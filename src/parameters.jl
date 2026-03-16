@@ -1,5 +1,7 @@
 # src/parameters.jl
 # Physical constants and preset configurations for the TRPT Kite Turbine Simulator.
+
+const DYNEEMA_DENSITY = 970.0   # kg/m³
 # All numerical values derived from:
 #   - "Rotary AWES Julia Simulation Framework.pdf"         (Framework PDF)
 #   - "Kite Turbine Mass Scaling Analysis.pdf"              (Mass Scaling PDF)
