@@ -20,6 +20,7 @@ export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbu
 export AbstractNode, RingNode, RopeNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos
 export build_kite_turbine_system, state_size
+export compute_rope_forces!, compute_ring_forces!
 export multibody_ode!
 export settle_to_equilibrium
 export ring_safety_frame
