@@ -760,7 +760,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     unlock_toggle = Toggle(act_row2[1, 2])
     Label(act_row2[1, 3], "unlock"; halign=:left, fontsize=10, color=:grey60)
 
-    rerun_btn = Button(ctrl[cnr!(), 1]; label="Re-run ODE 🔒", buttoncolor=:grey30,
+    rerun_btn = Button(ctrl[cnr!(), 1]; label="Re-run ODE [locked]", buttoncolor=:grey30,
                        labelcolor=:grey60)
     on(rerun_btn.clicks) do _
         if !unlock_toggle.active[]
@@ -770,7 +770,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         _rerun!(:steady, "Re-run Steady", sl_vref.value[])
     end
     on(unlock_toggle.active) do v
-        rerun_btn.label[]       = v ? "Re-run ODE 🔓" : "Re-run ODE 🔒"
+        rerun_btn.label[]       = v ? "Re-run ODE [open]" : "Re-run ODE [locked]"
         rerun_btn.labelcolor[]  = v ? :white          : :grey60
         rerun_btn.buttoncolor[] = v ? :darkgreen      : :grey30
     end
