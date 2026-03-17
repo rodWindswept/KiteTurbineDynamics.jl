@@ -19,8 +19,8 @@ end
 3D position of line j's attachment point on a ring with centre `centre`,
 radius `R`, twist angle `alpha`, in a plane with basis (perp1, perp2).
 """
-function attachment_point(centre::AbstractVector, R::Float64,
-                           alpha::Float64, j::Int, n_lines::Int,
+function attachment_point(centre::AbstractVector, R::Real,
+                           alpha::Real, j::Int, n_lines::Int,
                            perp1::AbstractVector, perp2::AbstractVector)
     φ = alpha + (j - 1) * (2π / n_lines)
     return centre .+ R .* (cos(φ) .* perp1 .+ sin(φ) .* perp2)

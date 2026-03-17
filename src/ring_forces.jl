@@ -15,7 +15,7 @@ function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
     hub_vel  = u[3*N+3*(hub_gid-1)+1 : 3*N+3*hub_gid]
     β        = p.elevation_angle
 
-    v_wind  = wind_fn(Float64.(hub_pos), t)
+    v_wind  = wind_fn(hub_pos, t)
     v_app   = v_wind .- hub_vel
     v_mag   = norm(v_app)
 
@@ -36,7 +36,7 @@ function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
     if v_hub_mag > 0.1
         omega_rotor = omega[hub_ri]
         lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
-        elev_angle  = atan(real(hub_pos[3]), norm(real.(hub_pos[1:2])))
+        elev_angle  = atan(hub_pos[3], norm(hub_pos[1:2]))
 
         thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
                       π * sys.rotor.radius^2 * 0.8 * cos(elev_angle)^2

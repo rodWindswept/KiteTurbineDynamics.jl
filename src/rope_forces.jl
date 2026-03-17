@@ -61,7 +61,7 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
         # Aerodynamic drag on rope nodes (applied at end_b when it is a rope node)
         if !ss.end_b.is_ring
             mid_pos = (pa .+ pb) ./ 2.0
-            v_wind  = wind_fn(Float64.(mid_pos), t)
+            v_wind  = wind_fn(mid_pos, t)
             v_node  = vb
             v_rel   = v_wind .- v_node
             v_perp  = v_rel .- dot(v_rel, dir) .* dir

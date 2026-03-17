@@ -22,7 +22,8 @@ export shaft_perp_basis, attachment_point, rope_helix_pos
 export build_kite_turbine_system, state_size
 export compute_rope_forces!, compute_ring_forces!
 export multibody_ode!
-export settle_to_equilibrium
-export ring_safety_frame
+export settle_to_equilibrium, simulate
+export ring_safety_frame, RING_SWL, TETHER_SWL
+export build_dashboard
 
 end

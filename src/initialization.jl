@@ -149,3 +149,99 @@ function build_kite_turbine_system(p::SystemParams;
 
     return sys, u0
 end
+
+"""
+    settle_to_equilibrium(sys, u0, p; n_steps, dt) → Vector{Float64}
+
+Explicit damped integrator that lets rope nodes sag under gravity without the
+stiffness penalty of a general-purpose ODE solver.
+
+Algorithm: semi-implicit Euler + per-step velocity kill at rate `damp`.
+Stability condition for the highest natural frequency ω_max:
+    (1 + ω_max·dt) · damp < 1
+With ω_max ≈ 20 000 rad/s (100 GPa Dyneema, 3 mm, 0.5 m sub-segs),
+dt = 4e-5 s → ω_max·dt = 0.8, so we need damp < 1/1.8 ≈ 0.56. Using 0.05.
+After 4 000 steps (0.16 s simulated) the gravity-driven sag (~0.1 mm) is
+fully resolved; high-frequency oscillations are damped out in ~5 steps.
+"""
+function settle_to_equilibrium(sys::KiteTurbineSystem,
+                                u0 ::Vector{Float64},
+                                p  ::SystemParams;
+                                n_steps::Int    = 4_000,
+                                dt     ::Float64 = 4e-5,
+                                damp   ::Float64 = 0.05)
+    u    = copy(u0)
+    N    = sys.n_total
+    Nr   = sys.n_ring
+    du   = zeros(Float64, length(u))
+    wind_zero = (pos, t) -> zeros(3)
+
+    for _ in 1:n_steps
+        fill!(du, 0.0)
+        multibody_ode!(du, u, (sys, p, wind_zero), 0.0)
+
+        # Semi-implicit Euler: velocities first, then positions
+        @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
+        @views u[1:3N]            .+= dt .* u[3N+1:6N]
+        @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
+        @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
+
+        # Kill high-frequency oscillations
+        @views u[3N+1:6N]        .*= damp
+        @views u[6N+Nr+1:6N+2Nr] .*= damp
+
+        # Enforce fixed ground node
+        u[1:3]       .= 0.0
+        u[3N+1:3N+3] .= 0.0
+        u[6N+1]       = 0.0
+        u[6N+Nr+1]    = 0.0
+    end
+    return u
+end
+
+"""
+    simulate(sys, u0, p, wind_fn; n_steps, dt, lin_damp, ang_damp) → Vector{Float64}
+
+Explicit semi-implicit Euler integrator with wind loading.
+Same stability guarantee as `settle_to_equilibrium` but drives the full
+aero + generator dynamics so angular velocity can evolve naturally.
+
+`ang_damp = 1.0` (default) means no angular velocity kill per step —
+the hub is free to spin up or down under the net torque balance.
+`lin_damp = 0.05` keeps rope oscillations damped without stopping the physics.
+"""
+function simulate(sys     ::KiteTurbineSystem,
+                  u0      ::Vector{Float64},
+                  p       ::SystemParams,
+                  wind_fn ::Function;
+                  n_steps ::Int     = 50_000,
+                  dt      ::Float64 = 4e-5,
+                  lin_damp::Float64 = 0.05,
+                  ang_damp::Float64 = 1.0)
+    u  = copy(u0)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    du = zeros(Float64, length(u))
+    t  = 0.0
+
+    for _ in 1:n_steps
+        fill!(du, 0.0)
+        multibody_ode!(du, u, (sys, p, wind_fn), t)
+        t += dt
+
+        @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
+        @views u[1:3N]            .+= dt .* u[3N+1:6N]
+        @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
+        @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
+
+        @views u[3N+1:6N]        .*= lin_damp
+        @views u[6N+Nr+1:6N+2Nr] .*= ang_damp
+
+        u[1:3]       .= 0.0
+        u[3N+1:3N+3] .= 0.0
+        u[6N+1]       = 0.0
+        u[6N+Nr+1]    = 0.0
+    end
+    return u
+end
+
