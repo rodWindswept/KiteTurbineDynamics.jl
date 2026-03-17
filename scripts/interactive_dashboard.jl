@@ -50,10 +50,9 @@ let t = 0.0, fi = 1
         @views u[3N+1:6N]        .*= LIN_DAMP   # damp rope oscillations
         # angular velocity: no kill — hub spins freely under aero/generator balance
 
-        u[1:3]       .= 0.0
-        u[3N+1:3N+3] .= 0.0
-        u[6N+1]       = 0.0
-        u[6N+Nr+1]    = 0.0
+        u[1:3]       .= 0.0   # ground ring centre stays at origin
+        u[3N+1:3N+3] .= 0.0   # ground ring translational velocity = 0
+        # alpha[1] and omega[1] evolve freely — ground ring IS the generator input shaft
 
         if step % SAVE_EVERY == 0
             frames[fi] = copy(u)

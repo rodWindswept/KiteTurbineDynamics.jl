@@ -49,7 +49,7 @@ function multibody_ode!(du, u, params, t)
         ri    = node.ring_idx
         I_z   = node.inertia_z
         du[6N + ri]      = omega[ri]
-        du[6N + Nr + ri] = node.is_fixed ? 0.0 : torques[ri] / I_z
+        du[6N + Nr + ri] = torques[ri] / I_z   # always live; pos_fixed handled by translation block above
     end
 
     return nothing

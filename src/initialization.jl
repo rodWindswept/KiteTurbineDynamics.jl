@@ -71,7 +71,8 @@ function build_kite_turbine_system(p::SystemParams;
     m_rope_sub = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0
 
     # ground (ring index k=0, ring_idx=1)
-    nodes[1] = RingNode(1, 1, 1e30, ring_radii[1], 1e30 * ring_radii[1]^2, true)
+    # Mass 1e30 keeps position fixed (F/m ≈ 0); i_pto gives real generator rotational inertia.
+    nodes[1] = RingNode(1, 1, 1e30, ring_radii[1], p.i_pto, true)
     ring_ids[1] = 1
 
     for s in 1:n_seg                      # segment s connects ring (s-1) to ring s
@@ -237,10 +238,9 @@ function simulate(sys     ::KiteTurbineSystem,
         @views u[3N+1:6N]        .*= lin_damp
         @views u[6N+Nr+1:6N+2Nr] .*= ang_damp
 
-        u[1:3]       .= 0.0
-        u[3N+1:3N+3] .= 0.0
-        u[6N+1]       = 0.0
-        u[6N+Nr+1]    = 0.0
+        u[1:3]       .= 0.0   # ground ring centre stays at origin
+        u[3N+1:3N+3] .= 0.0   # ground ring translational velocity = 0
+        # alpha[1] and omega[1] evolve freely — ground ring IS the generator input shaft
     end
     return u
 end
