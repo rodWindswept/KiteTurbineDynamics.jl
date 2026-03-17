@@ -193,6 +193,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # ── Figure — dark theme, 3 columns ───────────────────────────────────────
     set_theme!(theme_dark())
     fig = Figure(size=(1600, 950))
+
+    # All three columns must exist before colsize! can reference them
+    ctrl = GridLayout(fig[1, 1])
+    hud  = GridLayout(fig[1, 3])
     colsize!(fig.layout, 1, Fixed(280))   # Controls
     colsize!(fig.layout, 3, Fixed(340))   # HUD
 
@@ -347,7 +351,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
              color=:darkorange, markersize=10)
 
     # ── HUD (right column) ────────────────────────────────────────────────────
-    hud = GridLayout(fig[1, 3])
+    # hud already created above so colsize!(fig.layout, 3) could reference it
     # Fixed column width prevents label jitter as numbers change width
     colsize!(hud, 1, Fixed(320))
 
@@ -473,7 +477,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # ── Controls (left column) ────────────────────────────────────────────────
-    ctrl = GridLayout(fig[1, 1])
+    # ctrl already created above so colsize!(fig.layout, 1) could reference it
     colsize!(ctrl, 1, Fixed(260))
 
     cr = Ref(0)
