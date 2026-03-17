@@ -35,27 +35,29 @@ t  = 0.0
 fi = 1
 
 println("Simulating $(N_STEPS_TOTAL * DT) s  ($N_STEPS_TOTAL steps, $n_frames frames)...")
-for step in 1:N_STEPS_TOTAL
-    fill!(du, 0.0)
-    multibody_ode!(du, u, (sys, p, wind_fn), t)
-    t += DT
+let t = t, fi = fi
+    for step in 1:N_STEPS_TOTAL
+        fill!(du, 0.0)
+        multibody_ode!(du, u, (sys, p, wind_fn), t)
+        t += DT
 
-    @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
-    @views u[1:3N]            .+= DT .* u[3N+1:6N]
-    @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
-    @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
+        @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
+        @views u[1:3N]            .+= DT .* u[3N+1:6N]
+        @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
+        @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
 
-    @views u[3N+1:6N]        .*= LIN_DAMP   # damp rope oscillations
-    # angular velocity: no damping so hub can spin freely
+        @views u[3N+1:6N]        .*= LIN_DAMP   # damp rope oscillations
+        # angular velocity: no damping so hub can spin freely
 
-    u[1:3]       .= 0.0
-    u[3N+1:3N+3] .= 0.0
-    u[6N+1]       = 0.0
-    u[6N+Nr+1]    = 0.0
+        u[1:3]       .= 0.0
+        u[3N+1:3N+3] .= 0.0
+        u[6N+1]       = 0.0
+        u[6N+Nr+1]    = 0.0
 
-    if step % SAVE_EVERY == 0
-        frames[fi] = copy(u)
-        fi += 1
+        if step % SAVE_EVERY == 0
+            frames[fi] = copy(u)
+            fi += 1
+        end
     end
 end
 
