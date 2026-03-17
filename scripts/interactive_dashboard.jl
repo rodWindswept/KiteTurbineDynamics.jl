@@ -12,7 +12,8 @@ u_start = settle_to_equilibrium(sys, u0, p)
 
 N  = sys.n_total
 Nr = sys.n_ring
-u_start[6N + Nr + Nr] = 1.0   # seed hub with startup omega = 1 rad/s
+u_start[6N + Nr + Nr] = 9.0   # seed hub near optimal TSR: λ = 9×5/11 ≈ 4.1
+u_settled = copy(u_start)     # keep settled state for scenario re-runs
 
 wind_fn = (pos, t) -> begin
     z  = max(pos[3], 1.0)
@@ -65,7 +66,8 @@ end
 println("Done. Hub ω_final = $(round(u[6N+Nr+Nr], digits=4)) rad/s")
 println("Building dashboard ($n_frames frames)...")
 
-fig = build_dashboard(sys, p, frames; times=times)
+fig = build_dashboard(sys, p, frames; times=times,
+                      u_settled=u_settled, wind_fn=wind_fn)
 display(fig)
 println("Dashboard open. Use the frame slider or ▶ Play to animate. Ctrl+C to quit.")
 wait(fig.scene)
