@@ -8,7 +8,7 @@ Unlike quasi-static TRPT simulators, this package models every tether line indiv
 
 - Rope sag and catenary shape under gravity and wind drag
 - Line slack → torsional collapse (the key failure mode for TRPT)
-- Per-ring hoop compression and Euler buckling factor of safety
+- Per-ring polygon column Euler buckling factor of safety (CFRP hollow tube)
 - Hub spin-up, MPPT generator load, and power extraction
 
 **System size:** 241 nodes (16 RingNodes + 225 RopeNodes), 1 478-state ODE.
@@ -73,13 +73,37 @@ Ground anchor (fixed)
 │
 ├─ 5 tether lines × 4 sub-segments per inter-ring segment
 │    Each segment: ring_A ─ rope_1 ─ rope_2 ─ rope_3 ─ ring_B
-│    Torsional coupling emerges from helical attachment-point geometry
+│    Torque transmission holds rings in a twisted state; the resulting
+│    attachment-point displacement elastically stretches each line — that
+│    tension is the physical mechanism of torque propagation down the shaft
 │
 ├─ 14 intermediate rings (intermediate RingNodes)
 │
 └─ Hub (RingNode) — rotor disc, kite tether attachment
      Kite lift + rotor thrust + MPPT generator load
 ```
+
+## Structural design basis
+
+Ring frames are regular pentagons of CFRP hollow tubes.
+The governing failure mode is **Euler column buckling** of each flat polygon segment (pin-pin),
+not ring hoop Euler buckling.  Key design parameters (10 kW, 5-line pentagon):
+
+| Parameter | Value | Source |
+|---|---|---|
+| Ring tube material | CFRP hollow tube, t/D = 0.05 | TRPT_Ring_Scalability_Report.docx |
+| CFRP Young's modulus | 70 GPa (conservative isotropic) | ibid. |
+| Column buckling FoS | 3.0 at rated tether tension | ibid. |
+| Hub ring D_o × t | ≈ 19.7 mm × 0.99 mm (exact); 20.7 mm report (thin-wall approx.) | ibid. §3 |
+| Do scaling law | Do = 13.96 mm/m^0.5 × √R | N_comp constant ∴ I_req ∝ R² ∴ Do ∝ √R |
+| Tether tension at rated | ~2333 N/line (elastic stretch) | simulation calibrated |
+
+Tether tension arises because torque transmission holds adjacent rings in a twisted state,
+displacing attachment points and elastically stretching each line beyond its natural length.
+The twist and the tension are coupled outputs of the torque balance — not cause and effect.
+
+See [](TRPT_Ring_Scalability_Report.docx) for the full
+scalability analysis across 1–5 m rotor radius (1–50 kW class).
 
 ## Tests
 

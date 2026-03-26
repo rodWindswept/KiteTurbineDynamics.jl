@@ -26,7 +26,7 @@ function _tension_color(T::Float64, swl::Float64)
     end
 end
 
-"""Ring hoop-compression colour: blue → cyan → orange → red."""
+"""Ring polygon-column buckling colour: blue → cyan → orange → red."""
 function _ring_util_color(util::Float64)
     t = clamp(util, 0.0, 1.0)
     if t <= 0.5
@@ -441,8 +441,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
              label="0 N → $(Int(TETHER_SWL)) N SWL",
              labelsize=9, ticksize=4, ticklabelsize=8)
 
-    # Ring hoop compression — fraction of Euler buckling critical load
-    hlbl("Ring hoop compression  (P_crit = $(Int(RING_SWL)) N)"; fontsize=11, color=:firebrick)
+    # Ring polygon column buckling — fraction of Euler column P_crit for CFRP design tube
+    hlbl("Ring column buckling  (CFRP tube, FoS_design = $(Int(FOS_DESIGN)))"; fontsize=11, color=:firebrick)
     c_frame_lbl = hlbl("  max util   0.0%  ·  FoS      ∞")
     Colorbar(hud[hnr!(), 1]; colormap=ring_cmap, limits=(0.0, 1.0),
              vertical=false, height=14, tellheight=true, tellwidth=false,
