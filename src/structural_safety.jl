@@ -35,38 +35,48 @@ function ring_safety_frame(u      ::AbstractVector,
 
         F_inward = 0.0
         for ss in sys.sub_segs
-            # Only sub-segments whose upper end attaches to this ring
-            ss.end_b.is_ring && ss.end_b.node_id == ring_gid || continue
+            # Sub-segments touching this ring on either end
+            on_end_b = ss.end_b.is_ring && ss.end_b.node_id == ring_gid
+            on_end_a = ss.end_a.is_ring && ss.end_a.node_id == ring_gid
+            (on_end_b || on_end_a) || continue
 
-            pa = if ss.end_a.is_ring
-                node_a = sys.nodes[ss.end_a.node_id]::RingNode
-                ctr_a  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-                attachment_point(ctr_a, node_a.radius, alpha[node_a.ring_idx],
-                                 ss.end_a.line_idx, p.n_lines, perp1, perp2)
+            if on_end_b
+                # Ring is the upper end: rope pulls ring along (pa → pb) direction
+                pa = ss.end_a.is_ring ? begin
+                        node_a = sys.nodes[ss.end_a.node_id]::RingNode
+                        ctr_a  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                        attachment_point(ctr_a, node_a.radius, alpha[node_a.ring_idx],
+                                         ss.end_a.line_idx, p.n_lines, perp1, perp2)
+                     end : u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                pb  = attachment_point(ctr, R, α_ring, ss.end_b.line_idx,
+                                       p.n_lines, perp1, perp2)
+                len = norm(pb .- pa); len < 1e-9 && continue
+                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+                r_vec = pb .- ctr
+                dir   = (pb .- pa) ./ len   # rope direction toward ring
+                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
             else
-                u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                # Ring is the lower end: rope pulls ring along (pb → pa) direction
+                pb = ss.end_b.is_ring ? begin
+                        node_b = sys.nodes[ss.end_b.node_id]::RingNode
+                        ctr_b  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                        attachment_point(ctr_b, node_b.radius, alpha[node_b.ring_idx],
+                                         ss.end_b.line_idx, p.n_lines, perp1, perp2)
+                     end : u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                pa  = attachment_point(ctr, R, α_ring, ss.end_a.line_idx,
+                                       p.n_lines, perp1, perp2)
+                len = norm(pb .- pa); len < 1e-9 && continue
+                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+                r_vec = pa .- ctr
+                dir   = (pa .- pb) ./ len   # rope direction toward ring
+                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
             end
-
-            pb  = attachment_point(ctr, R, α_ring, ss.end_b.line_idx,
-                                   p.n_lines, perp1, perp2)
-            len = norm(pb .- pa)
-            len < 1e-9 && continue
-
-            strain = (len - ss.length_0) / ss.length_0
-            T      = max(0.0, ss.EA * strain)
-
-            r_vec  = pb .- ctr
-            r_norm = norm(r_vec)
-            r_norm < 1e-9 && continue
-            r_hat  = r_vec ./ r_norm
-
-            dir = (pb .- pa) ./ len
-            F_inward += T * abs(dot(dir, -r_hat))
         end
 
+        # Hoop compression = sum of inward radial components / 2π  (N)
+        # Critical hoop load: ring Euler buckling  N_crit = 3EI/R²  (Timoshenko)
         F_hoop = F_inward / (2π)
-        L_circ = 2π * R
-        P_crit = (π^2 * E_ring * I_ring) / L_circ^2
+        P_crit = 3.0 * E_ring * I_ring / R^2
         util   = F_hoop / max(P_crit, 1e-9)
         fos    = P_crit / max(F_hoop, 1e-9)
 

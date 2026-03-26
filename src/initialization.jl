@@ -197,7 +197,117 @@ function settle_to_equilibrium(sys::KiteTurbineSystem,
         u[6N+1]       = 0.0
         u[6N+Nr+1]    = 0.0
     end
+    # Final velocity zero: rope nodes retain an O(dt·F/m/(1-damp)) equilibrium
+    # velocity that can cause c_damp·vel_proj torque residuals at the next call.
+    # Zero it here so callers can build exact torsional equilibria.
+    @views u[3N+1:6N] .= 0.0
     return u
+end
+
+"""
+    set_orbital_velocities!(u, sys, p)
+
+Initialise every rope-node translational velocity to its expected orbital velocity —
+the velocity it would have if it perfectly tracked the rotation of its two bounding rings.
+
+For ring k spinning at ω_k with attachment-point angle φ = α_k + (j-1)·2π/n_lines:
+  v_att_k = ω_k · R_k · (−sin(φ)·pp1 + cos(φ)·pp2)
+
+The rope node at sub_idx/4 of the way between rings a and b interpolates linearly:
+  v_orbital = (1 − frac)·v_att_a + frac·v_att_b
+
+Call this once AFTER the equilibrium init so that the simulation starts with
+rope nodes already moving at the correct tangential speed (no impulsive loading
+on the first step).
+"""
+function set_orbital_velocities!(u::Vector{Float64},
+                                  sys::KiteTurbineSystem,
+                                  p  ::SystemParams)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    β  = p.elevation_angle
+    sd = [cos(β), 0.0, sin(β)]
+    pp1, pp2 = shaft_perp_basis(sd)
+
+    alpha = @view u[6N+1    : 6N+Nr]
+    omega = @view u[6N+Nr+1 : 6N+2Nr]
+
+    for node in sys.nodes
+        node isa RopeNode || continue
+        gid  = node.id
+        s    = node.seg_idx
+        j    = node.line_idx
+        frac = node.sub_idx / 4.0
+
+        na   = sys.nodes[sys.ring_ids[s]]::RingNode
+        nb   = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        ri_a = na.ring_idx;  ri_b = nb.ring_idx
+        φ_a  = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
+        φ_b  = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
+        v_a  = omega[ri_a] * na.radius * (-sin(φ_a) .* pp1 .+ cos(φ_a) .* pp2)
+        v_b  = omega[ri_b] * nb.radius * (-sin(φ_b) .* pp1 .+ cos(φ_b) .* pp2)
+
+        bv = 3N + 3*(gid - 1) + 1
+        u[bv : bv+2] .= (1.0 - frac) .* v_a .+ frac .* v_b
+    end
+end
+
+"""
+    orbital_damp_rope_velocities!(u, sys, p, lin_damp)
+
+Apply oscillation-damping to rope nodes while preserving their orbital velocity.
+
+For each rope node the velocity is split into:
+  v = v_orbital  +  v_oscillatory
+
+Only the oscillatory component is multiplied by `lin_damp`; the orbital part is
+left unchanged.  Ring-node translational velocities are killed uniformly with
+`lin_damp` (ring centres should not drift).
+
+This replaces the flat `u[3N+1:6N] .*= lin_damp` in the simulation loop, which
+suppressed orbital rotation (requiring O(1e5) m/s² of force to sustain it) and
+caused the hub to decelerate and reverse despite positive aero torque.
+"""
+function orbital_damp_rope_velocities!(u       ::Vector{Float64},
+                                        sys     ::KiteTurbineSystem,
+                                        p       ::SystemParams,
+                                        lin_damp::Float64)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    β  = p.elevation_angle
+    pp1, pp2 = shaft_perp_basis([cos(β), 0.0, sin(β)])
+
+    alpha = @view u[6N+1    : 6N+Nr]
+    omega = @view u[6N+Nr+1 : 6N+2Nr]
+
+    # ── Ring nodes: kill translational velocity (centres must not drift) ───
+    for node in sys.nodes
+        node isa RingNode || continue
+        bv = 3*sys.n_total + 3*(node.id - 1) + 1
+        @views u[bv : bv+2] .*= lin_damp
+    end
+
+    # ── Rope nodes: damp only oscillatory component ─────────────────────────
+    for node in sys.nodes
+        node isa RopeNode || continue
+        gid  = node.id
+        s    = node.seg_idx
+        j    = node.line_idx
+        frac = node.sub_idx / 4.0
+
+        na   = sys.nodes[sys.ring_ids[s]]::RingNode
+        nb   = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        ri_a = na.ring_idx;  ri_b = nb.ring_idx
+        φ_a  = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
+        φ_b  = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
+        v_a  = omega[ri_a] * na.radius * (-sin(φ_a) .* pp1 .+ cos(φ_a) .* pp2)
+        v_b  = omega[ri_b] * nb.radius * (-sin(φ_b) .* pp1 .+ cos(φ_b) .* pp2)
+        v_orbital = (1.0 - frac) .* v_a .+ frac .* v_b
+
+        bv = 3N + 3*(gid - 1) + 1
+        v_osc = @view(u[bv : bv+2]) .- v_orbital
+        u[bv : bv+2] .= v_orbital .+ lin_damp .* v_osc
+    end
 end
 
 """
@@ -235,7 +345,7 @@ function simulate(sys     ::KiteTurbineSystem,
         @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
         @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
 
-        @views u[3N+1:6N]        .*= lin_damp
+        orbital_damp_rope_velocities!(u, sys, p, lin_damp)
         @views u[6N+Nr+1:6N+2Nr] .*= ang_damp
 
         u[1:3]       .= 0.0   # ground ring centre stays at origin
