@@ -13,6 +13,18 @@ Unlike quasi-static TRPT simulators, this package models every tether line indiv
 
 **System size:** 241 nodes (16 RingNodes + 225 RopeNodes), 1 478-state ODE.
 
+## Design reports
+
+Three companion design reports are included in this repository:
+
+| Report | Contents |
+|---|---|
+| [TRPT_Ring_Scalability_Report.docx](TRPT_Ring_Scalability_Report.docx) | CFRP ring structural sizing, Do ∝ √R scaling law, mass budget, P/W vs rotor radius (1–5 m) |
+| [TRPT_Stacked_Rotor_Analysis.docx](TRPT_Stacked_Rotor_Analysis.docx) | Blade count sweep (n=3–6), rotor stacking (1–3 rotors), wake geometry, hub ring force balance |
+| [TRPT_Conical_Stack_Analysis.docx](TRPT_Conical_Stack_Analysis.docx) | Wind shear benefit of stacking, TSR-matched centrifugal radius expansion, conical stack P/W |
+
+Key result: a 3-rotor conical stack (R = 5.0, 5.52, 5.85 m) delivers **44.2 kW at 540 W/kg** — 27% above the single-rotor baseline — through wind shear plus passive centrifugal radius expansion.
+
 ## Install
 
 ```julia
@@ -83,6 +95,20 @@ Ground anchor (fixed)
      Kite lift + rotor thrust + MPPT generator load
 ```
 
+## Blade geometry
+
+TRPT blades are **annular**, not full-disc. Each blade spans from the hub ring to the outer tip:
+
+| Parameter | Value |
+|---|---|
+| Outer tip radius R | 5.0 m |
+| Hub ring radius r_hub | 2.0 m (= 0.4 × R) |
+| Blade span | 3.0 m |
+| Blade CoM radius r_cm | 3.8 m (r_hub + 0.6 × span) |
+| Total blade mass (5 blades) | 11.0 kg |
+
+Aerodynamic Cp and CT coefficients (from AeroDyn BEM, `Rotor_TRTP_Sizing_Iteration2.xlsx`) are normalised to full disc area πR² by convention. The inner hub region (r < 2 m) contributes negligibly at operational TSR (local TSR at r_hub ≈ 1.64), so this normalisation is consistent with the physical swept annulus. CT uses the BEM table — at λ_opt ≈ 4.1, CT ≈ 0.548 (not a fixed constant).
+
 ## Structural design basis
 
 Ring frames are regular pentagons of CFRP hollow tubes.
@@ -96,13 +122,17 @@ not ring hoop Euler buckling.  Key design parameters (10 kW, 5-line pentagon):
 | Column buckling FoS | 3.0 at rated tether tension | ibid. |
 | Hub ring D_o × t | ≈ 19.7 mm × 0.99 mm (exact); 20.7 mm report (thin-wall approx.) | ibid. §3 |
 | Do scaling law | Do = 13.96 mm/m^0.5 × √R | N_comp constant ∴ I_req ∝ R² ∴ Do ∝ √R |
+| Ring mass (14 rings, R=5m) | 9.57 kg (= 0.684 kg/ring) | TRPT_Ring_Scalability_Report.docx |
 | Tether tension at rated | ~2333 N/line (elastic stretch) | simulation calibrated |
+| Hub ring centrifugal load | ~3402 N outward (11 kg × 9.02² rad/s² × 3.8 m) | TRPT_Stacked_Rotor_Analysis.docx §6 |
 
 Tether tension arises because torque transmission holds adjacent rings in a twisted state,
 displacing attachment points and elastically stretching each line beyond its natural length.
 The twist and the tension are coupled outputs of the torque balance — not cause and effect.
 
-See [](TRPT_Ring_Scalability_Report.docx) for the full
+The hub ring is in **net hoop tension** at rated speed (centrifugal load 3402 N outward exceeds tether inward compression ~750–800 N). Intermediate rings remain compression-governed (Euler buckling).
+
+See [TRPT_Ring_Scalability_Report.docx](TRPT_Ring_Scalability_Report.docx) for the full
 scalability analysis across 1–5 m rotor radius (1–50 kW class).
 
 ## Tests
