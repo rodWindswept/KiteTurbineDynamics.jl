@@ -1,0 +1,298 @@
+Building base system…
+
+[ 1/24]  k×0.25  v=8 m/s  (k_mppt=2.8)
+  settling gravity sag… done
+  spin-up 5 s… done (34 s wall)
+  t= 15.0 s  twist=   0.1°  ω_hub= 0.01  P= 0.00 kW  [wall 51 s  ETA 253 s]
+  t= 25.0 s  twist=  15.1°  ω_hub= 1.59  P= 0.01 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist=  59.2°  ω_hub= 8.19  P= 1.46 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist=  77.1°  ω_hub= 8.67  P= 1.75 kW  [wall 204 s  ETA 102 s]
+  t= 55.0 s  twist=  87.0°  ω_hub= 8.69  P= 1.76 kW  [wall 255 s  ETA 51 s]
+  t= 65.0 s  twist=  93.8°  ω_hub= 8.70  P= 1.77 kW  [wall 306 s  ETA 0 s]
+  → settled: twist = 90.6 ± 2.1 °  |  P = 1.77 kW
+
+[ 2/24]  k×0.25  v=10 m/s  (k_mppt=2.8)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   2.2°  ω_hub= 0.24  P= 0.00 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist=  53.9°  ω_hub= 8.69  P= 1.71 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist=  81.1°  ω_hub=10.81  P= 3.37 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist=  92.4°  ω_hub=10.83  P= 3.40 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist=  99.5°  ω_hub=10.84  P= 3.41 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 104.4°  ω_hub=10.84  P= 3.42 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 102.0 ± 1.5 °  |  P = 3.41 kW
+
+[ 3/24]  k×0.25  v=11 m/s  (k_mppt=2.8)
+  settling gravity sag… done
+  spin-up 5 s… done (24 s wall)
+  t= 15.0 s  twist=   7.5°  ω_hub= 0.88  P= 0.00 kW  [wall 50 s  ETA 249 s]
+  t= 25.0 s  twist=  67.6°  ω_hub=11.33  P= 3.84 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist=  87.5°  ω_hub=11.89  P= 4.48 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist=  97.4°  ω_hub=11.90  P= 4.50 kW  [wall 201 s  ETA 100 s]
+  t= 55.0 s  twist= 103.6°  ω_hub=11.91  P= 4.52 kW  [wall 251 s  ETA 50 s]
+  t= 65.0 s  twist= 107.8°  ω_hub=11.91  P= 4.52 kW  [wall 302 s  ETA 0 s]
+  → settled: twist = 105.8 ± 1.3 °  |  P = 4.52 kW
+
+[ 4/24]  k×0.25  v=13 m/s  (k_mppt=2.8)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  16.6°  ω_hub= 2.49  P= 0.04 kW  [wall 49 s  ETA 247 s]
+  t= 25.0 s  twist=  82.3°  ω_hub=13.98  P= 7.23 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist=  96.9°  ω_hub=14.04  P= 7.35 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 104.7°  ω_hub=14.04  P= 7.37 kW  [wall 201 s  ETA 101 s]
+  t= 55.0 s  twist= 109.4°  ω_hub=14.05  P= 7.38 kW  [wall 251 s  ETA 50 s]
+  t= 65.0 s  twist= 112.5°  ω_hub=14.05  P= 7.38 kW  [wall 302 s  ETA 0 s]
+  → settled: twist = 111.0 ± 0.9 °  |  P = 7.38 kW
+
+[ 5/24]  k×0.50  v=8 m/s  (k_mppt=5.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   0.1°  ω_hub= 0.01  P= 0.00 kW  [wall 50 s  ETA 249 s]
+  t= 25.0 s  twist=  20.1°  ω_hub= 1.56  P= 0.02 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist=  73.2°  ω_hub= 7.49  P= 2.18 kW  [wall 150 s  ETA 150 s]
+  t= 45.0 s  twist=  97.8°  ω_hub= 7.88  P= 2.57 kW  [wall 200 s  ETA 100 s]
+  t= 55.0 s  twist= 112.3°  ω_hub= 7.88  P= 2.58 kW  [wall 251 s  ETA 50 s]
+  t= 65.0 s  twist= 122.8°  ω_hub= 7.89  P= 2.59 kW  [wall 302 s  ETA 0 s]
+  → settled: twist = 117.8 ± 3.2 °  |  P = 2.59 kW
+
+[ 6/24]  k×0.50  v=10 m/s  (k_mppt=5.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   2.4°  ω_hub= 0.24  P= 0.00 kW  [wall 49 s  ETA 247 s]
+  t= 25.0 s  twist=  66.1°  ω_hub= 7.90  P= 2.48 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist= 103.6°  ω_hub= 9.83  P= 4.94 kW  [wall 150 s  ETA 150 s]
+  t= 45.0 s  twist= 121.1°  ω_hub= 9.83  P= 4.97 kW  [wall 201 s  ETA 101 s]
+  t= 55.0 s  twist= 133.0°  ω_hub= 9.84  P= 4.98 kW  [wall 252 s  ETA 50 s]
+  t= 65.0 s  twist= 141.9°  ω_hub= 9.84  P= 4.99 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 137.6 ± 2.8 °  |  P = 4.99 kW
+
+[ 7/24]  k×0.50  v=11 m/s  (k_mppt=5.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   9.3°  ω_hub= 0.88  P= 0.00 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  84.3°  ω_hub=10.38  P= 5.72 kW  [wall 101 s  ETA 201 s]
+  t= 35.0 s  twist= 113.5°  ω_hub=10.81  P= 6.56 kW  [wall 153 s  ETA 153 s]
+  t= 45.0 s  twist= 129.6°  ω_hub=10.81  P= 6.58 kW  [wall 204 s  ETA 102 s]
+  t= 55.0 s  twist= 140.8°  ω_hub=10.81  P= 6.59 kW  [wall 255 s  ETA 51 s]
+  t= 65.0 s  twist= 149.1°  ω_hub=10.81  P= 6.60 kW  [wall 306 s  ETA 0 s]
+  → settled: twist = 145.1 ± 2.6 °  |  P = 6.60 kW
+
+[ 8/24]  k×0.50  v=13 m/s  (k_mppt=5.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  22.7°  ω_hub= 2.45  P= 0.07 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist= 105.2°  ω_hub=12.75  P=10.61 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 129.0°  ω_hub=12.76  P=10.71 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 143.3°  ω_hub=12.76  P=10.74 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 153.3°  ω_hub=12.76  P=10.75 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 160.8°  ω_hub=12.76  P=10.76 kW  [wall 305 s  ETA 0 s]
+  → settled: twist = 157.2 ± 2.3 °  |  P = 10.76 kW
+
+[ 9/24]  k×1.00  v=8 m/s  (k_mppt=11.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   0.1°  ω_hub= 0.01  P= 0.00 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  26.0°  ω_hub= 1.51  P= 0.03 kW  [wall 100 s  ETA 201 s]
+  t= 35.0 s  twist=  84.9°  ω_hub= 6.39  P= 2.61 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 116.0°  ω_hub= 6.78  P= 3.16 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 134.8°  ω_hub= 6.77  P= 3.17 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 148.6°  ω_hub= 6.77  P= 3.18 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 142.0 ± 4.3 °  |  P = 3.18 kW
+
+[10/24]  k×1.00  v=10 m/s  (k_mppt=11.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   2.7°  ω_hub= 0.24  P= 0.00 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist=  75.5°  ω_hub= 6.53  P= 2.67 kW  [wall 100 s  ETA 201 s]
+  t= 35.0 s  twist= 123.7°  ω_hub= 8.46  P= 6.06 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 146.7°  ω_hub= 8.45  P= 6.08 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 163.0°  ω_hub= 8.45  P= 6.09 kW  [wall 252 s  ETA 50 s]
+  t= 65.0 s  twist= 175.6°  ω_hub= 8.45  P= 6.09 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 169.5 ± 3.9 °  |  P = 6.09 kW
+
+[11/24]  k×1.00  v=11 m/s  (k_mppt=11.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  11.7°  ω_hub= 0.87  P= 0.00 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  98.6°  ω_hub= 8.90  P= 6.87 kW  [wall 100 s  ETA 201 s]
+  t= 35.0 s  twist= 136.6°  ω_hub= 9.30  P= 8.00 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 158.5°  ω_hub= 9.29  P= 8.01 kW  [wall 201 s  ETA 101 s]
+  t= 55.0 s  twist= 174.2°  ω_hub= 9.29  P= 8.02 kW  [wall 252 s  ETA 50 s]
+  t= 65.0 s  twist= 186.5°  ω_hub= 9.29  P= 8.03 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 180.6 ± 3.8 °  |  P = 8.03 kW
+
+[12/24]  k×1.00  v=13 m/s  (k_mppt=11.0)
+  settling gravity sag… done
+  spin-up 5 s… done (24 s wall)
+  t= 15.0 s  twist=  30.0°  ω_hub= 2.40  P= 0.12 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist= 125.5°  ω_hub=10.98  P=12.88 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 157.8°  ω_hub=10.98  P=12.96 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 178.3°  ω_hub=10.97  P=12.98 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 193.4°  ω_hub=10.96  P=12.98 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 205.2°  ω_hub=10.96  P=12.99 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 199.5 ± 3.7 °  |  P = 12.99 kW
+
+[13/24]  k×1.50  v=8 m/s  (k_mppt=16.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   0.1°  ω_hub= 0.01  P= 0.00 kW  [wall 49 s  ETA 247 s]
+  t= 25.0 s  twist=  29.7°  ω_hub= 1.47  P= 0.04 kW  [wall 99 s  ETA 199 s]
+  t= 35.0 s  twist=  88.1°  ω_hub= 5.45  P= 2.35 kW  [wall 150 s  ETA 150 s]
+  t= 45.0 s  twist= 123.2°  ω_hub= 5.95  P= 3.14 kW  [wall 201 s  ETA 100 s]
+  t= 55.0 s  twist= 144.1°  ω_hub= 5.95  P= 3.14 kW  [wall 251 s  ETA 50 s]
+  t= 65.0 s  twist= 159.6°  ω_hub= 5.94  P= 3.15 kW  [wall 302 s  ETA 0 s]
+  → settled: twist = 152.1 ± 4.8 °  |  P = 3.15 kW
+
+[14/24]  k×1.50  v=10 m/s  (k_mppt=16.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   3.0°  ω_hub= 0.24  P= 0.00 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  77.3°  ω_hub= 5.35  P= 2.13 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist= 131.7°  ω_hub= 7.44  P= 5.98 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 157.6°  ω_hub= 7.42  P= 5.98 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 175.9°  ω_hub= 7.41  P= 5.99 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 190.3°  ω_hub= 7.41  P= 5.99 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 183.4 ± 4.5 °  |  P = 5.99 kW
+
+[15/24]  k×1.50  v=11 m/s  (k_mppt=16.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  13.4°  ω_hub= 0.87  P= 0.01 kW  [wall 50 s  ETA 252 s]
+  t= 25.0 s  twist= 102.9°  ω_hub= 7.64  P= 6.28 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 146.2°  ω_hub= 8.17  P= 7.86 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 170.9°  ω_hub= 8.16  P= 7.86 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 188.9°  ω_hub= 8.15  P= 7.86 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 203.1°  ω_hub= 8.14  P= 7.86 kW  [wall 305 s  ETA 0 s]
+  → settled: twist = 196.2 ± 4.4 °  |  P = 7.86 kW
+
+[16/24]  k×1.50  v=13 m/s  (k_mppt=16.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  34.9°  ω_hub= 2.34  P= 0.17 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist= 133.5°  ω_hub= 9.65  P=12.54 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 170.1°  ω_hub= 9.64  P=12.63 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 193.7°  ω_hub= 9.62  P=12.63 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 211.2°  ω_hub= 9.61  P=12.62 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 225.2°  ω_hub= 9.61  P=12.62 kW  [wall 305 s  ETA 0 s]
+  → settled: twist = 218.5 ± 4.3 °  |  P = 12.62 kW
+
+[17/24]  k×2.50  v=8 m/s  (k_mppt=27.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   0.1°  ω_hub= 0.01  P= 0.00 kW  [wall 50 s  ETA 248 s]
+  t= 25.0 s  twist=  34.7°  ω_hub= 1.40  P= 0.06 kW  [wall 100 s  ETA 200 s]
+  t= 35.0 s  twist=  82.8°  ω_hub= 3.63  P= 1.12 kW  [wall 150 s  ETA 150 s]
+  t= 45.0 s  twist= 122.7°  ω_hub= 4.64  P= 2.39 kW  [wall 201 s  ETA 101 s]
+  t= 55.0 s  twist= 145.8°  ω_hub= 4.64  P= 2.41 kW  [wall 252 s  ETA 50 s]
+  t= 65.0 s  twist= 162.8°  ω_hub= 4.63  P= 2.40 kW  [wall 302 s  ETA 0 s]
+  → settled: twist = 154.6 ± 5.3 °  |  P = 2.40 kW
+
+[18/24]  k×2.50  v=10 m/s  (k_mppt=27.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   3.4°  ω_hub= 0.24  P= 0.00 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist=  74.4°  ω_hub= 3.61  P= 1.07 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 131.6°  ω_hub= 5.80  P= 4.50 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 160.3°  ω_hub= 5.79  P= 4.53 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 180.5°  ω_hub= 5.77  P= 4.51 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 196.4°  ω_hub= 5.76  P= 4.50 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 188.7 ± 4.9 °  |  P = 4.51 kW
+
+[19/24]  k×2.50  v=11 m/s  (k_mppt=27.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  15.8°  ω_hub= 0.86  P= 0.01 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  96.8°  ω_hub= 5.20  P= 3.14 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 147.6°  ω_hub= 6.38  P= 5.93 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 174.9°  ω_hub= 6.35  P= 5.90 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 194.8°  ω_hub= 6.33  P= 5.88 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 210.5°  ω_hub= 6.32  P= 5.87 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 202.9 ± 4.9 °  |  P = 5.88 kW
+
+[20/24]  k×2.50  v=13 m/s  (k_mppt=27.5)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  41.3°  ω_hub= 2.25  P= 0.24 kW  [wall 50 s  ETA 252 s]
+  t= 25.0 s  twist= 132.5°  ω_hub= 7.42  P= 8.94 kW  [wall 101 s  ETA 202 s]
+  t= 35.0 s  twist= 173.8°  ω_hub= 7.51  P= 9.39 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 200.0°  ω_hub= 7.47  P= 9.34 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 219.6°  ω_hub= 7.46  P= 9.31 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 235.4°  ω_hub= 7.45  P= 9.29 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 227.7 ± 4.9 °  |  P = 9.30 kW
+
+[21/24]  k×4.00  v=8 m/s  (k_mppt=44.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   0.2°  ω_hub= 0.01  P= 0.00 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist=  39.4°  ω_hub= 1.32  P= 0.08 kW  [wall 100 s  ETA 201 s]
+  t= 35.0 s  twist=  73.1°  ω_hub= 2.02  P= 0.32 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist=  97.1°  ω_hub= 2.40  P= 0.53 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 115.0°  ω_hub= 2.52  P= 0.62 kW  [wall 252 s  ETA 50 s]
+  t= 65.0 s  twist= 128.6°  ω_hub= 2.53  P= 0.63 kW  [wall 303 s  ETA 0 s]
+  → settled: twist = 122.1 ± 4.2 °  |  P = 0.63 kW
+
+[22/24]  k×4.00  v=10 m/s  (k_mppt=44.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=   4.0°  ω_hub= 0.24  P= 0.00 kW  [wall 50 s  ETA 250 s]
+  t= 25.0 s  twist=  70.6°  ω_hub= 2.36  P= 0.49 kW  [wall 101 s  ETA 201 s]
+  t= 35.0 s  twist= 103.5°  ω_hub= 2.99  P= 1.01 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 126.2°  ω_hub= 3.15  P= 1.18 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 142.4°  ω_hub= 3.14  P= 1.18 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 155.0°  ω_hub= 3.11  P= 1.16 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 149.0 ± 3.9 °  |  P = 1.17 kW
+
+[23/24]  k×4.00  v=11 m/s  (k_mppt=44.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  18.2°  ω_hub= 0.86  P= 0.01 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist=  82.6°  ω_hub= 2.82  P= 0.83 kW  [wall 100 s  ETA 201 s]
+  t= 35.0 s  twist= 115.8°  ω_hub= 3.39  P= 1.45 kW  [wall 151 s  ETA 151 s]
+  t= 45.0 s  twist= 137.7°  ω_hub= 3.46  P= 1.56 kW  [wall 202 s  ETA 101 s]
+  t= 55.0 s  twist= 153.6°  ω_hub= 3.43  P= 1.53 kW  [wall 253 s  ETA 51 s]
+  t= 65.0 s  twist= 165.9°  ω_hub= 3.40  P= 1.49 kW  [wall 304 s  ETA 0 s]
+  → settled: twist = 159.9 ± 3.8 °  |  P = 1.51 kW
+
+[24/24]  k×4.00  v=13 m/s  (k_mppt=44.0)
+  settling gravity sag… done
+  spin-up 5 s… done (25 s wall)
+  t= 15.0 s  twist=  47.5°  ω_hub= 2.14  P= 0.31 kW  [wall 50 s  ETA 251 s]
+  t= 25.0 s  twist= 103.9°  ω_hub= 3.74  P= 1.87 kW  [wall 101 s  ETA 203 s]
+  t= 35.0 s  twist= 136.4°  ω_hub= 4.08  P= 2.46 kW  [wall 152 s  ETA 152 s]
+  t= 45.0 s  twist= 157.4°  ω_hub= 4.05  P= 2.44 kW  [wall 203 s  ETA 101 s]
+  t= 55.0 s  twist= 172.7°  ω_hub= 4.00  P= 2.36 kW  [wall 254 s  ETA 51 s]
+  t= 65.0 s  twist= 184.7°  ω_hub= 3.95  P= 2.29 kW  [wall 305 s  ETA 0 s]
+  → settled: twist = 178.9 ± 3.7 °  |  P = 2.33 kW
+
+Saved: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/mppt_twist_sweep/twist_sweep.csv  (2880 rows)
+Saved: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/mppt_twist_sweep/twist_sweep_summary.csv  (24 rows)
+
+── Settled twist (last 10 s) ─────────────────────────────────────────────
+k_mult    v (m/s)   twist (°)     P (kW)      ω_hub   
+────────────────────────────────────────────────────────
+0.25      8.0         90.6 ± 2.1   1.77        8.70    
+0.25      10.0       102.0 ± 1.5   3.41        10.84   
+0.25      11.0       105.8 ± 1.3   4.52        11.91   
+0.25      13.0       111.0 ± 0.9   7.38        14.05   
+0.50      8.0        117.8 ± 3.2   2.59        7.88    
+0.50      10.0       137.6 ± 2.8   4.99        9.84    
+0.50      11.0       145.1 ± 2.6   6.60        10.81   
+0.50      13.0       157.2 ± 2.3   10.76       12.76   
+1.00      8.0        142.0 ± 4.3   3.18        6.77    
+1.00      10.0       169.5 ± 3.9   6.09        8.45    
+1.00      11.0       180.6 ± 3.8   8.03        9.29    
+1.00      13.0       199.5 ± 3.7   12.99       10.96   
+1.50      8.0        152.1 ± 4.8   3.15        5.94    
+1.50      10.0       183.4 ± 4.5   5.99        7.41    
+1.50      11.0       196.2 ± 4.4   7.86        8.15    
+1.50      13.0       218.5 ± 4.3   12.62       9.61    
+2.50      8.0        154.6 ± 5.3   2.40        4.63    
+2.50      10.0       188.7 ± 4.9   4.51        5.76    
+2.50      11.0       202.9 ± 4.9   5.88        6.33    
+2.50      13.0       227.7 ± 4.9   9.30        7.45    
+4.00      8.0        122.1 ± 4.2   0.63        2.53    
+4.00      10.0       149.0 ± 3.9   1.17        3.13    
+4.00      11.0       159.9 ± 3.8   1.51        3.42    
+4.00      13.0       178.9 ± 3.7   2.33        3.98    
+
+Done. All results in: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/mppt_twist_sweep
