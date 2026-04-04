@@ -91,7 +91,9 @@ function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
         ri_a   = node_a.ring_idx
         ri_b   = node_b.ring_idx
         r_s    = (node_a.radius + node_b.radius) * 0.5
-        Δα     = alpha[ri_b] - alpha[ri_a]
+        # Principal-value inter-ring twist (−π, π]: prevents accumulated whole-revolution
+        # counts from falsely triggering the collapse guard or inflating k_sec.
+        Δα     = mod(alpha[ri_b] - alpha[ri_a] + π, 2π) - π
         abs(Δα) >= 0.95π && continue
 
         # Estimate local torsional stiffness via rope geometry (for damper sizing only)

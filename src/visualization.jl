@@ -600,10 +600,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         V_hub     = p.v_wind_ref * (z_hub / p.h_ref)^(1.0/7.0)
         # TSR: blade tip speed ratio = ω_hub·R / V_hub (not cosine-corrected — operational display)
         tsr       = V_hub > 0.1 ? abs(omega_hub) * sys.rotor.radius / V_hub : 0.0
-        # TRPT total twist: α_hub − α_ground (degrees)
-        alpha_hub = u[6N + Nr]                 # hub ring twist angle
-        alpha_gnd = u[6N + 1]                  # ground ring twist angle
-        Δα_deg    = rad2deg(alpha_hub - alpha_gnd)
+        # TRPT structural twist: sum of principal-value inter-ring angular offsets.
+        # Raw (α_hub − α_gnd) grows without bound whenever ω_hub ≠ ω_gnd (elastic
+        # shaft slip) even though the torsional deformation is settled.  Reducing
+        # each inter-ring delta to its principal value in (−π, π] removes accumulated
+        # whole-revolution counts and shows only the instantaneous geometric twist.
+        alpha_vec = @view u[6N+1 : 6N+Nr]
+        Δα_deg    = rad2deg(sum(i -> mod(alpha_vec[i+1] - alpha_vec[i] + π, 2π) - π,
+                                1:Nr-1))
 
         t_lbl.text[] = if isnothing(times)
             @sprintf("Frame %5d / %d", fi, n_frames)
