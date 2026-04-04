@@ -47,10 +47,14 @@ struct SystemParams
     m_blade::Float64          # Mass per blade (kg)
 
     # Aerodynamics
-    # rotor_radius is the aerodynamic outer radius used in the power formula
-    # (P = ½ρv³πR²Cp cos³β), blade inertia (I = n_blades × m_blade × R²),
-    # and tether speed ratio (λ_t = ω × R / v_hub).
-    # TRPT stiffness and ring inertia use trpt_hub_radius / trpt_rL_ratio instead.
+    # rotor_radius is the outer tip radius R of the lifting blades.
+    # Blades are physically annular: inner tip at trpt_hub_radius (~0.4·R),
+    # outer tip at R.  Blade span = R − trpt_hub_radius.
+    # Cp and CT (from AeroDyn BEM) are normalised to the FULL DISC area πR²
+    # by convention — the inner hub region contributes negligibly at operational
+    # TSR, so using πR² with these BEM coefficients is consistent with the
+    # physical swept annulus.  Blade inertia I = n_blades × m_blade × R²
+    # (outer-tip approximation); tether TSR λ_t = ω × R / v_hub.
     cp::Float64               # Rotor power coefficient; AeroDyn BEM ≈ 0.22 (NACA4412, 3-blade)
 
     # Ground station — Mass Scaling PDF §"Drivetrain Mass and Inertia Matching"

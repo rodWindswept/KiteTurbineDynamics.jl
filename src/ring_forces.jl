@@ -38,8 +38,15 @@ function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
         lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
         elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
+        # Aerodynamic area convention: both Cp and CT are normalised to the FULL DISC
+        # area π·R² (outer-radius convention, consistent with AeroDyn BEM source data
+        # Rotor_TRTP_Sizing_Iteration2.xlsx).  The TRPT blades are physically annular
+        # (inner tip at trpt_hub_radius ≈ 0.4·R, outer tip at R), but the inner hub
+        # region contributes negligibly at operational TSR so the BEM Cp/CT values
+        # referenced to π·R² are consistent with the physical swept annulus.
+        # CT uses the BEM table (not a fixed 0.8 — at λ_opt ≈ 4.1, CT_BEM ≈ 0.548).
         thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
-                      π * sys.rotor.radius^2 * 0.8 * cos(elev_angle)^2
+                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) * cos(elev_angle)^2
         tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
         tl          = norm(tether_dir)
         if tl > 0; tether_dir ./= tl; end
