@@ -1,7 +1,8 @@
 using LinearAlgebra
 
 function multibody_ode!(du, u, params, t)
-    sys, p, wind_fn = params
+    sys, p, wind_fn = params[1], params[2], params[3]
+    lift_device = length(params) >= 4 ? params[4] : nothing
     N  = sys.n_total
     Nr = sys.n_ring
     g  = [0.0, 0.0, -9.81]
@@ -25,7 +26,7 @@ function multibody_ode!(du, u, params, t)
     compute_rope_forces!(forces, torques, u, alpha, sys, p, wind_fn, t)
 
     # ── Rotor/kite aero + generator torque ────────────────────────────────
-    compute_ring_forces!(forces, torques, u, omega, sys, p, wind_fn, t)
+    compute_ring_forces!(forces, torques, u, omega, sys, p, wind_fn, t, lift_device)
 
     # ── Assemble du ────────────────────────────────────────────────────────
     for i in 1:N

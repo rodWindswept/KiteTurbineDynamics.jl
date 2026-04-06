@@ -165,21 +165,24 @@ dt = 4e-5 s → ω_max·dt = 0.8, so we need damp < 1/1.8 ≈ 0.56. Using 0.05.
 After 4 000 steps (0.16 s simulated) the gravity-driven sag (~0.1 mm) is
 fully resolved; high-frequency oscillations are damped out in ~5 steps.
 """
-function settle_to_equilibrium(sys::KiteTurbineSystem,
-                                u0 ::Vector{Float64},
-                                p  ::SystemParams;
-                                n_steps::Int    = 4_000,
-                                dt     ::Float64 = 4e-5,
-                                damp   ::Float64 = 0.05)
+function settle_to_equilibrium(sys         ::KiteTurbineSystem,
+                                u0          ::Vector{Float64},
+                                p           ::SystemParams;
+                                lift_device ::Union{Nothing, LiftDevice} = nothing,
+                                n_steps     ::Int     = 4_000,
+                                dt          ::Float64 = 4e-5,
+                                damp        ::Float64 = 0.05)
     u    = copy(u0)
     N    = sys.n_total
     Nr   = sys.n_ring
     du   = zeros(Float64, length(u))
-    wind_zero = (pos, t) -> zeros(3)
+    wind_zero  = (pos, t) -> zeros(3)
+    ode_params = lift_device === nothing ? (sys, p, wind_zero) :
+                                           (sys, p, wind_zero, lift_device)
 
     for _ in 1:n_steps
         fill!(du, 0.0)
-        multibody_ode!(du, u, (sys, p, wind_zero), 0.0)
+        multibody_ode!(du, u, ode_params, 0.0)
 
         # Semi-implicit Euler: velocities first, then positions
         @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
@@ -321,23 +324,26 @@ aero + generator dynamics so angular velocity can evolve naturally.
 the hub is free to spin up or down under the net torque balance.
 `lin_damp = 0.05` keeps rope oscillations damped without stopping the physics.
 """
-function simulate(sys     ::KiteTurbineSystem,
-                  u0      ::Vector{Float64},
-                  p       ::SystemParams,
-                  wind_fn ::Function;
-                  n_steps ::Int     = 50_000,
-                  dt      ::Float64 = 4e-5,
-                  lin_damp::Float64 = 0.05,
-                  ang_damp::Float64 = 1.0)
+function simulate(sys         ::KiteTurbineSystem,
+                  u0          ::Vector{Float64},
+                  p           ::SystemParams,
+                  wind_fn     ::Function;
+                  lift_device ::Union{Nothing, LiftDevice} = nothing,
+                  n_steps     ::Int     = 50_000,
+                  dt          ::Float64 = 4e-5,
+                  lin_damp    ::Float64 = 0.05,
+                  ang_damp    ::Float64 = 1.0)
     u  = copy(u0)
     N  = sys.n_total
     Nr = sys.n_ring
     du = zeros(Float64, length(u))
     t  = 0.0
+    ode_params = lift_device === nothing ? (sys, p, wind_fn) :
+                                           (sys, p, wind_fn, lift_device)
 
     for _ in 1:n_steps
         fill!(du, 0.0)
-        multibody_ode!(du, u, (sys, p, wind_fn), t)
+        multibody_ode!(du, u, ode_params, t)
         t += dt
 
         @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]

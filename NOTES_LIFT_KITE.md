@@ -115,28 +115,62 @@ the passive kite approach.
 
 ---
 
-## Phase 2: Dynamic Hub Model (next step)
+## Phase 2: Dynamic Hub Model (IMPLEMENTED)
 
-The `lift_kite.jl` framework provides static force models. The next step is to
-make the hub node a free state with the lift line modelled as an additional force.
+The `lift_kite.jl` framework provides static force models that are now integrated
+into the ODE so the hub position responds to lift line force variations in real time.
 
-Required changes to `ring_forces.jl`:
-1. Replace fixed `p.elevation_angle` assumption with dynamic hub position.
-2. Add `lift_force_steady(dev, rho, v_wind)` call to `compute_ring_forces!()`.
-3. Add a `LiftDevice` field to `SystemParams` (or as a keyword argument to the
-   force function) to select the architecture.
+### Implementation
 
-The hub is already a free node in the ODE (it moves under rope forces + kite forces).
-The lift line needs to be added as a spring force between hub position and a
-virtual anchor point at the kite (quasi-static assumption for phase 2).
+Changes made to the simulation core:
+1. `src/ring_forces.jl` — added optional `lift_device` argument (default `nothing`).
+   When provided, computes `lift_force_steady(dev, rho, v_wind)` at each step and
+   applies the resulting 3D force to the hub node. Wind direction is computed from
+   the hub wind vector; the force is decomposed into horizontal (into-wind) and
+   vertical (+z) components correctly in 3D.
+2. `src/dynamics.jl` — extracts optional 4th element `lift_device` from the params
+   tuple `(sys, p, wind_fn[, lift_device])`. Backwards compatible: old 3-element
+   tuple still works with no lift device.
+3. `src/initialization.jl` — added `lift_device::Union{Nothing, LiftDevice}` keyword
+   to both `simulate()` and `settle_to_equilibrium()`.
+
+### Usage
+
+```julia
+dev = single_kite_sized(p10, 1.225, 11.0; margin=1.1)   # or rotary_lifter_default()
+u_final = simulate(sys, u0, p, wind_fn; lift_device=dev, n_steps=...)
+```
+
+### Phase 2 Dynamic Hub Excursion Results
+
+First dynamic comparison at v=11 m/s, I=0.15 turbulence, 3s simulation:
+
+| Device       | hub_z std (mm) | hub_z / SingleKite |
+|-------------|---------------|--------------------|
+| SingleKite  | 3.5           | 1.00× (reference)  |
+| Stack×3     | 3.5           | 1.00×              |
+| RotaryLifter| 0.9           | **0.26× (3.9× better)** |
+| NoLift      | 0.3           | baseline noise      |
+
+The RotaryLifter produces ~4× less hub vertical excursion than the single kite
+under the same turbulent wind. The predicted improvement from CV analysis was 8×;
+the discrepancy is expected because the 3s simulation is much shorter than the
+turbulence integral time scale (~31s for IEC Class A at 30m hub altitude), so
+the low-frequency turbulence content is undersampled. Longer runs (≥60s) would
+close this gap.
+
+**Stack×3 shows the same excursion as SingleKite**: this confirms the analytical
+prediction — stacked kites have the same total area and the same tension CV as a
+single kite. The handling advantage (smaller individual kites) comes without any
+improvement in hub stability.
 
 ### Turbulence model for lift line
 
-Once the dynamic hub model is in place, we can drive the lift line with a
-stochastic wind signal and record hub position excursion:
-- Use `turbulent_wind()` from `wind_profile.jl` (already implemented).
-- Run 60s sweeps recording hub_z, hub_x, elevation_angle at each time step.
-- Compare hub excursion amplitude: SingleKite vs StackedKites vs RotaryLifter.
+Dynamic hub model is in place. Turbulent wind drives hub excursion via:
+- `turbulent_wind()` from `wind_profile.jl` (AR(1) Markov, IEC Class A).
+- `scripts/hub_excursion_sweep.jl` records hub_z, elevation_angle at each step.
+- Initial 3s results show 3.9× hub_z std improvement: RotaryLifter vs SingleKite.
+- Longer runs (≥60s, ≥2 integral time scales) needed for converged statistics.
 
 ---
 
@@ -160,12 +194,20 @@ stochastic wind signal and record hub position excursion:
 
 ---
 
-## Code Added
+## Code Added / Modified
 
+**Phase 1 (static equilibrium framework):**
 - `src/lift_kite.jl` — `LiftDevice` type hierarchy + all force/analysis functions
 - `src/KiteTurbineDynamics.jl` — updated to include and export lift_kite.jl
 - `src/types.jl` — added `abstract type LiftDevice`
 - `scripts/lift_kite_equilibrium.jl` — equilibrium analysis across all architectures
+
+**Phase 2 (dynamic hub integration):**
+- `src/ring_forces.jl` — added optional `lift_device` 9th arg; applies 3D lift force at hub
+- `src/dynamics.jl` — extracts `lift_device` from params tuple (backwards compatible)
+- `src/initialization.jl` — `simulate()` and `settle_to_equilibrium()` accept `lift_device` kwarg
+- `scripts/hub_excursion_sweep.jl` — dynamic hub position variance sweep across architectures
+- `scripts/results/lift_kite/hub_excursion_{timeseries,summary}.csv` — Phase 2 results
 
 ## References
 

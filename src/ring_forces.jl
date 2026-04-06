@@ -1,13 +1,14 @@
 using LinearAlgebra
 
-function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
-                               torques ::AbstractVector,
-                               u       ::AbstractVector,
-                               omega   ::AbstractVector,
-                               sys     ::KiteTurbineSystem,
-                               p       ::SystemParams,
-                               wind_fn ::Function,
-                               t       ::Float64)
+function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
+                               torques     ::AbstractVector,
+                               u           ::AbstractVector,
+                               omega       ::AbstractVector,
+                               sys         ::KiteTurbineSystem,
+                               p           ::SystemParams,
+                               wind_fn     ::Function,
+                               t           ::Float64,
+                               lift_device ::Union{Nothing, LiftDevice} = nothing)
     N        = sys.n_total
     hub_gid  = sys.rotor.node_id
     hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
@@ -106,5 +107,31 @@ function compute_ring_forces!(forces  ::Vector{<:AbstractVector},
         Δω     = omega[ri_b] - omega[ri_a]
         torques[ri_a] += c_s * Δω
         torques[ri_b] -= c_s * Δω
+    end
+
+    # ── Lift kite / rotary lifter force at hub node ───────────────────────────
+    # Quasi-static Phase 2 model: compute steady-state lift line tension at the
+    # current hub wind speed and apply the resulting 3D force to the hub node.
+    # The lift device flies upwind of and above the hub, so the force on the hub
+    # points into the wind (horizontal) and upward (vertical).
+    #
+    # Wind direction is taken from the hub wind vector; horizontal component only
+    # drives the kite (vertical wind is small compared to horizontal at these
+    # scales and is ignored for the lift device model).
+    if lift_device !== nothing
+        v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
+        v_h1   = v_lift[1];  v_h2 = v_lift[2] # horizontal components
+        v_hmag = sqrt(v_h1^2 + v_h2^2)        # horizontal wind speed
+        if v_hmag > 0.1
+            into_wind = [-v_h1 / v_hmag, -v_h2 / v_hmag, 0.0]  # unit vec upwind
+        else
+            into_wind = [-1.0, 0.0, 0.0]
+        end
+        # Scalar tension and elevation from the lift device model
+        _, T_lift, elev_lift = lift_force_steady(lift_device, p.rho, v_hmag)
+        θ_lift = deg2rad(elev_lift)
+        # 3D force: horizontal component into wind + vertical component upward
+        forces[hub_gid] .+= T_lift .* (cos(θ_lift) .* into_wind .+
+                                        sin(θ_lift) .* [0.0, 0.0, 1.0])
     end
 end
