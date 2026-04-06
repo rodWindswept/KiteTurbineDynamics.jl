@@ -12,6 +12,7 @@ include("rope_forces.jl")
 include("ring_forces.jl")
 include("dynamics.jl")
 include("structural_safety.jl")
+include("lift_kite.jl")
 include("visualization.jl")
 
 export SystemParams, params_10kw, params_50kw
@@ -26,5 +27,12 @@ export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP
 export build_dashboard
+
+# Lift device types and analysis
+export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams
+export single_kite_default, single_kite_sized, stacked_kites_default, rotary_lifter_default
+export lift_force_steady, stack_tension_profile, topmost_kite_static_load
+export tension_sensitivity, tension_cv, tension_cv_reduction
+export required_kite_area, hub_lift_required, lift_margin, lift_area_vs_power
 
 end

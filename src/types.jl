@@ -1,5 +1,8 @@
 abstract type AbstractNode end
 
+"""Abstract supertype for all lift device configurations."""
+abstract type LiftDevice end
+
 struct RingNode <: AbstractNode
     id        :: Int
     ring_idx  :: Int       # index into twist sub-arrays (1-based)
