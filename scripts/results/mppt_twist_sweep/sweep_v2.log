@@ -1,0 +1,443 @@
+Building base system…
+  N=241 nodes, Nr=16 rings
+
+[ 1/28]  k×0.50  v= 8.0 m/s  (k_mppt=5.50)
+  settling… done
+  spin-up 5 s… done (34 s wall)
+  t=  25.0 s  twist=  20.08°  lo=  9.1° mid=  6.1° hi=  4.9°  Δω= 0.058  T_max=   238 N  P= 0.02 kW  [wall 128 s  ETA 1024 s]
+  t=  45.0 s  twist=  97.81°  lo= 47.9° mid= 29.2° hi= 20.7°  Δω= 0.121  T_max=  1282 N  P= 2.57 kW  [wall 252 s  ETA 884 s]
+  t=  65.0 s  twist= 122.79°  lo= 60.6° mid= 36.6° hi= 25.6°  Δω= 0.107  T_max=  1123 N  P= 2.59 kW  [wall 371 s  ETA 743 s]
+  t=  85.0 s  twist= 137.66°  lo= 68.3° mid= 41.0° hi= 28.4°  Δω= 0.102  T_max=  1079 N  P= 2.60 kW  [wall 475 s  ETA 594 s]
+  t= 105.0 s  twist= 148.15°  lo= 73.7° mid= 44.1° hi= 30.4°  Δω= 0.099  T_max=  1083 N  P= 2.61 kW  [wall 578 s  ETA 463 s]
+  t= 125.0 s  twist= 156.15°  lo= 77.9° mid= 46.4° hi= 31.8°  Δω= 0.097  T_max=  1029 N  P= 2.61 kW  [wall 681 s  ETA 341 s]
+  t= 145.0 s  twist= 162.53°  lo= 81.3° mid= 48.3° hi= 32.9°  Δω= 0.096  T_max=  1106 N  P= 2.61 kW  [wall 785 s  ETA 224 s]
+  t= 165.0 s  twist= 167.77°  lo= 84.1° mid= 49.8° hi= 33.9°  Δω= 0.100  T_max=  1154 N  P= 2.61 kW  [wall 889 s  ETA 111 s]
+  t= 185.0 s  twist= 172.13°  lo= 86.5° mid= 51.1° hi= 34.6°  Δω= 0.099  T_max=  1205 N  P= 2.61 kW  [wall 992 s  ETA 0 s]
+  → settled twist =  170.0 ± 1.3 °  (lo=85.3°  mid=50.5°  hi=34.2°)
+     P = 2.62 kW   Δω = 0.095 rad/s   T_max = 1141 N   τ/T = 6.9225 m
+
+[ 2/28]  k×0.50  v=10.0 m/s  (k_mppt=5.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  66.10°  lo= 31.7° mid= 19.8° hi= 14.5°  Δω= 0.231  T_max=  1637 N  P= 2.48 kW  [wall 103 s  ETA 822 s]
+  t=  45.0 s  twist= 121.08°  lo= 59.6° mid= 36.1° hi= 25.4°  Δω= 0.166  T_max=  1686 N  P= 4.97 kW  [wall 206 s  ETA 722 s]
+  t=  65.0 s  twist= 141.86°  lo= 70.3° mid= 42.2° hi= 29.3°  Δω= 0.156  T_max=  1638 N  P= 4.99 kW  [wall 309 s  ETA 619 s]
+  t=  85.0 s  twist= 154.70°  lo= 77.0° mid= 46.0° hi= 31.7°  Δω= 0.152  T_max=  1652 N  P= 5.01 kW  [wall 413 s  ETA 516 s]
+  t= 105.0 s  twist= 163.68°  lo= 81.8° mid= 48.7° hi= 33.3°  Δω= 0.149  T_max=  1585 N  P= 5.01 kW  [wall 517 s  ETA 414 s]
+  t= 125.0 s  twist= 170.38°  lo= 85.4° mid= 50.6° hi= 34.4°  Δω= 0.149  T_max=  1761 N  P= 5.02 kW  [wall 621 s  ETA 310 s]
+  t= 145.0 s  twist= 175.52°  lo= 88.2° mid= 52.1° hi= 35.2°  Δω= 0.165  T_max=  2032 N  P= 5.01 kW  [wall 724 s  ETA 207 s]
+  t= 165.0 s  twist= 179.56°  lo= 90.5° mid= 53.3° hi= 35.7°  Δω= 0.146  T_max=  2107 N  P= 5.04 kW  [wall 828 s  ETA 103 s]
+  t= 185.0 s  twist= 182.82°  lo= 92.4° mid= 54.3° hi= 36.2°  Δω= 0.122  T_max=  2196 N  P= 5.08 kW  [wall 931 s  ETA 0 s]
+  → settled twist =  181.2 ± 1.0 °  (lo=91.5°  mid=53.8°  hi=36.0°)
+     P = 5.05 kW   Δω = 0.145 rad/s   T_max = 2094 N   τ/T = 7.0771 m
+
+[ 3/28]  k×0.50  v=11.0 m/s  (k_mppt=5.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  84.33°  lo= 41.0° mid= 25.2° hi= 18.1°  Δω= 0.242  T_max=  2322 N  P= 5.72 kW  [wall 103 s  ETA 827 s]
+  t=  45.0 s  twist= 129.61°  lo= 63.9° mid= 38.6° hi= 27.0°  Δω= 0.195  T_max=  1944 N  P= 6.58 kW  [wall 207 s  ETA 723 s]
+  t=  65.0 s  twist= 149.14°  lo= 74.0° mid= 44.4° hi= 30.7°  Δω= 0.186  T_max=  1915 N  P= 6.60 kW  [wall 310 s  ETA 620 s]
+  t=  85.0 s  twist= 161.16°  lo= 80.4° mid= 47.9° hi= 32.9°  Δω= 0.182  T_max=  1996 N  P= 6.62 kW  [wall 414 s  ETA 517 s]
+  t= 105.0 s  twist= 169.44°  lo= 84.8° mid= 50.4° hi= 34.3°  Δω= 0.180  T_max=  2098 N  P= 6.63 kW  [wall 517 s  ETA 414 s]
+  t= 125.0 s  twist= 175.48°  lo= 88.1° mid= 52.1° hi= 35.2°  Δω= 0.170  T_max=  2167 N  P= 6.66 kW  [wall 620 s  ETA 310 s]
+  t= 145.0 s  twist= 179.96°  lo= 90.7° mid= 53.4° hi= 35.8°  Δω= 0.167  T_max=  2503 N  P= 6.67 kW  [wall 724 s  ETA 207 s]
+  t= 165.0 s  twist= 183.40°  lo= 92.7° mid= 54.5° hi= 36.2°  Δω= 0.171  T_max=  2483 N  P= 6.68 kW  [wall 827 s  ETA 103 s]
+  t= 185.0 s  twist= 186.14°  lo= 94.3° mid= 55.3° hi= 36.5°  Δω= 0.193  T_max=  2729 N  P= 6.64 kW  [wall 931 s  ETA 0 s]
+  → settled twist =  184.8 ± 0.8 °  (lo=93.6°  mid=54.9°  hi=36.4°)
+     P = 6.67 kW   Δω = 0.177 rad/s   T_max = 2577 N   τ/T = 7.9067 m
+
+[ 4/28]  k×0.50  v=13.0 m/s  (k_mppt=5.50)
+  settling… done
+  spin-up 5 s… done (25 s wall)
+  t=  25.0 s  twist= 105.16°  lo= 51.4° mid= 31.4° hi= 22.3°  Δω= 0.297  T_max=  2934 N  P=10.61 kW  [wall 103 s  ETA 828 s]
+  t=  45.0 s  twist= 143.32°  lo= 70.9° mid= 42.7° hi= 29.7°  Δω= 0.263  T_max=  2540 N  P=10.74 kW  [wall 206 s  ETA 722 s]
+  t=  65.0 s  twist= 160.79°  lo= 80.1° mid= 47.9° hi= 32.9°  Δω= 0.254  T_max=  2484 N  P=10.76 kW  [wall 310 s  ETA 619 s]
+  t=  85.0 s  twist= 171.22°  lo= 85.7° mid= 50.9° hi= 34.6°  Δω= 0.250  T_max=  2654 N  P=10.78 kW  [wall 413 s  ETA 516 s]
+  t= 105.0 s  twist= 178.06°  lo= 89.5° mid= 52.9° hi= 35.7°  Δω= 0.249  T_max=  2903 N  P=10.80 kW  [wall 516 s  ETA 413 s]
+  t= 125.0 s  twist= 182.72°  lo= 92.2° mid= 54.3° hi= 36.2°  Δω= 0.263  T_max=  3283 N  P=10.78 kW  [wall 619 s  ETA 310 s]
+  t= 145.0 s  twist= 185.95°  lo= 94.2° mid= 55.2° hi= 36.5°  Δω= 0.260  T_max=  3504 N  P=10.81 kW  [wall 723 s  ETA 207 s]
+  t= 165.0 s  twist= 188.16°  lo= 95.7° mid= 55.9° hi= 36.5°  Δω= 0.199  T_max=  3561 N  P=10.98 kW  [wall 826 s  ETA 103 s]
+  t= 185.0 s  twist= 189.78°  lo= 96.8° mid= 56.4° hi= 36.5°  Δω= 0.293  T_max=  3884 N  P=10.75 kW  [wall 930 s  ETA 0 s]
+  → settled twist =  189.0 ± 0.5 °  (lo=96.3°  mid=56.2°  hi=36.5°)
+     P = 10.86 kW   Δω = 0.249 rad/s   T_max = 3643 N   τ/T = 9.5194 m
+
+[ 5/28]  k×0.75  v= 8.0 m/s  (k_mppt=8.25)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  23.42°  lo= 10.9° mid=  7.1° hi=  5.4°  Δω= 0.068  T_max=   277 N  P= 0.03 kW  [wall 104 s  ETA 836 s]
+  t=  45.0 s  twist= 109.05°  lo= 53.7° mid= 32.5° hi= 22.9°  Δω= 0.152  T_max=  1410 N  P= 2.98 kW  [wall 210 s  ETA 736 s]
+  t=  65.0 s  twist= 138.60°  lo= 68.7° mid= 41.2° hi= 28.7°  Δω= 0.136  T_max=  1186 N  P= 3.00 kW  [wall 314 s  ETA 628 s]
+  t=  85.0 s  twist= 156.75°  lo= 78.0° mid= 46.6° hi= 32.1°  Δω= 0.130  T_max=  1159 N  P= 3.01 kW  [wall 418 s  ETA 523 s]
+  t= 105.0 s  twist= 169.93°  lo= 84.8° mid= 50.5° hi= 34.6°  Δω= 0.127  T_max=  1165 N  P= 3.02 kW  [wall 530 s  ETA 424 s]
+  t= 125.0 s  twist= 180.25°  lo= 90.2° mid= 53.5° hi= 36.5°  Δω= 0.126  T_max=  1176 N  P= 3.02 kW  [wall 669 s  ETA 334 s]
+  t= 145.0 s  twist= 188.70°  lo= 94.7° mid= 56.0° hi= 38.1°  Δω= 0.124  T_max=  1180 N  P= 3.02 kW  [wall 795 s  ETA 227 s]
+  t= 165.0 s  twist= 195.82°  lo= 98.5° mid= 58.0° hi= 39.3°  Δω= 0.125  T_max=  1178 N  P= 3.03 kW  [wall 932 s  ETA 117 s]
+  t= 185.0 s  twist= 201.92°  lo=101.7° mid= 59.8° hi= 40.4°  Δω= 0.126  T_max=  1336 N  P= 3.03 kW  [wall 1075 s  ETA 0 s]
+  → settled twist =  198.9 ± 1.8 °  (lo=100.1°  mid=59.0°  hi=39.9°)
+     P = 3.03 kW   Δω = 0.123 rad/s   T_max = 1219 N   τ/T = 7.3491 m
+
+[ 6/28]  k×0.75  v=10.0 m/s  (k_mppt=8.25)
+  settling… done
+  spin-up 5 s… done (33 s wall)
+  t=  25.0 s  twist=  72.25°  lo= 35.0° mid= 21.7° hi= 15.6°  Δω= 0.272  T_max=  1834 N  P= 2.73 kW  [wall 131 s  ETA 1046 s]
+  t=  45.0 s  twist= 136.78°  lo= 67.7° mid= 40.7° hi= 28.4°  Δω= 0.213  T_max=  1847 N  P= 5.75 kW  [wall 260 s  ETA 911 s]
+  t=  65.0 s  twist= 162.42°  lo= 80.8° mid= 48.3° hi= 33.3°  Δω= 0.202  T_max=  1761 N  P= 5.77 kW  [wall 390 s  ETA 781 s]
+  t=  85.0 s  twist= 178.98°  lo= 89.5° mid= 53.2° hi= 36.4°  Δω= 0.197  T_max=  1754 N  P= 5.78 kW  [wall 521 s  ETA 651 s]
+  t= 105.0 s  twist= 191.08°  lo= 95.8° mid= 56.7° hi= 38.5°  Δω= 0.194  T_max=  1815 N  P= 5.79 kW  [wall 652 s  ETA 521 s]
+  t= 125.0 s  twist= 200.49°  lo=100.9° mid= 59.4° hi= 40.2°  Δω= 0.186  T_max=  1855 N  P= 5.81 kW  [wall 773 s  ETA 387 s]
+  t= 145.0 s  twist= 208.07°  lo=105.0° mid= 61.6° hi= 41.4°  Δω= 0.210  T_max=  2171 N  P= 5.78 kW  [wall 879 s  ETA 251 s]
+  t= 165.0 s  twist= 214.32°  lo=108.4° mid= 63.5° hi= 42.4°  Δω= 0.182  T_max=  2231 N  P= 5.84 kW  [wall 984 s  ETA 123 s]
+  t= 185.0 s  twist= 219.61°  lo=111.3° mid= 65.0° hi= 43.2°  Δω= 0.225  T_max=  2197 N  P= 5.76 kW  [wall 1090 s  ETA 0 s]
+  → settled twist =  217.0 ± 1.6 °  (lo=109.9°  mid=64.3°  hi=42.8°)
+     P = 5.83 kW   Δω = 0.191 rad/s   T_max = 2206 N   τ/T = 7.7292 m
+
+[ 7/28]  k×0.75  v=11.0 m/s  (k_mppt=8.25)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  93.32°  lo= 45.7° mid= 27.9° hi= 19.8°  Δω= 0.303  T_max=  2604 N  P= 6.61 kW  [wall 106 s  ETA 844 s]
+  t=  45.0 s  twist= 147.27°  lo= 73.0° mid= 43.8° hi= 30.4°  Δω= 0.252  T_max=  2131 N  P= 7.59 kW  [wall 223 s  ETA 780 s]
+  t=  65.0 s  twist= 171.91°  lo= 85.7° mid= 51.1° hi= 35.1°  Δω= 0.241  T_max=  1977 N  P= 7.62 kW  [wall 356 s  ETA 712 s]
+  t=  85.0 s  twist= 187.89°  lo= 94.1° mid= 55.8° hi= 38.0°  Δω= 0.236  T_max=  2104 N  P= 7.63 kW  [wall 480 s  ETA 600 s]
+  t= 105.0 s  twist= 199.50°  lo=100.3° mid= 59.2° hi= 40.0°  Δω= 0.234  T_max=  2243 N  P= 7.64 kW  [wall 586 s  ETA 469 s]
+  t= 125.0 s  twist= 208.44°  lo=105.2° mid= 61.8° hi= 41.5°  Δω= 0.247  T_max=  2505 N  P= 7.62 kW  [wall 703 s  ETA 352 s]
+  t= 145.0 s  twist= 215.51°  lo=109.1° mid= 63.8° hi= 42.6°  Δω= 0.239  T_max=  2597 N  P= 7.66 kW  [wall 826 s  ETA 236 s]
+  t= 165.0 s  twist= 221.26°  lo=112.3° mid= 65.5° hi= 43.4°  Δω= 0.232  T_max=  2612 N  P= 7.68 kW  [wall 953 s  ETA 119 s]
+  t= 185.0 s  twist= 226.04°  lo=115.0° mid= 66.9° hi= 44.1°  Δω= 0.264  T_max=  2550 N  P= 7.62 kW  [wall 1085 s  ETA 0 s]
+  → settled twist =  223.8 ± 1.4 °  (lo=113.7°  mid=66.3°  hi=43.8°)
+     P = 7.69 kW   Δω = 0.234 rad/s   T_max = 2743 N   τ/T = 8.6917 m
+
+[ 8/28]  k×0.75  v=13.0 m/s  (k_mppt=8.25)
+  settling… done
+  spin-up 5 s… done (28 s wall)
+  t=  25.0 s  twist= 117.67°  lo= 58.0° mid= 35.1° hi= 24.6°  Δω= 0.382  T_max=  3273 N  P=12.23 kW  [wall 113 s  ETA 905 s]
+  t=  45.0 s  twist= 164.66°  lo= 81.9° mid= 49.0° hi= 33.8°  Δω= 0.342  T_max=  2740 N  P=12.35 kW  [wall 226 s  ETA 790 s]
+  t=  65.0 s  twist= 187.78°  lo= 94.0° mid= 55.8° hi= 38.0°  Δω= 0.332  T_max=  2827 N  P=12.37 kW  [wall 330 s  ETA 660 s]
+  t=  85.0 s  twist= 202.65°  lo=101.9° mid= 60.1° hi= 40.6°  Δω= 0.327  T_max=  2929 N  P=12.39 kW  [wall 434 s  ETA 542 s]
+  t= 105.0 s  twist= 213.19°  lo=107.7° mid= 63.2° hi= 42.3°  Δω= 0.332  T_max=  3216 N  P=12.39 kW  [wall 538 s  ETA 430 s]
+  t= 125.0 s  twist= 221.08°  lo=112.2° mid= 65.5° hi= 43.5°  Δω= 0.323  T_max=  3330 N  P=12.44 kW  [wall 642 s  ETA 321 s]
+  t= 145.0 s  twist= 227.05°  lo=115.6° mid= 67.2° hi= 44.2°  Δω= 0.298  T_max=  3599 N  P=12.54 kW  [wall 746 s  ETA 213 s]
+  t= 165.0 s  twist= 231.87°  lo=118.5° mid= 68.7° hi= 44.7°  Δω= 0.254  T_max=  3929 N  P=12.70 kW  [wall 850 s  ETA 106 s]
+  t= 185.0 s  twist= 235.73°  lo=120.8° mid= 69.9° hi= 45.1°  Δω= 0.309  T_max=  4145 N  P=12.53 kW  [wall 954 s  ETA 0 s]
+  → settled twist =  233.8 ± 1.1 °  (lo=119.6°  mid=69.2°  hi=44.9°)
+     P = 12.50 kW   Δω = 0.320 rad/s   T_max = 3874 N   τ/T = 10.6338 m
+
+[ 9/28]  k×1.00  v= 8.0 m/s  (k_mppt=11.00)
+  settling… done
+  spin-up 5 s… done (25 s wall)
+  t=  25.0 s  twist=  25.96°  lo= 12.3° mid=  7.8° hi=  5.9°  Δω= 0.074  T_max=   311 N  P= 0.03 kW  [wall 104 s  ETA 829 s]
+  t=  45.0 s  twist= 116.03°  lo= 57.3° mid= 34.6° hi= 24.2°  Δω= 0.175  T_max=  1511 N  P= 3.16 kW  [wall 207 s  ETA 726 s]
+  t=  65.0 s  twist= 148.60°  lo= 73.8° mid= 44.2° hi= 30.6°  Δω= 0.158  T_max=  1300 N  P= 3.18 kW  [wall 311 s  ETA 623 s]
+  t=  85.0 s  twist= 168.91°  lo= 84.2° mid= 50.2° hi= 34.5°  Δω= 0.152  T_max=  1207 N  P= 3.19 kW  [wall 415 s  ETA 519 s]
+  t= 105.0 s  twist= 183.84°  lo= 91.9° mid= 54.6° hi= 37.4°  Δω= 0.148  T_max=  1150 N  P= 3.19 kW  [wall 519 s  ETA 415 s]
+  t= 125.0 s  twist= 195.69°  lo= 98.1° mid= 58.0° hi= 39.6°  Δω= 0.146  T_max=  1215 N  P= 3.20 kW  [wall 623 s  ETA 312 s]
+  t= 145.0 s  twist= 205.50°  lo=103.2° mid= 60.9° hi= 41.4°  Δω= 0.145  T_max=  1253 N  P= 3.20 kW  [wall 729 s  ETA 208 s]
+  t= 165.0 s  twist= 213.86°  lo=107.7° mid= 63.3° hi= 42.9°  Δω= 0.144  T_max=  1252 N  P= 3.21 kW  [wall 833 s  ETA 104 s]
+  t= 185.0 s  twist= 221.13°  lo=111.5° mid= 65.5° hi= 44.2°  Δω= 0.146  T_max=  1211 N  P= 3.20 kW  [wall 937 s  ETA 0 s]
+  → settled twist =  217.6 ± 2.2 °  (lo=109.6°  mid=64.4°  hi=43.5°)
+     P = 3.21 kW   Δω = 0.144 rad/s   T_max = 1250 N   τ/T = 7.6730 m
+
+[10/28]  k×1.00  v=10.0 m/s  (k_mppt=11.00)
+  settling… done
+  spin-up 5 s… done (25 s wall)
+  t=  25.0 s  twist=  75.49°  lo= 36.7° mid= 22.6° hi= 16.2°  Δω= 0.295  T_max=  1901 N  P= 2.67 kW  [wall 104 s  ETA 830 s]
+  t=  45.0 s  twist= 146.72°  lo= 72.8° mid= 43.7° hi= 30.3°  Δω= 0.248  T_max=  1987 N  P= 6.08 kW  [wall 207 s  ETA 726 s]
+  t=  65.0 s  twist= 175.55°  lo= 87.6° mid= 52.1° hi= 35.9°  Δω= 0.235  T_max=  1773 N  P= 6.09 kW  [wall 311 s  ETA 623 s]
+  t=  85.0 s  twist= 194.56°  lo= 97.4° mid= 57.7° hi= 39.4°  Δω= 0.230  T_max=  1873 N  P= 6.10 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 208.71°  lo=104.9° mid= 61.9° hi= 42.0°  Δω= 0.227  T_max=  1832 N  P= 6.11 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 219.94°  lo=110.8° mid= 65.1° hi= 44.0°  Δω= 0.227  T_max=  1988 N  P= 6.12 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 229.14°  lo=115.8° mid= 67.8° hi= 45.5°  Δω= 0.215  T_max=  2088 N  P= 6.15 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 236.91°  lo=120.0° mid= 70.1° hi= 46.8°  Δω= 0.231  T_max=  2246 N  P= 6.13 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 243.61°  lo=123.7° mid= 72.0° hi= 47.9°  Δω= 0.195  T_max=  2377 N  P= 6.21 kW  [wall 936 s  ETA 0 s]
+  → settled twist =  240.3 ± 2.0 °  (lo=121.9°  mid=71.1°  hi=47.4°)
+     P = 6.15 kW   Δω = 0.223 rad/s   T_max = 2267 N   τ/T = 7.8641 m
+
+[11/28]  k×1.00  v=11.0 m/s  (k_mppt=11.00)
+  settling… done
+  spin-up 5 s… done (25 s wall)
+  t=  25.0 s  twist=  98.63°  lo= 48.4° mid= 29.4° hi= 20.8°  Δω= 0.346  T_max=  2747 N  P= 6.87 kW  [wall 104 s  ETA 830 s]
+  t=  45.0 s  twist= 158.49°  lo= 78.8° mid= 47.1° hi= 32.6°  Δω= 0.294  T_max=  2261 N  P= 8.01 kW  [wall 208 s  ETA 727 s]
+  t=  65.0 s  twist= 186.50°  lo= 93.2° mid= 55.4° hi= 37.9°  Δω= 0.282  T_max=  2200 N  P= 8.03 kW  [wall 312 s  ETA 623 s]
+  t=  85.0 s  twist= 205.10°  lo=102.9° mid= 60.8° hi= 41.4°  Δω= 0.277  T_max=  2225 N  P= 8.04 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 218.93°  lo=110.3° mid= 64.8° hi= 43.8°  Δω= 0.274  T_max=  2194 N  P= 8.05 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 229.81°  lo=116.2° mid= 68.0° hi= 45.6°  Δω= 0.262  T_max=  2469 N  P= 8.10 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 238.71°  lo=121.0° mid= 70.6° hi= 47.1°  Δω= 0.262  T_max=  2523 N  P= 8.11 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 246.13°  lo=125.1° mid= 72.8° hi= 48.3°  Δω= 0.314  T_max=  2642 N  P= 7.99 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 252.44°  lo=128.6° mid= 74.6° hi= 49.2°  Δω= 0.333  T_max=  2790 N  P= 7.94 kW  [wall 936 s  ETA 0 s]
+  → settled twist =  249.3 ± 1.9 °  (lo=126.9°  mid=73.7°  hi=48.7°)
+     P = 8.10 kW   Δω = 0.270 rad/s   T_max = 2798 N   τ/T = 8.8937 m
+
+[12/28]  k×1.00  v=13.0 m/s  (k_mppt=11.00)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 125.48°  lo= 62.0° mid= 37.4° hi= 26.1°  Δω= 0.445  T_max=  3514 N  P=12.88 kW  [wall 104 s  ETA 834 s]
+  t=  45.0 s  twist= 178.31°  lo= 88.9° mid= 53.0° hi= 36.4°  Δω= 0.401  T_max=  2906 N  P=12.98 kW  [wall 208 s  ETA 729 s]
+  t=  65.0 s  twist= 205.19°  lo=102.9° mid= 60.9° hi= 41.4°  Δω= 0.390  T_max=  2959 N  P=12.99 kW  [wall 313 s  ETA 625 s]
+  t=  85.0 s  twist= 223.04°  lo=112.4° mid= 66.1° hi= 44.6°  Δω= 0.384  T_max=  2932 N  P=13.01 kW  [wall 417 s  ETA 521 s]
+  t= 105.0 s  twist= 236.16°  lo=119.6° mid= 69.9° hi= 46.7°  Δω= 0.389  T_max=  3435 N  P=13.01 kW  [wall 522 s  ETA 417 s]
+  t= 125.0 s  twist= 246.25°  lo=125.2° mid= 72.8° hi= 48.3°  Δω= 0.366  T_max=  3706 N  P=13.12 kW  [wall 627 s  ETA 313 s]
+  t= 145.0 s  twist= 254.26°  lo=129.7° mid= 75.1° hi= 49.4°  Δω= 0.412  T_max=  3531 N  P=12.97 kW  [wall 732 s  ETA 209 s]
+  t= 165.0 s  twist= 260.90°  lo=133.5° mid= 77.1° hi= 50.3°  Δω= 0.316  T_max=  3984 N  P=13.33 kW  [wall 836 s  ETA 105 s]
+  t= 185.0 s  twist= 266.52°  lo=136.7° mid= 78.8° hi= 51.0°  Δω= 0.383  T_max=  4253 N  P=13.10 kW  [wall 940 s  ETA 0 s]
+  → settled twist =  263.8 ± 1.7 °  (lo=135.1°  mid=78.0°  hi=50.7°)
+     P = 13.11 kW   Δω = 0.377 rad/s   T_max = 3984 N   τ/T = 10.9286 m
+
+[13/28]  k×1.25  v= 8.0 m/s  (k_mppt=13.75)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  28.00°  lo= 13.4° mid=  8.4° hi=  6.2°  Δω= 0.078  T_max=   340 N  P= 0.04 kW  [wall 104 s  ETA 829 s]
+  t=  45.0 s  twist= 120.49°  lo= 59.6° mid= 35.9° hi= 25.0°  Δω= 0.192  T_max=  1543 N  P= 3.20 kW  [wall 207 s  ETA 725 s]
+  t=  65.0 s  twist= 155.23°  lo= 77.2° mid= 46.1° hi= 31.9°  Δω= 0.173  T_max=  1321 N  P= 3.21 kW  [wall 311 s  ETA 622 s]
+  t=  85.0 s  twist= 177.05°  lo= 88.3° mid= 52.6° hi= 36.1°  Δω= 0.167  T_max=  1263 N  P= 3.22 kW  [wall 415 s  ETA 518 s]
+  t= 105.0 s  twist= 193.23°  lo= 96.7° mid= 57.3° hi= 39.2°  Δω= 0.163  T_max=  1229 N  P= 3.22 kW  [wall 518 s  ETA 415 s]
+  t= 125.0 s  twist= 206.15°  lo=103.4° mid= 61.1° hi= 41.6°  Δω= 0.161  T_max=  1187 N  P= 3.23 kW  [wall 623 s  ETA 311 s]
+  t= 145.0 s  twist= 216.93°  lo=109.0° mid= 64.2° hi= 43.6°  Δω= 0.160  T_max=  1265 N  P= 3.23 kW  [wall 726 s  ETA 208 s]
+  t= 165.0 s  twist= 226.18°  lo=113.9° mid= 66.9° hi= 45.3°  Δω= 0.158  T_max=  1305 N  P= 3.23 kW  [wall 830 s  ETA 104 s]
+  t= 185.0 s  twist= 234.28°  lo=118.2° mid= 69.3° hi= 46.8°  Δω= 0.160  T_max=  1290 N  P= 3.23 kW  [wall 934 s  ETA 0 s]
+  → settled twist =  230.3 ± 2.4 °  (lo=116.1°  mid=68.1°  hi=46.1°)
+     P = 3.24 kW   Δω = 0.158 rad/s   T_max = 1278 N   τ/T = 7.5196 m
+
+[14/28]  k×1.25  v=10.0 m/s  (k_mppt=13.75)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  76.95°  lo= 37.5° mid= 23.0° hi= 16.4°  Δω= 0.303  T_max=  1891 N  P= 2.44 kW  [wall 104 s  ETA 831 s]
+  t=  45.0 s  twist= 153.28°  lo= 76.1° mid= 45.6° hi= 31.6°  Δω= 0.273  T_max=  2051 N  P= 6.12 kW  [wall 208 s  ETA 728 s]
+  t=  65.0 s  twist= 184.38°  lo= 92.1° mid= 54.7° hi= 37.6°  Δω= 0.260  T_max=  1908 N  P= 6.13 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 205.12°  lo=102.8° mid= 60.8° hi= 41.5°  Δω= 0.254  T_max=  1828 N  P= 6.14 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 220.74°  lo=111.0° mid= 65.4° hi= 44.3°  Δω= 0.251  T_max=  1939 N  P= 6.15 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 233.26°  lo=117.6° mid= 69.0° hi= 46.6°  Δω= 0.248  T_max=  2048 N  P= 6.16 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 243.65°  lo=123.2° mid= 72.0° hi= 48.4°  Δω= 0.257  T_max=  2282 N  P= 6.15 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 252.51°  lo=128.0° mid= 74.6° hi= 49.9°  Δω= 0.241  T_max=  2312 N  P= 6.19 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 260.24°  lo=132.2° mid= 76.9° hi= 51.2°  Δω= 0.250  T_max=  2328 N  P= 6.18 kW  [wall 937 s  ETA 0 s]
+  → settled twist =  256.4 ± 2.3 °  (lo=130.1°  mid=75.8°  hi=50.5°)
+     P = 6.18 kW   Δω = 0.247 rad/s   T_max = 2298 N   τ/T = 7.7460 m
+
+[15/28]  k×1.25  v=11.0 m/s  (k_mppt=13.75)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 101.61°  lo= 50.0° mid= 30.3° hi= 21.3°  Δω= 0.376  T_max=  2866 N  P= 6.72 kW  [wall 103 s  ETA 828 s]
+  t=  45.0 s  twist= 165.96°  lo= 82.6° mid= 49.3° hi= 34.0°  Δω= 0.324  T_max=  2305 N  P= 8.06 kW  [wall 208 s  ETA 728 s]
+  t=  65.0 s  twist= 196.35°  lo= 98.2° mid= 58.3° hi= 39.9°  Δω= 0.312  T_max=  2158 N  P= 8.07 kW  [wall 313 s  ETA 625 s]
+  t=  85.0 s  twist= 216.82°  lo=108.9° mid= 64.3° hi= 43.7°  Δω= 0.306  T_max=  2260 N  P= 8.08 kW  [wall 418 s  ETA 522 s]
+  t= 105.0 s  twist= 232.24°  lo=117.1° mid= 68.7° hi= 46.4°  Δω= 0.303  T_max=  2394 N  P= 8.09 kW  [wall 522 s  ETA 417 s]
+  t= 125.0 s  twist= 244.56°  lo=123.7° mid= 72.3° hi= 48.5°  Δω= 0.291  T_max=  2553 N  P= 8.13 kW  [wall 626 s  ETA 313 s]
+  t= 145.0 s  twist= 254.72°  lo=129.2° mid= 75.3° hi= 50.2°  Δω= 0.288  T_max=  2589 N  P= 8.15 kW  [wall 730 s  ETA 209 s]
+  t= 165.0 s  twist= 263.33°  lo=133.9° mid= 77.8° hi= 51.6°  Δω= 0.269  T_max=  2882 N  P= 8.22 kW  [wall 834 s  ETA 104 s]
+  t= 185.0 s  twist= 270.68°  lo=138.0° mid= 79.9° hi= 52.7°  Δω= 0.295  T_max=  2852 N  P= 8.15 kW  [wall 938 s  ETA 0 s]
+  → settled twist =  267.1 ± 2.2 °  (lo=136.0°  mid=78.9°  hi=52.2°)
+     P = 8.14 kW   Δω = 0.297 rad/s   T_max = 2839 N   τ/T = 8.7796 m
+
+[16/28]  k×1.25  v=13.0 m/s  (k_mppt=13.75)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 130.46°  lo= 64.6° mid= 38.8° hi= 27.0°  Δω= 0.491  T_max=  3608 N  P=12.91 kW  [wall 105 s  ETA 837 s]
+  t=  45.0 s  twist= 187.49°  lo= 93.6° mid= 55.7° hi= 38.2°  Δω= 0.445  T_max=  3040 N  P=12.99 kW  [wall 210 s  ETA 735 s]
+  t=  65.0 s  twist= 217.04°  lo=109.0° mid= 64.3° hi= 43.7°  Δω= 0.432  T_max=  3008 N  P=13.00 kW  [wall 315 s  ETA 630 s]
+  t=  85.0 s  twist= 237.03°  lo=119.6° mid= 70.1° hi= 47.3°  Δω= 0.426  T_max=  3118 N  P=13.01 kW  [wall 420 s  ETA 525 s]
+  t= 105.0 s  twist= 251.96°  lo=127.7° mid= 74.5° hi= 49.8°  Δω= 0.412  T_max=  3383 N  P=13.08 kW  [wall 525 s  ETA 420 s]
+  t= 125.0 s  twist= 263.73°  lo=134.2° mid= 77.9° hi= 51.7°  Δω= 0.408  T_max=  3757 N  P=13.12 kW  [wall 631 s  ETA 316 s]
+  t= 145.0 s  twist= 273.30°  lo=139.5° mid= 80.7° hi= 53.1°  Δω= 0.374  T_max=  3958 N  P=13.27 kW  [wall 736 s  ETA 210 s]
+  t= 165.0 s  twist= 281.22°  lo=144.0° mid= 83.0° hi= 54.2°  Δω= 0.394  T_max=  3943 N  P=13.20 kW  [wall 842 s  ETA 105 s]
+  t= 185.0 s  twist= 288.07°  lo=147.8° mid= 85.0° hi= 55.2°  Δω= 0.457  T_max=  3870 N  P=12.96 kW  [wall 947 s  ETA 0 s]
+  → settled twist =  284.8 ± 2.0 °  (lo=146.0°  mid=84.1°  hi=54.8°)
+     P = 13.11 kW   Δω = 0.420 rad/s   T_max = 4017 N   τ/T = 10.8177 m
+
+[17/28]  k×1.50  v= 8.0 m/s  (k_mppt=16.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  29.72°  lo= 14.3° mid=  8.9° hi=  6.5°  Δω= 0.082  T_max=   366 N  P= 0.04 kW  [wall 104 s  ETA 831 s]
+  t=  45.0 s  twist= 123.20°  lo= 61.0° mid= 36.7° hi= 25.5°  Δω= 0.203  T_max=  1619 N  P= 3.14 kW  [wall 208 s  ETA 729 s]
+  t=  65.0 s  twist= 159.58°  lo= 79.4° mid= 47.4° hi= 32.8°  Δω= 0.184  T_max=  1344 N  P= 3.15 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 182.53°  lo= 91.1° mid= 54.2° hi= 37.2°  Δω= 0.177  T_max=  1266 N  P= 3.15 kW  [wall 416 s  ETA 521 s]
+  t= 105.0 s  twist= 199.62°  lo= 99.9° mid= 59.2° hi= 40.5°  Δω= 0.173  T_max=  1240 N  P= 3.16 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 213.33°  lo=107.0° mid= 63.2° hi= 43.1°  Δω= 0.171  T_max=  1272 N  P= 3.16 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 224.83°  lo=113.0° mid= 66.6° hi= 45.2°  Δω= 0.170  T_max=  1229 N  P= 3.16 kW  [wall 729 s  ETA 208 s]
+  t= 165.0 s  twist= 234.73°  lo=118.2° mid= 69.5° hi= 47.0°  Δω= 0.168  T_max=  1319 N  P= 3.17 kW  [wall 833 s  ETA 104 s]
+  t= 185.0 s  twist= 243.44°  lo=122.8° mid= 72.0° hi= 48.6°  Δω= 0.170  T_max=  1249 N  P= 3.16 kW  [wall 938 s  ETA 0 s]
+  → settled twist =  239.2 ± 2.6 °  (lo=120.6°  mid=70.7°  hi=47.8°)
+     P = 3.17 kW   Δω = 0.168 rad/s   T_max = 1292 N   τ/T = 7.2564 m
+
+[18/28]  k×1.50  v=10.0 m/s  (k_mppt=16.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  77.28°  lo= 37.7° mid= 23.1° hi= 16.4°  Δω= 0.299  T_max=  1831 N  P= 2.13 kW  [wall 104 s  ETA 830 s]
+  t=  45.0 s  twist= 157.56°  lo= 78.3° mid= 46.8° hi= 32.4°  Δω= 0.291  T_max=  2093 N  P= 5.98 kW  [wall 208 s  ETA 728 s]
+  t=  65.0 s  twist= 190.34°  lo= 95.1° mid= 56.5° hi= 38.8°  Δω= 0.277  T_max=  1943 N  P= 5.99 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 212.36°  lo=106.5° mid= 63.0° hi= 42.9°  Δω= 0.271  T_max=  1949 N  P= 5.99 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 229.07°  lo=115.2° mid= 67.8° hi= 46.0°  Δω= 0.267  T_max=  1969 N  P= 6.00 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 242.55°  lo=122.4° mid= 71.7° hi= 48.4°  Δω= 0.269  T_max=  1950 N  P= 6.00 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 253.81°  lo=128.4° mid= 75.0° hi= 50.4°  Δω= 0.265  T_max=  2234 N  P= 6.02 kW  [wall 729 s  ETA 208 s]
+  t= 165.0 s  twist= 263.50°  lo=133.6° mid= 77.8° hi= 52.1°  Δω= 0.255  T_max=  2299 N  P= 6.05 kW  [wall 833 s  ETA 104 s]
+  t= 185.0 s  twist= 271.99°  lo=138.2° mid= 80.3° hi= 53.5°  Δω= 0.255  T_max=  2367 N  P= 6.05 kW  [wall 938 s  ETA 0 s]
+  → settled twist =  267.8 ± 2.5 °  (lo=135.9°  mid=79.1°  hi=52.8°)
+     P = 6.04 kW   Δω = 0.260 rad/s   T_max = 2312 N   τ/T = 7.4992 m
+
+[19/28]  k×1.50  v=11.0 m/s  (k_mppt=16.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 102.92°  lo= 50.7° mid= 30.7° hi= 21.6°  Δω= 0.394  T_max=  2890 N  P= 6.28 kW  [wall 105 s  ETA 838 s]
+  t=  45.0 s  twist= 170.92°  lo= 85.1° mid= 50.8° hi= 35.0°  Δω= 0.346  T_max=  2305 N  P= 7.86 kW  [wall 210 s  ETA 736 s]
+  t=  65.0 s  twist= 203.07°  lo=101.6° mid= 60.2° hi= 41.2°  Δω= 0.332  T_max=  2270 N  P= 7.86 kW  [wall 315 s  ETA 630 s]
+  t=  85.0 s  twist= 224.92°  lo=113.0° mid= 66.6° hi= 45.3°  Δω= 0.326  T_max=  2308 N  P= 7.87 kW  [wall 420 s  ETA 525 s]
+  t= 105.0 s  twist= 241.52°  lo=121.8° mid= 71.5° hi= 48.2°  Δω= 0.322  T_max=  2376 N  P= 7.88 kW  [wall 525 s  ETA 420 s]
+  t= 125.0 s  twist= 254.89°  lo=129.0° mid= 75.3° hi= 50.6°  Δω= 0.334  T_max=  2716 N  P= 7.85 kW  [wall 630 s  ETA 315 s]
+  t= 145.0 s  twist= 266.00°  lo=135.0° mid= 78.6° hi= 52.5°  Δω= 0.311  T_max=  2753 N  P= 7.93 kW  [wall 735 s  ETA 210 s]
+  t= 165.0 s  twist= 275.48°  lo=140.1° mid= 81.3° hi= 54.0°  Δω= 0.338  T_max=  2714 N  P= 7.86 kW  [wall 840 s  ETA 105 s]
+  t= 185.0 s  twist= 283.75°  lo=144.7° mid= 83.8° hi= 55.3°  Δω= 0.291  T_max=  2955 N  P= 8.01 kW  [wall 944 s  ETA 0 s]
+  → settled twist =  279.7 ± 2.5 °  (lo=142.4°  mid=82.6°  hi=54.7°)
+     P = 7.92 kW   Δω = 0.318 rad/s   T_max = 2854 N   τ/T = 8.4984 m
+
+[20/28]  k×1.50  v=13.0 m/s  (k_mppt=16.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 133.49°  lo= 66.2° mid= 39.7° hi= 27.6°  Δω= 0.525  T_max=  3691 N  P=12.54 kW  [wall 105 s  ETA 838 s]
+  t=  45.0 s  twist= 193.70°  lo= 96.8° mid= 57.5° hi= 39.4°  Δω= 0.475  T_max=  3097 N  P=12.63 kW  [wall 209 s  ETA 733 s]
+  t=  65.0 s  twist= 225.24°  lo=113.2° mid= 66.7° hi= 45.3°  Δω= 0.462  T_max=  3108 N  P=12.62 kW  [wall 315 s  ETA 630 s]
+  t=  85.0 s  twist= 246.82°  lo=124.6° mid= 73.0° hi= 49.2°  Δω= 0.456  T_max=  3230 N  P=12.63 kW  [wall 420 s  ETA 525 s]
+  t= 105.0 s  twist= 263.13°  lo=133.4° mid= 77.7° hi= 52.0°  Δω= 0.465  T_max=  3683 N  P=12.60 kW  [wall 525 s  ETA 420 s]
+  t= 125.0 s  twist= 276.12°  lo=140.5° mid= 81.5° hi= 54.1°  Δω= 0.442  T_max=  3826 N  P=12.71 kW  [wall 631 s  ETA 315 s]
+  t= 145.0 s  twist= 286.87°  lo=146.4° mid= 84.6° hi= 55.8°  Δω= 0.412  T_max=  3986 N  P=12.85 kW  [wall 736 s  ETA 210 s]
+  t= 165.0 s  twist= 295.94°  lo=151.5° mid= 87.3° hi= 57.2°  Δω= 0.417  T_max=  4151 N  P=12.84 kW  [wall 841 s  ETA 105 s]
+  t= 185.0 s  twist= 303.74°  lo=155.9° mid= 89.6° hi= 58.3°  Δω= 0.427  T_max=  4319 N  P=12.81 kW  [wall 946 s  ETA 0 s]
+  → settled twist =  299.9 ± 2.3 °  (lo=153.7°  mid=88.4°  hi=57.7°)
+     P = 12.72 kW   Δω = 0.447 rad/s   T_max = 4064 N   τ/T = 10.4802 m
+
+[21/28]  k×2.50  v= 8.0 m/s  (k_mppt=27.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  34.68°  lo= 16.8° mid= 10.4° hi=  7.4°  Δω= 0.095  T_max=   450 N  P= 0.06 kW  [wall 104 s  ETA 833 s]
+  t=  45.0 s  twist= 122.68°  lo= 60.8° mid= 36.5° hi= 25.4°  Δω= 0.213  T_max=  1577 N  P= 2.39 kW  [wall 208 s  ETA 728 s]
+  t=  65.0 s  twist= 162.75°  lo= 81.0° mid= 48.4° hi= 33.4°  Δω= 0.191  T_max=  1316 N  P= 2.40 kW  [wall 312 s  ETA 625 s]
+  t=  85.0 s  twist= 187.88°  lo= 93.8° mid= 55.8° hi= 38.3°  Δω= 0.183  T_max=  1248 N  P= 2.39 kW  [wall 416 s  ETA 521 s]
+  t= 105.0 s  twist= 206.71°  lo=103.5° mid= 61.3° hi= 42.0°  Δω= 0.179  T_max=  1225 N  P= 2.39 kW  [wall 521 s  ETA 417 s]
+  t= 125.0 s  twist= 221.93°  lo=111.3° mid= 65.7° hi= 44.9°  Δω= 0.176  T_max=  1171 N  P= 2.39 kW  [wall 625 s  ETA 313 s]
+  t= 145.0 s  twist= 234.80°  lo=118.0° mid= 69.5° hi= 47.3°  Δω= 0.175  T_max=  1255 N  P= 2.39 kW  [wall 730 s  ETA 208 s]
+  t= 165.0 s  twist= 245.98°  lo=123.8° mid= 72.8° hi= 49.4°  Δω= 0.172  T_max=  1287 N  P= 2.39 kW  [wall 834 s  ETA 104 s]
+  t= 185.0 s  twist= 255.88°  lo=129.0° mid= 75.6° hi= 51.2°  Δω= 0.172  T_max=  1303 N  P= 2.39 kW  [wall 938 s  ETA 0 s]
+  → settled twist =  251.0 ± 3.0 °  (lo=126.5°  mid=74.2°  hi=50.3°)
+     P = 2.39 kW   Δω = 0.173 rad/s   T_max = 1293 N   τ/T = 5.1569 m
+
+[22/28]  k×2.50  v=10.0 m/s  (k_mppt=27.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  74.36°  lo= 36.5° mid= 22.2° hi= 15.6°  Δω= 0.218  T_max=  1436 N  P= 1.07 kW  [wall 104 s  ETA 834 s]
+  t=  45.0 s  twist= 160.31°  lo= 79.8° mid= 47.7° hi= 32.9°  Δω= 0.304  T_max=  2058 N  P= 4.53 kW  [wall 208 s  ETA 729 s]
+  t=  65.0 s  twist= 196.43°  lo= 98.2° mid= 58.3° hi= 40.0°  Δω= 0.287  T_max=  1839 N  P= 4.50 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 220.90°  lo=110.8° mid= 65.5° hi= 44.7°  Δω= 0.280  T_max=  1897 N  P= 4.49 kW  [wall 417 s  ETA 521 s]
+  t= 105.0 s  twist= 239.70°  lo=120.6° mid= 71.0° hi= 48.2°  Δω= 0.276  T_max=  1851 N  P= 4.49 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 255.08°  lo=128.6° mid= 75.4° hi= 51.0°  Δω= 0.272  T_max=  2138 N  P= 4.50 kW  [wall 625 s  ETA 312 s]
+  t= 145.0 s  twist= 268.08°  lo=135.5° mid= 79.2° hi= 53.3°  Δω= 0.265  T_max=  2038 N  P= 4.51 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 279.38°  lo=141.6° mid= 82.5° hi= 55.3°  Δω= 0.259  T_max=  2293 N  P= 4.53 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 289.35°  lo=146.9° mid= 85.4° hi= 57.0°  Δω= 0.272  T_max=  2289 N  P= 4.50 kW  [wall 937 s  ETA 0 s]
+  → settled twist =  284.5 ± 3.0 °  (lo=144.3°  mid=84.0°  hi=56.2°)
+     P = 4.50 kW   Δω = 0.270 rad/s   T_max = 2268 N   τ/T = 5.9806 m
+
+[23/28]  k×2.50  v=11.0 m/s  (k_mppt=27.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  96.76°  lo= 47.6° mid= 28.9° hi= 20.2°  Δω= 0.346  T_max=  2327 N  P= 3.14 kW  [wall 103 s  ETA 828 s]
+  t=  45.0 s  twist= 174.91°  lo= 87.2° mid= 52.0° hi= 35.8°  Δω= 0.362  T_max=  2248 N  P= 5.90 kW  [wall 208 s  ETA 727 s]
+  t=  65.0 s  twist= 210.52°  lo=105.4° mid= 62.4° hi= 42.7°  Δω= 0.345  T_max=  2200 N  P= 5.87 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 235.03°  lo=118.1° mid= 69.6° hi= 47.3°  Δω= 0.338  T_max=  2255 N  P= 5.86 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 253.94°  lo=128.0° mid= 75.1° hi= 50.8°  Δω= 0.331  T_max=  2375 N  P= 5.87 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 269.36°  lo=136.2° mid= 79.6° hi= 53.5°  Δω= 0.332  T_max=  2621 N  P= 5.86 kW  [wall 625 s  ETA 312 s]
+  t= 145.0 s  twist= 282.40°  lo=143.2° mid= 83.4° hi= 55.8°  Δω= 0.328  T_max=  2704 N  P= 5.88 kW  [wall 729 s  ETA 208 s]
+  t= 165.0 s  twist= 293.76°  lo=149.3° mid= 86.7° hi= 57.8°  Δω= 0.355  T_max=  2639 N  P= 5.80 kW  [wall 833 s  ETA 104 s]
+  t= 185.0 s  twist= 303.80°  lo=154.7° mid= 89.6° hi= 59.4°  Δω= 0.312  T_max=  2947 N  P= 5.92 kW  [wall 938 s  ETA 0 s]
+  → settled twist =  298.9 ± 3.0 °  (lo=152.1°  mid=88.2°  hi=58.6°)
+     P = 5.87 kW   Δω = 0.330 rad/s   T_max = 2813 N   τ/T = 6.7693 m
+
+[24/28]  k×2.50  v=13.0 m/s  (k_mppt=27.50)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 132.46°  lo= 65.7° mid= 39.4° hi= 27.4°  Δω= 0.547  T_max=  3607 N  P= 8.94 kW  [wall 105 s  ETA 837 s]
+  t=  45.0 s  twist= 199.98°  lo=100.0° mid= 59.4° hi= 40.7°  Δω= 0.498  T_max=  2983 N  P= 9.34 kW  [wall 209 s  ETA 732 s]
+  t=  65.0 s  twist= 235.39°  lo=118.3° mid= 69.7° hi= 47.4°  Δω= 0.482  T_max=  2900 N  P= 9.29 kW  [wall 314 s  ETA 629 s]
+  t=  85.0 s  twist= 260.11°  lo=131.3° mid= 76.9° hi= 51.9°  Δω= 0.474  T_max=  3139 N  P= 9.27 kW  [wall 419 s  ETA 524 s]
+  t= 105.0 s  twist= 279.19°  lo=141.5° mid= 82.4° hi= 55.2°  Δω= 0.466  T_max=  3341 N  P= 9.30 kW  [wall 524 s  ETA 419 s]
+  t= 125.0 s  twist= 294.71°  lo=149.9° mid= 87.0° hi= 57.8°  Δω= 0.466  T_max=  3667 N  P= 9.30 kW  [wall 629 s  ETA 314 s]
+  t= 145.0 s  twist= 307.72°  lo=157.0° mid= 90.8° hi= 59.9°  Δω= 0.441  T_max=  3918 N  P= 9.39 kW  [wall 733 s  ETA 210 s]
+  t= 165.0 s  twist= 318.97°  lo=163.2° mid= 94.1° hi= 61.7°  Δω= 0.453  T_max=  3995 N  P= 9.33 kW  [wall 839 s  ETA 105 s]
+  t= 185.0 s  twist= 328.89°  lo=168.7° mid= 96.9° hi= 63.2°  Δω= 0.445  T_max=  3686 N  P= 9.36 kW  [wall 944 s  ETA 0 s]
+  → settled twist =  324.0 ± 3.0 °  (lo=166.0°  mid=95.5°  hi=62.5°)
+     P = 9.30 kW   Δω = 0.461 rad/s   T_max = 4007 N   τ/T = 8.3491 m
+
+[25/28]  k×4.00  v= 8.0 m/s  (k_mppt=44.00)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  39.37°  lo= 19.3° mid= 11.8° hi=  8.3°  Δω= 0.105  T_max=   539 N  P= 0.08 kW  [wall 104 s  ETA 831 s]
+  t=  45.0 s  twist=  97.05°  lo= 48.1° mid= 28.9° hi= 20.0°  Δω= 0.104  T_max=   970 N  P= 0.53 kW  [wall 208 s  ETA 727 s]
+  t=  65.0 s  twist= 128.65°  lo= 64.1° mid= 38.3° hi= 26.3°  Δω= 0.098  T_max=   925 N  P= 0.63 kW  [wall 312 s  ETA 625 s]
+  t=  85.0 s  twist= 148.75°  lo= 74.3° mid= 44.2° hi= 30.3°  Δω= 0.091  T_max=   873 N  P= 0.61 kW  [wall 416 s  ETA 521 s]
+  t= 105.0 s  twist= 163.57°  lo= 81.9° mid= 48.6° hi= 33.1°  Δω= 0.085  T_max=   827 N  P= 0.60 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 175.40°  lo= 88.0° mid= 52.0° hi= 35.4°  Δω= 0.082  T_max=   791 N  P= 0.58 kW  [wall 625 s  ETA 312 s]
+  t= 145.0 s  twist= 185.27°  lo= 93.1° mid= 54.9° hi= 37.2°  Δω= 0.083  T_max=   977 N  P= 0.57 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 193.70°  lo= 97.5° mid= 57.4° hi= 38.7°  Δω= 0.073  T_max=  1088 N  P= 0.56 kW  [wall 833 s  ETA 104 s]
+  t= 185.0 s  twist= 201.12°  lo=101.4° mid= 59.6° hi= 40.0°  Δω= 0.078  T_max=  1164 N  P= 0.55 kW  [wall 937 s  ETA 0 s]
+  → settled twist =  197.5 ± 2.2 °  (lo=99.5°  mid=58.6°  hi=39.4°)
+     P = 0.55 kW   Δω = 0.077 rad/s   T_max = 1053 N   τ/T = 1.8458 m
+
+[26/28]  k×4.00  v=10.0 m/s  (k_mppt=44.00)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  70.62°  lo= 34.9° mid= 21.1° hi= 14.6°  Δω= 0.132  T_max=  1113 N  P= 0.49 kW  [wall 104 s  ETA 832 s]
+  t=  45.0 s  twist= 126.19°  lo= 62.8° mid= 37.6° hi= 25.8°  Δω= 0.155  T_max=  1364 N  P= 1.18 kW  [wall 208 s  ETA 728 s]
+  t=  65.0 s  twist= 155.05°  lo= 77.5° mid= 46.1° hi= 31.4°  Δω= 0.140  T_max=  1297 N  P= 1.16 kW  [wall 312 s  ETA 624 s]
+  t=  85.0 s  twist= 174.07°  lo= 87.3° mid= 51.7° hi= 35.0°  Δω= 0.129  T_max=  1257 N  P= 1.11 kW  [wall 416 s  ETA 521 s]
+  t= 105.0 s  twist= 188.30°  lo= 94.8° mid= 55.9° hi= 37.6°  Δω= 0.122  T_max=  1556 N  P= 1.08 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 199.70°  lo=100.8° mid= 59.3° hi= 39.6°  Δω= 0.112  T_max=  1683 N  P= 1.06 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 209.18°  lo=106.0° mid= 62.1° hi= 41.1°  Δω= 0.119  T_max=  1400 N  P= 1.03 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 217.48°  lo=110.4° mid= 64.6° hi= 42.5°  Δω= 0.135  T_max=  2009 N  P= 1.01 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 224.79°  lo=114.4° mid= 66.8° hi= 43.6°  Δω= 0.108  T_max=  2204 N  P= 1.02 kW  [wall 936 s  ETA 0 s]
+  → settled twist =  221.1 ± 2.2 °  (lo=112.4°  mid=65.7°  hi=43.0°)
+     P = 1.02 kW   Δω = 0.116 rad/s   T_max = 1800 N   τ/T = 2.4935 m
+
+[27/28]  k×4.00  v=11.0 m/s  (k_mppt=44.00)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist=  82.60°  lo= 40.9° mid= 24.7° hi= 17.0°  Δω= 0.164  T_max=  1394 N  P= 0.83 kW  [wall 104 s  ETA 830 s]
+  t=  45.0 s  twist= 137.73°  lo= 68.7° mid= 41.0° hi= 28.0°  Δω= 0.181  T_max=  1512 N  P= 1.56 kW  [wall 207 s  ETA 725 s]
+  t=  65.0 s  twist= 165.92°  lo= 83.1° mid= 49.3° hi= 33.5°  Δω= 0.163  T_max=  1539 N  P= 1.49 kW  [wall 312 s  ETA 623 s]
+  t=  85.0 s  twist= 184.65°  lo= 92.9° mid= 54.8° hi= 36.9°  Δω= 0.151  T_max=  1742 N  P= 1.43 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 198.70°  lo=100.3° mid= 59.0° hi= 39.4°  Δω= 0.139  T_max=  1885 N  P= 1.39 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 209.88°  lo=106.4° mid= 62.3° hi= 41.2°  Δω= 0.138  T_max=  2136 N  P= 1.36 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 219.35°  lo=111.5° mid= 65.2° hi= 42.6°  Δω= 0.129  T_max=  2246 N  P= 1.36 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 227.50°  lo=116.0° mid= 67.6° hi= 43.9°  Δω= 0.172  T_max=  2715 N  P= 1.28 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 234.29°  lo=119.9° mid= 69.8° hi= 44.6°  Δω= 0.128  T_max=  1686 N  P= 1.31 kW  [wall 937 s  ETA 0 s]
+  → settled twist =  231.0 ± 2.1 °  (lo=118.0°  mid=68.7°  hi=44.2°)
+     P = 1.31 kW   Δω = 0.138 rad/s   T_max = 2162 N   τ/T = 2.8149 m
+
+[28/28]  k×4.00  v=13.0 m/s  (k_mppt=44.00)
+  settling… done
+  spin-up 5 s… done (26 s wall)
+  t=  25.0 s  twist= 103.85°  lo= 51.6° mid= 31.0° hi= 21.3°  Δω= 0.245  T_max=  2018 N  P= 1.87 kW  [wall 104 s  ETA 829 s]
+  t=  45.0 s  twist= 157.35°  lo= 78.7° mid= 46.8° hi= 31.8°  Δω= 0.241  T_max=  2057 N  P= 2.44 kW  [wall 208 s  ETA 727 s]
+  t=  65.0 s  twist= 184.70°  lo= 92.9° mid= 54.9° hi= 36.9°  Δω= 0.220  T_max=  1911 N  P= 2.29 kW  [wall 312 s  ETA 623 s]
+  t=  85.0 s  twist= 202.85°  lo=102.6° mid= 60.2° hi= 40.0°  Δω= 0.201  T_max=  2489 N  P= 2.20 kW  [wall 416 s  ETA 520 s]
+  t= 105.0 s  twist= 216.50°  lo=110.1° mid= 64.3° hi= 42.1°  Δω= 0.216  T_max=  2345 N  P= 2.12 kW  [wall 520 s  ETA 416 s]
+  t= 125.0 s  twist= 227.39°  lo=116.2° mid= 67.6° hi= 43.6°  Δω= 0.229  T_max=  2833 N  P= 2.06 kW  [wall 624 s  ETA 312 s]
+  t= 145.0 s  twist= 236.29°  lo=121.3° mid= 70.4° hi= 44.6°  Δω= 0.183  T_max=  2328 N  P= 2.09 kW  [wall 728 s  ETA 208 s]
+  t= 165.0 s  twist= 244.11°  lo=125.7° mid= 72.8° hi= 45.6°  Δω= 0.249  T_max=  3405 N  P= 1.95 kW  [wall 832 s  ETA 104 s]
+  t= 185.0 s  twist= 250.65°  lo=129.6° mid= 74.9° hi= 46.2°  Δω= 0.218  T_max=  3322 N  P= 1.96 kW  [wall 936 s  ETA 0 s]
+  → settled twist =  247.4 ± 2.0 °  (lo=127.7°  mid=73.9°  hi=45.8°)
+     P = 2.02 kW   Δω = 0.196 rad/s   T_max = 2800 N   τ/T = 3.4398 m
+
+
+── Wind ramp scenario  (v = 7.0 → 14.0 m/s over 150.0 s, k×1.0) ──
+  settling… ┌ Warning: Assignment to `u_ramp` in soft scope is ambiguous because a global variable by the same name exists: `u_ramp` will be treated as a new local. Disambiguate by using `local u_ramp` to suppress this warning or `global u_ramp` to assign to the existing global variable.
+└ @ ~/Documents/GitHub/KiteTurbineDynamics.jl/scripts/mppt_twist_sweep_v2.jl:295
+┌ Warning: Assignment to `t_ramp` in soft scope is ambiguous because a global variable by the same name exists: `t_ramp` will be treated as a new local. Disambiguate by using `local t_ramp` to suppress this warning or `global t_ramp` to assign to the existing global variable.
+└ @ ~/Documents/GitHub/KiteTurbineDynamics.jl/scripts/mppt_twist_sweep_v2.jl:296
+ERROR: LoadError: UndefVarError: `u_ramp` not defined in local scope
+Suggestion: check for an assignment to a local variable that shadows a global of the same name.
+Stacktrace:
+ [1] top-level scope
+   @ ~/Documents/GitHub/KiteTurbineDynamics.jl/scripts/mppt_twist_sweep_v2.jl:295
+ [2] include(mod::Module, _path::String)
+   @ Base ./Base.jl:306
+ [3] exec_options(opts::Base.JLOptions)
+   @ Base ./client.jl:317
+ [4] _start()
+   @ Base ./client.jl:550
+in expression starting at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/mppt_twist_sweep_v2.jl:294
+done
+  spin-up 5 s… done
