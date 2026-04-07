@@ -1,0 +1,54 @@
+======================================================================
+Hub Excursion Long Run
+  T_settle=10.0s  T_sim=60.0s  I=0.15
+  Wind speeds: [8.0, 11.0, 13.0] m/s
+  Devices: SingleKite, Stack×3, RotaryLifter, NoLift
+  Est. wall time: 84 min
+======================================================================
+
+▶  v_wind = 8.0 m/s
+   ────────────────────────────────────────────────────────────
+   SingleKite      hub_z std=9.12mm  P_mean=1.93kW  P_cv=62.8%  wall=485s
+   Stack×3         hub_z std=9.20mm  P_mean=1.93kW  P_cv=62.8%  wall=419s
+   RotaryLifter    hub_z std=20.15mm  P_mean=1.84kW  P_cv=69.6%  wall=415s
+   NoLift          hub_z std=30.39mm  P_mean=1.76kW  P_cv=75.3%  wall=432s
+   ✓ checkpoint written
+
+▶  v_wind = 11.0 m/s
+   ────────────────────────────────────────────────────────────
+   SingleKite      hub_z std=10.27mm  P_mean=5.85kW  P_cv=40.7%  wall=402s
+   Stack×3         hub_z std=10.18mm  P_mean=5.85kW  P_cv=40.7%  wall=401s
+   RotaryLifter    hub_z std=27.03mm  P_mean=5.63kW  P_cv=47.8%  wall=403s
+   NoLift          hub_z std=38.70mm  P_mean=5.53kW  P_cv=50.7%  wall=405s
+   ✓ checkpoint written
+
+▶  v_wind = 13.0 m/s
+   ────────────────────────────────────────────────────────────
+   SingleKite      hub_z std=27.28mm  P_mean=10.20kW  P_cv=32.0%  wall=403s
+   Stack×3         hub_z std=27.17mm  P_mean=10.20kW  P_cv=32.0%  wall=404s
+   RotaryLifter    hub_z std=28.19mm  P_mean=9.64kW  P_cv=41.2%  wall=403s
+   NoLift          hub_z std=40.29mm  P_mean=9.51kW  P_cv=43.5%  wall=400s
+   ✓ checkpoint written
+
+======================================================================
+COMPLETE
+======================================================================
+
+Full summary:
+
+  v(m/s)  device          hub_z_std(mm)  P_mean(kW)  P_cv(%)  corr_t(s)
+  ────────────────────────────────────────────────────────────────────
+     8.0  SingleKite               9.12        1.93     62.8     12.55
+     8.0  Stack×3                  9.20        1.93     62.8     12.60
+     8.0  RotaryLifter            20.15        1.84     69.6     15.40
+     8.0  NoLift                  30.39        1.76     75.3     15.70
+    11.0  SingleKite              10.27        5.85     40.7     10.00
+    11.0  Stack×3                 10.18        5.85     40.7      9.90
+    11.0  RotaryLifter            27.03        5.63     47.8     14.60
+    11.0  NoLift                  38.70        5.53     50.7     15.00
+    13.0  SingleKite              27.28       10.20     32.0     14.85
+    13.0  Stack×3                 27.17       10.20     32.0     14.80
+    13.0  RotaryLifter            28.19        9.64     41.2     13.75
+    13.0  NoLift                  40.29        9.51     43.5     14.45
+
+Results: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/lift_kite/long_*.csv
