@@ -145,6 +145,18 @@ All 11 test suites pass:
 - Parameters, aerodynamics, types, geometry, rope forces, ring forces, ODE smoke
 - Static equilibrium (gravity sag), rope sag, emergent torsion, power generation
 
+## Backlog
+
+Planned improvements not yet implemented:
+
+- **Solid-body collision physics** — ring and rotor interpenetration currently possible under severe droop (hub falls through TRPT rings below it during free-fall with no wind). Need contact normals + impulse-based rigid-body response so rings bounce/stack rather than pass through each other.
+- Pitch & bank kite control loop (currently elevation angle is fixed at 30°)
+- Stacked rotor configurations (multiple turbine stages on one TRPT shaft)
+- Expanding / variable-radius rotors
+- Launch and retrieval sequence simulation (ramp from ground to operating altitude)
+- Turbulent wind field input (von Kármán or Kaimal spectrum)
+- Fatigue life estimation from tether tension cycles
+
 ## Licence
 
 MIT © 2025 Rod Read / Windswept & Interesting Ltd
