@@ -75,7 +75,8 @@ function make_params(base::SystemParams; k_mppt=base.k_mppt, v_wind=base.v_wind_
         base.n_blades, base.m_blade,
         base.cp, base.i_pto,
         k_mppt,
-        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev
+        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
+        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x
     )
 end
 

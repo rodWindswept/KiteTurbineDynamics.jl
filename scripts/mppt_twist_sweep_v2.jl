@@ -115,7 +115,8 @@ function make_params(base::SystemParams; k_mppt=base.k_mppt, v_wind=base.v_wind_
         base.n_blades, base.m_blade,
         base.cp, base.i_pto,
         k_mppt,
-        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev
+        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
+        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x
     )
 end
 
@@ -292,6 +293,7 @@ N_RAMP    = round(Int, T_RAMP / T_CHUNK)
 t0w       = time()
 
 for chunk in 1:N_RAMP
+    global u_ramp, t_ramp
     u_ramp   = simulate(sys, u_ramp, p_ramp, wfn_ramp; n_steps=N_CHUNK, dt=DT)
     t_ramp  += T_CHUNK
 

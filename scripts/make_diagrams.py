@@ -364,78 +364,109 @@ print("Saved diag_cv_mechanism.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 4.  HUB NODE FORCE BALANCE
+# 4.  HUB NODE FORCE BALANCE  (corrected physics — no phantom kite lift)
 # ─────────────────────────────────────────────────────────────────────────────
-fig, ax = plt.subplots(figsize=(8, 7))
+# At v=11 m/s, β=30°, R=5m, ρ=1.225, λ_opt=4.1, CT≈0.548:
+#   T_CT  = 0.5·ρ·v²·πR²·CT·cos²β = 2394 N  (along shaft: +x·cos30°, +z·sin30°)
+#   T_shaft ≈ T_CT = 2394 N          (elastic reaction, along shaft: −x·cos30°, −z·sin30°)
+#   These CANCEL at hub — net aero-shaft vertical = 0.
+#   W = 24.96 kg × 9.81 = 245 N      (downward)
+#   T_lift needed = W / sin(θ_lift) ≈ 248 N  (lift kite supports weight only)
+#   Actual T_lift at 11 m/s (27.5 m² kite) = 2060 N — 8.3× margin, kite oversized at rated.
+#   Kite is sized for LAUNCH at 4 m/s (W = 245 N, margin 1.1 → 23 m²).
+
+fig, ax = plt.subplots(figsize=(9, 8))
 ax.set_aspect('equal')
-ax.set_xlim(-4.5, 4.5)
-ax.set_ylim(-4.5, 3.8)
+ax.set_xlim(-5, 5)
+ax.set_ylim(-5.5, 4.5)
 ax.axis('off')
 ax.set_facecolor('#F8F9FA')
 fig.patch.set_facecolor('#F8F9FA')
-ax.set_title("Hub Node — Free Body Diagram  (v = 11 m/s, β = 30°)", fontsize=13,
-             fontweight='bold', color=BLUE, pad=10)
+ax.set_title("Hub Node — Free Body Diagram  (v = 11 m/s, β = 30°)\n"
+             "Corrected physics: CT thrust and shaft tension cancel at hub node",
+             fontsize=12, fontweight='bold', color=BLUE, pad=10)
 
-hub = plt.Circle((0, 0), 0.28, color=ORANGE, zorder=5)
+hub = plt.Circle((0, 0), 0.32, color=ORANGE, zorder=5)
 ax.add_patch(hub)
 ax.text(0, 0, 'HUB', ha='center', va='center', fontsize=9,
         color='white', fontweight='bold', zorder=6)
 
-arrow_kw = dict(lw=3, mutation_scale=20)
+arrow_kw  = dict(lw=3, mutation_scale=20)
+arrow_sm  = dict(lw=2, mutation_scale=16)
+beta_r    = np.radians(30)
 
-# Lift force
-theta_lift = np.radians(80)
-lift_scale = 2.8
-ax.annotate('', xy=(lift_scale*np.cos(theta_lift), lift_scale*np.sin(theta_lift)),
-            xytext=(0, 0),
-            arrowprops=dict(arrowstyle='->', color=GREEN, **arrow_kw), zorder=4)
-ax.text(lift_scale*np.cos(theta_lift) + 0.2, lift_scale*np.sin(theta_lift),
-        'T_lift = 1,603 N\n(lift line at θ=80°)\nLine tension from\nkite/lifter above',
-        fontsize=8.5, color=GREEN, fontweight='bold', va='center')
-arc_lift = Arc((0, 0), 1.3, 1.3, angle=0, theta1=0, theta2=80, color=GREEN, lw=1.5)
-ax.add_patch(arc_lift)
-ax.text(0.8, 0.35, 'θ=80°', fontsize=8, color=GREEN)
+# ── CT thrust: large, upward+downwind along shaft [cos30°, sin30°] ────────────
+ct_scale = 2.8
+ct_ex = ct_scale * np.cos(beta_r)
+ct_ez = ct_scale * np.sin(beta_r)
+ax.annotate('', xy=(ct_ex, ct_ez), xytext=(0, 0),
+            arrowprops=dict(arrowstyle='->', color='#C0392B', **arrow_kw), zorder=4)
+ax.text(ct_ex + 0.15, ct_ez + 0.1,
+        'F_CT = 2,394 N\n(CT thrust along shaft)\nT·[cos30°, 0, sin30°]\nUpward + downwind →',
+        fontsize=8.5, color='#C0392B', fontweight='bold', va='bottom')
 
-# Gravity
-grav_scale = 0.65
-ax.annotate('', xy=(0, -grav_scale), xytext=(0, 0),
-            arrowprops=dict(arrowstyle='->', color=RED, **arrow_kw), zorder=4)
-ax.text(0.2, -grav_scale*0.5, 'W = 173 N\n(17.6 kg airborne\nmass, gravity)', fontsize=8.5,
-        color=RED, va='center')
-
-# TRPT shaft force (reaction down-along-shaft)
-beta_r = np.radians(30)
-shaft_scale = 1.8
-ax.annotate('', xy=(-shaft_scale*np.cos(beta_r), -shaft_scale*np.sin(beta_r)),
-            xytext=(0, 0),
+# ── Shaft tension: same magnitude, opposite direction ─────────────────────────
+sh_scale = 2.8
+ax.annotate('', xy=(-sh_scale*np.cos(beta_r), -sh_scale*np.sin(beta_r)), xytext=(0, 0),
             arrowprops=dict(arrowstyle='->', color=TEAL, **arrow_kw), zorder=4)
-ax.text(-shaft_scale*np.cos(beta_r) - 0.15, -shaft_scale*np.sin(beta_r) - 0.2,
-        'T_shaft ≈ 726 N\n(rotor thrust back-\ntransmitted down shaft\nat β=30°)',
+ax.text(-sh_scale*np.cos(beta_r) - 0.15, -sh_scale*np.sin(beta_r) - 0.15,
+        'T_shaft = 2,394 N\n(TRPT elastic reaction)\nT·[−cos30°, 0, −sin30°]\n← Downward + upwind',
         fontsize=8.5, color=TEAL, fontweight='bold', ha='right', va='top')
-arc_beta = Arc((0, 0), 0.9, 0.9, angle=0, theta1=180, theta2=210, color=TEAL, lw=1.5)
-ax.add_patch(arc_beta)
-ax.text(-0.8, -0.28, 'β=30°', fontsize=8, color=TEAL)
 
-# Equilibrium equation box
+# Cancellation annotation
+ax.text(0.1, -0.5, '✕  CANCEL\n(equal & opposite\nalong shaft axis)',
+        fontsize=8, color='#7F8C8D', ha='left', va='top',
+        bbox=dict(boxstyle='round,pad=0.3', facecolor='#F0F0F0', edgecolor='#CCC'))
+
+# ── Gravity: small (245 N) ────────────────────────────────────────────────────
+grav_scale = 0.55
+ax.annotate('', xy=(0, -grav_scale), xytext=(0, 0),
+            arrowprops=dict(arrowstyle='->', color=RED, **arrow_sm), zorder=4)
+ax.text(0.2, -grav_scale * 0.5, 'W = 245 N\n(24.96 kg × g)\nAll rings + blades\n+ tether mass',
+        fontsize=8, color=RED, va='center')
+
+# ── Lift kite: small (sized for launch; excess at rated) ──────────────────────
+theta_lift = np.radians(81.5)
+lift_scale = 0.55
+lx = lift_scale * np.cos(theta_lift)
+lz = lift_scale * np.sin(theta_lift)
+ax.annotate('', xy=(lx, lz), xytext=(0, 0),
+            arrowprops=dict(arrowstyle='->', color=GREEN, **arrow_sm), zorder=4)
+ax.text(lx + 0.18, lz,
+        'T_lift = 248 N\n(needed at v=4 m/s)\n27.5 m² kite at v=11 m/s\nprovides 2060 N (8.3×)',
+        fontsize=8, color=GREEN, fontweight='bold', va='center')
+arc_lift = Arc((0, 0), 1.0, 1.0, angle=0, theta1=0, theta2=81.5, color=GREEN, lw=1.2)
+ax.add_patch(arc_lift)
+ax.text(0.65, 0.25, 'θ=81.5°', fontsize=8, color=GREEN)
+
+# ── Back line: dashed, points downward toward anchor ─────────────────────────
+ax.annotate('', xy=(0.4, -0.5), xytext=(0, 0),
+            arrowprops=dict(arrowstyle='->', color='#E67E22', lw=1.5,
+                            linestyle='dashed', mutation_scale=14), zorder=3)
+ax.text(0.55, -0.45, 'Back line\n(slack at design alt.)', fontsize=7.5,
+        color='#E67E22', va='top')
+
+# ── Equilibrium equation box ──────────────────────────────────────────────────
 eq_text = (
-    "Vertical equilibrium:   T_lift·sin(θ) − W − T_shaft·sin(β)  =  0\n"
-    "      1,603·sin(80°)   −  173   −  726·sin(30°)  ≈  0  ✓\n"
-    "              1,579    −  173   −       363       ≈  1,043 N net upward\n\n"
-    "Hub moves vertically when T_lift oscillates:\n"
-    "      Δz_hub  ≈  ΔT_lift · sin(θ) / k_shaft\n"
-    "      k_shaft ≈ 117 kN/m  →  hub_z std ≈ CV_T · T_mean · sin(θ) / k_shaft"
+    "Vertical equilibrium at hub node:\n"
+    "  T_lift·sin(θ)  +  F_CT·sin(β)  −  T_shaft·sin(β)  −  W  =  0\n"
+    "       248·sin(81.5°) +  2394·sin(30°)  −  2394·sin(30°)  −  245  ≈  0  ✓\n"
+    "            245       +      1197       −      1197        −  245  =  0  ✓\n\n"
+    "CT thrust and shaft tension CANCEL → lift kite needs only to support W = 245 N.\n"
+    "Hub is self-supporting via CT thrust above v ≈ 3.5 m/s (no lift kite needed).\n"
+    "Lift kite sized for launch at v = 4 m/s.  Back line limits max elevation."
 )
-ax.text(0, -2.8, eq_text, ha='center', va='top', fontsize=8.5, color=BLUE,
+ax.text(0, -3.2, eq_text, ha='center', va='top', fontsize=8, color=BLUE,
         fontfamily='monospace',
         bbox=dict(boxstyle='round,pad=0.55', facecolor='#EBF5FB', edgecolor=BLUE, alpha=0.9))
 
-# Axes
-ax.annotate('', xy=(3.8, 0), xytext=(-0.4, 0),
+# ── Axes ──────────────────────────────────────────────────────────────────────
+ax.annotate('', xy=(4.2, 0), xytext=(-0.5, 0),
             arrowprops=dict(arrowstyle='->', color='#BDC3C7', lw=1.2))
-ax.text(3.9, 0, '+x', fontsize=8, color=GREY, va='center')
-ax.annotate('', xy=(0, 3.4), xytext=(0, -0.4),
+ax.text(4.3, 0, '+x\n(downwind)', fontsize=7.5, color=GREY, va='center')
+ax.annotate('', xy=(0, 4.0), xytext=(0, -0.5),
             arrowprops=dict(arrowstyle='->', color='#BDC3C7', lw=1.2))
-ax.text(0.12, 3.5, '+z', fontsize=8, color=GREY)
+ax.text(0.1, 4.1, '+z\n(up)', fontsize=7.5, color=GREY)
 
 plt.tight_layout()
 plt.savefig(OUT + 'diag_hub_forces.png', dpi=150, bbox_inches='tight')

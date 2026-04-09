@@ -43,9 +43,13 @@ function build_kite_turbine_system(p::SystemParams;
     g_z       = -9.81
     v         = p.v_wind_ref
     q         = 0.5 * p.rho * v^2
-    kite_lift_z = q * kite_area * 1.2
+    # Initial vertical force balance on hub — determines TRPT axial pre-tension.
+    # kite_lift_z removed: the rotor disc generates no net kite-style upward lift
+    # (flat blades in rotation plane, symmetric disc — see ring_forces.jl note).
+    # Upward support comes only from CT thrust's vertical component (thrust·sinβ)
+    # and, in operation, from the separate lift device.
     thrust_ax   = q * π * p.rotor_radius^2 * 0.8 * cos(β)^2
-    F_aero_z    = kite_lift_z + thrust_ax * sin(β) + (m_rotor + kite_mass) * g_z
+    F_aero_z    = thrust_ax * sin(β) + (m_rotor + kite_mass) * g_z
     F_top_ax    = max(-F_aero_z / sin(β), 20.0)
 
     g_axial_inc = p.m_ring * 9.81 / sin(β)

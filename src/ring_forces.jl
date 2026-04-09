@@ -20,17 +20,22 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     v_app   = v_wind .- hub_vel
     v_mag   = norm(v_app)
 
-    # ── Kite lift + drag ───────────────────────────────────────────────────
-    if v_mag > 0.1
-        q        = 0.5 * p.rho * v_mag^2
-        drag_dir = v_app ./ v_mag
-        ẑ        = [0.0, 0.0, 1.0]
-        ẑ_perp   = ẑ .- dot(ẑ, drag_dir) .* drag_dir
-        n_zp     = norm(ẑ_perp)
-        lift_dir = n_zp > 1e-6 ? ẑ_perp ./ n_zp : ẑ
-        forces[hub_gid] .+= q * sys.kite.area * sys.kite.CL .* lift_dir
-        forces[hub_gid] .+= q * sys.kite.area * sys.kite.CD .* drag_dir
-    end
+    # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
+    # NOTE: a previous kite-lift block (q·A·CL in direction [0,0,1]) has been
+    # removed.  It was wrong for two reasons:
+    #
+    #   1. Geometry: [0,0,1] is perpendicular to horizontal wind — correct only
+    #      for a horizontal disc (90° elevation).  Our disc normal is at 30°
+    #      elevation; a static disc at this angle produces normal force along the
+    #      shaft axis [cos30°,0,sin30°], not straight up.
+    #
+    #   2. Double-count: the CT thrust below already captures the dominant axial
+    #      hub force.  Flat blades rotating in the disc plane produce zero net
+    #      kite-style lift on the hub; in-plane wind loads (v·sin30° component)
+    #      are small and point slightly DOWNWARD at 30° elevation.
+    #
+    # The only legitimate aerodynamic hub forces are CT thrust (below) and the
+    # separate lift device (further below).
 
     # ── Rotor thrust + aero torque ─────────────────────────────────────────
     v_hub_mag = norm(v_wind)
@@ -133,5 +138,39 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         # 3D force: horizontal component into wind + vertical component upward
         forces[hub_gid] .+= T_lift .* (cos(θ_lift) .* into_wind .+
                                         sin(θ_lift) .* [0.0, 0.0, 1.0])
+    end
+
+    # ── Back line — elevation constraint tether ───────────────────────────────
+    # Attaches to the lift kite tether 10 cm above the hub bearing and runs down
+    # to a fixed ground anchor.  The anchor is placed back_anchor_fwd_x metres
+    # downwind of the hub's design x-projection to clear the TRPT rope footprint.
+    # With fwd_x = 0 the line is purely vertical; increasing it tilts it slightly
+    # toward the hub from a downwind stake, which is the practical field layout.
+    #
+    # Rest length L₀ = distance from anchor to attachment at DESIGN hub position —
+    # line is just taut at design elevation, slack below, taut above.
+    #
+    # Tension-only spring-damper.
+    back_attach_z = 0.10   # metres above hub bearing (attachment on lift tether)
+    back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
+    # Attachment point (10 cm above hub in z)
+    bv1 = hub_pos[1] - back_ax
+    bv2 = hub_pos[2]                     # anchor y = 0
+    bv3 = hub_pos[3] + back_attach_z     # anchor z = 0
+    back_len = sqrt(bv1^2 + bv2^2 + bv3^2)
+    # Rest length = distance from anchor to design attachment point
+    design_hub_x = p.tether_length * cos(p.elevation_angle)
+    design_hub_z = p.tether_length * sin(p.elevation_angle) + back_attach_z
+    back_L0 = sqrt((design_hub_x - back_ax)^2 + design_hub_z^2)
+    # = sqrt(back_anchor_fwd_x² + (L·sinβ + 0.10)²)
+    if back_len > back_L0 + 1e-6                           # tension-only
+        inv_len     = 1.0 / back_len
+        bh1 = bv1 * inv_len;  bh2 = bv2 * inv_len;  bh3 = bv3 * inv_len
+        back_strain = (back_len - back_L0) / back_L0
+        back_vproj  = hub_vel[1]*bh1 + hub_vel[2]*bh2 + hub_vel[3]*bh3
+        back_F      = -(p.EA_back_line * back_strain + p.c_back_line * back_vproj)
+        forces[hub_gid][1] += back_F * bh1
+        forces[hub_gid][2] += back_F * bh2
+        forces[hub_gid][3] += back_F * bh3
     end
 end

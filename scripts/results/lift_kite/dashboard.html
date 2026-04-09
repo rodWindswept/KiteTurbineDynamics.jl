@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TRPT Hub Excursion Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e0e6f0; min-height: 100vh; }
+
+  /* ── Header ── */
+  .header { background: #1a1e2e; border-bottom: 2px solid #2e75b6; padding: 10px 18px;
+            display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 16px; color: #5bc0f8; font-weight: 600; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 11px; color: #8899aa; margin-top: 2px; }
+  .header-right { display: flex; gap: 10px; align-items: center; }
+
+  /* ── Controls ── */
+  .controls { background: #151823; border-bottom: 1px solid #2a2e42; padding: 8px 18px;
+              display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .ctrl-group { display: flex; align-items: center; gap: 6px; }
+  .ctrl-label { font-size: 11px; color: #8899aa; text-transform: uppercase; letter-spacing: 0.6px; }
+
+  .tab-btn { padding: 4px 12px; border: 1px solid #2e3a52; background: #1a1e2e; color: #8899aa;
+             border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
+  .tab-btn:hover { border-color: #5bc0f8; color: #c0d8f0; }
+  .tab-btn.active { background: #1f497d; border-color: #5bc0f8; color: #ffffff; font-weight: 600; }
+  .tab-btn.active.kite  { background: #1a5e32; border-color: #27ae60; }
+  .tab-btn.active.stack { background: #0e4d4d; border-color: #17a589; }
+  .tab-btn.active.rotor { background: #6e2a10; border-color: #e67e22; }
+  .tab-btn.active.nolift{ background: #3a2060; border-color: #9b59b6; }
+
+  .spd-btn { padding: 4px 10px; border: 1px solid #2e3a52; background: #1a1e2e; color: #8899aa;
+             border-radius: 4px; cursor: pointer; font-size: 12px; }
+  .spd-btn.active { background: #2e3a52; border-color: #aac4e0; color: #e0e6f0; font-weight: 600; }
+
+  .play-btn { padding: 4px 14px; border: 1px solid #5bc0f8; background: #1f3a52; color: #5bc0f8;
+              border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .play-btn:hover { background: #2a4e6e; }
+
+  input[type=range] { width: 90px; accent-color: #5bc0f8; }
+
+  /* ── Layout ── */
+  .main { display: grid; grid-template-columns: 360px 1fr; grid-template-rows: auto auto;
+          gap: 10px; padding: 10px 14px; height: calc(100vh - 96px); }
+
+  /* ── Panels ── */
+  .panel { background: #151823; border: 1px solid #2a2e42; border-radius: 6px; overflow: hidden; }
+  .panel-title { font-size: 11px; color: #8899aa; text-transform: uppercase; letter-spacing: 0.8px;
+                 padding: 6px 10px; background: #1a1e2e; border-bottom: 1px solid #2a2e42; }
+
+  /* ── TRPT canvas ── */
+  #trpt-panel { grid-row: 1 / 3; display: flex; flex-direction: column; }
+  #trpt-canvas { flex: 1; width: 100%; }
+
+  /* ── Charts ── */
+  .charts-col { grid-row: 1 / 3; display: flex; flex-direction: column; gap: 10px; }
+  .chart-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  canvas.chart { flex: 1; width: 100%; min-height: 0; }
+
+  /* ── Metrics strip ── */
+  .metrics { display: flex; gap: 0; border-top: 1px solid #2a2e42; }
+  .metric { flex: 1; padding: 6px 10px; border-right: 1px solid #2a2e42; }
+  .metric:last-child { border-right: none; }
+  .metric .label { font-size: 10px; color: #8899aa; text-transform: uppercase; }
+  .metric .value { font-size: 17px; font-weight: 700; margin-top: 1px; }
+  .metric .unit  { font-size: 10px; color: #8899aa; }
+  .metric.warn .value { color: #e67e22; }
+  .metric.good .value { color: #27ae60; }
+  .metric.info .value { color: #5bc0f8; }
+  .metric.alert .value { color: #e74c3c; }
+
+  /* ── Sag indicator ── */
+  .sag-bar-wrap { padding: 4px 10px 6px; background: #1a1e2e; border-top: 1px solid #2a2e42; }
+  .sag-label { font-size: 10px; color: #8899aa; margin-bottom: 3px; }
+  .sag-track { height: 8px; background: #0f1117; border-radius: 4px; position: relative; overflow: visible; }
+  .sag-fill  { height: 100%; border-radius: 4px; transition: width 0.3s, background 0.3s; }
+  .sag-ref   { position: absolute; top: -3px; width: 2px; height: 14px; background: #27ae60; border-radius: 1px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header h1">TRPT Hub Excursion — Simulation Dashboard</div>
+    <div class="subtitle">KiteTurbineDynamics.jl · 10 kW prototype · IEC Class A turbulence (I = 0.15) · Corrected CT-thrust physics · Back line active · Kite sized for 4 m/s launch</div>
+  </div>
+  <div class="header-right">
+    <span id="time-display" style="font-size:13px;color:#5bc0f8;font-weight:600;font-variant-numeric:tabular-nums;">t = 0.00 s</span>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Device</span>
+    <button class="tab-btn kite  active" data-dev="SingleKite">Single Kite</button>
+    <button class="tab-btn stack"        data-dev="Stack×3">Stack ×3</button>
+    <button class="tab-btn rotor"        data-dev="RotaryLifter">Rotary Lifter ⚠</button>
+    <button class="tab-btn nolift"       data-dev="NoLift">No Lift</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Wind</span>
+    <button class="spd-btn" data-v="8">8 m/s</button>
+    <button class="spd-btn active" data-v="11">11 m/s ★</button>
+    <button class="spd-btn" data-v="13">13 m/s</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Speed</span>
+    <input type="range" id="speed-slider" min="1" max="20" value="8">
+    <span id="speed-label" style="font-size:11px;color:#8899aa;">8×</span>
+  </div>
+  <button class="play-btn" id="play-btn">▶ Play</button>
+  <button class="play-btn" id="reset-btn" style="background:#1a1e2e;">⏮ Reset</button>
+  <span id="frame-label" style="font-size:11px;color:#8899aa;margin-left:4px;"></span>
+</div>
+
+<div class="main">
+  <!-- Left: TRPT animation -->
+  <div class="panel" id="trpt-panel">
+    <div class="panel-title">TRPT System — Side View (10× vertical exaggeration on hub motion)</div>
+    <canvas id="trpt-canvas"></canvas>
+    <div class="sag-bar-wrap">
+      <div class="sag-label">Hub altitude sag from nominal (15.0 m) &nbsp; <span id="sag-mm">0.0 mm</span></div>
+      <div class="sag-track">
+        <div class="sag-fill" id="sag-fill" style="width:0%;background:#27ae60;"></div>
+        <div class="sag-ref" id="sag-ref" style="left:0%;"></div>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric info"><div class="label">Hub Z</div><div class="value" id="m-hz">—</div><div class="unit">m</div></div>
+      <div class="metric info"><div class="label">Elev β</div><div class="value" id="m-el">—</div><div class="unit">deg</div></div>
+      <div class="metric good"><div class="label">Power</div><div class="value" id="m-pw">—</div><div class="unit">kW</div></div>
+      <div class="metric info"><div class="label">ω_gnd</div><div class="value" id="m-om">—</div><div class="unit">rad/s</div></div>
+    </div>
+  </div>
+
+  <!-- Right: time-series charts -->
+  <div class="charts-col">
+    <div class="panel chart-panel">
+      <div class="panel-title">Hub Altitude z(t) &nbsp;·&nbsp; nominal = 15.0 m &nbsp;·&nbsp; sag exaggerated 200×</div>
+      <canvas class="chart" id="chart-hz"></canvas>
+    </div>
+    <div class="panel chart-panel">
+      <div class="panel-title">Wind speed v(t) &nbsp;&amp;&nbsp; Generator power P(t)</div>
+      <canvas class="chart" id="chart-vp"></canvas>
+    </div>
+    <div class="panel chart-panel" style="flex:0.6;">
+      <div class="panel-title">Elevation angle β(t) &nbsp;·&nbsp; nominal = 30°</div>
+      <canvas class="chart" id="chart-el"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Data ───────────────────────────────────────────────────────────────────
+</script>
+<script src="simdata.js"></script>
+<script>
+// ─── State ──────────────────────────────────────────────────────────────────
+let curDev = 'RotaryLifter';  // start on the interesting case
+let curV   = 11;
+let frame  = 0;
+let playing = false;
+let playSpeed = 8;
+let animId = null;
+let lastTs = null;
+let frameAccum = 0;
+
+const DEV_COLORS = {
+  'SingleKite':  '#27ae60',
+  'Stack×3':     '#17a589',
+  'RotaryLifter':'#e67e22',
+  'NoLift':      '#9b59b6',
+};
+
+const NOMINAL_HZ = 15.0;
+const NOMINAL_EL = 30.0;
+const N_RINGS    = 16;
+const SHAFT_LEN  = 30.0;  // m
+
+function getData() {
+  const key = `${curDev}_${curV}`;
+  return SIM_DATA[key] || [];
+}
+
+function getSummary() {
+  const key = `${curDev}_${curV}`;
+  return SUMMARY[key] || {};
+}
+
+// ─── Summary stats ──────────────────────────────────────────────────────────
+const SUMMARY = {
+  "SingleKite_8":   {hub_z_mean:15.0223,hub_z_std:9.116, elev_mean:30.163,elev_std:0.0582,P_mean:1.926,P_cv:62.8,LM:1.10},
+  "Stack×3_8":      {hub_z_mean:15.022, hub_z_std:9.205, elev_mean:30.162,elev_std:0.058, P_mean:1.926,P_cv:62.8,LM:1.10},
+  "RotaryLifter_8": {hub_z_mean:14.9912,hub_z_std:20.152,elev_mean:30.089,elev_std:0.0328,P_mean:1.839,P_cv:69.6,LM:0.44},
+  "NoLift_8":       {hub_z_mean:14.9675,hub_z_std:30.387,elev_mean:30.035,elev_std:0.011, P_mean:1.764,P_cv:75.3,LM:0.0},
+  "SingleKite_11":  {hub_z_mean:15.0625,hub_z_std:10.267,elev_mean:30.323,elev_std:0.1164,P_mean:5.852,P_cv:40.7,LM:1.10},
+  "Stack×3_11":     {hub_z_mean:15.0622,hub_z_std:10.182,elev_mean:30.323,elev_std:0.1162,P_mean:5.852,P_cv:40.7,LM:1.10},
+  "RotaryLifter_11":{hub_z_mean:14.9803,hub_z_std:27.03, elev_mean:30.143,elev_std:0.0513,P_mean:5.629,P_cv:47.8,LM:0.28},
+  "NoLift_11":      {hub_z_mean:14.9545,hub_z_std:38.695,elev_mean:30.087,elev_std:0.0291,P_mean:5.53, P_cv:50.7,LM:0.0},
+  "SingleKite_13":  {hub_z_mean:15.103, hub_z_std:27.275,elev_mean:30.456,elev_std:0.1652,P_mean:10.201,P_cv:32.0,LM:1.16},
+  "Stack×3_13":     {hub_z_mean:15.1027,hub_z_std:27.166,elev_mean:30.456,elev_std:0.165, P_mean:10.201,P_cv:32.0,LM:1.16},
+  "RotaryLifter_13":{hub_z_mean:14.9799,hub_z_std:28.194,elev_mean:30.188,elev_std:0.0666,P_mean:9.643, P_cv:41.2,LM:0.29},
+  "NoLift_13":      {hub_z_mean:14.9528,hub_z_std:40.293,elev_mean:30.13, elev_std:0.0439,P_mean:9.509, P_cv:43.5,LM:0.0},
+};
+
+// ─── Canvas helpers ──────────────────────────────────────────────────────────
+function resizeCanvas(c) {
+  const r = c.parentElement.getBoundingClientRect();
+  if (c.width !== r.width || c.height !== r.height) {
+    c.width  = r.width;
+    c.height = r.height;
+  }
+}
+
+// ─── TRPT drawing ────────────────────────────────────────────────────────────
+const trptCanvas = document.getElementById('trpt-canvas');
+
+function drawTRPT() {
+  const c = trptCanvas;
+  resizeCanvas(c);
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const data = getData();
+  if (!data.length) return;
+  const fi = Math.min(frame, data.length - 1);
+  const row = data[fi];
+
+  const col = DEV_COLORS[curDev] || '#5bc0f8';
+  const summary = getSummary();
+
+  // World → canvas mapping
+  // World: x=0..35m horizontal, z=0..20m vertical
+  const PAD_L = 52, PAD_R = 14, PAD_T = 20, PAD_B = 40;
+  const worldW = 36, worldH = 20;
+  const sx = (wx) => PAD_L + (wx / worldW) * (W - PAD_L - PAD_R);
+  const sz = (wz) => H - PAD_B - (wz / worldH) * (H - PAD_T - PAD_B);
+
+  // Ground
+  ctx.fillStyle = '#1a1e2e';
+  ctx.fillRect(PAD_L, sz(0), W - PAD_L - PAD_R, H - sz(0));
+  ctx.strokeStyle = '#2e3a52'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD_L, sz(0)); ctx.lineTo(W - PAD_R, sz(0)); ctx.stroke();
+  ctx.fillStyle = '#8899aa'; ctx.font = '10px Arial';
+  ctx.fillText('Ground', PAD_L + 4, sz(0) + 12);
+
+  // Y axis labels
+  ctx.fillStyle = '#556677'; ctx.font = '9px Arial'; ctx.textAlign = 'right';
+  for (let z = 0; z <= 20; z += 5) {
+    const y = sz(z);
+    ctx.fillText(`${z}m`, PAD_L - 4, y + 3);
+    ctx.strokeStyle = '#1e2535'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+  }
+  ctx.textAlign = 'left';
+
+  // GND station
+  ctx.fillStyle = '#2e75b6';
+  ctx.fillRect(sx(0) - 12, sz(0.5) - 3, 22, sz(0) - sz(0.5) + 3);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 8px Arial'; ctx.textAlign = 'center';
+  ctx.fillText('GND', sx(0) - 1, sz(0.2));
+  ctx.textAlign = 'left';
+
+  // ── TRPT Shaft ──────────────────────────────────────────────────────────
+  // Hub position in world space — the actual hub_x and hub_z from sim
+  // Exaggerate vertical deviation for visibility (10× around nominal)
+  const EXAG = 10;
+  const hubXw = row.hx;                                         // actual ~26m
+  const hubZw = NOMINAL_HZ + (row.hz - NOMINAL_HZ) * EXAG;     // exaggerated
+
+  const nomBeta = Math.atan2(NOMINAL_HZ, hubXw);               // nominal elevation
+  const gndX = 0.5, gndZ = 0.35;
+
+  // Draw shaft tethers (5 lines)
+  for (let offset of [-0.08, 0, 0.08]) {
+    ctx.strokeStyle = '#1a6b5a';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(sx(gndX), sz(gndZ + offset * 0.5));
+    ctx.lineTo(sx(hubXw), sz(hubZw));
+    ctx.stroke();
+  }
+
+  // Ring nodes
+  for (let i = 0; i <= N_RINGS; i++) {
+    const t = i / N_RINGS;
+    const rx = gndX + t * (hubXw - gndX);
+    const rz = gndZ + t * (hubZw - gndZ);
+    const r = i === N_RINGS ? 0 : 3;
+    if (r > 0) {
+      ctx.fillStyle = i % 4 === 0 ? '#17a589' : '#0e4d3e';
+      ctx.beginPath(); ctx.arc(sx(rx), sz(rz), r, 0, 2*Math.PI); ctx.fill();
+    }
+  }
+
+  // Nominal shaft line (ghost)
+  const nomHubX = NOMINAL_HZ / Math.tan(nomBeta);
+  ctx.strokeStyle = 'rgba(46,117,182,0.25)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(sx(gndX), sz(gndZ));
+  ctx.lineTo(sx(nomHubX), sz(NOMINAL_HZ));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Elevation angle arc ──────────────────────────────────────────────
+  const elRad = row.el * Math.PI / 180;
+  const nomElRad = NOMINAL_EL * Math.PI / 180;
+  const arcR = 32;
+  ctx.strokeStyle = '#2e75b6'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(sx(gndX), sz(gndZ), arcR, -nomElRad - 0.05, -elRad + 0.05);
+  ctx.stroke();
+  ctx.fillStyle = '#5bc0f8'; ctx.font = '10px Arial';
+  ctx.fillText(`β=${row.el.toFixed(2)}°`, sx(gndX) + arcR + 4, sz(gndZ) - 10);
+
+  // ── Hub node ──────────────────────────────────────────────────────────
+  const hubCx = sx(hubXw), hubCz = sz(hubZw);
+  const nomCx = sx(nomHubX), nomCz = sz(NOMINAL_HZ);
+
+  // Sag line (nominal → actual)
+  ctx.strokeStyle = 'rgba(231,76,60,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([2, 3]);
+  ctx.beginPath(); ctx.moveTo(nomCx, nomCz); ctx.lineTo(hubCx, hubCz); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Nominal hub marker
+  ctx.strokeStyle = 'rgba(39,174,96,0.4)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(nomCx, nomCz, 7, 0, 2*Math.PI); ctx.stroke();
+
+  // Hub
+  const grd = ctx.createRadialGradient(hubCx, hubCz, 0, hubCx, hubCz, 10);
+  grd.addColorStop(0, '#fff');
+  grd.addColorStop(0.3, col);
+  grd.addColorStop(1, col + '66');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(hubCx, hubCz, 10, 0, 2*Math.PI); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(hubCx, hubCz, 10, 0, 2*Math.PI); ctx.stroke();
+
+  // Hub label
+  ctx.fillStyle = '#e0e6f0'; ctx.font = 'bold 9px Arial';
+  ctx.fillText('Hub', hubCx + 13, hubCz - 4);
+  ctx.fillStyle = col; ctx.font = '9px Arial';
+  ctx.fillText(`z=${row.hz.toFixed(3)}m`, hubCx + 13, hubCz + 7);
+
+  // ── Rotor ─────────────────────────────────────────────────────────────
+  const rotorOffX = 2.2, rotorOffZ = 1.3;
+  const rotCx = hubCx + rotorOffX * (W-PAD_L-PAD_R)/36;
+  const rotCz = hubCz - rotorOffZ * (H-PAD_T-PAD_B)/20;
+  ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(hubCx, hubCz); ctx.lineTo(rotCx, rotCz); ctx.stroke();
+  const rotR = 22;
+  const rotPhase = (fi / 8) % (2 * Math.PI);
+  for (let b = 0; b < 3; b++) {
+    const a = rotPhase + b * 2 * Math.PI / 3;
+    ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(rotCx, rotCz);
+    ctx.lineTo(rotCx + rotR * Math.cos(a), rotCz + rotR * Math.sin(a));
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#e74c3c';
+  ctx.beginPath(); ctx.arc(rotCx, rotCz, 5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = '#cc8844'; ctx.font = '9px Arial';
+  ctx.fillText('Rotor', rotCx + 8, rotCz - 2);
+
+  // ── Lift device ───────────────────────────────────────────────────────
+  const liftLen = 4.5;
+  const liftAng = 80 * Math.PI / 180;
+  const liftX = hubXw + liftLen * Math.cos(liftAng);
+  const liftZ = hubZw/EXAG * EXAG + liftLen * Math.sin(liftAng);  // in exag space
+  const liftXw = hubXw + liftLen * Math.cos(liftAng);
+  const liftZw_exag = hubZw + liftLen * Math.sin(liftAng) * (H-PAD_T-PAD_B)/20;
+
+  ctx.strokeStyle = col + 'aa'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 2]);
+  ctx.beginPath();
+  ctx.moveTo(hubCx, hubCz);
+  const liftEndX = hubCx + liftLen * Math.cos(liftAng) * (W-PAD_L-PAD_R)/36;
+  const liftEndZ = hubCz - liftLen * Math.sin(liftAng) * (H-PAD_T-PAD_B)/20;
+  ctx.lineTo(liftEndX, liftEndZ);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Draw kite / rotor symbol
+  if (curDev === 'RotaryLifter') {
+    // Spinning disc
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(liftEndX, liftEndZ, 10, 0, 2*Math.PI); ctx.stroke();
+    for (let b = 0; b < 3; b++) {
+      const a = -rotPhase * 1.5 + b * 2*Math.PI/3;
+      ctx.strokeStyle = col; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(liftEndX, liftEndZ);
+      ctx.lineTo(liftEndX + 10*Math.cos(a), liftEndZ + 10*Math.sin(a));
+      ctx.stroke();
+    }
+  } else if (curDev === 'NoLift') {
+    ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 1; ctx.setLineDash([2,2]);
+    ctx.beginPath(); ctx.arc(liftEndX, liftEndZ, 6, 0, 2*Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#9b59b6'; ctx.font = '8px Arial';
+    ctx.fillText('—', liftEndX - 3, liftEndZ + 3);
+  } else {
+    // Kite diamond
+    ctx.fillStyle = col + '99';
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(liftEndX, liftEndZ - 12);
+    ctx.lineTo(liftEndX + 16, liftEndZ);
+    ctx.lineTo(liftEndX, liftEndZ + 12);
+    ctx.lineTo(liftEndX - 16, liftEndZ);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  }
+
+  // Lift device label
+  ctx.fillStyle = col; ctx.font = 'bold 9px Arial';
+  ctx.fillText(curDev, liftEndX + 14, liftEndZ);
+
+  // ── Wind arrow ─────────────────────────────────────────────────────────
+  const windLen = Math.max(20, row.vi * 2.8);
+  const windY = PAD_T + 18;
+  ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(W - PAD_R - windLen - 10, windY); ctx.lineTo(W - PAD_R - 10, windY); ctx.stroke();
+  ctx.fillStyle = '#e67e22';
+  ctx.beginPath();
+  ctx.moveTo(W - PAD_R - 10, windY);
+  ctx.lineTo(W - PAD_R - 16, windY - 5);
+  ctx.lineTo(W - PAD_R - 16, windY + 5);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#e67e22'; ctx.font = '10px Arial';
+  ctx.fillText(`${row.vi.toFixed(1)} m/s`, W - PAD_R - windLen - 10, windY - 5);
+
+  // ── Sag indicator (below canvas) ────────────────────────────────────
+  const sagMm = (row.hz - NOMINAL_HZ) * 1000;
+  const sagMax = 60; // mm display max
+  const sagPct = Math.min(100, Math.abs(sagMm) / sagMax * 100);
+  const sagFill = document.getElementById('sag-fill');
+  const sagEl = document.getElementById('sag-mm');
+  sagFill.style.width = sagPct + '%';
+  sagFill.style.background = sagMm > 0 ? '#27ae60' : sagMm > -10 ? '#e67e22' : '#e74c3c';
+  sagEl.textContent = `${sagMm >= 0 ? '+' : ''}${sagMm.toFixed(1)} mm`;
+  sagEl.style.color = sagMm > 0 ? '#27ae60' : sagMm > -10 ? '#e67e22' : '#e74c3c';
+
+  // ── Metrics ────────────────────────────────────────────────────────────
+  document.getElementById('m-hz').textContent = row.hz.toFixed(4);
+  document.getElementById('m-el').textContent = row.el.toFixed(3);
+  document.getElementById('m-pw').textContent = row.P.toFixed(2);
+  document.getElementById('m-om').textContent = row.w.toFixed(2);
+  document.getElementById('time-display').textContent = `t = ${row.t.toFixed(2)} s`;
+  document.getElementById('frame-label').textContent = `frame ${fi+1}/${data.length}`;
+
+  // Colour metrics by device
+  for (const el of document.querySelectorAll('.metric.info .value, .metric.good .value')) {
+    el.style.color = '';
+  }
+  document.getElementById('m-hz').style.color = col;
+  document.getElementById('m-el').style.color = col;
+}
+
+// ─── Line charts ─────────────────────────────────────────────────────────────
+function drawLineChart(canvasId, tracks, opts = {}) {
+  const c = document.getElementById(canvasId);
+  resizeCanvas(c);
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD_L = 52, PAD_R = 10, PAD_T = 8, PAD_B = 22;
+  const cW = W - PAD_L - PAD_R, cH = H - PAD_T - PAD_B;
+
+  // Determine range
+  const allVals = tracks.flatMap(t => t.data);
+  let yMin = opts.yMin !== undefined ? opts.yMin : Math.min(...allVals);
+  let yMax = opts.yMax !== undefined ? opts.yMax : Math.max(...allVals);
+  const pad = (yMax - yMin) * 0.1 || 0.001;
+  if (opts.yMin === undefined) yMin -= pad;
+  if (opts.yMax === undefined) yMax += pad;
+
+  const data0 = getData();
+  const nPts = data0.length;
+  const xScale = (i) => PAD_L + (i / (nPts - 1)) * cW;
+  const yScale = (v) => PAD_T + cH - (v - yMin) / (yMax - yMin) * cH;
+
+  // Grid
+  ctx.strokeStyle = '#1e2535'; ctx.lineWidth = 0.5;
+  const nGrid = 4;
+  for (let i = 0; i <= nGrid; i++) {
+    const v = yMin + i / nGrid * (yMax - yMin);
+    const y = yScale(v);
+    ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+    ctx.fillStyle = '#556677'; ctx.font = '9px Arial'; ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(opts.decimals !== undefined ? opts.decimals : 2), PAD_L - 3, y + 3);
+  }
+  ctx.textAlign = 'left';
+
+  // X axis ticks
+  const tData = getData();
+  ctx.fillStyle = '#556677'; ctx.font = '9px Arial'; ctx.textAlign = 'center';
+  for (let tick = 0; tick <= 60; tick += 10) {
+    const idx = tData.findIndex(r => r.t >= tick);
+    if (idx < 0) continue;
+    const x = xScale(idx);
+    ctx.fillText(`${tick}s`, x, PAD_T + cH + 14);
+    ctx.strokeStyle = '#1e2535'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, PAD_T); ctx.lineTo(x, PAD_T + cH); ctx.stroke();
+  }
+  ctx.textAlign = 'left';
+
+  // Reference lines
+  if (opts.refs) {
+    for (const ref of opts.refs) {
+      const y = yScale(ref.v);
+      ctx.strokeStyle = ref.color || '#2e3a52'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = ref.color || '#556677'; ctx.font = '9px Arial';
+      ctx.fillText(ref.label, PAD_L + 2, y - 2);
+    }
+  }
+
+  // Data tracks
+  for (const track of tracks) {
+    ctx.strokeStyle = track.color; ctx.lineWidth = track.width || 1.5;
+    ctx.globalAlpha = track.alpha || 1.0;
+    ctx.beginPath();
+    for (let i = 0; i < track.data.length; i++) {
+      const x = xScale(i), y = yScale(track.data[i]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
+  }
+
+  // Playhead
+  const fi = Math.min(frame, nPts - 1);
+  const px = xScale(fi);
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.setLineDash([2, 2]);
+  ctx.beginPath(); ctx.moveTo(px, PAD_T); ctx.lineTo(px, PAD_T + cH); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Current value dot
+  for (const track of tracks) {
+    const curVal = track.data[fi];
+    if (curVal !== undefined) {
+      ctx.fillStyle = track.color;
+      ctx.beginPath();
+      ctx.arc(px, yScale(curVal), 4, 0, 2*Math.PI);
+      ctx.fill();
+    }
+  }
+}
+
+function drawAllCharts() {
+  const d = getData();
+  if (!d.length) return;
+  const col = DEV_COLORS[curDev] || '#5bc0f8';
+
+  // ── Hub Z ──────────────────────────────────────────────────────────────
+  const hzArr = d.map(r => r.hz);
+  const hzMean = hzArr.reduce((a,b) => a+b) / hzArr.length;
+  // Exaggerate around nominal for visibility
+  const EXAG_CHART = 200;
+  const hzEx = hzArr.map(v => NOMINAL_HZ + (v - NOMINAL_HZ) * EXAG_CHART);
+  const hzMeanEx = NOMINAL_HZ + (hzMean - NOMINAL_HZ) * EXAG_CHART;
+  const hzNomEx = NOMINAL_HZ;
+
+  const hzRange = Math.max(...hzEx) - Math.min(...hzEx);
+  const hzPad = hzRange * 0.3 || 0.01;
+
+  drawLineChart('chart-hz', [
+    { data: hzEx, color: col, width: 1.5 },
+    { data: hzArr.map(() => hzMeanEx), color: col + '55', width: 1, alpha: 0.6 },
+  ], {
+    yMin: Math.min(...hzEx) - hzPad,
+    yMax: Math.max(...hzEx) + hzPad,
+    decimals: 3,
+    refs: [
+      { v: NOMINAL_HZ, color: 'rgba(39,174,96,0.5)', label: `nominal ${NOMINAL_HZ}m` },
+      { v: hzMeanEx,   color: col + '88',             label: `mean ${hzMean.toFixed(4)}m` },
+    ],
+  });
+
+  // ── Wind + Power ──────────────────────────────────────────────────────
+  const vArr = d.map(r => r.vi);
+  const pArr = d.map(r => r.P);
+  const vMax = Math.max(...vArr), pMax = Math.max(...pArr);
+  const pScale = vMax / Math.max(pMax, 0.01);  // scale P to wind axis
+  drawLineChart('chart-vp', [
+    { data: vArr,                         color: '#e67e22', width: 1.2 },
+    { data: pArr.map(p => p * pScale),    color: '#f1c40f', width: 1.5 },
+  ], {
+    yMin: 0,
+    decimals: 1,
+    refs: [
+      { v: curV,                         color: 'rgba(230,126,34,0.3)', label: `v_mean ${curV} m/s` },
+    ],
+  });
+  // Legend
+  const cv2 = document.getElementById('chart-vp');
+  const ctx2 = cv2.getContext('2d');
+  ctx2.font = '9px Arial'; ctx2.textAlign = 'left';
+  ctx2.fillStyle = '#e67e22'; ctx2.fillText('wind (m/s)', 56, 18);
+  ctx2.fillStyle = '#f1c40f'; ctx2.fillText(`power × ${pScale.toFixed(1)} (kW)`, 120, 18);
+
+  // ── Elevation ─────────────────────────────────────────────────────────
+  const elArr = d.map(r => r.el);
+  const elMean = elArr.reduce((a,b) => a+b) / elArr.length;
+  const elRange = Math.max(...elArr) - Math.min(...elArr);
+  const elPad = Math.max(elRange * 0.3, 0.005);
+  drawLineChart('chart-el', [
+    { data: elArr, color: col, width: 1.5 },
+  ], {
+    yMin: Math.min(...elArr) - elPad,
+    yMax: Math.max(...elArr) + elPad,
+    decimals: 3,
+    refs: [
+      { v: NOMINAL_EL, color: 'rgba(39,174,96,0.4)', label: 'nominal 30°' },
+      { v: elMean,     color: col + '66',              label: `mean ${elMean.toFixed(3)}°` },
+    ],
+  });
+}
+
+// ─── Render loop ─────────────────────────────────────────────────────────────
+function render(ts) {
+  if (playing) {
+    if (lastTs !== null) {
+      frameAccum += (ts - lastTs) * playSpeed * 0.001 * 4; // 4 = data fps (0.25s/frame)
+      while (frameAccum >= 1) {
+        frame++;
+        frameAccum -= 1;
+        if (frame >= getData().length) {
+          frame = 0;
+          frameAccum = 0;
+        }
+      }
+    }
+    lastTs = ts;
+  }
+
+  drawTRPT();
+  drawAllCharts();
+  animId = requestAnimationFrame(render);
+}
+
+function startLoop() {
+  if (animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(render);
+}
+
+// ─── Controls ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    curDev = btn.dataset.dev;
+    frame = 0; frameAccum = 0; lastTs = null;
+  });
+});
+
+document.querySelectorAll('.spd-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    curV = parseInt(btn.dataset.v);
+    frame = 0; frameAccum = 0; lastTs = null;
+  });
+});
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  playing = !playing;
+  lastTs = null; frameAccum = 0;
+  document.getElementById('play-btn').textContent = playing ? '⏸ Pause' : '▶ Play';
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  frame = 0; frameAccum = 0; lastTs = null;
+  playing = false;
+  document.getElementById('play-btn').textContent = '▶ Play';
+});
+
+const speedSlider = document.getElementById('speed-slider');
+speedSlider.addEventListener('input', () => {
+  playSpeed = parseInt(speedSlider.value);
+  document.getElementById('speed-label').textContent = playSpeed + '×';
+});
+
+// Resize
+window.addEventListener('resize', () => {});
+
+// ─── Start on the interesting case ──────────────────────────────────────────
+// pre-select RotaryLifter as the "weak lift" demo
+document.querySelectorAll('.tab-btn').forEach(b => {
+  b.classList.remove('active');
+  if (b.dataset.dev === 'RotaryLifter') b.classList.add('active');
+});
+curDev = 'RotaryLifter';
+
+startLoop();
+</script>
+</body>
+</html>

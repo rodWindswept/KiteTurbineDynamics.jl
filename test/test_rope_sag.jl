@@ -26,6 +26,9 @@ using LinearAlgebra
         params_10kw().β_max,
         params_10kw().β_rate_max,
         params_10kw().kp_elev,
+        params_10kw().EA_back_line,
+        params_10kw().c_back_line,
+        params_10kw().back_anchor_fwd_x,
     )
     sys, u0 = build_kite_turbine_system(p_low)
     u_settled = settle_to_equilibrium(sys, u0, p_low)

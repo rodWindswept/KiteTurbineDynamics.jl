@@ -196,9 +196,13 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # ── Observables ──────────────────────────────────────────────────────────
-    frame_obs  = Observable(1)
-    u_obs      = @lift frames[$frame_obs]
-    frames_ref = Ref(frames)
+    frame_obs       = Observable(1)
+    frames_obs      = Observable(frames)          # mutable — updated by every _rerun!
+    times_ref       = Ref(isnothing(times) ? Float64[] : collect(times))
+    u_obs           = @lift $frames_obs[$frame_obs]   # reacts to BOTH frame index AND new frames
+    lift_device_obs = Observable{Union{Nothing, LiftDevice}}(nothing)
+    wind_fn_obs     = Observable{Function}(isnothing(wind_fn) ?
+                          (pos, t) -> [p.v_wind_ref, 0.0, 0.0] : wind_fn)
 
     # ── Figure — dark theme ───────────────────────────────────────────────────
     set_theme!(theme_dark())
@@ -327,13 +331,40 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                    @lift([$lift_point_obs[3]]); color=:white, markersize=10,
              marker=:diamond)
 
-    # Lift kite tether + kite marker
+    # Lift kite tether + kite marker — position is dynamic: drops when wind drops
     kite_pos_obs = @lift begin
-        lp   = $lift_point_obs
-        γ_l  = p.lifter_elevation
-        sh   = [shaft_dir[1], shaft_dir[2], 0.0]
-        sh_hat = sh ./ max(sqrt(shaft_dir[1]^2 + shaft_dir[2]^2), 1e-6)
-        lp .+ 25.0 .* (sh_hat .* cos(γ_l) .+ [0.0, 0.0, sin(γ_l)])
+        lp  = $lift_point_obs
+        ld  = $lift_device_obs
+        wfn = $wind_fn_obs
+        fi  = $frame_obs
+        # Estimate current wind speed from the wind function at the hub position
+        # Use times_ref so we always track the most recently run scenario's times
+        tr = times_ref[]
+        t_now = (!isempty(tr) && fi <= length(tr)) ? tr[fi] : 0.0
+        v_vec   = wfn(lp, t_now)
+        v_now   = max(sqrt(v_vec[1]^2 + v_vec[2]^2), 0.5)
+        sh_horiz = [shaft_dir[1], shaft_dir[2], 0.0]
+        sh_hat   = sh_horiz ./ max(norm(sh_horiz), 1e-6)
+        if !isnothing(ld)
+            # Quasi-static kite elevation angle from lift physics
+            _, _, elev_deg = lift_force_steady(ld, p.rho, v_now)
+            θ = deg2rad(max(5.0, elev_deg))  # clamp: kite can't go below 5°
+            ll = (ld isa SingleKiteParams   ? ld.line_length :
+                  ld isa StackedKitesParams ? ld.spacing * ld.n_kites :
+                  ld.line_length)
+            lp .+ ll .* (sh_hat .* cos(θ) .+ [0.0, 0.0, sin(θ)])
+        else
+            # No lift device configured — show a visual kite that still responds
+            # to wind speed so kite-drop scenarios are visible.
+            # Elevation scales from 5° at stall (v < 3 m/s) to 45° at rated wind.
+            v_stall  = 3.0
+            v_ref_kd = max(p.v_wind_ref, 8.0)   # rated reference for scaling
+            θ_min = deg2rad(5.0); θ_max = deg2rad(45.0)
+            θ = v_now <= v_stall ? θ_min :
+                v_now >= v_ref_kd ? θ_max :
+                θ_min + (θ_max - θ_min) * (v_now - v_stall) / (v_ref_kd - v_stall)
+            lp .+ 25.0 .* (sh_hat .* cos(θ) .+ [0.0, 0.0, sin(θ)])
+        end
     end
     kite_tether_obs = @lift begin
         lp = $lift_point_obs; kt = $kite_pos_obs
@@ -343,6 +374,30 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                  @lift($kite_tether_obs[3]); color=:deepskyblue, linewidth=2.0)
     scatter!(ax3d, @lift([$kite_pos_obs[1]]), @lift([$kite_pos_obs[2]]),
                    @lift([$kite_pos_obs[3]]); color=:deepskyblue, markersize=15)
+
+    # Back line — coral, from 10 cm above the hub bearing down to the fixed ground
+    # anchor.  The anchor is back_anchor_fwd_x metres downwind of the hub's design
+    # x-projection, placing it clear of the TRPT rope footprint.
+    # Colour: coral = taut; grey = slack.
+    let back_off    = 0.10,
+        back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
+        design_hub_x = p.tether_length * cos(p.elevation_angle),
+        design_hub_z = p.tether_length * sin(p.elevation_angle) + 0.10,
+        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + back_off)^2)
+        scatter!(ax3d, [back_ax], [0.0], [0.0]; color=:coral, markersize=12, marker=:diamond)
+        back_line_obs = @lift begin
+            lp   = $lift_point_obs
+            att  = (lp[1], lp[2], lp[3] + back_off)
+            bv   = (att[1] - back_ax, att[2], att[3])
+            taut = sqrt(bv[1]^2 + bv[2]^2 + bv[3]^2) > back_L0
+            ([back_ax, att[1]], [0.0, att[2]], [0.0, att[3]]), taut
+        end
+        lines!(ax3d,
+               @lift($back_line_obs[1][1]), @lift($back_line_obs[1][2]),
+               @lift($back_line_obs[1][3]);
+               color=@lift($back_line_obs[2] ? :coral : :grey50),
+               linewidth=1.5)
+    end
 
     # Wind arrow — orange, upwind side, length = wind speed (m/s ≡ m visual)
     wind_arrow_obs = @lift begin
@@ -405,6 +460,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # TRPT total twist: accumulated α from ground ring to hub
     # Purpose: torsional loading indicator; large twist → rope near failure
     twist_lbl = hlbl("TRPT twist  Δα =   0.0°  (hub – PTO)")
+
+    # Hub altitude — key indicator for kite drop / TRPT sag scenarios
+    hub_z0_ref = Ref{Float64}(NaN)   # reference Z from frame 1; NaN = not yet set; reset each rerun
+    hub_z_lbl  = hlbl("Hub altitude  Z =   0.0 m  (Δ = ±  0.0 m)")
 
     # Fixed operating parameters (update only on frame changes for β; others static)
     elev_lbl  = hlbl(@sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
@@ -479,12 +538,26 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     hlbl(""; fontsize=6)
     hlbl("── Scenarios ──────────────────────────────"; fontsize=13, font=:bold)
 
-    scenario_msg = Observable("")
+    can_rerun          = !isnothing(u_settled) && !isnothing(wind_fn)
+    scenario_msg       = Observable(can_rerun ? "Select a scenario and press Run." :
+                                               "⚠  Pass u_settled & wind_fn to enable reruns.")
+    scenario_msg_color = Observable(can_rerun ? :grey60 : :orangered)
     Label(hud[hnr!(), 1], scenario_msg; halign=:left, tellwidth=false,
-          fontsize=10, color=:grey60)
+          fontsize=11, color=scenario_msg_color)
 
-    can_rerun = !isnothing(u_settled) && !isnothing(wind_fn)
-    scen_color(c) = can_rerun ? c : :grey40
+    scen_color(_) = can_rerun ? :grey30 : :grey20
+
+    # Build a modified copy of an immutable SystemParams (field overrides via kwargs).
+    # Explicit convert(fieldtype, value) ensures the positional constructor matches.
+    function _modified_params(base::SystemParams; kwargs...)
+        fnames    = fieldnames(SystemParams)
+        ftypes    = fieldtypes(SystemParams)
+        overrides = Dict{Symbol,Any}(kwargs)
+        vals = ntuple(length(fnames)) do i
+            convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
+        end
+        SystemParams(vals...)
+    end
 
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
@@ -511,6 +584,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 v = t < 30.0 ? vref*t/30.0 : vref
                 z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
             end
+        elseif scenario == :kite_drop
+            # Wind holds for 1.5 s then falls over 5 s to 12 % of rated (done by
+            # t ≈ 6.5 s), leaving 3.5 s of low-wind sag visible within the 10 s run.
+            (pos, t) -> begin
+                hold_t = 1.5; drop_t = 5.0
+                frac = t < hold_t ? 1.0 :
+                       t < hold_t + drop_t ? 1.0 - (t - hold_t) / drop_t * 0.88 :
+                       0.12
+                v = vref * frac
+                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+            end
         else   # :land
             (pos, t) -> begin
                 v = t < 30.0 ? vref*(1.0-t*0.9/30.0) : vref*0.1*max(0.0,1.0-(t-30.0)/10.0)
@@ -520,36 +604,66 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     function _rerun!(scenario, label, vref)
-        can_rerun || begin scenario_msg[] = "⚠ provide u_settled & wind_fn to enable"; return end
-        n_steps = 250_000; dt = 4e-5; t_total = n_steps * dt
-        wf  = _make_wind(vref, scenario, t_total)
-        u_s = copy(u_settled)
-        # Ensure orbital velocities are set for the current ω profile
-        set_orbital_velocities!(u_s, sys, p)
-        scenario_msg[] = "Running $label …"
-        @async begin
+        # ── Status update FIRST — always visible regardless of what follows ──
+        if !can_rerun
+            scenario_msg_color[] = :orangered
+            scenario_msg[]       = "⚠  provide u_settled & wind_fn to enable reruns"
+            return
+        end
+        scenario_msg_color[] = :orange
+        scenario_msg[]       = "⟳  Running $label …  (10 s simulation)"
+        hub_z0_ref[]         = NaN   # reset hub-altitude reference for this run
+
+        # ── Build scenario inputs (errors surfaced via status label) ──────────
+        local wf, p_run, u_s, ode_p
+        try
+            n_steps_local = 250_000; dt_local = 4e-5
+            t_total       = n_steps_local * dt_local
+            wf    = _make_wind(Float64(vref), scenario, t_total)
+            wind_fn_obs[] = wf
+            p_run = _modified_params(p;
+                        k_mppt          = Float64(sl_kmppt.value[]),
+                        elevation_angle = deg2rad(Float64(sl_beta.value[])))
+            ld    = lift_device_obs[]
+            ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
+            u_s   = copy(u_settled)
+            set_orbital_velocities!(u_s, sys, p_run)
+        catch e
+            scenario_msg_color[] = :orangered
+            scenario_msg[]       = "Setup error: $(sprint(showerror, e))"
+            return
+        end
+
+        n_steps = 250_000; dt = 4e-5
+        @async try
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ 500)
-            new_times  = Vector{Float64}(undef, n_steps ÷ 500)
+            new_times  = Vector{Float64}(undef,  n_steps ÷ 500)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
             for step in 1:n_steps
                 fill!(du, 0.0)
-                multibody_ode!(du, u, (sys, p, wf), t)
+                multibody_ode!(du, u, ode_p, t)
                 t += dt
                 @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
                 @views u[1:3N]            .+= dt .* u[3N+1:6N]
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
-                # Use orbital-frame damping — preserves rotational kinematics
-                orbital_damp_rope_velocities!(u, sys, p, 0.05)
+                orbital_damp_rope_velocities!(u, sys, p_run, 0.05)   # was: p (bug)
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
                 if step % 500 == 0
                     new_frames[fi] = copy(u); new_times[fi] = t; fi += 1
                 end
             end
-            frames_ref[] = new_frames
-            notify(frame_obs)
-            scenario_msg[] = "$label done  ($(length(new_frames)) frames)"
+            nf           = length(new_frames)
+            times_ref[]  = new_times
+            frames_obs[] = new_frames
+            frame_slider.range[] = 1:nf
+            frame_slider.value[] = 1
+            scenario_msg_color[] = :lawngreen
+            scenario_msg[]       = "✓  $label complete  ($nf frames, $(round(new_times[end], digits=1)) s)"
+        catch e
+            scenario_msg_color[] = :orangered
+            scenario_msg[]       = "Sim error: $(sprint(showerror, e))"
         end
     end
 
@@ -564,29 +678,40 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         scen_vref_lbl.text[] = @sprintf("%.1f m/s", v)
     end
 
-    scen_btns = GridLayout(hud[hnr!(), 1])
-    Button(scen_btns[1,1]; label="Steady",   buttoncolor=scen_color(:darkgreen),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:steady,    "Steady",    scen_vref_slider.value[]); end
-    Button(scen_btns[1,2]; label="Ramp Up",  buttoncolor=scen_color(:steelblue),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:ramp_up,   "Ramp-Up",   scen_vref_slider.value[]); end
-    Button(scen_btns[1,3]; label="Ramp Down",buttoncolor=scen_color(:darkorange),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:ramp_down, "Ramp-Down", scen_vref_slider.value[]); end
-    Button(scen_btns[2,1]; label="Gust",     buttoncolor=scen_color(:firebrick),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:gust,      "Gust",      scen_vref_slider.value[]); end
-    Button(scen_btns[2,2]; label="Launch",   buttoncolor=scen_color(:mediumpurple),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:launch,    "Launch",    scen_vref_slider.value[]); end
-    Button(scen_btns[2,3]; label="Land",     buttoncolor=scen_color(:saddlebrown),
-           labelcolor=:white, height=28) |> b ->
-        on(b.clicks) do _; _rerun!(:land,      "Land",      scen_vref_slider.value[]); end
+    bc          = scen_color(:_)   # neutral: grey30 (enabled) or grey20 (disabled)
+    bc_active   = can_rerun ? :steelblue : :grey20   # highlight for the selected scenario
+    active_btn  = Ref{Any}(nothing)                  # tracks the last-clicked button
+    # Deferred precheck for kite_drop — filled in after device_menu is defined below
+    _kite_drop_precheck! = Ref{Function}(() -> nothing)
+    scen_btns   = GridLayout(hud[hnr!(), 1])
+    for (pos, lbl, sym) in [
+            ((1,1), "Steady",    :steady),
+            ((1,2), "Ramp Up",   :ramp_up),
+            ((1,3), "Ramp Down", :ramp_down),
+            ((2,1), "Gust",      :gust),
+            ((2,2), "Launch",    :launch),
+            ((2,3), "Land",      :land),
+            ((3,1), "Kite Drop", :kite_drop)]
+        btn = Button(scen_btns[pos...]; label=lbl, buttoncolor=bc,
+                     labelcolor=:white, height=28)
+        let btn=btn, sym=sym, lbl=lbl          # explicit capture per iteration
+            on(btn.clicks) do _
+                # deactivate previous selection
+                prev = active_btn[]
+                isnothing(prev) || (prev.buttoncolor[] = bc)
+                # highlight this button as active
+                btn.buttoncolor[] = bc_active
+                active_btn[] = btn
+                # kite drop requires a lift device — auto-select one if none chosen
+                sym == :kite_drop && _kite_drop_precheck![]()
+                _rerun!(sym, lbl, scen_vref_slider.value[])
+            end
+        end
+    end
 
     # ── HUD update handler ────────────────────────────────────────────────────
     on(frame_obs) do fi
-        u = frames_ref[][fi]
+        u = frames_obs[][fi]
 
         # ── Telemetry ────────────────────────────────────────────────────────
         omega_hub = u[6N + Nr + Nr]            # hub (rotor) angular velocity
@@ -597,7 +722,12 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         pct_rated = p.p_rated_w > 0 ? P_kw*1000.0/p.p_rated_w*100.0 : 0.0
         hub_ctr   = u[3*(hub_gid-1)+1 : 3*hub_gid]
         z_hub     = max(hub_ctr[3], 1.0)
-        V_hub     = p.v_wind_ref * (z_hub / p.h_ref)^(1.0/7.0)
+        # Use actual wind function at current time — reflects scenario accurately
+        tr        = times_ref[]
+        t_hud     = (!isempty(tr) && fi <= length(tr)) ? tr[fi] : 0.0
+        wfn_hud   = wind_fn_obs[]
+        v_vec_hub = wfn_hud(hub_ctr, t_hud)
+        V_hub     = max(sqrt(v_vec_hub[1]^2 + v_vec_hub[2]^2), 0.1)
         # TSR: blade tip speed ratio = ω_hub·R / V_hub (not cosine-corrected — operational display)
         tsr       = V_hub > 0.1 ? abs(omega_hub) * sys.rotor.radius / V_hub : 0.0
         # TRPT structural twist: sum of principal-value inter-ring angular offsets.
@@ -609,11 +739,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         Δα_deg    = rad2deg(sum(i -> mod(alpha_vec[i+1] - alpha_vec[i] + π, 2π) - π,
                                 1:Nr-1))
 
-        t_lbl.text[] = if isnothing(times)
-            @sprintf("Frame %5d / %d", fi, n_frames)
-        else
-            @sprintf("t = %8.2f s  (frame %5d / %d)", times[fi], fi, n_frames)
-        end
+        nf_now       = length(frames_obs[])
+        t_lbl.text[] = isempty(tr) ?
+            @sprintf("Frame %5d / %d", fi, nf_now) :
+            @sprintf("t = %8.2f s  (frame %5d / %d)", t_hud, fi, nf_now)
         v_lbl.text[]        = @sprintf("Wind at hub    V = %6.2f m/s", V_hub)
         omega_lbl.text[]    = @sprintf("Rotor (hub)    ω = %7.3f rad/s  (%6.1f rpm)",
                                         omega_hub, rpm_hub)
@@ -623,6 +752,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                                         P_kw, pct_rated)
         tsr_lbl.text[]      = @sprintf("Tip speed ratio  λ = %5.2f  (opt ≈ 4.1)", tsr)
         twist_lbl.text[]    = @sprintf("TRPT twist  Δα = %7.1f°  (hub – PTO)", Δα_deg)
+
+        # Hub altitude — resolve reference on first frame of each run
+        z_hub_now = hub_ctr[3]
+        if isnan(hub_z0_ref[]);  hub_z0_ref[] = z_hub_now;  end
+        δz_hub    = z_hub_now - hub_z0_ref[]
+        hub_z_lbl.text[] = @sprintf("Hub altitude  Z = %5.1f m  (Δ = %+.2f m)",
+                                     z_hub_now, δz_hub)
+
         elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
                                         rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
 
@@ -682,42 +819,109 @@ function build_dashboard(sys       ::KiteTurbineSystem,
               fontsize=10, color=:grey70)
     end
 
-    # ── SECTION A: Parameters ─────────────────────────────────────────────────
-    # These sliders configure the NEXT scenario run — they do NOT live-edit the
-    # current simulation (which is already recorded as frames).
-    clbl("── Parameters (for next run) ────────────"; fontsize=12, font=:bold)
+    # ── SECTION L: Lift Device ────────────────────────────────────────────────
+    # Two adaptive sliders whose meaning changes with the selected device type.
+    # Slider A: Area (kites) or ω (rotary) — the dominant sizing parameter.
+    # Slider B: CL (kites) or Rotor radius (rotary) — the performance lever.
+    clbl("── Lift Device ──────────────────────────"; fontsize=12, font=:bold)
 
-    # Reference wind speed — scales the full Hellmann wind profile
-    clbl("Wind speed V_ref (m/s)"; fontsize=11)
-    sl_vref  = cslider!(0.0:0.5:25.0; start=p.v_wind_ref)
-    vl_vref  = cval_lbl!(@sprintf("%.1f m/s", p.v_wind_ref))
-    on(sl_vref.value) do v; vl_vref.text[] = @sprintf("%.1f m/s", v); end
+    device_menu = Menu(ctrl[cnr!(), 1];
+                       options=["None", "Single Kite", "Stacked ×3", "Rotary Lifter"],
+                       default="None", width=270)
+
+    # Slider A  ─  Area / N kites / ω
+    ld_slA_row = GridLayout(ctrl[cnr!(), 1])
+    ld_lbl_A   = Label(ld_slA_row[1,1], "Area (m²)"; halign=:left, fontsize=10, color=:grey70)
+    ld_sl_A    = Slider(ld_slA_row[1,2]; range=5.0:1.0:50.0, startvalue=15.0)
+    ld_val_A   = Label(ld_slA_row[1,3], "15 m²"; halign=:left, fontsize=10, color=:grey60, tellwidth=false)
+
+    # Slider B  ─  CL / CL / Rotor radius
+    ld_slB_row = GridLayout(ctrl[cnr!(), 1])
+    ld_lbl_B   = Label(ld_slB_row[1,1], "Lift CL";   halign=:left, fontsize=10, color=:grey70)
+    ld_sl_B    = Slider(ld_slB_row[1,2]; range=0.5:0.05:2.5, startvalue=1.2)
+    ld_val_B   = Label(ld_slB_row[1,3], "1.20"; halign=:left, fontsize=10, color=:grey60, tellwidth=false)
+
+    # Reconfigure slider ranges + labels when device type changes
+    function _reconfigure_ld_sliders!(choice)
+        if choice == "Single Kite" || choice == "Stacked ×3"
+            ld_lbl_A.text[] = choice == "Single Kite" ? "Area (m²)" : "N kites"
+            ld_sl_A.range[] = choice == "Single Kite" ? (5.0:1.0:50.0) : (2.0:1.0:10.0)
+            ld_sl_A.value[] = choice == "Single Kite" ? 15.0 : 3.0
+            ld_lbl_B.text[] = "Lift CL"
+            ld_sl_B.range[] = 0.5:0.05:2.5
+            ld_sl_B.value[] = 1.2
+        elseif choice == "Rotary Lifter"
+            ld_lbl_A.text[] = "ω (rad/s)"
+            ld_sl_A.range[] = 10.0:5.0:80.0
+            ld_sl_A.value[] = 40.0
+            ld_lbl_B.text[] = "Radius (m)"
+            ld_sl_B.range[] = 0.5:0.1:3.0
+            ld_sl_B.value[] = 1.0
+        end
+    end
+
+    on(ld_sl_A.value) do v
+        choice = device_menu.selection[]
+        ld_val_A.text[] = (choice == "Stacked ×3")  ? string(round(Int, v)) :
+                          (choice == "Rotary Lifter") ? @sprintf("%.0f r/s", v) :
+                                                        @sprintf("%.0f m²",  v)
+    end
+    on(ld_sl_B.value) do v
+        choice = device_menu.selection[]
+        ld_val_B.text[] = (choice == "Rotary Lifter") ? @sprintf("%.1f m", v) :
+                                                         @sprintf("%.2f",   v)
+    end
+
+    # Rebuild lift_device_obs whenever type or either slider changes
+    function _update_lift_device!(choice)
+        a = ld_sl_A.value[]; b = ld_sl_B.value[]
+        lift_device_obs[] = if choice == "Single Kite"
+            SingleKiteParams(CL=b, CD=0.12, area=a,
+                             line_length=25.0, line_EA=1.5e5, m_kite=3.0)
+        elseif choice == "Stacked ×3"
+            StackedKitesParams(n_kites=round(Int,a), CL=b, CD=0.12,
+                               area_each=8.0, spacing=8.0,
+                               line_EA=1.5e5, m_kite_each=2.0)
+        elseif choice == "Rotary Lifter"
+            RotaryLifterParams(rotor_radius=b, hub_radius=0.05, n_blades=3,
+                               blade_chord=0.12, CL_blade=1.2, CD_blade=0.02,
+                               omega_fixed=a, line_length=25.0,
+                               line_EA=1.5e5, m_lifter=5.0)
+        else
+            nothing
+        end
+    end
+
+    on(device_menu.selection) do choice
+        _reconfigure_ld_sliders!(choice)
+        _update_lift_device!(choice)
+    end
+    on(ld_sl_A.value) do _; _update_lift_device!(device_menu.selection[]); end
+    on(ld_sl_B.value) do _; _update_lift_device!(device_menu.selection[]); end
+
+    # Wire up kite-drop precheck now that device_menu exists.
+    # If no lift device is selected when Kite Drop is clicked, auto-select Single Kite —
+    # without a lift device the hub has no upward support and the scenario is physically meaningless.
+    _kite_drop_precheck![] = () -> begin
+        if isnothing(lift_device_obs[])
+            device_menu.selection[] = "Single Kite"   # triggers _reconfigure_ld_sliders! + _update_lift_device!
+            scenario_msg_color[] = :steelblue
+            scenario_msg[]       = "ℹ  Auto-selected Single Kite lifter (required for kite drop)"
+        end
+    end
+
+    clbl(""; fontsize=4)   # visual spacer
+
+    # ── SECTION A: Run Parameters ─────────────────────────────────────────────
+    # These two sliders are snapshotted at the start of every scenario run via
+    # _modified_params().  Wind speed V_ref is set in the Scenarios panel (HUD).
+    clbl("── Run Parameters ──────────────────────"; fontsize=12, font=:bold)
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
     clbl("MPPT gain k_mppt"; fontsize=11)
     sl_kmppt = cslider!(1.0:1.0:50.0; start=clamp(p.k_mppt, 1.0, 50.0))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
-
-    # Kite CL — lifter kite lift coefficient (affects vertical equilibrium force)
-    clbl("Kite CL (lifter)"; fontsize=11)
-    sl_cl = cslider!(0.5:0.05:2.5; start=clamp(sys.kite.CL, 0.5, 2.5))
-    vl_cl = cval_lbl!(@sprintf("CL = %.2f", sys.kite.CL))
-    on(sl_cl.value) do v
-        vl_cl.text[]  = @sprintf("CL = %.2f", v)
-        kite_lbl.text[] = @sprintf("Kite  CL = %4.2f  CD = %4.2f  |  A = %.1f m²",
-                                    v, sl_cd.value[], sys.kite.area)
-    end
-
-    # Kite CD — lifter kite drag coefficient (downwind force, reduces effective lift)
-    clbl("Kite CD (lifter)"; fontsize=11)
-    sl_cd = cslider!(0.01:0.01:0.5; start=clamp(sys.kite.CD, 0.01, 0.5))
-    vl_cd = cval_lbl!(@sprintf("CD = %.2f", sys.kite.CD))
-    on(sl_cd.value) do v
-        vl_cd.text[]  = @sprintf("CD = %.2f", v)
-        kite_lbl.text[] = @sprintf("Kite  CL = %4.2f  CD = %4.2f  |  A = %.1f m²",
-                                    sl_cl.value[], v, sys.kite.area)
-    end
 
     # Elevation angle — shaft tilt; trades rotor power (cos³β) for vertical lift
     clbl("Elevation β (deg)"; fontsize=11)
@@ -847,7 +1051,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         if !unlock_toggle.active[]
             scenario_msg[] = "Toggle 'unlock re-run' first"; return
         end
-        _rerun!(:steady, "Re-run Steady", sl_vref.value[])
+        _rerun!(:steady, "Re-run Steady", scen_vref_slider.value[])
     end
     on(unlock_toggle.active) do v
         rerun_btn.label[]       = v ? "Re-run ODE [open]" : "Re-run ODE [locked]"

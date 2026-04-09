@@ -15,8 +15,12 @@ using LinearAlgebra
     compute_ring_forces!(forces, torques, u0, omega, sys, p, wind_fn, 0.0)
 
     hub_gid = sys.rotor.node_id
-    # Kite lift should push hub upward at rated wind
-    @test forces[hub_gid][3] > 0
+    # CT thrust is the only aerodynamic hub force (kite-style CL removed — see ring_forces.jl).
+    # At rated wind (11 m/s) the thrust magnitude is large; the hub node must have a
+    # non-zero finite force vector with a non-negative X component (downwind component
+    # of thrust along the tether axis).
+    @test forces[hub_gid][1] > 0      # downwind thrust component always positive
+    @test all(isfinite, forces[hub_gid])
 
     # No NaN anywhere
     hub_ring_idx = (sys.nodes[hub_gid]::RingNode).ring_idx

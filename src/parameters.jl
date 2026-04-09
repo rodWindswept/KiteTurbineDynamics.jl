@@ -64,16 +64,34 @@ struct SystemParams
                               # Derived from rated torque and speed: k = τ_rated / ω_rated²
                               # Eliminates the bistability of a fixed linear damper below rated wind.
 
-    # Power limiter — elevation-angle proportional controller
+    # Rated power
     p_rated_w  ::Float64   # Rated electrical power (W). Default: 10_000.0
-    β_min      ::Float64   # Minimum safe elevation angle (rad). Default: deg2rad(23.0)
-                           #   Floor: blade tips must clear the ground at lowest operating angle
-    β_max      ::Float64   # Maximum safe elevation angle (rad). Default: deg2rad(67.0)
-                           #   Ceiling: lifter kite pull limit (varies IRL with wind speed)
-    β_rate_max ::Float64   # Maximum elevation change rate (rad/s). Default: deg2rad(1.0)
-                           #   1 °/s — representative of lifter kite / mooring servo speed
-    kp_elev    ::Float64   # Proportional gain (rad/W/s). Default: 5e-5
-                           #   Gives ≈ 0.5 °/s elevation response per 1 kW overpower
+
+    # Reserved — no elevation controller implemented.
+    # The physical system has fixed-pitch, fixed-bank blades with no cyclic
+    # control.  Elevation is set by the back line geometry and the lift device,
+    # not by an active controller.  These fields are retained as placeholders
+    # for future development.
+    β_min      ::Float64   # RESERVED — minimum safe elevation angle (rad)
+    β_max      ::Float64   # RESERVED — maximum safe elevation angle (rad)
+    β_rate_max ::Float64   # RESERVED — maximum elevation change rate (rad/s)
+    kp_elev    ::Float64   # RESERVED — proportional gain placeholder
+
+    # Back line — elevation constraint tether
+    # Attaches to the lift kite tether ~10 cm above the hub bearing and runs
+    # down to a fixed ground anchor.  Acts only in tension (slack below design
+    # elevation, taut above it).
+    #
+    # The anchor is placed further downwind than the hub's x-projection so the
+    # line clears the TRPT rope footprint.  back_anchor_fwd_x is the additional
+    # downwind distance past the hub's design x-position (tether_length·cos β).
+    # The rest length is computed from the actual anchor-to-attachment geometry.
+    #
+    # With back_anchor_fwd_x = 0 the line is purely vertical (anchor directly
+    # below hub).  Increase to 5–10 m to clear the TRPT footprint in the field.
+    EA_back_line      ::Float64  # Axial stiffness (N). 3 mm Dyneema ≈ 700 kN
+    c_back_line       ::Float64  # Damping coefficient (N·s/m). Default: 500.0
+    back_anchor_fwd_x ::Float64  # Extra downwind offset of ground anchor (m). Default: 5.0
 end
 
 """
@@ -146,10 +164,16 @@ function params_10kw()::SystemParams
                          #   Quadratic load law eliminates the bistability of the old linear c_pto
                          #   and gives correct MPPT at all wind speeds, not just rated.
         10_000.0,        # p_rated_w (W) — 10 kW rated
-        deg2rad(23.0),   # β_min — blade-tip ground clearance floor
-        deg2rad(67.0),   # β_max — lifter kite ceiling
-        deg2rad(1.0),    # β_rate_max (rad/s) — 1 °/s actuation rate limit
-        5e-5,            # kp_elev (rad/W/s) — 0.5 °/s per 1 kW overpower
+        deg2rad(23.0),   # β_min    — RESERVED (no elevation controller)
+        deg2rad(67.0),   # β_max    — RESERVED
+        deg2rad(1.0),    # β_rate_max — RESERVED
+        5e-5,            # kp_elev  — RESERVED
+        # Back line — 3 mm Dyneema single line.
+        # EA = E × A = 100 GPa × π(0.003)²/4 ≈ 707 kN; use 700 kN as round value.
+        700_000.0,       # EA_back_line (N)
+        500.0,           # c_back_line (N·s/m)
+        5.0,             # back_anchor_fwd_x (m) — anchor 5 m downwind of hub x-projection,
+                         #   clearing the TRPT rope footprint at (tether_length·cos β ≈ 26 m)
     )
 end
 
@@ -202,10 +226,13 @@ function mass_scale(base::SystemParams,
         base.cp,                               # aerodynamic constant, unchanged
         base.i_pto             * mass_factor * geom_scale^2,  # I ∝ m·R²: P^1.35 × P = P^2.35
         base.k_mppt            * power_ratio^2.5,             # k = τ/ω², τ ∝ P^(3/2), ω² ∝ P^(-1) → k ∝ P^(5/2)
-        base.p_rated_w  * power_ratio,        # rated power scales linearly
-        base.β_min,                            # angle does not scale
-        base.β_max,                            # angle does not scale
-        base.β_rate_max,                       # rate does not scale
-        base.kp_elev    / power_ratio,         # larger turbine: same °/s per fractional overpower
+        base.p_rated_w   * power_ratio,        # rated power scales linearly
+        base.β_min,                            # RESERVED — angle does not scale
+        base.β_max,                            # RESERVED — angle does not scale
+        base.β_rate_max,                       # RESERVED — rate does not scale
+        base.kp_elev    / power_ratio,         # RESERVED
+        base.EA_back_line      * geom_scale,    # back line stiffness scales with cross-section
+        base.c_back_line       * geom_scale,    # damping scales with line length
+        base.back_anchor_fwd_x * geom_scale,    # forward offset scales with geometry
     )
 end

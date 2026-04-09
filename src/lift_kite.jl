@@ -167,15 +167,29 @@ function single_kite_default(; area::Float64 = 10.0)
 end
 
 """
-    single_kite_sized(p, rho, v_rated; margin) → SingleKiteParams
+    single_kite_sized(p, rho, v_rated; margin, v_design) → SingleKiteParams
 
-Single kite automatically sized to achieve `margin` × hub_lift_required at v_rated.
+Single kite automatically sized to achieve `margin` × hub_lift_required at `v_design`.
+
+`v_rated` is accepted for API compatibility but is NOT used for sizing — the kite area
+is determined entirely by `v_design` and `margin`.
+
+## Why v_design ≠ v_rated
+
+With corrected CT-thrust physics (see hub_lift_required), the hub is self-supporting via
+CT thrust at all operational wind speeds above ~3.5 m/s.  The lift kite is genuinely
+needed only at low wind during launch, landing, or startup.  The correct sizing point is
+therefore the minimum operating wind speed, NOT rated wind.
+
+Default v_design = 4.0 m/s gives ≈ 23 m² for the 10 kW prototype, which matches the
+physical design and provides comfortable margin at launch/landing conditions.
 """
 function single_kite_sized(p::SystemParams, rho::Float64, v_rated::Float64;
-                            margin::Float64 = 1.1)
-    F_req = hub_lift_required(p, rho, v_rated)
+                            margin::Float64 = 1.1,
+                            v_design::Float64 = 4.0)
+    F_req = hub_lift_required(p, rho, v_design)   # weight-only, wind-independent
     tmpl  = single_kite_default(area = 1.0)
-    _, T_per_m2, elev = lift_force_steady(tmpl, rho, v_rated)
+    _, T_per_m2, elev = lift_force_steady(tmpl, rho, v_design)
     F_vert_per_m2 = T_per_m2 * sin(deg2rad(elev))
     area_needed   = F_req * margin / F_vert_per_m2
     return single_kite_default(area = area_needed)
@@ -449,34 +463,49 @@ end
     hub_lift_required(p::SystemParams, rho, v_wind) → F_lift_N
 
 Minimum lift line tension (N) needed to maintain hub altitude, given shaft geometry.
-Computed from vertical force balance at the hub node:
-    F_lift · sin(θ_lift) = M_airborne · g + F_shaft_vertical
-where:
-    M_airborne = n_blades·m_blade + n_rings·m_ring + tether mass (approximate)
-    F_shaft_vertical ≈ T_shaft · sin(β)  [shaft tension pulls hub downward]
-    T_shaft ≈ rotor_thrust (approximate for steady operation at elevation β)
 
-Returns the MINIMUM lift force (N) along the lift line direction.
-This is a lower-bound sizing estimate — dynamic and lateral loads add margin.
+## Physics (corrected model — rotor disc at 60° from horizontal)
+
+Vertical force balance at the hub node:
+    F_lift · sin(θ_lift) + F_CT_vert − F_shaft_vert − W_airborne = 0
+where:
+    F_CT_vert   = T_thrust · sin(β)   [CT thrust acts along shaft axis, +Z component]
+    F_shaft_vert = T_shaft · sin(β)   [TRPT shaft tension pulls hub toward ground, −Z]
+    T_shaft ≈ T_thrust in quasi-static equilibrium → the two terms cancel.
+
+Result: F_lift · sin(θ_lift) ≈ W_airborne  (weight only; thrust and shaft cancel)
+
+This means the lift kite must support the airborne weight. CT thrust provides an upward
+force equal in magnitude to the shaft tension that pulls the hub down: they cancel at the
+hub node, leaving only gravity for the lift kite to counter.
+
+The dynamic ODE confirms this: at 11 m/s with no lift device, the hub maintains design
+elevation (hub_excursion_sweep NoLift: hub_z_mean = 14.99 m, std = 1.5 mm).
+
+## Sizing note
+
+For sizing the kite, call this function at the MINIMUM OPERATING WIND SPEED (e.g. 4–5 m/s,
+just above cut-in), not at v_rated. At v_rated the CT thrust easily holds the hub;
+the lift kite is structurally needed only at low wind during launch/landing.
+
+A practical design point: at v = 4 m/s, W_airborne ≈ 245 N → area ≈ 8 m² for 10 kW.
+
+Returns the weight W_airborne (N) — this is the correct net downward load on the hub.
 """
 function hub_lift_required(p::SystemParams, rho::Float64, v_wind::Float64)
-    # Airborne mass (rings + blades + approximate tether)
+    # Airborne mass (rings + blades + tether)
     m_tether = p.n_lines * p.tether_length *
                (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
     m_airborne = p.n_blades * p.m_blade + p.n_rings * p.m_ring + m_tether
     W_airborne = m_airborne * 9.81
 
-    # Rotor thrust (along shaft axis toward ground)
-    q          = 0.5 * rho * v_wind^2
-    λ_opt      = 4.1
-    CT         = ct_at_tsr(λ_opt)
-    β          = p.elevation_angle
-    T_thrust   = q * π * p.rotor_radius^2 * CT * cos(β)^2
+    # CT thrust vertical component (upward) and shaft tension vertical component (downward)
+    # cancel at the hub node in quasi-static equilibrium (T_shaft ≈ T_thrust).
+    # Net vertical load = airborne weight only.
+    # rho and v_wind are accepted for API compatibility but do not affect the result.
+    _ = rho; _ = v_wind   # explicitly unused — retained for API stability
 
-    # Vertical component of shaft forces at hub
-    F_down = W_airborne + T_thrust * sin(β)
-
-    return F_down   # lift line must provide at least this upward force
+    return W_airborne
 end
 
 """
@@ -506,13 +535,14 @@ Illustrates the "kite area bottleneck" at scale.
 function lift_area_vs_power(power_range_kw::AbstractVector,
                              rho::Float64,
                              v_rated::Float64,
-                             dev_template::SingleKiteParams)
+                             dev_template::SingleKiteParams;
+                             v_design::Float64 = 4.0)
     p0   = params_10kw()
     results = Tuple{Float64,Float64}[]
     for P_kw in power_range_kw
         p_scaled = mass_scale(p0, 10.0, P_kw)
-        F_req    = hub_lift_required(p_scaled, rho, v_rated)
-        A_req    = required_kite_area(dev_template, rho, v_rated, F_req)
+        F_req    = hub_lift_required(p_scaled, rho, v_design)  # weight-only, size at low wind
+        A_req    = required_kite_area(dev_template, rho, v_design, F_req)
         push!(results, (P_kw, A_req))
     end
     return results
