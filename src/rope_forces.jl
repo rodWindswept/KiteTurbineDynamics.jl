@@ -18,8 +18,17 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
                                t           ::Float64)
 
     N  = sys.n_total
-    β  = p.elevation_angle
-    shaft_dir = [cos(β), 0.0, sin(β)]
+    # Dynamic shaft direction: computed from actual hub position so that hub
+    # elevation angle β is a genuine DOF rather than a fixed parameter.
+    # When hub is at design position this is identical to [cos(β₀),0,sin(β₀)].
+    # When hub droops under low lift or wind, shaft_dir tilts accordingly and
+    # rope attachment geometry self-consistently adjusts — enabling collapse.
+    hub_gid   = sys.rotor.node_id
+    hub_pos_r = u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_rmag  = norm(hub_pos_r)
+    shaft_dir = hub_rmag > 0.1 ?
+                hub_pos_r ./ hub_rmag :
+                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
     perp1, perp2 = shaft_perp_basis(shaft_dir)
 
     # Helper: 3D position of a SubSegmentEnd

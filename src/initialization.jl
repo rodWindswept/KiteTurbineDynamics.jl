@@ -232,8 +232,12 @@ function set_orbital_velocities!(u::Vector{Float64},
                                   p  ::SystemParams)
     N  = sys.n_total
     Nr = sys.n_ring
-    β  = p.elevation_angle
-    sd = [cos(β), 0.0, sin(β)]
+    hub_gid  = sys.rotor.node_id
+    hub_posv = u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_rmv  = norm(hub_posv)
+    sd = hub_rmv > 0.1 ?
+         hub_posv ./ hub_rmv :
+         [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
     pp1, pp2 = shaft_perp_basis(sd)
 
     alpha = @view u[6N+1    : 6N+Nr]
@@ -281,15 +285,27 @@ function orbital_damp_rope_velocities!(u       ::Vector{Float64},
                                         lin_damp::Float64)
     N  = sys.n_total
     Nr = sys.n_ring
-    β  = p.elevation_angle
-    pp1, pp2 = shaft_perp_basis([cos(β), 0.0, sin(β)])
+    hub_gid  = sys.rotor.node_id
+    hub_posw = u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_rmw  = norm(hub_posw)
+    shaft_dw = hub_rmw > 0.1 ?
+               hub_posw ./ hub_rmw :
+               [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    pp1, pp2 = shaft_perp_basis(shaft_dw)
 
     alpha = @view u[6N+1    : 6N+Nr]
     omega = @view u[6N+Nr+1 : 6N+2Nr]
 
     # ── Ring nodes: kill translational velocity (centres must not drift) ───
+    # The hub ring is intentionally EXCLUDED here: with free-β dynamics, the
+    # hub must be free to translate under physical forces (gravity, rope tension,
+    # aero, back line, lift device).  Applying lin_damp to the hub velocity
+    # would artificially suppress collapse and tether droop.  Intermediate
+    # ring nodes are still killed to prevent their centres from drifting
+    # off the shaft axis (they are constrained by rope geometry).
     for node in sys.nodes
         node isa RingNode || continue
+        node.id == hub_gid && continue    # hub: free to translate physically
         bv = 3*sys.n_total + 3*(node.id - 1) + 1
         @views u[bv : bv+2] .*= lin_damp
     end

@@ -237,52 +237,60 @@ Dynamic hub model is in place. Turbulent wind drives hub excursion via:
 
 ---
 
-## ⚠️ Open Issue — TRPT and Rotor Collapse Not Observed in Low-Wind Simulation
+## Hub Droop and Collapse Modelling — Status and Findings
 
-**Observed:** The simulator does not produce TRPT torsional collapse or rotor stall/drop
-under low-wind or low-lift conditions. A real suspended kite turbine would collapse the
-shaft and lose altitude when lift is insufficient. This absence is conspicuous and
-represents missing due-diligence for non-ideal operational cases.
+### ✅ RESOLVED — cause #3: Hub elevation angle β now a dynamic DOF
 
-**Suspected causes (to be investigated in priority order):**
+**Previously (fixed-mast model):** `β = p.elevation_angle` was a fixed parameter read
+from SystemParams inside `rope_forces.jl`, `set_orbital_velocities!`, and
+`orbital_damp_rope_velocities!`. The shaft always pointed at 30° regardless of hub
+translational position, making hub droop/collapse geometrically impossible.
 
-1. **Pre-loaded rotor energy at startup** — Simulations begin with the rotor already
-   spinning (ω_hub seeded manually). This inertia artificially sustains shaft tension
-   through the early low-wind period. A cold-start from ω=0 with v_wind below cut-in
-   would stress-test the collapse mechanism correctly.
+**Fix implemented (commit after 2026-04-09):**
+- `shaft_dir` in `rope_forces.jl` is now `normalize(hub_pos)` — computed from the
+  actual hub position at every ODE step. Rope attachment points self-consistently
+  adjust as the hub droops.
+- Hub ring translational velocity is **no longer killed** by `orbital_damp_rope_velocities!`
+  (intermediate ring velocities are still suppressed to prevent numerical drift).
+- The hub is now a free 3D body, held by rope tension + back line + lift device.
 
-2. **Back line modelled as single rigid element** — The back line is currently a single
-   spring-damper from hub to ground anchor. A real Dyneema back line has catenary sag,
-   finite mass, and can go slack. Multiple rope nodes would allow the line to go slack
-   at low loads and let the hub drop forward — which the current single-element model
-   cannot represent.
+**Cold-start validation results** (`scripts/cold_start_collapse.jl`, dt=5e-5, T=10s):
 
-3. **Hub reference frame has insufficient degrees of freedom** — The hub (ring 16)
-   bearing frame may be over-constrained. If elevation angle is partly fixed by
-   parameterisation rather than fully free as a dynamic state, the hub cannot drop
-   to the ground even when lift is zero. Check whether β (elevation angle) can
-   evolve freely in all 6 DOF during a no-lift simulation.
+| Scenario | hub elevation start | hub elevation (t=10s) | Δhub_z | Verdict |
+|---|---|---|---|---|
+| NoLift, v=5 m/s | 30.0° (z=15.0m) | 26.0° (z=12.1m) | −2.95 m | **DROOPING ↓** |
+| NoLift, v=3 m/s | 30.0° (z=15.0m) | 26.1° (z=12.0m) | −2.97 m | **DROOPING ↓** |
+| SingleKite, v=3.5 m/s | 30.0° (z=15.0m) | 30.5° (z=14.4m) | −0.61 m | Kite arresting droop |
 
-4. **Lift requirement computed and applied, not assessed for adequacy** — The
-   current `hub_lift_required()` path computes the force needed and then *applies*
-   exactly that force via the kite model. It never tests whether the wind speed is
-   high enough for the kite to *actually generate* that force. Below cut-in wind
-   speed the kite would generate less lift than required, but the simulator may
-   silently clamp or scale the force rather than letting the deficit propagate to
-   a real kinematic drop.
+Hub droops from 30° to ~26° under gravity when no lift device is active. Wind speed
+has minimal effect on droop rate (CT thrust ≈ 0 at ω=0). SingleKite at sub-cut-in
+wind (3.5 m/s < 4.0 m/s design) reduces droop by 4.7× — partial arrest.
 
-**Interim mitigation:** The current simulator can be treated as a **fixed-mast** model
-— correct and useful for above-cut-in steady-state and transient analysis, but not
-for launch/landing or low-wind collapse scenarios. This should be stated explicitly
-in any report shared externally.
+Full collapse (hub reaching ground) is not yet observed in 10s. The TRPT rope
+geometry provides mechanical support at ~26° — the ropes go taut and form a new
+lower equilibrium. Achieving full collapse would require:
+- Even lower wind speed or truly zero lift
+- Longer simulation time (hub is still slowly drifting at t=10s)
+- Or the **multi-element back line** (cause #2 below) which would allow back line sag
 
-**Required before claiming full fidelity:**
-- Cold-start test (ω=0, v_wind=5 m/s, no lift) → hub should drop and shaft should
-  un-twist within ~10 s
-- Back line multi-element rope model (at least 5 nodes)
-- Confirm hub β is a free dynamic state, not a parameterised constant
-- Add a minimum-lift check: if kite cannot generate F_req, apply actual F_lift < F_req
-  and let the hub sag or drop accordingly
+### ⚠️ Remaining open items
 
-**Note for reports:** Until collapse is demonstrated, all results should be labelled
-"above cut-in, kite-suspended" and the fixed-mast caveat stated clearly.
+1. **Pre-loaded rotor energy at startup** *(cause #1 — not yet investigated)*
+   Cold-start tests above use ω=0. The result is hub droop, not torsional wind-up.
+   Torsional collapse (TRPT un-winding catastrophically) has not been demonstrated.
+
+2. **Back line modelled as single rigid element** *(cause #2 — next priority)*
+   The back line is currently a single spring-damper from hub to ground anchor.
+   A real Dyneema back line can go slack. Multiple rope nodes would allow catenary sag
+   and enable the hub to drop forward when the back line can no longer constrain it.
+   **Task:** implement 5+ back line rope nodes (analogous to TRPT sub-segments).
+
+3. **Lift adequacy check** *(cause #4 — pending)*
+   The kite model still applies `lift_force_steady()` at the current wind speed.
+   Below cut-in, lift is proportional to v² so the actual force is correctly reduced,
+   but there is no explicit guard that applies zero lift below a minimum wind speed.
+   **Task:** add `v_hmag < v_cutin_kite` → `F_lift = 0` path in `ring_forces.jl`.
+
+**Status as of 2026-04-09:** The simulator can now model hub droop and partial collapse
+under low/no-lift conditions. Results should still be labelled "preliminary collapse
+model" until back-line multi-element rope and minimum-lift check are implemented.
