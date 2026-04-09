@@ -559,6 +559,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         SystemParams(vals...)
     end
 
+    # Simulation duration observable — read by _rerun! and by the duration menu widget
+    sim_dur_obs = Observable(10.0)   # seconds; default 10 s
+
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
             (pos, t) -> begin
@@ -611,13 +614,15 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             return
         end
         scenario_msg_color[] = :orange
-        scenario_msg[]       = "⟳  Running $label …  (10 s simulation)"
+        t_run  = sim_dur_obs[]
+        n_run  = round(Int, t_run / 4e-5)
+        scenario_msg[]       = "⟳  Running $label …  ($(round(Int,t_run)) s simulation)"
         hub_z0_ref[]         = NaN   # reset hub-altitude reference for this run
 
         # ── Build scenario inputs (errors surfaced via status label) ──────────
         local wf, p_run, u_s, ode_p
         try
-            n_steps_local = 250_000; dt_local = 4e-5
+            n_steps_local = n_run; dt_local = 4e-5
             t_total       = n_steps_local * dt_local
             wf    = _make_wind(Float64(vref), scenario, t_total)
             wind_fn_obs[] = wf
@@ -634,7 +639,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             return
         end
 
-        n_steps = 250_000; dt = 4e-5
+        n_steps = n_run; dt = 4e-5
         @async try
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ 500)
             new_times  = Vector{Float64}(undef,  n_steps ÷ 500)
@@ -668,14 +673,23 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     scen_rows = GridLayout(hud[hnr!(), 1])
-    # Wind speed slider for scenarios (inline, compact)
+    # Wind speed slider for scenarios (inline, compact) — 0.1 m/s minimum for hub-droop demos
     Label(scen_rows[1, 1], "V_ref:"; halign=:left, fontsize=10, color=:grey70)
-    scen_vref_slider = Slider(scen_rows[1, 2:4]; range=5.0:0.5:20.0,
-                               startvalue=p.v_wind_ref)
+    scen_vref_slider = Slider(scen_rows[1, 2:4]; range=0.1:0.1:20.0,
+                               startvalue=clamp(p.v_wind_ref, 0.1, 20.0))
     scen_vref_lbl = Label(scen_rows[1, 5], @sprintf("%.1f m/s", p.v_wind_ref);
                            halign=:left, fontsize=10, color=:grey70, tellwidth=false)
     on(scen_vref_slider.value) do v
         scen_vref_lbl.text[] = @sprintf("%.1f m/s", v)
+    end
+
+    # Simulation duration selector (10 / 20 / 30 s)
+    Label(scen_rows[2, 1], "Duration:"; halign=:left, fontsize=10, color=:grey70)
+    dur_menu = Menu(scen_rows[2, 2:5];
+                    options=["10 s", "20 s", "30 s"],
+                    default="10 s", width=90)
+    on(dur_menu.selection) do sel
+        sim_dur_obs[] = parse(Float64, split(sel)[1])
     end
 
     bc          = scen_color(:_)   # neutral: grey30 (enabled) or grey20 (disabled)
