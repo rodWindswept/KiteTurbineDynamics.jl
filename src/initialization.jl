@@ -296,18 +296,26 @@ function orbital_damp_rope_velocities!(u       ::Vector{Float64},
     alpha = @view u[6N+1    : 6N+Nr]
     omega = @view u[6N+Nr+1 : 6N+2Nr]
 
-    # ── Ring nodes: kill translational velocity (centres must not drift) ───
-    # The hub ring is intentionally EXCLUDED here: with free-β dynamics, the
-    # hub must be free to translate under physical forces (gravity, rope tension,
-    # aero, back line, lift device).  Applying lin_damp to the hub velocity
-    # would artificially suppress collapse and tether droop.  Intermediate
-    # ring nodes are still killed to prevent their centres from drifting
-    # off the shaft axis (they are constrained by rope geometry).
+    # ── Ring nodes: damp only transverse velocity; preserve axial (shaft) motion ─
+    # The hub ring translates freely in all directions (free-β dynamics).
+    # Intermediate rings must be able to slide ALONG the shaft axis so they
+    # cascade downward with the hub during droop — killing all 3 components
+    # (the old behaviour) blocked this.  We keep damping of the TRANSVERSE
+    # component (perpendicular to shaft_dw) to suppress off-axis drift.
+    # The ground ring is zeroed explicitly after the loop; skip it here.
+    grd_gid = sys.ring_ids[1]
     for node in sys.nodes
         node isa RingNode || continue
-        node.id == hub_gid && continue    # hub: free to translate physically
-        bv = 3*sys.n_total + 3*(node.id - 1) + 1
-        @views u[bv : bv+2] .*= lin_damp
+        node.id == hub_gid && continue    # hub: fully free
+        node.id == grd_gid && continue    # ground ring: zeroed explicitly below
+        bv  = 3*sys.n_total + 3*(node.id - 1) + 1
+        vx  = u[bv]; vy = u[bv+1]; vz = u[bv+2]
+        # Axial projection (magnitude along shaft direction)
+        v_s = vx*shaft_dw[1] + vy*shaft_dw[2] + vz*shaft_dw[3]
+        # Preserve axial component; damp transverse component
+        u[bv]   = v_s*shaft_dw[1] + lin_damp*(vx - v_s*shaft_dw[1])
+        u[bv+1] = v_s*shaft_dw[2] + lin_damp*(vy - v_s*shaft_dw[2])
+        u[bv+2] = v_s*shaft_dw[3] + lin_damp*(vz - v_s*shaft_dw[3])
     end
 
     # ── Rope nodes: damp only oscillatory component ─────────────────────────
