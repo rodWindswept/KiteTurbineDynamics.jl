@@ -562,6 +562,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Simulation duration observable — read by _rerun! and by the duration menu widget
     sim_dur_obs = Observable(10.0)   # seconds; default 10 s
 
+    # Timestep observable — reduce if the sim blows up (non-finite values / rings flying off)
+    dt_obs = Observable(4e-5)        # seconds; 4e-5 is stable for settled starts
+
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
             (pos, t) -> begin
@@ -615,14 +618,15 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         end
         scenario_msg_color[] = :orange
         t_run  = sim_dur_obs[]
-        n_run  = round(Int, t_run / 4e-5)
-        scenario_msg[]       = "⟳  Running $label …  ($(round(Int,t_run)) s simulation)"
+        dt_run = dt_obs[]
+        n_run  = round(Int, t_run / dt_run)
+        scenario_msg[]       = "⟳  Running $label …  ($(round(Int,t_run)) s, dt=$(dt_run))"
         hub_z0_ref[]         = NaN   # reset hub-altitude reference for this run
 
         # ── Build scenario inputs (errors surfaced via status label) ──────────
         local wf, p_run, u_s, ode_p
         try
-            n_steps_local = n_run; dt_local = 4e-5
+            n_steps_local = n_run; dt_local = dt_run
             t_total       = n_steps_local * dt_local
             wf    = _make_wind(Float64(vref), scenario, t_total)
             wind_fn_obs[] = wf
@@ -639,7 +643,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             return
         end
 
-        n_steps = n_run; dt = 4e-5
+        n_steps = n_run; dt = dt_run
         @async try
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ 500)
             new_times  = Vector{Float64}(undef,  n_steps ÷ 500)
@@ -691,6 +695,23 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     on(dur_menu.selection) do sel
         sim_dur_obs[] = parse(Float64, split(sel)[1])
     end
+
+    # Timestep slider — reduce if sim produces non-finite values or rings fly off
+    Label(scen_rows[3, 1], "dt:"; halign=:left, fontsize=10, color=:grey70)
+    dt_slider = Slider(scen_rows[3, 2:4];
+                       range=[4e-5, 3e-5, 2e-5, 1e-5],
+                       startvalue=4e-5)
+    dt_val_lbl = Label(scen_rows[3, 5], "4×10⁻⁵ s";
+                       halign=:left, fontsize=10, color=:grey70, tellwidth=false)
+    on(dt_slider.value) do v
+        dt_obs[] = v
+        dt_val_lbl.text[] = @sprintf("%.0e s", v)
+    end
+    # Note: reduce dt if rings go unstable (blow up / fly off) — more free ring
+    # DOFs means more high-frequency modes; halving dt ~4× slower but stays stable
+    Label(scen_rows[4, 1:5],
+          "↑ reduce if rings blow up  (halving dt ≈ 4× slower)";
+          halign=:left, fontsize=9, color=:grey50, tellwidth=false)
 
     bc          = scen_color(:_)   # neutral: grey30 (enabled) or grey20 (disabled)
     bc_active   = can_rerun ? :steelblue : :grey20   # highlight for the selected scenario
