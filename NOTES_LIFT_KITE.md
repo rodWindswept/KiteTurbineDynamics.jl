@@ -19,10 +19,11 @@ dynamic hub force model to `KiteTurbineDynamics.jl`.
 - Lift ∝ v². Tension CV ≈ 30% at I=0.15 turbulence intensity.
 - **Scaling bottleneck**: required area grows super-linearly with rated power
   (mass exponent 1.35 drives F_required up faster than v² drives lift up).
-  - 10 kW: ~19–21 m²
+  - 10 kW: **27.5 m²** (sized for v=4 m/s launch condition, not rated wind)
   - 50 kW: ~109 m²
   - 500 kW: ~1462 m² (about 40m × 37m parafoil — not practical)
-- Lift margin < 1.0 below v ≈ 9 m/s (kite needs to be oversized for rated wind).
+- CT thrust self-supports hub above v ≈ 3.5 m/s; kite provides security margin and
+  lateral stability. Sized at v_design=4.0 m/s (minimum launch wind), not v_rated.
 
 ### B. Stacked Kites on a Single Line
 - N smaller kites cascaded on one lift line; total area = single kite equivalent.
@@ -55,10 +56,12 @@ dynamic hub force model to `KiteTurbineDynamics.jl`.
 - **Tension CV at v=8 m/s**: 2.0% vs 30.2% → **15× better**.
 - CV reduction ratio ≈ v_wind / v_app = 1 / √(1 + (ω·r/v)²).
   At low wind, ratio improves further (ω·r/v increases).
-- **Current limitation in model**: rotary lifter at default parameters provides
-  only 28% of required hub lift at v=11 m/s (399 N vs 1441 N needed).
-  The blade area / CL need to be scaled up, or ω reduced, to match requirement.
-  This is a sizing exercise, not a physical impossibility.
+- **Status (corrected physics)**: rotary lifter at default parameters provides
+  **163% of required hub lift** at v=11 m/s (399 N vs 245 N needed — 1.6× margin).
+  After removing phantom kite CL lift from the ODE, F_required = airborne weight
+  only (245 N); CT thrust and shaft tension cancel at the hub in quasi-static
+  equilibrium. The rotary lifter is no longer undersized — it exceeds the requirement
+  across the operational wind range.
 - **Practical advantages**:
   - Consistent hub tension → more stable TRPT elevation angle → steadier power.
   - Gyroscopic stiffness resists lateral hub swinging.
@@ -76,21 +79,26 @@ dynamic hub force model to `KiteTurbineDynamics.jl`.
 
 ## Key Numbers — 10 kW TRPT at v=11 m/s, I=0.15 turbulence
 
+**Corrected physics:** F_req = 245 N (airborne weight only; CT thrust and shaft
+tension cancel at hub). Kite sized at v_design=4.0 m/s launch condition.
+
 | Metric | Single Kite | Stack×3 | Stack×5 | Rotary Lifter |
 |--------|------------|---------|---------|---------------|
-| Required area | 21.4 m² | 21.4 m² total | 21.4 m² total | ~12 m² blade area (TBD) |
-| Individual unit size | 21.4 m² | 7.1 m² each | 4.3 m² each | 1.5m radius rotor |
-| T_line at v=11 (N) | 1603 | 1599 | 1599 | 399 (undersized) |
-| Lift margin | 1.10 | 1.10 | 1.10 | 0.28 (needs sizing) |
+| Required lift force | 245 N | 245 N | 245 N | 245 N |
+| Required area (v=4 m/s) | **27.5 m²** | 27.5 m² total | 27.5 m² total | ~12 m² blade area (TBD) |
+| Individual unit size | 27.5 m² | 9.2 m² each | 5.5 m² each | 1.5m radius rotor |
+| T_line at v=11 m/s (N) | ~248 | ~248 | ~248 | 399 |
+| Lift margin at v=11 m/s | **8.3×** | 8.3× | 8.3× | **1.6×** |
+| Lift margin at v=4 m/s | 1.10× | 1.10× | 1.10× | ~0.4× (below launch threshold) |
 | Tension CV | 30.1% | 30.2% | 30.2% | 3.6% |
 | CV reduction vs single | — | 1.00× | 1.00× | **0.12× (8× better)** |
-| Top kite static load | — | 16 N | 19 N | n/a |
+| Top kite static load | — | ~20 N | ~20 N | n/a |
 
-### Scaling bottleneck (single kite)
+### Scaling bottleneck (single kite, v=4 m/s launch condition)
 
 | Power | Area needed | Area/kW |
 |-------|-------------|---------|
-| 10 kW | 19 m² | 1.9 m²/kW |
+| 10 kW | 27.5 m² | 2.75 m²/kW |
 | 50 kW | 109 m² | 2.2 m²/kW |
 | 100 kW | 234 m² | 2.3 m²/kW |
 | 200 kW | 510 m² | 2.6 m²/kW |
@@ -143,7 +151,21 @@ u_final = simulate(sys, u0, p, wind_fn; lift_device=dev, n_steps=...)
 
 ### Phase 2 Dynamic Hub Excursion Results
 
-First dynamic comparison at v=11 m/s, I=0.15 turbulence, 3s simulation:
+**Long-run results** (84 min simulation, 12 device × wind-speed cases, IEC Class A turbulence I=0.15):
+
+| Device | v=8 m/s hub_z std | v=11 m/s hub_z std | v=11 / SingleKite |
+|--------|-------------------|--------------------|--------------------|
+| SingleKite | 39 mm | 26 mm | 1.00× (reference) |
+| Stack×3 | ~39 mm | ~26 mm | ~1.00× |
+| RotaryLifter | TBD | TBD | expected ~0.12× |
+| NoLift | 72 mm | 36 mm | 1.38× worse |
+
+The NoLift baseline (no lift device, hub supported only by CT thrust) shows
+36–72 mm hub_z std — confirming CT thrust alone holds the hub but with
+significantly more sway than an actively supported kite. The single kite
+reduces hub excursion substantially by providing a tensioned catenary backstay.
+
+**Short-run results** (3s simulation, earlier run for reference):
 
 | Device       | hub_z std (mm) | hub_z / SingleKite |
 |-------------|---------------|--------------------|
@@ -152,17 +174,13 @@ First dynamic comparison at v=11 m/s, I=0.15 turbulence, 3s simulation:
 | RotaryLifter| 0.9           | **0.26× (3.9× better)** |
 | NoLift      | 0.3           | baseline noise      |
 
-The RotaryLifter produces ~4× less hub vertical excursion than the single kite
-under the same turbulent wind. The predicted improvement from CV analysis was 8×;
-the discrepancy is expected because the 3s simulation is much shorter than the
-turbulence integral time scale (~31s for IEC Class A at 30m hub altitude), so
-the low-frequency turbulence content is undersampled. Longer runs (≥60s) would
-close this gap.
+The 8× CV improvement predicted analytically for the RotaryLifter is only partially
+captured in short runs (3s << 31s turbulence integral time scale). Long-run
+RotaryLifter results are pending a dedicated sizing run.
 
-**Stack×3 shows the same excursion as SingleKite**: this confirms the analytical
-prediction — stacked kites have the same total area and the same tension CV as a
-single kite. The handling advantage (smaller individual kites) comes without any
-improvement in hub stability.
+**Stack×3 shows identical excursion to SingleKite** in both short and long runs —
+confirming the analytical prediction: same total area, same CV, same hub motion.
+The handling benefit (smaller units) comes at zero stability cost.
 
 ### Turbulence model for lift line
 
@@ -216,3 +234,55 @@ Dynamic hub model is in place. Turbulent wind drives hub excursion via:
 - RAWE tensegrity dynamics: WES 9:1273–1291 (2024), DOI:10.5194/wes-9-1273-2024
 - Stacked multi-kite systems: Leuthold et al., ResearchGate 2019
 - Kite networks: Haas et al., Springer 2018
+
+---
+
+## ⚠️ Open Issue — TRPT and Rotor Collapse Not Observed in Low-Wind Simulation
+
+**Observed:** The simulator does not produce TRPT torsional collapse or rotor stall/drop
+under low-wind or low-lift conditions. A real suspended kite turbine would collapse the
+shaft and lose altitude when lift is insufficient. This absence is conspicuous and
+represents missing due-diligence for non-ideal operational cases.
+
+**Suspected causes (to be investigated in priority order):**
+
+1. **Pre-loaded rotor energy at startup** — Simulations begin with the rotor already
+   spinning (ω_hub seeded manually). This inertia artificially sustains shaft tension
+   through the early low-wind period. A cold-start from ω=0 with v_wind below cut-in
+   would stress-test the collapse mechanism correctly.
+
+2. **Back line modelled as single rigid element** — The back line is currently a single
+   spring-damper from hub to ground anchor. A real Dyneema back line has catenary sag,
+   finite mass, and can go slack. Multiple rope nodes would allow the line to go slack
+   at low loads and let the hub drop forward — which the current single-element model
+   cannot represent.
+
+3. **Hub reference frame has insufficient degrees of freedom** — The hub (ring 16)
+   bearing frame may be over-constrained. If elevation angle is partly fixed by
+   parameterisation rather than fully free as a dynamic state, the hub cannot drop
+   to the ground even when lift is zero. Check whether β (elevation angle) can
+   evolve freely in all 6 DOF during a no-lift simulation.
+
+4. **Lift requirement computed and applied, not assessed for adequacy** — The
+   current `hub_lift_required()` path computes the force needed and then *applies*
+   exactly that force via the kite model. It never tests whether the wind speed is
+   high enough for the kite to *actually generate* that force. Below cut-in wind
+   speed the kite would generate less lift than required, but the simulator may
+   silently clamp or scale the force rather than letting the deficit propagate to
+   a real kinematic drop.
+
+**Interim mitigation:** The current simulator can be treated as a **fixed-mast** model
+— correct and useful for above-cut-in steady-state and transient analysis, but not
+for launch/landing or low-wind collapse scenarios. This should be stated explicitly
+in any report shared externally.
+
+**Required before claiming full fidelity:**
+- Cold-start test (ω=0, v_wind=5 m/s, no lift) → hub should drop and shaft should
+  un-twist within ~10 s
+- Back line multi-element rope model (at least 5 nodes)
+- Confirm hub β is a free dynamic state, not a parameterised constant
+- Add a minimum-lift check: if kite cannot generate F_req, apply actual F_lift < F_req
+  and let the hub sag or drop accordingly
+
+**Note for reports:** Until collapse is demonstrated, all results should be labelled
+"above cut-in, kite-suspended" and the fixed-mast caveat stated clearly.
