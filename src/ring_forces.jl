@@ -132,8 +132,17 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         else
             into_wind = [-1.0, 0.0, 0.0]
         end
-        # Scalar tension and elevation from the lift device model
+        # Scalar tension and elevation from the lift device model.
+        # Passive kites (single, stacked) require minimum wind to maintain stable flight;
+        # below ~2 m/s the kite crumples and generates no meaningful lift.  The rotary
+        # lifter is excepted: its rotation provides apparent wind regardless of v_wind.
+        # This guard prevents applying phantom lift during dead-calm cold-start conditions.
+        PASSIVE_KITE_STALL_SPEED = 2.0   # m/s — minimum flight wind for a passive kite
+        is_passive = !(lift_device isa RotaryLifterParams)
         _, T_lift, elev_lift = lift_force_steady(lift_device, p.rho, v_hmag)
+        if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
+            T_lift = 0.0      # kite cannot fly; no lift applied
+        end
         θ_lift = deg2rad(elev_lift)
         # 3D force: horizontal component into wind + vertical component upward
         forces[hub_gid] .+= T_lift .* (cos(θ_lift) .* into_wind .+
