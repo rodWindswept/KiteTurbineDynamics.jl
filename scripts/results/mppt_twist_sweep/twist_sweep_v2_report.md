@@ -22,3 +22,9 @@ Corrected CT-thrust physics | Back line active | Kite sized for 4 m/s launch
 | 1.5× | 3.27 | 6.17 | 8.09 | 12.97 |
 | 2.5× | 2.50 | 4.66 | 6.07 | 9.61 |
 | 4× | 0.78 | 1.36 | 1.72 | 2.62 |
+
+## Wind ramp (7→14 m/s over 150 s)
+
+- P at 14 m/s: 2.24 kW
+- Twist at 14 m/s: 197.8°
+- Ramp rows: 300
