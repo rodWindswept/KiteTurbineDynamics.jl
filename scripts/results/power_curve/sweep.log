@@ -1,0 +1,47 @@
+Building base system (params_10kw)…
+  N=241 nodes, Nr=16 rings, hub_gid=241
+Settling to equilibrium…
+  Done. Hub z = 15.0 m
+
+[ 1/12]  v_wind = 4.0 m/s … P=0.00 kW  ω=0.07 rad/s  λ=0.09  Cp_eff=0.000  hub_z=12.5 m  (229 s wall)
+
+[ 2/12]  v_wind = 5.0 m/s … P=0.00 kW  ω=0.12 rad/s  λ=0.13  Cp_eff=0.000  hub_z=12.5 m  (223 s wall)
+
+[ 3/12]  v_wind = 6.0 m/s … P=0.00 kW  ω=0.22 rad/s  λ=0.19  Cp_eff=0.000  hub_z=12.6 m  (207 s wall)
+
+[ 4/12]  v_wind = 7.0 m/s … P=0.00 kW  ω=0.45 rad/s  λ=0.33  Cp_eff=0.000  hub_z=12.6 m  (182 s wall)
+
+[ 5/12]  v_wind = 8.0 m/s … P=0.00 kW  ω=0.75 rad/s  λ=0.48  Cp_eff=0.000  hub_z=12.8 m  (179 s wall)
+
+[ 6/12]  v_wind = 9.0 m/s … P=0.02 kW  ω=1.22 rad/s  λ=0.69  Cp_eff=0.001  hub_z=13.2 m  (182 s wall)
+
+[ 7/12]  v_wind = 10.0 m/s … P=0.08 kW  ω=1.89 rad/s  λ=0.96  Cp_eff=0.002  hub_z=13.6 m  (179 s wall)
+
+[ 8/12]  v_wind = 11.0 m/s … P=0.28 kW  ω=2.80 rad/s  λ=1.29  Cp_eff=0.005  hub_z=14.0 m  (179 s wall)
+
+[ 9/12]  v_wind = 12.0 m/s … P=1.23 kW  ω=4.43 rad/s  λ=1.86  Cp_eff=0.015  hub_z=14.2 m  (179 s wall)
+
+[10/12]  v_wind = 13.0 m/s … P=9.51 kW  ω=9.38 rad/s  λ=3.63  Cp_eff=0.091  hub_z=14.5 m  (179 s wall)
+
+[11/12]  v_wind = 14.0 m/s … P=17.54 kW  ω=12.00 rad/s  λ=4.31  Cp_eff=0.135  hub_z=14.5 m  (180 s wall)
+
+[12/12]  v_wind = 15.0 m/s … P=26.13 kW  ω=13.76 rad/s  λ=4.61  Cp_eff=0.163  hub_z=14.5 m  (180 s wall)
+
+Saved to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/power_curve
+Power curve summary:
+12×5 DataFrame
+ Row │ v_wind   P_kw_mean     tsr        cp_eff       hub_elev_deg
+     │ Float64  Float64       Float64    Float64      Float64
+─────┼─────────────────────────────────────────────────────────────
+   1 │     4.0   0.00133706   0.0921409  0.000469065       26.5135
+   2 │     5.0   0.00112283   0.126047   0.000201631       26.4598
+   3 │     6.0   0.000944879  0.185428   9.81272e-5        26.3685
+   4 │     7.0   0.00158001   0.329807   0.000103058       26.2461
+   5 │     8.0   0.00468171   0.478831   0.000203255       26.383
+   6 │     9.0   0.019758     0.688775   0.000594883       26.7282
+   7 │    10.0   0.0763868    0.958557   0.00165388        27.4214
+   8 │    11.0   0.281471     1.2874     0.00453329        28.0303
+   9 │    12.0   1.23346      1.85894    0.0151833         28.5992
+  10 │    13.0   9.51325      3.62513    0.0912709         29.515
+  11 │    14.0  17.5389       4.30649    0.134686          29.6773
+  12 │    15.0  26.1303       4.60874    0.16345           29.6824
