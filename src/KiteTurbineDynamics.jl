@@ -35,4 +35,5 @@ export lift_force_steady, stack_tension_profile, topmost_kite_static_load
 export tension_sensitivity, tension_cv, tension_cv_reduction
 export required_kite_area, hub_lift_required, lift_margin, lift_area_vs_power
 
+include("simulation.jl")
 end

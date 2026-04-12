@@ -32,7 +32,7 @@ T_SIM    = 10.0    # hub falls ~1.2 m/s at cold start; 10s shows full collapse
 # and effective damping is identical to the settle function, but the net
 # rope force imbalance on the hub (≈1100 N) is still present and becomes
 # numerically amplified at dt > 5e-5.
-DT       = 5e-5
+DT       = 2e-5
 CHUNK    = 200           # steps per simulate call → 0.01 s wall resolution
 N_CHUNKS = round(Int, T_SIM / (DT * CHUNK))
 

@@ -1,21 +1,13 @@
-"""
-Power Curve Sweep — Nominal MPPT across full operating range
-============================================================
-Sweeps v_wind = 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 m/s at nominal
-k_mppt (k×1.0) to produce a complete power curve including cut-in behaviour.
+#!/usr/bin/env julia
+# scripts/power_curve_sweep.jl
+#
+# Generates a steady-state power curve for the 10 kW TRPT system.
+# Sweeps wind speed from 4 to 15 m/s and records mechanical power,
+# TSR, hub elevation, and shaft twist.
+#
+# Usage: julia --project=. scripts/power_curve_sweep.jl
 
-Uses dt = 2e-5 s (half of previous sweeps) to stay well within the explicit
-Euler stability limit after ring translational damping was removed.
-
-Outputs (scripts/results/power_curve/):
-  power_curve.csv    — settled-window statistics per wind speed
-  power_curve_ts.csv — full time series for selected wind speeds
-
-Usage:
-  julia --project=. scripts/power_curve_sweep.jl
-  # ~30 min wall time (12 cases × 2.5 min each at dt=2e-5, T=10s)
-"""
-
+using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, LinearAlgebra, Printf, CSV, DataFrames
 import Statistics: mean, std
 
@@ -27,21 +19,18 @@ T_SIM        = 10.0     # s — recorded window (settled stats from last 5 s)
 T_SETTLE_WIN = 5.0      # s — window for settled statistics
 T_CHUNK      = 0.5      # s — recording interval
 
-N_SPINUP  = round(Int, T_SPINUP  / DT)
 N_CHUNK   = round(Int, T_CHUNK   / DT)
-N_CHUNKS  = round(Int, T_SIM     / T_CHUNK)
-N_SETTLE  = round(Int, T_SETTLE_WIN / T_CHUNK)
 
 OUT_DIR = joinpath(@__DIR__, "results", "power_curve")
 mkpath(OUT_DIR)
 
-# ── Tension helpers ────────────────────────────────────────────────────────────
+# ── Helpers: tether tension (not exported from package) ────────────────────────
 function _mid_tension(u, sys, p, s, j)
-    idx = (s-1)*p.n_lines*4 + (j-1)*4 + 2
+    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + 2
     idx > length(sys.sub_segs) && return 0.0
-    ss = sys.sub_segs[idx]
-    pa = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-    pb = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+    ss  = sys.sub_segs[idx]
+    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
     max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
 end
 function _T_max(u, sys, p)
@@ -134,12 +123,11 @@ for (idx, v_wind) in enumerate(V_WIND_CASES)
         z = max(pos[3], 1.0)
         [p.v_wind_ref * (z / p.h_ref)^(1/7), 0.0, 0.0]
     end
-    ode_p = (sys, p, wf)
 
-    u  = copy(u_settled)
-    set_orbital_velocities!(u, sys, p)
-    du = zeros(Float64, length(u))
-    t  = 0.0
+    u = copy(u_settled)
+    # Warm start at expected equilibrium for this wind
+    ω_warm = 9.5 * (v_wind / 11.0)
+    u = settle_to_operational_state(sys, u, p, ω_warm)
 
     chunk_P    = Float64[]
     chunk_ω_h  = Float64[]
@@ -150,63 +138,44 @@ for (idx, v_wind) in enumerate(V_WIND_CASES)
     chunk_hz   = Float64[]
 
     save_ts    = v_wind in TS_V_SHOW
+    n_steps_sim = round(Int, T_SIM / DT)
+    n_steps_settle_win = round(Int, (T_SIM - T_SETTLE_WIN) / DT)
 
-    # Spin-up (not recorded)
-    for _ in 1:N_SPINUP
-        fill!(du, 0.0)
-        multibody_ode!(du, u, ode_p, t)
-        t += DT
-        @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
-        @views u[1:3N]            .+= DT .* u[3N+1:6N]
-        @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
-        @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
-        orbital_damp_rope_velocities!(u, sys, p, 0.05)
-        u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
-        !isfinite(u[1]) && (@printf("UNSTABLE at spinup step\n"); break)
-    end
+    run_canonical_sim!(u, sys, p, wf, n_steps_sim, DT;
+        lin_damp = 0.05,
+        callback = (u_curr, t_curr, step) -> begin
+            if step % N_CHUNK == 0
+                ω_h = u_curr[6N + Nr + hub_ring_idx]
+                ω_g = u_curr[6N + Nr + 1]
+                pk  = p.k_mppt * ω_g^2 * abs(ω_g) / 1000.0
+                tw  = _twist_deg(u_curr, N, Nr)
+                Tm  = _T_max(u_curr, sys, p)
+                Tmn = _T_mean(u_curr, sys, p)
+                hz  = u_curr[3*(hub_gid-1)+3]
 
-    # Recorded window
-    for ci in 1:N_CHUNKS
-        P_acc = 0.0; ω_h_acc = 0.0; ω_g_acc = 0.0
-        tw_acc = 0.0; Tm_acc = 0.0; Tmn_acc = 0.0; hz_acc = 0.0
-        for _ in 1:N_CHUNK
-            fill!(du, 0.0)
-            multibody_ode!(du, u, ode_p, t)
-            t += DT
-            ω_h = u[6N + Nr + hub_ring_idx]   # hub angular velocity (ring Nr)
-            ω_g = u[6N + Nr + 1]               # ground ring angular velocity (ring 1)
-            P_acc   += p.k_mppt * ω_g^2 * abs(ω_g)
-            ω_h_acc += ω_h; ω_g_acc += ω_g
-            @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
-            @views u[1:3N]            .+= DT .* u[3N+1:6N]
-            @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
-            @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
-            orbital_damp_rope_velocities!(u, sys, p, 0.05)
-            u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
-            !isfinite(u[1]) && break
+                if save_ts
+                    push!(pc_ts, (v_wind, t_curr, pk, ω_h, ω_g, tw, hz))
+                end
+                
+                # Use only stats from the final settlement window for the summary
+                if step > n_steps_settle_win
+                    push!(chunk_P,   pk)
+                    push!(chunk_ω_h, ω_h)
+                    push!(chunk_ω_g, ω_g)
+                    push!(chunk_tw,  tw)
+                    push!(chunk_Tm,  Tm)
+                    push!(chunk_Tmn, Tmn)
+                    push!(chunk_hz,  hz)
+                end
+            end
         end
-        sc  = 1.0 / N_CHUNK
-        hub = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        push!(chunk_P,   P_acc*sc/1000)
-        push!(chunk_ω_h, ω_h_acc*sc)
-        push!(chunk_ω_g, ω_g_acc*sc)
-        push!(chunk_tw,  _twist_deg(u, N, Nr))
-        push!(chunk_Tm,  _T_max(u, sys, p))
-        push!(chunk_Tmn, _T_mean(u, sys, p))
-        push!(chunk_hz,  hub[3])
+    )
 
-        if save_ts
-            push!(pc_ts, (v_wind, t, chunk_P[end], chunk_ω_h[end],
-                          chunk_ω_g[end], chunk_tw[end], chunk_hz[end]))
-        end
-    end
-
-    # Settled statistics from last N_SETTLE chunks
-    sl = max(1, length(chunk_P)-N_SETTLE+1) : length(chunk_P)
-    P_m   = mean(chunk_P[sl]);   P_s = std(chunk_P[sl])
-    ω_h_m = mean(chunk_ω_h[sl]);  ω_g_m = mean(chunk_ω_g[sl])
-    tw_m  = mean(chunk_tw[sl]);   Tm_m  = mean(chunk_Tm[sl])
-    Tmn_m = mean(chunk_Tmn[sl]);  hz_m  = mean(chunk_hz[sl])
+    # Settled statistics
+    P_m   = mean(chunk_P);   P_s = std(chunk_P)
+    ω_h_m = mean(chunk_ω_h);  ω_g_m = mean(chunk_ω_g)
+    tw_m  = mean(chunk_tw);   Tm_m  = mean(chunk_Tm)
+    Tmn_m = mean(chunk_Tmn);  hz_m  = mean(chunk_hz)
     elev  = rad2deg(atan(hz_m, sqrt(max(0, u[3*(hub_gid-1)+1]^2 + u[3*(hub_gid-1)+2]^2))))
 
     A_disc = π * p.rotor_radius^2

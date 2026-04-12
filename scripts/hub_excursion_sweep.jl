@@ -27,7 +27,7 @@ const RHO       = 1.225
 const V_RATED   = 11.0
 const T_SIM     = 3.0      # seconds of turbulent simulation per case
 const T_SETTLE  = 1.0      # seconds to settle before recording hub position
-const DT        = 4e-5     # integration step
+const DT        = 2e-5     # integration step
 const TURB_I    = 0.15     # turbulence intensity
 
 # ── Setup ──────────────────────────────────────────────────────────────────

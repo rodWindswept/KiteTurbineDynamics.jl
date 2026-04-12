@@ -33,7 +33,7 @@ mkpath(OUT_DIR)
 const RHO        = 1.225
 const T_SETTLE   = 10.0      # pre-record settling (with lift device active)
 const T_SIM      = 60.0      # recording window — 2× integral time scale (31 s)
-const DT         = 4e-5
+const DT         = 2e-5
 const REC_EVERY  = 1250      # record every 1250 steps = 0.05 s
 const TURB_I     = 0.15      # turbulence intensity (IEC Class A)
 const V_WINDS    = [8.0, 11.0, 13.0]
@@ -140,60 +140,41 @@ for v_wind in V_WINDS
     for (name, dev) in devices
         t_start_wall = time()
         u = copy(u_base)
-        du = zeros(Float64, length(u))
         t = 0.0
 
-        ode_params = dev === nothing ? (sys, p10, wind_fn) :
-                                       (sys, p10, wind_fn, dev)
+        print("   initializing $name equilibrium… ")
+        flush(stdout)
+        u = settle_to_operational_state(sys, u, p10, 9.5 * (v_wind / 11.0))
+        println("done")
 
-        n_settle = round(Int, T_SETTLE / DT)
-        n_sim    = round(Int, T_SIM / DT)
-
-        # Hub nominal position at end of settle (used for horizontal excursion)
-        for _ in 1:n_settle
-            fill!(du, 0.0)
-            multibody_ode!(du, u, ode_params, t)
-            t += DT
-            @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
-            @views u[1:3N]            .+= DT .* u[3N+1:6N]
-            @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
-            @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
-            orbital_damp_rope_velocities!(u, sys, p10, 0.05)
-            u[1:3] .= 0.0;  u[3N+1:3N+3] .= 0.0
-        end
-
+        # Hub nominal position at start of record
         hub_x0 = u[3*(hub_id-1)+1]
         hub_y0 = u[3*(hub_id-1)+2]
 
         # Recording loop
         local_ts = Tuple{Float64,Float64,Float64,Float64,Float64,Float64,Float64,Float64,Float64,Float64,Float64}[]
+        n_steps_sim = round(Int, T_SIM / DT)
 
-        for step in 1:n_sim
-            fill!(du, 0.0)
-            multibody_ode!(du, u, ode_params, t)
-            t += DT
-            @views u[3N+1:6N]        .+= DT .* du[3N+1:6N]
-            @views u[1:3N]            .+= DT .* u[3N+1:6N]
-            @views u[6N+Nr+1:6N+2Nr] .+= DT .* du[6N+Nr+1:6N+2Nr]
-            @views u[6N+1:6N+Nr]     .+= DT .* u[6N+Nr+1:6N+2Nr]
-            orbital_damp_rope_velocities!(u, sys, p10, 0.05)
-            u[1:3] .= 0.0;  u[3N+1:3N+3] .= 0.0
-
-            if mod(step, REC_EVERY) == 0
-                hx = u[3*(hub_id-1)+1]
-                hy = u[3*(hub_id-1)+2]
-                hz = u[3*(hub_id-1)+3]
-                r_xy  = sqrt((hx-hub_x0)^2 + (hy-hub_y0)^2)
-                elev  = rad2deg(atan(hz, sqrt(hx^2+hy^2)))
-                ω_hub = u[6N + Nr + Nr]           # hub ring (last ring)
-                ω_gnd = u[6N + Nr + 1]            # ground ring = PTO input
-                τ_gen = p10.k_mppt * ω_gnd^2 * sign(ω_gnd + 1e-9)
-                P_kw  = τ_gen * abs(ω_gnd) / 1000.0
-                v_inst = wind_1d(t)
-                push!(local_ts, (t - T_SETTLE, hx, hy, hz, r_xy, elev,
-                                  ω_hub, ω_gnd, τ_gen, P_kw, v_inst))
+        run_canonical_sim!(u, sys, p10, wind_fn, n_steps_sim, DT;
+            lift_device = dev,
+            lin_damp = 0.05,
+            callback = (u_curr, t_curr, step) -> begin
+                if mod(step, REC_EVERY) == 0
+                    hx = u_curr[3*(hub_id-1)+1]
+                    hy = u_curr[3*(hub_id-1)+2]
+                    hz = u_curr[3*(hub_id-1)+3]
+                    r_xy  = sqrt((hx-hub_x0)^2 + (hy-hub_y0)^2)
+                    elev  = rad2deg(atan(hz, sqrt(hx^2+hy^2)))
+                    ω_hub = u_curr[6N + Nr + Nr]
+                    ω_gnd = u_curr[6N + Nr + 1]
+                    τ_gen = p10.k_mppt * ω_gnd^2 * sign(ω_gnd + 1e-9)
+                    P_kw  = τ_gen * abs(ω_gnd) / 1000.0
+                    v_inst = wind_1d(t_curr)
+                    push!(local_ts, (t_curr, hx, hy, hz, r_xy, elev,
+                                      ω_hub, ω_gnd, τ_gen, P_kw, v_inst))
+                end
             end
-        end
+        )
 
         # Append to master DataFrame
         for row in local_ts

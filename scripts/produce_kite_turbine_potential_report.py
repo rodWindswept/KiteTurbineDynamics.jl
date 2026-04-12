@@ -648,6 +648,15 @@ callout(doc, "Hub droop 1.18 m/s at cold start; optimal elevation angle β≈21�
 callout(doc, "At 500 kW scale (5-rotor stack): estimated LCOE ~£60-80/MWh; comparable to offshore wind; deployable to remote/island sites with <10 m tower footprint",
         label="COMMERCIAL POTENTIAL", color=ORANGE)
 
+# ── 1.5 Simulation Physics & Known Limitations ─────────────────────────────────
+heading(doc, "1.5  Simulation Physics & Known Limitations")
+body(doc, "The current simulation environment contains several known physical abstractions and limitations that contextualize these results:")
+bullet(doc, "Zero-Speed Thrust (CT=0 at λ=0): The thrust coefficient CT is set exactly to 0.0 at standstill. A physical stationary rotor disk would experience significant drag. This affects 'cold start' collapse models.")
+bullet(doc, "Startup Torque numerical 'Hack': Aerodynamic torque is calculated as P_aero / max(|ω|, 0.5) to prevent division by zero, giving a small numerical 'kick-start' at ω=0 since P_aero is also zero.")
+bullet(doc, "Fixed-Mast Hub Constraint: The elevation constraint is a single tension-only spring. The hub is constrained relative to a fixed ground point and does not have the full freedom of a true tethered kite.")
+bullet(doc, "Analytical vs. Dynamic Scaling: 'Stacked Rotor' configurations in subsequent analytical reports are derived via scaling laws, not multi-rotor dynamic simulations.")
+bullet(doc, "Torsional Damping: An explicit, non-physical inter-ring torsional damper is applied to suppress high-frequency torsional oscillations numerical integration issues.")
+
 doc.add_page_break()
 
 # ── Section 2: Technology Architecture ───────────────────────────────────────

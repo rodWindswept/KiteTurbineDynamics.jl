@@ -43,7 +43,7 @@ K_MPPT_MULTS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.5, 4.0]   # 7 levels
 V_WIND_CASES = [8.0, 10.0, 11.0, 13.0]                   # m/s
 
 K_MPPT_NOM   = 11.0          # N·m·s²/rad² — default from params_10kw()
-DT           = 4e-5           # s
+DT           = 2e-5           # s
 T_SPINUP     = 5.0            # s — spin-up before recording
 T_SIM        = 180.0          # s — recorded duration
 T_CHUNK      = 0.5            # s — recording interval
@@ -185,51 +185,46 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
 
     @printf "\n[%2d/%d]  k×%.2f  v=%4.1f m/s  (k_mppt=%.2f)\n" run_idx n_total_runs k_mult v_wind k_mppt
 
-    # 1. Settle geometry to gravity equilibrium
-    print("  settling… ")
+    # 1. Settle geometry to gravity equilibrium + torque-chain bisection (Canonical Truth)
+    print("  initializing to equilibrium… ")
     flush(stdout)
-    u = settle_to_equilibrium(sys, copy(u0_base), p)
+    # Start at a guess omega based on wind speed (linear scaling from 9.5 @ 11m/s)
+    ω_guess = 9.5 * (v_wind / 11.0)
+    u = settle_to_operational_state(sys, copy(u0_base), p, ω_guess)
     println("done")
 
-    # 2. Spin-up
-    @printf "  spin-up %.0f s… " T_SPINUP
-    flush(stdout)
-    t0w = time()
-    u = simulate(sys, u, p, wfn; n_steps=N_SPINUP, dt=DT)
-    @printf "done (%.0f s wall)\n" (time()-t0w)
-    flush(stdout)
-
-    # 3. Record T_SIM seconds
-    t_sim = T_SPINUP
+    # 2. Recorded duration
     t0w   = time()
+    run_canonical_sim!(u, sys, p, wfn, N_CHUNKS * N_CHUNK, DT;
+        lin_damp = 0.05,
+        callback = (u_curr, t_curr, step) -> begin
+            if step % N_CHUNK == 0
+                α_vec    = @view u_curr[6N+1 : 6N+Nr]
+                ω_hub    = u_curr[6N + Nr + Nr]
+                ω_gnd    = u_curr[6N + Nr + 1]
+                twist    = partial_twist_deg(α_vec, 1,      Nr)
+                tw_lo    = partial_twist_deg(α_vec, r_lo_a,  r_lo_b)
+                tw_mid   = partial_twist_deg(α_vec, r_mid_a, r_mid_b)
+                tw_hi    = partial_twist_deg(α_vec, r_hi_a,  r_hi_b)
+                Δω       = ω_hub - ω_gnd
+                P_kw     = p.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
+                T_max    = _tether_max_v2(u_curr, sys, p)
+                T_mean   = _tether_mean_v2(u_curr, sys, p)
 
-    for chunk in 1:N_CHUNKS
-        u      = simulate(sys, u, p, wfn; n_steps=N_CHUNK, dt=DT)
-        t_sim += T_CHUNK
+                push!(ts_rows, (k_mult, k_mppt, v_wind, t_curr,
+                                twist, tw_lo, tw_mid, tw_hi,
+                                ω_hub, ω_gnd, Δω, P_kw, T_max, T_mean))
 
-        α_vec    = @view u[6N+1 : 6N+Nr]
-        ω_hub    = u[6N + Nr + Nr]
-        ω_gnd    = u[6N + Nr + 1]
-        twist    = partial_twist_deg(α_vec, 1,      Nr)
-        tw_lo    = partial_twist_deg(α_vec, r_lo_a,  r_lo_b)
-        tw_mid   = partial_twist_deg(α_vec, r_mid_a, r_mid_b)
-        tw_hi    = partial_twist_deg(α_vec, r_hi_a,  r_hi_b)
-        Δω       = ω_hub - ω_gnd
-        P_kw     = p.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
-        T_max    = _tether_max_v2(u, sys, p)
-        T_mean   = _tether_mean_v2(u, sys, p)
-
-        push!(ts_rows, (k_mult, k_mppt, v_wind, t_sim,
-                        twist, tw_lo, tw_mid, tw_hi,
-                        ω_hub, ω_gnd, Δω, P_kw, T_max, T_mean))
-
-        if chunk % 40 == 0 || chunk == N_CHUNKS
-            elapsed = time() - t0w
-            eta     = elapsed / chunk * (N_CHUNKS - chunk)
-            @printf "  t=%6.1f s  twist=%7.2f°  lo=%5.1f° mid=%5.1f° hi=%5.1f°  Δω=%6.3f  T_max=%6.0f N  P=%5.2f kW  [wall %.0f s  ETA %.0f s]\n" t_sim twist tw_lo tw_mid tw_hi Δω T_max P_kw elapsed eta
-            flush(stdout)
+                chunk_idx = step ÷ N_CHUNK
+                if chunk_idx % 40 == 0 || chunk_idx == N_CHUNKS
+                    elapsed = time() - t0w
+                    eta     = elapsed / chunk_idx * (N_CHUNKS - chunk_idx)
+                    @printf "  t=%6.1f s  twist=%7.2f°  lo=%5.1f° mid=%5.1f° hi=%5.1f°  Δω=%6.3f  T_max=%6.0f N  P=%5.2f kW  [wall %.0f s  ETA %.0f s]\n" t_curr twist tw_lo tw_mid tw_hi Δω T_max P_kw elapsed eta
+                    flush(stdout)
+                end
+            end
         end
-    end
+    )
 
     # 4. Summary stats from settled region
     settled = filter(r -> r.k_mult == k_mult && r.v_wind == v_wind &&
@@ -279,41 +274,38 @@ wfn_ramp = (pos, t) -> begin
     [v, 0.0, 0.0]
 end
 
-print("  settling… ")
+print("  initializing to equilibrium… ")
 flush(stdout)
-u_ramp = settle_to_equilibrium(sys, copy(u0_base), p_ramp)
+u_ramp = settle_to_operational_state(sys, copy(u0_base), p_ramp, 9.5 * (V_RAMP_LO / 11.0))
 println("done")
 
-@printf "  spin-up %.0f s… " T_SPINUP
-u_ramp = simulate(sys, u_ramp, p_ramp, wfn_ramp; n_steps=N_SPINUP, dt=DT)
-println("done")
-
-t_ramp    = T_SPINUP
-N_RAMP    = round(Int, T_RAMP / T_CHUNK)
+N_STEPS_RAMP = round(Int, T_RAMP / DT)
 t0w       = time()
 
-for chunk in 1:N_RAMP
-    global u_ramp, t_ramp
-    u_ramp   = simulate(sys, u_ramp, p_ramp, wfn_ramp; n_steps=N_CHUNK, dt=DT)
-    t_ramp  += T_CHUNK
+run_canonical_sim!(u_ramp, sys, p_ramp, wfn_ramp, N_STEPS_RAMP, DT;
+    lin_damp = 0.05,
+    callback = (u_curr, t_curr, step) -> begin
+        if step % N_CHUNK == 0
+            frac    = clamp(t_curr / T_RAMP, 0.0, 1.0)
+            v_now   = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
+            α_vec   = @view u_curr[6N+1 : 6N+Nr]
+            ω_hub   = u_curr[6N + Nr + Nr]
+            ω_gnd   = u_curr[6N + Nr + 1]
+            twist   = partial_twist_deg(α_vec, 1, Nr)
+            Δω      = ω_hub - ω_gnd
+            P_kw    = p_ramp.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
+            T_max   = _tether_max_v2(u_curr, sys, p_ramp)
 
-    frac    = clamp(t_ramp / T_RAMP, 0.0, 1.0)
-    v_now   = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
-    α_vec   = @view u_ramp[6N+1 : 6N+Nr]
-    ω_hub   = u_ramp[6N + Nr + Nr]
-    ω_gnd   = u_ramp[6N + Nr + 1]
-    twist   = partial_twist_deg(α_vec, 1, Nr)
-    Δω      = ω_hub - ω_gnd
-    P_kw    = p_ramp.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
-    T_max   = _tether_max_v2(u_ramp, sys, p_ramp)
+            push!(ramp_rows, (t_curr, v_now, twist, ω_hub, ω_gnd, Δω, P_kw, T_max))
 
-    push!(ramp_rows, (t_ramp, v_now, twist, ω_hub, ω_gnd, Δω, P_kw, T_max))
-
-    if chunk % 40 == 0 || chunk == N_RAMP
-        @printf "  t=%6.1f s  v=%5.1f m/s  twist=%7.2f°  Δω=%6.3f  P=%5.2f kW\n" t_ramp v_now twist Δω P_kw
-        flush(stdout)
+            chunk_idx = step ÷ N_CHUNK
+            if chunk_idx % 40 == 0 || chunk_idx == (N_STEPS_RAMP ÷ N_CHUNK)
+                @printf "  t=%6.1f s  v=%5.1f m/s  twist=%7.2f°  Δω=%6.3f  P=%5.2f kW\n" t_curr v_now twist Δω P_kw
+                flush(stdout)
+            end
+        end
     end
-end
+)
 
 # ── Save all results ──────────────────────────────────────────────────────────
 
