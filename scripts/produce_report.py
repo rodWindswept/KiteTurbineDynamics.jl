@@ -434,7 +434,10 @@ add_table(doc,
 callout(doc,
     "Optimal MPPT gain is k × 1.2 across all wind speeds (very flat peak between "
     "k×1.0 and k×1.2). Peak power at v=11 m/s: 8.31 kW. "
-    "Twist at optimal: 238° (8 m/s) → 308° (13 m/s).")
+    "Twist at optimal: 238° (8 m/s) → 308° (13 m/s). "
+    "Note: k×4.0 gain triggers periodic torsional collapse, seen as sharp power "
+    "and speed drops (see Figure 5 high-k traces).",
+    label="KEY RESULT")
 
 heading(doc, "6.2  Twist as a control signal", level=2)
 body(doc, (
@@ -489,10 +492,10 @@ add_table(doc,
          "Simulator does not demonstrate\nshaft un-twist or hub drop\nbelow cut-in",
          "Cold-start test from ω=0;\nmulti-element back line;\nfull 6-DOF hub frame"],
         ["Back line single spring-damper",
-         "Cannot sag, go slack, or\nlet hub drop forward",
+         "Semi-free: hub can droop but\nnot over-fly past design β",
          "5+ rope node back line model"],
-        ["Hub elevation β partly fixed\nby parameterisation",
-         "Hub cannot fall to ground\neven at zero lift",
+        ["Hub elevation β semi-free",
+         "Hub can fall to ground but\nstopped by back-line at design",
          "Confirm full 6-DOF free\nhub state in ODE"],
         ["Kite lift clamped to F_required",
          "Below cut-in, actual lift\n< F_req not propagated\nto hub kinematics",

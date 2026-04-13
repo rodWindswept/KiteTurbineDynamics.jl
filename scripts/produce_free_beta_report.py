@@ -274,7 +274,7 @@ body(doc, "The current simulation environment contains several known physical ab
 bullet_points = [
     "Zero-Speed Thrust (CT=0 at λ=0): The thrust coefficient CT is set exactly to 0.0 at standstill. A physical stationary rotor disk would experience significant drag. This affects 'cold start' collapse models.",
     "Startup Torque numerical 'Hack': Aerodynamic torque is calculated as P_aero / max(|ω|, 0.5) to prevent division by zero, giving a small numerical 'kick-start' at ω=0 since P_aero is also zero.",
-    "Fixed-Mast Hub Constraint: The elevation constraint is a single tension-only spring. The hub is constrained relative to a fixed ground point and does not have the full freedom of a true tethered kite.",
+    "Semi-Free Hub Constraint: The elevation is free to droop under gravity (e.g. at low wind) but is constrained from over-flying by a tension-only 'back line' tether. This 'virtual mast' prevents the hub from reaching its true aerodynamic equilibrium if that altitude is above the design elevation.",
     "Analytical vs. Dynamic Scaling: 'Stacked Rotor' configurations in subsequent analytical reports are derived via scaling laws, not multi-rotor dynamic simulations.",
     "Torsional Damping: An explicit, non-physical inter-ring torsional damper is applied to suppress high-frequency torsional oscillations numerical integration issues."
 ]
@@ -741,8 +741,10 @@ body(doc, (
     "ω_gnd is the actual generator input shaft speed. Higher MPPT gain (more "
     "braking torque) means lower equilibrium speed — the system trades speed for "
     "torque. At k×1.0 the nominal k_mppt = 11 N·m·s²/rad², and ω_gnd settles "
-    "at ~9.4 rad/s (90 RPM). At k×4.0 (k_mppt = 44), ω_gnd is only 3.6 rad/s "
-    "(34 RPM) — the rotor barely moves."
+    "at ~9.4 rad/s (90 RPM). At k×4.0 (k_mppt = 44), the system exhibits periodic "
+    "instability: ω_gnd drops sharply to ~2 rad/s before recovering. This indicates "
+    "torsional buckling or geometric collapse of the TRPT stack under excessive load; "
+    "the generator torque exceeds the structural capacity of the helical rope geometry."
 ))
 callout(doc,
     "Implication for generator selection: the generator must operate efficiently "
