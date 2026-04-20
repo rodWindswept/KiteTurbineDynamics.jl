@@ -183,22 +183,31 @@ The 1 mm difference is acknowledged in the code comment:
 ```
 This is a known and documented approximation difference. Not an error.
 
-### T_line = 2333 N claim — NEEDS VERIFICATION ⚠️
+### T_line = 2333 N claim — RESOLVED: stale, pre-CT-correction ⚠️
 
 Report §2.3 states "tether tension at rated operation is T ≈ 2333 N per line" from ODE
-simulation. Current MPPT v2 sweep at k=1.0, v=11 shows T_max = 823 N (across all segments).
+simulation. Current MPPT v2 sweep at k=1.0, v=11 shows **T_max = 823 N** per line
+(confirmed: T_max is measured per individual tether sub-segment, i.e. per line, in
+`scripts/mppt_twist_sweep_v2.jl → _tether_max_v2()`).
 
-This is a ~3× discrepancy. Possible explanations:
-1. The T_line = 2333 N was from a different/earlier simulation with higher Cp (0.43)
-2. T_max in the sweep CSV reports peak over all segments, not per-line; the per-line
-   average may differ
-3. The ring scalability report may have been generated before the canonical aerodynamics
-   table was finalized
+**Root cause identified (2026-04-20):** The T_line = 2333 N figure was used to calibrate
+`DO_SCALE = 0.01396` in `src/structural_safety.jl` (commit `fd02e39`, 2026-03-26) — which
+pre-dates the CT-thrust physics correction (commit `6fa0100`, 2026-04-09). That correction:
+- Removed phantom kite CL lift from the ODE
+- Reduced aerodynamic torque (and hence tether tension) at rated conditions
+- Is consistent with the ~2.84× tension reduction: √(2333/823) = 1.68 ≈ √(Cp_old/Cp_new)
 
-**Structural implication:** If actual T_line ≈ 800–1000 N (rather than 2333 N), the
-required ring tube diameters are smaller by about 40% (scaling as T^0.25), and the total
-ring mass of 9.6 kg stated in the report is an over-estimate. The DRR's 5.6 kg (14 rings
-× 0.4 kg) may be closer to reality with the current simulator.
+At k=1.5 (optimal MPPT, current finding): T_max = 730 N (even lower, due to optimal operating point).
+
+**Structural implication:** The ring sizing DO_SCALE was calibrated to T_line = 2333 N.
+Actual tension is ~820–730 N at rated → rings are ~2.84× over-designed (actual FoS ≈ 8.5
+vs design FoS = 3.0). The total ring mass of 9.6 kg in the report is an over-estimate;
+rings correctly sized for T_max = 820 N would mass approximately 9.6 × (820/2333)^0.5 ≈ 5.7 kg —
+closely matching the DRR placeholder of 5.6 kg (14 × 0.4 kg).
+
+**Action:** Add corrigendum note to report; update `structural_safety.jl` comment to
+document that DO_SCALE was calibrated pre-CT-correction and current T_max ≈ 820 N.
+DO_SCALE value is intentionally left conservative until ring re-sizing is formally reviewed.
 
 ### Core conclusions — VALID ✓
 
@@ -283,8 +292,11 @@ All key numbers check out analytically. ✓
 3. **TRPT_Lift_Device_Analysis.docx §4.3/4.4**: Hub excursion tables are from an earlier run.
    Current values from `long_summary.csv` differ by ~7× on hub_z_std at v=11.
 
-4. **TRPT_Ring_Scalability_Report.docx §2.3**: Clarify whether T_line = 2333 N is from the
-   canonical simulator or an earlier version. Current MPPT v2 sweep shows T_max ≈ 820 N.
+4. **TRPT_Ring_Scalability_Report.docx §2.3**: T_line = 2333 N is from pre-CT-correction
+   simulation (2026-03-26). Current T_max ≈ 820 N per line (2026-04-20 finding). Corrigendum
+   added to report. Ring mass budget (9.6 kg) is a ~1.7× over-estimate; correctly-sized rings
+   at T_max=820 N → ~5.7 kg, matching DRR placeholder of 5.6 kg. DO_SCALE in
+   `structural_safety.jl` kept conservative — see updated comment.
 
 ### Should preserve
 
