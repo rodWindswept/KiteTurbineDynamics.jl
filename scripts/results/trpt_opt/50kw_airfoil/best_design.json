@@ -1,0 +1,30 @@
+{
+  "config": "50 kW",
+  "profile": "PROFILE_AIRFOIL",
+  "timestamp": "2026-04-20T12:33:45.925",
+  "best_mass_kg": 1.0000033548422232e6,
+  "min_fos": 1.1635929044306896e-7,
+  "evaluations": 96038010,
+  "generations": 2000000,
+  "elapsed_s": 135.17685413360596,
+  "design": {
+    "Do_top_m": 0.007476743906138571,
+    "t_over_D": 0.02072422114588165,
+    "aspect_ratio": 0.08000000007051916,
+    "Do_scale_exp": 0.9999999999993141,
+    "r_hub_m": 4.024922359502212,
+    "taper_ratio": 0.2000000000028297,
+    "n_rings": 7,
+    "tether_length_m": 67.0820393249937,
+    "n_lines": 5,
+    "knuckle_mass_kg": 0.05
+  },
+  "evaluation": {
+    "mass_total_kg": 3.354842223272378,
+    "mass_beams_kg": 1.1048422232723782,
+    "mass_knuckles_kg": 2.25,
+    "min_fos": 1.1635929044306896e-7,
+    "worst_ring_idx": 2,
+    "feasible": false
+  }
+}

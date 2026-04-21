@@ -14,6 +14,8 @@ include("dynamics.jl")
 include("structural_safety.jl")
 include("lift_kite.jl")
 include("visualization.jl")
+include("trpt_optimization.jl")
+include("trpt_axial_profiles.jl")
 
 export SystemParams, params_10kw, params_50kw
 export cp_at_tsr, ct_at_tsr
@@ -27,6 +29,22 @@ export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP
 export build_dashboard
+
+# TRPT sizing optimization (Item B2)
+export BeamProfile, PROFILE_CIRCULAR, PROFILE_ELLIPTICAL, PROFILE_AIRFOIL
+export BeamSpec, TRPTDesign, EvalResult
+export beam_section_properties, ring_radii, segment_axial_lengths, beam_spec_at_ring
+export evaluate_design, baseline_design, search_bounds, design_from_vector, objective
+export peak_hub_thrust
+export OPT_E_CFRP, OPT_RHO_CFRP, OPT_KNUCKLE_MASS_KG, OPT_V_PEAK, OPT_FOS_REQUIRED
+export OPT_DESIGN_LOAD_FACTOR
+
+# TRPT v2: enriched axial-profile family + 12-DoF search space (Phase A of cartography)
+export AxialProfile, AXIAL_LINEAR, AXIAL_ELLIPTIC, AXIAL_PARABOLIC, AXIAL_TRUMPET, AXIAL_STRAIGHT_TAPER
+export AXIAL_PROFILE_COUNT, axial_profile_name, axial_profile_from_index
+export TRPTDesignV2, r_of_z, ring_z_positions
+export search_bounds_v2, design_from_vector_v2, objective_v2, baseline_design_v2
+export TRPT_V2_DIM
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams

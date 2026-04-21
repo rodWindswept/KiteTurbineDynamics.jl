@@ -1,0 +1,6 @@
+10kw_circular 34335
+10kw_elliptical 34376
+10kw_airfoil 34416
+50kw_circular 34460
+50kw_elliptical 34502
+50kw_airfoil 34544

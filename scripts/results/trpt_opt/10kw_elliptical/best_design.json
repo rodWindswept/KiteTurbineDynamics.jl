@@ -1,0 +1,30 @@
+{
+  "config": "10 kW",
+  "profile": "PROFILE_ELLIPTICAL",
+  "timestamp": "2026-04-20T12:33:54.541",
+  "best_mass_kg": 9.229360911531751,
+  "min_fos": 1.8,
+  "evaluations": 96038010,
+  "generations": 2000000,
+  "elapsed_s": 146.34083580970764,
+  "design": {
+    "Do_top_m": 0.03956391565691533,
+    "t_over_D": 0.02,
+    "aspect_ratio": 1.0,
+    "Do_scale_exp": 0.5000000000000016,
+    "r_hub_m": 1.8000000000000003,
+    "taper_ratio": 0.3,
+    "n_rings": 7,
+    "tether_length_m": 30.0,
+    "n_lines": 5,
+    "knuckle_mass_kg": 0.05
+  },
+  "evaluation": {
+    "mass_total_kg": 9.229360911531751,
+    "mass_beams_kg": 6.979360911531751,
+    "mass_knuckles_kg": 2.25,
+    "min_fos": 1.8,
+    "worst_ring_idx": 5,
+    "feasible": true
+  }
+}

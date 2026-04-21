@@ -1,0 +1,30 @@
+{
+  "config": "10 kW",
+  "profile": "PROFILE_AIRFOIL",
+  "timestamp": "2026-04-20T12:33:48.807",
+  "best_mass_kg": 65.9926287542785,
+  "min_fos": 1.8,
+  "evaluations": 96038010,
+  "generations": 2000000,
+  "elapsed_s": 139.19018507003784,
+  "design": {
+    "Do_top_m": 0.12,
+    "t_over_D": 0.02992527742294745,
+    "aspect_ratio": 0.2,
+    "Do_scale_exp": 0.4999999999999998,
+    "r_hub_m": 1.8,
+    "taper_ratio": 0.3,
+    "n_rings": 7,
+    "tether_length_m": 30.0,
+    "n_lines": 5,
+    "knuckle_mass_kg": 0.05
+  },
+  "evaluation": {
+    "mass_total_kg": 65.9926287542785,
+    "mass_beams_kg": 63.7426287542785,
+    "mass_knuckles_kg": 2.25,
+    "min_fos": 1.8,
+    "worst_ring_idx": 6,
+    "feasible": true
+  }
+}

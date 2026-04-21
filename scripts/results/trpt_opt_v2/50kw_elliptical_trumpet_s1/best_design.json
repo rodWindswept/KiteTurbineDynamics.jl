@@ -1,0 +1,35 @@
+{
+  "config": "50 kW",
+  "beam_profile": "PROFILE_ELLIPTICAL",
+  "axial_profile": "AXIAL_TRUMPET",
+  "timestamp": "2026-04-21T04:15:39.531",
+  "best_mass_kg": 22.69870359085146,
+  "min_fos": 1.8000000000000005,
+  "evaluations": 192109320,
+  "generations": 2000000,
+  "elapsed_s": 4993.846309900284,
+  "archive_size": 200,
+  "design": {
+    "Do_top_m": 0.06274776815818726,
+    "t_over_D": 0.02000000000000001,
+    "beam_aspect": 0.9999999999999996,
+    "Do_scale_exp": 0.04962231780594085,
+    "axial_profile": "AXIAL_TRUMPET",
+    "profile_exp": 0.30000000000000016,
+    "straight_frac": 0.11863691617247954,
+    "r_hub_m": 3.577708763999664,
+    "taper_ratio": 0.15,
+    "n_rings": 5,
+    "tether_length_m": 67.0820393249937,
+    "n_lines": 8,
+    "knuckle_mass_kg": 0.010000000000000005
+  },
+  "evaluation": {
+    "mass_total_kg": 22.69870359085146,
+    "mass_beams_kg": 22.13870359085146,
+    "mass_knuckles_kg": 0.5600000000000003,
+    "min_fos": 1.8000000000000005,
+    "worst_ring_idx": 6,
+    "feasible": true
+  }
+}

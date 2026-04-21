@@ -1,0 +1,35 @@
+{
+  "config": "50 kW",
+  "beam_profile": "PROFILE_AIRFOIL",
+  "axial_profile": "AXIAL_STRAIGHT_TAPER",
+  "timestamp": "2026-04-21T05:14:32.160",
+  "best_mass_kg": 155.37429332094933,
+  "min_fos": 1.8000000000000003,
+  "evaluations": 192109238,
+  "generations": 2000000,
+  "elapsed_s": 2064.3821878433228,
+  "archive_size": 200,
+  "design": {
+    "Do_top_m": 0.17944185374654645,
+    "t_over_D": 0.02937312722699482,
+    "beam_aspect": 0.2,
+    "Do_scale_exp": 3.156422106819921e-17,
+    "axial_profile": "AXIAL_STRAIGHT_TAPER",
+    "profile_exp": 2.60839740234863,
+    "straight_frac": 0.7,
+    "r_hub_m": 3.577708763999664,
+    "taper_ratio": 0.15,
+    "n_rings": 5,
+    "tether_length_m": 67.0820393249937,
+    "n_lines": 8,
+    "knuckle_mass_kg": 0.01000000000000002
+  },
+  "evaluation": {
+    "mass_total_kg": 155.37429332094933,
+    "mass_beams_kg": 154.81429332094933,
+    "mass_knuckles_kg": 0.560000000000001,
+    "min_fos": 1.8000000000000003,
+    "worst_ring_idx": 6,
+    "feasible": true
+  }
+}

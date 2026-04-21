@@ -13,4 +13,5 @@ using KiteTurbineDynamics
     include("test_rope_sag.jl")
     include("test_emergent_torsion.jl")
     include("test_power.jl")
+    include("test_trpt_axial_profiles.jl")
 end

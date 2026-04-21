@@ -1,0 +1,35 @@
+{
+  "config": "10 kW",
+  "beam_profile": "PROFILE_ELLIPTICAL",
+  "axial_profile": "AXIAL_STRAIGHT_TAPER",
+  "timestamp": "2026-04-21T01:06:00.064",
+  "best_mass_kg": 2.807795734499085,
+  "min_fos": 1.8000000000000018,
+  "evaluations": 192109320,
+  "generations": 2000000,
+  "elapsed_s": 4943.024792909622,
+  "archive_size": 200,
+  "design": {
+    "Do_top_m": 0.03236827343835123,
+    "t_over_D": 0.02,
+    "beam_aspect": 0.9999999999999996,
+    "Do_scale_exp": 0.18632615883370468,
+    "axial_profile": "AXIAL_STRAIGHT_TAPER",
+    "profile_exp": 2.0157459281269925,
+    "straight_frac": 0.7,
+    "r_hub_m": 1.6,
+    "taper_ratio": 0.25,
+    "n_rings": 5,
+    "tether_length_m": 30.0,
+    "n_lines": 8,
+    "knuckle_mass_kg": 0.010000000000000004
+  },
+  "evaluation": {
+    "mass_total_kg": 2.807795734499085,
+    "mass_beams_kg": 2.247795734499085,
+    "mass_knuckles_kg": 0.5600000000000002,
+    "min_fos": 1.8000000000000018,
+    "worst_ring_idx": 6,
+    "feasible": true
+  }
+}

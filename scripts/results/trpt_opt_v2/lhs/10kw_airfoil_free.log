@@ -1,0 +1,20 @@
+  Activating project at `/mnt/RodsData/GitHub/KiteTurbineDynamics.jl`
+LHS cartography: N=80000, config=10 kW, beam=PROFILE_AIRFOIL, axial=free
+  progress 5000 / 80000 — 0.36s, 13.8 /ms
+  progress 10000 / 80000 — 0.68s, 14.8 /ms
+  progress 15000 / 80000 — 0.76s, 19.8 /ms
+  progress 20000 / 80000 — 0.84s, 23.9 /ms
+  progress 25000 / 80000 — 1.05s, 23.8 /ms
+  progress 30000 / 80000 — 1.12s, 26.8 /ms
+  progress 35000 / 80000 — 1.20s, 29.2 /ms
+  progress 40000 / 80000 — 1.28s, 31.4 /ms
+  progress 45000 / 80000 — 1.70s, 26.5 /ms
+  progress 50000 / 80000 — 1.77s, 28.2 /ms
+  progress 55000 / 80000 — 1.85s, 29.7 /ms
+  progress 60000 / 80000 — 4.06s, 14.8 /ms
+  progress 65000 / 80000 — 4.09s, 15.9 /ms
+  progress 70000 / 80000 — 4.13s, 17.0 /ms
+  progress 75000 / 80000 — 4.16s, 18.0 /ms
+  progress 80000 / 80000 — 4.23s, 18.9 /ms
+wrote scripts/results/trpt_opt_v2/lhs/10kw_airfoil_free.csv — feasible=7677/80000 (9.6%)
+feasible min_mass = 96.385 kg

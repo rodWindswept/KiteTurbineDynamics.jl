@@ -1,0 +1,34 @@
+# Large campaign outputs that can be regenerated from source
+scripts/results/**/stdout.log
+scripts/results/**/stderr.log
+scripts/results/**/checkpoint.jls
+scripts/results/**/*.jls
+
+# Julia compilation caches
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+deps/deps.jl
+deps/build.log
+docs/build/
+docs/site/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Claude Code / agent workspace
+.claude/
+run_all_sims.log
+sweep_*.log
+
+# Monitor working files
+scripts/results/trpt_opt_v2/.last_refresh_stamp
+scripts/results/trpt_opt_v2/.stop_monitor
+scripts/results/trpt_opt_v2/auto_refresh.log

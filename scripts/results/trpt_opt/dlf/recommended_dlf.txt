@@ -1,0 +1,4 @@
+DLF_peak       = 1.3935
+DLF_p95        = 0.9425
+DLF_mean       = 0.2553
+DLF_recommended= 1.5328  (1.10 × peak)

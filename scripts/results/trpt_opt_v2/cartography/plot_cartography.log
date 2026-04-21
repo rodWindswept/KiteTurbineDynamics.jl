@@ -1,0 +1,13 @@
+Loaded 480000 LHS samples across 2 configs × 3 beams; 195346 feasible (40.7%)
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_heat_nrings_vs_nlines_10kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_heat_nrings_vs_nlines_50kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_heat_rhub_vs_nrings_10kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_heat_axial_vs_nlines_feas.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_3d_nrings_nlines_rhub_mass_10kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_3d_nrings_nlines_rhub_mass_50kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_axial_family_boxplot_10kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_axial_family_boxplot_50kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_pareto_mass_fos.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_sobol_first_order_10kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/fig_sobol_first_order_50kw.png
+wrote /mnt/RodsData/GitHub/KiteTurbineDynamics.jl/scripts/results/trpt_opt_v2/cartography/summary_by_config_beam_axial.csv

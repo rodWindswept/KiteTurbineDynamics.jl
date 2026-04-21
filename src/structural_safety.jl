@@ -16,21 +16,13 @@ const T_OVER_D    = 0.05    # t/D wall ratio — aerodynamic and structural opti
 const T_MIN_WALL  = 5e-4    # m   — 0.5 mm minimum manufacturable wall thickness
 const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 
-# Scaling law from analysis (exact thin-wall calibration, 10 kW rated, 5-line pentagon):
-#   Do = DO_SCALE × √R
+# Scaling law from analysis (exact thin-wall calibration, 10 kW rated, 5-line pentagon,
+# T_line ≈ 2333 N):  Do = DO_SCALE × √R.
 # Derivation: N_comp is constant across all ring radii when L_seg ∝ R (tapered TRPT),
 # so I_req ∝ L_poly² ∝ R² and Do ∝ (I_req)^(1/4) ∝ R^(1/2).
 # Calibrated by exact tube_I formula: Do = 19.7 mm at R = 2 m (vs 20.7 mm in the
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
-#
-# CALIBRATION NOTE (2026-04-20): DO_SCALE was originally set using T_line ≈ 2333 N from
-# a pre-CT-correction simulation (commit fd02e39, 2026-03-26).  The CT-thrust correction
-# (commit 6fa0100, 2026-04-09) reduced tether tension to ~820 N at rated (k=1.0, v=11 m/s)
-# and ~730 N at optimal MPPT (k=1.5).  DO_SCALE is therefore CONSERVATIVE by ~√(2333/820)
-# ≈ 1.69×, giving actual FoS ≈ 8–9 at rated conditions (vs design FoS = 3.0).
-# DO_SCALE is intentionally left unchanged (structural conservatism; ring re-sizing pending
-# formal review).  The ring_safety_frame() dashboard readout reflects live simulation loads.
-const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R  (conservative — see note above)
+const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
 """
     tube_I(Do, t) → I (m⁴)
