@@ -10,6 +10,103 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-04-22] Ground ring deployment constraint: maximum radius 1.5 m
+
+**Context:** The ground ring of the TRPT shaft is the lowest ring — closest to the ground
+station, anchored and connected to the drive train. Its radius sets the physical footprint of
+the ground structure (rotor anchor frame, bearing housing, guide ropes). In the v2 optimiser,
+`taper_ratio` was bounded below (taper_ratio ≥ 0.15, or 0.5/r_hub for small systems) to
+prevent geometrically degenerate designs. The v4 formulation replaces `taper_ratio` with
+`r_bottom` as an explicit design variable. Without an upper bound on `r_bottom`, the optimiser
+could select a ground ring radius approaching the hub radius (nearly cylindrical) — maximising
+structural efficiency but requiring a large, difficult-to-transport ground anchor structure.
+
+**Choice made:** `max_ground_radius = 1.5 m` as the hard upper bound on `r_bottom`. Designs
+with `r_bottom > 1.5 m` are returned as infeasible by `evaluate_design`. The parameter is
+configurable — `search_bounds_v4` and `evaluate_design` both accept a
+`max_ground_radius` keyword argument with default 1.5 m. The lower bound on `r_bottom` is
+0.3 m (minimum structural ring capable of carrying rope attachment geometry without the beam
+centroid overlapping the rope).
+
+**Alternatives considered:** Deriving the ground ring constraint dynamically from the ground
+station footprint model. This would require the ground station geometry as a system parameter
+— accurate but coupled. A simpler alternative of using `taper_ratio` bounds as before (≥ 0.15
+of r_hub ≈ 0.3 m for 10 kW) would work for a single power class but doesn't scale correctly
+when r_hub changes with power rating.
+
+**Why this choice:** 1.5 m ground ring radius fits within a standard flatbed trailer width
+(2.4 m) with margin for structural frame and anchoring — a practical deployment constraint
+for the 10 kW field trials. A 50 kW system would require revisiting this bound (r_hub ≈ 4–5 m
+suggests r_bottom up to 2.0–2.5 m may be acceptable). Making it a keyword argument means it
+can be changed per power class without changing the function signature.
+
+**Consequences:** The v4 optimiser will not discover designs with ground ring radius above
+1.5 m. If future site access improvements allow larger ground structures (e.g., permanent
+offshore installation), the bound should be raised. The lower bound 0.3 m guards against
+structurally nonsensical designs; raising it risks missing valid extreme-taper configurations.
+
+**Status:** Active.
+
+---
+
+## [2026-04-22] v4 ring spacing: variable positions targeting constant L/r per segment
+
+**Context:** In v2 and v3, polygon spacer rings are placed at uniform axial intervals along
+the 30 m tether, with ring radii interpolated along one of five profile families (linear,
+elliptic, parabolic, trumpet, straight-taper). The torsional collapse analysis showed that
+uniform spacing with a tapered geometry creates severely non-uniform L/r ratios per segment:
+thin bottom segments (small r) get the same axial spacing L as wide top segments (large r),
+giving them a much higher L/r ratio. This drives two problems simultaneously:
+(a) thin bottom segments are in the Euler buckling danger zone (P_crit ∝ 1/L²), and
+(b) the optimiser is forced toward taper_ratio → 1.0 (cylindrical) because any taper with
+uniform spacing makes the bottom segments structurally expensive and the optimiser eliminates
+taper to equalise the segment lengths.
+
+**What was decided:** v4 replaces the (n_rings, taper_ratio, axial_profile) triplet with two
+design variables: `r_bottom` (ground ring radius, bounded) and `target_Lr` (target L/r ratio,
+common to all segments). Ring positions are no longer inputs to the optimiser — they are
+computed from the constant-L/r constraint via `ring_spacing_v4()`. The number of rings n_rings
+is an output: determined by the geometry, not the optimizer.
+
+**Physics:** For a linear taper from r_top to r_bottom, constant L/r implies radii form a
+geometric series. The key relationships:
+- Segment axial length: L_i = target_Lr × r_mid_i (shorter near ground, longer near hub)
+- Ring radii ratio: r_{i+1}/r_i = k, where k = (2 - α×target_Lr)/(2 + α×target_Lr),
+  and α = (r_top - r_bottom)/tether_length is the taper slope
+- Euler buckling capacity: P_crit ∝ I/L² ∝ r² (for Do ∝ r^0.5 scaling) / L²
+  → with L = c×r: P_crit ∝ r²/(c×r)² = 1/c² = constant across all rings ✓
+- Compression load N_comp ∝ T_line ≈ constant (dominated by axial thrust / n_lines)
+- Result: FoS ≈ constant across all rings → no wasted structural margin anywhere
+
+Mass scales as ∝ D² × L ∝ r × L = r × target_Lr × r = target_Lr × r². Bottom rings are
+lighter (smaller r) AND have shorter span — doubly efficient. Drag loss scales as ∝ D × L ∝ r
+× target_Lr × r = target_Lr × r² (same scaling as mass — consistent trade-off).
+
+**Alternatives considered:** Uniform spacing (v2/v3) — proven above to be wasteful for tapered
+designs. Manually specified ring positions — maximum flexibility but too many variables for a
+DE search and no physical structure. Geometric-series spacing with n_rings as integer input
+(rather than target_Lr as continuous input) — preserves the physics but loses the natural
+parametrisation and creates discontinuities when n_rings rounds.
+
+**Why this choice:** target_Lr is a smooth, physically meaningful continuous parameter (the
+slenderness ratio is a canonical beam design parameter). The optimizer can gradient-follow it
+continuously while n_rings adjusts discretely in the background. This is more natural than
+optimising n_rings directly. The constant-L/r constraint is also the correct structural analogy
+to "keep all segments at the same point on the Euler buckling curve" — a classical optimal
+design principle.
+
+**Consequences:** The v4 formulation removes the axial profile family variables
+(axial_profile, profile_exp, straight_frac) — they become redundant since ring positions are
+fully determined by (r_bottom, target_Lr, r_hub, tether_length). The dimensionality drops from
+12 DoF (v2) to 9 DoF (v4). Results are NOT directly comparable with v2/v3 campaign winners
+without re-running both; the v4 formulation searches a different manifold of the design space.
+The v4 campaign should be run after v3 to compare minimum-mass winners at the same FoS
+threshold.
+
+**Status:** Active.
+
+---
+
 ## [2026-04-20] Taper ratio and n_rings lower bounds in DE search space
 
 **Context:** The 12-DoF search space for the Phase C optimisation needed lower bounds on
