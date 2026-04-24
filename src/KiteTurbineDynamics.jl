@@ -16,6 +16,7 @@ include("lift_kite.jl")
 include("visualization.jl")
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
+include("ring_spacing.jl")
 
 export SystemParams, params_10kw, params_50kw
 export cp_at_tsr, ct_at_tsr
@@ -45,6 +46,12 @@ export AXIAL_PROFILE_COUNT, axial_profile_name, axial_profile_from_index
 export TRPTDesignV2, r_of_z, ring_z_positions
 export search_bounds_v2, design_from_vector_v2, objective_v2, baseline_design_v2
 export TRPT_V2_DIM
+
+# TRPT v4: constant L/r ring spacing (replaces n_rings+taper_ratio with target_Lr+r_bottom)
+export ring_spacing_v4
+export TRPTDesignV4
+export OPT_MAX_GROUND_RADIUS, TRPT_V4_DIM
+export search_bounds_v4, design_from_vector_v4, objective_v4, baseline_design_v4
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams

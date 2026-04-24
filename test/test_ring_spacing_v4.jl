@@ -8,12 +8,15 @@
 #   taper without structural penalty at the thin bottom segments.
 
 using Test
+using Statistics
 using KiteTurbineDynamics
 
 # ─── 1. Constant L/r property ────────────────────────────────────────────────
 @testset "ring_spacing_v4 — constant L/r" begin
     r_top = 2.0; r_bot = 0.5; L = 30.0; c = 1.2
-    zs, rs, n_int = ring_spacing_v4(r_top, r_bot, L, c)
+    # Use max_rings=30 so the natural ring count (≈23) isn't clamped by the default
+    # max_rings=20 — this test checks mathematical correctness, not optimiser limits.
+    zs, rs, n_int = ring_spacing_v4(r_top, r_bot, L, c; max_rings=30)
     n_segs = length(zs) - 1
     @test n_segs >= 1
 
@@ -77,7 +80,12 @@ end
     d = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                       p.trpt_hub_radius, 0.6, 1.0,
                       p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
-    r = evaluate_design(d; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle)
+    # Use omega_rotor=0 to isolate the geometric FoS uniformity property.
+    # Centripetal off-loading (F = m·ω²·r) grows as r⁴ toward the hub, which
+    # creates a FoS gradient even with constant L/r; that's correct physics but
+    # would hide the geometric effect this test intends to verify.
+    r = evaluate_design(d; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle,
+                        omega_rotor=0.0)
     finite_fos = filter(isfinite, r.fos_per_ring)
     @test length(finite_fos) >= 2
     fos_spread = (maximum(finite_fos) - minimum(finite_fos)) / mean(finite_fos)
