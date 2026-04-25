@@ -265,7 +265,7 @@ function run_island(isl::Island, out_dir::String)
         knuckle_kg      = [d_best.knuckle_mass_kg],
         evaluations     = [evals],
         elapsed_s       = [elapsed],
-        status          = [r_best.msg],
+        status          = [r_best.constraint_msg],
     )
     CSV.write(best_path, summary)
 
