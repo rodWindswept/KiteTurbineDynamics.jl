@@ -100,6 +100,75 @@ fidelity structural model before committing to hardware dimensions.
 
 ---
 
+## [2026-04-25] n_lines Cp independence assumption (v4)
+
+**Context:** The v4 campaign found n_lines = 8 (the upper bound) in both the 10 kW and 50 kW
+winners. This raises the question: does the objective function penalise rotor aerodynamic
+efficiency as a function of n_lines, or treat power output as independent of n_lines?
+
+**Audit findings (src/ring_spacing.jl + src/trpt_optimization.jl):**
+
+Power (10 kW / 50 kW) enters the calculation only via the rotor radius `r_rotor` stored in
+`SystemParams`.  That radius feeds `peak_hub_thrust`:
+
+```julia
+T_peak = 0.5 * ρ * v² * π * r_rotor² * CT * cos(elev_angle)²   # CT = 1.0 fixed
+T_line_axial = T_peak / design.n_lines
+```
+
+`n_lines` then affects structural mechanics only:
+- polygon segment length `L_poly = 2r·sin(π/n_lines)` → Euler buckling resistance
+- compressive load `N_comp = F_v / (2·tan(π/n_lines))`
+- centripetal off-loading `F_centripetal = m_vertex * ω² * r`
+
+**There is no Cp(n_lines), Cp(TSR), or Cp(solidity) term anywhere in the v4 model.**
+
+The thrust coefficient `CT = 1.0` is a fixed structural load limit (conservative BEM ceiling);
+it does not couple aerodynamic efficiency back to n_lines.  Power output is implicitly assumed
+to be the same (10 kW or 50 kW) regardless of how many lines the shaft has.
+
+**Consequence:** More lines is always structurally better in v4 (shorter polygon segments →
+higher Euler buckling resistance → lighter beams), with zero aerodynamic cost.  The n_lines = 8
+result therefore saturates the upper bound as an artefact of the missing Cp(n_lines) coupling,
+not as a physically validated aerodynamic optimum.
+
+In reality, rotor solidity σ = n_lines × chord / (2π × r) rises with n_lines.  BEM theory
+shows Cp peaks at a solidity-dependent optimal TSR; over-solidity degrades Cp.  If Cp at
+n_lines = 8 is meaningfully lower than at n_lines = 4–6, the 10/50 kW target would require
+a larger rotor radius to compensate, increasing shaft mass and partially or fully erasing the
+structural gain.
+
+**Decision:** Accept the v4 result (n_lines = 8, 10.587 kg) as the minimum-mass shaft design
+**conditional on Cp being independent of n_lines** — a known modelling simplification.  The
+result is structurally valid; its aerodynamic validity is unverified.
+
+**v5 physics brief — recommended additions before trusting the n_lines optimum:**
+
+1. **BEM-derived Cp(n_lines, TSR, solidity):**
+   - Solidity: σ = n_lines × chord_eff / (2π × r_rotor)
+   - Run a BEM sweep over n_lines ∈ {3…12} and TSR ∈ {3…10}; fit Cp(σ, TSR) surface.
+   - Use the Cp surface to back-calculate the r_rotor needed to deliver rated power at each
+     n_lines candidate, then pass that r_rotor to `peak_hub_thrust`.  This closes the loop:
+     a Cp penalty now requires a larger rotor, which increases thrust, which increases shaft mass.
+
+2. **Upper bound on n_lines:** Raise from 8 to 12 in the search bounds once Cp penalty is
+   active; the penalty will naturally cap the optimal n_lines without a hard upper wall.
+
+3. **Per-generation torsional FOS logging:** Add `min_torsional_fos` to the DE callback so
+   convergence of the torsional constraint can be inspected independently of the beam FOS.
+
+**Alternatives considered:**
+- Run v5 without Cp coupling and just raise the n_lines upper bound to 12 — ruled out; would
+  only confirm that the optimiser still saturates at 12, adding no aerodynamic insight.
+- Use Actuator Disk theory Cp ≈ 16/27 as a fixed global value — rejected; this is independent
+  of n_lines and would not fix the missing coupling.
+
+**Status:** Active assumption in v4; targeted for removal in v5.  The v4 10.587 kg result
+remains the current structural reference but should not be used to select n_lines for hardware
+without a BEM-validated Cp model.
+
+---
+
 ## [2026-04-22] Ground ring deployment constraint: maximum radius 1.5 m
 
 **Context:** The ground ring of the TRPT shaft is the lowest ring — closest to the ground
