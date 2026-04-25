@@ -10,6 +10,96 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-04-25] Phase J — v4 campaign results: taper recovery yields 31 % mass reduction vs v3
+
+**Context:** The v3 campaign (Phase I) established the first torsionally-constrained minimum-mass
+TRPT shaft design. It identified 15.435 kg as the 10 kW optimum, but that campaign forced a
+cylindrical shaft profile (`taper_ratio = 1.0`) to isolate the torsional constraint as the new
+physics. The v4 formulation restored taper freedom and replaced the five-parameter axial profile
+family with a single `target_Lr` variable that enforces a constant L/r ratio across all shaft
+segments via a geometric-series ring spacing.
+
+**What was decided (campaign setup):**
+
+- **Formulation:** 9 design variables per island — `Do_top`, `t_over_D`, `beam_aspect`,
+  `Do_scale_exp` (taper), `r_hub`, `r_bottom`, `target_Lr`, `knuckle_mass_kg`, `n_lines`.
+  Ring count `n_rings` is derived, not free.  `target_Lr ∈ [0.4, 2.0]`.
+- **Beam profiles:** Circular, Elliptical, Airfoil (3 families).
+- **Power configs:** 10 kW and 50 kW (2 configs).
+- **Islands:** 60 = 3 beams × 5 Lr initialisation zones × 2 seeds × 2 power configs.
+- **Optimiser:** Differential Evolution, F = 0.7, CR = 0.9, pop = 64, stall restart at 1 500
+  generations; 168 h total budget ≈ 2.8 h per island.
+- **Constraints:** beam buckling FOS ≥ 1.8 (hard); torsional collapse FOS ≥ 1.5 (hard).
+- **Objective:** minimise TRPT shaft mass (kg) subject to both constraints being feasible.
+
+**Results — 10 kW winner:**
+
+| Parameter          | Value                |
+|--------------------|----------------------|
+| Mass               | **10.587 kg**        |
+| Beam profile       | Circular (or Elliptical — identical mass) |
+| r_hub              | 1.600 m              |
+| r_bottom           | 0.336 m              |
+| Tether length      | 30.0 m               |
+| target_Lr          | 2.0                  |
+| n_rings (derived)  | ≈ 19                 |
+| n_lines            | 8                    |
+| Do_top             | 0.039 m              |
+| Do_scale_exp       | 0.49 (tapered)       |
+| t_over_D           | 0.02                 |
+| Beam FOS           | 1.80 (at constraint) |
+
+**Results — 50 kW:**
+
+- Circular/Elliptical: 79.51 kg (beam FOS = 1.80, feasible)
+- Airfoil: 749.50 kg (airfoil profile penalty large at 50 kW scale)
+
+**Comparison vs previous campaigns (10 kW):**
+
+| Campaign | Constraint set          | Best mass | Notes                              |
+|----------|-------------------------|-----------|------------------------------------|
+| v2       | Beam buckling only      | 2.808 kg  | Torsionally infeasible — invalid   |
+| v3       | Beam + torsion (cylindrical) | 15.435 kg | Taper forced to 1.0            |
+| **v4**   | **Beam + torsion (taper free)** | **10.587 kg** | **−31.4 % vs v3**    |
+
+**Key finding — taper restoration:**
+
+Restoring taper freedom (freeing `Do_scale_exp` from its v3-implicit cylindrical value)
+reduces optimum mass from 15.435 kg to 10.587 kg — a 31.4 % saving under identical
+torsional and beam constraints.  The winning `Do_scale_exp` = 0.49 gives a shaft that tapers
+smoothly from hub (Do = 39 mm, r = 1.6 m) to a narrow ground ring (r = 0.34 m); the beam
+tubes at the ground end are proportionally thinner, saving steel where the torsional load is
+lowest.
+
+The v4 mass (10.587 kg) is still 3.8× heavier than the v2 taper-and-beam-only result
+(2.808 kg), confirming that torsional constraint adds real mass, not just formulation cost.
+Taper does not "undo" the torsional penalty; it recovers the mass that the forced-cylindrical
+assumption artificially added to v3.
+
+**Convergence robustness:** All 20 islands in the 10 kW circular + elliptical groups
+converged to the same design parameters (mass = 10.587 kg, target_Lr = 2.0) regardless of
+initial Lr zone or seed, confirming the DE found a single global minimum.  The 10 kW airfoil
+group converged to a distinct, heavier solution (70.78 kg), confirming that airfoil beam
+profiles are structurally inferior at this scale.
+
+**Figures generated:**
+- `figures/fig_v4_pareto.png` — mass by group (all 60 islands), log-scale
+- `figures/fig_v2_v3_v4_comparison.png` — mass and FOS comparison across campaigns
+- `figures/fig_v4_geometry.png` — side-elevation of the winning shaft (≈19 rings, 30 m tether)
+- `figures/fig_v4_island_heatmap.png` — 60-cell mass heatmap
+
+**Alternatives considered:**
+- Continue v3 search with cylindrical assumption and more compute time — ruled out; cylindrical
+  is demonstrably sub-optimal and the 31 % gap is physically justified, not a search artefact.
+- Run v4 with 50 kW as the primary target — done in parallel; 50 kW winner is 79.5 kg
+  (circular), forming the design-space anchor for future 50 kW structural work.
+
+**Status:** Active. The v4 10 kW winner (10.587 kg, target_Lr = 2.0, ≈19 rings) is the current
+reference minimum-mass TRPT shaft design. Future work should validate this against a higher-
+fidelity structural model before committing to hardware dimensions.
+
+---
+
 ## [2026-04-22] Ground ring deployment constraint: maximum radius 1.5 m
 
 **Context:** The ground ring of the TRPT shaft is the lowest ring — closest to the ground
