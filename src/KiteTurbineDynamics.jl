@@ -17,6 +17,8 @@ include("visualization.jl")
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
+include("bem.jl")
+include("objective_v5.jl")
 
 export SystemParams, params_10kw, params_50kw
 export cp_at_tsr, ct_at_tsr
