@@ -55,6 +55,11 @@ export TRPTDesignV4
 export OPT_MAX_GROUND_RADIUS, TRPT_V4_DIM
 export search_bounds_v4, design_from_vector_v4, objective_v4, baseline_design_v4
 
+# TRPT v5: BEM-coupled rotor radius (n_lines drives rotor sizing via BEM.rotor_radius_for_power)
+export BEM
+export TRPTDesignV5
+export search_bounds_v5, design_from_vector_v5, objective_v5, evaluate_design_v5
+
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams
 export single_kite_default, single_kite_sized, stacked_kites_default, rotary_lifter_default
