@@ -1,6 +1,7 @@
 # Large campaign outputs that can be regenerated from source
 scripts/results/**/stdout.log
 scripts/results/**/stderr.log
+scripts/results/**/campaign.log
 scripts/results/**/checkpoint.jls
 scripts/results/**/*.jls
 

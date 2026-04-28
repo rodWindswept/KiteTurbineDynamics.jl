@@ -1,0 +1,2 @@
+island_idx,cfg_name,beam_profile,variant,seed,best_mass_kg,min_fos,feasible,r_hub_m,r_bottom_m,target_Lr,n_lines,tether_length_m,Do_top_m,t_over_D,beam_aspect,Do_scale_exp,knuckle_kg,evaluations,elapsed_s,status
+24,10kw,airfoil,2,2,70.78322113919116,1.8,true,1.6,0.30000000000000004,1.9969877239170948,8,30.0,0.12,0.02278532082802272,0.2,0.3951044478862583,0.010000000000000005,128071992,192.65661597251892,OK

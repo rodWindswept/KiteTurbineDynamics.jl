@@ -1,0 +1,2 @@
+timestamp,generation,evaluations,best_mass_kg,best_fos,infeas_frac,elapsed_s,r_hub_m,r_bottom_m,target_Lr,n_lines
+2026-04-25T11:33:05.255,2000000,128071992,79.51342288746577,1.8,0.0,222.08872318267822,3.577708763999664,0.3000000000000006,1.4975916981382036,8
