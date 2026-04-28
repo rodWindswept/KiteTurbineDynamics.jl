@@ -3,6 +3,7 @@ scripts/results/**/stdout.log
 scripts/results/**/stderr.log
 scripts/results/**/checkpoint.jls
 scripts/results/**/*.jls
+scripts/results/**/campaign.log
 
 # Julia compilation caches
 *.jl.cov
