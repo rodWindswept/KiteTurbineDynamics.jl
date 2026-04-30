@@ -119,7 +119,7 @@ requires CFD validation at n > 6 (strip theory validity limit).
 | File | Purpose |
 |------|---------|
 | `src/ring_spacing.jl` | v4/v5 ring spacing, TRPTDesignV4, evaluate_design |
-| `src/bem_cp_model.jl` | v5 BEM Cp(σ, TSR) surface + self-consistent R |
+| `src/bem.jl` | v5 BEM Cp(n_lines) via Prandtl tip-loss + self-consistent R |
 | `src/trpt_axial_profiles.jl` | Torsional collapse constraint (v3+) |
 | `src/trpt_optimization.jl` | EvalResult struct; v2/v3 objectives |
 | `test/test_ring_spacing_v4.jl` | 368 tests for ring_spacing_v4 |
