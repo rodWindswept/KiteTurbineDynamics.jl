@@ -402,7 +402,8 @@ Phase G generated GLMakie renders of the winning designs.
 Phase H auto-generated and refreshed `TRPT_Design_Cartography_Report.docx` every 15 min
 during the campaign.
 
-Global winner results (FoS exactly 1.80 at the constraint boundary):
+Global winner results from Phase C–H (FoS exactly 1.80, Euler buckling only — later found
+torsionally infeasible in post-hoc check):
 
 | Config | Beam family  | Axial profile  | Total mass |
 |--------|-------------|----------------|-----------|
@@ -412,6 +413,42 @@ Global winner results (FoS exactly 1.80 at the constraint boundary):
 | 50 kW  | Circular    | Straight taper | 19.22 kg  |
 | 50 kW  | Elliptical  | Straight taper | 19.22 kg  |
 | 50 kW  | Airfoil     | Straight taper | 155.37 kg |
+
+### TRPT sizing optimisation — campaigns v3–v5 (April 2026)
+
+**v3 (2026-04-22):** Torsional collapse (Tulloch/Wacker criterion) added as a hard
+feasibility gate alongside Euler buckling. Post-hoc check on v2 results showed 54/60 islands
+infeasible — the lightest 10 kW winner (2.808 kg) had torsional FOS = 0.069. v3 enforces
+Euler FOS ≥ 1.8 + Torsional FOS ≥ 1.5 simultaneously. All 60 v3 islands converged to
+cylindrical geometry (`taper_ratio = 1.0`) because uniform ring spacing penalises taper
+(thin bottom segments get the same span as wide top segments, driving high L/r). 10 kW winner:
+**15.435 kg**. Results: `scripts/results/trpt_opt_v3/`.
+
+**v4 (2026-04-25):** Replaced the uniform-spacing + axial-profile approach with geometric
+ring spacing that targets a constant L/r ratio across all segments (`ring_spacing_v4()` in
+`src/ring_spacing.jl`). This lets the optimiser recover taper without the Euler buckling
+penalty. Ring count `n_rings` is now a derived output, not an input; `target_Lr` replaces the
+axial profile family. 60 islands (9 DoF). 10 kW winner: **10.587 kg** (−31.4 % vs v3).
+n_lines = 8 unanimous across all 60 islands. target_Lr = 2.0. Results: `scripts/results/trpt_opt_v4/`.
+
+**v5 (2026-04-30):** Closed the aerodynamic coupling loop: rotor radius R is now derived
+self-consistently from n_lines via a BEM Cp(σ, TSR) surface (`src/bem_cp_model.jl`). In v4,
+R was a fixed input and more lines had zero aerodynamic cost; in v5, Cp degradation from
+over-solidity requires a larger R, increasing thrust and shaft mass. 60 islands, same geometry
+as v4. 10 kW winner: **11.470 kg** (−25.7 % vs v3, +8.3 % vs v4). n_lines = 8 remains
+unanimous across all 60 v5 islands. Results: `scripts/results/trpt_opt_v5/`.
+
+Campaign progression summary (10 kW):
+
+| Campaign | Constraint set                          | Best mass    |
+|----------|-----------------------------------------|--------------|
+| v2       | Euler only                              | 2.808 kg (invalid) |
+| v3       | Euler + torsion (cylindrical forced)    | 15.435 kg    |
+| v4       | Euler + torsion (taper free, fixed R)   | 10.587 kg    |
+| v5       | Euler + torsion (taper free, BEM R)     | 11.470 kg    |
+
+Figures for the above campaigns committed to `figures/report/` and `figures/` (16 figures
+total). In progress: `TRPT_AWE_Forum_Report_v3.docx`.
 
 ---
 
@@ -457,6 +494,35 @@ angle per unit length must not exceed the limit set by the helical line geometry
 radius. This constraint is not currently computed or checked in `evaluate_design()`. Designs
 that pass the Euler FoS check may still be torsionally fragile. See `DECISIONS.md`.
 
+### Torsional constraint adds real mass; uniform spacing was imposing false cylindricity
+
+The v2 Euler-only optimiser produced designs at 2.808 kg (10 kW) that looked excellent but
+were torsionally infeasible by factors of 10–60×. The torsional FOS ≥ 1.5 constraint (v3)
+increased the minimum mass to 15.435 kg — a 449 % increase. That penalty was then partially
+recovered in v4 (−31.4 % vs v3) by switching from uniform to geometric ring spacing. The key
+insight: uniform spacing with a tapered shaft gives small-radius bottom segments a very high
+L/r ratio, making them structurally expensive and driving the optimiser toward cylindrical
+geometry. Constant L/r spacing removes this artificial pressure and recovers taper as an
+efficient structural strategy.
+
+### n_lines = 8 is structurally dominant over the canonical n_lines = 5
+
+All 120 optimisation islands across v4 and v5 unanimously select n_lines = 8 over the
+canonical n_lines = 5. More lines shorten the polygon segment span, raising the Euler buckling
+capacity. The aerodynamic cost (Cp degradation from higher solidity, quantified in v5 via BEM
+coupling) is approximately 3–4 % in Cp, translating to ~2 % larger required R and ~2 % higher
+shaft mass — well below the structural benefit. However, BEM strip theory is not validated for
+n_lines > 6: wake interference and potential-flow blockage effects at n = 8 are unmodelled.
+CFD or panel-method validation is required before adopting n_lines = 8 for hardware.
+
+### Hub elevation angle β likely has a structural optimum near 26°
+
+All sizing campaigns (v2–v5) fix β = 30°. The cold-start collapse analysis and lift-kite
+equilibrium work showed the natural hub equilibrium without active lift is approximately β ≈ 26°.
+A joint β + structural optimisation has not yet been run. The structural loads (thrust, tether
+tension) vary with cos²β; a lower β reduces thrust but increases the tether length per unit
+altitude — the net mass optimum is not obvious without a combined search.
+
 ### MPPT gain is near-optimal; ramp dynamics are the bigger concern
 
 The flat power peak between k×1.0 and k×1.2 means MPPT gain is not a sensitive parameter
@@ -475,11 +541,11 @@ in the model, even when the expected steady-state value matches the fixed assump
 
 ## 7. Known limitations and what could break
 
-**Torsional collapse not in optimiser fitness function.** The Euler FoS criterion prevents
-beam-column buckling but says nothing about whether the shaft can transmit the required
-torque without collapsing. A design that meets FoS ≥ 1.8 may still fail torsionally at
-rated conditions. The Tulloch/Wacker criterion needs to be added as an additional constraint
-in `evaluate_design()`. Flagged as an active gap in `DECISIONS.md`.
+**n_lines = 8 requires CFD validation.** Campaigns v4 and v5 unanimously select n_lines = 8.
+The BEM Cp model (v5) accounts for solidity-dependent Cp degradation but uses strip theory,
+which is not validated for n_lines > 6. Blade-to-blade wake interference, potential-flow
+blockage, and high-solidity corrections are unmodelled. n_lines = 8 should not be adopted
+for hardware without CFD or panel-method Cp confirmation.
 
 **OPT_DESIGN_LOAD_FACTOR is lumped and calibrated at one design point.** DLF = 1.2 was
 calibrated from six load scenarios at the 10 kW rated point (see `trpt_optimization.jl`
@@ -576,6 +642,7 @@ All design reports are checked into the repo as `.docx` files for sharing.
 | `TRPT_Conical_Stack_Analysis.docx` | Wind shear benefit; centrifugal radius expansion; conical stack P/W |
 | `TRPT_Sizing_Optimization_Report.docx` | Phase B1 DE sizing; 7-DoF; three beam profiles |
 | `TRPT_Design_Cartography_Report.docx` | Phase C–H cartography; 60-island campaign; 11.5 B evaluations |
+| `TRPT_AWE_Forum_Report_v3.docx` | v2–v5 campaign progression; n_lines = 8 finding; BEM Cp coupling (in progress) |
 | `KTD_Novelty_and_Prior_Art_Review.docx` | Patent and prior art landscape |
 
 ---
@@ -615,17 +682,19 @@ All 11 test suites pass. Test names and what they verify are listed in Section 2
 
 Known open items not yet implemented:
 
-- **Torsional collapse constraint in optimiser** — implement Tulloch/Wacker criterion as an
-  additional feasibility check in `evaluate_design()`. Highest-priority structural gap.
+- **CFD/panel-method validation of n_lines = 8 Cp** — BEM strip theory not validated above
+  n = 6. Required before adopting n_lines = 8 for hardware. Highest-priority for v6.
+- **Joint β + structural optimisation** — β fixed at 30° through all campaigns; optimum likely
+  near 26°. v6 should free β alongside structural design variables.
+- **Dynamic torsional loading and fatigue** — all structural sizing is against a static peak
+  envelope. Cyclic 1P/2P tether tension, S-N curves, and accumulated damage not modelled.
 - **Multi-segment back line** — replace single spring-damper with 5+ rope nodes to allow
   catenary sag and forward hub drift
 - **Solid-body collision physics** — ring and rotor interpenetration under severe droop;
   need contact normals and impulse-based rigid-body response
-- **Pitch and bank kite control loop** — elevation angle currently fixed at 30°
 - **Stacked rotor configurations** — multiple turbine stages on one TRPT shaft
 - **Launch and retrieval sequence simulation** — ramp from ground to operating altitude
 - **Turbulent wind field input** — von Kármán or Kaimal spectrum
-- **Fatigue life estimation** — tether tension cycle counting and S-N model
 
 ---
 

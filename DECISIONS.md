@@ -10,6 +10,86 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-04-30] Phase K — v5 campaign results: BEM-coupled rotor radius closes the n_lines loop
+
+**Context:** The v4 campaign found n_lines = 8 at the upper search bound in all 60 islands and
+the audit (entry below) established this was an artefact: more lines always improved Euler
+buckling resistance at zero aerodynamic cost because rotor radius R was a fixed input from
+`SystemParams` with no Cp(n_lines) coupling. v5 closes the loop by deriving R
+self-consistently from n_lines via a BEM Cp model, so Cp degradation from over-solidity
+translates into a larger R, higher thrust, and higher shaft mass.
+
+**What was decided (v5 formulation):**
+
+- Rotor radius R is no longer a fixed input. It is derived per candidate design: given n_lines,
+  chord geometry, and a BEM Cp(σ, TSR) surface, compute the σ that maximises Cp, find Cp_max,
+  then back-calculate R from `P_rated = 0.5ρv³πR²Cp_max·η`.
+- BEM Cp surface fitted from a sweep over n_lines ∈ {3…12}, TSR ∈ {3…10}, solidity
+  σ = n_lines × chord_eff / (2π × R). Stored in `src/bem_cp_model.jl`.
+- All other physics unchanged from v4 (Euler FOS ≥ 1.8, Torsional FOS ≥ 1.5, L/r spacing, DLF).
+- n_lines upper bound kept at 8: strip theory is not validated above n = 6; raising the bound
+  pending CFD/panel-method confirmation.
+
+**Results — 10 kW winner:**
+
+| Parameter           | Value                               |
+|---------------------|-------------------------------------|
+| Mass                | **11.470 kg** (+8.3 % vs v4)        |
+| n_lines             | 8 (unanimous across all 60 islands) |
+| Beam profile        | Circular                            |
+| r_hub               | 1.600 m                             |
+| r_bottom            | 0.340 m                             |
+| target_Lr           | 2.0                                 |
+| Cp (BEM-derived)    | 0.453                               |
+| R (self-consistent) | 5.12 m (vs fixed 5.0 m in v4)       |
+
+**Campaign summary across all runs (10 kW):**
+
+| Campaign | Constraint set                          | Best mass    | Δ vs v3   |
+|----------|-----------------------------------------|--------------|-----------|
+| v2       | Beam buckling only                      | 2.808 kg     | — (torsionally infeasible) |
+| v3       | Beam + torsion (cylindrical forced)     | 15.435 kg    | baseline  |
+| v4       | Beam + torsion (taper free, fixed R)    | 10.587 kg    | −31.4 %   |
+| **v5**   | **Beam + torsion (taper free, BEM R)**  | **11.470 kg**| **−25.7 %** |
+
+**n_lines = 8 is robust under BEM coupling.** The Cp penalty at n_lines = 8 solidity
+(σ ≈ 0.18 for the winner geometry) relative to n_lines = 5 canonical (σ ≈ 0.11) is
+approximately 3–4 %, translating to ~2 % larger R, ~3 % higher thrust, ~2 % higher shaft mass.
+The structural benefit of 8 vs 5 lines (shorter polygon segment → lighter beams) outweighs
+the aerodynamic penalty. n_lines = 8 is the unanimous choice across all 120 islands
+(60 v4 + 60 v5), across both 10 kW and 50 kW configurations.
+
+**Strip theory validity flag:** BEM strip theory is well-validated for n_lines ≤ 6. At
+n_lines = 8, blade-to-blade interaction (wake interference, solidity effects, potential-flow
+blockage) is not captured. Cp values at n_lines = 8 are provisional. CFD or panel-method
+validation is required before adopting n_lines = 8 for hardware.
+
+**Figures generated (committed to master):**
+
+- `figures/report/fig_trpt_system.png`, `fig_elevation_angle_trade.png`,
+  `fig_structural_efficiency_profile.png`, `fig_tulloch_wacker_chart.png`,
+  `fig_cp_contour.png`, `fig_nlines_mass_curve.png`, `fig_campaign_geometry_evolution.png`,
+  `fig_campaign_progression.png`, `fig_design_space.png`, `fig_fos_landscape.png`
+- `figures/fig_k_beam_profile_mass.png`, `fig_k_nlines_v4_v5.png`,
+  `fig_k_Lr_sensitivity.png`, `fig_k_taper_vs_mass.png`, `fig_k_torsional_binding.png`,
+  `fig_k_v4_v5_mass_comparison.png`
+
+**In progress:** `TRPT_AWE_Forum_Report_v3.docx` — builds on v4 and v5 results for external
+presentation.
+
+**Open questions for v6:**
+1. CFD/panel-method validation of n_lines = 8 Cp (strip theory not validated at n > 6).
+2. Joint β + structural optimisation: β fixed at 30° throughout v2–v5; cold-start and
+   lift-kite analysis suggest optimum near β ≈ 26°. v6 should free β alongside the
+   structural parameters.
+3. Dynamic torsional loading and fatigue: all campaigns size against a static peak envelope.
+   Cyclic tether tension (1P, 2P rotor harmonics) and fatigue life are not modelled.
+
+**Status:** Active. v5 (11.470 kg) is the current best physically-consistent TRPT shaft
+design. The +8.3 % mass penalty vs v4 is the cost of aerodynamic self-consistency.
+
+---
+
 ## [2026-04-25] Phase J — v4 campaign results: taper recovery yields 31 % mass reduction vs v3
 
 **Context:** The v3 campaign (Phase I) established the first torsionally-constrained minimum-mass
@@ -94,9 +174,30 @@ profiles are structurally inferior at this scale.
 - Run v4 with 50 kW as the primary target — done in parallel; 50 kW winner is 79.5 kg
   (circular), forming the design-space anchor for future 50 kW structural work.
 
-**Status:** Active. The v4 10 kW winner (10.587 kg, target_Lr = 2.0, ≈19 rings) is the current
-reference minimum-mass TRPT shaft design. Future work should validate this against a higher-
-fidelity structural model before committing to hardware dimensions.
+**Status:** Superseded as the current reference by v5 (11.470 kg with BEM-coupled R). v4 remains
+the structural lower bound — the minimum mass achievable if Cp is truly independent of n_lines.
+Future work should validate the winning geometry against a higher-fidelity structural model.
+
+---
+
+## [2026-04-25] n_lines Cp independence assumption in v4 (resolved in v5)
+
+**Context:** The v4 campaign found n_lines = 8 (the upper bound) in both 10 kW and 50 kW
+winners. Power (10 kW / 50 kW) entered v4 only via a fixed `r_rotor` in `SystemParams`. There
+was no Cp(n_lines), Cp(TSR), or Cp(solidity) term in the v4 objective. CT = 1.0 was a fixed
+conservative BEM ceiling. More lines was always structurally better (shorter polygon segments →
+higher Euler resistance), with zero aerodynamic cost — so the optimiser saturated n_lines at
+the upper bound as an artefact, not as a physically validated aerodynamic optimum.
+
+**Decision:** Accept v4 as the minimum-mass shaft design conditional on Cp being independent of
+n_lines. Flag v4 as structurally valid, aerodynamically unverified.
+
+**Resolution (v5, 2026-04-30):** v5 implements BEM-coupled rotor radius. n_lines = 8 still
+wins unanimously across all 120 islands, confirming the structural benefit outweighs the Cp
+penalty at this solidity. The n_lines = 8 preference is robust within the BEM strip model but
+not validated at n > 6 by higher-fidelity methods (see v5 entry above).
+
+**Status:** Resolved for the BEM-strip model. CFD/panel-method validation pending for n_lines = 8.
 
 ---
 
@@ -318,9 +419,10 @@ may be well under the torsional stability limit at rated torque. The optimiser c
 this. Any winning design from the Phase C–H campaign should be independently checked against
 the Tulloch/Wacker criterion before being treated as a final design.
 
-**Status:** Under review — active known gap. This is the highest-priority structural modelling
-task flagged by Tulloch's PhD and Wacker's analysis. Implementing the constraint correctly will
-require deriving the tapered-TRPT torsional stability limit and adding it to `evaluate_design()`.
+**Status:** Resolved (2026-04-22). The torsional collapse constraint was implemented as a hard
+feasibility gate in v3 (see the v4/v5 campaign entries above). All campaigns from v3 onwards
+enforce Torsional FOS ≥ 1.5 alongside Euler buckling FOS ≥ 1.8. This entry is retained for
+historical context — it describes the gap as it existed during Phase C–H (v2).
 
 ---
 
