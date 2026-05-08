@@ -2,15 +2,15 @@
 
 ## What this is
 
-A full multi-body dynamics simulator for a **TRPT kite turbine** — an Airborne Wind Energy (AWE) device developed by Windswept & Interesting Ltd. The primary design targets are a **10 kW prototype** (pentagon, 5-line TRPT) and a **50 kW commercial system** (octagon, 8-line TRPT, v5 geometry).
+A full multi-body dynamics simulator for a **TRPT kite turbine** — a Rotary Multi-Kite Airborne Wind Energy System capable of scaling via blade number, rotor layer stacking, rotor expansion, and network deployment methods, developed by Windswept & Interesting Ltd. The primarily tensile architecture is the key enabler of scaling: blades, shaft, and tether carry loads in tension. The exception is the polygon spacer rings, which resist inward compressive loads arising from the torsion in the helical lines — Euler column buckling of the ring beam segments is therefore a critical structural constraint. Dynamic rotor expansion via centripetal force during rotation (as investigated by AlphaAnemo and SomeAWE) is a further scaling pathway enabled by this tensile design. The primary design targets are a **10 kW prototype** (originally a pentagon, 5-line TRPT) and a **50 kW commercial system** (octagon, 8-line TRPT, v5 geometry).
 
 The simulator is the engineering source-of-truth for sizing, MPPT tuning, structural safety, and lift device trade-offs. It feeds directly into design reports, conference papers, and partner conversations.
 
 ---
 
-## Core physical concept: TRPT
+## Core physical concept: Kite Turbine
 
-**Tensile Rotary Power Transmission.** A rotor — a spinning ring of kite blades functioning as an autogyro kite — rotates in the wind at altitude. Torque travels *down the tether lines as twist* — the helical lines propagate rotation to the ground end, which drives a generator. There is no rigid shaft, gearbox, or tower. The structural spine is a tensile column of polygon spacer rings connected by the helical tether lines.
+**Kite Turbine.** A system for harvesting wind energy using a mostly tensile, lightweight, fast-deployable structure at low material cost. The system comprises: a **lift kite** providing elevation support via a **lift line** and **lift bearing**; a **back anchor line** limiting altitude and elevation angle; a **kite turbine rotor** (spinning ring of autogyro kite blades) generating torque from the wind; a **TRPT** (Tensile Rotary Power Transmission) shaft transmitting that torque to the ground as twist propagating down the helical tether lines; and a **ground station generator** extracting power at the ground end. There is no rigid shaft, gearbox, or tower. The tensile architecture keeps weight and material cost low and enables rapid deployment and scaling.
 
 Key consequences:
 - The system is **aerially suspended**: rotor lift + a separate lift device + tether tension must balance airborne weight and aerodynamic drag.
@@ -132,6 +132,8 @@ Three architectures are modelled in `src/lift_kite.jl`:
 | Rotary lifter | F ∝ v_app² = v² + (ωr)² | Low (ωr >> v) | Near-constant lift; path to safe 50 kW scaling |
 
 The static governing load case for stacked kites is the **topmost kite** supporting the full weight of the cascade below it — opposite to a compression stack.
+
+**Operational constraints:** A single lift kite sized to work at 4 m/s generates dangerously high forces at high wind speeds and becomes impossible for a human operator to control and recover safely. Stacked kites require multiple attachment points and are harder to deploy than a single kite, but their number can be adjusted to match an expected wind range. The rotary lifter avoids both problems — its near-constant lift force across wind speeds makes it the target architecture for safe scaling beyond 10 kW.
 
 ---
 
