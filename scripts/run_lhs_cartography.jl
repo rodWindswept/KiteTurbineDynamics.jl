@@ -93,6 +93,7 @@ function main()
         mass_beams_kg   = zeros(Float64, N),
         mass_knuckles_kg= zeros(Float64, N),
         min_fos         = zeros(Float64, N),
+        min_torsional_fos = zeros(Float64, N),
         worst_ring      = zeros(Int, N),
         feasible        = falses(N),
     )
@@ -118,6 +119,7 @@ function main()
         out[i, :mass_beams_kg]   = r.mass_beams_kg
         out[i, :mass_knuckles_kg]= r.mass_knuckles_kg
         out[i, :min_fos]         = r.min_fos
+        out[i, :min_torsional_fos] = r.min_torsional_fos
         out[i, :worst_ring]      = r.worst_ring_idx
         out[i, :feasible]        = r.feasible
         if i % 5000 == 0

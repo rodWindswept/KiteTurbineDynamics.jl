@@ -349,35 +349,101 @@ end
     lift_force_steady(dev::RotaryLifterParams, rho, v_wind)
         → (F_hub, T_line, elevation_deg)
 
-Steady-state lift from a rotary lifter at nominal TSR.
-Apparent wind at mean blade radius: v_app = √(v_wind² + (ω·r_mean)²)
-Lift ≈ 0.5 · ρ · v_app² · A_blade · CL
+Autogyro lift model using PCA-2 empirical rotor disk data.
+The rotor autorotates — tip-speed ratio determined by disk AoA, not fixed.
+Force uses rotor DISK area and empirical CL/CD curves
+(NASA TM 20080022367, PCA-2 autogyro wind tunnel tests).
+
+Disk angle of attack α = 90° − φ where φ is the line elevation.
+Equilibrium solved iteratively: φ = atan(CL(α)/CD(α)).
 """
 function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float64)
-    # FIXED omega — not TSR-following.  This is the key difference from a passive kite:
-    # omega is maintained by the rotor's own angular momentum and drive mechanism,
-    # so a gust changes v_wind but not (immediately) omega.  The apparent wind speed
-    # therefore changes much less than the true wind speed.
-    omega     = dev.omega_fixed
-    r_mean    = (dev.rotor_radius + dev.hub_radius) / 2.0
-    v_rot     = omega * r_mean
-    v_app     = sqrt(v_wind^2 + v_rot^2)
+    # PCA-2 autogyro disk coefficients vs angle of attack (degrees)
+    # CL and CD normalised to disk area πR² and freestream dynamic pressure
+    PCA2_ALPHA = [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0,
+                   45.0, 50.0, 60.0, 70.0, 80.0, 90.0]
+    PCA2_CL    = [0.00, 0.15, 0.30, 0.45, 0.60, 0.75, 0.85, 0.92, 0.95,
+                   0.90, 0.82, 0.65, 0.45, 0.25, 0.00]
+    PCA2_CD    = [0.01, 0.03, 0.06, 0.10, 0.16, 0.24, 0.35, 0.48, 0.62,
+                   0.75, 0.86, 0.96, 1.05, 1.15, 1.25]
 
-    # Blade area (both sides, n blades, chord × span)
-    span      = dev.rotor_radius - dev.hub_radius
-    A_blade   = dev.n_blades * dev.blade_chord * span
+    function pca2_interp(alpha_deg)
+        a = clamp(alpha_deg, 0.0, 90.0)
+        for i in 1:(length(PCA2_ALPHA)-1)
+            if a <= PCA2_ALPHA[i+1]
+                t = (a - PCA2_ALPHA[i]) / (PCA2_ALPHA[i+1] - PCA2_ALPHA[i])
+                return PCA2_CL[i] + t * (PCA2_CL[i+1] - PCA2_CL[i]),
+                       PCA2_CD[i] + t * (PCA2_CD[i+1] - PCA2_CD[i])
+            end
+        end
+        return PCA2_CL[end], PCA2_CD[end]
+    end
 
-    q_app     = 0.5 * rho * v_app^2
-    F_lift    = q_app * A_blade * dev.CL_blade
-    F_drag    = q_app * A_blade * dev.CD_blade
+    # Rotor disk area
+    A_disk = π * dev.rotor_radius^2
+    q = 0.5 * rho * v_wind^2
 
-    # Elevation angle: rotary lifter behaves like a kite with effective CL/CD
-    # In practice the lifter flies at a relatively shallow elevation (30–45°)
-    # because rotor drag is significant; use effective LD = CL/CD here
-    elev      = kite_elevation_angle(dev.CL_blade, dev.CD_blade)
-    T_line    = sqrt(F_lift^2 + F_drag^2)
-    F_hub     = T_line .* lift_line_direction(elev)
+    # Pitch factor: CL_blade scales the PCA-2 baseline CL
+    # 1.0 = nominal pitch, 0.5 = flat, 3.0 = aggressive pitch
+    pitch_factor = clamp(dev.CL_blade, 0.3, 3.0)
+
+    # Solve equilibrium: line elevation φ = atan(CL(90°-φ)×pitch / CD(90°-φ))
+    # CD also scales with pitch (induced drag ∝ CL² approximated as CD×pitch²)
+    φ_deg = 75.0
+    for _ in 1:8
+        α_deg = 90.0 - φ_deg
+        cl0, cd0 = pca2_interp(α_deg)
+        cl_eff = cl0 * pitch_factor
+        cd_eff = cd0 * pitch_factor^2  # induced drag scales with CL²
+        φ_deg = clamp(rad2deg(atan(cl_eff, cd_eff)), 5.0, 85.0)
+    end
+
+    α_final = 90.0 - φ_deg
+    cl0, cd0 = pca2_interp(α_final)
+    cl_disk = cl0 * pitch_factor
+    cd_disk = cd0 * pitch_factor^2
+
+    # Forces from disk aerodynamics (lift ⊥ wind, drag ∥ wind)
+    F_lift = q * A_disk * cl_disk
+    F_drag = q * A_disk * cd_disk
+    T_line = sqrt(F_lift^2 + F_drag^2)
+
+    # Line direction: force resultant angle
+    elev = φ_deg
+    F_hub = T_line .* lift_line_direction(elev)
     return (F_hub, T_line, elev)
+end
+
+# ── Autogyro sizing ────────────────────────────────────────────────────────────
+
+"""
+    autogyro_lift_required(p::SystemParams; lifter_elevation_deg=70.0)
+
+Compute the minimum lift line tension needed to support the airborne mass.
+Includes TRPT shaft, rotor blades, knuckles, and autogyro itself.
+"""
+function autogyro_lift_required(p::SystemParams; lifter_elevation_deg::Float64=70.0)
+    # Airborne mass budget
+    m_shaft   = 12.0     # kg — v5 optimized shaft ~11.5 + margin
+    m_blades  = p.n_blades * p.m_blade
+    m_knuckles = 1.0     # kg — knuckles, bearings, hub
+    m_lifter  = 5.0      # kg — autogyro rotor + lines
+    m_total   = m_shaft + m_blades + m_knuckles + m_lifter
+    g = 9.81
+    return m_total * g / sind(lifter_elevation_deg), m_total
+end
+
+"""
+    autogyro_radius_for_lift(lift_required_N, v_wind, pitch_factor=1.0)
+
+Compute the rotor radius needed to generate the required lift at a given wind speed.
+Uses PCA-2 CL at optimal disk AoA (~15°, CL≈0.45) scaled by pitch_factor.
+"""
+function autogyro_radius_for_lift(lift_required_N::Float64, v_wind::Float64;
+                                    pitch_factor::Float64=1.0, rho::Float64=1.225)
+    CL_nominal = 0.45 * pitch_factor  # PCA-2 at AoA≈15°
+    A_needed   = lift_required_N / (0.5 * rho * v_wind^2 * CL_nominal)
+    return sqrt(A_needed / π)
 end
 
 # ── Variability and sensitivity analysis ───────────────────────────────────────

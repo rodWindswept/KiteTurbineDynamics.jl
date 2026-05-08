@@ -188,6 +188,89 @@ function params_50kw()::SystemParams
 end
 
 """
+    params_v5_10kw() → SystemParams
+
+v5-optimized 10 kW configuration with 8-line octagonal geometry.
+Derived from the 168-hour DE optimisation campaign (island 11 winner,
+11.470 kg shaft, FOS=1.8, n_lines=8 unanimous optimum).
+
+Ring geometry uses the constant-L/r spacing law (ring_spacing_v4):
+  r_hub = 1.60 m, r_bottom = 0.336 m, target_Lr = 2.0
+  → 18 intermediate rings, 19 non-uniform segments
+
+Key differences from the canonical 5-line pentagon params_10kw():
+  - n_lines = 8 (distributes load → thinner, lighter beams)
+  - n_blades = 8 (one blade per TRPT vertex)
+  - r_hub = 1.60 m (vs 2.0 m canonical)
+  - n_rings = 18 (from ring_spacing_v4; vs 14 canonical)
+  - m_blade_each = 1.375 kg (total 11 kg across 8 blades)
+"""
+function params_v5_10kw()::SystemParams
+    base = params_10kw()
+    m_blade_each = 11.0 / 8.0   # ~1.375 kg per blade
+    m_ring = 0.4                # same ~400g per ring
+    return SystemParams(
+        base.rho, base.v_wind_ref, base.h_ref,
+        base.elevation_angle, base.lifter_elevation,
+        5.0,             # rotor_radius (m) — canonical; v5 BEM-derived = 5.12
+        30.0,            # tether_length (m)
+        1.60,            # trpt_hub_radius (m) — v5 optimum
+        0.74,            # trpt_rL_ratio — retained for backward compat; not used in v5 path
+        8,               # n_lines — v5 unanimous optimum
+        base.tether_diameter, base.e_modulus,
+        18,              # n_rings — from ring_spacing_v4(r_hub=1.60, r_bot=0.336, target_Lr=2.0)
+        m_ring,
+        8,               # n_blades — one per TRPT line
+        m_blade_each,
+        base.cp, base.i_pto, base.k_mppt,
+        base.p_rated_w,
+        base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
+        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
+    )
+end
+
+function params_v5_50kw()::SystemParams
+    return mass_scale(params_v5_10kw(), 10.0, 50.0)
+end
+
+"""
+    params_v5_safe_10kw() → SystemParams
+
+v5-safe 10 kW configuration: corrected power level, anti-necking ground ring,
+original FOS margins (Euler≥1.8, Torsion≥1.5).  Single-island DE preview result:
+18.0 kg shaft, nearly cylindrical (taper ratio 0.93), 11 rings, 8 lines.
+
+Key differences from params_v5_10kw():
+  - r_bottom = 1.49 m (vs 0.34 m) — anti-necking, prevents torsional collapse
+  - target_Lr = 1.61 (vs 2.0) — shorter segments for stiffness
+  - n_rings = 11 (vs 18) — fewer rings needed with wider geometry
+  - Mass = 18.0 kg (vs 11.5 kg) — 57% heavier, correctly sized for 10kW
+"""
+function params_v5_safe_10kw()::SystemParams
+    base = params_10kw()
+    m_blade_each = 11.0 / 8.0
+    m_ring = 0.4
+    return SystemParams(
+        base.rho, base.v_wind_ref, base.h_ref,
+        base.elevation_angle, base.lifter_elevation,
+        5.0,             # rotor_radius (m)
+        30.0,            # tether_length (m)
+        1.60,            # trpt_hub_radius (m)
+        0.74,            # trpt_rL_ratio (retained)
+        8,               # n_lines
+        base.tether_diameter, base.e_modulus,
+        11,              # n_rings — from ring_spacing_v4(1.60, 1.49, 30.0, 1.61)
+        m_ring,
+        8,               # n_blades
+        m_blade_each,
+        base.cp, base.i_pto, base.k_mppt,
+        base.p_rated_w,
+        base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
+        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
+    )
+end
+
+"""
     mass_scale(base, base_power_kw, target_power_kw)
 
 Scale a SystemParams to a new rated power using:

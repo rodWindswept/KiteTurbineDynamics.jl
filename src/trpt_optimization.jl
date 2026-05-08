@@ -29,6 +29,9 @@ const OPT_V_PEAK            = 25.0   # m/s — peak design wind speed
 const OPT_CT_PEAK            = 1.0   # max BEM thrust coefficient (conservative)
 const OPT_FOS_REQUIRED     = 1.8     # Factor of Safety (hard constraint)
 const OPT_TORSION_MARGIN   = 1.10    # Required ratio A_actual / A_buckling_limit
+const OPT_TORSION_FOS_REQUIRED = 1.5 # Tulloch torsional stability FOS (hard constraint)
+const OPT_CT_RATED         = 0.55    # Thrust coefficient at rated BEM operation
+const OPT_TSR_RATED        = 4.1     # Optimal tip-speed ratio
 
 # ── Combined design-load factor (DLF) ────────────────────────────────────────
 # Under perfectly uniform taper + zero twist + zero gust, the net radial force
@@ -282,6 +285,7 @@ struct EvalResult
     P_crit_per_ring   :: Vector{Float64}
     Do_per_ring       :: Vector{Float64}
     torsion_margin_ok :: Bool
+    min_torsional_fos :: Float64
     constraint_msg    :: String
 end
 
@@ -303,20 +307,38 @@ function evaluate_design(design::TRPTDesign;
                           r_rotor     :: Float64 = 5.0,
                           elev_angle  :: Float64 = π/6,
                           v_peak      :: Float64 = OPT_V_PEAK,
-                          fos_req     :: Float64 = OPT_FOS_REQUIRED)
+                          fos_req     :: Float64 = OPT_FOS_REQUIRED,
+                          v_rated     :: Float64 = 11.0,
+                          P_rated     :: Float64 = 10000.0)
 
     # Early-reject obviously invalid designs
     if design.Do_top <= 0 || design.t_over_D <= 0 ||
        design.n_rings < 3 || design.taper_ratio <= 0 ||
        design.r_hub <= 0
         return EvalResult(false, Inf, Inf, 0.0, 0.0, 0, Float64[], Float64[],
-                          Float64[], Float64[], false, "invalid geometry")
+                          Float64[], Float64[], false, 0.0, "invalid geometry")
     end
 
     radii      = ring_radii(design)
     L_seg      = segment_axial_lengths(design)
     n_rings_tot = length(radii)            # includes ground + hub
     n_seg      = length(L_seg)
+
+    # ── Torsional stability pre-calculation ──────────────────────────────────
+    # Tulloch/Wacker torsional collapse constraint at rated conditions.
+    ω_rated       = OPT_TSR_RATED * v_rated / r_rotor
+    τ_op          = P_rated / ω_rated
+    T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
+
+    min_torsional_fos = Inf
+    for i in 1:n_seg
+        r_min = min(radii[i], radii[i+1])
+        L     = L_seg[i]
+        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
+        tfos  = τ_cap / max(τ_op, 1e-9)
+        min_torsional_fos = min(min_torsional_fos, tfos)
+    end
+    torsional_collapse_ok = (min_torsional_fos >= OPT_TORSION_FOS_REQUIRED)
 
     # ── Line tension distribution ────────────────────────────────────────────
     # Total axial thrust transmitted through the n_lines tether lines.  Each
@@ -407,15 +429,17 @@ function evaluate_design(design::TRPTDesign;
     # Feasibility
     feasible = (min_fos >= fos_req) && torsion_ok &&
                (design.t_over_D >= OPT_T_OVER_D_MIN) &&
-               (design.t_over_D <= OPT_T_OVER_D_MAX)
+               (design.t_over_D <= OPT_T_OVER_D_MAX) &&
+               torsional_collapse_ok
     msg = feasible ? "OK" :
           (!torsion_ok ? "compressive stress > 500 MPa limit" :
            min_fos < fos_req ? "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx" :
+           !torsional_collapse_ok ? "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED" :
            "t/D out of manufacturable bounds")
 
     return EvalResult(feasible, mass_total, mass_beams, mass_knuckles,
                       min_fos, worst_idx, fos_per_ring, Ncomp_per_ring,
-                      Pcrit_per_ring, Do_per_ring, torsion_ok, msg)
+                      Pcrit_per_ring, Do_per_ring, torsion_ok, min_torsional_fos, msg)
 end
 
 # ── Baseline extraction from existing SystemParams ────────────────────────────

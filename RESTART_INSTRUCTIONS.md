@@ -1,11 +1,40 @@
 # RESTART_INSTRUCTIONS.md
 
-## Current state (2026-04-30)
+## Current state (2026-05-07)
 
-**v4 and v5 campaigns are COMPLETE.** Both sets of 60 islands finished.
+**Dashboard:** Major upgrade complete. v5 8-line octagon now fully supported alongside
+canonical 5-line pentagon. Config switching, furl controller, PCA-2 autogyro lift model,
+economics module, and safety state machine are all live.
 
-**In progress:** `TRPT_AWE_Forum_Report_v3.docx` is being built from v4/v5 results
-for external presentation. All campaign figures committed to master (see below).
+**To launch:**
+```bash
+julia --project=. scripts/interactive_dashboard.jl        # Canonical 5-line
+julia --project=. scripts/interactive_dashboard.jl --v5   # v5 Optimized 8-line
+```
+
+**Key new files:**
+| File | Purpose |
+|---|---|
+| `src/ring_spacing.jl` | v4/v5 geometric ring spacing (`ring_spacing_v4`) |
+| `src/bem.jl` | BEM Cp(n_lines) model for v5 aerodynamic coupling |
+| `src/economics.jl` | LCOE, capital cost, carbon analysis module |
+| `scripts/run_v4_campaign.jl` | v4 DE campaign (constant L/r spacing) |
+| `scripts/run_v5_campaign.jl` | v5 DE campaign (BEM-coupled rotor radius) |
+| `scripts/run_v5_safe_campaign.jl` | Corrected v5-safe campaign (pending launch) |
+
+**Known v5 campaign bug:** `run_v5_campaign.jl` line 103 hardcodes `power_W=50_000.0`
+for all islands — 10kW designs were optimized against 50kW loads. The v5-safe campaign
+(`scripts/run_v5_safe_campaign.jl`) fixes this and raises safety margins.
+
+**Dashboard features live:**
+- Config switching (Canonical ↔ v5, safety-gated)
+- 8 scenarios including Furl (pre-emptive backline winch + pitch boost)
+- PCA-2 autogyro lift model with blade pitch control
+- Lift budget HUD (T_lift, pitch factor, CL/CD, β, margin)
+- Per-segment tether tension (non-uniform natural lengths)
+- Safety state machine (:idle | :simulating | :switching)
+- Default lift device: Rotary Lifter (3.7m, pitch 1.0×)
+- Economics: LCOE 5.10 p/kWh, capital £11,724, carbon payback 2 months
 
 ---
 

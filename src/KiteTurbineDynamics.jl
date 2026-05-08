@@ -19,13 +19,14 @@ include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
 include("bem.jl")
 include("objective_v5.jl")
+include("economics.jl")
 
-export SystemParams, params_10kw, params_50kw
+export SystemParams, params_10kw, params_50kw, params_v5_10kw, params_v5_safe_10kw
 export cp_at_tsr, ct_at_tsr
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
 export AbstractNode, RingNode, RopeNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos
-export build_kite_turbine_system, state_size
+export build_kite_turbine_system, build_kite_turbine_system_v5, state_size
 export compute_rope_forces!, compute_ring_forces!
 export multibody_ode!
 export settle_to_equilibrium, simulate
@@ -66,6 +67,13 @@ export single_kite_default, single_kite_sized, stacked_kites_default, rotary_lif
 export lift_force_steady, stack_tension_profile, topmost_kite_static_load
 export tension_sensitivity, tension_cv, tension_cv_reduction
 export required_kite_area, hub_lift_required, lift_margin, lift_area_vs_power
+export autogyro_lift_required, autogyro_radius_for_lift
+
+# Economics
+export Economics, CostModel, default_cost_model_2026, compute_capital_cost,
+       compute_lcoe, compute_carbon, competitor_comparison,
+       compute_cost_breakdown, compute_mass_breakdown,
+       compute_annual_energy, compute_annual_revenue
 
 include("simulation.jl")
 end

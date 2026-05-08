@@ -4,6 +4,12 @@ Full multi-body dynamics simulator for a **TRPT kite turbine** — a Tensile Rot
 Transmission airborne wind energy system developed by
 [Windswept & Interesting Ltd](https://windswept.energy).
 
+**Now supports two configurations:**
+- **Canonical 5-line pentagon** (241 nodes, 14 rings, original 10kW prototype geometry)
+- **v5 Optimized 8-line octagon** (476 nodes, 18 rings, constant-L/r geometric ring spacing from 168-hour DE campaign)
+
+Switch between them live in the GLMakie dashboard.
+
 ---
 
 ## 1. What this is
@@ -60,11 +66,17 @@ KiteTurbineDynamics.jl/
 │   ├── simulation.jl             High-level simulation runner helpers
 │   ├── structural_safety.jl      Post-process Euler buckling FoS per ring
 │   ├── lift_kite.jl              LiftDevice type hierarchy + force models
+│   ├── ring_spacing.jl          v4/v5 geometric ring spacing (constant L/r)
+│   ├── bem.jl                   BEM Cp(n_lines) model for v5 aero coupling
 │   ├── trpt_axial_profiles.jl    Axial profile families for sizing optimisation
 │   ├── trpt_optimization.jl      TRPTDesign struct, evaluate_design(), DE fitness
-│   └── visualization.jl          GLMakie 3D dashboard
+│   ├── visualization.jl          GLMakie 3D dashboard (config switching, furl, lift HUD)
+│   └── economics.jl             LCOE, carbon, competitor comparison module
 ├── scripts/
-│   ├── interactive_dashboard.jl  Launch the GLMakie 3D viewer
+│   ├── interactive_dashboard.jl  Launch the GLMakie 3D viewer (--v5 for octagon)
+│   ├── run_v4_campaign.jl        v4 DE campaign (constant L/r spacing, 60 islands)
+│   ├── run_v5_campaign.jl        v5 DE campaign (BEM-coupled rotor radius)
+│   ├── run_v5_safe_campaign.jl   v5-safe DE campaign (corrected power, higher FOS)
 │   ├── mppt_twist_sweep_v2.jl    28-case MPPT gain × wind speed parametric sweep
 │   ├── mppt_ramp_only.jl         7→14 m/s wind ramp to expose inertial spin-up delay
 │   ├── hub_excursion_sweep.jl    Hub position variance vs lift device architecture
@@ -197,11 +209,35 @@ println("Hub ω = ", u_final[6N + Nr + Nr], " rad/s")
 ### GLMakie interactive dashboard
 
 ```bash
+# Canonical 5-line pentagon (original prototype)
 julia --project=. scripts/interactive_dashboard.jl
+
+# v5 optimized 8-line octagon (geometric ring spacing, L/r=2.0)
+julia --project=. scripts/interactive_dashboard.jl --v5
+
+# Headless batch mode (generates CSV output)
+julia --project=. scripts/interactive_dashboard.jl --headless --v5 --wind 11 --duration 30
 ```
 
-Opens a 3D view: rope node geometry, ring polygons coloured by structural utilisation
-(blue = safe → red = at buckling limit), structural FoS HUD, frame playback slider.
+**Dashboard features (May 2026):**
+- **Live config switching** — Switch between Canonical 5-line and v5 8-line via the
+  Configuration panel. Safety state machine prevents crashes during transitions.
+- **8 scenarios** — Steady, Ramp Up/Down, Gust, Launch, Land, Kite Drop, **Furl**
+- **Furl controller** — Pre-emptive backline winching + autogyro pitch boost for
+  above-rated wind operation. Two-phase: deploy at rated wind, then ramp wind into
+  already-elevated rotor.
+- **Lift Device panel** — Live autogyro/rotary lifter telemetry: T_lift, blade pitch
+  factor, CL/CD, β_actual, lift margin. Default: PCA-2 autogyro model (3.7m rotor,
+  auto-sized for v5 10kW airborne mass).
+- **Rotary Lifter (autogyro)** — PCA-2 empirical disk aerodynamics with autorotation.
+  Blade pitch factor (0.5–4×) modulates lift. Disk AoA determines line elevation
+  via iterative equilibrium solve.
+- **Economics module** — `src/economics.jl`: LCOE, capital cost, carbon analysis,
+  competitor comparison. Live via `using KiteTurbineDynamics.Economics`.
+- **Safety state machine** — All scenario/config/playback buttons disabled during
+  simulation. Status messages show what's happening. "Busy" warnings prevent crashes.
+- **Structural HUD** — Tether tension (per-segment natural length), ring column
+  buckling utilisation with FoS, rope sag, slack line count, torsional overturn warning.
 
 ### Regenerate reports from saved simulation data
 
@@ -449,6 +485,54 @@ Campaign progression summary (10 kW):
 
 Figures for the above campaigns committed to `figures/report/` and `figures/` (16 figures
 total). In progress: `TRPT_AWE_Forum_Report_v3.docx`.
+
+### Interactive dashboard upgrade + autogyro lift system (May 2026)
+
+The GLMakie dashboard was substantially upgraded to support the v5 8-line octagon
+configuration and serve as an integrated engineering + investor communication tool:
+
+- **v5 octagon support** — `build_kite_turbine_system_v5()` uses `ring_spacing_v4()`
+  for geometric non-uniform ring spacing. Node stride generalised from hardcoded 16
+  to `1 + n_lines × 3`. Sub-segment natural lengths use 3D chord (includes radial
+  taper spread). Auto-detected timestep reduction (dt=1e-5 for n_lines≥8).
+- **Per-segment tension display** — Tether tension closure uses per-segment natural
+  length from sub-segment data, correcting the 636kN phantom-tension bug caused by
+  using a uniform average segment length for all 19 non-uniform segments.
+- **In-dashboard config switching** — Menu selector + "Switch Configuration" button.
+  Safety state machine (`:idle | :simulating | :switching`) gates all interactive
+  controls. Status messages prevent confusion.
+- **Furl scenario** — Two-phase pre-emptive furl: (1) backline winches out +25m,
+  autogyro pitch ramps to 3× at rated wind; (2) wind ramps into already-elevated
+  rotor. Models the backline-release elevation-control strategy for above-rated
+  operation.
+- **PCA-2 autogyro lift model** — Rotary Lifter now uses empirical PCA-2 autogyro
+  disk aerodynamics (NASA TM 20080022367). Autorotation replaces fixed-ω model.
+  CL/CD from disk angle of attack via iterative equilibrium solve. Blade pitch
+  factor modulates lift (0.5–4×). Auto-sized for mission: 3.7m rotor for v5 10kW
+  (29 kg airborne, 303N lift required at cut-in).
+- **Lift budget HUD** — Live T_lift, pitch factor, CL/CD, β_actual, lift margin vs
+  required. Backline anchor winching visible through changing β.
+
+### Economics module (May 2026)
+
+`src/economics.jl` — pure-functions module (no GLMakie dependency):
+
+| Metric | v5 10kW | Notes |
+|---|---|---|
+| LCOE | 5.10 p/kWh | 30% CF, 7% discount, 20yr life |
+| Capital cost | £11,724 | CFRP tubes just £126 |
+| Carbon payback | 2 months | 1.51 gCO₂e/kWh embodied |
+| Annual energy | 26.3 MWh/yr | at 30% capacity factor |
+
+Functions: `compute_lcoe()`, `compute_capital_cost()`, `compute_carbon()`,
+`competitor_comparison()`, `autogyro_lift_required()`, `autogyro_radius_for_lift()`.
+
+### v5-safe optimisation campaign (pending)
+
+A corrected and safer DE campaign (`scripts/run_v5_safe_campaign.jl`) addresses the
+v5 power-level bug (all islands hardcoded to 50kW) and raises safety margins:
+torsional FOS ≥ 3.0, Euler FOS ≥ 2.5, r_bottom ≥ 0.5m anti-necking constraint.
+Estimated safe mass: 15–20 kg for 10kW.
 
 ---
 

@@ -25,6 +25,9 @@ function parse_commandline()
             help = "Render the optimized TRPT geometry from trpt_opt/<label>/best_design.json"
             arg_type = String
             default = ""
+        "--v5"
+            help = "Use v5 optimized 8-line octagon geometry"
+            action = :store_true
     end
     return parse_args(s)
 end
@@ -169,82 +172,114 @@ function main()
         return
     end
 
-    p    = params_10kw()
-    
-    # ── Initialization ──
-    sys, u0 = build_kite_turbine_system(p)
-    println("Initializing at rated power equilibrium (ω=9.5)...")
-    u_start = settle_to_operational_state(sys, u0, p, 9.5)
+    # Determine initial config from CLI flags
+    current_config = args["v5"] ? "v5 Optimized 8-line" : "Canonical 5-line"
+    v_target       = args["wind"]
 
-    N  = sys.n_total
-    Nr = sys.n_ring
-    
-    # Custom wind function
-    v_target = args["wind"]
-    wind_fn = (pos, t) -> begin
-        z  = max(pos[3], 1.0)
-        sh = (z / p.h_ref)^(1.0/7.0)
-        [v_target * sh, 0.0, 0.0]
-    end
+    while true
+        # ── Build system for current configuration ──────────────────────────
+        if current_config == "v5 Optimized 8-line"
+            p    = params_v5_10kw()
+            sys, u0 = build_kite_turbine_system_v5(p, 2.0, 0.336)
+            label  = "v5 octagon"
+        elseif current_config == "v5-safe 8-line"
+            p    = params_v5_safe_10kw()
+            sys, u0 = build_kite_turbine_system_v5(p, 1.61, 1.49)
+            label  = "v5-safe octagon"
+        else
+            p    = params_10kw()
+            sys, u0 = build_kite_turbine_system(p)
+            label  = "canonical 5-line"
+        end
+        println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
+        println("Initializing at rated power equilibrium (ω=9.5)...")
+        u_start = settle_to_operational_state(sys, u0, p, 9.5)
 
-    DT         = 4e-5
-    LIN_DAMP   = 0.05
-    SAVE_EVERY = 500
-    n_steps = round(Int, args["duration"] / DT)
+        N  = sys.n_total
+        Nr = sys.n_ring
 
-    if args["headless"]
-        # ── HEADLESS MODE ──
-        println("Running headless simulation: $(args["duration"])s at $(v_target)m/s...")
-        u = copy(u_start)
-        
-        # Simple CSV logging via callback
-        results = DataFrame(t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[])
-        
-        run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT; 
-            lin_damp = LIN_DAMP,
-            callback = (u_curr, t_curr, step) -> begin
-                if step % SAVE_EVERY == 0
-                    hz = u_curr[3*(sys.rotor.node_id-1)+3]
-                    om = u_curr[6N + Nr + Nr]
-                    pk = p.k_mppt * om^2 * abs(om) / 1000.0
-                    push!(results, (t_curr, hz, om, pk))
-                end
-            end
-        )
-        
-        out_path = "scripts/results/canonical_output_v$(v_target).csv"
-        CSV.write(out_path, results)
-        println("Done. Results saved to $out_path")
-    else
-        # ── INTERACTIVE MODE ──
-        # Load GLMakie only when needed
-        @eval using GLMakie
-        
-        n_frames = n_steps ÷ SAVE_EVERY
-        frames   = Vector{Vector{Float64}}(undef, n_frames)
-        times    = Vector{Float64}(undef, n_frames)
-        u        = copy(u_start)
+        # Custom wind function
+        wind_fn = (pos, t) -> begin
+            z  = max(pos[3], 1.0)
+            sh = (z / p.h_ref)^(1.0/7.0)
+            [v_target * sh, 0.0, 0.0]
+        end
 
-        println("Simulating $(args["duration"])s ($n_steps steps -> $n_frames frames)...")
-        let fi = 1
-            run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT; 
+        DT         = 4e-5
+        LIN_DAMP   = 0.05
+        SAVE_EVERY = 500
+        # v5 has shorter ground-end segments → higher stiffness → needs smaller dt
+        if current_config == "v5 Optimized 8-line"
+            DT = 1e-5
+            SAVE_EVERY = 2000  # keep ~same frames per simulated second
+        end
+        n_steps = round(Int, args["duration"] / DT)
+
+        if args["headless"]
+            # ── HEADLESS MODE ──
+            println("Running headless simulation: $(args["duration"])s at $(v_target)m/s...")
+            u = copy(u_start)
+            results = DataFrame(t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[])
+            run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
                 lin_damp = LIN_DAMP,
-                callback = (u_current, t_current, step) -> begin
-                    if step % SAVE_EVERY == 0 && fi <= n_frames
-                        frames[fi] = copy(u_current)
-                        times[fi]  = t_current
-                        fi += 1
+                callback = (u_curr, t_curr, step) -> begin
+                    if step % SAVE_EVERY == 0
+                        hz = u_curr[3*(sys.rotor.node_id-1)+3]
+                        om = u_curr[6N + Nr + Nr]
+                        pk = p.k_mppt * om^2 * abs(om) / 1000.0
+                        push!(results, (t_curr, hz, om, pk))
                     end
                 end
             )
-        end
+            out_path = "scripts/results/canonical_output_v$(v_target).csv"
+            CSV.write(out_path, results)
+            println("Done. Results saved to $out_path")
+            break  # headless: one config, no switching
+        else
+            # ── INTERACTIVE MODE ──
+            @eval using GLMakie
 
-        println("Building dashboard...")
-        fig = build_dashboard(sys, p, frames; times=times,
-                              u_settled=u_start, wind_fn=wind_fn)
-        display(fig)
-        println("Dashboard open. Ctrl+C to quit.")
-        wait(fig.scene)
+            n_frames = n_steps ÷ SAVE_EVERY
+            frames   = Vector{Vector{Float64}}(undef, n_frames)
+            times    = Vector{Float64}(undef, n_frames)
+            u        = copy(u_start)
+
+            println("Simulating $(args["duration"])s ($n_steps steps → $n_frames frames)...")
+            let fi = 1
+                run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
+                    lin_damp = LIN_DAMP,
+                    callback = (u_current, t_current, step) -> begin
+                        if step % SAVE_EVERY == 0 && fi <= n_frames
+                            frames[fi] = copy(u_current)
+                            times[fi]  = t_current
+                            fi += 1
+                        end
+                    end
+                )
+            end
+
+            println("Building dashboard...")
+            fig, config_changed = build_dashboard(sys, p, frames; times=times,
+                                  u_settled=u_start, wind_fn=wind_fn,
+                                  config_name=current_config)
+            display(fig)
+            println("Dashboard open — $(current_config). Use 'Switch Configuration' to change.")
+
+            # Wait for window close or config switch request
+            while isopen(fig.scene) && config_changed[] === nothing
+                sleep(0.25)
+            end
+
+            # Check if a config switch was requested
+            new_config = config_changed[]
+            if new_config === nothing
+                break  # User closed the window normally
+            else
+                current_config = new_config
+                println("⟳  Switching to $(new_config)...")
+                # Loop continues: rebuild system, re-run sim, re-open dashboard
+            end
+        end
     end
 end
 

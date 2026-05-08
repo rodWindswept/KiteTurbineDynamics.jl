@@ -17,6 +17,7 @@ function build_kite_turbine_system(p::SystemParams;
     n_ring   = p.n_rings + 2        # 16  (ground + rings + hub)
     n_rope   = p.n_lines * 3 * n_seg  # 225
     n_total  = n_ring + n_rope        # 241
+    stride   = 1 + p.n_lines * 3       # node stride per segment (5→16, 8→25)
 
     β         = p.elevation_angle
     shaft_dir = [cos(β), 0.0, sin(β)]
@@ -83,12 +84,12 @@ function build_kite_turbine_system(p::SystemParams;
         # rope nodes for this segment
         for j in 1:p.n_lines
             for m in 1:3
-                gid = (s-1)*16 + 2 + (j-1)*3 + (m-1)
+                gid = (s-1)*stride + 2 + (j-1)*3 + (m-1)
                 nodes[gid] = RopeNode(gid, m_rope_sub, j, s, m)
             end
         end
         # ring at top of segment
-        gid_ring   = 1 + s * 16
+        gid_ring   = 1 + s * stride
         inertia_z  = (s < n_seg) ? p.m_ring * ring_radii[s+1]^2 :
                                    m_rotor * p.rotor_radius^2
         mass_node  = (s < n_seg) ? p.m_ring : m_rotor
@@ -110,7 +111,7 @@ function build_kite_turbine_system(p::SystemParams;
             ends = Vector{SubSegmentEnd}(undef, 5)
             ends[1] = SubSegmentEnd(ring_a_gid, true,  j)
             for m in 1:3
-                gid      = (s-1)*16 + 2 + (j-1)*3 + (m-1)
+                gid      = (s-1)*stride + 2 + (j-1)*3 + (m-1)
                 ends[m+1] = SubSegmentEnd(gid, false, j)
             end
             ends[5] = SubSegmentEnd(ring_b_gid, true, j)
@@ -146,7 +147,176 @@ function build_kite_turbine_system(p::SystemParams;
             pb = attachment_point(ring_b_pos, ring_radii[s+1], alpha_b, j, p.n_lines, perp1, perp2)
             for m in 1:3
                 frac = m / 4.0
-                gid  = (s-1)*16 + 2 + (j-1)*3 + (m-1)
+                gid  = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+                u0[3*(gid-1)+1 : 3*gid] .= rope_helix_pos(pa, pb, frac)
+            end
+        end
+    end
+
+    return sys, u0
+end
+
+"""
+    build_kite_turbine_system_v5(p, target_Lr, r_bottom; ...) → (sys, u0)
+
+Constructs the KiteTurbineSystem using v5 constant-L/r non-uniform ring spacing
+from ring_spacing_v4().  Supports arbitrary n_lines (specifically 8 for the
+optimized octagon geometry).
+
+Differences from build_kite_turbine_system():
+  - Ring positions/radii computed by ring_spacing_v4 (non-uniform axial spacing)
+  - n_rings is an output of ring_spacing_v4, not a SystemParams field
+  - Segment natural lengths are non-uniform (derived from z_positions)
+  - Uses stride = 1 + p.n_lines * 3 (generalises to any n_lines)
+"""
+function build_kite_turbine_system_v5(p::SystemParams,
+                                       target_Lr::Float64,
+                                       r_bottom::Float64;
+                                       kite_area::Float64          = 10.0,
+                                       kite_mass::Float64          = 5.0,
+                                       kite_tether_length::Float64 = 20.0)
+
+    # ── Compute ring positions via constant-L/r spacing ─────────────────────
+    z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v4(
+        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr)
+
+    n_ring  = n_rings_computed + 2       # ground + intermediate rings + hub
+    n_seg   = n_rings_computed + 1
+    n_rope  = p.n_lines * 3 * n_seg
+    n_total = n_ring + n_rope
+    stride  = 1 + p.n_lines * 3
+
+    # Per-segment natural lengths (non-uniform)
+    seg_lengths = diff(z_positions)  # axial distance between adjacent rings
+    # Last segment may differ; ensure positivity
+    for i in eachindex(seg_lengths)
+        seg_lengths[i] = max(seg_lengths[i], 1e-6)
+    end
+
+    β         = p.elevation_angle
+    shaft_dir = [cos(β), 0.0, sin(β)]
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
+
+    EA_total  = p.e_modulus * π * (p.tether_diameter / 2)^2 * p.n_lines
+    # Use average segment length for initial axial stiffness estimate
+    k_axial   = EA_total / (p.tether_length / n_seg)
+
+    m_rotor   = p.n_blades * p.m_blade
+    g_z       = -9.81
+    v         = p.v_wind_ref
+    q         = 0.5 * p.rho * v^2
+    thrust_ax   = q * π * p.rotor_radius^2 * 0.8 * cos(β)^2
+    F_aero_z    = thrust_ax * sin(β) + (m_rotor + kite_mass) * g_z
+    F_top_ax    = max(-F_aero_z / sin(β), 20.0)
+
+    g_axial_inc = p.m_ring * 9.81 / sin(β)
+    F_axial     = zeros(n_seg)
+    F_axial[n_seg] = F_top_ax
+    for i in (n_seg-1):-1:1
+        F_axial[i] = F_axial[i+1] + g_axial_inc
+    end
+
+    # Build ring positions using per-segment natural lengths
+    ring_pos = Vector{Vector{Float64}}(undef, n_ring)
+    ring_pos[1] = [0.0, 0.0, 0.0]
+    for i in 1:n_seg
+        stretch     = max(0.0, F_axial[i] / k_axial)
+        ring_pos[i+1] = ring_pos[i] .+ (seg_lengths[i] + stretch) .* shaft_dir
+    end
+
+    # ── Build node list ────────────────────────────────────────────────────
+    nodes = Vector{AbstractNode}(undef, n_total)
+    ring_ids = Vector{Int}(undef, n_ring)
+
+    EA_single = p.e_modulus * π * (p.tether_diameter / 2)^2
+
+    # ground (ring index k=0, ring_idx=1)
+    nodes[1] = RingNode(1, 1, 1e30, ring_radii_computed[1], p.i_pto, true)
+    ring_ids[1] = 1
+
+    for s in 1:n_seg
+        # 3D chord includes radial taper spread: chord² = L_axial² + Δr²
+        r_a = ring_radii_computed[s]
+        r_b = ring_radii_computed[s+1]
+        chord_3d = sqrt(seg_lengths[s]^2 + (r_b - r_a)^2)
+        sub_len_0_s = chord_3d / 4.0
+        m_rope_sub_s = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0_s
+
+        # rope nodes for this segment
+        for j in 1:p.n_lines
+            for m in 1:3
+                gid = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+                nodes[gid] = RopeNode(gid, m_rope_sub_s, j, s, m)
+            end
+        end
+        # ring at top of segment
+        gid_ring   = 1 + s * stride
+        inertia_z  = (s < n_seg) ? p.m_ring * ring_radii_computed[s+1]^2 :
+                                   m_rotor * p.rotor_radius^2
+        mass_node  = (s < n_seg) ? p.m_ring : m_rotor
+        nodes[gid_ring] = RingNode(gid_ring, s+1, mass_node, ring_radii_computed[s+1],
+                                   inertia_z, false)
+        ring_ids[s+1] = gid_ring
+    end
+
+    # ── Build sub-segment list ──────────────────────────────────────────────
+    zeta   = 1.5
+    # Compute c_damp per segment (depends on sub_len_0)
+    sub_segs = Vector{RopeSubSegment}()
+    sizehint!(sub_segs, 4 * p.n_lines * n_seg)
+
+    for s in 1:n_seg
+        ring_a_gid = ring_ids[s]
+        ring_b_gid = ring_ids[s+1]
+        # 3D chord includes radial taper spread
+        r_a_seg = ring_radii_computed[s]
+        r_b_seg = ring_radii_computed[s+1]
+        chord_3d_s = sqrt(seg_lengths[s]^2 + (r_b_seg - r_a_seg)^2)
+        sub_len_0_s = chord_3d_s / 4.0
+        m_rope_sub_s = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0_s
+        c_damp_s = 2.0 * zeta * sqrt(EA_single / sub_len_0_s * m_rope_sub_s)
+
+        for j in 1:p.n_lines
+            ends = Vector{SubSegmentEnd}(undef, 5)
+            ends[1] = SubSegmentEnd(ring_a_gid, true,  j)
+            for m in 1:3
+                gid      = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+                ends[m+1] = SubSegmentEnd(gid, false, j)
+            end
+            ends[5] = SubSegmentEnd(ring_b_gid, true, j)
+
+            for sub in 1:4
+                push!(sub_segs, RopeSubSegment(
+                    ends[sub], ends[sub+1],
+                    sub_len_0_s, EA_single, c_damp_s, p.tether_diameter))
+            end
+        end
+    end
+
+    rotor = RotorSpec(ring_ids[end], p.rotor_radius, m_rotor,
+                      m_rotor * p.rotor_radius^2)
+    kite  = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1,
+                     kite_tether_length)
+
+    sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite, n_ring, n_total)
+
+    # ── Initial state vector (straight-line rope placement) ───────────────
+    u0 = zeros(Float64, state_size(sys))
+    for k in 1:n_ring
+        gid = ring_ids[k]
+        u0[3*(gid-1)+1 : 3*gid] .= ring_pos[k]
+    end
+
+    for s in 1:n_seg
+        ring_a_pos = ring_pos[s]
+        ring_b_pos = ring_pos[s+1]
+        alpha_a = 0.0; alpha_b = 0.0
+        for j in 1:p.n_lines
+            pa = attachment_point(ring_a_pos, ring_radii_computed[s],   alpha_a, j, p.n_lines, perp1, perp2)
+            pb = attachment_point(ring_b_pos, ring_radii_computed[s+1], alpha_b, j, p.n_lines, perp1, perp2)
+            for m in 1:3
+                frac = m / 4.0
+                gid  = (s-1)*stride + 2 + (j-1)*3 + (m-1)
                 u0[3*(gid-1)+1 : 3*gid] .= rope_helix_pos(pa, pb, frac)
             end
         end
@@ -176,6 +346,13 @@ function settle_to_equilibrium(sys         ::KiteTurbineSystem,
                                 n_steps     ::Int     = 4_000,
                                 dt          ::Float64 = 4e-5,
                                 damp        ::Float64 = 0.05)
+    # Auto-adjust dt for high-line-count systems: shorter ground-end segments
+    # (e.g., 0.17 m in v5 vs 0.50 m canonical) have higher natural frequencies
+    # that exceed the semi-implicit Euler stability limit at dt=4e-5.
+    # Scaling: ω_max ∝ 1/√L₀, so for L₀=0.17 m we need dt ≈ 4e-5×√(0.17/0.50) ≈ 2.3e-5
+    # Conservative bound: n_lines ≥ 8 → dt = 1e-5
+    local dt_use = p.n_lines >= 8 ? 1e-5 : dt
+    local n_use  = p.n_lines >= 8 ? n_steps * 4 : n_steps  # 4× steps to match sim time
     u    = copy(u0)
     N    = sys.n_total
     Nr   = sys.n_ring
@@ -184,15 +361,15 @@ function settle_to_equilibrium(sys         ::KiteTurbineSystem,
     ode_params = lift_device === nothing ? (sys, p, wind_zero) :
                                            (sys, p, wind_zero, lift_device)
 
-    for _ in 1:n_steps
+    for _ in 1:n_use
         fill!(du, 0.0)
         multibody_ode!(du, u, ode_params, 0.0)
 
         # Semi-implicit Euler: velocities first, then positions
-        @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
-        @views u[1:3N]            .+= dt .* u[3N+1:6N]
-        @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
-        @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
+        @views u[3N+1:6N]        .+= dt_use .* du[3N+1:6N]
+        @views u[1:3N]            .+= dt_use .* u[3N+1:6N]
+        @views u[6N+Nr+1:6N+2Nr] .+= dt_use .* du[6N+Nr+1:6N+2Nr]
+        @views u[6N+1:6N+Nr]     .+= dt_use .* u[6N+Nr+1:6N+2Nr]
 
         # Kill high-frequency oscillations
         @views u[3N+1:6N]        .*= damp
@@ -392,10 +569,10 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
 
     τ_rated  = p.k_mppt * ω_rated^2
     EA_rope  = p.e_modulus * π * (p.tether_diameter / 2)^2
-    L_seg    = p.tether_length / (Nr - 1)
     β_a      = p.elevation_angle
     sd       = [cos(β_a), 0.0, sin(β_a)]
     pp1, pp2 = shaft_perp_basis(sd)
+    stride   = 1 + p.n_lines * 3
 
     # 1. Uniform ω — zero inter-ring velocity difference at t=0
     for ri in 1:Nr
@@ -416,6 +593,9 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
         ctr_a = u_start[3*(gid_a-1)+1 : 3*gid_a]
         ctr_b = u_start[3*(gid_b-1)+1 : 3*gid_b]
 
+        # Natural segment length derived from sub_segs (supports non-uniform spacing)
+        L_seg_s = 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
+
         τ_fn_a = (Δα) -> begin
             τ = 0.0
             for j in 1:p.n_lines
@@ -423,7 +603,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
                 pb_j    = attachment_point(ctr_b, nb.radius, α_cum + Δα,  j, p.n_lines, pp1, pp2)
                 chord_j = norm(pb_j .- pa_j)
                 chord_j < 1e-9 && continue
-                T_j     = EA_rope * max(0.0, (chord_j - L_seg) / L_seg)
+                T_j     = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
                 dir_j   = (pb_j .- pa_j) ./ chord_j
                 r_vec_a = pa_j .- ctr_a
                 τ      += T_j * dot(cross(r_vec_a, dir_j), sd)
@@ -444,7 +624,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
             pb_j    = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
             chord_j = norm(pb_j .- pa_j)
             chord_j < 1e-9 && continue
-            T_j     = EA_rope * max(0.0, (chord_j - L_seg) / L_seg)
+            T_j     = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
             dir_j   = (pb_j .- pa_j) ./ chord_j
             r_vec_b = pb_j .- ctr_b
             τ_b    += T_j * dot(cross(r_vec_b, -dir_j), sd)
@@ -462,7 +642,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
             pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
             for m in 1:3
                 frac = m / 4.0
-                gid  = (s - 1) * 16 + 2 + (j - 1) * 3 + (m - 1)
+                gid  = (s - 1) * stride + 2 + (j - 1) * 3 + (m - 1)
                 u_start[3*(gid-1)+1 : 3*gid] .= pa .+ frac .* (pb .- pa)
             end
         end

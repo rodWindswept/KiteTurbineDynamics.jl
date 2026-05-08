@@ -4,18 +4,24 @@ version = "0.1.0"
 authors = ["Rod Read <rod@windswept.energy>"]
 
 [deps]
+Bonito = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Pandoc = "f853b5e0-b243-11e9-0043-7da5023c5ee7"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+WGLMakie = "276b4fcb-3e11-5398-bf8b-a0c2d153d008"
 
 [compat]
+Bonito = "4.2.0"
 FFTW = "1.10.0"
+Pandoc = "0.3.1"
+WGLMakie = "0.13.9"
 julia = "1.12"
 
 [extras]
