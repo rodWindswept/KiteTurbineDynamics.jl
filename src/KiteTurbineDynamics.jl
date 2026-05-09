@@ -22,8 +22,10 @@ include("bem.jl")
 include("objective_v5.jl")
 include("economics.jl")
 
-export SystemParams, params_10kw, params_50kw, params_v5_10kw, params_v5_safe_10kw
-export cp_at_tsr, ct_at_tsr
+export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLineSpec
+export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_10kw
+export mass_scale
+export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
 export AbstractNode, RingNode, RopeNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos

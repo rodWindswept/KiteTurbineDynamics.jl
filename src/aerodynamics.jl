@@ -214,3 +214,48 @@ function _interp_bem(tsr_table::Vector{Float64}, coeff_table::Vector{Float64},
     t = (lambda - tsr_table[i-1]) / (tsr_table[i] - tsr_table[i-1])
     return coeff_table[i-1] + t * (coeff_table[i] - coeff_table[i-1])
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Tether aerodynamic drag
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    TETHER_DRAG_CD
+
+Drag coefficient for a cylindrical Dyneema tether in crossflow.
+Cd ≈ 1.0 is the standard value for a smooth circular cylinder
+at the Reynolds numbers typical of TRPT tethers (Re ~ 10³–10⁴).
+"""
+const TETHER_DRAG_CD = 1.0
+
+"""
+    tether_drag_force(rho, cd, diameter, length_0, v_wind, v_node, dir) -> Vector{Float64}
+
+Compute aerodynamic drag force on a tether sub-segment, applied at the
+node (end_b).  Drag acts perpendicular to the segment direction; the
+component parallel to the segment is assumed negligible.
+
+# Arguments
+- `rho`: air density (kg/m³)
+- `cd`: drag coefficient (use TETHER_DRAG_CD for Dyneema)
+- `diameter`: tether diameter (m)
+- `length_0`: unstretched segment length (m)
+- `v_wind`: 3D wind velocity vector at segment midpoint (m/s)
+- `v_node`: 3D velocity of the rope node (m/s)
+- `dir`: unit vector along the segment direction
+
+# Returns
+- `drag::Vector{Float64}`: 3D drag force vector (N)
+"""
+function tether_drag_force(rho::Float64, cd::Float64, diameter::Float64,
+                           length_0::Float64, v_wind::AbstractVector,
+                           v_node::AbstractVector, dir::AbstractVector)
+    v_rel = v_wind .- v_node
+    v_perp = v_rel .- dot(v_rel, dir) .* dir
+    v_perp_mag = norm(v_perp)
+    if v_perp_mag <= 0.01
+        return zeros(3)
+    end
+    # Drag = ½·ρ·Cd·d·L₀·|v⊥|·v⊥  (perpendicular component only)
+    return 0.5 * rho * cd * diameter * length_0 * v_perp_mag .* v_perp
+end
