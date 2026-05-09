@@ -108,7 +108,7 @@ end
 function _max_sag_mm(u, sys, p, perp1, perp2)
     N   = sys.n_total
     best = 0.0; best_seg = 1
-    for s in 1:(p.n_rings+1)
+    for s in 1:p.n_rings    # skip top segment (uses vertex nodes)
         gid_a = sys.ring_ids[s];   gid_b = sys.ring_ids[s+1]
         na = sys.nodes[gid_a]::RingNode; nb = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1:3*gid_a]; ctr_b = u[3*(gid_b-1)+1:3*gid_b]
@@ -167,15 +167,22 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Sub-segments within a segment all share the same natural length.
     _seg_nat_len = (s) -> 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
     _seg_T = (u, s, j) -> begin
-        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s + 1]
+        gid_a = sys.ring_ids[s]
         na    = sys.nodes[gid_a]::RingNode
-        nb    = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
-        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
         α_a   = u[6N + na.ring_idx]
-        α_b   = u[6N + nb.ring_idx]
         pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+        # Upper endpoint: ring centre or vertex node
+        if s == n_seg
+            v_gid = sys.hub_vertex_ids[j]
+            pb    = u[3*(v_gid-1)+1 : 3*v_gid]
+        else
+            gid_b = sys.ring_ids[s + 1]
+            nb    = sys.nodes[gid_b]::RingNode
+            ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
+            α_b   = u[6N + nb.ring_idx]
+            pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+        end
         l_nat = _seg_nat_len(s)
         max(0.0, _ea_rope * (norm(pb .- pa) - l_nat) / l_nat)
     end
