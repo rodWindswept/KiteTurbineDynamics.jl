@@ -606,9 +606,9 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
 
     for s in 1:(Nr - 1)
         gid_a = sys.ring_ids[s]
-        gid_b = sys.ring_ids[s + 1]
-        na    = sys.nodes[gid_a]::RingNode
         is_top = (s == Nr - 1)
+        gid_b = is_top ? sys.rotor.node_id : sys.ring_ids[s + 1]
+        na    = sys.nodes[gid_a]::RingNode
 
         ctr_a = u_start[3*(gid_a-1)+1 : 3*gid_a]
         ctr_b = u_start[3*(gid_b-1)+1 : 3*gid_b]
