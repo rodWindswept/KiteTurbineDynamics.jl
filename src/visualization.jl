@@ -276,7 +276,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # Intermediate ring polygons — hoop-compression colour
-    for k in 2:(Nr-1)
+    for k in 2:n_seg    # intermediate rings (ground=1, hub not in ring_ids)
         gid_k = sys.ring_ids[k]
         nk    = sys.nodes[gid_k]::RingNode
         R_k   = nk.radius
