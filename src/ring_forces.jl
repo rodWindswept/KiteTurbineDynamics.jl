@@ -165,7 +165,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
 
     # Design rest length (no payout): distance anchor→design bearing position
     design_bearing_x = p.tether_length * cos(p.elevation_angle)
-    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_attach_z  # hub_z + bearing_offset + attach
+    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_attach_z
     back_L0_design = sqrt((design_bearing_x - back_ax)^2 + design_bearing_z^2)
     # L₀ = design distance + payout (winch releases line)
     back_L0 = back_L0_design + p.backline_payout
