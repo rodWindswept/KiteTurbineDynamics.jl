@@ -416,25 +416,43 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                linewidth=1.5)
     end
 
-    # Wind arrow — orange, upwind side, length = wind speed (m/s ≡ m visual)
-    wind_arrow_obs = @lift begin
-        u    = $u_obs
-        ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        z    = max(ctr[3], 1.0)
-        v    = p.v_wind_ref * (z / p.h_ref)^(1.0/7.0)
-        tail = ctr .- [v, 0.0, 0.0]
-        (tail, ctr, v)
+    # Wind indicator — blue-grey dots upwind of rotor, animated \"marching ants\"
+    # Dots stream from 3 m upwind (clear of blades) fading toward far upwind.
+    # Each dot gets a slight sinusoidal scatter in y, z so it looks organic.
+    wind_dot_obs = @lift begin
+        u       = $u_obs
+        ctr     = u[3*(hub_gid-1)+1 : 3*hub_gid]
+        z       = max(ctr[3], 1.0)
+        wfn     = $wind_fn_obs
+        v_vec   = wfn(ctr, 0.0)   # 3D wind at rotor
+        v_mag   = sqrt(v_vec[1]^2 + v_vec[2]^2)
+        v_mag   = max(v_mag, 0.5)   # minimum for visibility (1 dot per 0.5 m/s)
+        n_dots  = 20
+        fi      = $frame_obs
+        flow    = mod(fi * 0.3, 1.0)   # marching offset 0→1 per 3 frames
+        spacing = 0.5                  # m between adjacent dots
+        xs = Float64[]; ys = Float64[]; zs = Float64[]
+        alphas = Float64[]
+        for i in 0:(n_dots-1)
+            dist = 3.0 + i * spacing + flow * spacing  # 3 m clearance + dot spacing
+            push!(xs, ctr[1] - dist)
+            # Slight scatter: sin(i·1.7 + flow·π) adds organic variation
+            push!(ys, ctr[2] + 0.15 * sin(i * 1.7 + flow * π))
+            push!(zs, ctr[3] + 0.15 * cos(i * 2.3 + flow * π))
+            # Fade from bold (near rotor) to near-transparent (far upwind)
+            push!(alphas, 0.85 * (1.0 - i / n_dots))
+        end
+        (xs, ys, zs, alphas)
     end
-    lines!(ax3d,
-           @lift([$wind_arrow_obs[1][1], $wind_arrow_obs[2][1]]),
-           @lift([$wind_arrow_obs[1][2], $wind_arrow_obs[2][2]]),
-           @lift([$wind_arrow_obs[1][3], $wind_arrow_obs[2][3]]);
-           color=:darkorange, linewidth=3)
-    scatter!(ax3d,
-             @lift([$wind_arrow_obs[1][1]]),
-             @lift([$wind_arrow_obs[1][2]]),
-             @lift([$wind_arrow_obs[1][3]]);
-             color=:darkorange, markersize=12, marker=:rtriangle)
+    # 20 individual scatter calls so each dot has its own alpha
+    wind_dots = [scatter!(ax3d,
+        @lift([$wind_dot_obs[1][i+1]]),
+        @lift([$wind_dot_obs[2][i+1]]),
+        @lift([$wind_dot_obs[3][i+1]]);
+        color=RGBf(0.50, 0.58, 0.72),
+        markersize=@lift(4 + 3 * $wind_dot_obs[4][i+1]),
+        alpha=@lift($wind_dot_obs[4][i+1]))
+        for i in 0:19]
 
     # ── HUD (right column) ────────────────────────────────────────────────────
     # Fixed column width prevents label jitter as numbers change width
@@ -632,20 +650,12 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
             end
         elseif scenario == :furl
-            # Pre-emptive furl: backline released + pitch boosted BEFORE wind ramps.
-            # Phase 1 (0-2s): backline winches out, pitch ramps to 3× at rated wind
-            # Phase 2 (2-10s): wind ramps up into already-elevated rotor
+            # Power-spill furl: wind stays at user-selected vref throughout.
+            # The power reduction is purely geometric — backline payout lets the
+            # rotor rise, increasing β and spilling wind.  No wind ramp needed.
             (pos, t) -> begin
                 z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1/7)
-                # Phase 1: hold rated wind, pre-furl
-                # Phase 2: ramp wind up into elevated rotor
-                v_rated_local = Float64(p.v_wind_ref)
-                if t < 2.0
-                    v_raw = v_rated_local  # hold at rated while furl deploys
-                else
-                    v_raw = v_rated_local * (1.0 + 0.5 * min((t - 2.0) / 3.0, 1.0))
-                end
-                [v_raw * sh, 0.0, 0.0]
+                [Float64(vref) * sh, 0.0, 0.0]
             end
         else   # :land
             (pos, t) -> begin
@@ -678,7 +688,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         hub_z0_ref[]         = NaN   # reset hub-altitude reference for this run
 
         # ── Build scenario inputs (errors surfaced via status label) ──────────
-        local wf, p_run, u_s, ode_p, ld
+        local wf, p_run, u_s, ode_p, ld, t_total
         try
             n_steps_local = n_run; dt_local = dt_run
             t_total       = n_steps_local * dt_local
@@ -705,30 +715,31 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
             for step in 1:n_steps
-                # ── Furl: two-phase controller ──────────────────────────
-                # Phase 1 (t<2s): pre-furl — backline winches, pitch→3×, wind at rated
-                # Phase 2 (t≥2s): active furl — wind ramps, pitch responds to excess
-                if scenario == :furl && step % 10 == 0
-                    release_frac = clamp(t / 5.0, 0.0, 1.0)  # full deploy in 5s
-                    anchor_extension = 25.0 * release_frac
-                    backline_factor = 1.0 - 0.95 * release_frac
+                # ── Furl: winch payout controller (every 500 steps) ─────────
+                # The winch pays out extra backline from a FIXED anchor point.
+                # This increases the backline rest length → line goes slack →
+                # lift device pulls hub UP and DOWNWIND → rotor rises → β↑ →
+                # wind incidence drops → power spills.  Pitch boost helps the
+                # lift device overcome the initial inertia.
+                if scenario == :furl && step % 500 == 0
+                    release_frac = clamp(t / 5.0, 0.0, 1.0)  # full deploy in 5 s
                     p_furl = _modified_params(p_run;
-                        EA_back_line = p.EA_back_line * max(backline_factor, 0.01),
-                        c_back_line = p.c_back_line * max(backline_factor, 0.01),
-                        back_anchor_fwd_x = p.back_anchor_fwd_x + anchor_extension)
-                    
+                        backline_payout = 40.0 * release_frac)
+                    # Anchor stays FIXED — winch pays out extra line.
+                    # Rest length increases → backline goes slack → lift rises.
+
                     ld_furl = ld
                     if ld_furl !== nothing
                         if t < 2.0
-                            # Phase 1: ramp pitch to 3× regardless of power
-                            boost = 1.0 + 2.0 * (t / 2.0)  # 1→3× over 2s
+                            # Phase 1: pre-furl — ramp pitch modestly
+                            boost = 1.0 + 0.5 * (t / 2.0)  # 1→1.5× over 2 s
                         else
                             # Phase 2: pitch responds to excess power
                             ω_gnd_now = abs(u[6N + Nr + 1])
                             P_now = p.k_mppt * ω_gnd_now^3 / 1000.0
                             P_rated_kw = p.p_rated_w / 1000.0
                             excess = max(0.0, P_now - P_rated_kw)
-                            boost = clamp(1.0 + 3.0 * excess / P_rated_kw, 1.0, 4.0)
+                            boost = clamp(1.0 + 2.0 * excess / P_rated_kw, 1.0, 3.0)
                         end
                         if ld isa RotaryLifterParams
                             ld_furl = RotaryLifterParams(ld.rotor_radius,
@@ -745,6 +756,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                         end
                     end
                     ode_p = isnothing(ld_furl) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld_furl)
+
+                    # Progress update — keep the UI alive during long furl runs
+                    pct = round(Int, 100 * t / t_total)
+                    scenario_msg[] = "⟳ Furl … $pct% (t=$(round(t, digits=1))s)"
+                    yield()
                 end
                 fill!(du, 0.0)
                 multibody_ode!(du, u, ode_p, t)
