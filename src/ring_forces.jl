@@ -15,6 +15,8 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
     hub_vel  = @view u[3*N+3*(hub_gid-1)+1 : 3*N+3*hub_gid]
     β        = p.elevation_angle
+    bearing_gid = sys.bearing_id
+    bearing_pos = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
 
     v_wind  = wind_fn(hub_pos, t)
     v_app   = v_wind .- hub_vel
@@ -44,6 +46,23 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
         elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
+        # ── Disc tilt from bearing position offset ────────────────────────
+        # When the bearing drifts from its design position (e.g. during furl
+        # backline payout), the bridle tension becomes asymmetric and the disc
+        # tilts.  We approximate this as: tilt proportional to bearing offset
+        # from design position, constrained by TRPT tether rotational stiffness.
+        shaft_dir_t = normalize(hub_pos)
+        # Design bearing position: hub_centre + 6m along shaft axis
+        bearing_design = hub_pos .+ 6.0 .* shaft_dir_t
+        bearing_error  = bearing_pos .- bearing_design
+        # Perpendicular component (tilt direction)
+        tilt_perp = bearing_error .- dot(bearing_error, shaft_dir_t) .* shaft_dir_t
+        tilt_angle_rad = min(norm(tilt_perp) / 10.0, π/6)  # ±30° max, 10m scale
+        # Sign: tilt toward downwind (+X) reduces incidence, spills power
+        wind_dir = normalize(v_wind)
+        tilt_sign = dot(tilt_perp, cross(shaft_dir_t, wind_dir)) > 0 ? 1.0 : -1.0
+        disc_cos_correction = cos(tilt_sign * tilt_angle_rad)
+
         # Aerodynamic area convention: both Cp and CT are normalised to the FULL DISC
         # area π·R² (outer-radius convention, consistent with AeroDyn BEM source data
         # Rotor_TRTP_Sizing_Iteration2.xlsx).  The TRPT blades are physically annular
@@ -52,14 +71,16 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         # referenced to π·R² are consistent with the physical swept annulus.
         # CT uses the BEM table (not a fixed 0.8 — at λ_opt ≈ 4.1, CT_BEM ≈ 0.548).
         thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
-                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) * cos(elev_angle)^2
+                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) *
+                      cos(elev_angle)^2 * disc_cos_correction^2
         tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
         tl          = norm(tether_dir)
         if tl > 0; tether_dir ./= tl; end
         forces[hub_gid] .+= thrust_mag .* tether_dir
 
         P_aero   = 0.5 * p.rho * v_hub_mag^3 *
-                   π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) * cos(elev_angle)^3
+                   π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
+                   cos(elev_angle)^3 * disc_cos_correction^3
         # Wind always drives the rotor in the +ω direction regardless of current spin
         # direction. The previous sign(omega_rotor) factor caused negative aero torque
         # when the hub reversed (ω < 0), which physically-incorrectly reinforced the
@@ -115,13 +136,6 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     end
 
     # ── Lift line force at bearing node ────────────────────────────────────
-    # The lift device flies DOWNWIND of and above the bearing.  The line tension
-    # is determined by the lifter model (aerodynamic force balance).  We apply
-    # the lifter-reported tension directly at the bearing; bridle springs
-    # distribute it to the hub ring vertices.
-    bearing_gid = sys.bearing_id
-    bearing_pos = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
-
     if lift_device !== nothing
         v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
         v_h1   = v_lift[1];  v_h2 = v_lift[2] # horizontal components
