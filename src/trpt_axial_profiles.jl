@@ -203,7 +203,6 @@ function evaluate_design(design::TRPTDesignV2;
                           v_rated     :: Float64 = 11.0,
                           P_rated     :: Float64 = 10000.0)
 
-    # Validity sanity
     if design.Do_top <= 0 || design.t_over_D <= 0 ||
        design.n_rings < 3 || design.taper_ratio <= 0 ||
        design.r_hub <= 0 || design.n_lines < 3 || design.knuckle_mass_kg <= 0
@@ -211,125 +210,13 @@ function evaluate_design(design::TRPTDesignV2;
                           Float64[], Float64[], false, 0.0, "invalid geometry")
     end
 
-    radii       = ring_radii(design)
-    L_seg       = segment_axial_lengths(design)
-    n_rings_tot = length(radii)
-    n_seg       = length(L_seg)
+    radii = ring_radii(design)
+    L_seg = segment_axial_lengths(design)
 
-    # ── Torsional stability pre-calculation ──────────────────────────────────
-    ω_rated_op    = OPT_TSR_RATED * v_rated / r_rotor
-    τ_op          = P_rated / ω_rated_op
-    T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
-
-    min_torsional_fos = Inf
-    for i in 1:n_seg
-        r_min = min(radii[i], radii[i+1])
-        L     = L_seg[i]
-        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
-        tfos  = τ_cap / max(τ_op, 1e-9)
-        min_torsional_fos = min(min_torsional_fos, tfos)
-    end
-    torsional_collapse_ok = (min_torsional_fos >= OPT_TORSION_FOS_REQUIRED)
-
-    # ── Line tension distribution ────────────────────────────────────────────
-    T_peak       = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
-    T_line_axial = T_peak / design.n_lines
-
-    # Pre-compute beam sections so we can use A[i] for centripetal mass
-    specs = [beam_spec_at_ring(design, r) for r in radii]
-    secprops = [beam_section_properties(s) for s in specs]
-    A_ring = [sp[1] for sp in secprops]
-    I_ring = [sp[2] for sp in secprops]
-
-    # Blade mass lumped to hub vertex (one blade per n_lines vertex)
-    m_blade_per_vertex = m_blade_total / design.n_lines
-
-    # ── Per-ring analysis ────────────────────────────────────────────────────
-    fos_per_ring    = Float64[]
-    Ncomp_per_ring  = Float64[]
-    Pcrit_per_ring  = Float64[]
-    Do_per_ring     = Float64[]
-    min_fos         = Inf
-    worst_idx       = 0
-    torsion_ok      = true
-    mass_beams      = 0.0
-
-    for (i, r) in enumerate(radii)
-        # Local line-length multiplier picks up taper steepness
-        line_len_below = i > 1 ?
-            sqrt(L_seg[i-1]^2 + (radii[i] - radii[i-1])^2) : L_seg[1]
-        line_len_above = i < n_rings_tot ?
-            sqrt(L_seg[i]^2 + (radii[i+1] - radii[i])^2) : L_seg[end]
-        T_line = T_line_axial * max(line_len_below, line_len_above) /
-                  min(L_seg[max(i-1,1)], L_seg[min(i, n_seg)])
-        F_in_per_vertex_aero = OPT_DESIGN_LOAD_FACTOR * T_line
-
-        n_float = float(design.n_lines)
-        L_poly  = 2.0 * r * sin(π / n_float)
-
-        # Lumped vertex mass: knuckle + half of each adjacent polygon side.
-        # Per-vertex beam mass = ρ·A·L_poly (two half-beams, total one full side).
-        m_beam_per_vertex = OPT_RHO_CFRP * A_ring[i] * L_poly
-        m_vertex = design.knuckle_mass_kg + m_beam_per_vertex +
-                    (i == n_rings_tot ? m_blade_per_vertex : 0.0)
-
-        # Centripetal (outward) force on each vertex reduces compression load.
-        F_centripetal_per_vertex = m_vertex * omega_rotor^2 * r
-
-        # Net inward force must be ≥ 0 (otherwise line would go slack, but we
-        # still require structural FOS to handle the compressive case, so floor
-        # the subtraction at 0 — centripetal excess never reduces compression
-        # below zero for feasibility purposes, it just means the line is slack).
-        F_v = max(F_in_per_vertex_aero - F_centripetal_per_vertex, 0.0)
-        N_comp = F_v / (2.0 * tan(π / n_float))
-
-        P_crit = π^2 * OPT_E_CFRP * I_ring[i] / max(L_poly, 1e-12)^2
-
-        is_buckling_ring = (i > 1 && i < n_rings_tot)
-        if is_buckling_ring && N_comp > 0
-            fos = P_crit / N_comp
-            push!(fos_per_ring, fos)
-            push!(Ncomp_per_ring, N_comp)
-            push!(Pcrit_per_ring, P_crit)
-            push!(Do_per_ring, specs[i].Do)
-            if fos < min_fos
-                min_fos   = fos
-                worst_idx = i
-            end
-        else
-            push!(fos_per_ring, Inf)
-            push!(Ncomp_per_ring, 0.0)
-            push!(Pcrit_per_ring, 0.0)
-            push!(Do_per_ring, specs[i].Do)
-        end
-
-        # Compressive stress floor check (same 500 MPa allowable as v1)
-        if is_buckling_ring && A_ring[i] < (OPT_TORSION_MARGIN * abs(N_comp) / 5e8)
-            torsion_ok = false
-        end
-
-        # Beam mass: n_lines polygon sides, each length L_poly, area A, density ρ
-        mass_beams += design.n_lines * OPT_RHO_CFRP * A_ring[i] * L_poly
-    end
-
-    # Knuckle mass contribution (one per vertex per ring)
-    n_vertices    = design.n_lines * n_rings_tot
-    mass_knuckles = design.knuckle_mass_kg * n_vertices
-    mass_total    = mass_beams + mass_knuckles
-
-    feasible = (min_fos >= fos_req) && torsion_ok &&
-               (design.t_over_D >= OPT_T_OVER_D_MIN) &&
-               (design.t_over_D <= OPT_T_OVER_D_MAX) &&
-               torsional_collapse_ok
-    msg = feasible ? "OK" :
-          (!torsion_ok ? "compressive stress > 500 MPa limit" :
-           min_fos < fos_req ? "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx" :
-           !torsional_collapse_ok ? "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED" :
-           "t/D out of manufacturable bounds")
-
-    return EvalResult(feasible, mass_total, mass_beams, mass_knuckles,
-                      min_fos, worst_idx, fos_per_ring, Ncomp_per_ring,
-                      Pcrit_per_ring, Do_per_ring, torsion_ok, min_torsional_fos, msg)
+    return _evaluate_trpt_design_impl(design, radii, L_seg;
+        r_rotor=r_rotor, elev_angle=elev_angle, v_peak=v_peak,
+        fos_req=fos_req, omega_rotor=omega_rotor,
+        m_blade_total=m_blade_total, v_rated=v_rated, P_rated=P_rated)
 end
 
 # ── Extended search space (14 DoF) ───────────────────────────────────────────

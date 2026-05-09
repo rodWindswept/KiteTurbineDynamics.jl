@@ -222,7 +222,6 @@ function evaluate_design(design::TRPTDesignV4;
                           "r_bottom exceeds max_ground_radius")
     end
 
-    # ── Basic geometry sanity ─────────────────────────────────────────────
     if design.Do_top <= 0 || design.t_over_D <= 0 ||
        design.r_hub <= 0  || design.r_bottom <= 0  ||
        design.target_Lr <= 0 || design.n_lines < 3 ||
@@ -231,115 +230,14 @@ function evaluate_design(design::TRPTDesignV4;
                           Float64[], Float64[], false, 0.0, "invalid geometry")
     end
 
-    # ── Compute ring positions ────────────────────────────────────────────
     zs, radii, _ = ring_spacing_v4(design.r_hub, design.r_bottom,
                                     design.tether_length, design.target_Lr)
-    L_seg       = diff(zs)          # non-uniform axial segment lengths
-    n_rings_tot = length(radii)
-    n_seg       = length(L_seg)
+    L_seg = diff(zs)
 
-    # ── Torsional stability pre-calculation ──────────────────────────────────
-    ω_rated_op    = OPT_TSR_RATED * v_rated / r_rotor
-    τ_op          = P_rated / ω_rated_op
-    T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
-
-    min_torsional_fos = Inf
-    for i in 1:n_seg
-        r_min = min(radii[i], radii[i+1])
-        L     = L_seg[i]
-        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
-        tfos  = τ_cap / max(τ_op, 1e-9)
-        min_torsional_fos = min(min_torsional_fos, tfos)
-    end
-    torsional_collapse_ok = (min_torsional_fos >= OPT_TORSION_FOS_REQUIRED)
-
-    # ── Line tension distribution ─────────────────────────────────────────
-    T_peak       = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
-    T_line_axial = T_peak / design.n_lines
-
-    # Pre-compute beam sections
-    specs    = [beam_spec_at_ring(design, r) for r in radii]
-    secprops = [beam_section_properties(s) for s in specs]
-    A_ring   = [sp[1] for sp in secprops]
-    I_ring   = [sp[2] for sp in secprops]
-
-    m_blade_per_vertex = m_blade_total / design.n_lines
-
-    # ── Per-ring structural analysis ──────────────────────────────────────
-    fos_per_ring   = Float64[]
-    Ncomp_per_ring = Float64[]
-    Pcrit_per_ring = Float64[]
-    Do_per_ring    = Float64[]
-    min_fos        = Inf
-    worst_idx      = 0
-    torsion_ok     = true
-    mass_beams     = 0.0
-
-    for (i, r) in enumerate(radii)
-        line_len_below = i > 1 ?
-            sqrt(L_seg[i-1]^2 + (radii[i] - radii[i-1])^2) : L_seg[1]
-        line_len_above = i < n_rings_tot ?
-            sqrt(L_seg[i]^2   + (radii[i+1] - radii[i])^2) : L_seg[end]
-        T_line = T_line_axial * max(line_len_below, line_len_above) /
-                  min(L_seg[max(i-1, 1)], L_seg[min(i, n_seg)])
-
-        F_in_per_vertex_aero = OPT_DESIGN_LOAD_FACTOR * T_line
-
-        n_float = float(design.n_lines)
-        L_poly  = 2.0 * r * sin(π / n_float)
-
-        m_beam_per_vertex = OPT_RHO_CFRP * A_ring[i] * L_poly
-        m_vertex = design.knuckle_mass_kg + m_beam_per_vertex +
-                    (i == n_rings_tot ? m_blade_per_vertex : 0.0)
-
-        F_centripetal = m_vertex * omega_rotor^2 * r
-        F_v    = max(F_in_per_vertex_aero - F_centripetal, 0.0)
-        N_comp = F_v / (2.0 * tan(π / n_float))
-
-        P_crit = π^2 * OPT_E_CFRP * I_ring[i] / max(L_poly, 1e-12)^2
-
-        is_buckling_ring = (i > 1 && i < n_rings_tot)
-        if is_buckling_ring && N_comp > 0
-            fos = P_crit / N_comp
-            push!(fos_per_ring, fos)
-            push!(Ncomp_per_ring, N_comp)
-            push!(Pcrit_per_ring, P_crit)
-            push!(Do_per_ring, specs[i].Do)
-            if fos < min_fos
-                min_fos   = fos
-                worst_idx = i
-            end
-        else
-            push!(fos_per_ring, Inf)
-            push!(Ncomp_per_ring, 0.0)
-            push!(Pcrit_per_ring, 0.0)
-            push!(Do_per_ring, specs[i].Do)
-        end
-
-        if is_buckling_ring && A_ring[i] < (OPT_TORSION_MARGIN * abs(N_comp) / 5e8)
-            torsion_ok = false
-        end
-
-        mass_beams += design.n_lines * OPT_RHO_CFRP * A_ring[i] * L_poly
-    end
-
-    mass_knuckles = design.knuckle_mass_kg * design.n_lines * n_rings_tot
-    mass_total    = mass_beams + mass_knuckles
-
-    feasible = (min_fos >= fos_req) && torsion_ok &&
-               (design.t_over_D >= OPT_T_OVER_D_MIN) &&
-               (design.t_over_D <= OPT_T_OVER_D_MAX) &&
-               torsional_collapse_ok
-    msg = feasible ? "OK" :
-          (!torsion_ok ? "compressive stress > 500 MPa limit" :
-           min_fos < fos_req ?
-               "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx" :
-           !torsional_collapse_ok ? "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED" :
-           "t/D out of manufacturable bounds")
-
-    return EvalResult(feasible, mass_total, mass_beams, mass_knuckles,
-                      min_fos, worst_idx, fos_per_ring, Ncomp_per_ring,
-                      Pcrit_per_ring, Do_per_ring, torsion_ok, min_torsional_fos, msg)
+    return _evaluate_trpt_design_impl(design, radii, L_seg;
+        r_rotor=r_rotor, elev_angle=elev_angle, v_peak=v_peak,
+        fos_req=fos_req, omega_rotor=omega_rotor,
+        m_blade_total=m_blade_total, v_rated=v_rated, P_rated=P_rated)
 end
 
 # ── v4 search space ───────────────────────────────────────────────────────────
