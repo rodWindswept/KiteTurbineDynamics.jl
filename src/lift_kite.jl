@@ -381,7 +381,15 @@ function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float6
 
     # Rotor disk area
     A_disk = π * dev.rotor_radius^2
-    q = 0.5 * rho * v_wind^2
+
+    # Apparent wind speed at mean blade radius.
+    # The rotary lifter spins at fixed ω (not autorotating), so the blades
+    # experience v_app = √(v_wind² + (ω·r_mean)²).  At rated wind (11 m/s,
+    # ω=33 rad/s, r_mean=0.9 m): v_app ≈ 31.7 m/s >> v_wind.  At zero wind
+    # (settling): v_app = ω·r_mean ≈ 30 m/s → lift is always active.
+    r_mean = (dev.rotor_radius + dev.hub_radius) / 2.0
+    v_app  = sqrt(v_wind^2 + (dev.omega_fixed * r_mean)^2)
+    q = 0.5 * rho * v_app^2
 
     # Pitch factor: CL_blade scales the PCA-2 baseline CL
     # 1.0 = nominal pitch, 0.5 = flat, 3.0 = aggressive pitch

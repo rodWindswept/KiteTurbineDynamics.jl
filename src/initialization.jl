@@ -459,8 +459,9 @@ Initializes the system at the rated operating point to avoid torsional transient
 Uses a torque-chain bisection method to find the exact helical equilibrium of the ropes.
 This logic was shadowed directly from the interactive dashboard.
 """
-function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
-    u_start = settle_to_equilibrium(sys, u0, p)
+function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64;
+                                    lift_device::Union{Nothing, LiftDevice} = nothing)
+    u_start = settle_to_equilibrium(sys, u0, p; lift_device=lift_device)
 
     N  = sys.n_total
     Nr = sys.n_ring

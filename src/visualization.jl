@@ -78,7 +78,7 @@ function _mid_tension(u, sys, p, s, j)
     max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
 end
 
-"""Maximum tether tension across all lines."""
+# ── Geometry helpers for 3D tether rendering ────────────────────────────────
 function _tether_max(u, sys, p)
     T = 0.0
     for s in 1:p.n_rings+1, j in 1:p.n_lines
@@ -190,20 +190,21 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           RGBf(1.0, 0.5, 0.0), RGBf(1.0, 0.0, 0.0)],
                           [0.0, 0.5, 0.8, 1.0])
 
-    # ── Pre-compute run-wide peaks ────────────────────────────────────────────
-    T_peak = 0.0; omega_peak = 0.0; P_peak = 0.0; V_peak = 0.0; slack_events = 0
-    for u_f in frames
-        T_peak     = max(T_peak,     _tmax_local(u_f))
-        omega_hub  = abs(u_f[6N + Nr + Nr])
-        omega_gnd  = abs(u_f[6N + Nr + 1])
-        P_kw       = p.k_mppt * omega_gnd^2 * omega_gnd / 1000.0
-        omega_peak = max(omega_peak, omega_hub)
-        P_peak     = max(P_peak,     P_kw)
-        hub_ctr    = u_f[3*(hub_gid-1)+1 : 3*hub_gid]
-        z_hub      = max(hub_ctr[3], 1.0)
-        V_peak     = max(V_peak, p.v_wind_ref * (z_hub / p.h_ref)^(1.0/7.0))
-        _nslack_local(u_f) > 0 && (slack_events += 1)
-    end
+    # ── Pre-compute run-wide peaks via SimFrame capture ────────────────────────
+    # Capture all frames once; SimPeaks aggregates run-wide maxima.
+    # SimFrames are also stored for the HUD update handler to read from.
+    sim_frames = [capture_frame(u_f, sys, p,
+                   isnothing(times) ? 0.0 : times[i],
+                   isnothing(wind_fn) ? (pos, t) -> [p.v_wind_ref, 0.0, 0.0] : wind_fn,
+                   nothing)  # lift device configured later
+                  for (i, u_f) in enumerate(frames)]
+    peaks      = capture_peaks(sim_frames)
+    T_peak     = peaks.T_peak
+    omega_peak = peaks.omega_peak
+    P_peak     = peaks.P_peak
+    V_peak     = peaks.V_peak
+    slack_events = peaks.slack_events
+    sim_frames_obs = Observable(sim_frames)  # mirrors frames — updated by _rerun!
 
     # ── Observables ──────────────────────────────────────────────────────────
     frame_obs       = Observable(1)
@@ -277,11 +278,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
         end
         rc = @lift begin
-            u    = $u_obs
-            αvec = u[6N+1 : 6N+Nr]
-            sf   = ring_safety_frame(u, αvec, sys, p)
-            row  = findfirst(r -> r.ring_id == k-1, sf)
-            util = isnothing(row) ? 0.0 : sf[row].utilisation
+            sfs  = $sim_frames_obs
+            fi   = $frame_obs
+            util = fi <= length(sfs) ? sfs[fi].ring_utils[k-1] : 0.0
             _ring_util_color(util)
         end
         lines!(ax3d, @lift($ro[1]), @lift($ro[2]), @lift($ro[3]);
@@ -778,6 +777,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             nf           = length(new_frames)
             times_ref[]  = new_times
             frames_obs[] = new_frames
+            # Rebuild SimFrames for the new run
+            sim_frames_obs[] = [capture_frame(new_frames[i], sys, p,
+                                  new_times[i], wf, ld)
+                                 for i in 1:nf]
             frame_slider.range[] = 1:nf
             frame_slider.value[] = 1
             scenario_msg_color[] = :lawngreen
@@ -862,35 +865,25 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── HUD update handler ────────────────────────────────────────────────────
     on(frame_obs) do fi
-        u = frames_obs[][fi]
+        u  = frames_obs[][fi]
+        sf = sim_frames_obs[][fi]
 
         # ── Telemetry ────────────────────────────────────────────────────────
-        omega_hub = u[6N + Nr + Nr]            # hub (rotor) angular velocity
-        omega_gnd = u[6N + Nr + 1]             # ground ring (PTO) angular velocity
+        omega_hub = sf.omega_hub
+        omega_gnd = sf.omega_gnd
         rpm_hub   = omega_hub * 60.0 / (2π)
         rpm_gnd   = omega_gnd * 60.0 / (2π)
-        P_kw      = p.k_mppt * omega_gnd^2 * abs(omega_gnd) / 1000.0
-        pct_rated = p.p_rated_w > 0 ? P_kw*1000.0/p.p_rated_w*100.0 : 0.0
-        hub_ctr   = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        z_hub     = max(hub_ctr[3], 1.0)
-        # Use actual wind function at current time — reflects scenario accurately
-        tr        = times_ref[]
-        t_hud     = (!isempty(tr) && fi <= length(tr)) ? tr[fi] : 0.0
-        wfn_hud   = wind_fn_obs[]
-        v_vec_hub = wfn_hud(hub_ctr, t_hud)
-        V_hub     = max(sqrt(v_vec_hub[1]^2 + v_vec_hub[2]^2), 0.1)
-        # TSR: blade tip speed ratio = ω_hub·R / V_hub (not cosine-corrected — operational display)
-        tsr       = V_hub > 0.1 ? abs(omega_hub) * sys.rotor.radius / V_hub : 0.0
-        # TRPT structural twist: sum of principal-value inter-ring angular offsets.
-        # Raw (α_hub − α_gnd) grows without bound whenever ω_hub ≠ ω_gnd (elastic
-        # shaft slip) even though the torsional deformation is settled.  Reducing
-        # each inter-ring delta to its principal value in (−π, π] removes accumulated
-        # whole-revolution counts and shows only the instantaneous geometric twist.
-        alpha_vec = @view u[6N+1 : 6N+Nr]
-        Δα_deg    = rad2deg(sum(i -> mod(alpha_vec[i+1] - alpha_vec[i] + π, 2π) - π,
-                                1:Nr-1))
+        P_kw      = sf.P_kw
+        pct_rated = sf.pct_rated
+        V_hub     = sf.V_hub
+        tsr       = sf.tsr
+        Δα_deg    = sf.delta_alpha_deg
+        z_hub_now = sf.hub_z
+        δz_hub    = sf.hub_z_delta
 
         nf_now       = length(frames_obs[])
+        tr           = times_ref[]
+        t_hud        = sf.t
         t_lbl.text[] = isempty(tr) ?
             @sprintf("Frame %5d / %d", fi, nf_now) :
             @sprintf("t = %8.2f s  (frame %5d / %d)", t_hud, fi, nf_now)
@@ -905,39 +898,34 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         twist_lbl.text[]    = @sprintf("TRPT twist  Δα = %7.1f°  (hub – PTO)", Δα_deg)
 
         # Hub altitude — resolve reference on first frame of each run
-        z_hub_now = hub_ctr[3]
         if isnan(hub_z0_ref[]);  hub_z0_ref[] = z_hub_now;  end
-        δz_hub    = z_hub_now - hub_z0_ref[]
         hub_z_lbl.text[] = @sprintf("Hub altitude  Z = %5.1f m  (Δ = %+.2f m)",
-                                     z_hub_now, δz_hub)
+                                     z_hub_now, isnan(hub_z0_ref[]) ? 0.0 : z_hub_now - hub_z0_ref[])
 
         elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
                                         rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
 
         # ── Lift Device Telemetry ──────────────────────────────────────────
-        ld_hud = lift_device_obs[]
+        ld_hud   = lift_device_obs[]
+        hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
         β_actual = atan(hub_ctr[3], hub_ctr[1])
         if ld_hud !== nothing
-            _, T_lift, elev_lift = lift_force_steady(ld_hud, p.rho, V_hub)
+            T_lift_val    = sf.T_lift
+            elev_lift_val = sf.lift_elev_deg
             if ld_hud isa RotaryLifterParams
-                dev_type = "Rotary"
-                lift_req, m_air = autogyro_lift_required(p)
-                lift_margin = T_lift / max(lift_req, 1.0)
                 lift_status_lbl.text[] = @sprintf("Type: Rotary  |  T_lift = %6.0f N  |  pitch = %.1f×  |  CL/CD = %.1f",
-                    T_lift, ld_hud.CL_blade, ld_hud.CL_blade / 0.20)
+                    T_lift_val, ld_hud.CL_blade, ld_hud.CL_blade / 0.20)
                 lift_cl_lbl.text[] = @sprintf("R = %.1f m  |  β = %.1f°  |  elev = %.1f°  |  margin = %.1f×",
-                    ld_hud.rotor_radius, rad2deg(β_actual), elev_lift, lift_margin)
+                    ld_hud.rotor_radius, rad2deg(β_actual), elev_lift_val, sf.lift_margin)
             elseif ld_hud isa SingleKiteParams
-                dev_type = "Single Kite"
-                lift_status_lbl.text[] = @sprintf("Type: %s  |  T_lift = %6.0f N", dev_type, T_lift)
+                lift_status_lbl.text[] = @sprintf("Type: Single Kite  |  T_lift = %6.0f N", T_lift_val)
                 lift_cl_lbl.text[] = @sprintf("CL = %.2f  |  β_actual = %.1f°  |  elev_lift = %.0f°",
-                    ld_hud.CL, rad2deg(β_actual), rad2deg(elev_lift))
+                    ld_hud.CL, rad2deg(β_actual), elev_lift_val)
             elseif ld_hud isa StackedKitesParams
-                dev_type = "Stacked"
-                lift_status_lbl.text[] = @sprintf("Type: %s×%d  |  T_lift = %6.0f N",
-                    dev_type, ld_hud.n_kites, T_lift)
+                lift_status_lbl.text[] = @sprintf("Type: Stacked×%d  |  T_lift = %6.0f N",
+                    ld_hud.n_kites, T_lift_val)
                 lift_cl_lbl.text[] = @sprintf("CL = %.2f  |  β_actual = %.1f°  |  elev_lift = %.0f°",
-                    ld_hud.CL, rad2deg(β_actual), rad2deg(elev_lift))
+                    ld_hud.CL, rad2deg(β_actual), elev_lift_val)
             end
         else
             lift_status_lbl.text[] = "Type: None"
@@ -945,40 +933,22 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         end
 
         # ── Torque & Power Balance ────────────────────────────────────────────
-        # Aero torque: τ = P_aero / ω (with floor at 0.5 to match dynamics)
-        lambda_t = abs(omega_hub) * sys.rotor.radius / max(V_hub, 0.1)
-        P_aero   = 0.5 * p.rho * V_hub^3 * π * sys.rotor.radius^2 *
-                   cp_at_tsr(lambda_t) * cos(p.elevation_angle)^3
-        tau_aero = P_aero / max(abs(omega_hub), 0.5)
-        # Generator torque: MPPT quadratic law
-        tau_gen  = p.k_mppt * omega_gnd^2   # magnitude; sign opposes rotation
-        Δω       = omega_hub - omega_gnd
-
-        tau_aero_lbl.text[]     = @sprintf("τ_aero  = %7.0f N·m   (wind drives rotor)", tau_aero)
-        tau_gen_lbl.text[]      = @sprintf("τ_gen   = %7.0f N·m   (MPPT brake on PTO)", tau_gen)
-        delta_omega_lbl.text[]  = @sprintf("Δω (hub−PTO)  = %8.4f rad/s", Δω)
+        tau_aero_lbl.text[]     = @sprintf("τ_aero  = %7.0f N·m   (wind drives rotor)", sf.tau_aero)
+        tau_gen_lbl.text[]      = @sprintf("τ_gen   = %7.0f N·m   (MPPT brake on PTO)", sf.tau_gen)
+        delta_omega_lbl.text[]  = @sprintf("Δω (hub−PTO)  = %8.4f rad/s", sf.delta_omega)
 
         # ── Structural ───────────────────────────────────────────────────────
-        T_max    = _tmax_local(u)
-        fos_t    = T_max > 0.0 ? TETHER_SWL / T_max : Inf
-        α_vec    = u[6N+1 : 6N+Nr]
-        sf       = ring_safety_frame(u, α_vec, sys, p)
-        max_util = isempty(sf) ? 0.0 : maximum(r.utilisation for r in sf)
-        fos_r    = max_util > 0.0 ? 1.0 / max_util : Inf
-        n_slack  = _nslack_local(u)
-        max_sag, sag_seg = _max_sag_mm(u, sys, p, perp1, perp2)
-
-        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  FoS %s", T_max, fos_str(fos_t))
+        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
         c_frame_lbl.text[] = @sprintf("  max util %4.1f%%  ·  FoS %s",
-                                        max_util*100.0, fos_str(fos_r))
+                                        sf.ring_max_util*100.0, fos_str(sf.fos_ring))
         sag_lbl.text[]     = @sprintf("Max rope sag %5.1f mm  (seg %2d)  |  slack: %d lines",
-                                        max_sag, sag_seg, n_slack)
+                                        sf.max_sag_mm, sf.sag_seg, sf.n_slack)
 
-        # TORSIONAL COLLAPSE: hub twist > 270° indicates rope approaching wrap limit
-        warn_tors.text[]  = abs(Δα_deg) > 270.0 ? "!! TORSIONAL OVERTWIST" : ""
-        warn_buck.text[]  = max_util > 0.8        ? "!! BUCKLING RISK"       : ""
-        warn_slack.text[] = n_slack > 0 ?
-                            @sprintf("!! LINE SLACK: %d lines", n_slack) : ""
+        # Warnings
+        warn_tors.text[]  = sf.torsional_overtwist ? "!! TORSIONAL OVERTWIST" : ""
+        warn_buck.text[]  = sf.buckling_risk        ? "!! BUCKLING RISK"       : ""
+        warn_slack.text[] = sf.line_slack ?
+                            @sprintf("!! LINE SLACK: %d lines", sf.n_slack) : ""
     end
 
     # Compact HUD row spacing so all rows fit within 950 px

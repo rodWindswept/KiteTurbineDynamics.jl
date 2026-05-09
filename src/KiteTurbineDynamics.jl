@@ -14,6 +14,7 @@ include("catenary.jl")
 include("dynamics.jl")
 include("structural_safety.jl")
 include("lift_kite.jl")
+include("sim_frame.jl")
 include("visualization.jl")
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
@@ -35,6 +36,7 @@ export multibody_ode!
 export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP
+export SimFrame, SimPeaks, capture_frame, capture_peaks
 export build_dashboard
 
 # Catenary model

@@ -193,7 +193,8 @@ function main()
         end
         println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
         println("Initializing at rated power equilibrium (ω=9.5)...")
-        u_start = settle_to_operational_state(sys, u0, p, 9.5)
+        default_lift = rotary_lifter_default()
+        u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=default_lift)
 
         N  = sys.n_total
         Nr = sys.n_ring
@@ -221,6 +222,7 @@ function main()
             u = copy(u_start)
             results = DataFrame(t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[])
             run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
+                lift_device = default_lift,
                 lin_damp = LIN_DAMP,
                 callback = (u_curr, t_curr, step) -> begin
                     if step % SAVE_EVERY == 0
@@ -247,6 +249,7 @@ function main()
             println("Simulating $(args["duration"])s ($n_steps steps → $n_frames frames)...")
             let fi = 1
                 run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
+                    lift_device = default_lift,
                     lin_damp = LIN_DAMP,
                     callback = (u_current, t_current, step) -> begin
                         if step % SAVE_EVERY == 0 && fi <= n_frames
