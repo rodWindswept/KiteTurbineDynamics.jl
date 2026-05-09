@@ -276,7 +276,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # Intermediate ring polygons — hoop-compression colour
-    for k in 2:n_seg    # intermediate rings (ground=1, hub not in ring_ids)
+    n_ring_vis = length(sys.ring_ids) - 1    # exclude ground
+    for ki in 1:n_ring_vis
+        k  = ki + 1                            # ring_ids index (skip ground)
         gid_k = sys.ring_ids[k]
         nk    = sys.nodes[gid_k]::RingNode
         R_k   = nk.radius
@@ -293,7 +295,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         rc = @lift begin
             sfs  = $sim_frames_obs
             fi   = $frame_obs
-            util = fi <= length(sfs) ? sfs[fi].ring_utils[k-1] : 0.0
+            util = fi <= length(sfs) ? sfs[fi].ring_utils[ki] : 0.0
             _ring_util_color(util)
         end
         lines!(ax3d, @lift($ro[1]), @lift($ro[2]), @lift($ro[3]);
