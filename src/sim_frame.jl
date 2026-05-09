@@ -157,15 +157,23 @@ function capture_frame(u           :: AbstractVector,
     n_slack = 0
     for s in 1:n_seg, j in 1:p.n_lines
         seg_nat_len = 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
-        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s+1]
+        gid_a = sys.ring_ids[s]
         na    = sys.nodes[gid_a]::RingNode
-        nb    = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
-        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
         α_a   = u[6N + na.ring_idx]
-        α_b   = u[6N + nb.ring_idx]
         pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+
+        # Upper endpoint: ring centre (non-top) or vertex node position (top)
+        if s == n_seg
+            v_gid = sys.hub_vertex_ids[j]
+            pb    = u[3*(v_gid-1)+1 : 3*v_gid]
+        else
+            gid_b = sys.ring_ids[s+1]
+            nb    = sys.nodes[gid_b]::RingNode
+            ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
+            α_b   = u[6N + nb.ring_idx]
+            pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+        end
         T     = max(0.0, ea_rope * (norm(pb .- pa) - seg_nat_len) / seg_nat_len)
         T_max = max(T_max, T)
         T < 5.0 && (n_slack += 1)
@@ -181,7 +189,7 @@ function capture_frame(u           :: AbstractVector,
     # Rope sag
     max_sag_mm  = 0.0
     sag_seg     = 1
-    for s in 1:n_seg
+    for s in 1:(n_seg - 1)   # skip top segment (uses vertex positions)
         gid_a2 = sys.ring_ids[s];   gid_b2 = sys.ring_ids[s+1]
         na2 = sys.nodes[gid_a2]::RingNode; nb2 = sys.nodes[gid_b2]::RingNode
         ctr_a2 = u[3*(gid_a2-1)+1:3*gid_a2]
