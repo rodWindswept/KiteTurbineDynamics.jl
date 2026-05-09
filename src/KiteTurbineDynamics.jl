@@ -10,6 +10,7 @@ include("geometry.jl")
 include("initialization.jl")
 include("rope_forces.jl")
 include("ring_forces.jl")
+include("catenary.jl")
 include("dynamics.jl")
 include("structural_safety.jl")
 include("lift_kite.jl")
@@ -33,6 +34,9 @@ export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP
 export build_dashboard
+
+# Catenary model
+export catenary_forces, solve_catenary_a, dyneema_weight_Npm
 
 # TRPT sizing optimization (Item B2)
 export BeamProfile, PROFILE_CIRCULAR, PROFILE_ELLIPTICAL, PROFILE_AIRFOIL

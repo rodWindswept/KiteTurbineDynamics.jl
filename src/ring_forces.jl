@@ -114,72 +114,89 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         torques[ri_b] -= c_s * Δω
     end
 
-    # ── Lift kite / rotary lifter force at hub node ───────────────────────────
-    # Quasi-static Phase 2 model: compute steady-state lift line tension at the
-    # current hub wind speed and apply the resulting 3D force to the hub node.
-    # The lift device flies upwind of and above the hub, so the force on the hub
-    # points into the wind (horizontal) and upward (vertical).
+    # ── Lift line force at hub node ─────────────────────────────────────────
+    # The lift device flies DOWNWIND of and above the hub.  The line tension
+    # is determined by the lifter model (aerodynamic force balance), not by
+    # catenary geometry — the kite adjusts its position to maintain equilibrium.
+    # We apply the lifter-reported tension directly along the equilibrium
+    # direction.  Line sag is negligible (~5 mm at operational tension).
     #
-    # Wind direction is taken from the hub wind vector; horizontal component only
-    # drives the kite (vertical wind is small compared to horizontal at these
-    # scales and is ignored for the lift device model).
+    # The backline (below) uses a quasi-static catenary model where the force
+    # IS geometric — the anchor is fixed and the hub position determines tension.
     if lift_device !== nothing
         v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
         v_h1   = v_lift[1];  v_h2 = v_lift[2] # horizontal components
         v_hmag = sqrt(v_h1^2 + v_h2^2)        # horizontal wind speed
         if v_hmag > 0.1
-            into_wind = [-v_h1 / v_hmag, -v_h2 / v_hmag, 0.0]  # unit vec upwind
+            downwind = [v_h1 / v_hmag, v_h2 / v_hmag, 0.0]   # unit vec downwind (+X)
         else
-            into_wind = [-1.0, 0.0, 0.0]
+            downwind = [1.0, 0.0, 0.0]
         end
-        # Scalar tension and elevation from the lift device model.
-        # Passive kites (single, stacked) require minimum wind to maintain stable flight;
-        # below ~2 m/s the kite crumples and generates no meaningful lift.  The rotary
-        # lifter is excepted: its rotation provides apparent wind regardless of v_wind.
-        # This guard prevents applying phantom lift during dead-calm cold-start conditions.
-        PASSIVE_KITE_STALL_SPEED = 2.0   # m/s — minimum flight wind for a passive kite
+
+        # Passive kites stall below ~2 m/s; rotary lifter is exempt
+        PASSIVE_KITE_STALL_SPEED = 2.0
         is_passive = !(lift_device isa RotaryLifterParams)
         _, T_lift, elev_lift = lift_force_steady(lift_device, p.rho, v_hmag)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
-            T_lift = 0.0      # kite cannot fly; no lift applied
+            T_lift = 0.0
         end
-        θ_lift = deg2rad(elev_lift)
-        # 3D force: horizontal component into wind + vertical component upward
-        forces[hub_gid] .+= T_lift .* (cos(θ_lift) .* into_wind .+
-                                        sin(θ_lift) .* [0.0, 0.0, 1.0])
+
+        if T_lift > 0.0
+            θ_lift = deg2rad(elev_lift)
+            # Force direction: horizontal component downwind (+X) + vertical upward
+            forces[hub_gid][1] += T_lift * cos(θ_lift) * downwind[1]
+            forces[hub_gid][2] += T_lift * cos(θ_lift) * downwind[2]
+            forces[hub_gid][3] += T_lift * sin(θ_lift)
+        end
     end
 
-    # ── Back line — elevation constraint tether ───────────────────────────────
-    # Attaches to the lift kite tether 10 cm above the hub bearing and runs down
-    # to a fixed ground anchor.  The anchor is placed back_anchor_fwd_x metres
-    # downwind of the hub's design x-projection to clear the TRPT rope footprint.
-    # With fwd_x = 0 the line is purely vertical; increasing it tilts it slightly
-    # toward the hub from a downwind stake, which is the practical field layout.
+    # ── Back line — quasi-static catenary to ground anchor ────────────────────
+    # Runs from a point 10 cm above the hub bearing down to a fixed ground
+    # anchor.  The anchor stays at back_anchor_fwd_x downwind of the hub's
+    # design x-projection.  Backline payout increases the unstretched length
+    # (simulating winch release) — when payout > 0 the line goes slack and
+    # the hub rises under lift.
     #
-    # Rest length L₀ = distance from anchor to attachment at DESIGN hub position —
-    # line is just taut at design elevation, slack below, taut above.
-    #
-    # Tension-only spring-damper.
+    # Physics: catenary with line weight + stretch.  When L₀ < actual distance
+    # the line is pre-tensioned (straight spring).  When L₀ > actual distance
+    # the line is slack (zero force).  When L₀ ≈ actual distance the catenary
+    # has slight sag.
     back_attach_z = 0.10   # metres above hub bearing (attachment on lift tether)
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
-    # Attachment point (10 cm above hub in z)
-    bv1 = hub_pos[1] - back_ax
-    bv2 = hub_pos[2]                     # anchor y = 0
-    bv3 = hub_pos[3] + back_attach_z     # anchor z = 0
-    back_len = sqrt(bv1^2 + bv2^2 + bv3^2)
-    # Rest length = distance from anchor to design attachment point
+
+    # 2D projection: horizontal plane distance + vertical
+    b_dx = sqrt((hub_pos[1] - back_ax)^2 + hub_pos[2]^2)   # hub→anchor horiz
+    b_dz = hub_pos[3] + back_attach_z                        # hub z above anchor
+    b_dist = sqrt(b_dx^2 + b_dz^2)                           # straight-line
+
+    # Design rest length (no payout): distance anchor→design hub position
     design_hub_x = p.tether_length * cos(p.elevation_angle)
     design_hub_z = p.tether_length * sin(p.elevation_angle) + back_attach_z
-    back_L0 = sqrt((design_hub_x - back_ax)^2 + design_hub_z^2)
-    # = sqrt(back_anchor_fwd_x² + (L·sinβ + 0.10)²)
-    if back_len > back_L0 + 1e-6                           # tension-only
-        inv_len     = 1.0 / back_len
-        bh1 = bv1 * inv_len;  bh2 = bv2 * inv_len;  bh3 = bv3 * inv_len
-        back_strain = (back_len - back_L0) / back_L0
-        back_vproj  = hub_vel[1]*bh1 + hub_vel[2]*bh2 + hub_vel[3]*bh3
-        back_F      = -(p.EA_back_line * back_strain + p.c_back_line * back_vproj)
-        forces[hub_gid][1] += back_F * bh1
-        forces[hub_gid][2] += back_F * bh2
-        forces[hub_gid][3] += back_F * bh3
+    back_L0_design = sqrt((design_hub_x - back_ax)^2 + design_hub_z^2)
+    # L₀ = design distance + payout (winch releases line)
+    back_L0 = back_L0_design + p.backline_payout
+
+    # Tension-only: slack if anchor-to-hub distance < rest length
+    if b_dist > back_L0 + 1e-6
+        # Backline weight (3 mm Dyneema)
+        w_back = dyneema_weight_Npm(0.003)
+
+        # Catenary in the vertical plane: anchor at (0,0), hub at (b_dx, b_dz)
+        # Endpoint 1 = anchor, endpoint 2 = hub attachment
+        _, _, Fx_hub, Fz_hub, _ = catenary_forces(
+            0.0, 0.0, b_dx, b_dz,
+            back_L0, w_back, p.EA_back_line)
+
+        # Fx_hub < 0 (pulls hub toward anchor), Fz_hub < 0 (pulls hub down).
+        # Project horizontal component back to 3D.
+        if b_dx > 1e-12
+            uh_x = (hub_pos[1] - back_ax) / b_dx   # unit from anchor→hub
+            uh_y = hub_pos[2] / b_dx
+        else
+            uh_x, uh_y = 0.0, 0.0                  # hub directly above anchor
+        end
+        forces[hub_gid][1] += Fx_hub * uh_x
+        forces[hub_gid][2] += Fx_hub * uh_y
+        forces[hub_gid][3] += Fz_hub
     end
 end

@@ -251,8 +251,8 @@ Convention: wind along +x, vertical = +z.
 """
 function lift_line_direction(elevation_deg::Float64)
     θ = deg2rad(elevation_deg)
-    # Kite flies upwind and up: slightly into the wind (-x) and up (+z)
-    return [-cos(θ), 0.0, sin(θ)]
+    # Kite flies downwind and up: away from the hub in the wind direction (+x) and up (+z)
+    return [+cos(θ), 0.0, sin(θ)]
 end
 
 """

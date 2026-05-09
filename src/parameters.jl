@@ -92,6 +92,7 @@ struct SystemParams
     EA_back_line      ::Float64  # Axial stiffness (N). 3 mm Dyneema ≈ 700 kN
     c_back_line       ::Float64  # Damping coefficient (N·s/m). Default: 500.0
     back_anchor_fwd_x ::Float64  # Extra downwind offset of ground anchor (m). Default: 5.0
+    backline_payout   ::Float64  # Extra line paid out by winch (m). Default: 0.0
 end
 
 """
@@ -174,6 +175,7 @@ function params_10kw()::SystemParams
         500.0,           # c_back_line (N·s/m)
         5.0,             # back_anchor_fwd_x (m) — anchor 5 m downwind of hub x-projection,
                          #   clearing the TRPT rope footprint at (tether_length·cos β ≈ 26 m)
+        0.0,             # backline_payout — zero at construction
     )
 end
 
@@ -226,6 +228,7 @@ function params_v5_10kw()::SystemParams
         base.p_rated_w,
         base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
         base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
+        0.0,             # backline_payout
     )
 end
 
@@ -267,6 +270,7 @@ function params_v5_safe_10kw()::SystemParams
         base.p_rated_w,
         base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
         base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
+        0.0,             # backline_payout
     )
 end
 
@@ -317,5 +321,6 @@ function mass_scale(base::SystemParams,
         base.EA_back_line      * geom_scale,    # back line stiffness scales with cross-section
         base.c_back_line       * geom_scale,    # damping scales with line length
         base.back_anchor_fwd_x * geom_scale,    # forward offset scales with geometry
+        base.backline_payout,                    # payout does not scale
     )
 end
