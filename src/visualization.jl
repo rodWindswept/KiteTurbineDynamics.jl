@@ -295,24 +295,28 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     lines!(ax3d, @lift($hub_ring_obs[1]), @lift($hub_ring_obs[2]),
                  @lift($hub_ring_obs[3]); color=:firebrick, linewidth=3.5)
 
-    # Rotor blades — attached at hub vertex positions
+    # Rotor blades — in the ring plane, attached at hub vertex positions
     r_inner = hub_R
     r_outer = sys.rotor.radius
     chord   = r_outer * 0.15
     for b in 1:p.n_blades
         v_gid = sys.hub_vertex_ids[b]
         blade_obs = @lift begin
-            u    = $u_obs
-            vpos = u[3*(v_gid-1)+1 : 3*v_gid]
-            ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
+            u     = $u_obs
+            v_ids = sys.hub_vertex_ids
+            vpos  = u[3*(v_gid-1)+1 : 3*v_gid]
+            ctr   = u[3*(hub_gid-1)+1 : 3*hub_gid]
             # direction from centre to vertex
             r_vec = vpos .- ctr
             r_len = max(norm(r_vec), 1e-9)
             r_dir = r_vec ./ r_len
-            # perpendicular direction in the ring plane (approximate)
-            c_dir = [-r_dir[2], r_dir[1], 0.0]
-            c_len = max(norm(c_dir), 1e-9)
-            c_dir ./= c_len
+            # Ring plane normal from first 3 vertices
+            v1 = u[3*(v_ids[1]-1)+1 : 3*v_ids[1]]
+            v2 = u[3*(v_ids[2]-1)+1 : 3*v_ids[2]]
+            v3 = u[3*(v_ids[3]-1)+1 : 3*v_ids[3]]
+            ring_n = normalize(cross(v2 .- v1, v3 .- v1))
+            # Chord direction: in ring plane, perpendicular to radial
+            c_dir = normalize(cross(ring_n, r_dir))
             hc    = chord / 2.0
             p1 = vpos .- hc .* c_dir
             p2 = ctr .+ (r_outer / r_inner) .* r_vec .- hc .* c_dir
