@@ -47,9 +47,7 @@ end
 function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
     N     = sys.n_total
     gid_a = sys.ring_ids[s]
-    # Top segment: upper endpoint is a vertex node, not a ring centre
-    is_top_viz = (s == p.n_rings + 1)
-    gid_b = is_top_viz ? sys.rotor.node_id : sys.ring_ids[s + 1]
+    gid_b = sys.ring_ids[s + 1]
     na    = sys.nodes[gid_a]::RingNode
     nb    = sys.nodes[gid_b]::RingNode
     ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
@@ -57,13 +55,7 @@ function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
     α_a   = u[6N + na.ring_idx]
     α_b   = u[6N + nb.ring_idx]
     pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-    # Top segment: upper endpoint is a hub vertex node, not ring centre
-    if s == p.n_rings + 1
-        v_gid = sys.hub_vertex_ids[j]
-        pb    = u[3*(v_gid-1)+1 : 3*v_gid]
-    else
-        pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
-    end
+    pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
     pts   = Vector{Vector{Float64}}(undef, 5)
     pts[1] = pa
     # Compute stride from p.n_lines (not hardcoded: 5→16, 8→25)
@@ -108,7 +100,7 @@ end
 function _max_sag_mm(u, sys, p, perp1, perp2)
     N   = sys.n_total
     best = 0.0; best_seg = 1
-    for s in 1:p.n_rings    # skip top segment (uses vertex nodes)
+    for s in 1:(p.n_rings+1)
         gid_a = sys.ring_ids[s];   gid_b = sys.ring_ids[s+1]
         na = sys.nodes[gid_a]::RingNode; nb = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1:3*gid_a]; ctr_b = u[3*(gid_b-1)+1:3*gid_b]
@@ -167,22 +159,15 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Sub-segments within a segment all share the same natural length.
     _seg_nat_len = (s) -> 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
     _seg_T = (u, s, j) -> begin
-        gid_a = sys.ring_ids[s]
+        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s + 1]
         na    = sys.nodes[gid_a]::RingNode
+        nb    = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
+        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
         α_a   = u[6N + na.ring_idx]
+        α_b   = u[6N + nb.ring_idx]
         pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-        # Upper endpoint: ring centre or vertex node
-        if s == n_seg
-            v_gid = sys.hub_vertex_ids[j]
-            pb    = u[3*(v_gid-1)+1 : 3*v_gid]
-        else
-            gid_b = sys.ring_ids[s + 1]
-            nb    = sys.nodes[gid_b]::RingNode
-            ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
-            α_b   = u[6N + nb.ring_idx]
-            pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
-        end
+        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
         l_nat = _seg_nat_len(s)
         max(0.0, _ea_rope * (norm(pb .- pa) - l_nat) / l_nat)
     end
@@ -191,10 +176,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     l_seg = p.tether_length / n_seg
 
-    hub_gid  = sys.rotor.node_id   # hub centre (ring_idx=0, not in ring_ids)
+    hub_gid  = sys.ring_ids[Nr]
     hub_node = sys.nodes[hub_gid]::RingNode
     hub_R    = hub_node.radius
-    hub_ri   = hub_node.ring_idx   # = 0
+    hub_ri   = hub_node.ring_idx
 
     tension_cmap = cgrad([RGBf(0.0, 0.2, 1.0), RGBf(0.0, 0.8, 0.2),
                           RGBf(1.0, 0.5, 0.0), RGBf(1.0, 0.0, 0.0)],
@@ -276,9 +261,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # Intermediate ring polygons — hoop-compression colour
-    n_ring_vis = length(sys.ring_ids) - 1    # exclude ground
-    for ki in 1:n_ring_vis
-        k  = ki + 1                            # ring_ids index (skip ground)
+    for k in 2:(Nr-1)
         gid_k = sys.ring_ids[k]
         nk    = sys.nodes[gid_k]::RingNode
         R_k   = nk.radius
@@ -295,50 +278,43 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         rc = @lift begin
             sfs  = $sim_frames_obs
             fi   = $frame_obs
-            util = fi <= length(sfs) ? sfs[fi].ring_utils[ki] : 0.0
+            util = fi <= length(sfs) ? sfs[fi].ring_utils[k-1] : 0.0
             _ring_util_color(util)
         end
         lines!(ax3d, @lift($ro[1]), @lift($ro[2]), @lift($ro[3]);
                color=rc, linewidth=1.5)
     end
 
-    # Hub (rotor) ring — firebrick, drawn from vertex node positions
+    # Hub (rotor) ring — firebrick, thicker
     hub_ring_obs = @lift begin
         u   = $u_obs
-        pts = [u[3*(gid-1)+1 : 3*gid] for gid in sys.hub_vertex_ids]
-        push!(pts, pts[1])  # close the polygon
+        ctr = u[3*(hub_gid-1)+1 : 3*hub_gid]
+        α   = u[6N + hub_ri]
+        jj  = [1:p.n_lines; 1]
+        pts = [attachment_point(ctr, hub_R, α, jj[i], p.n_lines, perp1, perp2)
+               for i in eachindex(jj)]
         ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
     end
     lines!(ax3d, @lift($hub_ring_obs[1]), @lift($hub_ring_obs[2]),
                  @lift($hub_ring_obs[3]); color=:firebrick, linewidth=3.5)
 
-    # Rotor blades — in the ring plane, attached at hub vertex positions
+    # Rotor blades
     r_inner = hub_R
     r_outer = sys.rotor.radius
     chord   = r_outer * 0.15
     for b in 1:p.n_blades
-        v_gid = sys.hub_vertex_ids[b]
         blade_obs = @lift begin
-            u     = $u_obs
-            v_ids = sys.hub_vertex_ids
-            vpos  = u[3*(v_gid-1)+1 : 3*v_gid]
-            ctr   = u[3*(hub_gid-1)+1 : 3*hub_gid]
-            # direction from centre to vertex
-            r_vec = vpos .- ctr
-            r_len = max(norm(r_vec), 1e-9)
-            r_dir = r_vec ./ r_len
-            # Ring plane normal from first 3 vertices
-            v1 = u[3*(v_ids[1]-1)+1 : 3*v_ids[1]]
-            v2 = u[3*(v_ids[2]-1)+1 : 3*v_ids[2]]
-            v3 = u[3*(v_ids[3]-1)+1 : 3*v_ids[3]]
-            ring_n = normalize(cross(v2 .- v1, v3 .- v1))
-            # Chord direction: in ring plane, perpendicular to radial
-            c_dir = normalize(cross(ring_n, r_dir))
+            u    = $u_obs
+            ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
+            α    = u[6N + hub_ri]
+            φ    = α + (b-1) * (2π / p.n_blades)
+            r_dir = cos(φ) .* perp1 .+ sin(φ) .* perp2
+            c_dir = -sin(φ) .* perp1 .+ cos(φ) .* perp2
             hc    = chord / 2.0
-            p1 = vpos .- hc .* c_dir
-            p2 = ctr .+ (r_outer / r_inner) .* r_vec .- hc .* c_dir
-            p3 = ctr .+ (r_outer / r_inner) .* r_vec .+ hc .* c_dir
-            p4 = vpos .+ hc .* c_dir
+            p1 = ctr .+ r_inner .* r_dir .- hc .* c_dir
+            p2 = ctr .+ r_outer .* r_dir .- hc .* c_dir
+            p3 = ctr .+ r_outer .* r_dir .+ hc .* c_dir
+            p4 = ctr .+ r_inner .* r_dir .+ hc .* c_dir
             xs = [p1[1], p2[1], p3[1], p4[1], p1[1]]
             ys = [p1[2], p2[2], p3[2], p4[2], p1[2]]
             zs = [p1[3], p2[3], p3[3], p4[3], p1[3]]
@@ -354,12 +330,15 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # lift tether and backline both attach to the bearing
     lift_point_obs  = bearing_obs
 
-    # Bridle lines: bearing → hub vertex nodes (real ODE particles)
-    for (j, v_gid) in enumerate(sys.hub_vertex_ids)
+    # Bridle lines: bearing → hub ring vertices (spring-dampers in the ODE)
+    for j in 1:p.n_lines
         bridle_obs = @lift begin
-            bp = $bearing_obs
-            vp = $u_obs[3*(v_gid-1)+1 : 3*v_gid]
-            ([bp[1], vp[1]], [bp[2], vp[2]], [bp[3], vp[3]])
+            u    = $u_obs
+            ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
+            α    = u[6N + hub_ri]
+            node = attachment_point(ctr, hub_R, α, j, p.n_lines, perp1, perp2)
+            bp   = $bearing_obs
+            ([node[1], bp[1]], [node[2], bp[2]], [node[3], bp[3]])
         end
         lines!(ax3d, @lift($bridle_obs[1]), @lift($bridle_obs[2]),
                      @lift($bridle_obs[3]); color=:gold, linewidth=1.2)
@@ -419,8 +398,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     let back_off    = 0.10,
         back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
         design_bearing_x = p.tether_length * cos(p.elevation_angle),
-        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_off,
-        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 6.0 + back_off)^2)
+        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_off,
+        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 2.0 + back_off)^2)
         scatter!(ax3d, [back_ax], [0.0], [0.0]; color=:coral, markersize=12, marker=:diamond)
         back_line_obs = @lift begin
             bp   = $bearing_obs

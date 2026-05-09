@@ -62,7 +62,7 @@ function ring_safety_frame(u      ::AbstractVector,
 
     results = Vector{NamedTuple}()
 
-    for (k, ring_gid) in enumerate(sys.ring_ids[2:end])  # skip ground only (hub not in ring_ids)
+    for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])  # skip ground and hub
         node   = sys.nodes[ring_gid]::RingNode
         R      = node.radius
         ri     = node.ring_idx

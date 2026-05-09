@@ -33,20 +33,6 @@ struct BearingNode <: AbstractNode
     mass :: Float64        # bearing mass (~0.05 kg)
 end
 
-"""
-    HubVertexNode
-
-One vertex of the hub rotor ring polygon.  Each vertex is a free particle
-connected to the hub centre by a radial spoke and to adjacent vertices by
-beam segments.  Asymmetric bridle tension can tilt the polygon plane.
-The disc normal emerges from vertex positions.
-"""
-struct HubVertexNode <: AbstractNode
-    id         :: Int
-    vertex_idx :: Int      # 1..n_lines position around the polygon
-    mass       :: Float64  # per-vertex mass (knuckle + beam share + blade share)
-end
-
 # End of a sub-segment: either a rope node or a ring attachment point
 struct SubSegmentEnd
     node_id  :: Int        # global node index
@@ -80,15 +66,14 @@ struct KiteSpec
 end
 
 struct KiteTurbineSystem
-    nodes           :: Vector{AbstractNode}
-    sub_segs        :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle + beams)
-    ring_ids        :: Vector{Int}             # global ids of ring nodes, in order ground→hub
-    hub_vertex_ids  :: Vector{Int}             # global ids of HubVertexNodes (1..n_lines)
-    rotor           :: RotorSpec
-    kite            :: KiteSpec
-    bearing_id      :: Int                     # global id of the BearingNode
-    n_ring          :: Int
-    n_total         :: Int
+    nodes       :: Vector{AbstractNode}
+    sub_segs    :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle)
+    ring_ids    :: Vector{Int}             # global ids of ring nodes, in order ground→hub
+    rotor       :: RotorSpec
+    kite        :: KiteSpec
+    bearing_id  :: Int                     # global id of the BearingNode
+    n_ring      :: Int
+    n_total     :: Int
 end
 
 state_size(sys::KiteTurbineSystem) = 6 * sys.n_total + 2 * sys.n_ring

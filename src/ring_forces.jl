@@ -11,6 +11,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
                                lift_device ::Union{Nothing, LiftDevice} = nothing)
     N        = sys.n_total
     hub_gid  = sys.rotor.node_id
+    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
     hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
     hub_vel  = @view u[3*N+3*(hub_gid-1)+1 : 3*N+3*hub_gid]
     β        = p.elevation_angle
@@ -39,8 +40,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # ── Rotor thrust + aero torque ─────────────────────────────────────────
     v_hub_mag = norm(v_wind)
     if v_hub_mag > 0.1
-        last_ring_ri = (sys.nodes[sys.ring_ids[end]]::RingNode).ring_idx
-        omega_rotor = omega[last_ring_ri]
+        omega_rotor = omega[hub_ri]
         lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
         elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
@@ -66,11 +66,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         # reversal and pinned P_peak to zero. Floor at 0.5 rad/s prevents division blow-up
         # at standstill while giving a finite starting torque.
         tau_aero = P_aero / max(abs(omega_rotor), 0.5)
-        # Rotor torque applied to ring14 (last TRPT ring in twist chain).
-        # The hub centre has ring_idx=0 — torque transmits through vertices
-        # to ring14 via the TRPT top tethers.
-        last_ring_ri = (sys.nodes[sys.ring_ids[end]]::RingNode).ring_idx
-        torques[last_ring_ri] += tau_aero
+        torques[hub_ri] += tau_aero
     end
 
     # ── Generator MPPT torque on ground node ──────────────────────────────
@@ -169,7 +165,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
 
     # Design rest length (no payout): distance anchor→design bearing position
     design_bearing_x = p.tether_length * cos(p.elevation_angle)
-    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_attach_z  # hub_z + bearing_offset + attach
+    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_attach_z  # hub_z + bearing_offset + attach
     back_L0_design = sqrt((design_bearing_x - back_ax)^2 + design_bearing_z^2)
     # L₀ = design distance + payout (winch releases line)
     back_L0 = back_L0_design + p.backline_payout
