@@ -24,7 +24,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     n_seg   = length(seg_lengths)
     n_ring  = n_seg + 1
     n_rope  = p.n_lines * 3 * n_seg
-    n_total = n_ring + n_rope + 1       # +1 for bearing
+    n_total = n_ring + n_rope + 1 + p.n_lines   # +1 for bearing, +n_lines for hub vertices
     stride  = 1 + p.n_lines * 3
 
     β         = p.elevation_angle
@@ -127,6 +127,64 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     kite  = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1,
                      kite_tether_length)
 
+    # ── Hub vertex nodes + beam segments ─────────────────────────────────
+    # The hub ring polygon is decomposed into N individual vertex particles
+    # connected by radial spokes (centre → vertex) and polygon beam segments
+    # (vertex i → vertex i+1).  Vertex positions are set during u0 init below.
+    HUB_VERTEX_MASS   = m_rotor / p.n_lines       # blade mass per vertex
+    SPOKE_EA          = 1e7                        # N  — stiff radial spokes
+    SPOKE_C_DAMP      = 500.0
+    SPOKE_DIAM        = 0.008                      # m  — 8mm CFRP spoke
+    BEAM_EA           = OPT_E_CFRP * π * (0.008)^2 / 4  # N — CFRP beam axial
+    BEAM_C_DAMP       = 500.0
+    BEAM_DIAM         = 0.008                      # m
+
+    hub_gid_local = ring_ids[end]
+    hub_ctr_pos   = ring_pos[end]
+    hub_R_local   = ring_radii[end]
+
+    hub_vertex_ids_vec = Vector{Int}(undef, p.n_lines)
+    vertex_positions   = Vector{Vector{Float64}}(undef, p.n_lines)
+    for j in 1:p.n_lines
+        v_gid = n_ring + n_rope + j  # vertex nodes come before bearing
+        hub_vertex_ids_vec[j] = v_gid
+        nodes[v_gid] = HubVertexNode(v_gid, j, HUB_VERTEX_MASS)
+        # Store initial position for u0 init and beam segment lengths
+        vertex_positions[j] = attachment_point(hub_ctr_pos, hub_R_local,
+                                                0.0, j, p.n_lines, perp1, perp2)
+        # Radial spoke: hub centre → vertex
+        push!(sub_segs, RopeSubSegment(
+            SubSegmentEnd(hub_gid_local, true, j),
+            SubSegmentEnd(v_gid, false, j),
+            hub_R_local, SPOKE_EA, SPOKE_C_DAMP, SPOKE_DIAM))
+    end
+
+    # Polygon beam segments: vertex j → vertex j+1 (closed polygon)
+    for j in 1:p.n_lines
+        j_next = j < p.n_lines ? j + 1 : 1
+        v_a_gid = hub_vertex_ids_vec[j]
+        v_b_gid = hub_vertex_ids_vec[j_next]
+        beam_L0 = norm(vertex_positions[j_next] .- vertex_positions[j])
+        push!(sub_segs, RopeSubSegment(
+            SubSegmentEnd(v_a_gid, false, j),
+            SubSegmentEnd(v_b_gid, false, j_next),
+            beam_L0, BEAM_EA, BEAM_C_DAMP, BEAM_DIAM))
+    end
+
+    # Diagonal springs: vertex j → vertex j+2 (knuckle angular stiffness)
+    # These resist polygon folding — a rigid-body tilt preserves diagonal
+    # lengths, but folding/collapse changes them.  Same CFRP EA as beams.
+    for j in 1:p.n_lines
+        j_skip = j + 2 > p.n_lines ? j + 2 - p.n_lines : j + 2
+        v_a_gid = hub_vertex_ids_vec[j]
+        v_b_gid = hub_vertex_ids_vec[j_skip]
+        diag_L0 = norm(vertex_positions[j_skip] .- vertex_positions[j])
+        push!(sub_segs, RopeSubSegment(
+            SubSegmentEnd(v_a_gid, false, j),
+            SubSegmentEnd(v_b_gid, false, j_skip),
+            diag_L0, BEAM_EA, BEAM_C_DAMP, BEAM_DIAM))
+    end
+
     # ── Bearing node + bridle segments ──────────────────────────────────
     # The bearing is a free particle placed above the hub ring centre along
     # the shaft axis.  N bridle spring-dampers connect it to the hub ring
@@ -143,17 +201,17 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     bearing_pos0 = ring_pos[end] .+ bearing_offset .* shaft_dir
 
     for j in 1:p.n_lines
-        pa_attach = attachment_point(ring_pos[end], ring_radii[end], 0.0,
-                                     j, p.n_lines, perp1, perp2)
-        bridle_L0 = norm(bearing_pos0 .- pa_attach)
+        # Bridle: bearing → hub vertex node
+        v_gid = hub_vertex_ids_vec[j]
+        bridle_L0 = norm(bearing_pos0 .- vertex_positions[j])
         push!(sub_segs, RopeSubSegment(
-            SubSegmentEnd(bearing_gid, false, j),   # bearing end
-            SubSegmentEnd(ring_ids[end], true, j),   # hub-vertex end
+            SubSegmentEnd(bearing_gid, false, j),
+            SubSegmentEnd(v_gid, false, j),
             bridle_L0, BRIDLE_EA, BRIDLE_C_DAMP, BRIDLE_DIAM))
     end
 
-    sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
-                            bearing_gid, n_ring, n_total)
+    sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, hub_vertex_ids_vec,
+                            rotor, kite, bearing_gid, n_ring, n_total)
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))
@@ -179,6 +237,12 @@ function _build_kite_turbine_system_impl(p::SystemParams,
 
     # Bearing initial position
     u0[3*(bearing_gid-1)+1 : 3*bearing_gid] .= bearing_pos0
+
+    # Hub vertex initial positions
+    for j in 1:p.n_lines
+        v_gid = hub_vertex_ids_vec[j]
+        u0[3*(v_gid-1)+1 : 3*v_gid] .= vertex_positions[j]
+    end
 
     return sys, u0
 end

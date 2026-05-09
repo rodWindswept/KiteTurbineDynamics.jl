@@ -285,36 +285,39 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                color=rc, linewidth=1.5)
     end
 
-    # Hub (rotor) ring — firebrick, thicker
+    # Hub (rotor) ring — firebrick, drawn from vertex node positions
     hub_ring_obs = @lift begin
         u   = $u_obs
-        ctr = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        α   = u[6N + hub_ri]
-        jj  = [1:p.n_lines; 1]
-        pts = [attachment_point(ctr, hub_R, α, jj[i], p.n_lines, perp1, perp2)
-               for i in eachindex(jj)]
+        pts = [u[3*(gid-1)+1 : 3*gid] for gid in sys.hub_vertex_ids]
+        push!(pts, pts[1])  # close the polygon
         ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
     end
     lines!(ax3d, @lift($hub_ring_obs[1]), @lift($hub_ring_obs[2]),
                  @lift($hub_ring_obs[3]); color=:firebrick, linewidth=3.5)
 
-    # Rotor blades
+    # Rotor blades — attached at hub vertex positions
     r_inner = hub_R
     r_outer = sys.rotor.radius
     chord   = r_outer * 0.15
     for b in 1:p.n_blades
+        v_gid = sys.hub_vertex_ids[b]
         blade_obs = @lift begin
             u    = $u_obs
+            vpos = u[3*(v_gid-1)+1 : 3*v_gid]
             ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
-            α    = u[6N + hub_ri]
-            φ    = α + (b-1) * (2π / p.n_blades)
-            r_dir = cos(φ) .* perp1 .+ sin(φ) .* perp2
-            c_dir = -sin(φ) .* perp1 .+ cos(φ) .* perp2
+            # direction from centre to vertex
+            r_vec = vpos .- ctr
+            r_len = max(norm(r_vec), 1e-9)
+            r_dir = r_vec ./ r_len
+            # perpendicular direction in the ring plane (approximate)
+            c_dir = [-r_dir[2], r_dir[1], 0.0]
+            c_len = max(norm(c_dir), 1e-9)
+            c_dir ./= c_len
             hc    = chord / 2.0
-            p1 = ctr .+ r_inner .* r_dir .- hc .* c_dir
-            p2 = ctr .+ r_outer .* r_dir .- hc .* c_dir
-            p3 = ctr .+ r_outer .* r_dir .+ hc .* c_dir
-            p4 = ctr .+ r_inner .* r_dir .+ hc .* c_dir
+            p1 = vpos .- hc .* c_dir
+            p2 = ctr .+ (r_outer / r_inner) .* r_vec .- hc .* c_dir
+            p3 = ctr .+ (r_outer / r_inner) .* r_vec .+ hc .* c_dir
+            p4 = vpos .+ hc .* c_dir
             xs = [p1[1], p2[1], p3[1], p4[1], p1[1]]
             ys = [p1[2], p2[2], p3[2], p4[2], p1[2]]
             zs = [p1[3], p2[3], p3[3], p4[3], p1[3]]
@@ -330,15 +333,12 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # lift tether and backline both attach to the bearing
     lift_point_obs  = bearing_obs
 
-    # Bridle lines: bearing → hub ring vertices (spring-dampers in the ODE)
-    for j in 1:p.n_lines
+    # Bridle lines: bearing → hub vertex nodes (real ODE particles)
+    for (j, v_gid) in enumerate(sys.hub_vertex_ids)
         bridle_obs = @lift begin
-            u    = $u_obs
-            ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
-            α    = u[6N + hub_ri]
-            node = attachment_point(ctr, hub_R, α, j, p.n_lines, perp1, perp2)
-            bp   = $bearing_obs
-            ([node[1], bp[1]], [node[2], bp[2]], [node[3], bp[3]])
+            bp = $bearing_obs
+            vp = $u_obs[3*(v_gid-1)+1 : 3*v_gid]
+            ([bp[1], vp[1]], [bp[2], vp[2]], [bp[3], vp[3]])
         end
         lines!(ax3d, @lift($bridle_obs[1]), @lift($bridle_obs[2]),
                      @lift($bridle_obs[3]); color=:gold, linewidth=1.2)

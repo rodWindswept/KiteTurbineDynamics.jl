@@ -187,6 +187,23 @@ tension network — they can't tilt independently). The hub ring alone
 gets vertex particles + beam segments. This is the most physically
 accurate path and Rod's stated preference.
 
+### Implementation note: knuckle angular stiffness
+
+The physical knuckle connectors hold adjacent CFRP beam pairs at a fixed
+angle in the polygon plane. Currently modelled as **diagonal springs**
+(vertex i → vertex i+2, same CFRP EA as beams). A rigid-body polygon tilt
+preserves all diagonal lengths, so tilt is free; folding or collapse changes
+them, so folding is resisted. This is a first-order approximation. Future:
+replace with true angular springs (torque resisting beam-pair angle change)
+for more accurate knuckle physics.
+
+### Implementation note: backline attachment
+
+The backline should attach to the lift line ~30 cm above the bearing,
+not directly to the bearing itself. Currently simplified to bearing attachment.
+Future refinement: model the lift line as a multi-segment spring, attach
+backline to an intermediate node.
+
 ### Objective
 Compute rotor thrust and torque using the actual disc normal vector (derived
 from hub ring vertices) rather than the shaft elevation axis. Add a simplified
