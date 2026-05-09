@@ -15,4 +15,5 @@ using KiteTurbineDynamics
     include("test_power.jl")
     include("test_trpt_axial_profiles.jl")
     include("test_ring_spacing_v4.jl")
+    include("test_dashboard_smoke.jl")
 end
