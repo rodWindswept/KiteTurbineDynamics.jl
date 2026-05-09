@@ -1,5 +1,5 @@
 # src/parameters.jl
-# Physical constants and preset configurations for the TRPT Kite Turbine Simulator.
+# Physical constants, spec structs, and preset configurations for the TRPT Kite Turbine Simulator.
 
 const DYNEEMA_DENSITY = 970.0   # kg/m³
 # All numerical values derived from:
@@ -9,11 +9,103 @@ const DYNEEMA_DENSITY = 970.0   # kg/m³
 #   - data_collection_v3.xlsx                               (rotor geometry survey)
 #   - Rotor_TRTP_Sizing_Iteration2.xlsx                     (AeroDyn BEM simulations)
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Spec structs — domain-aligned groupings for SystemParams construction.
+# Each spec is an immutable value type; callers that only need e.g. atmospheric
+# parameters can accept an AeroSpec instead of the full SystemParams.
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    GeometrySpec
+
+TRPT geometry — all spatial dimensions and topology counts.
+Angles in radians, lengths in metres.  n_lines, n_rings, and n_blades
+are always equal in the current TRPT model (one blade and one tether line
+per polygon vertex).
+"""
+struct GeometrySpec
+    elevation_angle ::Float64  # TRPT shaft elevation angle β (rad)
+    lifter_elevation::Float64  # Lifter line elevation angle (rad)
+    rotor_radius    ::Float64  # Airborne ring radius R (m)
+    tether_length   ::Float64  # Unstretched total TRPT length L₀ (m)
+    trpt_hub_radius ::Float64  # Ring radius at the rotor end (m); r_top of taper
+    trpt_rL_ratio   ::Float64  # Geometry ratio r/L per segment (dimensionless)
+    n_lines         ::Int64    # Number of TRPT tether lines
+    n_rings         ::Int64    # Number of polygon spacer rings
+    n_blades        ::Int64    # Number of lifting blades (one per line)
+end
+
+"""
+    MaterialSpec
+
+Material and mass properties for tethers and rings.
+All masses are per-unit (per ring, per blade).
+"""
+struct MaterialSpec
+    tether_diameter ::Float64  # Tether line diameter d_t (m)
+    e_modulus       ::Float64  # Young's modulus (Pa); Dyneema ≈ 100 GPa
+    m_ring          ::Float64  # Mass per polygon spacer ring (kg)
+    m_blade         ::Float64  # Mass per lifting blade (kg)
+end
+
+"""
+    AeroSpec
+
+Atmospheric and aerodynamic constants.
+Cp is the rotor power coefficient from AeroDyn BEM (NACA4412, 3-blade).
+"""
+struct AeroSpec
+    rho         ::Float64  # Air density (kg/m³)
+    v_wind_ref  ::Float64  # Reference wind speed at h_ref (m/s)
+    h_ref       ::Float64  # Reference altitude for wind profile (m)
+    cp          ::Float64  # Rotor power coefficient
+end
+
+"""
+    ControlSpec
+
+Ground station drivetrain and reserved elevation-controller parameters.
+The β_* and kp_elev fields are RESERVED placeholders — no elevation controller
+is implemented.  The physical system uses fixed-pitch, fixed-bank blades.
+"""
+struct ControlSpec
+    i_pto       ::Float64  # Total PTO rotational inertia (kg·m²)
+    k_mppt      ::Float64  # MPPT gain (N·m·s²/rad²): τ_gen = k × ω²
+    p_rated_w   ::Float64  # Rated electrical power (W)
+    β_min       ::Float64  # RESERVED — minimum safe elevation angle (rad)
+    β_max       ::Float64  # RESERVED — maximum safe elevation angle (rad)
+    β_rate_max  ::Float64  # RESERVED — maximum elevation change rate (rad/s)
+    kp_elev     ::Float64  # RESERVED — proportional gain placeholder
+end
+
+"""
+    BackLineSpec
+
+Elevation-constraint back line — a single Dyneema tether from hub attachment
+point down to a fixed ground anchor.  Tension-only; goes slack when the hub
+is below design elevation.
+"""
+struct BackLineSpec
+    EA_back_line      ::Float64  # Axial stiffness (N)
+    c_back_line       ::Float64  # Damping coefficient (N·s/m)
+    back_anchor_fwd_x ::Float64  # Downwind offset of ground anchor (m)
+    backline_payout   ::Float64  # Extra line paid out by winch (m)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SystemParams — flat struct (unchanged external interface).
+# The spec constructor below composes one from grouped specs.
+# ══════════════════════════════════════════════════════════════════════════════
+
 """
     SystemParams
 
 All physical parameters for one TRPT configuration.
 All fields use SI units: m, kg, Pa, rad, rad/s, N·m.
+
+Construct from specs:
+    SystemParams(geo::GeometrySpec, mat::MaterialSpec, aero::AeroSpec,
+                  ctrl::ControlSpec, back::BackLineSpec)
 """
 struct SystemParams
     # Atmospheric
@@ -47,53 +139,53 @@ struct SystemParams
     m_blade::Float64          # Mass per blade (kg)
 
     # Aerodynamics
-    # rotor_radius is the outer tip radius R of the lifting blades.
-    # Blades are physically annular: inner tip at trpt_hub_radius (~0.4·R),
-    # outer tip at R.  Blade span = R − trpt_hub_radius.
-    # Cp and CT (from AeroDyn BEM) are normalised to the FULL DISC area πR²
-    # by convention — the inner hub region contributes negligibly at operational
-    # TSR, so using πR² with these BEM coefficients is consistent with the
-    # physical swept annulus.  Blade inertia I = n_blades × m_blade × R²
-    # (outer-tip approximation); tether TSR λ_t = ω × R / v_hub.
     cp::Float64               # Rotor power coefficient; AeroDyn BEM ≈ 0.22 (NACA4412, 3-blade)
 
     # Ground station — Mass Scaling PDF §"Drivetrain Mass and Inertia Matching"
     i_pto::Float64            # Total PTO rotational inertia (kg·m²)
     k_mppt::Float64           # MPPT gain constant k (N·m·s²/rad²): τ_gen = k × ω_ground²
-                              # Sets the quadratic load curve for maximum power point tracking.
-                              # Derived from rated torque and speed: k = τ_rated / ω_rated²
-                              # Eliminates the bistability of a fixed linear damper below rated wind.
-
-    # Rated power
-    p_rated_w  ::Float64   # Rated electrical power (W). Default: 10_000.0
+    p_rated_w  ::Float64      # Rated electrical power (W). Default: 10_000.0
 
     # Reserved — no elevation controller implemented.
-    # The physical system has fixed-pitch, fixed-bank blades with no cyclic
-    # control.  Elevation is set by the back line geometry and the lift device,
-    # not by an active controller.  These fields are retained as placeholders
-    # for future development.
-    β_min      ::Float64   # RESERVED — minimum safe elevation angle (rad)
-    β_max      ::Float64   # RESERVED — maximum safe elevation angle (rad)
-    β_rate_max ::Float64   # RESERVED — maximum elevation change rate (rad/s)
-    kp_elev    ::Float64   # RESERVED — proportional gain placeholder
+    β_min      ::Float64      # RESERVED — minimum safe elevation angle (rad)
+    β_max      ::Float64      # RESERVED — maximum safe elevation angle (rad)
+    β_rate_max ::Float64      # RESERVED — maximum elevation change rate (rad/s)
+    kp_elev    ::Float64      # RESERVED — proportional gain placeholder
 
     # Back line — elevation constraint tether
-    # Attaches to the lift kite tether ~10 cm above the hub bearing and runs
-    # down to a fixed ground anchor.  Acts only in tension (slack below design
-    # elevation, taut above it).
-    #
-    # The anchor is placed further downwind than the hub's x-projection so the
-    # line clears the TRPT rope footprint.  back_anchor_fwd_x is the additional
-    # downwind distance past the hub's design x-position (tether_length·cos β).
-    # The rest length is computed from the actual anchor-to-attachment geometry.
-    #
-    # With back_anchor_fwd_x = 0 the line is purely vertical (anchor directly
-    # below hub).  Increase to 5–10 m to clear the TRPT footprint in the field.
     EA_back_line      ::Float64  # Axial stiffness (N). 3 mm Dyneema ≈ 700 kN
     c_back_line       ::Float64  # Damping coefficient (N·s/m). Default: 500.0
     back_anchor_fwd_x ::Float64  # Extra downwind offset of ground anchor (m). Default: 5.0
     backline_payout   ::Float64  # Extra line paid out by winch (m). Default: 0.0
 end
+
+"""
+    SystemParams(geo, mat, aero, ctrl, back)
+
+Construct a flat `SystemParams` from domain-grouped spec structs.
+All existing callers that access `p.rho`, `p.elevation_angle`, etc.
+continue to work — only construction changes.
+"""
+function SystemParams(geo::GeometrySpec, mat::MaterialSpec, aero::AeroSpec,
+                       ctrl::ControlSpec, back::BackLineSpec)
+    return SystemParams(
+        aero.rho, aero.v_wind_ref, aero.h_ref,
+        geo.elevation_angle, geo.lifter_elevation,
+        geo.rotor_radius, geo.tether_length,
+        geo.trpt_hub_radius, geo.trpt_rL_ratio,
+        geo.n_lines, mat.tether_diameter, mat.e_modulus,
+        geo.n_rings, mat.m_ring,
+        geo.n_blades, mat.m_blade,
+        aero.cp, ctrl.i_pto, ctrl.k_mppt, ctrl.p_rated_w,
+        ctrl.β_min, ctrl.β_max, ctrl.β_rate_max, ctrl.kp_elev,
+        back.EA_back_line, back.c_back_line, back.back_anchor_fwd_x,
+        back.backline_payout,
+    )
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Factory functions — each returns a SystemParams.
+# ══════════════════════════════════════════════════════════════════════════════
 
 """
     params_10kw()
@@ -104,7 +196,7 @@ Rated operating point (DRR; AeroDyn sizing data):
   - Rated wind speed : 11 m/s (all AeroDyn simulations in Rotor_TRTP_Sizing_Iteration2.xlsx)
   - Elevation angle  : 30° (as physically built; newer designs optimise at 20°)
 
-Mass budget (Mass Scaling PDF §"Static Lift Kite Mass Bottleneck"):
+Mass budget (Mass Scaling PDF §\"Static Lift Kite Mass Bottleneck\"):
   - Rotor mass total : 11 kg (3 blades × 3.667 kg each)
   - TRPT shaft mass  : ~6.6 kg  (14 rings × 0.4 kg + 5 lines × 30 m × 0.006 kg/m)
   - Total airborne   : ~17.6 kg ≈ 17 kg
@@ -121,62 +213,53 @@ TRPT taper geometry (DRR Grasshopper FEA, rL Geometry Ratio: 0.740741):
 
 Aerodynamics (Rotor_TRTP_Sizing_Iteration2.xlsx AeroDyn BEM, NACA4412 profile):
   - Cp ≈ 0.22 at optimal TSR ≈ 4.1–4.2 (3-blade, 20°–30° elevation)
-    [4kW: Cp=0.232, 7kW: Cp=0.223, 12kW: Cp=0.227 — consistent across sizes]
   - Previous Framework PDF value (0.15) was a conservative proxy; AeroDyn gives ≈0.22
 
-Ground inertia (Mass Scaling PDF §"Drivetrain Mass and Inertia Matching"):
+Ground inertia (Mass Scaling PDF §\"Drivetrain Mass and Inertia Matching\"):
   - I_wheel = 0.019 kg·m², I_gen = 0.040 kg·m² → I_pto = 0.059 kg·m²
 """
 function params_10kw()::SystemParams
-    m_blade = 11.0 / 3.0   # 3 blades totalling 11 kg per Mass Scaling PDF
-    m_ring  = 0.4           # ~400 g per ring (DRR §5.2: CFRP tubes + clevis connectors)
-    i_pto   = 0.019 + 0.040 # wheel + generator (Mass Scaling PDF §"Drivetrain Mass")
-
-    # Hub altitude = tether_length × sin(elevation_angle) = 30 × sin(30°) = 15 m
-    # h_ref = hub altitude; v_wind_ref is rated hub wind speed (11 m/s, from DRR / AeroDyn data)
-    return SystemParams(
-        1.225,           # rho (kg/m³)
-        11.0,            # v_wind_ref (m/s) — rated wind speed at h_ref (DRR; AeroDyn sizing)
-        15.0,            # h_ref (m) — reference (measurement) altitude; set equal to hub altitude
-                         #   (30 × sin(30°) = 15 m) so v_wind_ref is specified directly at hub.
-                         #   Hellmann wind shear is active when elevation angle changes (hub
-                         #   altitude moves away from h_ref). Use a met-mast height here if
-                         #   you have wind data from a fixed anemometer at a different height.
-        π / 6,           # elevation_angle = 30° (as physically built; DRR)
-        deg2rad(70.0),   # lifter_elevation = 70° (typical operating angle for launch/landing lifter kite line)
-        5.0,             # rotor_radius R (m) — Framework PDF §5.3 (aerodynamic outer radius)
-        30.0,            # tether_length L₀ (m) — DRR §5.2 "For a 30m TRPT"
-        2.0,             # trpt_hub_radius (m) — ring radius at rotor end; DRR Grasshopper rL=0.74,
-                         #   tether=30m, n_seg=15 → avg L_seg=2.0m, r_bottom=0.96m
-        0.74,            # trpt_rL_ratio — DRR Grasshopper "rL Geometry Ratio: 0.740741"
-        5,               # n_lines — DRR §5.2 "5 tethers along the length"
-        0.003,           # tether_diameter (m) — DRR §5.2: 3 mm Dyneema type 01505
-        100e9,           # e_modulus (Pa) — Dyneema ~100 GPa
-        14,              # n_rings — DRR §5.2: rings every 2 m → (30/2)−1 = 14
-        m_ring,          # m_ring (kg)
-        5,               # n_blades — one blade per tether line / polygon vertex (n_lines = 5)
-        m_blade,         # m_blade (kg)
-        0.22,            # cp — AeroDyn BEM (Rotor_TRTP_Sizing_Iteration2.xlsx); peak reference value
-        i_pto,           # i_pto (kg·m²)
-        11.0,            # k_mppt (N·m·s²/rad²) — MPPT gain: τ_gen = k × ω²
-                         #   Derivation: ω_opt = λ_opt × v_rated / R = 4.1 × 11 / 5 = 9.02 rad/s
-                         #   τ_net = τ_aero − τ_drag ≈ 889 N·m at rated operating point
-                         #   k = τ_net / ω_opt² = 889 / 81.4 ≈ 10.9 → 11.0
-                         #   Quadratic load law eliminates the bistability of the old linear c_pto
-                         #   and gives correct MPPT at all wind speeds, not just rated.
-        10_000.0,        # p_rated_w (W) — 10 kW rated
-        deg2rad(23.0),   # β_min    — RESERVED (no elevation controller)
-        deg2rad(67.0),   # β_max    — RESERVED
-        deg2rad(1.0),    # β_rate_max — RESERVED
-        5e-5,            # kp_elev  — RESERVED
-        # Back line — 3 mm Dyneema single line.
-        # EA = E × A = 100 GPa × π(0.003)²/4 ≈ 707 kN; use 700 kN as round value.
-        700_000.0,       # EA_back_line (N)
-        500.0,           # c_back_line (N·s/m)
-        5.0,             # back_anchor_fwd_x (m) — anchor 5 m downwind of hub x-projection,
-                         #   clearing the TRPT rope footprint at (tether_length·cos β ≈ 26 m)
-        0.0,             # backline_payout — zero at construction
+    geo = GeometrySpec(
+        π / 6,              # elevation_angle = 30° (DRR)
+        deg2rad(70.0),      # lifter_elevation = 70° (typical launch/landing)
+        5.0,                # rotor_radius R (m) — Framework PDF §5.3
+        30.0,               # tether_length L₀ (m) — DRR §5.2
+        2.0,                # trpt_hub_radius (m) — DRR Grasshopper rL=0.74
+        0.74,               # trpt_rL_ratio — DRR Grasshopper "rL Geometry Ratio: 0.740741"
+        5,                  # n_lines — DRR §5.2 "5 tethers"
+        14,                 # n_rings — DRR §5.2: rings every 2 m → (30/2)−1 = 14
+        5,                  # n_blades — one blade per polygon vertex
     )
+    mat = MaterialSpec(
+        0.003,              # tether_diameter (m) — DRR §5.2: 3 mm Dyneema
+        100e9,              # e_modulus (Pa) — Dyneema ~100 GPa
+        0.4,                # m_ring (kg) — ~400 g per ring (DRR §5.2)
+        11.0 / 3.0,         # m_blade (kg) — 3 blades totalling 11 kg
+    )
+    aero = AeroSpec(
+        1.225,              # rho (kg/m³)
+        11.0,               # v_wind_ref (m/s) — rated wind speed at h_ref
+        15.0,               # h_ref (m) — hub altitude (30 × sin(30°) = 15 m)
+        0.22,               # cp — AeroDyn BEM (Rotor_TRTP_Sizing_Iteration2.xlsx)
+    )
+    ctrl = ControlSpec(
+        0.019 + 0.040,      # i_pto (kg·m²) — wheel + generator
+        11.0,               # k_mppt (N·m·s²/rad²) — τ_gen = k × ω²
+                            #   ω_opt = 4.1 × 11 / 5 = 9.02 rad/s, τ_net ≈ 889 N·m
+                            #   k = 889 / 81.4 ≈ 10.9 → 11.0
+        10_000.0,           # p_rated_w (W)
+        deg2rad(23.0),      # β_min — RESERVED
+        deg2rad(67.0),      # β_max — RESERVED
+        deg2rad(1.0),       # β_rate_max — RESERVED
+        5e-5,               # kp_elev — RESERVED
+    )
+    back = BackLineSpec(
+        700_000.0,          # EA_back_line (N) — 100 GPa × π(0.003)²/4 ≈ 707 kN
+        500.0,              # c_back_line (N·s/m)
+        5.0,                # back_anchor_fwd_x (m) — clears TRPT rope footprint
+        0.0,                # backline_payout — zero at construction
+    )
+    return SystemParams(geo, mat, aero, ctrl, back)
 end
 
 """
@@ -209,27 +292,27 @@ Key differences from the canonical 5-line pentagon params_10kw():
 """
 function params_v5_10kw()::SystemParams
     base = params_10kw()
-    m_blade_each = 11.0 / 8.0   # ~1.375 kg per blade
-    m_ring = 0.4                # same ~400g per ring
-    return SystemParams(
-        base.rho, base.v_wind_ref, base.h_ref,
+    geo = GeometrySpec(
         base.elevation_angle, base.lifter_elevation,
-        5.0,             # rotor_radius (m) — canonical; v5 BEM-derived = 5.12
-        30.0,            # tether_length (m)
-        1.60,            # trpt_hub_radius (m) — v5 optimum
-        0.74,            # trpt_rL_ratio — retained for backward compat; not used in v5 path
-        8,               # n_lines — v5 unanimous optimum
-        base.tether_diameter, base.e_modulus,
-        18,              # n_rings — from ring_spacing_v4(r_hub=1.60, r_bot=0.336, target_Lr=2.0)
-        m_ring,
-        8,               # n_blades — one per TRPT line
-        m_blade_each,
-        base.cp, base.i_pto, base.k_mppt,
-        base.p_rated_w,
-        base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
-        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
-        0.0,             # backline_payout
+        5.0,                # rotor_radius (m) — canonical; v5 BEM-derived = 5.12
+        30.0,               # tether_length (m)
+        1.60,               # trpt_hub_radius (m) — v5 optimum
+        0.74,               # trpt_rL_ratio — retained for backward compat; not used in v5 path
+        8,                  # n_lines — v5 unanimous optimum
+        18,                 # n_rings — from ring_spacing_v4(r_hub=1.60, r_bot=0.336, target_Lr=2.0)
+        8,                  # n_blades — one per TRPT line
     )
+    mat = MaterialSpec(
+        base.tether_diameter, base.e_modulus,
+        0.4,                # m_ring (kg)
+        11.0 / 8.0,         # m_blade (kg) — total 11 kg across 8 blades
+    )
+    aero = AeroSpec(base.rho, base.v_wind_ref, base.h_ref, base.cp)
+    ctrl = ControlSpec(base.i_pto, base.k_mppt, base.p_rated_w,
+                        base.β_min, base.β_max, base.β_rate_max, base.kp_elev)
+    back = BackLineSpec(base.EA_back_line, base.c_back_line,
+                         base.back_anchor_fwd_x, 0.0)
+    return SystemParams(geo, mat, aero, ctrl, back)
 end
 
 function params_v5_50kw()::SystemParams
@@ -251,27 +334,27 @@ Key differences from params_v5_10kw():
 """
 function params_v5_safe_10kw()::SystemParams
     base = params_10kw()
-    m_blade_each = 11.0 / 8.0
-    m_ring = 0.4
-    return SystemParams(
-        base.rho, base.v_wind_ref, base.h_ref,
+    geo = GeometrySpec(
         base.elevation_angle, base.lifter_elevation,
-        5.0,             # rotor_radius (m)
-        30.0,            # tether_length (m)
-        1.60,            # trpt_hub_radius (m)
-        0.74,            # trpt_rL_ratio (retained)
-        8,               # n_lines
-        base.tether_diameter, base.e_modulus,
-        11,              # n_rings — from ring_spacing_v4(1.60, 1.49, 30.0, 1.61)
-        m_ring,
-        8,               # n_blades
-        m_blade_each,
-        base.cp, base.i_pto, base.k_mppt,
-        base.p_rated_w,
-        base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
-        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x,
-        0.0,             # backline_payout
+        5.0,                # rotor_radius (m)
+        30.0,               # tether_length (m)
+        1.60,               # trpt_hub_radius (m)
+        0.74,               # trpt_rL_ratio (retained)
+        8,                  # n_lines
+        11,                 # n_rings — from ring_spacing_v4(1.60, 1.49, 30.0, 1.61)
+        8,                  # n_blades
     )
+    mat = MaterialSpec(
+        base.tether_diameter, base.e_modulus,
+        0.4,                # m_ring (kg)
+        11.0 / 8.0,         # m_blade (kg)
+    )
+    aero = AeroSpec(base.rho, base.v_wind_ref, base.h_ref, base.cp)
+    ctrl = ControlSpec(base.i_pto, base.k_mppt, base.p_rated_w,
+                        base.β_min, base.β_max, base.β_rate_max, base.kp_elev)
+    back = BackLineSpec(base.EA_back_line, base.c_back_line,
+                         base.back_anchor_fwd_x, 0.0)
+    return SystemParams(geo, mat, aero, ctrl, back)
 end
 
 """
@@ -281,7 +364,7 @@ Scale a SystemParams to a new rated power using:
 - Aerodynamic length scaling: x = (target/base)^(1/2) for all lengths.
   Rationale: P_aero ∝ R² (swept area), so R ∝ P^(1/2). Confirmed by AeroDyn BEM data:
   4 kW R=2.8 m → 12 kW R=4.8 m ≈ (12/4)^(1/2) × 2.8 ✓
-- Empirical mass exponent 1.35 (Mass Scaling PDF §"The Empirical Mass Exponent"):
+- Empirical mass exponent 1.35 (Mass Scaling PDF §\"The Empirical Mass Exponent\"):
   m_scaled = m_base × (target/base)^1.35
 - PTO inertia: I ∝ m × R² → exponent = 1.35 + 2×(1/2) = 2.35
 - MPPT gain: k_mppt = τ/ω² where τ ∝ P^(3/2), ω² ∝ P^(-1) → k_mppt ∝ P^(5/2)
@@ -290,37 +373,47 @@ function mass_scale(base::SystemParams,
                     base_power_kw::Float64,
                     target_power_kw::Float64)::SystemParams
     power_ratio = target_power_kw / base_power_kw
-    geom_scale  = power_ratio^(1.0/2.0)   # linear dimension scale: R ∝ P^(1/2) since P ∝ R²
-    mass_factor = power_ratio^1.35         # empirical mass exponent (Mass Scaling PDF)
+    geom_scale  = power_ratio^(1/2)     # linear dimension scale: R ∝ P^(1/2)
+    mass_factor = power_ratio^1.35       # empirical mass exponent
 
-    return SystemParams(
-        base.rho,
-        base.v_wind_ref,
-        base.h_ref             * geom_scale,
-        base.elevation_angle,                  # angle does not scale
-        base.lifter_elevation,                 # angle does not scale
-        base.rotor_radius      * geom_scale,
-        base.tether_length     * geom_scale,
-        base.trpt_hub_radius   * geom_scale,   # scales geometrically
-        base.trpt_rL_ratio,                    # dimensionless ratio, does not scale
-        base.n_lines,                          # topology does not scale
-        base.tether_diameter   * geom_scale,
-        base.e_modulus,                        # material property, unchanged
-        base.n_rings,                          # topology does not scale
-        base.m_ring            * mass_factor,
-        base.n_blades,                         # topology does not scale
-        base.m_blade           * mass_factor,
-        base.cp,                               # aerodynamic constant, unchanged
-        base.i_pto             * mass_factor * geom_scale^2,  # I ∝ m·R²: P^1.35 × P = P^2.35
-        base.k_mppt            * power_ratio^2.5,             # k = τ/ω², τ ∝ P^(3/2), ω² ∝ P^(-1) → k ∝ P^(5/2)
-        base.p_rated_w   * power_ratio,        # rated power scales linearly
-        base.β_min,                            # RESERVED — angle does not scale
-        base.β_max,                            # RESERVED — angle does not scale
-        base.β_rate_max,                       # RESERVED — rate does not scale
-        base.kp_elev    / power_ratio,         # RESERVED
-        base.EA_back_line      * geom_scale,    # back line stiffness scales with cross-section
-        base.c_back_line       * geom_scale,    # damping scales with line length
-        base.back_anchor_fwd_x * geom_scale,    # forward offset scales with geometry
-        base.backline_payout,                    # payout does not scale
+    # Decompose into specs, scale each, recompose
+    geo = GeometrySpec(
+        base.elevation_angle,                 # angle — does not scale
+        base.lifter_elevation,                # angle — does not scale
+        base.rotor_radius     * geom_scale,
+        base.tether_length    * geom_scale,
+        base.trpt_hub_radius  * geom_scale,
+        base.trpt_rL_ratio,                   # dimensionless ratio — does not scale
+        base.n_lines,                         # topology — does not scale
+        base.n_rings,                         # topology — does not scale
+        base.n_blades,                        # topology — does not scale
     )
+    mat = MaterialSpec(
+        base.tether_diameter  * geom_scale,
+        base.e_modulus,                       # material property — unchanged
+        base.m_ring           * mass_factor,
+        base.m_blade          * mass_factor,
+    )
+    aero = AeroSpec(
+        base.rho,                             # atmospheric — unchanged
+        base.v_wind_ref,                      # reference wind — unchanged
+        base.h_ref            * geom_scale,
+        base.cp,                              # aerodynamic constant — unchanged
+    )
+    ctrl = ControlSpec(
+        base.i_pto            * mass_factor * geom_scale^2,  # I ∝ m·R² → P^2.35
+        base.k_mppt           * power_ratio^2.5,            # k ∝ P^(5/2)
+        base.p_rated_w        * power_ratio,
+        base.β_min,                            # RESERVED — does not scale
+        base.β_max,                            # RESERVED — does not scale
+        base.β_rate_max,                       # RESERVED — does not scale
+        base.kp_elev          / power_ratio,   # RESERVED
+    )
+    back = BackLineSpec(
+        base.EA_back_line     * geom_scale,    # stiffness scales with cross-section
+        base.c_back_line      * geom_scale,    # damping scales with line length
+        base.back_anchor_fwd_x * geom_scale,   # forward offset scales with geometry
+        base.backline_payout,                  # payout does not scale
+    )
+    return SystemParams(geo, mat, aero, ctrl, back)
 end
