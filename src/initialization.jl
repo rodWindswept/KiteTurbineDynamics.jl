@@ -194,7 +194,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     BRIDLE_EA      = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
     BRIDLE_C_DAMP  = 100.0         # N·s/m
     BRIDLE_DIAM    = 0.002         # m  — 2mm Dyneema bridle line
-    bearing_offset = 2.0           # m above hub centre (along shaft)
+    bearing_offset = 6.0           # m above hub centre (along shaft)
 
     bearing_gid = n_total
     nodes[bearing_gid] = BearingNode(bearing_gid, BEARING_MASS)

@@ -398,8 +398,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     let back_off    = 0.10,
         back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
         design_bearing_x = p.tether_length * cos(p.elevation_angle),
-        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_off,
-        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 2.0 + back_off)^2)
+        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_off,
+        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 6.0 + back_off)^2)
         scatter!(ax3d, [back_ax], [0.0], [0.0]; color=:coral, markersize=12, marker=:diamond)
         back_line_obs = @lift begin
             bp   = $bearing_obs
