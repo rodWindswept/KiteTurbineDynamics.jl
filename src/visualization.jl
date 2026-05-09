@@ -395,7 +395,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Back line — coral, from 10 cm above the bearing down to the fixed ground
     # anchor.  Colour: coral = taut; grey = slack.
-    let back_off    = 0.10,
+    let back_off    = 0.30,
         back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
         design_bearing_x = p.tether_length * cos(p.elevation_angle),
         design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_off,

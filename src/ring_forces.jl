@@ -155,7 +155,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # design x-projection.  Backline payout increases the unstretched length
     # (simulating winch release) — when payout > 0 the line goes slack and
     # the bearing rises under lift, tilting the rotor via the bridle network.
-    back_attach_z = 0.10   # metres above bearing (attachment on lift tether)
+    back_attach_z = 0.30   # metres above bearing (on lift line, approximated as vertical)
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
 
     # 2D projection: horizontal plane distance + vertical
