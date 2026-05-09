@@ -344,7 +344,7 @@ function settle_to_equilibrium(sys         ::KiteTurbineSystem,
                                 u0          ::Vector{Float64},
                                 p           ::SystemParams;
                                 lift_device ::Union{Nothing, LiftDevice} = nothing,
-                                n_steps     ::Int     = 4_000,
+                                n_steps     ::Int     = 16_000,
                                 dt          ::Float64 = 4e-5,
                                 damp        ::Float64 = 0.05)
     # Auto-adjust dt for high-line-count systems: shorter ground-end segments

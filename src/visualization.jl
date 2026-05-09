@@ -55,7 +55,13 @@ function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
     α_a   = u[6N + na.ring_idx]
     α_b   = u[6N + nb.ring_idx]
     pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-    pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+    # Top segment: upper endpoint is a hub vertex node, not ring centre
+    if s == p.n_rings + 1
+        v_gid = sys.hub_vertex_ids[j]
+        pb    = u[3*(v_gid-1)+1 : 3*v_gid]
+    else
+        pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+    end
     pts   = Vector{Vector{Float64}}(undef, 5)
     pts[1] = pa
     # Compute stride from p.n_lines (not hardcoded: 5→16, 8→25)
