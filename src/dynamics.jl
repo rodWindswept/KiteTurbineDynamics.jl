@@ -18,7 +18,15 @@ function multibody_ode!(du, u, params, t)
     # ── Gravity on all nodes ───────────────────────────────────────────────
     for i in 1:N
         node = sys.nodes[i]
-        m    = node isa RingNode ? node.mass : (node::RopeNode).mass
+        m    = if node isa RingNode
+            node.mass
+        elseif node isa RopeNode
+            node.mass
+        elseif node isa BearingNode
+            node.mass
+        else
+            error("unknown node type")
+        end
         forces[i] .+= m .* g
     end
 
@@ -39,7 +47,15 @@ function multibody_ode!(du, u, params, t)
             du[bv:bv+2]   .= 0.0
         else
             du[bp:bp+2] .= u[bv:bv+2]        # d(pos)/dt = vel
-            m = node isa RingNode ? node.mass : (node::RopeNode).mass
+            m = if node isa RingNode
+                node.mass
+            elseif node isa RopeNode
+                node.mass
+            elseif node isa BearingNode
+                node.mass
+            else
+                error("unknown node type")
+            end
             du[bv:bv+2] .= forces[i] ./ m    # d(vel)/dt = F/m
         end
     end

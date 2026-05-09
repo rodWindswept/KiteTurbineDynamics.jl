@@ -28,7 +28,7 @@ export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
-export AbstractNode, RingNode, RopeNode, KiteTurbineSystem
+export AbstractNode, RingNode, RopeNode, BearingNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos
 export build_kite_turbine_system, build_kite_turbine_system_v5, state_size
 export compute_rope_forces!, compute_ring_forces!

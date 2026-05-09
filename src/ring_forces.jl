@@ -114,15 +114,14 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         torques[ri_b] -= c_s * Δω
     end
 
-    # ── Lift line force at hub node ─────────────────────────────────────────
-    # The lift device flies DOWNWIND of and above the hub.  The line tension
-    # is determined by the lifter model (aerodynamic force balance), not by
-    # catenary geometry — the kite adjusts its position to maintain equilibrium.
-    # We apply the lifter-reported tension directly along the equilibrium
-    # direction.  Line sag is negligible (~5 mm at operational tension).
-    #
-    # The backline (below) uses a quasi-static catenary model where the force
-    # IS geometric — the anchor is fixed and the hub position determines tension.
+    # ── Lift line force at bearing node ────────────────────────────────────
+    # The lift device flies DOWNWIND of and above the bearing.  The line tension
+    # is determined by the lifter model (aerodynamic force balance).  We apply
+    # the lifter-reported tension directly at the bearing; bridle springs
+    # distribute it to the hub ring vertices.
+    bearing_gid = sys.bearing_id
+    bearing_pos = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+
     if lift_device !== nothing
         v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
         v_h1   = v_lift[1];  v_h2 = v_lift[2] # horizontal components
@@ -144,59 +143,52 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         if T_lift > 0.0
             θ_lift = deg2rad(elev_lift)
             # Force direction: horizontal component downwind (+X) + vertical upward
-            forces[hub_gid][1] += T_lift * cos(θ_lift) * downwind[1]
-            forces[hub_gid][2] += T_lift * cos(θ_lift) * downwind[2]
-            forces[hub_gid][3] += T_lift * sin(θ_lift)
+            forces[bearing_gid][1] += T_lift * cos(θ_lift) * downwind[1]
+            forces[bearing_gid][2] += T_lift * cos(θ_lift) * downwind[2]
+            forces[bearing_gid][3] += T_lift * sin(θ_lift)
         end
     end
 
-    # ── Back line — quasi-static catenary to ground anchor ────────────────────
-    # Runs from a point 10 cm above the hub bearing down to a fixed ground
+    # ── Back line — quasi-static catenary from bearing to ground anchor ──
+    # Runs from a point 10 cm above the bearing down to a fixed ground
     # anchor.  The anchor stays at back_anchor_fwd_x downwind of the hub's
     # design x-projection.  Backline payout increases the unstretched length
     # (simulating winch release) — when payout > 0 the line goes slack and
-    # the hub rises under lift.
-    #
-    # Physics: catenary with line weight + stretch.  When L₀ < actual distance
-    # the line is pre-tensioned (straight spring).  When L₀ > actual distance
-    # the line is slack (zero force).  When L₀ ≈ actual distance the catenary
-    # has slight sag.
-    back_attach_z = 0.10   # metres above hub bearing (attachment on lift tether)
+    # the bearing rises under lift, tilting the rotor via the bridle network.
+    back_attach_z = 0.10   # metres above bearing (attachment on lift tether)
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
 
     # 2D projection: horizontal plane distance + vertical
-    b_dx = sqrt((hub_pos[1] - back_ax)^2 + hub_pos[2]^2)   # hub→anchor horiz
-    b_dz = hub_pos[3] + back_attach_z                        # hub z above anchor
-    b_dist = sqrt(b_dx^2 + b_dz^2)                           # straight-line
+    b_dx = sqrt((bearing_pos[1] - back_ax)^2 + bearing_pos[2]^2)
+    b_dz = bearing_pos[3] + back_attach_z
+    b_dist = sqrt(b_dx^2 + b_dz^2)
 
-    # Design rest length (no payout): distance anchor→design hub position
-    design_hub_x = p.tether_length * cos(p.elevation_angle)
-    design_hub_z = p.tether_length * sin(p.elevation_angle) + back_attach_z
-    back_L0_design = sqrt((design_hub_x - back_ax)^2 + design_hub_z^2)
+    # Design rest length (no payout): distance anchor→design bearing position
+    design_bearing_x = p.tether_length * cos(p.elevation_angle)
+    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_attach_z  # hub_z + bearing_offset + attach
+    back_L0_design = sqrt((design_bearing_x - back_ax)^2 + design_bearing_z^2)
     # L₀ = design distance + payout (winch releases line)
     back_L0 = back_L0_design + p.backline_payout
 
-    # Tension-only: slack if anchor-to-hub distance < rest length
+    # Tension-only: slack if anchor-to-bearing distance < rest length
     if b_dist > back_L0 + 1e-6
         # Backline weight (3 mm Dyneema)
         w_back = dyneema_weight_Npm(0.003)
 
-        # Catenary in the vertical plane: anchor at (0,0), hub at (b_dx, b_dz)
-        # Endpoint 1 = anchor, endpoint 2 = hub attachment
-        _, _, Fx_hub, Fz_hub, _ = catenary_forces(
+        # Catenary in the vertical plane: anchor at (0,0), bearing at (b_dx, b_dz)
+        _, _, Fx_bearing, Fz_bearing, _ = catenary_forces(
             0.0, 0.0, b_dx, b_dz,
             back_L0, w_back, p.EA_back_line)
 
-        # Fx_hub < 0 (pulls hub toward anchor), Fz_hub < 0 (pulls hub down).
-        # Project horizontal component back to 3D.
+        # Fx < 0 (pulls bearing toward anchor), Fz < 0 (pulls bearing down).
         if b_dx > 1e-12
-            uh_x = (hub_pos[1] - back_ax) / b_dx   # unit from anchor→hub
-            uh_y = hub_pos[2] / b_dx
+            uh_x = (bearing_pos[1] - back_ax) / b_dx
+            uh_y = bearing_pos[2] / b_dx
         else
-            uh_x, uh_y = 0.0, 0.0                  # hub directly above anchor
+            uh_x, uh_y = 0.0, 0.0
         end
-        forces[hub_gid][1] += Fx_hub * uh_x
-        forces[hub_gid][2] += Fx_hub * uh_y
-        forces[hub_gid][3] += Fz_hub
+        forces[bearing_gid][1] += Fx_bearing * uh_x
+        forces[bearing_gid][2] += Fx_bearing * uh_y
+        forces[bearing_gid][3] += Fz_bearing
     end
 end

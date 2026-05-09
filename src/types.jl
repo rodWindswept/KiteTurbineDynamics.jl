@@ -20,6 +20,19 @@ struct RopeNode <: AbstractNode
     sub_idx  :: Int        # position within segment (1–3)
 end
 
+"""
+    BearingNode
+
+The lift bearing — a free particle connecting the lift device and back line
+to the hub ring vertices via bridle lines.  Position and velocity evolve
+under the ODE like any other non-fixed node; the tension network determines
+where it settles.
+"""
+struct BearingNode <: AbstractNode
+    id   :: Int
+    mass :: Float64        # bearing mass (~0.05 kg)
+end
+
 # End of a sub-segment: either a rope node or a ring attachment point
 struct SubSegmentEnd
     node_id  :: Int        # global node index
@@ -54,10 +67,11 @@ end
 
 struct KiteTurbineSystem
     nodes       :: Vector{AbstractNode}
-    sub_segs    :: Vector{RopeSubSegment}  # all 300 sub-segments
+    sub_segs    :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle)
     ring_ids    :: Vector{Int}             # global ids of ring nodes, in order ground→hub
     rotor       :: RotorSpec
     kite        :: KiteSpec
+    bearing_id  :: Int                     # global id of the BearingNode
     n_ring      :: Int
     n_total     :: Int
 end

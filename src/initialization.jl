@@ -24,7 +24,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     n_seg   = length(seg_lengths)
     n_ring  = n_seg + 1
     n_rope  = p.n_lines * 3 * n_seg
-    n_total = n_ring + n_rope
+    n_total = n_ring + n_rope + 1       # +1 for bearing
     stride  = 1 + p.n_lines * 3
 
     β         = p.elevation_angle
@@ -127,7 +127,33 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     kite  = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1,
                      kite_tether_length)
 
-    sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite, n_ring, n_total)
+    # ── Bearing node + bridle segments ──────────────────────────────────
+    # The bearing is a free particle placed above the hub ring centre along
+    # the shaft axis.  N bridle spring-dampers connect it to the hub ring
+    # vertices, distributing lift/backline forces through the tension network
+    # rather than applying them as a single vector at the hub centre.
+    BEARING_MASS   = 0.05          # kg — lightweight swivel bearing
+    BRIDLE_EA      = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
+    BRIDLE_C_DAMP  = 100.0         # N·s/m
+    BRIDLE_DIAM    = 0.002         # m  — 2mm Dyneema bridle line
+    bearing_offset = 2.0           # m above hub centre (along shaft)
+
+    bearing_gid = n_total
+    nodes[bearing_gid] = BearingNode(bearing_gid, BEARING_MASS)
+    bearing_pos0 = ring_pos[end] .+ bearing_offset .* shaft_dir
+
+    for j in 1:p.n_lines
+        pa_attach = attachment_point(ring_pos[end], ring_radii[end], 0.0,
+                                     j, p.n_lines, perp1, perp2)
+        bridle_L0 = norm(bearing_pos0 .- pa_attach)
+        push!(sub_segs, RopeSubSegment(
+            SubSegmentEnd(bearing_gid, false, j),   # bearing end
+            SubSegmentEnd(ring_ids[end], true, j),   # hub-vertex end
+            bridle_L0, BRIDLE_EA, BRIDLE_C_DAMP, BRIDLE_DIAM))
+    end
+
+    sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
+                            bearing_gid, n_ring, n_total)
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))
@@ -150,6 +176,9 @@ function _build_kite_turbine_system_impl(p::SystemParams,
             end
         end
     end
+
+    # Bearing initial position
+    u0[3*(bearing_gid-1)+1 : 3*bearing_gid] .= bearing_pos0
 
     return sys, u0
 end

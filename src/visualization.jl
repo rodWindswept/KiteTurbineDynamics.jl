@@ -174,9 +174,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     _tmax_local   = u -> maximum((_seg_T(u, s, j) for s in 1:n_seg, j in 1:p.n_lines); init=0.0)
     _nslack_local = u -> count(_seg_T(u, s, j) < 5.0 for s in 1:n_seg, j in 1:p.n_lines)
 
-    l_seg          = p.tether_length / n_seg
-    bearing_offset = 1.5 * l_seg
-    lift_offset    = 1.0
+    l_seg = p.tether_length / n_seg
 
     hub_gid  = sys.ring_ids[Nr]
     hub_node = sys.nodes[hub_gid]::RingNode
@@ -326,10 +324,13 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($blade_obs[3]); color=:steelblue, linewidth=2.5)
     end
 
-    # Lift system — bridle lines from hub attachment → swivel bearing → kite
-    bearing_obs    = @lift $u_obs[3*(hub_gid-1)+1 : 3*hub_gid] .+ bearing_offset .* shaft_dir
-    lift_point_obs = @lift $bearing_obs .+ lift_offset .* shaft_dir
+    # Lift system — bearing is a real ODE particle; bridle lines are spring-dampers
+    bearing_gid_viz = sys.bearing_id
+    bearing_obs     = @lift $u_obs[3*(bearing_gid_viz-1)+1 : 3*bearing_gid_viz]
+    # lift tether and backline both attach to the bearing
+    lift_point_obs  = bearing_obs
 
+    # Bridle lines: bearing → hub ring vertices (spring-dampers in the ODE)
     for j in 1:p.n_lines
         bridle_obs = @lift begin
             u    = $u_obs
@@ -343,8 +344,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($bridle_obs[3]); color=:gold, linewidth=1.2)
     end
 
-    scatter!(ax3d, @lift([$lift_point_obs[1]]), @lift([$lift_point_obs[2]]),
-                   @lift([$lift_point_obs[3]]); color=:white, markersize=10,
+    # Bearing marker (white diamond)
+    scatter!(ax3d, @lift([$bearing_obs[1]]), @lift([$bearing_obs[2]]),
+                   @lift([$bearing_obs[3]]); color=:white, markersize=12,
              marker=:diamond)
 
     # Lift kite tether + kite marker — position is dynamic: drops when wind drops
@@ -391,19 +393,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     scatter!(ax3d, @lift([$kite_pos_obs[1]]), @lift([$kite_pos_obs[2]]),
                    @lift([$kite_pos_obs[3]]); color=:deepskyblue, markersize=15)
 
-    # Back line — coral, from 10 cm above the hub bearing down to the fixed ground
-    # anchor.  The anchor is back_anchor_fwd_x metres downwind of the hub's design
-    # x-projection, placing it clear of the TRPT rope footprint.
-    # Colour: coral = taut; grey = slack.
+    # Back line — coral, from 10 cm above the bearing down to the fixed ground
+    # anchor.  Colour: coral = taut; grey = slack.
     let back_off    = 0.10,
         back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
-        design_hub_x = p.tether_length * cos(p.elevation_angle),
-        design_hub_z = p.tether_length * sin(p.elevation_angle) + 0.10,
-        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + back_off)^2)
+        design_bearing_x = p.tether_length * cos(p.elevation_angle),
+        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 2.0 + back_off,
+        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 2.0 + back_off)^2)
         scatter!(ax3d, [back_ax], [0.0], [0.0]; color=:coral, markersize=12, marker=:diamond)
         back_line_obs = @lift begin
-            lp   = $lift_point_obs
-            att  = (lp[1], lp[2], lp[3] + back_off)
+            bp   = $bearing_obs
+            att  = (bp[1], bp[2], bp[3] + back_off)
             bv   = (att[1] - back_ax, att[2], att[3])
             taut = sqrt(bv[1]^2 + bv[2]^2 + bv[3]^2) > back_L0
             ([back_ax, att[1]], [0.0, att[2]], [0.0, att[3]]), taut

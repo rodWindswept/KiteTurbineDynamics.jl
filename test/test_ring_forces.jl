@@ -11,19 +11,21 @@ using LinearAlgebra
     omega   = zeros(Nr)
 
     wind_fn = (pos, t) -> [p.v_wind_ref, 0.0, 0.0]
+    ld      = rotary_lifter_default()
 
-    compute_ring_forces!(forces, torques, u0, omega, sys, p, wind_fn, 0.0)
+    compute_ring_forces!(forces, torques, u0, omega, sys, p, wind_fn, 0.0, ld)
 
     hub_gid = sys.rotor.node_id
-    # CT thrust is the only aerodynamic hub force (kite-style CL removed — see ring_forces.jl).
-    # At rated wind (11 m/s) the thrust magnitude is large; the hub node must have a
-    # non-zero finite force vector with a non-negative X component (downwind component
-    # of thrust along the tether axis).
-    @test forces[hub_gid][1] > 0      # downwind thrust component always positive
+
+    # At zero omega, CT thrust is zero (ct_at_tsr(0) = 0).
     @test all(isfinite, forces[hub_gid])
 
-    # No NaN anywhere
+    # Bearing receives lift force from rotary lifter
+    bearing_gid = sys.bearing_id
+    @test !all(iszero, forces[bearing_gid])
+    @test all(isfinite, forces[bearing_gid])
+
+    # No NaN in torques
     hub_ring_idx = (sys.nodes[hub_gid]::RingNode).ring_idx
     @test !isnan(torques[hub_ring_idx])
-    @test all(isfinite, forces[hub_gid])
 end
