@@ -47,7 +47,9 @@ end
 function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
     N     = sys.n_total
     gid_a = sys.ring_ids[s]
-    gid_b = sys.ring_ids[s + 1]
+    # Top segment: upper endpoint is a vertex node, not a ring centre
+    is_top_viz = (s == p.n_rings + 1)
+    gid_b = is_top_viz ? sys.rotor.node_id : sys.ring_ids[s + 1]
     na    = sys.nodes[gid_a]::RingNode
     nb    = sys.nodes[gid_b]::RingNode
     ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
