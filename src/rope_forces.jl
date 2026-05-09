@@ -71,9 +71,13 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
         if !ss.end_b.is_ring
             mid_pos = (pa .+ pb) ./ 2.0
             v_wind  = wind_fn(mid_pos, t)
-            drag = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
-                                     ss.length_0, v_wind, vb, dir)
-            forces[ss.end_b.node_id] .+= drag
+            v_rel   = v_wind .- vb
+            v_perp_mag = norm(v_rel .- dot(v_rel, dir) .* dir)
+            if v_perp_mag > 0.01
+                drag = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
+                                         ss.length_0, v_wind, vb, dir)
+                forces[ss.end_b.node_id] .+= drag
+            end
         end
 
         # Apply spring force to nodes
