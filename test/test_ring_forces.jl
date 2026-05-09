@@ -25,7 +25,7 @@ using LinearAlgebra
     @test !all(iszero, forces[bearing_gid])
     @test all(isfinite, forces[bearing_gid])
 
-    # No NaN in torques
-    hub_ring_idx = (sys.nodes[hub_gid]::RingNode).ring_idx
-    @test !isnan(torques[hub_ring_idx])
+    # No NaN in torques (use ring14, not hub which has ring_idx=0)
+    last_ring_ri = (sys.nodes[sys.ring_ids[end]]::RingNode).ring_idx
+    @test !isnan(torques[last_ring_ri])
 end

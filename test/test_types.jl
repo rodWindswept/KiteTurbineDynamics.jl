@@ -3,14 +3,14 @@
     sys, u0 = build_kite_turbine_system(p)
 
     # Node counts (includes bearing + hub vertex nodes)
-    n_ring     = p.n_rings + 2           # ground + 14 rings + hub = 16
+    n_ring     = p.n_rings + 2           # 16 (twist arrays: ground+rings+hub)
     n_rope     = p.n_lines * 3 * (p.n_rings + 1)  # 5 * 3 * 15 = 225
     n_vertices = p.n_lines               # hub vertex nodes = 5
     n_bearing  = 1
     n_total    = n_ring + n_rope + n_vertices + n_bearing  # 247
 
     @test length(sys.nodes) == n_total
-    @test count(n -> isa(n, RingNode), sys.nodes) == n_ring
+    @test count(n -> isa(n, RingNode), sys.nodes) == n_ring  # ground+14rings+hub=16
     @test count(n -> isa(n, RopeNode), sys.nodes) == n_rope
     @test count(n -> isa(n, HubVertexNode), sys.nodes) == n_vertices
     @test count(n -> isa(n, BearingNode), sys.nodes) == 1
@@ -18,7 +18,7 @@
     # State size: 6 DOF per node + 2 twist states per ring
     @test state_size(sys) == 6 * n_total + 2 * n_ring
 
-    # ring_idx values are 1:n_ring without gaps
+    # ring_idx values: 1..n_ring (hub=16, not in ring_ids but in twist arrays)
     ring_nodes = filter(n -> isa(n, RingNode), sys.nodes)
     idxs = sort([n.ring_idx for n in ring_nodes])
     @test idxs == collect(1:n_ring)
@@ -26,10 +26,10 @@
     # Ground node is fixed
     @test sys.nodes[1].is_fixed == true
 
-    # Hub node is last RingNode
-    hub = sys.nodes[sys.ring_ids[end]]
+    # Hub centre is a RingNode with ring_idx=0 (not in twist chain)
+    hub = sys.nodes[sys.rotor.node_id]
     @test isa(hub, RingNode)
-    @test hub.is_fixed == false
+    @test hub.ring_idx == p.n_rings + 2  # = 16
 
     # Bearing node exists
     @test sys.bearing_id > 0

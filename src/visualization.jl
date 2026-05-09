@@ -182,10 +182,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     l_seg = p.tether_length / n_seg
 
-    hub_gid  = sys.ring_ids[Nr]
+    hub_gid  = sys.rotor.node_id   # hub centre (ring_idx=0, not in ring_ids)
     hub_node = sys.nodes[hub_gid]::RingNode
     hub_R    = hub_node.radius
-    hub_ri   = hub_node.ring_idx
+    hub_ri   = hub_node.ring_idx   # = 0
 
     tension_cmap = cgrad([RGBf(0.0, 0.2, 1.0), RGBf(0.0, 0.8, 0.2),
                           RGBf(1.0, 0.5, 0.0), RGBf(1.0, 0.0, 0.0)],

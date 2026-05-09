@@ -8,9 +8,10 @@ using LinearAlgebra
     N  = sys.n_total
     Nr = sys.n_ring
 
-    # Seed hub with startup omega
     u_start = copy(u_settled)
-    u_start[6N + Nr + Nr] = 9.0   # hub omega near optimal TSR: λ = 9×5/11 ≈ 4.1
+    # Seed ring14 (last TRPT ring) with startup omega — aero torque reads ring14's ω
+    last_ring_ri = (sys.nodes[sys.ring_ids[end]]::RingNode).ring_idx
+    u_start[6N + Nr + last_ring_ri] = 9.0
 
     wind_fn = (pos, t) -> begin
         z  = max(pos[3], 1.0)

@@ -22,9 +22,9 @@ function _build_kite_turbine_system_impl(p::SystemParams,
                                           kite_tether_length::Float64 = 20.0)
 
     n_seg   = length(seg_lengths)
-    n_ring  = n_seg + 1
+    n_ring  = n_seg + 1              # twist arrays: ground+rings(1..n_seg) + hub(n_seg+1)
     n_rope  = p.n_lines * 3 * n_seg
-    n_total = n_ring + n_rope + 1 + p.n_lines   # +1 for bearing, +n_lines for hub vertices
+    n_total = n_ring + n_rope + p.n_lines + 1  # +n_lines vertices, +1 bearing
     stride  = 1 + p.n_lines * 3
 
     β         = p.elevation_angle
@@ -50,7 +50,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
         F_axial[i] = F_axial[i+1] + g_axial_inc
     end
 
-    ring_pos = Vector{Vector{Float64}}(undef, n_ring)
+    ring_pos = Vector{Vector{Float64}}(undef, n_seg + 1)  # +1 for hub centre (not in ring_ids)
     ring_pos[1] = [0.0, 0.0, 0.0]
     for i in 1:n_seg
         stretch     = max(0.0, F_axial[i] / k_axial)
@@ -59,7 +59,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
 
     # ── Build node list ──────────────────────────────────────────────────
     nodes = Vector{AbstractNode}(undef, n_total)
-    ring_ids = Vector{Int}(undef, n_ring)
+    ring_ids = Vector{Int}(undef, n_seg)     # ground + intermediate rings only (hub not in ring_ids)
 
     EA_single = p.e_modulus * π * (p.tether_diameter / 2)^2
 
@@ -82,17 +82,23 @@ function _build_kite_turbine_system_impl(p::SystemParams,
             end
         end
         gid_ring   = 1 + s * stride
-        inertia_z  = (s < n_seg) ? p.m_ring * ring_radii[s+1]^2 :
-                                   m_rotor * p.rotor_radius^2
-        mass_node  = (s < n_seg) ? p.m_ring : m_rotor
-        nodes[gid_ring] = RingNode(gid_ring, s+1, mass_node, ring_radii[s+1],
-                                   inertia_z, false)
-        ring_ids[s+1] = gid_ring
+        if s < n_seg
+            # Intermediate ring
+            inertia_z  = p.m_ring * ring_radii[s+1]^2
+            mass_node  = p.m_ring
+            nodes[gid_ring] = RingNode(gid_ring, s+1, mass_node, ring_radii[s+1],
+                                       inertia_z, false)
+            ring_ids[s+1] = gid_ring
+        else
+            # Hub centre — ring_idx=n_seg+1 (in twist arrays but not ring_ids)
+            nodes[gid_ring] = RingNode(gid_ring, n_seg+1, m_rotor, ring_radii[s+1],
+                                       m_rotor * p.rotor_radius^2, false)
+        end
     end
 
     # ── Build sub-segment list ────────────────────────────────────────────
     # Pre-compute hub vertex IDs: needed for the top TRPT segment endpoints
-    hub_vertex_ids_vec = [n_ring + n_rope + j for j in 1:p.n_lines]
+    hub_vertex_ids_vec = [1 + n_seg * stride + j for j in 1:p.n_lines]
 
     zeta   = 1.5
     sub_segs = Vector{RopeSubSegment}()
@@ -134,10 +140,16 @@ function _build_kite_turbine_system_impl(p::SystemParams,
         end
     end
 
-    rotor = RotorSpec(ring_ids[end], p.rotor_radius, m_rotor,
+    # Hub centre ring (not in ring_ids — not part of twist chain)
+    hub_gid = 1 + n_seg * stride
+
+    rotor = RotorSpec(hub_gid, p.rotor_radius, m_rotor,
                       m_rotor * p.rotor_radius^2)
-    kite  = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1,
+    kite  = KiteSpec(hub_gid, kite_area, kite_mass, 1.2, 0.1,
                      kite_tether_length)
+
+    hub_ctr_pos = ring_pos[n_seg+1]  # hub centre = last ring + axial stretch
+    hub_R_local = ring_radii[n_seg+1]  # hub radius (last entry in ring_radii)
 
     # ── Hub vertex nodes + beam segments ─────────────────────────────────
     # The hub ring polygon is decomposed into N individual vertex particles
@@ -151,10 +163,6 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     BEAM_C_DAMP       = 500.0
     BEAM_DIAM         = 0.008                      # m
 
-    hub_gid_local = ring_ids[end]
-    hub_ctr_pos   = ring_pos[end]
-    hub_R_local   = ring_radii[end]
-
     vertex_positions = Vector{Vector{Float64}}(undef, p.n_lines)
     for j in 1:p.n_lines
         v_gid = hub_vertex_ids_vec[j]
@@ -164,7 +172,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
                                                 0.0, j, p.n_lines, perp1, perp2)
         # Radial spoke: hub centre → vertex
         push!(sub_segs, RopeSubSegment(
-            SubSegmentEnd(hub_gid_local, true, j),
+            SubSegmentEnd(hub_gid, true, j),
             SubSegmentEnd(v_gid, false, j),
             hub_R_local, SPOKE_EA, SPOKE_C_DAMP, SPOKE_DIAM))
     end
@@ -225,18 +233,19 @@ function _build_kite_turbine_system_impl(p::SystemParams,
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))
-    for k in 1:n_ring
+    for k in 1:n_seg    # ring_ids has n_seg entries (ground+rings, no hub)
         gid = ring_ids[k]
         u0[3*(gid-1)+1 : 3*gid] .= ring_pos[k]
     end
 
     for s in 1:n_seg
         ring_a_pos = ring_pos[s]
-        ring_b_pos = ring_pos[s+1]
-        alpha_a = 0.0; alpha_b = 0.0
+        alpha_a = 0.0
+        is_top = (s == n_seg)
         for j in 1:p.n_lines
-            pa = attachment_point(ring_a_pos, ring_radii[s],   alpha_a, j, p.n_lines, perp1, perp2)
-            pb = attachment_point(ring_b_pos, ring_radii[s+1], alpha_b, j, p.n_lines, perp1, perp2)
+            pa = attachment_point(ring_a_pos, ring_radii[s], alpha_a, j, p.n_lines, perp1, perp2)
+            pb = is_top ? vertex_positions[j] :
+                 attachment_point(ring_pos[s+1], ring_radii[s+1], 0.0, j, p.n_lines, perp1, perp2)
             for m in 1:3
                 frac = m / 4.0
                 gid  = (s-1)*stride + 2 + (j-1)*3 + (m-1)
@@ -248,7 +257,8 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     # Bearing initial position
     u0[3*(bearing_gid-1)+1 : 3*bearing_gid] .= bearing_pos0
 
-    # Hub vertex initial positions
+    # Hub centre initial position (not in ring_ids loop above)
+    u0[3*(hub_gid-1)+1 : 3*hub_gid] .= hub_ctr_pos
     for j in 1:p.n_lines
         v_gid = hub_vertex_ids_vec[j]
         u0[3*(v_gid-1)+1 : 3*v_gid] .= vertex_positions[j]
@@ -429,7 +439,11 @@ function set_orbital_velocities!(u::Vector{Float64},
         frac = node.sub_idx / 4.0
 
         na   = sys.nodes[sys.ring_ids[s]]::RingNode
-        nb   = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        if s == p.n_rings + 1
+            nb = sys.nodes[sys.rotor.node_id]::RingNode
+        else
+            nb = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        end
         ri_a = na.ring_idx;  ri_b = nb.ring_idx
         φ_a  = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
         φ_b  = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
@@ -492,7 +506,11 @@ function orbital_damp_rope_velocities!(u       ::Vector{Float64},
         frac = node.sub_idx / 4.0
 
         na   = sys.nodes[sys.ring_ids[s]]::RingNode
-        nb   = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        if s == p.n_rings + 1
+            nb = sys.nodes[sys.rotor.node_id]::RingNode
+        else
+            nb = sys.nodes[sys.ring_ids[s+1]]::RingNode
+        end
         ri_a = na.ring_idx;  ri_b = nb.ring_idx
         φ_a  = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
         φ_b  = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
