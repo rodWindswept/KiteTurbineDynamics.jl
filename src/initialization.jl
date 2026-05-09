@@ -91,15 +91,22 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     end
 
     # ── Build sub-segment list ────────────────────────────────────────────
+    # Pre-compute hub vertex IDs: needed for the top TRPT segment endpoints
+    hub_vertex_ids_vec = [n_ring + n_rope + j for j in 1:p.n_lines]
+
     zeta   = 1.5
     sub_segs = Vector{RopeSubSegment}()
     sizehint!(sub_segs, 4 * p.n_lines * n_seg)
 
     for s in 1:n_seg
         ring_a_gid = ring_ids[s]
-        ring_b_gid = ring_ids[s+1]
+        # Top segment (s == n_seg): end_b attaches to hub vertex nodes,
+        # not the hub centre.  The hollow-axis ring rotor has no centre —
+        # TRPT tethers connect directly to the polygon vertices.
+        is_top_seg = (s == n_seg)
+        ring_b_gid = is_top_seg ? -1 : ring_ids[s+1]  # placeholder; resolved per-line below
         r_a_seg = ring_radii[s]
-        r_b_seg = ring_radii[s+1]
+        r_b_seg = is_top_seg ? ring_radii[s+1] : ring_radii[s+1]
         chord_3d_s = sqrt(seg_lengths[s]^2 + (r_b_seg - r_a_seg)^2)
         sub_len_0_s = chord_3d_s / 4.0
         m_rope_sub_s = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0_s
@@ -112,7 +119,12 @@ function _build_kite_turbine_system_impl(p::SystemParams,
                 gid      = (s-1)*stride + 2 + (j-1)*3 + (m-1)
                 ends[m+1] = SubSegmentEnd(gid, false, j)
             end
-            ends[5] = SubSegmentEnd(ring_b_gid, true, j)
+            if is_top_seg
+                # Top segment: attach to hub vertex node (not centre)
+                ends[5] = SubSegmentEnd(hub_vertex_ids_vec[j], false, j)
+            else
+                ends[5] = SubSegmentEnd(ring_ids[s+1], true, j)
+            end
 
             for sub in 1:4
                 push!(sub_segs, RopeSubSegment(
@@ -143,11 +155,9 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     hub_ctr_pos   = ring_pos[end]
     hub_R_local   = ring_radii[end]
 
-    hub_vertex_ids_vec = Vector{Int}(undef, p.n_lines)
-    vertex_positions   = Vector{Vector{Float64}}(undef, p.n_lines)
+    vertex_positions = Vector{Vector{Float64}}(undef, p.n_lines)
     for j in 1:p.n_lines
-        v_gid = n_ring + n_rope + j  # vertex nodes come before bearing
-        hub_vertex_ids_vec[j] = v_gid
+        v_gid = hub_vertex_ids_vec[j]
         nodes[v_gid] = HubVertexNode(v_gid, j, HUB_VERTEX_MASS)
         # Store initial position for u0 init and beam segment lengths
         vertex_positions[j] = attachment_point(hub_ctr_pos, hub_R_local,
@@ -580,7 +590,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
         gid_a = sys.ring_ids[s]
         gid_b = sys.ring_ids[s + 1]
         na    = sys.nodes[gid_a]::RingNode
-        nb    = sys.nodes[gid_b]::RingNode
+        is_top = (s == Nr - 1)
 
         ctr_a = u_start[3*(gid_a-1)+1 : 3*gid_a]
         ctr_b = u_start[3*(gid_b-1)+1 : 3*gid_b]
@@ -588,11 +598,16 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
         # Natural segment length derived from sub_segs (supports non-uniform spacing)
         L_seg_s = 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
 
+        # Vertex position helper for the top segment
+        _vertex_pos(j) = u_start[3*(sys.hub_vertex_ids[j]-1)+1 : 3*sys.hub_vertex_ids[j]]
+
         τ_fn_a = (Δα) -> begin
             τ = 0.0
             for j in 1:p.n_lines
-                pa_j    = attachment_point(ctr_a, na.radius, α_cum,       j, p.n_lines, pp1, pp2)
-                pb_j    = attachment_point(ctr_b, nb.radius, α_cum + Δα,  j, p.n_lines, pp1, pp2)
+                pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
+                pb_j = is_top ? _vertex_pos(j) :
+                       attachment_point(ctr_b, (sys.nodes[gid_b]::RingNode).radius,
+                                        α_cum + Δα, j, p.n_lines, pp1, pp2)
                 chord_j = norm(pb_j .- pa_j)
                 chord_j < 1e-9 && continue
                 T_j     = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
@@ -612,8 +627,10 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
 
         τ_b = 0.0
         for j in 1:p.n_lines
-            pa_j    = attachment_point(ctr_a, na.radius, α_cum,         j, p.n_lines, pp1, pp2)
-            pb_j    = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
+            pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
+            pb_j = is_top ? _vertex_pos(j) :
+                   attachment_point(ctr_b, (sys.nodes[gid_b]::RingNode).radius,
+                                    α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
             chord_j = norm(pb_j .- pa_j)
             chord_j < 1e-9 && continue
             T_j     = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
@@ -624,14 +641,16 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
         τ_target_a = -τ_b   # next lower ring must cancel this segment's load on ring_b
 
         α_cum += Δα_eq
-        u_start[6N + nb.ring_idx] = α_cum
+        u_start[6N + (sys.nodes[gid_b]::RingNode).ring_idx] = α_cum
 
         # 3. Rope nodes consistent with equilibrium twist for this segment.
         α_a = u_start[6N + na.ring_idx]
-        α_b = u_start[6N + nb.ring_idx]
+        α_b = u_start[6N + (sys.nodes[gid_b]::RingNode).ring_idx]
         for j in 1:p.n_lines
             pa = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
-            pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
+            pb = is_top ? _vertex_pos(j) :
+                 attachment_point(ctr_b, (sys.nodes[gid_b]::RingNode).radius,
+                                  α_b, j, p.n_lines, pp1, pp2)
             for m in 1:3
                 frac = m / 4.0
                 gid  = (s - 1) * stride + 2 + (j - 1) * 3 + (m - 1)
