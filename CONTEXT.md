@@ -23,11 +23,10 @@ Key consequences:
 
 | Term | Meaning |
 |------|---------|
-| **TRPT** | Tensile Rotary Power Transmission — the tether-shaft architecture |
+| **TRPT** | Tensile Rotary Power Transmission — the tether-shaft architecture comprised of polygonal Spacer Rings linked by (polygon n) tether lines|
 | **Ring / polygon ring** | Spacer frame between tether lines set at defined attachment points. A polygonal hoop made of rigid carbon tube beams joined at knuckle nodes. Configurations include pentagon (n=5) or octagon (n=8) |
-| **Top rotor ring hub** | The topmost polygon ring, at the rotor end of the TRPT. Unlike a conventional turbine hub there is no central bearing — the hub is a tensile polygon ring from which the rotor blades attach at the perimeter |
-| **Rotor** | A spinning ring of kite blades functioning as an autogyro kite. The blades mount to the periphery of the top rotor ring hub and sweep an annulus (no root join, open centre). Flown at altitude above the top of the TRPT ring stack |
-| **Lift device** | A separate kite device that provides lifting line tension to keep the kite turbine at elevation (types: passive kite, stacked kites, or rotary lifter). The lifting kite line holds a lift bearing which connects to the top lift lines of the kite turbine rotor. A ground anchor line attaches to the lifting line approximately 30 cm above the lift bearing (the lift bearing being at the lowest point of the lifting line), limiting the altitude and elevation angle of the kite turbine |
+| **Top rotor ring hub** | The topmost polygon ring, at the rotor end of the TRPT. Unlike a conventional turbine hub there is no central bearing — the hub is a tensile polygon ring with the rotor blades attach at the perimeter. The blades mount to the periphery of the top rotor ring hub and sweep an annulus (no root join, open centre). The Top Rotor ring hub functions as a spinning ring autogyro kite. This device is flown at altitude as the top ring of the TRPT stack and is the turbine device which gathers rotary power from wind energy and transmits it via tethers to the next lower TRPT ring in the shaft stack. |
+| **Lift kite device** | A separate kite device that provides lifting line tension to keep the kite turbine at elevation (types: passive kite, stacked kites, or rotary lifter). The lifting kite line holds a lift bearing which connects to the top lift lines of the kite turbine rotor. A ground anchor line attaches to the lifting line approximately 30 cm above the lift bearing (the lift bearing being at the lowest point of the lifting line), limiting the altitude and elevation angle of the kite turbine |
 | **TSR (λ)** | Tip-Speed Ratio: blade-tip speed ÷ wind speed at hub altitude |
 | **MTR** | Moment-to-Tension Ratio: `MTR = moment / (looping_radius × shaft_tension)`. Typical value ≈ 0.05 |
 | **Cp** | Rotor power coefficient. BEM (AeroDyn, NACA4412, 3-blade) gives Cp ≈ 0.22 at TSR ≈ 4.1 |

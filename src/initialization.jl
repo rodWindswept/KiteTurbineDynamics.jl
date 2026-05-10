@@ -271,6 +271,7 @@ function settle_to_equilibrium(sys         ::KiteTurbineSystem,
                                 u0          ::Vector{Float64},
                                 p           ::SystemParams;
                                 lift_device ::Union{Nothing, LiftDevice} = nothing,
+                                wind_fn     ::Union{Nothing, Function} = nothing,
                                 n_steps     ::Int     = 4_000,
                                 dt          ::Float64 = 4e-5,
                                 damp        ::Float64 = 0.05)
@@ -285,7 +286,7 @@ function settle_to_equilibrium(sys         ::KiteTurbineSystem,
     N    = sys.n_total
     Nr   = sys.n_ring
     du   = zeros(Float64, length(u))
-    wind_zero  = (pos, t) -> zeros(3)
+    wind_zero  = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
     ode_params = lift_device === nothing ? (sys, p, wind_zero) :
                                            (sys, p, wind_zero, lift_device)
 

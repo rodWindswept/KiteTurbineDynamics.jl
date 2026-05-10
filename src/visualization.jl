@@ -728,6 +728,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
+            # Pre-settle with actual wind + lift so frame 1 doesn't jump
+            u_s = settle_to_equilibrium(sys, u_s, p_run;
+                        lift_device=ld, wind_fn=wf, n_steps=2000, dt=4e-5, damp=0.05)
             set_orbital_velocities!(u_s, sys, p_run)
         catch e
             scenario_msg_color[] = :orangered
