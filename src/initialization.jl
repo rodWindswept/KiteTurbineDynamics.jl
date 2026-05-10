@@ -134,7 +134,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     # rather than applying them as a single vector at the hub centre.
     BEARING_MASS   = 0.3           # kg — small bearing + skateboard wheel
     BRIDLE_EA      = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
-    BRIDLE_C_DAMP  = 100.0         # N·s/m
+    BRIDLE_C_DAMP  = 500.0         # N·s/m — ~80% of critical for bearing mass
     BRIDLE_DIAM    = 0.002         # m  — 2mm Dyneema bridle line
     bearing_offset = 6.0           # m above hub centre (along shaft)
 
