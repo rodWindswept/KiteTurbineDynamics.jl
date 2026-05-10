@@ -156,11 +156,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     hub_R    = hub_node.radius
     hub_ri   = hub_node.ring_idx
 
-    # ── Tilted ring-plane basis (quasi-static, driven by bridle torque) ───
-    # Replaces the previous fixed-shaft basis.  The hub ring's stored tilt axis
-    # (ring_tilt_axis[hub_ri]) tilts the ring-plane normal away from shaft_dir.
-    # All closures below use this dynamic basis for attachment-point geometry.
-    _perp_fn = (u) -> _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    # ── Ring-plane basis: shaft_dir (matches physics) ──────────────────────
+    # The TRPT tethers see tilted geometry in rope_forces.jl for power spill,
+    # but the dashboard renders everything in the shaft frame so bridle lines
+    # match the physics (equal lengths, symmetric).  Tilt effects are visible
+    # through power/tension/altitude changes in the HUD.
+    _perp_fn = (u) -> begin
+        hub_p = u[3*(hub_gid-1)+1 : 3*hub_gid]
+        sh    = normalize(hub_p)
+        shaft_perp_basis(sh)
+    end
 
     # ── Tension closures — use ring attachment geometry, not rope node positions ──
     # Ring attachment points track the ODE alpha angles correctly even when rope
