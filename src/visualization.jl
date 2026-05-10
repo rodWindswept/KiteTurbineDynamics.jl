@@ -227,6 +227,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     wind_fn_obs     = Observable{Function}(isnothing(wind_fn) ?
                           (pos, t) -> [p.v_wind_ref, 0.0, 0.0] : wind_fn)
 
+    # ── Layer visibility toggles ────────────────────────────────────────────
+    vis_tethers  = Observable(true)   # TRPT tension-coloured tether lines
+    vis_rings    = Observable(true)   # intermediate ring polygons
+    vis_hub      = Observable(true)   # hub ring + rotor blades
+    vis_bridles  = Observable(true)   # gold bridle lines (bearing→hub)
+    vis_bearing  = Observable(true)   # white diamond bearing marker
+    vis_lift     = Observable(true)   # lift kite tether + kite marker
+    vis_backline = Observable(true)   # backline catenary
+    vis_ground   = Observable(true)   # ground grid + anchor
+
     # ── Configuration switching & safety state machine ────────────────────────
     config_changed_obs = Observable{Union{String, Nothing}}(nothing)  # nil = no change pending
     system_state_obs   = Observable{Symbol}(:idle)   # :idle | :simulating | :switching
@@ -253,15 +263,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     for x in -20:5:60
         lines!(ax3d, [float(x), float(x)], [-25.0, 25.0], [0.0, 0.0];
-               color=(:grey, 0.3), linewidth=0.5)
+               color=(:grey, 0.3), linewidth=0.5, visible=vis_ground)
     end
     for y in -25:5:25
         lines!(ax3d, [-20.0, 60.0], [float(y), float(y)], [0.0, 0.0];
-               color=(:grey, 0.3), linewidth=0.5)
+               color=(:grey, 0.3), linewidth=0.5, visible=vis_ground)
     end
 
     # Ground anchor
-    scatter!(ax3d, [0.0], [0.0], [0.0]; color=:limegreen, markersize=20)
+    scatter!(ax3d, [0.0], [0.0], [0.0]; color=:limegreen, markersize=20,
+             visible=vis_ground)
 
     # Tether lines — tension-coloured
     for s in 1:n_seg, j in 1:p.n_lines
@@ -270,7 +281,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         co   = @lift _tension_color($T_ob, TETHER_SWL)
         lw   = @lift ($T_ob < 5.0 ? 0.8f0 : 1.5f0)
         lines!(ax3d, @lift($lo[1]), @lift($lo[2]), @lift($lo[3]);
-               color=co, linewidth=lw)
+               color=co, linewidth=lw, visible=vis_tethers)
     end
 
     # Intermediate ring polygons — hoop-compression colour
@@ -928,13 +939,18 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
         β_actual = atan(hub_ctr[3], hub_ctr[1])
         if ld_hud !== nothing
-            T_lift_val    = sf.T_lift
-            elev_lift_val = sf.lift_elev_deg
+            # Compute T_lift LIVE (not from pre-captured SimFrame which used lift_device=nothing)
+            tr = times_ref[]
+            t_now = (!isempty(tr) && fi <= length(tr)) ? tr[fi] : 0.0
+            v_vec = wind_fn_obs[](hub_ctr, t_now)
+            V_hub_live = norm(v_vec)
+            _, T_lift_val, elev_lift_val = lift_force_steady(ld_hud, p.rho, V_hub_live)
+            lift_margin_v = T_lift_val / max(autogyro_lift_required(p)[1], 1.0)
             if ld_hud isa RotaryLifterParams
                 lift_status_lbl.text[] = @sprintf("Type: Rotary  |  T_lift = %6.0f N  |  pitch = %.1f×  |  CL/CD = %.1f",
                     T_lift_val, ld_hud.CL_blade, ld_hud.CL_blade / 0.20)
                 lift_cl_lbl.text[] = @sprintf("R = %.1f m  |  β = %.1f°  |  elev = %.1f°  |  margin = %.1f×",
-                    ld_hud.rotor_radius, rad2deg(β_actual), elev_lift_val, sf.lift_margin)
+                    ld_hud.rotor_radius, rad2deg(β_actual), elev_lift_val, lift_margin_v)
             elseif ld_hud isa SingleKiteParams
                 lift_status_lbl.text[] = @sprintf("Type: Single Kite  |  T_lift = %6.0f N", T_lift_val)
                 lift_cl_lbl.text[] = @sprintf("CL = %.2f  |  β_actual = %.1f°  |  elev_lift = %.0f°",
