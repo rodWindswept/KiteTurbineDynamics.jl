@@ -63,6 +63,14 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         tilt_sign = dot(tilt_perp, cross(shaft_dir_t, wind_dir)) > 0 ? 1.0 : -1.0
         disc_cos_correction = cos(tilt_sign * tilt_angle_rad)
 
+        # Apply tilt as a lateral force on the hub ring centre.
+        # When the bearing drifts, asymmetric bridle tension pushes the
+        # hub ring laterally.  This changes TRPT tether geometry and
+        # allows the ring to visibly pitch under the tension network.
+        tilt_force_scale = 500.0  # N per radian of tilt
+        tilt_dir = normalize(tilt_perp + [1e-9, 1e-9, 1e-9])
+        forces[hub_gid] .+= tilt_force_scale * tilt_angle_rad .* tilt_dir
+
         # Aerodynamic area convention: both Cp and CT are normalised to the FULL DISC
         # area π·R² (outer-radius convention, consistent with AeroDyn BEM source data
         # Rotor_TRTP_Sizing_Iteration2.xlsx).  The TRPT blades are physically annular
