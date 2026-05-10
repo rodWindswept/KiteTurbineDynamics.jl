@@ -69,9 +69,7 @@ end
 forces_r = [zeros(3) for _ in 1:N]
 torques_r = zeros(Nr)
 alpha0 = u_start[6N+1:6N+Nr]
-ring_torques_3d = [zeros(3) for _ in 1:Nr]
-compute_rope_forces!(forces_r, torques_r, u_start, alpha0, sys, p, wind_fn, 0.0,
-                      ring_torques_3d, pp1, pp2)
+compute_rope_forces!(forces_r, torques_r, u_start, alpha0, sys, p, wind_fn, 0.0)
 
 # 2. ring_forces torques
 forces_k = [zeros(3) for _ in 1:N]

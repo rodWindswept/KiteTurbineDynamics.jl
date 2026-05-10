@@ -132,7 +132,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     # the shaft axis.  N bridle spring-dampers connect it to the hub ring
     # vertices, distributing lift/backline forces through the tension network
     # rather than applying them as a single vector at the hub centre.
-    BEARING_MASS   = 1.0           # kg — bearing + swivel + shackle assembly
+    BEARING_MASS   = 0.3           # kg — small bearing + skateboard wheel
     BRIDLE_EA      = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
     BRIDLE_C_DAMP  = 100.0         # N·s/m
     BRIDLE_DIAM    = 0.002         # m  — 2mm Dyneema bridle line
