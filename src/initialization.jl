@@ -153,7 +153,8 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     end
 
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
-                            bearing_gid, n_ring, n_total)
+                            bearing_gid, n_ring, n_total,
+                            [zeros(3) for _ in 1:n_ring])
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))

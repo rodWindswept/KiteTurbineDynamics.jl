@@ -74,6 +74,18 @@ struct KiteTurbineSystem
     bearing_id  :: Int                     # global id of the BearingNode
     n_ring      :: Int
     n_total     :: Int
+    # Quasi-static disc tilt: accumulated non-shaft torque per ring (ring_idx order)
+    # Updated each ODE step; drives ring-plane tilt for the next step.
+    ring_tilt_axis :: Vector{Vector{Float64}}
 end
+
+# Compliance: rad of ring-plane tilt per N·m of non-shaft torque.
+# 2.5e-7 → ~1.7° tilt at 1 m bearing offset, ~5° at 3 m.
+const DISC_TILT_COMPLIANCE = 2.5e-7
+
+# Exponential smoothing factor for tilt torque storage (low-pass filter).
+# Models the ring's rotational inertia: α = exp(-dt/τ) where τ is the
+# pitch time constant.  With dt=4e-5 and α=0.99, τ ≈ 4 ms.
+const TILT_SMOOTH = 0.995
 
 state_size(sys::KiteTurbineSystem) = 6 * sys.n_total + 2 * sys.n_ring

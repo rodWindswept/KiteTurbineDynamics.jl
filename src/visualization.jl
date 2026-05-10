@@ -44,7 +44,7 @@ end
 # ── Geometry helpers ──────────────────────────────────────────────────────────
 
 """Five-point polyline for tether line j of segment s: attach_A, 3 rope nodes, attach_B."""
-function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
+function _rope_line_pts(u, sys, p, s, j)
     N     = sys.n_total
     gid_a = sys.ring_ids[s]
     gid_b = sys.ring_ids[s + 1]
@@ -54,8 +54,10 @@ function _rope_line_pts(u, sys, p, s, j, perp1, perp2)
     ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
     α_a   = u[6N + na.ring_idx]
     α_b   = u[6N + nb.ring_idx]
-    pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-    pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+    pp1, pp2 = _tilted_ring_basis(u, sys, sys.rotor.node_id,
+                                   (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx)
+    pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
+    pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
     pts   = Vector{Vector{Float64}}(undef, 5)
     pts[1] = pa
     # Compute stride from p.n_lines (not hardcoded: 5→16, 8→25)
@@ -97,15 +99,18 @@ function _n_slack_lines(u, sys, p)
 end
 
 """Maximum mid-rope sag (mm) across all 15 segments, line 1."""
-function _max_sag_mm(u, sys, p, perp1, perp2)
+function _max_sag_mm(u, sys, p)
     N   = sys.n_total
+    hub_gid  = sys.rotor.node_id
+    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1, pp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     best = 0.0; best_seg = 1
     for s in 1:(p.n_rings+1)
         gid_a = sys.ring_ids[s];   gid_b = sys.ring_ids[s+1]
         na = sys.nodes[gid_a]::RingNode; nb = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1:3*gid_a]; ctr_b = u[3*(gid_b-1)+1:3*gid_b]
-        pa = attachment_point(ctr_a, na.radius, u[6N+na.ring_idx], 1, p.n_lines, perp1, perp2)
-        pb = attachment_point(ctr_b, nb.radius, u[6N+nb.ring_idx], 1, p.n_lines, perp1, perp2)
+        pa = attachment_point(ctr_a, na.radius, u[6N+na.ring_idx], 1, p.n_lines, pp1, pp2)
+        pb = attachment_point(ctr_b, nb.radius, u[6N+nb.ring_idx], 1, p.n_lines, pp1, pp2)
         gid_mid = (s-1)*(1 + p.n_lines*3) + 3
         pm  = u[3*(gid_mid-1)+1:3*gid_mid]
         AB  = pb .- pa; len2 = dot(AB, AB)
@@ -146,9 +151,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     N        = sys.n_total
     Nr       = sys.n_ring
 
-    β         = p.elevation_angle
-    shaft_dir = [cos(β), 0.0, sin(β)]
-    perp1, perp2 = shaft_perp_basis(shaft_dir)
+    hub_gid  = sys.ring_ids[Nr]
+    hub_node = sys.nodes[hub_gid]::RingNode
+    hub_R    = hub_node.radius
+    hub_ri   = hub_node.ring_idx
+
+    # ── Tilted ring-plane basis (quasi-static, driven by bridle torque) ───
+    # Replaces the previous fixed-shaft basis.  The hub ring's stored tilt axis
+    # (ring_tilt_axis[hub_ri]) tilts the ring-plane normal away from shaft_dir.
+    # All closures below use this dynamic basis for attachment-point geometry.
+    _perp_fn = (u) -> _tilted_ring_basis(u, sys, hub_gid, hub_ri)
 
     # ── Tension closures — use ring attachment geometry, not rope node positions ──
     # Ring attachment points track the ODE alpha angles correctly even when rope
@@ -166,8 +178,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
         α_a   = u[6N + na.ring_idx]
         α_b   = u[6N + nb.ring_idx]
-        pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
+        pp1, pp2 = _perp_fn(u)
+        pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
+        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
         l_nat = _seg_nat_len(s)
         max(0.0, _ea_rope * (norm(pb .- pa) - l_nat) / l_nat)
     end
@@ -175,11 +188,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     _nslack_local = u -> count(_seg_T(u, s, j) < 5.0 for s in 1:n_seg, j in 1:p.n_lines)
 
     l_seg = p.tether_length / n_seg
-
-    hub_gid  = sys.ring_ids[Nr]
-    hub_node = sys.nodes[hub_gid]::RingNode
-    hub_R    = hub_node.radius
-    hub_ri   = hub_node.ring_idx
 
     tension_cmap = cgrad([RGBf(0.0, 0.2, 1.0), RGBf(0.0, 0.8, 0.2),
                           RGBf(1.0, 0.5, 0.0), RGBf(1.0, 0.0, 0.0)],
@@ -252,7 +260,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Tether lines — tension-coloured
     for s in 1:n_seg, j in 1:p.n_lines
-        lo   = @lift _rope_line_pts($u_obs, sys, p, s, j, perp1, perp2)
+        lo   = @lift _rope_line_pts($u_obs, sys, p, s, j)
         T_ob = @lift _seg_T($u_obs, s, j)
         co   = @lift _tension_color($T_ob, TETHER_SWL)
         lw   = @lift ($T_ob < 5.0 ? 0.8f0 : 1.5f0)
@@ -270,8 +278,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             u   = $u_obs
             ctr = u[3*(gid_k-1)+1 : 3*gid_k]
             α   = u[6N + ri_k]
+            pp1, pp2 = _perp_fn(u)
             jj  = [1:p.n_lines; 1]
-            pts = [attachment_point(ctr, R_k, α, jj[i], p.n_lines, perp1, perp2)
+            pts = [attachment_point(ctr, R_k, α, jj[i], p.n_lines, pp1, pp2)
                    for i in eachindex(jj)]
             ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
         end
@@ -290,8 +299,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         u   = $u_obs
         ctr = u[3*(hub_gid-1)+1 : 3*hub_gid]
         α   = u[6N + hub_ri]
+        pp1, pp2 = _perp_fn(u)
         jj  = [1:p.n_lines; 1]
-        pts = [attachment_point(ctr, hub_R, α, jj[i], p.n_lines, perp1, perp2)
+        pts = [attachment_point(ctr, hub_R, α, jj[i], p.n_lines, pp1, pp2)
                for i in eachindex(jj)]
         ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
     end
@@ -308,8 +318,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
             α    = u[6N + hub_ri]
             φ    = α + (b-1) * (2π / p.n_blades)
-            r_dir = cos(φ) .* perp1 .+ sin(φ) .* perp2
-            c_dir = -sin(φ) .* perp1 .+ cos(φ) .* perp2
+            pp1, pp2 = _perp_fn(u)
+            r_dir = cos(φ) .* pp1 .+ sin(φ) .* pp2
+            c_dir = -sin(φ) .* pp1 .+ cos(φ) .* pp2
             hc    = chord / 2.0
             p1 = ctr .+ r_inner .* r_dir .- hc .* c_dir
             p2 = ctr .+ r_outer .* r_dir .- hc .* c_dir
@@ -336,7 +347,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             u    = $u_obs
             ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
             α    = u[6N + hub_ri]
-            node = attachment_point(ctr, hub_R, α, j, p.n_lines, perp1, perp2)
+            pp1, pp2 = _perp_fn(u)
+            node = attachment_point(ctr, hub_R, α, j, p.n_lines, pp1, pp2)
             bp   = $bearing_obs
             ([node[1], bp[1]], [node[2], bp[2]], [node[3], bp[3]])
         end
@@ -361,7 +373,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         t_now = (!isempty(tr) && fi <= length(tr)) ? tr[fi] : 0.0
         v_vec   = wfn(lp, t_now)
         v_now   = max(sqrt(v_vec[1]^2 + v_vec[2]^2), 0.5)
-        sh_horiz = [shaft_dir[1], shaft_dir[2], 0.0]
+        sh      = normalize(lp)  # bearing→ground direction ≈ shaft direction
+        sh_horiz = [sh[1], sh[2], 0.0]
         sh_hat   = sh_horiz ./ max(norm(sh_horiz), 1e-6)
         if !isnothing(ld)
             # Quasi-static kite elevation angle from lift physics

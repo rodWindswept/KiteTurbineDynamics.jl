@@ -8,12 +8,20 @@ using LinearAlgebra
 
     forces  = [zeros(3) for _ in 1:N]
     torques = zeros(Nr)
+    ring_torques_3d = [zeros(3) for _ in 1:Nr]
 
     # zero wind, zero velocity, straight-line init
     wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
     alpha   = zeros(Nr)
 
-    compute_rope_forces!(forces, torques, u0, alpha, sys, p, wind_fn, 0.0)
+    # Shaft direction from hub position; no tilt at t=0
+    hub_gid  = sys.rotor.node_id
+    hub_pos  = u0[3*(hub_gid-1)+1 : 3*hub_gid]
+    shaft_dir = normalize(hub_pos)
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
+
+    compute_rope_forces!(forces, torques, u0, alpha, sys, p, wind_fn, 0.0,
+                          ring_torques_3d, perp1, perp2)
 
     # At rest on straight line with zero twist and zero velocity: no stretch,
     # no damping contribution → net forces on interior rope nodes should be ~0

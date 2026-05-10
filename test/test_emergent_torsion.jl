@@ -11,13 +11,21 @@ using LinearAlgebra
 
     forces  = [zeros(3) for _ in 1:N]
     torques = zeros(Nr)
+    ring_torques_3d = [zeros(3) for _ in 1:Nr]
     wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
 
     # Inject twist into state vector
     u_test = copy(u0)
     u_test[6N+2] = 0.1   # alpha[2] = 0.1 rad
 
-    compute_rope_forces!(forces, torques, u_test, alpha, sys, p, wind_fn, 0.0)
+    # Shaft direction from hub position; no tilt
+    hub_gid  = sys.rotor.node_id
+    hub_pos  = u_test[3*(hub_gid-1)+1 : 3*hub_gid]
+    shaft_dir = normalize(hub_pos)
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
+
+    compute_rope_forces!(forces, torques, u_test, alpha, sys, p, wind_fn, 0.0,
+                          ring_torques_3d, perp1, perp2)
 
     # Torque on ring 1 (ring_idx=2) should oppose the twist (restoring torque)
     @test torques[2] < 0.0   # negative = opposing positive twist
