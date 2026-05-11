@@ -142,6 +142,13 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     nodes[bearing_gid] = BearingNode(bearing_gid, BEARING_MASS)
     bearing_pos0 = ring_pos[end] .+ bearing_offset .* shaft_dir
 
+    # Lifter anchor: world-frame point the lift line tensions toward.
+    # Placed above the design hub along the design shaft, offset by line_length.
+    # The line direction from bearing to anchor approximately equals shaft_dir
+    # at frame 0, giving an on-axis bearing equilibrium.
+    LIFT_LINE_LENGTH = 25.0       # m — matches RotaryLifterParams.line_length default
+    lifter_anchor = ring_pos[end] .+ (bearing_offset + LIFT_LINE_LENGTH) .* shaft_dir
+
     for j in 1:p.n_lines
         pa_attach = attachment_point(ring_pos[end], ring_radii[end], 0.0,
                                      j, p.n_lines, perp1, perp2)
@@ -153,7 +160,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     end
 
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
-                            bearing_gid, n_ring, n_total,
+                            bearing_gid, lifter_anchor, n_ring, n_total,
                             [zeros(3) for _ in 1:n_ring])
 
     # ── Initial state vector (straight-line rope placement) ───────────────
@@ -491,8 +498,11 @@ Uses a torque-chain bisection method to find the exact helical equilibrium of th
 This logic was shadowed directly from the interactive dashboard.
 """
 function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64;
-                                    lift_device::Union{Nothing, LiftDevice} = nothing)
-    u_start = settle_to_equilibrium(sys, u0, p; lift_device=lift_device)
+                                    lift_device::Union{Nothing, LiftDevice} = nothing,
+                                    wind_fn::Union{Nothing, Function}      = nothing)
+    u_start = settle_to_equilibrium(sys, u0, p;
+                                     lift_device = lift_device,
+                                     wind_fn     = wind_fn)
 
     N  = sys.n_total
     Nr = sys.n_ring
@@ -500,7 +510,15 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     τ_rated  = p.k_mppt * ω_rated^2
     EA_rope  = p.e_modulus * π * (p.tether_diameter / 2)^2
     β_a      = p.elevation_angle
-    sd       = [cos(β_a), 0.0, sin(β_a)]
+    # Use the SETTLED hub direction, not the design [cos β, 0, sin β], so the
+    # bisected equilibrium twist matches the basis the live ODE will see at
+    # frame 1 (rope_forces.jl computes shaft_dir from normalize(hub_pos)).
+    # Fixes a small per-ring torque imbalance that was kicking off frame-1
+    # twist oscillation.
+    hub_p_settled = u_start[3*(sys.rotor.node_id-1)+1 : 3*sys.rotor.node_id]
+    hp_mag        = norm(hub_p_settled)
+    sd            = hp_mag > 0.1 ? hub_p_settled ./ hp_mag :
+                                    [cos(β_a), 0.0, sin(β_a)]
     pp1, pp2 = shaft_perp_basis(sd)
     stride   = 1 + p.n_lines * 3
 
@@ -580,6 +598,45 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
 
     set_orbital_velocities!(u_start, sys, p)
     @views u_start[3N + 3*(sys.ring_ids[1]-1)+1 : 3N + 3*sys.ring_ids[1]] .= 0.0
+
+    # ── Operational settle — find bearing equilibrium at ω_rated ────────────
+    # The earlier settle_to_equilibrium ran at ω ≈ 0 because its per-step
+    # angular-velocity damp (line 305) kills rotation faster than aero can
+    # sustain it.  The rotary lifter's force scales with √(v² + (ωR)²); at
+    # ω = 0 only the v² term acts, so the bearing equilibrated to the wrong
+    # lift vector.  Run a second damped pass with ω pinned at ω_rated and
+    # translation damped: bearing, hub, and intermediate ring centres all
+    # translate to their true operating seat before frame 0.  This eliminates
+    # the lifter step input that previously snapped the bearing on frame 1
+    # and threw the bridles asymmetric.
+    #
+    # α is held constant at the bisected values (we don't update u_start[6N+1
+    # : 6N+Nr] inside the loop, so dα/dt = ω from the ODE is discarded).
+    # Twist drift would invalidate the torque chain the bisection just
+    # established; the lifter equilibrium is purely a translational problem
+    # at fixed twist + rated rotation.
+    let
+        du2 = zeros(Float64, length(u_start))
+        wind_use   = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
+        ode_params = lift_device === nothing ? (sys, p, wind_use) :
+                                                (sys, p, wind_use, lift_device)
+        dt_op   = p.n_lines >= 8 ? 1e-5 : 4e-5
+        n_op    = 4_000
+        damp_op = 0.05
+        for _ in 1:n_op
+            fill!(du2, 0.0)
+            multibody_ode!(du2, u_start, ode_params, 0.0)
+            @views u_start[3N+1:6N] .+= dt_op .* du2[3N+1:6N]
+            @views u_start[1:3N]    .+= dt_op .* u_start[3N+1:6N]
+            @views u_start[3N+1:6N] .*= damp_op            # damp translation
+            @views u_start[6N+Nr+1:6N+2Nr] .= ω_rated      # pin ω at rated
+            u_start[1:3]       .= 0.0
+            u_start[3N+1:3N+3] .= 0.0
+        end
+        @views u_start[3N+1:6N] .= 0.0    # clean residual translational vel
+        set_orbital_velocities!(u_start, sys, p)
+        @views u_start[3N + 3*(sys.ring_ids[1]-1)+1 : 3N + 3*sys.ring_ids[1]] .= 0.0
+    end
 
     return u_start
 end

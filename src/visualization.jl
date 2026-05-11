@@ -372,6 +372,19 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($bridle_obs[3]); color=:gold, linewidth=1.2)
     end
 
+    # Lift line: bearing → lifter anchor (cyan)
+    lift_line_obs = @lift begin
+        bp = $bearing_obs
+        ap = sys.lifter_anchor
+        ([bp[1], ap[1]], [bp[2], ap[2]], [bp[3], ap[3]])
+    end
+    lines!(ax3d, @lift($lift_line_obs[1]), @lift($lift_line_obs[2]),
+                 @lift($lift_line_obs[3]); color=:cyan, linewidth=2.0, visible=vis_lift)
+
+    # Lifter anchor marker
+    scatter!(ax3d, [sys.lifter_anchor[1]], [sys.lifter_anchor[2]], [sys.lifter_anchor[3]];
+             color=:cyan, markersize=12, marker=:circle, visible=vis_lift)
+
     # Bearing marker (white diamond)
     scatter!(ax3d, @lift([$bearing_obs[1]]), @lift([$bearing_obs[2]]),
                    @lift([$bearing_obs[3]]); color=:white, markersize=12,
@@ -728,10 +741,27 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
-            # Pre-settle with actual wind + lift so frame 1 doesn't jump
-            u_s = settle_to_equilibrium(sys, u_s, p_run;
-                        lift_device=ld, wind_fn=wf, n_steps=2000, dt=4e-5, damp=0.05)
-            set_orbital_velocities!(u_s, sys, p_run)
+            # Operational pre-settle: regenerate the rated operating point for
+            # this scenario's wind + k_mppt, instead of just gravity-settling
+            # (which damps ω back to zero and forces a slow spin-up transient
+            # under PTO + lifter drag from cold start).
+            #
+            # settle_to_operational_state internally:
+            #   1. settle_to_equilibrium (gravity + wind + lift, ω damps to ~0)
+            #   2. set ω = ω_rated for all rings
+            #   3. torque-chain bisection to find equilibrium twist α
+            #   4. set_orbital_velocities! for rope nodes
+            #   5. operational settle at ω_rated (translation only, ω pinned)
+            #      so the bearing finds its true ω_rated lift equilibrium
+            # so frame 0 is the actual operating state and frame 1 is a smooth
+            # continuation — no lifter step input, no asymmetric bridle snap,
+            # no spin-up transient hiding the rotor's actual operating ω.
+            #
+            # ω_rated derived from the slider-modified k_mppt so the operating
+            # point tracks the dashboard's k_mppt control.
+            ω_rated_run = cbrt(p_run.p_rated_w / p_run.k_mppt)
+            u_s = settle_to_operational_state(sys, u_s, p_run, ω_rated_run;
+                        lift_device=ld, wind_fn=wf)
         catch e
             scenario_msg_color[] = :orangered
             scenario_msg[]       = "Setup error: $(sprint(showerror, e))"

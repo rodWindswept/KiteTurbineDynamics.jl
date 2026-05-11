@@ -70,9 +70,11 @@ struct KiteTurbineSystem
     sub_segs    :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle)
     ring_ids    :: Vector{Int}             # global ids of ring nodes, in order ground→hub
     rotor       :: RotorSpec
-    kite        :: KiteSpec
-    bearing_id  :: Int                     # global id of the BearingNode
-    n_ring      :: Int
+    kite           :: KiteSpec
+    bearing_id     :: Int                     # global id of the BearingNode
+    lifter_anchor  :: Vector{Float64}         # world-frame anchor for lift line
+    n_ring         :: Int
+
     n_total     :: Int
     # Quasi-static disc tilt: accumulated non-shaft torque per ring (ring_idx order)
     # Updated each ODE step; drives ring-plane tilt for the next step.

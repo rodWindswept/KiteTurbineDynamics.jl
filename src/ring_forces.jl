@@ -123,28 +123,22 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # ── Lift line force at bearing node ────────────────────────────────────
     if lift_device !== nothing
         v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
-        v_h1   = v_lift[1];  v_h2 = v_lift[2] # horizontal components
-        v_hmag = sqrt(v_h1^2 + v_h2^2)        # horizontal wind speed
-        if v_hmag > 0.1
-            downwind = [v_h1 / v_hmag, v_h2 / v_hmag, 0.0]   # unit vec downwind (+X)
-        else
-            downwind = [1.0, 0.0, 0.0]
-        end
+        v_hmag = sqrt(v_lift[1]^2 + v_lift[2]^2)
 
         # Passive kites stall below ~2 m/s; rotary lifter is exempt
         PASSIVE_KITE_STALL_SPEED = 2.0
         is_passive = !(lift_device isa RotaryLifterParams)
-        _, T_lift, elev_lift = lift_force_steady(lift_device, p.rho, v_hmag)
+        _, T_lift, _ = lift_force_steady(lift_device, p.rho, v_hmag)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
             T_lift = 0.0
         end
 
-        if T_lift > 0.0
-            θ_lift = deg2rad(elev_lift)
-            # Force direction: horizontal component downwind (+X) + vertical upward
-            forces[bearing_gid][1] += T_lift * cos(θ_lift) * downwind[1]
-            forces[bearing_gid][2] += T_lift * cos(θ_lift) * downwind[2]
-            forces[bearing_gid][3] += T_lift * sin(θ_lift)
+        # Spring force pointing from bearing to fixed world-frame anchor
+        line_vec = sys.lifter_anchor .- bearing_pos
+        line_len = norm(line_vec)
+        if line_len > 1e-6 && T_lift > 0.0
+            line_dir = line_vec ./ line_len
+            forces[bearing_gid] .+= T_lift .* line_dir
         end
     end
 
