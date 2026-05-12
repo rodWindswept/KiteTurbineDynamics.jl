@@ -24,7 +24,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     n_seg   = length(seg_lengths)
     n_ring  = n_seg + 1
     n_rope  = p.n_lines * 3 * n_seg
-    n_total = n_ring + n_rope + 1       # +1 for bearing
+    n_total = n_ring + n_rope + 2       # +1 for bearing, +1 for sky anchor
     stride  = 1 + p.n_lines * 3
 
     β         = p.elevation_angle
@@ -127,40 +127,59 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     kite  = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1,
                      kite_tether_length)
 
-    # ── Bearing node + bridle segments ──────────────────────────────────
+    # ── Bearing node + bridle segments + sky anchor + cyan line ──────────
     # The bearing is a free particle placed above the hub ring centre along
     # the shaft axis.  N bridle spring-dampers connect it to the hub ring
-    # vertices, distributing lift/backline forces through the tension network
-    # rather than applying them as a single vector at the hub centre.
+    # vertices.  A single "cyan line" runs from the bearing up to the sky
+    # anchor — a small particle that takes the lifter-kite force at ~80°
+    # and the back line down to the ground anchor.  This three-way splice
+    # ("Sky Anchor") replaces the old fixed-direction lift force on the
+    # bearing and lets the system rise when the back line is paid out.
     BEARING_MASS   = 0.3           # kg — small bearing + skateboard wheel
     BRIDLE_EA      = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
     BRIDLE_C_DAMP  = 500.0         # N·s/m — ~80% of critical for bearing mass
     BRIDLE_DIAM    = 0.002         # m  — 2mm Dyneema bridle line
     bearing_offset = 6.0           # m above hub centre (along shaft)
 
-    bearing_gid = n_total
-    nodes[bearing_gid] = BearingNode(bearing_gid, BEARING_MASS)
-    bearing_pos0 = ring_pos[end] .+ bearing_offset .* shaft_dir
+    SKY_ANCHOR_MASS = 0.3           # kg — small splice/knot, not the lifter itself
+    CYAN_L0         = 5.0           # m — bearing↔sky-anchor line ("a few m")
+    CYAN_EA         = 500_000.0     # N  — same Dyneema as bridles
+    CYAN_C_DAMP     = 500.0         # N·s/m — same critical fraction
+    CYAN_DIAM       = 0.003         # m  — 3 mm Dyneema (carries lifter load)
 
-    # Lifter anchor: world-frame point the lift line tensions toward.
-    # Placed above the design hub along the design shaft, offset by line_length.
-    # The line direction from bearing to anchor approximately equals shaft_dir
-    # at frame 0, giving an on-axis bearing equilibrium.
-    LIFT_LINE_LENGTH = 25.0       # m — matches RotaryLifterParams.line_length default
-    lifter_anchor = ring_pos[end] .+ (bearing_offset + LIFT_LINE_LENGTH) .* shaft_dir
+    # Bearing slot (n_total-1) and sky anchor slot (n_total)
+    bearing_gid    = n_total - 1
+    sky_anchor_gid = n_total
 
+    nodes[bearing_gid]    = BearingNode(bearing_gid, BEARING_MASS)
+    nodes[sky_anchor_gid] = SkyAnchorNode(sky_anchor_gid, SKY_ANCHOR_MASS)
+
+    bearing_pos0    = ring_pos[end] .+ bearing_offset .* shaft_dir
+    # Sky anchor sits CYAN_L0 further along the shaft so the cyan line is at
+    # rest length and pulls the bearing along +shaft_dir at frame 0 — that
+    # plus symmetric bridles is what keeps the bearing on-axis.
+    sky_anchor_pos0 = bearing_pos0 .+ CYAN_L0 .* shaft_dir
+
+    # Bridles: bearing → hub-ring vertices (unchanged geometry)
     for j in 1:p.n_lines
         pa_attach = attachment_point(ring_pos[end], ring_radii[end], 0.0,
                                      j, p.n_lines, perp1, perp2)
         bridle_L0 = norm(bearing_pos0 .- pa_attach)
         push!(sub_segs, RopeSubSegment(
-            SubSegmentEnd(bearing_gid, false, j),   # bearing end
-            SubSegmentEnd(ring_ids[end], true, j),   # hub-vertex end
+            SubSegmentEnd(bearing_gid, false, j),   # bearing end (lower)
+            SubSegmentEnd(ring_ids[end], true, j),  # hub-vertex end (upper)
             bridle_L0, BRIDLE_EA, BRIDLE_C_DAMP, BRIDLE_DIAM))
     end
 
+    # Cyan line: single sub-segment, both ends non-ring (bearing → sky anchor).
+    # line_idx is unused for non-ring ends; pick an arbitrary 1.
+    push!(sub_segs, RopeSubSegment(
+        SubSegmentEnd(bearing_gid,    false, 1),    # bearing end (lower)
+        SubSegmentEnd(sky_anchor_gid, false, 1),    # sky anchor end (upper)
+        CYAN_L0, CYAN_EA, CYAN_C_DAMP, CYAN_DIAM))
+
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
-                            bearing_gid, lifter_anchor, n_ring, n_total,
+                            bearing_gid, sky_anchor_gid, n_ring, n_total,
                             [zeros(3) for _ in 1:n_ring])
 
     # ── Initial state vector (straight-line rope placement) ───────────────
@@ -185,8 +204,9 @@ function _build_kite_turbine_system_impl(p::SystemParams,
         end
     end
 
-    # Bearing initial position
-    u0[3*(bearing_gid-1)+1 : 3*bearing_gid] .= bearing_pos0
+    # Bearing + sky anchor initial positions
+    u0[3*(bearing_gid-1)+1    : 3*bearing_gid]    .= bearing_pos0
+    u0[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid] .= sky_anchor_pos0
 
     return sys, u0
 end

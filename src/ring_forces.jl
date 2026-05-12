@@ -13,8 +13,10 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     hub_gid  = sys.rotor.node_id
     hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
     hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
-    bearing_gid = sys.bearing_id
-    bearing_pos = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+    bearing_gid    = sys.bearing_id
+    bearing_pos    = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+    sky_anchor_gid = sys.sky_anchor_id
+    sky_anchor_pos = @view u[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid]
 
     v_wind  = wind_fn(hub_pos, t)
 
@@ -120,68 +122,87 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         torques[ri_b] -= c_s * Δω
     end
 
-    # ── Lift line force at bearing node ────────────────────────────────────
+    # ── Lift line force at the SKY ANCHOR ─────────────────────────────────
+    # The lifter kite pulls the sky anchor at its physical elevation angle
+    # (~80° for a rotary lifter at rated wind).  The cyan line (a rope
+    # sub-segment between bearing and sky anchor) then transmits a fraction
+    # of this force to the bearing along its current direction.  The
+    # bearing therefore only feels gravity, bridles, and cyan-line tension
+    # — keeping it on-axis with symmetric bridles regardless of the lifter
+    # elevation.  When the back line is paid out, the kite lift wins the
+    # tug-of-war at the sky anchor and lifts the whole assembly.
     if lift_device !== nothing
-        v_lift = wind_fn(hub_pos, t)           # 3D wind at hub altitude
+        v_lift = wind_fn(sky_anchor_pos, t)    # 3D wind at sky anchor altitude
         v_hmag = sqrt(v_lift[1]^2 + v_lift[2]^2)
 
         # Passive kites stall below ~2 m/s; rotary lifter is exempt
         PASSIVE_KITE_STALL_SPEED = 2.0
         is_passive = !(lift_device isa RotaryLifterParams)
-        _, T_lift, _ = lift_force_steady(lift_device, p.rho, v_hmag)
+        _, T_lift, elev_lift_deg = lift_force_steady(lift_device, p.rho, v_hmag)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
             T_lift = 0.0
         end
 
-        # Spring force pointing from bearing to fixed world-frame anchor
-        line_vec = sys.lifter_anchor .- bearing_pos
-        line_len = norm(line_vec)
-        if line_len > 1e-6 && T_lift > 0.0
-            line_dir = line_vec ./ line_len
-            forces[bearing_gid] .+= T_lift .* line_dir
+        # Fixed-direction force vector at the kite's elevation angle.
+        # Downwind unit vector built from the actual wind direction so the
+        # model handles non-+x wind heading correctly.
+        if T_lift > 0.0 && v_hmag > 1e-6
+            downwind = [v_lift[1] / v_hmag, v_lift[2] / v_hmag, 0.0]
+            θ_lift   = deg2rad(elev_lift_deg)
+            lift_dir = cos(θ_lift) .* downwind .+ sin(θ_lift) .* [0.0, 0.0, 1.0]
+            forces[sky_anchor_gid] .+= T_lift .* lift_dir
         end
     end
 
-    # ── Back line — quasi-static catenary from bearing to ground anchor ──
-    # Runs from a point 10 cm above the bearing down to a fixed ground
-    # anchor.  The anchor stays at back_anchor_fwd_x downwind of the hub's
-    # design x-projection.  Backline payout increases the unstretched length
-    # (simulating winch release) — when payout > 0 the line goes slack and
-    # the bearing rises under lift, tilting the rotor via the bridle network.
-    back_attach_z = 0.30   # metres above bearing (on lift line, approximated as vertical)
-    back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
+    # ── Back line — quasi-static catenary from SKY ANCHOR to ground anchor ─
+    # The back line attaches at the sky anchor (the upper end of the cyan
+    # line, where the kite force also lands).  Backline payout increases
+    # the unstretched length — when payout > 0 the line goes slack, the
+    # kite lift wins at the sky anchor, the sky anchor rises and pulls the
+    # bearing up via the cyan line, tilting the rotor and spilling wind.
+    #
+    # NOTE: the geometric constants 6.0 (bearing_offset) and 5.0 (CYAN_L0)
+    # MUST match initialization.jl.  Centralising them on `sys` is a future
+    # cleanup; for now they're duplicated with this comment as the link.
+    back_ax        = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
+    bearing_offset = 6.0
+    cyan_L0        = 5.0
 
-    # 2D projection: horizontal plane distance + vertical
-    b_dx = sqrt((bearing_pos[1] - back_ax)^2 + bearing_pos[2]^2)
-    b_dz = bearing_pos[3] + back_attach_z
+    # 2D projection: horizontal plane distance + vertical (anchor at z=0)
+    b_dx   = sqrt((sky_anchor_pos[1] - back_ax)^2 + sky_anchor_pos[2]^2)
+    b_dz   = sky_anchor_pos[3]
     b_dist = sqrt(b_dx^2 + b_dz^2)
 
-    # Design rest length (no payout): distance anchor→design bearing position
-    design_bearing_x = p.tether_length * cos(p.elevation_angle)
-    design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_attach_z
-    back_L0_design = sqrt((design_bearing_x - back_ax)^2 + design_bearing_z^2)
+    # Design rest length: distance ground-anchor → design sky-anchor position.
+    # Sky anchor at design = ring_pos[end] + (bearing_offset+cyan_L0)·shaft_dir,
+    # which equals (tether_length + bearing_offset + cyan_L0) along the shaft
+    # from the origin.
+    L_axis_design        = p.tether_length + bearing_offset + cyan_L0
+    design_sky_anchor_x  = L_axis_design * cos(p.elevation_angle)
+    design_sky_anchor_z  = L_axis_design * sin(p.elevation_angle)
+    back_L0_design       = sqrt((design_sky_anchor_x - back_ax)^2 + design_sky_anchor_z^2)
     # L₀ = design distance + payout (winch releases line)
     back_L0 = back_L0_design + p.backline_payout
 
-    # Tension-only: slack if anchor-to-bearing distance < rest length
+    # Tension-only: slack if anchor-to-sky-anchor distance < rest length
     if b_dist > back_L0 + 1e-6
         # Backline weight (3 mm Dyneema)
         w_back = dyneema_weight_Npm(0.003)
 
-        # Catenary in the vertical plane: anchor at (0,0), bearing at (b_dx, b_dz)
-        _, _, Fx_bearing, Fz_bearing, _ = catenary_forces(
+        # Catenary in the vertical plane: anchor at (0,0), sky anchor at (b_dx, b_dz)
+        _, _, Fx_top, Fz_top, _ = catenary_forces(
             0.0, 0.0, b_dx, b_dz,
             back_L0, w_back, p.EA_back_line)
 
-        # Fx < 0 (pulls bearing toward anchor), Fz < 0 (pulls bearing down).
+        # Fx < 0 (pulls toward anchor), Fz < 0 (pulls down).
         if b_dx > 1e-12
-            uh_x = (bearing_pos[1] - back_ax) / b_dx
-            uh_y = bearing_pos[2] / b_dx
+            uh_x = (sky_anchor_pos[1] - back_ax) / b_dx
+            uh_y = sky_anchor_pos[2] / b_dx
         else
             uh_x, uh_y = 0.0, 0.0
         end
-        forces[bearing_gid][1] += Fx_bearing * uh_x
-        forces[bearing_gid][2] += Fx_bearing * uh_y
-        forces[bearing_gid][3] += Fz_bearing
+        forces[sky_anchor_gid][1] += Fx_top * uh_x
+        forces[sky_anchor_gid][2] += Fx_top * uh_y
+        forces[sky_anchor_gid][3] += Fz_top
     end
 end

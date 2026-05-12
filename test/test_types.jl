@@ -2,19 +2,21 @@
     p = params_10kw()
     sys, u0 = build_kite_turbine_system(p)
 
-    # Node counts (includes bearing node)
-    n_ring    = p.n_rings + 2          # ground + 14 rings + hub = 16
-    n_rope    = p.n_lines * 3 * (p.n_rings + 1)  # 5 * 3 * 15 = 225
-    n_bearing = 1
-    n_total   = n_ring + n_rope + n_bearing  # 242
+    # Node counts (includes bearing + sky anchor)
+    n_ring       = p.n_rings + 2                  # ground + 14 rings + hub = 16
+    n_rope       = p.n_lines * 3 * (p.n_rings + 1)  # 5 * 3 * 15 = 225
+    n_bearing    = 1
+    n_sky_anchor = 1
+    n_total      = n_ring + n_rope + n_bearing + n_sky_anchor  # 243
 
     @test length(sys.nodes) == n_total
     @test count(n -> isa(n, RingNode), sys.nodes) == n_ring
     @test count(n -> isa(n, RopeNode), sys.nodes) == n_rope
     @test count(n -> isa(n, BearingNode), sys.nodes) == 1
+    @test count(n -> isa(n, SkyAnchorNode), sys.nodes) == 1
 
     # State size: 6 DOF per node + 2 twist states per ring
-    @test state_size(sys) == 6 * n_total + 2 * n_ring  # 1484
+    @test state_size(sys) == 6 * n_total + 2 * n_ring  # 1490
 
     # ring_idx values are 1:n_ring without gaps
     ring_nodes = filter(n -> isa(n, RingNode), sys.nodes)
@@ -34,6 +36,12 @@
     bearing = sys.nodes[sys.bearing_id]
     @test isa(bearing, BearingNode)
 
-    # sub_segs count: 4 sub-segs × 5 lines × 15 segments + 5 bridle = 305
-    @test length(sys.sub_segs) == (4 * p.n_lines * (p.n_rings + 1)) + p.n_lines
+    # Sky anchor node exists and is free, and sits above the bearing
+    @test sys.sky_anchor_id > 0
+    @test sys.sky_anchor_id != sys.bearing_id
+    sky_anchor = sys.nodes[sys.sky_anchor_id]
+    @test isa(sky_anchor, SkyAnchorNode)
+
+    # sub_segs count: 4 sub-segs × 5 lines × 15 segments + 5 bridle + 1 cyan = 306
+    @test length(sys.sub_segs) == (4 * p.n_lines * (p.n_rings + 1)) + p.n_lines + 1
 end

@@ -351,11 +351,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($blade_obs[3]); color=:steelblue, linewidth=2.5)
     end
 
-    # Lift system — bearing is a real ODE particle; bridle lines are spring-dampers
-    bearing_gid_viz = sys.bearing_id
-    bearing_obs     = @lift $u_obs[3*(bearing_gid_viz-1)+1 : 3*bearing_gid_viz]
-    # lift tether and backline both attach to the bearing
-    lift_point_obs  = bearing_obs
+    # Lift system — bearing and sky anchor are real ODE particles.
+    # Bearing only sees gravity, bridles, and the cyan line.  The sky anchor
+    # (the splice/knot at the upper end of the cyan line) takes the kite
+    # lift force at ~80° and the back line down to the ground anchor.
+    bearing_gid_viz    = sys.bearing_id
+    sky_anchor_gid_viz = sys.sky_anchor_id
+    bearing_obs        = @lift $u_obs[3*(bearing_gid_viz-1)+1    : 3*bearing_gid_viz]
+    sky_anchor_obs     = @lift $u_obs[3*(sky_anchor_gid_viz-1)+1 : 3*sky_anchor_gid_viz]
+    # Kite tether and back line both attach at the sky anchor (matches physics)
+    lift_point_obs     = sky_anchor_obs
 
     # Bridle lines: bearing → hub ring vertices (spring-dampers in the ODE)
     for j in 1:p.n_lines
@@ -372,18 +377,22 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($bridle_obs[3]); color=:gold, linewidth=1.2)
     end
 
-    # Lift line: bearing → lifter anchor (cyan)
+    # Cyan line: bearing → sky anchor (both live in the ODE state).
+    # When the back line is paid out, the kite force lifts the sky anchor,
+    # which pulls the bearing up via this line — visible as the whole
+    # cyan-bearing-bridle assembly rising in unison.
     lift_line_obs = @lift begin
         bp = $bearing_obs
-        ap = sys.lifter_anchor
+        ap = $sky_anchor_obs
         ([bp[1], ap[1]], [bp[2], ap[2]], [bp[3], ap[3]])
     end
     lines!(ax3d, @lift($lift_line_obs[1]), @lift($lift_line_obs[2]),
                  @lift($lift_line_obs[3]); color=:cyan, linewidth=2.0, visible=vis_lift)
 
-    # Lifter anchor marker
-    scatter!(ax3d, [sys.lifter_anchor[1]], [sys.lifter_anchor[2]], [sys.lifter_anchor[3]];
-             color=:cyan, markersize=12, marker=:circle, visible=vis_lift)
+    # Sky anchor marker — cyan circle at the live anchor position
+    scatter!(ax3d, @lift([$sky_anchor_obs[1]]), @lift([$sky_anchor_obs[2]]),
+                   @lift([$sky_anchor_obs[3]]); color=:cyan, markersize=12,
+             marker=:circle, visible=vis_lift)
 
     # Bearing marker (white diamond)
     scatter!(ax3d, @lift([$bearing_obs[1]]), @lift([$bearing_obs[2]]),
@@ -435,20 +444,21 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     scatter!(ax3d, @lift([$kite_pos_obs[1]]), @lift([$kite_pos_obs[2]]),
                    @lift([$kite_pos_obs[3]]); color=:deepskyblue, markersize=15)
 
-    # Back line — coral, from 10 cm above the bearing down to the fixed ground
-    # anchor.  Colour: coral = taut; grey = slack.
-    let back_off    = 0.30,
-        back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
-        design_bearing_x = p.tether_length * cos(p.elevation_angle),
-        design_bearing_z = p.tether_length * sin(p.elevation_angle) + 6.0 + back_off,
-        back_L0     = sqrt(p.back_anchor_fwd_x^2 + (p.tether_length * sin(p.elevation_angle) + 6.0 + back_off)^2)
+    # Back line — coral, from the SKY ANCHOR down to the fixed ground anchor.
+    # Colour: coral = taut; grey = slack.  The geometric constants 6.0 and
+    # 5.0 must match initialization.jl (bearing offset + cyan_L0) and the
+    # back_L0_design in ring_forces.jl.
+    let back_ax     = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x,
+        L_axis_des  = p.tether_length + 6.0 + 5.0,
+        des_anc_x   = L_axis_des * cos(p.elevation_angle),
+        des_anc_z   = L_axis_des * sin(p.elevation_angle),
+        back_L0     = sqrt((des_anc_x - back_ax)^2 + des_anc_z^2)
         scatter!(ax3d, [back_ax], [0.0], [0.0]; color=:coral, markersize=12, marker=:diamond)
         back_line_obs = @lift begin
-            bp   = $bearing_obs
-            att  = (bp[1], bp[2], bp[3] + back_off)
-            bv   = (att[1] - back_ax, att[2], att[3])
+            ap   = $sky_anchor_obs
+            bv   = (ap[1] - back_ax, ap[2], ap[3])
             taut = sqrt(bv[1]^2 + bv[2]^2 + bv[3]^2) > back_L0
-            ([back_ax, att[1]], [0.0, att[2]], [0.0, att[3]]), taut
+            ([back_ax, ap[1]], [0.0, ap[2]], [0.0, ap[3]]), taut
         end
         lines!(ax3d,
                @lift($back_line_obs[1][1]), @lift($back_line_obs[1][2]),

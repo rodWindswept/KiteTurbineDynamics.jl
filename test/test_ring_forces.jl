@@ -20,10 +20,16 @@ using LinearAlgebra
     # At zero omega, CT thrust is zero (ct_at_tsr(0) = 0).
     @test all(isfinite, forces[hub_gid])
 
-    # Bearing receives lift force from rotary lifter
-    bearing_gid = sys.bearing_id
-    @test !all(iszero, forces[bearing_gid])
-    @test all(isfinite, forces[bearing_gid])
+    # After 2026-05-12 sky-anchor change: lift + back-line forces apply at the
+    # SKY ANCHOR, not the bearing.  The bearing only sees those forces
+    # transmitted via the cyan line, which is computed in compute_rope_forces!
+    # (not exercised here).  So compute_ring_forces! alone leaves the bearing
+    # untouched and loads the sky anchor.
+    bearing_gid    = sys.bearing_id
+    sky_anchor_gid = sys.sky_anchor_id
+    @test all(iszero,   forces[bearing_gid])      # bearing untouched here
+    @test !all(iszero,  forces[sky_anchor_gid])   # sky anchor takes the lift
+    @test all(isfinite, forces[sky_anchor_gid])
 
     # No NaN in torques
     hub_ring_idx = (sys.nodes[hub_gid]::RingNode).ring_idx

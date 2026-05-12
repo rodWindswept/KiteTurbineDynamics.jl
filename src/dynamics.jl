@@ -58,6 +58,8 @@ function multibody_ode!(du, u, params, t)
             node.mass
         elseif node isa BearingNode
             node.mass
+        elseif node isa SkyAnchorNode
+            node.mass
         else
             error("unknown node type")
         end
@@ -88,6 +90,8 @@ function multibody_ode!(du, u, params, t)
             elseif node isa RopeNode
                 node.mass
             elseif node isa BearingNode
+                node.mass
+            elseif node isa SkyAnchorNode
                 node.mass
             else
                 error("unknown node type")

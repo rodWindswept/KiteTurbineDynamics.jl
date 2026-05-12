@@ -155,7 +155,8 @@ struct SystemParams
     # Back line — elevation constraint tether
     EA_back_line      ::Float64  # Axial stiffness (N). 3 mm Dyneema ≈ 700 kN
     c_back_line       ::Float64  # Damping coefficient (N·s/m). Default: 500.0
-    back_anchor_fwd_x ::Float64  # Extra downwind offset of ground anchor (m). Default: 5.0
+    back_anchor_fwd_x :: Float64  # Extra downwind offset of ground anchor (m). Default: 11.0
+
     backline_payout   ::Float64  # Extra line paid out by winch (m). Default: 0.0
 end
 
@@ -256,7 +257,16 @@ function params_10kw()::SystemParams
     back = BackLineSpec(
         700_000.0,          # EA_back_line (N) — 100 GPa × π(0.003)²/4 ≈ 707 kN
         500.0,              # c_back_line (N·s/m)
-        5.0,                # back_anchor_fwd_x (m) — clears TRPT rope footprint
+        11.0,               # back_anchor_fwd_x (m) — placed downwind so the
+                            # backline direction at the SKY ANCHOR design position
+                            # has a small +x component, which lets the three-way
+                            # knot (lift @80° + backline + cyan) balance with the
+                            # cyan staying coaxial with the 30° shaft and ALL line
+                            # tensions positive.  At 5 m the geometry forced
+                            # T_cyan < 0 (infeasible), so the sky anchor swung up
+                            # to ~80° elevation and the cyan transmitted no axial
+                            # preload onto the bearing → TRPT looked slack.  See
+                            # docs/plans/2026-05-12-sky-anchor-node.md.
         0.0,                # backline_payout — zero at construction
     )
     return SystemParams(geo, mat, aero, ctrl, back)

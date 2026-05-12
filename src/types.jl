@@ -23,14 +23,38 @@ end
 """
     BearingNode
 
-The lift bearing — a free particle connecting the lift device and back line
-to the hub ring vertices via bridle lines.  Position and velocity evolve
-under the ODE like any other non-fixed node; the tension network determines
-where it settles.
+The lift bearing — a free particle connecting the cyan line (up to the sky
+anchor) to the hub ring vertices via bridle lines.  Position and velocity
+evolve under the ODE like any other non-fixed node; the tension network
+determines where it settles.
+
+After the 2026-05-12 sky-anchor change the bearing no longer sees the
+backline or the kite-lift force directly — those terminate at the sky
+anchor, and the bearing only feels gravity, the N bridles to the hub ring,
+and the cyan-line tension.  This keeps the bearing on the shaft axis with
+equal bridle lengths regardless of lifter elevation.
 """
 struct BearingNode <: AbstractNode
     id   :: Int
     mass :: Float64        # bearing mass (~0.05 kg)
+end
+
+"""
+    SkyAnchorNode
+
+The "knot in the sky" where the cyan line (down to the bearing), the back
+line (down to the ground anchor) and the lifter-kite force all meet.  In
+real hardware this is a three-way splice on the upper end of the cyan
+line; in the simulation it's a small free particle with a few hundred
+grams of mass.
+
+Modelled as a full ODE node (position + velocity in the state vector) so
+that paying out the back line lets the kite lift the anchor — and the
+bearing with it — naturally, without any quasi-static balance hack.
+"""
+struct SkyAnchorNode <: AbstractNode
+    id   :: Int
+    mass :: Float64        # ~0.3 kg — small splice/knot, not the lifter itself
 end
 
 # End of a sub-segment: either a rope node or a ring attachment point
@@ -66,13 +90,13 @@ struct KiteSpec
 end
 
 struct KiteTurbineSystem
-    nodes       :: Vector{AbstractNode}
-    sub_segs    :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle)
-    ring_ids    :: Vector{Int}             # global ids of ring nodes, in order ground→hub
-    rotor       :: RotorSpec
+    nodes          :: Vector{AbstractNode}
+    sub_segs       :: Vector{RopeSubSegment}  # all sub-segments (TRPT + bridle + cyan line)
+    ring_ids       :: Vector{Int}             # global ids of ring nodes, in order ground→hub
+    rotor          :: RotorSpec
     kite           :: KiteSpec
     bearing_id     :: Int                     # global id of the BearingNode
-    lifter_anchor  :: Vector{Float64}         # world-frame anchor for lift line
+    sky_anchor_id  :: Int                     # global id of the SkyAnchorNode (knot above bearing)
     n_ring         :: Int
 
     n_total     :: Int
