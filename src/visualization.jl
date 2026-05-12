@@ -789,7 +789,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 # wind incidence drops → power spills.  Pitch boost helps the
                 # lift device overcome the initial inertia.
                 if scenario == :furl && step % 500 == 0
-                    release_frac = clamp(t / 15.0, 0.0, 1.0)  # smooth deploy in 15 s
+                    release_frac = clamp((t - 2.0) / 15.0, 0.0, 1.0)  # smooth deploy in 15 s after 2s delay
                     p_furl = _modified_params(p_run;
                         backline_payout = 15.0 * release_frac)
                     # Anchor stays FIXED — winch pays out extra line.

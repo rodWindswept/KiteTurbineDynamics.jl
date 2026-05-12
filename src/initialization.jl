@@ -593,7 +593,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
         ode_params = lift_device === nothing ? (sys, p, wind_use) :
                                                 (sys, p, wind_use, lift_device)
         dt_op   = p.n_lines >= 8 ? 1e-5 : 4e-5
-        n_op    = 20_000
+        n_op    = 60_000
         damp_op = 0.05
 
         for _ in 1:n_op
