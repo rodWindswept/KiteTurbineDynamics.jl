@@ -156,15 +156,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     hub_R    = hub_node.radius
     hub_ri   = hub_node.ring_idx
 
-    # ── Ring-plane basis: shaft_dir (matches physics) ──────────────────────
-    # The TRPT tethers see tilted geometry in rope_forces.jl for power spill,
-    # but the dashboard renders everything in the shaft frame so bridle lines
-    # match the physics (equal lengths, symmetric).  Tilt effects are visible
-    # through power/tension/altitude changes in the HUD.
+    # ── Ring-plane basis: tilted (matches TRPT physics) ──────────────────────
+    # All intermediate rings, the hub, and the rotor blades render in the tilted
+    # frame to align with the tether geometry and visualize furl pitching.
     _perp_fn = (u) -> begin
-        hub_p = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        sh    = normalize(hub_p)
-        shaft_perp_basis(sh)
+        _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     end
 
     # ── Tension closures — use ring attachment geometry, not rope node positions ──
@@ -793,40 +789,15 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 # wind incidence drops → power spills.  Pitch boost helps the
                 # lift device overcome the initial inertia.
                 if scenario == :furl && step % 500 == 0
-                    release_frac = clamp(t / 5.0, 0.0, 1.0)  # full deploy in 5 s
+                    release_frac = clamp(t / 15.0, 0.0, 1.0)  # smooth deploy in 15 s
                     p_furl = _modified_params(p_run;
-                        backline_payout = 40.0 * release_frac)
+                        backline_payout = 15.0 * release_frac)
                     # Anchor stays FIXED — winch pays out extra line.
                     # Rest length increases → backline goes slack → lift rises.
+                    # No pitch boost is needed; the lifter kite already has excess lift
+                    # that is held back by the backline tension during normal flight.
 
-                    ld_furl = ld
-                    if ld_furl !== nothing
-                        if t < 2.0
-                            # Phase 1: pre-furl — ramp pitch modestly
-                            boost = 1.0 + 0.5 * (t / 2.0)  # 1→1.5× over 2 s
-                        else
-                            # Phase 2: pitch responds to excess power
-                            ω_gnd_now = abs(u[6N + Nr + 1])
-                            P_now = p.k_mppt * ω_gnd_now^3 / 1000.0
-                            P_rated_kw = p.p_rated_w / 1000.0
-                            excess = max(0.0, P_now - P_rated_kw)
-                            boost = clamp(1.0 + 2.0 * excess / P_rated_kw, 1.0, 3.0)
-                        end
-                        if ld isa RotaryLifterParams
-                            ld_furl = RotaryLifterParams(ld.rotor_radius,
-                                ld.hub_radius, ld.n_blades, ld.blade_chord,
-                                ld.CL_blade * boost, ld.CD_blade, ld.omega_fixed,
-                                ld.line_length, ld.line_EA, ld.m_lifter)
-                        elseif ld isa SingleKiteParams
-                            ld_furl = SingleKiteParams(ld.CL * boost,
-                                ld.CD, ld.area, ld.line_length, ld.line_EA, ld.m_kite)
-                        elseif ld isa StackedKitesParams
-                            ld_furl = StackedKitesParams(ld.n_kites,
-                                ld.CL * boost, ld.CD, ld.area_each, ld.spacing,
-                                ld.line_EA, ld.m_kite_each)
-                        end
-                    end
-                    ode_p = isnothing(ld_furl) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld_furl)
+                    ode_p = isnothing(ld) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld)
 
                     # Progress update — keep the UI alive during long furl runs
                     pct = round(Int, 100 * t / t_total)

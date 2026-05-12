@@ -192,19 +192,19 @@ function main()
             label  = "canonical 5-line"
         end
         println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
-        println("Initializing at rated power equilibrium (ω=9.5)...")
-        default_lift = rotary_lifter_default()
-        u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=default_lift)
-
-        N  = sys.n_total
-        Nr = sys.n_ring
-
         # Custom wind function
         wind_fn = (pos, t) -> begin
             z  = max(pos[3], 1.0)
             sh = (z / p.h_ref)^(1.0/7.0)
             [v_target * sh, 0.0, 0.0]
         end
+
+        println("Initializing at rated power equilibrium (ω=9.5)...")
+        default_lift = rotary_lifter_default()
+        u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=default_lift, wind_fn=wind_fn)
+
+        N  = sys.n_total
+        Nr = sys.n_ring
 
         DT         = 4e-5
         LIN_DAMP   = 0.05

@@ -367,11 +367,9 @@ function set_orbital_velocities!(u::Vector{Float64},
     Nr = sys.n_ring
     hub_gid  = sys.rotor.node_id
     hub_posv = u[3*(hub_gid-1)+1 : 3*hub_gid]
-    hub_rmv  = norm(hub_posv)
-    sd = hub_rmv > 0.1 ?
-         hub_posv ./ hub_rmv :
-         [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    pp1, pp2 = shaft_perp_basis(sd)
+         
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1, pp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
 
     alpha = @view u[6N+1    : 6N+Nr]
     omega = @view u[6N+Nr+1 : 6N+2Nr]
@@ -420,11 +418,9 @@ function orbital_damp_rope_velocities!(u       ::Vector{Float64},
     Nr = sys.n_ring
     hub_gid  = sys.rotor.node_id
     hub_posw = u[3*(hub_gid-1)+1 : 3*hub_gid]
-    hub_rmw  = norm(hub_posw)
-    shaft_dw = hub_rmw > 0.1 ?
-               hub_posw ./ hub_rmw :
-               [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    pp1, pp2 = shaft_perp_basis(shaft_dw)
+               
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1, pp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
 
     alpha = @view u[6N+1    : 6N+Nr]
     omega = @view u[6N+Nr+1 : 6N+2Nr]
@@ -517,7 +513,7 @@ Initializes the system at the rated operating point to avoid torsional transient
 Uses a torque-chain bisection method to find the exact helical equilibrium of the ropes.
 This logic was shadowed directly from the interactive dashboard.
 """
-function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64;
+function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated_max::Float64;
                                     lift_device::Union{Nothing, LiftDevice} = nothing,
                                     wind_fn::Union{Nothing, Function}      = nothing)
     u_start = settle_to_equilibrium(sys, u0, p;
@@ -527,30 +523,102 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     N  = sys.n_total
     Nr = sys.n_ring
 
-    τ_rated  = p.k_mppt * ω_rated^2
+    # Find the true aerodynamic equilibrium ω to prevent over-wound startup
+    # and immediate deceleration transients when v_wind < v_rated.
+    v_wind_hub = wind_fn === nothing ? zeros(3) : wind_fn(u_start[3*(sys.rotor.node_id-1)+1 : 3*sys.rotor.node_id], 0.0)
+    v_mag = norm(v_wind_hub)
+    ω_eq = ω_rated_max
+    if v_mag > 0.1
+        # Scan downwards from rated speed to find the stable operating point
+        # where aerodynamic torque equals generator torque. We look for the 
+        # highest ω where P_aero > P_gen to avoid the trivial P=0 stall state.
+        for w in range(ω_rated_max, 0.1, length=200)
+            lambda = w * sys.rotor.radius / v_mag
+            P_aero = 0.5 * p.rho * v_mag^3 * π * sys.rotor.radius^2 * cp_at_tsr(lambda) * cos(p.elevation_angle)^3
+            P_gen = p.k_mppt * w^3
+            if P_aero > P_gen
+                ω_eq = w
+                break
+            end
+        end
+    else
+        ω_eq = 0.0
+    end
+    τ_eq  = p.k_mppt * ω_eq^2
+
+    # ── Restore design ring positions with aero-derived axial preload ────────
+    # settle_to_equilibrium runs at ω ≈ 0 with no aerodynamic loading, so the
+    # rings settle to nearly their natural (zero-strain) spacing.  At that
+    # spacing the tether chord ≈ L_seg_s → zero tension → grey lines at frame 0
+    # and no torsional rigidity at start-up (the "preload deletion" bug).
+    # u0 was built by _build_kite_turbine_system_impl with ring positions
+    # stretched by F_top_ax (thrust + weight estimate at v_wind_ref), giving the
+    # design axial preload.  Restoring those positions here ensures
+    # chord_eq > chord_3d at equilibrium twist → positive tension → coral lines.
+    # Bearing and sky-anchor positions from the settle are intentionally kept;
+    # the operational settle below will re-equilibrate them at ω_rated.
+    for k in 1:Nr
+        gid = sys.ring_ids[k]
+        idx = 3*(gid-1)+1 : 3*gid
+        u_start[idx] .= u0[idx]
+    end
+
     EA_rope  = p.e_modulus * π * (p.tether_diameter / 2)^2
     β_a      = p.elevation_angle
-    # Use the SETTLED hub direction, not the design [cos β, 0, sin β], so the
-    # bisected equilibrium twist matches the basis the live ODE will see at
-    # frame 1 (rope_forces.jl computes shaft_dir from normalize(hub_pos)).
-    # Fixes a small per-ring torque imbalance that was kicking off frame-1
-    # twist oscillation.
+    # shaft direction for torque projections: since ring positions were restored
+    # from u0 (design preloaded, exactly along the shaft axis) the hub position
+    # is at ring_pos[end] = distance * [cos β, 0, sin β], so normalize gives
+    # the design shaft direction exactly.  rope_forces.jl also computes
+    # shaft_dir = normalize(hub_pos) at each ODE step, so both are consistent.
     hub_p_settled = u_start[3*(sys.rotor.node_id-1)+1 : 3*sys.rotor.node_id]
     hp_mag        = norm(hub_p_settled)
     sd            = hp_mag > 0.1 ? hub_p_settled ./ hp_mag :
                                     [cos(β_a), 0.0, sin(β_a)]
-    pp1, pp2 = shaft_perp_basis(sd)
     stride   = 1 + p.n_lines * 3
 
     # 1. Uniform ω — zero inter-ring velocity difference at t=0
     for ri in 1:Nr
-        u_start[6N + Nr + ri] = ω_rated
+        u_start[6N + Nr + ri] = ω_eq
     end
+
+    # ── Operational settle — find bearing equilibrium at ω_rated ────────────
+    # We must do this BEFORE bisection because the operational settle moves
+    # the bearing, which changes the tilted ring plane. If we bisect before
+    # the bearing moves, the initialized rope node positions will not match
+    # the tilted basis used by the ODE during the actual simulation, causing
+    # a visual disconnect and huge artificial tension spikes at t=0.
+    let
+        du2 = zeros(Float64, length(u_start))
+        wind_use   = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
+        ode_params = lift_device === nothing ? (sys, p, wind_use) :
+                                                (sys, p, wind_use, lift_device)
+        dt_op   = p.n_lines >= 8 ? 1e-5 : 4e-5
+        n_op    = 20_000
+        damp_op = 0.05
+
+        for _ in 1:n_op
+            fill!(du2, 0.0)
+            multibody_ode!(du2, u_start, ode_params, 0.0)
+            @views u_start[3N+1:6N] .+= dt_op .* du2[3N+1:6N]
+            @views u_start[1:3N]    .+= dt_op .* u_start[3N+1:6N]
+            @views u_start[3N+1:6N] .*= damp_op
+            @views u_start[6N+Nr+1:6N+2Nr] .= ω_eq
+            u_start[1:3]       .= 0.0
+            u_start[3N+1:3N+3] .= 0.0
+        end
+        @views u_start[3N+1:6N] .= 0.0
+    end
+
+    # Now that the bearing has found its equilibrium, the tilt axis is stable.
+    # Extract the tilted basis for the hub to use for all TRPT bisections.
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1, pp2 = _tilted_ring_basis(u_start, sys, hub_gid, hub_ri)
 
     # 2. Per-segment equilibrium twist via torque-chain bisection.
     u_start[6N + 1] = 0.0   # ground ring: α = 0 (reference)
     α_cum      = 0.0
-    τ_target_a = τ_rated    # torque needed on the LOWER ring of the first segment
+    τ_target_a = τ_eq    # torque needed on the LOWER ring of the first segment
 
     for s in 1:(Nr - 1)
         gid_a = sys.ring_ids[s]
@@ -619,46 +687,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     set_orbital_velocities!(u_start, sys, p)
     @views u_start[3N + 3*(sys.ring_ids[1]-1)+1 : 3N + 3*sys.ring_ids[1]] .= 0.0
 
-    # ── Operational settle — find bearing equilibrium at ω_rated ────────────
-    # The earlier settle_to_equilibrium ran at ω ≈ 0 because its per-step
-    # angular-velocity damp (line 305) kills rotation faster than aero can
-    # sustain it.  The rotary lifter's force scales with √(v² + (ωR)²); at
-    # ω = 0 only the v² term acts, so the bearing equilibrated to the wrong
-    # lift vector.  Run a second damped pass with ω pinned at ω_rated and
-    # translation damped: bearing, hub, and intermediate ring centres all
-    # translate to their true operating seat before frame 0.  This eliminates
-    # the lifter step input that previously snapped the bearing on frame 1
-    # and threw the bridles asymmetric.
-    #
-    # α is held constant at the bisected values (we don't update u_start[6N+1
-    # : 6N+Nr] inside the loop, so dα/dt = ω from the ODE is discarded).
-    # Twist drift would invalidate the torque chain the bisection just
-    # established; the lifter equilibrium is purely a translational problem
-    # at fixed twist + rated rotation.
-    let
-        du2 = zeros(Float64, length(u_start))
-        wind_use   = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
-        ode_params = lift_device === nothing ? (sys, p, wind_use) :
-                                                (sys, p, wind_use, lift_device)
-        dt_op   = p.n_lines >= 8 ? 1e-5 : 4e-5
-        n_op    = 8_000
-        damp_op = 0.15
-
-        for _ in 1:n_op
-            fill!(du2, 0.0)
-            multibody_ode!(du2, u_start, ode_params, 0.0)
-            @views u_start[3N+1:6N] .+= dt_op .* du2[3N+1:6N]
-            @views u_start[1:3N]    .+= dt_op .* u_start[3N+1:6N]
-            @views u_start[3N+1:6N] .*= damp_op            # damp translation
-            @views u_start[6N+Nr+1:6N+2Nr] .= ω_rated      # pin ω at rated
-            u_start[1:3]       .= 0.0
-            u_start[3N+1:3N+3] .= 0.0
-        end
-        @views u_start[3N+1:6N] .= 0.0    # clean residual translational vel
-        set_orbital_velocities!(u_start, sys, p)
-        @views u_start[3N + 3*(sys.ring_ids[1]-1)+1 : 3N + 3*sys.ring_ids[1]] .= 0.0
-    end
-
     return u_start
 end
+export settle_to_operational_state
 export settle_to_operational_state
