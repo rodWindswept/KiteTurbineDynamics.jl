@@ -786,22 +786,34 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 # The winch pays out extra backline from a FIXED anchor point.
                 # This increases the backline rest length → line goes slack →
                 # lift device pulls hub UP and DOWNWIND → rotor rises → β↑ →
-                # wind incidence drops → power spills.  Pitch boost helps the
-                # lift device overcome the initial inertia.
+                # wind incidence drops → power spills.
+                #
+                # Payout profile — cubic ease-in:
+                #   • 5 s delay: let initialisation transients fully decay
+                #     before any payout begins.
+                #   • Cubic ramp over 25 s (full 15 m at t = 30 s):
+                #     starts very slowly so the TRPT tether tension wave
+                #     can propagate down through the ring chain before the
+                #     hub gets ahead of ring N-1.  A linear or fast ramp
+                #     causes the upper segment to stretch before lower rings
+                #     can follow, rotating the tension direction toward axial
+                #     and collapsing torsional torque transmission.
+                #   • Once the system is moving quasi-statically together
+                #     (all rings rising in step), the cubic's later
+                #     acceleration is fine — the TRPT is no longer fighting
+                #     a differential hub-vs-ring displacement.
                 if scenario == :furl && step % 500 == 0
-                    release_frac = clamp((t - 2.0) / 15.0, 0.0, 1.0)  # smooth deploy in 15 s after 2s delay
+                    FURL_DELAY    = 5.0   # s — init-transient grace period
+                    FURL_DURATION = 25.0  # s — ramp from first release to full
+                    x             = clamp((t - FURL_DELAY) / FURL_DURATION, 0.0, 1.0)
+                    release_frac  = x * x * x   # cubic ease-in
                     p_furl = _modified_params(p_run;
                         backline_payout = 15.0 * release_frac)
-                    # Anchor stays FIXED — winch pays out extra line.
-                    # Rest length increases → backline goes slack → lift rises.
-                    # No pitch boost is needed; the lifter kite already has excess lift
-                    # that is held back by the backline tension during normal flight.
-
                     ode_p = isnothing(ld) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld)
 
                     # Progress update — keep the UI alive during long furl runs
                     pct = round(Int, 100 * t / t_total)
-                    scenario_msg[] = "⟳ Furl … $pct% (t=$(round(t, digits=1))s)"
+                    scenario_msg[] = "⟳ Furl … $pct% (payout=$(round(15.0*release_frac,digits=2))m, t=$(round(t,digits=1))s)"
                     yield()
                 end
                 fill!(du, 0.0)

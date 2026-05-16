@@ -587,25 +587,51 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     # the bearing moves, the initialized rope node positions will not match
     # the tilted basis used by the ODE during the actual simulation, causing
     # a visual disconnect and huge artificial tension spikes at t=0.
+    #
+    # Uses orbital_damp_rope_velocities! (same as the simulation loop) rather
+    # than a flat velocity kill.  The flat kill zeroed orbital rope velocities,
+    # producing a "rings spinning, ropes static" equilibrium that is inconsistent
+    # with the simulation's orbital-preserving damper — the mismatch caused
+    # visible power swings in the first ~2 s of every scenario rerun.
+    # With orbital damping, the settle trains positions AND velocities to be
+    # mutually consistent, so the first simulation frame is already smooth.
     let
         du2 = zeros(Float64, length(u_start))
         wind_use   = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
         ode_params = lift_device === nothing ? (sys, p, wind_use) :
                                                 (sys, p, wind_use, lift_device)
         dt_op   = p.n_lines >= 8 ? 1e-5 : 4e-5
-        n_op    = 60_000
-        damp_op = 0.05
+        n_op    = 150_000   # 6 s simulated — long enough for bearing+rope to
+                            # reach orbital equilibrium from any starting state
 
         for _ in 1:n_op
             fill!(du2, 0.0)
             multibody_ode!(du2, u_start, ode_params, 0.0)
-            @views u_start[3N+1:6N] .+= dt_op .* du2[3N+1:6N]
-            @views u_start[1:3N]    .+= dt_op .* u_start[3N+1:6N]
-            @views u_start[3N+1:6N] .*= damp_op
-            @views u_start[6N+Nr+1:6N+2Nr] .= ω_eq
-            u_start[1:3]       .= 0.0
-            u_start[3N+1:3N+3] .= 0.0
+            @views u_start[3N+1:6N]        .+= dt_op .* du2[3N+1:6N]
+            @views u_start[1:3N]            .+= dt_op .* u_start[3N+1:6N]
+            @views u_start[6N+Nr+1:6N+2Nr] .= ω_eq   # pin ω throughout
+
+            # Damp rope nodes with the orbital-preserving damper (same as
+            # the simulation loop) — trains rope positions/velocities to be
+            # consistent with orbital motion so the first sim frame is smooth.
+            orbital_damp_rope_velocities!(u_start, sys, p, 0.05)
+
+            # Ring centres should not drift during the settle — zero their
+            # translational velocities explicitly.  (orbital_damp only touches
+            # RopeNodes; ring translational DOFs are free otherwise.)
+            for k in 1:Nr
+                gid = sys.ring_ids[k]
+                bv  = 3N + 3*(gid-1) + 1
+                u_start[bv : bv+2] .= 0.0
+            end
+            # Bearing and sky-anchor translational velocities: let them settle
+            # naturally (they need to find equilibrium, not be pinned).
+            u_start[1:3]       .= 0.0   # ground ring position (fixed)
+            u_start[3N+1:3N+3] .= 0.0   # ground ring velocity (fixed)
         end
+        # All translational velocities to zero at the end — the subsequent
+        # set_orbital_velocities! call is now redundant (rope nodes are
+        # already at their orbital values) but kept as a consistency check.
         @views u_start[3N+1:6N] .= 0.0
     end
 
