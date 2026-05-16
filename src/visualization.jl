@@ -1234,9 +1234,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     @async while true
         if is_playing[]
-            nf = min(frame_slider.value[] + 1, length(frames_ref[]))
+            nf = min(frame_slider.value[] + 1, length(frames_obs[]))
             set_close_to!(frame_slider, nf)
-            if nf == length(frames_ref[])
+            if nf == length(frames_obs[])
                 is_playing[] = false
                 play_btn.label[]       = "▶ Play"
                 play_btn.buttoncolor[] = :darkgreen
@@ -1254,7 +1254,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     Button(act_row1[1, 1]; label="Export Forces", buttoncolor=:purple,
            labelcolor=:white, height=30) |> b ->
         on(b.clicks) do _
-            fi = frame_obs[]; u = frames_ref[][fi]
+            fi = frame_obs[]; u = frames_obs[][fi]
             du = zeros(Float64, length(u))
             wf = isnothing(wind_fn) ? (pos, t) -> [p.v_wind_ref, 0.0, 0.0] : wind_fn
             multibody_ode!(du, u, (sys, p, wf), 0.0)
@@ -1274,7 +1274,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     Button(act_row1[1, 2]; label="Export Nodes", buttoncolor=:darkslateblue,
            labelcolor=:white, height=30) |> b ->
         on(b.clicks) do _
-            fi = frame_obs[]; u = frames_ref[][fi]
+            fi = frame_obs[]; u = frames_obs[][fi]
             fname = @sprintf("nodes_frame_%04d.csv", fi)
             open(fname, "w") do io
                 println(io, "node_id,type,x,y,z,vx,vy,vz,tension_N")
@@ -1294,7 +1294,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     Button(act_row2[1, 1]; label="Reset View", buttoncolor=:grey40,
            labelcolor=:white, height=30) |> b ->
         on(b.clicks) do _
-            u   = frames_ref[][frame_obs[]]
+            u   = frames_obs[][frame_obs[]]
             xs  = [u[3*(i-1)+1] for i in 1:N]
             ys  = [u[3*(i-1)+2] for i in 1:N]
             zs  = [u[3*(i-1)+3] for i in 1:N]
