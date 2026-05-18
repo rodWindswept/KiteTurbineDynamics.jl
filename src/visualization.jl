@@ -777,8 +777,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
         n_steps = n_run; dt = dt_run
         @async try
-            new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ 500)
-            new_times  = Vector{Float64}(undef,  n_steps ÷ 500)
+            save_every = max(1, round(Int, 0.02 / dt))   # ≈ 0.02 s per frame for all dt values
+            new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ save_every)
+            new_times  = Vector{Float64}(undef,  n_steps ÷ save_every)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
             for step in 1:n_steps
@@ -803,9 +804,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 #     acceleration is fine — the TRPT is no longer fighting
                 #     a differential hub-vs-ring displacement.
                 if scenario == :furl && step % 500 == 0
-                    FURL_DELAY    = 5.0   # s — init-transient grace period
-                    FURL_DURATION = 25.0  # s — ramp from first release to full
-                    x             = clamp((t - FURL_DELAY) / FURL_DURATION, 0.0, 1.0)
+                    furl_delay    = t_total / 6        # grace period scales with run duration
+                    furl_duration = 5 * t_total / 6    # ramp occupies remaining 5/6 of run
+                    x             = clamp((t - furl_delay) / furl_duration, 0.0, 1.0)
                     release_frac  = x * x * x   # cubic ease-in
                     p_furl = _modified_params(p_run;
                         backline_payout = 15.0 * release_frac)
@@ -813,7 +814,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
                     # Progress update — keep the UI alive during long furl runs
                     pct = round(Int, 100 * t / t_total)
-                    scenario_msg[] = "⟳ Furl … $pct% (payout=$(round(15.0*release_frac,digits=2))m, t=$(round(t,digits=1))s)"
+                    scenario_msg[] = "⟳ Furl … $pct% (payout=$(round(15.0*release_frac,digits=2))m, t=$(round(t,digits=1))s / $(round(t_total,digits=0))s)"
                     yield()
                 end
                 fill!(du, 0.0)
@@ -825,7 +826,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
                 orbital_damp_rope_velocities!(u, sys, p_run, 0.05)   # was: p (bug)
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
-                if step % 500 == 0
+                if step % save_every == 0
                     new_frames[fi] = copy(u); new_times[fi] = t; fi += 1
                 end
             end
@@ -1226,23 +1227,43 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           s=="2×"    ? 2.0  : s=="4×"   ? 4.0 : 1.0
         end
 
+    # Wall-clock references — reset when playback starts or speed changes so that
+    # the "which frame should be showing right now?" calculation is always anchored
+    # to a known (frame, time) pair.  GLMakie may drop frames when rendering is
+    # slow, but the animation speed is governed by wall time, not by sleep duration.
+    play_wall_t0  = Ref(0.0)
+    play_frame_t0 = Ref(1)
+
     on(play_btn.clicks) do _
         is_playing[] = !is_playing[]
         play_btn.label[]       = is_playing[] ? "|| Pause" : "▶ Play"
         play_btn.buttoncolor[] = is_playing[] ? :darkorange : :darkgreen
+        if is_playing[]
+            play_wall_t0[]  = time()
+            play_frame_t0[] = frame_slider.value[]
+        end
+    end
+
+    on(speed_obs) do _
+        if is_playing[]
+            play_wall_t0[]  = time()
+            play_frame_t0[] = frame_slider.value[]
+        end
     end
 
     @async while true
         if is_playing[]
-            nf = min(frame_slider.value[] + 1, length(frames_obs[]))
-            set_close_to!(frame_slider, nf)
-            if nf == length(frames_obs[])
+            wall_elapsed = time() - play_wall_t0[]
+            target_nf    = play_frame_t0[] + round(Int, wall_elapsed * speed_obs[] / 0.02)
+            nf = clamp(target_nf, 1, length(frames_obs[]))
+            nf != frame_slider.value[] && set_close_to!(frame_slider, nf)
+            if nf >= length(frames_obs[])
                 is_playing[] = false
                 play_btn.label[]       = "▶ Play"
                 play_btn.buttoncolor[] = :darkgreen
             end
         end
-        sleep(1 / 30 / speed_obs[])
+        sleep(0.016)   # ~60 Hz poll; GLMakie renders at its own rate
     end
 
     # ── SECTION C: Actions ────────────────────────────────────────────────────
