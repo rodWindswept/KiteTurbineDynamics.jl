@@ -958,13 +958,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         hub_z_lbl.text[] = @sprintf("Hub altitude  Z = %5.1f m  (Δ = %+.2f m)",
                                      z_hub_now, isnan(hub_z0_ref[]) ? 0.0 : z_hub_now - hub_z0_ref[])
 
-        elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
-                                        rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
+        # Live shaft elevation from actual hub node position.
+        # p.elevation_angle is the design setpoint (30°); β_actual tracks
+        # furl-induced tilt in real time.
+        hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
+        β_actual = atan(hub_ctr[3], hub_ctr[1])
+        elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  (design %.0f°)  |  Rated %.0f kW",
+                                        rad2deg(β_actual), rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
 
         # ── Lift Device Telemetry ──────────────────────────────────────────
         ld_hud   = lift_device_obs[]
-        hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        β_actual = atan(hub_ctr[3], hub_ctr[1])
         if ld_hud !== nothing
             # Compute T_lift LIVE (not from pre-captured SimFrame which used lift_device=nothing)
             tr = times_ref[]
@@ -1125,7 +1128,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ld_sl_A.value[] = 1.0
             ld_lbl_B.text[] = "Radius (m)"
             ld_sl_B.range[] = 0.5:0.1:5.0
-            ld_sl_B.value[] = 3.7      # auto-sized for v5 10kW
+            ld_sl_B.value[] = 1.5      # rotary_lifter_default() rotor radius
         end
     end
 
