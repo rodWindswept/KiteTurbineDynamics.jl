@@ -458,7 +458,7 @@ function orbital_damp_rope_velocities!(u       ::Vector{Float64},
 end
 
 """
-    simulate(sys, u0, p, wind_fn; n_steps, dt, lin_damp, ang_damp) → Vector{Float64}
+    simulate(sys, u0, p, wind_fn; n_steps, dt, lin_damp, ang_damp, bearing_tr_damp) → Vector{Float64}
 
 Explicit semi-implicit Euler integrator with wind loading.
 Same stability guarantee as `settle_to_equilibrium` but drives the full
@@ -467,16 +467,35 @@ aero + generator dynamics so angular velocity can evolve naturally.
 `ang_damp = 1.0` (default) means no angular velocity kill per step —
 the hub is free to spin up or down under the net torque balance.
 `lin_damp = 0.05` keeps rope oscillations damped without stopping the physics.
+
+`bearing_tr_damp = 0.99994` damps the bearing's velocity component
+transverse to the shaft axis (i.e. the off-axis precession velocity).
+The along-shaft component is untouched so the bearing can rise and fall freely.
+
+**Physical justification:** The bearing assembly is a free particle in the
+air, held in position only by tether lines (cyan line below, bridles above,
+back line via sky anchor).  Several small real-world dissipation mechanisms
+damp transverse (off-axis) oscillations that the ODE does not model:
+aerodynamic drag on the fitting hardware and attachment knots, viscoelastic
+damping in the line material (Dyneema creep and hysteresis), and gyroscopic
+stabilisation from the spinning rotor above resisting lateral excitation.
+Without any transverse dissipation the simulated bearing is an ideal free
+particle that can precess indefinitely under asymmetric bridle loading
+(e.g. during furl when ring deceleration makes bridle tensions unequal).
+The default corresponds to an e-folding time of ~0.7 s for transverse
+motion — consistent with observed line-system damping and gentle enough to
+preserve all physically meaningful dynamics.
 """
-function simulate(sys         ::KiteTurbineSystem,
-                  u0          ::Vector{Float64},
-                  p           ::SystemParams,
-                  wind_fn     ::Function;
-                  lift_device ::Union{Nothing, LiftDevice} = nothing,
-                  n_steps     ::Int     = 50_000,
-                  dt          ::Float64 = 4e-5,
-                  lin_damp    ::Float64 = 0.05,
-                  ang_damp    ::Float64 = 1.0)
+function simulate(sys            ::KiteTurbineSystem,
+                  u0             ::Vector{Float64},
+                  p              ::SystemParams,
+                  wind_fn        ::Function;
+                  lift_device    ::Union{Nothing, LiftDevice} = nothing,
+                  n_steps        ::Int     = 50_000,
+                  dt             ::Float64 = 4e-5,
+                  lin_damp       ::Float64 = 0.05,
+                  ang_damp       ::Float64 = 1.0,
+                  bearing_tr_damp::Float64 = 0.99994)
     u  = copy(u0)
     N  = sys.n_total
     Nr = sys.n_ring
@@ -484,6 +503,12 @@ function simulate(sys         ::KiteTurbineSystem,
     t  = 0.0
     ode_params = lift_device === nothing ? (sys, p, wind_fn) :
                                            (sys, p, wind_fn, lift_device)
+
+    β0      = p.elevation_angle
+    sd0     = [cos(β0), 0.0, sin(β0)]   # design shaft direction (fallback)
+    bgid    = sys.bearing_id
+    hub_gid = sys.rotor.node_id
+    b_iv    = 3N + 3*(bgid-1) + 1       # first velocity index of bearing in u
 
     for _ in 1:n_steps
         fill!(du, 0.0)
@@ -497,6 +522,17 @@ function simulate(sys         ::KiteTurbineSystem,
 
         orbital_damp_rope_velocities!(u, sys, p, lin_damp)
         @views u[6N+Nr+1:6N+2Nr] .*= ang_damp
+
+        # Bearing transverse damping: damp only the velocity component perpendicular
+        # to the shaft axis.  The axial component (rise/fall during furl) is free.
+        hp    = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
+        hp_m  = norm(hp)
+        sd    = hp_m > 0.1 ? hp ./ hp_m : sd0
+        vbx, vby, vbz = u[b_iv], u[b_iv+1], u[b_iv+2]
+        v_ax_s = vbx*sd[1] + vby*sd[2] + vbz*sd[3]   # scalar dot product
+        u[b_iv]   = v_ax_s*sd[1] + bearing_tr_damp*(vbx - v_ax_s*sd[1])
+        u[b_iv+1] = v_ax_s*sd[2] + bearing_tr_damp*(vby - v_ax_s*sd[2])
+        u[b_iv+2] = v_ax_s*sd[3] + bearing_tr_damp*(vbz - v_ax_s*sd[3])
 
         u[1:3]       .= 0.0   # ground ring centre stays at origin
         u[3N+1:3N+3] .= 0.0   # ground ring translational velocity = 0
