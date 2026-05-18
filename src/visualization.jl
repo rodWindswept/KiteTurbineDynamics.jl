@@ -782,6 +782,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             new_times  = Vector{Float64}(undef,  n_steps ÷ save_every)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
+            release_frac = 0.0   # furl payout fraction (updated every 500 steps)
             for step in 1:n_steps
                 # ── Furl: winch payout controller (every 500 steps) ─────────
                 # The winch pays out extra backline from a FIXED anchor point.
@@ -825,6 +826,19 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
                 orbital_damp_rope_velocities!(u, sys, p_run, 0.05)   # was: p (bug)
+                # PTO co-braking during furl: damp all ring angular velocities
+                # proportionally to how far through the furl we are.
+                # Without this the hub decelerates (reduced aero torque at higher
+                # elevation angle) while the PTO end free-spins on inertia →
+                # Δα accumulates → torsional collapse at ~180° twist.
+                # Ramping with release_frac means no braking during the grace
+                # period; full 4-second time constant (0.99999/step) at peak furl.
+                # Physically: the generator is switched to plugging/regenerative
+                # brake mode as the backline pays out, decelerating both rotor and
+                # PTO shaft together so TRPT twist stays near its design value.
+                if scenario == :furl && release_frac > 0.0
+                    @views u[6N+Nr+1:6N+2Nr] .*= (1.0 - release_frac * 1e-5)
+                end
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
                 if step % save_every == 0
                     new_frames[fi] = copy(u); new_times[fi] = t; fi += 1
