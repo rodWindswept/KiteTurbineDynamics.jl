@@ -41,7 +41,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     q         = 0.5 * p.rho * v^2
     thrust_ax   = q * π * p.rotor_radius^2 * 0.8 * cos(β)^2
     F_aero_z    = thrust_ax * sin(β) + (m_rotor + kite_mass) * g_z
-    F_top_ax    = max(-F_aero_z / sin(β), 20.0)
+    F_top_ax    = max(F_aero_z / sin(β), 20.0)
 
     g_axial_inc = p.m_ring * 9.81 / sin(β)
     F_axial     = zeros(n_seg)
@@ -507,6 +507,48 @@ end
 
 
 """
+    design_preload_from_sky_anchor(p, lift_device; bearing_offset, cyan_L0) → T_cyan
+
+Solve the 3-force balance at the sky anchor node to find the design cyan-line tension.
+
+Sky anchor equilibrium:  F_lift + T_back·back_dir + T_cyan·cyan_dir + W_sky = 0
+
+Solves the 2×2 (x, z) linear system for [T_back; T_cyan] given:
+- F_lift from lift_force_steady at design wind speed
+- Sky anchor position: (tether_length + bearing_offset + cyan_L0) along shaft
+- Back anchor position: (tether_length·cos β + back_anchor_fwd_x, 0, 0)
+- Bearing position: (tether_length + bearing_offset) along shaft
+
+Returns T_cyan (clamped to ≥ 0).
+"""
+function design_preload_from_sky_anchor(p::SystemParams, lift_device::LiftDevice;
+                                         bearing_offset::Float64 = 6.0,
+                                         cyan_L0::Float64        = 5.0,
+                                         m_sky::Float64          = 0.3)
+    β         = p.elevation_angle
+    shaft_dir = [cos(β), 0.0, sin(β)]
+
+    bearing_pos   = (p.tether_length + bearing_offset) .* shaft_dir
+    sky_pos       = (p.tether_length + bearing_offset + cyan_L0) .* shaft_dir
+    back_ax       = p.tether_length * cos(β) + p.back_anchor_fwd_x
+    back_pos      = [back_ax, 0.0, 0.0]
+
+    back_dir = normalize(back_pos .- sky_pos)
+    cyan_dir = normalize(bearing_pos .- sky_pos)   # ≈ –shaft_dir
+
+    _, T_lift, el_deg = lift_force_steady(lift_device, p.rho, p.v_wind_ref)
+    el = deg2rad(el_deg)
+
+    # T_back·back_dir + T_cyan·cyan_dir = –F_lift + W_sky_upward
+    A   = [back_dir[1]  cyan_dir[1];
+           back_dir[3]  cyan_dir[3]]
+    rhs = [-T_lift * cos(el);
+           -T_lift * sin(el) + m_sky * 9.81]
+    sol = A \ rhs
+    return max(sol[2], 0.0)
+end
+
+"""
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
 Initializes the system at the rated operating point to avoid torsional transients.
@@ -551,29 +593,64 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     # rings settle to nearly their natural (zero-strain) spacing.  At that
     # spacing the tether chord ≈ L_seg_s → zero tension → grey lines at frame 0
     # and no torsional rigidity at start-up (the "preload deletion" bug).
-    # u0 was built by _build_kite_turbine_system_impl with ring positions
-    # stretched by F_top_ax (thrust + weight estimate at v_wind_ref), giving the
-    # design axial preload.  Restoring those positions here ensures
-    # chord_eq > chord_3d at equilibrium twist → positive tension → coral lines.
+    # When lift_device is provided, we add T_cyan (cyan line tension from the
+    # sky anchor 3-force balance) to the design F_top_ax.  This accounts for
+    # the additional axial load the kite line imposes on the bearing, which
+    # propagates through the bridles to preload the top of the TRPT shaft.
     # Bearing and sky-anchor positions from the settle are intentionally kept;
     # the operational settle below will re-equilibrate them at ω_rated.
-    for k in 1:Nr
-        gid = sys.ring_ids[k]
-        idx = 3*(gid-1)+1 : 3*gid
-        u_start[idx] .= u0[idx]
+    β_r   = p.elevation_angle
+    sd_r  = [cos(β_r), 0.0, sin(β_r)]
+    let
+        if lift_device !== nothing
+            T_cyan_des = design_preload_from_sky_anchor(p, lift_device)
+            n_seg_r    = Nr - 1
+            EA_tot     = p.n_lines * p.e_modulus * π * (p.tether_diameter / 2)^2
+            k_ax       = EA_tot / (p.tether_length / n_seg_r)
+            m_rotor_d  = p.n_blades * p.m_blade
+            kite_m_d   = sys.kite.mass
+            v_r        = p.v_wind_ref
+            thrust_r   = 0.5 * p.rho * v_r^2 * π * p.rotor_radius^2 * 0.8 * cos(β_r)^2
+            F_aero_z_r = thrust_r * sin(β_r) + (m_rotor_d + kite_m_d) * (-9.81)
+            F_top_ax_r = max(F_aero_z_r / sin(β_r) + T_cyan_des, 20.0)
+            g_inc      = p.m_ring * 9.81 / sin(β_r)
+            F_ax       = zeros(n_seg_r)
+            F_ax[n_seg_r] = F_top_ax_r
+            for i in (n_seg_r-1):-1:1
+                F_ax[i] = F_ax[i+1] + g_inc
+            end
+            seg_len = p.tether_length / n_seg_r
+            rp = zeros(3)
+            for k in 1:Nr
+                gid = sys.ring_ids[k]
+                idx = 3*(gid-1)+1 : 3*gid
+                u_start[idx] .= rp
+                if k < Nr
+                    stretch = max(0.0, F_ax[k] / k_ax)
+                    rp .+= (seg_len + stretch) .* sd_r
+                end
+            end
+        else
+            for k in 1:Nr
+                gid = sys.ring_ids[k]
+                idx = 3*(gid-1)+1 : 3*gid
+                u_start[idx] .= u0[idx]
+            end
+        end
     end
 
+    # Capture restored ring positions — pinned throughout the operational settle
+    # to prevent dt²·(F/m) position drift from erasing the axial preload.
+    preload_ring_pos = [u_start[3*(sys.ring_ids[k]-1)+1 : 3*sys.ring_ids[k]] for k in 1:Nr]
+
     EA_rope  = p.e_modulus * π * (p.tether_diameter / 2)^2
-    β_a      = p.elevation_angle
-    # shaft direction for torque projections: since ring positions were restored
-    # from u0 (design preloaded, exactly along the shaft axis) the hub position
-    # is at ring_pos[end] = distance * [cos β, 0, sin β], so normalize gives
-    # the design shaft direction exactly.  rope_forces.jl also computes
-    # shaft_dir = normalize(hub_pos) at each ODE step, so both are consistent.
+    # shaft direction for torque projections: ring positions were restored to
+    # design-preloaded values along [cos β, 0, sin β]; normalising the hub
+    # position recovers that direction exactly.  sd_r (computed above) is the
+    # same vector — used here as the fallback when hub is near origin.
     hub_p_settled = u_start[3*(sys.rotor.node_id-1)+1 : 3*sys.rotor.node_id]
     hp_mag        = norm(hub_p_settled)
-    sd            = hp_mag > 0.1 ? hub_p_settled ./ hp_mag :
-                                    [cos(β_a), 0.0, sin(β_a)]
+    sd            = hp_mag > 0.1 ? hub_p_settled ./ hp_mag : sd_r
     stride   = 1 + p.n_lines * 3
 
     # 1. Uniform ω — zero inter-ring velocity difference at t=0
@@ -623,6 +700,13 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
                 gid = sys.ring_ids[k]
                 bv  = 3N + 3*(gid-1) + 1
                 u_start[bv : bv+2] .= 0.0
+            end
+            # Pin ring positions to design preload — prevents dt²·(F/m) drift
+            # from accumulating over 150 000 steps and erasing axial preload.
+            for k in 1:Nr
+                gid = sys.ring_ids[k]
+                idx = 3*(gid-1)+1 : 3*gid
+                u_start[idx] .= preload_ring_pos[k]
             end
             # Bearing and sky-anchor translational velocities: let them settle
             # naturally (they need to find equilibrium, not be pinned).
@@ -716,4 +800,4 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     return u_start
 end
 export settle_to_operational_state
-export settle_to_operational_state
+export design_preload_from_sky_anchor
