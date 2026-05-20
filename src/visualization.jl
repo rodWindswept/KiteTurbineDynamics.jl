@@ -809,6 +809,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 #     (all rings rising in step), the cubic's later
                 #     acceleration is fine — the TRPT is no longer fighting
                 #     a differential hub-vs-ring displacement.
+                # furl-only: winch payout physics (unchanged logic)
                 if scenario == :furl && step % 500 == 0
                     furl_delay    = t_total / 6        # grace period scales with run duration
                     furl_duration = 5 * t_total / 6    # ramp occupies remaining 5/6 of run
@@ -817,10 +818,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     p_furl = _modified_params(p_run;
                         backline_payout = 15.0 * release_frac)
                     ode_p = isnothing(ld) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld)
+                end
 
-                    # Progress update — keep the UI alive during long furl runs
+                # all scenarios: progress update + yield every 500 steps
+                if step % 500 == 0
                     pct = round(Int, 100 * t / t_total)
-                    scenario_msg[] = "⟳ Furl … $pct% (payout=$(round(15.0*release_frac,digits=2))m, t=$(round(t,digits=1))s / $(round(t_total,digits=0))s)"
+                    scenario_msg[] = if scenario == :furl
+                        "⟳ Furl … $pct%  (payout=$(round(15.0*release_frac, digits=2)) m,  t=$(round(t,digits=1)) / $(round(t_total,digits=0)) s)"
+                    else
+                        "⟳ $label … $pct%  (t=$(round(t,digits=1)) / $(round(t_total,digits=0)) s)"
+                    end
                     yield()
                 end
                 fill!(du, 0.0)
