@@ -54,7 +54,8 @@ struct SimFrame
     sag_seg           :: Int          # segment index of max sag (1-based)
 
     # ── Per-ring utilisation (for ring-colour rendering) ──────────────────
-    ring_utils        :: Vector{Float64}  # length = n_rings (intermediate only, excludes ground+hub)
+    ring_utils        :: Vector{Float64}           # worst-beam util per ring (HUD/peaks/warnings)
+    ring_beam_utils   :: Vector{Vector{Float64}}   # [ring_idx][beam_idx] — for per-beam 3D colour
 
     # ── Lift device ───────────────────────────────────────────────────────
     T_lift            :: Float64      # lift line tension at hub (N; 0 if no device)
@@ -173,10 +174,11 @@ function capture_frame(u           :: AbstractVector,
     fos_tether = T_max > 0.0 ? TETHER_SWL / T_max : Inf
 
     # Ring buckling safety
-    sf_results  = ring_safety_frame(u, collect(alpha_vec), sys, p)
-    ring_utils  = [r.utilisation for r in sf_results]
-    max_util    = isempty(ring_utils) ? 0.0 : maximum(ring_utils)
-    fos_ring    = max_util > 0.0 ? 1.0 / max_util : Inf
+    rea_results     = ring_element_analysis(u, collect(alpha_vec), sys, p)
+    ring_beam_utils = [[b.utilisation for b in ref.beams] for ref in rea_results]
+    ring_utils      = [ref.max_util for ref in rea_results]
+    max_util        = isempty(ring_utils) ? 0.0 : maximum(ring_utils)
+    fos_ring        = max_util > 0.0 ? 1.0 / max_util : Inf
 
     # Rope sag
     max_sag_mm  = 0.0
@@ -229,7 +231,7 @@ function capture_frame(u           :: AbstractVector,
         hub_x, hub_y, hub_z, hub_z_delta, V_hub, tsr,
         Δα_deg, Δω, tau_aero, tau_gen,
         T_max, fos_tether, max_util, fos_ring, n_slack, max_sag_mm, sag_seg,
-        ring_utils,
+        ring_utils, ring_beam_utils,
         T_lift_val, elev_lift_val, lift_margin_v, lift_type_sym,
         torsional_overtwist, buckling_risk, line_slack_flag,
     )
