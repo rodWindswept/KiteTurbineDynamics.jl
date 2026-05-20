@@ -24,15 +24,27 @@ const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
-"""
-    tube_I(Do, t) → I (m⁴)
+const G_CFRP       = 5e9    # Pa — conservative shear modulus (woven CFRP layup)
+const σ_CFRP_COMPR = 600e6  # Pa — compressive strength (conservative unidirectional)
 
-Second moment of area for a hollow circular tube (exact formula).
 """
-function tube_I(Do::Float64, t::Float64)::Float64
-    Di = Do - 2.0 * t
-    return π / 64.0 * (Do^4 - Di^4)
+    tube_props(R) → NamedTuple
+
+Cross-section properties of the CFRP design tube for a ring of radius R.
+Returns (Do, t, Di, A, I_bend, J) where J = 2·I_bend for a circular tube.
+"""
+function tube_props(R::Float64)
+    Do     = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
+    t      = max(T_OVER_D * Do, T_MIN_WALL)
+    Di     = Do - 2.0 * t
+    A      = π / 4.0  * (Do^2 - Di^2)
+    I_bend = π / 64.0 * (Do^4 - Di^4)
+    J      = 2.0 * I_bend
+    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J)
 end
+
+# Backward-compat wrapper — existing callers unaffected
+tube_I(Do::Float64, t::Float64)::Float64 = π / 64.0 * (Do^4 - (Do - 2t)^4)
 
 """
     ring_safety_frame(u, alpha, sys, p) → Vector{NamedTuple}
@@ -119,10 +131,8 @@ function ring_safety_frame(u      ::AbstractVector,
 
         # ── CFRP design tube for this ring ─────────────────────────────────────────────────────
         # Tube outer diameter scales as Do = DO_SCALE × √R  (derived: N_comp constant, I_req ∝ R²).
-        Do_design = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
-        t_design  = max(T_OVER_D * Do_design, T_MIN_WALL)
-        I_design  = tube_I(Do_design, t_design)
-        P_crit    = π^2 * E_CFRP * I_design / L_poly^2
+        tp       = tube_props(R)
+        P_crit   = π^2 * E_CFRP * tp.I_bend / L_poly^2
 
         util = N_comp  / max(P_crit, 1e-9)
         fos  = P_crit  / max(N_comp,  1e-9)
@@ -131,7 +141,7 @@ function ring_safety_frame(u      ::AbstractVector,
                         radius      = R,
                         N_comp      = N_comp,
                         P_crit      = P_crit,
-                        tube_Do_mm  = Do_design * 1e3,
+                        tube_Do_mm  = tp.Do * 1e3,
                         utilisation = util,
                         fos         = fos,
                         exceeded    = (util > 1.0)))
