@@ -280,30 +280,35 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                color=co, linewidth=lw, visible=vis_tethers)
     end
 
-    # Intermediate ring polygons — hoop-compression colour
+    # Intermediate ring polygons — per-beam utilisation colour
     for k in 2:(Nr-1)
         gid_k = sys.ring_ids[k]
         nk    = sys.nodes[gid_k]::RingNode
         R_k   = nk.radius
         ri_k  = nk.ring_idx
-        ro = @lift begin
-            u   = $u_obs
-            ctr = u[3*(gid_k-1)+1 : 3*gid_k]
-            α   = u[6N + ri_k]
-            pp1, pp2 = _perp_fn(u)
-            jj  = [1:p.n_lines; 1]
-            pts = [attachment_point(ctr, R_k, α, jj[i], p.n_lines, pp1, pp2)
-                   for i in eachindex(jj)]
-            ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
+        for j in 1:p.n_lines
+            j_next = mod1(j + 1, p.n_lines)
+            edge_obs = @lift begin
+                u    = $u_obs
+                ctr  = u[3*(gid_k-1)+1 : 3*gid_k]
+                α    = u[6N + ri_k]
+                pp1, pp2 = _perp_fn(u)
+                pa = attachment_point(ctr, R_k, α, j,      p.n_lines, pp1, pp2)
+                pb = attachment_point(ctr, R_k, α, j_next, p.n_lines, pp1, pp2)
+                ([pa[1], pb[1]], [pa[2], pb[2]], [pa[3], pb[3]])
+            end
+            ec = @lift begin
+                sfs  = $sim_frames_obs
+                fi   = $frame_obs
+                util = (fi <= length(sfs) &&
+                        k-1 <= length(sfs[fi].ring_beam_utils) &&
+                        j   <= length(sfs[fi].ring_beam_utils[k-1])) ?
+                       sfs[fi].ring_beam_utils[k-1][j] : 0.0
+                _ring_util_color(util)
+            end
+            lines!(ax3d, @lift($edge_obs[1]), @lift($edge_obs[2]), @lift($edge_obs[3]);
+                   color=ec, linewidth=2.0, visible=vis_rings)
         end
-        rc = @lift begin
-            sfs  = $sim_frames_obs
-            fi   = $frame_obs
-            util = fi <= length(sfs) ? sfs[fi].ring_utils[k-1] : 0.0
-            _ring_util_color(util)
-        end
-        lines!(ax3d, @lift($ro[1]), @lift($ro[2]), @lift($ro[3]);
-               color=rc, linewidth=1.5)
     end
 
     # Hub (rotor) ring — firebrick, thicker
