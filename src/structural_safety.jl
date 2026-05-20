@@ -50,101 +50,21 @@ tube_I(Do::Float64, t::Float64)::Float64 = π / 64.0 * (Do^4 - (Do - 2t)^4)
     ring_safety_frame(u, alpha, sys, p) → Vector{NamedTuple}
 
 Compute per-ring polygon-segment compression and Euler column buckling FoS for one ODE frame.
-
-Failure mode: Euler column (pin-pin) buckling of each straight polygon segment.
-  P_crit = π² · E_CFRP · I_tube / L_poly²
-where L_poly = 2R·sin(π/n) is the flat chord length of one polygon side.
-
-Ring tube design: CFRP hollow tube sized by Do = DO_SCALE × √R, t = T_OVER_D × Do.
-FoS is computed against that design tube.  At rated loads FoS ≈ FOS_DESIGN = 3.0;
-under higher than rated loads FoS falls, under lighter loads it rises — giving a
-meaningful real-time margin indicator on the dashboard.
-
-Skips the fixed ground node (ring_idx = 1) and the hub (ring_idx = Nr).
+Delegates to `ring_element_analysis` and flattens results into the same NamedTuple format
+(`ring_id`, `radius`, `N_comp`, `P_crit`, `tube_Do_mm`, `utilisation`, `fos`, `exceeded`)
+that downstream consumers (e.g. `capture_frame`) expect.
 """
 function ring_safety_frame(u      ::AbstractVector,
                             alpha  ::AbstractVector,
                             sys    ::KiteTurbineSystem,
                             p      ::SystemParams)
-    N  = sys.n_total
-    Nr = sys.n_ring
-    β         = p.elevation_angle
-    shaft_dir = [cos(β), 0.0, sin(β)]
-    perp1, perp2 = shaft_perp_basis(shaft_dir)
-
-    results = Vector{NamedTuple}()
-
-    for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])  # skip ground and hub
-        node   = sys.nodes[ring_gid]::RingNode
-        R      = node.radius
-        ri     = node.ring_idx
-        α_ring = alpha[ri]
-        ctr    = u[3*(ring_gid-1)+1 : 3*ring_gid]
-
-        # ── Accumulate total inward radial force on this ring from all attached sub-segments ──
-        F_inward = 0.0
-        for ss in sys.sub_segs
-            on_end_b = ss.end_b.is_ring && ss.end_b.node_id == ring_gid
-            on_end_a = ss.end_a.is_ring && ss.end_a.node_id == ring_gid
-            (on_end_b || on_end_a) || continue
-
-            if on_end_b
-                pa = ss.end_a.is_ring ? begin
-                        node_a = sys.nodes[ss.end_a.node_id]::RingNode
-                        ctr_a  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-                        attachment_point(ctr_a, node_a.radius, alpha[node_a.ring_idx],
-                                         ss.end_a.line_idx, p.n_lines, perp1, perp2)
-                     end : u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-                pb  = attachment_point(ctr, R, α_ring, ss.end_b.line_idx,
-                                       p.n_lines, perp1, perp2)
-                len = norm(pb .- pa); len < 1e-9 && continue
-                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
-                r_vec = pb .- ctr
-                dir   = (pb .- pa) ./ len   # rope direction toward ring
-                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
-            else
-                pb = ss.end_b.is_ring ? begin
-                        node_b = sys.nodes[ss.end_b.node_id]::RingNode
-                        ctr_b  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-                        attachment_point(ctr_b, node_b.radius, alpha[node_b.ring_idx],
-                                         ss.end_b.line_idx, p.n_lines, perp1, perp2)
-                     end : u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-                pa  = attachment_point(ctr, R, α_ring, ss.end_a.line_idx,
-                                       p.n_lines, perp1, perp2)
-                len = norm(pb .- pa); len < 1e-9 && continue
-                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
-                r_vec = pa .- ctr
-                dir   = (pa .- pb) ./ len   # rope direction toward ring
-                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
-            end
-        end
-
-        # ── Polygon column compression ─────────────────────────────────────────────────────────
-        # For a regular n-gon with equal inward nodal forces F_v = F_inward/n:
-        #   compression per segment  N_comp = F_v / (2·tan(π/n))
-        n_float = float(p.n_lines)
-        F_v     = F_inward / n_float
-        N_comp  = F_v / (2.0 * tan(π / n_float))
-
-        # Polygon segment length: flat chord between adjacent vertices (pin-pin column length)
-        L_poly  = 2.0 * R * sin(π / n_float)
-
-        # ── CFRP design tube for this ring ─────────────────────────────────────────────────────
-        # Tube outer diameter scales as Do = DO_SCALE × √R  (derived: N_comp constant, I_req ∝ R²).
-        tp       = tube_props(R)
-        P_crit   = π^2 * E_CFRP * tp.I_bend / L_poly^2
-
-        util = N_comp  / max(P_crit, 1e-9)
-        fos  = P_crit  / max(N_comp,  1e-9)
-
-        push!(results, (ring_id     = k,
-                        radius      = R,
-                        N_comp      = N_comp,
-                        P_crit      = P_crit,
-                        tube_Do_mm  = tp.Do * 1e3,
-                        utilisation = util,
-                        fos         = fos,
-                        exceeded    = (util > 1.0)))
-    end
-    return results
+    frames = ring_element_analysis(u, alpha, sys, p)
+    return [(ring_id     = f.ring_id,
+             radius      = f.radius,
+             N_comp      = maximum(b.N     for b in f.beams; init=0.0),
+             P_crit      = maximum(b.N_crit for b in f.beams; init=1.0),
+             tube_Do_mm  = tube_props(f.radius).Do * 1e3,
+             utilisation = f.max_util,
+             fos         = f.max_util > 1e-9 ? 1.0 / f.max_util : Inf,
+             exceeded    = (f.max_util > 1.0)) for f in frames]
 end
