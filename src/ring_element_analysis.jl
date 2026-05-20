@@ -193,3 +193,64 @@ Returns the 6n nodal displacement vector.
 function solve_ring_frame(K_global::Matrix{Float64}, F_vec::Vector{Float64})::Vector{Float64}
     return K_global \ F_vec
 end
+
+"""
+    extract_beam_forces(d, R, n, α, tp, K_locals, T_mats) → Vector{BeamResult}
+
+Recover per-beam internal forces from the solved nodal displacement vector d.
+Returns a Vector of n BeamResults (one per polygon side).
+
+Sign convention:
+  N > 0 = compressive (positive compression)
+  M_ip, M_oop = max absolute bending moment at either end of the beam
+  T_tor = torsion at node 1 of the beam
+"""
+function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64,
+                              tp::NamedTuple, K_locals::Vector{Matrix{Float64}},
+                              T_mats::Vector{Matrix{Float64}})::Vector{BeamResult}
+    L_beam = 2.0 * R * sin(π / n)
+    N_crit = 4.0 * π^2 * E_CFRP * tp.I_bend / L_beam^2   # fixed-fixed K=0.5
+    M_el   = σ_CFRP_COMPR * tp.I_bend / (tp.Do / 2.0)    # elastic moment capacity
+
+    results = Vector{BeamResult}(undef, n)
+
+    for j in 1:n
+        jnext = mod1(j + 1, n)
+
+        # Extract 12-DOF element displacement in global ring-local frame
+        idx_j    = 6*(j-1)+1    : 6*j
+        idx_jn   = 6*(jnext-1)+1 : 6*jnext
+        d_elem   = [d[idx_j]; d[idx_jn]]
+
+        # Transform to local beam frame and compute local forces
+        d_local  = T_mats[j] * d_elem
+        f_local  = K_locals[j] * d_local
+
+        # Internal forces (sign: f_local[1] = reaction on node 1 in +x_L direction)
+        N_ax  = -f_local[1]         # compression positive
+        M_ip  = max(abs(f_local[6]), abs(f_local[12]))   # bending about z (in-plane)
+        M_oop = max(abs(f_local[5]), abs(f_local[11]))   # bending about y (OOP)
+        T_tor = abs(f_local[4])                           # torsion
+
+        util = beam_column_utilisation(N_ax, M_ip, M_oop, N_crit, M_el)
+        fos  = util > 1e-12 ? 1.0 / util : Inf
+
+        results[j] = BeamResult(N_ax, M_ip, M_oop, T_tor, N_crit, M_el,
+                                 util, fos, util > 1.0)
+    end
+    return results
+end
+
+"""
+    beam_column_utilisation(N, M_ip, M_oop, N_crit, M_el) → Float64
+
+Combined axial + bending interaction ratio.
+SRSS bending combination: util = N/N_crit + √(M_ip²+M_oop²)/M_el
+util ≥ 1.0 means the beam has exceeded its combined capacity.
+"""
+function beam_column_utilisation(N::Float64, M_ip::Float64, M_oop::Float64,
+                                  N_crit::Float64, M_el::Float64)::Float64
+    N_term = max(N, 0.0) / max(N_crit, 1e-9)
+    M_term = sqrt(M_ip^2 + M_oop^2) / max(M_el, 1e-9)
+    return N_term + M_term
+end
