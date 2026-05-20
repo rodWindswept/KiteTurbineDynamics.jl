@@ -16,13 +16,13 @@ end
     R=2.0; n=5; α=0.0; F=1000.0
     tp = KiteTurbineDynamics.tube_props(R)
 
-    # Equal outward radial force at each vertex (centrifugal load → compressive polygon)
+    # Equal inward radial force at each vertex (tether loads → compressive polygon)
     # Correct polygon-compression formula: N = F / (2·sin(π/n))
     F_local = zeros(3, n)
     for j in 1:n
         φ = α + (j-1) * 2π/n
-        F_local[1,j] = F * cos(φ)
-        F_local[2,j] = F * sin(φ)
+        F_local[1,j] = -F * cos(φ)
+        F_local[2,j] = -F * sin(φ)
     end
 
     K,Fv,Klocs,Tmats = KiteTurbineDynamics.assemble_ring_frame(R, n, α, tp, F_local)
@@ -41,14 +41,14 @@ end
     R=2.0; n=5; α=0.0; F=1000.0
     tp = KiteTurbineDynamics.tube_props(R)
 
-    # Double force at vertex 1, no force at vertex 3 (asymmetric outward/centrifugal load)
-    # Outward radial forces → compressive polygon; asymmetry breaks N uniformity
+    # Double force at vertex 1, no force at vertex 3 (asymmetric inward load)
+    # Inward radial forces → compressive polygon; asymmetry breaks N uniformity
     F_local = zeros(3, n)
-    forces = [2F, F, 0.0, F, F]   # outward magnitudes
+    forces = [2F, F, 0.0, F, F]   # inward magnitudes
     for j in 1:n
         φ = α + (j-1) * 2π/n
-        F_local[1,j] = forces[j] * cos(φ)
-        F_local[2,j] = forces[j] * sin(φ)
+        F_local[1,j] = -forces[j] * cos(φ)
+        F_local[2,j] = -forces[j] * sin(φ)
     end
 
     K,Fv,Klocs,Tmats = KiteTurbineDynamics.assemble_ring_frame(R, n, α, tp, F_local)
@@ -56,7 +56,7 @@ end
     beams = KiteTurbineDynamics.extract_beam_forces(d, R, n, α, tp, Klocs, Tmats)
 
     Ns = [b.N for b in beams]
-    # All beams in compression (outward loads → compressive polygon)
+    # All beams in compression (inward loads → compressive polygon)
     @test all(N -> N > 0, Ns)
     # N values are not all equal (asymmetric loading breaks uniformity)
     @test maximum(Ns) - minimum(Ns) > 1.0   # at least 1 N variation

@@ -227,7 +227,7 @@ function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64
         f_local  = K_locals[j] * d_local
 
         # Internal forces (sign: f_local[1] = reaction on node 1 in +x_L direction)
-        N_ax  = -f_local[1]         # compression positive
+        N_ax  = f_local[1]           # compression positive (f_local[1] > 0 when beam compressed)
         M_ip  = max(abs(f_local[6]), abs(f_local[12]))   # bending about z (in-plane)
         M_oop = max(abs(f_local[5]), abs(f_local[11]))   # bending about y (OOP)
         T_tor = abs(f_local[4])                           # torsion
