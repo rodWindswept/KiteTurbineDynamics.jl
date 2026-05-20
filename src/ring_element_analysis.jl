@@ -169,7 +169,7 @@ function assemble_ring_frame(R::Float64, n::Int, α::Float64,
     end
 
     # Self-equilibration check
-    F_res = norm(sum(reshape(F_vec[1:6:end], :), dims=1))   # residual force
+    F_res = norm(sum(reshape(F_vec, 6, n), dims=2))          # net DOF imbalance across all nodes
     F_scl = maximum(abs, F_vec; init=1.0)
     if F_res / F_scl > 1e-2
         @warn "Ring frame: load imbalance $(round(F_res/F_scl*100, digits=1))% — inertial forces may be significant"
