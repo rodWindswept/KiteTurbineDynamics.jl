@@ -113,3 +113,83 @@ function beam_transform(pa::AbstractVector, pb::AbstractVector,
     end
     return T
 end
+
+"""
+    assemble_ring_frame(R, n, α, tp, F_local)
+        → (K_global, F_vec, K_locals, T_mats)
+
+Assemble the 6n×6n global stiffness matrix and load vector for a closed n-gon ring.
+
+Arguments:
+  R       — ring radius (m)
+  n       — number of polygon sides (= n_lines)
+  α       — ring twist angle (rad); sets vertex azimuth φ_j = α + (j-1)·2π/n
+  tp      — tube properties NamedTuple from tube_props(R); fields A, I_bend, J
+  F_local — 3×n matrix of force vectors at each vertex in ring-local 3D frame
+
+Returns:
+  K_global — 6n×6n assembled stiffness matrix (with Tikhonov regularisation)
+  F_vec    — 6n load vector
+  K_locals — Vector of n 12×12 local stiffness matrices (for force recovery)
+  T_mats   — Vector of n 12×12 transformation matrices (for force recovery)
+"""
+function assemble_ring_frame(R::Float64, n::Int, α::Float64,
+                              tp::NamedTuple, F_local::Matrix{Float64})
+    L_beam = 2.0 * R * sin(π / n)
+    ring_normal = [0.0, 0.0, 1.0]   # z-axis in ring-local frame
+
+    K_global = zeros(6n, 6n)
+    F_vec    = zeros(6n)
+    K_locals = Vector{Matrix{Float64}}(undef, n)
+    T_mats   = Vector{Matrix{Float64}}(undef, n)
+
+    for j in 1:n
+        jnext = mod1(j + 1, n)
+        φ_j    = α + (j    - 1) * 2π / n
+        φ_jn   = α + (jnext - 1) * 2π / n
+        pa = [R * cos(φ_j),  R * sin(φ_j),  0.0]
+        pb = [R * cos(φ_jn), R * sin(φ_jn), 0.0]
+
+        K_loc = beam_stiffness_local(E_CFRP, G_CFRP, tp.A, tp.I_bend, tp.J, L_beam)
+        T_mat = beam_transform(pa, pb, ring_normal)
+        K_elem = T_mat' * K_loc * T_mat
+
+        K_locals[j] = K_loc
+        T_mats[j]   = T_mat
+
+        # Global DOF indices for vertices j and jnext
+        idx = [6*(j-1)+1    : 6*j;
+               6*(jnext-1)+1 : 6*jnext]
+        K_global[idx, idx] .+= K_elem
+    end
+
+    # Load vector: point forces at each vertex (no applied moments)
+    for j in 1:n
+        F_vec[6*(j-1)+1 : 6*(j-1)+3] .= F_local[:, j]
+    end
+
+    # Self-equilibration check
+    F_res = norm(sum(reshape(F_vec[1:6:end], :), dims=1))   # residual force
+    F_scl = maximum(abs, F_vec; init=1.0)
+    if F_res / F_scl > 1e-2
+        @warn "Ring frame: load imbalance $(round(F_res/F_scl*100, digits=1))% — inertial forces may be significant"
+    end
+
+    # Tikhonov regularisation — removes rigid body modes without pinning any DOF
+    ε = 1e-6 * tr(K_global) / (6n)
+    for i in 1:6n
+        K_global[i, i] += ε
+    end
+
+    return K_global, F_vec, K_locals, T_mats
+end
+
+"""
+    solve_ring_frame(K_global, F_vec) → d
+
+Solve the regularised frame stiffness system K·d = F.
+Returns the 6n nodal displacement vector.
+"""
+function solve_ring_frame(K_global::Matrix{Float64}, F_vec::Vector{Float64})::Vector{Float64}
+    return K_global \ F_vec
+end
