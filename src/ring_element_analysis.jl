@@ -316,3 +316,64 @@ function extract_vertex_forces(u       ::AbstractVector,
 
     return F_verts
 end
+
+"""
+    analyse_ring(u, sys, ring_gid, alpha, p) → RingElementFrame
+
+Full per-beam structural analysis for one intermediate ring:
+  1. Extract per-vertex 3D tether forces from ODE state
+  2. Transform forces to ring-local frame (perp1/perp2/shaft_dir)
+  3. Assemble 6n×6n stiffness system and solve
+  4. Recover N, M_ip, M_oop, T per beam and compute interaction utilisation
+"""
+function analyse_ring(u       ::AbstractVector,
+                      sys     ::KiteTurbineSystem,
+                      ring_gid::Int,
+                      alpha   ::AbstractVector,
+                      p       ::SystemParams)::RingElementFrame
+    node   = sys.nodes[ring_gid]::RingNode
+    R      = node.radius
+    ri     = node.ring_idx
+    α_ring = alpha[ri]
+    n      = p.n_lines
+    β      = p.elevation_angle
+    shaft_dir = [cos(β), 0.0, sin(β)]
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
+
+    # Step 1: per-vertex forces in global frame (3 × n)
+    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2)
+
+    # Step 2: transform to ring-local 3D frame (perp1, perp2, shaft_dir as axes)
+    R_to_local = [perp1'; perp2'; shaft_dir']   # 3×3
+    F_local    = R_to_local * F_global           # 3×n in ring-local
+
+    # Step 3: assemble and solve
+    tp = tube_props(R)
+    K_global, F_vec, K_locals, T_mats = assemble_ring_frame(R, n, α_ring, tp, F_local)
+    d = solve_ring_frame(K_global, F_vec)
+
+    # Step 4: recover per-beam forces
+    beams    = extract_beam_forces(d, R, n, α_ring, tp, K_locals, T_mats)
+    max_util = maximum(b.utilisation for b in beams; init=0.0)
+
+    # ring_id relative to intermediate rings (will be set by caller)
+    return RingElementFrame(ring_gid, R, beams, max_util)
+end
+
+"""
+    ring_element_analysis(u, alpha, sys, p) → Vector{RingElementFrame}
+
+Run per-beam structural analysis for all intermediate rings (skipping ground and hub).
+Replaces `ring_safety_frame()` as the primary structural post-processing function.
+"""
+function ring_element_analysis(u     ::AbstractVector,
+                               alpha ::AbstractVector,
+                               sys   ::KiteTurbineSystem,
+                               p     ::SystemParams)::Vector{RingElementFrame}
+    results = Vector{RingElementFrame}()
+    for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])
+        frame = analyse_ring(u, sys, ring_gid, alpha, p)
+        push!(results, RingElementFrame(k, frame.radius, frame.beams, frame.max_util))
+    end
+    return results
+end
