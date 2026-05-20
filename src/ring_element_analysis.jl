@@ -254,3 +254,65 @@ function beam_column_utilisation(N::Float64, M_ip::Float64, M_oop::Float64,
     M_term = sqrt(M_ip^2 + M_oop^2) / max(M_el, 1e-9)
     return N_term + M_term
 end
+
+"""
+    extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2) → Matrix{Float64} (3 × n_lines)
+
+Compute the net 3D tether force vector at each polygon vertex of the given ring.
+Column j is the total force (N) acting on vertex j in the global simulation frame.
+"""
+function extract_vertex_forces(u       ::AbstractVector,
+                                sys     ::KiteTurbineSystem,
+                                ring_gid::Int,
+                                alpha   ::AbstractVector,
+                                p       ::SystemParams,
+                                perp1   ::AbstractVector,
+                                perp2   ::AbstractVector)::Matrix{Float64}
+    node   = sys.nodes[ring_gid]::RingNode
+    R      = node.radius
+    ri     = node.ring_idx
+    α_ring = alpha[ri]
+    ctr    = u[3*(ring_gid-1)+1 : 3*ring_gid]
+    n      = p.n_lines
+
+    F_verts = zeros(3, n)   # 3D force at each vertex (global frame)
+
+    for ss in sys.sub_segs
+        on_b = ss.end_b.is_ring && ss.end_b.node_id == ring_gid
+        on_a = ss.end_a.is_ring && ss.end_a.node_id == ring_gid
+        (on_b || on_a) || continue
+
+        if on_b
+            j  = ss.end_b.line_idx
+            pa = if ss.end_a.is_ring
+                nd_a  = sys.nodes[ss.end_a.node_id]::RingNode
+                ctr_a = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                attachment_point(ctr_a, nd_a.radius, alpha[nd_a.ring_idx],
+                                 ss.end_a.line_idx, n, perp1, perp2)
+            else
+                u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+            end
+            pb  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
+            len = norm(pb .- pa);  len < 1e-9 && continue
+            T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            F_verts[:, j] .+= T .* ((pa .- pb) ./ len)   # force on pb toward pa
+
+        else   # on_a
+            j  = ss.end_a.line_idx
+            pb = if ss.end_b.is_ring
+                nd_b  = sys.nodes[ss.end_b.node_id]::RingNode
+                ctr_b = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                attachment_point(ctr_b, nd_b.radius, alpha[nd_b.ring_idx],
+                                 ss.end_b.line_idx, n, perp1, perp2)
+            else
+                u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+            end
+            pa  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
+            len = norm(pb .- pa);  len < 1e-9 && continue
+            T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            F_verts[:, j] .+= T .* ((pb .- pa) ./ len)   # force on pa toward pb
+        end
+    end
+
+    return F_verts
+end
