@@ -20,7 +20,7 @@ const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 # T_line ≈ 2333 N):  Do = DO_SCALE × √R.
 # Derivation: N_comp is constant across all ring radii when L_seg ∝ R (tapered TRPT),
 # so I_req ∝ L_poly² ∝ R² and Do ∝ (I_req)^(1/4) ∝ R^(1/2).
-# Calibrated by exact tube_I formula: Do = 19.7 mm at R = 2 m (vs 20.7 mm in the
+# Calibrated by exact hollow-tube formula: Do = 19.7 mm at R = 2 m (vs 20.7 mm in the
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
@@ -43,7 +43,7 @@ function tube_props(R::Float64)
     return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J)
 end
 
-# Backward-compat wrapper — existing callers unaffected
+# Backward-compat wrapper — retained for external callers; internal code uses tube_props
 tube_I(Do::Float64, t::Float64)::Float64 = π / 64.0 * (Do^4 - (Do - 2t)^4)
 
 """
@@ -55,7 +55,7 @@ Failure mode: Euler column (pin-pin) buckling of each straight polygon segment.
   P_crit = π² · E_CFRP · I_tube / L_poly²
 where L_poly = 2R·sin(π/n) is the flat chord length of one polygon side.
 
-Ring tube design: CFRP hollow tube sized by Do = DO_PER_R × R, t = T_OVER_D × Do.
+Ring tube design: CFRP hollow tube sized by Do = DO_SCALE × √R, t = T_OVER_D × Do.
 FoS is computed against that design tube.  At rated loads FoS ≈ FOS_DESIGN = 3.0;
 under higher than rated loads FoS falls, under lighter loads it rises — giving a
 meaningful real-time margin indicator on the dashboard.
