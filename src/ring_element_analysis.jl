@@ -40,3 +40,46 @@ struct RingElementFrame
     beams    :: Vector{BeamResult}   # length = n_lines
     max_util :: Float64              # maximum utilisation across all beams
 end
+
+"""
+    beam_stiffness_local(E, G, A, I, J, L) → 12×12 Matrix
+
+Standard 3D Euler–Bernoulli beam element stiffness in local coordinates.
+DOF order: [u1,v1,w1,θx1,θy1,θz1, u2,v2,w2,θx2,θy2,θz2].
+x = beam axis, y = in-plane transverse, z = OOP (ring normal direction).
+I_y = I_z = I (circular tube, equal bending in both planes).
+"""
+function beam_stiffness_local(E::Float64, G::Float64, A::Float64,
+                               I::Float64, J::Float64, L::Float64)::Matrix{Float64}
+    a = E*A/L                # axial
+    b = 12E*I/L^3            # bending shear
+    c =  6E*I/L^2            # bending-rotation coupling
+    d =  4E*I/L              # bending (same-end)
+    e =  2E*I/L              # bending (far-end)
+    f =  G*J/L               # torsion
+
+    K = zeros(12, 12)
+
+    # Axial: DOFs 1, 7
+    K[1,1]= a; K[1,7]=-a
+    K[7,1]=-a; K[7,7]= a
+
+    # In-plane bending (x-y plane, about z): DOFs 2,6,8,12
+    K[2,2]= b; K[2,6]= c; K[2,8]=-b; K[2,12]= c
+    K[6,2]= c; K[6,6]= d; K[6,8]=-c; K[6,12]= e
+    K[8,2]=-b; K[8,6]=-c; K[8,8]= b; K[8,12]=-c
+    K[12,2]= c; K[12,6]= e; K[12,8]=-c; K[12,12]= d
+
+    # OOP bending (x-z plane, about y): DOFs 3,5,9,11
+    # θy positive counterclockwise from +y → coupling sign negative
+    K[3,3]= b; K[3,5]=-c; K[3,9]=-b; K[3,11]=-c
+    K[5,3]=-c; K[5,5]= d; K[5,9]= c; K[5,11]= e
+    K[9,3]=-b; K[9,5]= c; K[9,9]= b; K[9,11]= c
+    K[11,3]=-c; K[11,5]= e; K[11,9]= c; K[11,11]= d
+
+    # Torsion: DOFs 4, 10
+    K[4,4]= f; K[4,10]=-f
+    K[10,4]=-f; K[10,10]= f
+
+    return K
+end
