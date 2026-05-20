@@ -36,8 +36,8 @@ export compute_rope_forces!, compute_ring_forces!
 export multibody_ode!
 export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
-export ring_safety_frame, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP,
-       G_CFRP, σ_CFRP_COMPR, tube_props
+export ring_safety_frame, ring_element_analysis, analyse_ring, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP,
+       G_CFRP, σ_CFRP_COMPR, tube_props, RingElementFrame, BeamResult
 export SimFrame, SimPeaks, capture_frame, capture_peaks
 export build_dashboard
 
