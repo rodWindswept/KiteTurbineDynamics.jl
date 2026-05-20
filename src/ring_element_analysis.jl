@@ -83,3 +83,33 @@ function beam_stiffness_local(E::Float64, G::Float64, A::Float64,
 
     return K
 end
+
+"""
+    beam_transform(pa, pb, ring_normal) → 12×12 Matrix
+
+Block-diagonal rotation matrix T mapping ring-local 3D frame to local beam frame.
+pa, pb: 3D positions of the two beam-end vertices (in ring-local coordinates).
+ring_normal: unit vector normal to the ring plane (shaft direction in ring-local = [0,0,1]).
+
+Local beam axes:
+  x_L = beam axis (pa → pb)
+  z_L = ring_normal (OOP)
+  y_L = z_L × x_L  (in-plane transverse, right-handed)
+
+K_global_element = T' * K_local * T
+"""
+function beam_transform(pa::AbstractVector, pb::AbstractVector,
+                         ring_normal::AbstractVector)::Matrix{Float64}
+    x_L = (pb .- pa) ./ norm(pb .- pa)
+    z_L = ring_normal ./ norm(ring_normal)
+    y_L = cross(z_L, x_L)
+    y_L ./= norm(y_L)
+
+    R = [x_L'; y_L'; z_L']   # 3×3: rows are local axes in ring-local frame
+
+    T = zeros(12, 12)
+    for i in 0:3
+        T[3i+1:3i+3, 3i+1:3i+3] = R
+    end
+    return T
+end
