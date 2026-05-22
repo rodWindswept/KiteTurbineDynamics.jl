@@ -81,18 +81,14 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
         tension  = max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
         F_vec    = tension .* dir
 
-        # Aerodynamic drag on rope nodes
-        if !ss.end_b.is_ring
-            mid_pos = (pa .+ pb) ./ 2.0
-            v_wind  = wind_fn(mid_pos, t)
-            v_rel   = v_wind .- vb
-            v_perp_mag = norm(v_rel .- dot(v_rel, dir) .* dir)
-            if v_perp_mag > 0.01
-                drag = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
-                                         ss.length_0, v_wind, vb, dir)
-                forces[ss.end_b.node_id] .+= drag
-            end
-        end
+        # Aerodynamic drag on all rope/tether sub-segments (50/50 distributed)
+        mid_pos = (pa .+ pb) ./ 2.0
+        v_wind  = wind_fn(mid_pos, t)
+        v_node  = (va .+ vb) ./ 2.0
+        drag    = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
+                                     ss.length_0, v_wind, v_node, dir)
+        forces[ss.end_a.node_id] .+= 0.5 .* drag
+        forces[ss.end_b.node_id] .+= 0.5 .* drag
 
         # Apply spring force to nodes — torque projection always uses shaft_dir
         if ss.end_a.is_ring

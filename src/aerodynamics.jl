@@ -229,6 +229,15 @@ at the Reynolds numbers typical of TRPT tethers (Re ~ 10³–10⁴).
 const TETHER_DRAG_CD = 1.0
 
 """
+    TUBE_DRAG_CD
+
+Drag coefficient for a cylindrical CFRP structural tube (ring strut) in crossflow.
+Cd ≈ 1.2 is standard for cylinders at typical Reynolds numbers.
+"""
+const TUBE_DRAG_CD = 1.2
+
+
+"""
     tether_drag_force(rho, cd, diameter, length_0, v_wind, v_node, dir) -> Vector{Float64}
 
 Compute aerodynamic drag force on a tether sub-segment, applied at the

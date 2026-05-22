@@ -256,7 +256,7 @@ function beam_column_utilisation(N::Float64, M_ip::Float64, M_oop::Float64,
 end
 
 """
-    extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2) → Matrix{Float64} (3 × n_lines)
+    extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn) → Matrix{Float64} (3 × n_lines)
 
 Compute the net 3D tether force vector at each polygon vertex of the given ring.
 Column j is the total force (N) acting on vertex j in the global simulation frame.
@@ -267,7 +267,9 @@ function extract_vertex_forces(u       ::AbstractVector,
                                 alpha   ::AbstractVector,
                                 p       ::SystemParams,
                                 perp1   ::AbstractVector,
-                                perp2   ::AbstractVector)::Matrix{Float64}
+                                perp2   ::AbstractVector,
+                                t       ::Float64 = 0.0,
+                                wind_fn ::Union{Nothing, Function} = nothing)::Matrix{Float64}
     node   = sys.nodes[ring_gid]::RingNode
     R      = node.radius
     ri     = node.ring_idx
@@ -297,6 +299,18 @@ function extract_vertex_forces(u       ::AbstractVector,
             T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
             F_verts[:, j] .+= T .* ((pa .- pb) ./ len)   # force on pb toward pa
 
+            if wind_fn !== nothing
+                N = sys.n_total
+                va = u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
+                vb = u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+                mid_pos = (pa .+ pb) ./ 2.0
+                v_wind  = wind_fn(mid_pos, t)
+                v_node  = (va .+ vb) ./ 2.0
+                drag    = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
+                                             ss.length_0, v_wind, v_node, (pb .- pa) ./ len)
+                F_verts[:, j] .+= 0.5 .* drag
+            end
+
         else   # on_a
             j  = ss.end_a.line_idx
             pb = if ss.end_b.is_ring
@@ -311,6 +325,18 @@ function extract_vertex_forces(u       ::AbstractVector,
             len = norm(pb .- pa);  len < 1e-9 && continue
             T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
             F_verts[:, j] .+= T .* ((pb .- pa) ./ len)   # force on pa toward pb
+
+            if wind_fn !== nothing
+                N = sys.n_total
+                va = u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
+                vb = u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+                mid_pos = (pa .+ pb) ./ 2.0
+                v_wind  = wind_fn(mid_pos, t)
+                v_node  = (va .+ vb) ./ 2.0
+                drag    = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
+                                             ss.length_0, v_wind, v_node, (pb .- pa) ./ len)
+                F_verts[:, j] .+= 0.5 .* drag
+            end
         end
     end
 
@@ -318,19 +344,23 @@ function extract_vertex_forces(u       ::AbstractVector,
 end
 
 """
-    analyse_ring(u, sys, ring_gid, alpha, p) → RingElementFrame
+    analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn) → RingElementFrame
 
 Full per-beam structural analysis for one intermediate ring:
   1. Extract per-vertex 3D tether forces from ODE state
-  2. Transform forces to ring-local frame (perp1/perp2/shaft_dir)
-  3. Assemble 6n×6n stiffness system and solve
-  4. Recover N, M_ip, M_oop, T per beam and compute interaction utilisation
+  2. Add self-weight (knuckle self-weight + CFRP tube self-weight)
+  3. Add structural tube aerodynamic drag
+  4. Transform forces to ring-local frame (perp1/perp2/shaft_dir)
+  5. Assemble 6n×6n stiffness system and solve
+  6. Recover N, M_ip, M_oop, T per beam and compute interaction utilisation
 """
 function analyse_ring(u       ::AbstractVector,
                       sys     ::KiteTurbineSystem,
                       ring_gid::Int,
                       alpha   ::AbstractVector,
-                      p       ::SystemParams)::RingElementFrame
+                      p       ::SystemParams,
+                      t       ::Float64 = 0.0,
+                      wind_fn ::Union{Nothing, Function} = nothing)::RingElementFrame
     node   = sys.nodes[ring_gid]::RingNode
     R      = node.radius
     ri     = node.ring_idx
@@ -341,15 +371,102 @@ function analyse_ring(u       ::AbstractVector,
     perp1, perp2 = shaft_perp_basis(shaft_dir)
 
     # Step 1: per-vertex forces in global frame (3 × n)
-    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2)
+    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
+
+    # Tube properties for gravity and drag
+    tp = tube_props(R)
+    L_beam = 2.0 * R * sin(π / n)
+
+    # Step 1b: Add self-weight (knuckle self-weight + CFRP tube self-weight)
+    m_vertex = 0.05 + tp.A * L_beam * 1600.0
+    F_grav = [0.0, 0.0, -9.81 * m_vertex]
+    for j in 1:n
+        F_global[:, j] .+= F_grav
+    end
+
+    # Step 1c: Add structural tube aerodynamic drag
+    if wind_fn !== nothing
+        N = sys.n_total
+        Nr = sys.n_ring
+        omega = u[6N+Nr+1 : 6N+2Nr]
+        ctr_pos = u[3*(ring_gid-1)+1 : 3*ring_gid]
+        ctr_vel = u[3*N+3*(ring_gid-1)+1 : 3*N+3*ring_gid]
+
+        for j in 1:n
+            jnext = mod1(j + 1, n)
+            pa = attachment_point(ctr_pos, R, α_ring, j,     n, perp1, perp2)
+            pb = attachment_point(ctr_pos, R, α_ring, jnext, n, perp1, perp2)
+
+            φ_a  = α_ring + (j - 1) * (2π / n)
+            φ_b  = α_ring + (jnext - 1) * (2π / n)
+            v_rot_a = omega[ri] * R * (-sin(φ_a) .* perp1 .+ cos(φ_a) .* perp2)
+            v_rot_b = omega[ri] * R * (-sin(φ_b) .* perp1 .+ cos(φ_b) .* perp2)
+
+            va = ctr_vel .+ v_rot_a
+            vb = ctr_vel .+ v_rot_b
+
+            mid_pos  = (pa .+ pb) ./ 2.0
+            v_wind_m = wind_fn(mid_pos, t)
+            v_beam   = (va .+ vb) ./ 2.0
+
+            v_rel    = v_wind_m .- v_beam
+            dir_beam = (pb .- pa) ./ L_beam
+            v_perp   = v_rel .- dot(v_rel, dir_beam) .* dir_beam
+            v_perp_m = norm(v_perp)
+
+            if v_perp_m > 0.01
+                drag_beam = 0.5 * p.rho * TUBE_DRAG_CD * tp.Do * L_beam * v_perp_m .* v_perp
+                # Distribute 50/50 to endpoints j and jnext
+                F_global[:, j]     .+= 0.5 .* drag_beam
+                F_global[:, jnext] .+= 0.5 .* drag_beam
+            end
+        end
+    end
+
+    # Inertia relief: Subtract net out-of-equilibrium force equally from all vertices.
+    # Since the ring accelerates dynamically under unbalanced forces (e.g. gravity, wind, 
+    # and tether forces under slack/furl), the static FEA solver's soft regularisation 
+    # ground springs (ε) would otherwise react to this net force. This results in huge 
+    # rigid-body translations (10^6+ m) that drown out tiny elastic beam deformations 
+    # (10^-5 m) in floating-point roundoff error, yielding astronomical spurious beam 
+    # stresses. By D'Alembert's Principle, a symmetric ring distributes inertial reaction 
+    # forces -m_j * a equally among its n identical vertex masses: F_inertial = -F_net / n.
+    F_net = sum(F_global, dims=2)
+    for j in 1:n
+        F_global[:, j] .-= F_net ./ n
+    end
 
     # Step 2: transform to ring-local 3D frame (perp1, perp2, shaft_dir as axes)
     R_to_local = [perp1'; perp2'; shaft_dir']   # 3×3
     F_local    = R_to_local * F_global           # 3×n in ring-local
 
-    # Step 3: assemble and solve
-    tp = tube_props(R)
-    K_global, F_vec, K_locals, T_mats = assemble_ring_frame(R, n, α_ring, tp, F_local)
+    # ── Rotational & Torsional Inertia Relief ──────────────────────────────
+    # Unbalanced moments cause the ring to undergo rotational (pitch/yaw) and torsional 
+    # accelerations, which should physically be balanced by angular D'Alembert inertial reactions.
+    # Without this moment equilibration, the soft regularisation springs (ε) in the static solver 
+    # react to the net out-of-plane and torsional moments, producing massive fictitious 
+    # rigid-body rotations (pitch, yaw, twist) that corrupt local coordinate transformations and 
+    # stresses with roundoff errors. We construct and subtract moment-equilibrated inertial 
+    # reaction forces to perfectly cancel net out-of-plane moments (Mx, My) and torsional moment (Mz).
+    xs = [R * cos(α_ring + (j-1)*2π/n) for j in 1:n]
+    ys = [R * sin(α_ring + (j-1)*2π/n) for j in 1:n]
+
+    Mx = sum(ys[j] * F_local[3, j] for j in 1:n)
+    My = sum(-xs[j] * F_local[3, j] for j in 1:n)
+    Mz = sum(xs[j] * F_local[2, j] - ys[j] * F_local[1, j] for j in 1:n)
+
+    F_local_relieved = copy(F_local)
+    for j in 1:n
+        # Torsional inertial reaction (in-plane x and y): F_x_inertial = -Mz * y_j / (n * R^2), F_y_inertial = Mz * x_j / (n * R^2)
+        F_local_relieved[1, j] += Mz * ys[j] / (n * R^2)
+        F_local_relieved[2, j] -= Mz * xs[j] / (n * R^2)
+
+        # Rotational inertial reaction (out-of-plane z)
+        F_local_relieved[3, j] -= 2.0 * (Mx * ys[j] - My * xs[j]) / (n * R^2)
+    end
+
+    # Step 3: assemble and solve using relieved local forces
+    K_global, F_vec, K_locals, T_mats = assemble_ring_frame(R, n, α_ring, tp, F_local_relieved)
     d = solve_ring_frame(K_global, F_vec)
 
     # Step 4: recover per-beam forces
@@ -361,7 +478,7 @@ function analyse_ring(u       ::AbstractVector,
 end
 
 """
-    ring_element_analysis(u, alpha, sys, p) → Vector{RingElementFrame}
+    ring_element_analysis(u, alpha, sys, p, t, wind_fn) → Vector{RingElementFrame}
 
 Run per-beam structural analysis for all intermediate rings (skipping ground and hub).
 Replaces `ring_safety_frame()` as the primary structural post-processing function.
@@ -369,10 +486,12 @@ Replaces `ring_safety_frame()` as the primary structural post-processing functio
 function ring_element_analysis(u     ::AbstractVector,
                                alpha ::AbstractVector,
                                sys   ::KiteTurbineSystem,
-                               p     ::SystemParams)::Vector{RingElementFrame}
+                               p     ::SystemParams,
+                               t     ::Float64 = 0.0,
+                               wind_fn::Union{Nothing, Function} = nothing)::Vector{RingElementFrame}
     results = Vector{RingElementFrame}()
     for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])
-        frame = analyse_ring(u, sys, ring_gid, alpha, p)
+        frame = analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn)
         push!(results, RingElementFrame(k, frame.radius, frame.beams, frame.max_util))
     end
     return results

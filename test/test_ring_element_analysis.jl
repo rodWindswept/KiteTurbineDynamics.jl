@@ -1,6 +1,8 @@
 # test/test_ring_element_analysis.jl
 # Tests for the per-beam ring element structural analysis.
 
+using LinearAlgebra
+
 @testset "ring_element_analysis" begin
 
 @testset "Test 2: fixed-fixed N_crit is 4× pin-pin" begin
@@ -102,6 +104,87 @@ end
     end
     # If no warning, this just runs silently
     KiteTurbineDynamics.assemble_ring_frame(R, n, α, tp, F_local2)
+end
+
+@testset "Test 6: gravity and drag inclusion" begin
+    p   = params_10kw()
+    sys, u0 = build_kite_turbine_system(p)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    
+    alpha_vec = u0[6N+1 : 6N+Nr]
+    
+    # 1. Run without wind
+    res_no_wind = ring_element_analysis(u0, collect(alpha_vec), sys, p, 0.0, nothing)
+    @test length(res_no_wind) == Nr - 2
+    
+    # Each ring's maximum utilisation should be non-zero (due to gravity!)
+    for f in res_no_wind
+        @test f.max_util > 0.0
+        # Check that there are non-zero bending moments in the beams
+        for b in f.beams
+            @test b.M_oop > 0.0 || b.M_ip > 0.0
+        end
+    end
+    
+    # 2. Run with strong wind
+    wind_fn = (pos, t) -> [15.0, 0.0, 0.0]  # 15 m/s wind in x direction
+    res_wind = ring_element_analysis(u0, collect(alpha_vec), sys, p, 0.0, wind_fn)
+    
+    for (f_wind, f_nowind) in zip(res_wind, res_no_wind)
+        # Bending moments and utilisation should change/increase due to wind drag
+        @test f_wind.max_util != f_nowind.max_util
+    end
+end
+
+@testset "Test 7: moment and torque equilibration under dynamic conditions" begin
+    # Test that when a ring experiences substantial out-of-plane and torsional net moments,
+    # the rotational & torsional inertia relief perfectly zero them out, leaving
+    # no residual moments in F_local_relieved.
+    R = 2.0; n = 5; α = 0.1
+    tp = KiteTurbineDynamics.tube_props(R)
+
+    # Apply highly unbalanced forces (creating both translation, out-of-plane tilt moments, and torsion)
+    F_local = zeros(3, n)
+    F_local[:, 1] = [100.0, 50.0, 200.0]  # vertex 1 load
+    F_local[:, 3] = [-50.0, -100.0, -300.0] # vertex 3 load
+
+    # Construct coordinates
+    xs = [R * cos(α + (j-1)*2π/n) for j in 1:n]
+    ys = [R * sin(α + (j-1)*2π/n) for j in 1:n]
+
+    # Perform translational relief
+    F_net = sum(F_local, dims=2)
+    F_trans_relieved = F_local .- F_net ./ n
+
+    # Calculate net moments
+    Mx = sum(ys[j] * F_trans_relieved[3, j] for j in 1:n)
+    My = sum(-xs[j] * F_trans_relieved[3, j] for j in 1:n)
+    Mz = sum(xs[j] * F_trans_relieved[2, j] - ys[j] * F_trans_relieved[1, j] for j in 1:n)
+
+    # Verify original moments are non-zero
+    @test abs(Mx) > 1.0
+    @test abs(My) > 1.0
+    @test abs(Mz) > 1.0
+
+    # Perform rotational & torsional relief
+    F_relieved = copy(F_trans_relieved)
+    for j in 1:n
+        F_relieved[1, j] += Mz * ys[j] / (n * R^2)
+        F_relieved[2, j] -= Mz * xs[j] / (n * R^2)
+        F_relieved[3, j] -= 2.0 * (Mx * ys[j] - My * xs[j]) / (n * R^2)
+    end
+
+    # Check that new moments are perfectly zeroed
+    Mx_new = sum(ys[j] * F_relieved[3, j] for j in 1:n)
+    My_new = sum(-xs[j] * F_relieved[3, j] for j in 1:n)
+    Mz_new = sum(xs[j] * F_relieved[2, j] - ys[j] * F_relieved[1, j] for j in 1:n)
+    F_net_new = sum(F_relieved, dims=2)
+
+    @test isapprox(Mx_new, 0.0, atol=1e-11)
+    @test isapprox(My_new, 0.0, atol=1e-11)
+    @test isapprox(Mz_new, 0.0, atol=1e-11)
+    @test isapprox(norm(F_net_new), 0.0, atol=1e-11)
 end
 
 end  # @testset "ring_element_analysis"

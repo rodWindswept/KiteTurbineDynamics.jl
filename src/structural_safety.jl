@@ -47,7 +47,7 @@ end
 tube_I(Do::Float64, t::Float64)::Float64 = π / 64.0 * (Do^4 - (Do - 2t)^4)
 
 """
-    ring_safety_frame(u, alpha, sys, p) → Vector{NamedTuple}
+    ring_safety_frame(u, alpha, sys, p, t, wind_fn) → Vector{NamedTuple}
 
 Compute per-ring polygon-segment compression and Euler column buckling FoS for one ODE frame.
 Delegates to `ring_element_analysis` and flattens results into the same NamedTuple format
@@ -57,8 +57,10 @@ that downstream consumers (e.g. `capture_frame`) expect.
 function ring_safety_frame(u      ::AbstractVector,
                             alpha  ::AbstractVector,
                             sys    ::KiteTurbineSystem,
-                            p      ::SystemParams)
-    frames = ring_element_analysis(u, alpha, sys, p)
+                            p      ::SystemParams,
+                            t      ::Float64 = 0.0,
+                            wind_fn::Union{Nothing, Function} = nothing)
+    frames = ring_element_analysis(u, alpha, sys, p, t, wind_fn)
     return [(ring_id     = f.ring_id,
              radius      = f.radius,
              N_comp      = maximum(b.N     for b in f.beams; init=0.0),

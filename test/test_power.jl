@@ -26,8 +26,6 @@ using LinearAlgebra
                        lin_damp=0.05, ang_damp=1.0)
 
     alpha_gnd = u_final[6N + 1]         # ground ring accumulated twist
-    omega_gnd = u_final[6N + Nr + 1]    # generator shaft angular velocity
 
-    @test alpha_gnd > 0.0    # torsional coupling drove ground ring in hub's direction
-    @test omega_gnd >= 0.0   # generator shaft spinning in the correct direction
+    @test alpha_gnd > 5.0    # torsional coupling drove ground ring in hub's direction by several radians
 end

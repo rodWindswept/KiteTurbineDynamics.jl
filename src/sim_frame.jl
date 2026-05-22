@@ -174,7 +174,7 @@ function capture_frame(u           :: AbstractVector,
     fos_tether = T_max > 0.0 ? TETHER_SWL / T_max : Inf
 
     # Ring buckling safety
-    rea_results     = ring_element_analysis(u, collect(alpha_vec), sys, p)
+    rea_results     = ring_element_analysis(u, collect(alpha_vec), sys, p, t, wind_fn)
     ring_beam_utils = [[b.utilisation for b in ref.beams] for ref in rea_results]
     ring_utils      = [ref.max_util for ref in rea_results]
     max_util        = isempty(ring_utils) ? 0.0 : maximum(ring_utils)

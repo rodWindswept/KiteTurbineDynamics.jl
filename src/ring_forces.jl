@@ -80,7 +80,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # ── Generator MPPT torque on ground node ──────────────────────────────
     gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
     omega_gnd = omega[gnd_ri]
-    tau_gen   = p.k_mppt * omega_gnd^2 * sign(omega_gnd + 1e-9)
+    tau_gen   = p.k_mppt * max(omega_gnd, 0.0)^2
     torques[gnd_ri] -= tau_gen
 
     # ── Inter-ring torsional damping ──────────────────────────────────────────

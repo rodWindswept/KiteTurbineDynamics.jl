@@ -10,6 +10,42 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-05-22] Phase N — Full 6-DOF Inertia Relief & Moment Equilibration in Space-Frame Ring FEA Solver
+
+**Context:** During dynamic simulations (e.g., startup, wind changes, or furl/slack scenarios), the intermediate spacer rings of the airborne kite turbine undergo acceleration due to unbalanced forces (such as gravity, aerodynamic wind drag, and cyclic tether tension). Because the space-frame finite element method (FEA) solver in `src/ring_element_analysis.jl` is static, it solves a stiffness equation $K d = F$. To handle rigid-body modes (since the free-floating ring is not physically anchored to the ground), a soft Tikhonov ground spring regularisation ($\varepsilon$) is added to the diagonal of $K$.
+
+Previously, when the net applied force vector $\vec{F}_{\text{net}} \neq \vec{0}$, these soft ground springs reacted to the net force, leading to huge fictitious rigid-body translations ($d \approx 10^6 \text{ m}$ to $10^8 \text{ m}$). We initially resolved this using a 3-DOF translational inertia relief. However, even with balanced forces, the intermediate rings experienced unbalanced out-of-plane rotational (pitch/yaw) moments ($M_x, M_y$) and in-plane torsional moments ($M_z$) due to dynamic, asymmetric tether loading. The soft regularisation springs ($\varepsilon$) reacted to these unbalanced moments by generating massive fictitious rigid-body rotations (e.g., $10^4$ to $10^6$ radians). Floating-point precision loss (limited to 16 decimal digits for `Float64`) completely corrupted the local coordinate transformations and local displacement recovery ($d_{\text{elem}} = T d$). This numerical noise leaked in-plane forces into colossal, artificial out-of-plane bending moments ($M_{\text{oop}} \approx 400 - 700\text{ N}\cdot\text{m}$ vs elastic capacity $54.7\text{ N}\cdot\text{m}$), causing all struts to turn bright red in the dashboard (max utilisation $>9000\%$, FoS = 0.0) even in benign operating points.
+
+**What was decided:**
+- **Full 6-DOF Inertia Relief Formulation:** Apply D'Alembert's Principle to perfectly equilibrate both the translational forces and the rotational/torsional moments of the system before passing it to the static FEA solver. Since the ring is a flat, symmetric polygon in the local ring frame, its mass is distributed symmetrically among $n$ identical knuckles of radius $R$ at local coordinates $(x_j, y_j)$. We formulate the angular D'Alembert inertial reaction force corrections as follows:
+  1. *Translational Inertia Relief (3 DOFs):*
+     $$\Delta \vec{F}_{\text{global}, j} = -\frac{\vec{F}_{\text{net}}}{n}$$
+     This perfectly zeroes the net global force: $\sum_{j=1}^n \vec{F}_{\text{global}, j} = \vec{0}$.
+  2. *Torsional Inertia Relief (1 DOF - in-plane rotation about local z-axis):*
+     Given the net torsional moment $M_z = \sum_{j=1}^n (x_j F_{y,j} - y_j F_{x,j})$, the D'Alembert reaction forces at each vertex must oppose $M_z$ proportionally to their radial distance. For a flat ring of radius $R$, the corrective forces are tangential:
+     $$\Delta F_{x, j} = + \frac{M_z y_j}{n R^2}, \quad \Delta F_{y, j} = - \frac{M_z x_j}{n R^2}$$
+     This cancels the net torque perfectly: $\sum (x_j \Delta F_{y,j} - y_j \Delta F_{x,j}) = -M_z$.
+  3. *Rotational Inertia Relief (2 DOFs - out-of-plane pitch/yaw about local x and y axes):*
+     Given net out-of-plane moments $M_x = \sum y_j F_{z,j}$ and $M_y = \sum -x_j F_{z,j}$, the out-of-plane D'Alembert reaction forces at each vertex oppose these moments:
+     $$\Delta F_{z, j} = - \frac{2}{n R^2} (M_x y_j - M_y x_j)$$
+     This cancels out-of-plane moments perfectly: $\sum y_j \Delta F_{z,j} = -M_x$ and $\sum -x_j \Delta F_{z,j} = -M_y$.
+- **Algorithm:** In `analyse_ring`, we compute $M_x, M_y, M_z$ in local coordinates and subtract/add the respective corrective forces. This mathematically guarantees that all net forces and moments in the local frame are zeroed to machine precision ($<10^{-13}$), removing all fictitious translations and rotations.
+- **Alternatives Considered:**
+  - *Pinning arbitrary nodes/DOFs:* Introducing fixed/pinned nodes violates the free-floating boundary conditions, introducing artificial reaction forces and asymmetric stresses that corrupt the physical load distribution.
+  - *Increasing the regularisation parameter $\varepsilon$:* Increasing $\varepsilon$ suppresses fictitious motions but acts as a stiff artificial ground spring, which constrains ring deformation and artificially inflates local beam forces.
+
+**Results, Rationale & Physical Design Limits:**
+- **Numerical Zeroing:** All fictitious rigid-body motions are eliminated, reducing translational displacements to $\approx 10^{-15}\text{ m}$ and rotations to $\approx 10^{-16}\text{ rad}$. Floating-point precision is fully preserved.
+- **Visual Accuracy:** The spacer struts in the interactive dashboard now accurately show realistic, physical, and highly differentiated colors corresponding to actual structural bending and compression, rather than a uniform red warning.
+- **Real physical torque waves:** The simulation now clearly reveals physical torsional propagation waves running up and down the TRPT shaft, validating the dynamic multibody line tension coupling.
+- **Physical Design Limit at $t = 1.26\text{ s}$:** With the numerical artifacts eliminated, we observe that at $t = 1.26\text{ s}$ (during peak transient power transmission of $8.21\text{ kW}$ and a TRPT twist of $181.1^\circ$), the worst-beam strut utilization reaches **$302.8\%$** (FoS $\approx 0.33$). 
+  - *Spacer Rings (Rings 1 to 13):* Remain perfectly safe, with utilization ratios between $0.6\%$ and $1.5\%$, proving the spacer ring sizing is structurally sound.
+  - *Ground-end Ring (Ring 14):* The high utilization of $302.8\%$ occurs on the ground-end ring which directly reacts the PTO torque and shear. This is **physically real**, indicating that the ground-end ring structure under peak transient dynamic torque waves is under-designed. A wider ring radius or larger tube diameter is physically required at the ground end to handle peak dynamic torque transients.
+
+**Status:** Active.
+
+---
+
 ## [2026-04-30] Phase K — v5 campaign results: BEM-coupled rotor radius closes the n_lines loop
 
 **Context:** The v4 campaign found n_lines = 8 at the upper search bound in all 60 islands and
