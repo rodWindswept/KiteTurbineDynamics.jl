@@ -275,6 +275,24 @@ end
     # With active damping ON, the ground ring deceleration must be much larger
     # (more negative acceleration) due to the extra damping torque
     @test accel_on < accel_off
+
+    # Test 2: Mechanical brake engagement below 1.0 rad/s
+    u_test_brake = copy(u0)
+    u_test_brake[6N + Nr + gnd_ri] = 0.5 # below 1.0 rad/s threshold
+    u_test_brake[6N + Nr + hub_ri] = 0.0
+
+    du_brake_off = zeros(Float64, length(u_test_brake))
+    multibody_ode!(du_brake_off, u_test_brake, (sys, p_off, wind_fn, lift_device), 0.0)
+
+    du_brake_on = zeros(Float64, length(u_test_brake))
+    multibody_ode!(du_brake_on, u_test_brake, (sys, p_on, wind_fn, lift_device), 0.0)
+
+    accel_brake_off = du_brake_off[6N + Nr + gnd_ri]
+    accel_brake_on  = du_brake_on[6N + Nr + gnd_ri]
+
+    @info "Ground station mechanical brake test" accel_brake_off accel_brake_on
+    @test accel_brake_on < accel_brake_off
 end
+
 
 

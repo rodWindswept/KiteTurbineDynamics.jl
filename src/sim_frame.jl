@@ -160,6 +160,20 @@ function capture_frame(u           :: AbstractVector,
         tau_gen_init += tau_damp_active
     end
 
+    # Apply automatic ground station mechanical brake if Field IMU toggle is active
+    # and ground speed drops below the threshold of 1.0 rad/s
+    if p.kp_elev ≈ 1.0
+        omega_threshold = 1.0
+        x = abs(omega_gnd) / omega_threshold
+        if x < 1.0
+            w_brake = (1.0 - x^2)^2
+            power_scale = (p.p_rated_w / 10000.0)^2
+            tau_brake_max = 1500.0 * power_scale
+            tau_brake = w_brake * tau_brake_max * tanh(20.0 * omega_gnd)
+            tau_gen_init += tau_brake
+        end
+    end
+
     P_kw      = tau_gen_init * abs(omega_gnd) / 1000.0
     pct_rated = p.p_rated_w > 0 ? P_kw * 1000.0 / p.p_rated_w * 100.0 : 0.0
 

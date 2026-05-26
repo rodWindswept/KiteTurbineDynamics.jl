@@ -124,6 +124,20 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         tau_damp_active = c_d_active * (omega_gnd - omega_hub)
         tau_gen += tau_damp_active
     end
+
+    # Apply automatic ground station mechanical brake if Field IMU toggle is active
+    # and ground speed drops below the threshold of 1.0 rad/s
+    if p.kp_elev ≈ 1.0
+        omega_threshold = 1.0
+        x = abs(omega_gnd) / omega_threshold
+        if x < 1.0
+            w_brake = (1.0 - x^2)^2
+            power_scale = (p.p_rated_w / 10000.0)^2
+            tau_brake_max = 1500.0 * power_scale
+            tau_brake = w_brake * tau_brake_max * tanh(20.0 * omega_gnd)
+            tau_gen += tau_brake
+        end
+    end
     
     torques[gnd_ri] -= tau_gen
 
