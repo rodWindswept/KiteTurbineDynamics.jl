@@ -80,6 +80,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # ── Generator MPPT torque on ground node ──────────────────────────────
     gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
     omega_gnd = omega[gnd_ri]
+    omega_hub = omega[hub_ri]
     
     # Winch payout base and geometric scaling for system size
     payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
@@ -95,15 +96,18 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         β_furl   = deg2rad(60.0)
         elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
         
-        omega_hub = omega[hub_ri]
-        
         if ctrl_mode ≈ 1.0
             # Mode 1: Active Torsional Damping
             tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
             power_scale = (p.p_rated_w / 10000.0)^2
             c_d = 10.0 * power_scale
             tau_damp = c_d * (omega_gnd - omega_hub)
-            tau_gen = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+            if p.kp_elev ≈ 1.0
+                # Field IMU active damping: two-sided damping (unclamped four-quadrant motoring)
+                tau_gen = (tau_mppt + tau_damp) * elev_scale
+            else
+                tau_gen = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+            end
         else
             # Mode 2: LPF Speed MPPT (smooth hub speed)
             tau_gen = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
@@ -111,6 +115,14 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     else
         # Mode 0: Standard MPPT with dynamic max payout
         tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
+    end
+
+    # Apply two-sided Field IMU Active Damping if toggle is active (for Mode 0 and Mode 2)
+    if p.kp_elev ≈ 1.0 && !(ctrl_mode ≈ 1.0)
+        power_scale = (p.p_rated_w / 10000.0)^2
+        c_d_active = 15.0 * power_scale  # robust damping coefficient
+        tau_damp_active = c_d_active * (omega_gnd - omega_hub)
+        tau_gen += tau_damp_active
     end
     
     torques[gnd_ri] -= tau_gen

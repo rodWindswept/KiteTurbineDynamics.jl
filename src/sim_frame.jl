@@ -141,12 +141,23 @@ function capture_frame(u           :: AbstractVector,
             power_scale = (p.p_rated_w / 10000.0)^2
             c_d = 10.0 * power_scale
             tau_damp = c_d * (omega_gnd - omega_hub)
-            tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+            if p.kp_elev ≈ 1.0
+                tau_gen_init = (tau_mppt + tau_damp) * elev_scale
+            else
+                tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+            end
         else
             tau_gen_init = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
         end
     else
         tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
+    end
+
+    if p.kp_elev ≈ 1.0 && !(ctrl_mode ≈ 1.0)
+        power_scale = (p.p_rated_w / 10000.0)^2
+        c_d_active = 15.0 * power_scale
+        tau_damp_active = c_d_active * (omega_gnd - omega_hub)
+        tau_gen_init += tau_damp_active
     end
 
     P_kw      = tau_gen_init * abs(omega_gnd) / 1000.0

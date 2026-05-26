@@ -223,3 +223,58 @@ end
     @test lowest_bridle.tension > 100.0 # N
 end
 
+@testset "Field IMU active damping control law" begin
+    p   = params_10kw()
+    sys, u0 = build_kite_turbine_system(p)
+
+    # Helper to build a modified copy of an immutable SystemParams in tests
+    function _modified_params(base::SystemParams; kwargs...)
+        fnames    = fieldnames(SystemParams)
+        ftypes    = fieldtypes(SystemParams)
+        overrides = Dict{Symbol,Any}(kwargs)
+        vals = ntuple(length(fnames)) do i
+            convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
+        end
+        SystemParams(vals...)
+    end
+
+    # Standard case: Field IMU active damping is off
+    p_off = p # kp_elev defaults to ~0.0
+    
+    # Active case: Field IMU active damping is on
+    p_on = _modified_params(p; kp_elev = 1.0)
+
+    # Set omega_gnd = 5.0 rad/s and omega_hub = 0.0 rad/s (rotor stalled)
+    u_test = copy(u0)
+    N = sys.n_total
+    Nr = sys.n_ring
+    gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx # = 1
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    
+    # Set the angular velocities in the state vector u_test
+    # Ring angular velocities are stored at u[6N + Nr + ri]
+    u_test[6N + Nr + gnd_ri] = 5.0
+    u_test[6N + Nr + hub_ri] = 0.0
+
+    du_off = zeros(Float64, length(u_test))
+    wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
+    lift_device = rotary_lifter_default()
+    
+    multibody_ode!(du_off, u_test, (sys, p_off, wind_fn, lift_device), 0.0)
+    
+    du_on = zeros(Float64, length(u_test))
+    multibody_ode!(du_on, u_test, (sys, p_on, wind_fn, lift_device), 0.0)
+
+    # The acceleration of the ground ring is du[6N + Nr + gnd_ri]
+    accel_off = du_off[6N + Nr + gnd_ri]
+    accel_on  = du_on[6N + Nr + gnd_ri]
+
+    @info "Field IMU damping torque test" accel_off accel_on
+    
+    # With active damping ON, the ground ring deceleration must be much larger
+    # (more negative acceleration) due to the extra damping torque
+    @test accel_on < accel_off
+end
+
+

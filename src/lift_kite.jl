@@ -231,7 +231,7 @@ function rotary_lifter_default()
         0.3,        # hub_radius (m)
         3,          # n_blades
         0.15,       # blade_chord (m)
-        1.2,        # CL_blade — high-lift foil section
+        1.0,        # CL_blade — design section lift coefficient
         0.08,       # CD_blade
         33.0,       # omega_fixed (rad/s) = TSR 4.5 at v=11 m/s → HELD CONSTANT
         25.0,       # line_length (m)
@@ -391,25 +391,25 @@ function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float6
     v_app  = sqrt(v_wind^2 + (dev.omega_fixed * r_mean)^2)
     q = 0.5 * rho * v_app^2
 
-    # Pitch factor: CL_blade scales the PCA-2 baseline CL
-    # CL_blade = 1.2 is nominal pitch (pitch_factor = 1.0), 0.6 = flat (0.5), 2.4 = aggressive (2.0)
-    pitch_factor = clamp(dev.CL_blade / 1.2, 0.25, 2.5)
+    # Elevation factor: CL_blade scales the PCA-2 baseline CL
+    # CL_blade = 1.2 is nominal pitch (elevation_factor = 1.0), 0.6 = flat (0.5), 2.4 = aggressive (2.0)
+    elevation_factor = clamp(dev.CL_blade / 1.2, 0.25, 2.5)
 
-    # Solve equilibrium: line elevation φ = atan(CL(90°-φ)×pitch / CD(90°-φ))
-    # CD also scales with pitch (induced drag ∝ CL² approximated as CD×pitch²)
+    # Solve equilibrium: line elevation φ = atan(CL(90°-φ)×elevation_factor / CD(90°-φ))
+    # CD also scales with elevation_factor (induced drag ∝ CL² approximated as CD×elevation_factor²)
     φ_deg = 75.0
     for _ in 1:8
         α_deg = 90.0 - φ_deg
         cl0, cd0 = pca2_interp(α_deg)
-        cl_eff = cl0 * pitch_factor
-        cd_eff = cd0 * pitch_factor^2  # induced drag scales with CL²
+        cl_eff = cl0 * elevation_factor
+        cd_eff = cd0 * elevation_factor^2  # induced drag scales with CL²
         φ_deg = clamp(rad2deg(atan(cl_eff, cd_eff)), 5.0, 85.0)
     end
 
     α_final = 90.0 - φ_deg
     cl0, cd0 = pca2_interp(α_final)
-    cl_disk = cl0 * pitch_factor
-    cd_disk = cd0 * pitch_factor^2
+    cl_disk = cl0 * elevation_factor
+    cd_disk = cd0 * elevation_factor^2
 
     # Forces from disk aerodynamics (lift ⊥ wind, drag ∥ wind)
     F_lift = q * A_disk * cl_disk

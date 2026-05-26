@@ -681,8 +681,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Pitch Depower closed-loop control toggles
     # active_winch_obs: enables proportional payout rate control using T_min feedback
     # mppt_stall_obs: enables ramped k_mppt stall governor (scales up to 9× during depower)
+    # field_imu_obs: enables two-sided active torsional damping using Field IMU delta-omega telemetry
     active_winch_obs = Observable(false)
     mppt_stall_obs   = Observable(false)
+    field_imu_obs    = Observable(false)
 
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
@@ -773,11 +775,13 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             payout_sel = depower_payout_selection[]
             payout_base_val = payout_sel == "25m Extended" ? 25.0 : 15.0
 
+            use_field_imu = field_imu_obs[]
             p_run = _modified_params(p;
                         k_mppt          = Float64(sl_kmppt.value[]),
                         elevation_angle = deg2rad(Float64(sl_beta.value[])),
                         β_rate_max      = ctrl_mode_val,
-                        β_min           = payout_base_val)
+                        β_min           = payout_base_val,
+                        kp_elev         = use_field_imu ? 1.0 : 0.0)
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
@@ -821,6 +825,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             # Read control settings once at run start (immutable during a run)
             use_active_winch = active_winch_obs[]
             use_mppt_stall   = mppt_stall_obs[]
+            use_field_imu    = field_imu_obs[]
             n_seg_dyn = sys.n_ring - 1
             ea_rope   = sys.sub_segs[1].EA
             for step in 1:n_steps
@@ -884,7 +889,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     
                     p_depower = _modified_params(p_run;
                         backline_payout = max_payout * release_frac,
-                        k_mppt          = p_run.k_mppt * k_mppt_scale)
+                        k_mppt          = p_run.k_mppt * k_mppt_scale,
+                        kp_elev         = use_field_imu ? 1.0 : 0.0)
                     ode_p = isnothing(ld) ? (sys, p_depower, wf) : (sys, p_depower, wf, ld)
                 end
 
@@ -1319,7 +1325,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ld_sl_B.range[] = 0.5:0.05:2.5
             ld_sl_B.value[] = 1.2
         elseif choice == "Rotary Lifter"
-            ld_lbl_A.text[] = "Pitch Factor"
+            ld_lbl_A.text[] = "Elevation Factor"
             ld_sl_A.range[] = 0.5:0.1:3.0
             ld_sl_A.value[] = 1.0
             ld_lbl_B.text[] = "Radius (m)"
@@ -1348,7 +1354,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         elseif choice == "Stacked ×3"
             StackedKitesParams(round(Int,a), b, 0.12, 8.0, 8.0, 1.5e5, 2.0)
         elseif choice == "Rotary Lifter"
-            # a = pitch factor (CL_blade), b = rotor radius
+            # a = elevation factor (CL_blade), b = rotor radius
             RotaryLifterParams(b, 0.05, 3, 0.12, a, 0.20, 40.0, 25.0, 1.5e5, 5.0)
         else
             nothing
@@ -1441,6 +1447,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     mppt_stall_toggle = Toggle(tog_row_C[1, 2]; active=mppt_stall_obs[], framecolor_active=to_color(:orange))
     on(mppt_stall_toggle.active) do v
         mppt_stall_obs[] = v
+    end
+
+    # Hypothesis D: Field IMU Torsional Damping
+    # Transmits a high-fidelity angular velocity signal from the sky (field rotor IMU)
+    # down to the ground PTO and applies a symmetric, two-sided torsional damper
+    # (without the motor/generator motoring clamp) to eliminate whipping resonance.
+    tog_row_D = GridLayout(ctrl[cnr!(), 1])
+    Label(tog_row_D[1, 1]; text="Field IMU Active Damping", fontsize=11, halign=:left, tellwidth=false)
+    field_imu_toggle = Toggle(tog_row_D[1, 2]; active=field_imu_obs[], framecolor_active=to_color(:cyan))
+    on(field_imu_toggle.active) do v
+        field_imu_obs[] = v
     end
 
     # ── SECTION B: Playback ───────────────────────────────────────────────────
