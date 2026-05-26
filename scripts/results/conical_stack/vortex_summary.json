@@ -1,0 +1,42 @@
+{
+    "physics_constants": {
+        "v_ref_mps": 11.0,
+        "z_ref_m": 15.0,
+        "hellmann_exponent": 0.14285714285714285,
+        "omega_rated_rad_s": 9.02,
+        "lambda_opt": 4.15,
+        "R_ref_m": 5.0
+    },
+    "rotors": [
+        {
+            "rotor_idx": 1,
+            "height_m": 15.0,
+            "wind_mps": 11.0,
+            "radius_opt_m": 5.060975609756098,
+            "power_multiplier": 1.0245389649018442
+        },
+        {
+            "rotor_idx": 2,
+            "height_m": 30.0,
+            "wind_mps": 12.144984650411935,
+            "radius_opt_m": 5.587770099690636,
+            "power_multiplier": 1.6809310730329026
+        },
+        {
+            "rotor_idx": 3,
+            "height_m": 45.0,
+            "wind_mps": 12.869238940345557,
+            "radius_opt_m": 5.920991308473844,
+            "power_multiplier": 2.245584366936166
+        }
+    ],
+    "wake_analysis": {
+        "spacing_m": 30.0,
+        "jensen_k_decay": 0.075,
+        "axial_induction": 0.3333333333333333,
+        "rotor2_wake_diameter_m": 14.621951219512194,
+        "rotor2_velocity_ratio": 0.6805325909854913,
+        "rotor3_wake_diameter_m": 19.121951219512194,
+        "rotor3_velocity_ratio": 0.813201747535749
+    }
+}

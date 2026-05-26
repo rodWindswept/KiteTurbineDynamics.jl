@@ -70,7 +70,7 @@ KiteTurbineDynamics.jl/
 │   ├── bem.jl                   BEM Cp(n_lines) model for v5 aero coupling
 │   ├── trpt_axial_profiles.jl    Axial profile families for sizing optimisation
 │   ├── trpt_optimization.jl      TRPTDesign struct, evaluate_design(), DE fitness
-│   ├── visualization.jl          GLMakie 3D dashboard (config switching, furl, lift HUD)
+│   ├── visualization.jl          GLMakie 3D dashboard (config switching, pitch depower, lift HUD)
 │   └── economics.jl             LCOE, carbon, competitor comparison module
 ├── scripts/
 │   ├── interactive_dashboard.jl  Launch the GLMakie 3D viewer (--v5 for octagon)
@@ -222,10 +222,8 @@ julia --project=. scripts/interactive_dashboard.jl --headless --v5 --wind 11 --d
 **Dashboard features (May 2026):**
 - **Live config switching** — Switch between Canonical 5-line and v5 8-line via the
   Configuration panel. Safety state machine prevents crashes during transitions.
-- **8 scenarios** — Steady, Ramp Up/Down, Gust, Launch, Land, Kite Drop, **Furl**
-- **Furl controller** — Pre-emptive backline winching + autogyro pitch boost for
-  above-rated wind operation. Two-phase: deploy at rated wind, then ramp wind into
-  already-elevated rotor.
+- **8 scenarios** — Steady, Ramp Up/Down, Gust, Launch, Land, Kite Drop, **Pitch Depower**
+- **Pitch Depower controller** — Pre-emptive backline winching where the top lifting device operates at **full power and tension** (high-tension pull) to raise the generating rotor axis vertically, reducing the wind annulus. The lift tension matches normal operational pull to keep the TRPT preloaded.
 - **Lift Device panel** — Live autogyro/rotary lifter telemetry: T_lift, blade pitch
   factor, CL/CD, β_actual, lift margin. Default: PCA-2 autogyro model (3.7m rotor,
   auto-sized for v5 10kW airborne mass).
@@ -501,10 +499,9 @@ configuration and serve as an integrated engineering + investor communication to
 - **In-dashboard config switching** — Menu selector + "Switch Configuration" button.
   Safety state machine (`:idle | :simulating | :switching`) gates all interactive
   controls. Status messages prevent confusion.
-- **Furl scenario** — Two-phase pre-emptive furl: (1) backline winches out +25m,
-  autogyro pitch ramps to 3× at rated wind; (2) wind ramps into already-elevated
-  rotor. Models the backline-release elevation-control strategy for above-rated
-  operation.
+- **Pitch Depower scenario** — Models the backline-release elevation-control strategy for above-rated operation: (1) backline winches out (15m/25m options), allowing the rotor to rise and tilt under the full operational tension of the lifting rotor kite; (2) generating rotor disc tilts closer to vertical, spilling aerodynamic power. 
+  - **The Dual-Rotor State:** While the generating rotor is depowered, the lifting rotor kite operates at **full power and tension** (providing a high-tension, high-elevation pull at least equal to normal operating conditions) to preload the TRPT column and keep the gold bridles taut. 
+  - **Terminology Note:** "Pitch Depower" refers to this generating-rotor spilling maneuver. The term **"Furl"** (specifically "Lift Kite Furling") is reserved for future scenarios where the lift device itself must modulate or reduce its lift force to protect against structural overload in extreme winds.
 - **PCA-2 autogyro lift model** — Rotary Lifter now uses empirical PCA-2 autogyro
   disk aerodynamics (NASA TM 20080022367). Autorotation replaces fixed-ω model.
   CL/CD from disk angle of attack via iterative equilibrium solve. Blade pitch

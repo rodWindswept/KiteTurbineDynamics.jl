@@ -17,8 +17,8 @@ using LinearAlgebra
 
 # ── Material and manufacturability constants ─────────────────────────────────
 # Re-used from structural_safety.jl (CFRP hollow tube).
-const OPT_E_CFRP          = 70e9     # Pa   — Young's modulus
-const OPT_RHO_CFRP        = 1600.0   # kg/m³ — density
+const OPT_E_CFRP          = DEFAULT_CFRP.E     # Pa   — Young's modulus
+const OPT_RHO_CFRP        = DEFAULT_CFRP.density   # kg/m³ — density
 const OPT_T_MIN_WALL      = 5e-4     # m    — 0.5 mm min manufacturable wall
 const OPT_T_OVER_D_MAX    = 0.15     # unitless — above this, tube collapses to solid rod
 const OPT_T_OVER_D_MIN    = 0.02     # unitless — below this, local shell buckling governs
@@ -75,8 +75,7 @@ const OPT_TSR_RATED        = 4.1     # Optimal tip-speed ratio
 #   • Remain below the 1.39 ebrake peak (no design against avoided fault).
 const OPT_DESIGN_LOAD_FACTOR = 1.2   # unitless — F_in_per_vertex = DLF × T_line
 
-# Beam profile types — discrete choice for the optimizer
-@enum BeamProfile PROFILE_CIRCULAR=1 PROFILE_ELLIPTICAL=2 PROFILE_AIRFOIL=3
+# Beam profile types — discrete choice for the optimizer (imported from SpacerRingDesign)
 
 """
     BeamSpec
@@ -137,50 +136,16 @@ Cross-section area (m²), minimum second moment of area (m⁴, controlling
 Euler buckling), and torsional constant (m⁴, for reference).
 """
 function beam_section_properties(spec::BeamSpec)
-    p = spec.profile
-    Do = spec.Do
-    t  = max(spec.t_over_D * Do, OPT_T_MIN_WALL)
-    if p == PROFILE_CIRCULAR
-        # Hollow circular tube.
-        Di = max(Do - 2t, 0.0)
-        A  = π/4 * (Do^2 - Di^2)
-        I  = π/64 * (Do^4 - Di^4)
-        J  = 2 * I
-        return (A, I, J)
-    elseif p == PROFILE_ELLIPTICAL
-        # Hollow elliptical tube; aspect_ratio = b/a  (minor/major).
-        a  = Do / 2.0
-        b  = max(spec.aspect_ratio, 0.1) * a
-        ai = max(a - t, 0.0)
-        bi = max(b - t, 0.0)
-        A  = π * (a*b - ai*bi)
-        # I about the major axis (bending perpendicular — minor-axis direction); this is I_min
-        # since the minor axis is smaller:
-        I_minor = π/4 * (a  * b ^3 - ai * bi^3)  # bending about major — weaker
-        I_major = π/4 * (a^3 * b    - ai^3 * bi) # bending about minor — stronger
-        I_min   = min(I_minor, I_major)
-        # Thin-wall torsion constant (approximate, Bredt):
-        perim = π * (a + b) * (1 + 3*((a-b)/(a+b))^2 / (10 + sqrt(4 - 3*((a-b)/(a+b))^2)))
-        J     = 4 * (π*a*b)^2 * t / max(perim, 1e-9)
-        return (A, I_min, J)
-    else # PROFILE_AIRFOIL — symmetric airfoil thin-wall shell (NACA 00XX-like)
-        c      = Do                                   # chord
-        t_c    = max(spec.aspect_ratio, 0.05)         # thickness-to-chord
-        t_max  = t_c * c                              # max thickness
-        t_w    = max(spec.t_over_D * c, OPT_T_MIN_WALL)  # wall thickness
-        # Thin-wall perimeter (symmetric airfoil approx):
-        perim  = 2.03 * c * (1 + 0.25*t_c^2)
-        A      = perim * t_w
-        # Flap bending (weak axis): skin contribution dominates.
-        # I_flap ≈ 0.073 × c × t_max² × t_w  (calibrated for NACA 0015 thin shell)
-        I_flap = 0.073 * c * t_max^2 * t_w
-        # Edge bending (strong axis): much larger — not a buckling concern here.
-        I_min  = I_flap
-        # Single-cell torsion (thin-wall, Bredt):
-        A_encl = 0.685 * c * t_max   # enclosed area for a symmetric airfoil
-        J      = 4 * A_encl^2 * t_w / max(perim, 1e-9)
-        return (A, I_min, J)
+    tube = if spec.profile == PROFILE_CIRCULAR
+        CircularTube(spec.Do, spec.t_over_D)
+    elseif spec.profile == PROFILE_ELLIPTICAL
+        EllipticalTube(spec.Do, spec.t_over_D, spec.aspect_ratio)
+    else
+        AirfoilTube(spec.Do, spec.t_over_D, spec.aspect_ratio)
     end
+    # Sizing optimization campaigns use conservative PinPin ends condition
+    props = strut_properties(tube, 1.0, PinPinEnds())
+    return (props.A, props.I_min, props.J)
 end
 
 # ── Geometry helpers ─────────────────────────────────────────────────────────
@@ -364,8 +329,17 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
 
         # Centripetal off-loading: blade + beam mass at this vertex
         spec = beam_spec_at_ring(design, r)
-        A, I_min, _ = beam_section_properties(spec)
-        m_beam_per_vertex = OPT_RHO_CFRP * A * L_poly
+        tube = if spec.profile == PROFILE_CIRCULAR
+            CircularTube(spec.Do, spec.t_over_D)
+        elseif spec.profile == PROFILE_ELLIPTICAL
+            EllipticalTube(spec.Do, spec.t_over_D, spec.aspect_ratio)
+        else
+            AirfoilTube(spec.Do, spec.t_over_D, spec.aspect_ratio)
+        end
+        props = strut_properties(tube, L_poly, PinPinEnds())
+
+        A = props.A
+        m_beam_per_vertex = props.mass * L_poly
         m_vertex = design.knuckle_mass_kg + m_beam_per_vertex +
                     (i == n_rings_tot ? m_blade_per_vertex : 0.0)
 
@@ -373,7 +347,7 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
         F_v = max(F_in_per_vertex_aero - F_centripetal, 0.0)
         N_comp = F_v / (2.0 * tan(π / n_float))
 
-        P_crit = π^2 * OPT_E_CFRP * I_min / max(L_poly, 1e-12)^2
+        P_crit = props.P_crit
 
         is_buckling_ring = (i > 1 && i < n_rings_tot)
         if is_buckling_ring && N_comp > 0
@@ -397,7 +371,7 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
             torsion_ok = false
         end
 
-        mass_beams += design.n_lines * OPT_RHO_CFRP * A * L_poly
+        mass_beams += design.n_lines * props.mass * L_poly
     end
 
     mass_knuckles = design.knuckle_mass_kg * design.n_lines * n_rings_tot

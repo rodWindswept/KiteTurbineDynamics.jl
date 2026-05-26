@@ -6,6 +6,8 @@ include("parameters.jl")
 include("aerodynamics.jl")
 include("wind_profile.jl")
 include("types.jl")
+include("spacer_ring_design.jl")
+using .SpacerRingDesignModule
 include("geometry.jl")
 include("initialization.jl")
 include("rope_forces.jl")
@@ -37,7 +39,7 @@ export multibody_ode!
 export settle_to_equilibrium, simulate
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, ring_element_analysis, analyse_ring, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP,
-       G_CFRP, σ_CFRP_COMPR, tube_props, RingElementFrame, BeamResult
+       G_CFRP, σ_CFRP_COMPR, tube_props, RingElementFrame, BeamResult, ground_station_forces
 export SimFrame, SimPeaks, capture_frame, capture_peaks
 export build_dashboard
 
@@ -84,6 +86,13 @@ export Economics, CostModel, default_cost_model_2026, compute_capital_cost,
        compute_lcoe, compute_carbon, competitor_comparison,
        compute_cost_breakdown, compute_mass_breakdown,
        compute_annual_energy, compute_annual_revenue
+
+# Spacer Ring Structural Design Module
+export CFRPProfile, CircularProfile, EllipticalProfile, AirfoilProfile
+export CFRPMaterial, DEFAULT_CFRP
+export CFRPTube, CircularTube, EllipticalTube, AirfoilTube
+export AbstractEndCondition, FixedFixedEnds, PinPinEnds, effective_length_factor
+export StrutProperties, strut_properties, utilisation
 
 include("simulation.jl")
 end

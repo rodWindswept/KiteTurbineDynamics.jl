@@ -80,7 +80,39 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # ── Generator MPPT torque on ground node ──────────────────────────────
     gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
     omega_gnd = omega[gnd_ri]
-    tau_gen   = p.k_mppt * max(omega_gnd, 0.0)^2
+    
+    # Winch payout base and geometric scaling for system size
+    payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
+    geom_scale  = p.tether_length / 30.0
+    max_payout  = payout_base * geom_scale
+
+    ctrl_mode = round(p.β_rate_max)
+    
+    if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
+        # Physical shaft elevation angle β_actual
+        β_actual = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
+        β_design = p.elevation_angle
+        β_furl   = deg2rad(60.0)
+        elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
+        
+        omega_hub = omega[hub_ri]
+        
+        if ctrl_mode ≈ 1.0
+            # Mode 1: Active Torsional Damping
+            tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
+            power_scale = (p.p_rated_w / 10000.0)^2
+            c_d = 10.0 * power_scale
+            tau_damp = c_d * (omega_gnd - omega_hub)
+            tau_gen = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+        else
+            # Mode 2: LPF Speed MPPT (smooth hub speed)
+            tau_gen = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+        end
+    else
+        # Mode 0: Standard MPPT with dynamic max payout
+        tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
+    end
+    
     torques[gnd_ri] -= tau_gen
 
     # ── Inter-ring torsional damping ──────────────────────────────────────────

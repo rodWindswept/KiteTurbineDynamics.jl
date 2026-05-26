@@ -12,7 +12,7 @@ Uses TWO ring-plane bases:
   Bridles are kept in the shaft frame to prevent tilt→bridle→tilt feedback.
 - **tilted** basis for TRPT sub-segments (ring→ring connections).
   The tilted basis lets the tether geometry respond to ring-plane tilt,
-  enabling power spill during furl.
+  enabling power spill during pitch depower.
 
 `alpha` is a length-n_ring vector of current twist angles (ring_idx order).
 """
@@ -62,9 +62,9 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
     end
 
     for ss in sys.sub_segs
-        # Bridle sub-segments have non-ring end_a (bearing); TRPT have both ring ends.
+        # Bridle and cyan sub-segments have end_a at the bearing node.
         # Bridles → shaft basis (stable); TRPT → tilted basis (power spill).
-        is_bridle = !ss.end_a.is_ring
+        is_bridle = ss.end_a.node_id == sys.bearing_id
         pa = end_pos(ss.end_a, !is_bridle)
         pb = end_pos(ss.end_b, !is_bridle)
         va = end_vel(ss.end_a)

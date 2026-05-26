@@ -150,7 +150,7 @@ function assemble_ring_frame(R::Float64, n::Int, α::Float64,
         pa = [R * cos(φ_j),  R * sin(φ_j),  0.0]
         pb = [R * cos(φ_jn), R * sin(φ_jn), 0.0]
 
-        K_loc = beam_stiffness_local(E_CFRP, G_CFRP, tp.A, tp.I_bend, tp.J, L_beam)
+        K_loc = beam_stiffness_local(tp.E, tp.G, tp.A, tp.I_bend, tp.J, L_beam)
         T_mat = beam_transform(pa, pb, ring_normal)
         K_elem = T_mat' * K_loc * T_mat
 
@@ -209,8 +209,8 @@ function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64
                               tp::NamedTuple, K_locals::Vector{Matrix{Float64}},
                               T_mats::Vector{Matrix{Float64}})::Vector{BeamResult}
     L_beam = 2.0 * R * sin(π / n)
-    N_crit = 4.0 * π^2 * E_CFRP * tp.I_bend / L_beam^2   # fixed-fixed K=0.5
-    M_el   = σ_CFRP_COMPR * tp.I_bend / (tp.Do / 2.0)    # elastic moment capacity
+    N_crit = 4.0 * π^2 * tp.E * tp.I_bend / L_beam^2   # fixed-fixed K=0.5
+    M_el   = tp.σ_yield * tp.I_bend / (tp.Do / 2.0)    # elastic moment capacity
 
     results = Vector{BeamResult}(undef, n)
 
@@ -360,25 +360,53 @@ function analyse_ring(u       ::AbstractVector,
                       alpha   ::AbstractVector,
                       p       ::SystemParams,
                       t       ::Float64 = 0.0,
-                      wind_fn ::Union{Nothing, Function} = nothing)::RingElementFrame
+                      wind_fn ::Union{Nothing, Function} = nothing,
+                      design  ::Union{Nothing, SpacerRingDesign} = nothing)::RingElementFrame
     node   = sys.nodes[ring_gid]::RingNode
     R      = node.radius
     ri     = node.ring_idx
     α_ring = alpha[ri]
     n      = p.n_lines
-    β      = p.elevation_angle
-    shaft_dir = [cos(β), 0.0, sin(β)]
-    perp1, perp2 = shaft_perp_basis(shaft_dir)
+    hub_gid   = sys.rotor.node_id
+    hub_ri    = (sys.nodes[hub_gid]::RingNode).ring_idx
+    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    shaft_dir = cross(perp1, perp2)
 
     # Step 1: per-vertex forces in global frame (3 × n)
     F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
 
     # Tube properties for gravity and drag
-    tp = tube_props(R)
     L_beam = 2.0 * R * sin(π / n)
+    active_tube = if design === nothing
+        # Legacy circular scaling
+        Do = max(0.01396 * sqrt(R), 5e-4 / 0.05)
+        t_over_D = 0.05
+        CircularTube(Do, t_over_D)
+    else
+        # Dynamic scaling matching optimization specs
+        scale = (R / design.r_hub)^design.Do_scale_exp
+        Do_scaled = max(design.Do_top * scale, 5e-4 / design.t_over_D)
+        
+        if design.profile == PROFILE_CIRCULAR
+            CircularTube(Do_scaled, design.t_over_D)
+        elseif design.profile == PROFILE_ELLIPTICAL
+            EllipticalTube(Do_scaled, design.t_over_D, design.aspect_ratio)
+        else
+            AirfoilTube(Do_scaled, design.t_over_D, design.aspect_ratio)
+        end
+    end
+
+    # Retrieve cached properties for the active tube (FixedFixed ends in space frame)
+    props = strut_properties(active_tube, L_beam, FixedFixedEnds())
+    Do_val = active_tube.profile.Do
+    t_val  = max(active_tube.profile.t_over_D * Do_val, 5e-4)
+
+    # Build tp NamedTuple for compatibility, including custom E, G, σ_yield
+    tp = (Do=Do_val, t=t_val, Di=max(Do_val - 2t_val, 0.0), A=props.A, I_bend=props.I_min, J=props.J,
+          E=active_tube.material.E, G=active_tube.material.G, σ_yield=active_tube.material.σ_yield)
 
     # Step 1b: Add self-weight (knuckle self-weight + CFRP tube self-weight)
-    m_vertex = 0.05 + tp.A * L_beam * 1600.0
+    m_vertex = 0.05 + props.mass * L_beam
     F_grav = [0.0, 0.0, -9.81 * m_vertex]
     for j in 1:n
         F_global[:, j] .+= F_grav
@@ -425,7 +453,7 @@ function analyse_ring(u       ::AbstractVector,
 
     # Inertia relief: Subtract net out-of-equilibrium force equally from all vertices.
     # Since the ring accelerates dynamically under unbalanced forces (e.g. gravity, wind, 
-    # and tether forces under slack/furl), the static FEA solver's soft regularisation 
+    # and tether forces under slack/depower), the static FEA solver's soft regularisation 
     # ground springs (ε) would otherwise react to this net force. This results in huge 
     # rigid-body translations (10^6+ m) that drown out tiny elastic beam deformations 
     # (10^-5 m) in floating-point roundoff error, yielding astronomical spurious beam 
@@ -488,10 +516,11 @@ function ring_element_analysis(u     ::AbstractVector,
                                sys   ::KiteTurbineSystem,
                                p     ::SystemParams,
                                t     ::Float64 = 0.0,
-                               wind_fn::Union{Nothing, Function} = nothing)::Vector{RingElementFrame}
+                               wind_fn::Union{Nothing, Function} = nothing,
+                               design::Union{Nothing, SpacerRingDesign} = nothing)::Vector{RingElementFrame}
     results = Vector{RingElementFrame}()
     for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])
-        frame = analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn)
+        frame = analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn, design)
         push!(results, RingElementFrame(k, frame.radius, frame.beams, frame.max_util))
     end
     return results

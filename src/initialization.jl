@@ -481,7 +481,7 @@ damping in the line material (Dyneema creep and hysteresis), and gyroscopic
 stabilisation from the spinning rotor above resisting lateral excitation.
 Without any transverse dissipation the simulated bearing is an ideal free
 particle that can precess indefinitely under asymmetric bridle loading
-(e.g. during furl when ring deceleration makes bridle tensions unequal).
+# (e.g. during pitch depower when ring deceleration makes bridle tensions unequal).
 The default corresponds to an e-folding time of ~0.7 s for transverse
 motion — consistent with observed line-system damping and gentle enough to
 preserve all physically meaningful dynamics.
@@ -524,7 +524,7 @@ function simulate(sys            ::KiteTurbineSystem,
         @views u[6N+Nr+1:6N+2Nr] .*= ang_damp
 
         # Bearing transverse damping: damp only the velocity component perpendicular
-        # to the shaft axis.  The axial component (rise/fall during furl) is free.
+        # to the shaft axis.  The axial component (rise/fall during pitch depower) is free.
         hp    = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
         hp_m  = norm(hp)
         sd    = hp_m > 0.1 ? hp ./ hp_m : sd0

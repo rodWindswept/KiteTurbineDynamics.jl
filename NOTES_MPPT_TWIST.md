@@ -83,16 +83,16 @@ for full tables. Key findings:
 
 | k_mult | v=8 m/s P | v=10 m/s P | v=11 m/s P | v=13 m/s P |
 |--------|-----------|------------|------------|------------|
-| 0.5× | 2.71 kW | 5.18 kW | 6.82 kW | 11.07 kW |
-| 0.75× | 3.13 kW | 5.97 kW | 7.86 kW | 12.71 kW |
-| **1.0×** | **3.31 kW** | **6.29 kW** | **8.27 kW** | **13.35 kW** |
-| **1.2×** | **3.34 kW** | **6.33 kW** | **8.31 kW** | **13.36 kW** |
-| 1.5× | 3.27 kW | 6.17 kW | 8.09 kW | 12.97 kW |
-| 2.5× | 2.50 kW | 4.66 kW | 6.07 kW | 9.61 kW |
-| 4.0× | 0.78 kW | 1.36 kW | 1.72 kW | 2.62 kW |
+| 0.5× | 2.80 kW | 5.81 kW | 7.82 kW | 13.04 kW |
+| 0.75× | 3.44 kW | 7.08 kW | 9.51 kW | 15.85 kW |
+| 1.0× | 3.82 kW | 7.83 kW | 10.52 kW | 17.54 kW |
+| 1.2× | 4.03 kW | 8.23 kW | 11.06 kW | 18.46 kW |
+| **1.5×** | **4.13 kW** | **8.38 kW** | **11.28 kW** | **18.84 kW** |
+| 2.5× | 4.04 kW | 7.79 kW | 10.36 kW | 17.17 kW |
+| 4.0× | 3.31 kW | 5.55 kW | 7.43 kW | 12.07 kW |
 
-- **Optimal k_mult = 1.2×** across all wind speeds (very flat peak between 1.0–1.2×)
-- Twist at optimal: 238° (8 m/s) → 308° (13 m/s) — increases with wind speed
+- **Optimal k_mult = 1.5×** across all wind speeds (authoritative v2 sweep result)
+- Twist at optimal: 475.1° (8 m/s) → 467.7° (13 m/s) — remarkably flat across wind speeds
 - Twist is NOT wind-speed-independent: it tracks wind speed (useful as a wind estimator)
 - Twist IS ambiguous as a sole control signal (same twist at under- and over-braked)
 - Torsional stability confirmed: twist std ≤ 1.7° in settled region

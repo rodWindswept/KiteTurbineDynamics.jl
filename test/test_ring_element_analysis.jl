@@ -187,4 +187,32 @@ end
     @test isapprox(norm(F_net_new), 0.0, atol=1e-11)
 end
 
+@testset "Test 8: ground_station_forces calculation" begin
+    p   = params_10kw()
+    sys, u0 = build_kite_turbine_system(p)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    
+    alpha_vec = u0[6N+1 : 6N+Nr]
+    
+    gnd_forces = ground_station_forces(u0, collect(alpha_vec), sys, p)
+    
+    # Net force magnitude and vertex max force should be valid positive numbers
+    @test gnd_forces.F_net_mag >= 0.0
+    @test gnd_forces.F_vertex_max >= 0.0
+    @test length(gnd_forces.F_net) == 3
+    @test length(gnd_forces.M_net) == 3
+    @test size(gnd_forces.F_vertices) == (3, p.n_lines)
+    
+    # In steady symmetric state, the net force should pull exactly along the shaft direction,
+    # and the net moment should also be close to 0.
+    beta = p.elevation_angle
+    shaft_dir = [cos(beta), 0.0, sin(beta)]
+    @test isapprox(dot(gnd_forces.F_net, shaft_dir), gnd_forces.F_net_mag, atol=1e-2)
+    @test isapprox(gnd_forces.F_net[2], 0.0, atol=1e-2)
+    @test isapprox(gnd_forces.M_net[1], 0.0, atol=1e-2)
+    @test isapprox(gnd_forces.M_net[2], 0.0, atol=1e-2)
+    @test isapprox(gnd_forces.M_net[3], 0.0, atol=1e-2)
+end
+
 end  # @testset "ring_element_analysis"

@@ -24,7 +24,7 @@ function multibody_ode!(du, u, params, t)
                 [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
 
     # ── Disc tilt from bearing offset (one-way, stable) ──────────────────
-    # When the bearing drifts from its design position (e.g. during furl),
+    # When the bearing drifts from its design position (e.g. during pitch depower),
     # the ring plane tilts.  We compute the tilt angle from the bearing
     # offset perpendicular to the shaft axis, then derive a tilted ring-plane
     # basis for TRPT sub-segments.  Bridle geometry stays in the shaft frame

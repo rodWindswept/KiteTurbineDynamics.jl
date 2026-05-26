@@ -10,6 +10,29 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-05-23] Banishment of Furl, Transition to Pitch Depower, and Terminological Preservation of Furl
+
+**Context:** During wind-spilling winching scenarios in *KiteTurbineDynamics.jl*, the simulator previously used the term "Furl" to refer to the process of winching out the backline to raise the turbine rotor and spill the wind. This terminology created significant confusion with "Lift Kite Furling" (the aerodynamic modulation of the top lift device to prevent structural overload in high winds). 
+
+Furthermore, high-fidelity dynamic simulations of this scenario identified a critical failure mode: if the backline is paid out without active tension constraints on the top lift device, the sky anchor and bearing sag under gravity and wind, causing the gold bridles to go completely slack (Tension = 0.0 N). This structurally decouples the ground generator from the airborne rotor, rendering active drivetrain damping and $k_{\text{MPPT}}$ stall governance completely useless, and triggering severe, unphysical 100 rad/s intermediate ring whipping and torsional collapse.
+
+**What was decided:**
+- **Banishment of "Furl" for Shaft Operations:** The term "Furl" is completely retired from all user-facing GUI, status messages, simulation parameters, and test campaigns. It is replaced by **"Pitch Depower"** (or **"Turbine Rotor Pitch Depower"** in full).
+- **Physical Concept & Terminological Separation:** 
+  1. *Pitch Depower:* Raising the generating rotor (at the top of the TRPT) by paying out the backline to tilt its axis of rotation closer to vertical, reducing its apparent wind annulus area and spilling wind.
+  2. *Furl:* Strictly reserved for future work on the lift kite's own aerodynamic lift modulation/reduction under extreme wind loads to protect the sky anchor from overload.
+- **The Lifter High-Tension Constraint:** The top lifting rotor kite must maintain **full operational lift force and tension** (high-tension pull, similar to and at least as much as under normal operating conditions, i.e., $T_{\text{lift}} \ge 1000\text{ N}$) throughout the entire Pitch Depower operation. This ensures that the TRPT column remains preloaded and taut, the gold bridles never go slack, and the ground-winch + MPPT stall braking controls can safely and smoothly stall the generating rotor.
+- **Drivetrain Active Damping Preservation:** Ground damping is preserved during pitch depower and is physically valid because the high-tension pull of the lifter kite keeps the bridles and tethers taut ($GJ \gg 0$).
+- **UI HUD Default Open:** The "Lift Device" HUD telemetry section is set to start open by default to display the lifting line tension $T_{\text{lift}}$ in real time, so that the high-tension pull constraint is immediately visible and easily monitored.
+
+**Alternatives Considered:**
+- *Letting the lift kite depower at the same time:* Checked in simulation, but this causes complete loss of tether tension, leading to bridle slackness, dynamic uncoupling of the PTO, and immediate torsional collapse.
+- *Keeping "Furl" as the general term:* Ruled out due to the clear physical distinction between spilling wind on the generating rotor (Pitch Depower) and spilling wind on the lifting device (Furl).
+
+**Status:** Active.
+
+---
+
 ## [2026-05-22] Phase N — Full 6-DOF Inertia Relief & Moment Equilibration in Space-Frame Ring FEA Solver
 
 **Context:** During dynamic simulations (e.g., startup, wind changes, or furl/slack scenarios), the intermediate spacer rings of the airborne kite turbine undergo acceleration due to unbalanced forces (such as gravity, aerodynamic wind drag, and cyclic tether tension). Because the space-frame finite element method (FEA) solver in `src/ring_element_analysis.jl` is static, it solves a stiffness equation $K d = F$. To handle rigid-body modes (since the free-floating ring is not physically anchored to the ground), a soft Tikhonov ground spring regularisation ($\varepsilon$) is added to the diagonal of $K$.

@@ -155,10 +155,10 @@ u_final = simulate(sys, u0, p, wind_fn; lift_device=dev, n_steps=...)
 
 | Device | v=8 m/s hub_z std | v=11 m/s hub_z std | v=11 / SingleKite |
 |--------|-------------------|--------------------|--------------------|
-| SingleKite | 39 mm | 26 mm | 1.00× (reference) |
-| Stack×3 | ~39 mm | ~26 mm | ~1.00× |
-| RotaryLifter | TBD | TBD | expected ~0.12× |
-| NoLift | 72 mm | 36 mm | 1.38× worse |
+| SingleKite | 81 mm | 69 mm | 1.00× (reference) |
+| Stack×3 | 81 mm | 69 mm | 1.00× |
+| RotaryLifter | 94 mm | 88 mm | 1.28× |
+| NoLift | 402 mm | 399 mm | 5.78× worse |
 
 The NoLift baseline (no lift device, hub supported only by CT thrust) shows
 36–72 mm hub_z std — confirming CT thrust alone holds the hub but with

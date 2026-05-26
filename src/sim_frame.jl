@@ -114,8 +114,6 @@ function capture_frame(u           :: AbstractVector,
     # ── State extraction ──────────────────────────────────────────────────
     omega_hub = u[6N + Nr + Nr]
     omega_gnd = u[6N + Nr + 1]
-    P_kw      = p.k_mppt * omega_gnd^2 * abs(omega_gnd) / 1000.0
-    pct_rated = p.p_rated_w > 0 ? P_kw * 1000.0 / p.p_rated_w * 100.0 : 0.0
 
     hub_gid   = sys.rotor.node_id
     hub_ctr   = u[3*(hub_gid-1)+1 : 3*hub_gid]
@@ -125,6 +123,34 @@ function capture_frame(u           :: AbstractVector,
     # Hub altitude reference — default to current if none provided
     z0        = hub_z0 === nothing ? hub_z : hub_z0
     hub_z_delta = hub_z - z0
+
+    payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
+    geom_scale  = p.tether_length / 30.0
+    max_payout  = payout_base * geom_scale
+    ctrl_mode   = round(p.β_rate_max)
+    
+    tau_gen_init = 0.0
+    if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
+        β_actual = atan(hub_z, sqrt(hub_x^2 + hub_y^2))
+        β_design = p.elevation_angle
+        β_furl   = deg2rad(60.0)
+        elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
+        
+        if ctrl_mode ≈ 1.0
+            tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
+            power_scale = (p.p_rated_w / 10000.0)^2
+            c_d = 10.0 * power_scale
+            tau_damp = c_d * (omega_gnd - omega_hub)
+            tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+        else
+            tau_gen_init = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+        end
+    else
+        tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
+    end
+
+    P_kw      = tau_gen_init * abs(omega_gnd) / 1000.0
+    pct_rated = p.p_rated_w > 0 ? P_kw * 1000.0 / p.p_rated_w * 100.0 : 0.0
 
     # Wind at hub
     v_vec_hub = wind_fn(hub_ctr, t)
@@ -144,14 +170,14 @@ function capture_frame(u           :: AbstractVector,
     P_aero   = 0.5 * p.rho * V_hub^3 * π * sys.rotor.radius^2 *
                cp_at_tsr(lambda_t) * cos(p.elevation_angle)^3
     tau_aero = P_aero / max(abs(omega_hub), 0.5)
-    tau_gen  = p.k_mppt * omega_gnd^2
+    tau_gen  = tau_gen_init
 
     # ── Structural ────────────────────────────────────────────────────────
     # Per-segment tether tension (ring-attachment geometry, not rope-node positions)
-    β_s       = p.elevation_angle
-    shaft_dir = [cos(β_s), 0.0, sin(β_s)]
-    perp1, perp2 = shaft_perp_basis(shaft_dir)
-    n_seg     = p.n_rings + 1
+    hub_gid   = sys.rotor.node_id
+    hub_ri    = (sys.nodes[hub_gid]::RingNode).ring_idx
+    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    n_seg     = sys.n_ring - 1
     ea_rope   = sys.sub_segs[1].EA
 
     T_max   = 0.0
