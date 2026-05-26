@@ -292,6 +292,26 @@ end
 
     @info "Ground station mechanical brake test" accel_brake_off accel_brake_on
     @test accel_brake_on < accel_brake_off
+
+    # Test 3: Mechanical brake safety interlock (do NOT engage if sky rotor is fast)
+    u_test_interlock = copy(u0)
+    u_test_interlock[6N + Nr + gnd_ri] = 0.5 # ground speed is slow
+    u_test_interlock[6N + Nr + hub_ri] = 5.0 # sky rotor is fast!
+
+    du_lock_off = zeros(Float64, length(u_test_interlock))
+    multibody_ode!(du_lock_off, u_test_interlock, (sys, p_off, wind_fn, lift_device), 0.0)
+
+    du_lock_on = zeros(Float64, length(u_test_interlock))
+    multibody_ode!(du_lock_on, u_test_interlock, (sys, p_on, wind_fn, lift_device), 0.0)
+
+    accel_lock_off = du_lock_off[6N + Nr + gnd_ri]
+    accel_lock_on  = du_lock_on[6N + Nr + gnd_ri]
+
+    @info "Ground station mechanical brake safety interlock test" accel_lock_off accel_lock_on
+    
+    # Deceleration with brake ON at high rotor speed should be much smaller in magnitude 
+    # compared to the massive brake (decels should NOT be ~14000 rad/s², it will only be active damping)
+    @test abs(accel_lock_on) < 2000.0
 end
 
 

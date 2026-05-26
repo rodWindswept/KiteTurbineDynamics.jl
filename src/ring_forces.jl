@@ -126,10 +126,10 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     end
 
     # Apply automatic ground station mechanical brake if Field IMU toggle is active
-    # and ground speed drops below the threshold of 1.0 rad/s
+    # and sky rotor speed drops below the threshold of 1.0 rad/s
     if p.kp_elev ≈ 1.0
         omega_threshold = 1.0
-        x = abs(omega_gnd) / omega_threshold
+        x = abs(omega_hub) / omega_threshold
         if x < 1.0
             w_brake = (1.0 - x^2)^2
             power_scale = (p.p_rated_w / 10000.0)^2
