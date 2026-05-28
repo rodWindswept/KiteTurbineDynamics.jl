@@ -1,7 +1,7 @@
 # Handover — Pitch Depower Physics & Sequencing Session
 **Date:** 2026-05-28  
 **Repo:** KiteTurbineDynamics.jl  
-**Scenario under investigation:** 20 s pitch depower — Field IMU active damping ON, LPF Speed Mode 2 (`ctrl_mode=2.0`), rotary lift device elevation factor 1.6×
+**Scenario under investigation:**  pitch depower - typically 20s or 30s — Field IMU active damping ON, LPF Speed Mode 2 (`ctrl_mode=2.0`), rotary lift device elevation factor usually ~ 1.6× or 1.7x 
 
 ---
 
@@ -18,6 +18,8 @@ increase.
 **1. Brake only locks the ground ring.**  
 `apply_brake_constraint!` zeros `omega_gnd` (ring_idx = 1). The hub ring (`ring_idx = Nr`)
 is completely free to rotate. Nothing in the force model arrests backward hub rotation.
+
+(this is later confirmed normal and as expected as the turbine rotor is flying)
 
 **2. BEM tables give near-zero torque at standstill and backward rotation.**  
 `CP(0) = CT(0) = 0` by table anchor (`aerodynamics.jl`). The code also maps backward
@@ -78,7 +80,7 @@ net work around a closed cycle (conservative), but it provides **zero position-d
 restoring force**. The sky anchor was therefore a free mass with no geometric spring from
 the kite side.
 
-Physical reality: the lift line runs from the sky anchor up to the kite. Tension acts along
+Physical reality: the lift line runs from the sky anchor up to the topmost lifting kite. Tension acts along
 that line. When the sky anchor displaces by δ⊥ perpendicular to the nominal line, the
 restoring force component is `T_lift × δ⊥ / L_line`. For T_lift ≈ 2000 N, L_line = 25 m:
 **k_geo ≈ 80 N/m** — absent from the previous model.

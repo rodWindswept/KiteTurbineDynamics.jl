@@ -67,6 +67,7 @@ struct SimFrame
     torsional_overtwist :: Bool       # |Δα| > 270°
     buckling_risk       :: Bool       # ring_max_util > 0.8
     line_slack          :: Bool       # n_slack > 0
+    brake_engaged       :: Bool       # is the mechanical brake latched?
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -136,41 +137,52 @@ function capture_frame(u           :: AbstractVector,
         β_furl   = deg2rad(60.0)
         elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
         
+        imu_reliable = p.kp_elev ≈ 1.0
         if ctrl_mode ≈ 1.0
-            tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
-            power_scale = (p.p_rated_w / 10000.0)^2
-            c_d = 10.0 * power_scale
-            tau_damp = c_d * (omega_gnd - omega_hub)
-            if p.kp_elev ≈ 1.0
+            # Active Torsional Damping — mode 1
+            if imu_reliable
+                tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
+                power_scale = (p.p_rated_w / 10000.0)^2
+                c_d = 10.0 * power_scale
+                tau_damp = c_d * (omega_gnd - omega_hub)
                 tau_gen_init = (tau_mppt + tau_damp) * elev_scale
             else
-                tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+                # Failsafe ground-only feedback
+                tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
             end
         else
-            tau_gen_init = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+            # Mode 2: LPF Speed MPPT (smooth hub speed)
+            if imu_reliable
+                tau_gen_init = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+            else
+                # Failsafe ground-only feedback
+                tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
+            end
         end
     else
         tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
     end
 
-    if p.kp_elev ≈ 1.0 && !(ctrl_mode ≈ 1.0)
+    imu_reliable = p.kp_elev ≈ 1.0
+    if imu_reliable && !(ctrl_mode ≈ 1.0)
         power_scale = (p.p_rated_w / 10000.0)^2
         c_d_active = 15.0 * power_scale
         tau_damp_active = c_d_active * (omega_gnd - omega_hub)
         tau_gen_init += tau_damp_active
     end
 
-    # Apply automatic ground station mechanical brake if Field IMU toggle is active
-    # and sky rotor speed drops below the threshold of 1.0 rad/s
+    # Apply safety torque limiter
+    power_scale = (p.p_rated_w / 10000.0)^2
+    tau_max_safe = 2500.0 * power_scale
+    tau_gen_init = clamp(tau_gen_init, -tau_max_safe, tau_max_safe)
+
+    # Ground-station mechanical brake — triggered by flying rotor speed only (matches ring_forces.jl).
     if p.kp_elev ≈ 1.0
-        omega_threshold = 1.0
-        x = abs(omega_hub) / omega_threshold
-        if x < 1.0
-            w_brake = (1.0 - x^2)^2
-            power_scale = (p.p_rated_w / 10000.0)^2
+        if sys.brake_engaged[] || abs(omega_hub) < 1.0
+            sys.brake_engaged[] = true
             tau_brake_max = 1500.0 * power_scale
-            tau_brake = w_brake * tau_brake_max * tanh(20.0 * omega_gnd)
-            tau_gen_init += tau_brake
+            tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
+            tau_gen_init = tau_brake
         end
     end
 
@@ -285,6 +297,7 @@ function capture_frame(u           :: AbstractVector,
         ring_utils, ring_beam_utils,
         T_lift_val, elev_lift_val, lift_margin_v, lift_type_sym,
         torsional_overtwist, buckling_risk, line_slack_flag,
+        sys.brake_engaged[],
     )
 end
 

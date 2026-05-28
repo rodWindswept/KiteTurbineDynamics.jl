@@ -207,10 +207,10 @@ Sign convention:
 """
 function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64,
                               tp::NamedTuple, K_locals::Vector{Matrix{Float64}},
-                              T_mats::Vector{Matrix{Float64}})::Vector{BeamResult}
+                              T_mats::Vector{Matrix{Float64}}, oop_relaxation::Float64 = 1.0)::Vector{BeamResult}
     L_beam = 2.0 * R * sin(π / n)
     N_crit = 4.0 * π^2 * tp.E * tp.I_bend / L_beam^2   # fixed-fixed K=0.5
-    M_el   = tp.σ_yield * tp.I_bend / (tp.Do / 2.0)    # elastic moment capacity
+    M_el   = tp.σ_yield * tp.I_bend / (tp.Do / 2.0)    # elastic bending moment capacity
 
     results = Vector{BeamResult}(undef, n)
 
@@ -229,7 +229,7 @@ function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64
         # Internal forces (sign: f_local[1] = reaction on node 1 in +x_L direction)
         N_ax  = f_local[1]           # compression positive (f_local[1] > 0 when beam compressed)
         M_ip  = max(abs(f_local[6]), abs(f_local[12]))   # bending about z (in-plane)
-        M_oop = max(abs(f_local[5]), abs(f_local[11]))   # bending about y (OOP)
+        M_oop = max(abs(f_local[5]), abs(f_local[11])) * oop_relaxation   # bending about y (OOP) with relaxation
         T_tor = abs(f_local[4])                           # torsion
 
         util = beam_column_utilisation(N_ax, M_ip, M_oop, N_crit, M_el)
@@ -269,7 +269,8 @@ function extract_vertex_forces(u       ::AbstractVector,
                                 perp1   ::AbstractVector,
                                 perp2   ::AbstractVector,
                                 t       ::Float64 = 0.0,
-                                wind_fn ::Union{Nothing, Function} = nothing)::Matrix{Float64}
+                                wind_fn ::Union{Nothing, Function} = nothing,
+                                active_mask::Union{Nothing, Vector{Bool}} = nothing)::Matrix{Float64}
     node   = sys.nodes[ring_gid]::RingNode
     R      = node.radius
     ri     = node.ring_idx
@@ -297,6 +298,9 @@ function extract_vertex_forces(u       ::AbstractVector,
             pb  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
             len = norm(pb .- pa);  len < 1e-9 && continue
             T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            if T >= 5.0 && active_mask !== nothing
+                active_mask[j] = true
+            end
             F_verts[:, j] .+= T .* ((pa .- pb) ./ len)   # force on pb toward pa
 
             if wind_fn !== nothing
@@ -324,6 +328,9 @@ function extract_vertex_forces(u       ::AbstractVector,
             pa  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
             len = norm(pb .- pa);  len < 1e-9 && continue
             T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            if T >= 5.0 && active_mask !== nothing
+                active_mask[j] = true
+            end
             F_verts[:, j] .+= T .* ((pb .- pa) ./ len)   # force on pa toward pb
 
             if wind_fn !== nothing
@@ -374,6 +381,9 @@ function analyse_ring(u       ::AbstractVector,
 
     # Step 1: per-vertex forces in global frame (3 × n)
     F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
+
+    # Residual out-of-plane moment coupling factor (5%) representing the compliant Dyneema suspension
+    oop_relaxation = 0.05
 
     # Tube properties for gravity and drag
     L_beam = 2.0 * R * sin(π / n)
@@ -498,7 +508,7 @@ function analyse_ring(u       ::AbstractVector,
     d = solve_ring_frame(K_global, F_vec)
 
     # Step 4: recover per-beam forces
-    beams    = extract_beam_forces(d, R, n, α_ring, tp, K_locals, T_mats)
+    beams    = extract_beam_forces(d, R, n, α_ring, tp, K_locals, T_mats, oop_relaxation)
     max_util = maximum(b.utilisation for b in beams; init=0.0)
 
     # ring_id relative to intermediate rings (will be set by caller)

@@ -34,9 +34,10 @@ export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbu
 export AbstractNode, RingNode, RopeNode, BearingNode, SkyAnchorNode, HubVertexNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos
 export build_kite_turbine_system, build_kite_turbine_system_v5, state_size
-export compute_rope_forces!, compute_ring_forces!
+export compute_rope_forces!, compute_ring_forces!, apply_brake_constraint!
 export multibody_ode!
 export settle_to_equilibrium, simulate
+export run_canonical_sim!, DepowerResult, run_pitch_depower!, override_params
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, ring_element_analysis, analyse_ring, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP,
        G_CFRP, σ_CFRP_COMPR, tube_props, RingElementFrame, BeamResult, ground_station_forces

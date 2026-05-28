@@ -215,4 +215,41 @@ end
     @test isapprox(gnd_forces.M_net[3], 0.0, atol=1e-2)
 end
 
+@testset "Test 9: out-of-plane moment relaxation filter" begin
+    R=2.0; n=5; α=0.0
+    tp = KiteTurbineDynamics.tube_props(R)
+
+    # Let's mock a displacement vector d representing some out-of-plane bending.
+    d = randn(6*n)
+
+    K_locals = Vector{Matrix{Float64}}(undef, n)
+    T_mats   = Vector{Matrix{Float64}}(undef, n)
+    L_beam = 2.0 * R * sin(π / n)
+    ring_normal = [0.0, 0.0, 1.0]
+
+    for j in 1:n
+        jnext = mod1(j + 1, n)
+        φ_j    = α + (j    - 1) * 2π / n
+        φ_jn   = α + (jnext - 1) * 2π / n
+        pa = [R * cos(φ_j),  R * sin(φ_j),  0.0]
+        pb = [R * cos(φ_jn), R * sin(φ_jn), 0.0]
+        K_locals[j] = KiteTurbineDynamics.beam_stiffness_local(tp.E, tp.G, tp.A, tp.I_bend, tp.J, L_beam)
+        T_mats[j]   = KiteTurbineDynamics.beam_transform(pa, pb, ring_normal)
+    end
+
+    # Case 1: oop_relaxation = 1.0 (raw unrelaxed moments)
+    beams_raw = KiteTurbineDynamics.extract_beam_forces(d, R, n, α, tp, K_locals, T_mats, 1.0)
+    
+    # Case 2: oop_relaxation = 0.05 (compliant Dyneema relaxation factor)
+    beams_relaxed = KiteTurbineDynamics.extract_beam_forces(d, R, n, α, tp, K_locals, T_mats, 0.05)
+
+    # Verify that M_oop is scaled by exactly 0.05 under compliant relaxation,
+    # while N and M_ip remain perfectly unaffected.
+    for j in 1:n
+        @test isapprox(beams_relaxed[j].M_oop, 0.05 * beams_raw[j].M_oop, atol=1e-10)
+        @test beams_raw[j].N == beams_relaxed[j].N
+        @test beams_raw[j].M_ip == beams_relaxed[j].M_ip
+    end
+end
+
 end  # @testset "ring_element_analysis"

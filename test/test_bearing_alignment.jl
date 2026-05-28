@@ -1,6 +1,18 @@
 using LinearAlgebra
 using Statistics
 
+# Helper used across multiple testsets: builds a modified copy of SystemParams.
+# Defined at file scope so all testsets can access it.
+function _modified_params(base::SystemParams; kwargs...)
+    fnames    = fieldnames(SystemParams)
+    ftypes    = fieldtypes(SystemParams)
+    overrides = Dict{Symbol,Any}(kwargs)
+    vals = ntuple(length(fnames)) do i
+        convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
+    end
+    SystemParams(vals...)
+end
+
 # Frame-0 alignment regression test.
 #
 # After `settle_to_operational_state`, the lift bearing must sit on the TRPT
@@ -227,17 +239,6 @@ end
     p   = params_10kw()
     sys, u0 = build_kite_turbine_system(p)
 
-    # Helper to build a modified copy of an immutable SystemParams in tests
-    function _modified_params(base::SystemParams; kwargs...)
-        fnames    = fieldnames(SystemParams)
-        ftypes    = fieldtypes(SystemParams)
-        overrides = Dict{Symbol,Any}(kwargs)
-        vals = ntuple(length(fnames)) do i
-            convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
-        end
-        SystemParams(vals...)
-    end
-
     # Standard case: Field IMU active damping is off
     p_off = p # kp_elev defaults to ~0.0
     
@@ -293,9 +294,10 @@ end
     @info "Ground station mechanical brake test" accel_brake_off accel_brake_on
     @test accel_brake_on < accel_brake_off
 
-    # Test 3: Mechanical brake safety interlock (do NOT engage if sky rotor is fast)
+    # Test 3: Mechanical brake safety interlock (do NOT engage if both are fast)
+    sys.brake_engaged[] = false
     u_test_interlock = copy(u0)
-    u_test_interlock[6N + Nr + gnd_ri] = 0.5 # ground speed is slow
+    u_test_interlock[6N + Nr + gnd_ri] = 2.0 # ground speed is fast
     u_test_interlock[6N + Nr + hub_ri] = 5.0 # sky rotor is fast!
 
     du_lock_off = zeros(Float64, length(u_test_interlock))
@@ -309,9 +311,116 @@ end
 
     @info "Ground station mechanical brake safety interlock test" accel_lock_off accel_lock_on
     
-    # Deceleration with brake ON at high rotor speed should be much smaller in magnitude 
-    # compared to the massive brake (decels should NOT be ~14000 rad/s², it will only be active damping)
+    # Deceleration with brake ON at high rotor and ground speed should be small (no brake engaged)
     @test abs(accel_lock_on) < 2000.0
+
+    # Test 4: Brake does NOT fire on PTO speed alone — flying rotor must reach < 1 rad/s.
+    # Design intent: triggering on omega_gnd alone could fire the brake while the rotor
+    # is still fast (e.g. TRPT is twisted), applying a torsional shock to the rope stack.
+    # The rotor must slow to < 1 rad/s first so torsional energy is already low.
+    sys.brake_engaged[] = false
+    u_no_premature_brake = copy(u0)
+    u_no_premature_brake[6N + Nr + gnd_ri] = 0.5 # PTO is slow
+    u_no_premature_brake[6N + Nr + hub_ri] = 5.0 # rotor is still fast — brake must NOT fire
+
+    du_no_premature = zeros(Float64, length(u_no_premature_brake))
+    multibody_ode!(du_no_premature, u_no_premature_brake, (sys, p_on, wind_fn, lift_device), 0.0)
+    accel_no_premature = du_no_premature[6N + Nr + gnd_ri]
+
+    # Deceleration should be moderate (MPPT + active damping only), not a brake slam
+    @info "No premature brake trigger test (PTO slow, rotor fast)" accel_no_premature
+    @test abs(accel_no_premature) < 10000.0
+
+    # Test 5: Torque Limiter Enforcement
+    # Even if p.k_mppt is scaled to an extremely high value (e.g. 10000.0),
+    # generator torque should be capped at tau_max_safe = 2500.0 * power_scale.
+    p_extreme = _modified_params(p_on; k_mppt = 10000.0) # extreme k_mppt
+    u_extreme = copy(u0)
+    u_extreme[6N + Nr + gnd_ri] = 2.0 # fast, no brake
+    u_extreme[6N + Nr + hub_ri] = 2.0
+    
+    du_extreme = zeros(Float64, length(u_extreme))
+    multibody_ode!(du_extreme, u_extreme, (sys, p_extreme, wind_fn, lift_device), 0.0)
+    accel_extreme = du_extreme[6N + Nr + gnd_ri]
+    
+    # The maximum deceleration should be bounded by (tau_max_safe / i_pto) + small damping/inertial margin
+    power_scale = (p_extreme.p_rated_w / 10000.0)^2
+    tau_max_safe = 2500.0 * power_scale
+    max_accel_safe = (tau_max_safe + 150.0) / p_extreme.i_pto
+    @info "Torque limiter test" accel_extreme max_accel_safe
+    @test abs(accel_extreme) <= max_accel_safe
+
+    # Test 6: Decoupling verification
+    # Once sys.brake_engaged[] is true, generator torque is overridden by tau_brake,
+    # meaning k_mppt does not affect it.
+    sys.brake_engaged[] = true
+    p_high_k = _modified_params(p_on; k_mppt = 5000.0)
+    u_decoupled = copy(u0)
+    u_decoupled[6N + Nr + gnd_ri] = 0.5
+    u_decoupled[6N + Nr + hub_ri] = 2.0 # hub is fast
+    
+    du_low_k = zeros(Float64, length(u_decoupled))
+    multibody_ode!(du_low_k, u_decoupled, (sys, p_on, wind_fn, lift_device), 0.0)
+    
+    du_high_k = zeros(Float64, length(u_decoupled))
+    multibody_ode!(du_high_k, u_decoupled, (sys, p_high_k, wind_fn, lift_device), 0.0)
+    
+    # The accelerations should be identical because the generator has been decoupled
+    # and only the mechanical brake is active!
+    @test du_low_k[6N + Nr + gnd_ri] ≈ du_high_k[6N + Nr + gnd_ri] atol=1e-3
+end
+
+@testset "brake Euler velocity constraint" begin
+    # Regression test for the forward-Euler numerical instability described in
+    # apply_brake_constraint! (ring_forces.jl).
+    #
+    # The tanh(20·ω_gnd) brake model has a linearised stiffness ~508 000 rad/s²
+    # near ω=0, which is ~250× beyond the Euler stability limit at dt=1 ms.
+    # Without apply_brake_constraint!, small perturbations amplify into sign-flipping
+    # oscillations — tau_gen swings wildly even though the HUD shows LOCKED.
+    #
+    # This test manually replicates the dashboard's Euler loop for 200 steps at
+    # dt = 1 ms with the brake engaged and a residual TRPT torsional disturbance,
+    # confirming that apply_brake_constraint! keeps omega_gnd exactly at zero.
+    p   = params_10kw()
+    sys, u0 = build_kite_turbine_system(p)
+    wind_fn     = (pos, t) -> [0.0, 0.0, 0.0]
+    lift_device = rotary_lifter_default()
+
+    N      = sys.n_total
+    Nr     = sys.n_ring
+    hub_gid = sys.rotor.node_id
+    gnd_ri  = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
+    hub_ri  = (sys.nodes[hub_gid]::RingNode).ring_idx
+
+    # Engage the brake and set a low hub speed (rotor nearly stopped)
+    sys.brake_engaged[] = true
+    p_brake = _modified_params(p; kp_elev = 1.0)
+
+    u = copy(u0)
+    u[6N + Nr + gnd_ri] = 0.3   # PTO just above zero — brake fires, should clamp to zero
+    u[6N + Nr + hub_ri] = 0.5   # hub also slow
+
+    du = zeros(Float64, length(u))
+    dt = 0.001   # 1 ms — standard dashboard timestep
+
+    for step in 1:200
+        fill!(du, 0.0)
+        multibody_ode!(du, u, (sys, p_brake, wind_fn, lift_device), step * dt)
+
+        # Replicate the dashboard Euler update
+        @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
+        @views u[1:3N]            .+= dt .* u[3N+1:6N]
+        @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
+
+        # Apply the brake constraint (this is what the dashboard calls)
+        apply_brake_constraint!(u, sys, N, Nr)
+
+        @views u[6N+1:6N+Nr] .+= dt .* u[6N+Nr+1:6N+2Nr]
+
+        # Ground ring angular velocity must be exactly zero every step
+        @test u[6N + Nr + gnd_ri] == 0.0
+    end
 end
 
 

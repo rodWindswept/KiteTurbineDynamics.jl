@@ -66,3 +66,17 @@ All Python tools should be executed using the system Python `/usr/bin/python3` w
 1. **Keep the Test Suite Green**: Always run the package test suite (`test/runtests.jl`) to verify repository integrity after making changes.
 2. **Physics Conservatism**: Ensure all physical calculations conform to the BEM-coupled v2/v5 solver formulations.
 3. **Idempotence**: Maintain report patching scripts so they are fully idempotent.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked on GitHub. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Standard triage labels are used. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This repository uses a single-context layout. See `docs/agents/domain.md`.

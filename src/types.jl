@@ -103,6 +103,8 @@ struct KiteTurbineSystem
     # Quasi-static disc tilt: accumulated non-shaft torque per ring (ring_idx order)
     # Updated each ODE step; drives ring-plane tilt for the next step.
     ring_tilt_axis :: Vector{Vector{Float64}}
+    # Latched ground station PTO mechanical brake state
+    brake_engaged  :: Ref{Bool}
 end
 
 # Compliance: rad of ring-plane tilt per N·m of non-shaft torque.
