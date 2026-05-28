@@ -180,7 +180,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
 
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
                             bearing_gid, sky_anchor_gid, n_ring, n_total,
-                            [zeros(3) for _ in 1:n_ring])
+                            [zeros(3) for _ in 1:n_ring], Ref(false))
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))
@@ -594,6 +594,9 @@ This logic was shadowed directly from the interactive dashboard.
 function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated_max::Float64;
                                     lift_device::Union{Nothing, LiftDevice} = nothing,
                                     wind_fn::Union{Nothing, Function}      = nothing)
+    # Reset mechanical brake engagement
+    sys.brake_engaged[] = false
+
     u_start = settle_to_equilibrium(sys, u0, p;
                                      lift_device = lift_device,
                                      wind_fn     = wind_fn)
@@ -833,6 +836,7 @@ function settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}
     set_orbital_velocities!(u_start, sys, p)
     @views u_start[3N + 3*(sys.ring_ids[1]-1)+1 : 3N + 3*sys.ring_ids[1]] .= 0.0
 
+    sys.brake_engaged[] = false
     return u_start
 end
 export settle_to_operational_state

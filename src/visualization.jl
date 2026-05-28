@@ -831,6 +831,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             t  = 0.0; fi = 1
             release_frac     = 0.0   # depower payout fraction
             sigmoid_progress = 0.0   # closed-loop winch controller state
+            L_winch          = 0.0   # physical actuator payout (m)
+            v_winch          = 0.0   # actuator payout velocity (m/s)
             # Read control settings once at run start (immutable during a run)
             use_active_winch = active_winch_obs[]
             use_mppt_stall   = mppt_stall_obs[]
@@ -847,6 +849,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             n_seg_dyn = sys.n_ring - 1
             ea_rope   = sys.sub_segs[1].EA
             p_active  = p_run
+            k_mppt_scale      = 1.0   # initial stall scale
             for step in 1:n_steps
                 # ── Pitch Depower: closed-loop winch + MPPT stall governor ──────
                 # Every 50 steps (≈ 2 ms sim time) — fast enough to respond to slack events.
@@ -862,7 +865,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 # Hypothesis C — k_MPPT Stall Governor (if mppt_stall_obs[]):
                 #   k_mppt ramped up to 9× proportional to how far through the depower we are.
                 if scenario == :pitch_depower && step % 50 == 0
-                    depower_delay    = seq_delay_frac * t_total
+                    depower_delay    = depower_seq == 1 ? 0.15 * t_total : 1.0  # 1.0 s absolute startup delay for Seq 2 & 3
                     depower_duration = 0.70 * t_total
                     target_sig       = clamp((t - depower_delay) / depower_duration, 0.0, 1.0)
                     
@@ -911,13 +914,27 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                                    clamp((release_frac - 0.30) / 0.70, 0.0, 1.0) :
                                    release_frac
                     k_mppt_scale = use_mppt_stall ? (1.0 + 8.0 * stall_ramp) : 1.0
-                    
-                    p_depower = _modified_params(p_run;
-                        backline_payout = max_payout * release_frac,
+                end
+
+                if scenario == :pitch_depower
+                    # Second-order compliant winch actuator model: steps at the simulation rate dt
+                    payout_base = p_run.β_min < 5.0 ? 15.0 : p_run.β_min
+                    geom_scale  = p_run.tether_length / 30.0
+                    max_payout  = payout_base * geom_scale
+
+                    L_target  = max_payout * release_frac
+                    omega_n   = 2.0 * pi * 1.0  # 1.0 Hz actuator natural frequency
+                    zeta_act  = 1.0            # Critically damped response
+                    a_winch   = (omega_n^2 * (L_target - L_winch)) - (2.0 * zeta_act * omega_n * v_winch)
+                    v_winch  += dt * a_winch
+                    L_winch  += dt * v_winch
+
+                    # Reconstruct p_active and ode_p every step with the new L_winch
+                    p_active = _modified_params(p_run;
+                        backline_payout = L_winch,
                         k_mppt          = p_run.k_mppt * k_mppt_scale,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
-                    ode_p = isnothing(ld) ? (sys, p_depower, wf) : (sys, p_depower, wf, ld)
-                    p_active = p_depower
+                    ode_p = isnothing(ld) ? (sys, p_active, wf) : (sys, p_active, wf, ld)
                 end
 
                 # all scenarios: progress update + yield every 500 steps

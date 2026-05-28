@@ -18,5 +18,6 @@ using KiteTurbineDynamics
     include("test_ring_spacing_v4.jl")
     include("test_ring_element_analysis.jl")
     include("test_spacer_ring_design.jl")
+    include("test_pitch_depower_sequence.jl")
     include("test_dashboard_smoke.jl")
 end

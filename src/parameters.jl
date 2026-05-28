@@ -244,7 +244,7 @@ function params_10kw()::SystemParams
         0.22,               # cp — AeroDyn BEM (Rotor_TRTP_Sizing_Iteration2.xlsx)
     )
     ctrl = ControlSpec(
-        0.019 + 0.040,      # i_pto (kg·m²) — wheel + generator
+        25.0,               # i_pto (kg·m²) — reflected low-speed shaft inertia (wheel + N²·I_gen)
         11.0,               # k_mppt (N·m·s²/rad²) — τ_gen = k × ω²
                             #   ω_opt = 4.1 × 11 / 5 = 9.02 rad/s, τ_net ≈ 889 N·m
                             #   k = 889 / 81.4 ≈ 10.9 → 11.0
