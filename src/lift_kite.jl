@@ -454,6 +454,18 @@ function autogyro_radius_for_lift(lift_required_N::Float64, v_wind::Float64;
     return sqrt(A_needed / π)
 end
 
+# ── Lift line geometry ─────────────────────────────────────────────────────────
+
+"""
+    lift_line_length(dev::LiftDevice) → Float64
+
+Length of the lift line from the sky anchor to the lift device (m).
+Used to compute the quasi-static kite position for geometric stiffness.
+"""
+lift_line_length(dev::SingleKiteParams)   = dev.line_length
+lift_line_length(dev::RotaryLifterParams) = dev.line_length
+lift_line_length(dev::StackedKitesParams) = dev.spacing * dev.n_kites
+
 # ── Variability and sensitivity analysis ───────────────────────────────────────
 
 """

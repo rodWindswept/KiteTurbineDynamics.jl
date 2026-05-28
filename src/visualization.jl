@@ -557,6 +557,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Purpose: primary performance metric
     p_lbl = hlbl("Output power   P =   0.00 kW  (  0% rated)")
 
+    # Mechanical brake status indicator
+    brake_status_lbl = hlbl("PTO Brake      =  OFF"; color=:grey60)
+
     # Tip speed ratio λ = ω_hub × R / V_hub
     # Purpose: operating point on the Cp–λ curve; optimal ~4.1
     tsr_lbl = hlbl("Tip speed ratio  λ =   0.00  (opt ≈ 4.1)")
@@ -682,9 +685,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # active_winch_obs: enables proportional payout rate control using T_min feedback
     # mppt_stall_obs: enables ramped k_mppt stall governor (scales up to 9× during depower)
     # field_imu_obs: enables two-sided active torsional damping using Field IMU delta-omega telemetry
+    # depower_seq_obs: controls payout/brake sequencing
+    #   1 = "Stall → Lift"  (current: payout starts at 15%, brake fires freely)
+    #   2 = "Lift ∥ Stall"  (payout starts immediately, brake fires freely)
+    #   3 = "Lift → Stall"  (payout starts immediately, brake inhibited until ≥30% lift)
     active_winch_obs = Observable(false)
     mppt_stall_obs   = Observable(false)
     field_imu_obs    = Observable(false)
+    depower_seq_obs  = Observable(1)
 
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
@@ -818,6 +826,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             save_every = max(1, round(Int, 0.02 / dt))   # ≈ 0.02 s per frame for all dt values
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ save_every)
             new_times  = Vector{Float64}(undef,  n_steps ÷ save_every)
+            new_params = Vector{SystemParams}(undef, n_steps ÷ save_every)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
             release_frac     = 0.0   # depower payout fraction
@@ -826,8 +835,18 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             use_active_winch = active_winch_obs[]
             use_mppt_stall   = mppt_stall_obs[]
             use_field_imu    = field_imu_obs[]
+            depower_seq      = depower_seq_obs[]
+            # Sequence-derived parameters:
+            #   seq 1 (Stall→Lift): payout delayed 15%, stall governor ramps with release_frac
+            #   seq 2 (Lift∥Stall): payout immediate, stall governor ramps with release_frac
+            #   seq 3 (Lift→Stall): payout immediate, stall governor held at 1× until ≥30%
+            #                       payout — rotor decelerates naturally from rising hub first,
+            #                       then stall governor assists.  Latch brake fires normally.
+            seq_delay_frac    = depower_seq == 1 ? 0.15 : 0.0
+            seq_stall_delayed = depower_seq == 3
             n_seg_dyn = sys.n_ring - 1
             ea_rope   = sys.sub_segs[1].EA
+            p_active  = p_run
             for step in 1:n_steps
                 # ── Pitch Depower: closed-loop winch + MPPT stall governor ──────
                 # Every 50 steps (≈ 2 ms sim time) — fast enough to respond to slack events.
@@ -843,7 +862,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 # Hypothesis C — k_MPPT Stall Governor (if mppt_stall_obs[]):
                 #   k_mppt ramped up to 9× proportional to how far through the depower we are.
                 if scenario == :pitch_depower && step % 50 == 0
-                    depower_delay    = 0.15 * t_total
+                    depower_delay    = seq_delay_frac * t_total
                     depower_duration = 0.70 * t_total
                     target_sig       = clamp((t - depower_delay) / depower_duration, 0.0, 1.0)
                     
@@ -884,14 +903,21 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     
                     release_frac = 3.0 * sigmoid_progress^2 - 2.0 * sigmoid_progress^3
                     
-                    # k_MPPT stall governor: ramp up to 9× as depower progresses
-                    k_mppt_scale = use_mppt_stall ? (1.0 + 8.0 * release_frac) : 1.0
+                    # k_MPPT stall governor: ramp up to 9× as depower progresses.
+                    # Lift→Stall sequence: hold at 1× until 30% payout is established,
+                    # then ramp over the remaining 70% — so the rotor sees natural power
+                    # spill from rising hub before any electrical stall torque is added.
+                    stall_ramp   = seq_stall_delayed ?
+                                   clamp((release_frac - 0.30) / 0.70, 0.0, 1.0) :
+                                   release_frac
+                    k_mppt_scale = use_mppt_stall ? (1.0 + 8.0 * stall_ramp) : 1.0
                     
                     p_depower = _modified_params(p_run;
                         backline_payout = max_payout * release_frac,
                         k_mppt          = p_run.k_mppt * k_mppt_scale,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
                     ode_p = isnothing(ld) ? (sys, p_depower, wf) : (sys, p_depower, wf, ld)
+                    p_active = p_depower
                 end
 
                 # all scenarios: progress update + yield every 500 steps
@@ -914,6 +940,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
                 @views u[1:3N]            .+= dt .* u[3N+1:6N]
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
+                apply_brake_constraint!(u, sys, N, Nr)
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
                 orbital_damp_rope_velocities!(u, sys, p_run, 0.05)
                 # PTO co-braking during depower: damp all ring angular velocities
@@ -923,15 +950,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 end
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
                 if step % save_every == 0
-                    new_frames[fi] = copy(u); new_times[fi] = t; fi += 1
+                    new_frames[fi] = copy(u); new_times[fi] = t; new_params[fi] = p_active; fi += 1
                 end
             end
 
             nf           = length(new_frames)
             times_ref[]  = new_times
             frames_obs[] = new_frames
-            # Rebuild SimFrames for the new run
-            sim_frames_obs[] = [capture_frame(new_frames[i], sys, p,
+            # Rebuild SimFrames for the new run.  We reset sys.brake_engaged to false
+            # and let the capture_frame loop latch it sequentially to match the simulation.
+            sys.brake_engaged[] = false
+            sim_frames_obs[] = [capture_frame(new_frames[i], sys, new_params[i],
                                   new_times[i], wf, ld)
                                  for i in 1:nf]
             frame_slider.range[] = 1:nf
@@ -1047,6 +1076,13 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                                         omega_gnd, rpm_gnd)
         p_lbl.text[]        = @sprintf("Output power   P = %6.2f kW  (%3.0f%% rated)",
                                         P_kw, pct_rated)
+        if sf.brake_engaged
+            brake_status_lbl.text[] = "PTO Brake      =  LOCKED (ENGAGED)"
+            brake_status_lbl.color[] = to_color(:red)
+        else
+            brake_status_lbl.text[] = "PTO Brake      =  OFF"
+            brake_status_lbl.color[] = to_color(:grey60)
+        end
         tsr_lbl.text[]      = @sprintf("Tip speed ratio  λ = %5.2f  (opt ≈ 4.1)", tsr)
         twist_lbl.text[]    = @sprintf("TRPT twist  Δα = %7.1f°  (hub – PTO)", Δα_deg)
 
@@ -1458,6 +1494,33 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     field_imu_toggle = Toggle(tog_row_D[1, 2]; active=field_imu_obs[], framecolor_active=to_color(:cyan))
     on(field_imu_toggle.active) do v
         field_imu_obs[] = v
+    end
+
+    # Depower sequence selector: controls the relative timing of backline payout
+    # vs. PTO brake engagement.
+    #   Stall → Lift  Payout starts at 15% of scenario time.  Brake fires freely
+    #                 at omega < 1 rad/s.  Currently observed: rotor stalls first,
+    #                 then hub lifts — TRPT absorbs torsional shock at full elevation.
+    #   Lift ∥ Stall  Payout starts immediately.  Brake fires freely.  Hub begins
+    #                 rising from t=0; rotor may still stall early if wind is low.
+    #   Lift → Stall  Payout starts immediately.  Brake is inhibited until ≥30%
+    #                 payout has been released — guarantees hub is rising and rotor
+    #                 power is substantially reduced before the mechanical brake locks.
+    #                 This is the originally intended sequence.
+    clbl(""; fontsize=4)
+    clbl("Depower Sequence"; fontsize=11, font=:bold, halign=:left)
+    _seq_options = ["Stall → Lift  (current)", "Lift ∥ Stall  (immediate payout)", "Lift → Stall  (stall gov. after lift)"]
+    seq_row = GridLayout(ctrl[cnr!(), 1])
+    seq_menu = Menu(seq_row[1, 1];
+        options   = _seq_options,
+        default   = _seq_options[1],
+        fontsize  = 10,
+        tellwidth = false)
+    on(seq_menu.selection) do sel
+        idx = findfirst(==( sel), _seq_options)
+        if !isnothing(idx)
+            depower_seq_obs[] = idx
+        end
     end
 
     # ── SECTION B: Playback ───────────────────────────────────────────────────

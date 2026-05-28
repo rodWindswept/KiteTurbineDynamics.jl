@@ -65,15 +65,51 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         if tl > 0; tether_dir ./= tl; end
         forces[hub_gid] .+= thrust_mag .* tether_dir
 
-        P_aero   = 0.5 * p.rho * v_hub_mag^3 *
-                   π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
-                   cos(elev_angle)^3
-        # Wind always drives the rotor in the +ω direction regardless of current spin
-        # direction. The previous sign(omega_rotor) factor caused negative aero torque
-        # when the hub reversed (ω < 0), which physically-incorrectly reinforced the
-        # reversal and pinned P_peak to zero. Floor at 0.5 rad/s prevents division blow-up
-        # at standstill while giving a finite starting torque.
-        tau_aero = P_aero / max(abs(omega_rotor), 0.5)
+        if omega_rotor >= 0.0
+            # ── Forward / standstill: BEM Cp table ────────────────────────────
+            # CP(0)=0 by table anchor → tau_aero≈0 at standstill.  This is
+            # physically correct for TRPT: the turbine requires kickstarting
+            # (consistent with known flat-pitch standstill behaviour).
+            # Floor at 0.5 rad/s prevents division blow-up near zero.
+            P_aero   = 0.5 * p.rho * v_hub_mag^3 *
+                       π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
+                       cos(elev_angle)^3
+            tau_aero = P_aero / max(omega_rotor, 0.5)
+        else
+            # ── Backward rotation: blade-element drag model ───────────────────
+            # BEM Cp tables are invalid for ω < 0.  In reverse, blades operate
+            # at AoA 40–70° with CD ≈ 1.3 (deep stall / bluff body).  The
+            # resulting drag torque is large (~2000 N·m at ω=−2 rad/s) and
+            # physically arrests the reversal.
+            #
+            # Omitting this was the root cause of the red-ring artefact in the
+            # pitch-depower scenario: the TRPT torsional restoring force drove
+            # backward twist accumulation unopposed (BEM gave near-zero torque)
+            # → growing ring compression → false structural alarm.
+            #
+            # Per-blade drag torque integral over span [R_i, R_o]:
+            #   dT = 0.5·ρ·CD·c · |ω|·r² · sqrt(v_ax²+(|ω|·r)²) · dr
+            # Approximated via 70%-span representative radius (propeller BEM
+            # convention; accurate to ±15% vs. full numerical integration):
+            #   T ≈ n_blades · 0.5·ρ·CD·c · |ω|·R_eff² · v_rel_eff · span
+            #
+            # Chord from BEM solidity: σ≈0.18 at λ_opt=4.1 for NACA4412
+            #   c = σ·π·R / n_blades ≈ 0.113·R  (≈ 0.60 m at R=5 m)
+            CD_reverse  = 1.3                           # NACA4412 CD at AoA 40–70°
+            chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
+            R_o   = sys.rotor.radius
+            R_i   = 0.4 * R_o                           # inner tip cutout at TRPT hub
+            R_eff = 0.70 * R_o                          # 70% representative radius
+            span  = R_o - R_i                           # blade span
+            ω_abs = abs(omega_rotor)
+            v_ax  = v_hub_mag * cos(elev_angle)         # axial wind through disc
+            v_t_eff   = ω_abs * R_eff
+            v_rel_eff = sqrt(v_ax^2 + v_t_eff^2)
+            Q_drag   = p.n_lines * 0.5 * p.rho * CD_reverse * chord_blade *
+                       ω_abs * R_eff^2 * v_rel_eff * span
+            # Restoring: opposes backward spin → positive torque (drives ω toward 0⁺)
+            tau_aero = Q_drag
+        end
         torques[hub_ri] += tau_aero
     end
 
@@ -89,6 +125,9 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
 
     ctrl_mode = round(p.β_rate_max)
     
+    # Check flying IMU telemetry health/availability
+    imu_reliable = p.kp_elev ≈ 1.0
+    
     if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
         # Physical shaft elevation angle β_actual
         β_actual = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
@@ -98,44 +137,62 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         
         if ctrl_mode ≈ 1.0
             # Mode 1: Active Torsional Damping
-            tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
-            power_scale = (p.p_rated_w / 10000.0)^2
-            c_d = 10.0 * power_scale
-            tau_damp = c_d * (omega_gnd - omega_hub)
-            if p.kp_elev ≈ 1.0
-                # Field IMU active damping: two-sided damping (unclamped four-quadrant motoring)
+            if imu_reliable
+                # High-fidelity IMU Mode: Torsional Active Damping
+                tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
+                power_scale = (p.p_rated_w / 10000.0)^2
+                c_d = 10.0 * power_scale
+                tau_damp = c_d * (omega_gnd - omega_hub)
                 tau_gen = (tau_mppt + tau_damp) * elev_scale
             else
-                tau_gen = max(0.0, (tau_mppt + tau_damp) * elev_scale)
+                # Failsafe ground-only feedback: fall back to ground encoder speed (omega_gnd)
+                tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
             end
         else
             # Mode 2: LPF Speed MPPT (smooth hub speed)
-            tau_gen = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+            if imu_reliable
+                tau_gen = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+            else
+                # Failsafe ground-only feedback
+                tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
+            end
         end
     else
         # Mode 0: Standard MPPT with dynamic max payout
         tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
     end
 
-    # Apply two-sided Field IMU Active Damping if toggle is active (for Mode 0 and Mode 2)
-    if p.kp_elev ≈ 1.0 && !(ctrl_mode ≈ 1.0)
+    # Apply two-sided Field IMU Active Damping if toggle is active and IMU is reliable
+    if imu_reliable && !(ctrl_mode ≈ 1.0)
         power_scale = (p.p_rated_w / 10000.0)^2
         c_d_active = 15.0 * power_scale  # robust damping coefficient
         tau_damp_active = c_d_active * (omega_gnd - omega_hub)
         tau_gen += tau_damp_active
     end
 
-    # Apply automatic ground station mechanical brake if Field IMU toggle is active
-    # and sky rotor speed drops below the threshold of 1.0 rad/s
+    # Protect the TRPT rope structure from excessive generator electromagnetic torque
+    power_scale = (p.p_rated_w / 10000.0)^2
+    tau_max_safe = 2500.0 * power_scale
+    tau_gen = clamp(tau_gen, -tau_max_safe, tau_max_safe)
+
+    # Ground-station mechanical brake — triggered by the flying turbine rotor speed only.
+    # Rationale: the rotor must reach < 1 rad/s before the brake engages so that
+    # torsional energy stored in the TRPT is already low.  Triggering on omega_gnd
+    # alone could fire the brake while the rotor is still fast (e.g. if the TRPT
+    # is twisted), applying a torsional shock to the rope stack.
     if p.kp_elev ≈ 1.0
-        omega_threshold = 1.0
-        x = abs(omega_hub) / omega_threshold
-        if x < 1.0
-            w_brake = (1.0 - x^2)^2
-            power_scale = (p.p_rated_w / 10000.0)^2
+        if sys.brake_engaged[] || abs(omega_hub) < 1.0
+            sys.brake_engaged[] = true
             tau_brake_max = 1500.0 * power_scale
-            tau_brake = w_brake * tau_brake_max * tanh(20.0 * omega_gnd)
-            tau_gen += tau_brake
+            # tanh gives smooth onset and bidirectional hold:
+            #   omega_gnd > 0  →  decelerates the PTO
+            #   omega_gnd ≈ 0  →  near-zero torque, PTO already stopped
+            #   omega_gnd < 0  →  opposes any reverse creep from TRPT unwind
+            tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
+
+            # Decouple generator: mechanical brake does 100% of the holding,
+            # preventing any residual MPPT torque from fighting the brake.
+            tau_gen = tau_brake
         end
     end
     
@@ -201,14 +258,44 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
             T_lift = 0.0
         end
 
-        # Fixed-direction force vector at the kite's elevation angle.
-        # Downwind unit vector built from the actual wind direction so the
-        # model handles non-+x wind heading correctly.
+        # Force vector: downwind + elevation, then applied along the actual
+        # kite–sky-anchor line for geometric stiffness.
         if T_lift > 0.0 && v_hmag > 1e-6
             downwind = [v_lift[1] / v_hmag, v_lift[2] / v_hmag, 0.0]
             θ_lift   = deg2rad(elev_lift_deg)
             lift_dir = cos(θ_lift) .* downwind .+ sin(θ_lift) .* [0.0, 0.0, 1.0]
-            forces[sky_anchor_gid] .+= T_lift .* lift_dir
+
+            # ── Geometric stiffness — tension along actual kite direction ──────
+            # Previous model applied T_lift in the fixed design direction (lift_dir),
+            # independent of sky_anchor_pos.  A constant force does zero net work
+            # around a cycle but gives NO position-dependent restoring force, so
+            # the sky anchor is an undamped free mass after any perturbation.
+            #
+            # Root cause of post-brake shaking: TRPT unwind sends an impulse up
+            # through the cyan line to the sky anchor.  With no geometric spring
+            # from the kite side, the sky anchor rings indefinitely and the
+            # motion re-excites the bearing and TRPT geometry — mimicking renewed
+            # torsional resonance even though the TRPT has fully straightened.
+            #
+            # Fix: treat the kite as quasi-statically fixed in space relative to
+            # the bearing (valid for sky-anchor oscillation timescales << kite
+            # response time).  Tension then acts along sky_anchor → kite_pos,
+            # which changes direction as sky_anchor moves → restoring spring
+            #   k_geo = T_lift / L_line  ≈  80 N/m
+            #
+            # Kite equilibrium position:
+            #   sky_anchor_eq ≈ bearing_pos + CYAN_L0 × shaft_dir  (bearing is stable)
+            #   kite_pos      = sky_anchor_eq + L_line × lift_dir_eq
+            hmag_hub      = norm(hub_pos)
+            shaft_dir_c   = hmag_hub > 0.1 ? hub_pos ./ hmag_hub :
+                                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+            CYAN_L0_GEO   = 5.0                      # must match initialization.jl
+            sky_anchor_eq = bearing_pos .+ CYAN_L0_GEO .* shaft_dir_c
+            kite_pos      = sky_anchor_eq .+ lift_line_length(lift_device) .* lift_dir
+            line_to_kite  = kite_pos .- sky_anchor_pos
+            line_dist     = norm(line_to_kite)
+            tension_dir   = line_dist > 1.0 ? line_to_kite ./ line_dist : lift_dir
+            forces[sky_anchor_gid] .+= T_lift .* tension_dir
         end
     end
 
@@ -262,5 +349,31 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         forces[sky_anchor_gid][1] += Fx_top * uh_x
         forces[sky_anchor_gid][2] += Fx_top * uh_y
         forces[sky_anchor_gid][3] += Fz_top
+    end
+end
+
+"""
+    apply_brake_constraint!(u, sys, N, Nr)
+
+Post-step velocity constraint for a locked mechanical brake.
+
+When `sys.brake_engaged[]` is true, pins the ground ring (PTO shaft) angular
+velocity to exactly zero in the state vector `u`.
+
+**Why this is needed:** The `tanh(20 × ω_gnd)` brake model in `compute_ring_forces!`
+has a linearised stiffness of `20 × τ_brake_max / i_pto ≈ 508 000 rad/s²` near zero.
+The forward-Euler integrator is only stable up to `2 × i_pto / (coefficient × τ_max)
+≈ 4 μs` in that regime — far below the typical dashboard timestep of ~1 ms.  Without
+this constraint the integrator amplifies sub-milliradian perturbations into sign-flipping
+oscillations that show as swinging `τ_gen` numbers even after the HUD reports LOCKED.
+
+This function must be called after the angular-velocity Euler update and **before** the
+angle update, so the PTO angle also stops drifting once the brake is engaged.
+"""
+function apply_brake_constraint!(u::Vector{Float64},
+                                  sys::KiteTurbineSystem,
+                                  N::Int, Nr::Int)
+    if sys.brake_engaged[]
+        u[6N + Nr + 1] = 0.0   # ground ring (ring_idx = 1) angular velocity → 0
     end
 end
