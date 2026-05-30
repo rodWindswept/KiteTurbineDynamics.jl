@@ -274,12 +274,12 @@ F_hub points from hub toward kite (upward and slightly into wind).
 T_line is the scalar tension in the lift line.
 elevation_deg is the kite flight elevation angle.
 """
-function lift_force_steady(dev::SingleKiteParams, rho::Float64, v_wind::Float64)
+function lift_force_steady(dev::SingleKiteParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
     q      = 0.5 * rho * v_wind^2
     F_lift = q * dev.area * dev.CL     # upward
     F_drag = q * dev.area * dev.CD     # along wind (away from hub)
     T_line = sqrt(F_lift^2 + F_drag^2) # tension in lift line
-    elev   = kite_elevation_angle(dev.CL, dev.CD)
+    elev   = p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
     F_hub  = T_line .* lift_line_direction(elev)
     return (F_hub, T_line, elev)
 end
@@ -291,9 +291,9 @@ end
 Total lift force at hub from N cascaded kites.
 Net lift = sum of all kite forces (hub tension = Σ(Lᵢ − Wᵢ·cosθ)).
 """
-function lift_force_steady(dev::StackedKitesParams, rho::Float64, v_wind::Float64)
+function lift_force_steady(dev::StackedKitesParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
     q         = 0.5 * rho * v_wind^2
-    elev      = kite_elevation_angle(dev.CL, dev.CD)
+    elev      = p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
     θ         = deg2rad(elev)
     L_each    = q * dev.area_each * dev.CL
     D_each    = q * dev.area_each * dev.CD
@@ -357,7 +357,7 @@ Force uses rotor DISK area and empirical CL/CD curves
 Disk angle of attack α = 90° − φ where φ is the line elevation.
 Equilibrium solved iteratively: φ = atan(CL(α)/CD(α)).
 """
-function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float64)
+function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
     # PCA-2 autogyro disk coefficients vs angle of attack (degrees)
     # CL and CD normalised to disk area πR² and freestream dynamic pressure
     PCA2_ALPHA = [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0,
@@ -397,13 +397,17 @@ function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float6
 
     # Solve equilibrium: line elevation φ = atan(CL(90°-φ)×elevation_factor / CD(90°-φ))
     # CD also scales with elevation_factor (induced drag ∝ CL² approximated as CD×elevation_factor²)
-    φ_deg = 75.0
-    for _ in 1:8
-        α_deg = 90.0 - φ_deg
-        cl0, cd0 = pca2_interp(α_deg)
-        cl_eff = cl0 * elevation_factor
-        cd_eff = cd0 * elevation_factor^2  # induced drag scales with CL²
-        φ_deg = clamp(rad2deg(atan(cl_eff, cd_eff)), 5.0, 85.0)
+    if p !== nothing
+        φ_deg = rad2deg(p.lifter_elevation)
+    else
+        φ_deg = 75.0
+        for _ in 1:8
+            α_deg = 90.0 - φ_deg
+            cl0, cd0 = pca2_interp(α_deg)
+            cl_eff = cl0 * elevation_factor
+            cd_eff = cd0 * elevation_factor^2  # induced drag scales with CL²
+            φ_deg = clamp(rad2deg(atan(cl_eff, cd_eff)), 5.0, 85.0)
+        end
     end
 
     α_final = 90.0 - φ_deg
@@ -601,7 +605,7 @@ Ratio of available lift to required lift.
 Values > 1.0 indicate the kite can maintain altitude; < 1.0 means the hub descends.
 """
 function lift_margin(dev::LiftDevice, p::SystemParams, rho::Float64, v_wind::Float64)
-    _, T_available, elev = lift_force_steady(dev, rho, v_wind)
+    _, T_available, elev = lift_force_steady(dev, rho, v_wind, p)
     F_required           = hub_lift_required(p, rho, v_wind)
     # Vertical component of lift line force
     F_vertical           = T_available * sin(deg2rad(elev))

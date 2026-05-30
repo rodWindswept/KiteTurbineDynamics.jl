@@ -379,11 +379,24 @@ function analyse_ring(u       ::AbstractVector,
     perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     shaft_dir = cross(perp1, perp2)
 
-    # Step 1: per-vertex forces in global frame (3 × n)
-    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
+    # Step 1: per-vertex forces in global frame (3 × n) and active tether mask (T >= 5 N)
+    active_mask = fill(false, n)
+    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn, active_mask)
 
-    # Residual out-of-plane moment coupling factor (5%) representing the compliant Dyneema suspension
-    oop_relaxation = 0.05
+    # Dynamic out-of-plane moment relaxation based on active tether mask.
+    # Rationale: under line-slack transients, an underconstrained ring (<=2 active vertices)
+    # cannot physically support out-of-plane bending and has 0.0 OOP moment capacity in space-frame
+    # FEA solver. 3 active vertices -> 0.5 relaxation, >=4 active vertices -> 1.0 (full baseline).
+    n_active = sum(active_mask)
+    tether_relaxation = if n_active <= 2
+        0.0
+    elseif n_active == 3
+        0.5
+    else
+        1.0
+    end
+    # Scale the baseline 5% compliant Dyneema out-of-plane coupling by this factor:
+    oop_relaxation = 0.05 * tether_relaxation
 
     # Tube properties for gravity and drag
     L_beam = 2.0 * R * sin(π / n)

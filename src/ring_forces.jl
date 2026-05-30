@@ -170,7 +170,8 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         tau_gen += tau_damp_active
     end
 
-    # Protect the TRPT rope structure from excessive generator electromagnetic torque
+    # Protect the TRPT rope structure from excessive generator electromagnetic torque.
+    # Capped at a robust 2500 N.m scaling to reflect Dyneema tether safety margins.
     power_scale = (p.p_rated_w / 10000.0)^2
     tau_max_safe = 2500.0 * power_scale
     tau_gen = clamp(tau_gen, -tau_max_safe, tau_max_safe)
@@ -180,20 +181,19 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # torsional energy stored in the TRPT is already low.  Triggering on omega_gnd
     # alone could fire the brake while the rotor is still fast (e.g. if the TRPT
     # is twisted), applying a torsional shock to the rope stack.
-    if p.kp_elev ≈ 1.0
-        if sys.brake_engaged[] || abs(omega_hub) < 1.0
-            sys.brake_engaged[] = true
-            tau_brake_max = 1500.0 * power_scale
-            # tanh gives smooth onset and bidirectional hold:
-            #   omega_gnd > 0  →  decelerates the PTO
-            #   omega_gnd ≈ 0  →  near-zero torque, PTO already stopped
-            #   omega_gnd < 0  →  opposes any reverse creep from TRPT unwind
-            tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
+    # Decoupled from Field IMU (p.kp_elev) for safety.
+    if sys.brake_engaged[] || abs(omega_hub) < 1.0
+        sys.brake_engaged[] = true
+        tau_brake_max = 1500.0 * power_scale
+        # tanh gives smooth onset and bidirectional hold:
+        #   omega_gnd > 0  →  decelerates the PTO
+        #   omega_gnd ≈ 0  →  near-zero torque, PTO already stopped
+        #   omega_gnd < 0  →  opposes any reverse creep from TRPT unwind
+        tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
 
-            # Decouple generator: mechanical brake does 100% of the holding,
-            # preventing any residual MPPT torque from fighting the brake.
-            tau_gen = tau_brake
-        end
+        # Decouple generator: mechanical brake does 100% of the holding,
+        # preventing any residual MPPT torque from fighting the brake.
+        tau_gen = tau_brake
     end
     
     torques[gnd_ri] -= tau_gen
@@ -253,7 +253,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         # Passive kites stall below ~2 m/s; rotary lifter is exempt
         PASSIVE_KITE_STALL_SPEED = 2.0
         is_passive = !(lift_device isa RotaryLifterParams)
-        _, T_lift, elev_lift_deg = lift_force_steady(lift_device, p.rho, v_hmag)
+        _, T_lift, elev_lift_deg = lift_force_steady(lift_device, p.rho, v_hmag, p)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
             T_lift = 0.0
         end
@@ -283,14 +283,12 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
             # which changes direction as sky_anchor moves → restoring spring
             #   k_geo = T_lift / L_line  ≈  80 N/m
             #
-            # Kite equilibrium position:
-            #   sky_anchor_eq ≈ bearing_pos + CYAN_L0 × shaft_dir  (bearing is stable)
-            #   kite_pos      = sky_anchor_eq + L_line × lift_dir_eq
-            hmag_hub      = norm(hub_pos)
-            shaft_dir_c   = hmag_hub > 0.1 ? hub_pos ./ hmag_hub :
-                                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-            CYAN_L0_GEO   = 5.0                      # must match initialization.jl
-            sky_anchor_eq = bearing_pos .+ CYAN_L0_GEO .* shaft_dir_c
+            # ── Sticky sky-kite: anchor the topmost virtual kite position to design coordinates ──
+            # Symmetrical bearing offset (6.0 m) + CYAN_L0 (5.0 m) = 11.0 m along design shaft
+            # Rationale: the 25 m lift line has large inertia and aerodynamic damping; it does not
+            # precess or vibrate at the high frequency of bearing/ring mechanics.
+            L_axis_design = p.tether_length + 11.0
+            sky_anchor_eq = L_axis_design .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
             kite_pos      = sky_anchor_eq .+ lift_line_length(lift_device) .* lift_dir
             line_to_kite  = kite_pos .- sky_anchor_pos
             line_dist     = norm(line_to_kite)

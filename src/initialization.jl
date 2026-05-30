@@ -572,7 +572,7 @@ function design_preload_from_sky_anchor(p::SystemParams, lift_device::LiftDevice
     back_dir = normalize(back_pos .- sky_pos)
     cyan_dir = normalize(bearing_pos .- sky_pos)   # ≈ –shaft_dir
 
-    _, T_lift, el_deg = lift_force_steady(lift_device, p.rho, p.v_wind_ref)
+    _, T_lift, el_deg = lift_force_steady(lift_device, p.rho, p.v_wind_ref, p)
     el = deg2rad(el_deg)
 
     # T_back·back_dir + T_cyan·cyan_dir = –F_lift + W_sky_upward

@@ -62,6 +62,11 @@ struct DepowerResult
     backline_payout:: Vector{Float64}   # instantaneous backline payout (m)
     k_mppt_scale   :: Vector{Float64}   # instantaneous MPPT stall multiplier
     brake_time     :: Float64           # simulated time when brake first latched (NaN = never)
+    
+    # Safety disqualification summary metrics
+    T_cyan_min     :: Float64           # minimum sky anchor tension (N)
+    twist_max      :: Float64           # maximum adjacent ring twist (rad)
+    fos_buckling_min:: Float64          # minimum CFRP column buckling FoS
 end
 
 """
@@ -113,6 +118,7 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
                              payout_base::Float64   = 15.0,
                              damping_mode::Float64  = 0.0,
                              depower_sequence::Int  = 1,
+                             payout_duration::Float64 = NaN,
                              save_every::Int        = max(1, round(Int, 0.02 / dt)))
     N  = sys.n_total
     Nr = sys.n_ring
@@ -150,6 +156,10 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
     # Power scale for brake torque — matches ring_forces.jl logic
     power_scale = p_base.p_rated_w / 10_000.0
 
+    T_cyan_min_run = Inf
+    twist_max_run  = 0.0
+    fos_buckling_min_run = Inf
+
     # Inline mid-rope tension for segment s, line j
     # (avoids importing visualization helpers; identical formula to _mid_tension)
     _mid_t(s, j) = begin
@@ -165,8 +175,8 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
         # ── Depower controller: every 50 steps ≈ 2 ms sim time ─────────────
         if step % 50 == 0
             depower_delay    = depower_sequence == 1 ? 0.15 * t_total : 1.0  # 1.0 s absolute startup delay for Seq 2 & 3
-            depower_duration = 0.70 * t_total
-            target_sig       = clamp((t - depower_delay) / depower_duration, 0.0, 1.0)
+            depower_dur      = isnan(payout_duration) ? 0.70 * t_total : payout_duration
+            target_sig       = clamp((t - depower_delay) / depower_dur, 0.0, 1.0)
 
             if use_active_winch && target_sig > sigmoid_progress
                 # T_min: minimum average segment tension (proxy for stack slack)
@@ -233,6 +243,23 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
             brake_time = t
         end
 
+        # --- Dynamic safety metrics evaluated every step ---
+        # 1. Sky Anchor Tension
+        ss_cyan = sys.sub_segs[end]
+        pa_c = @view u[3*(ss_cyan.end_a.node_id - 1) + 1 : 3*ss_cyan.end_a.node_id]
+        pb_c = @view u[3*(ss_cyan.end_b.node_id - 1) + 1 : 3*ss_cyan.end_b.node_id]
+        T_cyan = max(0.0, ss_cyan.EA * (norm(pb_c .- pa_c) - ss_cyan.length_0) / ss_cyan.length_0)
+        T_cyan_min_run = min(T_cyan_min_run, T_cyan)
+
+        # 2. Adjacent Ring Twist
+        alpha_now = @view u[6N+1 : 6N+Nr]
+        for s in 1:(Nr - 1)
+            node_a = sys.nodes[sys.ring_ids[s]]::RingNode
+            node_b = sys.nodes[sys.ring_ids[s+1]]::RingNode
+            Δα = mod(alpha_now[node_b.ring_idx] - alpha_now[node_a.ring_idx] + π, 2π) - π
+            twist_max_run = max(twist_max_run, abs(Δα))
+        end
+
         if step % save_every == 0 && fi <= n_frames
             omega_hub_now = u[6N + Nr + hub_ri]
             omega_gnd_now = u[6N + Nr + gnd_ri]
@@ -254,6 +281,21 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
                 end
             end
 
+            # 3. Space-Frame CFRP column buckling FoS (evaluated on saved frames)
+            min_fos = Inf
+            try
+                alpha_now = @view u[6N+1 : 6N+Nr]
+                re_frames = ring_element_analysis(u, alpha_now, sys, p_step, t, wind_fn)
+                for rf in re_frames
+                    for b in rf.beams
+                        min_fos = min(min_fos, b.fos)
+                    end
+                end
+            catch
+                min_fos = 0.0
+            end
+            fos_buckling_min_run = min(fos_buckling_min_run, min_fos)
+
             times_v[fi]       = t
             omega_hub_v[fi]   = omega_hub_now
             omega_gnd_v[fi]   = omega_gnd_now
@@ -267,5 +309,6 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
     end
 
     return DepowerResult(times_v, omega_hub_v, omega_gnd_v, tau_gen_v,
-                         T_max_v, n_slack_v, payout_v, kscale_v, brake_time)
+                         T_max_v, n_slack_v, payout_v, kscale_v, brake_time,
+                         T_cyan_min_run, twist_max_run, fos_buckling_min_run)
 end

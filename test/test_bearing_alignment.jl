@@ -245,7 +245,7 @@ end
     # Active case: Field IMU active damping is on
     p_on = _modified_params(p; kp_elev = 1.0)
 
-    # Set omega_gnd = 5.0 rad/s and omega_hub = 0.0 rad/s (rotor stalled)
+    # Set omega_gnd = 5.0 rad/s and omega_hub = 2.0 rad/s (rotor spinning, brake not engaged)
     u_test = copy(u0)
     N = sys.n_total
     Nr = sys.n_ring
@@ -256,7 +256,7 @@ end
     # Set the angular velocities in the state vector u_test
     # Ring angular velocities are stored at u[6N + Nr + ri]
     u_test[6N + Nr + gnd_ri] = 5.0
-    u_test[6N + Nr + hub_ri] = 0.0
+    u_test[6N + Nr + hub_ri] = 2.0
 
     du_off = zeros(Float64, length(u_test))
     wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
@@ -292,7 +292,9 @@ end
     accel_brake_on  = du_brake_on[6N + Nr + gnd_ri]
 
     @info "Ground station mechanical brake test" accel_brake_off accel_brake_on
-    @test accel_brake_on < accel_brake_off
+    # With the brake decoupled from the Field IMU, it must engage in both cases
+    @test accel_brake_on ≈ accel_brake_off
+    @test accel_brake_on < -50.0
 
     # Test 3: Mechanical brake safety interlock (do NOT engage if both are fast)
     sys.brake_engaged[] = false

@@ -177,13 +177,12 @@ function capture_frame(u           :: AbstractVector,
     tau_gen_init = clamp(tau_gen_init, -tau_max_safe, tau_max_safe)
 
     # Ground-station mechanical brake — triggered by flying rotor speed only (matches ring_forces.jl).
-    if p.kp_elev ≈ 1.0
-        if sys.brake_engaged[] || abs(omega_hub) < 1.0
-            sys.brake_engaged[] = true
-            tau_brake_max = 1500.0 * power_scale
-            tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
-            tau_gen_init = tau_brake
-        end
+    # Decoupled from Field IMU (p.kp_elev) for safety.
+    if sys.brake_engaged[] || abs(omega_hub) < 1.0
+        sys.brake_engaged[] = true
+        tau_brake_max = 1500.0 * power_scale
+        tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
+        tau_gen_init = tau_brake
     end
 
     P_kw      = tau_gen_init * abs(omega_gnd) / 1000.0
