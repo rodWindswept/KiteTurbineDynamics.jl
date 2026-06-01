@@ -63,32 +63,7 @@ V_RAMP_HI    = 14.0           # m/s  end
 OUT_DIR = joinpath(@__DIR__, "results", "mppt_twist_sweep")
 mkpath(OUT_DIR)
 
-# ── Helpers: tether tension (not exported from package, inlined here) ─────────
-
-function _mid_tension_v2(u, sys, p, s, j)
-    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + 2
-    idx > length(sys.sub_segs) && return 0.0
-    ss  = sys.sub_segs[idx]
-    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-    max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
-end
-
-function _tether_max_v2(u, sys, p)
-    T = 0.0
-    for s in 1:p.n_rings+1, j in 1:p.n_lines
-        T = max(T, _mid_tension_v2(u, sys, p, s, j))
-    end
-    T
-end
-
-function _tether_mean_v2(u, sys, p)
-    total = 0.0; n = 0
-    for s in 1:p.n_rings+1, j in 1:p.n_lines
-        total += _mid_tension_v2(u, sys, p, s, j); n += 1
-    end
-    n > 0 ? total / n : 0.0
-end
+# Tethers and generator helpers are imported from KiteTurbineDynamics.
 
 # ── Helper: principal-value TRPT structural twist ─────────────────────────────
 
@@ -127,6 +102,7 @@ p_base       = params_10kw()
 sys, u0_base = build_kite_turbine_system(p_base)
 N, Nr        = sys.n_total, sys.n_ring
 println("  N=$N nodes, Nr=$Nr rings")
+default_lift = rotary_lifter_default()
 
 # Stack is split into three equal thirds for per-segment twist
 # Nr=16 rings → 15 inter-ring gaps: lower=1..5, middle=6..10, upper=11..15
@@ -200,16 +176,19 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
         callback = (u_curr, t_curr, step) -> begin
             if step % N_CHUNK == 0
                 α_vec    = @view u_curr[6N+1 : 6N+Nr]
-                ω_hub    = u_curr[6N + Nr + Nr]
-                ω_gnd    = u_curr[6N + Nr + 1]
-                twist    = partial_twist_deg(α_vec, 1,      Nr)
+                sf       = capture_frame(u_curr, sys, p, t_curr, wfn, default_lift; brake_engaged=sys.brake_engaged[])
+                twist    = sf.delta_alpha_deg
                 tw_lo    = partial_twist_deg(α_vec, r_lo_a,  r_lo_b)
                 tw_mid   = partial_twist_deg(α_vec, r_mid_a, r_mid_b)
                 tw_hi    = partial_twist_deg(α_vec, r_hi_a,  r_hi_b)
+                ω_hub    = sf.omega_hub
+                ω_gnd    = sf.omega_gnd
                 Δω       = ω_hub - ω_gnd
-                P_kw     = p.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
-                T_max    = _tether_max_v2(u_curr, sys, p)
-                T_mean   = _tether_mean_v2(u_curr, sys, p)
+                P_kw     = sf.P_kw
+                T_max    = sf.T_max
+                n_seg_pc = sys.n_ring + 1
+                T_tot_pc = sum(get_segment_tension(u_curr, sys, p, s, j) for s in 1:n_seg_pc, j in 1:p.n_lines)
+                T_mean   = T_tot_pc / (n_seg_pc * p.n_lines)
 
                 push!(ts_rows, (k_mult, k_mppt, v_wind, t_curr,
                                 twist, tw_lo, tw_mid, tw_hi,
@@ -230,7 +209,7 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
     settled = filter(r -> r.k_mult == k_mult && r.v_wind == v_wind &&
                           r.t >= T_SPINUP + T_SIM - T_SETTLE, ts_rows)
     if !isempty(settled)
-        τ_gen  = k_mppt * mean(settled.omega_gnd)^2 * abs(mean(settled.omega_gnd))  # N·m — approx generator torque
+        τ_gen  = k_mppt * mean(settled.omega_gnd)^2  # N·m — approx generator torque
         T_ref  = mean(settled.T_mean_N)                                               # N — mean line tension
         τ_over_T = T_ref > 1.0 ? τ_gen / T_ref : NaN
 
@@ -288,13 +267,13 @@ run_canonical_sim!(u_ramp, sys, p_ramp, wfn_ramp, N_STEPS_RAMP, DT;
         if step % N_CHUNK == 0
             frac    = clamp(t_curr / T_RAMP, 0.0, 1.0)
             v_now   = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
-            α_vec   = @view u_curr[6N+1 : 6N+Nr]
-            ω_hub   = u_curr[6N + Nr + Nr]
-            ω_gnd   = u_curr[6N + Nr + 1]
-            twist   = partial_twist_deg(α_vec, 1, Nr)
+            sf      = capture_frame(u_curr, sys, p_ramp, t_curr, wfn_ramp, default_lift; brake_engaged=sys.brake_engaged[])
+            twist   = sf.delta_alpha_deg
+            ω_hub   = sf.omega_hub
+            ω_gnd   = sf.omega_gnd
             Δω      = ω_hub - ω_gnd
-            P_kw    = p_ramp.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
-            T_max   = _tether_max_v2(u_curr, sys, p_ramp)
+            P_kw    = sf.P_kw
+            T_max   = sf.T_max
 
             push!(ramp_rows, (t_curr, v_now, twist, ω_hub, ω_gnd, Δω, P_kw, T_max))
 
@@ -336,7 +315,7 @@ println()
 @printf "%-8s  %-8s  %-12s  %-12s  %-10s\n" "k_mult" "v (m/s)" "sim Δα (°)" "pred Δα (°)" "err (%)"
 println("─"^60)
 for r in eachrow(sum_rows)
-    τ_gen     = r.k_mppt * r.omega_hub_mean^2 * abs(r.omega_hub_mean)
+    τ_gen     = r.k_mppt * r.omega_hub_mean^2
     T_ref     = r.T_mean_mean
     Δα_pred   = T_ref > 1.0 ? rad2deg(τ_gen / T_ref * geom_factor) : NaN
     err_pct   = (!isnan(Δα_pred) && abs(r.twist_mean) > 1.0) ?

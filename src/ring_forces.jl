@@ -1,123 +1,28 @@
 using LinearAlgebra
 
-function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
-                               torques     ::AbstractVector,
-                               u           ::AbstractVector,
-                               omega       ::AbstractVector,
-                               sys         ::KiteTurbineSystem,
-                               p           ::SystemParams,
-                               wind_fn     ::Function,
-                               t           ::Float64,
-                               lift_device ::Union{Nothing, LiftDevice} = nothing)
-    N        = sys.n_total
-    hub_gid  = sys.rotor.node_id
-    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
-    hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
-    bearing_gid    = sys.bearing_id
-    bearing_pos    = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
-    sky_anchor_gid = sys.sky_anchor_id
-    sky_anchor_pos = @view u[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid]
+"""
+    get_generator_torque(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams, t::Float64, wind_fn::Function;
+                         brake_engaged::Bool) -> (tau_gen::Float64, new_brake_engaged::Bool)
 
-    v_wind  = wind_fn(hub_pos, t)
+Single source of truth for the generator control law and mechanical brake logic.
+Stateless and zero-allocation. Used by both the ODE solver and telemetry observers.
+"""
+function get_generator_torque(u::AbstractVector,
+                              sys::KiteTurbineSystem,
+                              p::SystemParams,
+                              t::Float64,
+                              wind_fn::Function;
+                              brake_engaged::Bool)
+    N = sys.n_total
+    Nr = sys.n_ring
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx
 
-    # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
-    # NOTE: a previous kite-lift block (q·A·CL in direction [0,0,1]) has been
-    # removed.  It was wrong for two reasons:
-    #
-    #   1. Geometry: [0,0,1] is perpendicular to horizontal wind — correct only
-    #      for a horizontal disc (90° elevation).  Our disc normal is at 30°
-    #      elevation; a static disc at this angle produces normal force along the
-    #      shaft axis [cos30°,0,sin30°], not straight up.
-    #
-    #   2. Double-count: the CT thrust below already captures the dominant axial
-    #      hub force.  Flat blades rotating in the disc plane produce zero net
-    #      kite-style lift on the hub; in-plane wind loads (v·sin30° component)
-    #      are small and point slightly DOWNWARD at 30° elevation.
-    #
-    # The only legitimate aerodynamic hub forces are CT thrust (below) and the
-    # separate lift device (further below).
+    omega_hub = u[6N + Nr + hub_ri]
+    omega_gnd = u[6N + Nr + gnd_ri]
+    hub_pos = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
 
-    # ── Rotor thrust + aero torque ─────────────────────────────────────────
-    v_hub_mag = norm(v_wind)
-    if v_hub_mag > 0.1
-        omega_rotor = omega[hub_ri]
-        lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
-        elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
-
-        # ── Disc tilt ─────────────────────────────────────────────────────
-        # Disc tilt (pitch/yaw of the rotor plane) now emerges from the
-        # quasi-static tilt model in dynamics.jl.  The ring-plane basis for
-        # attachment points is tilted by non-shaft torque from the bridle
-        # tension network — no separate aero correction needed.
-        #
-        # Aerodynamic area convention: both Cp and CT are normalised to the FULL DISC
-        # area π·R² (outer-radius convention, consistent with AeroDyn BEM source data
-        # Rotor_TRTP_Sizing_Iteration2.xlsx).  The TRPT blades are physically annular
-        # (inner tip at trpt_hub_radius ≈ 0.4·R, outer tip at R), but the inner hub
-        # region contributes negligibly at operational TSR so the BEM Cp/CT values
-        # referenced to π·R² are consistent with the physical swept annulus.
-        # CT uses the BEM table (not a fixed 0.8 — at λ_opt ≈ 4.1, CT_BEM ≈ 0.548).
-        thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
-                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) *
-                      cos(elev_angle)^2
-        tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
-        tl          = norm(tether_dir)
-        if tl > 0; tether_dir ./= tl; end
-        forces[hub_gid] .+= thrust_mag .* tether_dir
-
-        if omega_rotor >= 0.0
-            # ── Forward / standstill: BEM Cp table ────────────────────────────
-            # CP(0)=0 by table anchor → tau_aero≈0 at standstill.  This is
-            # physically correct for TRPT: the turbine requires kickstarting
-            # (consistent with known flat-pitch standstill behaviour).
-            # Floor at 0.5 rad/s prevents division blow-up near zero.
-            P_aero   = 0.5 * p.rho * v_hub_mag^3 *
-                       π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
-                       cos(elev_angle)^3
-            tau_aero = P_aero / max(omega_rotor, 0.5)
-        else
-            # ── Backward rotation: blade-element drag model ───────────────────
-            # BEM Cp tables are invalid for ω < 0.  In reverse, blades operate
-            # at AoA 40–70° with CD ≈ 1.3 (deep stall / bluff body).  The
-            # resulting drag torque is large (~2000 N·m at ω=−2 rad/s) and
-            # physically arrests the reversal.
-            #
-            # Omitting this was the root cause of the red-ring artefact in the
-            # pitch-depower scenario: the TRPT torsional restoring force drove
-            # backward twist accumulation unopposed (BEM gave near-zero torque)
-            # → growing ring compression → false structural alarm.
-            #
-            # Per-blade drag torque integral over span [R_i, R_o]:
-            #   dT = 0.5·ρ·CD·c · |ω|·r² · sqrt(v_ax²+(|ω|·r)²) · dr
-            # Approximated via 70%-span representative radius (propeller BEM
-            # convention; accurate to ±15% vs. full numerical integration):
-            #   T ≈ n_blades · 0.5·ρ·CD·c · |ω|·R_eff² · v_rel_eff · span
-            #
-            # Chord from BEM solidity: σ≈0.18 at λ_opt=4.1 for NACA4412
-            #   c = σ·π·R / n_blades ≈ 0.113·R  (≈ 0.60 m at R=5 m)
-            CD_reverse  = 1.3                           # NACA4412 CD at AoA 40–70°
-            chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
-            R_o   = sys.rotor.radius
-            R_i   = 0.4 * R_o                           # inner tip cutout at TRPT hub
-            R_eff = 0.70 * R_o                          # 70% representative radius
-            span  = R_o - R_i                           # blade span
-            ω_abs = abs(omega_rotor)
-            v_ax  = v_hub_mag * cos(elev_angle)         # axial wind through disc
-            v_t_eff   = ω_abs * R_eff
-            v_rel_eff = sqrt(v_ax^2 + v_t_eff^2)
-            Q_drag   = p.n_lines * 0.5 * p.rho * CD_reverse * chord_blade *
-                       ω_abs * R_eff^2 * v_rel_eff * span
-            # Restoring: opposes backward spin → positive torque (drives ω toward 0⁺)
-            tau_aero = Q_drag
-        end
-        torques[hub_ri] += tau_aero
-    end
-
-    # ── Generator MPPT torque on ground node ──────────────────────────────
-    gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
-    omega_gnd = omega[gnd_ri]
-    omega_hub = omega[hub_ri]
-    
     # Winch payout base and geometric scaling for system size
     payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
     geom_scale  = p.tether_length / 30.0
@@ -171,29 +76,85 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     end
 
     # Protect the TRPT rope structure from excessive generator electromagnetic torque.
-    # Capped at a robust 2500 N.m scaling to reflect Dyneema tether safety margins.
     power_scale = (p.p_rated_w / 10000.0)^2
     tau_max_safe = 2500.0 * power_scale
     tau_gen = clamp(tau_gen, -tau_max_safe, tau_max_safe)
 
     # Ground-station mechanical brake — triggered by the flying turbine rotor speed only.
-    # Rationale: the rotor must reach < 1 rad/s before the brake engages so that
-    # torsional energy stored in the TRPT is already low.  Triggering on omega_gnd
-    # alone could fire the brake while the rotor is still fast (e.g. if the TRPT
-    # is twisted), applying a torsional shock to the rope stack.
-    # Decoupled from Field IMU (p.kp_elev) for safety.
-    if sys.brake_engaged[] || abs(omega_hub) < 1.0
-        sys.brake_engaged[] = true
+    new_brake_engaged = brake_engaged || abs(omega_hub) < 1.0
+    if new_brake_engaged
         tau_brake_max = 1500.0 * power_scale
-        # tanh gives smooth onset and bidirectional hold:
-        #   omega_gnd > 0  →  decelerates the PTO
-        #   omega_gnd ≈ 0  →  near-zero torque, PTO already stopped
-        #   omega_gnd < 0  →  opposes any reverse creep from TRPT unwind
         tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
-
-        # Decouple generator: mechanical brake does 100% of the holding,
-        # preventing any residual MPPT torque from fighting the brake.
         tau_gen = tau_brake
+    end
+    
+    return tau_gen, new_brake_engaged
+end
+
+function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
+                               torques     ::AbstractVector,
+                               u           ::AbstractVector,
+                               omega       ::AbstractVector,
+                               sys         ::KiteTurbineSystem,
+                               p           ::SystemParams,
+                               wind_fn     ::Function,
+                               t           ::Float64,
+                               lift_device ::Union{Nothing, LiftDevice} = nothing)
+    N        = sys.n_total
+    hub_gid  = sys.rotor.node_id
+    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
+    hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
+    bearing_gid    = sys.bearing_id
+    bearing_pos    = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+    sky_anchor_gid = sys.sky_anchor_id
+    sky_anchor_pos = @view u[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid]
+
+    v_wind  = wind_fn(hub_pos, t)
+
+    # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
+    v_hub_mag = norm(v_wind)
+    if v_hub_mag > 0.1
+        omega_rotor = omega[hub_ri]
+        lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
+        elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
+
+        thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
+                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) *
+                      cos(elev_angle)^2
+        tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
+        tl          = norm(tether_dir)
+        if tl > 0; tether_dir ./= tl; end
+        forces[hub_gid] .+= thrust_mag .* tether_dir
+
+        if omega_rotor >= 0.0
+            P_aero   = 0.5 * p.rho * v_hub_mag^3 *
+                       π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
+                       cos(elev_angle)^3
+            tau_aero = P_aero / max(omega_rotor, 0.5)
+        else
+            CD_reverse  = 1.3                           # NACA4412 CD at AoA 40–70°
+            chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
+            R_o   = sys.rotor.radius
+            R_i   = 0.4 * R_o                           # inner tip cutout at TRPT hub
+            R_eff = 0.70 * R_o                          # 70% representative radius
+            span  = R_o - R_i                           # blade span
+            ω_abs = abs(omega_rotor)
+            v_ax  = v_hub_mag * cos(elev_angle)         # axial wind through disc
+            v_t_eff   = ω_abs * R_eff
+            v_rel_eff = sqrt(v_ax^2 + v_t_eff^2)
+            Q_drag   = p.n_lines * 0.5 * p.rho * CD_reverse * chord_blade *
+                       ω_abs * R_eff^2 * v_rel_eff * span
+            tau_aero = Q_drag
+        end
+        torques[hub_ri] += tau_aero
+    end
+
+    # ── Generator MPPT torque on ground node ──────────────────────────────
+    gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
+    
+    tau_gen, new_brake = get_generator_torque(u, sys, p, t, wind_fn; brake_engaged=sys.brake_engaged[])
+    if new_brake && !sys.brake_engaged[]
+        sys.brake_engaged[] = true
     end
     
     torques[gnd_ri] -= tau_gen
@@ -265,35 +226,32 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
             θ_lift   = deg2rad(elev_lift_deg)
             lift_dir = cos(θ_lift) .* downwind .+ sin(θ_lift) .* [0.0, 0.0, 1.0]
 
-            # ── Geometric stiffness — tension along actual kite direction ──────
-            # Previous model applied T_lift in the fixed design direction (lift_dir),
-            # independent of sky_anchor_pos.  A constant force does zero net work
-            # around a cycle but gives NO position-dependent restoring force, so
-            # the sky anchor is an undamped free mass after any perturbation.
+            # ── Geometric stiffness via dynamic kite position ─────────────────
+            # sys.kite_pos is updated each simulation step with a first-order lag
+            # toward the instantaneous equilibrium (sky_anchor_pos + lift_dir·L_line).
+            # This models the kite as "sticky" — it cannot teleport, but gradually
+            # follows the sky anchor as the lift line reorients.
             #
-            # Root cause of post-brake shaking: TRPT unwind sends an impulse up
-            # through the cyan line to the sky anchor.  With no geometric spring
-            # from the kite side, the sky anchor rings indefinitely and the
-            # motion re-excites the bearing and TRPT geometry — mimicking renewed
-            # torsional resonance even though the TRPT has fully straightened.
-            #
-            # Fix: treat the kite as quasi-statically fixed in space relative to
-            # the bearing (valid for sky-anchor oscillation timescales << kite
-            # response time).  Tension then acts along sky_anchor → kite_pos,
-            # which changes direction as sky_anchor moves → restoring spring
-            #   k_geo = T_lift / L_line  ≈  80 N/m
-            #
-            # ── Sticky sky-kite: anchor the topmost virtual kite position to design coordinates ──
-            # Symmetrical bearing offset (6.0 m) + CYAN_L0 (5.0 m) = 11.0 m along design shaft
-            # Rationale: the 25 m lift line has large inertia and aerodynamic damping; it does not
-            # precess or vibrate at the high frequency of bearing/ring mechanics.
-            L_axis_design = p.tether_length + 11.0
-            sky_anchor_eq = L_axis_design .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-            kite_pos      = sky_anchor_eq .+ lift_line_length(lift_device) .* lift_dir
-            line_to_kite  = kite_pos .- sky_anchor_pos
-            line_dist     = norm(line_to_kite)
-            tension_dir   = line_dist > 1.0 ? line_to_kite ./ line_dist : lift_dir
-            forces[sky_anchor_gid] .+= T_lift .* tension_dir
+            # The lift line tension acts along sky_anchor → kite_pos.
+            # If the sky anchor moves toward the kite (payout lets it rise), the
+            # line_dist decreases; once line_dist < lift_line_len the line is slack
+            # and T_lift is zero.  This is the physically correct tension-only model.
+            line_to_kite = sys.kite_pos .- sky_anchor_pos
+            line_dist    = norm(line_to_kite)
+
+            # Tension only if lift line is taut (line_dist ≥ design length).
+            # We use 99% threshold to avoid chattering at the exact design length.
+            lift_line_len = T_lift > 0.0 ? lift_device.line_length : 0.0
+            if line_dist > 1e-6
+                tension_dir = line_to_kite ./ line_dist
+            else
+                tension_dir = lift_dir
+            end
+            # Apply lift force to sky anchor only when lift line carries tension
+            if line_dist >= lift_line_len * 0.99
+                forces[sky_anchor_gid] .+= T_lift .* tension_dir
+            end
+            # (If line is slack: sky anchor rises freely; kite will catch up via lag update)
         end
     end
 

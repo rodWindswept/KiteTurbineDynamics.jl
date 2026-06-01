@@ -160,15 +160,16 @@ for v_wind in V_WINDS
             lin_damp = 0.05,
             callback = (u_curr, t_curr, step) -> begin
                 if mod(step, REC_EVERY) == 0
-                    hx = u_curr[3*(hub_id-1)+1]
-                    hy = u_curr[3*(hub_id-1)+2]
-                    hz = u_curr[3*(hub_id-1)+3]
+                    sf    = capture_frame(u_curr, sys, p10, t_curr, wind_fn, dev; brake_engaged=sys.brake_engaged[])
+                    hx    = sf.hub_x
+                    hy    = sf.hub_y
+                    hz    = sf.hub_z
                     r_xy  = sqrt((hx-hub_x0)^2 + (hy-hub_y0)^2)
-                    elev  = rad2deg(atan(hz, sqrt(hx^2+hy^2)))
-                    ω_hub = u_curr[6N + Nr + Nr]
-                    ω_gnd = u_curr[6N + Nr + 1]
-                    τ_gen = p10.k_mppt * ω_gnd^2 * sign(ω_gnd + 1e-9)
-                    P_kw  = τ_gen * abs(ω_gnd) / 1000.0
+                    elev  = sf.hub_elev_deg
+                    ω_hub = sf.omega_hub
+                    ω_gnd = sf.omega_gnd
+                    τ_gen, _ = get_generator_torque(u_curr, sys, p10, t_curr, wind_fn; brake_engaged=sys.brake_engaged[])
+                    P_kw  = sf.P_kw
                     v_inst = wind_1d(t_curr)
                     push!(local_ts, (t_curr, hx, hy, hz, r_xy, elev,
                                       ω_hub, ω_gnd, τ_gen, P_kw, v_inst))

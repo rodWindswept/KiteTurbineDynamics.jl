@@ -105,6 +105,24 @@ struct KiteTurbineSystem
     ring_tilt_axis :: Vector{Vector{Float64}}
     # Latched ground station PTO mechanical brake state
     brake_engaged  :: Ref{Bool}
+
+    # ── Dynamic kite position (first-order lag toward sky-anchor equilibrium) ──
+    # In previous model the kite was frozen at the design sky-anchor position,
+    # which created a spurious geometric spring that oscillated when the sky
+    # anchor rose above its design point during backline payout.
+    #
+    # Physics: the kite cannot snap instantly to a new equilibrium — it has
+    # inertia (m_lifter ≈ 4 kg) and the 25 m lift line has aerodynamic drag.
+    # We model this as a first-order lag:
+    #
+    #   d(kite_pos)/dt = (kite_eq(sky_anchor_pos) − kite_pos) / τ_kite
+    #
+    # where kite_eq = sky_anchor_pos + lift_line_len · lift_dir  (instantaneous
+    # equilibrium if the kite could teleport) and τ_kite is the time constant.
+    #
+    # The lift line tension acts along  (kite_pos − sky_anchor_pos); if this
+    # vector is shorter than the design line length the line is slack (T = 0).
+    kite_pos :: Vector{Float64}   # 3-element mutable; updated each simulation step
 end
 
 # Compliance: rad of ring-plane tilt per N·m of non-shaft torque.
@@ -115,5 +133,15 @@ const DISC_TILT_COMPLIANCE = 2.5e-7
 # Models the ring's rotational inertia: α = exp(-dt/τ) where τ is the
 # pitch time constant.  With dt=4e-5 and α=0.99, τ ≈ 4 ms.
 const TILT_SMOOTH = 0.995
+
+
+# Default kite time constant (s).
+# Physical basis:
+#   m_lifter = 4 kg, lift line length = 25 m.
+#   Aerodynamic damping on the line scales as ρ·CD·d·L·v ≈ 1.225·1.0·0.003·25·6 ≈ 0.55 N/(m/s).
+#   τ = m / c_aero ≈ 4 / 0.55 ≈ 7 s at 6 m/s wind.
+#   Rounded conservatively to 3 s to reflect that the rotary lifter is heavier
+#   and stiffer than a passive kite but the line still has finite drag.
+const KITE_TAU_S = 3.0
 
 state_size(sys::KiteTurbineSystem) = 6 * sys.n_total + 2 * sys.n_ring

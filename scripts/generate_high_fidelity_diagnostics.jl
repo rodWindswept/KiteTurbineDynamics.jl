@@ -123,25 +123,7 @@ function run_diagnostics_case(mode_name::String, ctrl_mode::Float64, payout_base
             hub_x, hub_y, hub_z = hub_ctr[1], hub_ctr[2], hub_ctr[3]
             
             # PTO Torque calculation
-            tau_gen_init = 0.0
-            if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
-                β_actual = atan(hub_z, sqrt(hub_x^2 + hub_y^2))
-                β_design = p_run.elevation_angle
-                β_depower   = deg2rad(60.0)
-                elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_depower - β_design), 0.0, 1.0)
-                
-                if ctrl_mode ≈ 1.0
-                    tau_mppt = p_run.k_mppt * max(omega_hub, 0.0)^2
-                    power_scale = (p_run.p_rated_w / 10000.0)^2
-                    c_d = 10.0 * power_scale
-                    tau_damp = c_d * (omega_gnd - omega_hub)
-                    tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
-                else
-                    tau_gen_init = p_run.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
-                end
-            else
-                tau_gen_init = p_run.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p_current.backline_payout / max_payout)
-            end
+            tau_gen_init, _ = get_generator_torque(u, sys, p_current, t, wind_fn; brake_engaged=sys.brake_engaged[])
             
             P_kw = tau_gen_init * abs(omega_gnd) / 1000.0
             

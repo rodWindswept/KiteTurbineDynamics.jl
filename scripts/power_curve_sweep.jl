@@ -25,32 +25,6 @@ OUT_DIR = joinpath(@__DIR__, "results", "power_curve")
 mkpath(OUT_DIR)
 
 # ── Helpers: tether tension (not exported from package) ────────────────────────
-function _mid_tension(u, sys, p, s, j)
-    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + 2
-    idx > length(sys.sub_segs) && return 0.0
-    ss  = sys.sub_segs[idx]
-    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-    max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
-end
-function _T_max(u, sys, p)
-    T = 0.0
-    for s in 1:p.n_rings+1, j in 1:p.n_lines
-        T = max(T, _mid_tension(u, sys, p, s, j))
-    end
-    T
-end
-function _T_mean(u, sys, p)
-    tot = 0.0; n = 0
-    for s in 1:p.n_rings+1, j in 1:p.n_lines
-        tot += _mid_tension(u, sys, p, s, j); n += 1
-    end
-    n > 0 ? tot / n : 0.0
-end
-function _twist_deg(u, N, Nr)
-    α = @view u[6N+1:6N+Nr]
-    rad2deg(sum(i -> mod(α[i+1]-α[i]+π, 2π)-π, 1:Nr-1))
-end
 
 # ── Build base system ──────────────────────────────────────────────────────────
 println("Building base system (params_10kw)…")
@@ -113,6 +87,7 @@ pc_ts = DataFrame(
 TS_V_SHOW = Set([5.0, 8.0, 11.0, 13.0])   # save time series for these wind speeds
 
 # ── Main sweep ────────────────────────────────────────────────────────────────
+default_lift = rotary_lifter_default()
 for (idx, v_wind) in enumerate(V_WIND_CASES)
     t_start = time()
     @printf("\n[%2d/%2d]  v_wind = %.1f m/s … ", idx, length(V_WIND_CASES), v_wind)
@@ -145,27 +120,26 @@ for (idx, v_wind) in enumerate(V_WIND_CASES)
         lin_damp = 0.05,
         callback = (u_curr, t_curr, step) -> begin
             if step % N_CHUNK == 0
-                ω_h = u_curr[6N + Nr + hub_ring_idx]
-                ω_g = u_curr[6N + Nr + 1]
-                pk  = p.k_mppt * ω_g^2 * abs(ω_g) / 1000.0
-                tw  = _twist_deg(u_curr, N, Nr)
-                Tm  = _T_max(u_curr, sys, p)
-                Tmn = _T_mean(u_curr, sys, p)
-                hz  = u_curr[3*(hub_gid-1)+3]
+                sf = capture_frame(u_curr, sys, p, t_curr, wf, default_lift; brake_engaged=sys.brake_engaged[])
+                
+                # Compute average tension across all TRPT segments
+                n_seg_pc = sys.n_ring - 1
+                T_tot_pc = sum(get_segment_tension(u_curr, sys, p, s, j) for s in 1:n_seg_pc, j in 1:p.n_lines)
+                Tmn = T_tot_pc / (n_seg_pc * p.n_lines)
 
                 if save_ts
-                    push!(pc_ts, (v_wind, t_curr, pk, ω_h, ω_g, tw, hz))
+                    push!(pc_ts, (v_wind, sf.t, sf.P_kw, sf.omega_hub, sf.omega_gnd, sf.delta_alpha_deg, sf.hub_z))
                 end
                 
                 # Use only stats from the final settlement window for the summary
                 if step > n_steps_settle_win
-                    push!(chunk_P,   pk)
-                    push!(chunk_ω_h, ω_h)
-                    push!(chunk_ω_g, ω_g)
-                    push!(chunk_tw,  tw)
-                    push!(chunk_Tm,  Tm)
+                    push!(chunk_P,   sf.P_kw)
+                    push!(chunk_ω_h, sf.omega_hub)
+                    push!(chunk_ω_g, sf.omega_gnd)
+                    push!(chunk_tw,  sf.delta_alpha_deg)
+                    push!(chunk_Tm,  sf.T_max)
                     push!(chunk_Tmn, Tmn)
-                    push!(chunk_hz,  hz)
+                    push!(chunk_hz,  sf.hub_z)
                 end
             end
         end

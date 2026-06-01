@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "KiteTurbineDynamics.jl"
+abstract: >-
+  A Julia package for the multibody dynamics, structural safety, and economic
+  sizing of Tensile Rotary Power Transmission (TRPT) airborne wind energy kite
+  turbines.
+type: software
+authors:
+  - family-names: "Read"
+    given-names: "Rod"
+    email: "rod@windswept.energy"
+    affiliation: "Windswept & Interesting Ltd"
+license: MIT
+version: "0.1.0"
+date-released: "2026-06-01"
+keywords:
+  - airborne-wind-energy
+  - kite-turbine
+  - TRPT
+  - multibody-dynamics
+  - julia

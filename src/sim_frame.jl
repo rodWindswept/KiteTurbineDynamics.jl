@@ -94,13 +94,11 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
-    capture_frame(u, sys, p, t, wind_fn, lift_device=nothing; hub_z0=nothing)
+    capture_frame(u, sys, p, t, wind_fn, lift_device=nothing; hub_z0=nothing, brake_engaged::Bool=sys.brake_engaged[])
         → SimFrame
 
 Extract all dashboard-relevant metrics from one ODE state vector `u`.
-
-`hub_z0` optionally provides the reference hub altitude from frame 1;
-if `nothing`, the current hub_z is used as its own reference (Δz = 0).
+Stateless, using unified get_generator_torque and get_max_rope_tension helpers.
 """
 function capture_frame(u           :: AbstractVector,
                         sys         :: KiteTurbineSystem,
@@ -108,9 +106,11 @@ function capture_frame(u           :: AbstractVector,
                         t           :: Float64,
                         wind_fn     :: Function,
                         lift_device :: Union{Nothing, LiftDevice} = nothing;
-                        hub_z0      :: Union{Nothing, Float64}    = nothing)
+                        hub_z0      :: Union{Nothing, Float64}    = nothing,
+                        brake_engaged::Bool                       = sys.brake_engaged[])
     N  = sys.n_total
     Nr = sys.n_ring
+    n_seg = Nr - 1
 
     # ── State extraction ──────────────────────────────────────────────────
     omega_hub = u[6N + Nr + Nr]
@@ -125,67 +125,10 @@ function capture_frame(u           :: AbstractVector,
     z0        = hub_z0 === nothing ? hub_z : hub_z0
     hub_z_delta = hub_z - z0
 
-    payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
-    geom_scale  = p.tether_length / 30.0
-    max_payout  = payout_base * geom_scale
-    ctrl_mode   = round(p.β_rate_max)
-    
-    tau_gen_init = 0.0
-    if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
-        β_actual = atan(hub_z, sqrt(hub_x^2 + hub_y^2))
-        β_design = p.elevation_angle
-        β_furl   = deg2rad(60.0)
-        elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
-        
-        imu_reliable = p.kp_elev ≈ 1.0
-        if ctrl_mode ≈ 1.0
-            # Active Torsional Damping — mode 1
-            if imu_reliable
-                tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
-                power_scale = (p.p_rated_w / 10000.0)^2
-                c_d = 10.0 * power_scale
-                tau_damp = c_d * (omega_gnd - omega_hub)
-                tau_gen_init = (tau_mppt + tau_damp) * elev_scale
-            else
-                # Failsafe ground-only feedback
-                tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
-            end
-        else
-            # Mode 2: LPF Speed MPPT (smooth hub speed)
-            if imu_reliable
-                tau_gen_init = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
-            else
-                # Failsafe ground-only feedback
-                tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
-            end
-        end
-    else
-        tau_gen_init = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
-    end
+    # Call stateless helper for generator torque:
+    tau_gen, _ = get_generator_torque(u, sys, p, t, wind_fn; brake_engaged=brake_engaged)
 
-    imu_reliable = p.kp_elev ≈ 1.0
-    if imu_reliable && !(ctrl_mode ≈ 1.0)
-        power_scale = (p.p_rated_w / 10000.0)^2
-        c_d_active = 15.0 * power_scale
-        tau_damp_active = c_d_active * (omega_gnd - omega_hub)
-        tau_gen_init += tau_damp_active
-    end
-
-    # Apply safety torque limiter
-    power_scale = (p.p_rated_w / 10000.0)^2
-    tau_max_safe = 2500.0 * power_scale
-    tau_gen_init = clamp(tau_gen_init, -tau_max_safe, tau_max_safe)
-
-    # Ground-station mechanical brake — triggered by flying rotor speed only (matches ring_forces.jl).
-    # Decoupled from Field IMU (p.kp_elev) for safety.
-    if sys.brake_engaged[] || abs(omega_hub) < 1.0
-        sys.brake_engaged[] = true
-        tau_brake_max = 1500.0 * power_scale
-        tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
-        tau_gen_init = tau_brake
-    end
-
-    P_kw      = tau_gen_init * abs(omega_gnd) / 1000.0
+    P_kw      = tau_gen * abs(omega_gnd) / 1000.0
     pct_rated = p.p_rated_w > 0 ? P_kw * 1000.0 / p.p_rated_w * 100.0 : 0.0
 
     # Wind at hub
@@ -206,33 +149,10 @@ function capture_frame(u           :: AbstractVector,
     P_aero   = 0.5 * p.rho * V_hub^3 * π * sys.rotor.radius^2 *
                cp_at_tsr(lambda_t) * cos(p.elevation_angle)^3
     tau_aero = P_aero / max(abs(omega_hub), 0.5)
-    tau_gen  = tau_gen_init
 
     # ── Structural ────────────────────────────────────────────────────────
-    # Per-segment tether tension (ring-attachment geometry, not rope-node positions)
-    hub_gid   = sys.rotor.node_id
-    hub_ri    = (sys.nodes[hub_gid]::RingNode).ring_idx
-    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
-    n_seg     = sys.n_ring - 1
-    ea_rope   = sys.sub_segs[1].EA
-
-    T_max   = 0.0
-    n_slack = 0
-    for s in 1:n_seg, j in 1:p.n_lines
-        seg_nat_len = 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
-        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s+1]
-        na    = sys.nodes[gid_a]::RingNode
-        nb    = sys.nodes[gid_b]::RingNode
-        ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
-        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
-        α_a   = u[6N + na.ring_idx]
-        α_b   = u[6N + nb.ring_idx]
-        pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, perp1, perp2)
-        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, perp1, perp2)
-        T     = max(0.0, ea_rope * (norm(pb .- pa) - seg_nat_len) / seg_nat_len)
-        T_max = max(T_max, T)
-        T < 5.0 && (n_slack += 1)
-    end
+    # Call stateless helper for true tether tension:
+    T_max, n_slack = get_max_rope_tension(u, sys, p)
     fos_tether = T_max > 0.0 ? TETHER_SWL / T_max : Inf
 
     # Ring buckling safety
@@ -241,6 +161,10 @@ function capture_frame(u           :: AbstractVector,
     ring_utils      = [ref.max_util for ref in rea_results]
     max_util        = isempty(ring_utils) ? 0.0 : maximum(ring_utils)
     fos_ring        = max_util > 0.0 ? 1.0 / max_util : Inf
+
+    # Tilted basis for rope sag attachment points
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
 
     # Rope sag
     max_sag_mm  = 0.0

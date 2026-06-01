@@ -72,30 +72,18 @@ end
 
 """Tension of the middle (rope→rope) sub-segment for tether line j of segment s."""
 function _mid_tension(u, sys, p, s, j)
-    idx = (s-1) * p.n_lines * 4 + (j-1) * 4 + 2
-    idx > length(sys.sub_segs) && return 0.0
-    ss  = sys.sub_segs[idx]
-    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-    max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
+    return get_segment_tension(u, sys, p, s, j)
 end
 
 function _tether_max(u, sys, p)
-    T = 0.0
-    for s in 1:(sys.n_ring-1), j in 1:p.n_lines
-        T = max(T, _mid_tension(u, sys, p, s, j))
-    end
-    T
+    return get_max_rope_tension(u, sys, p)[1]
 end
 
 """Count slack tether lines (T < 5 N)."""
 function _n_slack_lines(u, sys, p)
-    n = 0
-    for s in 1:(sys.n_ring-1), j in 1:p.n_lines
-        _mid_tension(u, sys, p, s, j) < 5.0 && (n += 1)
-    end
-    n
+    return get_max_rope_tension(u, sys, p)[2]
 end
+
 
 """Maximum mid-rope sag (mm) across all 15 segments, line 1."""
 function _max_sag_mm(u, sys, p)
@@ -162,30 +150,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     end
 
-    # ── Tension closures — use ring attachment geometry, not rope node positions ──
-    # Ring attachment points track the ODE alpha angles correctly even when rope
-    # nodes drift to natural length.  l_seg is the natural length of one full
-    # tether segment (4 sub-segs in series), so EA×Δl/l_seg gives correct force.
-    _ea_rope = sys.sub_segs[1].EA
-    # Per-segment natural length — critical for v5 non-uniform spacing.
-    # Sub-segments within a segment all share the same natural length.
-    _seg_nat_len = (s) -> 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
-    _seg_T = (u, s, j) -> begin
-        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s + 1]
-        na    = sys.nodes[gid_a]::RingNode
-        nb    = sys.nodes[gid_b]::RingNode
-        ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
-        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
-        α_a   = u[6N + na.ring_idx]
-        α_b   = u[6N + nb.ring_idx]
-        pp1, pp2 = _perp_fn(u)
-        pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
-        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
-        l_nat = _seg_nat_len(s)
-        max(0.0, _ea_rope * (norm(pb .- pa) - l_nat) / l_nat)
-    end
-    _tmax_local   = u -> maximum((_seg_T(u, s, j) for s in 1:n_seg, j in 1:p.n_lines); init=0.0)
-    _nslack_local = u -> count(_seg_T(u, s, j) < 5.0 for s in 1:n_seg, j in 1:p.n_lines)
+    _seg_T = (u, s, j) -> get_segment_tension(u, sys, p, s, j)
+    _tmax_local   = u -> get_max_rope_tension(u, sys, p)[1]
+    _nslack_local = u -> get_max_rope_tension(u, sys, p)[2]
 
     l_seg = p.tether_length / n_seg
 
@@ -827,6 +794,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ save_every)
             new_times  = Vector{Float64}(undef,  n_steps ÷ save_every)
             new_params = Vector{SystemParams}(undef, n_steps ÷ save_every)
+            new_sim_frames = Vector{SimFrame}(undef, n_steps ÷ save_every)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
             release_frac     = 0.0   # depower payout fraction
@@ -966,20 +934,22 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     @views u[6N+Nr+1:6N+2Nr] .*= (1.0 - release_frac * 1e-5)
                 end
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
+                if ld !== nothing
+                    update_kite_pos!(sys, u, ld, p_active, dt)
+                end
                 if step % save_every == 0
-                    new_frames[fi] = copy(u); new_times[fi] = t; new_params[fi] = p_active; fi += 1
+                    new_frames[fi] = copy(u)
+                    new_times[fi] = t
+                    new_params[fi] = p_active
+                    new_sim_frames[fi] = capture_frame(u, sys, p_active, t, wf, ld; brake_engaged=sys.brake_engaged[])
+                    fi += 1
                 end
             end
 
             nf           = length(new_frames)
             times_ref[]  = new_times
             frames_obs[] = new_frames
-            # Rebuild SimFrames for the new run.  We reset sys.brake_engaged to false
-            # and let the capture_frame loop latch it sequentially to match the simulation.
-            sys.brake_engaged[] = false
-            sim_frames_obs[] = [capture_frame(new_frames[i], sys, new_params[i],
-                                  new_times[i], wf, ld)
-                                 for i in 1:nf]
+            sim_frames_obs[] = new_sim_frames
             frame_slider.range[] = 1:nf
             frame_slider.value[] = 1
             scenario_msg_color[] = :lawngreen

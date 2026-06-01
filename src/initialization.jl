@@ -178,9 +178,20 @@ function _build_kite_turbine_system_impl(p::SystemParams,
         SubSegmentEnd(sky_anchor_gid, false, 1),    # sky anchor end (upper)
         CYAN_L0, CYAN_EA, CYAN_C_DAMP, CYAN_DIAM))
 
+    # Initial kite position: design equilibrium = sky anchor design pos + lift line in lift_dir.
+    # lift_dir is along the lifter elevation angle (p.lifter_elevation, already in radians).
+    θ_lift_init   = p.lifter_elevation
+    lift_dir_init = [cos(θ_lift_init), 0.0, sin(θ_lift_init)]
+    # Design lift line length — 25.0 m is the RotaryLifterParams default; we use
+    # CYAN_L0 + bearing_offset (=11 m) to map sky_anchor_pos0 to its design coords,
+    # then add the full lift line.  We don't have lift_device here, so we use a
+    # reasonable default of 25 m and the caller can call update_kite_pos! after settle.
+    kite_pos_init = sky_anchor_pos0 .+ 25.0 .* lift_dir_init
+
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
                             bearing_gid, sky_anchor_gid, n_ring, n_total,
-                            [zeros(3) for _ in 1:n_ring], Ref(false))
+                            [zeros(3) for _ in 1:n_ring], Ref(false),
+                            kite_pos_init)
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))

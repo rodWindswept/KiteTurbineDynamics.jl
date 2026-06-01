@@ -1,6 +1,133 @@
 using LinearAlgebra
 
 """
+    get_subsegment_tension(ss::RopeSubSegment, pa, pb, va, vb) -> tension::Float64
+
+Compute the physical spring-damper tension in a single rope sub-segment.
+Stateless and zero-allocation.
+"""
+function get_subsegment_tension(ss::RopeSubSegment, pa, pb, va, vb)
+    diff_pos = pb .- pa
+    current_len = norm(diff_pos)
+    current_len < 1e-9 && return 0.0
+    
+    dir = diff_pos ./ current_len
+    rel_vel = vb .- va
+    vel_proj = dot(rel_vel, dir)
+    strain = (current_len - ss.length_0) / ss.length_0
+    
+    return max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
+end
+
+"""
+    get_max_rope_tension(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams) -> (T_max::Float64, n_slack::Int)
+
+Calculate the maximum tether tension and the number of slack lines across the TRPT shaft tethers.
+Pure function of `u` (positions and velocities live in the state vector).
+"""
+function get_max_rope_tension(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams)
+    N = sys.n_total
+    Nr = sys.n_ring
+    
+    # Dynamic shaft direction
+    hub_gid   = sys.rotor.node_id
+    hub_pos_r = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_rmag  = norm(hub_pos_r)
+    shaft_dir = hub_rmag > 0.1 ?
+                hub_pos_r ./ hub_rmag :
+                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    perp1_shaft, perp2_shaft = shaft_perp_basis(shaft_dir)
+    
+    # Tilted basis
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1_tilt, pp2_tilt = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    
+    alpha = @view u[6N+1 : 6N+Nr]
+    
+    function get_pos(se::SubSegmentEnd)
+        if se.is_ring
+            node = sys.nodes[se.node_id]::RingNode
+            ri   = node.ring_idx
+            R    = node.radius
+            α    = alpha[ri]
+            ctr  = @view u[3*(se.node_id-1)+1 : 3*se.node_id]
+            return attachment_point(ctr, R, α, se.line_idx, p.n_lines, pp1_tilt, pp2_tilt)
+        else
+            return @view u[3*(se.node_id-1)+1 : 3*se.node_id]
+        end
+    end
+    
+    T_max = 0.0
+    n_slack = 0
+    
+    n_tether_segs = 4 * p.n_lines * (sys.n_ring - 1)
+    
+    for idx in 1:n_tether_segs
+        ss = sys.sub_segs[idx]
+        pa = get_pos(ss.end_a)
+        pb = get_pos(ss.end_b)
+        va = @view u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
+        vb = @view u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+        
+        T = get_subsegment_tension(ss, pa, pb, va, vb)
+        T_max = max(T_max, T)
+        T < 5.0 && (n_slack += 1)
+    end
+    
+    return T_max, n_slack
+end
+
+"""
+    get_segment_tension(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams, s::Int, j::Int; sub_idx::Int=2) -> Float64
+
+Compute the physical tension of segment `s`, line `j` (specifically at subsegment `sub_idx` in 1..4).
+Pure function of `u` (positions and velocities live in the state vector).
+"""
+function get_segment_tension(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams, s::Int, j::Int; sub_idx::Int=2)
+    N = sys.n_total
+    Nr = sys.n_ring
+    
+    # Dynamic shaft direction
+    hub_gid   = sys.rotor.node_id
+    hub_pos_r = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_rmag  = norm(hub_pos_r)
+    shaft_dir = hub_rmag > 0.1 ?
+                hub_pos_r ./ hub_rmag :
+                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    perp1_shaft, perp2_shaft = shaft_perp_basis(shaft_dir)
+    
+    # Tilted basis
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1_tilt, pp2_tilt = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    
+    alpha = @view u[6N+1 : 6N+Nr]
+    
+    function get_pos(se::SubSegmentEnd)
+        if se.is_ring
+            node = sys.nodes[se.node_id]::RingNode
+            ri   = node.ring_idx
+            R    = node.radius
+            α    = alpha[ri]
+            ctr  = @view u[3*(se.node_id-1)+1 : 3*se.node_id]
+            return attachment_point(ctr, R, α, se.line_idx, p.n_lines, pp1_tilt, pp2_tilt)
+        else
+            return @view u[3*(se.node_id-1)+1 : 3*se.node_id]
+        end
+    end
+    
+    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + sub_idx
+    idx > length(sys.sub_segs) && return 0.0
+    ss = sys.sub_segs[idx]
+    
+    pa = get_pos(ss.end_a)
+    pb = get_pos(ss.end_b)
+    va = @view u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
+    vb = @view u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+    
+    return get_subsegment_tension(ss, pa, pb, va, vb)
+end
+
+"""
     compute_rope_forces!(forces, torques, u, alpha, sys, p, wind_fn, t,
                           perp1_tilt, perp2_tilt)
 
@@ -75,10 +202,7 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
         current_len < 1e-9 && continue
 
         dir      = diff_pos ./ current_len
-        rel_vel  = vb .- va
-        vel_proj = dot(rel_vel, dir)
-        strain   = (current_len - ss.length_0) / ss.length_0
-        tension  = max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
+        tension  = get_subsegment_tension(ss, pa, pb, va, vb)
         F_vec    = tension .* dir
 
         # Aerodynamic drag on all rope/tether sub-segments (50/50 distributed)

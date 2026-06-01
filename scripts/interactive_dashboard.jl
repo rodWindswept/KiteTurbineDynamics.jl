@@ -226,10 +226,8 @@ function main()
                 lin_damp = LIN_DAMP,
                 callback = (u_curr, t_curr, step) -> begin
                     if step % SAVE_EVERY == 0
-                        hz = u_curr[3*(sys.rotor.node_id-1)+3]
-                        om = u_curr[6N + Nr + Nr]
-                        pk = p.k_mppt * om^2 * abs(om) / 1000.0
-                        push!(results, (t_curr, hz, om, pk))
+                        sf = capture_frame(u_curr, sys, p, t_curr, wind_fn, default_lift; brake_engaged=sys.brake_engaged[])
+                        push!(results, (sf.t, sf.hub_z, sf.omega_hub, sf.P_kw))
                     end
                 end
             )

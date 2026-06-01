@@ -37,11 +37,11 @@ export build_kite_turbine_system, build_kite_turbine_system_v5, state_size
 export compute_rope_forces!, compute_ring_forces!, apply_brake_constraint!
 export multibody_ode!
 export settle_to_equilibrium, simulate
-export run_canonical_sim!, DepowerResult, run_pitch_depower!, override_params
+export run_canonical_sim!, DepowerResult, run_pitch_depower!, override_params, update_kite_pos!
 export set_orbital_velocities!, orbital_damp_rope_velocities!
 export ring_safety_frame, ring_element_analysis, analyse_ring, TETHER_SWL, FOS_DESIGN, DO_SCALE, E_CFRP,
        G_CFRP, σ_CFRP_COMPR, tube_props, RingElementFrame, BeamResult, ground_station_forces
-export SimFrame, SimPeaks, capture_frame, capture_peaks
+export SimFrame, SimPeaks, capture_frame, capture_peaks, get_generator_torque, get_subsegment_tension, get_max_rope_tension, get_segment_tension
 export build_dashboard
 
 # Catenary model

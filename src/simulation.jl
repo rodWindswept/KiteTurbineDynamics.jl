@@ -1,4 +1,62 @@
-export run_canonical_sim!, DepowerResult, run_pitch_depower!, override_params
+export run_canonical_sim!, DepowerResult, run_pitch_depower!, override_params, update_kite_pos!
+
+"""
+    update_kite_pos!(sys, u, lift_device, p, dt)
+
+Advance `sys.kite_pos` by lagging the relative position vector `r_rel = kite_pos - sa_pos`
+toward the instantaneous equilibrium direction:
+
+    r_eq = lift_line_len · lift_dir(p)
+
+The update uses a first-order lag with time constant `KITE_TAU_S` (3 s):
+
+    r_rel .+= (dt / KITE_TAU_S) .* (r_eq .- r_rel)
+
+To model the continuous aerodynamic lift holding the lift line fully taut under normal payout,
+we project `r_rel` to exactly `lift_device.line_length` every step:
+
+    r_rel .= (r_rel ./ norm(r_rel)) · lift_line_len
+
+The absolute `sys.kite_pos` is then reconstructed as:
+
+    sys.kite_pos .= sa_pos .+ r_rel
+
+**Why a relative lag?**  The physical kite has inertia and the lift line exerts aerodynamic drag
+as it reorients. Using a relative direction lag instead of lagging absolute position ensures that
+the lift line is held 100% taut by construction as the sky anchor ascends, transmitting the kite's
+lift continuously into the TRPT preloads rather than artificially going slack.
+"""
+function update_kite_pos!(sys::KiteTurbineSystem,
+                           u::Vector{Float64},
+                           lift_device::LiftDevice,
+                           p::SystemParams,
+                           dt::Float64)
+    sky_anchor_gid = sys.sky_anchor_id
+    sa_pos = @view u[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid]
+
+    θ_lift   = p.lifter_elevation
+    lift_dir = [cos(θ_lift), 0.0, sin(θ_lift)]
+
+    # Relative vector from sky anchor to kite
+    r_rel = sys.kite_pos .- sa_pos
+    r_eq  = lift_device.line_length .* lift_dir
+
+    # Euler lag update of the relative vector
+    α = min(dt / KITE_TAU_S, 1.0)
+    r_rel .+= α .* (r_eq .- r_rel)
+
+    # Project to exact lift line length to keep the lift line 100% taut
+    d_rel = norm(r_rel)
+    if d_rel > 1e-6
+        r_rel .= (r_rel ./ d_rel) .* lift_device.line_length
+    else
+        r_rel .= lift_device.line_length .* lift_dir
+    end
+
+    # Update absolute kite position
+    sys.kite_pos .= sa_pos .+ r_rel
+    return nothing
+end
 
 """
     run_canonical_sim!(u, sys, p, wind_fn, n_steps, dt; lift_device, lin_damp, callback)
@@ -34,6 +92,11 @@ function run_canonical_sim!(u::Vector{Float64}, sys::KiteTurbineSystem, p::Syste
         u[1:3]       .= 0.0   # ground ring centre stays at origin
         u[3N+1:3N+3] .= 0.0   # ground ring translational velocity = 0
 
+        # Advance kite position lag (only when a lift device is present)
+        if lift_device !== nothing
+            update_kite_pos!(sys, u, lift_device, p, dt)
+        end
+
         if callback !== nothing
             callback(u, t, step)
         end
@@ -67,6 +130,16 @@ struct DepowerResult
     T_cyan_min     :: Float64           # minimum sky anchor tension (N)
     twist_max      :: Float64           # maximum adjacent ring twist (rad)
     fos_buckling_min:: Float64          # minimum CFRP column buckling FoS
+
+    # Advanced Dynamic & Structural Diagnostics (V4 Campaign)
+    fos_buckling_ring_id :: Int         # ring ID where min buckling FoS occurred
+    peak_strut_load      :: Float64     # peak compressive strut force (N)
+    peak_strut_ring_id   :: Int         # ring ID of peak compressive strut force
+    max_out_of_plane_accel:: Float64    # max out-of-plane acceleration of ring nodes (m/s²)
+    max_node_jerk        :: Float64     # max rate of acceleration change of ring nodes (m/s³)
+    T_trpt_max           :: Float64     # absolute peak tension in TRPT tethers (N)
+    peak_trpt_segment_idx:: Int         # segment index of peak TRPT tension
+    peak_trpt_line_idx   :: Int         # line index of peak TRPT tension
 end
 
 """
@@ -160,6 +233,18 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
     twist_max_run  = 0.0
     fos_buckling_min_run = Inf
 
+    fos_buckling_ring_id_run = 0
+    peak_strut_load_run      = 0.0
+    peak_strut_ring_id_run   = 0
+    max_out_of_plane_accel_run = 0.0
+    max_node_jerk_run        = 0.0
+    T_trpt_max_run           = 0.0
+    peak_trpt_segment_idx_run = 0
+    peak_trpt_line_idx_run   = 0
+
+    # Acceleration tracking for jerk calculation
+    a_prev = zeros(Float64, 3*N)
+
     # Inline mid-rope tension for segment s, line j
     # (avoids importing visualization helpers; identical formula to _mid_tension)
     _mid_t(s, j) = begin
@@ -223,6 +308,33 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
         multibody_ode!(du, u, ode_p, t)
         t += dt
 
+        # ── Whiplash and jerk diagnostics (V4 Campaign) ──
+        u_shaft = [cos(p_base.elevation_angle), 0.0, sin(p_base.elevation_angle)]
+        for r_idx in 1:Nr
+            gid = sys.ring_ids[r_idx]
+            a_k = @view du[3N + 3*(gid-1) + 1 : 3N + 3*gid]
+            a_k_perp = a_k .- dot(a_k, u_shaft) .* u_shaft
+            max_out_of_plane_accel_run = max(max_out_of_plane_accel_run, norm(a_k_perp))
+            if step > 1
+                a_prev_k = @view a_prev[3*(gid-1) + 1 : 3*gid]
+                jerk_k = (a_k .- a_prev_k) ./ dt
+                max_node_jerk_run = max(max_node_jerk_run, norm(jerk_k))
+            end
+        end
+        a_prev .= @view du[3N+1:6N]
+
+        # ── Peak TRPT tension mapping ──
+        for s in 1:n_seg
+            for j in 1:n_lines_p
+                T_ij = _mid_t(s, j)
+                if T_ij > T_trpt_max_run
+                    T_trpt_max_run = T_ij
+                    peak_trpt_segment_idx_run = s
+                    peak_trpt_line_idx_run = j
+                end
+            end
+        end
+
         @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
         @views u[1:3N]            .+= dt .* u[3N+1:6N]
         @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
@@ -237,6 +349,11 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
         end
 
         u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
+
+        # Advance dynamic kite position lag (when a lift device is present)
+        if lift_device !== nothing
+            update_kite_pos!(sys, u, lift_device, p_step, dt)
+        end
 
         # Latch brake time on first engagement
         if isnan(brake_time) && sys.brake_engaged[]
@@ -283,18 +400,35 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
 
             # 3. Space-Frame CFRP column buckling FoS (evaluated on saved frames)
             min_fos = Inf
+            max_comp_N = 0.0
+            peak_comp_ring_now = 0
+            min_fos_ring_now = 0
             try
                 alpha_now = @view u[6N+1 : 6N+Nr]
                 re_frames = ring_element_analysis(u, alpha_now, sys, p_step, t, wind_fn)
                 for rf in re_frames
                     for b in rf.beams
-                        min_fos = min(min_fos, b.fos)
+                        if b.fos < min_fos
+                            min_fos = b.fos
+                            min_fos_ring_now = rf.ring_id
+                        end
+                        if b.N > max_comp_N
+                            max_comp_N = b.N
+                            peak_comp_ring_now = rf.ring_id
+                        end
                     end
                 end
             catch
                 min_fos = 0.0
             end
-            fos_buckling_min_run = min(fos_buckling_min_run, min_fos)
+            if min_fos < fos_buckling_min_run
+                fos_buckling_min_run = min_fos
+                fos_buckling_ring_id_run = min_fos_ring_now
+            end
+            if max_comp_N > peak_strut_load_run
+                peak_strut_load_run = max_comp_N
+                peak_strut_ring_id_run = peak_comp_ring_now
+            end
 
             times_v[fi]       = t
             omega_hub_v[fi]   = omega_hub_now
@@ -310,5 +444,8 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
 
     return DepowerResult(times_v, omega_hub_v, omega_gnd_v, tau_gen_v,
                          T_max_v, n_slack_v, payout_v, kscale_v, brake_time,
-                         T_cyan_min_run, twist_max_run, fos_buckling_min_run)
+                         T_cyan_min_run, twist_max_run, fos_buckling_min_run,
+                         fos_buckling_ring_id_run, peak_strut_load_run, peak_strut_ring_id_run,
+                         max_out_of_plane_accel_run, max_node_jerk_run, T_trpt_max_run,
+                         peak_trpt_segment_idx_run, peak_trpt_line_idx_run)
 end

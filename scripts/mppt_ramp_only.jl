@@ -27,22 +27,7 @@ N_RAMP   = round(Int, T_RAMP   / T_CHUNK)
 OUT_DIR = joinpath(@__DIR__, "results", "mppt_twist_sweep")
 mkpath(OUT_DIR)
 
-function _mid_tension(u, sys, p, s, j)
-    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + 2
-    idx > length(sys.sub_segs) && return 0.0
-    ss  = sys.sub_segs[idx]
-    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-    max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
-end
-
-function tether_max(u, sys, p)
-    T = 0.0
-    for s in 1:p.n_rings+1, j in 1:p.n_lines
-        T = max(T, _mid_tension(u, sys, p, s, j))
-    end
-    T
-end
+# Tether and generator metrics are imported from KiteTurbineDynamics.
 
 function partial_twist_deg(α, r_a, r_b)
     rad2deg(sum(i -> mod(α[i+1] - α[i] + π, 2π) - π, r_a:r_b-1))
@@ -69,6 +54,7 @@ p_base       = params_10kw()
 sys, u0_base = build_kite_turbine_system(p_base)
 N, Nr        = sys.n_total, sys.n_ring
 println("  N=$N nodes, Nr=$Nr rings")
+default_lift = rotary_lifter_default()
 
 ramp_rows = DataFrame(
     t         = Float64[],
@@ -107,13 +93,13 @@ for chunk in 1:N_RAMP
 
     frac   = clamp(t_ramp / T_RAMP, 0.0, 1.0)
     v_now  = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
-    α_vec  = @view u_ramp[6N+1 : 6N+Nr]
-    ω_hub  = u_ramp[6N + Nr + Nr]
-    ω_gnd  = u_ramp[6N + Nr + 1]
-    twist  = partial_twist_deg(α_vec, 1, Nr)
+    sf     = capture_frame(u_ramp, sys, p_ramp, t_ramp, wfn_ramp, default_lift; brake_engaged=sys.brake_engaged[])
+    twist  = sf.delta_alpha_deg
+    ω_hub  = sf.omega_hub
+    ω_gnd  = sf.omega_gnd
     Δω     = ω_hub - ω_gnd
-    P_kw   = p_ramp.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
-    T_mx   = tether_max(u_ramp, sys, p_ramp)
+    P_kw   = sf.P_kw
+    T_mx   = sf.T_max
 
     push!(ramp_rows, (t_ramp, v_now, twist, ω_hub, ω_gnd, Δω, P_kw, T_mx))
 

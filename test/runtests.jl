@@ -20,4 +20,5 @@ using KiteTurbineDynamics
     include("test_spacer_ring_design.jl")
     include("test_pitch_depower_sequence.jl")
     include("test_dashboard_smoke.jl")
+    include("test_metric_consistency.jl")
 end

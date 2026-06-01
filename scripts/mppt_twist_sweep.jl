@@ -55,13 +55,6 @@ N_CHUNKS     = round(Int, T_SIM    / T_CHUNK)
 OUT_DIR = joinpath(@__DIR__, "results", "mppt_twist_sweep")
 mkpath(OUT_DIR)
 
-# ── Helper: principal-value TRPT structural twist ─────────────────────────────
-
-function structural_twist_deg(u, N, Nr)
-    α = @view u[6N+1 : 6N+Nr]
-    rad2deg(sum(i -> mod(α[i+1] - α[i] + π, 2π) - π, 1:Nr-1))
-end
-
 # ── Helper: build SystemParams with only k_mppt and v_wind_ref varied ─────────
 
 function make_params(base::SystemParams; k_mppt=base.k_mppt, v_wind=base.v_wind_ref)
@@ -128,10 +121,11 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
         u     = simulate(sys, u, p, wfn; n_steps=N_CHUNK, dt=DT)
         t_sim += T_CHUNK
 
-        ω_hub  = u[6N + Nr + Nr]
-        ω_gnd  = u[6N + Nr + 1]
-        twist  = structural_twist_deg(u, N, Nr)
-        P_kw   = p.k_mppt * ω_gnd^2 * abs(ω_gnd) / 1000.0
+        sf = capture_frame(u, sys, p, t_sim, wfn; brake_engaged=sys.brake_engaged[])
+        ω_hub  = sf.omega_hub
+        ω_gnd  = sf.omega_gnd
+        twist  = sf.delta_alpha_deg
+        P_kw   = sf.P_kw
 
         push!(ts_rows, (k_mult, k_mppt, v_wind, t_sim, twist, ω_hub, ω_gnd, P_kw))
 
