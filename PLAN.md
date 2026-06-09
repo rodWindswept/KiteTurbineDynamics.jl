@@ -568,3 +568,308 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 3. Coupling stiffness? (default: semi-rigid, 500 N·m/rad)
 4. Minimum blade count? (default: ≥4, per Carceller 2020)
 5. Blender vs pure GLMakie for graphical abstract? (start GLMakie, explore Blender)
+
+---
+
+# Literature Augmentation — Hypotheses Requiring Validation
+
+The AWE knowledge wiki (555 papers, 569 concept/entity pages) contains work that *may* be
+relevant to KTD.jl v6. Every reference below is a **hypothesis to test**, not a result to
+adopt. Each must be validated against KTD.jl's specific model assumptions, physical
+vocabulary, and simulation standards before any claim of applicability can be made.
+
+The framing throughout this section: "X paper reports Y finding. If Y holds under KTD.jl's
+assumptions, it could Z. Validation required: A, B, C."
+
+---
+
+## A. BEM validation against rotary AWE rotor benchmarks
+
+**Reference:** Pfister & Blondel (2020) — "Comparing blade-element theory and vortex
+computations intended for modelling of yaw aerodynamics of a tethered rotorcraft,"
+J. Phys. Conf. Ser. 1618. Numerical BEM + Mangler & Squire inflow validated against
+free-vortex CASTOR solver for a rotary AWE rotor (Gö-429 airfoil, R=1m, c/R=0.075,
+α=15°–90°, TSR=1–15).
+
+**Hypothesis:** If their numerical BEM methodology generalises to the Daisy rotor
+geometry (NACA4412, open-centre, n_lines-dependent solidity), their free-vortex results
+could serve as an independent validation target for Phase 0.1's unified BEM surface.
+The Mangler & Squire inflow model may improve torque prediction accuracy over the
+standard AeroDyn BEM, which matters because torque accuracy is the bottleneck for
+TRPT sizing.
+
+**Validation required before any claim of applicability:**
+- Pfister & Blondel use a Gö-429 airfoil, solidity σ=0.075, and a hub void of 0.2R.
+  KTD.jl uses NACA4412, open-centre annular rotor, and n_lines-dependent effective
+  solidity. BEM results must be regenerated for KTD.jl's specific geometry.
+- Their rotor is a single tethered rotorcraft at a fixed α; KTD.jl's rotor operates
+  at a dynamically-varying elevation angle with TRPT torsional coupling. The
+  steady-state BEM validation may not transfer to the coupled ODE dynamics.
+- The CASTOR free-vortex solver has its own assumptions (inviscid wake, Biot-Savart
+  convection). Cross-model agreement does not guarantee physical correctness — it
+  only validates internal consistency between two models.
+- M&S inflow assumes a specific induced velocity distribution across an inclined disk.
+  Whether this distribution holds for an annular open-centre rotor (inner tip at ~0.4R)
+  with n_lines blade elements must be verified.
+
+**Relevant plan phase:** Phase 0.1 (BEM unification), Phase 0.2 (elevation validation).
+
+---
+
+## B. Rotary efficiency penalty for expansion rotor lift
+
+**Reference:** Goldstein (2014) — "A theoretical basis for the rotary lift concept,"
+AWEC conference. Derives a rotary efficiency coefficient δ ≤ 1 quantifying the
+variable-airspeed penalty of a rotating blade vs. the same blade in straight-line
+flight. For constant chord with r=R/3, δ ≈ 0.48 (~2× efficiency penalty).
+Counterintuitive design rule: blades should get wider toward tips for rotary AWE
+(unlike HAWTs).
+
+**Hypothesis:** The expansion rotor force model in Phase 1 uses a straight-wing lift
+formula (`L = q·chord·span·CL`). If Goldstein's δ coefficient applies under the
+expansion rotor's operating conditions (shaft-driven rotation, bridle-angled flow,
+small-radius blades in the 0.5–2.0m range), the lift estimate may be optimistic by a
+factor of ~2. Applying δ would make the predicted expansion force more conservative
+and defensible in peer review.
+
+**Validation required before any claim of applicability:**
+- Goldstein's derivation assumes a rotor in autorotation at a fixed disk angle of
+  attack. The expansion rotor is shaft-driven (coupled to the TRPT at ω_shaft), not
+  autorotating. The velocity triangle at each blade element differs fundamentally:
+  Goldstein assumes the inflow is determined by the rotor's own induced velocity
+  field; the expansion rotor's inflow is imposed by the TRPT shaft rotation plus
+  the freestream wind. The δ coefficient may not transfer between these regimes.
+- The counterintuitive "wider toward tips" design rule depends on the blade root
+  cutout (r/R ratio). The expansion rotor's hub radius and blade geometry must be
+  parameterised and δ recomputed for each design point — it cannot be taken as a
+  constant.
+- Goldstein validates against rotary lift AWE concepts, not against small-radius
+  expansion elements in a TRPT stack. The scale effects (Re for 0.5m blades vs.
+  Goldstein's assumed rotor dimensions) are unquantified.
+- KTD.jl's expansion rotor model is a lumped-element force decomposition, not a
+  blade-element integration. δ is inherently a blade-element-level correction.
+  Whether it can be meaningfully applied to a lumped model without introducing
+  spurious accuracy is an open question.
+
+**Relevant plan phase:** Phase 1.1 (expansion rotor forces), Phase 2.3 (parameter sweep).
+
+---
+
+## C. Small-rotor solidity and stall delay at expansion rotor scale
+
+**Reference 1:** Duquette & Visser (2003) — "The Effect of Solidity and Blade Number
+on the Performance of Small Horizontal Axis Wind Turbines," Wind Engineering. Found
+that at Re 100k–500k, higher solidity (σ=0.15–0.25) with more blades (B=6–12)
+increases Cp at lower λ (2–4), contravening the conventional low-solidity HAWT
+paradigm. Torque at λ=2 is ~900% higher for σ=0.25 vs σ=0.05.
+
+**Reference 2:** Snel et al. (1993), via Burton Wind Energy Handbook §3.12 — empirical
+stall delay correction (Himmelskamp effect): rotating blades achieve higher CL_max than
+static 2D airfoil tests due to centrifugal pumping in the separated boundary layer.
+Correction: CL,3D = CL,2D + 3(c/r)²·ΔCL, strongest at the blade root.
+
+**Hypothesis:** The expansion rotor parameter sweep (Phase 2.3) includes blade_radius
+∈ {0.5,1.0,1.5,2.0}m and blade_count ∈ {3,5,8}. At the 0.5m scale, tip speed at
+ω=30 rad/s is 15 m/s, chord ~0.05m gives Re ≈ 50,000 — solidly in the regime where
+Duquette & Visser's findings apply. If validated for the expansion rotor's specific
+geometry and flow conditions, the higher-solidity design space could produce more
+radial expansion force than the current sweep assumes, particularly at low shaft RPM.
+Snel's correction would affect CL_blade in the expansion rotor force model: the
+static CL value may underpredict what the rotating blade actually achieves.
+
+**Validation required before any claim of applicability:**
+- Duquette & Visser tested HAWTs (axial flow), not bridle-angled expansion rotors
+  in mixed axial/tangential flow. The flow regime is fundamentally different — the
+  expansion rotor sees a velocity triangle combining shaft rotation and freestream
+  wind, not pure axial induction.
+- Their Re range (100k–500k) overlaps the lower end of KTD.jl's expansion rotor
+  envelope but the smallest rotors (0.5m radius, 0.05m chord at 15 m/s tip speed)
+  are at Re ~50,000 — below the validated range. Extrapolation is not warranted
+  without new data.
+- Snel's correction was developed for HAWT rotors at moderate λ. Whether the
+  centrifugal pumping mechanism operates identically on a small, shaft-driven,
+  bridle-angled blade is unknown. The correction depends on the local c/r ratio,
+  which varies along the expansion rotor span and depends on the specific blade
+  planform.
+- The expansion rotor model uses `CL_blade` as a lumped parameter, not a spanwise
+  distribution. Snel's correction is spanwise (strongest at root). Applying it as a
+  uniform CL multiplier would overcorrect the tip region. This needs a
+  blade-element-level treatment to be physically meaningful.
+
+**Relevant plan phase:** Phase 2.3 (parameter sweep), Phase 1.1 (CL_blade parameter).
+
+---
+
+## D. Generator torque coupling with autorotation-derived rotor forces
+
+**Reference:** Rimkus & Das (2013) — "An Application of the Autogyro Theory to Airborne
+Wind Energy Extraction," ASME DSCC. First extension of classical Glauert/Wheatley
+autogyro BEM to include a generator load torque Qe. Derives the energy-extraction
+inflow equation: `1.5 W_d R μ² + (W_d R α − 1.5 Qe)μ − (Qe α + 0.25 W_d R δ) = 0`.
+Uses PCA-2 parameters (4 blades, 17.5 ft radius, σ, α≈2°, δ=0.006).
+
+**Hypothesis:** The expansion rotor experiences parasitic torque `τ_drag = n_blades ×
+D_blade × r_mean` which must be overcome by the shaft (i.e., it consumes power from the
+TRPT). The Rimkus/Das framework models exactly this regime: an autogyro rotor with an
+external torque load (Qe) shifting the autorotation equilibrium. If their methodology
+generalises to the expansion rotor's geometry and flow conditions, the Qe equation could
+validate whether the parasitic power fraction stays within the 20% limit defined in
+Phase 2.4, and could predict the shaft power penalty analytically before running the
+full ODE campaign.
+
+**Validation required before any claim of applicability:**
+- Rimkus & Das use PCA-2 parameters (1932 rotor, 4 blades, GÖ 429 airfoil, 17.5 ft
+  radius). The expansion rotor is a fundamentally different device: smaller radius
+  (0.5–2.0m), different airfoil, shaft-driven rather than autorotating, and operating
+  at a bridle angle that introduces a radial force component absent from the
+  Rimkus/Das model.
+- Their Qe is a generator load on the rotor shaft. The expansion rotor's drag torque
+  is aerodynamic (profile drag + induced drag of the blades themselves), not
+  electromechanical. Whether the Qe formalism applies to aerodynamic torque sinks is
+  not established — the physical mechanism of energy extraction differs.
+- The Rimkus/Das model assumes the rotor is the primary lift device (generating thrust
+  Wd to support airborne weight). The expansion rotor's primary function is radial
+  spreading, not weight support. The force balance is different: the expansion rotor
+  operates in a TRPT stack where axial tension is dominated by the generating rotor's
+  thrust and the lift device's pull, not by the expansion rotor's own lift.
+- Their equation is a steady-state equilibrium. The KTD.jl ODE captures transient
+  shaft dynamics (ω_hub ≠ ω_gnd during speed changes). Whether the steady-state Qe
+  analysis bounds the transient parasitic power is untested.
+- Validation would require running KTD.jl with an expansion rotor configured to match
+  Rimkus/Das geometry as closely as possible, then comparing the steady-state parasitic
+  torque against the Qe prediction before claiming the framework transfers.
+
+**Relevant plan phase:** Phase 1.1–1.2 (expansion rotor ODE integration), Phase 2.4
+(parasitic power constraint f_parasitic ≤ 0.20).
+
+---
+
+## E. Modern autogyro rotor performance baseline
+
+**Reference:** Duda & Pruter (2012) — "Flight Performance of the MTOsport Gyroplane,"
+DLR/ICAS. Quantified modern autogyro rotor performance: rotor-alone L/D_max = 16.8
+(vs PCA-2's 11.5), solidity σ=0.030 (vs PCA-2's 0.097), 2-blade NACA 8-H-12.
+2/rev vertical force oscillation ~600N at 11 Hz for the 2-blade configuration;
+recommend 4+ blades above 100 kts.
+
+**Hypothesis:** Phase 0.4 imports PCA-2 data from CoaxialAutogyroStacking.jl for the
+rotary lifter model. If the MTOsport rotor data is applicable to the rotary lifter's
+operating regime, the L/D improvement from 11.5 to 16.8 would directly reduce the
+required rotor radius for a given lift force, improving the mass budget. The 2/rev
+force oscillation data supports the tensile kite network principle of more, smaller
+blades for smoother torque delivery — potentially relevant to expansion rotor blade
+count selection.
+
+**Validation required before any claim of applicability:**
+- MTOsport data is for a 2-blade teetering rotor in forward flight at 65–100 kts
+  (33–51 m/s). The rotary lifter operates at fixed RPM with apparent wind dominated
+  by tip speed (~30 m/s), not forward flight speed. The advance ratio µ and disk
+  angle of attack regimes are different.
+- The MTOsport rotor was measured on a complete aircraft; rotor-alone L/D is derived
+  by subtracting fuselage drag. The derivation methodology must be verified — the
+  rotor-alone L/D of 16.8 is an inferred value, not a direct measurement.
+- The NACA 8-H-12 airfoil differs from the airfoils used in KTD.jl's rotary lifter.
+  L/D_max is airfoil-dependent; the 16.8 value does not transfer to a different
+  airfoil without correction.
+- The 2/rev oscillation data is for an aircraft in forward flight with cyclic
+  dissymmetry of lift. The rotary lifter in a TRPT stack may not experience the
+  same cyclic loading because the inflow is different (no forward flight component,
+  shaft-aligned flow modified by the generating rotor's wake).
+- The recommendation for 4+ blades above 100 kts is an empirical guideline from one
+  aircraft. Whether it applies to a tethered, shaft-driven rotary element in combined
+  axial/tangential flow is unvalidated.
+
+**Relevant plan phase:** Phase 0.4 (PCA-2 import), Phase 2.3 (blade count sweep).
+
+---
+
+## F. TRPT design variants for expansion rotor integration
+
+**Reference:** Sethuramamurugan (2024) — TRPT-4 vs TRPT-5 force ratio analysis.
+Hexagonal rings, no central tether, no residual bending stress. Force ratio = 0.5
+at δ_crit = 104° for both designs. Manufacturing simplicity: straight carbon fibre
+segments vs bent circular rings.
+
+**Hypothesis:** If the TRPT-5 hexagonal ring architecture is compatible with expansion
+rotor mounting (which requires attachment points for bridle lines at specific azimuthal
+positions), it could eliminate the residual bending stress failure mode observed in
+circular rings when the system halts. The central tether removal in TRPT-5 may also
+simplify expansion rotor integration by providing a clear central passage for the
+rotor hub.
+
+**Validation required before any claim of applicability:**
+- Sethuramamurugan's analysis is steady-state geometric. Dynamic effects during
+  expansion (changing effective radius, varying tether tension during gusts) are
+  not modelled. The hexagonal ring's behaviour under dynamic radial spreading is
+  unknown.
+- TRPT-5's hexagonal rings have 6 attachment points. The expansion rotor model in
+  Phase 1.2 assumes attachment at each of the n_lines polygon vertices. For n_lines=8
+  (the unanimous DE winner in v4/v5), hexagonal rings have only 6 vertices — a
+  mismatch that would require an adapter geometry not analysed in Sethuramamurugan's
+  work.
+- The force ratio analysis assumes uniform axial tension. With expansion rotors
+  adding local radial forces at specific ring stations, the tension profile along
+  the TRPT becomes non-uniform. Whether the δ_crit = 104° limit holds under
+  non-uniform loading must be verified.
+- Manufacturing simplicity is claimed but not demonstrated at the scales and
+  tolerances relevant to a 10–50 kW airborne system.
+
+**Relevant plan phase:** Phase 1.2 (ODE integration — ring attachment geometry),
+Phase 2.1 (expansion stack configuration).
+
+---
+
+## G. Fatigue and cyclic loading from wind turbine standards
+
+**Reference:** Burton Wind Energy Handbook §3.12 — 1P/2P loading mechanisms from wind
+shear, tower shadow, yaw error, and turbulence. Snel's stall delay correction. DNV GL
+standards for rotor blade certification.
+
+**Hypothesis:** Audit issue #7 flags the absence of cyclic/fatigue loading in structural
+sizing. If the 1P/2P analytical formulations from Burton can be adapted to the TRPT's
+loading environment (cyclic tether tension from rotation, not tower shadow), a scoped
+Phase 0.5 task could add deterministic cyclic load cases to the sizing envelope without
+requiring full rainflow counting + Miner's rule. This would strengthen the paper's
+limitations section by quantifying what *is* captured vs what remains for future work.
+
+**Validation required before any claim of applicability:**
+- Burton's 1P/2P mechanisms are derived for HAWTs: tower shadow (wake deficit behind
+  cylindrical tower), wind shear (power-law profile across the rotor disk), yaw error
+  (misalignment between rotor axis and wind). The TRPT has no tower, the rotor disk
+  is inclined rather than vertical, and the tether lines are the primary cyclic-load
+  drivers. The physical sources of cyclic loading are different and must be identified
+  from first principles before applying any HAWT-derived formulation.
+- 1P/2P in HAWTs refers to once-per-revolution and twice-per-revolution loading at the
+  blade root. In a TRPT with n_lines tether lines, the cyclic loading on the ring
+  frames has a different harmonic structure (n_lines per revolution from attachment
+  point geometry, plus blade-passing frequency). The Burton framework would need
+  substantial adaptation, not direct application.
+- This is a scoping suggestion only. The paper's limitations section should make clear
+  that fatigue assessment is future work, with Burton and DNV GL cited as the
+  established methodology to be adapted once TRPT-specific load spectra are
+  characterised.
+
+**Relevant plan phase:** Audit issue #7, paper limitations section (Phase 4).
+
+---
+
+## Summary: Augmentation vs Validation
+
+| Ref | What it might offer | What must be validated first | Phase |
+|-----|-------------------|---------------------------|-------|
+| Pfister & Blondel | BEM validation target, M&S inflow upgrade | KTD.jl rotor geometry, coupled ODE dynamics | 0.1–0.2 |
+| Goldstein | Rotary efficiency penalty δ | Expansion rotor ≠ autorotation regime, lumped vs BEM | 1.1, 2.3 |
+| Duquette & Visser + Snel | Small-rotor solidity, stall delay CL correction | Mixed-flow regime, Re below validated range | 1.1, 2.3 |
+| Rimkus & Das | Generator torque coupling, parasitic power validation | Shaft-driven ≠ autorotating, Qe ≠ aerodynamic drag | 1.1–1.2, 2.4 |
+| Duda & Pruter (MTOsport) | Modern autogyro L/D baseline, 4+ blade guidance | Forward flight ≠ fixed-RPM shaft-driven, airfoil mismatch | 0.4, 2.3 |
+| Sethuramamurugan | Hexagonal rings, central tether removal | 6-vertex vs 8-line mismatch, dynamic expansion loading | 1.2, 2.1 |
+| Burton (fatigue) | 1P/2P framework, established methodology | TRPT loading mechanisms fundamentally different from HAWTs | Audit #7, Phase 4 |
+
+**None of these references have been validated against KTD.jl's model assumptions.**
+Every one requires a specific test: configure KTD.jl to match the reference's geometry
+and operating conditions as closely as possible, run the simulation, compare outputs,
+and only then claim the reference's findings are applicable. This is consistent with the
+Scientific Rigour Standards in this plan: "Cross-model: KTD.jl results checked against
+Tulloch's experimental data and Wacker's validated benchmark cases." Until that
+validation is done, these are hypotheses — useful for orienting the work, not for
+making claims.
