@@ -79,14 +79,106 @@ These apply to all phases. No phase is complete until its rigour checks pass.
 
 ## Validation
 
-- **Internal:** Every new module has unit tests with known analytical solutions
-- **Cross-model:** KTD.jl results checked against Tulloch's experimental data
-  (Cp 0.15–0.18 range) and Wacker's validated benchmark cases (Daisy 168W, MAR1 364W)
-- **Limit cases:** Expansion rotor model must degenerate correctly:
-  - N_expansion = 0 → identical results to v5 rigid TRPT (backward compatibility)
-  - bridle_angle = 0 → no radial force (pure axial lift, like a standard kite)
-  - v_wind = 0 → expansion still works via ω² term (shaft-driven rotation)
-- **Physical bounds:** CT ≤ 1.0 (momentum theory), Cp ≤ 16/27 (Betz), FoS ≥ 1.0
+Validation operates at two levels: the **baseline TRPT model** (already partially
+validated against literature) and the **novel expansion rotor model** (no existing
+experimental data — must be validated against higher-fidelity tools and analytical
+cases before relying on its predictions).
+
+### Baseline TRPT validation (carried forward from v5)
+
+- **Cross-model:** KTD.jl power-rotor results checked against Tulloch's experimental
+  data (Cp 0.15–0.18 range) and Wacker's validated benchmark cases (Daisy 168W,
+  MAR1 364W). Both must agree within ±10% for the same geometry and wind speed.
+- **Physical sanity bounds (not validation — catch implementation errors):**
+  CT ≤ 1.0 (momentum theory ceiling), Cp ≤ 16/27 (Betz limit), FoS ≥ 1.0 (a design
+  constraint; FoS < 1 means the design fails, not the model is wrong).
+- **Quality-gate invariants:** forces scale with v², zero wind → tension from weight
+  only, more rotors → more lift, tension monotonic increasing downward (from NFR4).
+
+### Expansion rotor validation
+
+The expansion rotor is novel — no experimental data exists for this architecture.
+Validation therefore proceeds through **hierarchical cross-fidelity comparison**:
+analytical solutions → higher-fidelity BEM → (future) experimental data.
+
+#### 1. Analytical limit cases (implementation correctness)
+
+| Case | What it tests | Expected behaviour |
+|------|--------------|-------------------|
+| N_expansion = 0 | Backward compatibility | Identical results to v5 rigid TRPT |
+| bridle_angle = 0° | No radial force | Pure axial lift (standard kite rotor); r_eff = r_nominal |
+| v_wind = 0, ω > 0 | Shaft-driven spreading | Expansion via ω² term only; r_eff > r_nominal |
+| ω = 0, v_wind > 0 | Static rotor in wind | r_eff = r_nominal; F_radial = 0 (blades not rotating) |
+| N_blades → ∞ (large) | Solidity limit | Radial force approaches upper bound; verify no singularity |
+
+#### 2. Analytical solutions (model correctness)
+
+The following analytical cases must be solved by hand (or symbolic algebra) and
+compared to KTD.jl output within 5%:
+
+| Case | Physics | Validation target |
+|------|---------|------------------|
+| Single-segment static equilibrium | Two tethers under known tension T, known F_radial at midpoint → geometry solvable by force triangle | `effective_radius()` output |
+| Centrifugal spreading of a rotating ring | Ring of mass m, radius r₀, at angular velocity ω → hoop tension T_hoop = mω²r/(2π), r_eff from force balance | r_eff at steady-state ω |
+| Maypole catenary | Central radial force on a catenary segment → known analytical solution for deflection | Segment deflection vs F_radial/T |
+
+These cases must be implemented as unit tests in `test/test_expansion_rotor.jl`
+(Phase 1.3) with the analytical solution documented in the test file header.
+
+#### 3. Cross-fidelity validation against higher-fidelity BEM
+
+The expansion rotor force model in `expansion_rotor_forces()` uses a simplified
+2D blade-element formulation (uniform inflow, no tip losses, constant CL/CD,
+no spanwise variation). This must be validated against a full 3D BEM code.
+
+**Tool: OpenFAST / AeroDyn Driver** (NREL, open-source, Apache 2.0)
+
+- The AeroDyn driver supports prescribed rotor speed, arbitrary blade geometry,
+  parametric sweeps (CP/CT/CQ vs TSR), and operates correctly in the propeller
+  brake state (negative torque / driven rotor regime).
+- **Validation procedure:**
+  1. Define expansion rotor blade geometry in AeroDyn input format (airfoil polar
+     from NACA4412 data already used in KTD.jl)
+  2. Run AeroDyn sweeps for the expansion rotor operating envelope: ω ∈ {10,20,30}
+     rad/s, v_wind ∈ {5,10,15} m/s, bridle-equivalent incidence sweep
+  3. Compare lift (→ F_radial via bridle angle) and drag (→ τ_drag) to
+     `expansion_rotor_forces()` output at matching operating points
+  4. Document discrepancy: expected 15–25% overprediction by the simplified model
+     (no tip losses, uniform inflow). Apply a calibrated correction factor if the
+     bias is systematic.
+
+- **Installation:** OpenFAST compiles from source on Linux via CMake + gfortran.
+  AeroDyn can run standalone (`aerodyn_driver`) without the full OpenFAST structural
+  solver — sufficient for rigid-rotor aerodynamic validation.
+
+- **Alternative:** QBlade Community Edition (GUI, Linux AppImage) has a dedicated
+  propeller BEM mode. Suitable for interactive spot-checks but not headless
+  automation (batch CLI is Enterprise-only).
+
+#### 4. Parasitic power model validation
+
+The parasitic power model (`tau_drag = N_blades × D_blade × r_mean`) uses a
+quadratic drag polar (CD0 + k·CL²) with hand-tuned coefficients. Validate against:
+
+- **AeroDyn BEM drag prediction** at matching operating points (from cross-fidelity
+  comparison above)
+- **Rotorcraft literature:** Helicopter tail-rotor and autogyro rotor power data
+  provide empirical benchmarks for driven rotors in axial+rotational flow. Cite
+  Seddon & Newman or Leishman for the expected CD0 and k_induced ranges for
+  NACA 4-series blades at representative Reynolds numbers (Re ≈ 2–5×10⁵ for a
+  1.5 m blade at ω=30 rad/s).
+
+#### 5. Sensitivity & uncertainty
+
+Key results (mass/power ratio, optimal N, parasitic power fraction) must be
+reported with uncertainty ranges from:
+
+- **Parameter sweep ±20%** on blade CL, CD0, and bridle_angle (the three parameters
+  with the largest uncertainty)
+- **Model-form uncertainty:** comparison of simplified model vs AeroDyn BEM across
+  the operating envelope (from cross-fidelity validation above)
+- If the headline result (mass/power scaling restoration) changes qualitatively
+  within these uncertainty bounds, the conclusion must be qualified accordingly.
 
 ## Peer Review Readiness
 
