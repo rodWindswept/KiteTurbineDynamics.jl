@@ -93,7 +93,7 @@ export CFRPProfile, CircularProfile, EllipticalProfile, AirfoilProfile
 export CFRPMaterial, DEFAULT_CFRP
 export CFRPTube, CircularTube, EllipticalTube, AirfoilTube
 export AbstractEndCondition, FixedFixedEnds, PinPinEnds, effective_length_factor
-export StrutProperties, strut_properties, utilisation
+export StrutProperties, strut_properties, utilisation, SpacerRingDesign
 
 include("simulation.jl")
 end

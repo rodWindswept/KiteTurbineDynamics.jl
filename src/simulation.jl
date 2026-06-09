@@ -192,7 +192,8 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
                              damping_mode::Float64  = 0.0,
                              depower_sequence::Int  = 1,
                              payout_duration::Float64 = NaN,
-                             save_every::Int        = max(1, round(Int, 0.02 / dt)))
+                             save_every::Int        = max(1, round(Int, 0.02 / dt)),
+                             design::Union{Nothing, SpacerRingDesign} = nothing)
     N  = sys.n_total
     Nr = sys.n_ring
 
@@ -207,6 +208,7 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
     kscale_v      = Vector{Float64}(undef, n_frames)
 
     brake_time       = NaN
+    kscale_actual    = 1.0
     du               = zeros(Float64, length(u))
     t                = 0.0
     fi               = 1
@@ -290,11 +292,15 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
         v_winch  += dt * a_winch
         L_winch  += dt * v_winch
 
-        # Stall governor delay logic for Option 3
+        # Stall governor delay logic for Option 3 with smoothing
         stall_ramp   = depower_sequence == 3 ?
                        clamp((release_frac - 0.30) / 0.70, 0.0, 1.0) :
                        release_frac
-        k_mppt_scale = use_mppt_stall ? (1.0 + 8.0 * stall_ramp) : 1.0
+        kscale_target = use_mppt_stall ? (1.0 + 8.0 * stall_ramp) : 1.0
+        
+        # Smooth out kMPPT using first-order lag with 0.2 s time constant (to match Tulloch damping)
+        kscale_actual += (dt / 0.2) * (kscale_target - kscale_actual)
+        k_mppt_scale = kscale_actual
 
         p_step = override_params(p_base;
             backline_payout = L_winch,
@@ -405,7 +411,7 @@ function run_pitch_depower!(u::Vector{Float64}, sys::KiteTurbineSystem, p_base::
             min_fos_ring_now = 0
             try
                 alpha_now = @view u[6N+1 : 6N+Nr]
-                re_frames = ring_element_analysis(u, alpha_now, sys, p_step, t, wind_fn)
+                re_frames = ring_element_analysis(u, alpha_now, sys, p_step, t, wind_fn, design)
                 for rf in re_frames
                     for b in rf.beams
                         if b.fos < min_fos

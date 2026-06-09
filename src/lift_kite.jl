@@ -3,6 +3,8 @@
 # Lift device models for TRPT hub elevation support.
 #
 # Three architectures are modelled:
+
+import CoaxialAutogyroStacking: pca2_interp
 #
 #   SingleKiteParams    — one passive parafoil/single-skin kite on a lift line.
 #                         Lift force ∝ v². Tension varies linearly with dynamic
@@ -358,26 +360,9 @@ Disk angle of attack α = 90° − φ where φ is the line elevation.
 Equilibrium solved iteratively: φ = atan(CL(α)/CD(α)).
 """
 function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
-    # PCA-2 autogyro disk coefficients vs angle of attack (degrees)
-    # CL and CD normalised to disk area πR² and freestream dynamic pressure
-    PCA2_ALPHA = [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0,
-                   45.0, 50.0, 60.0, 70.0, 80.0, 90.0]
-    PCA2_CL    = [0.00, 0.15, 0.30, 0.45, 0.60, 0.75, 0.85, 0.92, 0.95,
-                   0.90, 0.82, 0.65, 0.45, 0.25, 0.00]
-    PCA2_CD    = [0.01, 0.03, 0.06, 0.10, 0.16, 0.24, 0.35, 0.48, 0.62,
-                   0.75, 0.86, 0.96, 1.05, 1.15, 1.25]
-
-    function pca2_interp(alpha_deg)
-        a = clamp(alpha_deg, 0.0, 90.0)
-        for i in 1:(length(PCA2_ALPHA)-1)
-            if a <= PCA2_ALPHA[i+1]
-                t = (a - PCA2_ALPHA[i]) / (PCA2_ALPHA[i+1] - PCA2_ALPHA[i])
-                return PCA2_CL[i] + t * (PCA2_CL[i+1] - PCA2_CL[i]),
-                       PCA2_CD[i] + t * (PCA2_CD[i+1] - PCA2_CD[i])
-            end
-        end
-        return PCA2_CL[end], PCA2_CD[end]
-    end
+    # PCA-2 autogyro disk coefficients from CoaxialAutogyroStacking.pca2_interp.
+    # CL and CD normalised to disk area πR² and freestream dynamic pressure.
+    # (NASA TM 20080022367, PCA-2 autogyro wind tunnel tests)
 
     # Rotor disk area
     A_disk = π * dev.rotor_radius^2
