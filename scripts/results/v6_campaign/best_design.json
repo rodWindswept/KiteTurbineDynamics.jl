@@ -1,0 +1,22 @@
+{
+  "power_kw": 10,
+  "target_Lr": 2.0,
+  "Do_top_m": 0.005,
+  "r_hub_m": 2.4,
+  "knuckle_mass_kg": 0.01,
+  "version": "v6",
+  "elapsed_seconds": 0.23148012161254883,
+  "r_bottom_m": 0.9689294382703044,
+  "n_lines": 3,
+  "iterations": 100,
+  "Do_scale_exp": 1.0,
+  "best_mass_kg": 1.0000006341056965e6,
+  "bridle_angle_deg": 0.0,
+  "profile": "PROFILE_ELLIPTICAL",
+  "n_rings": 10,
+  "aspect_ratio": 0.25,
+  "t_over_D": 0.041049914494421635,
+  "n_expansion": 0,
+  "blade_radius": 0.0,
+  "tether_length_m": 30.0
+}

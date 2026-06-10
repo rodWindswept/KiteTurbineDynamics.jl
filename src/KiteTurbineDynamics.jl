@@ -27,6 +27,7 @@ include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
 include("bem.jl")
 include("objective_v5.jl")
+include("objective_v6.jl")
 include("economics.jl")
 
 export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLineSpec
@@ -79,6 +80,8 @@ export search_bounds_v4, design_from_vector_v4, objective_v4, baseline_design_v4
 export BEM
 export TRPTDesignV5
 export search_bounds_v5, design_from_vector_v5, objective_v5, evaluate_design_v5
+export TRPT_V6_DIM, search_bounds_v6, design_from_vector_v6, objective_v6
+export estimate_effective_radii
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams
