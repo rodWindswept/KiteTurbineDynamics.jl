@@ -19,7 +19,8 @@ function _build_kite_turbine_system_impl(p::SystemParams,
                                           seg_lengths::Vector{Float64};
                                           kite_area::Float64          = 10.0,
                                           kite_mass::Float64          = 5.0,
-                                          kite_tether_length::Float64 = 20.0)
+                                          kite_tether_length::Float64 = 20.0,
+                                          expansion_rotors::Vector{ExpansionRotorParams} = ExpansionRotorParams[])
 
     n_seg   = length(seg_lengths)
     n_ring  = n_seg + 1
@@ -192,7 +193,7 @@ function _build_kite_turbine_system_impl(p::SystemParams,
                             bearing_gid, sky_anchor_gid, n_ring, n_total,
                             [zeros(3) for _ in 1:n_ring], Ref(false),
                             kite_pos_init,
-                            ExpansionRotorParams[],     # no expansion rotors by default
+                            expansion_rotors,            # expansion rotors from caller
                             copy(ring_radii))           # effective radii = nominal radii
 
     # ── Initial state vector (straight-line rope placement) ───────────────
@@ -238,7 +239,8 @@ Uses the shared _build_kite_turbine_system_impl for all construction.
 function build_kite_turbine_system(p::SystemParams;
                                    kite_area::Float64          = 10.0,
                                    kite_mass::Float64          = 5.0,
-                                   kite_tether_length::Float64 = 20.0)
+                                   kite_tether_length::Float64 = 20.0,
+                                   expansion_rotors::Vector{ExpansionRotorParams} = ExpansionRotorParams[])
 
     n_seg = p.n_rings + 1
     r_top = p.trpt_hub_radius
@@ -257,7 +259,8 @@ function build_kite_turbine_system(p::SystemParams;
 
     return _build_kite_turbine_system_impl(p, ring_radii, seg_lengths;
         kite_area=kite_area, kite_mass=kite_mass,
-        kite_tether_length=kite_tether_length)
+        kite_tether_length=kite_tether_length,
+        expansion_rotors=expansion_rotors)
 end
 
 """
@@ -278,7 +281,8 @@ function build_kite_turbine_system_v5(p::SystemParams,
                                        r_bottom::Float64;
                                        kite_area::Float64          = 10.0,
                                        kite_mass::Float64          = 5.0,
-                                       kite_tether_length::Float64 = 20.0)
+                                       kite_tether_length::Float64 = 20.0,
+                                       expansion_rotors::Vector{ExpansionRotorParams} = ExpansionRotorParams[])
 
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v4(
         p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr)
@@ -290,7 +294,8 @@ function build_kite_turbine_system_v5(p::SystemParams,
 
     return _build_kite_turbine_system_impl(p, ring_radii_computed, seg_lengths;
         kite_area=kite_area, kite_mass=kite_mass,
-        kite_tether_length=kite_tether_length)
+        kite_tether_length=kite_tether_length,
+        expansion_rotors=expansion_rotors)
 end
 
 """
