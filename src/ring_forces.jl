@@ -120,7 +120,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
 
         thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
                       π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) *
-                      cos(elev_angle)^2
+                      cos(elev_angle)^2.0   # cos²·⁰ — thrust elevation factor
         tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
         tl          = norm(tether_dir)
         if tl > 0; tether_dir ./= tl; end
@@ -129,7 +129,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         if omega_rotor >= 0.0
             P_aero   = 0.5 * p.rho * v_hub_mag^3 *
                        π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
-                       cos(elev_angle)^3
+                       cos(elev_angle)^2.65  # cos²·⁶⁵ — power elevation factor (from AeroDyn sweep)
             tau_aero = P_aero / max(omega_rotor, 0.5)
         else
             CD_reverse  = 1.3                           # NACA4412 CD at AoA 40–70°
