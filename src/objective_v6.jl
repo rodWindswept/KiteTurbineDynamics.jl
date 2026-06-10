@@ -192,7 +192,14 @@ function objective_v6(x::AbstractVector, beam_profile::BeamProfile,
                                    max_ground_radius=max_ground_radius)
 
     if !eval_result.feasible
-        return 1e6 + eval_result.mass_total_kg
+        # Soft penalty: scales with constraint violation so the optimiser
+        # can follow the gradient toward feasibility.
+        # Designs with FoS=1.7 (just below 1.8) are penalised far less
+        # than designs with FoS=0.01.
+        fos_penalty = max(1.0, fos_req / max(eval_result.min_fos, 0.01))
+        torsion_penalty = max(1.0, 1.5 / max(eval_result.min_torsional_fos, 0.01))
+        penalty_mult = fos_penalty * torsion_penalty
+        return eval_result.mass_total_kg * penalty_mult
     end
 
     # Add expansion rotor mass
