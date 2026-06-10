@@ -673,30 +673,47 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 |------|--------|-------|
 | **0.1 — Unify BEM models** | ✅ Done | 43 new tests, 850/850 suite green. `cp_bem(n_lines, tsr)` and `ct_bem(n_lines, tsr)` surfaces fitted. `rotor_radius_for_power()` switched to BEM surface. |
 | **0.4 — Import PCA-2 from CoaxialAutogyroStacking.jl** | ✅ Done | ~20 lines removed. Inline PCA-2 table replaced with `using CoaxialAutogyroStacking: pca2_interp`. Identical output verified by existing rotary lifter tests. |
-| **0.2 — Validate cos²/cos³ elevation factors** | ⏳ Blocked | Requires AeroDyn sweep at 0°/20°/40° elevation. AeroDyn is part of OpenFAST — needs conda install on this machine. |
-| **0.3 — Validate CT monotonic increase at high λ** | ⏳ Blocked | Requires AeroDyn with Glauert/Buhl high-thrust corrections enabled. Same dependency as 0.2. |
+| **0.2 — Validate cos²/cos³ elevation factors** | 🔍 Investigation complete — action pending | **Finding (2026-06-10):** The BEM lookup tables in `src/aerodynamics.jl` were generated at **20° elevation** (line 4: "3 blades, 20° elevation angle"). KTD.jl then applies `cos(elev)²` and `cos(elev)³` on top. At the design elevation of 20°, this is **double-counting**: thrust underpredicted by ~12%, power underpredicted by ~17%. The 2024 TORQUE paper (Branlard et al.) found that AeroDyn's improved skew-corrected BEM produces thrust ∝ cos⁰·⁶⁴(elev) and power ∝ cos¹·⁷⁵(elev) relative to axial flow — not cos² and cos³. **Fix:** Regenerate BEM tables at 0° elevation (axial flow), then apply the correct skew exponents. AeroDyn v5.0.0 is installed and running on the laptop (`~/bin/aerodyn_driver`); elevation sweep ready to execute. |
+| **0.3 — Validate CT monotonic increase at high λ** | 🔍 Investigation complete — action pending | The current CT table (line 102-174 of `aerodynamics.jl`) rises monotonically to 0.782 at λ=8 with no Glauert high-thrust correction. With proper Glauert/Buhl correction enabled, CT should peak then decline. The CT fix is entangled with 0.2 — both require regenerating the BEM tables, which can be done in a single AeroDyn sweep (0°/20°/40° elevation, Glauert correction enabled). |
 
-## Environment Gaps (on this machine)
+## 0.2/0.3 Key Finding: Elevation Double-Counting
 
-| Gap | Status | Fix |
-|-----|--------|-----|
-| **gfortran** | ⏳ Need sudo | `sudo apt install gfortran` — needed for Phase 3 OpenFAST build-from-source validation |
-| **scipy** | ⏳ Need sudo | `sudo apt install python3-scipy` — needed for Phase 2 campaign analysis scripts |
-| **OpenFAST/AeroDyn** | ⏳ Needs conda | `conda install -c conda-forge openfast` — precompiled binary route for Linux. Rod will install when back at the Lewis machine. |
+The BEM lookup tables (`BEM_CP`, `BEM_CT` in `src/aerodynamics.jl`) were generated from AeroDyn runs at **20° elevation angle** (documented in the file header, line 4). AeroDyn's BEM at 20° elevation:
+- Already computes with the velocity component normal to the rotor plane (v × cos(20°))
+- Applies skew correction (Glauert/Pitt-Peters) to the induction field for yawed flow
+
+KTD.jl then additionally multiplies by `cos(elev_angle)²` (thrust) and `cos(elev_angle)³` (power). At the design elevation of 20°:
+- cos²(20°) = 0.883 → thrust underpredicted by ~12%
+- cos³(20°) = 0.830 → power underpredicted by ~17%
+
+**Correct approach** (per Branlard et al., TORQUE 2024):
+1. Generate BEM tables at **0° elevation** (pure axial flow) — these are the baseline coefficients
+2. Apply skew scaling: thrust × cos⁰·⁶⁴(elev), power × cos¹·⁷⁵(elev)
+3. Validate by comparing the scaled 0° results against direct AeroDyn runs at 20° and 40°
+
+This also resolves 0.3: regenerating the tables with Glauert high-thrust correction enabled will fix the CT monotonic issue.
+
+## Environment Status
+
+| Machine | AeroDyn | gfortran | Julia | Status |
+|---------|---------|----------|-------|--------|
+| **Laptop (this session)** | ✅ v5.0.0 at `~/bin/aerodyn_driver` | ✅ conda-forge gcc 15.2 | ✅ 1.12.5 | **Ready for 0.2/0.3 sweeps** |
+| **Desktop (Lewis)** | ⏳ | ⏳ | ✅ | `conda install -c conda-forge openfast` when back |
 
 ## Blockers on Rod
 
-- [ ] Install conda on the Lewis machine
+- [ ] Install conda on the Lewis machine (for Phase 1-2 work there)
 - [ ] `conda install -c conda-forge openfast` — gets OpenFAST + AeroDyn precompiled
 - [ ] `sudo apt install gfortran python3-scipy` — for compiler + analysis deps
 
-Once OpenFAST is available, 0.2 and 0.3 are estimated at ~1 hour each — they are "run AeroDyn at specific angles/resolutions, compare, adjust" tasks.
+**Note:** 0.2 and 0.3 can be executed on the laptop in this session — AeroDyn is ready. Estimated ~2 hours total for both tasks.
 
 ## Up Next
 
 ```
 Phase 0.2 (elevation) → Phase 0.3 (CT) → Phase 1 (expansion rotor) → Phase 2 (stacked campaign)
 ```
+- 0.2/0.3: Run AeroDyn sweeps at 0°/20°/40° elevation with Glauert + Buhl corrections → regenerate `BEM_CP`/`BEM_CT` tables at 0° → replace cos²/cos³ with cos⁰·⁶⁴/cos¹·⁷⁵ → verify
 - Phase 1.1: New `src/expansion_rotor.jl` + 6 tests
 - Phase 1.2: ODE integration in `ring_forces.jl`, `types.jl`, `rope_forces.jl`
 - Then full sweep campaigns (Phase 2)
