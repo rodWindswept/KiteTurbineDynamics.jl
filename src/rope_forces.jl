@@ -48,7 +48,7 @@ function get_max_rope_tension(u::AbstractVector, sys::KiteTurbineSystem, p::Syst
         if se.is_ring
             node = sys.nodes[se.node_id]::RingNode
             ri   = node.ring_idx
-            R    = node.radius
+            R    = isempty(sys.expansion_rotors) ? node.radius : sys.effective_radii[ri]
             α    = alpha[ri]
             ctr  = @view u[3*(se.node_id-1)+1 : 3*se.node_id]
             return attachment_point(ctr, R, α, se.line_idx, p.n_lines, pp1_tilt, pp2_tilt)
@@ -106,7 +106,7 @@ function get_segment_tension(u::AbstractVector, sys::KiteTurbineSystem, p::Syste
         if se.is_ring
             node = sys.nodes[se.node_id]::RingNode
             ri   = node.ring_idx
-            R    = node.radius
+            R    = isempty(sys.expansion_rotors) ? node.radius : sys.effective_radii[ri]
             α    = alpha[ri]
             ctr  = @view u[3*(se.node_id-1)+1 : 3*se.node_id]
             return attachment_point(ctr, R, α, se.line_idx, p.n_lines, pp1_tilt, pp2_tilt)
@@ -173,7 +173,7 @@ function compute_rope_forces!(forces      ::Vector{<:AbstractVector},
         if se.is_ring
             node  = sys.nodes[se.node_id]::RingNode
             ri    = node.ring_idx
-            R     = node.radius
+            R     = isempty(sys.expansion_rotors) ? node.radius : sys.effective_radii[ri]
             α     = alpha[ri]
             ctr   = u[3*(se.node_id-1)+1 : 3*se.node_id]
             pp1, pp2 = use_tilted ? (pp1_tilt, pp2_tilt) : (perp1_shaft, perp2_shaft)

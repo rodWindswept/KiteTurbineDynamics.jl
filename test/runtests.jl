@@ -5,6 +5,7 @@ using KiteTurbineDynamics
     include("test_parameters.jl")
     include("test_aerodynamics.jl")
     include("test_bem_unified.jl")
+    include("test_expansion_rotor.jl")
     include("test_types.jl")
     include("test_geometry.jl")
     include("test_rope_forces.jl")

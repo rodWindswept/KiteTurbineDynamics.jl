@@ -123,6 +123,16 @@ struct KiteTurbineSystem
     # The lift line tension acts along  (kite_pos − sky_anchor_pos); if this
     # vector is shorter than the design line length the line is slack (T = 0).
     kite_pos :: Vector{Float64}   # 3-element mutable; updated each simulation step
+
+    # ── Expansion rotors (Phase 1) ────────────────────────────────────────
+    # Aerodynamic expansion rotor elements mounted on TRPT rings.
+    # Empty vector = no expansion rotors (backward-compatible with v5).
+    expansion_rotors :: Vector{ExpansionRotorParams}
+
+    # Effective ring radii after expansion spreading (m).
+    # Same length as ring_ids; updated each ODE step when expansion
+    # rotors are present.  Initialised to nominal ring radii at build time.
+    effective_radii  :: Vector{Float64}
 end
 
 # Compliance: rad of ring-plane tilt per N·m of non-shaft torque.

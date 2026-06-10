@@ -191,7 +191,9 @@ function _build_kite_turbine_system_impl(p::SystemParams,
     sys = KiteTurbineSystem(nodes, sub_segs, ring_ids, rotor, kite,
                             bearing_gid, sky_anchor_gid, n_ring, n_total,
                             [zeros(3) for _ in 1:n_ring], Ref(false),
-                            kite_pos_init)
+                            kite_pos_init,
+                            ExpansionRotorParams[],     # no expansion rotors by default
+                            copy(ring_radii))           # effective radii = nominal radii
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))

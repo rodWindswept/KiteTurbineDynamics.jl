@@ -147,6 +147,44 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
             tau_aero = Q_drag
         end
         torques[hub_ri] += tau_aero
+
+        # ── Expansion rotor forces (Phase 1) ──────────────────────────────
+        # Each expansion rotor is a small 3-blade propeller on a TRPT ring.
+        # Blades generate lift from apparent wind, resolved through a bridle
+        # angle into radial (spreading) and axial (thrust) components.
+        if !isempty(sys.expansion_rotors)
+            for er in sys.expansion_rotors
+                ring_gid = sys.ring_ids[er.ring_idx]
+                ring_pos = @view u[3*(ring_gid-1)+1 : 3*ring_gid]
+                ring_ri  = (sys.nodes[ring_gid]::RingNode).ring_idx
+                r_nom    = (sys.nodes[ring_gid]::RingNode).radius
+
+                v_wind_ring = wind_fn(ring_pos, t)
+                v_wind_mag_ring = norm(v_wind_ring)
+
+                # Tether tension estimate from main rotor thrust
+                T_est = 0.5 * p.rho * v_hub_mag^2 *
+                        π * sys.rotor.radius^2 *
+                        ct_at_tsr(lambda_t) * cos(elev_angle)^2.0
+
+                F_radial, F_axial, tau_drag, r_eff, _ =
+                    expansion_rotor_forces(er, p.rho, v_wind_mag_ring,
+                                            omega[ring_ri], rad2deg(elev_angle),
+                                            r_nom, T_est, p.n_lines)
+
+                # Axial thrust along tether direction
+                tether_dir_ring = ring_pos .- @view(u[1:3])
+                tl_ring = norm(tether_dir_ring)
+                if tl_ring > 0; tether_dir_ring ./= tl_ring; end
+                forces[ring_gid] .+= F_axial .* tether_dir_ring
+
+                # Drag torque on the ring
+                torques[ring_ri] += tau_drag
+
+                # Update effective radius
+                sys.effective_radii[er.ring_idx] = r_eff
+            end
+        end
     end
 
     # ── Generator MPPT torque on ground node ──────────────────────────────

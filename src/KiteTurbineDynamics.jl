@@ -4,6 +4,7 @@ using LinearAlgebra, Printf, Statistics
 
 include("parameters.jl")
 include("aerodynamics.jl")
+include("expansion_rotor.jl")
 include("wind_profile.jl")
 include("types.jl")
 include("spacer_ring_design.jl")
@@ -30,6 +31,7 @@ export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLine
 export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_10kw
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
+export ExpansionRotorParams, expansion_rotor_forces, effective_radius
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
 export AbstractNode, RingNode, RopeNode, BearingNode, SkyAnchorNode, HubVertexNode, KiteTurbineSystem
 export shaft_perp_basis, attachment_point, rope_helix_pos

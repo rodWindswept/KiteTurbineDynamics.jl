@@ -5,9 +5,10 @@
 # Cp(n_lines, TSR) and CT(n_lines, TSR) surfaces derived from validated
 # AeroDyn BEM lookup tables.
 #
-# Baseline: AeroDyn BEM tables (NACA4412, 3 blades, n_lines=5, 20° elevation)
-# from Rotor_TRTP_Sizing_Iteration2.xlsx, averaged across 4kW/7kW/12kW sheets.
-# Baseline Cp peak ≈ 0.232 at λ ≈ 4.1, CT(4.1) ≈ 0.548.
+# Baseline: AeroDyn v5.0.0 quasi-steady BEM tables (NACA4412, 3 blades,
+# n_lines=5, 0° elevation) generated 2026-06-10 from the original MVP
+# input files (ad_primary_MVP.inp, ad_blade_MVP.inp, ad_airfoil_Rigid.inp).
+# Baseline Cp peak ≈ 0.309 at λ ≈ 5.2, CT plateau ≈ 0.82.
 #
 # Blade-count scaling: combines Prandtl tip-loss correction with a solidity
 # penalty.  More blades → less tip loss (benefit) but higher solidity →
@@ -92,7 +93,7 @@ blades increase the effective thrust area, but the rise is sub-linear due
 to induction reducing the local inflow velocity.
 
 - At n_lines = 5: returns `ct_at_tsr(tsr)` exactly.
-- CT is clamped at 1.0 (momentum-theory ceiling).
+- CT is clamped at 1.02 (quasi-steady BEM can exceed the momentum-theory ceiling of 1.0 at high TSR).
 
 ⚠ The scaling exponent (0.5) is approximate.
 """
@@ -106,7 +107,7 @@ function ct_bem(n_lines::Int, tsr::Float64=4.1)::Float64
     # thrust-capable area, but induction reduces per-blade effectiveness.
     # sqrt scaling is a reasonable first approximation.
     ct = ct5 * sqrt(n_lines / 5.0)
-    return clamp(ct, 0.0, 1.0)
+    return clamp(ct, 0.0, 1.02)  # quasi-steady BEM can slightly exceed 1.0 at high λ
 end
 
 # ══════════════════════════════════════════════════════════
