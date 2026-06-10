@@ -9,11 +9,57 @@
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
 #
-# Usage:
-#   julia --project=. scripts/run_v6_campaign.jl
-#   julia --project=. scripts/run_v6_campaign.jl --quick    (test run, 5 islands, 10 min)
+# ═══════════════════════════════════════════════════════════════════════════
+# USAGE
+# ═══════════════════════════════════════════════════════════════════════════
 #
-# Output: scripts/results/v6_campaign/best_design.json + full sweep CSV
+#   Quick test (5 min, verifies everything works):
+#     julia --project=. scripts/run_v6_campaign.jl --quick
+#
+#   Full campaign (60 islands, ~168h — run in screen/tmux/nohup):
+#     julia --project=. scripts/run_v6_campaign.jl
+#
+#   Full campaign at 50 kW:
+#     julia --project=. scripts/run_v6_campaign.jl --power 50
+#
+#   Background (nohup — survives SSH disconnect):
+#     nohup julia --project=. scripts/run_v6_campaign.jl > v6_campaign.log 2>&1 &
+#
+#   Background (screen — reconnect to check progress):
+#     screen -S v6
+#     julia --project=. scripts/run_v6_campaign.jl
+#     # Ctrl+A D to detach, screen -r v6 to reconnect
+#
+#   Check progress (from another terminal):
+#     tail -f scripts/results/v6_campaign/convergence_history.csv
+#
+# ═══════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#   scripts/results/v6_campaign/best_design.json     — best design found
+#   scripts/results/v6_campaign/convergence_history.csv — mass vs iteration
+#
+# ═══════════════════════════════════════════════════════════════════════════
+# DESIGN VARIABLES (13-DoF)
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#   x[1]  Do_top           beam outer diameter at hub (m)
+#   x[2]  t_over_D         wall thickness ratio
+#   x[3]  beam_aspect      elliptical b/a
+#   x[4]  Do_scale_exp     Do(r) = Do_top·(r/r_hub)^exp
+#   x[5]  r_hub            hub ring radius (m)
+#   x[6]  r_bottom         ground ring radius (m)
+#   x[7]  target_Lr        target L/r ratio
+#   x[8]  knuckle_mass_kg  per-vertex point mass (kg)
+#   x[9]  n_lines          polygon sides (3–8, rounded to int)
+#   x[10] n_expansion      number of expansion rotors (0–6, rounded to int)
+#   x[11] bridle_angle_deg expansion rotor bridle angle (5°–30°)
+#   x[12] blade_radius     expansion blade tip radius (m)
+#   x[13] blade_chord      expansion blade chord (m)
+#
+# Soft penalty: infeasible designs get cost = mass × (fos_req/min_fos)
+# × (1.5/min_torsional_fos), providing gradient toward feasibility.
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, DataFrames, CSV, Random
