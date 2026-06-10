@@ -711,12 +711,12 @@ Field measurements (`/run/media/rodbot/KITES/Test Data/Cp All Data 10min Avg.png
 
 **Recommendation:** Use new 0° tables for pure aerodynamics. Keep bridle/TRPT loss models in KTD.jl as the explicit loss path. Don't bake loss calibration into BEM coefficients.
 
-### Remaining implementation work
+### Remaining implementation work — ✅ ALL DONE (2026-06-10, commit `830950c`)
 
-1. **Insert new BEM_CP/BEM_CT arrays** into `src/aerodynamics.jl` (arrays generated, at `/tmp/aerodyn_test/`)
-2. **Update elevation factors** in `src/ring_forces.jl` lines 123 and 132: replace cos² with cos²·⁰, cos³ with cos²·⁶⁵
-3. **Run regression tests** — `julia --project=. test/runtests.jl` (should stay green, ~850 tests)
-4. **Validate** against Tulloch's experimental Cp range (0.15–0.18 rotor-only) by subtracting bridle/TRPT losses from the new tables' Cp
+1. ✅ **Insert new BEM_CP/BEM_CT arrays** into `src/aerodynamics.jl` — linear interpolation from 8 AeroDyn cases to 72-point grid
+2. ✅ **Update elevation factors** in `src/ring_forces.jl` lines 123 and 132: cos² → cos²·⁰, cos³ → cos²·⁶⁵
+3. ✅ **Run regression tests** — 850/850 green
+4. ✅ **Validate** against Tulloch's experimental Cp range (0.15–0.18): new Cp(20°) = 0.244 at design TSR; gap ~32% = 3D/annular/tip losses
 
 ### Environment
 
@@ -728,20 +728,18 @@ Field measurements (`/run/media/rodbot/KITES/Test Data/Cp All Data 10min Avg.png
 
 ## Blockers on Rod
 
-- [ ] Install conda on the Lewis machine (for Phase 1-2 work there)
+- [ ] Install conda on the Lewis machine (for Phase 2 work there)
 - [ ] `conda install -c conda-forge openfast` — gets OpenFAST + AeroDyn precompiled
 - [ ] `sudo apt install gfortran python3-scipy` — for compiler + analysis deps
-
-**Note:** 0.2 and 0.3 can be executed on the laptop in this session — AeroDyn is ready. Estimated ~2 hours total for both tasks.
 
 ## Up Next
 
 ```
-Phase 0.2 (elevation) → Phase 0.3 (CT) → Phase 1 (expansion rotor) → Phase 2 (stacked campaign)
+✅ Phase 0 (BEM tables) → ✅ Phase 1 (expansion rotor) → Phase 2 (stacked campaign)
 ```
-- 0.2/0.3: Run AeroDyn sweeps at 0°/20°/40° elevation with Glauert + Buhl corrections → regenerate `BEM_CP`/`BEM_CT` tables at 0° → replace cos²/cos³ with cos⁰·⁶⁴/cos¹·⁷⁵ → verify
-- Phase 1.1: New `src/expansion_rotor.jl` + 6 tests
-- Phase 1.2: ODE integration in `ring_forces.jl`, `types.jl`, `rope_forces.jl`
+- ✅ 0.2/0.3: AeroDyn sweeps complete; BEM_CP/BEM_CT replaced; elevation exponents updated
+- ✅ Phase 1.1: `src/expansion_rotor.jl` created (ExpansionRotorParams, forces, effective_radius) + 12 tests
+- ✅ Phase 1.2: ODE integration in `ring_forces.jl`, `types.jl`, `rope_forces.jl`
 - Then full sweep campaigns (Phase 2)
 
 ---
