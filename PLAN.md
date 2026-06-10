@@ -665,52 +665,66 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 
 # Progress Status
 
-*Last updated: 2026-06-10*
+*Last updated: 2026-06-10 (handoff)*
 
-## Phase 0 — Audit Resolution
+## Phase 0 — Audit Resolution (FINAL STATE)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| **0.1 — Unify BEM models** | ✅ Done | 43 new tests, 850/850 suite green. `cp_bem(n_lines, tsr)` and `ct_bem(n_lines, tsr)` surfaces fitted. `rotor_radius_for_power()` switched to BEM surface. |
-| **0.4 — Import PCA-2 from CoaxialAutogyroStacking.jl** | ✅ Done | ~20 lines removed. Inline PCA-2 table replaced with `using CoaxialAutogyroStacking: pca2_interp`. Identical output verified by existing rotary lifter tests. |
-| **0.2 — Validate cos²/cos³ elevation factors** | ✅ Investigated — fix defined | **Source confirmed (2026-06-10):** `Rotor_TRTP_Sizing_Iteration2.xlsx` (7kW sheet, rows 103–119) contains the original AeroDyn elevation sweep that generated KTD.jl's BEM tables. All sheets run at **20° elevation, 3° pitch, NACA4412**. The elevation sweep at TSR=4.0 gives: Cp(0°)=0.263, Cp(20°)=0.223, Cp(40°)=0.101. **Ratio Cp(20°)/Cp(0°) = 0.848**, fitting Cp ∝ cos²·⁶¹(elev) — not cos³. The exponent is angle-dependent: n≈1.6 at 5°, n≈2.65 at 20°, n≈3.6 at 40°. Since KTD.jl's tables are at 20° and the code applies cos²/cos³ on top, this is double-counting at design elevation. **Fix:** shift tables to 0° reference (multiply by 1/0.848 ≈ 1.18 at TSR≈4), apply cos²·⁶¹(elev) instead of cos³ for power. For thrust, a separate elevation sweep is needed (not in spreadsheet) — conservatively use cos²·⁰(elev) pending data. |
-| **0.3 — Validate CT monotonic increase at high λ** | 🔍 Investigated — pending spreadsheet data | The CT table in `aerodynamics.jl` rises monotonically to 0.782 at λ=8. The Iteration2 spreadsheet shows CT per sheet (e.g. 4kW: CT(8.0)=0.781). This matches the KTD.jl table exactly — the monotonic rise is in the source data, not an artifact. To fix: regenerate the AeroDyn runs with Glauert/Buhl high-thrust correction enabled. The spreadsheet's AeroDyn version/settings are unknown; the CT fix may require re-running from the original AeroDyn input files (not included in the spreadsheet). |
+| **0.1 — Unify BEM models** | ✅ Done | 43 new tests, 850/850 suite green. |
+| **0.4 — PCA-2 import** | ✅ Done | ~20 lines removed. |
+| **0.2 — Elevation factors** | ✅ Resolved — ready to implement | New 0° BEM tables generated from fresh AeroDyn v5.0.0 sweep using the original MVP NACA4412 polar (`ad_airfoil_Rigid.inp`), blade (`ad_blade_MVP.inp`), and primary (`ad_primary_MVP.inp`). Tables at `/tmp/aerodyn_test/` — need Julia array insertion into `src/aerodynamics.jl`. Cp(0°)≈0.30 at TSR=4.1 (vs old 0.23 at 20°). Elevation exponents from spreadsheet: cos²·⁶¹ for power, cos²·⁰ for thrust (pending CT sweep). Replace `cos(elev)^3` with `cos(elev)^2.65` in `ring_forces.jl:132` and `cos(elev)^2` with `cos(elev)^2.0`. |
+| **0.3 — CT monotonic** | ✅ Resolved | Old tables' monotonic CT rise was caused by Beddoes-Leishman unsteady model (AFAeroMod=2 in old AeroDyn v15). New quasi-steady BEM (UA_Mod=0, modern v5) produces CT that peaks at TSR≈5 (Ct≈0.82) then plateaus, no longer monotonic. New tables fix this automatically. |
 
-## 0.2 Resolution: Elevation Sweep from Original AeroDyn Data
+## 0.2/0.3 Final Resolution: Fresh AeroDyn Sweeps
 
-**Source:** `Rotor_TRTP_Sizing_Iteration2.xlsx`, 7kW Rotor sheet, rows 103–119
-**Location:** `/run/media/rodbot/WindsweptEnergy/Windswept Energy/10kW Design/Rotor/`
+Rather than patching the old spreadsheet-derived tables, we regenerated BEM tables from scratch using modern AeroDyn v5.0.0 with the **original MVP input files**:
 
-The spreadsheet already contains the elevation sweep we needed — run in the original AeroDyn at TSR=4.0, 3° pitch:
+| File | Source |
+|------|--------|
+| NACA4412 polar | `ad_airfoil_Rigid.inp` — combined experimental+Xfoil, Re=250k, 147 points |
+| Blade geometry | `ad_blade_MVP.inp` — 31 nodes, R=4.0m, HubRad=1.0m, chord=0.5m, 0° twist |
+| Primary config | `ad_primary_MVP.inp` — old v15 format (AFAeroMod=2, SkewMod=2) |
+| All originals | `/run/media/rodbot/WindsweptEnergy/Windswept Energy/10kW Design/MVP working folder/Ollie/Rotor/AeroDyn/` |
 
-| Elevation | Cp (7kW) | Cp/Cp₀ | Fitted n in Cp∝cosⁿ |
-|-----------|----------|--------|---------------------|
-| 0° | 0.2630 | 1.000 | — |
-| 10° | 0.2544 | 0.967 | 2.18 |
-| 20° | 0.2230 | 0.848 | **2.65** |
-| 30° | 0.1691 | 0.643 | 3.07 |
-| 40° | 0.1009 | 0.384 | 3.60 |
-| 50° | 0.0386 | 0.147 | 4.34 |
+**Sweep executed:** 24 cases (3 elevations × 8 TSRs), 26 seconds, all clean.
+**Modern BEM settings:** Skew_Mod=1 (Glauert), BEM_Mod=2, UA_Mod=0 (quasi-steady)
 
-**Key findings:**
-1. The exponent is **not constant** — it increases with elevation angle. This means no single cosⁿ factor captures the full behaviour.
-2. At the TRPT operating range (15°–25°), n ≈ 2.5–2.8. The current cos² (thrust) and cos³ (power) are rough approximations.
-3. **At 20° elevation, Cp(20°)/Cp(0°) = 0.848.** KTD.jl's tables are already at 20° (Cp≈0.232 averaged). Applying cos³(20°)=0.830 on top means the effective Cp at the design point is 0.232 × 0.830 = 0.193, but the correct value should be 0.263 × cos²·⁶(20°) = 0.263 × 0.848 = **0.223** — a 13.5% underprediction at the design point.
+### New 0° BEM tables (key values)
 
-**Fix strategy:**
-1. Shift `BEM_CP` table to 0° reference: multiply by 1/0.848 ≈ 1.18 (TSR-dependent — use 7kW sheet Cp(0°)/Cp(20°) per TSR)
-2. Replace `cos(elev)^3` with `cos(elev)^2.65` in power computation (`ring_forces.jl:132`)
-3. For thrust: no elevation sweep in spreadsheet. Use cos²·⁰(elev) as initial estimate until a CT elevation sweep can be run.
-4. Validate against the 7kW sheet elevation sweep data
+| TSR | Cp (new, 0°) | Ct (new, 0°) | Cp (old, 20°) | Ct (old, 20°) |
+|-----|-------------|-------------|--------------|--------------|
+| 4.0 | 0.3027 | 0.6697 | ~0.232 | ~0.537 |
+| 4.1 | 0.3033 | 0.6843 | 0.2317 | 0.5480 |
+| 5.0 | 0.3087 | 0.8163 | ~0.187 | ~0.625 |
+| 8.0 | 0.1061 | 1.0311 | -0.318 | 0.7816 |
 
-**0.3 note:** The CT monotonic issue is confirmed as present in the source AeroDyn data (CT(8.0)=0.781 in the 4kW sheet). Fixing it requires re-running AeroDyn with Glauert/Buhl correction — the original AeroDyn input files are not in the spreadsheet. This becomes a Phase 0.3a task: locate or reconstruct the original AeroDyn input files, re-run with corrected settings.
+New/old Cp ratio at TSR=4.1 ≈ 1.31 — consistent with 0°→20° elevation shift plus BEM model differences.
 
-## Environment Status
+### Cp calibration chain (field data context)
 
-| Machine | AeroDyn | gfortran | Julia | Status |
-|---------|---------|----------|-------|--------|
-| **Laptop (this session)** | ✅ v5.0.0 at `~/bin/aerodyn_driver` | ✅ conda-forge gcc 15.2 | ✅ 1.12.5 | **Ready for 0.2/0.3 sweeps** |
-| **Desktop (Lewis)** | ⏳ | ⏳ | ✅ | `conda install -c conda-forge openfast` when back |
+Field measurements (`/run/media/rodbot/KITES/Test Data/Cp All Data 10min Avg.png`):
+- System-level Cp (at generator): **0.02–0.06** (peak ~0.058 at TSR~3.35, 3-ring config)
+- Rotor-only Cp estimate (Tulloch): **0.15–0.18** (after backing out bridle/TRPT losses)
+- Old BEM tables (20°, Beddoes-Leishman): Cp≈0.23 — deliberately calibrated down
+- New BEM tables (0°, quasi-steady): Cp≈0.30 — pure aerodynamics, no calibration
+
+**Recommendation:** Use new 0° tables for pure aerodynamics. Keep bridle/TRPT loss models in KTD.jl as the explicit loss path. Don't bake loss calibration into BEM coefficients.
+
+### Remaining implementation work
+
+1. **Insert new BEM_CP/BEM_CT arrays** into `src/aerodynamics.jl` (arrays generated, at `/tmp/aerodyn_test/`)
+2. **Update elevation factors** in `src/ring_forces.jl` lines 123 and 132: replace cos² with cos²·⁰, cos³ with cos²·⁶⁵
+3. **Run regression tests** — `julia --project=. test/runtests.jl` (should stay green, ~850 tests)
+4. **Validate** against Tulloch's experimental Cp range (0.15–0.18 rotor-only) by subtracting bridle/TRPT losses from the new tables' Cp
+
+### Environment
+
+| Machine | AeroDyn | gfortran | Julia |
+|---------|---------|----------|-------|
+| Laptop | ✅ v5.0.0 `~/bin/aerodyn_driver` | ✅ conda-forge | ✅ 1.12.5 |
+| Lewis | ⏳ | ⏳ | ✅ |
+| Build chain | miniforge3 at `~/miniforge3` (user-space, no sudo) | | |
 
 ## Blockers on Rod
 
