@@ -663,6 +663,46 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 
 ---
 
+# Progress Status
+
+*Last updated: 2026-06-10*
+
+## Phase 0 — Audit Resolution
+
+| Task | Status | Notes |
+|------|--------|-------|
+| **0.1 — Unify BEM models** | ✅ Done | 43 new tests, 850/850 suite green. `cp_bem(n_lines, tsr)` and `ct_bem(n_lines, tsr)` surfaces fitted. `rotor_radius_for_power()` switched to BEM surface. |
+| **0.4 — Import PCA-2 from CoaxialAutogyroStacking.jl** | ✅ Done | ~20 lines removed. Inline PCA-2 table replaced with `using CoaxialAutogyroStacking: pca2_interp`. Identical output verified by existing rotary lifter tests. |
+| **0.2 — Validate cos²/cos³ elevation factors** | ⏳ Blocked | Requires AeroDyn sweep at 0°/20°/40° elevation. AeroDyn is part of OpenFAST — needs conda install on this machine. |
+| **0.3 — Validate CT monotonic increase at high λ** | ⏳ Blocked | Requires AeroDyn with Glauert/Buhl high-thrust corrections enabled. Same dependency as 0.2. |
+
+## Environment Gaps (on this machine)
+
+| Gap | Status | Fix |
+|-----|--------|-----|
+| **gfortran** | ⏳ Need sudo | `sudo apt install gfortran` — needed for Phase 3 OpenFAST build-from-source validation |
+| **scipy** | ⏳ Need sudo | `sudo apt install python3-scipy` — needed for Phase 2 campaign analysis scripts |
+| **OpenFAST/AeroDyn** | ⏳ Needs conda | `conda install -c conda-forge openfast` — precompiled binary route for Linux. Rod will install when back at the Lewis machine. |
+
+## Blockers on Rod
+
+- [ ] Install conda on the Lewis machine
+- [ ] `conda install -c conda-forge openfast` — gets OpenFAST + AeroDyn precompiled
+- [ ] `sudo apt install gfortran python3-scipy` — for compiler + analysis deps
+
+Once OpenFAST is available, 0.2 and 0.3 are estimated at ~1 hour each — they are "run AeroDyn at specific angles/resolutions, compare, adjust" tasks.
+
+## Up Next
+
+```
+Phase 0.2 (elevation) → Phase 0.3 (CT) → Phase 1 (expansion rotor) → Phase 2 (stacked campaign)
+```
+- Phase 1.1: New `src/expansion_rotor.jl` + 6 tests
+- Phase 1.2: ODE integration in `ring_forces.jl`, `types.jl`, `rope_forces.jl`
+- Then full sweep campaigns (Phase 2)
+
+---
+
 # Literature Augmentation — Hypotheses Requiring Validation
 
 The AWE knowledge wiki (555 papers, 569 concept/entity pages) contains work that *may* be
