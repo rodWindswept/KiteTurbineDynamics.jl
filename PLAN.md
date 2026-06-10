@@ -673,25 +673,37 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 |------|--------|-------|
 | **0.1 — Unify BEM models** | ✅ Done | 43 new tests, 850/850 suite green. `cp_bem(n_lines, tsr)` and `ct_bem(n_lines, tsr)` surfaces fitted. `rotor_radius_for_power()` switched to BEM surface. |
 | **0.4 — Import PCA-2 from CoaxialAutogyroStacking.jl** | ✅ Done | ~20 lines removed. Inline PCA-2 table replaced with `using CoaxialAutogyroStacking: pca2_interp`. Identical output verified by existing rotary lifter tests. |
-| **0.2 — Validate cos²/cos³ elevation factors** | 🔍 Investigation complete — action pending | **Finding (2026-06-10):** The BEM lookup tables in `src/aerodynamics.jl` were generated at **20° elevation** (line 4: "3 blades, 20° elevation angle"). KTD.jl then applies `cos(elev)²` and `cos(elev)³` on top. At the design elevation of 20°, this is **double-counting**: thrust underpredicted by ~12%, power underpredicted by ~17%. The 2024 TORQUE paper (Branlard et al.) found that AeroDyn's improved skew-corrected BEM produces thrust ∝ cos⁰·⁶⁴(elev) and power ∝ cos¹·⁷⁵(elev) relative to axial flow — not cos² and cos³. **Fix:** Regenerate BEM tables at 0° elevation (axial flow), then apply the correct skew exponents. AeroDyn v5.0.0 is installed and running on the laptop (`~/bin/aerodyn_driver`); elevation sweep ready to execute. |
-| **0.3 — Validate CT monotonic increase at high λ** | 🔍 Investigation complete — action pending | The current CT table (line 102-174 of `aerodynamics.jl`) rises monotonically to 0.782 at λ=8 with no Glauert high-thrust correction. With proper Glauert/Buhl correction enabled, CT should peak then decline. The CT fix is entangled with 0.2 — both require regenerating the BEM tables, which can be done in a single AeroDyn sweep (0°/20°/40° elevation, Glauert correction enabled). |
+| **0.2 — Validate cos²/cos³ elevation factors** | ✅ Investigated — fix defined | **Source confirmed (2026-06-10):** `Rotor_TRTP_Sizing_Iteration2.xlsx` (7kW sheet, rows 103–119) contains the original AeroDyn elevation sweep that generated KTD.jl's BEM tables. All sheets run at **20° elevation, 3° pitch, NACA4412**. The elevation sweep at TSR=4.0 gives: Cp(0°)=0.263, Cp(20°)=0.223, Cp(40°)=0.101. **Ratio Cp(20°)/Cp(0°) = 0.848**, fitting Cp ∝ cos²·⁶¹(elev) — not cos³. The exponent is angle-dependent: n≈1.6 at 5°, n≈2.65 at 20°, n≈3.6 at 40°. Since KTD.jl's tables are at 20° and the code applies cos²/cos³ on top, this is double-counting at design elevation. **Fix:** shift tables to 0° reference (multiply by 1/0.848 ≈ 1.18 at TSR≈4), apply cos²·⁶¹(elev) instead of cos³ for power. For thrust, a separate elevation sweep is needed (not in spreadsheet) — conservatively use cos²·⁰(elev) pending data. |
+| **0.3 — Validate CT monotonic increase at high λ** | 🔍 Investigated — pending spreadsheet data | The CT table in `aerodynamics.jl` rises monotonically to 0.782 at λ=8. The Iteration2 spreadsheet shows CT per sheet (e.g. 4kW: CT(8.0)=0.781). This matches the KTD.jl table exactly — the monotonic rise is in the source data, not an artifact. To fix: regenerate the AeroDyn runs with Glauert/Buhl high-thrust correction enabled. The spreadsheet's AeroDyn version/settings are unknown; the CT fix may require re-running from the original AeroDyn input files (not included in the spreadsheet). |
 
-## 0.2/0.3 Key Finding: Elevation Double-Counting
+## 0.2 Resolution: Elevation Sweep from Original AeroDyn Data
 
-The BEM lookup tables (`BEM_CP`, `BEM_CT` in `src/aerodynamics.jl`) were generated from AeroDyn runs at **20° elevation angle** (documented in the file header, line 4). AeroDyn's BEM at 20° elevation:
-- Already computes with the velocity component normal to the rotor plane (v × cos(20°))
-- Applies skew correction (Glauert/Pitt-Peters) to the induction field for yawed flow
+**Source:** `Rotor_TRTP_Sizing_Iteration2.xlsx`, 7kW Rotor sheet, rows 103–119
+**Location:** `/run/media/rodbot/WindsweptEnergy/Windswept Energy/10kW Design/Rotor/`
 
-KTD.jl then additionally multiplies by `cos(elev_angle)²` (thrust) and `cos(elev_angle)³` (power). At the design elevation of 20°:
-- cos²(20°) = 0.883 → thrust underpredicted by ~12%
-- cos³(20°) = 0.830 → power underpredicted by ~17%
+The spreadsheet already contains the elevation sweep we needed — run in the original AeroDyn at TSR=4.0, 3° pitch:
 
-**Correct approach** (per Branlard et al., TORQUE 2024):
-1. Generate BEM tables at **0° elevation** (pure axial flow) — these are the baseline coefficients
-2. Apply skew scaling: thrust × cos⁰·⁶⁴(elev), power × cos¹·⁷⁵(elev)
-3. Validate by comparing the scaled 0° results against direct AeroDyn runs at 20° and 40°
+| Elevation | Cp (7kW) | Cp/Cp₀ | Fitted n in Cp∝cosⁿ |
+|-----------|----------|--------|---------------------|
+| 0° | 0.2630 | 1.000 | — |
+| 10° | 0.2544 | 0.967 | 2.18 |
+| 20° | 0.2230 | 0.848 | **2.65** |
+| 30° | 0.1691 | 0.643 | 3.07 |
+| 40° | 0.1009 | 0.384 | 3.60 |
+| 50° | 0.0386 | 0.147 | 4.34 |
 
-This also resolves 0.3: regenerating the tables with Glauert high-thrust correction enabled will fix the CT monotonic issue.
+**Key findings:**
+1. The exponent is **not constant** — it increases with elevation angle. This means no single cosⁿ factor captures the full behaviour.
+2. At the TRPT operating range (15°–25°), n ≈ 2.5–2.8. The current cos² (thrust) and cos³ (power) are rough approximations.
+3. **At 20° elevation, Cp(20°)/Cp(0°) = 0.848.** KTD.jl's tables are already at 20° (Cp≈0.232 averaged). Applying cos³(20°)=0.830 on top means the effective Cp at the design point is 0.232 × 0.830 = 0.193, but the correct value should be 0.263 × cos²·⁶(20°) = 0.263 × 0.848 = **0.223** — a 13.5% underprediction at the design point.
+
+**Fix strategy:**
+1. Shift `BEM_CP` table to 0° reference: multiply by 1/0.848 ≈ 1.18 (TSR-dependent — use 7kW sheet Cp(0°)/Cp(20°) per TSR)
+2. Replace `cos(elev)^3` with `cos(elev)^2.65` in power computation (`ring_forces.jl:132`)
+3. For thrust: no elevation sweep in spreadsheet. Use cos²·⁰(elev) as initial estimate until a CT elevation sweep can be run.
+4. Validate against the 7kW sheet elevation sweep data
+
+**0.3 note:** The CT monotonic issue is confirmed as present in the source AeroDyn data (CT(8.0)=0.781 in the 4kW sheet). Fixing it requires re-running AeroDyn with Glauert/Buhl correction — the original AeroDyn input files are not in the spreadsheet. This becomes a Phase 0.3a task: locate or reconstruct the original AeroDyn input files, re-run with corrected settings.
 
 ## Environment Status
 
