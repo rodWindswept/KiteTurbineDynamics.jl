@@ -62,7 +62,7 @@
 # × (1.5/min_torsional_fos), providing gradient toward feasibility.
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
-using KiteTurbineDynamics, Printf, DataFrames, CSV, Random
+using KiteTurbineDynamics, Printf, DataFrames, CSV, Random, Statistics
 
 function parse_args()
     quick = "--quick" in ARGS
