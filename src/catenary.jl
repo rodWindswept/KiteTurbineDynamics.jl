@@ -55,15 +55,18 @@ function solve_catenary_a(dx::Float64, dz::Float64, L_target::Float64)
         return 1e6 * dx
     end
 
-    f(a)  = 2.0 * a * sinh(dx / (2.0 * a)) - S
+    f(a) = 2.0 * a * sinh(dx / (2.0 * a)) - S
     fp(a) = 2.0 * sinh(dx / (2.0 * a)) - (dx / a) * cosh(dx / (2.0 * a))
 
     # Initial guess: moderate sag
     a = dx
     for _ in 1:30
-        fa  = f(a)
+        fa = f(a)
         fpa = fp(a)
-        if abs(fpa) < 1e-20; break; end
+        if abs(fpa) < 1e-20
+            ;
+            break;
+        end
         step = fa / fpa
         # Damped Newton — restrict step to prevent overshoot into negative a
         a_new = max(a * 0.1, a - clamp(step, -0.5 * a, 0.9 * a))
@@ -99,29 +102,34 @@ Returns:
 When L0 < straight-line distance (pre-tensioned), returns straight-spring
 forces — no catenary solve needed.
 """
-function catenary_forces(x1::Float64, z1::Float64,
-                         x2::Float64, z2::Float64,
-                         L0::Float64, w::Float64, EA::Float64)
+function catenary_forces(
+    x1::Float64, z1::Float64, x2::Float64, z2::Float64, L0::Float64, w::Float64, EA::Float64
+)
     dx = x2 - x1
     dz = z2 - z1
-    d  = sqrt(dx^2 + dz^2)          # straight-line distance
+    d = sqrt(dx^2 + dz^2)          # straight-line distance
 
     # ── Pre-tensioned case: line too short for catenary ──────────────────
     if L0 < d
         # Straight spring under tension
-        strain  = (d - L0) / L0
-        T       = EA * strain       # uniform tension along straight line
-        F_mag   = T                 # force magnitude
-        ux, uz  = dx / d, dz / d    # unit vector from 1→2
-        return (F_mag * ux, F_mag * uz,   # force on endpoint 1 (pulls toward 2)
-                -F_mag * ux, -F_mag * uz, # force on endpoint 2 (pulls toward 1)
-                true)
+        strain = (d - L0) / L0
+        T = EA * strain       # uniform tension along straight line
+        F_mag = T                 # force magnitude
+        ux, uz = dx / d, dz / d    # unit vector from 1→2
+        return (
+            F_mag * ux,
+            F_mag * uz,   # force on endpoint 1 (pulls toward 2)
+            -F_mag * ux,
+            -F_mag * uz, # force on endpoint 2 (pulls toward 1)
+            true,
+        )
     end
 
     # ── Stretch iteration ─────────────────────────────────────────────────
     L = L0
     a = 0.0
-    sinh_u1 = 0.0; sinh_u2 = 0.0  # initialised for post-loop access
+    sinh_u1 = 0.0;
+    sinh_u2 = 0.0  # initialised for post-loop access
     converged = false
     for iter in 1:8
         a = solve_catenary_a(dx, dz, L)
@@ -131,8 +139,8 @@ function catenary_forces(x1::Float64, z1::Float64,
         # From: sinh(u₁) = (dz·cosh(δ) - L·sinh(δ)) / (2a·sinh(δ))
         # where δ = dx/(2a)
         half = dx / (2.0 * a)
-        sh   = sinh(half)
-        ch   = cosh(half)
+        sh = sinh(half)
+        ch = cosh(half)
         denom = 2.0 * a * sh          # = √(L² − dz²)
 
         if abs(denom) < 1e-20
@@ -167,8 +175,8 @@ function catenary_forces(x1::Float64, z1::Float64,
 
     # Recompute forces with final L
     H = a * w
-    F_x1 =  H                   # pulls endpoint 1 toward endpoint 2
-    F_z1 =  H * sinh_u1         # vertical component at endpoint 1
+    F_x1 = H                   # pulls endpoint 1 toward endpoint 2
+    F_z1 = H * sinh_u1         # vertical component at endpoint 1
     F_x2 = -H                   # pulls endpoint 2 toward endpoint 1
     F_z2 = -H * sinh_u2         # vertical component at endpoint 2
 

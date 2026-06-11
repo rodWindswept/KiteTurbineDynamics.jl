@@ -126,8 +126,9 @@ The default TSR = 4.1 corresponds to the AeroDyn Cp peak for the NACA4412
 3-blade baseline.  For design-point optimisation, a different TSR can be
 passed to account for off-peak operation.
 """
-function rotor_radius_for_power(power_W::Float64, v_rated::Float64,
-                                n_lines::Int; tsr::Float64=4.1)::Float64
+function rotor_radius_for_power(
+    power_W::Float64, v_rated::Float64, n_lines::Int; tsr::Float64=4.1
+)::Float64
     Cp = cp_bem(n_lines, tsr)
     denom = Cp * 0.5 * ρ_AIR * π * v_rated^3
     return sqrt(max(power_W / denom, 1e-8))

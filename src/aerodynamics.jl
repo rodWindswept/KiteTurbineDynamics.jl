@@ -16,13 +16,78 @@
 # Beyond table: Cp extrapolated (may be negative — freewheeling); CT extrapolated.
 
 const BEM_TSR = [
-    0.0, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9,
-    2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9,
-    3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
-    4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9,
-    5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9,
-    6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9,
-    7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 8.0
+    0.0,
+    1.0,
+    1.1,
+    1.2,
+    1.3,
+    1.4,
+    1.5,
+    1.6,
+    1.7,
+    1.8,
+    1.9,
+    2.0,
+    2.1,
+    2.2,
+    2.3,
+    2.4,
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9,
+    3.0,
+    3.1,
+    3.2,
+    3.3,
+    3.4,
+    3.5,
+    3.6,
+    3.7,
+    3.8,
+    3.9,
+    4.0,
+    4.1,
+    4.2,
+    4.3,
+    4.4,
+    4.5,
+    4.6,
+    4.7,
+    4.8,
+    4.9,
+    5.0,
+    5.1,
+    5.2,
+    5.3,
+    5.4,
+    5.5,
+    5.6,
+    5.7,
+    5.8,
+    5.9,
+    6.0,
+    6.1,
+    6.2,
+    6.3,
+    6.4,
+    6.5,
+    6.6,
+    6.7,
+    6.8,
+    6.9,
+    7.0,
+    7.1,
+    7.2,
+    7.3,
+    7.4,
+    7.5,
+    7.6,
+    7.7,
+    7.8,
+    7.9,
+    8.0,
 ]
 
 # Cp(λ) from AeroDyn v5.0.0 quasi-steady BEM at 0° elevation.
@@ -215,13 +280,14 @@ function ct_at_tsr(lambda::Float64)::Float64
 end
 
 # Internal: linear interpolation over a sorted TSR table.
-function _interp_bem(tsr_table::Vector{Float64}, coeff_table::Vector{Float64},
-                     lambda::Float64)::Float64
+function _interp_bem(
+    tsr_table::Vector{Float64}, coeff_table::Vector{Float64}, lambda::Float64
+)::Float64
     i = searchsortedfirst(tsr_table, lambda)
     i > length(tsr_table) && return coeff_table[end]
     i == 1 && return coeff_table[1]
-    t = (lambda - tsr_table[i-1]) / (tsr_table[i] - tsr_table[i-1])
-    return coeff_table[i-1] + t * (coeff_table[i] - coeff_table[i-1])
+    t = (lambda - tsr_table[i - 1]) / (tsr_table[i] - tsr_table[i - 1])
+    return coeff_table[i - 1] + t * (coeff_table[i] - coeff_table[i - 1])
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -245,7 +311,6 @@ Cd ≈ 1.2 is standard for cylinders at typical Reynolds numbers.
 """
 const TUBE_DRAG_CD = 1.2
 
-
 """
     tether_drag_force(rho, cd, diameter, length_0, v_wind, v_node, dir) -> Vector{Float64}
 
@@ -265,9 +330,15 @@ component parallel to the segment is assumed negligible.
 # Returns
 - `drag::Vector{Float64}`: 3D drag force vector (N)
 """
-function tether_drag_force(rho::Float64, cd::Float64, diameter::Float64,
-                           length_0::Float64, v_wind::AbstractVector,
-                           v_node::AbstractVector, dir::AbstractVector)
+function tether_drag_force(
+    rho::Float64,
+    cd::Float64,
+    diameter::Float64,
+    length_0::Float64,
+    v_wind::AbstractVector,
+    v_node::AbstractVector,
+    dir::AbstractVector,
+)
     v_rel = v_wind .- v_node
     v_perp = v_rel .- dot(v_rel, dir) .* dir
     v_perp_mag = norm(v_perp)

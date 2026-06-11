@@ -7,7 +7,7 @@ Two unit vectors spanning the plane perpendicular to shaft_dir.
 perp1 × perp2 is parallel to shaft_dir (right-hand rule).
 """
 function shaft_perp_basis(shaft_dir::AbstractVector)
-    ref   = abs(shaft_dir[3]) < 0.99 ? [0.0, 0.0, 1.0] : [0.0, 1.0, 0.0]
+    ref = abs(shaft_dir[3]) < 0.99 ? [0.0, 0.0, 1.0] : [0.0, 1.0, 0.0]
     perp1 = normalize(cross(shaft_dir, ref))
     perp2 = cross(shaft_dir, perp1)
     return perp1, perp2
@@ -19,9 +19,15 @@ end
 3D position of line j's attachment point on a ring with centre `centre`,
 radius `R`, twist angle `alpha`, in a plane with basis (perp1, perp2).
 """
-function attachment_point(centre::AbstractVector, R::Real,
-                           alpha::Real, j::Int, n_lines::Int,
-                           perp1::AbstractVector, perp2::AbstractVector)
+function attachment_point(
+    centre::AbstractVector,
+    R::Real,
+    alpha::Real,
+    j::Int,
+    n_lines::Int,
+    perp1::AbstractVector,
+    perp2::AbstractVector,
+)
     φ = alpha + (j - 1) * (2π / n_lines)
     return centre .+ R .* (cos(φ) .* perp1 .+ sin(φ) .* perp2)
 end
@@ -45,24 +51,28 @@ Reads the pre-computed tilted normal from `sys.ring_tilt_axis[hub_ri]`
 (stored by `multibody_ode!` at each step).  Returns the two basis
 vectors spanning the tilted ring plane.
 """
-function _tilted_ring_basis(u::AbstractVector, sys::KiteTurbineSystem,
-                             hub_gid::Int, hub_ri::Int)
-    hub_p = u[3*(hub_gid-1)+1 : 3*hub_gid]
-    hmag  = norm(hub_p)
+function _tilted_ring_basis(
+    u::AbstractVector, sys::KiteTurbineSystem, hub_gid::Int, hub_ri::Int
+)
+    hub_p = u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
+    hmag = norm(hub_p)
     shaft_dir = hmag > 0.1 ? hub_p ./ hmag : [cos(0.5236), 0.0, sin(0.5236)]
 
-    bearing_gid  = sys.bearing_id
-    bearing_pos  = u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+    bearing_gid = sys.bearing_id
+    bearing_pos = u[(3 * (bearing_gid - 1) + 1):(3 * bearing_gid)]
     bearing_design = hub_p .+ 6.0 .* shaft_dir
-    bearing_error  = bearing_pos .- bearing_design
+    bearing_error = bearing_pos .- bearing_design
     tilt_perp = bearing_error .- dot(bearing_error, shaft_dir) .* shaft_dir
-    tilt_mag  = norm(tilt_perp)
-    
-    TILT_SCALE  = 0.1
-    tilt_angle  = min(tilt_mag * TILT_SCALE, π/6)
-    tilt_dir_v  = tilt_mag > 1e-9 ? tilt_perp ./ tilt_mag : [0.0, 0.0, 0.0]
+    tilt_mag = norm(tilt_perp)
 
-    tilted_normal = normalize(cos(tilt_angle) .* shaft_dir .+ sin(tilt_angle) .* tilt_dir_v .+ [1e-12, 1e-12, 1e-12])
+    TILT_SCALE = 0.1
+    tilt_angle = min(tilt_mag * TILT_SCALE, π/6)
+    tilt_dir_v = tilt_mag > 1e-9 ? tilt_perp ./ tilt_mag : [0.0, 0.0, 0.0]
+
+    tilted_normal = normalize(
+        cos(tilt_angle) .* shaft_dir .+ sin(tilt_angle) .* tilt_dir_v .+
+        [1e-12, 1e-12, 1e-12],
+    )
 
     return shaft_perp_basis(tilted_normal)
 end

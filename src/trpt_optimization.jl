@@ -17,21 +17,21 @@ using LinearAlgebra
 
 # ── Material and manufacturability constants ─────────────────────────────────
 # Re-used from structural_safety.jl (CFRP hollow tube).
-const OPT_E_CFRP          = DEFAULT_CFRP.E     # Pa   — Young's modulus
-const OPT_RHO_CFRP        = DEFAULT_CFRP.density   # kg/m³ — density
-const OPT_T_MIN_WALL      = 5e-4     # m    — 0.5 mm min manufacturable wall
-const OPT_T_OVER_D_MAX    = 0.15     # unitless — above this, tube collapses to solid rod
-const OPT_T_OVER_D_MIN    = 0.02     # unitless — below this, local shell buckling governs
+const OPT_E_CFRP = DEFAULT_CFRP.E     # Pa   — Young's modulus
+const OPT_RHO_CFRP = DEFAULT_CFRP.density   # kg/m³ — density
+const OPT_T_MIN_WALL = 5e-4     # m    — 0.5 mm min manufacturable wall
+const OPT_T_OVER_D_MAX = 0.15     # unitless — above this, tube collapses to solid rod
+const OPT_T_OVER_D_MIN = 0.02     # unitless — below this, local shell buckling governs
 const OPT_KNUCKLE_MASS_KG = 0.050    # kg — per-vertex knuckle (user approval 2026-04-20)
 
 # ── Peak design load conditions ──────────────────────────────────────────────
-const OPT_V_PEAK            = 25.0   # m/s — peak design wind speed
-const OPT_CT_PEAK            = 1.0   # max BEM thrust coefficient (conservative)
-const OPT_FOS_REQUIRED     = 1.8     # Factor of Safety (hard constraint)
-const OPT_TORSION_MARGIN   = 1.10    # Required ratio A_actual / A_buckling_limit
+const OPT_V_PEAK = 25.0   # m/s — peak design wind speed
+const OPT_CT_PEAK = 1.0   # max BEM thrust coefficient (conservative)
+const OPT_FOS_REQUIRED = 1.8     # Factor of Safety (hard constraint)
+const OPT_TORSION_MARGIN = 1.10    # Required ratio A_actual / A_buckling_limit
 const OPT_TORSION_FOS_REQUIRED = 1.5 # Tulloch torsional stability FOS (hard constraint)
-const OPT_CT_RATED         = 0.55    # Thrust coefficient at rated BEM operation
-const OPT_TSR_RATED        = 4.1     # Optimal tip-speed ratio
+const OPT_CT_RATED = 0.55    # Thrust coefficient at rated BEM operation
+const OPT_TSR_RATED = 4.1     # Optimal tip-speed ratio
 
 # ── Combined design-load factor (DLF) ────────────────────────────────────────
 # Under perfectly uniform taper + zero twist + zero gust, the net radial force
@@ -89,10 +89,10 @@ Fields:
 - `aspect_ratio`   — Do_minor / Do_major for elliptical; thickness-to-chord for airfoil; ignored for circular
 """
 struct BeamSpec
-    profile      :: BeamProfile
-    Do           :: Float64
-    t_over_D     :: Float64
-    aspect_ratio :: Float64
+    profile::BeamProfile
+    Do::Float64
+    t_over_D::Float64
+    aspect_ratio::Float64
 end
 
 """
@@ -115,17 +115,17 @@ Fields:
 - `knuckle_mass_kg`  — point mass at each vertex (kg)
 """
 struct TRPTDesign
-    profile         :: BeamProfile
-    Do_top          :: Float64
-    t_over_D        :: Float64
-    aspect_ratio    :: Float64
-    Do_scale_exp    :: Float64
-    r_hub           :: Float64
-    taper_ratio     :: Float64
-    n_rings         :: Int
-    tether_length   :: Float64
-    n_lines         :: Int
-    knuckle_mass_kg :: Float64
+    profile::BeamProfile
+    Do_top::Float64
+    t_over_D::Float64
+    aspect_ratio::Float64
+    Do_scale_exp::Float64
+    r_hub::Float64
+    taper_ratio::Float64
+    n_rings::Int
+    tether_length::Float64
+    n_lines::Int
+    knuckle_mass_kg::Float64
 end
 
 # ── Beam cross-section properties ────────────────────────────────────────────
@@ -160,8 +160,8 @@ Intermediate rings are linearly interpolated in radius.
 """
 function ring_radii(design::TRPTDesign)
     n_total = design.n_rings + 2
-    r_top   = design.r_hub
-    r_bot   = design.r_hub * design.taper_ratio
+    r_top = design.r_hub
+    r_bot = design.r_hub * design.taper_ratio
     return [r_bot + (r_top - r_bot) * (i - 1) / (n_total - 1) for i in 1:n_total]
 end
 
@@ -184,10 +184,9 @@ Do_i = Do_top × (r_i / r_top)^Do_scale_exp.
 """
 function beam_spec_at_ring(design::TRPTDesign, r::Float64)
     scale = (r / design.r_hub)^design.Do_scale_exp
-    return BeamSpec(design.profile,
-                    design.Do_top * scale,
-                    design.t_over_D,
-                    design.aspect_ratio)
+    return BeamSpec(
+        design.profile, design.Do_top * scale, design.t_over_D, design.aspect_ratio
+    )
 end
 
 # ── Peak load distribution at 25 m/s ─────────────────────────────────────────
@@ -199,9 +198,13 @@ Conservative CT=1.0 captures the worst case within the BEM envelope
 (actual BEM peak CT ≈ 0.55 at λ_opt, but gust/runaway conditions can
 push CT toward the Betz upper bound of 8/9; 1.0 is a safe ceiling).
 """
-function peak_hub_thrust(r_rotor::Float64, elev_angle::Float64;
-                          v::Float64=OPT_V_PEAK, ρ::Float64=1.225,
-                          CT::Float64=OPT_CT_PEAK)
+function peak_hub_thrust(
+    r_rotor::Float64,
+    elev_angle::Float64;
+    v::Float64=OPT_V_PEAK,
+    ρ::Float64=1.225,
+    CT::Float64=OPT_CT_PEAK,
+)
     return 0.5 * ρ * v^2 * π * r_rotor^2 * CT * cos(elev_angle)^2
 end
 
@@ -215,12 +218,16 @@ taper angle determined by the radii of its two end rings.
 Each ring receives contributions from TWO adjacent segments (one above,
 one below); this function returns the contribution of one segment.
 """
-function segment_inward_force(design::TRPTDesign, seg_idx::Int,
-                               T_line::Float64, radii::AbstractVector,
-                               L_seg::AbstractVector)
+function segment_inward_force(
+    design::TRPTDesign,
+    seg_idx::Int,
+    T_line::Float64,
+    radii::AbstractVector,
+    L_seg::AbstractVector,
+)
     r_lo = radii[seg_idx]       # lower ring
-    r_hi = radii[seg_idx+1]     # upper ring
-    L    = L_seg[seg_idx]
+    r_hi = radii[seg_idx + 1]     # upper ring
+    L = L_seg[seg_idx]
     # Line length along the taper:
     line_len = sqrt(L^2 + (r_hi - r_lo)^2)
     # Inward radial component of tension at lower ring (lines taper inward going up):
@@ -239,19 +246,19 @@ end
 Outcome of evaluating one candidate TRPT design.
 """
 struct EvalResult
-    feasible          :: Bool
-    mass_total_kg     :: Float64
-    mass_beams_kg     :: Float64
-    mass_knuckles_kg  :: Float64
-    min_fos           :: Float64
-    worst_ring_idx    :: Int
-    fos_per_ring      :: Vector{Float64}
-    N_comp_per_ring   :: Vector{Float64}
-    P_crit_per_ring   :: Vector{Float64}
-    Do_per_ring       :: Vector{Float64}
-    torsion_margin_ok :: Bool
-    min_torsional_fos :: Float64
-    constraint_msg    :: String
+    feasible::Bool
+    mass_total_kg::Float64
+    mass_beams_kg::Float64
+    mass_knuckles_kg::Float64
+    min_fos::Float64
+    worst_ring_idx::Int
+    fos_per_ring::Vector{Float64}
+    N_comp_per_ring::Vector{Float64}
+    P_crit_per_ring::Vector{Float64}
+    Do_per_ring::Vector{Float64}
+    torsion_margin_ok::Bool
+    min_torsional_fos::Float64
+    constraint_msg::String
 end
 
 """
@@ -271,61 +278,67 @@ stress margin check.
 
 All other arguments are keyword-only; see evaluate_design docstring.
 """
-function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
-                                     L_seg::Vector{Float64};
-                                     r_rotor::Float64, elev_angle::Float64,
-                                     v_peak::Float64, fos_req::Float64,
-                                     omega_rotor::Float64,
-                                     m_blade_total::Float64,
-                                     v_rated::Float64, P_rated::Float64) where T
-
+function _evaluate_trpt_design_impl(
+    design::T,
+    radii::Vector{Float64},
+    L_seg::Vector{Float64};
+    r_rotor::Float64,
+    elev_angle::Float64,
+    v_peak::Float64,
+    fos_req::Float64,
+    omega_rotor::Float64,
+    m_blade_total::Float64,
+    v_rated::Float64,
+    P_rated::Float64,
+) where {T}
     n_rings_tot = length(radii)
-    n_seg       = length(L_seg)
+    n_seg = length(L_seg)
 
     # ── Torsional stability pre-calculation ──────────────────────────────────
-    ω_rated       = OPT_TSR_RATED * v_rated / r_rotor
-    τ_op          = P_rated / ω_rated
+    ω_rated = OPT_TSR_RATED * v_rated / r_rotor
+    τ_op = P_rated / ω_rated
     T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
 
     min_torsional_fos = Inf
     for i in 1:n_seg
-        r_min = min(radii[i], radii[i+1])
-        L     = L_seg[i]
+        r_min = min(radii[i], radii[i + 1])
+        L = L_seg[i]
         τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
-        tfos  = τ_cap / max(τ_op, 1e-9)
+        tfos = τ_cap / max(τ_op, 1e-9)
         min_torsional_fos = min(min_torsional_fos, tfos)
     end
     torsional_collapse_ok = (min_torsional_fos >= OPT_TORSION_FOS_REQUIRED)
 
     # ── Line tension distribution ────────────────────────────────────────────
-    T_peak       = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
+    T_peak = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
     T_line_axial = T_peak / design.n_lines
 
     # ── Per-ring structural analysis ─────────────────────────────────────────
-    fos_per_ring   = Float64[]
+    fos_per_ring = Float64[]
     Ncomp_per_ring = Float64[]
     Pcrit_per_ring = Float64[]
-    Do_per_ring    = Float64[]
-    min_fos        = Inf
-    worst_idx      = 0
-    torsion_ok     = true
-    mass_beams     = 0.0
+    Do_per_ring = Float64[]
+    min_fos = Inf
+    worst_idx = 0
+    torsion_ok = true
+    mass_beams = 0.0
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
     for (i, r) in enumerate(radii)
-        line_len_below = i > 1 ?
-            sqrt(L_seg[i-1]^2 + (radii[i] - radii[i-1])^2) : L_seg[1]
-        line_len_above = i < n_rings_tot ?
-            sqrt(L_seg[i]^2   + (radii[i+1] - radii[i])^2) : L_seg[end]
+        line_len_below =
+            i > 1 ? sqrt(L_seg[i - 1]^2 + (radii[i] - radii[i - 1])^2) : L_seg[1]
+        line_len_above =
+            i < n_rings_tot ? sqrt(L_seg[i]^2 + (radii[i + 1] - radii[i])^2) : L_seg[end]
 
-        T_line = T_line_axial * max(line_len_below, line_len_above) /
-                  min(L_seg[max(i-1, 1)], L_seg[min(i, n_seg)])
+        T_line =
+            T_line_axial * max(line_len_below, line_len_above) /
+            min(L_seg[max(i-1, 1)], L_seg[min(i, n_seg)])
 
         F_in_per_vertex_aero = OPT_DESIGN_LOAD_FACTOR * T_line
 
         n_float = float(design.n_lines)
-        L_poly  = 2.0 * r * sin(π / n_float)
+        L_poly = 2.0 * r * sin(π / n_float)
 
         # Centripetal off-loading: blade + beam mass at this vertex
         spec = beam_spec_at_ring(design, r)
@@ -340,8 +353,10 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
 
         A = props.A
         m_beam_per_vertex = props.mass * L_poly
-        m_vertex = design.knuckle_mass_kg + m_beam_per_vertex +
-                    (i == n_rings_tot ? m_blade_per_vertex : 0.0)
+        m_vertex =
+            design.knuckle_mass_kg +
+            m_beam_per_vertex +
+            (i == n_rings_tot ? m_blade_per_vertex : 0.0)
 
         F_centripetal = m_vertex * omega_rotor^2 * r
         F_v = max(F_in_per_vertex_aero - F_centripetal, 0.0)
@@ -357,7 +372,7 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
             push!(Pcrit_per_ring, P_crit)
             push!(Do_per_ring, spec.Do)
             if fos < min_fos
-                min_fos   = fos
+                min_fos = fos
                 worst_idx = i
             end
         else
@@ -375,23 +390,45 @@ function _evaluate_trpt_design_impl(design::T, radii::Vector{Float64},
     end
 
     mass_knuckles = design.knuckle_mass_kg * design.n_lines * n_rings_tot
-    mass_total    = mass_beams + mass_knuckles
+    mass_total = mass_beams + mass_knuckles
 
-    feasible = (min_fos >= fos_req) && torsion_ok &&
-               (design.t_over_D >= OPT_T_OVER_D_MIN) &&
-               (design.t_over_D <= OPT_T_OVER_D_MAX) &&
-               torsional_collapse_ok
-    msg = feasible ? "OK" :
-          (!torsion_ok ? "compressive stress > 500 MPa limit" :
-           min_fos < fos_req ?
-               "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx" :
-           !torsional_collapse_ok ?
-               "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED" :
-           "t/D out of manufacturable bounds")
+    feasible =
+        (min_fos >= fos_req) &&
+        torsion_ok &&
+        (design.t_over_D >= OPT_T_OVER_D_MIN) &&
+        (design.t_over_D <= OPT_T_OVER_D_MAX) &&
+        torsional_collapse_ok
+    msg = if feasible
+        "OK"
+    else
+        (
+        if !torsion_ok
+            "compressive stress > 500 MPa limit"
+        elseif min_fos < fos_req
+            "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx"
+        elseif !torsional_collapse_ok
+            "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED"
+        else
+            "t/D out of manufacturable bounds"
+        end
+    )
+    end
 
-    return EvalResult(feasible, mass_total, mass_beams, mass_knuckles,
-                      min_fos, worst_idx, fos_per_ring, Ncomp_per_ring,
-                      Pcrit_per_ring, Do_per_ring, torsion_ok, min_torsional_fos, msg)
+    return EvalResult(
+        feasible,
+        mass_total,
+        mass_beams,
+        mass_knuckles,
+        min_fos,
+        worst_idx,
+        fos_per_ring,
+        Ncomp_per_ring,
+        Pcrit_per_ring,
+        Do_per_ring,
+        torsion_ok,
+        min_torsional_fos,
+        msg,
+    )
 end
 """
     evaluate_design(design, r_rotor, elev_angle; v_peak, fos_req) → EvalResult
@@ -412,30 +449,55 @@ delegate to the shared `_evaluate_trpt_design_impl` so cross-campaign
 comparability is guaranteed — a v2 design evaluated through v1's path
 uses the same physics as v4's path.
 """
-function evaluate_design(design::TRPTDesign;
-                          r_rotor     :: Float64 = 5.0,
-                          elev_angle  :: Float64 = π/6,
-                          v_peak      :: Float64 = OPT_V_PEAK,
-                          fos_req     :: Float64 = OPT_FOS_REQUIRED,
-                          omega_rotor :: Float64 = 4.1 * OPT_V_PEAK / 5.0,
-                          m_blade_total :: Float64 = 11.0,
-                          v_rated     :: Float64 = 11.0,
-                          P_rated     :: Float64 = 10000.0)
-
-    if design.Do_top <= 0 || design.t_over_D <= 0 ||
-       design.n_rings < 3 || design.taper_ratio <= 0 ||
-       design.r_hub <= 0
-        return EvalResult(false, Inf, Inf, 0.0, 0.0, 0, Float64[], Float64[],
-                          Float64[], Float64[], false, 0.0, "invalid geometry")
+function evaluate_design(
+    design::TRPTDesign;
+    r_rotor::Float64=5.0,
+    elev_angle::Float64=π/6,
+    v_peak::Float64=OPT_V_PEAK,
+    fos_req::Float64=OPT_FOS_REQUIRED,
+    omega_rotor::Float64=4.1 * OPT_V_PEAK / 5.0,
+    m_blade_total::Float64=11.0,
+    v_rated::Float64=11.0,
+    P_rated::Float64=10000.0,
+)
+    if design.Do_top <= 0 ||
+        design.t_over_D <= 0 ||
+        design.n_rings < 3 ||
+        design.taper_ratio <= 0 ||
+        design.r_hub <= 0
+        return EvalResult(
+            false,
+            Inf,
+            Inf,
+            0.0,
+            0.0,
+            0,
+            Float64[],
+            Float64[],
+            Float64[],
+            Float64[],
+            false,
+            0.0,
+            "invalid geometry",
+        )
     end
 
     radii = ring_radii(design)
     L_seg = segment_axial_lengths(design)
 
-    return _evaluate_trpt_design_impl(design, radii, L_seg;
-        r_rotor=r_rotor, elev_angle=elev_angle, v_peak=v_peak,
-        fos_req=fos_req, omega_rotor=omega_rotor,
-        m_blade_total=m_blade_total, v_rated=v_rated, P_rated=P_rated)
+    return _evaluate_trpt_design_impl(
+        design,
+        radii,
+        L_seg;
+        r_rotor=r_rotor,
+        elev_angle=elev_angle,
+        v_peak=v_peak,
+        fos_req=fos_req,
+        omega_rotor=omega_rotor,
+        m_blade_total=m_blade_total,
+        v_rated=v_rated,
+        P_rated=P_rated,
+    )
 end
 
 # ── Baseline extraction from existing SystemParams ────────────────────────────
@@ -447,13 +509,13 @@ CFRP hollow circular tube, Do=0.01396×√R scaling (exponent=0.5), uniform
 axial spacing, taper consistent with current rL ratio.
 """
 function baseline_design(p::SystemParams)::TRPTDesign
-    r_hub       = p.trpt_hub_radius
+    r_hub = p.trpt_hub_radius
     r_bot_guess = 0.48 * r_hub   # DRR: 2.0 → 0.96 for 10 kW; ratio ≈ 0.48
     taper_ratio = r_bot_guess / r_hub
-    n_rings     = p.n_rings
-    tether_len  = p.tether_length
+    n_rings = p.n_rings
+    tether_len = p.tether_length
     # Baseline Do_top = DO_SCALE × √r_hub (matches structural_safety.jl scaling)
-    Do_top      = 0.01396 * sqrt(r_hub)
+    Do_top = 0.01396 * sqrt(r_hub)
     return TRPTDesign(
         PROFILE_CIRCULAR,
         Do_top,
@@ -480,7 +542,8 @@ function search_bounds(p::SystemParams, profile::BeamProfile)
     # Scale bounds by system size (square-root of rotor radius) so 50 kW and
     # 10 kW share the same bounds function.
     sc = sqrt(p.trpt_hub_radius / 2.0)          # =1 at 10 kW, ≈2.24 at 50 kW
-    Do_lo = 0.005 * sc;  Do_hi = 0.120 * sc     # 5–120 mm at 10 kW
+    Do_lo = 0.005 * sc;
+    Do_hi = 0.120 * sc     # 5–120 mm at 10 kW
 
     # r_hub is tightly constrained — it must match the rotor-hub mounting
     # geometry (blade root attachment).  Allow ±10% from baseline to let the
@@ -501,11 +564,14 @@ function search_bounds(p::SystemParams, profile::BeamProfile)
     n_rings_hi = 40.0
 
     if profile == PROFILE_ELLIPTICAL
-        ar_lo = 0.25;  ar_hi = 1.0          # minor/major
+        ar_lo = 0.25;
+        ar_hi = 1.0          # minor/major
     elseif profile == PROFILE_AIRFOIL
-        ar_lo = 0.08;  ar_hi = 0.20         # NACA 0008 to 0020
+        ar_lo = 0.08;
+        ar_hi = 0.20         # NACA 0008 to 0020
     else
-        ar_lo = 1.0;  ar_hi = 1.0           # ignored (fixed at 1.0 for circular)
+        ar_lo = 1.0;
+        ar_hi = 1.0           # ignored (fixed at 1.0 for circular)
     end
     # [Do_top, t_over_D, aspect_ratio, Do_scale_exp, r_hub, taper_ratio, n_rings]
     lo = [Do_lo, OPT_T_OVER_D_MIN, ar_lo, 0.0, r_hub_lo, taper_lo, n_rings_lo]
@@ -540,11 +606,15 @@ end
 
 Scalar cost function for the optimizer.
 """
-function objective(x::AbstractVector, profile::BeamProfile, p::SystemParams;
-                    rotor_radius::Float64 = 5.0,
-                    elev_angle::Float64   = π/6)
+function objective(
+    x::AbstractVector,
+    profile::BeamProfile,
+    p::SystemParams;
+    rotor_radius::Float64=5.0,
+    elev_angle::Float64=π/6,
+)
     design = design_from_vector(x, profile, p)
     r_rotor = rotor_radius                        # passed from caller for scaling
-    result  = evaluate_design(design; r_rotor=r_rotor, elev_angle=elev_angle)
+    result = evaluate_design(design; r_rotor=r_rotor, elev_angle=elev_angle)
     return result.feasible ? result.mass_total_kg : 1e6 + result.mass_total_kg
 end

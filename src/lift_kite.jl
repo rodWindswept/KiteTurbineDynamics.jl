@@ -90,12 +90,12 @@ Fields:
 - `m_kite`      : kite + bridle mass (kg)
 """
 struct SingleKiteParams <: LiftDevice
-    CL          :: Float64
-    CD          :: Float64
-    area        :: Float64
-    line_length :: Float64
-    line_EA     :: Float64
-    m_kite      :: Float64
+    CL::Float64
+    CD::Float64
+    area::Float64
+    line_length::Float64
+    line_EA::Float64
+    m_kite::Float64
 end
 
 """
@@ -108,13 +108,13 @@ Key geometry: spacing between adjacent kites along the lift line (m).
 Structural note: topmost kite's attachment is rated for the static weight of all kites below it.
 """
 struct StackedKitesParams <: LiftDevice
-    n_kites      :: Int
-    CL           :: Float64    # per-kite lift coefficient
-    CD           :: Float64    # per-kite drag coefficient
-    area_each    :: Float64    # per-kite area (m²)
-    spacing      :: Float64    # inter-kite spacing along lift line (m)
-    line_EA      :: Float64    # lift line axial stiffness (N)
-    m_kite_each  :: Float64    # per-kite + bridle mass (kg)
+    n_kites::Int
+    CL::Float64    # per-kite lift coefficient
+    CD::Float64    # per-kite drag coefficient
+    area_each::Float64    # per-kite area (m²)
+    spacing::Float64    # inter-kite spacing along lift line (m)
+    line_EA::Float64    # lift line axial stiffness (N)
+    m_kite_each::Float64    # per-kite + bridle mass (kg)
 end
 
 """
@@ -133,20 +133,20 @@ Tension variability (relative to single kite) ≈ v_wind² / (v_wind² + (ω·r)
 → at ω·r = 3·v_wind, variability is reduced by a factor of ~10.
 """
 struct RotaryLifterParams <: LiftDevice
-    rotor_radius :: Float64    # blade tip radius (m)
-    hub_radius   :: Float64    # blade root / hub radius (m)
-    n_blades     :: Int
-    blade_chord  :: Float64    # mean blade chord (m)
-    CL_blade     :: Float64    # blade section lift coefficient at design point
-    CD_blade     :: Float64    # blade section drag coefficient at design point
-    omega_fixed  :: Float64    # fixed operational angular velocity (rad/s)
-                               # KEY: omega is held constant by the lifter's own
-                               # inertia and control, NOT tracking TSR.  This is
-                               # what gives tension insensitivity: v_app²=v²+(ω·r)²
-                               # and dT/dv ∝ v_wind/v_app << 1 when ω·r >> v_wind.
-    line_length  :: Float64    # lift line length from TRPT hub to lifter (m)
-    line_EA      :: Float64    # lift line axial stiffness (N)
-    m_lifter     :: Float64    # total lifter mass (rotor + lines, kg)
+    rotor_radius::Float64    # blade tip radius (m)
+    hub_radius::Float64    # blade root / hub radius (m)
+    n_blades::Int
+    blade_chord::Float64    # mean blade chord (m)
+    CL_blade::Float64    # blade section lift coefficient at design point
+    CD_blade::Float64    # blade section drag coefficient at design point
+    omega_fixed::Float64    # fixed operational angular velocity (rad/s)
+    # KEY: omega is held constant by the lifter's own
+    # inertia and control, NOT tracking TSR.  This is
+    # what gives tension insensitivity: v_app²=v²+(ω·r)²
+    # and dT/dv ∝ v_wind/v_app << 1 when ω·r >> v_wind.
+    line_length::Float64    # lift line length from TRPT hub to lifter (m)
+    line_EA::Float64    # lift line axial stiffness (N)
+    m_lifter::Float64    # total lifter mass (rotor + lines, kg)
 end
 
 # ── Convenience constructors ───────────────────────────────────────────────────
@@ -157,14 +157,14 @@ end
 Default single parafoil kite sized for the 10 kW TRPT prototype.
 CL/CD ≈ 6 gives lift line elevation angle ≈ 80° (line nearly vertical).
 """
-function single_kite_default(; area::Float64 = 10.0)
-    SingleKiteParams(
+function single_kite_default(; area::Float64=10.0)
+    return SingleKiteParams(
         1.0,         # CL — moderate parafoil
         0.15,        # CD — LD ≈ 6.7
         area,        # m²; at 10 kW use ~19 m² to achieve lift_margin ≥ 1.0
         20.0,        # line length (m)
         200_000.0,   # line_EA (N) — 4mm Dyneema
-        2.0          # m_kite (kg) — single-skin kite + bridle
+        2.0,          # m_kite (kg) — single-skin kite + bridle
     )
 end
 
@@ -186,15 +186,19 @@ therefore the minimum operating wind speed, NOT rated wind.
 Default v_design = 4.0 m/s gives ≈ 23 m² for the 10 kW prototype, which matches the
 physical design and provides comfortable margin at launch/landing conditions.
 """
-function single_kite_sized(p::SystemParams, rho::Float64, v_rated::Float64;
-                            margin::Float64 = 1.1,
-                            v_design::Float64 = 4.0)
+function single_kite_sized(
+    p::SystemParams,
+    rho::Float64,
+    v_rated::Float64;
+    margin::Float64=1.1,
+    v_design::Float64=4.0,
+)
     F_req = hub_lift_required(p, rho, v_design)   # weight-only, wind-independent
-    tmpl  = single_kite_default(area = 1.0)
+    tmpl = single_kite_default(; area=1.0)
     _, T_per_m2, elev = lift_force_steady(tmpl, rho, v_design)
     F_vert_per_m2 = T_per_m2 * sin(deg2rad(elev))
-    area_needed   = F_req * margin / F_vert_per_m2
-    return single_kite_default(area = area_needed)
+    area_needed = F_req * margin / F_vert_per_m2
+    return single_kite_default(; area=area_needed)
 end
 
 """
@@ -202,15 +206,15 @@ end
 
 Stacked kite default: N kites totalling the same area as a single kite.
 """
-function stacked_kites_default(; n_kites::Int = 3, total_area::Float64 = 10.0)
-    StackedKitesParams(
+function stacked_kites_default(; n_kites::Int=3, total_area::Float64=10.0)
+    return StackedKitesParams(
         n_kites,
         1.0,                          # CL
         0.15,                         # CD
         total_area / n_kites,         # area_each
         8.0,                          # spacing (m)
         200_000.0,                    # line_EA (N)
-        2.0 / n_kites * 1.2           # m_kite_each: pro-rata + 20% for extra attachment
+        2.0 / n_kites * 1.2,           # m_kite_each: pro-rata + 20% for extra attachment
     )
 end
 
@@ -228,7 +232,7 @@ function rotary_lifter_default()
     # Gust +2 m/s → v_app = √(13² + 29.7²) = 32.5 m/s (+2.6%)
     # Same gust on single kite: ΔT/T = Δ(v²)/v² = (13²-11²)/11² = 41%
     # Tension variability reduction ≈ 2.6/41 ≈ 16× better
-    RotaryLifterParams(
+    return RotaryLifterParams(
         1.5,        # rotor_radius (m)
         0.3,        # hub_radius (m)
         3,          # n_blades
@@ -238,7 +242,7 @@ function rotary_lifter_default()
         33.0,       # omega_fixed (rad/s) = TSR 4.5 at v=11 m/s → HELD CONSTANT
         25.0,       # line_length (m)
         200_000.0,  # line_EA (N)
-        4.0         # m_lifter (kg)
+        4.0,         # m_lifter (kg)
     )
 end
 
@@ -264,7 +268,7 @@ Equilibrium flight elevation angle of a kite (angle of lift line above horizonta
 Derived from force balance on the kite: tan(θ) = CL/CD.
 """
 function kite_elevation_angle(CL::Float64, CD::Float64)
-    rad2deg(atan(CL, CD))
+    return rad2deg(atan(CL, CD))
 end
 
 """
@@ -276,13 +280,19 @@ F_hub points from hub toward kite (upward and slightly into wind).
 T_line is the scalar tension in the lift line.
 elevation_deg is the kite flight elevation angle.
 """
-function lift_force_steady(dev::SingleKiteParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
-    q      = 0.5 * rho * v_wind^2
+function lift_force_steady(
+    dev::SingleKiteParams,
+    rho::Float64,
+    v_wind::Float64,
+    p::Union{Nothing, SystemParams}=nothing,
+)
+    q = 0.5 * rho * v_wind^2
     F_lift = q * dev.area * dev.CL     # upward
     F_drag = q * dev.area * dev.CD     # along wind (away from hub)
     T_line = sqrt(F_lift^2 + F_drag^2) # tension in lift line
-    elev   = p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
-    F_hub  = T_line .* lift_line_direction(elev)
+    elev =
+        p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
+    F_hub = T_line .* lift_line_direction(elev)
     return (F_hub, T_line, elev)
 end
 
@@ -293,17 +303,23 @@ end
 Total lift force at hub from N cascaded kites.
 Net lift = sum of all kite forces (hub tension = Σ(Lᵢ − Wᵢ·cosθ)).
 """
-function lift_force_steady(dev::StackedKitesParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
-    q         = 0.5 * rho * v_wind^2
-    elev      = p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
-    θ         = deg2rad(elev)
-    L_each    = q * dev.area_each * dev.CL
-    D_each    = q * dev.area_each * dev.CD
-    W_each    = dev.m_kite_each * 9.81
+function lift_force_steady(
+    dev::StackedKitesParams,
+    rho::Float64,
+    v_wind::Float64,
+    p::Union{Nothing, SystemParams}=nothing,
+)
+    q = 0.5 * rho * v_wind^2
+    elev =
+        p !== nothing ? rad2deg(p.lifter_elevation) : kite_elevation_angle(dev.CL, dev.CD)
+    θ = deg2rad(elev)
+    L_each = q * dev.area_each * dev.CL
+    D_each = q * dev.area_each * dev.CD
+    W_each = dev.m_kite_each * 9.81
     # Net lift per kite (corrected for weight component along line)
     T_net_each = sqrt(L_each^2 + D_each^2) - W_each * cos(θ)
-    T_hub     = max(0.0, dev.n_kites * T_net_each)
-    F_hub     = T_hub .* lift_line_direction(elev)
+    T_hub = max(0.0, dev.n_kites * T_net_each)
+    F_hub = T_hub .* lift_line_direction(elev)
     return (F_hub, T_hub, elev)
 end
 
@@ -321,13 +337,13 @@ This is the CORRECT tension model:
   - Minimum (zero) is at the free end above the topmost kite.
 """
 function stack_tension_profile(dev::StackedKitesParams, rho::Float64, v_wind::Float64)
-    q      = 0.5 * rho * v_wind^2
-    elev   = kite_elevation_angle(dev.CL, dev.CD)
-    θ      = deg2rad(elev)
+    q = 0.5 * rho * v_wind^2
+    elev = kite_elevation_angle(dev.CL, dev.CD)
+    θ = deg2rad(elev)
     L_each = q * dev.area_each * dev.CL
     D_each = q * dev.area_each * dev.CD
     W_each = dev.m_kite_each * 9.81
-    T_net  = sqrt(L_each^2 + D_each^2) - W_each * cos(θ)
+    T_net = sqrt(L_each^2 + D_each^2) - W_each * cos(θ)
 
     profile = Vector{Float64}(undef, dev.n_kites + 1)
     profile[dev.n_kites + 1] = 0.0
@@ -344,7 +360,7 @@ Static structural load on the topmost kite's attachment point at zero wind.
 This is the weight of all kites below it — the governing structural design case.
 """
 function topmost_kite_static_load(dev::StackedKitesParams)
-    (dev.n_kites - 1) * dev.m_kite_each * 9.81
+    return (dev.n_kites - 1) * dev.m_kite_each * 9.81
 end
 
 """
@@ -359,7 +375,12 @@ Force uses rotor DISK area and empirical CL/CD curves
 Disk angle of attack α = 90° − φ where φ is the line elevation.
 Equilibrium solved iteratively: φ = atan(CL(α)/CD(α)).
 """
-function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float64, p::Union{Nothing, SystemParams} = nothing)
+function lift_force_steady(
+    dev::RotaryLifterParams,
+    rho::Float64,
+    v_wind::Float64,
+    p::Union{Nothing, SystemParams}=nothing,
+)
     # PCA-2 autogyro disk coefficients from CoaxialAutogyroStacking.pca2_interp.
     # CL and CD normalised to disk area πR² and freestream dynamic pressure.
     # (NASA TM 20080022367, PCA-2 autogyro wind tunnel tests)
@@ -373,7 +394,7 @@ function lift_force_steady(dev::RotaryLifterParams, rho::Float64, v_wind::Float6
     # ω=33 rad/s, r_mean=0.9 m): v_app ≈ 31.7 m/s >> v_wind.  At zero wind
     # (settling): v_app = ω·r_mean ≈ 30 m/s → lift is always active.
     r_mean = (dev.rotor_radius + dev.hub_radius) / 2.0
-    v_app  = sqrt(v_wind^2 + (dev.omega_fixed * r_mean)^2)
+    v_app = sqrt(v_wind^2 + (dev.omega_fixed * r_mean)^2)
     q = 0.5 * rho * v_app^2
 
     # Elevation factor: CL_blade scales the PCA-2 baseline CL
@@ -421,11 +442,11 @@ Includes TRPT shaft, rotor blades, knuckles, and autogyro itself.
 """
 function autogyro_lift_required(p::SystemParams; lifter_elevation_deg::Float64=70.0)
     # Airborne mass budget
-    m_shaft   = 12.0     # kg — v5 optimized shaft ~11.5 + margin
-    m_blades  = p.n_blades * p.m_blade
+    m_shaft = 12.0     # kg — v5 optimized shaft ~11.5 + margin
+    m_blades = p.n_blades * p.m_blade
     m_knuckles = 1.0     # kg — knuckles, bearings, hub
-    m_lifter  = 5.0      # kg — autogyro rotor + lines
-    m_total   = m_shaft + m_blades + m_knuckles + m_lifter
+    m_lifter = 5.0      # kg — autogyro rotor + lines
+    m_total = m_shaft + m_blades + m_knuckles + m_lifter
     g = 9.81
     return m_total * g / sind(lifter_elevation_deg), m_total
 end
@@ -436,10 +457,11 @@ end
 Compute the rotor radius needed to generate the required lift at a given wind speed.
 Uses PCA-2 CL at optimal disk AoA (~15°, CL≈0.45) scaled by pitch_factor.
 """
-function autogyro_radius_for_lift(lift_required_N::Float64, v_wind::Float64;
-                                    pitch_factor::Float64=1.0, rho::Float64=1.225)
+function autogyro_radius_for_lift(
+    lift_required_N::Float64, v_wind::Float64; pitch_factor::Float64=1.0, rho::Float64=1.225
+)
     CL_nominal = 0.45 * pitch_factor  # PCA-2 at AoA≈15°
-    A_needed   = lift_required_N / (0.5 * rho * v_wind^2 * CL_nominal)
+    A_needed = lift_required_N / (0.5 * rho * v_wind^2 * CL_nominal)
     return sqrt(A_needed / π)
 end
 
@@ -451,7 +473,7 @@ end
 Length of the lift line from the sky anchor to the lift device (m).
 Used to compute the quasi-static kite position for geometric stiffness.
 """
-lift_line_length(dev::SingleKiteParams)   = dev.line_length
+lift_line_length(dev::SingleKiteParams) = dev.line_length
 lift_line_length(dev::RotaryLifterParams) = dev.line_length
 lift_line_length(dev::StackedKitesParams) = dev.spacing * dev.n_kites
 
@@ -489,12 +511,11 @@ Turbulence intensity I = σ_v / v_mean (typical onshore: 0.10–0.20).
 Uses linear propagation: σ_T ≈ |dT/dv| × σ_v.
 Returns dimensionless σ_T / T_mean.
 """
-function tension_cv(dev::LiftDevice, rho::Float64, v_wind::Float64,
-                    turb_intensity::Float64)
+function tension_cv(dev::LiftDevice, rho::Float64, v_wind::Float64, turb_intensity::Float64)
     _, T_mean, _ = lift_force_steady(dev, rho, v_wind)
-    dT_dv        = tension_sensitivity(dev, rho, v_wind)
-    sigma_v      = turb_intensity * v_wind
-    sigma_T      = abs(dT_dv) * sigma_v
+    dT_dv = tension_sensitivity(dev, rho, v_wind)
+    sigma_v = turb_intensity * v_wind
+    sigma_T = abs(dT_dv) * sigma_v
     return T_mean > 0.0 ? sigma_T / T_mean : Inf
 end
 
@@ -507,12 +528,15 @@ Ratio of rotary lifter tension CV to single kite tension CV.
 Values < 1.0 indicate reduced tension variability (better).
 Analytical approximation: ratio ≈ v_wind² / (v_wind² + (ω·r_mean)²)
 """
-function tension_cv_reduction(dev_rotary::RotaryLifterParams,
-                               dev_ref::SingleKiteParams,
-                               rho::Float64, v_wind::Float64,
-                               turb_intensity::Float64 = 0.15)
+function tension_cv_reduction(
+    dev_rotary::RotaryLifterParams,
+    dev_ref::SingleKiteParams,
+    rho::Float64,
+    v_wind::Float64,
+    turb_intensity::Float64=0.15,
+)
     cv_rot = tension_cv(dev_rotary, rho, v_wind, turb_intensity)
-    cv_ref = tension_cv(dev_ref,    rho, v_wind, turb_intensity)
+    cv_ref = tension_cv(dev_ref, rho, v_wind, turb_intensity)
     return cv_ref > 0.0 ? cv_rot / cv_ref : NaN
 end
 
@@ -523,9 +547,9 @@ end
 Area (m²) of single kite needed to provide F_required (N) of lift line tension
 at wind speed v_wind.
 """
-function required_kite_area(dev_template::SingleKiteParams,
-                             rho::Float64, v_wind::Float64,
-                             F_required::Float64)
+function required_kite_area(
+    dev_template::SingleKiteParams, rho::Float64, v_wind::Float64, F_required::Float64
+)
     q = 0.5 * rho * v_wind^2
     # T = q · area · √(CL² + CD²)
     T_per_m2 = q * sqrt(dev_template.CL^2 + dev_template.CD^2)
@@ -569,8 +593,8 @@ Returns the weight W_airborne (N) — this is the correct net downward load on t
 """
 function hub_lift_required(p::SystemParams, rho::Float64, v_wind::Float64)
     # Airborne mass (rings + blades + tether)
-    m_tether = p.n_lines * p.tether_length *
-               (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
+    m_tether =
+        p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
     m_airborne = p.n_blades * p.m_blade + p.n_rings * p.m_ring + m_tether
     W_airborne = m_airborne * 9.81
 
@@ -578,7 +602,8 @@ function hub_lift_required(p::SystemParams, rho::Float64, v_wind::Float64)
     # cancel at the hub node in quasi-static equilibrium (T_shaft ≈ T_thrust).
     # Net vertical load = airborne weight only.
     # rho and v_wind are accepted for API compatibility but do not affect the result.
-    _ = rho; _ = v_wind   # explicitly unused — retained for API stability
+    _ = rho;
+    _ = v_wind   # explicitly unused — retained for API stability
 
     return W_airborne
 end
@@ -591,9 +616,9 @@ Values > 1.0 indicate the kite can maintain altitude; < 1.0 means the hub descen
 """
 function lift_margin(dev::LiftDevice, p::SystemParams, rho::Float64, v_wind::Float64)
     _, T_available, elev = lift_force_steady(dev, rho, v_wind, p)
-    F_required           = hub_lift_required(p, rho, v_wind)
+    F_required = hub_lift_required(p, rho, v_wind)
     # Vertical component of lift line force
-    F_vertical           = T_available * sin(deg2rad(elev))
+    F_vertical = T_available * sin(deg2rad(elev))
     return F_vertical / F_required
 end
 
@@ -607,17 +632,19 @@ Required kite area to maintain hub altitude as a function of rated power,
 using the Windswept mass scaling law (m_airborne ∝ P^1.35).
 Illustrates the "kite area bottleneck" at scale.
 """
-function lift_area_vs_power(power_range_kw::AbstractVector,
-                             rho::Float64,
-                             v_rated::Float64,
-                             dev_template::SingleKiteParams;
-                             v_design::Float64 = 4.0)
-    p0   = params_10kw()
-    results = Tuple{Float64,Float64}[]
+function lift_area_vs_power(
+    power_range_kw::AbstractVector,
+    rho::Float64,
+    v_rated::Float64,
+    dev_template::SingleKiteParams;
+    v_design::Float64=4.0,
+)
+    p0 = params_10kw()
+    results = Tuple{Float64, Float64}[]
     for P_kw in power_range_kw
         p_scaled = mass_scale(p0, 10.0, P_kw)
-        F_req    = hub_lift_required(p_scaled, rho, v_design)  # weight-only, size at low wind
-        A_req    = required_kite_area(dev_template, rho, v_design, F_req)
+        F_req = hub_lift_required(p_scaled, rho, v_design)  # weight-only, size at low wind
+        A_req = required_kite_area(dev_template, rho, v_design, F_req)
         push!(results, (P_kw, A_req))
     end
     return results

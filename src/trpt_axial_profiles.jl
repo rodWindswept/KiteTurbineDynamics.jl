@@ -39,24 +39,32 @@ using LinearAlgebra
 
 # ── Axial radius profile family ──────────────────────────────────────────────
 @enum AxialProfile begin
-    AXIAL_LINEAR         = 1  # r(z) = r_bot + (r_top - r_bot)(z/L)
-    AXIAL_ELLIPTIC       = 2  # r(z) = r_bot + (r_top - r_bot) sin(π/2 · z/L)  ; flat-near-ground, steep-near-hub
-    AXIAL_PARABOLIC      = 3  # r(z) = r_bot + (r_top - r_bot)(z/L)^p          ; p<1 concave, p>1 convex
-    AXIAL_TRUMPET        = 4  # r(z) = r_bot + (r_top - r_bot)(1-(1-z/L)^p)    ; steep-near-ground, flat-near-hub
+    AXIAL_LINEAR = 1  # r(z) = r_bot + (r_top - r_bot)(z/L)
+    AXIAL_ELLIPTIC = 2  # r(z) = r_bot + (r_top - r_bot) sin(π/2 · z/L)  ; flat-near-ground, steep-near-hub
+    AXIAL_PARABOLIC = 3  # r(z) = r_bot + (r_top - r_bot)(z/L)^p          ; p<1 concave, p>1 convex
+    AXIAL_TRUMPET = 4  # r(z) = r_bot + (r_top - r_bot)(1-(1-z/L)^p)    ; steep-near-ground, flat-near-hub
     AXIAL_STRAIGHT_TAPER = 5  # constant r_bot for z < z_str, linear to r_top after
 end
 
 const AXIAL_PROFILE_COUNT = 5
 
-axial_profile_name(p::AxialProfile) =
-    p == AXIAL_LINEAR         ? "linear"         :
-    p == AXIAL_ELLIPTIC       ? "elliptic"       :
-    p == AXIAL_PARABOLIC      ? "parabolic"      :
-    p == AXIAL_TRUMPET        ? "trumpet"        :
-    p == AXIAL_STRAIGHT_TAPER ? "straight_taper" : "unknown"
+function axial_profile_name(p::AxialProfile)
+    return if p == AXIAL_LINEAR
+        "linear"
+    elseif p == AXIAL_ELLIPTIC
+        "elliptic"
+    elseif p == AXIAL_PARABOLIC
+        "parabolic"
+    elseif p == AXIAL_TRUMPET
+        "trumpet"
+    elseif p == AXIAL_STRAIGHT_TAPER
+        "straight_taper"
+    else
+        "unknown"
+    end
+end
 
-axial_profile_from_index(i::Integer) =
-    AxialProfile(clamp(Int(i), 1, AXIAL_PROFILE_COUNT))
+axial_profile_from_index(i::Integer) = AxialProfile(clamp(Int(i), 1, AXIAL_PROFILE_COUNT))
 
 # ── Core r(z) evaluator ──────────────────────────────────────────────────────
 """
@@ -64,13 +72,15 @@ axial_profile_from_index(i::Integer) =
 
 Radial coordinate r at axial position z (ground z=0, hub z=L).
 """
-function r_of_z(axial_profile::AxialProfile,
-                 profile_exp::Float64,
-                 straight_frac::Float64,
-                 r_bot::Float64,
-                 r_top::Float64,
-                 L::Float64,
-                 z::Float64)::Float64
+function r_of_z(
+    axial_profile::AxialProfile,
+    profile_exp::Float64,
+    straight_frac::Float64,
+    r_bot::Float64,
+    r_top::Float64,
+    L::Float64,
+    z::Float64,
+)::Float64
     ζ = clamp(z / max(L, 1e-12), 0.0, 1.0)
     Δr = r_top - r_bot
     if axial_profile == AXIAL_LINEAR
@@ -108,22 +118,22 @@ free DoF (for the pentagon → hexagon → heptagon exploration).
 """
 struct TRPTDesignV2
     # Cross-section
-    beam_profile    :: BeamProfile
-    Do_top          :: Float64    # outer dim at hub (top) ring (m)
-    t_over_D        :: Float64
-    beam_aspect     :: Float64    # ellip b/a, or airfoil t/c
-    Do_scale_exp    :: Float64    # Do(r) ~ (r/r_top)^exp
+    beam_profile::BeamProfile
+    Do_top::Float64    # outer dim at hub (top) ring (m)
+    t_over_D::Float64
+    beam_aspect::Float64    # ellip b/a, or airfoil t/c
+    Do_scale_exp::Float64    # Do(r) ~ (r/r_top)^exp
     # Axial geometry
-    axial_profile   :: AxialProfile
-    profile_exp     :: Float64    # parabolic / trumpet exponent
-    straight_frac   :: Float64    # fraction of axial length constant r for STRAIGHT_TAPER
-    r_hub           :: Float64
-    taper_ratio     :: Float64    # r_bot / r_top
-    n_rings         :: Int
-    tether_length   :: Float64
+    axial_profile::AxialProfile
+    profile_exp::Float64    # parabolic / trumpet exponent
+    straight_frac::Float64    # fraction of axial length constant r for STRAIGHT_TAPER
+    r_hub::Float64
+    taper_ratio::Float64    # r_bot / r_top
+    n_rings::Int
+    tether_length::Float64
     # Topology & knuckles
-    n_lines         :: Int
-    knuckle_mass_kg :: Float64
+    n_lines::Int
+    knuckle_mass_kg::Float64
 end
 
 # ── Geometry helpers for v2 designs ──────────────────────────────────────────
@@ -146,10 +156,19 @@ Radii (m) of all n_rings+2 pentagon frames for a v2 design.
 function ring_radii(design::TRPTDesignV2)
     r_top = design.r_hub
     r_bot = design.r_hub * design.taper_ratio
-    L     = design.tether_length
-    zs    = ring_z_positions(design)
-    return [r_of_z(design.axial_profile, design.profile_exp, design.straight_frac,
-                   r_bot, r_top, L, z) for z in zs]
+    L = design.tether_length
+    zs = ring_z_positions(design)
+    return [
+        r_of_z(
+            design.axial_profile,
+            design.profile_exp,
+            design.straight_frac,
+            r_bot,
+            r_top,
+            L,
+            z,
+        ) for z in zs
+    ]
 end
 
 """
@@ -169,10 +188,9 @@ Return the beam spec at a ring of radius r using Do(r) = Do_top · (r/r_top)^exp
 """
 function beam_spec_at_ring(design::TRPTDesignV2, r::Float64)
     scale = (r / max(design.r_hub, 1e-12))^design.Do_scale_exp
-    return BeamSpec(design.beam_profile,
-                    design.Do_top * scale,
-                    design.t_over_D,
-                    design.beam_aspect)
+    return BeamSpec(
+        design.beam_profile, design.Do_top * scale, design.t_over_D, design.beam_aspect
+    )
 end
 
 # ── Enriched evaluation ──────────────────────────────────────────────────────
@@ -193,30 +211,57 @@ Keyword args:
                    Default: λ_opt · v_peak / r_rotor with λ_opt = 4.1.
   m_blade_total -- total blade mass (kg). Lumped to hub ring only. Default 11 kg.
 """
-function evaluate_design(design::TRPTDesignV2;
-                          r_rotor     :: Float64 = 5.0,
-                          elev_angle  :: Float64 = π/6,
-                          v_peak      :: Float64 = OPT_V_PEAK,
-                          fos_req     :: Float64 = OPT_FOS_REQUIRED,
-                          omega_rotor :: Float64 = 4.1 * OPT_V_PEAK / 5.0,
-                          m_blade_total :: Float64 = 11.0,
-                          v_rated     :: Float64 = 11.0,
-                          P_rated     :: Float64 = 10000.0)
-
-    if design.Do_top <= 0 || design.t_over_D <= 0 ||
-       design.n_rings < 3 || design.taper_ratio <= 0 ||
-       design.r_hub <= 0 || design.n_lines < 3 || design.knuckle_mass_kg <= 0
-        return EvalResult(false, Inf, Inf, 0.0, 0.0, 0, Float64[], Float64[],
-                          Float64[], Float64[], false, 0.0, "invalid geometry")
+function evaluate_design(
+    design::TRPTDesignV2;
+    r_rotor::Float64=5.0,
+    elev_angle::Float64=π/6,
+    v_peak::Float64=OPT_V_PEAK,
+    fos_req::Float64=OPT_FOS_REQUIRED,
+    omega_rotor::Float64=4.1 * OPT_V_PEAK / 5.0,
+    m_blade_total::Float64=11.0,
+    v_rated::Float64=11.0,
+    P_rated::Float64=10000.0,
+)
+    if design.Do_top <= 0 ||
+        design.t_over_D <= 0 ||
+        design.n_rings < 3 ||
+        design.taper_ratio <= 0 ||
+        design.r_hub <= 0 ||
+        design.n_lines < 3 ||
+        design.knuckle_mass_kg <= 0
+        return EvalResult(
+            false,
+            Inf,
+            Inf,
+            0.0,
+            0.0,
+            0,
+            Float64[],
+            Float64[],
+            Float64[],
+            Float64[],
+            false,
+            0.0,
+            "invalid geometry",
+        )
     end
 
     radii = ring_radii(design)
     L_seg = segment_axial_lengths(design)
 
-    return _evaluate_trpt_design_impl(design, radii, L_seg;
-        r_rotor=r_rotor, elev_angle=elev_angle, v_peak=v_peak,
-        fos_req=fos_req, omega_rotor=omega_rotor,
-        m_blade_total=m_blade_total, v_rated=v_rated, P_rated=P_rated)
+    return _evaluate_trpt_design_impl(
+        design,
+        radii,
+        L_seg;
+        r_rotor=r_rotor,
+        elev_angle=elev_angle,
+        v_peak=v_peak,
+        fos_req=fos_req,
+        omega_rotor=omega_rotor,
+        m_blade_total=m_blade_total,
+        v_rated=v_rated,
+        P_rated=P_rated,
+    )
 end
 
 # ── Extended search space (14 DoF) ───────────────────────────────────────────
@@ -240,7 +285,8 @@ const TRPT_V2_DIM = 12
 
 function search_bounds_v2(p::SystemParams, beam_profile::BeamProfile)
     sc = sqrt(p.trpt_hub_radius / 2.0)
-    Do_lo = 0.005 * sc;  Do_hi = 0.120 * sc
+    Do_lo = 0.005 * sc;
+    Do_hi = 0.120 * sc
 
     r_hub_lo = 0.80 * p.trpt_hub_radius
     r_hub_hi = 1.20 * p.trpt_hub_radius
@@ -267,22 +313,49 @@ function search_bounds_v2(p::SystemParams, beam_profile::BeamProfile)
         ar_lo, ar_hi = 1.0, 1.0
     end
 
-    lo = [Do_lo, OPT_T_OVER_D_MIN, ar_lo, 0.0, r_hub_lo, taper_lo, n_rings_lo,
-          axial_lo, profile_exp_lo, straight_frac_lo, knuckle_lo, n_lines_lo]
-    hi = [Do_hi, OPT_T_OVER_D_MAX, ar_hi, 1.0, r_hub_hi, taper_hi, n_rings_hi,
-          axial_hi, profile_exp_hi, straight_frac_hi, knuckle_hi, n_lines_hi]
+    lo = [
+        Do_lo,
+        OPT_T_OVER_D_MIN,
+        ar_lo,
+        0.0,
+        r_hub_lo,
+        taper_lo,
+        n_rings_lo,
+        axial_lo,
+        profile_exp_lo,
+        straight_frac_lo,
+        knuckle_lo,
+        n_lines_lo,
+    ]
+    hi = [
+        Do_hi,
+        OPT_T_OVER_D_MAX,
+        ar_hi,
+        1.0,
+        r_hub_hi,
+        taper_hi,
+        n_rings_hi,
+        axial_hi,
+        profile_exp_hi,
+        straight_frac_hi,
+        knuckle_hi,
+        n_lines_hi,
+    ]
     return lo, hi
 end
 
-function design_from_vector_v2(x::AbstractVector,
-                                beam_profile::BeamProfile,
-                                p::SystemParams)
-    n_rings       = max(3, Int(round(x[7])))
+function design_from_vector_v2(
+    x::AbstractVector, beam_profile::BeamProfile, p::SystemParams
+)
+    n_rings = max(3, Int(round(x[7])))
     axial_profile = axial_profile_from_index(Int(round(x[8])))
-    n_lines       = clamp(Int(round(x[12])), 3, 8)
+    n_lines = clamp(Int(round(x[12])), 3, 8)
     return TRPTDesignV2(
         beam_profile,
-        x[1], x[2], x[3], x[4],           # beam params
+        x[1],
+        x[2],
+        x[3],
+        x[4],           # beam params
         axial_profile,
         x[9],                             # profile_exp
         clamp(x[10], 0.0, 0.9),           # straight_frac
@@ -295,28 +368,39 @@ function design_from_vector_v2(x::AbstractVector,
     )
 end
 
-function objective_v2(x::AbstractVector, beam_profile::BeamProfile, p::SystemParams;
-                       rotor_radius::Float64 = 5.0,
-                       elev_angle::Float64   = π/6,
-                       v_peak::Float64       = OPT_V_PEAK)
+function objective_v2(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    rotor_radius::Float64=5.0,
+    elev_angle::Float64=π/6,
+    v_peak::Float64=OPT_V_PEAK,
+)
     design = design_from_vector_v2(x, beam_profile, p)
-    r      = evaluate_design(design; r_rotor=rotor_radius, elev_angle=elev_angle,
-                              v_peak=v_peak)
+    r = evaluate_design(design; r_rotor=rotor_radius, elev_angle=elev_angle, v_peak=v_peak)
     return r.feasible ? r.mass_total_kg : 1e6 + r.mass_total_kg
 end
 
 # ── Baseline v2 — matches existing physical design with LINEAR taper ─────────
 function baseline_design_v2(p::SystemParams)::TRPTDesignV2
-    r_hub       = p.trpt_hub_radius
+    r_hub = p.trpt_hub_radius
     r_bot_guess = 0.48 * r_hub
     taper_ratio = r_bot_guess / r_hub
-    Do_top      = 0.01396 * sqrt(r_hub)
+    Do_top = 0.01396 * sqrt(r_hub)
     return TRPTDesignV2(
         PROFILE_CIRCULAR,
-        Do_top, 0.05, 1.0, 0.5,
-        AXIAL_LINEAR, 1.0, 0.0,
-        r_hub, taper_ratio,
-        p.n_rings, p.tether_length,
-        p.n_lines, OPT_KNUCKLE_MASS_KG,
+        Do_top,
+        0.05,
+        1.0,
+        0.5,
+        AXIAL_LINEAR,
+        1.0,
+        0.0,
+        r_hub,
+        taper_ratio,
+        p.n_rings,
+        p.tether_length,
+        p.n_lines,
+        OPT_KNUCKLE_MASS_KG,
     )
 end

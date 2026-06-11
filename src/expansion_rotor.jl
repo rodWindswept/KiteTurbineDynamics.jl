@@ -50,17 +50,17 @@ Parameters for a single expansion rotor element mounted on a TRPT ring.
 - `shaft_coupling`: torque coupling factor (1.0 = rigidly coupled to shaft)
 """
 struct ExpansionRotorParams
-    n_blades         :: Int
-    blade_radius     :: Float64
-    hub_radius       :: Float64
-    blade_chord      :: Float64
-    CL_blade         :: Float64
-    CD0_blade        :: Float64
-    k_induced        :: Float64
-    bridle_angle_deg :: Float64
-    mass             :: Float64
-    ring_idx         :: Int
-    shaft_coupling   :: Float64
+    n_blades::Int
+    blade_radius::Float64
+    hub_radius::Float64
+    blade_chord::Float64
+    CL_blade::Float64
+    CD0_blade::Float64
+    k_induced::Float64
+    bridle_angle_deg::Float64
+    mass::Float64
+    ring_idx::Int
+    shaft_coupling::Float64
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -91,10 +91,16 @@ Compute aerodynamic forces from an expansion rotor element.
 - `r_eff::Float64`: effective ring radius after spreading (m)
 - `omega_rotor::Float64`: rotor angular velocity (rad/s)
 """
-function expansion_rotor_forces(er::ExpansionRotorParams, rho::Float64,
-                                 v_wind::Float64, omega_shaft::Float64,
-                                 elevation_deg::Float64, r_nominal::Float64,
-                                 T_tether::Float64, n_lines::Int)
+function expansion_rotor_forces(
+    er::ExpansionRotorParams,
+    rho::Float64,
+    v_wind::Float64,
+    omega_shaft::Float64,
+    elevation_deg::Float64,
+    r_nominal::Float64,
+    T_tether::Float64,
+    n_lines::Int,
+)
     # Blade annulus mean radius
     r_mean = (er.blade_radius + er.hub_radius) / 2.0
 
@@ -111,13 +117,13 @@ function expansion_rotor_forces(er::ExpansionRotorParams, rho::Float64,
 
     # Resolve through bridle angle
     bridle_rad = deg2rad(er.bridle_angle_deg)
-    F_radial  = er.n_blades * L_blade * sin(bridle_rad)
-    F_axial   = er.n_blades * L_blade * cos(bridle_rad)
-    tau_drag  = er.n_blades * D_blade * r_mean
+    F_radial = er.n_blades * L_blade * sin(bridle_rad)
+    F_axial = er.n_blades * L_blade * cos(bridle_rad)
+    tau_drag = er.n_blades * D_blade * r_mean
 
     # Effective radius from force balance at tether attachment point
     geometry_factor = 2.0 * tan(π / n_lines)
-    L_seg_estimate  = r_nominal * 2.0   # approximate segment length
+    L_seg_estimate = r_nominal * 2.0   # approximate segment length
     r_eff = effective_radius(r_nominal, F_radial, T_tether, L_seg_estimate, geometry_factor)
 
     # Rotor angular velocity (simplified: rigid coupling)
@@ -145,9 +151,13 @@ where `geometry_factor = 2 · tan(π / n_lines)`.
 # Returns
 - `r_nominal` if F_radial ≤ 0 or T_tether ≤ 0 (no spreading)
 """
-function effective_radius(r_nominal::Float64, F_radial::Float64,
-                           T_tether::Float64, L_seg::Float64,
-                           geometry_factor::Float64)::Float64
+function effective_radius(
+    r_nominal::Float64,
+    F_radial::Float64,
+    T_tether::Float64,
+    L_seg::Float64,
+    geometry_factor::Float64,
+)::Float64
     if F_radial <= 0.0 || T_tether <= 0.0
         return r_nominal
     end

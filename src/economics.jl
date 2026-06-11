@@ -14,10 +14,16 @@ const DYNEEMA_DENSITY = 970.0
 # We use duck-typing: any struct with the required field names will work.
 # This keeps Economics independent of the parent module's type hierarchy.
 
-export CostModel, default_cost_model_2026, compute_capital_cost, compute_lcoe,
-       compute_carbon, competitor_comparison,
-       compute_cost_breakdown, compute_mass_breakdown,
-       compute_annual_energy, compute_annual_revenue
+export CostModel,
+    default_cost_model_2026,
+    compute_capital_cost,
+    compute_lcoe,
+    compute_carbon,
+    competitor_comparison,
+    compute_cost_breakdown,
+    compute_mass_breakdown,
+    compute_annual_energy,
+    compute_annual_revenue
 
 # ── Cost Model ──────────────────────────────────────────────────────────────────
 
@@ -96,7 +102,7 @@ Return a named tuple with mass components (kg):
 function compute_mass_breakdown(p)   # p is a SystemParams-like struct (duck-typed)
     # Dyneema mass: n_lines × length × cross-sectional area × density
     line_xs_area = π * (p.tether_diameter / 2.0)^2
-    dyneema_kg  = p.n_lines * p.tether_length * line_xs_area * DYNEEMA_DENSITY
+    dyneema_kg = p.n_lines * p.tether_length * line_xs_area * DYNEEMA_DENSITY
 
     # Knuckle count: one per line per ring
     knuckle_count = p.n_rings * p.n_lines
@@ -113,7 +119,7 @@ function compute_mass_breakdown(p)   # p is a SystemParams-like struct (duck-typ
     if cfrp_tube_kg < 0.0
         # Fallback: treat full ring mass as CFRP if knuckle estimate overshoots
         cfrp_tube_kg = p.n_rings * p.m_ring
-        knuckle_kg   = 0.0
+        knuckle_kg = 0.0
         knuckle_count = 0
     end
 
@@ -150,32 +156,37 @@ function compute_capital_cost(p, cm::CostModel)::Float64
     mb = compute_mass_breakdown(p)
 
     # Airborne components
-    cost_cfrp     = mb.cfrp_tube_kg * cm.cost_per_kg_cfrp
-    cost_dyneema  = mb.dyneema_kg * cm.cost_per_kg_dyneema
+    cost_cfrp = mb.cfrp_tube_kg * cm.cost_per_kg_cfrp
+    cost_dyneema = mb.dyneema_kg * cm.cost_per_kg_dyneema
     cost_knuckles = mb.knuckle_count * cm.cost_per_knuckle
-    cost_blades   = mb.blade_kg * cm.cost_per_kg_blade
+    cost_blades = mb.blade_kg * cm.cost_per_kg_blade
 
     # Generator
     rated_kw = p.p_rated_w / 1000.0
     cost_generator = rated_kw * cm.cost_per_kw_generator
 
     # Ground station
-    cost_ground = cm.cost_ground_station_fixed +
-                  rated_kw * cm.cost_ground_station_per_kw
+    cost_ground = cm.cost_ground_station_fixed + rated_kw * cm.cost_ground_station_per_kw
 
     # Lift kite — area estimated from power scaling
     # Approximate: ~2 m² for 10 kW, scaling with power^0.5
     lift_area_m2 = 2.0 * sqrt(rated_kw / 10.0)
-    cost_lift_kite = cm.cost_lift_kite_fixed +
-                     lift_area_m2 * cm.cost_lift_kite_per_m2
+    cost_lift_kite = cm.cost_lift_kite_fixed + lift_area_m2 * cm.cost_lift_kite_per_m2
 
     # Fixed costs
     cost_install = cm.cost_installation
-    cost_grid    = cm.cost_grid_connection
+    cost_grid = cm.cost_grid_connection
 
-    total = cost_cfrp + cost_dyneema + cost_knuckles + cost_blades +
-            cost_generator + cost_ground + cost_lift_kite +
-            cost_install + cost_grid
+    total =
+        cost_cfrp +
+        cost_dyneema +
+        cost_knuckles +
+        cost_blades +
+        cost_generator +
+        cost_ground +
+        cost_lift_kite +
+        cost_install +
+        cost_grid
 
     return total
 end
@@ -191,18 +202,17 @@ function compute_cost_breakdown(p, cm::CostModel)
     lift_area_m2 = 2.0 * sqrt(rated_kw / 10.0)
 
     return (;
-        cfrp_tubes    = mb.cfrp_tube_kg * cm.cost_per_kg_cfrp,
-        dyneema       = mb.dyneema_kg * cm.cost_per_kg_dyneema,
-        knuckles      = mb.knuckle_count * cm.cost_per_knuckle,
-        blades        = mb.blade_kg * cm.cost_per_kg_blade,
-        generator     = rated_kw * cm.cost_per_kw_generator,
-        ground_station = cm.cost_ground_station_fixed +
-                         rated_kw * cm.cost_ground_station_per_kw,
-        lift_kite     = cm.cost_lift_kite_fixed +
-                         lift_area_m2 * cm.cost_lift_kite_per_m2,
-        installation  = cm.cost_installation,
-        grid_connection = cm.cost_grid_connection,
-        total         = compute_capital_cost(p, cm),
+        cfrp_tubes=mb.cfrp_tube_kg * cm.cost_per_kg_cfrp,
+        dyneema=mb.dyneema_kg * cm.cost_per_kg_dyneema,
+        knuckles=mb.knuckle_count * cm.cost_per_knuckle,
+        blades=mb.blade_kg * cm.cost_per_kg_blade,
+        generator=rated_kw * cm.cost_per_kw_generator,
+        ground_station=cm.cost_ground_station_fixed +
+                       rated_kw * cm.cost_ground_station_per_kw,
+        lift_kite=cm.cost_lift_kite_fixed + lift_area_m2 * cm.cost_lift_kite_per_m2,
+        installation=cm.cost_installation,
+        grid_connection=cm.cost_grid_connection,
+        total=compute_capital_cost(p, cm),
     )
 end
 
@@ -226,27 +236,30 @@ Compute the Levelized Cost of Energy in £/MWh.
 # Returns
 LCOE in £/MWh.  Divide by 10 to get p/kWh.
 """
-function compute_lcoe(p, cm::CostModel;
-                      cf::Float64 = 0.30,
-                      discount_rate::Float64 = 0.07,
-                      life_years::Float64 = 20.0)::Float64
-
+function compute_lcoe(
+    p,
+    cm::CostModel;
+    cf::Float64=0.30,
+    discount_rate::Float64=0.07,
+    life_years::Float64=20.0,
+)::Float64
     capital_total = compute_capital_cost(p, cm)
 
     # Capital Recovery Factor
     if discount_rate ≈ 0.0
         crf = 1.0 / life_years
     else
-        crf = discount_rate * (1.0 + discount_rate)^life_years /
-              ((1.0 + discount_rate)^life_years - 1.0)
+        crf =
+            discount_rate * (1.0 + discount_rate)^life_years /
+            ((1.0 + discount_rate)^life_years - 1.0)
     end
 
     annual_capital = capital_total * crf
-    annual_om      = capital_total * cm.om_rate
-    total_annual   = annual_capital + annual_om
+    annual_om = capital_total * cm.om_rate
+    total_annual = annual_capital + annual_om
 
     # Annual energy production
-    rated_mw  = p.p_rated_w / 1_000_000.0   # MW
+    rated_mw = p.p_rated_w / 1_000_000.0   # MW
     hours_per_year = 365.25 * 24.0          # 8766 h
     annual_mwh = rated_mw * cf * hours_per_year
 
@@ -262,7 +275,7 @@ end
 
 Compute the annual energy production in MWh.
 """
-function compute_annual_energy(p, cf::Float64 = 0.30)::Float64
+function compute_annual_energy(p, cf::Float64=0.30)::Float64
     rated_mw = p.p_rated_w / 1_000_000.0
     hours_per_year = 365.25 * 24.0
     return rated_mw * cf * hours_per_year
@@ -273,9 +286,7 @@ end
 
 Compute the annual revenue (£) at a given PPA price (p/kWh).
 """
-function compute_annual_revenue(p,
-                                ppa_price_p_kwh::Float64,
-                                cf::Float64 = 0.30)::Float64
+function compute_annual_revenue(p, ppa_price_p_kwh::Float64, cf::Float64=0.30)::Float64
     annual_mwh = compute_annual_energy(p, cf)
     return annual_mwh * ppa_price_p_kwh * 10.0   # MWh → kWh, p → £
 end
@@ -299,19 +310,21 @@ Named tuple with:
   - payback_months: carbon payback time (months)
   - embodied_per_kwh: embodied carbon per kWh over lifetime (gCO2e/kWh)
 """
-function compute_carbon(p, cm::CostModel;
-                        grid_intensity::Float64 = 0.233,
-                        cf::Float64 = 0.30,
-                        life_years::Float64 = 20.0)
-
+function compute_carbon(
+    p,
+    cm::CostModel;
+    grid_intensity::Float64=0.233,
+    cf::Float64=0.30,
+    life_years::Float64=20.0,
+)
     mb = compute_mass_breakdown(p)
 
     # Embodied carbon by material
-    co2_cfrp    = mb.cfrp_tube_kg * cm.kgco2_per_kg_cfrp
+    co2_cfrp = mb.cfrp_tube_kg * cm.kgco2_per_kg_cfrp
     co2_dyneema = mb.dyneema_kg * cm.kgco2_per_kg_dyneema
-    co2_steel   = mb.ground_steel_kg * cm.kgco2_per_kg_steel
+    co2_steel = mb.ground_steel_kg * cm.kgco2_per_kg_steel
     # Blades: GFRP — use CFRP carbon factor as conservative proxy
-    co2_blades  = mb.blade_kg * cm.kgco2_per_kg_cfrp
+    co2_blades = mb.blade_kg * cm.kgco2_per_kg_cfrp
     # Electronics/PMG: ~10 kgCO2e/kg estimated
     co2_generator = 10.0 * (p.p_rated_w / 1000.0)
 
@@ -323,7 +336,7 @@ function compute_carbon(p, cm::CostModel;
 
     # Payback in months
     if annual_offset_kg > 0.0
-        payback_years  = embodied_kg / annual_offset_kg
+        payback_years = embodied_kg / annual_offset_kg
         payback_months = payback_years * 12.0
     else
         payback_months = Inf
@@ -339,12 +352,12 @@ function compute_carbon(p, cm::CostModel;
         annual_offset_kg,
         payback_months,
         embodied_per_kwh,        # gCO2e/kWh
-        breakdown = (;
-            cfrp    = co2_cfrp,
-            dyneema = co2_dyneema,
-            steel   = co2_steel,
-            blades  = co2_blades,
-            generator = co2_generator,
+        breakdown=(;
+            cfrp=co2_cfrp,
+            dyneema=co2_dyneema,
+            steel=co2_steel,
+            blades=co2_blades,
+            generator=co2_generator,
         ),
     )
 end
@@ -360,8 +373,8 @@ for kite turbines vs other generation technologies.
 Source data: Lazard LCOE 2024, BEIS 2023, Windswept internal estimates.
 """
 function competitor_comparison()
-    return DataFrame(
-        Technology = [
+    return DataFrame(;
+        Technology=[
             "Kite Turbine\n(TRPT 10kW)",
             "Kite Turbine\n(TRPT 50kW)",
             "Rooftop Solar PV\n(50kWp)",
@@ -370,7 +383,7 @@ function competitor_comparison()
             "Gas Peaker\n(OCGT)",
             "Nuclear\n(EPR)",
         ],
-        LCOE_p_kWh = [
+        LCOE_p_kWh=[
             4.8,    # TRPT 10kW — ~5p/kWh target
             3.5,    # TRPT 50kW — scale benefits
             7.0,    # Rooftop solar ~7p/kWh
@@ -379,7 +392,7 @@ function competitor_comparison()
             15.0,   # Gas peaker
             12.0,   # Nuclear
         ],
-        Carbon_g_kWh = [
+        Carbon_g_kWh=[
             0.17,   # TRPT — ultra-low materials
             0.12,   # TRPT 50kW — lower per-kW embodied
             41.0,   # Solar PV
@@ -388,7 +401,7 @@ function competitor_comparison()
             490.0,  # Gas (CCGT ~350–490)
             12.0,   # Nuclear
         ],
-        Capacity_Factor = [
+        Capacity_Factor=[
             0.30,   # Kite 10kW — higher altitude wind
             0.35,   # Kite 50kW — larger swept area, higher altitude
             0.11,   # Solar UK ~11%
@@ -397,7 +410,7 @@ function competitor_comparison()
             0.10,   # Gas peaker (dispatchable but low utilisation)
             0.90,   # Nuclear baseload
         ],
-        Annual_MWh = [
+        Annual_MWh=[
             26.3,   # 10kW × 30% × 8766h
             153.4,  # 50kW × 35% × 8766h
             44.0,   # 50kWp × 11% × 8766h ≈ 48 MWh (rounded)

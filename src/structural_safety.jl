@@ -10,11 +10,11 @@ const TETHER_SWL = 3500.0   # N — Dyneema 3 mm safe working load
 
 # ── CFRP tube structural constants ────────────────────────────────────────────
 # Ring frames are built from CFRP hollow tubes; see TRPT_Ring_Scalability_Report §3.
-const E_CFRP      = 70e9    # Pa  — conservative isotropic CFRP Young's modulus
-const RHO_CFRP    = 1600.0  # kg/m³ — CFRP density
-const T_OVER_D    = 0.05    # t/D wall ratio — aerodynamic and structural optimum
-const T_MIN_WALL  = 5e-4    # m   — 0.5 mm minimum manufacturable wall thickness
-const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
+const E_CFRP = 70e9    # Pa  — conservative isotropic CFRP Young's modulus
+const RHO_CFRP = 1600.0  # kg/m³ — CFRP density
+const T_OVER_D = 0.05    # t/D wall ratio — aerodynamic and structural optimum
+const T_MIN_WALL = 5e-4    # m   — 0.5 mm minimum manufacturable wall thickness
+const FOS_DESIGN = 3.0     # column buckling factor of safety at design point
 
 # Scaling law from analysis (exact thin-wall calibration, 10 kW rated, 5-line pentagon,
 # T_line ≈ 2333 N):  Do = DO_SCALE × √R.
@@ -24,7 +24,7 @@ const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
-const G_CFRP       = 5e9    # Pa — conservative shear modulus (woven CFRP layup)
+const G_CFRP = 5e9    # Pa — conservative shear modulus (woven CFRP layup)
 const σ_CFRP_COMPR = 600e6  # Pa — compressive strength (conservative unidirectional)
 
 """
@@ -36,29 +36,30 @@ Uses the unified SpacerRingDesign module under the hood.
 """
 function tube_props(R::Float64)
     Do = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
-    t  = max(T_OVER_D * Do, T_MIN_WALL)
-    
+    t = max(T_OVER_D * Do, T_MIN_WALL)
+
     # Instantiate CircularTube (paired with DEFAULT_CFRP)
     tube = CircularTube(Do, t / Do)
-    
+
     # Query properties under unit length and FixedFixedEnds (space frame joints)
     props = strut_properties(tube, 1.0, FixedFixedEnds())
-    
+
     return (
-        Do      = Do, 
-        t       = t, 
-        Di      = Do - 2.0 * t, 
-        A       = props.A, 
-        I_bend  = props.I_min, 
-        J       = props.J,
-        E       = tube.material.E,
-        G       = tube.material.G,
-        σ_yield = tube.material.σ_yield
+        Do=Do,
+        t=t,
+        Di=Do - 2.0 * t,
+        A=props.A,
+        I_bend=props.I_min,
+        J=props.J,
+        E=tube.material.E,
+        G=tube.material.G,
+        σ_yield=tube.material.σ_yield,
     )
 end
 
 # Backward-compat wrapper — retained for external callers; internal code uses tube_props
-tube_I(Do::Float64, t::Float64)::Float64 = strut_properties(CircularTube(Do, t / Do), 1.0, FixedFixedEnds()).I_min
+tube_I(Do::Float64, t::Float64)::Float64 =
+    strut_properties(CircularTube(Do, t / Do), 1.0, FixedFixedEnds()).I_min
 
 """
     ring_safety_frame(u, alpha, sys, p, t, wind_fn) → Vector{NamedTuple}
@@ -68,21 +69,27 @@ Delegates to `ring_element_analysis` and flattens results into the same NamedTup
 (`ring_id`, `radius`, `N_comp`, `P_crit`, `tube_Do_mm`, `utilisation`, `fos`, `exceeded`)
 that downstream consumers (e.g. `capture_frame`) expect.
 """
-function ring_safety_frame(u      ::AbstractVector,
-                            alpha  ::AbstractVector,
-                            sys    ::KiteTurbineSystem,
-                            p      ::SystemParams,
-                            t      ::Float64 = 0.0,
-                            wind_fn::Union{Nothing, Function} = nothing)
+function ring_safety_frame(
+    u::AbstractVector,
+    alpha::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    t::Float64=0.0,
+    wind_fn::Union{Nothing, Function}=nothing,
+)
     frames = ring_element_analysis(u, alpha, sys, p, t, wind_fn)
-    return [(ring_id     = f.ring_id,
-             radius      = f.radius,
-             N_comp      = maximum(b.N     for b in f.beams; init=0.0),
-             P_crit      = maximum(b.N_crit for b in f.beams; init=1.0),
-             tube_Do_mm  = tube_props(f.radius).Do * 1e3,
-             utilisation = f.max_util,
-             fos         = f.max_util > 1e-9 ? 1.0 / f.max_util : Inf,
-             exceeded    = (f.max_util > 1.0)) for f in frames]
+    return [
+        (
+            ring_id=f.ring_id,
+            radius=f.radius,
+            N_comp=maximum(b.N for b in f.beams; init=0.0),
+            P_crit=maximum(b.N_crit for b in f.beams; init=1.0),
+            tube_Do_mm=tube_props(f.radius).Do * 1e3,
+            utilisation=f.max_util,
+            fos=f.max_util > 1e-9 ? 1.0 / f.max_util : Inf,
+            exceeded=(f.max_util > 1.0),
+        ) for f in frames
+    ]
 end
 
 """
@@ -96,14 +103,16 @@ Returns:
 - `F_vertices`: 3×n matrix of individual vertex force vectors (N).
 - `M_net`: 3D net moment vector (N·m) about the ground station center.
 """
-function ground_station_forces(u      ::AbstractVector,
-                               alpha  ::AbstractVector,
-                               sys    ::KiteTurbineSystem,
-                               p      ::SystemParams,
-                               t      ::Float64 = 0.0,
-                               wind_fn::Union{Nothing, Function} = nothing)
-    hub_gid  = sys.rotor.node_id
-    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
+function ground_station_forces(
+    u::AbstractVector,
+    alpha::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    t::Float64=0.0,
+    wind_fn::Union{Nothing, Function}=nothing,
+)
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
     perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
 
     ring_gid = sys.ring_ids[1]
@@ -116,7 +125,7 @@ function ground_station_forces(u      ::AbstractVector,
     F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
 
     # Compute net force
-    F_net = sum(F_global, dims=2)[:]
+    F_net = sum(F_global; dims=2)[:]
     F_net_mag = norm(F_net)
 
     # Compute individual vertex force magnitudes and peak
@@ -131,10 +140,10 @@ function ground_station_forces(u      ::AbstractVector,
     end
 
     return (
-        F_net = F_net,
-        F_net_mag = F_net_mag,
-        F_vertex_max = F_vertex_max,
-        F_vertices = F_global,
-        M_net = M_net
+        F_net=F_net,
+        F_net_mag=F_net_mag,
+        F_vertex_max=F_vertex_max,
+        F_vertices=F_global,
+        M_net=M_net,
     )
 end

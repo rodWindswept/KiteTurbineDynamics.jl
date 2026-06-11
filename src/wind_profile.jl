@@ -20,8 +20,9 @@ Returns 0.0 for any non-positive altitude.
 - `h`                 : Target altitude (m)
 - `hellmann_exponent` : Terrain-dependent shear exponent α (dimensionless); default 1/7
 """
-function wind_at_altitude(v_ref::Float64, h_ref::Float64, h::Float64;
-                          hellmann_exponent::Float64 = 1.0 / 7.0)::Float64
+function wind_at_altitude(
+    v_ref::Float64, h_ref::Float64, h::Float64; hellmann_exponent::Float64=1.0 / 7.0
+)::Float64
     if h <= 0.0
         return 0.0
     end
@@ -61,12 +62,14 @@ steady_wind(v_ref::Float64) = (t::Float64) -> v_ref
 Return a wind function that linearly ramps from `v_start` to `v_end` between
 `t_ramp_start` and `t_ramp_end` (s). Constant outside that window.
 """
-function wind_ramp(v_start::Float64, v_end::Float64,
-                   t_ramp_start::Float64, t_ramp_end::Float64)
+function wind_ramp(
+    v_start::Float64, v_end::Float64, t_ramp_start::Float64, t_ramp_end::Float64
+)
     function f(t::Float64)::Float64
         t <= t_ramp_start && return v_start
-        t >= t_ramp_end   && return v_end
-        return v_start + (v_end - v_start) * (t - t_ramp_start) / (t_ramp_end - t_ramp_start)
+        t >= t_ramp_end && return v_end
+        return v_start +
+               (v_end - v_start) * (t - t_ramp_start) / (t_ramp_end - t_ramp_start)
     end
     return f
 end
@@ -78,8 +81,7 @@ Return a wind function with a raised-cosine (Hann-window) gust from `t_start`
 to `t_end`. Peak speed is `v_gust`; baseline speed is `v_base` outside the
 gust window. Smooth (C¹ continuous) at the gust edges.
 """
-function gust_event(v_base::Float64, v_gust::Float64,
-                    t_start::Float64, t_end::Float64)
+function gust_event(v_base::Float64, v_gust::Float64, t_start::Float64, t_end::Float64)
     function f(t::Float64)::Float64
         (t < t_start || t > t_end) && return v_base
         frac = (t - t_start) / (t_end - t_start)
@@ -100,30 +102,33 @@ Return a wind function based on a first-order Markov (AR(1)) turbulence model.
   linearly for any query time.
 - Wind speed is clamped to ≥ 0.5 m/s to prevent negative values.
 """
-function turbulent_wind(v_mean::Float64, turbulence_intensity::Float64,
-                        t_max::Float64;
-                        dt::Float64   = 1.0 / 30.0,
-                        rng_seed::Int = 42)
-    σ   = turbulence_intensity * v_mean
-    L   = 340.0               # IEC 61400-1 integral length scale (m)
+function turbulent_wind(
+    v_mean::Float64,
+    turbulence_intensity::Float64,
+    t_max::Float64;
+    dt::Float64=1.0 / 30.0,
+    rng_seed::Int=42,
+)
+    σ = turbulence_intensity * v_mean
+    L = 340.0               # IEC 61400-1 integral length scale (m)
     T_L = L / v_mean          # integral time scale (s)
-    φ   = exp(-dt / T_L)      # AR(1) autocorrelation coefficient
+    φ = exp(-dt / T_L)      # AR(1) autocorrelation coefficient
 
-    rng  = MersenneTwister(rng_seed)
-    n    = round(Int, t_max / dt) + 2
-    ts   = [(i - 1) * dt for i in 1:n]
-    vs   = zeros(Float64, n)
+    rng = MersenneTwister(rng_seed)
+    n = round(Int, t_max / dt) + 2
+    ts = [(i - 1) * dt for i in 1:n]
+    vs = zeros(Float64, n)
     vs[1] = v_mean
-    w     = 0.0
+    w = 0.0
     for i in 2:n
-        w     = φ * w + sqrt(1.0 - φ^2) * randn(rng)
+        w = φ * w + sqrt(1.0 - φ^2) * randn(rng)
         vs[i] = max(0.5, v_mean + σ * w)
     end
 
     function interp(t::Float64)::Float64
         i = searchsortedfirst(ts, t)
-        i == 1             && return vs[1]
-        i > length(ts)     && return vs[end]
+        i == 1 && return vs[1]
+        i > length(ts) && return vs[end]
         frac = (t - ts[i - 1]) / (ts[i] - ts[i - 1])
         return vs[i - 1] + frac * (vs[i] - vs[i - 1])
     end

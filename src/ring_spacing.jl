@@ -33,7 +33,7 @@ using LinearAlgebra, Statistics
 
 # ── Constants ────────────────────────────────────────────────────────────────
 const OPT_MAX_GROUND_RADIUS = 1.5   # m — deployment transport limit (flatbed trailer)
-const TRPT_V4_DIM           = 9     # DoF count for v4 optimiser vector
+const TRPT_V4_DIM = 9     # DoF count for v4 optimiser vector
 
 # ── Core geometry function ───────────────────────────────────────────────────
 """
@@ -57,26 +57,27 @@ Returns
   radii        — ring radii at each z_position, increasing ground→hub     (m)
   n_rings      — number of intermediate rings (total rings = n_rings + 2)
 """
-function ring_spacing_v4(r_top::Float64,
-                          r_bottom::Float64,
-                          tether_length::Float64,
-                          target_Lr::Float64;
-                          max_rings::Int = 20)::Tuple{Vector{Float64}, Vector{Float64}, Int}
-
-    r_top        > 0 || throw(ArgumentError("r_top must be positive"))
-    r_bottom     > 0 || throw(ArgumentError("r_bottom must be positive"))
-    r_top       >= r_bottom || throw(ArgumentError("r_top must be ≥ r_bottom"))
+function ring_spacing_v4(
+    r_top::Float64,
+    r_bottom::Float64,
+    tether_length::Float64,
+    target_Lr::Float64;
+    max_rings::Int=20,
+)::Tuple{Vector{Float64}, Vector{Float64}, Int}
+    r_top > 0 || throw(ArgumentError("r_top must be positive"))
+    r_bottom > 0 || throw(ArgumentError("r_bottom must be positive"))
+    r_top >= r_bottom || throw(ArgumentError("r_top must be ≥ r_bottom"))
     tether_length > 0 || throw(ArgumentError("tether_length must be positive"))
-    target_Lr    > 0 || throw(ArgumentError("target_Lr must be positive"))
+    target_Lr > 0 || throw(ArgumentError("target_Lr must be positive"))
 
     # ── Cylindrical degenerate case ──────────────────────────────────────────
     if (r_top - r_bottom) / r_top < 1e-9
-        L_seg  = target_Lr * r_top
+        L_seg = target_Lr * r_top
         n_segs = max(1, round(Int, tether_length / L_seg))
         n_segs = min(n_segs, max_rings + 1)
-        n_tot  = n_segs + 1
-        zs     = collect(range(0.0, tether_length, length=n_tot))
-        rs     = fill(r_top, n_tot)
+        n_tot = n_segs + 1
+        zs = collect(range(0.0, tether_length; length=n_tot))
+        rs = fill(r_top, n_tot)
         return (zs, rs, n_segs - 1)
     end
 
@@ -85,7 +86,7 @@ function ring_spacing_v4(r_top::Float64,
 
     # Natural geometric ratio for L/r_mid = target_Lr exactly:
     #   derived from (r_i - r_{i+1}) / (α·(r_i+r_{i+1})/2) = c
-    c         = target_Lr
+    c = target_Lr
     k_natural = (2.0 - α * c) / (2.0 + α * c)
     if k_natural <= 0.0
         # target_Lr is so large that a single segment spans the full shaft;
@@ -108,12 +109,12 @@ function ring_spacing_v4(r_top::Float64,
 
     # Compute z positions from the linear taper: z_i = (r_i - r_bottom) / α
     z_hub_first = [(r - r_bottom) / α for r in radii_hub_first]
-    z_hub_first[1]   = tether_length  # force exact hub
+    z_hub_first[1] = tether_length  # force exact hub
     z_hub_first[end] = 0.0            # force exact ground
 
     # Return in ground-first order (ascending z)
     z_positions = reverse(z_hub_first)
-    radii       = reverse(radii_hub_first)
+    radii = reverse(radii_hub_first)
 
     return (z_positions, radii, n_segs - 1)
 end
@@ -133,17 +134,17 @@ n_rings is computed from (r_hub, r_bottom, tether_length, target_Lr) and is
 not a field of this struct.
 """
 struct TRPTDesignV4
-    beam_profile    :: BeamProfile
-    Do_top          :: Float64
-    t_over_D        :: Float64
-    beam_aspect     :: Float64
-    Do_scale_exp    :: Float64
-    r_hub           :: Float64    # top (hub) ring radius
-    r_bottom        :: Float64    # ground ring radius — design variable
-    target_Lr       :: Float64    # target L/r for all segments — design variable
-    tether_length   :: Float64
-    n_lines         :: Int
-    knuckle_mass_kg :: Float64
+    beam_profile::BeamProfile
+    Do_top::Float64
+    t_over_D::Float64
+    beam_aspect::Float64
+    Do_scale_exp::Float64
+    r_hub::Float64    # top (hub) ring radius
+    r_bottom::Float64    # ground ring radius — design variable
+    target_Lr::Float64    # target L/r for all segments — design variable
+    tether_length::Float64
+    n_lines::Int
+    knuckle_mass_kg::Float64
 end
 
 # ── Geometry helpers for v4 ──────────────────────────────────────────────────
@@ -153,8 +154,9 @@ end
 Axial positions of all rings, ground-first (z=0) to hub (z=tether_length).
 """
 function ring_z_positions(design::TRPTDesignV4)
-    zs, _, _ = ring_spacing_v4(design.r_hub, design.r_bottom,
-                                 design.tether_length, design.target_Lr)
+    zs, _, _ = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+    )
     return zs
 end
 
@@ -164,8 +166,9 @@ end
 Radii of all rings in ground-first order.
 """
 function ring_radii(design::TRPTDesignV4)
-    _, rs, _ = ring_spacing_v4(design.r_hub, design.r_bottom,
-                                 design.tether_length, design.target_Lr)
+    _, rs, _ = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+    )
     return rs
 end
 
@@ -184,10 +187,9 @@ end
 """
 function beam_spec_at_ring(design::TRPTDesignV4, r::Float64)
     scale = (r / max(design.r_hub, 1e-12))^design.Do_scale_exp
-    return BeamSpec(design.beam_profile,
-                    design.Do_top * scale,
-                    design.t_over_D,
-                    design.beam_aspect)
+    return BeamSpec(
+        design.beam_profile, design.Do_top * scale, design.t_over_D, design.beam_aspect
+    )
 end
 
 # ── Structural evaluation for v4 ─────────────────────────────────────────────
@@ -204,40 +206,80 @@ non-uniform axial spacings from ring_spacing_v4 instead of uniform spacing.
 Additional feasibility constraint: design.r_bottom ≤ max_ground_radius
 (deployment/transport limit on the ground ring footprint).
 """
-function evaluate_design(design::TRPTDesignV4;
-                          r_rotor          :: Float64 = 5.0,
-                          elev_angle       :: Float64 = π/6,
-                          v_peak           :: Float64 = OPT_V_PEAK,
-                          fos_req          :: Float64 = OPT_FOS_REQUIRED,
-                          omega_rotor      :: Float64 = 4.1 * OPT_V_PEAK / 5.0,
-                          m_blade_total    :: Float64 = 11.0,
-                          max_ground_radius:: Float64 = OPT_MAX_GROUND_RADIUS,
-                          v_rated          :: Float64 = 11.0,
-                          P_rated          :: Float64 = 10000.0)
+function evaluate_design(
+    design::TRPTDesignV4;
+    r_rotor::Float64=5.0,
+    elev_angle::Float64=π/6,
+    v_peak::Float64=OPT_V_PEAK,
+    fos_req::Float64=OPT_FOS_REQUIRED,
+    omega_rotor::Float64=4.1 * OPT_V_PEAK / 5.0,
+    m_blade_total::Float64=11.0,
+    max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+    v_rated::Float64=11.0,
+    P_rated::Float64=10000.0,
+)
 
     # ── Ground ring deployment constraint ─────────────────────────────────
     if design.r_bottom > max_ground_radius
-        return EvalResult(false, Inf, Inf, 0.0, 0.0, 0, Float64[], Float64[],
-                          Float64[], Float64[], false, 0.0,
-                          "r_bottom exceeds max_ground_radius")
+        return EvalResult(
+            false,
+            Inf,
+            Inf,
+            0.0,
+            0.0,
+            0,
+            Float64[],
+            Float64[],
+            Float64[],
+            Float64[],
+            false,
+            0.0,
+            "r_bottom exceeds max_ground_radius",
+        )
     end
 
-    if design.Do_top <= 0 || design.t_over_D <= 0 ||
-       design.r_hub <= 0  || design.r_bottom <= 0  ||
-       design.target_Lr <= 0 || design.n_lines < 3 ||
-       design.knuckle_mass_kg <= 0
-        return EvalResult(false, Inf, Inf, 0.0, 0.0, 0, Float64[], Float64[],
-                          Float64[], Float64[], false, 0.0, "invalid geometry")
+    if design.Do_top <= 0 ||
+        design.t_over_D <= 0 ||
+        design.r_hub <= 0 ||
+        design.r_bottom <= 0 ||
+        design.target_Lr <= 0 ||
+        design.n_lines < 3 ||
+        design.knuckle_mass_kg <= 0
+        return EvalResult(
+            false,
+            Inf,
+            Inf,
+            0.0,
+            0.0,
+            0,
+            Float64[],
+            Float64[],
+            Float64[],
+            Float64[],
+            false,
+            0.0,
+            "invalid geometry",
+        )
     end
 
-    zs, radii, _ = ring_spacing_v4(design.r_hub, design.r_bottom,
-                                    design.tether_length, design.target_Lr)
+    zs, radii, _ = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+    )
     L_seg = diff(zs)
 
-    return _evaluate_trpt_design_impl(design, radii, L_seg;
-        r_rotor=r_rotor, elev_angle=elev_angle, v_peak=v_peak,
-        fos_req=fos_req, omega_rotor=omega_rotor,
-        m_blade_total=m_blade_total, v_rated=v_rated, P_rated=P_rated)
+    return _evaluate_trpt_design_impl(
+        design,
+        radii,
+        L_seg;
+        r_rotor=r_rotor,
+        elev_angle=elev_angle,
+        v_peak=v_peak,
+        fos_req=fos_req,
+        omega_rotor=omega_rotor,
+        m_blade_total=m_blade_total,
+        v_rated=v_rated,
+        P_rated=P_rated,
+    )
 end
 
 # ── v4 search space ───────────────────────────────────────────────────────────
@@ -254,10 +296,14 @@ Vector layout for v4 optimisation (9 DoF):
   x[8]  knuckle_mass_kg     [kg]   per-vertex point mass
   x[9]  n_lines             [int]  polygon sides 3..8
 """
-function search_bounds_v4(p::SystemParams, beam_profile::BeamProfile;
-                           max_ground_radius::Float64 = OPT_MAX_GROUND_RADIUS)
-    sc     = sqrt(p.trpt_hub_radius / 2.0)
-    Do_lo  = 0.005 * sc;  Do_hi = 0.120 * sc
+function search_bounds_v4(
+    p::SystemParams,
+    beam_profile::BeamProfile;
+    max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+)
+    sc = sqrt(p.trpt_hub_radius / 2.0)
+    Do_lo = 0.005 * sc;
+    Do_hi = 0.120 * sc
 
     r_hub_lo = 0.80 * p.trpt_hub_radius
     r_hub_hi = 1.20 * p.trpt_hub_radius
@@ -265,10 +311,13 @@ function search_bounds_v4(p::SystemParams, beam_profile::BeamProfile;
     r_bot_lo = 0.3
     r_bot_hi = max_ground_radius
 
-    Lr_lo = 0.4;  Lr_hi = 2.0
+    Lr_lo = 0.4;
+    Lr_hi = 2.0
 
-    knuckle_lo = 0.010;  knuckle_hi = 0.200
-    n_lines_lo = 3.0;    n_lines_hi = 8.0
+    knuckle_lo = 0.010;
+    knuckle_hi = 0.200
+    n_lines_lo = 3.0;
+    n_lines_hi = 8.0
 
     ar_lo, ar_hi = if beam_profile == PROFILE_ELLIPTICAL
         0.25, 1.0
@@ -278,22 +327,42 @@ function search_bounds_v4(p::SystemParams, beam_profile::BeamProfile;
         1.0, 1.0
     end
 
-    lo = [Do_lo, OPT_T_OVER_D_MIN, ar_lo, 0.0,
-          r_hub_lo, r_bot_lo, Lr_lo, knuckle_lo, n_lines_lo]
-    hi = [Do_hi, OPT_T_OVER_D_MAX, ar_hi, 1.0,
-          r_hub_hi, r_bot_hi, Lr_hi, knuckle_hi, n_lines_hi]
+    lo = [
+        Do_lo,
+        OPT_T_OVER_D_MIN,
+        ar_lo,
+        0.0,
+        r_hub_lo,
+        r_bot_lo,
+        Lr_lo,
+        knuckle_lo,
+        n_lines_lo,
+    ]
+    hi = [
+        Do_hi,
+        OPT_T_OVER_D_MAX,
+        ar_hi,
+        1.0,
+        r_hub_hi,
+        r_bot_hi,
+        Lr_hi,
+        knuckle_hi,
+        n_lines_hi,
+    ]
     return lo, hi
 end
 
-function design_from_vector_v4(x::AbstractVector,
-                                 beam_profile::BeamProfile,
-                                 p::SystemParams;
-                                 max_ground_radius::Float64 = OPT_MAX_GROUND_RADIUS)
+function design_from_vector_v4(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+)
     n_lines = clamp(Int(round(x[9])), 3, 8)
-    r_hub   = x[5]
-    r_bot   = clamp(x[6], 0.1, max_ground_radius)
+    r_hub = x[5]
+    r_bot = clamp(x[6], 0.1, max_ground_radius)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
-    r_bot   = min(r_bot, r_hub)
+    r_bot = min(r_bot, r_hub)
     return TRPTDesignV4(
         beam_profile,
         x[1],                            # Do_top
@@ -309,25 +378,36 @@ function design_from_vector_v4(x::AbstractVector,
     )
 end
 
-function objective_v4(x::AbstractVector, beam_profile::BeamProfile, p::SystemParams;
-                       rotor_radius::Float64     = 5.0,
-                       elev_angle::Float64       = π/6,
-                       v_peak::Float64           = OPT_V_PEAK,
-                       max_ground_radius::Float64 = OPT_MAX_GROUND_RADIUS)
-    design = design_from_vector_v4(x, beam_profile, p;
-                                    max_ground_radius=max_ground_radius)
-    r      = evaluate_design(design; r_rotor=rotor_radius, elev_angle=elev_angle,
-                              v_peak=v_peak, max_ground_radius=max_ground_radius)
+function objective_v4(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    rotor_radius::Float64=5.0,
+    elev_angle::Float64=π/6,
+    v_peak::Float64=OPT_V_PEAK,
+    max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+)
+    design = design_from_vector_v4(x, beam_profile, p; max_ground_radius=max_ground_radius)
+    r = evaluate_design(
+        design;
+        r_rotor=rotor_radius,
+        elev_angle=elev_angle,
+        v_peak=v_peak,
+        max_ground_radius=max_ground_radius,
+    )
     return r.feasible ? r.mass_total_kg : 1e6 + r.mass_total_kg
 end
 
 # ── Baseline v4 design ────────────────────────────────────────────────────────
 function baseline_design_v4(p::SystemParams)::TRPTDesignV4
-    r_hub  = p.trpt_hub_radius
+    r_hub = p.trpt_hub_radius
     Do_top = 0.01396 * sqrt(r_hub)
     return TRPTDesignV4(
         PROFILE_CIRCULAR,
-        Do_top, 0.05, 1.0, 0.5,
+        Do_top,
+        0.05,
+        1.0,
+        0.5,
         r_hub,
         0.48 * r_hub,    # r_bottom = 0.48·r_hub (same ratio as baseline taper)
         1.0,             # target_Lr = 1.0 (moderate slenderness)

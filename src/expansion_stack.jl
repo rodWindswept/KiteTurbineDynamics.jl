@@ -41,33 +41,52 @@ Configuration for a stack of expansion rotors mounted on TRPT rings.
 - `shaft_coupling::Float64`: torque coupling factor (1.0 = rigid)
 """
 struct ExpansionStackConfig
-    placement        :: Symbol
-    custom_rings     :: Vector{Int}
-    n_rings          :: Int
-    n_expansion      :: Int
-    blade_radius     :: Float64
-    hub_radius       :: Float64
-    blade_chord      :: Float64
-    CL_blade         :: Float64
-    CD0_blade        :: Float64
-    k_induced        :: Float64
-    bridle_angle_deg :: Float64
-    mass_per_rotor   :: Float64
-    shaft_coupling   :: Float64
+    placement::Symbol
+    custom_rings::Vector{Int}
+    n_rings::Int
+    n_expansion::Int
+    blade_radius::Float64
+    hub_radius::Float64
+    blade_chord::Float64
+    CL_blade::Float64
+    CD0_blade::Float64
+    k_induced::Float64
+    bridle_angle_deg::Float64
+    mass_per_rotor::Float64
+    shaft_coupling::Float64
 end
 
 # Default constructor — custom_rings defaults to empty
-function ExpansionStackConfig(; placement::Symbol, n_rings::Int, n_expansion::Int,
-                               blade_radius::Float64, hub_radius::Float64,
-                               blade_chord::Float64, CL_blade::Float64,
-                               CD0_blade::Float64, k_induced::Float64,
-                               bridle_angle_deg::Float64, mass_per_rotor::Float64,
-                               shaft_coupling::Float64=1.0,
-                               custom_rings::Vector{Int}=Int[])
-    return ExpansionStackConfig(placement, custom_rings, n_rings, n_expansion,
-                                 blade_radius, hub_radius, blade_chord,
-                                 CL_blade, CD0_blade, k_induced,
-                                 bridle_angle_deg, mass_per_rotor, shaft_coupling)
+function ExpansionStackConfig(;
+    placement::Symbol,
+    n_rings::Int,
+    n_expansion::Int,
+    blade_radius::Float64,
+    hub_radius::Float64,
+    blade_chord::Float64,
+    CL_blade::Float64,
+    CD0_blade::Float64,
+    k_induced::Float64,
+    bridle_angle_deg::Float64,
+    mass_per_rotor::Float64,
+    shaft_coupling::Float64=1.0,
+    custom_rings::Vector{Int}=Int[],
+)
+    return ExpansionStackConfig(
+        placement,
+        custom_rings,
+        n_rings,
+        n_expansion,
+        blade_radius,
+        hub_radius,
+        blade_chord,
+        CL_blade,
+        CD0_blade,
+        k_induced,
+        bridle_angle_deg,
+        mass_per_rotor,
+        shaft_coupling,
+    )
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -140,7 +159,9 @@ function build_expansion_stack(cfg::ExpansionStackConfig)
         # Filter custom rings to available ones
         intersect(cfg.custom_rings, available)
     else
-        error("Unknown placement mode: $(cfg.placement). Use :alternating, :clustered, or :custom.")
+        error(
+            "Unknown placement mode: $(cfg.placement). Use :alternating, :clustered, or :custom.",
+        )
     end
 
     # Build ExpansionRotorParams for each selected ring

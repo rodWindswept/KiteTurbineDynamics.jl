@@ -7,12 +7,14 @@ using LinearAlgebra
 Single source of truth for the generator control law and mechanical brake logic.
 Stateless and zero-allocation. Used by both the ODE solver and telemetry observers.
 """
-function get_generator_torque(u::AbstractVector,
-                              sys::KiteTurbineSystem,
-                              p::SystemParams,
-                              t::Float64,
-                              wind_fn::Function;
-                              brake_engaged::Bool)
+function get_generator_torque(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    t::Float64,
+    wind_fn::Function;
+    brake_engaged::Bool,
+)
     N = sys.n_total
     Nr = sys.n_ring
     hub_gid = sys.rotor.node_id
@@ -21,25 +23,26 @@ function get_generator_torque(u::AbstractVector,
 
     omega_hub = u[6N + Nr + hub_ri]
     omega_gnd = u[6N + Nr + gnd_ri]
-    hub_pos = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
+    hub_pos = @view u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
 
     # Winch payout base and geometric scaling for system size
     payout_base = p.β_min < 5.0 ? 15.0 : p.β_min
-    geom_scale  = p.tether_length / 30.0
-    max_payout  = payout_base * geom_scale
+    geom_scale = p.tether_length / 30.0
+    max_payout = payout_base * geom_scale
 
     ctrl_mode = round(p.β_rate_max)
-    
+
     # Check flying IMU telemetry health/availability
     imu_reliable = p.kp_elev ≈ 1.0
-    
+
     if ctrl_mode ≈ 1.0 || ctrl_mode ≈ 2.0
         # Physical shaft elevation angle β_actual
         β_actual = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
         β_design = p.elevation_angle
-        β_furl   = deg2rad(60.0)
-        elev_scale = 1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
-        
+        β_furl = deg2rad(60.0)
+        elev_scale =
+            1.0 - 0.8 * clamp((β_actual - β_design) / (β_furl - β_design), 0.0, 1.0)
+
         if ctrl_mode ≈ 1.0
             # Mode 1: Active Torsional Damping
             if imu_reliable
@@ -64,7 +67,10 @@ function get_generator_torque(u::AbstractVector,
         end
     else
         # Mode 0: Standard MPPT with dynamic max payout
-        tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * max(0.0, 1.0 - p.backline_payout / max_payout)
+        tau_gen =
+            p.k_mppt *
+            max(omega_gnd, 0.0)^2 *
+            max(0.0, 1.0 - p.backline_payout / max_payout)
     end
 
     # Apply two-sided Field IMU Active Damping if toggle is active and IMU is reliable
@@ -87,63 +93,86 @@ function get_generator_torque(u::AbstractVector,
         tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
         tau_gen = tau_brake
     end
-    
+
     return tau_gen, new_brake_engaged
 end
 
-function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
-                               torques     ::AbstractVector,
-                               u           ::AbstractVector,
-                               omega       ::AbstractVector,
-                               sys         ::KiteTurbineSystem,
-                               p           ::SystemParams,
-                               wind_fn     ::Function,
-                               t           ::Float64,
-                               lift_device ::Union{Nothing, LiftDevice} = nothing)
-    N        = sys.n_total
-    hub_gid  = sys.rotor.node_id
-    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
-    hub_pos  = @view u[3*(hub_gid-1)+1 : 3*hub_gid]
-    bearing_gid    = sys.bearing_id
-    bearing_pos    = @view u[3*(bearing_gid-1)+1 : 3*bearing_gid]
+function compute_ring_forces!(
+    forces::Vector{<:AbstractVector},
+    torques::AbstractVector,
+    u::AbstractVector,
+    omega::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    wind_fn::Function,
+    t::Float64,
+    lift_device::Union{Nothing, LiftDevice}=nothing,
+)
+    N = sys.n_total
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    hub_pos = @view u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
+    bearing_gid = sys.bearing_id
+    bearing_pos = @view u[(3 * (bearing_gid - 1) + 1):(3 * bearing_gid)]
     sky_anchor_gid = sys.sky_anchor_id
-    sky_anchor_pos = @view u[3*(sky_anchor_gid-1)+1 : 3*sky_anchor_gid]
+    sky_anchor_pos = @view u[(3 * (sky_anchor_gid - 1) + 1):(3 * sky_anchor_gid)]
 
-    v_wind  = wind_fn(hub_pos, t)
+    v_wind = wind_fn(hub_pos, t)
 
     # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
     v_hub_mag = norm(v_wind)
     if v_hub_mag > 0.1
         omega_rotor = omega[hub_ri]
-        lambda_t    = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
-        elev_angle  = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
+        lambda_t = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
+        elev_angle = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
-        thrust_mag  = 0.5 * p.rho * v_hub_mag^2 *
-                      π * sys.rotor.radius^2 * ct_at_tsr(lambda_t) *
-                      cos(elev_angle)^2.0   # cos²·⁰ — thrust elevation factor
-        tether_dir  = hub_pos .- @view(u[1:3])   # ground is node 1
-        tl          = norm(tether_dir)
-        if tl > 0; tether_dir ./= tl; end
+        thrust_mag =
+            0.5 *
+            p.rho *
+            v_hub_mag^2 *
+            π *
+            sys.rotor.radius^2 *
+            ct_at_tsr(lambda_t) *
+            cos(elev_angle)^2.0   # cos²·⁰ — thrust elevation factor
+        tether_dir = hub_pos .- @view(u[1:3])   # ground is node 1
+        tl = norm(tether_dir)
+        if tl > 0
+            ;
+            tether_dir ./= tl;
+        end
         forces[hub_gid] .+= thrust_mag .* tether_dir
 
         if omega_rotor >= 0.0
-            P_aero   = 0.5 * p.rho * v_hub_mag^3 *
-                       π * sys.rotor.radius^2 * cp_at_tsr(lambda_t) *
-                       cos(elev_angle)^2.65  # cos²·⁶⁵ — power elevation factor (from AeroDyn sweep)
+            P_aero =
+                0.5 *
+                p.rho *
+                v_hub_mag^3 *
+                π *
+                sys.rotor.radius^2 *
+                cp_at_tsr(lambda_t) *
+                cos(elev_angle)^2.65  # cos²·⁶⁵ — power elevation factor (from AeroDyn sweep)
             tau_aero = P_aero / max(omega_rotor, 0.5)
         else
-            CD_reverse  = 1.3                           # NACA4412 CD at AoA 40–70°
+            CD_reverse = 1.3                           # NACA4412 CD at AoA 40–70°
             chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
-            R_o   = sys.rotor.radius
-            R_i   = 0.4 * R_o                           # inner tip cutout at TRPT hub
+            R_o = sys.rotor.radius
+            R_i = 0.4 * R_o                           # inner tip cutout at TRPT hub
             R_eff = 0.70 * R_o                          # 70% representative radius
-            span  = R_o - R_i                           # blade span
+            span = R_o - R_i                           # blade span
             ω_abs = abs(omega_rotor)
-            v_ax  = v_hub_mag * cos(elev_angle)         # axial wind through disc
-            v_t_eff   = ω_abs * R_eff
+            v_ax = v_hub_mag * cos(elev_angle)         # axial wind through disc
+            v_t_eff = ω_abs * R_eff
             v_rel_eff = sqrt(v_ax^2 + v_t_eff^2)
-            Q_drag   = p.n_lines * 0.5 * p.rho * CD_reverse * chord_blade *
-                       ω_abs * R_eff^2 * v_rel_eff * span
+            Q_drag =
+                p.n_lines *
+                0.5 *
+                p.rho *
+                CD_reverse *
+                chord_blade *
+                ω_abs *
+                R_eff^2 *
+                v_rel_eff *
+                span
             tau_aero = Q_drag
         end
         torques[hub_ri] += tau_aero
@@ -155,27 +184,41 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         if !isempty(sys.expansion_rotors)
             for er in sys.expansion_rotors
                 ring_gid = sys.ring_ids[er.ring_idx]
-                ring_pos = @view u[3*(ring_gid-1)+1 : 3*ring_gid]
-                ring_ri  = (sys.nodes[ring_gid]::RingNode).ring_idx
-                r_nom    = (sys.nodes[ring_gid]::RingNode).radius
+                ring_pos = @view u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
+                ring_ri = (sys.nodes[ring_gid]::RingNode).ring_idx
+                r_nom = (sys.nodes[ring_gid]::RingNode).radius
 
                 v_wind_ring = wind_fn(ring_pos, t)
                 v_wind_mag_ring = norm(v_wind_ring)
 
                 # Tether tension estimate from main rotor thrust
-                T_est = 0.5 * p.rho * v_hub_mag^2 *
-                        π * sys.rotor.radius^2 *
-                        ct_at_tsr(lambda_t) * cos(elev_angle)^2.0
+                T_est =
+                    0.5 *
+                    p.rho *
+                    v_hub_mag^2 *
+                    π *
+                    sys.rotor.radius^2 *
+                    ct_at_tsr(lambda_t) *
+                    cos(elev_angle)^2.0
 
-                F_radial, F_axial, tau_drag, r_eff, _ =
-                    expansion_rotor_forces(er, p.rho, v_wind_mag_ring,
-                                            omega[ring_ri], rad2deg(elev_angle),
-                                            r_nom, T_est, p.n_lines)
+                F_radial, F_axial, tau_drag, r_eff, _ = expansion_rotor_forces(
+                    er,
+                    p.rho,
+                    v_wind_mag_ring,
+                    omega[ring_ri],
+                    rad2deg(elev_angle),
+                    r_nom,
+                    T_est,
+                    p.n_lines,
+                )
 
                 # Axial thrust along tether direction
                 tether_dir_ring = ring_pos .- @view(u[1:3])
                 tl_ring = norm(tether_dir_ring)
-                if tl_ring > 0; tether_dir_ring ./= tl_ring; end
+                if tl_ring > 0
+                    ;
+                    tether_dir_ring ./= tl_ring;
+                end
                 forces[ring_gid] .+= F_axial .* tether_dir_ring
 
                 # Drag torque on the ring
@@ -188,13 +231,15 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     end
 
     # ── Generator MPPT torque on ground node ──────────────────────────────
-    gnd_ri    = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
-    
-    tau_gen, new_brake = get_generator_torque(u, sys, p, t, wind_fn; brake_engaged=sys.brake_engaged[])
+    gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
+
+    tau_gen, new_brake = get_generator_torque(
+        u, sys, p, t, wind_fn; brake_engaged=sys.brake_engaged[]
+    )
     if new_brake && !sys.brake_engaged[]
         sys.brake_engaged[] = true
     end
-    
+
     torques[gnd_ri] -= tau_gen
 
     # ── Inter-ring torsional damping ──────────────────────────────────────────
@@ -208,30 +253,30 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # cannot restore it.  c_s is sized for ζ ≈ 1.0 on the LOCAL ring-pair mode
     # (ω_n = √(k_sec/I_min)); this over-damps the global torsional mode (ζ > 1),
     # which is fine — it simply prevents torsional oscillation entirely.
-    Nr      = sys.n_ring
-    alpha   = @view u[6N+1 : 6N+Nr]
-    L_seg   = p.tether_length / (Nr - 1)
+    Nr = sys.n_ring
+    alpha = @view u[(6N + 1):(6N + Nr)]
+    L_seg = p.tether_length / (Nr - 1)
     EA_rope = p.e_modulus * π * (p.tether_diameter / 2)^2
 
-    for s in 1:length(sys.ring_ids) - 1
+    for s in 1:(length(sys.ring_ids) - 1)
         node_a = sys.nodes[sys.ring_ids[s]]::RingNode
-        node_b = sys.nodes[sys.ring_ids[s+1]]::RingNode
-        ri_a   = node_a.ring_idx
-        ri_b   = node_b.ring_idx
-        r_s    = (node_a.radius + node_b.radius) * 0.5
+        node_b = sys.nodes[sys.ring_ids[s + 1]]::RingNode
+        ri_a = node_a.ring_idx
+        ri_b = node_b.ring_idx
+        r_s = (node_a.radius + node_b.radius) * 0.5
         # Principal-value inter-ring twist (−π, π]: prevents accumulated whole-revolution
         # counts from falsely triggering the collapse guard or inflating k_sec.
-        Δα     = mod(alpha[ri_b] - alpha[ri_a] + π, 2π) - π
+        Δα = mod(alpha[ri_b] - alpha[ri_a] + π, 2π) - π
         abs(Δα) >= 0.95π && continue
 
         # Estimate local torsional stiffness via rope geometry (for damper sizing only)
-        chord  = sqrt(L_seg^2 + 2 * r_s^2 * (1 - cos(max(abs(Δα), 0.001))))
-        T_est  = p.n_lines * EA_rope * max(0.0, (chord - L_seg) / L_seg)
-        τ_est  = T_est * r_s^2 * sin(max(abs(Δα), 0.001)) / chord
-        k_sec  = max(τ_est / max(abs(Δα), 0.01), 200.0)   # floor at 200 N·m/rad
-        I_s    = min(node_a.inertia_z, node_b.inertia_z)
-        c_s    = 2.0 * sqrt(k_sec * I_s)       # ζ = 1.0 on local ring-pair mode
-        Δω     = omega[ri_b] - omega[ri_a]
+        chord = sqrt(L_seg^2 + 2 * r_s^2 * (1 - cos(max(abs(Δα), 0.001))))
+        T_est = p.n_lines * EA_rope * max(0.0, (chord - L_seg) / L_seg)
+        τ_est = T_est * r_s^2 * sin(max(abs(Δα), 0.001)) / chord
+        k_sec = max(τ_est / max(abs(Δα), 0.01), 200.0)   # floor at 200 N·m/rad
+        I_s = min(node_a.inertia_z, node_b.inertia_z)
+        c_s = 2.0 * sqrt(k_sec * I_s)       # ζ = 1.0 on local ring-pair mode
+        Δω = omega[ri_b] - omega[ri_a]
         torques[ri_a] += c_s * Δω
         torques[ri_b] -= c_s * Δω
     end
@@ -261,7 +306,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
         # kite–sky-anchor line for geometric stiffness.
         if T_lift > 0.0 && v_hmag > 1e-6
             downwind = [v_lift[1] / v_hmag, v_lift[2] / v_hmag, 0.0]
-            θ_lift   = deg2rad(elev_lift_deg)
+            θ_lift = deg2rad(elev_lift_deg)
             lift_dir = cos(θ_lift) .* downwind .+ sin(θ_lift) .* [0.0, 0.0, 1.0]
 
             # ── Geometric stiffness via dynamic kite position ─────────────────
@@ -275,7 +320,7 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
             # line_dist decreases; once line_dist < lift_line_len the line is slack
             # and T_lift is zero.  This is the physically correct tension-only model.
             line_to_kite = sys.kite_pos .- sky_anchor_pos
-            line_dist    = norm(line_to_kite)
+            line_dist = norm(line_to_kite)
 
             # Tension only if lift line is taut (line_dist ≥ design length).
             # We use 99% threshold to avoid chattering at the exact design length.
@@ -303,23 +348,23 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
     # NOTE: the geometric constants 6.0 (bearing_offset) and 5.0 (CYAN_L0)
     # MUST match initialization.jl.  Centralising them on `sys` is a future
     # cleanup; for now they're duplicated with this comment as the link.
-    back_ax        = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
+    back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
     bearing_offset = 6.0
-    cyan_L0        = 5.0
+    cyan_L0 = 5.0
 
     # 2D projection: horizontal plane distance + vertical (anchor at z=0)
-    b_dx   = sqrt((sky_anchor_pos[1] - back_ax)^2 + sky_anchor_pos[2]^2)
-    b_dz   = sky_anchor_pos[3]
+    b_dx = sqrt((sky_anchor_pos[1] - back_ax)^2 + sky_anchor_pos[2]^2)
+    b_dz = sky_anchor_pos[3]
     b_dist = sqrt(b_dx^2 + b_dz^2)
 
     # Design rest length: distance ground-anchor → design sky-anchor position.
     # Sky anchor at design = ring_pos[end] + (bearing_offset+cyan_L0)·shaft_dir,
     # which equals (tether_length + bearing_offset + cyan_L0) along the shaft
     # from the origin.
-    L_axis_design        = p.tether_length + bearing_offset + cyan_L0
-    design_sky_anchor_x  = L_axis_design * cos(p.elevation_angle)
-    design_sky_anchor_z  = L_axis_design * sin(p.elevation_angle)
-    back_L0_design       = sqrt((design_sky_anchor_x - back_ax)^2 + design_sky_anchor_z^2)
+    L_axis_design = p.tether_length + bearing_offset + cyan_L0
+    design_sky_anchor_x = L_axis_design * cos(p.elevation_angle)
+    design_sky_anchor_z = L_axis_design * sin(p.elevation_angle)
+    back_L0_design = sqrt((design_sky_anchor_x - back_ax)^2 + design_sky_anchor_z^2)
     # L₀ = design distance + payout (winch releases line)
     back_L0 = back_L0_design + p.backline_payout
 
@@ -330,8 +375,8 @@ function compute_ring_forces!(forces      ::Vector{<:AbstractVector},
 
         # Catenary in the vertical plane: anchor at (0,0), sky anchor at (b_dx, b_dz)
         _, _, Fx_top, Fz_top, _ = catenary_forces(
-            0.0, 0.0, b_dx, b_dz,
-            back_L0, w_back, p.EA_back_line)
+            0.0, 0.0, b_dx, b_dz, back_L0, w_back, p.EA_back_line
+        )
 
         # Fx < 0 (pulls toward anchor), Fz < 0 (pulls down).
         if b_dx > 1e-12
@@ -364,9 +409,9 @@ oscillations that show as swinging `τ_gen` numbers even after the HUD reports L
 This function must be called after the angular-velocity Euler update and **before** the
 angle update, so the PTO angle also stops drifting once the brake is engaged.
 """
-function apply_brake_constraint!(u::Vector{Float64},
-                                  sys::KiteTurbineSystem,
-                                  N::Int, Nr::Int)
+function apply_brake_constraint!(
+    u::Vector{Float64}, sys::KiteTurbineSystem, N::Int, Nr::Int
+)
     if sys.brake_engaged[]
         u[6N + Nr + 1] = 0.0   # ground ring (ring_idx = 1) angular velocity → 0
     end

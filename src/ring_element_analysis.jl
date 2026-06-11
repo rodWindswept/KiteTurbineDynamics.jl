@@ -17,15 +17,15 @@ Structural result for one beam element (one polygon side) of a ring frame.
 `utilisation = N/N_crit + √(M_ip²+M_oop²)/M_el`; failure when ≥ 1.
 """
 struct BeamResult
-    N           :: Float64   # axial compression (+ve = compressive, N)
-    M_ip        :: Float64   # max in-plane bending moment at either end (N·m)
-    M_oop       :: Float64   # max OOP bending moment at either end (N·m)
-    T_tor       :: Float64   # torsion (N·m) — tracked but not in interaction formula
-    N_crit      :: Float64   # fixed-fixed critical buckling load (N)
-    M_el        :: Float64   # elastic bending moment capacity (N·m)
-    utilisation :: Float64   # combined interaction ratio (1.0 = limit state)
-    fos         :: Float64   # 1 / utilisation
-    exceeded    :: Bool
+    N::Float64   # axial compression (+ve = compressive, N)
+    M_ip::Float64   # max in-plane bending moment at either end (N·m)
+    M_oop::Float64   # max OOP bending moment at either end (N·m)
+    T_tor::Float64   # torsion (N·m) — tracked but not in interaction formula
+    N_crit::Float64   # fixed-fixed critical buckling load (N)
+    M_el::Float64   # elastic bending moment capacity (N·m)
+    utilisation::Float64   # combined interaction ratio (1.0 = limit state)
+    fos::Float64   # 1 / utilisation
+    exceeded::Bool
 end
 
 """
@@ -35,10 +35,10 @@ Per-beam structural results for one intermediate ring.
 `max_util` is the worst-beam scalar used by the HUD and warning flags.
 """
 struct RingElementFrame
-    ring_id  :: Int
-    radius   :: Float64
-    beams    :: Vector{BeamResult}   # length = n_lines
-    max_util :: Float64              # maximum utilisation across all beams
+    ring_id::Int
+    radius::Float64
+    beams::Vector{BeamResult}   # length = n_lines
+    max_util::Float64              # maximum utilisation across all beams
 end
 
 """
@@ -49,37 +49,66 @@ DOF order: [u1,v1,w1,θx1,θy1,θz1, u2,v2,w2,θx2,θy2,θz2].
 x = beam axis, y = in-plane transverse, z = OOP (ring normal direction).
 I_y = I_z = I (circular tube, equal bending in both planes).
 """
-function beam_stiffness_local(E::Float64, G::Float64, A::Float64,
-                               I::Float64, J::Float64, L::Float64)::Matrix{Float64}
+function beam_stiffness_local(
+    E::Float64, G::Float64, A::Float64, I::Float64, J::Float64, L::Float64
+)::Matrix{Float64}
     a = E*A/L                # axial
     b = 12E*I/L^3            # bending shear
-    c =  6E*I/L^2            # bending-rotation coupling
-    d =  4E*I/L              # bending (same-end)
-    e =  2E*I/L              # bending (far-end)
-    f =  G*J/L               # torsion
+    c = 6E*I/L^2            # bending-rotation coupling
+    d = 4E*I/L              # bending (same-end)
+    e = 2E*I/L              # bending (far-end)
+    f = G*J/L               # torsion
 
     K = zeros(12, 12)
 
     # Axial: DOFs 1, 7
-    K[1,1]= a; K[1,7]=-a
-    K[7,1]=-a; K[7,7]= a
+    K[1, 1] = a;
+    K[1, 7]=-a
+    K[7, 1]=-a;
+    K[7, 7] = a
 
     # In-plane bending (x-y plane, about z): DOFs 2,6,8,12
-    K[2,2]= b; K[2,6]= c; K[2,8]=-b; K[2,12]= c
-    K[6,2]= c; K[6,6]= d; K[6,8]=-c; K[6,12]= e
-    K[8,2]=-b; K[8,6]=-c; K[8,8]= b; K[8,12]=-c
-    K[12,2]= c; K[12,6]= e; K[12,8]=-c; K[12,12]= d
+    K[2, 2] = b;
+    K[2, 6] = c;
+    K[2, 8]=-b;
+    K[2, 12] = c
+    K[6, 2] = c;
+    K[6, 6] = d;
+    K[6, 8]=-c;
+    K[6, 12] = e
+    K[8, 2]=-b;
+    K[8, 6]=-c;
+    K[8, 8] = b;
+    K[8, 12]=-c
+    K[12, 2] = c;
+    K[12, 6] = e;
+    K[12, 8]=-c;
+    K[12, 12] = d
 
     # OOP bending (x-z plane, about y): DOFs 3,5,9,11
     # θy positive counterclockwise from +y → coupling sign negative
-    K[3,3]= b; K[3,5]=-c; K[3,9]=-b; K[3,11]=-c
-    K[5,3]=-c; K[5,5]= d; K[5,9]= c; K[5,11]= e
-    K[9,3]=-b; K[9,5]= c; K[9,9]= b; K[9,11]= c
-    K[11,3]=-c; K[11,5]= e; K[11,9]= c; K[11,11]= d
+    K[3, 3] = b;
+    K[3, 5]=-c;
+    K[3, 9]=-b;
+    K[3, 11]=-c
+    K[5, 3]=-c;
+    K[5, 5] = d;
+    K[5, 9] = c;
+    K[5, 11] = e
+    K[9, 3]=-b;
+    K[9, 5] = c;
+    K[9, 9] = b;
+    K[9, 11] = c
+    K[11, 3]=-c;
+    K[11, 5] = e;
+    K[11, 9] = c;
+    K[11, 11] = d
 
     # Torsion: DOFs 4, 10
-    K[4,4]= f; K[4,10]=-f
-    K[10,4]=-f; K[10,10]= f
+    K[4, 4] = f;
+    K[4, 10]=-f
+    K[10, 4]=-f;
+    K[10, 10] = f
 
     return K
 end
@@ -98,8 +127,9 @@ Local beam axes:
 
 K_global_element = T' * K_local * T
 """
-function beam_transform(pa::AbstractVector, pb::AbstractVector,
-                         ring_normal::AbstractVector)::Matrix{Float64}
+function beam_transform(
+    pa::AbstractVector, pb::AbstractVector, ring_normal::AbstractVector
+)::Matrix{Float64}
     x_L = (pb .- pa) ./ norm(pb .- pa)
     z_L = ring_normal ./ norm(ring_normal)
     y_L = cross(z_L, x_L)
@@ -109,7 +139,7 @@ function beam_transform(pa::AbstractVector, pb::AbstractVector,
 
     T = zeros(12, 12)
     for i in 0:3
-        T[3i+1:3i+3, 3i+1:3i+3] = R
+        T[(3i + 1):(3i + 3), (3i + 1):(3i + 3)] = R
     end
     return T
 end
@@ -133,21 +163,22 @@ Returns:
   K_locals — Vector of n 12×12 local stiffness matrices (for force recovery)
   T_mats   — Vector of n 12×12 transformation matrices (for force recovery)
 """
-function assemble_ring_frame(R::Float64, n::Int, α::Float64,
-                              tp::NamedTuple, F_local::Matrix{Float64})
+function assemble_ring_frame(
+    R::Float64, n::Int, α::Float64, tp::NamedTuple, F_local::Matrix{Float64}
+)
     L_beam = 2.0 * R * sin(π / n)
     ring_normal = [0.0, 0.0, 1.0]   # z-axis in ring-local frame
 
     K_global = zeros(6n, 6n)
-    F_vec    = zeros(6n)
+    F_vec = zeros(6n)
     K_locals = Vector{Matrix{Float64}}(undef, n)
-    T_mats   = Vector{Matrix{Float64}}(undef, n)
+    T_mats = Vector{Matrix{Float64}}(undef, n)
 
     for j in 1:n
         jnext = mod1(j + 1, n)
-        φ_j    = α + (j    - 1) * 2π / n
-        φ_jn   = α + (jnext - 1) * 2π / n
-        pa = [R * cos(φ_j),  R * sin(φ_j),  0.0]
+        φ_j = α + (j - 1) * 2π / n
+        φ_jn = α + (jnext - 1) * 2π / n
+        pa = [R * cos(φ_j), R * sin(φ_j), 0.0]
         pb = [R * cos(φ_jn), R * sin(φ_jn), 0.0]
 
         K_loc = beam_stiffness_local(tp.E, tp.G, tp.A, tp.I_bend, tp.J, L_beam)
@@ -155,21 +186,23 @@ function assemble_ring_frame(R::Float64, n::Int, α::Float64,
         K_elem = T_mat' * K_loc * T_mat
 
         K_locals[j] = K_loc
-        T_mats[j]   = T_mat
+        T_mats[j] = T_mat
 
         # Global DOF indices for vertices j and jnext
-        idx = [6*(j-1)+1    : 6*j;
-               6*(jnext-1)+1 : 6*jnext]
+        idx = [
+            (6 * (j - 1) + 1):(6 * j);
+            (6 * (jnext - 1) + 1):(6 * jnext)
+        ]
         K_global[idx, idx] .+= K_elem
     end
 
     # Load vector: point forces at each vertex (no applied moments)
     for j in 1:n
-        F_vec[6*(j-1)+1 : 6*(j-1)+3] .= F_local[:, j]
+        F_vec[(6 * (j - 1) + 1):(6 * (j - 1) + 3)] .= F_local[:, j]
     end
 
     # Self-equilibration check
-    F_res = norm(sum(reshape(F_vec, 6, n), dims=2))          # net DOF imbalance across all nodes
+    F_res = norm(sum(reshape(F_vec, 6, n); dims=2))          # net DOF imbalance across all nodes
     F_scl = maximum(abs, F_vec; init=1.0)
     if F_res / F_scl > 1e-2
         @warn "Ring frame: load imbalance $(round(F_res/F_scl*100, digits=1))% — inertial forces may be significant"
@@ -190,7 +223,9 @@ end
 Solve the regularised frame stiffness system K·d = F.
 Returns the 6n nodal displacement vector.
 """
-function solve_ring_frame(K_global::Matrix{Float64}, F_vec::Vector{Float64})::Vector{Float64}
+function solve_ring_frame(
+    K_global::Matrix{Float64}, F_vec::Vector{Float64}
+)::Vector{Float64}
     return K_global \ F_vec
 end
 
@@ -205,12 +240,19 @@ Sign convention:
   M_ip, M_oop = max absolute bending moment at either end of the beam
   T_tor = torsion at node 1 of the beam
 """
-function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64,
-                              tp::NamedTuple, K_locals::Vector{Matrix{Float64}},
-                              T_mats::Vector{Matrix{Float64}}, oop_relaxation::Float64 = 1.0)::Vector{BeamResult}
+function extract_beam_forces(
+    d::Vector{Float64},
+    R::Float64,
+    n::Int,
+    α::Float64,
+    tp::NamedTuple,
+    K_locals::Vector{Matrix{Float64}},
+    T_mats::Vector{Matrix{Float64}},
+    oop_relaxation::Float64=1.0,
+)::Vector{BeamResult}
     L_beam = 2.0 * R * sin(π / n)
     N_crit = 4.0 * π^2 * tp.E * tp.I_bend / L_beam^2   # fixed-fixed K=0.5
-    M_el   = tp.σ_yield * tp.I_bend / (tp.Do / 2.0)    # elastic bending moment capacity
+    M_el = tp.σ_yield * tp.I_bend / (tp.Do / 2.0)    # elastic bending moment capacity
 
     results = Vector{BeamResult}(undef, n)
 
@@ -218,25 +260,26 @@ function extract_beam_forces(d::Vector{Float64}, R::Float64, n::Int, α::Float64
         jnext = mod1(j + 1, n)
 
         # Extract 12-DOF element displacement in global ring-local frame
-        idx_j    = 6*(j-1)+1    : 6*j
-        idx_jn   = 6*(jnext-1)+1 : 6*jnext
-        d_elem   = [d[idx_j]; d[idx_jn]]
+        idx_j = (6 * (j - 1) + 1):(6 * j)
+        idx_jn = (6 * (jnext - 1) + 1):(6 * jnext)
+        d_elem = [d[idx_j]; d[idx_jn]]
 
         # Transform to local beam frame and compute local forces
-        d_local  = T_mats[j] * d_elem
-        f_local  = K_locals[j] * d_local
+        d_local = T_mats[j] * d_elem
+        f_local = K_locals[j] * d_local
 
         # Internal forces (sign: f_local[1] = reaction on node 1 in +x_L direction)
-        N_ax  = f_local[1]           # compression positive (f_local[1] > 0 when beam compressed)
-        M_ip  = max(abs(f_local[6]), abs(f_local[12]))   # bending about z (in-plane)
+        N_ax = f_local[1]           # compression positive (f_local[1] > 0 when beam compressed)
+        M_ip = max(abs(f_local[6]), abs(f_local[12]))   # bending about z (in-plane)
         M_oop = max(abs(f_local[5]), abs(f_local[11])) * oop_relaxation   # bending about y (OOP) with relaxation
         T_tor = abs(f_local[4])                           # torsion
 
         util = beam_column_utilisation(N_ax, M_ip, M_oop, N_crit, M_el)
-        fos  = util > 1e-12 ? 1.0 / util : Inf
+        fos = util > 1e-12 ? 1.0 / util : Inf
 
-        results[j] = BeamResult(N_ax, M_ip, M_oop, T_tor, N_crit, M_el,
-                                 util, fos, util > 1.0)
+        results[j] = BeamResult(
+            N_ax, M_ip, M_oop, T_tor, N_crit, M_el, util, fos, util > 1.0
+        )
     end
     return results
 end
@@ -248,8 +291,9 @@ Combined axial + bending interaction ratio.
 SRSS bending combination: util = N/N_crit + √(M_ip²+M_oop²)/M_el
 util ≥ 1.0 means the beam has exceeded its combined capacity.
 """
-function beam_column_utilisation(N::Float64, M_ip::Float64, M_oop::Float64,
-                                  N_crit::Float64, M_el::Float64)::Float64
+function beam_column_utilisation(
+    N::Float64, M_ip::Float64, M_oop::Float64, N_crit::Float64, M_el::Float64
+)::Float64
     N_term = max(N, 0.0) / max(N_crit, 1e-9)
     M_term = sqrt(M_ip^2 + M_oop^2) / max(M_el, 1e-9)
     return N_term + M_term
@@ -261,22 +305,24 @@ end
 Compute the net 3D tether force vector at each polygon vertex of the given ring.
 Column j is the total force (N) acting on vertex j in the global simulation frame.
 """
-function extract_vertex_forces(u       ::AbstractVector,
-                                sys     ::KiteTurbineSystem,
-                                ring_gid::Int,
-                                alpha   ::AbstractVector,
-                                p       ::SystemParams,
-                                perp1   ::AbstractVector,
-                                perp2   ::AbstractVector,
-                                t       ::Float64 = 0.0,
-                                wind_fn ::Union{Nothing, Function} = nothing,
-                                active_mask::Union{Nothing, Vector{Bool}} = nothing)::Matrix{Float64}
-    node   = sys.nodes[ring_gid]::RingNode
-    R      = node.radius
-    ri     = node.ring_idx
+function extract_vertex_forces(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    ring_gid::Int,
+    alpha::AbstractVector,
+    p::SystemParams,
+    perp1::AbstractVector,
+    perp2::AbstractVector,
+    t::Float64=0.0,
+    wind_fn::Union{Nothing, Function}=nothing,
+    active_mask::Union{Nothing, Vector{Bool}}=nothing,
+)::Matrix{Float64}
+    node = sys.nodes[ring_gid]::RingNode
+    R = node.radius
+    ri = node.ring_idx
     α_ring = alpha[ri]
-    ctr    = u[3*(ring_gid-1)+1 : 3*ring_gid]
-    n      = p.n_lines
+    ctr = u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
+    n = p.n_lines
 
     F_verts = zeros(3, n)   # 3D force at each vertex (global frame)
 
@@ -286,18 +332,26 @@ function extract_vertex_forces(u       ::AbstractVector,
         (on_b || on_a) || continue
 
         if on_b
-            j  = ss.end_b.line_idx
+            j = ss.end_b.line_idx
             pa = if ss.end_a.is_ring
-                nd_a  = sys.nodes[ss.end_a.node_id]::RingNode
-                ctr_a = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
-                attachment_point(ctr_a, nd_a.radius, alpha[nd_a.ring_idx],
-                                 ss.end_a.line_idx, n, perp1, perp2)
+                nd_a = sys.nodes[ss.end_a.node_id]::RingNode
+                ctr_a = u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
+                attachment_point(
+                    ctr_a,
+                    nd_a.radius,
+                    alpha[nd_a.ring_idx],
+                    ss.end_a.line_idx,
+                    n,
+                    perp1,
+                    perp2,
+                )
             else
-                u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
             end
-            pb  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
-            len = norm(pb .- pa);  len < 1e-9 && continue
-            T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            pb = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
+            len = norm(pb .- pa);
+            len < 1e-9 && continue
+            T = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
             if T >= 5.0 && active_mask !== nothing
                 active_mask[j] = true
             end
@@ -305,29 +359,44 @@ function extract_vertex_forces(u       ::AbstractVector,
 
             if wind_fn !== nothing
                 N = sys.n_total
-                va = u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
-                vb = u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+                va = u[(3 * N + 3 * (ss.end_a.node_id - 1) + 1):(3 * N + 3 * ss.end_a.node_id)]
+                vb = u[(3 * N + 3 * (ss.end_b.node_id - 1) + 1):(3 * N + 3 * ss.end_b.node_id)]
                 mid_pos = (pa .+ pb) ./ 2.0
-                v_wind  = wind_fn(mid_pos, t)
-                v_node  = (va .+ vb) ./ 2.0
-                drag    = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
-                                             ss.length_0, v_wind, v_node, (pb .- pa) ./ len)
+                v_wind = wind_fn(mid_pos, t)
+                v_node = (va .+ vb) ./ 2.0
+                drag = tether_drag_force(
+                    p.rho,
+                    TETHER_DRAG_CD,
+                    ss.diameter,
+                    ss.length_0,
+                    v_wind,
+                    v_node,
+                    (pb .- pa) ./ len,
+                )
                 F_verts[:, j] .+= 0.5 .* drag
             end
 
         else   # on_a
-            j  = ss.end_a.line_idx
+            j = ss.end_a.line_idx
             pb = if ss.end_b.is_ring
-                nd_b  = sys.nodes[ss.end_b.node_id]::RingNode
-                ctr_b = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
-                attachment_point(ctr_b, nd_b.radius, alpha[nd_b.ring_idx],
-                                 ss.end_b.line_idx, n, perp1, perp2)
+                nd_b = sys.nodes[ss.end_b.node_id]::RingNode
+                ctr_b = u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
+                attachment_point(
+                    ctr_b,
+                    nd_b.radius,
+                    alpha[nd_b.ring_idx],
+                    ss.end_b.line_idx,
+                    n,
+                    perp1,
+                    perp2,
+                )
             else
-                u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
             end
-            pa  = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
-            len = norm(pb .- pa);  len < 1e-9 && continue
-            T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+            pa = attachment_point(ctr, R, α_ring, j, n, perp1, perp2)
+            len = norm(pb .- pa);
+            len < 1e-9 && continue
+            T = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
             if T >= 5.0 && active_mask !== nothing
                 active_mask[j] = true
             end
@@ -335,13 +404,20 @@ function extract_vertex_forces(u       ::AbstractVector,
 
             if wind_fn !== nothing
                 N = sys.n_total
-                va = u[3*N+3*(ss.end_a.node_id-1)+1 : 3*N+3*ss.end_a.node_id]
-                vb = u[3*N+3*(ss.end_b.node_id-1)+1 : 3*N+3*ss.end_b.node_id]
+                va = u[(3 * N + 3 * (ss.end_a.node_id - 1) + 1):(3 * N + 3 * ss.end_a.node_id)]
+                vb = u[(3 * N + 3 * (ss.end_b.node_id - 1) + 1):(3 * N + 3 * ss.end_b.node_id)]
                 mid_pos = (pa .+ pb) ./ 2.0
-                v_wind  = wind_fn(mid_pos, t)
-                v_node  = (va .+ vb) ./ 2.0
-                drag    = tether_drag_force(p.rho, TETHER_DRAG_CD, ss.diameter,
-                                             ss.length_0, v_wind, v_node, (pb .- pa) ./ len)
+                v_wind = wind_fn(mid_pos, t)
+                v_node = (va .+ vb) ./ 2.0
+                drag = tether_drag_force(
+                    p.rho,
+                    TETHER_DRAG_CD,
+                    ss.diameter,
+                    ss.length_0,
+                    v_wind,
+                    v_node,
+                    (pb .- pa) ./ len,
+                )
                 F_verts[:, j] .+= 0.5 .* drag
             end
         end
@@ -361,27 +437,31 @@ Full per-beam structural analysis for one intermediate ring:
   5. Assemble 6n×6n stiffness system and solve
   6. Recover N, M_ip, M_oop, T per beam and compute interaction utilisation
 """
-function analyse_ring(u       ::AbstractVector,
-                      sys     ::KiteTurbineSystem,
-                      ring_gid::Int,
-                      alpha   ::AbstractVector,
-                      p       ::SystemParams,
-                      t       ::Float64 = 0.0,
-                      wind_fn ::Union{Nothing, Function} = nothing,
-                      design  ::Union{Nothing, SpacerRingDesign} = nothing)::RingElementFrame
-    node   = sys.nodes[ring_gid]::RingNode
-    R      = node.radius
-    ri     = node.ring_idx
+function analyse_ring(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    ring_gid::Int,
+    alpha::AbstractVector,
+    p::SystemParams,
+    t::Float64=0.0,
+    wind_fn::Union{Nothing, Function}=nothing,
+    design::Union{Nothing, SpacerRingDesign}=nothing,
+)::RingElementFrame
+    node = sys.nodes[ring_gid]::RingNode
+    R = node.radius
+    ri = node.ring_idx
     α_ring = alpha[ri]
-    n      = p.n_lines
-    hub_gid   = sys.rotor.node_id
-    hub_ri    = (sys.nodes[hub_gid]::RingNode).ring_idx
+    n = p.n_lines
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
     perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     shaft_dir = cross(perp1, perp2)
 
     # Step 1: per-vertex forces in global frame (3 × n) and active tether mask (T >= 5 N)
     active_mask = fill(false, n)
-    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn, active_mask)
+    F_global = extract_vertex_forces(
+        u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn, active_mask
+    )
 
     # Dynamic out-of-plane moment relaxation based on active tether mask.
     # Rationale: under line-slack transients, an underconstrained ring (<=2 active vertices)
@@ -409,7 +489,7 @@ function analyse_ring(u       ::AbstractVector,
         # Dynamic scaling matching optimization specs
         scale = (R / design.r_hub)^design.Do_scale_exp
         Do_scaled = max(design.Do_top * scale, 5e-4 / design.t_over_D)
-        
+
         if design.profile == PROFILE_CIRCULAR
             CircularTube(Do_scaled, design.t_over_D)
         elseif design.profile == PROFILE_ELLIPTICAL
@@ -422,11 +502,20 @@ function analyse_ring(u       ::AbstractVector,
     # Retrieve cached properties for the active tube (FixedFixed ends in space frame)
     props = strut_properties(active_tube, L_beam, FixedFixedEnds())
     Do_val = active_tube.profile.Do
-    t_val  = max(active_tube.profile.t_over_D * Do_val, 5e-4)
+    t_val = max(active_tube.profile.t_over_D * Do_val, 5e-4)
 
     # Build tp NamedTuple for compatibility, including custom E, G, σ_yield
-    tp = (Do=Do_val, t=t_val, Di=max(Do_val - 2t_val, 0.0), A=props.A, I_bend=props.I_min, J=props.J,
-          E=active_tube.material.E, G=active_tube.material.G, σ_yield=active_tube.material.σ_yield)
+    tp = (
+        Do=Do_val,
+        t=t_val,
+        Di=max(Do_val - 2t_val, 0.0),
+        A=props.A,
+        I_bend=props.I_min,
+        J=props.J,
+        E=active_tube.material.E,
+        G=active_tube.material.G,
+        σ_yield=active_tube.material.σ_yield,
+    )
 
     # Step 1b: Add self-weight (knuckle self-weight + CFRP tube self-weight)
     m_vertex = 0.05 + props.mass * L_beam
@@ -439,36 +528,36 @@ function analyse_ring(u       ::AbstractVector,
     if wind_fn !== nothing
         N = sys.n_total
         Nr = sys.n_ring
-        omega = u[6N+Nr+1 : 6N+2Nr]
-        ctr_pos = u[3*(ring_gid-1)+1 : 3*ring_gid]
-        ctr_vel = u[3*N+3*(ring_gid-1)+1 : 3*N+3*ring_gid]
+        omega = u[(6N + Nr + 1):(6N + 2Nr)]
+        ctr_pos = u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
+        ctr_vel = u[(3 * N + 3 * (ring_gid - 1) + 1):(3 * N + 3 * ring_gid)]
 
         for j in 1:n
             jnext = mod1(j + 1, n)
-            pa = attachment_point(ctr_pos, R, α_ring, j,     n, perp1, perp2)
+            pa = attachment_point(ctr_pos, R, α_ring, j, n, perp1, perp2)
             pb = attachment_point(ctr_pos, R, α_ring, jnext, n, perp1, perp2)
 
-            φ_a  = α_ring + (j - 1) * (2π / n)
-            φ_b  = α_ring + (jnext - 1) * (2π / n)
+            φ_a = α_ring + (j - 1) * (2π / n)
+            φ_b = α_ring + (jnext - 1) * (2π / n)
             v_rot_a = omega[ri] * R * (-sin(φ_a) .* perp1 .+ cos(φ_a) .* perp2)
             v_rot_b = omega[ri] * R * (-sin(φ_b) .* perp1 .+ cos(φ_b) .* perp2)
 
             va = ctr_vel .+ v_rot_a
             vb = ctr_vel .+ v_rot_b
 
-            mid_pos  = (pa .+ pb) ./ 2.0
+            mid_pos = (pa .+ pb) ./ 2.0
             v_wind_m = wind_fn(mid_pos, t)
-            v_beam   = (va .+ vb) ./ 2.0
+            v_beam = (va .+ vb) ./ 2.0
 
-            v_rel    = v_wind_m .- v_beam
+            v_rel = v_wind_m .- v_beam
             dir_beam = (pb .- pa) ./ L_beam
-            v_perp   = v_rel .- dot(v_rel, dir_beam) .* dir_beam
+            v_perp = v_rel .- dot(v_rel, dir_beam) .* dir_beam
             v_perp_m = norm(v_perp)
 
             if v_perp_m > 0.01
                 drag_beam = 0.5 * p.rho * TUBE_DRAG_CD * tp.Do * L_beam * v_perp_m .* v_perp
                 # Distribute 50/50 to endpoints j and jnext
-                F_global[:, j]     .+= 0.5 .* drag_beam
+                F_global[:, j] .+= 0.5 .* drag_beam
                 F_global[:, jnext] .+= 0.5 .* drag_beam
             end
         end
@@ -482,14 +571,14 @@ function analyse_ring(u       ::AbstractVector,
     # (10^-5 m) in floating-point roundoff error, yielding astronomical spurious beam 
     # stresses. By D'Alembert's Principle, a symmetric ring distributes inertial reaction 
     # forces -m_j * a equally among its n identical vertex masses: F_inertial = -F_net / n.
-    F_net = sum(F_global, dims=2)
+    F_net = sum(F_global; dims=2)
     for j in 1:n
         F_global[:, j] .-= F_net ./ n
     end
 
     # Step 2: transform to ring-local 3D frame (perp1, perp2, shaft_dir as axes)
     R_to_local = [perp1'; perp2'; shaft_dir']   # 3×3
-    F_local    = R_to_local * F_global           # 3×n in ring-local
+    F_local = R_to_local * F_global           # 3×n in ring-local
 
     # ── Rotational & Torsional Inertia Relief ──────────────────────────────
     # Unbalanced moments cause the ring to undergo rotational (pitch/yaw) and torsional 
@@ -517,11 +606,13 @@ function analyse_ring(u       ::AbstractVector,
     end
 
     # Step 3: assemble and solve using relieved local forces
-    K_global, F_vec, K_locals, T_mats = assemble_ring_frame(R, n, α_ring, tp, F_local_relieved)
+    K_global, F_vec, K_locals, T_mats = assemble_ring_frame(
+        R, n, α_ring, tp, F_local_relieved
+    )
     d = solve_ring_frame(K_global, F_vec)
 
     # Step 4: recover per-beam forces
-    beams    = extract_beam_forces(d, R, n, α_ring, tp, K_locals, T_mats, oop_relaxation)
+    beams = extract_beam_forces(d, R, n, α_ring, tp, K_locals, T_mats, oop_relaxation)
     max_util = maximum(b.utilisation for b in beams; init=0.0)
 
     # ring_id relative to intermediate rings (will be set by caller)
@@ -534,15 +625,17 @@ end
 Run per-beam structural analysis for all intermediate rings (skipping ground and hub).
 Replaces `ring_safety_frame()` as the primary structural post-processing function.
 """
-function ring_element_analysis(u     ::AbstractVector,
-                               alpha ::AbstractVector,
-                               sys   ::KiteTurbineSystem,
-                               p     ::SystemParams,
-                               t     ::Float64 = 0.0,
-                               wind_fn::Union{Nothing, Function} = nothing,
-                               design::Union{Nothing, SpacerRingDesign} = nothing)::Vector{RingElementFrame}
+function ring_element_analysis(
+    u::AbstractVector,
+    alpha::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    t::Float64=0.0,
+    wind_fn::Union{Nothing, Function}=nothing,
+    design::Union{Nothing, SpacerRingDesign}=nothing,
+)::Vector{RingElementFrame}
     results = Vector{RingElementFrame}()
-    for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])
+    for (k, ring_gid) in enumerate(sys.ring_ids[2:(end - 1)])
         frame = analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn, design)
         push!(results, RingElementFrame(k, frame.radius, frame.beams, frame.max_util))
     end

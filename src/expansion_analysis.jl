@@ -36,8 +36,8 @@ Components:
 """
 function expansion_airborne_mass(sys::KiteTurbineSystem, p::SystemParams)
     # Tether mass
-    m_tether = p.n_lines * p.tether_length *
-               (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
+    m_tether =
+        p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
 
     # Structural rings
     m_rings = p.n_rings * p.m_ring
@@ -102,12 +102,13 @@ Produce a single campaign telemetry record with all key metrics.
 Returns a NamedTuple suitable for building DataFrames row-by-row in
 parameter sweep campaigns.
 """
-function expansion_telemetry(sys::KiteTurbineSystem, p::SystemParams,
-                              power_w::Float64, v_wind::Float64)
+function expansion_telemetry(
+    sys::KiteTurbineSystem, p::SystemParams, power_w::Float64, v_wind::Float64
+)
     m_airborne = expansion_airborne_mass(sys, p)
-    phi_val    = expansion_phi(sys, p, power_w)
-    radii      = expansion_radius_summary(sys)
-    n_exp      = length(sys.expansion_rotors)
+    phi_val = expansion_phi(sys, p, power_w)
+    radii = expansion_radius_summary(sys)
+    n_exp = length(sys.expansion_rotors)
 
     # Placement mode string
     placement = if n_exp == 0
@@ -129,7 +130,9 @@ function expansion_telemetry(sys::KiteTurbineSystem, p::SystemParams,
 
     # Mean radius spread (how much expansion increased the radii)
     nominal_radii = [node.radius for node in sys.nodes if node isa RingNode]
-    spreads = [radii[i] - nominal_radii[i] for i in 1:length(radii) if radii[i] != nominal_radii[i]]
+    spreads = [
+        radii[i] - nominal_radii[i] for i in 1:length(radii) if radii[i] != nominal_radii[i]
+    ]
     mean_spread = isempty(spreads) ? 0.0 : mean(spreads)
 
     # Bridle angle if expansion rotors present
@@ -137,22 +140,26 @@ function expansion_telemetry(sys::KiteTurbineSystem, p::SystemParams,
     blade_radius = n_exp > 0 ? sys.expansion_rotors[1].blade_radius : 0.0
 
     return (
-        n_expansion        = n_exp,
-        placement          = placement,
-        n_rings            = sys.n_ring,
-        n_lines            = p.n_lines,
-        mass_airborne_kg   = round(m_airborne; digits=3),
-        mass_tether_kg     = round(p.n_lines * p.tether_length *
-                               (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2); digits=3),
-        mass_expansion_kg  = round(sum(er -> er.mass, sys.expansion_rotors; init=0.0); digits=3),
-        phi_kg_per_kw      = round(phi_val; digits=4),
-        power_w            = power_w,
-        wind_m_per_s       = v_wind,
-        mean_radius_spread_m = round(mean_spread; digits=6),
-        bridle_angle_deg   = bridle_angle,
-        blade_radius_m     = blade_radius,
-        hub_radius_m       = p.rotor_radius,
-        tether_diameter_mm = round(p.tether_diameter * 1000; digits=2),
-        elevation_deg      = round(rad2deg(p.elevation_angle); digits=1),
+        n_expansion=n_exp,
+        placement=placement,
+        n_rings=sys.n_ring,
+        n_lines=p.n_lines,
+        mass_airborne_kg=round(m_airborne; digits=3),
+        mass_tether_kg=round(
+            p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2);
+            digits=3,
+        ),
+        mass_expansion_kg=round(
+            sum(er -> er.mass, sys.expansion_rotors; init=0.0); digits=3
+        ),
+        phi_kg_per_kw=round(phi_val; digits=4),
+        power_w=power_w,
+        wind_m_per_s=v_wind,
+        mean_radius_spread_m=round(mean_spread; digits=6),
+        bridle_angle_deg=bridle_angle,
+        blade_radius_m=blade_radius,
+        hub_radius_m=p.rotor_radius,
+        tether_diameter_mm=round(p.tether_diameter * 1000; digits=2),
+        elevation_deg=round(rad2deg(p.elevation_angle); digits=1),
     )
 end
