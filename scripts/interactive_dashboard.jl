@@ -4,30 +4,31 @@
 # Normal mode: Opens interactive GLMakie dashboard.
 # Headless mode: julia --project=. scripts/interactive_dashboard.jl --headless
 
-using Pkg; Pkg.activate(dirname(@__DIR__))
+using Pkg;
+Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames
 
 function parse_commandline()
     s = ArgParseSettings()
     @add_arg_table! s begin
         "--headless"
-            help = "Run in headless batch mode for report generation"
-            action = :store_true
+        help = "Run in headless batch mode for report generation"
+        action = :store_true
         "--wind"
-            help = "Wind speed for single run (m/s)"
-            arg_type = Float64
-            default = 11.0
+        help = "Wind speed for single run (m/s)"
+        arg_type = Float64
+        default = 11.0
         "--duration"
-            help = "Simulation duration (s)"
-            arg_type = Float64
-            default = 10.0
+        help = "Simulation duration (s)"
+        arg_type = Float64
+        default = 10.0
         "--optimized"
-            help = "Render the optimized TRPT geometry from trpt_opt/<label>/best_design.json"
-            arg_type = String
-            default = ""
+        help = "Render the optimized TRPT geometry from trpt_opt/<label>/best_design.json"
+        arg_type = String
+        default = ""
         "--v5"
-            help = "Use v5 optimized 8-line octagon geometry"
-            action = :store_true
+        help = "Use v5 optimized 8-line octagon geometry"
+        action = :store_true
     end
     return parse_args(s)
 end
@@ -47,64 +48,91 @@ using GLMakie.  Shows:
 function render_optimized_trpt(label::AbstractString)
     @eval using GLMakie
 
-    json_path  = joinpath(dirname(@__DIR__), "scripts", "results",
-                           "trpt_opt", label, "best_design.json")
+    json_path = joinpath(
+        dirname(@__DIR__), "scripts", "results", "trpt_opt", label, "best_design.json"
+    )
     isfile(json_path) || error("best_design.json not found at $json_path")
 
     # Hand-rolled minimal JSON parse (matches writer format in run_trpt_optimization.jl)
     design = parse_best_design_json(json_path)
 
-    r_top   = design["r_hub_m"]
-    r_bot   = r_top * design["taper_ratio"]
-    n_int   = design["n_rings"]
+    r_top = design["r_hub_m"]
+    r_bot = r_top * design["taper_ratio"]
+    n_int = design["n_rings"]
     L_total = design["tether_length_m"]
     n_rings_total = n_int + 2
-    radii   = [r_bot + (r_top - r_bot) * (i-1)/(n_rings_total-1) for i in 1:n_rings_total]
-    L_seg   = L_total / (n_rings_total - 1)
+    radii = [r_bot + (r_top - r_bot) * (i-1)/(n_rings_total-1) for i in 1:n_rings_total]
+    L_seg = L_total / (n_rings_total - 1)
     n_lines = design["n_lines"]
-    Do_top  = design["Do_top_m"]
-    Do_exp  = design["Do_scale_exp"]
+    Do_top = design["Do_top_m"]
+    Do_exp = design["Do_scale_exp"]
 
-    fig = Figure(size=(1600, 900), fontsize=16)
-    ax  = Axis3(fig[1, 1], title="Optimized TRPT — $(design["config"]) / $(design["profile"])",
-                 xlabel="x (m)", ylabel="y (m)", zlabel="z — axial (m)",
-                 aspect=:data)
+    fig = Figure(; size=(1600, 900), fontsize=16)
+    ax = Axis3(
+        fig[1, 1];
+        title="Optimized TRPT — $(design["config"]) / $(design["profile"])",
+        xlabel="x (m)",
+        ylabel="y (m)",
+        zlabel="z — axial (m)",
+        aspect=:data,
+    )
 
     # Ring vertices: pentagon at each height
     for (i, r) in enumerate(radii)
         z = (i - 1) * L_seg
         Do = Do_top * (r / r_top)^Do_exp
         # Pentagon vertices
-        pts_x = Float64[];  pts_y = Float64[];  pts_z = Float64[]
+        pts_x = Float64[];
+        pts_y = Float64[];
+        pts_z = Float64[]
         for j in 1:n_lines
             φ = 2π * (j - 1) / n_lines
-            push!(pts_x, r * cos(φ));  push!(pts_y, r * sin(φ));  push!(pts_z, z)
+            push!(pts_x, r * cos(φ));
+            push!(pts_y, r * sin(φ));
+            push!(pts_z, z)
         end
         # Close the polygon for visualization
-        push!(pts_x, pts_x[1]);  push!(pts_y, pts_y[1]);  push!(pts_z, pts_z[1])
+        push!(pts_x, pts_x[1]);
+        push!(pts_y, pts_y[1]);
+        push!(pts_z, pts_z[1])
         # Color by Do (larger Do = warmer color)
         col = RGBf(min(1, Do / 0.08), 0.3, 1 - min(1, Do / 0.08))
         lines!(ax, pts_x, pts_y, pts_z; color=col, linewidth=max(1, Do * 200))
         # Knuckles: red spheres at each vertex
-        scatter!(ax, pts_x[1:end-1], pts_y[1:end-1], pts_z[1:end-1];
-                 color=:red, markersize=8)
+        scatter!(
+            ax,
+            pts_x[1:(end - 1)],
+            pts_y[1:(end - 1)],
+            pts_z[1:(end - 1)];
+            color=:red,
+            markersize=8,
+        )
     end
 
     # Longitudinal tether lines between rings (grey)
     for j in 1:n_lines
-        line_x = Float64[];  line_y = Float64[];  line_z = Float64[]
+        line_x = Float64[];
+        line_y = Float64[];
+        line_z = Float64[]
         for (i, r) in enumerate(radii)
             z = (i - 1) * L_seg
             φ = 2π * (j - 1) / n_lines
-            push!(line_x, r * cos(φ));  push!(line_y, r * sin(φ));  push!(line_z, z)
+            push!(line_x, r * cos(φ));
+            push!(line_y, r * sin(φ));
+            push!(line_z, z)
         end
         lines!(ax, line_x, line_y, line_z; color=(:grey, 0.5), linewidth=1)
     end
 
     # Side panel: summary text
     side = fig[1, 2] = GridLayout()
-    Label(side[1, 1], "Item B2 — Optimization Result"; fontsize=20, tellwidth=false,
-          font=:bold)
+    Label(
+        side[1, 1],
+        "Item B2 — Optimization Result";
+        fontsize=20,
+        tellwidth=false,
+        font=:bold,
+    )
     summary = """
     Config:         $(design["config"])
     Profile:        $(design["profile"])
@@ -119,12 +147,13 @@ function render_optimized_trpt(label::AbstractString)
     Do scaling exp: $(round(design["Do_scale_exp"]; digits=3))
     knuckle mass:   $(round(design["knuckle_mass_kg"] * 1000; digits=1)) g × $(n_lines * n_rings_total) vertices
     """
-    Label(side[2, 1], summary; fontsize=14, tellwidth=false,
-           halign=:left, justification=:left)
+    Label(
+        side[2, 1], summary; fontsize=14, tellwidth=false, halign=:left, justification=:left
+    )
 
     display(fig)
     println("Interactive dashboard open for optimized design '$label'. Ctrl+C to quit.")
-    wait(fig.scene)
+    return wait(fig.scene)
 end
 
 """
@@ -135,7 +164,7 @@ Avoids a JSON3 dependency on the hot path.
 """
 function parse_best_design_json(path::AbstractString)
     txt = read(path, String)
-    out = Dict{String,Any}()
+    out = Dict{String, Any}()
     # Pull top-level scalars and nested fields with a simple regex sweep
     for (k, v) in (
         ("config", raw"\"config\"\s*:\s*\"([^\"]+)\""),
@@ -155,9 +184,13 @@ function parse_best_design_json(path::AbstractString)
     )
         m = match(Regex(v), txt)
         if m !== nothing
-            out[k] = k in ("config","profile") ? String(m.captures[1]) :
-                     k in ("n_rings", "n_lines") ? Int(round(parse(Float64, m.captures[1]))) :
-                     parse(Float64, m.captures[1])
+            out[k] = if k in ("config", "profile")
+                String(m.captures[1])
+            elseif k in ("n_rings", "n_lines")
+                Int(round(parse(Float64, m.captures[1])))
+            else
+                parse(Float64, m.captures[1])
+            end
         end
     end
     return out
@@ -169,45 +202,47 @@ function main()
     # ── Optimized-geometry mode (Item B2, Step 7) ─────────────────────────────
     if !isempty(args["optimized"])
         render_optimized_trpt(args["optimized"])
-        return
+        return nothing
     end
 
     # Determine initial config from CLI flags
     current_config = args["v5"] ? "v5 Optimized 8-line" : "Canonical 5-line"
-    v_target       = args["wind"]
+    v_target = args["wind"]
 
     while true
         # ── Build system for current configuration ──────────────────────────
         if current_config == "v5 Optimized 8-line"
-            p    = params_v5_10kw()
+            p = params_v5_10kw()
             sys, u0 = build_kite_turbine_system_v5(p, 2.0, 0.336)
-            label  = "v5 octagon"
+            label = "v5 octagon"
         elseif current_config == "v5-safe 8-line"
-            p    = params_v5_safe_10kw()
+            p = params_v5_safe_10kw()
             sys, u0 = build_kite_turbine_system_v5(p, 1.61, 1.49)
-            label  = "v5-safe octagon"
+            label = "v5-safe octagon"
         else
-            p    = params_10kw()
+            p = params_10kw()
             sys, u0 = build_kite_turbine_system(p)
-            label  = "canonical 5-line"
+            label = "canonical 5-line"
         end
         println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
         # Custom wind function
         wind_fn = (pos, t) -> begin
-            z  = max(pos[3], 1.0)
+            z = max(pos[3], 1.0)
             sh = (z / p.h_ref)^(1.0/7.0)
             [v_target * sh, 0.0, 0.0]
         end
 
         println("Initializing at rated power equilibrium (ω=9.5)...")
         default_lift = rotary_lifter_default()
-        u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=default_lift, wind_fn=wind_fn)
+        u_start = settle_to_operational_state(
+            sys, u0, p, 9.5; lift_device=default_lift, wind_fn=wind_fn
+        )
 
-        N  = sys.n_total
+        N = sys.n_total
         Nr = sys.n_ring
 
-        DT         = 4e-5
-        LIN_DAMP   = 0.05
+        DT = 4e-5
+        LIN_DAMP = 0.05
         SAVE_EVERY = 500
         # v5 has shorter ground-end segments → higher stiffness → needs smaller dt
         if current_config == "v5 Optimized 8-line"
@@ -218,18 +253,36 @@ function main()
 
         if args["headless"]
             # ── HEADLESS MODE ──
-            println("Running headless simulation: $(args["duration"])s at $(v_target)m/s...")
+            println(
+                "Running headless simulation: $(args["duration"])s at $(v_target)m/s..."
+            )
             u = copy(u_start)
-            results = DataFrame(t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[])
-            run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
-                lift_device = default_lift,
-                lin_damp = LIN_DAMP,
-                callback = (u_curr, t_curr, step) -> begin
+            results = DataFrame(;
+                t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[]
+            )
+            run_canonical_sim!(
+                u,
+                sys,
+                p,
+                wind_fn,
+                n_steps,
+                DT;
+                lift_device=default_lift,
+                lin_damp=LIN_DAMP,
+                callback=(u_curr, t_curr, step) -> begin
                     if step % SAVE_EVERY == 0
-                        sf = capture_frame(u_curr, sys, p, t_curr, wind_fn, default_lift; brake_engaged=sys.brake_engaged[])
+                        sf = capture_frame(
+                            u_curr,
+                            sys,
+                            p,
+                            t_curr,
+                            wind_fn,
+                            default_lift;
+                            brake_engaged=sys.brake_engaged[],
+                        )
                         push!(results, (sf.t, sf.hub_z, sf.omega_hub, sf.P_kw))
                     end
-                end
+                end,
             )
             out_path = "scripts/results/canonical_output_v$(v_target).csv"
             CSV.write(out_path, results)
@@ -240,31 +293,47 @@ function main()
             @eval using GLMakie
 
             n_frames = n_steps ÷ SAVE_EVERY
-            frames   = Vector{Vector{Float64}}(undef, n_frames)
-            times    = Vector{Float64}(undef, n_frames)
-            u        = copy(u_start)
+            frames = Vector{Vector{Float64}}(undef, n_frames)
+            times = Vector{Float64}(undef, n_frames)
+            u = copy(u_start)
 
-            println("Simulating $(args["duration"])s ($n_steps steps → $n_frames frames)...")
+            println(
+                "Simulating $(args["duration"])s ($n_steps steps → $n_frames frames)..."
+            )
             let fi = 1
-                run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
-                    lift_device = default_lift,
-                    lin_damp = LIN_DAMP,
-                    callback = (u_current, t_current, step) -> begin
+                run_canonical_sim!(
+                    u,
+                    sys,
+                    p,
+                    wind_fn,
+                    n_steps,
+                    DT;
+                    lift_device=default_lift,
+                    lin_damp=LIN_DAMP,
+                    callback=(u_current, t_current, step) -> begin
                         if step % SAVE_EVERY == 0 && fi <= n_frames
                             frames[fi] = copy(u_current)
-                            times[fi]  = t_current
+                            times[fi] = t_current
                             fi += 1
                         end
-                    end
+                    end,
                 )
             end
 
             println("Building dashboard...")
-            fig, config_changed = build_dashboard(sys, p, frames; times=times,
-                                  u_settled=u_start, wind_fn=wind_fn,
-                                  config_name=current_config)
+            fig, config_changed = build_dashboard(
+                sys,
+                p,
+                frames;
+                times=times,
+                u_settled=u_start,
+                wind_fn=wind_fn,
+                config_name=current_config,
+            )
             display(fig)
-            println("Dashboard open — $(current_config). Use 'Switch Configuration' to change.")
+            println(
+                "Dashboard open — $(current_config). Use 'Switch Configuration' to change."
+            )
 
             # Wait for window close or config switch request
             while isopen(fig.scene) && config_changed[] === nothing

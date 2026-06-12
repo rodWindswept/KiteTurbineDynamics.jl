@@ -16,14 +16,14 @@ const BEM = KiteTurbineDynamics.BEM
     @testset "Match AeroDyn at n_lines=5" begin
         for λ in [3.0, 3.5, 4.0, 4.1, 4.5, 5.0]
             cp_direct = cp_at_tsr(λ)
-            cp_bem5   = BEM.cp_bem(5, λ)
+            cp_bem5 = BEM.cp_bem(5, λ)
             if cp_direct > 0.01
                 @test abs(cp_bem5 - cp_direct) / cp_direct < 0.02
             end
         end
         for λ in [3.0, 3.5, 4.0, 4.1, 4.5, 5.0]
             ct_direct = ct_at_tsr(λ)
-            ct_bem5   = BEM.ct_bem(5, λ)
+            ct_bem5 = BEM.ct_bem(5, λ)
             if ct_direct > 0.01
                 @test abs(ct_bem5 - ct_direct) / ct_direct < 0.03
             end
@@ -59,7 +59,7 @@ const BEM = KiteTurbineDynamics.BEM
     @testset "Rotor radius self-consistent" begin
         P, v, n = 10_000.0, 11.0, 5
         R = BEM.rotor_radius_for_power(P, v, n; tsr=4.1)
-        Cp  = BEM.cp_bem(n, 4.1)
+        Cp = BEM.cp_bem(n, 4.1)
         P_check = Cp * 0.5 * 1.225 * π * R^2 * v^3
         @test abs(P_check - P) / P < 0.05
         R5 = BEM.rotor_radius_for_power(P, v, 5; tsr=4.1)
@@ -78,7 +78,7 @@ const BEM = KiteTurbineDynamics.BEM
 
     # ── 6. TSR sweep sanity ─────────────────────────────────
     @testset "TSR dependence" begin
-        cp_low  = BEM.cp_bem(5, 2.0)
+        cp_low = BEM.cp_bem(5, 2.0)
         cp_peak = BEM.cp_bem(5, 4.1)
         cp_high = BEM.cp_bem(5, 7.0)
         @test cp_peak > cp_low

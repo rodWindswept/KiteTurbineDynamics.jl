@@ -27,16 +27,17 @@
 # Replaces the hard-coded OPT_DESIGN_LOAD_FACTOR = 0.5 with a measured value
 # (writes scripts/results/trpt_opt/dlf/recommended_dlf.txt).
 
-using Pkg; Pkg.activate(dirname(@__DIR__))
+using Pkg;
+Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics
 using LinearAlgebra, Printf, CSV, DataFrames, Random, Dates
 
 const OUT_DIR = joinpath(dirname(@__DIR__), "scripts", "results", "trpt_opt", "dlf")
 mkpath(OUT_DIR)
 
-const DT          = 4e-5         # ODE step (matches dashboard)
-const SAVE_EVERY  = 1000         # ~25 ms between saves
-const LIN_DAMP    = 0.05
+const DT = 4e-5         # ODE step (matches dashboard)
+const SAVE_EVERY = 1000         # ~25 ms between saves
+const LIN_DAMP = 0.05
 const T_REL_SETTLE = 1.5         # ignore first ~1.5 s of each scenario
 
 # ── Per-ring inward force extractor ──────────────────────────────────────────
@@ -48,12 +49,12 @@ const T_REL_SETTLE = 1.5         # ignore first ~1.5 s of each scenario
 
 Returns one row per polygon spacer ring (skips ground & hub).
 """
-function extract_per_ring_F_inward(u::Vector{Float64},
-                                    sys::KiteTurbineDynamics.KiteTurbineSystem,
-                                    p::SystemParams)
-    N  = sys.n_total
+function extract_per_ring_F_inward(
+    u::Vector{Float64}, sys::KiteTurbineDynamics.KiteTurbineSystem, p::SystemParams
+)
+    N = sys.n_total
     Nr = sys.n_ring
-    α  = u[6N + 1 : 6N + Nr]
+    α = u[(6N + 1):(6N + Nr)]
     rows = []
     n = float(p.n_lines)
     safety = ring_safety_frame(u, α, sys, p)
@@ -61,15 +62,20 @@ function extract_per_ring_F_inward(u::Vector{Float64},
         # Recover the original F_inward from the polygon-equilibrium relation.
         #   F_v   = 2·tan(π/n)·N_comp
         #   F_in  = n·F_v
-        F_v   = 2.0 * tan(π / n) * r.N_comp
-        F_in  = n * F_v
-        push!(rows, (ring_id = r.ring_id,
-                     radius  = r.radius,
-                     N_comp  = r.N_comp,
-                     P_crit  = r.P_crit,
-                     fos     = r.fos,
-                     F_inward_total      = F_in,
-                     F_inward_per_vertex = F_v))
+        F_v = 2.0 * tan(π / n) * r.N_comp
+        F_in = n * F_v
+        push!(
+            rows,
+            (
+                ring_id=r.ring_id,
+                radius=r.radius,
+                N_comp=r.N_comp,
+                P_crit=r.P_crit,
+                fos=r.fos,
+                F_inward_total=F_in,
+                F_inward_per_vertex=F_v,
+            ),
+        )
     end
     return rows
 end
@@ -88,54 +94,68 @@ end
 
 # ── Scenario definitions ─────────────────────────────────────────────────────
 struct Scenario
-    name        :: String
-    v_peak      :: Float64
-    duration_s  :: Float64
-    wind_fn     :: Function
-    perturb_fn  :: Function   # (t) → optional change to system params (e.g. ebrake)
+    name::String
+    v_peak::Float64
+    duration_s::Float64
+    wind_fn::Function
+    perturb_fn::Function   # (t) → optional change to system params (e.g. ebrake)
 end
 
-scenarios(p::SystemParams) = [
-    Scenario("steady11", 11.0, 6.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
+function scenarios(p::SystemParams)
+    return [
+        Scenario(
+            "steady11", 11.0, 6.0, (pos, t) -> begin
+                z = max(pos[3], 1.0);
+                sh = (z / p.h_ref)^(1.0/7.0)
                 [11.0 * sh, 0.0, 0.0]
-             end,
-             t -> p),
-    Scenario("steady15", 15.0, 6.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
+            end, t -> p
+        ),
+        Scenario(
+            "steady15", 15.0, 6.0, (pos, t) -> begin
+                z = max(pos[3], 1.0);
+                sh = (z / p.h_ref)^(1.0/7.0)
                 [15.0 * sh, 0.0, 0.0]
-             end,
-             t -> p),
-    Scenario("steady20", 20.0, 6.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
+            end, t -> p
+        ),
+        Scenario(
+            "steady20", 20.0, 6.0, (pos, t) -> begin
+                z = max(pos[3], 1.0);
+                sh = (z / p.h_ref)^(1.0/7.0)
                 [20.0 * sh, 0.0, 0.0]
-             end,
-             t -> p),
-    Scenario("steady25", 25.0, 6.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
+            end, t -> p
+        ),
+        Scenario(
+            "steady25", 25.0, 6.0, (pos, t) -> begin
+                z = max(pos[3], 1.0);
+                sh = (z / p.h_ref)^(1.0/7.0)
                 [25.0 * sh, 0.0, 0.0]
-             end,
-             t -> p),
-    Scenario("gust_11_25", 25.0, 8.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
-                v_t = t < 1.5 ? 11.0 :
-                      t < 4.5 ? 11.0 + (25.0 - 11.0) * (1 - cos(π*(t-1.5)/3.0))/2 :
-                      25.0
+            end, t -> p
+        ),
+        Scenario(
+            "gust_11_25",
+            25.0,
+            8.0,
+            (pos, t) -> begin
+                z = max(pos[3], 1.0);
+                sh = (z / p.h_ref)^(1.0/7.0)
+                v_t = if t < 1.5
+                    11.0
+                elseif t < 4.5
+                    11.0 + (25.0 - 11.0) * (1 - cos(π*(t-1.5)/3.0))/2
+                else
+                    25.0
+                end
                 [v_t * sh, 0.0, 0.0]
-             end,
-             t -> p),
-    Scenario("ebrake", 11.0, 6.0,
-             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1.0/7.0)
-                [11.0 * sh, 0.0, 0.0]
-             end,
-             t -> p),  # k_mppt step is realised via callback below
-]
+            end,
+            t -> p,
+        ),
+        Scenario("ebrake", 11.0, 6.0, (pos, t) -> begin
+            z = max(pos[3], 1.0);
+            sh = (z / p.h_ref)^(1.0/7.0)
+            [11.0 * sh, 0.0, 0.0]
+        end, t -> p),  # k_mppt step is realised via callback below
+    ]
+end
 
 # ── Run one scenario, log per-ring F_inward time series ──────────────────────
 function run_scenario(p::SystemParams, sc::Scenario)
@@ -149,7 +169,7 @@ function run_scenario(p::SystemParams, sc::Scenario)
     println("    settle_to_operational_state: $(round(time()-t1; digits=2)) s")
 
     n_steps = round(Int, sc.duration_s / DT)
-    n_save  = n_steps ÷ SAVE_EVERY
+    n_save = n_steps ÷ SAVE_EVERY
 
     # ebrake: bump k_mppt × 3 at t=2.0s by mutating wind/dynamics.  Cheapest
     # implementation: run two sub-runs (pre-brake, then post-brake at higher k).
@@ -158,16 +178,37 @@ function run_scenario(p::SystemParams, sc::Scenario)
         df_pre = run_log!(u, sys, p, sc.wind_fn, round(Int, 2.0/DT), DT)
         # rebuild with 3× k_mppt
         p_brake = SystemParams(
-            p.rho, p.v_wind_ref, p.h_ref, p.elevation_angle, p.lifter_elevation,
-            p.rotor_radius, p.tether_length, p.trpt_hub_radius, p.trpt_rL_ratio,
-            p.n_lines, p.tether_diameter, p.e_modulus, p.n_rings, p.m_ring,
-            p.n_blades, p.m_blade, p.cp, p.i_pto,
+            p.rho,
+            p.v_wind_ref,
+            p.h_ref,
+            p.elevation_angle,
+            p.lifter_elevation,
+            p.rotor_radius,
+            p.tether_length,
+            p.trpt_hub_radius,
+            p.trpt_rL_ratio,
+            p.n_lines,
+            p.tether_diameter,
+            p.e_modulus,
+            p.n_rings,
+            p.m_ring,
+            p.n_blades,
+            p.m_blade,
+            p.cp,
+            p.i_pto,
             p.k_mppt * 3.0,                   # ← step
-            p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev,
-            p.EA_back_line, p.c_back_line, p.back_anchor_fwd_x,
+            p.p_rated_w,
+            p.β_min,
+            p.β_max,
+            p.β_rate_max,
+            p.kp_elev,
+            p.EA_back_line,
+            p.c_back_line,
+            p.back_anchor_fwd_x,
         )
-        df_post = run_log!(u, sys, p_brake, sc.wind_fn,
-                            round(Int, (sc.duration_s - 2.0)/DT), DT)
+        df_post = run_log!(
+            u, sys, p_brake, sc.wind_fn, round(Int, (sc.duration_s - 2.0)/DT), DT
+        )
         df_post.t .+= 2.0
         df = vcat(df_pre, df_post)
     else
@@ -185,68 +226,97 @@ function run_scenario(p::SystemParams, sc::Scenario)
     # Reference T_line at scenario v_peak
     T_ref = T_line_axial_static(p, sc.v_peak)
     rings = sort(unique(df_late.ring_id))
-    env = DataFrame(
-        scenario = String[],
-        ring_id  = Int[],
-        radius_m = Float64[],
-        F_in_per_vertex_peak = Float64[],
-        T_line_static_ref_N  = Float64[],
-        DLF_peak             = Float64[],
-        DLF_mean             = Float64[],
-        DLF_p95              = Float64[],
+    env = DataFrame(;
+        scenario=String[],
+        ring_id=Int[],
+        radius_m=Float64[],
+        F_in_per_vertex_peak=Float64[],
+        T_line_static_ref_N=Float64[],
+        DLF_peak=Float64[],
+        DLF_mean=Float64[],
+        DLF_p95=Float64[],
     )
     for ri in rings
         sub = df_late[df_late.ring_id .== ri, :]
         # F per vertex = N_comp × 2 tan(π/n)
         n_lines_fl = float(p.n_lines)
         F_v_arr = 2.0 * tan(π / n_lines_fl) .* sub.N_comp
-        push!(env, (sc.name, Int(ri), sub.radius[1],
-                    maximum(F_v_arr),
-                    T_ref,
-                    maximum(F_v_arr) / max(T_ref, 1e-9),
-                    sum(F_v_arr) / length(F_v_arr) / max(T_ref, 1e-9),
-                    quantile(F_v_arr, 0.95) / max(T_ref, 1e-9)))
+        push!(
+            env,
+            (
+                sc.name,
+                Int(ri),
+                sub.radius[1],
+                maximum(F_v_arr),
+                T_ref,
+                maximum(F_v_arr) / max(T_ref, 1e-9),
+                sum(F_v_arr) / length(F_v_arr) / max(T_ref, 1e-9),
+                quantile(F_v_arr, 0.95) / max(T_ref, 1e-9),
+            ),
+        )
     end
     return df, env
 end
 
 # Run the integrator while logging per-ring F_inward at every saved step.
-function run_log!(u::Vector{Float64},
-                  sys::KiteTurbineDynamics.KiteTurbineSystem,
-                  p::SystemParams,
-                  wind_fn::Function,
-                  n_steps::Int,
-                  dt::Float64)
-    df = DataFrame(t = Float64[],
-                   v_hub = Float64[],
-                   ring_id = Int[],
-                   radius  = Float64[],
-                   N_comp  = Float64[],
-                   P_crit  = Float64[],
-                   fos     = Float64[],
-                   F_inward_total      = Float64[],
-                   F_inward_per_vertex = Float64[])
-    run_canonical_sim!(u, sys, p, wind_fn, n_steps, dt;
-        lin_damp = LIN_DAMP,
-        callback = (u_curr, t_curr, step) -> begin
+function run_log!(
+    u::Vector{Float64},
+    sys::KiteTurbineDynamics.KiteTurbineSystem,
+    p::SystemParams,
+    wind_fn::Function,
+    n_steps::Int,
+    dt::Float64,
+)
+    df = DataFrame(;
+        t=Float64[],
+        v_hub=Float64[],
+        ring_id=Int[],
+        radius=Float64[],
+        N_comp=Float64[],
+        P_crit=Float64[],
+        fos=Float64[],
+        F_inward_total=Float64[],
+        F_inward_per_vertex=Float64[],
+    )
+    run_canonical_sim!(
+        u,
+        sys,
+        p,
+        wind_fn,
+        n_steps,
+        dt;
+        lin_damp=LIN_DAMP,
+        callback=(u_curr, t_curr, step) -> begin
             if step % SAVE_EVERY == 0
-                hub_z = u_curr[3*(sys.rotor.node_id-1)+3]
-                v_h   = wind_fn([0.0, 0.0, hub_z], t_curr)[1]
-                rows  = extract_per_ring_F_inward(u_curr, sys, p)
+                hub_z = u_curr[3 * (sys.rotor.node_id - 1) + 3]
+                v_h = wind_fn([0.0, 0.0, hub_z], t_curr)[1]
+                rows = extract_per_ring_F_inward(u_curr, sys, p)
                 for r in rows
-                    push!(df, (t_curr, v_h, r.ring_id, r.radius,
-                               r.N_comp, r.P_crit, r.fos,
-                               r.F_inward_total, r.F_inward_per_vertex))
+                    push!(
+                        df,
+                        (
+                            t_curr,
+                            v_h,
+                            r.ring_id,
+                            r.radius,
+                            r.N_comp,
+                            r.P_crit,
+                            r.fos,
+                            r.F_inward_total,
+                            r.F_inward_per_vertex,
+                        ),
+                    )
                 end
             end
-        end
+        end,
     )
     return df
 end
 
 # Helper: percentile (avoid Statistics.quantile import quirks under module reuse)
 function quantile(x::AbstractVector, q::Float64)
-    n = length(x); n == 0 && return 0.0
+    n = length(x);
+    n == 0 && return 0.0
     s = sort(x)
     idx = clamp(round(Int, q * n), 1, n)
     return s[idx]
@@ -279,17 +349,17 @@ function main()
 
     # Overall summary: max DLF across all scenarios and rings
     overall_dlf_peak = maximum(all_envs.DLF_peak)
-    overall_dlf_p95  = quantile(all_envs.DLF_p95, 0.95)
+    overall_dlf_p95 = quantile(all_envs.DLF_p95, 0.95)
     overall_dlf_mean = sum(all_envs.DLF_mean) / nrow(all_envs)
 
-    summary = DataFrame(
-        timestamp        = [string(now())],
-        n_scenarios      = [length(unique(all_envs.scenario))],
-        n_rings          = [length(unique(all_envs.ring_id))],
-        DLF_peak         = [overall_dlf_peak],
-        DLF_p95          = [overall_dlf_p95],
-        DLF_mean         = [overall_dlf_mean],
-        DLF_recommended  = [overall_dlf_peak * 1.10],  # +10% safety margin
+    summary = DataFrame(;
+        timestamp=[string(now())],
+        n_scenarios=[length(unique(all_envs.scenario))],
+        n_rings=[length(unique(all_envs.ring_id))],
+        DLF_peak=[overall_dlf_peak],
+        DLF_p95=[overall_dlf_p95],
+        DLF_mean=[overall_dlf_mean],
+        DLF_recommended=[overall_dlf_peak * 1.10],  # +10% safety margin
     )
     CSV.write(joinpath(OUT_DIR, "dlf_summary.csv"), summary)
     open(joinpath(OUT_DIR, "recommended_dlf.txt"), "w") do io
@@ -306,7 +376,7 @@ function main()
     @printf("  DLF mean                     : %.4f\n", overall_dlf_mean)
     @printf("  Recommended DLF (peak × 1.1) : %.4f\n", overall_dlf_peak * 1.10)
     println("=" ^ 72)
-    println("Compare: current OPT_DESIGN_LOAD_FACTOR = $(OPT_DESIGN_LOAD_FACTOR)")
+    return println("Compare: current OPT_DESIGN_LOAD_FACTOR = $(OPT_DESIGN_LOAD_FACTOR)")
 end
 
 main()

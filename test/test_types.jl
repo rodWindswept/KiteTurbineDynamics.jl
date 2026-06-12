@@ -3,11 +3,11 @@
     sys, u0 = build_kite_turbine_system(p)
 
     # Node counts (includes bearing + sky anchor)
-    n_ring       = p.n_rings + 2                  # ground + 14 rings + hub = 16
-    n_rope       = p.n_lines * 3 * (p.n_rings + 1)  # 5 * 3 * 15 = 225
-    n_bearing    = 1
+    n_ring = p.n_rings + 2                  # ground + 14 rings + hub = 16
+    n_rope = p.n_lines * 3 * (p.n_rings + 1)  # 5 * 3 * 15 = 225
+    n_bearing = 1
     n_sky_anchor = 1
-    n_total      = n_ring + n_rope + n_bearing + n_sky_anchor  # 243
+    n_total = n_ring + n_rope + n_bearing + n_sky_anchor  # 243
 
     @test length(sys.nodes) == n_total
     @test count(n -> isa(n, RingNode), sys.nodes) == n_ring

@@ -402,16 +402,16 @@ function _evaluate_trpt_design_impl(
         "OK"
     else
         (
-        if !torsion_ok
-            "compressive stress > 500 MPa limit"
-        elseif min_fos < fos_req
-            "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx"
-        elseif !torsional_collapse_ok
-            "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED"
-        else
-            "t/D out of manufacturable bounds"
-        end
-    )
+            if !torsion_ok
+                "compressive stress > 500 MPa limit"
+            elseif min_fos < fos_req
+                "FOS $(round(min_fos, digits=2)) < $fos_req at ring $worst_idx"
+            elseif !torsional_collapse_ok
+                "Torsional collapse FOS $(round(min_torsional_fos, digits=2)) < $OPT_TORSION_FOS_REQUIRED"
+            else
+                "t/D out of manufacturable bounds"
+            end
+        )
     end
 
     return EvalResult(

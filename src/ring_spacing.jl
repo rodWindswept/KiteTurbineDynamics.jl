@@ -217,6 +217,7 @@ function evaluate_design(
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     v_rated::Float64=11.0,
     P_rated::Float64=10000.0,
+    r_eff_override::Union{Nothing, Vector{Float64}}=nothing,
 )
 
     # ── Ground ring deployment constraint ─────────────────────────────────
@@ -267,9 +268,11 @@ function evaluate_design(
     )
     L_seg = diff(zs)
 
+    eval_radii = r_eff_override !== nothing ? r_eff_override : radii
+
     return _evaluate_trpt_design_impl(
         design,
-        radii,
+        eval_radii,
         L_seg;
         r_rotor=r_rotor,
         elev_angle=elev_angle,

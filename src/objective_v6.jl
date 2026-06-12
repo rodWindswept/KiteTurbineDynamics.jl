@@ -100,12 +100,15 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
-    estimate_effective_radii(design, stack, p; v_wind, omega, elev)
+    estimate_effective_radii(design, stack, p; v_wind, omega, elev_deg, r_rotor)
 
 Estimate effective ring radii from expansion rotor spreading at the
 design operating point.  Uses a simplified force balance — no ODE needed.
 
 Returns a vector of effective radii (same length as ring count).
+
+`r_rotor` is the generating rotor radius used for thrust estimation.
+When zero (default) falls back to `design.r_hub` as a proxy.
 """
 function estimate_effective_radii(
     design::TRPTDesignV4,
@@ -114,6 +117,7 @@ function estimate_effective_radii(
     v_wind::Float64=11.0,
     omega::Float64=9.5,
     elev_deg::Float64=20.0,
+    r_rotor::Float64=0.0,
 )
     zs, radii, n_rings = ring_spacing_v4(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
@@ -128,9 +132,10 @@ function estimate_effective_radii(
     rho = p.rho
 
     # Estimate tether tension from rotor thrust at design point
-    r_rotor = design.r_hub
-    lambda_t = omega * r_rotor / v_wind
-    thrust = 0.5 * rho * v_wind^2 * π * r_rotor^2 * ct_at_tsr(lambda_t) * cosd(elev_deg)^2.0
+    r_rotor_use = r_rotor > 0.0 ? r_rotor : design.r_hub
+    lambda_t = omega * r_rotor_use / max(v_wind, 0.1)
+    thrust =
+        0.5 * rho * v_wind^2 * π * r_rotor_use^2 * ct_at_tsr(lambda_t) * cosd(elev_deg)^2.0
     T_per_line = thrust / n_lines
 
     # Geometry factor for polygonal ring
@@ -188,15 +193,22 @@ function objective_v6(
     design = result.design
     stack = result.stack
 
-    # Compute effective radii from expansion rotors (steady-state estimate)
-    r_eff = estimate_effective_radii(
-        design, stack, p; v_wind=v_rated, elev_deg=rad2deg(elev_angle)
-    )
-
-    # Evaluate structural design using standard v5 evaluator
-    # (with BEM-coupled rotor radius)
+    # Rotor sizing (BEM-coupled): must come before effective-radii estimate
+    # so the correct operating point drives the tether-tension proxy.
     r_rotor = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
     omega = 4.1 * v_rated / r_rotor  # optimal TSR ≈ 4.1
+
+    # Compute effective radii from expansion rotor aerodynamic spreading.
+    # Larger r_eff → larger torsional capacity → lower structural mass.
+    r_eff = estimate_effective_radii(
+        design,
+        stack,
+        p;
+        v_wind=v_rated,
+        elev_deg=rad2deg(elev_angle),
+        omega=omega,
+        r_rotor=r_rotor,
+    )
 
     eval_result = evaluate_design(
         design;
@@ -208,6 +220,7 @@ function objective_v6(
         v_rated=v_rated,
         P_rated=power_W,
         max_ground_radius=max_ground_radius,
+        r_eff_override=r_eff,
     )
 
     if !eval_result.feasible

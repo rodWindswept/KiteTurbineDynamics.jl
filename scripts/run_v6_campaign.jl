@@ -31,14 +31,15 @@
 #     # Ctrl+A D to detach, screen -r v6 to reconnect
 #
 #   Check progress (from another terminal):
-#     tail -f scripts/results/v6_campaign/convergence_history.csv
+#     tail -f scripts/results/v6_campaign_10kw/convergence_history.csv
 #
 # ═══════════════════════════════════════════════════════════════════════════
 # OUTPUT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-#   scripts/results/v6_campaign/best_design.json     — best design found
-#   scripts/results/v6_campaign/convergence_history.csv — mass vs iteration
+#   scripts/results/v6_campaign_10kw/best_design.json     — best design found (10 kW)
+#   scripts/results/v6_campaign_50kw/best_design.json     — best design found (50 kW)
+#   scripts/results/v6_campaign_10kw/convergence_history.csv — mass vs iteration
 #
 # ═══════════════════════════════════════════════════════════════════════════
 # DESIGN VARIABLES (13-DoF)
@@ -244,7 +245,9 @@ function main()
     )
 
     # ── Save results ───────────────────────────────────────────────────────
-    out_dir = joinpath(dirname(@__DIR__), "scripts", "results", "v6_campaign")
+    out_dir = joinpath(
+        dirname(@__DIR__), "scripts", "results", "v6_campaign_$(args.power_kw)kw"
+    )
     mkpath(out_dir)
 
     if global_best_x !== nothing

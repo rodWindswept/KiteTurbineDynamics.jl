@@ -40,15 +40,15 @@ K_MPPT_MULTS = [0.25, 0.5, 1.0, 1.5, 2.5, 4.0]
 # Hub wind speeds (m/s): below rated, near rated, rated, above rated
 V_WIND_CASES = [8.0, 10.0, 11.0, 13.0]
 
-K_MPPT_NOM   = 11.0          # N·m·s²/rad² — default from params_10kw()
-DT           = 4e-5           # s — Euler integration step
-T_SPINUP     = 5.0            # s — extra spin-up before recording (on top of settle)
-T_SIM        = 60.0           # s — recorded simulation duration per combination
-T_CHUNK      = 0.5            # s — record one data point per chunk
+K_MPPT_NOM = 11.0          # N·m·s²/rad² — default from params_10kw()
+DT = 4e-5           # s — Euler integration step
+T_SPINUP = 5.0            # s — extra spin-up before recording (on top of settle)
+T_SIM = 60.0           # s — recorded simulation duration per combination
+T_CHUNK = 0.5            # s — record one data point per chunk
 
-N_SPINUP     = round(Int, T_SPINUP / DT)
-N_CHUNK      = round(Int, T_CHUNK  / DT)
-N_CHUNKS     = round(Int, T_SIM    / T_CHUNK)
+N_SPINUP = round(Int, T_SPINUP / DT)
+N_CHUNK = round(Int, T_CHUNK / DT)
+N_CHUNKS = round(Int, T_SIM / T_CHUNK)
 
 # ── Output directory ──────────────────────────────────────────────────────────
 
@@ -58,44 +58,73 @@ mkpath(OUT_DIR)
 # ── Helper: build SystemParams with only k_mppt and v_wind_ref varied ─────────
 
 function make_params(base::SystemParams; k_mppt=base.k_mppt, v_wind=base.v_wind_ref)
-    SystemParams(
-        base.rho, v_wind, base.h_ref,
-        base.elevation_angle, base.lifter_elevation,
-        base.rotor_radius, base.tether_length,
-        base.trpt_hub_radius, base.trpt_rL_ratio,
-        base.n_lines, base.tether_diameter, base.e_modulus,
-        base.n_rings, base.m_ring,
-        base.n_blades, base.m_blade,
-        base.cp, base.i_pto,
+    return SystemParams(
+        base.rho,
+        v_wind,
+        base.h_ref,
+        base.elevation_angle,
+        base.lifter_elevation,
+        base.rotor_radius,
+        base.tether_length,
+        base.trpt_hub_radius,
+        base.trpt_rL_ratio,
+        base.n_lines,
+        base.tether_diameter,
+        base.e_modulus,
+        base.n_rings,
+        base.m_ring,
+        base.n_blades,
+        base.m_blade,
+        base.cp,
+        base.i_pto,
         k_mppt,
-        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
-        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x
+        base.p_rated_w,
+        base.β_min,
+        base.β_max,
+        base.β_rate_max,
+        base.kp_elev,
+        base.EA_back_line,
+        base.c_back_line,
+        base.back_anchor_fwd_x,
     )
 end
 
 # ── Build base system once (geometry is the same for all runs) ────────────────
 
 println("Building base system…")
-p_base       = params_10kw()
+p_base = params_10kw()
 sys, u0_base = build_kite_turbine_system(p_base)
-N, Nr        = sys.n_total, sys.n_ring
+N, Nr = sys.n_total, sys.n_ring
 
 # ── Sweep ─────────────────────────────────────────────────────────────────────
 
-ts_rows   = DataFrame(k_mult=Float64[], k_mppt=Float64[], v_wind=Float64[],
-                       t=Float64[], twist_deg=Float64[], omega_hub=Float64[],
-                       omega_gnd=Float64[], P_kw=Float64[])
-sum_rows  = DataFrame(k_mult=Float64[], k_mppt=Float64[], v_wind=Float64[],
-                       twist_mean=Float64[], twist_std=Float64[],
-                       omega_hub_mean=Float64[], P_kw_mean=Float64[])
+ts_rows = DataFrame(;
+    k_mult=Float64[],
+    k_mppt=Float64[],
+    v_wind=Float64[],
+    t=Float64[],
+    twist_deg=Float64[],
+    omega_hub=Float64[],
+    omega_gnd=Float64[],
+    P_kw=Float64[],
+)
+sum_rows = DataFrame(;
+    k_mult=Float64[],
+    k_mppt=Float64[],
+    v_wind=Float64[],
+    twist_mean=Float64[],
+    twist_std=Float64[],
+    omega_hub_mean=Float64[],
+    P_kw_mean=Float64[],
+)
 
 n_total = length(K_MPPT_MULTS) * length(V_WIND_CASES)
 
-for (run_idx, (k_mult, v_wind)) in enumerate(
-        (k, v) for k in K_MPPT_MULTS for v in V_WIND_CASES)
+for (run_idx, (k_mult, v_wind)) in
+    enumerate((k, v) for k in K_MPPT_MULTS for v in V_WIND_CASES)
     k_mppt = K_MPPT_NOM * k_mult
-    p      = make_params(p_base; k_mppt=k_mppt, v_wind=v_wind)
-    wfn    = (pos, t) -> [v_wind, 0.0, 0.0]
+    p = make_params(p_base; k_mppt=k_mppt, v_wind=v_wind)
+    wfn = (pos, t) -> [v_wind, 0.0, 0.0]
 
     @printf "\n[%2d/%d]  k×%.2f  v=%.0f m/s  (k_mppt=%.1f)\n" run_idx n_total k_mult v_wind k_mppt
 
@@ -114,18 +143,18 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
     flush(stdout)
 
     # 3. Record T_SIM seconds in T_CHUNK-second chunks
-    t_sim  = T_SPINUP
-    t0w    = time()
+    t_sim = T_SPINUP
+    t0w = time()
 
     for chunk in 1:N_CHUNKS
-        u     = simulate(sys, u, p, wfn; n_steps=N_CHUNK, dt=DT)
+        u = simulate(sys, u, p, wfn; n_steps=N_CHUNK, dt=DT)
         t_sim += T_CHUNK
 
         sf = capture_frame(u, sys, p, t_sim, wfn; brake_engaged=sys.brake_engaged[])
-        ω_hub  = sf.omega_hub
-        ω_gnd  = sf.omega_gnd
-        twist  = sf.delta_alpha_deg
-        P_kw   = sf.P_kw
+        ω_hub = sf.omega_hub
+        ω_gnd = sf.omega_gnd
+        twist = sf.delta_alpha_deg
+        P_kw = sf.P_kw
 
         push!(ts_rows, (k_mult, k_mppt, v_wind, t_sim, twist, ω_hub, ω_gnd, P_kw))
 
@@ -138,24 +167,37 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
     end
 
     # 4. Summary stats from last 10 s (settled region)
-    settled = filter(r -> r.k_mult == k_mult && r.v_wind == v_wind &&
-                          r.t >= T_SPINUP + T_SIM - 10.0, ts_rows)
+    settled = filter(
+        r -> r.k_mult == k_mult && r.v_wind == v_wind && r.t >= T_SPINUP + T_SIM - 10.0,
+        ts_rows,
+    )
     if !isempty(settled)
-        push!(sum_rows, (k_mult, k_mppt, v_wind,
-                         mean(settled.twist_deg), std(settled.twist_deg),
-                         mean(settled.omega_hub), mean(settled.P_kw)))
-        @printf "  → settled: twist = %.1f ± %.1f °  |  P = %.2f kW\n" last(sum_rows).twist_mean last(sum_rows).twist_std last(sum_rows).P_kw_mean
+        push!(
+            sum_rows,
+            (
+                k_mult,
+                k_mppt,
+                v_wind,
+                mean(settled.twist_deg),
+                std(settled.twist_deg),
+                mean(settled.omega_hub),
+                mean(settled.P_kw),
+            ),
+        )
+        @printf "  → settled: twist = %.1f ± %.1f °  |  P = %.2f kW\n" last(sum_rows).twist_mean last(
+            sum_rows
+        ).twist_std last(sum_rows).P_kw_mean
     end
 end
 
 # ── Save results ──────────────────────────────────────────────────────────────
 
-ts_path  = joinpath(OUT_DIR, "twist_sweep.csv")
+ts_path = joinpath(OUT_DIR, "twist_sweep.csv")
 sum_path = joinpath(OUT_DIR, "twist_sweep_summary.csv")
-CSV.write(ts_path,  ts_rows)
+CSV.write(ts_path, ts_rows)
 CSV.write(sum_path, sum_rows)
 
-@printf "\nSaved: %s  (%d rows)\n" ts_path  nrow(ts_rows)
+@printf "\nSaved: %s  (%d rows)\n" ts_path nrow(ts_rows)
 @printf "Saved: %s  (%d rows)\n" sum_path nrow(sum_rows)
 
 # ── Print summary table ───────────────────────────────────────────────────────

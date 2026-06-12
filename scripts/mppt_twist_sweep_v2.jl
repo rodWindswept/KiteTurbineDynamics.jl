@@ -42,21 +42,21 @@ import Statistics: mean, std
 K_MPPT_MULTS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.5, 4.0]   # 7 levels
 V_WIND_CASES = [8.0, 10.0, 11.0, 13.0]                   # m/s
 
-K_MPPT_NOM   = 11.0          # N·m·s²/rad² — default from params_10kw()
-DT           = 2e-5           # s
-T_SPINUP     = 5.0            # s — spin-up before recording
-T_SIM        = 180.0          # s — recorded duration
-T_CHUNK      = 0.5            # s — recording interval
-T_SETTLE     = 20.0           # s — window for settled statistics (last T_SETTLE s)
+K_MPPT_NOM = 11.0          # N·m·s²/rad² — default from params_10kw()
+DT = 2e-5           # s
+T_SPINUP = 5.0            # s — spin-up before recording
+T_SIM = 180.0          # s — recorded duration
+T_CHUNK = 0.5            # s — recording interval
+T_SETTLE = 20.0           # s — window for settled statistics (last T_SETTLE s)
 
-N_SPINUP     = round(Int, T_SPINUP / DT)
-N_CHUNK      = round(Int, T_CHUNK  / DT)
-N_CHUNKS     = round(Int, T_SIM    / T_CHUNK)
+N_SPINUP = round(Int, T_SPINUP / DT)
+N_CHUNK = round(Int, T_CHUNK / DT)
+N_CHUNKS = round(Int, T_SIM / T_CHUNK)
 
 # ── Wind ramp parameters ───────────────────────────────────────────────────────
-T_RAMP       = 150.0          # s total ramp time
-V_RAMP_LO    = 7.0            # m/s  start
-V_RAMP_HI    = 14.0           # m/s  end
+T_RAMP = 150.0          # s total ramp time
+V_RAMP_LO = 7.0            # m/s  start
+V_RAMP_HI = 14.0           # m/s  end
 
 # ── Output directory ──────────────────────────────────────────────────────────
 
@@ -69,95 +69,113 @@ mkpath(OUT_DIR)
 
 """Total stack twist (°): principal-value sum from ring `r_a` to ring `r_b`."""
 function partial_twist_deg(α, r_a, r_b)
-    rad2deg(sum(i -> mod(α[i+1] - α[i] + π, 2π) - π, r_a:r_b-1))
+    return rad2deg(sum(i -> mod(α[i + 1] - α[i] + π, 2π) - π, r_a:(r_b - 1)))
 end
 
 function structural_twist_deg(u, N, Nr)
-    α = @view u[6N+1 : 6N+Nr]
-    partial_twist_deg(α, 1, Nr)
+    α = @view u[(6N + 1):(6N + Nr)]
+    return partial_twist_deg(α, 1, Nr)
 end
 
 # ── Helper: build SystemParams with only k_mppt and v_wind_ref varied ─────────
 
 function make_params(base::SystemParams; k_mppt=base.k_mppt, v_wind=base.v_wind_ref)
-    SystemParams(
-        base.rho, v_wind, base.h_ref,
-        base.elevation_angle, base.lifter_elevation,
-        base.rotor_radius, base.tether_length,
-        base.trpt_hub_radius, base.trpt_rL_ratio,
-        base.n_lines, base.tether_diameter, base.e_modulus,
-        base.n_rings, base.m_ring,
-        base.n_blades, base.m_blade,
-        base.cp, base.i_pto,
+    return SystemParams(
+        base.rho,
+        v_wind,
+        base.h_ref,
+        base.elevation_angle,
+        base.lifter_elevation,
+        base.rotor_radius,
+        base.tether_length,
+        base.trpt_hub_radius,
+        base.trpt_rL_ratio,
+        base.n_lines,
+        base.tether_diameter,
+        base.e_modulus,
+        base.n_rings,
+        base.m_ring,
+        base.n_blades,
+        base.m_blade,
+        base.cp,
+        base.i_pto,
         k_mppt,
-        base.p_rated_w, base.β_min, base.β_max, base.β_rate_max, base.kp_elev,
-        base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x
+        base.p_rated_w,
+        base.β_min,
+        base.β_max,
+        base.β_rate_max,
+        base.kp_elev,
+        base.EA_back_line,
+        base.c_back_line,
+        base.back_anchor_fwd_x,
     )
 end
 
 # ── Build base system ─────────────────────────────────────────────────────────
 
 println("Building base system…")
-p_base       = params_10kw()
+p_base = params_10kw()
 sys, u0_base = build_kite_turbine_system(p_base)
-N, Nr        = sys.n_total, sys.n_ring
+N, Nr = sys.n_total, sys.n_ring
 println("  N=$N nodes, Nr=$Nr rings")
 default_lift = rotary_lifter_default()
 
 # Stack is split into three equal thirds for per-segment twist
 # Nr=16 rings → 15 inter-ring gaps: lower=1..5, middle=6..10, upper=11..15
-n_seg   = Nr - 1          # 15
-seg3    = n_seg ÷ 3       # 5 gaps per third
-r_lo_a  = 1;   r_lo_b  = 1 + seg3          # rings 1..6  → lower 5 gaps
-r_mid_a = 1 + seg3;  r_mid_b = 1 + 2*seg3  # rings 6..11 → middle 5 gaps
-r_hi_a  = 1 + 2*seg3; r_hi_b = Nr          # rings 11..16 → upper 5 gaps
+n_seg = Nr - 1          # 15
+seg3 = n_seg ÷ 3       # 5 gaps per third
+r_lo_a = 1;
+r_lo_b = 1 + seg3          # rings 1..6  → lower 5 gaps
+r_mid_a = 1 + seg3;
+r_mid_b = 1 + 2*seg3  # rings 6..11 → middle 5 gaps
+r_hi_a = 1 + 2*seg3;
+r_hi_b = Nr          # rings 11..16 → upper 5 gaps
 
 # ── DataFrame schemas ─────────────────────────────────────────────────────────
 
-ts_rows = DataFrame(
-    k_mult    = Float64[],
-    k_mppt    = Float64[],
-    v_wind    = Float64[],
-    t         = Float64[],
-    twist_deg = Float64[],   # total stack twist
-    twist_lo  = Float64[],   # lower third (rings 1..6)
-    twist_mid = Float64[],   # middle third (rings 6..11)
-    twist_hi  = Float64[],   # upper third (rings 11..16)
-    omega_hub = Float64[],
-    omega_gnd = Float64[],
-    delta_omega = Float64[], # shaft slip (hub − gnd)
-    P_kw      = Float64[],
-    T_max_N   = Float64[],   # peak tether tension
-    T_mean_N  = Float64[],   # mean tether tension
+ts_rows = DataFrame(;
+    k_mult=Float64[],
+    k_mppt=Float64[],
+    v_wind=Float64[],
+    t=Float64[],
+    twist_deg=Float64[],   # total stack twist
+    twist_lo=Float64[],   # lower third (rings 1..6)
+    twist_mid=Float64[],   # middle third (rings 6..11)
+    twist_hi=Float64[],   # upper third (rings 11..16)
+    omega_hub=Float64[],
+    omega_gnd=Float64[],
+    delta_omega=Float64[], # shaft slip (hub − gnd)
+    P_kw=Float64[],
+    T_max_N=Float64[],   # peak tether tension
+    T_mean_N=Float64[],   # mean tether tension
 )
 
-sum_rows = DataFrame(
-    k_mult         = Float64[],
-    k_mppt         = Float64[],
-    v_wind         = Float64[],
-    twist_mean     = Float64[],
-    twist_std      = Float64[],
-    twist_lo_mean  = Float64[],
-    twist_mid_mean = Float64[],
-    twist_hi_mean  = Float64[],
-    omega_hub_mean = Float64[],
-    delta_omega_mean = Float64[],
-    P_kw_mean      = Float64[],
-    T_max_mean     = Float64[],
-    T_mean_mean    = Float64[],
-    tau_over_T     = Float64[],  # torque:tension ratio (τ = k_mppt × ω_gnd² × ω_gnd / ω_gnd = k×ω²; T=T_mean)
+sum_rows = DataFrame(;
+    k_mult=Float64[],
+    k_mppt=Float64[],
+    v_wind=Float64[],
+    twist_mean=Float64[],
+    twist_std=Float64[],
+    twist_lo_mean=Float64[],
+    twist_mid_mean=Float64[],
+    twist_hi_mean=Float64[],
+    omega_hub_mean=Float64[],
+    delta_omega_mean=Float64[],
+    P_kw_mean=Float64[],
+    T_max_mean=Float64[],
+    T_mean_mean=Float64[],
+    tau_over_T=Float64[],  # torque:tension ratio (τ = k_mppt × ω_gnd² × ω_gnd / ω_gnd = k×ω²; T=T_mean)
 )
 
 # ── Main sweep ────────────────────────────────────────────────────────────────
 
 n_total_runs = length(K_MPPT_MULTS) * length(V_WIND_CASES)
 
-for (run_idx, (k_mult, v_wind)) in enumerate(
-        (k, v) for k in K_MPPT_MULTS for v in V_WIND_CASES)
-
+for (run_idx, (k_mult, v_wind)) in
+    enumerate((k, v) for k in K_MPPT_MULTS for v in V_WIND_CASES)
     k_mppt = K_MPPT_NOM * k_mult
-    p      = make_params(p_base; k_mppt=k_mppt, v_wind=v_wind)
-    wfn    = (pos, t) -> [v_wind, 0.0, 0.0]
+    p = make_params(p_base; k_mppt=k_mppt, v_wind=v_wind)
+    wfn = (pos, t) -> [v_wind, 0.0, 0.0]
 
     @printf "\n[%2d/%d]  k×%.2f  v=%4.1f m/s  (k_mppt=%.2f)\n" run_idx n_total_runs k_mult v_wind k_mppt
 
@@ -170,86 +188,135 @@ for (run_idx, (k_mult, v_wind)) in enumerate(
     println("done")
 
     # 2. Recorded duration
-    t0w   = time()
-    run_canonical_sim!(u, sys, p, wfn, N_CHUNKS * N_CHUNK, DT;
-        lin_damp = 0.05,
-        callback = (u_curr, t_curr, step) -> begin
+    t0w = time()
+    run_canonical_sim!(
+        u,
+        sys,
+        p,
+        wfn,
+        N_CHUNKS * N_CHUNK,
+        DT;
+        lin_damp=0.05,
+        callback=(u_curr, t_curr, step) -> begin
             if step % N_CHUNK == 0
-                α_vec    = @view u_curr[6N+1 : 6N+Nr]
-                sf       = capture_frame(u_curr, sys, p, t_curr, wfn, default_lift; brake_engaged=sys.brake_engaged[])
-                twist    = sf.delta_alpha_deg
-                tw_lo    = partial_twist_deg(α_vec, r_lo_a,  r_lo_b)
-                tw_mid   = partial_twist_deg(α_vec, r_mid_a, r_mid_b)
-                tw_hi    = partial_twist_deg(α_vec, r_hi_a,  r_hi_b)
-                ω_hub    = sf.omega_hub
-                ω_gnd    = sf.omega_gnd
-                Δω       = ω_hub - ω_gnd
-                P_kw     = sf.P_kw
-                T_max    = sf.T_max
+                α_vec = @view u_curr[(6N + 1):(6N + Nr)]
+                sf = capture_frame(
+                    u_curr,
+                    sys,
+                    p,
+                    t_curr,
+                    wfn,
+                    default_lift;
+                    brake_engaged=sys.brake_engaged[],
+                )
+                twist = sf.delta_alpha_deg
+                tw_lo = partial_twist_deg(α_vec, r_lo_a, r_lo_b)
+                tw_mid = partial_twist_deg(α_vec, r_mid_a, r_mid_b)
+                tw_hi = partial_twist_deg(α_vec, r_hi_a, r_hi_b)
+                ω_hub = sf.omega_hub
+                ω_gnd = sf.omega_gnd
+                Δω = ω_hub - ω_gnd
+                P_kw = sf.P_kw
+                T_max = sf.T_max
                 n_seg_pc = sys.n_ring + 1
-                T_tot_pc = sum(get_segment_tension(u_curr, sys, p, s, j) for s in 1:n_seg_pc, j in 1:p.n_lines)
-                T_mean   = T_tot_pc / (n_seg_pc * p.n_lines)
+                T_tot_pc = sum(
+                    get_segment_tension(u_curr, sys, p, s, j) for
+                    s in 1:n_seg_pc, j in 1:p.n_lines
+                )
+                T_mean = T_tot_pc / (n_seg_pc * p.n_lines)
 
-                push!(ts_rows, (k_mult, k_mppt, v_wind, t_curr,
-                                twist, tw_lo, tw_mid, tw_hi,
-                                ω_hub, ω_gnd, Δω, P_kw, T_max, T_mean))
+                push!(
+                    ts_rows,
+                    (
+                        k_mult,
+                        k_mppt,
+                        v_wind,
+                        t_curr,
+                        twist,
+                        tw_lo,
+                        tw_mid,
+                        tw_hi,
+                        ω_hub,
+                        ω_gnd,
+                        Δω,
+                        P_kw,
+                        T_max,
+                        T_mean,
+                    ),
+                )
 
                 chunk_idx = step ÷ N_CHUNK
                 if chunk_idx % 40 == 0 || chunk_idx == N_CHUNKS
                     elapsed = time() - t0w
-                    eta     = elapsed / chunk_idx * (N_CHUNKS - chunk_idx)
+                    eta = elapsed / chunk_idx * (N_CHUNKS - chunk_idx)
                     @printf "  t=%6.1f s  twist=%7.2f°  lo=%5.1f° mid=%5.1f° hi=%5.1f°  Δω=%6.3f  T_max=%6.0f N  P=%5.2f kW  [wall %.0f s  ETA %.0f s]\n" t_curr twist tw_lo tw_mid tw_hi Δω T_max P_kw elapsed eta
                     flush(stdout)
                 end
             end
-        end
+        end,
     )
 
     # 4. Summary stats from settled region
-    settled = filter(r -> r.k_mult == k_mult && r.v_wind == v_wind &&
-                          r.t >= T_SPINUP + T_SIM - T_SETTLE, ts_rows)
+    settled = filter(
+        r -> r.k_mult == k_mult && r.v_wind == v_wind && r.t >= T_SPINUP + T_SIM - T_SETTLE,
+        ts_rows,
+    )
     if !isempty(settled)
-        τ_gen  = k_mppt * mean(settled.omega_gnd)^2  # N·m — approx generator torque
-        T_ref  = mean(settled.T_mean_N)                                               # N — mean line tension
+        τ_gen = k_mppt * mean(settled.omega_gnd)^2  # N·m — approx generator torque
+        T_ref = mean(settled.T_mean_N)                                               # N — mean line tension
         τ_over_T = T_ref > 1.0 ? τ_gen / T_ref : NaN
 
-        push!(sum_rows, (k_mult, k_mppt, v_wind,
-                         mean(settled.twist_deg), std(settled.twist_deg),
-                         mean(settled.twist_lo),  mean(settled.twist_mid), mean(settled.twist_hi),
-                         mean(settled.omega_hub), mean(settled.delta_omega),
-                         mean(settled.P_kw),
-                         mean(settled.T_max_N), mean(settled.T_mean_N),
-                         τ_over_T))
+        push!(
+            sum_rows,
+            (
+                k_mult,
+                k_mppt,
+                v_wind,
+                mean(settled.twist_deg),
+                std(settled.twist_deg),
+                mean(settled.twist_lo),
+                mean(settled.twist_mid),
+                mean(settled.twist_hi),
+                mean(settled.omega_hub),
+                mean(settled.delta_omega),
+                mean(settled.P_kw),
+                mean(settled.T_max_N),
+                mean(settled.T_mean_N),
+                τ_over_T,
+            ),
+        )
 
         r = last(sum_rows)
         @printf "  → settled twist = %6.1f ± %.1f °  (lo=%.1f°  mid=%.1f°  hi=%.1f°)\n" r.twist_mean r.twist_std r.twist_lo_mean r.twist_mid_mean r.twist_hi_mean
-        @printf "     P = %.2f kW   Δω = %.3f rad/s   T_max = %.0f N   τ/T = %.4f m\n"   r.P_kw_mean r.delta_omega_mean r.T_max_mean r.tau_over_T
+        @printf "     P = %.2f kW   Δω = %.3f rad/s   T_max = %.0f N   τ/T = %.4f m\n" r.P_kw_mean r.delta_omega_mean r.T_max_mean r.tau_over_T
     end
 
     # Checkpoint save after each run
-    CSV.write(joinpath(OUT_DIR, "twist_sweep_v2.csv"),  ts_rows)
+    CSV.write(joinpath(OUT_DIR, "twist_sweep_v2.csv"), ts_rows)
     CSV.write(joinpath(OUT_DIR, "twist_sweep_v2_summary.csv"), sum_rows)
 end
 
 # ── Wind ramp scenario ────────────────────────────────────────────────────────
 
-println("\n\n── Wind ramp scenario  (v = $V_RAMP_LO → $V_RAMP_HI m/s over $(T_RAMP) s, k×1.0) ──")
-
-ramp_rows = DataFrame(
-    t         = Float64[],
-    v_wind    = Float64[],
-    twist_deg = Float64[],
-    omega_hub = Float64[],
-    omega_gnd = Float64[],
-    delta_omega = Float64[],
-    P_kw      = Float64[],
-    T_max_N   = Float64[],
+println(
+    "\n\n── Wind ramp scenario  (v = $V_RAMP_LO → $V_RAMP_HI m/s over $(T_RAMP) s, k×1.0) ──",
 )
 
-p_ramp  = make_params(p_base; k_mppt=K_MPPT_NOM, v_wind=V_RAMP_LO)
+ramp_rows = DataFrame(;
+    t=Float64[],
+    v_wind=Float64[],
+    twist_deg=Float64[],
+    omega_hub=Float64[],
+    omega_gnd=Float64[],
+    delta_omega=Float64[],
+    P_kw=Float64[],
+    T_max_N=Float64[],
+)
+
+p_ramp = make_params(p_base; k_mppt=K_MPPT_NOM, v_wind=V_RAMP_LO)
 wfn_ramp = (pos, t) -> begin
     frac = clamp(t / T_RAMP, 0.0, 1.0)
-    v    = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
+    v = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
     [v, 0.0, 0.0]
 end
 
@@ -259,21 +326,35 @@ u_ramp = settle_to_operational_state(sys, copy(u0_base), p_ramp, 9.5 * (V_RAMP_L
 println("done")
 
 N_STEPS_RAMP = round(Int, T_RAMP / DT)
-t0w       = time()
+t0w = time()
 
-run_canonical_sim!(u_ramp, sys, p_ramp, wfn_ramp, N_STEPS_RAMP, DT;
-    lin_damp = 0.05,
-    callback = (u_curr, t_curr, step) -> begin
+run_canonical_sim!(
+    u_ramp,
+    sys,
+    p_ramp,
+    wfn_ramp,
+    N_STEPS_RAMP,
+    DT;
+    lin_damp=0.05,
+    callback=(u_curr, t_curr, step) -> begin
         if step % N_CHUNK == 0
-            frac    = clamp(t_curr / T_RAMP, 0.0, 1.0)
-            v_now   = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
-            sf      = capture_frame(u_curr, sys, p_ramp, t_curr, wfn_ramp, default_lift; brake_engaged=sys.brake_engaged[])
-            twist   = sf.delta_alpha_deg
-            ω_hub   = sf.omega_hub
-            ω_gnd   = sf.omega_gnd
-            Δω      = ω_hub - ω_gnd
-            P_kw    = sf.P_kw
-            T_max   = sf.T_max
+            frac = clamp(t_curr / T_RAMP, 0.0, 1.0)
+            v_now = V_RAMP_LO + frac * (V_RAMP_HI - V_RAMP_LO)
+            sf = capture_frame(
+                u_curr,
+                sys,
+                p_ramp,
+                t_curr,
+                wfn_ramp,
+                default_lift;
+                brake_engaged=sys.brake_engaged[],
+            )
+            twist = sf.delta_alpha_deg
+            ω_hub = sf.omega_hub
+            ω_gnd = sf.omega_gnd
+            Δω = ω_hub - ω_gnd
+            P_kw = sf.P_kw
+            T_max = sf.T_max
 
             push!(ramp_rows, (t_curr, v_now, twist, ω_hub, ω_gnd, Δω, P_kw, T_max))
 
@@ -283,22 +364,22 @@ run_canonical_sim!(u_ramp, sys, p_ramp, wfn_ramp, N_STEPS_RAMP, DT;
                 flush(stdout)
             end
         end
-    end
+    end,
 )
 
 # ── Save all results ──────────────────────────────────────────────────────────
 
-ts_path   = joinpath(OUT_DIR, "twist_sweep_v2.csv")
-sum_path  = joinpath(OUT_DIR, "twist_sweep_v2_summary.csv")
+ts_path = joinpath(OUT_DIR, "twist_sweep_v2.csv")
+sum_path = joinpath(OUT_DIR, "twist_sweep_v2_summary.csv")
 ramp_path = joinpath(OUT_DIR, "twist_ramp_v2.csv")
 
-CSV.write(ts_path,   ts_rows)
-CSV.write(sum_path,  sum_rows)
+CSV.write(ts_path, ts_rows)
+CSV.write(sum_path, sum_rows)
 CSV.write(ramp_path, ramp_rows)
 
-@printf "\nSaved: %s  (%d rows)\n" ts_path   nrow(ts_rows)
-@printf "Saved: %s  (%d rows)\n" sum_path   nrow(sum_rows)
-@printf "Saved: %s  (%d rows)\n" ramp_path  nrow(ramp_rows)
+@printf "\nSaved: %s  (%d rows)\n" ts_path nrow(ts_rows)
+@printf "Saved: %s  (%d rows)\n" sum_path nrow(sum_rows)
+@printf "Saved: %s  (%d rows)\n" ramp_path nrow(ramp_rows)
 
 # ── Analytical twist validation ───────────────────────────────────────────────
 # Prediction: Δα_total ≈ (τ_gen / T_mean) × L_total / (n × r_hub²)
@@ -307,19 +388,24 @@ CSV.write(ramp_path, ramp_rows)
 println("\n── Analytical twist prediction vs simulation ─────────────────────────────")
 L_total = p_base.tether_length
 n_lines = Float64(p_base.n_lines)
-r_s     = p_base.trpt_hub_radius
+r_s = p_base.trpt_hub_radius
 geom_factor = L_total / (n_lines * r_s^2)  # m⁻¹ · m² → rad/m per N·m/N
 
-@printf "Geometry factor L/(n·r_s²) = %.4f  (L=%.0f m, n=%d, r_s=%.2f m)\n" geom_factor L_total Int(p_base.n_lines) r_s
+@printf "Geometry factor L/(n·r_s²) = %.4f  (L=%.0f m, n=%d, r_s=%.2f m)\n" geom_factor L_total Int(
+    p_base.n_lines
+) r_s
 println()
 @printf "%-8s  %-8s  %-12s  %-12s  %-10s\n" "k_mult" "v (m/s)" "sim Δα (°)" "pred Δα (°)" "err (%)"
 println("─"^60)
 for r in eachrow(sum_rows)
-    τ_gen     = r.k_mppt * r.omega_hub_mean^2
-    T_ref     = r.T_mean_mean
-    Δα_pred   = T_ref > 1.0 ? rad2deg(τ_gen / T_ref * geom_factor) : NaN
-    err_pct   = (!isnan(Δα_pred) && abs(r.twist_mean) > 1.0) ?
-                100.0 * (Δα_pred - r.twist_mean) / r.twist_mean : NaN
+    τ_gen = r.k_mppt * r.omega_hub_mean^2
+    T_ref = r.T_mean_mean
+    Δα_pred = T_ref > 1.0 ? rad2deg(τ_gen / T_ref * geom_factor) : NaN
+    err_pct = if (!isnan(Δα_pred) && abs(r.twist_mean) > 1.0)
+        100.0 * (Δα_pred - r.twist_mean) / r.twist_mean
+    else
+        NaN
+    end
     @printf "%-8.2f  %-8.1f  %10.1f    %10.1f    %8.1f\n" r.k_mult r.v_wind r.twist_mean Δα_pred err_pct
 end
 

@@ -1,21 +1,21 @@
 using LinearAlgebra
 
 @testset "emergent torsion" begin
-    p   = params_10kw()
+    p = params_10kw()
     sys, u0 = build_kite_turbine_system(p)
 
     Nr = sys.n_ring
-    N  = sys.n_total
+    N = sys.n_total
     alpha = zeros(Nr)
     alpha[2] = 0.1   # 0.1 rad twist on ring 1 (ring_idx=2)
 
-    forces  = [zeros(3) for _ in 1:N]
+    forces = [zeros(3) for _ in 1:N]
     torques = zeros(Nr)
     wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
 
     # Inject twist into state vector
     u_test = copy(u0)
-    u_test[6N+2] = 0.1   # alpha[2] = 0.1 rad
+    u_test[6N + 2] = 0.1   # alpha[2] = 0.1 rad
 
     compute_rope_forces!(forces, torques, u_test, alpha, sys, p, wind_fn, 0.0)
 

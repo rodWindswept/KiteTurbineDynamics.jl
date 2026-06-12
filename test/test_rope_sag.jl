@@ -9,8 +9,8 @@ using LinearAlgebra
     # Compute sag as perpendicular distance from the straight chord between
     # ring attachment points (not z-difference from ring centres — rings are
     # tilted at the elevation angle, so centre-z is not the attachment-point z).
-    N  = sys.n_total
-    β  = p_low.elevation_angle
+    N = sys.n_total
+    β = p_low.elevation_angle
     shaft_dir = [cos(β), 0.0, sin(β)]
     perp1, perp2 = shaft_perp_basis(shaft_dir)
 
@@ -19,8 +19,8 @@ using LinearAlgebra
     gid_b = sys.ring_ids[2]
     na = sys.nodes[gid_a]::RingNode
     nb = sys.nodes[gid_b]::RingNode
-    ctr_a = u_settled[3*(gid_a-1)+1 : 3*gid_a]
-    ctr_b = u_settled[3*(gid_b-1)+1 : 3*gid_b]
+    ctr_a = u_settled[(3 * (gid_a - 1) + 1):(3 * gid_a)]
+    ctr_b = u_settled[(3 * (gid_b - 1) + 1):(3 * gid_b)]
     α_a = u_settled[6N + na.ring_idx]
     α_b = u_settled[6N + nb.ring_idx]
 
@@ -30,7 +30,7 @@ using LinearAlgebra
 
     # Middle rope node on line 1 (sub_idx=2, gid=3)
     gid_mid = 3   # (1-1)*16 + 2 + (1-1)*3 + (2-1) = 3
-    pm = u_settled[3*(gid_mid-1)+1 : 3*gid_mid]
+    pm = u_settled[(3 * (gid_mid - 1) + 1):(3 * gid_mid)]
 
     # Perpendicular distance from the straight chord pa→pb
     AB = pb .- pa

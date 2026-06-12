@@ -13,8 +13,8 @@ multibody_ode!(du, u_s, (sys, p, wf, ld), 0.0)
 
 bgid = sys.bearing_id
 sgid = sys.sky_anchor_id
-bacc = du[3*sys.n_total+3*(bgid-1)+1 : 3*sys.n_total+3*bgid]
-sacc = du[3*sys.n_total+3*(sgid-1)+1 : 3*sys.n_total+3*sgid]
+bacc = du[(3 * sys.n_total + 3 * (bgid - 1) + 1):(3 * sys.n_total + 3 * bgid)]
+sacc = du[(3 * sys.n_total + 3 * (sgid - 1) + 1):(3 * sys.n_total + 3 * sgid)]
 
 println("Bearing Acc: ", bacc)
 println("Sky Anchor Acc: ", sacc)

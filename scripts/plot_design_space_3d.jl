@@ -2,7 +2,8 @@
 # scripts/plot_design_space_3d.jl
 # High-fidelity 3D visualization of the TRPT design space mapping Euler and Torsional regimes.
 
-using Pkg; Pkg.activate(dirname(@__DIR__))
+using Pkg;
+Pkg.activate(dirname(@__DIR__))
 ENV["GKSwstype"] = "nul"
 
 using KiteTurbineDynamics, CSV, DataFrames, Printf, LinearAlgebra
@@ -20,9 +21,18 @@ catch err
 end
 
 function main()
-    input_path = joinpath(dirname(@__DIR__), "scripts", "results", "trpt_opt_v2", "lhs", "10kw_design_space_deep_dive.csv")
+    input_path = joinpath(
+        dirname(@__DIR__),
+        "scripts",
+        "results",
+        "trpt_opt_v2",
+        "lhs",
+        "10kw_design_space_deep_dive.csv",
+    )
     if !isfile(input_path)
-        error("Input data not found at $input_path. Run scripts/run_lhs_cartography.jl first.")
+        error(
+            "Input data not found at $input_path. Run scripts/run_lhs_cartography.jl first."
+        )
     end
 
     df = CSV.read(input_path, DataFrame)
@@ -57,37 +67,55 @@ function main()
         M.RGBAf(0.6, 0.1, 0.6, 0.02), # 4: Purple (Both Fail) - Ghostly
     ]
 
-    fig = M.Figure(size = (1400, 1200), backgroundcolor = :white)
-    ax = M.Axis3(fig[1, 1],
-                 title = "TRPT Design Space — Euler vs Torsional Feasibility (10 kW)",
-                 xlabel = "Hub Radius (m)",
-                 ylabel = "Taper Ratio (r_bot / r_hub)",
-                 zlabel = "Shaft Mass (kg)",
-                 titlesize = 24,
-                 aspect = (1, 1, 0.8)) # Force cubic aspect rather than :data which squashes it
+    fig = M.Figure(; size=(1400, 1200), backgroundcolor=:white)
+    ax = M.Axis3(
+        fig[1, 1];
+        title="TRPT Design Space — Euler vs Torsional Feasibility (10 kW)",
+        xlabel="Hub Radius (m)",
+        ylabel="Taper Ratio (r_bot / r_hub)",
+        zlabel="Shaft Mass (kg)",
+        titlesize=24,
+        aspect=(1, 1, 0.8),
+    ) # Force cubic aspect rather than :data which squashes it
 
     # Plot categories in a specific order so Feasible is drawn last (on top)
     labels = ["Double Failure", "Euler Failure", "Torsional Failure", "Feasible"]
-    plot_order = [4, 2, 3, 1] 
-    
+    plot_order = [4, 2, 3, 1]
+
     scatters = []
     for s in plot_order
         idx = (statuses .== s)
         sum(idx) == 0 && continue
-        
+
         ms = (s == 1) ? 5 : 2 # Feasible points are slightly larger
-        
-        sc = M.scatter!(ax, df_plot.r_hub_m[idx], df_plot.taper_ratio[idx], df_plot.mass_kg[idx],
-                       color = colors[s], markersize = ms, label = labels[findfirst(==(s), plot_order)])
+
+        sc = M.scatter!(
+            ax,
+            df_plot.r_hub_m[idx],
+            df_plot.taper_ratio[idx],
+            df_plot.mass_kg[idx];
+            color=colors[s],
+            markersize=ms,
+            label=labels[findfirst(==(s), plot_order)],
+        )
         push!(scatters, sc)
     end
 
-    M.Legend(fig[1, 2], scatters, labels, "Constraint Status", framevisible = true)
+    M.Legend(fig[1, 2], scatters, labels, "Constraint Status"; framevisible=true)
 
     # Highlight the theoretical v5 winner
     # Island 11: r_hub=1.6, taper=0.21, mass=11.47
-    M.scatter!(ax, [1.60], [0.21], [11.47], color = :gold, markersize = 25, 
-               strokecolor = :black, strokewidth = 2, label = "v5 Global Winner")
+    M.scatter!(
+        ax,
+        [1.60],
+        [0.21],
+        [11.47];
+        color=:gold,
+        markersize=25,
+        strokecolor=:black,
+        strokewidth=2,
+        label="v5 Global Winner",
+    )
 
     # Add a floor plane for better perspective
     # M.hlines!(ax, [0.0], color = :grey, alpha = 0.3)
@@ -97,8 +125,8 @@ function main()
 
     out_path = joinpath(dirname(@__DIR__), "figures", "fig_design_space_3d_cloud.png")
     mkpath(dirname(out_path))
-    M.save(out_path, fig, px_per_unit = 2)
-    println("Saved stunning 3D visual to $out_path")
+    M.save(out_path, fig; px_per_unit=2)
+    return println("Saved stunning 3D visual to $out_path")
 end
 
 main()

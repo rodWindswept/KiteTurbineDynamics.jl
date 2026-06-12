@@ -32,10 +32,20 @@ println("Total System Weight: ", total_weight, " N")
 # What happens in the furl scenario?
 # In furl, the pitch is boosted. Let's see the force.
 base_boost = 1.5 # 1.5x at end of phase 1
-ld_furl = RotaryLifterParams(ld.rotor_radius, ld.hub_radius, ld.n_blades, ld.blade_chord, ld.CL_blade * base_boost, ld.CD_blade, ld.omega_fixed, ld.line_length, ld.line_EA, ld.m_lifter)
+ld_furl = RotaryLifterParams(
+    ld.rotor_radius,
+    ld.hub_radius,
+    ld.n_blades,
+    ld.blade_chord,
+    ld.CL_blade * base_boost,
+    ld.CD_blade,
+    ld.omega_fixed,
+    ld.line_length,
+    ld.line_EA,
+    ld.m_lifter,
+)
 
 _, T_lift_furl, elev_furl = KiteTurbineDynamics.lift_force_steady(ld_furl, p.rho, v_wind)
 println("\nFURL PITCH BOOST (1.5x):")
 println("Rotary Lifter Tension: ", T_lift_furl, " N")
 println("Rotary Lifter Elevation: ", elev_furl, " deg")
-

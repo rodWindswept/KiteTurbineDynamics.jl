@@ -37,15 +37,16 @@
 # Usage:
 #   julia --project=. scripts/torsional_collapse_check.jl
 
-using Pkg; Pkg.activate(dirname(@__DIR__))
+using Pkg;
+Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics
 using CSV, DataFrames, Printf
 
 # ── Constants for the torsional operating-point check ─────────────────────────
-const RHO_AIR              = 1.225   # kg/m³
-const CT_RATED             = 0.55    # thrust coefficient at rated BEM operation
-                                     # (Betz-optimal rotor: a≈0.25–0.30, CT≈0.55)
-const TSR_RATED            = 4.1     # optimal tip-speed ratio (from k_mppt derivation)
+const RHO_AIR = 1.225   # kg/m³
+const CT_RATED = 0.55    # thrust coefficient at rated BEM operation
+# (Betz-optimal rotor: a≈0.25–0.30, CT≈0.55)
+const TSR_RATED = 4.1     # optimal tip-speed ratio (from k_mppt derivation)
 const TORSION_FOS_REQUIRED = 1.5     # minimum torsional FOS for a feasible segment
 
 # ── Torsional check for one design ────────────────────────────────────────────
@@ -60,27 +61,27 @@ Compute Tulloch torsional FOS per segment at rated operating conditions.
 r_min(i) = min(r_lower, r_upper) — conservative; worst case is smallest radius.
 """
 function torsional_check(design::TRPTDesignV2, p::SystemParams)
-    v_rated  = p.v_wind_ref        # rated hub wind speed (m/s)
-    r_rotor  = p.rotor_radius      # rotor radius (m)
-    β        = p.elevation_angle   # shaft elevation (rad)
-    P_rated  = p.p_rated_w         # rated power (W)
+    v_rated = p.v_wind_ref        # rated hub wind speed (m/s)
+    r_rotor = p.rotor_radius      # rotor radius (m)
+    β = p.elevation_angle   # shaft elevation (rad)
+    P_rated = p.p_rated_w         # rated power (W)
 
-    ω_rated       = TSR_RATED * v_rated / r_rotor
-    τ_op          = P_rated / ω_rated
+    ω_rated = TSR_RATED * v_rated / r_rotor
+    τ_op = P_rated / ω_rated
 
     # Total thrust-line tension at rated wind; this is the pre-tension that
     # enables torque transmission.  Uses peak_hub_thrust with rated wind + CT.
     T_total_rated = peak_hub_thrust(r_rotor, β; v=v_rated, CT=CT_RATED)
 
-    radii   = ring_radii(design)
-    L_segs  = segment_axial_lengths(design)
-    n_seg   = length(L_segs)
+    radii = ring_radii(design)
+    L_segs = segment_axial_lengths(design)
+    n_seg = length(L_segs)
 
     fos_per_seg = Vector{Float64}(undef, n_seg)
     for i in 1:n_seg
-        r_min      = min(radii[i], radii[i+1])   # conservative: smaller ring
-        L          = L_segs[i]
-        τ_cap      = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
+        r_min = min(radii[i], radii[i + 1])   # conservative: smaller ring
+        L = L_segs[i]
+        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
         fos_per_seg[i] = τ_cap / max(τ_op, 1e-9)
     end
     return minimum(fos_per_seg), fos_per_seg, τ_op, T_total_rated
@@ -101,7 +102,7 @@ end
 # ── Load best design from each island ─────────────────────────────────────────
 function parse_beam_from_name(island::AbstractString)
     lowercase(island) == "elliptical" && return PROFILE_ELLIPTICAL
-    lowercase(island) == "airfoil"    && return PROFILE_AIRFOIL
+    lowercase(island) == "airfoil" && return PROFILE_AIRFOIL
     return PROFILE_CIRCULAR
 end
 
@@ -123,9 +124,9 @@ function load_island_winners(v2_dir::String)
         parts = split(island, "_")
         length(parts) < 4 && continue
         config_kw = parts[1]   # "10kw" or "50kw"
-        beam_kw   = parts[2]   # "circular", "elliptical", "airfoil"
+        beam_kw = parts[2]   # "circular", "elliptical", "airfoil"
 
-        p    = config_kw == "50kw" ? params_50kw() : params_10kw()
+        p = config_kw == "50kw" ? params_50kw() : params_10kw()
         beam = parse_beam_from_name(beam_kw)
 
         df = CSV.read(arch_path, DataFrame)
@@ -150,16 +151,19 @@ function load_island_winners(v2_dir::String)
             Int(best.n_lines),
             Float64(best.knuckle_mass_kg),
         )
-        push!(results, (
-            island   = island,
-            config   = config_kw,
-            beam     = beam_kw,
-            design   = design,
-            params   = p,
-            mass_kg  = Float64(best.mass_kg),
-        ))
+        push!(
+            results,
+            (
+                island=island,
+                config=config_kw,
+                beam=beam_kw,
+                design=design,
+                params=p,
+                mass_kg=Float64(best.mass_kg),
+            ),
+        )
     end
-    sort!(results, by = r -> (r.config, r.mass_kg))
+    sort!(results; by=r -> (r.config, r.mass_kg))
     return results
 end
 
@@ -172,24 +176,47 @@ function report_design(io::IO, island, config, mass, design, p)
     r_rotor = p.rotor_radius
     ω_rated = TSR_RATED * v_rated / r_rotor
 
-    radii  = ring_radii(design)
+    radii = ring_radii(design)
     L_segs = segment_axial_lengths(design)
 
     println(io, "  Island: $island")
-    @printf(io, "  Mass %.3f kg  |  n_rings=%d  n_lines=%d  r_hub=%.3f m  taper=%.2f\n",
-            mass, design.n_rings, design.n_lines, design.r_hub, design.taper_ratio)
-    @printf(io, "  τ_op = P/ω = %.0f/%.3f = %.1f N·m  |  T_total_rated = %.0f N\n",
-            p.p_rated_w, ω_rated, τ_op, T_total)
+    @printf(
+        io,
+        "  Mass %.3f kg  |  n_rings=%d  n_lines=%d  r_hub=%.3f m  taper=%.2f\n",
+        mass,
+        design.n_rings,
+        design.n_lines,
+        design.r_hub,
+        design.taper_ratio
+    )
+    @printf(
+        io,
+        "  τ_op = P/ω = %.0f/%.3f = %.1f N·m  |  T_total_rated = %.0f N\n",
+        p.p_rated_w,
+        ω_rated,
+        τ_op,
+        T_total
+    )
     println(io, "  Segment torsional FOS (required ≥ $TORSION_FOS_REQUIRED):")
     for i in eachindex(fos_segs)
-        r_lo = radii[i]; r_hi = radii[i+1]
+        r_lo = radii[i];
+        r_hi = radii[i + 1]
         r_min = min(r_lo, r_hi)
-        L     = L_segs[i]
+        L = L_segs[i]
         τ_cap = T_total * r_min^2 / sqrt(L^2 + 2*r_min^2)
         δα_deg = rad2deg(optimal_twist_angle(L, r_min))
         status = fos_segs[i] >= TORSION_FOS_REQUIRED ? "✓" : "✗"
-        @printf(io, "    seg%d: r_min=%.3fm  L/r=%.2f  δα*=%.1f°  τ_cap=%.1fN·m  FOS=%.3f %s\n",
-                i, r_min, L/r_min, δα_deg, τ_cap, fos_segs[i], status)
+        @printf(
+            io,
+            "    seg%d: r_min=%.3fm  L/r=%.2f  δα*=%.1f°  τ_cap=%.1fN·m  FOS=%.3f %s\n",
+            i,
+            r_min,
+            L/r_min,
+            δα_deg,
+            τ_cap,
+            fos_segs[i],
+            status
+        )
     end
     verdict = pass ? "PASS" : "FAIL"
     @printf(io, "  → min torsional FOS = %.3f  [%s]\n", min_fos, verdict)
@@ -220,8 +247,10 @@ function main()
     end
 
     # ── Detailed per-island report ─────────────────────────────────────────
-    n_pass_10kw = 0; n_fail_10kw = 0
-    n_pass_50kw = 0; n_fail_50kw = 0
+    n_pass_10kw = 0;
+    n_fail_10kw = 0
+    n_pass_50kw = 0;
+    n_fail_50kw = 0
 
     println("─"^72)
     println("10 kW designs")
@@ -241,16 +270,18 @@ function main()
 
     # ── Summary ────────────────────────────────────────────────────────────
     total_islands = length(islands)
-    total_pass    = n_pass_10kw + n_pass_50kw
-    total_fail    = n_fail_10kw + n_fail_50kw
+    total_pass = n_pass_10kw + n_pass_50kw
+    total_fail = n_fail_10kw + n_fail_50kw
 
     println("="^72)
     println("SUMMARY")
     println("="^72)
-    @printf("10 kW: %d/%d PASS  (%d FAIL)\n",
-            n_pass_10kw, n_pass_10kw+n_fail_10kw, n_fail_10kw)
-    @printf("50 kW: %d/%d PASS  (%d FAIL)\n",
-            n_pass_50kw, n_pass_50kw+n_fail_50kw, n_fail_50kw)
+    @printf(
+        "10 kW: %d/%d PASS  (%d FAIL)\n", n_pass_10kw, n_pass_10kw+n_fail_10kw, n_fail_10kw
+    )
+    @printf(
+        "50 kW: %d/%d PASS  (%d FAIL)\n", n_pass_50kw, n_pass_50kw+n_fail_50kw, n_fail_50kw
+    )
     @printf("Total: %d/%d PASS  (%d FAIL)\n", total_pass, total_islands, total_fail)
     println()
 
@@ -258,29 +289,47 @@ function main()
     best_10kw = first(filter(x -> x.config == "10kw", islands))
     best_50kw = first(filter(x -> x.config == "50kw", islands))
 
-    println("Lightest 10 kW winner: $(best_10kw.island)  →  $(round(best_10kw.mass_kg; digits=3)) kg")
+    println(
+        "Lightest 10 kW winner: $(best_10kw.island)  →  $(round(best_10kw.mass_kg; digits=3)) kg",
+    )
     min_fos_10, _, τ_op_10, T_10 = torsional_check(best_10kw.design, best_10kw.params)
-    @printf("  Torsional FOS: %.3f  (%s vs required %.1f)\n",
-            min_fos_10, min_fos_10 >= TORSION_FOS_REQUIRED ? "PASS" : "FAIL", TORSION_FOS_REQUIRED)
+    @printf(
+        "  Torsional FOS: %.3f  (%s vs required %.1f)\n",
+        min_fos_10,
+        min_fos_10 >= TORSION_FOS_REQUIRED ? "PASS" : "FAIL",
+        TORSION_FOS_REQUIRED
+    )
 
     println()
-    println("Lightest 50 kW winner: $(best_50kw.island)  →  $(round(best_50kw.mass_kg; digits=3)) kg")
+    println(
+        "Lightest 50 kW winner: $(best_50kw.island)  →  $(round(best_50kw.mass_kg; digits=3)) kg",
+    )
     min_fos_50, _, τ_op_50, T_50 = torsional_check(best_50kw.design, best_50kw.params)
-    @printf("  Torsional FOS: %.3f  (%s vs required %.1f)\n",
-            min_fos_50, min_fos_50 >= TORSION_FOS_REQUIRED ? "PASS" : "FAIL", TORSION_FOS_REQUIRED)
+    @printf(
+        "  Torsional FOS: %.3f  (%s vs required %.1f)\n",
+        min_fos_50,
+        min_fos_50 >= TORSION_FOS_REQUIRED ? "PASS" : "FAIL",
+        TORSION_FOS_REQUIRED
+    )
 
     println()
     if total_fail > 0
         println("CONCLUSION: ALL $total_fail v2 winners FAIL the torsional collapse check.")
         println()
         println("The Euler-only optimiser produced frames that survive peak wind loads")
-        println("(25 m/s, FOS ≥ 1.8) but cannot transmit rated torque ($(Int(best_10kw.params.p_rated_w/1000)) kW)")
+        println(
+            "(25 m/s, FOS ≥ 1.8) but cannot transmit rated torque ($(Int(best_10kw.params.p_rated_w/1000)) kW)",
+        )
         println("without torsional shaft collapse. The dominant failure mode is small")
         println("ring radius at the ground end — τ_cap ∝ r², so the tapered bottom")
-        println("rings with r_min ≈ $(round(best_10kw.design.r_hub*best_10kw.design.taper_ratio; digits=2)) m")
+        println(
+            "rings with r_min ≈ $(round(best_10kw.design.r_hub*best_10kw.design.taper_ratio; digits=2)) m",
+        )
         println("have negligible torque capacity.")
         println()
-        println("v3 optimisation with Tulloch torsional FOS ≥ $TORSION_FOS_REQUIRED enforced")
+        println(
+            "v3 optimisation with Tulloch torsional FOS ≥ $TORSION_FOS_REQUIRED enforced"
+        )
         println("as a hard constraint is required. Expect v3 winners to have:")
         println("  • Much larger bottom-ring radius (taper_ratio → 1.0, near-cylindrical)")
         println("  • More intermediate rings (shorter L per segment → higher τ_cap)")
@@ -289,7 +338,7 @@ function main()
     else
         println("All v2 winners PASS the torsional collapse check.")
     end
-    println("="^72)
+    return println("="^72)
 end
 
 main()

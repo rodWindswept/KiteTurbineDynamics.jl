@@ -1,17 +1,17 @@
 using LinearAlgebra
 
 @testset "rope forces" begin
-    p   = params_10kw()
+    p = params_10kw()
     sys, u0 = build_kite_turbine_system(p)
-    N   = sys.n_total
-    Nr  = sys.n_ring
+    N = sys.n_total
+    Nr = sys.n_ring
 
-    forces  = [zeros(3) for _ in 1:N]
+    forces = [zeros(3) for _ in 1:N]
     torques = zeros(Nr)
 
     # zero wind, zero velocity, straight-line init
     wind_fn = (pos, t) -> [0.0, 0.0, 0.0]
-    alpha   = zeros(Nr)
+    alpha = zeros(Nr)
 
     compute_rope_forces!(forces, torques, u0, alpha, sys, p, wind_fn, 0.0)
 
