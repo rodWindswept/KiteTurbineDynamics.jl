@@ -61,7 +61,8 @@
 # Soft penalty: infeasible designs get cost = mass × (fos_req/min_fos)
 # × (1.5/min_torsional_fos), providing gradient toward feasibility.
 
-using Pkg; Pkg.activate(dirname(@__DIR__))
+using Pkg;
+Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, DataFrames, CSV, Random, Statistics
 
 function parse_args()
@@ -69,7 +70,7 @@ function parse_args()
     power_kw = 10
     for (i, arg) in enumerate(ARGS)
         if arg == "--power" && i < length(ARGS)
-            power_kw = parse(Int, ARGS[i+1])
+            power_kw = parse(Int, ARGS[i + 1])
         end
     end
     return (quick=quick, power_kw=power_kw)
@@ -86,8 +87,13 @@ function main()
     println("═══════════════════════════════════════════")
 
     # ── Setup ──────────────────────────────────────────────────────────────
-    p = args.power_kw == 10 ? params_10kw() :
-        args.power_kw == 50 ? params_v5_50kw() : params_v5_10kw()
+    p = if args.power_kw == 10
+        params_10kw()
+    elseif args.power_kw == 50
+        params_v5_50kw()
+    else
+        params_v5_10kw()
+    end
 
     beam_profile = PROFILE_ELLIPTICAL
     lo, hi = search_bounds_v6(p, beam_profile)
@@ -96,142 +102,180 @@ function main()
     @printf("  Bounds: [%.2f, %.2f] × ...\n", lo[1], hi[1])
 
     # ── Objective wrapper ──────────────────────────────────────────────────
-    obj_wrapper = x -> begin
-        # Round integer variables
-        x_rounded = copy(x)
-        x_rounded[9]  = round(Int, clamp(x[9], 3, 8))   # n_lines
-        x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion
-        try
-            return objective_v6(x_rounded, beam_profile, p; power_W=power_W)
-        catch e
-            @warn "Objective failed" exception = e
-            return 1e9
+    obj_wrapper =
+        x -> begin
+            # Round integer variables
+            x_rounded = copy(x)
+            x_rounded[9] = round(Int, clamp(x[9], 3, 8))   # n_lines
+            x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion
+            try
+                return objective_v6(x_rounded, beam_profile, p; power_W=power_W)
+            catch e
+                @warn "Objective failed" exception = e
+                return 1e9
+            end
         end
-    end
 
     # ── Population size and island count ───────────────────────────────────
     if args.quick
-        popsize   = 30
+        popsize = 30
         n_islands = 5
-        max_iter  = 100
-        @printf("  Quick mode: %d islands × %d population, %d iterations\n",
-                n_islands, popsize, max_iter)
+        max_iter = 100
+        @printf(
+            "  Quick mode: %d islands × %d population, %d iterations\n",
+            n_islands,
+            popsize,
+            max_iter
+        )
     else
-        popsize   = 80
+        popsize = 80
         n_islands = 60
-        max_iter  = 10_000
-        @printf("  Full mode: %d islands × %d population, up to %d iterations\n",
-                n_islands, popsize, max_iter)
+        max_iter = 10_000
+        @printf(
+            "  Full mode: %d islands × %d population, up to %d iterations\n",
+            n_islands,
+            popsize,
+            max_iter
+        )
         println("  Estimated runtime: ~168 hours")
     end
 
-    # ── Run DE optimisation ────────────────────────────────────────────────
-    Random.seed!(42)
+    # ── Run DE optimisation — island model ────────────────────────────────
+    global_best_x = nothing
+    global_best_cost = Inf
+    global_best_island = 0
+    all_history = Tuple{Int, Int, Float64}[]   # (island, iteration, mass_kg)
 
-    println("\n  Initialising population...")
-    population = [lo .+ rand(Float64, dim) .* (hi .- lo) for _ in 1:popsize]
+    campaign_start = time()
 
-    best_x     = nothing
-    best_cost  = Inf
-    history    = Float64[]
+    for island in 1:n_islands
+        Random.seed!(42 + island - 1)
+        println("\n  ── Island $island / $n_islands " * "─"^30)
 
-    start_time = time()
-    last_report = start_time
+        population = [lo .+ rand(Float64, dim) .* (hi .- lo) for _ in 1:popsize]
 
-    for iteration in 1:max_iter
-        for i in 1:popsize
-            # Select three distinct random vectors
-            a, b, c = rand(1:popsize, 3)
-            while a == i || b == i || c == i || a == b || a == c || b == c
+        best_x = nothing
+        best_cost = Inf
+        history = Float64[]
+
+        island_start = time()
+        last_report = island_start
+
+        for iteration in 1:max_iter
+            for i in 1:popsize
+                # Select three distinct random vectors
                 a, b, c = rand(1:popsize, 3)
-            end
+                while a == i || b == i || c == i || a == b || a == c || b == c
+                    a, b, c = rand(1:popsize, 3)
+                end
 
-            # Mutation: v = x_a + F * (x_b - x_c)
-            F = 0.5 + 0.3 * rand()
-            mutant = population[a] .+ F .* (population[b] .- population[c])
-            mutant = clamp.(mutant, lo, hi)
+                # Mutation: v = x_a + F * (x_b - x_c)
+                F = 0.5 + 0.3 * rand()
+                mutant = population[a] .+ F .* (population[b] .- population[c])
+                mutant = clamp.(mutant, lo, hi)
 
-            # Crossover: binomial
-            CR = 0.7 + 0.2 * rand()
-            trial = similar(population[i])
-            j_rand = rand(1:dim)
-            for j in 1:dim
-                if rand() <= CR || j == j_rand
-                    trial[j] = mutant[j]
-                else
-                    trial[j] = population[i][j]
+                # Crossover: binomial
+                CR = 0.7 + 0.2 * rand()
+                trial = similar(population[i])
+                j_rand = rand(1:dim)
+                for j in 1:dim
+                    if rand() <= CR || j == j_rand
+                        trial[j] = mutant[j]
+                    else
+                        trial[j] = population[i][j]
+                    end
+                end
+
+                # Selection
+                cost_trial = obj_wrapper(trial)
+                cost_current = obj_wrapper(population[i])
+
+                if cost_trial <= cost_current
+                    population[i] = trial
+                    if cost_trial < best_cost
+                        best_cost = cost_trial
+                        best_x = copy(trial)
+                    end
                 end
             end
 
-            # Selection
-            cost_trial = obj_wrapper(trial)
-            cost_current = obj_wrapper(population[i])
+            push!(history, best_cost)
+            push!(all_history, (island, iteration, best_cost))
 
-            if cost_trial <= cost_current
-                population[i] = trial
-                if cost_trial < best_cost
-                    best_cost = cost_trial
-                    best_x = copy(trial)
+            # Periodic reporting
+            now_t = time()
+            if now_t - last_report > 30 || iteration == max_iter
+                elapsed = now_t - island_start
+                @printf(
+                    "  [Island %d / %d | iter %6d]  best = %.3f kg  elapsed: %s\n",
+                    island,
+                    n_islands,
+                    iteration,
+                    best_cost,
+                    _format_duration(elapsed)
+                )
+                last_report = now_t
+            end
+
+            # Convergence check (only after sufficient burn-in)
+            if iteration > 500 && length(history) > 200
+                recent = history[(end - 199):end]
+                if std(recent) < 1e-6 * abs(mean(recent))
+                    @printf("  Converged at iteration %d\n", iteration)
+                    break
                 end
             end
         end
 
-        push!(history, best_cost)
-
-        # Periodic reporting
-        now_t = time()
-        if now_t - last_report > 30 || iteration == max_iter
-            elapsed = now_t - start_time
-            @printf("  [%6d]  best φ = %.3f kg  elapsed: %s\n",
-                    iteration, best_cost,
-                    _format_duration(elapsed))
-            last_report = now_t
-        end
-
-        # Convergence check
-        if iteration > 100 && length(history) > 50
-            recent = history[max(1, end-49):end]
-            if std(recent) < 1e-4 * abs(mean(recent))
-                println("  Converged at iteration $iteration")
-                break
-            end
+        if best_cost < global_best_cost
+            global_best_cost = best_cost
+            global_best_x = best_x
+            global_best_island = island
+            @printf(
+                "  ** New global best: %.3f kg (island %d) **\n", global_best_cost, island
+            )
         end
     end
 
-    elapsed = time() - start_time
+    elapsed = time() - campaign_start
     println("\n  Optimisation complete in $(_format_duration(elapsed))")
-    @printf("  Best mass: %.2f kg\n", best_cost)
+    @printf(
+        "  Global best mass: %.2f kg  (island %d)\n", global_best_cost, global_best_island
+    )
 
     # ── Save results ───────────────────────────────────────────────────────
     out_dir = joinpath(dirname(@__DIR__), "scripts", "results", "v6_campaign")
     mkpath(out_dir)
 
-    if best_x !== nothing
-        result = design_from_vector_v6(best_x, beam_profile, p)
+    if global_best_x !== nothing
+        result = design_from_vector_v6(global_best_x, beam_profile, p)
         design = result.design
 
         # Save best design as JSON
         best_json = Dict(
-            "version"           => "v6",
-            "power_kw"          => args.power_kw,
-            "best_mass_kg"      => best_cost,
-            "n_lines"           => design.n_lines,
-            "n_rings"           => length(ring_radii(design)),
-            "n_expansion"       => length(result.stack),
-            "bridle_angle_deg"  => isempty(result.stack) ? 0.0 : result.stack[1].bridle_angle_deg,
-            "blade_radius"      => isempty(result.stack) ? 0.0 : result.stack[1].blade_radius,
-            "profile"           => string(beam_profile),
-            "Do_top_m"          => design.Do_top,
-            "t_over_D"          => design.t_over_D,
-            "aspect_ratio"      => design.beam_aspect,
-            "Do_scale_exp"      => design.Do_scale_exp,
-            "r_hub_m"           => design.r_hub,
-            "r_bottom_m"        => design.r_bottom,
-            "target_Lr"         => design.target_Lr,
-            "knuckle_mass_kg"   => design.knuckle_mass_kg,
-            "tether_length_m"   => design.tether_length,
-            "elapsed_seconds"   => elapsed,
-            "iterations"        => length(history),
+            "version" => "v6",
+            "power_kw" => args.power_kw,
+            "island_idx" => global_best_island,
+            "best_mass_kg" => global_best_cost,
+            "n_lines" => design.n_lines,
+            "n_rings" => length(ring_radii(design)),
+            "n_expansion" => length(result.stack),
+            "bridle_angle_deg" =>
+                isempty(result.stack) ? 0.0 : result.stack[1].bridle_angle_deg,
+            "blade_radius" => isempty(result.stack) ? 0.0 : result.stack[1].blade_radius,
+            "profile" => string(beam_profile),
+            "Do_top_m" => design.Do_top,
+            "t_over_D" => design.t_over_D,
+            "aspect_ratio" => design.beam_aspect,
+            "Do_scale_exp" => design.Do_scale_exp,
+            "r_hub_m" => design.r_hub,
+            "r_bottom_m" => design.r_bottom,
+            "target_Lr" => design.target_Lr,
+            "knuckle_mass_kg" => design.knuckle_mass_kg,
+            "tether_length_m" => design.tether_length,
+            "elapsed_seconds" => elapsed,
+            "n_islands" => n_islands,
+            "total_iterations" => length(all_history),
         )
         json_path = joinpath(out_dir, "best_design.json")
         open(json_path, "w") do io
@@ -246,18 +290,22 @@ function main()
                     println(io, "  \"$k\": $v$comma")
                 end
             end
-            println(io, "}")
+            return println(io, "}")
         end
         println("  Best design saved to $json_path")
     end
 
-    # Save history
-    hist_df = DataFrame(iteration=1:length(history), mass_kg=history)
+    # Save history (island, iteration, mass_kg)
+    hist_df = DataFrame(;
+        island=[t[1] for t in all_history],
+        iteration=[t[2] for t in all_history],
+        mass_kg=[t[3] for t in all_history],
+    )
     hist_path = joinpath(out_dir, "convergence_history.csv")
     CSV.write(hist_path, hist_df)
     println("  Convergence history saved to $hist_path")
 
-    println("\n  ✅ Campaign complete.")
+    return println("\n  Campaign complete.")
 end
 
 function _format_duration(seconds::Float64)
