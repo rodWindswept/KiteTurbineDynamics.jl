@@ -10,6 +10,97 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-06-12] v6 Campaign Result & Bound Analysis
+
+**Campaign summary:**
+
+| Parameter | Value |
+|-----------|-------|
+| Campaign | v6 — expansion-rotor-augmented TRPT, 10 kW |
+| Islands | 60; island 53 produced the global best |
+| Convergence | All 60 islands converged at iteration 501 |
+| Best mass | **17.37 kg** |
+| Beam profile | Elliptical |
+| Optimiser | Differential Evolution (island model, F ∈ [0.5,0.8], CR ∈ [0.7,0.9], pop = 80) |
+| Convergence criterion | std(recent 200 iterations) < 1×10⁻⁶ × \|mean\| after 500-iteration burn-in |
+
+**Best design key parameters (from `scripts/results/v6_campaign/best_design.json`):**
+
+| Parameter | Value | Bound status |
+|-----------|-------|--------------|
+| `best_mass_kg` | 17.37 kg | — |
+| `n_lines` | 8 | interior |
+| `n_expansion` | 2 | interior (bounds [0, 6]) |
+| `r_hub_m` | 1.600 m | interior (bounds [1.28, 1.92] m) |
+| `r_bottom_m` | **1.500 m** | **at upper bound** |
+| `t_over_D` | **0.02** | **at lower bound** |
+| `aspect_ratio` | **1.0** | **at upper bound** (for PROFILE_ELLIPTICAL) |
+| `target_Lr` | 1.97 | interior (upper bound = 2.0) |
+| `Do_top_m` | 0.0348 m | interior |
+| `blade_radius_m` | 2.34 m | interior (bounds [0.3, 2.5] m) |
+| `bridle_angle_deg` | 15.5° | interior (bounds [5°, 30°]) |
+| `n_rings` | 11 | derived (not a design variable) |
+| `tether_length_m` | 30.0 m | fixed |
+
+Three variables pinned to their search bounds. Analysis of each follows.
+
+---
+
+### Bound-pinned variable 1: `r_bottom = 1.500 m` — at upper bound
+
+**Bound:** `OPT_MAX_GROUND_RADIUS = 1.5 m` (defined in `src/ring_spacing.jl:35`).
+
+**Physical justification for the bound (unchanged from the [2026-04-22] entry):**
+The 1.5 m limit is a deployment transport constraint — a 3 m diameter ground ring fits within a standard flatbed trailer with margin. The bound was set conservatively for land/mobile deployment of the 10 kW prototype.
+
+**Why the optimiser saturated this bound:**
+A larger ground ring radius reduces inward radial force per polygon vertex for a given tether tension (more radial moment arm to react the axial torque), which allows lighter-section beams throughout the shaft. The optimiser correctly identifies maximum ground radius as a structural free parameter: it reduces beam mass everywhere at zero aerodynamic cost. The bound is genuinely constraining the optimum, not an inactive limit.
+
+**Contrast with v5:** The v5 winner had `r_bottom = 0.336 m` — a strongly tapered shaft. v5 optimised shaft mass only (no tether mass term); v6 adds tether mass and expansion rotor mass to the objective. The near-cylindrical v6 geometry (r_bottom = 1.5 m, r_hub = 1.6 m, ratio ≈ 0.94) likely reflects the different objective coupling.
+
+**Implication for v7:** For permanent or offshore installations, relax `max_ground_radius` to 2.0–2.5 m and run a 50 kW campaign. For mobile land deployment, 1.5 m remains appropriate. Make the bound power-class-specific.
+
+---
+
+### Bound-pinned variable 2: `t_over_D = 0.02` — at lower bound
+
+**Bound:** `OPT_T_OVER_D_MIN = 0.02` (defined in `src/trpt_optimization.jl:24`). The comment reads: *"below this, local shell buckling governs"*.
+
+**Physical justification for the bound:**
+Below `t/D = 0.02`, local shell buckling (Brazier ovalization, circumferential wrinkling) governs tube failure before global Euler buckling can occur. The structural model evaluates global Euler buckling FoS only and does not include a local shell buckling check. The `t/D ≥ 0.02` floor guards against designs that appear feasible under the Euler model but would fail locally under bending and compression loads.
+
+**Why the optimiser saturated this bound:**
+Thinner walls reduce mass directly (mass ∝ D × t × L). The optimiser drives `t/D` to the minimum the model permits. This is a model completeness issue, not a true physical optimum. With explicit shell buckling constraints in the objective, the physically correct `t/D` would emerge from the competition between global Euler FoS and local shell FoS.
+
+**Implication for v7:** Add an explicit Brazier/shell buckling FoS term alongside the Euler FoS in `evaluate_design()`. Expected constraint-active `t/D` is 0.03–0.06 for this tube geometry under combined axial and bending load.
+
+---
+
+### Bound-pinned variable 3: `aspect_ratio = 1.0` — beam b/a at upper bound for PROFILE_ELLIPTICAL
+
+**Bound and variable definition:**
+`x[3] = beam_aspect = b/a` (minor-to-major semi-axis ratio of the elliptical tube cross-section). For `PROFILE_ELLIPTICAL`, the bounds are `ar_lo = 0.25, ar_hi = 1.0` (defined in `src/ring_spacing.jl:322–323`). The value `b/a = 1.0` is the circular limit and **is at the upper bound** — the optimiser hit the boundary, it did not converge to an interior optimum.
+
+**Physical interpretation — why circular is optimal:**
+For a tube carrying combined Euler buckling, bending, and torsional loads from omnidirectional tether pull (the TRPT shaft loading regime), the circular cross-section is optimal: it has equal second moments of area about both axes, zero shear centre eccentricity, and minimises shear stress concentration under torsion. An elliptical cross-section with b/a < 1.0 is weaker about the minor axis, requiring a heavier tube to maintain the same FoS. The result is consistent across v4, v5, and v6 campaigns — circular (or elliptical degenerated to circular) always wins.
+
+**The upper bound `ar_hi = 1.0` is the natural physical limit**, not an arbitrary engineering guard. `b/a > 1.0` would just relabel the axes (same geometry). No relaxation is possible or useful.
+
+**Implication for v7:** Fix `beam_aspect = 1.0` and use `PROFILE_CIRCULAR` directly. This drops one dimension from the search space and removes a bound that is always active. The elliptical family adds no value for torsion-critical TRPT shaft members.
+
+---
+
+**Landscape interpretation:**
+
+Convergence of all 60 islands at iteration 501 with the same three variables pinned to their bounds suggests the v6 objective landscape is **smooth and unimodal within the feasible region**. The optimiser is not trapped in local minima — it reliably finds the boundary of the search space in three directions. This is a strong signal that the search bounds themselves are the binding constraints, not the expansion rotor design physics.
+
+**Context on v6 vs v5 mass:**
+v6 (17.37 kg) is heavier than v5 (11.47 kg). The v6 objective includes expansion rotor mass and tether mass that were absent in v5, so the totals are not directly comparable on the shaft-mass basis. The 50 kW campaign (not yet run) and the φ (mass per unit power) metric from `expansion_sweep.csv` are the correct comparison basis for assessing whether expansion rotors improve the mass-specific performance.
+
+**Status:** Active. 50 kW v6 campaign not yet run; pending to enable full φ comparison.
+
+---
+
 ## [2026-05-23] Banishment of Furl, Transition to Pitch Depower, and Terminological Preservation of Furl
 
 **Context:** During wind-spilling winching scenarios in *KiteTurbineDynamics.jl*, the simulator previously used the term "Furl" to refer to the process of winching out the backline to raise the turbine rotor and spill the wind. This terminology created significant confusion with "Lift Kite Furling" (the aerodynamic modulation of the top lift device to prevent structural overload in high winds). 
