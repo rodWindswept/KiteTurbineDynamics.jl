@@ -64,7 +64,7 @@ All Python tools should be executed using the system Python `/usr/bin/python3` w
 ## ── Development Guidelines ────────────────────────────────────────────
 
 1. **Keep the Test Suite Green**: Always run the package test suite (`test/runtests.jl`) to verify repository integrity after making changes.
-2. **Physics Conservatism**: Ensure all physical calculations conform to the BEM-coupled v2/v5 solver formulations.
+2. **Physics Conservatism**: The main TRPT power-rotor model must conform to the BEM-coupled v2/v5 solver formulations (validated against Tulloch/Wacker benchmarks). The expansion rotor aerodynamic model (`expansion_rotor_forces()`) uses its own simplified 2D blade-element formulation — see PLAN.md §Expansion rotor validation for its cross-fidelity validation protocol. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
 3. **Idempotence**: Maintain report patching scripts so they are fully idempotent.
 
 ## Agent skills
