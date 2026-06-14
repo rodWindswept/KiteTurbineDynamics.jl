@@ -3,20 +3,21 @@
 #
 # Phase 2.3 — Expansion rotor parameter sweep.
 #
-# Sweeps across 5 dimensions:
-#   N_expansion ∈ {0,1,2,3,4}
-#   bridle_angle ∈ {5°,10°,15°,20°,25°}
-#   blade_radius ∈ {0.5,1.0,1.5,2.0} m
-#   blade_count  ∈ {3,5,8} (n_blades on the main rotor; expansion rotors
-#                            use 3 blades standard)
-#   power        ∈ {10,20,50} kW
+# Sweeps across 3 dimensions:
+#   n_expansion ∈ {0,1,2,3,4}
+#   bank_angle  ∈ {5°,10°,15°,20°,30°,45°}
+#   power       ∈ {10,20,50} kW
+#   placement   ∈ {:alternating, :clustered}
 #
-# Total: 5 × 5 × 4 × 3 × 3 = 900 + baseline variants = ~1000 configs.
+# Expansion blade tip radius, hub radius, chord, and count are inherited
+# from the generating rotor — same blade mould, banked downward.
+#
+# Total: 5 × 6 × 3 × 2 = 180 configs.
 #
 # Output: scripts/results/expansion_sweep.csv
 #
 # Uses mass-budget analysis (no full ODE simulation) for speed.
-# Each config takes ~0.1s → sweep completes in ~2 minutes.
+# Each config takes ~0.1s → sweep completes in <1 minute.
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, CSV, DataFrames
@@ -28,21 +29,19 @@ function main()
 # ══════════════════════════════════════════════════════════════════════════════
 
 N_EXPANSION_VALS  = [0, 1, 2, 3, 4]
-BRIDLE_ANGLE_VALS = [5.0, 10.0, 15.0, 20.0, 25.0]
-BLADE_RADIUS_VALS = [0.5, 1.0, 1.5, 2.0]
-BLADE_COUNT_VALS  = [3, 5, 8]
+BANK_ANGLE_VALS   = [5.0, 10.0, 15.0, 20.0, 30.0, 45.0]
 POWER_KW_VALS     = [10, 20, 50]
 
 PLACEMENT_MODES   = [:alternating, :clustered]
 
-total = length(N_EXPANSION_VALS) * length(BRIDLE_ANGLE_VALS) *
-        length(BLADE_RADIUS_VALS) * length(BLADE_COUNT_VALS) *
+total = length(N_EXPANSION_VALS) * length(BANK_ANGLE_VALS) *
         length(POWER_KW_VALS) * length(PLACEMENT_MODES)
 
 println("Expansion Rotor Parameter Sweep")
 println("===============================")
 println("Configs: $total")
-println("Dimensions: N_exp × bridle_angle × blade_radius × blade_count × power × placement")
+println("Dimensions: N_exp × bank_angle × power × placement")
+println("(Blade geometry inherited from generating rotor)")
 println()
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -67,81 +66,79 @@ for power_kw in POWER_KW_VALS
 
     v_rated = p.v_wind_ref  # rated wind speed (m/s)
 
-    for blade_count in BLADE_COUNT_VALS
-        for blade_radius in BLADE_RADIUS_VALS
-            for bridle_angle in BRIDLE_ANGLE_VALS
-                for n_exp in N_EXPANSION_VALS
-                    for placement in PLACEMENT_MODES
+    for bank_angle in BANK_ANGLE_VALS
+        for n_exp in N_EXPANSION_VALS
+            for placement in PLACEMENT_MODES
 
-                        count += 1
+                count += 1
 
-                        # Build expansion stack config
-                        cfg = if n_exp > 0
-                            ExpansionStackConfig(
-                                placement        = placement,
-                                n_rings          = 16,  # default for 10 kW
-                                n_expansion      = n_exp,
-                                blade_radius     = blade_radius,
-                                hub_radius       = 0.15,
-                                blade_chord      = 0.06,
-                                CL_blade         = 1.0,
-                                CD0_blade        = 0.02,
-                                k_induced        = 0.05,
-                                bridle_angle_deg = bridle_angle,
-                                mass_per_rotor   = 0.5,
-                                shaft_coupling   = 1.0,
-                            )
-                        else
-                            nothing
-                        end
+                # Derive blade geometry from generating rotor
+                r_rotor = BEM.rotor_radius_for_power(power_w, v_rated, p.n_lines)
+                blade_tip  = r_rotor
+                blade_hub  = 0.25 * r_rotor   # same annulus as generating rotor
+                blade_ch   = 0.113 * r_rotor   # solidity-calibrated
 
-                        # Build stack if expansion rotors present
-                        stack = (cfg !== nothing) ? build_expansion_stack(cfg) :
-                                                    ExpansionRotorParams[]
+                cfg = if n_exp > 0
+                    ExpansionStackConfig(;
+                        placement=placement,
+                        n_rings=16,
+                        n_expansion=n_exp,
+                        n_blades=p.n_blades,
+                        blade_tip_radius=blade_tip,
+                        blade_hub_radius=blade_hub,
+                        blade_chord=blade_ch,
+                        CL_blade=1.0,
+                        CD0_blade=0.02,
+                        k_induced=0.05,
+                        bank_angle_deg=bank_angle,
+                        mass_per_rotor=0.5,
+                        shaft_coupling=1.0,
+                    )
+                else
+                    nothing
+                end
 
-                        try
-                            # Build system with expansion rotors
-                            # Note: blade_count affects main rotor blade count
-                            # (for the BEM-coupled structural optimiser in Phase 2.4).
-                            # In this mass-budget sweep, expansion rotors always
-                            # use 3 blades regardless of main rotor blade count.
-                            sys, _ = build_kite_turbine_system(p;
-                                expansion_rotors=stack)
+                # Build stack if expansion rotors present
+                stack = (cfg !== nothing) ? build_expansion_stack(cfg) :
+                                            ExpansionRotorParams[]
 
-                            # Compute telemetry
-                            record = expansion_telemetry(sys, p, power_w, v_rated)
+                try
+                    # Build system with expansion rotors
+                    sys, _ = build_kite_turbine_system(p;
+                        expansion_rotors=stack)
 
-                            # Build row
-                            row = DataFrame(
-                                n_expansion        = record.n_expansion,
-                                placement          = record.placement,
-                                n_rings            = record.n_rings,
-                                n_lines            = record.n_lines,
-                                mass_airborne_kg   = record.mass_airborne_kg,
-                                mass_tether_kg     = record.mass_tether_kg,
-                                mass_expansion_kg  = record.mass_expansion_kg,
-                                phi_kg_per_kw      = record.phi_kg_per_kw,
-                                power_kw           = power_kw,
-                                wind_m_per_s       = record.wind_m_per_s,
-                                mean_radius_spread_m = record.mean_radius_spread_m,
-                                bridle_angle_deg   = record.bridle_angle_deg,
-                                blade_radius_m     = record.blade_radius_m,
-                                blade_count        = blade_count,
-                            )
-                            append!(results, row)
+                    # Compute telemetry
+                    record = expansion_telemetry(sys, p, power_w, v_rated)
 
-                        catch e
-                            @warn "Failed config $count: n_exp=$n_exp bridle=$bridle_angle° r=$blade_radius n_blades=$blade_count P=$power_kw kW $placement" exception = e
-                        end
+                    # Build row
+                    row = DataFrame(
+                        n_expansion        = record.n_expansion,
+                        placement          = record.placement,
+                        n_rings            = record.n_rings,
+                        n_lines            = record.n_lines,
+                        mass_airborne_kg   = record.mass_airborne_kg,
+                        mass_tether_kg     = record.mass_tether_kg,
+                        mass_expansion_kg  = record.mass_expansion_kg,
+                        phi_kg_per_kw      = record.phi_kg_per_kw,
+                        power_kw           = power_kw,
+                        wind_m_per_s       = record.wind_m_per_s,
+                        mean_radius_spread_m = record.mean_radius_spread_m,
+                        bank_angle_deg     = record.bank_angle_deg,
+                        blade_tip_radius_m = record.blade_tip_radius_m,
+                        blade_count        = p.n_blades,
+                    )
+                    append!(results, row)
 
-                        if count % 50 == 0
-                            elapsed = time() - start_time
-                            rate = count / elapsed
-                            remaining = (total - count) / rate
-                            @printf("  %4d/%d (%.1f%%)  %.1f configs/s  ETA: %.0fs\n",
-                                    count, total, 100*count/total, rate, remaining)
-                        end
-                    end
+                catch e
+                    @warn "Failed config $count: n_exp=$n_exp bank=$bank_angle° P=$power_kw kW $placement" exception = e
+                end
+
+                if count % 50 == 0
+                    elapsed = time() - start_time
+                    rate = count / elapsed
+                    remaining = (total - count) / rate
+                    @printf("  %4d/%d (%.1f%%)  %.1f configs/s  ETA: %.0fs\n",
+                            count, total, 100*count/total, rate, remaining)
                 end
             end
         end

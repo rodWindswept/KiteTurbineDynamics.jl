@@ -4,7 +4,7 @@
 # Phase 2.4 — v6 DE Optimisation Campaign.
 #
 # Differential Evolution optimisation of the TRPT system with expansion rotors.
-# 13 design variables, 60 islands, ~168h compute budget.
+# 11 design variables, 60 islands, ~168h compute budget.
 #
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
@@ -31,17 +31,18 @@
 #     # Ctrl+A D to detach, screen -r v6 to reconnect
 #
 #   Check progress (from another terminal):
-#     tail -f scripts/results/v6_campaign/convergence_history.csv
+#     tail -f scripts/results/v6_campaign_10kw/convergence_history.csv
 #
 # ═══════════════════════════════════════════════════════════════════════════
 # OUTPUT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-#   scripts/results/v6_campaign/best_design.json     — best design found
-#   scripts/results/v6_campaign/convergence_history.csv — mass vs iteration
+#   scripts/results/v6_campaign_10kw/best_design.json     — best design found
+#   scripts/results/v6_campaign_50kw/best_design.json     — best design found
+#   scripts/results/v6_campaign_10kw/convergence_history.csv — mass vs iteration
 #
 # ═══════════════════════════════════════════════════════════════════════════
-# DESIGN VARIABLES (13-DoF)
+# DESIGN VARIABLES (11-DoF)
 # ═══════════════════════════════════════════════════════════════════════════
 #
 #   x[1]  Do_top           beam outer diameter at hub (m)
@@ -54,9 +55,10 @@
 #   x[8]  knuckle_mass_kg  per-vertex point mass (kg)
 #   x[9]  n_lines          polygon sides (3–8, rounded to int)
 #   x[10] n_expansion      number of expansion rotors (0–6, rounded to int)
-#   x[11] bridle_angle_deg expansion rotor bridle angle (5°–30°)
-#   x[12] blade_radius     expansion blade tip radius (m)
-#   x[13] blade_chord      expansion blade chord (m)
+#   x[11] bank_angle_deg   expansion blade bank angle (5°–45°)
+#
+# Expansion blade tip radius, hub radius, chord, and count are inherited
+# from the generating rotor — same blade mould, banked downward.
 #
 # Soft penalty: infeasible designs get cost = mass × (fos_req/min_fos)
 # × (1.5/min_torsional_fos), providing gradient toward feasibility.
@@ -244,7 +246,9 @@ function main()
     )
 
     # ── Save results ───────────────────────────────────────────────────────
-    out_dir = joinpath(dirname(@__DIR__), "scripts", "results", "v6_campaign")
+    out_dir = joinpath(
+        dirname(@__DIR__), "scripts", "results", "v6_campaign_$(args.power_kw)kw"
+    )
     mkpath(out_dir)
 
     if global_best_x !== nothing
@@ -260,9 +264,9 @@ function main()
             "n_lines" => design.n_lines,
             "n_rings" => length(ring_radii(design)),
             "n_expansion" => length(result.stack),
-            "bridle_angle_deg" =>
-                isempty(result.stack) ? 0.0 : result.stack[1].bridle_angle_deg,
-            "blade_radius" => isempty(result.stack) ? 0.0 : result.stack[1].blade_radius,
+            "bank_angle_deg" =>
+                isempty(result.stack) ? 0.0 : result.stack[1].bank_angle_deg,
+            "blade_tip_radius" => isempty(result.stack) ? 0.0 : result.stack[1].blade_tip_radius,
             "profile" => string(beam_profile),
             "Do_top_m" => design.Do_top,
             "t_over_D" => design.t_over_D,
