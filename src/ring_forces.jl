@@ -186,6 +186,12 @@ function compute_ring_forces!(
                 ring_gid = sys.ring_ids[er.ring_idx]
                 ring_pos = @view u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
                 ring_ri = (sys.nodes[ring_gid]::RingNode).ring_idx
+
+                # ── NaN/Inf guard: skip rotor if ring state is non-finite ──
+                if !isfinite(omega[ring_ri]) || !isfinite(alpha[ring_ri])
+                    continue
+                end
+
                 r_nom = (sys.nodes[ring_gid]::RingNode).radius
 
                 v_wind_ring = wind_fn(ring_pos, t)
