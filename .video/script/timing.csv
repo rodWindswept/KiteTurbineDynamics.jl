@@ -1,0 +1,9 @@
+scene,duration_s,vo_start_s,vo_lines,visual_key,notes
+1,60,0,8,mass_power_curve,"TRPT scaling wall animation — curve bending away from ideal. v2→v5 campaign progression overlay."
+2,45,60,6,ring_compression,"Ring FBD with inward force arrows. Euler buckling equation. Tulloch-Wacker torsional criterion."
+3,90,105,8,expansion_concept,"3D TRPT with blades appearing. Banking animation. Side-by-side blade comparison."
+4,90,195,10,force_diagram,"Apparent wind vector. Lift resolution through bank angle. Force-first equation with numbers."
+5,60,285,6,verification,"Terminal screencast: test suite 917/917. Code snippet. Verify script output."
+6,45,345,5,dashboard_screencast,"GLMakie dashboard: cyan diamonds, HUD readout. Mouse interaction."
+7,60,390,8,results_chart,"Bar chart v5 vs v6. Convergence plot. Parameter saturation highlight."
+8,30,450,5,roadmap,"Timeline. GitHub URL. windswept.energy."
