@@ -6,24 +6,28 @@
 # actively-lifted blades that spread the tether line set outward through
 # aerodynamic force during rotation.
 #
-# Concept: each expansion rotor is a small 3-blade propeller mounted on a
-# TRPT ring. The blades generate lift from apparent wind (v_app² = v_wind² +
-# (ω·r)²), and the lift is resolved through a bridle angle into radial
-# (spreading) and axial (thrust) components. The radial force pushes the
-# tether attachment points outward, increasing the effective ring radius.
+# Concept: each expansion rotor uses the SAME blade annulus as the
+# generating rotor — identical hub radius, tip radius, chord, and blade
+# count — but banked downward toward the next ring on the TRPT shaft.
+# The banking angle resolves blade lift into radial (spreading) and axial
+# (thrust) components.
 #
-#   F_radial = n_blades · L_blade · sin(bridle_angle)   (spreads the ring)
-#   F_axial  = n_blades · L_blade · cos(bridle_angle)   (adds to rotor thrust)
-#   τ_drag   = n_blades · D_blade · r_mean              (drag torque)
+#   F_radial = n_blades · L_blade · sin(bank_angle)   (spreads the ring)
+#   F_axial  = n_blades · L_blade · cos(bank_angle)   (adds to rotor thrust)
+#   τ_drag   = n_blades · D_blade · r_mean            (drag torque)
 #
-# The effective radius r_eff is computed from a force balance at the
-# tether attachment point:
+# The blade annulus extends from hub_radius to tip_radius along the blade,
+# mounted at the ring radius r_nominal.  Banking tilts the annulus downward
+# by bank_angle, projecting it into the rotation plane:
 #
-#   r_eff = r_nominal + Δr
-#   Δr = F_radial · L_seg / (T_tether · geometry_factor)
+#   r_tip   = r_nominal + blade_tip_radius · cos(bank_angle)
+#   r_hub   = r_nominal + blade_hub_radius · cos(bank_angle)
+#   r_mean  = r_nominal + (blade_hub_radius + blade_tip_radius)/2 · cos(bank)
 #
-# where geometry_factor = 2 · tan(π / n_lines) is the geometric advantage
-# of the polygonal tether arrangement.
+# Blade span for area = blade_tip_radius - blade_hub_radius
+#
+# The apparent wind at the mean radius drives blade lift:
+#   v_app² = v_wind² + (ω · r_mean)²
 #
 # Reference: PLAN.md Phase 1 — Expansion Rotor Element
 
@@ -35,29 +39,32 @@
     ExpansionRotorParams
 
 Parameters for a single expansion rotor element mounted on a TRPT ring.
+Uses the SAME blade annulus as the generating rotor — identical hub radius,
+tip radius, chord, and blade count — banked downward toward the next ring.
 
 # Fields
-- `n_blades`: number of blades (typically 3)
-- `blade_radius`: tip radius of each blade (m)
-- `hub_radius`: hub radius (m) — inner edge of the blade annulus
-- `blade_chord`: blade chord length (m)
+- `n_blades`: number of blades (inherited from main rotor)
+- `blade_tip_radius`: distance from ring to blade tip (m — same as main rotor tip radius)
+- `blade_hub_radius`: distance from ring to inner edge of annulus (m — same as main rotor hub radius)
+- `blade_chord`: blade chord length (m — same as main rotor chord)
 - `CL_blade`: blade lift coefficient (design point)
 - `CD0_blade`: blade zero-lift drag coefficient
 - `k_induced`: induced drag factor (CDᵢ = k · CL²)
-- `bridle_angle_deg`: bridle angle from axial (degrees) — controls radial/axial split
+- `bank_angle_deg`: bank angle from rotation plane (degrees) — outer tip
+  tilted down toward the next ring. Controls radial/axial split.
 - `mass`: mass of the rotor assembly (kg)
 - `ring_idx`: which TRPT ring this rotor is mounted on (1-based)
 - `shaft_coupling`: torque coupling factor (1.0 = rigidly coupled to shaft)
 """
 struct ExpansionRotorParams
     n_blades::Int
-    blade_radius::Float64
-    hub_radius::Float64
-    blade_chord::Float64
+    blade_tip_radius::Float64   # same as main rotor tip radius (m)
+    blade_hub_radius::Float64   # same as main rotor hub radius (m)
+    blade_chord::Float64        # same as main rotor chord (m)
     CL_blade::Float64
     CD0_blade::Float64
     k_induced::Float64
-    bridle_angle_deg::Float64
+    bank_angle_deg::Float64     # blade banking angle toward next ring
     mass::Float64
     ring_idx::Int
     shaft_coupling::Float64
@@ -74,12 +81,16 @@ end
 
 Compute aerodynamic forces from an expansion rotor element.
 
+The blade annulus (hub → tip) is banked by bank_angle_deg toward the next
+ring.  The mean aerodynamic radius accounts for the ring position and the
+projected annulus centre in the rotation plane.
+
 # Arguments
 - `er::ExpansionRotorParams`: rotor parameters
 - `rho::Float64`: air density (kg/m³)
 - `v_wind::Float64`: wind speed at the rotor plane (m/s, scalar — uniform inflow)
 - `omega_shaft::Float64`: shaft angular velocity (rad/s)
-- `elevation_deg::Float64`: shaft elevation angle (degrees, unused — reserved for future cosⁿ scaling)
+- `elevation_deg::Float64`: shaft elevation angle (degrees, unused — reserved)
 - `r_nominal::Float64`: nominal ring radius before spreading (m)
 - `T_tether::Float64`: tether tension at this ring (N)
 - `n_lines::Int`: number of tether lines
@@ -101,24 +112,28 @@ function expansion_rotor_forces(
     T_tether::Float64,
     n_lines::Int,
 )
-    # Blade annulus mean radius
-    r_mean = (er.blade_radius + er.hub_radius) / 2.0
+    bank_rad = deg2rad(er.bank_angle_deg)
 
-    # Apparent wind speed at mean radius
+    # Annulus centre in the blade plane, projected into rotation plane
+    r_mean_annulus = (er.blade_hub_radius + er.blade_tip_radius) / 2.0
+    r_mean = r_nominal + r_mean_annulus * cos(bank_rad)
+
+    # Physical blade span for area calculation
+    blade_span = er.blade_tip_radius - er.blade_hub_radius
+
+    # Apparent wind speed at mean radius (wind + rotation)
     v_app = sqrt(v_wind^2 + (omega_shaft * r_mean)^2)
 
     # Dynamic pressure
-    span = er.blade_radius - er.hub_radius
     q = 0.5 * rho * v_app^2
 
     # Blade lift and drag (simplified 2D model, uniform inflow, no tip losses)
-    L_blade = q * er.blade_chord * span * er.CL_blade
-    D_blade = q * er.blade_chord * span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
+    L_blade = q * er.blade_chord * blade_span * er.CL_blade
+    D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
 
-    # Resolve through bridle angle
-    bridle_rad = deg2rad(er.bridle_angle_deg)
-    F_radial = er.n_blades * L_blade * sin(bridle_rad)
-    F_axial = er.n_blades * L_blade * cos(bridle_rad)
+    # Resolve through bank angle
+    F_radial = er.n_blades * L_blade * sin(bank_rad)
+    F_axial  = er.n_blades * L_blade * cos(bank_rad)
     tau_drag = er.n_blades * D_blade * r_mean
 
     # Effective radius from force balance at tether attachment point
@@ -127,7 +142,7 @@ function expansion_rotor_forces(
     r_eff = effective_radius(r_nominal, F_radial, T_tether, L_seg_estimate, geometry_factor)
 
     # Rotor angular velocity (simplified: rigid coupling)
-    omega_rotor = omega_shaft   # extend with shaft_coupling for flexible coupling later
+    omega_rotor = omega_shaft
 
     return (F_radial, F_axial, tau_drag, r_eff, omega_rotor)
 end

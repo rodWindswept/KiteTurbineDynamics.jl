@@ -2,11 +2,11 @@
 #
 # V6: Expansion-rotor-augmented TRPT optimisation.
 #
-# Extends v5 (BEM-coupled rotor radius) with expansion rotor design variables
-# and an effective-radius model that captures the structural benefit of
-# aerodynamic ring spreading.
+# Extends v5 (BEM-coupled rotor radius) with expansion rotor design variables.
+# Expansion blades use the SAME span and chord as the generating rotor —
+# identical blade mould, banked downward toward the next ring.
 #
-# Design vector (13 DoF):
+# Design vector (11 DoF):
 #   x[1]   Do_top           [m]    beam outer diameter at hub
 #   x[2]   t_over_D         [-]    wall thickness ratio
 #   x[3]   beam_aspect      [-]    elliptical b/a or airfoil t/c
@@ -17,16 +17,16 @@
 #   x[8]   knuckle_mass_kg  [kg]   per-vertex point mass
 #   x[9]   n_lines          [int]  polygon sides (3-8)
 #   x[10]  n_expansion      [int]  number of expansion rotors (0-6)
-#   x[11]  bridle_angle_deg [deg]  expansion rotor bridle angle (5-30)
-#   x[12]  blade_radius     [m]    expansion blade tip radius (0.3-2.5)
-#   x[13]  blade_chord      [m]    expansion blade chord (0.02-0.15)
+#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-45)
 #
-# Key physics: expansion rotors increase effective ring radius →
-# lower tether tension → smaller beam diameters → less airborne mass.
-# The DE optimiser discovers whether this feedback loop justifies the
-# added mass of the expansion rotor assemblies.
+# Blade span, chord, and count are inherited from the generating rotor:
+#   blade_span  = BEM rotor radius  (same blade mould)
+#   blade_chord = 0.113 × rotor_radius  (solidity-calibrated)
+#   n_blades    = p.n_blades
+#
+# Reference: PLAN.md Phase 2.4 — v6 DE campaign
 
-const TRPT_V6_DIM = 13
+const TRPT_V6_DIM = 11
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Search bounds
@@ -42,9 +42,9 @@ function search_bounds_v6(
         p, beam_profile; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor bounds (vars 10-13)
-    exp_lo = [0.0, 5.0, 0.3, 0.02]
-    exp_hi = [6.0, 30.0, 2.5, 0.15]
+    # Expansion rotor bounds (vars 10-11): n_expansion, bank_angle_deg
+    exp_lo = [0.0, 5.0]
+    exp_hi = [6.0, 45.0]
 
     return vcat(base_lo, exp_lo), vcat(base_hi, exp_hi)
 end
@@ -53,37 +53,51 @@ end
 # Design vector → TRPTDesign + ExpansionStack
 # ══════════════════════════════════════════════════════════════════════════════
 
+"""
+    design_from_vector_v6(x, beam_profile, p; max_ground_radius, power_W, v_rated)
+
+Decode a v6 design vector into a TRPTDesignV4 and expansion rotor stack.
+Blade geometry (span, chord, count) is derived from the generating rotor.
+"""
 function design_from_vector_v6(
     x::AbstractVector,
     beam_profile::BeamProfile,
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+    power_W::Float64=10000.0,
+    v_rated::Float64=11.0,
 )
     # Base v5 design (first 9 vars)
     design = design_from_vector_v5(
         x[1:9], beam_profile, p; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor parameters (vars 10-13)
+    # Expansion rotor parameters (vars 10-11)
     n_exp = round(Int, clamp(x[10], 0, 6))
-    bridle_deg = clamp(x[11], 5.0, 30.0)
-    blade_r = clamp(x[12], 0.3, 2.5)
-    blade_c = clamp(x[13], 0.02, 0.15)
+    bank_deg = clamp(x[11], 5.0, 45.0)
+
+    # Derive blade geometry from generating rotor annulus.
+    # HubRad ≈ 0.25 × tip_radius (AeroDyn BEM: HubRad=1.0m, R=4.0m)
+    r_rotor_est = design.r_hub  # hub radius ≈ rotor radius for stack sizing
+    blade_tip_radius = r_rotor_est
+    blade_hub_radius = 0.25 * r_rotor_est   # same ratio as generating rotor
+    blade_chord_est = 0.113 * r_rotor_est   # solidity-calibrated
 
     # Build expansion stack config
     cfg = if n_exp > 0
         ExpansionStackConfig(;
-            placement=:clustered,   # clustered near hub — most effective
-            n_rings=20,           # will be adjusted by ring_spacing_v4
+            placement=:clustered,
+            n_rings=20,
             n_expansion=n_exp,
-            blade_radius=blade_r,
-            hub_radius=0.15,
-            blade_chord=blade_c,
+            n_blades=p.n_blades,
+            blade_tip_radius=blade_tip_radius,
+            blade_hub_radius=blade_hub_radius,
+            blade_chord=blade_chord_est,
             CL_blade=1.0,
             CD0_blade=0.02,
             k_induced=0.05,
-            bridle_angle_deg=bridle_deg,
-            mass_per_rotor=0.3 + 0.1 * blade_r,  # mass scales with blade size
+            bank_angle_deg=bank_deg,
+            mass_per_rotor=0.3 + 0.1 * blade_tip_radius,
             shaft_coupling=1.0,
         )
     else
@@ -100,12 +114,22 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
-    estimate_effective_radii(design, stack, p; v_wind, omega, elev)
+    estimate_effective_radii(design, stack, p; v_wind, omega, elev_deg, r_rotor)
+        -> (r_eff, F_radial_per_ring)
 
-Estimate effective ring radii from expansion rotor spreading at the
+Estimate effective ring radii and per-ring radial expansion forces at the
 design operating point.  Uses a simplified force balance — no ODE needed.
 
-Returns a vector of effective radii (same length as ring count).
+Returns:
+- `r_eff`: vector of effective radii (same length as ring count), used for
+  torsional collapse lever-arm calculation.
+- `F_radial_per_ring`: vector of radial spreading forces per ring (N).  Zero
+  for rings without expansion rotors.  Injected into the structural solver
+  as a load term that directly reduces ring compression — force-first
+  modelling per Rod (2026-06-13).
+
+`r_rotor` is the generating rotor radius used for thrust estimation.
+When zero (default) falls back to `design.r_hub` as a proxy.
 """
 function estimate_effective_radii(
     design::TRPTDesignV4,
@@ -114,27 +138,26 @@ function estimate_effective_radii(
     v_wind::Float64=11.0,
     omega::Float64=9.5,
     elev_deg::Float64=20.0,
+    r_rotor::Float64=0.0,
 )
-    zs, radii, n_rings = ring_spacing_v4(
+    zs, radii, _ = ring_spacing_v4(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
     )
     r_eff = copy(radii)
+    F_radial_per_ring = zeros(Float64, length(radii))
 
     if isempty(stack)
-        return r_eff
+        return (r_eff, F_radial_per_ring)
     end
 
     n_lines = design.n_lines
     rho = p.rho
 
     # Estimate tether tension from rotor thrust at design point
-    r_rotor = design.r_hub
-    lambda_t = omega * r_rotor / v_wind
-    thrust = 0.5 * rho * v_wind^2 * π * r_rotor^2 * ct_at_tsr(lambda_t) * cosd(elev_deg)^2.0
+    r_rotor_use = r_rotor > 0.0 ? r_rotor : design.r_hub
+    lambda_t = omega * r_rotor_use / max(v_wind, 0.1)
+    thrust = 0.5 * rho * v_wind^2 * π * r_rotor_use^2 * ct_at_tsr(lambda_t) * cosd(elev_deg)^2.0
     T_per_line = thrust / n_lines
-
-    # Geometry factor for polygonal ring
-    geom_factor = 2.0 * tan(π / n_lines)
 
     for er in stack
         ri = er.ring_idx
@@ -144,21 +167,21 @@ function estimate_effective_radii(
         r_nom = radii[ri]
 
         # Estimate L_seg from adjacent segments
-        if ri < n_rings
+        if ri < length(radii)
             L_seg = zs[ri + 1] - zs[ri]
         else
             L_seg = zs[ri] - zs[ri - 1]
         end
 
-        # Call the force model (v_wind varies with altitude — use hub wind as proxy)
-        F_radial, _, _, r_new, _ = expansion_rotor_forces(
+        F_radial, F_axial, _, r_new, _ = expansion_rotor_forces(
             er, rho, v_wind, omega, elev_deg, r_nom, T_per_line, n_lines
         )
 
         r_eff[ri] = r_new
+        F_radial_per_ring[ri] = F_radial
     end
 
-    return r_eff
+    return (r_eff, F_radial_per_ring)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -188,16 +211,19 @@ function objective_v6(
     design = result.design
     stack = result.stack
 
-    # Compute effective radii from expansion rotors (steady-state estimate)
-    r_eff = estimate_effective_radii(
-        design, stack, p; v_wind=v_rated, elev_deg=rad2deg(elev_angle)
-    )
-
-    # Evaluate structural design using standard v5 evaluator
-    # (with BEM-coupled rotor radius)
+    # Rotor sizing (BEM-coupled): must come before effective-radii estimate
+    # so the correct operating point drives the expansion rotor force calc.
     r_rotor = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
     omega = 4.1 * v_rated / r_rotor  # optimal TSR ≈ 4.1
 
+    # Compute effective radii (for torsional collapse) and per-ring radial
+    # expansion forces (for ring compression relief) from expansion rotors.
+    r_eff, F_radial_per_ring = estimate_effective_radii(
+        design, stack, p;
+        v_wind=v_rated, elev_deg=rad2deg(elev_angle), omega=omega, r_rotor=r_rotor,
+    )
+
+    # Evaluate structural design with force-first expansion benefit
     eval_result = evaluate_design(
         design;
         r_rotor=r_rotor,
@@ -208,13 +234,11 @@ function objective_v6(
         v_rated=v_rated,
         P_rated=power_W,
         max_ground_radius=max_ground_radius,
+        r_eff_override=r_eff,
+        F_radial_per_ring=F_radial_per_ring,
     )
 
     if !eval_result.feasible
-        # Soft penalty: scales with constraint violation so the optimiser
-        # can follow the gradient toward feasibility.
-        # Designs with FoS=1.7 (just below 1.8) are penalised far less
-        # than designs with FoS=0.01.
         fos_penalty = max(1.0, fos_req / max(eval_result.min_fos, 0.01))
         torsion_penalty = max(1.0, 1.5 / max(eval_result.min_torsional_fos, 0.01))
         penalty_mult = fos_penalty * torsion_penalty

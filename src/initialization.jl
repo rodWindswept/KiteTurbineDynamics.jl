@@ -689,10 +689,13 @@ function settle_to_operational_state(
 
     # Find the true aerodynamic equilibrium ω to prevent over-wound startup
     # and immediate deceleration transients when v_wind < v_rated.
+    # Use the design hub position (from u0, before equilibrium settle moved it)
+    # rather than the equilibrium hub — expansion rotors can shift the equilibrium
+    # hub to a different altitude where wind shear gives misleadingly low wind.
     v_wind_hub = if wind_fn === nothing
-        zeros(3)
+        [p.v_wind_ref, 0.0, 0.0]
     else
-        wind_fn(u_start[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)], 0.0)
+        wind_fn(u0[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)], 0.0)
     end
     v_mag = norm(v_wind_hub)
     ω_eq = ω_rated_max

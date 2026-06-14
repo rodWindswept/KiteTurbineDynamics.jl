@@ -135,9 +135,9 @@ function expansion_telemetry(
     ]
     mean_spread = isempty(spreads) ? 0.0 : mean(spreads)
 
-    # Bridle angle if expansion rotors present
-    bridle_angle = n_exp > 0 ? sys.expansion_rotors[1].bridle_angle_deg : 0.0
-    blade_radius = n_exp > 0 ? sys.expansion_rotors[1].blade_radius : 0.0
+    # Bank angle and blade span if expansion rotors present
+    bank_angle = n_exp > 0 ? sys.expansion_rotors[1].bank_angle_deg : 0.0
+    blade_tip = n_exp > 0 ? sys.expansion_rotors[1].blade_tip_radius : 0.0
 
     return (
         n_expansion=n_exp,
@@ -156,8 +156,8 @@ function expansion_telemetry(
         power_w=power_w,
         wind_m_per_s=v_wind,
         mean_radius_spread_m=round(mean_spread; digits=6),
-        bridle_angle_deg=bridle_angle,
-        blade_radius_m=blade_radius,
+        bank_angle_deg=bank_angle,
+        blade_tip_radius_m=blade_tip,
         hub_radius_m=p.rotor_radius,
         tether_diameter_mm=round(p.tether_diameter * 1000; digits=2),
         elevation_deg=round(rad2deg(p.elevation_angle); digits=1),

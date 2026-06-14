@@ -217,6 +217,8 @@ function evaluate_design(
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     v_rated::Float64=11.0,
     P_rated::Float64=10000.0,
+    r_eff_override::Union{Nothing, Vector{Float64}}=nothing,
+    F_radial_per_ring::Union{Nothing, Vector{Float64}}=nothing,
 )
 
     # ── Ground ring deployment constraint ─────────────────────────────────
@@ -279,6 +281,8 @@ function evaluate_design(
         m_blade_total=m_blade_total,
         v_rated=v_rated,
         P_rated=P_rated,
+        r_eff_override=r_eff_override,
+        F_radial_per_ring=F_radial_per_ring,
     )
 end
 

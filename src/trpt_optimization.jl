@@ -271,12 +271,21 @@ off-loading at the hub ring (blade mass), Euler buckling of polygon
 segments, Tulloch/Wacker torsional collapse check, and compressive
 stress margin check.
 
-# Arguments
-- `design`: any TRPT design struct that supports beam_spec_at_ring(design, r)
-- `radii`: ring radii from ground to hub (m)
-- `L_seg`: axial segment lengths between rings (m)
-
-All other arguments are keyword-only; see evaluate_design docstring.
+# Keyword Arguments
+- `r_rotor`: generating rotor radius (m)
+- `elev_angle`: shaft elevation angle (rad)
+- `v_peak`: peak wind speed for structural load (m/s)
+- `fos_req`: minimum required FoS against buckling
+- `omega_rotor`: rotor angular velocity (rad/s)
+- `m_blade_total`: total blade mass on hub ring (kg)
+- `v_rated`: rated wind speed (m/s)
+- `P_rated`: rated power (W)
+- `r_eff_override`: optional override radii for torsional collapse (m).
+  If provided, used instead of nominal radii for the torsional lever-arm
+  calculation — expansion rotors increase effective radius.
+- `F_radial_per_ring`: optional per-ring radial expansion force (N).
+  If provided, subtracted from the aerodynamic inward force at each ring,
+  directly reducing ring compression — force-first modelling.
 """
 function _evaluate_trpt_design_impl(
     design::T,
@@ -290,6 +299,8 @@ function _evaluate_trpt_design_impl(
     m_blade_total::Float64,
     v_rated::Float64,
     P_rated::Float64,
+    r_eff_override::Union{Nothing,Vector{Float64}}=nothing,
+    F_radial_per_ring::Union{Nothing,Vector{Float64}}=nothing,
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
@@ -299,11 +310,14 @@ function _evaluate_trpt_design_impl(
     τ_op = P_rated / ω_rated
     T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
 
+    # Use override radii (expansion rotors) for torsional lever-arm if provided
+    torsion_radii = r_eff_override !== nothing ? r_eff_override : radii
+
     min_torsional_fos = Inf
     for i in 1:n_seg
-        r_min = min(radii[i], radii[i + 1])
+        r_min = min(torsion_radii[i], torsion_radii[i + 1])
         L = L_seg[i]
-        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2*r_min^2)
+        τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2 * r_min^2)
         tfos = τ_cap / max(τ_op, 1e-9)
         min_torsional_fos = min(min_torsional_fos, tfos)
     end
@@ -337,6 +351,15 @@ function _evaluate_trpt_design_impl(
 
         F_in_per_vertex_aero = OPT_DESIGN_LOAD_FACTOR * T_line
 
+        # Force-first expansion modelling (Rod 2026-06-13):
+        # Expansion rotor radial force pushes outward on the ring attachment
+        # points, directly reducing net inward force and ring compression.
+        F_exp_per_vertex = if F_radial_per_ring !== nothing
+            F_radial_per_ring[i] / design.n_lines
+        else
+            0.0
+        end
+
         n_float = float(design.n_lines)
         L_poly = 2.0 * r * sin(π / n_float)
 
@@ -359,7 +382,7 @@ function _evaluate_trpt_design_impl(
             (i == n_rings_tot ? m_blade_per_vertex : 0.0)
 
         F_centripetal = m_vertex * omega_rotor^2 * r
-        F_v = max(F_in_per_vertex_aero - F_centripetal, 0.0)
+        F_v = max(F_in_per_vertex_aero - F_centripetal - F_exp_per_vertex, 0.0)
         N_comp = F_v / (2.0 * tan(π / n_float))
 
         P_crit = props.P_crit

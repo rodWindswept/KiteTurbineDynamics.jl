@@ -499,36 +499,52 @@ max_idx = argmax(ct_vals)
 
 ### 1.1 — New source file: `src/expansion_rotor.jl`
 
+Expansion blades use the **SAME blade mould** as the generating rotor — identical
+span, chord, and count — banked downward toward the next TRPT ring. The banking
+angle resolves blade lift into radial (spreading) and axial (thrust) components.
+
+The blade is mounted at ring radius `r_nominal`. Banking tilts the tip downward,
+reducing the projected radius in the rotation plane:
+```
+r_tip  = r_nominal + blade_span × cos(bank_angle)
+r_mean = r_nominal + blade_span × cos(bank_angle) / 2
+```
+
 ```julia
 struct ExpansionRotorParams
-    n_blades        :: Int
-    blade_radius    :: Float64
-    hub_radius      :: Float64
-    blade_chord     :: Float64
+    n_blades        :: Int        # inherited from p.n_blades (main rotor)
+    blade_span      :: Float64    # same as generating rotor radius (m)
+    blade_chord     :: Float64    # 0.113 × rotor_radius (solidity-calibrated)
     CL_blade        :: Float64
     CD0_blade       :: Float64
     k_induced       :: Float64
-    bridle_angle_deg:: Float64
+    bank_angle_deg  :: Float64    # tip banked down toward next ring
     mass            :: Float64
     ring_idx        :: Int
     shaft_coupling  :: Float64
 end
 
-function expansion_rotor_forces(er, rho, v_wind, omega_shaft, elevation_deg, r_nominal, T_tether)
-    r_mean = (er.blade_radius + er.hub_radius) / 2.0
-    v_app  = sqrt(v_wind^2 + (omega_shaft * r_mean)^2)
-    span   = er.blade_radius - er.hub_radius
-    q      = 0.5 * rho * v_app^2
-    L_blade = q * er.blade_chord * span * er.CL_blade
-    D_blade = q * er.blade_chord * span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
-    bridle_rad = deg2rad(er.bridle_angle_deg)
-    F_radial = er.n_blades * L_blade * sin(bridle_rad)
-    F_axial  = er.n_blades * L_blade * cos(bridle_rad)
-    tau_drag = er.n_blades * D_blade * r_mean
-    r_eff    = effective_radius(r_nominal, F_radial, T_tether, 1.0)  # n_lines via system
-    omega_rotor = omega_shaft  # simplified: rigid coupling; extend with shaft_coupling later
-    return (F_radial, F_axial, tau_drag, r_eff, omega_rotor)
+function expansion_rotor_forces(er, rho, v_wind, omega_shaft, elevation_deg, r_nominal, T_tether, n_lines)
+    bank_rad   = deg2rad(er.bank_angle_deg)
+    proj_span  = er.blade_span * cos(bank_rad)
+    r_mean     = r_nominal + proj_span / 2.0
+    v_app      = sqrt(v_wind^2 + (omega_shaft * r_mean)^2)
+    q          = 0.5 * rho * v_app^2
+    L_blade    = q * er.blade_chord * er.blade_span * er.CL_blade
+    D_blade    = q * er.blade_chord * er.blade_span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
+    F_radial   = er.n_blades * L_blade * sin(bank_rad)
+    F_axial    = er.n_blades * L_blade * cos(bank_rad)
+    tau_drag   = er.n_blades * D_blade * r_mean
+    r_eff      = effective_radius(r_nominal, F_radial, T_tether, n_lines, ...)
+    return (F_radial, F_axial, tau_drag, r_eff, omega_shaft)
 end
+```
+
+**Design decision (2026-06-13):** Expansion blades inherit span, chord, and count from
+the generating rotor. Only `bank_angle_deg` and `n_expansion` are free search variables.
+This reduces the V6 search space from 13-DoF to 11-DoF and ensures forces are physically
+meaningful — at the hub ring, a 5 m expansion blade produces ~2,830 N lift per blade,
+compared to ~5 N for the previous toy-scale 1 m/6 cm test blades.
 
 function effective_radius(r_nominal, F_radial, T_tether, n_lines)
     if F_radial <= 0.0 || T_tether <= 0.0
@@ -551,14 +567,13 @@ use effective radius for attachment point geometry when expansion rotor present.
 
 Six tests in `test/test_expansion_rotor.jl`:
 1. Zero-wind spreading via ω²
-2. Zero bridle angle → no radial force
+2. Zero bank angle → no radial force (pure thrust)
 3. Force scales with v_app²
-4. Steeper bridle → more radial force fraction
-5. Effective radius computation
-6. No force → no spread
+4. Steeper bank → more radial force fraction
+5. Larger ring → larger mean radius → more force
+6. Empty stack returns nominal radii (no expansion rotors)
 
-**Quality gate:** All tests pass. Expansion rotor forces match analytical hand-calculation
-for v=0, ω=30 rad/s, bridle=10°.
+**Quality gate:** All tests pass. Expansion rotor forces match analytical hand-calculation.
 
 ---
 
@@ -576,14 +591,29 @@ for v=0, ω=30 rad/s, bridle=10°.
 
 ### 2.3 — Parameter sweep: `scripts/run_expansion_sweep.jl`
 
-Sweep across: N_expansion ∈ {0,1,2,3,4}, bridle_angle ∈ {5°,10°,15°,20°,25°},
-blade_radius ∈ {0.5,1.0,1.5,2.0} m, blade_count ∈ {3,5,8}, power ∈ {10,20,50} kW.
+Sweep across: N_expansion ∈ {0,1,2,3,4}, bank_angle ∈ {5°,10°,15°,20°,30°,45°},
+power ∈ {10,20,50} kW. Blade span, chord, and count are derived from the
+generating rotor — no longer swept independently.
 Output: `results/expansion_sweep.csv`
 
 ### 2.4 — DE Optimisation Campaign: `scripts/run_v6_campaign.jl` ✅ BUILT
 
-13 design variables (9 base TRPT + 4 expansion rotor). Soft-penalty objective
-function guides the DE optimiser toward feasibility.
+**11 design variables** (9 base TRPT + 2 expansion rotor), down from 13-DoF.
+Expansion blade span, chord, and count are inherited from the generating rotor
+(same blade mould, banked downward). Only `n_expansion` (x[10]) and
+`bank_angle_deg` (x[11]) are free.
+
+**Force-first structural model (2026-06-13):** `F_radial` from expansion rotors
+is injected directly into `_evaluate_trpt_design_impl` as ring compression
+relief, rather than routed through a weak displacement channel (Δr ≈ mm).
+`r_eff` is still used for the torsional collapse lever-arm calculation.
+`estimate_effective_radii()` returns `(r_eff, F_radial_per_ring)`.
+
+**Settle fix (2026-06-13):** `settle_to_operational_state` now computes the
+aerodynamic ω scan at the design hub position instead of the equilibrium hub,
+preventing ω_eq=0 when expansion rotors shift the structural equilibrium.
+
+Soft-penalty objective function guides the DE optimiser toward feasibility.
 
 **Quick test verified** (100 iterations, 5 islands): optimiser found FoS=1.80,
 raw mass=12.97 kg, torsional FoS=1.12 — right on the feasibility boundary.
