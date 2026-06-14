@@ -220,10 +220,17 @@ function main()
             end
 
             # Convergence check (only after sufficient burn-in)
+            # Require ACTUAL improvement: best cost must have decreased
+            # by ≥0.5% in the last 200 iterations.  A flat line with zero
+            # variance (population collapsed to identical cost) is NOT
+            # convergence — it's stagnation.
             if iteration > 500 && length(history) > 200
                 recent = history[(end - 199):end]
-                if std(recent) < 1e-6 * abs(mean(recent))
-                    @printf("  Converged at iteration %d\n", iteration)
+                first_best = minimum(history[1:max(1, iteration-400)])
+                last_best  = minimum(recent)
+                rel_improvement = (first_best - last_best) / max(abs(first_best), 0.01)
+                if rel_improvement < 0.005 && std(recent) < 0.01 * abs(mean(recent))
+                    @printf("  Converged at iteration %d (Δ=%.3f%%)\n", iteration, rel_improvement*100)
                     break
                 end
             end

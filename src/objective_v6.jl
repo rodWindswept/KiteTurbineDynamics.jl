@@ -241,8 +241,10 @@ function objective_v6(
     if !eval_result.feasible
         fos_penalty = max(1.0, fos_req / max(eval_result.min_fos, 0.01))
         torsion_penalty = max(1.0, 1.5 / max(eval_result.min_torsional_fos, 0.01))
-        penalty_mult = fos_penalty * torsion_penalty
-        return eval_result.mass_total_kg * penalty_mult
+        # Clamp penalty to 10× so infeasible designs retain a cost gradient
+        # rather than flattening the search space (all candidates → 1e9).
+        penalty_mult = min(fos_penalty * torsion_penalty, 10.0)
+        return eval_result.mass_total_kg * penalty_mult + 100.0  # +100 biases toward feasibility
     end
 
     # Add expansion rotor mass

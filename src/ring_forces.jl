@@ -207,7 +207,7 @@ function compute_ring_forces!(
                     ct_at_tsr(lambda_t) *
                     cos(elev_angle)^2.0
 
-                F_radial, F_axial, tau_drag, r_eff, _ = expansion_rotor_forces(
+                F_radial, F_axial, tau_net, r_eff, _ = expansion_rotor_forces(
                     er,
                     p.rho,
                     v_wind_mag_ring,
@@ -222,13 +222,13 @@ function compute_ring_forces!(
                 tether_dir_ring = ring_pos .- @view(u[1:3])
                 tl_ring = norm(tether_dir_ring)
                 if tl_ring > 0
-                    ;
-                    tether_dir_ring ./= tl_ring;
+                    tether_dir_ring ./= tl_ring
                 end
                 forces[ring_gid] .+= F_axial .* tether_dir_ring
 
-                # Drag torque RESISTS ring rotation (opposes motion)
-                torques[ring_ri] -= tau_drag
+                # Net shaft torque from expansion rotor (τ_net = τ_lift - τ_drag).
+                # Positive = driving (injects power). Negative = braking (parasitic).
+                torques[ring_ri] += tau_net
 
                 # NOTE: effective_radii update REMOVED (2026-06-14).
                 # The old displacement model Δr = F_radial×L/(T×geom) produces

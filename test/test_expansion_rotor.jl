@@ -14,15 +14,16 @@
         T_tether = 500.0
         n_lines = 5
 
-        F_radial, F_axial, tau_drag, r_eff, omega_rotor =
+        F_radial, F_axial, tau_net, r_eff, omega_rotor =
             expansion_rotor_forces(er, rho, v_wind, omega, elev, r_nom, T_tether, n_lines)
 
         # r_mean = r_nom + span*cos(15°)/2 = 1.0 + 1.0*0.966/2 = 1.483
         # v_app = 30 * 1.483 = 44.5 m/s
-        # expect non-zero radial force
+        # expect non-zero forces
         @test F_radial > 0.0
         @test F_axial  > 0.0
-        @test tau_drag > 0.0
+        # v_wind=0 → φ=0 → no tangential lift component; τ_net = -τ_drag < 0
+        @test tau_net < 0.0
         @test r_eff > r_nom
         @test omega_rotor == omega
     end

@@ -12,9 +12,11 @@
 # The banking angle resolves blade lift into radial (spreading) and axial
 # (thrust) components.
 #
-#   F_radial = n_blades · L_blade · sin(bank_angle)   (spreads the ring)
-#   F_axial  = n_blades · L_blade · cos(bank_angle)   (adds to rotor thrust)
-#   τ_drag   = n_blades · D_blade · r_mean            (drag torque)
+#   F_radial = n_blades · L_blade · cos(φ) · sin(bank)   (spreads ring)
+#   F_axial  = n_blades · L_blade · cos(φ) · cos(bank)   (thrust)
+#   τ_lift   = n_blades · L_blade · sin(φ) · cos(bank) · r_mean  (drives shaft)
+#   τ_drag   = n_blades · D_blade · cos(φ) · r_mean       (parasitic)
+#   τ_net    = τ_lift - τ_drag                            (>0 = drives, <0 = brakes)
 #
 # The blade annulus extends from hub_radius to tip_radius along the blade,
 # mounted at the ring radius r_nominal.  Banking tilts the annulus downward
@@ -27,7 +29,8 @@
 # Blade span for area = blade_tip_radius - blade_hub_radius
 #
 # The apparent wind at the mean radius drives blade lift:
-#   v_app² = v_wind² + (ω · r_mean)²
+#   v_axial = v_wind · cos(elevation)              (along shaft)
+#   v_app²  = v_axial² + (ω · r_mean)²
 #
 # Reference: PLAN.md Phase 1 — Expansion Rotor Element
 
@@ -77,7 +80,7 @@ end
 """
     expansion_rotor_forces(er, rho, v_wind, omega_shaft, elevation_deg,
                            r_nominal, T_tether, n_lines)
-        -> (F_radial, F_axial, tau_drag, r_eff, omega_rotor)
+        -> (F_radial, F_axial, tau_net, r_eff, omega_rotor)
 
 Compute aerodynamic forces from an expansion rotor element.
 
@@ -98,7 +101,7 @@ projected annulus centre in the rotation plane.
 # Returns
 - `F_radial::Float64`: radial spreading force (N)
 - `F_axial::Float64`: axial thrust force (N)
-- `tau_drag::Float64`: drag torque on the shaft (N·m)
+- `tau_net::Float64`: net shaft torque (N·m). Positive = driving\n  (injects power into shaft — τ_lift dominates). Negative = braking\n  (parasitic — τ_drag dominates).
 - `r_eff::Float64`: effective ring radius after spreading (m)
 - `omega_rotor::Float64`: rotor angular velocity (rad/s)
 """
@@ -121,8 +124,13 @@ function expansion_rotor_forces(
     # Physical blade span for area calculation
     blade_span = er.blade_tip_radius - er.blade_hub_radius
 
-    # Apparent wind speed at mean radius (wind + rotation)
-    v_app = sqrt(v_wind^2 + (omega_shaft * r_mean)^2)
+    elev_rad = deg2rad(elevation_deg)
+
+    # Wind component along the shaft axis (horizontal wind × cos(elevation))
+    v_axial = v_wind * cos(elev_rad)
+
+    # Apparent wind at mean radius: vector sum of axial wind + tangential rotation
+    v_app = sqrt(v_axial^2 + (omega_shaft * r_mean)^2)
 
     # Dynamic pressure
     q = 0.5 * rho * v_app^2
@@ -131,10 +139,34 @@ function expansion_rotor_forces(
     L_blade = q * er.blade_chord * blade_span * er.CL_blade
     D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
 
-    # Resolve through bank angle
-    F_radial = er.n_blades * L_blade * sin(bank_rad)
-    F_axial  = er.n_blades * L_blade * cos(bank_rad)
-    tau_drag = er.n_blades * D_blade * r_mean
+    # Resolve lift perpendicular to apparent wind into shaft-frame components.
+    # The apparent wind approaches at inflow angle φ from the rotation plane.
+    #   φ = atan(v_wind, ω·r_mean)
+    #
+    # Lift L_blade is ⊥ to apparent wind. Its shaft-frame decomposition:
+    #   F_radial = n_blades · L_blade · cos(φ) · sin(bank)    [spreads ring]
+    #   F_axial  = n_blades · L_blade · cos(φ) · cos(bank)    [thrust]
+    #   τ_lift   = n_blades · L_blade · sin(φ) · cos(bank) · r_mean  [drives shaft]
+    #
+    # Drag D_blade is ∥ to apparent wind:
+    #   τ_drag   = n_blades · D_blade · cos(φ) · r_mean        [opposes rotation]
+    #
+    # Net shaft torque τ_net = τ_lift - τ_drag.
+    # Positive = driving (injects power into shaft, like main rotor aerodynamics).
+    # Negative = braking (extracts power, parasitic).
+
+    phi = atan(v_axial, omega_shaft * r_mean)   # inflow angle from rotation plane
+    sin_phi = sin(phi)
+    cos_phi = cos(phi)
+
+    L_tangential = L_blade * sin_phi * cos(bank_rad)  # per blade, tangential
+    D_tangential = D_blade * cos_phi                    # per blade, tangential
+
+    F_radial = er.n_blades * L_blade * cos_phi * sin(bank_rad)
+    F_axial  = er.n_blades * L_blade * cos_phi * cos(bank_rad)
+    tau_lift = er.n_blades * L_tangential * r_mean
+    tau_drag = er.n_blades * D_tangential * r_mean
+    tau_net  = tau_lift - tau_drag   # > 0 = driving, < 0 = braking
 
     # Effective radius from force balance at tether attachment point
     geometry_factor = 2.0 * tan(π / n_lines)
@@ -144,7 +176,7 @@ function expansion_rotor_forces(
     # Rotor angular velocity (simplified: rigid coupling)
     omega_rotor = omega_shaft
 
-    return (F_radial, F_axial, tau_drag, r_eff, omega_rotor)
+    return (F_radial, F_axial, tau_net, r_eff, omega_rotor)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
