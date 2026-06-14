@@ -163,10 +163,14 @@ function capture_frame(
     T_max, n_slack = get_max_rope_tension(u, sys, p)
     fos_tether = T_max > 0.0 ? TETHER_SWL / T_max : Inf
 
-    # Ring buckling safety
+    # Ring buckling safety — ground ring (index 1) excluded: it is ground-supported
+    # and can be arbitrarily strong (doesn't count against airborne mass).
     rea_results = ring_element_analysis(u, collect(alpha_vec), sys, p, t, wind_fn)
-    ring_beam_utils = [[b.utilisation for b in ref.beams] for ref in rea_results]
-    ring_utils = [ref.max_util for ref in rea_results]
+    ring_beam_utils = [any(isnan, [b.utilisation for b in ref.beams]) ?
+                       zeros(length(ref.beams)) :
+                       [b.utilisation for b in ref.beams]
+                       for ref in rea_results]
+    ring_utils = [isnan(ref.max_util) ? 0.0 : ref.max_util for ref in rea_results]
     max_util = isempty(ring_utils) ? 0.0 : maximum(ring_utils)
     fos_ring = max_util > 0.0 ? 1.0 / max_util : Inf
 
