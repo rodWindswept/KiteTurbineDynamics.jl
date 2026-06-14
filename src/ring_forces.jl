@@ -224,8 +224,13 @@ function compute_ring_forces!(
                 # Drag torque on the ring
                 torques[ring_ri] += tau_drag
 
-                # Update effective radius
-                sys.effective_radii[er.ring_idx] = r_eff
+                # NOTE: effective_radii update REMOVED (2026-06-14).
+                # The old displacement model Δr = F_radial×L/(T×geom) produces
+                # absurdly large radii (meters) with realistic blade forces
+                # (kN range), corrupting rope attachment geometry.
+                # Force-first model applies F_radial as a load term in the
+                # structural evaluator; ODE dynamics use nominal ring radii.
+                # TODO: apply F_radial as outward force on ring vertices.
             end
         end
     end
