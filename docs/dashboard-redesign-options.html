@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KiteTurbineDynamics — dashboard redesign options</title>
+<style>
+:root{
+  --bg:#0b0c0e; --surf:#17191c; --surf2:#101214; --line:#2a2e33;
+  --ink:#e6e8ea; --mut:#8a9099; --dim:#5f5e5a;
+  --blue:#378add; --green:#2fbf71; --amber:#ef9f27; --red:#e24b4a;
+  --radm:8px; --radl:12px;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;padding:32px 20px}
+.page{max-width:1040px;margin:0 auto}
+h1{font-size:22px;font-weight:500;margin:0 0 4px}
+.lede{color:var(--mut);font-size:14px;margin:0 0 4px}
+.note{color:var(--amber);font-size:12px;margin:0 0 28px}
+.sec{margin:0 0 30px}
+.hd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.step{font-size:12px;font-weight:500;color:#bcd6f5;background:#16314e;padding:2px 9px;border-radius:var(--radm)}
+.h{font-size:16px;font-weight:500}
+.sub{font-size:13px;color:var(--mut);margin:0 0 14px}
+.grid{display:grid;gap:12px}
+.card{background:var(--surf2);border:0.5px solid var(--line);border-radius:var(--radl);padding:14px}
+.card.rec{border:2px solid var(--blue)}
+.badge{display:inline-block;font-size:11px;color:#bcd6f5;background:#16314e;padding:2px 8px;border-radius:var(--radm);margin-bottom:8px}
+.name{font-size:14px;font-weight:500;margin:0 0 2px}
+.desc{font-size:12px;color:var(--mut);line-height:1.5;margin:0 0 10px}
+.chips{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}
+.chip{width:30px;height:30px;border-radius:6px;border:0.5px solid rgba(255,255,255,.18)}
+.prev{border-radius:8px;padding:10px;margin:0 0 4px;font-family:var(--mono);background:var(--surf);border:0.5px solid var(--line)}
+.prev .row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.prev .big{font-size:18px;font-weight:500;letter-spacing:-.3px}
+.lay{display:flex;flex-direction:column;gap:4px;height:118px;margin:0 0 6px}
+.lay .strip{display:flex;gap:4px;flex:1}
+.lbox{border-radius:5px;font-size:10px;color:var(--mut);display:flex;align-items:center;justify-content:center;text-align:center;background:var(--surf);border:0.5px solid var(--line)}
+.tag{font-size:10px;color:var(--dim);font-family:var(--mono)}
+.foot{border-top:0.5px solid var(--line);padding-top:14px;color:var(--mut);font-size:13px}
+.pick{font-family:var(--mono);color:var(--green)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Dashboard redesign — options board</h1>
+<p class="lede">KiteTurbineDynamics.jl · five choices for the interactive GLMakie dashboard. Recommended option is outlined.</p>
+<p class="note">Reply on Dispatch with your picks, e.g. "A1 B2 C2 D1 E1, F yes".</p>
+
+<div class="sec">
+  <div class="hd"><span class="step">Decision A</span><span class="h">Visual theme &amp; palette</span></div>
+  <p class="sub">Same readouts (power, rotor speed, tether safety) in each theme.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    <div class="card rec"><span class="badge">Recommended</span><p class="name">A1 — Instrument</p><p class="desc">Near-black, one accent blue, semantic green/amber/red reserved for state only.</p>
+      <div class="chips"><div class="chip" style="background:#0E0F11"></div><div class="chip" style="background:#17191C"></div><div class="chip" style="background:#378ADD"></div><div class="chip" style="background:#2FBF71"></div><div class="chip" style="background:#EF9F27"></div><div class="chip" style="background:#E24B4A"></div></div>
+      <div class="prev"><div class="row"><span style="color:var(--mut)">POWER</span><span class="big" style="color:var(--green)">10.3 kW</span></div><div class="row"><span style="color:var(--mut)">ROTOR</span><span>91 rpm</span></div><div class="row"><span style="color:var(--mut)">TETHER FoS</span><span style="color:var(--red);font-weight:500">0.5</span></div></div></div>
+    <div class="card"><p class="name">A2 — Blueprint</p><p class="desc">Deep navy with cyan linework and warm amber accents — a CAD canvas feel.</p>
+      <div class="chips"><div class="chip" style="background:#0B1626"></div><div class="chip" style="background:#112236"></div><div class="chip" style="background:#38BDF8"></div><div class="chip" style="background:#7FE0C2"></div><div class="chip" style="background:#F5B544"></div><div class="chip" style="background:#F0997B"></div></div>
+      <div class="prev" style="background:#112236;border-color:#243a55;color:#DCE7F2"><div class="row"><span style="color:#6E8AAA">POWER</span><span class="big" style="color:#7FE0C2">10.3 kW</span></div><div class="row"><span style="color:#6E8AAA">ROTOR</span><span>91 rpm</span></div><div class="row"><span style="color:#6E8AAA">TETHER FoS</span><span style="color:#F0997B;font-weight:500">0.5</span></div></div></div>
+    <div class="card"><p class="name">A3 — Slate (light)</p><p class="desc">Light surface for daylight field use and projectors.</p>
+      <div class="chips"><div class="chip" style="background:#ECEAE3"></div><div class="chip" style="background:#FFFFFF"></div><div class="chip" style="background:#185FA5"></div><div class="chip" style="background:#3B6D11"></div><div class="chip" style="background:#BA7517"></div><div class="chip" style="background:#A32D2D"></div></div>
+      <div class="prev" style="background:#fff;border-color:#D3D1C7;color:#1F2937"><div class="row"><span style="color:#6B7280">POWER</span><span class="big" style="color:#3B6D11">10.3 kW</span></div><div class="row"><span style="color:#6B7280">ROTOR</span><span>91 rpm</span></div><div class="row"><span style="color:#6B7280">TETHER FoS</span><span style="color:#A32D2D;font-weight:500">0.5</span></div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="hd"><span class="step">Decision B</span><span class="h">Layout structure</span></div>
+  <p class="sub">Grey block = 3D viewport; coloured blocks = panels.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+    <div class="card"><p class="name">B1 — Tidy 3-column</p><p class="desc">Keep today's shape; group the wall of text into bordered cards.</p>
+      <div class="lay"><div class="strip"><div class="lbox" style="width:26%">controls</div><div class="lbox" style="flex:1;background:#0E0F11;color:#cfd3d8">3D viewport</div><div class="lbox" style="width:30%">HUD cards</div></div></div></div>
+    <div class="card rec"><span class="badge">Recommended</span><p class="name">B2 — Cockpit strip</p><p class="desc">Headline status as a full-width strip on top; viewport dominant; slim diagnostics right.</p>
+      <div class="lay"><div class="strip" style="flex:0 0 26px"><div class="lbox" style="flex:1;background:#1b2a1f;color:#9fe1cb">status · power · state · FoS</div></div><div class="strip"><div class="lbox" style="width:24%">controls</div><div class="lbox" style="flex:1;background:#0E0F11;color:#cfd3d8">3D viewport</div><div class="lbox" style="width:24%">loads</div></div></div></div>
+    <div class="card"><p class="name">B3 — Tabbed diagnostics</p><p class="desc">Right panel becomes tabs: Flight · Loads · Run · Scenarios.</p>
+      <div class="lay"><div class="strip"><div class="lbox" style="width:24%">controls</div><div class="lbox" style="flex:1;background:#0E0F11;color:#cfd3d8">3D viewport</div><div class="lbox" style="width:30%;flex-direction:column;gap:3px;padding:4px"><div style="display:flex;gap:4px;width:100%"><span class="tag" style="color:var(--blue)">Flight</span><span class="tag">Loads</span><span class="tag">Run</span></div><div style="flex:1"></div></div></div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="hd"><span class="step">Decision C</span><span class="h">How numbers are displayed</span></div>
+  <p class="sub">Output power (10.3 kW / 103% rated) shown three ways. Can be mixed.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+    <div class="card"><p class="name">C1 — Metric cards</p><p class="desc">Big number, label, thin % fill bar. Scannable.</p>
+      <div class="prev"><div style="font-size:10px;color:var(--mut)">OUTPUT POWER</div><div class="big">10.3<span style="font-size:11px;color:var(--mut)"> kW</span></div><div style="height:5px;background:var(--line);border-radius:3px;margin-top:5px"><div style="width:100%;height:5px;background:var(--amber);border-radius:3px"></div></div><div style="font-size:10px;color:var(--amber);margin-top:3px">103% rated</div></div></div>
+    <div class="card rec"><span class="badge">Recommended hybrid</span><p class="name">C2 — Gauge + sparkline</p><p class="desc">Radial gauge for bounded ratios; sparkline shows run trend without scrubbing.</p>
+      <div class="prev" style="display:flex;align-items:center;gap:10px"><svg width="58" height="58" viewBox="0 0 58 58"><circle cx="29" cy="29" r="23" fill="none" stroke="#2A2E33" stroke-width="6"/><circle cx="29" cy="29" r="23" fill="none" stroke="#EF9F27" stroke-width="6" stroke-dasharray="148 145" stroke-linecap="round" transform="rotate(-90 29 29)"/><text x="29" y="32" text-anchor="middle" fill="#E6E8EA" font-size="13" font-family="monospace">103%</text></svg><div style="flex:1"><div style="font-size:10px;color:var(--mut)">POWER 10.3 kW</div><svg width="100%" height="26" viewBox="0 0 120 26" preserveAspectRatio="none"><polyline points="0,22 20,18 40,20 60,8 80,4 100,9 120,6" fill="none" stroke="#2fbf71" stroke-width="2"/></svg></div></div></div>
+    <div class="card"><p class="name">C3 — Aligned rows</p><p class="desc">Today's text, but right-aligned values in a fixed column with units split out.</p>
+      <div class="prev"><div class="row"><span style="color:var(--mut)">Output power</span><span>10.26 <span style="color:var(--mut)">kW</span></span></div><div class="row"><span style="color:var(--mut)">% rated</span><span style="color:var(--amber)">103 <span style="color:var(--mut)">%</span></span></div><div class="row"><span style="color:var(--mut)">Rotor</span><span>91.1 <span style="color:var(--mut)">rpm</span></span></div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="hd"><span class="step">Decision D</span><span class="h">Safety &amp; alarm treatment</span></div>
+  <p class="sub">FoS 0.5 and "100% slack events" currently hide in body text.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+    <div class="card rec"><span class="badge">Recommended</span><p class="name">D1 — Status banner</p><p class="desc">One banner that flips green→amber→red on the worst active condition, with the triggering value.</p>
+      <div style="background:#2a1416;border:1px solid var(--red);border-radius:8px;padding:9px 11px;font-family:var(--mono)"><div style="font-size:12px;color:var(--red);font-weight:500">TETHER OVERLOAD — FoS 0.5</div><div style="font-size:10px;color:#c98">6460 N vs 3500 N SWL · 90 lines slack</div></div></div>
+    <div class="card"><p class="name">D2 — Loads panel + FoS gauge</p><p class="desc">Dedicated card: FoS dial that goes red below 1.0, plus the two load colourbars kept and clearly labelled.</p>
+      <div class="prev" style="display:flex;align-items:center;gap:10px"><svg width="54" height="54" viewBox="0 0 58 58"><circle cx="29" cy="29" r="23" fill="none" stroke="#2A2E33" stroke-width="6"/><circle cx="29" cy="29" r="23" fill="none" stroke="#E24B4A" stroke-width="6" stroke-dasharray="22 250" stroke-linecap="round" transform="rotate(-90 29 29)"/><text x="29" y="33" text-anchor="middle" fill="#E24B4A" font-size="14" font-family="monospace">0.5</text></svg><div style="flex:1"><div style="font-size:10px;color:var(--mut);margin-bottom:4px">TETHER FoS</div><div style="height:8px;border-radius:4px;background:linear-gradient(90deg,#378ADD,#2FBF71,#EF9F27,#E24B4A)"></div><div style="font-size:9px;color:var(--mut);margin-top:2px">0 → 3500 N SWL</div></div></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="hd"><span class="step">Decision E</span><span class="h">Controls organisation</span></div>
+  <p class="sub">Left column today is a flat stack of menus, sliders and toggles.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+    <div class="card rec"><span class="badge">Recommended</span><p class="name">E1 — Collapsible groups</p><p class="desc">Setup → Lift device → Control law → Depower → Playback → Actions. Collapse what you're not tuning.</p>
+      <div class="prev"><div class="row" style="color:var(--blue)">▸ Setup &amp; configuration</div><div class="row" style="color:var(--blue)">▾ Lift device</div><div class="row" style="padding-left:10px;color:var(--mut)">radius · elevation · CL</div><div class="row" style="color:var(--blue)">▸ Control law &amp; depower</div><div class="row" style="color:var(--blue)">▸ Playback &amp; export</div></div></div>
+    <div class="card"><p class="name">E2 — Flat + headers</p><p class="desc">Everything visible, but with section headers, consistent value-on-slider, aligned spacing.</p>
+      <div class="prev"><div class="row" style="color:var(--dim)">── LIFT DEVICE ──</div><div class="row"><span style="color:var(--mut)">Radius</span><span>1.5 m</span></div><div class="row"><span style="color:var(--mut)">Elevation</span><span>30°</span></div><div class="row" style="color:var(--dim)">── CONTROL ──</div></div></div>
+  </div>
+</div>
+
+<p class="foot">Recommended bundle: <span class="pick">A1 · B2 · C2 · D1 · E1</span>. Plus Decision F (repo hygiene): fetch &amp; confirm latest, prune stale worktree + old <span class="pick">claude/*</span> branches?</p>
+
+</div>
+</body>
+</html>

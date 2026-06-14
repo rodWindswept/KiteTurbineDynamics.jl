@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kite Turbine Dashboard — Redesign Mockup (A1·B2·C2·D2·E1)</title>
+<style>
+  :root{
+    --bg:#0a0c10;            /* instrument near-black */
+    --panel:#12161d;
+    --panel-2:#161b24;
+    --edge:#222a35;
+    --edge-soft:#1b212b;
+    --ink:#e8eef6;
+    --ink-dim:#9aa7b6;
+    --ink-faint:#647284;
+    --accent:#39d0d8;        /* single cyan accent */
+    --accent-dim:#1d7d83;
+    --ok:#34d399;
+    --warn:#f5b73d;
+    --alarm:#ff4d4f;
+    --alarm-bg:#2a0e10;
+    --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13px}
+  .frame{max-width:1280px;margin:0 auto;padding:14px}
+  .small{font-size:11px}
+  .dim{color:var(--ink-dim)}
+  .faint{color:var(--ink-faint)}
+  .mono{font-family:var(--mono)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ── B2: cockpit status strip on top ───────────────────── */
+  .strip{
+    display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+    background:linear-gradient(180deg,#141922,#0f131a);
+    border:1px solid var(--edge);border-radius:10px;padding:10px 14px;margin-bottom:12px;
+  }
+  .state-pill{
+    display:flex;align-items:center;gap:8px;font-weight:600;letter-spacing:.3px;
+    padding:6px 12px;border-radius:999px;background:rgba(52,211,153,.12);
+    border:1px solid rgba(52,211,153,.4);color:var(--ok);white-space:nowrap;
+  }
+  .state-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .strip-metrics{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .sm{display:flex;flex-direction:column;gap:2px;min-width:90px}
+  .sm .label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint)}
+  .sm .val{font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+  .sm .sub{font-size:10px;color:var(--ink-dim);font-family:var(--mono)}
+  .bar{height:5px;border-radius:3px;background:#222a35;overflow:hidden;margin-top:3px}
+  .bar > i{display:block;height:100%;border-radius:3px}
+
+  /* D2 alarm zone embedded in strip */
+  .alarm-zone{
+    display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:8px;
+    background:var(--alarm-bg);border:1px solid var(--alarm);
+    box-shadow:0 0 0 1px rgba(255,77,79,.2),0 0 18px rgba(255,77,79,.18);
+  }
+  .alarm-zone .fos{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--alarm);line-height:1}
+  .alarm-zone .meta{font-size:10px;color:#ffb4b5;font-family:var(--mono);line-height:1.4}
+  .alarm-zone .tag{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--alarm);font-weight:700}
+
+  /* ── body: 3 cols ──────────────────────────────────────── */
+  .body{display:grid;grid-template-columns:240px 1fr 320px;gap:12px;align-items:start}
+  .panel{background:var(--panel);border:1px solid var(--edge);border-radius:10px;overflow:hidden}
+  .panel > .hd{padding:9px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink-dim);border-bottom:1px solid var(--edge-soft);display:flex;justify-content:space-between;align-items:center}
+
+  /* E1: collapsible control groups */
+  .group{border-bottom:1px solid var(--edge-soft)}
+  .group:last-child{border-bottom:none}
+  .group > summary{list-style:none;cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--ink);user-select:none}
+  .group > summary::-webkit-details-marker{display:none}
+  .group > summary .chev{margin-left:auto;color:var(--ink-faint);transition:transform .15s}
+  .group[open] > summary .chev{transform:rotate(90deg)}
+  .group .gbody{padding:4px 12px 12px}
+  .field{margin:9px 0}
+  .field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-bottom:4px}
+  .ctrl{width:100%;background:var(--panel-2);border:1px solid var(--edge);color:var(--ink);border-radius:6px;padding:7px 9px;font-size:12px;font-family:var(--sans)}
+  .slider{appearance:none;width:100%;height:4px;border-radius:3px;background:#2a323d;outline:none}
+  .slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 6px var(--accent-dim)}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px}
+  .switch{width:34px;height:18px;border-radius:999px;background:#2a323d;position:relative;cursor:pointer;flex:0 0 auto}
+  .switch.on{background:var(--accent-dim)}
+  .switch i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#cfd8e3;transition:left .15s}
+  .switch.on i{left:18px;background:var(--accent)}
+  .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .btn{flex:1;min-width:64px;text-align:center;background:var(--panel-2);border:1px solid var(--edge);color:var(--ink);border-radius:6px;padding:7px 8px;font-size:11px;cursor:pointer}
+  .btn.accent{background:rgba(57,208,216,.12);border-color:var(--accent-dim);color:var(--accent)}
+
+  /* center viewport */
+  .viewport{position:relative;background:radial-gradient(120% 120% at 50% 0%,#0e1320 0%,#0a0c10 70%);min-height:520px;display:flex;flex-direction:column}
+  .vp-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:8px}
+  .vp-foot{display:flex;align-items:center;gap:14px;padding:8px 12px;border-top:1px solid var(--edge-soft);font-size:11px;color:var(--ink-dim)}
+  .legend{display:flex;align-items:center;gap:8px}
+  .legend .ramp{width:120px;height:8px;border-radius:4px;background:linear-gradient(90deg,#3b82f6,#34d399,#f5b73d,#ff4d4f)}
+  .play{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .play .pbtn{width:28px;height:28px;border-radius:6px;border:1px solid var(--edge);background:var(--panel-2);color:var(--ink);cursor:pointer}
+  .scrub{appearance:none;width:200px;height:4px;border-radius:3px;background:#2a323d}
+  .scrub::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+
+  /* C2: gauges + sparklines, right diagnostics */
+  .card{margin:0}
+  .card + .card{margin-top:12px}
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+  .metric{background:var(--panel-2);border:1px solid var(--edge-soft);border-radius:8px;padding:9px 10px}
+  .metric .mlabel{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint)}
+  .metric .mval{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;margin-top:2px}
+  .metric .mtarget{font-size:10px;color:var(--ink-dim);font-family:var(--mono);margin-top:1px}
+  .spark{display:block;width:100%;height:26px;margin-top:5px}
+
+  .gauge-wrap{display:flex;align-items:center;gap:12px;padding:12px}
+  .gauge{flex:0 0 auto}
+  .gauge-meta{display:flex;flex-direction:column;gap:2px}
+  .gauge-meta .g-val{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1}
+  .gauge-meta .g-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint)}
+  .gauge-meta .g-sub{font-size:11px;color:var(--ink-dim);font-family:var(--mono)}
+
+  .loadrow{display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px;font-size:12px}
+  .loadrow .lv{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .colorbar{margin:6px 12px 2px;height:10px;border-radius:5px;background:linear-gradient(90deg,#3b82f6,#34d399,#f5b73d,#ff4d4f);position:relative}
+  .colorbar .mark{position:absolute;top:-3px;width:2px;height:16px;background:#fff;box-shadow:0 0 4px #000}
+  .cb-scale{display:flex;justify-content:space-between;margin:2px 12px 10px;font-size:9px;color:var(--ink-faint);font-family:var(--mono)}
+
+  .flag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 8px;border-radius:999px;font-family:var(--mono)}
+  .flag.alarm{background:rgba(255,77,79,.14);color:var(--alarm);border:1px solid rgba(255,77,79,.4)}
+  .flag.ok{background:rgba(52,211,153,.12);color:var(--ok);border:1px solid rgba(52,211,153,.35)}
+  .flags{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 12px}
+
+  .legend-note{font-size:10px;color:var(--ink-faint);padding:10px 14px;border-top:1px solid var(--edge-soft);line-height:1.6}
+  .legend-note b{color:var(--ink-dim)}
+  h1.banner{font-size:13px;font-weight:600;color:var(--ink-dim);margin:0 0 10px;letter-spacing:.3px}
+  h1.banner span{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="frame">
+  <h1 class="banner">Kite Turbine Dashboard — redesign mockup · locked set <span>A1 · B2 · C2 · D2 · E1</span> · sample frame data</h1>
+
+  <!-- ════ B2 cockpit status strip ════ -->
+  <div class="strip">
+    <div class="state-pill"><span class="dot"></span>GENERATING</div>
+
+    <div class="strip-metrics">
+      <div class="sm">
+        <span class="label">Power</span>
+        <span class="val">10.3 <span class="dim small">kW</span></span>
+        <span class="sub">103% of 10.0 rated</span>
+        <span class="bar"><i style="width:100%;background:var(--warn)"></i></span>
+      </div>
+      <div class="sm">
+        <span class="label">Rotor / PTO</span>
+        <span class="val">91.1 <span class="dim small">rpm</span></span>
+        <span class="sub">PTO 93.3 rpm</span>
+      </div>
+      <div class="sm">
+        <span class="label">TSR vs opt</span>
+        <span class="val">4.34</span>
+        <span class="sub">λ_opt 4.10 · Cp 0.41</span>
+      </div>
+      <div class="sm">
+        <span class="label">Wind</span>
+        <span class="val">12.0 <span class="dim small">m/s</span></span>
+        <span class="sub">steady</span>
+      </div>
+    </div>
+
+    <!-- D2 alarm zone (glanceable summary; full panel on right) -->
+    <div class="alarm-zone">
+      <div class="fos">FoS 0.5</div>
+      <div>
+        <div class="tag">Tether overload</div>
+        <div class="meta">6460 N / 3500 N SWL<br>90 lines slack</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ body 3 columns ════ -->
+  <div class="body">
+
+    <!-- ── LEFT: E1 collapsible control groups ── -->
+    <div class="panel">
+      <div class="hd">Controls</div>
+
+      <details class="group" open>
+        <summary>Configuration <span class="chev">▸</span></summary>
+        <div class="gbody">
+          <div class="field">
+            <label>System config</label>
+            <select class="ctrl"><option>Canonical 5-line</option><option>v5 octagon</option><option>v5-safe</option></select>
+          </div>
+          <div class="btnrow"><button class="btn accent">Switch &amp; rebuild</button></div>
+        </div>
+      </details>
+
+      <details class="group" open>
+        <summary>Lift device <span class="chev">▸</span></summary>
+        <div class="gbody">
+          <div class="field">
+            <label>Device type</label>
+            <select class="ctrl"><option>Soft kite</option><option>Rigid wing</option></select>
+          </div>
+          <div class="field">
+            <label>Area A — 28 m²</label>
+            <input class="slider" type="range" min="10" max="60" value="28">
+          </div>
+          <div class="field">
+            <label>Aspect ratio B — 6.0</label>
+            <input class="slider" type="range" min="3" max="12" value="6">
+          </div>
+        </div>
+      </details>
+
+      <details class="group">
+        <summary>Control law <span class="chev">▸</span></summary>
+        <div class="gbody">
+          <div class="field">
+            <label>Generator control</label>
+            <select class="ctrl"><option>MPPT (TSR track)</option><option>Constant torque</option></select>
+          </div>
+          <div class="field">
+            <label>Depower payout</label>
+            <select class="ctrl"><option>Auto</option><option>Manual</option></select>
+          </div>
+          <div class="toggle-row"><span>Active winch</span><span class="switch on"><i></i></span></div>
+          <div class="toggle-row"><span>MPPT stall governor</span><span class="switch on"><i></i></span></div>
+          <div class="toggle-row"><span>Field IMU damping</span><span class="switch"><i></i></span></div>
+        </div>
+      </details>
+
+      <details class="group">
+        <summary>Scenario <span class="chev">▸</span></summary>
+        <div class="gbody">
+          <div class="field">
+            <label>Depower sequence</label>
+            <select class="ctrl"><option>Steady</option><option>Ramp</option><option>Gust</option><option>Launch</option><option>Land</option><option>Furl</option><option>Pitch depower</option></select>
+          </div>
+        </div>
+      </details>
+
+      <details class="group">
+        <summary>Run &amp; export <span class="chev">▸</span></summary>
+        <div class="gbody">
+          <div class="toggle-row"><span>Unlock re-run</span><span class="switch"><i></i></span></div>
+          <div class="btnrow"><button class="btn">Re-run ODE</button></div>
+          <div class="btnrow"><button class="btn">Export forces</button><button class="btn">Export nodes</button></div>
+          <div class="btnrow"><button class="btn">Reset view</button></div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ── CENTER: viewport ── -->
+    <div class="panel viewport">
+      <div class="vp-stage">
+        <!-- schematic of TRPT kite turbine -->
+        <svg viewBox="0 0 360 460" width="100%" height="480" xmlns="http://www.w3.org/2000/svg" style="max-width:340px">
+          <!-- ground -->
+          <line x1="40" y1="430" x2="320" y2="430" stroke="#2a323d" stroke-width="2"/>
+          <rect x="168" y="426" width="24" height="10" fill="#161b24" stroke="#2a323d"/>
+          <text x="180" y="450" fill="#647284" font-size="9" text-anchor="middle" font-family="monospace">ground anchor</text>
+          <!-- main tether (over-SWL → red) -->
+          <line x1="180" y1="426" x2="180" y2="250" stroke="#ff4d4f" stroke-width="3.5"/>
+          <!-- tensegrity rings -->
+          <ellipse cx="180" cy="250" rx="62" ry="16" fill="none" stroke="#34d399" stroke-width="2"/>
+          <ellipse cx="180" cy="210" rx="58" ry="15" fill="none" stroke="#34d399" stroke-width="2"/>
+          <!-- TRPT lines between rings -->
+          <line x1="118" y1="250" x2="122" y2="210" stroke="#f5b73d" stroke-width="1.5"/>
+          <line x1="242" y1="250" x2="238" y2="210" stroke="#f5b73d" stroke-width="1.5"/>
+          <line x1="180" y1="266" x2="180" y2="225" stroke="#3b82f6" stroke-width="1.5"/>
+          <!-- rotor ring -->
+          <ellipse cx="180" cy="150" rx="80" ry="22" fill="none" stroke="#b22222" stroke-width="3"/>
+          <!-- rotor blades -->
+          <line x1="180" y1="150" x2="120" y2="120" stroke="#4682b4" stroke-width="3"/>
+          <line x1="180" y1="150" x2="244" y2="124" stroke="#4682b4" stroke-width="3"/>
+          <line x1="180" y1="150" x2="180" y2="96" stroke="#4682b4" stroke-width="3"/>
+          <!-- bridles -->
+          <line x1="120" y1="120" x2="180" y2="60" stroke="#d4af37" stroke-width="1"/>
+          <line x1="244" y1="124" x2="180" y2="60" stroke="#d4af37" stroke-width="1"/>
+          <line x1="180" y1="96" x2="180" y2="60" stroke="#d4af37" stroke-width="1"/>
+          <!-- lift kite -->
+          <path d="M150 56 Q180 38 210 56 Q180 50 150 56 Z" fill="#d4af37" opacity="0.85"/>
+          <text x="180" y="34" fill="#9aa7b6" font-size="9" text-anchor="middle" font-family="monospace">lift kite</text>
+          <!-- labels -->
+          <text x="270" y="150" fill="#b22222" font-size="9" font-family="monospace">rotor ring</text>
+          <text x="250" y="252" fill="#34d399" font-size="9" font-family="monospace">tensegrity</text>
+          <text x="196" y="340" fill="#ff4d4f" font-size="9" font-family="monospace">tether ⚠</text>
+        </svg>
+      </div>
+      <div class="vp-foot">
+        <div class="legend">
+          <span class="faint small">tension</span>
+          <span class="ramp"></span>
+          <span class="faint small mono">0 → SWL → fail</span>
+        </div>
+        <div class="play">
+          <button class="pbtn">&#9658;</button>
+          <input class="scrub" type="range" min="0" max="500" value="500">
+          <span class="faint small mono">500 / 500</span>
+          <select class="ctrl" style="width:auto"><option>1×</option><option>2×</option><option>0.5×</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: C2 diagnostics (gauges + sparklines) + D2 loads panel ── -->
+    <div>
+      <!-- Flight card -->
+      <div class="panel card">
+        <div class="hd">Flight</div>
+        <div class="gauge-wrap">
+          <svg class="gauge" width="78" height="78" viewBox="0 0 78 78">
+            <circle cx="39" cy="39" r="32" fill="none" stroke="#2a323d" stroke-width="7"/>
+            <circle cx="39" cy="39" r="32" fill="none" stroke="var(--warn)" stroke-width="7"
+              stroke-dasharray="201" stroke-dashoffset="-1" stroke-linecap="round"
+              transform="rotate(-90 39 39)"/>
+          </svg>
+          <div class="gauge-meta">
+            <span class="g-val" style="color:var(--warn)">103%</span>
+            <span class="g-label">power vs rated</span>
+            <span class="g-sub">10.3 / 10.0 kW</span>
+          </div>
+        </div>
+        <svg class="spark" viewBox="0 0 280 26" preserveAspectRatio="none" style="padding:0 12px 8px">
+          <polyline fill="none" stroke="var(--accent)" stroke-width="1.5"
+            points="0,20 24,18 48,15 72,16 96,11 120,9 144,12 168,7 192,8 216,5 240,6 264,4 280,5"/>
+        </svg>
+        <div class="metric-grid" style="padding-top:0">
+          <div class="metric"><div class="mlabel">TSR</div><div class="mval">4.34</div><div class="mtarget">target 4.10</div></div>
+          <div class="metric"><div class="mlabel">Twist</div><div class="mval">80.3°</div><div class="mtarget">depower angle</div></div>
+          <div class="metric"><div class="mlabel">Rotor</div><div class="mval">91.1</div><div class="mtarget">rpm</div></div>
+          <div class="metric"><div class="mlabel">PTO</div><div class="mval">93.3</div><div class="mtarget">rpm</div></div>
+        </div>
+      </div>
+
+      <!-- D2 Loads card with FoS gauge -->
+      <div class="panel card">
+        <div class="hd">Structural loads <span class="flag alarm">⚠ FoS 0.5</span></div>
+        <div class="gauge-wrap">
+          <svg class="gauge" width="78" height="78" viewBox="0 0 78 78">
+            <circle cx="39" cy="39" r="32" fill="none" stroke="#2a323d" stroke-width="7"/>
+            <circle cx="39" cy="39" r="32" fill="none" stroke="var(--alarm)" stroke-width="7"
+              stroke-dasharray="201" stroke-dashoffset="50" stroke-linecap="round"
+              transform="rotate(-90 39 39)"/>
+          </svg>
+          <div class="gauge-meta">
+            <span class="g-val" style="color:var(--alarm)">0.5</span>
+            <span class="g-label">tether FoS</span>
+            <span class="g-sub">design min 2.0</span>
+          </div>
+        </div>
+
+        <div class="loadrow"><span class="dim">Tether tension</span><span class="lv" style="color:var(--alarm)">6460 N</span></div>
+        <div class="colorbar"><span class="mark" style="left:100%"></span></div>
+        <div class="cb-scale"><span>0</span><span>SWL 3500</span><span>fail</span></div>
+
+        <div class="loadrow"><span class="dim">Ring buckling util</span><span class="lv" style="color:var(--ok)">0.1%</span></div>
+        <div class="colorbar" style="background:linear-gradient(90deg,#34d399,#f5b73d,#ff4d4f)"><span class="mark" style="left:1%"></span></div>
+        <div class="cb-scale"><span>0</span><span>0.5</span><span>1.0 (FoS 1980)</span></div>
+
+        <div class="loadrow"><span class="dim">Max sag</span><span class="lv">3.4 mm</span></div>
+
+        <div class="flags">
+          <span class="flag alarm">slack 90 lines</span>
+          <span class="flag alarm">tether &gt; SWL</span>
+          <span class="flag ok">no torsional collapse</span>
+        </div>
+      </div>
+
+      <!-- Run peaks card -->
+      <div class="panel card">
+        <div class="hd">Run peaks <span class="faint small">over 500 frames</span></div>
+        <div class="metric-grid">
+          <div class="metric"><div class="mlabel">P peak</div><div class="mval">13.53</div><div class="mtarget">kW</div></div>
+          <div class="metric"><div class="mlabel">T peak</div><div class="mval" style="color:var(--alarm)">6460 N</div><div class="mtarget" style="color:var(--alarm)">FoS 0.5</div></div>
+          <div class="metric"><div class="mlabel">Slack events</div><div class="mval" style="color:var(--alarm)">500/500</div><div class="mtarget" style="color:var(--alarm)">100%</div></div>
+          <div class="metric"><div class="mlabel">Sag peak</div><div class="mval">4.1 mm</div><div class="mtarget">over run</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend-note">
+    <b>What changed vs current HUD:</b> the ~40-row monospace text wall is replaced by a <b>cockpit status strip</b> (operating point at a glance) + a <b>three-column workspace</b>.
+    Safety is no longer buried — the <b>tether FoS</b> reads as a dedicated alarm zone in the strip <i>and</i> a full loads panel (D2) with an FoS gauge and an over-SWL marker on the tension colourbar.
+    Bounded metrics use <b>radial gauges</b>; trends use <b>sparklines</b> (C2). Controls are <b>collapsible workflow groups</b> (E1) ordered config → lift → control → scenario → run.
+    Theme is <b>A1 Instrument</b> (near-black, single cyan accent). Numbers shown are sample frame data from the over-loaded scenario for illustration.
+  </div>
+</div>
+</body>
+</html>
