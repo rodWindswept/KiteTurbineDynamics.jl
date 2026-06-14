@@ -277,6 +277,23 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         end
     end
 
+    # Expansion rotor ring markers — cyan dots at rings with expansion rotors
+    if !isempty(sys.expansion_rotors)
+        exp_ring_ids = [er.ring_idx for er in sys.expansion_rotors]
+        for ri in exp_ring_ids
+            if ri < 1 || ri > Nr; continue; end
+            gid = sys.ring_ids[ri]
+            pos_obs = @lift begin
+                u = $u_obs
+                u[(3*(gid-1)+1):(3*gid)]
+            end
+            scatter!(ax3d,
+                @lift([$pos_obs[1]]), @lift([$pos_obs[2]]), @lift([$pos_obs[3]]);
+                color=:cyan, markersize=12, marker=:diamond,
+                visible=vis_rings)
+        end
+    end
+
     # Hub (rotor) ring — firebrick, thicker
     hub_ring_obs = @lift begin
         u   = $u_obs
@@ -597,7 +614,21 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     warn_buck  = hlbl(""; color=:orange, fontsize=12, font=:bold)
     warn_slack = hlbl(""; color=:yellow, fontsize=12, font=:bold)
 
-    # ── SECTION D: Run Peaks ─────────────────────────────────────────────────
+    # ── SECTION D: Expansion Rotors ──────────────────────────────────────────
+    exp_n = length(sys.expansion_rotors)
+    if exp_n > 0
+        hlbl(""; fontsize=6)
+        hlbl("── Expansion Rotors ─────────────────────────"; fontsize=13, font=:bold, color=:cyan)
+        exp_rings_str = join([string(er.ring_idx) for er in sys.expansion_rotors], ", ")
+        exp_bank = sys.expansion_rotors[1].bank_angle_deg
+        exp_span = sys.expansion_rotors[1].blade_tip_radius
+        exp_chord = sys.expansion_rotors[1].blade_chord
+        hlbl("Rings: $exp_rings_str  |  bank: $(round(exp_bank;digits=0))°"; fontsize=11, color=:cyan)
+        hlbl("Blade: span=$(round(exp_span;digits=1)) m, chord=$(round(exp_chord*1000;digits=0)) mm"; fontsize=10, color=:lightcyan)
+        hlbl("n_blades: $(sys.expansion_rotors[1].n_blades)  (from generating rotor)"; fontsize=10, color=:lightcyan)
+    end
+
+    # ── SECTION E: Run Peaks ─────────────────────────────────────────────────
     hlbl(""; fontsize=6)
     hlbl("── Run Peaks ──────────────────────────────"; fontsize=13, font=:bold)
     fos_t_peak = T_peak > 0 ? TETHER_SWL / T_peak : Inf

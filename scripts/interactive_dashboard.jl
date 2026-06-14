@@ -28,6 +28,14 @@ function parse_commandline()
         "--v5"
             help = "Use v5 optimized 8-line octagon geometry"
             action = :store_true
+        "--expansion"
+            help = "Add expansion rotors at given bank angle (deg, default 20)"
+            arg_type = Float64
+            default = 0.0
+        "--n-expansion"
+            help = "Number of expansion rotors (default 3)"
+            arg_type = Int
+            default = 3
     end
     return parse_args(s)
 end
@@ -192,6 +200,24 @@ function main()
             label  = "canonical 5-line"
         end
         println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
+        # Expansion rotors (if requested)
+        if args["expansion"] > 0.0
+            bank_deg = args["expansion"]
+            n_exp = args["n-expansion"]
+            r_rotor = BEM.rotor_radius_for_power(10000.0, 11.0, p.n_lines)
+            cfg = ExpansionStackConfig(;
+                placement=:clustered, n_rings=sys.n_ring, n_expansion=n_exp,
+                n_blades=p.n_blades,
+                blade_tip_radius=r_rotor,
+                blade_hub_radius=0.25 * r_rotor,
+                blade_chord=0.113 * r_rotor,
+                CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
+                bank_angle_deg=bank_deg, mass_per_rotor=0.5, shaft_coupling=1.0,
+            )
+            stack = build_expansion_stack(cfg)
+            sys, u0 = build_kite_turbine_system(p; expansion_rotors=stack)
+            println("  Expansion: $n_exp rotors, bank=$bank_deg deg, blade_r=$(round(r_rotor;digits=1)) m")
+        end
         # Custom wind function
         wind_fn = (pos, t) -> begin
             z  = max(pos[3], 1.0)
