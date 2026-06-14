@@ -87,14 +87,54 @@ function run_canonical_sim!(
 
     for step in 1:n_steps
         fill!(du, 0.0)
+        # ── Pre-ODE NaN/Inf guard: clamp ω, α in state vector ──────────────
+        # If α or ω became Inf/NaN in a prior step, the ODE evaluation will
+        # crash inside sin/cos before our post-update guards can fire.
+        # Clamp to zero here so the ODE sees finite values.  The ring that
+        # diverged will have zero twist rate for this step — physically
+        # equivalent to "the simulation can no longer trust that ring's state."
+        omega_pre = @view u[(6N + Nr + 1):(6N + 2Nr)]
+        alpha_pre = @view u[(6N + 1):(6N + Nr)]
+        for ri in findall(!isfinite, omega_pre)
+            omega_pre[ri] = 0.0
+        end
+        for ri in findall(!isfinite, alpha_pre)
+            alpha_pre[ri] = 0.0
+        end
         multibody_ode!(du, u, ode_params, t)
         t += dt
 
         @views u[(3N + 1):6N] .+= dt .* du[(3N + 1):6N]
         @views u[1:3N] .+= dt .* u[(3N + 1):6N]
-        @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* du[(6N + Nr + 1):(6N + 2Nr)]
+
+        # ── NaN/Inf guard for ring twist derivatives ───────────────────────
+        # Expansion-force destabilisation can produce torques that drive ω → Inf.
+        # Guard here so that α doesn't get infected and crash sin(α) downstream.
+        # Non-finite derivatives are clamped to zero — the step is skipped rather
+        # than letting the ring state diverge.
+        omega_dot = @view du[(6N + Nr + 1):(6N + 2Nr)]
+        unsafe_ri = findall(!isfinite, omega_dot)
+        if !isempty(unsafe_ri)
+            omega_dot[unsafe_ri] .= 0.0
+        end
+        @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* omega_dot
         apply_brake_constraint!(u, sys, N, Nr)   # pin ω_gnd=0 when brake latched
+
+        # ── Also clamp ω itself if it became Inf/NaN from accumulation ──────
+        omega_view = @view u[(6N + Nr + 1):(6N + 2Nr)]
+        unsafe_omega = findall(!isfinite, omega_view)
+        if !isempty(unsafe_omega)
+            omega_view[unsafe_omega] .= 0.0
+        end
+
         @views u[(6N + 1):(6N + Nr)] .+= dt .* u[(6N + Nr + 1):(6N + 2Nr)]
+
+        # ── Clamp α if it became Inf/NaN from ω accumulation ─────────────────
+        alpha_view = @view u[(6N + 1):(6N + Nr)]
+        unsafe_alpha = findall(!isfinite, alpha_view)
+        if !isempty(unsafe_alpha)
+            alpha_view[unsafe_alpha] .= 0.0
+        end
 
         if lin_damp > 0.0
             orbital_damp_rope_velocities!(u, sys, p, lin_damp)
@@ -335,6 +375,15 @@ function run_pitch_depower!(
             (sys, p_step, wind_fn, lift_device)
         end
         fill!(du, 0.0)
+        # ── Pre-ODE NaN/Inf guard: clamp ω, α in state vector ──────────────
+        omega_pre = @view u[(6N + Nr + 1):(6N + 2Nr)]
+        alpha_pre = @view u[(6N + 1):(6N + Nr)]
+        for ri in findall(!isfinite, omega_pre)
+            omega_pre[ri] = 0.0
+        end
+        for ri in findall(!isfinite, alpha_pre)
+            alpha_pre[ri] = 0.0
+        end
         multibody_ode!(du, u, ode_p, t)
         t += dt
 
@@ -367,9 +416,26 @@ function run_pitch_depower!(
 
         @views u[(3N + 1):6N] .+= dt .* du[(3N + 1):6N]
         @views u[1:3N] .+= dt .* u[(3N + 1):6N]
-        @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* du[(6N + Nr + 1):(6N + 2Nr)]
+
+        # ── NaN/Inf guard for ring twist derivatives ───────────────────────
+        omega_dot = @view du[(6N + Nr + 1):(6N + 2Nr)]
+        unsafe_ri = findall(!isfinite, omega_dot)
+        if !isempty(unsafe_ri)
+            omega_dot[unsafe_ri] .= 0.0
+        end
+        @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* omega_dot
         apply_brake_constraint!(u, sys, N, Nr)
+
+        # ── Clamp ω and α if they became Inf/NaN from accumulation ──────────
+        omega_view = @view u[(6N + Nr + 1):(6N + 2Nr)]
+        for ri in findall(!isfinite, omega_view)
+            omega_view[ri] = 0.0
+        end
         @views u[(6N + 1):(6N + Nr)] .+= dt .* u[(6N + Nr + 1):(6N + 2Nr)]
+        alpha_view = @view u[(6N + 1):(6N + Nr)]
+        for ri in findall(!isfinite, alpha_view)
+            alpha_view[ri] = 0.0
+        end
 
         orbital_damp_rope_velocities!(u, sys, p_step, 0.05)
 

@@ -221,8 +221,8 @@ function compute_ring_forces!(
                 end
                 forces[ring_gid] .+= F_axial .* tether_dir_ring
 
-                # Drag torque on the ring
-                torques[ring_ri] += tau_drag
+                # Drag torque RESISTS ring rotation (opposes motion)
+                torques[ring_ri] -= tau_drag
 
                 # NOTE: effective_radii update REMOVED (2026-06-14).
                 # The old displacement model Δr = F_radial×L/(T×geom) produces

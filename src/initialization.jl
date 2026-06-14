@@ -517,15 +517,23 @@ function orbital_damp_rope_velocities!(
         nb = sys.nodes[sys.ring_ids[s + 1]]::RingNode
         ri_a = na.ring_idx;
         ri_b = nb.ring_idx
+        # ── NaN/Inf guard: expansion-force destabilisation can drive α, ω → ±Inf.
+        #     When this happens the simulation has lost physical meaning — skip
+        #     the orbital damping for this rope node rather than crashing on
+        #     sin(Inf).  The instability will be visible in the dashboard as
+        #     rings flying apart, which is the correct diagnostic signal.
         φ_a = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
         φ_b = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
-        v_a = omega[ri_a] * na.radius * (-sin(φ_a) .* pp1 .+ cos(φ_a) .* pp2)
-        v_b = omega[ri_b] * nb.radius * (-sin(φ_b) .* pp1 .+ cos(φ_b) .* pp2)
-        v_orbital = (1.0 - frac) .* v_a .+ frac .* v_b
+        if isfinite(φ_a) && isfinite(φ_b) &&
+           isfinite(omega[ri_a]) && isfinite(omega[ri_b])
+            v_a = omega[ri_a] * na.radius * (-sin(φ_a) .* pp1 .+ cos(φ_a) .* pp2)
+            v_b = omega[ri_b] * nb.radius * (-sin(φ_b) .* pp1 .+ cos(φ_b) .* pp2)
+            v_orbital = (1.0 - frac) .* v_a .+ frac .* v_b
 
-        bv = 3N + 3*(gid - 1) + 1
-        v_osc = @view(u[bv:(bv + 2)]) .- v_orbital
-        u[bv:(bv + 2)] .= v_orbital .+ lin_damp .* v_osc
+            bv = 3N + 3*(gid - 1) + 1
+            v_osc = @view(u[bv:(bv + 2)]) .- v_orbital
+            u[bv:(bv + 2)] .= v_orbital .+ lin_damp .* v_osc
+        end
     end
 end
 
