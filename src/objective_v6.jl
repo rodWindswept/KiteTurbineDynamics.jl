@@ -244,7 +244,10 @@ function objective_v6(
         # Clamp penalty to 10× so infeasible designs retain a cost gradient
         # rather than flattening the search space (all candidates → 1e9).
         penalty_mult = min(fos_penalty * torsion_penalty, 10.0)
-        return eval_result.mass_total_kg * penalty_mult + 100.0  # +100 biases toward feasibility
+        # +1e6 absolute barrier: feasible designs weigh 24–3,000 kg;
+        # infeasible penalties are now 1,000,100–1,000,300 kg, so ANY feasible
+        # design beats ANY infeasible design regardless of mass.
+        return eval_result.mass_total_kg * penalty_mult + 1_000_000.0
     end
 
     # Add expansion rotor mass
