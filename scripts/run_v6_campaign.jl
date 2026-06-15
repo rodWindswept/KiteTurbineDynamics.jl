@@ -159,6 +159,9 @@ function main()
         best_x = nothing
         best_cost = Inf
         history = Float64[]
+        collapse_count = 0
+        collapse_no_improve = 0
+        pre_collapse_best = Inf
 
         island_start = time()
         last_report = island_start
@@ -213,26 +216,43 @@ function main()
                 sample_costs = [obj_wrapper(population[j]) for j in sample_idx]
                 unique_sample = length(Set(round(c, digits=6) for c in sample_costs))
                 if unique_sample <= 1
-                    # Reseed 80% of population with fresh random candidates
-                    n_keep = max(2, popsize ÷ 5)
-                    sorted_idx = sortperm([obj_wrapper(p) for p in population])
-                    new_pop = [copy(population[sorted_idx[j]]) for j in 1:n_keep]
-                    for _ in (n_keep + 1):popsize
+                    collapse_count += 1
+                    # Track whether reseeds are producing improvement
+                    if best_cost >= pre_collapse_best * 0.995
+                        collapse_no_improve += 1
+                    else
+                        collapse_no_improve = 0
+                        pre_collapse_best = best_cost
+                    end
+                    # After 10 collapses with no improvement, abandon island
+                    if collapse_no_improve >= 10
+                        @printf(
+                            "  [Island %d | iter %6d] STAGNANT — %d collapses, no improvement. Moving on.\\n",
+                            island, iteration, collapse_no_improve
+                        )
+                        break
+                    end
+                    # Reseed 98% of population with fresh random candidates.
+                    # Keep only the single best individual (with small perturbation
+                    # to avoid immediately converging back to the same point).
+                    n_keep = 1
+                    best_kept = copy(best_x)
+                    # Perturb the kept best by ±5% in each dimension
+                    for j in 1:dim
+                        delta = 0.05 * (rand() - 0.5) * (hi[j] - lo[j])
+                        best_kept[j] = clamp(best_kept[j] + delta, lo[j], hi[j])
+                    end
+                    new_pop = [best_kept]
+                    for _ in 2:popsize
                         push!(new_pop, lo .+ rand(Float64, dim) .* (hi .- lo))
                     end
                     population = new_pop
                     # Re-evaluate best after reseed
-                    best_cost = Inf
-                    for p in population
-                        c = obj_wrapper(p)
-                        if c < best_cost
-                            best_cost = c
-                            best_x = copy(p)
-                        end
-                    end
+                    best_cost = obj_wrapper(best_kept)
+                    best_x = copy(best_kept)
                     @printf(
-                        "  [Island %d | iter %6d] COLLAPSE — reseeded %d candidates  best = %.2f kg\\n",
-                        island, iteration, popsize - n_keep, best_cost
+                        "  [Island %d | iter %6d] COLLAPSE #%d — reseeded %d candidates  best = %.2f kg\\n",
+                        island, iteration, collapse_count, popsize - n_keep, best_cost
                     )
                 end
             end
@@ -252,20 +272,10 @@ function main()
                 last_report = now_t
             end
 
-            # Convergence check — requires sufficient burn-in AND a long
-            # window of genuine no-improvement.  Also checks that the
-            # population is NOT collapsed (std must be non-negligible
-            # relative to the cost magnitude but still small).
-            if iteration > 2000 && length(history) > 500
-                recent = history[(end - 499):end]
-                first_best = minimum(history[1:max(1, iteration-1000)])
-                last_best  = minimum(recent)
-                rel_improvement = (first_best - last_best) / max(abs(first_best), 0.01)
-                if rel_improvement < 0.005 && std(recent) < 0.01 * abs(mean(recent))
-                    @printf("  Converged at iteration %d (Δ=%.3f%%)\n", iteration, rel_improvement*100)
-                    break
-                end
-            end
+            # Convergence check removed — let the full 10,000 iterations run.
+            # The collapse detection + reseed provides enough exploration;
+            # stopping early just locks us into the first basin found.
+            # Each island runs to max_iter, then moves to the next.
         end
 
         if best_cost < global_best_cost
