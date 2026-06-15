@@ -235,10 +235,11 @@ function objective_v6(
     omega = 4.1 * v_rated / r_hub_rotor
 
     # Build ring geometry
-    zs, radii, L_seg = ring_spacing_v4(
+    zs, radii, _ = ring_spacing_v4(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
     )
     n_rings_tot = length(radii)
+    L_seg = diff(zs)
     n_lines = design.n_lines
 
     # ── Per-ring thrust from hub rotor ────────────────────────────────────
@@ -262,9 +263,6 @@ function objective_v6(
         r_nom = radii[ri]
         # Tension at this ring: cumulative thrust from rings ABOVE (1..ri-1)
         T_above = ri > 1 ? cumulative_thrust[ri - 1] / n_lines : 0.0
-        # Segment length for geometry factor
-        L_seg_er = ri <= length(L_seg) ? L_seg[ri] :
-                   (ri > 1 ? L_seg[ri - 1] : L_seg[1])
 
         F_radial, F_axial, tau_net, r_new, _ = expansion_rotor_forces(
             er, rho, v_rated, omega, rad2deg(elev_angle),
