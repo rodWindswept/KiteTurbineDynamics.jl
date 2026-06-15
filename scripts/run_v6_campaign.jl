@@ -70,12 +70,15 @@ using KiteTurbineDynamics, Printf, DataFrames, CSV, Random, Statistics
 function parse_args()
     quick = "--quick" in ARGS
     power_kw = 10
+    max_ground_radius = nothing  # nil = use default
     for (i, arg) in enumerate(ARGS)
         if arg == "--power" && i < length(ARGS)
             power_kw = parse(Int, ARGS[i + 1])
+        elseif arg == "--max-ground-radius" && i < length(ARGS)
+            max_ground_radius = parse(Float64, ARGS[i + 1])
         end
     end
-    return (quick=quick, power_kw=power_kw)
+    return (quick=quick, power_kw=power_kw, max_ground_radius=max_ground_radius)
 end
 
 function main()
@@ -97,8 +100,31 @@ function main()
         params_v5_10kw()
     end
 
+    # For 50kW, widen bounds: the mass-scaled trpt_hub_radius (3.58m) is
+    # far smaller than the BEM rotor (7.4–9.3m), giving r_hub bounds of
+    # only 2.9–4.3m.  This starves the torsional collapse check because
+    # ground-adjacent ring radii (r_min) are too small relative to r_rotor.
+    # Use a bounds params with trpt_hub_radius ≈ BEM rotor radius and a
+    # larger max_ground_radius so the DE can find feasible geometries.
+    mgr = if args.max_ground_radius !== nothing
+        args.max_ground_radius
+    elseif args.power_kw == 50
+        5.0   # 50kW needs wider ground ring: r_bot/r_rotor must be >30%
+    else
+        OPT_MAX_GROUND_RADIUS  # 1.5m for 10kW (flatbed trailer limit)
+    end
+
+    p_bounds = if args.power_kw == 50
+        # Use a trpt_hub_radius that matches the BEM rotor scale (~9m for 8 blades)
+        # so r_hub bounds span 7.2–10.8m — wide enough for the DE to find the
+        # right ring-to-rotor ratio.
+        mass_scale(params_v5_10kw(), 10.0, 50.0 * (9.0 / 3.58)^2)
+    else
+        p
+    end
+
     beam_profile = PROFILE_ELLIPTICAL
-    lo, hi = search_bounds_v6(p, beam_profile)
+    lo, hi = search_bounds_v6(p_bounds, beam_profile; max_ground_radius=mgr)
     dim = length(lo)
     @printf("  Design space: %d dimensions\n", dim)
     @printf("  Bounds: [%.2f, %.2f] × ...\n", lo[1], hi[1])
@@ -111,7 +137,7 @@ function main()
             x_rounded[9] = round(Int, clamp(x[9], 3, 8))   # n_lines
             x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion
             try
-                return objective_v6(x_rounded, beam_profile, p; power_W=power_W)
+                return objective_v6(x_rounded, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
             catch e
                 @warn "Objective failed" exception = e
                 return 1e9
@@ -301,7 +327,7 @@ function main()
     mkpath(out_dir)
 
     if global_best_x !== nothing
-        result = design_from_vector_v6(global_best_x, beam_profile, p)
+        result = design_from_vector_v6(global_best_x, beam_profile, p; max_ground_radius=mgr, power_W=power_W)
         design = result.design
 
         # Save best design as JSON
