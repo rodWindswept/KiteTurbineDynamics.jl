@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[paperwidth=21cm,paperheight=15cm,margin=0.3cm]{geometry}
+\usepackage{tikz}
+\usepackage{amsmath}
+\pagestyle{empty}
+\begin{document}
+\centering
+\begin{tikzpicture}[scale=1.0]
+
+% Background panel
+\fill[black!2, rounded corners=8pt] (-9.0,-6.5) rectangle (9.0,5.8);
+\node[font=\bfseries\LARGE, black!80] at (0,5.1) {The Polygon Breakthrough: Why Triangles Win};
+
+% === V6 OCTAGON (left) ===
+\begin{scope}[xshift=-5.0cm, yshift=0.5cm]
+  % Panel
+  \fill[blue!3, rounded corners=6pt] (-2.8,-5.5) rectangle (2.8,2.5);
+  \node[font=\bfseries\Large, blue!60!black] at (0,2.0) {V6 — Octagon};
+  \node[font=\small, blue!50!black] at (0,1.5) {$n=8$, mass = 259 kg, $D_o$ = 118 mm};
+
+  % Octagon polygon (radius ~1.9 to fill space)
+  \foreach \i in {1,...,8} {
+    \coordinate (O\i) at ({1.9*cos(360*\i/8 + 22.5)}, {1.9*sin(360*\i/8 + 22.5)});
+  }
+  % Beams — thin (shared load N/8)
+  \draw[blue!70!black, line width=1.0pt] (O1) -- (O2) -- (O3) -- (O4) -- (O5) -- (O6) -- (O7) -- (O8) -- cycle;
+
+  % Compression arrows at every vertex (small, toward center)
+  \foreach \i in {1,...,8} {
+    \pgfmathsetmacro{\ang}{360*\i/8 + 22.5}
+    \draw[->, red!60, line width=0.6pt] ($(O\i)!0.15!({0.2*cos(\ang)},{0.2*sin(\ang)})$) -- ($(O\i)!0.0!({0.2*cos(\ang)},{0.2*sin(\ang)})$);
+  }
+
+  % Knuckles
+  \foreach \i in {1,...,8} {
+    \fill[red!70!black] (O\i) circle (3.5pt);
+  }
+
+  % Load callout
+  \node[font=\footnotesize, align=center, red!70!black] at (0,-0.8) {Ring compression N\\shared 8 ways\\N/8 per beam};
+
+  % Stats box
+  \node[font=\footnotesize, align=left, fill=white, rounded corners=3pt, inner sep=5pt] at (0,-3.0) {
+    Beams: 8, thin (low per-beam load)\\
+    Knuckles: 8 $\times$ 10 g = 0.08 kg\\
+    Lines: 8 $\times$ 67 m tethers\\
+    \textbf{Buckling limit: n=8 ceiling}};
+
+  % Arrow pointing to n=8 mass factor
+  \node[font=\footnotesize\bfseries, red] at (0,-4.5) {n/tan($\pi$/n) = \textbf{19.3}};
+\end{scope}
+
+% BIG CENTER ARROW
+\draw[->, line width=4pt, >=stealth, green!50!black] (-1.5,0.5) -- (1.5,0.5)
+  node[midway,above,font=\bfseries\Large, green!50!black] {\textbf{--77.6\%}};
+\node[font=\small, green!50!black] at (0,-0.2) {259 kg $\rightarrow$ 58 kg};
+
+% === V6.2 TRIANGLE (right) ===
+\begin{scope}[xshift=5.0cm, yshift=0.5cm]
+  % Panel
+  \fill[green!3, rounded corners=6pt] (-2.8,-5.5) rectangle (2.8,2.5);
+  \node[font=\bfseries\Large, green!50!black] at (0,2.0) {V6.2 — Triangle};
+  \node[font=\small, green!50!black] at (0,1.5) {$n=3$, mass = 58 kg, $D_o$ = 126 mm};
+
+  % Triangle — larger radius (126 vs 118 = 7% bigger)
+  \coordinate (T1) at ({2.05*cos(90)}, {2.05*sin(90)});
+  \coordinate (T2) at ({2.05*cos(210)}, {2.05*sin(210)});
+  \coordinate (T3) at ({2.05*cos(330)}, {2.05*sin(330)});
+
+  % Beams — THICK (shared load N/3, 2.67× more per beam)
+  \draw[green!50!black, line width=3.5pt] (T1) -- (T2) -- (T3) -- cycle;
+
+  % Compression arrows (larger, toward center)
+  \draw[->, red!60, line width=0.8pt] ($(T1)!0.12!(0,0)$) -- ($(T1)!0.02!(0,0)$);
+  \draw[->, red!60, line width=0.8pt] ($(T2)!0.12!(0,0)$) -- ($(T2)!0.02!(0,0)$);
+  \draw[->, red!60, line width=0.8pt] ($(T3)!0.12!(0,0)$) -- ($(T3)!0.02!(0,0)$);
+
+  % Knuckles — same size but fewer
+  \fill[red!70!black] (T1) circle (3.5pt);
+  \fill[red!70!black] (T2) circle (3.5pt);
+  \fill[red!70!black] (T3) circle (3.5pt);
+
+  % Load callout
+  \node[font=\footnotesize, align=center, red!70!black] at (0,-0.8) {Ring compression N\\shared 3 ways\\N/3 per beam — 2.67$\times$ more};
+
+  % Stats box
+  \node[font=\footnotesize, align=left, fill=white, rounded corners=3pt, inner sep=5pt] at (0,-3.0) {
+    Beams: 3, thick (per-beam load $\uparrow$)\\
+    Knuckles: 3 $\times$ 5 g = 0.015 kg\\
+    Lines: 3 $\times$ 67 m tethers\\
+    \textbf{Buckling limit: freed by n=3}};
+
+  % Arrow pointing to n=3 mass factor
+  \node[font=\footnotesize\bfseries, green!50!black] at (0,-4.5) {n/tan($\pi$/n) = \textbf{1.73}};
+\end{scope}
+
+% Bottom physics bar
+\fill[black!5, rounded corners=6pt] (-8.5,-6.2) rectangle (8.5,-5.0);
+\node[font=\small, align=center, black!70] at (0,-5.6) {
+  \textbf{The physics:} Beam mass $\propto n/\tan(\pi/n)$ —
+  octagon penalty = 19.3, triangle = 1.73 —
+  \textbf{11$\times$ less beam mass} for the same ring compression force};
+
+\end{tikzpicture}
+\end{document}

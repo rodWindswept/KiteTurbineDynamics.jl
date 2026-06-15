@@ -1,0 +1,107 @@
+\documentclass{article}
+\usepackage[paperwidth=21cm,paperheight=15cm,margin=0.3cm]{geometry}
+\usepackage{tikz}
+\usepackage{amsmath}
+\pagestyle{empty}
+\begin{document}
+\centering
+\begin{tikzpicture}[scale=0.85]
+
+% Background
+\fill[black!2, rounded corners=8pt] (-0.8,-1.0) rectangle (14.0,11.5);
+\node[font=\bfseries\LARGE, black!80] at (6.6,10.8) {Density Profile: Material Where It Counts};
+
+% === AXES ===
+% Y-axis
+\draw[->, thick] (0,0) -- (0,10.0) node[above, font=\bfseries] {L/r (slenderness ratio)};
+\node[font=\footnotesize, rotate=90, black!50] at (-0.9,5.0) {$\downarrow$L/r = stronger (thicker beam)};
+
+% X-axis
+\draw[->, thick] (0,0) -- (12.5,0) node[right, font=\bfseries] {Ring position};
+\node[font=\small] at (6.25,-0.7) {0 = ground (high compression) \hspace{1.5cm} 1.0 = hub (low compression)};
+
+% Grid
+\foreach \x in {0,2,4,6,8,10,12} {\draw[gray!20] (\x,0) -- (\x,9.5);}
+\foreach \y in {0,2,4,6,8} {\draw[gray!20] (0,\y) -- (12,\y);}
+
+% Y-axis tick labels
+\foreach \y in {0,2,4,6,8} {\node[left, font=\footnotesize] at (0,\y) {\y};}
+\node[font=\footnotesize] at (-0.3,9.7) {10};
+
+% X-axis tick
+\node[font=\footnotesize] at (0,-0.25) {0};
+\node[font=\footnotesize] at (12,-0.25) {1.0};
+
+% === COMPRESSION ZONE SHADING ===
+% High compression zone (left third)
+\fill[red!8] (0,0) rectangle (4,9.5);
+\node[font=\bfseries\small, red!60!black] at (2.0,9.0) {HIGH COMPRESSION};
+\node[font=\footnotesize, red!50!black] at (2.0,8.5) {force accumulates};
+
+% Low compression zone (right third)
+\fill[blue!4] (8,0) rectangle (12,9.5);
+\node[font=\bfseries\small, blue!50!black] at (10.0,9.0) {LOW COMPRESSION};
+\node[font=\footnotesize, blue!50!black] at (10.0,8.5) {force diminished};
+
+% === UNIFORM (β=0) ===
+\draw[blue!60, line width=2.5pt, densely dashed] (0,3.13) -- (12,3.13);
+\fill[blue!60] (0,3.13) circle (3pt);
+\fill[blue!60] (12,3.13) circle (3pt);
+\node[blue!60, font=\bfseries\small] at (6.0,3.5) {$\beta=0$ — uniform (L/r = 3.13 everywhere)};
+\node[font=\tiny, blue!50] at (6.0,3.1) {same beam everywhere, even where compression is low};
+
+% === VARIABLE DENSITY (β=0.76) ===
+% Points: position → L/r
+% 0→0.79, 1→0.85, 2→0.92, 3→1.02, 4→1.13, 5→1.29, 6→1.51, 7→1.82, 8→2.35, 9→3.51, 10→6.45, 11→10.5, 12→15.9
+% Scale vertically: y × 0.55 to fit (max ~8.75)
+\draw[red!70!black, line width=3.0pt] 
+    (0,0.43) -- (1,0.47) -- (2,0.51) -- (3,0.56) -- (4,0.62)
+    -- (5,0.71) -- (6,0.83) -- (7,1.00) -- (8,1.29) -- (9,1.93)
+    -- (10,3.55) -- (11,5.78) -- (12,8.75);
+
+% Points
+\foreach \i/\y in {0/0.43,1/0.47,2/0.51,3/0.56,4/0.62,5/0.71,6/0.83,7/1.00,8/1.29,9/1.93,10/3.55,11/5.78,12/8.75} {
+    \fill[red!70!black] (\i,\y) circle (2.5pt);
+}
+
+\node[red!70!black, font=\bfseries\small] at (8.5,6.5) {$\beta=0.76$ — variable density};
+\node[font=\tiny, red!60!black] at (8.5,6.1) {thick at bottom, thin at top};
+
+% === KEY ANNOTATIONS ===
+% Bottom: very low L/r = very strong
+\draw[->, red!80, line width=1.2pt] (1.5,6.0) to[out=270, in=90] (1.0,1.0);
+\node[font=\bfseries\footnotesize, red!60!black, align=center] at (3.8,6.3) {
+  Bottom ring: L/r = \textbf{0.79}\\
+  $\rightarrow$ \textbf{15.7$\times$ more buckling resistance}\\
+  than uniform baseline};
+
+% Top: high L/r, thin, acceptable where compression is low
+\draw[->, blue!60, line width=1.2pt] (10.5,4.5) to[out=270, in=90] (11.0,8.0);
+\node[font=\footnotesize, blue!50!black, align=center] at (10.5,3.8) {
+  Top ring: L/r = \textbf{15.9}\\
+  (thin beam, safe here —\\
+  compression already dissipated)};
+
+% === INSET: TAPERED RING STACK (right side) ===
+\begin{scope}[xshift=11.5cm, yshift=4.0cm, scale=0.7]
+  % Ground line
+  \draw[thick] (-1.2,0) -- (1.2,0);
+  \node[font=\tiny] at (0,-0.3) {ground};
+
+  % Ring stack — tapering upward
+  \foreach \i/\w in {0/2.0,1/1.7,2/1.4,3/1.15,4/0.95,5/0.78,6/0.65,7/0.55,8/0.45,9/0.38,10/0.32,11/0.28,12/0.25} {
+    \draw[red!50!black, line width={\w}pt] ({-0.6+0.1*\i},\i*0.5) -- ({0.6-0.1*\i},\i*0.5);
+  }
+  \node[font=\tiny, red!50!black] at (1.2,3.5) {thick};
+  \node[font=\tiny, blue!50!black] at (1.2,6.0) {thin};
+  \node at (0,6.8) {hub};
+\end{scope}
+
+% Bottom annotation: variable density explained
+\node[font=\footnotesize, align=center, black!60] at (6.6,0.8) {
+  \textbf{Variable density ($\beta>0$)} concentrates beams in the bottom third\\
+  where ring compression is highest. Top rings carry almost no compression —\\
+  they can be much thinner, saving mass without losing strength.};
+
+\end{tikzpicture}
+\end{document}
