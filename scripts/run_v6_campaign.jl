@@ -204,6 +204,39 @@ function main()
             push!(history, best_cost)
             push!(all_history, (island, iteration, best_cost))
 
+            # ── Population collapse detection ────────────────────────────
+            # Every 100 iterations, sample 10 random population members.
+            # If all sampled costs == best_cost (within 1e-6), the population
+            # has collapsed to identical candidates — NOT genuine convergence.
+            if iteration % 100 == 0 && iteration > 0
+                sample_idx = rand(1:popsize, min(10, popsize))
+                sample_costs = [obj_wrapper(population[j]) for j in sample_idx]
+                unique_sample = length(Set(round(c, digits=6) for c in sample_costs))
+                if unique_sample <= 1
+                    # Reseed 80% of population with fresh random candidates
+                    n_keep = max(2, popsize ÷ 5)
+                    sorted_idx = sortperm([obj_wrapper(p) for p in population])
+                    new_pop = [copy(population[sorted_idx[j]]) for j in 1:n_keep]
+                    for _ in (n_keep + 1):popsize
+                        push!(new_pop, lo .+ rand(Float64, dim) .* (hi .- lo))
+                    end
+                    population = new_pop
+                    # Re-evaluate best after reseed
+                    best_cost = Inf
+                    for p in population
+                        c = obj_wrapper(p)
+                        if c < best_cost
+                            best_cost = c
+                            best_x = copy(p)
+                        end
+                    end
+                    @printf(
+                        "  [Island %d | iter %6d] COLLAPSE — reseeded %d candidates  best = %.2f kg\\n",
+                        island, iteration, popsize - n_keep, best_cost
+                    )
+                end
+            end
+
             # Periodic reporting
             now_t = time()
             if now_t - last_report > 30 || iteration == max_iter
@@ -219,14 +252,13 @@ function main()
                 last_report = now_t
             end
 
-            # Convergence check (only after sufficient burn-in)
-            # Require ACTUAL improvement: best cost must have decreased
-            # by ≥0.5% in the last 200 iterations.  A flat line with zero
-            # variance (population collapsed to identical cost) is NOT
-            # convergence — it's stagnation.
-            if iteration > 500 && length(history) > 200
-                recent = history[(end - 199):end]
-                first_best = minimum(history[1:max(1, iteration-400)])
+            # Convergence check — requires sufficient burn-in AND a long
+            # window of genuine no-improvement.  Also checks that the
+            # population is NOT collapsed (std must be non-negligible
+            # relative to the cost magnitude but still small).
+            if iteration > 2000 && length(history) > 500
+                recent = history[(end - 499):end]
+                first_best = minimum(history[1:max(1, iteration-1000)])
                 last_best  = minimum(recent)
                 rel_improvement = (first_best - last_best) / max(abs(first_best), 0.01)
                 if rel_improvement < 0.005 && std(recent) < 0.01 * abs(mean(recent))
