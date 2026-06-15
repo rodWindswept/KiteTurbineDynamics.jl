@@ -1,10 +1,20 @@
 #!/usr/bin/env julia
 # scripts/run_v6_campaign.jl
 #
-# Phase 2.4 — v6 DE Optimisation Campaign.
+# Phase 2.5 — V6.2 DE Optimisation Campaign (widened bounds).
 #
-# Differential Evolution optimisation of the TRPT system with expansion rotors.
-# 11 design variables, 60 islands, ~168h compute budget.
+# Differential Evolution optimisation of the TRPT system with expansion rotors,
+# tension stiffening, and variable-density ring spacing.
+# 12 design variables, 60 islands, ~20 min compute.
+#
+# V6.2 changes from V6:
+#   - n_lines:       [3, 12]  (was [3, 8])
+#   - target_Lr:     [0.2, 3.0] (was [0.4, 2.0])
+#   - aspect_ratio:  [0.15, 1.5] (was [0.25, 1.0])
+#   - t_over_D:      [0.01, 0.20] (was [0.02, 0.20])
+#   - knuckle_mass:  [0.005, 0.200] (was [0.010, 0.200])
+#   - r_hub factor:  [0.60, 1.50] × trpt_hub (was [0.80, 1.20])
+#   - NEW: density_profile ∈ [-0.8, 0.8] (ring density bias)
 #
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
@@ -134,8 +144,8 @@ function main()
         x -> begin
             # Round integer variables
             x_rounded = copy(x)
-            x_rounded[9] = round(Int, clamp(x[9], 3, 8))   # n_lines
-            x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion
+            x_rounded[9] = round(Int, clamp(x[9], 3, 12))    # n_lines (V6.2)
+            x_rounded[11] = round(Int, clamp(x[11], 0, 6))   # n_expansion
             try
                 return objective_v6(x_rounded, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
             catch e
@@ -322,7 +332,7 @@ function main()
 
     # ── Save results ───────────────────────────────────────────────────────
     out_dir = joinpath(
-        dirname(@__DIR__), "scripts", "results", "v6_campaign_$(args.power_kw)kw"
+        dirname(@__DIR__), "scripts", "results", "v6_2_campaign_$(args.power_kw)kw"
     )
     mkpath(out_dir)
 
@@ -350,6 +360,7 @@ function main()
             "r_hub_m" => design.r_hub,
             "r_bottom_m" => design.r_bottom,
             "target_Lr" => design.target_Lr,
+            "density_profile" => design.density_profile,
             "knuckle_mass_kg" => design.knuckle_mass_kg,
             "tether_length_m" => design.tether_length,
             "elapsed_seconds" => elapsed,
@@ -372,6 +383,13 @@ function main()
             return println(io, "}")
         end
         println("  Best design saved to $json_path")
+
+        # Also save the raw DE vector for exact reproducibility
+        vec_path = joinpath(out_dir, "best_vector.csv")
+        open(vec_path, "w") do io
+            println(io, join(global_best_x, ","))
+        end
+        println("  Raw vector saved to $vec_path")
     end
 
     # Save history (island, iteration, mass_kg)

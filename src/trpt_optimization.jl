@@ -21,7 +21,7 @@ const OPT_E_CFRP = DEFAULT_CFRP.E     # Pa   — Young's modulus
 const OPT_RHO_CFRP = DEFAULT_CFRP.density   # kg/m³ — density
 const OPT_T_MIN_WALL = 5e-4     # m    — 0.5 mm min manufacturable wall
 const OPT_T_OVER_D_MAX = 0.15     # unitless — above this, tube collapses to solid rod
-const OPT_T_OVER_D_MIN = 0.02     # unitless — below this, local shell buckling governs
+const OPT_T_OVER_D_MIN = 0.01     # unitless — below this, local shell buckling governs (V6.2: widened from 0.02)
 const OPT_KNUCKLE_MASS_KG = 0.050    # kg — per-vertex knuckle (user approval 2026-04-20)
 
 # ── Peak design load conditions ──────────────────────────────────────────────
@@ -427,6 +427,17 @@ function _evaluate_trpt_design_impl(
         N_comp = F_v / (2.0 * tan(π / n_float))
 
         P_crit = props.P_crit
+
+        # ── Tension stiffening from ring polygon hoop tension ──────────────
+        # Expansion rotors apply F_radial to their ring, creating polygon hoop
+        # tension that stiffens beams against Euler buckling — like a guitar
+        # string under tension is harder to deflect laterally.
+        #   T_ring = F_radial / (2·sin(π/n))    [hoop tension per vertex]
+        #   P_crit_eff = P_crit + T_ring         [beam-column approximation]
+        if F_exp_per_vertex > 0
+            T_ring = F_exp_per_vertex / (2.0 * sin(π / n_float))
+            P_crit += T_ring
+        end
 
         is_buckling_ring = (i > 1 && i < n_rings_tot)
         if is_buckling_ring && N_comp > 0

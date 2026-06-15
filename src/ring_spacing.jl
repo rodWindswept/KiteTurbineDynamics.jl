@@ -33,7 +33,7 @@ using LinearAlgebra, Statistics
 
 # ── Constants ────────────────────────────────────────────────────────────────
 const OPT_MAX_GROUND_RADIUS = 1.5   # m — deployment transport limit (flatbed trailer)
-const TRPT_V4_DIM = 9     # DoF count for v4 optimiser vector
+const TRPT_V4_DIM = 10    # DoF count for v4 optimiser vector (now includes density_profile)
 
 # ── Core geometry function ───────────────────────────────────────────────────
 """
@@ -63,6 +63,7 @@ function ring_spacing_v4(
     tether_length::Float64,
     target_Lr::Float64;
     max_rings::Int=20,
+    density_profile::Float64=0.0,
 )::Tuple{Vector{Float64}, Vector{Float64}, Int}
     r_top > 0 || throw(ArgumentError("r_top must be positive"))
     r_bottom > 0 || throw(ArgumentError("r_bottom must be positive"))
@@ -103,8 +104,20 @@ function ring_spacing_v4(
     # Adjust k so the geometric series lands exactly on r_bottom in n_segs steps
     k = (r_bottom / r_top)^(1.0 / n_segs)
 
-    # Build radii from hub (index 1) down to ground (index n_segs+1)
-    radii_hub_first = [r_top * k^i for i in 0:n_segs]
+    # Build radii with density profile bias (t^(1-β) power-law mapping).
+    # β = 0: uniform log-steps (original v4 geometric series).
+    # β > 0: more rings at bottom where compression is highest.
+    # β < 0: more rings at top where beams are thinnest.
+    radii_hub_first = Float64[]
+    for i in 0:n_segs
+        t = i / n_segs   # uniform position in [0, 1]
+        t_biased = if abs(density_profile) < 1e-9
+            t  # uniform — identical to original v4 geometric series
+        else
+            t^(1.0 - density_profile)  # power-law mapping
+        end
+        push!(radii_hub_first, r_top * (r_bottom / r_top)^t_biased)
+    end
     radii_hub_first[end] = r_bottom   # force exact boundary
 
     # Compute z positions from the linear taper: z_i = (r_i - r_bottom) / α
@@ -145,6 +158,29 @@ struct TRPTDesignV4
     tether_length::Float64
     n_lines::Int
     knuckle_mass_kg::Float64
+    density_profile::Float64  # ring density bias: 0=uniform, >0=more at bottom
+
+    # Inner constructor: defaults density_profile to 0.0 for backward compatibility
+    function TRPTDesignV4(
+        beam_profile::BeamProfile,
+        Do_top::Float64,
+        t_over_D::Float64,
+        beam_aspect::Float64,
+        Do_scale_exp::Float64,
+        r_hub::Float64,
+        r_bottom::Float64,
+        target_Lr::Float64,
+        tether_length::Float64,
+        n_lines::Int,
+        knuckle_mass_kg::Float64,
+        density_profile::Float64=0.0,
+    )
+        return new(
+            beam_profile, Do_top, t_over_D, beam_aspect, Do_scale_exp,
+            r_hub, r_bottom, target_Lr, tether_length, n_lines, knuckle_mass_kg,
+            density_profile,
+        )
+    end
 end
 
 # ── Geometry helpers for v4 ──────────────────────────────────────────────────
@@ -155,7 +191,8 @@ Axial positions of all rings, ground-first (z=0) to hub (z=tether_length).
 """
 function ring_z_positions(design::TRPTDesignV4)
     zs, _, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+        density_profile=design.density_profile,
     )
     return zs
 end
@@ -167,7 +204,8 @@ Radii of all rings in ground-first order.
 """
 function ring_radii(design::TRPTDesignV4)
     _, rs, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+        density_profile=design.density_profile,
     )
     return rs
 end
@@ -266,7 +304,8 @@ function evaluate_design(
     end
 
     zs, radii, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+        density_profile=design.density_profile,
     )
     L_seg = diff(zs)
 
@@ -311,22 +350,22 @@ function search_bounds_v4(
     Do_lo = 0.005 * sc;
     Do_hi = 0.120 * sc
 
-    r_hub_lo = 0.80 * p.trpt_hub_radius
-    r_hub_hi = 1.20 * p.trpt_hub_radius
+    r_hub_lo = 0.60 * p.trpt_hub_radius
+    r_hub_hi = 1.50 * p.trpt_hub_radius
 
     r_bot_lo = 0.3
     r_bot_hi = max_ground_radius
 
-    Lr_lo = 0.4;
-    Lr_hi = 2.0
+    Lr_lo = 0.2;
+    Lr_hi = 3.0
 
-    knuckle_lo = 0.010;
+    knuckle_lo = 0.005;
     knuckle_hi = 0.200
     n_lines_lo = 3.0;
-    n_lines_hi = 8.0
+    n_lines_hi = 12.0
 
     ar_lo, ar_hi = if beam_profile == PROFILE_ELLIPTICAL
-        0.25, 1.0
+        0.15, 1.5
     elseif beam_profile == PROFILE_AIRFOIL
         0.08, 0.20
     else
@@ -343,6 +382,7 @@ function search_bounds_v4(
         Lr_lo,
         knuckle_lo,
         n_lines_lo,
+        -0.8,          # density_profile — bias rings toward bottom (>0) or top (<0)
     ]
     hi = [
         Do_hi,
@@ -354,6 +394,7 @@ function search_bounds_v4(
         Lr_hi,
         knuckle_hi,
         n_lines_hi,
+        0.8,           # density_profile
     ]
     return lo, hi
 end
@@ -364,11 +405,13 @@ function design_from_vector_v4(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    n_lines = clamp(Int(round(x[9])), 3, 8)
+    n_lines = clamp(Int(round(x[9])), 3, 12)
     r_hub = x[5]
     r_bot = clamp(x[6], 0.1, max_ground_radius)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
     r_bot = min(r_bot, r_hub)
+    # Density profile: optional 10th element for variable ring density
+    density_profile = length(x) >= 10 ? clamp(x[10], -0.8, 0.8) : 0.0
     return TRPTDesignV4(
         beam_profile,
         x[1],                            # Do_top
@@ -381,6 +424,7 @@ function design_from_vector_v4(
         p.tether_length,
         n_lines,
         x[8],                            # knuckle_mass_kg
+        density_profile,                 # NEW: ring density bias
     )
 end
 
