@@ -1,0 +1,24 @@
+
+============================================================
+  Pitch Depower Campaign V4 Analysis
+============================================================
+  Results directory : /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/pitch_depower_campaign_v4
+  Analysis directory: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/pitch_depower_campaign_v4/analysis
+
+Loaded 128 runs: 0 safe, 128 disqualified
+Generating figures...
+  Saved 01_heatmaps_smoothness.png
+  Saved 02_heatmaps_tension.png
+  Saved 04_parallel_coordinates.png
+  Saved 05_ranked_configs.png
+  Saved 08_timeseries_best5.png
+  Saved 09_timeseries_worst5.png
+  Saved 12_disqualifications.png
+  Saved 13_whiplash_jerk_sensitivity.png
+  Saved 14_whipping_slackness_sensitivity.png
+  Saved 10_composite_waterfall.png
+  Saved 11_sensitivity_bar.png
+Compiling professional PDF report to: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/pitch_depower_campaign_v4/analysis/analysis_report.pdf...
+PDF Report generated successfully.
+============================================================
+

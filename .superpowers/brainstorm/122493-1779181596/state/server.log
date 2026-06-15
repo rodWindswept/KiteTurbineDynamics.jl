@@ -1,0 +1,7 @@
+{"type":"server-started","port":49581,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49581","screen_dir":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content","state_dir":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/state"}
+{"type":"screen-added","file":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content/ecosystem-map.html"}
+{"type":"screen-updated","file":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content/ecosystem-map.html"}
+{"type":"screen-updated","file":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content/ecosystem-map.html"}
+{"type":"screen-added","file":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content/evidence-map.html"}
+{"type":"screen-added","file":"/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/.superpowers/brainstorm/122493-1779181596/content/deep-analysis.html"}
+{"type":"server-stopped","reason":"idle timeout"}

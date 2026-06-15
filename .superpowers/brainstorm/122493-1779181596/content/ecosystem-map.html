@@ -1,0 +1,145 @@
+<h2>The Research Ecosystem</h2>
+<p class="subtitle">KiteTurbineDynamics.jl as system integrator — who's doing what, and where the shared agenda lives</p>
+
+<style>
+.eco-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.eco-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--bg-secondary);
+}
+.eco-card.centre {
+  grid-column: 2;
+  grid-row: 2;
+  border: 2px solid var(--accent);
+  background: var(--selected-bg);
+  text-align: center;
+}
+.eco-card .tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.4rem;
+}
+.eco-card h4 { margin: 0 0 0.4rem 0; font-size: 0.95rem; color: var(--text-primary); }
+.eco-card p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+.eco-card .contrib {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+.shared-problems {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+.shared-problems h3 { color: var(--warning); margin: 0 0 0.75rem 0; font-size: 0.9rem; }
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.problem-item {
+  font-size: 0.78rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+.problem-item strong { color: var(--text-primary); }
+</style>
+
+<div class="eco-grid">
+
+  <!-- Row 1: top partners -->
+  <div class="eco-card">
+    <div class="tag">Academic · AWE</div>
+    <h4>Freiburg University</h4>
+    <p>Cyclically controlled rotary lift. Autogyro kite systems. CFD capability.</p>
+    <p class="contrib">Contributes: CFD validation, cyclic control theory</p>
+  </div>
+
+  <div class="eco-card">
+    <div class="tag">Community · Open Source</div>
+    <h4>Signal Group</h4>
+    <p>Open AWES sim &amp; control community. Multiple teams sharing tools under open licences.</p>
+    <p class="contrib">Already active — KiteTurbineDynamics.jl is already in this space</p>
+  </div>
+
+  <div class="eco-card">
+    <div class="tag">Academic · AWE</div>
+    <h4>SomeAWE</h4>
+    <p>Rotary lifter hardware and dynamics. Centrifugal radius expansion research.</p>
+    <p class="contrib">Contributes: hardware experiments, expansion dynamics</p>
+  </div>
+
+  <!-- Row 2: centre + flanks -->
+  <div class="eco-card">
+    <div class="tag">Individual Researcher</div>
+    <h4>Tallak Tveide</h4>
+    <p>TetherDragODESolver — tether catenary &amp; drag under rotation. Already integrated into Windswept workflow.</p>
+    <p class="contrib">Contributes: tether physics, TRPT efficiency model</p>
+  </div>
+
+  <div class="eco-card centre">
+    <div class="tag">System Integrator</div>
+    <h4>KiteTurbineDynamics.jl</h4>
+    <p>The only full-system ODE simulator that integrates lift device, TRPT shaft, rotor aero, structural sizing, MPPT, and economics in one model.</p>
+    <p class="contrib">Unique contribution: emergent torsional collapse, BEM-coupled optimisation, rotary lifter system model</p>
+  </div>
+
+  <div class="eco-card">
+    <div class="tag">Industry · Adjacent</div>
+    <h4>Drone &amp; Marine</h4>
+    <p>Tethered rotor expertise, composites manufacturing, offshore deployment experience.</p>
+    <p class="contrib">Contributes: manufacturing, deployment, sector credibility</p>
+  </div>
+
+  <!-- Row 3: bottom anchors -->
+  <div class="eco-card">
+    <div class="tag">Industry · Prior Relationship</div>
+    <h4>Shell Gamechanger / NZTC</h4>
+    <p>Innovation funding, offshore wind pathway, commercial scale-up credibility.</p>
+    <p class="contrib">Contributes: grant anchor, commercial validation</p>
+  </div>
+
+  <div class="eco-card">
+    <div class="tag">Hardware · AWE</div>
+    <h4>AlphaAnemo</h4>
+    <p>Centrifugal rotor expansion dynamics. Multi-kite autogyro torque transfer systems.</p>
+    <p class="contrib">Contributes: expansion modelling, multi-rotor architecture</p>
+  </div>
+
+  <div class="eco-card">
+    <div class="tag">Windswept &amp; Interesting</div>
+    <h4>10 kW Prototype Flight</h4>
+    <p>Dec 2018 — produced &gt;1 kW. TRL 4 demonstrated. TRPT concept physically validated.</p>
+    <p class="contrib">Contributes: proof of physical concept, field data</p>
+  </div>
+
+</div>
+
+<div class="shared-problems">
+  <h3>The Shared Research Agenda — problems no single team can solve alone</h3>
+  <div class="problem-grid">
+    <div class="problem-item"><strong>CFD validation</strong> of n=8 rotor geometry (strip theory unvalidated above n=6)</div>
+    <div class="problem-item"><strong>Cyclic control</strong> of rotary lift device for above-rated wind operation</div>
+    <div class="problem-item"><strong>Centrifugal expansion</strong> dynamics integrated into full-system TRPT model</div>
+    <div class="problem-item"><strong>Dynamic fatigue</strong> model — S-N spectrum, not static envelope only</div>
+    <div class="problem-item"><strong>Torsional wave propagation</strong> — Tulloch waves observed but not modelled analytically</div>
+    <div class="problem-item"><strong>Network deployment</strong> — multi-turbine array interactions and control</div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem;">Does this map feel right? What's missing or misplaced?</p>

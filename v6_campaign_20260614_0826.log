@@ -1,0 +1,202 @@
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+═══════════════════════════════════════════
+  KTD.jl v6 — DE Optimisation Campaign
+  Power: 10 kW
+  Mode:  FULL (168h)
+═══════════════════════════════════════════
+  Design space: 11 dimensions
+  Bounds: [0.01, 0.12] × ...
+  Full mode: 60 islands × 80 population, up to 10000 iterations
+  Estimated runtime: ~168 hours
+
+  ── Island 1 / 60 ──────────────────────────────
+  Converged at iteration 501
+  ** New global best: 17.368 kg (island 1) **
+
+  ── Island 2 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 3 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 4 / 60 ──────────────────────────────
+  Converged at iteration 501
+  ** New global best: 17.368 kg (island 4) **
+
+  ── Island 5 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 6 / 60 ──────────────────────────────
+  Converged at iteration 501
+  ** New global best: 17.368 kg (island 6) **
+
+  ── Island 7 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 8 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 9 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 10 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 11 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 12 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 13 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 14 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 15 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 16 / 60 ──────────────────────────────
+  Converged at iteration 501
+  ** New global best: 17.368 kg (island 16) **
+
+  ── Island 17 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 18 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 19 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 20 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 21 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 22 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 23 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 24 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 25 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 26 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 27 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 28 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 29 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 30 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 31 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 32 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 33 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 34 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 35 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 36 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 37 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 38 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 39 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 40 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 41 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 42 / 60 ──────────────────────────────
+  Converged at iteration 501
+  ** New global best: 17.368 kg (island 42) **
+
+  ── Island 43 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 44 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 45 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 46 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 47 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 48 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 49 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 50 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 51 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 52 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 53 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 54 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 55 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 56 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 57 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 58 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 59 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  ── Island 60 / 60 ──────────────────────────────
+  Converged at iteration 501
+
+  Optimisation complete in 0m 11s
+  Global best mass: 17.37 kg  (island 42)
+  Best design saved to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v6_campaign_10kw/best_design.json
+  Convergence history saved to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v6_campaign_10kw/convergence_history.csv
+
+  Campaign complete.

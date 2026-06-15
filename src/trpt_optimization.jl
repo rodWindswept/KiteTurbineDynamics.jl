@@ -301,31 +301,67 @@ function _evaluate_trpt_design_impl(
     P_rated::Float64,
     r_eff_override::Union{Nothing,Vector{Float64}}=nothing,
     F_radial_per_ring::Union{Nothing,Vector{Float64}}=nothing,
+    thrust_per_ring::Union{Nothing,Vector{Float64}}=nothing,
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
 
-    # ── Torsional stability pre-calculation ──────────────────────────────────
-    ω_rated = OPT_TSR_RATED * v_rated / r_rotor
-    τ_op = P_rated / ω_rated
-    T_total_rated = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
+    # ── Determine loading model ────────────────────────────────────────────
+    # Distributed: each ring i contributes thrust_per_ring[i] and its share
+    # of the total torque.  Tension builds cumulatively down the shaft.
+    # Single-rotor (backward compatible): all thrust at the hub ring.
+    use_distributed = thrust_per_ring !== nothing
 
-    # Use override radii (expansion rotors) for torsional lever-arm if provided
+    # Per-ring thrust (for line tension distribution)
+    T_ring = if use_distributed
+        thrust_per_ring
+    else
+        # Single-rotor: all thrust at hub ring (index end, since radii[1]=hub)
+        T_single = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
+        vcat(T_single, zeros(n_rings_tot - 1))
+    end
+
+    T_total_rated = sum(T_ring)
+
+    # Per-ring rated torque contribution
+    tau_ring_rated = if use_distributed
+        # Each ring's rotor contributes P_i = thrust_i * v (approx).
+        # For simplicity: distribute total torque proportionally to thrust.
+        tau_total = P_rated / omega_rotor
+        [t / T_total_rated * tau_total for t in T_ring]
+    else
+        tau_total = P_rated / omega_rotor
+        vcat(tau_total, zeros(n_rings_tot - 1))
+    end
+
+    # ── Torsional stability (per-segment, cumulative torque) ───────────────
     torsion_radii = r_eff_override !== nothing ? r_eff_override : radii
-
     min_torsional_fos = Inf
     for i in 1:n_seg
         r_min = min(torsion_radii[i], torsion_radii[i + 1])
         L = L_seg[i]
+        # Torque from all rings ABOVE this segment (indices 1..i)
+        tau_above = sum(tau_ring_rated[1:i])
         τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2 * r_min^2)
-        tfos = τ_cap / max(τ_op, 1e-9)
+        tfos = τ_cap / max(tau_above, 1e-9)
         min_torsional_fos = min(min_torsional_fos, tfos)
     end
     torsional_collapse_ok = (min_torsional_fos >= OPT_TORSION_FOS_REQUIRED)
 
-    # ── Line tension distribution ────────────────────────────────────────────
-    T_peak = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
-    T_line_axial = T_peak / design.n_lines
+    # ── Line tension distribution (cumulative thrust) ──────────────────────
+    # At ring i, the tension below is sum of thrust from rings 1..i.
+    # Peak load scales proportionally.
+    T_ring_peak = if use_distributed
+        [t * (v_peak / v_rated)^2 for t in T_ring]
+    else
+        T_pk = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
+        vcat(T_pk, zeros(n_rings_tot - 1))
+    end
+
+    cumulative_T_rated = cumsum(T_ring)
+    cumulative_T_peak  = cumsum(T_ring_peak)
+    T_line_axial_rated = cumulative_T_rated[end] / design.n_lines
+    T_line_axial_peak  = cumulative_T_peak[end] / design.n_lines
 
     # ── Per-ring structural analysis ─────────────────────────────────────────
     fos_per_ring = Float64[]
@@ -345,8 +381,13 @@ function _evaluate_trpt_design_impl(
         line_len_above =
             i < n_rings_tot ? sqrt(L_seg[i]^2 + (radii[i + 1] - radii[i])^2) : L_seg[end]
 
+        # Tension at ring i: cumulative thrust from rings 1..i (above and including this ring)
+        # divided by n_lines, scaled by geometric factors.
+        T_above_rated = cumulative_T_rated[i] / design.n_lines
+        T_above_peak  = cumulative_T_peak[i] / design.n_lines
+
         T_line =
-            T_line_axial * max(line_len_below, line_len_above) /
+            max(T_above_peak, T_above_rated) * max(line_len_below, line_len_above) /
             min(L_seg[max(i-1, 1)], L_seg[min(i, n_seg)])
 
         F_in_per_vertex_aero = OPT_DESIGN_LOAD_FACTOR * T_line

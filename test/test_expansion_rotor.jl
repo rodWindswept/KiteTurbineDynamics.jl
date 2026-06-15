@@ -87,7 +87,7 @@
         design = design_from_vector_v5(
             search_bounds_v5(p, PROFILE_CIRCULAR)[1], PROFILE_CIRCULAR, p
         )
-        r_eff, F_radial = estimate_effective_radii(
+        r_eff, F_radial, _, _ = estimate_effective_radii(
             design, ExpansionRotorParams[], p; v_wind=11.0, omega=9.5, elev_deg=20.0
         )
         @test length(r_eff) > 3

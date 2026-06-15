@@ -76,18 +76,26 @@ function design_from_vector_v6(
     n_exp = round(Int, clamp(x[10], 0, 6))
     bank_deg = clamp(x[11], 5.0, 45.0)
 
-    # Derive blade geometry from generating rotor annulus.
-    # HubRad ≈ 0.25 × tip_radius (AeroDyn BEM: HubRad=1.0m, R=4.0m)
-    r_rotor_est = design.r_hub  # hub radius ≈ rotor radius for stack sizing
+    # Derive blade geometry from BEM rotor radius (network model: each
+    # rotor is sized for P/n_rotors, so the blade tip matches the rotor).
+    # Compute actual ring count for stack placement.
+    zs, _, _ = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+    )
+    n_rings_actual = length(zs)
+
+    # BEM rotor radius for this power level (will be refined in objective_v6
+    # with network power sharing, but this gives a reasonable blade size).
+    r_rotor_est = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
     blade_tip_radius = r_rotor_est
-    blade_hub_radius = 0.25 * r_rotor_est   # same ratio as generating rotor
-    blade_chord_est = 0.113 * r_rotor_est   # solidity-calibrated
+    blade_hub_radius = 0.25 * r_rotor_est
+    blade_chord_est = 0.113 * r_rotor_est
 
     # Build expansion stack config
     cfg = if n_exp > 0
         ExpansionStackConfig(;
             placement=:clustered,
-            n_rings=20,
+            n_rings=n_rings_actual,
             n_expansion=n_exp,
             n_blades=p.n_blades,
             blade_tip_radius=blade_tip_radius,
@@ -145,9 +153,11 @@ function estimate_effective_radii(
     )
     r_eff = copy(radii)
     F_radial_per_ring = zeros(Float64, length(radii))
+    tau_net_per_ring = zeros(Float64, length(radii))
+    F_axial_per_ring = zeros(Float64, length(radii))
 
     if isempty(stack)
-        return (r_eff, F_radial_per_ring)
+        return (r_eff, F_radial_per_ring, tau_net_per_ring, F_axial_per_ring)
     end
 
     n_lines = design.n_lines
@@ -173,15 +183,17 @@ function estimate_effective_radii(
             L_seg = zs[ri] - zs[ri - 1]
         end
 
-        F_radial, F_axial, _, r_new, _ = expansion_rotor_forces(
+        F_radial, F_axial, tau_net, r_new, _ = expansion_rotor_forces(
             er, rho, v_wind, omega, elev_deg, r_nom, T_per_line, n_lines
         )
 
         r_eff[ri] = r_new
         F_radial_per_ring[ri] = F_radial
+        tau_net_per_ring[ri] = tau_net
+        F_axial_per_ring[ri] = F_axial
     end
 
-    return (r_eff, F_radial_per_ring)
+    return (r_eff, F_radial_per_ring, tau_net_per_ring, F_axial_per_ring)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -211,22 +223,67 @@ function objective_v6(
     design = result.design
     stack = result.stack
 
-    # Rotor sizing (BEM-coupled): must come before effective-radii estimate
-    # so the correct operating point drives the expansion rotor force calc.
-    r_rotor = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
-    omega = 4.1 * v_rated / r_rotor  # optimal TSR ≈ 4.1
+    # ── Network rotor sizing: each rotor contributes equally ──────────────
+    # In AWE, smaller wings have better power-to-weight ratios.  The network
+    # of N rotors (1 hub + n_expansion) shares the total power equally.
+    # Each ring's BEM rotor is sized for P_per_rotor, not the full budget.
+    n_rotors_total = 1 + length(stack)   # hub + expansion rotors
+    P_per_rotor = power_W / n_rotors_total
 
-    # Compute effective radii (for torsional collapse) and per-ring radial
-    # expansion forces (for ring compression relief) from expansion rotors.
-    r_eff, F_radial_per_ring = estimate_effective_radii(
-        design, stack, p;
-        v_wind=v_rated, elev_deg=rad2deg(elev_angle), omega=omega, r_rotor=r_rotor,
+    # Size hub rotor for its share of the power
+    r_hub_rotor = BEM.rotor_radius_for_power(P_per_rotor, v_rated, design.n_lines)
+    omega = 4.1 * v_rated / r_hub_rotor
+
+    # Build ring geometry
+    zs, radii, L_seg = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr
+    )
+    n_rings_tot = length(radii)
+    n_lines = design.n_lines
+
+    # ── Per-ring thrust from hub rotor ────────────────────────────────────
+    thrust_per_ring = zeros(Float64, n_rings_tot)
+    thrust_per_ring[1] = peak_hub_thrust(
+        r_hub_rotor, elev_angle; v=v_rated, CT=KiteTurbineDynamics.OPT_CT_RATED
     )
 
-    # Evaluate structural design with force-first expansion benefit
+    # ── Per-ring expansion forces (direct computation with correct tension) ──
+    r_eff = copy(radii)
+    F_radial_per_ring = zeros(Float64, n_rings_tot)
+    tau_net_per_ring = zeros(Float64, n_rings_tot)
+    rho = p.rho
+    cumulative_thrust = cumsum(thrust_per_ring)
+
+    for er in stack
+        ri = er.ring_idx
+        if ri > n_rings_tot || ri < 1
+            continue
+        end
+        r_nom = radii[ri]
+        # Tension at this ring: cumulative thrust from rings ABOVE (1..ri-1)
+        T_above = ri > 1 ? cumulative_thrust[ri - 1] / n_lines : 0.0
+        # Segment length for geometry factor
+        L_seg_er = ri <= length(L_seg) ? L_seg[ri] :
+                   (ri > 1 ? L_seg[ri - 1] : L_seg[1])
+
+        F_radial, F_axial, tau_net, r_new, _ = expansion_rotor_forces(
+            er, rho, v_rated, omega, rad2deg(elev_angle),
+            r_nom, T_above, n_lines
+        )
+
+        r_eff[ri] = r_new
+        F_radial_per_ring[ri] = F_radial
+        tau_net_per_ring[ri] = tau_net
+        thrust_per_ring[ri] += F_axial   # add expansion thrust to ring's load
+    end
+
+    # Recompute cumulative thrust after adding expansion contributions
+    cumulative_thrust = cumsum(thrust_per_ring)
+
+    # Evaluate structural design with distributed loading
     eval_result = evaluate_design(
         design;
-        r_rotor=r_rotor,
+        r_rotor=r_hub_rotor,
         elev_angle=elev_angle,
         v_peak=v_peak,
         fos_req=fos_req,
@@ -236,6 +293,7 @@ function objective_v6(
         max_ground_radius=max_ground_radius,
         r_eff_override=r_eff,
         F_radial_per_ring=F_radial_per_ring,
+        thrust_per_ring=thrust_per_ring,
     )
 
     if !eval_result.feasible

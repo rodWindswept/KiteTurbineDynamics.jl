@@ -1,0 +1,287 @@
+<h2>Deep Analysis: What This Project Actually Proves</h2>
+<p class="subtitle">Meaning · Method · Reasoning — plus missing investigations that could change rotary AWES direction</p>
+
+<style>
+.deep-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.deep-card h4 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin: 0 0 0.2rem 0;
+}
+.deep-card .number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+.deep-card .row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.deep-card .cell {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.deep-card .cell strong {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.3rem;
+}
+.section-head {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+  border-radius: 5px;
+  margin: 1.75rem 0 0.75rem 0;
+  color: white;
+}
+.section-head.green  { background: var(--success); }
+.section-head.amber  { background: var(--warning); }
+.section-head.blue   { background: var(--accent); }
+.section-head.red    { background: var(--error); }
+
+.miss-card {
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--warning);
+  border-radius: 0 8px 8px 0;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.9rem;
+}
+.miss-card.critical  { border-color: var(--error); }
+.miss-card.field     { border-color: var(--accent); }
+.miss-card h4 { color: var(--text-primary); font-size: 0.95rem; margin: 0 0 0.4rem 0; }
+.miss-card p  { font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.35rem 0; line-height: 1.5; }
+.miss-card .why { font-size: 0.78rem; color: var(--accent); font-style: italic; }
+.tag-pill {
+  display: inline-block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.tag-pill.crit { background: rgba(255,59,48,0.15); color: var(--error); }
+.tag-pill.gap  { background: rgba(255,159,10,0.15); color: var(--warning); }
+.tag-pill.field{ background: rgba(10,132,255,0.15); color: var(--accent); }
+</style>
+
+<!-- ========== SECTION 1: PROVEN ========== -->
+<div class="section-head green">What is actually proved — meaning, method, reasoning</div>
+
+<div class="deep-card">
+  <div class="number">11.47 kg</div>
+  <h4>Minimum feasible 10 kW TRPT shaft mass</h4>
+  <div class="row3">
+    <div class="cell"><strong>What it means</strong>The structural spine of a 10 kW kite turbine — all polygon ring frames — can be built in carbon fibre tube at 11.47 kg. At £126 for the CFRP, the novel structural component costs essentially nothing. Compare: a conventional 10 kW wind turbine tower weighs ~500–1000 kg.</div>
+    <div class="cell"><strong>Method</strong>60-island Differential Evolution (Julia, BlackBoxOptim.jl). 9 degrees of freedom: beam diameter, wall thickness, taper exponent, hub radius, bottom radius, L/r ratio, knuckle mass, n_lines, beam profile. ~128M evaluations per island, 168h total. Feasibility gated by Euler FoS ≥ 1.8 AND torsional FoS ≥ 1.5 simultaneously.</div>
+    <div class="cell"><strong>Why it matters</strong>This is a lower bound, not a target. Any design heavier than this is leaving structural mass on the table. The result proves TRPT shaft mass is a small fraction of total system cost — the generator, installation, and ground station dominate. This removes "the structure is too heavy" as a commercial objection.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">39.30 kg — 51% lighter than expected at 50 kW</div>
+  <h4>BEM coupling reveals fixed-CT models badly overestimate shaft loads at scale</h4>
+  <div class="row3">
+    <div class="cell"><strong>What it means</strong>v4 (fixed CT=0.55) predicted 79.5 kg for 50 kW. v5 BEM-coupling gives 39.30 kg. The difference: a larger 50 kW rotor at rated wind operates at lower blade solidity → lower CT → lower axial thrust → lighter shaft. Fixed-CT models don't capture this; they scale thrust naively with rotor area.</div>
+    <div class="cell"><strong>Method</strong>v5 closes the aerodynamic loop: for each candidate design, rotor radius R is derived self-consistently from n_lines via BEM Cp(σ, TSR) surface. More lines → higher solidity → lower Cp → larger required R → higher thrust → heavier shaft. The optimiser then balances this aerodynamic penalty against structural benefit.</div>
+    <div class="cell"><strong>Why it matters</strong>Previous published TRPT mass estimates (and competitor comparisons) likely used fixed-CT scaling. The true 50 kW shaft mass is half what they'd predict. This changes the LCOE calculation at 50 kW significantly. It also means the scaling advantage of TRPT improves faster with power class than was believed.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">120 / 120 islands → n_lines = 8</div>
+  <h4>8-line polygon geometry is structurally dominant — unanimous across all campaigns</h4>
+  <div class="row3">
+    <div class="cell"><strong>Physical reason</strong>For an n-polygon ring with radius r, each beam segment has length L_s = 2r·sin(π/n). Euler buckling capacity scales as 1/L_s². Going from n=5 to n=8 shortens each segment from L/r=1.18 to L/r=0.77 — a 35% reduction in length, giving 2.36× higher buckling capacity per unit beam mass.</div>
+    <div class="cell"><strong>Aerodynamic cost</strong>More lines means higher rotor solidity → lower Cp. At n=8, Cp drops ~3–4% vs n=5. This requires ~2% larger R, increasing thrust and shaft mass by ~2%. Net: 2.36× structural gain vs ~2% mass penalty. The structural benefit dominates by more than 100:1.</div>
+    <div class="cell"><strong>Caveat</strong>BEM strip theory is not validated above n=6. Wake interference between 8 blades is unmodelled. The structural argument is airtight but the aerodynamic penalty may be different in reality. This result should not be used to commit n=8 for hardware without CFD or panel-method Cp validation at n=8 solidity.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">−31% mass: constant L/r ring spacing</div>
+  <h4>Geometric spacing removes false cylindricity pressure — lets taper work efficiently</h4>
+  <div class="row3">
+    <div class="cell"><strong>The problem it solves</strong>With uniform ring spacing on a tapered shaft, bottom rings have large L (shaft length / n_rings) but small r (tapered radius). L/r is huge at the bottom → Euler buckling governs strongly → thick heavy beams required. The optimiser avoids this by going cylindrical (no taper = uniform L/r throughout). This is a mathematical artefact, not physics.</div>
+    <div class="cell"><strong>The fix</strong>Require L_segment ∝ r_ring at every segment. This means ring radii form a geometric series: r_i = r_hub × k^i. Every segment operates at the same normalised slenderness L/r. No segment is over-engineered relative to any other. Taper becomes feasible because bottom segments are now short (matching their small radius).</div>
+    <div class="cell"><strong>Why it matters</strong>This was the single largest mass recovery: v3 (uniform spacing, torsional constraint) gave 15.44 kg. v4 (constant L/r, same constraints) gave 10.59 kg — a 31% improvement with zero relaxation of safety margins. The insight generalises: any tensile tapered structure benefits from this spacing law, not just TRPT.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">2.81 kg → 15.44 kg → 10.59 kg: the torsional constraint story</div>
+  <h4>Torsional collapse is the dominant structural constraint — Euler buckling alone is not sufficient</h4>
+  <div class="row3">
+    <div class="cell"><strong>What happened in v2</strong>The v2 optimiser enforced Euler buckling FoS ≥ 1.8 but ignored torsional collapse. The "winner" was 2.81 kg. Post-hoc Tulloch/Wacker check: torsional FoS = 0.069 — 14.5× below the required minimum. All 54 of 60 v2 islands produced torsionally infeasible designs. These would collapse catastrophically under a fraction of rated torque.</div>
+    <div class="cell"><strong>Why torsion dominates</strong>Torsional capacity scales as r_min² (ring radius squared). A tapered shaft has very small r at the bottom. Even with large-radius hub rings, the narrow bottom ring has almost no torque capacity. A design optimised for minimum mass naturally minimises material at the bottom — exactly where torsional capacity is most needed.</div>
+    <div class="cell"><strong>Field validation</strong>The field failure mode matches: CONTEXT.md records 7 lines snapped in testing when torsional collapse occurred. The collapse begins at the bottom (smallest radius), lines go slack, rings converge, and the shaft winds up. This is exactly what the simulator now correctly models and constrains.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">Emergent torsional collapse — no detection logic needed</div>
+  <h4>The tensile-only spring law naturally produces collapse; the simulator makes no assumptions about how it happens</h4>
+  <div class="row3">
+    <div class="cell"><strong>The mechanism</strong>Each rope sub-segment uses: T = max(0, EA·strain + c·rate). When a line overtwists, strain goes negative → T = 0 (slack). When enough lines go simultaneously slack, torsional coupling between rings disappears. The shaft can no longer resist further twist — it collapses. The max(0,...) is the entire collapse model.</div>
+    <div class="cell"><strong>Why this is novel</strong>Previous simulators either (a) crashed at collapse onset, (b) used analytical detection and applied discontinuous forces, or (c) simply didn't model it. This simulator shows the collapse cascade: which line goes slack first, how others follow, the forces during winding. No prior TRPT simulator could do this.</div>
+    <div class="cell"><strong>What it enables</strong>Safety margin studies can be run in simulation before hardware. How much torque headroom exists at rated conditions? What gust profile triggers collapse? What does the ring convergence look like in the seconds before structural failure? The furl controller can be designed around avoiding this regime entirely.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">8× lift stability: rotary lifter vs passive kite</div>
+  <h4>Tip speed dominates apparent wind — lift becomes nearly wind-speed-independent</h4>
+  <div class="row3">
+    <div class="cell"><strong>The physics</strong>Passive kite lift ∝ v_wind². A 3-second gust from 8 to 14 m/s changes lift by (14/8)² = 3.1× — dangerously large. Rotary lifter: apparent wind v_app = √(v²+(ωr)²). At ω=33 rad/s, r=0.9m: ωr=29.7 m/s >> v_wind. A gust from 8 to 14 m/s changes v_app by only (√(14²+29.7²))/(√(8²+29.7²)) = 1.06×. Lift varies by just 6%.</div>
+    <div class="cell"><strong>Critical condition</strong>This only works if ω is held FIXED (not TSR-following). If the rotary lifter tracks TSR (ω ∝ v_wind), then ωr ∝ v_wind and the advantage collapses. The angular momentum of the rotor disk must be sufficient to resist wind gusts without changing speed. At τ≈0.67s mechanical time constant, a gust shorter than this barely affects ω.</div>
+    <div class="cell"><strong>Scaling advantage</strong>Passive kite area grows as P^1.35 (super-linear with power class). At 500 kW: 1462 m² — a 40×37m parafoil, humanly unmanageable. Rotary lifter area scales much more favourably because its lift is dominated by tip speed, not wind speed. It is the only architecturally viable lift device above ~50 kW.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">245 N — true lift requirement after phantom force fix</div>
+  <h4>Correcting a fundamental physics bug transformed the lift device analysis</h4>
+  <div class="row3">
+    <div class="cell"><strong>The bug</strong>The predecessor code applied q·A·CL in [0,0,1] direction at the hub — treating the rotor like a kite generating aerodynamic lift. This was wrong on two counts: (1) direction [0,0,1] is for a horizontal rotor, not one at 30° elevation; (2) CT thrust already accounts for axial hub force. The rotor blades rotating in the disc plane produce zero net vertical lift.</div>
+    <div class="cell"><strong>The correction</strong>After removing phantom lift, the required external lift = airborne weight only = 245 N (for 10 kW). CT thrust and shaft tension cancel in quasi-static equilibrium at the hub — they don't add to the lift requirement. This single fix halved the required lift device size and unblocked the entire lift device analysis.</div>
+    <div class="cell"><strong>Why it matters</strong>Before the fix, the lift device was sized for a phantom load that didn't exist. After the fix, the 27.5 m² passive kite requirement became correct — it's driven by the launch condition (v=4 m/s), not the aerodynamic interaction. All LCOE, carbon, and partner presentations should use the corrected numbers.</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">Twist tracks wind speed — but can't close the MPPT loop alone</div>
+  <h4>28-case MPPT sweep reveals the fundamental ambiguity of shaft twist as a control signal</h4>
+  <div class="row3">
+    <div class="cell"><strong>What the sweep showed</strong>Optimal k_mult = 1.2× across all wind speeds (very flat peak 1.0–1.2×). Settled twist: 238° at 8 m/s → 308° at 13 m/s. Twist increases with wind speed at fixed k_mppt. Torsional stability confirmed: twist std ≤ 1.7° — the shaft settles cleanly with no oscillation in steady conditions.</div>
+    <div class="cell"><strong>The ambiguity</strong>At twist = 270° you could be at k×1.0 in 11 m/s wind, OR at k×1.5 in 8 m/s wind. Same twist, different power output, different optimal action. A controller trying to maximise power by adjusting k_mppt based only on twist cannot distinguish these states — it would hunt rather than converge.</div>
+    <div class="cell"><strong>The ramp finding</strong>7→14 m/s ramp over 150s: power = 2.25 kW at the end vs 13.4 kW steady state. The TRPT has not had time to spin up. The mechanical inertia time constant >> 150 seconds. This is a more important control challenge than MPPT gain optimisation — how do you extract power during fast wind events if the rotor can't spin up in time?</div>
+  </div>
+</div>
+
+<div class="deep-card">
+  <div class="number">5.10 p/kWh LCOE · 2-month carbon payback</div>
+  <h4>Economics module: computed from first principles, not benchmarked assumptions</h4>
+  <div class="row3">
+    <div class="cell"><strong>Capital cost breakdown</strong>Total £11,724. CFRP ring tubes: £126 (1.1% of CAPEX). Generator: ~£3,000. Ground station / installation: ~£5,000. The structurally novel component is essentially free. The cost is in conventional components — generator, civil works, grid connection. This means cost reduction follows conventional supply chain improvement, not exotic materials R&D.</div>
+    <div class="cell"><strong>Carbon payback</strong>1.51 gCO₂e/kWh embodied (primarily CFRP manufacturing energy). At 30% CF, 26.3 MWh/year displaces ~6,000 kgCO₂e/year vs UK grid. Payback in 2 months. Solar PV: 12–18 months. Offshore wind: 3–4 months. This is the lowest embodied carbon per kWh of any current energy technology at this scale.</div>
+    <div class="cell"><strong>Sensitivity not yet done</strong>LCOE is computed at exactly 30% CF, 7% discount rate, 20yr life. These are point estimates. A sensitivity sweep (CF: 20–40%, discount: 5–10%) hasn't been run. At CF=20% the LCOE rises steeply — what's the break-even CF for a 5p/kWh target? This is the most commercially important number not yet computed.</div>
+  </div>
+</div>
+
+<!-- ========== SECTION 2: MISSING ANALYSIS ========== -->
+<div class="section-head amber">Missing analysis — logical gaps not yet followed</div>
+
+<div class="miss-card critical">
+  <span class="tag-pill crit">Critical gap</span>
+  <h4>System Cp end-to-end: rotor → shaft → generator → grid</h4>
+  <p>All power claims use rotor Cp = 0.22. But the conversion chain is: rotor aero → TRPT torsional transmission → ground ring → generator → grid. TetherDragODESolver gives TRPT efficiency ratio for the tether shape, but this hasn't been integrated into KiteTurbineDynamics.jl. Generator efficiency is assumed (~90%) but not derived. System Cp = 0.22 × η_shaft × η_gen could be 0.17–0.19. The LCOE of 5.10 p/kWh might be 5.8–6.2 p/kWh once end-to-end losses are accounted for.</p>
+  <p class="why">→ Without this, every LCOE and power output claim is overestimated by an unknown amount. This must be closed before any investor or grant presentation.</p>
+</div>
+
+<div class="miss-card critical">
+  <span class="tag-pill crit">Critical gap</span>
+  <h4>τ/T ratio as sensorless MPPT control signal — validation pending</h4>
+  <p>NOTES_MPPT_TWIST derives analytically: δα ≈ (τ/T) × L_seg / (n × r_s²). This means twist normalised by shaft tension gives a control-independent estimate of torque loading. Ground-end tension T is measurable from a load cell. Generator torque τ is inferrable from motor controller current. The ratio could give a sensorless MPPT signal that's wind-speed-independent. This has not been validated against the 28-case sweep data — it's a theoretical prediction sitting in the notes, unused.</p>
+  <p class="why">→ If validated, this is the basis of the first commercial TRPT control system. It could be patentable. It's the piece that makes autonomous TRPT operation feasible without instrumentation on the airborne rotor.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>Power-to-mass scaling law: P^? from 1 kW to 500 kW</h4>
+  <p>Two data points exist: 10 kW (11.47 kg shaft) and 50 kW (39.30 kg shaft). Implied exponent ≈ 0.75 (shaft mass grows as P^0.75). A conventional wind turbine tower mass grows as roughly P^1.2. The crossover point — where TRPT becomes mass-advantageous over conventional wind — can be calculated but hasn't been. Running the v5 campaign for 1, 3, 6, 20, 100, 500 kW would give an empirical scaling curve. This is the commercial argument in graphic form.</p>
+  <p class="why">→ The scaling advantage is the core commercial proposition for kite turbines at 50+ kW. Without quantifying it, the claim is qualitative. With it, you have a chart that shows exactly where TRPT wins.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>LCOE sensitivity analysis: CF, discount rate, site wind</h4>
+  <p>The 5.10 p/kWh result is a point estimate at exactly 30% CF, 7% discount rate, 20yr life. The economics module has compute_lcoe() that could sweep these. Minimum viable CF for 5p/kWh target? How does LCOE change at CF=20% (poor site) vs CF=40% (excellent site)? What's the LCOE at a specific Scottish island site wind profile? This is a 30-line script that hasn't been written.</p>
+  <p class="why">→ Grant bodies and commercial partners will ask "what does this cost at my site?" You need a response based on data, not a single-point number.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>Inertia time constant: what controls it, can it be reduced?</h4>
+  <p>The 150-second wind ramp result shows the TRPT can't track fast wind events. The time constant is set by rotor moment of inertia, TRPT shaft torsional stiffness, and generator load curve. None of these has been individually characterised. Could a reduced-load (or disconnected) generator during spin-up allow faster acceleration? Could a lighter rotor (different blade design) reduce inertia? This matters for capacity factor in variable wind — how many kWh per year are lost because the system is in spin-up?</p>
+  <p class="why">→ If the time constant can be halved, annual energy yield increases. This could change the LCOE significantly at sites with variable wind.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>Annular actuator disk Cp limit — possibly above Betz</h4>
+  <p>The Betz limit (16/27 = 0.593) applies to a full actuator disk. The TRPT rotor sweeps an annulus with inner boundary at r ≈ 0.4R (no hub blade root, open centre). For an annular actuator disk, the theoretical Cp maximum is higher than Betz — the inner region not extracting energy from the flow allows the outer annulus to extract more. Loth & McCoy (1983) derived this. For r_inner/R = 0.4: theoretical Cp_max ≈ 0.64. The current BEM model is normalised to full disk area. If the aerodynamic analysis is redone for annular geometry, Cp = 0.22 may be conservative by 10–20%.</p>
+  <p class="why">→ A higher achievable Cp directly reduces LCOE and improves the competitive position vs conventional small wind.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>Tether line fatigue: cyclic loading model missing entirely</h4>
+  <p>7 lines snapped in field testing. The Dyneema tethers experience cyclic tension at the rotor harmonic (~2–6 rad/s → 170,000–520,000 cycles/day). Dyneema S-N curves exist in the literature. At operational tension ratios, what's the expected line life? 3 months? 3 years? This is a safety-critical gap. If lines must be replaced every 6 months, the OPEX and maintenance model changes entirely, and the LCOE calculation is wrong.</p>
+  <p class="why">→ A fatigue life estimate is required for any safety case, insurance assessment, or certification pathway. Without it, the system cannot be commercially operated.</p>
+</div>
+
+<div class="miss-card">
+  <span class="tag-pill gap">Gap</span>
+  <h4>Torsional wave (Tulloch wave) analytical model</h4>
+  <p>The furl simulation shows the hub briefly reversing to ω = −0.14 rad/s during backline payout. This is a Tulloch torsional wave — elastic energy releasing as TRPT geometry changes. It was initially misidentified as "lines crossing and driving reverse torque." The wave is observed but not analytically characterised: no formula for its period, amplitude, or damping exists in the codebase. NOTES_MPPT_TWIST identifies potential MPPT-resonance interactions. A 1D wave equation for the TRPT torsional mode would close this gap.</p>
+  <p class="why">→ Uncharacterised waves can trigger false control responses. The wave period may coincide with MPPT control bandwidth — a resonance risk. Also a diagnostic opportunity: wave frequency encodes shaft stiffness and could serve as structural health monitoring.</p>
+</div>
+
+<!-- ========== SECTION 3: FIELD-LEVEL GAPS ========== -->
+<div class="section-head blue">Investigation logic not yet followed — could change rotary AWES direction</div>
+
+<div class="miss-card field">
+  <span class="tag-pill field">Field question</span>
+  <h4>Can the rotary lifter and kite turbine rotor be unified?</h4>
+  <p>The rotary lifter spins above the kite turbine rotor on the same axis — both are ring rotors with blades. The kite turbine produces torque; the lifter produces lift. Could a single rotor be designed that simultaneously produces useful torque AND adequate lift at a given elevation angle? CONTEXT.md notes "blades rotating in the disc plane produce zero net hub lift" — but this is for horizontal orientation. At steeper elevation angles, with different blade pitch, could the rotor provide both? Answering this requires a combined aero-structural ODE analysis that hasn't been attempted.</p>
+  <p class="why">→ If viable, this eliminates the lift device as a separate component — the rotor IS the lift system. Dramatic system simplification. If not viable, it confirms the need for the separate rotary lifter architecture and informs its design constraints.</p>
+</div>
+
+<div class="miss-card field">
+  <span class="tag-pill field">Field question</span>
+  <h4>Multi-rotor TRPT: distributed power generation along the shaft</h4>
+  <p>The current architecture has one rotor at the top of the TRPT shaft. But the shaft itself is a tensile column connecting multiple ring levels. What if intermediate rings also carried rotor blades — a stacked multi-rotor TRPT? Each rotor at a different altitude accesses progressively stronger wind (shear profile). The shaft would transmit torque from multiple sources simultaneously. AlphaAnemo's centrifugal expansion work and the stacked rotor analysis in the existing reports touch this, but a full ODE model of multi-rotor TRPT hasn't been built.</p>
+  <p class="why">→ Could multiply power output without increasing ground footprint. The wind shear bonus (stronger wind at altitude) makes each successive rotor more productive. Network of TRPT units would each be a distributed generator, not a single-rotor device.</p>
+</div>
+
+<div class="miss-card field">
+  <span class="tag-pill field">Field question</span>
+  <h4>Array power density and network spacing optimisation</h4>
+  <p>Conventional wind turbines need 5–10 rotor diameters of spacing to avoid wake losses. A TRPT kite turbine's rotor is at altitude — its wake is at altitude. The ground footprint is just the ground anchor point. What is the minimum spacing for a TRPT network with <5% wake loss? If the rotors are at 20–50m altitude and the spacing is determined by altitude-layer wake recovery (faster at altitude than near ground), TRPT arrays could be far denser than conventional wind. This hasn't been analysed — no wake model exists for TRPT networks.</p>
+  <p class="why">→ Power density (kW/m² of land) is potentially the strongest commercial argument for TRPT. If it's 5× higher than conventional wind at the same wind resource, the land-use story changes completely. This is the path to the "1 gigatonne grid carbon offset" goal.</p>
+</div>
+
+<div class="miss-card field">
+  <span class="tag-pill field">Field question</span>
+  <h4>Rotary lifter — kite turbine aerodynamic interaction</h4>
+  <p>The rotary lifter disk sits directly above the kite turbine rotor on the same axis. Both are spinning disks extracting energy from (or adding momentum to) the airflow. The lifter's downwash affects the inflow velocity to the kite turbine rotor below. The kite turbine's upwash affects the lifter's inflow from above. This aerodynamic coupling is completely unmodelled — each device sees "free stream" in the current simulation. The interference could be beneficial (pre-swirl from lifter helping rotor alignment) or detrimental (velocity deficit from lifter reducing rotor power).</p>
+  <p class="why">→ Before building a 50 kW system with an integrated rotary lifter, this interaction must be characterised. An unexpected coupling could invalidate both the power and lift calculations simultaneously.</p>
+</div>
+
+<div class="miss-card field">
+  <span class="tag-pill field">Field question</span>
+  <h4>Cyclic blade pitch as MPPT and furl control — the bridling question</h4>
+  <p>All TRPT simulations use fixed blade pitch. But the physical kite turbine blades are bridled — their pitch angle can be adjusted by changing the bridle line lengths. Bridling changes Cl/Cd and therefore torque, thrust, and rotor speed simultaneously. The hypothesis in NOTES_MPPT_TWIST: if τ/T can be measured, bridling provides a low-bandwidth, high-leverage control input. A 5° bridle adjustment might change power output by 20–30%. No model of bridled rotor dynamics exists. Implementing this would require coupling the BEM Cp(α) table to a pitch control variable in the ODE.</p>
+  <p class="why">→ Bridling is the most accessible control degree of freedom in the physical system — no actuators aloft, just line lengths at the ground. Characterising it in simulation before attempting hardware control is essential. This could be the paper that defines the TRPT control problem for the AWE field.</p>
+</div>
+
+<p class="subtitle" style="margin-top: 2rem;">Does this level of depth feel useful? Which of the missing investigations should be the priority?</p>

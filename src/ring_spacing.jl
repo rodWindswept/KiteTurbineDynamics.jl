@@ -219,6 +219,7 @@ function evaluate_design(
     P_rated::Float64=10000.0,
     r_eff_override::Union{Nothing, Vector{Float64}}=nothing,
     F_radial_per_ring::Union{Nothing, Vector{Float64}}=nothing,
+    thrust_per_ring::Union{Nothing, Vector{Float64}}=nothing,
 )
 
     # ── Ground ring deployment constraint ─────────────────────────────────
@@ -283,6 +284,7 @@ function evaluate_design(
         P_rated=P_rated,
         r_eff_override=r_eff_override,
         F_radial_per_ring=F_radial_per_ring,
+        thrust_per_ring=thrust_per_ring,
     )
 end
 

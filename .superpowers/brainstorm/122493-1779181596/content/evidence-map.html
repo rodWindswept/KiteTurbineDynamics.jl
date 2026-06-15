@@ -1,0 +1,250 @@
+<h2>What This Project Proves</h2>
+<p class="subtitle">Grounded in code, docs, and simulation results — no speculation</p>
+
+<style>
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+.col-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 0;
+}
+.col-header.proven   { background: var(--success); color: #fff; }
+.col-header.open     { background: var(--warning); color: #fff; }
+.col-header.grant    { background: var(--accent);  color: #fff; }
+.col-body {
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+}
+.finding {
+  padding: 0.55rem 0.65rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.finding .num {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+.finding .label-sm {
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+}
+.finding.open-item { border-left: 3px solid var(--warning); }
+.finding.grant-item { border-left: 3px solid var(--accent); }
+
+.divider {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+  margin: 0.75rem 0 0.4rem 0;
+}
+</style>
+
+<div class="three-col">
+
+  <!-- COLUMN 1: PROVEN -->
+  <div>
+    <div class="col-header proven">Already proved</div>
+    <div class="col-body">
+
+      <div class="divider">Structural optimisation</div>
+
+      <div class="finding">
+        <span class="num">11.47 kg</span>
+        <span class="label-sm">Minimum feasible 10 kW TRPT shaft mass (v5, BEM-coupled, Euler + torsion constraints)</span>
+      </div>
+      <div class="finding">
+        <span class="num">39.30 kg</span>
+        <span class="label-sm">Minimum feasible 50 kW shaft — 51% lighter than fixed-CT models predicted</span>
+      </div>
+      <div class="finding">
+        <span class="num">120/120 islands</span>
+        <span class="label-sm">n_lines = 8 selected unanimously across all DE campaigns (v4 + v5)</span>
+      </div>
+      <div class="finding">
+        <span class="num">−31% mass</span>
+        <span class="label-sm">Constant L/r ring spacing vs uniform spacing — key structural insight</span>
+      </div>
+      <div class="finding">
+        <span class="num">449% mass penalty</span>
+        <span class="label-sm">Adding torsional constraint: 2.81 kg (Euler-only, invalid) → 15.44 kg. Then constant L/r recovers it to 11.47 kg</span>
+      </div>
+
+      <div class="divider">Torsional physics</div>
+
+      <div class="finding">
+        <span class="num">Emergent collapse</span>
+        <span class="label-sm">Tensile-only spring law naturally produces torsional collapse — no detection criterion needed. First simulator to model this correctly</span>
+      </div>
+      <div class="finding">
+        <span class="num">Tulloch wave</span>
+        <span class="label-sm">Elastic torsional rebound wave observed in furl simulation — consistent with Tulloch PhD theory</span>
+      </div>
+
+      <div class="divider">Lift device</div>
+
+      <div class="finding">
+        <span class="num">8× better</span>
+        <span class="label-sm">Rotary lifter lift stability vs passive kite (3.6% vs 30.1% tension CoV). Hub excursion 3.9× smaller</span>
+      </div>
+      <div class="finding">
+        <span class="num">245 N</span>
+        <span class="label-sm">True lift required for 10 kW system after correcting phantom rotor lift bug — enables accurate lift device sizing</span>
+      </div>
+
+      <div class="divider">MPPT &amp; control</div>
+
+      <div class="finding">
+        <span class="num">Flat peak k×1.0–1.2</span>
+        <span class="label-sm">MPPT gain is near-optimal at nominal calibration. Ramp dynamics are the real control problem</span>
+      </div>
+      <div class="finding">
+        <span class="num">Twist ≠ MPPT signal</span>
+        <span class="label-sm">Shaft twist tracks wind speed but is ambiguous — can't distinguish under- from over-braking at same twist value</span>
+      </div>
+
+      <div class="divider">Economics</div>
+
+      <div class="finding">
+        <span class="num">5.10 p/kWh</span>
+        <span class="label-sm">LCOE at 30% CF, 7% discount, 20yr life. Capital cost £11,724; CFRP tubes just £126</span>
+      </div>
+      <div class="finding">
+        <span class="num">2 months</span>
+        <span class="label-sm">Carbon payback period — 1.51 gCO₂e/kWh embodied energy</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COLUMN 2: OPEN QUESTIONS -->
+  <div>
+    <div class="col-header open">Still needs proof</div>
+    <div class="col-body">
+
+      <div class="divider">Aerodynamics</div>
+
+      <div class="finding open-item">
+        <strong>CFD validation of n=8 Cp</strong>
+        <span class="label-sm">BEM strip theory not validated above n=6. Blade-to-blade wake interference, blockage, and high-solidity corrections unmodelled. Cannot adopt n=8 for hardware without this</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Free elevation angle β</strong>
+        <span class="label-sm">All campaigns fix β=30°. Cold-start analysis suggests optimum near β≈26°. Joint β + structural optimisation not yet run</span>
+      </div>
+
+      <div class="divider">Structural</div>
+
+      <div class="finding open-item">
+        <strong>Dynamic fatigue</strong>
+        <span class="label-sm">All sizing against static peak envelope only. No S-N model, no cyclic 1P/2P loading, no accumulated damage estimate</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Ring radial deformation</strong>
+        <span class="label-sm">Rings are point masses — inward buckling deformation not modelled. Matters when FoS approaches 1.0</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Multi-segment backline</strong>
+        <span class="label-sm">Single spring-damper misses catenary sag and forward hub drift. Needed for realistic collapse scenarios</span>
+      </div>
+
+      <div class="divider">Control &amp; dynamics</div>
+
+      <div class="finding open-item">
+        <strong>Cyclic blade pitch</strong>
+        <span class="label-sm">Blade AoA fixed. Bridling as control input discussed but not implemented. Critical for above-rated operation</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Centrifugal rotor expansion</strong>
+        <span class="label-sm">Dynamic radius expansion under spin not integrated into full-system ODE. AlphaAnemo/SomeAWE have studied this as a scaling pathway</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Torsional wave propagation</strong>
+        <span class="label-sm">Tulloch wave observed in simulation but not analytically characterised. No model of resonance or damping</span>
+      </div>
+
+      <div class="divider">Scale &amp; deployment</div>
+
+      <div class="finding open-item">
+        <strong>Network deployment</strong>
+        <span class="label-sm">Multi-turbine array interactions, wake effects, and coordinated control not modelled</span>
+      </div>
+      <div class="finding open-item">
+        <strong>Launch &amp; retrieval sequence</strong>
+        <span class="label-sm">Ramp from ground to operating altitude not simulated. Contact physics missing</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COLUMN 3: GRANT PROGRAMME -->
+  <div>
+    <div class="col-header grant">What a grant programme buys</div>
+    <div class="col-body">
+
+      <div class="divider">Validation (TRL 4→5)</div>
+
+      <div class="finding grant-item">
+        <strong>CFD at n=8</strong>
+        <span class="label-sm">Panel-method or RANS validation of rotor Cp at n=8 solidity. Closes the biggest structural–aerodynamic uncertainty before hardware</span>
+      </div>
+      <div class="finding grant-item">
+        <strong>Rotary lifter hardware test</strong>
+        <span class="label-sm">Validate PCA-2 autogyro model against measured lift/drag in controlled conditions. Direct comparison with simulation</span>
+      </div>
+      <div class="finding grant-item">
+        <strong>TRPT structural test</strong>
+        <span class="label-sm">Bench test of torsional collapse criterion — apply torque to a scaled TRPT segment and measure collapse onset vs Tulloch/Wacker prediction</span>
+      </div>
+
+      <div class="divider">Simulation extensions (v6)</div>
+
+      <div class="finding grant-item">
+        <strong>Free β + dynamic loading</strong>
+        <span class="label-sm">v6 campaign: elevation angle as optimisation variable. Dynamic torsional load spectrum. Fatigue margin estimate</span>
+      </div>
+      <div class="finding grant-item">
+        <strong>Cyclic control model</strong>
+        <span class="label-sm">Implement blade pitch / bridle control. Design above-rated furl strategy. Joint work with cyclic-control teams</span>
+      </div>
+      <div class="finding grant-item">
+        <strong>Centrifugal expansion</strong>
+        <span class="label-sm">Integrate centrifugal radius expansion into ODE. Characterise scaling benefit vs structural cost</span>
+      </div>
+
+      <div class="divider">Demonstrator</div>
+
+      <div class="finding grant-item">
+        <strong>Optimised 10 kW v2 flight</strong>
+        <span class="label-sm">Build and fly the v5 octagon design. Validate structural sizing, MPPT law, and rotary lifter in field conditions</span>
+      </div>
+      <div class="finding grant-item">
+        <strong>Standards groundwork</strong>
+        <span class="label-sm">Document design methodology against IEC 61400 framework. First step toward certification pathway for TRPT systems</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle">Does this accurately reflect the project's current state? Anything wrong, missing, or overstated?</p>

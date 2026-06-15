@@ -1,0 +1,52 @@
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+
+=== Simulating Hypothesis Case: Mode 1 Baseline ===
+  Baseline T_top (settled): 1817.0 N
+✓ Case Complete: Mode 1 Baseline
+  Peak Power Spike : 562.96 kW
+  Peak PTO Torque  : 2346.2 N·m
+  SS Speed Ripple  : 76.733 rad/s
+  Slack Line Time  : 78.1 %
+  Peak Shaft Twist : 367.1 deg
+  T_top baseline   : 1817.0 N  (operational settled state)
+  T_top min        : 0.0 N  (worst dip during depower)
+  T_top < 50N time : 58.2 %  (top seg slack = lift line not supporting hub)
+
+=== Simulating Hypothesis Case: Hypothesis A (Winch Bias) ===
+  Baseline T_top (settled): 1817.0 N
+✓ Case Complete: Hypothesis A (Winch Bias)
+  Peak Power Spike : 141.65 kW
+  Peak PTO Torque  : 1920.8 N·m
+  SS Speed Ripple  : 4.389 rad/s
+  Slack Line Time  : 73.8 %
+  Peak Shaft Twist : 380.8 deg
+  T_top baseline   : 1817.0 N  (operational settled state)
+  T_top min        : 0.0 N  (worst dip during depower)
+  T_top < 50N time : 28.1 %  (top seg slack = lift line not supporting hub)
+
+=== Simulating Hypothesis Case: Hypothesis B (40% Clamp) ===
+  Baseline T_top (settled): 1817.0 N
+✓ Case Complete: Hypothesis B (40% Clamp)
+  Peak Power Spike : 210.81 kW
+  Peak PTO Torque  : 1944.0 N·m
+  SS Speed Ripple  : 66.095 rad/s
+  Slack Line Time  : 78.1 %
+  Peak Shaft Twist : 344.5 deg
+  T_top baseline   : 1817.0 N  (operational settled state)
+  T_top min        : 0.0 N  (worst dip during depower)
+  T_top < 50N time : 51.1 %  (top seg slack = lift line not supporting hub)
+
+=== Simulating Hypothesis Case: Hypothesis AB (Combined) ===
+  Baseline T_top (settled): 1817.0 N
+✓ Case Complete: Hypothesis AB (Combined)
+  Peak Power Spike : 162.33 kW
+  Peak PTO Torque  : 1785.3 N·m
+  SS Speed Ripple  : 0.727 rad/s
+  Slack Line Time  : 73.8 %
+  Peak Shaft Twist : 370.6 deg
+  T_top baseline   : 1817.0 N  (operational settled state)
+  T_top min        : 0.0 N  (worst dip during depower)
+  T_top < 50N time : 26.8 %  (top seg slack = lift line not supporting hub)
+
+✓ Saved timeseries data to: scripts/results/diagnostics/hypothesis_testing_telemetry.csv
+✓ Saved markdown summary to: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/test/../scripts/results/diagnostics/hypothesis_testing_report.md

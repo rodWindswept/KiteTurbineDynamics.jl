@@ -1,0 +1,10 @@
+[2026-05-30 13:37:22] Launching Full Pitch Depower V4 Campaign...
+  - Mode: 128-run high-resolution dynamic sweep
+  - Time-step: 100 kHz (dt = 1e-5s)
+  - Threads: 32
+  - Julia Log : campaign_v4.log
+  - Python Log: analysis_v4.log
+[2026-05-30 17:10:29] Julia campaign completed successfully.
+Starting Python visual post-processing and PDF compilation...
+[2026-05-30 17:10:37] Pitch Depower V4 Campaign and PDF compilation complete! ✅
+Finished PDF Report: scripts/results/pitch_depower_campaign_v4/analysis/analysis_report.pdf

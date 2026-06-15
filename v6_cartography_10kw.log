@@ -1,0 +1,9 @@
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+V6 LHS cartography: N=5000, power=10kW, seed=7
+  r_hub bounds: [1.6, 2.4] m
+  r_bot bounds: [0.3, 1.5] m
+  2000 / 5000  (0.0 s, 229.1/ms)
+  4000 / 5000  (0.1 s, 48.5/ms)
+Wrote scripts/results/v6_cartography_10kw.csv
+  Feasible: 22 / 5000 (0.4%)
+  Best feasible mass: 136.9 kg

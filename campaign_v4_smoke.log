@@ -1,0 +1,15 @@
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+Precompiling packages...
+   4919.5 ms  ✓ KiteTurbineDynamics
+  1 dependency successfully precompiled in 6 seconds. 576 already precompiled.
+┌ Info: Pitch Depower Campaign V4
+│   n_runs = 2
+│   threads = 32
+└   smoke_test = true
+┌ Info: Results directory
+└   RESULTS_DIR = "/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/pitch_depower_campaign_v4"
+[ Info: Run    1 /    2  [65 s elapsed, ETA 1 min]
+[ Info: Run    2 /    2  [66 s elapsed, ETA 0 min]
+[ Info: Campaign V4 complete: 2 runs in 1.1 minutes
+┌ Info: Summary CSV
+└   metrics_path = "/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/pitch_depower_campaign_v4/campaign_metrics.csv"
