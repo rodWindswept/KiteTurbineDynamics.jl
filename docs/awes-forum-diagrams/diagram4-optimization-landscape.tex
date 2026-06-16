@@ -257,6 +257,45 @@
   \draw[gray!40, line width=2pt, densely dashed] (3.0,0.8) -- (3.0,9.5);
   \node[font=\tiny, gray!50, rotate=90] at (2.6,5.0) {V6: no expansion rotors};
 
+  % === FORCE VECTOR INSET (top-right of panel) ===
+  \begin{scope}[shift={(7.5,7.0)}, scale=0.55]
+    % Blade cross-section (airfoil shape at bank angle)
+    \draw[black!70, line width=1.2pt, rotate around={-45:(0,0)}]
+      (0,0) to[out=0, in=180] (2.0,0.3) to[out=0, in=180] (2.5,0) -- cycle;
+    \node[font=\tiny] at (1.2,-0.7) {blade section};
+
+    % Wind arrow
+    \draw[->, blue!50, line width=1.2pt] (-2.5,1.5) -- (-0.3,0.8);
+    \node[font=\tiny, blue!50] at (-2.5,1.8) {apparent wind};
+
+    % Lift vector (perpendicular to chord, rotated -45)
+    \draw[->, red!70, line width=1.5pt] (0.5,0.15) -- (1.2,1.5);
+    \node[font=\tiny, red!70] at (1.5,1.5) {lift};
+
+    % Radial component
+    \draw[->, red!50, line width=1.0pt] (0.5,0.15) -- (0.5,0.9);
+    \node[font=\tiny, red!50!black] at (0.2,0.9) {$F_r$};
+
+    % Axial component (downward)
+    \draw[->, red!50, line width=1.0pt] (0.5,0.15) -- (0.9,-0.1);
+    \node[font=\tiny, red!50!black] at (1.2,-0.1) {$F_a$};
+
+    % Bank angle label
+    \draw[->, gray!50] (0.3,0.4) arc (90:45:0.5);
+    \node[font=\tiny, gray!50] at (0.8,0.7) {bank};
+  \end{scope}
+  \node[font=\tiny, black!60] at (8.8,5.8) {Expansion blade};
+
+  % === BANK ANGLE WARNING CALL-OUT ===
+  \node[font=\tiny, align=center, text width=3.0cm, fill=yellow!8, draw=yellow!60!black, rounded corners=3pt, inner sep=4pt] at (8.5,1.8) {
+    \textbf{!! Bank angle concern}
+
+    45$^\circ$ bank saturates search bound.
+    Pitch depower tilts axis $\uparrow$
+    $\rightarrow$ risk of blade back-winding,
+    lift reversal, inward collapse.
+    See report \S5.5.};
+
 \end{scope}
 
 % ============================================================
@@ -268,8 +307,8 @@
 
   % === V6 STACK (left) ===
   \begin{scope}[shift={(2.5,5.0)}]
-    \node[font=\bfseries, blue!60!black] at (0,5.2) {V6};
-    \node[font=\small, blue!50!black] at (0,4.7) {259 kg};
+    \node[font=\bfseries, blue!60!black] at (0,5.2) {V6 (50 kW)};
+    \node[font=\small, blue!50!black] at (0,4.7) {259 kg, 6 rings};
 
     % 6 octagon rings, uniform spacing
     \foreach \i in {0,...,5} {
@@ -286,7 +325,7 @@
     % Labels
     \node[font=\tiny, blue!60] at (2.8,2.5) {n=8};
     \node[font=\tiny, gray!50] at (2.8,1.5) {uniform};
-    \node[font=\tiny, gray!50] at (2.8,0.5) {spacing};
+    \node[font=\tiny, gray!50] at (2.8,0.5) {L/r = 3.13};
     \node[font=\tiny, red!60] at (2.8,-0.5) {0 expansion};
     \node[font=\tiny, red!60] at (2.8,-1.5) {rotors};
   \end{scope}
@@ -297,30 +336,27 @@
 
   % === V6.2 STACK (right) ===
   \begin{scope}[shift={(8.5,5.0)}]
-    \node[font=\bfseries, green!50!black] at (0,5.2) {V6.2};
-    \node[font=\small, green!50!black] at (0,4.7) {58 kg};
+    \node[font=\bfseries, green!50!black] at (0,5.2) {V6.2 (50 kW)};
+    \node[font=\small, green!50!black] at (0,4.7) {58 kg, 10 rings};
 
     % 10 triangle rings, bottom-biased spacing
     \foreach \i in {0,...,9} {
-      % Biased y-position: crowd toward bottom
-      \pgfmathsetmacro{\t}{\i/9.0}
-      \pgfmathsetmacro{\t_biased}{\t^(1-0.76)}
-      \pgfmathsetmacro{\yy}{4.0 - \t_biased*8.0}
-      % Ring size: smaller at top, larger at bottom
-      \pgfmathsetmacro{\rr}{0.8 + \t_biased*1.0}
-      % Triangle
+      \pgfmathsetmacro{\myT}{\i/9.0}
+      \pgfmathsetmacro{\myTbias}{\myT^(1-0.76)}
+      \pgfmathsetmacro{\yy}{4.0 - \myTbias*8.0}
+      \pgfmathsetmacro{\rr}{0.8 + \myTbias*1.0}
       \draw[green!50!black, line width=1.0pt]
         ({\rr*cos(90)},{\yy+\rr*sin(90)}) --
         ({\rr*cos(210)},{\yy+\rr*sin(210)}) --
         ({\rr*cos(330)},{\yy+\rr*sin(330)}) -- cycle;
     }
 
-    % Expansion rotor markers (at rings 7, 8, 9 — bottom third)
+    % Expansion rotor markers (at rings 7, 8, 9)
     \foreach \i in {7,8,9} {
-      \pgfmathsetmacro{\t}{\i/9.0}
-      \pgfmathsetmacro{\t_biased}{\t^(1-0.76)}
-      \pgfmathsetmacro{\yy}{4.0 - \t_biased*8.0}
-      \pgfmathsetmacro{\rr}{0.8 + \t_biased*1.0}
+      \pgfmathsetmacro{\myT}{\i/9.0}
+      \pgfmathsetmacro{\myTbias}{\myT^(1-0.76)}
+      \pgfmathsetmacro{\yy}{4.0 - \myTbias*8.0}
+      \pgfmathsetmacro{\rr}{0.8 + \myTbias*1.0}
       \fill[cyan!70, opacity=0.6] (0,\yy) circle (5pt);
     }
 
@@ -331,17 +367,19 @@
     % Labels
     \node[font=\tiny, green!50!black] at (2.5,2.5) {n=3};
     \node[font=\tiny, gray!50] at (2.5,1.5) {bottom-};
-    \node[font=\tiny, gray!50] at (2.5,1.0) {biased};
+    \node[font=\tiny, gray!50] at (2.5,1.0) {biased ($\beta$=0.76)};
     \node[font=\tiny, cyan!70] at (2.5,-0.5) {3 expansion};
     \node[font=\tiny, cyan!70] at (2.5,-1.0) {rotors (cyan)};
+    \node[font=\tiny, gray!50] at (2.5,-1.8) {uniform beams};
   \end{scope}
 
   % Key changes callout
   \node[font=\footnotesize, align=left, fill=black!3, rounded corners=4pt, inner sep=6pt] at (5.5,0.8) {
-    \textbf{Three breakthroughs unlocked 58 kg:}\\[2pt]
+    \textbf{Three breakthroughs unlocked 58 kg (50 kW):}\\[2pt]
     1. Triangle rings (n=3): \textbf{11$\times$ less beam mass}\\[1pt]
     2. Bottom-biased density ($\beta$=0.76): \textbf{15.7$\times$ more buckling resistance}\\[1pt]
-    3. Network rotors (n\_exp=3): \textbf{thrust distributed, uniform beams}};
+    3. Network rotors (n\_exp=3): \textbf{thrust distributed, uniform beams}\\[3pt]
+    \textbf{10 kW result: 6.25 kg} (n=3, n\_exp=1, $\beta\approx$0)};
 
 \end{scope}
 

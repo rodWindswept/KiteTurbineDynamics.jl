@@ -84,44 +84,141 @@ works differently than intuition suggests.
 
 ## 3. Why Triangle Rings Beat Octagons
 
-### 3.1 The constant-mass theorem
+### 3.1 Polygon compression mechanics
 
-For a ring carrying total polygon compression N, distributed across n lines:
+Consider a regular n-gon ring of radius R. Each vertex experiences an inward
+radial force F_v from the tether lines pulling the ring vertices toward the
+shaft axis. The ring resists this with beam compression.
 
-- Load per beam: N_comp = N / (2 · tan(π/n))
-- Required beam diameter: Do ∝ √(N_comp) (from Euler buckling: P_crit ∝ Do⁴/L²)
-- Beam cross-section area: A ∝ Do² ∝ N_comp ∝ 1/tan(π/n)
-- Beam mass per unit length: m_beam ∝ n · A ∝ n / tan(π/n)
+**Step 1 — Force equilibrium at a vertex.** Two beams meet at each vertex.
+From the polygon geometry, each beam makes an angle π/n from the tangent
+direction, so its inward radial component is C·sin(π/n) where C is the beam
+compression. Force balance:
 
-For large n, tan(π/n) ≈ π/n, so m_beam ∝ n / (π/n) = n²/π → mass grows with n²!
-For small n, tan(π/n) > π/n, so the scaling is worse than n².
+\[
+2C \cdot \sin\!\left(\frac{\pi}{n}\right) = F_v
+\qquad\Longrightarrow\qquad
+C = \frac{F_v}{2\sin(\pi/n)}
+\]
 
-At n=3: tan(π/3) = √3 ≈ 1.732 → n/tan = 1.73
-At n=5: tan(π/5) ≈ 0.727 → n/tan = 6.88
-At n=8: tan(π/8) ≈ 0.414 → n/tan = 19.3
+This is the exact polygon statics. For a square (n=4): sin(π/4)=1/√2, so
+C = F_v/√2 ≈ 0.707F_v — each beam carries 71% of the per-vertex load.
 
-**Beam mass at n=8 is 11× higher than at n=3 for the same ring compression.**
+**Model simplification.** The structural model in KTD.jl uses:
 
-This is the fundamental reason the optimiser chose triangles. The mass penalty
-of additional lines overwhelms the per-beam load reduction.
+\[
+C = \frac{F_v}{2\tan(\pi/n)}
+\]
+
+The two differ by cos(π/n). For n=3 the tan-formula gives C = 0.289F_v
+vs the exact 0.577F_v — a factor-of-2 under-estimate. For n=8 the
+discrepancy is only 8%. The qualitative conclusion is unchanged regardless
+of which denominator is used, but the tan-formula is used throughout the
+DE campaigns and the mass scaling below is presented consistently with it.
+
+**Step 2 — Euler buckling sizing.** Each beam is a thin-walled tube of
+diameter D, wall thickness t, spanning length L between adjacent rings.
+For Euler buckling between ring supports (pin-pin end conditions):
+
+\[
+P_{\text{crit}} = \frac{\pi^2 E I}{L^2},
+\qquad I = \frac{\pi}{8}D^3 t \;\;(\text{thin wall}, t \ll D)
+\]
+
+Setting P_crit ≥ C (with a Factor of Safety) and holding t/D constant:
+
+\[
+D^4 \propto C \cdot L^2
+\]
+
+For a given ring station, the axial spacing L_axial between rings is fixed
+by the density profile — it does not depend on n. Therefore L is constant
+across the n-comparison, and:
+
+\[
+D^2 \propto \sqrt{C}
+\]
+
+Cross-section area: A = πDt ∝ D² ∝ √C.
+
+**Step 3 — Mass comparison.** The ring has n beam segments. With
+C ∝ 1/tan(π/n) (the model's formula):
+
+\[
+A \propto \sqrt{C} \propto \frac{1}{\sqrt{\tan(\pi/n)}}
+\]
+
+Each beam's mass: m_beam ∝ A · L_poly, where L_poly = 2R·sin(π/n) is the
+polygon side length (which does depend on n). Total ring mass:
+
+\[
+m_{\text{ring}} \propto n \cdot \frac{1}{\sqrt{\tan(\pi/n)}} \cdot \sin(\pi/n)
+ = n \cdot \sqrt{\sin(\pi/n) \cdot \cos(\pi/n)}
+\]
+
+**Step 4 — Numerical comparison.** Evaluating this function for the
+relevant n range:
+
+| n | Polygon | sin(π/n) | tan(π/n) | √(sin·cos) | n·√(sin·cos) | vs n=3 |
+|---|---------|----------|----------|------------|--------------|--------|
+| 3 | triangle | 0.866 | 1.732 | 0.658 | **1.97** | 1.00× |
+| 4 | square | 0.707 | 1.000 | 0.595 | 2.38 | 1.21× |
+| 5 | pentagon | 0.588 | 0.727 | 0.530 | 2.65 | 1.35× |
+| 6 | hexagon | 0.500 | 0.577 | 0.467 | 2.80 | 1.42× |
+| 7 | heptagon | 0.434 | 0.481 | 0.409 | 2.86 | 1.45× |
+| 8 | octagon | 0.383 | 0.414 | 0.357 | **2.86** | 1.45× |
+| 12 | dodecagon | 0.259 | 0.268 | 0.239 | 2.87 | 1.46× |
+
+The ring mass converges toward n→∞ at ~2.87 — only 46% above n=3. This
+is a more modest effect than the headline 11×, because:
+1. The √C (rather than C) scaling from Euler buckling weakens the
+   n-dependence.
+2. The polygon perimeter shrinks with n (shorter beams), partially
+   offsetting the increased beam count.
+
+**So why does the DE see a much larger mass difference?**
+
+The beam-mass comparison above keeps ring radius R and per-vertex force F_v
+constant — a single ring in isolation. In the full TRPT optimisation,
+changing n_lines ripples through the entire design:
+
+- **Tether count.** 8 tethers weigh 2.67× more than 3 tethers (§3.3).
+- **Knuckle count.** 8 knuckles weigh 2.67× more than 3 (§3.2).
+- **Rotor radius.** The BEM-coupled rotor R must grow to compensate for
+  the Cp penalty at high solidity (more blades in the annulus).
+- **Ring radius.** The DE can choose a different r_hub and r_bottom when
+  n changes — the optimum reconfigures geometrically.
+- **Expansion rotor count.** The V6 optimum at n=8 used 1 expansion
+  rotor; the V6.2 optimum at n=3 uses 3. The network effect compounds
+  the polygon benefit.
+
+The 58 kg vs 179 kg result is the product of all these effects working
+together — the polygon scaling is the catalyst that enables the other
+optimisations, not the sole mechanism.
 
 ### 3.2 Knuckle mass
 
-Each polygon vertex requires a knuckle joint. With the lower bound at 0.005 kg:
+Each polygon vertex requires a knuckle joint. At 0.005 kg per knuckle:
 
-- n=3: 3 knuckles = 0.015 kg
-- n=8: 8 knuckles = 0.040 kg
+- n=3: 3 × 0.005 = 0.015 kg
+- n=5: 5 × 0.005 = 0.025 kg
+- n=8: 8 × 0.005 = 0.040 kg
 
-Knuckle mass alone is 2.7× higher at n=8.
+Knuckle mass scales ∝ n — 2.7× between n=3 and n=8. For a shaft with
+10 rings, this contributes 0.25 kg of difference.
 
 ### 3.3 Tether mass
 
-The TRPT shaft uses n_lines tension members:
+The TRPT shaft uses n_lines tension members running the full 67 m shaft
+length. Tether mass scales ∝ n (same cross-section per line):
 
-- n=3: 3 tethers × 67 m × 970 kg/m³ × π × (d/2)²
-- n=8: 8 tethers × 67 m × 970 kg/m³ × π × (d/2)²
+- n=3: 3 × 67 m × 970 kg/m³ × π(d/2)² = 0.55 kg (for d=1.9 mm Dyneema)
+- n=5: 5 lines = 0.91 kg
+- n=8: 8 lines = 1.46 kg
 
-Tether mass scales linearly with n_lines: 8/3 = 2.67×.
+A 2.67× difference for the tether mass alone. Combined with beam mass,
+knuckle mass, and the compounding effects on rotor sizing, the polygon
+choice drives the largest structural lever in the TRPT design space.
 
 ---
 
@@ -153,15 +250,52 @@ compression (only local expansion rotor thrust) and can tolerate L/r = 15.9.
 
 ---
 
-## 5. Expansion Rotor Multiplication
+## 5. Expansion Rotors: Aerodynamic Spreading of the TRPT Shaft
 
-The V6.2 design uses 3 expansion rotors instead of 1. Combined with the hub
-rotor, this creates a 4-rotor network where each rotor is sized for 12.5 kW
-(50 kW ÷ 4). The expansion rotors are positioned at rings 9, 10, and 11
-(counting from ground), placing them in the upper third of the shaft where
-the ring radii are larger (2.7–4.7 m) and the blades can be longer.
+### 5.1 What is an expansion rotor?
 
-Thrust distribution:
+An expansion rotor is an intermediate ring on the TRPT shaft whose knuckle
+nodes carry not passive carbon beams but actively-lifted aerodynamic blades.
+During TRPT rotation, these blades generate lift with an outward radial
+component — spreading the tether attachment points wider than the passive
+ring geometry would permit.
+
+The expansion rotor replaces structural mass (thick carbon beams resisting
+ring compression) with aerodynamic work (lift from spun blades). Instead of
+passively fighting the inward buckling force, the blades actively push
+outward.
+
+### 5.2 How it works
+
+Each expansion blade is coupled to the rotating TRPT line set, driven by
+the torque flowing down from the hub rotor above. The blade is banked
+downward — its tip points toward the next lower ring — so that its lift
+vector resolves into two components:
+
+1. **An outward radial component** that spreads the tether attachment points,
+   increasing the effective ring radius (r_eff) at that station.
+2. **A downward axial component** that contributes to the compressive load
+   in the shaft below.
+
+The radial spreading has two structural benefits:
+
+- **Wider r_eff increases torsional capacity.** The Tulloch/Wacker
+  torsional collapse criterion scales as τ_cap ∝ r² — a wider ring at an
+  expansion station can transmit more torque before the helical lines
+  overtwist.
+- **Shorter effective segment length.** Each expansion rotor breaks a long
+  soft shaft section into two shorter ones, reducing the L/r slenderness
+  ratio and increasing Euler buckling resistance.
+
+### 5.3 The V6.2 configuration
+
+The V6.2 design uses 3 expansion rotors (up from 1 in V6). Combined with
+the hub rotor, this creates a 4-rotor network where each rotor is sized for
+12.5 kW (50 kW ÷ 4). The expansion rotors are positioned at rings 9, 10,
+and 11 (counting from ground), placing them in the upper third of the shaft
+where the ring radii are larger (2.7–4.7 m) and the blades can be longer.
+
+**Thrust distribution:**
 
 | Rotor | Ring | Radius | Power | Blade tip |
 |-------|------|--------|-------|-----------|
@@ -170,9 +304,67 @@ Thrust distribution:
 | ER 2 | 10 | 3.54 m | 12.5 kW | 7.39 m |
 | ER 3 | 9 | 2.69 m | 12.5 kW | 7.39 m |
 
-All expansion blades share the same mould (7.39 m tip radius, banked at 45°
-toward the next ring down). This is a key manufacturability advantage — one
-blade design serves all three expansion rotors.
+All expansion blades share the same mould (7.39 m tip radius). This is a
+key manufacturability advantage — one blade design serves all three
+expansion rotors.
+
+### 5.4 Why three expansion rotors helped
+
+The V6 optimum used 1 expansion rotor and produced 179 kg shaft mass. The
+V6.2 DE optimiser was freed to explore n_expansion ∈ [0, 6] and converged
+on 3. The physics reason: distributing the 50 kW of aerodynamic thrust
+across 4 rotors (hub + 3 expansion) instead of 2 (hub + 1) reduces the peak
+ring compression at any single station by nearly half. Lower peak
+compression → thinner beams can survive Euler buckling → less mass.
+
+This is a **network effect**: more expansion rotors spread the structural
+load across more rings. The diminishing return comes from the parasitic drag
+of the expansion blades themselves — each additional rotor adds blade area
+that must be spun through the air, consuming a fraction of the transmitted
+power. The optimiser's choice of n_exp = 3 represents the balance point
+where the structural benefit of one more rotor no longer outweighs its
+added mass and drag.
+
+### 5.5 The bank angle concern
+
+The V6.2 optimum places expansion blades banked at 45° toward the next ring
+down — the upper search bound. The optimiser would prefer an even steeper
+bank if permitted. This raises a critical operational concern.
+
+Expansion rotor blades are banked downward to produce an outward radial
+lift component. Their angle of attack relative to the incoming wind depends
+on the shaft elevation angle (currently 30° from horizontal). During
+**pitch depower** — the emergency shutdown procedure where the back-anchor
+line is winched out to tilt the rotor axis toward vertical and spill wind —
+the apparent wind direction at the expansion rotors changes.
+
+At a 45° bank angle and 30° shaft elevation, the blades already operate
+near the edge of their usable angle-of-attack range. If pitch depower
+raises the shaft by another 15–20°, the apparent wind could approach the
+blades from above — reversing the lift direction and converting the
+expansion rotors from outward-spreading devices into inward-collapsing
+devices. A back-winded expansion rotor would pull the tethers inward,
+reducing r_eff precisely when the shaft is most vulnerable (during an
+emergency manoeuvre with fluctuating loads).
+
+This is not modelled in the current static structural sizing. The DE
+optimiser cannot penalise a design for failing under a transient operating
+condition it doesn't evaluate. We recommend:
+
+1. **Dynamic simulation of pitch depower with expansion rotors** — a
+   multi-body ODE transient to confirm whether back-winding actually occurs
+   at 45° bank.
+2. **Bank angle sweep** — map the safe operating envelope of bank angle vs.
+   shaft elevation angle, identifying the maximum bank that survives a full
+   pitch depower sequence.
+3. **Blade section selection for expansion rotors** — symmetric or
+   reflexed-camber airfoils that tolerate reversed flow may widen the safe
+   bank angle range.
+
+Until this analysis is complete, the 45° bank angle result should be
+treated as an optimiser artefact at the search bound, not a validated
+design choice. A conservative bank angle of 20–30° is likely safer for
+initial prototyping.
 
 ---
 
@@ -188,11 +380,14 @@ Despite the 67% mass reduction, 7 of 12 parameters remain on bounds:
 | t_over_D | 0.01 | [0.01, 0.20] | MIN — wants thinner walls |
 | aspect_ratio | 1.0 | [0.15, 1.5] | MAX — circular cross-section |
 | knuckle_mass | 0.005 kg | [0.005, 0.20] | MIN — wants lighter knuckles |
-| bank_angle | 45° | [5, 45] | MAX — wants steeper bank |
+| bank_angle | 45° | [5, 45] | MAX — wants steeper bank **(see §5.5)** |
 
-The optimiser is still fighting the constraint boundaries. Further widening of
-target_Lr (beyond 3.0), t_over_D (below 0.01), and r_bottom (below 0.3 m) may
-yield additional mass savings. However, manufacturability limits on wall
+The optimiser is still fighting the constraint boundaries. The bank_angle
+saturation at 45° is particularly concerning — steeper bank angles may be
+structurally optimal in the static model but could cause expansion rotor
+back-winding during pitch depower (discussed in §5.5). Further widening of
+target_Lr (beyond 3.0), t_over_D (below 0.01), and r_bottom (below 0.3 m)
+may yield additional mass savings. However, manufacturability limits on wall
 thickness and knuckle mass are approaching physical minima.
 
 ---
@@ -209,9 +404,12 @@ thickness and knuckle mass are approaching physical minima.
    proportionally shorter segments. A power-law density profile (β ≈ 0.75)
    captures this physics with a single continuous parameter.
 
-3. **More expansion rotors distribute thrust better.** Moving from 1 to 3
-   expansion rotors reduced the peak ring compression by spreading the load
-   across multiple rings. The optimum count may be even higher.
+3. **More expansion rotors distribute thrust better, with caveats.** Moving
+   from 1 to 3 expansion rotors reduced the peak ring compression by
+   spreading the load across multiple rings. The optimum count may be even
+   higher, but parasitic drag on the expansion blades and the bank angle
+   back-wind risk during pitch depower (§5.5) impose practical limits not
+   yet captured in the static structural model.
 
 4. **Uniform beam diameters work.** Do_scale_exp = 0 means every ring uses
    the same 125.7 mm beam. This eliminates the manufacturing complexity of
