@@ -143,10 +143,42 @@ expansion rotor count dropped because distributing thrust across more stations
 no longer pays for itself — the larger hub rotor at n=12 handles the load
 efficiently at one station.
 
-The bank angle remains at 45° (the upper search bound). A caution from our earlier 
-post: during pitch depower the apparent wind direction at the
-expansion rotor shifts, and at 45° bank the blades may be back-winded. Dynamic
-simulation is needed before this angle can be considered validated.
+### How many blades on an expansion rotor?
+
+A finding from our latest review: expansion rotor blade count is n_blades =
+n_lines — one blade per polygon vertex. The expansion blades use the same mould
+as the main BEM rotor (identical span, chord, and count) and are simply banked
+downward toward the next ring. Only n_exp and bank_angle are free parameters in
+the 11-DoF design vector.
+
+This changes the expansion station economics significantly. At n=12 the single
+expansion rotor carries **12 blades** (not 3 as we'd previously sketched). The
+old V6 at n=8 with three rotors carried 24 expansion blades total (8 blades × 3
+rotors). The corrected V6.2 optimum at n=12 with a single rotor carries **12
+expansion blades — half as many as the old design**. Fewer total blades, fewer
+knuckle assemblies, and lower parasitic drag, all while achieving the needed
+radial spreading through the hub rotor's larger radius and higher per-blade
+loading.
+
+### Blade span — an unexplored degree of freedom
+
+Because expansion blades inherit span and chord from the main rotor, the
+optimizer could not try shorter or longer expansion blades. A dedicated
+expansion blade with, say, half the span of the main rotor blade might be
+sufficient to provide the radial spreading force at lower mass and drag cost.
+This is an entirely unexplored degree of freedom — the current 11-DoF
+formulation has no parameter for expansion blade geometry. We intend to add one.
+
+### Bank angle safety
+
+The bank angle converged to 45° — the upper search bound. During pitch depower
+the apparent wind direction at the expansion rotor shifts, and at 45° the blades
+may be back-winded (flow from the wrong side of the airfoil). We now believe the
+bank angle bound should be capped at **35°** for pitch depower safety. The
+current optimum at 45° was found with bounds [0, 60]° — a campaign re-run with
+bank ∈ [0, 35]° is needed before this angle can be considered validated. The
+dashboard now renders expansion rotor blades for visual verification of the
+geometry.
 
 ---
 
@@ -160,14 +192,28 @@ penalty barrier.](d4-optimization-landscape.png)
 ## What's still at the bounds
 
 Seven of eleven parameters remain on their bounds, including n_lines=12 (wants
-more), t_over_D=0.01 (wants thinner walls), and bank_angle=45° (wants steeper
-bank). The optimiser is not done — it's just run out of permitted space.
+more) and t_over_D=0.01 (wants thinner walls). The optimiser is not done — it's
+just run out of permitted space.
 
 The key structural bound is n_lines. With n_blades = n_lines (one blade per
-polygon vertex on the hub ring), higher line counts increase solidity and
-induction losses. The interaction between the structural optimum (more lines =
-lighter beams per unit compression) and the aerodynamic penalty (more blades =
-more induction) is the central unresolved question in the TRPT design space.
+polygon vertex on both the main rotor and expansion rotors), higher line counts
+increase solidity and induction losses. The interaction between the structural
+optimum (more lines = lighter beams per unit compression) and the aerodynamic
+penalty (more blades = more induction) is the central unresolved question in the
+TRPT design space.
+
+**Bank angle is at a safety bound, not a search bound.** The optimiser found
+bank_angle=45° because that was the upper limit of the search range [0, 60]°.
+We now believe the bound should be **35°** for pitch depower safety — at 45° the
+expansion blades risk back-winding during depower. A campaign re-run with
+bank ∈ [0, 35]° is required. This is a constraint, not a preference: the current
+45° optimum may not survive a safety-limited re-optimisation.
+
+**Expansion blade span is unexplored.** The expansion blades currently inherit
+span, chord, and count from the main BEM rotor — only n_exp and bank_angle are
+free. Whether shorter expansion blades could provide the same radial spreading
+at lower mass and drag is an open question. This is a 12th degree of freedom
+waiting to be added.
 
 ---
 

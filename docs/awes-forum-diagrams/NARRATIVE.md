@@ -60,7 +60,8 @@ The mass budget at the V6.2 optimum (n=12, 74.17 kg):
 - Beam mass: ~46.7 kg (from Phase 2.4 calculation for 9 rings at n=12)
 - Knuckle mass: 12 knuckles × 0.10 kg × 9 rings ≈ 10.8 kg
 - Tether mass: 12 lines × 67m × Dyneema density ≈ 1.4 kg
-- Expansion rotor: 1 rotor × 3 blades × ~1.5 kg ≈ 4.5 kg (plus hub hardware)
+- Expansion rotor: 1 rotor × 12 blades (n_blades = n_lines) + hub hardware
+  (exact mass TBC — blade mass inherited from main BEM rotor mould)
 - These are approximate — the exact breakdown requires running the full structural evaluation
 
 Compare to V6 baseline at n=8:
@@ -80,3 +81,31 @@ The V6.2 optimum is NOT a broad valley. It's a needle in a constraint haystack:
 - This means the optimum sits at an intersection of multiple constraints (FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 5m, etc.)
 
 The "top bias" (β<0) is real — the optimizer converged there — but it's not a smooth valley you can sweep. It's the specific point in 11-dimensional space where all constraints are simultaneously satisfied with minimum mass. The old "mistake" (tan formula) happened to produce β=+0.76 because it changed which constraint was binding.
+
+## Expansion rotor blade count (2026-06-17 finding)
+
+A significant correction from the latest review: expansion rotor blade count is
+n_blades = n_lines — one blade per polygon vertex — NOT 3 as previously assumed.
+The expansion blades use the same mould as the main BEM rotor (identical span,
+chord, and count) and are banked downward. Only n_exp and bank_angle are free
+parameters.
+
+This matters for the expansion station economics:
+- At n=12: single expansion rotor carries 12 blades
+- Old V6 at n=8: 3 rotors × 8 blades = 24 expansion blades total
+- V6.2 at n=12: 1 rotor × 12 blades = 12 expansion blades total (half as many)
+- Despite fewer total blades, the hub rotor's larger radius and higher per-blade
+  loading provide sufficient radial spreading
+
+Additionally, expansion blade span was not a free parameter — the optimizer
+could not try shorter/longer blades. Whether a dedicated shorter expansion blade
+could provide the needed force at lower mass/drag is an unexplored 12th degree
+of freedom.
+
+## Bank angle safety (2026-06-17 finding)
+
+The bank angle converged to 45° — the upper search bound — but this was found
+with bounds [0, 60]°. During pitch depower, the apparent wind shifts and at 45°
+the blades risk back-winding. The bound should be capped at **35°** for safety.
+A campaign re-run with bank ∈ [0, 35]° is required. The current 45° optimum
+may not survive a safety-limited re-optimisation.

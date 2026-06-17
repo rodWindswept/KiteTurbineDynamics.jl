@@ -360,6 +360,49 @@ function params_v5_50kw()::SystemParams
 end
 
 """
+    params_v6_50kw() → SystemParams
+
+V6.2 50 kW configuration from DE campaign optimum (n=12, 9 rings, β=−0.13, n_exp=1).
+Geometry from best_design.json: r_hub=5.40m, r_bottom=1.05m, target_Lr=2.98,
+tether_length=67.1m, n_lines=12, n_blades=12 (one blade per line).
+"""
+function params_v6_50kw()::SystemParams
+    base = params_10kw()
+    # Scale from 10kW to 50kW geometrically
+    geom_scale = (50.0 / 10.0)^(1.0 / 3.0)  # ∼1.71
+    mass_factor = 50.0 / 10.0               # ∼5.0
+    geo = GeometrySpec(
+        base.elevation_angle,
+        base.lifter_elevation,
+        9.3,                                     # rotor_radius (m) — BEM-sized for 50kW/12
+        67.0820393249937,                        # tether_length (m) — from best_design.json
+        5.396543964537164,                       # trpt_hub_radius (m) — from best_design.json
+        0.74,                                    # trpt_rL_ratio (retained)
+        12,                                      # n_lines — V6.2 optimum
+        9,                                       # n_rings — from ring_spacing_v4
+        12,                                      # n_blades — one per line
+    )
+    mat = MaterialSpec(
+        base.tether_diameter * geom_scale,
+        base.e_modulus,
+        0.4 * mass_factor,                       # m_ring (kg)
+        11.0 / 8.0 * mass_factor,                # m_blade (kg)
+    )
+    aero = AeroSpec(base.rho, base.v_wind_ref, base.h_ref * geom_scale, base.cp)
+    ctrl = ControlSpec(
+        base.i_pto * mass_factor * geom_scale^2,
+        base.k_mppt * (50.0 / 10.0)^2.5,
+        base.p_rated_w * 5.0,
+        base.β_min,
+        base.β_max,
+        base.β_rate_max,
+        base.kp_elev,
+    )
+    back = BackLineSpec(base.EA_back_line, base.c_back_line, base.back_anchor_fwd_x, 0.0)
+    return SystemParams(geo, mat, aero, ctrl, back)
+end
+
+"""
     params_v5_safe_10kw() → SystemParams
 
 v5-safe 10 kW configuration: corrected power level, anti-necking ground ring,

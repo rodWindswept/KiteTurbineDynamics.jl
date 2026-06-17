@@ -353,7 +353,7 @@ version = "0.1.13"
 
 [[deps.CoaxialAutogyroStacking]]
 deps = ["Bonito", "CairoMakie", "DataFrames", "GLMakie", "Observables", "Pluto", "Statistics", "WGLMakie"]
-path = "/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl"
+path = "/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl"
 uuid = "cb2a5e45-b910-4a0e-9959-8ee2b2784885"
 version = "0.1.0"
 

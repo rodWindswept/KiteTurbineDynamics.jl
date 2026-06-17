@@ -109,6 +109,7 @@ function compute_ring_forces!(
     lift_device::Union{Nothing, LiftDevice}=nothing,
 )
     N = sys.n_total
+    Nr = sys.n_ring
     hub_gid = sys.rotor.node_id
     hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
     hub_pos = @view u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
@@ -116,6 +117,7 @@ function compute_ring_forces!(
     bearing_pos = @view u[(3 * (bearing_gid - 1) + 1):(3 * bearing_gid)]
     sky_anchor_gid = sys.sky_anchor_id
     sky_anchor_pos = @view u[(3 * (sky_anchor_gid - 1) + 1):(3 * sky_anchor_gid)]
+    alpha = @view u[(6N + 1):(6N + Nr)]
 
     v_wind = wind_fn(hub_pos, t)
 

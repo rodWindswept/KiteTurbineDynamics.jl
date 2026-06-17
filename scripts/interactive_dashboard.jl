@@ -191,8 +191,8 @@ function main()
     while true
         # ── Build system for current configuration ──────────────────────────
         if current_config == "V6.2 12-line dodecagon"
-            # V6.2 optimum from scripts/results/v6_2_campaign_50kw/best_design.json
-            p    = params_v5_50kw()
+            # V6.2 optimum: params_v6_50kw() with geometry from best_design.json
+            p    = params_v6_50kw()
             sys, u0 = build_kite_turbine_system(p)
             label  = "V6.2 dodecagon"
             println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")

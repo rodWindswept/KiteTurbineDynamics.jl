@@ -31,7 +31,7 @@ include("objective_v6.jl")
 include("economics.jl")
 
 export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLineSpec
-export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_10kw
+export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_10kw, params_v6_50kw
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
 export ExpansionRotorParams, expansion_rotor_forces, effective_radius
