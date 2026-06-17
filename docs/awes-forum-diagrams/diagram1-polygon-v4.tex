@@ -1,106 +1,75 @@
-\documentclass{article}
-\usepackage[paperwidth=21cm,paperheight=15cm,margin=0.3cm]{geometry}
-\usepackage{tikz}
+\documentclass[tikz, border=10pt]{standalone}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
-\pagestyle{empty}
 \begin{document}
-\centering
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[scale=0.95]
 
-% Background panel
-\fill[black!2, rounded corners=8pt] (-9.0,-6.5) rectangle (9.0,5.8);
-\node[font=\bfseries\LARGE, black!80] at (0,5.1) {The Polygon Breakthrough: Why Triangles Win};
+% Background
+\fill[black!2, rounded corners=8pt] (-12.0,-7.0) rectangle (12.0,7.0);
 
-% === V6 OCTAGON (left) ===
-\begin{scope}[xshift=-5.0cm, yshift=0.5cm]
-  % Panel
-  \fill[blue!3, rounded corners=6pt] (-2.8,-5.5) rectangle (2.8,2.5);
-  \node[font=\bfseries\Large, blue!60!black] at (0,2.0) {V6 — Octagon};
-  \node[font=\small, blue!50!black] at (0,1.5) {$n=8$, mass = 259 kg, $D_o$ = 118 mm};
+% === TITLE ===
+\node[font=\bfseries\Huge, black!80] at (0,6.2) {The Polygon Flip: Why {\color{green!50!black} 12} Lines Beat {\color{blue!60!black} 8}};
 
-  % Octagon polygon (radius ~1.9 to fill space)
+% === LEFT: OCTAGON ===
+\begin{scope}[xshift=-6.5cm, yshift=0.5cm]
+  \fill[blue!3, rounded corners=6pt] (-3.5,-6.5) rectangle (3.5,3.5);
+  \node[font=\bfseries\Large, blue!60!black] at (0,3.0) {V6 Baseline};
+  \node[font=\Large\bfseries, blue!60!black] at (0,2.3) {{\Large 8}-line octagon};
+
+  % Octagon
   \foreach \i in {1,...,8} {
-    \coordinate (O\i) at ({1.9*cos(360*\i/8 + 22.5)}, {1.9*sin(360*\i/8 + 22.5)});
+    \coordinate (O\i) at ({2.2*cos(360*\i/8 + 22.5)}, {2.2*sin(360*\i/8 + 22.5)});
   }
-  % Beams — thin (shared load N/8)
-  \draw[blue!70!black, line width=1.0pt] (O1) -- (O2) -- (O3) -- (O4) -- (O5) -- (O6) -- (O7) -- (O8) -- cycle;
+  \draw[blue!70!black, line width=1.3pt] (O1) -- (O2) -- (O3) -- (O4) -- (O5) -- (O6) -- (O7) -- (O8) -- cycle;
+  \foreach \i in {1,...,8} { \fill[red!60!black] (O\i) circle (3.5pt); }
 
-  % Compression arrows at every vertex (small, toward center)
-  \foreach \i in {1,...,8} {
-    \pgfmathsetmacro{\ang}{360*\i/8 + 22.5}
-    \draw[->, red!60, line width=0.6pt] ($(O\i)!0.15!({0.2*cos(\ang)},{0.2*sin(\ang)})$) -- ($(O\i)!0.0!({0.2*cos(\ang)},{0.2*sin(\ang)})$);
-  }
+  % Stats box — below polygon, not overlapping
+  \node[font=\footnotesize, align=left, fill=white, draw=gray!30, rounded corners=4pt, inner sep=6pt] at (0,-1.8) {
+    \textbf{Mass:} 259 kg \quad \textbf{Do:} 118 mm\\
+    Per-beam compression: $N/8$\\
+    8 knuckles $\times$ 0.11 kg = 0.88 kg\\
+    8 tethers $\times$ 67 m};
 
-  % Knuckles
-  \foreach \i in {1,...,8} {
-    \fill[red!70!black] (O\i) circle (3.5pt);
-  }
-
-  % Load callout
-  \node[font=\footnotesize, align=center, red!70!black] at (0,-0.8) {Ring compression N\\shared 8 ways\\N/8 per beam};
-
-  % Stats box
-  \node[font=\footnotesize, align=left, fill=white, rounded corners=3pt, inner sep=5pt] at (0,-3.0) {
-    Beams: 8, thin (low per-beam load)\\
-    Knuckles: 8 $\times$ 10 g = 0.08 kg\\
-    Lines: 8 $\times$ 67 m tethers\\
-    \textbf{Buckling limit: n=8 ceiling}};
-
-  % Arrow pointing to n=8 mass factor
-  \node[font=\footnotesize\bfseries, red] at (0,-4.5) {n/tan($\pi$/n) = \textbf{19.3}};
+  % Formula
+  \node[font=\small, blue!50!black] at (0,-3.8) {$\sin(\pi/8)=0.383$\quad $n\sqrt{\sin(\pi/n)}=2.86$};
 \end{scope}
 
-% BIG CENTER ARROW
-\draw[->, line width=4pt, >=stealth, green!50!black] (-1.5,0.5) -- (1.5,0.5)
-  node[midway,above,font=\bfseries\Large, green!50!black] {\textbf{--77.6\%}};
-\node[font=\small, green!50!black] at (0,-0.2) {259 kg $\rightarrow$ 58 kg};
+% === ARROW ===
+\draw[->, line width=5pt, >=stealth, green!50!black] (-2.5,1.0) -- (2.5,1.0);
+\node[font=\bfseries\Huge, green!50!black] at (0,2.0) {\textbf{--71\%}};
+\node[font=\large, green!50!black] at (0,1.3) {259 kg $\rightarrow$ 74 kg};
 
-% === V6.2 TRIANGLE (right) ===
-\begin{scope}[xshift=5.0cm, yshift=0.5cm]
-  % Panel
-  \fill[green!3, rounded corners=6pt] (-2.8,-5.5) rectangle (2.8,2.5);
-  \node[font=\bfseries\Large, green!50!black] at (0,2.0) {V6.2 — Triangle};
-  \node[font=\small, green!50!black] at (0,1.5) {$n=3$, mass = 58 kg, $D_o$ = 126 mm};
+% === RIGHT: DODECAGON ===
+\begin{scope}[xshift=6.5cm, yshift=0.5cm]
+  \fill[green!3, rounded corners=6pt] (-3.5,-6.5) rectangle (3.5,3.5);
+  \node[font=\bfseries\Large, green!50!black] at (0,3.0) {V6.2 Optimum};
+  \node[font=\Large\bfseries, green!50!black] at (0,2.3) {{\Large 12}-line dodecagon};
 
-  % Triangle — larger radius (126 vs 118 = 7% bigger)
-  \coordinate (T1) at ({2.05*cos(90)}, {2.05*sin(90)});
-  \coordinate (T2) at ({2.05*cos(210)}, {2.05*sin(210)});
-  \coordinate (T3) at ({2.05*cos(330)}, {2.05*sin(330)});
-
-  % Beams — THICK (shared load N/3, 2.67× more per beam)
-  \draw[green!50!black, line width=3.5pt] (T1) -- (T2) -- (T3) -- cycle;
-
-  % Compression arrows (larger, toward center)
-  \draw[->, red!60, line width=0.8pt] ($(T1)!0.12!(0,0)$) -- ($(T1)!0.02!(0,0)$);
-  \draw[->, red!60, line width=0.8pt] ($(T2)!0.12!(0,0)$) -- ($(T2)!0.02!(0,0)$);
-  \draw[->, red!60, line width=0.8pt] ($(T3)!0.12!(0,0)$) -- ($(T3)!0.02!(0,0)$);
-
-  % Knuckles — same size but fewer
-  \fill[red!70!black] (T1) circle (3.5pt);
-  \fill[red!70!black] (T2) circle (3.5pt);
-  \fill[red!70!black] (T3) circle (3.5pt);
-
-  % Load callout
-  \node[font=\footnotesize, align=center, red!70!black] at (0,-0.8) {Ring compression N\\shared 3 ways\\N/3 per beam — 2.67$\times$ more};
+  % Dodecagon
+  \foreach \i in {1,...,12} {
+    \coordinate (D\i) at ({2.2*cos(360*\i/12 + 15)}, {2.2*sin(360*\i/12 + 15)});
+  }
+  \draw[green!50!black, line width=0.8pt] (D1) foreach \i in {2,...,12} { -- (D\i) } -- cycle;
+  \foreach \i in {1,...,12} { \fill[red!60!black] (D\i) circle (2.5pt); }
 
   % Stats box
-  \node[font=\footnotesize, align=left, fill=white, rounded corners=3pt, inner sep=5pt] at (0,-3.0) {
-    Beams: 3, thick (per-beam load $\uparrow$)\\
-    Knuckles: 3 $\times$ 5 g = 0.015 kg\\
-    Lines: 3 $\times$ 67 m tethers\\
-    \textbf{Buckling limit: freed by n=3}};
+  \node[font=\footnotesize, align=left, fill=white, draw=gray!30, rounded corners=4pt, inner sep=6pt] at (0,-1.8) {
+    \textbf{Mass:} 74 kg \quad \textbf{Do:} 95 mm\\
+    Per-beam compression: $N/12$ --- 33\% lower\\
+    12 knuckles $\times$ 0.10 kg = 1.20 kg\\
+    12 tethers $\times$ 67 m};
 
-  % Arrow pointing to n=3 mass factor
-  \node[font=\footnotesize\bfseries, green!50!black] at (0,-4.5) {n/tan($\pi$/n) = \textbf{1.73}};
+  % Formula
+  \node[font=\small, green!50!black] at (0,-3.8) {$\sin(\pi/12)=0.259$\quad $n\sqrt{\sin(\pi/n)}=6.10$};
 \end{scope}
 
-% Bottom physics bar
-\fill[black!5, rounded corners=6pt] (-8.5,-6.2) rectangle (8.5,-5.0);
-\node[font=\small, align=center, black!70] at (0,-5.6) {
-  \textbf{The physics:} Beam mass $\propto n/\tan(\pi/n)$ —
-  octagon penalty = 19.3, triangle = 1.73 —
-  \textbf{11$\times$ less beam mass} for the same ring compression force};
+% === BOTTOM KEY ===
+\fill[black!4, rounded corners=6pt] (-11.5,-6.7) rectangle (11.5,-5.4);
+\node[font=\small, align=center, black!70] at (0,-6.05) {
+  \textbf{The tradeoff:} Beam-only scaling favours fewer lines ($n\sqrt{\sin(\pi/n)}$ = 2.86 at n=8 vs 6.10 at n=12).
+  But system effects reverse this: thinner beams (95 vs 118 mm) enable smaller knuckles (0.10 vs 0.11 kg each),
+  and per-beam compression drops 33\%. The 2.19$\times$ beam-mass penalty is offset by coupled knuckle mass,
+  tether economies, and rotor sizing. The optimiser found the system optimum at n=12.};
 
 \end{tikzpicture}
 \end{document}

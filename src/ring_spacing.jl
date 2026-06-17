@@ -33,7 +33,7 @@ using LinearAlgebra, Statistics
 
 # ── Constants ────────────────────────────────────────────────────────────────
 const OPT_MAX_GROUND_RADIUS = 1.5   # m — deployment transport limit (flatbed trailer)
-const TRPT_V4_DIM = 10    # DoF count for v4 optimiser vector (now includes density_profile)
+const TRPT_V4_DIM = 9     # DoF count for v4 optimiser vector (no knuckle_mass_kg)
 
 # ── Core geometry function ───────────────────────────────────────────────────
 """
@@ -157,7 +157,6 @@ struct TRPTDesignV4
     target_Lr::Float64    # target L/r for all segments — design variable
     tether_length::Float64
     n_lines::Int
-    knuckle_mass_kg::Float64
     density_profile::Float64  # ring density bias: 0=uniform, >0=more at bottom
 
     # Inner constructor: defaults density_profile to 0.0 for backward compatibility
@@ -172,12 +171,11 @@ struct TRPTDesignV4
         target_Lr::Float64,
         tether_length::Float64,
         n_lines::Int,
-        knuckle_mass_kg::Float64,
         density_profile::Float64=0.0,
     )
         return new(
             beam_profile, Do_top, t_over_D, beam_aspect, Do_scale_exp,
-            r_hub, r_bottom, target_Lr, tether_length, n_lines, knuckle_mass_kg,
+            r_hub, r_bottom, target_Lr, tether_length, n_lines,
             density_profile,
         )
     end
@@ -284,8 +282,7 @@ function evaluate_design(
         design.r_hub <= 0 ||
         design.r_bottom <= 0 ||
         design.target_Lr <= 0 ||
-        design.n_lines < 3 ||
-        design.knuckle_mass_kg <= 0
+        design.n_lines < 3
         return EvalResult(
             false,
             Inf,
@@ -338,8 +335,8 @@ Vector layout for v4 optimisation (9 DoF):
   x[5]  r_hub               [m]    hub ring radius (= r_top)
   x[6]  r_bottom            [m]    ground ring radius  ← NEW (replaces taper_ratio)
   x[7]  target_Lr           [-]    common L/r target   ← NEW (replaces n_rings float)
-  x[8]  knuckle_mass_kg     [kg]   per-vertex point mass
-  x[9]  n_lines             [int]  polygon sides 3..8
+  x[8]  n_lines             [int]  polygon sides 3..12
+  x[9]  density_profile     [-]    ring density bias (-0.8..0.8, 0=uniform)
 """
 function search_bounds_v4(
     p::SystemParams,
@@ -358,9 +355,6 @@ function search_bounds_v4(
 
     Lr_lo = 0.2;
     Lr_hi = 3.0
-
-    knuckle_lo = 0.005;
-    knuckle_hi = 0.200
     n_lines_lo = 3.0;
     n_lines_hi = 12.0
 
@@ -380,7 +374,6 @@ function search_bounds_v4(
         r_hub_lo,
         r_bot_lo,
         Lr_lo,
-        knuckle_lo,
         n_lines_lo,
         -0.8,          # density_profile — bias rings toward bottom (>0) or top (<0)
     ]
@@ -392,7 +385,6 @@ function search_bounds_v4(
         r_hub_hi,
         r_bot_hi,
         Lr_hi,
-        knuckle_hi,
         n_lines_hi,
         0.8,           # density_profile
     ]
@@ -405,13 +397,13 @@ function design_from_vector_v4(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    n_lines = clamp(Int(round(x[9])), 3, 12)
+    n_lines = clamp(Int(round(x[8])), 3, 12)
     r_hub = x[5]
     r_bot = clamp(x[6], 0.1, max_ground_radius)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
     r_bot = min(r_bot, r_hub)
-    # Density profile: optional 10th element for variable ring density
-    density_profile = length(x) >= 10 ? clamp(x[10], -0.8, 0.8) : 0.0
+    # Density profile: element 9 for variable ring density
+    density_profile = length(x) >= 9 ? clamp(x[9], -0.8, 0.8) : 0.0
     return TRPTDesignV4(
         beam_profile,
         x[1],                            # Do_top
@@ -423,8 +415,7 @@ function design_from_vector_v4(
         clamp(x[7], 0.1, 5.0),           # target_Lr
         p.tether_length,
         n_lines,
-        x[8],                            # knuckle_mass_kg
-        density_profile,                 # NEW: ring density bias
+        density_profile,                 # ring density bias
     )
 end
 
@@ -463,6 +454,5 @@ function baseline_design_v4(p::SystemParams)::TRPTDesignV4
         1.0,             # target_Lr = 1.0 (moderate slenderness)
         p.tether_length,
         p.n_lines,
-        OPT_KNUCKLE_MASS_KG,
     )
 end

@@ -5,16 +5,16 @@
 #
 # Differential Evolution optimisation of the TRPT system with expansion rotors,
 # tension stiffening, and variable-density ring spacing.
-# 12 design variables, 60 islands, ~20 min compute.
+# 11 design variables (knuckle mass derived from beam geometry), 60 islands, ~20 min compute.
 #
 # V6.2 changes from V6:
 #   - n_lines:       [3, 12]  (was [3, 8])
 #   - target_Lr:     [0.2, 3.0] (was [0.4, 2.0])
 #   - aspect_ratio:  [0.15, 1.5] (was [0.25, 1.0])
 #   - t_over_D:      [0.01, 0.20] (was [0.02, 0.20])
-#   - knuckle_mass:  [0.005, 0.200] (was [0.010, 0.200])
 #   - r_hub factor:  [0.60, 1.50] × trpt_hub (was [0.80, 1.20])
 #   - NEW: density_profile ∈ [-0.8, 0.8] (ring density bias)
+#   - CHANGED: knuckle mass now derived from beam geometry (was [0.005, 0.200])
 #
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
@@ -52,7 +52,7 @@
 #   scripts/results/v6_campaign_10kw/convergence_history.csv — mass vs iteration
 #
 # ═══════════════════════════════════════════════════════════════════════════
-# DESIGN VARIABLES (11-DoF)
+# DESIGN VARIABLES (11-DoF — knuckle mass derived from beam geometry)
 # ═══════════════════════════════════════════════════════════════════════════
 #
 #   x[1]  Do_top           beam outer diameter at hub (m)
@@ -62,8 +62,8 @@
 #   x[5]  r_hub            hub ring radius (m)
 #   x[6]  r_bottom         ground ring radius (m)
 #   x[7]  target_Lr        target L/r ratio
-#   x[8]  knuckle_mass_kg  per-vertex point mass (kg)
-#   x[9]  n_lines          polygon sides (3–8, rounded to int)
+#   x[8]  n_lines          polygon sides (3–12, rounded to int)
+#   x[9]  density_profile  ring density bias (−0.8..0.8)
 #   x[10] n_expansion      number of expansion rotors (0–6, rounded to int)
 #   x[11] bank_angle_deg   expansion blade bank angle (5°–45°)
 #
@@ -144,8 +144,8 @@ function main()
         x -> begin
             # Round integer variables
             x_rounded = copy(x)
-            x_rounded[9] = round(Int, clamp(x[9], 3, 12))    # n_lines (V6.2)
-            x_rounded[11] = round(Int, clamp(x[11], 0, 6))   # n_expansion
+            x_rounded[8] = round(Int, clamp(x[8], 3, 12))    # n_lines (now at position 8)
+            x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion (now at position 10)
             try
                 return objective_v6(x_rounded, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
             catch e
@@ -361,7 +361,6 @@ function main()
             "r_bottom_m" => design.r_bottom,
             "target_Lr" => design.target_Lr,
             "density_profile" => design.density_profile,
-            "knuckle_mass_kg" => design.knuckle_mass_kg,
             "tether_length_m" => design.tether_length,
             "elapsed_seconds" => elapsed,
             "n_islands" => n_islands,

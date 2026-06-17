@@ -33,6 +33,30 @@ const OPT_TORSION_FOS_REQUIRED = 1.5 # Tulloch torsional stability FOS (hard con
 const OPT_CT_RATED = 0.55    # Thrust coefficient at rated BEM operation
 const OPT_TSR_RATED = 4.1     # Optimal tip-speed ratio
 
+# ── Knuckle mass model (coupled to beam geometry) ─────────────────────────────
+# Each knuckle is a bent CFRP tube section coupling two adjacent polygon beams.
+# Mass scales with Do × t × (2·L_clamp + L_bend), where L_bend = Do·4/n_sides.
+# L_clamp = 1.0·Do represents a weight-optimised cuff with lightening cutouts.
+const KNUCKLE_L_CLAMP_FACTOR = 1.0   # beam engagement length / Do
+const RHO_KNUCKLE = 1600.0           # kg/m³ — CFRP density (same as beams)
+const KNUCKLE_T_WALL_FACTOR = 1.0    # knuckle wall t relative to beam t
+
+"""
+    knuckle_mass_at_ring(Do, t_over_D, n_sides) → Float64
+
+Per-vertex knuckle mass (kg) for a bent CFRP tube coupling joining two beams
+at a polygon vertex. Assumes weight-optimised patterning on the cuff.
+
+Do: beam outer diameter (m), t_over_D: beam wall thickness ratio, n_sides: polygon sides.
+"""
+function knuckle_mass_at_ring(Do::Float64, t_over_D::Float64, n_sides::Int)
+    t = t_over_D * Do * KNUCKLE_T_WALL_FACTOR
+    L_clamp = KNUCKLE_L_CLAMP_FACTOR * Do
+    L_bend = Do * 4.0 / n_sides
+    L_eff = 2 * L_clamp + L_bend
+    return RHO_KNUCKLE * π * Do * t * L_eff
+end
+
 # ── Combined design-load factor (DLF) ────────────────────────────────────────
 # Under perfectly uniform taper + zero twist + zero gust, the net radial force
 # per pentagon vertex is ZERO (tension components from segments above and below
@@ -372,6 +396,7 @@ function _evaluate_trpt_design_impl(
     worst_idx = 0
     torsion_ok = true
     mass_beams = 0.0
+    mass_knuckles = 0.0
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
@@ -417,14 +442,15 @@ function _evaluate_trpt_design_impl(
 
         A = props.A
         m_beam_per_vertex = props.mass * L_poly
+        m_knuckle = knuckle_mass_at_ring(spec.Do, design.t_over_D, design.n_lines)
         m_vertex =
-            design.knuckle_mass_kg +
+            m_knuckle +
             m_beam_per_vertex +
             (i == n_rings_tot ? m_blade_per_vertex : 0.0)
 
         F_centripetal = m_vertex * omega_rotor^2 * r
         F_v = max(F_in_per_vertex_aero - F_centripetal - F_exp_per_vertex, 0.0)
-        N_comp = F_v / (2.0 * tan(π / n_float))
+        N_comp = F_v / (2.0 * sin(π / n_float))
 
         P_crit = props.P_crit
 
@@ -462,9 +488,9 @@ function _evaluate_trpt_design_impl(
         end
 
         mass_beams += design.n_lines * props.mass * L_poly
+        mass_knuckles += design.n_lines * m_knuckle
     end
 
-    mass_knuckles = design.knuckle_mass_kg * design.n_lines * n_rings_tot
     mass_total = mass_beams + mass_knuckles
 
     feasible =

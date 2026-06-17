@@ -7,20 +7,6 @@
 # Expansion blades use the SAME span and chord as the generating rotor —
 # identical blade mould, banked downward toward the next ring.
 #
-# Design vector (12 DoF):
-#   x[1]   Do_top           [m]    beam outer diameter at hub
-#   x[2]   t_over_D         [-]    wall thickness ratio
-#   x[3]   beam_aspect      [-]    elliptical b/a or airfoil t/c
-#   x[4]   Do_scale_exp     [-]    Do(r) = Do_top · (r/r_hub)^exp
-#   x[5]   r_hub            [m]    hub ring radius
-#   x[6]   r_bottom         [m]    ground ring radius
-#   x[7]   target_Lr        [-]    common L/r target
-#   x[8]   knuckle_mass_kg  [kg]   per-vertex point mass
-#   x[9]   n_lines          [int]  polygon sides (3-8)
-#   x[10]  density_profile  [-]    ring density bias (-0.8..0.8, 0=uniform)
-#   x[11]  n_expansion      [int]  number of expansion rotors (0-6)
-#   x[12]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-45)
-#
 # Blade span, chord, and count are inherited from the generating rotor:
 #   blade_span  = BEM rotor radius  (same blade mould)
 #   blade_chord = 0.113 × rotor_radius  (solidity-calibrated)
@@ -28,7 +14,21 @@
 #
 # Reference: PLAN.md Phase 2.4 — v6 DE campaign
 
-const TRPT_V6_DIM = 12
+const TRPT_V6_DIM = 11
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Design vector (11 DoF):
+#   x[1]   Do_top           [m]    beam outer diameter at hub
+#   x[2]   t_over_D         [-]    wall thickness ratio
+#   x[3]   beam_aspect      [-]    elliptical b/a or airfoil t/c
+#   x[4]   Do_scale_exp     [-]    Do(r) = Do_top · (r/r_hub)^exp
+#   x[5]   r_hub            [m]    hub ring radius
+#   x[6]   r_bottom         [m]    ground ring radius
+#   x[7]   target_Lr        [-]    common L/r target
+#   x[8]   n_lines          [int]  polygon sides (3-12)
+#   x[9]   density_profile  [-]    ring density bias (-0.8..0.8, 0=uniform)
+#   x[10]  n_expansion      [int]  number of expansion rotors (0-6)
+#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-45)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Search bounds
@@ -44,7 +44,7 @@ function search_bounds_v6(
         p, beam_profile; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor bounds (vars 11-12): n_expansion, bank_angle_deg
+    # Expansion rotor bounds (vars 10-11): n_expansion, bank_angle_deg
     exp_lo = [0.0, 5.0]
     exp_hi = [6.0, 45.0]
 
@@ -69,14 +69,14 @@ function design_from_vector_v6(
     power_W::Float64=10000.0,
     v_rated::Float64=11.0,
 )
-    # Base v5 design (first 10 vars, now includes density_profile)
+    # Base v5 design (first 9 vars, knuckle mass now derived from beam geometry)
     design = design_from_vector_v5(
-        x[1:10], beam_profile, p; max_ground_radius=max_ground_radius
+        x[1:9], beam_profile, p; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor parameters (vars 11-12)
-    n_exp = round(Int, clamp(x[11], 0, 6))
-    bank_deg = clamp(x[12], 5.0, 45.0)
+    # Expansion rotor parameters (vars 10-11)
+    n_exp = round(Int, clamp(x[10], 0, 6))
+    bank_deg = clamp(x[11], 5.0, 45.0)
 
     # Derive blade geometry from BEM rotor radius (network model: each
     # rotor is sized for P/n_rotors, so the blade tip matches the rotor).

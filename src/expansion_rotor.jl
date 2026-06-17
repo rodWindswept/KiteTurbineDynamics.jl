@@ -169,7 +169,7 @@ function expansion_rotor_forces(
     tau_net  = tau_lift - tau_drag   # > 0 = driving, < 0 = braking
 
     # Effective radius from force balance at tether attachment point
-    geometry_factor = 2.0 * tan(π / n_lines)
+    geometry_factor = 2.0 * sin(π / n_lines)
     L_seg_estimate = r_nominal * 2.0   # approximate segment length
     r_eff = effective_radius(r_nominal, F_radial, T_tether, L_seg_estimate, geometry_factor)
 
@@ -193,7 +193,7 @@ at the attachment point on a polygonal ring of n_lines sides:
 
     Δr = F_radial · L_seg / (T_tether · geometry_factor)
 
-where `geometry_factor = 2 · tan(π / n_lines)`.
+where `geometry_factor = 2 · sin(π / n_lines)`.
 
 # Returns
 - `r_nominal` if F_radial ≤ 0 or T_tether ≤ 0 (no spreading)

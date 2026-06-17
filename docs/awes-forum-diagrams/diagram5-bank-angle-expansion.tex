@@ -1,20 +1,16 @@
-\documentclass{article}
-\usepackage[paperwidth=24cm,paperheight=18cm,margin=0.3cm]{geometry}
-\usepackage{tikz}
+\documentclass[tikz, border=10pt]{standalone}
 \usepackage{amsmath}
 \usetikzlibrary{calc,patterns,arrows.meta}
-\pagestyle{empty}
 \begin{document}
-\centering
 \begin{tikzpicture}[scale=0.85]
 
 % === TITLE ===
-\node[font=\bfseries\Huge, black!80] at (12.0,19.5) {Expansion Rotor Bank Angle \& Pitch Depower Risk};
+\node[font=\bfseries\Huge, black!80] at (14.0,22.2) {Expansion Rotor Bank Angle \& Pitch Depower Risk};
 
 % ============================================================
 % PANEL 1: Normal operation
 % ============================================================
-\begin{scope}[shift={(0,1.5)}]
+\begin{scope}[shift={(0,3.5)}]
   \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (12.5,17.5);
   \node[font=\bfseries\Large, black!70] at (6.0,16.8) {Normal Operation: Expansion Rotor Spreading};
 
@@ -86,15 +82,9 @@
 \end{scope}
 
 % ============================================================
-% CENTER ARROW
-% ============================================================
-\draw[->, line width=4pt, >=stealth, red!40!black] (6.9,10.5) -- (6.9,7.5);
-\node[font=\bfseries\Large, red!40!black] at (6.9,9.5) {Pitch Depower};
-
-% ============================================================
 % PANEL 2: Pitch depower -- back-wind risk
 % ============================================================
-\begin{scope}[shift={(14,1.5)}]
+\begin{scope}[shift={(16,3.5)}]
   \fill[red!2, rounded corners=6pt] (-0.5,-0.5) rectangle (12.5,17.5);
   \node[font=\bfseries\Large, red!50!black] at (6.0,16.8) {Pitch Depower: Back-Wind Risk};
 
@@ -163,13 +153,25 @@
 \end{scope}
 
 % ============================================================
-% BOTTOM STRIP: Mitigation
+% CENTER ARROW (drawn after panels to be on top)
 % ============================================================
-\fill[black!3, draw=gray!30, rounded corners=5pt] (-0.5,0.0) rectangle (26.5,1.2);
-\node[font=\small\bfseries, black!70] at (13.0,0.8) {Mitigation:};
-\node[font=\small, align=center, black!60] at (13.0,0.4) {
-  Lower bank angle (20--30$^\circ$) provides margin $\cdot$ Symmetric/reflexed airfoil tolerates reversed flow $\cdot$ Dynamic ODE validation needed before final bank angle selection
-};
+\draw[->, line width=4pt, >=stealth, red!40!black] (14.0,12.5) -- (14.0,9.5);
+\node[font=\bfseries\Large, red!40!black, fill=white, inner sep=3pt, rounded corners=2pt] at (14.0,11.0) {Pitch Depower};
+
+% ============================================================
+% BOTTOM STRIP: Limitation + Mitigation
+% ============================================================
+% STATIC MODEL LIMITATION callout
+\fill[red!8, draw=red!50!black, line width=1.5pt, rounded corners=5pt] (-0.5,0.3) rectangle (28.5,2.4);
+\node[font=\bfseries\large, red!60!black] at (14.0,1.9) {!! STATIC MODEL LIMITATION};
+\node[font=\small, align=center, red!50!black] at (14.0,1.1) {
+  The DE optimiser uses static structural sizing — it assumes $F_r$ is always outward. It cannot penalise
+  a design for failing during a transient pitch depower manoeuvre. \textbf{Dynamic ODE simulation is required.}};
+
+% Mitigation below
+\node[font=\small\bfseries, black!70] at (14.0,-0.4) {Mitigation options:};
+\node[font=\small, align=center, black!60] at (14.0,-0.9) {
+  Lower bank angle (20–30$^\circ$) $\cdot$ Symmetric/reflexed airfoils for reversed flow $\cdot$ Dynamic ODE validation $\cdot$ Conservative 20–30$^\circ$ for prototyping until validated};
 
 \end{tikzpicture}
 \end{document}

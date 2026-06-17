@@ -205,10 +205,23 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     build_status_obs   = Observable("")              # shown during transitions
     _is_safe()         = (system_state_obs[] == :idle)
 
-    # ── Figure — dark theme ───────────────────────────────────────────────────
-    set_theme!(theme_dark())
-    fig = Figure(size=(1600, 950))
+    # ── Figure — A1 Instrument dark theme ─────────────────────────────────────
+    # Palette: near-black background, cyan accent, light-grey ink
+    A1_BG        = RGBf(0.039, 0.047, 0.063)
+    A1_PANEL     = RGBf(0.071, 0.086, 0.114)
+    A1_EDGE      = RGBf(0.133, 0.165, 0.208)
+    A1_INK       = RGBf(0.910, 0.933, 0.965)
+    A1_INK_DIM   = RGBf(0.604, 0.655, 0.714)
+    A1_ACCENT    = RGBf(0.224, 0.816, 0.847)
+    A1_GREEN     = RGBf(0.2, 0.8, 0.3)
+    A1_ORANGE    = RGBf(0.95, 0.55, 0.1)
+    A1_RED       = RGBf(0.95, 0.2, 0.2)
 
+    set_theme!(theme_dark())
+    fig_w, fig_h = 1400, 850  # fits 15" laptop screens
+    fig = Figure(size=(fig_w, fig_h), backgroundcolor=A1_BG)
+
+    # ── Main content: controls | 3D viewport | HUD ────────────────────────────
     ctrl = GridLayout(fig[1, 1])
     hud  = GridLayout(fig[1, 3])
     colsize!(fig.layout, 1, Fixed(300))
@@ -497,6 +510,35 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Fixed column width prevents label jitter as numbers change width
     colsize!(hud, 1, Fixed(350))
 
+    # ── Cockpit telemetry — opens as a separate resizable window ──────────────
+    strip_power    = Observable("0.00 kW")
+    strip_rpm      = Observable("0 rpm")
+    strip_fos      = Observable("∞")
+    strip_fos_col  = Observable(A1_GREEN)
+    strip_util     = Observable("0%")
+    strip_util_col = Observable(A1_GREEN)
+    strip_wind     = Observable("0.0 m/s")
+    strip_time     = Observable("0.00 s")
+
+    cockpit_fig = Figure(size=(900, 110), backgroundcolor=A1_BG)
+    cp = GridLayout(cockpit_fig[1, 1])
+    Label(cp[2, 1], "POWER kW";       fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 2], "ROTOR rpm";      fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 3], "TETHER FoS";     fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 4], "RING BUCKLING";  fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 5], "WIND m/s";       fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 6], "ELEVATION";      fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[2, 7], "TIME";           fontsize=10, color=A1_INK_DIM, halign=:left)
+    Label(cp[1, 1], strip_power;    fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
+    Label(cp[1, 2], strip_rpm;      fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
+    Label(cp[1, 3], strip_fos;      fontsize=28, font=:bold, color=strip_fos_col,   halign=:left, tellwidth=false)
+    Label(cp[1, 4], strip_util;     fontsize=28, font=:bold, color=strip_util_col,  halign=:left, tellwidth=false)
+    Label(cp[1, 5], strip_wind;     fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
+    Label(cp[1, 6], Observable(@sprintf("%.0f°", rad2deg(p.elevation_angle))); fontsize=28, font=:bold, color=A1_INK, halign=:left, tellwidth=false)
+    Label(cp[1, 7], strip_time;     fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
+    for i in 1:7; colsize!(cp, i, Fixed(120)); end
+    colsize!(cp, 7, Fixed(160))
+
     hr = Ref(0)
     hnr!() = (hr[] += 1; hr[])
 
@@ -505,106 +547,61 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                               justification=:left, kw...)
     fos_str(v) = (isinf(v) || isnan(v) || v > 9999) ? "   ∞" : @sprintf("%6.1f", v)
 
-    # ── SECTION A: Live Telemetry ─────────────────────────────────────────────
-    hlbl("── Live Telemetry ─────────────────────────"; fontsize=13, font=:bold)
+    # ── Sparkline buffers (circular, last 80 frames) ───────────────────────
+    SPARK_N = 80
+    spark_power   = Observable(fill(NaN, SPARK_N))
+    spark_tension = Observable(fill(NaN, SPARK_N))
+    spark_ring    = Observable(fill(NaN, SPARK_N))
+    spark_idx     = Ref(1)
 
-    # Time / frame indicator — shows simulated time if available
-    t_lbl = hlbl(isnothing(times) ? "Frame     1 / $(n_frames)" :
-                                     "t =     0.00 s  (frame     1 / $(n_frames))")
+    # ── SECTION A: Compact Live Telemetry ─────────────────────────────────
+    hlbl("── LIVE ─────────────────────────────────────"; fontsize=12, font=:bold, color=A1_ACCENT)
 
-    # Wind speed at hub altitude (Hellmann shear applied)
-    v_lbl = hlbl("Wind at hub    V =    0.00 m/s")
+    # Power sparkline
+    ax_pwr = Axis(hud[hnr!(), 1]; height=50, width=330,
+                  backgroundcolor=A1_PANEL, xgridcolor=A1_EDGE, ygridcolor=A1_EDGE,
+                  xticklabelsize=0, yticklabelsize=8, ytickcolor=A1_INK_DIM,
+                  spinewidth=0.5, xtrimspine=true, ytrimspine=true)
+    lines!(ax_pwr, 1:SPARK_N, spark_power; color=A1_ACCENT, linewidth=1.5)
+    pwr_readout = hlbl("P =   0.00 kW  (  0% rated)"; fontsize=10, color=A1_INK_DIM)
 
-    # ── SECTION L: Lift Device Status (Moved to top for visibility) ─────────────
-    hlbl("── Lift Device ───────────────────────────"; fontsize=13, font=:bold)
+    # Tether tension sparkline
+    ax_ten = Axis(hud[hnr!(), 1]; height=50, width=330,
+                  backgroundcolor=A1_PANEL, xgridcolor=A1_EDGE, ygridcolor=A1_EDGE,
+                  xticklabelsize=0, yticklabelsize=8, ytickcolor=A1_INK_DIM,
+                  spinewidth=0.5, xtrimspine=true, ytrimspine=true)
+    lines!(ax_ten, 1:SPARK_N, spark_tension; color=:orange, linewidth=1.5)
+    hlines!(ax_ten, [Float64(TETHER_SWL)]; color=A1_RED, linestyle=:dash, linewidth=1)
+    ten_readout = hlbl("T =      0 N  ·  FoS  ∞"; fontsize=10, color=A1_INK_DIM)
+
+    # Ring utilisation bar
+    ax_ring = Axis(hud[hnr!(), 1]; height=22, width=330,
+                   backgroundcolor=A1_PANEL,
+                   xticklabelsize=0, yticklabelsize=0,
+                   spinewidth=0, xgridvisible=false, ygridvisible=false,
+                   xautolimitmargin=(0,0), yautolimitmargin=(0,0))
+    ring_bar_val = Observable(0.0)
+    barplot!(ax_ring, @lift([$ring_bar_val]); color=strip_util_col,
+             direction=:x, width=20, strokewidth=0)
+    xlims!(ax_ring, 0, 1.05)
+    ring_readout = hlbl("Ring util   0.0%  ·  FoS  ∞"; fontsize=10, color=A1_INK_DIM)
+
+    # ── Lift Device Status ─────────────────────────────────────────────────
+    hlbl("── LIFT DEVICE ────────────────────────────"; fontsize=12, font=:bold, color=A1_ACCENT)
     lift_status_lbl = hlbl("Type: Rotary  |  T_lift =      0 N")
     lift_cl_lbl     = hlbl("R = 3.7 m  |  β = 30.0°")
-    # T_top_avg: physical tension in topmost TRPT segment (sky-anchor → hub).
-    # This is the real structural check during Pitch Depower — must stay above baseline.
     lift_ttop_lbl   = hlbl("T_top (phys) =      --- N"; color=:lightcyan)
-    hlbl("(top TRPT tethers average tension)"; fontsize=10, color=:grey70)
     lift_line_lbl   = hlbl("Lift line tension =      0 N"; color=to_color(:cyan))
     backline_lbl    = hlbl("Backline payout =    0.0 m  |  T_back =      0 N"; color=to_color(:coral))
     bridles_lbl     = hlbl("Bridles (gold) avg =      0 N"; color=to_color(:gold))
-    lift_depower_lbl   = hlbl(""; fontsize=10, color=:lawngreen)
-    hlbl(""; fontsize=6)
-
-    # Rotor (hub) angular velocity and RPM
-    # Purpose: primary rotational state of the kite/rotor assembly
-    omega_lbl = hlbl("Rotor (hub)    ω =   0.000 rad/s  (  0.0 rpm)")
-
-    # PTO (ground ring) angular velocity — actual generator shaft speed
-    # Purpose: what the generator sees; differs from hub by TRPT torsional slip
-    pto_lbl = hlbl("PTO (ground)   ω =   0.000 rad/s  (  0.0 rpm)")
-
-    # Electrical output power = τ_gen × ω_PTO = k_mppt × ω_PTO³
-    # Purpose: primary performance metric
-    p_lbl = hlbl("Output power   P =   0.00 kW  (  0% rated)")
-
-    # Mechanical brake status indicator
-    brake_status_lbl = hlbl("PTO Brake      =  OFF"; color=:grey60)
-
-    # Tip speed ratio λ = ω_hub × R / V_hub
-    # Purpose: operating point on the Cp–λ curve; optimal ~4.1
-    tsr_lbl = hlbl("Tip speed ratio  λ =   0.00  (opt ≈ 4.1)")
-
-    # TRPT total twist: accumulated α from ground ring to hub
-    # Purpose: torsional loading indicator; large twist → rope near failure
-    twist_lbl = hlbl("TRPT twist  Δα =   0.0°  (hub – PTO)")
-
-    # Hub altitude — key indicator for kite drop / TRPT sag scenarios
-    hub_z0_ref = Ref{Float64}(NaN)   # reference Z from frame 1; NaN = not yet set; reset each rerun
-    hub_z_lbl  = hlbl("Hub altitude  Z =   0.0 m  (Δ = ±  0.0 m)")
-
-    # Fixed operating parameters (update only on frame changes for β; others static)
-    elev_lbl  = hlbl(@sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
-                               rad2deg(p.elevation_angle), p.p_rated_w/1000.0))
-    kite_lbl  = hlbl(@sprintf("Kite  CL = %4.2f  CD = %4.2f  |  A = %.1f m²",
-                               sys.kite.CL, sys.kite.CD, sys.kite.area))
-
-    # Pitch depower phase indicator — updated during simulation
     depower_phase_obs = Observable("")
+    lift_depower_lbl   = hlbl(""; fontsize=10, color=:lawngreen)
 
-    # ── SECTION B: Torque & Power Balance ────────────────────────────────────
-    hlbl(""; fontsize=6)
-    hlbl("── Torque & Power Balance ──────────────────"; fontsize=13, font=:bold)
+    # Hub altitude reference (reset each rerun, used by _rerun!)
+    hub_z0_ref = Ref{Float64}(NaN)
 
-    # Aero torque at hub: τ_aero = P_aero / ω_hub
-    # Purpose: driving torque from wind; must exceed generator load for sustained rotation
-    tau_aero_lbl = hlbl("τ_aero  =      0 N·m   (wind drives rotor)")
-
-    # Generator (MPPT) torque on PTO: τ_gen = k_mppt × ω_PTO²
-    # Purpose: braking load; set by MPPT law to maximise power at all wind speeds
-    tau_gen_lbl  = hlbl("τ_gen   =      0 N·m   (MPPT brake on PTO)")
-
-    # Angular velocity difference between hub and PTO
-    # Purpose: non-zero Δω = torsional "slip"; needed to transmit torque but
-    #          large Δω causes damper heating and structural stress
-    delta_omega_lbl = hlbl("Δω (hub−PTO)  =   0.000 rad/s")
-
-    # ── SECTION C: Structural Loads ───────────────────────────────────────────
-    hlbl(""; fontsize=6)
-    hlbl("── Structural Loads (this frame) ───────────"; fontsize=13, font=:bold)
-
-    # Tether max tension vs SWL — measured at mid sub-segment (avoids ring attachment spikes)
-    hlbl("Tether tension  (SWL = $(Int(TETHER_SWL)) N)"; fontsize=11, color=:steelblue)
-    t_frame_lbl = hlbl("  max      0 N  ·  FoS      ∞")
-    Colorbar(hud[hnr!(), 1]; colormap=tension_cmap, limits=(0.0, Float64(TETHER_SWL)),
-             vertical=false, height=14, tellheight=true, tellwidth=false,
-             label="0 N → $(Int(TETHER_SWL)) N SWL",
-             labelsize=9, ticksize=4, ticklabelsize=8)
-
-    # Ring polygon column buckling — fraction of Euler column P_crit for CFRP design tube
-    hlbl("Ring column buckling  (CFRP tube, FoS_design = $(Int(FOS_DESIGN)))"; fontsize=11, color=:firebrick)
-    c_frame_lbl = hlbl("  max util   0.0%  ·  FoS      ∞")
-    Colorbar(hud[hnr!(), 1]; colormap=ring_cmap, limits=(0.0, 1.0),
-             vertical=false, height=14, tellheight=true, tellwidth=false,
-             label="utilisation:  0 (safe)  →  1.0 (buckle)",
-             labelsize=9, ticksize=4, ticklabelsize=8)
-
-    # Max rope sag (single line, most-sagged segment)
-    # Purpose: sag indicates gravity loading vs rope tension; large sag → low tension
-    sag_lbl = hlbl("Max rope sag   0.0 mm  (seg --)  |  slack: 0 lines")
+    # ── Compact structural + warnings ──────────────────────────────────────
+    sag_lbl = hlbl("Sag 0.0 mm  |  slack: 0 lines"; fontsize=10, color=A1_INK_DIM)
 
     # Warnings — only visible when condition is active
     # TORSIONAL COLLAPSE: hub twist > 270° (nearing rope-wrap limit)
@@ -1084,40 +1081,33 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         nf_now       = length(frames_obs[])
         tr           = times_ref[]
         t_hud        = sf.t
-        t_lbl.text[] = isempty(tr) ?
-            @sprintf("Frame %5d / %d", fi, nf_now) :
-            @sprintf("t = %8.2f s  (frame %5d / %d)", t_hud, fi, nf_now)
-        v_lbl.text[]        = @sprintf("Wind at hub    V = %6.2f m/s", V_hub)
-        omega_lbl.text[]    = @sprintf("Rotor (hub)    ω = %7.3f rad/s  (%6.1f rpm)",
-                                        omega_hub, rpm_hub)
-        pto_lbl.text[]      = @sprintf("PTO (ground)   ω = %7.3f rad/s  (%6.1f rpm)",
-                                        omega_gnd, rpm_gnd)
-        p_lbl.text[]        = @sprintf("Output power   P = %6.2f kW  (%3.0f%% rated)",
-                                        P_kw, pct_rated)
-        if sf.brake_engaged
-            brake_status_lbl.text[] = "PTO Brake      =  LOCKED (ENGAGED)"
-            brake_status_lbl.color[] = to_color(:red)
-        else
-            brake_status_lbl.text[] = "PTO Brake      =  OFF"
-            brake_status_lbl.color[] = to_color(:grey60)
+
+        # ── Cockpit strip updates ────────────────────────────────────────────
+        strip_power[]    = @sprintf("%.1f kW", P_kw)
+        strip_rpm[]      = @sprintf("%.0f rpm", rpm_hub)
+        strip_wind[]     = @sprintf("%.1f m/s", V_hub)
+        strip_time[]     = @sprintf("%.1f s", t_hud)
+
+        # ── Sparkline data push ────────────────────────────────────────────
+        let buf_p = spark_power[], buf_t = spark_tension[], buf_r = spark_ring[]
+            i = spark_idx[]
+            buf_p[i] = P_kw
+            buf_t[i] = sf.T_max
+            buf_r[i] = sf.ring_max_util * 100
+            spark_power[] = buf_p; spark_tension[] = buf_t; spark_ring[] = buf_r
+            spark_idx[] = mod1(i + 1, SPARK_N)
         end
-        tsr_lbl.text[]      = @sprintf("Tip speed ratio  λ = %5.2f  (opt ≈ 4.1)", tsr)
-        twist_lbl.text[]    = @sprintf("TRPT twist  Δα = %7.1f°  (hub – PTO)", Δα_deg)
 
-        # Hub altitude — resolve reference on first frame of each run
-        if isnan(hub_z0_ref[]);  hub_z0_ref[] = z_hub_now;  end
-        hub_z_lbl.text[] = @sprintf("Hub altitude  Z = %5.1f m  (Δ = %+.2f m)",
-                                     z_hub_now, isnan(hub_z0_ref[]) ? 0.0 : z_hub_now - hub_z0_ref[])
-
-        # Live shaft elevation from actual hub node position.
-        # p.elevation_angle is the design setpoint (30°); β_actual tracks
-        # pitch-depower-induced tilt in real time.
-        hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
-        β_actual = atan(hub_ctr[3], hub_ctr[1])
-        elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  (design %.0f°)  |  Rated %.0f kW",
-                                        rad2deg(β_actual), rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
+        # ── Sparkline readouts ─────────────────────────────────────────────
+        pwr_readout.text[]  = @sprintf("P = %6.2f kW  (%3.0f%% rated)", P_kw, pct_rated)
+        ten_readout.text[]  = @sprintf("T = %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
+        ring_bar_val[]      = sf.ring_max_util
+        ring_readout.text[] = @sprintf("Ring util %4.1f%%  ·  FoS %s",
+                                        sf.ring_max_util*100.0, fos_str(sf.fos_ring))
 
         # ── Lift Device Telemetry ──────────────────────────────────────────
+        hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
+        β_actual = atan(hub_ctr[3], hub_ctr[1])
         ld_hud   = lift_device_obs[]
         if ld_hud !== nothing
             # Compute T_lift LIVE (not from pre-captured SimFrame which used lift_device=nothing)
@@ -1252,17 +1242,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             bridles_lbl.text[] = @sprintf("Bridles (gold) avg = %5.0f N", T_bridles_avg)
         end
 
-        # ── Torque & Power Balance ────────────────────────────────────────────
-        tau_aero_lbl.text[]     = @sprintf("τ_aero  = %7.0f N·m   (wind drives rotor)", sf.tau_aero)
-        tau_gen_lbl.text[]      = @sprintf("τ_gen   = %7.0f N·m   (MPPT brake on PTO)", sf.tau_gen)
-        delta_omega_lbl.text[]  = @sprintf("Δω (hub−PTO)  = %8.4f rad/s", sf.delta_omega)
+        # ── Compact structural + warnings ─────────────────────────────────
+        sag_lbl.text[]     = @sprintf("Sag %4.1f mm  |  slack: %d lines",
+                                        sf.max_sag_mm, sf.n_slack)
 
-        # ── Structural ───────────────────────────────────────────────────────
-        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
-        c_frame_lbl.text[] = @sprintf("  max util %4.1f%%  ·  FoS %s",
-                                        sf.ring_max_util*100.0, fos_str(sf.fos_ring))
-        sag_lbl.text[]     = @sprintf("Max rope sag %5.1f mm  (seg %2d)  |  slack: %d lines",
-                                        sf.max_sag_mm, sf.sag_seg, sf.n_slack)
+        # Cockpit FoS / ring util colour-coded
+        strip_fos[]  = fos_str(sf.fos_tether)
+        strip_util[] = @sprintf("%.0f%%", sf.ring_max_util * 100.0)
+        fv = sf.fos_tether
+        strip_fos_col[]  = fv >= 3.0 ? A1_GREEN : (fv >= 1.8 ? A1_ORANGE : A1_RED)
+        ru = sf.ring_max_util
+        strip_util_col[] = ru <= 0.5 ? A1_GREEN : (ru <= 0.8 ? A1_ORANGE : A1_RED)
 
         # Warnings
         warn_tors.text[]  = sf.torsional_overtwist ? "!! TORSIONAL OVERTWIST" : ""
@@ -1693,5 +1683,5 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── Initial notify ────────────────────────────────────────────────────────
     notify(frame_obs)
-    return (fig, config_changed_obs)
+    return (fig, cockpit_fig, config_changed_obs)
 end

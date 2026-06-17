@@ -58,7 +58,7 @@ end
     # r_bottom at exactly the limit → feasibility must not be blocked by constraint
     d_ok = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                          p.trpt_hub_radius, OPT_MAX_GROUND_RADIUS, 1.0,
-                         p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
+                         p.tether_length, p.n_lines)
     r_ok = evaluate_design(d_ok; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle)
     # Constraint itself should not fire — only structural FoS decides feasibility
     @test r_ok.constraint_msg != "r_bottom exceeds max_ground_radius"
@@ -66,7 +66,7 @@ end
     # r_bottom above the limit → explicitly infeasible from deployment constraint
     d_big = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                           p.trpt_hub_radius, OPT_MAX_GROUND_RADIUS + 0.1, 1.0,
-                          p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
+                          p.tether_length, p.n_lines)
     r_big = evaluate_design(d_big; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle)
     @test !r_big.feasible
     @test r_big.constraint_msg == "r_bottom exceeds max_ground_radius"
@@ -79,7 +79,7 @@ end
     p = params_10kw()
     d = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                       p.trpt_hub_radius, 0.6, 1.0,
-                      p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
+                      p.tether_length, p.n_lines)
     # Use omega_rotor=0 to isolate the geometric FoS uniformity property.
     # Centripetal off-loading (F = m·ω²·r) grows as r⁴ toward the hub, which
     # creates a FoS gradient even with constant L/r; that's correct physics but
@@ -101,7 +101,7 @@ end
 
     d_v4 = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                          p.trpt_hub_radius, r_bot, 1.0,
-                         p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
+                         p.tether_length, p.n_lines)
 
     # Equivalent v2 with same boundary radii and uniform spacing
     taper_ratio = r_bot / p.trpt_hub_radius
@@ -165,7 +165,7 @@ end
     @test d.r_bottom <= hi[6]
     @test d.target_Lr >= lo[7]
     @test d.target_Lr <= hi[7]
-    @test d.n_lines in 3:8
+    @test d.n_lines in 3:12
 
     # objective_v4 returns a finite value for the midpoint
     f = objective_v4(x, PROFILE_CIRCULAR, p;
@@ -178,12 +178,9 @@ end
     p = params_10kw()
     d = TRPTDesignV4(PROFILE_CIRCULAR, 0.040, 0.05, 1.0, 0.5,
                       p.trpt_hub_radius, 0.7, 1.0,
-                      p.tether_length, p.n_lines, OPT_KNUCKLE_MASS_KG)
+                      p.tether_length, p.n_lines)
     r = evaluate_design(d; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle)
     @test r.mass_total_kg > 0
     @test r.mass_beams_kg > 0
-    zs, rs, n_int = ring_spacing_v4(d.r_hub, d.r_bottom, d.tether_length, d.target_Lr)
-    n_rings_total = length(rs)
-    expected_knuckles = d.knuckle_mass_kg * d.n_lines * n_rings_total
-    @test r.mass_knuckles_kg ≈ expected_knuckles atol=1e-9
+    @test r.mass_knuckles_kg > 0
 end

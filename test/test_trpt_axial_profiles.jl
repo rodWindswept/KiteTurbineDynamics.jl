@@ -71,7 +71,7 @@ end
     r = evaluate_design(d; r_rotor=p.rotor_radius, elev_angle=p.elevation_angle)
     @test r.mass_total_kg > 0
     @test r.mass_beams_kg > 0
-    @test r.mass_knuckles_kg ≈ d.knuckle_mass_kg * d.n_lines * (d.n_rings + 2)
+    @test r.mass_knuckles_kg > 0  # knuckle mass now derived from beam geometry
     @test length(r.fos_per_ring) == d.n_rings + 2
 end
 

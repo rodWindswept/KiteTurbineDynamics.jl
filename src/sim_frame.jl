@@ -155,7 +155,7 @@ function capture_frame(
         π *
         sys.rotor.radius^2 *
         cp_at_tsr(lambda_t) *
-        cos(p.elevation_angle)^3
+        cos(p.elevation_angle)^2.65
     tau_aero = P_aero / max(abs(omega_hub), 0.5)
 
     # ── Structural ────────────────────────────────────────────────────────

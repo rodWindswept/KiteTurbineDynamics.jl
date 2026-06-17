@@ -22,7 +22,7 @@
 #   • n_polygon_sides = n_lines   (pentagon = 5, hexagon = 6, …)
 #   • n_lines         = n_lines   (tether lines running the axial length)
 #   • n_blades        = n_lines   (one blade per vertex on the hub ring)
-# The structural pentagon analysis already consumes n_lines through tan(π/n_lines)
+# The structural pentagon analysis already consumes n_lines through sin(π/n_lines)
 # and the blade centripetal term now consumes the same n_lines through m_blade_total
 # distributed across n_lines hub vertices. The three quantities must always remain
 # equal in this model.
@@ -31,7 +31,7 @@
 # Each vertex of radius r spinning at ω_rotor experiences an outward centrifugal
 # force m_lumped · ω² · r (reactive in the rotating frame). This force *subtracts*
 # from the inward force delivered by line tension, so pentagon-beam compression is
-# N_comp = max(0, (F_inward − F_centripetal)) / (2 tan(π/n))
+# N_comp = max(0, (F_inward − F_centripetal)) / (2 sin(π/n))
 # At rated ω ≈ 20 rad/s and peak v_sizing the blade mass on the hub ring produces
 # hundreds of newtons of outward force, so this term is structurally non-negligible.
 

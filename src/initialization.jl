@@ -720,7 +720,7 @@ function settle_to_operational_state(
                 π *
                 sys.rotor.radius^2 *
                 cp_at_tsr(lambda) *
-                cos(p.elevation_angle)^3
+                cos(p.elevation_angle)^2.65
             P_gen = p.k_mppt * w^3
             if P_aero > P_gen
                 ω_eq = w
