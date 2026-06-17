@@ -89,19 +89,20 @@ The V6.2 optimum is a constraint intersection, not a smooth valley. Key narrativ
 ## Panel 4: n_expansion (bottom-right)
 - `shift={(19.5, 0)}`, frame 16.5×16.5
 - Title: "4. Expansion Stations: n_exp=1 Optimal"
-- Sub: "Varied n_exp∈[0,6] AND blade radius∈[0,15]m — chose one large rotor over many small ones"
+- Sub: "Varied n_exp∈[0,6] — expansion blades inherit span, chord, and count from main BEM rotor. Only n_exp and bank_angle are free."
 
 - Grey search bar at y=10.0: [0,6], green dot at n_exp=1, grey dots at others
 - n_exp=0 shown: "no expansion — heavier"
 - Mini rotor icons: hub only (n_exp=0), hub+1 ring (n_exp=1, highlighted), hub+3 rings (n_exp=3)
 
 - Text at y=5.5: `\footnotesize` — "Each extra station adds 3 blades + knuckle hardware + parasitic drag penalty"
-- Text at y=4.5: `\footnotesize` — "At n=12, per-beam compression is low enough that one large hub rotor (blade tip=10.6m) provides sufficient F_radial for the entire shaft"
+- Text at y=4.5: `\footnotesize` — "At n=12, per-beam compression is low enough that one hub rotor provides sufficient F_radial for the entire shaft"
 - Text at y=3.5: `\footnotesize` — "The old V6 at n=8 needed 3 rotors because higher per-beam compression required more radial spreading"
+- Text at y=2.5: `\footnotesize\itshape` — "Limitation: expansion blades use the same mould as the main rotor. Blade span was not a free parameter — the optimizer could not try shorter/longer expansion blades."
 
 - Disclosure at y=0.5: `\tiny black!40, text width=14cm`:
-  "Single-parameter sweep infeasible. Optimizer freely explored 11-D space. n_exp=0 (no expansion)\\\
-  is heavier — some radial spreading is required for feasibility."
+  "Single-parameter sweep infeasible. Optimizer freely explored 11-D space. n_exp=0 (no expansion)\\
+  is heavier — some radial spreading is required for feasibility. Blade length remains an unexplored DoF."
 
 ## Verification
 ```bash

@@ -140,7 +140,7 @@
 \begin{scope}[shift={(19.5,0)}]
   \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,17.0);
   \node[font=\bfseries\Large, black!70] at (8.0,16.3) {4. Expansion Stations: $n_{\text{exp}}{=}1$ Optimal};
-  \node[font=\small, black!50] at (8.0,15.7) {Varied $n_{\text{exp}}{\in}[0,6]$ AND blade radius${\in}[0,15]$m -- chose one large rotor over many small ones};
+  \node[font=\small, black!50] at (8.0,15.7) {Varied $n_{\text{exp}}{\in}[0,6]$ -- expansion blades inherit span, chord, and count from main BEM rotor. Only $n_{\text{exp}}$ and bank angle are free.};
 
   \draw[gray!20, line width=8pt] (1.5,10.0) -- (14.5,10.0);
   \foreach \n/\x in {0/1.5,1/3.5,2/5.5,3/7.5,4/9.5,5/11.5,6/13.5} {
@@ -149,7 +149,7 @@
 
   \fill[green!50!black] (3.5,10.0) circle (6pt);
   \draw[green!50!black, line width=1.5pt] (3.5,10.0) circle (9pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (3.5,11.2) {$n_{\text{exp}}{=}1$, blade tip = 10.6\,m};
+  \node[font=\bfseries\footnotesize, green!50!black] at (3.5,11.2) {$n_{\text{exp}}{=}1$};
 
   \fill[gray!50] (1.5,10.0) circle (4pt);
   \node[font=\tiny, gray!50] at (1.5,8.8) {no expansion\\heavier};
@@ -169,16 +169,22 @@
     \draw[gray!50, line width=1pt] (0.3:0.5) circle;
   \end{scope}
 
-  \node[font=\footnotesize, blue!70!black, align=center] at (8.0,4.0) {
+  \node[font=\footnotesize, blue!70!black, align=center] at (8.0,4.2) {
     Each extra station adds 3 blades + knuckle hardware + parasitic drag.\\
-    At $n{=}12$, per-beam compression is low enough that one large hub rotor\\
-    (blade tip = 10.6\,m) provides sufficient $F_{\text{radial}}$ for the entire shaft.\\
-    The old V6 at $n{=}8$ needed 3 rotors because higher per-beam compression\\
-    required more radial spreading.};
+    At $n{=}12$, per-beam compression is low enough that one hub rotor\\
+    provides sufficient $F_{\text{radial}}$ for the entire shaft.\\
+    The old V6 at $n{=}8$ needed 3 rotors because higher per-beam\\
+    compression required more radial spreading.};
+
+  \node[font=\footnotesize\itshape, black!50, align=center] at (8.0,2.3) {
+    Limitation: expansion blades use the same mould as the main rotor.\\
+    Blade span was not a free parameter -- the optimizer could not\\
+    try shorter or longer expansion blades.};
 
   \node[font=\tiny, black!40, align=left, text width=14cm] at (8.0,0.5) {
     Single-parameter sweep infeasible. Optimizer freely explored 11-D space.\\
-    $n_{\text{exp}}{=}0$ (no expansion) is heavier -- some radial spreading is required for feasibility.};
+    $n_{\text{exp}}{=}0$ (no expansion) is heavier -- some radial spreading is required\\
+    for feasibility. Blade length remains an unexplored degree of freedom.};
 \end{scope}
 
 \end{tikzpicture}
