@@ -350,13 +350,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── Expansion rotor blades ──────────────────────────────────────────────
     if !isempty(sys.expansion_rotors)
+        ground_gid = sys.ring_ids[1]  # bottom ring
         for (ei, er) in enumerate(sys.expansion_rotors)
             ri = er.ring_idx
             if ri < 1 || ri > sys.n_ring; continue; end
             ring_gid = sys.ring_ids[ri]
             ring_node = sys.nodes[ring_gid]
             ring_R = ring_node.radius
-            # Blade extends from ring radius outward, banked down
+            # Blade extends from ring radius outward, banked down along shaft
             r_inner_exp = ring_R
             r_outer_exp = ring_R + er.blade_tip_radius
             bank_rad = deg2rad(er.bank_angle_deg)
@@ -364,12 +365,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 exp_blade_obs = @lift begin
                     u    = $u_obs
                     ctr  = u[3*(ring_gid-1)+1 : 3*ring_gid]
+                    hub_ctr = u[3*($hub_gid-1)+1 : 3*$hub_gid]
+                    gnd_ctr = u[3*(ground_gid-1)+1 : 3*ground_gid]
                     α    = u[6N + ri]
                     φ    = α + (b-1) * (2π / er.n_blades)
                     pp1, pp2 = _perp_fn(u)
                     r_dir = cos(φ) .* pp1 .+ sin(φ) .* pp2
-                    # Banked downward: radial component + axial component
-                    bank_dir = cos(bank_rad) .* r_dir .- sin(bank_rad) .* [0,0,1]
+                    # Shaft direction: hub → ground (downward)
+                    shaft_dir = normalize(gnd_ctr .- hub_ctr)
+                    # Bank blade along shaft axis: radial component + downward shaft component
+                    bank_dir = cos(bank_rad) .* r_dir .+ sin(bank_rad) .* shaft_dir
                     p_inner = ctr .+ r_inner_exp .* r_dir
                     p_outer = ctr .+ r_outer_exp .* bank_dir
                     ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
