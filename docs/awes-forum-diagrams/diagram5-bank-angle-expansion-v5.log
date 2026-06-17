@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.3.6)  17 JUN 2026 21:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.3.6)  17 JUN 2026 17:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**diagram3-mass-scaling-v4.tex
-(./diagram3-mass-scaling-v4.tex
+**diagram5-bank-angle-expansion-v5.tex
+(./diagram5-bank-angle-expansion-v5.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -306,11 +306,7 @@ File: pgfmodulematrix.code.tex 2014-07-01 v0.0 (0.0)
 (/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarytopaths.co
 de.tex
 File: tikzlibrarytopaths.code.tex 2014-07-01 v0.0 (0.0)
-)))
-(/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarycalc.code.
-tex
-File: tikzlibrarycalc.code.tex 2014-07-01 v0.0 (0.0)
-) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+))) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2023/05/13 v2.17o AMS math features
 \@mathmargin=\skip50
 
@@ -400,13 +396,30 @@ Package: iftex 2022/02/03 v1.0f TeX engine tests
 \Gm@layoutvoffset=\dimen265
 \Gm@dimlist=\toks35
 )
+(/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarycalc.code.
+tex
+File: tikzlibrarycalc.code.tex 2014-07-01 v0.0 (0.0)
+)
+(/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarypatterns.c
+ode.tex
+File: tikzlibrarypatterns.code.tex 2014-07-01 v0.0 (0.0)
+ (/home/rod/texmf/tex/generic/libraries/pgflibrarypatterns.code.tex
+File: pgflibrarypatterns.code.tex 2014-07-01 v0.0 (0.0)
+))
+(/home/rod/texmf/tex/generic/libraries/pgflibraryarrows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2014-07-01 v0.0 (0.0)
+\pgfarrowinset=\dimen266
+\pgfarrowlength=\dimen267
+\pgfarrowwidth=\dimen268
+\pgfarrowlinewidth=\dimen269
+)
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count297
 \l__pdf_internal_box=\box64
 )
-(./diagram3-mass-scaling-v4.aux)
-\openout1 = `diagram3-mass-scaling-v4.aux'.
+(./diagram5-bank-angle-expansion-v5.aux)
+\openout1 = `diagram5-bank-angle-expansion-v5.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
@@ -426,13 +439,13 @@ LaTeX Font Info:    ... okay on input line 7.
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count298
-\scratchdimen=\dimen266
+\scratchdimen=\dimen270
 \scratchbox=\box65
 \nofMPsegments=\count299
 \nofMParguments=\count300
 \everyMPshowfont=\toks36
 \MPscratchCnt=\count301
-\MPscratchDim=\dimen267
+\MPscratchDim=\dimen271
 \MPnumerator=\count302
 \makeMPintoPDFobject=\count303
 \everyMPtoPDFconversion=\toks37
@@ -453,15 +466,15 @@ e
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(14.22636pt, 995.84648pt, 14.22636pt)
-* v-part:(T,H,B)=(14.22636pt, 540.60239pt, 14.22636pt)
-* \paperwidth=1024.29921pt
-* \paperheight=569.05511pt
-* \textwidth=995.84648pt
-* \textheight=540.60239pt
-* \oddsidemargin=-58.04362pt
-* \evensidemargin=-58.04362pt
-* \topmargin=-95.04362pt
+* h-part:(L,W,R)=(0.0pt, 910.48817pt, 0.0pt)
+* v-part:(T,H,B)=(0.0pt, 597.50787pt, 0.0pt)
+* \paperwidth=910.48817pt
+* \paperheight=597.50787pt
+* \textwidth=910.48817pt
+* \textheight=597.50787pt
+* \oddsidemargin=-72.26999pt
+* \evensidemargin=-72.26999pt
+* \topmargin=-109.26999pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -479,53 +492,38 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-
-! LaTeX Error: Something's wrong--perhaps a missing \item.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.32 ...sep=3pt] at (2.8,8.5) {$n{=}3$ lightest\\(
-                                                  but only by 20\%)};
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(./diagram3-mass-scaling-v4.aux)
+(./diagram5-bank-angle-expansion-v5.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13290 strings out of 476182
- 267013 string characters out of 5795596
- 1936975 words of memory out of 5000000
- 35082 multiletter control sequences out of 15000+600000
- 568023 words of font info for 71 fonts, out of 8000000 for 9000
+ 13752 strings out of 476182
+ 280375 string characters out of 5795596
+ 1937975 words of memory out of 5000000
+ 35536 multiletter control sequences out of 15000+600000
+ 564300 words of font info for 58 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 102i,7n,107p,426b,816s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,8n,107p,433b,818s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on diagram3-mass-scaling-v4.pdf (1 page, 170879 bytes).
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+msy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.p
+fb>
+Output written on diagram5-bank-angle-expansion-v5.pdf (1 page, 115775 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
- 52 compressed objects within 1 object stream
+ 66 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

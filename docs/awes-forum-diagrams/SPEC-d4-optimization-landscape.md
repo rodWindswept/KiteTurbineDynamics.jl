@@ -95,10 +95,10 @@ The V6.2 optimum is a constraint intersection, not a smooth valley. Key narrativ
 - n_exp=0 shown: "no expansion — heavier"
 - Mini rotor icons: hub only (n_exp=0), hub+1 ring (n_exp=1, highlighted), hub+3 rings (n_exp=3)
 
-- Text at y=5.5: `\footnotesize` — "Each extra station adds 3 blades + knuckle hardware + parasitic drag penalty"
+- Text at y=5.5: `\footnotesize` — "Each extra station adds n_lines blades (12 at n=12) + knuckle hardware + parasitic drag penalty"
 - Text at y=4.5: `\footnotesize` — "At n=12, per-beam compression is low enough that one hub rotor provides sufficient F_radial for the entire shaft"
-- Text at y=3.5: `\footnotesize` — "The old V6 at n=8 needed 3 rotors because higher per-beam compression required more radial spreading"
-- Text at y=2.5: `\footnotesize\itshape` — "Limitation: expansion blades use the same mould as the main rotor. Blade span was not a free parameter — the optimizer could not try shorter/longer expansion blades."
+- Text at y=3.5: `\footnotesize` — "The old V6 at n=8 needed 3 rotors (24 expansion blades) because higher per-beam compression required more radial spreading"
+- Text at y=2.5: `\footnotesize\itshape` — "Limitation: expansion blades use the same mould as the main rotor. Blade span was not a free parameter.
 
 - Disclosure at y=0.5: `\tiny black!40, text width=14cm`:
   "Single-parameter sweep infeasible. Optimizer freely explored 11-D space. n_exp=0 (no expansion)\\
