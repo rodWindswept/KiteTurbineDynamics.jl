@@ -1,82 +1,74 @@
 \documentclass{article}
 \usepackage{tikz}
-\usepackage{amsmath}
 \usetikzlibrary{calc}
+\usepackage{amsmath}
 \usepackage[paperwidth=36cm,paperheight=18cm,margin=0.5cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \centering
 \begin{tikzpicture}[scale=0.85]
 
-% === GLOBAL TITLE ===
-\node[font=\bfseries\Huge, black!80] at (11.5,13.5) {Why the Optimiser Chose $n=12$ Despite Beam-Only Scaling};
-\node[font=\large, black!50] at (11.5,12.7) {Beam mass alone says fewer lines are lighter. Coupled system effects reverse the tradeoff.};
+% === TITLE ===
+\node[font=\bfseries\Huge, black!80] at (11.5,13.5) {Why the Optimiser Chose $n{=}12$: Beam Formula vs System Reality};
+\node[font=\large, black!50] at (11.5,12.7) {The beam-only formula ($n{\cdot}\sin(\pi/n)$) gives only 1.20$\times$ penalty at $n{=}12$ -- coupled knuckle savings dominate.};
 
 % === LEFT: Beam-only model ===
 \begin{scope}[shift={(0,0)}]
   \fill[red!3, rounded corners=6pt] (-0.5,-2.0) rectangle (9.0,11.2);
   \node[font=\bfseries\Large, red!60!black] at (4.25,10.6) {Beam-Mass-Only Model};
-  \node[font=\small, red!50!black] at (4.25,10.1) {$m_{\text{ring}} \propto n\sqrt{\sin(\pi/n)}$~\tiny (normalised)};
+  \node[font=\small, red!50!black] at (4.25,10.1) {$m \propto n{\cdot}\sin(\pi/n)$ --- verified from code};
 
-  \foreach \n/\val/\label/\i in {3/1.00/1.00/0, 6/1.52/1.52/1, 8/1.77/1.77/2, 10/1.99/1.99/3, 12/2.19/2.19/4} {
+  % CORRECTED values: n·sin(π/n), normalized to n=3
+  \foreach \n/\val/\label/\i in {3/1.000/1.00/0, 6/1.155/1.15/1, 8/1.178/1.18/2, 10/1.189/1.19/3, 12/1.195/1.20/4} {
     \pgfmathsetmacro{\barht}{\val * 3.0}
     \pgfmathsetmacro{\x}{1.2 + \i * 1.6}
     \fill[red!40] ({\x-0.55}, 1.5) rectangle ({\x+0.55}, {1.5+\barht});
     \node[font=\footnotesize, red!70!black] at (\x, {1.5+\barht+0.3}) {\label$\times$};
   }
+
   \draw[->, thick] (0.5,1.5) -- (9.2,1.5) node[right, font=\bfseries] {$n$};
   \foreach \n/\i in {3/0, 6/1, 8/2, 10/3, 12/4} { \node[font=\footnotesize] at ({1.2+\i*1.6}, 1.1) {\n}; }
   \node[font=\footnotesize, rotate=90] at (0.0,5.0) {Normalised beam mass};
 
-  \node[font=\small\bfseries, red!70!black, fill=white, draw=red!30, rounded corners=3pt, inner sep=3pt] at (2.8,8.0) {n=3 lightest};
+  \node[font=\small\bfseries, red!70!black, fill=white, draw=red!30, rounded corners=3pt, inner sep=3pt] at (2.8,8.0) {$n{=}3$ lightest\\(but only by 20\%)};
   \draw[->, red!50, line width=1.5pt] (2.8,7.8) -- (1.2,3.5);
 \end{scope}
 
 % === BRIDGE ===
 \draw[->, line width=4pt, >=stealth, magenta!60] (9.4,5.5) -- (11.0,5.5);
-\node[font=\bfseries\small, magenta!60, align=center] at (10.2,6.8) {Coupled\\system\\effects};
+\node[font=\bfseries\small, magenta!60, align=center] at (10.2,6.8) {Coupled system\\effects};
 
-% === RIGHT: System reality ===
+% === RIGHT: System result ===
 \begin{scope}[shift={(11.5,0)}]
   \fill[blue!2, rounded corners=6pt] (-0.5,-2.0) rectangle (11.5,11.2);
-  \node[font=\bfseries\Large, blue!60!black] at (5.5,10.6) {Full System Optimum};
-  \node[font=\small, blue!50!black] at (5.5,10.1) {Beams + knuckles + tethers + rotor\qquad (absolute mass, kg)};
+  \node[font=\bfseries\Large, blue!60!black] at (5.5,10.6) {V6.2 Campaign Result};
+  \node[font=\small, blue!50!black] at (5.5,10.1) {DE optimiser, 60 islands $\times$ 10\,000 iterations};
 
-  \draw[->, thick] (0.8,1.5) -- (0.8,9.0) node[above, font=\bfseries] {Total mass (kg)};
-  \draw[->, thick] (0.8,1.5) -- (10.5,1.5) node[right, font=\bfseries] {$n$};
-  \foreach \y/\label in {1.5/60,2.5/70,3.5/80,4.5/90,5.5/100,6.5/110,7.5/120} {
-    \draw[gray!20] (0.8,\y) -- (10.3,\y);
-    \node[left, font=\tiny] at (0.6,\y) {\label};
-  }
-  \foreach \n/\x in {3/2.2,6/3.8,8/5.8,10/7.4,12/9.0} { \node[font=\footnotesize] at (\x,1.1) {\n}; }
+  % Optimum marker
+  \fill[green!50!black] (6.0,5.0) circle (8pt);
+  \draw[green!50!black, line width=1.5pt] (6.0,5.0) circle (10pt);
+  \node[font=\bfseries\Large, green!50!black] at (6.0,6.5) {\textbf{74.17 kg}};
+  \node[font=\large, green!50!black] at (6.0,5.8) {$n = 12$};
 
-  % Curve: decreases with n, with slight uptick after n=12 to show it IS the minimum
-  \draw[blue!60, line width=3pt] plot coordinates {(2.2,7.0) (3.8,5.2) (5.8,3.8) (7.4,2.8) (9.0,2.0) (10.0,2.3)};
-  \fill[blue!50] (2.2,7.0) circle (3pt);
-  \fill[blue!50] (3.8,5.2) circle (3pt);
-  \fill[blue!50] (5.8,3.8) circle (3pt);
-  \fill[green!50!black] (9.0,2.0) circle (5pt);
-  \draw[green!50!black, line width=1.5pt] (9.0,2.0) circle (8pt);
-  \fill[blue!30] (10.0,2.3) circle (3pt);
-  \node[font=\tiny, blue!30] at (10.0,2.7) {n=14?};
+  % Convergence context
+  \node[font=\small, blue!70!black] at (5.5,4.0) {58/60 islands converged to 70--75 kg};
+  \node[font=\small, blue!70!black] at (5.5,3.3) {Optimum: $n{=}12$, $\beta{=}{-}0.13$, $n_{\text{exp}}{=}1$};
 
-  \node[font=\bfseries\footnotesize, green!50!black, fill=white] at (8.5,3.0) {\textbf{74.17 kg}};
-  \node[font=\tiny, green!50!black] at (8.5,2.4) {$n\!=\!12$};
+  % Mechanism
+  \node[font=\footnotesize, blue!70!black, align=left, fill=white, draw=blue!20, rounded corners=3pt, inner sep=4pt] at (5.5,1.5) {
+    \textbf{Why $n{=}12$ wins despite beam penalty:}\\
+    1. Beam formula gives only 1.20$\times$ at $n{=}12$\\
+    2. Thinner beams $\rightarrow$ smaller coupled knuckles\\
+    3. Tether$\uparrow$ and rotor$\uparrow$ penalties are modest\\
+    $\rightarrow$ System optimum at $n{=}12$};
 
-  \node[font=\footnotesize, blue!70!black, align=left, fill=white, draw=blue!20, rounded corners=3pt, inner sep=4pt] at (5.5,8.5) {
-    \textbf{Why mass decreases with $n$:}\\
-    1. Thinner beams at higher $n$\\
-    2. Smaller knuckles (coupled to $D_o$)\\
-    3. Tether $\uparrow$ modest, rotor $\uparrow$ modest\\
-    $\rightarrow$ system optimum at $n\!=\!12$};
+  \node[font=\tiny, black!40] at (5.5,-1.2) {Note: single-parameter sweeps infeasible -- optimum at constraint intersection};
 \end{scope}
 
 % === BOTTOM ===
 \fill[black!3, rounded corners=6pt] (-0.5,-2.8) rectangle (23.0,-1.8);
 \node[font=\small\bfseries, black!70, align=center] at (11.2,-2.3) {
-  \textbf{Counterintuitive result:} Beam-only (left) says $n=3$ lightest. But coupled knuckle mass dominates —
-  thinner beams at higher $n$ reduce knuckle weight enough to overcome $2.19\times$ beam penalty.
-  The DE optimiser searches $n\!\in\![3,12]$ and finds the system minimum at $n=12$, 74.17 kg.};
+  Beam-only ($n{\cdot}\sin(\pi/n)$): 1.20$\times$ penalty at $n{=}12$. Coupled knuckle savings dominate. 58/60 DE islands converge to 70--75 kg at $n{=}12$.};
 
 \end{tikzpicture}
 \end{document}

@@ -2,12 +2,11 @@
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
-\usepackage[paperwidth=36cm,paperheight=26cm,margin=0.5cm]{geometry}
+\usepackage[paperwidth=36cm,paperheight=24cm,margin=0.5cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \centering
-\vspace*{-1cm}
-\begin{tikzpicture}[scale=0.82]
+\begin{tikzpicture}[scale=0.85]
 
 % === TITLE ===
 \node[font=\bfseries\Huge, black!80] at (0,8.5) {The Polygon Flip: Why {\color{green!50!black} 12} Lines Beat {\color{blue!60!black} 8}};
@@ -28,7 +27,7 @@
   \node[font=\footnotesize, align=left] at (0,-2.3) {
     \textbf{Mass:} 259 kg \hspace{0.8cm} \textbf{$D_o$:} 118 mm\\
     Per-beam: $N/8$, 8 knuckles $\times$ 0.11 kg = 0.88 kg};
-  \node[font=\small, blue!50!black] at (0,-3.8) {$\sin(\pi/8)=0.383$\quad $n\sqrt{\sin(\pi/n)}=2.86$};
+  \node[font=\small, blue!50!black] at (0,-3.8) {$\sin(\pi/8)=0.383$\quad $n{\cdot}\sin(\pi/n)=2.86$};
   \node[font=\footnotesize\itshape, blue!40!black, align=center] at (0,-5.1) {Thick beams: expansion rotors needed\\at intermediate rings to share load};
 \end{scope}
 
@@ -52,18 +51,18 @@
   \node[font=\footnotesize, align=left] at (0,-2.3) {
     \textbf{Mass:} 74 kg \hspace{0.8cm} \textbf{$D_o$:} 95 mm\\
     Per-beam: $N/12$, 33\% lower, 12 knuckles $\times$ 0.10 kg = 1.20 kg};
-  \node[font=\small, green!50!black] at (0,-3.8) {$\sin(\pi/12)=0.259$\quad $n\sqrt{\sin(\pi/n)}=6.10$};
-  \node[font=\footnotesize\itshape, green!40!black, align=center] at (0,-5.1) {Thin beams handle compression locally:\\hub-only expansion rotor ($n_{\text{exp}}\!=\!1$), straight shaft};
+  \node[font=\small, green!50!black] at (0,-3.8) {$\sin(\pi/12)=0.259$\quad $n{\cdot}\sin(\pi/n)=6.10$};
+  \node[font=\footnotesize\itshape, green!40!black, align=center] at (0,-5.1) {Thin beams handle compression locally:\\hub-only expansion rotor, straight shaft};
 \end{scope}
 
 % === FINDINGS BOX ===
 \fill[black!4, draw=gray!40, rounded corners=8pt] (-15.0,-8.0) rectangle (15.0,-12.5);
 \node[font=\bfseries\large, black!60] at (0,-7.2) {What this reveals about the TRPT scaling problem:};
-\node[font=\small, align=left, black!65, text width=28cm] at (0,-10.2) {
-  \textbf{Beam-only model:} $m_{\text{ring}} \propto n\sqrt{\sin(\pi/n)}$ is monotonically increasing — $n\!=\!12$ costs $2.19\!\times$ more beam mass than $n\!=\!3$.
-  That suggests fewer lines are lighter. \textbf{But the beam-only model ignores the coupled system.} Thinner beams (95 vs 118 mm OD) enable smaller knuckle
-  hardware, and knuckle mass scales with beam diameter. Tether mass ($\propto n$) and rotor solidity penalties are modest. \textbf{The DE optimiser evaluates
-  the full coupled design space} — beams, knuckles, tethers, rotor sizing, ring count, density profile, expansion stations — and finds the global minimum
-  at $n\!=\!12$, not $n\!=\!3$. This is a system-level inversion of a component-level intuition.};
+\node[font=\small, align=left, black!65, text width=28cm] at (0,-10.0) {
+  The beam-mass-only formula ($n{\cdot}\sin(\pi/n)$) increases by only 1.20$\times$ from $n{=}3$ to $n{=}12$ -- far less than intuition suggests.
+  Thinner beams at higher $n$ enable dramatically smaller knuckle hardware. The DE optimiser evaluates the full coupled design space -- beams, knuckles,
+  tethers, rotor sizing, ring count, density profile, expansion stations -- and finds the global minimum at $n{=}12$, not $n{=}3$ or $n{=}8$.
+  This is a system-level inversion of a component-level intuition.};
+
 \end{tikzpicture}
 \end{document}

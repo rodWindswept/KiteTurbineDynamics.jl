@@ -2,72 +2,62 @@
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
-\usepackage[paperwidth=34cm,paperheight=18cm,margin=0pt]{geometry}
+\usepackage[paperwidth=36cm,paperheight=20cm,margin=0.3cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \begin{tikzpicture}[scale=0.88]
 
-% Background
-\fill[black!1, rounded corners=8pt] (-16.0,-7.5) rectangle (16.0,6.5);
+% === TITLE ===
 \node[font=\bfseries\Huge, black!80] at (0,5.8) {Why the Density Profile Inverted: From Bottom-Heavy to Top-Biased};
-\node[font=\large, black!50] at (0,5.1) {$\beta$ controls ring spacing along the shaft: $\beta\!>\!0$ clusters rings toward bottom, $\beta\!<\!0$ clusters toward top.};
+\node[font=\large, black!50] at (0,5.1) {$\beta$ controls ring spacing: $\beta{>}0$ = bottom-heavy, $\beta{<}0$ = top-bias. The optimizer freely chooses $\beta \in [-0.8, +0.8]$.};
 
 % === LEFT: n=3, beta=+0.76 ===
 \begin{scope}[xshift=-8.5cm, yshift=-0.1cm]
   \fill[orange!3, rounded corners=6pt] (-5.0,-6.5) rectangle (5.0,4.5);
-  \node[font=\bfseries\Large, orange!60!black] at (0,3.9) {n = 3, $\beta = +0.76$};
-  \node[font=\small, orange!50!black] at (0,3.3) {$\beta\!>\!0$: rings cluster at bottom};
+  \node[font=\bfseries\Large, orange!60!black] at (0,3.9) {$n = 3$, $\beta = +0.76$};
+  \node[font=\small, orange!50!black] at (0,3.3) {$\beta{>}0$: rings cluster at bottom};
 
-  % Shaft axis
   \draw[gray!40, line width=1pt] (0,-5.0) -- (0,2.8);
 
-  % FIXED: bottom ring (t=1) is SMALLEST, top ring (t=0) is LARGEST
-  % \rr = 2.5 - \tbias*2.15  (decreases top→bottom)
   \foreach \i in {0,...,9} {
     \pgfmathsetmacro{\t}{\i/9.0}
-    \pgfmathsetmacro{\tbias}{\t^(1-0.76)}  % t^0.24: rings cluster at bottom (large t)
-    \pgfmathsetmacro{\yy}{2.8 - \tbias*7.2}  % top→bottom
-    \pgfmathsetmacro{\rr}{2.5 - \tbias*2.15} % LARGE at top, small at bottom
-    \pgfmathsetmacro{\thick}{0.4 + \tbias*1.8} % thick at bottom (high load)
+    \pgfmathsetmacro{\tbias}{\t^(1-0.76)}
+    \pgfmathsetmacro{\yy}{2.8 - \tbias*7.2}
+    \pgfmathsetmacro{\rr}{2.5 - \tbias*2.15}
+    \pgfmathsetmacro{\thick}{0.4 + \tbias*1.8}
     \draw[orange!70!black, line width=\thick pt]
       ({\rr*cos(90)},{\yy+\rr*sin(90)}) --
       ({\rr*cos(210)},{\yy+\rr*sin(210)}) --
       ({\rr*cos(330)},{\yy+\rr*sin(330)}) -- cycle;
   }
 
-  % Ground
   \draw[thick, black!50] (-4.0,-4.5) -- (4.0,-4.5);
   \node[font=\footnotesize, black!50] at (0,-4.9) {ground (smallest ring)};
 
-  % Annotation: SMALL rings at bottom, tight
-  \node[font=\small\bfseries, orange!70!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (3.8,1.5) {Large rings\\at top\\(hub)};
+  \node[font=\small\bfseries, orange!70!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (3.8,1.5) {Large rings\\at top (hub)};
   \node[font=\small\bfseries, orange!70!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (3.8,-2.5) {Small rings\\tightly packed\\at bottom\\--- high compression};
 
-  % Stats box at bottom — compact
   \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=4pt] at (0,-5.8) {
     Per-beam compression: $N/3$ --- very high\\
-    \textbf{$\beta\!=\!+0.76$:} Rings cluster at bottom where cumulative load peaks.};
+    \textbf{$\beta{=}{+}0.76$:} Rings cluster at bottom where cumulative load peaks.};
 \end{scope}
 
-% === CENTER ARROW ===
+% === CENTER ===
 \draw[->, line width=4pt, >=stealth, green!50!black] (-2.5,0.0) -- (2.5,0.0)
-  node[midway,above,font=\bfseries\Large] {n=3 $\rightarrow$ n=12};
+  node[midway,above,font=\bfseries\Large] {$n{=}3 \rightarrow n{=}12$};
 \node[font=\small, green!50!black] at (0,-0.8) {$\beta$ sign flips from $+0.76$ to $-0.13$};
 
 % === RIGHT: n=12, beta=-0.13 ===
 \begin{scope}[xshift=8.5cm, yshift=-0.1cm]
   \fill[blue!2, rounded corners=6pt] (-5.0,-6.5) rectangle (5.0,4.5);
-  \node[font=\bfseries\Large, blue!60!black] at (0,3.9) {n = 12, $\beta = -0.13$};
-  \node[font=\small, blue!50!black] at (0,3.3) {$\beta\!<\!0$: mild top-bias — sign inverted};
+  \node[font=\bfseries\Large, blue!60!black] at (0,3.9) {$n = 12$, $\beta = -0.13$};
+  \node[font=\small, blue!50!black] at (0,3.3) {$\beta{<}0$: mild top-bias --- sign inverted};
 
-  % Shaft axis
   \draw[gray!40, line width=1pt] (0,-5.0) -- (0,2.8);
 
-  % FIXED: bottom ring (t=1) is SMALLEST, top ring (t=0) is LARGEST
-  % \rr = 2.3 - \tbias*1.6
   \foreach \i in {0,...,8} {
     \pgfmathsetmacro{\t}{\i/8.0}
-    \pgfmathsetmacro{\tbias}{\t^(1-(-0.13))}  % t^1.13: mild top-bias
+    \pgfmathsetmacro{\tbias}{\t^(1-(-0.13))}
     \pgfmathsetmacro{\yy}{2.8 - \tbias*7.2}
     \pgfmathsetmacro{\rr}{2.3 - \tbias*1.6}
     \draw[blue!50!black, line width=0.55pt]
@@ -75,19 +65,16 @@
       foreach \a in {45,75,...,345} { -- ({\rr*cos(\a)},{\yy+\rr*sin(\a)}) } -- cycle;
   }
 
-  % Ground
   \draw[thick, black!50] (-4.0,-4.5) -- (4.0,-4.5);
   \node[font=\footnotesize, black!50] at (0,-4.9) {ground (smallest ring)};
 
-  % Annotation
-  \node[font=\small\bfseries, blue!60!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (4.2,1.5) {Large rings\\at top\\(hub)};
+  \node[font=\small\bfseries, blue!60!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (4.2,1.5) {Large rings\\at top (hub)};
   \node[font=\small\bfseries, blue!60!black, align=center, fill=white, fill opacity=0.9, text opacity=1.0, rounded corners=3pt, inner sep=3pt] at (4.2,-2.5) {Small rings\\at bottom\\--- nearly uniform\\spacing};
 
-  % Stats
   \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=4pt] at (0,-5.8) {
-    Per-beam compression: $N/12$ --- $4\times$ lower than n=3\\
-    \textbf{$\beta\!=\!-0.13$:} Compression so low that beam taper (thin near hub)\\
-    \quad now dominates — rings drift slightly toward top where beams are thinnest.};
+    Per-beam compression: $N/12$ --- $4\times$ lower than $n{=}3$\\
+    \textbf{$\beta{=}{-}0.13$:} Compression so low that beam taper (thin near hub)\\
+    \quad now dominates --- rings drift slightly toward top where beams are thinnest.};
 \end{scope}
 
 \end{tikzpicture}
