@@ -1,66 +1,69 @@
 # Diagram d4 Specification: V6.2 Optimization Landscape
 
-## Purpose
-Show the reader HOW the DE optimizer found the 74.17 kg optimum — not just WHAT it found. The four panels together tell the story: wide bounds allowed escape from the V6 constraint ceiling (panel 1), increasing n_lines systematically reduced mass (panel 2), the density profile β sign flipped after physics corrections (panel 3), and a single expansion rotor was optimal (panel 4). Each panel must include what was varied, what bounds were used, and what the result means.
-
 ## Data provenance
 
-### Campaign setup
-- Algorithm: Differential Evolution, 60 islands × 10,000 iterations = 600,000 evaluations
-- Free parameters: n_lines [3,12], n_rings [5,16], density_profile (β) [−0.8,+0.8], n_expansion [0,6], r_hub [1,10]m, r_bot [0.1,5]m, Do_top [0.01,0.2]m, blade_tip_radius [0,15]m, bank_angle [0,60]°, t_over_D [0.005,0.05], aspect_ratio [0.5,5.0], Do_scale_exp [0.1,1.0]
-- This is from the actual best_design.json and campaign script parameters
+### What we HAVE (VERIFIED)
+- Convergence history: 600,000 evaluations, 60 islands × 10,000 iterations
+- 58/60 islands converged to 70-75 kg (Phase 1 analysis)
+- Best island (#35): started at 447 kg, reached within 5% of final at iteration 204
+- Campaign bounds: n∈[3,12], β∈[−0.8,+0.8], n_exp∈[0,6], r_hub∈[1,10]m, r_bot∈[0.1,5]m, n_rings∈[5,16], bank_angle∈[0,60]°
+- Optimum: n=12, β=−0.1286, n_exp=1, r_hub=5.40m, r_bot=1.05m, Do=94.9mm, n_rings=9, bank=45°
 
-### What we DON'T have
-- The convergence history CSV only tracks mass, not individual parameter values per iteration. Panel 1 (convergence traces) and Panel 3 (β sweep curve) are schematic/qualitative — they show the CONCEPT based on known physics and optimizer behavior, not exact per-iteration data.
-- We do NOT have separate per-n campaign runs. Panel 2 (n_lines vs mass) shows the qualitative trend — mass decreases with n — but the exact mass values at n=3,6,8,10 are approximate. Only n=12 has a confirmed campaign result (74.17 kg).
-- Panel 3 (β sweep): the optimizer varied β freely. The curve shape showing a minimum at β≈−0.13 is based on the known best value. We don't have a full β sensitivity sweep.
-- Panel 4 (n_exp): same — we know n_exp=1 is best, but don't have exact masses at n_exp=2,3,etc.
+### What we CANNOT show (Phase 2.1-2.3 finding)
+- Smooth single-parameter sensitivity curves — IMPOSSIBLE. The optimum sits at a sharp constraint intersection. Changing any parameter by >1% produces infeasible designs (~1e6 kg penalty from FoS violations).
+- This constraint tightness IS the story: the V6.2 optimum is a needle in a haystack that 58/60 independent searches found. This is stronger evidence than a smooth valley would be.
 
-### HONESTY REQUIREMENT
-Each panel must disclose what is confirmed campaign data vs what is qualitative/schematic. The caption text must distinguish: "Solid line = confirmed trend, dashed = schematic based on known optimum."
+### What the optimizer actually varied
+- n_expansion [0,6] AND blade_tip_radius [0,15]m were independent free parameters. The optimizer could choose many rings with short blades or one ring with a long blade. It chose n_exp=1 with blade_tip_radius=10.6m.
+- bank_angle [0,60]° was free. It converged to 45°.
+- n_rings [5,16] was free. It converged to 9.
 
-## What the optimizer actually tried
-- YES, the optimizer tried shorter expansion blades on more rings. blade_tip_radius [0,15]m and n_expansion [0,6] were independent free parameters. The optimizer could choose n_exp=3 with small blades or n_exp=1 with a large blade. It converged to n_exp=1 with blade_tip_radius=10.6m — one large expansion rotor at the hub ring.
-- bank_angle [0,60]° was also free. The optimum landed at 45°.
-- n_rings was [5,16]; optimum at 9 rings.
-
-## Visual layout: 2×2 grid of panels
+## Visual layout: 4-panel grid
 
 ### Panel 1: Convergence History (top-left)
+Title: "1. Convergence: 60 Islands → 74.17 kg"
 - Axes: Best mass (kg) vs Iteration
-- Multiple thin grey lines = individual island trajectories (schematic)
-- One thick green line = best island's trajectory (island #35)
-- Horizontal dashed line at 74.17 kg
-- Caption: "60 islands × 10,000 iterations. Grey traces = individual islands (schematic). Green = best island trajectory. Each island explores a different region of parameter space, with periodic migration sharing best solutions."
-- Bounds listed: n∈[3,12], r_hub∈[1,10]m, r_bot∈[0.1,5]m, β∈[−0.8,0.8], n_rings∈[5,16], n_exp∈[0,6]
+- Y-axis: 0-400 kg (log-ish scale to show the steep descent)
+- Multiple thin grey lines = individual island trajectories (schematic representation)
+- One thick green line = best island (#35): 447→74.17 kg
+- Horizontal dashed green line at 74.17 kg
+- Annotation: "Best island reaches <5% of final at iteration 204"
+- Legend: "Grey = individual islands. Green = island #35 (best)."
+- Caption: "60 islands × 10,000 iterations = 600,000 evaluations. 58/60 islands converged to 70-75 kg."
+- Bounds footnote: n∈[3,12], r_hub∈[1,10]m, β∈[−0.8,0.8], n_rings∈[5,16], n_exp∈[0,6]
 
-### Panel 2: n_lines Sensitivity (top-right)
-- Axes: Best mass (kg) vs n (lines)
-- Curve: decreasing monotonically from n=3 to n=12
-- Green circle at n=12 = 74.17 kg
-- Mini polygon icons on x-axis (triangle at n=3, octagon at n=8, dodecagon at n=12)
-- Caption: "Trend is qualitative — only n=12 has a confirmed campaign run. The monotonic decrease is supported by physics: more lines → thinner beams → smaller coupled knuckles → lower total mass."
+### Panel 2: n_lines Explored (top-right)
+Title: "2. Polygon Search: n_lines"
+- Show the optimizer's search RANGE: n∈[3,12] with a visual indicator
+- Mark the converged value: n=12 (dodecagon)
+- Mini polygon icons: triangle (n=3), pentagon (n=5), octagon (n=8), dodecagon (n=12)
+- Text: "Converged to n=12. Higher n → thinner beams → smaller knuckles."
+- DISCLOSURE: "Single-parameter sweep infeasible — optimum is a constraint intersection. The DE explored the full 11-D space."
+- Caption: "The optimizer varied n freely in [3,12] alongside all other parameters. It converged to n=12 — a dodecagon."
 
 ### Panel 3: Density Profile β (bottom-left)
-- Axes: Mass (kg) vs β (density profile)
-- Two curves: red dashed = pre-correction physics (tan formula, minimum at β≈+0.76), blue solid = corrected physics (sin formula, minimum at β≈−0.13)
-- Green circle at β=−0.13 = 74.17 kg
-- Arrow from old optimum to new: "correction shifted optimum"
-- Mini stack icons on x-axis showing: top-bias (β<0, rings near top), uniform (β=0), bottom-heavy (β>0, rings near bottom)
-- Caption: "β controls ring spacing along shaft. The tan→sin and cos³→cos²·⁶⁵ corrections halved the buckling demand, making the old bottom-heavy profile (β=+0.76) suboptimal. The optimizer freely explored β∈[−0.8,+0.8] and converged to −0.13."
+Title: "3. Density Profile: β Sign Flip"
+- Show two annotated points, not a curve:
+  - Old optimum (pre-correction): β≈+0.76, mass ~100+ kg (bottom-heavy)
+  - New optimum (V6.2): β=−0.1286, mass=74.17 kg (mild top-bias)
+- Arrow between them: "tan→sin correction shifted optimum"
+- Mini stack icons on x-axis: top-bias (β<0), uniform (β=0), bottom-heavy (β>0)
+- Text: "β controls ring spacing. β>0 = bottom-heavy, β<0 = top-bias. The corrected physics (tan→sin, cos³→cos²·⁶⁵) shifted the optimum from strong bottom-bias to mild top-bias."
+- DISCLOSURE: "Single-parameter β sweep infeasible — even β=−0.13 gives penalty. The constraint intersection locks β to the campaign value."
 
-### Panel 4: n_expansion Sensitivity (bottom-right)
-- Axes: Mass (kg) vs n_expansion (number of expansion stations)
-- Curve: n_exp=0 is heavy (no radial spreading), n_exp=1 is minimum (74.17 kg), n_exp>1 increases mass
-- Data points at n_exp=0 through 6 with approximate masses
-- Annotation: "Each extra station adds: 3 blades × ~1.5 kg + knuckle hardware + parasitic drag penalty"
-- Mini icons on x-axis: circles representing rotors at ring positions
-- n_exp=0 included FOR COMPARISON — shows that having NO expansion is worse than having one
-- Caption: "Expansion rotors sit at ring positions on the shaft (not at the main power rotor). n_exp=0 (no expansion) is heavier than n_exp=1 — a single expansion station at the hub provides enough radial force without the mass penalty of multiple stations. The optimizer varied blade_tip_radius [0,15]m independently, so it could try short blades on many rings or one large blade. It chose one large blade."
+### Panel 4: n_expansion (bottom-right)
+Title: "4. Expansion Stations: n_exp=1 Optimal"
+- Show the optimizer's search range: n_exp∈[0,6]
+- Mark converged value: n_exp=1
+- Annotate: "The optimizer could choose n_exp=0..6 AND vary blade_tip_radius [0,15]m independently. It converged to n_exp=1 with blade_tip_radius=10.6m — one large expansion rotor at the hub ring."
+- Mini icons: circles representing rotors at ring positions
+- n_exp=0 shown for context: "n_exp=0 (no expansion) is heavier — some radial spreading is needed"
+- DISCLOSURE: "Single-parameter n_exp sweep infeasible. The optimizer freely explored n_exp∈[0,6]."
+- Caption: "Expansion rotors sit at ring positions on the shaft (not at the main power rotor). The optimizer chose one large rotor over multiple small ones."
 
 ## Design constraints
-- article + geometry, no standalone
-- All four panels must be fully visible without cropping
-- Each panel must have a descriptive caption explaining bounds, assumptions, and data confidence
-- The physics correction must be named explicitly: tan→sin, cos³→cos²·⁶⁵, coupled knuckle mass model
-- Honesty markers: distinguish confirmed data from schematic/qualitative trends
+- article + geometry (paperwidth=38cm, paperheight=28cm)
+- All 4 panels must be visible without cropping
+- Each panel must have a disclosure about what IS and ISN'T confirmed data
+- Colors: green=optimum/converged, grey=schematic/other islands, red=pre-correction
+- Non-white pixels > 2%

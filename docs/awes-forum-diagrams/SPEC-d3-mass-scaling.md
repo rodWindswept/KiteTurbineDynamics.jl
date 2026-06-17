@@ -1,61 +1,56 @@
-# Diagram d3 Specification: Mass Scaling — Why n=12 Despite Beam-Only
+# Diagram d3 Specification: Mass Scaling — Why n=12 Wins
 
-## Purpose
-Show the central paradox of the V6.2 result: a naive beam-mass-only model says increasing n makes the ring heavier, but the full system optimizer consistently finds that higher n reduces total mass. This diagram must make the counterintuitive logic self-evident.
+## Data provenance
 
-## Data sources
+### Beam-only formula (VERIFIED — Phase 2.4)
+The beam-mass-only scaling is **n·sin(π/n)**, derived directly from:
+- Beam mass = n × (CFRP mass per meter) × (beam length)
+- Beam length = 2r·sin(π/n) for an n-gon of radius r
+- Therefore mass ∝ n·sin(π/n)
 
-### Beam-only model (left panel)
-The formula m_ring ∝ n·√sin(π/n) is an exact geometric derivation:
-- A polygon ring resists compression through its beams
-- Beam cross-section scales with the chord force, which scales with 1/sin(π/n)
-- There are n beams, each needing that cross-section
-- Total beam mass ∝ n / sin(π/n) × sin(π/n) = ... no, the correct derivation:
-  - Chord compression F_c ∝ 1/sin(π/n) — the polygon geometry amplifies axial load
-  - To resist buckling, beam diameter Do ∝ √F_c 
-  - Beam mass ∝ n × Do² ∝ n × F_c ∝ n/sin(π/n)
-  - Wait — the formula in the diagram says n√sin(π/n), not n/sin(π/n). 
-  - Actually the buckling formula is: critical load ∝ Do⁴, and the beam must support F_c ∝ 1/sin(π/n). So Do ∝ (1/sin(π/n))^(1/4). Mass ∝ n × Do² ∝ n × (1/sin(π/n))^(1/2) = n/√sin(π/n). Hmm, that's n DIVIDED by √sin, not multiplied.
-  - Wait, let me check what we've been using. The diagram shows n√sin(π/n) which increases with n. But n/√sin(π/n) would also increase with n (since √sin decreases with n). So both formulas increase with n, just at different rates.
-  
-  Actually, let me just use the values we've been computing: n·√sin(π/n) at n=3,6,8,10,12 gives 1.00, 1.52, 1.77, 1.99, 2.19 (normalized). These are mathematically exact.
+Verified values (normalized to n=3):
+- n=3: 1.000×  (3·sin(60°) = 2.598)
+- n=6: 1.155×  (6·sin(30°) = 3.000)
+- n=8: 1.178×  (8·sin(22.5°) = 3.061)
+- n=12: 1.195× (12·sin(15°) = 3.105)
 
-### Full system model (right panel)
-The V6.2 campaign optimized all parameters simultaneously (n, n_rings, β, n_exp, r_hub, r_bot, Do, etc.) for each n value. The total mass includes beams + knuckles + tethers + rotor penalty. The key data point is n=12 at 74.17 kg.
+The beam-only penalty from n=3 to n=12 is only **1.20×** — much smaller than previously claimed.
 
-The curve shape (decreasing with n, slight uptick after n=12) is qualitative — we don't have per-n campaign runs at n=14 to confirm the exact shape, but the physics (beam thinning + knuckle coupling dominating at moderate n, tether+rotor penalties eventually overtaking) supports a U-shaped curve with minimum near n=12.
+CRITICAL: The old formula n·√sin(π/n) was WRONG (it gave 2.19×). That formula cannot be derived from any beam model. DO NOT USE IT.
+
+### System optimum (VERIFIED — campaign)
+- n=12, mass=74.17 kg from V6.2 corrected campaign
+- 58/60 islands converged to 70-75 kg
+- Source: `scripts/results/v6_2_campaign_50kw/best_design.json`
+
+### What we CANNOT show
+- Smooth system mass curve vs n — single-parameter sweeps are IMPOSSIBLE because the optimum sits at a sharp constraint intersection. Changing any parameter by >1% makes the design infeasible (~1e6 kg penalty).
+- This is itself a finding: the V6.2 optimum is not a broad valley but a needle in a constraint haystack. The DE optimizer found a point that 58/60 independent searches converged to.
 
 ## Visual layout
 
-### Split design: left = simple model, right = full system
-- LEFT panel (red-tinted): "Beam-Mass-Only Model" — bar chart, normalized beam mass vs n
-  - 5 bars at n=3,6,8,10,12 with values (normalized to n=3=1.00): 1.00×, 1.52×, 1.77×, 1.99×, 2.19×
-  - Arrow pointing to n=3 bar: "n=3 lightest"
-  - Formula displayed: m_ring ∝ n√sin(π/n)
-  - Y-axis labeled: "Normalised beam mass"
+### Split design: left = beam-only model, right = system result
+- LEFT panel (red-tinted): "Beam-Mass-Only Model" — bar chart
+  - 5 bars at n=3,6,8,10,12 with CORRECT values: 1.00×, 1.15×, 1.18×, 1.19×, 1.20×
+  - Formula: m_ring ∝ n·sin(π/n)
+  - Y-axis: "Normalised beam mass"
+  - Annotation: "Beam-only penalty: only 1.20× from n=3 to n=12"
 
-- CENTER: magenta arrow with "Coupled system effects"
+- CENTER: magenta arrow: "Coupled system effects dominate"
 
-- RIGHT panel (blue-tinted): "Full System Optimum" — line chart, total mass (kg) vs n
-  - Curve: starts high at n=3 (~110 kg), decreases to minimum at n=12 (74.17 kg), slight uptick after
-  - Green circle at n=12 marking the optimum
-  - Y-axis labeled: "Total mass (kg)" with tick marks at 60, 70, 80, 90, 100, 110, 120
-  - Mechanism box listing three reasons mass decreases:
-    1. Thinner beams at higher n
-    2. Smaller knuckles (coupled to Do)
-    3. Tether↑ modest, rotor↑ modest
-    → system optimum at n=12
+- RIGHT panel (blue-tinted): "V6.2 Campaign Result"
+  - Show a single prominent data point at n=12, mass=74.17 kg
+  - Text: "DE optimizer, 60 islands × 10,000 iterations"
+  - Text: "58/60 islands converged to 70-75 kg"
+  - Text: "Optimum: n=12, β=−0.13, n_exp=1"
+  - Small annotation: "Single-parameter sweeps infeasible — design space is tightly constrained"
 
 ### Bottom summary
-One-line text: "Beam-only says n=3 lightest. Coupled knuckle mass dominates — thinner beams at higher n reduce knuckle weight enough to overcome 2.19× beam penalty. DE optimizer finds minimum at n=12, 74.17 kg."
-
-### Critical: data consistency
-- The left panel values (1.00×, 1.52×, etc.) must be mathematically exact
-- The right panel must show n=12 as the minimum with 74.17 kg clearly labeled
-- The left and right charts MUST NOT contradict each other numerically — they measure different things (normalized beam mass vs total system kg)
-- Y-axis labels must distinguish: left says "Normalised beam mass", right says "Total mass (kg)"
+"Beam-only scaling (n·sin(π/n)) gives only 1.20× penalty at n=12. Coupled knuckle mass dominates — thinner beams enable dramatically smaller knuckles. The DE optimizer finds the system minimum at n=12, 74.17 kg, with 58/60 islands converging to the same narrow feasible region."
 
 ## Design constraints
-- article + geometry class
-- Paper wide enough to show full title "Why the Optimiser Chose n=12 Despite Beam-Only Scaling" without cropping
-- Title cropping has been a persistent issue — test by checking pdftotext output for complete title
+- article + geometry (paperwidth=36cm, paperheight=18cm)
+- Left bar values MUST use n·sin(π/n), NOT n·√sin(π/n)
+- Right panel shows a single optimum point with convergence context
+- Title must not be cropped
+- Non-white pixels > 2%
