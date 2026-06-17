@@ -350,33 +350,32 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── Expansion rotor blades ──────────────────────────────────────────────
     if !isempty(sys.expansion_rotors)
-        ground_gid = sys.ring_ids[1]  # bottom ring
+        hub_gid_val = hub_gid
+        ground_gid_val = sys.ring_ids[1]
         for (ei, er) in enumerate(sys.expansion_rotors)
-            ri = er.ring_idx
-            if ri < 1 || ri > sys.n_ring; continue; end
-            ring_gid = sys.ring_ids[ri]
-            ring_node = sys.nodes[ring_gid]
-            ring_R = ring_node.radius
-            # Blade extends from ring radius outward, banked down along shaft
-            r_inner_exp = ring_R
-            r_outer_exp = ring_R + er.blade_tip_radius
-            bank_rad = deg2rad(er.bank_angle_deg)
-            for b in 1:er.n_blades
+            ri_val = er.ring_idx
+            if ri_val < 1 || ri_val > sys.n_ring; continue; end
+            ring_gid_val = sys.ring_ids[ri_val]
+            ring_node = sys.nodes[ring_gid_val]
+            ring_R_val = ring_node.radius
+            r_outer_val = ring_R_val + er.blade_tip_radius
+            bank_rad_val = deg2rad(er.bank_angle_deg)
+            n_blades_val = er.n_blades
+            for b in 1:n_blades_val
+                b_val = b
                 exp_blade_obs = @lift begin
-                    u    = $u_obs
-                    ctr  = u[3*(ring_gid-1)+1 : 3*ring_gid]
-                    hub_ctr = u[3*($hub_gid-1)+1 : 3*$hub_gid]
-                    gnd_ctr = u[3*(ground_gid-1)+1 : 3*ground_gid]
-                    α    = u[6N + ri]
-                    φ    = α + (b-1) * (2π / er.n_blades)
-                    pp1, pp2 = _perp_fn(u)
-                    r_dir = cos(φ) .* pp1 .+ sin(φ) .* pp2
-                    # Shaft direction: hub → ground (downward)
-                    shaft_dir = normalize(gnd_ctr .- hub_ctr)
-                    # Bank blade along shaft axis: radial component + downward shaft component
-                    bank_dir = cos(bank_rad) .* r_dir .+ sin(bank_rad) .* shaft_dir
-                    p_inner = ctr .+ r_inner_exp .* r_dir
-                    p_outer = ctr .+ r_outer_exp .* bank_dir
+                    uu = $u_obs
+                    ctr  = @view uu[(3*(ring_gid_val-1)+1):(3*ring_gid_val)]
+                    hub  = @view uu[(3*(hub_gid_val-1)+1):(3*hub_gid_val)]
+                    gnd  = @view uu[(3*(ground_gid_val-1)+1):(3*ground_gid_val)]
+                    α_val  = uu[6N + ri_val]
+                    φ_val  = α_val + (b_val - 1) * (2π / n_blades_val)
+                    pp1, pp2 = _perp_fn(uu)
+                    r_dir = cos(φ_val) .* pp1 .+ sin(φ_val) .* pp2
+                    shaft_dir = normalize(Vector(gnd .- hub))
+                    bank_dir = cos(bank_rad_val) .* r_dir .+ sin(bank_rad_val) .* shaft_dir
+                    p_inner = Vector(ctr) .+ ring_R_val .* r_dir
+                    p_outer = Vector(ctr) .+ r_outer_val .* bank_dir
                     ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
                 end
                 lines!(ax3d, @lift($exp_blade_obs[1]), @lift($exp_blade_obs[2]),
