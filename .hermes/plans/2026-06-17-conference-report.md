@@ -45,12 +45,29 @@ before proceeding — the conference report must reference a green suite.
 
 ---
 
-## Block 1 — CoaxialAutogyroStacking.jl: close out Task 11
+## Block 1 — CoaxialAutogyroStacking.jl: visuals + API
 
-The coaxial package is the lift-stacking story. It needs its integration API before
-it can be properly referenced in the report.
+The coaxial package provides the lift-stacking story for the report. The API is
+useful for integration, but the **priority for conference is visuals**: a clean
+stack diagram showing rotors, tension profile, and force vectors.
 
-### Task 1.1: Implement `lift_force_steady` (Task 11)
+### Task 1.0: Generate coaxial stack report visuals (PRIORITY)
+**Goal:** Produce 2-3 publication-quality figures from the coaxial package:
+1. **Stack schematic** — side view of N rotors on a kite line, annotated with
+   force vectors (F_lift, F_drag, F_line) at each rotor, tension profile curve
+2. **Tension profile plot** — free-end → anchor, showing monotonic increase,
+   per-rotor contributions visible as step changes
+3. **Optimal pitch sweep** — pitch angle vs rotor position for a representative
+   wind speed, showing how downstream rotors need different pitch
+
+**Sources:** `notebooks/dashboard.jl` (Pluto), `src/stack.jl`, `src/rotor.jl`
+
+**Approach options (try in order):**
+A. Export from existing Pluto dashboard if it renders on this machine
+B. Generate with GLMakie in a standalone script (headless export via CairoMakie)
+C. TikZ/PGF diagrams (matching the KTD.jl diagram style)
+
+### Task 1.1: Implement `lift_force_steady` (Task 11 — secondary)
 **File:** `src/stack.jl` (or new `src/integration.jl`)
 **What:** `lift_force_steady(stack::AutogyroStack, rho, v_wind) → (F_hub, T_anchor, elevation)`
 Mirrors the dispatch pattern in KTD.jl's `lift_kite.jl`. Wraps `stack_tension_profile`
@@ -134,6 +151,50 @@ Master document: `docs/reports/CONFERENCE_REPORT_2026-06.md`
 - V6.2 campaign result: **74.17 kg at 50 kW** (n=12 dodecagon)
 - Comparison to v5 baseline: 11.47 kg at 10 kW, 79.5 kg at 50 kW
 - Include d1–d5 diagrams
+
+### Task 2.5a: Write §5a — Why three blades? Optimizer logic & scaling pathway
+**Sources:** `src/objective_v6.jl`, `src/expansion_rotor.jl`, campaign convergence data,
+`scripts/results/v6_2_campaign_50kw/best_design.json`
+
+This is the section Rod specifically wants — the physics reasoning behind the
+optimizer's choices, and what they imply for larger systems.
+
+**Part A: Why the DE optimizer landed on three blades**
+- **Parasitic drag penalty:** Each expansion blade produces profile drag ∝ N_blades.
+  The optimizer trades blade count against radial force. Fewer blades = less drag
+  but each blade must work harder (higher CL, larger chord).
+- **Mass penalty:** Each blade adds knuckle mass at the ring attachment point.
+  Three blades minimizes attachment hardware while maintaining enough solidity
+  for the required F_radial.
+- **Bridle angle sensitivity:** At the optimized bridle angle, three blades
+  produce sufficient radial force without excessive axial lift loss. More blades
+  would spread the same total force but add parasitic losses.
+- **Shaft power budget:** Expansion rotors consume shaft power (τ_drag × ω).
+  The optimizer found three blades strikes the balance: enough radial force to
+  expand the ring, parasitic power fraction stays below some threshold.
+- **DE search history:** Extract from campaign data — did the optimizer try
+  2, 4, 5, 6 blades and converge to 3? Or was 3 blade count near the lower
+  bound? This tells us whether 3 is a true optimum or a bound artefact.
+
+**Part B: Where expansion rotors scale in larger systems**
+- **More expansion stations:** At 100+ kW, the TRPT shaft is longer. More rings
+  need spreading. The optimizer logic suggests adding expansion stations at
+  strategic ring positions (not every ring — just where beam compression is
+  highest in the buckling analysis).
+- **Larger blades at higher power:** Blade chord and radius scale with rated
+  power. Three blades remain optimal if the parasitic-to-radial force ratio
+  stays favourable — but this ratio depends on Re, which changes with scale.
+- **Dual-purpose rotors:** The long-term vision: rotors that both extract power
+  AND provide expansion force. This eliminates the parasitic power penalty
+  entirely — the "drag" becomes useful torque. PLAN.md post-publication
+  strategy mentions this.
+- **Network topologies:** Multiple expansion stations, concentric rings,
+  asymmetric spreading for yaw control. The three-blade minimum-mass pattern
+  may extend to these.
+- **What the optimizer CAN'T tell us:** The DE optimizer evaluates steady-state
+  structural mass only. It doesn't model dynamic bank angle transients, furling
+  behaviour, or manufacturing constraints. The three-blade result is a structural
+  optimum — dynamic validation pending (M4).
 
 ### Task 2.6: Write §6 (integration pathway)
 **Key points:**
