@@ -1,212 +1,145 @@
 \documentclass[tikz, border=10pt]{standalone}
 \usepackage{amsmath}
-\usetikzlibrary{calc,patterns,arrows.meta}
+\usetikzlibrary{calc,arrows.meta}
 \begin{document}
-\begin{tikzpicture}[scale=0.85]
+\begin{tikzpicture}[scale=0.82]
 
 % === TITLE ===
-\node[font=\bfseries\Huge, black!80] at (16.0,23.5) {Expansion Rotor Bank Angle \& Pitch Depower Risk};
+\node[font=\bfseries\Huge, black!80] at (14.0,20.5) {Expansion Rotor Bank Angle \& Pitch Depower Risk};
 
 % ============================================================
-% PANEL 1: Normal operation — rotor disk shown as truncated cone
+% LEFT: Normal operation
 % ============================================================
-\begin{scope}[shift={(0,3.0)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (15.0,19.0);
-  \node[font=\bfseries\Large, black!70] at (7.25,18.3) {Normal Operation: Rotor Sweeps Truncated Cone};
+\begin{scope}[shift={(0,2.0)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (13.5,17.5);
+  \node[font=\bfseries\Large, black!70] at (6.5,16.8) {Normal: Rotor Sweeps Truncated Cone};
 
   % === SHAFT SIDE VIEW ===
-  \begin{scope}[shift={(5.5,12.0)}]
-    % Ground
-    \draw[thick] (-4.0,0) -- (4.0,0);
-    \node[font=\small] at (0,-0.5) {ground station};
+  \begin{scope}[shift={(5.0,11.5)}]
+    \draw[thick] (-3.5,0) -- (3.5,0) node[font=\small, below] {ground};
 
-    % Shaft axis (30° elevation)
-    \draw[gray!60, line width=1pt] (0,0) -- (5.2,3.0);
-    \node[font=\footnotesize, gray!60] at (6.0,3.3) {shaft axis};
-    \node[font=\footnotesize, gray!60] at (2.5,-0.9) {$30^\circ$ elevation};
+    % Shaft at 30 deg
+    \draw[gray!60, line width=1pt] (0,0) -- (4.5,2.6) node[font=\tiny, above right] {shaft $30^\circ$};
 
-    % Hub rotor at top (flat annulus — normal rotor)
-    \draw[blue!60, line width=2pt] (4.3,2.5) -- (6.1,3.5);
-    \node[font=\small, blue!60] at (5.2,4.3) {hub rotor (flat annulus)};
+    % Main rotor at top (flat annulus)
+    \draw[blue!60, line width=2pt] (3.6,2.1) -- (5.0,2.9) node[font=\tiny, above] {hub rotor};
 
-    % Expansion rotor at intermediate ring position
-    % The rotor hub is at (2.2,1.27) on the shaft
-    % Blades extend outward at 45° bank angle, sweeping a cone
-    % Upper blade edge: (1.7,0.98) -- (3.2,1.85) at ~45°
-    % Lower blade edge: (1.7,1.56) -- (3.2,1.85) at ~-45° (opposite side of cone)
-    
-    % Rotor hub point on shaft
-    \fill[cyan!70, opacity=0.9] (2.2,1.27) circle (3pt);
-    
-    % Upper blade — extends outward-upward at bank angle
-    \draw[cyan!60!black, line width=2.0pt] (2.2,1.27) -- (1.3,2.2);
-    % Lower blade — extends outward-downward 
-    \draw[cyan!60!black, line width=2.0pt] (2.2,1.27) -- (1.3,0.35);
+    % Expansion rotor at ring position — hub + blades
+    \fill[cyan!70] (1.8,1.04) circle (2.5pt);
+    % Upper blade (banked outward)
+    \draw[cyan!60!black, line width=1.8pt] (1.8,1.04) -- (1.0,1.85);
+    % Lower blade (banked outward, opposite side)
+    \draw[cyan!60!black, line width=1.8pt] (1.8,1.04) -- (1.0,0.23);
+    % Cone surface (translucent sweep)
+    \draw[cyan!30!black, line width=0.6pt, densely dashed] (1.0,1.85) arc (140:220:1.0);
+    \fill[cyan!12, opacity=0.35] (1.8,1.04) -- (1.0,1.85) arc (140:220:1.0) -- cycle;
 
-    % Blade tip arc (upper edge of cone section)
-    \draw[cyan!40!black, line width=0.8pt, densely dashed] (1.3,2.2) arc (150:210:1.0);
-    
-    % Cone swept surface (translucent)
-    \fill[cyan!15, opacity=0.4] (2.2,1.27) -- (1.3,2.2) arc (150:210:1.0) -- cycle;
+    \node[font=\tiny, cyan!70!black] at (0.3,0.6) {expansion\\rotor};
 
-    % Bank angle annotation
-    \draw[->, red!60, line width=1pt] (2.0,1.5) ++(0.4,0.2) arc (40:85:0.8);
-    \node[font=\footnotesize, red!60] at (1.2,2.0) {bank $=45^\circ$};
+    % Bank angle arc
+    \draw[->, red!60, line width=1pt] (1.6,1.3) ++(0.3,0.15) arc (35:80:0.6);
+    \node[font=\tiny, red!60] at (0.8,1.6) {$45^\circ$ bank};
 
-    % Label
-    \node[font=\small, cyan!70!black] at (0.5,0.7) {expansion\\rotor};
-
-    % Wind arrow
-    \draw[->, blue!50, line width=2.5pt] (-2.0,2.5) -- (0.2,1.0);
-    \node[font=\small, blue!50] at (-2.2,2.9) {wind};
-
-    % Shaft tether lines
-    \draw[green!40!black, line width=0.6pt, densely dotted] (0,0) -- (2.2,1.27);
-    \draw[green!40!black, line width=0.6pt, densely dotted] (0.5,0) -- (4.3,2.5);
+    % Wind
+    \draw[->, blue!50, line width=2pt] (-1.5,2.0) -- (0.1,0.8);
+    \node[font=\small, blue!50] at (-1.8,2.3) {wind};
   \end{scope}
 
   % === BLADE CROSS-SECTION ===
-  \begin{scope}[shift={(1.5,2.0)}]
-    \node[font=\bfseries\small, black!60] at (2.0,2.5) {Blade section (mid-span)};
+  \begin{scope}[shift={(1.2,2.0)}]
+    \node[font=\bfseries\small, black!60] at (1.8,2.2) {Blade section:};
 
-    % Airfoil at 45° bank
-    \draw[black!70, line width=1.8pt, rotate around={-45:(0,0)}]
-      (0,0) to[out=10, in=180] (2.5,0.4) to[out=5, in=180] (3.0,0.1) -- cycle;
-    \fill[black!10, rotate around={-45:(0,0)}] (0,0) to[out=10, in=180] (2.5,0.4) to[out=5, in=180] (3.0,0.1) -- cycle;
+    \draw[black!70, line width=1.6pt, rotate around={-45:(0,0)}]
+      (0,0) to[out=10, in=180] (2.2,0.35) to[out=5, in=180] (2.6,0.1) -- cycle;
+    \fill[black!8, rotate around={-45:(0,0)}] (0,0) to[out=10, in=180] (2.2,0.35) to[out=5, in=180] (2.6,0.1) -- cycle;
 
-    % Apparent wind (from rotation + ambient)
-    \draw[->, blue!60, line width=1.8pt] (-2.5,0.8) -- (-0.1,0.0);
-    \node[font=\small, blue!60] at (-2.5,1.2) {apparent wind};
+    \draw[->, blue!60, line width=1.5pt] (-2.2,0.7) -- (-0.1,0.0);
+    \node[font=\tiny, blue!60] at (-2.2,1.0) {app. wind};
 
-    % Lift vector (perpendicular to blade, outward)
-    \draw[->, red!70!black, line width=2.0pt] (1.0,0.8) -- (2.2,2.2);
-    \node[font=\small, red!70!black] at (2.8,2.2) {lift};
+    \draw[->, red!70!black, line width=1.8pt] (0.9,0.7) -- (2.0,2.0);
+    \draw[->, red!50, line width=1.2pt, dashed] (0.9,0.7) -- (0.9,1.7) node[left, font=\tiny] {$F_r$ outward};
+    \draw[->, red!50, line width=1.2pt, dashed] (0.9,0.7) -- (1.7,0.7) node[below, font=\tiny] {$F_a$};
 
-    % Force decomposition
-    \draw[->, red!50, line width=1.5pt, dashed] (1.0,0.8) -- (1.0,2.0);
-    \node[font=\small, red!50!black] at (0.5,2.0) {$F_r$ (outward $\rightarrow$ spreads ring)};
-
-    \draw[->, red!50, line width=1.5pt, dashed] (1.0,0.8) -- (2.0,0.8);
-    \node[font=\small, red!50!black] at (2.5,0.6) {$F_a$ (axial)};
-
-    % Bank angle marker
-    \draw[->, gray!50] (0.5,0.3) arc (130:175:0.7);
-    \node[font=\small, gray!50] at (-0.1,0.9) {$45^\circ$};
-
-    \node[font=\bfseries, green!50!black, fill=green!5, draw=green!40!black, rounded corners=4pt, inner sep=4pt] at (1.5,-1.5) {STATUS: Spreading — shaft is stable};
+    \node[font=\bfseries, green!50!black, fill=green!5, draw=green!40!black, rounded corners=3pt, inner sep=3pt] at (1.8,-1.0) {Stable};
   \end{scope}
 
-  % Force summary box
-  \node[font=\small, align=left, fill=black!3, draw=gray!30, rounded corners=5pt, inner sep=7pt] at (11.0,4.0) {
-    \textbf{How expansion rotors work:}\\[3pt]
-    Blades are the {\color{cyan!70!black}outer portion of the rotor disk}.\\[2pt]
-    Unlike a flat-annulus main rotor, expansion blades\\[2pt]
-    are {\color{red!60}banked outward} — they sweep a {\color{cyan!70!black}hollow truncated cone}.\\[2pt]
-    Lift vector resolves into:\\
-    \quad $\bullet$ Radial $F_r$: spreads tethers outward\\
-    \quad $\bullet$ Axial $F_a$: contributes to shaft compression\\
-    Net effect: reduces ring buckling $\rightarrow$ lighter shaft.
-  };
+  % Compact summary
+  \node[font=\footnotesize, align=left, fill=black!3, draw=gray!30, rounded corners=4pt, inner sep=5pt] at (10.0,3.5) {
+    \textbf{Expansion rotor:}\\
+    $\bullet$ Hub at ring position on shaft\\
+    $\bullet$ Blades banked $45^\circ$ outward\\
+    $\bullet$ Sweep hollow truncated cone\\
+    $\bullet$ Lift $\rightarrow$ $F_r$ (spreads ring)\\
+    \qquad $+$ $F_a$ (shaft compression)};
 \end{scope}
 
 % ============================================================
-% PANEL 2: Pitch depower — back-wind risk
+% RIGHT: Pitch depower
 % ============================================================
-\begin{scope}[shift={(18,3.0)}]
-  \fill[red!2, rounded corners=6pt] (-0.5,-0.5) rectangle (15.0,19.0);
-  \node[font=\bfseries\Large, red!50!black] at (7.25,18.3) {Pitch Depower: Banked Blades Face Back-Wind};
+\begin{scope}[shift={(16,2.0)}]
+  \fill[red!2, rounded corners=6pt] (-0.5,-0.5) rectangle (13.5,17.5);
+  \node[font=\bfseries\Large, red!50!black] at (6.5,16.8) {Pitch Depower: Back-Wind Risk};
 
-  % === SHAFT TILTED UP ===
-  \begin{scope}[shift={(5.5,12.0)}]
-    % Ground
-    \draw[thick] (-4.0,0) -- (4.0,0);
-    \node[font=\small] at (0,-0.5) {ground station};
+  % === SHAFT TILTED ===
+  \begin{scope}[shift={(5.0,11.5)}]
+    \draw[thick] (-3.5,0) -- (3.5,0) node[font=\small, below] {ground};
 
-    % Shaft at 50° (backline winched out)
-    \draw[gray!60, line width=1pt] (0,0) -- (3.0,3.6);
-    \node[font=\footnotesize, gray!60] at (3.8,3.8) {shaft axis};
-    \node[font=\footnotesize, gray!60, align=center] at (3.0,-0.9) {$50^\circ$ elevation\\(backline out)};
+    % Shaft at 50 deg (backline out)
+    \draw[gray!60, line width=1pt] (0,0) -- (2.6,3.1) node[font=\tiny, above right] {shaft $50^\circ$};
 
     % Hub rotor
-    \draw[blue!60, line width=2pt] (2.2,2.6) -- (3.8,3.8);
-    \node[font=\small, blue!60] at (3.4,4.6) {hub rotor};
+    \draw[blue!60, line width=2pt] (1.9,2.3) -- (3.2,3.3) node[font=\tiny, above] {hub rotor};
 
-    % Expansion rotor at same ring position, but now tilted
-    \fill[red!70, opacity=0.9] (1.3,1.55) circle (3pt);
-    
-    % Upper blade — relative orientation unchanged to shaft, but wind direction changed
-    \draw[red!60!black, line width=2.0pt] (1.3,1.55) -- (0.3,2.5);
-    \draw[red!60!black, line width=2.0pt] (1.3,1.55) -- (0.3,0.6);
-    \draw[red!40!black, line width=0.8pt, densely dashed] (0.3,2.5) arc (150:210:1.0);
-    \fill[red!10, opacity=0.3] (1.3,1.55) -- (0.3,2.5) arc (150:210:1.0) -- cycle;
+    % Expansion rotor — same mechanical geometry, different wind angle
+    \fill[red!70] (1.0,1.2) circle (2.5pt);
+    \draw[red!60!black, line width=1.8pt] (1.0,1.2) -- (0.3,2.0);
+    \draw[red!60!black, line width=1.8pt] (1.0,1.2) -- (0.3,0.4);
+    \draw[red!30!black, line width=0.6pt, densely dashed] (0.3,2.0) arc (140:220:1.0);
+    \fill[red!8, opacity=0.3] (1.0,1.2) -- (0.3,2.0) arc (140:220:1.0) -- cycle;
 
-    \node[font=\small, red!70!black] at (-0.5,1.2) {expansion\\rotor};
+    \node[font=\tiny, red!70!black] at (-0.5,0.8) {expansion\\rotor};
 
-    % Wind from above (shaft tilted, wind unchanged)
-    \draw[->, red!50, line width=2.5pt] (-1.0,4.0) -- (0.5,2.0);
-    \node[font=\small, red!50] at (-1.5,4.3) {wind hits\\from above};
+    % Wind from above
+    \draw[->, red!50, line width=2pt] (-0.8,3.5) -- (0.4,1.5);
+    \node[font=\small, red!50] at (-1.2,3.8) {wind};
 
-    \node[font=\bfseries\small, red!70, fill=red!3, draw=red!50, rounded corners=3pt, inner sep=3pt] at (4.0,1.0) {! BACK-WIND};
-
-    % Tether lines
-    \draw[green!40!black, line width=0.6pt, densely dotted] (0,0) -- (1.3,1.55);
-    \draw[green!40!black, line width=0.6pt, densely dotted] (0.5,0) -- (2.2,2.6);
+    \node[font=\bfseries\small, red!70, fill=red!3, draw=red!50, rounded corners=2pt, inner sep=2pt] at (3.5,1.0) {BACK-WIND};
   \end{scope}
 
-  % === BLADE CROSS-SECTION — back-winded ===
-  \begin{scope}[shift={(1.5,2.0)}]
-    \node[font=\bfseries\small, red!50!black] at (2.0,2.5) {Blade section — back-winded};
+  % === BLADE CROSS-SECTION — reversed ===
+  \begin{scope}[shift={(1.2,2.0)}]
+    \node[font=\bfseries\small, red!50!black] at (1.8,2.2) {Back-winded:};
 
-    % Airfoil at 45° bank (same orientation)
-    \draw[black!70, line width=1.8pt, rotate around={-45:(0,0)}]
-      (0,0) to[out=10, in=180] (2.5,0.4) to[out=5, in=180] (3.0,0.1) -- cycle;
-    \fill[red!8, rotate around={-45:(0,0)}] (0,0) to[out=10, in=180] (2.5,0.4) to[out=5, in=180] (3.0,0.1) -- cycle;
+    \draw[black!70, line width=1.6pt, rotate around={-45:(0,0)}]
+      (0,0) to[out=10, in=180] (2.2,0.35) to[out=5, in=180] (2.6,0.1) -- cycle;
+    \fill[red!6, rotate around={-45:(0,0)}] (0,0) to[out=10, in=180] (2.2,0.35) to[out=5, in=180] (2.6,0.1) -- cycle;
 
-    % Apparent wind from above (shaft tilt changes AoA)
-    \draw[->, red!60, line width=1.8pt] (1.5,2.5) -- (0.2,0.2);
-    \node[font=\small, red!60] at (1.8,2.8) {apparent wind\\(from above)};
+    \draw[->, red!60, line width=1.5pt] (1.3,2.2) -- (0.2,0.2);
+    \node[font=\tiny, red!60] at (1.5,2.5) {wind from above};
 
-    % Lift REVERSED (pulls inward)
-    \draw[->, red!70!black, line width=2.0pt] (1.0,0.5) -- (-0.2,-0.8);
-    \node[font=\small, red!70!black] at (-1.2,-0.8) {lift (REVERSED)};
+    \draw[->, red!70!black, line width=1.8pt] (0.9,0.5) -- (-0.1,-0.6);
+    \draw[->, red!50, line width=1.2pt, dashed] (0.9,0.5) -- (0.6,-0.3) node[left, font=\tiny] {$F_r$ inward};
+    \draw[->, red!50, line width=1.2pt, dashed] (0.9,0.5) -- (1.6,0.7) node[right, font=\tiny] {$F_a$};
 
-    % Force decomposition
-    \draw[->, red!50, line width=1.5pt, dashed] (1.0,0.5) -- (0.7,-0.5);
-    \node[font=\small, red!50!black] at (0.0,-0.5) {$F_r$ (inward)};
-
-    \draw[->, red!50, line width=1.5pt, dashed] (1.0,0.5) -- (1.8,0.8);
-    \node[font=\small, red!50!black] at (2.5,0.8) {$F_a$};
-
-    \node[font=\bfseries, red!70!black, fill=red!5, draw=red!50!black, rounded corners=4pt, inner sep=4pt] at (1.5,-1.5) {STATUS: Collapsing — shaft at risk};
+    \node[font=\bfseries, red!70!black, fill=red!5, draw=red!50!black, rounded corners=3pt, inner sep=3pt] at (1.8,-1.0) {Collapsing};
   \end{scope}
 
-  % Explanation box
-  \node[font=\small, align=left, fill=red!3, draw=red!40, rounded corners=5pt, inner sep=7pt] at (11.0,4.0) {
-    \textbf{Why back-winding is dangerous:}\\[3pt]
-    Pitch depower tilts the shaft upward (50$^\circ$).\\[2pt]
-    Wind direction is unchanged — but the blade\\[2pt]
-    orientation relative to wind flips.\\[2pt]
-    At 45$^\circ$ bank, apparent wind hits from above.\\[2pt]
-    Lift reverses: radial force pulls tethers INWARD.\\[2pt]
-    $r_{\text{eff}}$ drops $\propto r^2$ — torsional capacity collapses.\\[2pt]
-    \textbf{Result: shaft can buckle during shutdown.}
-  };
+  % Compact summary
+  \node[font=\footnotesize, align=left, fill=red!3, draw=red!40, rounded corners=4pt, inner sep=5pt] at (10.0,3.5) {
+    \textbf{Back-wind mechanism:}\\
+    $\bullet$ Shaft tilts up during depower\\
+    $\bullet$ Blade orientation unchanged\\
+    $\bullet$ Apparent wind hits from above\\
+    $\bullet$ Lift reverses $\rightarrow$ $F_r$ pulls inward\\
+    $\bullet$ $r_{\text{eff}}$ drops, shaft buckles};
 \end{scope}
 
 % ============================================================
-% BOTTOM STRIP
+% BOTTOM BAR
 % ============================================================
-\fill[red!8, draw=red!50!black, line width=1.5pt, rounded corners=5pt] (-0.5,0.0) rectangle (33.0,2.8);
-\node[font=\bfseries\large, red!60!black] at (16.0,2.2) {!! STATIC MODEL LIMITATION};
-\node[font=\small, align=center, red!50!black] at (16.0,1.3) {
-  The DE optimiser uses static structural sizing — it assumes $F_r$ is always outward. It cannot detect
-  transient back-wind collapse during pitch depower. \textbf{Dynamic ODE simulation is required.}};
-
-% Mitigation
-\node[font=\small\bfseries, black!70] at (16.0,-0.5) {Mitigation options:};
-\node[font=\small, align=center, black!60] at (16.0,-1.1) {
-  Lower bank angle (20--30$^\circ$) $\cdot$ Symmetric/reflexed airfoils for reversed flow $\cdot$ Dynamic ODE validation
-  $\cdot$ Conservative 20--30$^\circ$ bank for prototyping until transient behaviour is fully characterised};
+\fill[red!6, draw=red!40!black, line width=1.2pt, rounded corners=4pt] (-0.5,0.0) rectangle (29.5,1.6);
+\node[font=\bfseries\small, red!50!black] at (14.5,1.1) {Static DE optimiser cannot detect transient back-wind collapse — dynamic ODE validation required.};
+\node[font=\tiny, black!50] at (14.5,0.4) {Mitigation: lower bank angle (20--30$^\circ$), symmetric airfoils, conservative prototyping until validated};
 
 \end{tikzpicture}
 \end{document}
