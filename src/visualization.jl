@@ -348,6 +348,38 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($blade_obs[3]); color=:steelblue, linewidth=2.5)
     end
 
+    # ── Expansion rotor blades ──────────────────────────────────────────────
+    if !isempty(sys.expansion_rotors)
+        for (ei, er) in enumerate(sys.expansion_rotors)
+            ri = er.ring_idx
+            if ri < 1 || ri > sys.n_ring; continue; end
+            ring_gid = sys.ring_ids[ri]
+            ring_node = sys.nodes[ring_gid]
+            ring_R = ring_node.radius
+            # Blade extends from ring radius outward, banked down
+            r_inner_exp = ring_R
+            r_outer_exp = ring_R + er.blade_tip_radius
+            bank_rad = deg2rad(er.bank_angle_deg)
+            for b in 1:er.n_blades
+                exp_blade_obs = @lift begin
+                    u    = $u_obs
+                    ctr  = u[3*(ring_gid-1)+1 : 3*ring_gid]
+                    α    = u[6N + ri]
+                    φ    = α + (b-1) * (2π / er.n_blades)
+                    pp1, pp2 = _perp_fn(u)
+                    r_dir = cos(φ) .* pp1 .+ sin(φ) .* pp2
+                    # Banked downward: radial component + axial component
+                    bank_dir = cos(bank_rad) .* r_dir .- sin(bank_rad) .* [0,0,1]
+                    p_inner = ctr .+ r_inner_exp .* r_dir
+                    p_outer = ctr .+ r_outer_exp .* bank_dir
+                    ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
+                end
+                lines!(ax3d, @lift($exp_blade_obs[1]), @lift($exp_blade_obs[2]),
+                             @lift($exp_blade_obs[3]); color=:darkorange, linewidth=2.0)
+            end
+        end
+    end
+
     # Lift system — bearing and sky anchor are real ODE particles.
     # Bearing only sees gravity, bridles, and the cyan line.  The sky anchor
     # (the splice/knot at the upper end of the cyan line) takes the kite

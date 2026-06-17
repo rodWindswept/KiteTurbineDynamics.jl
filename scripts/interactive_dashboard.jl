@@ -28,6 +28,9 @@ function parse_commandline()
         "--v5"
             help = "Use v5 optimized 8-line octagon geometry"
             action = :store_true
+        "--v6"
+            help = "Use V6.2 optimized 12-line dodecagon with expansion rotor"
+            action = :store_true
         "--expansion"
             help = "Add expansion rotors at given bank angle (deg, default 20)"
             arg_type = Float64
@@ -181,12 +184,33 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v5"] ? "v5 Optimized 8-line" : "Canonical 5-line"
+    current_config = args["v6"] ? "V6.2 12-line dodecagon" :
+                     args["v5"] ? "v5 Optimized 8-line" : "Canonical 5-line"
     v_target       = args["wind"]
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "v5 Optimized 8-line"
+        if current_config == "V6.2 12-line dodecagon"
+            # V6.2 optimum from scripts/results/v6_2_campaign_50kw/best_design.json
+            p    = params_v5_50kw()
+            sys, u0 = build_kite_turbine_system(p)
+            label  = "V6.2 dodecagon"
+            println("$label: $(p.n_lines) lines, $(sys.n_ring) rings, $(sys.n_total) nodes")
+            # Add V6.2 expansion rotor: n_exp=1, bank=45°, at hub ring (ring_idx=1)
+            r_rotor = 10.591991451982997  # from best_design.json
+            cfg = ExpansionStackConfig(;
+                placement=:clustered, n_rings=sys.n_ring, n_expansion=1,
+                n_blades=p.n_blades,
+                blade_tip_radius=r_rotor,
+                blade_hub_radius=0.25 * r_rotor,
+                blade_chord=0.113 * r_rotor,
+                CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
+                bank_angle_deg=45.0, mass_per_rotor=0.5, shaft_coupling=1.0,
+            )
+            stack = build_expansion_stack(cfg)
+            sys, u0 = build_kite_turbine_system(p; expansion_rotors=stack)
+            println("  V6.2 expansion: 1 rotor, bank=45°, blade_r=$(round(r_rotor;digits=1)) m")
+        elseif current_config == "v5 Optimized 8-line"
             p    = params_v5_10kw()
             sys, u0 = build_kite_turbine_system_v5(p, 2.0, 0.336)
             label  = "v5 octagon"
