@@ -2,7 +2,7 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usetikzlibrary{calc}
-\usepackage[paperwidth=28cm,paperheight=18cm,margin=0.3cm]{geometry}
+\usepackage[paperwidth=36cm,paperheight=18cm,margin=0.5cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \centering
@@ -16,7 +16,7 @@
 \begin{scope}[shift={(0,0)}]
   \fill[red!3, rounded corners=6pt] (-0.5,-2.0) rectangle (9.0,11.2);
   \node[font=\bfseries\Large, red!60!black] at (4.25,10.6) {Beam-Mass-Only Model};
-  \node[font=\small, red!50!black] at (4.25,10.1) {$m_{\text{ring}} \propto n\sqrt{\sin(\pi/n)}$};
+  \node[font=\small, red!50!black] at (4.25,10.1) {$m_{\text{ring}} \propto n\sqrt{\sin(\pi/n)}$~\tiny (normalised)};
 
   \foreach \n/\val/\label/\i in {3/1.00/1.00/0, 6/1.52/1.52/1, 8/1.77/1.77/2, 10/1.99/1.99/3, 12/2.19/2.19/4} {
     \pgfmathsetmacro{\barht}{\val * 3.0}
@@ -38,28 +38,32 @@
 
 % === RIGHT: System reality ===
 \begin{scope}[shift={(11.5,0)}]
-  \fill[blue!2, rounded corners=6pt] (-0.5,-2.0) rectangle (9.5,11.2);
-  \node[font=\bfseries\Large, blue!60!black] at (4.5,10.6) {Full System Optimum};
-  \node[font=\small, blue!50!black] at (4.5,10.1) {Beams + knuckles + tethers + rotor};
+  \fill[blue!2, rounded corners=6pt] (-0.5,-2.0) rectangle (11.5,11.2);
+  \node[font=\bfseries\Large, blue!60!black] at (5.5,10.6) {Full System Optimum};
+  \node[font=\small, blue!50!black] at (5.5,10.1) {Beams + knuckles + tethers + rotor\qquad (absolute mass, kg)};
 
   \draw[->, thick] (0.8,1.5) -- (0.8,9.0) node[above, font=\bfseries] {Total mass (kg)};
-  \draw[->, thick] (0.8,1.5) -- (9.2,1.5) node[right, font=\bfseries] {$n$};
+  \draw[->, thick] (0.8,1.5) -- (10.5,1.5) node[right, font=\bfseries] {$n$};
   \foreach \y/\label in {1.5/60,2.5/70,3.5/80,4.5/90,5.5/100,6.5/110,7.5/120} {
-    \draw[gray!20] (0.8,\y) -- (9.0,\y);
+    \draw[gray!20] (0.8,\y) -- (10.3,\y);
     \node[left, font=\tiny] at (0.6,\y) {\label};
   }
   \foreach \n/\x in {3/2.2,6/3.8,8/5.8,10/7.4,12/9.0} { \node[font=\footnotesize] at (\x,1.1) {\n}; }
 
-  \draw[blue!60, line width=3pt] plot coordinates {(2.2,7.0) (3.8,5.2) (5.8,3.8) (7.4,2.8) (9.0,2.0)};
+  % Curve: decreases with n, with slight uptick after n=12 to show it IS the minimum
+  \draw[blue!60, line width=3pt] plot coordinates {(2.2,7.0) (3.8,5.2) (5.8,3.8) (7.4,2.8) (9.0,2.0) (10.0,2.3)};
   \fill[blue!50] (2.2,7.0) circle (3pt);
   \fill[blue!50] (3.8,5.2) circle (3pt);
   \fill[blue!50] (5.8,3.8) circle (3pt);
   \fill[green!50!black] (9.0,2.0) circle (5pt);
   \draw[green!50!black, line width=1.5pt] (9.0,2.0) circle (8pt);
+  \fill[blue!30] (10.0,2.3) circle (3pt);
+  \node[font=\tiny, blue!30] at (10.0,2.7) {n=14?};
+
   \node[font=\bfseries\footnotesize, green!50!black, fill=white] at (8.5,3.0) {\textbf{74.17 kg}};
   \node[font=\tiny, green!50!black] at (8.5,2.4) {$n\!=\!12$};
 
-  \node[font=\footnotesize, blue!70!black, align=left, fill=white, draw=blue!20, rounded corners=3pt, inner sep=4pt] at (4.5,8.5) {
+  \node[font=\footnotesize, blue!70!black, align=left, fill=white, draw=blue!20, rounded corners=3pt, inner sep=4pt] at (5.5,8.5) {
     \textbf{Why mass decreases with $n$:}\\
     1. Thinner beams at higher $n$\\
     2. Smaller knuckles (coupled to $D_o$)\\
@@ -68,10 +72,11 @@
 \end{scope}
 
 % === BOTTOM ===
-\fill[black!3, rounded corners=6pt] (-0.5,-2.8) rectangle (21.0,-1.8);
-\node[font=\small\bfseries, black!70, align=center] at (10.2,-2.3) {
+\fill[black!3, rounded corners=6pt] (-0.5,-2.8) rectangle (23.0,-1.8);
+\node[font=\small\bfseries, black!70, align=center] at (11.2,-2.3) {
   \textbf{Counterintuitive result:} Beam-only (left) says $n=3$ lightest. But coupled knuckle mass dominates —
-  thinner beams at higher $n$ reduce knuckle weight enough to overcome $2.19\times$ beam penalty. DE optimiser finds minimum at $n=12$, 74.17 kg.};
+  thinner beams at higher $n$ reduce knuckle weight enough to overcome $2.19\times$ beam penalty.
+  The DE optimiser searches $n\!\in\![3,12]$ and finds the system minimum at $n=12$, 74.17 kg.};
 
 \end{tikzpicture}
 \end{document}
