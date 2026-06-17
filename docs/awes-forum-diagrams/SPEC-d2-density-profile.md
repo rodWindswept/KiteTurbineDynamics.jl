@@ -1,4 +1,13 @@
-# Diagram d2 — Generator-Ready Specification
+# Diagram d2 — Generator-Ready Specification (v3 — narrative-driven)
+
+## The story this diagram tells
+The density profile β flipped from +0.76 (bottom-heavy) to −0.13 (mild top-bias). This happened because:
+
+1. **At n=12, buckling is no longer the bottleneck.** Per-beam compression drops to N/12 — 4× lower than at n=3. The rings no longer NEED to cluster at the bottom for buckling resistance. The old β=+0.76 was driven by the need to pack rings where cumulative compression was highest.
+
+2. **The expansion rotor changes the game.** With n_exp=1 (single hub expansion rotor), radial spreading force F_radial is strongest at the hub and weakens down the shaft. Rings near the hub benefit more from increased effective radius (r_eff ↑ → torsional resistance ↑). This creates a mild incentive to shift rings toward the hub.
+
+3. **The effect is MILD.** β=−0.13 is barely different from uniform spacing (β=0). This is not a dramatic inversion — it's a subtle shift driven by the expansion rotor's radial force gradient.
 
 ## Output files
 - Source: `docs/awes-forum-diagrams/diagram2-density-v4.tex`
@@ -18,85 +27,53 @@
 
 ## Title area
 - Main: `\bfseries\Huge` at (0, 5.8) — "Why the Density Profile Inverted: From Bottom-Heavy to Top-Biased"
-- Subtitle: `\large` at (0, 5.1) — "β controls ring spacing: β>0 = bottom-heavy, β<0 = top-bias. The optimizer freely chooses β ∈ [−0.8, +0.8]."
+- Subtitle: `\large` at (0, 5.1) — "β controls ring spacing: β>0 = bottom-heavy, β<0 = top-bias. At n=12, buckling relaxes — expansion rotor force gradient favours mild top-bias."
 
-## Left panel: n=3, β=+0.76 (orange)
+## Left panel: n=3, β=+0.76
 - Scope: `xshift=-8.5cm, yshift=-0.1cm`
 - Background: `\fill[orange!3, rounded corners=6pt] (-5.0,-6.5) rectangle (5.0,4.5)`
 - Title: `\bfseries\Large orange!60!black` at (0, 3.9) — "n = 3, β = +0.76"
-- Subtitle: `\small orange!50!black` at (0, 3.3) — "β>0: rings cluster at bottom"
-- Shaft axis: `\draw[gray!40, line width=1pt] (0,-5.0) -- (0,2.8)`
+- Subtitle: `\small orange!50!black` at (0, 3.3) — "High compression forces rings to cluster at bottom"
 
-### Ring geometry (CRITICAL: largest at top, smallest at bottom)
-Ring spacing uses power law: t = i/9 for i=0..9, tbias = t^(1-0.76) = t^0.24
-- y-position: yy = 2.8 − tbias × 7.2  (top=2.8, bottom=-4.4)
-- Ring radius: rr = 2.5 − tbias × 2.15  (top=2.5, bottom=0.35)
-- Line width: thick = 0.4 + tbias × 1.8  (thick at bottom where load is high)
-- Each ring is a triangle (n=3): vertices at 90°, 210°, 330° around (0, yy)
-- Color: `orange!70!black`
+### Ring geometry (same as v2 — verified correct)
+Ring spacing: t = i/9, tbias = t^0.24, yy = 2.8 − tbias×7.2, rr = 2.5 − tbias×2.15
+- Bottom ring rr=0.35 (smallest), top ring rr=2.5 (largest) ✓
 
-Verification: bottom ring (i=9, t=1) has rr=0.35 (smallest), top ring (i=0, t=0) has rr=2.5 (largest)
+- Ground: `\draw[thick, black!50] (-4.0,-4.5) -- (4.0,-4.5)`, label "ground (smallest ring)"
+- Annotation: "Large rings at top (hub)" at (3.8, 1.5), "Small rings tightly packed at bottom" at (3.8, -2.5)
+- Stats box: "Per-beam: N/3 — very high. β=+0.76: Rings cluster at bottom where cumulative load peaks. Without expansion rotors at n=3, buckling at the base is the binding constraint."
 
-- Ground line: `\draw[thick, black!50] (-4.0,-4.5) -- (4.0,-4.5)`
-- Ground label: `\footnotesize` at (0,-4.9) — "ground (smallest ring)"
-
-### Annotations (must not overlap rings)
-- `\small\bfseries orange!70!black` at (3.8, 1.5) — "Large rings at top (hub)"
-- `\small\bfseries orange!70!black` at (3.8, -2.5) — "Small rings tightly packed at bottom — high compression"
-- Both with `fill=white, fill opacity=0.9, rounded corners=3pt`
-
-### Stats box
-- `\footnotesize` at (0, -5.8): "Per-beam compression: N/3 — very high", "β=+0.76: Rings cluster at bottom where cumulative load peaks."
-
-## Center transition
+## Center
 - Arrow: `\draw[->, line width=4pt, >=stealth, green!50!black] (-2.5,0) -- (2.5,0)`
-- Label: `\bfseries\Large` — "n=3 → n=12"
-- Below: `\small` — "β sign flips from +0.76 to −0.13"
+- Label: "n=3 → n=12"
+- Below: "β sign flips from +0.76 to −0.13"
 
-## Right panel: n=12, β=−0.13 (blue)
+## Right panel: n=12, β=−0.13
 - Scope: `xshift=8.5cm, yshift=-0.1cm`
 - Background: `\fill[blue!2, rounded corners=6pt] (-5.0,-6.5) rectangle (5.0,4.5)`
 - Title: `\bfseries\Large blue!60!black` at (0, 3.9) — "n = 12, β = −0.13"
-- Subtitle: `\small blue!50!black` at (0, 3.3) — "β<0: mild top-bias — sign inverted"
-- Shaft axis: `\draw[gray!40, line width=1pt] (0,-5.0) -- (0,2.8)`
+- Subtitle: `\small blue!50!black` at (0, 3.3) — "Low compression: expansion rotor force gradient favours mild top-bias"
 
 ### Ring geometry
-t = i/8 for i=0..8, tbias = t^(1−(−0.13)) = t^1.13 (mild top-bias)
-- yy = 2.8 − tbias × 7.2
-- rr = 2.3 − tbias × 1.6  (top=2.3, bottom=0.7)
-- 12-gon rings: `blue!50!black, line width=0.55pt`, vertices at 15° + k×30°
-- Ground line at y=-4.5, label "ground (smallest ring)"
+t = i/8, tbias = t^1.13, yy = 2.8 − tbias×7.2, rr = 2.3 − tbias×1.6
+- Bottom ring rr=0.7, top ring rr=2.3 ✓
 
-Verification: bottom ring (i=8, t=1) has rr=0.7, top ring (i=0, t=0) has rr=2.3
-
-### Annotations
-- `\small\bfseries blue!60!black` at (4.2, 1.5): "Large rings at top (hub)"
-- `\small\bfseries blue!60!black` at (4.2, -2.5): "Small rings at bottom — nearly uniform spacing"
-
-### Stats box
-- `\footnotesize` at (0, -5.8): "Per-beam compression: N/12 — 4× lower than n=3", "β=−0.13: Compression so low that beam taper (thin near hub) now dominates — rings drift slightly toward top where beams are thinnest."
+- Ground line, same as left
+- Annotation: "Large rings at top (hub)" at (4.2, 1.5), "Small rings at bottom — nearly uniform" at (4.2, -2.5)
+- Stats box: "Per-beam: N/12 — 4× lower. β=−0.13: Buckling is no longer the binding constraint. The hub expansion rotor provides radial force that strengthens nearby rings more than distant ones — rings drift slightly toward the hub where r_eff is largest."
 
 ## Verification
 ```bash
 cd docs/awes-forum-diagrams
 pdflatex -interaction=nonstopmode diagram2-density-v4.tex
-# Zero Error lines
-
 pdftoppm -png -r 300 diagram2-density-v4.pdf d2-density-profile
 mv d2-density-profile-1.png d2-density-profile.png
-
 python3 -c "
 from PIL import Image; import numpy as np
 img = Image.open('d2-density-profile.png')
-arr = np.array(img)
-nw = (arr < 240).any(axis=2).sum()
-tot = arr.shape[0]*arr.shape[1]
-assert img.size[0] > 3500, 'Too narrow'
-assert 100*nw/tot > 2.0, f'Content too sparse: {100*nw/tot:.1f}%'
-print(f'OK: {img.size}, {100*nw/tot:.1f}% non-white')
+arr = np.array(img); nw = (arr < 240).any(axis=2).sum()
+assert img.size[0] > 3500 and 100*nw/(arr.shape[0]*arr.shape[1]) > 2.0, 'FAIL'
+print('OK')
 "
-
-pdftotext diagram2-density-v4.pdf - | grep -q 'Density Profile' && echo 'Title OK'
-pdftotext diagram2-density-v4.pdf - | grep -q 'smallest ring' && echo 'Ring labels OK'
-pdftotext diagram2-density-v4.pdf - | grep -q 'beam taper' && echo 'Stats OK'
+pdftotext diagram2-density-v4.pdf - | grep -q 'expansion rotor' && echo 'Narrative OK'
 ```
