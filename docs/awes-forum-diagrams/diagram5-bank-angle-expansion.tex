@@ -1,8 +1,7 @@
 \documentclass[tikz, border=10pt]{standalone}
 \usepackage{amsmath}
 \usetikzlibrary{calc,arrows.meta}
-\begin{document}
-\begin{tikzpicture}[scale=0.82]
+\begin{document}[scale=0.82]
 
 % === TITLE ===
 \node[font=\bfseries\Huge, black!80] at (14.0,20.5) {Expansion Rotor Bank Angle \& Pitch Depower Risk};
@@ -140,6 +139,4 @@
 \fill[red!6, draw=red!40!black, line width=1.2pt, rounded corners=4pt] (-0.5,0.0) rectangle (29.5,1.6);
 \node[font=\bfseries\small, red!50!black] at (14.5,1.1) {Static DE optimiser cannot detect transient back-wind collapse — dynamic ODE validation required.};
 \node[font=\tiny, black!50] at (14.5,0.4) {Mitigation: lower bank angle (20--30$^\circ$), symmetric airfoils, conservative prototyping until validated};
-
-\end{tikzpicture}
 \end{document}

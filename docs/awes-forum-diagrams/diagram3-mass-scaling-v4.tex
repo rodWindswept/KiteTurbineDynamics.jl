@@ -1,9 +1,7 @@
 \documentclass[tikz, border=10pt]{standalone}
 \usepackage{amsmath}
 \usetikzlibrary{calc}
-\begin{document}
-\begin{tikzpicture}[scale=0.85]
-
+\begin{document}[scale=0.85]
 % === GLOBAL TITLE ===
 \node[font=\bfseries\Huge, black!80] at (11.5,12.8) {Why the Optimiser Chose $n=12$ Despite Beam-Only Scaling};
 \node[font=\large, black!50] at (11.5,12.0) {Beam mass alone says fewer lines are lighter. Coupled system effects reverse the tradeoff.};
@@ -77,6 +75,4 @@
 \node[font=\small\bfseries, black!70, align=center] at (10.2,-2.0) {
   \textbf{The counterintuitive result:} Beam-only scaling (left) says $n=3$ is lightest. But coupled knuckle mass dominates: thinner beams at higher $n$
   reduce knuckle weight enough to overcome the $2.19\times$ beam-mass penalty. The DE optimiser finds the system minimum at $n=12$, 74.17 kg.};
-
-\end{tikzpicture}
 \end{document}
