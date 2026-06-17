@@ -1,29 +1,33 @@
-\documentclass[tikz, border=10pt]{standalone}
+\documentclass{article}
+\usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
+\usepackage[paperwidth=38cm,paperheight=20cm,margin=0pt]{geometry}
+\pagestyle{empty}
 \begin{document}
 \begin{tikzpicture}[scale=0.85]
 
 % Background
-\fill[black!1, rounded corners=8pt] (-12.5,-7.5) rectangle (12.5,6.5);
-\node[font=\bfseries\Huge, black!80] at (0,5.8) {Why the Density Profile Changed: From Bottom-Biased to Uniform};
-\node[font=\large, black!50] at (0,5.1) {At n=3, per-beam compression is high — rings must cluster at the bottom. At n=12, load is distributed.};
+\fill[black!1, rounded corners=8pt] (-18.5,-8.5) rectangle (18.5,7.5);
+\node[font=\bfseries\Huge, black!80] at (0,6.8) {Why the Density Profile Inverted: From Bottom-Heavy to Top-Biased};
+\node[font=\large, black!50] at (0,6.0) {At n=3, per-beam compression is high --- rings must cluster at the bottom. At n=12, load is distributed --- the sign flips.};
 
 % === LEFT: n=3 ===
-\begin{scope}[xshift=-7.0cm, yshift=-0.2cm]
-  \fill[orange!3, rounded corners=6pt] (-5.0,-7.0) rectangle (5.0,4.5);
-  \node[font=\bfseries\Large, orange!60!black] at (0,4.0) {n = 3, $\beta$ = 0.76};
-  \node[font=\small, orange!50!black] at (0,3.4) {Heavily bottom-biased};
+\begin{scope}[xshift=-9.5cm, yshift=-0.2cm]
+  \fill[orange!3, rounded corners=6pt] (-5.5,-7.5) rectangle (5.5,5.0);
+  \node[font=\bfseries\Large, orange!60!black] at (0,4.4) {n = 3, $\beta$ = +0.76};
+  \node[font=\small, orange!50!black] at (0,3.8) {Heavily bottom-biased --- rings cluster at base};
 
   % Shaft axis
-  \draw[gray!40, line width=1pt] (0,-5.5) -- (0,2.8);
+  \draw[gray!40, line width=1pt] (0,-6.0) -- (0,3.2);
 
-  % Triangle rings — bottom-biased
+  % Triangle rings --- bottom-biased: t^(1-0.76) = t^0.24
+  % SMALL rings at bottom (rr=0.4), LARGE rings at top (rr=2.6)
   \foreach \i in {0,...,9} {
     \pgfmathsetmacro{\t}{\i/9.0}
     \pgfmathsetmacro{\tbias}{\t^(1-0.76)}
-    \pgfmathsetmacro{\yy}{2.8 - \tbias*7.5}
-    \pgfmathsetmacro{\rr}{0.4 + \tbias*2.2}
+    \pgfmathsetmacro{\yy}{3.2 - \tbias*8.5}
+    \pgfmathsetmacro{\rr}{0.35 + \tbias*2.4}
     \pgfmathsetmacro{\thick}{2.2 - \tbias*1.3}
     \draw[orange!70!black, line width=\thick pt]
       ({\rr*cos(90)},{\yy+\rr*sin(90)}) --
@@ -32,57 +36,61 @@
   }
 
   % Ground
-  \draw[thick, black!50] (-4.0,-5.0) -- (4.0,-5.0);
-  \node[font=\footnotesize, black!50] at (0,-5.4) {ground};
+  \draw[thick, black!50] (-4.0,-5.5) -- (4.0,-5.5);
+  \node[font=\footnotesize, black!50] at (0,-5.9) {ground (smallest ring)};
 
-  % Compression annotation
-  \draw[->, red!70, line width=2.5pt] (2.9,-4.0) -- (2.9,0.5);
-  \node[font=\small\bfseries, red!70, align=center, fill=white, fill opacity=0.8, text opacity=1.0, rounded corners=2pt, inner sep=2pt] at (3.8,-1.5) {Cumulative\\compression\\peaks at\\bottom ring\\$\rightarrow$ rings must\\be tight here};
+  % Annotation: small rings at bottom
+  \draw[->, red!70, line width=2.5pt] (2.4,-3.5) -- (2.4,0.5);
+  \node[font=\small\bfseries, red!70, align=center, fill=white, fill opacity=0.85, text opacity=1.0, rounded corners=2pt, inner sep=2pt] at (3.5,-1.5) {Cumulative\\compression\\peaks at\\bottom ring\\$\rightarrow$ small rings\\must be tight};
 
   % Stats
-  \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=5pt] at (0,-6.3) {
+  \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=5pt] at (0,-6.8) {
     Per-beam compression: $N/3$ --- high\\
-    Bottom L/r = 0.79 \quad Buckling FoS: 15.7$\times$ at base\\
-    \textbf{Why:} Tight spacing resists high per-beam load};
+    Bottom ring radius = 0.35, top ring = 2.75\\
+    \textbf{Why:} Small rings at bottom resist high per-beam load};
 \end{scope}
 
 % === CENTER ARROW ===
-\draw[->, line width=4pt, >=stealth, green!50!black] (-1.5,0.0) -- (1.5,0.0)
+\draw[->, line width=4pt, >=stealth, green!50!black] (-3.0,0.0) -- (3.0,0.0)
   node[midway,above,font=\bfseries\Large] {n=3 $\rightarrow$ n=12};
+\node[font=\footnotesize, green!50!black] at (0,-0.8) {density sign flips};
 
 % === RIGHT: n=12 ===
-\begin{scope}[xshift=7.0cm, yshift=-0.2cm]
-  \fill[blue!2, rounded corners=6pt] (-5.0,-7.0) rectangle (5.0,4.5);
-  \node[font=\bfseries\Large, blue!60!black] at (0,4.0) {n = 12, $\beta$ = $-$0.13};
-  \node[font=\small, blue!50!black] at (0,3.4) {Nearly uniform spacing};
+\begin{scope}[xshift=9.5cm, yshift=-0.2cm]
+  \fill[blue!2, rounded corners=6pt] (-5.5,-7.5) rectangle (5.5,5.0);
+  \node[font=\bfseries\Large, blue!60!black] at (0,4.4) {n = 12, $\beta$ = $-$0.13};
+  \node[font=\small, blue!50!black] at (0,3.8) {Mild top-bias --- sign has inverted};
 
   % Shaft axis
-  \draw[gray!40, line width=1pt] (0,-5.5) -- (0,2.8);
+  \draw[gray!40, line width=1pt] (0,-6.0) -- (0,3.2);
 
-  % Dodecagon rings — uniform spacing
+  % Dodecagon rings --- t^(1-(-0.13)) = t^1.13: mild top-bias
+  % SMALL rings at bottom (rr=0.7), LARGE rings at top (rr=2.5)
   \foreach \i in {0,...,8} {
     \pgfmathsetmacro{\t}{\i/8.0}
     \pgfmathsetmacro{\tbias}{\t^(1-(-0.13))}
-    \pgfmathsetmacro{\yy}{2.8 - \tbias*7.5}
-    \pgfmathsetmacro{\rr}{0.8 + \tbias*1.6}
+    \pgfmathsetmacro{\yy}{3.2 - \tbias*8.5}
+    \pgfmathsetmacro{\rr}{0.7 + \tbias*1.8}
     \draw[blue!50!black, line width=0.55pt]
       ({\rr*cos(15)},{\yy+\rr*sin(15)})
       foreach \a in {45,75,...,345} { -- ({\rr*cos(\a)},{\yy+\rr*sin(\a)}) } -- cycle;
   }
 
   % Ground
-  \draw[thick, black!50] (-4.0,-5.0) -- (4.0,-5.0);
-  \node[font=\footnotesize, black!50] at (0,-5.4) {ground};
+  \draw[thick, black!50] (-4.0,-5.5) -- (4.0,-5.5);
+  \node[font=\footnotesize, black!50] at (0,-5.9) {ground (smallest ring)};
 
-  % Distributed load annotation
-  \draw[->, blue!70, line width=1pt] (2.9,2.0) -- (2.9,-4.0);
-  \node[font=\small\bfseries, blue!70, align=center, fill=white, fill opacity=0.8, text opacity=1.0, rounded corners=2pt, inner sep=2pt] at (3.8,-1.5) {Low per-beam\\compression\\everywhere\\$\rightarrow$ no need\\for local\\reinforcement};
+  % Annotation
+  \draw[->, blue!70, line width=1pt] (2.4,2.5) -- (2.4,-4.5);
+  \node[font=\small\bfseries, blue!70, align=center, fill=white, fill opacity=0.85, text opacity=1.0, rounded corners=2pt, inner sep=2pt] at (3.5,-1.5) {Low per-beam\\compression\\everywhere\\$\rightarrow$ density\\demand vanishes\\--- sign inverts};
 
   % Stats
-  \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=5pt] at (0,-6.3) {
+  \node[font=\footnotesize, align=left, fill=white, draw=gray!20, rounded corners=3pt, inner sep=5pt] at (0,-6.8) {
     Per-beam compression: $N/12$ --- $4\times$ lower\\
-    L/r $\approx$ 3.0 everywhere \quad Buckling FoS: uniform\\
-    \textbf{Why:} Low per-beam load means uniform spacing is sufficient};
+    Bottom ring radius = 0.7, top ring = 2.5\\
+    \textbf{Why $\beta<0$:} Compression so low that beam taper\\
+    \quad (thin at hub) now dominates over load --- rings\\
+    \quad drift slightly toward the top where beams are thinnest.};
 \end{scope}
 
 \end{tikzpicture}

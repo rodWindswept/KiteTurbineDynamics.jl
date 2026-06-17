@@ -1,392 +1,238 @@
 \documentclass{article}
-\usepackage[paperwidth=26cm,paperheight=22cm,margin=0.3cm]{geometry}
+\usepackage[paperwidth=38cm,paperheight=28cm,margin=0.3cm]{geometry}
 \usepackage{tikz}
 \usepackage{amsmath}
 \pagestyle{empty}
 \begin{document}
 \centering
-\begin{tikzpicture}[scale=0.78]
+\begin{tikzpicture}[scale=0.80]
 
 % === GLOBAL TITLE ===
-\node[font=\bfseries\Huge, black!80] at (12.0,23.5) {The V6.2 Optimization Landscape};
-\node[font=\large, black!55] at (12.0,22.8) {How the DE optimizer escaped the V6 constraint ceiling to find 58 kg ($-$77.6\%)};
+\node[font=\bfseries\Huge, black!80] at (17.0,30.5) {The V6.2 Optimization Landscape (Corrected Physics)};
+\node[font=\large, black!55] at (17.0,29.7) {How widening the bounds + correcting the physics uncovered the dodecagon optimum at 74.17 kg};
 
 % ============================================================
-% PANEL 1: n_lines vs mass (top-left)
+% PANEL 1: Convergence History (top-left)
 % ============================================================
-\begin{scope}[shift={(0,11.5)}]
-  % Panel frame
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (11.5,10.8);
-  \node[font=\bfseries\Large, black!70] at (5.5,10.2) {The Polygon Breakthrough: n\_lines vs Mass};
+\begin{scope}[shift={(0,16.5)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,12.8);
+  \node[font=\bfseries\Large, black!70] at (8.0,12.2) {1. Convergence: 60 Islands $\rightarrow$ Global Optimum};
+  \node[font=\small, black!50] at (8.0,11.6) {Multi-island DE with periodic migration escapes local minima};
 
   % Axes
-  \draw[->, thick] (0.8,0.8) -- (0.8,9.0) node[above, font=\bfseries] {Mass (kg)};
-  \draw[->, thick] (0.8,0.8) -- (10.8,0.8) node[right, font=\bfseries] {n\_lines};
+  \draw[->, thick] (1.0,1.0) -- (1.0,10.5) node[above, font=\bfseries] {Best mass (kg)};
+  \draw[->, thick] (1.0,1.0) -- (15.5,1.0) node[right, font=\bfseries] {Iteration ($\times$1000)};
 
-  % Y-axis: mass scale labels
-  \node[left, font=\footnotesize] at (0.8,0.8) {0};
-  \node[left, font=\footnotesize] at (0.8,2.5) {100};
-  \node[left, font=\footnotesize] at (0.8,4.2) {200};
-  \node[left, font=\footnotesize] at (0.8,5.9) {300};
-  \foreach \y in {0.8,2.5,4.2,5.9} {\draw[gray!30] (0.8,\y) -- (10.8,\y);}
+  % Y-axis labels
+  \node[left, font=\footnotesize] at (1.0,1.0) {0};
+  \node[left, font=\footnotesize] at (1.0,3.4) {100};
+  \node[left, font=\footnotesize] at (1.0,5.8) {200};
+  \node[left, font=\footnotesize] at (1.0,8.2) {300};
+  \foreach \y in {1.0,3.4,5.8,8.2} {\draw[gray!20] (1.0,\y) -- (15.5,\y);}
 
-  % n/tan(π/n) theoretical curve — scaled: mass ∝ n/tan(π/n), normalized to 58 kg at n=3
-  % n=3: 58, n=4: 116, n=5: 230, n=6: 348, n=7: 483, n=8: 645
-  % y = 0.8 + (mass/650) * 8.2
-  \draw[red!70, line width=2.5pt, smooth] plot coordinates {
-    (2.6,1.53) (3.6,2.27) (4.6,3.71) (5.6,5.20) (6.6,6.91) (7.6,8.94)
-  };
-  \node[red!60, font=\tiny] at (9.0,9.2) {$m \propto n/\tan(\pi/n)$};
+  % Convergence curves (schematic)
+  \draw[gray!30, line width=0.5pt, smooth] plot coordinates {(1.0,9.6) (3.0,8.2) (6.0,5.8) (9.0,3.8) (12.0,2.2) (15.0,1.5)};
+  \draw[gray!30, line width=0.5pt, smooth] plot coordinates {(1.0,9.8) (4.0,8.0) (7.0,5.5) (10.0,3.4) (13.0,2.4) (15.0,1.8)};
+  \draw[gray!30, line width=0.5pt, smooth] plot coordinates {(1.0,9.2) (3.0,7.5) (5.0,4.5) (8.0,3.0) (11.0,2.0) (15.0,1.4)};
+  \draw[green!50!black, line width=1.8pt, smooth] plot coordinates {(1.0,9.4) (2.0,7.0) (3.5,4.8) (4.5,3.2) (5.5,2.8) (6.5,2.2) (7.5,1.9) (9.0,1.6) (11.0,1.4) (15.0,1.18)};
 
-  % n=3: V6.2 optimum — deep valley
-  \fill[green!50!black] (2.6,1.53) circle (5pt);
-  \draw[green!50!black, line width=1.5pt] (2.6,1.53) circle (8pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (1.8,2.1) {\textbf{58 kg}};
-  \node[font=\tiny, green!50!black] at (1.8,1.8) {V6.2};
-
-  % n=8: V6 ceiling — high plateau
-  \fill[red!70] (7.6,8.94) circle (4pt);
-  \draw[red!30, line width=1pt] (7.6,8.94) circle (7pt);
-  \node[font=\footnotesize, red!70] at (8.3,9.2) {259 kg (V6)};
-
-  % V6 bound wall
-  \draw[blue!40, line width=2.5pt, densely dashed] (6.9,0.8) -- (6.9,9.5);
-  \node[font=\small, blue!40, rotate=90] at (6.5,5.0) {V6 n$\geq$7 bound};
-
-  % === MINI POLYGON ICONS ON X-AXIS ===
-  % n=3: triangle
-  \begin{scope}[shift={(2.6,0.15)}, scale=0.25]
-    \coordinate (T1) at (0:1.0); \coordinate (T2) at (120:1.0); \coordinate (T3) at (240:1.0);
-    \draw[green!50!black, line width=2pt] (T1)--(T2)--(T3)--cycle;
-    \fill[green!30, opacity=0.5] (T1)--(T2)--(T3)--cycle;
-  \end{scope}
-  \node[font=\tiny, green!50!black] at (2.6,-0.15) {1$\times$};
-
-  % n=5: pentagon
-  \begin{scope}[shift={(4.6,0.15)}, scale=0.25]
-    \draw[orange!80, line width=1.5pt] (18:1.0) foreach \i in {90,162,234,306} { -- (\i:1.0) } -- cycle;
-  \end{scope}
-  \node[font=\tiny, orange!80] at (4.6,-0.15) {4$\times$};
-
-  % n=8: octagon (grayed — forbidden)
-  \begin{scope}[shift={(7.6,0.15)}, scale=0.25]
-    \draw[gray!50, line width=1pt] (22.5:1.0) foreach \i in {67.5,112.5,...,337.5} { -- (\i:1.0) } -- cycle;
-  \end{scope}
-  \node[font=\tiny, gray!50] at (7.6,-0.15) {11$\times$};
-
-  % n=12: dodecagon
-  \begin{scope}[shift={(10.6,0.15)}, scale=0.20]
-    \draw[gray!30, line width=0.7pt] (15:1.0) foreach \i in {45,75,...,345} { -- (\i:1.0) } -- cycle;
-  \end{scope}
-  \node[font=\tiny, gray!30] at (10.6,-0.15) {25$\times$};
-
-  % Label for mini-icons
-  \node[font=\tiny, black!40, rotate=45] at (6.0,-0.5) {$\leftarrow$ lighter \hspace{1cm} heavier $\rightarrow$};
-
-  % === ESCAPE PATH (chevron arrows) ===
-  \draw[->, line width=2.0pt, >=stealth, green!50!black] (8.2,5.0) -- (6.5,3.0);
-  \draw[->, line width=2.0pt, >=stealth, green!50!black] (5.8,2.2) -- (3.2,1.8);
-  \node[font=\bfseries\tiny, green!50!black, align=center] at (7.0,5.7) {V6.2\\widened\\bounds};
-
-  % Annotations
-  \node[font=\tiny, black!50, align=center] at (9.5,1.5) {11$\times$ less\\beam mass};
-  \draw[->, thin, black!30] (9.5,2.0) -- (8.2,8.2);
-
-\end{scope}
-
-% ============================================================
-% PANEL 2: density_profile vs mass (top-right)
-% ============================================================
-\begin{scope}[shift={(12.5,11.5)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (11.5,10.8);
-  \node[font=\bfseries\Large, black!70] at (5.5,10.2) {Material Concentration: Density vs Mass};
-
-  % Axes
-  \draw[->, thick] (0.8,0.8) -- (0.8,9.0) node[above, font=\bfseries] {Mass (kg)};
-  \draw[->, thick] (0.8,0.8) -- (10.8,0.8) node[right, font=\bfseries] {density\_profile ($\beta$)};
-
-  \foreach \y in {0.8,2.5,4.2,5.9} {\draw[gray!30] (0.8,\y) -- (10.8,\y);}
-  \node[left, font=\footnotesize] at (0.8,0.8) {0};
-  \node[left, font=\footnotesize] at (0.8,2.5) {100};
-  \node[left, font=\footnotesize] at (0.8,4.2) {200};
-  \node[left, font=\footnotesize] at (0.8,5.9) {300};
+  % 74.17 kg target line
+  \draw[green!50!black, dashed, line width=1.5pt] (1.0,2.18) -- (15.5,2.18);
+  \node[font=\bfseries\footnotesize, green!50!black, fill=white] at (13.0,2.5) {74.17 kg};
 
   % X-axis ticks
-  \foreach \x/\label in {0.8/0, 4.0/0.2, 7.0/0.4, 10.0/0.6, 10.8/0.8} {
-    \draw (\x,0.7) -- (\x,0.9);
-    \node[font=\footnotesize] at (\x,0.4) {\label};
+  \foreach \x in {1.0,3.0,5.0,7.0,9.0,11.0,13.0,15.0} {
+    \draw (\x,0.9) -- (\x,1.1);
   }
+  \node[font=\footnotesize] at (1.0,0.5) {0};
+  \node[font=\footnotesize] at (5.0,0.5) {100};
+  \node[font=\footnotesize] at (9.0,0.5) {200};
+  \node[font=\footnotesize] at (13.0,0.5) {300};
+  \node[font=\footnotesize] at (15.0,0.5) {600k};
 
-  % Pareto frontier — density_profile sweep
-  % β=0: high mass (uniform, waste material at top)
-  % β=0.3-0.5: lower mass
-  % β=0.76: minimum mass
-  \draw[blue!60, line width=2.5pt, smooth] plot coordinates {
-    (0.8,8.0) (2.0,5.5) (4.0,3.3) (6.0,2.2) (8.0,1.6) (10.0,1.5) (10.8,1.55)
-  };
-  \node[blue!50, font=\tiny] at (4.0,7.0) {Pareto frontier};
-
-  % β=0 (uniform) — high mass
-  \fill[blue!50] (0.8,8.0) circle (4pt);
-  \node[font=\footnotesize, blue!50] at (1.5,8.5) {$\beta$=0: uniform};
-
-  % β=0.76 — V6.2 optimum
-  \fill[green!50!black] (10.0,1.5) circle (5pt);
-  \draw[green!50!black, line width=1.5pt] (10.0,1.5) circle (8pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (9.0,2.1) {\textbf{58 kg}};
-  \node[font=\tiny, green!50!black] at (9.0,1.8) {$\beta$=0.76};
-
-  % === MINI RING-STACK ICONS ON X-AXIS ===
-  % β=0: uniform stack
-  \begin{scope}[shift={(0.8,0.0)}, scale=0.25]
-    \foreach \i in {0,...,7} {
-      \draw[blue!50, line width=1.2pt] (-1.0,{\i*0.7}) -- (1.0,{\i*0.7});
-    }
-  \end{scope}
-  \node[font=\tiny, blue!50] at (0.8,-0.3) {uniform};
-
-  % β=0.4: slight taper
-  \begin{scope}[shift={(5.0,0.0)}, scale=0.25]
-    \draw[blue!40, line width=1.20pt] (-0.60,0.00) -- (0.60,0.00);
-    \draw[blue!40, line width=1.08pt] (-0.54,0.70) -- (0.54,0.70);
-    \draw[blue!40, line width=0.96pt] (-0.48,1.40) -- (0.48,1.40);
-    \draw[blue!40, line width=0.84pt] (-0.42,2.10) -- (0.42,2.10);
-    \draw[blue!40, line width=0.72pt] (-0.36,2.80) -- (0.36,2.80);
-    \draw[blue!40, line width=0.60pt] (-0.30,3.50) -- (0.30,3.50);
-    \draw[blue!40, line width=0.48pt] (-0.24,4.20) -- (0.24,4.20);
-    \draw[blue!40, line width=0.36pt] (-0.18,4.90) -- (0.18,4.90);
-  \end{scope}
-
-  % β=0.76: strong taper (thick bottom, thin top)
-  \begin{scope}[shift={(10.0,0.0)}, scale=0.25]
-    \draw[green!50!black, line width=2.00pt] (-0.35,0.00) -- (0.35,0.00);
-    \draw[green!50!black, line width=1.78pt] (-0.30,0.70) -- (0.30,0.70);
-    \draw[green!50!black, line width=1.56pt] (-0.24,1.40) -- (0.24,1.40);
-    \draw[green!50!black, line width=1.34pt] (-0.19,2.10) -- (0.19,2.10);
-    \draw[green!50!black, line width=1.12pt] (-0.13,2.80) -- (0.13,2.80);
-    \draw[green!50!black, line width=0.90pt] (-0.08,3.50) -- (0.08,3.50);
-    \draw[green!50!black, line width=0.68pt] (-0.02,4.20) -- (0.02,4.20);
-    \draw[green!50!black, line width=0.46pt] (0.03,4.90) -- (-0.03,4.90);
-  \end{scope}
-  \node[font=\tiny, green!50!black] at (10.0,-0.3) {tapered};
-
-  % Arrow showing optimizer trajectory
-  \draw[->, line width=2.0pt, >=stealth, green!50!black] (3.0,6.0) -- (8.0,2.5);
-  \node[font=\bfseries\tiny, green!50!black] at (5.5,6.3) {optimizer discovers $\beta>0$};
-
-  % Annotations
-  \node[font=\tiny, black!50, align=center] at (3.0,1.0) {15.7$\times$ more\\buckling resistance\\at bottom ring};
-
+  % Caption
+  \node[font=\scriptsize\itshape, black!50, align=center] at (8.0,0.0) {60 islands $\times$ 10\,000 iterations = 600\,000 evaluations.\\
+  Bounds: $n\in[3,12]$, $r_{\text{hub}}\in[1,10]$\,m, $r_{\text{bot}}\in[0.1,5]$\,m, $n_{\text{rings}}\in[5,16]$, $\beta\in[-0.8,0.8]$, $n_{\text{exp}}\in[0,6]$};
 \end{scope}
 
 % ============================================================
-% PANEL 3: n_expansion vs mass (bottom-left)
+% PANEL 2: n_lines sensitivity (top-right)
 % ============================================================
-\begin{scope}[shift={(0,0)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (11.5,10.8);
-  \node[font=\bfseries\Large, black!70] at (5.5,10.2) {Network Effect: Expansion Rotors vs Mass};
+\begin{scope}[shift={(17.5,16.5)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,12.8);
+  \node[font=\bfseries\Large, black!70] at (8.0,12.2) {2. Polygon Effect: $n_{\text{lines}}$ vs Mass};
+  \node[font=\small, black!50] at (8.0,11.6) {More lines = thinner beams = smaller knuckles = lower total mass};
 
   % Axes
-  \draw[->, thick] (0.8,0.8) -- (0.8,9.0) node[above, font=\bfseries] {Mass (kg)};
-  \draw[->, thick] (0.8,0.8) -- (10.8,0.8) node[right, font=\bfseries] {n\_expansion};
+  \draw[->, thick] (1.5,1.0) -- (1.5,10.0) node[above, font=\bfseries] {Best mass (kg)};
+  \draw[->, thick] (1.5,1.0) -- (15.0,1.0) node[right, font=\bfseries] {$n$ (lines)};
 
-  \foreach \y in {0.8,2.5,4.2,5.9} {\draw[gray!30] (0.8,\y) -- (10.8,\y);}
-  \node[left, font=\footnotesize] at (0.8,0.8) {0};
-  \node[left, font=\footnotesize] at (0.8,2.5) {100};
-  \node[left, font=\footnotesize] at (0.8,4.2) {200};
-  \node[left, font=\footnotesize] at (0.8,5.9) {300};
+  % Y-axis
+  \node[left, font=\footnotesize] at (1.5,1.0) {70};
+  \node[left, font=\footnotesize] at (1.5,3.5) {80};
+  \node[left, font=\footnotesize] at (1.5,6.0) {90};
+  \node[left, font=\footnotesize] at (1.5,8.5) {100};
+  \foreach \y in {1.0,3.5,6.0,8.5} {\draw[gray!20] (1.5,\y) -- (15.0,\y);}
 
-  % X-axis ticks with rotor icons
-  \foreach \n/\x in {0/1.5,1/4.0,2/6.5,3/9.0} {
-    \draw (\x,0.7) -- (\x,0.9);
-    \node[font=\footnotesize] at (\x,0.4) {\n};
+  % Data: mass decreases with n (coupled knuckle effect dominates)
+  \draw[blue!60, line width=3pt] plot coordinates {
+    (3.0,8.0) (6.0,6.5) (8.0,5.2) (10.0,3.8) (12.0,2.2) (13.0,1.5)
+  };
+  \fill[blue!50] (3.0,8.0) circle (3pt);
+  \fill[blue!50] (6.0,6.5) circle (3pt);
+  \fill[blue!50] (10.0,3.8) circle (3pt);
+  \fill[green!50!black] (12.0,2.2) circle (5pt);
+  \draw[green!50!black, line width=1.5pt] (12.0,2.2) circle (8pt);
+
+  \node[font=\bfseries\footnotesize, green!50!black] at (12.5,3.0) {\textbf{74.17 kg}};
+  \node[font=\tiny, green!50!black] at (12.5,2.5) {$n\!\!=\!\!12$};
+
+  % Mini polygons on x-axis
+  % n=3: triangle
+  \begin{scope}[shift={(3.0,-0.1)}, scale=0.20]
+    \draw[gray!60, line width=1.5pt] (0:1)--(120:1)--(240:1)--cycle;
+  \end{scope}
+  % n=8: octagon
+  \begin{scope}[shift={(8.0,-0.1)}, scale=0.20]
+    \draw[gray!60, line width=1pt] (22.5:1) foreach \i in {67.5,112.5,...,337.5} {--(\i:1)}--cycle;
+  \end{scope}
+  % n=12: dodecagon
+  \begin{scope}[shift={(12.0,-0.1)}, scale=0.18]
+    \draw[green!50!black, line width=1.2pt] (15:1) foreach \i in {45,75,...,345} {--(\i:1)}--cycle;
+  \end{scope}
+
+  % X-axis labels
+  \foreach \n/\x in {3/3.0,6/6.0,8/8.0,10/10.0,12/12.0} {
+    \node[font=\footnotesize] at (\x,0.5) {\n};
   }
 
-  % Data: n_exp vs mass (approximate campaign data)
-  % n_exp=0: 195 kg, n_exp=1: 185 kg, n_exp=2: 120 kg, n_exp=3: 58 kg
-  \draw[red!60, line width=3.0pt] plot coordinates {
-    (1.5,3.26) (4.0,3.14) (6.5,2.32) (9.0,1.53)
+  % Caption
+  \node[font=\scriptsize\itshape, black!50, align=center] at (8.0,0.0) {Each $n$ value is a separate DE run with all other parameters free.\\
+  The curve is the Pareto frontier: mass decreases monotonically with $n$.};
+\end{scope}
+
+% ============================================================
+% PANEL 3: Density profile (bottom-left)
+% ============================================================
+\begin{scope}[shift={(0,0)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,14.8);
+  \node[font=\bfseries\Large, black!70] at (8.0,14.2) {3. Density Profile: $\beta$ Sign Flip};
+  \node[font=\small, black!50] at (8.0,13.6) {Corrected physics shifted the optimum from $\beta\!=\!+0.76$ to $\beta\!=\!-0.13$};
+
+  % Axes
+  \draw[->, thick] (1.5,1.5) -- (1.5,12.5) node[above, font=\bfseries] {Mass (kg)};
+  \draw[->, thick] (1.5,1.5) -- (15.0,1.5) node[right, font=\bfseries] {$\beta$ (density profile)};
+
+  % Y-axis
+  \node[left, font=\footnotesize] at (1.5,1.5) {70};
+  \node[left, font=\footnotesize] at (1.5,4.0) {80};
+  \node[left, font=\footnotesize] at (1.5,6.5) {90};
+  \node[left, font=\footnotesize] at (1.5,9.0) {110};
+  \node[left, font=\footnotesize] at (1.5,11.5) {130};
+  \foreach \y in {1.5,4.0,6.5,9.0,11.5} {\draw[gray!20] (1.5,\y) -- (15.0,\y);}
+
+  % X-axis
+  \foreach \x/\label in {1.5/-0.8,4.0/-0.4,6.5/0.0,9.0/+0.4,11.5/+0.8} {
+    \draw (\x,1.4) -- (\x,1.6);
+    \node[font=\footnotesize] at (\x,1.0) {\label};
+  }
+
+  % Old regime curve
+  \draw[red!40, line width=1.5pt, dashed, smooth] plot coordinates {
+    (1.5,11.0) (4.0,9.5) (6.5,5.0) (9.0,3.5) (11.5,4.5) (13.0,7.0)
   };
-  \fill[blue!50] (1.5,3.26) circle (4pt);
-  \fill[blue!50] (4.0,3.14) circle (4pt);
-  \fill[orange!70] (6.5,2.32) circle (4pt);
-  \fill[green!50!black] (9.0,1.53) circle (5pt);
-  \draw[green!50!black, line width=1.5pt] (9.0,1.53) circle (8pt);
+  \node[red!40, font=\tiny] at (3.0,12.0) {Pre-correction physics};
+  \fill[red!40] (9.0,3.5) circle (4pt);
+  \node[font=\footnotesize, red!40] at (7.5,4.8) {Old opt: $\beta\!=\!+0.76$};
 
-  \node[font=\footnotesize, blue!50] at (1.5,3.8) {195 kg};
-  \node[font=\footnotesize, blue!50] at (4.0,3.6) {185 kg};
-  \node[font=\footnotesize, orange!70] at (6.5,2.8) {120 kg};
-  \node[font=\bfseries\footnotesize, green!50!black] at (8.5,2.1) {\textbf{58 kg}};
+  % Corrected regime curve
+  \draw[blue!60, line width=2.5pt, smooth] plot coordinates {
+    (1.5,6.0) (3.0,4.0) (4.0,3.0) (5.5,2.3) (7.0,2.0) (9.0,2.2) (11.5,3.5) (13.0,6.5)
+  };
+  \fill[green!50!black] (5.5,2.3) circle (5pt);
+  \draw[green!50!black, line width=1.5pt] (5.5,2.3) circle (8pt);
+  \node[font=\bfseries\footnotesize, green!50!black] at (4.0,3.2) {\textbf{74.17 kg}};
+  \node[font=\tiny, green!50!black] at (4.0,2.7) {$\beta\!=\!-0.13$};
 
-  % === MINI ROTOR ICONS ON X-AXIS ===
-  % n_exp=0: no expansion rotors
-  \begin{scope}[shift={(1.5,0.0)}, scale=0.22]
-    \draw[gray!50, line width=1.2pt] (0:1.0) circle;
-    \node[font=\tiny, gray!50] at (0,-1.5) {hub only};
+  % Arrow showing shift
+  \draw[->, green!50!black, line width=2pt] (9.0,4.5) -- (5.5,3.3);
+  \node[font=\bfseries\tiny, green!50!black, fill=white] at (7.5,4.5) {correction shifted optimum};
+
+  % Mini ring-stack icons on x-axis
+  % β=-0.8: top-biased
+  \begin{scope}[shift={(1.5,-0.6)}, scale=0.18]
+    \foreach \i in {0,...,5} { \draw[blue!50, line width=0.6pt] (-0.8,{\i*0.4}) -- (0.8,{\i*0.4}); }
+    \draw[blue!50, line width=1.2pt] (-0.5,2.8) -- (0.5,2.8);
+    \draw[blue!50, line width=1.2pt] (-0.4,2.4) -- (0.4,2.4);
   \end{scope}
-
-  % n_exp=1: one expansion rotor
-  \begin{scope}[shift={(4.0,0.0)}, scale=0.22]
-    \draw[blue!50, line width=1.2pt] (0:1.0) circle;
-    \draw[blue!50, line width=1.2pt] (0:0.5) circle;
+  % β=0: uniform
+  \begin{scope}[shift={(6.5,-0.6)}, scale=0.18]
+    \foreach \i in {0,...,5} { \draw[gray!50, line width=1pt] (-0.7,{\i*0.6}) -- (0.7,{\i*0.6}); }
   \end{scope}
-
-  % n_exp=2: two
-  \begin{scope}[shift={(6.5,0.0)}, scale=0.22]
-    \draw[orange!60, line width=1.2pt] (0:1.0) circle;
-    \draw[orange!60, line width=1.2pt] (-0.3:0.55) circle;
-    \draw[orange!60, line width=1.2pt] (0.3:0.55) circle;
+  % β=+0.8: bottom-heavy
+  \begin{scope}[shift={(11.5,-0.6)}, scale=0.18]
+    \foreach \i in {0,...,5} { \draw[red!50, line width=0.6pt] (-0.8,{\i*0.4}) -- (0.8,{\i*0.4}); }
+    \draw[red!50, line width=1.2pt] (-0.5,0.4) -- (0.5,0.4);
+    \draw[red!50, line width=1.2pt] (-0.4,0.8) -- (0.4,0.8);
   \end{scope}
+  \node[font=\tiny, blue!50] at (1.5,-1.4) {top-bias};
+  \node[font=\tiny, gray!50] at (6.5,-1.4) {uniform};
+  \node[font=\tiny, red!50] at (11.5,-1.4) {bottom-heavy};
 
-  % n_exp=3: three
-  \begin{scope}[shift={(9.0,0.0)}, scale=0.22]
-    \draw[green!50!black, line width=1.5pt] (0:1.0) circle;
-    \draw[green!50!black, line width=1.5pt] (-0.4:0.5) circle;
-    \draw[green!50!black, line width=1.5pt] (0:0.5) circle;
-    \draw[green!50!black, line width=1.5pt] (0.4:0.5) circle;
-  \end{scope}
-  \node[font=\tiny, green!50!black] at (9.0,-0.3) {3 rotors};
+  % Caption
+  \node[font=\scriptsize\itshape, black!50, align=center] at (8.0,-2.3) {$\beta$ controls ring spacing: $\beta\!<\!0$ clusters rings toward top, $\beta\!>\!0$ clusters toward bottom.\\
+  The DE optimiser freely chooses $\beta$ — it landed at $-0.13$ (mild top-bias).};
+\end{scope}
+
+% ============================================================
+% PANEL 4: n_expansion sensitivity (bottom-right)
+% ============================================================
+\begin{scope}[shift={(17.5,0)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,14.8);
+  \node[font=\bfseries\Large, black!70] at (8.0,14.2) {4. Expansion Rotors: $n_{\text{exp}}$ vs Mass};
+  \node[font=\small, black!50] at (8.0,13.6) {More expansion stations add mass — the optimum is $n_{\text{exp}}\!=\!1$};
+
+  % Axes
+  \draw[->, thick] (1.5,1.5) -- (1.5,12.0) node[above, font=\bfseries] {Mass (kg)};
+  \draw[->, thick] (1.5,1.5) -- (15.0,1.5) node[right, font=\bfseries] {$n_{\text{expansion}}$};
+
+  % Y-axis
+  \node[left, font=\footnotesize] at (1.5,1.5) {70};
+  \node[left, font=\footnotesize] at (1.5,3.0) {80};
+  \node[left, font=\footnotesize] at (1.5,4.5) {90};
+  \node[left, font=\footnotesize] at (1.5,6.0) {100};
+  \node[left, font=\footnotesize] at (1.5,7.5) {110};
+  \node[left, font=\footnotesize] at (1.5,9.0) {120};
+  \foreach \y in {1.5,3.0,4.5,6.0,7.5,9.0} {\draw[gray!20] (1.5,\y) -- (15.0,\y);}
+
+  % Data: mass increases monotonically with n_exp, minimum at n_exp=1
+  \draw[red!60, line width=3pt] plot coordinates {
+    (3.0,1.8) (5.0,2.5) (7.0,4.0) (9.0,5.5) (11.0,7.0) (13.0,8.5)
+  };
+  \fill[green!50!black] (3.0,1.8) circle (5pt);
+  \draw[green!50!black, line width=1.5pt] (3.0,1.8) circle (8pt);
+  \fill[red!50] (5.0,2.5) circle (3pt);
+  \fill[red!50] (7.0,4.0) circle (3pt);
+  \fill[red!50] (11.0,7.0) circle (3pt);
+  \fill[red!50] (13.0,8.5) circle (3pt);
+
+  \node[font=\bfseries\footnotesize, green!50!black] at (3.0,2.8) {\textbf{74.17 kg}};
+  \node[font=\tiny, green!50!black] at (3.0,2.3) {$n_{\text{exp}}\!\!=\!\!1$};
 
   % Annotations
-  \node[font=\tiny, black!50, align=center] at (5.5,8.0) {Network power sharing:\\
-  $P_\text{per rotor} = P_\text{total} / (1+n_\text{exp})$};
-  \node[font=\tiny, black!50, align=center] at (5.5,5.5) {Thrust distributed across rings\\
-  $\rightarrow$ lower peak compression};
+  \node[font=\small, red!60] at (9.0,9.5) {Each added expansion station:};
+  \node[font=\footnotesize, red!60, align=left] at (9.0,8.5) {$+$ blade mass (3 blades $\times$ $\sim$1.5\,kg)\\$+$ knuckle hardware\\$+$ parasitic drag penalty};
 
-  % Mark: V6 had n_exp bound at 0
-  \draw[gray!40, line width=2pt, densely dashed] (3.0,0.8) -- (3.0,9.5);
-  \node[font=\tiny, gray!50, rotate=90] at (2.6,5.0) {V6: no expansion rotors};
+  % X-axis with icons
+  \foreach \n/\x in {1/3.0,2/5.0,3/7.0,4/11.0,5/13.0} {
+    \draw (\x,1.4) -- (\x,1.6);
+    \node[font=\footnotesize] at (\x,1.0) {\n};
+  }
 
-  % === FORCE VECTOR INSET (top-right of panel) ===
-  \begin{scope}[shift={(7.5,7.0)}, scale=0.55]
-    % Blade cross-section (airfoil shape at bank angle)
-    \draw[black!70, line width=1.2pt, rotate around={-45:(0,0)}]
-      (0,0) to[out=0, in=180] (2.0,0.3) to[out=0, in=180] (2.5,0) -- cycle;
-    \node[font=\tiny] at (1.2,-0.7) {blade section};
-
-    % Wind arrow
-    \draw[->, blue!50, line width=1.2pt] (-2.5,1.5) -- (-0.3,0.8);
-    \node[font=\tiny, blue!50] at (-2.5,1.8) {apparent wind};
-
-    % Lift vector (perpendicular to chord, rotated -45)
-    \draw[->, red!70, line width=1.5pt] (0.5,0.15) -- (1.2,1.5);
-    \node[font=\tiny, red!70] at (1.5,1.5) {lift};
-
-    % Radial component
-    \draw[->, red!50, line width=1.0pt] (0.5,0.15) -- (0.5,0.9);
-    \node[font=\tiny, red!50!black] at (0.2,0.9) {$F_r$};
-
-    % Axial component (downward)
-    \draw[->, red!50, line width=1.0pt] (0.5,0.15) -- (0.9,-0.1);
-    \node[font=\tiny, red!50!black] at (1.2,-0.1) {$F_a$};
-
-    % Bank angle label
-    \draw[->, gray!50] (0.3,0.4) arc (90:45:0.5);
-    \node[font=\tiny, gray!50] at (0.8,0.7) {bank};
-  \end{scope}
-  \node[font=\tiny, black!60] at (8.8,5.8) {Expansion blade};
-
-  % === BANK ANGLE WARNING CALL-OUT ===
-  \node[font=\tiny, align=center, text width=3.0cm, fill=yellow!8, draw=yellow!60!black, rounded corners=3pt, inner sep=4pt] at (8.5,1.8) {
-    \textbf{!! Bank angle concern}
-
-    45$^\circ$ bank saturates search bound.
-    Pitch depower tilts axis $\uparrow$
-    $\rightarrow$ risk of blade back-winding,
-    lift reversal, inward collapse.
-    See report \S5.5.};
-
+  % Caption
+  \node[font=\scriptsize\itshape, black!50, align=center] at (8.0,-0.2) {$n_{\text{exp}}\!=\!0$ (no expansion) is heavier than $n_{\text{exp}}\!=\!1$ — a single expansion\\
+  rotor at the hub provides enough radial force without the mass penalty of multiple stations.};
 \end{scope}
-
-% ============================================================
-% PANEL 4: TRPT STACKED PHYSICAL COMPARISON (bottom-right)
-% ============================================================
-\begin{scope}[shift={(12.5,0)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (11.5,10.8);
-  \node[font=\bfseries\Large, black!70] at (5.5,10.2) {Physical Transformation: V6 $\rightarrow$ V6.2};
-
-  % === V6 STACK (left) ===
-  \begin{scope}[shift={(2.5,5.0)}]
-    \node[font=\bfseries, blue!60!black] at (0,5.2) {V6 (50 kW)};
-    \node[font=\small, blue!50!black] at (0,4.7) {259 kg, 6 rings};
-
-    % 6 octagon rings, uniform spacing
-    \foreach \i in {0,...,5} {
-      \pgfmathsetmacro{\y}{4.0 - \i*1.3}
-      % Octagon outline
-      \draw[blue!60, line width=0.8pt] ({1.8*cos(22.5)},{\y+1.8*sin(22.5)})
-        foreach \a in {67.5,112.5,...,337.5} { -- ({1.8*cos(\a)},{\y+1.8*sin(\a)}) } -- cycle;
-    }
-
-    % Ground line
-    \draw[thick] (-2.5,-3.5) -- (2.5,-3.5);
-    \node[font=\tiny] at (0,-3.8) {ground};
-
-    % Labels
-    \node[font=\tiny, blue!60] at (2.8,2.5) {n=8};
-    \node[font=\tiny, gray!50] at (2.8,1.5) {uniform};
-    \node[font=\tiny, gray!50] at (2.8,0.5) {L/r = 3.13};
-    \node[font=\tiny, red!60] at (2.8,-0.5) {0 expansion};
-    \node[font=\tiny, red!60] at (2.8,-1.5) {rotors};
-  \end{scope}
-
-  % Arrow between
-  \draw[->, line width=3pt, >=stealth, green!50!black] (5.5,4.5) -- (7.0,4.5)
-    node[midway,above,font=\bfseries\footnotesize, green!50!black] {$-$77.6\%};
-
-  % === V6.2 STACK (right) ===
-  \begin{scope}[shift={(8.5,5.0)}]
-    \node[font=\bfseries, green!50!black] at (0,5.2) {V6.2 (50 kW)};
-    \node[font=\small, green!50!black] at (0,4.7) {58 kg, 10 rings};
-
-    % 10 triangle rings, bottom-biased spacing
-    \foreach \i in {0,...,9} {
-      \pgfmathsetmacro{\myT}{\i/9.0}
-      \pgfmathsetmacro{\myTbias}{\myT^(1-0.76)}
-      \pgfmathsetmacro{\yy}{4.0 - \myTbias*8.0}
-      \pgfmathsetmacro{\rr}{0.8 + \myTbias*1.0}
-      \draw[green!50!black, line width=1.0pt]
-        ({\rr*cos(90)},{\yy+\rr*sin(90)}) --
-        ({\rr*cos(210)},{\yy+\rr*sin(210)}) --
-        ({\rr*cos(330)},{\yy+\rr*sin(330)}) -- cycle;
-    }
-
-    % Expansion rotor markers (at rings 7, 8, 9)
-    \foreach \i in {7,8,9} {
-      \pgfmathsetmacro{\myT}{\i/9.0}
-      \pgfmathsetmacro{\myTbias}{\myT^(1-0.76)}
-      \pgfmathsetmacro{\yy}{4.0 - \myTbias*8.0}
-      \pgfmathsetmacro{\rr}{0.8 + \myTbias*1.0}
-      \fill[cyan!70, opacity=0.6] (0,\yy) circle (5pt);
-    }
-
-    % Ground line
-    \draw[thick] (-2.5,-3.5) -- (2.5,-3.5);
-    \node[font=\tiny] at (0,-3.8) {ground};
-
-    % Labels
-    \node[font=\tiny, green!50!black] at (2.5,2.5) {n=3};
-    \node[font=\tiny, gray!50] at (2.5,1.5) {bottom-};
-    \node[font=\tiny, gray!50] at (2.5,1.0) {biased ($\beta$=0.76)};
-    \node[font=\tiny, cyan!70] at (2.5,-0.5) {3 expansion};
-    \node[font=\tiny, cyan!70] at (2.5,-1.0) {rotors (cyan)};
-    \node[font=\tiny, gray!50] at (2.5,-1.8) {uniform beams};
-  \end{scope}
-
-  % Key changes callout
-  \node[font=\footnotesize, align=left, fill=black!3, rounded corners=4pt, inner sep=6pt] at (5.5,0.8) {
-    \textbf{Three breakthroughs unlocked 58 kg (50 kW):}\\[2pt]
-    1. Triangle rings (n=3): \textbf{11$\times$ less beam mass}\\[1pt]
-    2. Bottom-biased density ($\beta$=0.76): \textbf{15.7$\times$ more buckling resistance}\\[1pt]
-    3. Network rotors (n\_exp=3): \textbf{thrust distributed, uniform beams}\\[3pt]
-    \textbf{10 kW result: 6.25 kg} (n=3, n\_exp=1, $\beta\approx$0)};
-
-\end{scope}
-
-% ============================================================
-% BOTTOM FOOTER
-% ============================================================
-\node[font=\footnotesize, black!40] at (12.0,-0.8) {V6.2 campaign: 60-island DE with collapse-reseed, 12-DoF search space. Branch: v6-force-first.};
 
 \end{tikzpicture}
 \end{document}
