@@ -1,10 +1,16 @@
-\documentclass[tikz, border=10pt]{standalone}
+\documentclass{article}
+\usepackage{tikz}
 \usepackage{amsmath}
 \usetikzlibrary{calc}
-\begin{document}[scale=0.85]
+\usepackage[paperwidth=28cm,paperheight=18cm,margin=0.3cm]{geometry}
+\pagestyle{empty}
+\begin{document}
+\centering
+\begin{tikzpicture}[scale=0.85]
+
 % === GLOBAL TITLE ===
-\node[font=\bfseries\Huge, black!80] at (11.5,12.8) {Why the Optimiser Chose $n=12$ Despite Beam-Only Scaling};
-\node[font=\large, black!50] at (11.5,12.0) {Beam mass alone says fewer lines are lighter. Coupled system effects reverse the tradeoff.};
+\node[font=\bfseries\Huge, black!80] at (11.5,13.5) {Why the Optimiser Chose $n=12$ Despite Beam-Only Scaling};
+\node[font=\large, black!50] at (11.5,12.7) {Beam mass alone says fewer lines are lighter. Coupled system effects reverse the tradeoff.};
 
 % === LEFT: Beam-only model ===
 \begin{scope}[shift={(0,0)}]
@@ -12,7 +18,6 @@
   \node[font=\bfseries\Large, red!60!black] at (4.25,10.6) {Beam-Mass-Only Model};
   \node[font=\small, red!50!black] at (4.25,10.1) {$m_{\text{ring}} \propto n\sqrt{\sin(\pi/n)}$};
 
-  % Bars — exact formula values
   \foreach \n/\val/\label/\i in {3/1.00/1.00/0, 6/1.52/1.52/1, 8/1.77/1.77/2, 10/1.99/1.99/3, 12/2.19/2.19/4} {
     \pgfmathsetmacro{\barht}{\val * 3.0}
     \pgfmathsetmacro{\x}{1.2 + \i * 1.6}
@@ -37,21 +42,15 @@
   \node[font=\bfseries\Large, blue!60!black] at (4.5,10.6) {Full System Optimum};
   \node[font=\small, blue!50!black] at (4.5,10.1) {Beams + knuckles + tethers + rotor};
 
-  % Axes
   \draw[->, thick] (0.8,1.5) -- (0.8,9.0) node[above, font=\bfseries] {Total mass (kg)};
   \draw[->, thick] (0.8,1.5) -- (9.2,1.5) node[right, font=\bfseries] {$n$};
   \foreach \y/\label in {1.5/60,2.5/70,3.5/80,4.5/90,5.5/100,6.5/110,7.5/120} {
     \draw[gray!20] (0.8,\y) -- (9.0,\y);
     \node[left, font=\tiny] at (0.6,\y) {\label};
   }
-  \foreach \n/\x in {3/2.2,6/3.8,8/5.8,10/7.4,12/9.0} {
-    \node[font=\footnotesize] at (\x,1.1) {\n};
-  }
+  \foreach \n/\x in {3/2.2,6/3.8,8/5.8,10/7.4,12/9.0} { \node[font=\footnotesize] at (\x,1.1) {\n}; }
 
-  % Total mass curve: decreases with n (coupled knuckle effect dominates beam penalty)
-  \draw[blue!60, line width=3pt] plot coordinates {
-    (2.2,7.0) (3.8,5.2) (5.8,3.8) (7.4,2.8) (9.0,2.0)
-  };
+  \draw[blue!60, line width=3pt] plot coordinates {(2.2,7.0) (3.8,5.2) (5.8,3.8) (7.4,2.8) (9.0,2.0)};
   \fill[blue!50] (2.2,7.0) circle (3pt);
   \fill[blue!50] (3.8,5.2) circle (3pt);
   \fill[blue!50] (5.8,3.8) circle (3pt);
@@ -60,19 +59,19 @@
   \node[font=\bfseries\footnotesize, green!50!black, fill=white] at (8.5,3.0) {\textbf{74.17 kg}};
   \node[font=\tiny, green!50!black] at (8.5,2.4) {$n\!=\!12$};
 
-  % Mechanism annotations
   \node[font=\footnotesize, blue!70!black, align=left, fill=white, draw=blue!20, rounded corners=3pt, inner sep=4pt] at (4.5,8.5) {
     \textbf{Why mass decreases with $n$:}\\
     1. Thinner beams at higher $n$\\
     2. Smaller knuckles (coupled to $D_o$)\\
     3. Tether $\uparrow$ modest, rotor $\uparrow$ modest\\
     $\rightarrow$ system optimum at $n\!=\!12$};
-
 \end{scope}
 
 % === BOTTOM ===
-\fill[black!3, rounded corners=6pt] (-0.5,-2.5) rectangle (21.0,-1.5);
-\node[font=\small\bfseries, black!70, align=center] at (10.2,-2.0) {
-  \textbf{The counterintuitive result:} Beam-only scaling (left) says $n=3$ is lightest. But coupled knuckle mass dominates: thinner beams at higher $n$
-  reduce knuckle weight enough to overcome the $2.19\times$ beam-mass penalty. The DE optimiser finds the system minimum at $n=12$, 74.17 kg.};
+\fill[black!3, rounded corners=6pt] (-0.5,-2.8) rectangle (21.0,-1.8);
+\node[font=\small\bfseries, black!70, align=center] at (10.2,-2.3) {
+  \textbf{Counterintuitive result:} Beam-only (left) says $n=3$ lightest. But coupled knuckle mass dominates —
+  thinner beams at higher $n$ reduce knuckle weight enough to overcome $2.19\times$ beam penalty. DE optimiser finds minimum at $n=12$, 74.17 kg.};
+
+\end{tikzpicture}
 \end{document}
