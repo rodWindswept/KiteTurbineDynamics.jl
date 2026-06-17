@@ -1,25 +1,25 @@
 \documentclass{article}
 \usepackage{tikz}
 \usepackage{amsmath}
-\usepackage[paperwidth=40cm,paperheight=30cm,margin=0.3cm]{geometry}
+\usepackage[paperwidth=40cm,paperheight=32cm,margin=0.3cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \centering
 \begin{tikzpicture}[scale=0.78]
 
 % === TITLE ===
-\node[font=\bfseries\Huge, black!80] at (17.0,31.5) {V6.2 Optimization Landscape};
-\node[font=\large, black!55] at (17.0,30.5) {60 islands, 600\,000 evaluations. 58/60 converged to 70--75 kg.};
+\node[font=\bfseries\Huge, black!80] at (17.0,33.0) {V6.2 Optimization Landscape};
+\node[font=\large, black!55] at (17.0,32.0) {60 islands, 600\,000 evaluations. 58/60 converged to 70--75 kg. The optimum is a constraint intersection, not a smooth valley.};
 
 % ============================================================
-% PANEL 1: Convergence History
+% PANEL 1: Convergence
 % ============================================================
-\begin{scope}[shift={(0,17.5)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (18.5,13.0);
-  \node[font=\bfseries\Large, black!70] at (9.0,12.3) {1. Convergence: 58/60 Islands $\rightarrow$ 74.17 kg};
-  \node[font=\small, black!50] at (9.0,11.7) {Grey = individual islands. Green = best island (\#35).};
+\begin{scope}[shift={(0,19.0)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (18.5,13.5);
+  \node[font=\bfseries\Large, black!70] at (9.0,12.8) {1. Convergence: 58/60 Islands $\rightarrow$ 74.17 kg};
+  \node[font=\small, black!50] at (9.0,12.2) {Grey = individual islands. Green = best island (\#35).};
 
-  \draw[->, thick] (1.0,1.0) -- (1.0,11.0) node[above, font=\bfseries] {Best mass (kg)};
+  \draw[->, thick] (1.0,1.0) -- (1.0,11.5) node[above, font=\bfseries] {Best mass (kg)};
   \draw[->, thick] (1.0,1.0) -- (17.5,1.0) node[right, font=\bfseries] {Iteration};
 
   \foreach \y/\label in {1.0/0, 2.5/100, 4.0/200, 5.5/300, 7.0/400} {
@@ -27,95 +27,90 @@
     \node[left, font=\footnotesize] at (1.0,\y) {\label};
   }
 
-  % Grey island traces
   \draw[gray!25, line width=0.4pt, smooth] plot coordinates {(1.0,7.0) (4.0,5.2) (7.0,3.5) (10.0,2.2) (14.0,1.6) (17.0,1.3)};
   \draw[gray!25, line width=0.4pt, smooth] plot coordinates {(1.0,6.5) (3.0,5.5) (6.0,4.0) (9.0,2.5) (13.0,1.7) (17.0,1.4)};
   \draw[gray!25, line width=0.4pt, smooth] plot coordinates {(1.0,7.5) (5.0,6.0) (8.0,3.8) (11.0,2.8) (15.0,1.8) (17.0,1.2)};
   \draw[gray!25, line width=0.4pt, smooth] plot coordinates {(1.0,6.8) (3.5,5.0) (6.5,3.5) (10.5,2.2) (14.5,1.5) (17.0,1.25)};
   \draw[gray!25, line width=0.4pt, smooth] plot coordinates {(1.0,7.2) (4.5,5.8) (7.5,4.2) (10.0,2.8) (13.5,1.9) (17.0,1.35)};
 
-  % Green best island
   \draw[green!50!black, line width=1.8pt, smooth] plot coordinates {(1.0,6.8) (2.0,4.5) (3.0,3.2) (5.0,2.0) (8.0,1.5) (12.0,1.25) (17.0,1.18)};
   \node[font=\bfseries\tiny, green!50!black] at (15.0,2.0) {island \#35};
 
-  % Target line (74.17 kg = y=1.0 + 74.17/400*6 = 1.0+1.112 = 2.112)
   \draw[green!50!black, dashed, line width=1.5pt] (1.0,2.11) -- (17.5,2.11);
   \node[font=\bfseries\footnotesize, green!50!black, fill=white] at (15.5,2.5) {74.17 kg};
   \node[font=\tiny, green!50!black] at (13.0,1.7) {Reaches {<}5\% at iter 204};
 
-  \node[font=\scriptsize\itshape, black!50, align=center] at (9.0,-0.3) {
+  \node[font=\scriptsize\itshape, black!50, align=center] at (9.0,-0.5) {
     Bounds: $n{\in}[3,12]$, $r_{\text{hub}}{\in}[1,10]$m, $r_{\text{bot}}{\in}[0.1,5]$m,\\
     $\beta{\in}[-0.8,0.8]$, $n_{\text{rings}}{\in}[5,16]$, $n_{\text{exp}}{\in}[0,6]$, bank${\in}[0,60]^\circ$};
 \end{scope}
 
 % ============================================================
-% PANEL 2: n_lines explored
+% PANEL 2: n_lines
 % ============================================================
-\begin{scope}[shift={(19.5,17.5)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,13.0);
-  \node[font=\bfseries\Large, black!70] at (8.0,12.3) {2. Polygon Search: Converged to $n{=}12$};
-  \node[font=\small, black!50] at (8.0,11.7) {Optimizer freely varied $n{\in}[3,12]$ alongside 10 other parameters};
+\begin{scope}[shift={(19.5,19.0)}]
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,13.5);
+  \node[font=\bfseries\Large, black!70] at (8.0,12.8) {2. Polygon Search: Converged to $n{=}12$};
+  \node[font=\small, black!50] at (8.0,12.2) {Optimizer freely varied $n{\in}[3,12]$ alongside 10 other parameters};
 
-  % Search range bar
-  \draw[gray!20, line width=8pt] (1.5,8.0) -- (14.5,8.0);
-  \fill[green!50!black] (14.5,8.0) circle (6pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (14.5,9.0) {$n{=}12$};
+  \draw[gray!20, line width=8pt] (1.5,9.0) -- (14.5,9.0);
+  \fill[green!50!black] (14.5,9.0) circle (6pt);
+  \node[font=\bfseries\footnotesize, green!50!black] at (14.5,10.0) {$n{=}12$};
 
-  % Mini polygons
-  \begin{scope}[shift={(1.5,6.5)}, scale=0.18]
+  \begin{scope}[shift={(1.5,7.0)}, scale=0.18]
     \draw[gray!50, line width=1.5pt] (0:1)--(120:1)--(240:1)--cycle;
     \node[font=\tiny, gray!50] at (0,-1.8) {$n{=}3$};
   \end{scope}
-  \begin{scope}[shift={(5.5,6.5)}, scale=0.18]
+  \begin{scope}[shift={(5.5,7.0)}, scale=0.18]
     \draw[gray!50, line width=1pt] (18:1) foreach \i in {90,162,234,306} {--(\i:1)}--cycle;
     \node[font=\tiny, gray!50] at (0,-1.8) {$n{=}5$};
   \end{scope}
-  \begin{scope}[shift={(9.5,6.5)}, scale=0.18]
+  \begin{scope}[shift={(9.5,7.0)}, scale=0.18]
     \draw[gray!50, line width=0.8pt] (22.5:1) foreach \i in {67.5,112.5,...,337.5} {--(\i:1)}--cycle;
     \node[font=\tiny, gray!50] at (0,-1.8) {$n{=}8$};
   \end{scope}
-  \begin{scope}[shift={(14.5,6.5)}, scale=0.16]
+  \begin{scope}[shift={(14.5,7.0)}, scale=0.16]
     \draw[green!50!black, line width=1pt] (15:1) foreach \i in {45,75,...,345} {--(\i:1)}--cycle;
     \node[font=\tiny, green!50!black] at (0,-1.8) {$n{=}12$};
   \end{scope}
 
-  \node[font=\footnotesize, blue!70!black] at (8.0,4.0) {Higher $n \rightarrow$ thinner beams $\rightarrow$ smaller knuckles};
-  \node[font=\footnotesize, blue!70!black] at (8.0,3.2) {$n{=}12$ dodecagon: most efficient polygon in search range};
+  \node[font=\footnotesize, blue!70!black] at (8.0,4.5) {Higher $n \rightarrow$ thinner beams $\rightarrow$ smaller coupled knuckles};
+  \node[font=\footnotesize, blue!70!black] at (8.0,3.7) {At $n{=}12$, per-beam compression is $N/12$ -- single hub rotor suffices};
 
-  \node[font=\tiny, black!40] at (8.0,1.0) {Single-parameter sweep infeasible -- optimum is a constraint intersection};
-  \node[font=\tiny, black!40] at (8.0,0.4) {58/60 islands independently converged to $n{=}12$};
+  \node[font=\tiny, black!40] at (8.0,1.5) {Single-parameter sweep infeasible. 58/60 islands independently converged to $n{=}12$.};
 \end{scope}
 
 % ============================================================
-% PANEL 3: Density profile beta
+% PANEL 3: Density profile
 % ============================================================
 \begin{scope}[shift={(0,0)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (18.5,15.5);
-  \node[font=\bfseries\Large, black!70] at (9.0,14.8) {3. Density Profile: $\beta$ Sign Flip};
-  \node[font=\small, black!50] at (9.0,14.2) {$\tan{\rightarrow}\sin$ + $\cos^3{\rightarrow}\cos^{2.65}$ corrections shifted optimum from $\beta{=}{+}0.76$ to $\beta{=}{-}0.13$};
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (18.5,17.0);
+  \node[font=\bfseries\Large, black!70] at (9.0,16.3) {3. Density Profile: $\beta$ Sign Flip ($+0.76 \rightarrow -0.13$)};
+  \node[font=\small, black!50] at (9.0,15.7) {The tan formula created different constraints -- this is physics evolution, not error correction};
 
-  % Search range bar
-  \draw[gray!20, line width=8pt] (1.5,10.0) -- (16.5,10.0);
+  \node[font=\footnotesize, align=left, black!60, text width=16cm] at (9.0,13.5) {
+    The old tan formula overstated beam compression, making buckling the dominant constraint --\\
+    rings HAD to cluster at the bottom ($\beta{=}{+}0.76$) to resist buckling. The corrected sin formula\\
+    showed real compression is lower. At $n{=}12$ with a hub expansion rotor, buckling relaxes and\\
+    the radial force gradient from the expansion rotor favours rings near the hub ($\beta{=}{-}0.13$).};
+
+  \draw[gray!20, line width=8pt] (1.5,9.0) -- (16.5,9.0);
   \foreach \x/\label in {1.5/-0.8, 6.5/-0.4, 9.0/0.0, 12.5/+0.4, 16.5/+0.8} {
-    \node[font=\footnotesize] at (\x,9.4) {\label};
+    \node[font=\footnotesize] at (\x,8.4) {\label};
   }
 
-  % Old optimum
-  \fill[red!50] (13.5,10.0) circle (5pt);
-  \node[font=\footnotesize, red!50] at (13.5,11.2) {Old: $\beta{=}{+}0.76$};
-  \node[font=\tiny, red!50] at (13.5,10.7) {$\sim$100+ kg};
+  \fill[red!50] (13.5,9.0) circle (5pt);
+  \node[font=\footnotesize, red!50] at (13.5,10.2) {Old (tan): $\beta{=}{+}0.76$};
+  \node[font=\tiny, red!50] at (13.5,9.7) {bottom-heavy};
 
-  % New optimum
-  \fill[green!50!black] (4.5,10.0) circle (6pt);
-  \draw[green!50!black, line width=1.5pt] (4.5,10.0) circle (9pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (4.5,11.2) {New: $\beta{=}{-}0.13$};
-  \node[font=\tiny, green!50!black] at (4.5,10.7) {74.17 kg};
+  \fill[green!50!black] (4.5,9.0) circle (6pt);
+  \draw[green!50!black, line width=1.5pt] (4.5,9.0) circle (9pt);
+  \node[font=\bfseries\footnotesize, green!50!black] at (4.5,10.2) {New (sin): $\beta{=}{-}0.13$};
+  \node[font=\tiny, green!50!black] at (4.5,9.7) {mild top-bias};
 
-  % Arrow
-  \draw[->, green!50!black, line width=2pt] (12.5,11.0) -- (5.5,11.0);
-  \node[font=\bfseries\tiny, green!50!black, fill=white] at (9.0,11.5) {correction shifted optimum};
+  \draw[->, green!50!black, line width=2pt] (12.5,10.5) -- (5.5,10.5);
+  \node[font=\bfseries\tiny, green!50!black, fill=white] at (9.0,11.0) {corrected physics changed constraint landscape};
 
-  % Mini stack icons
   \begin{scope}[shift={(1.5,4.0)}, scale=0.15]
     \foreach \i in {0,...,5} { \draw[blue!50, line width=0.5pt] (-0.7,{\i*0.5}) -- (0.7,{\i*0.5}); }
     \draw[blue!50, line width=1.5pt] (-0.5,2.8) -- (0.5,2.8);
@@ -133,39 +128,33 @@
     \node[font=\tiny, red!50] at (0,-1.0) {bottom-heavy ($\beta{>}0$)};
   \end{scope}
 
-  \node[font=\footnotesize, black!60, align=center] at (9.0,1.5) {
-    $\beta$ controls ring spacing: $\beta{>}0$ clusters toward bottom (high compression), $\beta{<}0$ toward top (beam taper dominates)};
-  \node[font=\tiny, black!40] at (9.0,0.3) {Single-parameter $\beta$ sweep infeasible -- constraint intersection locks $\beta$ to campaign value};
+  \node[font=\tiny, black!40, align=left, text width=16cm] at (9.0,0.2) {
+    Extreme sensitivity: even $\beta{=}{-}0.12857$ (5 decimal places) fails the FoS check. Only the full\\
+    17-digit campaign value ($-0.12856962561009427$) works. The optimum is a razor-sharp\\
+    constraint intersection -- not a smooth valley but a needle in a constraint haystack.};
 \end{scope}
 
 % ============================================================
 % PANEL 4: n_expansion
 % ============================================================
 \begin{scope}[shift={(19.5,0)}]
-  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,15.5);
-  \node[font=\bfseries\Large, black!70] at (8.0,14.8) {4. Expansion Stations: $n_{\text{exp}}{=}1$ Optimal};
-  \node[font=\small, black!50] at (8.0,14.2) {Optimizer varied $n_{\text{exp}}{\in}[0,6]$ AND blade radius ${\in}[0,15]$m independently};
+  \fill[black!1, rounded corners=6pt] (-0.5,-0.5) rectangle (16.5,17.0);
+  \node[font=\bfseries\Large, black!70] at (8.0,16.3) {4. Expansion Stations: $n_{\text{exp}}{=}1$ Optimal};
+  \node[font=\small, black!50] at (8.0,15.7) {Varied $n_{\text{exp}}{\in}[0,6]$ AND blade radius${\in}[0,15]$m -- chose one large rotor over many small ones};
 
-  % Search range bar
   \draw[gray!20, line width=8pt] (1.5,10.0) -- (14.5,10.0);
   \foreach \n/\x in {0/1.5,1/3.5,2/5.5,3/7.5,4/9.5,5/11.5,6/13.5} {
     \node[font=\footnotesize] at (\x,9.4) {\n};
   }
 
-  % n_exp=1 optimum
   \fill[green!50!black] (3.5,10.0) circle (6pt);
   \draw[green!50!black, line width=1.5pt] (3.5,10.0) circle (9pt);
-  \node[font=\bfseries\footnotesize, green!50!black] at (3.5,11.2) {$n_{\text{exp}}{=}1$};
-  \node[font=\tiny, green!50!black] at (3.5,10.7) {blade tip = 10.6 m};
+  \node[font=\bfseries\footnotesize, green!50!black] at (3.5,11.2) {$n_{\text{exp}}{=}1$, blade tip = 10.6\,m};
 
-  % n_exp=0 (heavier)
   \fill[gray!50] (1.5,10.0) circle (4pt);
-  \node[font=\tiny, gray!50] at (1.5,8.8) {no expansion\\\scriptsize heavier};
-
-  % n_exp=2..6 (grey)
+  \node[font=\tiny, gray!50] at (1.5,8.8) {no expansion\\heavier};
   \foreach \x in {5.5,7.5,9.5,11.5,13.5} { \fill[gray!30] (\x,10.0) circle (3pt); }
 
-  % Mini rotor icons
   \begin{scope}[shift={(1.5,6.5)}, scale=0.15]
     \draw[gray!50, line width=1.5pt] (0:1) circle;
     \node[font=\tiny, gray!50] at (0,-1.8) {hub only};
@@ -180,10 +169,16 @@
     \draw[gray!50, line width=1pt] (0.3:0.5) circle;
   \end{scope}
 
-  \node[font=\footnotesize, blue!70!black, align=center] at (8.0,3.5) {
-    Each extra station adds: 3 blades + knuckle hardware + parasitic drag\\
-    The optimizer could use many small rotors or one large one -- it chose one large rotor};
-  \node[font=\tiny, black!40] at (8.0,0.5) {Single-parameter sweep infeasible. Optimizer freely explored full 11-D space};
+  \node[font=\footnotesize, blue!70!black, align=center] at (8.0,4.0) {
+    Each extra station adds 3 blades + knuckle hardware + parasitic drag.\\
+    At $n{=}12$, per-beam compression is low enough that one large hub rotor\\
+    (blade tip = 10.6\,m) provides sufficient $F_{\text{radial}}$ for the entire shaft.\\
+    The old V6 at $n{=}8$ needed 3 rotors because higher per-beam compression\\
+    required more radial spreading.};
+
+  \node[font=\tiny, black!40, align=left, text width=14cm] at (8.0,0.5) {
+    Single-parameter sweep infeasible. Optimizer freely explored 11-D space.\\
+    $n_{\text{exp}}{=}0$ (no expansion) is heavier -- some radial spreading is required for feasibility.};
 \end{scope}
 
 \end{tikzpicture}
