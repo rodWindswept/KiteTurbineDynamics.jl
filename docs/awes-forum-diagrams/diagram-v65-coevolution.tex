@@ -1,0 +1,181 @@
+% diagram-v65-coevolution.tex
+% Co-evolution diagram: blade_scale vs n_lines, colored by convergence phase
+% Shows the optimizer's strategy discovery path through parameter space
+
+\documentclass{article}
+\usepackage[paperwidth=48cm,paperheight=26cm,margin=0.5cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\pgfplotsset{compat=1.18}
+
+\definecolor{ink}{RGB}{25,30,40}
+\definecolor{inkdim}{RGB}{110,120,130}
+\definecolor{phase1}{RGB}{215,48,39}    % red — discovery
+\definecolor{phase2}{RGB}{217,95,14}    % orange — shift
+\definecolor{phase3}{RGB}{33,113,181}   % blue — consolidate
+\definecolor{phase4}{RGB}{35,139,69}    % green — fine-tune
+
+\newcommand{\datadir}{/home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v6_5_campaign_50kw/trajectory_analysis/tikz_data}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{tikzpicture}
+
+% ============================================================================
+% LEFT PANEL: λ vs n_lines scatter, colored by phase
+% ============================================================================
+\begin{scope}[shift={(0,0)}]
+  \node[ink,font=\bfseries\Huge\sffamily,anchor=north] at (22.5,25.5)
+    {Co-evolution: Blade Scale $\lambda$ vs Polygon $n_{\text{lines}}$};
+
+  \node[inkdim,font=\large\sffamily,anchor=north,text width=38cm,align=center] at (22.5,24.2)
+    {Each point = one island at one iteration. Color = convergence phase.
+    Arrow = ensemble median trajectory through parameter space.};
+
+  \begin{axis}[
+    width=22cm, height=21cm,
+    xlabel={$n_{\text{lines}}$ (polygon vertices)},
+    ylabel={Blade scale $\lambda$},
+    xmin=2, xmax=13,
+    ymin=0.005, ymax=1.1,
+    ymode=log,
+    grid=major,
+    grid style={dotted,gray!20},
+    tick label style={font=\normalsize\sffamily},
+    label style={font=\Large\sffamily,color=inkdim},
+    legend style={font=\footnotesize\sffamily,fill=white,fill opacity=0.92,
+                  draw=gray!30,at={(0.02,0.02)},anchor=south west,
+                  legend columns=2},
+    xtick={2,3,4,5,6,7,8,9,10,11,12},
+    ytick={0.005,0.01,0.02,0.05,0.1,0.2,0.5,1.0},
+    yticklabels={0.005,0.01,0.02,0.05,0.1,0.2,0.5,1.0},
+  ]
+
+    % Phase 1: iter 1-50 (red, discovery — scattered everywhere)
+    \addplot[
+      only marks, mark=*, mark size=1.2,
+      mark options={fill=phase1!40,draw=phase1!60,line width=0.3pt},
+      forget plot
+    ] table [x=n_lines, y=blade_scale, col sep=comma]
+      {\datadir/coevolution_sample_phase1.csv};
+
+    % Phase 2: iter 51-200 (orange, strategy shift)
+    \addplot[
+      only marks, mark=*, mark size=1.2,
+      mark options={fill=phase2!40,draw=phase2!60,line width=0.3pt},
+      forget plot
+    ] table [x=n_lines, y=blade_scale, col sep=comma]
+      {\datadir/coevolution_sample_phase2.csv};
+
+    % Phase 3: iter 201-500 (blue, consolidation)
+    \addplot[
+      only marks, mark=*, mark size=1.2,
+      mark options={fill=phase3!40,draw=phase3!60,line width=0.3pt},
+      forget plot
+    ] table [x=n_lines, y=blade_scale, col sep=comma]
+      {\datadir/coevolution_sample_phase3.csv};
+
+    % Phase 4: iter 501-10000 (green, fine-tuning)
+    \addplot[
+      only marks, mark=*, mark size=1.2,
+      mark options={fill=phase4!40,draw=phase4!60,line width=0.3pt},
+      forget plot
+    ] table [x=n_lines, y=blade_scale, col sep=comma]
+      {\datadir/coevolution_sample_phase4.csv};
+
+    % Legend markers (invisible trend lines with visible markers for legend)
+    \addplot[only marks, mark=*, mark size=2,
+             mark options={fill=phase1!60,draw=phase1!80}]
+      coordinates {(0,0)};
+    \addlegendentry{Phase 1 (1--50): Discovery};
+
+    \addplot[only marks, mark=*, mark size=2,
+             mark options={fill=phase2!60,draw=phase2!80}]
+      coordinates {(0,0)};
+    \addlegendentry{Phase 2 (51--200): Shift};
+
+    \addplot[only marks, mark=*, mark size=2,
+             mark options={fill=phase3!60,draw=phase3!80}]
+      coordinates {(0,0)};
+    \addlegendentry{Phase 3 (201--500): Consolidate};
+
+    \addplot[only marks, mark=*, mark size=2,
+             mark options={fill=phase4!60,draw=phase4!80}]
+      coordinates {(0,0)};
+    \addlegendentry{Phase 4 (501--10k): Fine-tune};
+
+    % Ensemble median trajectory (thick arrow path)
+    % Data from ensemble stats at key iterations
+    \addplot[ink, very thick, mark=*, mark size=2.5,
+             mark options={fill=white,draw=ink,line width=1.2pt},
+             smooth, tension=0.5]
+      coordinates {
+        (8.2,0.297)    % iter 1
+        (9.0,0.257)    % iter 2
+        (8.0,0.264)    % iter 5
+        (8.5,0.282)    % iter 10
+        (9.4,0.272)    % iter 20
+        (10.8,0.211)   % iter 50
+        (8.3,0.149)    % iter 100
+        (3.3,0.099)    % iter 200
+        (3.1,0.011)    % iter 500
+        (3.2,0.011)    % iter 1000
+        (3.1,0.011)    % iter 2000
+        (3.1,0.011)    % iter 5000
+        (3.2,0.011)    % iter 10000
+      };
+    \addlegendentry{Ensemble median path};
+
+    % Arrow head at iter 200 transition
+    \draw[ink!60,->,line width=1.5pt] (axis cs:9,0.22) -- (axis cs:5,0.12);
+    \node[ink,font=\footnotesize\sffamily,anchor=south west] at (axis cs:8.5,0.24)
+      {\textbf{The Collapse}};
+
+    % Final convergence point annotation
+    \draw[ink,line width=0.8pt] (axis cs:2.5,0.008) -- (axis cs:3.5,0.008);
+    \node[ink,font=\footnotesize\bfseries\sffamily,anchor=south] at (axis cs:3.0,0.0085)
+      {60/60 islands converge here};
+
+    % "Tiny blade" zone
+    \draw[phase3!40,fill=phase3!10,fill opacity=0.5,rounded corners=4pt]
+      (axis cs:2.5,0.005) rectangle (axis cs:4.0,0.025);
+    \node[phase3!80,font=\footnotesize\sffamily,anchor=south] at (axis cs:3.25,0.026)
+      {Tiny-blade optimum basin};
+
+  \end{axis}
+
+  % Text annotations outside plot
+  \node[inkdim,font=\small\sffamily,text width=11cm,align=left,anchor=north west]
+    at (23.5,21) {
+    \textbf{How to read this diagram:}\\[3pt]
+    Each colored dot shows where one island\\
+    was at one iteration in ($n_{\text{lines}}$, $\lambda$) space.\\[3pt]
+    \textbf{Phase 1 (red):} Wide exploration —\\
+    all polygon sizes, $\lambda$=0.1--0.8. Scattered.\\[3pt]
+    \textbf{Phase 2 (orange):} Population starts\\
+    clustering around $n$=8--11 with moderate $\lambda$.\\[3pt]
+    \textbf{Phase 3 (blue):} Abrupt collapse —\\
+    $n$ drops to 3, $\lambda$ plummets to 0.01.\\[3pt]
+    \textbf{Phase 4 (green):} Dense cluster at\\
+    ($n$=3, $\lambda$=0.011) — 60 islands unanimous.\\[3pt]
+    \textbf{The black path} = ensemble median\\
+    through parameter space across iterations.\\[3pt]
+    \textbf{Key insight:} The optimizer spends\\
+    Phase 1--2 exploring moderate polygons\\
+    ($n$=6--12), then suddenly discovers that\\
+    triangles + tiny blades ($\lambda$=0.01) unlock\\
+    10$\times$ lower mass in Phase 3.
+  };
+
+\end{scope}
+
+% ===========================================================================
+% Bottom strip
+% ===========================================================================
+\node[ink,font=\bfseries\Large\sffamily,anchor=north] at (24,0.5)
+  {V6.5 Parameter Space Co-evolution --- $\lambda$ vs $n_{\text{lines}}$ --- 2,935 sampled points from 600,000-row parameter trace};
+
+\end{tikzpicture}
+\end{document}

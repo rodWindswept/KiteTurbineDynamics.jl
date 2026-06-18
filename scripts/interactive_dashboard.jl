@@ -175,6 +175,14 @@ function parse_best_design_json(path::AbstractString)
         ("tether_length_m", raw"\"tether_length_m\"\s*:\s*([-\d.eE+]+)"),
         ("n_lines", raw"\"n_lines\"\s*:\s*([-\d.eE+]+)"),
         ("knuckle_mass_kg", raw"\"knuckle_mass_kg\"\s*:\s*([-\d.eE+]+)"),
+        # Campaign-format fields (V6.x)
+        ("n_expansion", raw"\"n_expansion\"\s*:\s*([-\d.eE+]+)"),
+        ("bank_angle_deg", raw"\"bank_angle_deg\"\s*:\s*([-\d.eE+]+)"),
+        ("blade_tip_radius", raw"\"blade_tip_radius\"\s*:\s*([-\d.eE+]+)"),
+        ("blade_scale", raw"\"blade_scale\"\s*:\s*([-\d.eE+]+)"),
+        ("density_profile", raw"\"density_profile\"\s*:\s*([-\d.eE+]+)"),
+        ("r_bottom_m", raw"\"r_bottom_m\"\s*:\s*([-\d.eE+]+)"),
+        ("target_Lr", raw"\"target_Lr\"\s*:\s*([-\d.eE+]+)"),
     )
         m = match(Regex(v), txt)
         if m !== nothing
@@ -215,7 +223,8 @@ function build_from_campaign(campaign_dir::String, label::String)
     sys, u0 = build_kite_turbine_system(p_campaign)
 
     # Build expansion stack from campaign parameters
-    chord = 0.113 * r_blade / max(blade_s, 0.001)
+    # r_blade is already scaled (r_rotor_est * blade_scale), so chord = 0.113 * r_blade
+    chord = 0.113 * r_blade
     cfg = ExpansionStackConfig(;
         placement=:clustered, n_rings=sys.n_ring, n_expansion=n_exp,
         n_blades=n_lines,
