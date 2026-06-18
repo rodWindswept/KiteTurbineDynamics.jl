@@ -31,3 +31,8 @@ sweep_*.log
 scripts/results/trpt_opt_v2/.last_refresh_stamp
 scripts/results/trpt_opt_v2/.stop_monitor
 scripts/results/trpt_opt_v2/auto_refresh.log
+parameter_trace.csv
+island_bests.csv
+trajectory_analysis/
+*.log
+*.aux

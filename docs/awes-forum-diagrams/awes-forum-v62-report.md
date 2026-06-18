@@ -217,6 +217,92 @@ waiting to be added.
 
 ---
 
+## Addendum: V6.3 — the "many small fans" optimum (June 17, 2026)
+
+We added a 12th degree of freedom: expansion blade scale λ, where blade span
+and chord both scale by λ (preserving planform) and mass scales as λ³. We also
+capped the bank angle at 35° for pitch depower safety (was 45° in V6.2, which
+risks back-winding). A fresh 60-island DE campaign found a dramatically
+different optimum in 6 minutes.
+
+### The result
+
+| Parameter | V6.2 (11-DoF) | V6.3 (12-DoF) |
+|-----------|--------------|--------------|
+| **Mass** | **74.17 kg** | **52.61 kg (−29%)** |
+| n_lines | 12 (dodecagon) | 7 (heptagon) |
+| n_expansion | 1 | **6** (max bound) |
+| blade_scale λ | 1.0 (fixed) | **0.200** (min bound) |
+| bank_angle | 45° | **35.0°** (safety cap) |
+| β density | −0.13 | −0.107 |
+| r_hub | 5.40 m | 5.40 m |
+| r_bottom | 1.05 m | 1.45 m |
+| Do_top | 95 mm | 83 mm |
+| n_rings | 9 | 8 |
+
+The campaign converged with extraordinary tightness: **57 of 60 islands within
+1 kg of each other** (σ = 0.38 kg, 0.7% of the mean). Plateau was reached at
+iteration 321 — 95% of the total improvement was found in the first 417 of
+10,000 iterations. The search landscape has a single, sharp basin.
+
+### Why it's lighter
+
+The V6.2 optimum put one large expansion rotor (10.6 m blades, 12 blades per
+rotor) at the hub. The V6.3 optimum discovered that **many tiny rotors beat one
+big one**. Six expansion rotors with 1.8 m blades (λ = 0.2) distributed across
+the shaft provide the radial spreading force more efficiently — less total blade
+mass, less parasitic drag, and the load is distributed rather than concentrated.
+
+This also allowed the polygon to drop from n=12 to n=7, which reduces tether
+count (7 vs 12 lines), knuckle count, and ring complexity. The total expansion
+blade count went from 12 (one rotor × 12 blades at n=12) to 48 (six rotors ×
+8 blades at n=7, with the main rotor at n_blades = n_lines). Despite more total
+blades, each is 5× smaller — 1.8 m span vs 10.6 m — and the net mass is lower.
+
+### Parameters still at bounds
+
+Four of twelve parameters hit their limits:
+
+- **blade_scale λ = 0.200** (minimum) — the optimiser wants EVEN SMALLER blades.
+  Expanding the lower bound to 0.05 or 0.02 could yield further mass reduction.
+- **n_expansion = 6** (maximum) — the optimiser wants MORE rotors. Six is an
+  artificial ceiling from the V6.2 campaign design; relaxing to 10 or 12 may
+  reveal further gains.
+- **bank_angle = 35.0°** (safety cap) — exactly on the pitch-depower limit.
+  The optimiser would go steeper if allowed.
+- **t_over_D = 0.01** (minimum) — wants thinner beam walls.
+
+### What this means
+
+The corrected physics (sin formula, coupled knuckles, consistent elevation
+exponent) didn't just fix the polygon answer — they opened a **new strategy
+space** that didn't exist before. When expansion blades can shrink, the
+economics invert: many distributed small rotors beat one concentrated large one.
+The V6.2 optimum at 74 kg was a local basin — the V6.3 optimum at 53 kg is a
+different basin entirely, accessed only by freeing blade scale.
+
+We intend to expand the bounds further (λ ∈ [0.02, 2.0], n_exp ∈ [0, 12]) in a
+follow-up campaign. The true global optimum may be well below 50 kg.
+
+### Dynamic validation pending
+
+The dynamic dashboard simulation (multi-body ODE with MPPT control) shows
+power overshoot with the current expansion rotor model — the aerodynamic
+coefficients (CL=1.0, CD0=0.02, k_ind=0.05) are optimistic placeholders that
+produce unrealistic blade forces. The V6.3 optimum's small blades (λ=0.2) will
+reduce the forces 5×, but the model parameters need calibration against
+manufacturable blade data before dynamic results are meaningful. This is a
+separate investigation, not a structural optimisation issue.
+
+### Data
+
+All campaign output at `scripts/results/v6_3_campaign_50kw/`:
+- `best_design.json` — full 12-parameter design vector
+- `convergence_history.csv` — 60 islands × 10,000 iterations
+- `best_vector.csv` — raw DE vector for exact reproduction
+
+---
+
 ## Method and reproducibility
 
 All code, data, and the corrected source files at:
@@ -224,7 +310,8 @@ All code, data, and the corrected source files at:
 
 The three corrections are documented in `docs/case-notes/` and the campaign
 workflow is captured as a Hermes agent skill. Campaign results (best design,
-convergence history, raw DE vector) at `scripts/results/v6_2_campaign_50kw/`.
+convergence history, raw DE vector) at `scripts/results/v6_2_campaign_50kw/`
+and `scripts/results/v6_3_campaign_50kw/`.
 
 ---
 

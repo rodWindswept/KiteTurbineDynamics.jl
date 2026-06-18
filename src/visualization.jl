@@ -1324,7 +1324,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Config selector menu — disabled during simulation
     config_menu = Menu(ctrl[cnr!(), 1];
-        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line", "V6.2 12-line dodecagon"],
+        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line",
+                 "V6.2 12-line dodecagon", "V6.3 7-line heptagon",
+                 "V6.4 3-line triangle", "V6.5 3-line triangle"],
         default=config_name, width=270)
 
     # Also disable menu when not idle

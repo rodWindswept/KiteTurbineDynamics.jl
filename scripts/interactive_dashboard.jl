@@ -31,6 +31,18 @@ function parse_commandline()
         "--v6"
             help = "Use V6.2 optimized 12-line dodecagon with expansion rotor"
             action = :store_true
+        "--v62"
+            help = "Use V6.2 campaign winner (12-line, 1 exp, 74 kg)"
+            action = :store_true
+        "--v63"
+            help = "Use V6.3 campaign winner (7-line, 6 exp, 53 kg, λ=0.2)"
+            action = :store_true
+        "--v64"
+            help = "Use V6.4 campaign winner (3-line, 12 exp, 24 kg, λ=0.02)"
+            action = :store_true
+        "--v65"
+            help = "Use V6.5 campaign winner (3-line, 20 exp, 18 kg, λ=0.01)"
+            action = :store_true
         "--expansion"
             help = "Add expansion rotors at given bank angle (deg, default 20)"
             arg_type = Float64
@@ -174,6 +186,55 @@ function parse_best_design_json(path::AbstractString)
     return out
 end
 
+# ── Build system from campaign best_design.json ──────────────────────────
+function build_from_campaign(campaign_dir::String, label::String)
+    json_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_design.json")
+    if !isfile(json_path)
+        error("best_design.json not found at $json_path — run campaign first")
+    end
+    design = parse_best_design_json(json_path)
+
+    n_lines = design["n_lines"]
+    n_exp   = design["n_expansion"]
+    bank    = design["bank_angle_deg"]
+    r_blade = design["blade_tip_radius"]
+    blade_s = get(design, "blade_scale", 1.0)
+
+    # Build system params: use v5-50kw as base, override with campaign geometry
+    p = params_v5_50kw()
+    # Override n_lines and n_blades from campaign
+    geo = GeometrySpec(p.elevation_angle, p.lifter_elevation, p.rotor_radius,
+                       p.tether_length, design["r_hub_m"], p.trpt_rL_ratio,
+                       n_lines, design["n_rings"], n_lines)  # n_blades = n_lines
+    mat = MaterialSpec(p.tether_diameter, p.e_modulus, p.m_ring, p.m_blade)
+    aero = AeroSpec(p.rho, p.v_wind_ref, p.h_ref, p.cp)
+    ctrl = ControlSpec(p.i_pto, p.k_mppt, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
+    back = BackLineSpec(p.EA_back_line, p.c_back_line, p.back_anchor_fwd_x, p.backline_payout)
+    p_campaign = SystemParams(geo, mat, aero, ctrl, back)
+
+    sys, u0 = build_kite_turbine_system(p_campaign)
+
+    # Build expansion stack from campaign parameters
+    chord = 0.113 * r_blade / max(blade_s, 0.001)
+    cfg = ExpansionStackConfig(;
+        placement=:clustered, n_rings=sys.n_ring, n_expansion=n_exp,
+        n_blades=n_lines,
+        blade_tip_radius=r_blade,
+        blade_hub_radius=0.25 * r_blade,
+        blade_chord=chord,
+        CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
+        bank_angle_deg=bank,
+        mass_per_rotor=(0.3 + 0.1 * r_blade) * blade_s^3,
+        shaft_coupling=1.0,
+    )
+    stack = build_expansion_stack(cfg)
+    sys, u0 = build_kite_turbine_system(p_campaign; expansion_rotors=stack)
+
+    println("$label: n_lines=$n_lines  n_exp=$n_exp  bank=$(round(bank;digits=1))°  blade_r=$(round(r_blade;digits=2))m  λ=$(round(blade_s;digits=3))")
+    println("  rings=$(sys.n_ring)  total_nodes=$(sys.n_total)")
+    return sys, u0, p_campaign, label
+end
+
 function main()
     args = parse_commandline()
 
@@ -184,13 +245,22 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v6"] ? "V6.2 12-line dodecagon" :
+    current_config = args["v65"] ? "V6.5 3-line triangle" :
+                     args["v64"] ? "V6.4 3-line triangle" :
+                     args["v63"] ? "V6.3 7-line heptagon" :
+                     args["v6"] || args["v62"] ? "V6.2 12-line dodecagon" :
                      args["v5"] ? "v5 Optimized 8-line" : "Canonical 5-line"
     v_target       = args["wind"]
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V6.2 12-line dodecagon"
+        if current_config == "V6.5 3-line triangle"
+            sys, u0, p, label = build_from_campaign("v6_5_campaign_50kw", "V6.5 triangle")
+        elseif current_config == "V6.4 3-line triangle"
+            sys, u0, p, label = build_from_campaign("v6_4_campaign_50kw", "V6.4 triangle")
+        elseif current_config == "V6.3 7-line heptagon"
+            sys, u0, p, label = build_from_campaign("v6_3_campaign_50kw", "V6.3 heptagon")
+        elseif current_config == "V6.2 12-line dodecagon"
             # V6.2 optimum: params_v6_50kw() with geometry from best_design.json
             p    = params_v6_50kw()
             sys, u0 = build_kite_turbine_system(p)

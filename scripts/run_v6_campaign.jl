@@ -52,7 +52,7 @@
 #   scripts/results/v6_campaign_10kw/convergence_history.csv — mass vs iteration
 #
 # ═══════════════════════════════════════════════════════════════════════════
-# DESIGN VARIABLES (11-DoF — knuckle mass derived from beam geometry)
+# DESIGN VARIABLES (12-DoF — knuckle mass derived from beam geometry)
 # ═══════════════════════════════════════════════════════════════════════════
 #
 #   x[1]  Do_top           beam outer diameter at hub (m)
@@ -64,8 +64,9 @@
 #   x[7]  target_Lr        target L/r ratio
 #   x[8]  n_lines          polygon sides (3–12, rounded to int)
 #   x[9]  density_profile  ring density bias (−0.8..0.8)
-#   x[10] n_expansion      number of expansion rotors (0–6, rounded to int)
-#   x[11] bank_angle_deg   expansion blade bank angle (5°–45°)
+#   x[10] n_expansion      number of expansion rotors (0–12, rounded to int)
+#   x[11] bank_angle_deg   expansion blade bank angle (5°–35°)
+#   x[12] blade_scale      expansion blade span/chord scale (0.02–2.0)
 #
 # Expansion blade tip radius, hub radius, chord, and count are inherited
 # from the generating rotor — same blade mould, banked downward.
@@ -145,7 +146,7 @@ function main()
             # Round integer variables
             x_rounded = copy(x)
             x_rounded[8] = round(Int, clamp(x[8], 3, 12))    # n_lines (now at position 8)
-            x_rounded[10] = round(Int, clamp(x[10], 0, 6))   # n_expansion (now at position 10)
+            x_rounded[10] = round(Int, clamp(x[10], 0, 20))   # n_expansion (widened: 0-20)
             try
                 return objective_v6(x_rounded, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
             catch e
@@ -183,6 +184,8 @@ function main()
     global_best_cost = Inf
     global_best_island = 0
     all_history = Tuple{Int, Int, Float64}[]   # (island, iteration, mass_kg)
+    island_bests = Tuple{Int,Float64,Vector{Float64}}[]  # (island, mass, best_x)
+    param_trace = Tuple{Int,Int,Vector{Float64}}[]  # (island, iteration, best_x)
 
     campaign_start = time()
 
@@ -242,6 +245,11 @@ function main()
 
             push!(history, best_cost)
             push!(all_history, (island, iteration, best_cost))
+
+            # FULL parameter trace: save best_x every iteration for correlation analysis
+            if best_x !== nothing
+                push!(param_trace, (island, iteration, copy(best_x)))
+            end
 
             # ── Population collapse detection ────────────────────────────
             # Every 100 iterations, sample 10 random population members.
@@ -319,8 +327,13 @@ function main()
             global_best_x = best_x
             global_best_island = island
             @printf(
-                "  ** New global best: %.3f kg (island %d) **\n", global_best_cost, island
+                "  ** New global best: %.3f kg (island %d) **\\n", global_best_cost, island
             )
+        end
+
+        # Save this island's final best for per-island analysis
+        if best_x !== nothing
+            push!(island_bests, (island, best_cost, copy(best_x)))
         end
     end
 
@@ -332,7 +345,7 @@ function main()
 
     # ── Save results ───────────────────────────────────────────────────────
     out_dir = joinpath(
-        dirname(@__DIR__), "scripts", "results", "v6_2_campaign_$(args.power_kw)kw"
+        dirname(@__DIR__), "scripts", "results", "v6_5_campaign_$(args.power_kw)kw"
     )
     mkpath(out_dir)
 
@@ -342,7 +355,7 @@ function main()
 
         # Save best design as JSON
         best_json = Dict(
-            "version" => "v6",
+            "version" => "v6.5",
             "power_kw" => args.power_kw,
             "island_idx" => global_best_island,
             "best_mass_kg" => global_best_cost,
@@ -352,6 +365,7 @@ function main()
             "bank_angle_deg" =>
                 isempty(result.stack) ? 0.0 : result.stack[1].bank_angle_deg,
             "blade_tip_radius" => isempty(result.stack) ? 0.0 : result.stack[1].blade_tip_radius,
+            "blade_scale" => isempty(result.stack) ? 1.0 : global_best_x[12],
             "profile" => string(beam_profile),
             "Do_top_m" => design.Do_top,
             "t_over_D" => design.t_over_D,
@@ -400,6 +414,40 @@ function main()
     hist_path = joinpath(out_dir, "convergence_history.csv")
     CSV.write(hist_path, hist_df)
     println("  Convergence history saved to $hist_path")
+
+    # Save per-island best vectors (one row per island) with named columns
+    if !isempty(island_bests)
+        island_df = DataFrame(;
+            island=[t[1] for t in island_bests],
+            mass_kg=[t[2] for t in island_bests],
+        )
+        col_names = ["Do_top_m", "t_over_D", "beam_aspect", "Do_scale_exp",
+                     "r_hub_m", "r_bottom_m", "target_Lr", "n_lines",
+                     "density_profile", "n_expansion", "bank_angle_deg", "blade_scale"]
+        for (j, name) in enumerate(col_names)
+            island_df[!, name] = [t[3][j] for t in island_bests]
+        end
+        island_path = joinpath(out_dir, "island_bests.csv")
+        CSV.write(island_path, island_df)
+        println("  Per-island best vectors saved to $island_path ($(length(island_bests)) islands)")
+    end
+
+    # Save FULL parameter trace (every iteration × every island) with named columns
+    if !isempty(param_trace)
+        trace_df = DataFrame(;
+            island=[t[1] for t in param_trace],
+            iteration=[t[2] for t in param_trace],
+        )
+        col_names = ["Do_top_m", "t_over_D", "beam_aspect", "Do_scale_exp",
+                     "r_hub_m", "r_bottom_m", "target_Lr", "n_lines",
+                     "density_profile", "n_expansion", "bank_angle_deg", "blade_scale"]
+        for (j, name) in enumerate(col_names)
+            trace_df[!, name] = [t[3][j] for t in param_trace]
+        end
+        trace_path = joinpath(out_dir, "parameter_trace.csv")
+        CSV.write(trace_path, trace_df)
+        println("  Full parameter trace saved to $trace_path ($(length(param_trace)) rows)")
+    end
 
     return println("\n  Campaign complete.")
 end

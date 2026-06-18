@@ -14,10 +14,10 @@
 #
 # Reference: PLAN.md Phase 2.4 — v6 DE campaign
 
-const TRPT_V6_DIM = 11
+const TRPT_V6_DIM = 12
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Design vector (11 DoF):
+# Design vector (12 DoF):
 #   x[1]   Do_top           [m]    beam outer diameter at hub
 #   x[2]   t_over_D         [-]    wall thickness ratio
 #   x[3]   beam_aspect      [-]    elliptical b/a or airfoil t/c
@@ -27,8 +27,9 @@ const TRPT_V6_DIM = 11
 #   x[7]   target_Lr        [-]    common L/r target
 #   x[8]   n_lines          [int]  polygon sides (3-12)
 #   x[9]   density_profile  [-]    ring density bias (-0.8..0.8, 0=uniform)
-#   x[10]  n_expansion      [int]  number of expansion rotors (0-6)
-#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-45)
+#   x[10]  n_expansion      [int]  number of expansion rotors (0-12)
+#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-35)
+#   x[12]  blade_scale      [-]    expansion blade span/chord scale (0.02-2.0)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Search bounds
@@ -44,9 +45,9 @@ function search_bounds_v6(
         p, beam_profile; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor bounds (vars 10-11): n_expansion, bank_angle_deg
-    exp_lo = [0.0, 5.0]
-    exp_hi = [6.0, 45.0]
+    # Expansion rotor bounds (vars 10-12): n_expansion, bank_angle_deg, blade_scale
+    exp_lo = [0.0, 5.0, 0.005]   # λ lowered to 0.005
+    exp_hi = [20.0, 35.0, 2.0]   # n_exp widened to 20; bank safety cap 35°
 
     return vcat(base_lo, exp_lo), vcat(base_hi, exp_hi)
 end
@@ -74,9 +75,10 @@ function design_from_vector_v6(
         x[1:9], beam_profile, p; max_ground_radius=max_ground_radius
     )
 
-    # Expansion rotor parameters (vars 10-11)
-    n_exp = round(Int, clamp(x[10], 0, 6))
-    bank_deg = clamp(x[11], 5.0, 45.0)
+    # Expansion rotor parameters (vars 10-12)
+    n_exp = round(Int, clamp(x[10], 0, 20))
+    bank_deg = clamp(x[11], 5.0, 35.0)     # safety cap at 35°
+    blade_scale = clamp(x[12], 0.005, 2.0) # λ: span/chord/mass, widened to 0.005
 
     # Derive blade geometry from BEM rotor radius (network model: each
     # rotor is sized for P/n_rotors, so the blade tip matches the rotor).
@@ -90,9 +92,9 @@ function design_from_vector_v6(
     # BEM rotor radius for this power level (will be refined in objective_v6
     # with network power sharing, but this gives a reasonable blade size).
     r_rotor_est = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
-    blade_tip_radius = r_rotor_est
-    blade_hub_radius = 0.25 * r_rotor_est
-    blade_chord_est = 0.113 * r_rotor_est
+    blade_tip_radius = r_rotor_est * blade_scale
+    blade_hub_radius = 0.25 * r_rotor_est * blade_scale
+    blade_chord_est = 0.113 * r_rotor_est * blade_scale
 
     # Build expansion stack config
     cfg = if n_exp > 0
@@ -108,7 +110,7 @@ function design_from_vector_v6(
             CD0_blade=0.02,
             k_induced=0.05,
             bank_angle_deg=bank_deg,
-            mass_per_rotor=0.3 + 0.1 * blade_tip_radius,
+            mass_per_rotor=(0.3 + 0.1 * blade_tip_radius) * blade_scale^3,
             shaft_coupling=1.0,
         )
     else
