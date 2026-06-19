@@ -35,6 +35,7 @@ export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
 export ExpansionRotorParams, expansion_rotor_forces, effective_radius
+export EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED
 export ExpansionStackConfig, build_expansion_stack
 export expansion_airborne_mass, expansion_phi, expansion_radius_summary, expansion_telemetry
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
@@ -103,6 +104,7 @@ export TRPTDesignV5
 export search_bounds_v5, design_from_vector_v5, objective_v5, evaluate_design_v5
 export TRPT_V6_DIM, search_bounds_v6, design_from_vector_v6, objective_v6
 export estimate_effective_radii
+export parasitic_drag_power
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams

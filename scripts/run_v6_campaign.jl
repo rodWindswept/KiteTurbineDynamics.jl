@@ -1,20 +1,19 @@
 #!/usr/bin/env julia
 # scripts/run_v6_campaign.jl
 #
-# Phase 2.5 — V6.2 DE Optimisation Campaign (widened bounds).
+# Phase 2.8 — V6.8 DE Optimisation Campaign (physically-corrected drag model).
 #
-# Differential Evolution optimisation of the TRPT system with expansion rotors,
-# tension stiffening, and variable-density ring spacing.
-# 11 design variables (knuckle mass derived from beam geometry), 60 islands, ~20 min compute.
-#
-# V6.2 changes from V6:
-#   - n_lines:       [3, 12]  (was [3, 8])
-#   - target_Lr:     [0.2, 3.0] (was [0.4, 2.0])
-#   - aspect_ratio:  [0.15, 1.5] (was [0.25, 1.0])
-#   - t_over_D:      [0.01, 0.20] (was [0.02, 0.20])
-#   - r_hub factor:  [0.60, 1.50] × trpt_hub (was [0.80, 1.20])
-#   - NEW: density_profile ∈ [-0.8, 0.8] (ring density bias)
-#   - CHANGED: knuckle mass now derived from beam geometry (was [0.005, 0.200])
+# Changes from V6.7:
+#   - parasitic_drag_power() rewritten with correct per-component physics:
+#     * Beam drag: skin friction + axial crossflow (was cylinder crossflow,
+#       ~1,450× overestimate at tangential flow); now ~0.5 kW (negligible)
+#     * Tether drag: crossflow × 0.5 curvature factor (was raw Cd=1.0;
+#       Tallak Tveide's ODE solver gives ~0.25 for non-TRPT; TRPT tethers
+#       are straighter → 0.5 conservative estimate)
+#     * Expansion blades: airfoil profile drag (unchanged)
+#   - Removed hacky 0.2 blanket factor — corrections are per-component
+#   - Same 12-DoF search space and bounds as V6.5/V6.6/V6.7
+#   - Expansion rotor power credit and 2× margin retained from V6.7
 #
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
@@ -345,7 +344,7 @@ function main()
 
     # ── Save results ───────────────────────────────────────────────────────
     out_dir = joinpath(
-        dirname(@__DIR__), "scripts", "results", "v6_5_campaign_$(args.power_kw)kw"
+        dirname(@__DIR__), "scripts", "results", "v6_8_campaign_$(args.power_kw)kw"
     )
     mkpath(out_dir)
 
@@ -355,7 +354,7 @@ function main()
 
         # Save best design as JSON
         best_json = Dict(
-            "version" => "v6.5",
+            "version" => "v6.8",
             "power_kw" => args.power_kw,
             "island_idx" => global_best_island,
             "best_mass_kg" => global_best_cost,

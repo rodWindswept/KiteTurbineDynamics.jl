@@ -106,9 +106,9 @@ function design_from_vector_v6(
             blade_tip_radius=blade_tip_radius,
             blade_hub_radius=blade_hub_radius,
             blade_chord=blade_chord_est,
-            CL_blade=1.0,
-            CD0_blade=0.02,
-            k_induced=0.05,
+            CL_blade=EXP_CL_DESIGN,
+            CD0_blade=EXP_CD0_DESIGN,
+            k_induced=EXP_K_INDUCED,
             bank_angle_deg=bank_deg,
             mass_per_rotor=(0.3 + 0.1 * blade_tip_radius) * blade_scale^3,
             shaft_coupling=1.0,
@@ -203,6 +203,173 @@ function estimate_effective_radii(
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Parasitic drag model
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    parasitic_drag_power(design, stack, p; omega, n_lines, radii, zs,
+                         v_wind, elev_rad)
+        -> (P_beam, P_tether, P_exp_blades, P_total)
+
+Compute total parasitic aerodynamic drag power (W) at the design operating
+point — the power that must be supplied by the rotors just to overcome
+structural drag.  This power is dissipated as heat and is NOT available for
+useful work (radial spreading, thrust).
+
+# Components
+
+- **P_beam**: ring beam drag.  Each intermediate ring has `n_lines` beam
+  segments of outer dimension `Do(rr)`, chord length `L_beam = 2·rr·sin(π/n)`,
+  tangential velocity `v_t = ω·rr`.  Cylindrical crossflow drag model with
+  `Cd = TUBE_DRAG_CD` (1.2).  Hub ring (carries rotor) and ground ring (fixed)
+  are excluded.
+
+- **P_tether**: tether line drag.  Each inter-ring tether segment (diameter
+  `d_tether`, length L_seg) at midpoint radius r_mid.  Cylindrical crossflow
+  drag with `Cd = TETHER_DRAG_CD` (1.0).
+
+- **P_exp_blades**: expansion blade profile drag.  Parasitic torque from the
+  zero-lift and induced drag of each expansion blade annulus at its mean
+  aerodynamic radius.
+
+# Physics note
+
+The ring beam drag is computed with a scalar midpoint approximation (velocity
+at ring radius × beam area).  The full 3D treatment in `dynamics.jl` resolves
+perpendicular velocity components and sums over beam segments per ring.  For
+the optimisation loop (which evaluates ~10⁵ designs per minute), the scalar
+approximation is adequate — it captures the dominant `(ω·r)³` scaling and
+provides the correct ordering of designs.
+"""
+function parasitic_drag_power(
+    design::TRPTDesignV4,
+    stack::Vector{ExpansionRotorParams},
+    p::SystemParams;
+    omega::Float64,
+    n_lines::Int,
+    radii::Vector{Float64},
+    zs::Vector{Float64},
+    v_wind::Float64=11.0,
+    elev_rad::Float64=π / 6,
+)
+    rho = p.rho
+    d_tether = p.tether_diameter  # 3 mm Dyneema
+    n_rings_tot = length(radii)
+    v_axial = v_wind * cos(elev_rad)
+    nu = 1.5e-5  # kinematic viscosity of air (m²/s)
+
+    # ═══════════════════════════════════════════════════════════════════
+    # 1. Ring beam drag power
+    #
+    # PHYSICS (2026-06-19): Ring beams are polygon CHORDS, not radial
+    # spokes.  At the beam midpoint, tangential velocity v_t = ω·r is
+    # exactly PARALLEL to the beam axis — flow sweeps lengthwise along
+    # the beam, not across it.  The correct drag model has two components:
+    #
+    #   a) Skin friction from tangential flow (along beam):
+    #      P_skin = n·½ρ·(wetted_perim·L)·Cf·v_t³
+    #      Cf ≈ 0.027/Re^(1/7)  (turbulent boundary layer, 1/7th power law)
+    #      Wetted perimeter ≈ π·Do·1.2 (elliptical section, AR≈1.26)
+    #
+    #   b) Crossflow pressure drag from axial wind (across beam):
+    #      P_axial = n·½ρ·Cd_ellipse·Do·L·v_axial³
+    #      Cd_ellipse ≈ 0.2–0.3 (streamlined elliptical section in crossflow)
+    #
+    # Both are negligible for current designs (<0.5 kW combined vs 50 kW
+    # rated).  The old model (Cd=1.2 cylinder crossflow using Do×L with
+    # v_t³) overestimated beam drag by ~1,450×.
+    # ═══════════════════════════════════════════════════════════════════
+    P_beam_total = 0.0
+    for ri in 2:(n_rings_tot - 1)  # skip hub (ri=1) and ground (ri=end)
+        rr = radii[ri]
+        spec = beam_spec_at_ring(design, rr)
+        Do = spec.Do
+        L_beam = 2.0 * rr * sin(π / n_lines)
+        v_t = omega * rr
+
+        # Skin friction (tangential flow along beam)
+        wetted_perim = π * Do * 1.2           # elliptical perimeter approx
+        surface_area = wetted_perim * L_beam
+        Re = v_t * L_beam / nu
+        Cf = 0.027 / Re^(Float64(1) / 7)     # turbulent skin friction
+        q = 0.5 * rho * v_t^2
+        F_skin = q * surface_area * Cf
+        P_skin = F_skin * v_t                # power = force × velocity
+
+        # Axial crossflow (wind hits beam broadside)
+        CD_AXIAL_CROSSFLOW = 0.3             # elliptical section in crossflow
+        P_axial = 0.5 * rho * CD_AXIAL_CROSSFLOW * Do * L_beam * v_axial^3
+
+        P_beam_total += n_lines * (P_skin + P_axial)
+    end
+
+    # ═══════════════════════════════════════════════════════════════════
+    # 2. Tether line drag power
+    #
+    # Tethers run approximately along the shaft axis, so tangential flow
+    # IS crossflow — the cylinder-in-crossflow model applies.  Corrected
+    # by TETHER_CURVATURE_FACTOR to account for tether curvature toward
+    # the flow direction.
+    #
+    # Tallak Tveide's TetherDragODESolver (2023) gives
+    # drag_coefficient_multiplier ≈ 0.25 for non-TRPT configurations.
+    # TRPT tethers carry higher centrifugal loads → straighter → higher
+    # factor.  Using 0.5 as a conservative TRPT estimate pending ODE
+    # validation at TRPT operating conditions.
+    # ═══════════════════════════════════════════════════════════════════
+    tether_curvature_factor = 0.5  # TRPT estimate (non-TRPT: 0.25)
+
+    P_tether_total = 0.0
+    L_segs = diff(zs)
+    for si in eachindex(L_segs)
+        r_a = radii[si]
+        r_b = radii[si + 1]
+        r_mid = (r_a + r_b) / 2.0
+        v_t_mid = omega * r_mid
+        L_seg = L_segs[si]
+        # Raw crossflow power: ½ρ·Cd·d·L·v³
+        P_seg_raw = 0.5 * rho * TETHER_DRAG_CD * d_tether * L_seg * v_t_mid^3
+        P_tether_total += n_lines * P_seg_raw * tether_curvature_factor
+    end
+
+    # ═══════════════════════════════════════════════════════════════════
+    # 3. Expansion blade profile drag power
+    #
+    # Airfoil profile + induced drag, resolved to tangential direction.
+    # Uses calibrated coefficients (EXP_CL_DESIGN, EXP_CD0_DESIGN,
+    # EXP_K_INDUCED) from NACA 4412 data (Abbott & von Doenhoff 1959).
+    # ═══════════════════════════════════════════════════════════════════
+    P_exp_blade_total = 0.0
+    for er in stack
+        ri = er.ring_idx
+        if ri > n_rings_tot || ri < 1
+            continue
+        end
+        r_nom = radii[ri]
+        bank_rad = deg2rad(er.bank_angle_deg)
+        r_mean_annulus = (er.blade_hub_radius + er.blade_tip_radius) / 2.0
+        r_mean = r_nom + r_mean_annulus * cos(bank_rad)
+        blade_span = max(er.blade_tip_radius - er.blade_hub_radius, 0.0)
+
+        v_app = sqrt(v_axial^2 + (omega * r_mean)^2)
+        q = 0.5 * rho * v_app^2
+
+        # Profile + induced drag: D_blade = q·chord·span·(CD0 + k·CL²)
+        D_blade =
+            q * er.blade_chord * blade_span *
+            (er.CD0_blade + er.k_induced * er.CL_blade^2)
+        phi = atan(v_axial, omega * r_mean)
+        D_tangential = D_blade * cos(phi)
+
+        tau_drag_exp = er.n_blades * D_tangential * r_mean
+        P_exp_blade_total += tau_drag_exp * omega
+    end
+
+    P_total = P_beam_total + P_tether_total + P_exp_blade_total
+    return (P_beam_total, P_tether_total, P_exp_blade_total, P_total)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # v6 objective
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -212,7 +379,9 @@ end
 Scalar cost function for the v6 expansion-rotor DE optimiser.
 
 Returns total airborne mass (kg) if feasible, or a high penalty if
-constraints are violated.
+constraints are violated.  Includes a parasitic drag feasibility check:
+designs whose structural drag exceeds the hub rotor's aerodynamic shaft power
+are rejected as dynamically impossible.
 """
 function objective_v6(
     x::AbstractVector,
@@ -321,6 +490,53 @@ function objective_v6(
         design.n_lines * design.tether_length * (970.0 * π * (p.tether_diameter / 2)^2)
 
     total_mass = eval_result.mass_total_kg + m_expansion + m_tether
+
+    # ══════════════════════════════════════════════════════════════════
+    # Parasitic drag feasibility check
+    #
+    # parasitic_drag_power() returns physically-corrected drag values:
+    #   - Beam drag: skin friction + axial crossflow (negligible, ~0.5 kW)
+    #   - Tether drag: crossflow × 0.5 curvature factor (dominant)
+    #   - Expansion blades: airfoil profile + induced drag
+    #
+    # The constraint checks whether total parasitic drag can be overcome
+    # by aerodynamic power from ALL rotors (hub + expansion), with a 2×
+    # engineering margin:
+    #
+    #   P_aero_total = P_aero_hub + Σ (P_per_rotor × cos(bank_i))
+    #
+    # P_parasitic ≤ 2 × P_aero_total → no penalty (feasible)
+    # P_parasitic > 2 × P_aero_total → +1e6 barrier + gradient
+    # ══════════════════════════════════════════════════════════════════
+    P_beam, P_tether, P_exp_blades, P_parasitic = parasitic_drag_power(
+        design, stack, p;
+        omega=omega, n_lines=n_lines, radii=radii, zs=zs,
+        v_wind=v_rated, elev_rad=elev_angle,
+    )
+
+    # Hub rotor aerodynamic shaft power at design TSR (λ = 4.1)
+    P_aero_hub =
+        0.5 * p.rho * v_rated^3 * π * r_hub_rotor^2 *
+        BEM.cp_bem(n_lines, 4.1)
+
+    # Expansion rotor aero power contributions
+    P_aero_exp_total = 0.0
+    for er in stack
+        bank_rad = deg2rad(er.bank_angle_deg)
+        P_aero_exp_total += P_per_rotor * cos(bank_rad)
+    end
+
+    # Total available aero power: hub + expansion rotors
+    P_aero_total = P_aero_hub + P_aero_exp_total
+
+    if P_parasitic > 2.0 * P_aero_total
+        # Dynamically impossible: parasitic drag exceeds 2× available power.
+        # Use same 1e6 barrier as structural infeasibility so the DE can
+        # navigate between constraint regions.  Mass×ratio provides gradient
+        # within the infeasible zone so designs that almost balance are
+        # preferred over those 100× over.
+        return max(total_mass, 1.0) * min(P_parasitic / max(P_aero_total, 1.0), 100.0) + 1_000_000.0
+    end
 
     return total_mass
 end

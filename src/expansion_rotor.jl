@@ -33,6 +33,43 @@
 #   v_app²  = v_axial² + (ω · r_mean)²
 #
 # Reference: PLAN.md Phase 1 — Expansion Rotor Element
+#
+# ══════════════════════════════════════════════════════════════════════════════
+# Calibrated blade coefficients (2026-06-18 — supersedes placeholder values)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# Source: NACA 4412 section data from Abbott & von Doenhoff "Theory of Wing
+# Sections" (1959), §4.2, Re = 3×10⁶.  The TRPT expansion blades operate at
+# Re ≈ 2×10⁶ (chord ≈ 0.1–1.0 m, v_app ≈ 20–50 m/s), so Re 3×10⁶ is a
+# slightly high but defensible reference.
+#
+# 2D section values (Re = 3×10⁶):
+#   CL_max ≈ 1.4, CD_min ≈ 0.006 (at CL ≈ 0.1)
+#   Design point (max L/D ≈ 100): CL ≈ 0.8, CD ≈ 0.008
+#
+# 3D corrections for finite AR (≈ 6–15, depending on blade planform):
+#   k_induced ≈ 1 / (π · AR · e)  where e ≈ 0.85 (Oswald)
+#   For AR ≈ 8: k_induced ≈ 0.047.  At CL=0.7: CD_i ≈ 0.023.
+#   Total CD ≈ 0.010 + 0.023 = 0.033  →  L/D ≈ 21.
+#
+# Conservative design values (below stall, account for off-design operation):
+#   CL_design  = 0.7   — ~85% of 2D max-L/D point, margin against stall
+#   CD0_design = 0.010 — 2D section drag at moderate lift + surface roughness
+#   k_induced  = 0.050 — finite-AR induced drag factor (upper end for AR≈8)
+#
+# Previous placeholder values (CL=1.0, CD0=0.02, k=0.05) gave L/D ≈ 14.3.
+# Calibrated values give L/D ≈ 0.7/(0.010+0.050×0.49) ≈ 20.3 — ~42% better.
+# The primary change is CD0 halving from 0.02→0.010 (section drag was double
+# the physical value) and CL reducing from 1.0→0.7 (stall margin).
+#
+# Validation gap: these are textbook values, not CFD or wind-tunnel data
+# specific to the TRPT blade planform.  AeroDyn BEM sweep or XFOIL run at
+# Re 2×10⁶ with the actual chord and AR would be the authoritative source.
+# Marked as CALIBRATED (not VALIDATED) — better than placeholder, but CFD
+# confirmation is pending.  See 03_missing_context.md item M5.
+const EXP_CL_DESIGN  = 0.7
+const EXP_CD0_DESIGN = 0.010
+const EXP_K_INDUCED  = 0.050
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Parameter struct

@@ -43,6 +43,9 @@ function parse_commandline()
         "--v65"
             help = "Use V6.5 campaign winner (3-line, 20 exp, 18 kg, λ=0.01)"
             action = :store_true
+        "--v67"
+            help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
+            action = :store_true
         "--expansion"
             help = "Add expansion rotors at given bank angle (deg, default 20)"
             arg_type = Float64
@@ -254,7 +257,8 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v65"] ? "V6.5 3-line triangle" :
+    current_config = args["v67"] ? "V6.7 drag-constrained" :
+                     args["v65"] ? "V6.5 3-line triangle" :
                      args["v64"] ? "V6.4 3-line triangle" :
                      args["v63"] ? "V6.3 7-line heptagon" :
                      args["v6"] || args["v62"] ? "V6.2 12-line dodecagon" :
@@ -263,7 +267,9 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V6.5 3-line triangle"
+        if current_config == "V6.7 drag-constrained"
+            sys, u0, p, label = build_from_campaign("v6_7_campaign_50kw", "V6.7 drag-constrained")
+        elseif current_config == "V6.5 3-line triangle"
             sys, u0, p, label = build_from_campaign("v6_5_campaign_50kw", "V6.5 triangle")
         elseif current_config == "V6.4 3-line triangle"
             sys, u0, p, label = build_from_campaign("v6_4_campaign_50kw", "V6.4 triangle")
