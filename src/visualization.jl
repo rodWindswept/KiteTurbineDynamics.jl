@@ -1132,6 +1132,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             buf_r[i] = sf.ring_max_util * 100
             spark_power[] = buf_p; spark_tension[] = buf_t; spark_ring[] = buf_r
             spark_idx[] = mod1(i + 1, SPARK_N)
+
+            # Auto-scale y-axis to visible data range (skip NaN)
+            valid_p = filter(!isnan, buf_p)
+            valid_t = filter(!isnan, buf_t)
+            p_max = isempty(valid_p) ? 1.0 : maximum(valid_p) * 1.1
+            t_max = isempty(valid_t) ? 100.0 : maximum(valid_t) * 1.1
+            ylims!(ax_pwr, 0, p_max)
+            ylims!(ax_ten, 0, t_max)
         end
 
         # ── Sparkline readouts ─────────────────────────────────────────────
