@@ -216,6 +216,11 @@ function main()
     @printf("  Global best mass: %.2f kg  (island %d)\n", global_best_cost, global_best_island)
     _save_final_results(out_dir, global_best_x, global_best_cost, global_best_island,
                         beam_profile, p, args, mgr, elapsed, n_islands, all_history, island_bests, param_trace, verifications)
+
+    # ── Post-campaign dynamic verification ────────────────────────────
+    _final_dynamic_verify(out_dir, global_best_x, global_best_cost, global_best_island,
+                          beam_profile, p, args, mgr)
+
     println("\n  Campaign complete.")
 end
 
@@ -274,7 +279,83 @@ function _validate_island(best_x, best_cost, island, power_W, beam_profile, mgr)
     power_ratio < 0.75 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — severely underpowered")
     power_ratio > 1.25 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — severely overpowered")
 
-    return (true, "mass=$(round(best_cost,digits=1))kg  n_active=$n_active  ω=$(round(ω_rpm,digits=0))rpm")
+    # 7. Dynamic structural check: verify the gravity-settled TRPT is stable.
+    #    Catches designs with degenerate geometry (bouncing head, no gravity
+    #    settlement).  Full k_mppt power scan runs post-campaign on the
+    #    global best (see _final_dynamic_verify below).
+    vr = headless_verify_structural(d, result.rotors, params_v5_50kw();
+        power_W=power_W, v_rated=11.0)
+    if vr !== nothing && !vr.feasible
+        return (false, "dynamic: gravity settle failed — TRPT structure is unstable")
+    end
+
+    return (true, "mass=$(round(best_cost,digits=1))kg  n_active=$n_active  ω=$(round(ω_rpm,digits=0))rpm  dyn_P=$(round(vr===nothing ? 0 : vr.P_gen_mean/1000,digits=1))kW")
+end
+
+# ── Post-campaign dynamic verification ────────────────────────────────────
+
+function _final_dynamic_verify(out_dir, global_best_x, global_best_cost, global_best_island,
+                               beam_profile, p, args, mgr)
+    println("\n" * "="^70)
+    println("  POST-CAMPAIGN DYNAMIC VERIFICATION")
+    println("="^70)
+
+    xr = copy(global_best_x)
+    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
+
+    result = design_from_vector_v10(xr, beam_profile, params_v5_50kw();
+        max_ground_radius=mgr, power_W=args["power"])
+    d = result.design
+
+    println("  Running full k_mppt power scan on global best...")
+    println("  (This takes ~5 minutes — scanning 8 k_mppt values)")
+
+    vr = headless_verify(d, result.rotors, params_v5_50kw();
+        power_W=args["power"], v_rated=11.0)
+
+    if vr === nothing
+        println("  Skipped (no active rotors).")
+        return
+    end
+
+    ω_rpm = vr.ω_mean * 60 / (2π)
+    println()
+    println("  ── DYNAMIC VERIFICATION RESULT ──")
+    println("  Best k_mppt:     $(round(vr.k_mppt_best, digits=0))")
+    println("  Settled ω:       $(round(ω_rpm, digits=1)) rpm")
+    println("  P_gen at best k: $(round(vr.P_gen_mean/1000, digits=1)) kW")
+    println("  Power ratio:     $(round(vr.power_ratio * 100, digits=1))% of rated")
+
+    if vr.feasible
+        println()
+        println("  *** DESIGN IS DYNAMICALLY VIABLE ***")
+        println("  *** Produces >80% rated power at k_mppt=$(round(vr.k_mppt_best,digits=0)) ***")
+    else
+        println()
+        println("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        println("  !!  WARNING: DESIGN IS DYNAMICALLY DEAD    !!")
+        println("  !!  Best P_gen = $(round(vr.P_gen_mean/1000,digits=1)) kW ($(round(vr.power_ratio*100,digits=0))% rated)            !!")
+        println("  !!  No k_mppt value produces >80% rated.   !!")
+        println("  !!  This design passes static gates but     !!")
+        println("  !!  fails dynamically — DO NOT CITE.        !!")
+        println("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    end
+
+    # Save dynamic verification report
+    open(joinpath(out_dir, "dynamic_verification.txt"), "w") do io
+        println(io, "Dynamic Verification Report")
+        println(io, "==========================")
+        println(io, "Campaign: v10_50kw")
+        println(io, "Global best: Island $global_best_island, $(round(global_best_cost,digits=2)) kg")
+        println(io)
+        println(io, "k_mppt scan results:")
+        println(io, "  Best k_mppt:     $(round(vr.k_mppt_best, digits=0))")
+        println(io, "  Settled ω:       $(round(ω_rpm, digits=1)) rpm")
+        println(io, "  P_gen:           $(round(vr.P_gen_mean/1000, digits=1)) kW")
+        println(io, "  Power ratio:     $(round(vr.power_ratio * 100, digits=1))%")
+        println(io, "  Dynamically viable: $(vr.feasible)")
+    end
+    println("  Report saved to $(joinpath(out_dir, "dynamic_verification.txt"))")
 end
 
 # ── Checkpoint helpers ─────────────────────────────────────────────────────

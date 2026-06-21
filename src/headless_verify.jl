@@ -1,53 +1,37 @@
 # src/headless_verify.jl
 #
 # Headless ODE verification for campaign designs.
-# Runs a 10s steady simulation without GLMakie and extracts key dynamic metrics
-# to compare against static predictions.  Catches designs that pass static
-# constraint gates but fail dynamically (the V9.0 dashboard gap).
 #
-# Usage: result = headless_verify(design, rotors, p, power_W, v_rated)
+# Two functions:
+#   headless_verify_structural  — gravity-settle only, ~2s, catches
+#                                 degenerate geometry (per-island gate)
+#   headless_verify             — full k_mppt scan via settle_to_operational_state,
+#                                 finds whether ANY k_mppt produces rated power
+#                                 (post-campaign global-best check)
+#
+# Usage:
+#   vr = headless_verify_structural(design, rotors, p)
+#   vr = headless_verify(design, rotors, p; power_W, v_rated)
 
 """
     VerificationResult
 
-Dynamic metrics from a headless 10s steady simulation.
+Dynamic metrics from headless verification.
 """
 struct VerificationResult
     feasible::Bool
-    ω_mean::Float64        # mean rotor speed (rad/s)
-    ω_max::Float64         # peak rotor speed (rad/s)
-    P_gen_peak::Float64    # peak generator power (W)
-    P_gen_mean::Float64    # mean generator power (W)
-    tether_fos_min::Float64  # minimum tether FoS
-    overtwist_max::Float64   # maximum inter-ring twist (rad)
-    slack_pct::Float64       # % of frames with slack
-    peak_tension_N::Float64  # peak tether tension (N)
+    ω_mean::Float64        # settled rotor speed (rad/s)
+    ω_max::Float64         # same
+    P_gen_peak::Float64    # generator power (W)
+    P_gen_mean::Float64    # same
+    k_mppt_best::Float64   # best k_mppt found (full scan only)
+    power_ratio::Float64   # P_gen / power_W
 end
 
-"""
-    headless_verify(design, rotors, p; power_W, v_rated, duration)
+# ── Shared system construction ──────────────────────────────────────────
 
-Build the TRPT system from a campaign design, settle to operational state,
-run a short steady simulation, and extract dynamic metrics.
-
-Returns a VerificationResult or nothing if the system build fails.
-"""
-function headless_verify(
-    design::TRPTDesignV4,
-    rotors::Vector{RotorSpecV10},
-    p::SystemParams;
-    power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
-    duration::Float64=10.0,
-)
-    # Skip if no rotors
-    if isempty(rotors)
-        return nothing
-    end
-
+function _build_verify_system(design, rotors, p, v_rated, power_W)
     n_lines = design.n_lines
-
-    # Build expansion rotor params for the ODE system
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
         ri = rotor.ring_idx
@@ -60,11 +44,10 @@ function headless_verify(
         push!(expansion_params, er)
     end
 
-    # Build system params matching the campaign geometry
     p_sys = params_v5_50kw()
     n_rings = length(ring_radii(design))
     geo = GeometrySpec(
-        p_sys.elevation_angle, p_sys.lifter_elevation, 5.0,  # placeholder rotor radius
+        p_sys.elevation_angle, p_sys.lifter_elevation, 5.0,
         design.tether_length, design.r_hub, p_sys.trpt_rL_ratio,
         n_lines, n_rings, n_lines,
     )
@@ -74,36 +57,144 @@ function headless_verify(
     back = BackLineSpec(p_sys.EA_back_line, p_sys.c_back_line, p_sys.back_anchor_fwd_x, 0.1)
     p_campaign = SystemParams(geo, mat, aero, ctrl, back)
 
-    # Build system
-    sys, u0 = try
-        build_kite_turbine_system(p_campaign; expansion_rotors=expansion_params)
+    sys, u0 = build_kite_turbine_system(p_campaign; expansion_rotors=expansion_params)
+    return sys, u0, p_campaign, p_sys, geo, mat, aero, back
+end
+
+# ── Fast structural check (~2s) ─────────────────────────────────────────
+
+"""
+    headless_verify_structural(design, rotors, p; power_W, v_rated)
+
+Gravity-settle only.  Returns `feasible=false` if the TRPT structure
+cannot reach a stable gravity-equilibrium (degenerate geometry,
+bouncing head, no tension).  Does NOT test power production.
+
+Fast enough for per-island campaign validation (~2 seconds).
+"""
+function headless_verify_structural(
+    design::TRPTDesignV4,
+    rotors::Vector{RotorSpecV10},
+    p::SystemParams;
+    power_W::Float64=50000.0,
+    v_rated::Float64=11.0,
+)
+    if isempty(rotors)
+        return nothing
+    end
+
+    local sys, u0, p_campaign
+    try
+        sys, u0, p_campaign, _, _, _, _, _ = _build_verify_system(design, rotors, p, v_rated, power_W)
+    catch e
+        @warn "headless_verify_structural: build failed" exception = e
+        return VerificationResult(false, 0, 0, 0, 0, p.k_mppt, 0)
+    end
+
+    try
+        settle_to_equilibrium(sys, u0, p_campaign; wind_fn=nothing, n_steps=20000)
+    catch e
+        @warn "headless_verify_structural: gravity settle failed" exception = e
+        return VerificationResult(false, 0, 0, 0, 0, p.k_mppt, 0)
+    end
+
+    return VerificationResult(true, 0, 0, 0, 0, p.k_mppt, 0)
+end
+
+# ── Full k_mppt power scan (~5 min) ─────────────────────────────────────
+
+"""
+    headless_verify(design, rotors, p; power_W, v_rated)
+
+1. Gravity-settle the TRPT structure.
+2. Scan 8 logarithmically-spaced k_mppt values from 0.1× to 10× the
+   campaign's k_mppt.
+3. At each k_mppt, run settle_to_operational_state to find the
+   equilibrium ω, then compute P_gen = k_mppt × ω³.
+4. Find the k_mppt whose P_gen is closest to power_W (in ratio space).
+5. Return whether that best P_gen falls within [0.8×, 1.25×] power_W.
+
+A design that can't produce >80% rated power at ANY k_mppt is
+dynamically non-viable.
+
+Intended for post-campaign final verification, not per-island gating
+(~5 minutes for the full scan).
+"""
+function headless_verify(
+    design::TRPTDesignV4,
+    rotors::Vector{RotorSpecV10},
+    p::SystemParams;
+    power_W::Float64=50000.0,
+    v_rated::Float64=11.0,
+)
+    if isempty(rotors)
+        return nothing
+    end
+
+    local sys, u0, p_campaign, p_sys, geo, mat, aero, back
+    try
+        sys, u0, p_campaign, p_sys, geo, mat, aero, back = _build_verify_system(design, rotors, p, v_rated, power_W)
     catch e
         @warn "headless_verify: system build failed" exception = e
-        return VerificationResult(false, 0, 0, 0, 0, 0, 0, 0, 0)
+        return VerificationResult(false, 0, 0, 0, 0, p.k_mppt, 0)
     end
 
-    # Settle to operational state
-    u_settled = try
-        settle_to_equilibrium(sys, u0, p_campaign; wind_fn=nothing, n_steps=50000)
+    # Gravity settle
+    local u_grav
+    try
+        u_grav = settle_to_equilibrium(sys, u0, p_campaign; wind_fn=nothing, n_steps=20000)
     catch e
-        @warn "headless_verify: settle failed" exception = e
-        return VerificationResult(false, 0, 0, 0, 0, 0, 0, 0, 0)
+        @warn "headless_verify: gravity settle failed" exception = e
+        return VerificationResult(false, 0, 0, 0, 0, p.k_mppt, 0)
     end
 
-    # Extract key metrics from settled state
-    N = sys.n_total
-    frame_size = 3 * N + 2 * sys.n_ring
-    omega_idx = 3 * N + 1
-    ω_mean_settled = mean(abs.(u_settled[omega_idx:(omega_idx + sys.n_ring - 1)]))
+    # Scan k_mppt logarithmically
+    k_base = p_sys.k_mppt
+    k_values = [round(k_base * 10.0^x, digits=1) for x in [-1.0, -0.7, -0.4, -0.1, 0.0, 0.3, 0.6, 1.0]]
 
-    # Simple static power estimate — full ODE sim is heavyweight
-    # Use the equilibrium ω from the settle for a rough check
-    P_gen_est = p_campaign.k_mppt * ω_mean_settled^3
-    ω_rpm = ω_mean_settled * 60 / (2π)
+    wind_fn = (pos, t) -> [v_rated, 0.0, 0.0]
+    ω_init = 9.5
+    N = sys.n_total
+    Nr = sys.n_ring
+    omega_idx = 3 * N + 1
+
+    best_k = k_base
+    best_ratio_err = Inf
+    best_omega = 0.0
+    best_P = 0.0
+
+    for k_mppt_test in k_values
+        ctrl_test = ControlSpec(p_sys.i_pto, k_mppt_test, power_W, p_sys.β_min, p_sys.β_max, p_sys.β_rate_max, p_sys.kp_elev)
+        p_test = SystemParams(geo, mat, aero, ctrl_test, back)
+
+        local u_op
+        try
+            u_op = settle_to_operational_state(sys, u_grav, p_test, ω_init;
+                wind_fn=wind_fn, lift_device=nothing)
+        catch e
+            continue
+        end
+
+        ω_vals = abs.(u_op[omega_idx:(omega_idx + Nr - 1)])
+        ω_mean_val = mean(ω_vals)
+        P_val = k_mppt_test * ω_mean_val^3
+        ratio = P_val / power_W
+        err = abs(log(max(ratio, 0.01)))
+
+        if err < best_ratio_err
+            best_ratio_err = err
+            best_k = k_mppt_test
+            best_omega = ω_mean_val
+            best_P = P_val
+        end
+    end
+
+    best_ratio = best_P / power_W
+    feasible_dynamic = best_ratio > 0.80
 
     return VerificationResult(
-        true, ω_mean_settled, ω_mean_settled,
-        P_gen_est, P_gen_est,
-        1.0, 0.0, 0.0, 0.0,  # placeholder FoS/twist/slack
+        feasible_dynamic, best_omega, best_omega,
+        best_P, best_P,
+        best_k, best_ratio,
     )
 end

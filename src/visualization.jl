@@ -1483,7 +1483,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
     clbl("MPPT gain k_mppt"; fontsize=11)
-    sl_kmppt = cslider!(1.0:1.0:50.0; start=clamp(p.k_mppt, 1.0, 50.0))
+    sl_kmppt = cslider!(1.0:1.0:2000.0; start=clamp(p.k_mppt, 1.0, 2000.0))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
 
