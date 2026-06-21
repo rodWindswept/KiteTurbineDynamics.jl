@@ -253,7 +253,10 @@ function build_from_campaign_v10(campaign_dir::String, label::String; vector_fil
                        n_lines, n_rings, n_lines)
     mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
-    ctrl = ControlSpec(p_base.i_pto, p_base.k_mppt, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
+    # Scale k_mppt by blade area (λ²) to match objective_v10
+    λ_eff = isempty(rotors) ? 1.0 : rotors[1].blade_scale
+    k_mppt_eff = p_base.k_mppt * λ_eff^2
+    ctrl = ControlSpec(p_base.i_pto, k_mppt_eff, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
     back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
     p_campaign = SystemParams(geo, mat, aero, ctrl, back)
 

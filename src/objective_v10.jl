@@ -306,9 +306,21 @@ function objective_v10(
     v_ref_rotor = isempty(rotors) ? v_rated : rotors[1].v_wind
     r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
 
+    # ── Effective k_mppt scaled by blade area ──────────────────────────
+    # k_mppt ∝ rotor swept area ∝ λ².  A λ=0.5 rotor has ¼ the swept area
+    # of λ=1.0 and should expect ¼ the power.  Without this scaling, the
+    # DE converges to λ→0 to save blade mass (∝ λ³) while the equilibrium
+    # solver compensates with higher ω — but the rotor lacks startup torque
+    # to reach that ω in the ODE.  Scaling k_mppt with λ² inside the
+    # equilibrium solve aligns the static objective with the dynamic reality.
+    λ_eff = rotors[1].blade_scale
+    k_mppt_eff = p.k_mppt * λ_eff^2
+    ctrl_scaled = ControlSpec(p.i_pto, k_mppt_eff, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
+    p_scaled = override_params(p; k_mppt=k_mppt_eff)
+
     # ── Equilibrium solve ────────────────────────────────────────────────
     ω_eq, r_hub_rotor = solve_equilibrium_self_consistent(
-        design, expansion_params, p, n_lines, radii, zs;
+        design, expansion_params, p_scaled, n_lines, radii, zs;
         P_per_rotor=P_per_rotor, v_wind=v_rated, elev_rad=elev_angle,
     )
 
@@ -319,7 +331,7 @@ function objective_v10(
     end
 
     # ── Gate 7 (continued): P_gen hard lower bound ─────────────────────────
-    P_gen_eq = p.k_mppt * ω_eq^3
+    P_gen_eq = k_mppt_eff * ω_eq^3
     if P_gen_eq < 0.8 * power_W   # severely underpowered → infeasible
         m_base = sum(er -> er.mass, expansion_params; init=0.0)
         return max(m_base, 1.0) * min(power_W / max(P_gen_eq, 1.0), 100.0) + 1_000_000.0
