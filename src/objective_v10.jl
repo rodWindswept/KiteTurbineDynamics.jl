@@ -34,6 +34,10 @@ const TRPT_V10_DIM = 14
 function _generate_valid_rotor_masks(n_pos::Int=10, min_gap::Int=2)
     masks = UInt16[]
     for m in 0:((1 << n_pos) - 1)
+        # Require a rotor at position 1 (hub, highest wind).
+        # The hub rotor is the primary power source; designs without one
+        # waste DE search time on configurations that are never optimal.
+        (m & 1) == 0 && continue
         valid = true
         prev_one = -min_gap - 1
         for i in 0:(n_pos - 1)
