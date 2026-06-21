@@ -138,14 +138,16 @@ function design_from_vector_v10(
     )
     n_rings = length(zs)
 
-    # Clamp rotor positions to top half only (hub-side rings)
-    # Rotor mask position 1 = hub ring. Ring indices are ground→hub.
+    # Map rotor mask positions to ring indices.
+    # Mask position 1 = hub ring. Ring indices are ground→hub.
     # Convert: mask position p → ring index = n_rings - p + 1
-    max_positions = max(n_rings ÷ 2, 1)
+    # Clamp to valid ring range [1, n_rings].  Positions beyond n_rings
+    # (mask position > n_rings) are dropped — no ring exists that far down.
+    # The _generate_valid_rotor_masks constraint (≥2-ring gap) still applies.
     positions = Int[]
     for p in positions_raw
-        if p <= max_positions
-            ring_idx = n_rings - p + 1  # position 1 = hub ring = ring n_rings
+        ring_idx = n_rings - p + 1
+        if ring_idx >= 1 && ring_idx <= n_rings
             push!(positions, ring_idx)
         end
     end
@@ -399,6 +401,16 @@ function objective_v10(
     # ── Gate 6: Slack guard ──────────────────────────────────────────────
     if any(thrust_per_ring .< 0.0)
         return eval_result.mass_total_kg * 5.0 + 1_000_000.0
+    end
+
+    # ── Gate 6b: Tension distribution — every segment must carry load ────
+    # cumulative_thrust[ri] is the force above ring ri that the tethers
+    # must bear.  A non-positive value means that segment has gone slack —
+    # the TRPT cannot transmit torque from expansion rotors down to the
+    # generator at the ground ring.
+    min_tether_tension = minimum(cumulative_thrust) / n_lines
+    if min_tether_tension <= 0.0
+        return eval_result.mass_total_kg * max(10.0, abs(min_tether_tension) / 100.0 + 1.0) + 1_000_000.0
     end
 
     # ── Gate 8: Parasitic drag check (embedded in equilibrium solve) ─────
