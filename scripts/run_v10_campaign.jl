@@ -340,14 +340,14 @@ function _final_dynamic_verify(out_dir, global_best_x, global_best_cost, global_
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
 
     result = design_from_vector_v10(xr, beam_profile, params_v5_50kw();
-        max_ground_radius=mgr, power_W=args["power"])
+        max_ground_radius=mgr, power_W=args.power_kw * 1000)
     d = result.design
 
     println("  Running full k_mppt power scan on global best...")
     println("  (This takes ~5 minutes — scanning 8 k_mppt values)")
 
     vr = headless_verify(d, result.rotors, params_v5_50kw();
-        power_W=args["power"], v_rated=11.0)
+        power_W=args.power_kw * 1000, v_rated=11.0)
 
     if vr === nothing
         println("  Skipped (no active rotors).")
