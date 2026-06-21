@@ -57,6 +57,29 @@ function main()
 
     beam_profile = PROFILE_ELLIPTICAL  # elliptical only for V10
     lo, hi = search_bounds_v10(p_bounds, beam_profile; max_ground_radius=mgr)
+
+    # ── Tight mode: narrow bounds around known basin ──────────────────
+    tight = "--tight" in ARGS
+    if tight
+        # n_lines: skip triangles/pentagons, optimum at 12-16
+        lo[8] = max(lo[8], 8.0)
+        # r_bottom: skip tiny ground rings, optimum at 3.7-4.4
+        lo[6] = max(lo[6], 2.0)
+        # target_Lr: known optimum screaming at max
+        lo[7] = max(lo[7], 2.0)
+        # Do_top: known optimum ~0.075
+        lo[1] = max(lo[1], 0.06)
+        hi[1] = min(hi[1], 0.15)
+        # r_hub: known optimum ~3.7
+        lo[5] = max(lo[5], 2.5)
+        hi[5] = min(hi[5], 5.0)
+        # lambda: skip microscopic blades
+        lo[13] = max(lo[13], 0.1)
+        lo[14] = max(lo[14], 0.1)
+        hi[13] = min(hi[13], 1.5)
+        hi[14] = min(hi[14], 1.5)
+        println("  TIGHT mode: bounds narrowed around known basin")
+    end
     dim = length(lo)
     @printf("  Design space: %d dimensions\n", dim)
     @printf("  Bounds: [%.2f, %.2f] x ...\n", lo[1], hi[1])
