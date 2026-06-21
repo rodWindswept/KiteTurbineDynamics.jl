@@ -17,8 +17,8 @@ fuller reference.
 
 ## Working agreement
 
-- **Keep the suite green.** Run `julia --project=. test/runtests.jl` (~48 s, 11
-  suites) before committing. Never commit with a red suite.
+- **Keep the suite green.** Run `julia --project=. test/runtests.jl` (~3m08s,
+  917 tests in 22 files) before committing. Never commit with a red suite.
 - **Physics conservatism.** Physical calculations must conform to the
   BEM-coupled v2/v5 solver formulations described in `DECISIONS.md`.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.

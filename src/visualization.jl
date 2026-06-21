@@ -1136,8 +1136,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             # Auto-scale y-axis to visible data range (skip NaN)
             valid_p = filter(!isnan, buf_p)
             valid_t = filter(!isnan, buf_t)
-            p_max = isempty(valid_p) ? 1.0 : maximum(valid_p) * 1.1
-            t_max = isempty(valid_t) ? 100.0 : maximum(valid_t) * 1.1
+            p_max = isempty(valid_p) ? 1.0 : max(maximum(valid_p) * 1.1, 1.0)
+            t_max = isempty(valid_t) ? 100.0 : max(maximum(valid_t) * 1.1, 100.0)
             ylims!(ax_pwr, 0, p_max)
             ylims!(ax_ten, 0, t_max)
         end
@@ -1334,7 +1334,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     config_menu = Menu(ctrl[cnr!(), 1];
         options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line",
                  "V6.2 12-line dodecagon", "V6.3 7-line heptagon",
-                 "V6.4 3-line triangle", "V6.5 3-line triangle"],
+                 "V6.4 3-line triangle", "V6.5 3-line triangle",
+                 "V6.7 drag-constrained", "V9.0 50kW equilibrium", "V10 unified rotors"],
         default=config_name, width=270)
 
     # Also disable menu when not idle

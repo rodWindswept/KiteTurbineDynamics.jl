@@ -1,7 +1,8 @@
 # V9 — Dynamic Equilibrium Objective
 
-**Date:** 2026-06-19
-**Status:** Plan — not yet implemented
+**Date:** 2026-06-19  
+**Implemented:** 2026-06-20  
+**Status:** ✅ Implemented — `objective_v6.jl` (equilibrium solve), `scripts/run_v6_campaign.jl` (V9.0 mode). V9.0 campaign complete (44.52 kg winner). Dashboard verified. See `DECISIONS.md` entry [2026-06-20]. **Superseded by V10** (`docs/plans/2026-06-20-v10-full-dynamic-constraints.md`).  
 **Supersedes:** V6.x static-TSR constraint, V7 dynamic-settle plan
 
 ---
@@ -330,20 +331,27 @@ No changes to: `src/expansion_rotor.jl`, `src/KiteTurbineDynamics.jl`,
 
 ### 6.1 First campaign (V9.0)
 
-Same 12-DoF bounds as V6.8.  Expected results:
+**Bounds widened from V6.8:** n_lines [3,12]→[3,24], n_expansion [0,10]→[0,20],
+r_hub [0.60×,1.50×]→[0.30×,8.00×], blade_scale λ lower bound 0.02→0.005.
 
-1. **Fewer feasible designs** than V6.8 (57/60) — many V6.8 designs passed the
-   broken constraint but are actually air brakes.
-2. **Higher mass optimum** — designs must survive both equilibrium ω AND
-   structural integrity at that ω.  Current 58 kg designs are carried by the
-   counterfactual TSR=4.1 assumption.
-3. **Lower ω_eq** than design ω — the equilibrium ω is where drag balances.
-   For V6.8 winner, no equilibrium exists at all.
-4. **Binding constraint shift** — tether drag will dominate the power balance
-   and drive ω_eq lower.  Designs with fewer rings, larger hub rotors, and
-   lower ω will be favoured.
-5. **Diagnostic-rich trace** — every infeasible design tagged with WHY it
-   failed (air brake, low power, structural, tether).
+**Actual results (50 kW):**
+- Best mass: 44.52 kg (n=8, n_exp=9, λ=0.40, bank=30°)
+- 59/60 islands feasible — fewer than V6.8's 57/60 (the equilibrium solve is stricter)
+- ω_eq ≈ 79 rpm vs design TSR=4.1 ω of ~90 rpm
+
+**Dashboard verification:** Revealed three unmodelled failure modes (tether FoS=0.3,
+overtwist > π, 7.6% slack) despite passing all objective_v6 gates. These drive
+the V10 constraint expansion plan.
+
+**Key findings:**
+1. **Higher mass than V6.8 fantasy** — the equilibrium solve forces designs to
+   survive at their actual operating ω, not an assumed TSR=4.1. The self-consistent
+   rotor sizing (iterating ω_eq ↔ R) closes GitHub issue #4.
+2. **Lower ω_eq than design ω** — equilibrium typically 10–15% below TSR=4.1 ω
+   because parasitic drag ∝ ω³ pulls the operating point down.
+3. **Binding constraints:** Three parameters at bounds (t_over_D=0.01, target_Lr=3.0
+   max, r_bottom=0.3 min) — these are widened further in V10.
+4. **n_lines=8 unanimous** — not at bound, confirmed robust under equilibrium solve.
 
 ### 6.2 Subsequent campaigns
 

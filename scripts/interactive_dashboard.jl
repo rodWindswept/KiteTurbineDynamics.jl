@@ -43,6 +43,15 @@ function parse_commandline()
         "--v65"
             help = "Use V6.5 campaign winner (3-line, 20 exp, 18 kg, λ=0.01)"
             action = :store_true
+        "--v9"
+            help = "Use V9.0 campaign winner (50kW, equilibrium solve)"
+            action = :store_true
+        "--v9-10kw"
+            help = "Use V9.0 10kW campaign winner (equilibrium solve)"
+            action = :store_true
+        "--v10"
+            help = "Use V10 campaign winner (unified rotors, full constraints)"
+            action = :store_true
         "--v67"
             help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
             action = :store_true
@@ -197,31 +206,87 @@ function parse_best_design_json(path::AbstractString)
     return out
 end
 
+# ── Build system from V10 campaign (raw vector + design_from_vector_v10) ──
+function build_from_campaign_v10(campaign_dir::String, label::String)
+    vec_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_vector.csv")
+    if !isfile(vec_path)
+        error("best_vector.csv not found — run campaign first")
+    end
+    x_raw = parse.(Float64, split(readline(vec_path), ","))
+    x = copy(x_raw)
+    x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
+    x[10] = clamp(x[10], 0.0, Float64(N_VALID_MASKS))
+
+    result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw(); max_ground_radius=5.0, power_W=50000.0)
+    design = result.design
+    rotors = result.rotors
+    n_lines = design.n_lines
+    n_rings = result.n_rings
+
+    # Build expansion params from rotor specs
+    expansion_params = ExpansionRotorParams[]
+    for rotor in rotors
+        mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
+        er = ExpansionRotorParams(
+            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
+            EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
+            rotor.bank_angle_deg, mass_est, rotor.ring_idx, 1.0,
+        )
+        push!(expansion_params, er)
+    end
+
+    # Build system params
+    p_base = params_v5_50kw()
+    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0,
+                       design.tether_length, design.r_hub, p_base.trpt_rL_ratio,
+                       n_lines, n_rings, n_lines)
+    mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
+    aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
+    ctrl = ControlSpec(p_base.i_pto, p_base.k_mppt, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
+    back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
+    p_campaign = SystemParams(geo, mat, aero, ctrl, back)
+
+    sys, u0 = build_kite_turbine_system(p_campaign; expansion_rotors=expansion_params)
+
+    n_active = length(rotors)
+    bank_str = isempty(rotors) ? "none" : "$(round(rotors[1].bank_angle_deg,digits=1)) deg"
+    println("$label: n_lines=$n_lines  n_rotors=$n_active  rings=$n_rings  bank=$bank_str")
+    println("  r_hub=$(round(design.r_hub,digits=2)) m  r_bottom=$(round(design.r_bottom,digits=2)) m")
+    return sys, u0, p_campaign, label
+end
+
 # ── Build system from campaign best_design.json ──────────────────────────
-function build_from_campaign(campaign_dir::String, label::String)
+function build_from_campaign(campaign_dir::String, label::String; params_fn=params_v5_50kw)
     json_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_design.json")
     if !isfile(json_path)
         error("best_design.json not found at $json_path — run campaign first")
     end
     design = parse_best_design_json(json_path)
 
-    n_lines = design["n_lines"]
-    n_exp   = design["n_expansion"]
+    n_lines = Int(design["n_lines"])
+    n_exp   = Int(design["n_expansion"])
     bank    = design["bank_angle_deg"]
     r_blade = design["blade_tip_radius"]
     blade_s = get(design, "blade_scale", 1.0)
 
-    # Build system params: use v5-50kw as base, override with campaign geometry
-    p = params_v5_50kw()
-    # Override n_lines and n_blades from campaign
-    geo = GeometrySpec(p.elevation_angle, p.lifter_elevation, p.rotor_radius,
-                       p.tether_length, design["r_hub_m"], p.trpt_rL_ratio,
+    # Build system params from the appropriate param set
+    p_base = params_fn()
+    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, p_base.rotor_radius,
+                       design["tether_length_m"], design["r_hub_m"], p_base.trpt_rL_ratio,
                        n_lines, design["n_rings"], n_lines)  # n_blades = n_lines
-    mat = MaterialSpec(p.tether_diameter, p.e_modulus, p.m_ring, p.m_blade)
-    aero = AeroSpec(p.rho, p.v_wind_ref, p.h_ref, p.cp)
-    ctrl = ControlSpec(p.i_pto, p.k_mppt, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
-    back = BackLineSpec(p.EA_back_line, p.c_back_line, p.back_anchor_fwd_x, p.backline_payout)
+    mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
+    aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
+    ctrl = ControlSpec(p_base.i_pto, p_base.k_mppt, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
+    back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
     p_campaign = SystemParams(geo, mat, aero, ctrl, back)
+
+    # Override tether_length to match campaign design
+    p_campaign = SystemParams(
+        GeometrySpec(p_campaign.elevation_angle, p_campaign.lifter_elevation, p_campaign.rotor_radius,
+                     design["tether_length_m"], design["r_hub_m"], p_campaign.trpt_rL_ratio,
+                     n_lines, design["n_rings"], n_lines),
+        mat, aero, ctrl, back
+    )
 
     sys, u0 = build_kite_turbine_system(p_campaign)
 
@@ -234,7 +299,7 @@ function build_from_campaign(campaign_dir::String, label::String)
         blade_tip_radius=r_blade,
         blade_hub_radius=0.25 * r_blade,
         blade_chord=chord,
-        CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
+        CL_blade=EXP_CL_DESIGN, CD0_blade=EXP_CD0_DESIGN, k_induced=EXP_K_INDUCED,
         bank_angle_deg=bank,
         mass_per_rotor=(0.3 + 0.1 * r_blade) * blade_s^3,
         shaft_coupling=1.0,
@@ -242,7 +307,7 @@ function build_from_campaign(campaign_dir::String, label::String)
     stack = build_expansion_stack(cfg)
     sys, u0 = build_kite_turbine_system(p_campaign; expansion_rotors=stack)
 
-    println("$label: n_lines=$n_lines  n_exp=$n_exp  bank=$(round(bank;digits=1))°  blade_r=$(round(r_blade;digits=2))m  λ=$(round(blade_s;digits=3))")
+    println("$label: n_lines=$n_lines  n_exp=$n_exp  bank=$(round(bank;digits=1)) deg  blade_r=$(round(r_blade;digits=2))m  lambda=$(round(blade_s;digits=3))")
     println("  rings=$(sys.n_ring)  total_nodes=$(sys.n_total)")
     return sys, u0, p_campaign, label
 end
@@ -257,7 +322,10 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v67"] ? "V6.7 drag-constrained" :
+    current_config = args["v10"] ? "V10 unified rotors" :
+                     args["v9"] && !args["v9-10kw"] ? "V9.0 50kW equilibrium" :
+                     args["v9-10kw"] ? "V9.0 10kW equilibrium" :
+                     args["v67"] ? "V6.7 drag-constrained" :
                      args["v65"] ? "V6.5 3-line triangle" :
                      args["v64"] ? "V6.4 3-line triangle" :
                      args["v63"] ? "V6.3 7-line heptagon" :
@@ -267,7 +335,13 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V6.7 drag-constrained"
+        if current_config == "V10 unified rotors"
+            sys, u0, p, label = build_from_campaign_v10("v10_campaign_50kw", "V10")
+        elseif current_config == "V9.0 50kW equilibrium"
+            sys, u0, p, label = build_from_campaign("v9_0_campaign_50kw", "V9.0 50kW")
+        elseif current_config == "V9.0 10kW equilibrium"
+            sys, u0, p, label = build_from_campaign("v9_0_campaign_10kw", "V9.0 10kW"; params_fn=params_10kw)
+        elseif current_config == "V6.7 drag-constrained"
             sys, u0, p, label = build_from_campaign("v6_7_campaign_50kw", "V6.7 drag-constrained")
         elseif current_config == "V6.5 3-line triangle"
             sys, u0, p, label = build_from_campaign("v6_5_campaign_50kw", "V6.5 triangle")

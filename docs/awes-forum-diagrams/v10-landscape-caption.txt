@@ -1,0 +1,15 @@
+The landscape shows the V10 campaign's parameter space at a glance:
+
+- Yellow valley (top-left): the optimum at 76.75 kg — where the white trajectory ends
+- Purple peaks (center-right): high-mass regions the optimizer avoided  
+- Contour lines: thin white lines tracing the mass topography at 78, 80, 82, 84, 90, 100 kg
+- 60 spiderweb trajectories (faint pink): every island's exploration path
+- Island 41 path (white, labeled): cyan start → yellow diamond finish
+- PC interpretation panels: what the axes mean physically
+- 310K evaluations, 33% PCA variance captured
+
+---
+
+ALT text:
+
+A dark-themed scientific visualization showing the V10 campaign's parameter-space optimisation landscape. A 2D PCA projection of 310,000 evaluations across 60 islands reveals a yellow valley (low mass, ~77 kg) in the top-left where the optimum design sits, and purple peaks (high mass, 84+ kg) in the center-right where the optimizer avoided. Thin white contour lines trace the mass topography at 78, 80, 82, 84, 90, and 100 kg. A white trajectory line traces Island 41's convergence path from a cyan start marker to a yellow diamond end marker at 76.75 kg. Faint pink spiderweb lines show the exploration paths of all 60 islands. Right-side panels explain that PC1 (x-axis) represents structural scale — larger hubs and beams to the right — while PC2 (y-axis) represents configuration choice — more rotors and steeper bank upward. A vertical colorbar maps yellow through green to purple from 77 to 84 kg. Bottom text notes 310,000 total evaluations with PCA capturing 33% of the 14-dimensional variance.

@@ -15,7 +15,7 @@ This repository uses a single-context domain documentation layout:
 ### Julia Package & Test Commands
 
 * **Activate Environment**: Use `--project=.` or `Pkg.activate(".")` inside the repository.
-* **Run Entire Test Suite** (~48 seconds):
+* **Run Entire Test Suite** (~3m08s):
   ```bash
   julia --project=. test/runtests.jl
   ```

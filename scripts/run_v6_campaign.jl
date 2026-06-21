@@ -1,19 +1,17 @@
 #!/usr/bin/env julia
 # scripts/run_v6_campaign.jl
 #
-# Phase 2.8 — V6.8 DE Optimisation Campaign (physically-corrected drag model).
+# Phase 3.0 — V9.0 DE Optimisation Campaign (dynamic equilibrium objective).
 #
-# Changes from V6.7:
-#   - parasitic_drag_power() rewritten with correct per-component physics:
-#     * Beam drag: skin friction + axial crossflow (was cylinder crossflow,
-#       ~1,450× overestimate at tangential flow); now ~0.5 kW (negligible)
-#     * Tether drag: crossflow × 0.5 curvature factor (was raw Cd=1.0;
-#       Tallak Tveide's ODE solver gives ~0.25 for non-TRPT; TRPT tethers
-#       are straighter → 0.5 conservative estimate)
-#     * Expansion blades: airfoil profile drag (unchanged)
-#   - Removed hacky 0.2 blanket factor — corrections are per-component
-#   - Same 12-DoF search space and bounds as V6.5/V6.6/V6.7
-#   - Expansion rotor power credit and 2× margin retained from V6.7
+# Changes from V6.8:
+#   - Replaced static TSR=4.1 drag constraint with dynamic equilibrium solve:
+#     solve_equilibrium_omega() scans ω from 1–300 rpm to find the actual
+#     operating point where P_aero_total = P_par + P_gen.
+#   - Constraint: ω_eq must exist AND P_gen(ω_eq) ≥ 50 kW AND structure
+#     must survive loads at ω_eq (evaluated at the true operating point).
+#   - Removed all ad-hoc drag margins (2× factor, 0.2 blanket, P_per_rotor×cos(bank) credit).
+#     The equilibrium solve is the single physically-correct gate.
+#   - Same 12-DoF search bounds as V6.5–V6.8.
 #
 # Objective: minimise total airborne mass (kg)
 # Constraints: FoS_beam ≥ 1.8, FoS_torsion ≥ 1.5, ground radius ≤ 1.5m
@@ -144,7 +142,7 @@ function main()
         x -> begin
             # Round integer variables
             x_rounded = copy(x)
-            x_rounded[8] = round(Int, clamp(x[8], 3, 12))    # n_lines (now at position 8)
+            x_rounded[8] = round(Int, clamp(x[8], 3, 24))    # n_lines (now at position 8)
             x_rounded[10] = round(Int, clamp(x[10], 0, 20))   # n_expansion (widened: 0-20)
             try
                 return objective_v6(x_rounded, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
@@ -344,7 +342,7 @@ function main()
 
     # ── Save results ───────────────────────────────────────────────────────
     out_dir = joinpath(
-        dirname(@__DIR__), "scripts", "results", "v6_8_campaign_$(args.power_kw)kw"
+        dirname(@__DIR__), "scripts", "results", "v9_0_campaign_$(args.power_kw)kw"
     )
     mkpath(out_dir)
 
@@ -354,7 +352,7 @@ function main()
 
         # Save best design as JSON
         best_json = Dict(
-            "version" => "v6.8",
+            "version" => "v9.0",
             "power_kw" => args.power_kw,
             "island_idx" => global_best_island,
             "best_mass_kg" => global_best_cost,

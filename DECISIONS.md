@@ -10,6 +10,239 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-06-20] V11: Tapered tether diameters — top tethers carry less load, don't need the same SWL
+
+**Context:** Tether tension accumulates from hub to ground. In the V10 winner (76.75 kg,
+n=12, FoS=3.5), the ground tethers carry ~1,000 N per line requiring 3 mm Dyneema
+(SWL 3,500 N), but the hub tethers carry only ~200 N per line — they could use
+1.1 mm Dyneema (SWL ~475 N).  The current model uses uniform 3 mm diameter
+everywhere, over-designing the upper tethers by up to 7×.
+
+**What was decided (V11 scope):**
+
+1. **Single new design variable:** `tether_taper` ∈ [0.3, 1.0] — ratio of top tether
+   diameter to bottom diameter.  1.0 = uniform (backward-compatible), 0.3 = top tethers
+   at 30% of bottom.  Quadratic taper profile along the shaft.
+
+2. **Per-segment FoS check replaces global tether FoS gate.**  Each inter-ring segment
+   is sized for its local cumulative thrust, with its local tapered diameter.
+
+3. **Practical minimum diameter:** D_min = 1.5 mm (not 1.1 mm theoretical).  Below
+   1.5 mm, Dyneema braided lines have handling, inspection, and splicing issues, and
+   the SWL ∝ D² scaling breaks down due to sheath-to-core ratio.  This limits
+   tether_taper to ~0.5 and mass saving to ~2.5 kg.
+
+4. **Expected impact:** ~3 kg mass reduction (72-74 kg vs 76.75 kg), ~1.5 kW drag
+   reduction.  The n_lines trade-off shifts — tapered designs make fewer thick lines
+   more competitive.
+
+**Alternatives considered:**
+- *Uniform tethers (current):* Rejected — over-designs 80% of the tether length.
+- *Full per-segment diameter as separate variables:* Rejected — too many DoF.
+  A single taper ratio captures the physics with minimal search space expansion.
+- *No D_min, allow 1.1 mm:* Rejected — practical handling concerns and SWL
+  model fidelity concerns for very small braided lines.
+
+**Status:** Active.  Implemented in V11 campaign.  See
+`docs/plans/2026-06-20-v11-tapered-tethers.md` for full scope.
+
+---
+
+## [2026-06-20] Dashboard verification reveals three unmodelled failure modes — constraint expansion required
+
+**Context:** The V9.0 campaign winner (44.52 kg, n=8, n_exp=9, λ=0.40, bank=30°) passed all
+`objective_v6` checks (beam buckling FoS ≥ 1.8, torsional FoS ≥ 1.5, P_gen ≥ 50 kW at
+equilibrium ω, parasitic drag balanced).  But when loaded into the interactive dashboard
+under steady 11 m/s wind at 30° elevation, the design failed catastrophically:
+
+- Power: 403.7 kW (8× rated) — expansion rotors injecting ~350 kW into shaft
+- Rotor ω: 85 rpm — dashboard settles to different equilibrium than campaign solver
+- Tether FoS: 0.3 — tension 8.2× SWL (3,500 N), peak tension 28,653 N
+- Torsional overtwist: RED ALERT — inter-ring twist exceeded π
+- Slack events: 38/500 frames (7.6%) — tethers going slack in steady wind
+
+The `objective_v6` function checks structural FoS and power balance, but does NOT model:
+1. **Tether tension FoS** — tethers sized for static hub thrust; dynamic forces 8× higher
+2. **Torsional overtwist** — the Tulloch limit (inter-ring twist < 0.95π); expansion rotor
+   τ_net can twist the shaft beyond safe limits
+3. **Slack events** — the static evaluator assumes all lines taut; 7.6% slack frames
+   observed in steady wind
+
+Additionally, `solve_equilibrium_self_consistent` uses a 30-point log scan (1–300 rpm) which
+has coarse resolution at high ω (~20 rpm between points near 80 rpm), potentially missing
+equilibrium crossings where expansion rotor τ_net dominates.
+
+**What was decided:**
+
+1. **Dashboard verification is mandatory** for every campaign winner before it is cited as
+   viable.  The dashboard is the ground truth — if it shows failure, the campaign objective
+   is missing a constraint.  This is the validation loop: campaign → dashboard → gap →
+   constraint → re-campaign.
+
+2. **Three new constraints will be added to `objective_v6`** before the next campaign:
+   - Tether tension FoS: `T_per_line / TETHER_SWL ≥ 3.0`
+   - Torsional overtwist: `max_twist < 0.95π` (cumulative per-ring twist)
+   - Slack guard: `min(thrust_per_ring) > 0` (no decompressed rings)
+
+3. **Equilibrium scan resolution** will be increased from 30 to 100 points, and the
+   lifter torque term will be added to `solve_equilibrium_self_consistent` to close
+   the ω mismatch between campaign solver and dashboard.
+
+4. **The V9.0 winner (44.52 kg) is scientifically useful but not viable as-is.**  It
+   represents the best design within the modelled constraint set.  With the three new
+   constraints, the feasible region will shrink and the optimum mass will rise.  The mass
+   trajectory — V6.5 fantasy (17.7 kg) → V6.8 corrected drag (58 kg) → V9.0 equilibrium
+   (44.5 kg) → V10 full constraints (TBD) — is the arc of increasing physical fidelity.
+
+**Alternatives considered:**
+- *Accept the campaign winner and ignore dashboard failures:* Rejected.  The dashboard is
+  the higher-fidelity model; if it shows failure modes the campaign missed, those modes
+  are real and the objective is incomplete.
+- *Abandon the campaign approach and only use full ODE evaluation:* Rejected — the ODE is
+  too expensive for DE optimisation (millions of evaluations).  The correct approach is
+  to add static proxies for each dynamic failure mode to the objective.
+- *Blame the dashboard for the mismatch:* Rejected after investigation — the ω mismatch
+  is caused by the campaign solver undersampling the equilibrium scan and ignoring lifter
+  torque, not by a dashboard bug.
+
+**Status:** Active.  The three new constraints plus scan resolution fix are the V10
+campaign scope.  See `references/v9_0-dashboard-verification.md` for full evidence.
+
+---
+
+## [2026-06-20] Architectural unification — all rotors are expansion rotors, hub rotor special case removed
+
+**Context:** The V6–V9 architecture treated the hub rotor (ring 1) as a distinct entity:
+always present, no bank angle, blades in the rotation plane, separately sized.  N
+additional expansion rotors were placed via a clustering strategy, all with identical
+bank angle and blade scale.  This created two code paths for rotor force computation,
+power sharing (`P_per_rotor = P_total / (1 + n_expansion)`), and structural evaluation.
+
+The V9.0 dashboard revealed that expansion rotor τ_net can inject 350+ kW into the
+shaft at high ω — the special-cased hub rotor model couldn't capture this because
+it assumed the hub dominated the power balance.  Additionally, the expansion rotor
+clustering strategy was arbitrary — there was no physics justification for clustered
+vs distributed placement.
+
+**What was decided:**
+
+1. **Ring 1's rotor is just another expansion rotor.**  It can have a bank angle
+   (0° = axial driving rotor, the former hub-rotor behaviour).  All rotors use
+   the same force model, same power sharing, same structural contribution.
+
+2. **Rotor placement is a 60-pattern bitmask.**  Rotors go on the top 10 rings
+   (rings 1–10 from hub) with at least 2 bare rings between any two active rotors
+   for wake clearance.  This gives 60 valid patterns encoded as a discrete proxy
+   variable.  The optimizer chooses which rings get rotors — from 0 (no expansion)
+   to 4 (max density at positions 1,4,7,10).
+
+3. **Blade scale and bank angle become gradients.**  `λ_top` and `λ_bottom` with
+   linear interpolation between them.  Same for `bank_top` and `bank_bottom`.
+   This lets upper rotors carry larger blades at shallower bank (clean air,
+   stronger wind, more thrust) while lower rotors use smaller blades at steeper
+   bank (wake-affected, more radial spreading).
+
+4. **Per-rotor BEM sizing with wind shear.**  Each rotor is sized for its local
+   wind speed via power-law shear (`v ∝ z^0.14`).  The self-consistent equilibrium
+   solve sizes all rotors at their local wind, sharing a common ω.
+
+5. **Hub rotor term retired.**  Code references to "hub rotor," "main rotor,"
+   "supplementary expansion rotors" are removed.  All rotors are co-equal.
+
+**Alternatives considered:**
+- *Keep hub rotor special case:* Rejected — the dashboard proves expansion rotors
+  can dominate the power balance, making the hub-centric model physically wrong.
+- *Full bitmask over all 21 rings:* Rejected — bottom-half rings see reduced wind
+  (shear), are in the wake of upper rotors, and have smaller radius (less leverage
+  for spreading).  10 top rings captures the viable rotor positions.
+- *Per-ring binary variables (2^10 = 1024 options):* Rejected — the 2-ring gap
+  constraint collapses this to 60 valid patterns, which is manageable.
+
+**Status:** Active.  Implemented in V10 campaign (`objective_v10.jl`).  See
+`docs/plans/2026-06-20-v10-full-dynamic-constraints.md` for full scope.
+
+---
+
+## [2026-06-20] V10 campaign implementation — bug fixes, validation gates, and bounds tightening
+
+**Context:** The V10 campaign was launched after implementing the architectural
+unification (all-rotors-are-expansion) and 8-gate constraint set.  During
+implementation, four bugs were discovered that would have silently produced
+physically nonsensical designs.  Additionally, the campaign runner lacked
+defence against pathological islands — a single buggy design could waste
+hours of compute before being caught.  These gaps were closed before launch.
+
+**What was decided:**
+
+### 1. Four critical bugs fixed in `objective_v10.jl`
+
+| Bug | Root cause | Fix |
+|-----|-----------|-----|
+| Rotor at ground ring | Mask positions mapped 1:1 to ring indices; position 10 → ground ring (n_rings) | Clamp positions to top half (`n_rings ÷ 2`), convert position → ring index = `n_rings - p + 1` |
+| λ=0.005 microscopic blades | Lower bound let optimizer functionally disable rotors (blade tip radius → 0) | Raised λ_min from 0.005 to **0.05** (5 cm minimum blade scale) |
+| Duplicate `ring_spacing_v4` | Code called the spacing function twice after refactor, using stale `zs` values | Removed duplicate call; single source of truth |
+| Wrong zs index for wind | `pos` started as mask position, used directly to index `zs` after it already became ring index | Use `zs[pos]` directly after position→ring conversion |
+
+### 2. Per-island validation gates (6 checks)
+
+Before the campaign advances to the next island, the current island's best design
+is validated through a 6-gate check in `_validate_island()`:
+
+| Gate | Check | Rationale |
+|------|-------|-----------|
+| 1 — Rotor count | `n_active ≥ 1` | Design must have at least one rotor |
+| 2 — Mass sanity | 10 kg < mass < 300 kg | Catch pathological penalty escapes and implausible designs |
+| 3 — Blade scale floor | `min(λ) ≥ 0.051` | Ensure no rotor has effectively zero blades |
+| 4 — Bank diversity | Not all rotors at bank=35° | Pure spreading rotors with zero thrust are degenerate |
+| 5 — Equilibrium ω | 1 < ω < 250 rpm | Designs that can't find equilibrium ("air brake") or overspeed are rejected |
+| 6 — Power ratio | 0.90 < P_gen/P_rated < 1.10 | Designs must deliver power within 10% of target at equilibrium ω |
+
+If any gate fails, the campaign **halts** with a diagnostic message and the
+offending island number.  The user can fix the issue and `--resume` from that
+island.  This trades campaign autonomy for compute efficiency — catching a
+bug at island 2 saves ~58 islands of wasted DE iterations.
+
+**Alternative considered:** Run all islands regardless and flag failures in a
+post-mortem log.  Rejected — by the time the user sees the log, 60 islands of
+compute have been wasted.  Halting immediately is the correct trade-off during
+active development.
+
+### 3. Design vector tightened from plan
+
+The original plan specified 14-DoF with n_lines ∈ [3, 24].  Three bounds were
+tightened compared to the plan:
+
+| Parameter | Plan bound | Implemented bound | Reason |
+|-----------|-----------|-------------------|--------|
+| `Do_top` min | 0.01 m | **0.05 m** | 1 cm beam OD is below manufacturing floor for a 50 kW system |
+| `r_bottom` min | 0.1 m | **0.5 m** | Ground ring below 0.5 m radius can't carry 3× tether attachment geometry |
+| `n_lines` max | 24 | **16** | Strip theory Cp model not validated above n=12; 16 already extrapolating |
+
+### 4. Collapse mechanism carries forward from V6
+
+The DE search uses the same stall-detection and population-reset mechanism from
+the V6 campaign: every 100 iterations, check population diversity; if collapsed,
+perturb the best vector and re-randomise the rest.  This was vetted across the
+V6.x–V9.x campaigns and performed reliably.
+
+### 5. Incremental CSV checkpointing
+
+After each island completes, four files are written (appended) with `flush()`:
+`convergence_history.csv`, `island_bests.csv`, `parameter_trace.csv`, and
+`verification_log.csv`.  The global best is updated atomically in
+`best_design.json` + `best_vector.csv`.  This means:
+- **Mid-run inspection:** `tail convergence_history.csv` shows progress
+- **Crash recovery:** `--resume` reads `island_bests.csv`, skips completed islands
+- **No data loss:** `flush()` ensures data hits disk even if the process is killed
+
+**Status:** Active.  The V10 campaign is currently running (60 islands, 80 pop,
+elliptical beam profile only).  First campaign launch produced a 49.1 kg winner
+(n=12, 2 rotors, r_bottom=2.1 m free); a second launch with tightened bounds is
+in progress.  Dashboard verification of the winner is mandatory per the
+[2026-06-20] dashboard decision above.
+
+---
+
 ## [2026-05-23] Banishment of Furl, Transition to Pitch Depower, and Terminological Preservation of Furl
 
 **Context:** During wind-spilling winching scenarios in *KiteTurbineDynamics.jl*, the simulator previously used the term "Furl" to refer to the process of winching out the backline to raise the turbine rotor and spill the wind. This terminology created significant confusion with "Lift Kite Furling" (the aerodynamic modulation of the top lift device to prevent structural overload in high winds). 

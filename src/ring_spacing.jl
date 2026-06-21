@@ -347,8 +347,8 @@ function search_bounds_v4(
     Do_lo = 0.005 * sc;
     Do_hi = 0.120 * sc
 
-    r_hub_lo = 0.60 * p.trpt_hub_radius
-    r_hub_hi = 1.50 * p.trpt_hub_radius
+    r_hub_lo = 0.30 * p.trpt_hub_radius    # widened from 0.60 (Jun 2026 V9)
+    r_hub_hi = 8.00 * p.trpt_hub_radius    # widened from 1.50
 
     r_bot_lo = 0.3
     r_bot_hi = max_ground_radius
@@ -356,7 +356,7 @@ function search_bounds_v4(
     Lr_lo = 0.2;
     Lr_hi = 3.0
     n_lines_lo = 3.0;
-    n_lines_hi = 12.0
+    n_lines_hi = 24.0    # widened from 12 (Jun 2026 V9)
 
     ar_lo, ar_hi = if beam_profile == PROFILE_ELLIPTICAL
         0.15, 1.5

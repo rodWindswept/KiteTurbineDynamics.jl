@@ -1,0 +1,192 @@
+\documentclass{article}
+\usepackage[paperwidth=34cm, paperheight=30cm, margin=0.5cm]{geometry}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{calc, shapes.geometric, patterns, arrows.meta, positioning}
+\pagestyle{empty}
+
+\begin{document}
+\definecolor{hubblue}{HTML}{2563EB}
+\definecolor{ringgrey}{HTML}{94A3B8}
+\definecolor{beamorange}{HTML}{EA580C}
+\definecolor{exppurple}{HTML}{7C3AED}
+\definecolor{groundbrown}{HTML}{92400E}
+\definecolor{bgpanel}{HTML}{F8FAFC}
+\definecolor{accentgreen}{HTML}{059669}
+
+\begin{tikzpicture}[scale=1.0]
+% --- TITLE ---
+\node[font=\Large\bfseries] at (16, 28.8) {V9.0 Optimisation Winners --- Side-by-Side};
+\node[font=\small, text=ringgrey] at (16, 28.1) {Dynamic equilibrium objective {\tt solve\_equilibrium\_self\_consistent}};
+
+% ======================================================================
+%   LEFT: 50 kW   (panel y=2.8..27.8, cone y=3.5..27.0)
+% ======================================================================
+\begin{scope}[shift={(0.8,0)}]
+  \fill[bgpanel, rounded corners=6pt] (-0.2,2.8) rectangle (14.3,27.8);
+
+  \node[font=\Large\bfseries, hubblue] at (7.0,27.2) {50 kW $\bullet$ 44.5 kg};
+  \node[font=\small, text=ringgrey] at (7.0,26.5) {8 lines $\bullet$ 9 expansion rotors $\bullet$ 30$^\circ$ bank $\bullet$ $\lambda{=}0.40$};
+
+  \def\ys{0.343}   % cm/m: 23.5 cm / 67 m
+  \def\xs{1.8}     % cm/m for radius
+
+  % Cone
+  \fill[hubblue!6, draw=hubblue!30, line width=0.5pt]
+    (7.0, 27.0) -- (7.0+2.698*\xs, 27.0) -- (7.0+0.30*\xs, 3.5) --
+    (7.0-0.30*\xs, 3.5) -- (7.0-2.698*\xs, 27.0) -- cycle;
+
+  % Ring lines
+  \foreach \z/\r in {
+    0.00/0.300,1.10/0.339,2.32/0.383,3.70/0.432,5.25/0.488,
+    6.98/0.549,8.91/0.619,11.06/0.696,13.46/0.781,16.13/0.877,
+    19.09/0.982,22.36/1.099,25.97/1.228,29.94/1.370,34.29/1.526,
+    39.03/1.695,44.16/1.879,49.67/2.076,55.51/2.284,61.52/2.499,
+    67.08/2.698
+  }{
+    \pgfmathsetmacro{\Y}{3.5+\z*\ys}
+    \draw[ringgrey, line width=0.25pt] (7.0-\r*\xs, \Y) -- (7.0+\r*\xs, \Y);
+  }
+
+  % Expansion rotors
+  \foreach \i in {1,...,9}{
+    \pgfmathsetmacro{\f}{(\i-0.5)/9.0}
+    \pgfmathsetmacro{\Y}{3.5+\f*23.5}
+    \pgfmathsetmacro{\R}{(0.30+\f*(2.698-0.30))*\xs}
+    \draw[exppurple, line width=1.0pt] (7.0+\R,\Y) -- ++(-30:0.8);
+    \draw[exppurple, line width=1.0pt] (7.0-\R,\Y) -- ++(210:0.8);
+  }
+
+  % Hub octagon
+  \node[regular polygon, regular polygon sides=8, draw=hubblue, fill=hubblue!10,
+        minimum size=1.2cm, line width=1.0pt] at (7.0,27.7) {};
+  \node[font=\footnotesize, hubblue, anchor=south] at (7.0,28.3) {$n{=}8$};
+
+  % Beam
+  \draw[beamorange, line width=3.0pt] (7.0+2.698*\xs+0.7,27.0) -- ++(0,-1.4);
+  \node[font=\tiny, beamorange, anchor=west] at (7.0+2.698*\xs+1.0,26.3) {81 mm};
+  \node[font=\tiny, beamorange, anchor=west] at (7.0+2.698*\xs+1.0,25.6) {straight};
+
+  % Callouts
+  \node[font=\tiny, text=ringgrey, anchor=west] at (7.0+2.698*\xs+0.5,7.0) {$\rho{=}{-}0.12$};
+  \node[font=\tiny, text=ringgrey, anchor=west] at (7.0+2.698*\xs+0.5,14.0) {21 rings};
+  \node[font=\tiny, text=ringgrey, anchor=west] at (7.0+2.698*\xs+0.5,19.0) {near-uniform};
+
+  % Ground
+  \fill[groundbrown!15] (7.0-3.8,2.8) rectangle (7.0+3.8,3.5);
+  \draw[groundbrown, line width=1.5pt] (7.0-4.0,3.5) -- (7.0+4.0,3.5);
+  \node[font=\footnotesize, groundbrown] at (7.0,3.1) {$r_{\text{bottom}}{=}0.30$ m};
+
+  % Scale
+  \draw[ringgrey, line width=0.8pt] (7.0-3.8,2.8) -- (7.0-3.8,2.8+67*\ys);
+  \node[font=\tiny, text=ringgrey, anchor=east] at (7.0-4.0,2.8+33*\ys) {67 m};
+
+  % Metric box
+  \node[draw=ringgrey!40, fill=white, rounded corners=3pt, font=\footnotesize, align=left,
+        inner sep=3pt, anchor=north west] at (0.0,27.8) {
+    \textbf{50 kW}\\[1pt]
+    Mass/power: 0.89 kg/kW\\[1pt]
+    $r_{\text{hub}}{=}2.70$ m\\[1pt]
+    Do$_{\text{top}}{=}81$ mm
+  };
+\end{scope}
+
+% ======================================================================
+%   RIGHT: 10 kW   (panel y=2.8..27.8, cone y=3.5..27.0)
+% ======================================================================
+\begin{scope}[shift={(18.0,0)}]
+  \fill[bgpanel, rounded corners=6pt] (-0.2,2.8) rectangle (14.3,27.8);
+
+  \node[font=\Large\bfseries, accentgreen] at (7.0,27.2) {10 kW $\bullet$ 5.7 kg};
+  \node[font=\small, text=ringgrey] at (7.0,26.5) {17 lines $\bullet$ 3 expansion rotors $\bullet$ 22$^\circ$ bank $\bullet$ $\lambda{=}0.46$};
+
+  \def\ys{0.783}   % cm/m: 23.5 cm / 30 m
+  \def\xs{8.0}     % cm/m for radius
+
+  % Cone
+  \fill[accentgreen!6, draw=accentgreen!30, line width=0.5pt]
+    (7.0, 27.0) -- (7.0+0.60*\xs, 27.0) -- (7.0+0.30*\xs, 3.5) --
+    (7.0-0.30*\xs, 3.5) -- (7.0-0.60*\xs, 27.0) -- cycle;
+
+  % Top-crowding highlight
+  \fill[accentgreen!3] (7.0-0.60*\xs,3.5+24.0*\ys) rectangle (7.0+0.60*\xs,27.0);
+
+  % Ring lines
+  \foreach \z/\r in {
+    0.00/0.300,1.43/0.314,2.90/0.329,4.40/0.344,5.93/0.359,
+    7.49/0.375,9.07/0.391,10.68/0.407,12.29/0.423,13.92/0.439,
+    15.55/0.455,17.17/0.472,18.78/0.488,20.37/0.504,21.92/0.519,
+    23.42/0.534,24.86/0.549,26.22/0.562,27.46/0.575,28.56/0.586,
+    29.46/0.595,30.00/0.600
+  }{
+    \pgfmathsetmacro{\Y}{3.5+\z*\ys}
+    \draw[ringgrey, line width=0.25pt] (7.0-\r*\xs, \Y) -- (7.0+\r*\xs, \Y);
+  }
+
+  % Expansion rotors (clustered at top)
+  \foreach \i in {1,...,3}{
+    \pgfmathsetmacro{\f}{0.70+(\i-1)*0.10}
+    \pgfmathsetmacro{\Y}{3.5+\f*23.5}
+    \pgfmathsetmacro{\R}{(0.30+\f*(0.60-0.30))*\xs}
+    \draw[exppurple, line width=1.0pt] (7.0+\R,\Y) -- ++(-22:0.8);
+    \draw[exppurple, line width=1.0pt] (7.0-\R,\Y) -- ++(202:0.8);
+  }
+
+  % Hub circle
+  \draw[accentgreen, fill=accentgreen!10, line width=1.0pt] (7.0,27.7) circle (0.55cm);
+  \node[font=\footnotesize, accentgreen, anchor=south] at (7.0,28.3) {$n{=}17$};
+
+  % Tapered beam
+  \draw[beamorange, line width=2.5pt] (7.0+0.60*\xs+0.7,27.0) -- ++(0,-1.0);
+  \draw[beamorange, line width=1.0pt] (7.0+0.30*\xs+0.7,5.5) -- ++(0,-1.0);
+  \node[font=\tiny, beamorange, anchor=west] at (7.0+0.60*\xs+1.0,26.5) {21 mm};
+  \node[font=\tiny, beamorange, anchor=west] at (7.0+0.30*\xs+1.0,5.0) {13 mm};
+  \draw[beamorange, dashed, line width=0.3pt] (7.0+0.60*\xs+0.7,26.0) -- (7.0+0.30*\xs+0.7,6.5);
+  \node[font=\tiny, beamorange, anchor=north] at (7.0+0.30*\xs+0.7,15.5) {Do\_scale\\[-1pt]=0.62};
+
+  % Callouts
+  \node[font=\tiny, text=ringgrey, anchor=west] at (7.0+0.60*\xs+0.5,8.0) {$\rho{=}{-}0.43$};
+  \node[font=\tiny, text=ringgrey, anchor=west] at (7.0+0.60*\xs+0.5,14.0) {22 rings};
+  \node[font=\tiny, text=accentgreen!60, anchor=west] at (7.0+0.60*\xs+0.5,20.0) {top-crowded};
+
+  % Ground
+  \fill[groundbrown!15] (7.0-3.8,2.8) rectangle (7.0+3.8,3.5);
+  \draw[groundbrown, line width=1.5pt] (7.0-4.0,3.5) -- (7.0+4.0,3.5);
+  \node[font=\footnotesize, groundbrown] at (7.0,3.1) {$r_{\text{bottom}}{=}0.30$ m};
+
+  % Scale
+  \draw[ringgrey, line width=0.8pt] (7.0-3.8,2.8) -- (7.0-3.8,2.8+30*\ys);
+  \node[font=\tiny, text=ringgrey, anchor=east] at (7.0-4.0,2.8+15*\ys) {30 m};
+
+  % Metric box
+  \node[draw=ringgrey!40, fill=white, rounded corners=3pt, font=\footnotesize, align=left,
+        inner sep=3pt, anchor=north west] at (0.0,27.8) {
+    \textbf{10 kW}\\[1pt]
+    Mass/power: 0.57 kg/kW\\[1pt]
+    $r_{\text{hub}}{=}0.60$ m\\[1pt]
+    Do$_{\text{top}}{=}21$ mm
+  };
+\end{scope}
+
+% ======================================================================
+%   FINDINGS BOX
+% ======================================================================
+\fill[black!3, draw=gray!30, rounded corners=8pt] (0.8,0.3) rectangle (31.5,2.5);
+
+\node[font=\bfseries] at (16.0,2.15) {Two Strategies, One Physics};
+
+\node[font=\footnotesize, align=left, anchor=north west, inner sep=4pt] at (1.2,1.55) {
+  $\bullet$ 10 kW uses 2.1$\times$ more tether lines (17 vs 8) \hspace{1.5cm}
+  $\bullet$ 3$\times$ fewer expansion rotors (3 vs 9) \hspace{1.5cm}
+  $\bullet$ Tapered beams (Do\_scale=0.62) vs straight
+};
+\node[font=\footnotesize, align=left, anchor=north west, inner sep=4pt] at (1.2,0.9) {
+  $\bullet$ Top-crowded rings ($\rho{=}{-}0.43$) vs near-uniform ($\rho{=}{-}0.12$) \hspace{1.5cm}
+  $\bullet$ Mass/power: 0.57 kg/kW (10 kW) vs 0.89 kg/kW (50 kW) --- 36\% better \hspace{1.5cm}
+  $\bullet$ Both pin r$_{\text{bottom}}{=}$0.30 m and t/D=0.01 at min bounds
+};
+
+\node[font=\tiny, text=ringgrey, anchor=south east] at (31.2,0.5) {V9.0 $\bullet$ KTD.jl};
+
+\end{tikzpicture}
+\end{document}

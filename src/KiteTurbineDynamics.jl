@@ -28,6 +28,8 @@ include("ring_spacing.jl")
 include("bem.jl")
 include("objective_v5.jl")
 include("objective_v6.jl")
+include("objective_v10.jl")
+include("headless_verify.jl")
 include("economics.jl")
 
 export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLineSpec
@@ -105,6 +107,10 @@ export search_bounds_v5, design_from_vector_v5, objective_v5, evaluate_design_v5
 export TRPT_V6_DIM, search_bounds_v6, design_from_vector_v6, objective_v6
 export estimate_effective_radii
 export parasitic_drag_power
+export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
+export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
+export RotorSpecV10, VerificationResult, headless_verify
+export wind_speed_at_ring, solve_equilibrium_omega, solve_equilibrium_self_consistent
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams

@@ -598,10 +598,33 @@ Output: `results/expansion_sweep.csv`
 
 ### 2.4 — DE Optimisation Campaign: `scripts/run_v6_campaign.jl` ✅ BUILT
 
-**11 design variables** (9 base TRPT + 2 expansion rotor), down from 13-DoF.
+**12 design variables** (see `objective_v6.jl:TRPT_V6_DIM`):
+
+| x[i] | Variable | Type | Bounds (V9.0) | Notes |
+|------|----------|------|---------------|-------|
+| x[1] | Do_top | continuous | [0.005×sc, 0.120×sc] m | Beam OD at hub |
+| x[2] | t_over_D | continuous | [0.01, 0.20] | Wall thickness ratio |
+| x[3] | beam_aspect | continuous | [0.15, 1.5] | Elliptical b/a |
+| x[4] | Do_scale_exp | continuous | [0.1, 1.0] | Beam taper exponent |
+| x[5] | r_hub | continuous | [0.30×, 8.00×] hub_radius | Widened from [0.60×, 1.50×] |
+| x[6] | r_bottom | continuous | [0.3, 5.0] m | Ground ring radius |
+| x[7] | target_Lr | continuous | [0.2, 3.0] | Segment slenderness |
+| x[8] | n_lines | discrete proxy | [3, 24] | Widened from [3, 12] (Jun 2026 V9) |
+| x[9] | density_profile | continuous | [−0.8, 0.8] | Ring spacing bias |
+| x[10] | n_expansion | discrete proxy | [0, 20] | Widened from [0, 10] |
+| x[11] | bank_angle_deg | continuous | [5, 35]° | Safety cap at 35° |
+| x[12] | blade_scale | continuous | [0.005, 2.0] | Expansion blade scale; lower bound from λ=0.02 |
+
 Expansion blade span, chord, and count are inherited from the generating rotor
-(same blade mould, banked downward). Only `n_expansion` (x[10]) and
-`bank_angle_deg` (x[11]) are free.
+(same blade mould, banked downward), scaled by `blade_scale`.
+
+**V6.x → V9.0 evolution:** V6.x used a static TSR=4.1 assumption with an ad-hoc
+`P_parasitic ≤ 2×P_aero_total` constraint. The V9.0 rewrite replaces this with a
+dynamic equilibrium solve (`solve_equilibrium_self_consistent`) that finds the
+actual operating ω where torques balance. The constraint becomes
+`P_gen(ω_eq) ≥ P_rated` — the system must produce rated power at its real
+equilibrium speed. This closes the static-vs-dynamic rotor sizing mismatch
+(GitHub issue #4). See `docs/plans/2026-06-19-v9-dynamic-equilibrium-objective.md`.
 
 **Force-first structural model (2026-06-13):** `F_radial` from expansion rotors
 is injected directly into `_evaluate_trpt_design_impl` as ring compression
@@ -609,29 +632,24 @@ relief, rather than routed through a weak displacement channel (Δr ≈ mm).
 `r_eff` is still used for the torsional collapse lever-arm calculation.
 `estimate_effective_radii()` returns `(r_eff, F_radial_per_ring)`.
 
-**Settle fix (2026-06-13):** `settle_to_operational_state` now computes the
-aerodynamic ω scan at the design hub position instead of the equilibrium hub,
-preventing ω_eq=0 when expansion rotors shift the structural equilibrium.
-
-Soft-penalty objective function guides the DE optimiser toward feasibility.
-
-**Quick test verified** (100 iterations, 5 islands): optimiser found FoS=1.80,
-raw mass=12.97 kg, torsional FoS=1.12 — right on the feasibility boundary.
-Full run (60 islands, ~168h) needed to close the torsional gap.
+**V9.0 campaign results (50 kW):** Best mass 44.52 kg (n=8, n_exp=9, λ=0.40,
+bank=30°). Dashboard verification revealed three unmodelled failure modes
+(tether FoS=0.3, torsional overtwist, 7.6% slack) — these drive the V10
+constraint expansion. See `DECISIONS.md` entry [2026-06-20].
 
 **To run:**
 ```bash
 # Quick test (5 min):
 julia --project=. scripts/run_v6_campaign.jl --quick
 
-# Full campaign (60 islands, ~168h):
-nohup julia --project=. scripts/run_v6_campaign.jl > v6_campaign.log 2>&1 &
+# Full campaign (60 islands):
+julia --project=. scripts/run_v6_campaign.jl 2>&1 | tee v9_campaign.log
 
-# 50 kW:
-julia --project=. scripts/run_v6_campaign.jl --power 50
+# 50 kW (V9.0 equilibrium):
+julia --project=. scripts/run_v6_campaign.jl --power 50 2>&1 | tee v9_50kw_campaign.log
 ```
 
-Output: `scripts/results/v6_campaign/best_design.json` + `convergence_history.csv`
+Output: `scripts/results/v9_0_campaign_<power>kw/best_design.json` + CSVs
 
 ### 2.5 — Paper outputs ⏳ PENDING
 
@@ -713,7 +731,7 @@ Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 
 
 # Progress Status
 
-*Last updated: 2026-06-10 (handoff)*
+*Last updated: 2026-06-20*
 
 ## Phase 0 — Audit Resolution (FINAL STATE)
 
@@ -783,12 +801,14 @@ Field measurements (`/run/media/rodbot/KITES/Test Data/Cp All Data 10min Avg.png
 ## Up Next
 
 ```
-✅ Phase 0 (BEM tables) → ✅ Phase 1 (expansion rotor) → Phase 2 (stacked campaign)
+✅ Phase 0 (BEM tables) → ✅ Phase 1 (expansion rotor) → ✅ V6.x campaigns → ✅ V9.0 (equilibrium solve) → V10 (full dynamic constraints)
 ```
 - ✅ 0.2/0.3: AeroDyn sweeps complete; BEM_CP/BEM_CT replaced; elevation exponents updated
 - ✅ Phase 1.1: `src/expansion_rotor.jl` created (ExpansionRotorParams, forces, effective_radius) + 12 tests
 - ✅ Phase 1.2: ODE integration in `ring_forces.jl`, `types.jl`, `rope_forces.jl`
-- Then full sweep campaigns (Phase 2)
+- ✅ V6.5–V6.8: Campaigns ran (narrow→widened bounds, corrected drag, parasitic constraint)
+- ✅ V9.0: Dynamic equilibrium objective (`solve_equilibrium_self_consistent`) — 44.52 kg winner; campaign complete, dashboard-verified
+- → **V10**: Architectural unification (all rotors co-equal) + full dynamic constraints (tether FoS, overtwist, slack guard). See `docs/plans/2026-06-20-v10-full-dynamic-constraints.md`
 
 ---
 

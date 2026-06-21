@@ -370,6 +370,254 @@ function parasitic_drag_power(
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Dynamic equilibrium ω solver
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    solve_equilibrium_omega(design, stack, p, n_lines, radii, zs, r_hub_rotor;
+        P_rated, v_wind, elev_rad, n_scan)
+
+Find the stable equilibrium rotational speed ω_eq where the net shaft power
+balance is zero:
+
+    P_aero_total(ω) − P_parasitic(ω) − P_gen(ω) = 0
+
+Returns ω_eq (rad/s) or `nothing` if no equilibrium exists (air brake at
+all ω).  Selects the HIGHEST crossing — the stable attractor where a design
+accelerates up from below and decelerates down from above.
+
+# Algorithm
+
+1. Coarse scan at `n_scan` logarithmically-spaced points from ω_min to ω_max
+2. At each ω, compute P_net = P_aero_total(ω) − P_par(ω) − k_mppt·ω³
+3. Find intervals where P_net changes sign (crossings exist)
+4. Bisection refinement in each interval to 1% tolerance
+5. Return the highest ω where P_net ≥ 0, or nothing if P_net < 0 everywhere
+
+# Expansion rotor power at off-design ω
+
+The expansion rotor lift torque τ_net(ω) is computed via the same
+`expansion_rotor_forces()` function called at each scan ω.  This gives
+self-consistent power contributions at any operating speed, not just
+the design TSR=4.1 point.
+"""
+function solve_equilibrium_omega(
+    design::TRPTDesignV4,
+    stack::Vector{ExpansionRotorParams},
+    p::SystemParams,
+    n_lines::Int,
+    radii::Vector{Float64},
+    zs::Vector{Float64},
+    r_hub_rotor::Float64;
+    P_rated::Float64=50000.0,
+    v_wind::Float64=11.0,
+    elev_rad::Float64=π / 6,
+    n_scan::Int=30,
+)
+    rho = p.rho
+    k_mppt = p.k_mppt
+    elev_deg = rad2deg(elev_rad)
+
+    # Scan range: ω_min = 1 rpm, ω_max = 300 rpm
+    ω_min = 1.0 * 2π / 60
+    ω_max = 300.0 * 2π / 60
+
+    # Logarithmic spacing — finer at low ω where crossings are more likely
+    ω_scan = exp.(range(log(ω_min), log(ω_max); length=n_scan))
+    P_net = zeros(n_scan)
+
+    # Pre-compute thrust for expansion rotor force evaluation
+    thrust_per_ring = zeros(Float64, length(radii))
+    thrust_per_ring[1] = peak_hub_thrust(
+        r_hub_rotor, elev_rad; v=v_wind, CT=KiteTurbineDynamics.OPT_CT_RATED
+    )
+    cumulative_thrust = cumsum(thrust_per_ring)
+
+    for (j, ω) in enumerate(ω_scan)
+        # Hub rotor aero power
+        λ = clamp(ω * r_hub_rotor / v_wind, 0.0, 12.0)
+        cp = BEM.cp_bem(n_lines, λ)
+        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp
+
+        # Expansion rotor net power (with NaN guard for extreme ω)
+        P_exp_net = 0.0
+        for er in stack
+            ri = er.ring_idx
+            if ri > length(radii) || ri < 1
+                continue
+            end
+            r_nom = radii[ri]
+            # Guard: skip if geometry is degenerate
+            if r_nom <= 0.0 || !isfinite(r_nom)
+                continue
+            end
+            T_above = ri > 1 ? cumulative_thrust[ri - 1] / n_lines : 0.0
+            try
+                _, _, tau_net, _, _ = expansion_rotor_forces(
+                    er, rho, v_wind, ω, elev_deg, r_nom, T_above, n_lines
+                )
+                if isfinite(tau_net)
+                    P_exp_net += tau_net * ω
+                end
+            catch
+                # Degenerate operating point (extreme ω, zero radius, etc.)
+                continue
+            end
+        end
+
+        P_aero_total = P_aero_hub + P_exp_net
+
+        # Parasitic drag
+        _, _, _, P_par = parasitic_drag_power(
+            design, stack, p;
+            omega=ω, n_lines=n_lines, radii=radii, zs=zs,
+            v_wind=v_wind, elev_rad=elev_rad,
+        )
+
+        # Generator load (MPPT: P_gen = k_mppt × ω³)
+        P_gen = k_mppt * ω^3
+
+        P_net[j] = P_aero_total - P_par - P_gen
+    end
+
+    # Find the highest ω where P_net ≥ 0 (stable equilibrium)
+    # P_net > 0 → system accelerates; P_net < 0 → decelerates.
+    # The highest ω with P_net ≥ 0 is the stable attractor.
+    best_idx = 0
+    for j in 1:n_scan
+        if P_net[j] >= 0.0
+            best_idx = j
+        end
+    end
+
+    if best_idx == 0 || best_idx == n_scan
+        return nothing  # never positive, or positive at max ω (runaway)
+    end
+
+    # Bisection refinement between best_idx (P_net ≥ 0) and next point (P_net < 0)
+    ω_lo = ω_scan[best_idx]
+    ω_hi = ω_scan[best_idx + 1]
+    for _ in 1:20
+        ω_mid = (ω_lo + ω_hi) / 2.0
+        λ = clamp(ω_mid * r_hub_rotor / v_wind, 0.0, 12.0)
+        cp = BEM.cp_bem(n_lines, λ)
+        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp
+
+        P_exp_net = 0.0
+        for er in stack
+            ri = er.ring_idx
+            if ri > length(radii) || ri < 1
+                continue
+            end
+            r_nom = radii[ri]
+            if r_nom <= 0.0 || !isfinite(r_nom)
+                continue
+            end
+            T_above = ri > 1 ? cumulative_thrust[ri - 1] / n_lines : 0.0
+            try
+                _, _, tau_net, _, _ = expansion_rotor_forces(
+                    er, rho, v_wind, ω_mid, elev_deg, r_nom, T_above, n_lines
+                )
+                if isfinite(tau_net)
+                    P_exp_net += tau_net * ω_mid
+                end
+            catch
+                continue
+            end
+        end
+
+        _, _, _, P_par = parasitic_drag_power(
+            design, stack, p;
+            omega=ω_mid, n_lines=n_lines, radii=radii, zs=zs,
+            v_wind=v_wind, elev_rad=elev_rad,
+        )
+
+        P_net_mid = P_aero_hub + P_exp_net - P_par - k_mppt * ω_mid^3
+
+        if P_net_mid >= 0.0
+            ω_lo = ω_mid
+        else
+            ω_hi = ω_mid
+        end
+    end
+
+    return (ω_lo + ω_hi) / 2.0
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Self-consistent equilibrium: iterate rotor sizing + equilibrium ω
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    solve_equilibrium_self_consistent(design, stack, p, n_lines, radii, zs;
+        P_per_rotor, v_wind, elev_rad, max_iter)
+
+Find the self-consistent equilibrium where the hub rotor is sized for the
+actual operating ω, not the assumed TSR=4.1.
+
+Iterates:
+1. Start with rotor sized for TSR=4.1 (BEM.rotor_radius_for_power)
+2. Find ω_eq via solve_equilibrium_omega()
+3. Re-size rotor so it produces P_per_rotor at ω_eq
+4. Repeat until ω_eq converges (Δω/ω < 1%)
+
+Returns (ω_eq, r_hub_rotor) or (nothing, NaN) if no equilibrium.
+"""
+function solve_equilibrium_self_consistent(
+    design::TRPTDesignV4,
+    stack::Vector{ExpansionRotorParams},
+    p::SystemParams,
+    n_lines::Int,
+    radii::Vector{Float64},
+    zs::Vector{Float64};
+    P_per_rotor::Float64=50000.0,
+    v_wind::Float64=11.0,
+    elev_rad::Float64=π / 6,
+    max_iter::Int=8,
+)
+    rho = p.rho
+
+    # Initial rotor size from static BEM (TSR=4.1)
+    r_hub_rotor = BEM.rotor_radius_for_power(P_per_rotor, v_wind, n_lines)
+    omega = 4.1 * v_wind / r_hub_rotor
+
+    for iter in 1:max_iter
+        # Find equilibrium ω with current rotor size
+        omega_new = solve_equilibrium_omega(
+            design, stack, p, n_lines, radii, zs, r_hub_rotor;
+            P_rated=P_per_rotor * (1 + length(stack)),  # total system power
+            v_wind=v_wind, elev_rad=elev_rad,
+        )
+
+        if omega_new === nothing
+            return (nothing, NaN)  # air brake
+        end
+
+        # Re-size rotor for this ω: find R s.t. ½ρv³πR²·Cp(ωR/v) = P_per_rotor
+        lambda_target = omega_new * r_hub_rotor / v_wind
+        cp_target = BEM.cp_bem(n_lines, lambda_target)
+
+        if cp_target <= 0.0
+            # Can't produce power at this TSR — rotor would be infinite
+            return (nothing, NaN)
+        end
+
+        R_new = sqrt(P_per_rotor / (0.5 * rho * v_wind^3 * π * cp_target))
+
+        # Check convergence
+        if abs(omega_new - omega) / max(omega, 0.01) < 0.01 &&
+           abs(R_new - r_hub_rotor) / max(r_hub_rotor, 0.01) < 0.01
+            return (omega_new, R_new)
+        end
+
+        omega = omega_new
+        r_hub_rotor = R_new
+    end
+
+    return (omega, r_hub_rotor)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # v6 objective
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -455,13 +703,50 @@ function objective_v6(
     cumulative_thrust = cumsum(thrust_per_ring)
 
     # Evaluate structural design with distributed loading
+    # ══════════════════════════════════════════════════════════════════
+    # Dynamic equilibrium solve — find the actual operating ω
+    #
+    # This must come BEFORE structural evaluation because:
+    #   1. The system never operates at the design TSR=4.1 ω — it settles
+    #      at ω_eq where torques balance.
+    #   2. Structural loads at ω_eq differ from loads at ω_design.
+    #   3. Checking structure at ω_design rejects designs that would
+    #      survive at their actual (lower) operating ω.
+    #
+    #   Uses self-consistent iteration: rotor size → ω_eq → re-size →
+    #   repeat until converged.  This closes GitHub issue #4.
+    # ══════════════════════════════════════════════════════════════════
+    ω_eq, r_hub_rotor_sc = solve_equilibrium_self_consistent(
+        design, stack, p, n_lines, radii, zs;
+        P_per_rotor=P_per_rotor, v_wind=v_rated, elev_rad=elev_angle,
+    )
+
+    if ω_eq === nothing
+        # Air brake: P_par > P_aero at every ω.  Massive penalty.
+        m_exp = sum(er -> er.mass, stack; init=0.0)
+        return m_exp + 1_000_000.0
+    end
+
+    # Use the self-consistent rotor radius for structural eval
+    r_hub_rotor = r_hub_rotor_sc
+
+    # Check power output at equilibrium
+    P_gen_eq = p.k_mppt * ω_eq^3
+    if P_gen_eq < power_W
+        # Equilibrium exists but below rated power.
+        # Gradient: designs closer to 50 kW are preferred.
+        m_exp = sum(er -> er.mass, stack; init=0.0)
+        return max(m_exp, 1.0) * min(power_W / max(P_gen_eq, 1.0), 100.0) + 1_000_000.0
+    end
+
+    # ── Evaluate structure at the ACTUAL operating ω ────────────────────
     eval_result = evaluate_design(
         design;
         r_rotor=r_hub_rotor,
         elev_angle=elev_angle,
         v_peak=v_peak,
         fos_req=fos_req,
-        omega_rotor=omega,
+        omega_rotor=ω_eq,
         v_rated=v_rated,
         P_rated=power_W,
         max_ground_radius=max_ground_radius,
@@ -473,70 +758,12 @@ function objective_v6(
     if !eval_result.feasible
         fos_penalty = max(1.0, fos_req / max(eval_result.min_fos, 0.01))
         torsion_penalty = max(1.0, 1.5 / max(eval_result.min_torsional_fos, 0.01))
-        # Clamp penalty to 10× so infeasible designs retain a cost gradient
-        # rather than flattening the search space (all candidates → 1e9).
         penalty_mult = min(fos_penalty * torsion_penalty, 10.0)
-        # +1e6 absolute barrier: feasible designs weigh 24–3,000 kg;
-        # infeasible penalties are now 1,000,100–1,000,300 kg, so ANY feasible
-        # design beats ANY infeasible design regardless of mass.
         return eval_result.mass_total_kg * penalty_mult + 1_000_000.0
     end
 
-    # Add expansion rotor mass
+    # ── Feasible: return total mass ────────────────────────────────────
     m_expansion = sum(er -> er.mass, stack; init=0.0)
-
-    # Add tether mass
-    m_tether =
-        design.n_lines * design.tether_length * (970.0 * π * (p.tether_diameter / 2)^2)
-
-    total_mass = eval_result.mass_total_kg + m_expansion + m_tether
-
-    # ══════════════════════════════════════════════════════════════════
-    # Parasitic drag feasibility check
-    #
-    # parasitic_drag_power() returns physically-corrected drag values:
-    #   - Beam drag: skin friction + axial crossflow (negligible, ~0.5 kW)
-    #   - Tether drag: crossflow × 0.5 curvature factor (dominant)
-    #   - Expansion blades: airfoil profile + induced drag
-    #
-    # The constraint checks whether total parasitic drag can be overcome
-    # by aerodynamic power from ALL rotors (hub + expansion), with a 2×
-    # engineering margin:
-    #
-    #   P_aero_total = P_aero_hub + Σ (P_per_rotor × cos(bank_i))
-    #
-    # P_parasitic ≤ 2 × P_aero_total → no penalty (feasible)
-    # P_parasitic > 2 × P_aero_total → +1e6 barrier + gradient
-    # ══════════════════════════════════════════════════════════════════
-    P_beam, P_tether, P_exp_blades, P_parasitic = parasitic_drag_power(
-        design, stack, p;
-        omega=omega, n_lines=n_lines, radii=radii, zs=zs,
-        v_wind=v_rated, elev_rad=elev_angle,
-    )
-
-    # Hub rotor aerodynamic shaft power at design TSR (λ = 4.1)
-    P_aero_hub =
-        0.5 * p.rho * v_rated^3 * π * r_hub_rotor^2 *
-        BEM.cp_bem(n_lines, 4.1)
-
-    # Expansion rotor aero power contributions
-    P_aero_exp_total = 0.0
-    for er in stack
-        bank_rad = deg2rad(er.bank_angle_deg)
-        P_aero_exp_total += P_per_rotor * cos(bank_rad)
-    end
-
-    # Total available aero power: hub + expansion rotors
-    P_aero_total = P_aero_hub + P_aero_exp_total
-
-    if P_parasitic > 2.0 * P_aero_total
-        # Dynamically impossible: parasitic drag exceeds 2× available power.
-        # Use same 1e6 barrier as structural infeasibility so the DE can
-        # navigate between constraint regions.  Mass×ratio provides gradient
-        # within the infeasible zone so designs that almost balance are
-        # preferred over those 100× over.
-        return max(total_mass, 1.0) * min(P_parasitic / max(P_aero_total, 1.0), 100.0) + 1_000_000.0
-    end
-
-    return total_mass
+    m_tether = design.n_lines * design.tether_length * (970.0 * π * (p.tether_diameter / 2)^2)
+    return eval_result.mass_total_kg + m_expansion + m_tether
 end
