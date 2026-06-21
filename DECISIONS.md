@@ -368,11 +368,27 @@ the rotary lifter radius/elevation factor may need tuning, or a second
 rotor to increase total thrust.
 
 **Status:** Issues 1 and 2 are fixed and committed (commits 71ea694 and
-1c86b69).  Issue 3 (dynamic tension degradation) remains open — the 1-rotor
-design at 35° bank shows structural integrity at settle but loses tension
-during simulation.  The tight-bounded campaign (`launch_v10_tight.sh`) with
-k_mppt scaling should find designs where λ is large enough to produce rated
-power at the correctly-scaled generator load.
+1c86b69).  Issue 3 (dynamic tension degradation) remains open.
+
+The tight-bounded campaign with k_mppt scaling (`launch_v10_tight.sh`,
+commit 04f2d18 with widened validation gates) found a fundamentally
+different basin: **49.20 kg, 4 rotors, λ=0.519, r_hub=2.89m, ω=59 rpm**
+— a 36% mass reduction from the V10v1 76.75 kg baseline.  The k_mppt
+λ² scaling prevented the DE from converging to λ→0; the ring-mapping
+fix placed rotors on the correct hub ring; the hub-rotor mask filter
+reduced the search space from 60 to 19 masks.
+
+However, post-campaign dynamic verification (`headless_verify` k_mppt
+scan) shows the design is still dynamically dead: 12.1 kW at 55.6 rpm
+(24% rated) vs the static solver's prediction of 50 kW at 59 rpm.  The
+static-vs-dynamic power gap persists — the equilibrium solver and the
+multibody ODE disagree on the operating point even with the k_mppt
+scaling fix.  Five parameters are screaming at bounds (Do_top, t_over_D,
+r_bottom, target_Lr, λ_bottom), indicating the true optimum lies outside
+the current tight envelope.
+
+Full analysis: `docs/reports/v10-tight-analysis.md`.
+Landscape diagram: `docs/awes-forum-diagrams/v10-tight-landscape.png`.
 
 ---
 
