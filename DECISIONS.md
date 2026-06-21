@@ -327,6 +327,55 @@ position-clamp-tension-gate.md` for the implementation record.
 
 ---
 
+## [2026-06-21] Ring-count mismatch — rotor on wrong ring, bridles slack, k_mppt blade-area scaling
+
+**Context:** Dashboard testing of the V10 winner (76.75 kg, 1 rotor, bank=35°,
+λ=0.234) revealed 0 kW, −2 rpm, 144 slack lines, and a bouncing lift kite.
+Systematic tracing through the ODE state revealed three compounding issues.
+
+**Issue 1 — Rotor on wrong ring.** `design_from_vector_v10` uses intermediate
+ring numbering (1..n_rings from `ring_spacing_v4`). `build_kite_turbine_system`
+adds ground (ring 1) and hub (ring n_rings+2) rings, creating a +2 offset.
+A rotor meant for the hub (mask position 1 → intermediate ring n_rings) was
+placed at system ring n_rings (an intermediate ring at r=5.26m) instead of
+ring n_rings+2 (the actual hub at r=3.70m).  Rotor thrust and bridle
+connections were on different rings — 12/13 bridles slack, tension chain
+broken.  **Fix:** Remap ring indices in `build_from_campaign_v10` and
+`_build_verify_system`: intermediate ring i → system ring i+1, and the
+hub-proxy ring (intermediate ring n_rings) → system ring n_rings+2.
+
+**Issue 2 — Blade scale λ exploited as mass cheat.** The DE converged to
+λ=0.234 because blade mass ∝ λ³. The static equilibrium solver found ω_eq
+at k_mppt=615 regardless of λ — tiny blades were "compensated" with higher
+ω in the solver, but the ODE showed the rotor lacks startup torque to reach
+that ω.  At λ=0.234 (tip=2.7m): stalls at 10 rpm, 0.6 kW.  At λ=1.0
+(tip=11.5m): spins to 35 rpm, 31 kW.  **Fix:** Scale k_mppt by λ² inside
+the equilibrium solver (`k_mppt_eff = p.k_mppt × λ²`).  A λ=0.5 rotor has
+¼ the swept area of λ=1.0 and should expect ¼ the power.  The scaled
+k_mppt is passed to `solve_equilibrium_self_consistent` so ω_eq is found
+for the correctly-sized generator load.  Applied in both `objective_v10`
+and `build_from_campaign_v10` for dashboard consistency.
+
+**Issue 3 — Lift kite tension adequate but structural tension degrades.**
+After fixes 1 and 2, all 12 bridles are taut (139-161N).  The lift kite
+provides 1.53 kN vs 0.75 kN system weight — healthy 2× margin.  Initial
+slack drops from 36% to 5%.  After 2s simulation: 19% slack, 2.3 rpm,
+0 kW — tension still degrades dynamically.  Force balance at hub shows
+bridle axial force (1.53 kN) slightly exceeds rotor thrust (1.36 kN) plus
+axial weight (0.38 kN) by 0.21 kN — the lift kite is marginally too weak
+to maintain axial preload under dynamic conditions.  Not yet resolved;
+the rotary lifter radius/elevation factor may need tuning, or a second
+rotor to increase total thrust.
+
+**Status:** Issues 1 and 2 are fixed and committed (commits 71ea694 and
+1c86b69).  Issue 3 (dynamic tension degradation) remains open — the 1-rotor
+design at 35° bank shows structural integrity at settle but loses tension
+during simulation.  The tight-bounded campaign (`launch_v10_tight.sh`) with
+k_mppt scaling should find designs where λ is large enough to produce rated
+power at the correctly-scaled generator load.
+
+---
+
 ## [2026-05-23] Banishment of Furl, Transition to Pitch Depower, and Terminological Preservation of Furl
 
 **Context:** During wind-spilling winching scenarios in *KiteTurbineDynamics.jl*, the simulator previously used the term "Furl" to refer to the process of winching out the backline to raise the turbine rotor and spill the wind. This terminology created significant confusion with "Lift Kite Furling" (the aerodynamic modulation of the top lift device to prevent structural overload in high winds). 
