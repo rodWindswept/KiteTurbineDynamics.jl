@@ -243,6 +243,90 @@ in progress.  Dashboard verification of the winner is mandatory per the
 
 ---
 
+## [2026-06-21] V10 v2 diagnostic campaign — fixes to search machinery confirmed correct but insufficient to shift the fitness landscape
+
+**Context:** A dashboard investigation of the V10 winner (island 41, 76.75 kg,
+1 rotor at hub) revealed it is dynamically dead: 0.0 kW, −2 rpm, 144 slack
+lines, bouncing lift kite, misaligned hub ring.  The single hub rotor
+concentrates all thrust at the top ring; upper tethers go slack under dynamic
+load and torque cannot transmit to the generator at the ground ring.
+
+Three fixes were applied to the V10 search machinery before a diagnostic
+re-run (v2):
+
+1. **Rotor-position clamp removed** (`design_from_vector_v10`).  The old code
+   applied `max_positions = n_rings ÷ 2`, silently discarding rotor mask
+   positions beyond the top half of rings.  For the V10 winner (n_rings=7,
+   mask positions [1,4,7,10]), only position 1 survived — positions 4, 7, 10
+   were killed.  The DE selected 4-rotor masks but the objective only evaluated
+   1 rotor.  The atlas visualisation (`export_v10_atlas_data.jl`) reported
+   `n_rotors = count_ones(mask)` (the raw bit count, 4) rather than the
+   clamped `n_active` (1), creating a silent rotor-count mismatch between
+   what the pairs plot showed and what the campaign actually optimised.
+
+2. **Tension-distribution gate added** (`objective_v10`, gate 6b).  After the
+   structural evaluation, checks `minimum(cumulative_thrust) / n_lines > 0` —
+   every tether segment must carry positive tension at ω_eq.  A slack segment
+   means the TRPT cannot transmit expansion-rotor torque to the ground-ring
+   generator.  Rejects designs with a mass-scaled penalty + 1e6.
+
+3. **Hub-rotor mask filter** (`_generate_valid_rotor_masks`).  41 of 60 masks
+   lacked a rotor at position 1 (hub, highest wind).  These were filtered out
+   by adding `(m & 1) == 0 && continue`, reducing the valid set to 19 masks,
+   all with a hub rotor.  Eliminates DE search time wasted on configurations
+   that place the first rotor partway down the shaft.
+
+Additionally, the dashboard's MPPT gain slider range was widened from
+`1:1:50` to `1:1:2000` after discovering that `params_v5_50kw().k_mppt ≈ 615`
+was out of range — the dashboard was testing at k_mppt=50 (8% of campaign
+value), explaining the "massive overpower" symptom reported during dashboard
+testing.
+
+**What the v2 diagnostic run showed:**
+
+The v2 campaign was launched (`launch_v10_50kw_v2.sh`, 60 islands, 80 pop)
+and stopped after 22 islands.  Every island converged to the same basin as
+v1: **n_active=1, 76.7 kg, 41 rpm**.  The tension-distribution gate did not
+trigger on single-rotor designs — `cumulative_thrust` is monotonically
+positive when all thrust comes from the hub ring.  Multi-rotor masks (e.g.
+[1,4], [1,5]) are now available but the DE has no incentive to select them:
+a second rotor costs blade mass with no offsetting benefit in the objective.
+
+**Why the fixes didn't change the outcome:**
+
+The fixes addressed structural problems in the *search machinery* (clamp,
+masks, gates) but did not change the *fitness landscape*.  Lower mass always
+wins, a second rotor always costs mass, and the static tension gate sees
+positive cumulative thrust for 1-rotor designs.  The 144 slack lines observed
+in the dashboard are a *dynamic* effect from the lift-kite interaction —
+tension oscillates, bridles go slack, and the static equilibrium solver
+cannot model this.
+
+**What would actually shift the DE toward multi-rotor designs:**
+
+1. **Model the lift kite in the objective's force balance.**  The lift kite's
+   tension vector changes the tether force distribution.  Without it, the
+   static solver thinks tethers are fine when the ODE shows they collapse.
+
+2. **Add a thrust-spreading incentive.**  Penalise designs where >80% of
+   cumulative thrust comes from a single ring.  This would make 2-rotor
+   designs at rings [7,4] competitive against 1-rotor at ring 7 alone.
+
+3. **Replace the static tension check with a dynamic proxy.**  The
+   `headless_verify_structural` (gravity-settle only) catches degenerate
+   geometry but not dynamic slack.  A cheap dynamic check — perhaps a very
+   short wind-driven ODE settle with lift device — could close this gap
+   without the full 5-minute `headless_verify` scan.
+
+**Status:** The three search-machinery fixes are committed and correct — they
+enable multi-rotor exploration and prevent silent rotor-count mismatches.
+They do not, by themselves, change the optimum.  The V10 campaign must be
+re-run with at least a thrust-spreading incentive or lift-kite modelling
+before a multi-rotor design can emerge.  See `docs/plans/2026-06-21-rotor-
+position-clamp-tension-gate.md` for the implementation record.
+
+---
+
 ## [2026-05-23] Banishment of Furl, Transition to Pitch Depower, and Terminological Preservation of Furl
 
 **Context:** During wind-spilling winching scenarios in *KiteTurbineDynamics.jl*, the simulator previously used the term "Furl" to refer to the process of winching out the backline to raise the turbine rotor and spill the wind. This terminology created significant confusion with "Lift Kite Furling" (the aerodynamic modulation of the top lift device to prevent structural overload in high winds). 
