@@ -16,14 +16,21 @@ function parse_args()
     power_kw = 10
     max_ground_radius = nothing
     resume = "--resume" in ARGS
+    islands_override = nothing
+    iterations_override = nothing
     for (i, arg) in enumerate(ARGS)
         if arg == "--power" && i < length(ARGS)
             power_kw = parse(Int, ARGS[i + 1])
         elseif arg == "--max-ground-radius" && i < length(ARGS)
             max_ground_radius = parse(Float64, ARGS[i + 1])
+        elseif arg == "--islands" && i < length(ARGS)
+            islands_override = parse(Int, ARGS[i + 1])
+        elseif arg == "--iterations" && i < length(ARGS)
+            iterations_override = parse(Int, ARGS[i + 1])
         end
     end
-    return (quick=quick, power_kw=power_kw, max_ground_radius=max_ground_radius, resume=resume)
+    return (quick=quick, power_kw=power_kw, max_ground_radius=max_ground_radius,
+            resume=resume, islands_override=islands_override, iterations_override=iterations_override)
 end
 
 function _fmt_dur(seconds::Float64)
@@ -60,6 +67,12 @@ function main()
         popsize, n_islands, max_iter = 30, 5, 100
     else
         popsize, n_islands, max_iter = 80, 60, 10_000
+    end
+    if args.islands_override !== nothing
+        n_islands = args.islands_override
+    end
+    if args.iterations_override !== nothing
+        max_iter = args.iterations_override
     end
     @printf("  %d islands x %d population, up to %d iterations\n", n_islands, popsize, max_iter)
 
