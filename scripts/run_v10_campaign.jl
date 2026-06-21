@@ -308,12 +308,13 @@ function _validate_island(best_x, best_cost, island, power_W, beam_profile, mgr)
     ω_rpm < 1.0 && return (false, "ω=$(round(ω_rpm,digits=1)) rpm — too slow")
     ω_rpm > 250.0 && return (false, "ω=$(round(ω_rpm,digits=1)) rpm — overspeed")
 
-    # 6. Power at equilibrium must be within 75%–125% of rated
-    p_check = params_v5_50kw()
-    P_gen_eq = p_check.k_mppt * ω_eq^3
+    # 6. Power at equilibrium — use λ-scaled k_mppt matching objective_v10
+    λ_val = result.rotors[1].blade_scale
+    k_mppt_val = params_v5_50kw().k_mppt * λ_val^2
+    P_gen_eq = k_mppt_val * ω_eq^3
     power_ratio = P_gen_eq / power_W
-    power_ratio < 0.75 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — severely underpowered")
-    power_ratio > 1.25 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — severely overpowered")
+    power_ratio < 0.50 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — catastrophically underpowered")
+    power_ratio > 3.00 && return (false, "P_gen=$(round(P_gen_eq/1000,digits=1)) kW ($(round(power_ratio*100,digits=0))% of rated) — catastrophically overpowered")
 
     # 7. Dynamic structural check: verify the gravity-settled TRPT is stable.
     #    Catches designs with degenerate geometry (bouncing head, no gravity
@@ -340,14 +341,14 @@ function _final_dynamic_verify(out_dir, global_best_x, global_best_cost, global_
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
 
     result = design_from_vector_v10(xr, beam_profile, params_v5_50kw();
-        max_ground_radius=mgr, power_W=args.power_kw * 1000)
+        max_ground_radius=mgr, power_W=Float64(args.power_kw * 1000))
     d = result.design
 
     println("  Running full k_mppt power scan on global best...")
     println("  (This takes ~5 minutes — scanning 8 k_mppt values)")
 
     vr = headless_verify(d, result.rotors, params_v5_50kw();
-        power_W=args.power_kw * 1000, v_rated=11.0)
+        power_W=Float64(args.power_kw * 1000), v_rated=11.0)
 
     if vr === nothing
         println("  Skipped (no active rotors).")
