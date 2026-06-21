@@ -95,8 +95,9 @@ for field, cmap, title, callout, context, vmin_o, vmax_o in PARAM_PANELS:
     ax.set_title(title, fontsize=13, color='white', fontweight='bold', pad=8)
     ax.set_xlim(apc1.min(), apc1.max()); ax.set_ylim(apc2.min(), apc2.max())
     
-    cbar_ax = fig.add_axes([0.78, 0.55, 0.012, 0.25])
-    cbar = fig.colorbar(im, cax=cbar_ax)
+    # Colorbar at bottom of heatmap
+    cbar_ax = fig.add_axes([0.10, 0.03, 0.45, 0.015])
+    cbar = fig.colorbar(im, cax=cbar_ax, orientation='horizontal')
     cbar.ax.tick_params(labelsize=7, colors='white'); cbar.outline.set_edgecolor('#444')
     
     ax_r = fig.add_subplot(gs[0, 1]); ax_r.set_xlim(0, 1); ax_r.set_ylim(0, 1); ax_r.axis('off')
