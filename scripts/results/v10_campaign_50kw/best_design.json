@@ -1,20 +1,27 @@
 {
-  "power_kw": 50,
-  "target_Lr": 2.9534649227578815,
-  "n_active_rotors": 1,
-  "Do_top_m": 0.07499595858397273,
-  "r_hub_m": 3.696606188150067,
-  "n_islands": 60,
   "version": "v10",
-  "r_bottom_m": 3.696606188150067,
-  "n_lines": 12,
-  "Do_scale_exp": 0.05498169875172167,
-  "best_mass_kg": 76.74726039831037,
+  "power_kw": 50,
+  "best_mass_kg": 76.74725841938121,
+  "island_idx": 8,
+  "n_islands": 60,
   "profile": "PROFILE_ELLIPTICAL",
-  "island_idx": 41,
-  "density_profile": 0.21450451244109997,
+  "n_lines": 12,
   "n_rings": 7,
-  "aspect_ratio": 1.0000001290516105,
-  "t_over_D": 0.010000000259117249,
-  "tether_length_m": 67.0820393249937
+  "n_active_rotors": 1,
+  "r_hub_m": 3.696606184398919,
+  "r_bottom_m": 3.696606184398919,
+  "target_Lr": 3.0,
+  "tether_length_m": 67.0820393249937,
+  "density_profile": -0.017920908994889087,
+  "Do_top_m": 0.07499595947731758,
+  "t_over_D": 0.01000000000731652,
+  "aspect_ratio": 1.0000000441534567,
+  "Do_scale_exp": 0.7019482938928233
+,  "rotor_1": {
+    "ring_idx": 7,
+    "bank_angle_deg": 35.0,
+    "blade_scale": 0.2343575241991371,
+    "blade_tip_radius_m": 2.6994122167667594,
+    "blade_chord_m": 0.30503358049464385
+  }
 }
