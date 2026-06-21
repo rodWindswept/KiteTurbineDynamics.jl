@@ -32,14 +32,18 @@ end
 
 function _build_verify_system(design, rotors, p, v_rated, power_W)
     n_lines = design.n_lines
+    n_rings = length(ring_radii(design))
+    sys_n_rings_total = n_rings + 2
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
         ri = rotor.ring_idx
+        # Remap from intermediate to system ring numbering
+        sys_ri = ri == n_rings ? sys_n_rings_total : ri + 1
         mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
         er = ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg, mass_est, ri, 1.0,
+            rotor.bank_angle_deg, mass_est, sys_ri, 1.0,
         )
         push!(expansion_params, er)
     end

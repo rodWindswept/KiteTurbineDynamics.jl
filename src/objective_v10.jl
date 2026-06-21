@@ -142,12 +142,13 @@ function design_from_vector_v10(
     )
     n_rings = length(zs)
 
-    # Map rotor mask positions to ring indices.
-    # Mask position 1 = hub ring. Ring indices are ground→hub.
+    # Map rotor mask positions to ring indices (intermediate ring numbering).
+    # ring_spacing_v4 returns n_rings intermediate ring positions.
+    # The system builder adds ground (ring 1) and hub (ring n_rings+2) later;
+    # rotor ring indices here use intermediate numbering [1, n_rings]
+    # and are remapped to system numbering in build_from_campaign_v10.
+    # Mask position 1 = hub ring → intermediate ring n_rings.
     # Convert: mask position p → ring index = n_rings - p + 1
-    # Clamp to valid ring range [1, n_rings].  Positions beyond n_rings
-    # (mask position > n_rings) are dropped — no ring exists that far down.
-    # The _generate_valid_rotor_masks constraint (≥2-ring gap) still applies.
     positions = Int[]
     for p in positions_raw
         ring_idx = n_rings - p + 1

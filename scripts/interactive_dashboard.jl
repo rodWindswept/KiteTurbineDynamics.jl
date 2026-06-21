@@ -52,6 +52,9 @@ function parse_commandline()
         "--v10"
             help = "Use V10 campaign winner (unified rotors, full constraints)"
             action = :store_true
+        "--v10-island51"
+            help = "Use V10 Island 51 alt-basin design (2 rotors, 76.75 kg)"
+            action = :store_true
         "--v67"
             help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
             action = :store_true
@@ -207,8 +210,8 @@ function parse_best_design_json(path::AbstractString)
 end
 
 # ── Build system from V10 campaign (raw vector + design_from_vector_v10) ──
-function build_from_campaign_v10(campaign_dir::String, label::String)
-    vec_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_vector.csv")
+function build_from_campaign_v10(campaign_dir::String, label::String; vector_file::String="best_vector.csv")
+    vec_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, vector_file)
     if !isfile(vec_path)
         error("best_vector.csv not found — run campaign first")
     end
@@ -224,13 +227,21 @@ function build_from_campaign_v10(campaign_dir::String, label::String)
     n_rings = result.n_rings
 
     # Build expansion params from rotor specs
+    # Rotor ring indices from design_from_vector_v10 use intermediate
+    # ring numbering (1..n_rings).  The system builder adds ground ring
+    # at position 1 and hub ring at position n_rings+2, so we remap:
+    #   intermediate ring i → system ring i+1
+    #   intermediate ring n_rings (hub proxy) → system ring n_rings+2
     expansion_params = ExpansionRotorParams[]
+    sys_n_rings_total = n_rings + 2
     for rotor in rotors
         mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
+        # Remap from intermediate to system ring numbering
+        sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
         er = ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg, mass_est, rotor.ring_idx, 1.0,
+            rotor.bank_angle_deg, mass_est, sys_ring, 1.0,
         )
         push!(expansion_params, er)
     end
@@ -322,7 +333,8 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v10"] ? "V10 unified rotors" :
+    current_config = args["v10-island51"] ? "V10 Island 51 alt-basin" :
+                     args["v10"] ? "V10 unified rotors" :
                      args["v9"] && !args["v9-10kw"] ? "V9.0 50kW equilibrium" :
                      args["v9-10kw"] ? "V9.0 10kW equilibrium" :
                      args["v67"] ? "V6.7 drag-constrained" :
@@ -335,7 +347,10 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V10 unified rotors"
+        if current_config == "V10 Island 51 alt-basin"
+            sys, u0, p, label = build_from_campaign_v10("v10_campaign_50kw", "V10 Island 51"; 
+                                                         vector_file="best_vector_island51.csv")
+        elseif current_config == "V10 unified rotors"
             sys, u0, p, label = build_from_campaign_v10("v10_campaign_50kw", "V10")
         elseif current_config == "V9.0 50kW equilibrium"
             sys, u0, p, label = build_from_campaign("v9_0_campaign_50kw", "V9.0 50kW")
