@@ -4,17 +4,11 @@ Full multi-body dynamics simulator for a **TRPT kite turbine** — a Tensile Rot
 Transmission airborne wind energy system developed by
 [Windswept & Interesting Ltd](https://windswept.energy).
 
-**Now supports two configurations:**
-- **Canonical 5-line pentagon** (241 nodes, 14 rings, original 10kW prototype geometry)
-- **v5 Optimized 8-line octagon** (476 nodes, 18 rings, constant-L/r geometric ring spacing from 168-hour DE campaign)
-
-Switch between them live in the GLMakie dashboard.
-
-![Module Architecture](docs/architecture.drawio.png)
-
-> **30 src/ modules · 129 scripts · 196 docs · 3 objective versions (V5→V6→V10) · 39+ dashboard configs**
->
-> Open [`docs/architecture-full.drawio`](docs/architecture-full.drawio) in [draw.io](https://app.diagrams.net) to edit.
+The simulator spans **30 source modules, 129 scripts, and 196 documentation files**
+across 5 architectural layers, supporting multi-configuration dashboards, multi-objective
+optimisation campaigns (V5→V6→V10), and three distinct lift device architectures
+(kite, stacked, rotary). Canonical designs cover 10 kW pentagon and 50 kW octagon
+configurations with live switching in the GLMakie dashboard.
 
 ---
 
@@ -55,6 +49,12 @@ All of this is open work. Decisions, assumptions, and failures are documented he
 ---
 
 ## 2. Repo structure
+
+![Module Architecture](docs/architecture.drawio.png)
+
+> **30 src/ modules · 129 scripts · 196 docs · 3 objective versions · 39+ dashboard configs**
+>
+> Open [`docs/architecture.drawio`](docs/architecture.drawio) in [draw.io](https://app.diagrams.net) to edit.
 
 ```
 KiteTurbineDynamics.jl/
