@@ -246,3 +246,113 @@ Every file in the repository (excluding `.git/`, `.julia/`, generated artifacts 
 | `docs/Project.toml` | .toml | Jun 3 | derived | Docs environment | current |
 | `docs/src/api.md` | .md | Jun 3 | human | API documentation | current |
 | `docs/src/index.md` | .md | Jun 3 | human | Docs index | current |
+
+## Added Since June 16 (V10 Era + Video + Campaigns)
+
+### src/ — New Julia Sources
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `src/objective_v10.jl` | .jl | Jun 21 | human | V10 objective: rotor masks, tension gate, k_mppt λ², 14-DoF; 466 lines | current |
+| `src/headless_verify.jl` | .jl | Jun 21 | human | Headless structural verification + k_mppt dynamic scan gate; 205 lines | current |
+
+### Root — Launch Scripts
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `launch_v10.sh` | .sh | Jun 21 | human | V10 baseline launch | current |
+| `launch_v10_50kw.sh` | .sh | Jun 21 | human | V10 50kW campaign launch | current |
+| `launch_v10_50kw_v2.sh` | .sh | Jun 21 | human | V10 v2 campaign (clamp removed + tension gate) | current |
+| `launch_v10_tight.sh` | .sh | Jun 21 | human | V10 Tight campaign (4-rotor, reduced bounds) | current |
+| `launch_v10_medium.sh` | .sh | Jun 21 | human | V10 medium configuration | current |
+| `launch_v10_quick_0bank.sh` | .sh | Jun 21 | human | V10 quick test with zero bank | current |
+
+### scripts/ — Campaign & Analysis
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `scripts/run_v10_campaign.jl` | .jl | Jun 21 | human | V10 DE campaign runner; 60 islands, 14 DoF, validation gates | current |
+| `scripts/interactive_dashboard.jl` | .jl | Jun 21 | human | GLMakie dashboard, k_mppt slider, design overlay | current |
+| `scripts/export_v10_atlas_data.jl` | .jl | Jun 21 | agent | Exports non-dimensional π-group data from campaign traces | current |
+| `scripts/export_v10_landscape_data.jl` | .jl | Jun 21 | agent | Exports PCA landscape projections | current |
+| `scripts/export_v10_tight.jl` | .jl | Jun 22 | agent | V10 Tight data export | current |
+| `scripts/render_v10_landscape.py` | .py | Jun 21 | agent | PCA landscape render | current |
+| `scripts/render_v10_atlas.py` | .py | Jun 21 | agent | Non-dimensional atlas render (3×3 panel) | current |
+| `scripts/render_v10_pairs.py` | .py | Jun 21 | agent | Parameter pairs plot | current |
+| `scripts/render_v10_panels.py` | .py | Jun 21 | agent | Individual panel explainer cards | current |
+| `scripts/render_v10_3d.py` | .py | Jun 21 | agent | 3D PCA landscape | current |
+| `scripts/render_v10_tight_all.py` | .py | Jun 22 | agent | V10 Tight full diagram set | current |
+| `scripts/render_v10_tight_landscape.py` | .py | Jun 22 | agent | V10 Tight landscape | current |
+| `scripts/render_v10_tight_panels.py` | .py | Jun 22 | agent | V10 Tight panel diagrams | current |
+| `scripts/render_v10_tight_param_panels.py` | .py | Jun 22 | agent | V10 Tight parameter panels | current |
+| `scripts/plot_v10_landscape.jl` | .jl | Jun 21 | agent | Julia landscape plotter | current |
+| `scripts/plot_v10_trajectories.jl` | .jl | Jun 21 | agent | Julia trajectory plotter | current |
+| `scripts/analyze_kmppt.jl` | .jl | Jun 21 | agent | k_mppt sensitivity analysis | current |
+| `scripts/calibrate_kmppt_v62.jl` | .jl | Jun 21 | agent | k_mppt calibration for v6.2 | current |
+| `scripts/sensitivity_sweeps.jl` | .jl | Jun 21 | agent | Parameter sensitivity sweeps | current |
+| `scripts/trace_balance.jl` | .jl | Jun 21 | agent | Balance tracing for debugging | current |
+| `scripts/trace_tensions.jl` | .jl | Jun 21 | agent | Tension tracing for debugging | current |
+| `scripts/validate_v62_dynamic.jl` | .jl | Jun 21 | agent | Dynamic validation of v6.2 designs | current |
+| `scripts/verify_beam_mass_formula.jl` | .jl | Jun 21 | agent | Beam mass formula verification | current |
+
+### docs/awes-forum-diagrams/ — V10 Diagram Specifications
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `docs/awes-forum-diagrams/v10-nondimensional-atlas.md` | .md | Jun 21 | agent | Non-dimensional atlas narrative | current |
+| `docs/awes-forum-diagrams/v10-traced-paths.md` | .md | Jun 21 | agent | Traced convergence paths narrative | current |
+| `docs/awes-forum-diagrams/v10-tight-diagrams.md` | .md | Jun 22 | agent | V10 Tight diagram set spec | current |
+| `docs/awes-forum-diagrams/v10-tight-nondim-explainer.md` | .md | Jun 22 | agent | V10 Tight non-dimensional explainer | current |
+| `docs/awes-forum-diagrams/SPEC-v10-convergence.md` | .md | Jun 21 | agent | V10 convergence diagram spec | current |
+| `docs/awes-forum-diagrams/V7_CAMPAIGN_PLAN.md` | .md | Jun 19 | agent | V7 campaign plan | current |
+
+### docs/awes-forum-diagrams/video-interpretation/ — Video Production
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `docs/awes-forum-diagrams/video-interpretation/SCRIPT_NARRATIVE.md` | .md | Jun 22 | agent | 4-min explainer video transcript (V10 Tight era) | current |
+| `docs/awes-forum-diagrams/video-interpretation/ANIMATION_SPEC.md` | .md | Jun 22 | agent | Animation specifications and Manim code | current |
+| `docs/awes-forum-diagrams/video-interpretation/README.md` | .md | Jun 22 | agent | Video project overview and tooling | current |
+
+### .video/ — Video Production Assets
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `.video/PLAN.md` | .md | Jun 22 | agent | Video production plan (updated for V10 Tight) | current |
+| `.video/script/voiceover.md` | .md | Jun 22 | agent | SUPERSEDED — see video-interpretation/SCRIPT_NARRATIVE.md | superseded |
+| `.video/script/timing.csv` | .csv | Jun 22 | agent | Scene timing spreadsheet | current |
+
+### docs/reports/ — New Reports
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `docs/reports/v10-tight-analysis.md` | .md | Jun 22 | agent | V10 Tight campaign analysis (49.2 kg) | current |
+
+### docs/plans/ — New Plans
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `docs/plans/2026-06-19-v9-dynamic-equilibrium-objective.md` | .md | Jun 19 | agent | V9 dynamic equilibrium plan | current |
+| `docs/plans/2026-06-20-v10-full-dynamic-constraints.md` | .md | Jun 20 | agent | V10 constraint design plan | current |
+| `docs/plans/2026-06-20-v11-tapered-tethers.md` | .md | Jun 20 | agent | V11 tapered tether plan | current |
+| `docs/plans/2026-06-21-dynamic-verification-gate.md` | .md | Jun 21 | agent | Dynamic verification gate plan | current |
+| `docs/plans/2026-06-21-rotor-position-clamp-tension-gate.md` | .md | Jun 21 | agent | Rotor clamp + tension gate plan | current |
+
+### references/ — New References
+
+| Path | Type | Date | Authority | Limitations | Status |
+|------|------|------|-----------|-------------|--------|
+| `references/rotor-sizing-problem.md` | .md | Jun 21 | agent | Rotor sizing physics reference | current |
+| `references/v9_0-campaign-analysis.md` | .md | Jun 20 | agent | V9 campaign analysis | current |
+| `references/v9_0-campaign-10kw-analysis.md` | .md | Jun 20 | agent | V9 10kW analysis | current |
+| `references/v9_0-dashboard-verification.md` | .md | Jun 20 | agent | V9 dashboard verification | current |
+
+### External Pipeline (not in repo, but essential context)
+
+| Resource | Path | Description |
+|----------|------|-------------|
+| Agents-K1 framework | `/home/rod/Documents/kites/agents-k1/` | GraphAnything + K1 4B extraction model |
+| AWES knowledge graph | `/home/rod/Documents/kites/awes_graph/` | 540 papers, 7,401 nodes, 6,903 edges |
+| AWES paper corpus | `/home/rod/Documents/kites/investigation/` | 540 PDFs |
+| KTD paper pipeline | `/home/rod/Documents/kites/ktd_paper_graph/` | Reverse ingestion → paper draft |
+| K1 model | `/home/rod/Documents/kites/models/agents-k1/` | 4B parameter extraction model (GPU served) |

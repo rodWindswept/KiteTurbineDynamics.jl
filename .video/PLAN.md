@@ -1,28 +1,46 @@
-# .video/PLAN.md — AWEC 2026 Explainer Video
+# .video/PLAN.md — Windswept Explainer Video (UPDATED)
 
-**Title:** Breaking the TRPT Scaling Wall — Aerodynamic Expansion Rotors
-**Duration target:** 6–8 minutes
-**Audience:** Airborne Wind Energy researchers and industry (AWEC 2026 attendees)
+**Title:** How We Found the Lightest Kite Turbine
+**Duration target:** 4 minutes
+**Audience:** Potential collaborators, contributors, AWEC 2026 attendees, industry partners
 **Format:** 1920×1080, 60fps, voiceover + animation + screencast
+**Status:** Transcript updated 2026-06-22. Diagram/animation work pending.
 
 ---
 
-## Narrative Arc
+## Narrative Arc (UPDATED)
 
 | # | Scene | Duration | Visual | Message |
 |---|-------|----------|--------|---------|
-| 1 | **The Problem** | 60s | TRPT mass/power curve, scaling cliff animation | TRPT hits a nonlinear scaling wall — mass grows faster than power |
-| 2 | **Why It Happens** | 45s | Ring compression diagram, Euler buckling equation | Compression rings are heavy dead mass — the torsional constraint forces more rings = more weight |
-| 3 | **The Concept** | 90s | 3D TRPT with expansion blades appearing, banking animation | Replace passive rings with aerodynamic blades — same mould as generating rotor, banked downward |
-| 4 | **The Physics** | 90s | Force diagram: apparent wind, lift, radial/axial resolution | v_app² = v_wind² + (ω·r)² ; F_radial = L × sin(bank) ; force-first structural model |
-| 5 | **The Model** | 60s | Screencast: Julia code, test output, verification script | 917 tests, force-first injection into structural solver, settle fix |
-| 6 | **The Dashboard** | 45s | Screencast: GLMakie dashboard with expansion rotors | Cyan diamond markers at expansion rings, HUD readout — visual physics verification |
-| 7 | **The Results** | 60s | Bar chart: v5 shaft mass vs v6 shaft mass, convergence plot | 4.4% shaft mass reduction; optimiser saturates n_expansion=6, bank_angle=45° — wants MORE |
-| 8 | **What's Next** | 30s | Roadmap: 50 kW campaign, ODE integration of F_radial, multi-rotor scaling | Scaling to utility power, full dynamic simulation, paper submission |
+| 1 | **Why Light Matters** | 35s | Mass/power curve, TRPT shaft, scaling problem | Mass-to-power ratio gets WORSE with scale — existential for airborne wind |
+| 2 | **The Search** | 20s | Campaign montage V2→V10, PCA landscape | 7 campaigns, 310K evaluations, 14D collapses to 2 orthogonal axes |
+| 3 | **The Error** | 20s | tan→sin equation, triangle→dodecagon transition | Math error understated compression by 50%. Correcting it flipped the optimum. |
+| 4 | **The Gates** | 25s | Slenderness gate, tension gate, island paths | Two hard physics gates: Lr/D>21 and every line in tension. |
+| 5 | **The Trap** | 25s | 3D PCA elevation, Basin A vs B, λ gradient | Two-basin architecture. 6 islands trapped. λ gradient < 7 required. |
+| 6 | **The Breakthrough** | 25s | V10 Tight result, k_mppt fix, ring-mapping fix | 49.2 kg, 4 rotors — 35% reduction. k_mppt λ² and ring-mapping corrections. |
+| 7 | **The Honest Truth** | 25s | 5 params at bounds, static-vs-dynamic dashboard | Optimizer wants more. Static 50 kW → Dynamic 12 kW. The gap is real. |
+| 8 | **The Engine** | 25s | 540 papers, K1 graph network, query animation | Agents-K1 scholar knowledge graph: every paper, method, failure mode. |
+| 9 | **The Invitation** | 30s | V10 Tight turbine in sunset, GitHub URL, tagline | 49.2 kg @ 50 kW. Open code, public data. Come build it with us. |
 
 ---
 
-## Visual Language
+## Key Numbers (Current)
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Best airborne mass | 49.2 kg | V10 Tight campaign |
+| Rotors | 4 | V10 Tight optimum |
+| Tip-speed ratio | λ = 0.519 | V10 Tight |
+| Static prediction | 50 kW | Equilibrium solver |
+| Dynamic actual | 12 kW | Full multibody ODE |
+| Parameters at bounds | 5 | bank_angle, n_exp, n_lines, λ_top, λ_bottom |
+| Papers in KG | 540 | Agents-K1 ingest |
+| Graph nodes | 7,401 | awes_unified.graph.json |
+| Graph edges | 6,903 | awes_unified.graph.json |
+
+---
+
+## Visual Language (unchanged)
 
 | Element | Specification |
 |---------|---------------|
@@ -36,63 +54,9 @@
 
 ---
 
-## Scene Details
+## Production Pipeline (unchanged)
 
-### Scene 1 — The Problem (60s)
-- Opening: single kite turbine diagram → zoom to TRPT shaft
-- Animated mass/power curve: linear for ideal, curved for real TRPT
-- v2→v5 campaign progression overlay (mass numbers dropping but still climbing with scale)
-- VO: "Kite turbines transmit power mechanically through a tensile shaft. But the shaft itself hits a scaling wall..."
-
-### Scene 2 — Why It Happens (45s)
-- Cross-section of TRPT ring: tether lines pulling inward, ring beam in compression
-- Euler buckling equation appears: P_crit = π²EI/L²
-- Torsional collapse diagram: Tulloch-Wacker criterion
-- VO: "Compression rings resist buckling. More power → more rings → more mass. The shaft becomes its own enemy."
-
-### Scene 3 — The Concept (90s)
-- 3D TRPT shaft rotating slowly
-- Expansion blades fade in on rings near hub
-- Banking animation: blades tilt ~20° toward next ring down
-- Side-by-side: generating rotor blade vs expansion blade — SAME blade, different mounting
-- VO: "What if the rings spread themselves? Same blade as the generating rotor — identical span, chord, count — but banked toward the next ring..."
-
-### Scene 4 — The Physics (90s)
-- Animated force diagram at a single ring
-- Apparent wind vector: v_wind + ω×r
-- Lift resolves through bank angle: sin(θ)→radial, cos(θ)→axial
-- Force-first equation: F_v = F_in - F_centripetal - F_radial/n
-- Numbers appear: 2,830 N/blade, F_radial = 4,840 N at hub ring
-- VO: "The blade sees apparent wind from rotation PLUS free-stream..."
-
-### Scene 5 — The Model (60s)
-- Screencast: terminal running `julia --project=. test/runtests.jl` → 917/917 pass
-- Code snippet: force-first injection in `_evaluate_trpt_design_impl`
-- Screencast: `scripts/verify_expansion_forces.jl` output
-- VO: "The model is open-source. 917 tests verify every equation..."
-
-### Scene 6 — The Dashboard (45s)
-- Screencast: `julia --project=. scripts/interactive_dashboard.jl --expansion 20`
-- Mouse hover over cyan diamond markers on expansion rings
-- HUD section: rings, bank angle, blade span, F_radial
-- VO: "The dashboard lets us verify visually — are the expansion blades pulling where we expect?"
-
-### Scene 7 — The Results (60s)
-- Bar chart: v5 shaft 11.47 kg → v6 shaft 10.97 kg
-- Convergence plot: mass dropping from 72 kg to 17.37 kg over 30k iterations
-- Parameter saturation: n_expansion→6, bank_angle→45°, n_lines→8
-- VO: "After 60 islands of differential evolution, the optimiser demands maximum expansion..."
-
-### Scene 8 — What's Next (30s)
-- Roadmap timeline: 50 kW campaign → ODE integration → multi-rotor → paper
-- Call to action: GitHub link, windswept.energy
-- VO: "This is early-stage research. The model is open. The data is public. Join us."
-
----
-
-## Production Pipeline
-
-1. **Script finalisation** → `script/voiceover.md`
+1. **Script finalisation** → `script/voiceover.md` (SUPERSEDED → use `docs/awes-forum-diagrams/video-interpretation/SCRIPT_NARRATIVE.md`)
 2. **Diagram design** → `diagrams/` (SVG/PNG exports from GLMakie + Manim)
 3. **Animation coding** → `script/scenes.py` (Manim CE)
 4. **Screencast capture** → `screencasts/` (OBS or ffmpeg screen capture)
@@ -102,29 +66,12 @@
 
 ---
 
-## File Map
+## New Diagrams Needed
 
-```
-.video/
-├── PLAN.md                    ← this file
-├── script/
-│   ├── voiceover.md           ← full narration script
-│   ├── scenes.py              ← Manim CE animation code
-│   └── timing.csv             ← scene → duration → VO line mapping
-├── diagrams/
-│   ├── trpt_scaling.svg       ← mass/power curve
-│   ├── ring_compression.svg   ← ring FBD with buckling eq
-│   ├── expansion_concept.svg  ← 3D concept diagram
-│   ├── force_diagram.svg      ← apparent wind + resolution
-│   └── results_bars.svg       ← v5 vs v6 comparison
-├── screencasts/
-│   ├── test_suite.mp4         ← terminal recording
-│   ├── dashboard.mp4          ← GLMakie dashboard
-│   └── verify_forces.mp4      ← verification script
-├── renders/
-│   └── (manim output)
-├── audio/
-│   └── voiceover.wav
-└── stills/
-    └── (preview frames)
-```
+| Diagram | Source | Description |
+|---------|--------|-------------|
+| V10 Tight design render | KTD dashboard / FreeCAD | 4-rotor, 49.2 kg, heptagon rings |
+| Static-vs-dynamic comparison | Dashboard screenshots | Side-by-side: 50 kW prediction vs 12 kW reality |
+| 5-parameters-at-bounds | V10 Tight convergence | Five amber readouts pegged at max |
+| Agents-K1 graph network | awes_unified.graph.json | 540 papers → 7,401 nodes network visualization |
+| Tension gate visualization | KTD structural solver | Slack line detection, penalty barrier |
