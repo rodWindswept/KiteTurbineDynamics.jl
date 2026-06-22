@@ -10,6 +10,12 @@ Transmission airborne wind energy system developed by
 
 Switch between them live in the GLMakie dashboard.
 
+![Module Architecture](docs/architecture.drawio.png)
+
+> **30 src/ modules · 129 scripts · 196 docs · 3 objective versions (V5→V6→V10) · 39+ dashboard configs**
+>
+> Open [`docs/architecture-full.drawio`](docs/architecture-full.drawio) in [draw.io](https://app.diagrams.net) to edit.
+
 ---
 
 ## 1. What this is
@@ -207,6 +213,8 @@ println("Hub ω = ", u_final[6N + Nr + Nr], " rad/s")
 ```
 
 ### GLMakie interactive dashboard
+
+![Dashboard screenshot](docs/dashboard-screenshot.png)
 
 ```bash
 # Canonical 5-line pentagon (original prototype)
