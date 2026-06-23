@@ -1073,3 +1073,87 @@ choice.
 names, code structure, test organisation) are not recorded here. Record a decision when:
 (a) multiple plausible alternatives existed, (b) the choice has non-obvious consequences, or
 (c) the choice is likely to be revisited or questioned.*
+
+---
+
+## Knowledge Pipeline Decisions
+
+*These decisions were made during the 2026-06-22–23 K1 knowledge extraction sprint.
+They live here because the pipeline serves KTD.jl's literature grounding.
+Full session record: `docs/reports/knowledge-pipeline-sprint.md`.*
+
+### [2026-06-22] Single-doc GPU processor for industry documents
+
+**Context:** Initial approach used persistent K1 GPU server (localhost:8000). Crashed after
+4–5 requests due to GPU memory accumulation.
+
+**Decision:** Switched to single-doc processor — each cron tick loads the K1 model fresh,
+processes ONE document, then frees GPU memory.
+
+**Rationale:** Eliminates server OOM. Trade-off: ~20s model load overhead per doc, but
+reliable. Of 45 industry docs, none lost to crashes after the switch.
+
+**Status:** Deployed in `ingest_one_industry.py`. Cron paused 2026-06-23.
+
+### [2026-06-22] Cursor + skip logic for academic ingestion
+
+**Context:** Initial `k1_ingest.py` re-processed all 540 papers on every run. 64 papers
+(patents/catalogues) produced empty graphs, wasting 14 reads per batch.
+
+**Decision:** `~/.k1_ingest_cursor` tracks last-processed filename. Skip gate checks for
+existing `graph.json` before processing. Empty graphs are also skipped.
+
+**Rationale:** Idempotent ingestion. No wasted GPU on known-empty or already-processed papers.
+
+**Status:** Deployed. Cursor file at `~/.k1_ingest_cursor`.
+
+### [2026-06-22] JSON repair over clean-output enforcement
+
+**Context:** K1 4B model produces near-valid JSON with common failures: unterminated
+strings, markdown code fences, trailing commas.
+
+**Decision:** Accept imperfect K1 output and repair post-hoc rather than constrain
+K1 generation (which would reduce extraction quality).
+
+**Rationale:** JSON repair is deterministic and cheap. Prompt constraints to force
+perfect JSON reduce extraction quality. Repair handles 95%+ of failures.
+
+**Status:** Deployed in `k1_server.py` and `k1_ingest.py`.
+
+### [2026-06-22] max_tokens=4096 + paragraph-boundary chunking
+
+**Context:** Initial max_tokens=2048 caused frequent JSON truncation. Papers with
+many findings produced partial graphs.
+
+**Decision:** Increased to 4096 tokens output. Input text chunked on paragraph
+boundaries at 6000-char windows.
+
+**Rationale:** Doubled token budget nearly eliminated truncation. 4096 is the practical
+limit for K1 4B on RTX A4500 (20 GB VRAM). Paragraph-aware chunking preserves
+semantic units.
+
+**Status:** Deployed in both `k1_ingest.py` and `ingest_one_industry.py`.
+
+### [2026-06-23] Phase prioritization: 1 → 3 → 3b
+
+**Context:** Multiple analysis phases compete for attention. Need Porto-ready materials.
+
+**Decision:** Phase 1 (collaboration map) → immediately useful for networking.
+Phase 3 (citation lineage) → ground claims in literature.
+Phase 3b (web validation) → pressure-test highest-risk claims before being challenged.
+
+**Rationale:** Collaboration map is the most immediately useful deliverable. Citation
+lineage prevents embarrassment. Web validation catches K1 graph blind spots. Phases
+4 (CSV anchoring) and 5 (paper synthesis) deferred.
+
+**Status:** Phases 1, 3, 3b complete. Phases 4, 5 planned.
+
+### [2026-06-23] All crons paused for Porto preparation
+
+**Context:** Ingestion complete (540 academic + 45 industry). Continuous cron
+notifications generate noise during focused preparation.
+
+**Decision:** Paused all three ingestion crons. GPU freed. Signal notifications stopped.
+
+**Status:** All crons paused. AWS Paper Ingest, K1 Paper Ingest, Industry Doc Ingest
+all in 'paused' state as of 2026-06-23 15:17.

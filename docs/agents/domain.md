@@ -23,6 +23,7 @@
 | Plans | `docs/plans/` | Implementation plans for each campaign phase |
 | Architecture decisions | `docs/adr/` | Recorded design rationale |
 | Diagrams | `docs/awes-forum-diagrams/` | Specs, generated PNGs, PCA landscapes |
+| Porto 2026 | `docs/porto-2026/` | Collaboration map, citation lineage, paper outline |
 | Video | `.video/`, `docs/awes-forum-diagrams/video-interpretation/` | Explainer video project |
 | Agent handoffs | `handovers/` | Session-to-session handoff documents |
 | Inventory | `PROJECT_ROOM.md`, `01_source_inventory.md` | Navigate the repo |
@@ -42,7 +43,7 @@
 
 | Campaign | Best Mass | Rotors | Key Finding |
 |----------|-----------|--------|-------------|
-| V6.3 | 52.6 kg | 6 expansion | Many small fans beat one big one |
+| V6.3 | 52.6 kg ⚠ | 6 expansion | Many small fans beat one big one. **⚠ Dynamically impossible** — parasitic drag 14,277× aero power. Maths artefact, not a real design. |
 | V10 | 76.75 kg | 1 | PCA decoupling, two-basin trap, slenderness gate |
 | **V10 Tight** | **49.2 kg** | **4** | k_mppt fix + ring-mapping fix unlocked multi-rotor |
 
@@ -55,11 +56,22 @@
 
 ## External Resources
 
-- **Agents-K1:** `/home/rod/Documents/kites/agents-k1/` — Scholar knowledge graph framework
-- **AWES Knowledge Graph:** `/home/rod/Documents/kites/awes_graph/` — 540 papers, 7,401 nodes
-- **AWES Paper Corpus:** `/home/rod/Documents/kites/investigation/` — 540 PDFs
-- **KTD Paper Pipeline:** `/home/rod/Documents/kites/ktd_paper_graph/` — Reverse ingestion → paper draft
+### Knowledge Pipeline (K1)
+- **Workspace:** `/home/rod/Documents/kites/` — extraction scripts, data, model
+- **Knowledge graph:** `/home/rod/Documents/kites/awes_graph/awes_unified.graph.json` — 7,048 nodes, 9,775 edges (540 academic + 45 industry, 586 individual graph files)
+- **Paper texts:** `/home/rod/Documents/kites/awes_texts/` (540 markdown files)
+- **Industry texts:** `/home/rod/Documents/kites/industry_texts/` (45 markdown files)
+- **K1 model:** `/home/rod/Documents/kites/models/agents-k1/` — 4B, RTX A4500 GPU, single-doc mode preferred
+- **Pipeline scripts:** `/home/rod/Documents/kites/scripts/` — 16 Python scripts
+- **Phase results:** Phase 1 (collab map), Phase 3 (citation lineage), Phase 3b (web validation) — all complete
+- **Crons:** ALL PAUSED as of 2026-06-23. Do not restart without explicit direction.
+- **Session record:** `docs/reports/knowledge-pipeline-sprint.md`
+- **graphanything CLI:** BROKEN — use direct API calls via `k1_ingest.py`
+
+### Related Repos
 - **TRPTSim:** `/home/rod/Documents/GitHub/TRPTSim/` — TRPT airborne wind energy simulator
+- **TetherDragODESolver:** `/home/rod/Documents/GitHub/TetherDragODESolver/` — Tether drag ODE (Tveide)
+- **CoaxialAutogyroStacking.jl:** `/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl/` — Autogyro lift model
 - **10kW Prototype:** `/home/rod/Documents/GitHub/10kWKiteTurbine/` — Physical prototype docs
 
 ## Conventions

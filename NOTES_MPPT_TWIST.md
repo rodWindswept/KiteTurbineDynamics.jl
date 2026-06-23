@@ -140,6 +140,105 @@ At large angles the full transcendental rope-chord equation must be used (ring_f
 but the ratio structure is preserved. Twist is directly predictable from measurable
 quantities without running the simulator.
 
+## v2 Dashboard k_mppt: Slider Scale vs. Option — Critical Discovery (June 2026)
+
+The dashboard's interactive k_mppt widget (`src/visualization.jl:1486`) uses a
+linear integer slider:
+
+```julia
+sl_kmppt = cslider!(1.0:1.0:50.0; start=clamp(p.k_mppt, 1.0, 50.0))
+```
+
+### Three Problems with the Slider
+
+**1. Range Mismatch for 50 kW Designs**
+
+The slider spans 1–50, but the canonical 50 kW `k_mppt` is:
+
+```
+k_mppt_50kw = 11.0 × (50/10)^2.5 = 614.9  N·m·s²/rad²
+```
+
+The `clamp()` forces the default to 50 — a **12.3× under-estimate**. The
+dashboard runs with k_mppt=50 instead of the design value 615, completely
+changing the generator load curve.  At the true k_mppt=615, the MPPT torque
+at 41 rpm (rated ω for 50 kW) is:
+
+```
+τ = 615 × (41×2π/60)² = 11,530 Nm
+```
+
+The rotor produces at most a few hundred Nm of aero torque at this speed
+— the system **cannot spin up** against the design MPPT.  This is the root
+cause of the V10 winner failing dynamically in the dashboard (pitfall #20).
+
+**2. Linear Scale Hides Non-Linear Physics**
+
+The v2 twist sweep (7 multipliers × 4 wind speeds = 28 cases) reveals a
+sharply non-linear power-vs-k_mppt landscape:
+
+```
+k_mult    0.5×    0.75×    1.0×    1.2×    1.5×    2.5×    4.0×
+P(kW)     3.3     3.4      3.8     4.0     4.1     4.0     3.3   (v=8 m/s)
+P(kW)     13.0    15.9     17.5    18.5    18.8    17.2    12.1  (v=13 m/s)
+```
+
+The optimum is narrow — **k_mult = 1.5×** across all wind speeds.  Going from
+1.5× to 2.5× drops power 9%, and 4.0× drops it 36%.  A slider at 1–50 with
+integer steps presents this as a continuous "more k = more braking" control,
+masking the under-braked→optimal→over-braked→**catastrophic instability**
+progression.
+
+**3. The 4× Instability Cliff is Invisible**
+
+At k_mult = 4×, the TRPT shaft enters a destructive resonance regime:
+
+| Metric | k×1.5 (optimal) | k×4.0 (failed) |
+|--------|-----------------|----------------|
+| Twist ripple (σ) | ~0° | 50–80° |
+| Δω hub−ground | ~0.003 rad/s | large slip events |
+| Time-series | smooth settle | periodic snapping / collapse |
+| Power | stable | drops to zero intermittently |
+
+![MPPT twist sweep analysis](scripts/results/mppt_twist_sweep/twist_sweep_v2_analysis.png)
+
+The 4× boundary is a hard physics cliff.  A linear slider would never reveal
+this — users would slide past 4× on the way to 50 and land in the unstable
+regime unknowingly, attributing the violent oscillations to "simulator bugs"
+rather than a real physical instability.
+
+### Solution: Discrete Multiplier Options
+
+Replace the slider with a `Menu` offering **multiplier options** relative
+to the design's nominal `k_mppt`:
+
+```
+Options:  "0.5× (light braking)"  → k = 0.5 × k_nom
+          "0.75×"                  → k = 0.75 × k_nom
+          "1.0× (design nominal)"  → k = k_nom
+          "1.2×"                   → k = 1.2 × k_nom
+          "1.5× (optimal — max P)" → k = 1.5 × k_nom
+          "2.5× (over-braked)"     → k = 2.5 × k_nom
+          "4.0× ⚠ (instability)"   → k = 4.0 × k_nom  # warn user
+```
+
+This:
+- **Fixes the range mismatch** — scaling by nominal k_mppt works for any power level
+- **Makes physics regimes explicit** — each option maps to a known performance regime
+- **Surfaces the instability cliff** — 4.0× carries a warning
+- **Matches sweep data** — the options correspond to the validated v2 sweep multiplier grid
+- **Educates users** — the labels describe what each regime means physically
+
+### Impact Summary
+
+| What | Slider (current) | Options (proposed) |
+|------|-----------------|-------------------|
+| 50 kW k_mppt | 50 (clamped from 615) | 615 (1.0× nominal) |
+| Optimal power | unreachable | 1.5× option available |
+| 4× instability | hidden in 1–50 range | explicitly labelled ⚠ |
+| User model | "more k = more braking" | "pick a regime: light/optimal/over/unsafe" |
+| Cross-power-level | broken (1–50 only works for 10kW) | works for any P_rated |
+
 ## Future work
 
 - **Validate δα ≈ (τ/T)×geometry** against v2 sweep results

@@ -347,12 +347,28 @@ Every file in the repository (excluding `.git/`, `.julia/`, generated artifacts 
 | `references/v9_0-campaign-10kw-analysis.md` | .md | Jun 20 | agent | V9 10kW analysis | current |
 | `references/v9_0-dashboard-verification.md` | .md | Jun 20 | agent | V9 dashboard verification | current |
 
-### External Pipeline (not in repo, but essential context)
+### External Pipeline — Knowledge Extraction Workspace
+
+Full details: `docs/reports/knowledge-pipeline-sprint.md` (2026-06-22–23 sprint record).
+
+| Resource | Path | Description | Status |
+|----------|------|-------------|--------|
+| Extraction workspace | `/home/rod/Documents/kites/` | Main pipeline directory — scripts, graphs, model | Active |
+| K1 extraction scripts | `kites/scripts/` | 16 Python scripts — ingestion, phase analysis, synthesis | Complete |
+| Unified knowledge graph | `kites/awes_graph/awes_unified.graph.json` | 7,048 nodes, 9,775 edges (586 files) | Active |
+| Individual paper graphs | `kites/awes_graph/*.graph.json` | 586 per-paper K1 extractions | Frozen |
+| Academic paper texts | `kites/awes_texts/` | 540 markdown files (PDF extractions) | Frozen |
+| Industry document texts | `kites/industry_texts/` | 45 markdown files (PDF/DOCX/PPTX extractions) | Frozen |
+| K1 4B model | `kites/models/agents-k1/` | 2 shards, 8.3 GB, PyTorch, RTX A4500 GPU | Active (loaded on demand) |
+| graphanything CLI | `kites/agents-k1/` | **BROKEN** — `graphanything new --auto` produces zero nodes. Do not use. | Deprecated |
+| KTD paper graph | `kites/ktd_paper_graph/` | Reverse-ingestion outputs (ktd_schema_graph.json, paper_draft.md) | Draft |
+| K1 ingest cursor | `~/.k1_ingest_cursor` | Tracks last-processed paper filename for idempotent ingestion | Active |
+| Project room | `kites/project_room.md` | Redirect stub — authoritative docs at KTD.jl root | Active |
+
+### Porto 2026 Materials
 
 | Resource | Path | Description |
 |----------|------|-------------|
-| Agents-K1 framework | `/home/rod/Documents/kites/agents-k1/` | GraphAnything + K1 4B extraction model |
-| AWES knowledge graph | `/home/rod/Documents/kites/awes_graph/` | 540 papers, 7,401 nodes, 6,903 edges |
-| AWES paper corpus | `/home/rod/Documents/kites/investigation/` | 540 PDFs |
-| KTD paper pipeline | `/home/rod/Documents/kites/ktd_paper_graph/` | Reverse ingestion → paper draft |
-| K1 model | `/home/rod/Documents/kites/models/agents-k1/` | 4B parameter extraction model (GPU served) |
+| Collaboration map | `docs/porto-2026/collaboration-map.md` | Who to talk to, research density, conversation starters |
+| Citation lineage | `docs/porto-2026/citation-lineage.md` | 6 KTD techniques — what to cite, extend, contradict |
+| KTD paper outline | `docs/porto-2026/KTD-paper-outline.md` | Paper skeleton, evidence table, figures needed |

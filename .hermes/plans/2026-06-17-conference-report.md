@@ -196,6 +196,290 @@ optimizer's choices, and what they imply for larger systems.
   behaviour, or manufacturing constraints. The three-blade result is a structural
   optimum — dynamic validation pending (M4).
 
+### Task 2.5b: Generate 5 New Analysis Diagrams (d6–d10) — V9/V10 Campaign Era
+
+These 5 diagrams extend the conference report beyond the V6.2-era d1–d5 set, covering
+the full design evolution through V10. They tell the honest story: the optimizer found
+ever-lower mass (V6.5→V9.0), but those designs failed physical validation. V10 is the
+first design that passes all 8 constraint gates. Each diagram is **data-derived from
+real campaign CSVs**, rendered as publication-quality TikZ/PNG, and verified with the
+3-layer pipeline (pdflatex→pixel>1.5%→pdftotext→vision).
+
+**Diagram criteria (from conversation):**
+- Must NOT be a "smudge" — every axis labeled, every callout readable
+- All data from real CSVs in `scripts/results/v9_0_campaign_50kw/` and `v10_campaign_50kw/`
+- TikZ `article`+`geometry` pattern; compiled with `pdflatex`; verified with `vision_analyze`
+- Space budgets computed before drawing; font sizes specified at every level
+- Dark theme (`black!95` background, white labels) matching existing V9/V10 diagram style
+- Output: `docs/awes-forum-diagrams/diagram-v10-*.tex` + `.png`
+
+---
+
+#### Diagram d6 — Cross-Version Mass Honesty Timeline
+
+**Story (1-3 sentences):** The optimizer found progressively lower mass across V6.2→V6.5→V6.8→V9.0
+(74→17.7→58→44.5 kg), but every sub-50 kg design was physically impossible. V9.0 failed
+dashboard verification (8× over-power, FoS 0.3). V10 rises to 76.75 kg because it's the
+first design that passes all 8 physical constraint gates. The honest mass is higher —
+and that's the point.
+
+**Layout:** Horizontal grouped bar chart, 5 version groups (V6.2, V6.5, V6.8, V9.0, V10).
+Each bar annotated with mass + key parameters (n, n_rotors, λ). Physical validity marker
+overlay: green checkmark = dashboard-verified feasible, red X = physically impossible,
+yellow triangle = counterfactual (static TSR=4.1). V10 bar gets a special "8/8 gates"
+badge. Connecting line showing that V10 is the first honest design.
+
+**Data provenance:**
+| Version | Mass (kg) | Source | Valid? |
+|---------|-----------|--------|--------|
+| V6.2 corrected | 74.17 | `v6_2_campaign_50kw/best_design.json` | Static only |
+| V6.5 (tan error) | 17.7 | `v6_5_campaign_50kw/best_design.json` | ✗ IMPOSSIBLE (14,277× drag) |
+| V6.8 (static TSR=4.1) | 58.4 | `v6_8_campaign_50kw/best_design.json` | ⚠ Counterfactual |
+| V9.0 (dynamic eq.) | 44.52 | `v9_0_campaign_50kw/best_design.json` | ✗ Dashboard FAIL |
+| V10 (8 gates) | 76.75 | `v10_campaign_50kw/best_design.json` | ✓ 8/8 gates |
+
+**Space budget:** 32cm × 18cm paper; 5 bar groups × 4cm each = 20cm horizontal.
+Left margin 3cm for y-axis labels. Right margin 4cm for validity markers.
+Vertical: mass range 0–150 kg scaled to 14cm. Font: `\large` titles, `\small` bar labels,
+`\footnotesize` callouts, `\tiny` parameter text.
+
+**Generation pipeline:**
+```bash
+# 1. Extract winner data (Julia)
+julia --project=. -e '
+using JSON, DataFrames
+for (ver, path) in [
+    ("v62", "scripts/results/v6_2_campaign_50kw/best_design.json"),
+    ("v65", "scripts/results/v6_5_campaign_50kw/best_design.json"),
+    ("v68", "scripts/results/v6_8_campaign_50kw/best_design.json"),
+    ("v90", "scripts/results/v9_0_campaign_50kw/best_design.json"),
+    ("v10", "scripts/results/v10_campaign_50kw/best_design.json"),
+]
+    d = JSON.parsefile(path)
+    println("$ver: $(d["best_mass_kg"]) kg, n=$(get(d,"n_lines","?")), n_rotors=$(get(d,"n_active_rotors",get(d,"n_expansion","?")))")
+end
+'
+
+# 2. Write TikZ (manual) → diagram-v10-mass-timeline.tex
+# 3. Compile + verify
+pdflatex -interaction=nonstopmode diagram-v10-mass-timeline.tex
+python3 ~/.local/bin/tikz_lint.py diagram-v10-mass-timeline.tex --fix
+pdftoppm -png -r 300 diagram-v10-mass-timeline.pdf diagram-v10-mass-timeline
+mv diagram-v10-mass-timeline-1.png diagram-v10-mass-timeline.png
+```
+
+---
+
+#### Diagram d7 — Parasitic Drag Power Budget
+
+**Story:** The V10 winner's 50 kW rated power must overcome parasitic drag. This diagram
+shows WHERE the parasitic power goes — tether line drag (dominant, ~4.2 kW), expansion
+blade profile drag (~0.8 kW), and ring beam skin friction (negligible, ~0.05 kW).
+The hub aero power must exceed parasitic + generator power for equilibrium to exist.
+This explains why the parasitic drag model was the critical missing piece from V6.5.
+
+**Layout:** Horizontal stacked bar (total parasitic power) broken into 3 colored segments:
+tether lines (red-orange, ~83%), expansion blades (blue, ~16%), ring beams (green, ~1%).
+Second bar showing hub aero power for comparison. Annotations: absolute kW + % of rated.
+Small inset table: Cd values used (tether cylinder Cd=1.2, beam skin friction Cf=0.003,
+blade profile Cd0=0.01 from NACA 4412). Formula reference: P_drag = F_drag × v_tang.
+
+**Data provenance:**
+- V10 winner parameters from `scripts/results/v10_campaign_50kw/best_design.json`
+- Drag forces computed by `parasitic_drag_power()` in `src/objective_v10.jl`
+- Verification: run the actual function on the winner vector, not hand-calculated
+
+**Space budget:** 24cm × 14cm paper. Two horizontal bars stacked vertically (6cm each),
+3cm left margin for labels, 8cm right panel for coefficient table. Font: `\large` title,
+`\small` bar segment labels, `\footnotesize` table entries, `\tiny` formula references.
+
+**Generation pipeline:**
+```bash
+# 1. Compute parasitic drag breakdown for V10 winner
+julia --project=. -e '
+using KiteTurbineDynamics, JSON
+best = JSON.parsefile("scripts/results/v10_campaign_50kw/best_design.json")
+x = best_to_vector_v10(best)
+P_tether, P_beam, P_blade, P_total = parasitic_drag_power_v10(x)
+println("tether=$(round(P_tether/1000,digits=1)) beam=$(round(P_beam/1000,digits=1)) blade=$(round(P_blade/1000,digits=1)) total=$(round(P_total/1000,digits=1))")
+' > /tmp/v10_parasitic_drag.txt
+
+# 2. Write TikZ → diagram-v10-parasitic-drag.tex
+# 3. Compile + verify
+```
+
+---
+
+#### Diagram d8 — Constraint Gate Panel (8-Gate Pass/Fail)
+
+**Story:** The V10 winner passes all 8 validation gates — this is what makes it the
+first physically-viable design. This 8-panel diagram shows each gate with its threshold
+and the winner's actual value. Readers can see at a glance that the design is real:
+no gate is marginal, no constraint is gamed. The juxtaposition with V9.0 (which fails
+power, FoS, overtwist, and slack) makes the case that V10's higher mass buys physical validity.
+
+**Layout:** 4×2 grid of small panels (8 total), each showing:
+- Gate name + threshold (red dashed line)
+- V10 winner value (green bar or dot)
+- V9.0 value for comparison (red bar or dot, where it fails)
+- Margin annotation (e.g., "FoS: 2.1× required")
+
+**The 8 gates:**
+| # | Gate | Threshold | V10 winner (verify from campaign) |
+|---|------|-----------|-----------------------------------|
+| 1 | Beam buckling FoS | ≥ 2.0 | Extract from `verification_log.csv` |
+| 2 | Torsion FoS | ≥ 1.5 | Extract |
+| 3 | Tether FoS | ≥ 3.0 | Extract |
+| 4 | Overtwist guard | twist < 2π | Extract |
+| 5 | Slack fraction | < 5% | Extract |
+| 6 | Parasitic power | P_par < P_aero | Extract |
+| 7 | Power accuracy | 0.75 ≤ P/P_rated ≤ 1.25 | Extract |
+| 8 | Rotor usefulness | min(λ·cos(β)) ≥ 0.01 | Extract |
+
+**Data provenance:** All gate values from `verification_log.csv` (V10 campaign checkpointing).
+If `verification_log.csv` doesn't have per-gate breakdown, compute by running
+`_validate_island()` on the winner vector and printing each gate result.
+
+**Space budget:** 28cm × 18cm paper. 4 columns × 2 rows = 8 panels. Each panel ~6cm × 7cm.
+Margins: 2cm left, 1cm between panels. Font: `\large` panel titles, `\footnotesize` gate
+descriptions, `\tiny` threshold/margin annotations.
+
+**Generation pipeline:**
+```bash
+# 1. Dump validation gate results for V10 winner + V9.0 winner
+julia --project=. -e '
+using KiteTurbineDynamics, JSON, CSV, DataFrames
+vl = CSV.read("scripts/results/v10_campaign_50kw/verification_log.csv", DataFrame)
+println(last(vl, 1))  # last entry should be V10 winner validation
+' > /tmp/v10_gate_results.txt
+
+# 2. Write TikZ (manual, 8 panels) → diagram-v10-constraint-gates.tex
+# 3. Compile + verify
+```
+
+---
+
+#### Diagram d9 — Rotor Configuration & Usefulness Map
+
+**Story:** The V10 optimizer places rotors on specific rings with a λ gradient (larger
+blades at top, smaller at bottom) and a bank gradient (shallower at top, steeper at
+bottom). This diagram shows the rotor mask (which rings get rotors), the λ and bank
+profiles, and the resulting λ·cos(bank) "usefulness" metric. It also shows why the
+V9.0 winner's 9 expansion rotors were "decorative" — their λ·cos(bank) was below the
+usefulness threshold, meaning they produced near-zero thrust while adding parasitic drag.
+
+**Layout:** Three-panel horizontal:
+1. **Rotor mask** — 3D schematic of TRPT shaft with rings, rotors shown as filled circles
+   at their ring positions. Size proportional to λ. Color = usefulness (green = useful,
+   red = decorative).
+2. **λ and bank profiles** — line plots: λ vs ring index (decreasing downward), bank vs
+   ring index (increasing downward). V10 winner as solid lines, V9.0 as dashed.
+3. **Usefulness scatter** — λ·cos(bank) vs ring index. Horizontal threshold line at 0.01
+   (validation gate). Points below = decorative rotors. V9.0 has many below; V10 has none.
+
+**Data provenance:**
+- Rotor mask from V10 winner's `rotor_mask_proxy` (decoded to ring positions)
+- λ_top, λ_bottom, bank_top, bank_bottom from `best_design.json`
+- λ and bank at each ring: linear interpolation between top and bottom
+- V9.0 rotor positions from `v9_0_campaign_50kw/best_design.json` `n_expansion` + ring positions
+
+**Space budget:** 30cm × 14cm paper. Three panels at 8cm, 10cm, 10cm width. 2cm gaps.
+Font: `\large` panel titles, `\small` axis labels, `\footnotesize` point labels, `\tiny` annotations.
+
+**Generation pipeline:**
+```bash
+# 1. Decode rotor mask + compute usefulness
+julia --project=. -e '
+using KiteTurbineDynamics, JSON
+best = JSON.parsefile("scripts/results/v10_campaign_50kw/best_design.json")
+mask = best["rotor_mask_proxy"]
+ring_positions = decode_rotor_mask(mask, best["n_rings"])
+λ_top, λ_bottom = best["lambda_top"], best["lambda_bottom"]
+bank_top, bank_bottom = best["bank_top"], best["bank_bottom"]
+for (i, r) in enumerate(ring_positions)
+    frac = i / length(ring_positions)
+    λ = λ_top + frac*(λ_bottom - λ_top)
+    bank = bank_top + frac*(bank_bottom - bank_top)
+    usefulness = λ * cosd(bank)
+    println("ring=$r λ=$(round(λ,digits=3)) bank=$(round(bank,digits=1)) usefulness=$(round(usefulness,digits=4))")
+end
+' > /tmp/v10_rotor_usefulness.txt
+
+# 2. Same for V9.0 winner
+# 3. Write TikZ → diagram-v10-rotor-config.tex
+# 4. Compile + verify
+```
+
+---
+
+#### Diagram d10 — Per-Island Strategy Divergence Map
+
+**Story:** The 60-island DE optimizer explores different regions of parameter space in
+parallel. This diagram uses PCA projection (from the V10 campaign's 14-D parameter trace)
+to show where each island's search converged. Islands cluster into two basins:
+Basin A (compact, few rotors, low structural scale) and Basin B (expansion-dominant,
+more rotors, higher PC2). The winning island (41, 76.75 kg) sits in Basin A — the
+compact strategy wins. Islands that got stuck in local minima are visible as outliers.
+This shows the optimizer's exploration strategy and gives confidence the global basin
+was found.
+
+**Layout:** 
+- **Main panel:** PCA scatter (PC1 vs PC2), each point = one island's final best position.
+  Color = final mass (viridis inverted). Size = convergence iteration count.
+- **Annotation callouts:** Winner island circled + labeled. Basin A vs B regions outlined
+  with dashed ellipses. Outlier islands annotated with brief explanation (e.g., "n=19, stuck").
+- **Sidebar:** PC1/PC2 interpretation guide (same as existing V10 landscape diagram).
+- **Bottom:** Convergence iteration histogram (how many iterations each island took to converge).
+
+**Data provenance:**
+- PCA from `v10_campaign_50kw/parameter_trace.csv` (600K+ rows, 14 parameters)
+- Final best per island from `island_bests.csv`
+- PCA mean/std/V already computed in `/tmp/v10_pca_*.txt` (from prior V10 landscape run)
+- Julia extraction script: `scripts/export_v10_landscape_data.jl` (exists, ran successfully)
+
+**Space budget:** 28cm × 18cm paper. Main PCA panel 20cm × 14cm. Sidebar 6cm wide.
+Histogram strip 26cm × 3cm at bottom. Font: `\large` title, `\small` axis labels,
+`\footnotesize` annotation callouts, `\tiny` sidebar text.
+
+**Generation pipeline:**
+```bash
+# 1. Extract per-island final best PCA coordinates + mass
+julia --project=. scripts/export_v10_strategy_data.jl  # new script, similar to export_v10_landscape_data.jl
+# Outputs: /tmp/v10_island_pc1.txt, pc2.txt, mass.txt, iters.txt
+
+# 2. Write TikZ → diagram-v10-strategy-divergence.tex
+# Julia prints TikZ \draw commands for each island point + annotations
+# 3. Compile + verify
+pdflatex -interaction=nonstopmode diagram-v10-strategy-divergence.tex
+python3 ~/.local/bin/tikz_lint.py diagram-v10-strategy-divergence.tex --fix
+pdftoppm -png -r 300 diagram-v10-strategy-divergence.pdf diagram-v10-strategy-divergence
+mv diagram-v10-strategy-divergence-1.png diagram-v10-strategy-divergence.png
+```
+
+---
+
+#### Diagram Generation Order & Dependencies
+
+1. **d6 (Mass Timeline)** — depends only on `best_design.json` files from each campaign. Zero data extraction needed.
+2. **d7 (Parasitic Drag)** — needs winner vector fed through `parasitic_drag_power_v10()`. Verify the function works first.
+3. **d8 (Constraint Gates)** — needs `verification_log.csv` or re-run `_validate_island()` on winner.
+4. **d9 (Rotor Config)** — needs rotor mask decoding + interpolation. Confirm `decode_rotor_mask()` exists.
+5. **d10 (Strategy Map)** — needs PCA data (already computed in `/tmp/v10_pca_*.txt`) + per-island extraction script.
+
+d6 and d9 can proceed in parallel. d7 and d8 share the V10 winner validation data.
+d10 is independent once PCA data is confirmed.
+
+#### Verification Checklist (per diagram)
+
+- [ ] `tikz_lint.py --fix` passes (0 non-Unicode issues)
+- [ ] `pdflatex` compiles with 0 errors in `.log`
+- [ ] `pdfinfo` shows exactly 1 page
+- [ ] `pdftoppm -r 300` produces PNG; pixel check > 1.5% non-white
+- [ ] `pdftotext` grep confirms key narrative text present
+- [ ] `vision_analyze` confirms: properly rendered diagram (not raw text, not blank)
+- [ ] All numbers match CSV source data (±0.1 kg for mass, ±0.01 for λ)
+
+
 ### Task 2.6: Write §6 (integration pathway)
 **Key points:**
 - CoaxialAutogyroStacking.jl → KTD.jl lift_kite.jl integration
@@ -215,14 +499,23 @@ optimizer's choices, and what they imply for larger systems.
 - No wake interaction in coaxial model (v2 scope)
 
 ### Task 2.8: Generate/embed all figures
-**Figures to include:**
+**Figures to include (d1–d5: V6.2 era; d6–d10: V9/V10 era; coax: coaxial package):**
 - d1: Polygon comparison (n=8 vs n=12)
 - d2: Density profile
 - d3: Mass scaling (10 kW → 50 kW)
 - d4: Optimization landscape
 - d5: Bank angle expansion
+- **d6: Cross-version mass honesty timeline** (V6.2→V10, physical validity markers)
+- **d7: Parasitic drag power budget** (tether/beam/blade breakdown)
+- **d8: Constraint gate panel** (8-gate pass/fail for V10 winner vs V9.0)
+- **d9: Rotor configuration & usefulness map** (rotor mask + λ/bank profiles + decorative rotor analysis)
+- **d10: Per-island strategy divergence map** (PCA colored by basin, winner annotated)
 - Coaxial stack schematic (TikZ or from Pluto dashboard export)
 - System architecture comparison (Daisy / Pyramid / Expansion)
+
+All d6–d10 diagrams: data-derived from real CSVs, TikZ `article`+`geometry` pattern,
+3-layer verified. See Task 2.5b for full specs, generation pipelines, and verification
+checklist.
 
 ---
 

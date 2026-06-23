@@ -1,6 +1,6 @@
 # Project Room — KiteTurbineDynamics.jl
 
-**Created:** 2026-06-16 · **Updated:** 2026-06-22 (V10 era, video project, Agents-K1)
+**Created:** 2026-06-16 · **Updated:** 2026-06-23 (Phase 1–3b, Porto prep, audit Pass 1–2 applied)
 
 Systematic inventory of the repository. These files live at the repo root so any agent arriving fresh sees them immediately.
 
@@ -44,11 +44,16 @@ Systematic inventory of the repository. These files live at the repo root so any
 - **`.video/`** — 4-minute explainer video project for AWEC 2026 / collaborators
 - **`docs/awes-forum-diagrams/video-interpretation/`** — Updated transcript with V10 Tight results, tension gate, static-vs-dynamic gap, Agents-K1
 
-### Agents-K1 Knowledge Pipeline
-- **540 AWES papers** ingested into scholar knowledge graph (7,401 nodes, 6,903 edges)
-- **`/home/rod/Documents/kites/agents-k1/`** — GraphAnything framework with K1 4B extraction model
-- **`/home/rod/Documents/kites/awes_graph/`** — Unified knowledge graph, per-paper extractions
-- **K1 model** served on GPU (RTX A4500) for structured entity extraction
+### Agents-K1 Knowledge Pipeline (Updated Jun 23)
+- **540 academic papers + 45 industry documents** ingested — **7,048 nodes, 9,775 edges** in unified graph (586 individual graph files, 878 paper nodes)
+- **Phase 1 (collaboration map)** complete — identified 10 priority researchers, research density gaps, W&I's unique multi-kite/farm lane
+- **Phase 3 (citation lineage)** complete — 6 KTD techniques grounded in literature with per-technique citation maps
+- **Phase 3b (web validation)** complete — all 3 high-risk claims validated clean (Moore CSR ≠ inertia relief; Wacker ≠ ring-mapping; 4.2× gap is TRPT-unique)
+- **All 3 crons paused** 2026-06-23 — ingestion complete, GPU freed for Porto preparation
+- **`/home/rod/Documents/kites/`** — extraction workspace (scripts, graphs, model). Project room at KTD.jl root
+- **Porto materials:** `docs/porto-2026/collaboration-map.md`, `citation-lineage.md`, `KTD-paper-outline.md`
+- **Session record:** `docs/reports/knowledge-pipeline-sprint.md`
+- **Handover:** `handovers/handover-2026-06-23-knowledge-pipeline.md`
 
 ### Files Referenced But Not Yet Created
 - `02_conflict_log.md` — 8 conflicts need documentation
@@ -67,8 +72,14 @@ Systematic inventory of the repository. These files live at the repo root so any
 | Parameters at bounds | 5 | bank_angle, n_exp, n_lines, λ_top, λ_bottom |
 | Parameters total | 14 | V10 design vector |
 | Campaign evaluations | 310,000 | V10 convergence_history.csv |
-| Papers in KG | 540 | Agents-K1 |
-| Graph nodes | 7,401 | awes_unified.graph.json |
+| Papers in KG | 540 academic + 45 industry | Agents-K1 |
+| Graph nodes | 7,048 | awes_unified.graph.json |
+| Graph edges | 9,775 | awes_unified.graph.json |
+| Individual graph files | 586 | awes_graph/ |
+| Paper nodes in graph | 878 | awes_unified.graph.json |
+| TRPT researchers identified | 8 | K1 graph |
+| KTD techniques grounded | 6 | Phase 3 + 3b |
+| Web-validated claims | 3/3 clean | Phase 3b |
 | Test suite | 917 tests | `test/runtests.jl` |
 
 ## Remaining Cleanup (unchanged from June 16)
