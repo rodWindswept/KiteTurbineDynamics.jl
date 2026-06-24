@@ -42,7 +42,7 @@ KTD.jl combines three computational layers within a single Julia framework:
 
 **Multibody ODE verifier.** A full 11-degree-of-freedom multibody simulation integrates the equations of motion for each ring (translational + torsional + out-of-plane), connected by rope force elements that enforce tension-only behaviour. The verifier captures TRPT torsional dynamics, expansion rotor coupling, lifter kite interaction, and generator control — physics absent from the equilibrium solver.
 
-**Ring-mapping topology.** The DE design vector operates on *intermediate rings* (the user-facing design space), while the multibody solver operates on *system rings* (the physical topology). A +2 offset maps intermediate ring i → system ring i+1: ground adds ring 1, and the hub rotor occupies ring n+2 (commit 71ea694, Figure G3). This correction resolved a persistent bug where rotors were placed on incorrect rings, producing designs that the ODE verifier could not sustain.
+**Ring-mapping topology.** The DE design vector operates on *intermediate rings* (the user-facing design space), while the multibody solver operates on *system rings* (the physical topology). A +1 index shift maps intermediate ring i → system ring i+1 to account for the ground ring (system ring 1), while the hub rotor occupies system ring n+2 (commit 71ea694, Figure G3). This correction resolved a persistent bug where rotors were placed on incorrect rings, producing designs that the ODE verifier could not sustain.
 
 ### 2.2 Physics Models
 
@@ -70,7 +70,7 @@ The DE optimiser was run across six campaign versions, each refining the search 
 
 The V10 campaign introduced unified rotor masks, 8 constraint gates, and a 60-island × 2,000-iteration DE. The V10v1 optimum reached 76.75 kg with a single hub rotor at λ = 0.234 — but the ring-mapping bug placed this rotor on an intermediate ring rather than the hub ring, and the unscaled k_mppt = 615 allowed the DE to cheat with microscopic blades. Dynamic verification showed 0 kW output.
 
-The V10 Tight campaign (12 islands × 1,500 iterations, tight bounds, k_mppt ∝ λ², ring-mapping fix) found a fundamentally different design basin. The winner — Island 1, 49.20 kg — employs 4 rotors distributed across rings 1, 4, 7, and 10 of the 10-ring system, with the hub rotor correctly positioned on system ring 9 (Figure 1).
+The V10 Tight campaign (12 islands × 1,500 iterations, tight bounds, k_mppt ∝ λ², ring-mapping fix) found a fundamentally different design basin. The winner — Island 1, 49.20 kg — employs 4 rotors distributed across the 10 intermediate rings (positions 1, 4, 7, and 10 counting from the bottom), with the hub rotor correctly occupying the top intermediate ring (Figure 1).
 
 **V10 Tight optimum parameters:**
 
