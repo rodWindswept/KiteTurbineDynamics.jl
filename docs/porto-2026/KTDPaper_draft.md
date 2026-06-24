@@ -8,7 +8,7 @@
 
 ## Abstract
 
-Airborne wind energy systems employing tensile rotary power transmission (TRPT) offer a material-efficient path to power generation at altitude, but design optimisation has been dominated by steady-state models that systematically overpredict performance. We present KiteTurbineDynamics.jl, an open-source Julia framework combining differential evolution (DE) optimisation with full multibody dynamic verification. Applied to a 50 kW TRPT kite turbine, the framework introduces five contributions: (1) k_mppt λ² scaling that couples generator load to blade sweep area within the equilibrium solver, (2) replacement of the single-section moment-to-tension ratio (MTR ≈ 0.05, Tulloch 2023) with explicit multi-section TRPT geometry where per-segment torque-tension coupling varies with DE-optimised ring radii and segment lengths, (3) n× parallel tether drag accumulation for multi-line TRPT configurations, (4) ring-mapping correction resolving a +2 index offset between intermediate and system rings in the multibody topology, and (5) 6-DOF D'Alembert inertia relief eliminating fictitious rigid-body translations (10⁶–10⁸ m) from free-floating ring finite element analysis. A sixth contribution — quantification of a 4.2× static-to-dynamic power gap — emerges from the comparison of techniques (1) and (2): the equilibrium solver predicts 50 kW at 59 rpm; full multibody ordinary differential equation (ODE) verification yields 12.1 kW at 55.6 rpm. This gap is an order of magnitude larger than the 18–21% overprediction consensus in conventional AWE literature (Kheiri et al. 2018, Carceller Candau 2022, Pfister & Blondel 2020). The DE-optimised design achieves 49.2 kg airborne mass with 4 rotors at λ = 0.519, demonstrating that multi-rotor TRPT configurations are viable at 50 kW scale. Literature grounding via automated knowledge graph extraction of 540 AWE papers confirms the novelty of each technique and identifies open gaps in rigid-rotor blade design, multi-kite economics, and dynamic power validation.
+Airborne wind energy systems employing tensile rotary power transmission (TRPT) offer a material-efficient path to power generation at altitude, but design optimisation has been dominated by steady-state models that systematically overpredict performance. We present KiteTurbineDynamics.jl, an open-source Julia framework combining differential evolution (DE) optimisation with full multibody dynamic verification. Applied to a 50 kW TRPT kite turbine, the framework introduces four contributions: (1) k_mppt λ² scaling that couples generator load to blade sweep area within the equilibrium solver, (2) replacement of the single-section moment-to-tension ratio (MTR ≈ 0.05, Tulloch 2023) with explicit multi-section TRPT geometry where per-segment torque-tension coupling varies with DE-optimised ring radii and segment lengths, (3) n× parallel tether drag accumulation for multi-line TRPT configurations, and (4) 6-DOF D'Alembert inertia relief eliminating fictitious rigid-body translations (10⁶–10⁸ m) from free-floating ring finite element analysis. A fifth contribution — quantification of a 4.2× static-to-dynamic power gap — emerges from the comparison of techniques (1) and (2): the equilibrium solver predicts 50 kW at 59 rpm; full multibody ordinary differential equation (ODE) verification yields 12.1 kW at 55.6 rpm. This gap is an order of magnitude larger than the 18–21% overprediction consensus in conventional AWE literature (Kheiri et al. 2018, Carceller Candau 2022, Pfister & Blondel 2020). The DE-optimised design achieves 49.2 kg airborne mass with 4 rotors at λ = 0.519, demonstrating that multi-rotor TRPT configurations are viable at 50 kW scale. Literature grounding via automated knowledge graph extraction of 540 AWE papers confirms the novelty of each technique and identifies open gaps in rigid-rotor blade design, multi-kite economics, and dynamic power validation.
 
 ---
 
@@ -20,14 +20,13 @@ The TRPT concept originates from the single-section Pyramid configuration, where
 
 A persistent challenge across AWE modelling is the systematic overprediction of power by steady-state equilibrium solvers. Kheiri et al. (2018) identified induction factor effects that produce 21% power overestimation in crosswind kite models. Carceller Candau (2022, MSc thesis) demonstrated 18% overprediction from neglected dynamic inflow in rotorcraft AWES. Pfister and Blondel (2020) compared blade element momentum (BEM) theory against free-vortex wake methods, finding significant discrepancies in thrust and power coefficients at inclined rotor discs — the operating condition of RAWES rotors tilted at elevation angles of 25–35°.
 
-KiteTurbineDynamics.jl (KTD.jl) addresses these gaps through an integrated DE optimisation and multibody verification framework. This paper presents the framework and its application to a 50 kW TRPT kite turbine, with six contributions:
+KiteTurbineDynamics.jl (KTD.jl) addresses these gaps through an integrated DE optimisation and multibody verification framework. This paper presents the framework and its application to a 50 kW TRPT kite turbine, with five contributions:
 
 1. k_mppt λ² scaling — coupling generator load to blade sweep area to prevent the DE from converging to λ → 0.
 2. Multi-section TRPT geometry — replacing the single-section MTR with explicit per-segment torque-tension coupling computed from DE-optimised ring radii and segment lengths.
 3. n× parallel tether drag — extending the classical ¼ tether drag coefficient (Tveide TetherDragODESolver) to multi-line TRPT configurations.
-4. Ring-mapping correction — resolving a +2 index offset between intermediate and system rings in the multibody model (commit 71ea694).
-5. 6-DOF D'Alembert inertia relief — eliminating fictitious rigid-body translations from free-floating ring FEA (ADR 0001).
-6. Quantification of a 4.2× static-to-dynamic power gap — an order of magnitude larger than the 18–21% literature consensus.
+4. 6-DOF D'Alembert inertia relief — eliminating fictitious rigid-body translations from free-floating ring FEA (ADR 0001).
+5. Quantification of a 4.2× static-to-dynamic power gap — an order of magnitude larger than the 18–21% literature consensus.
 
 ---
 
@@ -124,14 +123,13 @@ The physical origin of this gap is the equilibrium solver's inability to capture
 
 ### 3.5 Technique Validation
 
-All six contributions were validated against the literature through the K1 knowledge graph and web searches (Table 2). The ring-mapping correction (contribution 4) is internal architecture rather than a publication claim; the remaining five contributions are novel within the AWE literature.
+All five contributions were validated against the literature through the K1 knowledge graph and web searches (Table 2). All are novel within the AWE literature.
 
 | Contribution | Evidence | Validation |
 |-------------|----------|------------|
 | k_mppt λ² scaling | λ = 0.519 (Tight) vs 0.234 (V10v1); k_mppt_eff = 166 | K1 graph: 16 induction/power findings, none link generator load to blade area. Web: clean. |
 | Multi-section TRPT geometry | r_hub = 2.89 m, target_Lr = 3.0 m, r_bottom = 2.0 m, density = −0.11 | Replaces single-section MTR ≈ 0.05 (Tulloch 2023); no prior multi-section DE optimisation of TRPT geometry. |
 | n× tether drag | 12 lines × 67 m tether | Tveide ODE solver validates ¼ coefficient; n× parallel accumulation is TRPT-specific. |
-| Ring-mapping +2 offset | 4 rotors viable (vs 1 before fix); rotor on hub ring 9 of 9 | Internal architecture. No prior art (Wacker 2022 uses flat 1-indexed frame list). |
 | 6-DOF inertia relief | Eliminates 10⁶–10⁸ m fictitious translations | Standard 3-DOF IR (NASA 1995); Moore CSR (2014) uses constrained joints, no overlap. |
 | 4.2× static-dynamic gap | 50 kW (static) → 12.1 kW (ODE) | 18–21% literature consensus; 420% gap is TRPT-specific and unresolved. |
 
@@ -167,7 +165,7 @@ The current study has several limitations. **Static solver scope.** The equilibr
 
 ## 5. Conclusion
 
-KiteTurbineDynamics.jl demonstrates that DE optimisation coupled with multibody dynamic verification can identify physically realisable TRPT kite turbine designs at 50 kW scale. The five novel contributions — k_mppt λ² scaling, multi-section TRPT geometry, n× tether drag accumulation, ring-mapping correction, and 6-DOF inertia relief — each address a specific gap in the existing AWE design toolkit. The 49.2 kg, 4-rotor optimum represents a 36% mass reduction from the pre-correction V10 optimum (76.75 kg), achieved entirely through DE algorithm improvements with no changes to the physical model.
+KiteTurbineDynamics.jl demonstrates that DE optimisation coupled with multibody dynamic verification can identify physically realisable TRPT kite turbine designs at 50 kW scale. The four novel contributions — k_mppt λ² scaling, multi-section TRPT geometry, n× tether drag accumulation, and 6-DOF inertia relief — each address a specific gap in the existing AWE design toolkit. The 49.2 kg, 4-rotor optimum represents a 36% mass reduction from the pre-correction V10 optimum (76.75 kg), achieved entirely through DE algorithm improvements with no changes to the physical model.
 
 The 4.2× static-to-dynamic power gap is the most significant finding. It is an order of magnitude larger than the literature consensus, TRPT-specific, and unresolved. This gap is not an error to be corrected but a physical result of multi-section TRPT torsional dynamics — a finding that would not have emerged from steady-state analysis alone.
 
