@@ -165,7 +165,7 @@ The current study has several limitations. **Static solver scope.** The equilibr
 
 ## 5. Conclusion
 
-KiteTurbineDynamics.jl demonstrates that DE optimisation coupled with multibody dynamic verification can identify physically realisable TRPT kite turbine designs at 50 kW scale. The four novel contributions — k_mppt λ² scaling, multi-section TRPT geometry, n× tether drag accumulation, and 6-DOF inertia relief — each address a specific gap in the existing AWE design toolkit. The 49.2 kg, 4-rotor optimum represents a 36% mass reduction from the pre-correction V10 optimum (76.75 kg), achieved entirely through DE algorithm improvements with no changes to the physical model.
+KiteTurbineDynamics.jl demonstrates that DE optimisation coupled with multibody dynamic verification can identify physically realisable TRPT kite turbine designs at 50 kW scale. The four novel contributions — k_mppt λ² scaling, multi-section TRPT geometry, n× tether drag accumulation, and 6-DOF inertia relief — each address a specific gap in the existing AWE design toolkit. The 49.2 kg, 4-rotor optimum represents a 36% mass reduction from the pre-correction V10 optimum (76.75 kg), achieved through tighter search bounds, the k_mppt λ² generator scaling law, and the ring-mapping topology fix — with no change to the structural or aerodynamic sub-models.
 
 The 4.2× static-to-dynamic power gap is the most significant finding. It is an order of magnitude larger than the literature consensus, TRPT-specific, and unresolved. This gap is not an error to be corrected but a physical result of multi-section TRPT torsional dynamics — a finding that would not have emerged from steady-state analysis alone.
 
