@@ -129,18 +129,11 @@ The novelty of each technique was assessed through two complementary methods. Fi
 
 \subsection{Optimisation Campaigns}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{fig-system-schematic.pdf}
-\caption{System schematic of the V10 Tight optimum. The 49.2~kg, 4-rotor design with 12-sided polygon rings, $r_{\mathrm{hub}} = 2.89~m$, $r_{\mathrm{bottom}} = 2.0~m$, and segment length 3.0~m. Rotors are positioned on intermediate rings 1, 4, 7, and 10 (counting from the bottom), with the hub rotor on the top intermediate ring.}
-\label{fig:schematic}
-\end{figure}
-
-The DE optimiser was run across six campaign versions, each refining the search space and physical model (Figure~\ref{fig:power-gap}). The V6 baseline (pre-physics corrections) converged to 259~kg at $n = 8$ polygon sides with 3 expansion rotors. Corrections to the polygon force resolution ($\tan \to \sin$), coupled knuckle mass model, and elevation exponent ($\cos^3 \to \cos^{2.65}$) in V6.2 reduced the optimum to 74.2~kg at $n = 12$ with a single expansion rotor—a 71\% reduction dominated by the elimination of two expansion stations and the coupled knuckle mass model exposing the true cost of thick beams.
+The DE optimiser was run across six campaign versions, each refining the search space and physical model. The V6 baseline (pre-physics corrections) converged to 259~kg at $n = 8$ polygon sides with 3 expansion rotors. Corrections to the polygon force resolution ($\tan \to \sin$), coupled knuckle mass model, and elevation exponent ($\cos^3 \to \cos^{2.65}$) in V6.2 reduced the optimum to 74.2~kg at $n = 12$ with a single expansion rotor—a 71\% reduction dominated by the elimination of two expansion stations and the coupled knuckle mass model exposing the true cost of thick beams.
 
 The V10 campaign introduced unified rotor masks, 8 constraint gates, and a 60-island $\times$ 2,000-iteration DE. The V10v1 optimum reached 76.75~kg with a single hub rotor at $\lambda = 0.234$—but the ring-mapping bug placed this rotor on an intermediate ring rather than the hub ring, and the unscaled $k_{\mathrm{mppt}} = 615$ allowed the DE to cheat with microscopic blades. Dynamic verification showed 0~kW output.
 
-The V10 Tight campaign (12 islands $\times$ 1,500 iterations, tight bounds, $k_{\mathrm{mppt}} \propto \lambda^2$, ring-mapping fix) found a fundamentally different design basin. The winner—Island~1, 49.20~kg—employs 4 rotors distributed across the 10 intermediate rings (positions 1, 4, 7, and 10 counting from the bottom), with the hub rotor correctly occupying the top intermediate ring (Figure~\ref{fig:schematic}).
+The V10 Tight campaign (12 islands $\times$ 1,500 iterations, tight bounds, $k_{\mathrm{mppt}} \propto \lambda^2$, ring-mapping fix) found a fundamentally different design basin. The winner—Island~1, 49.20~kg—employs 4 rotors distributed across the 10 intermediate rings (positions 1, 4, 7, and 10 counting from the bottom), with the hub rotor correctly occupying the top intermediate ring (Figure~\ref{fig:pca}).
 
 \begin{table}[t]
 \centering
@@ -174,12 +167,12 @@ Six parameters are at their search bounds—$D_{o,\mathrm{top}}$, $t/D$, $r_{\ma
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{fig-ring-mapping.pdf}
-\caption{PCA design space of the V10 Tight campaign. Two dominant axes capture 49.3\% of total variance. PC1 (28.9\%) captures structural scale; PC2 (20.4\%) captures configuration choice. The winner (marked) sits in a compact low-mass basin. White iso-mass contours at 50 and 65~kg show the steep mass gradient. Island convergence paths (grey) converge to the same basin from random initialisation (58 of 60 islands).}
-\label{fig:ring-mapping}
+\includegraphics[width=\textwidth]{../awes-forum-diagrams/v10-tight-landscape.png}
+\caption{PCA design space of the V10 Tight campaign. Two dominant axes capture 49.3\% of total variance. PC1 (28.9\%) captures structural scale ($r_{\mathrm{hub}}$, $D_{o,\mathrm{top}}$, $n_{\mathrm{lines}}$); PC2 (20.4\%) captures configuration choice ($\lambda$ gradient, bank gradient, rotor mask selection). The winner (marked) sits in a compact low-mass basin at $\mathrm{PC1} \approx -0.5$, $\mathrm{PC2} \approx -0.3$. White iso-mass contours at 50 and 65~kg show the steep mass gradient around the optimum, consistent with a constraint intersection rather than a broad valley.}
+\label{fig:pca}
 \end{figure}
 
-Principal component analysis of the V10 Tight design space (Figure~\ref{fig:ring-mapping}) reveals two dominant axes capturing 49.3\% of total variance—significantly more than V10v1 (32.7\%), reflecting the concentrated search within tight bounds. PC1 (28.9\% variance) captures structural scale: $r_{\mathrm{hub}}$, $D_{o,\mathrm{top}}$, and $n_{\mathrm{lines}}$ dominate. PC2 (20.4\% variance) captures configuration choice: $\lambda$ gradient, bank gradient, and rotor mask selection. The winner sits in a compact low-mass basin at $\mathrm{PC1} \approx -0.5$, $\mathrm{PC2} \approx -0.3$. White iso-mass contours at 50 and 65~kg show the steep mass gradient around the optimum, consistent with a constraint intersection rather than a broad valley.
+Principal component analysis of the V10 Tight design space (Figure~\ref{fig:pca}) reveals two dominant axes capturing 49.3\% of total variance—significantly more than V10v1 (32.7\%), reflecting the concentrated search within tight bounds. PC1 (28.9\% variance) captures structural scale: $r_{\mathrm{hub}}$, $D_{o,\mathrm{top}}$, and $n_{\mathrm{lines}}$ dominate. PC2 (20.4\% variance) captures configuration choice: $\lambda$ gradient, bank gradient, and rotor mask selection. The winner sits in a compact low-mass basin at $\mathrm{PC1} \approx -0.5$, $\mathrm{PC2} \approx -0.3$. White iso-mass contours at 50 and 65~kg show the steep mass gradient around the optimum, consistent with a constraint intersection rather than a broad valley.
 
 \subsection{Non-Dimensional Physics Atlas}
 
@@ -189,12 +182,12 @@ Colouring the PCA landscape by nine non-dimensional Pi groups (Figure~\ref{fig:n
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{fig-lit-map.pdf}
-\caption{Non-dimensional physics atlas. PCA landscape coloured by nine Pi groups. The winner design (marked) occupies a region of high slenderness, high power loading, normal ring taper, and elevated rotor solidity—a fundamentally different design basin from single-rotor configurations.}
+\includegraphics[width=\textwidth]{../awes-forum-diagrams/v10-tight-nondim.png}
+\caption{Non-dimensional physics atlas. PCA landscape coloured by nine Pi groups.}
 \label{fig:nondim}
 \end{figure}
 
-The island convergence paths (Figure~\ref{fig:ring-mapping}) confirm that the multi-rotor basin is the dominant attractor: 58 of 60 DE islands independently converge to the same 49--75~kg region despite random initialisation, with Island~1 securing the global optimum at 49.20~kg.
+The island convergence paths (Figure~\ref{fig:pca}) confirm that the multi-rotor basin is the dominant attractor: 58 of 60 DE islands independently converge to the same 49--75~kg region despite random initialisation, with Island~1 securing the global optimum at 49.20~kg.
 
 \subsection{Static-vs-Dynamic Power Gap}
 
@@ -218,13 +211,6 @@ $k_{\mathrm{mppt,eff}}$  & 166   & 62 (best found) \\
 \end{table}
 
 The $k_{\mathrm{mppt}} \lambda^2$ scaling successfully closed the rotational speed gap (V10v1: $41 \to 0$~rpm; V10 Tight: $59 \to 55.6$~rpm), confirming that the equilibrium solver and ODE now agree on the operating speed. However, the power gap persists at $4.1$$\times$—an order of magnitude larger than the 18--21\% overprediction reported for conventional AWE configurations \cite{kheiri2018,leuthold2019,carceller2022,pfister2020}.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{fig-power-gap.pdf}
-\caption{Power gap across campaign versions. The persistent $4.1$$\times$ gap between equilibrium solver prediction (50~kW) and ODE verification (12.1~kW) emerges consistently after the ring-mapping fix. The $k_{\mathrm{mppt}} \lambda^2$ scaling closes the rotational speed gap but power remains systematically overpredicted.}
-\label{fig:power-gap}
-\end{figure}
 
 The physical origin of this gap is the equilibrium solver's inability to capture torque transmission dynamics through the TRPT. The static solver assumes instantaneous, lossless torque propagation from rotor to generator. The ODE reveals that inter-ring torsional compliance, expansion rotor coupling, and tether drag accumulation along the multi-section shaft reduce the effective torque reaching the generator. The best-found dynamic $k_{\mathrm{mppt}}$ of 62 (vs.\ the static optimum of 166) indicates that the generator must be significantly unloaded to allow the TRPT to reach operational speed—at $k_{\mathrm{mppt}} = 166$, the generator load stalls the shaft before the rotor can accelerate.
 
