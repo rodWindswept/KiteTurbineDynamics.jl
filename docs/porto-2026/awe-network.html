@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWES Research Network — K1 Knowledge Graph</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;overflow:hidden;height:100vh}
+#graph{width:100%;height:100vh;cursor:grab}
+#graph:active{cursor:grabbing}
+#tooltip{position:absolute;background:rgba(15,23,42,.95);border:1px solid #334155;border-radius:.5rem;padding:.75rem 1rem;font-size:.8rem;color:#e2e8f0;pointer-events:none;opacity:0;transition:opacity .15s;max-width:300px;z-index:10}
+#tooltip .name{font-size:1rem;font-weight:700;margin-bottom:.25rem}
+#tooltip .detail{color:#94a3b8;font-size:.75rem}
+#legend{position:absolute;bottom:1rem;left:1rem;background:rgba(15,23,42,.8);border:1px solid #334155;border-radius:.5rem;padding:.75rem;font-size:.7rem;color:#94a3b8;z-index:5}
+#legend span{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+#title{position:absolute;top:1rem;left:1rem;z-index:5}
+#title h1{font-size:1.2rem;color:#e2e8f0;margin-bottom:.25rem}
+#title p{font-size:.75rem;color:#64748b}
+#minimap{position:absolute;bottom:1rem;right:1rem;width:150px;height:100px;background:rgba(15,23,42,.6);border:1px solid #334155;border-radius:.5rem;z-index:5}
+</style>
+</head>
+<body>
+<div id="title"><h1>AWES Research Network</h1><p>60 authors · co-authorship links · K1 Knowledge Graph</p></div>
+<div id="tooltip"></div>
+<div id="graph"></div>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const DATA = {"nodes": [{"id": "author_roland_schmehl", "name": "Roland Schmehl", "papers": 74, "years": "2011-2026", "affiliation": "TU Delft", "color": "#f87171"}, {"id": "author_moritz_diehl", "name": "Moritz Diehl", "papers": 22, "years": "2014-2022", "affiliation": "Syscop lab, University of Freiburg", "color": "#fbbf24"}, {"id": "author_lorenzo_fagiano", "name": "Lorenzo Fagiano", "papers": 21, "years": "2007-2022", "affiliation": "ABB Schweiz", "color": "#34d399"}, {"id": "author_jochem_de_schutter", "name": "Jochem De Schutter", "papers": 14, "years": "2017-2023", "affiliation": "Freiburg", "color": "#38bdf8"}, {"id": "author_r_schmehl", "name": "R. Schmehl", "papers": 13, "years": "2011-2025", "affiliation": "Delft University of Technology", "color": "#a78bfa"}, {"id": "author_rachel_leuthold", "name": "Rachel Leuthold", "papers": 11, "years": "2018-2022", "affiliation": "University of Freiburg", "color": "#f472b6"}, {"id": "author_filippo_trevisi", "name": "Filippo Trevisi", "papers": 8, "years": "2020-2024", "affiliation": "Politecnico di Milano, Department o", "color": "#fb923c"}, {"id": "author_mac_gaunaa", "name": "Mac Gaunaa", "papers": 8, "years": "2019-2023", "affiliation": "DTU Wind Energy", "color": "#22d3ee"}, {"id": "author_schmehl_r", "name": "Schmehl R", "papers": 8, "years": "2018-2020", "affiliation": "TU Delft", "color": "#f87171"}, {"id": "author_peter_jamieson", "name": "Peter Jamieson", "papers": 7, "years": "2012-2014", "affiliation": "Strathclyde University", "color": "#818cf8"}, {"id": "author_philip_bechtle", "name": "Philip Bechtle", "papers": 7, "years": "2017-2019", "affiliation": "Universit\u00e4t Bonn", "color": "#e879f9"}, {"id": "author_pierre_benha_em", "name": "Pierre Benha\u00efem", "papers": 7, "years": "2024-2024", "affiliation": "Orange", "color": "#f87171"}, {"id": "author_thomas_haas", "name": "Thomas Haas", "papers": 7, "years": "2022-2025", "affiliation": "Ghent University / Flanders Make (C", "color": "#fbbf24"}, {"id": "author_uwe_fechner", "name": "uwe-fechner", "papers": 6, "years": "2014-2017", "affiliation": "TU Delft", "color": "#f87171"}, {"id": "author_oliver_tulloch", "name": "Oliver Tulloch", "papers": 6, "years": "2021-2022", "affiliation": "University of Strathclyde, Glasgow ", "color": "#34d399"}, {"id": "author_alessandro_croce", "name": "Alessandro Croce", "papers": 6, "years": "2022-2024", "affiliation": "Politecnico di Milano", "color": "#fb923c"}, {"id": "author_s_gros", "name": "S Gros", "papers": 6, "years": "2012-2020", "affiliation": "KU Leuven, Electrical Engineering D", "color": "#38bdf8"}, {"id": "author_antonello_cherubini", "name": "Antonello Cherubini", "papers": 6, "years": "2015-2017", "affiliation": "Scuola Superiore Sant'Anna, Tecip I", "color": "#a78bfa"}, {"id": "author_mark_schelbergen", "name": "Mark Schelbergen", "papers": 6, "years": "2019-2024", "affiliation": "Delft University of Technology", "color": "#a78bfa"}, {"id": "author_axelle_vir", "name": "Axelle Vir\u00e9", "papers": 6, "years": "2019-2020", "affiliation": "TU Delft (Faculty of Aerospace Engi", "color": "#f472b6"}, {"id": "author_g_s_nchez_arriaga", "name": "G. S\u00e1nchez-Arriaga", "papers": 5, "years": "2017-2019", "affiliation": "Universidad Carlos III de Madrid", "color": "#fb923c"}, {"id": "author_w_j_ockels", "name": "W.J. Ockels", "papers": 5, "years": "2009-2011", "affiliation": "TU Delft, ASSET", "color": "#22d3ee"}, {"id": "author_johannes_oehler", "name": "Johannes Oehler", "papers": 5, "years": "2018-2018", "affiliation": "Kitepower B.V.", "color": "#818cf8"}, {"id": "author_urban_fasel", "name": "Urban Fasel", "papers": 5, "years": "2017-2021", "affiliation": "ETH Zurich", "color": "#e879f9"}, {"id": "author_marco_fontana", "name": "Marco Fontana", "papers": 5, "years": "2015-2017", "affiliation": "Scuola Superiore Sant\u2019Anna", "color": "#a78bfa"}, {"id": "author_udo_zillmann", "name": "Udo Zillmann", "papers": 5, "years": "2018-2019", "affiliation": "Airborne Wind Europe", "color": "#f87171"}, {"id": "author_florian_bauer", "name": "Florian Bauer", "papers": 5, "years": "2017-2022", "affiliation": "kiteKRAFT GmbH", "color": "#fbbf24"}, {"id": "author_rod_read", "name": "Rod Read", "papers": 5, "years": "?", "affiliation": "Windswept and Interesting Ltd", "color": "#34d399"}, {"id": "author_de_schutter", "name": "De Schutter", "papers": 5, "years": "?", "affiliation": "Freiburg", "color": "#38bdf8"}, {"id": "author_hong_yue", "name": "Hong Yue", "papers": 5, "years": "2021-2024", "affiliation": "Wind Energy and Control Centre (WEC", "color": "#38bdf8"}, {"id": "author_roderick_read", "name": "Roderick Read", "papers": 5, "years": "2022-2022", "affiliation": "Windswept and Interesting Ltd", "color": "#34d399"}, {"id": "author_mikko_folkersma", "name": "Mikko Folkersma", "papers": 5, "years": "2019-2020", "affiliation": "TU Delft (Faculty of Aerospace Engi", "color": "#f472b6"}, {"id": "author_m_diehl", "name": "M Diehl", "papers": 5, "years": "2006-2019", "affiliation": "KU Leuven, Electrical Engineering D", "color": "#38bdf8"}, {"id": "author_johan_meyers", "name": "Johan Meyers", "papers": 5, "years": "2012-2022", "affiliation": "KU Leuven", "color": "#a78bfa"}, {"id": "author_a_pastor_rodr_guez", "name": "A. Pastor-Rodr\u00edguez", "papers": 4, "years": "2018-2019", "affiliation": "Universidad Carlos III de Madrid", "color": "#fb923c"}, {"id": "author_sigitas_rimkus", "name": "Sigitas Rimkus", "papers": 4, "years": "2013-2013", "affiliation": "University of Central Florida, Mech", "color": "#f472b6"}, {"id": "author_tuhin_das", "name": "Tuhin Das", "papers": 4, "years": "2013-2013", "affiliation": "University of Central Florida, Mech", "color": "#f472b6"}, {"id": "author_r_borobia_moreno", "name": "R. Borobia-Moreno", "papers": 4, "years": "2018-2018", "affiliation": "Flight Mechanics Area, Aircraft Dep", "color": "#fb923c"}, {"id": "author_damon_vander_lind", "name": "Damon Vander Lind", "papers": 4, "years": "2013-2018", "affiliation": "Google[x] Makani Power", "color": "#22d3ee"}, {"id": "author_thomas_gehrmann", "name": "Thomas Gehrmann", "papers": 4, "years": "2016-2016", "affiliation": "Universit\u00e4t Bonn", "color": "#e879f9"}, {"id": "author_espen_oland", "name": "Espen Oland", "papers": 4, "years": "2022-2026", "affiliation": "Kitemill AS, Voss, Norway", "color": "#818cf8"}, {"id": "author_diehl", "name": "Diehl", "papers": 4, "years": "?", "affiliation": "Freiburg", "color": "#38bdf8"}, {"id": "author_christof_beaupoil", "name": "Christof Beaupoil", "papers": 4, "years": "2019-2024", "affiliation": "someAWE Labs", "color": "#e879f9"}, {"id": "author_michael_mcwilliam", "name": "Michael McWilliam", "papers": 4, "years": "2020-2022", "affiliation": "DTU Wind Energy", "color": "#22d3ee"}, {"id": "author_rishikesh_joshi", "name": "Rishikesh Joshi", "papers": 4, "years": "2024-2024", "affiliation": "TU Delft (Faculty of Aerospace Engi", "color": "#f472b6"}, {"id": "author_p_jamieson", "name": "P Jamieson", "papers": 4, "years": "2014-2016", "affiliation": "University of Strathclyde", "color": "#34d399"}, {"id": "author_mario_milanese", "name": "Mario Milanese", "papers": 4, "years": "2007-2012", "affiliation": "Politecnico di Torino", "color": "#f87171"}, {"id": "author_gonzalo_s_nchez_arriaga", "name": "Gonzalo S\u00e1nchez Arriaga", "papers": 4, "years": "2019-2024", "affiliation": "Universidad Carlos III de Madrid (U", "color": "#fb923c"}, {"id": "author_dylan_eijkelhof", "name": "Dylan Eijkelhof", "papers": 4, "years": "2019-2026", "affiliation": "Delft University of Technology", "color": "#a78bfa"}, {"id": "author_dietmar_g_hlich", "name": "Dietmar G\u00f6hlich", "papers": 4, "years": "2018-2024", "affiliation": "TU Berlin", "color": "#fbbf24"}, {"id": "author_michael_erhard", "name": "Michael Erhard", "papers": 4, "years": "2018-2018", "affiliation": "Hamburg Univ. Applied Sciences", "color": "#34d399"}, {"id": "author_fernando_a_c_c_fontes", "name": "Fernando A.C.C Fontes", "papers": 4, "years": "2018-2021", "affiliation": "SYSTEC\u2013ISR, Faculdade de Engenharia", "color": "#38bdf8"}, {"id": "author_niels_pynaert", "name": "Niels Pynaert", "papers": 4, "years": "2020-2025", "affiliation": "Ghent University / Flanders Make (C", "color": "#fbbf24"}, {"id": "author_volkan_salma", "name": "Volkan Salma", "papers": 4, "years": "2018-2020", "affiliation": "European Space Research and Technol", "color": "#a78bfa"}, {"id": "author_markus_sommerfeld", "name": "Markus Sommerfeld", "papers": 4, "years": "2020-2023", "affiliation": "UVic", "color": "#f472b6"}, {"id": "author_m_sanjurjo_rivo", "name": "M. Sanjurjo-Rivo", "papers": 3, "years": "2019-2019", "affiliation": "Universidad Carlos III de Madrid", "color": "#fb923c"}, {"id": "author_steven_businger", "name": "Steven Businger", "papers": 3, "years": "?", "affiliation": "SOEST/UHM", "color": "#fb923c"}, {"id": "author_massimo_ippolito", "name": "Massimo Ippolito", "papers": 3, "years": "?", "affiliation": "Sequoia Automation S.r.l.", "color": "#22d3ee"}, {"id": "author_ricardo_borobia_moreno", "name": "Ricardo Borobia-Moreno", "papers": 3, "years": "2018-2018", "affiliation": "Instituto Nacional de Tecnolog\u00eda Ag", "color": "#818cf8"}, {"id": "author_ranjan_mukherjee", "name": "Ranjan Mukherjee", "papers": 3, "years": "?", "affiliation": "Michigan State University", "color": "#e879f9"}], "edges": [{"source": "author_jochem_de_schutter", "target": "author_moritz_diehl", "weight": 13}, {"source": "author_johannes_oehler", "target": "author_roland_schmehl", "weight": 10}, {"source": "author_moritz_diehl", "target": "author_rachel_leuthold", "weight": 10}, {"source": "author_philip_bechtle", "target": "author_roland_schmehl", "weight": 9}, {"source": "author_g_s_nchez_arriaga", "target": "author_r_schmehl", "weight": 9}, {"source": "author_jochem_de_schutter", "target": "author_rachel_leuthold", "weight": 8}, {"source": "author_philip_bechtle", "target": "author_udo_zillmann", "weight": 8}, {"source": "author_antonello_cherubini", "target": "author_marco_fontana", "weight": 7}, {"source": "author_mark_schelbergen", "target": "author_roland_schmehl", "weight": 7}, {"source": "author_a_pastor_rodr_guez", "target": "author_r_schmehl", "weight": 7}, {"source": "author_sigitas_rimkus", "target": "author_tuhin_das", "weight": 6}, {"source": "author_axelle_vir", "target": "author_roland_schmehl", "weight": 6}, {"source": "author_r_borobia_moreno", "target": "author_r_schmehl", "weight": 6}, {"source": "author_a_pastor_rodr_guez", "target": "author_g_s_nchez_arriaga", "weight": 6}, {"source": "author_marco_fontana", "target": "author_roland_schmehl", "weight": 5}, {"source": "author_marco_fontana", "target": "author_philip_bechtle", "weight": 5}, {"source": "author_rachel_leuthold", "target": "author_roland_schmehl", "weight": 5}, {"source": "author_axelle_vir", "target": "author_mikko_folkersma", "weight": 5}, {"source": "author_oliver_tulloch", "target": "author_roderick_read", "weight": 5}, {"source": "author_mikko_folkersma", "target": "author_roland_schmehl", "weight": 5}, {"source": "author_antonello_cherubini", "target": "author_roland_schmehl", "weight": 5}, {"source": "author_antonello_cherubini", "target": "author_philip_bechtle", "weight": 5}, {"source": "author_m_sanjurjo_rivo", "target": "author_r_schmehl", "weight": 5}, {"source": "author_roland_schmehl", "target": "author_udo_zillmann", "weight": 5}, {"source": "author_dietmar_g_hlich", "target": "author_roland_schmehl", "weight": 5}, {"source": "author_a_pastor_rodr_guez", "target": "author_m_sanjurjo_rivo", "weight": 5}, {"source": "author_hong_yue", "target": "author_oliver_tulloch", "weight": 5}, {"source": "author_mac_gaunaa", "target": "author_michael_mcwilliam", "weight": 4}, {"source": "author_ranjan_mukherjee", "target": "author_sigitas_rimkus", "weight": 4}, {"source": "author_ranjan_mukherjee", "target": "author_tuhin_das", "weight": 4}, {"source": "author_johan_meyers", "target": "author_thomas_haas", "weight": 4}, {"source": "author_philip_bechtle", "target": "author_thomas_gehrmann", "weight": 4}, {"source": "author_alessandro_croce", "target": "author_filippo_trevisi", "weight": 4}, {"source": "author_florian_bauer", "target": "author_lorenzo_fagiano", "weight": 4}, {"source": "author_roland_schmehl", "target": "author_uwe_fechner", "weight": 4}, {"source": "author_roland_schmehl", "target": "author_volkan_salma", "weight": 4}, {"source": "author_de_schutter", "target": "author_diehl", "weight": 4}, {"source": "author_lorenzo_fagiano", "target": "author_mario_milanese", "weight": 4}, {"source": "author_g_s_nchez_arriaga", "target": "author_m_sanjurjo_rivo", "weight": 4}, {"source": "author_g_s_nchez_arriaga", "target": "author_r_borobia_moreno", "weight": 4}, {"source": "author_thomas_gehrmann", "target": "author_udo_zillmann", "weight": 4}, {"source": "author_damon_vander_lind", "target": "author_roland_schmehl", "weight": 4}, {"source": "author_dylan_eijkelhof", "target": "author_roland_schmehl", "weight": 4}, {"source": "author_espen_oland", "target": "author_lorenzo_fagiano", "weight": 4}, {"source": "author_espen_oland", "target": "author_florian_bauer", "weight": 4}, {"source": "author_ricardo_borobia_moreno", "target": "author_roland_schmehl", "weight": 4}, {"source": "author_mark_schelbergen", "target": "author_philip_bechtle", "weight": 4}, {"source": "author_mark_schelbergen", "target": "author_udo_zillmann", "weight": 4}, {"source": "author_hong_yue", "target": "author_roderick_read", "weight": 4}, {"source": "author_jochem_de_schutter", "target": "author_markus_sommerfeld", "weight": 3}, {"source": "author_mac_gaunaa", "target": "author_roland_schmehl", "weight": 3}, {"source": "author_lorenzo_fagiano", "target": "author_roland_schmehl", "weight": 3}, {"source": "author_m_diehl", "target": "author_s_gros", "weight": 3}, {"source": "author_niels_pynaert", "target": "author_thomas_haas", "weight": 3}, {"source": "author_a_pastor_rodr_guez", "target": "author_r_borobia_moreno", "weight": 3}, {"source": "author_jochem_de_schutter", "target": "author_thomas_haas", "weight": 2}, {"source": "author_jochem_de_schutter", "target": "author_johan_meyers", "weight": 2}, {"source": "author_filippo_trevisi", "target": "author_mac_gaunaa", "weight": 2}, {"source": "author_johan_meyers", "target": "author_moritz_diehl", "weight": 2}, {"source": "author_alessandro_croce", "target": "author_lorenzo_fagiano", "weight": 2}, {"source": "author_alessandro_croce", "target": "author_roland_schmehl", "weight": 2}, {"source": "author_roland_schmehl", "target": "author_schmehl_r", "weight": 2}, {"source": "author_rishikesh_joshi", "target": "author_roland_schmehl", "weight": 2}, {"source": "author_moritz_diehl", "target": "author_roland_schmehl", "weight": 2}, {"source": "author_moritz_diehl", "target": "author_thomas_haas", "weight": 2}, {"source": "author_mac_gaunaa", "target": "author_urban_fasel", "weight": 1}, {"source": "author_michael_erhard", "target": "author_moritz_diehl", "weight": 1}, {"source": "author_r_schmehl", "target": "author_w_j_ockels", "weight": 1}, {"source": "author_filippo_trevisi", "target": "author_michael_mcwilliam", "weight": 1}, {"source": "author_axelle_vir", "target": "author_mark_schelbergen", "weight": 1}, {"source": "author_gonzalo_s_nchez_arriaga", "target": "author_ricardo_borobia_moreno", "weight": 1}, {"source": "author_gonzalo_s_nchez_arriaga", "target": "author_rachel_leuthold", "weight": 1}, {"source": "author_gonzalo_s_nchez_arriaga", "target": "author_moritz_diehl", "weight": 1}, {"source": "author_p_jamieson", "target": "author_peter_jamieson", "weight": 1}, {"source": "author_roderick_read", "target": "author_roland_schmehl", "weight": 1}, {"source": "author_oliver_tulloch", "target": "author_roland_schmehl", "weight": 1}, {"source": "author_oliver_tulloch", "target": "author_rod_read", "weight": 1}, {"source": "author_florian_bauer", "target": "author_r_schmehl", "weight": 1}, {"source": "author_m_sanjurjo_rivo", "target": "author_r_borobia_moreno", "weight": 1}, {"source": "author_roland_schmehl", "target": "author_urban_fasel", "weight": 1}, {"source": "author_lorenzo_fagiano", "target": "author_rachel_leuthold", "weight": 1}, {"source": "author_lorenzo_fagiano", "target": "author_moritz_diehl", "weight": 1}, {"source": "author_christof_beaupoil", "target": "author_gonzalo_s_nchez_arriaga", "weight": 1}, {"source": "author_dylan_eijkelhof", "target": "author_mac_gaunaa", "weight": 1}, {"source": "author_dylan_eijkelhof", "target": "author_urban_fasel", "weight": 1}, {"source": "author_hong_yue", "target": "author_rod_read", "weight": 1}]};
+
+const W = window.innerWidth, H = window.innerHeight;
+
+const svg = d3.select("#graph").append("svg")
+  .attr("width", W).attr("height", H);
+
+const g = svg.append("g");
+
+// Zoom
+const zoom = d3.zoom().scaleExtent([0.1, 6]).on("zoom", (e) => g.attr("transform", e.transform));
+svg.call(zoom);
+svg.call(zoom.transform, d3.zoomIdentity.translate(W/2, H/2));
+
+// Tooltip
+const tip = d3.select("#tooltip");
+
+// Scales
+const sizeScale = d3.scaleSqrt().domain([1, 74]).range([5, 40]);
+const linkScale = d3.scaleLinear().domain([1, 13]).range([0.3, 3]);
+
+// Simulation
+const sim = d3.forceSimulation(DATA.nodes)
+  .force("link", d3.forceLink(DATA.edges).id(d => d.id).distance(120))
+  .force("charge", d3.forceManyBody().strength(-300))
+  .force("center", d3.forceCenter(0, 0))
+  .force("collision", d3.forceCollide().radius(d => sizeScale(d.papers) + 4));
+
+// Links
+const link = g.append("g").selectAll("line")
+  .data(DATA.edges).join("line")
+  .attr("stroke", "#334155")
+  .attr("stroke-width", d => linkScale(d.weight))
+  .attr("stroke-opacity", 0.4);
+
+// Nodes
+const node = g.append("g").selectAll("circle")
+  .data(DATA.nodes).join("circle")
+  .attr("r", d => sizeScale(d.papers))
+  .attr("fill", d => d.color)
+  .attr("stroke", "#1e293b")
+  .attr("stroke-width", 1.5)
+  .attr("cursor", "pointer")
+  .on("mouseover", (ev, d) => {
+    tip.style("opacity", 1)
+      .html(`<div class="name">${d.name}</div>
+        <div class="detail">📄 ${d.papers} papers · ${d.years}</div>
+        <div class="detail">🏛 ${d.affiliation}</div>`);
+  })
+  .on("mousemove", (ev) => {
+    tip.style("left", (ev.pageX+15)+"px").style("top", (ev.pageY-15)+"px");
+  })
+  .on("mouseout", () => tip.style("opacity", 0))
+  .call(d3.drag()
+    .on("start", (ev, d) => { if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+    .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
+    .on("end", (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+// Labels
+const label = g.append("g").selectAll("text")
+  .data(DATA.nodes).join("text")
+  .text(d => d.name)
+  .attr("font-size", d => Math.max(8, sizeScale(d.papers) * 0.45))
+  .attr("fill", "#94a3b8")
+  .attr("text-anchor", "middle")
+  .attr("dy", d => sizeScale(d.papers) + 12);
+
+// Tick
+sim.on("tick", () => {
+  link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+  node.attr("cx", d => d.x).attr("cy", d => d.y);
+  label.attr("x", d => d.x).attr("y", d => d.y);
+});
+
+// Minimap
+const mini = d3.select("#minimap").append("svg").attr("width", 150).attr("height", 100);
+const mg = mini.append("g");
+const miniScale = 0.08;
+mg.selectAll("circle").data(DATA.nodes).join("circle")
+  .attr("cx", d => (d.x || 0) * miniScale + 75)
+  .attr("cy", d => (d.y || 0) * miniScale + 50)
+  .attr("r", 2)
+  .attr("fill", d => d.color)
+  .attr("opacity", 0.6);
+</script>
+</body>
+</html>
