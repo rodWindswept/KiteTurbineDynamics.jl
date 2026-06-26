@@ -1,0 +1,22 @@
+# V10 Tight dashboard — no lowest expansion blades
+# 
+# Launch from KTD.jl root:
+julia --project=. scripts/interactive_dashboard.jl --v10-tight
+
+# The V10 Tight winner (49.2 kg, 4 rotors, Island 1) with the lowest
+# expansion rotor removed. Uses best_design.json from v10_campaign_50kw/.
+#
+# If --v10-tight is not yet in the dashboard, first apply the patch:
+#   - Flag added at line 57 of scripts/interactive_dashboard.jl
+#   - Config detection at line 342
+#   - Build function at line 275  
+#   - Case handler at line 357
+#
+# Design parameters (from best_design.json):
+#   r_hub = 2.89 m    r_bottom = 2.00 m
+#   Do_top = 0.06 m    t_over_D = 0.01
+#   target_Lr = 3.0 m  n_lines = 12
+#   density_profile = -0.11
+#   λ_top = 0.519      λ_bottom = 0.10
+#   bank_top = 32°     bank_bottom = 35°
+#   mass = 49.20 kg    4 rotors → 3 (drop lowest)

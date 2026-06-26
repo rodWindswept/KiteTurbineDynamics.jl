@@ -55,6 +55,9 @@ function parse_commandline()
         "--v10-island51"
             help = "Use V10 Island 51 alt-basin design (2 rotors, 76.75 kg)"
             action = :store_true
+        "--v10-tight"
+            help = "Use V10 Tight winner (49.2 kg, 4 rotors, without lowest expansion)"
+            action = :store_true
         "--v67"
             help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
             action = :store_true
@@ -269,6 +272,51 @@ function build_from_campaign_v10(campaign_dir::String, label::String; vector_fil
     return sys, u0, p_campaign, label
 end
 
+# ── Build V10 Tight winner, drop lowest expansion rotor ──
+function build_v10_tight_no_lowest()
+    import JSON3
+    best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
+    isfile(best_path) || error("best_design.json not found")
+    best = JSON3.read(read(best_path, String))
+    x = Float64[
+        best.r_hub_m, best.r_bottom_m, best.Do_top_m, best.t_over_D,
+        best.target_Lr, Float64(best.n_lines), best.density_profile,
+        0.519, 0.10, 32.0, 35.0,
+        Float64(best.n_active_rotors), 1.0, best.aspect_ratio, 1.0
+    ]
+    result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw(); 
+                                     max_ground_radius=5.0, power_W=50000.0)
+    rotors = sort(result.rotors, by=r -> r.ring_idx, rev=true)
+    if length(rotors) > 1
+        dropped = popfirst!(rotors)
+        println("Dropped lowest expansion rotor at ring $(dropped.ring_idx)")
+    end
+    n_exp = length(rotors)
+    n_lines = result.design.n_lines
+    n_rings = result.n_rings
+    expansion_params = ExpansionParams[]
+    for rotor in rotors
+        sr = rotor.ring_idx == n_rings ? n_rings + 2 : rotor.ring_idx + 1
+        push!(expansion_params, ExpansionParams(
+            ring_index=sr, n_blades=n_lines,
+            blade_scale=rotor.blade_scale, bank_angle_deg=rotor.bank_angle_deg))
+    end
+    p_base = params_v5_50kw()
+    geo = GeometrySpec(n_lines, n_rings, n_exp, result.design.r_bottom,
+                       result.design.tether_length, result.design.r_hub, p_base.trpt_rL_ratio,
+                       n_lines, n_rings, n_lines)
+    mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
+    aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
+    le = isempty(rotors) ? 1.0 : rotors[1].blade_scale
+    km = p_base.k_mppt * le^2
+    ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
+    back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
+    pc = SystemParams(geo, mat, aero, ctrl, back)
+    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
+    println("V10 Tight no-lowest: n_lines=$n_lines n_rotors=$n_exp rings=$n_rings mass=$(round(best.best_mass_kg,digits=2))kg")
+    return sys, u0, pc, "V10 Tight ($n_exp rotors)"
+end
+
 # ── Build system from campaign best_design.json ──────────────────────────
 function build_from_campaign(campaign_dir::String, label::String; params_fn=params_v5_50kw)
     json_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_design.json")
@@ -336,7 +384,8 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v10-island51"] ? "V10 Island 51 alt-basin" :
+    current_config = args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
+                     args["v10-island51"] ? "V10 Island 51 alt-basin" :
                      args["v10"] ? "V10 unified rotors" :
                      args["v9"] && !args["v9-10kw"] ? "V9.0 50kW equilibrium" :
                      args["v9-10kw"] ? "V9.0 10kW equilibrium" :
@@ -350,7 +399,10 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V10 Island 51 alt-basin"
+        if current_config == "V10 Tight (no lowest expansion)"
+            # Load V10 Tight winner from best_design.json, drop lowest expansion rotor
+            sys, u0, p, label = build_v10_tight_no_lowest()
+        elseif current_config == "V10 Island 51 alt-basin"
             sys, u0, p, label = build_from_campaign_v10("v10_campaign_50kw", "V10 Island 51"; 
                                                          vector_file="best_vector_island51.csv")
         elseif current_config == "V10 unified rotors"
