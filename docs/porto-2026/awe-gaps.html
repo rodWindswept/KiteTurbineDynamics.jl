@@ -71,9 +71,9 @@ const node = g.append("g").selectAll("circle")
   .attr("cursor", "pointer")
   .on("mouseover", (ev, d) => {
     tip.style("opacity", 1)
-      .html(`<div class="name">${d.name}</div>
-        <div class="detail">📄 ${d.papers} papers · ${d.years}</div>
-        <div class="detail">🏛 ${d.affiliation}</div>`);
+      .html(`<div class="name">${d.label}</div>
+        <div class="detail">📄 Flagged by ${d.papers} papers</div>
+        <div class="detail">🏷 ${d.group}</div>`);
   })
   .on("mousemove", (ev) => {
     tip.style("left", (ev.pageX+15)+"px").style("top", (ev.pageY-15)+"px");
@@ -87,7 +87,7 @@ const node = g.append("g").selectAll("circle")
 // Labels
 const label = g.append("g").selectAll("text")
   .data(DATA.nodes).join("text")
-  .text(d => d.name)
+  .text(d => d.label)
   .attr("font-size", d => Math.max(8, sizeScale(d.papers) * 0.45))
   .attr("fill", "#94a3b8")
   .attr("text-anchor", "middle")
