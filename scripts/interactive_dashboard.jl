@@ -274,7 +274,6 @@ end
 
 # ── Build V10 Tight winner, drop lowest expansion rotor ──
 function build_v10_tight_no_lowest()
-    import JSON3
     best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
     isfile(best_path) || error("best_design.json not found")
     best = JSON3.read(read(best_path, String))
