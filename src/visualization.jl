@@ -725,6 +725,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     field_imu_obs    = Observable(false)
     depower_seq_obs  = Observable(1)
 
+    # Auto-Ramp: soft-ramp k_mppt controller (Phase B)
+    auto_ramp_obs  = Observable(false)
+    ramp_ctrl_obs  = Observable(RampController())
+    ramp_state_obs = Observable("IDLE")
+
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
             (pos, t) -> begin
@@ -821,6 +826,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                         β_rate_max      = ctrl_mode_val,
                         β_min           = payout_base_val,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
+            sys.k_mppt_ref[] = p_run.k_mppt  # sync live ref for ODE
+            # Reset auto-ramp controller for new run
+            if auto_ramp_obs[]
+                ctrl = ramp_ctrl_obs[]
+                ctrl.P_target = p.p_rated_w  # track the active power rating
+                ctrl.fos_soft = Float64(sl_fos_soft.value[])   # from dashboard slider
+                ctrl.fos_hard = Float64(sl_fos_hard.value[])   # from dashboard slider
+                reset!(ctrl)
+                init_geometry!(ctrl, sys, p_run)  # compute per-segment δα*
+                ramp_state_obs[] = state_label(ctrl)
+            end
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
@@ -966,6 +982,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                         backline_payout = L_winch,
                         k_mppt          = p_run.k_mppt * k_mppt_scale,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
+                    sys.k_mppt_ref[] = p_active.k_mppt  # live ref for ODE
                     ode_p = isnothing(ld) ? (sys, p_active, wf) : (sys, p_active, wf, ld)
                 end
 
@@ -1006,6 +1023,18 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     new_times[fi] = t
                     new_params[fi] = p_active
                     new_sim_frames[fi] = capture_frame(u, sys, p_active, t, wf, ld; brake_engaged=sys.brake_engaged[])
+                    # Auto-ramp controller update (runs at frame rate ~50 Hz)
+                    if auto_ramp_obs[]
+                        ctrl_dt = dt * save_every
+                        ctrl = ramp_ctrl_obs[]
+                        sf = new_sim_frames[fi]
+                        min_fos_val = sf.fos_ring
+                        collapse_margin = min_collapse_margin(u, sys, ctrl)
+                        new_state = update_ramp!(ctrl, sys, sf, ctrl_dt;
+                            min_fos=min_fos_val,
+                            collapse_margin_deg=collapse_margin)
+                        ramp_state_obs[] = state_label(ctrl)
+                    end
                     fi += 1
                 end
             end
@@ -1485,11 +1514,41 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
     # V10 configs need finer resolution at low k_mppt (dynamic sweet spot ~62)
     kmppt_start = clamp(p.k_mppt, 1.0, 2000.0)
-    kmppt_range = startswith(config_name, "V10") ? 10.0:1.0:200.0 : 1.0:1.0:2000.0
+    kmppt_range = startswith(config_name, "V10") ? (10.0:1.0:200.0) : (1.0:1.0:2000.0)
     clbl("MPPT gain k_mppt"; fontsize=11)
     sl_kmppt = cslider!(kmppt_range; start=clamp(kmppt_start, minimum(kmppt_range), maximum(kmppt_range)))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
+
+    # Auto-Ramp: soft-ramp k_mppt controller toggle + state indicator
+    ramp_tog_row = GridLayout(ctrl[cnr!(), 1])
+    Label(ramp_tog_row[1, 1]; text="Auto-Ramp k_mppt", fontsize=11, halign=:left, tellwidth=false)
+    auto_ramp_toggle = Toggle(ramp_tog_row[1, 2]; active=auto_ramp_obs[], framecolor_active=to_color(:cyan))
+    on(auto_ramp_toggle.active) do v
+        auto_ramp_obs[] = v
+        if !v
+            ramp_state_obs[] = "OFF"
+        end
+    end
+    ramp_state_lbl = clbl("State: OFF"; fontsize=10, color=:grey70)
+    on(ramp_state_obs) do txt
+        ramp_state_lbl.text[] = "State: " * txt
+    end
+
+    # FoS thresholds for Auto-Ramp (Phase C)
+    clbl("FoS soft limit"; fontsize=10, color=:grey70)
+    sl_fos_soft = Slider(ctrl[cnr!(), 1]; range=1.5:0.1:5.0, startvalue=2.5)
+    vl_fos_soft = cval_lbl!(@sprintf("taper below %.1f", 2.5); fontsize=9, color=:grey60)
+    on(sl_fos_soft.value) do v
+        vl_fos_soft.text[] = @sprintf("taper below %.1f", v)
+    end
+
+    clbl("FoS hard floor"; fontsize=10, color=:grey70)
+    sl_fos_hard = Slider(ctrl[cnr!(), 1]; range=1.0:0.1:3.0, startvalue=1.5)
+    vl_fos_hard = cval_lbl!(@sprintf("freeze at %.1f", 1.5); fontsize=9, color=:grey60)
+    on(sl_fos_hard.value) do v
+        vl_fos_hard.text[] = @sprintf("freeze at %.1f", v)
+    end
 
     # Elevation angle — shaft tilt; trades rotor power (cos³β) for vertical lift
     clbl("Elevation β (deg)"; fontsize=11)

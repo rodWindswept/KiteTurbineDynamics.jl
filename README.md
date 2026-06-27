@@ -582,7 +582,7 @@ under-loaded regions that carry excess mass.
 
 This is the most important open engineering gap. The structural fitness function evaluates
 Euler column buckling FoS and beam manufacturability only. It does not enforce any constraint
-on torsional collapse. Tulloch (PhD thesis, TU Delft) and Wacker (unpublished analysis)
+on torsional collapse. Tulloch (PhD thesis, University of Strathclyde) and Wacker (unpublished analysis)
 derived the geometric limit at which a TRPT shaft collapses torsionally: the applied twist
 angle per unit length must not exceed the limit set by the helical line geometry and ring
 radius. This constraint is not currently computed or checked in `evaluate_design()`. Designs

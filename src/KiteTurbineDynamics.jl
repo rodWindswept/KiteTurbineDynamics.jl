@@ -21,6 +21,7 @@ include("structural_safety.jl")
 include("ring_element_analysis.jl")
 include("lift_kite.jl")
 include("sim_frame.jl")
+include("soft_ramp_controller.jl")
 include("visualization.jl")
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
@@ -73,6 +74,11 @@ export SimFrame,
     get_max_rope_tension,
     get_segment_tension
 export build_dashboard
+
+# Soft-ramp k_mppt controller
+export RampState, IDLE, RAMPING, HOLDING
+export RampController, update_ramp!, reset!, state_label
+export init_geometry!, min_collapse_margin
 
 # Catenary model
 export catenary_forces, solve_catenary_a, dyneema_weight_Npm

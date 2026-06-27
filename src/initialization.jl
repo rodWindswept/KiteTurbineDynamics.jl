@@ -223,7 +223,8 @@ function _build_kite_turbine_system_impl(
         n_ring,
         n_total,
         [zeros(3) for _ in 1:n_ring],
-        Ref(false),
+        Ref(false),                    # brake_engaged
+        Ref(p.k_mppt),                # k_mppt_ref — live MPPT gain
         kite_pos_init,
         expansion_rotors,            # expansion rotors from caller
         copy(ring_radii),

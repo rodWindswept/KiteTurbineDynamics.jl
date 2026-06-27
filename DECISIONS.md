@@ -24,6 +24,119 @@ following the checklist rather than ~45 minutes of fix-push-retry cycles.
 
 **Status.** Active. The skill is at `~/.hermes/skills/ktd-dashboard-config/`.
 
+## 2026-06-27: Soft-ramp k_mppt controller — architecture, constraints, and control philosophy
+
+**Context:** The V10 Tight winner (49.2 kg, 4 rotors) is dynamically underpowered: the
+static equilibrium solver predicts 59 rpm / 50 kW at k_mppt_eff=166, but the multibody
+ODE reaches only 55.6 rpm / 12.1 kW at k_mppt=62. The static solver assumes instant,
+lossless torque propagation through the TRPT, but torque propagates sequentially through
+each ring pair's torsional spring-damper chain (k_sec, c_s). A manual k_mppt slider
+in the dashboard requires the operator to hunt for the sweet spot — fragile and
+unrepeatable.
+
+The original plan (`docs/plans/2026-06-26-soft-ramp-kmppt.md`) proposed a PID controller
+with state machine and slack-line detection. A detailed review on 2026-06-27 revised
+six aspects based on TRPT physics and Tulloch's torsional collapse analysis.
+
+**What was decided:**
+
+### 1. Slack lines dropped as control signal
+
+The original plan proposed "react to slack within 1–2 ODE steps." Polygon ring
+redistribution handles local slack naturally — the tension-only spring law
+`T = max(0, EA·strain + c·damp·rate)` already models the correct physics. 1–2 slack
+lines between a ring pair is a symptom of geometry settling after a load change,
+not a failure trigger. The rings redistribute and the slack resolves. Slack is
+NOT used as a controller input.
+
+### 2. k_mppt made mutable via Ref{Float64}
+
+Currently `p.k_mppt` lives in the immutable `SystemParams` struct. A `Ref{Float64}`
+added to `KiteTurbineSystem` provides a single pointer dereference — one memory load
+per generator torque evaluation. The ODE already uses this pattern for
+`sys.brake_engaged[]`. Rope force computations (hundreds of `norm()`, `sqrt()`,
+spring-damper evals per step) dominate runtime by 3–4 orders of magnitude. The
+overhead is unmeasurable.
+
+### 3. Halving k_mppt on FoS violation would cause overspeed
+
+The original plan proposed PROTECT state: "FoS < 1.5 → aggressive k_mppt reduction."
+If FoS drops during a gust, halving k_mppt → generator pulls less torque → rotor
+accelerates → more aero torque → more structural load. This is a positive feedback
+loop toward overspeed. The correct action is to **hold or reduce ramp rate**, not
+release the generator load. The generator is the only brake the TRPT has.
+
+### 4. FoS soft intervention at 2.5, hard floor at 1.5
+
+A hard freeze at FoS = 1.5 creates a control discontinuity that could excite the
+TRPT's torsional modes (underdamped locally, ζ=1.0 at ring-pair level, but global
+mode coupling means a sharp k_mppt change can ring). A linear taper from FoS = 2.5
+(full ramp rate) to FoS = 1.5 (zero ramp rate) gives a smooth approach to the
+structural limit:
+
+```
+ramp_rate = nominal_rate × clamp((FoS − 1.5) / (2.5 − 1.5), 0.0, 1.0)
+```
+
+This is the "slow the shocks" approach — the controller begins reducing its
+aggression well before the structural limit, avoiding the discontinuity.
+
+### 5. State machine with proportional ramp, not PID
+
+The TRPT is a distributed nonlinear spring-damper chain. Torsional stiffness k_sec
+varies with twist angle (geometric hardening, then collapse). A single PID tuned
+at one operating point would be suboptimal elsewhere. A state machine (IDLE →
+RAMPING → HOLDING) with proportional ramp rate `Δk = Kp × (P_target − P_actual)`
+is simpler, more robust, and easier to tune. The P term provides the basic feedback;
+the ramp itself provides integral action. No derivative term (power is noisy at
+ODE timescales). Anti-windup via k_mppt clamping to [k_min, k_max].
+
+PID autotuning (relay feedback, Åström-Hägglund) is reserved as a future option
+if the state machine proves insufficient.
+
+### 6. Margin to torsional collapse (Tulloch δα*) as the constraint metric
+
+Tulloch's τ(δα) curve is non-monotonic: k_sec = dτ/dδα starts low, rises (geometric
+hardening), peaks, then goes to zero at δα* = 2·arcsin(L/√(2(L²+2r²))), then goes
+negative (the collapse cliff). The segment nearest its δα* is the limiting one.
+Its k_sec will be the *highest* (closest to the peak), which is misleading — it's
+about to fall off the cliff.
+
+The controller tracks `margin_i = δα*_i − |Δα_i|` per segment. `min(margin_i)` is
+the constraint — a direct, monotonic measure of distance to the Tulloch cliff.
+If any segment's margin drops below 5°, the ramp rate is frozen regardless of FoS.
+This is a novel constraint metric: twist-angle margin to collapse, computed
+analytically per segment from ring geometry (no additional simulation cost).
+
+### 7. Data recording for paper
+
+Both old (instant k_mppt step) and new (soft-ramp) systems will be recorded
+headless at 0.5 s intervals, capturing: k_mppt, P_gen, ω_hub, ω_gnd, Δω,
+min(FoS), min(margin_to_δα*), total twist, peak tether tension. Three scenarios:
+canonical 10 kW at rated wind, V10 Tight 50 kW at rated wind, and 7→14 m/s
+wind ramp. The comparison will form a paper section on "Dynamic MPPT Control
+of TRPT Kite Turbines."
+
+**Alternatives considered:**
+- *Use slack as a control input:* Rejected — polygon ring redistribution handles
+  local slack. Using it as a trigger would cause false-positive interventions
+  during normal geometry settling.
+- *Keep k_mppt in immutable SystemParams, rebuild params on change:* Rejected —
+  would require reconstructing the entire params struct at frame rate, and
+  risks stale references in flight.
+- *Halve k_mppt on FoS violation:* Rejected — positive feedback toward overspeed.
+- *Hard freeze at FoS = 1.5:* Rejected — control discontinuity excites torsional
+  modes.
+- *Full PID controller:* Deferred — state machine with P-only ramp is the safer
+  starting point for a nonlinear plant.
+- *Track k_sec as constraint:* Rejected — k_sec peaks near collapse, making it
+  misleading. Margin to δα* is monotonic and physically meaningful.
+
+**Status:** Active. Full plan at `docs/plans/2026-06-27-soft-ramp-kmppt-v2.md`.
+Phase A (mutable k_mppt) ready to execute.
+
+---
+
 ## 2026-06-26: CoaxialAutogyroStacking documented as required dependency
 
 **Situation.** New users cloning KTD.jl hit `Package CoaxialAutogyroStacking not
@@ -865,7 +978,7 @@ mode of a TRPT shaft: when the applied twist angle per unit length exceeds the g
 set by the helical line winding angle and ring radius, the lines go slack and the shaft loses
 its torque-transmitting ability.
 
-Tulloch (PhD thesis, TU Delft) and Wacker (unpublished analysis, Windswept internal) derived
+Tulloch (PhD thesis, University of Strathclyde) and Wacker (unpublished analysis, Windswept internal) derived
 the torsional collapse criterion for TRPT-style tensile shafts. The criterion sets a minimum
 on (ring radius × number of turns) relative to (shaft torque ÷ tether tension). This is a
 geometric stability limit, distinct from material failure.

@@ -47,28 +47,28 @@ function get_generator_torque(
             # Mode 1: Active Torsional Damping
             if imu_reliable
                 # High-fidelity IMU Mode: Torsional Active Damping
-                tau_mppt = p.k_mppt * max(omega_hub, 0.0)^2
+                tau_mppt = sys.k_mppt_ref[] * max(omega_hub, 0.0)^2
                 power_scale = (p.p_rated_w / 10000.0)^2
                 c_d = 10.0 * power_scale
                 tau_damp = c_d * (omega_gnd - omega_hub)
                 tau_gen = (tau_mppt + tau_damp) * elev_scale
             else
                 # Failsafe ground-only feedback: fall back to ground encoder speed (omega_gnd)
-                tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
+                tau_gen = sys.k_mppt_ref[] * max(omega_gnd, 0.0)^2 * elev_scale
             end
         else
             # Mode 2: LPF Speed MPPT (smooth hub speed)
             if imu_reliable
-                tau_gen = p.k_mppt * max(omega_hub, 0.0)^2 * elev_scale
+                tau_gen = sys.k_mppt_ref[] * max(omega_hub, 0.0)^2 * elev_scale
             else
                 # Failsafe ground-only feedback
-                tau_gen = p.k_mppt * max(omega_gnd, 0.0)^2 * elev_scale
+                tau_gen = sys.k_mppt_ref[] * max(omega_gnd, 0.0)^2 * elev_scale
             end
         end
     else
         # Mode 0: Standard MPPT with dynamic max payout
         tau_gen =
-            p.k_mppt *
+            sys.k_mppt_ref[] *
             max(omega_gnd, 0.0)^2 *
             max(0.0, 1.0 - p.backline_payout / max_payout)
     end
@@ -266,6 +266,23 @@ function compute_ring_forces!(
     # cannot restore it.  c_s is sized for ζ ≈ 1.0 on the LOCAL ring-pair mode
     # (ω_n = √(k_sec/I_min)); this over-damps the global torsional mode (ζ > 1),
     # which is fine — it simply prevents torsional oscillation entirely.
+    #
+    # ── Torsional stiffness k_sec — Tulloch curve (PhD thesis, TU Delft) ──
+    #
+    #   τ(δα) = n_lines × T_line × r² × sin(δα) / chord(δα)
+    #   where chord(δα) = √(L² + 4r² sin²(δα/2))
+    #
+    # k_sec = dτ/dδα is NON-MONOTONIC:
+    #   δα ≈ 0:       Low stiffness — geometry is soft
+    #   Mid δα:        Rising — geometric hardening, helix engages
+    #   Near δα*:      Peaks → 0 — approaching τ_cap
+    #   At δα*:        0 — τ_cap = T_total × r² / √(L² + 2r²)
+    #                   δα* = 2·arcsin(L/√(2(L²+2r²)))
+    #   Past δα*:      NEGATIVE — torsional collapse, lines cross
+    #
+    # k_sec is NOT a good control constraint — it peaks near collapse.
+    # The soft_ramp_controller tracks margin_i = δα*_i − |Δα_i| instead.
+    # See: src/soft_ramp_controller.jl, scripts/torsional_collapse_check.jl
     Nr = sys.n_ring
     alpha = @view u[(6N + 1):(6N + Nr)]
     L_seg = p.tether_length / (Nr - 1)

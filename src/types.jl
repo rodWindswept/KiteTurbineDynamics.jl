@@ -106,6 +106,11 @@ struct KiteTurbineSystem
     # Latched ground station PTO mechanical brake state
     brake_engaged::Ref{Bool}
 
+    # Live MPPT gain constant k_mppt (N·m·s²/rad²) — mutable so the dashboard
+    # and future soft-ramp controller can adjust generator load in real time
+    # without reconstructing SystemParams.  Initialised from p.k_mppt.
+    k_mppt_ref::Ref{Float64}
+
     # ── Dynamic kite position (first-order lag toward sky-anchor equilibrium) ──
     # In previous model the kite was frozen at the design sky-anchor position,
     # which created a spurious geometric spring that oscillated when the sky

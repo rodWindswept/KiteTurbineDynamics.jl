@@ -5,6 +5,11 @@
 # Applies the Tulloch/Wacker criterion for TRPT torsional stability to every
 # rank-1 design in every island's elite_archive.csv.
 #
+# This file is the authoritative reference for the Tulloch τ(δα) derivation
+# in the KTD.jl codebase.  The same physics is applied live by:
+#   src/soft_ramp_controller.jl  —  init_geometry!(), min_collapse_margin()
+#   src/ring_forces.jl           —  inter-ring torsional damping (k_sec, c_s)
+#
 # Physics derivation (Tulloch, PhD TU Delft):
 # ─────────────────────────────────────────────
 # In a TRPT segment of axial length L between two rings of radius r, with
