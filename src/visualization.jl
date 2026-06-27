@@ -1538,14 +1538,16 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # FoS thresholds for Auto-Ramp (Phase C)
     clbl("FoS soft limit"; fontsize=10, color=:grey70)
     sl_fos_soft = Slider(ctrl[cnr!(), 1]; range=1.5:0.1:5.0, startvalue=2.5)
-    vl_fos_soft = cval_lbl!(@sprintf("taper below %.1f", 2.5); fontsize=9, color=:grey60)
+    vl_fos_soft = Label(ctrl[cnr!(), 1], @sprintf("taper below %.1f", 2.5);
+        halign=:left, tellwidth=false, fontsize=9, color=:grey60)
     on(sl_fos_soft.value) do v
         vl_fos_soft.text[] = @sprintf("taper below %.1f", v)
     end
 
     clbl("FoS hard floor"; fontsize=10, color=:grey70)
     sl_fos_hard = Slider(ctrl[cnr!(), 1]; range=1.0:0.1:3.0, startvalue=1.5)
-    vl_fos_hard = cval_lbl!(@sprintf("freeze at %.1f", 1.5); fontsize=9, color=:grey60)
+    vl_fos_hard = Label(ctrl[cnr!(), 1], @sprintf("freeze at %.1f", 1.5);
+        halign=:left, tellwidth=false, fontsize=9, color=:grey60)
     on(sl_fos_hard.value) do v
         vl_fos_hard.text[] = @sprintf("freeze at %.1f", v)
     end
