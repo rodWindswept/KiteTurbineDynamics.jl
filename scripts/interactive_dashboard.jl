@@ -304,7 +304,7 @@ function build_v10_tight_no_lowest()
         push!(expansion_params, er)
     end
     p_base = params_v5_50kw()
-    geo = GeometrySpec(n_lines, n_rings, n_exp, result.design.r_bottom,
+    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0,
                        result.design.tether_length, result.design.r_hub, p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
     mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
