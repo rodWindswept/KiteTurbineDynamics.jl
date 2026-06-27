@@ -6,6 +6,7 @@
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie, JSON3
+import KiteTurbineDynamics: ExpansionParams
 
 function parse_commandline()
     s = ArgParseSettings()
