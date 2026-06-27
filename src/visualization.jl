@@ -710,7 +710,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # Generator control mode and winch payout observables
-    gen_ctrl_selection       = Observable("Active Damping (Mode 1)")
+    gen_ctrl_selection       = Observable("Standard (Mode 0)")  # Mode 0 gives cleanest lock-in
     depower_payout_selection = Observable("25m Extended")
     # Pitch Depower closed-loop control toggles
     # active_winch_obs: enables proportional payout rate control using T_min feedback
@@ -833,6 +833,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 ctrl.P_target = p.p_rated_w  # track the active power rating
                 ctrl.fos_soft = Float64(sl_fos_soft.value[])   # from dashboard slider
                 ctrl.fos_hard = Float64(sl_fos_hard.value[])   # from dashboard slider
+                # Scale Kp and k_max by power rating (50 kW baseline)
+                power_ratio = p.p_rated_w / 50000.0
+                ctrl.Kp = 1e-4 / power_ratio   # higher gain for lower-power systems
+                ctrl.k_max = 200.0 * power_ratio  # narrower range for 10 kW
+                ctrl.k_min = max(2.0, 20.0 * power_ratio)
                 reset!(ctrl)
                 init_geometry!(ctrl, sys, p_run)  # compute per-segment δα*
                 ramp_state_obs[] = state_label(ctrl)
