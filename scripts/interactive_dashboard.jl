@@ -5,7 +5,7 @@
 # Headless mode: julia --project=. scripts/interactive_dashboard.jl --headless
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
-using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie
+using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie, JSON3
 
 function parse_commandline()
     s = ArgParseSettings()
