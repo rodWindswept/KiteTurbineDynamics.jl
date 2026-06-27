@@ -165,13 +165,18 @@ KiteTurbineDynamics.jl/
 
 ### Install
 
-Clone the repo and activate the environment:
+Clone both repos and link them:
 
 ```bash
 git clone https://github.com/rodWindswept/KiteTurbineDynamics.jl.git
+git clone https://github.com/rodWindswept/CoaxialAutogyroStacking.jl.git
 cd KiteTurbineDynamics.jl
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. -e 'using Pkg; Pkg.develop(path="../CoaxialAutogyroStacking.jl"); Pkg.instantiate()'
 ```
+
+> **Note:** `CoaxialAutogyroStacking.jl` provides the PCA-2 autogyro lift device model
+> used by the GLMakie dashboard. It's a separate repo — not a Julia package registry
+> dependency — so it must be `Pkg.develop()`ed manually. See `src/lift_kite.jl`.
 
 Or add from another Julia project:
 
