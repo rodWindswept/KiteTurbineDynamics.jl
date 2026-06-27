@@ -2,7 +2,7 @@
 
 julia_version = "1.12.5"
 manifest_format = "2.0"
-project_hash = "ad8e35c12325db9f895789f58407e89c2fa69595"
+project_hash = "0e66cfac5973f3c93fac378e369f6ce44578adbf"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "bbc22a9a08a0ef6460041086d8a7b27940ed4ffd"
@@ -353,7 +353,7 @@ version = "0.1.13"
 
 [[deps.CoaxialAutogyroStacking]]
 deps = ["Bonito", "CairoMakie", "DataFrames", "GLMakie", "Observables", "Pluto", "Statistics", "WGLMakie"]
-path = "/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl"
+path = "/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl"
 uuid = "cb2a5e45-b910-4a0e-9959-8ee2b2784885"
 version = "0.1.0"
 
