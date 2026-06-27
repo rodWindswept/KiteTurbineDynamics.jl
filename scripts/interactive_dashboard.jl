@@ -404,6 +404,7 @@ function main()
         if current_config == "V10 Tight (no lowest expansion)"
             # Load V10 Tight winner from best_design.json, drop lowest expansion rotor
             sys, u0, p, label = build_v10_tight_no_lowest()
+            current_config = label  # use the builder's label for menu matching
         elseif current_config == "V10 Island 51 alt-basin"
             sys, u0, p, label = build_from_campaign_v10("v10_campaign_50kw", "V10 Island 51"; 
                                                          vector_file="best_vector_island51.csv")
