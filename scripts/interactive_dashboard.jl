@@ -6,7 +6,6 @@
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie, JSON3
-import KiteTurbineDynamics: ExpansionParams
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -294,12 +293,15 @@ function build_v10_tight_no_lowest()
     n_exp = length(rotors)
     n_lines = result.design.n_lines
     n_rings = result.n_rings
-    expansion_params = ExpansionParams[]
+    expansion_params = ExpansionRotorParams[]
     for rotor in rotors
         sr = rotor.ring_idx == n_rings ? n_rings + 2 : rotor.ring_idx + 1
-        push!(expansion_params, ExpansionParams(
-            ring_index=sr, n_blades=n_lines,
-            blade_scale=rotor.blade_scale, bank_angle_deg=rotor.bank_angle_deg))
+        er = ExpansionRotorParams(
+            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
+            EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
+            rotor.bank_angle_deg, 0.0, sr, 1.0,
+        )
+        push!(expansion_params, er)
     end
     p_base = params_v5_50kw()
     geo = GeometrySpec(n_lines, n_rings, n_exp, result.design.r_bottom,
