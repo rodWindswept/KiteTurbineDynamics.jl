@@ -1483,8 +1483,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     clbl("── Run Parameters ──────────────────────"; fontsize=12, font=:bold)
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
+    # V10 configs need finer resolution at low k_mppt (dynamic sweet spot ~62)
+    kmppt_start = clamp(p.k_mppt, 1.0, 2000.0)
+    kmppt_range = startswith(config_name, "V10") ? 10.0:1.0:200.0 : 1.0:1.0:2000.0
     clbl("MPPT gain k_mppt"; fontsize=11)
-    sl_kmppt = cslider!(1.0:1.0:2000.0; start=clamp(p.k_mppt, 1.0, 2000.0))
+    sl_kmppt = cslider!(kmppt_range; start=clamp(kmppt_start, minimum(kmppt_range), maximum(kmppt_range)))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
 
