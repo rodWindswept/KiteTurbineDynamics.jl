@@ -1335,7 +1335,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line",
                  "V6.2 12-line dodecagon", "V6.3 7-line heptagon",
                  "V6.4 3-line triangle", "V6.5 3-line triangle",
-                 "V6.7 drag-constrained", "V9.0 50kW equilibrium", "V10 unified rotors"],
+                 "V6.7 drag-constrained", "V9.0 50kW equilibrium", "V10 unified rotors",
+                 "V10 Island 51 alt-basin", "V10 Tight (3 rotors)"],
         default=config_name, width=270)
 
     # Also disable menu when not idle
