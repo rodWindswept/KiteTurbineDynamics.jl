@@ -1,0 +1,6 @@
+# Fix CoaxialAutogyroStacking missing dependency, then launch V10 Tight dashboard
+
+julia --project=. -e 'using Pkg; Pkg.develop(path="/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl")'
+
+# Then:
+julia --project=. scripts/interactive_dashboard.jl --v10-tight

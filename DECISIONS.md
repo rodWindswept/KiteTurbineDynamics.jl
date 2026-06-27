@@ -1,6 +1,41 @@
 # DECISIONS.md — KiteTurbineDynamics.jl
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
+
+## 2026-06-26: Dashboard config addition requires three-string sync across two files
+
+**Situation.** Adding a new CLI flag (`--v10-tight`) to the GLMakie dashboard
+failed 8 times — GeometrySpec, ExpansionRotorParams, imports, and menu mismatch
+errors cascaded through the Julia precompile cycle, each requiring a full round-trip.
+
+**Decision.** Documented the three-string synchronization requirement as a dev
+skill (`ktd-dashboard-config`). When adding a config: (1) CLI flag,
+(2) builder's return label, and (3) Menu(options=[...]) list must agree
+character-for-character. The `current_config` local variable must be overwritten
+with the builder's `label` return value before passing to `build_dashboard()`.
+
+**Rationale.** This is a structural coupling enforced by Makie's `Menu` widget
+which checks the default option against the options list at initialization time.
+There is no single source of truth — the three strings live in different lexical
+scopes and can drift silently until runtime.
+
+**What it enables.** New contributors can add dashboard configs in ~5 minutes
+following the checklist rather than ~45 minutes of fix-push-retry cycles.
+
+**Status.** Active. The skill is at `~/.hermes/skills/ktd-dashboard-config/`.
+
+## 2026-06-26: CoaxialAutogyroStacking documented as required dependency
+
+**Situation.** New users cloning KTD.jl hit `Package CoaxialAutogyroStacking not
+installed` because it's an unregistered development dependency providing the
+PCA-2 autogyro lift device model (`src/lift_kite.jl`).
+
+**Decision.** Updated README install instructions to clone both repos and use
+`Pkg.develop()`. Added note explaining the dependency is unregistered —
+`Pkg.add()` won't find it.
+
+**Status.** Active.
+
 Each entry explains the situation, what was decided, what alternatives were on the table, why
 this choice was made, what it enables and rules out, and whether it is still active.
 
