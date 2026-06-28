@@ -249,6 +249,7 @@ function objective_v10(
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+    k_mppt_safety::Float64=1.0,   # >1.0 = conservative (static solver under-predicts dynamic k_mppt)
 )
     # ── Decode design ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -314,7 +315,7 @@ function objective_v10(
     # to reach that ω in the ODE.  Scaling k_mppt with λ² inside the
     # equilibrium solve aligns the static objective with the dynamic reality.
     λ_eff = rotors[1].blade_scale
-    k_mppt_eff = p.k_mppt * λ_eff^2
+    k_mppt_eff = p.k_mppt * λ_eff^2 * k_mppt_safety
     ctrl_scaled = ControlSpec(p.i_pto, k_mppt_eff, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
     p_scaled = override_params(p; k_mppt=k_mppt_eff)
 

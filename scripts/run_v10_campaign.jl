@@ -18,6 +18,8 @@ function parse_args()
     resume = "--resume" in ARGS
     islands_override = nothing
     iterations_override = nothing
+    conservative = "--conservative" in ARGS
+    tight = "--tight" in ARGS
     for (i, arg) in enumerate(ARGS)
         if arg == "--power" && i < length(ARGS)
             power_kw = parse(Int, ARGS[i + 1])
@@ -27,10 +29,14 @@ function parse_args()
             islands_override = parse(Int, ARGS[i + 1])
         elseif arg == "--iterations" && i < length(ARGS)
             iterations_override = parse(Int, ARGS[i + 1])
+        elseif arg == "--k-safety" && i < length(ARGS)
+            conservative = true  # implied
         end
     end
     return (quick=quick, power_kw=power_kw, max_ground_radius=max_ground_radius,
-            resume=resume, islands_override=islands_override, iterations_override=iterations_override)
+            resume=resume, islands_override=islands_override,
+            iterations_override=iterations_override, conservative=conservative,
+            tight=tight)
 end
 
 function _fmt_dur(seconds::Float64)
@@ -45,6 +51,8 @@ function main()
     println("═"^55)
     println("  KTD.jl V10 — DE Optimisation Campaign")
     println("  Power: $(args.power_kw) kW  |  Mode: $(args.quick ? "QUICK" : "FULL")  |  Resume: $(args.resume)")
+    conservative_str = args.conservative ? " (k_mppt_safety=3.0)" : ""
+    println("  Conservative:$conservative_str  |  Tight: $(args.tight)")
     println("═"^55)
 
     # ── Setup ──────────────────────────────────────────────────────────
@@ -59,8 +67,7 @@ function main()
     lo, hi = search_bounds_v10(p_bounds, beam_profile; max_ground_radius=mgr)
 
     # ── Tight mode: narrow bounds around known basin ──────────────────
-    tight = "--tight" in ARGS
-    if tight
+    if args.tight
         # n_lines: skip triangles/pentagons, optimum at 12-16
         lo[8] = max(lo[8], 8.0)
         # r_bottom: skip tiny ground rings, optimum at 3.7-4.4
@@ -100,16 +107,19 @@ function main()
     @printf("  %d islands x %d population, up to %d iterations\n", n_islands, popsize, max_iter)
 
     # ── Output dir ─────────────────────────────────────────────────────
-    out_dir = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_$(args.power_kw)kw")
+    suffix = args.conservative ? "_cons" : (args.tight ? "_tight" : "")
+    out_dir = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_$(args.power_kw)kw$suffix")
     mkpath(out_dir)
 
     # ── Objective wrapper ──────────────────────────────────────────────
+    k_mppt_safety = args.conservative ? 3.0 : 1.0
     obj_wrapper = x -> begin
         xr = copy(x)
         xr[8] = Float64(round(Int, clamp(x[8], 3, 16)))       # n_lines
         xr[10] = clamp(x[10], 0.0, Float64(N_VALID_MASKS))    # rotor_mask (continuous proxy, decoded inside)
         try
-            return objective_v10(xr, beam_profile, p; power_W=power_W, max_ground_radius=mgr)
+            return objective_v10(xr, beam_profile, p; power_W=power_W, max_ground_radius=mgr,
+                                 k_mppt_safety=k_mppt_safety)
         catch e
             @warn "Objective failed" exception = e
             return 1e9
