@@ -19,7 +19,7 @@ function verify_campaign(dir::String, label::String, power_W::Float64, p_params)
 
     n_lines = Int(x[8])
     n_exp = Int(x[10])
-    bank = clamp(x[11], 5.0, 35.0)
+    bank = clamp(x[11], 5.0, 25.0)
     blade_s = clamp(x[12], 0.005, 2.0)
 
     println("  Raw vector:   n_lines=$(round(x_raw[8];digits=2))  n_exp=$(round(x_raw[10];digits=2))")

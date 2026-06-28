@@ -28,7 +28,7 @@ const TRPT_V6_DIM = 12
 #   x[8]   n_lines          [int]  polygon sides (3-12)
 #   x[9]   density_profile  [-]    ring density bias (-0.8..0.8, 0=uniform)
 #   x[10]  n_expansion      [int]  number of expansion rotors (0-12)
-#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-35)
+#   x[11]  bank_angle_deg   [deg]  blade bank angle toward next ring (5-25)
 #   x[12]  blade_scale      [-]    expansion blade span/chord scale (0.02-2.0)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -47,7 +47,7 @@ function search_bounds_v6(
 
     # Expansion rotor bounds (vars 10-12): n_expansion, bank_angle_deg, blade_scale
     exp_lo = [0.0, 5.0, 0.005]   # λ lowered to 0.005
-    exp_hi = [20.0, 35.0, 2.0]   # n_exp widened to 20; bank safety cap 35°
+    exp_hi = [20.0, 25.0, 2.0]   # n_exp widened to 20; bank safety cap 25° (pitch depower clearance)
 
     return vcat(base_lo, exp_lo), vcat(base_hi, exp_hi)
 end
@@ -77,7 +77,7 @@ function design_from_vector_v6(
 
     # Expansion rotor parameters (vars 10-12)
     n_exp = round(Int, clamp(x[10], 0, 20))
-    bank_deg = clamp(x[11], 5.0, 35.0)     # safety cap at 35°
+    bank_deg = clamp(x[11], 5.0, 25.0)     # safety cap at 25° (pitch depower blade-tip clearance)
     blade_scale = clamp(x[12], 0.005, 2.0) # λ: span/chord/mass, widened to 0.005
 
     # Derive blade geometry from BEM rotor radius (network model: each

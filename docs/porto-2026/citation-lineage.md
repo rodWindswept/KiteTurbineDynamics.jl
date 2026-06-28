@@ -24,21 +24,21 @@
 
 ---
 
-## 2. TRPT Moment-to-Tension Ratio (MTR ≈ 0.05)
+## 2. TRPT Torque-Tension Coupling — Beyond Single-Section MTR
 
-**What it is:** moment = MTR × looping_radius × shaft_tension. Defines the coupling between mechanical torque transmission and structural tension in the TRPT shaft. Typical value ~0.05.
+**What it is:** In single-section TRPT (Pyramid concept, Tulloch 2023), the moment-to-tension ratio MTR ≈ 0.05 provides a simplified coupling coefficient: moment = MTR × looping_radius × shaft_tension. KTD.jl replaces this with explicit multi-section TRPT geometry — per-segment torque-tension coupling is computed from DE-optimised ring radii (r_hub, r_bottom, density_profile) and segment lengths (target_Lr) via the full TRPT deformation equations (Wacker eq 4.1, Tulloch 2023 §4).
 
-**Origin:** Tulloch et al. (2023) "A Tensile Rotary Airborne Wind Energy System" — Energies 16(6):2610. Tulloch PhD thesis (2021, University of Strathclyde).
+**Origin:** MTR concept — Tulloch et al. (2023) "A Tensile Rotary Airborne Wind Energy System" — Energies 16(6):2610. Pyramid single-section derivation (Tallak/Dirk). Tulloch PhD thesis (2021, University of Strathclyde).
 
-**Extends:** Tulloch's steady-state TRPT model with shaft_section_mtr(). KTD uses MTR as a DE optimisation variable rather than a fixed parameter.
+**Extends:** Tulloch's single-section analytical MTR to a full multi-section geometric treatment where the DE indirectly varies per-segment coupling through ring geometry. Rather than fixing MTR ≈ 0.05, the optimiser varies r_hub (2.89 m), target_Lr (3.0 m), r_bottom (2.0 m), and density_profile (−0.11) — the equivalent per-section moment-to-tension relationship shifts as a consequence.
 
-**K1 matches:** 8 TRPT papers, 4 specific findings, 8 methods in the unified graph. Tulloch's TRPT paper is the central node — it connects to most subsequent TRPT research.
+**K1 matches:** 8 TRPT papers, 4 specific findings, 8 methods in the unified graph. Tulloch's TRPT paper is the central node connecting most subsequent TRPT research.
 
-**Novelty:** MTR as optimisation variable. At different scales and rotor counts, the optimal MTR shifts from the canonical 0.05.
+**Novelty:** Replacing the single-section MTR analytical simplification with explicit multi-section TRPT geometry in a DE optimisation loop. The equivalent per-section coupling varies with ring count, taper, and segment length — implicit in the geometry rather than explicit as a free parameter.
 
-**Gap:** No existing paper treats MTR as a free parameter in design optimisation.
+**Gap:** No existing paper applies multi-section TRPT geometry within DE optimisation. Wacker (2022) optimises steady-state geometry but does not vary ring count or segment lengths in a multi-section TRPT.
 
-**To cite:** Tulloch et al. (2023), Tulloch PhD (2021)
+**To cite:** Tulloch et al. (2023), Tulloch PhD (2021), Wacker (2022)
 
 ---
 
@@ -118,7 +118,7 @@
 | Technique | Cite | Extends | Contradicts | Web-Validated |
 |-----------|------|---------|-------------|---------------|
 | k_mppt λ² | Loyd 1980, Diehl 2013 | Standard MPPT | Fixed-area MPPT | ✓ Clean |
-| TRPT MTR | Tulloch 2023, 2021 | shaft_section_mtr() | Fixed-MTR design | ✓ Clean |
+| TRPT coupling | Tulloch 2023, 2021, Wacker 2022 | Single-section MTR → multi-section geometry | Fixed-MTR design | ✓ Clean |
 | Tether drag ¼ | Loyd 1980, Tveide | Multi-tether scaling | Full drag models | ✓ Clean |
 | Ring-mapping | Internal | — | Direct index mapping | N/A (internal) |
 | 6-DOF inertia relief | NASA 1995, Moore 2014 | Standard 3-DOF IR | Node-pinning | ✓ Clean (Moore ≠ IR) |

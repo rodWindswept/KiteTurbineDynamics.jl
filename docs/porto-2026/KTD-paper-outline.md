@@ -107,7 +107,7 @@ The following figures have been generated and verified. Source `.tex` and render
 
 #### 2.2 Physics Models
 - k_mppt λ² scaling (commit 1c86b69) — Fig 5, Fig 6
-- TRPT MTR with shaft_section_mtr()
+- TRPT torque-tension coupling: replaces single-section MTR (Tulloch ≈0.05) with explicit multi-section geometry via DE-optimised ring radii and segment lengths
 - Tether drag (Tveide ODE, ¼ coefficient, n× parallel)
 - 6-DOF inertia relief for free-floating rings (ADR 0001)
 - Expansion rotor model (force-first, bank angle)
@@ -153,8 +153,9 @@ The following figures have been generated and verified. Source `.tex` and render
 |-----------|----------|
 | Loyd (1980) | Crosswind power law, tether drag exclusion |
 | Diehl (2013) | AWE power fundamentals, drag-mode theorem |
-| Tulloch et al. (2023) | TRPT definition, steady-state model, MTR |
-| Tulloch PhD (2021) | TRPT dynamics, tether drag model, steady-state analytical model |
+| Tulloch et al. (2023) | TRPT definition, steady-state model, single-section MTR concept |
+| Tulloch PhD (2021) | TRPT dynamics, tether drag model |
+| Wacker (2022) | TRPT deformation equations (eq 4.1), multi-section geometry |
 | Tveide TetherDragODESolver | ¼ tether drag coefficient validation |
 | Kheiri et al. (2018) | Induction factor effects in crosswind kite power limits |
 | Carceller Candau (2022, MSc) | 18% power overestimation from neglected dynamic inflow |
@@ -166,15 +167,27 @@ The following figures have been generated and verified. Source `.tex` and render
 
 ---
 
-## Open Questions for Phase 4/5
+## Evidence Table — Verified from Campaign Data
 
-- [ ] Extract exact MTR values from V10 campaign CSVs
-- [ ] Extract λ convergence data for k_mppt claim
-- [ ] Generate system schematic (Figure to-be-generated #1)
-- [ ] Generate static-vs-dynamic gap bar chart (Figure to-be-generated #2)
-- [ ] Generate ring-mapping diagram (Figure to-be-generated #3)
-- [ ] Generate literature map from K1 graph (Figure to-be-generated #4)
-- [ ] Verify all citations in K1 graph with exact evidence spans
+| Claim | Verified Value | Source | Status |
+|-------|---------------|--------|--------|
+| k_mppt λ² prevents λ→0 | λ=0.519 (Tight) vs 0.234 (V10v1); k_mppt_eff=615×0.519²=**166** | v10-tight-analysis.md §2 | ✓ |
+| TRPT torque-tension coupling | MTR≈0.05 canonical (Pyramid/Tulloch); KTD replaces with explicit multi-section geometry via DE-optimised r_hub, target_Lr, r_bottom, density_profile | CONTEXT.md; ring_forces.jl | ✓ |
+| n× tether drag | 13 lines × 67m tether; validated against Tveide ODE solver | TetherDragODESolver | ✓ |
+| Ring-mapping correction | 4 rotors viable (vs 1); rotor on hub ring 9 of 9 | v10-tight-analysis.md §1; 71ea694 | ✓ |
+| 6-DOF inertia relief | Eliminates 10⁶–10⁸ m fictitious translations | ADR 0001 | ✓ |
+| 4.2× static-dynamic gap | Static: 59 rpm / **50 kW**; ODE: 55.6 rpm / **12.1 kW** (24%) | v10-tight-analysis.md §Dynamic Verification | ✓ |
+
+**Five parameters at bounds** (true optimum lies outside tight envelope):
+Do_top=0.06m (MIN), t_over_D=0.01 (MIN), target_Lr=3.0m (MAX), r_bottom=2.0m (MIN), λ_bottom=0.10 (MIN), bank_bottom=35° (MAX)
+
+## Open Questions — Status
+
+- [x] Generate system schematic → `fig-system-schematic.pdf` ✓
+- [x] Generate static-vs-dynamic gap bar chart → `fig-power-gap.pdf` ✓
+- [x] Generate ring-mapping diagram → `fig-ring-mapping.pdf` ✓
+- [x] Generate literature map → `fig-lit-map.pdf` ✓
+- [ ] Extract per-section torque-tension coupling from V10 Tight geometry (derived from ring radii + segment lengths, not a DE variable)
 - [ ] Cross-reference Wacker's Daisy Kite parameters against KTD V10 inputs
 - [ ] Include CoaxialAutogyroStacking.jl lift model integration
-- [ ] Format per target venue (AWES conference template or Wind Energy Science)
+- [ ] Format per target venue (AWES conference or Wind Energy Science template)

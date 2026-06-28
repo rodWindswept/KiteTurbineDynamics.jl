@@ -86,8 +86,9 @@ function get_generator_torque(
     tau_max_safe = 2500.0 * power_scale
     tau_gen = clamp(tau_gen, -tau_max_safe, tau_max_safe)
 
-    # Ground-station mechanical brake — triggered by the flying turbine rotor speed only.
-    new_brake_engaged = brake_engaged || abs(omega_hub) < 1.0
+    # Ground-station mechanical brake — only engaged by explicit command
+    # (e.g. pitch-depower sequence), not auto-triggered by rotor speed.
+    new_brake_engaged = brake_engaged
     if new_brake_engaged
         tau_brake_max = 1500.0 * power_scale
         tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)

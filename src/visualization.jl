@@ -833,11 +833,14 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 ctrl.P_target = p.p_rated_w  # track the active power rating
                 ctrl.fos_soft = Float64(sl_fos_soft.value[])   # from dashboard slider
                 ctrl.fos_hard = Float64(sl_fos_hard.value[])   # from dashboard slider
-                # Scale Kp and k_max by power rating (50 kW baseline)
+                # Scale Kp by power rating.  k_min/k_max are centred on the
+                # slider's setpoint so the controller can search both directions
+                # from the user's static-equilibrium estimate.
                 power_ratio = p.p_rated_w / 50000.0
                 ctrl.Kp = 1e-4 / power_ratio   # higher gain for lower-power systems
-                ctrl.k_max = 200.0 * power_ratio  # narrower range for 10 kW
-                ctrl.k_min = max(2.0, 20.0 * power_ratio)
+                slider_k = p_run.k_mppt          # user's chosen operating point
+                ctrl.k_min = max(2.0, slider_k * 0.2)   # can reduce load 80%
+                ctrl.k_max = min(2000.0, slider_k * 2.0) # can increase load 100%
                 reset!(ctrl)
                 init_geometry!(ctrl, sys, p_run)  # compute per-segment δα*
                 ramp_state_obs[] = state_label(ctrl)
@@ -1039,6 +1042,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                             min_fos=min_fos_val,
                             collapse_margin_deg=collapse_margin)
                         ramp_state_obs[] = state_label(ctrl)
+                        sl_kmppt.value[] = sys.k_mppt_ref[]  # animate slider
                     end
                     fi += 1
                 end
@@ -1517,9 +1521,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     clbl("── Run Parameters ──────────────────────"; fontsize=12, font=:bold)
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
-    # V10 configs need finer resolution at low k_mppt (dynamic sweet spot ~62)
+    # V10 configs need range up to ~600 (dashboard default ~555 from mass scaling)
     kmppt_start = clamp(p.k_mppt, 1.0, 2000.0)
-    kmppt_range = startswith(config_name, "V10") ? (10.0:1.0:200.0) : (1.0:1.0:2000.0)
+    kmppt_range = startswith(config_name, "V10") ? (10.0:1.0:600.0) : (1.0:1.0:2000.0)
     clbl("MPPT gain k_mppt"; fontsize=11)
     sl_kmppt = cslider!(kmppt_range; start=clamp(kmppt_start, minimum(kmppt_range), maximum(kmppt_range)))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))

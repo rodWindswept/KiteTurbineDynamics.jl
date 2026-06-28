@@ -20,8 +20,8 @@
 #   x[8]   n_lines          [int]  polygon sides (3-16)
 #   x[9]   density_profile  [-]    ring density bias (-0.8..0.8)
 #   x[10]  rotor_mask       [int]  proxy -> 60 valid bitmasks
-#   x[11]  bank_top         [deg]  bank at ring 1 (0-35)
-#   x[12]  bank_bottom      [deg]  bank at lowest rotor (0-35)
+#   x[11]  bank_top         [deg]  bank at ring 1 (0-25)
+#   x[12]  bank_bottom      [deg]  bank at lowest rotor (0-25)
 #   x[13]  lambda_top       [-]    blade scale at ring 1 (0.005-2.0)
 #   x[14]  lambda_bottom    [-]    blade scale at lowest rotor (0.005-2.0)
 
@@ -159,8 +159,8 @@ function design_from_vector_v10(
     n_active = length(positions)
 
     # Bank angle gradient (x[11]=bank_top, x[12]=bank_bottom)
-    bank_top = clamp(x[11], 0.0, 35.0)
-    bank_bottom = clamp(x[12], 0.0, 35.0)
+    bank_top = clamp(x[11], 0.0, 25.0)
+    bank_bottom = clamp(x[12], 0.0, 25.0)
 
     # Blade scale gradient (x[13]=λ_top, x[14]=λ_bottom)
     λ_top = clamp(x[13], 0.03, 2.0)
@@ -224,7 +224,7 @@ function search_bounds_v10(
 
     # V10 additional vars: rotor_mask, bank_top, bank_bottom, λ_top, λ_bottom
     v10_lo = [0.0, 0.0, 0.0, 0.03, 0.03]     # mask proxy, banks, lambdas
-    v10_hi = [Float64(N_VALID_MASKS), 35.0, 35.0, 2.0, 2.0]
+    v10_hi = [Float64(N_VALID_MASKS), 25.0, 25.0, 2.0, 2.0]
 
     return vcat(base_lo, v10_lo), vcat(base_hi, v10_hi)
 end

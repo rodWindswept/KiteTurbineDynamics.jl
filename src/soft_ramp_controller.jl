@@ -104,7 +104,7 @@ function RampController(;
     Kp::Float64 = 1e-4,          # Δk per second per watt of deficit
     P_target::Float64 = 50000.0,  # 50 kW rated
     ω_idle::Float64 = 0.5,        # ~5 rpm in rad/s
-    idle_hold::Float64 = 3.0,     # 3 seconds above ω_idle
+    idle_hold::Float64 = 0.5,     # 0.5 seconds above ω_idle
     hold_pct::Float64 = 0.05,     # ±5% of P_target
     hold_secs::Float64 = 3.0,     # 3 seconds stable
     lull_pct::Float64 = 0.20,     # 20% power drop

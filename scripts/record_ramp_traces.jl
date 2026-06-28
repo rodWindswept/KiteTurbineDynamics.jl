@@ -58,6 +58,15 @@ function wind_steady(v)
     (pos, t) -> [v, 0.0, 0.0]
 end
 
+# Wind with power-law shear — matches the interactive dashboard exactly
+function wind_shear(v_target, p)
+    (pos, t) -> begin
+        z  = max(pos[3], 1.0)
+        sh = (z / p.h_ref)^(1.0 / 7.0)
+        [v_target * sh, 0.0, 0.0]
+    end
+end
+
 function wind_ramp_fn(v_lo, v_hi, T)
     (pos, t) -> begin
         frac = clamp(t / T, 0.0, 1.0)
@@ -83,8 +92,6 @@ function run_scenario(
     t_sim::Float64 = T_SIM,
     lift_device = rotary_lifter_default(),
 )
-    local u, df
-
     # Set initial k_mppt
     sys.k_mppt_ref[] = k_mppt_val
     if controller !== nothing
@@ -93,7 +100,8 @@ function run_scenario(
         init_geometry!(controller, sys, p)
     end
 
-    # Settle to operational state
+    # Settle to operational state (uses Tsit5 from DifferentialEquations.jl —
+    # same as the interactive dashboard)
     print("  settling to operational state… ")
     flush(stdout)
     ω_guess = 9.5 * (V_RATED / 11.0)
@@ -101,72 +109,68 @@ function run_scenario(
         lift_device=lift_device, wind_fn=wind_fn)
     println("done")
 
-    # Simulation loop
+    # ── Simulation loop via run_canonical_sim! (same integrator as dashboard) ──
     df = empty_trace_df()
     n_steps = round(Int, t_sim / DT)
-    n_chunks = n_steps ÷ SAVE_EVERY
-    du = zeros(Float64, length(u))
-    t = 0.0
-    ode_params = (sys, p, wind_fn, lift_device)
     frame_dt = DT * SAVE_EVERY
-
     t0w = time()
-    for chunk in 1:n_chunks
-        # Run SAVE_EVERY steps
-        for _ in 1:SAVE_EVERY
-            fill!(du, 0.0)
-            multibody_ode!(du, u, ode_params, t)
-            # Explicit Euler
-            N = sys.n_total; Nr = sys.n_ring
-            @views u[(3N + 1):6N] .+= DT .* du[(3N + 1):6N]
-            @views u[1:3N] .+= DT .* u[(3N + 1):6N]
-            @views u[(6N + Nr + 1):(6N + 2Nr)] .+= DT .* du[(6N + Nr + 1):(6N + 2Nr)]
-            @views u[(6N + 1):(6N + Nr)] .+= DT .* u[(6N + Nr + 1):(6N + 2Nr)]
-            # Damping + ground constraint
-            @views u[(3N + 1):6N] .*= 0.05
-            @views u[(6N + Nr + 1):(6N + 2Nr)] .*= 0.05
-            u[1:3] .= 0.0; u[(3N + 1):(3N + 3)] .= 0.0
-            u[6N + 1] = 0.0; u[6N + Nr + 1] = 0.0
-            # Kite position update
-            if lift_device !== nothing
-                update_kite_pos!(sys, u, lift_device, p, DT)
+    last_report = Ref(0.0)
+
+    run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
+        lift_device = lift_device,
+        lin_damp = 0.05,   # matches dashboard's LIN_DAMP
+        callback = (u_curr, t_curr, step) -> begin
+            if step % SAVE_EVERY == 0
+                sf = capture_frame(u_curr, sys, p, t_curr, wind_fn, lift_device;
+                    brake_engaged=sys.brake_engaged[])
+                N = sys.n_total; Nr = sys.n_ring
+                ω_hub = u_curr[6N + Nr + Nr]
+                ω_gnd = u_curr[6N + Nr + 1]
+
+                # Controller update (if active)
+                state_label_str = "fixed"
+                if controller !== nothing
+                    collapse_margin = min_collapse_margin(u_curr, sys, controller)
+                    update_ramp!(controller, sys, sf, frame_dt;
+                        min_fos=sf.fos_ring, collapse_margin_deg=collapse_margin)
+                    state_label_str = string(controller.state)
+                end
+
+                push!(df, (
+                    t_curr, sys.k_mppt_ref[], sf.P_kw, ω_hub, ω_gnd,
+                    ω_hub - ω_gnd, sf.fos_ring,
+                    controller !== nothing ? min_collapse_margin(u_curr, sys, controller) : Inf,
+                    total_twist_deg(u_curr, sys), sf.T_max, state_label_str,
+                ))
+
+                # Progress report every ~10s sim time
+                if t_curr - last_report[] >= 10.0 || t_curr >= t_sim - 0.01
+                    last_report[] = t_curr
+                    elapsed = time() - t0w
+                    frac = t_curr / t_sim
+                    eta = frac > 0 ? elapsed / frac * (1 - frac) : 0.0
+                    msg = @sprintf("  t=%6.1fs  k=%.1f  P=%.2fkW  ω=%.1frpm  FoS=%.2f  [wall %.0fs ETA %.0fs]",
+                        t_curr, sys.k_mppt_ref[], sf.P_kw, ω_hub*60/(2π), sf.fos_ring, elapsed, eta)
+                    println(msg)
+                end
             end
-            t += DT
         end
-
-        # Capture frame
-        sf = capture_frame(u, sys, p, t, wind_fn, lift_device; brake_engaged=sys.brake_engaged[])
-        N = sys.n_total; Nr = sys.n_ring
-        ω_hub = u[6N + Nr + Nr]          # hub is last ring
-        ω_gnd = u[6N + Nr + 1]           # ground is ring 1
-
-        # Controller update (if active)
-        state_label_str = "fixed"
-        if controller !== nothing
-            collapse_margin = min_collapse_margin(u, sys, controller)
-            update_ramp!(controller, sys, sf, frame_dt;
-                min_fos=sf.fos_ring, collapse_margin_deg=collapse_margin)
-            state_label_str = string(controller.state)
-        end
-
-        push!(df, (
-            t, sys.k_mppt_ref[], sf.P_kw, ω_hub, ω_gnd,
-            ω_hub - ω_gnd, sf.fos_ring,
-            controller !== nothing ? min_collapse_margin(u, sys, controller) : Inf,
-            total_twist_deg(u, sys), sf.T_max, state_label_str,
-        ))
-
-        if chunk % 500 == 0 || chunk == n_chunks
-            elapsed = time() - t0w
-            eta = elapsed / chunk * (n_chunks - chunk)
-            msg = @sprintf("  t=%6.1fs  k=%.1f  P=%.2fkW  ω=%.1frpm  FoS=%.2f  [wall %.0fs ETA %.0fs]",
-                t, sys.k_mppt_ref[], sf.P_kw, ω_hub*60/(2π), sf.fos_ring, elapsed, eta)
-            println(msg)
-        end
-    end
+    )
 
     println("  → $(nrow(df)) frames recorded in $(round(time()-t0w; digits=1))s")
     return df
+end
+
+# ── Save helper (progressive, one CSV per scenario) ────────────────────
+function save_csv(name::String, df::DataFrame)
+    if nrow(df) > 0
+        path = joinpath(OUT_DIR, "$name.csv")
+        CSV.write(path, df)
+        @printf "  ✓ saved %s  (%d rows)\\n" path nrow(df)
+        flush(stdout)
+    else
+        println("  ⚠ $name: empty — skipping")
+    end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -184,35 +188,42 @@ function main()
     println("── 1a. Canonical 10kW — INSTANT step to k_mppt=11 ──")
     p10 = params_10kw()
     sys10, u0_10 = build_kite_turbine_system(p10)
-    df_can_instant = run_scenario(sys10, u0_10, p10, "canonical-instant", 11.0, nothing)
+    # Use wind shear matching the dashboard exactly
+    wf10 = wind_shear(V_RATED, p10)
+    df_can_instant = run_scenario(sys10, u0_10, p10, "canonical-instant", 11.0, nothing;
+        wind_fn=wf10)
+    save_csv("canonical_10kw_instant", df_can_instant)
 
     println()
-    println("── 1b. Canonical 10kW — SOFT-RAMP from k_min=2 → P_target=10kW ──")
+    println("── 1b. Canonical 10kW — SOFT-RAMP from k_min=5 → P_target=10kW ──")
     sys10b, u0_10b = build_kite_turbine_system(p10)
-    ctrl10 = RampController(; k_min=2.0, k_max=30.0, Kp=5e-4, P_target=10000.0)
-    df_can_ramp = run_scenario(sys10b, u0_10b, p10, "canonical-ramp", 2.0, ctrl10)
+    ctrl10 = RampController(; k_min=5.0, k_max=30.0, Kp=5e-4, P_target=10000.0)
+    df_can_ramp = run_scenario(sys10b, u0_10b, p10, "canonical-ramp", 5.0, ctrl10)
+    save_csv("canonical_10kw_softramp", df_can_ramp)
 
     # ── 2. V10 Tight 50 kW ────────────────────────────────────────────────
     println()
     println("── 2. V10 Tight 50kW ──")
-    df_v10_instant = DataFrame()
-    df_v10_ramp   = DataFrame()
     try
-        # Use the dashboard's builder function
-        include("interactive_dashboard.jl")
-        sys_v10, u0_v10, p_v10, _ = build_v10_tight_no_lowest()
+        # Load the builder utility (no GUI — won't hang on GLMakie)
+        println("  loading V10 Tight builder...")
+        include("builders_util.jl")
+        # Use invokelatest to avoid Julia 1.12 world-age error
+        sys_v10, u0_v10, p_v10, _ = Base.invokelatest(build_v10_tight_no_lowest)
 
         println()
         println("── 2a. V10 Tight — INSTANT step to k_mppt=62 ──")
         df_v10_instant = run_scenario(sys_v10, u0_v10, p_v10, "v10-instant", 62.0, nothing;
             t_sim=90.0)
+        save_csv("v10_tight_50kw_instant", df_v10_instant)
 
         println()
         println("── 2b. V10 Tight — SOFT-RAMP from k_min=20 → P_target=50kW ──")
-        sys_v10b, u0_v10b, _ = build_v10_tight_no_lowest()
+        sys_v10b, u0_v10b, _ = Base.invokelatest(build_v10_tight_no_lowest)
         ctrl50 = RampController(; k_min=20.0, k_max=200.0, Kp=1e-4, P_target=50000.0)
         df_v10_ramp = run_scenario(sys_v10b, u0_v10b, p_v10, "v10-ramp", 20.0, ctrl50;
             t_sim=90.0)
+        save_csv("v10_tight_50kw_softramp", df_v10_ramp)
     catch e
         println("  V10 Tight skipped: $(sprint(showerror, e))")
     end
@@ -223,31 +234,15 @@ function main()
     sys10c, u0_10c = build_kite_turbine_system(p10)
     df_ramp_instant = run_scenario(sys10c, u0_10c, p10, "ramp-instant", 11.0, nothing;
         wind_fn=wind_ramp_fn(7.0, 14.0, T_RAMP_WIND), t_sim=T_RAMP_WIND)
+    save_csv("wind_ramp_instant", df_ramp_instant)
 
     println()
     println("── 3b. Wind ramp 7→14 m/s — SOFT-RAMP ──")
     sys10d, u0_10d = build_kite_turbine_system(p10)
-    ctrl_ramp = RampController(; k_min=2.0, k_max=30.0, Kp=5e-4, P_target=10000.0)
-    df_ramp_soft = run_scenario(sys10d, u0_10d, p10, "ramp-soft", 2.0, ctrl_ramp;
+    ctrl_ramp = RampController(; k_min=5.0, k_max=30.0, Kp=5e-4, P_target=10000.0)
+    df_ramp_soft = run_scenario(sys10d, u0_10d, p10, "ramp-soft", 5.0, ctrl_ramp;
         wind_fn=wind_ramp_fn(7.0, 14.0, T_RAMP_WIND), t_sim=T_RAMP_WIND)
-
-    # ── Save all CSVs ─────────────────────────────────────────────────────
-    println()
-    println("── Saving CSVs ──")
-    for (name, df) in [
-        ("canonical_10kw_instant", df_can_instant),
-        ("canonical_10kw_softramp", df_can_ramp),
-        ("v10_tight_50kw_instant",  df_v10_instant),
-        ("v10_tight_50kw_softramp", df_v10_ramp),
-        ("wind_ramp_instant",       df_ramp_instant),
-        ("wind_ramp_softramp",      df_ramp_soft),
-    ]
-        if nrow(df) > 0
-            path = joinpath(OUT_DIR, "$name.csv")
-            CSV.write(path, df)
-            @printf "  %s  (%d rows)\n" path nrow(df)
-        end
-    end
+    save_csv("wind_ramp_softramp", df_ramp_soft)
 
     println()
     println("Done. Results in: $OUT_DIR")

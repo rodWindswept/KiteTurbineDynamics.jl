@@ -1,0 +1,116 @@
+MPPT TWIST SWEEP v2 — NUMERICAL FINDINGS
+=======================================
+June 2026 | Corrected CT-thrust physics | 10 kW TRPT prototype
+Companion data file for NOTES_MPPT_TWIST.md
+
+────────────────────────────────────────────────────────────────────────
+SLIDER vs. OPTION — DASHBOARD k_mppt WIDGET CRITICAL DISCOVERY
+────────────────────────────────────────────────────────────────────────
+
+PROBLEM: Dashboard slider (1–50 integer range) clips k_mppt for 50 kW designs.
+
+  k_mppt_50kw = 11.0 × (50/10)^2.5 = 614.9 N·m·s²/rad²
+  Slider default: clamp(614.9, 1, 50) = 50   ← 12.3× WRONG
+
+  At k_mppt=615, MPPT torque at 41 rpm (rated ω):
+    τ = 615 × (4.29)² = 11,530 Nm
+
+  V10 rotor static torque: ~237 Nm  ← cannot overcome MPPT
+  Result: V10 winner stalls at near-zero rpm in dashboard (pitfall #20)
+
+────────────────────────────────────────────────────────────────────────
+POWER vs. k_mppt — SHARPLY NON-LINEAR LANDSCAPE
+────────────────────────────────────────────────────────────────────────
+
+  k_mult     v=8 m/s    v=10 m/s   v=11 m/s   v=13 m/s
+  ──────     ───────    ────────   ────────   ────────
+  0.5×       2.80 kW     5.81 kW    7.82 kW   13.04 kW
+  0.75×      3.44 kW     7.08 kW    9.51 kW   15.85 kW
+  1.0×       3.82 kW     7.83 kW   10.52 kW   17.54 kW
+  1.2×       4.03 kW     8.23 kW   11.06 kW   18.46 kW
+  1.5×  ★    4.13 kW     8.38 kW   11.28 kW   18.84 kW     ← OPTIMAL
+  2.5×       4.04 kW     7.79 kW   10.36 kW   17.17 kW
+  4.0×  ⚠    3.31 kW     5.55 kW    7.43 kW   12.07 kW     ← UNSTABLE
+
+  Optimum k_mult = 1.5× — consistent across all wind speeds.
+  Power drop at 4.0× vs 1.5×: 20% at v=8, 36% at v=13.
+
+────────────────────────────────────────────────────────────────────────
+STABILITY BOUNDARY — k×4.0 CATASTROPHIC REGIME
+────────────────────────────────────────────────────────────────────────
+
+  Metric              k×1.5 (optimal)     k×4.0 (FAILED)
+  ──────              ───────────────     ──────────────
+  Twist σ (ripple)    ~0°                 50–80°
+  Δω hub−ground       ~0.003 rad/s        large slip events
+  Time-series         smooth settle       periodic snapping/collapse
+  Power               stable              drops to zero intermittently
+  Tether load         nominal             violent spiking
+
+  Root cause: MPPT torque overpowers the torsional stiffness of the TRPT
+  shaft.  Elastic shaft + quadratic load = resonance at k×4.0 boundary.
+  This is a real physical instability, not a simulator artifact.
+
+────────────────────────────────────────────────────────────────────────
+PROPOSED FIX: Discrete Multiplier Options (Menu widget)
+────────────────────────────────────────────────────────────────────────
+
+  "0.5× (light braking)"     → k = 0.5 × k_nom
+  "0.75×"                    → k = 0.75 × k_nom
+  "1.0× (design nominal)"    → k = k_nom
+  "1.2×"                     → k = 1.2 × k_nom
+  "1.5× (optimal — max P)"   → k = 1.5 × k_nom
+  "2.5× (over-braked)"       → k = 2.5 × k_nom
+  "4.0× ⚠ (instability)"     → k = 4.0 × k_nom
+
+  Benefits:
+  - Scales correctly for ANY P_rated (10 kW → 50 kW → 100+ kW)
+  - Each choice maps to a validated physics regime
+  - Instability boundary visible and warns user
+  - Matches v2 sweep grid exactly
+
+────────────────────────────────────────────────────────────────────────
+TWIST vs. k_mppt — STEADY-STATE DATA
+────────────────────────────────────────────────────────────────────────
+
+  k_mult     v=8 m/s      v=10 m/s     v=11 m/s     v=13 m/s
+  ──────     ───────      ────────     ────────     ────────
+  0.5×       441.5°       444.2°       445.5°       440.9°
+  0.75×      460.3°       462.5°       462.0°       457.5°
+  1.0×       469.4°       471.6°       470.2°       465.9°
+  1.2×       473.4°       475.8°       474.3°       469.4°
+  1.5×       475.1°       474.0°       471.8°       467.7°
+  2.5×       478.3°       467.0°       460.7°       447.0°
+  4.0×  ⚠    498.1°       462.7°       441.3°       405.4°
+
+  Twist at optimal (1.5×): 475.1°→467.7° across wind range
+  Remarkably flat — twist is ~wind-speed-independent at optimal k.
+
+  Twist ambiguity: 467.7° occurs at both k×1.5 (v=13, optimal) and
+  k×2.5 (v=10, over-braked).  Twist alone cannot disambiguate the
+  operating regime — need ω or P as a co-signal.
+
+────────────────────────────────────────────────────────────────────────
+WIND RAMP (7→14 m/s over 150 s, k×1.0)
+────────────────────────────────────────────────────────────────────────
+
+  P at 14 m/s end of ramp: 2.25 kW (vs 13.4 kW steady-state at 13 m/s)
+  System has not spun up — TRPT inertial time constant >> 150 s
+  Implication: controller must model long spin-up delay.
+
+────────────────────────────────────────────────────────────────────────
+REPORT IMAGES
+────────────────────────────────────────────────────────────────────────
+
+  scripts/results/mppt_twist_sweep/twist_sweep_v2_analysis.png
+    — 12-panel dashboard: power, twist, load, Δω, τ/T, ripple,
+      time-series at v=11, wind ramp.  Key exhibit for the k×4
+      instability boundary.
+
+  scripts/results/mppt_twist_sweep/individual/01_power_vs_wind.png
+    — Power vs wind speed for all 7 k_mult values.  1.5× consistently
+      highest. 4.0× is worst-performing curve.
+
+  scripts/results/mppt_twist_sweep/individual/06_twist_ripple.png
+    — Twist σ (ripple) vs wind speed.  k×4.0 shows 50–80° ripple;
+      all other values at ~0°.  Hard stability boundary at 4×.

@@ -158,6 +158,177 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-06-25] Bank angle bound tightened 35° → 25° for pitch depower blade-tip clearance
+
+**Context:** During pitch depower, the shaft elevates to ~65° from horizontal to spill
+wind. At the top of the shaft rotation circuit (12 o'clock position), a blade extending
+radially from a ring points upward at (90° − θ) from horizontal where θ is shaft elevation.
+The blade tip is banked downward by bank_angle from the ring plane. For the tip to stay
+above the root's horizontal plane:
+
+```
+tip_elevation = 90° − θ − bank_angle ≥ 0  →  bank_angle ≤ 90° − θ
+```
+
+| Shaft elevation θ | Max safe bank |
+|---|---|
+| 30° (normal operation) | 60° |
+| 65° (pitch depower) | **25°** |
+
+At 65° shaft tilt, any blade banked steeper than 25° has its tip below the root horizontal
+at top-of-circuit. A blade tip below horizontal at this point in the rotation means the
+apparent wind hits the top face of the blade (back-wind), reversing the lift direction.
+Since the tether bridling supports the blade in tension for underside loading only, back-wind
+stresses the blade root and ring fitting in ways the structure is not designed for.
+
+**Previous bound:** 35° (set as a DE search bound in V6.2 after reducing from 45° in
+earlier versions). The 35° limit was adequate for normal operation but fails the pitch
+depower geometric constraint by 10°.
+
+**Choice made:** Tighten bank_angle upper bound from 35° → 25° in all DE search bounds
+(V6 and V10). This is a geometric constraint derived from the pitch depower shaft angle,
+not an aerodynamic or structural limit — it ensures the blade physically cannot back-wind
+regardless of bridling configuration.
+
+**Alternatives considered:** 
+- Keep 35° and rely on bridling incidence to prevent back-wind: rejected because bridling
+  cannot fix a geometric inversion where the tip sits below the root.
+- Compute a dynamic limit from φ_inflow during gusts: deferred as the geometric constraint
+  is tighter and simpler to enforce.
+
+**Consequences:**
+- Reduces the DE's F_radial per unit blade lift (shallower bank = more F_axial, less F_radial)
+- May increase the optimal ring beam mass since less radial spreading → less tension stiffening
+- V10 tight winner at bank_bottom=35° becomes infeasible; campaign must be re-run
+- The true feasible bank angle may be even lower if bridling incidence is explicitly modeled
+  (deferred to a future incidence/AoA model)
+
+**Status:** Active. Pending code change in search_bounds_v6, search_bounds_v10,
+design_from_vector_v6, design_from_vector_v10.
+
+---
+
+## [2026-06-28] Provisional: V10 Tight over-bladed at rated wind — structural failure at k_mppt=62
+
+**Context:** Soft-ramp k_mppt controller trace recording (6 scenarios, `scripts/record_ramp_traces.jl`)
+completed 2026-06-28.  The canonical 5-line 10 kW system behaves well: instant k=11 settles at
+12.6 kW with min FoS=9.3, and the soft-ramp controller correctly transitions IDLE→RAMPING→HOLDING
+at k_min=5, producing 11.0 kW with min FoS=24.
+
+V10 Tight (49.2 kg, 3 expansion rotors, n_lines=3, n_rings=22) shows severely non-conservative
+behaviour at the handover-documented dynamic k_mppt=62:
+
+| Scenario | P_final | ω_final | min FoS | min collapse margin |
+|---|---|---|---|---|
+| Instant k=62 | **132 kW** | 123 rpm | **0.43** | — |
+| Soft-ramp from k=20 | **171 kW** | 165 rpm | **0.83** | 39.2° |
+
+The system produces 2.6–3.4× rated power at 11 m/s wind.  FoS drops below 0.5 within
+10 seconds — the TRPT ring structure buckles regardless of control strategy.  The soft-ramp
+controller correctly detects the P deficit and ramps k_mppt upward (20 → 33), but because
+the aerodynamic power far exceeds the 50 kW target, the rotor accelerates past the structural
+limit before the controller can intervene.
+
+**Physical interpretation:** The V10 DE campaign optimised for minimum mass at a static
+50 kW equilibrium (k_mppt_eff=166, ω=59 rpm).  The dynamic simulation at k_mppt=62 reveals
+the expansion rotors capture far more aerodynamic power than the equilibrium solver predicts,
+because the solver assumes instant, lossless torque propagation through the TRPT.  In the
+dynamic multibody model, the rotor spins up to 123–165 rpm before the torsional wave
+reaches the generator — by which point aero power is 2–3× rated and the rings buckle.
+
+**Three hypotheses (provisional, needs sweep data to confirm):**
+
+1. **Too much blade area** — the expansion rotors are sized for a high-altitude, low-wind
+   operating point.  At 11 m/s rated wind, they capture excess power.  Shorter blades or
+   fewer rotors would match the 50 kW structural limit.
+
+2. **k_mppt too low** — the handover's k=62 was derived at a lower effective wind speed.
+   At 11 m/s with wind shear, higher k_mppt (e.g. dashboard default ~555) would load the
+   generator more, slowing the rotor and reducing power.  Trade-off: higher k_mppt increases
+   TRPT torsional load, which also stresses the structure.
+
+3. **Less efficient blades** — reducing CL or increasing CD would lower aerodynamic capture
+   at the same blade area and rotor speed, producing less power for the same structural load.
+   Noise implication: higher tip speed for equivalent power, but at Ø5m and ~150 rpm,
+   tip Mach < 0.2 — aeroacoustic noise is not a limiting factor at this scale.
+
+**Required sweep:** Vary k_mppt from ~20 to ~600 for both canonical 10 kW and V10 Tight,
+recording min FoS, P_final, ω_final, and collapse margin per run.  This will map the safe
+operating envelope and identify the k_mppt value that balances P ≈ P_rated with FoS ≥ 1.5.
+
+**Brake fix:** The auto-brake previously engaged whenever ω_hub < 1.0 rad/s (~9.5 rpm),
+latching the ground ring and preventing any power generation.  This was removed in
+`src/ring_forces.jl` — the brake now only engages on explicit command (depower sequence),
+not auto-triggered by rotor speed.
+
+**Controller status:** The soft-ramp state machine (IDLE→RAMPING→HOLDING) makes correct
+transitions for canonical 10 kW.  For V10 Tight, the P-term overshoots because the ramp
+rate (Kp=1e-4) is too fast relative to the system's spin-up time — k reaches ceiling before
+HOLDING can engage.  The FoS taper and Tulloch collapse-margin guards are active but
+insufficient to prevent structural failure when aero power far exceeds rated.
+
+**Status:** Confirmed.  k_mppt sweep (2026-06-28) found the value that hits 50 kW: k≈550.
+But FoS=0.75 at that point — the structure fails before rated power is reached.
+
+---
+
+### [2026-06-28 follow-up] k_mppt hunt confirms: V10 Tight structurally incapable of 50 kW at 11 m/s
+
+A 12-point k_mppt sweep (50→600, 3s each) on V10 Tight found the k_mppt that produces
+50 kW at the generator: **k ≈ 550**.  However, at this operating point:
+
+| k_mppt | P_gen | ω_hub | min FoS | Collapse margin |
+|---|---|---|---|---|
+| 62 (original) | 132 kW | 123 rpm | 0.43 | Inf |
+| **550 (tuned)** | **49.2 kW** | 52 rpm | **0.75** | — |
+
+The power target is met, but the TRPT ring structure buckles (FoS < 1.0).  The relationship
+is monotonic: as k_mppt increases, generator braking increases, rotor speed drops, power
+first rises then falls, and FoS decreases continuously.  The structural limit (FoS=1.5)
+is crossed at k≈350, well before the power target (50 kW) is reached at k≈550.
+
+**Root cause of the design error:**
+
+The V10 DE campaign optimised for minimum mass subject to a *static* 50 kW equilibrium.
+The static solver computes ω_eq and k_mppt_eff assuming instant, lossless torque propagation
+through the TRPT.  In reality, the TRPT is a distributed torsional spring-damper chain:
+torque propagates sequentially, and the generator only "sees" rotor torque after the
+torsional wave travels the full shaft length.  This propagation delay means:
+
+1. The static solver *under-predicts* the k_mppt needed to hold the rotor at the design
+   speed (static: k_eff=166, dynamic: k≈550).
+2. The higher k_mppt needed dynamically produces higher TRPT torsional loads.
+3. The ring radii and tether diameters optimised for the static equilibrium are
+   insufficient for the dynamic loads.
+
+**What a 50 kW-capable V10 would need:**
+
+The TRPT structure must withstand the dynamic torsional load at k≈550, ω≈52 rpm.
+The ring buckling FoS scales with ring radius and tether tension.  To achieve FoS≥1.5:
+
+- **Larger ring radii** — increases the moment arm, reducing tether tension for the
+  same torque (T = τ / r, FoS ∝ r² for buckling).  Trade-off: more mass.
+- **Thicker tethers** — increases the column buckling capacity directly.
+  Trade-off: more mass, more drag.
+- **More tether lines per ring** — distributes the load across more tension members.
+  Current V10 Tight uses n_lines=3; increasing to 5–6 would reduce per-line tension.
+- **Shorter segments** (more rings) — reduces the unsupported column length, increasing
+  the Euler buckling load (F_crit ∝ 1/L²).
+
+A first-order estimate: FoS must increase from 0.75 to 1.5 (2×).  Since FoS ∝ r² for
+ring buckling, ring radii would need to increase by √2 ≈ 1.4×.  With 3 lines, increasing
+to 5 lines would provide 5/3 ≈ 1.67× load distribution.  Combined: 1.4² × 1.67 ≈ 3.3×
+FoS improvement, well above the 2× needed.  Mass penalty: ~40% increase in ring mass
+(radii) plus ~67% more tether mass (lines).  Total system mass estimate: ~70–80 kg
+(vs current 49.2 kg).
+
+**Next step:** Run a DE campaign with the new structural constraint: FoS ≥ 1.5 at
+the *dynamic* operating point (k_mppt = value that produces P_rated, found by hunt),
+not the static equilibrium k_mppt.  This requires a two-level optimisation: outer
+loop hunts k_mppt, inner loop evaluates FoS.
+
+---
+
 ## [2026-06-20] V11: Tapered tether diameters — top tethers carry less load, don't need the same SWL
 
 **Context:** Tether tension accumulates from hub to ground. In the V10 winner (76.75 kg,

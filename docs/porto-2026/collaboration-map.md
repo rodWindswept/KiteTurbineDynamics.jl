@@ -72,7 +72,7 @@ Launch/Landing      ███ 34
 *"Your cyclic pitch control on someAWE's helix TRPT is the most advanced rotor control I've seen on a flying RAWES. We're exploring whether independent rotor pitching could close the static-vs-dynamic gap in stacked configurations. What did you learn about wake interaction between segments?"*
 
 ### Oliver Tulloch
-*"The TRPT model you built is the foundation we all stand on. One thing the KTD solver has revealed: MTR shouldn't be a fixed parameter — it needs to be a DE optimisation variable. At different scales and rotor counts, the optimal MTR shifts. Have you explored this?"*
+*"The TRPT model you built is the foundation we all stand on. Our KTD solver takes a different approach — rather than using a single MTR coefficient, we compute per-section torque-tension coupling explicitly from the DE-optimised ring geometry. At the V10 Tight optimum (4 rotors, r_hub=2.89m, target_Lr=3.0m), the equivalent per-section coupling varies with the tapered ring profile. Have you explored multi-section TRPT coupling where the moment-to-tension relationship isn't uniform?"*
 
 ---
 
