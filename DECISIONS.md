@@ -2,6 +2,183 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-01 (round 3): Dashboard v2 — per-rotor hub power fix, stacked dials in tall row, tension-colour match, N/Pcr relabel
+
+**Context:** Rod reviewed the round-2 cockpit and asked: the hub dial showed
+η=286% (aero efficiency >200%) — are the dial powers cumulative?; move the rotor
+dials to stack vertically beside the bar charts (like the top-row bars); what is
+`N/Pcr` in plain English; is "more torque at the bottom" of the torque chain
+right; and should the tension-chain bar colours match the 3D viewport tether
+line colours.
+
+1. **Hub dial η>200% was a genuine bug — fixed at source.** The hub dial's
+   "ground" power was `base.P_kw` (the TOTAL generator electrical, which reacts
+   the hub rotor PLUS all expansion-rotor torques accumulated down the shaft),
+   while its "aero" was the hub rotor alone → η = total/hub_aero can exceed 100%.
+   Fix in `sim_frame.jl`: hub `rg = |tau_aero · omega_gnd| / 1000` — the hub
+   rotor's OWN contribution referred to the ground shaft. Now every dial is a
+   per-rotor contribution and the dials approximately SUM to `GEN ELEC kW`; no
+   dial is cumulative. `rotor_ground_power` is consumed only by the dials/scripts
+   (grepped), so changing its hub definition is safe for tests/core.
+
+2. **Rotor dials moved into the TALL row (row 3, col 4), stacked vertically.**
+   Rod: "stacked beside the bar charts top to bottom … like the rotors are."
+   `rotor_gauges!(…; horizontal=false)` now lives at `fig[3,4]`; 3D viewport moved
+   `fig[3,4:6]` → `fig[3,5:6]`. Row 2 headers gain `ROTOR POWER` (col 4), `3D
+   VIEWPORT` → cols 5:6. Freed-up row-5 space: config now spans cols 2:3, event
+   log cols 4:6 (rotor gauges no longer in row 5). Centre fonts scale with layout
+   (`fs_kw` 24 horizontal / 18 stacked) so the kW readout fits the narrower dial.
+   New `colsize!(fig.layout, 4, Relative(0.12))`; cols 1-3 12% each; 3D keeps 5:6.
+
+3. **Tension-chain bar colours now use the same ramp as the 3D tethers.** Was a
+   local green>10 / orange>5 / red<5 kN threshold; now
+   `_tension_color(T_newtons, TETHER_SWL)` per segment (grey<5N slack, then
+   blue→green→orange→red as T/SWL→1). A segment's bar colour matches its line
+   colour in the viewport. Bars still plot kN; colour is computed on Newtons.
+
+4. **`N/Pcr` relabelled `buckle util (N/Pcr)`.** It is axial compressive load N
+   divided by the ring frame's critical Euler buckling load Pcr — a buckling
+   utilisation (1.0 = at buckling; FoS = Pcr/N). Axis label + tooltip updated.
+
+## 2026-07-01 (round 2): Dashboard v2 — barplot binding bug, rotor dial sizing, tooltips, power-label clarity
+
+**Context:** After the round-1 refinements rendered, Rod reviewed the running
+cockpit and reported: the three tall bar charts (torque/ring/tension) were
+visually empty on every design; rotor dials too small to read; config panel
+over-spaced with content hidden under the play bar; and asked whether the
+`POWER kW` KPI is generator electrical out and whether tooltips are possible.
+
+1. **Root cause of "empty bars" was a barplot API misuse, not light load.** The
+   panel handlers set `bars[1] = vals`, which reassigns the bar *positions* (the
+   first plot argument), shoving every bar to an off-axis y-coordinate. Fix: bind
+   bar lengths to an `Observable` created at plot time (`heights = Observable(...)`;
+   `barplot!(ax, 1:n, heights; …)`) and update `heights[] = vals`; likewise a
+   `colors` Observable for per-bar colour. Also removed the bogus `width=22/35`
+   kwargs (absolute data-unit widths that would overlap bars into a blob) — barplot
+   auto-width is correct. This makes all three charts fill and animate.
+
+2. **`GEN ELEC kW` is the correct reading and is now labelled as such.** Verified
+   `P_kw = tau_gen · |omega_gnd| / 1000` (sim_frame.jl:133) — generator reaction
+   torque × ground-PTO speed = electrical output at the single ground generator.
+   Renamed the cockpit KPI `POWER kW` → `GEN ELEC kW`. Expansion-rotor powers shown
+   on their own dials are aero contributions to the same shaft, not separate
+   generators, so the KPI is not summed.
+
+3. **Rotor dials laid out horizontally in a wide 3-column cell.** `rotor_gauges!`
+   gained a `horizontal` kwarg (places each dial at `gp[1,i]` instead of `gp[i,1]`);
+   centre fontsizes bumped (kW 17→24, sub 7→10, label 10→13). In v2 the gauges moved
+   from a single narrow column to `fig[5,4:6]`, so each dial is ~top-row-chart width.
+
+4. **Floating tooltips via `DataInspector(fig)`.** Each bar panel sets a custom
+   `inspector_label` (ring/segment id + value); other inspectable plots show default
+   readouts. Answers Rod's "can we give floating tooltips" — yes, globally.
+
+5. **De-compressed the secondary row.** Figure 1040→1180 tall, row 5 250→340;
+   row 5 reflowed to twist(1) | config(2) | event log(3) | rotor gauges(4:6). Config
+   menus narrowed 140→120 to fit the single column and stop content spilling under
+   the control bar.
+
+**Status:** written to `src/dashboard_panels.jl` + `src/dashboard_v2.jl`; NOT
+compile-verified (sandbox 401 again). Rod runs `--v2 --v10-reinforced`.
+
+## 2026-07-01: Dashboard v2 cockpit — layout, dynamic scaling, rotor readout, config interactivity, and V10 design selection
+
+**Context:** The `--v2` cockpit (`src/dashboard_v2.jl` + `src/dashboard_panels.jl`)
+first rendered successfully on 2026-07-01 (play/scrub, 3D viewport, and the
+rotor gauge all live). Rod reviewed it at screen and asked for five concrete
+changes. This entry records the decisions taken in response, plus a correction
+about V10 design artifacts. Full session detail in
+`handovers/handover-2026-07-01-dashboard-v2-refinements.md`.
+
+### 1. Three tall diagnostic charts sit side-by-side, not stacked across rows
+
+**Decision:** Torque chain, ring health, and tension chain are placed in a
+single tall row beside each other (`fig[3,1]`, `fig[3,2]`, `fig[3,3]`), with the
+3D viewport widened to `fig[3,4:6]`. The layout moved from a compressed 6-row ×
+4-col grid to a 6-row × 6-col grid; the tall content row is `Auto` (takes all
+leftover height, ~640 px), the secondary row is `Fixed(250)`, and the figure
+grew from 1600×1000 to 1780×1040.
+
+**Why:** Rod: "I'd like to see the three tall segment and ring elements all
+charts beside each other because that would show easily a lot about how those
+relate." Ring buckling, torque accumulation, and tension slack all propagate
+*along the shaft* — placing the three per-position bar charts adjacently lets an
+engineer read their relationship at a glance (e.g. high torque at the bottom
+ring co-located with the lowest tension segment). Stacking them across separate
+rows hid that relationship. The previous layout was also "really quite
+compressed"; the bigger figure and full-width control bar address that.
+
+### 2. Bar-chart x-axes autoscale to the current frame, not fixed limits
+
+**Decision:** `ring_health!` and `tension_chain!` now autoscale their x-axis in
+the frame handler (`xlims!(ax, 0, max(mx*1.25, floor))`) instead of using fixed
+limits. Ring health dropped its `xlims!(ax, 0, 1.5)` + `clamp(ratio, 0, 1.5)`;
+tension keeps the SWL line in view via `max(mx*1.15, swl*1.15)`. Torque chain
+already autoscaled.
+
+**Why:** On the lightly-loaded canonical design (ring util ~8%, FoS ~21) the
+fixed-scale bars were near-invisible — Rod: "can we... scale it dynamically...
+the ring health, the torque chain and the tension chain." Autoscaling makes the
+bars readable at any load. Trade-off accepted: a fixed reference threshold (e.g.
+the buckling line at N/Pcr = 1.0) is *not* pinned on-screen, because pinning it
+would re-compress the bars under light load — the colour coding (green/orange/red
+by FoS) carries the safety signal instead. Tension is the exception: its SWL
+line stays visible because it is the operative limit for that panel.
+
+### 3. Rotor gauge reads delivered power in kW, not efficiency percent
+
+**Decision:** The rotor gauge centre shows delivered (ground) power in kW as the
+big number, with an `aero X.X · η YY%` sub-line; the panel header states
+`outer=aero · inner=out`. The outer cyan arc is aerodynamic power, the inner
+green arc is delivered power (both scaled to `P_rated_kw / n_rotors`).
+
+**Why:** Rod couldn't tell what the arcs meant or what power the rotor produced —
+"it doesn't show what the power output of the rotor is, and I think the other
+bit's percentage efficiency." Delivered kW is the number an operator cares about;
+efficiency is secondary and demoted to the sub-line. Units confirmed: both
+`rotor_aero_power` and `rotor_ground_power` are already kW in
+`capture_extended` (`sim_frame.jl` — `Pa/1000`, `base.P_kw`).
+
+### 4. Config panel uses real interactive Menu widgets; live rerun stays deferred
+
+**Decision:** The config panel's four dropdowns (design / scenario / generator /
+payout) are now real Makie `Menu` widgets, selectable at runtime.
+`config_panel!` returns a NamedTuple of the menu handles so the caller wires each
+`.selection` to the event log. The duplicate scenario menu that lived in the
+control bar was removed. Selecting a menu logs "rerun pending" — it does **not**
+yet re-run the simulation.
+
+**Why:** Rod: "Not able yet to select any of the controls in the config." The
+static `Label` placeholders looked interactive but weren't. Making them real
+widgets closes that gap now; live scenario re-simulation via `build_rerun!`
+(`sim_runner.jl`) remains deferred per the PRD (out of scope for v2 v1.0) — it
+needs the runner/panel seam wired and is a larger change.
+
+### 5. V10 "Reinforced" is the demo-worthy loaded design; a flag exposes it
+
+**Decision:** Added `--v10-reinforced` to `scripts/interactive_dashboard.jl`,
+which calls `build_v10_tight_no_lowest(r_bottom_scale=1.30, tether_diameter=0.004)`.
+`build_v10_tight_no_lowest` gained those two kwargs (scaling design-vector
+`x[2]` = r_bottom, and swapping the `MaterialSpec` tether diameter).
+
+**Why:** Correction to a stale assumption — `scripts/results/v10_campaign_50kw/best_design.json`
+**is present and valid** (an earlier note claimed it was absent; that was wrong),
+so `--v2 --v10-tight` works today and renders the cockpit on a loaded design
+(bars fill and colour, unlike canonical). But plain V10 Tight is **dynamically
+dead (FoS = 0.43)** — it shows red/warning states and may diverge. The only
+viable V10 is the reinforced variant (wider bottom ring + 4 mm tethers → ~55 kW
+at FoS = 2.30), and the builder previously had no way to express it. The
+kwargs + flag make the healthy loaded design a one-command demo:
+`julia --project=. scripts/interactive_dashboard.jl --v2 --v10-reinforced`.
+Note: the separate Tight campaign winner in `v10_campaign_50kw_tight/` is not
+read — the builder path to `v10_campaign_50kw/` is hardcoded.
+
+**Status:** All five changes are written but **not yet compiled** — the sandbox
+was unauthenticated (401) this session, so Rod compiles/runs on his machine.
+Watch for Makie issues on `Menu` `fontsize`/`width` kwargs, `Relative` column
+sizing, the `lblkw...` NamedTuple splat in `config_panel!`, and the new builder
+kwargs.
+
 ## 2026-06-30: The two-flank control problem — left-flank overspeed vs right-flank torque demand
 
 **Context:** The dynamic k_mppt hunt (control-map bisection) consistently

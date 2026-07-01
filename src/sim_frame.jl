@@ -295,3 +295,130 @@ function capture_peaks(frames::Vector{SimFrame})
 
     return SimPeaks(T_peak, omega_peak, P_peak, V_peak, slack_events, length(frames))
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ExtendedSimFrame — per-ring and per-rotor detail for dashboard panels
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    ExtendedSimFrame
+
+Wraps a standard SimFrame with additional per-element detail for
+dashboard panels that need per-ring and per-rotor visualization.
+The base SimFrame contains aggregated maxima; this adds the arrays.
+"""
+struct ExtendedSimFrame
+    base::SimFrame
+
+    # ── Per-ring structural (n_rings elements) ─────────────────────
+    ring_fos::Vector{Float64}
+    ring_Ncomp::Vector{Float64}
+    ring_Pcrit::Vector{Float64}
+
+    # ── Per-segment twist (n_rings-1 elements) ─────────────────────
+    segment_twist_deg::Vector{Float64}
+
+    # ── Per-segment tension (n_rings-1 elements) ───────────────────
+    segment_tension::Vector{Float64}
+
+    # ── Per-rotor power (n_rotors elements, hub first) ─────────────
+    rotor_labels::Vector{String}
+    rotor_aero_power::Vector{Float64}
+    rotor_ground_power::Vector{Float64}
+    rotor_omega::Vector{Float64}
+end
+
+"""
+    capture_extended(u, sys, p, t, wind_fn, lift_device=nothing; kwargs...)
+
+Returns an ExtendedSimFrame with per-ring and per-rotor detail.
+Calls the existing `capture_frame()` internally for the base SimFrame,
+then augments with per-element arrays from `ring_element_analysis()`
+and `expansion_rotor_forces()`.
+"""
+function capture_extended(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    t::Float64,
+    wind_fn::Function,
+    lift_device::Union{Nothing,LiftDevice}=nothing;
+    hub_z0::Union{Nothing,Float64}=nothing,
+    brake_engaged::Bool=sys.brake_engaged[],
+)
+    base = capture_frame(u, sys, p, t, wind_fn, lift_device;
+                         hub_z0=hub_z0, brake_engaged=brake_engaged)
+
+    N = sys.n_total; Nr = sys.n_ring; n_seg = Nr - 1
+    alpha_vec = @view u[(6N + 1):(6N + Nr)]
+    omega_gnd = abs(u[6N + Nr + 1])
+    hub_gid = sys.rotor.node_id
+    hub_ctr = u[(3*(hub_gid-1)+1):(3*hub_gid)]
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+
+    # ── Per-ring structural ────────────────────────────────────────
+    rea = ring_element_analysis(u, collect(alpha_vec), sys, p, t, wind_fn)
+    ring_fos   = Float64[]
+    ring_Ncomp = Float64[]
+    ring_Pcrit = Float64[]
+    for ref in rea
+        wN  = maximum(b.N for b in ref.beams; init=0.0)
+        wNc = maximum(b.N_crit for b in ref.beams; init=1.0)
+        push!(ring_fos, (isnan(ref.max_util) || ref.max_util <= 0) ? Inf : 1.0 / ref.max_util)
+        push!(ring_Ncomp, wN)
+        push!(ring_Pcrit, wNc)
+    end
+
+    # ── Per-segment twist ──────────────────────────────────────────
+    segment_twist = [rad2deg(mod(alpha_vec[i+1]-alpha_vec[i]+π, 2π)-π) for i in 1:n_seg]
+
+    # ── Per-segment tension ────────────────────────────────────────
+    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    segment_tension = Float64[]
+    for s in 1:n_seg
+        seg_sum = sum(get_segment_tension(u, sys, p, s, j) for j in 1:p.n_lines)
+        push!(segment_tension, seg_sum / p.n_lines)
+    end
+
+    # ── Per-rotor power ────────────────────────────────────────────
+    v_vec = wind_fn(hub_ctr, t)
+    V_hub = max(sqrt(v_vec[1]^2 + v_vec[2]^2), 0.1)
+    elev_deg = rad2deg(p.elevation_angle)
+
+    rl, ra, rg, ro = String[], Float64[], Float64[], Float64[]
+    lambda = clamp(abs(base.omega_hub) * sys.rotor.radius / V_hub, 0.0, 12.0)
+    cp = cp_at_tsr(lambda)
+    Pa = 0.5 * p.rho * V_hub^3 * π * sys.rotor.radius^2 * cp * cos(p.elevation_angle)^2.65
+    # Hub "ground" power = the hub rotor's OWN contribution referred to the ground
+    # shaft (tau_aero · omega_gnd), NOT base.P_kw. base.P_kw is the TOTAL generator
+    # electrical output (it also reacts the expansion-rotor torques); using it here
+    # made the hub dial show >100% "efficiency". With this per-rotor definition the
+    # hub + expansion dials approximately SUM to base.P_kw (the GEN ELEC kW KPI).
+    push!(rl, "Hub"); push!(ra, Pa/1000)
+    push!(rg, max(0.0, abs(base.tau_aero * base.omega_gnd) / 1000))
+    push!(ro, abs(base.omega_hub))
+
+    if !isempty(sys.expansion_rotors)
+        for er in sys.expansion_rotors
+            ri = er.ring_idx
+            ri < 1 || ri > Nr && continue
+            rgid = sys.ring_ids[ri]
+            rpos = u[(3*(rgid-1)+1):(3*rgid)]
+            rω   = abs(u[6N+Nr+ri])
+            rnom = (sys.nodes[rgid]::RingNode).radius
+            vw = wind_fn(rpos, t); vm = max(sqrt(vw[1]^2+vw[2]^2), 0.1)
+            T_est = ri > 1 ? sum(get_segment_tension(u, sys, p, ri-1, j) for j in 1:p.n_lines)/p.n_lines : 100.0
+            T_est = max(T_est, 100.0)
+            try
+                _, _, tn, _, _ = expansion_rotor_forces(er, p.rho, vm, rω, elev_deg, rnom, T_est, p.n_lines)
+                push!(ra, tn*rω/1000); push!(rg, max(0.0, tn*omega_gnd/1000))
+            catch
+                push!(ra, 0.0); push!(rg, 0.0)
+            end
+            push!(rl, "R$(ri)"); push!(ro, rω)
+        end
+    end
+
+    return ExtendedSimFrame(base, ring_fos, ring_Ncomp, ring_Pcrit,
+        segment_twist, segment_tension, rl, ra, rg, ro)
+end
