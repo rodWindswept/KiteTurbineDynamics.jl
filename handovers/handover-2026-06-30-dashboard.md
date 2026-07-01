@@ -5,6 +5,64 @@
 
 ---
 
+## Design Intent — Why This Matters
+
+### The Problem
+
+The v1 dashboard (`src/visualization.jl`, 1,850 lines) is a monolithic HUD. It shows aggregate numbers (one FoS, one power, one tension) but can't show WHERE a problem is occurring. A TRPT engineer needs to see:
+
+- **Which ring is buckling?** Is it the bottom ring (torque accumulation) or the hub ring (thrust)?
+- **Which rotor is contributing power?** Are all expansion rotors working, or is one stalled?
+- **How is twist propagating?** Can we see the torsional wave travel down the shaft?
+- **Where in the tension chain is the weak point?** Is a tether segment going slack?
+
+The v1 dashboard compresses all this into a single `FoS=1.36` number. The v2 dashboard **shows the system**.
+
+### The Aesthetic Reference
+
+The design draws from **aircraft instrument panels and automotive gauge clusters** — dark backgrounds, cyan/high-contrast accents, large readable KPIs, minimal text. The reference is the Kitemill dashboard aesthetic (clean, dark-themed, per-component diagnostics). The A1 Instrument palette (near-black #1a1a2e, cyan #00bcd4 accent) was selected in Phase 1.
+
+The goal: an engineer looking at this dashboard should immediately understand the TRPT's state without reading numbers. Red ring bar = that ring is buckling. Rotor gauge spinning fast = that rotor is contributing. Twist view showing a spiral = torsional wave propagating. No hidden algorithms, no buried menus.
+
+### The Panel Philosophy — TRPT-Specific Diagnostics
+
+Each panel answers one question for the TRPT engineer:
+
+| Panel | Question | Why TRPT-specific |
+|-------|----------|-------------------|
+| **Ring health bars** | Which ring is closest to buckling? | TRPT has 20+ rings — the failure is always at one specific ring. No conventional turbine has this. |
+| **Rotor power gauges** | Which rotor is producing power? | Multi-rotor TRPT — hub + expansion rotors. A stalled expansion rotor is invisible in aggregate power. |
+| **Tension chain** | Where is tension lowest in the shaft? | Tension propagates downward through the TRPT. A slack segment breaks the transmission. |
+| **Torque chain** | How does torque accumulate per ring? | Torque accumulates from hub to ground. Bottom rings carry the full load. |
+| **Twist view** | What's the twist profile down the shaft? | The TRPT's defining failure mode — torsional collapse. Visualised as a polar spiral. |
+| **Config & Controls** | What am I running and can I change it? | Config name, wind speed, scenario buttons. |
+
+### The Grilling — Architecture Decisions
+
+The dashboard architecture was grilled using Matt Pocock's methodology (one question at a time, recommended answer, walk the decision tree). The key questions and answers:
+
+**Q: Monolith vs thin-shell vs microkernel?**
+→ Thin-shell. V1 stays untouched. V2 is a new function composing extracted modules.
+
+**Q: What's the right seam between the runner and the panels?**
+→ `build_rerun!` as a factory function. Both v1 and v2 call it identically. Change the ODE timestep once, both layouts pick it up.
+
+**Q: Should panels know their grid position?**
+→ No. Signature is `panel!(grid_cell, data_obs, palette)` — layout-agnostic. This enables configurable cell slots: swap torque_chain for rotor_gauges in the same cell.
+
+**Q: Extract vs duplicate the 3D viewport?**
+→ Both v1 and v2 share the same 3D scene. The viewport is rendered once, placed in different grid cells per layout.
+
+**Q: Configurable cell slots — now or later?**
+→ Deferred. Post-extraction. First make the panels work, then make them swappable.
+
+**Q: Responsive sizing — now or later?**
+→ `Fixed()` first (matching 1920×1080 laptop), `Relative()`/`Auto()` after panels are verified.
+
+Full PRD at `docs/architecture/PRD-dashboard-refactor.md` (published as GitHub issue #5).
+
+---
+
 ## State of Play
 
 The dashboard v2 refactor has two working modules and one broken integration. The handover recommends starting a clean session with only this document as context — avoid the tangle of the previous mixed session.
@@ -49,14 +107,12 @@ The dashboard v2 refactor has two working modules and one broken integration. Th
 
 ## The Plan (from PRD)
 
-**`docs/architecture/PRD-dashboard-refactor.md`** (published as GitHub issue #5):
+> Don't modify `build_dashboard()`. Write `build_dashboard_v2()` from scratch as a thin shell composing the extracted modules. V1 stays working. `scripts/interactive_dashboard.jl` gets a `--v2` flag.
 
-> Don't modify `build_dashboard()`. Write `build_dashboard_v2()` from scratch as a thin shell composing the extracted modules. V1 stays working throughout. `scripts/interactive_dashboard.jl` gets a `--v2` flag.
-
-**V2 layout (6-row responsive grid):**
-- Row 1: Cockpit strip (7 KPIs, integrated from separate window)
-- Row 2: Torque chain | Ring health bars | Rotor gauges | Config & Controls
-- Row 3: Twist view | Tension chain | 3D viewport
+**V2 layout (6-row responsive grid, 1920×1080):**
+- Row 1: Cockpit strip (7 KPIs — POWER, RPM, FoS, RING%, WIND, ELEV, TIME)
+- Row 2: Torque chain | Ring health bars | Rotor gauges (vertical stack) | Config & Controls
+- Row 3: Twist view (polar) | Tension chain | 3D viewport
 - Row 4: Event log + Playback controls
 
 ## Implementation Tracker
@@ -78,8 +134,6 @@ From `scripts/dashboard_v2_tracker.md`:
 
 ## Julia/Makie Pitfalls
 
-From the previous session:
-
 1. **`Observable(nothing)` is type-locked** to `Nothing`. Use `Observable{Any}(nothing)` for multi-type fields.
 2. **`SystemParams` is immutable.** Use `modified_params(base; field=value)` — exported from `parameters.jl`.
 3. **Try/catch blocks create variable scopes.** Variables inside `try` are invisible to subsequent code.
@@ -94,8 +148,8 @@ From the previous session:
 **Vertical TDD slices.** One panel, one window, verify, then integrate:
 
 1. Run `scripts/dashboard_v2_standalone.jl --v10-tight` with Rod at screen. Does `ring_health!` render in GLMakie? This is the critical first step — all panel verification requires display.
-2. If it renders: write `build_dashboard_v2()` from scratch in `src/visualization.jl`. New function, clean grid, compose panels via the same pattern as the standalone script.
-3. Add `--v2` flag to `interactive_dashboard.jl` that calls `build_dashboard_v2()` instead of `build_dashboard()`.
+2. If it renders: write `build_dashboard_v2()` from scratch in `src/visualization.jl`. New function, clean grid, compose panels.
+3. Add `--v2` flag to `interactive_dashboard.jl`.
 4. One panel at a time: ring_health! → tension_chain! → torque_chain! → rotor_gauges! → twist_view! → config_panel!
 
 **Do NOT:**
@@ -134,13 +188,6 @@ julia --project=. scripts/dashboard_prototype_panels.jl
 | `scripts/dashboard_v2_standalone.jl` | v2 standalone test (needs display) |
 | `scripts/dashboard_prototype_panels.jl` | CairoMakie reference |
 | `scripts/dashboard_v2_tracker.md` | Implementation tracker |
-| `docs/architecture/PRD-dashboard-refactor.md` | Full PRD |
-| `SESSION_HANDOVER_2026-06-30.md` | Previous session record (Windswept drive) |
-
-## Reference PRD
-
-The full dashboard architecture PRD is at `docs/architecture/PRD-dashboard-refactor.md`. Two seams were identified:
-1. `build_rerun!(sys, p, u0, wind_fn, lift_device, obs_nt)` → returns a scenario-runner closure
-2. `panel!(grid_cell, data_obs::Observable{ExtendedSimFrame})` → 6 panel functions
-
-Both are extracted and working. The integration layer (`build_dashboard_v2()`) is the remaining piece.
+| `docs/architecture/PRD-dashboard-refactor.md` | Full PRD (grilling output) |
+| `docs/porto-2026/dashboard-redesign-plan.md` | Original redesign spec |
+| `docs/porto-2026/dashboard-issues.md` | Bug tracker |
