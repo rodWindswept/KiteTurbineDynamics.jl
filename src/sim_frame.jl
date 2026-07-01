@@ -321,6 +321,10 @@ struct ExtendedSimFrame
     # ── Per-segment tension (n_rings-1 elements) ───────────────────
     segment_tension::Vector{Float64}
 
+    # ── Per-segment transmitted torque (n_rings-1 elements) ────────
+    # Rope constitutive torque carried through each segment (N·m).
+    segment_torque::Vector{Float64}
+
     # ── Per-rotor power (n_rotors elements, hub first) ─────────────
     rotor_labels::Vector{String}
     rotor_aero_power::Vector{Float64}
@@ -380,6 +384,29 @@ function capture_extended(
         push!(segment_tension, seg_sum / p.n_lines)
     end
 
+    # ── Per-segment transmitted torque ─────────────────────────────
+    # Real transmitted torque through each rope segment, from the SAME TRPT
+    # torsional constitutive law documented in ring_forces.jl (§torsional
+    # stiffness / Tulloch curve):
+    #     τ_s = n_lines · T_s · r_s² · sin(Δα_s) / chord_s,
+    #     chord_s = √(L_seg² + 2·r_s²·(1 − cos Δα_s))
+    # evaluated on the ACTUAL per-segment line tension (segment_tension) and
+    # inter-ring twist (segment_twist) from THIS frame. This is the torque the
+    # twisted rope is physically carrying — not a ground→hub interpolation.
+    # It naturally builds along the shaft (steps at driving rings) and captures
+    # torsional dynamics. Telemetry-only: does not feed back into the solver.
+    L_seg = p.tether_length / n_seg
+    segment_torque = Float64[]
+    for s in 1:n_seg
+        r_a = (sys.nodes[sys.ring_ids[s]]::RingNode).radius
+        r_b = (sys.nodes[sys.ring_ids[s+1]]::RingNode).radius
+        r_s = 0.5 * (r_a + r_b)
+        dα  = deg2rad(segment_twist[s])
+        chord = sqrt(L_seg^2 + 2 * r_s^2 * (1 - cos(dα)))
+        τ_s = p.n_lines * segment_tension[s] * r_s^2 * sin(abs(dα)) / max(chord, 1e-9)
+        push!(segment_torque, τ_s)
+    end
+
     # ── Per-rotor power ────────────────────────────────────────────
     v_vec = wind_fn(hub_ctr, t)
     V_hub = max(sqrt(v_vec[1]^2 + v_vec[2]^2), 0.1)
@@ -420,5 +447,5 @@ function capture_extended(
     end
 
     return ExtendedSimFrame(base, ring_fos, ring_Ncomp, ring_Pcrit,
-        segment_twist, segment_tension, rl, ra, rg, ro)
+        segment_twist, segment_tension, segment_torque, rl, ra, rg, ro)
 end

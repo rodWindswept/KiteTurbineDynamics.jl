@@ -33,43 +33,42 @@ fos_str(v) = (isinf(v) || isnan(v) || v > 9999) ? "   ∞" : @sprintf("%6.1f", v
 
 
 """
-    torque_chain!(gp, ext_frames_obs, palette; n_rings, ring_labels)
+    torque_chain!(gp, ext_frames_obs, palette; n_segments, seg_labels)
 
-Vertical bar chart of transmitted torque per ring (ground → hub).
-
-First-order model: no per-ring torque array is exported yet (see PRD "Out of
-Scope"), so torque is interpolated linearly along the TRPT from the generator
-reaction torque |tau_gen| at the ground ring to the aerodynamic driving torque
-|tau_aero| at the hub ring. Both come from the base SimFrame. This captures the
-torque build-up along the shaft; replace with true per-ring torque when
-ring_forces.jl exposes it.
+Vertical bar chart of the REAL transmitted torque carried by each rope segment
+(ground → hub). Reads `ExtendedSimFrame.segment_torque`, which capture_extended
+computes from the TRPT torsional constitutive law (τ = n·T·r²·sinΔα/chord)
+evaluated on the actual per-segment tension and inter-ring twist of the frame.
+This replaced an earlier ground→hub linear interpolation placeholder: the bars
+now show a physically-grounded per-segment torque (steps at driving rings,
+torsional dynamics), not a straight-line guess. Per-segment (S1..Sn) to align
+with the tension chain beside it.
 """
 function torque_chain!(gp, ext_frames_obs, palette::DashboardPalette;
-                        n_rings::Int=12, ring_labels::Vector{String}=["R$i" for i in 1:n_rings])
+                        n_segments::Int=11, seg_labels::Vector{String}=["S$i" for i in 1:n_segments])
     ax = Axis(gp; yreversed=true, backgroundcolor=palette.PANEL,
-        xlabel="τ N·m", ylabel="Ring",
+        xlabel="τ N·m", ylabel="Seg",
         xticklabelsize=7, yticklabelsize=7,
         xtickcolor=palette.INK_DIM, ytickcolor=palette.INK_DIM,
         yticklabelcolor=palette.INK)
     # Heights are a bound Observable so `heights[] = vals` updates bar LENGTHS.
     # (Setting bars[1] would move the bar POSITIONS off-axis — the old bug.)
-    heights = Observable(zeros(n_rings))
-    bars = barplot!(ax, 1:n_rings, heights; direction=:x,
+    heights = Observable(zeros(n_segments))
+    bars = barplot!(ax, 1:n_segments, heights; direction=:x,
         color=palette.ACCENT, strokewidth=0, inspectable=true,
-        inspector_label=(pl, i, pos) -> (1 <= i <= length(ring_labels) ?
-            "$(ring_labels[i]): $(round(heights[][i]; digits=1)) N·m" : ""))
-    ylims!(ax, 0.5, n_rings+0.5)
-    ax.yticks = (1:n_rings, ring_labels)
+        inspector_label=(pl, i, pos) -> (1 <= i <= length(seg_labels) ?
+            "$(seg_labels[i]): $(round(heights[][i]; digits=1)) N·m" : ""))
+    ylims!(ax, 0.5, n_segments+0.5)
+    ax.yticks = (1:n_segments, seg_labels)
 
     on(ext_frames_obs) do efs
         isempty(efs) && return
-        b = efs[end].base
-        tau_g = abs(b.tau_gen)
-        tau_h = abs(b.tau_aero)
-        vals = n_rings == 1 ? [tau_h] :
-               [tau_g + (tau_h - tau_g) * (i - 1) / (n_rings - 1) for i in 1:n_rings]
-        heights[] = vals
+        ef = efs[end]
+        n = min(length(ef.segment_torque), n_segments)
+        vals = abs.(ef.segment_torque[1:n])
         mx = maximum(vals; init=1.0)
+        append!(vals, zeros(n_segments - n))
+        heights[] = vals
         xlims!(ax, 0, mx > 0 ? mx * 1.15 : 1.0)
     end
 

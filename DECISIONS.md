@@ -40,6 +40,32 @@ line colours.
    divided by the ring frame's critical Euler buckling load Pcr — a buckling
    utilisation (1.0 = at buckling; FoS = Pcr/N). Axis label + tooltip updated.
 
+5. **Torque chain now shows REAL per-segment transmitted torque, not a linear
+   interpolation.** Rod (correctly) flagged that drawing interpolated intermediate
+   bars on a diagnostic panel is misleading — it looks like data but isn't. The
+   old `torque_chain!` ramped linearly from |tau_gen| (ground) to |tau_aero| (hub)
+   because "no per-ring torque array is exported." But the transmitted-torque law
+   is already documented in `ring_forces.jl` (§torsional stiffness, Tulloch curve)
+   and `capture_extended` already has its two real inputs. New
+   `ExtendedSimFrame.segment_torque` (n_seg): for each rope segment,
+   `τ_s = n_lines · T_s · r_s² · sin(Δα_s) / chord_s`,
+   `chord_s = √(L_seg² + 2 r_s²(1 − cos Δα_s))`, evaluated on the ACTUAL per-segment
+   line tension (`segment_tension`) and inter-ring twist (`segment_twist`) of the
+   frame. This is byte-for-byte the same `τ_fn` used by `scripts/torque_diag.jl`
+   (lines 31–35) — the codebase's own torque reference — except it uses the real
+   `get_segment_tension` instead of torque_diag's idealized `EA·strain` estimate,
+   so it's the more faithful of the two. It is the torque the twisted rope is
+   physically carrying: it builds along the shaft with steps at driving rings and
+   captures torsional dynamics, rather than a straight-line guess. `torque_chain!`
+   is now per-segment (S1..Sn) to align with the tension chain beside it.
+   Telemetry-only — does NOT feed back into the solver (physics conservatism, FR4
+   unaffected). NB: `scripts/simframe_extension.jl` is a dead prototype whose
+   struct has a stale `ring_torque` field (stored as zeros) and no longer matches
+   `ExtendedSimFrame`; not include()d by the package. Gold-standard alternative if
+   ever needed: call `compute_rope_forces!` in capture_extended and read its
+   per-ring `torques_r` — but that's NET ring torque (≈0 in steady state), not the
+   TRANSMITTED torque a chain diagram wants, and costs an extra force eval/frame.
+
 ## 2026-07-01 (round 2): Dashboard v2 — barplot binding bug, rotor dial sizing, tooltips, power-label clarity
 
 **Context:** After the round-1 refinements rendered, Rod reviewed the running

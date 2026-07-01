@@ -444,7 +444,7 @@ function build_dashboard_v2(sys        ::KiteTurbineSystem,
     # ── ROW 3 (TALL): three bar charts beside each other + 3D viewport ────────
     # torque | ring health | tension sit side-by-side so their relationship reads
     # at a glance; all three x-axes autoscale to the current frame (see panels).
-    torque_chain!(fig[3, 1], ext_obs, pal; n_rings=Nr, ring_labels=ring_labels)
+    torque_chain!(fig[3, 1], ext_obs, pal; n_segments=Nr-1)
     ring_health!(fig[3, 2], ext_obs, pal; n_rings=Nr, ring_labels=ring_labels, exp_rings=exp_idxs)
     tension_chain!(fig[3, 3], ext_obs, pal; n_segments=Nr-1, swl=Float64(TETHER_SWL)/1000.0)
     # Rotor power dials stacked vertically (hub top → expansion rotors down), tall
