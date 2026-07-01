@@ -2,6 +2,431 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-06-30: The two-flank control problem — left-flank overspeed vs right-flank torque demand
+
+**Context:** The dynamic k_mppt hunt (control-map bisection) consistently
+finds the **left-flank** solution: low k (2–16), high ω (200–430 rpm),
+power 3–4× rated (110–185 kW at 50 kW target).  The generator braking is
+minimal — the rotor overspeeds until P = k·ω² crosses the target.  This
+is structurally dangerous (high thrust → low ring FoS, V10 Tight FoS=1.36
+at 15 m/s) but easy to reach dynamically (low torque, low twist, healthy
+collapse margin 42–47°).
+
+The P(k) curve is hump-shaped and P_rated crosses it at **two** points:
+
+```
+P ↑      ╱‾‾‾╲
+  │     ╱     ╲
+  │    ╱       ╲
+  │───╱─────────╲─── P_rated
+  │  ╱           ╲
+  │ ╱             ╲
+  └──────────────────→ k
+   LEFT            RIGHT
+   FLANK           FLANK
+   low k, high ω   high k, low ω
+   low torque      HIGH TORQUE
+   high thrust     low thrust
+   low twist       high twist
+   FoS-limited     collapse-margin-limited
+```
+
+The **right-flank** solution would operate at higher k (more generator
+braking), lower ω (less thrust → better FoS), with more twist (lower
+collapse margin).  It trades the scarcer resource (FoS, currently 1.36
+on V10 Tight) for the more abundant one (collapse margin, currently
+42–47°).  This is the correct trade for a tensile transmission.
+
+### Why the right flank may be dynamically unreachable
+
+1. **Collapse margin soft-taper tension.**  At the right-flank k, steady-state
+   collapse margin will be lower than the left flank's 42–47°.  If it drops
+   below the controller's soft taper (e.g., 20°), the controller backs off
+   BEFORE reaching the operating point:
+   - Ramp k upward → twist accumulates → margin drops
+   - Margin < 20° → controller reduces ramp rate (or reverses)
+   - Twist unwinds → margin recovers → controller tries again
+   - Result: oscillation around the soft-taper boundary, never settling
+
+   Raising the soft taper to 20° (from 5°) INCREASES this risk — the
+   controller becomes more conservative, potentially blocking access to
+   the right flank entirely.
+
+2. **Dynamic bounce.**  The TRPT is a distributed spring-damper chain.  k
+   changes propagate as torsional waves.  A discrete k step causes overshoot
+   in twist before settling.  The transient dip in collapse margin may cross
+   the soft taper even if steady-state margin is above it.
+
+3. **Generator torque demand.**  At the right flank, τ_gen = k·ω².  For the
+   same 50 kW output, lower ω means higher torque:
+   - Left flank (k=2, ω=400 rpm): τ ≈ 120 N·m
+   - Right flank (k=500, ω=50 rpm): τ ≈ 1,250 N·m (10× higher)
+
+   A direct-drive generator sized for low-torque, high-speed left-flank
+   operation cannot deliver right-flank torque without a gearbox — which
+   the TRPT's tensile architecture is designed to avoid.  Generator
+   cooling is identical (50 kW dissipated either way), but the torque
+   rating at low rpm is the limiting factor.
+
+4. **Bisection may find a k that doesn't survive the transient.**  The
+   hunt uses steady-state endpoint power.  A k that produces 50 kW at
+   t=60s may cause the controller to back off at t=5s due to the twist
+   transient, preventing the system from ever reaching that endpoint.
+
+### What the control map proved
+
+The 2026-06-30 control-map sweep (canonical 10 kW, V10 Tight, Reinforced
+V10) confirmed:
+- The left-flank solution exists at all operational winds for V10 Tight
+  and Reinforced V10, producing 3–4× rated power with FoS as low as 1.36.
+- The canonical 10 kW operates correctly on the left flank because its
+  TRPT is massively over-designed relative to 10 kW (FoS ≥ 28).
+- Collapse margin is healthy (42–47°) at the left-flank solution.
+- The +30% bottom ring reinforcement improves FoS from 1.36 → 7.18 at
+  15 m/s but does not fix the over-blading.
+- The DE campaign's static solver completely failed to predict the dynamic
+  power overshoot.
+
+### What remains unknown
+
+- **Does a right-flank k exist** that produces 50 kW with collapse margin
+  above the soft taper (steady-state)?
+- **Is that k dynamically reachable** — can the controller ramp there
+  without the transient twist dip triggering the soft-taper guard?
+- **Does the generator have the torque capacity** for right-flank operation
+  at 50 kW?
+- **If right-flank is unreachable**, the TRPT rings must be sized for
+  left-flank overspeed thrust loads — a structural problem, not a
+  control problem.
+
+### Design implications
+
+If right-flank operation is infeasible (torque limit, dynamic reachability),
+the design path is:
+1. Reduce blade scale (λ) until left-flank minimum power ≤ P_rated
+2. Size rings for the thrust loads at that operating point
+3. Accept that the controller operates on the left flank
+
+If right-flank IS reachable:
+1. The generator must be sized for high-torque, low-speed operation
+2. The soft taper must be set below the steady-state right-flank collapse margin
+3. The controller must navigate the twist transient without triggering the guard
+
+**Status:** Active.  Right-flank search to be implemented in `scripts/hunt_kmppt_bisect.jl`.
+Full analysis at `docs/reports/2026-06-30-control-map-findings.md`.
+Control map data at `scripts/results/control_maps/`.
+
+## 2026-06-30: Architectural decision — design for left-flank overspeed, the TRPT's natural operating regime
+
+**Context:** The two-flank control problem (entry above) reveals that the TRPT
+is fundamentally a **low-torque, high-speed** transmission.  Torque is carried
+by twist in tensioned lines — the more torque, the more twist, the closer to
+torsional collapse.  The TRPT naturally wants to run fast with low torque: the
+left flank.
+
+The right flank demands the opposite: high torque at low speed.  That's what
+gearboxes and rigid shafts deliver.  A tensile shaft fights that regime — it
+twists, bounces, and the controller backs off before reaching the operating
+point due to the collapse margin soft-taper guard.
+
+**What was decided:** Design the rotor to match the TRPT's natural operating
+regime rather than forcing the TRPT into a high-torque regime it resists.
+This means:
+
+1. **Size blades so that the left-flank minimum power ≤ P_rated.**  As k → 0,
+   the rotor overspeeds freely.  The minimum achievable power at k→0 is the
+   design floor — if it exceeds P_rated, the turbine is over-bladed (the
+   current V10 Tight produces 178 kW at k=2, 15 m/s).
+
+2. **Size rings for left-flank thrust loads.**  At high ω, rotor thrust is
+   high.  Ring buckling FoS is the binding constraint.  The +30% bottom-ring
+   reinforcement (FoS 1.36 → 7.18) proves this is fixable — larger rings,
+   cylindrical taper.
+
+3. **Accept that the left flank IS the operating regime.**  k_mppt will be
+   small (2–20), ω will be high (200–400 rpm at 50 kW).  The generator runs
+   at high speed, low torque — a direct-drive generator's natural regime.
+   No gearbox needed, no high-torque PTO.
+
+4. **Collapse margin is NOT the binding constraint on the left flank** — it
+   stays at 42–47° across all tested winds, well above any soft-taper
+   threshold.  The controller never needs to intervene for twist.
+
+5. **Right-flank operation remains a future option** if the generator can
+   handle the torque and if structural changes (bigger rings, more lines)
+   provide sufficient steady-state collapse margin above the soft taper.
+   But it is not the baseline design path.
+
+**Alternatives considered:**
+- *Design for right-flank operation (high k, low ω):* Rejected as the baseline
+  design path.  Requires high-torque generator (gearbox or oversized direct-drive),
+  larger rings to increase collapse margin, and the controller must survive
+  the twist transient without triggering the soft-taper guard.  Reserved as
+  a future option if generator torque rating permits.
+- *Split the difference, operate at peak P(k):* Rejected — the peak is
+  structurally ambiguous (high thrust AND high twist) and is a knife-edge,
+  not a stable operating point.
+
+**Why this choice:** The TRPT's defining advantage is that it eliminates the
+rigid shaft, gearbox, and tower of a conventional wind turbine.  Designing
+for the left flank preserves this advantage — the generator runs at the
+rotor's natural speed, torque stays low, and the transmission stays well
+clear of torsional collapse.  The mass penalty (larger rings for thrust) is
+the cost of this simplicity.  The current evidence (reinforced V10: FoS=7.18,
+cm=42°, zero failing rings at 15 m/s) suggests this cost is acceptable.
+
+**Consequences:**
+- The DE campaign must search for blade scale (λ) values that bring left-flank
+  minimum power to P_rated, not below it.
+- The ring sizing constraint becomes thrust-driven (FoS ≥ 1.5 at max ω), not
+  torsion-driven.
+- The controller operates on the left flank exclusively — dP/dk sign detection
+  must handle the left-flank regime (dP/dk > 0 → increase k to increase P).
+- The generator is specified for low-torque, high-speed direct-drive operation.
+- If right-flank operation is ever pursued, it is a separate generator and
+  structural design exercise.
+
+**Status:** Active.  This is the governing architectural decision for the
+Phase 2 dynamic-aware DE campaign and all subsequent design work.
+
+## 2026-06-30: Soft-kite rotors rejected for left-flank TRPT — higher Ct/Cp ratio penalises ring mass
+
+**Context:** The left-flank architectural decision (above) establishes that the
+TRPT operates in a low-torque, high-speed regime where ring buckling FoS from
+aerodynamic thrust — not torsional collapse margin — is the binding constraint.
+The question arose: would soft ram-air kites, with their lower mass and
+potentially lower solidity, reduce ring compression compared to rigid NACA 4412
+blades?
+
+**Analysis:** The metric that matters is **Ct/Cp — thrust per unit power**.
+A rotor producing 50 kW at lower thrust requires smaller, lighter rings:
+
+```
+Thrust = ½ρv²A·Ct    Power = ½ρv³A·Cp    →    Thrust/Power ∝ Ct/(v·Cp)
+```
+
+Measured and modelled values:
+
+| Rotor type | CL | CD | L/D | TSR | Cp | Ct | **Ct/Cp** |
+|------------|----|----|------|-----|------|------|-----------|
+| NACA 4412 (BEM, KTD.jl) | 1.0 | 0.04 | 25 | 4.1 | 0.22 | **0.55** | **2.5** |
+| Ram-air kite (INTA 2021) | 1.0 | 0.40 | 2.5 | ~2 | ~0.12 | **~1.0** | **~8.3** |
+| Optimised ram-air (Thedens) | 1.2 | — | ~4 | ~3 | ~0.15 | **~1.2** | **~8.0** |
+
+At the same CL, a ram-air kite produces **3.3× more thrust per unit power**
+because:
+1. Higher drag (CD=0.4 vs 0.04) means more lift force is "wasted" overcoming
+   drag rather than producing torque.
+2. Lower TSR (2–3 vs 4.1) means the rotor must be larger for the same power —
+   larger swept area → proportionally more total thrust.
+3. Even optimised ram-air designs (SkySails, Thedens 2024) only reach
+   L/D ≈ 4, still 6× worse than a clean rigid wing.
+
+**Blade mass is negligible.** At 50 kW scale, aerodynamic thrust (~25 kN for
+a rigid rotor at 11 m/s) exceeds blade self-weight (~0.4 kN for 3 blades at
+15 kg each) by 60:1.  The ram-air's mass advantage is irrelevant for ring
+sizing.
+
+**What was decided:** Rigid NACA 4412 blades (or equivalent clean airfoil)
+are preferred for left-flank TRPT operation.  The design path is:
+
+1. **Low solidity** — minimum number of blades needed to achieve rated power
+   at design TSR.  Every extra blade adds thrust without adding proportionate
+   power (Cp saturates with blade count faster than Ct accumulates).
+2. **High TSR (4–6)** — maximises the ω term in P = τ·ω, minimising the τ
+   (and therefore Ct) needed for a given power.
+3. **Clean airfoil (high L/D)** — minimises the drag penalty that inflates
+   Ct relative to Cp.
+4. **Smaller swept area** — size blades so the left-flank minimum power
+   (at k→0) equals P_rated, not exceeds it by 3×.
+
+**Alternatives considered:**
+- *Ram-air soft kites:* Rejected — 3.3× higher thrust per unit power
+  translates directly to heavier rings and a heavier TRPT.  The mass saving
+  on blades is negligible compared to the ring mass penalty from higher thrust.
+- *Very high-TSR soft designs (TSR > 5):* Rejected — soft kite aerodynamics
+  degrade at high TSR due to deformation, flutter, and structural compliance.
+  Rigid blades are required for TSR > 4 operation.
+
+**References:**
+- Borobia-Moreno et al. (2021), "Identification of kite aerodynamic
+  characteristics" — ram-air CL=1.0, CD=0.4 at typical AoA.
+- Thedens & Oliveira (2019), "Ram-air kite airfoil and reinforcements
+  optimization for AWE" — optimised designs push L/D toward 4 but no higher.
+- KTD.jl BEM tables (`src/aerodynamics.jl`) — NACA 4412 Cp(TSR) and Ct(TSR)
+  from AeroDyn v15.
+
+**Status:** Active.  This decision reinforces the left-flank architectural
+choice: rigid blades, high TSR, low solidity.  The DE campaign's blade scale
+parameter (λ) controls swept area — and should be driven downward until
+left-flank power at k→0 matches P_rated.
+
+## 2026-06-30: Acoustic constraint — left-flank tip speeds require altitude and siting strategy
+
+**Context:** Left-flank operation at 50 kW produces high rotor speeds (150–200 rpm
+at R≈5–8 m) and correspondingly high tip speeds.  Measured tip speeds from the
+current (over-bladed) V10 design at R≈5 m:
+
+| Wind | V10 Tight | Reinforced V10 | Canonical 10 kW |
+|------|-----------|----------------|-----------------|
+| 11 m/s | 115 m/s | 107 m/s | **66 m/s** |
+| 13 m/s | 188 m/s | 152 m/s | 90 m/s |
+| 15 m/s | 224 m/s | 197 m/s | 104 m/s |
+
+Industry references:
+- Commercial wind turbine: 70–80 m/s (noise-limited in most jurisdictions)
+- Urban / noise-sensitive: 50–60 m/s
+- Helicopter rotor: 200–220 m/s (militarily acceptable, not residential)
+
+At 50 kW with properly sized blades (not the current 3× over-bladed design),
+tip speeds scale approximately as √(P_rated/P_ref) × tip_ref.  From the
+canonical 10 kW baseline (66 m/s at 11 m/s): a 50 kW system at the same
+solidity reaches ~148 m/s — well above commercial wind turbine norms.
+
+**Mitigating factors:**
+
+1. **Altitude (Oliver Tulloch PhD, 2024).**  The PhD thesis identified an
+   optimal kite turbine operating altitude >100 m.  At 100 m hub height vs a
+   conventional 80 m tower, the ground-level noise attenuation is comparable
+   (~20 dB additional loss from 80→100 m).  More significantly, the TRPT
+   has **no tower** — eliminating tower-shadow thump (the dominant low-frequency
+   noise source in conventional turbines).
+
+2. **Line drag noise.**  At 100 m+ tether lengths, vortex shedding from the
+   cylindrical Dyneema lines produces broadband aerodynamic noise.  This is
+   an additional noise source not present in conventional turbines.  The
+   line count (n_lines) and diameter affect both the TRPT mass and the
+   acoustic signature — a trade that the DE campaign does not currently model.
+
+3. **No tower thump.**  Tower shadow — the blade passing through the tower's
+   wind deficit once per revolution — is the dominant low-frequency annoyance
+   from conventional turbines.  The TRPT has no tower, so this source is
+   eliminated entirely.  The remaining noise is pure aerodynamic (blade
+   self-noise + trailing edge) which is higher-frequency and attenuates
+   faster with distance.
+
+4. **Siting strategy.**  The TRPT's deployment advantages (no foundation, no
+   crane, rapid install) enable siting further from residences — offshore,
+   remote ridges, industrial zones — where noise constraints are relaxed.
+
+**What was decided (design constraint, not yet implemented):**
+
+1. **Maximum tip speed target: 120 m/s at rated wind.**  This is ~1.5× the
+   commercial norm but justified by the absence of tower thump and the
+   altitude advantage.  The DE campaign must enforce tip_speed ≤ 120 m/s as
+   a design constraint on the (R, ω) combination.
+2. **Altitude ≥ 80 m** (Oliver's optimisation) for noise-sensitive sites.
+   Below 80 m, the ground-level noise from a 120 m/s tip may exceed
+   regulatory limits in residential areas.
+3. **Line count as an acoustic variable.**  n_lines affects both structural
+   mass and vortex-shedding noise.  Lower n_lines = less line noise, but
+   higher per-line tension → heavier rings.  The trade is currently
+   unmodelled and deferred.
+4. **Buyer acceptability.**  A turbine that sounds like a helicopter at
+   close range will not sell, regardless of technical merit.  Noise is a
+   market constraint, not just an engineering one.
+
+**Alternatives considered:**
+- *Accept higher tip speeds (150+ m/s) and rely on siting:* Rejected —
+  eliminates residential and near-urban markets.  The TRPT's deployment
+  flexibility is its commercial advantage; sacrificing it to avoid a
+  rotor-sizing problem is self-defeating.
+- *Reduce power rating to keep tip speeds low:* Rejected — 10 kW is quiet
+  but commercially unviable.  50 kW is the minimum economically interesting
+  scale.
+- *Right-flank operation (low ω, high k):* Already analysed as structurally
+  challenging (collapse margin, generator torque).  Would solve the noise
+  problem but creates others.
+
+**Status:** Active design constraint.  To be encoded as `tip_speed_max` in
+the DE campaign objective function.  Acoustic modelling (blade self-noise,
+line vortex shedding) deferred to a separate study.
+
+## 2026-06-30: Motor-driven detwist — deferred feature, requires careful implementation design
+
+**Context:** While re-reading Tulloch's PhD thesis (Final Submission), a finding on
+pp. 229–230 (Figures 5.44–5.45) was noted: for the Daisy Kite rotor coupled with
+TRPT-4, the net torque coefficient Cq crosses zero at **two TSR values** — 1.2 and
+5.3. The rotor in isolation doesn't cross zero until TSR > 6. The multiplicity arises
+from the **rotor + TRPT combination**, not from the rotor alone. With the optimised
+rotor (Section 5.3.2), only one equilibrium emerges — the phenomenon is
+design-dependent and some configurations may exhibit 3 crossings.
+
+**Field validation:** During the experimental campaign, "it was necessary to drive
+the system using the generator as a motor to reach higher angular velocities" — the
+low-speed equilibrium trapped the system, requiring motor boost to escape. This
+occurred primarily in light winds.
+
+**What was decided (recorded, not actioned yet):**
+
+1. This is a **third mechanism** contributing to the static-vs-dynamic power gap (in
+   addition to distributed torsional stiffness and sequential torque propagation):
+   the static equilibrium solver may converge to the *wrong* equilibrium — a low-speed,
+   low-power solution — and report the design as viable.
+2. The k_mppt bisection hunt assumes monotonic P(k). Multiple equilibria mean P(k)
+   may be non-monotonic; the bisection could land on the wrong branch.
+3. Tulloch's field experience validates that **motor-driven boot through low-speed
+   equilibria** (already recorded as a deferred Phase 3–4 feature in the decision
+   above) is a real operational requirement, not a theoretical edge case.
+4. The "light winds" condition where the trap occurred matches our controller's
+   IDLE→RAMPING transition challenge: the controller may misclassify a low-speed
+   equilibrium as "spinning up" and ramp incorrectly.
+
+**Status:** Recorded as Issue [#6](https://github.com/rodWindswept/KiteTurbineDynamics.jl/issues/6).
+Action items: check whether V10 Tight exhibits multiple Cq=0 crossings; verify
+bisection robustness; reference in Porto paper § power gap discussion.
+
+## 2026-06-30: Motor-driven detwist — deferred feature, requires careful implementation design
+
+**Context:** In field operation of the TRPT prototype, the PTO generator was
+capable of forward-driving as a motor — injecting torque into the TRPT from
+the ground end to help start the rotor or reduce accumulated twist.  The
+current simulation models the PTO as a passive MPPT load only (`τ_gen = k·ω²`).
+Adding motor-driven detwist would provide a dynamic, closed-loop mechanism to
+avoid torsional collapse: when the controller detects an approaching overtwist
+(margin to δα* dropping below a threshold), switch from generator to motor,
+drive forward to unwind the accumulated twist, then resume power extraction.
+
+Collapse margin (`δα* − |Δα|`) is the natural trigger metric: monotonic,
+physically meaningful, and directly measurable in the field via top-rotor IMU
+α position and distance-derived twist inference.  Unlike Euler buckling FoS,
+collapse margin is observable from flight instrumentation alone — no structural
+model required.
+
+**What was decided (deferral):** Motor-driven detwist is deferred as a
+Phase 3–4 feature.  The current Phase 1–2 scope (bisection hunt, dynamic-aware
+DE campaign) must complete first to establish the viable design space.
+Implementation will require:
+
+1. **Trigger thresholds** — at what collapse margin does the controller switch
+   from generator to motor?  Soft taper 20°→5° (ramp rate linearly reduced),
+   hard motor engagement at 5°?  How to avoid oscillation (hysteresis band)?
+2. **Motor torque profile** — how much torque to apply?  Fixed k_drive, or
+   proportional to twist error?  Power budget: motor energy consumption vs
+   recovered energy on return to MPPT.
+3. **Rotor overspeed during unwind** — with generator load removed, the rotor
+   accelerates.  Motor torque partially compensates, but the net loss of
+   braking may cause overspeed — thrust-driven ring buckling or tether
+   over-tension before twist is relieved.
+4. **Torsional wave dynamics** — motor torque injected at the ground ring must
+   propagate upward through the same spring-damper chain.  The wave travel time
+   and reflection behaviour (impedance mismatch at rotor end) determine whether
+   detwist is faster than the collapse progression.
+5. **State machine integration** — the controller already has IDLE → RAMPING →
+   HOLDING states.  Adding MOTOR (or DETWIST) requires defining entry/exit
+   conditions, interaction with the FoS taper, and whether HOLDING can
+   transition directly to MOTOR or must go through RAMPING.
+
+**Field relevance:** The 10 kW field prototype demonstrated forward-drive
+capability.  At the 50 kW scale, the TRPT's longer shaft and higher accumulated
+torque make the collapse margin tighter — detwist becomes a safety-critical
+control function, not just a startup convenience.
+
+**Status:** Deferred.  Recorded for future planning.  The collapse margin
+infrastructure (`min_collapse_margin()`, `RampController._δα_star`) and the
+mutable k_mppt reference (`sys.k_mppt_ref[]`) are already in place —
+implementation is a controller logic change, not a physics model change.
+
 ## 2026-06-26: Dashboard config addition requires three-string sync across two files
 
 **Situation.** Adding a new CLI flag (`--v10-tight`) to the GLMakie dashboard
@@ -208,124 +633,214 @@ design_from_vector_v6, design_from_vector_v10.
 
 ---
 
-## [2026-06-28] Provisional: V10 Tight over-bladed at rated wind — structural failure at k_mppt=62
+## [2026-06-28] Confirmed: Static equilibrium solver cannot design a viable TRPT — two independent lines of evidence
 
-**Context:** Soft-ramp k_mppt controller trace recording (6 scenarios, `scripts/record_ramp_traces.jl`)
-completed 2026-06-28.  The canonical 5-line 10 kW system behaves well: instant k=11 settles at
-12.6 kW with min FoS=9.3, and the soft-ramp controller correctly transitions IDLE→RAMPING→HOLDING
-at k_min=5, producing 11.0 kW with min FoS=24.
+**Summary:** Two independent investigations on 2026-06-28 converge on the same conclusion:
+the DE campaign's static equilibrium objective function is fundamentally mismatched to the
+distributed torsional dynamics of the TRPT.  The optimiser cannot find a viable design because
+it evaluates the wrong physics.
 
-V10 Tight (49.2 kg, 3 expansion rotors, n_lines=3, n_rings=22) shows severely non-conservative
-behaviour at the handover-documented dynamic k_mppt=62:
+### Line 1: V10 Tight dynamic testing (k_mppt hunt + 60s traces)
 
-| Scenario | P_final | ω_final | min FoS | min collapse margin |
+The original V10 Tight (49.2 kg, k=62) overspeeds to 132 kW (2.6× rated) with FoS=0.43 —
+too much blade for the structure.  A 12-point k_mppt hunt (50→600) found the value that
+produces 50 kW: **k≈550**.  But at this point FoS=0.75 — the structure buckles progressively
+over 60 seconds, power decays from 49→21 kW as rings collapse.
+
+| k_mppt | P_gen | ω_hub | min FoS | Outcome |
 |---|---|---|---|---|
-| Instant k=62 | **132 kW** | 123 rpm | **0.43** | — |
-| Soft-ramp from k=20 | **171 kW** | 165 rpm | **0.83** | 39.2° |
+| 62 (original) | 132 kW | 123 rpm | 0.43 | Instant overspeed, structural failure |
+| 550 (tuned) | 49→21 kW | 52→32 rpm | 0.75→0.26 | Progressive buckling, power decays |
 
-The system produces 2.6–3.4× rated power at 11 m/s wind.  FoS drops below 0.5 within
-10 seconds — the TRPT ring structure buckles regardless of control strategy.  The soft-ramp
-controller correctly detects the P deficit and ramps k_mppt upward (20 → 33), but because
-the aerodynamic power far exceeds the 50 kW target, the rotor accelerates past the structural
-limit before the controller can intervene.
+The FoS crosses below the 1.5 hard floor at k≈350, well before the 50 kW target at k≈550.
+**No k_mppt value simultaneously satisfies P ≥ 50 kW AND FoS ≥ 1.5.**
 
-**Physical interpretation:** The V10 DE campaign optimised for minimum mass at a static
-50 kW equilibrium (k_mppt_eff=166, ω=59 rpm).  The dynamic simulation at k_mppt=62 reveals
-the expansion rotors capture far more aerodynamic power than the equilibrium solver predicts,
-because the solver assumes instant, lossless torque propagation through the TRPT.  In the
-dynamic multibody model, the rotor spins up to 123–165 rpm before the torsional wave
-reaches the generator — by which point aero power is 2–3× rated and the rings buckle.
+### Line 2: Conservative DE campaign (launched independently)
 
-**Three hypotheses (provisional, needs sweep data to confirm):**
+A fresh V10 campaign with tightened constraints produced a 60.8 kg design.  Post-campaign
+dynamic verification found the best achievable power was **8.6 kW (17% of rated)** at k=62 —
+the design is "dynamically dead."  The static solver steered the optimiser toward a geometry
+that looks correct in equilibrium but cannot transmit torque through the TRPT.
 
-1. **Too much blade area** — the expansion rotors are sized for a high-altitude, low-wind
-   operating point.  At 11 m/s rated wind, they capture excess power.  Shorter blades or
-   fewer rotors would match the 50 kW structural limit.
+| Campaign | Best mass | Dynamic P at best k | Rating |
+|---|---|---|---|
+| Original V10 Tight | 49.2 kg | 132 kW (k=62) → FoS fails | Over-bladed |
+| Conservative V10 | 60.8 kg | 8.6 kW (k=62) | Under-torqued |
+| **Neither produces 50 kW with FoS ≥ 1.5** | | | |
 
-2. **k_mppt too low** — the handover's k=62 was derived at a lower effective wind speed.
-   At 11 m/s with wind shear, higher k_mppt (e.g. dashboard default ~555) would load the
-   generator more, slowing the rotor and reducing power.  Trade-off: higher k_mppt increases
-   TRPT torsional load, which also stresses the structure.
+### Root cause
 
-3. **Less efficient blades** — reducing CL or increasing CD would lower aerodynamic capture
-   at the same blade area and rotor speed, producing less power for the same structural load.
-   Noise implication: higher tip speed for equivalent power, but at Ø5m and ~150 rpm,
-   tip Mach < 0.2 — aeroacoustic noise is not a limiting factor at this scale.
+The DE objective function evaluates designs using `settle_to_equilibrium()` which:
+1. Assumes instant, lossless torque propagation through the TRPT
+2. Computes ω_eq by balancing P_aero = P_gen at a single operating point
+3. Ignores the distributed torsional spring-damper chain that governs real torque transmission
 
-**Required sweep:** Vary k_mppt from ~20 to ~600 for both canonical 10 kW and V10 Tight,
-recording min FoS, P_final, ω_final, and collapse margin per run.  This will map the safe
-operating envelope and identify the k_mppt value that balances P ≈ P_rated with FoS ≥ 1.5.
+In the dynamic multibody model, torque propagates sequentially through each ring pair's
+torsional stiffness.  The generator only "sees" rotor torque after the torsional wave
+travels the full shaft length.  This means:
+- The **k_mppt needed dynamically is 3–4× higher** than the static solver predicts
+- The **torsional loads are correspondingly higher**
+- The **ring radii and tether diameters optimised for static loads are insufficient**
 
-**Brake fix:** The auto-brake previously engaged whenever ω_hub < 1.0 rad/s (~9.5 rpm),
-latching the ground ring and preventing any power generation.  This was removed in
-`src/ring_forces.jl` — the brake now only engages on explicit command (depower sequence),
-not auto-triggered by rotor speed.
+### Required fix: Dynamic-aware objective function
 
-**Controller status:** The soft-ramp state machine (IDLE→RAMPING→HOLDING) makes correct
-transitions for canonical 10 kW.  For V10 Tight, the P-term overshoots because the ramp
-rate (Kp=1e-4) is too fast relative to the system's spin-up time — k reaches ceiling before
-HOLDING can engage.  The FoS taper and Tulloch collapse-margin guards are active but
-insufficient to prevent structural failure when aero power far exceeds rated.
+The DE campaign must evaluate candidates using the dynamic simulation, not the static
+equilibrium solver.  Proposed two-level objective:
 
-**Status:** Confirmed.  k_mppt sweep (2026-06-28) found the value that hits 50 kW: k≈550.
-But FoS=0.75 at that point — the structure fails before rated power is reached.
+```
+For each candidate design vector x:
+  1. Build system: sys, u0, p = build_from_vector(x)
+  2. Hunt k_mppt:  sweep k ∈ [20, 800] in 5s dynamic sims
+     → find k* that minimises |P_gen − P_rated|
+  3. Verify at k*: run 60s dynamic sim
+     → extract min FoS, P_final, ω_final
+  4. Score:
+     if min FoS < 1.5:  penalty = 1e6 × (1.5 − min FoS)
+     else:              score = mass + λ × |P_final − P_rated|/P_rated
+```
+
+Computational cost: ~12 hunt points × 5s + 1 verify × 60s ≈ 120s per candidate.
+For a 60-island × 80-population campaign: ~160 hours on 32 threads.
+Practical: run a smaller campaign (20 islands, 40 pop) first to validate, ~27 hours.
+
+### Structural redesign estimate
+
+To close the gap between the safe region (k≤350, FoS≥1.5) and the power target (k≈550):
+- Ring radii: +40% (FoS ∝ r², need 2× FoS → √2 ≈ 1.4×)
+- Tether lines: 3→5 (1.67× load distribution)
+- Combined FoS improvement: 1.4² × 1.67 ≈ 3.3×
+- Mass estimate: 70–80 kg (vs current 49.2 kg)
+
+### Jamieson scaling law for multi-rotor mass
+
+Peter Jamieson's analysis (personal communication) shows that splitting a single rotor
+of radius R into N stacked rotors of radii R₁, R₂, ..., R_N such that total swept area
+is preserved (ΣR_i² = R²) gives a mass ratio:
+
+```
+M(k) = (1 + k³ + k⁶) / (1 + k² + k⁴)^(3/2)    [for N=3, geometric progression R_{i+1} = k·R_i]
+```
+
+For equal-sized rotors (k=1): M = 3 / 3^(3/2) = 0.577 → **42% mass saving**.
+As k → 0 (rotors become very unequal), M → 1.0 (no saving — dead mass).
+For k < ~0.5, the saving drops below 20% and the optimisation should question whether
+the smallest rotor justifies its mass.
+
+This explains the V10 Tight configuration: the lowest expansion rotor was removed by
+design specification (minimum ground clearance constraint), not by the optimiser.
+The three remaining rotors are the ones that physically fit; they should be as equal
+as possible to maximise the Jamieson mass saving.
+
+**Implication for the dynamic-aware campaign:** No explicit Jamieson penalty is needed —
+the mass objective naturally penalises unequal rotors because a very small rotor adds mass
+without contributing proportional power (P ∝ R², m ∝ R³).  The optimiser will discover
+equal rotor sizing as an emergent property of the physics.  The Jamieson analysis explains
+*why* this convergence occurs and gives us the theoretical upper bound: 42% mass saving
+for perfectly equal rotors vs a single equivalent rotor.
+
+### Brake fix (2026-06-28)
+
+The auto-brake previously engaged whenever ω_hub < 1.0 rad/s (~9.5 rpm).  Removed from
+`src/ring_forces.jl` — brake now only engages on explicit command (depower sequence).
+
+### Controller improvements (2026-06-28)
+
+- **Slider range:** V10 k_mppt slider extended 10→600 (was 10→200)
+- **Auto-ramp k_min/k_max:** centred on slider setpoint ±80% range, not hardcoded
+- **Slider animation:** live-tracks `sys.k_mppt_ref[]` during auto-ramp simulation
+- **Idle hold time:** reduced from 3.0s to 0.5s for faster controller engagement
+
+### Figures generated
+
+9 publication-quality figures in `scripts/results/ramp_traces/figures/`:
+1. Canonical dashboard (6-panel full-state)
+2. V10 Tight dashboard (with failure annotations)
+3. Wind ramp triptych (trajectory + structural + torsional)
+4. Structural envelope (4-panel operating map)
+5. Frequency domain (torsional PSD, Welch method)
+6. Controller diagnostic (state machine Gantt chart)
+7. Cross-system comparison (bar chart)
+8. V10 Tight: Original vs Tuned comparison
+9. k_mppt hunt sweep (power + FoS vs k)
+
+### Additional fixes applied (2026-06-29)
+
+- **Expansion rotor power in equilibrium scan** (`src/initialization.jl:715`):
+  `settle_to_operational_state` now includes expansion rotor aerodynamic power in the
+  ω equilibrium scan.  Previously only the hub rotor counted, causing V10 Tight to
+  fall back to ω_eq=9.5 rad/s regardless of actual blade count.
+
+- **Kite position lag in settle loop** (`src/initialization.jl:875`): `update_kite_pos!`
+  called during the 150,000-step operational settle so the lift line doesn't snap at frame 1.
+
+- **HOLDING no longer blocked by structural margin** (`src/soft_ramp_controller.jl:250`):
+  Removed `struct_mult ≥ 0.99` condition.  Structural guards still limit ramp rate.
+
+- **dP/dk sign detection** (`src/soft_ramp_controller.jl:245`): Controller detects whether
+  it's on the left flank (dP/dk > 0) or right flank (dP/dk < 0) and adjusts direction.
+  Uses accumulated thresholds to detect small per-frame changes.
+
+- **Controller init after settle** (`src/visualization.jl:854`): `init_geometry!` now sees
+  the settled ring positions instead of raw `u0`.
+
+- **Warm start: skip IDLE** (`src/visualization.jl:867`): If the settled rotor is already
+  spinning above `ω_idle`, the controller starts in RAMPING, not IDLE.
+
+- **Dashboard panelised** (`src/visualization.jl:1516`): Controls reorganised into
+  Generator Control, Structural Guards, System, and Depower panels with colour-coded headers.
+
+- **Kp slider** (`src/visualization.jl:1554`): User-adjustable ramp gain, log scale
+  1e-6 → 1e-2 (60 steps), replaces auto-computed gain.
+
+- **Tulloch collapse margin slider** (`src/visualization.jl:1589`): Threshold adjustable
+  1°–15°, was hardcoded at 5°.
+
+- **Live k_mppt numeric display** (`src/visualization.jl:1044`): Value label updates
+  alongside slider animation.
+
+- **Rotor count label** (`scripts/builders_util.jl`, `scripts/interactive_dashboard.jl`):
+  Changed from "3 rotors" to "hub + 3 expansion rotors".
 
 ---
 
-### [2026-06-28 follow-up] k_mppt hunt confirms: V10 Tight structurally incapable of 50 kW at 11 m/s
+## [2026-06-29] Reinforced V10: larger bottom rings + 4mm tethers produce a viable design
 
-A 12-point k_mppt sweep (50→600, 3s each) on V10 Tight found the k_mppt that produces
-50 kW at the generator: **k ≈ 550**.  However, at this operating point:
+### Per-ring FoS sweep confirms bottom bottleneck
 
-| k_mppt | P_gen | ω_hub | min FoS | Collapse margin |
-|---|---|---|---|---|
-| 62 (original) | 132 kW | 123 rpm | 0.43 | Inf |
-| **550 (tuned)** | **49.2 kW** | 52 rpm | **0.75** | — |
+3 k_mppt values (62, 200, 550), 60s each, with per-ring ring_element_analysis:
+**ring 1 (lowest airborne ring) is ALWAYS the limiting ring** at every operating point.
+The bottom ~13 rings (out of 22) fail (FoS < 1.5).  The taper goes from 1.33m (ground)
+to 1.58m (kite) — the rings get SMALLER as torsional load ACCUMULATES downward.
+This taper direction is structurally backwards for a torque-carrying shaft.
 
-The power target is met, but the TRPT ring structure buckles (FoS < 1.0).  The relationship
-is monotonic: as k_mppt increases, generator braking increases, rotor speed drops, power
-first rises then falls, and FoS decreases continuously.  The structural limit (FoS=1.5)
-is crossed at k≈350, well before the power target (50 kW) is reached at k≈550.
+### Reinforced V10 test
 
-**Root cause of the design error:**
+Using `build_kite_turbine_system_v5` (ring_spacing_v4 geometry matching the design)
+with `r_bottom_scale=1.30` and 4mm tethers:
 
-The V10 DE campaign optimised for minimum mass subject to a *static* 50 kW equilibrium.
-The static solver computes ω_eq and k_mppt_eff assuming instant, lossless torque propagation
-through the TRPT.  In reality, the TRPT is a distributed torsional spring-damper chain:
-torque propagates sequentially, and the generator only "sees" rotor torque after the
-torsional wave travels the full shaft length.  This propagation delay means:
+| Scale | r_bottom | r_top | P at k=200 | min FoS | Rings failing |
+|---|---|---|---|---|---|
+| 1.0 (original) | 1.33m | 1.58m | 44 kW | 0.29 | 13/22 |
+| 1.3 | 2.99m | 2.99m | 55 kW | **2.30** | **0/20** |
 
-1. The static solver *under-predicts* the k_mppt needed to hold the rotor at the design
-   speed (static: k_eff=166, dynamic: k≈550).
-2. The higher k_mppt needed dynamically produces higher TRPT torsional loads.
-3. The ring radii and tether diameters optimised for the static equilibrium are
-   insufficient for the dynamic loads.
+The +30% scale (via ring_spacing_v4) produces a cylindrical 3m TRPT.  4mm tethers
+alone made no difference — ring buckling, not line tension, is the limiting factor.
 
-**What a 50 kW-capable V10 would need:**
+### Builder disconnect discovered
 
-The TRPT structure must withstand the dynamic torsional load at k≈550, ω≈52 rpm.
-The ring buckling FoS scales with ring radius and tether tension.  To achieve FoS≥1.5:
+The V10 Tight builder uses `build_kite_turbine_system` (linear taper) for the ODE
+system geometry, but the design uses `ring_spacing_v4` (non-uniform spacing) for
+structural evaluation.  The design radii (~3m) and system radii (~1.33m) differ by
+over 2× — the system is built with much smaller rings than the design assumes.
+`build_kite_turbine_system_v5` uses ring_spacing_v4 and matches the design geometry.
 
-- **Larger ring radii** — increases the moment arm, reducing tether tension for the
-  same torque (T = τ / r, FoS ∝ r² for buckling).  Trade-off: more mass.
-- **Thicker tethers** — increases the column buckling capacity directly.
-  Trade-off: more mass, more drag.
-- **More tether lines per ring** — distributes the load across more tension members.
-  Current V10 Tight uses n_lines=3; increasing to 5–6 would reduce per-line tension.
-- **Shorter segments** (more rings) — reduces the unsupported column length, increasing
-  the Euler buckling load (F_crit ∝ 1/L²).
+### Next: Control-first design campaign
 
-A first-order estimate: FoS must increase from 0.75 to 1.5 (2×).  Since FoS ∝ r² for
-ring buckling, ring radii would need to increase by √2 ≈ 1.4×.  With 3 lines, increasing
-to 5 lines would provide 5/3 ≈ 1.67× load distribution.  Combined: 1.4² × 1.67 ≈ 3.3×
-FoS improvement, well above the 2× needed.  Mass penalty: ~40% increase in ring mass
-(radii) plus ~67% more tether mass (lines).  Total system mass estimate: ~70–80 kg
-(vs current 49.2 kg).
-
-**Next step:** Run a DE campaign with the new structural constraint: FoS ≥ 1.5 at
-the *dynamic* operating point (k_mppt = value that produces P_rated, found by hunt),
-not the static equilibrium k_mppt.  This requires a two-level optimisation: outer
-loop hunts k_mppt, inner loop evaluates FoS.
+Plan: `docs/plans/2026-06-28-control-first-design.md`.  Given a candidate geometry,
+sweep 6 wind speeds, hunt the k_mppt that produces P_rated at each, record FoS.
+Viable designs have FoS ≥ 1.5 at all wind speeds.  Then run a dynamic-aware DE
+campaign with the FoS gate in the objective.  Estimated: 4 hours coding, 27 hours
+compute.
 
 ---
 
@@ -1476,3 +1991,59 @@ notifications generate noise during focused preparation.
 
 **Status:** All crons paused. AWS Paper Ingest, K1 Paper Ingest, Industry Doc Ingest
 all in 'paused' state as of 2026-06-23 15:17.
+
+### [2026-06-29] Dashboard v2 — per-ring/per-rotor panels
+
+**Context:** Prototype panels developed (torque chain, ring health, rotor power
+gauges, twist view, config & controls). `ExtendedSimFrame` + `capture_extended()`
+added to `src/sim_frame.jl` providing per-ring and per-rotor data. All existing
+tests pass — the extension is backward-compatible (wraps SimFrame, doesn't modify it).
+
+**Decision:** Create `build_dashboard_v2()` in `src/visualization.jl` alongside
+the existing `build_dashboard()`. The v1 dashboard (3D viewport + HUD) stays
+working. `scripts/interactive_dashboard.jl` gets a `--v2` flag to select the
+new layout.
+
+**V2 layout:** 6-row responsive grid
+- Row 1: Cockpit strip (7 KPIs, integrated from separate window)
+- Row 2: Torque chain | Ring health bars | Rotor gauges (vertical) | Config & Controls
+- Row 3: Twist view | Tension chain | 3D viewport
+- Row 4: Event log + Playback controls
+
+**Responsive sizing:** Switch from `Fixed()` to `Relative()` and `Auto()` column
+widths so the dashboard scales to any screen size (laptop + desktop).
+
+**Implementation steps (ordered, test each):**
+1. Create `build_dashboard_v2()` skeleton — same Figure, same 3D viewport, new grid
+2. Capture `ExtendedSimFrame`s alongside existing `SimFrame`s in pre-compute loop
+3. Add cockpit strip as row 1 of the main Figure (remove separate window)
+4. Add bar chart panels (torque chain, ring health, tension chain) with `@lift`
+5. Add rotor power gauge panel (vertical stack, concentric rings)
+6. Add twist view panel (polar, looking down shaft axis)
+7. Add Config & Regen Controls panel (read-only labels for now)
+8. Switch to Relative sizing
+9. Wire `--v2` flag in `interactive_dashboard.jl`
+10. Run full test suite after each step
+
+**Status:** Steps 1-4 ✓. Steps 5-10 paused pending v2 interactive controls refactor.
+
+### [2026-06-30] V2 scenarios blocked — grid conflict
+
+**Context:** V2 layout uses `fig[1,1:4]` for cockpit strip. V1 `_rerun!` machinery
+is coupled to `fig[1,1]` (controls column) and `fig[1,3]` (HUD column). The two
+grids collide. V2 returns early before the shared scenarios/controls code.
+
+**Decision:** Paused. Need to either (a) extract `_rerun!` into a parameterised
+function that both layouts call, or (b) define v2-specific controls in the v2
+grid. Both are ~150 lines. Best done with display available for verification.
+
+**What works:**
+- `--v2` flag in interactive_dashboard.jl passes `layout=:v2` to build_dashboard
+- V2 renders the grid, cockpit strip, ring health bars, 3D viewport
+- V2 displays pre-computed frames (from v1 pipeline) correctly
+- `ExtendedSimFrame` capture integrated into both pre-compute and `_rerun!` loops
+- Ring health bars update via `ext_frames_obs` in the `on(frame_obs)` handler
+
+**What doesn't:**
+- Scenario buttons, slider, playback controls, config switching in v2
+- The Run button is a placeholder that doesn't trigger actual simulation
