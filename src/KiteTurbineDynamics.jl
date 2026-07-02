@@ -23,6 +23,8 @@ include("lift_kite.jl")
 include("sim_frame.jl")
 include("soft_ramp_controller.jl")
 include("visualization.jl")
+include("dashboard_panels.jl")
+include("dashboard_v2.jl")
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
@@ -73,7 +75,7 @@ export SimFrame,
     get_subsegment_tension,
     get_max_rope_tension,
     get_segment_tension
-export build_dashboard
+export build_dashboard, build_dashboard_v2
 
 # Soft-ramp k_mppt controller
 export RampState, IDLE, RAMPING, HOLDING
