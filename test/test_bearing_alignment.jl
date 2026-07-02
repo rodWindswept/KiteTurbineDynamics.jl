@@ -277,24 +277,31 @@ end
     # (more negative acceleration) due to the extra damping torque
     @test accel_on < accel_off
 
-    # Test 2: Mechanical brake engagement below 1.0 rad/s
+    # Test 2: Brake does NOT auto-engage on low hub speed (removed 2026-06-30)
+    # Previously the brake triggered whenever |ω_hub| < 1.0, which locked the
+    # rotor during normal spin-up.  The brake is now explicit-command only.
     u_test_brake = copy(u0)
-    u_test_brake[6N + Nr + gnd_ri] = 0.5 # below 1.0 rad/s threshold
-    u_test_brake[6N + Nr + hub_ri] = 0.0
+    u_test_brake[6N + Nr + gnd_ri] = 0.5   # ground ring spinning slowly
+    u_test_brake[6N + Nr + hub_ri] = 0.0   # hub stationary — old code would brake
 
-    du_brake_off = zeros(Float64, length(u_test_brake))
-    multibody_ode!(du_brake_off, u_test_brake, (sys, p_off, wind_fn, lift_device), 0.0)
+    du_no_brake = zeros(Float64, length(u_test_brake))
+    multibody_ode!(du_no_brake, u_test_brake, (sys, p_off, wind_fn, lift_device), 0.0)
 
-    du_brake_on = zeros(Float64, length(u_test_brake))
-    multibody_ode!(du_brake_on, u_test_brake, (sys, p_on, wind_fn, lift_device), 0.0)
+    accel_no_brake = du_no_brake[6N + Nr + gnd_ri]
+    @info "Ground station mechanical brake test" accel_no_brake
 
-    accel_brake_off = du_brake_off[6N + Nr + gnd_ri]
-    accel_brake_on  = du_brake_on[6N + Nr + gnd_ri]
+    # Brake is NOT auto-engaged — acceleration is just normal MPPT torque (~−0.5 to −2.0)
+    @test accel_no_brake > -5.0
 
-    @info "Ground station mechanical brake test" accel_brake_off accel_brake_on
-    # With the brake decoupled from the Field IMU, it must engage in both cases
-    @test accel_brake_on ≈ accel_brake_off
-    @test accel_brake_on < -50.0
+    # Explicit brake engagement must produce strong braking torque
+    sys.brake_engaged[] = true
+    du_braked = zeros(Float64, length(u_test_brake))
+    multibody_ode!(du_braked, u_test_brake, (sys, p_off, wind_fn, lift_device), 0.0)
+    accel_braked = du_braked[6N + Nr + gnd_ri]
+    sys.brake_engaged[] = false  # cleanup
+
+    @info "Ground station explicit brake test" accel_braked
+    @test accel_braked < -50.0    # brake torque is strong
 
     # Test 3: Mechanical brake safety interlock (do NOT engage if both are fast)
     sys.brake_engaged[] = false
