@@ -24,8 +24,13 @@ function main()
     v_wind = 11.0
 
     if v10r || v10t
-        sys, u0, p, config_name = build_v10_tight_no_lowest()
-        if v10r; config_name = "V10 Reinforced"; end
+        if v10r
+            sys, u0, p, config_name = build_v10_tight_no_lowest(;
+                r_bottom_scale=1.30, tether_diameter=0.004)
+            config_name = "V10 Reinforced"
+        else
+            sys, u0, p, config_name = build_v10_tight_no_lowest()
+        end
     else
         p = params_10kw(); sys, u0 = build_kite_turbine_system(p)
         config_name = "Canonical 5-line"
@@ -36,6 +41,8 @@ function main()
     end
 
     lift_device = rotary_lifter_default()
+    # Start with light braking for spin-up (V10 default k_mppt ≈ 166 stalls rotor)
+    sys.k_mppt_ref[] = 20.0
     println("Settling…")
     u_start = settle_to_operational_state(sys, copy(u0), p, 9.5;
         lift_device=lift_device, wind_fn=wind_fn)
