@@ -20,7 +20,7 @@ The v1 dashboard compresses all this into a single `FoS=1.36` number. The v2 das
 
 ### The Aesthetic Reference
 
-The design draws from **aircraft instrument panels and automotive gauge clusters** — dark backgrounds, cyan/high-contrast accents, large readable KPIs, minimal text. The reference is the Kitemill dashboard aesthetic (clean, dark-themed, per-component diagnostics). The A1 Instrument palette (near-black #1a1a2e, cyan #00bcd4 accent) was selected in Phase 1.
+The design draws from **aircraft instrument panels and automotive gauge clusters** — dark backgrounds, cyan/high-contrast accents, large readable KPIs, minimal text. The reference dashboard aesthetic (clean, dark-themed, per-component diagnostics). The A1 Instrument palette (near-black #1a1a2e, cyan #00bcd4 accent) was selected in Phase 1. Check as colours have to be Julia valid.
 
 The goal: an engineer looking at this dashboard should immediately understand the TRPT's state without reading numbers. Red ring bar = that ring is buckling. Rotor gauge spinning fast = that rotor is contributing. Twist view showing a spiral = torsional wave propagating. No hidden algorithms, no buried menus.
 

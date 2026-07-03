@@ -508,3 +508,19 @@ function mass_scale(
     )
     return SystemParams(geo, mat, aero, ctrl, back)
 end
+
+"""
+    modified_params(base::SystemParams; kwargs...) -> SystemParams
+
+Create a new SystemParams with specified fields overridden.
+Use for immutable parameter modification (dashboard scenarios, depower).
+"""
+function modified_params(base::SystemParams; kwargs...)
+    fnames = fieldnames(SystemParams)
+    ftypes = fieldtypes(SystemParams)
+    overrides = Dict{Symbol,Any}(kwargs)
+    vals = ntuple(length(fnames)) do i
+        convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
+    end
+    SystemParams(vals...)
+end

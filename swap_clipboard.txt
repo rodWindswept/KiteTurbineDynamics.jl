@@ -1,0 +1,22 @@
+=== V10 Conservative Campaign — OVERNIGHT ===
+
+# Launch overnight:
+cd ~/Documents/GitHub/KiteTurbineDynamics.jl
+bash launch_v10_conservative.sh
+
+# What it does:
+#   k_mppt_safety = 3.0 (accounts for static/dynamic mismatch ~3.3×)
+#   60 islands × 80 pop, 10,000 iterations each
+#   Full bounds (no --tight)
+#   Output: scripts/results/v10_campaign_50kw_cons/
+#   Expected: 4-8 hours
+
+# Check progress:
+ls -la scripts/results/v10_campaign_50kw_cons/
+head -5 scripts/results/v10_campaign_50kw_cons/island_bests.csv
+
+# Monitor:
+tail -f scripts/results/v10_campaign_50kw_cons/campaign.log
+
+# Previous tight results preserved at:
+#   scripts/results/v10_campaign_50kw_tight/

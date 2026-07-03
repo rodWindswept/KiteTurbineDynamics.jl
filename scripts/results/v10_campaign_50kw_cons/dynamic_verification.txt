@@ -1,0 +1,11 @@
+Dynamic Verification Report
+==========================
+Campaign: v10_50kw
+Global best: Island 1, 60.83 kg
+
+k_mppt scan results:
+  Best k_mppt:     62.0
+  Settled ω:       49.6 rpm
+  P_gen:           8.6 kW
+  Power ratio:     17.2%
+  Dynamically viable: false

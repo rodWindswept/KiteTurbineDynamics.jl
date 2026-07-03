@@ -10,7 +10,7 @@
 #   src/soft_ramp_controller.jl  —  init_geometry!(), min_collapse_margin()
 #   src/ring_forces.jl           —  inter-ring torsional damping (k_sec, c_s)
 #
-# Physics derivation (Tulloch, PhD TU Delft):
+# Physics derivation (Tulloch, PhD thesis, University of Strathclyde):
 # ─────────────────────────────────────────────
 # In a TRPT segment of axial length L between two rings of radius r, with
 # n_lines lines each under tension T_line = T_total/n_lines, the torque

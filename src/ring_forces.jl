@@ -268,7 +268,7 @@ function compute_ring_forces!(
     # (ω_n = √(k_sec/I_min)); this over-damps the global torsional mode (ζ > 1),
     # which is fine — it simply prevents torsional oscillation entirely.
     #
-    # ── Torsional stiffness k_sec — Tulloch curve (PhD thesis, TU Delft) ──
+    # ── Torsional stiffness k_sec — Tulloch curve (PhD thesis, Strathclyde) ──
     #
     #   τ(δα) = n_lines × T_line × r² × sin(δα) / chord(δα)
     #   where chord(δα) = √(L² + 4r² sin²(δα/2))

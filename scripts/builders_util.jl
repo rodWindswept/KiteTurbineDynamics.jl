@@ -19,14 +19,18 @@ lowest-expansion rotor removed.  Reads `best_design.json` from the
 Returns `(sys, u0, p, label)`.
 """
 function build_v10_tight_no_lowest(;
-    r_bottom_scale::Float64 = 1.0,
-    tether_diameter::Float64 = 0.003,
+    tether_diameter::Float64=0.003,       # default 3mm, pass 0.004 for reinforced
+    r_bottom_scale::Float64=1.0,          # default 1.0, pass >1.0 for larger bottom
+    r_hub_scale::Float64=1.0,             # default 1.0, auto-set to ≥ r_bottom_scale
 )
     best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
     isfile(best_path) || error("best_design.json not found at $best_path")
     best = JSON3.read(read(best_path, String))
+    # Ensure r_hub ≥ r_bottom (taper constraint: top ≥ bottom)
+    r_hub_s = max(r_hub_scale, r_bottom_scale * best.r_bottom_m / max(best.r_hub_m, 1e-9))
     x = Float64[
-        best.r_hub_m, best.r_bottom_m, best.Do_top_m, best.t_over_D,
+        best.r_hub_m * r_hub_s, best.r_bottom_m * r_bottom_scale,
+        best.Do_top_m, best.t_over_D,
         best.target_Lr, Float64(best.n_lines), best.density_profile,
         0.519, 0.10, 32.0, 35.0,
         Float64(best.n_active_rotors), 1.0, best.aspect_ratio, 1.0
@@ -55,7 +59,7 @@ function build_v10_tight_no_lowest(;
     p_base = params_v5_50kw()
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0,
                        result.design.tether_length, result.design.r_hub, p_base.trpt_rL_ratio,
-                       n_lines, n_rings, n_lines)
+                      n_lines, result.n_rings, n_lines)
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     le = isempty(rotors) ? 1.0 : rotors[1].blade_scale
@@ -63,7 +67,13 @@ function build_v10_tight_no_lowest(;
     ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
     back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
     pc = SystemParams(geo, mat, aero, ctrl, back)
-    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
+    # Use v5 when scaling bottom rings — it matches ring_spacing_v4 geometry
+    if r_bottom_scale != 1.0
+        sys, u0 = build_kite_turbine_system_v5(pc, result.design.target_Lr,
+            result.design.r_bottom; expansion_rotors=expansion_params)
+    else
+        sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
+    end
     println("V10 Tight no-lowest: n_lines=$n_lines n_rotors=$n_exp rings=$n_rings mass=$(round(best.best_mass_kg, digits=2))kg")
-    return sys, u0, pc, "V10 Tight ($n_exp rotors)"
+    return sys, u0, pc, "V10 Tight (hub + $n_exp expansion rotors)"
 end

@@ -21,10 +21,11 @@ include("structural_safety.jl")
 include("ring_element_analysis.jl")
 include("lift_kite.jl")
 include("sim_frame.jl")
+include("sim_runner.jl")    # DashboardState + build_rerun! (v2 refactor)
+include("dashboard_panels.jl")  # Panel functions (v2 refactor)
 include("soft_ramp_controller.jl")
 include("visualization.jl")
-include("dashboard_panels.jl")
-include("dashboard_v2.jl")
+include("dashboard_v2.jl")       # Single-window v2 cockpit (build_dashboard_v2)
 include("trpt_optimization.jl")
 include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
@@ -68,14 +69,21 @@ export ring_safety_frame,
     BeamResult,
     ground_station_forces
 export SimFrame,
+    DashboardState,
+    ExtendedSimFrame,
     SimPeaks,
     capture_frame,
+    capture_extended,
+    build_rerun!,
     capture_peaks,
     get_generator_torque,
     get_subsegment_tension,
     get_max_rope_tension,
     get_segment_tension
 export build_dashboard, build_dashboard_v2
+# Dashboard v2 panels (extracted, layout-agnostic) + shared helpers
+export DashboardPalette, fos_str
+export ring_health!, tension_chain!, torque_chain!, rotor_gauges!, twist_view!, config_panel!
 
 # Soft-ramp k_mppt controller
 export RampState, IDLE, RAMPING, HOLDING

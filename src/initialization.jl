@@ -710,18 +710,31 @@ function settle_to_operational_state(
     ω_eq = ω_rated_max
     if v_mag > 0.1
         # Scan downwards from rated speed to find the stable operating point
-        # where aerodynamic torque equals generator torque. We look for the 
+        # where aerodynamic torque equals generator torque. We look for the
         # highest ω where P_aero > P_gen to avoid the trivial P=0 stall state.
+        # Includes expansion rotor power if present (V10 Tight et al.).
+        has_exp = !isempty(sys.expansion_rotors)
         for w in range(ω_rated_max, 0.1; length=200)
+            # Hub rotor power
             lambda = w * sys.rotor.radius / v_mag
-            P_aero =
-                0.5 *
-                p.rho *
-                v_mag^3 *
-                π *
-                sys.rotor.radius^2 *
-                cp_at_tsr(lambda) *
-                cos(p.elevation_angle)^2.65
+            P_aero_hub =
+                0.5 * p.rho * v_mag^3 * π * sys.rotor.radius^2 *
+                cp_at_tsr(lambda) * cos(p.elevation_angle)^2.65
+            # Expansion rotor power (simplified: each rotor contributes from its own swept area)
+            P_aero_exp = 0.0
+            if has_exp
+                for er in sys.expansion_rotors
+                    r_tip = er.blade_tip_radius
+                    r_hub = er.blade_hub_radius
+                    area = π * (r_tip^2 - r_hub^2)
+                    # Use the rotor's own radius for TSR, not the hub radius
+                    lambda_er = clamp(w * r_tip / v_mag, 0.0, 12.0)
+                    cp_er = cp_at_tsr(lambda_er)
+                    P_aero_exp += 0.5 * p.rho * v_mag^3 * area * cp_er *
+                                  cosd(er.bank_angle_deg)  # bank angle reduces effective area
+                end
+            end
+            P_aero = P_aero_hub + P_aero_exp
             P_gen = p.k_mppt * w^3
             if P_aero > P_gen
                 ω_eq = w
@@ -859,6 +872,10 @@ function settle_to_operational_state(
             # naturally (they need to find equilibrium, not be pinned).
             u_start[1:3] .= 0.0   # ground ring position (fixed)
             u_start[(3N + 1):(3N + 3)] .= 0.0   # ground ring velocity (fixed)
+            # Let the lift kite position lag-catch-up to the bearing's new position
+            if lift_device !== nothing
+                update_kite_pos!(sys, u_start, lift_device, p, dt_op)
+            end
         end
         # All translational velocities to zero at the end — the subsequent
         # set_orbital_velocities! call is now redundant (rope nodes are

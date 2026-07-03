@@ -12,6 +12,8 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 
 | File | Date | Topic |
 |------|------|-------|
+| `handover-2026-07-01-dashboard-v2-refinements.md` | Jul 1 | Dashboard v2 cockpit refinements — side-by-side charts, dynamic scaling, kW rotor gauge, interactive config menus, V10 Reinforced selection |
+| `handover-2026-06-30-dashboard.md` | Jun 30 | Dashboard v2 cockpit design intent + panel philosophy |
 | `handover-2026-06-16.md` | Jun 16 | V6.2 corrected physics campaign + forum post preparation |
 | `handover-2026-06-14.md` | Jun 14 | Expansion rotor refactor |
 | `handover-2026-05-28-pitch-depower-session.md` | May 28 | Pitch depower diagnostics |

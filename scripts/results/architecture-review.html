@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KTD.jl Architecture Review — Dashboard Monolith</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'dark', themeVariables:{primaryColor:'#0d9488',primaryTextColor:'#f3f4f6',primaryBorderColor:'#5eead4',lineColor:'#5eead4',secondaryColor:'#1e293b',tertiaryColor:'#0f172a',fontSize:'14px'}});</script>
+<style>
+  body { background: #0a0a0b; color: #e5e7eb; font-family: system-ui; }
+  .card { background: #111318; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin: 16px 0; }
+  .badge-strong { background: #065f46; color: #6ee7b7; }
+  .badge-explore { background: #78350f; color: #fbbf24; }
+  .badge-speculative { background: #1e293b; color: #94a3b8; }
+  .diagram-box { background: #0f172a; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  h1 { font-size: 1.8rem; font-weight: 700; color: #5eead4; }
+  h2 { font-size: 1.3rem; font-weight: 600; color: #e5e7eb; }
+  h3 { font-size: 1.1rem; font-weight: 600; color: #94a3b8; }
+  .metric { font-size: 0.85rem; color: #64748b; }
+  .before { border-left: 3px solid #ef4444; }
+  .after { border-left: 3px solid #22c55e; }
+</style>
+</head>
+<body class="max-w-4xl mx-auto p-6">
+
+<h1 class="mb-2">🔍 KTD.jl Architecture Review</h1>
+<p class="metric mb-8">src/visualization.jl · 1,850 lines · 1 monolithic function · 15 captured variables in _rerun! closure</p>
+
+<!-- Summary -->
+<div class="card">
+  <h2 class="mb-3">Executive Summary</h2>
+  <p class="mb-2"><code>build_dashboard()</code> is a <strong>shallow module</strong> by the codebase-design vocabulary: its interface takes <code>layout=:v1|:v2</code> but its implementation is a single 1,850-line function where panels, controls, scenarios, and the simulation runner are all defined inline as closures capturing 15+ variables.</p>
+  <p>The <strong>deletion test</strong>: deleting any single piece (the _rerun! closure, a panel, the controls) would require rewriting N callers that depend on the captured variables. This is the definition of low <strong>locality</strong>.</p>
+  <p class="mt-3 text-cyan-400 text-sm">Vocabulary: <span class="text-slate-400">module · interface · depth · seam · adapter · leverage · locality — per codebase-design skill</span></p>
+</div>
+
+<!-- Candidate 1 -->
+<div class="card">
+  <div class="flex justify-between items-start mb-3">
+    <h2>1. Extract <code>_rerun!</code> from build_dashboard</h2>
+    <span class="px-3 py-1 rounded-full text-xs font-bold badge-strong">STRONG</span>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 mb-4">
+    <div class="metric">📁 <b>Files</b><br/>visualization.jl:850-1070</div>
+    <div class="metric">🔗 <b>Captures</b><br/>15 outer variables</div>
+    <div class="metric">📏 <b>Size</b><br/>~220 lines</div>
+  </div>
+
+  <h3 class="mb-2">Problem</h3>
+  <p class="mb-3">The <strong>_rerun!</strong> closure captures sys, p, u_settled, wind_fn, speed_slider, payout_slider, sim_frames_obs, ext_frames_obs, frame_slider, times_ref, and 5+ control booleans from the outer scope. It's coupled to v1's grid positions (controls at fig[1,1], HUD at fig[1,3]). V2 can't reuse it because v2's cockpit strip occupies fig[1,1:4].</p>
+
+  <h3 class="mb-2">Solution</h3>
+  <p class="mb-3">Extract as <code>build_rerun!(sys, p, u0, wind_fn, lift_device, obs_nt) → closure</code> where <code>obs_nt</code> is a NamedTuple of observables the runner reads/writes. Both v1 and v2 pass their own observables — the runner logic is identical.</p>
+
+  <div class="diagram-box">
+    <p class="text-xs text-cyan-400 mb-2">Before: closure captures 15 variables from outer scope</p>
+    <div class="mermaid">
+graph TD
+    BD[build_dashboard 1850 lines]
+    BD --> R[_rerun! closure captures 15 vars]
+    BD --> V1Ctrl[V1 controls at fig1,1]
+    BD --> V1HUD[V1 HUD at fig1,3]
+    BD --> V2Grid[V2 grid at fig1,14 - conflicts!]
+    R -.->|cannot reuse| V2Grid
+    style R fill:#7f1d1d,stroke:#ef4444
+</div>
+    <p class="text-xs text-green-400 mt-4 mb-2">After: extracted module with clean interface</p>
+    <div class="mermaid">
+graph TD
+    RR[build_rerun! sys,p,u0,wind_fn,obs_nt - closure]
+    V1[V1 layout shell] --> RR
+    V2[V2 layout shell] --> RR
+    RR --> SF[sim_frames_obs]
+    RR --> EF[ext_frames_obs]
+    style RR fill:#064e3b,stroke:#22c55e
+</div>
+  </div>
+
+  <h3 class="mb-2">Benefits</h3>
+  <ul class="list-disc list-inside text-sm space-y-1 text-slate-300">
+    <li><b>Leverage:</b> One runner serves two layouts — add a third layout with zero changes</li>
+    <li><b>Locality:</b> Bug in simulation stepping? Fix in one place, both layouts fixed</li>
+    <li><b>Testability:</b> <code>build_rerun!</code> returns a closure — call it with mock observables, verify frames produced</li>
+  </ul>
+</div>
+
+<!-- Candidate 2 -->
+<div class="card">
+  <div class="flex justify-between items-start mb-3">
+    <h2>2. Extract Panel Functions</h2>
+    <span class="px-3 py-1 rounded-full text-xs font-bold badge-strong">STRONG</span>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 mb-4">
+    <div class="metric">📁 <b>Files</b><br/>visualization.jl (various)<br/>+ prototype scripts</div>
+    <div class="metric">📦 <b>Panels</b><br/>6 panel types</div>
+    <div class="metric">🔄 <b>Interface</b><br/>grid_cell + data_obs</div>
+  </div>
+
+  <h3 class="mb-2">Problem</h3>
+  <p class="mb-3">Panel visuals are defined inline in build_dashboard. They can't be swapped between layouts or cells. The prototype panels (torque chain, ring health, rotor gauges) exist as standalone CairoMakie scripts but aren't callable from the GLMakie dashboard.</p>
+
+  <h3 class="mb-2">Solution</h3>
+  <p class="mb-3">Each panel becomes a function: <code>torque_chain!(grid_cell, data_obs::Observable{ExtendedSimFrame})</code>. Creates its own axes/plots, reads from the observable. Doesn't know about frame_obs or ext_frames_obs — just receives data.</p>
+
+  <div class="diagram-box">
+    <p class="text-xs text-green-400 mb-2">After: panels as deep modules</p>
+    <div class="mermaid">
+graph LR
+    subgraph "Layout Shell"
+        C1[cell 1]
+        C2[cell 2]
+        C3[cell 3]
+    end
+    D[ExtendedSimFrame Observable]
+    TQ[torque_chain!] --> C1
+    RH[ring_health!] --> C2
+    RG[rotor_gauges!] --> C3
+    D --> TQ
+    D --> RH
+    D --> RG
+    style TQ fill:#064e3b,stroke:#22c55e
+    style RH fill:#064e3b,stroke:#22c55e
+    style RG fill:#064e3b,stroke:#22c55e
+</div>
+  </div>
+
+  <h3 class="mb-2">Benefits</h3>
+  <ul class="list-disc list-inside text-sm space-y-1 text-slate-300">
+    <li><b>Leverage:</b> One panel implementation, N cells can display it</li>
+    <li><b>Locality:</b> Fix ring health bar colour logic in one function, all layouts see it</li>
+    <li><b>Testability:</b> Call <code>ring_health!(cell, obs)</code>, push data to obs, verify bar colours</li>
+  </ul>
+</div>
+
+<!-- Candidate 3 -->
+<div class="card">
+  <div class="flex justify-between items-start mb-3">
+    <h2>3. Configurable Cell Slots</h2>
+    <span class="px-3 py-1 rounded-full text-xs font-bold badge-explore">WORTH EXPLORING</span>
+  </div>
+
+  <div class="metric mb-2">📁 visualization.jl + new panel_registry module</div>
+
+  <h3 class="mb-2">Problem</h3>
+  <p class="mb-3">After extracting panels, the grid still has fixed assignments. A structural analysis workflow wants ring health bars + torque chain. A power optimization workflow wants rotor gauges + tension chain. Currently you'd need different dashboard functions for each.</p>
+
+  <h3 class="mb-2">Solution</h3>
+  <p class="mb-3"><code>configurable_cell!(grid_cell, panel_registry, selector_obs)</code> — a cell stores [panel_fn1, panel_fn2, ...] and calls the one selected by <code>selector_obs[]</code>. Each cell gets an independent dropdown.</p>
+
+  <h3 class="mb-2">Benefits</h3>
+  <p class="text-sm text-slate-300">Same dashboard shell, different workflows. Investor demo gets rotor gauges + 3D viewport. Engineering review gets ring health + torque chain. No layout duplication.</p>
+</div>
+
+<!-- Top Recommendation -->
+<div class="card border-cyan-800">
+  <h2 class="mb-3">🎯 Top Recommendation</h2>
+  <p class="text-lg font-semibold text-cyan-400 mb-2">Start with Candidate 1 (extract _rerun!) + Candidate 2 (extract panels) together.</p>
+  <p class="text-sm text-slate-300 mb-2">These are a natural pair: <code>_rerun!</code> produces ExtendedSimFrames, panels consume them. Extracting both creates a clean seam between data production and visualisation. After both are extracted, Candidate 3 (configurable cells) is a thin layer on top — add a dropdown per cell that swaps which panel function it calls.</p>
+  <p class="text-sm text-slate-400">Estimated: ~300 lines changed, ~150 new. V1 dashboard test passes unchanged. V2 layout becomes a thin shell composing the extracted components.</p>
+</div>
+
+</body>
+</html>

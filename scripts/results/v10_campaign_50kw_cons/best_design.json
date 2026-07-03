@@ -1,0 +1,20 @@
+{
+  "power_kw": 50,
+  "target_Lr": 2.9419055729910455,
+  "n_active_rotors": 1,
+  "Do_top_m": 0.06789498729714864,
+  "r_hub_m": 2.698271972848908,
+  "n_islands": 60,
+  "version": "v10",
+  "r_bottom_m": 2.698271972848908,
+  "n_lines": 10,
+  "Do_scale_exp": 0.0,
+  "best_mass_kg": 60.83060982087664,
+  "profile": "PROFILE_ELLIPTICAL",
+  "island_idx": 1,
+  "density_profile": 0.8,
+  "n_rings": 9,
+  "aspect_ratio": 1.0000001537771213,
+  "t_over_D": 0.010000000068039501,
+  "tether_length_m": 67.0820393249937
+}

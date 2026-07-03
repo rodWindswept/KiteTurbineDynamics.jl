@@ -56,7 +56,10 @@ function parse_commandline()
             help = "Use V10 Island 51 alt-basin design (2 rotors, 76.75 kg)"
             action = :store_true
         "--v10-tight"
-            help = "Use V10 Tight winner (49.2 kg, 4 rotors, without lowest expansion)"
+            help = "Use V10 Tight winner (49.2 kg, 4 rotors, without lowest expansion). WARNING: dynamically dead, FoS=0.43"
+            action = :store_true
+        "--v10-reinforced"
+            help = "Use V10 Reinforced (r_bottom_scale=1.30, 4mm tethers): 55 kW at FoS=2.30 — the viable V10"
             action = :store_true
         "--v67"
             help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
@@ -69,6 +72,9 @@ function parse_commandline()
             help = "Number of expansion rotors (default 3)"
             arg_type = Int
             default = 3
+        "--v2"
+            help = "Use the single-window v2 cockpit dashboard (3D + diagnostic panels + telemetry strip)"
+            action = :store_true
     end
     return parse_args(s)
 end
@@ -273,12 +279,16 @@ function build_from_campaign_v10(campaign_dir::String, label::String; vector_fil
 end
 
 # ── Build V10 Tight winner, drop lowest expansion rotor ──
-function build_v10_tight_no_lowest()
+function build_v10_tight_no_lowest(; r_bottom_scale::Float64=1.0,
+                                     tether_diameter::Union{Nothing,Float64}=nothing)
     best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
     isfile(best_path) || error("best_design.json not found")
     best = JSON3.read(read(best_path, String))
+    # r_bottom_scale (x[2]) and a wider tether reinforce the dynamically-dead
+    # tight winner (FoS=0.43) into the viable V10 (r_bottom_scale=1.30,
+    # tether_diameter=0.004 → ~55 kW at FoS=2.30).
     x = Float64[
-        best.r_hub_m, best.r_bottom_m, best.Do_top_m, best.t_over_D,
+        best.r_hub_m, best.r_bottom_m * r_bottom_scale, best.Do_top_m, best.t_over_D,
         best.target_Lr, Float64(best.n_lines), best.density_profile,
         0.519, 0.10, 32.0, 35.0,
         Float64(best.n_active_rotors), 1.0, best.aspect_ratio, 1.0
@@ -307,7 +317,8 @@ function build_v10_tight_no_lowest()
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0,
                        result.design.tether_length, result.design.r_hub, p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
-    mat = MaterialSpec(p_base.tether_diameter, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
+    td  = isnothing(tether_diameter) ? p_base.tether_diameter : tether_diameter
+    mat = MaterialSpec(td, p_base.e_modulus, p_base.m_ring, p_base.m_blade)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     le = isempty(rotors) ? 1.0 : rotors[1].blade_scale
     km = p_base.k_mppt * le^2
@@ -386,7 +397,8 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
+    current_config = args["v10-reinforced"] ? "V10 Reinforced" :
+                     args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
                      args["v10-island51"] ? "V10 Island 51 alt-basin" :
                      args["v10"] ? "V10 unified rotors" :
                      args["v9"] && !args["v9-10kw"] ? "V9.0 50kW equilibrium" :
@@ -401,7 +413,11 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        if current_config == "V10 Tight (no lowest expansion)"
+        if current_config == "V10 Reinforced"
+            # Viable V10: reinforce the tight winner (wider bottom + 4mm tethers).
+            sys, u0, p, label = build_v10_tight_no_lowest(r_bottom_scale=1.30, tether_diameter=0.004)
+            current_config = "V10 Reinforced"
+        elseif current_config == "V10 Tight (no lowest expansion)"
             # Load V10 Tight winner from best_design.json, drop lowest expansion rotor
             sys, u0, p, label = build_v10_tight_no_lowest()
             current_config = label  # use the builder's label for menu matching
@@ -539,6 +555,22 @@ function main()
                         end
                     end
                 )
+            end
+
+            if args["v2"]
+                # ── Single-window v2 cockpit ──
+                println("Building v2 cockpit dashboard...")
+                fig = build_dashboard_v2(sys, p, frames; times=times,
+                                         u_settled=u_start, wind_fn=wind_fn,
+                                         lift_device=default_lift,
+                                         config_name=current_config)
+                main_screen = GLMakie.Screen()
+                display(main_screen, fig)
+                println("v2 cockpit open — $(current_config). Close the window to exit.")
+                while isopen(fig.scene)
+                    sleep(0.25)
+                end
+                break  # v2 has no in-window config switching yet
             end
 
             println("Building dashboard...")

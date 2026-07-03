@@ -5,7 +5,7 @@
 # Physical basis:
 # ───────────────
 # The TRPT is a distributed torsional spring-damper chain.  Torsional stiffness
-# k_sec = dτ/dδα is NON-MONOTONIC (Tulloch, PhD thesis TU Delft):
+# k_sec = dτ/dδα is NON-MONOTONIC (Tulloch, PhD thesis, University of Strathclyde):
 #
 #   τ(δα) = n_lines × T_line × r² × sin(δα) / chord(δα)
 #   where chord(δα) = √(L² + 4r² sin²(δα/2))
@@ -90,6 +90,14 @@ mutable struct RampController
     _idle_ctr::Int
     _hold_ctr::Int
     _lull_ctr::Int
+
+    # Sign detection: track previous values for dP/dk
+    _P_prev::Float64
+    _k_prev::Float64
+    _sign_confident::Bool   # true once we've confirmed the dP/dk sign
+    _sign::Float64          # current best estimate of dP/dk sign (+1 or -1)
+    _dP_accum::Float64      # accumulated power change since last sign check
+    _dk_accum::Float64      # accumulated k change since last sign check
 end
 
 """
@@ -118,7 +126,10 @@ function RampController(;
         idle_hold, hold_pct, hold_secs, lull_pct, lull_secs,
         fos_soft, fos_hard, collapse_margin_deg,
         Float64[], 0,    # _δα_star, _n_seg — filled by init_geometry!
-        0, 0, 0,
+        0, 0, 0,          # _idle_ctr, _hold_ctr, _lull_ctr
+        0.0, 0.0, false,  # _P_prev, _k_prev, _sign_confident
+        1.0,              # _sign — default: assume left flank
+        0.0, 0.0,       # _dP_accum, _dk_accum
     )
 end
 
@@ -233,21 +244,45 @@ function update_ramp!(
         end
 
     elseif ctrl.state == RAMPING
-        # Proportional ramp: Δk = Kp × (P_target − P_actual) × dt
-        # Tapered by structural multiplier
+        # Proportional ramp with accumulated dP/dk sign detection
+        # If dP/dk > 0: increase k to increase P (left flank)
+        # If dP/dk < 0: decrease k to increase P (right flank)
         error_W = ctrl.P_target - P_actual
-        delta_k = ctrl.Kp * error_W * dt * struct_mult
+        delta_k_abs = ctrl.Kp * abs(error_W) * dt * struct_mult
+
+        # Accumulate changes across frames for reliable dP/dk detection
+        ctrl._dP_accum += P_actual - ctrl._P_prev
+        ctrl._dk_accum += k_current - ctrl._k_prev
+        ctrl._P_prev = P_actual
+        ctrl._k_prev = k_current
+
+        # Check sign when we've seen enough cumulative change (~0.5-1s worth)
+        # Use OR: either enough k change OR enough power change to evaluate
+        if (abs(ctrl._dk_accum) > 0.05 && abs(ctrl._dP_accum) > 50.0) ||
+           abs(ctrl._dk_accum) > 0.5
+            # Enough signal to evaluate dP/dk
+            if abs(ctrl._dP_accum) > 1.0  # non-zero power change
+                ctrl._sign = ctrl._dP_accum / ctrl._dk_accum > 0 ? +1.0 : -1.0
+                ctrl._sign_confident = true
+            end
+            ctrl._dP_accum = 0.0
+            ctrl._dk_accum = 0.0
+        elseif !ctrl._sign_confident
+            ctrl._sign = 1.0  # default: assume left flank until proven otherwise
+        end
+
+        delta_k = ctrl._sign * delta_k_abs * (error_W > 0 ? 1.0 : -1.0)
         new_k = clamp(k_current + delta_k, ctrl.k_min, ctrl.k_max)
         sys.k_mppt_ref[] = new_k
 
         # Check for HOLDING condition: power within ±hold_pct of target
-        # AND structural constraints satisfied
+        # (structural guards limit ramp rate but don't block HOLDING)
         if abs(P_actual - ctrl.P_target) / ctrl.P_target <= ctrl.hold_pct
             ctrl._hold_ctr += 1
         else
             ctrl._hold_ctr = 0
         end
-        if ctrl._hold_ctr * dt >= ctrl.hold_secs && struct_mult >= 0.99
+        if ctrl._hold_ctr * dt >= ctrl.hold_secs
             ctrl.state = HOLDING
             ctrl._hold_ctr = 0
         end
@@ -279,6 +314,12 @@ function reset!(ctrl::RampController)
     ctrl._idle_ctr = 0
     ctrl._hold_ctr = 0
     ctrl._lull_ctr = 0
+    ctrl._P_prev = 0.0
+    ctrl._k_prev = 0.0
+    ctrl._sign_confident = false
+    ctrl._sign = 1.0
+    ctrl._dP_accum = 0.0
+    ctrl._dk_accum = 0.0
 end
 
 """
