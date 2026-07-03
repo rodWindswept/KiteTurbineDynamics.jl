@@ -1,14 +1,16 @@
 # KiteTurbineDynamics.jl
 
+> **📋 Current development state (July 2026):** This README covers the project architecture and v2–v5 campaign history (through April 2026). For the **V6.2→V10 DE campaigns**, **expansion rotor model**, **k_mppt controller**, **dashboard v2**, **K1 knowledge pipeline**, and current development status, see **[CONTEXT.md](CONTEXT.md)** and **[DECISIONS.md](DECISIONS.md)**.
+
 Full multi-body dynamics simulator for a **TRPT kite turbine** — a Tensile Rotary Power
 Transmission airborne wind energy system developed by
 [Windswept & Interesting Ltd](https://windswept.energy).
 
-The simulator spans **30 source modules, 129 scripts, and 196 documentation files**
+The simulator spans **34 source modules, ~150 scripts, and 200+ documentation files**
 across 5 architectural layers, supporting multi-configuration dashboards, multi-objective
-optimisation campaigns (V5→V6→V10), and three distinct lift device architectures
-(kite, stacked, rotary). Canonical designs cover 10 kW pentagon and 50 kW octagon
-configurations with live switching in the GLMakie dashboard.
+optimisation campaigns (V2→V5→V6.2→V10), three distinct lift device architectures
+(kite, stacked, rotary), and expansion rotor networks. Canonical designs cover 10 kW through
+50 kW with live switching in the GLMakie dashboard.
 
 ---
 
@@ -77,42 +79,19 @@ KiteTurbineDynamics.jl/
 │   ├── trpt_axial_profiles.jl    Axial profile families for sizing optimisation
 │   ├── trpt_optimization.jl      TRPTDesign struct, evaluate_design(), DE fitness
 │   ├── visualization.jl          GLMakie 3D dashboard (config switching, pitch depower, lift HUD)
+│   ├── soft_ramp_controller.jl  k_mppt auto-ramp controller (state machine, FoS taper, collapse margin)
+│   ├── objective_v6.jl           V6 DE objective (network power sharing, tension stiffening)
+│   ├── objective_v10.jl          V10 DE objective (rotor masks, tension gate, unified rotors)
+│   ├── sim_frame.jl              SimFrame, ExtendedSimFrame, capture_extended()
+│   ├── expansion_rotor.jl        Expansion rotor force + torque models
+│   ├── ring_element_analysis.jl  Per-ring space-frame FEA
 │   └── economics.jl             LCOE, carbon, competitor comparison module
 ├── scripts/
-│   ├── interactive_dashboard.jl  Launch the GLMakie 3D viewer (--v5 for octagon)
+│   ├── interactive_dashboard.jl  Launch the GLMakie 3D viewer (--v5 for octagon, --v2 for cockpit)
 │   ├── run_v4_campaign.jl        v4 DE campaign (constant L/r spacing, 60 islands)
 │   ├── run_v5_campaign.jl        v5 DE campaign (BEM-coupled rotor radius)
 │   ├── run_v5_safe_campaign.jl   v5-safe DE campaign (corrected power, higher FOS)
-│   ├── mppt_twist_sweep_v2.jl    28-case MPPT gain × wind speed parametric sweep
-│   ├── mppt_ramp_only.jl         7→14 m/s wind ramp to expose inertial spin-up delay
-│   ├── hub_excursion_sweep.jl    Hub position variance vs lift device architecture
-│   ├── lift_kite_equilibrium.jl  Static lift analysis across three device architectures
-│   ├── cold_start_collapse.jl    Hub droop / collapse from zero-spin cold start
-│   ├── run_trpt_optimization.jl  Phase B1 DE sizing (7-DoF, circular/elliptical/airfoil)
-│   ├── run_trpt_optimization_v2.jl Phase C DE sizing (12-DoF, 60 islands)
-│   ├── run_lhs_cartography.jl    Phase D Latin Hypercube Sampling — design space survey
-│   ├── launch_trpt_optimization.sh  Batch-launch all 6 (config × profile) Phase B runs
-│   ├── launch_autonomous_campaign.sh  60-island Phase C launch, 12 parallel
-│   ├── auto_refresh_monitor.sh   Regenerate cartography report every 15 min
-│   ├── calibrate_dlf.jl          Calibrate Design Load Factor from ODE load cases
-│   ├── verify_top_candidates_envelope.jl  Phase E FoS envelope check on winners
-│   ├── render_winners_clean.jl   Phase G GLMakie winner renders
-│   ├── power_curve_sweep.jl      Power curve P(v) at rated conditions
-│   ├── make_diagrams.py          Python matplotlib system diagrams
-│   ├── plot_mppt_sweep.py        MPPT sweep analysis charts
-│   ├── plot_mppt_individual.py   Per-case MPPT time-series charts
-│   ├── plot_hub_excursion.py     Hub excursion statistics charts
-│   ├── plot_cartography_heatmaps.py  Phase D 2-D / 3-D heatmaps
-│   ├── plot_dlf_calibration.py   DLF calibration per load case
-│   ├── plot_phase_f_sensitivity.py  n_lines × knuckle mass sensitivity
-│   ├── plot_polygon_pair_graphic.py  Polygon family illustration
-│   ├── produce_report.py         TRPT_Dynamics_Report.docx generator
-│   ├── produce_free_beta_report.py   TRPT_FreeBeta_Report.docx generator
-│   ├── produce_kite_turbine_potential_report.py  TRPT_KiteTurbine_Potential.docx
-│   ├── produce_trpt_optimization_report.py  TRPT_Sizing_Optimization_Report.docx
-│   ├── produce_cartography_report.py  TRPT_Design_Cartography_Report.docx
-│   ├── torque_diag.jl            Torque budget diagnostic
-│   ├── torsion_check.jl          Manual torsional angle check
+│   ├── ...                        (Phase A–H scripts — see CONTEXT.md for current V6+ scripts)
 │   └── results/                  All simulation output CSVs (not in git LFS — large)
 │       ├── canonical_output_v12.0.csv   Reference steady-state trace
 │       ├── mppt_twist_sweep/            k_mppt × v_wind sweep data
@@ -125,32 +104,25 @@ KiteTurbineDynamics.jl/
 │       ├── lift_kite/                   Hub excursion time-series CSVs
 │       ├── power_curve/                 P(v) data
 │       └── collapse/                    Cold-start droop validation data
+│       ├── v6_2_campaign_50kw/          V6.2+ campaign results (see CONTEXT.md for full table)
 ├── test/
-│   ├── runtests.jl               Test suite entry; runs all 11 suites
-│   ├── test_types.jl             Node count, state size, ring_idx mapping
-│   ├── test_parameters.jl        Parameter struct completeness
-│   ├── test_aerodynamics.jl      Cp/CT table bounds, TSR lookup correctness
-│   ├── test_geometry.jl          Attachment points, perp basis, helix
-│   ├── test_rope_forces.jl       Spring tension, tensile-only clamp, damping
-│   ├── test_ring_forces.jl       Rotor thrust, generator torque direction
-│   ├── test_dynamics.jl          ODE smoke test — does not crash, states finite
-│   ├── test_static_equilibrium.jl  Zero-wind: rings sag, rope nodes droop correctly
-│   ├── test_rope_sag.jl          Low-tension: rope nodes sag toward ground
-│   ├── test_emergent_torsion.jl  Applied twist → correct torque direction
-│   ├── test_power.jl             Rated wind → expected power output
-│   └── test_trpt_axial_profiles.jl  Axial profile geometry consistency
+│   ├── runtests.jl               Test suite entry; runs all 23 suites
+│   ├── test_*.jl                  (23 test files covering types, forces, dynamics, FEA, campaigns)
 ├── docs/
-│   └── plans/
-│       ├── 2026-03-16-kite-turbine-dynamics-design.md      Original architecture spec
-│       ├── 2026-03-16-kite-turbine-dynamics-implementation.md  Build task list
-│       └── 2026-04-01-session-notes-pending-work.md        Work log + pending items
-├── figures/                      matplotlib system diagrams for reports
-├── NOTES_MPPT_TWIST.md           MPPT × twist analysis research notes
-├── NOTES_LIFT_KITE.md            Lift device architecture analysis + hub droop findings
-├── DECISIONS.md                  Running log of architectural and physical decisions
-├── RESTART_INSTRUCTIONS.md       Per-session instructions for resuming overnight runs
-├── Project.toml                  Julia package manifest
-├── run_all_sims.sh               Launch all overnight simulations sequentially
+│   ├── plans/                     Implementation plans per campaign phase
+│   ├── porto-2026/                AWEC 2026 Porto paper materials
+│   ├── adr/                       Architecture Decision Records
+│   ├── reports/                   Analysis reports
+│   └── awes-forum-diagrams/       Diagram specs + generated PNGs
+├── handovers/                     Agent handoff documents (12+)
+├── references/                    Physics references, bug analyses, methodology
+├── CONTEXT.md                     Current development state + domain vocabulary
+├── DECISIONS.md                   Running log of architectural and physical decisions
+├── CHANGELOG.md                   User-facing version history
+├── PROJECT_ROOM.md                Repo inventory + cleanup status
+├── AGENTS.md / CLAUDE.md          Agent entry points
+├── PLAN.md                        Implementation roadmap
+├── Project.toml                   Julia package manifest
 └── TRPT_*.docx                   Design reports (generated, checked in for sharing)
 ```
 
@@ -190,7 +162,7 @@ pkg> add https://github.com/rodWindswept/KiteTurbineDynamics.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-All 11 test suites should pass.
+All 23 test suites should pass.
 
 ### Run a simulation
 
@@ -449,8 +421,7 @@ Phase G generated GLMakie renders of the winning designs.
 Phase H auto-generated and refreshed `TRPT_Design_Cartography_Report.docx` every 15 min
 during the campaign.
 
-Global winner results from Phase C–H (FoS exactly 1.80, Euler buckling only — later found
-torsionally infeasible in post-hoc check):
+Global winner results from Phase C–H (FoS exactly 1.80, Euler buckling only — **pre-torsion, v2 era**. Torsional collapse gate added in v3; these designs were later found torsionally infeasible):
 
 | Config | Beam family  | Axial profile  | Total mass |
 |--------|-------------|----------------|-----------|
@@ -537,12 +508,24 @@ configuration and serve as an integrated engineering + investor communication to
 Functions: `compute_lcoe()`, `compute_capital_cost()`, `compute_carbon()`,
 `competitor_comparison()`, `autogyro_lift_required()`, `autogyro_radius_for_lift()`.
 
-### v5-safe optimisation campaign (pending)
+### v5-safe and beyond (April–July 2026)
 
-A corrected and safer DE campaign (`scripts/run_v5_safe_campaign.jl`) addresses the
-v5 power-level bug (all islands hardcoded to 50kW) and raises safety margins:
-torsional FOS ≥ 3.0, Euler FOS ≥ 2.5, r_bottom ≥ 0.5m anti-necking constraint.
-Estimated safe mass: 15–20 kg for 10kW.
+A corrected DE campaign (`scripts/run_v5_safe_campaign.jl`) addressed the
+v5 power-level bug (all islands hardcoded to 50kW). This was followed by the
+**V6→V10 campaign series** (June–July 2026) which introduced expansion rotors,
+tension stiffening, parasitic drag modelling, unified rotor networks, and the
+k_mppt soft-ramp controller. Current best: **76.75 kg at 50 kW** (V10, 14-DoF,
+hub+3 expansion rotors).
+
+Key developments since May 2026:
+- **Expansion rotors** — co-equal generating rotors on TRPT rings, sharing power via network model
+- **k_mppt soft-ramp controller** — state machine with FoS taper, collapse margin guards, dP/dk sign detection
+- **Control-first design** — sweep wind speeds, hunt k_mppt, verify FoS in one pass
+- **Left-flank architecture** — governing decision to design for overspeed (low-torque, high-ω regime)
+- **Dashboard v2** — 6-row responsive cockpit with bar charts, rotor dials, tooltips
+- **K1 knowledge pipeline** — 585 papers ingested into unified graph, AWEC 2026 Porto materials
+
+See [CONTEXT.md](CONTEXT.md) for the full campaign table, [DECISIONS.md](DECISIONS.md) for the design rationale, and [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 ---
 
@@ -578,15 +561,15 @@ segment length also scales with ring radius; the ratio P/P_crit stays flat). A s
 optimally allocates structural mass along the length. Other profile shapes create
 under-loaded regions that carry excess mass.
 
-### Torsional collapse not yet properly constrained in the optimiser
+### Torsional collapse is now properly constrained (since v3, April 2026)
 
-This is the most important open engineering gap. The structural fitness function evaluates
-Euler column buckling FoS and beam manufacturability only. It does not enforce any constraint
-on torsional collapse. Tulloch (PhD thesis, University of Strathclyde) and Wacker (unpublished analysis)
-derived the geometric limit at which a TRPT shaft collapses torsionally: the applied twist
-angle per unit length must not exceed the limit set by the helical line geometry and ring
-radius. This constraint is not currently computed or checked in `evaluate_design()`. Designs
-that pass the Euler FoS check may still be torsionally fragile. See `DECISIONS.md`.
+The Tulloch/Wacker geometric torsional collapse criterion has been enforced as a hard
+feasibility gate since v3. Every design evaluation checks `τ_cap ≥ τ_op × 1.5` alongside
+Euler buckling. This constraint added real mass (2.81→15.4 kg at 10 kW), but the
+constant-L/r ring spacing introduced in v4 recovered much of that penalty by removing
+the artificial bias against tapered geometry. The optimiser now freely explores taper
+designs that satisfy both buckling and torsional constraints simultaneously. All campaigns
+v3→v10 enforce both gates.
 
 ### Torsional constraint adds real mass; uniform spacing was imposing false cylindricity
 
@@ -768,7 +751,7 @@ Ground anchor (fixed)
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-All 11 test suites pass. Test names and what they verify are listed in Section 2.
+All 23 test suites pass. Test names and what they verify are listed in Section 2.
 
 ---
 
@@ -776,19 +759,19 @@ All 11 test suites pass. Test names and what they verify are listed in Section 2
 
 Known open items not yet implemented:
 
-- **CFD/panel-method validation of n_lines = 8 Cp** — BEM strip theory not validated above
-  n = 6. Required before adopting n_lines = 8 for hardware. Highest-priority for v6.
-- **Joint β + structural optimisation** — β fixed at 30° through all campaigns; optimum likely
-  near 26°. v6 should free β alongside structural design variables.
+- **CFD/panel-method validation** — BEM strip theory not validated above n = 6. V10 campaigns
+  use n_lines up to 14. Required before adopting high line counts for hardware.
 - **Dynamic torsional loading and fatigue** — all structural sizing is against a static peak
   envelope. Cyclic 1P/2P tether tension, S-N curves, and accumulated damage not modelled.
 - **Multi-segment back line** — replace single spring-damper with 5+ rope nodes to allow
   catenary sag and forward hub drift
 - **Solid-body collision physics** — ring and rotor interpenetration under severe droop;
   need contact normals and impulse-based rigid-body response
-- **Stacked rotor configurations** — multiple turbine stages on one TRPT shaft
 - **Launch and retrieval sequence simulation** — ramp from ground to operating altitude
 - **Turbulent wind field input** — von Kármán or Kaimal spectrum
+- **Blade pitch control** — bridling as a dynamic control degree of freedom
+- **Fully parametric node counts** — all geometry flowing from `SystemParams` rather than
+  hard-coded configurations
 
 ---
 
