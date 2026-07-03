@@ -5,78 +5,105 @@ Welcome to the **KiteTurbineDynamics.jl** workspace. This guide contains key ent
 ## ── Domain Documentation ──────────────────────────────────────────────
 
 This repository uses a single-context domain documentation layout:
-* **Core Context**: [CONTEXT.md](file:///home/rod/Documents/GitHub/KiteTurbineDynamics.jl/CONTEXT.md) at the repository root.
-* **Design & Optimization Decisions**: [DECISIONS.md](file:///home/rod/Documents/GitHub/KiteTurbineDynamics.jl/DECISIONS.md) at the repository root.
-* **Architectural Decisions**:
-  * [docs/adr/0001-inertia-relief.md](file:///home/rod/Documents/GitHub/KiteTurbineDynamics.jl/docs/adr/0001-inertia-relief.md) — 6-DOF moment and torsional inertia relief.
+* **Core Context**: [CONTEXT.md](CONTEXT.md) at the repository root — domain vocabulary, architecture, campaign history, source map.
+* **Design & Optimization Decisions**: [DECISIONS.md](DECISIONS.md) at the repository root — 2,252-line running decision log.
+* **Changelog**: [CHANGELOG.md](CHANGELOG.md) — user-facing version history.
+* **Architectural Decisions**: [docs/adr/0001-inertia-relief.md](docs/adr/0001-inertia-relief.md)
+* **Agent domain docs**: [docs/agents/domain.md](docs/agents/domain.md)
+
+## ── Essential Reads Before Any KTD.jl Session ────────────────────────
+
+In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (most recent file) → `docs/plans/` (active plan).
 
 ## ── Developer Commands ────────────────────────────────────────────────
 
 ### Julia Package & Test Commands
 
-* **Activate Environment**: Use `--project=.` or `Pkg.activate(".")` inside the repository.
-* **Run Entire Test Suite** (~3m08s):
+* **Run Entire Test Suite** (23 test files):
   ```bash
   julia --project=. test/runtests.jl
   ```
-* **Run a Single Unit Test**:
+  Use `script -q -c "julia --project=. test/runtests.jl" /dev/null` for live output (Julia buffers stdout).
+
+* **Launch Interactive Dashboard** (GLMakie):
   ```bash
-  julia --project=. test/test_forces.jl
-  ```
-* **Launch Interactive Telemetry Dashboard** (Makie GUI):
-  ```bash
-  julia --project=. scripts/interactive_dashboard.jl
+  julia --project=. scripts/interactive_dashboard.jl           # V1
+  julia --project=. scripts/interactive_dashboard.jl --v2      # V2 cockpit
   ```
 
-### Physics & Sizing Campaigns
+### DE Campaigns (V6.2 → V10)
 
-* **Export White-Background System Rendering (GLMakie)**:
+* **Clear Julia cache** before any campaign (critical — stale .ji files cause silent errors):
   ```bash
-  julia --project=. scripts/export_glmakie_render.jl
+  rm -f ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.ji ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.so
   ```
-* **Run v5 Optimization & Sizing Sweep**:
+* **Run V10 campaign** (14-DoF, unified rotors):
   ```bash
-  julia --project=. scripts/run_v5_campaign.jl
+  julia --project=. --threads=auto scripts/run_v10_campaign.jl
   ```
-* **Run MPPT Twist Sweep (v2 Sweep)**:
+* **Verify a campaign result** against current code:
   ```bash
-  julia --project=. scripts/mppt_twist_sweep_v2.jl
+  julia --project=. -e 'using KiteTurbineDynamics; ... evaluate_design(...)'
   ```
 
-### Python Utilities & Report Patching
+### Controller & Headless Simulation
 
-All Python tools should be executed using the system Python `/usr/bin/python3` which has pre-installed libraries (like `python-docx`).
+* **k_mppt bisection hunt** (finds P_rated operating point):
+  ```bash
+  julia --project=. scripts/hunt_kmppt_bisect.jl
+  ```
+* **Headless trace recording** (6 scenarios, open-loop vs soft-ramp):
+  ```bash
+  julia --project=. scripts/record_ramp_traces.jl
+  ```
+* **Publication charts** from ramp traces:
+  ```bash
+  python3 scripts/plot_ramp_traces.py
+  ```
 
-* **Regenerate Sizing & Wake Figures**:
+### Structural Diagnostics
+
+* **Per-ring FoS sweep** (identify which rings buckle):
   ```bash
-  /usr/bin/python3 scripts/reconstruct_lift_kite_figures.py
-  /usr/bin/python3 scripts/vortex_expansion_analysis.py
+  julia --project=. scripts/sweep_v10_ring_detail.jl
   ```
-* **Patch and Verify Engineering Reports** (Cp claims, mass budgets, tension numbers):
+* **3D design overlay** (compare 2+ TRPT designs):
   ```bash
-  /usr/bin/python3 scripts/patch_docx_reports.py
-  ```
-* **Insert GLMakie Render into Lift Kite Sizing Report**:
-  ```bash
-  /usr/bin/python3 scripts/insert_rendering_to_report.py
+  julia --project=. scripts/overlay_designs.jl
   ```
 
 ## ── Development Guidelines ────────────────────────────────────────────
 
-1. **Keep the Test Suite Green**: Always run the package test suite (`test/runtests.jl`) to verify repository integrity after making changes.
-2. **Physics Conservatism**: The main TRPT power-rotor model must conform to the BEM-coupled v2/v5 solver formulations (validated against Tulloch/Wacker benchmarks). The expansion rotor aerodynamic model (`expansion_rotor_forces()`) uses its own simplified 2D blade-element formulation — see PLAN.md §Expansion rotor validation for its cross-fidelity validation protocol. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
-3. **Idempotence**: Maintain report patching scripts so they are fully idempotent.
+1. **Run the test suite before committing.** 23 test files. Never commit with red.
+2. **Physics conservatism.** The TRPT rotor model must conform to BEM-coupled v2/v5 formulations. Expansion rotor model uses simplified 2D blade-element. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
+3. **Always use `run_canonical_sim!()`** for headless simulation — never hand-roll integrators.
+4. **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
+5. **Progressive CSV saves.** Write each scenario's CSV immediately after completion, not all at the end.
+6. **Clear Julia cache after src/ edits.** `rm ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.ji`
 
-## Agent skills
+## ── Agent Skills (for Hermes Agents) ──────────────────────────────────
 
-### Issue tracker
+When working in this repo, load skills in this order:
+```
+/skill windswept-knowledge    ← Company knowledge, drive structure, campaign table
+/skill awe-knowledge          ← AWE domain science, papers, SQLite index
+/skill tdd                    ← Test-driven development
+/skill ktd-simulation-workflow ← Dashboard/headless parity, controller tuning, TRPT physics
+```
 
-Issues are tracked on GitHub. See `docs/agents/issue-tracker.md`.
+Additional skills load as needed: `ktd-headless-analysis`, `ktd-controller-analysis`, `ktd-v6-campaign-workflow`.
 
-### Triage labels
+## ── Key Files ──────────────────────────────────────────────────────────
 
-Standard triage labels are used. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-This repository uses a single-context layout. See `docs/agents/domain.md`.
+| File | Role |
+|------|------|
+| `src/simulation.jl` | `run_canonical_sim!` — canonical integrator |
+| `src/soft_ramp_controller.jl` | RampController state machine |
+| `src/objective_v10.jl` | V10 DE objective (rotor masks, tension gate) |
+| `src/ring_forces.jl` | Rotor aero, generator torque, expansion forces |
+| `src/initialization.jl` | Settle pipeline, equilibrium ω scan |
+| `scripts/interactive_dashboard.jl` | Dashboard launcher |
+| `scripts/hunt_kmppt_bisect.jl` | Bisection k_mppt hunt |
+| `scripts/builders_util.jl` | GUI-free system builders |
+| `DECISIONS.md` | 2,252-line decision log |
+| `CONTEXT.md` | Domain vocabulary + architecture |

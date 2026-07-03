@@ -1,12 +1,13 @@
 name = "KiteTurbineDynamics"
 uuid = "7ea09719-b4d1-44aa-8231-bd6b72d03c63"
-version = "0.1.0"
+version = "0.10.0"
 authors = ["Rod Read <rod@windswept.energy>"]
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 Bonito = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 CoaxialAutogyroStacking = "cb2a5e45-b910-4a0e-9959-8ee2b2784885"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
@@ -24,6 +25,7 @@ WGLMakie = "276b4fcb-3e11-5398-bf8b-a0c2d153d008"
 ArgParse = "1.2.0"
 Bonito = "4.2.0"
 CSV = "0.10"
+CairoMakie = "0.15.11"
 DataFrames = "1.8"
 DifferentialEquations = "7.17"
 FFTW = "1.10.0"
