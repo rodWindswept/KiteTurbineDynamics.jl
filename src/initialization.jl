@@ -735,7 +735,7 @@ function settle_to_operational_state(
                 end
             end
             P_aero = P_aero_hub + P_aero_exp
-            P_gen = p.k_mppt * w^3
+            P_gen = sys.k_mppt_ref[] * w^3  # use mutable ref so blade-scale overrides propagate to settle
             if P_aero > P_gen
                 ω_eq = w
                 break
@@ -744,7 +744,7 @@ function settle_to_operational_state(
     else
         ω_eq = 0.0
     end
-    τ_eq = p.k_mppt * ω_eq^2
+    τ_eq = sys.k_mppt_ref[] * ω_eq^2  # use mutable ref for consistency with settle scan
 
     # ── Restore design ring positions with aero-derived axial preload ────────
     # settle_to_equilibrium runs at ω ≈ 0 with no aerodynamic loading, so the

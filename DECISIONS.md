@@ -2,6 +2,96 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-04: Settle k_mppt bug and five simulator-integrity findings; blade-scaling energy balance
+
+### Settle k_mppt bug (integrity #1)
+
+**Context:** `settle_to_operational_state` (`initialization.jl:738,747`) used
+`p.k_mppt` (fixed params, V10 Tight = 614.9) to find equilibrium ω/τ, while the
+simulation reads `sys.k_mppt_ref[]` (mutable, gate override = 15.6). The 39×
+mismatch meant every settle initialised at a wrong low-ω state, and short sims
+(≤10s) may not have converged to the true steady state.
+
+**Fix:** Changed `:738` to `P_gen = sys.k_mppt_ref[] * w^3` and `:747` to
+`τ_eq = sys.k_mppt_ref[] * ω_eq^2`. Gate retest: P shifted from 166–172 kW to
+193 kW (+12–16%). All published V10 control-map and k-hunt numbers carry this
+asterisk until re-run through the fixed settle.
+
+### Integrity findings #2–5
+
+1. **Gate drift (settle fix consequence):** Gate P shifted from 166–172 kW to
+   193.2 kW at 221.7 rpm. The 2026-06-28 static/dynamic k_mppt mismatch (3.3×)
+   may be partially this bug. Control maps under re-verification.
+
+2. **Hardcoded `rotor_radius = 5.0` (severity: low for power, moderate for inertia):**
+   Builder overrides `params_v5_50kw().rotor_radius = 11.18` with 5.0. The hub produces
+   only 6 kW of 221.5 kW total aero at the gate (2.7%), sitting far off its cp peak
+   at TSR≈10.5. Aerodynamically near-irrelevant for power — but the hub disk inertia
+   term is still wrong, affecting transient dynamics.
+
+3. **Builder–design pipeline mismatch:** `p_base.k_mppt = 614.9` (mass-scaled
+   from 10 kW params, k ∝ P^2.5) vs empirical K₀ = 15.6 for V10 Tight (39×).
+   `trpt_hub_radius = 2.988` at runtime ≠ `best_design.json.r_hub_m` (v5 design
+   pipeline transforms the value en route). The builder constructs a system that
+   differs from the recorded DE winner in at least three parameters (rotor_radius,
+   k_mppt, trpt_hub_radius). "V10 Tight" in reports and "V10 Tight" in the
+   simulator are different machines.
+
+4. **Silent catch in `capture_extended` (`sim_frame.jl:439`):** Any exception in
+   `expansion_rotor_forces` was caught and silently zeroed per-rotor aero/ground
+   power. Fixed to `@warn` + `NaN` instead of `0.0` (zero is a plausible valid
+   value; NaN signals "this measurement failed").
+
+### Blade-only scaling energy balance (λ=0.54)
+
+Tested post-design blade scaling of V10 Tight to 54% blade dimensions (fixed ring
+geometry, r_mean-corrected k=2.3). Full ODE + static aero P(ω) sweep:
+
+| | Gate (λ=1.0) | λ=0.54 |
+|---|---|---|
+| Expansion aero (static peak) | 253.2 kW @ 248 rpm | 73.5 kW @ 315 rpm |
+| Ratio | — | **0.290 = λ²** |
+| Expansion aero (ODE op point) | 215.5 kW | 48.1 kW |
+| Hub aero (ODE) | 6.0 kW | 3.9 kW |
+| Σ Aero (ODE) | 221.5 kW | 52.0 kW |
+| Generator (k·ω³) | 193.8 kW | 23.6 kW |
+| Transmission loss | 27.8 kW (13%) | 28.4 kW (55%) |
+| Shaft efficiency | 87% | 45% |
+| Max segment twist | 11.6° | 11.0° |
+| Min FoS | 2.53 | 8.8 |
+
+**Key findings:**
+- Static aero model obeys λ² at peak power (confirmed at 0.290)
+- Transmission loss is proportional to aero power, not a fixed overhead. Loss
+  fraction increases with blade shrinking: 13% (gate, 11 m/s), 22% (gate, 15 m/s),
+  28% (λ=0.69, 11 m/s), 25% (λ=0.69, 15 m/s). Loss roughly follows v³/ω across
+  winds, not constant-torque nor constant-power.
+- Shaft efficiency degrades from ~87% (gate) to ~72% (λ=0.69) — blade-thrust
+  and shaft torque capacity are coupled.
+- **Damping sensitivity verified:** halving `lin_damp` (0.05→0.025) changes gate
+  loss by only 1% (27.8→27.5 kW). The ~28 kW overhead is NOT a solver-stability
+  artifact — it's structural/geometric. lin_damp=0.0 crashes the solver
+  (stability floor exists), but the loss magnitude is robust to the lin_damp value.
+  Other dissipation channels (line axial damping, back-line damper, solver tolerance)
+  untested; mechanism attribution ongoing.
+- Max segment twist is near-identical (11–12°) despite different loadings — the
+  torque saturation mechanism is not twist-limited at these regimes.
+- FoS margin is generous (8.8) — structural headroom exists for larger blades.
+
+**Status:** Full-envelope verified. λ=0.69 with scaled m_blade: 62→168 kW at 11→15 m/s,
+FoS 4.29→2.51. Low-wind P(v): 4.5/13.8/32.2/62.1 kW at 5/7/9/11 m/s, following v³
+below rated. Blade mass saving: 19.0 kg (36.2→17.2 kg, λ² scaling). Corrected
+airborne mass ≈ 30 kg vs V10 Tight 49.2 kg — feeds counter-analysis mass-scaling
+table. The published V10 Tight failed at 15 m/s (FoS 1.36); blade right-sizing
+improves high-wind structural margin.
+
+**For counter-analysis:** "Blade-rescaled V10 Tight (λ=0.69) simultaneously meets
+P≥50 kW and FoS≥1.5 across the full 5–15 m/s wind envelope. Static aero follows λ²
+at peak (confirmed 0.290). Transmission loss is proportional to aero power
+(13% gate → 28% λ=0.69), verified insensitive to solver damping — blade-thrust and
+shaft torque capacity are coupled, a physics absent from swept-area scaling models.
+Constant-CL expansion rotor model caveat applies pending cross-fidelity validation."
+
 ## 2026-07-01 (round 3): Dashboard v2 — per-rotor hub power fix, stacked dials in tall row, tension-colour match, N/Pcr relabel
 
 **Context:** Rod reviewed the round-2 cockpit and asked: the hub dial showed

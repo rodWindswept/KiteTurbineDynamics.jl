@@ -439,8 +439,9 @@ function capture_extended(
             try
                 _, _, tn, _, _ = expansion_rotor_forces(er, p.rho, vm, rω, elev_deg, rnom, T_est, p.n_lines)
                 push!(ra, tn*rω/1000); push!(rg, max(0.0, tn*omega_gnd/1000))
-            catch
-                push!(ra, 0.0); push!(rg, 0.0)
+            catch e
+                @warn "capture_extended: expansion_rotor_forces failed for R$(ri)" exception=(e, catch_backtrace())
+                push!(ra, NaN); push!(rg, NaN)
             end
             push!(rl, "R$(ri)"); push!(ro, rω)
         end

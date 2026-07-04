@@ -342,10 +342,10 @@ canonical_10kw_builder() = begin
     sys, u0, p, "Canonical 10 kW"
 end
 
-function v10_tight_builder(; r_bottom_scale::Float64=1.0, tether_diameter::Float64=0.003)
+function v10_tight_builder(; r_bottom_scale::Float64=1.0, tether_diameter::Float64=0.003, blade_scale::Float64=1.0)
     include(joinpath(dirname(@__DIR__), "scripts", "builders_util.jl"))
     return () -> Base.invokelatest(build_v10_tight_no_lowest;
-        r_bottom_scale=r_bottom_scale, tether_diameter=tether_diameter)
+        r_bottom_scale=r_bottom_scale, tether_diameter=tether_diameter, blade_scale=blade_scale)
 end
 
 end  # module
@@ -361,24 +361,11 @@ if abspath(PROGRAM_FILE) == @__FILE__
     WINDS   = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
     lift    = KiteTurbineDynamics.rotary_lifter_default()
 
-    # Validation 1: Canonical 10 kW
-    println("\n═══ CANONICAL 10 kW ═══")
+    # Blade-scaled V10 λ=0.54 (properly sized for 50 kW)
+    println("\n═══ V10 BLADE-SCALED λ=0.54 ═══")
     ControlMapHunt.hunt_control_map(
-        ControlMapHunt.canonical_10kw_builder,
-        KiteTurbineDynamics.params_10kw().p_rated_w,
-        WINDS; out_dir=OUT_DIR, name="canonical_10kw", lift_device=lift, verbose=true)
-
-    # Validation 2: V10 Tight (known-dead)
-    println("\n═══ V10 TIGHT ═══")
-    ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(), 50000.0,
-        WINDS; out_dir=OUT_DIR, name="v10_tight", lift_device=lift, verbose=true)
-
-    # Validation 3: Reinforced V10
-    println("\n═══ REINFORCED V10 ═══")
-    ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(r_bottom_scale=1.30), 50000.0,
-        WINDS; out_dir=OUT_DIR, name="v10_reinforced", lift_device=lift, verbose=true)
+        ControlMapHunt.v10_tight_builder(blade_scale=0.54), 50000.0,
+        WINDS; out_dir=OUT_DIR, name="v10_blade_scaled_054", lift_device=lift, verbose=true)
 
     println("\nDone.")
 end
