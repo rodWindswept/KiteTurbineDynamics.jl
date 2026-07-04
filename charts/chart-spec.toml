@@ -1,0 +1,44 @@
+# charts/chart-spec.toml — single source of truth for all KTD.jl published figures
+# See docs/prd/0005-chart-standards.md
+
+[colors]
+# Okabe–Ito palette (colorblind-safe)
+black       = "#000000"
+orange      = "#E69F00"
+sky_blue    = "#56B4E9"
+bluish_green = "#009E73"
+yellow      = "#F0E442"
+blue        = "#0072B2"
+vermillion  = "#D55E00"
+reddish_purple = "#CC79A7"
+grey        = "#999999"
+white       = "#FFFFFF"
+
+[design_hues]
+# Constant across all figures — reader learns once
+lambda_1_0  = "blue"        # V10 Tight gate, λ=1.0
+lambda_0_79 = "orange"      # λ=0.79
+lambda_0_69 = "bluish_green" # λ=0.69
+lambda_0_54 = "reddish_purple" # λ=0.54
+canonical_10kw = "grey"
+
+[thresholds]
+fos_min     = "vermillion"   # FoS = 1.5
+rated_power = "vermillion"   # 50 kW line
+criteria_line_style = "dashed"
+
+[confidence_tiers]
+# Encoded: line_style + marker_fill + badge_text
+H = { line = "solid", marker = "filled", badge = "H", description = "Hardware-validated" }
+M = { line = "solid", marker = "half", badge = "M", description = "Model-cross-validated" }
+P = { line = "dashed", marker = "hollow", badge = "P", description = "Provisional (single sim)" }
+X = { line = "dotted", marker = "cross", badge = "X", description = "Invalidated / superseded" }
+
+[fonts]
+family = "DejaVu Sans"
+size_axis_label = 10
+size_tick = 9
+size_title = 12
+size_footer = 7
+size_badge = 8
+size_stamp = 8

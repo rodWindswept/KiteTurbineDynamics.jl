@@ -62,12 +62,16 @@ geometry, r_mean-corrected k=2.3). Full ODE + static aero P(ω) sweep:
 
 **Key findings:**
 - Static aero model obeys λ² at peak power (confirmed at 0.290)
-- Transmission loss is proportional to aero power, not a fixed overhead. Loss
-  fraction increases with blade shrinking: 13% (gate, 11 m/s), 22% (gate, 15 m/s),
-  28% (λ=0.69, 11 m/s), 25% (λ=0.69, 15 m/s). Loss roughly follows v³/ω across
-  winds, not constant-torque nor constant-power.
-- Shaft efficiency degrades from ~87% (gate) to ~72% (λ=0.69) — blade-thrust
-  and shaft torque capacity are coupled.
+- **Transmission loss scales as ~ω³** (consistent with quadratic aerodynamic drag
+  torque τ_d ∝ ω² on the rotating shaft). Coefficient c ≈ 2.2–2.5 W/(rad/s)³ is
+  near-constant across λ=1.0 and λ=0.69 (design-independent shaft property).
+  Knockout pair: Gate@11 (P_aero=222 kW, ω=23.1 rad/s, loss=28 kW) vs λ=0.69@15
+  (P_aero=224 kW, ω=28.3 rad/s, loss=56 kW) — same aero power, 2× loss at higher ω.
+  Loss fraction rises as blades shrink (13% → ~25%) because generator k falls with
+  λ² while shaft drag does not. Notation: loss_frac ≈ c/(k+c). c is a shaft
+  property; k fell with λ² — the shaft didn't get worse, the rotor got smaller.
+  Low-wind additive term under investigation (c drifts from 2.5→4.8 W/(rad/s)³
+  at 5 m/s, suggesting small constant-torque component at very low ω).
 - **Damping sensitivity verified:** halving `lin_damp` (0.05→0.025) changes gate
   loss by only 1% (27.8→27.5 kW). The ~28 kW overhead is NOT a solver-stability
   artifact — it's structural/geometric. lin_damp=0.0 crashes the solver
@@ -87,10 +91,11 @@ improves high-wind structural margin.
 
 **For counter-analysis:** "Blade-rescaled V10 Tight (λ=0.69) simultaneously meets
 P≥50 kW and FoS≥1.5 across the full 5–15 m/s wind envelope. Static aero follows λ²
-at peak (confirmed 0.290). Transmission loss is proportional to aero power
-(13% gate → 28% λ=0.69), verified insensitive to solver damping — blade-thrust and
-shaft torque capacity are coupled, a physics absent from swept-area scaling models.
-Constant-CL expansion rotor model caveat applies pending cross-fidelity validation."
+at peak (confirmed 0.290). Transmission loss scales as ~ω³ (quadratic shaft drag,
+design-independent coefficient c ≈ 2.3 W/(rad/s)³), causing loss fraction to rise
+from 13% to ~25% as blades shrink — not because the shaft degrades, but because
+generator k falls with λ² while shaft drag does not. Constant-CL expansion rotor
+model caveat applies pending cross-fidelity validation."
 
 ## 2026-07-01 (round 3): Dashboard v2 — per-rotor hub power fix, stacked dials in tall row, tension-colour match, N/Pcr relabel
 
