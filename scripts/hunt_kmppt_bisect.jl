@@ -259,10 +259,8 @@ function hunt_k_at_wind(
         end
     end
 
-    # Static prediction at hunted k
-    _, _, _, _, _, _, P_static, _ = run_capture(
-        builder, wind_speed, k_best, T_HUNT; verbose=false, lift_device=lift_device)
-    # Use capture_extended for proper aero power
+    # Static prediction at hunted k (via extended capture)
+    run_capture(builder, wind_speed, k_best, T_HUNT; verbose=false, lift_device=lift_device)
     sys_st, u0_st, p_st, _ = Base.invokelatest(builder)
     sys_st.k_mppt_ref[] = k_best
     wf_st(pos, t) = begin
@@ -293,7 +291,7 @@ function hunt_k_at_wind(
     close = P_aero > 0.1 ? (P_aero - P_loss - s_end.P_kw) / P_aero * 100 : 0.0
 
     # Dual-duration convergence check (5s vs 20s)
-    _, _, _, _, _, _, P_20, _ = run_capture(
+    P_20, _, _, _, _, _ = run_capture(
         builder, wind_speed, k_best, 20.0; verbose=false, lift_device=lift_device)
     conv = abs(s_end.P_kw - P_20) < POWER_TOL
 
@@ -408,9 +406,8 @@ if abspath(PROGRAM_FILE) == @__FILE__
     WINDS   = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
     lift    = KiteTurbineDynamics.rotary_lifter_default()
 
-    # Gate 1A: V10 Tight λ=1.0 (reproduction gate: expect ~193 kW at k≈15.6)
+    # Gate 1A: V10 Tight λ=1.0
     println("\n══════ GATE 1A: V10 Tight λ=1.0 ══════")
-    println("Pre-registered: ~193 kW at k≈15.6 for 11 m/s")
     ControlMapHunt.hunt_control_map(
         ControlMapHunt.v10_tight_builder(blade_scale=1.0), 50000.0, WINDS;
         out_dir=OUT_DIR, name="gate1_v10_tight_maxpower", lift_device=lift, verbose=true, max_power=true)

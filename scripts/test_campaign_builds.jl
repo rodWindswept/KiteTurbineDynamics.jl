@@ -39,7 +39,7 @@ function build_campaign(dir, label)
     cfg = ExpansionStackConfig(;
         placement=:clustered, n_rings=sys.n_ring, n_expansion=n_exp,
         n_blades=n_lines,
-        blade_tip_radius=r_blade, blade_hub_radius=0.25*r_blade, blade_chord=chord,
+        blade_tip_radius=0.7 * r_blade, blade_hub_radius=-0.3*r_blade, blade_chord=chord,
         CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
         bank_angle_deg=bank,
         mass_per_rotor=(0.3+0.1*r_blade)*blade_s^3,

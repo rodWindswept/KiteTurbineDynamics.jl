@@ -2,6 +2,44 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-05: Blade geometry defect — expansion rotor annulus 3× too far outboard
+
+**Severity: CRITICAL.** Every simulation using expansion rotors was affected.
+
+**The defect:** `blade_hub_radius = 0.25 * blade_tip_radius` placed the
+entire blade annulus outboard of the ring attachment point. The blade hub was a
+positive outboard offset (25% of tip), meaning the inner edge sat outboard of the
+ring and the mean aerodynamic radius was `r_nom + 0.625·s·cos(β)`.
+
+**The correction:** `blade_hub_radius = -0.3 * blade_span` (negative = inboard of
+ring) and `blade_tip_radius = 0.7 * blade_span` (positive = outboard). The
+correct mean radius is `r_nom + 0.2·s·cos(β)`. The offset was overstated by a
+factor of ~3.1×.
+
+**Root cause:** BEM's hub-root-cutout convention (hub_radius = 0.25 × tip_radius,
+measured from shaft axis for nacelle clearance) was mistakenly adopted as a ring
+offset. In a conventional HAWT, the hub is a physical structure at some distance
+from the shaft. In TRPT, the ring IS the hub — the blade attaches AT the ring, so
+~30% sits inboard (toward shaft axis) and ~70% outboard. Different coordinate
+systems; different parameter semantics.
+
+**Impact:** Expansion rotor power, torque, centrifugal forces, ring structural
+loading, FoS values, k_mppt values, loss model coefficients, and blade-scaling
+laws were all computed on wrong geometry. V6-V10 optimisation campaigns evaluated
+designs on wrong physics. The Gate 1 control maps (all three builders), the
+AWEC Porto poster, and the technical report carried invalid numbers.
+
+**Fix:** 13 files changed (src/objective_v6.jl, src/objective_v10.jl, 6 scripts,
+3 doc/vis files, 2 handover/docs). See PRD 0006 for full audit and recovery plan.
+
+**What survived:** Hub rotor aerodynamics (uses BEM `sys.rotor.radius` from shaft
+axis), ring geometry, TRPT structural model code, tether dynamics, and any sims
+without expansion rotors.
+
+**Decision:** Gate 1 re-run with corrected geometry (in progress). All downstream
+numbers, reports, and claims to be re-verified against corrected results before
+publication. Old CSVs retained as tier-X reference; new ones supersede them.
+
 ## 2026-07-04: Settle k_mppt bug and five simulator-integrity findings; blade-scaling energy balance
 
 ### Settle k_mppt bug (integrity #1)

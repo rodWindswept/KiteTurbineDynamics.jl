@@ -358,7 +358,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ring_gid_val = sys.ring_ids[ri_val]
             ring_node = sys.nodes[ring_gid_val]
             ring_R_val = ring_node.radius
-            r_outer_val = ring_R_val + er.blade_tip_radius
+            r_inner_val = ring_R_val + er.blade_hub_radius   # hub offset (neg = inboard of ring)
+            r_outer_val = ring_R_val + er.blade_tip_radius   # tip offset (pos = outboard)
             bank_rad_val = deg2rad(er.bank_angle_deg)
             n_blades_val = er.n_blades
             for b in 1:n_blades_val
@@ -374,7 +375,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     r_dir = cos(φ_val) .* pp1 .+ sin(φ_val) .* pp2
                     shaft_dir = normalize(Vector(gnd .- hub))
                     bank_dir = cos(bank_rad_val) .* r_dir .+ sin(bank_rad_val) .* shaft_dir
-                    p_inner = Vector(ctr) .+ ring_R_val .* r_dir
+                    p_inner = Vector(ctr) .+ r_inner_val .* r_dir
                     p_outer = Vector(ctr) .+ r_outer_val .* bank_dir
                     ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
                 end
@@ -654,7 +655,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         hlbl("── Expansion Rotors ─────────────────────────"; fontsize=13, font=:bold, color=:cyan)
         exp_rings_str = join([string(er.ring_idx) for er in sys.expansion_rotors], ", ")
         exp_bank = sys.expansion_rotors[1].bank_angle_deg
-        exp_span = sys.expansion_rotors[1].blade_tip_radius
+        exp_span = sys.expansion_rotors[1].blade_tip_radius - sys.expansion_rotors[1].blade_hub_radius
         exp_chord = sys.expansion_rotors[1].blade_chord
         hlbl("Rings: $exp_rings_str  |  bank: $(round(exp_bank;digits=0))°"; fontsize=11, color=:cyan)
         hlbl("Blade: span=$(round(exp_span;digits=1)) m, chord=$(round(exp_chord*1000;digits=0)) mm"; fontsize=10, color=:lightcyan)

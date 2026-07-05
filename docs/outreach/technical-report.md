@@ -4,14 +4,25 @@
 
 Rod Read · Windswept & Interesting Ltd, Stornoway, Scotland · rod@windswept.energy
 
-**Version**: 0.2-draft (supersedes Community Report v0.1, July 2026)
-**Status**: RE-BASELINE IN PROGRESS — see §0. Do not cite numbers marked ⟨RB⟩ until the post-settle-fix control map re-run completes.
+**Version**: 0.3-draft (Gate 1 re-run in progress — blade geometry corrected, §0)
+**Status**: CRITICAL ERRATA — see §0. All expansion rotor numbers prior to 2026-07-05 used wrong blade geometry. Gate 1 re-run with corrected 70/30 blade split underway.
 **Repository**: https://github.com/rodread/KiteTurbineDynamics.jl (MIT License)
 **Intended publication**: versioned `docs/` report + Zenodo DOI; figures per `docs/reporting-charts-prd.md` (white background, provenance footer, confidence badge on every figure).
 
 ---
 
 ## 0. Status of numbers in this report
+
+**ERRATA (2026-07-05):** A systematic geometry defect was discovered in the
+expansion rotor blade placement. The blade hub offset was set as a positive
+outboard value (`blade_hub_radius = 0.25 × blade_tip_radius`), placing the
+entire blade annulus outboard of the ring attachment point. The correct
+geometry is 70% outboard, 30% inboard (`hub = -0.3·span`, `tip = +0.7·span`).
+The mean aerodynamic radius was overstated by a factor of ~3.1×. This affected
+all expansion rotor power, k_mppt, ω, FoS, loss model, and blade-scaling
+numbers in every simulation that used expansion rotors. See PRD 0006 for the
+full audit and recovery plan. **All numbers in this report are provisional
+pending the Gate 1 re-run with corrected geometry.**
 
 On 2026-07-04 a simulator integrity audit found that the dynamic settle stage used `p.k_mppt = 614.9` while the simulation used `k_ref = 15.6` (39×), meaning **all dynamic results published before the fix started from a wrong-state settle**. After the fix, the λ=1.0 verification gate moved from 166 to 193 kW (+16%). Consequences for this report:
 

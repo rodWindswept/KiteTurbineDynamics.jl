@@ -36,9 +36,9 @@ Blade geometry (span, chord, count) is inherited from the generating rotor.
 - `n_rings::Int`: total number of rings in the TRPT system
 - `n_expansion::Int`: how many expansion rotors to place (clamped to available rings)
 - `n_blades::Int`: blade count (inherited from main rotor)
-- `blade_span::Float64`: distance from ring to blade tip (m — same as main rotor tip radius)
-- `blade_hub_radius::Float64`: distance from ring to inner edge of annulus (m — same as main rotor hub radius)
-- `blade_chord::Float64`: chord length (m — same as main rotor: 0.113 × tip_radius)
+- `blade_tip_radius::Float64`: outboard offset from ring, ~70% of blade span (positive)
+- `blade_hub_radius::Float64`: inboard offset from ring, ~30% of blade span (negative, inward)
+- `blade_chord::Float64`: chord length (m — 0.113 × span)
 - `CL_blade::Float64`: blade lift coefficient
 - `CD0_blade::Float64`: zero-lift drag coefficient
 - `k_induced::Float64`: induced drag factor (CDᵢ = k·CL²)

@@ -74,8 +74,8 @@ for power_kw in POWER_KW_VALS
 
                 # Derive blade geometry from generating rotor
                 r_rotor = BEM.rotor_radius_for_power(power_w, v_rated, p.n_lines)
-                blade_tip  = r_rotor
-                blade_hub  = 0.25 * r_rotor   # same annulus as generating rotor
+                blade_tip  = 0.7 * r_rotor
+                blade_hub  = -0.3 * r_rotor  # inboard of ring (neg = inboard)
                 blade_ch   = 0.113 * r_rotor   # solidity-calibrated
 
                 cfg = if n_exp > 0

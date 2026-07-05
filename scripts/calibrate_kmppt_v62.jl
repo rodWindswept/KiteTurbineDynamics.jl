@@ -34,8 +34,8 @@ function main()
     cfg = ExpansionStackConfig(;
         placement=:clustered, n_rings=sys.n_ring, n_expansion=1,
         n_blades=p.n_blades,
-        blade_tip_radius=r_rotor,
-        blade_hub_radius=0.25 * r_rotor,
+        blade_tip_radius=0.7 * r_rotor,
+        blade_hub_radius=-0.3 * r_rotor,
         blade_chord=0.113 * r_rotor,
         CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
         bank_angle_deg=45.0, mass_per_rotor=0.5, shaft_coupling=1.0,

@@ -192,8 +192,8 @@ function design_from_vector_v10(
         # BEM rotor radius for this rotor at local wind speed
         r_rotor_i = BEM.rotor_radius_for_power(P_per_rotor, v_i, design.n_lines)
 
-        blade_tip = r_rotor_i * λ_i
-        blade_hub = 0.25 * r_rotor_i * λ_i
+        blade_tip = 0.7 * r_rotor_i * λ_i
+        blade_hub = -0.3 * r_rotor_i * λ_i
         blade_chord = 0.113 * r_rotor_i * λ_i
 
         push!(rotors, RotorSpecV10(

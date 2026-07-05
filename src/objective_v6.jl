@@ -92,8 +92,10 @@ function design_from_vector_v6(
     # BEM rotor radius for this power level (will be refined in objective_v6
     # with network power sharing, but this gives a reasonable blade size).
     r_rotor_est = BEM.rotor_radius_for_power(power_W, v_rated, design.n_lines)
-    blade_tip_radius = r_rotor_est * blade_scale
-    blade_hub_radius = 0.25 * r_rotor_est * blade_scale
+    # 70/30 blade split: 70% outboard, 30% inboard of ring attachment
+    blade_span = r_rotor_est * blade_scale
+    blade_tip_radius = 0.7 * blade_span     # +70% outboard from ring
+    blade_hub_radius = -0.3 * blade_span    # -30% inboard from ring (neg = inboard)
     blade_chord_est = 0.113 * r_rotor_est * blade_scale
 
     # Build expansion stack config

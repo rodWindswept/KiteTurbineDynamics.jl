@@ -84,8 +84,8 @@ tip radius, chord, and blade count — banked downward toward the next ring.
 
 # Fields
 - `n_blades`: number of blades (inherited from main rotor)
-- `blade_tip_radius`: distance from ring to blade tip (m — same as main rotor tip radius)
-- `blade_hub_radius`: distance from ring to inner edge of annulus (m — same as main rotor hub radius)
+- `blade_tip_radius`: outboard offset from ring — ~70% of blade span (positive, outward)
+- `blade_hub_radius`: inboard offset from ring — ~30% of blade span (negative, inward of ring)
 - `blade_chord`: blade chord length (m — same as main rotor chord)
 - `CL_blade`: blade lift coefficient (design point)
 - `CD0_blade`: blade zero-lift drag coefficient
@@ -98,9 +98,9 @@ tip radius, chord, and blade count — banked downward toward the next ring.
 """
 struct ExpansionRotorParams
     n_blades::Int
-    blade_tip_radius::Float64   # same as main rotor tip radius (m)
-    blade_hub_radius::Float64   # same as main rotor hub radius (m)
-    blade_chord::Float64        # same as main rotor chord (m)
+    blade_tip_radius::Float64   # outboard offset from ring, ~70% span (positive)
+    blade_hub_radius::Float64   # inboard offset from ring, ~30% span (negative)
+    blade_chord::Float64        # blade chord length (m)
     CL_blade::Float64
     CD0_blade::Float64
     k_induced::Float64

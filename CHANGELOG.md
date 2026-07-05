@@ -82,7 +82,7 @@ Dates are YYYY-MM-DD. Versions track major campaign generations.
 - V6.3 blade scaling campaign (52.61 kg ⚠ dynamically impossible)
 - 12-DoF design space (density_profile added)
 - Variable-density ring spacing (β ∈ [-0.8, 0.8])
-- Expansion rotor blade geometry refactor: same annulus as generating rotor
+- Expansion rotor blade geometry: 70/30 split around ring attachment (70% outboard, 30% inboard)
 - Dashboard: expansion rotor rendering (cyan diamonds, HUD section)
 
 ### Fixed
