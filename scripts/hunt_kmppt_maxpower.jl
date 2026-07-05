@@ -81,8 +81,8 @@ function eval_at_k(builder, wind_speed, k_val, duration; verbose=false, lift_dev
             if step == n_steps
                 ef = capture_extended(u_curr, sys, p, t_curr, wf, lift_device; brake_engaged=sys.brake_engaged[])
                 P_g = ef.base.P_kw; ω_h = ef.base.omega_hub
-                # Aero power = sum of per-rotor aero (ExtendedSimFrame.ra)
-                P_a = sum(x for x in ef.ra if !isnan(x))
+                # Aero power = sum of per-rotor aero (ExtendedSimFrame.rotor_aero_power)
+                P_a = sum(x for x in ef.rotor_aero_power if !isnan(x))
                 P_l = P_a - P_g
                 ring_f = copy(ef.ring_fos); seg_t = copy(ef.segment_twist_deg)
                 cm = min_collapse_margin(u_curr, sys, ctrl); T_m = ef.base.T_max
@@ -105,7 +105,7 @@ function static_prediction(builder, wind_speed, k_val)
     wf(pos, t) = [wind_speed * max(pos[3], 1.0) / p.h_ref^(1.0/7.0), 0.0, 0.0]
     u = settle_to_operational_state(sys, copy(u0), p, 9.5; wind_fn=wf)
     ef = capture_extended(u, sys, p, 0.0, wf, nothing; brake_engaged=false)
-    return sum(x for x in ef.ra if !isnan(x))  # total aero power (kW) at settled state
+    return sum(x for x in ef.rotor_aero_power if !isnan(x))  # total aero power (kW) at settled state
 end
 
 function run_sweep(builder, wind_speed; verbose=false, lift_device=nothing)
