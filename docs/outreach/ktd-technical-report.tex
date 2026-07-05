@@ -1,0 +1,517 @@
+% ══════════════════════════════════════════════════════════════════════════════
+% KTD.jl Technical Report v0.2
+% Rod Read — Windswept & Interesting Ltd
+% July 2026
+% ══════════════════════════════════════════════════════════════════════════════
+
+\documentclass[11pt,a4paper]{article}
+
+% ── Typography ───────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Page geometry ────────────────────────────────────────────────────────────
+\usepackage[top=3cm,bottom=3cm,left=3.2cm,right=3.2cm]{geometry}
+
+% ── Headers / footers ────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{KTD.jl Technical Report v0.2 --- July 2026}}
+\fancyhead[R]{\small\textit{Windswept \& Interesting Ltd}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Figures & graphics ───────────────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\graphicspath{{./}{../../docs/awes-forum-diagrams/}{../../docs/porto-2026/}}
+
+% ── Tables ───────────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{array}
+
+% ── Math ────────────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb}
+
+% ── Hyperlinks ───────────────────────────────────────────────────────────────
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!40!black,urlcolor=blue!60!black]{hyperref}
+
+% ── Custom commands ──────────────────────────────────────────────────────────
+\newcommand{\RB}{$\langle$RB$\rangle$}  % Re-baseline pending marker
+\newcommand{\tierP}{\textsc{[tier P]}}   % Tier P badge
+
+% ══════════════════════════════════════════════════════════════════════════════
+
+\title{\textbf{KiteTurbineDynamics.jl}\\[4pt]
+\large Multi-Rotor Tensile Rotary Power Transmission\\for 50\,kW Airborne Wind Energy\\[8pt]
+\Large Technical Report v0.2}
+
+\author{Rod Read\\
+Windswept \& Interesting Ltd, Stornoway, Scotland\\
+\texttt{rod@windswept.energy}}
+
+\date{July 2026}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\small\textbf{Status: RE-BASELINE IN PROGRESS.}
+Do not cite numbers marked \RB{} until the post-settle-fix control map re-run completes (see \S0).
+All results are confidence \textbf{tier P} (provisional --- single simulation model, unvalidated)
+per the chart standards PRD.
+\end{minipage}}
+\end{center}
+
+\vspace{12pt}
+\begin{center}
+\small
+\textbf{Repository:} \url{https://github.com/rodread/KiteTurbineDynamics.jl} (MIT License)\\
+\textbf{Tests:} 917 in 23 files, Julia 1.12, $\sim$3\,min full suite\\
+\textbf{Intended publication:} Versioned report + Zenodo DOI (pending Gate~1)
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Status of Numbers in This Report}
+\label{sec:status}
+% ══════════════════════════════════════════════════════════════════════════════
+
+On 2026-07-04 a simulator integrity audit found that the dynamic settle stage used
+$p.k_{\text{mppt}} = 614.9$ while the simulation used $k_{\text{ref}} = 15.6$ (39$\times$),
+meaning \textbf{all dynamic results published before the fix started from a wrong-state settle}.
+After the fix, the $\lambda = 1.0$ verification gate moved from 166 to 193\,kW (+16\%).
+Consequences for this report:
+
+\begin{itemize}
+\item Every dynamic number produced before 2026-07-04 is marked \RB{} (re-baseline pending)
+      and is superseded pending the control-map re-run.
+\item Every result in this report is confidence \textbf{tier P} (provisional --- single simulation model,
+      unvalidated) per the chart standards PRD \cite{chartprd}. There are no tier-H or tier-M results yet.
+      That is not a reason to hide the badge; it is the reason to show it.
+\item Two findings from the 2026-07-04 session are \textbf{new and post-fix}: the $\lambda = 0.69$
+      blade-rescaled envelope pass and the $\omega$-dependent transmission-loss result (\S\ref{sec:postaudit}).
+\item Earlier drafts stated 4.2$\times$ in the abstract and 4.1$\times$ in the body;
+      the discrepancy is itself an argument for the consistency-stamp standard now in force.
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Introduction: The TRPT Kite Turbine}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{What is tensile rotary power transmission?}
+
+A conventional horizontal-axis wind turbine places a rotor on a tower and transmits torque
+down a rigid driveshaft. The tower must resist the overturning moment from rotor thrust---this
+drives the cubic mass scaling that makes large turbines heavy.
+
+A TRPT kite turbine \cite{tulloch2023} inverts this architecture. The rotor flies at altitude,
+and torque is transmitted to the ground through a \emph{tensile} shaft: a rotating polygon of
+tensioned tethers supported by thin-walled carbon-fibre rings. The rings resist the inward pull
+of the tethers in hoop compression; the tethers carry tension along the shaft axis.
+No tower is needed---the entire structure is held aloft by aerodynamic forces.
+
+The shaft serves two functions simultaneously: it transmits torque from the airborne rotor to
+the ground generator, and its rings provide mounting points for \emph{expansion rotors}---additional
+banked rotors distributed along the shaft that contribute power and radial spreading force.
+
+This report concerns the \textbf{power subsystem}---the TRPT shaft with expansion rotors,
+operating at $\sim$30$^\circ$ elevation.
+A separate \textbf{lift subsystem} (coaxial autogyro rotors on a kite line, modelled in
+\texttt{CoaxialAutogyroStacking.jl}, operating at 45--55$^\circ$ elevation) provides the
+axial tension that holds the TRPT aloft.
+The two subsystems are modelled in separate repositories and are \textbf{not yet integrated};
+the elevation mismatch is a known risk (\S\ref{sec:limitations}).
+
+\subsection{Why multi-rotor?}
+
+The late Prof.\ Peter Jamieson provided the foundational scaling argument for multi-rotor TRPT.
+Splitting a single rotor of radius $R$ into $N$ equal stacked rotors with the same total swept
+area yields mass ratio $M(1) = 0.577$ for perfectly equal rotors---a 42\% mass saving \cite{jamieson2020}.
+Applied to the Windswept RodKite01 geometry, this confirmed multi-rotor TRPT as the correct
+scaling direction. Note this is a geometric principle, not yet a validated TRPT result.
+
+This insight underpins the KTD.jl architecture: rather than one large rotor,
+the TRPT shaft carries multiple smaller rotors whose combined swept area produces the target
+power at lower total mass.
+The DE optimiser discovers the distribution of rotor sizes, ring positions, bank angles,
+and tether counts simultaneously.
+
+\subsection{The lift--power split}
+
+The earlier 10\,kW Windswept prototype (the ``Daisy Kite'') used a static lift kite.
+Dirk van Leersum's 2023 scaling analysis showed the static-kite approach becomes commercially
+unviable above $\sim$10\,kW---lift kite area grows faster than power output \cite{vanleersum2023}.
+The active lifting approach (coaxial autogyro stack) is intended to eliminate this bottleneck;
+that claim is itself unvalidated (PCA-2 disk model, 3$\times$ solidity mismatch,
+factor-of-2 error possible).
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{The KTD.jl Framework}
+% ══════════════════════════════════════════════════════════════════════════════
+
+Two computational stages:
+
+\begin{enumerate}
+\item \textbf{Differential evolution (DE) optimisation} across up to 14 design variables---60-island
+      parallel population, BEM-coupled force models, multi-gate constraint system.
+\item \textbf{Full 11-DoF multibody dynamic verification}---ODE solver with per-ring finite element
+      analysis, inertia relief for free-floating rings, individual rotor power accounting.
+\end{enumerate}
+
+\subsection{Design variables}
+
+\begin{itemize}
+\item \textbf{Structural}: hub ring radius, ring outer diameter, wall thickness ratio ($t/D$),
+      segment target length, bottom ring radius, line count
+\item \textbf{Rotor}: expansion rotor count, bank angle, tip-speed-ratio scaling factors ($\lambda_i$),
+      rotor radius scaling factors
+\item \textbf{Constraints}: ground clearance, ring buckling FoS $\geq$ 1.5,
+      collapse margin ($\delta\alpha^* - |\Delta\alpha| > 0$), bank $\leq 25^\circ$,
+      tip speed $\leq$ 120\,m/s
+\end{itemize}
+
+\subsection{Verification strategy}
+
+Every DE campaign optimum is verified by a 60-second dynamic simulation at design wind speed
+(11\,m/s), computing per-ring forces, per-rotor power, shaft speed, and structural FoS at 1\,Hz.
+A design that passes static gates but fails dynamic verification is flagged
+\textbf{dynamically dead}---a category that includes the V10 Tight winner
+(49.2\,kg static, structural failure within 60\,s of dynamic simulation).
+
+Verification revealed the static equilibrium solver under-predicts dynamic $k_{\text{mppt}}$
+by $\sim$3.3$\times$, causing DE campaigns to optimise for loads substantially lower than
+dynamic operation produces.
+Documented in \texttt{DECISIONS.md} \cite{ktd_decisions2026}.
+
+\subsection{Campaign history}
+
+\begin{table}[htbp]
+\centering
+\caption{DE campaign results. All targets: 50\,kW rated, 11\,m/s design wind speed.}
+\label{tab:campaigns}
+\begin{tabular}{@{}lrrll@{}}
+\toprule
+Version & Mass (kg) & $n_{\text{lines}}$ & $n_{\text{exp}}$ & Key feature \\
+\midrule
+V6.0 & 184.8 & 8 & 1 & Octagon baseline, 6/11 params on bounds \\
+V6.2 (corrected) & 74.2 & 12 & 1 & sin formula, $\cos^{2.65}$, coupled knuckle mass \\
+V9.0 & 44.5 & 8 & 9 & Dynamic $\omega$ solve, 59/60 feasible \\
+V10 (unified) & 76.8 & 14 & 4 & 8 gates, unified rotor model \\
+V10 Tight & 49.2$^\dagger$ & 12 & 4 & $k_{\text{mppt}} \propto \lambda^2$, ring-mapping \RB \\
+V10 Reinforced & 60.8 & 12 & 4 & $+$30\% $r_{\text{bottom}}$, FoS 7.18 at 15\,m/s \RB \\
+\bottomrule
+\end{tabular}
+\vspace{4pt}
+
+\footnotesize
+$^\dagger$Dynamically dead.
+All masses \textbf{exclude expansion rotor mass} (\S\ref{sec:limitations}, item 6)
+and pre-date the $m_{\text{blade}}$ $\lambda^2$ scaling fix of 2026-07-04.
+The 49.2\,kg $\lambda = 1.0$ optimum was over-bladed for its ring structure.
+\normalsize
+\end{table}
+
+\subsection{Known limitations}
+\label{sec:limitations}
+
+Disclosed openly because they define where collaboration is needed:
+
+\begin{enumerate}
+\item \textbf{Constant-$C_L$ expansion rotor model.} No angle-of-attack dependence,
+      no induction, no Betz limit, no tip losses---the model cannot stall.
+      BEM or lifting-line cross-validation is the highest-priority gap.
+\item \textbf{No wake interaction between rotors.} Downstream rotors see freestream wind.
+      Leuthold's axisymmetric wake induction model \cite{leuthold2019} directly addresses this.
+\item \textbf{Static solver under-predicts dynamic $k_{\text{mppt}}$ by $\sim$3.3$\times$.}
+      Campaigns compensate with $k_{\text{mppt\_safety}} = 3.0$; root cause (lossless torque
+      propagation in the equilibrium solver) requires a dynamic-aware objective.
+\item \textbf{30$^\circ$ elevation mismatch with autogyro lift} (45--55$^\circ$ sweet spot).
+      Integration risk identified, not yet modelled.
+\item \textbf{Blade mass is provisional} (constant-thickness skin, $\propto \lambda^2$).
+      No structural blade design.
+\item \textbf{Expansion rotor mass not computed}---builder sets it to zero;
+      all mass totals exclude this contribution.
+\item \textbf{(New, 2026-07-04)} Settle/sim $k_{\text{mppt}}$ mismatch invalidated all
+      pre-fix dynamic results (\S\ref{sec:status}); five simulator integrity bugs found
+      and fixed or flagged in one audit session. The audit itself is documented in
+      \texttt{DECISIONS.md} and retained deliberately---tier-X history is part of the integrity story.
+\end{enumerate}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Key Findings}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{The static--dynamic gap \RB}
+
+The most significant pre-audit finding: systematic overprediction of power by steady-state
+equilibrium models versus full multibody dynamics.
+AWE literature documents 18--21\% overprediction for conventional configurations
+\cite{kheiri2018,leuthold2019,carceller2022}.
+At the V10 Tight design point, the static solver predicted 50\,kW;
+the pre-fix dynamic ODE produced 12.1\,kW---a factor of 4.1$\times$.
+
+\textbf{\RB{} This headline number is under re-baseline.}
+The 12.1\,kW dynamic figure was produced with the broken settle (\S\ref{sec:status}),
+which is known to have produced partial-convergence artifacts
+(the $\lambda = 1.0$ gate moved 166 $\rightarrow$ 193\,kW after the fix, $+$16\%).
+The gap is expected to persist qualitatively---the two proposed mechanisms
+(inter-ring torsional losses absent from the equilibrium solver, and angle-of-attack
+variation under shaft twist) are real---but the magnitude (4.1$\times$ vs.\ something smaller)
+must not be cited until the re-run lands.
+
+The gap, whatever its post-fix magnitude, is not a failure of KTD.jl---it is the simulator's
+primary finding. No published TRPT model has quantified it.
+
+\subsection{Left-flank architecture}
+
+Control-map hunting across 5--15\,m/s revealed two operating regimes for a given $k_{\text{mppt}}$:
+
+\begin{itemize}
+\item \textbf{Right flank} (high $k$, low $\omega$): high generator torque, low speed.
+      Dynamic reachability challenges, poor collapse margin.
+\item \textbf{Left flank} (low $k$, high $\omega$): low generator torque, high speed.
+      The bisection naturally converges here.
+      \RB{} The pre-fix claim ``FoS $\geq$ 2.5 while absorbing 3.4$\times$ rated capture
+      at 15\,m/s'' derives from the superseded 172.7\,kW control map and awaits re-run.
+\end{itemize}
+
+Architectural decision (2026-06-30): \textbf{design for left-flank overspeed}---size blades
+so that $P_{\text{min}} \leq P_{\text{rated}}$ on the left flank, size rings for thrust,
+enforce tip speed $\leq$ 120\,m/s for acoustic compliance \cite{ktd_decisions2026}.
+
+\subsection{Mass scaling}
+
+The system-level mass scaling exponent $\alpha \approx 0.74$--$0.90$ emerges from three
+competing mechanisms, not a single law:
+
+\begin{itemize}
+\item \textbf{Lines} (tension-governed): mass $\propto$ force $\propto P$. Linear.
+\item \textbf{Rings} (buckling-governed, Euler column): mass $\propto P_{\text{cr}} \cdot r^2 / EI$.
+      Sub-volumetric, sensitive to ring diameter.
+\item \textbf{Blades} (volumetric): mass $\propto A^{3/2}$. Cubic, but blades contribute
+      $<$5\% of airborne mass.
+\end{itemize}
+
+\textbf{Caveats stated plainly}: $\alpha$ is computed from \textbf{two design points}
+(10\,kW, 50\,kW), excludes expansion rotor mass, and carries zero hardware validation.
+The Makani precedent (designed 919\,kg, built 1,731\,kg---1.88$\times$) is the standard
+we hold ourselves to: simulation-only mass claims carry limited weight until a hardware
+demonstration exists.
+
+\subsection{Post-audit findings (2026-07-04, tier P, post-settle-fix)}
+\label{sec:postaudit}
+
+\begin{enumerate}
+\item \textbf{Blade-rescaled envelope pass.}
+      A $\lambda = 0.69$ blade-rescaled V10 Tight
+      ($k_{\text{mppt}} = 7.4$, from $k(\lambda) = k_0 \cdot \lambda^2 \cdot [r_{\text{mean}}(\lambda)/r_{\text{mean}}(1)]^3$)
+      meets \textbf{P $\geq$ 50\,kW and FoS $\geq$ 1.5 across 5--15\,m/s}---168\,kW / FoS 2.51
+      at 15\,m/s under unregulated MPPT (conservative), where the published V10 Tight
+      failed at FoS 1.36.
+      Low-wind power follows $\sim v^3$ below rated.
+      This lifts the previous binding constraint.
+
+\item \textbf{Transmission loss scales with shaft speed, not aero power.}
+      Across eight runs spanning two designs and 194--303\,rpm, loss fits $c \cdot \omega^3$
+      with a design-independent coefficient $c \approx 2.2$--$2.9$\,W/(rad/s)$^3$ (consistent
+      with quadratic aerodynamic drag torque on the rotating shaft).
+      Loss fraction rises as blades shrink (13\% $\rightarrow \sim$25\%) because generator $k$
+      falls with $\lambda^2$ while shaft drag does not.
+      Mechanism attribution ongoing; numerical damping (\texttt{lin\_damp}) excluded as the source.
+      Low-wind deficit suggests a small additional constant-torque term; two-term fit pending.
+
+\item \textbf{Blade-only scaling law.}
+      Static aero power follows $\lambda^2$ at fixed ring radius;
+      the correct $k_{\text{mppt}}$ schedule is neither $\lambda^2$ nor $\lambda^5$ alone
+      but $k_0 \cdot \lambda^2 \cdot (r_{\text{mean}}\ \text{ratio})^3$, because blade radii
+      are offsets from the ring radius, not the shaft axis.
+\end{enumerate}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Comparison with Prior and Parallel Work}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{University of Strathclyde---Wind Energy \& Control Centre}
+
+The most complete published TRPT modelling framework, in close collaboration with Windswept.
+
+\textbf{Chen et al.\ (AWEC 2026)} \cite{chen2026}: coupled aero-structural steady-state model
+for TRPT power efficiency.
+86.33\% transmission efficiency across 4--15\,m/s; 89\% of torque loss concentrated in the
+top TRPT segment; optimal TSR shifts downward when transmission loss is considered;
+stable operation requires positive tangent stiffness (minimum axial force bound).
+
+\textbf{Amjad et al.\ (AWEC 2026)} \cite{amjad2026}: TRPT scalability framework using
+QBlade LLFVW.
+TRPT upscaling is transmission-limited, not rotor-limited; parametric sweeps yield a
+``wide-and-short'' geometric prescription; multi-rotor identified as future work.
+
+\textbf{Relationship to KTD.jl}: the Strathclyde models are steady-state.
+Chen's 86.33\% efficiency is the best published TRPT steady-state analysis;
+KTD.jl's static--dynamic gap is the natural next question---what happens when these
+configurations run through full multibody dynamics?
+Amjad's ``wide-and-short'' geometry is precisely what KTD.jl's DE optimiser independently produces.
+Note also the convergence between Chen's transmission-loss findings and KTD.jl's $\omega^3$ loss
+result (\S\ref{sec:postaudit}, item 2)---an obvious joint-validation target.
+
+\subsection{University of Freiburg---Systems Control \& Optimization Laboratory}
+
+\textbf{Leuthold et al.\ (AWEC 2026)} \cite{leuthold2026}: rigidly-convected lifting-line
+vortex model for AWE optimal control; her 2019 wake induction model \cite{leuthold2019}
+quantified 18--21\% overprediction from neglected induction.
+
+\textbf{Diehl, De Schutter \& Harzer (AWEC 2026)} \cite{diehl2026}: vertical AWE farm
+concept---99 dual-wing systems, 50\,MW on 7\,km$^2$; figure of merit is power density (MW/km$^2$).
+The free-flying analogue of multi-rotor TRPT vertical stacking.
+De Schutter is now at TransnetBW (grid-integration perspective).
+
+\textbf{Relationship}: both groups distribute aerodynamic load across vertically-stacked
+elements under different mechanical constraints.
+KTD's fixed-geometry axisymmetric wake is a simpler validation case for Leuthold's model
+than free-flying multi-kite; the static--dynamic gap is a direct data point for her research question.
+
+\subsection{someAWE Labs---Christof Beaupoil}
+
+The most advanced rotary AWE hardware currently flying \cite{beaupoil2026}:
+autogyro pumping-mode with swashplate, active rotation compensation, Kaman-style servo flaps
+for cyclic pitch (no pitch links at the hub), in cooperation with Freiburg.
+Closest flying analogue to the autogyro lift subsystem; his servo-flap approach may remove
+mechanical linkages between stacked units.
+
+\subsection{Dr.\ Oliver Tulloch---TRPT inventor}
+
+Tulloch's thesis \cite{tulloch2021} and Energies paper \cite{tulloch2023} established the
+foundational TRPT model: single-section moment-to-tension ratio (MTR $\approx$ 0.05),
+spring-disc dynamic formulation, $\delta\alpha^*$ collapse criterion.
+All of KTD.jl's physics traces to this work.
+KTD.jl extends the single-section MTR to per-section coupling from explicit ring geometry;
+$\delta\alpha^*$ is implemented dynamically as \texttt{collapse\_margin} $= \delta\alpha^* - |\Delta\alpha|$,
+verified healthy at 42--47$^\circ$ on the left flank.
+Dr.\ Tulloch now works in offshore wind; his contribution is cited with gratitude and respect.
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+% ══════════════════════════════════════════════════════════════════════════════
+
+TRPT kite turbines with multi-rotor expansion represent a material-efficient path to
+utility-relevant airborne wind energy.
+KTD.jl has quantified an achievable mass range (49--61\,kg airborne at 50\,kW, tier P,
+expansion-rotor mass excluded), identified the static--dynamic gap as the critical modelling
+challenge \RB{}, established left-flank overspeed as the operating architecture, and---post-audit---demonstrated
+a blade-rescaled design meeting power and safety criteria across the full wind envelope in simulation.
+
+The remaining gaps---mid-fidelity aerodynamics, wake interaction, hardware validation,
+dynamic-aware optimisation---map directly onto the expertise of the groups discussed in \S4.
+Collaboration briefs are issued separately.
+The simulator is open-source, the test suite is green, and the decisions are documented.
+The next step is a conversation.
+
+\vspace{18pt}
+\begin{center}
+\textit{Rod Read}\\
+Windswept \& Interesting Ltd, Stornoway, Scotland\\
+\texttt{rod@windswept.energy}
+\end{center}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% REFERENCES
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{thebibliography}{99}
+
+\bibitem{tulloch2023}
+Tulloch, O., Yue, H., Kazemi Amiri, A.M.\ and Read, R. (2023).
+A tensile rotary airborne wind energy system---modelling, analysis and improved design.
+\emph{Energies}, 16(6), 2610.
+
+\bibitem{tulloch2021}
+Tulloch, O. (2021).
+\emph{Tensile Rotary Power Transmission Design}.
+PhD Thesis, University of Strathclyde.
+
+\bibitem{jamieson2020}
+Jamieson, P. (2020).
+Top-level rotor optimisations using actuator disk theory.
+\emph{Wind Energy Science}, 5, 807--818.
+
+\bibitem{vanleersum2023}
+van Leersum, D. (2023).
+TRPT scaling analysis---internal report for Windswept \& Interesting Ltd.
+Unpublished.
+
+\bibitem{chen2026}
+Chen, Z., Yue, H., Kazemi, A.\ and Read, R. (2026).
+Power efficiency analysis of a rotary kite airborne wind energy system.
+\emph{Proc.\ 11th Intl.\ Airborne Wind Energy Conference (AWEC 2026)}, Porto, Portugal.
+
+\bibitem{amjad2026}
+Amjad Zulfazli, M.M., Yue, H., Carroll, J.\ and Chen, Z. (2026).
+Scalability analysis of a rotary kite AWE system with tensile rotary power transmission.
+\emph{Proc.\ AWEC 2026}, Porto.
+
+\bibitem{leuthold2019}
+Leuthold, R., Crawford, C., Gros, S.\ and Diehl, M. (2019).
+Engineering wake induction model for axisymmetric multi-kite AWE systems.
+\emph{Wake Conference 2019}.
+
+\bibitem{leuthold2017}
+Leuthold, R., Gros, S.\ and Diehl, M. (2017).
+Induction in optimal control of multiple-kite AWE systems.
+\emph{IFAC-PapersOnLine}, 50(1), 153--158.
+
+\bibitem{leuthold2026}
+Leuthold, R., Crawford, C., Gros, S.\ and Diehl, M. (2026).
+Trajectory tracking in AWE optimal control with a rigidly-convected, lifting-line vortex model.
+\emph{Proc.\ AWEC 2026}, Porto.
+
+\bibitem{diehl2026}
+Diehl, M., Harzer, J.\ and De Schutter, J. (2026).
+Vertical airborne wind energy farms based on dual-wing systems.
+\emph{Proc.\ AWEC 2026}, Porto.
+
+\bibitem{beaupoil2026}
+Beaupoil, C.\ and Weyel, F. (2026).
+Autogyro pumping mode rotary AWE system---design and control of a servo flap cyclic pitch actuated rotor.
+\emph{Proc.\ AWEC 2026}, Porto.
+
+\bibitem{kheiri2018}
+Kheiri, M., Bourgault, F.\ and Iosilevskii, G. (2018).
+Power limit and its governing factors for crosswind kite systems.
+\emph{Journal of Aircraft}, 55(4), 1534--1548.
+
+\bibitem{carceller2022}
+Carceller Candau, J. (2022).
+Dynamic analysis of a rotary airborne wind energy system.
+MSc Thesis, Universitat Polit\`ecnica de Catalunya.
+
+\bibitem{ktd_decisions2026}
+Read, R. (2026).
+\texttt{KiteTurbineDynamics.jl}---\texttt{DECISIONS.md} (architectural decision log).
+\url{https://github.com/rodread/KiteTurbineDynamics.jl}
+
+\bibitem{chartprd}
+Read, R. (2026).
+KTD.jl Reporting Chart Standards, PRD 0005.
+\texttt{docs/prd/0005-chart-standards.md}.
+
+\bibitem{harzer2026}
+Harzer, J., Polkl\"aser, K.S., Diehl, M.\ and Moormann, D. (2026).
+Multi-wing AWE research project: goals and progress.
+\emph{Proc.\ AWEC 2026}, Porto.
+
+\end{thebibliography}
+
+\end{document}
