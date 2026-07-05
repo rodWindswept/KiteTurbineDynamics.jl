@@ -14,9 +14,10 @@
 module ControlMapHunt
 
 using KiteTurbineDynamics
-using Printf, CSV, DataFrames
+using Printf, CSV, DataFrames, Dates
 
-# ═════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
+const GIT_HASH       = "86ca0e5"
 const DT              = 4e-5
 const T_HUNT          = 5.0      # pre-sweep + bisection sim duration (s)
 const T_VERIFY        = 60.0     # verification sim duration (s)
@@ -36,6 +37,9 @@ struct HuntResult
     ω_rpm::Float64;    min_fos::Float64;  collapse_margin_deg::Float64
     max_twist_deg::Float64;  T_max_kN::Float64
     reached_rated::Bool;     status::String
+    # Gate 1 new columns
+    P_aero_kw::Float64; P_loss_kw::Float64; P_static_kw::Float64
+    consistency::Float64; closure_pct::Float64; converged::Bool
 end
 
 """
@@ -43,12 +47,12 @@ end
 """
 struct VerifySlice
     t_sim::Float64;          P_kw::Float64;        ω_rpm::Float64
-    min_fos::Float64;        worst_ring::Int       # ring index (1-based) with lowest FoS
-    fos_worst::Float64;      n_failing::Int        # count of rings with FoS < 1.5
+    min_fos::Float64;        worst_ring::Int
+    fos_worst::Float64;      n_failing::Int
     collapse_margin_deg::Float64
     max_twist_deg::Float64;  T_max_kN::Float64
-    segment_twist::Vector{Float64}   # per-segment twist (degrees)
-    ring_fos::Vector{Float64}        # per-ring FoS
+    segment_twist::Vector{Float64}; ring_fos::Vector{Float64}
+    P_aero_kw::Float64       # Gate 1: aero power at this slice
 end
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -164,11 +168,12 @@ function run_verify_timeseries(
                     worst_i = argmin(airborne) + 1  # re-index to 1-based
                     n_fail = count(f -> f < 1.5, airborne)
                     mt = maximum(abs, ef.segment_twist_deg)
+                    P_aero = sum(x for x in ef.rotor_aero_power if !isnan(x))
 
                     push!(slices, VerifySlice(
                         t_curr, P_kw, ω_rpm, min_f, worst_i,
                         ring_fos[worst_i], n_fail, cm, mt, T_max / 1000.0,
-                        copy(ef.segment_twist_deg), copy(ring_fos),
+                        copy(ef.segment_twist_deg), copy(ring_fos), P_aero,
                     ))
                 end
             end
@@ -189,7 +194,7 @@ end
 
 function hunt_k_at_wind(
     builder::Function, wind_speed::Float64, P_rated::Float64;
-    verbose::Bool=false, lift_device=nothing,
+    verbose::Bool=false, lift_device=nothing, max_power::Bool=false,
 )
     P_rated_kw = P_rated / 1000.0
     verbose && println("  v=$(wind_speed) m/s — pre-sweep …")
@@ -208,44 +213,65 @@ function hunt_k_at_wind(
     verbose && @printf("    sweep: P_peak=%.1f kW (k=%.0f)  P_maxk=%.1f kW\n",
         P_peak, ks_sweep[i_peak], P_sweep[end])
 
-    if P_peak < P_rated_kw * 0.85
+    if P_peak < P_rated_kw * 0.85 && !max_power
         verbose && println("    → underpowered")
         return HuntResult(wind_speed, ks_sweep[i_peak], P_peak,
-            ω_sweep[i_peak]*60/(2π), Inf, Inf, 0.0, 0.0, false, "underpowered"),
+            ω_sweep[i_peak]*60/(2π), Inf, Inf, 0.0, 0.0, false, "underpowered",
+            0.0, 0.0, 0.0, 0.0, 0.0, false),
             VerifySlice[]
     end
 
-    # Bracket on left flank
-    k_low, P_low = K_MIN, P_sweep[1]
-    k_high, P_high = ks_sweep[i_peak], P_peak
-    for i in 2:i_peak
-        if P_sweep[i-1] < P_rated_kw && P_sweep[i] >= P_rated_kw
-            k_low, P_low = ks_sweep[i-1], P_sweep[i-1]
-            k_high, P_high = ks_sweep[i], P_sweep[i]; break
-        end
-    end
-    if P_low >= P_rated_kw
-        verbose && println("    → all sweep points above rated")
-        k_low, P_low = K_MIN, P_sweep[1]
-    end
-    verbose && @printf("    bracket: k∈[%.0f, %.0f] P∈[%.1f, %.1f] kW\n",
-        k_low, k_high, P_low, P_high)
+    k_best = ks_sweep[i_peak]
+    P_best = P_peak
 
-    k_best, P_best = k_low, P_low
-    verbose && println("    bisecting …")
-    for iter in 1:MAX_BISECT
-        k_mid = (k_low + k_high) / 2.0
-        abs(k_high - k_low) < BISECT_MIN_GAP && break
-        P_mid, _, _, _, _, _ = run_capture(
-            builder, wind_speed, k_mid, T_HUNT; verbose=false, lift_device=lift_device)
-        verbose && @printf("    iter %2d: k=%7.1f P=%6.2f kW\n", iter, k_mid, P_mid)
-        if P_mid < P_rated_kw
-            k_low = k_mid; P_mid > P_best && (P_best=P_mid; k_best=k_mid)
-        else
-            k_high = k_mid
+    if max_power
+        verbose && @printf("    max-power mode: k=%.0f P_peak=%.1f kW\n", k_best, P_best)
+    else
+        k_low, P_low = K_MIN, P_sweep[1]
+        k_high, P_high = ks_sweep[i_peak], P_peak
+        for i in 2:i_peak
+            if P_sweep[i-1] < P_rated_kw && P_sweep[i] >= P_rated_kw
+                k_low, P_low = ks_sweep[i-1], P_sweep[i-1]
+                k_high, P_high = ks_sweep[i], P_sweep[i]; break
+            end
         end
-        abs(P_mid - P_rated_kw) < POWER_TOL && (k_best=k_mid; P_best=P_mid; break)
+        if P_low >= P_rated_kw
+            verbose && println("    → all sweep points above rated")
+            k_low, P_low = K_MIN, P_sweep[1]
+        end
+        verbose && @printf("    bracket: k∈[%.0f, %.0f] P∈[%.1f, %.1f] kW\n",
+            k_low, k_high, P_low, P_high)
+
+        k_best, P_best = k_low, P_low
+        verbose && println("    bisecting …")
+        for iter in 1:MAX_BISECT
+            k_mid = (k_low + k_high) / 2.0
+            abs(k_high - k_low) < BISECT_MIN_GAP && break
+            P_mid, _, _, _, _, _ = run_capture(
+                builder, wind_speed, k_mid, T_HUNT; verbose=false, lift_device=lift_device)
+            verbose && @printf("    iter %2d: k=%7.1f P=%6.2f kW\n", iter, k_mid, P_mid)
+            if P_mid < P_rated_kw
+                k_low = k_mid; P_mid > P_best && (P_best=P_mid; k_best=k_mid)
+            else
+                k_high = k_mid
+            end
+            abs(P_mid - P_rated_kw) < POWER_TOL && (k_best=k_mid; P_best=P_mid; break)
+        end
     end
+
+    # Static prediction at hunted k
+    _, _, _, _, _, _, P_static, _ = run_capture(
+        builder, wind_speed, k_best, T_HUNT; verbose=false, lift_device=lift_device)
+    # Use capture_extended for proper aero power
+    sys_st, u0_st, p_st, _ = Base.invokelatest(builder)
+    sys_st.k_mppt_ref[] = k_best
+    wf_st(pos, t) = begin
+        z = max(pos[3], 1.0)
+        [wind_speed * (z / p_st.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+    end
+    u_st = settle_to_operational_state(sys_st, copy(u0_st), p_st, 9.5; wind_fn=wf_st)
+    ef_st = capture_extended(u_st, sys_st, p_st, 0.0, wf_st, nothing; brake_engaged=false)
+    P_static = sum(x for x in ef_st.rotor_aero_power if !isnan(x))
 
     verbose && println("    verifying at k=$(round(k_best, digits=1)) (60s, 1Hz FEA) …")
     slices = run_verify_timeseries(
@@ -259,9 +285,21 @@ function hunt_k_at_wind(
     verbose && @printf("    result: P=%.1f kW ω=%.0f rpm FoS=%.2f cm=%.1f° %s (%d slices)\n",
         s_end.P_kw, s_end.ω_rpm, s_end.min_fos, s_end.collapse_margin_deg, st, length(slices))
 
+    # Gate 1: capture aero power from last verify slice
+    P_aero = isempty(slices) ? 0.0 : slices[end].P_aero_kw
+    P_loss = P_aero - s_end.P_kw
+    ω_rad = s_end.ω_rpm * 2π / 60
+    cons = ω_rad > 0.1 ? s_end.P_kw / (k_best * ω_rad^3) : 0.0
+    close = P_aero > 0.1 ? (P_aero - P_loss - s_end.P_kw) / P_aero * 100 : 0.0
+
+    # Dual-duration convergence check (5s vs 20s)
+    _, _, _, _, _, _, P_20, _ = run_capture(
+        builder, wind_speed, k_best, 20.0; verbose=false, lift_device=lift_device)
+    conv = abs(s_end.P_kw - P_20) < POWER_TOL
+
     return HuntResult(wind_speed, k_best, s_end.P_kw, s_end.ω_rpm,
         s_end.min_fos, s_end.collapse_margin_deg, s_end.max_twist_deg, s_end.T_max_kN,
-        reached, st), slices
+        reached, st, P_aero, P_loss, P_static, cons, close, conv), slices
 end
 
 
@@ -273,6 +311,7 @@ function hunt_control_map(
     builder::Function, P_rated::Float64, wind_speeds::Vector{Float64};
     out_dir::String=joinpath(dirname(@__DIR__), "scripts", "results", "control_maps"),
     name::String="control_map", verbose::Bool=true, lift_device=nothing,
+    max_power::Bool=false,
 )
     mkpath(out_dir)
 
@@ -287,7 +326,7 @@ function hunt_control_map(
     for v in wind_speeds
         println()
         result, slices = hunt_k_at_wind(builder, v, P_rated;
-            verbose=verbose, lift_device=lift_device)
+            verbose=verbose, lift_device=lift_device, max_power=max_power)
         push!(results, result)
         for s in slices
             push!(all_slices, s)
@@ -297,20 +336,28 @@ function hunt_control_map(
     # ── Summary CSV ─────────────────────────────────────────────────
     viable = count(r -> r.status == "ok", results)
     println("\n── $(name) ──  $(viable)/$(length(wind_speeds)) viable")
-    println("  v_wind │   k_mppt │   P_kW │ ω_rpm │  FoS │ cm_deg │ status")
+    @printf("  %5s │ %8s │ %7s │ %5s │ %5s │ %5s │ %6s │ %7s │ %7s │ %-5s │ %s\n",
+        "v", "k_mppt", "P_kW", "ω", "FoS", "cm°", "P_aero", "P_static", "P/kω³", "conv", "status")
     for r in results
-        @printf("  %6.1f │ %8.1f │ %6.1f │ %5.0f │ %4.2f │ %6.1f │ %s\n",
-            r.v_wind, r.k_mppt, r.P_kw, r.ω_rpm, r.min_fos, r.collapse_margin_deg, r.status)
+        @printf("  %5.1f │ %8.1f │ %6.1f │ %4.0f │ %4.2f │ %5.1f │ %6.1f │ %7.1f │ %7.3f │ %-5s │ %s\n",
+            r.v_wind, r.k_mppt, r.P_kw, r.ω_rpm, r.min_fos, r.collapse_margin_deg,
+            r.P_aero_kw, r.P_static_kw, r.consistency, r.converged ? "Y" : "N", r.status)
     end
 
+    stamp = "# script:hunt_kmppt_bisect @ $(GIT_HASH) · builder:$(name) · date:$(Dates.format(now(), "yyyy-mm-ddTHH:MM:SS")) · max_power:$(max_power)"
+    csv_path = joinpath(out_dir, "$(name)_summary.csv")
+    open(csv_path, "w") do io; println(io, stamp); end
     df_summary = DataFrame(
         v_wind=[r.v_wind for r in results], k_mppt=[r.k_mppt for r in results],
         P_kw=[r.P_kw for r in results], ω_rpm=[r.ω_rpm for r in results],
         min_fos=[r.min_fos for r in results], collapse_margin_deg=[r.collapse_margin_deg for r in results],
         max_twist_deg=[r.max_twist_deg for r in results], T_max_kN=[r.T_max_kN for r in results],
         reached_rated=[r.reached_rated for r in results], status=[r.status for r in results],
+        P_aero_kw=[r.P_aero_kw for r in results], P_loss_kw=[r.P_loss_kw for r in results],
+        P_static_kw=[r.P_static_kw for r in results], consistency=[r.consistency for r in results],
+        closure_pct=[r.closure_pct for r in results], converged=[r.converged for r in results],
     )
-    CSV.write(joinpath(out_dir, "$(name)_summary.csv"), df_summary)
+    CSV.write(csv_path, df_summary; append=true, header=true)
 
     # ── Timeseries CSV (1 Hz FEA slices) ────────────────────────────
     if !isempty(all_slices)
@@ -321,7 +368,7 @@ function hunt_control_map(
             n_failing=[s.n_failing for s in all_slices],
             collapse_margin_deg=[s.collapse_margin_deg for s in all_slices],
             max_twist_deg=[s.max_twist_deg for s in all_slices],
-            T_max_kN=[s.T_max_kN for s in all_slices],
+            T_max_kN=[s.T_max_kN for s in all_slices], P_aero_kw=[s.P_aero_kw for s in all_slices],
         )
         CSV.write(joinpath(out_dir, "$(name)_timeseries.csv"), df_ts)
         println("Timeseries: $(length(all_slices)) slices → $(name)_timeseries.csv")
@@ -331,9 +378,8 @@ function hunt_control_map(
     return df_summary
 end
 
-
 # ═════════════════════════════════════════════════════════════════════════
-# Builder factories
+# Builder factories (unchanged)
 # ═════════════════════════════════════════════════════════════════════════
 
 canonical_10kw_builder() = begin
@@ -350,7 +396,8 @@ end
 
 end  # module
 
-
+# ═════════════════════════════════════════════════════════════════════════
+# GATE 1: Max-power control-map re-run
 # ═════════════════════════════════════════════════════════════════════════
 if abspath(PROGRAM_FILE) == @__FILE__
     using Pkg; Pkg.activate(dirname(@__DIR__))
@@ -361,11 +408,24 @@ if abspath(PROGRAM_FILE) == @__FILE__
     WINDS   = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
     lift    = KiteTurbineDynamics.rotary_lifter_default()
 
-    # Blade-scaled V10 λ=0.54 (properly sized for 50 kW)
-    println("\n═══ V10 BLADE-SCALED λ=0.54 ═══")
+    # Gate 1A: V10 Tight λ=1.0 (reproduction gate: expect ~193 kW at k≈15.6)
+    println("\n══════ GATE 1A: V10 Tight λ=1.0 ══════")
+    println("Pre-registered: ~193 kW at k≈15.6 for 11 m/s")
     ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(blade_scale=0.54), 50000.0,
-        WINDS; out_dir=OUT_DIR, name="v10_blade_scaled_054", lift_device=lift, verbose=true)
+        ControlMapHunt.v10_tight_builder(blade_scale=1.0), 50000.0, WINDS;
+        out_dir=OUT_DIR, name="gate1_v10_tight_maxpower", lift_device=lift, verbose=true, max_power=true)
 
-    println("\nDone.")
+    # Gate 1B: V10 Reinforced
+    println("\n══════ GATE 1B: V10 Reinforced ══════")
+    ControlMapHunt.hunt_control_map(
+        ControlMapHunt.v10_tight_builder(r_bottom_scale=1.30, tether_diameter=0.004, blade_scale=1.0), 50000.0, WINDS;
+        out_dir=OUT_DIR, name="gate1_v10_reinforced_maxpower", lift_device=lift, verbose=true, max_power=true)
+
+    # Gate 1C: Blade-rescaled λ=0.69
+    println("\n══════ GATE 1C: Blade-rescaled λ=0.69 ══════")
+    ControlMapHunt.hunt_control_map(
+        ControlMapHunt.v10_tight_builder(blade_scale=0.69), 50000.0, WINDS;
+        out_dir=OUT_DIR, name="gate1_blade_scaled_069_maxpower", lift_device=lift, verbose=true, max_power=true)
+
+    println("\n═══ Gate 1 complete ═══")
 end
