@@ -15,11 +15,11 @@ PROVISIONAL — Rod to supply actual reel MBL or make/model.
 | Constraint | Status | Binding? | Source |
 |-----------|--------|----------|--------|
 | Ring compression FoS | ✅ Implemented | Binding where net radial load is inward (load-dependent) | `_evaluate_trpt_design_impl` |
-| Spoke FoS (7mm Dyneema, SWL 19.8 kN) | 🟡 SWL provisional | TBD after SWL-sourced regeneration | `SpokeParams`, evaluator |
+| Spoke FoS (7mm Dyneema, SWL 19.8 kN) | ✅ Implemented | TBD after SWL-sourced regeneration | `SpokeParams`, evaluator |
 | Spoke drag (ODE, ~12 kW at 260 rpm, ω³) | ✅ Implemented | ~5-8% of design | `compute_ring_forces!` |
-| Strut tension FoS | ⬜ Outward-load spec Commit 1, pending | TBD | `docs/prd/0006-outward-load-spec.md` |
-| Knuckle at spoke-termination load | ⬜ Outward-load spec Commit 1, pending | TBD | Same spec |
-| Blade-root bending FoS | ⬜ Outward-load spec Commit 2, pending | TBD | Same spec |
+| Strut tension FoS | ✅ Implemented (CFRP 600 MPa) | Non-binding (~120 at 260 rpm) | `src/structural_constants.jl` |
+| Knuckle at spoke-termination load | ✅ Pass-through (FoS_knuckle ≥ FoS_tension by design, Rod) | Non-binding | Rod (2026-07-06) |
+| Blade-root bending FoS | ✅ Implemented (lumped-mass cantilever) | Non-binding (~118 at 260 rpm) | `src/structural_constants.jl` |
 | Mach 0.7 / 0.85 | Caveat column | Non-binding | Verify-stage flag |
 | V10 Tight instability | **Retired** — dynamic instability at all low-k values (second independent ground) | `scripts/diagnose_tight_transient.jl` |
 | Hardware ω ceiling | Wrap rate **APPLICABLE** — rigidised pipe-shrouded lift line passes through top swivel bearing (stationary member on rotation axis). Swivel rated RPM = hardware ceiling (TBD — Rod to supply make/model or rating). Generator sized via gearbox, not design ceiling. Model limits bind: spoke FoS, stability, drag economics. |
