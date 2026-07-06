@@ -283,6 +283,9 @@ struct EvalResult
     torsion_margin_ok::Bool
     min_torsional_fos::Float64
     constraint_msg::String
+    # Centrifugal clamp diagnostics (2026-07-06)
+    n_clamped_rings::Int          # count of rings where F_v clamped to 0 (net outward)
+    max_outward_N::Float64        # worst net outward force per vertex (N), 0 if none
 end
 
 """
@@ -310,6 +313,11 @@ stress margin check.
 - `F_radial_per_ring`: optional per-ring radial expansion force (N).
   If provided, subtracted from the aerodynamic inward force at each ring,
   directly reducing ring compression — force-first modelling.
+
+- `m_expansion_blade_per_ring`: optional per-ring expansion blade mass (kg, total,
+  not per-vertex). Added to `m_vertex` at each ring carrying expansion rotors.
+  The existing `F_centripetal = m_vertex·ω²·r` machinery handles the force.
+  Rings without expansion rotors get zero. Default: nothing (backward compatible).
 """
 function _evaluate_trpt_design_impl(
     design::T,
@@ -326,6 +334,7 @@ function _evaluate_trpt_design_impl(
     r_eff_override::Union{Nothing,Vector{Float64}}=nothing,
     F_radial_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     thrust_per_ring::Union{Nothing,Vector{Float64}}=nothing,
+    m_expansion_blade_per_ring::Union{Nothing,Vector{Float64}}=nothing,
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
@@ -397,6 +406,8 @@ function _evaluate_trpt_design_impl(
     torsion_ok = true
     mass_beams = 0.0
     mass_knuckles = 0.0
+    n_clamped = 0
+    max_outward_N = 0.0
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
@@ -446,10 +457,19 @@ function _evaluate_trpt_design_impl(
         m_vertex =
             m_knuckle +
             m_beam_per_vertex +
-            (i == n_rings_tot ? m_blade_per_vertex : 0.0)
+            (i == n_rings_tot ? m_blade_per_vertex : 0.0) +
+            (m_expansion_blade_per_ring !== nothing ? m_expansion_blade_per_ring[i] / design.n_lines : 0.0)
 
         F_centripetal = m_vertex * omega_rotor^2 * r
-        F_v = max(F_in_per_vertex_aero - F_centripetal - F_exp_per_vertex, 0.0)
+        F_v_total = F_in_per_vertex_aero - F_centripetal - F_exp_per_vertex
+        if F_v_total < 0.0
+            n_clamped += 1
+            outward_N = -F_v_total
+            if outward_N > max_outward_N
+                max_outward_N = outward_N
+            end
+        end
+        F_v = max(F_v_total, 0.0)
         N_comp = F_v / (2.0 * sin(π / n_float))
 
         P_crit = props.P_crit
@@ -493,6 +513,10 @@ function _evaluate_trpt_design_impl(
 
     mass_total = mass_beams + mass_knuckles
 
+    if n_clamped > 0
+        @warn "Centrifugal clamp: $n_clamped ring(s) with net outward load (max $(round(max_outward_N; digits=0)) N/vertex). FoS on these rings reads ∞; outward load path (tension/bending/knuckles) is unverified. See DECISIONS.md §2026-07-06."
+    end
+
     feasible =
         (min_fos >= fos_req) &&
         torsion_ok &&
@@ -529,6 +553,8 @@ function _evaluate_trpt_design_impl(
         torsion_ok,
         min_torsional_fos,
         msg,
+        n_clamped,
+        max_outward_N,
     )
 end
 """
@@ -580,6 +606,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
+            0, 0.0,
         )
     end
 

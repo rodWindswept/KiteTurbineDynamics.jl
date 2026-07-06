@@ -244,7 +244,7 @@ function build_from_campaign_v10(campaign_dir::String, label::String; vector_fil
     expansion_params = ExpansionRotorParams[]
     sys_n_rings_total = n_rings + 2
     for rotor in rotors
-        mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
+        mass_est = expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
         # Remap from intermediate to system ring numbering
         sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
         er = ExpansionRotorParams(
@@ -376,7 +376,7 @@ function build_from_campaign(campaign_dir::String, label::String; params_fn=para
         blade_chord=chord,
         CL_blade=EXP_CL_DESIGN, CD0_blade=EXP_CD0_DESIGN, k_induced=EXP_K_INDUCED,
         bank_angle_deg=bank,
-        mass_per_rotor=(0.3 + 0.1 * r_blade) * blade_s^3,
+        mass_per_rotor=expansion_blade_mass(r_blade, blade_s),
         shaft_coupling=1.0,
     )
     stack = build_expansion_stack(cfg)

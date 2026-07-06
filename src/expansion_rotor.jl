@@ -249,3 +249,24 @@ function effective_radius(
     Δr = F_radial * L_seg / (T_tether * geometry_factor)
     return r_nominal + Δr
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Blade mass
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    expansion_blade_mass(blade_tip_radius, blade_scale) -> Float64
+
+Total blade mass for one expansion rotor assembly (all `n_blades` blades).
+
+Mass scales with the cube of blade linear dimension: mass ∝ volume ∝ span³.
+The empirical constants (0.3 kg base + 0.1 kg/m per unit tip radius) are
+calibrated from CFRP blade mass estimates for the V10 configuration.
+
+# Arguments
+- `blade_tip_radius`: outer tip radius (m), post-70/30 geometry
+- `blade_scale`: dimensionless scalar (span/chord/mass), λ in [0, 1]
+"""
+function expansion_blade_mass(blade_tip_radius::Float64, blade_scale::Float64)::Float64
+    return (0.3 + 0.1 * blade_tip_radius) * blade_scale^3
+end

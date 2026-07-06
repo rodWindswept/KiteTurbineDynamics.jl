@@ -294,10 +294,13 @@ function objective_v10(
         if ri > n_rings_tot || ri < 1
             continue
         end
+        # n_blades = n_lines (one blade per vertex, per V10 geometry convention)
         er = ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg, 0.0, ri, 1.0,  # mass computed later
+            rotor.bank_angle_deg,
+            expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
+            ri, 1.0,
         )
         push!(expansion_params, er)
     end
@@ -349,6 +352,7 @@ function objective_v10(
     # ── Per-ring expansion forces ────────────────────────────────────────
     r_eff = copy(radii)
     F_radial_per_ring = zeros(Float64, n_rings_tot)
+    m_exp_per_ring = zeros(Float64, n_rings_tot)
     tau_net_per_ring = zeros(Float64, n_rings_tot)
     cumulative_thrust = cumsum(thrust_per_ring)
 
@@ -366,6 +370,7 @@ function objective_v10(
 
         r_eff[ri] = r_new
         F_radial_per_ring[ri] = F_radial
+        m_exp_per_ring[ri] = er.mass
         tau_net_per_ring[ri] = tau_net
         thrust_per_ring[ri] += F_axial
     end
@@ -386,6 +391,7 @@ function objective_v10(
         r_eff_override=r_eff,
         F_radial_per_ring=F_radial_per_ring,
         thrust_per_ring=thrust_per_ring,
+        m_expansion_blade_per_ring=m_exp_per_ring,
     )
 
     # ── Gate 2: Beam buckling FoS ────────────────────────────────────────
@@ -438,8 +444,7 @@ function objective_v10(
     # Expansion rotor mass
     m_expansion = 0.0
     for rotor in rotors
-        blade_s = rotor.blade_scale
-        m_expansion += (0.3 + 0.1 * rotor.blade_tip_radius) * blade_s^3
+        m_expansion += expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
     end
 
     # Tether mass

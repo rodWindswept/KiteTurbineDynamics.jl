@@ -12,7 +12,7 @@ function main()
     n_rings_int = result.n_rings; sys_total = n_rings_int + 2
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
-        mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
+        mass_est = expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
         sys_ri = rotor.ring_idx == n_rings_int ? sys_total : rotor.ring_idx + 1
         push!(expansion_params, ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,

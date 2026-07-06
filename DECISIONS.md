@@ -97,6 +97,40 @@ at low k/high ω, not just slow settling. R3 λ=0.69 is deterministic at 60s
 caveat. Delta doc regeneration waits for Gate 1 re-run with corrected selection
 basis and convergence criterion.
 
+**2026-07-06 Centrifugal expansion blade loads added to structural evaluator:**
+
+Expansion rotor blade centrifugal forces were absent from the FoS calculation.
+`expansion_rotor_forces()` is pure aero; no ω² term. The structural evaluator
+(`_evaluate_trpt_design_impl`) added blade mass only to the hub ring
+(`i == n_rings_tot ? m_blade_per_vertex : 0.0`).
+
+**Fix:** `expansion_blade_mass()` centralized in `src/expansion_rotor.jl`
+(replaces 8 copy-pasted instances). `m_expansion_blade_per_ring` kwarg added
+to the evaluator, plumbed through `evaluate_design()` in `ring_spacing.jl`.
+`objective_v10.jl` builds the per-ring mass vector and passes it. The existing
+`F_centripetal = m_vertex·ω²·r` machinery applies the force with correct
+per-ring radius and sign — no double-counting with aerodynamic F_radial.
+
+**Clamp caveat:** At high ω, centrifugal force can exceed inward aero load,
+clamping `F_v` to 0 → FoS reads ∞ (no ring compression). Net outward load
+passes into strut tension/bending and knuckle attachments — unmodeled. Designs
+at the clamp boundary carry an unverified structural margin. `@debug` log
+reports each clamped ring with force magnitudes. Full outward load path is a
+separate ticket.
+
+**Mass formula:** `(0.3 + 0.1·tip_radius)·blade_scale³` (kg, total per rotor
+assembly). n_blades = n_lines (one blade per vertex, V10 convention).
+
+**Tests (against evaluate_design, not full objective):**
+- ω→0: F_centripetal→0, recovers pre-fix results bit-for-bit
+- mass→0: expansion_blade_mass=0, recovers pre-fix results
+- N_expansion=0: m_expansion_blade_per_ring=nothing, bit-identical
+
+**Side effects:** Gate 7 penalty branches (objective_v10.jl:330,337) use
+`sum(er.mass)` — now non-zero. Infeasible-design penalty values shift;
+DE trajectories not byte-reproducible against old campaigns. Feasible results
+unaffected.
+
 ## 2026-07-04: Settle k_mppt bug and five simulator-integrity findings; blade-scaling energy balance
 
 ### Settle k_mppt bug (integrity #1)

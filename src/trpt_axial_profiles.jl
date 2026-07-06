@@ -243,6 +243,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
+            0, 0.0,
         )
     end
 

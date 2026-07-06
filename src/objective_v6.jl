@@ -112,7 +112,7 @@ function design_from_vector_v6(
             CD0_blade=EXP_CD0_DESIGN,
             k_induced=EXP_K_INDUCED,
             bank_angle_deg=bank_deg,
-            mass_per_rotor=(0.3 + 0.1 * blade_tip_radius) * blade_scale^3,
+            mass_per_rotor=expansion_blade_mass(blade_tip_radius, blade_scale),
             shaft_coupling=1.0,
         )
     else

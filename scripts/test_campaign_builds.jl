@@ -42,7 +42,7 @@ function build_campaign(dir, label)
         blade_tip_radius=0.7 * r_blade, blade_hub_radius=-0.3*r_blade, blade_chord=chord,
         CL_blade=1.0, CD0_blade=0.02, k_induced=0.05,
         bank_angle_deg=bank,
-        mass_per_rotor=(0.3+0.1*r_blade)*blade_s^3,
+        mass_per_rotor=expansion_blade_mass(r_blade, blade_s),
         shaft_coupling=1.0)
     stack = build_expansion_stack(cfg)
     sys, u0 = build_kite_turbine_system(pc; expansion_rotors=stack)

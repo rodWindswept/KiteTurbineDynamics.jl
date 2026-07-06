@@ -39,7 +39,7 @@ function _build_verify_system(design, rotors, p, v_rated, power_W)
         ri = rotor.ring_idx
         # Remap from intermediate to system ring numbering
         sys_ri = ri == n_rings ? sys_n_rings_total : ri + 1
-        mass_est = (0.3 + 0.1 * rotor.blade_tip_radius) * rotor.blade_scale^3
+        mass_est = expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
         er = ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
