@@ -63,6 +63,9 @@ load on TRPT line segment at the anchor point. Root bending at cuff is from
 the short cantilever between cuff and bridle attachment (reduced ~10× vs
 unbridled cantilever).
 
+**Bridle line:** Dyneema, diameter = tether_diameter × 0.8 (Rod 2026-07-06).
+V10 Tight: ~2.4mm; V10 Reinforced: ~3.2mm. MBL and SWL from co-op stock.
+
 ---
 
 ## Radial spoke ties

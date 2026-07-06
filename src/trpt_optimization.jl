@@ -294,6 +294,8 @@ struct EvalResult
     # Outward-load checks (2026-07-06 Phase B)
     min_fos_tension::Float64       # strut tension FoS (Inf if none)
     min_fos_blade_root::Float64    # blade-root bending FoS (Inf if no expansion rotors)
+    min_fos_bridle::Float64        # bridle tension FoS (Inf if none)
+    max_lateral_line_load_N::Float64  # worst lateral point load on tether from bridle anchor (N)
 end
 
 """
@@ -350,6 +352,7 @@ function _evaluate_trpt_design_impl(
     m_expansion_blade_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     spoke::Union{Nothing,KiteTurbineDynamics.SpokeParams}=nothing,
     expansion_blade_geo::Union{Nothing,Vector{NamedTuple{(:ring_idx, :mass, :bank_deg, :chord, :span),Tuple{Int,Float64,Float64,Float64,Float64}}}}=nothing,
+    tether_diameter::Float64=0.003,  # for bridle line spec (tether_diameter × 0.8)
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
@@ -567,18 +570,56 @@ function _evaluate_trpt_design_impl(
         end
     end
 
-    # ── Blade-root bending — DEFERRED (2026-07-06) ─────────────────────
-    # The check committed at f1b5f4e modeled an unbridled cantilever.
-    # Real expansion blades carry bridles at ~0.7·span anchored to the
-    # TRPT line ~1/3 of the way to the next ring (Rod 2026-07-06).
-    # Correct model: beam on two supports (root pin + bridle point) with
-    # tip overhang. Root moment drops ~10×; new loads appear: bridle
-    # tension + lateral point load on the line segment. Requires a
-    # canonical rig topology document before any blade check ships.
-    # Four defects in the committed check: wrong structure (cantilever
-    # vs bridled), trig error (cos vs sin bank), CG error (+0.4 vs +0.2
-    # span per 70/30 geometry), section invented (solid rect vs shell).
-    min_fos_blade_root = Inf  # placeholder until bridle model exists
+    # ── Bridle tension + blade-root bending (2026-07-06) ─────────────────
+    # Expansion blades are bridled, not cantilevered. Outer bridle at 0.49·span
+    # outboard, inner at 0.21·span inboard, both anchored at ~30% down the
+    # line segment below (Rod 2026-07-06). Bridle line: tether_diameter × 0.8.
+    # Conservative lumped-mass: bridle carries 100% of normal centrifugal force
+    # on its span portion (assumes zero cuff reaction — overestimates tension).
+    min_fos_bridle_val = Inf
+    max_lateral = 0.0
+    if expansion_blade_geo !== nothing
+        for geo in expansion_blade_geo
+            mass, bank, span = geo.mass, geo.bank_deg, geo.span
+            r_root = radii[geo.ring_idx]
+            # Outboard portion: 70% of mass, CG at r_root + 0.35·span
+            m_out = 0.7 * mass
+            r_cg_out = r_root + 0.35 * span
+            F_cf_out = m_out * r_cg_out * omega_rotor^2
+            T_outer = F_cf_out * abs(sind(bank))  # normal component → bridle tension
+
+            # Inboard portion: 30% of mass, CG at r_root - 0.15·span
+            m_in = 0.3 * mass
+            r_cg_in = r_root - 0.15 * span
+            F_cf_in = m_in * max(r_cg_in, 0.01) * omega_rotor^2
+            T_inner = F_cf_in * abs(sind(bank))
+
+            # Bridle line SWL: Dyneema, tether_diameter × 0.8
+            # MBL scales with d²; use spoke derating chain
+            d_bridle = tether_diameter * 0.8
+            # Rough MBL: ~2 kN/mm² for Dyneema → MBL ≈ π·(d/2)² × 2e9 × 0.5
+            # Simpler: scale from 7mm spoke: MBL ∝ d²
+            mbl_bridle = (d_bridle / 0.007)^2 * 44_000.0
+            swl_bridle = mbl_bridle * 0.90 * 0.50  # same derating chain
+
+            fos_outer = swl_bridle / max(T_outer, 0.01)
+            fos_inner = swl_bridle / max(T_inner, 0.01)
+            fos_bridle = min(fos_outer, fos_inner)
+            if fos_bridle < min_fos_bridle_val
+                min_fos_bridle_val = fos_bridle
+            end
+
+            # Lateral line load at bridle anchor (vector sum of tensions)
+            lat = sqrt(T_outer^2 + T_inner^2)
+            if lat > max_lateral; max_lateral = lat; end
+        end
+    end
+    min_fos_bridle = min_fos_bridle_val
+    max_lateral_line_load_N = max_lateral
+
+    # Blade-root bending: short cantilever from cuff to bridle points
+    # Reduced ~10× vs unbridled — defer full beam-on-supports model
+    min_fos_blade_root = Inf
 
     feasible =
         (min_fos >= fos_req) &&
@@ -624,6 +665,8 @@ function _evaluate_trpt_design_impl(
         required_mbl,
         min_fos_tension,
         min_fos_blade_root,
+        min_fos_bridle,
+        max_lateral_line_load_N,
     )
 end
 """
@@ -675,7 +718,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
-            0, 0.0, Inf, 0, 0.0, 0.0, Inf, Inf,
+            0, 0.0, Inf, 0, 0.0, 0.0, Inf, Inf, 0.0, 0.0,
         )
     end
 
