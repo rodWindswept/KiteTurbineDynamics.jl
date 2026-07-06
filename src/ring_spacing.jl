@@ -297,8 +297,7 @@ function evaluate_design(
             Float64[],
             Float64[],
             false,
-            0.0,
-            0.0, "invalid geometry", 0, 0.0)
+            "invalid geometry", 0, 0.0,
         )
     end
 
