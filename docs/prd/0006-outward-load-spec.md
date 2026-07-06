@@ -61,28 +61,32 @@ In the per-ring loop of `_evaluate_trpt_design_impl`, when `F_v_total < 0`:
 
 ### Physics
 
-The knuckle at each ring vertex transmits the net force to the tether line.
-Under outward load, the knuckle sees:
+The knuckle at each ring vertex transmits the net radial force to the tether line.
+The check applies to the net radial force per vertex in **both signs**:
+- Below the clamp threshold: compression-side, knuckle sees crushing force
+- Above the clamp threshold: tension-side, knuckle sees pulling force
+
+Applying only to clamped rings would produce a discontinuity at 191 rpm where
+FoS_knuckle suddenly drops from ∞ to a finite value. The check runs on every
+ring, every evaluation.
 
 ```
-F_knuckle = max(F_outward_per_vertex - F_centripetal_knuckle, 0)
-```
-where `F_centripetal_knuckle = m_knuckle * ω² * r` (the knuckle's own centrifugal
-force partially offsets the outward load — the knuckle mass is already in `m_vertex`).
-
-Simplified: the net outward force per vertex passes through the knuckle to the
-tether. The knuckle is a small CFRP fitting.
-
-```
-FoS_knuckle = F_yield_knuckle / F_knuckle
+F_radial_per_vertex = |F_in_per_vertex_aero - F_centripetal - F_exp_per_vertex| / n_vertex_factor
+FoS_knuckle = F_yield_knuckle / F_radial_per_vertex
 ```
 
-### Material
+where F_centripetal includes knuckle mass (already in `m_vertex`), so the net
+radial force per vertex is the total force the knuckle must transmit to the tether.
 
-Knuckle yield force: estimate from existing `OPT_KNUCKLE_MASS_KG` and
-typical CFRP fitting strength. Conservative: 5 kN baseline, scaled by
-knuckle mass. The existing knuckle mass is ~0.1 kg; a 0.1 kg CFRP fitting
-can typically handle ~5 kN in tension.
+### Strength constant
+
+`F_yield_knuckle` — rated load per knuckle fitting. **Source: to be supplied
+by Rod** (physical part geometry, material rating, pin/bolt strength, or test
+data). NOT derived from knuckle mass — mass is not strength.
+
+All structural strength constants (σ_yield_tension, F_yield_knuckle, σ_yield_cfrp)
+live in a single named location: `src/structural_constants.jl`, with source
+comments per constant. No guessed material numbers in evaluator code.
 
 ### New EvalResult field
 
@@ -90,54 +94,63 @@ can typically handle ~5 kN in tension.
 
 ---
 
-## 3. Blade-root bending (most involved — needs cross-section model)
+## 3. Blade-root bending
 
 ### Physics
 
-The expansion rotor blade is a cantilever beam attached at the ring vertex.
-Centrifugal force is distributed along the span:
+The expansion rotor blade is a cantilever attached at the ring vertex, banked
+by `bank_angle_deg` toward the next ring. The bank angle decomposes centrifugal
+force into two components at the blade root:
 
 ```
-dF(r) = dm_blade(r) * r * ω²
+F_cf_total = m_blade * r_cg * ω²            (total centrifugal force, radial in ring plane)
+F_cf_axial  = F_cf_total * sin(bank)        (along blade axis — root tension)
+F_cf_normal = F_cf_total * cos(bank)        (normal to blade axis — root bending)
 ```
 
-where `dm_blade(r)` is the mass element at radius `r` from the shaft axis,
-and `r` ranges from `ring_r` (root) to `ring_r + 0.7·span` (tip).
+**Root tension:** `σ_tension = F_cf_axial / A_root`. Checked separately from
+bending; typically much lower stress than bending for thin blades.
 
-**Bending moment at root:**
+**Root bending:** the normal component acts as a distributed load along the span:
 ```
-M_root = ∫[r_root .. r_tip] (r - r_root) * dm_blade(r) * r * ω²
+dF_normal(r) = dm_blade(r) * r * ω² * cos(bank)
+```
+where `r` ranges from `r_root` (ring radius) to `r_root + 0.7·span` (tip).
+
+Bending moment at root:
+```
+M_root = ∫[r_root .. r_tip] (r - r_root) * dF_normal(r)
 ```
 
 With uniform mass distribution per unit span (simplified):
 ```
 m_per_unit = m_blade_total / span
-M_root = m_per_unit * ω² * ∫[r_root..r_tip] (r - r_root) * r * dr
-       = m_per_unit * ω² * [r_tip³/3 - r_root*r_tip² + 2r_root³/3]
+M_root = m_per_unit * ω² * cos(bank) * [r_tip³/3 - r_root*r_tip² + 2r_root³/3]
+```
+
+**Lumped-mass approximation (Phase 1):**
+```
+r_cg = r_root + 0.4 * span           (approximate CG for linear taper)
+M_root = m_blade_total * r_cg * ω² * cos(bank) * (r_cg - r_root)
 ```
 
 **Root bending stress:**
 ```
-I_root = (chord * t_blade³) / 12     (rectangular approximation, chord × thickness)
+I_root = (chord * t_blade³) / 12     (rectangular approximation)
 σ_bending = M_root * (t_blade/2) / I_root
-FoS_blade = σ_yield / σ_bending
+FoS_blade_root = σ_yield_cfrp / σ_bending
 ```
+
+**Centrifugal stiffening:** neglected in Phase 1. The axial tension from `F_cf_axial`
+increases the blade's effective bending stiffness (like a guitar string under
+tension). This is a second-order effect that improves FoS — neglecting it is
+conservative. Included in Phase 2+ blade model if margin is tight.
 
 ### Blade cross-section
 
-The expansion rotor blade has chord ≈ `er.blade_chord` (from ExpansionRotorParams).
-Thickness: estimated from typical NACA profile t/c ≈ 0.12 → `t_blade = 0.12 * chord`.
-Material: CFRP, σ_yield ≈ 600 MPa.
-
-### Simplification
-
-For a Phase 1 implementation, approximate with a lumped-mass model:
-- Blade CG at r_cg = r_root + 0.4 * span (approximate CG for linear taper)
-- Bending moment: M = m_blade_total * r_cg * ω² * (r_cg - r_root) / n_blades
-- Stress: σ = M / (blade_chord * t_blade² / 6)
-
-This gives a conservative estimate (lumped mass at CG produces higher root moment
-than the distributed load). Good enough to catch grossly under-designed blades.
+Chord: `er.blade_chord` (from ExpansionRotorParams).
+Thickness: t/c = 0.12 (typical NACA profile) → `t_blade = 0.12 * chord`.
+Material: CFRP, σ_yield_cfrp (from `src/structural_constants.jl`).
 
 ### New EvalResult field
 
@@ -198,23 +211,18 @@ pass. The `feasible` flag in EvalResult uses `min_fos_overall` instead of
 
 ---
 
-## Expected consequences
+## Validation harness
 
-1. **Strut tension FoS will be high** — CFRP struts in tension are much stronger
-   than in compression (buckling). Expect FoS_tension >> FoS_compression.
+Per-check validation before committing:
 
-2. **Knuckle FoS may be limiting** — the knuckle is a small fitting. If F_yield
-   is conservatively 5 kN and F_outward is ~3-8 kN per vertex, FoS_knuckle
-   could drop to 0.6-1.6 at high ω. This may be the real constraint.
+1. **Hand calculation:** for one known expansion rotor at one known ω,
+   compute FoS by hand and assert the evaluator matches to <1%.
 
-3. **Blade-root bending will scale with ω²** — at 376 rpm vs 191 rpm, stress is
-   ~4× higher. The blade chord and thickness were sized for aero, not centrifugal.
+2. **Regression:** ω→0 must recover current results (all forces vanish).
+   mass→0 must recover current results. N_expansion=0 bit-identical.
 
-4. **Minimum FoS will likely shift** from compression-dominated (low ω) to
-   knuckle/blade-dominated (high ω). The design envelope shape won't be
-   monotone — there may be a mid-ω sweet spot.
-
----
+3. **Constants:** all strength constants in `src/structural_constants.jl`
+   with source comments. No guessed numbers.
 
 ## Non-goals
 
