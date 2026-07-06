@@ -37,15 +37,19 @@ r_tip,max = max_ring_radius + 0.7 × blade_span (post-13f304a geometry), maximis
 over all rings (excluding ground ring index 1). Per-design ceiling — each builder
 has a different r_tip,max because blade spans differ.
 
-## Per-design ω ceilings (computed at runtime)
+## Per-design ω ceilings (computed at runtime from RingNode.radius)
 
-Estimated (exact values from script):
+| Design | r_tip,max | ω_target (M0.85) | ω_hard (M0.90) |
+|--------|-----------|-------------------|-----------------|
+| V10 Tight λ=1.0 | 5.45 m | 506 rpm | 536 rpm |
+| V10 Reinforced | 5.78 m | 478 rpm | 506 rpm |
+| λ=0.69 | 4.59 m | 602 rpm | 637 rpm |
 
-| Design | r_tip,max (est.) | ω_target (est.) | ω_hard (est.) |
-|--------|-------------------|-------------------|----------------|
-| V10 Tight λ=1.0 | ~12–15 m | ~160–200 rpm | ~170–210 rpm |
-| V10 Reinforced | same rings | same | same |
-| λ=0.69 | ~11–14 m | ~175–220 rpm | ~185–235 rpm |
+**Permanent tripwire:** at construction time, compute Mach at ω=260 rpm using the
+extracted r_tip,max and assert `0.30 < Mach < 0.60`. This catches every future
+ring-radius extraction bug (the 2026-07-06 handover estimated Mach 1.2-1.7
+using assumed ring radii of ~12m — wrong by ~5×). Gate 1 data (150-279 rpm) is
+at Mach 0.3-0.5; the Mach 0.85 ceiling is non-binding at those speeds.
 
 ---
 

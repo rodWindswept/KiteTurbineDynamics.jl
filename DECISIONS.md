@@ -85,10 +85,12 @@ at low k/high ω, not just slow settling. R3 λ=0.69 is deterministic at 60s
   unstable — a more important finding than "peak is at lower k."
 - V10 Tight stays retired on its 13 m/s FoS wall (best FoS=1.24 at any k,
   still below 1.5). The 11 m/s question is unresolved until P(t) converges.
-- Model validity constraint: expansion rotors at outer rings (r ≥ 15m) see
-  inflow velocities at Mach 1.2–1.7 at ω ≥ 260 rpm. Subsonic BEM cannot
-  model these conditions. A physical ω ceiling (hardware or compressibility)
-  should be established before committing to a Gate 1 re-run.
+**2026-07-06 corrected: expansion rotor ring radii are 2.0-3.0m (RingNode.radius),
+not ~12m as the 2026-07-06 handover estimated. r_tip = ring_radius + 0.7·blade_span
+≈ 4.6-5.8m across the three builders. Gate 1 ω values (150-279 rpm) correspond to
+Mach 0.3-0.5 — well subsonic. Mach 0.85 ceiling is ~480-600 rpm, far above
+anything simulated. The Mach constraint is non-binding for Gate 1 data; it becomes
+relevant for Gate 2 optimisation at high ω / low k.
 - FoS < 1 rows are infeasibility certificates, not data points. Report both
   unconstrained peak (diagnostic) and constrained optimum (FoS ≥ 1.5).
 
