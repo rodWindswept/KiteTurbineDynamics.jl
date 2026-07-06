@@ -85,8 +85,9 @@ at low k/high ω, not just slow settling. R3 λ=0.69 is deterministic at 60s
   unstable — a more important finding than "peak is at lower k."
 - V10 Tight stays retired on its 13 m/s FoS wall (best FoS=1.24 at any k,
   still below 1.5). The 11 m/s question is unresolved until P(t) converges.
-**2026-07-06 corrected: expansion rotor ring radii are 2.0-3.0m (RingNode.radius,
-verified via scripts/verify_ring_radii.jl). r_tip = ring_radius + 0.7·blade_span
+## 2026-07-06: Corrected expansion rotor ring radii
+
+Verified via scripts/verify_ring_radii.jl. r_tip = ring_radius + 0.7·blade_span
 ≈ 4.6-5.8m across the three builders. Gate 1 ω values (150-322 rpm) correspond
 to Mach 0.18-0.54 — well subsonic, BEM model is valid throughout.
 
@@ -100,31 +101,41 @@ Gate 1 never exceeded Mach 0.54. The "defect: BEM validity" entry is struck.
 → F_cf ≈ 27 kN. At correct r_mean ≈ 3.5m (ring radius + mid-span projection):
 F_cf ≈ 8 kN at 260 rpm — still significant vs aero F_radial, so the centrifugal
 fix stands, but all downstream numbers quoting 27 kN need correction.
-The centrifugal spoke engagement onset is at ~191 rpm on beam+knuckle mass alone.
-With expansion blade mass, spoke tension increases with ω²; 7mm Dyneema spokes
-(SWL 10.5 kN) cross FoS=1.0 at ~330 rpm. The spokes replace the old "clamp" —
-the outward load path is now a measured structural check, not an unmodeled
-caveat. See `SpokeParams` in `src/expansion_rotor.jl`.
 
-**2026-07-06 spoke ties design change (Rod):** radial 7mm Dyneema spokes from
+## 2026-07-06: Spoke engagement onset and SWL derivation
+Spoke engagement onset is at ~191 rpm on beam+knuckle mass alone (load-dependent,
+not a fixed threshold). 7mm Dyneema spokes: MBL 44.0 kN (generic SK78 catalogue,
+provisional pending Rod's reel spec), SWL = 44.0 × 0.90 splice × 0.50 creep/fatigue/UV
+= 19.8 kN. Spoke FoS-1.0 crossing moves well above 376 rpm for all designs.
+The spokes replace the old "clamp" — the outward load path is now a measured
+structural check. See `SpokeParams` in `src/expansion_rotor.jl`.
+
+## 2026-07-06: Spoke ties design change (Rod)
+
+Radial 7mm Dyneema spokes from
 each ring vertex to a floating center node, engaging under net-outward radial
-load. `SpokeParams` in `src/expansion_rotor.jl` (SWL 10.5 kN, MBL 42.2 kN/4× SF
-with documented deratings). Structural check (`_evaluate_trpt_design_impl`):
-T_spoke = max(F_centripetal + F_exp − F_in_aero, 0), FoS = SWL/T_spoke.
+load. `SpokeParams` in `src/expansion_rotor.jl`: d_line=0.007, SWL=19.8 kN
+(derived from 44.0 kN MBL × 0.90 × 0.50). Structural check
+(`_evaluate_trpt_design_impl`): T_spoke = max(F_centripetal + F_exp − F_in_aero, 0),
+FoS = SWL/T_spoke.
 Drag torque (ODE only): τ = ρ·C_D·d·ω²·R⁴/8 per spoke. Hand-calc validated:
 47.6 N·m/spoke at 260 rpm/R=2.66m → ~4 kW/ring → ~12 kW total. Spokes only on
 rings with expansion rotors (Rod). `spoke=nothing` = current behavior.
 
-**Parity gap (deferred):** spoke drag applies in ODE path (ring_forces.jl →
+## 2026-07-06: Spoke drag static parity gap (deferred)
+
+Spoke drag applies in ODE path (ring_forces.jl →
 multibody_ode! → run_canonical_sim!) but NOT in static equilibrium solver
 (solve_equilibrium_self_consistent in objective_v6.jl). Static evaluations
 (objective_v10, Phase 2 campaign re-eval) compute ω_eq without spoke drag.
 Guard: objective_v10 errors if spoke is enabled (not @warn — prevents silent
 divergence). Must be lifted before Phase 2 static campaign re-evaluation.
 
-**2026-07-06 neutral radial loading design philosophy (Rod):** the spoke tension
-crossing (~330 rpm for 7mm, ~6.5 kN/vertex at 260 rpm) reframes from a
-diagnostic threshold into an operating target. "Neutral radial loading" as a
+## 2026-07-06: Neutral radial loading design philosophy (Rod)
+
+The spoke engagement
+onset — the point where net radial load crosses zero and spokes begin to carry
+tension — reframes from a diagnostic threshold into an operating target. "Neutral radial loading" as a
 design objective: operate at small positive spoke tension — beams near-zero
 compression, spokes in light standing tension, structure sized for cruise can
 be genuinely light. Bias slightly outward (taut lines don't snap, sewn tabs
@@ -154,11 +165,15 @@ simulator-answerable.
   neutral-band operation across wind distribution, ramp transients as binding
   off-design case
 
-**2026-07-06 FoS gate decision (Rod):** Gate 2 hunts at spoke FoS ≥ 1.0 (SWL
+## 2026-07-06: FoS gate decision (Rod)
+
+Gate 2 hunts at spoke FoS ≥ 1.0 (SWL
 already embeds deratings; gating at 1.5-on-SWL would double-margin). Rows with
 FoS < 1.5 carry a caveat flag. Single number, single role.
 
-**Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding.
+## 2026-07-06: Gate 2 implications
+
+Mach 0.85 ceiling is at 478-602 rpm — non-binding.
 Spoke engagement (7mm Dyneema, SWL 19.8 kN, FoS-1.0 crossing well above
 376 rpm for all designs) and spoke drag (~12 kW at 260 rpm, ω³) are the
 real constraints. Gate 2 hunts constrained max-power with spoke FoS ≥ 1.0
@@ -175,7 +190,7 @@ candidate design target.
 caveat. Delta doc regeneration waits for Gate 1 re-run with corrected selection
 basis and convergence criterion.
 
-**2026-07-06 Centrifugal expansion blade loads added to structural evaluator:**
+## 2026-07-06: Centrifugal expansion blade loads added to structural evaluator
 
 Expansion rotor blade centrifugal forces were absent from the FoS calculation.
 `expansion_rotor_forces()` is pure aero; no ω² term. The structural evaluator
@@ -192,9 +207,10 @@ per-ring radius and sign — no double-counting with aerodynamic F_radial.
 **Clamp caveat:** At high ω, centrifugal force can exceed inward aero load,
 clamping `F_v` to 0 → FoS reads ∞ (no ring compression). Net outward load
 passes into strut tension/bending and knuckle attachments — unmodeled. Designs
-at the clamp boundary carry an unverified structural margin. `@debug` log
-reports each clamped ring with force magnitudes. Full outward load path is a
-separate ticket.
+at the boundary carry an unverified structural margin. `@warn` log reports
+each clamped ring with force magnitudes. **Superseded by spoke ties (2026-07-06
+entry above):** spokes replace the clamp with a measured structural check;
+the outward load path is now verified where spokes are enabled.
 
 **Mass formula:** `(0.3 + 0.1·tip_radius)·blade_scale³` (kg, total per rotor
 assembly). n_blades = n_lines (one blade per vertex, V10 convention).
