@@ -185,6 +185,26 @@ candidate design target.
 - FoS < 1 rows are infeasibility certificates, not data points. Report both
   unconstrained peak (diagnostic) and constrained optimum (FoS ≥ 1.5).
 
+## 2026-07-06: V10 Tight dynamic instability at low k
+
+The t=57-59s spike at k=6.23 is reproducible and is not an isolated artefact.
+`scripts/diagnose_tight_transient.jl` tested three k values at 11 m/s:
+
+| k | Stability | P range | Min FoS | n_fail |
+|---|----------|---------|---------|--------|
+| 3.0 | ✗ Unstable | 11.8% | 0.20 | 10 |
+| 6.23 | ✗ Unstable | 20.4% | 0.42 | 5 |
+| 12.94 | ✗ Unstable | 17.7% | 1.22 | 1 |
+
+V10 Tight is dynamically unstable across the entire low-k range at 11 m/s.
+The instability worsens as k decreases (higher ω). This is not a convergence
+problem — it is a real dynamic instability. The stable operating k is above
+some (unknown) boundary. Design cannot be optimised into the unstable regime.
+
+V10 Reinforced at k=12.94: marginal (6.7% P range, n_fail=0; FoS oscillates
+2.2→39→2.3 suggesting ring-FoS numerical artefact). λ=0.69 at k=3.0: stable
+(1.2% P range, 2 rpm ω range).
+
 **CSV annotation:** Corrected Gate 1 CSVs carry tier-Y status: right geometry
 (post-PRD-0006 fix), unverified convergence. k_refine CSVs carry the same
 caveat. Delta doc regeneration waits for Gate 1 re-run with corrected selection
