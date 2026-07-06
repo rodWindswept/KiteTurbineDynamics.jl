@@ -276,7 +276,7 @@ function evaluate_design(
             false,
             0.0,
             "r_bottom exceeds max_ground_radius",
-            0, 0.0, Inf, 0, 0.0,
+            0, 0.0, Inf, 0, 0.0, 0.0,
         )
     end
 
@@ -298,7 +298,7 @@ function evaluate_design(
             Float64[],
             Float64[],
             false,
-            "invalid geometry", 0, 0.0, Inf, 0, 0.0,
+            "invalid geometry", 0, 0.0, Inf, 0, 0.0, 0.0,
         )
     end
 

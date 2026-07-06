@@ -22,7 +22,7 @@ PROVISIONAL — Rod to supply actual reel MBL or make/model.
 | Blade-root bending FoS | ⬜ Outward-load spec Commit 2, pending | TBD | Same spec |
 | Mach 0.7 / 0.85 | Caveat column | Non-binding | Verify-stage flag |
 | V10 Tight instability | **Retired** — dynamic instability at all low-k values (second independent ground) | `scripts/diagnose_tight_transient.jl` |
-| Hardware ω ceiling | Rod's call | TBD | Generator rpm, tether wrap rate |
+| Hardware ω ceiling | **Unconstrained** — generator sized via gearbox, not design ceiling (Rod 2026-07-06). Wrap rate: TBD (see below). Model limits bind: spoke FoS, stability, drag economics. |
 
 **Rated FoS** (when envelope is complete): min over compression, spoke, strut tension,
 knuckle, blade-root. Pending members marked absent from current envelope.

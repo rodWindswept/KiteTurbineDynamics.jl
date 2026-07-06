@@ -290,6 +290,7 @@ struct EvalResult
     min_spoke_fos::Float64        # minimum spoke FoS (Inf if none or disabled)
     n_spokes_engaged::Int         # count of spokes under tension
     max_spoke_tension_N::Float64  # worst spoke tension (N), 0 if none
+    required_MBL_N::Float64        # minimum MBL for FoS_gate (gate × max_T / derating)
 end
 
 """
@@ -421,6 +422,7 @@ function _evaluate_trpt_design_impl(
     n_spokes_engaged = 0
     max_spoke_tension_N = 0.0
     min_spoke_fos = Inf
+    required_mbl = 0.0
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
@@ -543,6 +545,10 @@ function _evaluate_trpt_design_impl(
     if n_clamped > 0
         if spoke !== nothing && spoke.enabled
             @warn "Spoke check: $n_clamped ring(s) engaged (max tension $(round(max_spoke_tension_N; digits=0)) N/vertex, min FoS $(round(min_spoke_fos; digits=2))). $n_spokes_engaged spokes active."
+            # required_MBL = FoS_gate × max_spoke_tension / (splice × creep)
+            # derating chain: MBL → splice 0.90 → creep/fatigue 0.50 → SWL
+            FOS_GATE = 1.0
+            required_mbl = FOS_GATE * max_spoke_tension_N / (0.90 * 0.50)
         else
             @warn "Centrifugal clamp: $n_clamped ring(s) with net outward load (max $(round(max_outward_N; digits=0)) N/vertex). FoS on these rings reads ∞; outward load path (tension/bending/knuckles) is unverified. See DECISIONS.md §2026-07-06."
         end
@@ -589,6 +595,7 @@ function _evaluate_trpt_design_impl(
         min_spoke_fos,
         n_spokes_engaged,
         max_spoke_tension_N,
+        required_mbl,
     )
 end
 """
@@ -640,7 +647,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
-            0, 0.0, Inf, 0, 0.0,
+            0, 0.0, Inf, 0, 0.0, 0.0,
         )
     end
 

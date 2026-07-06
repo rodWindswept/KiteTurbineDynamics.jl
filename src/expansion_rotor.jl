@@ -283,12 +283,14 @@ Engage under net-outward radial load — carry the force the clamp currently
 discards. `nothing` = disabled = current behavior (bit-identical).
 
 # Fields
-- `d_line::Float64`: spoke line diameter (m). 0.007 (7mm Dyneema, Rod 2026-07-06).
-- `SWL_N::Float64`: safe working load per spoke, after splice/creep/fatigue derating (N).
-  7mm SK78 Dyneema: MBL ≈ 44.0 kN (generic catalogue value for 7mm SK78 single braid).
-  PROVISIONAL: replace with manufacturer datasheet for the actual reel (Rod to supply).
-  Deratings: splice efficiency 0.90, creep/fatigue/UV 0.50 (provisional blanket factor).
-  SWL = 44.0 × 0.90 × 0.50 = 19.8 kN.
+- `d_line::Float64`: spoke line diameter for drag computation (m). Sizing parameter —
+  the actual line is selected post-hoc from `required_MBL_N` in the Gate 2 CSV.
+  0.004 default (~4mm, plausible neighbourhood for corrected loads).
+- `SWL_N::Float64`: safe working load (N). Used for structural FoS during evaluation.
+  Derived from d_line sizing rule. Not the final line spec — see `required_MBL_N`.
+  7mm SK78 Dyneema: MBL ≈ 44.0 kN (generic catalogue, provisional).
+  Deratings: splice 0.90, creep/fatigue/UV 0.50 → SWL = 44.0 × 0.90 × 0.50 = 19.8 kN.
+  PROVISIONAL pending Gate 2 output — `required_MBL_N` in CSV supersedes this constant.
 - `C_D::Float64`: drag coefficient for cylinder in cross-flow. ~1.0 at spoke Re.
 - `enabled::Bool`: enable the structural check and drag torque. false = no-op.
 """
