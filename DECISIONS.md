@@ -119,8 +119,8 @@ rings with expansion rotors (Rod). `spoke=nothing` = current behavior.
 multibody_ode! → run_canonical_sim!) but NOT in static equilibrium solver
 (solve_equilibrium_self_consistent in objective_v6.jl). Static evaluations
 (objective_v10, Phase 2 campaign re-eval) compute ω_eq without spoke drag.
-Guard: objective_v10 @warns if spoke is passed. ODE-only is correct for
-Gate 2 Option B; static side ticketed for Gate 2 post-processing.
+Guard: objective_v10 errors if spoke is enabled (not @warn — prevents silent
+divergence). Must be lifted before Phase 2 static campaign re-evaluation.
 
 **2026-07-06 neutral radial loading design philosophy (Rod):** the spoke tension
 crossing (~330 rpm for 7mm, ~6.5 kN/vertex at 260 rpm) reframes from a

@@ -254,7 +254,9 @@ function objective_v10(
 )
     # ═══ Spoke parity guard (2026-07-06) ═════════════════════════════════
     if spoke !== nothing && spoke.enabled
-        @warn "objective_v10 does not include spoke drag in static equilibrium solve — ω_eq computed without spoke drag power loss. ODE-only parity gap. See DECISIONS.md §2026-07-06."
+        error("spoke drag not implemented in static equilibrium solve; " *
+              "objective_v10 results would diverge from ODE. " *
+              "See DECISIONS.md 2026-07-06 (parity deferral).")
     end
     # ── Decode design ────────────────────────────────────────────────────
     result = design_from_vector_v10(

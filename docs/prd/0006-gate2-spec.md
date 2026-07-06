@@ -1,91 +1,100 @@
-# PRD 0006 Gate 2 — Constrained Control Map Re-run (v4)
+# PRD 0006 Gate 2 — Constrained Control Map Re-run (v5)
 
-**Status:** SPEC (revised 2026-07-06 — spokes replace clamp, neutral-loading target)
+**Status:** SPEC (2026-07-06 — spokes replace clamp, neutral-loading target)
 **Parent:** [PRD 0006 — Blade Geometry Audit & Recovery](0006-blade-geometry-audit.md)
-**Supersedes:** Gate 1 (defects #2 and #3) · Gate 2 v1 (Mach root-find — retracted) · Gate 2 v3 (clamp-boundary — superseded by spoke design)
-**Gate:** Centrifugal loads ✅ · Spoke ties ✅ · FR4 + full suite ✅
+**Supersedes:** Gate 1 (defects #2, #3) · v1 (Mach root-find) · v3 (clamp) · v4 (SWL unsourced)
+**Gate:** Centrifugal loads ✅ · Spoke ties 🟡 (Commit 2 held pending SWL fix — this spec)
+
+Spoke SWL: 44.0 kN MBL × 0.90 splice × 0.50 creep/fatigue/UV = **19.8 kN**.
+PROVISIONAL — Rod to supply actual reel MBL or make/model.
 
 ---
 
-## Constraint summary
+## Constraint envelope
 
-| Constraint | Type | Binding? | Source |
-|-----------|------|----------|--------|
-| Spoke FoS (7mm Dyneema, SWL 10.5 kN) | Structural | **Yes** — crosses 1.0 at ~330 rpm | SpokeParams, `_evaluate_trpt_design_impl` |
-| Spoke drag (ODE, ~12 kW at 260 rpm, ω³) | Parasitic loss | **Yes** — ~5-8% of design at 260 rpm, grows with ω³ | `compute_ring_forces!` |
-| Ring compression FoS | Structural | Binding at low ω (<~200 rpm) | Existing evaluator (unchanged) |
-| Mach 0.7 (drag divergence) | Model caveat | No — non-binding below 440 rpm | Caveat column only |
-| Mach 0.85 (transonic) | Model caveat | No — non-binding below 500 rpm | Caveat column only |
-| V10 Tight instability | Dynamic | TBD (t=57-59s transient) | Separate investigation |
+| Constraint | Status | Binding? | Source |
+|-----------|--------|----------|--------|
+| Ring compression FoS | ✅ Implemented | Binding where net radial load is inward (load-dependent) | `_evaluate_trpt_design_impl` |
+| Spoke FoS (7mm Dyneema, SWL 19.8 kN) | 🟡 SWL provisional | TBD after SWL-sourced regeneration | `SpokeParams`, evaluator |
+| Spoke drag (ODE, ~12 kW at 260 rpm, ω³) | ✅ Implemented | ~5-8% of design | `compute_ring_forces!` |
+| Strut tension FoS | ⬜ Outward-load spec Commit 1, pending | TBD | `docs/prd/0006-outward-load-spec.md` |
+| Knuckle at spoke-termination load | ⬜ Outward-load spec Commit 1, pending | TBD | Same spec |
+| Blade-root bending FoS | ⬜ Outward-load spec Commit 2, pending | TBD | Same spec |
+| Mach 0.7 / 0.85 | Caveat column | Non-binding | Verify-stage flag |
+| V10 Tight instability | TBD | TBD | t=57-59s transient at k=6.23 |
 | Hardware ω ceiling | Rod's call | TBD | Generator rpm, tether wrap rate |
 
-**Spoke engagement** replaces the old "centrifugal clamp" concept. The clamp was
-a model validity boundary (FoS reads ∞ when F_v < 0); the spokes are a real
-structural member with measured FoS, drag, and a design target ("neutral radial
-loading" — operate at small positive spoke tension, bias slightly outward).
+**Rated FoS** (when envelope is complete): min over compression, spoke, strut tension,
+knuckle, blade-root. Pending members marked absent from current envelope.
+
+**Spoke engagement** replaces the old "clamp" concept. The clamp was a model
+validity boundary (FoS reads ∞ when F_v < 0); spokes are a real structural
+member with measured FoS, drag, and a design target.
 
 ---
 
-## Spoke check at reference ω values
+## Reference spoke tensions (PROVISIONAL — pre-SWL-fix, for illustration only)
 
-| ω (rpm) | T_spoke/vertex | FoS (7mm) | Regime |
-|---------|---------------|-----------|--------|
-| 150 (Gate 1 typical) | <2 kN | >5 | Compression-dominated, spokes slack |
-| 191 | ~4 kN | 2.6 | Spokes begin to engage |
-| 260 (Reinforced peak) | ~6.5 kN | 1.62 | "Fly-light" band — near neutral |
-| 332 (Tight peak) | ~10.6 kN | 0.99 | Spoke FoS crosses 1.0 |
-| 376 | ~13.6 kN | 0.77 | Spoke failure |
+Regenerate via script after SWL constant is sourced. Do not cite these numbers
+in any document without provenance stamp.
 
-**Spoke drag:** ~12 kW at 260 rpm (~5-8% of 150-350 kW design), ~30 kW at
-376 rpm (ω³ scaling). Drag may cap useful ω before structural FoS does.
+| Design | Wind | k | ω (rpm) | T_spoke (kN) | FoS (SWL 19.8) |
+|--------|------|---|---------|-------------|-----------------|
+| Tight λ=1.0 | 15 | 12.9 | 322 | ~10 | ~2.0 |
+| Reinforced | 15 | 12.9 | 213 | ~3 | ~6+ |
+| λ=0.69 | 15 | 3.0 | 337 | ~10 | ~2.0 |
 
-**Neutral radial loading** (Rod 2026-07-06): operate at small positive spoke
-tension — beams near-zero compression, spokes in light standing tension,
-structure sized for cruise can be genuinely light. Bias slightly outward
-(taut lines don't snap, sewn tabs tolerate steady low tension better than
-slack-taut cycling). Guard: ramp transients (startup/shutdown) may dominate
-sizing — check before betting a design on neutral cruise.
+**Spoke drag** (per `scripts/verify_ring_radii.jl` output): ~4 kW/ring at 260 rpm,
+~12 kW total across 3 rings × 3 lines. ω³ scaling; hand-calc validated at
+47.6 N·m/spoke at 260 rpm/R=2.66m.
 
 ---
 
 ## Hunt procedure
 
-### Step 1 — Compute per-design spoke engagement curve
+### Step 1 — Compute per-design spoke engagement curves
 
-For each builder, compute T_spoke(v, k) across the wind band. The spoke
-engagement onset is load-dependent, not a fixed ω limit. Use the evaluator's
-`max_spoke_tension_N` and `min_spoke_fos` per row.
+For each builder, sample T_spoke(v, k) via the evaluator across the wind band.
+Output: `spoke_engagement_{design}.csv` with columns (v_wind, k, ω, T_spoke, spoke_fos).
+Spoke engagement is load-dependent — no fixed-rpm threshold.
+
+### Step 1b — ω_neutral(v) bisection
+
+Per design, bisect on net radial load = 0 across the wind band. Output:
+`omega_neutral_{design}.csv`. Overlay chart: ω_neutral(v) against the controller
+operating line ω(v) from k_mppt. The gap between the MPPT line and the neutral
+line is the power-vs-fatigue trade, quantified per design.
 
 ### Step 2 — Constrained peak-hunt per row (builder × wind)
 
 Reuse Gate 1 machinery (`ControlMapHunt.hunt_control_map`) with:
-- `max_power=true` (unchanged)
+- `max_power=true`
 - Spokes enabled (`SpokeParams(enabled=true)`)
-- Adaptive convergence: sliding 20s windows, cap 240s
-- Report **windowed-mean P**, never last-slice
-- Record ω(t), FoS(t), spoke FoS(t) to distinguish settling from instability
+- Adaptive convergence: sliding 20s windows, cap 240s, windowed-mean P
+- Record ω(t), FoS(t), spoke FoS(t), spoke drag power
 
 ### Step 3 — Verify at the chosen k
 
 - Sliding-window convergence ✓
 - Stability gate (variance bound) ✓
-- Spoke FoS per ring (record `min_spoke_fos`, `n_spokes_engaged`)
-- Spoke drag power loss (record per ring)
-- tip_mach_ss and tip_mach_max (caveat, not constraint)
+- Spoke FoS per ring, spoke drag power loss
+- tip_mach_ss and tip_mach_max (caveat)
 
 ### Step 4 — CSV output
 
-Columns: all Gate 1 columns plus `tip_mach_ss`, `tip_mach_max`,
-`n_spokes_engaged`, `max_spoke_tension_N`, `min_spoke_fos`, `spoke_drag_kW`,
-`standing_radial_load_N` (signed, per worst ring), `n_sims_hunt`,
+Columns: all Gate 1 plus `n_spokes_engaged`, `max_spoke_tension_N`,
+`min_spoke_fos`, `spoke_drag_kW`, `standing_radial_load_N` (signed),
+`sign_flip_gust_ms`, `tip_mach_ss`, `tip_mach_max`, `n_sims_hunt`,
 `T_converged_s`, `stability_flag`.
 
 Caveat flags:
-- `min_spoke_fos < 1.5`: spoke FoS marginal
+- `min_spoke_fos < 1.5`: spoke FoS below design margin (hunt gates at 1.0;
+  SWL already embeds deratings; gating at 1.5-on-SWL would double-margin)
+- `sign_flip_gust_ms` within Rod's site turbulence band (band TBD; until
+  supplied, flag if within ±2 m/s of row wind speed)
 - `tip_mach_ss > 0.7`: drag divergence, power optimistic
 - `stability_flag = fail`: P variance high
-- `T_converged_s = 240`: hit time cap, may not be converged
-- `abs(standing_radial_load_N) < 500`: near neutral — check dwell flag
+- `T_converged_s = 240`: hit time cap
 
 ---
 
@@ -93,31 +102,38 @@ Caveat flags:
 
 | Parameter | Source |
 |-----------|--------|
-| Rated speed | ω at constrained optimum (rpm) |
+| Rated speed | ω at constrained optimum |
 | Rated torque | Q_gen from verify stage |
 | Rated power | P_kw at constrained optimum |
-| Rated FoS | min of compression FoS, spoke FoS |
-| Rated spoke load | standing_radial_load_N at operating point |
+| Rated FoS | min over implemented checks |
+| Standing spoke load | standing_radial_load_N at operating point |
 
 ---
 
-## Pre-requisites before Gate 2 runs
+## Pre-requisites
 
-- [ ] Stable t=57-59s transient investigated for Tight
+- [ ] Rod: reel MBL or make/model (SWL currently 19.8 kN PROVISIONAL)
+- [ ] Rod: hardware ω ceiling on record, or explicit "unconstrained for Gate 2"
+- [ ] Rod: FoS gate decision — gate hunt at 1.0 with 1.5 caveat (recommended),
+      or gate at 1.5 and drop caveat
+- [ ] Reference tables regenerated by script post-SWL-fix, provenance stamped
+- [ ] Spoke ties Commit 2 landed with SWL fix + table regeneration
+- [ ] Outward-load check commits (strut tension, knuckle, blade-root) — pending
 - [ ] Static equilibrium parity (spoke drag in objective_v10) — deferred,
-      ODE-only for Gate 2 runs
+      objective_v10 errors if spoke enabled per parity guard
 - [ ] Tripwire: assert Mach at ω=260rpm ∈ [0.30, 0.60]
+- [ ] V10 Tight t=57-59s transient investigated
 
 ---
 
 ## What replaces Gate 1
 
-| Gate 1 | Gate 2 (v4) |
+| Gate 1 | Gate 2 (v5) |
 |--------|-------------|
-| Unconstrained max-power | Constrained max-power (spoke FoS ≥ 1.5) |
+| Unconstrained max-power | Constrained max-power (spoke FoS ≥ 1.0 gate, <1.5 flag) |
 | 5s pre-sweep k-selection | Gate 1 machinery + adaptive converge |
 | T_VERIFY = 60s fixed | Sliding-window, cap 240s |
 | Last-slice P snapshot | Windowed-mean P |
-| No ω(t) or FoS(t) | Full ω(t), FoS(t), spoke FoS(t) |
-| No spoke tracking | n_spokes_engaged, spoke FoS, spoke drag |
-| No generator spec | Rated speed/torque/power/spoke load as outputs |
+| No ω(t), FoS(t) | Full ω(t), FoS(t), spoke FoS(t) |
+| No spoke tracking | Spoke engagement, FoS, drag, sign-flip margin |
+| No generator spec | Rated speed/torque/power/spoke load |
