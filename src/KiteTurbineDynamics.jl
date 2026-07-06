@@ -5,6 +5,7 @@ using LinearAlgebra, Printf, Statistics
 include("parameters.jl")
 include("aerodynamics.jl")
 include("expansion_rotor.jl")
+include("structural_constants.jl")
 include("expansion_stack.jl")
 include("wind_profile.jl")
 include("types.jl")

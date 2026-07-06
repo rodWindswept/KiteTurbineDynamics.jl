@@ -291,6 +291,8 @@ struct EvalResult
     n_spokes_engaged::Int         # count of spokes under tension
     max_spoke_tension_N::Float64  # worst spoke tension (N), 0 if none
     required_MBL_N::Float64        # minimum MBL for FoS_gate (gate × max_T / derating)
+    # Outward-load checks (2026-07-06 Phase B)
+    min_fos_tension::Float64       # strut tension FoS (Inf if none)
 end
 
 """
@@ -423,6 +425,7 @@ function _evaluate_trpt_design_impl(
     max_spoke_tension_N = 0.0
     min_spoke_fos = Inf
     required_mbl = 0.0
+    min_fos_tension = Inf
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
@@ -495,6 +498,14 @@ function _evaluate_trpt_design_impl(
                 fos_spoke = spoke.SWL_N / T_spoke
                 if fos_spoke < min_spoke_fos
                     min_spoke_fos = fos_spoke
+                end
+                # Strut tension check (2026-07-06 Phase B): when net outward,
+                # strut sees tension instead of compression buckling
+                T_strut = outward_N / (2.0 * sin(π / n_float))
+                sigma_tension = T_strut / A  # A from props (strut cross-section)
+                fos_tension = CFRP_SIGMA_YIELD_TENSION_MPA * 1e6 / sigma_tension
+                if fos_tension < min_fos_tension
+                    min_fos_tension = fos_tension
                 end
             end
         end
@@ -596,6 +607,7 @@ function _evaluate_trpt_design_impl(
         n_spokes_engaged,
         max_spoke_tension_N,
         required_mbl,
+        min_fos_tension,
     )
 end
 """
@@ -647,7 +659,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
-            0, 0.0, Inf, 0, 0.0, 0.0,
+            0, 0.0, Inf, 0, 0.0, 0.0, Inf,
         )
     end
 
