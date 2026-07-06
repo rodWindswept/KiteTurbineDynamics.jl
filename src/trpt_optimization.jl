@@ -286,6 +286,10 @@ struct EvalResult
     # Centrifugal clamp diagnostics (2026-07-06)
     n_clamped_rings::Int          # count of rings where F_v clamped to 0 (net outward)
     max_outward_N::Float64        # worst net outward force per vertex (N), 0 if none
+    # Spoke tie diagnostics (2026-07-06)
+    min_spoke_fos::Float64        # minimum spoke FoS (Inf if none or disabled)
+    n_spokes_engaged::Int         # count of spokes under tension
+    max_spoke_tension_N::Float64  # worst spoke tension (N), 0 if none
 end
 
 """
@@ -318,6 +322,11 @@ stress margin check.
   not per-vertex). Added to `m_vertex` at each ring carrying expansion rotors.
   The existing `F_centripetal = m_vertex·ω²·r` machinery handles the force.
   Rings without expansion rotors get zero. Default: nothing (backward compatible).
+
+- `spoke`: optional radial spoke tie parameters (SpokeParams). When enabled, the
+  net-outward radial load (currently clamped to F_v=0) is routed through spoke
+  tension. Spoke FoS is computed per ring and reported in EvalResult. Default:
+  nothing (disabled — current clamp behavior, bit-identical).
 """
 function _evaluate_trpt_design_impl(
     design::T,
@@ -335,6 +344,7 @@ function _evaluate_trpt_design_impl(
     F_radial_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     thrust_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     m_expansion_blade_per_ring::Union{Nothing,Vector{Float64}}=nothing,
+    spoke::Union{Nothing,KiteTurbineDynamics.SpokeParams}=nothing,
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
@@ -408,6 +418,9 @@ function _evaluate_trpt_design_impl(
     mass_knuckles = 0.0
     n_clamped = 0
     max_outward_N = 0.0
+    n_spokes_engaged = 0
+    max_spoke_tension_N = 0.0
+    min_spoke_fos = Inf
 
     m_blade_per_vertex = m_blade_total / design.n_lines
 
@@ -468,6 +481,20 @@ function _evaluate_trpt_design_impl(
             if outward_N > max_outward_N
                 max_outward_N = outward_N
             end
+            # Spoke tension check (2026-07-06): when net radial force is outward,
+            # the spoke carries it. T_spoke = -F_v_total (sign convention: positive
+            # = tension in spoke, pulling center node toward ring vertex).
+            if spoke !== nothing && spoke.enabled
+                T_spoke = outward_N  # per-vertex spoke tension
+                n_spokes_engaged += 1
+                if T_spoke > max_spoke_tension_N
+                    max_spoke_tension_N = T_spoke
+                end
+                fos_spoke = spoke.SWL_N / T_spoke
+                if fos_spoke < min_spoke_fos
+                    min_spoke_fos = fos_spoke
+                end
+            end
         end
         F_v = max(F_v_total, 0.0)
         N_comp = F_v / (2.0 * sin(π / n_float))
@@ -514,7 +541,11 @@ function _evaluate_trpt_design_impl(
     mass_total = mass_beams + mass_knuckles
 
     if n_clamped > 0
-        @warn "Centrifugal clamp: $n_clamped ring(s) with net outward load (max $(round(max_outward_N; digits=0)) N/vertex). FoS on these rings reads ∞; outward load path (tension/bending/knuckles) is unverified. See DECISIONS.md §2026-07-06."
+        if spoke !== nothing && spoke.enabled
+            @warn "Spoke check: $n_clamped ring(s) engaged (max tension $(round(max_spoke_tension_N; digits=0)) N/vertex, min FoS $(round(min_spoke_fos; digits=2))). $n_spokes_engaged spokes active."
+        else
+            @warn "Centrifugal clamp: $n_clamped ring(s) with net outward load (max $(round(max_outward_N; digits=0)) N/vertex). FoS on these rings reads ∞; outward load path (tension/bending/knuckles) is unverified. See DECISIONS.md §2026-07-06."
+        end
     end
 
     feasible =
@@ -555,6 +586,9 @@ function _evaluate_trpt_design_impl(
         msg,
         n_clamped,
         max_outward_N,
+        min_spoke_fos,
+        n_spokes_engaged,
+        max_spoke_tension_N,
     )
 end
 """
@@ -606,7 +640,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
-            0, 0.0,
+            0, 0.0, Inf, 0, 0.0,
         )
     end
 

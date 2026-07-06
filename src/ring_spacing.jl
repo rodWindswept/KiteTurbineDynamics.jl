@@ -257,6 +257,7 @@ function evaluate_design(
     F_radial_per_ring::Union{Nothing, Vector{Float64}}=nothing,
     thrust_per_ring::Union{Nothing, Vector{Float64}}=nothing,
     m_expansion_blade_per_ring::Union{Nothing, Vector{Float64}}=nothing,
+    spoke::Union{Nothing, KiteTurbineDynamics.SpokeParams}=nothing,
 )
 
     # ── Ground ring deployment constraint ─────────────────────────────────
@@ -275,7 +276,7 @@ function evaluate_design(
             false,
             0.0,
             "r_bottom exceeds max_ground_radius",
-            0, 0.0,
+            0, 0.0, Inf, 0, 0.0,
         )
     end
 
@@ -297,7 +298,7 @@ function evaluate_design(
             Float64[],
             Float64[],
             false,
-            "invalid geometry", 0, 0.0,
+            "invalid geometry", 0, 0.0, Inf, 0, 0.0,
         )
     end
 
@@ -323,6 +324,7 @@ function evaluate_design(
         F_radial_per_ring=F_radial_per_ring,
         thrust_per_ring=thrust_per_ring,
         m_expansion_blade_per_ring=m_expansion_blade_per_ring,
+        spoke=spoke,
     )
 end
 

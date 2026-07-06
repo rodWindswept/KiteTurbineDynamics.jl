@@ -270,3 +270,28 @@ calibrated from CFRP blade mass estimates for the V10 configuration.
 function expansion_blade_mass(blade_tip_radius::Float64, blade_scale::Float64)::Float64
     return (0.3 + 0.1 * blade_tip_radius) * blade_scale^3
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Radial spoke ties (2026-07-06 — Rod's design change)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    SpokeParams
+
+Radial spoke ties from each ring vertex to a floating center node.
+Engage under net-outward radial load — carry the force the clamp currently
+discards. `nothing` = disabled = current behavior (bit-identical).
+
+# Fields
+- `d_line::Float64`: spoke line diameter (m). 0.007 (7mm Dyneema, Rod 2026-07-06).
+- `SWL_N::Float64`: safe working load per spoke, after splice/creep/fatigue derating (N).
+  7mm SK78 Dyneema: break ~40 kN → SWL ~10 kN after 4× safety factor.
+- `C_D::Float64`: drag coefficient for cylinder in cross-flow. ~1.0 at spoke Re.
+- `enabled::Bool`: enable the structural check and drag torque. false = no-op.
+"""
+@kwdef struct SpokeParams
+    d_line::Float64 = 0.007
+    SWL_N::Float64  = 10_000.0
+    C_D::Float64    = 1.0
+    enabled::Bool   = true
+end
