@@ -17,7 +17,22 @@ using KiteTurbineDynamics
 using Printf, CSV, DataFrames, Dates
 
 # ═══════════════════════════════════════════════════════════════
-const GIT_HASH       = "86ca0e5"
+# Auto-detect code state — never hardcode (PRD 0006 checklist: stale hash made
+# biased and corrected CSVs indistinguishable). "-dirty" flag covers uncommitted
+# src/scripts edits (results/ excluded — runs write there).
+function _detect_git_hash()
+    root = dirname(@__DIR__)
+    try
+        h = strip(read(`git -C $root rev-parse --short HEAD`, String))
+        dirty = !isempty(strip(read(
+            `git -C $root status --porcelain --untracked-files=no -- src scripts ':!scripts/results'`,
+            String)))
+        return dirty ? "$h-dirty" : h
+    catch
+        return "unknown"
+    end
+end
+const GIT_HASH       = _detect_git_hash()
 const DT              = 4e-5
 const T_HUNT          = 5.0      # pre-sweep + bisection sim duration (s)
 const T_VERIFY        = 60.0     # verification sim duration (s)
@@ -406,23 +421,31 @@ if abspath(PROGRAM_FILE) == @__FILE__
     WINDS   = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
     lift    = KiteTurbineDynamics.rotary_lifter_default()
 
-    # Gate 1A: V10 Tight λ=1.0
-    println("\n══════ GATE 1A: V10 Tight λ=1.0 ══════")
-    ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(blade_scale=1.0), 50000.0, WINDS;
-        out_dir=OUT_DIR, name="gate1_v10_tight_maxpower", lift_device=lift, verbose=true, max_power=true)
+    # ── Gate 1: all three builders completed 2026-07-05/06 ──────────────────
+    # Re-run any gate by uncommenting the block below. Parameters are the
+    # authoritative record of what was run.
 
-    # Gate 1B: V10 Reinforced
-    println("\n══════ GATE 1B: V10 Reinforced ══════")
-    ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(r_bottom_scale=1.30, tether_diameter=0.004, blade_scale=1.0), 50000.0, WINDS;
-        out_dir=OUT_DIR, name="gate1_v10_reinforced_maxpower", lift_device=lift, verbose=true, max_power=true)
+    # Gate 1A: V10 Tight λ=1.0 (done — 2026-07-05T21:37, CSV: gate1_v10_tight_maxpower)
+    # println("\n══════ GATE 1A: V10 Tight λ=1.0 ══════")
+    # ControlMapHunt.hunt_control_map(
+    #     ControlMapHunt.v10_tight_builder(blade_scale=1.0), 50000.0, WINDS;
+    #     out_dir=OUT_DIR, name="gate1_v10_tight_maxpower", lift_device=lift,
+    #     verbose=true, max_power=true)
 
-    # Gate 1C: Blade-rescaled λ=0.69
-    println("\n══════ GATE 1C: Blade-rescaled λ=0.69 ══════")
-    ControlMapHunt.hunt_control_map(
-        ControlMapHunt.v10_tight_builder(blade_scale=0.69), 50000.0, WINDS;
-        out_dir=OUT_DIR, name="gate1_blade_scaled_069_maxpower", lift_device=lift, verbose=true, max_power=true)
+    # Gate 1B: V10 Reinforced (done — 2026-07-05T22:58, CSV: gate1_v10_reinforced_maxpower)
+    # println("\n══════ GATE 1B: V10 Reinforced ══════")
+    # ControlMapHunt.hunt_control_map(
+    #     ControlMapHunt.v10_tight_builder(r_bottom_scale=1.30, tether_diameter=0.004, blade_scale=1.0),
+    #     50000.0, WINDS;
+    #     out_dir=OUT_DIR, name="gate1_v10_reinforced_maxpower", lift_device=lift,
+    #     verbose=true, max_power=true)
 
-    println("\n═══ Gate 1 complete ═══")
+    # Gate 1C: Blade-rescaled λ=0.69 (done — 2026-07-06T00:37, CSV: gate1_blade_scaled_069_maxpower)
+    # println("\n══════ GATE 1C: Blade-rescaled λ=0.69 ══════")
+    # ControlMapHunt.hunt_control_map(
+    #     ControlMapHunt.v10_tight_builder(blade_scale=0.69), 50000.0, WINDS;
+    #     out_dir=OUT_DIR, name="gate1_blade_scaled_069_maxpower", lift_device=lift,
+    #     verbose=true, max_power=true)
+
+    println("\n═══ All Gate 1 builders completed. Uncomment a block above to re-run. ═══")
 end

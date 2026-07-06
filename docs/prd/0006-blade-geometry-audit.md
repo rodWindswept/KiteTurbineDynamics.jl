@@ -44,25 +44,11 @@ The mean aerodynamic radius shifted from `r_nom + 0.625·s·cos(β)` to
 
 ## Audit phases
 
-### Phase 0 — Gate 1 re-run (IN PROGRESS)
-
-Three builders × 6 winds with corrected 70/30 geometry.
-Deliverable: new `gate1_*_maxpower_summary.csv` and timeseries.
-
-**Gate:** The corrected Gate 1 must complete before any other re-runs.
-All downstream numbers wait on this.
-
-### Phase 1 — Impact quantification
-
-For each affected system, compare old (biased) vs new (corrected) results.
-
-1. **Gate 1 delta table** — old vs new P, ω, k, FoS for all three builders
-2. **Loss model re-fit** — new c·ω³ regression on corrected data
-3. **FoS envelope** — which FoS claims survive, which don't
-4. **k_mppt mapping** — corrected k values for each builder/wind
-5. **Rated-crossing winds** — which builders hit 50 kW at which wind
-
-### Phase 2 — Campaign re-evaluation
+### Phase 0 — Gate 1 re-run (COMPLETE ✅)
+### Phase 1 — Impact quantification (COMPLETE ✅ — see 0006-phase1-delta-analysis.md)
+### Phase 2 — Campaign re-evaluation (PENDING)
+### Phase 3 — Document correction (PARTIAL)
+### Phase 4 — Preventative measures (PENDING)
 
 1. **V10 campaign**: was the "best" design an artefact of wrong geometry?
    - Re-evaluate top-N elite designs with corrected expansion rotor forces

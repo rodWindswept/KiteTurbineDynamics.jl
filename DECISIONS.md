@@ -40,6 +40,23 @@ without expansion rotors.
 numbers, reports, and claims to be re-verified against corrected results before
 publication. Old CSVs retained as tier-X reference; new ones supersede them.
 
+**2026-07-06 P1 provenance resolution:** The fix was committed as `13f304a`
+(2026-07-05T21:07+0100). The tier-X biased runs (14:58–19:18) used code state
+`d661dfc` (pre-fix). The corrected runs (21:37–00:37) used `13f304a`. All six
+CSVs were retro-annotated with `code_state:` stamps. The hardcoded `GIT_HASH`
+constant in `hunt_kmppt_bisect.jl` was replaced with `git rev-parse` auto-detect
+plus a `-dirty` flag for uncommitted src/script edits. A `tier-X-biased-geometry/
+README.md` was added documenting the DO-NOT-CITE status. Attribution: CSV
+annotations, README, and GIT_HASH auto-detect were contributed via the Cowork
+advisor session of 2026-07-06; the Gate 1 runner stubs with done-timestamps
+originate from the 07-05 sequential-run session; the Gate 1 max-power runner
+with VerifySlice/P_aero fields is from the primary Hermes session.
+
+**2026-07-06 script cleanup:** `scripts/hunt_kmppt_maxpower.jl` was deleted
+(`git rm`). It was the abandoned first-attempt max-power script that used
+`ExtendedSimFrame` and produced garbage at low winds. All Gate 1 runs used
+`scripts/hunt_kmppt_bisect.jl` instead. History retained at `51e70cb`.
+
 ## 2026-07-04: Settle k_mppt bug and five simulator-integrity findings; blade-scaling energy balance
 
 ### Settle k_mppt bug (integrity #1)
