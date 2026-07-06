@@ -3,7 +3,7 @@
 # 2 builders × 6 winds. Spokes enabled, stability gate, adaptive verify.
 # Usage: julia --project=. scripts/hunt_gate2.jl [--builder lambda069|reinforced]
 
-using Printf, CSV, DataFrames, Dates
+using Printf, CSV, DataFrames, Dates, Statistics
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 using KiteTurbineDynamics; import KiteTurbineDynamics: SpokeParams
