@@ -85,12 +85,29 @@ at low k/high ω, not just slow settling. R3 λ=0.69 is deterministic at 60s
   unstable — a more important finding than "peak is at lower k."
 - V10 Tight stays retired on its 13 m/s FoS wall (best FoS=1.24 at any k,
   still below 1.5). The 11 m/s question is unresolved until P(t) converges.
-**2026-07-06 corrected: expansion rotor ring radii are 2.0-3.0m (RingNode.radius),
-not ~12m as the 2026-07-06 handover estimated. r_tip = ring_radius + 0.7·blade_span
-≈ 4.6-5.8m across the three builders. Gate 1 ω values (150-279 rpm) correspond to
-Mach 0.3-0.5 — well subsonic. Mach 0.85 ceiling is ~480-600 rpm, far above
-anything simulated. The Mach constraint is non-binding for Gate 1 data; it becomes
-relevant for Gate 2 optimisation at high ω / low k.
+**2026-07-06 corrected: expansion rotor ring radii are 2.0-3.0m (RingNode.radius,
+verified via scripts/verify_ring_radii.jl). r_tip = ring_radius + 0.7·blade_span
+≈ 4.6-5.8m across the three builders. Gate 1 ω values (150-322 rpm) correspond
+to Mach 0.18-0.54 — well subsonic, BEM model is valid throughout.
+
+**Retraction:** the 2026-07-06 handover claimed "expansion rotor tips at Mach
+1.2-1.7" and "subsonic BEM beyond validity at ω ≥ 260 rpm." Both are wrong.
+Root cause: ring radii were estimated as ~12m (confusing ring polygon radius
+with ring position along the shaft). Actual RingNode.radius values are 2.2-3.0m.
+Gate 1 never exceeded Mach 0.54. The "defect: BEM validity" entry is struck.
+
+**Magnitude correction:** the centrifugal force magnitude check used r_mean ≈ 12m
+→ F_cf ≈ 27 kN. At correct r_mean ≈ 3.5m (ring radius + mid-span projection):
+F_cf ≈ 8 kN at 260 rpm — still significant vs aero F_radial, so the centrifugal
+fix stands, but all downstream numbers quoting 27 kN need correction.
+The centrifugal clamp fires at ~191 rpm on beam+knuckle mass alone.
+
+**Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding vs
+the centrifugal clamp at 191 rpm. Gate 2 redesign: constrained peak-hunt (not
+Mach root-find), with clamp threshold as the model-validity boundary. Below 191
+rpm, ring compression is verified; above, the outward load path is unmodeled.
+Mach becomes a verify-stage caveat (flag tip_mach > 0.7 for drag divergence).
+Stability check (Tight t=57-59s transient) remains a separate bound.
 - FoS < 1 rows are infeasibility certificates, not data points. Report both
   unconstrained peak (diagnostic) and constrained optimum (FoS ≥ 1.5).
 
