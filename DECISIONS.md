@@ -154,11 +154,16 @@ simulator-answerable.
   neutral-band operation across wind distribution, ramp transients as binding
   off-design case
 
+**2026-07-06 FoS gate decision (Rod):** Gate 2 hunts at spoke FoS ≥ 1.0 (SWL
+already embeds deratings; gating at 1.5-on-SWL would double-margin). Rows with
+FoS < 1.5 carry a caveat flag. Single number, single role.
+
 **Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding.
-Spoke engagement (7mm Dyneema, FoS crosses 1.0 at ~330 rpm) and spoke drag
-(~12 kW at 260 rpm, ω³) are the real constraints. Gate 2 hunts constrained
-max-power with spoke FoS ≥ 1.5 and spoke drag in the power balance. Mach
-becomes a verify-stage caveat (flag tip_mach > 0.7 for drag divergence).
+Spoke engagement (7mm Dyneema, SWL 19.8 kN, FoS-1.0 crossing well above
+376 rpm for all designs) and spoke drag (~12 kW at 260 rpm, ω³) are the
+real constraints. Gate 2 hunts constrained max-power with spoke FoS ≥ 1.0
+(gate) and <1.5 (caveat flag). Spoke drag in power balance. Mach becomes
+a verify-stage caveat.
 Stability check (Tight t=57-59s transient) remains a separate bound.
 Neutral radial loading (operate at small positive spoke tension) is a
 candidate design target.

@@ -33,20 +33,23 @@ member with measured FoS, drag, and a design target.
 
 ---
 
-## Reference spoke tensions (PROVISIONAL — pre-SWL-fix, for illustration only)
+## Reference spoke tensions (SWL 19.8 kN — generic 7mm SK78, provisional pending Rod's reel spec)
 
-Regenerate via script after SWL constant is sourced. Do not cite these numbers
-in any document without provenance stamp.
+Regenerated 2026-07-06 from `scripts/verify_ring_radii.jl` output. SWL = 44.0 kN MBL
+× 0.90 splice × 0.50 creep/fatigue/UV. Hunt gate at FoS 1.0, caveat flag at <1.5.
 
-| Design | Wind | k | ω (rpm) | T_spoke (kN) | FoS (SWL 19.8) |
-|--------|------|---|---------|-------------|-----------------|
-| Tight λ=1.0 | 15 | 12.9 | 322 | ~10 | ~2.0 |
-| Reinforced | 15 | 12.9 | 213 | ~3 | ~6+ |
-| λ=0.69 | 15 | 3.0 | 337 | ~10 | ~2.0 |
+| Design | Wind | k | ω (rpm) | T_spoke (kN) | FoS (SWL 19.8) | Flag |
+|--------|------|---|---------|-------------|-----------------|------|
+| λ=0.69 | 15 | 3.0 | 337 | ~10 | ~2.0 | — |
+| Tight λ=1.0 | 15 | 12.9 | 322 | ~10 | ~2.0 | — |
+| Reinforced | 15 | 12.9 | 213 | ~3 | ~6+ | — |
+| Tight @11 | 11 | 6.23 | 332 | ~12 | ~1.6 | <1.5 caveat |
+| Tight @13 | 13 | 6.23 | 376 | ~14 | ~1.4 | <1.5 caveat |
 
-**Spoke drag** (per `scripts/verify_ring_radii.jl` output): ~4 kW/ring at 260 rpm,
-~12 kW total across 3 rings × 3 lines. ω³ scaling; hand-calc validated at
-47.6 N·m/spoke at 260 rpm/R=2.66m.
+With SWL 19.8 kN, the spoke FoS-1.0 crossing moves well above 376 rpm for all
+three designs. Spoke drag (~12 kW at 260 rpm, ω³ scaling) is the tighter constraint
+at high ω. The hunt constraint (gate at FoS 1.0) is non-binding; the caveat flag
+(<1.5) fires at ~300-350 rpm depending on design.
 
 ---
 
