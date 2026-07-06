@@ -2,6 +2,33 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-06: Wrap-rate applicability — swivel rating = hardware ω ceiling
+
+**Severity: Gate 2 constraint.** Wrap rate applies to the TRPT rig because a
+stationary member (rigidised pipe-shrouded lift line) passes through the
+rotating shaft axis at the top swivel bearing.
+
+**Configuration (Rod):** The top swivel has a rigidised pipe-shrouded lifting
+line segment passing through it, held to the underside of the bearing by washers
+and a carefully bound and finished knot. Above the bearing, the back line is
+tensely anchored to the ground — this resists torque propagating upward into the
+top lift line. A flange between the rigidised pipe and the back line is under
+consideration to further prevent wrap risk.
+
+**Finding: wrap rate applies.** If no stationary member crossed the rotation
+axis, wrap rate would be n/a (pure bearing interfaces). With a stationary
+member, the swivel is the decoupling interface — its rated RPM is the hardware ω
+ceiling. The mitigations (ground-anchored back line, proposed flange) reduce
+torque ingress to the swivel but do not raise the bearing's speed rating.
+
+**Gate 2 impact:** Current Gate 2 operating points (λ=0.69 at 337 rpm; Tight at
+376 rpm) must be checked against the swivel's rated RPM. If the swivel is rated
+below ~300 rpm, all left-flank designs require a bearing upgrade or gearbox
+relocation of the speed ceiling.
+
+**Status:** Applicability confirmed. Rated RPM value TBD — Rod to supply swivel
+make/model or measurement.
+
 ## 2026-07-05: Blade geometry defect — expansion rotor annulus 3× too far outboard
 
 **Severity: CRITICAL.** Every simulation using expansion rotors was affected.
@@ -209,7 +236,15 @@ with dwelling at the engagement boundary — exactly the snap-cycling regime
 the neutral-loading philosophy aims to avoid. The sign_flip_gust_ms column
 will catch this in Gate 2.
 
-λ=0.69 at k=3.0: stable (1.2% P range, 2 rpm ω range). Accumulating case:
+λ=0.69 at k=3.0: stable (1.2% P range, 2 rpm ω range).
+
+**Config:** `scripts/diagnose_tight_transient.jl` @ `3e713de`. Spokes: off
+(default verifier). T_sim=60s (ControlMapHunt.T_VERIFY). Convergence: none
+(last-slice, not windowed-mean — these runs pre-date the adaptive convergence
+spec). Wind: 11 m/s (Tight), 15 m/s (Reinforced, λ=0.69). 1/7-power shear via
+h_ref. Rotary lifter default. Caveat: spoke-off means no spoke drag; Gate 2
+with spoke-on will shift ω via drag → stability classifications may move for
+marginal rows. Accumulating case:
 stable, flat peak (flatness 1.008), FoS 3.87, clean traces. Robust-to-k
 plus dynamically calm — the profile for a field machine.
 
