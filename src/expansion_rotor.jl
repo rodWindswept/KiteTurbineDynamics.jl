@@ -285,13 +285,16 @@ discards. `nothing` = disabled = current behavior (bit-identical).
 # Fields
 - `d_line::Float64`: spoke line diameter (m). 0.007 (7mm Dyneema, Rod 2026-07-06).
 - `SWL_N::Float64`: safe working load per spoke, after splice/creep/fatigue derating (N).
-  7mm SK78 Dyneema: break ~40 kN → SWL ~10 kN after 4× safety factor.
+  7mm SK78 Dyneema: MBL ≈ 42.2 kN (4,300 kg, Marlow D12 Max 78 or equivalent).
+  SWL = MBL / 4.0 ≈ 10.5 kN (4× SF: splice efficiency 0.8, creep 0.7, fatigue 0.8, bending 0.9 → combined 0.4).
+  Derating sources: Cordage Institute CI 2001 splice derating; DSM creep life factor
+  for continuous load at 30% MBL; fatigue knockdown per PhD thesis experimental data."
 - `C_D::Float64`: drag coefficient for cylinder in cross-flow. ~1.0 at spoke Re.
 - `enabled::Bool`: enable the structural check and drag torque. false = no-op.
 """
 @kwdef struct SpokeParams
     d_line::Float64 = 0.007
-    SWL_N::Float64  = 10_000.0
+    SWL_N::Float64  = 10_500.0
     C_D::Float64    = 1.0
     enabled::Bool   = true
 end

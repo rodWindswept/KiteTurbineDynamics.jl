@@ -250,7 +250,12 @@ function objective_v10(
     fos_req::Float64=OPT_FOS_REQUIRED,
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     k_mppt_safety::Float64=1.0,   # >1.0 = conservative (static solver under-predicts dynamic k_mppt)
+    spoke::Union{Nothing,KiteTurbineDynamics.SpokeParams}=nothing,
 )
+    # ═══ Spoke parity guard (2026-07-06) ═════════════════════════════════
+    if spoke !== nothing && spoke.enabled
+        @warn "objective_v10 does not include spoke drag in static equilibrium solve — ω_eq computed without spoke drag power loss. ODE-only parity gap. See DECISIONS.md §2026-07-06."
+    end
     # ── Decode design ────────────────────────────────────────────────────
     result = design_from_vector_v10(
         x, beam_profile, p; max_ground_radius=max_ground_radius, power_W=power_W, v_rated=v_rated

@@ -102,6 +102,22 @@ F_cf ≈ 8 kN at 260 rpm — still significant vs aero F_radial, so the centrifu
 fix stands, but all downstream numbers quoting 27 kN need correction.
 The centrifugal clamp fires at ~191 rpm on beam+knuckle mass alone.
 
+**2026-07-06 spoke ties design change (Rod):** radial 7mm Dyneema spokes from
+each ring vertex to a floating center node, engaging under net-outward radial
+load. `SpokeParams` in `src/expansion_rotor.jl` (SWL 10.5 kN, MBL 42.2 kN/4× SF
+with documented deratings). Structural check (`_evaluate_trpt_design_impl`):
+T_spoke = max(F_centripetal + F_exp − F_in_aero, 0), FoS = SWL/T_spoke.
+Drag torque (ODE only): τ = ρ·C_D·d·ω²·R⁴/8 per spoke. Hand-calc validated:
+47.6 N·m/spoke at 260 rpm/R=2.66m → ~4 kW/ring → ~12 kW total. Spokes only on
+rings with expansion rotors (Rod). `spoke=nothing` = current behavior.
+
+**Parity gap (deferred):** spoke drag applies in ODE path (ring_forces.jl →
+multibody_ode! → run_canonical_sim!) but NOT in static equilibrium solver
+(solve_equilibrium_self_consistent in objective_v6.jl). Static evaluations
+(objective_v10, Phase 2 campaign re-eval) compute ω_eq without spoke drag.
+Guard: objective_v10 @warns if spoke is passed. ODE-only is correct for
+Gate 2 Option B; static side ticketed for Gate 2 post-processing.
+
 **Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding vs
 the centrifugal clamp at 191 rpm. Gate 2 redesign: constrained peak-hunt (not
 Mach root-find), with clamp threshold as the model-validity boundary. Below 191
