@@ -293,6 +293,7 @@ struct EvalResult
     required_MBL_N::Float64        # minimum MBL for FoS_gate (gate × max_T / derating)
     # Outward-load checks (2026-07-06 Phase B)
     min_fos_tension::Float64       # strut tension FoS (Inf if none)
+    min_fos_blade_root::Float64    # blade-root bending FoS (Inf if no expansion rotors)
 end
 
 """
@@ -348,6 +349,7 @@ function _evaluate_trpt_design_impl(
     thrust_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     m_expansion_blade_per_ring::Union{Nothing,Vector{Float64}}=nothing,
     spoke::Union{Nothing,KiteTurbineDynamics.SpokeParams}=nothing,
+    expansion_blade_geo::Union{Nothing,Vector{NamedTuple{(:ring_idx, :mass, :bank_deg, :chord, :span),Tuple{Int,Float64,Float64,Float64,Float64}}}}=nothing,
 ) where {T}
     n_rings_tot = length(radii)
     n_seg = length(L_seg)
@@ -565,6 +567,31 @@ function _evaluate_trpt_design_impl(
         end
     end
 
+    # ── Blade-root bending (2026-07-06 Phase B) ──────────────────────────
+    # Per-expansion-rotor check. Lumped-mass cantilever: centrifugal force
+    # at blade CG resolved normal to blade axis via bank angle.
+    # Centrifugal stiffening neglected (conservative).
+    min_fos_blade = Inf
+    if expansion_blade_geo !== nothing
+        for geo in expansion_blade_geo
+            mass, bank, chord, span = geo.mass, geo.bank_deg, geo.chord, geo.span
+            # Need ring radius — find from radii at ring_idx
+            r_root = radii[geo.ring_idx]
+            r_cg = r_root + 0.4 * span  # approximate CG for linear taper
+            F_cf = mass * r_cg * omega_rotor^2
+            F_normal = F_cf * cosd(bank)  # normal to blade axis
+            M_root = F_normal * (r_cg - r_root)  # lumped-mass root moment
+            t_blade = 0.12 * chord  # NACA t/c ≈ 0.12
+            I_root = chord * t_blade^3 / 12.0
+            sigma = M_root * (t_blade / 2.0) / I_root
+            fos_blade = CFRP_BLADE_SIGMA_YIELD_MPA * 1e6 / sigma
+            if fos_blade < min_fos_blade
+                min_fos_blade = fos_blade
+            end
+        end
+    end
+    min_fos_blade_root = min_fos_blade
+
     feasible =
         (min_fos >= fos_req) &&
         torsion_ok &&
@@ -608,6 +635,7 @@ function _evaluate_trpt_design_impl(
         max_spoke_tension_N,
         required_mbl,
         min_fos_tension,
+        min_fos_blade_root,
     )
 end
 """
@@ -659,7 +687,7 @@ function evaluate_design(
             false,
             0.0,
             "invalid geometry",
-            0, 0.0, Inf, 0, 0.0, 0.0, Inf,
+            0, 0.0, Inf, 0, 0.0, 0.0, Inf, Inf,
         )
     end
 
