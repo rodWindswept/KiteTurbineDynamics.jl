@@ -108,6 +108,7 @@ function compute_ring_forces!(
     wind_fn::Function,
     t::Float64,
     lift_device::Union{Nothing, LiftDevice}=nothing,
+    spoke::Union{Nothing, KiteTurbineDynamics.SpokeParams}=nothing,
 )
     N = sys.n_total
     Nr = sys.n_ring
@@ -232,6 +233,19 @@ function compute_ring_forces!(
                 # Net shaft torque from expansion rotor (τ_net = τ_lift - τ_drag).
                 # Positive = driving (injects power). Negative = braking (parasitic).
                 torques[ring_ri] += tau_net
+
+                # ── Spoke drag torque (2026-07-06) ──────────────────────────
+                # Radial spokes from ring vertices to center node experience
+                # aerodynamic drag as they rotate. τ = ρ·C_D·d·ω²·R⁴/8 per spoke.
+                # Only on rings with expansion rotors (Rod 2026-07-06).
+                if spoke !== nothing && spoke.enabled
+                    R_spoke = r_nom  # spoke extends from ring radius to center
+                    omega_ring = abs(omega[ring_ri])
+                    tau_spoke_per = 0.5 * p.rho * spoke.C_D * spoke.d_line *
+                                    omega_ring^2 * R_spoke^4 / 4.0
+                    tau_spoke_total = p.n_lines * tau_spoke_per
+                    torques[ring_ri] -= tau_spoke_total  # braking
+                end
 
                 # NOTE: effective_radii update REMOVED (2026-06-14).
                 # The old displacement model Δr = F_radial×L/(T×geom) produces

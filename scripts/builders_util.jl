@@ -56,7 +56,11 @@ function build_v10_tight_no_lowest(;
             rotor.blade_hub_radius * blade_scale,
             rotor.blade_chord * blade_scale,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg, 0.0, sr, 1.0,
+            rotor.bank_angle_deg,
+            KiteTurbineDynamics.expansion_blade_mass(
+                rotor.blade_tip_radius * blade_scale, blade_scale
+            ),
+            sr, 1.0,
         )
         push!(expansion_params, er)
     end

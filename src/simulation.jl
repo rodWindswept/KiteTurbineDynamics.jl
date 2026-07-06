@@ -77,13 +77,25 @@ function run_canonical_sim!(
     lift_device::Union{Nothing, LiftDevice}=nothing,
     lin_damp::Float64=0.05,
     callback::Union{Nothing, Function}=nothing,
+    spoke::Union{Nothing, KiteTurbineDynamics.SpokeParams}=nothing,
 )
     N = sys.n_total
     Nr = sys.n_ring
     du = zeros(Float64, length(u))
     t = 0.0
-    ode_params =
-        lift_device === nothing ? (sys, p, wind_fn) : (sys, p, wind_fn, lift_device)
+    ode_params = if lift_device === nothing
+        if spoke === nothing
+            (sys, p, wind_fn)
+        else
+            (sys, p, wind_fn, nothing, spoke)
+        end
+    else
+        if spoke === nothing
+            (sys, p, wind_fn, lift_device)
+        else
+            (sys, p, wind_fn, lift_device, spoke)
+        end
+    end
 
     for step in 1:n_steps
         fill!(du, 0.0)
