@@ -80,13 +80,19 @@ radial force per vertex is the total force the knuckle must transmit to the teth
 
 ### Strength constant
 
-`F_yield_knuckle` — rated load per knuckle fitting. **Source: to be supplied
-by Rod** (physical part geometry, material rating, pin/bolt strength, or test
-data). NOT derived from knuckle mass — mass is not strength.
+`F_yield_knuckle` — rated load per knuckle fitting.
+
+**Rod (2026-07-06):** knuckles have an internal diameter that accepts the ring
+tube and act as rigid joints between adjacent ring tubes. Knuckles are of
+stronger construction than ring tubes — they do NOT yield before the ring
+tubes yield. Therefore `FoS_knuckle ≥ FoS_tension` by construction.
+
+The knuckle check still runs (for completeness and future designs where
+knuckles may differ), but the binding constraint is strut tension FoS,
+not knuckle yield.
 
 All structural strength constants (σ_yield_tension, F_yield_knuckle, σ_yield_cfrp)
-live in a single named location: `src/structural_constants.jl`, with source
-comments per constant. No guessed material numbers in evaluator code.
+live in `src/structural_constants.jl` with source comments.
 
 ### New EvalResult field
 
