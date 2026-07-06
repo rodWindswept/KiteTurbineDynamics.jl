@@ -567,30 +567,18 @@ function _evaluate_trpt_design_impl(
         end
     end
 
-    # ── Blade-root bending (2026-07-06 Phase B) ──────────────────────────
-    # Per-expansion-rotor check. Lumped-mass cantilever: centrifugal force
-    # at blade CG resolved normal to blade axis via bank angle.
-    # Centrifugal stiffening neglected (conservative).
-    min_fos_blade = Inf
-    if expansion_blade_geo !== nothing
-        for geo in expansion_blade_geo
-            mass, bank, chord, span = geo.mass, geo.bank_deg, geo.chord, geo.span
-            # Need ring radius — find from radii at ring_idx
-            r_root = radii[geo.ring_idx]
-            r_cg = r_root + 0.4 * span  # approximate CG for linear taper
-            F_cf = mass * r_cg * omega_rotor^2
-            F_normal = F_cf * cosd(bank)  # normal to blade axis
-            M_root = F_normal * (r_cg - r_root)  # lumped-mass root moment
-            t_blade = 0.12 * chord  # NACA t/c ≈ 0.12
-            I_root = chord * t_blade^3 / 12.0
-            sigma = M_root * (t_blade / 2.0) / I_root
-            fos_blade = CFRP_BLADE_SIGMA_YIELD_MPA * 1e6 / sigma
-            if fos_blade < min_fos_blade
-                min_fos_blade = fos_blade
-            end
-        end
-    end
-    min_fos_blade_root = min_fos_blade
+    # ── Blade-root bending — DEFERRED (2026-07-06) ─────────────────────
+    # The check committed at f1b5f4e modeled an unbridled cantilever.
+    # Real expansion blades carry bridles at ~0.7·span anchored to the
+    # TRPT line ~1/3 of the way to the next ring (Rod 2026-07-06).
+    # Correct model: beam on two supports (root pin + bridle point) with
+    # tip overhang. Root moment drops ~10×; new loads appear: bridle
+    # tension + lateral point load on the line segment. Requires a
+    # canonical rig topology document before any blade check ships.
+    # Four defects in the committed check: wrong structure (cantilever
+    # vs bridled), trig error (cos vs sin bank), CG error (+0.4 vs +0.2
+    # span per 70/30 geometry), section invented (solid rect vs shell).
+    min_fos_blade_root = Inf  # placeholder until bridle model exists
 
     feasible =
         (min_fos >= fos_req) &&
