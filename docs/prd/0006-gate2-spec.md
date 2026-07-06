@@ -1,92 +1,91 @@
-# PRD 0006 Gate 2 — Constrained Control Map Re-run (v3)
+# PRD 0006 Gate 2 — Constrained Control Map Re-run (v4)
 
-**Status:** SPEC (revised 2026-07-06 — Mach constraint non-binding, clamp binds first)
+**Status:** SPEC (revised 2026-07-06 — spokes replace clamp, neutral-loading target)
 **Parent:** [PRD 0006 — Blade Geometry Audit & Recovery](0006-blade-geometry-audit.md)
-**Supersedes:** Gate 1 (defects #2 and #3) · Gate 2 v1 (Mach root-find — retracted)
-**Gate:** Centrifugal loads ✅ committed `e5b4886` · FR4 + full suite ✅ PASS
+**Supersedes:** Gate 1 (defects #2 and #3) · Gate 2 v1 (Mach root-find — retracted) · Gate 2 v3 (clamp-boundary — superseded by spoke design)
+**Gate:** Centrifugal loads ✅ · Spoke ties ✅ · FR4 + full suite ✅
 
 ---
 
-## Revised findings (2026-07-06 ring radius correction)
+## Constraint summary
 
-Expansion rotor ring radii are **2.2-3.0m** (RingNode.radius, verified via
-`scripts/verify_ring_radii.jl`). r_tip = 4.6-5.8m across builders. Gate 1
-peaked at Mach 0.54 — well subsonic. The handover's Mach 1.2-1.7 claim was
-computed from wrong radii (~12m, confusing ring position with polygon radius)
-and is **retracted**.
-
-| Constraint | Threshold | Binding? | Source |
-|-----------|-----------|----------|--------|
-| Centrifugal clamp | ~191 rpm | **Yes** — model validity boundary | Beam+knuckle F_centripetal exceeds aero F_in |
-| Mach 0.7 (drag divergence) | ~440 rpm | No — above clamp | Subsonic BEM polars become optimistic |
-| Mach 0.85 (transonic) | ~500 rpm | No — far above clamp | Tip speed = a·0.85 |
-| V10 Tight instability | t=57-59s transient | TBD | Low-k / high-ω, k=6.23 @ 11 m/s |
+| Constraint | Type | Binding? | Source |
+|-----------|------|----------|--------|
+| Spoke FoS (7mm Dyneema, SWL 10.5 kN) | Structural | **Yes** — crosses 1.0 at ~330 rpm | SpokeParams, `_evaluate_trpt_design_impl` |
+| Spoke drag (ODE, ~12 kW at 260 rpm, ω³) | Parasitic loss | **Yes** — ~5-8% of design at 260 rpm, grows with ω³ | `compute_ring_forces!` |
+| Ring compression FoS | Structural | Binding at low ω (<~200 rpm) | Existing evaluator (unchanged) |
+| Mach 0.7 (drag divergence) | Model caveat | No — non-binding below 440 rpm | Caveat column only |
+| Mach 0.85 (transonic) | Model caveat | No — non-binding below 500 rpm | Caveat column only |
+| V10 Tight instability | Dynamic | TBD (t=57-59s transient) | Separate investigation |
 | Hardware ω ceiling | Rod's call | TBD | Generator rpm, tether wrap rate |
 
-**Key fact:** the k-refinement power peaks (260-376 rpm) sit above the 191 rpm
-clamp onset. The power-optimal regime is the unverified regime.
+**Spoke engagement** replaces the old "centrifugal clamp" concept. The clamp was
+a model validity boundary (FoS reads ∞ when F_v < 0); the spokes are a real
+structural member with measured FoS, drag, and a design target ("neutral radial
+loading" — operate at small positive spoke tension, bias slightly outward).
 
 ---
 
-## Two options for Gate 2
+## Spoke check at reference ω values
 
-### Option A: Clamp-free regime only (fast, verified physics)
+| ω (rpm) | T_spoke/vertex | FoS (7mm) | Regime |
+|---------|---------------|-----------|--------|
+| 150 (Gate 1 typical) | <2 kN | >5 | Compression-dominated, spokes slack |
+| 191 | ~4 kN | 2.6 | Spokes begin to engage |
+| 260 (Reinforced peak) | ~6.5 kN | 1.62 | "Fly-light" band — near neutral |
+| 332 (Tight peak) | ~10.6 kN | 0.99 | Spoke FoS crosses 1.0 |
+| 376 | ~13.6 kN | 0.77 | Spoke failure |
 
-- Hunt max P subject to ω ≤ 191 rpm (clamp count = 0 on all rings)
-- Gate 1 + adaptive convergence + windowed-mean P + stability gate
-- Every result stands on verified ring-compression physics
-- Will report boundary-constrained optima — potentially well below true peaks
-- ~2-4h runtime
+**Spoke drag:** ~12 kW at 260 rpm (~5-8% of 150-350 kW design), ~30 kW at
+376 rpm (ω³ scaling). Drag may cap useful ω before structural FoS does.
 
-### Option B: Full regime after outward-load check (slower, real optima)
-
-- Build strut tension/bending + knuckle attachment check (existing ticket)
-- Gate 2 can then explore the full ω range and find real optima
-- Answers the question Rod actually cares about
-- Requires src/ changes, test suite, commit → then Gate 2 runs
-
-**Decision: Rod's call.** Option A is the default if no preference is stated.
+**Neutral radial loading** (Rod 2026-07-06): operate at small positive spoke
+tension — beams near-zero compression, spokes in light standing tension,
+structure sized for cruise can be genuinely light. Bias slightly outward
+(taut lines don't snap, sewn tabs tolerate steady low tension better than
+slack-taut cycling). Guard: ramp transients (startup/shutdown) may dominate
+sizing — check before betting a design on neutral cruise.
 
 ---
 
-## Hunt procedure (applies to either option)
+## Hunt procedure
 
-### Step 1 — Compute per-design ω_ceiling
+### Step 1 — Compute per-design spoke engagement curve
 
-For each builder, compute ω at which clamp first fires on any ring with
-expansion blade mass (not just beam+knuckle). This is tighter than the
-191 rpm baseline since blade mass adds to F_centripetal. For Option A,
-this becomes the hunt boundary. For Option B, it becomes a diagnostic flag.
+For each builder, compute T_spoke(v, k) across the wind band. The spoke
+engagement onset is load-dependent, not a fixed ω limit. Use the evaluator's
+`max_spoke_tension_N` and `min_spoke_fos` per row.
 
 ### Step 2 — Constrained peak-hunt per row (builder × wind)
 
 Reuse Gate 1 machinery (`ControlMapHunt.hunt_control_map`) with:
 - `max_power=true` (unchanged)
-- Adaptive convergence: sliding 20s windows, |mean(P_last20) − mean(P_prev20)| < 1%
-  relative for two consecutive windows, cap at 240s
+- Spokes enabled (`SpokeParams(enabled=true)`)
+- Adaptive convergence: sliding 20s windows, cap 240s
 - Report **windowed-mean P**, never last-slice
-- Record ω(t) and FoS(t) to distinguish settling from instability
-- For Option A: constrain k search so ω ≤ ω_ceiling
+- Record ω(t), FoS(t), spoke FoS(t) to distinguish settling from instability
 
 ### Step 3 — Verify at the chosen k
 
-Same as Gate 2 v1 verify stage (spec §Step 4), minus Mach root-find:
 - Sliding-window convergence ✓
 - Stability gate (variance bound) ✓
-- Record tip_mach_ss and tip_mach_max (caveat, not constraint)
-- For Option A: assert n_clamped = 0. For Option B: record n_clamped with
-  "outward load unverified" caveat flag.
+- Spoke FoS per ring (record `min_spoke_fos`, `n_spokes_engaged`)
+- Spoke drag power loss (record per ring)
+- tip_mach_ss and tip_mach_max (caveat, not constraint)
 
 ### Step 4 — CSV output
 
-Columns: all Gate 1 columns plus `tip_mach_ss`, `tip_mach_max`, `n_clamped_rings`,
-`max_outward_N`, `n_sims_hunt`, `T_converged_s`, `stability_flag`, `omega_ceiling_rpm`.
+Columns: all Gate 1 columns plus `tip_mach_ss`, `tip_mach_max`,
+`n_spokes_engaged`, `max_spoke_tension_N`, `min_spoke_fos`, `spoke_drag_kW`,
+`standing_radial_load_N` (signed, per worst ring), `n_sims_hunt`,
+`T_converged_s`, `stability_flag`.
 
 Caveat flags:
+- `min_spoke_fos < 1.5`: spoke FoS marginal
 - `tip_mach_ss > 0.7`: drag divergence, power optimistic
-- `n_clamped_rings > 0`: outward load unverified
 - `stability_flag = fail`: P variance high
 - `T_converged_s = 240`: hit time cap, may not be converged
+- `abs(standing_radial_load_N) < 500`: near neutral — check dwell flag
 
 ---
 
@@ -97,32 +96,28 @@ Caveat flags:
 | Rated speed | ω at constrained optimum (rpm) |
 | Rated torque | Q_gen from verify stage |
 | Rated power | P_kw at constrained optimum |
-| Rated FoS | min_fos (with centrifugal loads) |
+| Rated FoS | min of compression FoS, spoke FoS |
+| Rated spoke load | standing_radial_load_N at operating point |
 
 ---
 
 ## Pre-requisites before Gate 2 runs
 
-- [ ] Rod's decision: Option A or Option B
-- [ ] Hardware ω ceiling from Rod (generator rpm, tether wrap rate) — if
-      below 191 rpm, this becomes the binding constraint instead of clamp
-- [ ] Tripwire committed to Gate 2 script: assert Mach at ω=260rpm ∈ [0.30, 0.60]
-- [ ] Stable t=57-59s transient investigated for Tight (separate from Gate 2
-      but may constrain it if low-k / high-ω is dynamically unstable)
-- [ ] Clamp CSV columns spec'd and implemented
-- [ ] Outward load path ticket created (if Option B)
+- [ ] Stable t=57-59s transient investigated for Tight
+- [ ] Static equilibrium parity (spoke drag in objective_v10) — deferred,
+      ODE-only for Gate 2 runs
+- [ ] Tripwire: assert Mach at ω=260rpm ∈ [0.30, 0.60]
 
 ---
 
 ## What replaces Gate 1
 
-| Gate 1 | Gate 2 (v3) |
+| Gate 1 | Gate 2 (v4) |
 |--------|-------------|
-| Unconstrained max-power | Constrained max-power (ω ≤ ω_ceiling) |
+| Unconstrained max-power | Constrained max-power (spoke FoS ≥ 1.5) |
 | 5s pre-sweep k-selection | Gate 1 machinery + adaptive converge |
 | T_VERIFY = 60s fixed | Sliding-window, cap 240s |
 | Last-slice P snapshot | Windowed-mean P |
-| No ω(t) or FoS(t) | Full ω(t), FoS(t) for stability check |
-| No Mach tracking | tip_mach as caveat column |
-| No clamp tracking | n_clamped_rings, max_outward_N columns |
-| No generator spec | Rated speed/torque/power as outputs |
+| No ω(t) or FoS(t) | Full ω(t), FoS(t), spoke FoS(t) |
+| No spoke tracking | n_spokes_engaged, spoke FoS, spoke drag |
+| No generator spec | Rated speed/torque/power/spoke load as outputs |

@@ -100,7 +100,11 @@ Gate 1 never exceeded Mach 0.54. The "defect: BEM validity" entry is struck.
 → F_cf ≈ 27 kN. At correct r_mean ≈ 3.5m (ring radius + mid-span projection):
 F_cf ≈ 8 kN at 260 rpm — still significant vs aero F_radial, so the centrifugal
 fix stands, but all downstream numbers quoting 27 kN need correction.
-The centrifugal clamp fires at ~191 rpm on beam+knuckle mass alone.
+The centrifugal spoke engagement onset is at ~191 rpm on beam+knuckle mass alone.
+With expansion blade mass, spoke tension increases with ω²; 7mm Dyneema spokes
+(SWL 10.5 kN) cross FoS=1.0 at ~330 rpm. The spokes replace the old "clamp" —
+the outward load path is now a measured structural check, not an unmodeled
+caveat. See `SpokeParams` in `src/expansion_rotor.jl`.
 
 **2026-07-06 spoke ties design change (Rod):** radial 7mm Dyneema spokes from
 each ring vertex to a floating center node, engaging under net-outward radial
@@ -150,12 +154,14 @@ simulator-answerable.
   neutral-band operation across wind distribution, ramp transients as binding
   off-design case
 
-**Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding vs
-the centrifugal clamp at 191 rpm. Gate 2 redesign: constrained peak-hunt (not
-Mach root-find), with clamp threshold as the model-validity boundary. Below 191
-rpm, ring compression is verified; above, the outward load path is unmodeled.
-Mach becomes a verify-stage caveat (flag tip_mach > 0.7 for drag divergence).
+**Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding.
+Spoke engagement (7mm Dyneema, FoS crosses 1.0 at ~330 rpm) and spoke drag
+(~12 kW at 260 rpm, ω³) are the real constraints. Gate 2 hunts constrained
+max-power with spoke FoS ≥ 1.5 and spoke drag in the power balance. Mach
+becomes a verify-stage caveat (flag tip_mach > 0.7 for drag divergence).
 Stability check (Tight t=57-59s transient) remains a separate bound.
+Neutral radial loading (operate at small positive spoke tension) is a
+candidate design target.
 - FoS < 1 rows are infeasibility certificates, not data points. Report both
   unconstrained peak (diagnostic) and constrained optimum (FoS ≥ 1.5).
 
