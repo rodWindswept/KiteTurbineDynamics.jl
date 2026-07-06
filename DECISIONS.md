@@ -57,6 +57,46 @@ with VerifySlice/P_aero fields is from the primary Hermes session.
 `ExtendedSimFrame` and produced garbage at low winds. All Gate 1 runs used
 `scripts/hunt_kmppt_bisect.jl` instead. History retained at `51e70cb`.
 
+**2026-07-06 Gate 1 methodology defects #2 and #3 (P2 k-refinement findings):**
+
+Defect #2 — **5s pre-sweep k-selection is invalid (systematic, all 18 rows).**
+The Gate 1 max-power hunt uses a 5s pre-sweep (`T_HUNT=5.0`) to pick k,
+then verifies at 60s. The 5s sims have not reached steady state; P is still
+rising. This systematically biases k toward higher values (right flank of the
+true P(k) curve). Three-row k-refinement with 60s verifies shows the true
+steady-state peak at much lower k for all three builders.
+
+Defect #3 — **T_VERIFY=60s insufficient for V10 Tight at low k.**
+Timeseries at k=6.23 for V10 Tight @ 11 m/s shows P(t) still drifting at 60s
+(range 47 kW over final 20s, drift +11%). The 247.4 kW last-slice snapshot
+(claimed +108%) is a transient artefact, not converged steady state. At
+t=57–59s, P swings 226→270→247 kW — possible onset of dynamic instability
+at low k/high ω, not just slow settling. R3 λ=0.69 is deterministic at 60s
+(ΔP=0.0000% on re-run); T_VERIFY sufficiency is design-dependent.
+
+**Implications for Gate 1 re-run:**
+- `T_HUNT` must be extended until P(t) flattens (sliding-window convergence
+  criterion, not fixed duration). Adaptive stop: fast designs finish at
+  ~60–80s, only Tight rows run long. Cap at ~240s.
+- Report windowed-mean P, never last-slice. Last-slice artefacts manufactured
+  the 247.4 kW +108% claim.
+- Record ω(t) and FoS(t) alongside P(t) to distinguish slow settling from
+  dynamic instability. If ω ramps or oscillates, low k may be dynamically
+  unstable — a more important finding than "peak is at lower k."
+- V10 Tight stays retired on its 13 m/s FoS wall (best FoS=1.24 at any k,
+  still below 1.5). The 11 m/s question is unresolved until P(t) converges.
+- Model validity constraint: expansion rotors at outer rings (r ≥ 15m) see
+  inflow velocities at Mach 1.2–1.7 at ω ≥ 260 rpm. Subsonic BEM cannot
+  model these conditions. A physical ω ceiling (hardware or compressibility)
+  should be established before committing to a Gate 1 re-run.
+- FoS < 1 rows are infeasibility certificates, not data points. Report both
+  unconstrained peak (diagnostic) and constrained optimum (FoS ≥ 1.5).
+
+**CSV annotation:** Corrected Gate 1 CSVs carry tier-Y status: right geometry
+(post-PRD-0006 fix), unverified convergence. k_refine CSVs carry the same
+caveat. Delta doc regeneration waits for Gate 1 re-run with corrected selection
+basis and convergence criterion.
+
 ## 2026-07-04: Settle k_mppt bug and five simulator-integrity findings; blade-scaling energy balance
 
 ### Settle k_mppt bug (integrity #1)
