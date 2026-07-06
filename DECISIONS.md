@@ -118,6 +118,38 @@ multibody_ode! → run_canonical_sim!) but NOT in static equilibrium solver
 Guard: objective_v10 @warns if spoke is passed. ODE-only is correct for
 Gate 2 Option B; static side ticketed for Gate 2 post-processing.
 
+**2026-07-06 neutral radial loading design philosophy (Rod):** the spoke tension
+crossing (~330 rpm for 7mm, ~6.5 kN/vertex at 260 rpm) reframes from a
+diagnostic threshold into an operating target. "Neutral radial loading" as a
+design objective: operate at small positive spoke tension — beams near-zero
+compression, spokes in light standing tension, structure sized for cruise can
+be genuinely light. Bias slightly outward (taut lines don't snap, sewn tabs
+tolerate steady low tension far better than slack-taut cycling from gusts).
+Target: small positive T_spoke with enough offset that site turbulence rarely
+flips the sign — a percentile statement against the wind distribution.
+
+**Ramp constraint:** the light structure is sized by the ramp, not the cruise.
+At low ω (startup, shutdown, parked), centrifugal vanishes and beams see full
+inward squeeze. Rings must survive the trajectory through (tension, ω) space
+during spin-up/down — the soft-ramp controller and record_ramp_traces.jl
+machinery exist to characterize this. If the ramp case dominates, the fly-light
+mass saving shrinks — check this before betting a design on neutral operation.
+
+**Cycle fatigue caveat:** low mean load reduces abrasion and creep, but cyclic
+damage in stitching is driven by load range — turbulence sets the range
+regardless of mean. The bias eliminates snap events (the big win), but tabs
+still cycle. Tab life is a coupon-test question for the field kit, not
+simulator-answerable.
+
+**Action items (post-Gate 2):**
+- ω_neutral tool: bisection on net radial load=0 per (design, wind, k)
+- MPPT-vs-neutral overlay chart: gap between k_mppt operating line and neutral line
+- New Gate 2 CSV columns: standing radial load (signed), sign-flip margin
+  (gust/turbulence percentile at which sign flips)
+- Candidate objective variant for next campaign: min mass subject to
+  neutral-band operation across wind distribution, ramp transients as binding
+  off-design case
+
 **Gate 2 implications:** Mach 0.85 ceiling is at 478-602 rpm — non-binding vs
 the centrifugal clamp at 191 rpm. Gate 2 redesign: constrained peak-hunt (not
 Mach root-find), with clamp threshold as the model-validity boundary. Below 191
