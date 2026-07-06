@@ -21,7 +21,7 @@ PROVISIONAL — Rod to supply actual reel MBL or make/model.
 | Knuckle at spoke-termination load | ⬜ Outward-load spec Commit 1, pending | TBD | Same spec |
 | Blade-root bending FoS | ⬜ Outward-load spec Commit 2, pending | TBD | Same spec |
 | Mach 0.7 / 0.85 | Caveat column | Non-binding | Verify-stage flag |
-| V10 Tight instability | TBD | TBD | t=57-59s transient at k=6.23 |
+| V10 Tight instability | **Retired** — dynamic instability at all low-k values (second independent ground) | `scripts/diagnose_tight_transient.jl` |
 | Hardware ω ceiling | Rod's call | TBD | Generator rpm, tether wrap rate |
 
 **Rated FoS** (when envelope is complete): min over compression, spoke, strut tension,
@@ -125,7 +125,8 @@ Caveat flags:
 - [ ] Static equilibrium parity (spoke drag in objective_v10) — deferred,
       objective_v10 errors if spoke enabled per parity guard
 - [ ] Tripwire: assert Mach at ω=260rpm ∈ [0.30, 0.60]
-- [ ] V10 Tight t=57-59s transient investigated
+- [x] V10 Tight t=57-59s transient investigated — **retired on two independent grounds**
+- [ ] Gate at 4-5% windowed-P range (stable 1.2%, marginal 6.7%, unstable 11.8-20.4%)
 
 ---
 

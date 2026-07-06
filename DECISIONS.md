@@ -201,9 +201,22 @@ The instability worsens as k decreases (higher ω). This is not a convergence
 problem — it is a real dynamic instability. The stable operating k is above
 some (unknown) boundary. Design cannot be optimised into the unstable regime.
 
-V10 Reinforced at k=12.94: marginal (6.7% P range, n_fail=0; FoS oscillates
-2.2→39→2.3 suggesting ring-FoS numerical artefact). λ=0.69 at k=3.0: stable
-(1.2% P range, 2 rpm ω range).
+V10 Reinforced at k=12.94: marginal (6.7% P range, n_fail=0). The FoS
+oscillation (2.2→39→2.3) is the signature of net radial load passing through
+zero — the spoke-engagement sign crossing — not a numerical artefact. FoS
+blows up as inward load vanishes, snaps back as compression returns. Consistent
+with dwelling at the engagement boundary — exactly the snap-cycling regime
+the neutral-loading philosophy aims to avoid. The sign_flip_gust_ms column
+will catch this in Gate 2.
+
+λ=0.69 at k=3.0: stable (1.2% P range, 2 rpm ω range). Accumulating case:
+stable, flat peak (flatness 1.008), FoS 3.87, clean traces. Robust-to-k
+plus dynamically calm — the profile for a field machine.
+
+**Stability gate calibration:** measured separation — stable 1.2%, marginal
+6.7%, unstable 11.8-20.4% windowed-P range. Gate at 4-5% splits cleanly
+with margin on both sides. Basis: this table, these runs. (Note: runs used
+spoke-off; Gate 2 runs spoke-on → drag shifts ω → marginal cases may shift.)
 
 **CSV annotation:** Corrected Gate 1 CSVs carry tier-Y status: right geometry
 (post-PRD-0006 fix), unverified convergence. k_refine CSVs carry the same
