@@ -216,14 +216,18 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 function main()
-    # Parse --row filter
+    # Parse --row filter (simple: --row R3 or --row=R3)
     row_filter = nothing
-    for arg in ARGS
+    i = 1
+    while i <= length(ARGS)
+        arg = ARGS[i]
         if startswith(arg, "--row=")
             row_filter = arg[7:end]
-        elseif arg == "--row" && length(ARGS) > 1
-            row_filter = popfirst!(ARGS)
+        elseif arg == "--row" && i < length(ARGS)
+            row_filter = ARGS[i+1]
+            i += 1
         end
+        i += 1
     end
 
     rows_to_run = isnothing(row_filter) ? ROWS :
