@@ -85,5 +85,5 @@ function build_v10_tight_no_lowest(;
         sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
     end
     println("V10 Tight no-lowest: n_lines=$n_lines n_rotors=$n_exp rings=$n_rings mass=$(round(best.best_mass_kg, digits=2))kg blade_scale=$(blade_scale)")
-    return sys, u0, pc, "V10 Tight (hub + $n_exp expansion rotors)"
+    return sys, u0, pc, "V10 Tight (hub + $n_exp expansion rotors)", result.design
 end

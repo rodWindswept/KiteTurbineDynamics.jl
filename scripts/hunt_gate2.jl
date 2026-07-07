@@ -91,8 +91,8 @@ for bk in to_run
             elseif nr > 0.05; stab = "marginal"; end
         end
 
-        # Spoke engagement — run evaluator on actual design geometry
-        sys, u0, p_sys, _ = Base.invokelatest(b.fn)
+        # Spoke engagement — use design from builder (single source of truth)
+        sys, u0, p_sys, _, design = Base.invokelatest(b.fn)
         ω_rad = ω_v * 2π / 60
         drag_kW = 0.0
         max_R = 0.0
@@ -104,17 +104,6 @@ for bk in to_run
             drag_kW += p_sys.n_lines * tau * ω_rad / 1000.0
         end
 
-        # Evaluator with actual ring radii from the built system
-        ring_radii_vec = Float64[]
-        for nid in sys.ring_ids
-            if nid !== nothing
-                push!(ring_radii_vec, (sys.nodes[nid]::KiteTurbineDynamics.RingNode).radius)
-            end
-        end
-        design = KiteTurbineDynamics.TRPTDesignV4(
-            KiteTurbineDynamics.PROFILE_CIRCULAR, ring_radii_vec[end], ring_radii_vec[1],
-            p_sys.tether_length, 2.0, 0.05, 0.05, p_sys.tether_diameter,
-            p_sys.tether_length, p_sys.n_lines, 0.0)
         ev = KiteTurbineDynamics.evaluate_design(
             design; r_rotor=sys.rotor.radius, elev_angle=p_sys.elevation_angle,
             v_peak=25.0, fos_req=1.5, omega_rotor=ω_rad, spoke=spoke)
