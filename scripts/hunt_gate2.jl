@@ -20,12 +20,21 @@ const BUILDERS = Dict(
                     name="gate2_reinforced", desc="V10 Reinforced"),
 )
 
-builder_filter = nothing; i = 1
-while i <= length(ARGS)
-    if startswith(ARGS[i], "--builder="); builder_filter = ARGS[i][11:end]
-    elseif ARGS[i] == "--builder" && i < length(ARGS); builder_filter = ARGS[i+1]; i += 1; end
-    i += 1
+function parse_args()
+    filter = nothing
+    i = 1
+    while i <= length(ARGS)
+        arg = ARGS[i]
+        if startswith(arg, "--builder=")
+            filter = arg[11:end]
+        elseif arg == "--builder" && i < length(ARGS)
+            filter = ARGS[i+1]; i += 1
+        end
+        i += 1
+    end
+    return filter
 end
+builder_filter = parse_args()
 to_run = isnothing(builder_filter) ? collect(keys(BUILDERS)) : filter(k->k==builder_filter, keys(BUILDERS))
 isempty(to_run) && error("No builder. Valid: lambda069, reinforced")
 
@@ -35,8 +44,6 @@ println("═══════════════════════�
 println("Gate 2 — Constrained Control Map")
 println("code: $(ControlMapHunt.GIT_HASH)  spokes: $(spoke.d_line*1000)mm SWL=$(spoke.SWL_N/1000)kN")
 println("═══════════════════════════════════════════════════════════")
-
-let
 
 for bk in to_run
     b = BUILDERS[bk]
@@ -153,4 +160,3 @@ for bk in to_run
 end
 
 println("\n═══ Gate 2 complete ═══")
-end
