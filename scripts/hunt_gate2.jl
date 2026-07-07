@@ -60,7 +60,7 @@ for bk in to_run
             out_dir=OUT_DIR, name="$(b.name)_tmp", lift_device=lift,
             verbose=false, max_power=true)
 
-        if nrow(df) == 0 || df[1, :P_kw] < 5.0
+        if nrow(df) == 0 || occursin("power_deficit", string(df[1, :status]))
             println("no viable k (power_deficit)")
             push!(results, (v_wind=wind, k_mppt=NaN, P_kw=0.0, ω_rpm=0.0,
                 min_fos=Inf, cm_deg=0.0, n_spokes=0, max_T_spoke_N=0.0,
@@ -106,7 +106,7 @@ for bk in to_run
         push!(results, (v_wind=wind, k_mppt=k, P_kw=P_v, P_windowed=P_win,
             ω_rpm=ω_v, min_fos=fos_v, cm_deg=cm_v, n_spokes=n_sp,
             max_T_spoke_N=T_sp, min_fos_spoke=f_sp, spoke_drag_kW=drag_kW,
-            tip_mach=tm, stability=stab))
+            tip_mach=tip_mach, stability=stab))
     end
 
     # Write CSV
