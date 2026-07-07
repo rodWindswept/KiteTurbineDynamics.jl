@@ -1,121 +1,119 @@
 #!/usr/bin/env julia
-# scripts/postprocess_gate2_spokes.jl
-# Post-process Gate 2 CSVs: add spoke engagement, spoke drag, tip_mach, stability.
-# Reads gate2_*_summary.csv, writes gate2_*_envelope.csv with all columns.
-# One evaluator call per row (wind-dependent ω). Single system build per design.
+# postprocess_gate2_spokes.jl — adds spoke/drag/stability from ODE timeseries
+# Physical model: T_spoke = m_vertex*ω²*r - F_in (from P_aero)
+# Usage: julia --project=. scripts/postprocess_gate2_spokes.jl
 
-using Printf, CSV, DataFrames, Dates, Statistics
+using CSV, DataFrames, Printf, Statistics
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
-using KiteTurbineDynamics; import KiteTurbineDynamics: SpokeParams, RingNode, expansion_rotor_forces
+using KiteTurbineDynamics; import KiteTurbineDynamics: RingNode, SpokeParams
 
 const OUT_DIR = joinpath(@__DIR__, "results", "control_maps")
-const spoke = SpokeParams(; enabled=true)
+const spoke  = SpokeParams(; enabled=true)
 
-const BUILDERS = Dict(
-    "gate2_lambda069"  => ControlMapHunt.v10_tight_builder(blade_scale=0.69),
-    "gate2_reinforced" => ControlMapHunt.v10_tight_builder(
-        r_bottom_scale=1.30, tether_diameter=0.004, blade_scale=1.0),
+# Name → builder function (maps summary CSV prefix to builder)
+const BLD = Dict(
+    "gate2_reinforced"             => ControlMapHunt.v10_tight_builder(r_bottom_scale=1.30, tether_diameter=0.004, blade_scale=1.0),
+    "gate1_blade_scaled_069_maxpower" => ControlMapHunt.v10_tight_builder(blade_scale=0.69),
 )
 
-for (name, bfn) in BUILDERS
-    csv_in = joinpath(OUT_DIR, "$(name)_summary.csv")
-    csv_out = joinpath(OUT_DIR, "$(name)_envelope.csv")
-    isfile(csv_in) || continue
+for (bname, bfn) in BLD
+    for sfx in ["", "_tmp"]
+        tsf = joinpath(OUT_DIR, bname * sfx * "_timeseries.csv")
+        ssf = joinpath(OUT_DIR, bname * sfx * "_summary.csv")
+        isfile(tsf) && isfile(ssf) || continue
+        nm = bname * sfx
+        println("\n=== $nm ===")
 
-    println("\n═══ $name ═══")
+        sys, u0, p, _ = Base.invokelatest(bfn)
+        nr = sys.n_ring; nl = p.n_lines
 
-    # Build system once
-    sys, u0, p_sys, _, design = Base.invokelatest(bfn)
-    elev = p_sys.elevation_angle
-    r_rot = sys.rotor.radius
+        # Ring radii from system
+        rr = zeros(nr)
+        for i in 1:nr
+            nid = sys.ring_ids[i]; nid === nothing && continue
+            rr[i] = (sys.nodes[nid]::RingNode).radius
+        end
 
-    # Build per-ring expansion rotor data
-    m_exp_per_ring = zeros(Float64, sys.n_ring)
-    for er in sys.expansion_rotors
-        m_exp_per_ring[er.ring_idx] = er.mass
-    end
-
-    df = CSV.read(csv_in, DataFrame; comment="#")
-    results = []
-
-    for row in eachrow(df)
-        v = row.v_wind
-        ω_rpm = row.ω_rpm
-        ω_rad = ω_rpm * 2π / 60
-        k = row.k_mppt
-
-        # Expansion rotor forces at this (v, ω)
-        F_radial_per_ring = zeros(Float64, sys.n_ring)
-        thrust_per_ring   = zeros(Float64, sys.n_ring)
-        drag_kW = 0.0
-        max_R = 0.0
+        # Expansion rotor data
+        erings = Int[]; emass = zeros(nr)
         for er in sys.expansion_rotors
-            nid = sys.ring_ids[er.ring_idx]; nid === nothing && continue
-            R = (sys.nodes[nid]::RingNode).radius
-            if R > max_R; max_R = R; end
-
-            # Spoke drag: τ = ρ·C_D·d·ω²·R⁴/8 per spoke
-            tau = 0.5 * p_sys.rho * spoke.C_D * spoke.d_line * ω_rad^2 * R^4 / 4.0
-            drag_kW += p_sys.n_lines * tau * ω_rad / 1000.0
-
-            # Aero forces for structural evaluation
-            Fr, Fa, _, _, _ = expansion_rotor_forces(
-                er, p_sys.rho, v, ω_rad, rad2deg(elev),
-                R, 1000.0, p_sys.n_lines)
-            F_radial_per_ring[er.ring_idx] = Fr
-            thrust_per_ring[er.ring_idx] = Fa
+            push!(erings, er.ring_idx)
+            emass[er.ring_idx] = er.mass
         end
 
-        # Evaluator with spoke enabled
-        ev = evaluate_design(
-            design; r_rotor=r_rot, elev_angle=elev,
-            v_peak=v, fos_req=1.5, omega_rotor=ω_rad, spoke=spoke,
-            m_expansion_blade_per_ring=m_exp_per_ring,
-            F_radial_per_ring=F_radial_per_ring,
-            thrust_per_ring=thrust_per_ring,
-            max_ground_radius=6.0)
-
-        # Tip Mach
-        tip_mach = ω_rad * (max_R + 2.8) / 340.0  # r_tip ≈ ring_R + 0.7*span
-
-        # Stability from windowed-mean P (read verify timeseries)
-        stab = "ok"
-        tsf = joinpath(OUT_DIR, "$(name)_tmp_timeseries.csv")
-        if isfile(tsf)
-            ts = CSV.read(tsf, DataFrame; comment="#")
-            # Filter by wind matching (the timeseries has multiple winds)
-            # For now: use the hunt's convergence flag as proxy
-            stab = "ok"  # hunt already verified convergence
+        # Per-vertex structural mass (beam + knuckle + blade share)
+        mb = isdefined(p, :m_ring) ? p.m_ring : 0.0
+        mv = fill(mb * 1.1, nr)  # beam + 10% knuckle
+        for ri in erings
+            mv[ri] += emass[ri] / nl  # blade mass per vertex
         end
 
-        push!(results, (
-            v_wind=v, k_mppt=k, P_kw=row.P_kw, ω_rpm=ω_rpm,
-            min_fos=ev.min_fos, cm_deg=row.cm_deg,
-            n_spokes=ev.n_spokes_engaged,
-            max_T_spoke_N=ev.max_spoke_tension_N,
-            min_fos_spoke=ev.min_spoke_fos,
-            spoke_drag_kW=drag_kW,
-            standing_ld_N=ev.max_spoke_tension_N,
-            tip_mach=tip_mach, max_tip_mach=tip_mach*1.05,
-            stability=stab,
-        ))
-        @printf("  v=%.0f ω=%.0f n_spoke=%d T=%.0fN FoS=%.1f drag=%.1fkW\n",
-            v, ω_rpm, ev.n_spokes_engaged, ev.max_spoke_tension_N,
-            ev.min_spoke_fos, drag_kW)
+        ts  = CSV.read(tsf, DataFrame; comment="#")
+        sum = CSV.read(ssf, DataFrame; comment="#")
+
+        sum.n_spokes       = zeros(Int, nrow(sum))
+        sum.max_T_spoke_N  = zeros(nrow(sum))
+        sum.min_fos_spoke  = fill(Inf, nrow(sum))
+        sum.spoke_drag_kW  = zeros(nrow(sum))
+        sum.P_windowed     = zeros(nrow(sum))
+        sum.stability      = fill("ok", nrow(sum))
+
+        ti = 1  # timeseries row pointer
+        for i in 1:nrow(sum)
+            wrpm = sum[i, Symbol("ω_rpm")]
+            w = wrpm * 2π / 60
+            te = min(ti + 59, nrow(ts))
+            ws = ts[ti:te, :]
+            ti = te + 1
+
+            dkW = 0.0; mxT = 0.0; nE = 0
+            for ri in erings
+                R = rr[ri]
+                Fcf = mv[ri] * w^2 * R
+                # Estimate inward aero force from power balance
+                Pa = nrow(ws) > 0 ? ws[end, :P_aero_kw] * 1000.0 : 0.0
+                ne = length(erings)
+                Fi = ne > 0 ? Pa / (w * rr[ri] * nl * ne) : 0.0
+                Fnet = Fcf - Fi
+                if Fnet > 0
+                    nE += 1
+                    if Fnet > mxT; mxT = Fnet; end
+                end
+                # Spoke drag
+                tau = 0.5 * p.rho * spoke.C_D * spoke.d_line * w^2 * R^4 / 4.0
+                dkW += nl * tau * w / 1000.0
+            end
+            fs = mxT > 0 ? spoke.SWL_N / mxT : Inf
+
+            # Windowed-mean P + stability from final 20s
+            if nrow(ws) >= 20
+                la = ws[end-19:end, :]
+                pv = la.P_kw
+                pw = mean(pv)
+                nrp = (maximum(pv) - minimum(pv)) / max(abs(mean(pv)), 0.1)
+                st = nrp > 0.15 ? "unstable" : nrp > 0.05 ? "marginal" : "ok"
+            else
+                pw = sum[i, :P_kw]; st = "ok"
+            end
+
+            sum[i, :n_spokes]      = nE
+            sum[i, :max_T_spoke_N] = mxT
+            sum[i, :min_fos_spoke] = fs
+            sum[i, :spoke_drag_kW] = dkW
+            sum[i, :P_windowed]    = pw
+            sum[i, :stability]     = st
+
+            @printf("  v=%.0f ω=%.0f eng=%d T=%.0fN FoS=%.1f dkW=%.1f %s\n",
+                sum[i,:v_wind], wrpm, nE, mxT, fs, dkW, st)
+        end
+
+        out = joinpath(OUT_DIR, nm * "_spokes.csv")
+        open(out, "w") do io
+            write(io, "# postprocess_spokes · builder:$nm · spokes:$(spoke.d_line*1000)mm_SWL$(spoke.SWL_N/1000)kN\n")
+            CSV.write(io, sum)
+        end
+        println("  → $out")
     end
-
-    # Write envelope CSV
-    open(csv_out, "w") do io
-        write(io, "# postprocess_gate2 @ $(ControlMapHunt.GIT_HASH) · builder:$name · spokes:$(spoke.d_line*1000)mm_SWL$(spoke.SWL_N/1000)kN\n")
-        write(io, "v_wind,k_mppt,P_kw,ω_rpm,min_fos,cm_deg,n_spokes,max_T_spoke_N,min_fos_spoke,spoke_drag_kW,standing_ld_N,tip_mach,max_tip_mach,stability\n")
-        for r in results
-            write(io, join([getfield(r, Symbol(c)) for c in
-                ["v_wind","k_mppt","P_kw","ω_rpm","min_fos","cm_deg",
-                 "n_spokes","max_T_spoke_N","min_fos_spoke","spoke_drag_kW",
-                 "standing_ld_N","tip_mach","max_tip_mach","stability"]], ",") * "\n")
-        end
-    end
-    println("  → $csv_out")
 end
-println("\n═══ Post-process complete ═══")
+println("\n=== Done ===")
