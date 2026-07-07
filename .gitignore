@@ -37,3 +37,4 @@ trajectory_analysis/
 *.log
 *.aux
 .claude/worktrees/
+*.csv
