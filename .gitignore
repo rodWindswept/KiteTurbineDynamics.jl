@@ -36,3 +36,4 @@ island_bests.csv
 trajectory_analysis/
 *.log
 *.aux
+.claude/worktrees/
