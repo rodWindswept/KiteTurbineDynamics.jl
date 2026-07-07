@@ -4,6 +4,7 @@
 # Usage: julia --project=. scripts/hunt_gate2.jl [--builder lambda069|reinforced]
 
 using Printf, CSV, DataFrames, Dates
+using Statistics
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 using KiteTurbineDynamics
