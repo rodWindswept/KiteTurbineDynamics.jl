@@ -6,6 +6,7 @@
 using Printf, CSV, DataFrames, Dates
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
+using KiteTurbineDynamics
 
 const OUT_DIR = joinpath(@__DIR__, "results", "control_maps")
 const WINDS   = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
