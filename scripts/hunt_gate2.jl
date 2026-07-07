@@ -36,6 +36,8 @@ println("Gate 2 — Constrained Control Map")
 println("code: $(ControlMapHunt.GIT_HASH)  spokes: $(spoke.d_line*1000)mm SWL=$(spoke.SWL_N/1000)kN")
 println("═══════════════════════════════════════════════════════════")
 
+let
+
 for bk in to_run
     b = BUILDERS[bk]
     println("\n═══ $(b.desc) ═══")
@@ -151,3 +153,4 @@ for bk in to_run
 end
 
 println("\n═══ Gate 2 complete ═══")
+end
