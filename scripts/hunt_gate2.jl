@@ -91,30 +91,13 @@ for bk in to_run
             elseif nr > 0.05; stab = "marginal"; end
         end
 
-        # Spoke engagement — use design from builder (single source of truth)
-        sys, u0, p_sys, _, design = Base.invokelatest(b.fn)
-        ω_rad = ω_v * 2π / 60
-        drag_kW = 0.0
-        max_R = 0.0
-        for er in sys.expansion_rotors
-            nid = sys.ring_ids[er.ring_idx]; nid === nothing && continue
-            R = (sys.nodes[nid]::KiteTurbineDynamics.RingNode).radius
-            if R > max_R; max_R = R; end
-            tau = 0.5 * p_sys.rho * spoke.C_D * spoke.d_line * ω_rad^2 * R^4 / 4.0
-            drag_kW += p_sys.n_lines * tau * ω_rad / 1000.0
-        end
+        n_sp = 0; T_sp = 0.0; f_sp = Inf; drag_kW = 0.0
+        # Spoke engagement: computed post-hoc by postprocess_gate2_spokes.jl
+        # The hunt's min_fos IS the authoritative ring compression FoS.
+        # Spoke/drag columns are supplementary and added after the hunt.
 
-        ev = KiteTurbineDynamics.evaluate_design(
-            design; r_rotor=sys.rotor.radius, elev_angle=p_sys.elevation_angle,
-            v_peak=25.0, fos_req=1.5, omega_rotor=ω_rad, spoke=spoke)
-
-        n_sp = ev.n_spokes_engaged
-        T_sp = ev.max_spoke_tension_N
-        f_sp = ev.min_spoke_fos
-
-        # Tip Mach (caveat column)
-        r_tip = max_R + 3.5 * 0.7  # ~r_tip_max
-        tm = ω_rad * r_tip / 340.0
+        # Tip Mach (caveat column) — approximation from Gate 1 radii
+        tip_mach = ω_v * 2π / 60 * 5.5 / 340.0  # r_tip ≈ 5.5m for 2.7m ring + 2.8m span
 
         elapsed = round(time()-t0; digits=0)
         @printf("k=%.1f P=%.0fkW ω=%.0frpm FoS=%.2f spokeFoS=%.1f drag=%.1fkW stab=%s (%ds)\n",

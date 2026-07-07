@@ -1,0 +1,3 @@
+# script:hunt_kmppt_bisect @ e679524 · builder:gate2_reinforced_tmp · date:2026-07-07T07:35:31 · max_power:true
+v_wind,k_mppt,P_kw,ω_rpm,min_fos,collapse_margin_deg,max_twist_deg,T_max_kN,reached_rated,status,P_aero_kw,P_loss_kw,P_static_kw,consistency,closure_pct,converged
+15.0,26.87460856772399,300.98950448722337,213.04957717682788,2.261444411221133,44.192581229567175,6.28876721468561,22.278787303819563,true,ok,423.9701459984625,122.98064151123913,121.96652091267163,0.001008512582066617,0.0,false
