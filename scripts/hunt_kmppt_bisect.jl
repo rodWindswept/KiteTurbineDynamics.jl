@@ -344,6 +344,7 @@ function hunt_control_map(
         for s in slices
             push!(all_slices, s)
         end
+        GC.gc()  # 2026-07-07: prevent ODE solver memory accumulation across winds
     end
 
     # ── Summary CSV ─────────────────────────────────────────────────
