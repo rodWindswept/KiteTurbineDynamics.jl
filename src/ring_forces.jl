@@ -259,26 +259,26 @@ function compute_ring_forces!(
 
                 # ── F_radial on ring vertices (2026-07-07) ─────────────────
                 # Expansion rotor radial force pushes outward on the ring.
-                # Applied at ring center (bulk radial dynamics approximation).
-                rad_dir = ring_pos .- @view(u[1:3])  # radial from ground
-                rd_norm = norm(rad_dir)
-                if rd_norm > 1e-6
-                    rad_dir ./= rd_norm
+                # Radial = perpendicular to shaft axis.
+                shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
+                r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
+                rad_dir = ring_pos .- r_proj
+                r_current = norm(rad_dir)
+                if r_current > 1e-6
+                    rad_dir ./= r_current
                     forces[ring_gid] .+= F_radial .* rad_dir
                 end
 
                 # ── Spoke spring restoring force (2026-07-07) ──────────────
                 # Radial Dyneema spokes from ring vertices to floating center.
                 # Spring force: F = -k · (r_current - r_design) · r̂.
-                # Applied at ring center (bulk approximation).
+                # Applied at ring center, radial to shaft axis.
                 if spoke !== nothing && spoke.enabled
-                    r_current = rd_norm > 1e-6 ? rd_norm : r_nom
-                    Δr = r_current - r_nom
-                    if Δr > 0  # tension-only
+                    if r_current > 1e-6 && r_current > r_nom  # tension-only
                         E_dyn = 100e9  # Dyneema stiffness (Pa)
                         A_spoke = π * spoke.d_line^2 / 4.0
-                        k_spoke = p.n_lines * E_dyn * A_spoke / r_nom  # total for all spokes
-                        F_spoke = k_spoke * Δr
+                        k_spoke = p.n_lines * E_dyn * A_spoke / r_nom
+                        F_spoke = k_spoke * (r_current - r_nom)
                         forces[ring_gid] .-= F_spoke .* rad_dir  # inward
                     end
                 end
