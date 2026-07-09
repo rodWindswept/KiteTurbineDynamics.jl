@@ -2635,4 +2635,25 @@ grid. Both are ~150 lines. Best done with display available for verification.
 
 **What doesn't:**
 - Scenario buttons, slider, playback controls, config switching in v2
-- The Run button is a placeholder that doesn't trigger actual simulation
+
+### [2026-07-09] Parametric Design Explorer (Pluto.jl + MeshCat.jl)
+
+**Context:** Aligning on spatial hardware design nuances (such as ring spacing, tapering, blade span offsets, spoke-tie boundaries, and material constraints) between human designers and AI agents via natural language is challenging and prone to translation errors. The GLMakie dashboard runs locally and is non-visual to agents, Grasshopper/Rhino requires a Windows environment, and TeX diagrams are static. A shared, interactive, code-as-data 3D playground is needed.
+
+**Decision:** Implemented **Path A: The Simulation-First Route (Pluto.jl + MeshCat.jl)**. Created `notebooks/design_explorer.jl` as a standalone reactive Pluto notebook. Fixed the sibling dependency `CoaxialAutogyroStacking` path mapping in `Manifest.toml` from `/home/rod/...` to `/home/rodbot/...` to allow full compilation.
+
+**Rationale:**
+- **Pluto.jl** notebooks are standard Julia files that are fully readable and writable by AI agents, making code-sharing straightforward.
+- **MeshCat.jl** renders Three.js WebGL scenes in the browser, providing a shared 3D viewport that Pluto embeds natively in cells.
+- **Fast Feedback Loop:** Moving a slider triggers a fast static settle solver (`settle_to_operational_state`) under wind load, updating ring/tether/blade geometry and HUD safety metrics (FoS, buckling utilization) in real-time.
+- **Performance Guard:** Added a checkbox to toggle dynamic time-domain ODE simulations (2s duration), preventing slider drag lag while still enabling playback animation of transient torsional oscillations.
+
+**Status: Completed.** Resolved several environment initialization and execution errors:
+- **Manifest Cell Collision Fix:** Discovered that Pluto reserves the zero-UUID cell `# ╔═╡ 00000000-0000-0000-0000-000000000002` for internal `PLUTO_MANIFEST_TOML_CONTENTS`. Writing custom environment initialization code (like `Pkg.activate`) inside it causes Pluto to overwrite and delete it on save. Resolved by moving the environment initialization block to a custom cell UUID (`c9092282-...`), which Pluto respects and persists.
+- **Duplicate Imports:** Removed redundant local `using Printf` statements inside `let` blocks. Since the initialization cell now runs successfully first, the top-level `using Printf` is available globally, and removing local ones resolved the duplicate import error.
+- **PlutoUI Widget Naming:** Restored `@bind run_dynamic CheckBox` (uppercase B), which is the correct exported widget name in PlutoUI (lowercase casing was incorrect).
+- **geometry.jl API Alignment:** Fixed arguments in `attachment_point` calls in the telemetry HUDs to remove an extra `j+1` argument, matching the 7-argument signature in `src/geometry.jl`.
+- **structural_safety.jl API Alignment:** Updated `ring_safety_frame` calls to include the nominal state vector `u0_custom` as the second argument, matching `src/structural_safety.jl:72`.
+- **FoS Reduction:** Replaced the invalid field access `sf.min_column_fos` with `minimum(f.fos for f in sf; init=Inf)` to correctly extract spacer ring buckling safety margins.
+- **Headless-safety:** Wrapped the reactive `run_dynamic` variable in a `try...catch` block in the simulation cell to prevent `UndefVarError` when evaluating the notebook headlessly.
+

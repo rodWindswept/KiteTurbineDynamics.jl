@@ -204,6 +204,21 @@ julia --project=. scripts/interactive_dashboard.jl --v5
 julia --project=. scripts/interactive_dashboard.jl --headless --v5 --wind 11 --duration 30
 ```
 
+### Pluto.jl Parametric Design Explorer (WebGL)
+
+For a web-based, interactive 3D viewport that allows tweaking structural parameters (rings, lines, diameters, preset configurations) in real-time with agents and seeing settled tension/compression safety metrics, run:
+
+```bash
+# Start the Pluto server and open the design explorer notebook
+julia --project=. -e 'using Pluto; Pluto.run(notebook="notebooks/design_explorer.jl")'
+```
+
+**Explorer features:**
+- **Presets & Overrides:** Load standard presets (`V10 Tight`, `V10 Reinforced`, `λ=0.69`, `λ=0.69 Reinforced`) and adjust physical geometry (struts, rings, lengths) dynamically via sliders.
+- **Fast Static Settle:** Resolves operational equilibrium under wind load in real-time, showing 3D geometry in a browser-based MeshCat viewer.
+- **Dynamic ODE Solver:** Toggle a checkbox to run a 2.0-second time-domain ODE simulation with playback scrubber.
+
+
 **Dashboard features (May 2026):**
 - **Live config switching** — Switch between Canonical 5-line and v5 8-line via the
   Configuration panel. Safety state machine prevents crashes during transitions.
