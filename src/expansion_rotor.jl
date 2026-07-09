@@ -299,4 +299,5 @@ discards. `nothing` = disabled = current behavior (bit-identical).
     SWL_N::Float64  = 19_800.0
     C_D::Float64    = 1.0
     enabled::Bool   = true
+    epsilon::Float64 = 1e-6  # minimum ring drift before spoke engages (m)
 end

@@ -282,19 +282,20 @@ function compute_ring_forces!(
             for i in 1:(length(sys.ring_ids)-1)  # skip ground ring (PTO)
                 ring_gid = sys.ring_ids[i]
                 ring_gid === nothing && continue
-                r_nom = (sys.nodes[ring_gid]::RingNode).radius
                 ring_pos = @view u[(3*(ring_gid-1)+1):(3*ring_gid)]
                 r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
                 rad_dir = ring_pos .- r_proj
                 r_current = norm(rad_dir)
-                if r_current > 1e-6 && r_current > r_nom  # tension-only
+                if r_current > spoke.epsilon  # ring center drift from shaft axis
                     rad_dir ./= r_current
-                    k_spoke = p.n_lines * E_dyn * A_spoke / r_nom
-                    F_spoke = k_spoke * (r_current - r_nom)
+                    k_spoke = p.n_lines * E_dyn * A_spoke / ((sys.nodes[ring_gid]::RingNode).radius)
+                    F_spoke = k_spoke * r_current
                     forces[ring_gid] .-= F_spoke .* rad_dir  # inward
                 end
             end
         end
+    end
+
     gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
 
     tau_gen, new_brake = get_generator_torque(
