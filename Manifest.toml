@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.5"
+julia_version = "1.12.6"
 manifest_format = "2.0"
 project_hash = "5c59932a850ae1f141473808a8e9af819cde3410"
 
@@ -358,7 +358,7 @@ version = "0.1.13"
 
 [[deps.CoaxialAutogyroStacking]]
 deps = ["Bonito", "CairoMakie", "DataFrames", "GLMakie", "Observables", "Pluto", "Statistics", "WGLMakie"]
-path = "/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl"
+path = "/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl"
 uuid = "cb2a5e45-b910-4a0e-9959-8ee2b2784885"
 version = "0.1.1"
 
@@ -1457,7 +1457,7 @@ uuid = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
 version = "0.6.12"
 
 [[deps.KiteTurbineDynamics]]
-deps = ["ArgParse", "Bonito", "CSV", "CairoMakie", "CoaxialAutogyroStacking", "DataFrames", "DifferentialEquations", "FFTW", "GLMakie", "JSON3", "LinearAlgebra", "MeshCat", "Pandoc", "Pluto", "PlutoUI", "Printf", "Random", "Statistics", "WGLMakie"]
+deps = ["ArgParse", "Bonito", "CSV", "CairoMakie", "CoaxialAutogyroStacking", "Colors", "CoordinateTransformations", "DataFrames", "DifferentialEquations", "FFTW", "GLMakie", "JSON3", "LinearAlgebra", "MeshCat", "Pandoc", "Pluto", "PlutoUI", "Printf", "Random", "Rotations", "Statistics", "WGLMakie"]
 path = "."
 uuid = "7ea09719-b4d1-44aa-8231-bd6b72d03c63"
 version = "0.10.0"

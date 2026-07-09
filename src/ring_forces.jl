@@ -270,28 +270,27 @@ function compute_ring_forces!(
                 end
             end
         end
+    end
 
-        # ── Spoke spring restoring force (2026-07-07) ──────────────────────────
-        # Radial Dyneema spokes from each ring vertex to floating center.
-        # Applied at ring center for ALL rings (not just expansion rotor rings).
-        # Spring force: F = -k · (r_current - r_design) · r̂ per ring.
-        if spoke !== nothing && spoke.enabled
-            shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
-            E_dyn = 100e9  # Dyneema stiffness (Pa)
-            A_spoke = π * spoke.d_line^2 / 4.0
-            for i in 1:(length(sys.ring_ids)-1)  # skip ground ring (PTO)
-                ring_gid = sys.ring_ids[i]
-                ring_gid === nothing && continue
-                ring_pos = @view u[(3*(ring_gid-1)+1):(3*ring_gid)]
-                r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
-                rad_dir = ring_pos .- r_proj
-                r_current = norm(rad_dir)
-                if r_current > spoke.epsilon  # ring center drift from shaft axis
-                    rad_dir ./= r_current
-                    k_spoke = p.n_lines * E_dyn * A_spoke / ((sys.nodes[ring_gid]::RingNode).radius)
-                    F_spoke = k_spoke * r_current
-                    forces[ring_gid] .-= F_spoke .* rad_dir  # inward
-                end
+    # ── Spoke spring restoring force (2026-07-07) ──────────────────────────────
+    # Radial Dyneema spokes from each ring vertex to floating center.
+    # MUST run every timestep, independent of wind/aero state.
+    if spoke !== nothing && spoke.enabled
+        shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
+        E_dyn = 100e9
+        A_spoke = π * spoke.d_line^2 / 4.0
+        for i in 1:(length(sys.ring_ids)-1)  # skip ground ring (PTO)
+            ring_gid = sys.ring_ids[i]
+            ring_gid === nothing && continue
+            ring_pos = @view u[(3*(ring_gid-1)+1):(3*ring_gid)]
+            r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
+            rad_dir = ring_pos .- r_proj
+            r_current = norm(rad_dir)
+            if r_current > spoke.epsilon
+                rad_dir ./= r_current
+                k_spoke = p.n_lines * E_dyn * A_spoke / ((sys.nodes[ring_gid]::RingNode).radius)
+                F_spoke = k_spoke * r_current
+                forces[ring_gid] .-= F_spoke .* rad_dir
             end
         end
     end
