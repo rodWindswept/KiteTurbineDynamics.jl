@@ -268,25 +268,33 @@ function compute_ring_forces!(
                     rad_dir ./= r_current
                     forces[ring_gid] .+= F_radial .* rad_dir
                 end
+            end
+        end
 
-                # ── Spoke spring restoring force (2026-07-07) ──────────────
-                # Radial Dyneema spokes from ring vertices to floating center.
-                # Spring force: F = -k · (r_current - r_design) · r̂.
-                # Applied at ring center, radial to shaft axis.
-                if spoke !== nothing && spoke.enabled
-                    if r_current > 1e-6 && r_current > r_nom  # tension-only
-                        E_dyn = 100e9  # Dyneema stiffness (Pa)
-                        A_spoke = π * spoke.d_line^2 / 4.0
-                        k_spoke = p.n_lines * E_dyn * A_spoke / r_nom
-                        F_spoke = k_spoke * (r_current - r_nom)
-                        forces[ring_gid] .-= F_spoke .* rad_dir  # inward
-                    end
+        # ── Spoke spring restoring force (2026-07-07) ──────────────────────────
+        # Radial Dyneema spokes from each ring vertex to floating center.
+        # Applied at ring center for ALL rings (not just expansion rotor rings).
+        # Spring force: F = -k · (r_current - r_design) · r̂ per ring.
+        if spoke !== nothing && spoke.enabled
+            shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
+            E_dyn = 100e9  # Dyneema stiffness (Pa)
+            A_spoke = π * spoke.d_line^2 / 4.0
+            for i in 1:(length(sys.ring_ids)-1)  # skip ground ring (PTO)
+                ring_gid = sys.ring_ids[i]
+                ring_gid === nothing && continue
+                r_nom = (sys.nodes[ring_gid]::RingNode).radius
+                ring_pos = @view u[(3*(ring_gid-1)+1):(3*ring_gid)]
+                r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
+                rad_dir = ring_pos .- r_proj
+                r_current = norm(rad_dir)
+                if r_current > 1e-6 && r_current > r_nom  # tension-only
+                    rad_dir ./= r_current
+                    k_spoke = p.n_lines * E_dyn * A_spoke / r_nom
+                    F_spoke = k_spoke * (r_current - r_nom)
+                    forces[ring_gid] .-= F_spoke .* rad_dir  # inward
                 end
             end
         end
-    end
-
-    # ── Generator MPPT torque on ground node ──────────────────────────────
     gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx   # = 1
 
     tau_gen, new_brake = get_generator_torque(
