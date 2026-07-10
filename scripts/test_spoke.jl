@@ -19,7 +19,7 @@ shaft = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
 function wf(pos, t); z = max(pos[3], 1.0); [wind_ms*(z/p.h_ref)^(1/7), 0.0, 0.0]; end
 
 # Phase 1: motor-mode spin-up (5s, k<0 drives the PTO)
-sys.k_mppt_ref[] = -500.0  # motor mode
+sys.k_mppt_ref[] = -50.0   # motor mode (gentle)
 u = copy(u0)
 print("Phase 1: Motor spin-up (5s)... ")
 KiteTurbineDynamics.run_canonical_sim!(u, sys, p, wf,
