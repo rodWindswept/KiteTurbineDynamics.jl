@@ -497,8 +497,86 @@ function apply_brake_constraint!(
         u[6N + Nr + 1] = 0.0   # ground ring (ring_idx = 1) angular velocity → 0
     end
 end
+"""
+
+    ring_vertex_positions(u, sys, ring_gid, p, alpha) → Matrix{Float64}
+
+Compute 3×n_lines matrix of vertex positions for a ring, given the ODE state
+`u`, system `sys`, ring global id `ring_gid`, params `p`, and twist angles `alpha`.
+
+Each vertex j is at: centre + R * (cos(α + 2πj/n) * perp1 + sin(α + 2πj/n) * perp2)
+
+Uses `shaft_perp_basis` with the shaft direction for the ring-plane basis.
+NOTE: `_tilted_ring_basis` (geometry.jl) introduces a visual amplification
+(TILT_SCALE=0.1) designed for dashboard rendering — it is NOT suitable for
+physics computations.  For vertex-level spoke forces, use the non-amplified
+basis derived from the design shaft direction.
+"""
+function ring_vertex_positions(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    ring_gid::Int,
+    p::SystemParams,
+    alpha::AbstractVector,
+)::Matrix{Float64}
+    node = sys.nodes[ring_gid]::RingNode
+    R = node.radius
+    ring_idx = node.ring_idx
+    α = alpha[ring_idx]
+
+    # Use non-amplified basis from design shaft direction (not _tilted_ring_basis
+    # which has TILT_SCALE=0.1 visual amplification).
+    shaft_dir = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
+
+    n_lines = p.n_lines
+    vertices = Matrix{Float64}(undef, 3, n_lines)
+    centre = @view u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
+
+    for j in 1:n_lines
+        φ = α + 2π * (j - 1) / n_lines
+        vertices[:, j] .= centre .+ R .* (cos(φ) .* perp1 .+ sin(φ) .* perp2)
+    end
+
+    return vertices
+end
 
 """
+
+    spoke_drift(u, sys, p, alpha, ring_gid) → (drift_outward, drift_inward)
+
+Maximum vertex displacement from design radius for the ring at `ring_gid`.
+Positive = outward (vertex further from axis than design), negative = inward.
+"""
+function spoke_drift(
+    u::AbstractVector,
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    alpha::AbstractVector,
+    ring_gid::Int,
+)
+    node = sys.nodes[ring_gid]::RingNode
+    R = node.radius
+    vertices = ring_vertex_positions(u, sys, ring_gid, p, alpha)
+
+    shaft_dir = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+
+    drift_outward = -Inf
+    drift_inward = Inf
+    for j in 1:size(vertices, 2)
+        v = @view vertices[:, j]
+        v_proj = dot(v, shaft_dir) .* shaft_dir
+        r_actual = norm(v .- v_proj)
+        dr = r_actual - R
+        drift_outward = max(drift_outward, dr)
+        drift_inward = min(drift_inward, dr)
+    end
+
+    return drift_outward, drift_inward
+end
+
+"""
+
     constrain_spokes!(u, sys, N, Nr, p)
 
 Post-step position constraint for radial spoke ties.

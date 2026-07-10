@@ -18,16 +18,12 @@ Success looks like: λ=0.69 Reinforced with spokes running at 50+ kW sustained f
 
 ## Decisions so far
 
-_None yet._
+- [WT1](docs/wayfinder-tickets/wt1-resolution.md) — **Tulloch δα* is invariant to constraint method.** Collapse threshold depends only on design constants (r, L), never runtime state. Center constraint kills power by preventing rings from reaching any |Δα| (dynamic reachability failure, not geometric). Vertex constraint preserves torsional coupling — twist angles α evolve freely, tether geometry correct. No changes needed to `init_geometry!`, `min_collapse_margin`, or collapse formulas.
+- **WT2** — `ring_vertex_positions()` and `spoke_drift()` functions added to `src/ring_forces.jl`. Test script at `scripts/test_vertex_spoke.jl`. Vertex positions match design radius with 0.0mm drift when rings on-axis. Uses `shaft_perp_basis()` (not `_tilted_ring_basis` — that has TILT_SCALE=0.1 visual amplification for dashboard, would break physics).
 
 ## Not yet specified
 
 - Per-vertex projection vs per-vertex spring force: which numerical approach?
-- Apply forces to ring center nodes (from vertex displacements) or add new ODE vertex nodes?
-- Tulloch collapse criterion: how does vertex constraint change the geometric collapse margin?
-- Pluto visualiser: spoke line rendering from vertex positions?
-- Does the kickstart control need re-tuning after vertex-level constraint?
-- Should `constrain_spokes!` replace or supplement the existing ring-center hard constraint?
 
 ## Out of scope
 
