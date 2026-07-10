@@ -497,3 +497,41 @@ function apply_brake_constraint!(
         u[6N + Nr + 1] = 0.0   # ground ring (ring_idx = 1) angular velocity → 0
     end
 end
+
+"""
+    constrain_spokes!(u, sys, N, Nr, p)
+
+Post-step position constraint for radial spoke ties.
+Projects each flying ring center back onto the shaft axis,
+enforcing the hard-constraint limit of the spoke lines.
+
+Why this is needed: The spoke spring (k ≈ 3.9 MN/m) is too stiff
+for explicit Euler at DT=4e-5 — rings drift 10mm/step and the spring
+corrects one step behind. A hard projection after each step prevents
+accumulated drift without requiring an implicit solver.
+"""
+function constrain_spokes!(
+    u::Vector{Float64}, sys::KiteTurbineSystem, N::Int, Nr::Int, p::SystemParams
+)
+    shaft_dir = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    for i in 2:length(sys.ring_ids)
+        gid = sys.ring_ids[i]
+        gid === nothing && continue
+        rng = (3*(gid-1)+1):(3*gid)
+        ring_pos = @view u[rng]
+        proj = dot(ring_pos, shaft_dir) * shaft_dir
+        drift = ring_pos .- proj
+        if norm(drift) > 1e-9
+            ring_pos .= proj
+            # Remove radial velocity component
+            ri = (sys.nodes[gid]::RingNode).ring_idx
+            v_start = 3N + 3*(gid-1) + 1
+            v_end = 3N + 3*gid
+            if v_end <= length(u)
+                v_ring = @view u[v_start:v_end]
+                v_proj = dot(v_ring, shaft_dir) * shaft_dir
+                v_ring .= v_proj
+            end
+        end
+    end
+end

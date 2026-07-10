@@ -131,6 +131,9 @@ function run_canonical_sim!(
         end
         @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* omega_dot
         apply_brake_constraint!(u, sys, N, Nr)   # pin ω_gnd=0 when brake latched
+        if spoke !== nothing && spoke.enabled
+            constrain_spokes!(u, sys, N, Nr, p)   # hard radial spoke constraint
+        end
 
         # ── Also clamp ω itself if it became Inf/NaN from accumulation ──────
         omega_view = @view u[(6N + Nr + 1):(6N + 2Nr)]
