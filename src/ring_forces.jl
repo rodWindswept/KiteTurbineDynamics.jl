@@ -617,7 +617,7 @@ function constrain_spokes!(
                 net_force .-= F .* radial_unit  # inward restoring force
             end
         end
-        forces[gid] .+= net_force
+        forces[(3*(gid-1)+1):(3*gid)] .+= net_force
     end
     return nothing
 end

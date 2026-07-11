@@ -132,7 +132,21 @@ function run_canonical_sim!(
         @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* omega_dot
         apply_brake_constraint!(u, sys, N, Nr)   # pin ω_gnd=0 when brake latched
         if spoke !== nothing && spoke.enabled
-            constrain_spokes!(forces, u, sys, N, Nr, p)   # per-vertex spoke spring
+            # Spoke spring applied via force accumulation (not post-step projection)
+            # Call from here with a local forces array for spoke accumulation only
+            f_spoke = zeros(Float64, 3 * N)
+            constrain_spokes!(f_spoke, u, sys, N, Nr, p)
+            # Apply spoke forces as velocity impulse: Δv = F_spoke · dt / m
+            for i in 1:N
+                m = sys.nodes[i].mass
+                if m > 1e-12
+                    v_idx_start = 3N + 3*(i-1) + 1
+                    v_idx_end = 3N + 3*i
+                    if v_idx_end <= length(u)
+                        @views u[v_idx_start:v_idx_end] .+= dt .* f_spoke[(3*(i-1)+1):(3*i)] ./ m
+                    end
+                end
+            end
         end
 
         # ── Also clamp ω itself if it became Inf/NaN from accumulation ──────
