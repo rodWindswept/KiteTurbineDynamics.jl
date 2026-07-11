@@ -589,27 +589,35 @@ corrects one step behind. A hard projection after each step prevents
 accumulated drift without requiring an implicit solver.
 """
 function constrain_spokes!(
-    u::Vector{Float64}, sys::KiteTurbineSystem, N::Int, Nr::Int, p::SystemParams
+    forces::Vector{Float64}, u::Vector{Float64},
+    sys::KiteTurbineSystem, N::Int, Nr::Int, p::SystemParams
 )
-    shaft_dir = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    for i in 2:length(sys.ring_ids)
-        gid = sys.ring_ids[i]
+    shaft = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    alpha = @view u[6N+1 : 6N+Nr]
+    EA_spoke = 100e9 * π * 0.007^2 / 4.0
+    for gid in sys.ring_ids[2:end]
         gid === nothing && continue
-        rng = (3*(gid-1)+1):(3*gid)
-        ring_pos = @view u[rng]
-        proj = dot(ring_pos, shaft_dir) * shaft_dir
-        drift = ring_pos .- proj
-        if norm(drift) > 1e-9
-            ring_pos .= proj
-            # Remove radial velocity component
-            ri = (sys.nodes[gid]::RingNode).ring_idx
-            v_start = 3N + 3*(gid-1) + 1
-            v_end = 3N + 3*gid
-            if v_end <= length(u)
-                v_ring = @view u[v_start:v_end]
-                v_proj = dot(v_ring, shaft_dir) * shaft_dir
-                v_ring .= v_proj
+        node = sys.nodes[gid]::RingNode
+        ring_idx = node.ring_idx
+        perp1, perp2 = shaft_perp_basis(shaft)
+        center = @view u[3*(gid-1)+1 : 3*gid]
+        R_design = node.radius
+        α_ring = alpha[ring_idx]
+        n_lines = p.n_lines
+        k_per_spoke = EA_spoke / R_design
+        net_force = zeros(3)
+        for j in 1:n_lines
+            vertex = attachment_point(center, R_design, α_ring, j, n_lines, perp1, perp2)
+            axial_proj = dot(vertex, shaft)
+            radial_vec = vertex .- axial_proj .* shaft
+            r = norm(radial_vec)
+            if r > R_design + 1e-6
+                radial_unit = radial_vec ./ r
+                F = k_per_spoke * (r - R_design)
+                net_force .-= F .* radial_unit  # inward restoring force
             end
         end
+        forces[gid] .+= net_force
     end
+    return nothing
 end
