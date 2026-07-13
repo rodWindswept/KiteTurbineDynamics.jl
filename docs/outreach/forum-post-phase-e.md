@@ -95,6 +95,35 @@ bidirectionally from the CP-max TSR point rather than from a fixed ceiling.
 
 ---
 
+## Power to weight
+
+The proposition behind TRPT kite turbines is materials efficiency. No tower.
+No foundation. The flying assembly is blades, rings, a tensile shaft, and a
+kite. Total airborne mass for the V10 Tight configuration is under 50 kg.
+
+Our design sweep shows this assembly producing 100–300 kW. That is **2–6 kW
+per kilogram of flying mass.** Conventional horizontal-axis wind turbines
+deliver roughly 0.02 kW/kg at the rotor and nacelle level. The gap is two
+orders of magnitude.
+
+The ring geometry fix matters here. When the structural check used the
+placeholder tube formula, every design appeared to fail. The ring was
+40× too weak. The fix did not change the flying mass. It changed our
+ability to see that the mass we already had was structurally adequate.
+The DE optimizer had found a 60 mm, 0.6 mm wall tube that is both light
+and strong. We just were not using its numbers.
+
+For the high-RPM regime, the power-to-weight story gets more interesting.
+Blade 0.85 at k=2 produces 116–156 kW from the same 49 kg airframe. If
+a 0.69 blade scales similarly, a three-stack on one line could approach
+350 kW from perhaps 60 kg. That is nearly 6 kW/kg.
+
+The TRPT approach does not win on peak aerodynamic efficiency. It wins
+on mass. Every kilogram you do not lift is a kilogram you do not pay for
+in structure, foundation, and installation.
+
+---
+
 ## Where we are
 
 Three things we learned:
