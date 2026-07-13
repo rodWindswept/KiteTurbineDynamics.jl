@@ -35,8 +35,10 @@ function build_v10_tight_no_lowest(;
     r_bottom_scale::Float64=1.0,
     r_hub_scale::Float64=1.0,
     blade_scale::Float64=1.0,
+    do_scale::Float64=1.0,
+    t_scale::Float64=1.0,
 )
-    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true, do_scale=1.0, t_scale=1.0)
+    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true, do_scale, t_scale)
 end
 
 function _build_v10_tight(;
