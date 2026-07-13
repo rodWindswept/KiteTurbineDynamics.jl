@@ -1,0 +1,130 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage[paperwidth=22cm,paperheight=15cm,margin=0.3cm]{geometry}
+\pagestyle{empty}
+\begin{document}
+\centering
+\begin{tikzpicture}[scale=0.88]
+
+% ── Title ──
+\node[font=\large\sffamily\bfseries] at (11.0, 15.8) {TRPT Design Landscape — Power vs Rotor Speed};
+\node[font=\footnotesize\sffamily] at (11.0, 15.0) {V10 Tight · 11 m/s · spokes ON · DE-optimized ring · 4mm/3.5mm tether};
+
+% ── Axes ──
+% X: ω from 0 to 500 rpm → 0 to 18 cm
+% Y: P from 0 to 320 kW → 0 to 12 cm
+\draw[->, thick] (2.0, 2.0) -- (20.5, 2.0) node[right, font=\footnotesize] {Rotor speed $\omega$ (rpm)};
+\draw[->, thick] (2.0, 2.0) -- (2.0, 14.5) node[above, font=\footnotesize] {Ground power $P$ (kW)};
+
+% X ticks
+\foreach \w/\x in {0/2.0, 100/5.6, 200/9.2, 300/12.8, 400/16.4, 500/20.0} {
+  \draw (\x, 1.8) -- (\x, 2.0);
+  \node[font=\tiny] at (\x, 1.4) {\w};
+}
+
+% Y ticks
+\foreach \p/\y in {0/2.0, 50/3.88, 100/5.75, 150/7.62, 200/9.5, 250/11.38, 300/13.25} {
+  \draw (1.8, \y) -- (2.0, \y);
+  \node[font=\tiny] at (1.4, \y) {\p};
+}
+
+% ── Regime divider ──
+\draw[dashed, gray!60] (11.6, 2.0) -- (11.6, 14.0);
+\node[font=\small\sffamily, fill=white] at (6.8, 13.5) {Regime B};
+\node[font=\small\sffamily, fill=white] at (16.0, 13.5) {Regime A};
+
+% Helper: x = 2.0 + ω/500*18, y = 2.0 + P/320*12
+\def\ptoX#1#2{\pgfmathsetmacro{\px}{2.0 + #1/500*18}\pgfmathsetmacro{\py}{2.0 + #2/320*12}}
+
+% ── Failed points (small open circles) ──
+% blade 0.69, k=4, ω=23, P=0.2
+\ptoX{23}{0.2}\draw[blue!60, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.69, k=6, ω=16, P=0.2
+\ptoX{16}{0.2}\draw[teal!50, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.69, k=10, ω=58, P=3.3
+\ptoX{58}{3.3}\draw[orange!50, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.80, k=4, ω=18, P=0.2
+\ptoX{18}{0.2}\draw[blue!60, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.80, k=6, ω=123, P=15.3
+\ptoX{123}{15.3}\draw[teal!50, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.85, k=10, ω=12, P=0.2
+\ptoX{12}{0.2}\draw[orange!50, fill=white] (\px, \py) circle (1.0pt);
+% blade 0.85, k=14, ω=82, P=18.1
+\ptoX{82}{18.1}\draw[red!50, fill=white] (\px, \py) circle (1.0pt);
+\node[font=\tiny] at (\px+0.3, \py) {0.85};
+
+% ── Viable points (filled, labeled) ──
+% blade 0.80, k=14, ω=201, P=133
+\ptoX{201}{133}\draw[red!50, fill=red!50] (\px, \py) circle (2.0pt);
+\node[font=\tiny, above] at (\px, \py+0.2) {0.80};
+
+% blade 0.90, k=6, ω=168, P=81
+\ptoX{168}{81}\draw[teal!50, fill=teal!50] (\px, \py) circle (2.0pt);
+\node[font=\tiny, right] at (\px+0.2, \py) {0.90};
+
+% blade 0.95, k=4, ω=257, P=199
+\ptoX{257}{199}\draw[blue!60, fill=blue!60] (\px, \py) circle (2.2pt);
+\node[font=\tiny, above right] at (\px+0.15, \py+0.15) {0.95};
+
+% blade 0.95, k=6/3.5mm, ω=301, P=259
+\ptoX{301}{259}\draw[teal!50, fill=teal!50] (\px, \py) circle (2.0pt);
+\node[font=\tiny, above] at (\px, \py+0.25) {0.95$^4$};
+
+% blade 0.95, k=2/r1.0, ω=455, P=147
+\ptoX{455}{147}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+\node[font=\tiny, left] at (\px-0.3, \py) {0.95$^3$};
+
+% blade 1.00, k=4, ω=206, P=146
+\ptoX{206}{146}\draw[blue!60, fill=blue!60] (\px, \py) circle (2.0pt);
+\node[font=\tiny, below] at (\px, \py-0.25) {1.00};
+
+% blade 1.00, k=2/3.5mm, ω=272, P=223
+\ptoX{272}{223}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+
+% blade 1.05, k=4, ω=190, P=86
+\ptoX{190}{86}\draw[blue!60, fill=blue!60] (\px, \py) circle (2.0pt);
+
+% blade 1.05, k=2/r1.0, ω=408, P=196
+\ptoX{408}{196}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+\node[font=\tiny, above] at (\px, \py+0.2) {1.05$^3$};
+
+% blade 1.05, k=2/3.5mm, ω=318, P=155
+\ptoX{318}{155}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+
+% blade 1.10, k=4, ω=272, P=297
+\ptoX{272}{297}\draw[blue!60, fill=blue!60] (\px, \py) circle (2.2pt);
+\node[font=\tiny, above] at (\px, \py+0.25) {1.10};
+
+% blade 1.10, k=2/3.5mm, ω=351, P=121
+\ptoX{351}{121}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+
+% blade 1.10, k=2/r1.0, ω=398, P=190
+\ptoX{398}{190}\draw[black!70, fill=black!70] (\px, \py) circle (2.0pt);
+
+% ── k=2 curve guide (Regime A right-flank) ──
+\draw[dashed, black!40] (12.0, 2.2) parabola (16.4, 9.1);
+\node[font=\tiny, black!40] at (16.5, 9.5) {$k{=}2$ locus};
+
+% ── k=4 curve guide ──
+\draw[dashed, blue!40] (4.0, 2.1) parabola (11.3, 9.5);
+\node[font=\tiny, blue!40] at (2.5, 5.5) {$k{=}4$};
+
+% ── Kickstart diamond (blade 0.85, k=2, 116-156 kW, 326-482 rpm) ──
+\ptoX{404}{136}\draw[magenta, fill=magenta] (\px, \py) ++(0.2,0) -- ++(-0.2,0.2) -- ++(-0.2,-0.2) -- ++(0.2,-0.2) -- cycle;
+\draw[magenta, thin] (2.0+326/500*18, 2.0+116/320*12) -- (2.0+482/500*18, 2.0+156/320*12);
+\node[font=\tiny, magenta, right] at (2.0+482/500*18+0.2, 2.0+156/320*12) {kickstart};
+
+% ── Legend ──
+\node[font=\small\sffamily\bfseries] at (19.0, 13.5) {$k_{\text{mppt}}$};
+\foreach \k/\c/\cy in {2/black!70/12.8, 4/blue!60/12.1, 6/teal!50/11.4, 14/red!50/10.7} {
+  \draw[\c, fill=\c] (19.0, \cy) circle (2pt);
+  \node[font=\tiny, right] at (19.3, \cy) {$k{=}\k$};
+}
+\node[font=\tiny] at (19.0, 10.0) {\textsuperscript{3}=r1.00 \textsuperscript{4}=3.5mm};
+
+% ── Data box ──
+\node[font=\tiny\sffamily, anchor=south east] at (20.0, 2.5) {KTD.jl · \texttt{8cb23f9}};
+
+\end{tikzpicture}
+\end{document}
