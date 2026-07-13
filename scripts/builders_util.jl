@@ -108,5 +108,9 @@ function _build_v10_tight(;
         sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
     end
     println("V10 Tight no-lowest: n_lines=$n_lines n_rotors=$n_exp rings=$n_rings mass=$(round(best.best_mass_kg, digits=2))kg blade_scale=$(blade_scale)")
+    # Populate ring geometry in system for ring_element_analysis
+    sys.ring_Do_top[] = best.Do_top_m * do_scale
+    sys.ring_toverD[] = best.t_over_D * t_scale
+    sys.ring_aspect_ratio[] = best.aspect_ratio
     return sys, u0, pc, "V10 Tight (hub + $n_exp expansion rotors)", result.design
 end

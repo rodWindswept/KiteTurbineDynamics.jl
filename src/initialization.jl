@@ -227,8 +227,11 @@ function _build_kite_turbine_system_impl(
         Ref(p.k_mppt),                # k_mppt_ref — live MPPT gain
         kite_pos_init,
         expansion_rotors,            # expansion rotors from caller
-        copy(ring_radii),
-    )           # effective radii = nominal radii
+        copy(ring_radii),            # effective radii = nominal radii
+        Ref(0.0),                    # ring_Do_top (populated by builder)
+        Ref(0.05),                   # ring_toverD (populated by builder)
+        Ref(1.0),                    # ring_aspect_ratio (populated by builder)
+    )
 
     # ── Initial state vector (straight-line rope placement) ───────────────
     u0 = zeros(Float64, state_size(sys))

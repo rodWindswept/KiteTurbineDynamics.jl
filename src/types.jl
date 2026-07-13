@@ -138,6 +138,17 @@ struct KiteTurbineSystem
     # Same length as ring_ids; updated each ODE step when expansion
     # rotors are present.  Initialised to nominal ring radii at build time.
     effective_radii::Vector{Float64}
+
+    # Ring beam design geometry — populated by builder, read by ring_element_analysis
+    ring_Do_top::Base.RefValue{Float64}
+    ring_toverD::Base.RefValue{Float64}
+    ring_aspect_ratio::Base.RefValue{Float64}
+end
+
+# Default ring geometry (legacy circular 0.05 t/D, Do ∝ √R)
+# Used when builder doesn't populate these fields
+function default_ring_do(R::Float64)
+    return max(0.01396 * sqrt(R), 5e-4 / 0.05)
 end
 
 # Compliance: rad of ring-plane tilt per N·m of non-shaft torque.
