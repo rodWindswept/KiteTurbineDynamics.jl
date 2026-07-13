@@ -18,11 +18,29 @@ lowest-expansion rotor removed.  Reads `best_design.json` from the
 
 Returns `(sys, u0, p, label)`.
 """
+function build_v10_tight(;
+    tether_diameter::Float64=0.003,
+    r_bottom_scale::Float64=1.0,
+    r_hub_scale::Float64=1.0,
+    blade_scale::Float64=1.0,
+    keep_lowest::Bool=false,
+)
+    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest, drop=false)
+end
+
 function build_v10_tight_no_lowest(;
     tether_diameter::Float64=0.003,       # default 3mm, pass 0.004 for reinforced
     r_bottom_scale::Float64=1.0,          # default 1.0, pass >1.0 for larger bottom
     r_hub_scale::Float64=1.0,             # default 1.0, auto-set to ≥ r_bottom_scale
     blade_scale::Float64=1.0,             # default 1.0, pass <1.0 for smaller blades (λ)
+)
+    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true)
+end
+
+function _build_v10_tight(;
+    tether_diameter::Float64, r_bottom_scale::Float64,
+    r_hub_scale::Float64, blade_scale::Float64,
+    keep_lowest::Bool, drop::Bool,
 )
     best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
     isfile(best_path) || error("best_design.json not found at $best_path")
@@ -40,7 +58,7 @@ function build_v10_tight_no_lowest(;
     result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw();
                                      max_ground_radius=5.0, power_W=50000.0)
     rotors = sort(result.rotors, by=r -> r.ring_idx, rev=true)
-    if length(rotors) > 1
+    if drop && length(rotors) > 1
         dropped = popfirst!(rotors)
         println("Dropped lowest expansion rotor at ring $(dropped.ring_idx)")
     end
