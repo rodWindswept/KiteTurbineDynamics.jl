@@ -99,24 +99,28 @@ bidirectionally from the CP-max TSR point rather than from a fixed ceiling.
 
 The proposition behind TRPT kite turbines is materials efficiency. No tower.
 No foundation. The flying assembly is blades, rings, a tensile shaft, and a
-kite. Total airborne mass for the V10 Tight configuration is under 50 kg.
+kite. Total airborne mass ranges from 108 kg (blade 0.80) to 130 kg (blade
+1.10), with the structural rings dominating at 77 kg across all designs.
 
-Our design sweep shows this assembly producing 100–300 kW. That is **2–6 kW
-per kilogram of flying mass.** Conventional horizontal-axis wind turbines
+Our sweep shows this assembly producing 100–300 kW. The sweet spot —
+blade 0.95 at k=4 — delivers 199 kW from 118 kg, or **1.7 kW per kilogram**
+of flying mass. The maximum power design — blade 1.10 at k=4 — hits 297 kW
+from 130 kg, or **2.3 kW/kg.** Conventional horizontal-axis wind turbines
 deliver roughly 0.02 kW/kg at the rotor and nacelle level. The gap is two
 orders of magnitude.
 
 The ring geometry fix matters here. When the structural check used the
-placeholder tube formula, every design appeared to fail. The ring was
-40× too weak. The fix did not change the flying mass. It changed our
-ability to see that the mass we already had was structurally adequate.
-The DE optimizer had found a 60 mm, 0.6 mm wall tube that is both light
-and strong. We just were not using its numbers.
+placeholder tube formula, every design appeared to fail. The fix revealed
+that the 77 kg ring mass we already had — 22 rings at 3.5 kg each — is
+structurally adequate with FoS margins from 2.1 to 11.3. The DE optimizer
+had found a 60 mm, 0.6 mm wall tube that balances mass and strength.
+We just were not using its numbers.
 
-For the high-RPM regime, the power-to-weight story gets more interesting.
-Blade 0.85 at k=2 produces 116–156 kW from the same 49 kg airframe. If
-a 0.69 blade scales similarly, a three-stack on one line could approach
-350 kW from perhaps 60 kg. That is nearly 6 kW/kg.
+For the high-RPM regime, blade 0.85 produces 116–156 kW from 111 kg
+(1.0–1.4 kW/kg). The power-to-weight is lower than the high-torque family
+but the blade loads are lower, suggesting better fatigue life and easier
+stacking. A three-stack of 0.69 blades could approach the same total power
+with distributed structural loads.
 
 The TRPT approach does not win on peak aerodynamic efficiency. It wins
 on mass. Every kilogram you do not lift is a kilogram you do not pay for
