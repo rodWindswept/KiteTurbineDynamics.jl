@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # scripts/kickstart_sweep.jl — kickstart small blades to find true operating points
 # Uses: no-load spin-up (k=0, 30s) → engage k, run 60s MPPT → record P, ω, FoS
-using KiteTurbineDynamics, Printf, LinearAlgebra
+using KiteTurbineDynamics, Printf, LinearAlgebra, CSV, DataFrames
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 import KiteTurbineDynamics: SpokeParams

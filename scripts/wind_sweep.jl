@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 # scripts/wind_sweep.jl — power curves at multiple wind speeds for key designs
-using KiteTurbineDynamics, Printf, LinearAlgebra
+using KiteTurbineDynamics, Printf, LinearAlgebra, CSV, DataFrames
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 import KiteTurbineDynamics: SpokeParams
