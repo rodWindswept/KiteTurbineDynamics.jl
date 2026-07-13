@@ -24,23 +24,26 @@ function build_v10_tight(;
     r_hub_scale::Float64=1.0,
     blade_scale::Float64=1.0,
     keep_lowest::Bool=false,
+    do_scale::Float64=1.0,
+    t_scale::Float64=1.0,
 )
-    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest, drop=false)
+    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest, drop=!keep_lowest, do_scale, t_scale)
 end
 
 function build_v10_tight_no_lowest(;
-    tether_diameter::Float64=0.003,       # default 3mm, pass 0.004 for reinforced
-    r_bottom_scale::Float64=1.0,          # default 1.0, pass >1.0 for larger bottom
-    r_hub_scale::Float64=1.0,             # default 1.0, auto-set to ≥ r_bottom_scale
-    blade_scale::Float64=1.0,             # default 1.0, pass <1.0 for smaller blades (λ)
+    tether_diameter::Float64=0.003,
+    r_bottom_scale::Float64=1.0,
+    r_hub_scale::Float64=1.0,
+    blade_scale::Float64=1.0,
 )
-    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true)
+    return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true, do_scale=1.0, t_scale=1.0)
 end
 
 function _build_v10_tight(;
     tether_diameter::Float64, r_bottom_scale::Float64,
     r_hub_scale::Float64, blade_scale::Float64,
     keep_lowest::Bool, drop::Bool,
+    do_scale::Float64, t_scale::Float64,
 )
     best_path = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_design.json")
     isfile(best_path) || error("best_design.json not found at $best_path")
@@ -55,6 +58,8 @@ function _build_v10_tight(;
         Float64(best.n_active_rotors), 1.0, best.aspect_ratio, 1.0   # λ=1.0 gate: aspect_ratio from JSON, blade_scale always 1.0 in design vector
     ]
     x[2] *= r_bottom_scale       # reinforce bottom ring radius
+    x[3] *= do_scale              # scale ring outer diameter
+    x[4] *= t_scale               # scale wall thickness ratio
     result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw();
                                      max_ground_radius=5.0, power_W=50000.0)
     rotors = sort(result.rotors, by=r -> r.ring_idx, rev=true)

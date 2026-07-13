@@ -402,10 +402,11 @@ canonical_10kw_builder() = begin
     sys, u0, p, "Canonical 10 kW"
 end
 
-function v10_tight_builder(; r_bottom_scale::Float64=1.0, tether_diameter::Float64=0.003, blade_scale::Float64=1.0)
+function v10_tight_builder(; r_bottom_scale::Float64=1.0, tether_diameter::Float64=0.003, blade_scale::Float64=1.0, do_scale::Float64=1.0, t_scale::Float64=1.0)
     include(joinpath(dirname(@__DIR__), "scripts", "builders_util.jl"))
     return () -> Base.invokelatest(build_v10_tight_no_lowest;
-        r_bottom_scale=r_bottom_scale, tether_diameter=tether_diameter, blade_scale=blade_scale)
+        r_bottom_scale=r_bottom_scale, tether_diameter=tether_diameter, blade_scale=blade_scale,
+        do_scale=do_scale, t_scale=t_scale)
 end
 
 end  # module
