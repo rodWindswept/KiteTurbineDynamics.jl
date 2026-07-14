@@ -30,6 +30,8 @@ function eval_design(blade::Float64, k::Float64, wind::Float64)
         [wind * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
     end
 
+    sys.k_mppt_ref[] = k  # SET BEFORE SETTLE (used by equilibrium scan)
+
     # For small blades (≤0.85): kickstart needed
     if blade <= 0.85
         u = settle_to_equilibrium(sys, copy(u0), p; wind_fn=wf)
@@ -58,7 +60,6 @@ function eval_design(blade::Float64, k::Float64, wind::Float64)
         u = settle_to_operational_state(sys, copy(u0), p, 9.5; wind_fn=wf)
     end
 
-    sys.k_mppt_ref[] = k
     n_mppt = round(Int, SIM_S / DT)
 
     local P_final = 0.0
