@@ -1,19 +1,20 @@
 \documentclass{article}
 \usepackage{tikz}
 \usepackage{amsmath}
-\usepackage[paperwidth=18cm,paperheight=16cm,margin=0.5cm]{geometry}
+\usepackage[paperwidth=18cm,paperheight=18cm,margin=0.5cm]{geometry}
 \pagestyle{empty}
 \begin{document}
 \centering
 \begin{tikzpicture}[scale=0.85]
 
 % ── Title ──
-\node[font=\large\sffamily\bfseries] at (9.0, 15.2) {TRPT Design Landscape — FoS vs Power};
-\node[font=\footnotesize\sffamily] at (9.0, 14.4) {V10 Tight · 11 m/s · spokes ON · DE-optimized ring · 30s MPPT};
+\node[font=\large\sffamily\bfseries] at (9.0, 17.0) {TRPT Design Landscape — FoS vs Power};
+\node[font=\footnotesize\sffamily] at (9.0, 16.2) {V10 Tight · 11 m/s · spokes ON · DE-optimized ring · 30s MPPT};
 
 % ── Axes ──
+% Y: FoS 0-12 → 2.0 to 15.2 (1.1 cm per FoS unit)
 \draw[->, thick] (2.5, 2.0) -- (17.5, 2.0) node[right, font=\footnotesize] {$P$ (kW)};
-\draw[->, thick] (2.5, 2.0) -- (2.5, 13.5) node[above, font=\footnotesize] {Min. ring FoS};
+\draw[->, thick] (2.5, 2.0) -- (2.5, 15.2) node[above right, font=\footnotesize] {Min. ring FoS};
 
 % X ticks
 \foreach \p/\x in {50/2.5, 100/5.17, 150/7.83, 200/10.5, 250/13.17, 300/15.83} {
@@ -21,89 +22,93 @@
   \node[font=\tiny] at (\x, 1.4) {\p};
 }
 
-% Y ticks
-\foreach \f/\y in {2/4.4, 4/6.8, 6/9.2, 8/11.6, 10/14.0} {
+% Y ticks (y = 2.0 + FoS*1.1)
+\foreach \f/\y in {2/4.2, 4/6.4, 6/8.6, 8/10.8, 10/13.0, 12/15.2} {
   \draw (2.3, \y) -- (2.5, \y);
   \node[font=\tiny] at (2.0, \y) {\f};
 }
 
-% FoS bands
-\fill[green!10]  (2.5, 9.2) rectangle (17.5, 13.5);
-\fill[yellow!10] (2.5, 6.8) rectangle (17.5, 9.2);
-\fill[orange!8]  (2.5, 5.0) rectangle (17.5, 6.8);
-\fill[red!6]     (2.5, 4.4) rectangle (17.5, 5.0);
+% FoS bands (aligned to new Y scale: y = 2.0 + FoS*1.1)
+\fill[green!10]  (2.5, 8.6) rectangle (17.5, 15.2);   % FoS≥6
+\fill[yellow!10] (2.5, 6.4) rectangle (17.5, 8.6);     % FoS 4-6
+\fill[orange!8]  (2.5, 4.75) rectangle (17.5, 6.4);    % FoS 2.5-4
+\fill[red!6]     (2.5, 4.2) rectangle (17.5, 4.75);    % FoS 2-2.5
 
 % Gate lines
-\draw[dashed, red!60] (2.5, 4.4) -- (17.5, 4.4);
-\draw[dashed, red!40] (2.5, 3.8) -- (17.5, 3.8);
-\draw[dashed, red!40] (2.5, 2.0) -- (2.5, 13.5);
+\draw[dashed, red!60] (2.5, 4.2) -- (17.5, 4.2);        % FoS=2
+\draw[dashed, red!40] (2.5, 3.65) -- (17.5, 3.65);      % FoS=1.5
+\draw[dashed, red!40] (2.5, 2.0) -- (2.5, 15.2);        % P=50 gate
 
-% Band labels (right side)
-\node[font=\tiny\sffamily] at (16.0, 12.5) {\textcolor{green!50!black}{Ultra-safe (FoS$\ge$6)}};
-\node[font=\tiny\sffamily] at (16.0, 8.0) {\textcolor{yellow!50!black}{Safe (4--6)}};
-\node[font=\tiny\sffamily] at (16.0, 5.8) {\textcolor{orange!70!black}{Adequate (2.5--4)}};
-\node[font=\tiny\sffamily] at (16.0, 4.65) {\textcolor{red!60!black}{Marginal (2--2.5)}};
+% Band labels (right side, adjusted for new Y scale)
+\node[font=\tiny\sffamily] at (16.0, 13.5) {\textcolor{green!50!black}{Ultra-safe (FoS$\ge$6)}};
+\node[font=\tiny\sffamily] at (16.0, 7.5) {\textcolor{yellow!50!black}{Safe (4--6)}};
+\node[font=\tiny\sffamily] at (16.0, 5.5) {\textcolor{orange!70!black}{Adequate (2.5--4)}};
+\node[font=\tiny\sffamily] at (16.0, 4.4) {\textcolor{red!60!black}{Marginal (2--2.5)}};
 
-% ── Precompute coordinates ──
-% x = 2.5 + (P-50)/270*15, y = 2.0 + FoS*1.2
+% Gate labels
+\node[font=\tiny, red!60] at (16.5, 4.05) {FoS=2.0};
+\node[font=\tiny, red!40] at (16.5, 3.45) {FoS=1.5};
+\node[font=\tiny, red!40, rotate=90] at (2.7, 3.0) {$P{=}50$ kW};\n\n% ── Data points
+
+% ── Data points: x = 2.5 + (P-50)/270*15, y = 2.0 + FoS*1.1 ──
 
 % Ultra-safe
-\pgfmathsetmacro{\x}{2.5 + (81-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 11.28*1.2}
+\pgfmathsetmacro{\x}{2.5 + (81-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 11.28*1.1}
 \draw[teal!60, fill=teal!60] (\x, \y) circle (1.6pt);
 \node[font=\tiny, teal!60, right] at (\x+0.3, \y) {0.90};
 
-\pgfmathsetmacro{\x}{2.5 + (147-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 8.63*1.2}
+\pgfmathsetmacro{\x}{2.5 + (147-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 8.63*1.1}
 \draw[green!60, fill=green!60] (\x, \y) circle (1.7pt);
 
-\pgfmathsetmacro{\x}{2.5 + (133-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.19*1.2}
+\pgfmathsetmacro{\x}{2.5 + (133-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.19*1.1}
 \draw[blue!60, fill=blue!60] (\x, \y) circle (1.4pt);
 \node[font=\tiny, blue!60, above] at (\x, \y+0.3) {0.80};
 
-\pgfmathsetmacro{\x}{2.5 + (190-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.14*1.2}
+\pgfmathsetmacro{\x}{2.5 + (190-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.14*1.1}
 \draw[red!60, fill=red!60] (\x, \y) circle (2.0pt);
 
-\pgfmathsetmacro{\x}{2.5 + (259-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.14*1.2}
+\pgfmathsetmacro{\x}{2.5 + (259-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 6.14*1.1}
 \draw[green!60, fill=green!60] (\x, \y) circle (1.7pt);
 
 % Safe
-\pgfmathsetmacro{\x}{2.5 + (199-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 5.18*1.2}
+\pgfmathsetmacro{\x}{2.5 + (199-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 5.18*1.1}
 \draw[green!60, fill=green!60] (\x, \y) circle (1.7pt);
 \node[font=\tiny, green!60, above right] at (\x+0.15, \y+0.15) {0.95};
 
-\pgfmathsetmacro{\x}{2.5 + (70-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 4.69*1.2}
+\pgfmathsetmacro{\x}{2.5 + (70-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 4.69*1.1}
 \draw[olive!60!black, fill=olive!60!black] (\x, \y) circle (1.8pt);
 
-\pgfmathsetmacro{\x}{2.5 + (155-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 4.04*1.2}
+\pgfmathsetmacro{\x}{2.5 + (155-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 4.04*1.1}
 \draw[orange!60, fill=orange!60] (\x, \y) circle (1.9pt);
 
 % Adequate
-\pgfmathsetmacro{\x}{2.5 + (146-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 3.91*1.2}
+\pgfmathsetmacro{\x}{2.5 + (146-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 3.91*1.1}
 \draw[olive!60!black, fill=olive!60!black] (\x, \y) circle (1.8pt);
 \node[font=\tiny, olive!60!black, above right] at (\x+0.15, \y+0.15) {1.00};
 
-\pgfmathsetmacro{\x}{2.5 + (196-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 3.53*1.2}
+\pgfmathsetmacro{\x}{2.5 + (196-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 3.53*1.1}
 \draw[orange!60, fill=orange!60] (\x, \y) circle (1.9pt);
 
-\pgfmathsetmacro{\x}{2.5 + (223-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.52*1.2}
+\pgfmathsetmacro{\x}{2.5 + (223-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.52*1.1}
 \draw[olive!60!black, fill=olive!60!black] (\x, \y) circle (1.8pt);
 
 % Marginal
-\pgfmathsetmacro{\x}{2.5 + (297-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.30*1.2}
+\pgfmathsetmacro{\x}{2.5 + (297-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.30*1.1}
 \draw[red!60, fill=red!60] (\x, \y) circle (2.0pt);
-\node[font=\tiny, red!60, above] at (\x, \y+0.3) {1.10};
+\node[font=\tiny, red!60, below] at (\x, \y-0.3) {1.10};
 
-\pgfmathsetmacro{\x}{2.5 + (121-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.28*1.2}
+\pgfmathsetmacro{\x}{2.5 + (121-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.28*1.1}
 \draw[red!60, fill=red!60] (\x, \y) circle (2.0pt);
 
-\pgfmathsetmacro{\x}{2.5 + (86-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.14*1.2}
+\pgfmathsetmacro{\x}{2.5 + (86-50)/270*15}\pgfmathsetmacro{\y}{2.0 + 2.14*1.1}
 \draw[orange!60, fill=orange!60] (\x, \y) circle (1.9pt);
 
-% ── Legend (bottom, dots and labels separated) ──
-\node[font=\footnotesize\sffamily] at (2.8, 1.0) {Blade:};
+% ── Legend ──
+\node[font=\footnotesize\sffamily] at (2.8, 1.8) {Blade:};
 \foreach \bs/\c/\xoff in {0.80/blue!60/0, 0.90/teal!60/1.2, 0.95/green!60/2.4, 1.00/olive!60!black/3.6, 1.05/orange!60/4.8, 1.10/red!60/6.0} {
   \pgfmathsetmacro{\lr}{\bs*1.6}
-  \draw[\c, fill=\c] (4.8+\xoff, 0.8) circle (\lr pt);
-  \node[font=\tiny, anchor=west] at (5.1+\xoff, 0.8) {\bs};
+  \draw[\c, fill=\c] (4.8+\xoff, 1.6) circle (\lr pt);
+  \node[font=\tiny, anchor=west] at (5.1+\xoff, 1.6) {\bs};
 }
 
 % ── Data box ──
