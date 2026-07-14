@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone CoaxialAutogyroStacking
+        run: |
+          git clone https://github.com/rodWindswept/CoaxialAutogyroStacking.jl.git ..
+          echo "CoaxialAutogyroStacking cloned"
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.12'
+
+      - name: Instantiate + develop
+        run: |
+          julia --project=. -e '
+            using Pkg
+            Pkg.develop(path="../CoaxialAutogyroStacking.jl")
+            Pkg.instantiate()
+          '
+
+      - name: Run structural tests
+        run: |
+          julia --project=. -e '
+            using Test, KiteTurbineDynamics
+            @testset "Structural golden traces" begin
+              include("test/test_golden_traces.jl")
+            end
+          '
