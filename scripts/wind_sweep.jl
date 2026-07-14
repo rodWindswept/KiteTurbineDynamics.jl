@@ -55,6 +55,7 @@ function eval_design(blade::Float64, k::Float64, wind::Float64)
         n_spin = round(Int, 30.0 / DT)
         run_canonical_sim!(u, sys, p, wf, n_spin, DT;
             lift_device=nothing, lin_damp=0.05, spoke=sp)
+        sys.k_mppt_ref[] = k  # re-engage generator after spin-up
     else
         # Standard settle for large blades
         u = settle_to_operational_state(sys, copy(u0), p, 9.5; wind_fn=wf)

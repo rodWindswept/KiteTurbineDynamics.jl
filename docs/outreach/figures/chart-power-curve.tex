@@ -19,7 +19,7 @@
   \pgfmathsetmacro{\x}{2.0 + (\v-4.0)*18/12}
   \draw[black!6] (\x, 2.0) -- (\x, 14.0);
   \draw (\x, 1.8) -- (\x, 2.0);
-  \node[font=\tiny] at (\x, 1.45) {\v};
+  \node[font=\tiny] at (\x, 1.6) {\v};
 }
 \foreach \p in {0,100,200,300,400,500,600,700} {
   \pgfmathsetmacro{\y}{2.0 + \p*12/700}
@@ -32,6 +32,7 @@
 \definecolor{sweet}{RGB}{50,160,60}
 \definecolor{maxp}{RGB}{210,50,40}
 \definecolor{safe}{RGB}{30,140,190}
+\definecolor{light}{RGB}{130,50,180}
 
 % ── Cubic reference (faint) — P = 199*(V/11)³ from sweet spot anchor ──
 \draw[black!15, line width=1pt, dashed, domain=8.0:16.0, samples=40, smooth]
@@ -86,6 +87,49 @@
   ({2.0+(13.0-4.0)*18/12}, {2.0+406.9*12/700}) --
   ({2.0+(15.0-4.0)*18/12}, {2.0+275.0*12/700});
 \node[safe, font=\footnotesize\bfseries] at (17.0, {2.0+300*12/700}) {0.90·k6 Safest};
+
+% ── 0.85/k4 (Light blade — kickstart) ──
+% 5+7 m/s: 0 kW (below cut-in even with kickstart)
+% 9 m/s
+\pgfmathsetmacro{\dx}{2.0 + (9.0-4.0)*18/12}
+\pgfmathsetmacro{\dy}{2.0 + 156.6*12/700}
+\fill[light] (\dx, \dy) circle (3.5pt);
+\node[font=\tiny, light, right] at (\dx+0.3, \dy) {FoS 8.6};
+% 11 m/s — the DIP
+\pgfmathsetmacro{\dx}{2.0 + (11.0-4.0)*18/12}
+\pgfmathsetmacro{\dy}{2.0 + 110.4*12/700}
+\fill[light!50] (\dx, \dy) circle (3.5pt);
+\draw[light, thick] (\dx, \dy) circle (3.5pt);
+\node[font=\tiny, light, below] at (\dx, \dy-0.3) {FoS 5.3};
+% 13 m/s — the JUMP
+\pgfmathsetmacro{\dx}{2.0 + (13.0-4.0)*18/12}
+\pgfmathsetmacro{\dy}{2.0 + 325.9*12/700}
+\fill[light] (\dx, \dy) circle (3.5pt);
+\node[font=\tiny, light, above] at (\dx, \dy+0.25) {FoS 3.2};
+% 15 m/s — unstable (ODE solver failed to converge in 300s)
+\pgfmathsetmacro{\dx}{2.0 + (15.0-4.0)*18/12}
+\pgfmathsetmacro{\dy}{2.0 + 420*12/700}
+\node[font=\tiny, light!60, align=center] at (\dx, \dy) {unstable\\?};
+
+% 0.85/k4 curve — solid 9→11, dashed 11→13 (bifurcation), no 15
+\draw[light, line width=1.8pt]
+  ({2.0+(9.0-4.0)*18/12}, {2.0+156.6*12/700}) --
+  ({2.0+(11.0-4.0)*18/12}, {2.0+110.4*12/700});
+\draw[light, line width=1.4pt, dashed]
+  ({2.0+(11.0-4.0)*18/12}, {2.0+110.4*12/700}) --
+  ({2.0+(13.0-4.0)*18/12}, {2.0+325.9*12/700});
+% Dotted fade to instability zone
+\draw[light, line width=1pt, dotted]
+  ({2.0+(13.0-4.0)*18/12}, {2.0+325.9*12/700}) --
+  ({2.0+(15.0-4.0)*18/12}, {2.0+400*12/700});
+\node[light, font=\footnotesize\bfseries] at (9.5, {2.0+360*12/700}) {0.85·k4 Light blade};
+
+% Annotation: 0.85/k4 dip
+\pgfmathsetmacro{\ax}{2.0 + (11.0-4.0)*18/12}
+\pgfmathsetmacro{\ay}{2.0 + 110.4*12/700}
+\draw[light!60, thin] ({\ax-0.3}, {\ay-1.0}) -- (\ax, \ay-0.2);
+\node[font=\tiny, light!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\ax-2.5}, {\ay-1.3})
+  {Power dips at 11 m/s —\\blade stalls between\\two equilibria};
 
 % ── 0.95/k4 (Sweet spot) ──
 \dpt{9}{82.6}{5.1}{sweet}{above right}
@@ -167,21 +211,25 @@
 % ═══════════════════════════════════════════════════════════════
 % LEGEND
 % ═══════════════════════════════════════════════════════════════
-\fill[white, draw=black!15, rounded corners=3pt] (2.3, 0.3) rectangle (18.0, 1.9);
+\fill[white, draw=black!15, rounded corners=3pt] (2.3, 0.2) rectangle (20.5, 1.55);
 
-\draw[safe, line width=2pt] (2.8, 1.55) -- (4.2, 1.55);
-\fill[safe] (3.5, 1.55) circle (3pt);
-\node[font=\tiny, anchor=west] at (4.5, 1.55) {0.90·k6 Safest — P peaks at 13 m/s (407 kW), drops to 275 kW @ 15 m/s};
+\draw[safe, line width=2pt] (2.8, 1.25) -- (4.2, 1.25);
+\fill[safe] (3.5, 1.25) circle (3pt);
+\node[font=\tiny, anchor=west] at (4.5, 1.25) {0.90·k6 Safest — peaks at 13 m/s (407 kW), drops to 275 kW @ 15 m/s};
 
-\draw[sweet, line width=2pt] (2.8, 1.05) -- (4.2, 1.05);
-\fill[sweet] (3.5, 1.05) circle (3pt);
-\node[font=\tiny, anchor=west] at (4.5, 1.05) {0.95·k4 Sweet spot — smooth curve, 83→344 kW, FoS$\ge$3.9};
+\draw[light, line width=2pt] (2.8, 0.95) -- (4.2, 0.95);
+\fill[light] (3.5, 0.95) circle (3pt);
+\node[font=\tiny, anchor=west] at (4.5, 0.95) {0.85·k4 Light blade (kickstart) — dips at 11 m/s (110 kW), jumps to 326 kW @ 13 m/s};
 
-\draw[maxp, line width=2pt] (2.8, 0.55) -- (4.2, 0.55);
-\fill[maxp] (3.5, 0.55) circle (3pt);
-\node[font=\tiny, anchor=west] at (4.5, 0.55) {1.10·k4 Max power — bifurcates at 13 m/s ($\rightarrow$dashed), jumps to 657 kW @ 15 m/s};
+\draw[sweet, line width=2pt] (2.8, 0.65) -- (4.2, 0.65);
+\fill[sweet] (3.5, 0.65) circle (3pt);
+\node[font=\tiny, anchor=west] at (4.5, 0.65) {0.95·k4 Sweet spot — smooth curve, 83→344 kW, FoS$\ge$3.9};
 
-\node[font=\tiny, black!40, anchor=south east] at (19.8, 1.7) {KTD.jl · wind\_sweep.csv · 45s sim per point};
+\draw[maxp, line width=2pt] (2.8, 0.35) -- (4.2, 0.35);
+\fill[maxp] (3.5, 0.35) circle (3pt);
+\node[font=\tiny, anchor=west] at (4.5, 0.35) {1.10·k4 Max power — bifurcates at 13 m/s ($\rightarrow$dashed), jumps to 657 kW @ 15 m/s};
+
+\node[font=\tiny, black!40, anchor=south east] at (19.8, 0.7) {KTD.jl · wind\_sweep.csv · 45s sim per point};
 
 \end{tikzpicture}
 \end{document}
