@@ -1,0 +1,17 @@
+KTD.jl StonePunk infographic prompt:
+
+A professional StonePunk infographic for "KiteTurbineDynamics.jl" — a TRPT kite turbine dynamics simulator. Bento-grid layout with realistic engineering accuracy. 
+
+Aesthetic: Neolithic meets AI meets 1980s hi-tech. Dark background with synthwave purple/cyan/gold neon grid lines and glowing wireframe overlays. Stone megalith textures alongside polished metal turbine components. Thick outlined retro-futuristic panel borders.
+
+CENTER: A scientifically accurate illustration of a TRPT kite turbine in flight — stacked polygonal rotor rings with visible beam edges, helical tether lines in tension between rings, a hub rotor with 3 blades at the top, expansion rotors with banked blades on intermediate rings, a lift line extending upward, ground anchor at bottom. The rotor must look like a real autogyro with proper blade geometry — not a cartoon. Cyan tension lines, firebrick hub ring, steel-blue blades, dark orange expansion blades. Wind indicator dots flowing from left.
+
+TOP LEFT: "KTD.jl" title in large synthwave font. "TRPT Kite Turbine Dynamics · BEM-Coupled Multi-Body Solver".
+
+TOP RIGHT: Key metrics in glowing cyan on dark panels. "13,831 LOC · 322 commits · 917+ tests green · V10 Campaign".
+
+BOTTOM LEFT: "Current Findings" — "Static k_mppt under-predicts dynamic by 3.3x" with sparkline. "Rigid NACA 4412 beats soft kites · Ct/Cp = 2.5 vs 8.3". "Collapse margin > FoS for TRPT safety".
+
+BOTTOM RIGHT: "Next Target" — "Structural redesign → 70-80 kg at 50kW". "0.17 gCO2e/kWh · under 5p/kWh". Small "Porto 2026" badge.
+
+Footer: "Built on Lewis — stone by stone, line by line" in gold.

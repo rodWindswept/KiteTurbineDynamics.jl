@@ -1,9 +1,9 @@
 # AGENTS.md
 
 Cross-tool entry point for AI agents and human contributors working in this
-repository. This is the tool-agnostic companion to the Claude-specific
-[`CLAUDE.md`](CLAUDE.md) — read both. Where they overlap, `CLAUDE.md` is the
-fuller reference.
+repository. Claude-specific commands and workflows live in
+[`CLAUDE.md`](CLAUDE.md); this file holds the tool-agnostic conventions that
+apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 
 ## Start here
 
@@ -18,7 +18,7 @@ fuller reference.
 ## Working agreement
 
 - **Run the suite.** Run `julia --project=. test/runtests.jl` before committing.
-  23 test files included. Never commit with a red suite.
+  Never commit with a red suite.
 - **Physics conservatism.** Physical calculations must conform to the
   BEM-coupled v2/v5 solver formulations described in `DECISIONS.md`.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.

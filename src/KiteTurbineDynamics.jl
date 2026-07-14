@@ -22,12 +22,14 @@ include("structural_safety.jl")
 include("ring_element_analysis.jl")
 include("lift_kite.jl")
 include("sim_frame.jl")
+include("simulation.jl")
 include("sim_runner.jl")    # DashboardState + build_rerun! (v2 refactor)
 include("dashboard_panels.jl")  # Panel functions (v2 refactor)
 include("soft_ramp_controller.jl")
 include("visualization.jl")
 include("dashboard_v2.jl")       # Single-window v2 cockpit (build_dashboard_v2)
 include("trpt_optimization.jl")
+include("builders_util.jl")      # V10 builder functions (formerly scripts/builders_util.jl)
 include("trpt_axial_profiles.jl")
 include("ring_spacing.jl")
 include("bem.jl")
@@ -128,6 +130,9 @@ export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
 export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
 export RotorSpecV10, VerificationResult, headless_verify, headless_verify_structural
 export wind_speed_at_ring, solve_equilibrium_omega, solve_equilibrium_self_consistent
+
+# V10 system builders (src/builders_util.jl)
+export build_v10_tight, build_v10_tight_no_lowest
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams

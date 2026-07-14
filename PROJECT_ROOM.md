@@ -1,21 +1,78 @@
 # Project Room — KiteTurbineDynamics.jl
 
-**Created:** 2026-06-16 · **Updated:** 2026-07-03 (cleanup audit applied)
+**Created:** 2026-06-16 · **Updated:** 2026-07-14 (codebase audit applied)
 
-Systematic inventory of the repository. These files live at the repo root so any agent arriving fresh sees them immediately.
+Systematic inventory of the repository. Root-level files so any agent sees them immediately.
 
-## Structure
+## Root documents
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `01_source_inventory.md` | Every file logged with path, type, date, authority, limitations, and status | Updated 2026-06-22 |
-| `02_conflict_log.md` | 8 conflicts surfaced for review | Created 2026-06-17 |
-| `03_missing_context.md` | 10 gaps identified | Created 2026-06-17 |
-| `04_duplicates_report.md` | Version families identified (4 resolved, 5 open) | Created 2026-06-22 |
-| `PROJECT_ROOM.md` | This file | Updated 2026-07-03 |
-| `CONTEXT.md` | Domain vocabulary, architecture, campaigns, source map | Rewritten 2026-07-03 |
-| `DECISIONS.md` | 2,252-line running decision log | Current to 2026-07-01 |
-| `CHANGELOG.md` | User-facing version changelog | Created 2026-07-03 |
+| `AGENTS.md` | Cross-tool agent conventions (Hermes, Codex, OpenCode) | Active |
+| `CLAUDE.md` | Claude-specific commands and workflows | Active |
+| `README.md` | Human entry point, architecture overview | Active |
+| `CONTEXT.md` | Domain vocabulary, architecture, campaigns, source map | Active |
+| `DECISIONS.md` | Running design decision log | Active |
+| `CHANGELOG.md` | User-facing version history | Active |
+| `CONTRIBUTING.md` | Contribution guidelines | Active |
+| `PROJECT_ROOM.md` | This file — repo inventory | Active |
+| `TODO_ADVANCED_VISUALS.md` | Forward-looking visual evidence wishlist | Active |
+| `docs/case-notes/01_source_inventory.md` | File-level inventory with metadata | Moved from root |
+| `docs/case-notes/02_conflict_log.md` | Surfaced conflicts for review | Moved from root |
+| `docs/case-notes/03_missing_context.md` | Identified context gaps | Moved from root |
+| `docs/case-notes/04_duplicates_report.md` | Version families, resolved + open | Moved from root |
+| `docs/archive/` | Superseded docs (PLAN.md, RESTART_INSTRUCTIONS.md, TODO.md) | Archived |
+| `docs/RECAP.md` | 5 engineering breakthrough narratives | Active |
+| `handovers/` | Agent handoff documents (`handover-YYYY-MM-DD[-topic].md`) | Active |
+
+## Source layout
+
+```
+src/
+├── KiteTurbineDynamics.jl     Package entry; all includes + exports
+├── builders_util.jl           V10 system builders (promoted from scripts/ Jul 14)
+├── control_map_hunt.jl        ControlMapHunt module (promoted from scripts/ Jul 14)
+├── types.jl, parameters.jl    Core types and parameter sets
+├── aerodynamics.jl, bem.jl    BEM aerodynamics + solidity model
+├── wind_profile.jl            Wind shear + turbulence
+├── geometry.jl, initialization.jl
+├── rope_forces.jl, ring_forces.jl, dynamics.jl   ODE core
+├── simulation.jl, sim_frame.jl, sim_runner.jl     Simulation runners
+├── structural_safety.jl, ring_element_analysis.jl  FEA + FoS
+├── lift_kite.jl               Lift device type hierarchy
+├── expansion_rotor.jl, expansion_stack.jl, expansion_analysis.jl
+├── ring_spacing.jl, trpt_axial_profiles.jl        TRPT geometry
+├── trpt_optimization.jl       DE evaluator
+├── objective_v6.jl, objective_v10.jl              Campaign objectives
+├── soft_ramp_controller.jl    k_mppt auto-ramp state machine
+├── visualization.jl, dashboard_panels.jl, dashboard_v2.jl   GLMakie dashboards
+├── spacer_ring_design.jl, catenary.jl, economics.jl
+scripts/
+├── launchers/                  Shell scripts for campaigns + dashboards
+├── diagnostics/                verify_*.jl, campaign test runners (moved from test/)
+├── hunt_kmppt_bisect.jl        Shim → src/control_map_hunt.jl
+├── builders_util.jl            Shim → src/builders_util.jl
+├── wind_sweep.jl, catalog_sweep.jl, crossover_sweep.jl   Current sweeps
+├── power_curve_quick.jl        Quick power curve generator
+├── interactive_dashboard.jl    GLMakie launcher
+├── run_v*_campaign.jl          DE campaign runners
+├── results/                    Simulation output CSVs (campaign CSVs now tracked)
+test/
+├── runtests.jl                 24 test suites wired
+├── test_*.jl                   24 unit test files
+docs/
+├── adr/                        Architecture Decision Records
+├── agents/                     Issue tracker, triage labels, domain reference
+├── awes-forum-diagrams/        Diagram specs + generated PNGs
+├── case-notes/                 Audit inventories, physics corrections
+├── community/                  Community report + Strathclyde posters
+├── handover/                   (empty — consolidated into handovers/)
+├── outreach/                   Phase E design landscape charts + figures
+├── plans/                      Implementation plans per phase
+├── porto-2026/                 AWEC 2026 Porto paper materials
+├── reports/                    Analysis reports
+├── wayfinder-tickets/          WT1–WT5 resolution docs
+```
 
 ## Campaign History
 
@@ -24,49 +81,21 @@ Systematic inventory of the repository. These files live at the repo root so any
 | V6.0 | 50 kW | 184.84 kg | 8 | 1 | Octagon baseline | Jun 15 |
 | V6.1 | 50 kW | 179.27 kg | 8 | 1 | +tension stiffening | Jun 15 |
 | V6.2 | 50 kW | 74.17 kg | 12 | 1 | Corrected physics (tan→sin, cos²·⁶⁵) | Jun 17 |
-| V6.3 | 50 kW | 52.61 kg ⚠ | 7 | 6 | Dynamically impossible (no drag model) | Jun 18 |
-| V6.6 | 50 kW | none feasible | — | — | Parasitic drag, constraint too tight | Jun 20 |
-| V6.7 | 50 kW | 54.91 kg | 9 | 14 | Relaxed drag, streamlined Cd | Jun 22 |
+| V6.3 | 50 kW | 52.61 kg ⚠ | 7 | 6 | Dynamically impossible | Jun 18 |
+| V6.7 | 50 kW | 54.91 kg | 9 | 14 | Relaxed drag | Jun 22 |
 | V8.0 | 50 kW | 58.41 kg | 9 | 3 | Per-component physics | Jun 24 |
 | V9.0 | 50 kW | 44.52 kg | 8 | 9 | Dynamic ω solve | Jun 27 |
 | V10 | 50 kW | 76.75 kg | 14 | 4 | Unified rotors, 8 gates | Jun 29 |
-| V10 Tight | 50 kW | 49.20 kg ⚠ | 12 | 4 | Dynamically dead (FoS=0.75) | Jun 29 |
+| V10 Tight | 50 kW | 49.20 kg ⚠ | 12 | 4 | Centre-constraint spoke bug — retracted | Jun 29 |
+| V10 Tight (corrected) | 50 kW | — | — | — | Per-vertex spokes — Phase D/E active | Jul 13 |
 
-## What's New Since June 23
+## Current work (July 2026)
 
-### V10 Campaign Era (June 25–July 1)
-- **V9 dynamic equilibrium** — 44.52 kg, 59/60 feasible, 3 bounds screaming
-- **V10 unified rotors** — 76.75 kg, hub+3 rotors, 8 structural gates
-- **V10 Tight** — 49.20 kg ⚠ dynamically dead (k≈550 hits P=50 kW but FoS=0.75)
-- **Control-map verification** — 6 wind speeds, V10 over-bladed (3–4× rated), left-flank decision
-- **Dashboard v2** — 6-row cockpit refactor with bar charts, rotor dials, tooltips
-- **k_mppt bisection hunt** — pre-sweep + two-flank bracketing
-
-### Key Physics Decisions (June 28–30)
-- **Left-flank architecture:** Design for overspeed. Size blades for P_min ≤ P_rated.
-- **Rigid NACA 4412 chosen** over soft kites (Ct/Cp 2.5 vs 8.3)
-- **Collapse margin** adopted as primary monotonic safety indicator
-- **Two-flank problem:** Right flank dynamically unreachable (torque, bounce, taper)
-
-### Documentation (June 29–July 3)
-- `CONTEXT.md` — fully rewritten for current state
-- `CHANGELOG.md` — created from DECISIONS.md milestones
-- `docs/reports/2026-06-30-control-map-findings.md` — full verification report
-- `docs/plans/2026-06-30-control-first-campaign.md` — campaign architecture
-- `docs/porto-2026/` — AWEC 2026 Porto materials
-
-## Remaining Cleanup
-
-- Rename `pitch_depower_campaign_v5_safe.jl` → `pitch_depower_campaign.jl`
-- Archive old campaign result directories (D2, D8, D9)
-- Archive old pitch depower scripts (D4)
-- Archive old report generation scripts (D7)
-- Add "SUPERSEDED" headers to old .md reports
-- Resolve 8 conflicts (C1–C8) — surfaced in `02_conflict_log.md`
-- Address 10 missing context items (M1–M10) — surfaced in `03_missing_context.md`
+- **Phase E design landscape** — 13 viable V10 Tight designs, 5-figure chart set for community report
+- **Per-vertex spoke springs** — physically correct tension-only model replacing centre-constraint
+- **Power curves** — real simulation data at 5–15 m/s for 6 designs (`wind_sweep.csv`)
+- **Codebase audit** — items 1–3, 6, 8, 13–14, 17 applied (Jul 14)
 
 ## Usage
 
-These documents are living references. When files are added, renamed, superseded, or deleted, update the relevant inventory, close resolved conflicts, and mark gaps as filled.
-
-Do NOT use these documents to make automated changes. All resolution decisions (archiving, deleting, merging) must be made by the project owner.
+These documents are living references. Update the relevant inventory when files change. All resolution decisions (archiving, deleting, merging) must be made by the project owner.

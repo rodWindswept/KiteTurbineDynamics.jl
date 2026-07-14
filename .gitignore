@@ -37,4 +37,7 @@ trajectory_analysis/
 *.log
 *.aux
 .claude/worktrees/
+
+# Temporary/monitor CSVs — but NOT campaign results
 *.csv
+!scripts/results/**/*.csv
