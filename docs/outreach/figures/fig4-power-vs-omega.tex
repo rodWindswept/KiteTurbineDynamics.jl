@@ -1,0 +1,292 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage[paperwidth=23cm,paperheight=16cm,margin=0.3cm]{geometry}
+\usetikzlibrary{shapes.geometric, shapes.symbols, backgrounds, fit, arrows.meta}
+\definecolor{amber}{rgb}{1.0,0.65,0.0}
+\pagestyle{empty}
+\begin{document}
+\centering
+\begin{tikzpicture}[scale=0.88]
+
+% ── Title ──
+\node[font=\large\sffamily\bfseries] at (11.5, 16.2) {TRPT Design Landscape — Power vs Rotor Speed};
+\node[font=\footnotesize\sffamily] at (11.5, 15.4) {V10-Spoke · 11 m/s · spokes ON · DE-optimized ring · 4mm/3.5mm tether};
+
+% ── Axes ──
+% X: ω from 0 to 500 rpm → 2.0 to 20.0 cm
+% Y: P from 0 to 350 kW → 2.0 to 14.0 cm
+\draw[->, thick] (2.0, 2.0) -- (20.5, 2.0) node[right, font=\footnotesize] {Rotor speed $\omega$ (rpm)};
+\draw[->, thick] (2.0, 2.0) -- (2.0, 14.5) node[above, font=\footnotesize] {Ground power $P$ (kW)};
+
+% X ticks
+\foreach \w/\x in {0/2.0, 100/5.6, 200/9.2, 300/12.8, 400/16.4, 500/20.0} {
+  \draw (\x, 1.8) -- (\x, 2.0);
+  \node[font=\tiny] at (\x, 1.4) {\w};
+}
+
+% Y ticks
+\foreach \p/\y in {0/2.0, 50/3.71, 100/5.43, 150/7.14, 200/8.86, 250/10.57, 300/12.29, 350/14.0} {
+  \draw (1.8, \y) -- (2.0, \y);
+  \node[font=\tiny] at (1.4, \y) {\p};
+}
+
+% ── Helper: compute (x, y) from (ω, P) ──
+\def\ptX#1#2{\pgfmathsetmacro{\px}{2.0 + #1/500*18}}
+\def\ptY#1#2{\pgfmathsetmacro{\py}{2.0 + #2/350*12}}
+\def\pXY#1#2{\ptX{#1}{#2}\ptY{#1}{#2}}
+
+% ── Helper: size from blade_scale ──
+\def\bsize#1{\pgfmathsetmacro{\bs}{2.0 + #1*3.0}}
+
+% ── BACKGROUND LAYER: kickstart band + blade family ellipses ──
+\begin{scope}[on background layer]
+  % Kickstart threshold band (behind everything)
+  \fill[magenta!5] (2.0, 2.0) rectangle (12.44, 14.0);
+  \node[font=\footnotesize, magenta!50, rotate=30] at (7.2, 5.5) {Kickstart required below $\sim$290 rpm for $k{=}2$};
+
+  % λ=0.85 family — pale cyan ellipse
+  \fill[cyan!22, rotate around={10:(11.5,8.0)}] (10.0,6.0) ellipse (4.2cm and 2.5cm);
+  \node[font=\tiny\sffamily\bfseries, cyan!65!black] at (14.0,4.0) {$\lambda{=}0.85$ family};
+
+  % λ=0.95 family — pale orange ellipse
+  \fill[orange!18, rotate around={20:(13.0,9.5)}] (11.5,7.5) ellipse (4.8cm and 2.8cm);
+  \node[font=\tiny\sffamily\bfseries, orange!70!black] at (16.5,6.5) {$\lambda{=}0.95$ family};
+
+  % λ=1.10 family — pale pink ellipse
+  \fill[magenta!14, rotate around={25:(13.5,9.5)}] (11.0,8.0) ellipse (5.2cm and 3.2cm);
+  \node[font=\tiny\sffamily\bfseries, magenta!65!black] at (7.5,11.0) {$\lambda{=}1.10$ family};
+\end{scope}
+
+% ── Regime divider ──
+\draw[dashed, gray!60, line width=0.6pt] (12.44, 2.0) -- (12.44, 14.0);
+\node[font=\small\sffamily, fill=white, inner sep=1pt] at (7.2, 14.5) {\textbf{Generator-dominated} \textit{(FoS-limited)}};
+\node[font=\tiny, fill=white, inner sep=1pt] at (7.2, 14.1) {$P \propto k{\cdot}\omega^3$ — higher $k$ extracts more power at cost of ring compression};
+\node[font=\small\sffamily, fill=white, inner sep=1pt] at (16.0, 14.5) {\textbf{Aero-dominated} \textit{(kickstart-required)}};
+\node[font=\tiny, fill=white, inner sep=1pt] at (16.0, 14.1) {$P \propto \omega^3$ — blades must reach aero equilibrium before engaging generator};
+
+% ── Kickstart ramp arrow ──
+\draw[->, magenta!60, line width=0.8pt] (3.5, 2.5) .. controls (7.0, 7.0) and (10.0, 7.5) .. (13.5, 6.8);
+\node[font=\tiny, magenta!60] at (7.0, 8.2) {no-load spin-up};
+
+% ── FoS safety boundary ──
+\draw[dashed, red!70, line width=0.5pt] (2.0, 3.71) -- (20.0, 3.71);
+\node[font=\tiny, red!70] at (19.5, 3.45) {FoS$\approx$1.5 structural floor};
+
+% ═══════════════════════════════════════════════════════════════
+% DATA POINTS — Regime A (generator-dominated, k≥4)
+% ═══════════════════════════════════════════════════════════════
+
+% λ=0.85, k=14, FoS 11.5, std, kickstart — ◆ green
+\pXY{165}{107}\bsize{0.85}
+\draw[green!60, fill=green!60] (\px, \py) ++(0,\bs pt) -- ++(\bs pt,-\bs pt) -- ++(-\bs pt,-\bs pt) -- ++(-\bs pt,\bs pt) -- cycle;
+\node[font=\tiny, above left] at (\px, \py) {0.85};
+
+% λ=0.90, k=6, FoS 11.3, std — □ green
+\pXY{168}{82}\bsize{0.90}
+\node[regular polygon, regular polygon sides=4, draw=none, fill=green!60, minimum size=\bs pt*1.8] at (\px, \py) {};
+\node[font=\tiny, right] at (\px+0.3, \py) {0.90};
+
+% λ=1.05, k=4, FoS 2.1, std — ○ red
+\pXY{190}{86}\bsize{1.05}
+\draw[red!60, fill=red!60] (\px, \py) circle (\bs pt);
+\node[font=\tiny, above] at (\px, \py+0.3) {1.05};
+
+% λ=0.80, k=8, FoS 12.9, std, kickstart — ◆ green
+\pXY{198}{77}\bsize{0.80}
+\draw[green!60, fill=green!60] (\px, \py) ++(0,\bs pt) -- ++(\bs pt,-\bs pt) -- ++(-\bs pt,-\bs pt) -- ++(-\bs pt,\bs pt) -- cycle;
+\node[font=\tiny, left] at (\px-0.4, \py) {0.80};
+
+% λ=0.80, k=14, FoS 6.2, std — ◆ green
+\pXY{201}{133}\bsize{0.80}
+\draw[green!60, fill=green!60] (\px, \py) ++(0,\bs pt) -- ++(\bs pt,-\bs pt) -- ++(-\bs pt,-\bs pt) -- ++(-\bs pt,\bs pt) -- cycle;
+\node[font=\tiny, above right] at (\px+0.2, \py+0.2) {0.80};
+
+% λ=1.00, k=4, FoS 3.9, std — ○ amber
+\pXY{206}{146}\bsize{1.00}
+\draw[amber!60, fill=amber!60] (\px, \py) circle (\bs pt);
+\node[font=\tiny, above] at (\px, \py+0.3) {1.00};
+
+% λ=0.80, k=10, FoS 6.0, std, kickstart — ◆ green
+\pXY{243}{161}\bsize{0.80}
+\draw[green!60, fill=green!60] (\px, \py) ++(0,\bs pt) -- ++(\bs pt,-\bs pt) -- ++(-\bs pt,-\bs pt) -- ++(-\bs pt,\bs pt) -- cycle;
+\node[font=\tiny, right] at (\px+0.3, \py) {0.80};
+
+% λ=0.95, k=4, FoS 5.2, std — ○ green
+\pXY{257}{199}\bsize{0.95}
+\draw[green!40, fill=green!40] (\px, \py) circle (\bs pt);
+\node[font=\tiny, above right] at (\px+0.2, \py+0.3) {0.95};
+
+% λ=0.85, k=6, FoS 17.4, std, kickstart — □ green
+\pXY{263}{129}\bsize{0.85}
+\node[regular polygon, regular polygon sides=4, draw=none, fill=green!60, minimum size=\bs pt*1.8] at (\px, \py) {};
+\node[font=\tiny, left] at (\px-0.3, \py) {0.85};
+
+% λ=1.10, k=4, FoS 2.3, std — ○ red ★ MAX POWER
+\pXY{272}{297}\bsize{1.10}
+\draw[red!60, fill=red!60] (\px, \py) circle (\bs pt);
+\node[font=\tiny, above] at (\px, \py+0.4) {1.10};
+
+% λ=0.85, k=8, FoS 26.2, std, kickstart — ◆ green
+\pXY{277}{184}\bsize{0.85}
+\draw[green!60, fill=green!60] (\px, \py) ++(0,\bs pt) -- ++(\bs pt,-\bs pt) -- ++(-\bs pt,-\bs pt) -- ++(-\bs pt,\bs pt) -- cycle;
+
+% λ=0.80, k=6, FoS 10.1, std, kickstart — □ green
+\pXY{292}{134}\bsize{0.80}
+\node[regular polygon, regular polygon sides=4, draw=none, fill=green!60, minimum size=\bs pt*1.8] at (\px, \py) {};
+
+% λ=0.95, k=6, FoS 6.1, 3.5mm — □ green ³·⁵
+\pXY{301}{259}\bsize{0.95}
+\node[regular polygon, regular polygon sides=4, draw=none, fill=green!60, minimum size=\bs pt*1.8] at (\px, \py) {};
+\node[font=\tiny] at (\px+0.5, \py+0.25) {0.95$^{3.5}$};
+
+% λ=1.05, k=2, FoS 4.0, 3.5mm — △ green ³·⁵
+\pXY{318}{155}\bsize{1.05}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!40, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, right] at (\px+0.4, \py) {1.05$^{3.5}$};
+
+% λ=0.85, k=4, FoS 5.5, std, kickstart — ○ green
+\pXY{330}{187}\bsize{0.85}
+\draw[green!40, fill=green!40] (\px, \py) circle (\bs pt);
+
+% λ=0.75, k=4, FoS 6.0, std, kickstart — ○ green
+\pXY{342}{173}\bsize{0.75}
+\draw[green!60, fill=green!60] (\px, \py) circle (\bs pt);
+\node[font=\tiny, below right] at (\px+0.2, \py-0.3) {0.75};
+
+% λ=1.10, k=2, FoS 2.3, 3.5mm — △ red ³·⁵
+\pXY{351}{121}\bsize{1.10}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=red!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, right] at (\px+0.5, \py) {1.10$^{3.5}$};
+
+% λ=0.85, k=2, FoS 12.9, std, kickstart — △ green
+\pXY{391}{167}\bsize{0.85}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+
+% λ=1.10, k=2, FoS 6.1, r=1.00 — △ green ʳ¹
+\pXY{398}{190}\bsize{1.10}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, above] at (\px, \py+0.4) {1.10$^{r1}$};
+
+% λ=0.80, k=4, FoS 2.2, std, kickstart — ○ red
+\pXY{411}{131}\bsize{0.80}
+\draw[red!60, fill=red!60] (\px, \py) circle (\bs pt);
+
+% ═══════════════════════════════════════════════════════════════
+% DATA POINTS — Regime B (aero-dominated, k=2, requires kickstart)
+% ═══════════════════════════════════════════════════════════════
+
+% λ=0.75, k=2, FoS 19.1, std, kickstart — △ green
+\pXY{314}{100}\bsize{0.75}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, left] at (\px-0.6, \py+0.15) {0.75};
+
+% λ=0.80, k=2, FoS 3.8, std, kickstart — △ amber
+\pXY{351}{118}\bsize{0.80}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=amber!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, below left] at (\px-0.35, \py-0.55) {0.80};
+
+% λ=0.69, k=2, FoS 6.5, std, kickstart — △ green
+\pXY{387}{95}\bsize{0.69}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, above] at (\px, \py+0.45) {0.69};
+
+% λ=0.85, k=2, kickstart mid-point — △ green
+\pXY{404}{136}\bsize{0.85}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, below] at (\px, \py-0.55) {0.85};
+
+% λ=1.05, k=2, FoS 3.5, r=1.00 — △ amber ʳ¹
+\pXY{408}{196}\bsize{1.05}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=amber!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, above right] at (\px+0.5, \py+0.5) {1.05$^{r1}$};
+
+% λ=0.95, k=2, FoS 8.6, r=1.00 — △ green ʳ¹
+\pXY{455}{147}\bsize{0.95}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, above right] at (\px+0.4, \py+0.45) {0.95$^{r1}$};
+
+% λ=0.85, k=2, kickstart high — △ green
+\pXY{482}{156}\bsize{0.85}
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=green!60, minimum size=\bs pt*2.0] at (\px, \py) {};
+\node[font=\tiny, right] at (\px+0.5, \py) {0.85};
+
+% ═══════════════════════════════════════════════════════════════
+% FAILED / UNDERPOWERED (small grey open markers)
+% ═══════════════════════════════════════════════════════════════
+
+% Catalog settle-blind failures
+\pXY{23}{0.1}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{18}{0.2}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{16}{0.2}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{23}{0.2}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{58}{3.3}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+
+% Underpowered (rotating but P<50)
+\pXY{240}{6.7}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{123}{15.3}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{82}{18.1}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{127}{4.9}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+\pXY{257}{24.9}\draw[gray!40, fill=white] (\px, \py) circle (1.5pt);
+
+% FoS-failing (P≥50 but FoS<1.5)
+\pXY{350}{51.4}\draw[red!80, fill=white, line width=0.7pt] (\px, \py) circle (2.0pt);
+\node[font=\tiny, red!80, right] at (\px+0.3, \py) {1.10};
+
+% ═══════════════════════════════════════════════════════════════
+% ANNOTATION CALLOUTS
+% ═══════════════════════════════════════════════════════════════
+
+% Callout 1: λ=0.95 sweet spot
+\pXY{257}{199}
+\draw[green!60!black, thin] (14.0, 10.5) -- (\px, \py+0.4);
+\draw[green!10, draw=green!60!black, rounded corners=2pt] (12.2, 10.2) rectangle (15.8, 11.4);
+\node[font=\tiny, green!60!black, align=left] at (14.0, 10.8) {$\lambda{=}0.95$ @ $k{=}4$: 199 kW, FoS 5.2\\Best balance of power and safety};
+
+% Callout 2: λ=1.10 max power
+\pXY{272}{297}
+\draw[red!70!black, thin] (15.5, 13.5) -- (\px, \py+0.4);
+\draw[red!5, draw=red!70!black, rounded corners=2pt] (13.5, 13.2) rectangle (17.0, 14.3);
+\node[font=\tiny, red!70!black, align=left] at (15.25, 13.75) {$\lambda{=}1.10$ @ $k{=}4$: 297 kW, FoS 2.3\\Highest power, marginal safety};
+
+% ═══════════════════════════════════════════════════════════════
+% LEGEND — consolidated panel at bottom-center
+% ═══════════════════════════════════════════════════════════════
+
+\draw[rounded corners=3pt, fill=white, draw=gray!40] (2.5, 0.2) rectangle (19.5, 1.9);
+
+% Control (k_mppt) shapes
+\node[font=\tiny\sffamily\bfseries] at (3.5, 1.5) {Control ($k_{\text{mppt}}$):};
+% k=2 △
+\node[regular polygon, regular polygon sides=3, shape border rotate=180, draw=none, fill=black!60, minimum size=7pt] at (6.0, 1.5) {};
+\node[font=\tiny] at (6.3, 1.5) {$k{=}2$};
+% k=4 ○
+\draw[black!60, fill=black!60] (7.2, 1.5) circle (3.5pt);
+\node[font=\tiny] at (7.6, 1.5) {$k{=}4$};
+% k=6 □
+\node[regular polygon, regular polygon sides=4, draw=none, fill=black!60, minimum size=7pt] at (8.5, 1.5) {};
+\node[font=\tiny] at (8.8, 1.5) {$k{=}6$};
+% k≥8 ◆
+\draw[black!60, fill=black!60] (9.8, 1.5) ++(0,3pt) -- ++(3pt,-3pt) -- ++(-3pt,-3pt) -- ++(-3pt,3pt) -- cycle;
+\node[font=\tiny] at (10.3, 1.5) {$k{\ge}8$};
+
+% Structural safety (FoS) colours
+\node[font=\tiny\sffamily\bfseries] at (3.5, 1.0) {Safety (FoS):};
+\draw[green!60, fill=green!60] (5.5, 1.0) circle (3pt);
+\node[font=\tiny] at (5.8, 1.0) {$\ge$6};
+\draw[green!40, fill=green!40] (7.0, 1.0) circle (3pt);
+\node[font=\tiny] at (7.3, 1.0) {4–6};
+\draw[amber!60, fill=amber!60] (8.2, 1.0) circle (3pt);
+\node[font=\tiny] at (8.5, 1.0) {2.5–4};
+\draw[red!60, fill=red!60] (9.6, 1.0) circle (3pt);
+\node[font=\tiny] at (10.0, 1.0) {$<$2.5};
+
+% Size and variant notes
+\node[font=\tiny\sffamily\bfseries] at (12.0, 1.5) {Size $\propto$ blade scale};
+\node[font=\tiny] at (12.0, 1.0) {$^{3.5}$ = 3.5mm tether \quad $^{r1}$ = r\textsubscript{bottom}=1.00};
+
+% ── Data provenance ──
+\node[font=\tiny\sffamily, anchor=south east] at (20.5, 2.5) {KTD.jl · catalog + kickstart sweeps};
+
+\end{tikzpicture}
+\end{document}

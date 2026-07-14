@@ -8,7 +8,7 @@
 
 % ── Title ──
 \node[font=\Large\sffamily\bfseries] at (11.0, 16.5) {TRPT Power Curves — Three Design Strategies};
-\node[font=\footnotesize\sffamily, black!50] at (11.0, 15.8) {V10 Tight · fixed-$k$ MPPT · spokes ON · DE-optimized ring · 45s sim per point};
+\node[font=\footnotesize\sffamily, black!50] at (11.0, 15.8) {V10-Spoke · fixed-$k$ MPPT · spokes ON · DE-optimized ring · 45s sim per point};
 
 % ── Axes: x=2.0+(V-4)*18/12, y=2.0+P*12/700 ──
 \draw[->, thick] (2.0, 2.0) -- (20.8, 2.0) node[right, font=\footnotesize] {Wind speed (m/s)};
@@ -257,7 +257,7 @@
 \fill[maxp] (3.5, 0.35) circle (3pt);
 \node[font=\tiny, anchor=west] at (4.5, 0.35) {1.10·k4 Max power — bifurcates at 13 m/s ($\rightarrow$dashed), jumps to 657 kW @ 15 m/s};
 
-\node[font=\tiny, black!40, anchor=south east] at (19.8, 0.7) {KTD.jl · wind\_sweep.csv · 45s sim per point};
+\node[font=\tiny, black!40, anchor=south east] at (19.8, 0.7) {KTD.jl · V10-Spoke · wind\_sweep.csv};
 
 \end{tikzpicture}
 \end{document}
