@@ -125,6 +125,40 @@
 \node[font=\tiny, light!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\px-3.5}, {\py-1.5})
   {With k=1.82 (power-limited):\\P=45 kW, FoS=7.9\\→ capping at 50 kW feasible};
 
+% ── POWER-LIMITED CURVE (0.85 blade, k-adaptive, P≈50kW) ──
+% Wind 9: verified point
+\pgfmathsetmacro{\px}{2.0 + (9.0-4.0)*18/12}
+\pgfmathsetmacro{\py}{2.0 + 45.1*12/700}
+\draw[light!80, fill=white, line width=0.8pt] (\px,\py) circle (4pt);
+\fill[light!80] (\px,\py) circle (2.5pt);
+
+% Winds 11-15: analytical estimates (P≈50kW, FoS very high — k≪2)
+\pgfmathsetmacro{\px}{2.0 + (11.0-4.0)*18/12}
+\pgfmathsetmacro{\py}{2.0 + 50*12/700}
+\draw[light!60, fill=white, thin] (\px,\py) circle (4pt);
+\node[font=\tiny, light!60] at (\px+0.4, \py+0.15) {est};
+\pgfmathsetmacro{\px}{2.0 + (13.0-4.0)*18/12}
+\draw[light!60, fill=white, thin] (\px,\py) circle (4pt);
+\node[font=\tiny, light!60] at (\px+0.4, \py+0.15) {est};
+\pgfmathsetmacro{\px}{2.0 + (15.0-4.0)*18/12}
+\draw[light!60, fill=white, thin] (\px,\py) circle (4pt);
+\node[font=\tiny, light!60] at (\px+0.4, \py+0.15) {est};
+
+% Dashed curve connecting power-limited points
+\draw[light!70, line width=1.4pt, dashed]
+  ({2.0+(9.0-4.0)*18/12}, {2.0+45.1*12/700}) --
+  ({2.0+(11.0-4.0)*18/12}, {2.0+50*12/700}) --
+  ({2.0+(13.0-4.0)*18/12}, {2.0+50*12/700}) --
+  ({2.0+(15.0-4.0)*18/12}, {2.0+50*12/700});
+\node[light!70, font=\footnotesize\bfseries] at (14.0, {2.0+60*12/700}) {Power-limited (k-adaptive)};
+
+% Annotation explaining power-limited curve
+\pgfmathsetmacro{\ax}{2.0 + (15.0-4.0)*18/12}
+\pgfmathsetmacro{\ay}{2.0 + 50*12/700}
+\draw[light!50, thin] ({\ax+1.0}, {\ay+1.2}) -- (\ax+0.1, \ay+0.1);
+\node[font=\tiny, light!60, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\ax+2.5}, {\ay+1.5})
+  {k drops from 1.82→0.51\\as wind increases.\\Very low generator load\\→ FoS estimated very high.\\ODE-stiff region —\\analytical estimate shown.};
+
 % ── 0.95/k4 (Sweet spot) ──
 \dpt{9}{82.6}{5.1}{sweet}{above right}
 \dpt{11}{163.2}{3.9}{sweet}{right}
