@@ -81,6 +81,20 @@ In AWE, smaller wings have better power-to-weight ratios and sweep tighter loops
 
 All campaigns use differential evolution with collapse-reseed (≈720 random starts per campaign). Physics corrections applied at V6.2: tan→sin polygon resolution, cos³→cos²·⁶⁵ elevation exponent, coupled knuckle mass model. Pre-V6.2 results are **superseded**.
 
+### Canonical V10 names
+
+Two physically distinct V10 variants exist; disambiguate with these names:
+
+| Name | Also called | Design | Spoke model | Status |
+|------|-------------|--------|-------------|--------|
+| **V10-DE** | V10, V10 Winner | 14-gon, 76.75 kg, hub+3 rotors, 8 gates | Centre-constraint | DE campaign winner |
+| **V10-Spoke** | V10 Tight (corrected) | 12-gon, 49.2 kg, per-vertex Dyneema springs | Tension-only per-vertex | **Current work — Phase D/E active** |
+| **V10-Tight (retracted)** | V10 Tight (old) | 12-gon, 49.2 kg, centre-constraint | Centre-constraint (artificially stiff) | Retracted 2026-07-13 |
+
+The retracted V10-Tight used the centre-constraint spoke model which projected ring centres onto the shaft axis, artificially stiffening the structure and inflating FoS. **V10-Spoke** replaces this with physically correct per-vertex Dyneema spring spokes (tension-only). All Phase D/E design cards and charts use V10-Spoke.
+
+When writing code, reports, or chart labels: use **V10-DE**, **V10-Spoke**, or **V10-Tight (retracted)**. Never use unqualified "V10" or "V10 Tight" alone.
+
 | Version | Power | Mass | n_lines | n_exp | Key feature |
 |---------|-------|------|---------|-------|-------------|
 | V6.0 | 50 kW | 184.84 kg | 8 | 1 | Octagon baseline, 6/11 params on bounds |
@@ -211,7 +225,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 - Visualisation: GLMakie (V1 dashboard) + WGLMakie/Bonito (V2 cockpit)
 - Structural: Analytic Euler buckling + thin-wall second moment of area + Tulloch collapse criterion
 - **SI units throughout:** m, kg, Pa, rad, rad/s, N·m
-- **Test suite:** 23 test files, run via `julia --project=. test/runtests.jl`
+- **Test suite:** 24 test files, run via `julia --project=. test/runtests.jl`
 
 ---
 

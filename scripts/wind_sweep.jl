@@ -92,6 +92,7 @@ end
 mkpath(dirname(OUT_CSV))
 println("════════════════════════════════════════════════")
 println("Wind speed sweep — power curves for key designs")
+println("code: $(ControlMapHunt.GIT_HASH)")
 println("$(SIM_S)s MPPT · spokes ON · DE ring")
 println("════════════════════════════════════════════════")
 

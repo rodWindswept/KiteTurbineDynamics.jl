@@ -13,6 +13,7 @@ hr = (sys.nodes[sys.rotor.node_id] :: RingNode).ring_idx
 
 function run_sweep()
     println("=== λ=0.69 Reinforced, $(wind_ms) m/s — aero vs parasitic torque ===")
+    println("code: $(ControlMapHunt.GIT_HASH)")
     println("   k     ω(rpm)   ω(rad/s)   P_aero(kW)  P_par(kW)  τ_aero(Nm)  τ_par(Nm)  τ_net(Nm)")
     local prev_tau_net = -Inf
     for k_log in 0.3:0.2:2.3

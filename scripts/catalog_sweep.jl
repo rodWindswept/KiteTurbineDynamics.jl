@@ -14,6 +14,12 @@ const SIM_S      = 30.0
 const K_VALUES   = [2.0, 4.0, 6.0, 8.0, 10.0, 14.0]
 const OUT_CSV    = joinpath(@__DIR__, "results", "control_maps", "catalog_corrected_geo.csv")
 
+println("════════════════════════════════════════════════")
+println("Design catalog sweep — corrected ring geometry")
+println("code: $(ControlMapHunt.GIT_HASH)")
+println("wind: $(WIND_MS) m/s · spokes: ON · settle+$(SIM_S)s MPPT")
+println("════════════════════════════════════════════════")
+
 const ROUNDS = [
     (1, 0.004,  1.30, [0.69, 0.80, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10]),
     (2, 0.004,  1.15, [0.90, 0.95, 1.00, 1.05, 1.10]),
