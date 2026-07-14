@@ -71,12 +71,6 @@ All our Phase D/E design cards and charts use V10-Spoke. Never use unqualified "
 - `catalog_sweep.jl`, `wind_sweep.jl`, `crossover_sweep.jl` now print GIT_HASH provenance
 - README.md trimmed from 795 to 210 lines
 
-## What's still pending (items we were skeptical about)
-
-- **Item 7 (dep split):** Move truly unused deps (Pluto, MeshCat, WGLMakie, Pandoc) out of Project.toml. But GLMakie stays — the dashboard depends on it. This is real work, not a quick win.
-- **Items 9-12, 15-16:** scripts/ restructuring, archive old objectives, DECISIONS.md split, docs/ grouping, integrator headroom. All deferred or treated as nice-to-have.
-- **Item 11 (repo shrink):** Do NOT run `git filter-repo` — it rewrites history and will corrupt clones on other machines. `git gc --aggressive` is safer.
-
 ## When you resume
 
 The design cards and Phase E charts are in `docs/outreach/figures/`. The power curve chart (`chart-power-curve.pdf`) uses real simulation data from `wind_sweep.csv`. The other four charts went through 3 review cycles and are final.
