@@ -198,6 +198,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     vis_lift     = Observable(true)   # lift kite tether + kite marker
     vis_backline = Observable(true)   # backline catenary
     vis_ground   = Observable(true)   # ground grid + anchor
+    vis_spokes   = Observable(true)   # radial Dyneema spokes (vertex→ring centre)
 
     # ── Configuration switching & safety state machine ────────────────────────
     config_changed_obs = Observable{Union{String, Nothing}}(nothing)  # nil = no change pending
@@ -287,6 +288,26 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             end
             lines!(ax3d, @lift($edge_obs[1]), @lift($edge_obs[2]), @lift($edge_obs[3]);
                    color=ec, linewidth=2.0, visible=vis_rings)
+        end
+    end
+
+    # Radial Dyneema spokes — thin lines from each ring vertex to ring centre
+    for k in 2:(Nr-1)
+        gid_k = sys.ring_ids[k]
+        nk    = sys.nodes[gid_k]::RingNode
+        R_k   = nk.radius
+        ri_k  = nk.ring_idx
+        for j in 1:p.n_lines
+            spoke_obs = @lift begin
+                u   = $u_obs
+                ctr = u[3*(gid_k-1)+1 : 3*gid_k]
+                α   = u[6N + ri_k]
+                pp1, pp2 = _perp_fn(u)
+                pa = attachment_point(ctr, R_k, α, j, p.n_lines, pp1, pp2)
+                ([pa[1], ctr[1]], [pa[2], ctr[2]], [pa[3], ctr[3]])
+            end
+            lines!(ax3d, @lift($spoke_obs[1]), @lift($spoke_obs[2]), @lift($spoke_obs[3]);
+                   color=(:gold, 0.6), linewidth=0.8, visible=vis_spokes)
         end
     end
 
