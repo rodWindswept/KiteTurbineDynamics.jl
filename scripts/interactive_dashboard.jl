@@ -418,10 +418,6 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
-        elseif current_config == "Daisy Proto 1kW"
-            sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
-            current_config = "Daisy Proto 1kW"
-
         if current_config == "V10 Reinforced"
             # Viable V10: reinforce the tight winner (wider bottom + 4mm tethers).
             sys, u0, p, label = build_v10_tight_no_lowest(r_bottom_scale=1.30, tether_diameter=0.004)
@@ -475,6 +471,18 @@ function main()
             p    = params_v5_safe_10kw()
             sys, u0 = build_kite_turbine_system_v5(p, 1.61, 1.49)
             label  = "v5-safe octagon"
+        elseif current_config == "Daisy Proto 1kW"
+            sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
+            current_config = "Daisy Proto 1kW"
+        elseif current_config == "V10-Spoke λ0.90 (safest)"
+            sys, u0, p, label = build_v10_tight(blade_scale=0.90)
+            current_config = label
+        elseif current_config == "V10-Spoke λ0.95 (sweet spot)"
+            sys, u0, p, label = build_v10_tight(blade_scale=0.95)
+            current_config = label
+        elseif current_config == "V10-Spoke λ1.10 (max power)"
+            sys, u0, p, label = build_v10_tight(blade_scale=1.10)
+            current_config = label
         else
             p    = params_10kw()
             sys, u0 = build_kite_turbine_system(p)
