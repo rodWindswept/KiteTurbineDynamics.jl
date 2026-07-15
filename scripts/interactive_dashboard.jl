@@ -6,6 +6,7 @@
 
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie, JSON3
+include(joinpath(@__DIR__, "daisy_builder.jl"))
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -58,6 +59,10 @@ function parse_commandline()
         "--v10-tight"
             help = "Use V10 Tight winner (49.2 kg, 4 rotors, without lowest expansion). WARNING: dynamically dead, FoS=0.43"
             action = :store_true
+        "--daisy"
+            help = "Daisy 1kW prototype (Tulloch Config 8, TRPT-4: 1.52m ring, 3 blades, 10.3m tether)"
+            action = :store_true
+
         "--v10-reinforced"
             help = "Use V10 Reinforced (r_bottom_scale=1.30, 4mm tethers): 55 kW at FoS=2.30 — the viable V10"
             action = :store_true
@@ -398,7 +403,7 @@ function main()
 
     # Determine initial config from CLI flags
     current_config = args["v10-reinforced"] ? "V10 Reinforced" :
-                     args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
+                     args["daisy"] ? "Daisy Proto 1kW" : args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
                      args["v10-island51"] ? "V10 Island 51 alt-basin" :
                      args["v10"] ? "V10 unified rotors" :
                      args["v9"] && !args["v9-10kw"] ? "V9.0 50kW equilibrium" :
@@ -413,6 +418,10 @@ function main()
 
     while true
         # ── Build system for current configuration ──────────────────────────
+        elseif current_config == "Daisy Proto 1kW"
+            sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
+            current_config = "Daisy Proto 1kW"
+
         if current_config == "V10 Reinforced"
             # Viable V10: reinforce the tight winner (wider bottom + 4mm tethers).
             sys, u0, p, label = build_v10_tight_no_lowest(r_bottom_scale=1.30, tether_diameter=0.004)
