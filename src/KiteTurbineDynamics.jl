@@ -1,6 +1,6 @@
 module KiteTurbineDynamics
 
-using LinearAlgebra, Printf, Statistics
+using LinearAlgebra, Printf, Statistics, JSON3
 
 include("parameters.jl")
 include("aerodynamics.jl")
