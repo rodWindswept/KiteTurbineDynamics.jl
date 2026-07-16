@@ -44,12 +44,11 @@ not the full picture.
    lets the blade spin freely to its aerodynamic equilibrium (~400 rpm), where the
    available aero power is substantial.
 
-2. **r_bottom is a null parameter** in the current model. Rounds 1 (r=1.30) and
-   2 (r=1.15) produce bit-identical results for the same blade/k. This suggests
-   the ring geometry (from `best_design.json`) dominates structural FoS — the
-   tether bottom radius doesn't affect the ring polygon's beam loading in the
-   current element analysis formulation. This is worth flagging but not a blocker
-   for this report.
+2. **r_bottom is a null parameter over 1.15–1.30** in the current model. Rounds 1
+   (r=1.30) and 2 (r=1.15) produce bit-identical results for the same blade/k.
+   However, r_bottom=1.00 (wind_sweep default) produces different power, FoS, and ω
+   from r=1.30 — the parameter has a threshold effect. This is worth flagging but
+   not a blocker for this report.
 
 3. **3.5mm tether pushes designs to lower k.** Thinner tether = higher drag = more
    parasitic loss. To compensate, the system must operate further left on the k-axis
