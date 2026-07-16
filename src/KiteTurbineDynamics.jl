@@ -1,5 +1,7 @@
 module KiteTurbineDynamics
 
+__precompile__(false)
+
 using LinearAlgebra, Printf, Statistics, JSON3
 
 include("parameters.jl")
