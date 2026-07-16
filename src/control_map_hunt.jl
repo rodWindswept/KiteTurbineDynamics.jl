@@ -15,6 +15,7 @@ module ControlMapHunt
 
 using KiteTurbineDynamics
 using Printf, CSV, DataFrames, Dates, JSON3
+import KiteTurbineDynamics: expansion_blade_mass
 
 # ═══════════════════════════════════════════════════════════════
 # Auto-detect code state — never hardcode (PRD 0006 checklist: stale hash made
