@@ -1,41 +1,16 @@
-### A Pluto.jl Notebook
-# ╔═╡ 00000000-0000-0000-0000-000000000001
-# ╠═╡ show_logs = false
+### A Pluto.jl notebook ###
+# v1.0.3
+
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ 00000000-0000-0000-0000-000000000004
 begin
-	using Pkg
-	Pkg.activate(joinpath(@__DIR__, ".."))
+	import Pkg
+	Pkg.develop(path=joinpath(@__DIR__, ".."))
 	using KiteTurbineDynamics, Printf, PlutoUI, LinearAlgebra
+	include(joinpath(@__DIR__, "..", "scripts", "daisy_builder.jl"))
 end
-
-# ╔═╡ 00000000-0000-0000-0000-000000000002
-md"""
-# 🪁 Daisy 1kW Kite Turbine — Simulator Validation Report
-
-*July 2025 · Rod Read & KTD.jl · [GitHub](https://github.com/rodWindswept/KiteTurbineDynamics.jl)*
-
----
-
-Daisy was our first working kite turbine prototype. It flew through 2019 on the croft at
-Lewis, generating power through a **tensile rotary power transmission (TRPT)** — a driveshaft
-made of six Dyneema strings, tapering from a 1.52 m rotor ring at 4.8 m altitude to a
-0.32 m ground wheel. No gearbox, no tower, no bearings on the rotor. Oliver Tulloch
-used Daisy's data for his PhD at Strathclyde, developing the TRPT theory our simulator is
-built on.
-
-This notebook validates KTD.jl against **three independent benchmarks**:
-
-| Benchmark | What it proves | Result |
-|---|---|---|
-| Tulloch's simulated Daisy | TRPT model matches published predictions | −20% (λ gap) |
-| Rod's gust peak (1.4 kW) | Matches real measured output | −24% @ 11 m/s |
-| Bergey Excel 10 (SWCC) | Blade aerodynamics are correct | **98.4%** |
-
-**⏱️ Expected run time:** ~5 minutes for the wind sweep (5 settle operations).
-
-**👉 How to use this notebook:** wait for the cells below to finish loading
-(the coloured dot turns green), then scroll through. The wind sweep runs
-automatically — no buttons to press.
-"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000003
 md"""
@@ -54,9 +29,6 @@ The builder below creates a system with:
 *The cell below builds the system in memory. The coloured indicator →
 turns green when ready.*
 """
-
-# ╔═╡ 00000000-0000-0000-0000-000000000004
-include(joinpath(@__DIR__, "..", "scripts", "daisy_builder.jl"))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000005
 begin
@@ -223,4 +195,18 @@ md"""
 *Built with [KiteTurbineDynamics.jl](https://github.com/rodWindswept/KiteTurbineDynamics.jl) · 
 Daisy prototype by Windswept and Interesting Ltd · 
 TRPT theory by Oliver Tulloch (Strathclyde, 2021)*
-"""
+""
+
+# ╔═╡ Cell order:
+# ╠═00000000-0000-0000-0000-000000000003
+# ╠═00000000-0000-0000-0000-000000000004
+# ╠═00000000-0000-0000-0000-000000000005
+# ╠═00000000-0000-0000-0000-000000000006
+# ╠═00000000-0000-0000-0000-000000000007
+# ╠═00000000-0000-0000-0000-000000000008
+# ╠═00000000-0000-0000-0000-000000000009
+# ╠═00000000-0000-0000-0000-000000000010
+# ╠═00000000-0000-0000-0000-000000000011
+# ╠═00000000-0000-0000-0000-000000000012
+# ╠═00000000-0000-0000-0000-000000000013
+# ╠═00000000-0000-0000-0000-000000000014

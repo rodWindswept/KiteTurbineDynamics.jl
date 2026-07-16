@@ -114,7 +114,17 @@ julia --project=. scripts/interactive_dashboard.jl
 ```
 
 Features: config switching, pitch depower, lift device telemetry, safety state machine,
-structural HUD, economics module. See `docs/dashboard-screenshot.png`.
+structural HUD, economics module.
+
+### Pluto.jl notebooks
+
+```bash
+# Daisy 1kW calibration & validation (vs Tulloch, Bergey Excel 10)
+julia --project=. -e 'using Pluto; Pluto.run(notebook="notebooks/daisy_calibration.jl")'
+
+# Parametric design explorer (interactive 3D parameter tweaking)
+julia --project=. -e 'using Pluto; Pluto.run(notebook="notebooks/design_explorer.jl")'
+```
 
 ### Minimal simulation
 
