@@ -14,7 +14,7 @@
 module ControlMapHunt
 
 using KiteTurbineDynamics
-using Printf, CSV, DataFrames, Dates
+using Printf, CSV, DataFrames, Dates, JSON3
 
 # ═══════════════════════════════════════════════════════════════
 # Auto-detect code state — never hardcode (PRD 0006 checklist: stale hash made
