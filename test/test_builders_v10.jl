@@ -14,7 +14,7 @@ include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
     @test p.n_rings == 10
     @test p.trpt_hub_radius ≈ 2.889 atol=0.01
     @test design.r_bottom ≈ 2.000 atol=0.01
-    @test design.r_hub > design.r_bottom  "taper: hub must be wider than ground"
+    @test design.r_hub > design.r_bottom
     @test p.tether_length ≈ 67.08 atol=1.0
     @test occursin("12-gon", label)
     @test occursin("10 rings", label)

@@ -126,7 +126,7 @@ function _build_v10_tight(;
     sys.ring_toverD[]       = x[2]  # t_over_D (with t_scale applied)
     sys.ring_aspect_ratio[] = x[3]  # beam_aspect
 
-    n_rotor_label = drop ? n_exp : n_exp + 1
+    n_rotor_label = n_exp
     rot_label = string(n_rotor_label, " expansion rotors")
     r_bot_str = r_bottom_scale != 1.0 ? " r_bot×$(r_bottom_scale)" : ""
     bl_s_str  = blade_scale != 1.0 ? " blade×$(blade_scale)" : ""
