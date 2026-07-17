@@ -2,6 +2,30 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-17: Phantom triangle validated — legacy results re-legitimised
+
+**GATE PASS (exact):** `build_phantom_triangle(blade_scale=0.85)` + legacy
+kickstart protocol reproduces `wind_sweep_triangle_legacy.csv` 0.85/k2/11 m/s
+bit-for-bit: 117.4 kW @ 411 rpm, FoS 4.52, T 77.3 kN.
+
+**Consequence:** all numbers previously shared with Strathclyde are verified
+simulations of a now-deliberately-specified design (3-line triangle, 22 rings,
+untapered 2.99 m, rotors at rings 14/17/20 with bank 18/11/4°, 11.6 m² blade
+area) — not artifacts of a bug. The kickstart/high-RPM-equilibrium finding is
+protected.
+
+**12-gon regression check (partial):** the fixed decode reproduces the
+campaign's `best_design.json` 10/10 fields exactly (geometry-level validation
+✓). Dynamic numbers from `dynamic_verification.txt` (12.1 kW @ 55.6 rpm, k=62)
+are NOT reproducible on current code — physics and `params_v5_50kw().k_mppt`
+have evolved since the campaign era. Current-code 12-gon with spokes+shear:
+109.6 kW @ 119.5 rpm FoS 0.79 at k=62 (possibly viable on power, fails FoS).
+
+**Geometry fingerprint mandate (Rod):** every sweep CSV must embed
+`geometry_fingerprint()` output (n_blades/rotor, tip, chord, per-rotor and
+total blade area, masses, taper) so cross-configuration tables can never hide
+a λ-reference shift.
+
 ## 2026-07-17: x-vector packing fix — drop-direction and blades-per-rotor (Rod)
 
 **Severity: Campaign-defining.** The `_build_v10_tight` builder has been packing
