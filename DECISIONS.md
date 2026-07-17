@@ -2,6 +2,26 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-17: x-vector packing fix — drop-direction and blades-per-rotor (Rod)
+
+**Severity: Campaign-defining.** The `_build_v10_tight` builder has been packing
+`best_design.json` in JSON-field order into a `design_from_vector_v4` decoder,
+producing a phantom 3-line/22-ring/untapered triangle system. All sweeps and
+dashboard runs used this incorrect geometry. Fix: load `best_vector.csv` directly
+(Phase 1a of `docs/plans/fix_xvector_rerun_sweeps.md`).
+
+**Gate 1b — which rotor to drop (Rod, 2026-07-17):** The expansion rotor nearest
+the **ground** (lowest ring_idx) was removed as an experiment to reduce power draw.
+Fix: sort rotors by ring_idx ascending, `popfirst!` removes the ground-adjacent
+rotor. Print text corrected to match.
+
+**Gate 1c — blades per expansion rotor (Rod, 2026-07-17):** `n_blades = n_lines`
+for a balanced polygon frame. A 12-gon system gets 12 blades per expansion rotor
+(12 vertices, blade at each). Fewer blades must divide `n_lines` evenly for
+balance (e.g. 3 blades on a 6-line hexagon ✓). The triangle-bug systems had 3
+blades/rotor (n_lines=3); corrected 12-gon has 12 blades/rotor. This is physically
+intended — blades balance around the polygon vertices.
+
 ## 2026-07-06: Wrap-rate applicability — swivel rating = hardware ω ceiling
 
 **Severity: Gate 2 constraint.** Wrap rate applies to the TRPT rig because a
