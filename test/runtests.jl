@@ -27,4 +27,5 @@ using KiteTurbineDynamics
     include("test_pitch_depower_sequence.jl")
     include("test_dashboard_smoke.jl")
     include("test_metric_consistency.jl")
+    include("test_builders_v10.jl")
 end
