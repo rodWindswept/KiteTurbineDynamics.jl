@@ -48,6 +48,8 @@ Current code sorts `rotors` by `ring_idx` **rev=true** then `popfirst!` — that
 
 `ExpansionRotorParams(n_lines, ...)` sets blades per expansion rotor = n_lines. Triangle system → 3 blades; corrected 12-gon → **12 blades per rotor**. ⛔ **Stop and ask Rod whether 12 blades/rotor is physically intended before running sweeps** — this multiplies blade area, mass, and torque and is not obviously the designed machine. (Rod's hardware mental model is 3-bladed.)
 
+**→ RESOLVED (2026-07-17):** 12 blades/rotor for the 12-gon. n_blades = n_lines for balanced polygon frames. The triangle systems tested so far were bug-built — an explicitly-built n_lines=3 system with the correct builder may produce different (possibly better) numbers. **Amendment: the acceptance target includes BOTH the 12-gon AND a deliberate n_lines=3 triangle, both built from the fixed builder, so results can be compared directly rather than betting on the 12-gon being the restoration target.**
+
 ### 1d. Deduplicate the other scrambled packings
 
 Audit and fix every hand-packed vector (all currently in JSON-field order, all wrong):
@@ -79,7 +81,9 @@ Add `test/test_builders_v10.jl` (and register in `test/runtests.jl`):
 
 ## Phase 3 — Re-run the sweeps (in this order)
 
-All outputs to NEW filenames — suffix `_12gon` (e.g. `kickstart_sweep_12gon.csv`); never append to legacy CSVs. Put the git hash and builder fingerprint (n_lines, n_rings, r_hub, r_bottom) in a header comment row or sidecar `.meta` file for each.
+**Amendment (Rod, 2026-07-17):** Each sweep step runs TWICE — once for the corrected 12-gon and once for an explicitly-built n_lines=3 triangle. Both use the fixed builder. This gives a direct comparison rather than betting on which geometry is the restoration target.
+
+All outputs to NEW filenames — suffix `_12gon` and `_triangle3` (e.g. `kickstart_sweep_12gon.csv`, `kickstart_sweep_triangle3.csv`); never append to legacy CSVs. Put the git hash and builder fingerprint (n_lines, n_rings, r_hub, r_bottom) in a header comment row or sidecar `.meta` file for each.
 
 1. **`scripts/kickstart_sweep.jl`** — blades {0.69, 0.75, 0.80, 0.85} × rebracketed K_VALUES, 11 m/s. Protocol unchanged: settle → kick all rings to ω=30 rad/s → 30 s k=0 → engage k → 60 s MPPT → record P, ω(rpm), min airborne-ring FoS, T_max. If the kick speed is inappropriate for the 12-gon (different inertia), note it and re-bracket ω_kick; document any change.
 2. **`scripts/retest_085_k2.jl`** (→ `wind_sweep_12gon.csv`) — best kickstart point across winds {5,7,9,11,13,15} m/s. Update BLADE/K constants to the corrected system's best point (from step 1), not blindly 0.85/k2.
