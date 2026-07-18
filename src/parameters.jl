@@ -257,7 +257,13 @@ function params_10kw()::SystemParams
         0.003,              # tether_diameter (m) — DRR §5.2: 3 mm Dyneema
         100e9,              # e_modulus (Pa) — Dyneema ~100 GPa
         0.4,                # m_ring (kg) — ~400 g per ring (DRR §5.2)
-        11.0 / 3.0,         # m_blade (kg) — 3 blades totalling 11 kg
+        11.0 / 5.0,         # m_blade (kg) — 2.2 kg/blade: 11 kg TOTAL across n_blades=5
+                            #   (one blade per vertex, Gate 1c). Matches the repo invariant
+                            #   m_blade_total = 11 kg (params_v5_10kw: 11/8; objective_v5/
+                            #   ring_spacing/trpt_axial_profiles default 11.0). Was 11/3 —
+                            #   a DRR "3 blades totalling 11 kg" transcription remnant giving
+                            #   18.3 kg airborne — until 2026-07-18; see DECISIONS
+                            #   "m_blade = 11/5 ratified". Re-opens Daisy/Bergey calibration.
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
