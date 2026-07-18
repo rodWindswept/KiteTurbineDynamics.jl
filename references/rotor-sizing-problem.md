@@ -1,5 +1,15 @@
 # Rotor Sizing: Static vs Dynamic Mismatch
 
+> **⚠ HISTORICAL — RESOLVED as of V9.0** *(banner added 2026-07-18, doc-staleness
+> audit — see `docs/reports/2026-07-18-doc-staleness-audit.md`)*. The "Status:
+> Open" below is stale: `solve_equilibrium_self_consistent()`
+> (`src/objective_v6.jl:568`) implements the dynamic equilibrium solve this doc
+> requests, and the placeholder expansion coefficients were calibrated
+> (`src/expansion_rotor.jl:70–72`). The dashboard numbers below predate both the
+> 2026-07-04 settle-k_mppt fix (ADR 0004) and the 2026-07-17 builder fix
+> (`7d43455`) — treat them as historical evidence only. The "10 rotors" figure
+> is contradicted by `references/v9_0-campaign-analysis.md:172` (V6.2 n_exp=1).
+
 **Date:** 2026-06-18  
 **Discovered by:** Dashboard verification of V6.2 campaign winner  
 **Status:** Open — requires dynamic equilibrium solve in objective function

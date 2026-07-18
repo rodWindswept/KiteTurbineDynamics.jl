@@ -58,8 +58,12 @@ function _build_v10_tight(;
     # v4 layout: Do_top, t_over_D, beam_aspect, Do_scale_exp, r_hub, r_bottom,
     #            target_Lr, n_lines, density_profile, rotor_mask,
     #            bank_top, bank_bottom, λ_top, λ_bottom
-    x[8]  = Float64(round(Int, clamp(x[8], 3, 16)))         # n_lines → integer
-    x[10] = clamp(x[10], 0.0, Float64(N_VALID_MASKS))       # rotor_mask
+    # n_lines (x[8]) and rotor_mask (x[10]) are decoded and clamped by the
+    # authoritative decoder chain — design_from_vector_v4 (ring_spacing.jl:408,
+    # n_lines ∈ [3,12]) and decode_rotor_mask (objective_v10.jl:69, mask ∈ [0,59]).
+    # No pre-clamp here: a duplicate [3,16]/[0,60] pre-clamp used to disagree with
+    # the decoder bounds (removed 2026-07-18, single-authority fix; outcome
+    # bit-identical, guarded by test/test_documented_claims.jl).
 
     # ── Apply kwargs post-decode (see Gate 1c note: r_bottom scaling once) ──
     x[3] *= do_scale       # beam_aspect → Do_top effective

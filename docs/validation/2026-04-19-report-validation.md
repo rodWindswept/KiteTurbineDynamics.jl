@@ -1,5 +1,14 @@
 # TRPT Report Validity Review — 2026-04-19
 
+> **⚠ HISTORICAL — aero-table claims superseded** *(banner added 2026-07-18,
+> doc-staleness audit)*. The BEM tables this review checked against were
+> replaced on 2026-06-10 (commit `830950c`, AeroDyn v5.0.0, 0° elevation):
+> peak Cp is now **0.309 @ λ≈5.2** and CT(4.1)=**0.653118** — so this doc's
+> Cp correction target of 0.232 is itself stale. Parameter and
+> structural-constant claims were re-verified TRUE on 2026-07-18; everything
+> citing the old Cp/CT tables is dead. `_tether_max_v2` no longer exists
+> (tension now via `get_segment_tension`).
+
 Reviewed by: Claude Code (claude-sonnet-4-6)  
 Branch: `claude/peaceful-pascal`  
 Simulator version: as of commit `1f13356`
