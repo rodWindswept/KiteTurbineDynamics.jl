@@ -2701,3 +2701,47 @@ grid. Both are ~150 lines. Best done with display available for verification.
 - **FoS Reduction:** Replaced the invalid field access `sf.min_column_fos` with `minimum(f.fos for f in sf; init=Inf)` to correctly extract spacer ring buckling safety margins.
 - **Headless-safety:** Wrapped the reactive `run_dynamic` variable in a `try...catch` block in the simulation cell to prevent `UndefVarError` when evaluating the notebook headlessly.
 
+### [2026-07-18] Triangle3 wind curve: 30 s rows embargoed, 90 s re-run; k=4 anchors
+
+**Context:** The triangle3 wind sweep (`wind_sweep_triangle3.csv`) ran 30 s MPPT;
+the kickstart sweep (`kickstart_sweep_triangle3.csv`) ran 60 s. Same design, same
+wind (11 m/s), same k: 107 vs 187 kW (k4) and 86 vs 184 kW (k8). That is direct
+evidence the 30 s rows are not converged — the "11 m/s dip" is a protocol
+artifact until proven otherwise, and the 60 s kickstart values are the better
+estimates at 11 m/s.
+
+**Decisions (Rod, 2026-07-18):**
+1. **The quotable triangle wind curve does not exist until the 90 s re-run
+   lands.** The 11 m/s row is not to be plotted or quoted at all. Whole-curve
+   re-run (12 rows) at 90 s MPPT, not just spot checks — 12 rows at ~2-3× cost
+   is cheap; the 12-gon recheck is the expensive one. CSV header of the 30 s
+   file carries a DO NOT PLOT OR QUOTE embargo.
+2. **431 kW @ 15 m/s is UNVERIFIED, not just hardware-inadmissible.** Sanity:
+   at 15 m/s, ½ρv³ ≈ 2.1 kW/m², so 431 kW needs ~350 m² at Betz — far above the
+   triangle's actual swept annuli (audited in the 90 s CSV header). Decisive
+   test: record P_aero_kw alongside P_gen; P_gen > P_aero at the snapshot
+   proves kinetic-energy drawdown from the 444 rpm spin — a transient
+   masquerading as an operating point. The 90 s script records P_aero at
+   30/60/90 s checkpoints for every row.
+3. **Cut-in ≥ 9 m/s is a protocol property, not a machine property.** The
+   kickstart (fixed 30 s free spin, hard engage) is the crudest possible start
+   strategy. Correct statement: "not self-sustaining below 9 m/s under
+   kickstart protocol." Low-wind viability goes through hunt_kmppt/soft-ramp
+   work, not this sweep. This also moots the k4-vs-k8 AEP argument below
+   9 m/s — both stall identically there.
+4. **k=4 anchors the triangle.** k4 ≥ k8 at every wind where either sustains;
+   the 444 rpm swivel ceiling is k4's operating-envelope cap at high wind.
+5. **No rated-power curtailment is modeled in these sweeps.** Any externally
+   quoted number above ~50 kW carries the "no power limiter modeled" caveat,
+   regardless of convergence status.
+
+**Rows most likely to change conclusions, not just decimals:** 15 m/s (energy
+balance) and 11 m/s (convergence).
+
+**Artifacts:** `scripts/wind_sweep_triangle3_90s.jl` →
+`scripts/results/control_maps/wind_sweep_triangle3_90s.csv` (checkpoints at
+30/60/90 s, P_aero columns, 1 Hz window stats t∈[30,90] s, swept-area audit +
+Betz ceiling in header). 12-gon recheck (150 s, running as of this entry) gets
+the same P_aero treatment in a follow-up batch once its current run completes —
+its schema can't change mid-run.
+

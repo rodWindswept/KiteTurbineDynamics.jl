@@ -1,0 +1,31 @@
+# wind_sweep_triangle3.csv — deliberate triangle3 (build_phantom_triangle)
+# git=121f72619198b9186f5f6546ee4fd80804fb8f10  wind sweep at 0.85/k4 and 0.85/k8
+# protocol: settle(seed k) -> kick omega=30 rad/s -> 30.0s k=0 -> 30.0s MPPT (legacy retest_085_k2 protocol)
+# ═══ SUPERSEDED 2026-07-18 — DO NOT PLOT OR QUOTE ═══
+# 30 s MPPT rows are protocol artifacts, not converged. Direct evidence at 11 m/s
+# (same design/wind/k, only duration differs vs kickstart_sweep_triangle3.csv 60 s):
+#   k4: 107 kW (30s) vs 187 kW (60s) · k8: 86 kW (30s) vs 184 kW (60s)
+# 431 kW @ 15 m/s additionally UNVERIFIED pending energy balance (P_aero vs P_gen) —
+# suspected kinetic-energy drawdown from 444 rpm. No power limiter modeled anywhere.
+# Replacement: wind_sweep_triangle3_90s.csv (90 s MPPT, 30/60/90 s checkpoints, P_aero).
+# geometry_fingerprint
+# n_lines=3 n_rings=22 tether_length=67.08m
+# r_hub=2.9879m r_bottom=2.9879m taper=none
+# blade_scale=0.85 hub_disk_radius=4.25m
+# rotor1: ring=20 n_blades=3 tip=2.37m chord=0.383m span=3.386m area=3.886m² bank=18.0° mass=0.33kg
+# rotor2: ring=17 n_blades=3 tip=2.36m chord=0.381m span=3.371m area=3.853m² bank=11.0° mass=0.329kg
+# rotor3: ring=14 n_blades=3 tip=2.366m chord=0.382m span=3.379m area=3.871m² bank=4.0° mass=0.33kg
+# total_blade_area=11.611m² total_blade_mass=2.965kg n_rotors=3
+blade_scale,k_mppt,wind_ms,P_kw,omega_rpm,min_fos,T_max_kN,git,status
+0.85,4.0,5.0,0.0,9.64080003325478,64.72162100477411,0.5478437555091634,121f7261,ok
+0.85,4.0,7.0,0.0,-0.3314884950478192,390.70526200667877,0.1989955373545968,121f7261,ok
+0.85,4.0,9.0,127.88095424140657,301.93882670700924,14.516272563833763,17.013054475237603,121f7261,ok
+0.85,4.0,11.0,107.11374991441588,252.18645109512119,10.379901493826745,38.54560626172277,121f7261,ok
+0.85,4.0,13.0,211.32578593447823,365.58396992556715,8.436929024726242,45.69349167585253,121f7261,ok
+0.85,4.0,15.0,431.3977901708601,444.20729464748075,42.36367247586763,39.237714576011825,121f7261,ok
+0.85,8.0,5.0,0.0,9.205682617180624,64.1870224022386,0.5994086891592871,121f7261,ok
+0.85,8.0,7.0,0.0,0.3851001720868389,532.7498585512935,0.1680633863082858,121f7261,ok
+0.85,8.0,9.0,44.04294039645355,185.98835003234532,43.304371853941944,19.652738229083276,121f7261,ok
+0.85,8.0,11.0,85.88381379965,97.22811530667326,8.466418312500094,44.86183765929318,121f7261,ok
+0.85,8.0,13.0,182.55469164208057,266.5648949396349,9.459205119967601,32.467633513740616,121f7261,ok
+0.85,8.0,15.0,361.67430002435293,337.46567026887726,5.965290390929367,42.99422003399008,121f7261,ok
