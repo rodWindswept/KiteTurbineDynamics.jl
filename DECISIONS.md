@@ -30,6 +30,66 @@ the known mid-transient dip (107 kW vs 187 kW at 60 s) — treat as
 non-converged; 444 rpm @ 15 m/s exceeds any plausible swivel wrap-rate
 ceiling (hardware-inadmissible operating point).
 
+## 2026-07-18: m_blade = 11/5 in params_10kw — ratified. STALENESS CLIFF #4 (commit `35f066f`)
+
+**Anchor:** commit `35f066f` (`fix: params_10kw m_blade 11/3 → 11/5`). Fourth
+dated mass-staleness anchor, after #1 `830950c` (2026-06-10 aero-table swap),
+#2 ADR 0004 (2026-07-04 settle k_mppt bug), #3 `7d43455` (2026-07-17 V10
+builder x-vector fix). Any params_10kw/params_50kw-derived number quoted from
+before this commit embeds 18.3 kg blade mass.
+
+**Context (Rod):** Same-day reversal of the "m_blade — DEFERRED" decision in the
+entry below. The post-builder-fix re-run of sweeps and Phase-E figures (2026-07-17
+x-vector fix) is still pending, so the downstream result classes are queued for
+regeneration anyway. Folding the m_blade correction into that same re-run means
+one dated anchor covers both changes; deferring to the next 10 kW campaign would
+have created a *separate* staleness cliff #4 later. Take the pain once.
+
+**Change:** `params_10kw` m_blade 11/3 → 11/5 = 2.2 kg — 11 kg TOTAL blade mass
+across n_blades=5 (one blade per vertex, Gate 1c), matching the repo invariant
+(`m_blade_total=11.0` defaults in `objective_v5`/`ring_spacing`/
+`trpt_axial_profiles`; `params_v5_10kw` uses 11/8). Airborne blade mass
+18.33 → 11.00 kg (−7.33 kg). Propagates to `params_50kw` via `mass_scale`
+(m_blade × 5^1.35). `params_v5_*` and `params_v6_50kw` are unaffected
+(explicit 11/8-based values).
+
+**Cost accepted:** every params_10kw- and params_50kw-derived result generated
+before 2026-07-18 embeds the 18.3 kg blade mass and is invalid — this includes
+the Daisy/Bergey calibration, which is hereby re-opened and must be re-validated
+as part of the post-fix re-run. Guarded by `test/test_documented_claims.jl`
+(asserts m_blade == 11/5 and n_blades × m_blade == 11).
+
+**Status:** Active. Supersedes the m_blade deferral in the entry below.
+
+## 2026-07-18: Single-authority clamp in V10 builder; m_blade 10 kW decision deferred
+
+**Context:** The doc-staleness audit (`docs/reports/2026-07-18-doc-staleness-audit.md`)
+added `test/test_documented_claims.jl`, which surfaced two code findings.
+
+**Dual clamp removed (fix by deletion):** `_build_v10_tight` pre-clamped x[8]
+(n_lines) to [3,16] and x[10] (rotor_mask) to [0,60] before the decoder chain
+re-clamped them — [3,12] in `design_from_vector_v4` (ring_spacing.jl:408) and
+[0,59] in `decode_rotor_mask` (objective_v10.jl:69). The decoder always ran and
+won, so the pre-clamps were pure duplication with *disagreeing bounds* — the same
+two-interpretations-of-one-slot class as the 2026-07-17 x-vector bug. Deleted
+rather than aligned, so exactly one authority remains. Outcome bit-identical
+(raw n_lines 13.21 → 12 either way); end-to-end decode guarded by
+`test_documented_claims.jl`.
+
+**m_blade in params_10kw — DEFERRED:** repo invariant is 11 kg *total* blade
+mass (`params_50kw` uses 11/8 "total 11 kg across 8 blades"; `objective_v5`,
+`ring_spacing`, `trpt_axial_profiles` default `m_blade_total=11.0`), but
+`params_10kw` uses `m_blade=11/3` with `n_blades=5` → 18.3 kg airborne. Evidence
+argues `m_blade = 11/5 = 2.2 kg` (n_blades=5 matches the ratified
+one-blade-per-vertex convention, Gate 1c; 11/3 is a DRR transcription remnant).
+**Not changed now:** dropping 7.1 kg of airborne mass invalidates every
+params_10kw-derived result and re-opens Daisy/Bergey calibration — it would be
+staleness cliff #4. Revisit at the next 10 kW campaign. The inconsistency is
+documented at the definition site and the per-blade value is guarded by
+`test_documented_claims.jl` so any change is deliberate.
+
+**Status:** Active.
+
 ## 2026-07-17: Phantom triangle validated — legacy results re-legitimised
 
 **GATE PASS (exact):** `build_phantom_triangle(blade_scale=0.85)` + legacy
@@ -1962,6 +2022,8 @@ translates into a larger R, higher thrust, and higher shaft mass.
   then back-calculate R from `P_rated = 0.5ρv³πR²Cp_max·η`.
 - BEM Cp surface fitted from a sweep over n_lines ∈ {3…12}, TSR ∈ {3…10}, solidity
   σ = n_lines × chord_eff / (2π × R). Stored in `src/bem_cp_model.jl`.
+  *(2026-07-18 audit note: no file of that name was ever committed — the Cp surface
+  landed in `src/bem.jl`.)*
 - All other physics unchanged from v4 (Euler FOS ≥ 1.8, Torsional FOS ≥ 1.5, L/r spacing, DLF).
 - n_lines upper bound kept at 8: strip theory is not validated above n = 6; raising the bound
   pending CFD/panel-method confirmation.
