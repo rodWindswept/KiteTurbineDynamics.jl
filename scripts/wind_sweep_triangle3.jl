@@ -9,6 +9,11 @@ include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 import KiteTurbineDynamics: SpokeParams
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
+# LEGACY PHYSICS PIN (2026-07-18): this script reproduces CSVs archived under
+# the pre-induction model. Default flipped to induction=ON; pin OFF here so
+# the committed results stay bit-reproducible. New work: use the default.
+set_expansion_induction!(false)
+
 
 const BLADE   = 0.85
 const KS      = [4.0, 8.0]

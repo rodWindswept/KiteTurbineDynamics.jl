@@ -122,11 +122,11 @@ end
 #      At high TSR φ→0 drives α negative → CL brakes → fixed point always exists.
 #   2. Momentum: solve T_BE(a) = T_M(a) by bisection on a ∈ [0, 0.5];
 #      T_M uses Glauert/Buhl empirical branch above a = 0.4.
-# Toggle: EXPANSION_INDUCTION[] — default FALSE (legacy) until validation
-# completes (proposal §5); flip in the validation commit. The phantom gate and
-# all legacy reproduction runs require OFF.
+# Toggle: EXPANSION_INDUCTION[] — default TRUE as of 2026-07-18 (validation
+# commit; all four §3 gates passed). Legacy reproduction scripts (phantom gate,
+# archived sweep CSVs) pin set_expansion_induction!(false) explicitly.
 
-const EXPANSION_INDUCTION = Ref{Bool}(false)
+const EXPANSION_INDUCTION = Ref{Bool}(true)
 
 "Enable/disable the per-annulus induction + α model globally."
 set_expansion_induction!(b::Bool) = (EXPANSION_INDUCTION[] = b; b)

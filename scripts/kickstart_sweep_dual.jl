@@ -18,6 +18,11 @@ include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
 import KiteTurbineDynamics: SpokeParams
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
+# LEGACY PHYSICS PIN (2026-07-18): this script reproduces CSVs archived under
+# the pre-induction model. Default flipped to induction=ON; pin OFF here so
+# the committed results stay bit-reproducible. New work: use the default.
+set_expansion_induction!(false)
+
 
 const CONFIG = isempty(ARGS) ? error("pass config: 12gon | triangle3") : ARGS[1]
 @assert CONFIG in ("12gon", "triangle3") "config must be 12gon or triangle3"

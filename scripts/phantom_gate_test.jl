@@ -13,6 +13,11 @@ const SIM_S = 30.0
 const DT = ControlMapHunt.DT
 
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
+# LEGACY PHYSICS PIN (2026-07-18): this script reproduces CSVs archived under
+# the pre-induction model. Default flipped to induction=ON; pin OFF here so
+# the committed results stay bit-reproducible. New work: use the default.
+set_expansion_induction!(false)
+
 
 sys, u0, p, label, design = Base.invokelatest(build_phantom_triangle; blade_scale=BLADE)
 print(geometry_fingerprint(sys, p, design; blade_scale=BLADE))

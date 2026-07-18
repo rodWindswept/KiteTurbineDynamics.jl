@@ -2,6 +2,38 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-18: Induction default flipped ON — all four acceptance gates passed
+
+Per-annulus induction + α model (docs/plans/induction_fix_proposal.md, Rod's 4
+amendments) implemented and validated; `EXPANSION_INDUCTION` default now TRUE.
+
+**Gates:** (1) Betz cap + solver convergence: 768-pt grid green, every point
+converges ≤80 iters. (2) Continuity: a→0 limit matches legacy within 1%,
+CL(φ_design) ≡ EXP_CL_DESIGN to 1e-12. (3) Daisy ±5%: PASS — offsets
+identical (−18…−24%) — **but non-discriminating**: Daisy power is 93% hub-BEM
+(410 W with expansion rotor vs 383 W without); no hardware anchor validates
+the expansion α-model constants at 50 kW scale where expansion rotors are
+~100% of power. Tulloch benchmarks / future test data needed. (4) Energy
+balance: induction-ON 90 s triangle sweep P_aero peaks 92–169 kW at/below
+Σ-annulus ceilings (was 2–5× over); v1 bound = Σ per-annulus Betz (union-Betz
+deferred to v2 wake matrix).
+
+**Corrected triangle estimates** (`wind_sweep_triangle3_90s_induction.csv`):
+~20 kW @ 11 m/s, ~45–60 kW @ 15 m/s at 90 s — vs 127–202 / 362–457 kW under
+legacy physics. The 117 kW @ 11 m/s figure shared with Strathclyde is ~6×
+optimistic. High-RPM branch largely unsustainable: the α model brakes at high
+TSR (as designed); rows remain limit-cycling (DRIFTING) — window statistics
+mandatory. **12-gon spot check** (0.69/k62, settle protocol, low branch):
+16.1 → 10.6 kW (−34%), FoS 1.83 → 1.72.
+
+**Legacy pins:** all scripts reproducing committed pre-induction CSVs now set
+`set_expansion_induction!(false)` explicitly (phantom gate, kickstart sweeps,
+wind sweeps, recheck). Phantom gate reproducibility certification unaffected.
+
+**Consequence:** V10 re-campaign required under corrected objective (proposal
+§4) — the 12-gon was selected by physics that no longer exists. K-bracket
+re-hunt mandatory at the corrected power level.
+
 ## 2026-07-18: 12-gon convergence recheck — structurally non-viable at current design
 
 150 s dual-duration recheck (`kickstart_12gon_recheck.csv`, 7 rows, window

@@ -1,5 +1,12 @@
 @testset "expansion rotor — analytical mechanics" begin
 
+    # LEGACY PHYSICS PIN (2026-07-18): these analytical tests document the
+    # fixed-CL legacy model (e.g. zero-wind spreading assumes CL=1.0 at φ=0;
+    # the α model correctly gives negative lift there). The induction model
+    # has its own acceptance suite in test_expansion_induction.jl.
+    _prev_induction = expansion_induction()
+    set_expansion_induction!(false)
+
     # === Test 1: Zero-wind spreading via ω² ===
     # When v_wind=0, blades generate lift from rotational apparent wind,
     # producing radial force that spreads the ring.
@@ -93,4 +100,6 @@
         @test length(r_eff) > 3
         @test all(F_radial .== 0.0)
     end
+
+    set_expansion_induction!(_prev_induction)
 end

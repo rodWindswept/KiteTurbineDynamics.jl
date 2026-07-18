@@ -3,6 +3,11 @@
 using KiteTurbineDynamics, Printf, LinearAlgebra, CSV, DataFrames
 include(joinpath(@__DIR__, "hunt_kmppt_bisect.jl"))
 using .ControlMapHunt
+# LEGACY PHYSICS PIN (2026-07-18): reproduces CSVs archived under the
+# pre-induction model. Default is now induction=ON; pinned OFF for archive
+# reproducibility. New work: use the default.
+set_expansion_induction!(false)
+
 import KiteTurbineDynamics: SpokeParams
 
 const WINDS = [5.0, 7.0, 9.0, 11.0, 13.0, 15.0]
