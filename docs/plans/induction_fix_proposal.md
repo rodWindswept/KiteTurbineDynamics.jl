@@ -1,7 +1,10 @@
 # PROPOSAL: Per-annulus axial-induction fixed point for expansion rotors
 
-**Status:** PROPOSED — awaiting Rod's sign-off. Physics-model change; per
-AGENTS.md conservatism rule this document precedes any solver edit.
+**Status:** AMENDED per Rod 2026-07-18 (4 amendments folded in: solver-
+convergence assertion in test 1; §2a α model resolving fixed-point
+existence — BLOCKING amendment, option (a) selected; test 4 bound relaxed to
+Σ per-annulus Betz for v1; test 3 verified non-vacuous + FR4 assertion
+restored). Ready for implementation on Rod's go.
 **Authored:** 2026-07-18 (Hermes desktop, from Rod's source inspection + sketch).
 **Prereqs read:** `wake_overlap_audit.jl` results (DECISIONS.md 2026-07-18),
 Rod's confirmation: no induction at `expansion_rotor.jl:167`, fixed CL at
@@ -41,6 +44,34 @@ axis-normal inflow v_n) as an actuator annulus:
 5. Torque/power follow from the blade-element forces at the induced inflow —
    per-annulus CP is then automatically Betz-bounded.
 
+### 2a. Existence of the fixed point — the CL model (BLOCKING amendment, Rod 2026-07-18)
+
+With CL held fixed (the unaddressed half of the diagnosis), the fixed point
+can have **no solution**: at high tip speed the blade-element thrust is
+dominated by the ω·r term — `T_BE ≈ n·½ρ(ωr)²·c·s·CL·cos(bank)` — nearly
+independent of a, while momentum thrust maxes out at a = 0.5. Above a modest
+ω there is no crossing in [0, 0.5]; a clamps, and power still grows without
+bound (`P ≈ n·½ρ·c·s·CL·cos(bank)·v_eff·(ωr)²`) because induction constrains
+thrust while fixed-CL torque never feels it. The Betz property test would
+trip at the top of its own ω grid.
+
+**Selected resolution — (a) minimal α model** (Rod's preference; fixes the
+actual physics, still `expansion_rotor.jl`-only):
+
+- `α = φ − θ_i`, with the incidence `θ_i` back-solved once per rotor so the
+  **design point reproduces `EXP_CL_DESIGN` exactly** (backwards-compatible
+  where it matters).
+- `CL = clamp(slope·α, −CL_max, +CL_max)` (slope ≈ 2π or a stated finite
+  value; CL_max stated).
+- At high TSR, φ → 0 drives α negative, CL drops, torque brakes — the fixed
+  point **always exists**, and the rotor gains the natural aerodynamic TSR
+  equilibrium a fixed-CL model fundamentally lacks.
+
+*(Rejected fallback (b): keep fixed CL and define the no-crossing branch
+explicitly — momentum wins, forces rescaled to the momentum-consistent
+CT-capped values, documented as such. A patch on a patch; retained here only
+so the decision is on record.)*
+
 Scope: `src/expansion_rotor.jl` only. The hub disk uses the BEM-coupled v2/v5
 path (already momentum-limited) — verify, don't touch. A builder/sim kwarg
 `induction::Bool` (default **true** after validation) preserves the legacy
@@ -52,26 +83,47 @@ Deferred to v2: inter-rotor wake deficits driven by the overlap matrix from
 `wake_overlap_audit.jl` (triangle adjacent-station 32–53%); loaded-shaft
 (bowed) geometry in the overlap calculation.
 
-## 3. Acceptance tests (four)
+## 3. Acceptance tests (four, as amended by Rod 2026-07-18)
 
 Write BEFORE the fix (TDD), register in `test/runtests.jl` as
-`test_expansion_induction.jl`. *(Reconstructed from Rod's sketch — amend if
-the original list differed.)*
+`test_expansion_induction.jl`.
 
-1. **Betz cap (property test):** for every expansion rotor across a grid of
-   ω ∈ [1, 60] rad/s × v ∈ [5, 15] m/s × λ ∈ {0.69, 0.85, 1.0}:
-   `P_rotor ≤ 0.593 · ½ρ A_ann v_n³` (small numerical tolerance).
+1. **Betz cap + solver convergence (property test):** for every expansion
+   rotor across a grid of ω ∈ [1, 60] rad/s × v ∈ [5, 15] m/s ×
+   λ ∈ {0.69, 0.85, 1.0}:
+   - `P_rotor ≤ 0.593 · ½ρ A_ann v_n³` (small numerical tolerance), AND
+   - the fixed-point solver **converges within N iterations to a stated
+     residual tolerance** (e.g. N = 50, |residual| < 1e-8·T_ref) at every
+     grid point. **Non-convergence fails the test** — no silent clamping.
+     The fixed point is where an implementation bug will live if there is
+     one; with the §2a α model a solution always exists, so failure here
+     means the code, not the physics.
 2. **Light-loading continuity:** at low solidity / low CL / low ω, a → 0 and
    forces converge to the legacy (`induction=false`) model within 1% —
    the fix must be a limit-correct extension, not a different aerodynamics.
-3. **Daisy calibration preserved:** re-run the Daisy validation; Bergey Cp
-   match stays within ±5% of the current 98.4%, and the −20% TRPT offset
-   does not worsen. (Daisy's small solidity ⇒ small a; if Daisy shifts
-   materially, the implementation is wrong.)
-4. **Energy balance closes:** re-run `wind_sweep_triangle3_90s.jl` with
-   induction on: every row satisfies
-   `P_gen ≤ ΣP_aero,annuli ≤ union-Betz(97 kW @ 11 m/s, 247 kW @ 15 m/s)`,
-   and the per-row P_aero energy-balance columns are self-consistent.
+   The §2a θ_i back-solve guarantees the design point reproduces
+   `EXP_CL_DESIGN` exactly; assert that too.
+3. **Daisy calibration preserved (verified non-vacuous):** re-run the Daisy
+   validation; Bergey Cp match stays within ±5% of the current 98.4%, and
+   the −20% TRPT offset does not worsen. *Non-vacuousness confirmed
+   2026-07-18: `scripts/daisy_builder.jl:117–131` models Daisy's main rotor
+   as an `ExpansionRotorParams` passed to the system builder — the Daisy path
+   executes `expansion_rotor_forces` and WILL feel the induction change.*
+4. **Energy balance closes (v1 bound = Σ per-annulus Betz):** re-run
+   `wind_sweep_triangle3_90s.jl` with induction on: every row satisfies
+   `P_gen ≤ ΣP_aero,annuli ≤ Σ per-annulus Betz limits` and the per-row
+   energy-balance columns are self-consistent. **NOT union-Betz in v1**:
+   the union bound implicitly assumes wake coupling, which §2 explicitly
+   defers — with the triangle's 23% overlap and no inter-rotor deficits, a
+   correctly implemented per-annulus model can legitimately total
+   ~1.2–1.3× union-Betz. Union-Betz becomes the tightened bound when the
+   v2 wake matrix lands (record both numbers in the CSV meta now so the
+   v2 tightening is a one-line change).
+
+Plus, restored per Rod: the **FR4 bit-identity assertion** — a system built
+with `N_expansion = 0` produces bit-for-bit identical results to plain v5,
+with induction on or off (expansion code must be provably inert when absent;
+one line, asserted rather than assumed).
 
 Plus the standing gates: full suite green, phantom gate green with
 `induction=false`, JuliaFormatter, cache cleared after every src edit.
