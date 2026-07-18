@@ -1,0 +1,66 @@
+# kickstart_sweep_triangle3.csv — deliberate triangle3 (build_phantom_triangle)
+# git=844ed49  date=2026-07-17T16:45:04.697  wind=11.0 m/s  spokes=ON
+# protocol: settle(seed k) -> kick omega=30 rad/s -> 30.0s no-load (k=0) -> engage k -> 60.0s MPPT
+# Gate B provenance: 0.85/k2 reproduces legacy 117.4 kW @ 411 rpm FoS 4.52 bit-identical (DECISIONS.md 2026-07-17)
+# NOTE: er.mass (expansion blades) is non-dynamic bookkeeping — zero inertia in ODE (Phase 2b trap 3)
+# ── blade_scale=0.69 · Phantom triangle (hub + 3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=3 n_rings=22 tether_length=67.08m
+# r_hub=2.9879m r_bottom=2.9879m taper=none
+# blade_scale=0.69 hub_disk_radius=3.45m
+# rotor1: ring=20 n_blades=3 tip=1.924m chord=0.311m span=2.749m area=2.561m² bank=18.0° mass=0.162kg
+# rotor2: ring=17 n_blades=3 tip=1.916m chord=0.309m span=2.737m area=2.539m² bank=11.0° mass=0.161kg
+# rotor3: ring=14 n_blades=3 tip=1.92m chord=0.31m span=2.743m area=2.551m² bank=4.0° mass=0.162kg
+# total_blade_area=7.651m² total_blade_mass=1.455kg n_rotors=3
+# ── blade_scale=0.75 · Phantom triangle (hub + 3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=3 n_rings=22 tether_length=67.08m
+# r_hub=2.9879m r_bottom=2.9879m taper=none
+# blade_scale=0.75 hub_disk_radius=3.75m
+# rotor1: ring=20 n_blades=3 tip=2.091m chord=0.338m span=2.988m area=3.026m² bank=18.0° mass=0.215kg
+# rotor2: ring=17 n_blades=3 tip=2.082m chord=0.336m span=2.975m area=3.0m² bank=11.0° mass=0.214kg
+# rotor3: ring=14 n_blades=3 tip=2.087m chord=0.337m span=2.982m area=3.014m² bank=4.0° mass=0.215kg
+# total_blade_area=9.039m² total_blade_mass=1.931kg n_rotors=3
+# ── blade_scale=0.8 · Phantom triangle (hub + 3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=3 n_rings=22 tether_length=67.08m
+# r_hub=2.9879m r_bottom=2.9879m taper=none
+# blade_scale=0.8 hub_disk_radius=4.0m
+# rotor1: ring=20 n_blades=3 tip=2.231m chord=0.36m span=3.187m area=3.443m² bank=18.0° mass=0.268kg
+# rotor2: ring=17 n_blades=3 tip=2.221m chord=0.359m span=3.173m area=3.413m² bank=11.0° mass=0.267kg
+# rotor3: ring=14 n_blades=3 tip=2.226m chord=0.359m span=3.181m area=3.429m² bank=4.0° mass=0.268kg
+# total_blade_area=10.285m² total_blade_mass=2.408kg n_rotors=3
+# ── blade_scale=0.85 · Phantom triangle (hub + 3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=3 n_rings=22 tether_length=67.08m
+# r_hub=2.9879m r_bottom=2.9879m taper=none
+# blade_scale=0.85 hub_disk_radius=4.25m
+# rotor1: ring=20 n_blades=3 tip=2.37m chord=0.383m span=3.386m area=3.886m² bank=18.0° mass=0.33kg
+# rotor2: ring=17 n_blades=3 tip=2.36m chord=0.381m span=3.371m area=3.853m² bank=11.0° mass=0.329kg
+# rotor3: ring=14 n_blades=3 tip=2.366m chord=0.382m span=3.379m area=3.871m² bank=4.0° mass=0.33kg
+# total_blade_area=11.611m² total_blade_mass=2.965kg n_rotors=3
+blade_scale,k_mppt,P_kw,omega_rpm,min_fos,T_max_kN,wind_ms,status
+0.69,2.0,94.965127,387.1173,6.5474,35.9457,11.0,ok
+0.69,4.0,0.004257,-10.0190,222.8096,0.5957,11.0,ok
+0.69,6.0,0.000004,33.2614,59.4080,0.3454,11.0,ok
+0.69,8.0,13.820799,164.2660,14.0475,2.9846,11.0,ok
+0.69,10.0,0.000053,0.2881,432.0899,0.2961,11.0,ok
+0.69,14.0,0.000024,11.7758,155.5367,1.3664,11.0,ok
+0.75,2.0,99.498320,313.5760,19.0626,16.7203,11.0,ok
+0.75,4.0,173.436318,342.2769,5.9631,57.6161,11.0,ok
+0.75,6.0,160.697147,273.4994,19.7768,15.2007,11.0,ok
+0.75,8.0,4.482824,216.9782,29.5247,6.4535,11.0,ok
+0.75,10.0,24.178906,65.3989,18.8410,6.1398,11.0,ok
+0.75,14.0,0.000001,16.8726,101.2849,0.2369,11.0,ok
+0.80,2.0,118.084130,350.9174,3.8214,41.5675,11.0,ok
+0.80,4.0,131.211647,410.8279,2.2107,35.5602,11.0,ok
+0.80,6.0,134.326869,291.7201,10.0546,55.0142,11.0,ok
+0.80,8.0,76.961755,197.7965,12.8550,19.4081,11.0,ok
+0.80,10.0,160.786038,242.7174,6.0098,44.9615,11.0,ok
+0.80,14.0,0.000000,102.9164,10.8034,6.5130,11.0,ok
+0.85,2.0,167.474390,391.4678,12.9436,34.6974,11.0,ok
+0.85,4.0,187.086610,329.5604,5.5272,31.3492,11.0,ok
+0.85,6.0,129.243564,262.8420,17.4434,24.2555,11.0,ok
+0.85,8.0,184.286275,277.0551,26.1634,26.5491,11.0,ok
+0.85,10.0,2.066048,125.0317,12.2208,19.1020,11.0,ok
+0.85,14.0,107.213637,164.5592,11.5137,12.8366,11.0,ok

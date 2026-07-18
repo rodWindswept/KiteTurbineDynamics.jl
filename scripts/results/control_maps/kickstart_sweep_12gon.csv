@@ -1,0 +1,80 @@
+# kickstart_sweep_12gon.csv — corrected 12-gon (build_v10_tight_no_lowest)
+# git=844ed49  date=2026-07-17T16:44:47.597  wind=11.0 m/s  spokes=ON
+# protocol: settle(seed k) -> kick omega=30 rad/s -> 30.0s no-load (k=0) -> engage k -> 60.0s MPPT
+# NOTE: er.mass (expansion blades) is non-dynamic bookkeeping — zero inertia in ODE (Phase 2b trap 3)
+# ── blade_scale=0.69 · V10 12-gon 10 rings blade×0.69 (3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=0.69 hub_disk_radius=3.45m
+# rotor1: ring=5 n_blades=12 tip=0.846m chord=0.137m span=1.209m area=1.981m² bank=25.0° mass=0.126kg
+# rotor2: ring=8 n_blades=12 tip=1.149m chord=0.185m span=1.641m area=3.652m² bank=25.0° mass=0.136kg
+# rotor3: ring=12 n_blades=12 tip=1.443m chord=0.233m span=2.061m area=5.76m² bank=25.0° mass=0.146kg
+# total_blade_area=11.393m² total_blade_mass=4.903kg n_rotors=3
+# ── blade_scale=0.75 · V10 12-gon 10 rings blade×0.75 (3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=0.75 hub_disk_radius=3.75m
+# rotor1: ring=5 n_blades=12 tip=0.92m chord=0.148m span=1.314m area=2.341m² bank=25.0° mass=0.165kg
+# rotor2: ring=8 n_blades=12 tip=1.249m chord=0.202m span=1.784m area=4.314m² bank=25.0° mass=0.179kg
+# rotor3: ring=12 n_blades=12 tip=1.568m chord=0.253m span=2.24m area=6.805m² bank=25.0° mass=0.193kg
+# total_blade_area=13.46m² total_blade_mass=6.448kg n_rotors=3
+# ── blade_scale=0.8 · V10 12-gon 10 rings blade×0.8 (3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=0.8 hub_disk_radius=4.0m
+# rotor1: ring=5 n_blades=12 tip=0.981m chord=0.158m span=1.401m area=2.663m² bank=25.0° mass=0.204kg
+# rotor2: ring=8 n_blades=12 tip=1.332m chord=0.215m span=1.903m area=4.909m² bank=25.0° mass=0.222kg
+# rotor3: ring=12 n_blades=12 tip=1.673m chord=0.27m span=2.39m area=7.743m² bank=25.0° mass=0.239kg
+# total_blade_area=15.315m² total_blade_mass=7.978kg n_rotors=3
+# ── blade_scale=0.85 · V10 12-gon 10 rings blade×0.85 (3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=0.85 hub_disk_radius=4.25m
+# rotor1: ring=5 n_blades=12 tip=1.042m chord=0.168m span=1.489m area=3.006m² bank=25.0° mass=0.248kg
+# rotor2: ring=8 n_blades=12 tip=1.415m chord=0.228m span=2.022m area=5.541m² bank=25.0° mass=0.271kg
+# rotor3: ring=12 n_blades=12 tip=1.777m chord=0.287m span=2.539m area=8.741m² bank=25.0° mass=0.293kg
+# total_blade_area=17.289m² total_blade_mass=9.753kg n_rotors=3
+# ── blade_scale=1.0 · V10 12-gon 10 rings (3 expansion rotors) ──
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=1.0 hub_disk_radius=5.0m
+# rotor1: ring=5 n_blades=12 tip=1.226m chord=0.198m span=1.752m area=4.161m² bank=25.0° mass=0.423kg
+# rotor2: ring=8 n_blades=12 tip=1.665m chord=0.269m span=2.378m area=7.67m² bank=25.0° mass=0.466kg
+# rotor3: ring=12 n_blades=12 tip=2.091m chord=0.338m span=2.987m area=12.098m² bank=25.0° mass=0.509kg
+# total_blade_area=23.929m² total_blade_mass=16.778kg n_rotors=3
+blade_scale,k_mppt,P_kw,omega_rpm,min_fos,T_max_kN,wind_ms,status
+0.69,8.0,70.261073,194.1483,0.8605,21.9255,11.0,ok
+0.69,16.0,76.284962,155.4505,1.2424,8.4519,11.0,ok
+0.69,32.0,160.042692,157.3054,0.3917,16.7002,11.0,ok
+0.69,48.0,234.669989,170.7329,1.0727,21.0987,11.0,ok
+0.69,62.0,325.968478,177.6443,2.1517,3.9386,11.0,ok
+0.69,96.0,504.756215,177.5197,0.7520,9.6157,11.0,ok
+0.75,8.0,57.109926,174.9274,0.5095,8.2734,11.0,ok
+0.75,16.0,67.117239,153.9689,0.5711,7.5275,11.0,ok
+0.75,32.0,29.396348,91.7530,0.9454,4.2180,11.0,ok
+0.75,48.0,10.173693,57.3093,1.9464,1.0475,11.0,ok
+0.75,62.0,0.000000,17.3846,6.3066,0.5782,11.0,ok
+0.75,96.0,0.000000,0.0622,13.4367,0.4285,11.0,ok
+0.80,8.0,64.309439,189.1144,0.3431,18.7699,11.0,ok
+0.80,16.0,113.191248,190.4896,0.3320,17.9855,11.0,ok
+0.80,32.0,240.404351,187.5657,0.3121,8.9241,11.0,ok
+0.80,48.0,380.041485,178.8861,0.7771,8.8150,11.0,ok
+0.80,62.0,520.813194,184.8152,1.9687,7.9001,11.0,ok
+0.80,96.0,691.208751,181.7554,0.2925,15.7578,11.0,ok
+0.85,8.0,54.261628,181.1222,0.4391,11.5865,11.0,ok
+0.85,16.0,81.294202,164.0483,0.5837,10.6371,11.0,ok
+0.85,32.0,59.660345,126.9994,0.7186,7.1363,11.0,ok
+0.85,48.0,78.973356,110.3217,0.6497,7.9545,11.0,ok
+0.85,62.0,56.094809,93.7016,1.3370,3.6722,11.0,ok
+0.85,96.0,18.797712,63.4508,1.7659,3.5456,11.0,ok
+1.00,8.0,67.632817,195.6851,0.3433,16.4956,11.0,ok
+1.00,16.0,106.274313,180.0094,0.3856,15.5373,11.0,ok
+1.00,32.0,135.624151,153.7112,0.5257,13.2455,11.0,ok
+1.00,48.0,120.642726,132.2208,0.6139,12.8431,11.0,ok
+1.00,62.0,127.644257,120.6370,0.6507,12.0933,11.0,ok
+1.00,96.0,109.184305,97.1918,0.7327,9.8057,11.0,ok

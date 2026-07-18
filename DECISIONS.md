@@ -2,6 +2,34 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-18: 12-gon convergence recheck — structurally non-viable at current design
+
+150 s dual-duration recheck (`kickstart_12gon_recheck.csv`, 7 rows, window
+stats t∈[30,150] s) kills every 12-gon viability headline from the 60 s sweep:
+
+- **0.69/k62 "326 kW FoS 2.15"** → power CONVERGED (325.7 kW, drift 0.1%) but
+  the FoS was aliased: window min 0.22, end 0.28. T_max 27.5 kN (not 3.9).
+- **0.80/k62 "521 kW FoS 1.97"** → converges to ~540 kW but window FoS
+  min 0.21 / end 0.40. Structurally dead.
+- **0.80/k96 "691 kW"** → transient blowout; collapses to ~0 by 150 s.
+- **0.69/k48 "235 kW FoS 1.07"** → drifting (−30% power), FoS_min 0.23.
+- **0.75 column collapse** → kick-sensitivity, not geometry: ω_kick=30 stalls
+  (or wakes glacially), ω_kick=40 sustains ~29 kW converged (FoS_min 0.94).
+  12-gon has strong basin-of-attraction sensitivity like the triangle.
+
+**Verdict:** the corrected 12-gon produces large converged power (325–540 kW
+at 11 m/s) but NO rechecked operating point holds FoS ≥ 1.5 — window minima
+are 0.21–0.94 everywhere power exists. Not citable as viable. Redesign
+required (ring/tether reinforcement via do_scale/t_scale, or reduced blade
+count/area) before any 12-gon claim.
+
+**Triangle3 wind sweep** (`wind_sweep_triangle3.csv`, λ=0.85, k∈{4,8}, 30 s
+protocol): k=4 dominates k=8 at all winds; cut-in ≥9 m/s from kickstart; both
+branches survive 15 m/s (431/362 kW, FoS 42/6.0). Caveats: 11 m/s rows show
+the known mid-transient dip (107 kW vs 187 kW at 60 s) — treat as
+non-converged; 444 rpm @ 15 m/s exceeds any plausible swivel wrap-rate
+ceiling (hardware-inadmissible operating point).
+
 ## 2026-07-17: Phantom triangle validated — legacy results re-legitimised
 
 **GATE PASS (exact):** `build_phantom_triangle(blade_scale=0.85)` + legacy
