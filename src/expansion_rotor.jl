@@ -111,6 +111,121 @@ struct ExpansionRotorParams
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Per-annulus axial induction + α model (2026-07-18, induction_fix_proposal.md)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# Legacy model (induction OFF): fixed CL, free-stream inflow — extraction does
+# not deplete the flow that produces it; torque grows ~ω² unbounded.
+# Fix (induction ON):
+#   1. α model: CL = clamp(EXP_CL_SLOPE·(φ − EXP_THETA_I), ±EXP_CL_MAX) with
+#      θ_i back-solved so CL(φ_design) = EXP_CL_DESIGN exactly (§2a option a).
+#      At high TSR φ→0 drives α negative → CL brakes → fixed point always exists.
+#   2. Momentum: solve T_BE(a) = T_M(a) by bisection on a ∈ [0, 0.5];
+#      T_M uses Glauert/Buhl empirical branch above a = 0.4.
+# Toggle: EXPANSION_INDUCTION[] — default FALSE (legacy) until validation
+# completes (proposal §5); flip in the validation commit. The phantom gate and
+# all legacy reproduction runs require OFF.
+
+const EXPANSION_INDUCTION = Ref{Bool}(false)
+
+"Enable/disable the per-annulus induction + α model globally."
+set_expansion_induction!(b::Bool) = (EXPANSION_INDUCTION[] = b; b)
+"Query the induction toggle."
+expansion_induction() = EXPANSION_INDUCTION[]
+
+# α model constants (stated per proposal §2a)
+const EXP_CL_SLOPE   = 2π                    # lift-curve slope (1/rad)
+const EXP_CL_MAX     = 1.2                   # symmetric stall clamp
+const EXP_TSR_DESIGN = 3.0                   # design annulus tip-speed ratio
+const EXP_PHI_DESIGN = atan(1.0 / EXP_TSR_DESIGN)  # design inflow angle (rad)
+# Back-solved incidence: CL(φ_design) ≡ EXP_CL_DESIGN exactly
+const EXP_THETA_I    = EXP_PHI_DESIGN - EXP_CL_DESIGN / EXP_CL_SLOPE
+
+"CL from inflow angle φ (rad) under the α model."
+expansion_cl(phi::Float64) = clamp(EXP_CL_SLOPE * (phi - EXP_THETA_I), -EXP_CL_MAX, EXP_CL_MAX)
+
+"Shaft-axis swept annulus area (m²) for an expansion rotor at ring radius r_nominal."
+function expansion_annulus_area(er::ExpansionRotorParams, r_nominal::Float64)
+    bank_rad = deg2rad(er.bank_angle_deg)
+    r_out = r_nominal + er.blade_tip_radius * cos(bank_rad)
+    r_in  = max(r_nominal + er.blade_hub_radius * cos(bank_rad), 0.0)
+    return π * max(r_out^2 - r_in^2, 0.0)
+end
+
+# Buhl/Glauert empirical thrust coefficient (valid a ∈ [0, 0.5])
+function _ct_momentum(a::Float64)
+    if a <= 0.4
+        return 4.0 * a * (1.0 - a)
+    else
+        # Buhl continuation: CT = 8/9 + (4F − 40/9)a + (50/9 − 4F)a², F = 1
+        return 8/9 + (4 - 40/9)*a + (50/9 - 4)*a^2
+    end
+end
+
+# Blade-element axial thrust at induction a (whole rotor, N)
+function _thrust_be(er::ExpansionRotorParams, rho, v_axial, omega, r_mean, bank_rad, a)
+    v_eff = v_axial * (1.0 - a)
+    phi = atan(v_eff, omega * r_mean)
+    CL = expansion_cl(phi)
+    v_app2 = v_eff^2 + (omega * r_mean)^2
+    q = 0.5 * rho * v_app2
+    s = er.blade_tip_radius - er.blade_hub_radius
+    L = q * er.blade_chord * s * CL
+    D = q * er.blade_chord * s * (er.CD0_blade + er.k_induced * CL^2)
+    return er.n_blades * (L * cos(phi) + D * sin(phi)) * cos(bank_rad)
+end
+
+"""
+    solve_expansion_induction(er, rho, v_wind, omega_shaft, elevation_deg, r_nominal)
+        -> (a, converged, iters, residual)
+
+Per-annulus axial-induction fixed point: bisection on
+`T_BE(a) − T_M(a) = 0`, a ∈ [0, 0.5]. Returns the converged induction factor.
+`converged=false` when no sign change exists in the bracket (reported, never
+silently clamped — acceptance test 1 fails on it).
+"""
+function solve_expansion_induction(
+    er::ExpansionRotorParams, rho::Float64, v_wind::Float64,
+    omega_shaft::Float64, elevation_deg::Float64, r_nominal::Float64,
+)
+    bank_rad = deg2rad(er.bank_angle_deg)
+    r_mean = r_nominal + (er.blade_hub_radius + er.blade_tip_radius)/2 * cos(bank_rad)
+    v_axial = v_wind * cos(deg2rad(elevation_deg))
+    A_ann = expansion_annulus_area(er, r_nominal)
+
+    (v_axial <= 1e-9 || A_ann <= 1e-9) && return (0.0, true, 0, 0.0)
+
+    T_ref = 0.5 * rho * A_ann * v_axial^2          # residual scale
+    f(a) = _thrust_be(er, rho, v_axial, omega_shaft, r_mean, bank_rad, a) -
+           0.5 * rho * A_ann * v_axial^2 * _ct_momentum(a)
+
+    f0 = f(0.0)
+    f0 <= 0.0 && return (0.0, true, 0, 0.0)        # no/negative thrust → no induction
+    fh = f(0.5)
+    fh > 0.0 && return (0.5, false, 0, fh / T_ref) # no crossing — REPORTED not clamped
+
+    lo, hi, flo = 0.0, 0.5, f0
+    iters = 0
+    a_mid, fm = 0.25, 0.0
+    for _ in 1:80
+        iters += 1
+        a_mid = 0.5 * (lo + hi)
+        fm = f(a_mid)
+        if abs(fm) < 1e-8 * max(T_ref, 1e-6)
+            return (a_mid, true, iters, fm / T_ref)
+        end
+        if sign(fm) == sign(flo)
+            lo, flo = a_mid, fm
+        else
+            hi = a_mid
+        end
+        (hi - lo) < 1e-12 && break
+    end
+    # bracket collapsed to machine width — converged by interval
+    return (a_mid, (hi - lo) < 1e-10, iters, fm / T_ref)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Force model
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -164,7 +279,17 @@ function expansion_rotor_forces(
     elev_rad = deg2rad(elevation_deg)
 
     # Wind component along the shaft axis (horizontal wind × cos(elevation))
-    v_axial = v_wind * cos(elev_rad)
+    v_axial_free = v_wind * cos(elev_rad)
+
+    # ── Induction (2026-07-18): deplete the inflow by the momentum-consistent
+    # axial induction factor a, and use the α model for CL. OFF (default)
+    # reproduces the legacy fixed-CL free-stream model bit-for-bit.
+    local a_ind::Float64 = 0.0
+    if EXPANSION_INDUCTION[]
+        a_ind, _, _, _ = solve_expansion_induction(
+            er, rho, v_wind, omega_shaft, elevation_deg, r_nominal)
+    end
+    v_axial = v_axial_free * (1.0 - a_ind)
 
     # Apparent wind at mean radius: vector sum of axial wind + tangential rotation
     v_app = sqrt(v_axial^2 + (omega_shaft * r_mean)^2)
@@ -172,9 +297,14 @@ function expansion_rotor_forces(
     # Dynamic pressure
     q = 0.5 * rho * v_app^2
 
-    # Blade lift and drag (simplified 2D model, uniform inflow, no tip losses)
-    L_blade = q * er.blade_chord * blade_span * er.CL_blade
-    D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * er.CL_blade^2)
+    # Inflow angle (needed for the α model before lift/drag)
+    phi = atan(v_axial, omega_shaft * r_mean)   # inflow angle from rotation plane
+
+    # Blade lift and drag (2D model, uniform inflow, no tip losses)
+    # Legacy: fixed CL_blade. Induction ON: α model CL(φ).
+    CL_eff = EXPANSION_INDUCTION[] ? expansion_cl(phi) : er.CL_blade
+    L_blade = q * er.blade_chord * blade_span * CL_eff
+    D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * CL_eff^2)
 
     # Resolve lift perpendicular to apparent wind into shaft-frame components.
     # The apparent wind approaches at inflow angle φ from the rotation plane.
@@ -192,7 +322,6 @@ function expansion_rotor_forces(
     # Positive = driving (injects power into shaft, like main rotor aerodynamics).
     # Negative = braking (extracts power, parasitic).
 
-    phi = atan(v_axial, omega_shaft * r_mean)   # inflow angle from rotation plane
     sin_phi = sin(phi)
     cos_phi = cos(phi)
 

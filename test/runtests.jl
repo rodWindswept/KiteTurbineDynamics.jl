@@ -28,5 +28,6 @@ using KiteTurbineDynamics
     include("test_dashboard_smoke.jl")
     include("test_metric_consistency.jl")
     include("test_builders_v10.jl")
+    include("test_expansion_induction.jl")
     include("test_documented_claims.jl")
 end

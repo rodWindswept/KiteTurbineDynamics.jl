@@ -47,6 +47,9 @@ export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
 export ExpansionRotorParams, expansion_rotor_forces, effective_radius
 export EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED
+export solve_expansion_induction, expansion_cl, expansion_annulus_area
+export set_expansion_induction!, expansion_induction
+export EXP_CL_SLOPE, EXP_CL_MAX, EXP_PHI_DESIGN, EXP_THETA_I, EXP_TSR_DESIGN
 export ExpansionStackConfig, build_expansion_stack
 export expansion_airborne_mass, expansion_phi, expansion_radius_summary, expansion_telemetry
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
