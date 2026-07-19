@@ -148,14 +148,18 @@ results = DataFrame(param=String[], value=Float64[], candidate=String[], P_kw=Fl
 # ═══ Item 3: k-bracket for 12-gon_0.45 ═══════════════════════════════════════
 println("--- k-bracket for 12gon_0.45 ---")
 k_bests = Dict{String,Float64}("triangle3_0.85" => 4.0, "12gon_0.80" => 90.0)
-best_k_045 = 0.0; best_P_045 = -Inf
-for k_try in [14.0, 28.0, 56.0]
-    P, ω, fos = eval_candidate("12gon_0.45", sys3, copy(u0_3), p3, k_try)
-    @printf("  ks=%.0f → P=%.2f kW  ω=%.0f rpm  FoS=%.2f\n", k_try, P, ω, fos)
-    if P > best_P_045
-        best_P_045 = P; best_k_045 = k_try
+function bracket_045(sys, u0, p)
+    best_k = 0.0; best_P = -Inf
+    for k_try in [14.0, 28.0, 56.0]
+        P, ω, fos = eval_candidate("12gon_0.45", sys, copy(u0), p, k_try)
+        @printf("  ks=%.0f → P=%.2f kW  ω=%.0f rpm  FoS=%.2f\n", k_try, P, ω, fos)
+        if P > best_P
+            best_P = P; best_k = k_try
+        end
     end
+    return best_k
 end
+best_k_045 = bracket_045(sys3, u0_3, p3)
 k_bests["12gon_0.45"] = best_k_045
 println("  → selected ks=%.0f\n", best_k_045)
 
