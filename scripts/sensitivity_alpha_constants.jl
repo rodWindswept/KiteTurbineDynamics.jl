@@ -37,8 +37,8 @@ const WIND_MS = 11.0
 const AERO_TS = 60.0
 const sp      = SpokeParams(enabled=true)
 
-function eval_candidate(label, sys, u0, p)
-    sys.k_mppt_ref[] = 2.0
+function eval_candidate(label, sys, u0, p, k_mppt)
+    sys.k_mppt_ref[] = k_mppt
     function wf(pos, t)
         z = max(pos[3], 1.0)
         return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
@@ -67,9 +67,9 @@ sys1, u0_1, p1, lbl1 = build_phantom_triangle(blade_scale=0.85)
 sys2, u0_2, p2, lbl2 = build_v10_tight_no_lowest(blade_scale=0.80)
 sys3, u0_3, p3, lbl3 = build_v10_tight_no_lowest(blade_scale=0.45)
 candidates = [
-    ("triangle3_0.85", lbl1, sys1, u0_1, p1),
-    ("12gon_0.80",     lbl2, sys2, u0_2, p2),
-    ("12gon_0.45",     lbl3, sys3, u0_3, p3),
+    ("triangle3_0.85", lbl1, sys1, u0_1, p1, 4.0),
+    ("12gon_0.80",     lbl2, sys2, u0_2, p2, 90.0),
+    ("12gon_0.45",     lbl3, sys3, u0_3, p3, 2.0),
 ]
 
 set_expansion_physics!(ExpansionPhysics(true, true, true))
@@ -85,8 +85,8 @@ results = DataFrame(param=String[], value=Float64[], candidate=String[], P_kw=Fl
 
 # ═══ Baseline ═════════════════════════════════════════════════════════════════
 println("--- BASELINE (default α constants) ---")
-for (cname, label, sys, u0, p) in candidates
-    P, ω, fos = eval_candidate(label, sys, copy(u0), p)
+for (cname, label, sys, u0, p, k) in candidates
+    P, ω, fos = eval_candidate(label, sys, copy(u0), p, k)
     push!(results, ("baseline", 0.0, cname, round(P, digits=2), round(ω, digits=1), round(fos, digits=2)))
     @printf("  %-16s  P=%.1f kW  ω=%.0f rpm  FoS=%.2f\n", cname, P, ω, fos)
 end
@@ -105,8 +105,8 @@ for (param, val) in pert_grid
     # The ODE path: ring_forces → expansion_rotor_forces → expansion_cl(phi).
     @eval KiteTurbineDynamics expansion_cl(phi) = $sa(phi)
     println("--- $(param)=$(round(val, digits=3)) ---")
-    for (cname, label, sys, u0, p) in candidates
-        P, ω, fos = eval_candidate(label, sys, copy(u0), p)
+    for (cname, label, sys, u0, p, k) in candidates
+        P, ω, fos = eval_candidate(label, sys, copy(u0), p, k)
         push!(results, (param, val, cname, round(P, digits=2), round(ω, digits=1), round(fos, digits=2)))
         @printf("  %-16s  P=%.1f kW  ω=%.0f rpm  FoS=%.2f\n", cname, P, ω, fos)
     end
