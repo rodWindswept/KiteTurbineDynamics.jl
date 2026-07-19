@@ -121,33 +121,10 @@ for (cname, (label, sys, u0, p)) in candidates
 end
 println()
 
-for (param, vals) in PERTURBATIONS, val in vals
-    # Re-derive θ_i from the perturbed constant + clamped defaults for others
-    tsr  = param == "TSR_design" ? val : EXP_TSR_DESIGN
-    slope = param == "slope" ? val : EXP_CL_SLOPE
-    clmax = param == "CL_max" ? val : EXP_CL_MAX
-    phi_d = atan(1.0 / tsr)
-    theta_i = phi_d - EXP_CL_DESIGN / slope
-
-    # Bypass const-ness via eval (sensitivity gate is a one-off analysis script;
-    # production code should keep the consts — this path is temporary)
-    @eval KiteTurbineDynamics EXP_CL_SLOPE   = $slope
-    @eval KiteTurbineDynamics EXP_CL_MAX     = $clmax
-    @eval KiteTurbineDynamics EXP_TSR_DESIGN = $tsr
-    @eval KiteTurbineDynamics EXP_PHI_DESIGN = $phi_d
-    @eval KiteTurbineDynamics EXP_THETA_I    = $theta_i
-
-    println("--- $(param)=$(round(val,digits=3)) ---")
-    for (cname, (label, sys, u0, p)) in candidates
-        P, ω, fos = eval_candidate(label, sys, copy(u0), p, sa)
-        push!(results, (param, val, cname, round(P, digits=2),
-            round(ω, digits=1), round(fos, digits=2)))
-        @printf("  %-16s  P=%.1f kW  ω=%.0f rpm  FoS=%.2f\n", cname, P, ω, fos)
-
 # ── RED/GREEN check ──────────────────────────────────────────────────────────
 println("\n=== RANKING ANALYSIS ===")
 baselines = Dict(r.candidate => r.P_kw for r in eachrow(results) if r.param == "baseline")
-rank_baseline = sort(collect(baselines), by=last, rev=true)  # descending power
+rank_baseline = sort(collect(baselines), by=last, rev=true)
 println("Baseline ranking (P_kw):")
 for (i, (c, p)) in enumerate(rank_baseline)
     println("  $i. $c = $p kW")
