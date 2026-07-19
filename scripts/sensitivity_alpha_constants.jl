@@ -45,9 +45,21 @@ function build_c4()
             1.0, 0.02, 0.05, rotor.bank_angle_deg,
             0.5, sys_ring_idx, 1.0))
     end
-    p = KiteTurbineDynamics.params_v5_50kw()
-    sys, u0 = KiteTurbineDynamics.build_kite_turbine_system_v5(
-        p, design.target_Lr, design.r_bottom; expansion_rotors=expansion_params)
+    # Build system params with campaign geometry via GeometrySpec (dashboard convention:
+    # design.r_hub → p.trpt_hub_radius; then build_kite_turbine_system reads it for ring spacing)
+    geo = KiteTurbineDynamics.GeometrySpec(
+        KiteTurbineDynamics.params_v5_50kw().elevation_angle,
+        KiteTurbineDynamics.params_v5_50kw().lifter_elevation,
+        5.0,  # rotor_radius — overwritten by hub disk dynamics
+        design.tether_length, design.r_hub,
+        KiteTurbineDynamics.params_v5_50kw().trpt_rL_ratio,
+        n_lines, n_rings, n_lines)
+    mat = KiteTurbineDynamics.MaterialSpec(0.008, 50e9, 0.5, 0.5)
+    aero = KiteTurbineDynamics.AeroSpec(1.225, 11.0, 47.6, 1.0)
+    ctrl = KiteTurbineDynamics.ControlSpec(1.0, 2.0, 50_000.0, 0.0, 45.0, 5.0, 0.5)
+    back = KiteTurbineDynamics.BackLineSpec(1e6, 100.0, 5.0, 0.1)
+    p = KiteTurbineDynamics.SystemParams(geo, mat, aero, ctrl, back)
+    sys, u0 = KiteTurbineDynamics.build_kite_turbine_system(p; expansion_rotors=expansion_params)
     return sys, u0, p, "Island 51"
 end
 
