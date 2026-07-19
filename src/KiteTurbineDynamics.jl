@@ -45,7 +45,7 @@ export SystemParams, GeometrySpec, MaterialSpec, AeroSpec, ControlSpec, BackLine
 export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_10kw, params_v6_50kw
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
-export ExpansionRotorParams, expansion_rotor_forces, effective_radius
+export ExpansionRotorParams, expansion_rotor_forces, effective_radius, expansion_rotor_inertia
 export EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED
 export solve_expansion_induction, expansion_cl, expansion_annulus_area
 export set_expansion_physics!, expansion_physics, LEGACY_PHYSICS_PRE_2026_07_18, ExpansionPhysics

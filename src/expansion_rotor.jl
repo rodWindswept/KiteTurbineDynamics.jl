@@ -403,14 +403,36 @@ function effective_radius(
     return r_nominal + Δr
 end
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Blade mass
-# ══════════════════════════════════════════════════════════════════════════════
+"""
+    expansion_rotor_inertia(er::ExpansionRotorParams, r_nominal::Float64) -> Float64
+
+Total moment of inertia (kg·m²) about the shaft axis for one expansion rotor's
+blades (uniform slender rods spanning the blade annulus).
+
+Formula: J_rotor = n_blades · m_per_blade · (r₂² + r₂·r₁ + r₁²)/3
+where r₁ = r_nominal + blade_hub_radius, r₂ = r_nominal + blade_tip_radius
+(axis radii — NOT blade-local offsets; the ring-radius² term dominates).
+Gated by `EXPANSION_PHYSICS[].blade_inertia`.
+"""
+function expansion_rotor_inertia(er::ExpansionRotorParams, r_nominal::Float64)
+    r₁ = r_nominal + er.blade_hub_radius
+    r₂ = r_nominal + er.blade_tip_radius
+    m_per_blade = er.mass / er.n_blades
+    return er.n_blades * m_per_blade * (r₂^2 + r₂*r₁ + r₁^2) / 3
+end
 
 """
-    expansion_blade_mass(blade_tip_radius, blade_scale) -> Float64
+    expansion_blade_mass(blade_tip_radius, blade_scale, n_blades=nothing) -> Float64
 
 Total blade mass for one expansion rotor assembly (all `n_blades` blades).
+
+**Semantics choice (Rod, 2026-07-18):** the legacy ``(0.3 + 0.1·tip)·λ³`` value
+was calibrated during the 3-blade era (Daisy, legacy triangle, legacy 12-gon all
+used n_blades=3).  It is treated as the correct TOTAL mass for a 3-blade assembly.
+When `EXPANSION_PHYSICS[].corrected_mass` is true, the assembly total is
+``(n_blades/3) · legacy_total`` — Daisy (3-blade) is invariant by construction,
+while a 12-blade assembly scales by ×4.  The alternative reading (legacy was
+per-blade all along) would shift Daisy by ×3 and fail the extant hardware validation.
 
 Mass scales with the cube of blade linear dimension: mass ∝ volume ∝ span³.
 The empirical constants (0.3 kg base + 0.1 kg/m per unit tip radius) are
@@ -419,9 +441,16 @@ calibrated from CFRP blade mass estimates for the V10 configuration.
 # Arguments
 - `blade_tip_radius`: outer tip radius (m), post-70/30 geometry
 - `blade_scale`: dimensionless scalar (span/chord/mass), λ in [0, 1]
+- `n_blades`: number of blades — used only when `corrected_mass` is on
+  (default: nothing → legacy behaviour preserved for backward compat)
 """
-function expansion_blade_mass(blade_tip_radius::Float64, blade_scale::Float64)::Float64
-    return (0.3 + 0.1 * blade_tip_radius) * blade_scale^3
+function expansion_blade_mass(blade_tip_radius::Float64, blade_scale::Float64, n_blades::Union{Int,Nothing}=nothing)::Float64
+    legacy_total = (0.3 + 0.1 * blade_tip_radius) * blade_scale^3
+    if !EXPANSION_PHYSICS[].corrected_mass || n_blades === nothing || n_blades <= 0
+        return legacy_total
+    end
+    # Corrected: legacy_total was for 3 blades; scale to n_blades
+    return legacy_total * n_blades / 3
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

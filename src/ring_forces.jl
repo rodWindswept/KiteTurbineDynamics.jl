@@ -234,6 +234,15 @@ function compute_ring_forces!(
                 # Positive = driving (injects power). Negative = braking (parasitic).
                 torques[ring_ri] += tau_net
 
+                # ── Blade inertia (2026-07-18) ──────────────────────────────
+                # Gate 2b: rotary inertia of the expansion-rotor blade annulus
+                # about the shaft axis.  Gated by EXPANSION_PHYSICS[].blade_inertia;
+                # applies only in transient (α≠0), vanishes at steady state.
+                if EXPANSION_PHYSICS[].blade_inertia
+                    J_rotor = expansion_rotor_inertia(er, r_nom)
+                    torques[ring_ri] -= J_rotor * alpha[ring_ri]  # I·α opposes
+                end
+
                 # ── Spoke drag torque (2026-07-06) ──────────────────────────
                 # Radial spokes from ring vertices to center node experience
                 # aerodynamic drag as they rotate. τ = ρ·C_D·d·ω²·R⁴/8 per spoke.

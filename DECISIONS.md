@@ -2,6 +2,22 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-18: Gate 2b — blade inertia + mass-factor fix deployed
+
+Blade inertia in ODE (`expansion_rotor_inertia`, `src/expansion_rotor.jl`):
+axis-radius rod integral J = n·m/n·(r₂²+r₂r₁+r₁²)/3 where r₁=r_nom+hub_offset,
+r₂=r_nom+tip_offset. Gated by `EXPANSION_PHYSICS[].blade_inertia`; applied as
+`−J·α` in `ring_forces.jl` (vanishes at steady state).
+
+Mass-fix semantics (Rod, 2026-07-18): legacy `(0.3+0.1·tip)·λ³` treated as
+**correct total for the 3-blade era** it was calibrated in. Corrected assembly
+mass = `(n_blades/3)·legacy`. Daisy (3-blade) invariant by construction; 12-gon
+assembly mass scales by ×4. Gated by `EXPANSION_PHYSICS[].corrected_mass`.
+`expansion_blade_mass` now accepts optional `n_blades` kwarg (nothing=legacy).
+
+Acceptance: 9/9 test assertions (analytic rod-integral property, regression
+guard, Daisy plausibility, mass invariance, blade_scale scaling).
+
 ## 2026-07-18: Induction default flipped ON — all four acceptance gates passed
 
 Per-annulus induction + α model (docs/plans/induction_fix_proposal.md, Rod's 4
