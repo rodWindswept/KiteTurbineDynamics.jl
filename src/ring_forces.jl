@@ -123,12 +123,15 @@ function compute_ring_forces!(
 
     v_wind = wind_fn(hub_pos, t)
 
+    # ── Shaft elevation angle (needed by spoke restoring force + rotor disc) ──
+    # Computed once from live hub position; note: may differ from design elevation.
+    elev_angle = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
+
     # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
     v_hub_mag = norm(v_wind)
     if v_hub_mag > 0.1
         omega_rotor = omega[hub_ri]
         lambda_t = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
-        elev_angle = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
         thrust_mag =
             0.5 *

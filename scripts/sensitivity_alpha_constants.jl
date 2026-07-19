@@ -77,7 +77,7 @@ function eval_candidate(label, sys, u0, p)
         z = max(pos[3], 1.0)
         [WIND_MS * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
     end
-    u = settle_to_operational_state(sys, copy(u0), p, 20.0; wind_fn=wf)
+    u = settle_to_operational_state(sys, copy(u0), p, 60.0; wind_fn=wf)
     n = round(Int, AERO_TS / DT)
     out = Ref((0.0, 0.0, Inf))
     run_canonical_sim!(u, sys, p, wf, n, DT;
