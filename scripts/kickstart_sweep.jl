@@ -7,7 +7,7 @@ using .ControlMapHunt
 # LEGACY PHYSICS PIN (2026-07-18): reproduces CSVs archived under the
 # pre-induction model. Default is now induction=ON; pinned OFF for archive
 # reproducibility. New work: use the default.
-set_expansion_induction!(false)
+set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
 
 import KiteTurbineDynamics: SpokeParams
 

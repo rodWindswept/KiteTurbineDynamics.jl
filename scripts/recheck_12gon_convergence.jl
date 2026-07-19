@@ -23,7 +23,7 @@ import KiteTurbineDynamics: SpokeParams
 # LEGACY PHYSICS PIN (2026-07-18): this script reproduces CSVs archived under
 # the pre-induction model. Default flipped to induction=ON; pin OFF here so
 # the committed results stay bit-reproducible. New work: use the default.
-set_expansion_induction!(false)
+set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
 
 
 const WIND_MS = 11.0

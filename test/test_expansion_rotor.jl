@@ -4,8 +4,8 @@
     # fixed-CL legacy model (e.g. zero-wind spreading assumes CL=1.0 at φ=0;
     # the α model correctly gives negative lift there). The induction model
     # has its own acceptance suite in test_expansion_induction.jl.
-    _prev_induction = expansion_induction()
-    set_expansion_induction!(false)
+    _prev = expansion_physics()
+    set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
 
     # === Test 1: Zero-wind spreading via ω² ===
     # When v_wind=0, blades generate lift from rotational apparent wind,
@@ -101,5 +101,5 @@
         @test all(F_radial .== 0.0)
     end
 
-    set_expansion_induction!(_prev_induction)
+    set_expansion_physics!(_prev)
 end

@@ -122,16 +122,40 @@ end
 #      At high TSR φ→0 drives α negative → CL brakes → fixed point always exists.
 #   2. Momentum: solve T_BE(a) = T_M(a) by bisection on a ∈ [0, 0.5];
 #      T_M uses Glauert/Buhl empirical branch above a = 0.4.
-# Toggle: EXPANSION_INDUCTION[] — default TRUE as of 2026-07-18 (validation
-# commit; all four §3 gates passed). Legacy reproduction scripts (phantom gate,
-# archived sweep CSVs) pin set_expansion_induction!(false) explicitly.
+# Toggle: unified expansion_rotor_physics (2026-07-18, pre_gates_scoping.md GATE 2).
+# Replaces the scattered per-feature flags (EXPANSION_INDUCTION, soon blade_inertia,
+# corrected_mass, eventually wake_coupling) with a single struct — one atomic pin
+# per era, safe by construction where multiple partial toggles were interacting silently.
+#
+# Legacy reproduction scripts (phantom gate, archived sweep CSVs) call
+#   set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
+# once and any new era constant is added here.
 
-const EXPANSION_INDUCTION = Ref{Bool}(true)
+@kwdef mutable struct ExpansionPhysics
+    induction::Bool      = true    # per-annulus induction + α model
+    blade_inertia::Bool  = true    # blade mass in rotational ODE (Gate 2b)
+    corrected_mass::Bool = true    # n_blades factor in expansion_blade_mass (Gate 2a)
+end
 
-"Enable/disable the per-annulus induction + α model globally."
-set_expansion_induction!(b::Bool) = (EXPANSION_INDUCTION[] = b; b)
-"Query the induction toggle."
-expansion_induction() = EXPANSION_INDUCTION[]
+"Named era — pinned by all legacy-reproduction scripts."
+const LEGACY_PHYSICS_PRE_2026_07_18 = ExpansionPhysics(false, false, false)
+
+const EXPANSION_PHYSICS = Ref{ExpansionPhysics}(ExpansionPhysics())
+
+"Set all physics flags atomically. The pre-2026-07-17 era is `LEGACY_PHYSICS_PRE_2026_07_18`."
+set_expansion_physics!(p::ExpansionPhysics) = (EXPANSION_PHYSICS[] = p; p)
+"No-argument query."
+expansion_physics() = EXPANSION_PHYSICS[]
+
+# Backward-compat shim — redirects legacy partial-pin calls to the full legacy era
+# with a display warning.  Delete after the migration commit settles.
+function set_expansion_induction!(b::Bool)
+    @warn "set_expansion_induction! is deprecated — use set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)"
+    if !b
+        set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
+    end
+end
+expansion_induction() = EXPANSION_PHYSICS[].induction
 
 # α model constants (stated per proposal §2a)
 const EXP_CL_SLOPE   = 2π                    # lift-curve slope (1/rad)
@@ -285,7 +309,7 @@ function expansion_rotor_forces(
     # axial induction factor a, and use the α model for CL. OFF (default)
     # reproduces the legacy fixed-CL free-stream model bit-for-bit.
     local a_ind::Float64 = 0.0
-    if EXPANSION_INDUCTION[]
+    if EXPANSION_PHYSICS[].induction
         a_ind, _, _, _ = solve_expansion_induction(
             er, rho, v_wind, omega_shaft, elevation_deg, r_nominal)
     end
@@ -302,7 +326,7 @@ function expansion_rotor_forces(
 
     # Blade lift and drag (2D model, uniform inflow, no tip losses)
     # Legacy: fixed CL_blade. Induction ON: α model CL(φ).
-    CL_eff = EXPANSION_INDUCTION[] ? expansion_cl(phi) : er.CL_blade
+    CL_eff = EXPANSION_PHYSICS[].induction ? expansion_cl(phi) : er.CL_blade
     L_blade = q * er.blade_chord * blade_span * CL_eff
     D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * CL_eff^2)
 

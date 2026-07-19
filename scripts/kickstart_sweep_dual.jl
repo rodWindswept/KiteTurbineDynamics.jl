@@ -21,7 +21,7 @@ include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
 # LEGACY PHYSICS PIN (2026-07-18): this script reproduces CSVs archived under
 # the pre-induction model. Default flipped to induction=ON; pin OFF here so
 # the committed results stay bit-reproducible. New work: use the default.
-set_expansion_induction!(false)
+set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
 
 
 const CONFIG = isempty(ARGS) ? error("pass config: 12gon | triangle3") : ARGS[1]

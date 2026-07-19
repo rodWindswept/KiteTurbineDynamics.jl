@@ -37,8 +37,8 @@ import KiteTurbineDynamics: SpokeParams
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
 
 # Acceptance test 4 (proposal §3): per-annulus induction + α model ENABLED
-set_expansion_induction!(true)
-@assert expansion_induction()
+set_expansion_physics!(ExpansionPhysics(true, true, true))
+@assert expansion_physics().induction
 println("*** EXPANSION INDUCTION: ON ***")
 
 const BLADE   = 0.85
