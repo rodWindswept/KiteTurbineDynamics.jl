@@ -37,7 +37,16 @@ deferred to v2 wake matrix).
 **Corrected triangle estimates** (`wind_sweep_triangle3_90s_induction.csv`):
 ~20 kW @ 11 m/s, ~45–60 kW @ 15 m/s at 90 s — vs 127–202 / 362–457 kW under
 legacy physics. The 117 kW @ 11 m/s figure shared with Strathclyde is ~6×
-optimistic. High-RPM branch largely unsustainable: the α model brakes at high
+optimistic.
+*(CORRECTION 2026-07-19, laptop verification against the CSV's own header:
+the figures above are a column mis-read — "~20 kW @ 11" is `P_aero_30`
+(aerodynamic, t=30 s) and "~45–60 @ 15" is `P_aero_30` for k8/k4; "ω=30 rpm"
+was `fos_90`=29.5. True generator power at 90 s: 4.8 kW @ 11 m/s k4 (window
+2.2–9.6), ~0 k8; 8.0/12.8 kW @ 15 m/s k4/k8 (window maxima 34/47). The 117 kW
+figure is therefore ~24× optimistic in electrical terms at legacy k — but
+legacy k∈{4,8} and ω_kick were tuned under old physics, so corrected
+operating points await the k re-hunt. Quote only "tens of kW, ≤97 kW Betz
+ceiling". Do not quote ~20 kW as electrical output.)* High-RPM branch largely unsustainable: the α model brakes at high
 TSR (as designed); rows remain limit-cycling (DRIFTING) — window statistics
 mandatory. **12-gon spot check** (0.69/k62, settle protocol, low branch):
 16.1 → 10.6 kW (−34%), FoS 1.83 → 1.72.
