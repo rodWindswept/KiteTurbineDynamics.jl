@@ -21,13 +21,40 @@ import KiteTurbineDynamics: SpokeParams, ExpansionPhysics,
 #   C4: Island 51   from campaign archive (intermediate n_lines, competitive)
 
 function build_c4()
-    # best_vector_island51.csv via build_from_campaign_v10 decode path
-    sys, u0, p, label = ControlMapHunt.build_from_campaign_v10("v10_campaign_50kw", "V10 Island 51";
-        vector_file="best_vector_island51.csv")
-    # Note: Island 51 uses the dashboard-specific builder, not builders_util.
-    # We extract its geometry fingerprint only; the ODE evaluation uses
-    # a one-shot settle + capture — builder independence after construction.
-    return sys, u0, p, label
+    # Island 51: decode best_vector_island51.csv via the v10 design pipeline,
+    # same decode path as interactive_dashboard.jl:build_from_campaign_v10.
+    # Inlined here to avoid loading the full Makie GUI harness.
+    fn = joinpath(dirname(@__DIR__), "scripts", "results", "v10_campaign_50kw", "best_vector_island51.csv")
+    x_raw = parse.(Float64, split(readline(fn), ","))
+    x = copy(x_raw)
+    x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
+    x[10] = clamp(x[10], 0.0, Float64(KiteTurbineDynamics.N_VALID_MASKS))
+    result = KiteTurbineDynamics.design_from_vector_v10(x, KiteTurbineDynamics.PROFILE_ELLIPTICAL,
+        KiteTurbineDynamics.params_v5_50kw(); max_ground_radius=5.0, power_W=50000.0)
+    design = result.design
+    rotors = result.rotors
+    # Build expansion rotor params from campaign rotors, remapping ring indices
+    # as the dashboard does (intermediate 1..n_rings → system 2..n_rings+1,
+    # hub proxy at n_rings → system n_rings+2)
+    n_rings = result.n_rings
+    n_lines = design.n_lines
+    expansion_params = KiteTurbineDynamics.ExpansionRotorParams[]
+    for rotor in rotors
+        i = rotor.ring_idx
+        sys_ring_idx = i == n_rings ? n_rings + 2 : i + 1
+        rring = i == n_rings ? design.r_hub : design.r_bottom + (design.r_hub - design.r_bottom) * (i - 1) / (n_rings - 1)
+        bt = rotor.blade_tip_radius; bh = rotor.blade_hub_radius; bc = rotor.blade_chord
+        push!(expansion_params, KiteTurbineDynamics.ExpansionRotorParams(
+            n_lines, bt, bh, bc, 1.0, 0.02, 0.05, rotor.bank_angle_deg,
+            KiteTurbineDynamics.EXP_CL_DESIGN * bt * bc, sys_ring_idx, 1.0))
+    end
+    sys, u0 = KiteTurbineDynamics.build_kite_turbine_system(
+        KiteTurbineDynamics.params_v5_50kw(); n_lines=n_lines,
+        r_hub=design.r_hub, r_bottom=design.r_bottom, tether_length=design.tether_length,
+        Do_top=design.Do_top, t_over_D=design.t_over_D, n_rings=n_rings,
+        expansion_rotors=expansion_params)
+    p = KiteTurbineDynamics.params_v5_50kw()
+    return sys, u0, p, "Island 51"
 end
 
 const DT      = ControlMapHunt.DT
