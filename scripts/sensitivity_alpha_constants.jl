@@ -120,7 +120,7 @@ function eval_candidate(label, sys, u0, p, k_mppt; slope=EXP_CL_SLOPE, cl_max=EX
                 omega_ring = ef_final.base.omega_hub  # use hub ω as shaft ω (simplified)
                 _, _, tau, _, _ = eval_expansion_forces(
                     er, p.rho, WIND_MS, omega_ring, p.elevation_angle,
-                    2.99, 20000.0, sys.n_lines;
+                    2.99, 20000.0, 3;  # n_lines stored in first rotor's n_blades
                     slope=slope, cl_max=cl_max, tsr_design=tsr)
                 P_custom += abs(tau * omega_ring) / 1000.0  # kW
             end
@@ -161,7 +161,7 @@ function bracket_045(sys, u0, p)
 end
 best_k_045 = bracket_045(sys3, u0_3, p3)
 k_bests["12gon_0.45"] = best_k_045
-println("  → selected ks=%.0f\n", best_k_045)
+println("  → selected ks=$(best_k_045)\n")
 
 # ═══ Baseline (default α constants) ═══════════════════════════════════════════
 println("--- BASELINE (default α constants) ---")
