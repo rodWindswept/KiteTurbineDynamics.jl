@@ -387,25 +387,30 @@ function warmstart_with_k_bracket(
 
     best_fitness = Inf
     best_k = k_prior
-    best_result = (Inf, 0.0, Inf, 0.0, 0.0, true)
+    best_P = 0.0; best_FoS = Inf; best_ω = 0.0
+    best_P_range = 0.0; best_drifted = true
 
     for k_scale in [0.5, 1.0, 2.0]
         k_try = clamp(k_prior * k_scale, 0.01, 1000.0)
         x_k = copy(x)
         x_k[15] = log10(k_try)
 
-        fitness, P_mean, FoS_min, ω_eq, P_range, drift =
+        fitness, P_mean, FoS_min, ω_eq, P_range, drifted =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke)
 
         if fitness < best_fitness
             best_fitness = fitness
             best_k = k_try
-            best_result = (fitness, P_mean, FoS_min, ω_eq, P_range, drift)
+            best_P = P_mean
+            best_FoS = FoS_min
+            best_ω = ω_eq
+            best_P_range = P_range
+            best_drifted = drifted
         end
     end
 
-    return (best_fitness, best_k, best_result...)
+    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
