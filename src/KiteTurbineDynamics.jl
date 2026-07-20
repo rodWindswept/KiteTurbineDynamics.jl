@@ -38,6 +38,7 @@ include("bem.jl")
 include("objective_v5.jl")
 include("objective_v6.jl")
 include("objective_v10.jl")
+include("objective_v11.jl")
 include("headless_verify.jl")
 include("economics.jl")
 
@@ -132,6 +133,7 @@ export TRPT_V6_DIM, search_bounds_v6, design_from_vector_v6, objective_v6
 export estimate_effective_radii
 export parasitic_drag_power
 export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
+export TRPT_V11_DIM, search_bounds_v11, objective_v11, objective_v11_snapshot
 export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
 export RotorSpecV10, VerificationResult, headless_verify, headless_verify_structural
 export wind_speed_at_ring, solve_equilibrium_omega, solve_equilibrium_self_consistent
