@@ -5,7 +5,7 @@
 
 using KiteTurbineDynamics, Printf
 
-const SP = SpokeParams(enabled=false)
+const SP = KiteTurbineDynamics.SpokeParams(enabled=false)
 const P = params_v5_50kw()
 
 function diag_one(label, x)
