@@ -73,7 +73,7 @@ function collect_legacy_front_members()
 end
 
 function evaluate_anchor_lhs(x::Vector{Float64}, p::SystemParams)
-    spoke = SpokeParams(enabled=false)
+    spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
     
     # V10 static fitness
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, p)
@@ -93,7 +93,7 @@ end
 
 function evaluate_anchor_legacy(x::Vector{Float64}, p::SystemParams)
     # Legacy fronts get the 3-point bracket
-    spoke = SpokeParams(enabled=false)
+    spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, p)
     
     f_v11, k_best, P_mean, FoS_min, ω_eq, P_range, drift =
@@ -108,7 +108,7 @@ function main()
     Random.seed!(42)
     
     p = params_v5_50kw()
-    spoke = SpokeParams(enabled=false)
+    spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
     
     println("=== Phase 1c — Anchor Batch ===\n")
     
