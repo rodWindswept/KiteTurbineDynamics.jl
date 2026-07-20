@@ -24,6 +24,22 @@ accepts biased selection). Making k_mppt a DE decision variable eliminates the
 scan, lets the population simultaneously optimise geometry and control, and
 removes selection bias.
 
+## Design Language
+
+This spec inherits the self-validating instrumentation pattern that
+Gate 1 established:
+
+- **Phantom gate:** prove the artifact is reproducible before claiming
+  it's a model prediction.
+- **Positive control:** prove the perturbation reaches the physics before
+  interpreting sensitivity results.
+- **k-bracket:** let the data pick k, not a prior — when the prior was
+  wrong three times, the instrument earns its keep.
+
+Every acceptance test in this PRD must prove the measurement apparatus
+works before it proves the physics does. A test that doesn't validate
+its own signal path is a hope, not a gate.
+
 ## Solution
 
 1. **Windowed ODE evaluator** (`objective_v11.jl`, parallel to `v10`).
@@ -229,6 +245,55 @@ script (window-mean scoring).
   for Gate 3. Distributed islands are a scaling concern for the full
   re-campaign, not the gate itself.
 
+## Post-Campaign Gate: Winner-Front α-Retest
+
+Gate 1 passed GREEN using a frozen-ω post-hoc measurement. That screen
+had a known blind spot: the spinning rotors sit saturated at CL_max in
+the operating range, making slope/TSR perturbations invisible. The check
+was cheap but incomplete.
+
+**After the re-campaign produces a winner front (3–5 best designs):**
+
+1. Re-evaluate every winner-front design under the full 7-perturbation
+   α-constant grid (TSR_design ±20%, slope ±30–50%, CL_max ±17%) **in
+   full dynamic sim** — settle + kick + window, same ODE protocol as
+   the campaign evaluator.
+2. If any first-rank flip or pairwise ordering reversal occurs among the
+   winner-front designs under α perturbation: **RED — re-campaign winner
+   is not reliable, constants need calibration** (Tulloch/AeroDyn
+   critical path).
+3. If ranking holds: **GREEN — winner is stable under α-model uncertainty
+   at the dynamic operating point.**
+
+~35 evaluations (5 designs × 7 perturbations), a few hours of compute.
+Converts a hope ("the frozen-ω screen was good enough") into a scheduled
+check with the same instrument that picked the winner.
+
+## Known Model Gaps
+
+These do not block the re-campaign but constrain what its results mean.
+
+### CL_max saturation
+
+Gate 1 v14 found that spinning rotors at operating φ sit pinned at
+CL_max — slope and TSR_design perturbations were invisible because the
+CL curve is saturated. This makes CL_max the only α constant that
+matters for operating-point power, and CL_max = 1.2 is the least
+anchored constant in the α model. The re-campaign's power rankings
+are effectively a CL_max ranking until calibrated.
+
+### Optimistic drag at CL_max
+
+The expansion CL/CD model uses `CD = CD0 + k_induced × CL²`. At
+CL_max (≈1.2), this is a pre-stall polar with no post-stall drag
+rise. Real airfoils at CL_max have CD 2–5× higher than the
+quadratic polar predicts. The re-campaign's power numbers are
+optimistic at the operating point — designs that sit near CL_max
+(the current operating regime) overstate net power. This gap
+narrows when calibrated polars replace the quadratic model, but
+the re-campaign's *ranking* may still be valid if all designs
+share the same optimistic drag offset.
+
 ## Further Notes
 
 ### Sequencing reminder
@@ -271,3 +336,15 @@ during the campaign — every design is evaluated at a dynamically-settled
 operating point that reflects its actual α-constant response. The Gate 1
 GREEN verdict means we proceed without recalibrating constants; the Gate 3
 evaluator inherits that decision.
+
+### Strathclyde collaboration ask
+
+Gate 1 identified CL_max as the only α constant that materially affects
+operating-point power rankings, and the current quadratic-polar CD model
+is optimistic at CL_max. The collaboration request to Strathclyde (Hong
+Yue, Amjad Zulfazli) becomes concrete: **stalled-regime polars from your
+AeroDyn tooling** — CL/CD curves for representative expansion-blade
+airfoils at Re 10⁵–10⁶ through the stall break and into the post-stall
+regime. A specific data product, not a vague "collaborate on aero." The
+re-campaign's post-campaign α-retest gates whether this is a dependency
+(RED → critical path) or a refinement (GREEN → nice-to-have).
