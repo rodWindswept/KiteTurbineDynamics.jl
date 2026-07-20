@@ -134,6 +134,7 @@ export estimate_effective_radii
 export parasitic_drag_power
 export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
 export TRPT_V11_DIM, search_bounds_v11, objective_v11, objective_v11_snapshot
+export objective_v11_warmstart, warmstart_with_k_bracket
 export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
 export RotorSpecV10, VerificationResult, headless_verify, headless_verify_structural
 export wind_speed_at_ring, solve_equilibrium_omega, solve_equilibrium_self_consistent

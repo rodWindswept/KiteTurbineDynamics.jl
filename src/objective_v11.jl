@@ -217,6 +217,198 @@ function objective_v11(
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Warm-start v11 — skip startup theater, start ODE from static equilibrium
+# ══════════════════════════════════════════════════════════════════════════════
+
+const WARM_RELAX_S = 10.0   # relaxation after warm-start init
+const WARM_WINDOW_S = 30.0  # measurement window (shorter — signal is in departure)
+
+"""
+    objective_v11_warmstart(x, beam_profile, p; spoke, ...)
+
+Warm-start v11 variant for anchor evaluation.  Skips settle + kickstart:
+runs the static solver (solve_equilibrium_self_consistent) to get ω_eq,
+initialises the ODE at that equilibrium, then runs 10 s relaxation + 30 s
+measurement window.
+
+Returns (fitness, P_mean, FoS_min, omega_eq, window_P_range, drift_flag).
+Caller runs a 3-point k-bracket and keeps the best.
+"""
+function objective_v11_warmstart(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    power_W::Float64=50000.0,
+    v_rated::Float64=11.0,
+    elev_angle::Float64=π / 6,
+    spoke::Union{Nothing,SpokeParams}=nothing,
+)
+    # ── Decode genome ────────────────────────────────────────────────────
+    result = design_from_vector_v10(
+        x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
+    )
+    if result.n_active == 0
+        return (1e9, 0.0, Inf, 0.0, 0.0, true)
+    end
+
+    k_mppt = 10.0^x[15]
+    k_mppt = clamp(k_mppt, 0.01, 1000.0)
+
+    (; design, rotors, n_rings, zs) = result
+    n_lines = design.n_lines
+
+    # ── Build ODE system ─────────────────────────────────────────────────
+    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
+
+    # ── Static equilibrium solve (same path as objective_v10:374) ────────
+    expansion_params_v10 = ExpansionRotorParams[]
+    for rotor in rotors
+        er = ExpansionRotorParams(
+            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius,
+            rotor.blade_chord, EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
+            rotor.bank_angle_deg,
+            expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
+            rotor.ring_idx, 1.0,
+        )
+        push!(expansion_params_v10, er)
+    end
+
+    _, radii, _ = ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+        density_profile=design.density_profile,
+    )
+
+    λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
+    k_mppt_eff = p.k_mppt * λ_eff^2  # λ²-scaling for static solver
+    p_scaled = override_params(p; k_mppt=k_mppt_eff)
+
+    ω_eq, r_ref = solve_equilibrium_self_consistent(
+        design, expansion_params_v10, p_scaled, n_lines, radii, zs;
+        P_per_rotor=power_W / max(result.n_active, 1),
+        v_wind=v_rated, elev_rad=elev_angle,
+    )
+
+    if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
+        return (1e9, 0.0, Inf, 0.0, 0.0, true)
+    end
+
+    # ── Settle rope geometry from ODE ────────────────────────────────────
+    function wf(pos, t)
+        z = max(pos[3], 1.0)
+        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+    end
+
+    u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
+    if any(isnan.(u_settled)) || any(isinf.(u_settled))
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true)
+    end
+
+    # ── Set ring angular velocities to static ω_eq ──────────────────────
+    N = sys.n_total
+    Nr = sys.n_ring
+    # Ring twist rates: u[6N+Nr+1:6N+2Nr]
+    u_settled[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
+
+    # ── Set k_mppt for the ODE run ──────────────────────────────────────
+    sys.k_mppt_ref[] = k_mppt
+
+    # ── Run relaxation + window ─────────────────────────────────────────
+    total_s = WARM_RELAX_S + WARM_WINDOW_S
+    total_n = round(Int, total_s / V11_DT)
+    sample_interval = round(Int, 1.0 / V11_DT)
+
+    P_samples = Float64[]
+    fos_samples = Float64[]
+
+    function window_callback(uc, tc, s)
+        t_cum = s * V11_DT
+        if t_cum > WARM_RELAX_S && s % sample_interval == 0
+            ef = capture_extended(
+                uc, sys, pc, tc, wf, nothing; brake_engaged=sys.brake_engaged[]
+            )
+            push!(P_samples, ef.base.P_kw)
+            airborne = Float64[]
+            for i in 2:length(ef.ring_fos)
+                v = ef.ring_fos[i]
+                (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
+            end
+            push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
+        end
+    end
+
+    try
+        run_canonical_sim!(
+            u_settled, sys, pc, wf, total_n, V11_DT;
+            lift_device=nothing, lin_damp=0.05, spoke=spoke, callback=window_callback
+        )
+    catch e
+        @warn "Warm-start sim failed" exception = e
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true)
+    end
+
+    # ── Score ────────────────────────────────────────────────────────────
+    P_mean = isempty(P_samples) ? 0.0 : mean(P_samples)
+    FoS_min = isempty(fos_samples) || all(isinf.(fos_samples)) ? Inf : minimum(fos_samples)
+    P_range = length(P_samples) >= 2 ? maximum(P_samples) - minimum(P_samples) : 0.0
+    drift = length(P_samples) >= 2 ? abs(P_samples[end] - P_samples[1]) / max(mean(P_samples), 0.01) : 0.0
+    drifted = drift > 0.15  # >15% drift flag
+
+    fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
+    fitness = -P_mean * fos_penalty
+
+    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Warm-start with 3-point k-bracket (Phase 1b)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    warmstart_with_k_bracket(x, beam_profile, p; spoke, ...)
+
+Evaluate warm-start v11 at 3 k values around the λ²-scaled prior and return
+the best result.  Prior: k̂ = p.k_mppt * λ_eff².  Bracket: k̂·{0.5, 1, 2}.
+
+Returns (best_fitness, best_k, P_mean, FoS_min, omega_eq, P_range, drift).
+"""
+function warmstart_with_k_bracket(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    power_W::Float64=50000.0,
+    v_rated::Float64=11.0,
+    spoke::Union{Nothing,SpokeParams}=nothing,
+)
+    result = design_from_vector_v10(
+        x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
+    )
+    λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
+    k_prior = p.k_mppt * λ_eff^2
+
+    best_fitness = Inf
+    best_k = k_prior
+    best_result = (Inf, 0.0, Inf, 0.0, 0.0, true)
+
+    for k_scale in [0.5, 1.0, 2.0]
+        k_try = clamp(k_prior * k_scale, 0.01, 1000.0)
+        x_k = copy(x)
+        x_k[15] = log10(k_try)
+
+        fitness, P_mean, FoS_min, ω_eq, P_range, drift =
+            objective_v11_warmstart(x_k, beam_profile, p;
+                power_W=power_W, v_rated=v_rated, spoke=spoke)
+
+        if fitness < best_fitness
+            best_fitness = fitness
+            best_k = k_try
+            best_result = (fitness, P_mean, FoS_min, ω_eq, P_range, drift)
+        end
+    end
+
+    return (best_fitness, best_k, best_result...)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Snapshot mode — backwards-compat single-point evaluation
 # ══════════════════════════════════════════════════════════════════════════════
 
