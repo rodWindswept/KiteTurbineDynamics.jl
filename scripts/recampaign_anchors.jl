@@ -72,26 +72,35 @@ function collect_legacy_front_members()
     return unique(members)[1:min(N_LEGACY, end)]
 end
 
-function evaluate_anchor(x::Vector{Float64}, p::SystemParams)
+function evaluate_anchor_lhs(x::Vector{Float64}, p::SystemParams)
     spoke = SpokeParams(enabled=false)
     
     # V10 static fitness
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, p)
     
-    # V11 warm-start with k-bracket
+    # Single-k full protocol at λ²-prior (no bracket for LHS)
+    result = design_from_vector_v10(x[1:14], PROFILE_ELLIPTICAL, p)
+    λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
+    k_prior = clamp(p.k_mppt * λ_eff^2, 0.01, 1000.0)
+    x_k = copy(x)
+    x_k[15] = log10(k_prior)
+    
+    f_v11 = objective_v11(x_k, PROFILE_ELLIPTICAL, p; spoke=spoke)
+    
+    return (; f_v10=f_v10, f_v11=f_v11, k_best=k_prior,
+             P_mean=NaN, FoS_min=NaN, ω_eq=NaN, P_range=NaN, drift=false)
+end
+
+function evaluate_anchor_legacy(x::Vector{Float64}, p::SystemParams)
+    # Legacy fronts get the 3-point bracket
+    spoke = SpokeParams(enabled=false)
+    f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, p)
+    
     f_v11, k_best, P_mean, FoS_min, ω_eq, P_range, drift =
         warmstart_with_k_bracket(x, PROFILE_ELLIPTICAL, p; spoke=spoke)
     
-    return (;
-        f_v10 = f_v10,
-        f_v11 = f_v11,
-        k_best = k_best,
-        P_mean = P_mean,
-        FoS_min = FoS_min,
-        ω_eq = ω_eq,
-        P_range = P_range,
-        drift = drift,
-    )
+    return (; f_v10=f_v10, f_v11=f_v11, k_best=k_best,
+             P_mean=P_mean, FoS_min=FoS_min, ω_eq=ω_eq, P_range=P_range, drift=drift)
 end
 
 function main()
@@ -135,7 +144,11 @@ function main()
     t0 = time()
     for (i, x) in enumerate(all_samples)
         src = i <= N_ANCHORS_LHS ? "lhs" : "legacy"
-        r = evaluate_anchor(x, p)
+        if src == "lhs"
+            r = evaluate_anchor_lhs(x, p)
+        else
+            r = evaluate_anchor_legacy(x, p)
+        end
         
         push!(results, [
             i, src,
