@@ -136,7 +136,9 @@ end
     @test f_ws <= 0.0    # warm-start produces positive power
     @test k_ws > 0.0     # bracket picked a valid k
     @test P_range >= 0.0 # window range is non-negative
-    @test drift isa Bool  # drift is a boolean flag
+    @test isfinite(P_ws)  # power must be finite
+    @test isfinite(FoS_ws) # FoS must be finite
+    @test P_range > 0.0   # oscillation expected — assert its signature
 
     # Both should be in the same order of magnitude
     # (warm-start may differ from full protocol due to missing kickstart transient,
@@ -160,7 +162,9 @@ end
     @test isfinite(f_tri_full)
     @test isfinite(f_tri_ws)
     @test k_tri_ws > 0.0
-    @test drift_tri isa Bool  # drift may occur for oscillators — just check type
+    @test isfinite(P_tri)     # power must be finite
+    @test isfinite(FoS_tri)   # FoS must be finite
+    @test P_range_tri > 0.0   # oscillation expected — assert its signature
 
     if abs(f_tri_full) > 1.0 && abs(f_tri_ws) > 1.0
         ratio_tri = max(abs(f_tri_full), abs(f_tri_ws)) / min(abs(f_tri_full), abs(f_tri_ws))
