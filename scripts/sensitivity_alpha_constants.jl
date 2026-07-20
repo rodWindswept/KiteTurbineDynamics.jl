@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# scripts/sensitivity_alpha_constants.jl  —  v13
+# scripts/sensitivity_alpha_constants.jl  —  v14
 # Gate 1: α-constant sensitivity with explicit parameter plumbing.
 # All four Rod amendments (2026-07-18):
 #   1. α_params as explicit args through solve_expansion_induction/expansion_cl
@@ -110,23 +110,23 @@ function eval_candidate(label, sys, u0, p, k_mppt; slope=EXP_CL_SLOPE, cl_max=EX
     ω_mean = ef_final.base.omega_hub * 60 / (2π)
     fos_min = isempty(fos_samples) ? Inf : minimum(fos_samples)
 
-    # Post-sim: compute expansion forces at the settled operating point using
-    # custom α-parameters (the gate measures steady-state sensitivity).
-    if slope != EXP_CL_SLOPE || cl_max != EXP_CL_MAX || tsr != EXP_TSR_DESIGN
-        P_custom = 0.0
-        for er in sys.expansion_rotors
-            ring_ri = sys.ring_ids[er.ring_idx] !== nothing ? (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).ring_idx : 0
-            if ring_ri > 0
-                omega_ring = ef_final.base.omega_hub  # use hub ω as shaft ω (simplified)
-                _, _, tau, _, _ = eval_expansion_forces(
-                    er, p.rho, WIND_MS, omega_ring, p.elevation_angle,
-                    2.99, 20000.0, 3;  # n_lines stored in first rotor's n_blades
-                    slope=slope, cl_max=cl_max, tsr_design=tsr)
-                P_custom += abs(tau * omega_ring) / 1000.0  # kW
-            end
+    # Post-sim: compute expansion forces at the settled operating point.
+    # Same instrument for baseline and perturbations — only α params differ.
+    # Frozen ω from the default-α dynamics run; this is a cheap screen, not the
+    # final answer (re-campaign's full-sim protocol retests sensitivity organically).
+    P_custom = 0.0
+    for er in sys.expansion_rotors
+        ring_ri = sys.ring_ids[er.ring_idx] !== nothing ? (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).ring_idx : 0
+        if ring_ri > 0
+            omega_ring = ef_final.base.omega_hub  # use hub ω as shaft ω (simplified)
+            _, _, tau, _, _ = eval_expansion_forces(
+                er, p.rho, WIND_MS, omega_ring, p.elevation_angle,
+                2.99, 20000.0, 3;  # n_lines stored in first rotor's n_blades
+                slope=slope, cl_max=cl_max, tsr_design=tsr)
+            P_custom += abs(tau * omega_ring) / 1000.0  # kW
         end
-        P_mean = P_custom  # override with custom-CL power at operating point
     end
+    P_mean = P_custom
 
     return P_mean, ω_mean, fos_min
 end
@@ -140,7 +140,7 @@ sys3, u0_3, p3, lbl3 = build_v10_tight_no_lowest(blade_scale=0.45)
 # 12-gon_0.45 bracketed per item 3
 set_expansion_physics!(ExpansionPhysics(true, true, true))
 
-OUT_CSV = joinpath(@__DIR__, "results", "control_maps", "sensitivity_alpha_v13.csv")
+OUT_CSV = joinpath(@__DIR__, "results", "control_maps", "sensitivity_alpha_v14.csv")
 mkpath(dirname(OUT_CSV))
 results = DataFrame(param=String[], value=Float64[], candidate=String[], P_kw=Float64[],
     omega_rpm=Float64[], min_fos=Float64[], k_mppt=Float64[])
@@ -225,14 +225,14 @@ for grp in groupby(results[results.param .!= "baseline", :], [:param, :value])
     rank = sort(collect(vals), by=last, rev=true)
     if rank[1][1] != rank_baseline[1][1]
         println("RED: first-rank flip under $(grp[1,:param])=$(grp[1,:value]) → $(rank[1][1])")
-        red = true
+        global red = true
     end
     bl = Dict(c => i for (i, (c, _)) in enumerate(rank_baseline))
     for i in 1:length(rank)-1, j in i+1:length(rank)
         c_i, c_j = rank[i][1], rank[j][1]
         if bl[c_i] > bl[c_j]
             println("RED: reversal $(c_j) ↕ $(c_i) under $(grp[1,:param])=$(grp[1,:value])")
-            red = true
+            global red = true
         end
     end
 end
