@@ -74,18 +74,18 @@ end
     @test f_v11 == f_v10
 end
 
-@testset "objective_v11 — no active rotors returns infeasible" begin
-    # rotor_mask=0 produces zero active rotors
+@testset "objective_v11 — feasible genome returns negative fitness" begin
+    # Valid 1-rotor design: rotor_mask=0 maps to VALID_ROTOR_MASKS[1] (hub rotor)
     x = zeros(15)
     x[1]  = 0.075;  x[2]  = 0.01;   x[3]  = 1.0
     x[4]  = 0.5;    x[5]  = 3.7;    x[6]  = 2.0
     x[7]  = 2.5;    x[8]  = 12.0;   x[9]  = 0.0
-    x[10] = 0.0     # rotor_mask = 0 → no active rotors
-    x[11] = 15.0;   x[12] = 5.0
+    x[10] = 0.0;    x[11] = 15.0;   x[12] = 5.0
     x[13] = 0.5;    x[14] = 0.3;    x[15] = 1.0
 
     f = objective_v11(x, PROFILE_ELLIPTICAL, params_v5_50kw(); spoke=SP)
-    @test f >= 1e8
+    @test isfinite(f)
+    @test f <= 0.0  # negative fitness = positive power
 end
 
 @testset "objective_v11 — fitness sign convention" begin
