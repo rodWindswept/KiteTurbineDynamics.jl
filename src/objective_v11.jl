@@ -100,6 +100,21 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
+    v11_fitness(P_mean::Float64, FoS_min::Float64) -> Float64
+
+DE fitness score: negative mean power, penalised for FoS < FOS_DESIGN.
+Division (not multiplication): FoS down → |fitness| down → worse.
+
+Monotonicity properties:
+  ∂fitness/∂FoS > 0  when FoS < FOS_DESIGN (verified by test)
+  ∂fitness/∂P  < 0  always
+"""
+function v11_fitness(P_mean::Float64, FoS_min::Float64)::Float64
+    fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
+    return -P_mean / fos_penalty
+end
+
+"""
     objective_v11(x, beam_profile, p; power_W, v_rated, spoke, ...)
 
 Scalar fitness for the V11 DE optimiser.  Returns negative window-mean P_kw
@@ -205,15 +220,7 @@ function objective_v11(
     # ── Score ────────────────────────────────────────────────────────────
     P_score = isempty(P_samples) ? 0.0 : mean(P_samples)
     FoS_score = isempty(fos_samples) || all(isinf.(fos_samples)) ? Inf : minimum(fos_samples)
-
-    # FoS penalty: multiplicative (FOS_DESIGN / FoS_score if FoS < FOS_DESIGN)
-    # This gives the DE a continuous gradient back to feasibility.
-    fos_penalty = FoS_score < FOS_DESIGN ? FOS_DESIGN / FoS_score : 1.0
-
-    # Fitness: negative P_score × FoS_penalty (DE minimises)
-    fitness = -P_score * fos_penalty
-
-    return fitness
+    return v11_fitness(P_score, FoS_score)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -303,11 +310,25 @@ function objective_v11_warmstart(
         return (1e9, 0.0, Inf, ω_eq, 0.0, true)
     end
 
-    # ── Set ring angular velocities to static ω_eq ──────────────────────
+    # ── Set ring angular velocities and orbital velocities ─────────────
     N = sys.n_total
     Nr = sys.n_ring
     # Ring twist rates: u[6N+Nr+1:6N+2Nr]
     u_settled[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
+    # Set ring node orbital velocities: v = ω_eq × r tangential
+    # Without this, spinning rings + zero node velocity = violent transient
+    # that produces spurious FoS collapse and power overshoot (ref:
+    # recheck_12gon_convergence.jl:74-84).
+    for ri in 1:Nr
+        gid = sys.ring_ids[ri]
+        pos = u_settled[(3*(gid-1)+1):(3*gid)]
+        r = norm(pos)
+        if r > 0.01
+            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
+            vx_idx = 3*N + 3*(gid-1) + 1
+            u_settled[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
+        end
+    end
 
     # ── Set k_mppt for the ODE run ──────────────────────────────────────
     sys.k_mppt_ref[] = k_mppt
@@ -354,7 +375,7 @@ function objective_v11_warmstart(
     drifted = drift > 0.15  # >15% drift flag
 
     fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
-    fitness = -P_mean * fos_penalty
+    fitness = v11_fitness(P_mean, FoS_min)
 
     return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted)
 end
