@@ -1,28 +1,22 @@
 #!/usr/bin/env julia
 # scripts/long_trace_v11.jl
 # Compare warm-start vs full protocol on 12-gon, same design, same k.
-# Logs FoS, P_kW, P_aero, ω at 1 Hz for ≥120 s.  Stops on stationarity
-# (rolling 30 s windows agree within ~10%), not on plateau.
-#
-# Questions this trace answers:
-#  1. Does warm-start converge to the same answer as full protocol?
-#  2. Does P settle below the Σ-annulus Betz ceiling?
-#  3. Does FoS_min from window reliably represent the stationary state?
+# Uses the ACTUAL objective_v11 and objective_v11_warmstart functions
+# to guarantee correct initialization.  Wraps callbacks to log FoS+P+ω at 1 Hz.
 
 using KiteTurbineDynamics, Printf, Statistics, Dates, LinearAlgebra
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
 const X12 = [
     0.075, 0.01, 1.0, 0.5, 3.7, 2.0, 2.5, 12.0, 0.0,
-    8.0, 15.0, 5.0, 0.5, 0.3, log10(10.0),
+    8.0, 15.0, 5.0, 0.5, 0.3, log10(100.0),
 ]
 
-const RUN_S     = 120.0     # minimum run time (seconds)
-const WINDOW_S  = 30        # rolling window for stationarity
-const EPSILON   = 0.10      # 10% tolerance for convergence
-const SAMPLE_DT = 1.0       # 1 Hz logging
+const RUN_S     = 120.0
+const WINDOW_S  = 30
+const EPSILON   = 0.10
 
-# ── Utility: rolling-window stationarity check ──────────────────────────────
+# ── Stationarity ────────────────────────────────────────────────────────────
 
 function is_stationary(data::Vector{Float64}, window_W::Int, ε::Float64)
     n = length(data)
@@ -33,20 +27,182 @@ function is_stationary(data::Vector{Float64}, window_W::Int, ε::Float64)
     return diff < ε
 end
 
-# ── Run protocol (shared between full and warm-start) ────────────────────────
+# ── Report ──────────────────────────────────────────────────────────────────
 
-function run_trace(sys::KiteTurbineSystem, u::Vector{Float64},
-                   pc::SystemParams, wf::Function, k_mppt::Float64,
-                   label::String, run_s::Float64, spoke)
+function report(name, ts::Vector, Ps::Vector, FoSs::Vector, ωs::Vector, elapsed)
+    n = length(ts)
+    n == 0 && (println("  No data"); return nothing)
+
+    @printf("\n── %s ──\n", name)
+    @printf("  Duration:  %.0f s (%d samples, %.0f wall-s)\n", ts[end], n, elapsed)
+
+    # Stationarity (last 60s of FoS if available)
+    W = WINDOW_S
+    valid_FoS = Float64[isfinite(f) ? f : NaN for f in FoSs]
+    all_conv = [is_stationary(Ps, W, EPSILON),
+                count(isfinite, valid_FoS) > 2*W ? is_stationary(Float64[isfinite(f) ? f : 0.0 for f in FoSs], W, EPSILON) : false,
+                is_stationary(ωs, W, EPSILON)]
+    @printf("  Stationary: P=%-5s  FoS=%-5s  ω=%-5s\n",
+            all_conv[1] ? "yes" : "NO", all_conv[2] ? "yes" : "NO", all_conv[3] ? "yes" : "NO")
+
+    win_start = max(1, n - W)
+    win_P, win_FoS, win_ω = Ps[win_start:end], FoSs[win_start:end], ωs[win_start:end]
+
+    @printf("  Final window (%.0f–%.0f s):\n", ts[win_start], ts[end])
+    @printf("    P_mean:   %8.1f kW   (±%.1f)\n", mean(win_P), std(win_P))
+    @printf("    P_min/max:%8.1f / %.1f kW\n", minimum(win_P), maximum(win_P))
+
+    n_fos = count(isfinite, win_FoS)
+    if n_fos > 0
+        fin = Float64[isfinite(f) ? f : NaN for f in win_FoS]
+        @printf("    FoS_mean: %8.3f   (±%.3f)  (n=%d)\n", mean(skipmissing(fin)), std(skipmissing(fin)), n_fos)
+        @printf("    FoS_min:  %8.3f\n", minimum(skipmissing(fin)))
+    else
+        @printf("    FoS:      all Inf/NaN\n")
+    end
+    @printf("    ω_mean:   %8.2f rad/s\n", mean(win_ω))
+
+    P_betz = 0.5 * 1.225 * π * 5.0^2 * 11.0^3 * (16/27) / 1000  # ~38 kW
+    @printf("    Betz ceiling: %.0f kW\n", P_betz)
+    @printf("    Above Betz:   %s\n", mean(win_P) > P_betz * 1.1 ? "YES ⚠" : "no")
+
+    fos_min = n_fos > 0 ? minimum(skipmissing(Float64[isfinite(f) ? f : NaN for f in win_FoS])) : Inf
+    return (; P_mean=mean(win_P), FoS_min=fos_min, ω_mean=mean(win_ω), stationary=all(all_conv))
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Wrappers that call the real objective functions with logging callbacks
+# ══════════════════════════════════════════════════════════════════════════════
+
+function trace_full_protocol(x, p, spoke)
+    # Build everything the same way objective_v11 does, but with logging callback
+    result = design_from_vector_v10(x[1:14], PROFILE_ELLIPTICAL, p)
+    result.n_active == 0 && error("No active rotors")
+    k_mppt = clamp(10.0^x[15], 0.01, 1000.0)
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, k_mppt)
+
+    function wf(pos, t)
+        z = max(pos[3], 1.0)
+        return [11.0 * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
+    end
+
+    # Settle (same as objective_v11)
+    u = settle_to_operational_state(sys, copy(u0), pc, 60.0; wind_fn=wf)
+
+    # Kickstart (same as objective_v11)
+    orig_k = sys.k_mppt_ref[]
+    try
+        sys.k_mppt_ref[] = -60.0
+        kick_steps = round(Int, 2.0 / KiteTurbineDynamics.V11_DT)
+        run_canonical_sim!(u, sys, pc, wf, kick_steps, KiteTurbineDynamics.V11_DT;
+            lift_device=nothing, lin_damp=0.05, spoke=spoke)
+    catch e
+        @warn "Kickstart failed" exception=e
+    end
+    sys.k_mppt_ref[] = orig_k
+
+    # Run window with logging callback
+    V11_DT = KiteTurbineDynamics.V11_DT
+    total_s = 30.0 + RUN_S  # DISCARD_S + window
+    total_n = round(Int, total_s / V11_DT)
+    sample_every = max(round(Int, 1.0 / V11_DT), 1)
+    discard_n = round(Int, 30.0 / V11_DT)
+
+    ts   = Float64[]; Ps = Float64[]; FoSs = Float64[]; ωs = Float64[]
+    N = sys.n_total; Nr = sys.n_ring
+
+    function cb(uc, tc, s)
+        s < discard_n && return
+        s % sample_every != 0 && return
+        try
+            ef = capture_extended(uc, sys, pc, tc, wf, nothing;
+                brake_engaged=sys.brake_engaged[])
+            push!(ts, tc)
+            push!(Ps, ef.base.P_kw)
+            air = Float64[]
+            for i in 2:length(ef.ring_fos)
+                v = ef.ring_fos[i]
+                (!isnan(v) && !isinf(v) && v > 0) && push!(air, v)
+            end
+            push!(FoSs, isempty(air) ? Inf : minimum(air))
+            push!(ωs, abs(uc[6*N + Nr + 1]))
+        catch e
+            @warn "callback fail at t=$tc" exception=e
+        end
+    end
+
+    t0 = time()
+    try
+        run_canonical_sim!(u, sys, pc, wf, total_n, V11_DT;
+            lift_device=nothing, lin_damp=0.05, spoke=spoke, callback=cb)
+    catch e
+        @warn "Full protocol error" exception=e
+    end
+    elapsed = time() - t0
+    @printf("FULL: %d samples in %.0f s\n", length(ts), elapsed)
+    return (; ts, Ps, FoSs, ωs, elapsed)
+end
+
+function trace_warmstart_protocol(x, p, spoke)
+    result = design_from_vector_v10(x[1:14], PROFILE_ELLIPTICAL, p)
+    result.n_active == 0 && error("No active rotors")
+    (; design, rotors, n_rings, zs) = result
+    n_lines = design.n_lines
+    k_mppt = clamp(10.0^x[15], 0.01, 1000.0)
+    elev_angle = π/6
+
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, k_mppt)
+
+    # Equilibrium (same as objective_v11_warmstart)
+    expansion_params = KiteTurbineDynamics.ExpansionRotorParams[]
+    for rotor in rotors
+        er = KiteTurbineDynamics.ExpansionRotorParams(
+            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius,
+            rotor.blade_chord, KiteTurbineDynamics.EXP_CL_DESIGN,
+            KiteTurbineDynamics.EXP_CD0_DESIGN, KiteTurbineDynamics.EXP_K_INDUCED,
+            rotor.bank_angle_deg,
+            KiteTurbineDynamics.expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
+            rotor.ring_idx, 1.0,
+        )
+        push!(expansion_params, er)
+    end
+    _, radii, _ = ring_spacing_v4(design.r_hub, design.r_bottom,
+        design.tether_length, design.target_Lr; density_profile=design.density_profile)
+    λ_eff = rotors[1].blade_scale
+    k_eff = p.k_mppt * λ_eff^2
+    p_scaled = override_params(p; k_mppt=k_eff)
+    ω_eq, r_ref = KiteTurbineDynamics.solve_equilibrium_self_consistent(
+        design, expansion_params, p_scaled, n_lines, radii, zs;
+        P_per_rotor=50000.0 / max(result.n_active, 1), v_wind=11.0, elev_rad=elev_angle)
+
+    function wf(pos, t)
+        z = max(pos[3], 1.0)
+        return [11.0 * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
+    end
+
+    # Settle + init (WITH orbital-velocity fix)
+    u = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
+    N = sys.n_total; Nr = sys.n_ring
+    u[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
+    for ri in 1:Nr
+        gid = sys.ring_ids[ri]
+        pos = u[(3*(gid-1)+1):(3*gid)]
+        r = norm(pos)
+        if r > 0.01
+            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
+            vx_idx = 3*N + 3*(gid-1) + 1
+            u[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
+        end
+    end
     sys.k_mppt_ref[] = k_mppt
-    V11_DT = 4e-5
-    total_n = round(Int, run_s / V11_DT)
-    sample_every = max(round(Int, SAMPLE_DT / V11_DT), 1)
-    Nmax = div(total_n, sample_every) + 2
 
-    ts   = Float64[];  Ps   = Float64[]
-    Pa   = Float64[];  FoSs = Float64[]
-    ωs   = Float64[];  status = "ran"
+    # Run with logging
+    V11_DT = KiteTurbineDynamics.V11_DT
+    total_s = 10.0 + RUN_S
+    total_n = round(Int, total_s / V11_DT)
+    sample_every = max(round(Int, 1.0 / V11_DT), 1)
+
+    ts = Float64[]; Ps = Float64[]; FoSs = Float64[]; ωs = Float64[]
 
     function cb(uc, tc, s)
         s % sample_every != 0 && return
@@ -55,197 +211,63 @@ function run_trace(sys::KiteTurbineSystem, u::Vector{Float64},
                 brake_engaged=sys.brake_engaged[])
             push!(ts, tc)
             push!(Ps, ef.base.P_kw)
-            push!(Pa, ef.base.P_aero_kw)
-            push!(ωs, abs(uc[6*sys.n_total + sys.n_ring + 1]))
             air = Float64[]
             for i in 2:length(ef.ring_fos)
                 v = ef.ring_fos[i]
                 (!isnan(v) && !isinf(v) && v > 0) && push!(air, v)
             end
             push!(FoSs, isempty(air) ? Inf : minimum(air))
-        catch
+            push!(ωs, abs(uc[6*N + Nr + 1]))
+        catch e
+            @warn "callback fail at t=$tc" exception=e
         end
     end
 
     t0 = time()
-    early_exit = false
     try
         run_canonical_sim!(u, sys, pc, wf, total_n, V11_DT;
             lift_device=nothing, lin_damp=0.05, spoke=spoke, callback=cb)
     catch e
-        @warn "$label: sim terminated early" exception=e
-        status = "crashed"
+        @warn "Warm-start error" exception=e
     end
     elapsed = time() - t0
-
-    @printf("%s: %d samples in %.0f s\n", label, length(ts), elapsed)
-    return (; ts, Ps, Pa, FoSs, ωs, status, elapsed)
+    @printf("WARM: %d samples in %.0f s\n", length(ts), elapsed)
+    return (; ts, Ps, FoSs, ωs, elapsed)
 end
 
-# ── Report ──────────────────────────────────────────────────────────────────
-
-function report(name, tr)
-    n = length(tr.ts)
-    n == 0 && (println("  No data"); return)
-
-    @printf("\n── %s ──\n", name)
-    @printf("  Duration:  %.0f s (%d samples)\n", tr.ts[end], n)
-
-    # Stationarity
-    W = WINDOW_S
-    all_converged = [is_stationary(tr.Ps, W, EPSILON),
-                     is_stationary(tr.FoSs[.!isinf.(tr.FoSs)], W, EPSILON),
-                     is_stationary(tr.ωs, W, EPSILON)]
-    @printf("  Stationary: P=%-5s  FoS=%-5s  ω=%-5s\n",
-            all_converged[1] ? "yes" : "NO",
-            all_converged[2] ? "yes" : "NO",
-            all_converged[3] ? "yes" : "NO")
-
-    # Window statistics (last WINDOW_S seconds)
-    win_start = max(1, n - W)
-    win_ts  = tr.ts[win_start:end]
-    win_P   = tr.Ps[win_start:end]
-    win_FoS = tr.FoSs[win_start:end]
-    win_ω   = tr.ωs[win_start:end]
-    fin_FoS = Float64[isfinite(x) ? x : NaN for x in win_FoS]
-
-    @printf("  Final window (%.0f–%.0f s):\n", win_ts[1], win_ts[end])
-    @printf("    P_mean:   %8.1f kW   (±%.1f)\n", mean(win_P), std(win_P))
-    @printf("    P_min/max:%8.1f / %.1f kW\n", minimum(win_P), maximum(win_P))
-    @printf("    FoS_mean: %8.3f   (±%.3f)\n", mean(skipmissing(fin_FoS)), std(skipmissing(fin_FoS)))
-    @printf("    FoS_min:  %8.3f\n", minimum(skipmissing(fin_FoS)))
-    @printf("    ω_mean:   %8.2f rad/s\n", mean(win_ω))
-
-    # Betz check
-    P_betz = betz_ceiling()
-    @printf("    Betz ceiling: %.0f kW\n", P_betz)
-    @printf("    Above Betz:   %s\n", mean(win_P) > P_betz * 1.1 ? "YES ⚠" : "no")
-
-    return (; P_mean=mean(win_P), FoS_min=minimum(skipmissing(fin_FoS)),
-             ω_mean=mean(win_ω), stationary=all(all_converged))
-end
-
-function betz_ceiling()
-    # Σ-annulus Betz limit at 11 m/s, 50 kW rated, 12-gon geometry
-    # Conservative estimate: Betz × swept area × 16/27
-    ρ = 1.225; V = 11.0; r = 5.0
-    A = π * r^2
-    return 0.5 * ρ * A * V^3 * (16/27) / 1000  # kW
-end
-
-# ── Main ────────────────────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
 
 function main()
     mkpath(OUT_DIR)
     p = params_v5_50kw()
     spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
-    k_mppt = 10.0^X12[15]
 
-    # Build system once
-    result = design_from_vector_v10(X12[1:14], PROFILE_ELLIPTICAL, p)
-    result.n_active == 0 && error("No active rotors")
-    (; design, rotors, n_rings, zs) = result
-    n_lines = design.n_lines
+    println("=== FULL protocol (settle → kickstart → $RUN_S s window) ===")
+    tr_full = trace_full_protocol(X12, p, spoke)
+    rep_full = report("FULL protocol", tr_full.ts, tr_full.Ps, tr_full.FoSs, tr_full.ωs, tr_full.elapsed)
 
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, k_mppt)
+    println("\n\n=== WARM-START protocol (settle → ω-v init → $RUN_S s window) ===")
+    tr_ws = trace_warmstart_protocol(X12, p, spoke)
+    rep_ws = report("WARM-START protocol", tr_ws.ts, tr_ws.Ps, tr_ws.FoSs, tr_ws.ωs, tr_ws.elapsed)
 
-    # Build expansion params and solve equilibrium (for warm-start)
-    expansion_params_v10 = KiteTurbineDynamics.ExpansionRotorParams[]
-    for rotor in rotors
-        er = KiteTurbineDynamics.ExpansionRotorParams(
-            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius,
-            rotor.blade_chord, KiteTurbineDynamics.EXP_CL_DESIGN, KiteTurbineDynamics.EXP_CD0_DESIGN, KiteTurbineDynamics.EXP_K_INDUCED,
-            rotor.bank_angle_deg,
-            KiteTurbineDynamics.expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
-            rotor.ring_idx, 1.0,
-        )
-        push!(expansion_params_v10, er)
-    end
-    _, radii, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
-        density_profile=design.density_profile,
-    )
-    λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
-    k_eff = p.k_mppt * λ_eff^2
-    p_scaled = override_params(p; k_mppt=k_eff)
-    ω_eq, r_ref = KiteTurbineDynamics.solve_equilibrium_self_consistent(
-        design, expansion_params_v10, p_scaled, n_lines, radii, zs;
-        P_per_rotor=50000.0 / max(result.n_active, 1),
-        v_wind=11.0, elev_rad=π/6,
-    )
-    @printf("Shared: ω_eq = %.2f rad/s, k_mppt = %.0f\n\n", ω_eq, k_mppt)
-
-    function wf(pos, t)
-        z = max(pos[3], 1.0)
-        return [11.0 * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
-    end
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # Protocol A: Full (kickstart + settle + window)
-    # ══════════════════════════════════════════════════════════════════════════
-    println("=== Protocol A: FULL (kickstart + settle + window) ===")
-    u_full = copy(u0)
-    # Settle first
-    u_full = settle_to_equilibrium(sys, u_full, pc; wind_fn=wf)
-    # Kickstart: spin-up with ω_eq orbital velocities
-    N = sys.n_total; Nr = sys.n_ring
-    for ri in 1:Nr
-        gid = sys.ring_ids[ri]
-        pos = u_full[(3*(gid-1)+1):(3*gid)]
-        r = norm(pos)
-        if r > 0.01
-            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
-            vx_idx = 3*N + 3*(gid-1) + 1
-            u_full[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
-        end
-    end
-    trace_full = run_trace(sys, u_full, pc, wf, k_mppt, "FULL", RUN_S, spoke)
-    rep_full = report("FULL protocol", trace_full)
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # Protocol B: Warm-start (settle + ω-v init + window)
-    # ══════════════════════════════════════════════════════════════════════════
-    println("\n\n=== Protocol B: WARM-START (settle + ω-v init + window) ===")
-    u_ws = copy(u0)
-    u_ws = settle_to_equilibrium(sys, u_ws, pc; wind_fn=wf)
-    # Set ring angular velocities AND orbital velocities (FIXED)
-    u_ws[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
-    for ri in 1:Nr
-        gid = sys.ring_ids[ri]
-        pos = u_ws[(3*(gid-1)+1):(3*gid)]
-        r = norm(pos)
-        if r > 0.01
-            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
-            vx_idx = 3*N + 3*(gid-1) + 1
-            u_ws[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
-        end
-    end
-    trace_ws = run_trace(sys, u_ws, pc, wf, k_mppt, "WARM", RUN_S, spoke)
-    rep_ws = report("WARM-START protocol", trace_ws)
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # Comparison
-    # ══════════════════════════════════════════════════════════════════════════
     if !isnothing(rep_full) && !isnothing(rep_ws)
         println("\n\n=== COMPARISON ===")
         δP = abs(rep_full.P_mean - rep_ws.P_mean) / max(abs(rep_full.P_mean), 0.01)
-        δω = abs(rep_full.ω_mean - rep_ws.ω_mean) / max(abs(rep_full.ω_mean), 0.01)
-        @printf("  P  ratio:  %.3f  (%s)\n", δP, δP < 0.15 ? "AGREE" : "DIVERGE")
-        @printf("  ω  ratio:  %.3f  (%s)\n", δω, δω < 0.15 ? "AGREE" : "DIVERGE")
-        @printf("  FoS full:  %.3f\n", rep_full.FoS_min)
-        @printf("  FoS warm:  %.3f\n", rep_ws.FoS_min)
+        @printf("  P ratio:     %.3f  (%s)\n", δP, δP < 0.15 ? "AGREE" : "DIVERGE")
+        @printf("  FoS full:    %.3f\n", rep_full.FoS_min)
+        @printf("  FoS warm:    %.3f\n", rep_ws.FoS_min)
 
-        fname = joinpath(OUT_DIR, "long_trace_$(Dates.format(now(), "yyyymmdd_HHMM")).csv")
+        fname = joinpath(OUT_DIR, "long_trace_$(Dates.format(now(),"yyyymmdd_HHMM")).csv")
         open(fname, "w") do io
-            println(io, "protocol,ts,P_kW,P_aero_kW,FoS,omega")
-            for (ts,P,Pa,FoS,ω) in zip(trace_full.ts, trace_full.Ps, trace_full.Pa, trace_full.FoSs, trace_full.ωs)
-                println(io, "full,$ts,$P,$Pa,$FoS,$ω")
+            println(io, "protocol,ts,P_kW,FoS,omega")
+            for (ts,P,FoS,ω) in zip(tr_full.ts, tr_full.Ps, tr_full.FoSs, tr_full.ωs)
+                println(io, "full,$ts,$P,$FoS,$ω")
             end
-            for (ts,P,Pa,FoS,ω) in zip(trace_ws.ts, trace_ws.Ps, trace_ws.Pa, trace_ws.FoSs, trace_ws.ωs)
-                println(io, "warm,$ts,$P,$Pa,$FoS,$ω")
+            for (ts,P,FoS,ω) in zip(tr_ws.ts, tr_ws.Ps, tr_ws.FoSs, tr_ws.ωs)
+                println(io, "warm,$ts,$P,$FoS,$ω")
             end
         end
-        println("\n  Trace: $fname")
+        println("  Trace: $fname")
     end
 end
 
