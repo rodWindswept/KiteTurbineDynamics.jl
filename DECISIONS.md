@@ -2,6 +2,42 @@
 
 Running log of architectural and physical decisions. One entry per decision, newest at top.
 
+## 2026-07-22 — Bearing transverse damper: provenance + likely redundancy
+
+**Timeline (reconstructed from May 2026 handovers):**
+
+- **2026-05-18** (`handover-2026-05-18.md`, commit `e83f6ca`): added
+  `bearing_tr_damp = 0.99994`/step to suppress violent bearing/sky-anchor
+  precession seen on the dashboard. Symptom-suppressor.
+- **2026-05-25→28** (`handover-2026-05-28-pitch-depower-session.md`): root cause
+  found — the sky anchor had no geometric restoring force. Lift-line tension was
+  applied in a constant direction, so perpendicular sky-anchor displacement had
+  nothing pulling it back. Fixed by computing tension direction from actual
+  geometry: `tension_dir = normalize(kite_pos − sky_anchor_pos)`.
+
+**Fix is live in HEAD** at `ring_forces.jl:415-428` (geometric spring, with a
+`lift_dir` fallback only when the line degenerates). This is the *intrinsic* lift
+path, active in the rhs regardless of `lift_device` — so headless evals
+(`lift_device=nothing`) **do** carry lift force (→ the turbine IS held up).
+With `lift_device=nothing`, `kite_pos` is static (`update_kite_pos!` runs only
+when a lift device is present), so the spring pulls toward a fixed point — the
+strongest restoring case, zero precession driver.
+
+**Consequence — `bearing_tr_damp` is expected-redundant** now that (a) the geometric
+spring removed its driver and (b) Gate 2b added blade inertia (gyroscopic
+stabilisation, cited in `e83f6ca`'s own justification, was absent when the damper
+was added). The damping-rate sweep includes `bearing_tr_damp` OFF; in
+`lift_device=nothing` evals it should be a near no-op. If the bearing stays stable
+without it, retire the knob.
+
+**Un-migrated second path (flag):** the geometric fix was applied to the
+sky-anchor path (`ring_forces.jl`) but NOT to the optional **LiftDevice** path
+(`lift_kite.jl:295/322/431` still uses constant-direction `lift_line_direction(elev)`).
+Any run with an explicit `lift_device` still carries the pre-2026-05-25
+precession driver. The dashboard is the likely caller — verify who passes a
+non-nothing `lift_device` before trusting its bearing dynamics. Two divergent
+lift models, same split-path class as the x-vector builder scramble.
+
 ## 2026-07-18: Gate 2b — blade inertia + mass-factor fix deployed
 
 Blade inertia in ODE (`expansion_rotor_inertia`, `src/expansion_rotor.jl`):
