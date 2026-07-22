@@ -56,6 +56,25 @@ Three validated examples (this week):
 
 ---
 
+## Detection Pattern: Peak-Value Metrics Alias on Limit Cycles
+
+A convergence or comparison gate built on `P_max` (or any single-sample peak) is
+phase-sensitive: DT and DT/2 runs decorrelate in phase and hit different peaks of
+the SAME physical limit cycle, so their peak ratio differs even when the integrator
+is fully converged. **Symptom:** an isolated "valid" point flanked by "divergent" ones,
+with the divergent points showing SMALL peaks (not exploding).
+
+2026-07-22: this misclassified `lin_damp=0.5` as divergent in the damping-rate
+sweep; the real valid band was 0.5–0.8. **Rule:** gate convergence on windowed
+statistics (mean + range agreement), never on peaks. Genuine divergence *explodes*
+the peak (thousands of kW); phase-noise jitters it by 1.5–2×.
+
+Before launching any campaign, confirm that all convergence/promotion gates use
+windowed agreement, not a peak or endpoint. A peak-based gate anywhere in the
+objective pipeline would quietly reintroduce this error.
+
+---
+
 ## Sanity Bounds (Hard Discard Rules)
 
 Any result triggering these is discarded without analysis:
