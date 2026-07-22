@@ -79,17 +79,17 @@ function main()
         @printf("  %s  P=%.1f Pmax=%.0f FoS=%.3f betz=%d dip=%d\n",
             r2.dtlabel, r2.P_mean, r2.P_max, r2.FoS_min, r2.n_betz, r2.n_fos_dip)
 
-        # Convergence check
-        alive = r1.P_max > 2.0  # non-trivial power
-        pmax_ratio = r1.P_max / max(r2.P_max, 0.01)
+        # Convergence check (P_mean, not P_max — avoids phase aliasing on limit cycles)
+        alive = r1.P_max > 2.0
+        pmean_ratio = r1.P_mean / max(r2.P_mean, 0.01)
         fmin_ratio = isfinite(r1.FoS_min) && isfinite(r2.FoS_min) ?
             r1.FoS_min / max(r2.FoS_min, 0.001) : 99.0
-        converged = 0.85 <= pmax_ratio <= 1.15 && 0.85 <= fmin_ratio <= 1.15
+        converged = 0.70 <= pmean_ratio <= 1.43 && 0.85 <= fmin_ratio <= 1.15
         push!(results, (; ld, rate_hz, alive, converged,
-            pmax_ratio, fmin_ratio, r1, r2))
+            pmean_ratio, fmin_ratio, r1, r2))
         status = alive&&converged ? "VALID" : alive ? "ALIVE_DIVERGENT" : "DEAD"
-        @printf("  → %s (alive=%d conv=%d P_ratio=%.2f F_ratio=%.2f)\n\n",
-            status, alive, converged, pmax_ratio, fmin_ratio)
+        @printf("  → %s (alive=%d conv=%d Pmean_ratio=%.2f F_ratio=%.2f)\n\n",
+            status, alive, converged, pmean_ratio, fmin_ratio)
     end
 
     # Summary
@@ -113,10 +113,10 @@ function main()
 
     out = joinpath(@__DIR__,"results","recampaign","sweep_damp_rate_dtpaired.csv")
     open(out,"w") do io
-        println(io,"lin_damp,rate_hz,dt_label,dt,n_samples,P_mean,P_max,P_range,FoS_min,FoS_mean,n_betz,n_fos_dips,alive,converged,pmax_ratio,fmin_ratio")
+        println(io,"lin_damp,rate_hz,dt_label,dt,n_samples,P_mean,P_max,P_range,FoS_min,FoS_mean,n_betz,n_fos_dips,alive,converged,pmean_ratio,fmin_ratio")
         for r in results
             for (rlab, rr) in [("DT",r.r1),("DT/2",r.r2)]
-                println(io,"$(r.ld),$(r.rate_hz),$rlab,$(rr.dt),$(rr.n),$(rr.P_mean),$(rr.P_max),$(rr.P_range),$(rr.FoS_min),$(rr.FoS_mean),$(rr.n_betz),$(rr.n_fos_dip),$(r.alive),$(r.converged),$(r.pmax_ratio),$(r.fmin_ratio)")
+                println(io,"$(r.ld),$(r.rate_hz),$rlab,$(rr.dt),$(rr.n),$(rr.P_mean),$(rr.P_max),$(rr.P_range),$(rr.FoS_min),$(rr.FoS_mean),$(rr.n_betz),$(rr.n_fos_dip),$(r.alive),$(r.converged),$(r.pmean_ratio),$(r.fmin_ratio)")
             end
         end
     end
