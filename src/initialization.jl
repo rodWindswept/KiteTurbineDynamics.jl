@@ -402,9 +402,11 @@ function settle_to_equilibrium(
         @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt_use .* du[(6N + Nr + 1):(6N + 2Nr)]
         @views u[(6N + 1):(6N + Nr)] .+= dt_use .* u[(6N + Nr + 1):(6N + 2Nr)]
 
-        # Kill high-frequency oscillations
-        @views u[(3N + 1):6N] .*= damp
-        @views u[(6N + Nr + 1):(6N + 2Nr)] .*= damp
+        # Kill high-frequency oscillations (dt-scaled)
+        _drate = -log(max(damp, 1e-10)) / 4e-5
+        _dretain = exp(-_drate * dt_use)
+        @views u[(3N + 1):6N] .*= _dretain
+        @views u[(6N + Nr + 1):(6N + 2Nr)] .*= _dretain
 
         # Enforce fixed ground node
         u[1:3] .= 0.0
@@ -621,9 +623,11 @@ function simulate(
         sd = hp_m > 0.1 ? hp ./ hp_m : sd0
         vbx, vby, vbz = u[b_iv], u[b_iv + 1], u[b_iv + 2]
         v_ax_s = vbx*sd[1] + vby*sd[2] + vbz*sd[3]   # scalar dot product
-        u[b_iv] = v_ax_s*sd[1] + bearing_tr_damp*(vbx - v_ax_s*sd[1])
-        u[b_iv + 1] = v_ax_s*sd[2] + bearing_tr_damp*(vby - v_ax_s*sd[2])
-        u[b_iv + 2] = v_ax_s*sd[3] + bearing_tr_damp*(vbz - v_ax_s*sd[3])
+        _bdrate = -log(max(bearing_tr_damp, 1e-10)) / 4e-5
+        _bdretain = exp(-_bdrate * dt)
+        u[b_iv] = v_ax_s*sd[1] + _bdretain*(vbx - v_ax_s*sd[1])
+        u[b_iv + 1] = v_ax_s*sd[2] + _bdretain*(vby - v_ax_s*sd[2])
+        u[b_iv + 2] = v_ax_s*sd[3] + _bdretain*(vbz - v_ax_s*sd[3])
 
         u[1:3] .= 0.0   # ground ring centre stays at origin
         u[(3N + 1):(3N + 3)] .= 0.0   # ground ring translational velocity = 0
