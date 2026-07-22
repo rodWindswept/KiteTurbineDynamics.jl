@@ -124,6 +124,9 @@ function run_canonical_sim!(
         # Guard here so that α doesn't get infected and crash sin(α) downstream.
         # Non-finite derivatives are clamped to zero — the step is skipped rather
         # than letting the ring state diverge.
+        # ── Save ground-ring ω before explicit Euler step ──────────────────
+        # Required by semi-implicit braking correction below.
+        omega_gnd_old = u[6N + Nr + 1]
         omega_dot = @view du[(6N + Nr + 1):(6N + 2Nr)]
         unsafe_ri = findall(!isfinite, omega_dot)
         if !isempty(unsafe_ri)
@@ -131,6 +134,22 @@ function run_canonical_sim!(
         end
         @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* omega_dot
         apply_brake_constraint!(u, sys, N, Nr)   # pin ω_gnd=0 when brake latched
+        # ── Semi-implicit braking: stabilise k·ω² MPPT term ────────────────
+        # Explicit Euler on τ = k·ω² is positive feedback — a small ω
+        # perturbation amplifies without bound.  Treat the braking term
+        # implicitly on the ground ring:
+        #   ω_{n+1} = (ω_n + dt·τ_other/I) / (1 + dt·k·ω_n/I)
+        # Denominator > 1 always → unconditionally stable.
+        k_mppt_now = sys.k_mppt_ref[]
+        if k_mppt_now > 0.01 && omega_gnd_old > 0.1
+            omega_gnd_new = u[6N + Nr + 1]
+            gnd_gid = sys.ring_ids[1]
+            I_z = (sys.nodes[gnd_gid]::RingNode).inertia_z
+            du_gen = k_mppt_now * omega_gnd_old^2 / I_z
+            du_other = (omega_gnd_new - omega_gnd_old) / dt + du_gen
+            denom = 1.0 + dt * k_mppt_now * omega_gnd_old / I_z
+            u[6N + Nr + 1] = (omega_gnd_old + dt * du_other) / denom
+        end
         if spoke !== nothing && spoke.enabled
             # Spoke spring applied via force accumulation (not post-step projection)
             # Call from here with a local forces array for spoke accumulation only
