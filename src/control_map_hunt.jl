@@ -34,14 +34,14 @@ function _detect_git_hash()
     end
 end
 const GIT_HASH       = _detect_git_hash()
-const DT              = 4e-5
+const DT              = 4e-5     # production ODE timestep (s); stiff multibody system needs ≤4e-5. MUST match objective_v11.jl V11_DT (duplicate — see Duplicate-Representation Audit)
 const T_HUNT          = 5.0      # pre-sweep + bisection sim duration (s)
 const T_VERIFY        = 60.0     # verification sim duration (s)
-const K_MIN           = 2.0
-const K_MAX           = 5000.0
+const K_MIN           = 2.0      # k_mppt bisection lower bracket (N·m·s²/rad²)
+const K_MAX           = 5000.0   # k_mppt bisection upper bracket (N·m·s²/rad²)
 const POWER_TOL       = 0.5      # kW — bisection convergence
-const MAX_BISECT      = 15
-const BISECT_MIN_GAP  = 0.1
+const MAX_BISECT      = 15       # max bisection iterations in the k_mppt hunt
+const BISECT_MIN_GAP  = 0.1      # stop bisection once the k-bracket is narrower than this
 const TRACE_HZ        = 10       # P/ω/k scalar capture rate
 const FEA_HZ          = 1        # per-ring FEA capture rate
 const TRACE_EVERY     = round(Int, 1.0 / (TRACE_HZ * DT))

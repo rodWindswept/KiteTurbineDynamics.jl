@@ -151,15 +151,6 @@ function default_ring_do(R::Float64)
     return max(0.01396 * sqrt(R), 5e-4 / 0.05)
 end
 
-# Compliance: rad of ring-plane tilt per N·m of non-shaft torque.
-# 2.5e-7 → ~1.7° tilt at 1 m bearing offset, ~5° at 3 m.
-const DISC_TILT_COMPLIANCE = 2.5e-7
-
-# Exponential smoothing factor for tilt torque storage (low-pass filter).
-# Models the ring's rotational inertia: α = exp(-dt/τ) where τ is the
-# pitch time constant.  With dt=4e-5 and α=0.99, τ ≈ 4 ms.
-const TILT_SMOOTH = 0.995
-
 # Default kite time constant (s).
 # Physical basis:
 #   m_lifter = 4 kg, lift line length = 25 m.

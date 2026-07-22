@@ -46,7 +46,7 @@ using LinearAlgebra
     AXIAL_STRAIGHT_TAPER = 5  # constant r_bot for z < z_str, linear to r_top after
 end
 
-const AXIAL_PROFILE_COUNT = 5
+const AXIAL_PROFILE_COUNT = 5   # number of AxialProfile enum variants above — bump if you add one
 
 function axial_profile_name(p::AxialProfile)
     return if p == AXIAL_LINEAR
