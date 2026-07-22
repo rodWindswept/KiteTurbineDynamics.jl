@@ -16,7 +16,20 @@ Every confirmed instrument fault with its fix commit, so neither instance re-dis
 | 2026-07-22 | Missing orbital-velocity init | Uniform FoS=0.03-0.08 band; 260 kW above Betz ceiling; P_range 218-1793 kW | Warm-start set ring ω=ω_eq but node velocities stayed at zero → kinematically impossible state | `9bd3f67`: added tangential `v=ω_eq×r` block per `recheck_12gon_convergence.jl:74-84` |
 | 2026-07-22 | Wrong protocol in anchor batch | k_best → 1000 bound; LHS 0/40 valid; overnight batch produced garbage | `recampaign_anchors.jl:100` called `warmstart_with_k_bracket` (flawed fast path) instead of full-protocol fallback | Superseded anchors.csv with banner; batch not yet re-run |
 | 2026-07-22 | Forward Euler blowup on k·ω² MPPT | 1000-1900 kW super-Betz spikes; FoS floor 0.04-0.13 across all k | `simulation.jl:159` — explicit Euler on positive-feedback `τ=k·ω²` term, no magnitude cap | `d285139`: semi-implicit ground-ring update `ω' = (ω+dt·τ_other/I)/(1+dt·k·ω/I)` |
-| 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539` — `v_orbital + lin_damp * v_osc` applied per-step without dt scaling; halving dt doubles projections | FIXED: dt-scaling applied; confirmed convergent under DT-refinement. Queued gate: damping-rate sensitivity sweep (see Queued Gates) |
+| 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539` — `v_orbital + lin_damp * v_osc` applied per-step without dt scaling; halving dt doubles projections | FIXED: all three per-step velocity dampers dt-scaled via `exp(-rate·dt)` — `orbital_damp_rope_velocities!` (`f71c7a0`), `settle_to_equilibrium` velocity kill, `simulate()` bearing damper (`17cc6f6`). Semi-implicit k·ω² braking also applied (`d285139`). Integrator loop is clean; residual DT-refinement non-convergence at lin_damp=0.05 is damping-rate calibration (see Unanchored Parameters). |
+
+---
+
+## Unanchored Parameters
+
+Modeling choices that affect results but have no physical calibration. Ranked by sensitivity — top items need hardware anchors before any external claim.
+
+| Parameter | Current Value | Physical Meaning | Sensitivity |
+|-----------|--------------|-------------------|-------------|
+| `lin_damp` (rope damping rate) | 0.05 → rate=75,000 Hz | Per-step orbital velocity retention. At production DT damps rope oscillations in ~13 µs — near-rigid orbital slaving. Never physically calibrated. | **HIGH** — determines whether the system is alive or dead; DT-refinement non-convergence after all dt-bug fixes traces to this rate, not unfixed operators |
+| α-constants (Tulloch et al.) | Various | Induced-drag correction factors for expansion rotors | Known — see `DECISIONS.md` |
+
+The `lin_damp=0` (no rope stabilization) case produces trivially-convergent but unphysical results — it is NOT a design finding and must not be cited as evidence of structural inadequacy ("FoS=0.18 → rings buckle"). The canonical config is `lin_damp=0.05`, spokes ON.
 
 ---
 
@@ -128,4 +141,4 @@ Gates that must pass before any external claim about "what this design can produ
 
 | Gate | Status | Description |
 |------|--------|-------------|
-| Damping-rate sensitivity sweep | ⏳ QUEUED | Vary `lin_damp` across 0.01–0.2 (rate ±) at production DT. Measure power, FoS, and design ranking. Rationale: `lin_damp = 0.05` at DT=4e-5 encodes a ~75,000 /s rate (~13 µs time constant) — near-rigid slaving of rope transverse velocity to orbital velocity. This was never physically calibrated; it's a free knob that happens to converge under refinement. If results are stable across the range, the knob doesn't matter. If sensitive, damping joins the α-constants on the list of parameters needing physical justification before any external claim. Not a delay — run after refinement, report as a finding either way. |
+| Damping-rate sensitivity sweep (DT-paired) | ⏳ QUEUED | Sweep `lin_damp` across candidate rates. For EACH rate, run DT AND DT/2. A rate is valid only if alive (non-trivial P) AND dt-convergent (DT≈DT/2 within 15% on P_max and FoS_min). Single-dt results without refinement cannot be trusted. If no rate at which the 12-gon is both alive and dt-convergent, that is a design finding (just not the one we thought). If a valid rate exists, it joins the α-constants as an unanchored parameter needing hardware calibration. |
