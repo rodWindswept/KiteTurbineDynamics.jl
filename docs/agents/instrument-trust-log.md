@@ -4,6 +4,16 @@
 
 **Last updated:** 2026-07-22
 
+## Duplicate-Representation Audit
+
+Constants or parameters defined in two places that must stay in sync:
+
+| Item | Location A | Location B | Risk | Action |
+|------|-----------|-----------|------|--------|
+| ODE timestep | `control_map_hunt.jl:37` `DT=4e-5` | `objective_v11.jl` `V11_DT=4e-5` | **DUPLICATE, in sync** — two constants, same value, must not drift | Single source, or test asserting `DT == V11_DT` |
+
+---
+
 ---
 
 ## Fault Ledger
@@ -104,6 +114,7 @@ The truth sits between: the instrument was broken, the design is unmeasured, the
 - [ ] No super-Betz P_aero samples at production DT
 - [ ] FoS varies with k (not uniform) — confirms instrument is measuring structure, not floor
 - [ ] `lin_damp` is dt-scaled ✓ (confirmed post-fix)
+- [ ] `python3 scripts/kwarg_default_audit.py --check` — no undocumented HIGH-danger defaults
 - [ ] Provenance stamp on output CSV: git hash, physics-era, geometry fingerprint, instrument version
 
 ---
