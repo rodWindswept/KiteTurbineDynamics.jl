@@ -1,7 +1,7 @@
 # KTD Design Landscape — Phase E Discovery Report
 
 **Windswept & Interesting Ltd | July 2026**
-**V10 Tight, 11 m/s, per-vertex spoke model, DE-optimized ring geometry**
+**V10-Spoke, 11 m/s, per-vertex spoke model, DE-optimized ring geometry**
 
 ---
 

@@ -7,8 +7,9 @@
 \begin{tikzpicture}[scale=0.90]
 
 % ── Title ──
-\node[font=\Large\sffamily\bfseries] at (11.0, 16.5) {TRPT Power Curves — Three Design Strategies};
-\node[font=\footnotesize\sffamily, black!50] at (11.0, 15.8) {V10-Spoke · fixed-$k$ MPPT · spokes ON · DE-optimized ring · 45s sim per point};
+\node[font=\Large\sffamily\bfseries] at (11.0, 16.5) {TRPT Power Curves — Four Design Strategies};
+\node[font=\footnotesize\sffamily, black!50] at (11.0, 15.8) {V10-Spoke · fixed-$k$ MPPT · spokes ON · DE-optimized ring · $r_{\text{bottom}}{=}1.00$ (builder default) · 45s sim per point};
+\node[font=\tiny\sffamily, black!40] at (11.0, 15.3) {NB: design cards use $r_{\text{bottom}}{=}1.30$ — same $(\lambda,k)$ names, different frame; numbers are not directly comparable};
 
 % ── Axes: x=2.0+(V-4)*18/12, y=2.0+P*12/700 ──
 \draw[->, thick] (2.0, 2.0) -- (20.8, 2.0) node[right, font=\footnotesize] {Wind speed (m/s)};
@@ -39,15 +40,16 @@
   plot (\x, {2.0 + 199*((\x)/11.0)^3 * 12/700});
 \node[font=\tiny, black!45] at (15.5, {2.0 + 199*(15.0/11.0)^3*12/700 + 0.4}) {$P{\propto}V^3$ (ref)};
 
-% ── Cut-in zone ──
-\pgfmathsetmacro{\cvx}{2.0 + (7.0-4.0)*18/12}
+% ── Cut-in zone (cut-in is design-dependent, 5–9 m/s; shade only the universally-dead band) ──
+\pgfmathsetmacro{\cvx}{2.0 + (5.0-4.0)*18/12}
 \fill[black!5] (2.0, 2.0) rectangle (\cvx, 14.0);
-\node[font=\footnotesize, black!40, rotate=90] at ({\cvx-0.8}, 7.5) {Below cut-in};
+\node[font=\footnotesize, black!40, rotate=90] at ({\cvx-0.75}, 7.5) {Below cut-in};
+\node[font=\tiny, black!40, rotate=90] at ({\cvx-0.3}, 7.5) {(cut-in 5--9 m/s, design-dependent)};
 
 % ── 50 kW gate ──
 \pgfmathsetmacro{\yref}{2.0 + 50*12/700}
 \draw[gray!50, line width=0.5pt] (2.0, \yref) -- (20.0, \yref);
-\node[font=\tiny, gray!50, anchor=south east] at (19.5, \yref) {50 kW gate};
+\node[font=\tiny, gray!50, anchor=north east] at (17.4, \yref) {50 kW gate};
 
 % ═══════════════════════════════════════════════════════════════
 % DATA POINTS with FoS labels
@@ -70,23 +72,13 @@
 \draw[safe, thick] (\dx, \dy) circle (4pt);  % outlined
 \node[font=\tiny, safe, below] at (\dx, \dy-0.25) {FoS 4.0};
 
-% Curve through 0.90/k6 points
-\draw[safe, line width=1.8pt] 
-  (2.0+9*18/12-2.0*18/12, 2.0+93.6*12/700) --
-  (2.0+11*18/12-2.0*18/12, 2.0+204.0*12/700) --
-  (2.0+13*18/12-2.0*18/12, 2.0+406.9*12/700) --
-  (2.0+15*18/12-2.0*18/12, 2.0+275.0*12/700);
-% Hmm, let me redo with proper pgf coordinates...
-% Actually, just use explicit coords
-
-% Let me replace with explicit coordinate curves
-% 0.90/k6 curve
+% 0.90/k6 curve (NB: a duplicate mis-scaled copy of this curve, shifted +2 m/s, was removed 2026-07-16)
 \draw[safe, line width=1.8pt] 
   ({2.0+(9.0-4.0)*18/12}, {2.0+93.6*12/700}) --
   ({2.0+(11.0-4.0)*18/12}, {2.0+204.0*12/700}) --
   ({2.0+(13.0-4.0)*18/12}, {2.0+406.9*12/700}) --
   ({2.0+(15.0-4.0)*18/12}, {2.0+275.0*12/700});
-\node[safe, font=\footnotesize\bfseries] at (17.0, {2.0+300*12/700}) {0.90·k6 Safest};
+\node[safe, font=\footnotesize\bfseries] at (14.0, {2.0+443*12/700}) {0.90·k6 Safest};
 
 % ── 0.85/k2 (Light blade — safe k, kickstart) ──
 % 5+7 m/s: 0 kW (below cut-in)
@@ -109,20 +101,20 @@
 \pgfmathsetmacro{\dx}{2.0 + (15.0-4.0)*18/12}
 \pgfmathsetmacro{\dy}{2.0 + 225.2*12/700}
 \fill[light] (\dx, \dy) circle (3.5pt);
-\node[font=\tiny, light, above] at (\dx, \dy+0.25) {FoS 11.9};
+\node[font=\tiny, light, below right] at (\dx+0.1, \dy-0.15) {FoS 11.9};
 
 \draw[light, line width=1.8pt]
   ({2.0+(9.0-4.0)*18/12}, {2.0+43.8*12/700}) --
   ({2.0+(11.0-4.0)*18/12}, {2.0+117.4*12/700}) --
   ({2.0+(13.0-4.0)*18/12}, {2.0+150.0*12/700}) --
   ({2.0+(15.0-4.0)*18/12}, {2.0+225.2*12/700});
-\node[light, font=\footnotesize\bfseries] at (10.5, {2.0+250*12/700}) {0.85·k2 Light blade};
+\node[light, font=\footnotesize\bfseries] at (13.8, {2.0+92*12/700}) {0.85·k2 Light blade};
 
-% Power-limited annotation
+% Power-limited annotation (moved off the x-axis ticks into the empty low-wind area)
 \pgfmathsetmacro{\px}{2.0 + (9.0-4.0)*18/12}
 \pgfmathsetmacro{\py}{2.0 + 43.8*12/700}
-\draw[light!60, thin] ({\px-1.5}, {\py-1.0}) -- (\px, \py-0.2);
-\node[font=\tiny, light!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\px-3.5}, {\py-1.5})
+\draw[light!60, thin] (6.8, 4.1) -- (\px, \py+0.2);
+\node[font=\tiny, light!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at (5.2, 4.6)
   {With k=1.82 (power-limited):\\P=45 kW, FoS=7.9\\→ capping at 50 kW feasible};
 
 % ── POWER-LIMITED CURVE (0.85 blade, k-adaptive, P≈50kW) ──
@@ -150,7 +142,7 @@
   ({2.0+(11.0-4.0)*18/12}, {2.0+50*12/700}) --
   ({2.0+(13.0-4.0)*18/12}, {2.0+50*12/700}) --
   ({2.0+(15.0-4.0)*18/12}, {2.0+50*12/700});
-\node[light!70, font=\footnotesize\bfseries] at (14.0, {2.0+60*12/700}) {Power-limited (k-adaptive)};
+\node[light!70, font=\footnotesize\bfseries] at (14.0, {2.0+18*12/700}) {Power-limited (k-adaptive)};
 
 % Annotation explaining power-limited curve
 \pgfmathsetmacro{\ax}{2.0 + (15.0-4.0)*18/12}
@@ -160,9 +152,9 @@
   {k drops from 1.82→0.51\\as wind increases.\\Very low generator load\\→ FoS estimated very high.\\ODE-stiff region —\\analytical estimate shown.};
 
 % ── 0.95/k4 (Sweet spot) ──
-\dpt{9}{82.6}{5.1}{sweet}{above right}
+\dpt{9}{82.6}{5.1}{sweet}{below right}
 \dpt{11}{163.2}{3.9}{sweet}{right}
-\dpt{13}{291.2}{30.7}{sweet}{above}
+\dpt{13}{291.2}{30.7}{sweet}{above left}
 \dpt{15}{344.3}{10.4}{sweet}{above right}
 
 \draw[sweet, line width=1.8pt]
@@ -170,12 +162,13 @@
   ({2.0+(11.0-4.0)*18/12}, {2.0+163.2*12/700}) --
   ({2.0+(13.0-4.0)*18/12}, {2.0+291.2*12/700}) --
   ({2.0+(15.0-4.0)*18/12}, {2.0+344.3*12/700});
-\node[sweet, font=\footnotesize\bfseries] at (14.0, {2.0+380*12/700}) {0.95·k4 Sweet spot};
+\draw[sweet!60, thin] (19.0, 7.45) -- (18.65, 7.80);
+\node[sweet, font=\footnotesize\bfseries] at (19.9, 7.25) {0.95·k4 Sweet spot};
 
 % ── 1.10/k4 (Max power) ──
 \dpt{5}{5.6}{11.0}{maxp}{above}
 \dpt{7}{65.4}{15.3}{maxp}{above}
-\dpt{9}{128.9}{3.5}{maxp}{below}
+\dpt{9}{128.9}{3.5}{maxp}{above left}
 \dpt{11}{297.2}{5.3}{maxp}{above right}
 % 13 m/s — the DIP
 \pgfmathsetmacro{\dx}{2.0 + (13.0-4.0)*18/12}
@@ -208,11 +201,11 @@
 % ANNOTATIONS — story of the curve shapes
 % ═══════════════════════════════════════════════════════════════
 
-% Annotation 1: FoS dip at 9 m/s for 1.10/k4
+% Annotation 1: FoS dip at 9 m/s for 1.10/k4 (moved off the purple curve into the low-wind gap)
 \pgfmathsetmacro{\ax}{2.0 + (9.0-4.0)*18/12}
 \pgfmathsetmacro{\ay}{2.0 + 128.9*12/700}
-\draw[maxp!60, thin] ({\ax+0.5}, {\ay-0.8}) -- (\ax, \ay-0.15);
-\node[font=\tiny, maxp!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\ax+2.5}, {\ay-1.0})
+\draw[maxp!60, thin] (8.85, 2.88) -- (9.45, 3.95);
+\node[font=\tiny, maxp!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at (7.6, 2.48)
   {FoS dips to 3.5\\at 9 m/s — structural\\warning for large blades};
 
 % Annotation 2: The 1.10/k4 bifurcation
@@ -222,11 +215,11 @@
 \node[font=\tiny, maxp!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\bx+1.5}, {\by-0.5})
   {Bifurcation: system\\finds higher equilibrium\\at 15 m/s — 657 kW};
 
-% Annotation 3: 0.90/k6 structural ceiling
+% Annotation 3: 0.90/k6 structural ceiling (moved below the purple curve, off the right-edge labels)
 \pgfmathsetmacro{\cx}{2.0 + (15.0-4.0)*18/12}
 \pgfmathsetmacro{\cy}{2.0 + 275.0*12/700}
-\draw[safe!60, thin] ({\cx+1.2}, {\cy-0.6}) -- (\cx, \cy-0.15);
-\node[font=\tiny, safe!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at ({\cx+2.5}, {\cy-1.0})
+\draw[safe!60, thin] (17.3, 4.45) -- (\cx, {\cy-0.2});
+\node[font=\tiny, safe!80, align=left, fill=white, fill opacity=0.85, text opacity=1] at (17.3, 3.9)
   {Structural ceiling —\\power drops from 407→275 kW\\as ring compression\\limits engage};
 
 % Annotation 4: 0.95/k4 equilibrium jump
@@ -257,7 +250,7 @@
 \fill[maxp] (3.5, 0.35) circle (3pt);
 \node[font=\tiny, anchor=west] at (4.5, 0.35) {1.10·k4 Max power — bifurcates at 13 m/s ($\rightarrow$dashed), jumps to 657 kW @ 15 m/s};
 
-\node[font=\tiny, black!40, anchor=south east] at (19.8, 0.7) {KTD.jl · V10-Spoke · wind\_sweep.csv};
+\node[font=\tiny, black!40, anchor=south east] at (20.3, 0.25) {KTD.jl · V10-Spoke · wind\_sweep.csv};
 
 \end{tikzpicture}
 \end{document}

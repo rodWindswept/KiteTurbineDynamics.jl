@@ -16,7 +16,7 @@ Every confirmed instrument fault with its fix commit, so neither instance re-dis
 | 2026-07-22 | Missing orbital-velocity init | Uniform FoS=0.03-0.08 band; 260 kW above Betz ceiling; P_range 218-1793 kW | Warm-start set ring ω=ω_eq but node velocities stayed at zero → kinematically impossible state | `9bd3f67`: added tangential `v=ω_eq×r` block per `recheck_12gon_convergence.jl:74-84` |
 | 2026-07-22 | Wrong protocol in anchor batch | k_best → 1000 bound; LHS 0/40 valid; overnight batch produced garbage | `recampaign_anchors.jl:100` called `warmstart_with_k_bracket` (flawed fast path) instead of full-protocol fallback | Superseded anchors.csv with banner; batch not yet re-run |
 | 2026-07-22 | Forward Euler blowup on k·ω² MPPT | 1000-1900 kW super-Betz spikes; FoS floor 0.04-0.13 across all k | `simulation.jl:159` — explicit Euler on positive-feedback `τ=k·ω²` term, no magnitude cap | `d285139`: semi-implicit ground-ring update `ω' = (ω+dt·τ_other/I)/(1+dt·k·ω/I)` |
-| 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539` — `v_orbital + lin_damp * v_osc` applied per-step without dt scaling; halving dt doubles projections | PENDING: run `lin_damp=0` refinement → confirm → apply dt-scaled fix |
+| 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539` — `v_orbital + lin_damp * v_osc` applied per-step without dt scaling; halving dt doubles projections | `f71c7a0`: exponential retention `v_osc·exp(−rate·dt)` replacing per-step projection. Damping-rate sensitivity gate queued. |
 
 ---
 
@@ -115,7 +115,5 @@ wind = 11.0 m/s    (rated wind speed)
 power_W = 50000    (rated power)
 v_rated = 11.0     (rated wind)
 elev_angle = π/6   (30°)
-spokes = OFF       (SpokeParams(enabled=false) for structural-only runs)
-FOS_DESIGN = 1.5   (minimum acceptable FoS)
-lin_damp = 0.05    (must be dt-scaled — see fault ledger)
+spokes = ON        (SpokeParams(enabled=true) — Rod's 2026-07-06 radial-tie\n                    design change; 31 scripts at HEAD use enabled=true.\n                    Structural-only runs that deliberately suppress spokes\n                    must document the override.)\nFOS_DESIGN = 1.5   (minimum acceptable FoS)\nlin_damp = 0.05    (dt-scaled fix applied at f71c7a0 — see fault ledger;\n                    damping-rate sensitivity gate queued — rate is unanchored,\n                    ~75,000/s → 13 µs time constant = near-rigid slaving.\n                    Vary lin_damp 0.01–0.2; if power/FoS/ranking move\n                    materially, damping joins α-constants on the list of\n                    things needing physical justification before external\n                    claims.)
 ```

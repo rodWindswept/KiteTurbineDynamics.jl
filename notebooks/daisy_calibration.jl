@@ -8,7 +8,7 @@ using InteractiveUtils
 begin
 	import Pkg
 	Pkg.develop(path=joinpath(@__DIR__, ".."))
-	using KiteTurbineDynamics, Printf, PlutoUI, LinearAlgebra
+	using KiteTurbineDynamics, Printf
 	include(joinpath(@__DIR__, "..", "scripts", "daisy_builder.jl"))
 end
 
@@ -33,11 +33,12 @@ turns green when ready.*
 # ╔═╡ 00000000-0000-0000-0000-000000000005
 begin
 	sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
+	kval = round(sys.k_mppt_ref[], digits=4)
 	md"""
 	**Built successfully.**  
 	$(sys.n_total) nodes · $(sys.n_ring) rings · $(p.n_lines) tethers  
 	Hub ring: $(p.trpt_hub_radius) m · TRPT length: $(p.tether_length) m · Elevation: 28°  
-	k_mppt = $(round(sys.k_mppt_ref[], digits=4)) · CDt = $(p.cdt) (Tulloch calibrated tether drag)
+	k_mppt = $(kval) · CDt = $(p.cdt) (Tulloch calibrated tether drag)
 	"""
 end
 
