@@ -1,95 +1,121 @@
-# Simulation Instrument Trust Log — shared cross-instance memory
+# Instrument Trust Log
 
-**Purpose.** Two Claude/Hermes instances (Rod's laptop Cowork, the desktop
-remote) cannot see each other's private memory. Git is the only shared channel.
-This file is the single source of truth for *how far the simulator can be
-trusted right now* and *which numbers are contaminated*. Update it by commit
-whenever instrument state changes; read it at session start (add to CLAUDE.md
-"Essential Reads"). Same discipline as the doc-staleness work: version-controlled,
-one source of truth, no per-instance divergence.
+**Purpose:** Shared cross-instance truth source for both Hermes instances (laptop + desktop) working on KiteTurbineDynamics.jl.  Durable state lives version-controlled, not in either instance's private memory.  Read at session start.
 
-**Rule of use.** Before quoting ANY absolute number (kW, FoS, ω) from a sweep,
-check it against §2 (trust state) and §3 (sanity bounds). A number that violates
-a sanity bound is an instrument reading, not a datum — no matter how converged
-the run looked.
+**Last updated:** 2026-07-22
 
 ---
 
-## 1. Current headline state (2026-07-22, laptop instance)
+## Fault Ledger
 
-- The V10/V11 **integrator is NOT converged under timestep refinement.**
-  DT/DT2/DT4 at k=60 diverge (post semi-implicit fix: 6 kW / 2216 kW / 5224 kW).
-  **Do not run production sweeps or draw design verdicts until refinement
-  converges (DT ≈ DT/2 ≈ DT/4).**
-- Leading cause (high-confidence, code-read, not yet run-confirmed):
-  `orbital_damp_rope_velocities!` (`src/initialization.jl:539`) applies a
-  **per-step, dt-independent** velocity projection `v_orbital + lin_damp·v_osc`.
-  Per-step operators diverge as dt→0 — matches the observed "worse with smaller
-  dt" signature, which classic stiffness cannot produce.
-- Confirming experiment (cheap, ~1 h): re-run DT/DT2/DT4 refinement with
-  `lin_damp = 0`. If divergence-under-refinement vanishes → confirmed the
-  damping operator. Fix = dt-scale the retention: `v_osc·(1 − rate·dt)` or
-  `v_osc·exp(−rate·dt)`.
-- **"Clean at production DT" ≠ trustworthy.** It is a single-point coincidence
-  below the operator's tolerance, not a converged result.
+Every confirmed instrument fault with its fix commit, so neither instance re-discovers a fixed bug.
 
-## 2. Instrument fault ledger
+| Date | Fault | Symptom | Root Cause | Fix Commit |
+|------|-------|---------|-----------|------------|
+| 2026-07-22 | FoS sign inversion | DE rewarded structural failure (fitness 50× better at FoS 0.03) | `fitness = -P * fos_penalty` with `fos_penalty > 1` when failing | `9bd3f67`: `*` → `/`; extracted `v11_fitness()` with monotonicity unit tests |
+| 2026-07-22 | Missing orbital-velocity init | Uniform FoS=0.03-0.08 band; 260 kW above Betz ceiling; P_range 218-1793 kW | Warm-start set ring ω=ω_eq but node velocities stayed at zero → kinematically impossible state | `9bd3f67`: added tangential `v=ω_eq×r` block per `recheck_12gon_convergence.jl:74-84` |
+| 2026-07-22 | Wrong protocol in anchor batch | k_best → 1000 bound; LHS 0/40 valid; overnight batch produced garbage | `recampaign_anchors.jl:100` called `warmstart_with_k_bracket` (flawed fast path) instead of full-protocol fallback | Superseded anchors.csv with banner; batch not yet re-run |
+| 2026-07-22 | Forward Euler blowup on k·ω² MPPT | 1000-1900 kW super-Betz spikes; FoS floor 0.04-0.13 across all k | `simulation.jl:159` — explicit Euler on positive-feedback `τ=k·ω²` term, no magnitude cap | `d285139`: semi-implicit ground-ring update `ω' = (ω+dt·τ_other/I)/(1+dt·k·ω/I)` |
+| 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539` — `v_orbital + lin_damp * v_osc` applied per-step without dt scaling; halving dt doubles projections | PENDING: run `lin_damp=0` refinement → confirm → apply dt-scaled fix |
 
-| Fault | Location | Status | Commit |
-|---|---|---|---|
-| x-vector packing scramble (phantom triangle) | builders_util.jl | FIXED | cfd2128 |
-| Expansion rotor: no induction + fixed CL (energy non-conservation) | expansion_rotor.jl | FIXED (default ON) | 234a722 |
-| Blade inertia zero + mass missing n_blades | expansion_rotor.jl, ring_forces.jl | FIXED | Gate 2b |
-| v11 fitness sign inverted (rewarded FoS failure) | objective_v11.jl:214,357 | FIXED | 9bd3f67 |
-| Warm-start init missing orbital velocities (shock → false FoS floor) | objective_v11.jl | FIXED | 9bd3f67 |
-| warmstart tuple-shift (8 returns, 7 unpacked) | objective_v11.jl | FIXED | 9029591 |
-| Forward-Euler blowup on k·ω² braking (super-Betz, FoS floor) | simulation.jl / ring_forces | PARTIAL — semi-implicit at DT only | d285139 |
-| **Per-step dt-independent rope damping (refinement divergence)** | initialization.jl:539 | **OPEN — leading suspect** | — |
-| "settled" = endpoint drift<15% (passes designs oscillating >200 kW mid-window) | objective_v11.jl | OPEN — needs stationarity-of-windowed-stats | — |
-| V10 gate axial-only FoS vs V11 combined axial+bending | objective_v10 vs ring_element_analysis | OPEN — δ̂_FoS must bridge; correction is large not small | — |
+---
 
-## 3. Sanity bounds (a violation = broken state, discard the sample)
+## Detection Pattern: Instrument Floor
 
-- **Betz ceiling** (corrected physics): triangle ~97 kW @ 11 m/s / ~247 @ 15;
-  12-gon ~62 kW @ 11 m/s. Any P above this is numerical, not aerodynamic.
-  Log `P_aero` alongside `P_gen` so energy balance is checkable directly.
-- **Tip speed:** ω·r_tip ≫ ~100 m/s is unphysical (30 rad/s on a 5 m rotor =
-  ~900 m/s — the "get a grip" line). Kickstart ω targets must respect this.
-- **FoS constant across varying k / P** = instrument floor, not structure
-  (validated 3× this week). Real FoS varies with load.
-- **k_best pinned to a bracket bound** = the bracket is selecting for failure or
-  the optimum is outside the bracket — never accept a boundary optimum.
+**Rule:** A metric that is uniform across conditions that SHOULD change it is an instrument floor, not a design finding.
 
-## 4. Canonical configuration (code intent — routines must match)
+Three validated examples (this week):
+1. **Warm-start FoS:** 0.028-0.075 for designs spanning 39-260 kW → initialization shock, not structure
+2. **k-bracket selecting failure:** k_best→1000 bound because sign inversion made failing designs score better
+3. **FoS-vs-k sweep:** FoS 0.04-0.13 across k=20-80 despite power varying 1.3-17.7 kW → integrator blowup, not ring strength
 
-- Physics default: `EXPANSION_PHYSICS` ON. Legacy reproduction pins
-  `LEGACY_PHYSICS_PRE_2026_07_18` (induction+inertia+corrected_mass all OFF).
-  Every script reproducing a pre-234a722 CSV MUST pin; new work uses default.
-- FoS = 1/utilisation, combined beam-column, min over airborne rings
-  (`capture_extended → ring_fos`). Min-over-window aliases on limit-cycling
-  systems — report windowed statistics (mean ± range) with drift checks, never
-  a single snapshot.
-- Credible dynamic FoS needs the full protocol (settle → kick → window), and
-  now also a **converged** integrator (see §1).
-- Every results CSV carries: git hash, physics-era, geometry fingerprint
-  (n_lines, rings, r_hub, r_bottom, per-rotor blade count/tip/chord/area/mass).
+**Also: P > Betz ceiling → broken state, not data point.** 1000+ kW from a ~97 kW machine is physically impossible.
 
-## 5. Superseded artifacts (do not read as data)
+---
 
-- `scripts/results/recampaign/anchors.csv` — inverted fitness, shocked warm-start
-  states, k-bracket selecting for failure. Evidence only; banner in place.
-- All pre-234a722 absolute kW (kickstart/wind/catalog sweeps, headless_verify,
-  dynamic_verification.txt) — pre-induction, inflated. Relative/qualitative
-  findings survive; absolutes do not.
-- Strathclyde-shared 117 kW figure: reproducible sim of a now-specified triangle,
-  ~6× optimistic vs corrected ceiling. Follow-up drafted
-  (`docs/outreach/strathclyde_followup_draft.md`).
+## Sanity Bounds (Hard Discard Rules)
 
-## 6. Cross-check heuristics (Rod's, keep applying)
+Any result triggering these is discarded without analysis:
 
-1. A metric uniform across conditions that should change it = broken instrument.
-2. Any P > Betz anywhere in a trace = the whole trace is suspect.
-3. Search existing CSVs before launching a new sweep.
-4. Divergence-under-refinement = numerical; convergence-under-refinement = trust.
-5. Both over-corrections are wrong: "design dead at any k" AND "just numerics,
-   design fine." Fix the instrument, THEN ask what the design does.
+| Check | Threshold | Action |
+|-------|-----------|--------|
+| P_aero > Σ-annulus Betz ceiling | ~97 kW for 12-gon, 5m rotor | Discard sample; integrator instability |
+| ω·r_tip > sane tip speed | ~200 m/s (~380 rpm at 5m) | Discard sample; numerical blowup |
+| FoS identical (±20%) across >3 k values | — | Instrument floor; don't draw structural conclusions |
+| P_range / P_mean > 10 | — | Limit-cycling; not a steady-state measurement |
+| dt-refinement: DT vs DT/2 vs DT/4 diverge | — | Integrator not converged; results at any single dt cannot be trusted |
+
+---
+
+## DT-Refinement Outcomes
+
+The three possible results of a DT/DT2/DT4 comparison:
+
+| Outcome | Spikes/FoS as dt→0 | Meaning | Action |
+|---------|---------------------|---------|--------|
+| Convergent | Vanish toward zero | 100% numerical — integrator issue | Fix integrator; result at one dt is the wrong number |
+| Persistent | Unchanged within 10% | Genuine dynamics (stiff physical process) | Physics question, not numerical |
+| Divergent | Get WORSE with smaller dt | dt-unscaled operator (e.g., per-step projection) | Fix dt-scaling on the operator; result at any dt is coincidental |
+
+Our k=60 case: **Divergent** — 2→57→88 super-Betz samples, P_max 38→2798→∞ kW. This is the textbook signature of a dt-unscaled per-step operator, not a CFL limit and not a stiff physical process.
+
+---
+
+## Fix Hierarchy
+
+1. **dt-scale per-step projections first.** These are the first-order culprits — they produce divergence-under-refinement that masks everything else.
+2. **Semi-implicit on positive-feedback terms.** Second-order after projections are scaled. Prefer over global dt reduction (4× slower) and reject-and-flag (hides instability instead of removing it).
+3. **Then DT-refinement.** After both fixes, DT ≈ DT/2 ≈ DT/4 must hold. Only then can a single-dt result be trusted.
+
+---
+
+## Both Over-Corrections Pitfall
+
+| Wrong | Why |
+|-------|-----|
+| "Structurally dead at any k" | Reads the blowup as design property; k=40 already falsified this (0/301 FoS dips) |
+| "Fine, just numerics" | Assumes the fix reveals power that may not be there; low-k stable but low-power (~1.6 kW) |
+
+The truth sits between: the instrument was broken, the design is unmeasured, the real operating envelope is unknown until the integrator converges under refinement.
+
+---
+
+## Pre-Flight Checklist (Before Any Batch Launch)
+
+- [ ] `git pull` — sync with other instance
+- [ ] `julia --project=. test/test_objective_v11.jl` — pure unit tests pass
+- [ ] `v11_fitness()` monotonicity test passes (worse FoS → worse fitness)
+- [ ] Warm-start uses BOTH ω AND tangential v init
+- [ ] Full protocol uses `settle_to_operational_state` (not plain settle)
+- [ ] DT-refinement pass at target k: DT≈DT/2≈DT/4 within 15%
+- [ ] No super-Betz P_aero samples at production DT
+- [ ] FoS varies with k (not uniform) — confirms instrument is measuring structure, not floor
+- [ ] `lin_damp` is dt-scaled (confirmed or fixed)
+- [ ] Provenance stamp on output CSV: git hash, physics-era, geometry fingerprint, instrument version
+
+---
+
+## Superseded Artifacts
+
+| File | Status | Reason |
+|------|--------|--------|
+| `anchors_SUPERSEDED_2026-07-21.csv` | Banner, retained as evidence | Inverted fitness, shocked states, k-bracket selecting for failure |
+| `k_sweep_full_20260721_1612.csv` | Banner, retained as evidence | Pre-semi-implicit-fix; FoS floor is integrator blowup |
+| `kickstart_sweep_12gon.csv` (2026-07-17) | Reference only | Different protocol (30 rad/s kickstart), not comparable |
+
+---
+
+## Canonical Config
+
+Settings that must match between instances for results to be comparable:
+
+```
+DT = 4e-5          (production timestep; V11_DT)
+wind = 11.0 m/s    (rated wind speed)
+power_W = 50000    (rated power)
+v_rated = 11.0     (rated wind)
+elev_angle = π/6   (30°)
+spokes = OFF       (SpokeParams(enabled=false) for structural-only runs)
+FOS_DESIGN = 1.5   (minimum acceptable FoS)
+lin_damp = 0.05    (must be dt-scaled — see fault ledger)
+```

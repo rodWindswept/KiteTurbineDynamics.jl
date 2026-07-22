@@ -107,3 +107,4 @@ Additional skills load as needed: `ktd-headless-analysis`, `ktd-controller-analy
 | `scripts/builders_util.jl` | GUI-free system builders |
 | `DECISIONS.md` | 2,252-line decision log |
 | `CONTEXT.md` | Domain vocabulary + architecture |
+| `docs/agents/instrument-trust-log.md` | Fault ledger, sanity bounds, pre-flight checklist |
