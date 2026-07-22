@@ -471,7 +471,7 @@ function set_orbital_velocities!(
 end
 
 """
-    orbital_damp_rope_velocities!(u, sys, p, lin_damp)
+    orbital_damp_rope_velocities!(u, sys, p, lin_damp, dt)
 
 Apply oscillation-damping to rope nodes while preserving their orbital velocity.
 
@@ -487,7 +487,7 @@ suppressed orbital rotation (requiring O(1e5) m/s² of force to sustain it) and
 caused the hub to decelerate and reverse despite positive aero torque.
 """
 function orbital_damp_rope_velocities!(
-    u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams, lin_damp::Float64
+    u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams, lin_damp::Float64, dt::Float64
 )
     N = sys.n_total
     Nr = sys.n_ring
@@ -536,7 +536,12 @@ function orbital_damp_rope_velocities!(
 
             bv = 3N + 3*(gid - 1) + 1
             v_osc = @view(u[bv:(bv + 2)]) .- v_orbital
-            u[bv:(bv + 2)] .= v_orbital .+ lin_damp .* v_osc
+            # dt-scaled retention: lin_damp was calibrated at dt=4e-5.
+            # For any dt, retention = exp(-rate * dt) where
+            # rate = -log(lin_damp) / 4e-5 gives dt-independent damping.
+            _rate = -log(max(lin_damp, 1e-10)) / 4e-5
+            _retain = exp(-_rate * dt)
+            u[bv:(bv + 2)] .= v_orbital .+ _retain .* v_osc
         end
     end
 end
@@ -606,7 +611,7 @@ function simulate(
         @views u[(6N + Nr + 1):(6N + 2Nr)] .+= dt .* du[(6N + Nr + 1):(6N + 2Nr)]
         @views u[(6N + 1):(6N + Nr)] .+= dt .* u[(6N + Nr + 1):(6N + 2Nr)]
 
-        orbital_damp_rope_velocities!(u, sys, p, lin_damp)
+        orbital_damp_rope_velocities!(u, sys, p, lin_damp, dt)
         @views u[(6N + Nr + 1):(6N + 2Nr)] .*= ang_damp
 
         # Bearing transverse damping: damp only the velocity component perpendicular
@@ -854,10 +859,9 @@ function settle_to_operational_state(
             # Damp rope nodes with the orbital-preserving damper (same as
             # the simulation loop) — trains rope positions/velocities to be
             # consistent with orbital motion so the first sim frame is smooth.
-            orbital_damp_rope_velocities!(u_start, sys, p, 0.05)
+            orbital_damp_rope_velocities!(u_start, sys, p, 0.05, dt_op)
 
             # Ring centres should not drift during the settle — zero their
-            # translational velocities explicitly.  (orbital_damp only touches
             # RopeNodes; ring translational DOFs are free otherwise.)
             for k in 1:Nr
                 gid = sys.ring_ids[k]

@@ -1,0 +1,3 @@
+# script:hunt_kmppt_bisect @ 6f6d940 · builder:leak_test · date:2026-07-07T21:12:01 · max_power:true
+v_wind,k_mppt,P_kw,ω_rpm,min_fos,collapse_margin_deg,max_twist_deg,T_max_kN,reached_rated,status,P_aero_kw,P_loss_kw,P_static_kw,consistency,closure_pct,converged
+11.0,2.0,76.60015774978079,344.20626765548053,0.17318883539124874,33.45198421327799,17.8561177346835,27.796428061906308,true,FoS_fail,117.45730130172623,40.85714355194544,24.779690162553326,0.0008178195572604357,0.0,false

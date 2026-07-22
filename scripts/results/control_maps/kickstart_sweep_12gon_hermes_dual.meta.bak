@@ -1,0 +1,23 @@
+# kickstart_sweep_12gon — generated 2026-07-17 17:38:25
+# git=6dc67e6dfa31b0d00e32a97333f219c8ee824b21
+# protocol: settle → kick ω=30 rad/s → 30.0s k=0 → 60.0s MPPT @ 11.0 m/s, spokes ON
+# K_VALUES=[4.0, 8.0, 16.0, 32.0, 62.0, 128.0]
+# BLADES=[0.69, 0.75, 0.8, 0.85]
+# --- fingerprint at blade_scale=1.0 (V10 12-gon 10 rings (3 expansion rotors)) ---
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=1.0 hub_disk_radius=5.0m
+# rotor1: ring=5 n_blades=12 tip=1.226m chord=0.198m span=1.752m area=4.161m² bank=25.0° mass=0.423kg
+# rotor2: ring=8 n_blades=12 tip=1.665m chord=0.269m span=2.378m area=7.67m² bank=25.0° mass=0.466kg
+# rotor3: ring=12 n_blades=12 tip=2.091m chord=0.338m span=2.987m area=12.098m² bank=25.0° mass=0.509kg
+# total_blade_area=23.929m² total_blade_mass=16.778kg n_rotors=3
+# --- fingerprint at blade_scale=0.85 (V10 12-gon 10 rings blade×0.85 (3 expansion rotors)) ---
+# geometry_fingerprint
+# n_lines=12 n_rings=10 tether_length=67.08m
+# r_hub=2.8885m r_bottom=2.0m taper=0.692
+# blade_scale=0.85 hub_disk_radius=4.25m
+# rotor1: ring=5 n_blades=12 tip=1.042m chord=0.168m span=1.489m area=3.006m² bank=25.0° mass=0.248kg
+# rotor2: ring=8 n_blades=12 tip=1.415m chord=0.228m span=2.022m area=5.541m² bank=25.0° mass=0.271kg
+# rotor3: ring=12 n_blades=12 tip=1.777m chord=0.287m span=2.539m area=8.741m² bank=25.0° mass=0.293kg
+# total_blade_area=17.289m² total_blade_mass=9.753kg n_rotors=3

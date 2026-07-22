@@ -1,0 +1,5 @@
+k=62 regression — corrected 12-gon (Gate A, soft)
+git=cfd2128  date=Fri 17 Jul 2026 14:17:49 BST
+label: V10 12-gon 10 rings (4 expansion rotors)
+── geometry fingerprint ──
+n_lines=12  n_rings=10  n_blades_main=12  r_hub=2.889  r_bot=2.0  hub_disk_R=5.0  tether=67.08

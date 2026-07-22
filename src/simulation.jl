@@ -185,7 +185,7 @@ function run_canonical_sim!(
         end
 
         if lin_damp > 0.0
-            orbital_damp_rope_velocities!(u, sys, p, lin_damp)
+            orbital_damp_rope_velocities!(u, sys, p, lin_damp, dt)
         end
 
         u[1:3] .= 0.0   # ground ring centre stays at origin
@@ -485,7 +485,7 @@ function run_pitch_depower!(
             alpha_view[ri] = 0.0
         end
 
-        orbital_damp_rope_velocities!(u, sys, p_step, 0.05)
+        orbital_damp_rope_velocities!(u, sys, p_step, 0.05, dt)
 
         # PTO co-braking: damp all ring angular velocities (only in pure MPPT mode 0)
         if release_frac > 0.0 && round(damping_mode) ≈ 0.0

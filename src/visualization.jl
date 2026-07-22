@@ -1038,7 +1038,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
                 apply_brake_constraint!(u, sys, N, Nr)
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
-                orbital_damp_rope_velocities!(u, sys, p_run, 0.05)
+                orbital_damp_rope_velocities!(u, sys, p_run, 0.05, dt)
                 # PTO co-braking during depower: damp all ring angular velocities
                 # proportionally to how far through the Pitch Depower we are.
                 if scenario == :pitch_depower && release_frac > 0.0 && round(p_run.β_rate_max) ≈ 0.0
