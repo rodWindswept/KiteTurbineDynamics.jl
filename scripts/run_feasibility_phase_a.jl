@@ -211,10 +211,11 @@ function differential_evolution(pop, fit, gen)
         end
 
         # Decode metadata
+        nl = 0; na = 0
         try
             r = KiteTurbineDynamics.design_from_vector_v10(trial[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             nl = r.design.n_lines; na = r.n_active
-        catch; nl = 0; na = 0; end
+        catch; end
         save_row(gh, trial, nl, na, f_feas > 10 ? Inf : f_feas, 0.0,
                  P_mean, FoS_min, 60.0, 0.0, false, false, ua, ub, f_feas, tier, gen)
 
@@ -278,11 +279,13 @@ function main()
         eval_count += 1
         @printf("[seed %d] %s  P=%.1f FoS=%.3f f_feas=%.3f tier=%s\n",
             eval_count, gh[1:8], P, FoS, f_feas, tier)
+        nl = 0; na = 0
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
-            save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
-                     P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
+            nl = r.design.n_lines; na = r.n_active
         catch; end
+        save_row(gh, x, nl, na, f_feas > 10 ? Inf : f_feas, k,
+                 P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
     end
 
     # Fill to pop size with random
@@ -297,11 +300,13 @@ function main()
         eval_count += 1
         @printf("[init %d] %s  P=%.1f FoS=%.3f f_feas=%.3f tier=%s\n",
             eval_count, gh[1:8], P, FoS, f_feas, tier)
+        nl = 0; na = 0
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
-            save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
-                     P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
+            nl = r.design.n_lines; na = r.n_active
         catch; end
+        save_row(gh, x, nl, na, f_feas > 10 ? Inf : f_feas, k,
+                 P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
     end
 
     println("\nInitial population: $(length(pop))  Evals so far: $eval_count\n")
