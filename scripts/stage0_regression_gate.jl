@@ -10,7 +10,7 @@ spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
 x_k40 = copy(X12)
 
 # Warmstart path
-f_ws, P_ws, FoS_ws, ω_ws, P_range_ws, drifted_ws =
+f_ws, P_ws, FoS_ws, ω_ws, P_range_ws, drifted_ws, stationary_ws =
     objective_v11_warmstart(x_k40, PROFILE_ELLIPTICAL, p; spoke=spoke)
 
 # Full protocol path
