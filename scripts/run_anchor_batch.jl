@@ -279,10 +279,10 @@ function evaluate_anchor(x::AbstractVector, source::String)
         warmstart_with_k_bracket(x, BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED, spoke=SP)
     catch e
         @warn "warmstart failed for $gh" exception=e
-        (1e9, 0.0, 0.0, Inf, 0.0, 0.0, true, false)
+        (1e9, 0.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
-    
-    f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drift, stationary = result
+
+    f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drift, stationary, util_a, util_b = result
     
     # ── Decode for metadata ──
     n_active = 0

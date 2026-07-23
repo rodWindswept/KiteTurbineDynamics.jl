@@ -89,7 +89,7 @@ function main()
         println("  FIX: if warmstart path is ≤2GB, the excess is ring_element_analysis")
         println("  inside capture_extended.  Option: compute FoS on sample subset only.")
     else
-        println("FINDING: per-sample allocation ${per_sample:.0f} MB — reasonable.")
+        println("FINDING: per-sample allocation ", round(Int, per_sample), " MB — reasonable.")
         println("  38GB likely comes from settle_to_operational_state accumulation.")
     end
 end
