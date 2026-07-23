@@ -2928,3 +2928,45 @@ Betz ceiling in header). 12-gon recheck (150 s, running as of this entry) gets
 the same P_aero treatment in a follow-up batch once its current run completes —
 its schema can't change mid-run.
 
+### [2026-07-23] Phase 2 correlation gate: RED — δ̂ multi-fidelity path abandoned, campaign goes v11-direct
+
+**Context:** Phase 2 of `docs/plans/multifidelity_recampaign.md` — Spearman ρ
+between f_v10 (static solver) and f_v11 (warmstart dynamic) ranks on the
+50-anchor batch (`scripts/results/recampaign/anchors.csv`, commit 1acaaa2,
+physics era post-234a722_corrected-physics_ON).
+
+**Verdict: RED.** ρ ≈ −0.2 to −0.3 depending on validity filter (Julia gate
+run: −0.29 all-rows; scipy cross-check: −0.240 all-rows, −0.184 on the
+29-row valid subset [P > 1 kW, finite FoS]). Per-stratum values are noise
+(n = 3–13 per stratum; only n_lines=8 is nominally significant at ρ = −0.86/
+−0.90, p ≈ 0.04). Every variant is far below the 0.4 RED threshold. Verdict
+is robust to filter choice.
+
+**Root-cause refinement (found during verification, sharper than the plan's
+RED wording):** all 50/50 anchors have f_v10 > 1e6 — every single one is in
+a penalty branch of `src/objective_v10.jl` (gates 2–6b: buckling/torsional
+FoS, tether FoS, overtwist, slack). The f_v10 spread across anchors is
+~6×10³ on a 10⁶ base. So the gate did not compare two smooth objectives; it
+compared v10 penalty-branch residuals (mass × penalty_mult) against v11
+dynamic scores. Penalty residuals were never designed to rank designs, so
+anti-correlation is unsurprising. Two consequences:
+
+1. The claim "the static solver cannot proxy the ODE" is **not established**
+   for feasible designs — there are no feasible designs in the sample to
+   test it on. What IS established: both instruments independently agree the
+   entire 50-anchor LHS sample is structurally infeasible (v10: 50/50 in
+   penalty branches; v11: best FoS 0.48 vs gate 1.5).
+2. The δ̂ plan is dead either way. A surrogate fitted on penalty residuals
+   ranks noise; a surrogate with no feasible anchors cannot steer a DE
+   toward a feasible region it has never seen.
+
+**Decision (per the plan's pre-authorized RED clause):** STOP Phase 3/4 as
+designed. The campaign must run v11-direct — small budget, elite-only,
+hybrid periodic-check scheme. Additionally, given 0/50 random designs pass
+the FoS gate, the v11-direct campaign should treat **feasibility recovery as
+phase one** (constraint satisfaction before power optimization) rather than
+optimizing power under a gate nothing satisfies.
+
+**Artifacts:** `scripts/results/recampaign/anchors.csv` (50 rows, committed
+1acaaa2). Verification cross-check run 2026-07-23 (scipy.stats.spearmanr).
+
