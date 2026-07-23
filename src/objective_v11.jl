@@ -255,7 +255,7 @@ function objective_v11_warmstart(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
     )
     if result.n_active == 0
-        return (1e9, 0.0, Inf, 0.0, 0.0, true)
+        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
 
     k_mppt = 10.0^x[15]
@@ -296,7 +296,7 @@ function objective_v11_warmstart(
     )
 
     if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
-        return (1e9, 0.0, Inf, 0.0, 0.0, true)
+        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Settle rope geometry from ODE ────────────────────────────────────
@@ -307,7 +307,7 @@ function objective_v11_warmstart(
 
     u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
     if any(isnan.(u_settled)) || any(isinf.(u_settled))
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true)
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Set ring angular velocities and orbital velocities ─────────────
@@ -340,6 +340,8 @@ function objective_v11_warmstart(
 
     P_samples = Float64[]
     fos_samples = Float64[]
+    util_a_samples = Float64[]  # worst-ring axial share per sample
+    util_b_samples = Float64[]  # worst-ring bending share per sample
 
     function window_callback(uc, tc, s)
         t_cum = s * V11_DT
@@ -354,6 +356,14 @@ function objective_v11_warmstart(
                 (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
             end
             push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
+            # Axial and bending shares at worst-FoS ring
+            if !isempty(airborne)
+                worst_idx = argmin(airborne) + 1  # +1 for 1-based indexing
+                if worst_idx <= length(ef.ring_util_axial)
+                    push!(util_a_samples, ef.ring_util_axial[worst_idx])
+                    push!(util_b_samples, ef.ring_util_bending[worst_idx])
+                end
+            end
         end
     end
 
@@ -364,7 +374,7 @@ function objective_v11_warmstart(
         )
     catch e
         @warn "Warm-start sim failed" exception = e
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true)
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Score ────────────────────────────────────────────────────────────
@@ -373,6 +383,10 @@ function objective_v11_warmstart(
     P_range = length(P_samples) >= 2 ? maximum(P_samples) - minimum(P_samples) : 0.0
     drift = length(P_samples) >= 2 ? abs(P_samples[end] - P_samples[1]) / max(mean(P_samples), 0.01) : 0.0
     drifted = drift > 0.15  # >15% drift flag
+
+    # Window-worst axial and bending util shares (at FoS-min sample)
+    util_a = isempty(util_a_samples) ? -1.0 : maximum(util_a_samples)
+    util_b = isempty(util_b_samples) ? -1.0 : maximum(util_b_samples)
 
     # Stationarity gate: split window into halves, check consistency
     n = length(P_samples)
@@ -391,7 +405,7 @@ function objective_v11_warmstart(
     fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
     fitness = v11_fitness(P_mean, FoS_min)
 
-    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary)
+    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -424,13 +438,14 @@ function warmstart_with_k_bracket(
     best_k = k_prior
     best_P = 0.0; best_FoS = Inf; best_ω = 0.0
     best_P_range = 0.0; best_drifted = true; best_stationary = false
+    best_util_a = -1.0; best_util_b = -1.0
 
     for k_scale in [0.5, 1.0, 2.0]
         k_try = clamp(k_prior * k_scale, 0.01, 1000.0)
         x_k = copy(x)
         x_k[15] = log10(k_try)
 
-        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary =
+        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke)
 
@@ -443,10 +458,12 @@ function warmstart_with_k_bracket(
             best_P_range = P_range
             best_drifted = drifted
             best_stationary = stationary
+            best_util_a = util_a
+            best_util_b = util_b
         end
     end
 
-    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary)
+    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary, best_util_a, best_util_b)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

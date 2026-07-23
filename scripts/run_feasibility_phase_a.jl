@@ -79,7 +79,7 @@ end
 function evaluate_genome(x)
     x_copy = copy(x)
     try
-        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary =
+        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
             KiteTurbineDynamics.warmstart_with_k_bracket(x_copy, BEAM, P_BASE;
                 power_W=POWER_W, v_rated=V_RATED, spoke=SP)
 
@@ -87,10 +87,10 @@ function evaluate_genome(x)
         tier = P_mean < P_FLOOR ? "stalled" : FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
 
         return (f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
-                f_feas, tier, true)
+                util_a, util_b, f_feas, tier, true)
     catch e
         return (Inf, 0.0, 0.0, Inf, 0.0, 0.0, true, false,
-                11.0, "stalled", false)
+                -1.0, -1.0, 11.0, "stalled", false)
     end
 end
 
@@ -121,7 +121,7 @@ function load_existing_hashes()
 end
 
 function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω_eq,
-                  P_range, drifted, stationary, f_feas, tier, gen)
+                  P_range, drifted, stationary, util_a, util_b, f_feas, tier, gen)
     row = Dict{Symbol,Any}(
         :genome_hash => gh, :physics_era => PHYSICS_ERA, :git_hash => GIT_HASH,
         :x1=>x[1],:x2=>x[2],:x3=>x[3],:x4=>x[4],:x5=>x[5],
@@ -131,7 +131,7 @@ function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω
         :f_v11 => f_v11, :k_chosen => k_chosen, :P_mean_kw => P_mean,
         :FoS_min => FoS_min, :omega_eq_rpm => ω_eq * 60 / (2π),
         :P_range_kw => P_range, :drift_flag => drifted, :stationary => stationary,
-        :util_axial => -1.0, :util_bending => -1.0,  # ODE path: ring_element_analysis not called (TODO: post-hoc beam split)
+        :util_axial => util_a, :util_bending => util_b,
         :f_feas => f_feas, :tier => tier, :gen => gen,
         :timestamp => string(Dates.now()),
     )
@@ -203,7 +203,7 @@ function differential_evolution(pop, fit, gen)
             continue
         end
 
-        _, _, P_mean, FoS_min, _, _, _, _, f_feas, tier, ok = evaluate_genome(trial)
+        _, _, P_mean, FoS_min, _, _, _, _, ua, ub, f_feas, tier, ok = evaluate_genome(trial)
         if !ok
             push!(new_pop, pop[i])
             push!(new_fit, fit[i])
@@ -216,7 +216,7 @@ function differential_evolution(pop, fit, gen)
             nl = r.design.n_lines; na = r.n_active
         catch; nl = 0; na = 0; end
         save_row(gh, trial, nl, na, f_feas > 10 ? Inf : f_feas, 0.0,
-                 P_mean, FoS_min, 60.0, 0.0, false, false, f_feas, tier, gen)
+                 P_mean, FoS_min, 60.0, 0.0, false, false, ua, ub, f_feas, tier, gen)
 
         if f_feas < fit[i]
             push!(new_pop, trial)
@@ -256,7 +256,7 @@ function main()
         if gh in existing
             continue
         end
-        _, k, P, FoS, ω, Pr, dr, st, f_feas, tier, ok = evaluate_genome(x)
+        _, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
         if !ok; continue; end
         push!(pop, x)
         push!(fit, f_feas)
@@ -266,7 +266,7 @@ function main()
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
-                     P, FoS, ω, Pr, dr, st, f_feas, tier, 0)
+                     P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
         catch; end
     end
 
@@ -275,7 +275,7 @@ function main()
         x = random_genome()
         gh = genome_hash(x)
         if gh in existing; continue; end
-        _, k, P, FoS, ω, Pr, dr, st, f_feas, tier, ok = evaluate_genome(x)
+        _, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
         if !ok; continue; end
         push!(pop, x)
         push!(fit, f_feas)
@@ -285,7 +285,7 @@ function main()
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
-                     P, FoS, ω, Pr, dr, st, f_feas, tier, 0)
+                     P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
         catch; end
     end
 

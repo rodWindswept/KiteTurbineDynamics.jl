@@ -314,6 +314,8 @@ struct ExtendedSimFrame
     ring_fos::Vector{Float64}
     ring_Ncomp::Vector{Float64}
     ring_Pcrit::Vector{Float64}
+    ring_util_axial::Vector{Float64}   # max(N/N_crit) on worst beam, per ring
+    ring_util_bending::Vector{Float64}  # max(√(M²)/M_el) on worst beam, per ring
 
     # ── Per-segment twist (n_rings-1 elements) ─────────────────────
     segment_twist_deg::Vector{Float64}
@@ -365,12 +367,18 @@ function capture_extended(
     ring_fos   = Float64[]
     ring_Ncomp = Float64[]
     ring_Pcrit = Float64[]
+    ring_util_axial  = Float64[]  # max(N/N_crit) on worst beam, per ring
+    ring_util_bending = Float64[] # max(√(M_ip²+M_oop²)/M_el) on worst beam, per ring
     for ref in rea
         wN  = maximum(b.N for b in ref.beams; init=0.0)
         wNc = maximum(b.N_crit for b in ref.beams; init=1.0)
+        wA  = maximum(b.N / max(b.N_crit, 1.0) for b in ref.beams; init=0.0)
+        wB  = maximum(sqrt(b.M_ip^2 + b.M_oop^2) / max(b.M_el, 1.0) for b in ref.beams; init=0.0)
         push!(ring_fos, (isnan(ref.max_util) || ref.max_util <= 0) ? Inf : 1.0 / ref.max_util)
         push!(ring_Ncomp, wN)
         push!(ring_Pcrit, wNc)
+        push!(ring_util_axial, wA)
+        push!(ring_util_bending, wB)
     end
 
     # ── Per-segment twist ──────────────────────────────────────────
@@ -448,5 +456,6 @@ function capture_extended(
     end
 
     return ExtendedSimFrame(base, ring_fos, ring_Ncomp, ring_Pcrit,
+        ring_util_axial, ring_util_bending,
         segment_twist, segment_tension, segment_torque, rl, ra, rg, ro)
 end
