@@ -91,3 +91,53 @@ end
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, params_v5_50kw())
     @test f_v11 == f_v10
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# objective_feasibility — three-tier ordering and monotonicity
+# ══════════════════════════════════════════════════════════════════════════════
+
+@testset "objective_feasibility — tier ordering" begin
+    # Stalled > feasibility > feasible
+    f_stalled  = objective_feasibility(0.5, 10.0)   # P=0.5 < P_floor=1.0
+    f_feas     = objective_feasibility(10.0, 0.5)    # FoS=0.5 < 1.5
+    f_good     = objective_feasibility(30.0, 2.0)    # passes both
+
+    @test f_stalled > f_feas
+    @test f_feas > f_good
+    @test f_good < 0.0  # feasible tier is negative
+    @test f_stalled >= 10.0  # stalled starts at 10
+end
+
+@testset "objective_feasibility — monotonicity within tiers" begin
+    # Stalled: worse (lower P) → higher fitness
+    @test objective_feasibility(0.1, 1.0) > objective_feasibility(0.9, 1.0)
+
+    # Feasibility: worse (lower FoS) → higher fitness
+    @test objective_feasibility(10.0, 0.2) > objective_feasibility(10.0, 1.4)
+
+    # Feasible: more power → lower (better) fitness, capped at P_cap
+    @test objective_feasibility(20.0, 2.0) > objective_feasibility(40.0, 2.0)
+    @test objective_feasibility(50.0, 2.0) == objective_feasibility(100.0, 2.0)  # capped
+
+    # FoS=1.5 exactly at threshold: passes to feasible tier (>= FoS_design)
+    f_at_bound = objective_feasibility(20.0, 1.5)
+    @test f_at_bound < 0.0  # feasible, negative
+end
+
+@testset "objective_feasibility — edge cases" begin
+    # Zero power, infinite FoS → stalled
+    f = objective_feasibility(0.0, Inf)
+    @test f > 10.0
+
+    # Tiny power, good FoS → stalled (P < P_floor)
+    f = objective_feasibility(0.01, 5.0)
+    @test f > 10.0
+
+    # Good power, barely passing FoS → feasibility (just under 1.5)
+    f = objective_feasibility(20.0, 1.499)
+    @test f > 0.0 && f < 1.5
+
+    # Exactly P_floor passes stalled check
+    f = objective_feasibility(1.0, 0.1)
+    @test f > 0.0  # goes to feasibility tier, not stalled
+end
