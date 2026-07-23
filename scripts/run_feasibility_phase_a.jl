@@ -107,6 +107,7 @@ const CSV_COLS = [:genome_hash, :physics_era, :git_hash,
     :n_lines, :n_active,
     :f_v11, :k_chosen, :P_mean_kw, :FoS_min, :omega_eq_rpm,
     :P_range_kw, :drift_flag, :stationary,
+    :util_axial, :util_bending,
     :f_feas, :tier, :gen, :timestamp]
 
 function load_existing_hashes()
@@ -130,6 +131,7 @@ function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω
         :f_v11 => f_v11, :k_chosen => k_chosen, :P_mean_kw => P_mean,
         :FoS_min => FoS_min, :omega_eq_rpm => ω_eq * 60 / (2π),
         :P_range_kw => P_range, :drift_flag => drifted, :stationary => stationary,
+        :util_axial => -1.0, :util_bending => -1.0,  # ODE path: ring_element_analysis not called (TODO: post-hoc beam split)
         :f_feas => f_feas, :tier => tier, :gen => gen,
         :timestamp => string(Dates.now()),
     )
@@ -263,7 +265,7 @@ function main()
             eval_count, gh[1:8], P, FoS, f_feas, tier)
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
-            save_row(gh, x, r.design.n_lines, r.n_active, f_feas>10?Inf:f_feas, k,
+            save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
                      P, FoS, ω, Pr, dr, st, f_feas, tier, 0)
         catch; end
     end
@@ -283,7 +285,7 @@ function main()
             eval_count, gh[1:8], P, FoS, f_feas, tier)
         try
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
-            save_row(gh, x, r.design.n_lines, r.n_active, f_feas>10?Inf:f_feas, k,
+            save_row(gh, x, r.design.n_lines, r.n_active, f_feas > 10 ? Inf : f_feas, k,
                      P, FoS, ω, Pr, dr, st, f_feas, tier, 0)
         catch; end
     end
