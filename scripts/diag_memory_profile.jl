@@ -1,15 +1,17 @@
 #!/usr/bin/env julia
 # Memory diagnosis for full-protocol ODE on 12-gon at k=60.
-# Profiles allocation per phase to locate the 38GB source.
+# Simplified: report per-phase wall time and GC stats.
 
-using KiteTurbineDynamics, Printf, Base.GC
+using KiteTurbineDynamics, Printf, Statistics
 
 const X12 = [0.075,0.01,1.0,0.5,3.7,2.0,2.5,12.0,0.0,8.0,15.0,5.0,0.5,0.3,log10(60.0)]
 const BEAM = KiteTurbineDynamics.PROFILE_ELLIPTICAL
 
-function alloc_since_mb(start_num)
-    end_num = Base.gc_alloc_count(Base.gc_num())
-    return (end_num.allocd - start_num.allocd) / 1e6
+function gc_delta(start_gc)
+    end_gc = Base.gc_num()
+    allocd = end_gc.allocd - start_gc.allocd
+    gctime = end_gc.total_time + end_gc.pause - start_gc.total_time - start_gc.pause
+    return allocd / 1e6, gctime / 1e9  # MB, seconds
 end
 
 function main()
@@ -28,69 +30,71 @@ function main()
     end
 
     dt = KiteTurbineDynamics.V11_DT
-    N = sys.n_total
-    Nr = sys.n_ring
 
     # Phase 1: settle_to_operational_state (60s)
-    println("Phase 1: settle_to_operational_state (60s, $(round(Int,60/dt)) steps)")
+    n_steps = round(Int, 60/dt)
+    println("Phase 1: settle_to_operational_state (60s, $n_steps steps)")
     GC.gc()
-    sn1 = Base.gc_alloc_count(Base.gc_num())
-    u_start = copy(u0)
-    u = KiteTurbineDynamics.settle_to_operational_state(sys, u_start, pc, 60.0; wind_fn=wf)
-    println("  done — $(round(alloc_since_mb(sn1))) MB")
+    gc0 = Base.gc_num()
+    t0 = time()
+    u = KiteTurbineDynamics.settle_to_operational_state(sys, copy(u0), pc, 60.0; wind_fn=wf)
+    t1 = time()
+    alloc_mb, gc_s = gc_delta(gc0)
+    @printf "  done in %.1fs — %.0f MB allocated (GC: %.1fs)\n" (t1-t0) alloc_mb gc_s
 
     # Phase 2: kickstart (2s at negative k)
-    println("Phase 2: kickstart (2s, $(round(Int,2/dt)) steps)")
+    n_steps = round(Int, 2/dt)
+    println("Phase 2: kickstart (2s, $n_steps steps)")
     GC.gc()
-    sn2 = Base.gc_alloc_count(Base.gc_num())
+    gc0 = Base.gc_num()
+    t0 = time()
     orig_k = sys.k_mppt_ref[]
     sys.k_mppt_ref[] = -60.0
     ks = round(Int, 2.0 / dt)
-    KiteTurbineDynamics.run_canonical_sim!(u, sys, pc, wf, ks, dt;
-        lin_damp=0.05, spoke=spoke)
+    KiteTurbineDynamics.run_canonical_sim!(u, sys, pc, wf, ks, dt; lin_damp=0.05, spoke=spoke)
     sys.k_mppt_ref[] = orig_k
-    println("  done — $(round(alloc_since_mb(sn2))) MB")
+    t1 = time()
+    alloc_mb, gc_s = gc_delta(gc0)
+    @printf "  done in %.1fs — %.0f MB allocated (GC: %.1fs)\n" (t1-t0) alloc_mb gc_s
 
-    # Phase 3: window (40s, 1Hz sampling, discard first 10s)
-    println("Phase 3: measurement window (30s sampling, $(round(Int,40/dt)) steps)")
+    # Phase 3: measurement window (40s, sample last 30s at 1Hz)
     total_n = round(Int, 40.0 / dt)
     se = round(Int, 1.0 / dt)
     dn = round(Int, 10.0 / dt)
+    println("Phase 3: window (40s, $(total_n) steps, $(30) samples)")
     Ps = Float64[]; FoSs = Float64[]
     GC.gc()
-    sn3 = Base.gc_alloc_count(Base.gc_num())
-    cb_count = Ref(0)
+    gc0 = Base.gc_num()
+    t0 = time()
     function cb(uc, tc, s)
-        s < dn && return
-        s % se != 0 && return
-        cb_count[] += 1
-        ef = KiteTurbineDynamics.capture_extended(uc, sys, pc, tc, wf, nothing;
-            brake_engaged=false)
+        s < dn && return; s % se != 0 && return
+        ef = KiteTurbineDynamics.capture_extended(uc, sys, pc, tc, wf, nothing; brake_engaged=false)
         push!(Ps, ef.base.P_kw)
         air = Float64[v for v in ef.ring_fos[2:end] if isfinite(v) && v > 0]
         push!(FoSs, isempty(air) ? Inf : minimum(air))
     end
-    KiteTurbineDynamics.run_canonical_sim!(u, sys, pc, wf, total_n, dt;
-        lin_damp=0.05, spoke=spoke, callback=cb)
-    alloc_mb = alloc_since_mb(sn3)
+    KiteTurbineDynamics.run_canonical_sim!(u, sys, pc, wf, total_n, dt; lin_damp=0.05, spoke=spoke, callback=cb)
+    t1 = time()
+    alloc_mb, gc_s = gc_delta(gc0)
 
     n = length(Ps)
     P_mean = n > 0 ? mean(Ps) : 0.0
     FoS_min = n > 0 && !all(isinf.(FoSs)) ? minimum(FoSs[isfinite.(FoSs)]) : Inf
     per_sample = n > 0 ? alloc_mb / n : 0.0
 
-    println("  done — $(round(alloc_mb)) MB, $(cb_count[]) callbacks, $(per_sample:.1f) MB/sample")
+    @printf "  done in %.1fs — %.0f MB allocated (GC: %.1fs, %d samples, %.0f MB/sample)\n" (t1-t0) alloc_mb gc_s n per_sample
     println()
-    println("Window: P_mean=$(round(P_mean,digits=1))kW  FoS_min=$(round(FoS_min,digits=3))")
+    @printf "Window: P_mean=%.1f kW  FoS_min=%.3f\n" P_mean FoS_min
     println()
-    if per_sample > 50
-        println("FINDING: capture_extended in callback allocates >50 MB/sample.")
-        println("  Running ring_element_analysis on $(N) nodes × 30 samples = $(round(alloc_mb)) MB")
-        println("  FIX: if warmstart path is ≤2GB, the excess is ring_element_analysis")
-        println("  inside capture_extended.  Option: compute FoS on sample subset only.")
+
+    if per_sample > 100
+        println("FINDING: >100 MB/sample in callback (capture_extended + ring_element_analysis)")
+        println("  Window callback allocates $(round(Int, per_sample)) MB per 1Hz sample.")
+        println("  For 3-phase ODE ~40 samples: this accounts for bulk of 38GB.")
+        println("  FIX: compute FoS every N samples (e.g. 10), not every sample.")
     else
-        println("FINDING: per-sample allocation ", round(Int, per_sample), " MB — reasonable.")
-        println("  38GB likely comes from settle_to_operational_state accumulation.")
+        println("FINDING: per-sample $(round(Int, per_sample)) MB — not the dominant allocator.")
+        println("  The 38GB is from settle/kick steps accumulation, not the window callback.")
     end
 end
 

@@ -250,10 +250,25 @@ function main()
     t0 = time()
     eval_count = 0
 
-    # Seeds first
+    # Seeds first — if already evaluated, load from CSV for population
     for x in seeds
         gh = genome_hash(x)
         if gh in existing
+            # Load genome from CSV to seed the population (resume)
+            push!(pop, x)
+            # Get f_feas from CSV
+            try
+                df = CSV.read(OUT_CSV, DataFrame)
+                idx = findfirst(df.genome_hash .== gh)
+                if idx !== nothing
+                    push!(fit, df.f_feas[idx])
+                else
+                    push!(fit, Inf)
+                end
+            catch
+                push!(fit, Inf)
+            end
+            @printf("[seed %d] %s  (resumed from CSV)\n", length(pop), gh[1:8])
             continue
         end
         _, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
