@@ -241,7 +241,7 @@ const CSV_COLS = [
     :x11, :x12, :x13, :x14, :x15,
     :n_lines, :n_active,
     :f_v10, :f_v11, :P_mean_kw, :FoS_min, :omega_eq_rpm,
-    :P_range_kw, :drift_flag,
+    :P_range_kw, :drift_flag, :stationary,
     :chosen_k, :k_prior, :k_bracket_results,
     :timestamp, :anchor_source,
 ]
@@ -279,10 +279,10 @@ function evaluate_anchor(x::AbstractVector, source::String)
         warmstart_with_k_bracket(x, BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED, spoke=SP)
     catch e
         @warn "warmstart failed for $gh" exception=e
-        (1e9, 0.0, 0.0, Inf, 0.0, 0.0, true)
+        (1e9, 0.0, 0.0, Inf, 0.0, 0.0, true, false)
     end
     
-    f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drift = result
+    f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drift, stationary = result
     
     # ── Decode for metadata ──
     n_active = 0
@@ -323,6 +323,7 @@ function evaluate_anchor(x::AbstractVector, source::String)
         :omega_eq_rpm => ω_eq * 60 / (2π),
         :P_range_kw => P_range,
         :drift_flag => drift,
+        :stationary => stationary,
         :chosen_k => k_chosen,
         :k_prior => k_prior,
         :k_bracket_results => JSON3.write(k_results),

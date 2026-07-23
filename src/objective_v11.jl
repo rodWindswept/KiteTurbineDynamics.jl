@@ -374,10 +374,24 @@ function objective_v11_warmstart(
     drift = length(P_samples) >= 2 ? abs(P_samples[end] - P_samples[1]) / max(mean(P_samples), 0.01) : 0.0
     drifted = drift > 0.15  # >15% drift flag
 
+    # Stationarity gate: split window into halves, check consistency
+    n = length(P_samples)
+    stationary = false
+    if n >= 4
+        mid = n ÷ 2
+        P1 = P_samples[1:mid]; P2 = P_samples[mid+1:end]
+        F1 = fos_samples[1:mid]; F2 = fos_samples[mid+1:end]
+        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01
+            dP = abs(mean(P1) - mean(P2)) / mean(P1)
+            dF = isfinite(FoS_min) ? abs(minimum(F1) - minimum(F2)) : 99
+            stationary = dP < 0.10 && dF < 0.10
+        end
+    end
+
     fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
     fitness = v11_fitness(P_mean, FoS_min)
 
-    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted)
+    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -409,14 +423,14 @@ function warmstart_with_k_bracket(
     best_fitness = Inf
     best_k = k_prior
     best_P = 0.0; best_FoS = Inf; best_ω = 0.0
-    best_P_range = 0.0; best_drifted = true
+    best_P_range = 0.0; best_drifted = true; best_stationary = false
 
     for k_scale in [0.5, 1.0, 2.0]
         k_try = clamp(k_prior * k_scale, 0.01, 1000.0)
         x_k = copy(x)
         x_k[15] = log10(k_try)
 
-        fitness, P_mean, FoS_min, ω_eq, P_range, drifted =
+        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke)
 
@@ -428,10 +442,11 @@ function warmstart_with_k_bracket(
             best_ω = ω_eq
             best_P_range = P_range
             best_drifted = drifted
+            best_stationary = stationary
         end
     end
 
-    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted)
+    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
