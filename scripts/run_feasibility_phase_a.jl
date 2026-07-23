@@ -274,7 +274,6 @@ function main()
     while length(pop) < POP_SIZE
         x = random_genome()
         gh = genome_hash(x)
-        gh in existing || continue
         if gh in existing; continue; end
         _, k, P, FoS, ω, Pr, dr, st, f_feas, tier, ok = evaluate_genome(x)
         if !ok; continue; end
