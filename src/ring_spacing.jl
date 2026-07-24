@@ -351,23 +351,24 @@ function search_bounds_v4(
     beam_profile::BeamProfile;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    sc = sqrt(p.trpt_hub_radius / 2.0)
-    Do_lo = 0.005 * sc;
-    Do_hi = 0.120 * sc
+    # Do_top: hard bounds per Rod (2026-07-24), no scaling
+    Do_lo = 0.05
+    Do_hi = 0.220
 
-    r_hub_lo = 0.30 * p.trpt_hub_radius    # widened from 0.60 (Jun 2026 V9)
-    r_hub_hi = 8.00 * p.trpt_hub_radius    # widened from 1.50
+    r_hub_lo = 1.50 * p.trpt_hub_radius    # raised floor from 0.30
+    r_hub_hi = 8.00 * p.trpt_hub_radius
 
-    r_bot_lo = 0.3
-    r_bot_hi = max_ground_radius
+    r_bot_lo = 1.5
+    r_bot_hi = 8.0
 
     Lr_lo = 0.2;
     Lr_hi = 3.0
     n_lines_lo = 3.0;
     n_lines_hi = 24.0    # widened from 12 (Jun 2026 V9)
 
+    # aspect_ratio: fixed at 1.0 (circular tube per Rod 2026-07-24)
     ar_lo, ar_hi = if beam_profile == PROFILE_ELLIPTICAL
-        0.15, 1.5
+        1.0, 1.0
     elseif beam_profile == PROFILE_AIRFOIL
         0.08, 0.20
     else
@@ -407,7 +408,7 @@ function design_from_vector_v4(
 )
     n_lines = clamp(Int(round(x[8])), 3, 12)
     r_hub = x[5]
-    r_bot = clamp(x[6], 0.1, max_ground_radius)
+    r_bot = clamp(x[6], 1.5, 8.0)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
     r_bot = min(r_bot, r_hub)
     # Density profile: element 9 for variable ring density

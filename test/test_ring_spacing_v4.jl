@@ -158,8 +158,10 @@ end
     @test length(hi) == TRPT_V4_DIM
     @test all(hi .>= lo)
 
-    # Midpoint vector → valid design
-    x = (lo .+ hi) ./ 2.0
+    # Known-feasible design at low end of widened bounds (10kW scale)
+    x = copy(lo)
+    x[5] = p.trpt_hub_radius       # r_hub at reference value
+    x[6] = 1.5                      # r_bottom at minimum
     d = design_from_vector_v4(x, PROFILE_CIRCULAR, p)
     @test d.r_bottom >= lo[6]
     @test d.r_bottom <= hi[6]

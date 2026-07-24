@@ -163,8 +163,8 @@ function design_from_vector_v10(
     bank_bottom = clamp(x[12], 0.0, 25.0)
 
     # Blade scale gradient (x[13]=λ_top, x[14]=λ_bottom)
-    λ_top = clamp(x[13], 0.03, 2.0)
-    λ_bottom = clamp(x[14], 0.03, 2.0)
+    λ_top = clamp(x[13], 0.1, 2.0)
+    λ_bottom = clamp(x[14], 0.1, 2.0)
 
     # Hub altitude from shaft geometry (rings already computed above)
     hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
@@ -218,12 +218,12 @@ function search_bounds_v10(
     )
 
     # Tighten inherited v5 bounds for V10
-    base_lo[1] = max(base_lo[1], 0.05)      # Do_top min: 0.05 m (was 0.01)
-    base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (was ~0.1)
+    base_lo[1] = max(base_lo[1], 0.05)      # Do_top min: 0.05 m (redundant with v4: already 0.05)
+    base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (redundant with v4: already 1.5)
     base_hi[8] = min(base_hi[8], 16.0)       # n_lines max: 16 (was 24)
 
     # V10 additional vars: rotor_mask, bank_top, bank_bottom, λ_top, λ_bottom
-    v10_lo = [0.0, 0.0, 0.0, 0.03, 0.03]     # mask proxy, banks, lambdas
+    v10_lo = [0.0, 0.0, 0.0, 0.1, 0.1]     # mask proxy, banks, lambdas (λ floor 0.1 per Rod 2026-07-24)
     v10_hi = [Float64(N_VALID_MASKS), 25.0, 25.0, 2.0, 2.0]
 
     return vcat(base_lo, v10_lo), vcat(base_hi, v10_hi)
