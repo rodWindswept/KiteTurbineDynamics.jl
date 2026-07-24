@@ -9,10 +9,10 @@ using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates,
 # Config
 # ══════════════════════════════════════════════════════════════════════════════
 const POP_SIZE    = 8
-const MAX_GENS    = 15
-const MAX_EVALS   = 120
+const MAX_GENS    = 21
+const MAX_EVALS   = 176
 const P_CAP        = 50.0
-const P_FLOOR      = 1.0
+const P_FLOOR      = 25.0
 const FOS_DESIGN   = 1.5
 const F           = 0.8    # DE differential weight
 const CR          = 0.9    # DE crossover rate
