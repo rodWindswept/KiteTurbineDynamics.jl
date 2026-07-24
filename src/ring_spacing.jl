@@ -353,7 +353,7 @@ function search_bounds_v4(
 )
     # Do_top: hard bounds per Rod (2026-07-24), no scaling
     Do_lo = 0.05
-    Do_hi = 0.220
+    Do_hi = 0.440
 
     r_hub_lo = 1.50 * p.trpt_hub_radius    # raised floor from 0.30
     r_hub_hi = 8.00 * p.trpt_hub_radius
