@@ -352,7 +352,7 @@ function search_bounds_v4(
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
     # Do_top: hard bounds per Rod (2026-07-24), no scaling
-    Do_lo = 0.05
+    Do_lo = 0.20
     Do_hi = 0.440
 
     r_hub_lo = 1.50 * p.trpt_hub_radius    # raised floor from 0.30
