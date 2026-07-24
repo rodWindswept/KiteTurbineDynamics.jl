@@ -203,7 +203,7 @@ function differential_evolution(pop, fit, gen)
             continue
         end
 
-        _, _, P_mean, FoS_min, _, _, _, _, ua, ub, f_feas, tier, ok = evaluate_genome(trial)
+        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, f_feas, tier, ok = evaluate_genome(trial)
         if !ok
             push!(new_pop, pop[i])
             push!(new_fit, fit[i])
@@ -216,8 +216,8 @@ function differential_evolution(pop, fit, gen)
             r = KiteTurbineDynamics.design_from_vector_v10(trial[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             nl = r.design.n_lines; na = r.n_active
         catch; end
-        save_row(gh, trial, nl, na, f_feas > 10 ? Inf : f_feas, 0.0,
-                 P_mean, FoS_min, 60.0, 0.0, false, false, ua, ub, f_feas, tier, gen)
+        save_row(gh, trial, nl, na, f_v11, k_chosen,
+                 P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, f_feas, tier, gen)
 
         if f_feas < fit[i]
             push!(new_pop, trial)
@@ -272,7 +272,7 @@ function main()
             @printf("[seed %d] %s  (resumed from CSV)\n", length(pop), gh[1:8])
             continue
         end
-        _, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
+        f_v11, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
         if !ok; continue; end
         push!(pop, x)
         push!(fit, f_feas)
@@ -284,7 +284,7 @@ function main()
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             nl = r.design.n_lines; na = r.n_active
         catch; end
-        save_row(gh, x, nl, na, f_feas > 10 ? Inf : f_feas, k,
+        save_row(gh, x, nl, na, f_v11, k,
                  P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
     end
 
@@ -293,7 +293,7 @@ function main()
         x = random_genome()
         gh = genome_hash(x)
         if gh in existing; continue; end
-        _, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
+        f_v11, k, P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, ok = evaluate_genome(x)
         if !ok; continue; end
         push!(pop, x)
         push!(fit, f_feas)
@@ -305,7 +305,7 @@ function main()
             r = KiteTurbineDynamics.design_from_vector_v10(x[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
             nl = r.design.n_lines; na = r.n_active
         catch; end
-        save_row(gh, x, nl, na, f_feas > 10 ? Inf : f_feas, k,
+        save_row(gh, x, nl, na, f_v11, k,
                  P, FoS, ω, Pr, dr, st, ua, ub, f_feas, tier, 0)
     end
 
@@ -322,10 +322,10 @@ function main()
 
         gen_best = minimum(fit)
         gen_best_idx = argmin(fit)
-        gen_best_P = 0.0; gen_best_FoS = Inf
+        gen_best_P = 0.0; gen_best_FoS = Inf; gen_best_FoS_check = Inf; gen_best_stationary = false
         try
-            _, _, p, f, _, _, _, _, _, _, _ = evaluate_genome(pop[gen_best_idx])
-            gen_best_P = p; gen_best_FoS = f
+            _, _, p, f, _, _, d, st, _, _, _, _, _ = evaluate_genome(pop[gen_best_idx])
+            gen_best_P = p; gen_best_FoS = f; gen_best_stationary = st
         catch; end
 
         elapsed = (time() - t0) / 60
@@ -337,20 +337,22 @@ function main()
             @printf("  → NEW BEST: f=%.3f\n", gen_best)
         end
 
-        # Gate checks
-        if gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR
+        # Gate checks — must also be stationary
+        if gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR && gen_best_stationary
             println("\n╔══════════════════════════════════════════════╗")
-            println("║  GREEN: FoS ≥ 1.5 with P ≥ 1 kW achieved!   ║")
+            println("║  GREEN: FoS ≥ 1.5, P ≥ 1 kW, stationary     ║")
             println("║  Genome: $(genome_hash(pop[gen_best_idx])[1:8])  ║")
             println("╚══════════════════════════════════════════════╝")
             println("→ Freeze genome, proceed to Stage 3 verification.")
             break
+        elseif gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR && !gen_best_stationary
+            println("  → Gate: FoS/P met but stationary=false — NOT GREEN, continuing.")
         end
     end
 
     # Final verdict
     final_best_idx = argmin(fit)
-    _, _, P_fin, FoS_fin, _, _, _, _, f_feas_fin, tier_fin, _ = evaluate_genome(pop[final_best_idx])
+    _, _, P_fin, FoS_fin, _, _, _, _, _, _, f_feas_fin, tier_fin, _ = evaluate_genome(pop[final_best_idx])
     println()
     println("═══════════════════════════════════════════════")
     if FoS_fin >= FOS_DESIGN && P_fin >= P_FLOOR
