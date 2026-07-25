@@ -97,30 +97,33 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 @testset "objective_feasibility — tier ordering" begin
-    # Stalled > feasibility > feasible
-    f_stalled  = objective_feasibility(0.5, 10.0)   # P=0.5 < P_floor=1.0
-    f_feas     = objective_feasibility(10.0, 0.5)    # FoS=0.5 < 1.5
+    # Stalled > feasibility > feasible.  P_floor default is 25.0 kW.
+    f_stalled  = objective_feasibility(10.0, 10.0)  # P=10 < P_floor=25
+    f_feas     = objective_feasibility(30.0, 0.5)    # FoS=0.5 < 1.5
     f_good     = objective_feasibility(30.0, 2.0)    # passes both
+    f_reject   = objective_feasibility(30.0, Inf)     # null FoS → rejection
 
+    @test f_reject > f_stalled  # rejection above all stalls
     @test f_stalled > f_feas
     @test f_feas > f_good
     @test f_good < 0.0  # feasible tier is negative
     @test f_stalled >= 10.0  # stalled starts at 10
+    @test f_reject >= 12.0   # rejection band
 end
 
 @testset "objective_feasibility — monotonicity within tiers" begin
     # Stalled: worse (lower P) → higher fitness
-    @test objective_feasibility(0.1, 1.0) > objective_feasibility(0.9, 1.0)
+    @test objective_feasibility(0.1, 1.0) > objective_feasibility(24.0, 1.0)
 
     # Feasibility: worse (lower FoS) → higher fitness
-    @test objective_feasibility(10.0, 0.2) > objective_feasibility(10.0, 1.4)
+    @test objective_feasibility(30.0, 0.2) > objective_feasibility(30.0, 1.4)
 
     # Feasible: more power → lower (better) fitness, capped at P_cap
-    @test objective_feasibility(20.0, 2.0) > objective_feasibility(40.0, 2.0)
+    @test objective_feasibility(30.0, 2.0) > objective_feasibility(45.0, 2.0)
     @test objective_feasibility(50.0, 2.0) == objective_feasibility(100.0, 2.0)  # capped
 
     # FoS=1.5 exactly at threshold: passes to feasible tier (>= FoS_design)
-    f_at_bound = objective_feasibility(20.0, 1.5)
+    f_at_bound = objective_feasibility(30.0, 1.5)
     @test f_at_bound < 0.0  # feasible, negative
 end
 

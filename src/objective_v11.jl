@@ -399,7 +399,12 @@ function objective_v11_warmstart(
     drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
     drifted = drift > 0.15
 
-    # Window-worst axial and bending util shares (at FoS-min sample)
+    # Window-worst axial and bending util shares.
+    # OPEN: these are independent maxima over each sample array, not tied to
+    # the FoS-min instant or to each other.  util_axial + util_bending will
+    # NOT equal 1/FoS_min.  Fix per audit item 1 (handover 2026-07-25):
+    # record ring index + sample index at FoS_min, take N_ax/N_crit and
+    # √(M_ip²+M_oop²)/M_el from that beam at that sample.
     util_a = isempty(util_a_samples) ? -1.0 : maximum(filter(isfinite, util_a_samples); init=-1.0)
     util_b = isempty(util_b_samples) ? -1.0 : maximum(filter(isfinite, util_b_samples); init=-1.0)
 
@@ -411,11 +416,12 @@ function objective_v11_warmstart(
         P1 = P_finite[1:mid]; P2 = P_finite[mid+1:end]
         nf = length(fos_finite)
         if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01 &&
-           nf >= 4 && all(isfinite.(fos_finite))
+           nf >= 4
             mid_f = nf ÷ 2
             F1 = fos_finite[1:mid_f]; F2 = fos_finite[mid_f+1:end]
             dP = abs(mean(P1) - mean(P2)) / mean(P1)
-            dF = abs(mean(F1) - mean(F2)) / mean(F1)
+            # FoS_min drives scoring → min-based comparison is truer
+            dF = abs(minimum(F1) - minimum(F2)) / max(mean(F1), 0.01)
             stationary = dP < 0.10 && dF < 0.10
         end
     end

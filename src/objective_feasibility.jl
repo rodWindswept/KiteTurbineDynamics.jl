@@ -19,10 +19,11 @@ Tier ordering invariant: stalled > feasibility > feasible.
 Within each tier: f decreases (improves) monotonically with better P or FoS.
 """
 function objective_feasibility(P_mean, FoS_min; P_cap=50.0, P_floor=25.0, FoS_design=1.5)
-    # Guard: null structural measurement → stalled tier, not feasible
-    (!isfinite(FoS_min) || FoS_min <= 0.0) && return 10.0 + (P_floor - min(P_mean, P_floor)) / P_floor
+    # Guard: null structural measurement → rejection tier, above all stalls.
+    # Returns strictly > any genuine stall so rejections can never be elite.
+    (!isfinite(FoS_min) || FoS_min <= 0.0) && return 12.0
     if P_mean < P_floor
-        return 10.0 + (P_floor - P_mean) / P_floor  # stalled tier ∈ (10, 10+P_floor]
+        return 10.0 + (P_floor - P_mean) / P_floor  # stalled tier ∈ [10, 11]
     elseif FoS_min < FoS_design
         return FoS_design - FoS_min  # feasibility tier ∈ (0, 1.5)
     else
