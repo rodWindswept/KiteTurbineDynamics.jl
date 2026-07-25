@@ -198,7 +198,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     vis_lift     = Observable(true)   # lift kite tether + kite marker
     vis_backline = Observable(true)   # backline catenary
     vis_ground   = Observable(true)   # ground grid + anchor
-    vis_spokes   = Observable(true)   # radial Dyneema spokes (vertex→ring centre)
 
     # ── Configuration switching & safety state machine ────────────────────────
     config_changed_obs = Observable{Union{String, Nothing}}(nothing)  # nil = no change pending
@@ -291,26 +290,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         end
     end
 
-    # Radial Dyneema spokes — thin lines from each ring vertex to ring centre
-    for k in 2:(Nr-1)
-        gid_k = sys.ring_ids[k]
-        nk    = sys.nodes[gid_k]::RingNode
-        R_k   = nk.radius
-        ri_k  = nk.ring_idx
-        for j in 1:p.n_lines
-            spoke_obs = @lift begin
-                u   = $u_obs
-                ctr = u[3*(gid_k-1)+1 : 3*gid_k]
-                α   = u[6N + ri_k]
-                pp1, pp2 = _perp_fn(u)
-                pa = attachment_point(ctr, R_k, α, j, p.n_lines, pp1, pp2)
-                ([pa[1], ctr[1]], [pa[2], ctr[2]], [pa[3], ctr[3]])
-            end
-            lines!(ax3d, @lift($spoke_obs[1]), @lift($spoke_obs[2]), @lift($spoke_obs[3]);
-                   color=(:gold, 0.6), linewidth=0.8, visible=vis_spokes)
-        end
-    end
-
     # Expansion rotor ring markers — cyan dots at rings with expansion rotors
     if !isempty(sys.expansion_rotors)
         exp_ring_ids = [er.ring_idx for er in sys.expansion_rotors]
@@ -379,8 +358,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ring_gid_val = sys.ring_ids[ri_val]
             ring_node = sys.nodes[ring_gid_val]
             ring_R_val = ring_node.radius
-            r_inner_val = ring_R_val + er.blade_hub_radius   # hub offset (neg = inboard of ring)
-            r_outer_val = ring_R_val + er.blade_tip_radius   # tip offset (pos = outboard)
+            r_outer_val = ring_R_val + er.blade_tip_radius
             bank_rad_val = deg2rad(er.bank_angle_deg)
             n_blades_val = er.n_blades
             for b in 1:n_blades_val
@@ -396,7 +374,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     r_dir = cos(φ_val) .* pp1 .+ sin(φ_val) .* pp2
                     shaft_dir = normalize(Vector(gnd .- hub))
                     bank_dir = cos(bank_rad_val) .* r_dir .+ sin(bank_rad_val) .* shaft_dir
-                    p_inner = Vector(ctr) .+ r_inner_val .* r_dir
+                    p_inner = Vector(ctr) .+ ring_R_val .* r_dir
                     p_outer = Vector(ctr) .+ r_outer_val .* bank_dir
                     ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
                 end
@@ -676,7 +654,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         hlbl("── Expansion Rotors ─────────────────────────"; fontsize=13, font=:bold, color=:cyan)
         exp_rings_str = join([string(er.ring_idx) for er in sys.expansion_rotors], ", ")
         exp_bank = sys.expansion_rotors[1].bank_angle_deg
-        exp_span = sys.expansion_rotors[1].blade_tip_radius - sys.expansion_rotors[1].blade_hub_radius
+        exp_span = sys.expansion_rotors[1].blade_tip_radius
         exp_chord = sys.expansion_rotors[1].blade_chord
         hlbl("Rings: $exp_rings_str  |  bank: $(round(exp_bank;digits=0))°"; fontsize=11, color=:cyan)
         hlbl("Blade: span=$(round(exp_span;digits=1)) m, chord=$(round(exp_chord*1000;digits=0)) mm"; fontsize=10, color=:lightcyan)
@@ -732,7 +710,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     end
 
     # Generator control mode and winch payout observables
-    gen_ctrl_selection       = Observable("Standard (Mode 0)")  # Mode 0 gives cleanest lock-in
+    gen_ctrl_selection       = Observable("Active Damping (Mode 1)")
     depower_payout_selection = Observable("25m Extended")
     # Pitch Depower closed-loop control toggles
     # active_winch_obs: enables proportional payout rate control using T_min feedback
@@ -746,11 +724,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     mppt_stall_obs   = Observable(false)
     field_imu_obs    = Observable(false)
     depower_seq_obs  = Observable(1)
-
-    # Auto-Ramp: soft-ramp k_mppt controller (Phase B)
-    auto_ramp_obs  = Observable(false)
-    ramp_ctrl_obs  = Observable(RampController())
-    ramp_state_obs = Observable("IDLE")
 
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
@@ -848,25 +821,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                         β_rate_max      = ctrl_mode_val,
                         β_min           = payout_base_val,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
-            sys.k_mppt_ref[] = p_run.k_mppt  # sync live ref for ODE
-            # Reset auto-ramp controller for new run
-            if auto_ramp_obs[]
-                ctrl = ramp_ctrl_obs[]
-                ctrl.P_target = p.p_rated_w  # track the active power rating
-                ctrl.fos_soft = Float64(sl_fos_soft.value[])   # from dashboard slider
-                ctrl.fos_hard = Float64(sl_fos_hard.value[])   # from dashboard slider
-                # Scale Kp by power rating.  k_min/k_max are centred on the
-                # slider's setpoint so the controller can search both directions
-                # from the user's static-equilibrium estimate.
-                power_ratio = p.p_rated_w / 50000.0
-                ctrl.Kp = 1e-4 / power_ratio   # higher gain for lower-power systems
-                slider_k = p_run.k_mppt          # user's chosen operating point
-                ctrl.k_min = max(2.0, slider_k * 0.2)   # can reduce load 80%
-                ctrl.k_max = min(2000.0, slider_k * 2.0) # can increase load 100%
-                reset!(ctrl)
-                init_geometry!(ctrl, sys, p_run)  # compute per-segment δα*
-                ramp_state_obs[] = state_label(ctrl)
-            end
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
@@ -1012,7 +966,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                         backline_payout = L_winch,
                         k_mppt          = p_run.k_mppt * k_mppt_scale,
                         kp_elev         = use_field_imu ? 1.0 : 0.0)
-                    sys.k_mppt_ref[] = p_active.k_mppt  # live ref for ODE
                     ode_p = isnothing(ld) ? (sys, p_active, wf) : (sys, p_active, wf, ld)
                 end
 
@@ -1038,7 +991,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
                 apply_brake_constraint!(u, sys, N, Nr)
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
-                orbital_damp_rope_velocities!(u, sys, p_run, 0.05, dt)
+                orbital_damp_rope_velocities!(u, sys, p_run, 0.05)
                 # PTO co-braking during depower: damp all ring angular velocities
                 # proportionally to how far through the Pitch Depower we are.
                 if scenario == :pitch_depower && release_frac > 0.0 && round(p_run.β_rate_max) ≈ 0.0
@@ -1053,19 +1006,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                     new_times[fi] = t
                     new_params[fi] = p_active
                     new_sim_frames[fi] = capture_frame(u, sys, p_active, t, wf, ld; brake_engaged=sys.brake_engaged[])
-                    # Auto-ramp controller update (runs at frame rate ~50 Hz)
-                    if auto_ramp_obs[]
-                        ctrl_dt = dt * save_every
-                        ctrl = ramp_ctrl_obs[]
-                        sf = new_sim_frames[fi]
-                        min_fos_val = sf.fos_ring
-                        collapse_margin = min_collapse_margin(u, sys, ctrl)
-                        new_state = update_ramp!(ctrl, sys, sf, ctrl_dt;
-                            min_fos=min_fos_val,
-                            collapse_margin_deg=collapse_margin)
-                        ramp_state_obs[] = state_label(ctrl)
-                        sl_kmppt.value[] = sys.k_mppt_ref[]  # animate slider
-                    end
                     fi += 1
                 end
             end
@@ -1396,12 +1336,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                  "V6.2 12-line dodecagon", "V6.3 7-line heptagon",
                  "V6.4 3-line triangle", "V6.5 3-line triangle",
                  "V6.7 drag-constrained", "V9.0 50kW equilibrium", "V10 unified rotors",
-                 "V10 Island 51 alt-basin", "V10 Tight (3 rotors)",
-                 "V10 Tight (hub + 3 expansion rotors)",
-                 "V10 Reinforced", "V10 Tight (no lowest expansion)",
-                 "V10-Spoke λ0.90 (safest)", "V10-Spoke λ0.95 (sweet spot)",
-                 "V10-Spoke λ1.10 (max power)",
-                 "Daisy Proto 1kW"],
+                 "V10 Island 51 alt-basin"],
         default=config_name, width=270)
 
     # Also disable menu when not idle
@@ -1548,45 +1483,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     clbl("── Run Parameters ──────────────────────"; fontsize=12, font=:bold)
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
-    # V10 configs need range up to ~600 (dashboard default ~555 from mass scaling)
-    kmppt_start = clamp(p.k_mppt, 1.0, 2000.0)
-    kmppt_range = startswith(config_name, "V10") ? (10.0:1.0:600.0) : (1.0:1.0:2000.0)
     clbl("MPPT gain k_mppt"; fontsize=11)
-    sl_kmppt = cslider!(kmppt_range; start=clamp(kmppt_start, minimum(kmppt_range), maximum(kmppt_range)))
+    sl_kmppt = cslider!(1.0:1.0:2000.0; start=clamp(p.k_mppt, 1.0, 2000.0))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
-
-    # Auto-Ramp: soft-ramp k_mppt controller toggle + state indicator
-    ramp_tog_row = GridLayout(ctrl[cnr!(), 1])
-    Label(ramp_tog_row[1, 1]; text="Auto-Ramp k_mppt", fontsize=11, halign=:left, tellwidth=false)
-    auto_ramp_toggle = Toggle(ramp_tog_row[1, 2]; active=auto_ramp_obs[], framecolor_active=to_color(:cyan))
-    on(auto_ramp_toggle.active) do v
-        auto_ramp_obs[] = v
-        if !v
-            ramp_state_obs[] = "OFF"
-        end
-    end
-    ramp_state_lbl = clbl("State: OFF"; fontsize=10, color=:grey70)
-    on(ramp_state_obs) do txt
-        ramp_state_lbl.text[] = "State: " * txt
-    end
-
-    # FoS thresholds for Auto-Ramp (Phase C)
-    clbl("FoS soft limit"; fontsize=10, color=:grey70)
-    sl_fos_soft = Slider(ctrl[cnr!(), 1]; range=1.5:0.1:5.0, startvalue=2.5)
-    vl_fos_soft = Label(ctrl[cnr!(), 1], @sprintf("taper below %.1f", 2.5);
-        halign=:left, tellwidth=false, fontsize=9, color=:grey60)
-    on(sl_fos_soft.value) do v
-        vl_fos_soft.text[] = @sprintf("taper below %.1f", v)
-    end
-
-    clbl("FoS hard floor"; fontsize=10, color=:grey70)
-    sl_fos_hard = Slider(ctrl[cnr!(), 1]; range=1.0:0.1:3.0, startvalue=1.5)
-    vl_fos_hard = Label(ctrl[cnr!(), 1], @sprintf("freeze at %.1f", 1.5);
-        halign=:left, tellwidth=false, fontsize=9, color=:grey60)
-    on(sl_fos_hard.value) do v
-        vl_fos_hard.text[] = @sprintf("freeze at %.1f", v)
-    end
 
     # Elevation angle — shaft tilt; trades rotor power (cos³β) for vertical lift
     clbl("Elevation β (deg)"; fontsize=11)

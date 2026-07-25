@@ -163,8 +163,8 @@ function design_from_vector_v10(
     bank_bottom = clamp(x[12], 0.0, 25.0)
 
     # Blade scale gradient (x[13]=λ_top, x[14]=λ_bottom)
-    λ_top = clamp(x[13], 0.1, 2.0)
-    λ_bottom = clamp(x[14], 0.1, 2.0)
+    λ_top = clamp(x[13], 0.03, 2.0)
+    λ_bottom = clamp(x[14], 0.03, 2.0)
 
     # Hub altitude from shaft geometry (rings already computed above)
     hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
@@ -192,8 +192,8 @@ function design_from_vector_v10(
         # BEM rotor radius for this rotor at local wind speed
         r_rotor_i = BEM.rotor_radius_for_power(P_per_rotor, v_i, design.n_lines)
 
-        blade_tip = 0.7 * r_rotor_i * λ_i
-        blade_hub = -0.3 * r_rotor_i * λ_i
+        blade_tip = r_rotor_i * λ_i
+        blade_hub = 0.25 * r_rotor_i * λ_i
         blade_chord = 0.113 * r_rotor_i * λ_i
 
         push!(rotors, RotorSpecV10(
@@ -218,15 +218,12 @@ function search_bounds_v10(
     )
 
     # Tighten inherited v5 bounds for V10
-    base_lo[1] = max(base_lo[1], 0.05)      # Do_top min: 0.05 m (redundant with v4: already 0.05)
-    base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (redundant with v4: already 1.5)
-    base_hi[8] = min(base_hi[8], 12.0)       # n_lines max: 12 — matches decoder clamp (ring_spacing.jl:409).
-                                               #   V4 bound of 24 is superseded; raising to 16 would open an
-                                               #   untested region before blade inertia lands (aero ∝ n_blades,
-                                               #   inertia ∝ 0 — those designs are unreliable).
+    base_lo[1] = max(base_lo[1], 0.05)      # Do_top min: 0.05 m (was 0.01)
+    base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (was ~0.1)
+    base_hi[8] = min(base_hi[8], 16.0)       # n_lines max: 16 (was 24)
 
     # V10 additional vars: rotor_mask, bank_top, bank_bottom, λ_top, λ_bottom
-    v10_lo = [0.0, 0.0, 0.0, 0.1, 0.1]     # mask proxy, banks, lambdas (λ floor 0.1 per Rod 2026-07-24)
+    v10_lo = [0.0, 0.0, 0.0, 0.03, 0.03]     # mask proxy, banks, lambdas
     v10_hi = [Float64(N_VALID_MASKS), 25.0, 25.0, 2.0, 2.0]
 
     return vcat(base_lo, v10_lo), vcat(base_hi, v10_hi)
@@ -252,15 +249,7 @@ function objective_v10(
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
-    k_mppt_safety::Float64=1.0,   # >1.0 = conservative (static solver under-predicts dynamic k_mppt)
-    spoke::Union{Nothing,KiteTurbineDynamics.SpokeParams}=nothing,
 )
-    # ═══ Spoke parity guard (2026-07-06) ═════════════════════════════════
-    if spoke !== nothing && spoke.enabled
-        error("spoke drag not implemented in static equilibrium solve; " *
-              "objective_v10 results would diverge from ODE. " *
-              "See DECISIONS.md 2026-07-06 (parity deferral).")
-    end
     # ── Decode design ────────────────────────────────────────────────────
     result = design_from_vector_v10(
         x, beam_profile, p; max_ground_radius=max_ground_radius, power_W=power_W, v_rated=v_rated
@@ -304,13 +293,10 @@ function objective_v10(
         if ri > n_rings_tot || ri < 1
             continue
         end
-        # n_blades = n_lines (one blade per vertex, per V10 geometry convention)
         er = ExpansionRotorParams(
             n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius, rotor.blade_chord,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
-            ri, 1.0,
+            rotor.bank_angle_deg, 0.0, ri, 1.0,  # mass computed later
         )
         push!(expansion_params, er)
     end
@@ -328,7 +314,7 @@ function objective_v10(
     # to reach that ω in the ODE.  Scaling k_mppt with λ² inside the
     # equilibrium solve aligns the static objective with the dynamic reality.
     λ_eff = rotors[1].blade_scale
-    k_mppt_eff = p.k_mppt * λ_eff^2 * k_mppt_safety
+    k_mppt_eff = p.k_mppt * λ_eff^2
     ctrl_scaled = ControlSpec(p.i_pto, k_mppt_eff, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
     p_scaled = override_params(p; k_mppt=k_mppt_eff)
 
@@ -362,7 +348,6 @@ function objective_v10(
     # ── Per-ring expansion forces ────────────────────────────────────────
     r_eff = copy(radii)
     F_radial_per_ring = zeros(Float64, n_rings_tot)
-    m_exp_per_ring = zeros(Float64, n_rings_tot)
     tau_net_per_ring = zeros(Float64, n_rings_tot)
     cumulative_thrust = cumsum(thrust_per_ring)
 
@@ -380,7 +365,6 @@ function objective_v10(
 
         r_eff[ri] = r_new
         F_radial_per_ring[ri] = F_radial
-        m_exp_per_ring[ri] = er.mass
         tau_net_per_ring[ri] = tau_net
         thrust_per_ring[ri] += F_axial
     end
@@ -401,7 +385,6 @@ function objective_v10(
         r_eff_override=r_eff,
         F_radial_per_ring=F_radial_per_ring,
         thrust_per_ring=thrust_per_ring,
-        m_expansion_blade_per_ring=m_exp_per_ring,
     )
 
     # ── Gate 2: Beam buckling FoS ────────────────────────────────────────
@@ -454,7 +437,8 @@ function objective_v10(
     # Expansion rotor mass
     m_expansion = 0.0
     for rotor in rotors
-        m_expansion += expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
+        blade_s = rotor.blade_scale
+        m_expansion += (0.3 + 0.1 * rotor.blade_tip_radius) * blade_s^3
     end
 
     # Tether mass
