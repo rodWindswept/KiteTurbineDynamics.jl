@@ -33,7 +33,8 @@ function tube_props(R::Float64)
     J      = 2.0 * I_bend
     E      = E_CFRP
     G      = E_CFRP / (2.0 * (1.0 + 0.3))  # CFRP ν ≈ 0.3
-    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J, E=E, G=G)
+    σ_yield = 600e6  # CFRP compressive yield ~600 MPa
+    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J, E=E, G=G, σ_yield=σ_yield)
 end
 
 """
