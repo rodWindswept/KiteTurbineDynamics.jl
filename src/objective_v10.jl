@@ -220,7 +220,10 @@ function search_bounds_v10(
     # Tighten inherited v5 bounds for V10
     base_lo[1] = max(base_lo[1], 0.05)      # Do_top min: 0.05 m (redundant with v4: already 0.05)
     base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (redundant with v4: already 1.5)
-    base_hi[8] = min(base_hi[8], 16.0)       # n_lines max: 16 (was 24)
+    base_hi[8] = min(base_hi[8], 12.0)       # n_lines max: 12 — matches decoder clamp (ring_spacing.jl:409).
+                                               #   V4 bound of 24 is superseded; raising to 16 would open an
+                                               #   untested region before blade inertia lands (aero ∝ n_blades,
+                                               #   inertia ∝ 0 — those designs are unreliable).
 
     # V10 additional vars: rotor_mask, bank_top, bank_bottom, λ_top, λ_bottom
     v10_lo = [0.0, 0.0, 0.0, 0.1, 0.1]     # mask proxy, banks, lambdas (λ floor 0.1 per Rod 2026-07-24)
