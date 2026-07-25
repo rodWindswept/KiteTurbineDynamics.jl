@@ -65,70 +65,122 @@ const DAMPING_SETTINGS = [0.05, 0.5, 0.8]
 const DT_FACTORS = [1.0, 2.0]   # DT = 4e-5, DT/2 = 2e-5
 
 function eval_one(x, lin_damp, dt_factor)
-    design = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw();
+    # Use the same build path as objective_v11_warmstart
+    result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw();
                                      power_W=50000.0, v_rated=11.0)
-    sys, u0, pc, label, _ = build_v10_tight()
-    # Build from genome instead of reference
-    expansion_params = build_expansion_params(design, PROFILE_ELLIPTICAL, params_v5_50kw())
-    pc2 = build_system_params(design, params_v5_50kw())
-    sys2, u0_2 = build_kite_turbine_system(pc2; expansion_rotors=expansion_params)
-    
-    dt = 4e-5 / dt_factor
-    n_steps = round(Int, 90.0 / dt)
-    
-    P_samples = Float64[]
-    FoS_samples = Float64[]
-    betz_count = Ref(0)
-    fos_dip_count = Ref(0)
-    
-    function callback(u, t, sys, p)
-        ef = capture_extended(u, sys, p, t, wf)
-        push!(P_samples, ef.P_kw)
-        push!(FoS_samples, ef.fos_ring)
-        # Betz check: P > 97 kW ceiling for triangle-class designs
-        if ef.P_kw > 97.0
-            betz_count[] += 1
-        end
-        # FoS dip: below 1.0
-        if ef.fos_ring < 1.0
-            fos_dip_count[] += 1
-        end
-        return nothing
+    if result.n_active == 0
+        return (NaN, NaN, NaN, 0, 0, NaN, NaN)
     end
-    
+    k_mppt = 10.0^x[15]
+    k_mppt = clamp(k_mppt, 0.01, 1000.0)
+
+    (; design, rotors, n_rings, zs) = result
+    n_lines = design.n_lines
+
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, k_mppt)
+
+    # Build expansion params for static solve
+    expansion_params = ExpansionRotorParams[]
+    for rotor in rotors
+        er = ExpansionRotorParams(
+            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius,
+            rotor.blade_chord, KiteTurbineDynamics.EXP_CL_DESIGN,
+            KiteTurbineDynamics.EXP_CD0_DESIGN, KiteTurbineDynamics.EXP_K_INDUCED,
+            rotor.bank_angle_deg,
+            KiteTurbineDynamics.expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
+            rotor.ring_idx, 1.0,
+        )
+        push!(expansion_params, er)
+    end
+
+    _, radii, _ = KiteTurbineDynamics.ring_spacing_v4(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+        density_profile=design.density_profile)
+
+    λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
+    k_mppt_eff = params_v5_50kw().k_mppt * λ_eff^2
+    p_scaled = KiteTurbineDynamics.override_params(params_v5_50kw(); k_mppt=k_mppt_eff)
+
+    ω_eq, r_ref = KiteTurbineDynamics.solve_equilibrium_self_consistent(
+        design, expansion_params, p_scaled, n_lines, radii, zs;
+        P_per_rotor=50000.0 / max(result.n_active, 1),
+        v_wind=11.0, elev_rad=π/6)
+
+    if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
+        return (NaN, NaN, NaN, 0, 0, NaN, NaN)
+    end
+
     function wf(pos, t)
         z = max(pos[3], 1.0)
         return [11.0 * (z / 15.0)^(1.0 / 7.0), 0.0, 0.0]
     end
-    
-    # Warmstart path
-    ω_eq, _ = solve_equilibrium_self_consistent(
-        design.design, expansion_params, pc2, design.n_lines, Float64[], Float64[];
-        P_per_rotor=50000.0 / max(design.n_active, 1), v_wind=11.0, elev_rad=π/6)
-    
-    u_settled = settle_to_equilibrium(sys2, u0_2, pc2; wind_fn=wf)
-    u_settled[(6*sys2.n_total + sys2.n_ring + 1):(6*sys2.n_total + 2*sys2.n_ring)] .= ω_eq
-    
+
+    u_settled = KiteTurbineDynamics.settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
+    if any(isnan.(u_settled)) || any(isinf.(u_settled))
+        return (NaN, NaN, NaN, 0, 0, NaN, NaN)
+    end
+
+    N = sys.n_total; Nr = sys.n_ring
+    u_settled[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
+    for ri in 1:Nr
+        gid = sys.ring_ids[ri]
+        pos = u_settled[(3*(gid-1)+1):(3*gid)]
+        r = norm(pos)
+        if r > 0.01
+            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
+            vx_idx = 3*N + 3*(gid-1) + 1
+            u_settled[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
+        end
+    end
+
+    sys.k_mppt_ref[] = k_mppt
+
+    dt = 4e-5 / dt_factor
+    n_steps = round(Int, 90.0 / dt)
+
+    P_samples = Float64[]
+    FoS_samples = Float64[]
+    betz_count = Ref(0)
+    fos_dip_count = Ref(0)
+
+    function callback(u, t, sys, p)
+        ef = KiteTurbineDynamics.capture_extended(u, sys, p, t, wf)
+        push!(P_samples, ef.base.P_kw)
+        airborne = Float64[]
+        for i in 2:length(ef.ring_fos)
+            v = ef.ring_fos[i]
+            (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
+        end
+        push!(FoS_samples, isempty(airborne) ? Inf : minimum(airborne))
+        if ef.base.P_kw > 97.0
+            betz_count[] += 1
+        end
+        if !isempty(airborne) && minimum(airborne) < 1.0
+            fos_dip_count[] += 1
+        end
+        return nothing
+    end
+
     try
-        run_canonical_sim!(u_settled, sys2, pc2, wf, n_steps, dt;
-                           lift_device=nothing, lin_damp=lin_damp, callback=callback)
+        KiteTurbineDynamics.run_canonical_sim!(u_settled, sys, pc, wf, n_steps, dt;
+            lift_device=nothing, lin_damp=lin_damp, callback=callback)
     catch
         return (NaN, NaN, NaN, 0, 0, NaN, NaN)
     end
-    
+
     P_finite = [p for p in P_samples if isfinite(p) && p >= 0.0]
     fos_finite = [f for f in FoS_samples if isfinite(f) && f > 0.0]
-    
+
     if isempty(P_finite) || length(P_finite) < 2
         return (NaN, NaN, NaN, 0, 0, NaN, NaN)
     end
-    
+
     P_mean = mean(P_finite)
     FoS_min = isempty(fos_finite) ? Inf : minimum(fos_finite)
     P_range = maximum(P_finite) - minimum(P_finite)
     n_betz = betz_count[]
     n_dips = fos_dip_count[]
-    
+
     return (P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, minimum(P_finite))
 end
 
