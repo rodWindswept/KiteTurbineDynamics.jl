@@ -26,7 +26,7 @@
 #   DT/2 arm is 4.5M steps vs 2.25M at DT, costing ~2× per eval.
 #   Plan for ~16 h, not 7.5.
 
-using KiteTurbineDynamics, CSV, DataFrames, Printf, Statistics
+using KiteTurbineDynamics, CSV, DataFrames, Printf, Statistics, LinearAlgebra
 
 const GENOMES = Dict(
     # Front-spanning: P,FoS pairs from re-scored campaign data
