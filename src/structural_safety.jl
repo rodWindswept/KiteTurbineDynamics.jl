@@ -31,7 +31,9 @@ function tube_props(R::Float64)
     A      = π / 4.0  * (Do^2 - Di^2)
     I_bend = π / 64.0 * (Do^4 - Di^4)
     J      = 2.0 * I_bend
-    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J)
+    E      = E_CFRP
+    G      = E_CFRP / (2.0 * (1.0 + 0.3))  # CFRP ν ≈ 0.3
+    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J, E=E, G=G)
 end
 
 """
