@@ -193,26 +193,66 @@ function eval_one(x, lin_damp, dt_factor)
     return (P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, minimum(P_finite))
 end
 
-# ── Main: screen-first gate ──
-# Only run one genome first.  If no damping setting produces a steady trace
-# on that genome, the instability is damping-independent and we save 7/8
-# of the compute budget.  Only proceed to the full matrix if promising.
+# ── Setup ──
+const CSV_PATH = "scripts/results/recampaign/rebaseline_damping.csv"
+
+# ── Main: smoke → screen → matrix ──
+# Smoke: one eval first.  If it produces garbage (P=0, all NaN), the
+# freshly-threaded lin_damp path is broken and we halt in 20 min, not 9h.
+# Screen: one genome across 3 damping × 2 dt.  If no setting produces a
+# steady trace, the instability is damping-independent and we save 7/8
+# of the compute budget.
+# Matrix: remaining 6 genomes — only if screen passes.
 const SCREEN_GENOME = "10kW_fos034"
-println("=== SCREEN: $SCREEN_GENOME across 3 damping × 2 dt (6 evals, ~9h) ===")
+const SMOKE_LD = 0.05; const SMOKE_DTF = 1.0  # baseline: should reproduce archive
+
+# Load existing results for resume
 results = DataFrame(
     label=String[], lin_damp=Float64[], dt_factor=Float64[],
     P_mean=Float64[], FoS_min=Float64[], P_range=Float64[],
     n_betz=Int[], n_fos_dips=Int[], omega_eq=Float64[], P_min=Float64[]
 )
+if isfile(CSV_PATH)
+    existing = CSV.read(CSV_PATH, DataFrame)
+    append!(results, existing)
+    println("Resumed $(nrow(existing)) existing row(s) from $CSV_PATH")
+end
 
+function already_done(label, ld, dtf)
+    nrow(results[(results.label .== label) .& (results.lin_damp .== ld) .& (results.dt_factor .== dtf), :]) > 0
+end
+
+function save_row(label, ld, dtf, P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min)
+    push!(results, (label, ld, dtf, P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min))
+    # Progressive save — one row at a time, survives kill
+    CSV.write(CSV_PATH, results)
+end
+
+# ── Stage 1: Smoke ──
+if !already_done(SCREEN_GENOME, SMOKE_LD, SMOKE_DTF)
+    println("=== SMOKE: $SCREEN_GENOME ld=$SMOKE_LD dt/$(SMOKE_DTF) (1 eval, ~20 min) ===")
+    P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min =
+        eval_one(GENOMES[SCREEN_GENOME], SMOKE_LD, SMOKE_DTF)
+    save_row(SCREEN_GENOME, SMOKE_LD, SMOKE_DTF, P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min)
+    if !isfinite(P_mean) || P_mean <= 0.01
+        println("SMOKE FAILED — P=$(round(P_mean, digits=1)) kW. lin_damp threading or build path broken.")
+        println("Fix before running the full screen.")
+        exit(3)
+    end
+    println("SMOKE PASSED — P=$(round(P_mean, digits=1)) kW, FoS=$(round(FoS_min, digits=3))")
+end
+
+# ── Stage 2: Screen ──
+println("=== SCREEN: $SCREEN_GENOME across 3 damping × 2 dt (up to 6 evals, ~9h) ===")
 screen_x = GENOMES[SCREEN_GENOME]
 for ld in DAMPING_SETTINGS
     for dtf in DT_FACTORS
+        already_done(SCREEN_GENOME, ld, dtf) && continue
         P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min =
             eval_one(screen_x, ld, dtf)
-        push!(results, (SCREEN_GENOME, ld, dtf, P_mean, FoS_min, P_range,
-                        n_betz, n_dips, ω_eq, P_min))
-        @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n", SCREEN_GENOME, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
+        save_row(SCREEN_GENOME, ld, dtf, P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min)
+        @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n",
+                SCREEN_GENOME, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
     end
 end
 
@@ -239,23 +279,23 @@ end
 println("SCREEN PASSED — proceeding to full 7-genome matrix.")
 println()
 
-# Full matrix: remaining 6 genomes
+# Full matrix: remaining 6 genomes — progressive save + resume
 for (label, x) in GENOMES
     label == SCREEN_GENOME && continue
     for ld in DAMPING_SETTINGS
         for dtf in DT_FACTORS
+            already_done(label, ld, dtf) && continue
             P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min =
                 eval_one(x, ld, dtf)
-            push!(results, (label, ld, dtf, P_mean, FoS_min, P_range,
-                            n_betz, n_dips, ω_eq, P_min))
-            @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n", label, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
+            save_row(label, ld, dtf, P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min)
+            @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n",
+                    label, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
         end
     end
 end
 
-out = "scripts/results/recampaign/rebaseline_damping.csv"
-CSV.write(out, results)
-println("\nWrote $out ($(nrow(results)) rows)")
+# CSV already written progressively by save_row() above.
+println("\nWrote $CSV_PATH ($(nrow(results)) rows)")
 
 # ── Admissibility gate ──
 println("\n=== REPRODUCTION CHECK (lin_damp=0.05 vs archived CSVs) ===")
