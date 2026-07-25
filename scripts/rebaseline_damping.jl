@@ -143,8 +143,8 @@ function eval_one(x, lin_damp, dt_factor)
     betz_count = Ref(0)
     fos_dip_count = Ref(0)
 
-    function callback(u, t, sys, p)
-        ef = KiteTurbineDynamics.capture_extended(u, sys, p, t, wf)
+    function callback(u, t_cum, s)
+        ef = KiteTurbineDynamics.capture_extended(u, sys, pc, t_cum, wf)
         push!(P_samples, ef.base.P_kw)
         airborne = Float64[]
         for i in 2:length(ef.ring_fos)
@@ -315,8 +315,8 @@ for (ld, grp) in pairs(g)
             end
         end
         if all_converged && total_dips < best_dips
-            best_dips = total_dips
-            best_ld = ld
+            global best_dips = total_dips
+            global best_ld = ld
         end
     end
 end
