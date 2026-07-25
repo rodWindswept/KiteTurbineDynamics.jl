@@ -10,140 +10,151 @@ const TETHER_SWL = 3500.0   # N — Dyneema 3 mm safe working load
 
 # ── CFRP tube structural constants ────────────────────────────────────────────
 # Ring frames are built from CFRP hollow tubes; see TRPT_Ring_Scalability_Report §3.
-const E_CFRP = 70e9    # Pa  — conservative isotropic CFRP Young's modulus
-const RHO_CFRP = 1600.0  # kg/m³ — CFRP density
-const T_OVER_D = 0.05    # t/D wall ratio — aerodynamic and structural optimum
-const T_MIN_WALL = 5e-4    # m   — 0.5 mm minimum manufacturable wall thickness
-const FOS_DESIGN = 3.0     # column buckling factor of safety at design point
+const E_CFRP      = 70e9    # Pa  — conservative isotropic CFRP Young's modulus
+const RHO_CFRP    = 1600.0  # kg/m³ — CFRP density
+const T_OVER_D    = 0.05    # t/D wall ratio — aerodynamic and structural optimum
+const T_MIN_WALL  = 5e-4    # m   — 0.5 mm minimum manufacturable wall thickness
+const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 
 # Scaling law from analysis (exact thin-wall calibration, 10 kW rated, 5-line pentagon,
 # T_line ≈ 2333 N):  Do = DO_SCALE × √R.
 # Derivation: N_comp is constant across all ring radii when L_seg ∝ R (tapered TRPT),
 # so I_req ∝ L_poly² ∝ R² and Do ∝ (I_req)^(1/4) ∝ R^(1/2).
-# Calibrated by exact hollow-tube formula: Do = 19.7 mm at R = 2 m (vs 20.7 mm in the
+# Calibrated by exact tube_I formula: Do = 19.7 mm at R = 2 m (vs 20.7 mm in the
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
-const G_CFRP = 5e9    # Pa — conservative shear modulus (woven CFRP layup)
-const σ_CFRP_COMPR = 600e6  # Pa — compressive strength (conservative unidirectional)
-
 """
-    tube_props(R) → NamedTuple
+    tube_I(Do, t) → I (m⁴)
 
-Cross-section properties of the CFRP design tube for a ring of radius R.
-Returns (Do, t, Di, A, I_bend, J, E, G, σ_yield) where J = 2·I_bend for a circular tube.
-Uses the unified SpacerRingDesign module under the hood.
+Second moment of area for a hollow circular tube (exact formula).
 """
-function tube_props(R::Float64)
-    Do = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
-    t = max(T_OVER_D * Do, T_MIN_WALL)
-
-    # Instantiate CircularTube (paired with DEFAULT_CFRP)
-    tube = CircularTube(Do, t / Do)
-
-    # Query properties under unit length and FixedFixedEnds (space frame joints)
-    props = strut_properties(tube, 1.0, FixedFixedEnds())
-
-    return (
-        Do=Do,
-        t=t,
-        Di=Do - 2.0 * t,
-        A=props.A,
-        I_bend=props.I_min,
-        J=props.J,
-        E=tube.material.E,
-        G=tube.material.G,
-        σ_yield=tube.material.σ_yield,
-    )
+function tube_I(Do::Float64, t::Float64)::Float64
+    Di = Do - 2.0 * t
+    return π / 64.0 * (Do^4 - Di^4)
 end
 
-# Backward-compat wrapper — retained for external callers; internal code uses tube_props
-tube_I(Do::Float64, t::Float64)::Float64 =
-    strut_properties(CircularTube(Do, t / Do), 1.0, FixedFixedEnds()).I_min
-
 """
-    ring_safety_frame(u, alpha, sys, p, t, wind_fn) → Vector{NamedTuple}
+    ring_safety_frame(u, alpha, sys, p) → Vector{NamedTuple}
 
 Compute per-ring polygon-segment compression and Euler column buckling FoS for one ODE frame.
-Delegates to `ring_element_analysis` and flattens results into the same NamedTuple format
-(`ring_id`, `radius`, `N_comp`, `P_crit`, `tube_Do_mm`, `utilisation`, `fos`, `exceeded`)
-that downstream consumers (e.g. `capture_frame`) expect.
+
+Failure mode: Euler column (pin-pin) buckling of each straight polygon segment.
+  P_crit = π² · E_CFRP · I_tube / L_poly²
+where L_poly = 2R·sin(π/n) is the flat chord length of one polygon side.
+
+Ring tube design: CFRP hollow tube sized by Do = DO_PER_R × R, t = T_OVER_D × Do.
+FoS is computed against that design tube.  At rated loads FoS ≈ FOS_DESIGN = 3.0;
+under higher than rated loads FoS falls, under lighter loads it rises — giving a
+meaningful real-time margin indicator on the dashboard.
+
+Skips the fixed ground node (ring_idx = 1) and the hub (ring_idx = Nr).
 """
-function ring_safety_frame(
-    u::AbstractVector,
-    alpha::AbstractVector,
-    sys::KiteTurbineSystem,
-    p::SystemParams,
-    t::Float64=0.0,
-    wind_fn::Union{Nothing, Function}=nothing,
-)
-    frames = ring_element_analysis(u, alpha, sys, p, t, wind_fn)
-    return [
-        (
-            ring_id=f.ring_id,
-            radius=f.radius,
-            N_comp=maximum(b.N for b in f.beams; init=0.0),
-            P_crit=maximum(b.N_crit for b in f.beams; init=1.0),
-            tube_Do_mm=tube_props(f.radius).Do * 1e3,
-            utilisation=f.max_util,
-            fos=f.max_util > 1e-9 ? 1.0 / f.max_util : Inf,
-            exceeded=(f.max_util > 1.0),
-        ) for f in frames
-    ]
-end
+function ring_safety_frame(u      ::AbstractVector,
+                            alpha  ::AbstractVector,
+                            sys    ::KiteTurbineSystem,
+                            p      ::SystemParams)
+    N  = sys.n_total
+    Nr = sys.n_ring
+    β         = p.elevation_angle
+    shaft_dir = [cos(β), 0.0, sin(β)]
+    perp1, perp2 = shaft_perp_basis(shaft_dir)
 
-"""
-    ground_station_forces(u, alpha, sys, p, t=0.0, wind_fn=nothing) → NamedTuple
+    results = Vector{NamedTuple}()
 
-Compute the forces and moments acting on the ground PTO station/ring.
-Returns:
-- `F_net`: 3D net force vector (N) in global frame acting on the ground station.
-- `F_net_mag`: Magnitude of net force (N).
-- `F_vertex_max`: Maximum force magnitude on any single ground attachment point (N).
-- `F_vertices`: 3×n matrix of individual vertex force vectors (N).
-- `M_net`: 3D net moment vector (N·m) about the ground station center.
-"""
-function ground_station_forces(
-    u::AbstractVector,
-    alpha::AbstractVector,
-    sys::KiteTurbineSystem,
-    p::SystemParams,
-    t::Float64=0.0,
-    wind_fn::Union{Nothing, Function}=nothing,
-)
-    hub_gid = sys.rotor.node_id
-    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
-    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    for (k, ring_gid) in enumerate(sys.ring_ids[2:end-1])  # skip ground and hub
+        node   = sys.nodes[ring_gid]::RingNode
+        R      = node.radius
+        ri     = node.ring_idx
+        α_ring = alpha[ri]
+        ctr    = u[3*(ring_gid-1)+1 : 3*ring_gid]
 
-    ring_gid = sys.ring_ids[1]
-    node = sys.nodes[ring_gid]::RingNode
-    R = node.radius
-    α_ring = alpha[1]
-    n = p.n_lines
+        # ── Accumulate total inward radial force on this ring from all attached sub-segments ──
+        F_inward = 0.0
+        for ss in sys.sub_segs
+            on_end_b = ss.end_b.is_ring && ss.end_b.node_id == ring_gid
+            on_end_a = ss.end_a.is_ring && ss.end_a.node_id == ring_gid
+            (on_end_b || on_end_a) || continue
 
-    # Extract vertex forces from the tethers
-    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
+            if on_end_b
+                pa = ss.end_a.is_ring ? begin
+                        node_a = sys.nodes[ss.end_a.node_id]::RingNode
+                        ctr_a  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                        attachment_point(ctr_a, node_a.radius, alpha[node_a.ring_idx],
+                                         ss.end_a.line_idx, p.n_lines, perp1, perp2)
+                     end : u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+                pb  = attachment_point(ctr, R, α_ring, ss.end_b.line_idx,
+                                       p.n_lines, perp1, perp2)
+                len = norm(pb .- pa); len < 1e-9 && continue
+                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+                r_vec = pb .- ctr
+                dir   = (pb .- pa) ./ len   # rope direction toward ring
+                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
+            else
+                pb = ss.end_b.is_ring ? begin
+                        node_b = sys.nodes[ss.end_b.node_id]::RingNode
+                        ctr_b  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                        attachment_point(ctr_b, node_b.radius, alpha[node_b.ring_idx],
+                                         ss.end_b.line_idx, p.n_lines, perp1, perp2)
+                     end : u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+                pa  = attachment_point(ctr, R, α_ring, ss.end_a.line_idx,
+                                       p.n_lines, perp1, perp2)
+                len = norm(pb .- pa); len < 1e-9 && continue
+                T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
+                r_vec = pa .- ctr
+                dir   = (pa .- pb) ./ len   # rope direction toward ring
+                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
+            end
+        end
 
-    # Compute net force
-    F_net = sum(F_global; dims=2)[:]
-    F_net_mag = norm(F_net)
+        # ── Polygon column compression ─────────────────────────────────────────────────────────
+        # For a regular n-gon with equal inward nodal forces F_v = F_inward/n:
+        #   compression per segment  N_comp = F_v / (2·tan(π/n))
+        #
+        # !! SERIOUS LIMITATION — symmetric loading assumed !!
+        # This formula is only physically valid when all n lines are uniformly taut and
+        # the TRPT is transmitting torque (i.e. the lines are helically twisted).
+        # Ring beam compression arises from the INWARD RADIAL component of line tension,
+        # which is proportional to sin(Δα) — the per-segment twist angle.  When torque
+        # drops (furl, deceleration) the twist angle shrinks toward zero and even taut
+        # lines contribute near-zero inward force; the beams are NOT significantly
+        # compressed.  Slack lines contribute zero by construction (T = max(0,…)) but
+        # taut lines on only one side of the ring are treated here as if spread evenly
+        # to all n vertices, which is wrong in two ways:
+        #   1. Peak member compression (between two adjacent loaded vertices) can be up to
+        #      n times higher than F_v = F_inward/n suggests — so asymmetric loading is
+        #      UNDER-reported on the worst-case beam segment.
+        #   2. Unloaded sides of the ring are shown as compressed when they are not.
+        # Consequence: the red ring colour during furl transients and slack-line events
+        # is physically misleading.  A correct treatment requires per-vertex force
+        # accounting and a 2-D polygon frame solve.  Until that is implemented, treat
+        # ring colour and utilisation numbers as valid ONLY during steady-state operation
+        # with all lines uniformly taut.
+        n_float = float(p.n_lines)
+        F_v     = F_inward / n_float
+        N_comp  = F_v / (2.0 * tan(π / n_float))
 
-    # Compute individual vertex force magnitudes and peak
-    F_vertex_mags = [norm(F_global[:, j]) for j in 1:n]
-    F_vertex_max = maximum(F_vertex_mags)
+        # Polygon segment length: flat chord between adjacent vertices (pin-pin column length)
+        L_poly  = 2.0 * R * sin(π / n_float)
 
-    # Compute moments about the center [0,0,0]
-    M_net = zeros(3)
-    for j in 1:n
-        pa = attachment_point([0.0, 0.0, 0.0], R, α_ring, j, n, perp1, perp2)
-        M_net .+= cross(pa, F_global[:, j])
+        # ── CFRP design tube for this ring ─────────────────────────────────────────────────────
+        # Tube outer diameter scales as Do = DO_SCALE × √R  (derived: N_comp constant, I_req ∝ R²).
+        Do_design = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
+        t_design  = max(T_OVER_D * Do_design, T_MIN_WALL)
+        I_design  = tube_I(Do_design, t_design)
+        P_crit    = π^2 * E_CFRP * I_design / L_poly^2
+
+        util = N_comp  / max(P_crit, 1e-9)
+        fos  = P_crit  / max(N_comp,  1e-9)
+
+        push!(results, (ring_id     = k,
+                        radius      = R,
+                        N_comp      = N_comp,
+                        P_crit      = P_crit,
+                        tube_Do_mm  = Do_design * 1e3,
+                        utilisation = util,
+                        fos         = fos,
+                        exceeded    = (util > 1.0)))
     end
-
-    return (
-        F_net=F_net,
-        F_net_mag=F_net_mag,
-        F_vertex_max=F_vertex_max,
-        F_vertices=F_global,
-        M_net=M_net,
-    )
+    return results
 end

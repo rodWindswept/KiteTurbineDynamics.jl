@@ -72,18 +72,31 @@ end
 
 """Tension of the middle (rope→rope) sub-segment for tether line j of segment s."""
 function _mid_tension(u, sys, p, s, j)
-    return get_segment_tension(u, sys, p, s, j)
+    idx = (s-1) * p.n_lines * 4 + (j-1) * 4 + 2
+    idx > length(sys.sub_segs) && return 0.0
+    ss  = sys.sub_segs[idx]
+    pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
+    pb  = u[3*(ss.end_b.node_id-1)+1 : 3*ss.end_b.node_id]
+    max(0.0, ss.EA * (norm(pb .- pa) - ss.length_0) / ss.length_0)
 end
 
+# ── Geometry helpers for 3D tether rendering ────────────────────────────────
 function _tether_max(u, sys, p)
-    return get_max_rope_tension(u, sys, p)[1]
+    T = 0.0
+    for s in 1:p.n_rings+1, j in 1:p.n_lines
+        T = max(T, _mid_tension(u, sys, p, s, j))
+    end
+    T
 end
 
 """Count slack tether lines (T < 5 N)."""
 function _n_slack_lines(u, sys, p)
-    return get_max_rope_tension(u, sys, p)[2]
+    n = 0
+    for s in 1:p.n_rings+1, j in 1:p.n_lines
+        _mid_tension(u, sys, p, s, j) < 5.0 && (n += 1)
+    end
+    n
 end
-
 
 """Maximum mid-rope sag (mm) across all 15 segments, line 1."""
 function _max_sag_mm(u, sys, p)
@@ -92,7 +105,7 @@ function _max_sag_mm(u, sys, p)
     hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
     pp1, pp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     best = 0.0; best_seg = 1
-    for s in 1:(sys.n_ring-1)
+    for s in 1:(p.n_rings+1)
         gid_a = sys.ring_ids[s];   gid_b = sys.ring_ids[s+1]
         na = sys.nodes[gid_a]::RingNode; nb = sys.nodes[gid_b]::RingNode
         ctr_a = u[3*(gid_a-1)+1:3*gid_a]; ctr_b = u[3*(gid_b-1)+1:3*gid_b]
@@ -134,7 +147,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           config_name::String = "Canonical 5-line")
 
     n_frames = length(frames)
-    n_seg    = sys.n_ring - 1
+    n_seg    = p.n_rings + 1
     N        = sys.n_total
     Nr       = sys.n_ring
 
@@ -150,9 +163,30 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         _tilted_ring_basis(u, sys, hub_gid, hub_ri)
     end
 
-    _seg_T = (u, s, j) -> get_segment_tension(u, sys, p, s, j)
-    _tmax_local   = u -> get_max_rope_tension(u, sys, p)[1]
-    _nslack_local = u -> get_max_rope_tension(u, sys, p)[2]
+    # ── Tension closures — use ring attachment geometry, not rope node positions ──
+    # Ring attachment points track the ODE alpha angles correctly even when rope
+    # nodes drift to natural length.  l_seg is the natural length of one full
+    # tether segment (4 sub-segs in series), so EA×Δl/l_seg gives correct force.
+    _ea_rope = sys.sub_segs[1].EA
+    # Per-segment natural length — critical for v5 non-uniform spacing.
+    # Sub-segments within a segment all share the same natural length.
+    _seg_nat_len = (s) -> 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
+    _seg_T = (u, s, j) -> begin
+        gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s + 1]
+        na    = sys.nodes[gid_a]::RingNode
+        nb    = sys.nodes[gid_b]::RingNode
+        ctr_a = u[3*(gid_a-1)+1 : 3*gid_a]
+        ctr_b = u[3*(gid_b-1)+1 : 3*gid_b]
+        α_a   = u[6N + na.ring_idx]
+        α_b   = u[6N + nb.ring_idx]
+        pp1, pp2 = _perp_fn(u)
+        pa    = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
+        pb    = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
+        l_nat = _seg_nat_len(s)
+        max(0.0, _ea_rope * (norm(pb .- pa) - l_nat) / l_nat)
+    end
+    _tmax_local   = u -> maximum((_seg_T(u, s, j) for s in 1:n_seg, j in 1:p.n_lines); init=0.0)
+    _nslack_local = u -> count(_seg_T(u, s, j) < 5.0 for s in 1:n_seg, j in 1:p.n_lines)
 
     l_seg = p.tether_length / n_seg
 
@@ -205,23 +239,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     build_status_obs   = Observable("")              # shown during transitions
     _is_safe()         = (system_state_obs[] == :idle)
 
-    # ── Figure — A1 Instrument dark theme ─────────────────────────────────────
-    # Palette: near-black background, cyan accent, light-grey ink
-    A1_BG        = RGBf(0.039, 0.047, 0.063)
-    A1_PANEL     = RGBf(0.071, 0.086, 0.114)
-    A1_EDGE      = RGBf(0.133, 0.165, 0.208)
-    A1_INK       = RGBf(0.910, 0.933, 0.965)
-    A1_INK_DIM   = RGBf(0.604, 0.655, 0.714)
-    A1_ACCENT    = RGBf(0.224, 0.816, 0.847)
-    A1_GREEN     = RGBf(0.2, 0.8, 0.3)
-    A1_ORANGE    = RGBf(0.95, 0.55, 0.1)
-    A1_RED       = RGBf(0.95, 0.2, 0.2)
-
+    # ── Figure — dark theme ───────────────────────────────────────────────────
     set_theme!(theme_dark())
-    fig_w, fig_h = 1400, 850  # fits 15" laptop screens
-    fig = Figure(size=(fig_w, fig_h), backgroundcolor=A1_BG)
+    fig = Figure(size=(1600, 950))
 
-    # ── Main content: controls | 3D viewport | HUD ────────────────────────────
     ctrl = GridLayout(fig[1, 1])
     hud  = GridLayout(fig[1, 3])
     colsize!(fig.layout, 1, Fixed(300))
@@ -259,52 +280,30 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                color=co, linewidth=lw, visible=vis_tethers)
     end
 
-    # Intermediate ring polygons — per-beam utilisation colour
+    # Intermediate ring polygons — hoop-compression colour
     for k in 2:(Nr-1)
         gid_k = sys.ring_ids[k]
         nk    = sys.nodes[gid_k]::RingNode
         R_k   = nk.radius
         ri_k  = nk.ring_idx
-        for j in 1:p.n_lines
-            j_next = mod1(j + 1, p.n_lines)
-            edge_obs = @lift begin
-                u    = $u_obs
-                ctr  = u[3*(gid_k-1)+1 : 3*gid_k]
-                α    = u[6N + ri_k]
-                pp1, pp2 = _perp_fn(u)
-                pa = attachment_point(ctr, R_k, α, j,      p.n_lines, pp1, pp2)
-                pb = attachment_point(ctr, R_k, α, j_next, p.n_lines, pp1, pp2)
-                ([pa[1], pb[1]], [pa[2], pb[2]], [pa[3], pb[3]])
-            end
-            ec = @lift begin
-                sfs  = $sim_frames_obs
-                fi   = $frame_obs
-                util = (fi <= length(sfs) &&
-                        k-1 <= length(sfs[fi].ring_beam_utils) &&
-                        j   <= length(sfs[fi].ring_beam_utils[k-1])) ?
-                       sfs[fi].ring_beam_utils[k-1][j] : 0.0
-                _ring_util_color(util)
-            end
-            lines!(ax3d, @lift($edge_obs[1]), @lift($edge_obs[2]), @lift($edge_obs[3]);
-                   color=ec, linewidth=2.0, visible=vis_rings)
+        ro = @lift begin
+            u   = $u_obs
+            ctr = u[3*(gid_k-1)+1 : 3*gid_k]
+            α   = u[6N + ri_k]
+            pp1, pp2 = _perp_fn(u)
+            jj  = [1:p.n_lines; 1]
+            pts = [attachment_point(ctr, R_k, α, jj[i], p.n_lines, pp1, pp2)
+                   for i in eachindex(jj)]
+            ([pt[1] for pt in pts], [pt[2] for pt in pts], [pt[3] for pt in pts])
         end
-    end
-
-    # Expansion rotor ring markers — cyan dots at rings with expansion rotors
-    if !isempty(sys.expansion_rotors)
-        exp_ring_ids = [er.ring_idx for er in sys.expansion_rotors]
-        for ri in exp_ring_ids
-            if ri < 1 || ri > Nr; continue; end
-            gid = sys.ring_ids[ri]
-            pos_obs = @lift begin
-                u = $u_obs
-                u[(3*(gid-1)+1):(3*gid)]
-            end
-            scatter!(ax3d,
-                @lift([$pos_obs[1]]), @lift([$pos_obs[2]]), @lift([$pos_obs[3]]);
-                color=:cyan, markersize=12, marker=:diamond,
-                visible=vis_rings)
+        rc = @lift begin
+            sfs  = $sim_frames_obs
+            fi   = $frame_obs
+            util = fi <= length(sfs) ? sfs[fi].ring_utils[k-1] : 0.0
+            _ring_util_color(util)
         end
+        lines!(ax3d, @lift($ro[1]), @lift($ro[2]), @lift($ro[3]);
+               color=rc, linewidth=1.5)
     end
 
     # Hub (rotor) ring — firebrick, thicker
@@ -348,42 +347,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                      @lift($blade_obs[3]); color=:steelblue, linewidth=2.5)
     end
 
-    # ── Expansion rotor blades ──────────────────────────────────────────────
-    if !isempty(sys.expansion_rotors)
-        hub_gid_val = hub_gid
-        ground_gid_val = sys.ring_ids[1]
-        for (ei, er) in enumerate(sys.expansion_rotors)
-            ri_val = er.ring_idx
-            if ri_val < 1 || ri_val > sys.n_ring; continue; end
-            ring_gid_val = sys.ring_ids[ri_val]
-            ring_node = sys.nodes[ring_gid_val]
-            ring_R_val = ring_node.radius
-            r_outer_val = ring_R_val + er.blade_tip_radius
-            bank_rad_val = deg2rad(er.bank_angle_deg)
-            n_blades_val = er.n_blades
-            for b in 1:n_blades_val
-                b_val = b
-                exp_blade_obs = @lift begin
-                    uu = $u_obs
-                    ctr  = @view uu[(3*(ring_gid_val-1)+1):(3*ring_gid_val)]
-                    hub  = @view uu[(3*(hub_gid_val-1)+1):(3*hub_gid_val)]
-                    gnd  = @view uu[(3*(ground_gid_val-1)+1):(3*ground_gid_val)]
-                    α_val  = uu[6N + ri_val]
-                    φ_val  = α_val + (b_val - 1) * (2π / n_blades_val)
-                    pp1, pp2 = _perp_fn(uu)
-                    r_dir = cos(φ_val) .* pp1 .+ sin(φ_val) .* pp2
-                    shaft_dir = normalize(Vector(gnd .- hub))
-                    bank_dir = cos(bank_rad_val) .* r_dir .+ sin(bank_rad_val) .* shaft_dir
-                    p_inner = Vector(ctr) .+ ring_R_val .* r_dir
-                    p_outer = Vector(ctr) .+ r_outer_val .* bank_dir
-                    ([p_inner[1], p_outer[1]], [p_inner[2], p_outer[2]], [p_inner[3], p_outer[3]])
-                end
-                lines!(ax3d, @lift($exp_blade_obs[1]), @lift($exp_blade_obs[2]),
-                             @lift($exp_blade_obs[3]); color=:darkorange, linewidth=2.0)
-            end
-        end
-    end
-
     # Lift system — bearing and sky anchor are real ODE particles.
     # Bearing only sees gravity, bridles, and the cyan line.  The sky anchor
     # (the splice/knot at the upper end of the cyan line) takes the kite
@@ -401,11 +364,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             u    = $u_obs
             ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
             α    = u[6N + hub_ri]
-            hub_rmag  = norm(ctr)
-            shaft_dir = hub_rmag > 0.1 ?
-                        ctr ./ hub_rmag :
-                        [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-            pp1, pp2 = shaft_perp_basis(shaft_dir)
+            pp1, pp2 = _perp_fn(u)
             node = attachment_point(ctr, hub_R, α, j, p.n_lines, pp1, pp2)
             bp   = $bearing_obs
             ([node[1], bp[1]], [node[2], bp[2]], [node[3], bp[3]])
@@ -500,7 +459,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         lines!(ax3d,
                @lift($back_line_obs[1][1]), @lift($back_line_obs[1][2]),
                @lift($back_line_obs[1][3]);
-               color=@lift(to_color($back_line_obs[2] ? :coral : :grey50)),
+               color=@lift($back_line_obs[2] ? :coral : :grey50),
                linewidth=1.5)
     end
 
@@ -546,35 +505,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Fixed column width prevents label jitter as numbers change width
     colsize!(hud, 1, Fixed(350))
 
-    # ── Cockpit telemetry — opens as a separate resizable window ──────────────
-    strip_power    = Observable("0.00 kW")
-    strip_rpm      = Observable("0 rpm")
-    strip_fos      = Observable("∞")
-    strip_fos_col  = Observable(A1_GREEN)
-    strip_util     = Observable("0%")
-    strip_util_col = Observable(A1_GREEN)
-    strip_wind     = Observable("0.0 m/s")
-    strip_time     = Observable("0.00 s")
-
-    cockpit_fig = Figure(size=(900, 110), backgroundcolor=A1_BG)
-    cp = GridLayout(cockpit_fig[1, 1])
-    Label(cp[2, 1], "POWER kW";       fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 2], "ROTOR rpm";      fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 3], "TETHER FoS";     fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 4], "RING BUCKLING";  fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 5], "WIND m/s";       fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 6], "ELEVATION";      fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[2, 7], "TIME";           fontsize=10, color=A1_INK_DIM, halign=:left)
-    Label(cp[1, 1], strip_power;    fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
-    Label(cp[1, 2], strip_rpm;      fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
-    Label(cp[1, 3], strip_fos;      fontsize=28, font=:bold, color=strip_fos_col,   halign=:left, tellwidth=false)
-    Label(cp[1, 4], strip_util;     fontsize=28, font=:bold, color=strip_util_col,  halign=:left, tellwidth=false)
-    Label(cp[1, 5], strip_wind;     fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
-    Label(cp[1, 6], Observable(@sprintf("%.0f°", rad2deg(p.elevation_angle))); fontsize=28, font=:bold, color=A1_INK, halign=:left, tellwidth=false)
-    Label(cp[1, 7], strip_time;     fontsize=28, font=:bold, color=A1_INK,          halign=:left, tellwidth=false)
-    for i in 1:7; colsize!(cp, i, Fixed(120)); end
-    colsize!(cp, 7, Fixed(160))
-
     hr = Ref(0)
     hnr!() = (hr[] += 1; hr[])
 
@@ -583,61 +513,99 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                               justification=:left, kw...)
     fos_str(v) = (isinf(v) || isnan(v) || v > 9999) ? "   ∞" : @sprintf("%6.1f", v)
 
-    # ── Sparkline buffers (circular, last 80 frames) ───────────────────────
-    SPARK_N = 80
-    spark_power   = Observable(fill(NaN, SPARK_N))
-    spark_tension = Observable(fill(NaN, SPARK_N))
-    spark_ring    = Observable(fill(NaN, SPARK_N))
-    spark_idx     = Ref(1)
+    # ── SECTION A: Live Telemetry ─────────────────────────────────────────────
+    hlbl("── Live Telemetry ─────────────────────────"; fontsize=13, font=:bold)
 
-    # ── SECTION A: Compact Live Telemetry ─────────────────────────────────
-    hlbl("── LIVE ─────────────────────────────────────"; fontsize=12, font=:bold, color=A1_ACCENT)
+    # Time / frame indicator — shows simulated time if available
+    t_lbl = hlbl(isnothing(times) ? "Frame     1 / $(n_frames)" :
+                                     "t =     0.00 s  (frame     1 / $(n_frames))")
 
-    # Power sparkline
-    ax_pwr = Axis(hud[hnr!(), 1]; height=50, width=330,
-                  backgroundcolor=A1_PANEL, xgridcolor=A1_EDGE, ygridcolor=A1_EDGE,
-                  xticklabelsize=0, yticklabelsize=8, ytickcolor=A1_INK_DIM,
-                  spinewidth=0.5, xtrimspine=true, ytrimspine=true)
-    lines!(ax_pwr, 1:SPARK_N, spark_power; color=A1_ACCENT, linewidth=1.5)
-    pwr_readout = hlbl("P =   0.00 kW  (  0% rated)"; fontsize=10, color=A1_INK_DIM)
+    # Wind speed at hub altitude (Hellmann shear applied)
+    v_lbl = hlbl("Wind at hub    V =    0.00 m/s")
 
-    # Tether tension sparkline
-    ax_ten = Axis(hud[hnr!(), 1]; height=50, width=330,
-                  backgroundcolor=A1_PANEL, xgridcolor=A1_EDGE, ygridcolor=A1_EDGE,
-                  xticklabelsize=0, yticklabelsize=8, ytickcolor=A1_INK_DIM,
-                  spinewidth=0.5, xtrimspine=true, ytrimspine=true)
-    lines!(ax_ten, 1:SPARK_N, spark_tension; color=:orange, linewidth=1.5)
-    hlines!(ax_ten, [Float64(TETHER_SWL)]; color=A1_RED, linestyle=:dash, linewidth=1)
-    ten_readout = hlbl("T =      0 N  ·  FoS  ∞"; fontsize=10, color=A1_INK_DIM)
+    # Rotor (hub) angular velocity and RPM
+    # Purpose: primary rotational state of the kite/rotor assembly
+    omega_lbl = hlbl("Rotor (hub)    ω =   0.000 rad/s  (  0.0 rpm)")
 
-    # Ring utilisation bar
-    ax_ring = Axis(hud[hnr!(), 1]; height=22, width=330,
-                   backgroundcolor=A1_PANEL,
-                   xticklabelsize=0, yticklabelsize=0,
-                   spinewidth=0, xgridvisible=false, ygridvisible=false,
-                   xautolimitmargin=(0,0), yautolimitmargin=(0,0))
-    ring_bar_val = Observable(0.0)
-    barplot!(ax_ring, @lift([$ring_bar_val]); color=strip_util_col,
-             direction=:x, width=20, strokewidth=0)
-    xlims!(ax_ring, 0, 1.05)
-    ring_readout = hlbl("Ring util   0.0%  ·  FoS  ∞"; fontsize=10, color=A1_INK_DIM)
+    # PTO (ground ring) angular velocity — actual generator shaft speed
+    # Purpose: what the generator sees; differs from hub by TRPT torsional slip
+    pto_lbl = hlbl("PTO (ground)   ω =   0.000 rad/s  (  0.0 rpm)")
 
-    # ── Lift Device Status ─────────────────────────────────────────────────
-    hlbl("── LIFT DEVICE ────────────────────────────"; fontsize=12, font=:bold, color=A1_ACCENT)
+    # Electrical output power = τ_gen × ω_PTO = k_mppt × ω_PTO³
+    # Purpose: primary performance metric
+    p_lbl = hlbl("Output power   P =   0.00 kW  (  0% rated)")
+
+    # Tip speed ratio λ = ω_hub × R / V_hub
+    # Purpose: operating point on the Cp–λ curve; optimal ~4.1
+    tsr_lbl = hlbl("Tip speed ratio  λ =   0.00  (opt ≈ 4.1)")
+
+    # TRPT total twist: accumulated α from ground ring to hub
+    # Purpose: torsional loading indicator; large twist → rope near failure
+    twist_lbl = hlbl("TRPT twist  Δα =   0.0°  (hub – PTO)")
+
+    # Hub altitude — key indicator for kite drop / TRPT sag scenarios
+    hub_z0_ref = Ref{Float64}(NaN)   # reference Z from frame 1; NaN = not yet set; reset each rerun
+    hub_z_lbl  = hlbl("Hub altitude  Z =   0.0 m  (Δ = ±  0.0 m)")
+
+    # Fixed operating parameters (update only on frame changes for β; others static)
+    elev_lbl  = hlbl(@sprintf("Elevation  β = %5.1f°  |  Rated %.0f kW",
+                               rad2deg(p.elevation_angle), p.p_rated_w/1000.0))
+    kite_lbl  = hlbl(@sprintf("Kite  CL = %4.2f  CD = %4.2f  |  A = %.1f m²",
+                               sys.kite.CL, sys.kite.CD, sys.kite.area))
+
+    # ── SECTION L: Lift Device Status ──────────────────────────────────────────
+    hlbl(""; fontsize=6)
+    hlbl("── Lift Device ───────────────────────────"; fontsize=13, font=:bold)
     lift_status_lbl = hlbl("Type: Rotary  |  T_lift =      0 N")
     lift_cl_lbl     = hlbl("R = 3.7 m  |  β = 30.0°")
-    lift_ttop_lbl   = hlbl("T_top (phys) =      --- N"; color=:lightcyan)
-    lift_line_lbl   = hlbl("Lift line tension =      0 N"; color=to_color(:cyan))
-    backline_lbl    = hlbl("Backline payout =    0.0 m  |  T_back =      0 N"; color=to_color(:coral))
-    bridles_lbl     = hlbl("Bridles (gold) avg =      0 N"; color=to_color(:gold))
-    depower_phase_obs = Observable("")
-    lift_depower_lbl   = hlbl(""; fontsize=10, color=:lawngreen)
+    lift_furl_lbl   = hlbl(""; fontsize=10, color=:lawngreen)
 
-    # Hub altitude reference (reset each rerun, used by _rerun!)
-    hub_z0_ref = Ref{Float64}(NaN)
+    # Furl phase indicator — updated during simulation
+    furl_phase_obs = Observable("")
 
-    # ── Compact structural + warnings ──────────────────────────────────────
-    sag_lbl = hlbl("Sag 0.0 mm  |  slack: 0 lines"; fontsize=10, color=A1_INK_DIM)
+    # ── SECTION B: Torque & Power Balance ────────────────────────────────────
+    hlbl(""; fontsize=6)
+    hlbl("── Torque & Power Balance ──────────────────"; fontsize=13, font=:bold)
+
+    # Aero torque at hub: τ_aero = P_aero / ω_hub
+    # Purpose: driving torque from wind; must exceed generator load for sustained rotation
+    tau_aero_lbl = hlbl("τ_aero  =      0 N·m   (wind drives rotor)")
+
+    # Generator (MPPT) torque on PTO: τ_gen = k_mppt × ω_PTO²
+    # Purpose: braking load; set by MPPT law to maximise power at all wind speeds
+    tau_gen_lbl  = hlbl("τ_gen   =      0 N·m   (MPPT brake on PTO)")
+
+    # Angular velocity difference between hub and PTO
+    # Purpose: non-zero Δω = torsional "slip"; needed to transmit torque but
+    #          large Δω causes damper heating and structural stress
+    delta_omega_lbl = hlbl("Δω (hub−PTO)  =   0.000 rad/s")
+
+    # ── SECTION C: Structural Loads ───────────────────────────────────────────
+    hlbl(""; fontsize=6)
+    hlbl("── Structural Loads (this frame) ───────────"; fontsize=13, font=:bold)
+
+    # Tether max tension vs SWL — measured at mid sub-segment (avoids ring attachment spikes)
+    hlbl("Tether tension  (SWL = $(Int(TETHER_SWL)) N)"; fontsize=11, color=:steelblue)
+    t_frame_lbl = hlbl("  max      0 N  ·  FoS      ∞")
+    Colorbar(hud[hnr!(), 1]; colormap=tension_cmap, limits=(0.0, Float64(TETHER_SWL)),
+             vertical=false, height=14, tellheight=true, tellwidth=false,
+             label="0 N → $(Int(TETHER_SWL)) N SWL",
+             labelsize=9, ticksize=4, ticklabelsize=8)
+
+    # Ring polygon column buckling — fraction of Euler column P_crit for CFRP design tube
+    # NOTE: valid only during steady-state with all lines uniformly taut and torque being
+    # transmitted (twist ≠ 0).  Slack lines or asymmetric loading (e.g. furl transients)
+    # make this metric unreliable — ring colour during furl should be ignored.
+    hlbl("Ring column buckling  (CFRP tube, FoS_design = $(Int(FOS_DESIGN)))  ⚠ steady-state only"; fontsize=11, color=:firebrick)
+    c_frame_lbl = hlbl("  max util   0.0%  ·  FoS      ∞")
+    Colorbar(hud[hnr!(), 1]; colormap=ring_cmap, limits=(0.0, 1.0),
+             vertical=false, height=14, tellheight=true, tellwidth=false,
+             label="utilisation:  0 (safe)  →  1.0 (buckle)",
+             labelsize=9, ticksize=4, ticklabelsize=8)
+
+    # Max rope sag (single line, most-sagged segment)
+    # Purpose: sag indicates gravity loading vs rope tension; large sag → low tension
+    sag_lbl = hlbl("Max rope sag   0.0 mm  (seg --)  |  slack: 0 lines")
 
     # Warnings — only visible when condition is active
     # TORSIONAL COLLAPSE: hub twist > 270° (nearing rope-wrap limit)
@@ -647,21 +615,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     warn_buck  = hlbl(""; color=:orange, fontsize=12, font=:bold)
     warn_slack = hlbl(""; color=:yellow, fontsize=12, font=:bold)
 
-    # ── SECTION D: Expansion Rotors ──────────────────────────────────────────
-    exp_n = length(sys.expansion_rotors)
-    if exp_n > 0
-        hlbl(""; fontsize=6)
-        hlbl("── Expansion Rotors ─────────────────────────"; fontsize=13, font=:bold, color=:cyan)
-        exp_rings_str = join([string(er.ring_idx) for er in sys.expansion_rotors], ", ")
-        exp_bank = sys.expansion_rotors[1].bank_angle_deg
-        exp_span = sys.expansion_rotors[1].blade_tip_radius
-        exp_chord = sys.expansion_rotors[1].blade_chord
-        hlbl("Rings: $exp_rings_str  |  bank: $(round(exp_bank;digits=0))°"; fontsize=11, color=:cyan)
-        hlbl("Blade: span=$(round(exp_span;digits=1)) m, chord=$(round(exp_chord*1000;digits=0)) mm"; fontsize=10, color=:lightcyan)
-        hlbl("n_blades: $(sys.expansion_rotors[1].n_blades)  (from generating rotor)"; fontsize=10, color=:lightcyan)
-    end
-
-    # ── SECTION E: Run Peaks ─────────────────────────────────────────────────
+    # ── SECTION D: Run Peaks ─────────────────────────────────────────────────
     hlbl(""; fontsize=6)
     hlbl("── Run Peaks ──────────────────────────────"; fontsize=13, font=:bold)
     fos_t_peak = T_peak > 0 ? TETHER_SWL / T_peak : Inf
@@ -684,7 +638,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                                                "⚠  Pass u_settled & wind_fn to enable reruns.")
     scenario_msg_color = Observable(can_rerun ? :grey60 : :orangered)
     Label(hud[hnr!(), 1], scenario_msg; halign=:left, tellwidth=false,
-          fontsize=11, color=@lift(to_color($scenario_msg_color)))
+          fontsize=11, color=scenario_msg_color)
 
     scen_color(_) = can_rerun ? :grey30 : :grey20
 
@@ -708,22 +662,6 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     if p.n_lines == 8
         dt_obs[] = 1e-5              # v5 octagon: shorter segments → higher stiffness
     end
-
-    # Generator control mode and winch payout observables
-    gen_ctrl_selection       = Observable("Active Damping (Mode 1)")
-    depower_payout_selection = Observable("25m Extended")
-    # Pitch Depower closed-loop control toggles
-    # active_winch_obs: enables proportional payout rate control using T_min feedback
-    # mppt_stall_obs: enables ramped k_mppt stall governor (scales up to 9× during depower)
-    # field_imu_obs: enables two-sided active torsional damping using Field IMU delta-omega telemetry
-    # depower_seq_obs: controls payout/brake sequencing
-    #   1 = "Stall → Lift"  (current: payout starts at 15%, brake fires freely)
-    #   2 = "Lift ∥ Stall"  (payout starts immediately, brake fires freely)
-    #   3 = "Lift → Stall"  (payout starts immediately, brake inhibited until ≥30% lift)
-    active_winch_obs = Observable(false)
-    mppt_stall_obs   = Observable(false)
-    field_imu_obs    = Observable(false)
-    depower_seq_obs  = Observable(1)
 
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
@@ -761,11 +699,10 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 v = vref * frac
                 z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
             end
-        elseif scenario == :pitch_depower
-            # Power-spill Pitch Depower: wind stays at user-selected vref throughout.
-            # The power reduction is purely geometric — backline payout lets the generating
-            # rotor rise and tilt, increasing β (pointing more vertically) and spilling wind.
-            # The lifting rotor kite provides a high-tension, high-elevation pull to keep the TRPT preloaded and stable.
+        elseif scenario == :furl
+            # Power-spill furl: wind stays at user-selected vref throughout.
+            # The power reduction is purely geometric — backline payout lets the
+            # rotor rise, increasing β and spilling wind.  No wind ramp needed.
             (pos, t) -> begin
                 z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1/7)
                 [Float64(vref) * sh, 0.0, 0.0]
@@ -807,20 +744,9 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             t_total       = n_steps_local * dt_local
             wf    = _make_wind(Float64(vref), scenario, t_total)
             wind_fn_obs[] = wf
-            gen_sel = gen_ctrl_selection[]
-            ctrl_mode_val = gen_sel == "Active Damping (Mode 1)" ? 1.0 :
-                            gen_sel == "LPF Speed (Mode 2)"      ? 2.0 : 0.0
-            
-            payout_sel = depower_payout_selection[]
-            payout_base_val = payout_sel == "25m Extended" ? 25.0 : 15.0
-
-            use_field_imu = field_imu_obs[]
             p_run = _modified_params(p;
                         k_mppt          = Float64(sl_kmppt.value[]),
-                        elevation_angle = deg2rad(Float64(sl_beta.value[])),
-                        β_rate_max      = ctrl_mode_val,
-                        β_min           = payout_base_val,
-                        kp_elev         = use_field_imu ? 1.0 : 0.0)
+                        elevation_angle = deg2rad(Float64(sl_beta.value[])))
             ld    = lift_device_obs[]
             ode_p = isnothing(ld) ? (sys, p_run, wf) : (sys, p_run, wf, ld)
             u_s   = copy(u_settled)
@@ -857,130 +783,42 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             save_every = max(1, round(Int, 0.02 / dt))   # ≈ 0.02 s per frame for all dt values
             new_frames = Vector{Vector{Float64}}(undef, n_steps ÷ save_every)
             new_times  = Vector{Float64}(undef,  n_steps ÷ save_every)
-            new_params = Vector{SystemParams}(undef, n_steps ÷ save_every)
-            new_sim_frames = Vector{SimFrame}(undef, n_steps ÷ save_every)
             u  = copy(u_s); du = zeros(Float64, length(u))
             t  = 0.0; fi = 1
-            release_frac     = 0.0   # depower payout fraction
-            sigmoid_progress = 0.0   # closed-loop winch controller state
-            L_winch          = 0.0   # physical actuator payout (m)
-            v_winch          = 0.0   # actuator payout velocity (m/s)
-            # Read control settings once at run start (immutable during a run)
-            use_active_winch = active_winch_obs[]
-            use_mppt_stall   = mppt_stall_obs[]
-            use_field_imu    = field_imu_obs[]
-            depower_seq      = depower_seq_obs[]
-            # Sequence-derived parameters:
-            #   seq 1 (Stall→Lift): payout delayed 15%, stall governor ramps with release_frac
-            #   seq 2 (Lift∥Stall): payout immediate, stall governor ramps with release_frac
-            #   seq 3 (Lift→Stall): payout immediate, stall governor held at 1× until ≥30%
-            #                       payout — rotor decelerates naturally from rising hub first,
-            #                       then stall governor assists.  Latch brake fires normally.
-            seq_delay_frac    = depower_seq == 1 ? 0.15 : 0.0
-            seq_stall_delayed = depower_seq == 3
-            n_seg_dyn = sys.n_ring - 1
-            ea_rope   = sys.sub_segs[1].EA
-            p_active  = p_run
-            k_mppt_scale      = 1.0   # initial stall scale
+            release_frac = 0.0   # furl payout fraction (updated every 500 steps)
             for step in 1:n_steps
-                # ── Pitch Depower: closed-loop winch + MPPT stall governor ──────
-                # Every 50 steps (≈ 2 ms sim time) — fast enough to respond to slack events.
+                # ── Furl: winch payout controller (every 500 steps) ─────────
+                # The winch pays out extra backline from a FIXED anchor point.
+                # This increases the backline rest length → line goes slack →
+                # lift device pulls hub UP and DOWNWIND → rotor rises → β↑ →
+                # wind incidence drops → power spills.
                 #
-                # Physics: releasing the backline lets the sky anchor rise under the
-                # full lifting power (T_lift ≥ 1000 N) of the top lifter device.
-                # This tilts the TRPT axis toward vertical, reducing the apparent
-                # rotor annulus area to the wind and depowering the generating rotor.
-                # The lifter remains at full operational tension to keep tethers taut.
-                #
-                # Hypothesis A — Proportional Winch Retarder (if active_winch_obs[]):
-                #   Payout rate ∝ T_min / 150 N.  Zero payout when top segments go slack.
-                # Hypothesis C — k_MPPT Stall Governor (if mppt_stall_obs[]):
-                #   k_mppt ramped up to 9× proportional to how far through the depower we are.
-                if scenario == :pitch_depower && step % 50 == 0
-                    depower_delay    = depower_seq == 1 ? 0.15 * t_total : 1.0  # 1.0 s absolute startup delay for Seq 2 & 3
-                    depower_duration = 0.70 * t_total
-                    target_sig       = clamp((t - depower_delay) / depower_duration, 0.0, 1.0)
-                    
-                    payout_base = p_run.β_min < 5.0 ? 15.0 : p_run.β_min
-                    geom_scale  = p_run.tether_length / 30.0
-                    max_payout  = payout_base * geom_scale
-                    
-                    if use_active_winch && target_sig > sigmoid_progress
-                        # Measure T_min: minimum average segment tension across all TRPT segments
-                        hub_gid_d = sys.rotor.node_id
-                        hub_ri_d  = (sys.nodes[hub_gid_d]::RingNode).ring_idx
-                        perp1_d, perp2_d = _tilted_ring_basis(u, sys, hub_gid_d, hub_ri_d)
-                        T_min_d = Inf
-                        for s in 1:n_seg_dyn
-                            seg_sum_d = 0.0
-                            for j in 1:p_run.n_lines
-                                seg_nat_len_d = 4 * sys.sub_segs[(s-1)*p_run.n_lines*4 + 1].length_0
-                                gid_a_d = sys.ring_ids[s];  gid_b_d = sys.ring_ids[s+1]
-                                na_d    = sys.nodes[gid_a_d]::RingNode
-                                nb_d    = sys.nodes[gid_b_d]::RingNode
-                                ctr_a_d = u[3*(gid_a_d-1)+1 : 3*gid_a_d]
-                                ctr_b_d = u[3*(gid_b_d-1)+1 : 3*gid_b_d]
-                                α_a_d   = u[6N + na_d.ring_idx]
-                                α_b_d   = u[6N + nb_d.ring_idx]
-                                pa_d    = attachment_point(ctr_a_d, na_d.radius, α_a_d, j, p_run.n_lines, perp1_d, perp2_d)
-                                pb_d    = attachment_point(ctr_b_d, nb_d.radius, α_b_d, j, p_run.n_lines, perp1_d, perp2_d)
-                                T_d     = max(0.0, ea_rope * (norm(pb_d .- pa_d) - seg_nat_len_d) / seg_nat_len_d)
-                                seg_sum_d += T_d
-                            end
-                            T_min_d = min(T_min_d, seg_sum_d / p_run.n_lines)
-                        end
-                        # Proportional rate: 0 when slack, 1 when T_min ≥ 150 N
-                        rate_factor = clamp(T_min_d / 150.0, 0.0, 1.0)
-                        sigmoid_progress += rate_factor * 0.002 * (target_sig - sigmoid_progress)
-                    else
-                        sigmoid_progress = target_sig
-                    end
-                    
-                    release_frac = 3.0 * sigmoid_progress^2 - 2.0 * sigmoid_progress^3
-                    
-                    # k_MPPT stall governor: ramp up to 9× as depower progresses.
-                    # Lift→Stall sequence: hold at 1× until 30% payout is established,
-                    # then ramp over the remaining 70% — so the rotor sees natural power
-                    # spill from rising hub before any electrical stall torque is added.
-                    stall_ramp   = seq_stall_delayed ?
-                                   clamp((release_frac - 0.30) / 0.70, 0.0, 1.0) :
-                                   release_frac
-                    k_mppt_scale = use_mppt_stall ? (1.0 + 8.0 * stall_ramp) : 1.0
-                end
+                # Payout profile — cubic ease-in:
+                #   • 5 s delay: let initialisation transients fully decay
+                #     before any payout begins.
+                #   • Cubic ramp over 25 s (full 15 m at t = 30 s):
+                #     starts very slowly so the TRPT tether tension wave
+                #     can propagate down through the ring chain before the
+                #     hub gets ahead of ring N-1.  A linear or fast ramp
+                #     causes the upper segment to stretch before lower rings
+                #     can follow, rotating the tension direction toward axial
+                #     and collapsing torsional torque transmission.
+                #   • Once the system is moving quasi-statically together
+                #     (all rings rising in step), the cubic's later
+                #     acceleration is fine — the TRPT is no longer fighting
+                #     a differential hub-vs-ring displacement.
+                if scenario == :furl && step % 500 == 0
+                    furl_delay    = t_total / 6        # grace period scales with run duration
+                    furl_duration = 5 * t_total / 6    # ramp occupies remaining 5/6 of run
+                    x             = clamp((t - furl_delay) / furl_duration, 0.0, 1.0)
+                    release_frac  = x * x * x   # cubic ease-in
+                    p_furl = _modified_params(p_run;
+                        backline_payout = 15.0 * release_frac)
+                    ode_p = isnothing(ld) ? (sys, p_furl, wf) : (sys, p_furl, wf, ld)
 
-                if scenario == :pitch_depower
-                    # Second-order compliant winch actuator model: steps at the simulation rate dt
-                    payout_base = p_run.β_min < 5.0 ? 15.0 : p_run.β_min
-                    geom_scale  = p_run.tether_length / 30.0
-                    max_payout  = payout_base * geom_scale
-
-                    L_target  = max_payout * release_frac
-                    omega_n   = 2.0 * pi * 1.0  # 1.0 Hz actuator natural frequency
-                    zeta_act  = 1.0            # Critically damped response
-                    a_winch   = (omega_n^2 * (L_target - L_winch)) - (2.0 * zeta_act * omega_n * v_winch)
-                    v_winch  += dt * a_winch
-                    L_winch  += dt * v_winch
-
-                    # Reconstruct p_active and ode_p every step with the new L_winch
-                    p_active = _modified_params(p_run;
-                        backline_payout = L_winch,
-                        k_mppt          = p_run.k_mppt * k_mppt_scale,
-                        kp_elev         = use_field_imu ? 1.0 : 0.0)
-                    ode_p = isnothing(ld) ? (sys, p_active, wf) : (sys, p_active, wf, ld)
-                end
-
-                # all scenarios: progress update + yield every 500 steps
-                if step % 500 == 0
+                    # Progress update — keep the UI alive during long furl runs
                     pct = round(Int, 100 * t / t_total)
-                    scenario_msg[] = if scenario == :pitch_depower
-                        payout_base = p_run.β_min < 5.0 ? 15.0 : p_run.β_min
-                        geom_scale  = p_run.tether_length / 30.0
-                        max_payout  = payout_base * geom_scale
-                        ctrl_flags  = (use_active_winch ? " [Winch✓]" : "") * (use_mppt_stall ? " [Stall✓]" : "")
-                        "⟳ Depower$ctrl_flags … $pct%  (payout=$(round(max_payout*release_frac, digits=2)) m,  t=$(round(t,digits=1)) / $(round(t_total,digits=0)) s)"
-                    else
-                        "⟳ $label … $pct%  (t=$(round(t,digits=1)) / $(round(t_total,digits=0)) s)"
-                    end
+                    scenario_msg[] = "⟳ Furl … $pct% (payout=$(round(15.0*release_frac,digits=2))m, t=$(round(t,digits=1))s / $(round(t_total,digits=0))s)"
                     yield()
                 end
                 fill!(du, 0.0)
@@ -989,31 +827,33 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                 @views u[3N+1:6N]        .+= dt .* du[3N+1:6N]
                 @views u[1:3N]            .+= dt .* u[3N+1:6N]
                 @views u[6N+Nr+1:6N+2Nr] .+= dt .* du[6N+Nr+1:6N+2Nr]
-                apply_brake_constraint!(u, sys, N, Nr)
                 @views u[6N+1:6N+Nr]     .+= dt .* u[6N+Nr+1:6N+2Nr]
-                orbital_damp_rope_velocities!(u, sys, p_run, 0.05)
-                # PTO co-braking during depower: damp all ring angular velocities
-                # proportionally to how far through the Pitch Depower we are.
-                if scenario == :pitch_depower && release_frac > 0.0 && round(p_run.β_rate_max) ≈ 0.0
+                orbital_damp_rope_velocities!(u, sys, p_run, 0.05)   # was: p (bug)
+                # PTO co-braking during furl: damp all ring angular velocities
+                # proportionally to how far through the furl we are.
+                # Without this the hub decelerates (reduced aero torque at higher
+                # elevation angle) while the PTO end free-spins on inertia →
+                # Δα accumulates → torsional collapse at ~180° twist.
+                # Ramping with release_frac means no braking during the grace
+                # period; full 4-second time constant (0.99999/step) at peak furl.
+                # Physically: the generator is switched to plugging/regenerative
+                # brake mode as the backline pays out, decelerating both rotor and
+                # PTO shaft together so TRPT twist stays near its design value.
+                if scenario == :furl && release_frac > 0.0
                     @views u[6N+Nr+1:6N+2Nr] .*= (1.0 - release_frac * 1e-5)
                 end
                 u[1:3] .= 0.0; u[3N+1:3N+3] .= 0.0
-                if ld !== nothing
-                    update_kite_pos!(sys, u, ld, p_active, dt)
-                end
                 if step % save_every == 0
-                    new_frames[fi] = copy(u)
-                    new_times[fi] = t
-                    new_params[fi] = p_active
-                    new_sim_frames[fi] = capture_frame(u, sys, p_active, t, wf, ld; brake_engaged=sys.brake_engaged[])
-                    fi += 1
+                    new_frames[fi] = copy(u); new_times[fi] = t; fi += 1
                 end
             end
-
             nf           = length(new_frames)
             times_ref[]  = new_times
             frames_obs[] = new_frames
-            sim_frames_obs[] = new_sim_frames
+            # Rebuild SimFrames for the new run
+            sim_frames_obs[] = [capture_frame(new_frames[i], sys, p,
+                                  new_times[i], wf, ld)
+                                 for i in 1:nf]
             frame_slider.range[] = 1:nf
             frame_slider.value[] = 1
             scenario_msg_color[] = :lawngreen
@@ -1063,8 +903,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
           "↑ reduce if rings blow up  (halving dt ≈ 4× slower)";
           halign=:left, fontsize=9, color=:grey50, tellwidth=false)
 
-    bc          = to_color(scen_color(:_))   # neutral: grey30 (enabled) or grey20 (disabled)
-    bc_active   = to_color(can_rerun ? :steelblue : :grey20)   # highlight for the selected scenario
+    bc          = scen_color(:_)   # neutral: grey30 (enabled) or grey20 (disabled)
+    bc_active   = can_rerun ? :steelblue : :grey20   # highlight for the selected scenario
     active_btn  = Ref{Any}(nothing)                  # tracks the last-clicked button
     # Deferred precheck for kite_drop — filled in after device_menu is defined below
     _kite_drop_precheck! = Ref{Function}(() -> nothing)
@@ -1077,7 +917,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ((2,2), "Launch",    :launch),
             ((2,3), "Land",      :land),
             ((3,1), "Kite Drop", :kite_drop),
-            ((3,2), "Pitch Depower", :pitch_depower)]
+            ((3,2), "Furl",      :furl)]
         btn = Button(scen_btns[pos...]; label=lbl, buttoncolor=bc,
                      labelcolor=:white, height=28)
         let btn=btn, sym=sym, lbl=lbl          # explicit capture per iteration
@@ -1117,41 +957,33 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         nf_now       = length(frames_obs[])
         tr           = times_ref[]
         t_hud        = sf.t
+        t_lbl.text[] = isempty(tr) ?
+            @sprintf("Frame %5d / %d", fi, nf_now) :
+            @sprintf("t = %8.2f s  (frame %5d / %d)", t_hud, fi, nf_now)
+        v_lbl.text[]        = @sprintf("Wind at hub    V = %6.2f m/s", V_hub)
+        omega_lbl.text[]    = @sprintf("Rotor (hub)    ω = %7.3f rad/s  (%6.1f rpm)",
+                                        omega_hub, rpm_hub)
+        pto_lbl.text[]      = @sprintf("PTO (ground)   ω = %7.3f rad/s  (%6.1f rpm)",
+                                        omega_gnd, rpm_gnd)
+        p_lbl.text[]        = @sprintf("Output power   P = %6.2f kW  (%3.0f%% rated)",
+                                        P_kw, pct_rated)
+        tsr_lbl.text[]      = @sprintf("Tip speed ratio  λ = %5.2f  (opt ≈ 4.1)", tsr)
+        twist_lbl.text[]    = @sprintf("TRPT twist  Δα = %7.1f°  (hub – PTO)", Δα_deg)
 
-        # ── Cockpit strip updates ────────────────────────────────────────────
-        strip_power[]    = @sprintf("%.1f kW", P_kw)
-        strip_rpm[]      = @sprintf("%.0f rpm", rpm_hub)
-        strip_wind[]     = @sprintf("%.1f m/s", V_hub)
-        strip_time[]     = @sprintf("%.1f s", t_hud)
+        # Hub altitude — resolve reference on first frame of each run
+        if isnan(hub_z0_ref[]);  hub_z0_ref[] = z_hub_now;  end
+        hub_z_lbl.text[] = @sprintf("Hub altitude  Z = %5.1f m  (Δ = %+.2f m)",
+                                     z_hub_now, isnan(hub_z0_ref[]) ? 0.0 : z_hub_now - hub_z0_ref[])
 
-        # ── Sparkline data push ────────────────────────────────────────────
-        let buf_p = spark_power[], buf_t = spark_tension[], buf_r = spark_ring[]
-            i = spark_idx[]
-            buf_p[i] = P_kw
-            buf_t[i] = sf.T_max
-            buf_r[i] = sf.ring_max_util * 100
-            spark_power[] = buf_p; spark_tension[] = buf_t; spark_ring[] = buf_r
-            spark_idx[] = mod1(i + 1, SPARK_N)
-
-            # Auto-scale y-axis to visible data range (skip NaN)
-            valid_p = filter(!isnan, buf_p)
-            valid_t = filter(!isnan, buf_t)
-            p_max = isempty(valid_p) ? 1.0 : max(maximum(valid_p) * 1.1, 1.0)
-            t_max = isempty(valid_t) ? 100.0 : max(maximum(valid_t) * 1.1, 100.0)
-            ylims!(ax_pwr, 0, p_max)
-            ylims!(ax_ten, 0, t_max)
-        end
-
-        # ── Sparkline readouts ─────────────────────────────────────────────
-        pwr_readout.text[]  = @sprintf("P = %6.2f kW  (%3.0f%% rated)", P_kw, pct_rated)
-        ten_readout.text[]  = @sprintf("T = %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
-        ring_bar_val[]      = sf.ring_max_util
-        ring_readout.text[] = @sprintf("Ring util %4.1f%%  ·  FoS %s",
-                                        sf.ring_max_util*100.0, fos_str(sf.fos_ring))
-
-        # ── Lift Device Telemetry ──────────────────────────────────────────
+        # Live shaft elevation from actual hub node position.
+        # p.elevation_angle is the design setpoint (30°); β_actual tracks
+        # furl-induced tilt in real time.
         hub_ctr  = u[3*(hub_gid-1)+1 : 3*hub_gid]
         β_actual = atan(hub_ctr[3], hub_ctr[1])
+        elev_lbl.text[]     = @sprintf("Elevation  β = %5.1f°  (design %.0f°)  |  Rated %.0f kW",
+                                        rad2deg(β_actual), rad2deg(p.elevation_angle), p.p_rated_w/1000.0)
+
+        # ── Lift Device Telemetry ──────────────────────────────────────────
         ld_hud   = lift_device_obs[]
         if ld_hud !== nothing
             # Compute T_lift LIVE (not from pre-captured SimFrame which used lift_device=nothing)
@@ -1181,122 +1013,17 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             lift_cl_lbl.text[]     = @sprintf("β_actual = %.1f°", rad2deg(β_actual))
         end
 
-        # ── T_top_avg: physical top-segment tension (real lift line check) ──────
-        # The topmost TRPT segment (sky-anchor → hub) carries the lift line load.
-        # This must stay above the operational baseline during Pitch Depower.
-        # Colour: cyan (taut ≥ 200N) → orange (low 50–200N) → red (slack < 50N)
-        let n_seg_hud = sys.n_ring - 1,
-            ea_hud    = sys.sub_segs[1].EA
-            T_top_hud = 0.0
-            hub_gid_h = sys.rotor.node_id
-            hub_ri_h  = (sys.nodes[hub_gid_h]::RingNode).ring_idx
-            perp1_h, perp2_h = _tilted_ring_basis(u, sys, hub_gid_h, hub_ri_h)
-            for j in 1:p.n_lines
-                seg_nat_h = 4 * sys.sub_segs[(n_seg_hud - 1) * p.n_lines * 4 + 1].length_0
-                gid_a_h = sys.ring_ids[n_seg_hud];   gid_b_h = sys.ring_ids[n_seg_hud + 1]
-                na_h    = sys.nodes[gid_a_h]::RingNode
-                nb_h    = sys.nodes[gid_b_h]::RingNode
-                ctr_a_h = u[3*(gid_a_h - 1) + 1 : 3*gid_a_h]
-                ctr_b_h = u[3*(gid_b_h - 1) + 1 : 3*gid_b_h]
-                α_a_h   = u[6N + na_h.ring_idx]
-                α_b_h   = u[6N + nb_h.ring_idx]
-                pa_h    = attachment_point(ctr_a_h, na_h.radius, α_a_h, j, p.n_lines, perp1_h, perp2_h)
-                pb_h    = attachment_point(ctr_b_h, nb_h.radius, α_b_h, j, p.n_lines, perp1_h, perp2_h)
-                T_top_hud += max(0.0, ea_hud * (norm(pb_h .- pa_h) - seg_nat_h) / seg_nat_h)
-            end
-            T_top_hud /= p.n_lines
-            ttop_colour = T_top_hud > 200.0 ? to_color(:lightcyan) : (T_top_hud > 50.0 ? to_color(:orange) : to_color(:red))
-            lift_ttop_lbl.color[] = ttop_colour
-            lift_ttop_lbl.text[]  = @sprintf("T_top (phys) = %6.0f N  %s",
-                T_top_hud,
-                T_top_hud > 200.0 ? "✅ taut" : (T_top_hud > 50.0 ? "⚠️ low" : "❌ SLACK"))
-        end
+        # ── Torque & Power Balance ────────────────────────────────────────────
+        tau_aero_lbl.text[]     = @sprintf("τ_aero  = %7.0f N·m   (wind drives rotor)", sf.tau_aero)
+        tau_gen_lbl.text[]      = @sprintf("τ_gen   = %7.0f N·m   (MPPT brake on PTO)", sf.tau_gen)
+        delta_omega_lbl.text[]  = @sprintf("Δω (hub−PTO)  = %8.4f rad/s", sf.delta_omega)
 
-        # ── Lift line, backline, and gold bridles telemetry updates ──
-        let
-            # 1. Cyan Lift Line Tension
-            ss_cyan = sys.sub_segs[end]
-            pa_cyan = u[3*(sys.bearing_id-1)+1 : 3*sys.bearing_id]
-            pb_cyan = u[3*(sys.sky_anchor_id-1)+1 : 3*sys.sky_anchor_id]
-            T_cyan_now = max(0.0, ss_cyan.EA * (norm(pb_cyan .- pa_cyan) - ss_cyan.length_0) / ss_cyan.length_0)
-            lift_line_lbl.text[] = @sprintf("Lift line tension = %6.0f N", T_cyan_now)
-            
-            # 2. Backline Payout & Tension
-            T_back_now = 0.0
-            payout_now = 0.0
-            if ld_hud !== nothing
-                sky_pos = u[3*(sys.sky_anchor_id-1)+1 : 3*sys.sky_anchor_id]
-                v_lift = wind_fn_obs[](sky_pos, t_hud)
-                v_hmag = sqrt(v_lift[1]^2 + v_lift[2]^2)
-                _, T_lift_val, elev_lift_val = lift_force_steady(ld_hud, p.rho, v_hmag)
-                if T_lift_val > 0.0 && v_hmag > 1e-6
-                    downwind = [v_lift[1] / v_hmag, v_lift[2] / v_hmag, 0.0]
-                    θ_lift   = deg2rad(elev_lift_val)
-                    lift_dir = cos(θ_lift) .* downwind .+ sin(θ_lift) .* [0.0, 0.0, 1.0]
-                    F_lift_vec = T_lift_val .* lift_dir
-                    
-                    bearing_pos = u[3*(sys.bearing_id-1)+1 : 3*sys.bearing_id]
-                    cyan_dir = normalize(bearing_pos .- sky_pos)
-                    F_cyan_vec = T_cyan_now .* cyan_dir
-                    
-                    F_grav = [0.0, 0.0, -0.3 * 9.81]
-                    F_back_vec = - (F_lift_vec + F_cyan_vec + F_grav)
-                    T_back_now = max(0.0, norm(F_back_vec))
-                    
-                    back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
-                    b_dist = norm(sky_pos .- [back_ax, 0.0, 0.0])
-                    
-                    bearing_offset = 6.0
-                    cyan_L0        = 5.0
-                    L_axis_design        = p.tether_length + bearing_offset + cyan_L0
-                    design_sky_anchor_x  = L_axis_design * cos(p.elevation_angle)
-                    design_sky_anchor_z  = L_axis_design * sin(p.elevation_angle)
-                    back_L0_design       = sqrt((design_sky_anchor_x - back_ax)^2 + design_sky_anchor_z^2)
-                    
-                    payout_now = max(0.0, b_dist - back_L0_design)
-                end
-            end
-            backline_lbl.text[] = @sprintf("Backline payout = %5.1f m  |  T_back = %5.0f N", payout_now, T_back_now)
-            
-            # 3. Gold Bridles Tension
-            T_bridles_sum = 0.0
-            for j in 1:p.n_lines
-                ss_b = sys.sub_segs[end - p.n_lines + j - 1]
-                pa_b = u[3*(sys.bearing_id-1)+1 : 3*sys.bearing_id]
-                
-                hub_gid = sys.rotor.node_id
-                hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
-                ctr_h = u[3*(hub_gid-1)+1 : 3*hub_gid]
-                α_h   = u[6N + hub_ri]
-                
-                # Bridles must use the dynamic shaft_perp_basis (NOT tilted basis)
-                # to match the physics solver in rope_forces.jl
-                hub_rmag  = norm(ctr_h)
-                shaft_dir = hub_rmag > 0.1 ?
-                            ctr_h ./ hub_rmag :
-                            [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-                pp1, pp2 = shaft_perp_basis(shaft_dir)
-                
-                hub_node_b = sys.nodes[hub_gid]::RingNode
-                pb_b  = attachment_point(ctr_h, hub_node_b.radius, α_h, j, p.n_lines, pp1, pp2)
-                
-                T_bridles_sum += max(0.0, ss_b.EA * (norm(pb_b .- pa_b) - ss_b.length_0) / ss_b.length_0)
-            end
-            T_bridles_avg = T_bridles_sum / p.n_lines
-            bridles_lbl.text[] = @sprintf("Bridles (gold) avg = %5.0f N", T_bridles_avg)
-        end
-
-        # ── Compact structural + warnings ─────────────────────────────────
-        sag_lbl.text[]     = @sprintf("Sag %4.1f mm  |  slack: %d lines",
-                                        sf.max_sag_mm, sf.n_slack)
-
-        # Cockpit FoS / ring util colour-coded
-        strip_fos[]  = fos_str(sf.fos_tether)
-        strip_util[] = @sprintf("%.0f%%", sf.ring_max_util * 100.0)
-        fv = sf.fos_tether
-        strip_fos_col[]  = fv >= 3.0 ? A1_GREEN : (fv >= 1.8 ? A1_ORANGE : A1_RED)
-        ru = sf.ring_max_util
-        strip_util_col[] = ru <= 0.5 ? A1_GREEN : (ru <= 0.8 ? A1_ORANGE : A1_RED)
+        # ── Structural ───────────────────────────────────────────────────────
+        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
+        c_frame_lbl.text[] = @sprintf("  max util %4.1f%%  ·  FoS %s",
+                                        sf.ring_max_util*100.0, fos_str(sf.fos_ring))
+        sag_lbl.text[]     = @sprintf("Max rope sag %5.1f mm  (seg %2d)  |  slack: %d lines",
+                                        sf.max_sag_mm, sf.sag_seg, sf.n_slack)
 
         # Warnings
         warn_tors.text[]  = sf.torsional_overtwist ? "!! TORSIONAL OVERTWIST" : ""
@@ -1332,11 +1059,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Config selector menu — disabled during simulation
     config_menu = Menu(ctrl[cnr!(), 1];
-        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line",
-                 "V6.2 12-line dodecagon", "V6.3 7-line heptagon",
-                 "V6.4 3-line triangle", "V6.5 3-line triangle",
-                 "V6.7 drag-constrained", "V9.0 50kW equilibrium", "V10 unified rotors",
-                 "V10 Island 51 alt-basin"],
+        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line"],
         default=config_name, width=270)
 
     # Also disable menu when not idle
@@ -1368,11 +1091,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # Disable switch button when not idle
     on(system_state_obs) do st
         if st == :idle
-            switch_btn.buttoncolor[] = to_color(:steelblue)
+            switch_btn.buttoncolor[] = :steelblue
             switch_btn.labelcolor[]  = :white
             switch_btn.label[]       = "Switch Configuration"
         else
-            switch_btn.buttoncolor[] = to_color(:grey30)
+            switch_btn.buttoncolor[] = :grey30
             switch_btn.labelcolor[]  = :grey60
             switch_btn.label[]       = st == :simulating ? "Busy — simulating..." : "Switching..."
         end
@@ -1417,7 +1140,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             ld_sl_B.range[] = 0.5:0.05:2.5
             ld_sl_B.value[] = 1.2
         elseif choice == "Rotary Lifter"
-            ld_lbl_A.text[] = "Elevation Factor"
+            ld_lbl_A.text[] = "Pitch Factor"
             ld_sl_A.range[] = 0.5:0.1:3.0
             ld_sl_A.value[] = 1.0
             ld_lbl_B.text[] = "Radius (m)"
@@ -1446,7 +1169,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         elseif choice == "Stacked ×3"
             StackedKitesParams(round(Int,a), b, 0.12, 8.0, 8.0, 1.5e5, 2.0)
         elseif choice == "Rotary Lifter"
-            # a = elevation factor (CL_blade), b = rotor radius
+            # a = pitch factor (CL_blade), b = rotor radius
             RotaryLifterParams(b, 0.05, 3, 0.12, a, 0.20, 40.0, 25.0, 1.5e5, 5.0)
         else
             nothing
@@ -1484,7 +1207,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # MPPT gain — sets the quadratic generator load curve (τ = k × ω²)
     clbl("MPPT gain k_mppt"; fontsize=11)
-    sl_kmppt = cslider!(1.0:1.0:2000.0; start=clamp(p.k_mppt, 1.0, 2000.0))
+    sl_kmppt = cslider!(1.0:1.0:50.0; start=clamp(p.k_mppt, 1.0, 50.0))
     vl_kmppt = cval_lbl!(@sprintf("%.1f N·m·s²/rad²", p.k_mppt))
     on(sl_kmppt.value) do v; vl_kmppt.text[] = @sprintf("%.1f N·m·s²/rad²", v); end
 
@@ -1498,89 +1221,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                                     v, p.p_rated_w/1000.0)
     end
 
-    clbl("Generator Control"; fontsize=11)
-    gen_ctrl_menu = Menu(ctrl[cnr!(), 1];
-                         options=["Standard (Mode 0)", "Active Damping (Mode 1)", "LPF Speed (Mode 2)"],
-                         default=gen_ctrl_selection[])
-    on(gen_ctrl_menu.selection) do sel
-        gen_ctrl_selection[] = sel
-    end
-
-    clbl("Depower Winch Payout"; fontsize=11)
-    depower_payout_menu = Menu(ctrl[cnr!(), 1];
-                               options=["15m Baseline", "25m Extended"],
-                               default=depower_payout_selection[])
-    on(depower_payout_menu.selection) do sel
-        depower_payout_selection[] = sel
-    end
-
-    # ── Pitch Depower Closed-Loop Controls ───────────────────────────────────────
-    # These toggles activate the control hypotheses during the Pitch Depower scenario.
-    # They have no effect on steady / ramp-down / kite-drop scenarios.
-    clbl(""; fontsize=3)   # spacer
-    clbl("── Pitch Depower Controls ──────────────"; fontsize=12, font=:bold)
-
-
-    # Hypothesis A: Proportional Active Winch Tension-Keeping
-    # Measures T_min across all TRPT segments every 2ms and throttles payout rate
-    # proportionally: zero payout if top segments are slack, full rate if well-tensioned.
-    tog_row_A = GridLayout(ctrl[cnr!(), 1])
-    Label(tog_row_A[1, 1]; text="Active Winch (T_min feedback)", fontsize=11, halign=:left, tellwidth=false)
-    active_winch_toggle = Toggle(tog_row_A[1, 2]; active=active_winch_obs[], framecolor_active=to_color(:limegreen))
-    on(active_winch_toggle.active) do v
-        active_winch_obs[] = v
-    end
-
-    # Hypothesis C: k_MPPT Stall Governor
-    # Ramps the MPPT gain up to 9× during depower to overload the rotor with
-    # braking torque and smoothly stall it without relying on geometry alone.
-    tog_row_C = GridLayout(ctrl[cnr!(), 1])
-    Label(tog_row_C[1, 1]; text="k_MPPT Stall Governor (9×)", fontsize=11, halign=:left, tellwidth=false)
-    mppt_stall_toggle = Toggle(tog_row_C[1, 2]; active=mppt_stall_obs[], framecolor_active=to_color(:orange))
-    on(mppt_stall_toggle.active) do v
-        mppt_stall_obs[] = v
-    end
-
-    # Hypothesis D: Field IMU Torsional Damping
-    # Transmits a high-fidelity angular velocity signal from the sky (field rotor IMU)
-    # down to the ground PTO and applies a symmetric, two-sided torsional damper
-    # (without the motor/generator motoring clamp) to eliminate whipping resonance.
-    tog_row_D = GridLayout(ctrl[cnr!(), 1])
-    Label(tog_row_D[1, 1]; text="Field IMU Active Damping", fontsize=11, halign=:left, tellwidth=false)
-    field_imu_toggle = Toggle(tog_row_D[1, 2]; active=field_imu_obs[], framecolor_active=to_color(:cyan))
-    on(field_imu_toggle.active) do v
-        field_imu_obs[] = v
-    end
-
-    # Depower sequence selector: controls the relative timing of backline payout
-    # vs. PTO brake engagement.
-    #   Stall → Lift  Payout starts at 15% of scenario time.  Brake fires freely
-    #                 at omega < 1 rad/s.  Currently observed: rotor stalls first,
-    #                 then hub lifts — TRPT absorbs torsional shock at full elevation.
-    #   Lift ∥ Stall  Payout starts immediately.  Brake fires freely.  Hub begins
-    #                 rising from t=0; rotor may still stall early if wind is low.
-    #   Lift → Stall  Payout starts immediately.  Brake is inhibited until ≥30%
-    #                 payout has been released — guarantees hub is rising and rotor
-    #                 power is substantially reduced before the mechanical brake locks.
-    #                 This is the originally intended sequence.
-    clbl(""; fontsize=4)
-    clbl("Depower Sequence"; fontsize=11, font=:bold, halign=:left)
-    _seq_options = ["Stall → Lift  (current)", "Lift ∥ Stall  (immediate payout)", "Lift → Stall  (stall gov. after lift)"]
-    seq_row = GridLayout(ctrl[cnr!(), 1])
-    seq_menu = Menu(seq_row[1, 1];
-        options   = _seq_options,
-        default   = _seq_options[1],
-        fontsize  = 10,
-        tellwidth = false)
-    on(seq_menu.selection) do sel
-        idx = findfirst(==( sel), _seq_options)
-        if !isnothing(idx)
-            depower_seq_obs[] = idx
-        end
-    end
-
     # ── SECTION B: Playback ───────────────────────────────────────────────────
-
     clbl(""; fontsize=6)
     clbl("── Playback ────────────────────────────"; fontsize=12, font=:bold)
 
@@ -1596,7 +1237,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Play / Pause with speed selection
     pb_row = GridLayout(ctrl[cnr!(), 1])
-    play_btn  = Button(pb_row[1, 1]; label="▶ Play",  buttoncolor=to_color(:darkgreen), labelcolor=:white)
+    play_btn  = Button(pb_row[1, 1]; label="▶ Play",  buttoncolor=:darkgreen, labelcolor=:white)
     is_playing = Observable(false)
     speed_obs  = Observable(1.0)
 
@@ -1616,7 +1257,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     on(play_btn.clicks) do _
         is_playing[] = !is_playing[]
         play_btn.label[]       = is_playing[] ? "|| Pause" : "▶ Play"
-        play_btn.buttoncolor[] = is_playing[] ? to_color(:darkorange) : to_color(:darkgreen)
+        play_btn.buttoncolor[] = is_playing[] ? :darkorange : :darkgreen
         if is_playing[]
             play_wall_t0[]  = time()
             play_frame_t0[] = frame_slider.value[]
@@ -1639,7 +1280,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             if nf >= length(frames_obs[])
                 is_playing[] = false
                 play_btn.label[]       = "▶ Play"
-                play_btn.buttoncolor[] = to_color(:darkgreen)
+                play_btn.buttoncolor[] = :darkgreen
             end
         end
         sleep(0.016)   # ~60 Hz poll; GLMakie renders at its own rate
@@ -1723,7 +1364,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     on(unlock_toggle.active) do v
         rerun_btn.label[]       = v ? "Re-run ODE [open]" : "Re-run ODE [locked]"
         rerun_btn.labelcolor[]  = v ? :white  : :grey60
-        rerun_btn.buttoncolor[] = to_color(v ? :darkgreen : :grey30)
+        rerun_btn.buttoncolor[] = v ? :darkgreen : :grey30
     end
 
     # Compact Controls row spacing to match HUD
@@ -1731,5 +1372,5 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── Initial notify ────────────────────────────────────────────────────────
     notify(frame_obs)
-    return (fig, cockpit_fig, config_changed_obs)
+    return (fig, config_changed_obs)
 end
