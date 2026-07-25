@@ -137,10 +137,11 @@ end
     @test f > 10.0
 
     # Good power, barely passing FoS → feasibility (just under 1.5)
-    f = objective_feasibility(20.0, 1.499)
+    # P must exceed P_floor (default 25 kW)
+    f = objective_feasibility(30.0, 1.499)
     @test f > 0.0 && f < 1.5
 
     # Exactly P_floor passes stalled check
-    f = objective_feasibility(1.0, 0.1)
+    f = objective_feasibility(25.0, 0.1)
     @test f > 0.0  # goes to feasibility tier, not stalled
 end
