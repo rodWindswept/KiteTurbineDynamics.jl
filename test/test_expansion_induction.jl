@@ -30,7 +30,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
 
 @testset "expansion induction" begin
 
-    prev = expansion_physics().induction
+    _prev_induction = expansion_physics().induction
 
     # ── Test 1: Betz cap + solver convergence ────────────────────────────
     @testset "Betz cap + convergence (property grid)" begin
