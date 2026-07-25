@@ -378,31 +378,44 @@ function objective_v11_warmstart(
     end
 
     # ── Score ────────────────────────────────────────────────────────────
-    P_mean = isempty(P_samples) ? 0.0 : mean(P_samples)
-    FoS_min = isempty(fos_samples) || all(isinf.(fos_samples)) ? Inf : minimum(fos_samples)
-    P_range = length(P_samples) >= 2 ? maximum(P_samples) - minimum(P_samples) : 0.0
-    drift = length(P_samples) >= 2 ? abs(P_samples[end] - P_samples[1]) / max(mean(P_samples), 0.01) : 0.0
-    drifted = drift > 0.15  # >15% drift flag
+    # Filter NaN/Inf from samples before computing statistics
+    P_finite = [p for p in P_samples if isfinite(p) && p >= 0.0]
+    fos_finite = [f for f in fos_samples if isfinite(f) && f > 0.0]
+
+    if isempty(P_finite) || length(P_finite) < 2
+        # No valid power samples — simulation produced garbage
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+    end
+
+    P_mean = mean(P_finite)
+    FoS_min = isempty(fos_finite) ? Inf : minimum(fos_finite)
+
+    # Guard against astronomical P from numerical blowup
+    if !isfinite(P_mean) || P_mean > 1e6
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+    end
+
+    P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
+    drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
+    drifted = drift > 0.15
 
     # Window-worst axial and bending util shares (at FoS-min sample)
-    util_a = isempty(util_a_samples) ? -1.0 : maximum(util_a_samples)
-    util_b = isempty(util_b_samples) ? -1.0 : maximum(util_b_samples)
+    util_a = isempty(util_a_samples) ? -1.0 : maximum(filter(isfinite, util_a_samples); init=-1.0)
+    util_b = isempty(util_b_samples) ? -1.0 : maximum(filter(isfinite, util_b_samples); init=-1.0)
 
     # Stationarity gate: split window into halves, check consistency
-    n = length(P_samples)
+    n = length(P_finite)
     stationary = false
     if n >= 4
         mid = n ÷ 2
-        P1 = P_samples[1:mid]; P2 = P_samples[mid+1:end]
-        F1 = fos_samples[1:mid]; F2 = fos_samples[mid+1:end]
+        P1 = P_finite[1:mid]; P2 = P_finite[mid+1:end]
         if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01
             dP = abs(mean(P1) - mean(P2)) / mean(P1)
-            dF = isfinite(FoS_min) ? abs(minimum(F1) - minimum(F2)) : 99
+            dF = isfinite(FoS_min) ? abs(minimum(P1) - minimum(P2)) : 99
             stationary = dP < 0.10 && dF < 0.10
         end
     end
 
-    fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
     fitness = v11_fitness(P_mean, FoS_min)
 
     return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b)
@@ -448,6 +461,11 @@ function warmstart_with_k_bracket(
         fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke)
+
+        # Skip garbage evals (NaN/Inf blowup returns 1e9 sentinel)
+        if !isfinite(fitness) || fitness >= 1e8
+            continue
+        end
 
         if fitness < best_fitness
             best_fitness = fitness
