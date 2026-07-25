@@ -168,3 +168,38 @@ function ring_safety_frame(u      ::AbstractVector,
     end
     return results
 end
+
+function ground_station_forces(u      ::AbstractVector,
+                               alpha  ::AbstractVector,
+                               sys    ::KiteTurbineSystem,
+                               p      ::SystemParams,
+                               t      ::Float64 = 0.0,
+                               wind_fn::Union{Nothing, Function} = nothing)
+    hub_gid  = sys.rotor.node_id
+    hub_ri   = (sys.nodes[hub_gid]::RingNode).ring_idx
+    perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+
+    ring_gid = sys.ring_ids[1]
+    node = sys.nodes[ring_gid]::RingNode
+    R = node.radius
+    α_ring = alpha[1]
+    n = p.n_lines
+
+    F_global = extract_vertex_forces(u, sys, ring_gid, alpha, p, perp1, perp2, t, wind_fn)
+    F_net = sum(F_global, dims=2)[:]
+    F_net_mag = norm(F_net)
+    F_vertex_mags = [norm(F_global[:, j]) for j in 1:n]
+    F_vertex_max = maximum(F_vertex_mags)
+    M_net = zeros(3)
+    for j in 1:n
+        pa = attachment_point([0.0, 0.0, 0.0], R, α_ring, j, n, perp1, perp2)
+        M_net .+= cross(pa, F_global[:, j])
+    end
+    return (
+        F_net = F_net,
+        F_net_mag = F_net_mag,
+        F_vertex_max = F_vertex_max,
+        F_vertices = F_global,
+        M_net = M_net
+    )
+end
