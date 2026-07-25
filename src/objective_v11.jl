@@ -408,7 +408,9 @@ function objective_v11_warmstart(
     util_a = isempty(util_a_samples) ? -1.0 : maximum(filter(isfinite, util_a_samples); init=-1.0)
     util_b = isempty(util_b_samples) ? -1.0 : maximum(filter(isfinite, util_b_samples); init=-1.0)
 
-    # Stationarity gate: split window into halves, check consistency
+    # Stationarity gate: split window into halves, check drift (trend)
+    # AND amplitude (steadiness).  A limit cycle with a stable mean is
+    # not stationary — it must not oscillate violently.
     n = length(P_finite)
     stationary = false
     if n >= 4
@@ -419,10 +421,16 @@ function objective_v11_warmstart(
            nf >= 4
             mid_f = nf ÷ 2
             F1 = fos_finite[1:mid_f]; F2 = fos_finite[mid_f+1:end]
+            # Drift: half-window means must be stable
             dP = abs(mean(P1) - mean(P2)) / mean(P1)
-            # FoS_min drives scoring → min-based comparison is truer
             dF = abs(minimum(F1) - minimum(F2)) / max(mean(F1), 0.01)
-            stationary = dP < 0.10 && dF < 0.10
+            # Amplitude: the design must not oscillate wildly around its mean.
+            # P_range is already computed above; FoS_range from fos_finite.
+            FoS_range = length(fos_finite) >= 2 ?
+                maximum(fos_finite) - minimum(fos_finite) : 0.0
+            P_steady = P_mean > 0.1 ? P_range / P_mean < 0.20 : false
+            FoS_steady = FoS_min > 0.01 ? FoS_range / FoS_min < 0.20 : false
+            stationary = dP < 0.10 && dF < 0.10 && P_steady && FoS_steady
         end
     end
 
