@@ -146,8 +146,8 @@ for (label, x) in GENOMES
                 eval_one(x, ld, dtf)
             push!(results, (label, ld, dtf, P_mean, FoS_min, P_range,
                             n_betz, n_dips, ω_eq, P_min))
-            @printf "%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n" \
-                label ld dtf P_mean FoS_min n_betz n_dips
+            @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n",
+                label, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
         end
     end
 end
