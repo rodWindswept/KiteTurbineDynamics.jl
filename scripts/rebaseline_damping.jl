@@ -21,34 +21,45 @@
 #   If no setting is admissible, the script prints ESCALATE and exits 1.
 #
 # Output: scripts/results/recampaign/rebaseline_damping.csv
+#
+# Runtime: 7 genomes × 3 damping × 2 dt = 42 evals (~16 h).
+#   DT/2 arm is 4.5M steps vs 2.25M at DT, costing ~2× per eval.
+#   Plan for ~16 h, not 7.5.
 
 using KiteTurbineDynamics, CSV, DataFrames, Printf, Statistics
 
 const GENOMES = Dict(
     # Front-spanning: P,FoS pairs from re-scored campaign data
-    "high_p"     => [0.392772, 0.080245, 1.0, 0.55672, 6.94996, 6.57715,
-                     1.5478, 7.0411, 0.3002, 17.0365, 25.0, 21.2038, 2.0,
-                     1.6814, -0.7901],   # ~61 kW, FoS 0.32
-    "mid_p"      => [0.10398, 0.01, 0.15, 0.8053, 18.9164, 2.6725,
-                     3.0, 16.0, -0.6612, 7.1482, 11.1376, 24.4920,
-                     0.6497, 1.5018, 0.5272],   # ~14 kW, FoS 0.12
-    "low_p"      => [0.08801, 0.09712, 0.7535, 0.4175, 1.0733, 3.9722,
-                     2.6439, 11.84, -0.2110, 7.1154, 15.0, 12.6903,
-                     0.5403, 1.0438, 0.7117],   # ~56 kW, FoS 0.06
-    "best_fos"   => [0.33650, 0.01, 1.0, 0.8065, 14.6306, 4.7605,
-                     3.0, 16.0, -0.1057, 0.0, 25.0, 11.2949,
-                     0.1, 0.1, 0.2380],   # FoS ~21, P ~0 (unloaded)
-    "green"      => [0.09545, 0.01, 0.6767, 1.0, 18.9164, 1.1435,
-                     3.0, 16.0, -0.8, 3.4684, 7.2752, 25.0,
-                     1.1493, 2.0, 0.7693],   # ae59adf6: P=2.9, FoS=2.56
+    "87kW_fos017" => [0.392772, 0.080245, 1.0, 0.55672, 6.94996, 6.57715,
+                       1.5478, 7.0411, 0.3002, 17.0365, 25.0, 21.2038, 2.0,
+                       1.6814, -0.7901],   # 87.2 kW, FoS 0.175 (best-power, structurally crushed)
+    "58kW_fos024" => [0.06563, 0.01, 1.2167, 0.2957, 3.8555, 4.9030,
+                       2.99, 9.44, 0.3752, 9.5726, 18.0899, 0.0,
+                       0.2959, 0.1119, 1.0],   # 58.0 kW, FoS 0.241 (best balanced mid-power)
+    "10kW_fos034" => [0.11767, 0.05624, 1.0, 0.9715, 14.8489, 4.8324,
+                       2.5, 8.0, 0.0, 5.0, 15.0, 10.0,
+                       1.8716, 1.4256, 1.0],   # 10.0 kW, FoS 0.339 (low-power, best mid-FoS)
+    "5kW_fos053"  => [0.11902, 0.08119, 1.0, 0.3993, 12.1150, 3.8062,
+                       2.6802, 8.0, -0.1923, 6.7140, 23.6095, 12.7398,
+                       0.5787, 0.3, 0.7578],   # 4.6 kW, FoS 0.530 (best realistic FoS)
+    "ae59adf6"    => [0.09545, 0.01, 0.6767, 1.0, 18.9164, 1.1435,
+                       3.0, 16.0, -0.8, 3.4684, 7.2752, 25.0,
+                       1.1493, 2.0, 0.7693],   # 2.9 kW, FoS 2.56 (former GREEN, unloaded regime)
     # Blowup-family members (n_lines=12, n_rings=3, high target_Lr, high k)
-    "blowup_a"   => [0.2, 0.01, 1.0, 0.6865, 14.4397, 5.1512,
-                     2.4594, 11.9218, -0.1700, 19.0, 16.1316, 14.3633,
-                     0.8842, 0.1, 0.6598],   # from garbage CSV gen 9
-    "blowup_b"   => [0.2, 0.01, 1.0, 0.6073, 13.6123, 3.6327,
-                     3.0, 16.0, -0.2715, 12.1884, 25.0, 11.5318,
-                     0.4121, 0.1, 1.3018],   # from garbage CSV gen 8
+    "blowup_a"    => [0.2, 0.01, 1.0, 0.6865, 14.4397, 5.1512,
+                       2.4594, 11.9218, -0.1700, 19.0, 16.1316, 14.3633,
+                       0.8842, 0.1, 0.6598],   # from garbage CSV gen 9
+    "blowup_b"    => [0.2, 0.01, 1.0, 0.6073, 13.6123, 3.6327,
+                       3.0, 16.0, -0.2715, 12.1884, 25.0, 11.5318,
+                       0.4121, 0.1, 1.3018],   # from garbage CSV gen 8
 )
+
+# NOTE: ae59adf6 and blowup_b carry x8=16 — above the current x8 cap of 12.
+#   ae59adf6 also carries x3≠1.0 — outside the current aspect_ratio clamp.
+#   These genomes are correct for reproducing the original evals but must
+#   never be reused as DE seeds.  This is a second reason the reproduction
+#   check matters: if re-evaluation diverges from the archive, era drift
+#   is the first suspect.
 
 const DAMPING_SETTINGS = [0.05, 0.5, 0.8]
 const DT_FACTORS = [1.0, 2.0]   # DT = 4e-5, DT/2 = 2e-5
@@ -146,7 +157,42 @@ CSV.write(out, results)
 println("\nWrote $out ($(nrow(results)) rows)")
 
 # ── Admissibility gate ──
-println("\n=== ADMISSIBILITY GATE ===")
+println("\n=== REPRODUCTION CHECK (lin_damp=0.05 vs archived CSVs) ===")
+# The lin_damp=0.05 / DT arm should reproduce archived values.
+# If it doesn't, nothing downstream is interpretable.
+# Known values from feasibility_phase_a_garbage.csv:
+const REPRO_TARGETS = Dict(
+    "87kW_fos017" => (P=87.2, FoS=0.175),
+    "58kW_fos024" => (P=58.0, FoS=0.241),
+    "10kW_fos034" => (P=10.0, FoS=0.339),
+    "5kW_fos053"  => (P=4.6,  FoS=0.530),
+    "ae59adf6"    => (P=2.9,  FoS=2.562),
+    "blowup_a"    => (P=NaN, FoS=NaN),   # blowup — no target
+    "blowup_b"    => (P=NaN, FoS=NaN),
+)
+repro_ok = true
+for (label, target) in REPRO_TARGETS
+    if isnan(target.P); continue; end
+    row = results[(results.label .== label) .& (results.lin_damp .== 0.05) .& (results.dt_factor .== 1.0), :]
+    if nrow(row) == 1 && isfinite(row.P_mean[1])
+        dP = abs(row.P_mean[1] - target.P) / max(target.P, 0.1)
+        dF = abs(row.FoS_min[1] - target.FoS) / max(target.FoS, 0.01)
+        ok = dP < 0.15 && dF < 0.15
+        println("  $label: P=$(round(row.P_mean[1],digits=1)) (target $(target.P)) dP=$(round(dP,digits=3))  FoS=$(round(row.FoS_min[1],digits=3)) (target $(target.FoS)) dF=$(round(dF,digits=3))  $(ok ? '✓' : '✗')")
+        if !ok; repro_ok = false; end
+    else
+        println("  $label: NO DATA — reproduction check failed")
+        repro_ok = false
+    end
+end
+if !repro_ok
+    println("\nREPRODUCTION FAILED — archived values not reproduced at lin_damp=0.05.")
+    println("Era drift (genome bounds changed since eval) is the first suspect.")
+    println("Do not trust the damping comparison until this is resolved.")
+end
+println()
+
+println("=== ADMISSIBILITY GATE ===")
 g = groupby(results, :lin_damp)
 for (ld, grp) in pairs(g)
     admissible = true
