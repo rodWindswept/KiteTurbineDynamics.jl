@@ -24,6 +24,16 @@ const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 # scalability report which used the thin-wall I ≈ π·t/D·D⁴/8 approximation).
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
+function tube_props(R::Float64)
+    Do     = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
+    t      = max(T_OVER_D * Do, T_MIN_WALL)
+    Di     = Do - 2.0 * t
+    A      = π / 4.0  * (Do^2 - Di^2)
+    I_bend = π / 64.0 * (Do^4 - Di^4)
+    J      = 2.0 * I_bend
+    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J)
+end
+
 """
     tube_I(Do, t) → I (m⁴)
 
