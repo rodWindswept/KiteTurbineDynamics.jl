@@ -409,9 +409,13 @@ function objective_v11_warmstart(
     if n >= 4
         mid = n ÷ 2
         P1 = P_finite[1:mid]; P2 = P_finite[mid+1:end]
-        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01
+        nf = length(fos_finite)
+        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01 &&
+           nf >= 4 && all(isfinite.(fos_finite))
+            mid_f = nf ÷ 2
+            F1 = fos_finite[1:mid_f]; F2 = fos_finite[mid_f+1:end]
             dP = abs(mean(P1) - mean(P2)) / mean(P1)
-            dF = isfinite(FoS_min) ? abs(minimum(P1) - minimum(P2)) : 99
+            dF = abs(mean(F1) - mean(F2)) / mean(F1)
             stationary = dP < 0.10 && dF < 0.10
         end
     end

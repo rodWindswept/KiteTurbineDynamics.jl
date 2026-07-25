@@ -18,7 +18,9 @@ Three-tier feasibility objective for DE minimisation:
 Tier ordering invariant: stalled > feasibility > feasible.
 Within each tier: f decreases (improves) monotonically with better P or FoS.
 """
-function objective_feasibility(P_mean, FoS_min; P_cap=50.0, P_floor=1.0, FoS_design=1.5)
+function objective_feasibility(P_mean, FoS_min; P_cap=50.0, P_floor=25.0, FoS_design=1.5)
+    # Guard: null structural measurement → stalled tier, not feasible
+    (!isfinite(FoS_min) || FoS_min <= 0.0) && return 10.0 + (P_floor - min(P_mean, P_floor)) / P_floor
     if P_mean < P_floor
         return 10.0 + (P_floor - P_mean) / P_floor  # stalled tier ∈ (10, 10+P_floor]
     elseif FoS_min < FoS_design
