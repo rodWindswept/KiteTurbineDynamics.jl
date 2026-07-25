@@ -65,19 +65,28 @@ const DAMPING_SETTINGS = [0.05, 0.5, 0.8]
 const DT_FACTORS = [1.0, 2.0]   # DT = 4e-5, DT/2 = 2e-5
 
 function eval_one(x, lin_damp, dt_factor)
-    # Use the same build path as objective_v11_warmstart
+    # Use warmstart_with_k_bracket to find correct k (matches campaign eval)
+    # The k-bracket picks best k; we extract it and run the ODE with our damping
+    best_f, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary,
+        best_ua, best_ub = KiteTurbineDynamics.warmstart_with_k_bracket(
+            x, PROFILE_ELLIPTICAL, params_v5_50kw();
+            power_W=50000.0, v_rated=11.0)
+
+    if best_f >= 1e8 || !isfinite(best_f)
+        return (NaN, NaN, NaN, 0, 0, NaN, NaN)
+    end
+
+    # Now rebuild system with the best k and run with specified damping/dt
     result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, params_v5_50kw();
                                      power_W=50000.0, v_rated=11.0)
     if result.n_active == 0
         return (NaN, NaN, NaN, 0, 0, NaN, NaN)
     end
-    k_mppt = 10.0^x[15]
-    k_mppt = clamp(k_mppt, 0.01, 1000.0)
 
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, k_mppt)
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, best_k)
 
     # Build expansion params for static solve
     expansion_params = ExpansionRotorParams[]
@@ -133,7 +142,7 @@ function eval_one(x, lin_damp, dt_factor)
         end
     end
 
-    sys.k_mppt_ref[] = k_mppt
+    sys.k_mppt_ref[] = best_k
 
     dt = 4e-5 / dt_factor
     n_steps = round(Int, 90.0 / dt)
