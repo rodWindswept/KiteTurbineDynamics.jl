@@ -1,14 +1,14 @@
 #!/usr/bin/env julia
 # test/test_blade_geometry.jl
-# Assertion: expansion rotor blade hub is inboard of ring (negative offset),
-# tip is outboard (positive offset). 70/30 split around ring attachment.
+# Assertion: expansion rotor blade hub and tip are positive offsets,
+# tip is 4× hub (hub = 0.25×tip, matching objective_v10.jl:195-196).
 #
 # Run: julia --project=. test/test_blade_geometry.jl
 
 using Test
 using KiteTurbineDynamics
 
-@testset "Blade geometry — 70/30 split" begin
+@testset "Blade geometry — 4:1 tip/hub ratio" begin
 
     # ═══ Test 1: builders_util.jl — V10 Tight (blade_scale=1.0) ═══
     @testset "V10 Tight λ=1.0" begin
@@ -19,11 +19,10 @@ using KiteTurbineDynamics
         @test !isempty(sys.expansion_rotors)
         for (i, er) in enumerate(sys.expansion_rotors)
             @test er.blade_tip_radius > 0
-            @test er.blade_hub_radius < 0
+            @test er.blade_hub_radius > 0
             span = er.blade_tip_radius - er.blade_hub_radius
             @test span > 0
-            @test er.blade_tip_radius ≈ 0.7 * span atol=1e-9
-            @test -er.blade_hub_radius ≈ 0.3 * span atol=1e-9
+            @test er.blade_tip_radius ≈ 4.0 * er.blade_hub_radius atol=1e-9
         end
     end
 
@@ -34,10 +33,8 @@ using KiteTurbineDynamics
 
         for (i, er) in enumerate(sys.expansion_rotors)
             @test er.blade_tip_radius > 0
-            @test er.blade_hub_radius < 0
-            span = er.blade_tip_radius - er.blade_hub_radius
-            @test er.blade_tip_radius ≈ 0.7 * span atol=1e-9
-            @test -er.blade_hub_radius ≈ 0.3 * span atol=1e-9
+            @test er.blade_hub_radius > 0
+            @test er.blade_tip_radius ≈ 4.0 * er.blade_hub_radius atol=1e-9
         end
     end
 
@@ -48,10 +45,8 @@ using KiteTurbineDynamics
 
         for (i, er) in enumerate(sys.expansion_rotors)
             @test er.blade_tip_radius > 0
-            @test er.blade_hub_radius < 0
-            span = er.blade_tip_radius - er.blade_hub_radius
-            @test er.blade_tip_radius ≈ 0.7 * span atol=1e-9
-            @test -er.blade_hub_radius ≈ 0.3 * span atol=1e-9
+            @test er.blade_hub_radius > 0
+            @test er.blade_tip_radius ≈ 4.0 * er.blade_hub_radius atol=1e-9
         end
     end
 
