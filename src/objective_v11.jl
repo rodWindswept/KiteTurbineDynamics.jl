@@ -130,6 +130,7 @@ function objective_v11(
     v_rated::Float64=11.0,
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
+    lin_damp::Float64=0.05,     # bearing damper retention factor
 )
     # ── Decode genome ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -175,7 +176,7 @@ function objective_v11(
         kick_steps = round(Int, 2.0 / V11_DT)  # 2 s kick
         run_canonical_sim!(
             u_settled, sys, pc, wf, kick_steps, V11_DT;
-            lift_device=nothing, lin_damp=0.05, spoke=spoke
+            lift_device=nothing, lin_damp=lin_damp, spoke=spoke
         )
     catch e
         @warn "Kickstart failed" exception = e
@@ -210,7 +211,7 @@ function objective_v11(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=nothing, lin_damp=0.05, spoke=spoke, callback=window_callback
+            lift_device=nothing, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e
         @warn "Window sim failed" exception = e
@@ -249,6 +250,7 @@ function objective_v11_warmstart(
     v_rated::Float64=11.0,
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
+    lin_damp::Float64=0.05,     # bearing damper retention factor
 )
     # ── Decode genome ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -370,7 +372,7 @@ function objective_v11_warmstart(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=nothing, lin_damp=0.05, spoke=spoke, callback=window_callback
+            lift_device=nothing, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e
         @warn "Warm-start sim failed" exception = e
@@ -458,6 +460,7 @@ function warmstart_with_k_bracket(
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
     spoke::Union{Nothing,SpokeParams}=nothing,
+    lin_damp::Float64=0.05,     # bearing damper retention factor
 )
     result = design_from_vector_v10(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
@@ -478,7 +481,8 @@ function warmstart_with_k_bracket(
 
         fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
             objective_v11_warmstart(x_k, beam_profile, p;
-                power_W=power_W, v_rated=v_rated, spoke=spoke)
+                power_W=power_W, v_rated=v_rated, spoke=spoke,
+                lin_damp=lin_damp)
 
         # Skip garbage evals (NaN/Inf blowup returns 1e9 sentinel)
         if !isfinite(fitness) || fitness >= 1e8

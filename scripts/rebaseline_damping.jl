@@ -70,7 +70,7 @@ function eval_one(x, lin_damp, dt_factor)
     best_f, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary,
         best_ua, best_ub = KiteTurbineDynamics.warmstart_with_k_bracket(
             x, PROFILE_ELLIPTICAL, params_v5_50kw();
-            power_W=50000.0, v_rated=11.0)
+            power_W=50000.0, v_rated=11.0, lin_damp=lin_damp)
 
     if best_f >= 1e8 || !isfinite(best_f)
         return (NaN, NaN, NaN, 0, 0, NaN, NaN)
@@ -193,22 +193,62 @@ function eval_one(x, lin_damp, dt_factor)
     return (P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, minimum(P_finite))
 end
 
-# ── Main ──
+# ── Main: screen-first gate ──
+# Only run one genome first.  If no damping setting produces a steady trace
+# on that genome, the instability is damping-independent and we save 7/8
+# of the compute budget.  Only proceed to the full matrix if promising.
+const SCREEN_GENOME = "10kW_fos034"
+println("=== SCREEN: $SCREEN_GENOME across 3 damping × 2 dt (6 evals, ~9h) ===")
 results = DataFrame(
     label=String[], lin_damp=Float64[], dt_factor=Float64[],
     P_mean=Float64[], FoS_min=Float64[], P_range=Float64[],
     n_betz=Int[], n_fos_dips=Int[], omega_eq=Float64[], P_min=Float64[]
 )
 
+screen_x = GENOMES[SCREEN_GENOME]
+for ld in DAMPING_SETTINGS
+    for dtf in DT_FACTORS
+        P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min =
+            eval_one(screen_x, ld, dtf)
+        push!(results, (SCREEN_GENOME, ld, dtf, P_mean, FoS_min, P_range,
+                        n_betz, n_dips, ω_eq, P_min))
+        @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n", SCREEN_GENOME, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
+    end
+end
+
+# Check screen: any setting with P_range/P_mean < 0.2?
+screen_hopeful = false
+for row in eachrow(results)
+    if isfinite(row.P_mean) && row.P_mean > 0.1 && isfinite(row.P_range)
+        ratio = row.P_range / row.P_mean
+        if ratio < 0.2
+            screen_hopeful = true
+            @printf "  ld=%.2f dt/%.0f: P_range/P_mean = %.3f ✓\n" row.lin_damp row.dt_factor ratio
+        end
+    end
+end
+
+if !screen_hopeful
+    println("\nSCREEN FAILED — no damping setting achieves P_range/P_mean < 0.2.")
+    println("The instability is damping-independent.  Full 7-genome matrix skipped.")
+    println("Saved $(7*3*2 - 6) evals (~53h).")
+    CSV.write("scripts/results/recampaign/rebaseline_damping.csv", results)
+    exit(2)
+end
+
+println("SCREEN PASSED — proceeding to full 7-genome matrix.")
+println()
+
+# Full matrix: remaining 6 genomes
 for (label, x) in GENOMES
+    label == SCREEN_GENOME && continue
     for ld in DAMPING_SETTINGS
         for dtf in DT_FACTORS
             P_mean, FoS_min, P_range, n_betz, n_dips, ω_eq, P_min =
                 eval_one(x, ld, dtf)
             push!(results, (label, ld, dtf, P_mean, FoS_min, P_range,
                             n_betz, n_dips, ω_eq, P_min))
-            @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n",
-                label, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
+            @printf("%-12s ld=%.2f dt/%.0f  P=%.1f kW  FoS=%.3f  betz=%d  dips=%d\n", label, ld, dtf, P_mean, FoS_min, n_betz, n_dips)
         end
     end
 end
