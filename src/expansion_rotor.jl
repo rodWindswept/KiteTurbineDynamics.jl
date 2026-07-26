@@ -79,7 +79,9 @@ const EXP_K_INDUCED  = 0.050
 #   CD_stall ≈ 0.15 is a conservative order-of-magnitude estimate for a
 #   fully-separated blade section at Re 10⁵–10⁶.  Replace with polars when
 #   available (Gate 3 PRD §airfoil-data).
-const EXP_CD_STALL  = 0.15
+# Ref (not const) so smoke tests can toggle it without source edits —
+# run CD_STALL=0 for reproduction, then CD_STALL=0.15 for isolated effect.
+const EXP_CD_STALL = Ref(0.15)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Parameter struct
@@ -203,7 +205,7 @@ function _thrust_be(er::ExpansionRotorParams, rho, v_axial, omega, r_mean, bank_
     CL = expansion_cl(phi)
     CL_raw = EXP_CL_SLOPE * (phi - EXP_THETA_I)
     d_stall = max(abs(CL_raw) - EXP_CL_MAX, 0.0)
-    cd_stall_rise = EXP_CD_STALL * d_stall^2
+    cd_stall_rise = EXP_CD_STALL[] * (d_stall + d_stall^2)
     v_app2 = v_eff^2 + (omega * r_mean)^2
     q = 0.5 * rho * v_app2
     s = er.blade_tip_radius - er.blade_hub_radius
@@ -346,7 +348,7 @@ function expansion_rotor_forces(
     CL_raw = EXP_CL_SLOPE * (phi - EXP_THETA_I)
     d_stall = max(abs(CL_raw) - EXP_CL_MAX, 0.0)
     D_blade = q * er.blade_chord * blade_span *
-        (er.CD0_blade + er.k_induced * CL_eff^2 + EXP_CD_STALL * d_stall^2)
+        (er.CD0_blade + er.k_induced * CL_eff^2 + EXP_CD_STALL[] * (d_stall + d_stall^2))
 
     # Resolve lift perpendicular to apparent wind into shaft-frame components.
     # The apparent wind approaches at inflow angle φ from the rotation plane.
