@@ -25,16 +25,26 @@ const FOS_DESIGN  = 3.0     # column buckling factor of safety at design point
 const DO_SCALE = 0.01396    # m/m^0.5  →  Do = DO_SCALE × √R
 
 function tube_props(R::Float64)
-    Do     = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
-    t      = max(T_OVER_D * Do, T_MIN_WALL)
-    Di     = Do - 2.0 * t
-    A      = π / 4.0  * (Do^2 - Di^2)
-    I_bend = π / 64.0 * (Do^4 - Di^4)
-    J      = 2.0 * I_bend
-    E      = E_CFRP
-    G      = E_CFRP / (2.0 * (1.0 + 0.3))  # CFRP ν ≈ 0.3
-    σ_yield = 600e6  # CFRP compressive yield ~600 MPa
-    return (Do=Do, t=t, Di=Di, A=A, I_bend=I_bend, J=J, E=E, G=G, σ_yield=σ_yield)
+    Do = max(DO_SCALE * sqrt(R), T_MIN_WALL / T_OVER_D)
+    t = max(T_OVER_D * Do, T_MIN_WALL)
+
+    # Instantiate CircularTube (paired with DEFAULT_CFRP)
+    tube = CircularTube(Do, t / Do)
+
+    # Query properties under unit length and FixedFixedEnds (space frame joints)
+    props = strut_properties(tube, 1.0, FixedFixedEnds())
+
+    return (
+        Do=Do,
+        t=t,
+        Di=Do - 2.0 * t,
+        A=props.A,
+        I_bend=props.I_min,
+        J=props.J,
+        E=tube.material.E,
+        G=tube.material.G,
+        σ_yield=tube.material.σ_yield,
+    )
 end
 
 """
