@@ -71,6 +71,16 @@ const EXP_CL_DESIGN  = 0.7
 const EXP_CD0_DESIGN = 0.010
 const EXP_K_INDUCED  = 0.050
 
+# Post-stall drag rise — provisional, pending real airfoil polars (M5).
+# Below |CL_raw| ≤ CL_MAX:  CD = CD0 + k·CL²  (unchanged induced-drag model).
+# Beyond CL_MAX: flow separation causes CD to rise nonlinearly.  The quadratic
+# term restores aerodynamic damping in the saturated regime where clamping
+# CL also clamped CD (the aero dead-zone).
+#   CD_stall ≈ 0.15 is a conservative order-of-magnitude estimate for a
+#   fully-separated blade section at Re 10⁵–10⁶.  Replace with polars when
+#   available (Gate 3 PRD §airfoil-data).
+const EXP_CD_STALL  = 0.15
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Parameter struct
 # ══════════════════════════════════════════════════════════════════════════════
@@ -191,11 +201,14 @@ function _thrust_be(er::ExpansionRotorParams, rho, v_axial, omega, r_mean, bank_
     v_eff = v_axial * (1.0 - a)
     phi = atan(v_eff, omega * r_mean)
     CL = expansion_cl(phi)
+    CL_raw = EXP_CL_SLOPE * (phi - EXP_THETA_I)
+    d_stall = max(abs(CL_raw) - EXP_CL_MAX, 0.0)
+    cd_stall_rise = EXP_CD_STALL * d_stall^2
     v_app2 = v_eff^2 + (omega * r_mean)^2
     q = 0.5 * rho * v_app2
     s = er.blade_tip_radius - er.blade_hub_radius
     L = q * er.blade_chord * s * CL
-    D = q * er.blade_chord * s * (er.CD0_blade + er.k_induced * CL^2)
+    D = q * er.blade_chord * s * (er.CD0_blade + er.k_induced * CL^2 + cd_stall_rise)
     return er.n_blades * (L * cos(phi) + D * sin(phi)) * cos(bank_rad)
 end
 
@@ -328,7 +341,12 @@ function expansion_rotor_forces(
     # Legacy: fixed CL_blade. Induction ON: α model CL(φ).
     CL_eff = EXPANSION_PHYSICS[].induction ? expansion_cl(phi) : er.CL_blade
     L_blade = q * er.blade_chord * blade_span * CL_eff
-    D_blade = q * er.blade_chord * blade_span * (er.CD0_blade + er.k_induced * CL_eff^2)
+    # Post-stall drag rise: CD decoupled from clamped CL to restore
+    # aerodynamic damping in saturated regime (aero dead-zone fix).
+    CL_raw = EXP_CL_SLOPE * (phi - EXP_THETA_I)
+    d_stall = max(abs(CL_raw) - EXP_CL_MAX, 0.0)
+    D_blade = q * er.blade_chord * blade_span *
+        (er.CD0_blade + er.k_induced * CL_eff^2 + EXP_CD_STALL * d_stall^2)
 
     # Resolve lift perpendicular to apparent wind into shaft-frame components.
     # The apparent wind approaches at inflow angle φ from the rotation plane.
