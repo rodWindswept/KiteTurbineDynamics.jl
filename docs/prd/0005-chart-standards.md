@@ -68,7 +68,6 @@ A quantity claimed to depend on X must be plotted against X **with X varying whi
 - Pass/fail and thresholds use reserved colors (vermillion for limits/failures, black dashed for criteria lines like FoS = 1.5) never used for design identity.
 
 ### 3.7 Forbidden
-- Dual y-axes of unrelated quantities (sole exception: rad/s-rpm twin).
 - Truncated axes on FoS or safety-margin plots. FoS axes start at 0 and mark 1.5 explicitly.
 - Trend lines or smoothing through < 5 points. Three points get three markers and no line, or a line explicitly labeled "interpolation aid, not fit."
 - The word "efficiency" on any figure without its definition (numerator/denominator) in the caption or axis.
