@@ -416,6 +416,19 @@ function objective_v11_warmstart(
         return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
+    # Betz ceiling (A2 fix) — reject designs exceeding the physical power
+    # limit for their swept area.  Was: only P_mean > 1e6 (a 1 TW overflow
+    # trap, ~10 million × the machine's ceiling).  The 1103 kW row passed
+    # it untouched and contaminated later generations.
+    # NOTE: swept area = π·R² uses the airborne ring radius.  Rod should
+    # tune this if the multi-line annulus area (n_lines × blade annulus)
+    # is the intended reference area.
+    P_betz = (16.0 / 27.0) * 0.5 * p.rho * π * p.rotor_radius^2 * v_rated^3 / 1000.0
+    P_aero_peak = maximum(P_finite)
+    if P_mean > P_betz || P_aero_peak > P_betz
+        return (1e9, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0)
+    end
+
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
     drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
     drifted = drift > 0.15
