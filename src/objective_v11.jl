@@ -257,7 +257,7 @@ function objective_v11_warmstart(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
     )
     if result.n_active == 0
-        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
 
     k_mppt = 10.0^x[15]
@@ -272,7 +272,7 @@ function objective_v11_warmstart(
     # is too low.  n_rings = 3 permits degenerate geometry with unrealistically
     # high FoS that the DE exploits (register row 5).
     if n_rings < 5
-        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Build ODE system ─────────────────────────────────────────────────
@@ -307,7 +307,7 @@ function objective_v11_warmstart(
     )
 
     if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
-        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Settle rope geometry from ODE ────────────────────────────────────
@@ -318,7 +318,7 @@ function objective_v11_warmstart(
 
     u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
     if any(isnan.(u_settled)) || any(isinf.(u_settled))
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Set ring angular velocities and orbital velocities ─────────────
@@ -392,7 +392,7 @@ function objective_v11_warmstart(
         )
     catch e
         @warn "Warm-start sim failed" exception = e
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     # ── Score ────────────────────────────────────────────────────────────
@@ -402,7 +402,7 @@ function objective_v11_warmstart(
 
     if isempty(P_finite) || length(P_finite) < 2
         # No valid power samples — simulation produced garbage
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     P_mean = mean(P_finite)
@@ -422,7 +422,7 @@ function objective_v11_warmstart(
 
     # Guard against astronomical P from numerical blowup
     if !isfinite(P_mean) || P_mean > 1e6
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
 
     # Betz ceiling (A2 fix) — reject designs exceeding the physical power
@@ -435,7 +435,7 @@ function objective_v11_warmstart(
     P_betz = (16.0 / 27.0) * 0.5 * p.rho * π * p.rotor_radius^2 * v_rated^3 / 1000.0
     P_aero_peak = maximum(P_finite)
     if P_mean > P_betz || P_aero_peak > P_betz
-        return (1e9, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0)
+        return (12.0, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0)
     end
 
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
