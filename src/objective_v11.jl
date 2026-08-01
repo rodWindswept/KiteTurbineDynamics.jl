@@ -358,13 +358,20 @@ function objective_v11_warmstart(
                 (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
             end
             push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
-            # Axial and bending shares at worst-FoS ring
+            # Axial and bending shares at worst-FoS ring (A1 fix — always push
+            # to keep array lengths aligned with fos_samples)
             if !isempty(airborne)
                 worst_idx = argmin(airborne) + 1  # +1 for 1-based indexing
                 if worst_idx <= length(ef.ring_util_axial)
                     push!(util_a_samples, ef.ring_util_axial[worst_idx])
                     push!(util_b_samples, ef.ring_util_bending[worst_idx])
+                else
+                    push!(util_a_samples, -1.0)
+                    push!(util_b_samples, -1.0)
                 end
+            else
+                push!(util_a_samples, -1.0)
+                push!(util_b_samples, -1.0)
             end
         end
     end
@@ -390,7 +397,19 @@ function objective_v11_warmstart(
     end
 
     P_mean = mean(P_finite)
-    FoS_min = isempty(fos_finite) ? Inf : minimum(fos_finite)
+
+    # Find FoS_min and its sample index in the original arrays (A1 fix).
+    # Was: FoS_min = minimum(fos_finite) — no index tracking, so util_a
+    # and util_b came from independent maxima rather than the FoS-min instant.
+    FoS_min = Inf
+    fos_idx_min = 0
+    for i in eachindex(fos_samples)
+        f = fos_samples[i]
+        if isfinite(f) && f > 0.0 && f < FoS_min
+            FoS_min = f
+            fos_idx_min = i
+        end
+    end
 
     # Guard against astronomical P from numerical blowup
     if !isfinite(P_mean) || P_mean > 1e6
@@ -401,14 +420,22 @@ function objective_v11_warmstart(
     drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
     drifted = drift > 0.15
 
-    # Window-worst axial and bending util shares.
-    # OPEN: these are independent maxima over each sample array, not tied to
-    # the FoS-min instant or to each other.  util_axial + util_bending will
-    # NOT equal 1/FoS_min.  Fix per audit item 1 (handover 2026-07-25):
-    # record ring index + sample index at FoS_min, take N_ax/N_crit and
-    # √(M_ip²+M_oop²)/M_el from that beam at that sample.
-    util_a = isempty(util_a_samples) ? -1.0 : maximum(filter(isfinite, util_a_samples); init=-1.0)
-    util_b = isempty(util_b_samples) ? -1.0 : maximum(filter(isfinite, util_b_samples); init=-1.0)
+    # Axial and bending util at the FoS-min sample (A1 fix).
+    # Was: independent maxima over each array — util_a + util_b ≠ 1/FoS_min.
+    # Now: extract from the same ring at the same sample that produced FoS_min.
+    # Identity: util_a + util_b = 1/FoS_min for a single beam at a single instant.
+    if fos_idx_min > 0 && fos_idx_min <= length(util_a_samples) &&
+       fos_idx_min <= length(util_b_samples)
+        util_a = util_a_samples[fos_idx_min]
+        util_b = util_b_samples[fos_idx_min]
+        expected = 1.0 / FoS_min
+        if !isapprox(util_a + util_b, expected; rtol=0.01)
+            @warn "A1 identity check failed" util_a util_b sum=util_a+util_b expected FoS_min fos_idx_min
+        end
+    else
+        util_a = -1.0
+        util_b = -1.0
+    end
 
     # Stationarity gate: split window into halves, check drift (trend)
     # AND amplitude (steadiness).  A limit cycle with a stable mean is
