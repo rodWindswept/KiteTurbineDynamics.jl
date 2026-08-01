@@ -406,7 +406,7 @@ function design_from_vector_v4(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    n_lines = clamp(Int(round(x[8])), 3, 12)
+    n_lines = clamp(Int(round(x[8])), 3, 16)  # A4 fix: was 12, bound is 16
     r_hub = x[5]
     r_bot = clamp(x[6], 1.5, 8.0)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
