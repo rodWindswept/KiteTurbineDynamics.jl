@@ -266,6 +266,15 @@ function objective_v11_warmstart(
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
+    # n_rings gate (A3 fix) — reject designs with fewer than 5 rings.
+    # This is a model-validity bound, not a physical finding.  The Tulloch
+    # collapse model is uncalibrated at L/r > 3.5, which occurs when n_rings
+    # is too low.  n_rings = 3 permits degenerate geometry with unrealistically
+    # high FoS that the DE exploits (register row 5).
+    if n_rings < 5
+        return (1e9, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+    end
+
     # ── Build ODE system ─────────────────────────────────────────────────
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
 
