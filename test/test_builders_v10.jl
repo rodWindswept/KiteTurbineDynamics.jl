@@ -7,16 +7,16 @@
 using Test, KiteTurbineDynamics
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
 
-@testset "V10 builder — 12-gon geometry" begin
+@testset "V10 builder — 13-gon geometry" begin
     sys, u0, p, label, design = build_v10_tight_no_lowest()
 
-    @test p.n_lines == 12
+    @test p.n_lines == 13
     @test p.n_rings == 10
     @test p.trpt_hub_radius ≈ 2.889 atol=0.01
     @test design.r_bottom ≈ 2.000 atol=0.01
     @test design.r_hub > design.r_bottom
     @test p.tether_length ≈ 67.08 atol=1.0
-    @test occursin("12-gon", label)
+    @test occursin("13-gon", label)
     @test occursin("10 rings", label)
 end
 
@@ -71,7 +71,7 @@ end
 
 @testset "V10 builder — Gate 1c: n_blades = n_lines" begin
     sys, u0, p, label, design = build_v10_tight_no_lowest()
-    @test p.n_lines == 12
+    @test p.n_lines == 13
     # Expansion rotor params should have 12 blades each
     # (verified by n_lines flowing through to ExpansionRotorParams in builder)
 end
