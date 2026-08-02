@@ -1,7 +1,9 @@
 #!/usr/bin/env julia
 # scripts/run_feasibility_phase_a.jl
-# Stage 2: Phase A feasibility campaign — DE minimising objective_feasibility.
-# Budget: pop=24, ≤30 gens, hard cap 500 v11 evals.  Progressive saves, resume by hash.
+# Stage 2: Phase A v2 feasibility campaign — DE minimising objective_feasibility.
+# Corrected A1-A5 physics (commit e7bbadf+), fresh start.
+# Budget: pop=8, ≤21 gens, hard cap 176 evals.  Progressive saves, resume by hash.
+# Seed: V10 winner only (post-A1-A5 — known feasible).
 
 using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates, DataFrames, CSV, Random, DelimitedFiles
 
@@ -23,10 +25,10 @@ const P_BASE      = KiteTurbineDynamics.params_v5_50kw()
 const POWER_W     = 50000.0
 const V_RATED     = 11.0
 const GIT_HASH    = strip(read(`git -C $(dirname(@__DIR__)) rev-parse --short HEAD`, String))
-const PHYSICS_ERA = "post-234a722_corrected-physics_ON"
+const PHYSICS_ERA = "post-e7bbadf_A1-A5-corrected"
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
-const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a.csv")
+const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v2.csv")
 mkpath(OUT_DIR)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -34,42 +36,16 @@ mkpath(OUT_DIR)
 # ══════════════════════════════════════════════════════════════════════════════
 lo_full, hi_full = KiteTurbineDynamics.search_bounds_v11(P_BASE, BEAM; max_ground_radius=5.0)
 
-const SEED_HASHES = [
-    "205c119cd2cb",  # FoS 0.48, 8-line, 6.4kW
-    "fdc0c9e0907b",  # FoS 0.37, 3-line legacy, 5.1kW
-    "0d61db093a2c",  # FoS 0.34, 4-line, 10.0kW
-    "f697422b778f",  # FoS 0.23, 12-line legacy, 1.6kW
-    "caddb19b866b",  # FoS 0.17, 6-line, 13.2kW
-]
-
-function load_anchors_map()
-    map = Dict{String,Vector{Float64}}()
-    rows = readdlm(joinpath(@__DIR__, "results", "recampaign", "anchors.csv"), ',', header=true)
-    hdr = Dict(h => i for (i, h) in enumerate(rows[2]))
-    for i in 1:size(rows[1], 1)
-        gh = string(rows[1][i, hdr["genome_hash"]])
-        x = [parse(Float64, string(rows[1][i, hdr["x$j"]])) for j in 1:15]
-        map[gh] = x
-    end
-    return map
-end
-
-const ANCHORS = load_anchors_map()
-
-# V6.2 recovered 12-line optimum (from handover)
-const X_V62 = [0.0600000,0.0100000,0.8799392,0.9999998,2.8885233,2.0000000,
-               2.9878503,12.000000,0.0,18.5580461,31.9905662,34.9999911,
-               0.5186482,0.1000000,log10(165.4)]
+# V10 winner (post-A1-A5 corrected physics) — sole seed for fresh campaign.
+# 14-param design vector from v10_campaign_50kw/best_vector.csv.
+# k_mppt handled by warmstart_with_k_bracket (brackets 0.5×/1×/2× of prior).
+const X_V10 = [0.06000000003501675, 0.01, 0.8799392364011867, 0.9999998481455412,
+                2.8885232552453664, 2.0000000178739743, 2.9878503277143196,
+                13.207866704651128, -0.1097833891351554, 18.558046111485208,
+                31.990566201321005, 34.99999109191107, 0.5186481959328214, 0.1, 0.0]
 
 function load_seeds()
-    seeds = Vector{Float64}[]
-    for h in SEED_HASHES
-        if haskey(ANCHORS, h)
-            push!(seeds, ANCHORS[h])
-        end
-    end
-    push!(seeds, copy(X_V62))
-    return seeds
+    return [copy(X_V10)]
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -236,7 +212,7 @@ end
 
 function main()
     println("═══════════════════════════════════════════════")
-    println("Phase A — Feasibility Campaign")
+    println("Phase A v2 — Feasibility Campaign (A1-A5 corrected)")
     println("git=$GIT_HASH  era=$PHYSICS_ERA")
     println("pop=$POP_SIZE  max_gens=$MAX_GENS  max_evals=$MAX_EVALS")
     println("═══════════════════════════════════════════════\n")
@@ -340,7 +316,7 @@ function main()
         # Gate checks — must also be stationary
         if gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR && gen_best_stationary
             println("\n╔══════════════════════════════════════════════╗")
-            println("║  GREEN: FoS ≥ 1.5, P ≥ 1 kW, stationary     ║")
+            @printf("║  GREEN: FoS ≥ %.1f, P ≥ %.0f kW, stationary  ║\n", FOS_DESIGN, P_FLOOR)
             println("║  Genome: $(genome_hash(pop[gen_best_idx])[1:8])  ║")
             println("╚══════════════════════════════════════════════╝")
             println("→ Freeze genome, proceed to Stage 3 verification.")
