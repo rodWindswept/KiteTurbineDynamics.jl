@@ -367,13 +367,27 @@ function capture_extended(
     ring_fos   = Float64[]
     ring_Ncomp = Float64[]
     ring_Pcrit = Float64[]
-    ring_util_axial  = Float64[]  # max(N/N_crit) on worst beam, per ring
-    ring_util_bending = Float64[] # max(√(M_ip²+M_oop²)/M_el) on worst beam, per ring
+    ring_util_axial  = Float64[]  # N/N_crit from worst-utilisation beam, per ring
+    ring_util_bending = Float64[] # √(M_ip²+M_oop²)/M_el from same beam, per ring
     for ref in rea
         wN  = maximum(b.N for b in ref.beams; init=0.0)
         wNc = maximum(b.N_crit for b in ref.beams; init=1.0)
-        wA  = maximum(b.N / max(b.N_crit, 1.0) for b in ref.beams; init=0.0)
-        wB  = maximum(sqrt(b.M_ip^2 + b.M_oop^2) / max(b.M_el, 1.0) for b in ref.beams; init=0.0)
+        # Pull axial and bending shares from the beam that produced max_util,
+        # not independent maxima.  This guarantees wA + wB = max_util so the
+        # identity util_a + util_b = 1/FoS_min holds at every sample (A1 fix).
+        if !isempty(ref.beams)
+            worst = ref.beams[1]
+            for b in ref.beams
+                if b.utilisation >= worst.utilisation
+                    worst = b
+                end
+            end
+            wA = max(worst.N, 0.0) / max(worst.N_crit, 1e-9)
+            wB = sqrt(worst.M_ip^2 + worst.M_oop^2) / max(worst.M_el, 1e-9)
+        else
+            wA = 0.0
+            wB = 0.0
+        end
         push!(ring_fos, (isnan(ref.max_util) || ref.max_util <= 0) ? Inf : 1.0 / ref.max_util)
         push!(ring_Ncomp, wN)
         push!(ring_Pcrit, wNc)
