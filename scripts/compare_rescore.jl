@@ -65,6 +65,7 @@ for r in eachrow(new)
     expected = 1.0 / fos
     actual = ua + ub
     if !isapprox(actual, expected; rtol=0.01)
+        global violations
         violations += 1
     end
 end
@@ -103,7 +104,9 @@ for (i, (label, df)) in enumerate([
     vlines!(ax, [P_cap]; color=:gray, linestyle=:dash, linewidth=1)
     # Feasibility region shading
     xlims!(ax, -5, 55)
-    ylims!(ax, 0, ceil(maximum(df.FoS_min) + 0.5))
+    fos_finite = filter(isfinite, df.FoS_min)
+    ymax = isempty(fos_finite) ? 5.0 : ceil(maximum(fos_finite) + 0.5)
+    ylims!(ax, 0, ymax)
     i == 1 && axislegend(ax; position=:rt)
 end
 
