@@ -462,7 +462,6 @@ function objective_v11_warmstart(
 
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
     drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
->>>>>>> dc93c51 (fix(Part-A): A1 util-split co-location, A2 Betz ceiling, A3 n_rings gate, A4 x8 clamp)
     # Axial and bending util at the FoS-min sample (A1 fix).
     # Was: independent maxima over each array — util_a + util_b ≠ 1/FoS_min.
     # Now: extract from the same ring at the same sample that produced FoS_min.
@@ -478,7 +477,6 @@ function objective_v11_warmstart(
     else
         util_a = -1.0
         util_b = -1.0
-    end
     end
 
     # Stationarity gate: split window into halves, check drift (trend)
