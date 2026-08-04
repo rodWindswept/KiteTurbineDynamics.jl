@@ -17,12 +17,12 @@ Canonical designs cover 10 kW through 50 kW with live switching in the GLMakie d
 
 A TRPT kite turbine is an airborne wind energy device. A rotor (a ring of blades) is held
 at altitude by aerodynamic lift and tether tension. The wind spins the rotor. That spin
-travels *down the tether lines as twist* — the lines wrap helically, the helix propagates
-toward the ground, and the ground end unwinds into a generator shaft. There is no
-mechanical shaft, no gearbox, no tower.
+travels *down the tether lines as twist* — the lines wrap helically over polygon rings which hold the lines appart, the helix propagates
+toward the ground. The ground end unwinds into a generator shaft. There is no rigid
+mechanical shaft between the flown turbine and the ground sited generator, no gearbox, no tower.
 
 The key failure mode is **torsional collapse**: if the shaft is loaded beyond its elastic
-twist limit, the helical lines go slack, the rings fall toward each other, and the
+twist limit, the helical lines twist together, the rings fall toward each other, and the
 transmission fails.
 
 This package models the TRPT as a multi-body ODE system. Torsional coupling between rings

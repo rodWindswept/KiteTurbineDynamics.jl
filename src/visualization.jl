@@ -596,7 +596,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # NOTE: valid only during steady-state with all lines uniformly taut and torque being
     # transmitted (twist ≠ 0).  Slack lines or asymmetric loading (e.g. furl transients)
     # make this metric unreliable — ring colour during furl should be ignored.
-    hlbl("Ring column buckling  (CFRP tube, FoS_design = $(Int(FOS_DESIGN)))  ⚠ steady-state only"; fontsize=11, color=:firebrick)
+    hlbl("Ring column buckling  (CFRP tube, FoS_design = $(round(Int, FOS_DESIGN)))  ⚠ steady-state only"; fontsize=11, color=:firebrick)
     c_frame_lbl = hlbl("  max util   0.0%  ·  FoS      ∞")
     Colorbar(hud[hnr!(), 1]; colormap=ring_cmap, limits=(0.0, 1.0),
              vertical=false, height=14, tellheight=true, tellwidth=false,

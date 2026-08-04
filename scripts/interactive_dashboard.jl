@@ -544,13 +544,11 @@ function main()
             end
 
             println("Building dashboard...")
-            fig, cockpit_fig, config_changed = build_dashboard(sys, p, frames; times=times,
+            fig, config_changed = build_dashboard(sys, p, frames; times=times,
                                   u_settled=u_start, wind_fn=wind_fn,
                                   config_name=current_config)
             main_screen = GLMakie.Screen()
             display(main_screen, fig)
-            cp_screen = GLMakie.Screen()
-            display(cp_screen, cockpit_fig)  # cockpit on top
             println("Dashboard open — $(current_config). Use 'Switch Configuration' to change.")
 
             # Wait for window close or config switch request

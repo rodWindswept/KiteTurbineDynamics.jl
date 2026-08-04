@@ -140,6 +140,14 @@ function objective_v11(
         return 1e9  # no rotors = infeasible
     end
 
+    # Model-validity gate: Tulloch TRPT model is uncalibrated at L/r > 3.5.
+    # n_rings < 5 implies L/seg >> validated range.  Gate at decode time;
+    # re-check after A1 lands — if the degenerate family disappears without
+    # this gate, it's insurance rather than necessity.
+    if result.n_rings < 5
+        return 1e9  # outside Tulloch calibration range
+    end
+
     k_mppt = 10.0^x[15]
     k_mppt = clamp(k_mppt, 0.01, 1000.0)  # safety clamp
 
@@ -438,10 +446,23 @@ function objective_v11_warmstart(
         return (12.0, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0)
     end
 
+    # Betz ceiling — physical admissibility check.
+    # Total projected swept area: hub rotor + expansion rotors (banked area).
+    # Betz power ceiling: 0.593 × ½ρv³ × A_projected.  P_mean must not exceed
+    # 1.1× this ceiling (10% tolerance for transient overshoot during window).
+    A_total = π * p.rotor_radius^2  # hub rotor, face-on
+    for rotor in result.rotors
+        bank_rad = rotor.bank_angle_deg * π / 180.0
+        A_total += π * rotor.blade_tip_radius^2 * cos(bank_rad)
+    end
+    Betz_ceiling_kW = 0.593 * 0.5 * ρ_AIR * A_total * v_rated^3 / 1000.0
+    if P_mean > 1.1 * Betz_ceiling_kW
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+    end
+
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
     drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
-    drifted = drift > 0.15
-
+>>>>>>> dc93c51 (fix(Part-A): A1 util-split co-location, A2 Betz ceiling, A3 n_rings gate, A4 x8 clamp)
     # Axial and bending util at the FoS-min sample (A1 fix).
     # Was: independent maxima over each array — util_a + util_b ≠ 1/FoS_min.
     # Now: extract from the same ring at the same sample that produced FoS_min.
@@ -457,6 +478,7 @@ function objective_v11_warmstart(
     else
         util_a = -1.0
         util_b = -1.0
+    end
     end
 
     # Stationarity gate: split window into halves, check drift (trend)

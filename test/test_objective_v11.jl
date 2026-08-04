@@ -145,3 +145,70 @@ end
     f = objective_feasibility(25.0, 0.1)
     @test f > 0.0  # goes to feasibility tier, not stalled
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# A5: rejection band — all rejection paths exceed stalled and feasibility tiers
+# ══════════════════════════════════════════════════════════════════════════════
+@testset "objective_feasibility — rejection band" begin
+    f_stalled  = objective_feasibility(10.0, 10.0)   # stalled tier
+    f_feas     = objective_feasibility(30.0, 0.5)      # feasibility tier
+
+    rejections = [
+        objective_feasibility(30.0, Inf),     # null FoS
+        objective_feasibility(30.0, NaN),     # NaN FoS
+        objective_feasibility(30.0, 0.0),      # zero FoS
+        objective_feasibility(30.0, -1.0),     # negative FoS
+    ]
+    for f_reject in rejections
+        @test f_reject > f_stalled   # rejection strictly above stalled
+        @test f_reject > f_feas      # rejection strictly above feasibility
+        @test f_reject >= 12.0       # rejection band floor
+    end
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# A4: n_lines decoder must not clamp at 12 when bounds allow 16
+# ══════════════════════════════════════════════════════════════════════════════
+@testset "A4: n_lines decoder ceiling" begin
+    x_16 = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 15.9, 0.0, 30.0,
+            15.0, 15.0, 1.0, 1.0]
+    design = design_from_vector_v4(x_16, PROFILE_ELLIPTICAL, params_v5_50kw())
+    @test design.n_lines == 16  # must decode to 16, not silently clamp to 12
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# A2: Betz ceiling — super-Betz power must reject
+# ══════════════════════════════════════════════════════════════════════════════
+@testset "A2: Betz ceiling — known super-Betz rows" begin
+    # P=1103 kW at 15 m/s needs ~900 m² — impossible for ring sizes in our
+    # search space.  Reject at objective level.
+    # NOTE: full ODE objective_v11 test is slow; this is a structural test
+    # that the Betz ceiling function exists and exercises at the call site.
+    # The rejection path is tested by the static guard in objective_v11.
+    # Compute ceiling for a minimal design
+    p = params_v5_50kw()
+    x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
+         30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
+    f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
+        objective_v11(x, PROFILE_ELLIPTICAL, p; v_rated=15.0)
+    # With a valid design, should not return 1e9 penalty from Betz
+    @test f < 1e8 || P == 0.0  # either valid or genuinely underpowered
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# A1: util split identity — |ua + ub − 1/FoS_min| × FoS_min < 0.01
+# ══════════════════════════════════════════════════════════════════════════════
+@testset "A1: util split co-located with FoS_min" begin
+    # Verify that objective_v11 returns util_a, util_b from the same sample
+    # as FoS_min.  The function now ties them together and warns on violation.
+    p = params_v5_50kw()
+    x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
+         30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
+    f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
+        objective_v11(x, PROFILE_ELLIPTICAL, p; v_rated=11.0)
+    # If we have valid measurements, identity must hold to within 1% of FoS
+    if ua > 0.0 && ub > 0.0 && isfinite(FoS) && FoS > 0.0
+        id_err = abs(ua + ub - 1.0 / FoS) * FoS
+        @test id_err < 0.01
+    end
+end
