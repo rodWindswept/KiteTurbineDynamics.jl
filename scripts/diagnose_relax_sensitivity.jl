@@ -158,17 +158,17 @@ println("═"^78)
 if nrow(R) == 0
     println("No evals completed.")
 else
-    improved = 0
-    tested   = 0
+    global improved = 0
+    global tested = 0
     for gh in unique(R.genome_hash)
         g = sort(filter(r -> r.genome_hash == gh, R), :relax_s)
         nrow(g) < 2 && continue
-        tested += 1
+        global tested += 1
         base = g[1, :ratio]; final = g[end, :ratio]
         tag = (isfinite(final) && final < 0.20) ? "ARTEFACT (now steady)" :
               (isfinite(final) && isfinite(base) && final < 0.5 * base) ? "ARTEFACT (halved)" :
               "PHYSICAL (ratio held)"
-        occursin("ARTEFACT", tag) && (improved += 1)
+        occursin("ARTEFACT", tag) && (global improved += 1)
         @printf("  %-14s ratio %7.3f @%.0fs → %7.3f @%.0fs   P %7.3f → %7.3f kW   %s\n",
                 gh[1:min(12, end)], base, g[1, :relax_s], final, g[end, :relax_s],
                 g[1, :P_mean_kw], g[end, :P_mean_kw], tag)
