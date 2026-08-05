@@ -22,12 +22,31 @@ const CR          = 0.9    # DE crossover rate
 const SP          = KiteTurbineDynamics.SpokeParams(enabled=false)
 const BEAM        = KiteTurbineDynamics.PROFILE_ELLIPTICAL
 const P_BASE      = KiteTurbineDynamics.params_v5_50kw()
-const LIFT_DEVICE = KiteTurbineDynamics.RotaryLifterParams(  # autogyro — 1.5× margin at rated wind
-    1.3, 0.3, 3, 0.15, 1.0, 0.08, 33.0, 25.0, 200_000.0, 4.0)
 const POWER_W     = 50000.0
 const V_RATED     = 11.0
+
+# ── Lift device — DESIGN-AWARE (Rod, 2026-08-05) ─────────────────────────────
+# Was: a fixed RotaryLifterParams(1.3 m, ...) delivering ~638 N to EVERY genome
+# regardless of mass, while its reported "1.5× margin" was computed against a
+# hard-coded 12 kg v5 reference shaft.  638 N is ≈61 kg of vertical support at
+# 70°; the V6.2 optimum is 74.17 kg airborne on its own.  Heavy, stiff designs
+# were therefore under-supported and the margin readout concealed it — a
+# systematic bias against exactly the torsional rigidity we want to buy.
+#
+# Now: presume the coaxial autogyro stack supplies enough lift at the lift
+# bearing to hold the machine smoothly in the air, and size it to 1.5× THIS
+# genome's airborne mass.  Stack sizing lives in CoaxialAutogyroStacking.jl and
+# is deliberately out of scope here.  The presumption is to be published as one.
+#
+# Passed as a function: sizing needs the built system's mass, which does not
+# exist until the genome is decoded and built.
+const LIFT_MARGIN = 1.5
+lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
+    sys, p; margin=LIFT_MARGIN, v_ref=V_RATED)
+const LIFT_DEVICE = lift_for
+
 const GIT_HASH    = strip(read(`git -C $(dirname(@__DIR__)) rev-parse --short HEAD`, String))
-const PHYSICS_ERA = "post-e7bbadf_A1-A5-corrected"
+const PHYSICS_ERA = "post-1d76492_design-aware-lift"
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
 const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v2.csv")
@@ -63,13 +82,25 @@ function evaluate_genome(x)
 
         f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR, FoS_design=FOS_DESIGN)
         tier = P_mean < P_FLOOR ? "stalled" : FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
-        lift_tension = KiteTurbineDynamics.lift_force_steady(LIFT_DEVICE, 1.225, V_RATED)[2]  # T_line at rated wind
+
+        # Lift tension is now PER-GENOME (sized to airborne mass), so it can no
+        # longer be computed here from a shared const — the device does not exist
+        # until the system is built inside the objective.  The objective's return
+        # tuple does not carry it yet, so record the margin the stack was sized
+        # to.  TODO: thread T_ref out of objective_v11_warmstart so the actual
+        # newtons land in the CSV; until then use trace_altitude_torque.jl, whose
+        # telemetry does capture T_lift per sample.
+        lift_tension = LIFT_MARGIN
 
         return (f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
                 util_a, util_b, lift_tension, f_feas, tier, true)
     catch e
+        # 12.0 (rejection band), NOT 11.0: an exception must never score better
+        # than a null-FoS rejection, and 11.0 collides exactly with a legitimate
+        # P_mean=0 stall (10 + (25-0)/25).  See handover-2026-08-05.
+        @warn "genome eval threw" exception=(e, catch_backtrace())
         return (Inf, 0.0, 0.0, Inf, 0.0, 0.0, true, false,
-                -1.0, -1.0, -1.0, 11.0, "stalled", false)
+                -1.0, -1.0, -1.0, 12.0, "rejected", false)
     end
 end
 

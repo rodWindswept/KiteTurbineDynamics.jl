@@ -146,6 +146,7 @@ export build_v10_tight, build_v10_tight_no_lowest
 
 # Lift device types and analysis
 export LiftDevice, SingleKiteParams, StackedKitesParams, RotaryLifterParams
+export StackedLifterParams, sized_lifter_for
 export single_kite_default, single_kite_sized, stacked_kites_default, rotary_lifter_default
 export lift_force_steady, stack_tension_profile, topmost_kite_static_load
 export tension_sensitivity, tension_cv, tension_cv_reduction

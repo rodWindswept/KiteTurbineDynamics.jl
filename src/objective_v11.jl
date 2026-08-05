@@ -270,7 +270,16 @@ function objective_v11_warmstart(
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
-    lift_device::Union{Nothing,LiftDevice}=nothing,
+    # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
+    # system exists, so the device can be sized to this genome's airborne mass —
+    # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
+    lift_device::Union{Nothing,LiftDevice,Function}=nothing,
+    # Diagnostic tap.  Called every ODE step as trace_callback(u, t, step, ctx)
+    # where ctx = (; sys, pc, wf, lift_device).  Scoring is unaffected — the
+    # window sampling below runs exactly as it does without a tap, so a traced
+    # eval and an untraced eval return identical numbers.  Decimate inside the
+    # callback; this fires at full step rate.
+    trace_callback::Union{Nothing,Function}=nothing,
 )
     # ── Decode genome ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -297,6 +306,18 @@ function objective_v11_warmstart(
 
     # ── Build ODE system ─────────────────────────────────────────────────
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
+
+    # Resolve a design-aware lift device.  Passing a Function lets the caller
+    # size the device from the system that was just built — necessary because a
+    # design-aware lifter needs this genome's airborne mass, which does not exist
+    # until `sys` does.  A plain LiftDevice is used as-is.
+    #
+    # CRITICAL: hand it `pc`, NOT `p`.  `p` is the shared base SystemParams; `pc`
+    # (from build_system_from_v10 above) is the one carrying THIS genome's
+    # n_lines, n_rings, tether_length and blade-scaled m_blade.  Sizing against
+    # `p` would compute the same mass for every genome — reintroducing exactly
+    # the design-blind lift this change exists to remove.
+    lift_dev = lift_device isa Function ? lift_device(sys, pc) : lift_device
 
     # ── Static equilibrium solve (same path as objective_v10:374) ────────
     expansion_params_v10 = ExpansionRotorParams[]
@@ -374,11 +395,21 @@ function objective_v11_warmstart(
     util_a_samples = Float64[]  # worst-ring axial share per sample
     util_b_samples = Float64[]  # worst-ring bending share per sample
 
+    trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
+
     function window_callback(uc, tc, s)
+        # Diagnostic tap runs first and is scoring-neutral.
+        trace_callback !== nothing && trace_callback(uc, tc, s, trace_ctx)
+
         t_cum = s * V11_DT
         if t_cum > WARM_RELAX_S[] && s % sample_interval == 0
+            # NOTE: lift_device passed through (was `nothing`).  In capture_frame
+            # the lift_device argument only populates T_lift/elev_lift/lift_margin/
+            # lift_type — it does NOT feed max_util, ring_fos or T_max, which come
+            # from the state vector and already include the lift force.  So P and
+            # FoS are unchanged by this; only the telemetry fields are now correct.
             ef = capture_extended(
-                uc, sys, pc, tc, wf, nothing; brake_engaged=sys.brake_engaged[]
+                uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
             )
             push!(P_samples, ef.base.P_kw)
             airborne = Float64[]
@@ -408,7 +439,7 @@ function objective_v11_warmstart(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=lift_device, lin_damp=lin_damp, spoke=spoke, callback=window_callback
+            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e
         @warn "Warm-start sim failed" exception = e
@@ -543,7 +574,10 @@ function warmstart_with_k_bracket(
     v_rated::Float64=11.0,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
-    lift_device::Union{Nothing,LiftDevice}=nothing,
+    # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
+    # system exists, so the device can be sized to this genome's airborne mass —
+    # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
+    lift_device::Union{Nothing,LiftDevice,Function}=nothing,
 )
     result = design_from_vector_v10(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated

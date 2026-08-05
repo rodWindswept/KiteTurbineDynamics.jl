@@ -118,6 +118,120 @@ struct StackedKitesParams <: LiftDevice
 end
 
 """
+    StackedLifterParams
+
+A stack of coaxial autogyro lifters on the lift line, sized to the machine it
+carries. Delivers a **prescribed** line tension rather than one derived from a
+rotor model — see the honesty note below.
+
+Constructed with [`sized_lifter_for`](@ref), which sets
+
+    T_line = margin · m_airborne · g / sin(elevation)
+
+so the *vertical* component at the lift bearing is `margin · m_airborne · g`.
+With the default `margin = 1.5` the stack carries 1.5× the machine's weight.
+
+## The presumption (Rod, 2026-08-05)
+
+**Presume the stack delivers enough lift at the lift bearing to support the kite
+turbine smoothly in the air, and test on that basis.** Sizing the stack is a
+solved problem living in `CoaxialAutogyroStacking.jl` and is deliberately out of
+scope here — this package does not model rotors, unit counts, or line geometry
+for the lifter. It applies the force the machine needs and gets on with the
+structural and power questions.
+
+The presumption is stated so it can be published as one. It is not hidden in a
+rotor model, and it is not a claim about any particular device.
+
+Why not derive the force from `RotaryLifterParams` instead: that path spins at a
+prescribed `omega_fixed`, so `v_app = √(v² + (ω·r_mean)²)` is dominated by the
+rotor term and its lift varies only ~17% between dead calm and rated wind —
+84% of rated lift at zero windspeed. Whatever the merits of that rotor model, an
+unintended near-constant force is not the presumption we want to be testing.
+
+## Scaling with wind
+
+Tension scales as `(v/v_ref)²` about the rated design point, so the machine is
+not held up by a constant force at all wind speeds. Set `v_ref` to the wind speed
+at which the `margin` requirement is to be met (rated, by default).
+
+## Known circularity
+
+The stack's own mass is part of the airborne mass it must lift, so
+`m_airborne → T_line → m_lifter → m_airborne`. `expansion_airborne_mass` books a
+flat 5 kg for the lifter regardless of size. `sized_lifter_for` records
+`m_airborne_ref` so that gap stays auditable rather than silent.
+"""
+struct StackedLifterParams <: LiftDevice
+    T_ref::Float64           # lift-line tension at v_ref (N)
+    v_ref::Float64           # wind speed the requirement is sized at (m/s)
+    elevation_deg::Float64   # lift line elevation above horizontal (deg)
+    margin::Float64          # vertical force / weight (1.5 = carries 1.5× weight)
+    m_airborne_ref::Float64  # airborne mass this was sized against (kg) — provenance
+    m_lifter::Float64        # stack mass booked into the airborne budget (kg)
+    line_EA::Float64         # lift line axial stiffness (N)
+    line_length::Float64     # lift line length from TRPT hub to stack (m)
+end
+
+"""
+    sized_lifter_for(sys, p; margin=1.5, elevation_deg=70.0, line_EA=200_000.0, line_length=25.0)
+
+Build a [`StackedLifterParams`](@ref) sized to this design's airborne mass, so the
+vertical force at the lift bearing is `margin × m_airborne × g`.
+
+Sizes against `expansion_airborne_mass(sys, p)` — the design's real tether, rings,
+blades and expansion rotors — not a fixed reference budget. This is the whole
+point: a stiffer, heavier machine gets a proportionally stronger lift line, so the
+optimiser is no longer penalised for buying torsional rigidity.
+
+Replaces the previous arrangement, in which every genome in a campaign received an
+identical hard-coded 638 N (≈61 kg of vertical support at 70°) regardless of its
+mass, while `autogyro_lift_required` reported a healthy margin computed against a
+fixed 12 kg reference shaft. See
+`handovers/handover-2026-08-05-stationarity-audit.md`.
+"""
+function sized_lifter_for(
+    sys,
+    p::SystemParams;
+    margin::Float64=1.5,
+    v_ref::Float64=11.0,
+    elevation_deg::Float64=70.0,
+    line_EA::Float64=200_000.0,
+    line_length::Float64=25.0,
+    m_lifter::Float64=5.0,
+)
+    g = 9.81
+    m_airborne = expansion_airborne_mass(sys, p)
+    F_vert = margin * m_airborne * g          # vertical requirement at v_ref
+    T_ref = F_vert / sind(elevation_deg)      # line tension delivering it
+    return StackedLifterParams(
+        T_ref, v_ref, elevation_deg, margin, m_airborne, m_lifter, line_EA, line_length
+    )
+end
+
+"""
+    lift_force_steady(dev::StackedLifterParams, rho, v_wind, p=nothing)
+
+Lift-line tension for the sized stack, scaling as `(v_wind/v_ref)²` about the
+design point so the requirement is met at `v_ref` and falls off below it.
+
+This is the presumption made explicit: the stack supplies `margin × weight` at
+`v_ref`, and dynamic-pressure scaling elsewhere. No rotor model, no unit count —
+see the `StackedLifterParams` docstring.
+"""
+function lift_force_steady(
+    dev::StackedLifterParams,
+    rho::Float64,
+    v_wind::Float64,
+    p::Union{Nothing,SystemParams}=nothing,
+)
+    elev = p !== nothing ? rad2deg(p.lifter_elevation) : dev.elevation_deg
+    T = dev.T_ref * (v_wind / dev.v_ref)^2
+    F_hub = T .* lift_line_direction(elev)
+    return (F_hub, T, elev)
+end
+
+"""
     RotaryLifterParams
 
 Spinning rotor (ring-blade geometry, similar to TRPT) optimised for lift.
@@ -435,19 +549,51 @@ end
 # ── Autogyro sizing ────────────────────────────────────────────────────────────
 
 """
-    autogyro_lift_required(p::SystemParams; lifter_elevation_deg=70.0)
+    autogyro_lift_required(p::SystemParams, sys=nothing; lifter_elevation_deg=70.0)
 
-Compute the minimum lift line tension needed to support the airborne mass.
-Includes TRPT shaft, rotor blades, knuckles, and autogyro itself.
+Minimum lift line tension needed to support the airborne mass, as
+`(T_required_N, m_total_kg)`.
+
+Pass `sys` (a built `KiteTurbineSystem`) whenever one is available. The mass is
+then taken from `expansion_airborne_mass(sys, p)`, which counts the actual
+tether, rings, blades and expansion rotors of the design being evaluated.
+
+## Why `sys` matters (2026-08-05)
+
+Without `sys` this falls back to a **fixed reference budget** whose `m_shaft` is
+a hard-coded 12 kg — the v5 optimised shaft. That budget is blind to the design:
+a 5-gon and a 14-gon at r_hub = 5.37 m both come out around 22–28 kg, so
+`lift_margin` reported a comfortable 2.2–2.8× for every genome in the Phase A
+campaign while the ODE applied a flat 638 N (≈61 kg of vertical support at a 70°
+line). The V6.2 optimum alone is 74.17 kg airborne.
+
+The consequence is a systematic bias against stiff designs: torsional rigidity
+costs mass, mass is unsupported, but the margin that would have flagged it was
+computed against a machine nobody was simulating. See
+`handovers/handover-2026-08-05-stationarity-audit.md`.
+
+This function reports a *requirement*. It does not change the force the
+simulation applies — that comes from the `LiftDevice` — so making it
+design-aware makes the diagnostic honest without altering any physics.
 """
-function autogyro_lift_required(p::SystemParams; lifter_elevation_deg::Float64=70.0)
-    # Airborne mass budget
-    m_shaft = 12.0     # kg — v5 optimized shaft ~11.5 + margin
-    m_blades = p.n_blades * p.m_blade
-    m_knuckles = 1.0     # kg — knuckles, bearings, hub
-    m_lifter = 5.0      # kg — autogyro rotor + lines
-    m_total = m_shaft + m_blades + m_knuckles + m_lifter
+function autogyro_lift_required(
+    p::SystemParams,
+    sys=nothing;
+    lifter_elevation_deg::Float64=70.0,
+)
     g = 9.81
+    m_total = if sys === nothing
+        # Fixed reference budget — v5 shaft.  Design-blind; see docstring.
+        m_shaft    = 12.0   # kg — v5 optimized shaft ~11.5 + margin
+        m_blades   = p.n_blades * p.m_blade
+        m_knuckles = 1.0    # kg — knuckles, bearings, hub
+        m_lifter   = 5.0    # kg — autogyro rotor + lines
+        m_shaft + m_blades + m_knuckles + m_lifter
+    else
+        # Actual airborne mass of this design: tether + rings + blades +
+        # expansion rotors + lifter.  Already includes the 5 kg lifter.
+        expansion_airborne_mass(sys, p)
+    end
     return m_total * g / sind(lifter_elevation_deg), m_total
 end
 

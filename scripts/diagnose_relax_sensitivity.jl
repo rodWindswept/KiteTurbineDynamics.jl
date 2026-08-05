@@ -155,40 +155,76 @@ println("═"^78)
 println("VERDICT")
 println("═"^78)
 
+# CLASSIFIER v2 (2026-08-05).
+#
+# v1 classified on `ratio = P_range/P_mean` alone and called a genome ARTEFACT
+# when the ratio dropped below 0.20.  That was wrong, and wrong in exactly the
+# way this script was written to expose: a ratio whose denominator can collapse
+# is not a steadiness measure.  Two genomes were labelled "ARTEFACT (now steady)"
+# when what actually happened is that P_mean fell four orders of magnitude — the
+# numerator collapsed faster than the denominator.  A dead machine reads as
+# perfectly steady.  Same defect class as `P_steady` in objective_v11.jl:503.
+#
+# v2 requires a genome to still be PRODUCING before its steadiness is assessed,
+# and reports the power trend as a first-class result rather than a footnote.
+const P_ALIVE = 0.1   # kW — below this the design is not producing; ratio is meaningless
+
 if nrow(R) == 0
     println("No evals completed.")
 else
-    global improved = 0
-    global tested = 0
+    counts = Dict("SETTLES" => 0, "STALLS OUT" => 0, "SURGES" => 0, "DECAYING" => 0)
+    tested = 0
     for gh in unique(R.genome_hash)
         g = sort(filter(r -> r.genome_hash == gh, R), :relax_s)
         nrow(g) < 2 && continue
-        global tested += 1
-        base = g[1, :ratio]; final = g[end, :ratio]
-        tag = (isfinite(final) && final < 0.20) ? "ARTEFACT (now steady)" :
-              (isfinite(final) && isfinite(base) && final < 0.5 * base) ? "ARTEFACT (halved)" :
-              "PHYSICAL (ratio held)"
-        occursin("ARTEFACT", tag) && (global improved += 1)
-        @printf("  %-14s ratio %7.3f @%.0fs → %7.3f @%.0fs   P %7.3f → %7.3f kW   %s\n",
-                gh[1:min(12, end)], base, g[1, :relax_s], final, g[end, :relax_s],
-                g[1, :P_mean_kw], g[end, :P_mean_kw], tag)
+        tested += 1
+        P0, P1     = g[1, :P_mean_kw], g[end, :P_mean_kw]
+        r0, r1     = g[1, :ratio], g[end, :ratio]
+        F0, F1     = g[1, :FoS_min], g[end, :FoS_min]
+        dP         = P0 > 0 ? (P1 - P0) / P0 : NaN
+        alive      = isfinite(P1) && P1 >= P_ALIVE
+        steady     = isfinite(r1) && r1 < 0.20
+
+        tag = !alive              ? "STALLS OUT" :   # died — ratio says nothing
+              steady              ? "SETTLES"    :   # alive AND steady: the only good outcome
+              dP < -0.20          ? "DECAYING"   :   # still producing but bleeding down
+                                    "SURGES"          # holding power, genuinely oscillating
+        counts[tag] += 1
+
+        kswitch = length(unique(g.k_chosen)) > 1 ? " k-SWITCHED" : ""
+        fswing  = (isfinite(F0) && isfinite(F1) && min(F0, F1) > 0) ?
+                  @sprintf(" FoS %.3g→%.3g (%.1f×)", F0, F1, max(F0,F1)/min(F0,F1)) : ""
+        @printf("  %-14s P %9.4g → %9.4g kW (%+6.1f%%)  ratio %7.3f → %7.3f  %-11s%s%s\n",
+                gh[1:min(12, end)], P0, P1, 100*dP, r0, r1, tag, fswing, kswitch)
     end
+
     println()
     if tested == 0
         println("  Not enough relax settings completed per genome to judge.")
-    elseif improved == tested
-        println("  → ARTEFACT across the board.  The amplitude failures are undecayed")
-        println("    transient, not physical surge.  Raise WARM_RELAX_S to >= DISCARD_S")
-        println("    (30 s) and re-run Phase A.  The existing 42 rows cannot support the")
-        println("    'power is the binding constraint' conclusion.")
-    elseif improved == 0
-        println("  → PHYSICAL.  These designs genuinely surge; stationary=false is a real")
-        println("    finding for the reachable rows.  The 37 sub-100 W rows remain")
-        println("    uninformative regardless — that part of the flag is still an artefact")
-        println("    of the P_steady precondition.")
     else
-        @printf("  → MIXED: %d of %d genomes settle with more relaxation.\n", improved, tested)
-        println("    Per-genome judgement required; do not generalise either way.")
+        @printf("  SETTLES %d   SURGES %d   DECAYING %d   STALLS OUT %d   (of %d)\n\n",
+                counts["SETTLES"], counts["SURGES"], counts["DECAYING"],
+                counts["STALLS OUT"], tested)
+        if counts["SETTLES"] == 0
+            println("  → NO STEADY STATE FOUND AT ANY RELAX TIME.")
+            println("    This is not a 'tune WARM_RELAX_S' result.  If no genome reaches a")
+            println("    productive plateau, there is no correct window to pick — the 10 s")
+            println("    campaign figure is just the highest point on a decay curve, and")
+            println("    every P and FoS in feasibility_phase_a_v2.csv is a readout of how")
+            println("    far a design had got through dying when sampling happened to stop.")
+            println()
+            println("    Next question is whether the decay is PHYSICAL (aero torque cannot")
+            println("    sustain rotation against generator + losses) or NUMERICAL (the")
+            println("    integrator is bleeding energy).  Resolve with an omega/torque trace")
+            println("    over the full 120 s on the warm-start path — not settle_to_operational_state,")
+            println("    which blows up.  Watch omega(t), tau_aero(t), tau_gen(t).")
+        elseif counts["SETTLES"] == tested
+            println("  → ALL SETTLE.  Raise WARM_RELAX_S to the settling time and re-run")
+            println("    Phase A; the existing 42 rows were measured mid-transient.")
+        else
+            println("  → MIXED.  Judge per genome; do not generalise.  Only the SETTLES rows")
+            println("    have quotable P and FoS figures.")
+        end
     end
 end
 

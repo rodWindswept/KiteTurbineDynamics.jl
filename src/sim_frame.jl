@@ -219,7 +219,10 @@ function capture_frame(
         _, T_lift_val, elev_lift_val = lift_force_steady(lift_device, p.rho, V_hub)
         if lift_device isa RotaryLifterParams
             lift_type_sym = :rotary
-            lift_req, _ = autogyro_lift_required(p)
+            # `sys` is in scope here — use the design's real airborne mass rather
+            # than the fixed v5 reference budget, so lift_margin means something
+            # for designs other than the reference.  See autogyro_lift_required.
+            lift_req, _ = autogyro_lift_required(p, sys)
             lift_margin_v = T_lift_val / max(lift_req, 1.0)
         elseif lift_device isa SingleKiteParams
             lift_type_sym = :single

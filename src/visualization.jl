@@ -992,7 +992,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             v_vec = wind_fn_obs[](hub_ctr, t_now)
             V_hub_live = norm(v_vec)
             _, T_lift_val, elev_lift_val = lift_force_steady(ld_hud, p.rho, V_hub_live)
-            lift_margin_v = T_lift_val / max(autogyro_lift_required(p)[1], 1.0)
+            # `sys` from the build_dashboard closure — design-aware airborne mass.
+            lift_margin_v = T_lift_val / max(autogyro_lift_required(p, sys)[1], 1.0)
             if ld_hud isa RotaryLifterParams
                 lift_status_lbl.text[] = @sprintf("Type: Rotary  |  T_lift = %6.0f N  |  pitch = %.1f×  |  CL/CD = %.1f",
                     T_lift_val, ld_hud.CL_blade, ld_hud.CL_blade / 0.20)

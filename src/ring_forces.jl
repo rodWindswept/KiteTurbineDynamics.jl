@@ -387,9 +387,12 @@ function compute_ring_forces!(
         v_lift = wind_fn(sky_anchor_pos, t)    # 3D wind at sky anchor altitude
         v_hmag = sqrt(v_lift[1]^2 + v_lift[2]^2)
 
-        # Passive kites stall below ~2 m/s; rotary lifter is exempt
+        # Passive kites stall below ~2 m/s.  Rotary lifter is exempt (fixed ω).
+        # StackedLifterParams is exempt too: it already scales as v², so it fades
+        # out smoothly on its own rather than needing a stall cliff.
         PASSIVE_KITE_STALL_SPEED = 2.0
-        is_passive = !(lift_device isa RotaryLifterParams)
+        is_passive = !(lift_device isa RotaryLifterParams ||
+                       lift_device isa StackedLifterParams)
         _, T_lift, elev_lift_deg = lift_force_steady(lift_device, p.rho, v_hmag, p)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
             T_lift = 0.0
