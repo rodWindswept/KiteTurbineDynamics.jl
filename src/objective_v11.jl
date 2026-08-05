@@ -236,8 +236,19 @@ end
 # Warm-start v11 — skip startup theater, start ODE from static equilibrium
 # ══════════════════════════════════════════════════════════════════════════════
 
-const WARM_RELAX_S = 10.0   # relaxation after warm-start init
-const WARM_WINDOW_S = 30.0  # measurement window (shorter — signal is in departure)
+# Warm-start scoring window.  Held in Refs (not consts) so diagnostics can sweep
+# the relaxation time without a source edit or a precompile-cache flush.
+# Defaults are the historical values — behaviour is unchanged unless set.
+#
+# NOTE (2026-08-05): WARM_RELAX_S = 10.0 is one third of the cold path's
+# DISCARD_S = 30.0.  Any design whose start-up transient outlasts 10 s is still
+# decaying throughout the whole 30 s measurement window, which inflates P_range
+# and makes the stationarity gate's amplitude test (P_range/P_mean < 0.20)
+# unpassable for reasons that are numerical, not physical.  The window comment
+# below ("signal is in departure") is in direct tension with applying a
+# stationarity gate to the same window.  See scripts/diagnose_relax_sensitivity.jl.
+const WARM_RELAX_S = Ref(10.0)   # relaxation after warm-start init
+const WARM_WINDOW_S = Ref(30.0)  # measurement window (shorter — signal is in departure)
 
 """
     objective_v11_warmstart(x, beam_profile, p; spoke, ...)
@@ -354,7 +365,7 @@ function objective_v11_warmstart(
     sys.k_mppt_ref[] = k_mppt
 
     # ── Run relaxation + window ─────────────────────────────────────────
-    total_s = WARM_RELAX_S + WARM_WINDOW_S
+    total_s = WARM_RELAX_S[] + WARM_WINDOW_S[]
     total_n = round(Int, total_s / V11_DT)
     sample_interval = round(Int, 1.0 / V11_DT)
 
@@ -365,7 +376,7 @@ function objective_v11_warmstart(
 
     function window_callback(uc, tc, s)
         t_cum = s * V11_DT
-        if t_cum > WARM_RELAX_S && s % sample_interval == 0
+        if t_cum > WARM_RELAX_S[] && s % sample_interval == 0
             ef = capture_extended(
                 uc, sys, pc, tc, wf, nothing; brake_engaged=sys.brake_engaged[]
             )
