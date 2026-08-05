@@ -249,7 +249,7 @@ function build_from_campaign_v10(campaign_dir::String, label::String; vector_fil
     expansion_params = ExpansionRotorParams[]
     sys_n_rings_total = n_rings + 2
     for rotor in rotors
-        mass_est = expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
+        mass_est = KiteTurbineDynamics.expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale)
         # Remap from intermediate to system ring numbering
         sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
         er = ExpansionRotorParams(

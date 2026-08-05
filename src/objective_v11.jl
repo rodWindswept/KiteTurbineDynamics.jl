@@ -259,6 +259,7 @@ function objective_v11_warmstart(
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
+    lift_device::Union{Nothing,LiftDevice}=nothing,
 )
     # ── Decode genome ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -396,7 +397,7 @@ function objective_v11_warmstart(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=nothing, lin_damp=lin_damp, spoke=spoke, callback=window_callback
+            lift_device=lift_device, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e
         @warn "Warm-start sim failed" exception = e
@@ -455,7 +456,7 @@ function objective_v11_warmstart(
         bank_rad = rotor.bank_angle_deg * π / 180.0
         A_total += π * rotor.blade_tip_radius^2 * cos(bank_rad)
     end
-    Betz_ceiling_kW = 0.593 * 0.5 * ρ_AIR * A_total * v_rated^3 / 1000.0
+    Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * v_rated^3 / 1000.0
     if P_mean > 1.1 * Betz_ceiling_kW
         return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
     end
@@ -506,6 +507,7 @@ function objective_v11_warmstart(
     end
 
     fitness = v11_fitness(P_mean, FoS_min)
+    drifted = drift > 0.20  # >20% drift = flagged
 
     return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b)
 end
@@ -530,6 +532,7 @@ function warmstart_with_k_bracket(
     v_rated::Float64=11.0,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
+    lift_device::Union{Nothing,LiftDevice}=nothing,
 )
     result = design_from_vector_v10(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
@@ -551,7 +554,7 @@ function warmstart_with_k_bracket(
         fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke,
-                lin_damp=lin_damp)
+                lin_damp=lin_damp, lift_device=lift_device)
 
         # Skip garbage evals (NaN/Inf blowup returns 1e9 sentinel)
         if !isfinite(fitness) || fitness >= 1e8

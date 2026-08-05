@@ -190,7 +190,7 @@ end
     x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
          30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
     f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
-        objective_v11(x, PROFILE_ELLIPTICAL, p; v_rated=15.0)
+        objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; v_rated=15.0)
     # With a valid design, should not return 1e9 penalty from Betz
     @test f < 1e8 || P == 0.0  # either valid or genuinely underpowered
 end
@@ -205,7 +205,7 @@ end
     x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
          30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
     f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
-        objective_v11(x, PROFILE_ELLIPTICAL, p; v_rated=11.0)
+        objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; v_rated=11.0)
     # If we have valid measurements, identity must hold to within 1% of FoS
     if ua > 0.0 && ub > 0.0 && isfinite(FoS) && FoS > 0.0
         id_err = abs(ua + ub - 1.0 / FoS) * FoS

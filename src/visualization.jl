@@ -1059,7 +1059,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Config selector menu — disabled during simulation
     config_menu = Menu(ctrl[cnr!(), 1];
-        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line"],
+        options=["Canonical 5-line", "v5 Optimized 8-line", "v5-safe 8-line",
+                 "V10 unified rotors", "V10 Tight (no lowest expansion)", "V10 Island 51 alt-basin",
+                 "V10 Reinforced", "V9.0 50kW equilibrium", "V9.0 10kW equilibrium",
+                 "V6.7 drag-constrained", "V6.5 3-line triangle", "V6.4 3-line triangle",
+                 "V6.3 7-line heptagon", "V6.2 12-line dodecagon", "Daisy Proto 1kW"],
         default=config_name, width=270)
 
     # Also disable menu when not idle
