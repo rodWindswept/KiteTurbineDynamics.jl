@@ -117,7 +117,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
     # path that the acceptance-test tight builder did have.)
     sys.ring_Do_top[]       = design.Do_top
     sys.ring_toverD[]       = design.t_over_D
-    sys.ring_aspect_ratio[] = design.aspect_ratio
+    sys.ring_aspect_ratio[] = design.beam_aspect
 
     return sys, u0, pc
 end
