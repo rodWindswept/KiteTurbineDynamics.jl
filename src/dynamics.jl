@@ -82,7 +82,15 @@ function multibody_ode!(du, u, params, t)
         R = node.radius
         ri = node.ring_idx
         α_ring = alpha[ri]
-        tp = tube_props(R)
+        # Design-aware tube outer diameter: use DE-chosen Do_top when wired
+        # (via build_system_from_v10), otherwise fall back to legacy
+        # 0.01396*sqrt(R) scaling.  Mirrors the analyse_ring logic.
+        Do_tube = if sys.ring_Do_top[] > 0.0
+            scale = sqrt(R / p.trpt_hub_radius)
+            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 0.05))
+        else
+            max(0.01396 * sqrt(R), 5e-4 / 0.05)
+        end
         n_lines = p.n_lines
         L_beam = 2.0 * R * sin(π / n_lines)
 
@@ -116,7 +124,7 @@ function multibody_ode!(du, u, params, t)
             v_perp_m = norm(v_perp)
 
             if v_perp_m > 0.01
-                drag_beam = 0.5 * p.rho * TUBE_DRAG_CD * tp.Do * L_beam * v_perp_m .* v_perp
+                drag_beam = 0.5 * p.rho * TUBE_DRAG_CD * Do_tube * L_beam * v_perp_m .* v_perp
                 forces[ring_gid] .+= drag_beam
             end
         end

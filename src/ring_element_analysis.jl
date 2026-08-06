@@ -481,9 +481,16 @@ function analyse_ring(
     # Tube properties for gravity and drag
     L_beam = 2.0 * R * sin(π / n)
     active_tube = if design === nothing
-        # Use system's ring geometry fields (populated by builder from design vector)
-        # Falls back to legacy sqrt(R) scaling for backward compatibility
-        Do = max(sys.ring_Do_top[], max(0.01396 * sqrt(R), 5e-4 / 0.05))
+        # Use system's ring geometry fields (populated by builder from design vector).
+        # When ring_Do_top is wired (via build_system_from_v10), scale Do with √R
+        # matching the design-path behavior.  Falls back to legacy 0.01396*sqrt(R)
+        # when ring_Do_top is zero (backward compatibility).
+        Do = if sys.ring_Do_top[] > 0.0
+            scale = sqrt(R / p.trpt_hub_radius)
+            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 0.05))
+        else
+            max(0.01396 * sqrt(R), 5e-4 / 0.05)
+        end
         t_over_D = max(sys.ring_toverD[], 0.05)
         CircularTube(Do, t_over_D)
     else

@@ -79,11 +79,28 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
     p_base = params_v5_50kw()
     tether_diameter = 0.003
     le = blade_scale
+
+    # Compute design-aware per-ring mass from actual tube geometry instead of
+    # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
+    # and get free structural stiffness with zero mass penalty — producing
+    # campaigns that report green but design physically impossible machines.
+    # Tube: Do = Do_top × √(R / r_hub), t = t_over_D × Do.
+    # Mass per ring ≈ n_lines × ρ_cfrp × π × Do × t × L_beam
+    # Use the average ring radius (linear taper) for a representative value.
+    r_avg = 0.5 * (design.r_hub + design.r_bottom)
+    Do_avg = design.Do_top * sqrt(r_avg / design.r_hub)
+    t_avg = design.t_over_D * Do_avg
+    L_avg = 2.0 * r_avg * sin(π / design.n_lines)
+    ρ_cfrp = 1600.0  # kg/m³ — matches SpacerRingDesign default
+    area_avg = π / 4.0 * (Do_avg^2 - (Do_avg - 2t_avg)^2)
+    m_ring_design = design.n_lines * ρ_cfrp * area_avg * L_avg
+    m_ring_design = max(m_ring_design, 0.05)  # floor: 50 g
+
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
-    mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring,
+    mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
                        p_base.m_blade * le^2)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
@@ -141,6 +158,9 @@ function objective_v11(
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
+    # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
+    # system exists, so the device can be sized to this genome's airborne mass.
+    lift_device::Union{Nothing,LiftDevice,Function}=nothing,
 )
     # ── Decode genome ────────────────────────────────────────────────────
     result = design_from_vector_v10(
@@ -166,6 +186,11 @@ function objective_v11(
     # via design_from_vector_v10's RotorSpecV10.blade_tip_radius etc.
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
 
+    # Resolve a design-aware lift device (mirrors warmstart path at :320).
+    # CRITICAL: hand it `pc`, not `p` — `pc` carries this genome's n_lines,
+    # n_rings, tether_length and blade-scaled m_blade.
+    lift_dev = lift_device isa Function ? lift_device(sys, pc) : lift_device
+
     # ── Wind function ────────────────────────────────────────────────────
     function wf(pos, t)
         z = max(pos[3], 1.0)
@@ -176,7 +201,7 @@ function objective_v11(
     u_settled = nothing
     try
         u_settled = settle_to_operational_state(
-            sys, copy(u0), pc, 60.0; wind_fn=wf
+            sys, copy(u0), pc, 60.0; wind_fn=wf, lift_device=lift_dev
         )
     catch e
         @warn "Settle failed for genome" exception = e
@@ -194,7 +219,7 @@ function objective_v11(
         kick_steps = round(Int, 2.0 / V11_DT)  # 2 s kick
         run_canonical_sim!(
             u_settled, sys, pc, wf, kick_steps, V11_DT;
-            lift_device=nothing, lin_damp=lin_damp, spoke=spoke
+            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
         )
     catch e
         @warn "Kickstart failed" exception = e
@@ -214,7 +239,7 @@ function objective_v11(
         t_cum = s * V11_DT
         if t_cum > DISCARD_S && s % sample_interval == 0
             ef = capture_extended(
-                uc, sys, pc, tc, wf, nothing; brake_engaged=sys.brake_engaged[]
+                uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
             )
             push!(P_samples, ef.base.P_kw)
             airborne = Float64[]
@@ -229,7 +254,7 @@ function objective_v11(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=nothing, lin_damp=lin_damp, spoke=spoke, callback=window_callback
+            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e
         @warn "Window sim failed" exception = e

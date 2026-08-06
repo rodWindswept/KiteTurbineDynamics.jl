@@ -226,8 +226,20 @@ function capture_frame(
             lift_margin_v = T_lift_val / max(lift_req, 1.0)
         elseif lift_device isa SingleKiteParams
             lift_type_sym = :single
+            lift_req, _ = autogyro_lift_required(p, sys)
+            lift_margin_v = T_lift_val / max(lift_req, 1.0)
         elseif lift_device isa StackedKitesParams
             lift_type_sym = :stacked
+            lift_req, _ = autogyro_lift_required(p, sys)
+            lift_margin_v = T_lift_val / max(lift_req, 1.0)
+        elseif lift_device isa StackedLifterParams
+            lift_type_sym = :stacked
+            # StackedLifterParams stores the design-point margin and airborne mass
+            # in its own fields; the tension T_lift_val is from lift_force_steady
+            # above (scaled by (v/v_ref)²), so the margin at current conditions is
+            # T_current / (m_airborne_ref · g / sin(elev)).
+            F_req = lift_device.m_airborne_ref * 9.81 / sind(lift_device.elevation_deg)
+            lift_margin_v = T_lift_val / max(F_req, 1.0)
         end
     end
 
