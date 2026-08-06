@@ -92,6 +92,16 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
     pc = SystemParams(geo, mat, aero, ctrl, back)
 
     sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
+
+    # Populate ring beam geometry from the genome so ring_element_analysis uses
+    # the DE's Do_top/t_over_D rather than falling through to the hard-coded
+    # 0.01396×√R legacy scaling.  (2026-08-05: absent since V10 — the DE was
+    # optimising a dead parameter.  See builders_util.jl:130 for the parallel
+    # path that the acceptance-test tight builder did have.)
+    sys.ring_Do_top[]       = design.Do_top
+    sys.ring_toverD[]       = design.t_over_D
+    sys.ring_aspect_ratio[] = design.aspect_ratio
+
     return sys, u0, pc
 end
 
