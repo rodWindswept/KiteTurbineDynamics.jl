@@ -5,7 +5,9 @@
 # Budget: pop=8, ≤21 gens, hard cap 176 evals.  Progressive saves, resume by hash.
 # Seed: V10 winner only (post-A1-A5 — known feasible).
 
-using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates, DataFrames, CSV, Random, DelimitedFiles
+using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates, DataFrames, CSV, Random, DelimitedFiles, Base.Threads
+
+const CSV_LOCK = ReentrantLock()  # thread-safe CSV writes
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Config
@@ -204,16 +206,16 @@ function differential_evolution(pop, fit, gen)
     d = length(lo_full)
     new_pop = Vector{Float64}[]
     new_fit = Float64[]
+
+    # Pre-compute trials (read-only on pop/fit)
+    trials = Vector{Vector{Float64}}(undef, n)
+    base_indices = Vector{Int}(undef, n)
     for i in 1:n
-        # Select three distinct random indices != i
         a = b = c = i
         while a == i; a = rand(1:n); end
         while b == i || b == a; b = rand(1:n); end
         while c == i || c == a || c == b; c = rand(1:n); end
-
-        # DE/rand/1: mutant = pop[a] + F*(pop[b] - pop[c])
         mutant = pop[a] .+ F .* (pop[b] .- pop[c])
-        # Exponential crossover
         trial = copy(pop[i])
         j = rand(1:d)
         for k in 1:d
@@ -221,41 +223,46 @@ function differential_evolution(pop, fit, gen)
                 trial[j] = mutant[j]
             end
             j = (j % d) + 1
-            if rand() >= CR
-                # continue with next from the crossover start
-            end
         end
-        trial = clamp_genome(trial)
+        trials[i] = clamp_genome(trial)
+        base_indices[i] = i
+    end
 
-        # Evaluate trial
+    # Pre-load existing hashes (read-only)
+    existing_hashes = load_existing_hashes()
+
+    # Threaded evaluation
+    accepted = falses(n)
+    f_feas_results = zeros(n)
+    @threads for i in 1:n
+        trial = trials[i]
         gh = genome_hash(trial)
-        existing = load_existing_hashes()
-        if gh in existing
-            # Already evaluated; skip
-            push!(new_pop, pop[i])
-            push!(new_fit, fit[i])
-            continue
+        if gh in existing_hashes
+            continue  # accepted stays false
+        else
+            f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, ok = evaluate_genome(trial)
+            if !ok
+                continue  # accepted stays false
+            end
+            nl = 0; na = 0
+            try
+                r = KiteTurbineDynamics.design_from_vector_v10(trial[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
+                nl = r.design.n_lines; na = r.n_active
+            catch; end
+            lock(CSV_LOCK) do
+                save_row(gh, trial, nl, na, f_v11, k_chosen,
+                         P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, gen)
+            end
+            f_feas_results[i] = f_feas
+            accepted[i] = f_feas < fit[base_indices[i]]
         end
+    end
 
-        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, ok = evaluate_genome(trial)
-        if !ok
-            push!(new_pop, pop[i])
-            push!(new_fit, fit[i])
-            continue
-        end
-
-        # Decode metadata
-        nl = 0; na = 0
-        try
-            r = KiteTurbineDynamics.design_from_vector_v10(trial[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
-            nl = r.design.n_lines; na = r.n_active
-        catch; end
-        save_row(gh, trial, nl, na, f_v11, k_chosen,
-                 P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, gen)
-
-        if f_feas < fit[i]
-            push!(new_pop, trial)
-            push!(new_fit, f_feas)
+    # Sequential population update
+    for i in 1:n
+        if accepted[i]
+            push!(new_pop, trials[i])
+            push!(new_fit, f_feas_results[i])
         else
             push!(new_pop, pop[i])
             push!(new_fit, fit[i])
