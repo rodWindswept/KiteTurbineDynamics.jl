@@ -5,7 +5,7 @@
 ## Quick Start
 
 1. **Read these first:** `CONTEXT.md` (physics glossary) → `DECISIONS.md` (design rationale) → `CLAUDE.md` (dev commands)
-2. **Run the test suite:** `julia --project=. test/runtests.jl` (~3 min, 917 tests). Never commit with failures.
+2. **Run the test suite:** `julia --project=. test/runtests.jl` (~21 min, 1861 tests). Never commit with failures.
 3. **Launch a dashboard:** `julia --project=. scripts/interactive_dashboard.jl --v10`
 4. **Understand the physics:** Every tether, bridle, and line must transmit force only in TENSION. Slack = failure.
 
@@ -15,8 +15,8 @@
 |------|-------|-----|
 | Physics & decisions | `CONTEXT.md`, `DECISIONS.md` | Understand the TRPT, campaign history, design choices |
 | Dev commands | `CLAUDE.md`, `AGENTS.md` | Build, test, lint, run campaigns |
-| Source code | `src/` | 28 Julia files — entry at `src/KiteTurbineDynamics.jl` |
-| Test suite | `test/` | 27 test files, 917 tests |
+| Source code | `src/` | 39 Julia files — entry at `src/KiteTurbineDynamics.jl` |
+| Test suite | `test/` | 33 test files, 1861 tests |
 | Campaign scripts | `scripts/` | DE optimisers, analysis, rendering |
 | Campaign results | `scripts/results/` | V2 through V10 Tight, CSVs and JSONs |
 | Reports | `docs/reports/`, `archive/reports/` | .docx and .md reports |
@@ -57,22 +57,22 @@
 ## External Resources
 
 ### Knowledge Pipeline (K1)
-- **Workspace:** `/home/rod/Documents/kites/` — extraction scripts, data, model
-- **Knowledge graph:** `/home/rod/Documents/kites/awes_graph/awes_unified.graph.json` — 7,048 nodes, 9,775 edges (540 academic + 45 industry, 586 individual graph files)
-- **Paper texts:** `/home/rod/Documents/kites/awes_texts/` (540 markdown files)
-- **Industry texts:** `/home/rod/Documents/kites/industry_texts/` (45 markdown files)
-- **K1 model:** `/home/rod/Documents/kites/models/agents-k1/` — 4B, RTX A4500 GPU, single-doc mode preferred
-- **Pipeline scripts:** `/home/rod/Documents/kites/scripts/` — 16 Python scripts
+- **Workspace:** `/home/rodbot/Documents/kites/` — extraction scripts, data, model
+- **Knowledge graph:** `/home/rodbot/Documents/kites/awes_graph/awes_unified.graph.json` — 7,048 nodes, 9,775 edges (540 academic + 45 industry, 586 individual graph files)
+- **Paper texts:** `/home/rodbot/Documents/kites/awes_texts/` (540 markdown files)
+- **Industry texts:** `/home/rodbot/Documents/kites/industry_texts/` (45 markdown files)
+- **K1 model:** `/home/rodbot/Documents/kites/models/agents-k1/` — 4B, RTX A4500 GPU, single-doc mode preferred
+- **Pipeline scripts:** `/home/rodbot/Documents/kites/scripts/` — 16 Python scripts
 - **Phase results:** Phase 1 (collab map), Phase 3 (citation lineage), Phase 3b (web validation) — all complete
 - **Crons:** ALL PAUSED as of 2026-06-23. Do not restart without explicit direction.
 - **Session record:** `docs/reports/knowledge-pipeline-sprint.md`
 - **graphanything CLI:** BROKEN — use direct API calls via `k1_ingest.py`
 
 ### Related Repos
-- **TRPTSim:** `/home/rod/Documents/GitHub/TRPTSim/` — TRPT airborne wind energy simulator
-- **TetherDragODESolver:** `/home/rod/Documents/GitHub/TetherDragODESolver/` — Tether drag ODE (Tveide)
-- **CoaxialAutogyroStacking.jl:** `/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl/` — Autogyro lift model
-- **10kW Prototype:** `/home/rod/Documents/GitHub/10kWKiteTurbine/` — Physical prototype docs
+- **TRPTSim:** `/home/rodbot/Documents/GitHub/TRPTSim/` — TRPT airborne wind energy simulator
+- **TetherDragODESolver:** `/home/rodbot/Documents/GitHub/TetherDragODESolver/` — Tether drag ODE (Tveide)
+- **CoaxialAutogyroStacking.jl:** `/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl/` — Autogyro lift model
+- **10kW Prototype:** `/home/rodbot/Documents/GitHub/10kWKiteTurbine/` — Physical prototype docs
 
 ## Conventions
 

@@ -11,4 +11,5 @@ Issues for this repository are tracked on GitHub.
 
 ## Workflow
 
-Skills like `to-issues` and `to-prd` will use the `gh` CLI to interact with GitHub Issues.
+Skills like `to-tickets`, `triage`, and `to-spec` use the `gh` CLI to read from
+and write to GitHub Issues.

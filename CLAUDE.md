@@ -93,6 +93,12 @@ When working in this repo, load skills in this order:
 
 Additional skills load as needed: `ktd-headless-analysis`, `ktd-controller-analysis`, `ktd-v6-campaign-workflow`.
 
+### Agent skills — repo configuration
+
+- **Issue tracker**: GitHub Issues via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+- **Triage labels**: five canonical roles — `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+- **Domain docs**: single-context — `CONTEXT.md` + `DECISIONS.md` at the repo root; ADRs in `docs/adr/`. See `docs/agents/domain.md`.
+
 ## ── Key Files ──────────────────────────────────────────────────────────
 
 | File | Role |
