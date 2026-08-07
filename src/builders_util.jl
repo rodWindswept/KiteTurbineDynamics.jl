@@ -130,6 +130,10 @@ function _build_v10_tight(;
     sys.ring_Do_top[]       = x[1]  # Do_top (with do_scale applied)
     sys.ring_toverD[]       = x[2]  # t_over_D (with t_scale applied)
     sys.ring_aspect_ratio[] = x[3]  # beam_aspect
+    # Taper law refs (v4 layout: x[4]=Do_scale_exp, x[5]=r_hub) — keeps
+    # analyse_ring's design===nothing path consistent with the design path.
+    sys.ring_Do_scale_exp[] = x[4]
+    sys.ring_r_hub[]        = x[5]
 
     n_rotor_label = n_exp
     rot_label = string(n_rotor_label, " expansion rotors")

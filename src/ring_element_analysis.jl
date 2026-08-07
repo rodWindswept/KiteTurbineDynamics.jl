@@ -482,16 +482,22 @@ function analyse_ring(
     L_beam = 2.0 * R * sin(π / n)
     active_tube = if design === nothing
         # Use system's ring geometry fields (populated by builder from design vector).
-        # When ring_Do_top is wired (via build_system_from_v10), scale Do with √R
-        # matching the design-path behavior.  Falls back to legacy 0.01396*sqrt(R)
-        # when ring_Do_top is zero (backward compatibility).
+        # When ring_Do_top is wired (via build_system_from_v10), reproduce the
+        # design path's taper law EXACTLY: Do(r) = Do_top·(r/r_hub)^Do_scale_exp,
+        # with the genome's raw t_over_D (no 0.05 floor — the design branch has
+        # none, and flooring silently thickened every sub-0.05 wall the DE chose).
+        # Falls back to legacy 0.01396*sqrt(R) when ring_Do_top is zero
+        # (backward compatibility).  Refs are zero when the builder predates
+        # them, in which case use the legacy √R law via exp=0.5 / p.trpt_hub_radius.
         Do = if sys.ring_Do_top[] > 0.0
-            scale = sqrt(R / p.trpt_hub_radius)
-            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 0.05))
+            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
+            exp_taper = sys.ring_Do_scale_exp[]
+            scale = (R / r_ref)^exp_taper
+            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
         else
             max(0.01396 * sqrt(R), 5e-4 / 0.05)
         end
-        t_over_D = max(sys.ring_toverD[], 0.05)
+        t_over_D = max(sys.ring_toverD[], 1e-4)
         CircularTube(Do, t_over_D)
     else
         # Dynamic scaling matching optimization specs

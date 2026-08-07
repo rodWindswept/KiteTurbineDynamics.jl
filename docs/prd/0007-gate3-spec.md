@@ -100,23 +100,26 @@ design vector decode (`design_from_vector_v10`, `decode_rotor_mask`) but
 replaces the equilibrium solver with an ODE window. V10 is left untouched
 for backwards comparison. V11 is the re-campaign evaluator.
 
-The design vector grows from 14 to 15 DoF:
+The design vector is the V10 genome (14 DoF).  x15 (log₁₀ k_mppt) was
+introduced as a 15th gene but removed 2026-08-07 (S1 audit): the warm-start
+bracket overwrote it before every evaluation, so it had zero fitness effect
+and only railed at a bound.  k is now owned solely by
+`warmstart_with_k_bracket`'s λ²-scaled prior + 3-point bracket.
 
 | Index | Name | Type | Bounds |
 |-------|------|------|--------|
 | 1–14 | V10 genome | — | unchanged |
-| 15 | log₁₀(k_mppt) | Continuous | [−2, 3] |
 
-`search_bounds_v11` wraps `search_bounds_v10` and appends the k bounds.
+`search_bounds_v11` is now identical to `search_bounds_v10`.
 
 ### Decision 2: Window protocol
 
 Per candidate:
 
 1. Build system from genome (geometry + λ from x[1:14], k_mppt from
-   10^x[15]).
-2. Set `sys.k_mppt_ref[] = k_mppt` directly — no λ² scaling, no safety
-   factor. The DE owns k.
+   the bracket's k_try, appended as the objective's internal x[15]).
+2. Set `sys.k_mppt_ref[] = k_mppt` directly — the bracket owns k (λ²-scaled
+   prior × {0.5, 1, 2}, clamped to [0.01, K_MPPT_MAX]).
 3. Settle: `settle_to_operational_state` with the standard wind profile
    (power-law shear, 11 m/s at hub height).
 4. Kick + spin-up: apply the kickstart protocol from the convergence

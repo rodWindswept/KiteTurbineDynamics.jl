@@ -14,12 +14,10 @@ const FD = KiteTurbineDynamics.FOS_DESIGN  # 1.5
 # ══════════════════════════════════════════════════════════════════════════════
 
 @testset "objective_v11 — module exports" begin
-    @test TRPT_V11_DIM == 15
+    @test TRPT_V11_DIM == 14
     lo, hi = search_bounds_v11(params_v5_50kw(), PROFILE_ELLIPTICAL)
-    @test length(lo) == 15
-    @test length(hi) == 15
-    @test lo[15] == -2.0
-    @test hi[15] == 3.0
+    @test length(lo) == 14
+    @test length(hi) == 14
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

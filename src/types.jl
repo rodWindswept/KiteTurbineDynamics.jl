@@ -143,6 +143,14 @@ struct KiteTurbineSystem
     ring_Do_top::Base.RefValue{Float64}
     ring_toverD::Base.RefValue{Float64}
     ring_aspect_ratio::Base.RefValue{Float64}
+    # Taper law: Do(r) = Do_top · (r / r_ref)^exp.  r_ref is the hub ring
+    # radius (design.r_hub) so the campaign path (design === nothing in
+    # analyse_ring) reproduces the design path exactly.  Exp is the DE genome
+    # x4 (Do_scale_exp); 0.5 recovers the legacy √R law.  Zero r_ref means
+    # "fall back to p.trpt_hub_radius" for legacy builders that predate these
+    # refs.
+    ring_Do_scale_exp::Base.RefValue{Float64}
+    ring_r_hub::Base.RefValue{Float64}
 end
 
 # Default ring geometry (legacy circular 0.05 t/D, Do ∝ √R)

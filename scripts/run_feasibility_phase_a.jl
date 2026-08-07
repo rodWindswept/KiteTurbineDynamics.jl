@@ -46,7 +46,20 @@ lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
 const LIFT_DEVICE = lift_for
 
 const GIT_HASH    = strip(read(`git -C $(dirname(@__DIR__)) rev-parse --short HEAD`, String))
-const PHYSICS_ERA = "post-1d76492_design-aware-lift"
+# Bumped 2026-08-07 (F4b fix): ring beam taper now follows the genome's
+# Do_scale_exp with raw t_over_D.  ALL pre-fix fitness values are stale —
+# resume must not reuse them (see load_existing_hashes, era-filtered).
+const PHYSICS_ERA = "post-4894787_f4b-taper-reconcile"
+
+# ── F5 measurement horizon ────────────────────────────────────────────────
+# The 2026-08-05 relax sweep and the altitude traces showed power still
+# decaying at the old 10 s warm-start relax — the 30 s window was sampling a
+# departing signal, so P_mean was not a mean and the stationarity gate could
+# never fire (1/44 stationary in the 2026-08-06 campaign).  Extend the relax
+# to 120 s (collapse completes by ~120 s per trace_altitude_torque.jl) so the
+# window measures the settled state.  Set here, NOT in src — the source
+# default stays 10 s so unit tests don't run 3.75× longer.
+KiteTurbineDynamics.WARM_RELAX_S[] = 120.0
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
 const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v2.csv")
@@ -57,16 +70,20 @@ mkpath(OUT_DIR)
 # ══════════════════════════════════════════════════════════════════════════════
 lo_full, hi_full = KiteTurbineDynamics.search_bounds_v11(P_BASE, BEAM; max_ground_radius=5.0)
 
-# V10 winner (post-A1-A5 corrected physics) — sole seed for fresh campaign.
-# 14-param design vector from v10_campaign_50kw/best_vector.csv.
-# k_mppt handled by warmstart_with_k_bracket (brackets 0.5×/1×/2× of prior).
-const X_V10 = [0.06000000003501675, 0.01, 0.8799392364011867, 0.9999998481455412,
-                2.8885232552453664, 2.0000000178739743, 2.9878503277143196,
-                13.207866704651128, -0.1097833891351554, 18.558046111485208,
-                31.990566201321005, 34.99999109191107, 0.5186481959328214, 0.1, 0.0]
+# V10 winner is OBSOLETE (2026-08-07, F1 audit): X_V10 sits OUTSIDE the v11
+# search box in 5 of 15 dims (x1=0.06 < Do_lo=0.20; x3=0.88 < ar_lo=1.0;
+# x5=2.89 < r_hub_lo=5.37; x11=31.99 > 25; x12=35 > 25) and evaluates to
+# 0.39 W under current physics.  The DE cannot search where its anchor lives.
+# Reseed with the best feasible genome from the 2026-08-06 run (79e2d24b,
+# P=44.2 kW, n_lines=15) — inside the box, and the strongest known point.
+# NOTE: its fitness in the CSV is STALE (pre-F4b); the era-filtered resume
+# (load_existing_hashes) forces re-evaluation under the corrected physics.
+const X_SEED = [0.2, 0.01, 1.0, 1.0, 5.366563145999496, 1.5, 2.290336420077981,
+                15.380561394283504, 0.7635956009855438, 19.0, 22.42396791533018,
+                25.0, 0.8804365395898538, 0.4636680969018283]  # 14-D (x15/k removed, S1)
 
 function load_seeds()
-    return [copy(X_V10)]
+    return [copy(X_SEED)]
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -76,21 +93,18 @@ end
 function evaluate_genome(x)
     x_copy = copy(x)
     try
-        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
+        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift =
             KiteTurbineDynamics.warmstart_with_k_bracket(x_copy, BEAM, P_BASE;
                 power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE)
 
-        f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR, FoS_design=FOS_DESIGN)
+        f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR, FoS_design=FOS_DESIGN, P_range=P_range)
         tier = P_mean < P_FLOOR ? "stalled" : FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
 
-        # Lift tension is now PER-GENOME (sized to airborne mass), so it can no
-        # longer be computed here from a shared const — the device does not exist
-        # until the system is built inside the objective.  The objective's return
-        # tuple does not carry it yet, so record the margin the stack was sized
-        # to.  TODO: thread T_ref out of objective_v11_warmstart so the actual
-        # newtons land in the CSV; until then use trace_altitude_torque.jl, whose
-        # telemetry does capture T_lift per sample.
-        lift_tension = LIFT_MARGIN
+        # S3: T_lift is the per-genome mean lift-line tension (real newtons)
+        # measured over the scoring window — the sized lifter's T_ref scaled
+        # by (v/v_ref)².  Previously this column recorded the dimensionless
+        # LIFT_MARGIN constant (1.5) mislabelled as newtons.
+        lift_tension = T_lift
 
         return (f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
                 util_a, util_b, lift_tension, f_feas, tier, true)
@@ -125,6 +139,13 @@ function load_existing_hashes()
     isfile(OUT_CSV) || return Set{String}()
     try
         df = CSV.read(OUT_CSV, DataFrame)
+        # Era filter (2026-08-07, F1 audit): a genome hash is only "already
+        # evaluated" if its row was scored under the CURRENT physics era.
+        # Pre-fix rows (e.g. the 44-row 4894787 campaign) carry stale fitness
+        # — the F4b taper fix changed the physics, so they must re-evaluate.
+        if :physics_era in names(df)
+            df = filter(row -> row.physics_era == PHYSICS_ERA, df)
+        end
         return Set(string.(df.genome_hash))
     catch
         return Set{String}()
@@ -137,7 +158,8 @@ function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω
         :genome_hash => gh, :physics_era => PHYSICS_ERA, :git_hash => GIT_HASH,
         :x1=>x[1],:x2=>x[2],:x3=>x[3],:x4=>x[4],:x5=>x[5],
         :x6=>x[6],:x7=>x[7],:x8=>x[8],:x9=>x[9],:x10=>x[10],
-        :x11=>x[11],:x12=>x[12],:x13=>x[13],:x14=>x[14],:x15=>x[15],
+        :x11=>x[11],:x12=>x[12],:x13=>x[13],:x14=>x[14],
+        :x15 => log10(k_chosen),  # S1: k is bracket-owned; record log₁₀ of the k actually used
         :n_lines => n_lines, :n_active => n_active,
         :f_v11 => f_v11, :k_chosen => k_chosen, :P_mean_kw => P_mean,
         :FoS_min => FoS_min, :omega_eq_rpm => ω_eq * 60 / (2π),
@@ -163,15 +185,15 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 function random_genome()
-    x = zeros(15)
-    for i in 1:15
+    x = zeros(length(lo_full))
+    for i in eachindex(x)
         x[i] = lo_full[i] + (hi_full[i] - lo_full[i]) * rand()
     end
     return x
 end
 
 function clamp_genome(x)
-    for i in 1:15
+    for i in eachindex(x)
         x[i] = clamp(x[i], lo_full[i], hi_full[i])
     end
     return x
@@ -179,7 +201,7 @@ end
 
 function differential_evolution(pop, fit, gen)
     n = length(pop)
-    d = 15
+    d = length(lo_full)
     new_pop = Vector{Float64}[]
     new_fit = Float64[]
     for i in 1:n

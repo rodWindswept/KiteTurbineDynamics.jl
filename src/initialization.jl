@@ -231,6 +231,8 @@ function _build_kite_turbine_system_impl(
         Ref(0.0),                    # ring_Do_top (populated by builder)
         Ref(0.05),                   # ring_toverD (populated by builder)
         Ref(1.0),                    # ring_aspect_ratio (populated by builder)
+        Ref(0.5),                    # ring_Do_scale_exp (populated by builder; 0.5 = legacy √R)
+        Ref(0.0),                    # ring_r_hub (populated by builder; 0 = fall back to p.trpt_hub_radius)
     )
 
     # ── Initial state vector (straight-line rope placement) ───────────────

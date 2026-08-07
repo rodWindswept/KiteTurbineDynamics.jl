@@ -38,11 +38,16 @@ against source on any tactical decision that depends on them.
 | x13 | λ_top | 0.1 | 2.0 | `clamp(x[13], 0.1, 2.0)` | `design_from_vector_v10` | Blade linear scale at top station. λ=1.0 = reference blade. Area scales as λ². | DE can minimise λ to unload structure |
 | x14 | λ_bottom | 0.1 | 2.0 | `clamp(x[14], 0.1, 2.0)` | `design_from_vector_v10` | Blade linear scale at bottom station. Interpolated linearly between stations. | Same as λ_top |
 
-## Variable 15: V11 genome extension
+## Variable 15: removed 2026-08-07 (S1 audit)
 
-| # | Name | Low | High | Clamp | Decoder | Physical meaning | Gaming risk |
-|---|------|-----|------|-------|---------|------------------|-------------|
-| x15 | log₁₀(k_mppt) | −2.0 | 3.0 | — | `k_mppt = 10^x[15]`; applied as `sys.k_mppt_ref[] = k_mppt` | Generator load coefficient. τ = k·ω². log encoding gives uniform exploration across orders of magnitude. | **CONFIRMED EXPLOIT.** DE selects k→1000 (upper bound) → transient spin-down power clears P_floor before structure collapses. Stationarity gate now catches this. |
+x15 (log₁₀ k_mppt) was the V11's 15th gene but is **gone from the search
+space**.  `warmstart_with_k_bracket` overwrote `x[15]` with the bracket's
+`log10(k_try)` before every evaluation, so the DE's value never reached the
+sim — a dead gene that only railed at a bound (15/44 evals at ±bound in the
+2026-08-06 campaign).  k is now owned solely by the bracket: λ²-scaled prior
+× {0.5, 1, 2}, clamped to [0.01, K_MPPT_MAX=5000].  The CSV's `x15` column is
+retained for schema stability and records `log10(k_chosen)` — the k actually
+evaluated.
 
 ---
 

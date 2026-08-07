@@ -252,4 +252,73 @@ end
     end
 end
 
+@testset "Test 10: F4b — sys-ref branch reproduces design taper law" begin
+    # Regression for the 2026-08-07 audit: analyse_ring's design===nothing
+    # branch (the campaign path) hard-coded the taper exponent to 0.5 and
+    # floored t_over_D at 0.05, disagreeing with the design branch and killing
+    # genome x4 (Do_scale_exp).  With the sys refs populated by
+    # build_system_from_v10, both branches must give the same Do at any ring.
+    p = KiteTurbineDynamics.params_10kw()
+    sys, u0 = KiteTurbineDynamics.build_kite_turbine_system(p)
+    N = sys.n_total
+    Nr = sys.n_ring
+    alpha_vec = u0[6N+1 : 6N+Nr]
+
+    # First intermediate ring (index 2 → ring_ids[2]) — not ground, not hub
+    ring_gid = sys.ring_ids[2]
+    node = sys.nodes[ring_gid]::KiteTurbineDynamics.RingNode
+    R = node.radius
+
+    # Genome values: Do_top = 0.25, t_over_D = 0.02, exp = 1.0 (railed upper
+    # bound in 14/44 evals — must now have an effect), r_hub = 3.0
+    Do_top = 0.25
+    t_over_D = 0.02
+    exp_taper = 1.0
+    r_hub = 3.0
+
+    # Populate refs exactly as build_system_from_v10 does
+    sys.ring_Do_top[]       = Do_top
+    sys.ring_toverD[]       = t_over_D
+    sys.ring_aspect_ratio[] = 1.0
+    sys.ring_Do_scale_exp[] = exp_taper
+    sys.ring_r_hub[]        = r_hub
+
+    # Design-path Do at this ring (the reference law)
+    scale_design = (R / r_hub)^exp_taper
+    Do_design = max(Do_top * scale_design, 5e-4 / t_over_D)
+
+    # Campaign path: analyse_ring with design === nothing
+    frame = KiteTurbineDynamics.analyse_ring(
+        u0, sys, ring_gid, alpha_vec, p, 0.0, nothing
+    )
+
+    # Compare the frame's worst beam against strut_properties of the
+    # design-law tube (N_crit and M_el are pure geometry — no load dependence).
+    L_beam = 2.0 * R * sin(π / p.n_lines)
+    props_design = KiteTurbineDynamics.strut_properties(
+        KiteTurbineDynamics.CircularTube(Do_design, t_over_D), L_beam,
+        KiteTurbineDynamics.FixedFixedEnds()
+    )
+    frame_beam = frame.beams[argmax([b.utilisation for b in frame.beams])]
+    @test isapprox(frame_beam.N_crit, props_design.P_crit, rtol=1e-6)
+
+    # Exponent must be alive: exp = 0.5 (legacy √R) gives a DIFFERENT (larger)
+    # Do at rings below hub → different N_crit.  Prove x4 has an effect now.
+    sys.ring_Do_scale_exp[] = 0.5
+    frame_legacy = KiteTurbineDynamics.analyse_ring(
+        u0, sys, ring_gid, alpha_vec, p, 0.0, nothing
+    )
+    legacy_beam = frame_legacy.beams[argmax([b.utilisation for b in frame_legacy.beams])]
+    @test !isapprox(frame_beam.N_crit, legacy_beam.N_crit, rtol=1e-3)
+
+    # t_over_D floor must be gone: t_over_D = 0.02 must NOT be floored to 0.05.
+    # A 0.02 wall tube has smaller M_el than a 0.05 wall tube at same Do.
+    props_floor = KiteTurbineDynamics.strut_properties(
+        KiteTurbineDynamics.CircularTube(Do_design, 0.05), L_beam,
+        KiteTurbineDynamics.FixedFixedEnds()
+    )
+    @test props_floor.M_el > props_design.M_el
+    @test isapprox(frame_beam.M_el, props_design.M_el, rtol=1e-6)
+end
+
 end  # @testset "ring_element_analysis"

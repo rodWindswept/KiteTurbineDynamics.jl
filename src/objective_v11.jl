@@ -1,13 +1,15 @@
 # src/objective_v11.jl
 #
-# V11: Windowed dynamic objective with k_mppt in the DE genome.
+# V11: Windowed dynamic objective with k_mppt owned by the warm-start bracket.
 # Replaces the static equilibrium solver from v10 with an ODE window
 # protocol: settle → kickstart → 60 s MPPT window → window-mean P_kw
 # and window-min FoS scoring.
 #
-# Design vector (15 DoF): V10's 14 DoF + log₁₀(k_mppt)
-#   x[1:14] — V10 genome (see objective_v10.jl)
-#   x[15]   — log₁₀(k_mppt) ∈ [-2, 3] covering k ∈ [0.01, 1000]
+# Design vector (14 DoF): the V10 genome.  x15 (log₁₀ k_mppt) was removed
+# 2026-08-07 (S1 audit) — the bracket overwrote it before every eval, so it
+# was a dead search dimension.  k is chosen by warmstart_with_k_bracket
+# (λ²-scaled prior × {0.5, 1, 2}, clamped to K_MPPT_MAX) and passed to the
+# objective as its internal x[15] channel.
 #
 # Reference: PRD 0007 Gate 3 (docs/prd/0007-gate3-spec.md)
 
@@ -19,10 +21,14 @@
 # VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask are available
 # from objective_v10.jl which is included before this file.
 
-const TRPT_V11_DIM = 15
+# 14-D search space: the V10 genome (Do_top … λ_bottom).  x15 (log₁₀ k_mppt)
+# was removed 2026-08-07 (S1 audit): warmstart_with_k_bracket overwrote it
+# before every eval, so the DE's 15th gene had zero fitness effect and only
+# railed at a bound.  k is now owned solely by the bracket's λ²-scaled prior.
+const TRPT_V11_DIM = 14
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Search bounds — v10 + log₁₀(k) bounds
+# Search bounds — V10 genome only (k owned by the bracket, not the search)
 # ══════════════════════════════════════════════════════════════════════════════
 
 function search_bounds_v11(
@@ -30,10 +36,7 @@ function search_bounds_v11(
     beam_profile::BeamProfile;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    v10_lo, v10_hi = search_bounds_v10(p, beam_profile; max_ground_radius=max_ground_radius)
-    lo = vcat(v10_lo, [-2.0])
-    hi = vcat(v10_hi, [3.0])
-    return lo, hi
+    return search_bounds_v10(p, beam_profile; max_ground_radius=max_ground_radius)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -44,6 +47,17 @@ const WINDOW_S    = 60.0   # scoring window after transient
 const DISCARD_S   = 30.0   # transient discard before window
 const WIND_MS     = 11.0   # rated wind speed
 const FOS_DESIGN  = 1.5    # minimum acceptable FoS
+# Stationarity soft penalty (F5, 2026-08-07): the DE must not be rewarded for
+# transient power peaks.  A design whose window power swings wider than 20% of
+# its mean pays λ per unit of excess swing ratio, so a steady 40 kW outranks a
+# swinging 44 kW even though both pass the FoS gate.  The GREEN gate still
+# requires stationary=true; this only shapes the search toward it.
+const STATIONARITY_LAMBDA = 10.0
+const STATIONARITY_SWING = 0.20   # matches the gate's P_range/P_mean < 0.20
+# MPPT gain clamp ceiling (S2, 2026-08-07): widened from 1000 so the k-bracket
+# can bracket near the old ceiling — previously the optimum railed at 1000 and
+# the bracket's three points collapsed onto one value.
+const K_MPPT_MAX = 5000.0
 const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff system)
                             # Each evaluation: ~90s sim / 4e-5 = 2.25M steps
                             # Wall time: ~10-30 min depending on system size.
@@ -84,11 +98,14 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
     # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
     # and get free structural stiffness with zero mass penalty — producing
     # campaigns that report green but design physically impossible machines.
-    # Tube: Do = Do_top × √(R / r_hub), t = t_over_D × Do.
+    # Tube: Do = Do_top × (r/r_hub)^Do_scale_exp, t = t_over_D × Do.
     # Mass per ring ≈ n_lines × ρ_cfrp × π × Do × t × L_beam
     # Use the average ring radius (linear taper) for a representative value.
+    # NOTE: taper exponent comes from the genome (Do_scale_exp, x4), matching
+    # the structural analysis — previously hard-coded √R (0.5), which let the
+    # DE pick exp=1.0 for free (2026-08-07, F4b audit).
     r_avg = 0.5 * (design.r_hub + design.r_bottom)
-    Do_avg = design.Do_top * sqrt(r_avg / design.r_hub)
+    Do_avg = design.Do_top * (r_avg / design.r_hub)^design.Do_scale_exp
     t_avg = design.t_over_D * Do_avg
     L_avg = 2.0 * r_avg * sin(π / design.n_lines)
     ρ_cfrp = 1600.0  # kg/m³ — matches SpacerRingDesign default
@@ -115,9 +132,14 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
     # 0.01396×√R legacy scaling.  (2026-08-05: absent since V10 — the DE was
     # optimising a dead parameter.  See builders_util.jl:130 for the parallel
     # path that the acceptance-test tight builder did have.)
+    # Do_scale_exp (x4) and r_hub (x5) ride along so analyse_ring's campaign
+    # path (design === nothing) reproduces the design path's taper law
+    # Do(r) = Do_top·(r/r_hub)^exp exactly (2026-08-07, F4b audit).
     sys.ring_Do_top[]       = design.Do_top
     sys.ring_toverD[]       = design.t_over_D
     sys.ring_aspect_ratio[] = design.beam_aspect
+    sys.ring_Do_scale_exp[] = design.Do_scale_exp
+    sys.ring_r_hub[]        = design.r_hub
 
     return sys, u0, pc
 end
@@ -179,7 +201,7 @@ function objective_v11(
     end
 
     k_mppt = 10.0^x[15]
-    k_mppt = clamp(k_mppt, 0.01, 1000.0)  # safety clamp
+    k_mppt = clamp(k_mppt, 0.01, K_MPPT_MAX)  # safety clamp
 
     # ── Build ODE system ─────────────────────────────────────────────────
     # Use blade_scale = 1.0 — the genome's λ values already scale blades
@@ -321,11 +343,11 @@ function objective_v11_warmstart(
         x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
     )
     if result.n_active == 0
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     k_mppt = 10.0^x[15]
-    k_mppt = clamp(k_mppt, 0.01, 1000.0)
+    k_mppt = clamp(k_mppt, 0.01, K_MPPT_MAX)
 
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
@@ -336,7 +358,7 @@ function objective_v11_warmstart(
     # is too low.  n_rings = 3 permits degenerate geometry with unrealistically
     # high FoS that the DE exploits (register row 5).
     if n_rings < 5
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     # ── Build ODE system ─────────────────────────────────────────────────
@@ -383,7 +405,7 @@ function objective_v11_warmstart(
     )
 
     if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     # ── Settle rope geometry from ODE ────────────────────────────────────
@@ -394,7 +416,7 @@ function objective_v11_warmstart(
 
     u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
     if any(isnan.(u_settled)) || any(isinf.(u_settled))
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     # ── Set ring angular velocities and orbital velocities ─────────────
@@ -429,6 +451,7 @@ function objective_v11_warmstart(
     fos_samples = Float64[]
     util_a_samples = Float64[]  # worst-ring axial share per sample
     util_b_samples = Float64[]  # worst-ring bending share per sample
+    T_lift_samples = Float64[]  # per-sample lift-line tension (S3: real N)
 
     trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
 
@@ -447,6 +470,7 @@ function objective_v11_warmstart(
                 uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
             )
             push!(P_samples, ef.base.P_kw)
+            isfinite(ef.base.T_lift) && push!(T_lift_samples, ef.base.T_lift)
             airborne = Float64[]
             for i in 2:length(ef.ring_fos)
                 v = ef.ring_fos[i]
@@ -478,7 +502,7 @@ function objective_v11_warmstart(
         )
     catch e
         @warn "Warm-start sim failed" exception = e
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     # ── Score ────────────────────────────────────────────────────────────
@@ -488,7 +512,7 @@ function objective_v11_warmstart(
 
     if isempty(P_finite) || length(P_finite) < 2
         # No valid power samples — simulation produced garbage
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     P_mean = mean(P_finite)
@@ -508,7 +532,7 @@ function objective_v11_warmstart(
 
     # Guard against astronomical P from numerical blowup
     if !isfinite(P_mean) || P_mean > 1e6
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     # Betz ceiling (A2 fix) — reject designs exceeding the physical power
@@ -521,7 +545,7 @@ function objective_v11_warmstart(
     P_betz = (16.0 / 27.0) * 0.5 * p.rho * π * p.rotor_radius^2 * v_rated^3 / 1000.0
     P_aero_peak = maximum(P_finite)
     if P_mean > P_betz || P_aero_peak > P_betz
-        return (12.0, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0)
+        return (12.0, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0, 0.0)
     end
 
     # Betz ceiling — physical admissibility check.
@@ -535,7 +559,7 @@ function objective_v11_warmstart(
     end
     Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * v_rated^3 / 1000.0
     if P_mean > 1.1 * Betz_ceiling_kW
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0)
+        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
@@ -584,9 +608,23 @@ function objective_v11_warmstart(
     end
 
     fitness = v11_fitness(P_mean, FoS_min)
+    # F5 stationarity soft penalty: excess swing (beyond the gate's 20% of
+    # mean) is ADDED to fitness so the DE prefers steady designs.
+    # v11_fitness is negative (more negative = better), so we ADD the penalty
+    # (making swinging designs worse, i.e. less negative).
+    swing = P_mean > 0.1 ? P_range / P_mean : 0.0
+    excess = max(0.0, swing - STATIONARITY_SWING)
+    fitness = fitness + STATIONARITY_LAMBDA * excess
     drifted = drift > 0.20  # >20% drift = flagged
 
-    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b)
+    # S3: mean lift-line tension over the window (real newtons, per-genome —
+    # the sized lifter's T_ref scaled by (v/v_ref)²).  Falls back to the
+    # sized device's design-point T_ref when no samples landed.
+    T_lift_mean = isempty(T_lift_samples) ?
+        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0) :
+        mean(T_lift_samples)
+
+    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift_mean)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -614,8 +652,15 @@ function warmstart_with_k_bracket(
     # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
     lift_device::Union{Nothing,LiftDevice,Function}=nothing,
 )
+    # x is the 14-D search genome (S1: x15 removed from the search space).
+    # k is owned by this bracket; we append it as the objective's internal
+    # x[15] channel.  A legacy 15-D vector (with x15 present) is accepted and
+    # sliced — x[15] is overwritten by the bracket regardless, so it is inert.
+    (length(x) == TRPT_V11_DIM || length(x) == TRPT_V11_DIM + 1) ||
+        error("warmstart_with_k_bracket expects $TRPT_V11_DIM-D genome, got $(length(x))")
+    x14 = x[1:TRPT_V11_DIM]
     result = design_from_vector_v10(
-        x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
+        x14, beam_profile, p; power_W=power_W, v_rated=v_rated
     )
     λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
     k_prior = p.k_mppt * λ_eff^2
@@ -625,13 +670,19 @@ function warmstart_with_k_bracket(
     best_P = 0.0; best_FoS = Inf; best_ω = 0.0
     best_P_range = 0.0; best_drifted = true; best_stationary = false
     best_util_a = -1.0; best_util_b = -1.0
+    best_T_lift = 0.0
 
+    # S2: skip duplicate k_try values: when k_prior·0.5 > K_MPPT_MAX all three
+    # points collapse to the ceiling → three identical sims for one data point.
+    tried_k = Set{Float64}()
     for k_scale in [0.5, 1.0, 2.0]
-        k_try = clamp(k_prior * k_scale, 0.01, 1000.0)
-        x_k = copy(x)
-        x_k[15] = log10(k_try)
+        k_try = clamp(k_prior * k_scale, 0.01, K_MPPT_MAX)
+        k_try in tried_k && continue
+        push!(tried_k, k_try)
 
-        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b =
+        x_k = vcat(x14, [log10(k_try)])  # objective's internal x[15] = log₁₀ k
+
+        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift =
             objective_v11_warmstart(x_k, beam_profile, p;
                 power_W=power_W, v_rated=v_rated, spoke=spoke,
                 lin_damp=lin_damp, lift_device=lift_device)
@@ -652,10 +703,11 @@ function warmstart_with_k_bracket(
             best_stationary = stationary
             best_util_a = util_a
             best_util_b = util_b
+            best_T_lift = T_lift
         end
     end
 
-    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary, best_util_a, best_util_b)
+    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary, best_util_a, best_util_b, best_T_lift)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

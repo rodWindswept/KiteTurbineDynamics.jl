@@ -84,10 +84,12 @@ function multibody_ode!(du, u, params, t)
         α_ring = alpha[ri]
         # Design-aware tube outer diameter: use DE-chosen Do_top when wired
         # (via build_system_from_v10), otherwise fall back to legacy
-        # 0.01396*sqrt(R) scaling.  Mirrors the analyse_ring logic.
+        # 0.01396*sqrt(R) scaling.  Matches the analyse_ring taper law
+        # Do(r) = Do_top·(r/r_hub)^Do_scale_exp (2026-08-07, F4b audit).
         Do_tube = if sys.ring_Do_top[] > 0.0
-            scale = sqrt(R / p.trpt_hub_radius)
-            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 0.05))
+            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
+            scale = (R / r_ref)^sys.ring_Do_scale_exp[]
+            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
         else
             max(0.01396 * sqrt(R), 5e-4 / 0.05)
         end
