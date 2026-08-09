@@ -1,21 +1,15 @@
 using LinearAlgebra
 
 """
-    get_subsegment_tension(ss::RopeSubSegment, pa, pb, va, vb) -> tension::Float64
+    get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb) -> tension::Float64
 
 Compute the physical spring-damper tension in a single rope sub-segment.
-Stateless and zero-allocation.
+Accepts pre-computed geometry from the caller to avoid duplicate allocations.
 """
-function get_subsegment_tension(ss::RopeSubSegment, pa, pb, va, vb)
-    diff_pos = pb .- pa
-    current_len = norm(diff_pos)
-    current_len < 1e-9 && return 0.0
-
-    dir = diff_pos ./ current_len
+function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb)
     rel_vel = vb .- va
     vel_proj = dot(rel_vel, dir)
     strain = (current_len - ss.length_0) / ss.length_0
-
     return max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
 end
 
@@ -71,7 +65,11 @@ function get_max_rope_tension(u::AbstractVector, sys::KiteTurbineSystem, p::Syst
         va = @view u[(3 * N + 3 * (ss.end_a.node_id - 1) + 1):(3 * N + 3 * ss.end_a.node_id)]
         vb = @view u[(3 * N + 3 * (ss.end_b.node_id - 1) + 1):(3 * N + 3 * ss.end_b.node_id)]
 
-        T = get_subsegment_tension(ss, pa, pb, va, vb)
+        diff_pos = pb .- pa
+        current_len = norm(diff_pos)
+        current_len < 1e-9 && continue
+        dir = diff_pos ./ current_len
+        T = get_subsegment_tension(ss, diff_pos, current_len, dir, va, vb)
         T_max = max(T_max, T)
         T < 5.0 && (n_slack += 1)
     end
@@ -135,7 +133,11 @@ function get_segment_tension(
     va = @view u[(3 * N + 3 * (ss.end_a.node_id - 1) + 1):(3 * N + 3 * ss.end_a.node_id)]
     vb = @view u[(3 * N + 3 * (ss.end_b.node_id - 1) + 1):(3 * N + 3 * ss.end_b.node_id)]
 
-    return get_subsegment_tension(ss, pa, pb, va, vb)
+    diff_pos = pb .- pa
+    current_len = norm(diff_pos)
+    current_len < 1e-9 && return 0.0
+    dir = diff_pos ./ current_len
+    return get_subsegment_tension(ss, diff_pos, current_len, dir, va, vb)
 end
 
 """
@@ -197,9 +199,9 @@ function compute_rope_forces!(
         end
     end
 
-    # Helper: velocity at a SubSegmentEnd
+    # Helper: velocity at a SubSegmentEnd (returns a view — no allocation)
     function end_vel(se::SubSegmentEnd)
-        return u[(3 * N + 3 * (se.node_id - 1) + 1):(3 * N + 3 * se.node_id)]
+        return @view u[(3 * N + 3 * (se.node_id - 1) + 1):(3 * N + 3 * se.node_id)]
     end
 
     for ss in sys.sub_segs
@@ -216,7 +218,7 @@ function compute_rope_forces!(
         current_len < 1e-9 && continue
 
         dir = diff_pos ./ current_len
-        tension = get_subsegment_tension(ss, pa, pb, va, vb)
+        tension = get_subsegment_tension(ss, diff_pos, current_len, dir, va, vb)
         F_vec = tension .* dir
 
         # Aerodynamic drag on all rope/tether sub-segments (50/50 distributed)
@@ -226,8 +228,11 @@ function compute_rope_forces!(
         drag = tether_drag_force(
             p.rho, TETHER_DRAG_CD, ss.diameter, ss.length_0, v_wind, v_node, dir
         )
-        forces[ss.end_a.node_id] .+= 0.5 .* drag
-        forces[ss.end_b.node_id] .+= 0.5 .* drag
+        half_drag = 0.5 .* drag
+        for k in 1:3
+            forces[ss.end_a.node_id][k] += half_drag[k]
+            forces[ss.end_b.node_id][k] += half_drag[k]
+        end
 
         # Apply spring force to nodes — torque projection always uses shaft_dir
         if ss.end_a.is_ring
@@ -235,10 +240,14 @@ function compute_rope_forces!(
             ri_a = node_a.ring_idx
             ctr_a = u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
             r_vec_a = pa .- ctr_a
-            forces[ss.end_a.node_id] .+= F_vec
+            for k in 1:3
+                forces[ss.end_a.node_id][k] += F_vec[k]
+            end
             torques[ri_a] += dot(cross(r_vec_a, F_vec), shaft_dir)
         else
-            forces[ss.end_a.node_id] .+= F_vec
+            for k in 1:3
+                forces[ss.end_a.node_id][k] += F_vec[k]
+            end
         end
 
         if ss.end_b.is_ring
@@ -246,10 +255,14 @@ function compute_rope_forces!(
             ri_b = node_b.ring_idx
             ctr_b = u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
             r_vec_b = pb .- ctr_b
-            forces[ss.end_b.node_id] .-= F_vec
+            for k in 1:3
+                forces[ss.end_b.node_id][k] -= F_vec[k]
+            end
             torques[ri_b] += dot(cross(r_vec_b, -F_vec), shaft_dir)
         else
-            forces[ss.end_b.node_id] .-= F_vec
+            for k in 1:3
+                forces[ss.end_b.node_id][k] -= F_vec[k]
+            end
         end
     end
 end

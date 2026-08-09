@@ -1,25 +1,27 @@
 #!/usr/bin/env julia
 # scripts/run_feasibility_phase_a.jl
 # Stage 2: Phase A v2 feasibility campaign — DE minimising objective_feasibility.
-# Corrected A1-A5 physics (commit e7bbadf+), fresh start.
-# Budget: pop=8, ≤21 gens, hard cap 176 evals.  Progressive saves, resume by hash.
+# Corrected A1-A5 physics, n_rings≥1, 30s decay checkpoint, OOM fixes.
+# Budget: pop=8, ≤6 gens, hard cap 48 evals.  Progressive saves, resume by hash.
 # Seed: V10 winner only (post-A1-A5 — known feasible).
 
-using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates, DataFrames, CSV, Random, DelimitedFiles, Base.Threads
+using KiteTurbineDynamics, Printf, LinearAlgebra, Statistics, SHA, JSON3, Dates, DataFrames, CSV, Random, Base.Threads
 
-const CSV_LOCK = ReentrantLock()  # thread-safe CSV writes
+const CSV_LOCK    = ReentrantLock()  # thread-safe CSV row buffer
+const ROWS_BUFFER = Dict{Symbol,Any}[]
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Config
 # ══════════════════════════════════════════════════════════════════════════════
-const POP_SIZE    = 8
-const MAX_GENS    = 6
+const POP_SIZE    = 6
+const MAX_GENS    = 4
 const MAX_EVALS   = 48
 const P_CAP        = 50.0
 const P_FLOOR      = 25.0
 const FOS_DESIGN   = 1.5
 const F           = 0.8    # DE differential weight
 const CR          = 0.9    # DE crossover rate
+const DECAY_P_THRESHOLD = 1.0  # kW — abort if P_30s is below this
 
 const SP          = KiteTurbineDynamics.SpokeParams(enabled=false)
 const BEAM        = KiteTurbineDynamics.PROFILE_ELLIPTICAL
@@ -27,44 +29,20 @@ const P_BASE      = KiteTurbineDynamics.params_v5_50kw()
 const POWER_W     = 50000.0
 const V_RATED     = 11.0
 
-# ── Lift device — DESIGN-AWARE (Rod, 2026-08-05) ─────────────────────────────
-# Was: a fixed RotaryLifterParams(1.3 m, ...) delivering ~638 N to EVERY genome
-# regardless of mass, while its reported "1.5× margin" was computed against a
-# hard-coded 12 kg v5 reference shaft.  638 N is ≈61 kg of vertical support at
-# 70°; the V6.2 optimum is 74.17 kg airborne on its own.  Heavy, stiff designs
-# were therefore under-supported and the margin readout concealed it — a
-# systematic bias against exactly the torsional rigidity we want to buy.
-#
-# Now: presume the coaxial autogyro stack supplies enough lift at the lift
-# bearing to hold the machine smoothly in the air, and size it to 1.5× THIS
-# genome's airborne mass.  Stack sizing lives in CoaxialAutogyroStacking.jl and
-# is deliberately out of scope here.  The presumption is to be published as one.
-#
-# Passed as a function: sizing needs the built system's mass, which does not
-# exist until the genome is decoded and built.
+# ── Lift device — DESIGN-AWARE ─────────────────────────────────────────────
 const LIFT_MARGIN = 1.5
 lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
     sys, p; margin=LIFT_MARGIN, v_ref=V_RATED)
 const LIFT_DEVICE = lift_for
 
 const GIT_HASH    = strip(read(`git -C $(dirname(@__DIR__)) rev-parse --short HEAD`, String))
-# Bumped 2026-08-07 (F4b fix): ring beam taper now follows the genome's
-# Do_scale_exp with raw t_over_D.  ALL pre-fix fitness values are stale —
-# resume must not reuse them (see load_existing_hashes, era-filtered).
-const PHYSICS_ERA = "post-4894787_f4b-taper-reconcile"
+const PHYSICS_ERA = "post-4894787_f4b-taper-reconcile_nrings1_decayck"
 
 # ── F5 measurement horizon ────────────────────────────────────────────────
-# The 2026-08-05 relax sweep and the altitude traces showed power still
-# decaying at the old 10 s warm-start relax — the 30 s window was sampling a
-# departing signal, so P_mean was not a mean and the stationarity gate could
-# never fire (1/44 stationary in the 2026-08-06 campaign).  Extend the relax
-# to 120 s (collapse completes by ~120 s per trace_altitude_torque.jl) so the
-# window measures the settled state.  Set here, NOT in src — the source
-# default stays 10 s so unit tests don't run 3.75× longer.
 KiteTurbineDynamics.WARM_RELAX_S[] = 120.0
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
-const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v2.csv")
+const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v3.csv")
 mkpath(OUT_DIR)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -72,48 +50,60 @@ mkpath(OUT_DIR)
 # ══════════════════════════════════════════════════════════════════════════════
 lo_full, hi_full = KiteTurbineDynamics.search_bounds_v11(P_BASE, BEAM; max_ground_radius=5.0)
 
-# V10 winner is OBSOLETE (2026-08-07, F1 audit): X_V10 sits OUTSIDE the v11
-# search box in 5 of 15 dims (x1=0.06 < Do_lo=0.20; x3=0.88 < ar_lo=1.0;
-# x5=2.89 < r_hub_lo=5.37; x11=31.99 > 25; x12=35 > 25) and evaluates to
-# 0.39 W under current physics.  The DE cannot search where its anchor lives.
-# Reseed with the best feasible genome from the 2026-08-06 run (79e2d24b,
-# P=44.2 kW, n_lines=15) — inside the box, and the strongest known point.
-# NOTE: its fitness in the CSV is STALE (pre-F4b); the era-filtered resume
-# (load_existing_hashes) forces re-evaluation under the corrected physics.
 const X_SEED = [0.2, 0.01, 1.0, 1.0, 5.366563145999496, 1.5, 2.290336420077981,
                 15.380561394283504, 0.7635956009855438, 19.0, 22.42396791533018,
-                25.0, 0.8804365395898538, 0.4636680969018283]  # 14-D (x15/k removed, S1)
+                25.0, 0.8804365395898538, 0.4636680969018283]  # 14-D
 
 function load_seeds()
     return [copy(X_SEED)]
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Evaluation
+# Evaluation (with 30s decay checkpoint)
 # ══════════════════════════════════════════════════════════════════════════════
+
+function _warmstart_at_relax(x, relax_s)
+    """Run warmstart_with_k_bracket at a specific WARM_RELAX_S."""
+    old = KiteTurbineDynamics.WARM_RELAX_S[]
+    KiteTurbineDynamics.WARM_RELAX_S[] = relax_s
+    try
+        return KiteTurbineDynamics.warmstart_with_k_bracket(
+            x, BEAM, P_BASE;
+            power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE)
+    finally
+        KiteTurbineDynamics.WARM_RELAX_S[] = old
+    end
+end
 
 function evaluate_genome(x)
     x_copy = copy(x)
     try
-        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift =
-            KiteTurbineDynamics.warmstart_with_k_bracket(x_copy, BEAM, P_BASE;
-                power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE)
+        # Phase 1: 30s quick-check — abort decaying designs early
+        f_v11_30, k30, P_30, FoS_30, ω30, Pr30, dr30, st30, ua30, ub30, Tl30 =
+            _warmstart_at_relax(x_copy, 30.0)
 
-        f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR, FoS_design=FOS_DESIGN, P_range=P_range)
-        tier = P_mean < P_FLOOR ? "stalled" : FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
+        # Decay checkpoint: if power is already negligible at 30s, abort
+        if P_30 < DECAY_P_THRESHOLD
+            f_feas = objective_feasibility(P_30, FoS_30; P_cap=P_CAP, P_floor=P_FLOOR,
+                                           FoS_design=FOS_DESIGN, P_range=Pr30)
+            tier = P_30 < P_FLOOR ? "stalled" : "feasibility"
+            return (f_v11_30, k30, P_30, FoS_30, ω30, Pr30, dr30, st30,
+                    ua30, ub30, Tl30, f_feas, "decay_30s", true)
+        end
 
-        # S3: T_lift is the per-genome mean lift-line tension (real newtons)
-        # measured over the scoring window — the sized lifter's T_ref scaled
-        # by (v/v_ref)².  Previously this column recorded the dimensionless
-        # LIFT_MARGIN constant (1.5) mislabelled as newtons.
-        lift_tension = T_lift
+        # Phase 2: full 120s evaluation for promising designs
+        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
+            util_a, util_b, T_lift =
+            _warmstart_at_relax(x_copy, 120.0)
+
+        f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR,
+                                       FoS_design=FOS_DESIGN, P_range=P_range)
+        tier = P_mean < P_FLOOR ? "stalled" :
+               FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
 
         return (f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
-                util_a, util_b, lift_tension, f_feas, tier, true)
+                util_a, util_b, T_lift, f_feas, tier, true)
     catch e
-        # 12.0 (rejection band), NOT 11.0: an exception must never score better
-        # than a null-FoS rejection, and 11.0 collides exactly with a legitimate
-        # P_mean=0 stall (10 + (25-0)/25).  See handover-2026-08-05.
         @warn "genome eval threw" exception=(e, catch_backtrace())
         return (Inf, 0.0, 0.0, Inf, 0.0, 0.0, true, false,
                 -1.0, -1.0, -1.0, 12.0, "rejected", false)
@@ -141,10 +131,6 @@ function load_existing_hashes()
     isfile(OUT_CSV) || return Set{String}()
     try
         df = CSV.read(OUT_CSV, DataFrame)
-        # Era filter (2026-08-07, F1 audit): a genome hash is only "already
-        # evaluated" if its row was scored under the CURRENT physics era.
-        # Pre-fix rows (e.g. the 44-row 4894787 campaign) carry stale fitness
-        # — the F4b taper fix changed the physics, so they must re-evaluate.
         if :physics_era in names(df)
             df = filter(row -> row.physics_era == PHYSICS_ERA, df)
         end
@@ -154,14 +140,14 @@ function load_existing_hashes()
     end
 end
 
-function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω_eq,
-                  P_range, drifted, stationary, util_a, util_b, lift_tension, f_feas, tier, gen)
-    row = Dict{Symbol,Any}(
+function _row_dict(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω_eq,
+                   P_range, drifted, stationary, util_a, util_b, lift_tension, f_feas, tier, gen)
+    return Dict{Symbol,Any}(
         :genome_hash => gh, :physics_era => PHYSICS_ERA, :git_hash => GIT_HASH,
         :x1=>x[1],:x2=>x[2],:x3=>x[3],:x4=>x[4],:x5=>x[5],
         :x6=>x[6],:x7=>x[7],:x8=>x[8],:x9=>x[9],:x10=>x[10],
         :x11=>x[11],:x12=>x[12],:x13=>x[13],:x14=>x[14],
-        :x15 => log10(k_chosen),  # S1: k is bracket-owned; record log₁₀ of the k actually used
+        :x15 => log10(k_chosen),
         :n_lines => n_lines, :n_active => n_active,
         :f_v11 => f_v11, :k_chosen => k_chosen, :P_mean_kw => P_mean,
         :FoS_min => FoS_min, :omega_eq_rpm => ω_eq * 60 / (2π),
@@ -171,15 +157,34 @@ function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω
         :f_feas => f_feas, :tier => tier, :gen => gen,
         :timestamp => string(Dates.now()),
     )
-    if !isfile(OUT_CSV)
-        df = DataFrame([(c==:genome_hash||c==:physics_era||c==:git_hash||c==:tier||c==:timestamp) ? String[] :
-                         (c==:drift_flag||c==:stationary) ? Bool[] : Float64[] for c in CSV_COLS], CSV_COLS)
-        CSV.write(OUT_CSV, df)
+end
+
+function save_row(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω_eq,
+                  P_range, drifted, stationary, util_a, util_b, lift_tension, f_feas, tier, gen)
+    row = _row_dict(gh, x, n_lines, n_active, f_v11, k_chosen, P_mean, FoS_min, ω_eq,
+                    P_range, drifted, stationary, util_a, util_b, lift_tension, f_feas, tier, gen)
+    lock(CSV_LOCK) do
+        push!(ROWS_BUFFER, row)
     end
-    df = CSV.read(OUT_CSV, DataFrame)
-    push!(df, row; cols=:union)
+end
+
+function flush_csv()
+    isempty(ROWS_BUFFER) && return
+    df_new = DataFrame(ROWS_BUFFER)
+    if isfile(OUT_CSV)
+        try
+            df_existing = CSV.read(OUT_CSV, DataFrame)
+            df = vcat(df_existing, df_new; cols=:union)
+        catch
+            df = df_new
+        end
+    else
+        df = df_new
+    end
     sort!(df, :genome_hash)
     CSV.write(OUT_CSV, df)
+    empty!(ROWS_BUFFER)
+    println("  [flush] wrote $(nrow(df)) rows to $OUT_CSV")
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -201,7 +206,7 @@ function clamp_genome(x)
     return x
 end
 
-function differential_evolution(pop, fit, gen)
+function differential_evolution(pop, fit, gen, existing_hashes)
     n = length(pop)
     d = length(lo_full)
     new_pop = Vector{Float64}[]
@@ -228,10 +233,7 @@ function differential_evolution(pop, fit, gen)
         base_indices[i] = i
     end
 
-    # Pre-load existing hashes (read-only)
-    existing_hashes = load_existing_hashes()
-
-    # Threaded evaluation
+    # Threaded evaluation — existing_hashes is pre-computed OUTSIDE the loop
     accepted = falses(n)
     f_feas_results = zeros(n)
     @threads for i in 1:n
@@ -242,17 +244,15 @@ function differential_evolution(pop, fit, gen)
         else
             f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, ok = evaluate_genome(trial)
             if !ok
-                continue  # accepted stays false
+                continue
             end
             nl = 0; na = 0
             try
                 r = KiteTurbineDynamics.design_from_vector_v10(trial[1:14], BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED)
                 nl = r.design.n_lines; na = r.n_active
             catch; end
-            lock(CSV_LOCK) do
-                save_row(gh, trial, nl, na, f_v11, k_chosen,
-                         P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, gen)
-            end
+            save_row(gh, trial, nl, na, f_v11, k_chosen,
+                     P_mean, FoS_min, ω_eq, P_range, drifted, stationary, ua, ub, lift_tension, f_feas, tier, gen)
             f_feas_results[i] = f_feas
             accepted[i] = f_feas < fit[base_indices[i]]
         end
@@ -277,7 +277,7 @@ end
 
 function main()
     println("═══════════════════════════════════════════════")
-    println("Phase A v2 — Feasibility Campaign (A1-A5 corrected)")
+    println("Phase A v3 — Feasibility Campaign (OOM fixes, n_rings≥1, 30s decay ck)")
     println("git=$GIT_HASH  era=$PHYSICS_ERA")
     println("pop=$POP_SIZE  max_gens=$MAX_GENS  max_evals=$MAX_EVALS")
     println("═══════════════════════════════════════════════\n")
@@ -292,13 +292,11 @@ function main()
     t0 = time()
     eval_count = 0
 
-    # Seeds first — if already evaluated, load from CSV for population
+    # Seeds first
     for x in seeds
         gh = genome_hash(x)
         if gh in existing
-            # Load genome from CSV to seed the population (resume)
             push!(pop, x)
-            # Get f_feas from CSV
             try
                 df = CSV.read(OUT_CSV, DataFrame)
                 idx = findfirst(df.genome_hash .== gh)
@@ -310,7 +308,7 @@ function main()
             catch
                 push!(fit, Inf)
             end
-            @printf("[seed %d] %s  (resumed from CSV)\n", length(pop), gh[1:8])
+            @printf("[seed %d] %s  (resumed)\n", length(pop), gh[1:8])
             continue
         end
         f_v11, k, P, FoS, ω, Pr, dr, st, ua, ub, lift_tension, f_feas, tier, ok = evaluate_genome(x)
@@ -318,7 +316,7 @@ function main()
         push!(pop, x)
         push!(fit, f_feas)
         eval_count += 1
-        @printf("[seed %d] %s  P=%.1f FoS=%.3f f_feas=%.3f tier=%s\n",
+        @printf("[seed %d] %s  P=%.1f FoS=%.3f f=%.3f tier=%s\n",
             eval_count, gh[1:8], P, FoS, f_feas, tier)
         nl = 0; na = 0
         try
@@ -339,7 +337,7 @@ function main()
         push!(pop, x)
         push!(fit, f_feas)
         eval_count += 1
-        @printf("[init %d] %s  P=%.1f FoS=%.3f f_feas=%.3f tier=%s\n",
+        @printf("[init %d] %s  P=%.1f FoS=%.3f f=%.3f tier=%s\n",
             eval_count, gh[1:8], P, FoS, f_feas, tier)
         nl = 0; na = 0
         try
@@ -350,6 +348,7 @@ function main()
                  P, FoS, ω, Pr, dr, st, ua, ub, lift_tension, f_feas, tier, 0)
     end
 
+    flush_csv()
     println("\nInitial population: $(length(pop))  Evals so far: $eval_count\n")
 
     best_fit_ever = minimum(fit)
@@ -358,12 +357,19 @@ function main()
     for gen in 1:MAX_GENS
         eval_count >= MAX_EVALS && break
 
-        pop, fit = differential_evolution(pop, fit, gen)
+        # Refresh existing hashes before this generation
+        existing = load_existing_hashes()
+
+        pop, fit = differential_evolution(pop, fit, gen, existing)
         eval_count += POP_SIZE
+
+        # Flush CSV and force GC between generations
+        flush_csv()
+        GC.gc()
 
         gen_best = minimum(fit)
         gen_best_idx = argmin(fit)
-        gen_best_P = 0.0; gen_best_FoS = Inf; gen_best_FoS_check = Inf; gen_best_stationary = false
+        gen_best_P = 0.0; gen_best_FoS = Inf; gen_best_stationary = false
         try
             _, _, p, f, _, _, d, st, _, _, _, _, _, _ = evaluate_genome(pop[gen_best_idx])
             gen_best_P = p; gen_best_FoS = f; gen_best_stationary = st
@@ -378,18 +384,20 @@ function main()
             @printf("  → NEW BEST: f=%.3f\n", gen_best)
         end
 
-        # Gate checks — must also be stationary
+        # Gate checks
         if gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR && gen_best_stationary
             println("\n╔══════════════════════════════════════════════╗")
             @printf("║  GREEN: FoS ≥ %.1f, P ≥ %.0f kW, stationary  ║\n", FOS_DESIGN, P_FLOOR)
             println("║  Genome: $(genome_hash(pop[gen_best_idx])[1:8])  ║")
             println("╚══════════════════════════════════════════════╝")
-            println("→ Freeze genome, proceed to Stage 3 verification.")
             break
         elseif gen_best_FoS >= FOS_DESIGN && gen_best_P >= P_FLOOR && !gen_best_stationary
-            println("  → Gate: FoS/P met but stationary=false — NOT GREEN, continuing.")
+            println("  → FoS/P met but stationary=false — NOT GREEN.")
         end
     end
+
+    # Final flush
+    flush_csv()
 
     # Final verdict
     final_best_idx = argmin(fit)
@@ -399,16 +407,11 @@ function main()
     if FoS_fin >= FOS_DESIGN && P_fin >= P_FLOOR
         println("GREEN — feasible design found.")
     elseif FoS_fin >= 1.0
-        println("AMBER — best FoS ≥ 1.0 but < 1.5.  Pareto report to Rod.")
-        println("  Best: FoS=%.3f P=%.1f kW f_feas=%.3f", FoS_fin, P_fin, f_feas_fin)
+        println("AMBER — best FoS ≥ 1.0 but < 1.5.")
+        @printf("  Best: FoS=%.3f P=%.1f kW f_feas=%.3f\n", FoS_fin, P_fin, f_feas_fin)
     else
         println("PROVISIONAL RED — best FoS < 1.0 after $eval_count evals.")
-        println("  Best: FoS=%.3f P=%.1f kW f_feas=%.3f", FoS_fin, P_fin, f_feas_fin)
-        println("  120-eval probe (not an exhaustive search): directional evidence of")
-        println("  structural underbuild.  Escalate the airframe conversation AND decide")
-        println("  whether a second 120-eval budget on a memory-fixed evaluator changes")
-        println("  anything.  One-sided test: even optimistic FoS (no blade mass) can't")
-        println("  reach 1.0 from the best-known seeds — robust lower bound.")
+        @printf("  Best: FoS=%.3f P=%.1f kW f_feas=%.3f\n", FoS_fin, P_fin, f_feas_fin)
     end
     println("Output: $OUT_CSV")
     println("═══════════════════════════════════════════════")

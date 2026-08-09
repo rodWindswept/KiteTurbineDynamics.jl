@@ -192,12 +192,9 @@ function objective_v11(
         return 1e9  # no rotors = infeasible
     end
 
-    # Model-validity gate: Tulloch TRPT model is uncalibrated at L/r > 3.5.
-    # n_rings < 5 implies L/seg >> validated range.  Gate at decode time;
-    # re-check after A1 lands — if the degenerate family disappears without
-    # this gate, it's insurance rather than necessity.
-    if result.n_rings < 5
-        return 1e9  # outside Tulloch calibration range
+    # n_rings gate — require at least 1 intermediate ring (matching warmstart path).
+    if result.n_rings < 1
+        return 1e9
     end
 
     k_mppt = 10.0^x[15]
@@ -352,12 +349,12 @@ function objective_v11_warmstart(
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
-    # n_rings gate (A3 fix) — reject designs with fewer than 5 rings.
-    # This is a model-validity bound, not a physical finding.  The Tulloch
-    # collapse model is uncalibrated at L/r > 3.5, which occurs when n_rings
-    # is too low.  n_rings = 3 permits degenerate geometry with unrealistically
-    # high FoS that the DE exploits (register row 5).
-    if n_rings < 5
+    # n_rings gate — require at least 1 intermediate (flown) ring.
+    # n_rings = 1 → 3 total rings (ground + 1 flown + hub).  The hub ring
+    # carries the topmost expansion rotor; intermediate rings transmit torque
+    # to ground.  Lower bound removed per Rod (2026-08-08): if a 1-ring TRPT
+    # works, that's a valid result — the DE should find it.
+    if n_rings < 1
         return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
     end
 

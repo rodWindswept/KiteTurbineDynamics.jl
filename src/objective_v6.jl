@@ -335,37 +335,16 @@ function parasitic_drag_power(
     end
 
     # ═══════════════════════════════════════════════════════════════════
-    # 3. Expansion blade profile drag power
+    # 3. Expansion blade profile drag — REMOVED (2026-08-08)
     #
-    # Airfoil profile + induced drag, resolved to tangential direction.
-    # Uses calibrated coefficients (EXP_CL_DESIGN, EXP_CD0_DESIGN,
-    # EXP_K_INDUCED) from NACA 4412 data (Abbott & von Doenhoff 1959).
+    # expansion_rotor_forces() already computes net torque as τ_lift - τ_drag,
+    # where τ_drag includes profile + induced + post-stall drag.  The static
+    # solver (solve_equilibrium_omega) uses τ_net·ω as P_exp_net — drag is
+    # already subtracted inside the expansion rotor model.  Including it again
+    # here double-counts profile drag, producing phantom P_par values that
+    # dominate the power balance and drive ω_eq unrealistically low.
     # ═══════════════════════════════════════════════════════════════════
     P_exp_blade_total = 0.0
-    for er in stack
-        ri = er.ring_idx
-        if ri > n_rings_tot || ri < 1
-            continue
-        end
-        r_nom = radii[ri]
-        bank_rad = deg2rad(er.bank_angle_deg)
-        r_mean_annulus = (er.blade_hub_radius + er.blade_tip_radius) / 2.0
-        r_mean = r_nom + r_mean_annulus * cos(bank_rad)
-        blade_span = max(er.blade_tip_radius - er.blade_hub_radius, 0.0)
-
-        v_app = sqrt(v_axial^2 + (omega * r_mean)^2)
-        q = 0.5 * rho * v_app^2
-
-        # Profile + induced drag: D_blade = q·chord·span·(CD0 + k·CL²)
-        D_blade =
-            q * er.blade_chord * blade_span *
-            (er.CD0_blade + er.k_induced * er.CL_blade^2)
-        phi = atan(v_axial, omega * r_mean)
-        D_tangential = D_blade * cos(phi)
-
-        tau_drag_exp = er.n_blades * D_tangential * r_mean
-        P_exp_blade_total += tau_drag_exp * omega
-    end
 
     P_total = P_beam_total + P_tether_total + P_exp_blade_total
     return (P_beam_total, P_tether_total, P_exp_blade_total, P_total)
