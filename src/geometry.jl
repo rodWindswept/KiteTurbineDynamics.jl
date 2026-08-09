@@ -33,6 +33,29 @@ function attachment_point(
 end
 
 """
+    attachment_point!(out, centre, R, alpha, j, n_lines, perp1, perp2)
+
+In-place variant.  Writes into `out` (3-vector buffer) without allocating.
+"""
+function attachment_point!(
+    out::AbstractVector,
+    centre::AbstractVector,
+    R::Real,
+    alpha::Real,
+    j::Int,
+    n_lines::Int,
+    perp1::AbstractVector,
+    perp2::AbstractVector,
+)
+    φ = alpha + (j - 1) * (2π / n_lines)
+    cφ, sφ = cos(φ), sin(φ)
+    @inbounds for k in 1:3
+        out[k] = centre[k] + R * (cφ * perp1[k] + sφ * perp2[k])
+    end
+    return out
+end
+
+"""
     rope_helix_pos(pos_a, pos_b, frac) → Vector{Float64}
 
 Linear interpolation between two attachment points at fraction `frac` ∈ [0,1].

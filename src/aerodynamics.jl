@@ -348,3 +348,40 @@ function tether_drag_force(
     # Drag = ½·ρ·Cd·d·L₀·|v⊥|·v⊥  (perpendicular component only)
     return 0.5 * rho * cd * diameter * length_0 * v_perp_mag .* v_perp
 end
+
+"""
+    tether_drag_force!(out, rho, cd, diameter, length_0, v_wind, v_node, dir, v_rel_buf, v_perp_buf)
+
+In-place variant.  Writes drag force into `out` (3-vector buffer).
+`v_rel_buf` and `v_perp_buf` are scratch 3-vectors reused across calls.
+"""
+function tether_drag_force!(
+    out::AbstractVector,
+    rho::Float64,
+    cd::Float64,
+    diameter::Float64,
+    length_0::Float64,
+    v_wind::AbstractVector,
+    v_node::AbstractVector,
+    dir::AbstractVector,
+    v_rel_buf::AbstractVector,
+    v_perp_buf::AbstractVector,
+)
+    @inbounds for k in 1:3
+        v_rel_buf[k] = v_wind[k] - v_node[k]
+    end
+    v_rel_dot_dir = v_rel_buf[1]*dir[1] + v_rel_buf[2]*dir[2] + v_rel_buf[3]*dir[3]
+    @inbounds for k in 1:3
+        v_perp_buf[k] = v_rel_buf[k] - v_rel_dot_dir * dir[k]
+    end
+    v_perp_mag = sqrt(v_perp_buf[1]^2 + v_perp_buf[2]^2 + v_perp_buf[3]^2)
+    if v_perp_mag <= 0.01
+        out[1] = 0.0; out[2] = 0.0; out[3] = 0.0
+        return out
+    end
+    scale = 0.5 * rho * cd * diameter * length_0 * v_perp_mag
+    @inbounds for k in 1:3
+        out[k] = scale * v_perp_buf[k]
+    end
+    return out
+end

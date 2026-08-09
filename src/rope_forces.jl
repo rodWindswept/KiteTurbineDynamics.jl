@@ -1,14 +1,20 @@
 using LinearAlgebra
 
 """
-    get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb) -> tension::Float64
+    get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb; rel_buf=nothing) -> tension::Float64
 
 Compute the physical spring-damper tension in a single rope sub-segment.
 Accepts pre-computed geometry from the caller to avoid duplicate allocations.
+When `rel_buf` (3-vector) is provided, uses it as scratch to avoid allocating `rel_vel`.
 """
-function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb)
-    rel_vel = vb .- va
-    vel_proj = dot(rel_vel, dir)
+function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb; rel_buf=nothing)
+    if rel_buf !== nothing
+        @inbounds for k in 1:3; rel_buf[k] = vb[k] - va[k]; end
+        vel_proj = rel_buf[1]*dir[1] + rel_buf[2]*dir[2] + rel_buf[3]*dir[3]
+    else
+        rel_vel = vb .- va
+        vel_proj = dot(rel_vel, dir)
+    end
     strain = (current_len - ss.length_0) / ss.length_0
     return max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
 end
@@ -184,85 +190,99 @@ function compute_rope_forces!(
     local pp1_tilt = perp1_tilt === nothing ? perp1_shaft : perp1_tilt
     local pp2_tilt = perp2_tilt === nothing ? perp2_shaft : perp2_tilt
 
-    # Helper: 3D position of a SubSegmentEnd
-    function end_pos(se::SubSegmentEnd, use_tilted::Bool)
-        if se.is_ring
-            node = sys.nodes[se.node_id]::RingNode
-            ri = node.ring_idx
-            R = isempty(sys.expansion_rotors) ? node.radius : sys.effective_radii[ri]
-            α = alpha[ri]
-            ctr = u[(3 * (se.node_id - 1) + 1):(3 * se.node_id)]
-            pp1, pp2 = use_tilted ? (pp1_tilt, pp2_tilt) : (perp1_shaft, perp2_shaft)
-            return attachment_point(ctr, R, α, se.line_idx, p.n_lines, pp1, pp2)
-        else
-            return u[(3 * (se.node_id - 1) + 1):(3 * se.node_id)]
-        end
-    end
-
-    # Helper: velocity at a SubSegmentEnd (returns a view — no allocation)
-    function end_vel(se::SubSegmentEnd)
-        return @view u[(3 * N + 3 * (se.node_id - 1) + 1):(3 * N + 3 * se.node_id)]
-    end
+    # ── Pre-allocated scratch buffers (reused across sub_segs, zero per-step allocs) ──
+    pa    = zeros(3);  pb    = zeros(3);  diff  = zeros(3)
+    dir_v = zeros(3);  F_vec = zeros(3);  mid   = zeros(3)
+    v_mid = zeros(3);  drag  = zeros(3);  hdrag = zeros(3)
+    r_a   = zeros(3);  r_b   = zeros(3)
+    vrel_buf = zeros(3);  vperp_buf = zeros(3)
 
     for ss in sys.sub_segs
-        # Bridle and cyan sub-segments have end_a at the bearing node.
-        # Bridles → shaft basis (stable); TRPT → tilted basis (power spill).
         is_bridle = ss.end_a.node_id == sys.bearing_id
-        pa = end_pos(ss.end_a, !is_bridle)
-        pb = end_pos(ss.end_b, !is_bridle)
-        va = end_vel(ss.end_a)
-        vb = end_vel(ss.end_b)
 
-        diff_pos = pb .- pa
-        current_len = norm(diff_pos)
-        current_len < 1e-9 && continue
-
-        dir = diff_pos ./ current_len
-        tension = get_subsegment_tension(ss, diff_pos, current_len, dir, va, vb)
-        F_vec = tension .* dir
-
-        # Aerodynamic drag on all rope/tether sub-segments (50/50 distributed)
-        mid_pos = (pa .+ pb) ./ 2.0
-        v_wind = wind_fn(mid_pos, t)
-        v_node = (va .+ vb) ./ 2.0
-        drag = tether_drag_force(
-            p.rho, TETHER_DRAG_CD, ss.diameter, ss.length_0, v_wind, v_node, dir
-        )
-        half_drag = 0.5 .* drag
-        for k in 1:3
-            forces[ss.end_a.node_id][k] += half_drag[k]
-            forces[ss.end_b.node_id][k] += half_drag[k]
+        # ── positions (in-place) ──
+        if ss.end_a.is_ring
+            node_a_r = sys.nodes[ss.end_a.node_id]::RingNode
+            ri_a_p = node_a_r.ring_idx
+            R_a = isempty(sys.expansion_rotors) ? node_a_r.radius : sys.effective_radii[ri_a_p]
+            ctr_a = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
+            pp1_a, pp2_a = is_bridle ? (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
+            attachment_point!(pa, ctr_a, R_a, alpha[ri_a_p], ss.end_a.line_idx, p.n_lines, pp1_a, pp2_a)
+        else
+            pa_v = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
+            pa[1]=pa_v[1]; pa[2]=pa_v[2]; pa[3]=pa_v[3]
+        end
+        if ss.end_b.is_ring
+            node_b_r = sys.nodes[ss.end_b.node_id]::RingNode
+            ri_b_p = node_b_r.ring_idx
+            R_b = isempty(sys.expansion_rotors) ? node_b_r.radius : sys.effective_radii[ri_b_p]
+            ctr_b = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
+            pp1_b, pp2_b = is_bridle ? (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
+            attachment_point!(pb, ctr_b, R_b, alpha[ri_b_p], ss.end_b.line_idx, p.n_lines, pp1_b, pp2_b)
+        else
+            pb_v = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
+            pb[1]=pb_v[1]; pb[2]=pb_v[2]; pb[3]=pb_v[3]
         end
 
-        # Apply spring force to nodes — torque projection always uses shaft_dir
+        # ── velocities (views — no allocation) ──
+        va = @view u[(3N + 3*(ss.end_a.node_id-1)+1):(3N + 3*ss.end_a.node_id)]
+        vb = @view u[(3N + 3*(ss.end_b.node_id-1)+1):(3N + 3*ss.end_b.node_id)]
+
+        # ── geometry (in-place) ──
+        @inbounds for k in 1:3; diff[k] = pb[k] - pa[k]; end
+        current_len = sqrt(diff[1]^2 + diff[2]^2 + diff[3]^2)
+        current_len < 1e-9 && continue
+        inv_len = 1.0 / current_len
+        @inbounds for k in 1:3; dir_v[k] = diff[k] * inv_len; end
+
+        tension = get_subsegment_tension(ss, diff, current_len, dir_v, va, vb; rel_buf=vrel_buf)
+        @inbounds for k in 1:3; F_vec[k] = tension * dir_v[k]; end
+
+        # ── aerodynamic drag (in-place) ──
+        @inbounds for k in 1:3
+            mid[k]   = (pa[k] + pb[k]) * 0.5
+            v_mid[k] = (va[k] + vb[k]) * 0.5
+        end
+        v_wind = wind_fn(mid, t)
+        tether_drag_force!(drag, p.rho, TETHER_DRAG_CD, ss.diameter, ss.length_0,
+                           v_wind, v_mid, dir_v, vrel_buf, vperp_buf)
+        @inbounds for k in 1:3; hdrag[k] = 0.5 * drag[k]; end
+
+        # ── accumulate forces to nodes (manual loops — no broadcast allocs) ──
+        nid_a = ss.end_a.node_id
+        nid_b = ss.end_b.node_id
+        @inbounds for k in 1:3
+            forces[nid_a][k] += hdrag[k]
+            forces[nid_b][k] += hdrag[k]
+        end
+
+        # ── spring force + torque ──
         if ss.end_a.is_ring
-            node_a = sys.nodes[ss.end_a.node_id]::RingNode
-            ri_a = node_a.ring_idx
-            ctr_a = u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
-            r_vec_a = pa .- ctr_a
-            for k in 1:3
-                forces[ss.end_a.node_id][k] += F_vec[k]
+            ri_a = ri_a_p  # from position block above
+            ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
+            @inbounds for k in 1:3
+                r_a[k] = pa[k] - ctr_a_view[k]
+                forces[nid_a][k] += F_vec[k]
             end
-            torques[ri_a] += dot(cross(r_vec_a, F_vec), shaft_dir)
+            torques[ri_a] += (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
+                             (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
+                             (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
         else
-            for k in 1:3
-                forces[ss.end_a.node_id][k] += F_vec[k]
-            end
+            @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
         end
 
         if ss.end_b.is_ring
-            node_b = sys.nodes[ss.end_b.node_id]::RingNode
-            ri_b = node_b.ring_idx
-            ctr_b = u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
-            r_vec_b = pb .- ctr_b
-            for k in 1:3
-                forces[ss.end_b.node_id][k] -= F_vec[k]
+            ri_b = ri_b_p  # from position block above
+            ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
+            @inbounds for k in 1:3
+                r_b[k] = pb[k] - ctr_b_view[k]
+                forces[nid_b][k] -= F_vec[k]
             end
-            torques[ri_b] += dot(cross(r_vec_b, -F_vec), shaft_dir)
+            torques[ri_b] += (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
+                             (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
+                             (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
         else
-            for k in 1:3
-                forces[ss.end_b.node_id][k] -= F_vec[k]
-            end
+            @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
         end
     end
 end
