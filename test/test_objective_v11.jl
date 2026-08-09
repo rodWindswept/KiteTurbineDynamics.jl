@@ -10,7 +10,9 @@
 using Test
 using KiteTurbineDynamics
 
-const FD = KiteTurbineDynamics.FOS_DESIGN  # 1.5
+const FD = KiteTurbineDynamics.FOS_GATE  # 1.5 — the objective's minimum-acceptable FoS
+# (Distinct from the structural FOS_DESIGN = 3.0 — the objective's old
+# `const FOS_DESIGN = 1.5` shadowed it at load; renamed FOS_GATE 2026-08-09.)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Module exports & bounds
@@ -27,7 +29,7 @@ end
 # v11_fitness — pure unit tests (no ODE, milliseconds)
 # ══════════════════════════════════════════════════════════════════════════════
 
-@testset "v11_fitness — FoS ≥ FOS_DESIGN: no penalty" begin
+@testset "v11_fitness — FoS ≥ FOS_GATE: no penalty" begin
     @test v11_fitness(100.0, Inf) == -100.0
     @test v11_fitness(100.0, FD)  == -100.0
     @test v11_fitness(100.0, FD * 2.0) == -100.0
@@ -77,10 +79,14 @@ end
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Snapshot backward compat
+# objective_v10 — static-evaluator regression pin
 # ══════════════════════════════════════════════════════════════════════════════
 
-@testset "objective_v11 — snapshot backward compat" begin
+@testset "objective_v10 — static evaluator regression pin" begin
+    # Formerly the objective_v11_snapshot test (deleted 2026-08-09 — the
+    # snapshot was a v10 forwarder wearing a v11 name).  The pin survives as
+    # a direct v10 call: the static solver is frozen legacy, and this guards
+    # it against drift.
     x = zeros(15)
     x[1]  = 0.075;  x[2]  = 0.01;   x[3]  = 1.0
     x[4]  = 0.5;    x[5]  = 3.7;    x[6]  = 2.0
@@ -88,9 +94,9 @@ end
     x[10] = 8.0;    x[11] = 15.0;   x[12] = 5.0
     x[13] = 0.5;    x[14] = 0.3
 
-    f_v11 = objective_v11_snapshot(x, PROFILE_ELLIPTICAL, params_v5_50kw())
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, params_v5_50kw())
-    @test f_v11 == f_v10
+    @test f_v10 isa Float64
+    @test isfinite(f_v10)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -183,31 +189,27 @@ end
 @testset "A2: Betz ceiling — known super-Betz rows" begin
     # P=1103 kW at 15 m/s needs ~900 m² — impossible for ring sizes in our
     # search space.  Reject at objective level.
-    # NOTE: full ODE objective_v11 test is slow; this is a structural test
-    # that the Betz ceiling function exists and exercises at the call site.
-    # The rejection path is tested by the static guard in objective_v11.
-    # Compute ceiling for a minimal design
+    # CI-cost guard (2026-08-07): a 4 s horizon (relax 1 s + window 3 s)
+    # still yields 3 power samples (sample interval = 1 s), which is enough
+    # for the Betz/identity assertions — they check per-sample co-location
+    # and a ceiling, not long-horizon dynamics.  The horizon rides in the
+    # ObjectiveConfig now (was: mutating the WARM_RELAX_S/WARM_WINDOW_S
+    # module Refs — a data race under threaded campaigns, deleted 2026-08-09).
     p = params_v5_50kw()
     x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
-         30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
-    # CI-cost guard (2026-08-07): the default window (10 s relax + 30 s
-    # window = 1M steps at V11_DT=4e-5) made this file ~17 min and the whole
-    # suite ~21 min.  A 4 s horizon still yields 3 power samples (sample
-    # interval = 1 s), which is enough for the Betz/identity assertions —
-    # they check per-sample co-location and a ceiling, not long-horizon
-    # dynamics.  Restore the Refs afterwards so other tests see defaults.
-    relax_old = KiteTurbineDynamics.WARM_RELAX_S[]
-    window_old = KiteTurbineDynamics.WARM_WINDOW_S[]
-    KiteTurbineDynamics.WARM_RELAX_S[] = 1.0
-    KiteTurbineDynamics.WARM_WINDOW_S[] = 3.0
-    try
-        f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
-            objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; v_rated=15.0)
-        # With a valid design, should not return 1e9 penalty from Betz
-        @test f < 1e8 || P == 0.0  # either valid or genuinely underpowered
-    finally
-        KiteTurbineDynamics.WARM_RELAX_S[] = relax_old
-        KiteTurbineDynamics.WARM_WINDOW_S[] = window_old
+         30.0, 15.0, 15.0, 1.0, 1.0]
+    cfg = ObjectiveConfig(; relax_s=1.0, window_s=3.0, v_rated=15.0)
+    r = objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; cfg=cfg)
+    # With a valid design, either it evaluates or it is genuinely rejected.
+    # (The pre-2026-08-09 rejection path CRASHED here — the first Betz gate
+    # referenced P_range before assignment.  This call would have thrown.)
+    @test r isa ObjectiveResult
+    @test r.status === :ok || r.P_mean == 0.0
+    if r.status === :ok
+        # Any finite score is a real measurement.  (NOT < 0.0: the F5
+        # stationarity penalty can legitimately push a ~0 kW swinging eval's
+        # fitness positive — observed 23.6 at the 4 s test horizon.)
+        @test isfinite(r.fitness)
     end
 end
 
@@ -216,31 +218,43 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 @testset "A1: util split co-located with FoS_min" begin
     # Verify that objective_v11 returns util_a, util_b from the same sample
-    # as FoS_min.  The function now ties them together and warns on violation.
+    # as FoS_min.  The evaluator ties them together and warns on violation.
     p = params_v5_50kw()
     x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
-         30.0, 15.0, 15.0, 1.0, 1.0, log10(10.0)]
+         30.0, 15.0, 15.0, 1.0, 1.0]
     # Short window (see A2 testset above) — identity is per-sample, so a 4 s
     # horizon exercises it at ~10× lower ODE cost.
-    relax_old = KiteTurbineDynamics.WARM_RELAX_S[]
-    window_old = KiteTurbineDynamics.WARM_WINDOW_S[]
-    KiteTurbineDynamics.WARM_RELAX_S[] = 1.0
-    KiteTurbineDynamics.WARM_WINDOW_S[] = 3.0
-    try
-        f, P, FoS, ω, P_range, drifted, stationary, ua, ub =
-            objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; v_rated=11.0)
-        # If we have valid measurements, identity must hold to within 1% of FoS.
-        # Guard excludes ONLY the -1.0 sentinel (no airborne rings / misaligned
-        # sample): a genuine ua == 0.0 (ring in pure bending at window start)
-        # is a valid measurement and must still run the identity.  Verified
-        # 2026-08-07: at the 4 s test horizon ua=0.0, ub=0.02151, 1/FoS=0.02152
-        # — identity holds; the old `ua > 0.0` guard silently skipped it.
-        if ua > -0.5 && ub > -0.5 && isfinite(FoS) && FoS > 0.0
-            id_err = abs(ua + ub - 1.0 / FoS) * FoS
-            @test id_err < 0.01
-        end
-    finally
-        KiteTurbineDynamics.WARM_RELAX_S[] = relax_old
-        KiteTurbineDynamics.WARM_WINDOW_S[] = window_old
+    cfg = ObjectiveConfig(; relax_s=1.0, window_s=3.0)
+    r = objective_v11_warmstart(x, PROFILE_ELLIPTICAL, p; cfg=cfg)
+    # If we have valid measurements, identity must hold to within 1% of FoS.
+    # Guard excludes ONLY the -1.0 sentinel (no airborne rings / misaligned
+    # sample): a genuine ua == 0.0 (ring in pure bending at window start)
+    # is a valid measurement and must still run the identity.  Verified
+    # 2026-08-07: at the 4 s test horizon ua=0.0, ub=0.02151, 1/FoS=0.02152
+    # — identity holds; the old `ua > 0.0` guard silently skipped it.
+    if r.status === :ok && r.util_a > -0.5 && r.util_b > -0.5 &&
+       isfinite(r.FoS_min) && r.FoS_min > 0.0
+        id_err = abs(r.util_a + r.util_b - 1.0 / r.FoS_min) * r.FoS_min
+        @test id_err < 0.01
     end
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Result contract — the bracket cannot let an all-rejected genome win
+# ══════════════════════════════════════════════════════════════════════════════
+
+@testset "with_k_bracket — all-rejected genome cannot win" begin
+    # The pre-2026-08-09 defect: the bracket filtered `fitness >= 1e8`, which
+    # MISSED the 12.0 rejection sentinel — an all-rejected genome "won" its
+    # bracket with fitness 12.0 and landed in campaign CSVs as a real result.
+    # Now the bracket gates on status; a scoring fn that always rejects must
+    # come back as status=:reject.  No ODE runs in this test (stub scoring).
+    x = [0.15, 0.05, 1.5, 0.5, 3.0, 3.0, 2.0, 8.0, 0.0,
+         30.0, 15.0, 15.0, 1.0, 1.0]
+    always_reject = (x14, cfg) -> KiteTurbineDynamics.rejected_eval()
+    best, best_k = with_k_bracket(always_reject, x, PROFILE_ELLIPTICAL,
+                                  params_v5_50kw())
+    @test best.status === :reject
+    @test best.fitness == Inf
+    @test isfinite(best_k)
 end

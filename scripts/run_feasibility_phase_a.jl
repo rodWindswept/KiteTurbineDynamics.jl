@@ -36,10 +36,13 @@ lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
 const LIFT_DEVICE = lift_for
 
 const GIT_HASH    = strip(read(`git -C $(dirname(@__DIR__)) rev-parse --short HEAD`, String))
-const PHYSICS_ERA = "post-4894787_f4b-taper-reconcile_nrings1_decayck"
+const PHYSICS_ERA = "post-20260809-evaluator-consolidation"
 
 # ── F5 measurement horizon ────────────────────────────────────────────────
-KiteTurbineDynamics.WARM_RELAX_S[] = 120.0
+# (The old `KiteTurbineDynamics.WARM_RELAX_S[] = 120.0` global mutation is
+# GONE — per-eval horizons ride in the ObjectiveConfig passed to the bracket,
+# see _warmstart_at_relax below.  The module-level Refs were deleted
+# 2026-08-09: mutating them inside a threaded DE loop was a data race.)
 
 const OUT_DIR = joinpath(@__DIR__, "results", "recampaign")
 const OUT_CSV = joinpath(OUT_DIR, "feasibility_phase_a_v3.csv")
@@ -63,38 +66,60 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 function _warmstart_at_relax(x, relax_s)
-    """Run warmstart_with_k_bracket at a specific WARM_RELAX_S."""
-    old = KiteTurbineDynamics.WARM_RELAX_S[]
-    KiteTurbineDynamics.WARM_RELAX_S[] = relax_s
-    try
-        return KiteTurbineDynamics.warmstart_with_k_bracket(
-            x, BEAM, P_BASE;
-            power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE)
-    finally
-        KiteTurbineDynamics.WARM_RELAX_S[] = old
-    end
+    """Run warmstart_with_k_bracket at a specific relax horizon.
+
+    The horizon rides in an ObjectiveConfig (per-eval, immutable) — no module
+    global is mutated, so this is safe inside the threaded DE loop.  The old
+    implementation wrote KiteTurbineDynamics.WARM_RELAX_S[] per-eval while
+    worker threads read the same Ref: thread A's 30 s quick-check could read
+    thread B's 120 s value (2026-08-09 architecture audit)."""
+    cfg = KiteTurbineDynamics.ObjectiveConfig(; relax_s=relax_s)
+    best, k_chosen = KiteTurbineDynamics.warmstart_with_k_bracket(
+        x, BEAM, P_BASE;
+        power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE,
+        cfg=cfg)
+    return best, k_chosen
 end
 
 function evaluate_genome(x)
     x_copy = copy(x)
     try
         # Phase 1: 30s quick-check — abort decaying designs early
-        f_v11_30, k30, P_30, FoS_30, ω30, Pr30, dr30, st30, ua30, ub30, Tl30 =
-            _warmstart_at_relax(x_copy, 30.0)
+        best30, k30 = _warmstart_at_relax(x_copy, 30.0)
+        f_v11_30 = best30.fitness
+        P_30 = best30.P_mean
+        FoS_30 = best30.FoS_min
+        ω30 = best30.ω_eq
+        Pr30 = best30.P_range
+        dr30 = best30.drifted
+        st30 = best30.stationary
+        ua30 = best30.util_a
+        ub30 = best30.util_b
+        Tl30 = best30.T_lift
 
         # Decay checkpoint: if power is already negligible at 30s, abort
-        if P_30 < DECAY_P_THRESHOLD
+        # (a rejected bracket also lands here — its row is written with the
+        # status flag so it cannot be mistaken for a real measurement)
+        if P_30 < DECAY_P_THRESHOLD || best30.status !== :ok
             f_feas = objective_feasibility(P_30, FoS_30; P_cap=P_CAP, P_floor=P_FLOOR,
                                            FoS_design=FOS_DESIGN, P_range=Pr30)
-            tier = P_30 < P_FLOOR ? "stalled" : "feasibility"
+            tier = "decay_30s"
             return (f_v11_30, k30, P_30, FoS_30, ω30, Pr30, dr30, st30,
-                    ua30, ub30, Tl30, f_feas, "decay_30s", true)
+                    ua30, ub30, Tl30, f_feas, tier, best30.status === :ok)
         end
 
         # Phase 2: full 120s evaluation for promising designs
-        f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
-            util_a, util_b, T_lift =
-            _warmstart_at_relax(x_copy, 120.0)
+        best, k_chosen = _warmstart_at_relax(x_copy, 120.0)
+        f_v11 = best.fitness
+        P_mean = best.P_mean
+        FoS_min = best.FoS_min
+        ω_eq = best.ω_eq
+        P_range = best.P_range
+        drifted = best.drifted
+        stationary = best.stationary
+        util_a = best.util_a
+        util_b = best.util_b
+        T_lift = best.T_lift
 
         f_feas = objective_feasibility(P_mean, FoS_min; P_cap=P_CAP, P_floor=P_FLOOR,
                                        FoS_design=FOS_DESIGN, P_range=P_range)
@@ -102,7 +127,7 @@ function evaluate_genome(x)
                FoS_min < FOS_DESIGN ? "feasibility" : "feasible"
 
         return (f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary,
-                util_a, util_b, T_lift, f_feas, tier, true)
+                util_a, util_b, T_lift, f_feas, tier, best.status === :ok)
     catch e
         @warn "genome eval threw" exception=(e, catch_backtrace())
         return (Inf, 0.0, 0.0, Inf, 0.0, 0.0, true, false,

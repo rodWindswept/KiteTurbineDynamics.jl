@@ -1,15 +1,18 @@
 # src/objective_v11.jl
 #
 # V11: Windowed dynamic objective with k_mppt owned by the warm-start bracket.
-# Replaces the static equilibrium solver from v10 with an ODE window
-# protocol: settle → kickstart → 60 s MPPT window → window-mean P_kw
-# and window-min FoS scoring.
 #
-# Design vector (14 DoF): the V10 genome.  x15 (log₁₀ k_mppt) was removed
-# 2026-08-07 (S1 audit) — the bracket overwrote it before every eval, so it
-# was a dead search dimension.  k is chosen by warmstart_with_k_bracket
-# (λ²-scaled prior × {0.5, 1, 2}, clamped to K_MPPT_MAX) and passed to the
-# objective as its internal x[15] channel.
+# Since 2026-08-09 this file is a thin adapter over the shared windowed
+# evaluator (src/objective_evaluator.jl).  The protocol — build → start →
+# window ODE run → gates → score — lives there, once.  This file contributes
+# what is genuinely V11: the search space (14-D V10 genome), the fitness
+# function, and the versioned entry points.
+#
+# The fitness seam: `fitness_fn(P_mean, FoS_min, cfg)`.  A non-finite return
+# is a hard rejection.  k comes from `cfg.k_mppt` — never from the genome.
+# A legacy 15-D vector (x[15] = log₁₀ k_mppt) is still accepted and sliced;
+# the slot is inert (S1 audit 2026-08-07: the bracket overwrote it before
+# every eval, so it was a dead search dimension).
 #
 # Reference: PRD 0007 Gate 3 (docs/prd/0007-gate3-spec.md)
 
@@ -24,7 +27,7 @@
 # 14-D search space: the V10 genome (Do_top … λ_bottom).  x15 (log₁₀ k_mppt)
 # was removed 2026-08-07 (S1 audit): warmstart_with_k_bracket overwrote it
 # before every eval, so the DE's 15th gene had zero fitness effect and only
-# railed at a bound.  k is now owned solely by the bracket's λ²-scaled prior.
+# railed at a bound.  k is owned solely by the bracket's λ²-scaled prior.
 const TRPT_V11_DIM = 14
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -40,112 +43,7 @@ function search_bounds_v11(
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ODE window protocol — constants matching Gate 1 sensitivity script
-# ══════════════════════════════════════════════════════════════════════════════
-
-const WINDOW_S    = 60.0   # scoring window after transient
-const DISCARD_S   = 30.0   # transient discard before window
-const WIND_MS     = 11.0   # rated wind speed
-const FOS_DESIGN  = 1.5    # minimum acceptable FoS
-# Stationarity soft penalty (F5, 2026-08-07): the DE must not be rewarded for
-# transient power peaks.  A design whose window power swings wider than 20% of
-# its mean pays λ per unit of excess swing ratio, so a steady 40 kW outranks a
-# swinging 44 kW even though both pass the FoS gate.  The GREEN gate still
-# requires stationary=true; this only shapes the search toward it.
-const STATIONARITY_LAMBDA = 10.0
-const STATIONARITY_SWING = 0.20   # matches the gate's P_range/P_mean < 0.20
-# MPPT gain clamp ceiling (S2, 2026-08-07): widened from 1000 so the k-bracket
-# can bracket near the old ceiling — previously the optimum railed at 1000 and
-# the bracket's three points collapsed onto one value.
-const K_MPPT_MAX = 5000.0
-const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff system)
-                            # Each evaluation: ~90s sim / 4e-5 = 2.25M steps
-                            # Wall time: ~10-30 min depending on system size.
-                            # Gate 3 is a verification gate, not a full-campaign evaluator.
-
-# ══════════════════════════════════════════════════════════════════════════════
-# System builder — adapted from builders_util.jl:build_v10_tight_no_lowest
-# ══════════════════════════════════════════════════════════════════════════════
-
-function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
-    (; design, rotors, n_rings) = result
-    n_lines = design.n_lines
-    n_exp = length(rotors)
-
-    # Build expansion rotor params (Gate 1c: n_blades = n_lines)
-    sys_n_rings_total = n_rings + 2
-    expansion_params = ExpansionRotorParams[]
-    for rotor in rotors
-        sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
-        er = ExpansionRotorParams(
-            n_lines,
-            rotor.blade_tip_radius * blade_scale,
-            rotor.blade_hub_radius * blade_scale,
-            rotor.blade_chord * blade_scale,
-            EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, blade_scale),
-            sys_ring, 1.0,
-        )
-        push!(expansion_params, er)
-    end
-
-    p_base = params_v5_50kw()
-    tether_diameter = 0.003
-    le = blade_scale
-
-    # Compute design-aware per-ring mass from actual tube geometry instead of
-    # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
-    # and get free structural stiffness with zero mass penalty — producing
-    # campaigns that report green but design physically impossible machines.
-    # Tube: Do = Do_top × (r/r_hub)^Do_scale_exp, t = t_over_D × Do.
-    # Mass per ring ≈ n_lines × ρ_cfrp × π × Do × t × L_beam
-    # Use the average ring radius (linear taper) for a representative value.
-    # NOTE: taper exponent comes from the genome (Do_scale_exp, x4), matching
-    # the structural analysis — previously hard-coded √R (0.5), which let the
-    # DE pick exp=1.0 for free (2026-08-07, F4b audit).
-    r_avg = 0.5 * (design.r_hub + design.r_bottom)
-    Do_avg = design.Do_top * (r_avg / design.r_hub)^design.Do_scale_exp
-    t_avg = design.t_over_D * Do_avg
-    L_avg = 2.0 * r_avg * sin(π / design.n_lines)
-    ρ_cfrp = 1600.0  # kg/m³ — matches SpacerRingDesign default
-    area_avg = π / 4.0 * (Do_avg^2 - (Do_avg - 2t_avg)^2)
-    m_ring_design = design.n_lines * ρ_cfrp * area_avg * L_avg
-    m_ring_design = max(m_ring_design, 0.05)  # floor: 50 g
-
-    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
-                       design.tether_length, design.r_hub,
-                       p_base.trpt_rL_ratio,
-                       n_lines, n_rings, n_lines)
-    mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
-                       p_base.m_blade * le^2)
-    aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
-    ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
-                       p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
-    back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
-    pc = SystemParams(geo, mat, aero, ctrl, back)
-
-    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
-
-    # Populate ring beam geometry from the genome so ring_element_analysis uses
-    # the DE's Do_top/t_over_D rather than falling through to the hard-coded
-    # 0.01396×√R legacy scaling.  (2026-08-05: absent since V10 — the DE was
-    # optimising a dead parameter.  See builders_util.jl:130 for the parallel
-    # path that the acceptance-test tight builder did have.)
-    # Do_scale_exp (x4) and r_hub (x5) ride along so analyse_ring's campaign
-    # path (design === nothing) reproduces the design path's taper law
-    # Do(r) = Do_top·(r/r_hub)^exp exactly (2026-08-07, F4b audit).
-    sys.ring_Do_top[]       = design.Do_top
-    sys.ring_toverD[]       = design.t_over_D
-    sys.ring_aspect_ratio[] = design.beam_aspect
-    sys.ring_Do_scale_exp[] = design.Do_scale_exp
-    sys.ring_r_hub[]        = design.r_hub
-
-    return sys, u0, pc
-end
-
-# ══════════════════════════════════════════════════════════════════════════════
-# V11 objective — windowed ODE evaluator
+# V11 fitness — pure scoring (tested in isolation)
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
@@ -159,17 +57,23 @@ Monotonicity properties:
   ∂fitness/∂P  < 0  always
 """
 function v11_fitness(P_mean::Float64, FoS_min::Float64)::Float64
-    fos_penalty = FoS_min < FOS_DESIGN ? FOS_DESIGN / FoS_min : 1.0
+    fos_penalty = FoS_min < FOS_GATE ? FOS_GATE / FoS_min : 1.0
     return -P_mean / fos_penalty
 end
 
+# ══════════════════════════════════════════════════════════════════════════════
+# V11 cold-start objective — scalar fitness (settle → kickstart → 60 s window)
+# ══════════════════════════════════════════════════════════════════════════════
+
 """
-    objective_v11(x, beam_profile, p; power_W, v_rated, spoke, ...)
+    objective_v11(x, beam_profile, p; k_mppt, power_W, v_rated, spoke, ...)
 
-Scalar fitness for the V11 DE optimiser.  Returns negative window-mean P_kw
-multiplied by a FoS penalty (DE minimises → more negative = better).
+Scalar fitness for the V11 DE optimiser (DE minimises → more negative =
+better).  The window protocol — settle → kickstart → 60 s window @ 1 Hz →
+score — is `evaluate_windowed` with `start_mode=:cold`.  Rejected genomes
+return `Inf` (check with `isfinite`).
 
-The window protocol: settle → kickstart → 60 s window @ 1 Hz → score.
+`k_mppt` is an explicit keyword (was: a phantom x[15] genome slot).
 """
 function objective_v11(
     x::AbstractVector,
@@ -183,144 +87,36 @@ function objective_v11(
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
     # system exists, so the device can be sized to this genome's airborne mass.
     lift_device::Union{Nothing,LiftDevice,Function}=nothing,
+    k_mppt::Float64=10.0,
 )
-    # ── Decode genome ────────────────────────────────────────────────────
-    result = design_from_vector_v10(
-        x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
-    )
-    if result.n_active == 0
-        return 1e9  # no rotors = infeasible
-    end
-
-    # n_rings gate — require at least 1 intermediate ring (matching warmstart path).
-    if result.n_rings < 1
-        return 1e9
-    end
-
-    k_mppt = 10.0^x[15]
-    k_mppt = clamp(k_mppt, 0.01, K_MPPT_MAX)  # safety clamp
-
-    # ── Build ODE system ─────────────────────────────────────────────────
-    # Use blade_scale = 1.0 — the genome's λ values already scale blades
-    # via design_from_vector_v10's RotorSpecV10.blade_tip_radius etc.
-    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
-
-    # Resolve a design-aware lift device (mirrors warmstart path at :320).
-    # CRITICAL: hand it `pc`, not `p` — `pc` carries this genome's n_lines,
-    # n_rings, tether_length and blade-scaled m_blade.
-    lift_dev = lift_device isa Function ? lift_device(sys, pc) : lift_device
-
-    # ── Wind function ────────────────────────────────────────────────────
-    function wf(pos, t)
-        z = max(pos[3], 1.0)
-        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
-    end
-
-    # ── Settle ───────────────────────────────────────────────────────────
-    u_settled = nothing
-    try
-        u_settled = settle_to_operational_state(
-            sys, copy(u0), pc, 60.0; wind_fn=wf, lift_device=lift_dev
-        )
-    catch e
-        @warn "Settle failed for genome" exception = e
-        return 1e9
-    end
-    if u_settled === nothing
-        return 1e9
-    end
-
-    # ── Kickstart — brief PTO reversal to spin the rotor ─────────────────
-    orig_k = sys.k_mppt_ref[]
-    try
-        # PTO torque reversal: set k negative momentarily to motor the rotor
-        sys.k_mppt_ref[] = -60.0  # N·m·s²/rad² — motor torque
-        kick_steps = round(Int, 2.0 / V11_DT)  # 2 s kick
-        run_canonical_sim!(
-            u_settled, sys, pc, wf, kick_steps, V11_DT;
-            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
-        )
-    catch e
-        @warn "Kickstart failed" exception = e
-        sys.k_mppt_ref[] = orig_k
-    end
-    sys.k_mppt_ref[] = orig_k  # restore MPPT k
-
-    # ── Window sim ───────────────────────────────────────────────────────
-    total_s = DISCARD_S + WINDOW_S
-    total_n = round(Int, total_s / V11_DT)
-    sample_interval = round(Int, 1.0 / V11_DT)
-
-    P_samples = Float64[]
-    fos_samples = Float64[]
-
-    function window_callback(uc, tc, s)
-        t_cum = s * V11_DT
-        if t_cum > DISCARD_S && s % sample_interval == 0
-            ef = capture_extended(
-                uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
-            )
-            push!(P_samples, ef.base.P_kw)
-            airborne = Float64[]
-            for i in 2:length(ef.ring_fos)
-                v = ef.ring_fos[i]
-                (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
-            end
-            push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
-        end
-    end
-
-    try
-        run_canonical_sim!(
-            u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
-        )
-    catch e
-        @warn "Window sim failed" exception = e
-        return 1e9
-    end
-
-    # ── Score ────────────────────────────────────────────────────────────
-    P_score = isempty(P_samples) ? 0.0 : mean(P_samples)
-    FoS_score = isempty(fos_samples) || all(isinf.(fos_samples)) ? Inf : minimum(fos_samples)
-    return v11_fitness(P_score, FoS_score)
+    cfg = ObjectiveConfig(; k_mppt=k_mppt, relax_s=DISCARD_S, window_s=WINDOW_S,
+                          power_W=power_W, v_rated=v_rated)
+    return evaluate_windowed(x, beam_profile, p, cfg;
+        start_mode=:cold, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
+        lift_device=lift_device, fitness_fn=(P, F, c) -> v11_fitness(P, F)).fitness
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Warm-start v11 — skip startup theater, start ODE from static equilibrium
+# V11 warmstart — static pre-solve → relax + measurement window
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Warm-start scoring window.  Held in Refs (not consts) so diagnostics can sweep
-# the relaxation time without a source edit or a precompile-cache flush.
-# Defaults are the historical values — behaviour is unchanged unless set.
-#
-# NOTE (2026-08-05): WARM_RELAX_S = 10.0 is one third of the cold path's
-# DISCARD_S = 30.0.  Any design whose start-up transient outlasts 10 s is still
-# decaying throughout the whole 30 s measurement window, which inflates P_range
-# and makes the stationarity gate's amplitude test (P_range/P_mean < 0.20)
-# unpassable for reasons that are numerical, not physical.  The window comment
-# below ("signal is in departure") is in direct tension with applying a
-# stationarity gate to the same window.  See scripts/diagnose_relax_sensitivity.jl.
-const WARM_RELAX_S = Ref(10.0)   # relaxation after warm-start init
-const WARM_WINDOW_S = Ref(30.0)  # measurement window (shorter — signal is in departure)
-
 """
-    objective_v11_warmstart(x, beam_profile, p; spoke, ...)
+    objective_v11_warmstart(x, beam_profile, p; cfg, spoke, ...) -> ObjectiveResult
 
-Warm-start v11 variant for anchor evaluation.  Skips settle + kickstart:
-runs the static solver (solve_equilibrium_self_consistent) to get ω_eq,
-initialises the ODE at that equilibrium, then runs 10 s relaxation + 30 s
-measurement window.
+Warm-start variant for anchor evaluation.  Skips settle + kickstart: runs the
+static solver (solve_equilibrium_self_consistent) to get ω_eq, initialises
+the ODE at that equilibrium, then runs `cfg.relax_s` relaxation + a
+`cfg.window_s` measurement window.
 
-Returns (fitness, P_mean, FoS_min, omega_eq, window_P_range, drift_flag).
-Caller runs a 3-point k-bracket and keeps the best.
+Returns an `ObjectiveResult` (gate on `status`; `status == :reject` means the
+eval produced no real result).  `cfg.k_mppt` replaces the x[15] channel —
+the bracket passes it.
 """
 function objective_v11_warmstart(
     x::AbstractVector,
     beam_profile::BeamProfile,
     p::SystemParams;
-    power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    cfg::ObjectiveConfig=ObjectiveConfig(),
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
@@ -330,298 +126,17 @@ function objective_v11_warmstart(
     lift_device::Union{Nothing,LiftDevice,Function}=nothing,
     # Diagnostic tap.  Called every ODE step as trace_callback(u, t, step, ctx)
     # where ctx = (; sys, pc, wf, lift_device).  Scoring is unaffected — the
-    # window sampling below runs exactly as it does without a tap, so a traced
+    # window sampling runs exactly as it does without a tap, so a traced
     # eval and an untraced eval return identical numbers.  Decimate inside the
     # callback; this fires at full step rate.
     trace_callback::Union{Nothing,Function}=nothing,
 )
-    # ── Decode genome ────────────────────────────────────────────────────
-    result = design_from_vector_v10(
-        x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated
-    )
-    if result.n_active == 0
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    k_mppt = 10.0^x[15]
-    k_mppt = clamp(k_mppt, 0.01, K_MPPT_MAX)
-
-    (; design, rotors, n_rings, zs) = result
-    n_lines = design.n_lines
-
-    # n_rings gate — require at least 1 intermediate (flown) ring.
-    # n_rings = 1 → 3 total rings (ground + 1 flown + hub).  The hub ring
-    # carries the topmost expansion rotor; intermediate rings transmit torque
-    # to ground.  Lower bound removed per Rod (2026-08-08): if a 1-ring TRPT
-    # works, that's a valid result — the DE should find it.
-    if n_rings < 1
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # ── Build ODE system ─────────────────────────────────────────────────
-    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
-
-    # Resolve a design-aware lift device.  Passing a Function lets the caller
-    # size the device from the system that was just built — necessary because a
-    # design-aware lifter needs this genome's airborne mass, which does not exist
-    # until `sys` does.  A plain LiftDevice is used as-is.
-    #
-    # CRITICAL: hand it `pc`, NOT `p`.  `p` is the shared base SystemParams; `pc`
-    # (from build_system_from_v10 above) is the one carrying THIS genome's
-    # n_lines, n_rings, tether_length and blade-scaled m_blade.  Sizing against
-    # `p` would compute the same mass for every genome — reintroducing exactly
-    # the design-blind lift this change exists to remove.
-    lift_dev = lift_device isa Function ? lift_device(sys, pc) : lift_device
-
-    # ── Static equilibrium solve (same path as objective_v10:374) ────────
-    expansion_params_v10 = ExpansionRotorParams[]
-    for rotor in rotors
-        er = ExpansionRotorParams(
-            n_lines, rotor.blade_tip_radius, rotor.blade_hub_radius,
-            rotor.blade_chord, EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius, rotor.blade_scale),
-            rotor.ring_idx, 1.0,
-        )
-        push!(expansion_params_v10, er)
-    end
-
-    _, radii, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
-        density_profile=design.density_profile,
-    )
-
-    λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
-    k_mppt_eff = p.k_mppt * λ_eff^2  # λ²-scaling for static solver
-    p_scaled = override_params(p; k_mppt=k_mppt_eff)
-
-    ω_eq, r_ref = solve_equilibrium_self_consistent(
-        design, expansion_params_v10, p_scaled, n_lines, radii, zs;
-        P_per_rotor=power_W / max(result.n_active, 1),
-        v_wind=v_rated, elev_rad=elev_angle,
-    )
-
-    if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
-        return (12.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # ── Settle rope geometry from ODE ────────────────────────────────────
-    function wf(pos, t)
-        z = max(pos[3], 1.0)
-        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
-    end
-
-    u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
-    if any(isnan.(u_settled)) || any(isinf.(u_settled))
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # ── Set ring angular velocities and orbital velocities ─────────────
-    N = sys.n_total
-    Nr = sys.n_ring
-    # Ring twist rates: u[6N+Nr+1:6N+2Nr]
-    u_settled[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq
-    # Set ring node orbital velocities: v = ω_eq × r tangential
-    # Without this, spinning rings + zero node velocity = violent transient
-    # that produces spurious FoS collapse and power overshoot (ref:
-    # recheck_12gon_convergence.jl:74-84).
-    for ri in 1:Nr
-        gid = sys.ring_ids[ri]
-        pos = u_settled[(3*(gid-1)+1):(3*gid)]
-        r = norm(pos)
-        if r > 0.01
-            tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
-            vx_idx = 3*N + 3*(gid-1) + 1
-            u_settled[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
-        end
-    end
-
-    # ── Set k_mppt for the ODE run ──────────────────────────────────────
-    sys.k_mppt_ref[] = k_mppt
-
-    # ── Run relaxation + window ─────────────────────────────────────────
-    total_s = WARM_RELAX_S[] + WARM_WINDOW_S[]
-    total_n = round(Int, total_s / V11_DT)
-    sample_interval = round(Int, 1.0 / V11_DT)
-
-    P_samples = Float64[]
-    fos_samples = Float64[]
-    util_a_samples = Float64[]  # worst-ring axial share per sample
-    util_b_samples = Float64[]  # worst-ring bending share per sample
-    T_lift_samples = Float64[]  # per-sample lift-line tension (S3: real N)
-
-    trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
-
-    function window_callback(uc, tc, s)
-        # Diagnostic tap runs first and is scoring-neutral.
-        trace_callback !== nothing && trace_callback(uc, tc, s, trace_ctx)
-
-        t_cum = s * V11_DT
-        if t_cum > WARM_RELAX_S[] && s % sample_interval == 0
-            # NOTE: lift_device passed through (was `nothing`).  In capture_frame
-            # the lift_device argument only populates T_lift/elev_lift/lift_margin/
-            # lift_type — it does NOT feed max_util, ring_fos or T_max, which come
-            # from the state vector and already include the lift force.  So P and
-            # FoS are unchanged by this; only the telemetry fields are now correct.
-            ef = capture_extended(
-                uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
-            )
-            push!(P_samples, ef.base.P_kw)
-            isfinite(ef.base.T_lift) && push!(T_lift_samples, ef.base.T_lift)
-            airborne = Float64[]
-            for i in 2:length(ef.ring_fos)
-                v = ef.ring_fos[i]
-                (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
-            end
-            push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
-            # Axial and bending shares at worst-FoS ring (A1 fix — always push
-            # to keep array lengths aligned with fos_samples)
-            if !isempty(airborne)
-                worst_idx = argmin(airborne) + 1  # +1 for 1-based indexing
-                if worst_idx <= length(ef.ring_util_axial)
-                    push!(util_a_samples, ef.ring_util_axial[worst_idx])
-                    push!(util_b_samples, ef.ring_util_bending[worst_idx])
-                else
-                    push!(util_a_samples, -1.0)
-                    push!(util_b_samples, -1.0)
-                end
-            else
-                push!(util_a_samples, -1.0)
-                push!(util_b_samples, -1.0)
-            end
-        end
-    end
-
-    try
-        run_canonical_sim!(
-            u_settled, sys, pc, wf, total_n, V11_DT;
-            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
-        )
-    catch e
-        @warn "Warm-start sim failed" exception = e
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # ── Score ────────────────────────────────────────────────────────────
-    # Filter NaN/Inf from samples before computing statistics
-    P_finite = [p for p in P_samples if isfinite(p) && p >= 0.0]
-    fos_finite = [f for f in fos_samples if isfinite(f) && f > 0.0]
-
-    if isempty(P_finite) || length(P_finite) < 2
-        # No valid power samples — simulation produced garbage
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    P_mean = mean(P_finite)
-
-    # Find FoS_min and its sample index in the original arrays (A1 fix).
-    # Was: FoS_min = minimum(fos_finite) — no index tracking, so util_a
-    # and util_b came from independent maxima rather than the FoS-min instant.
-    FoS_min = Inf
-    fos_idx_min = 0
-    for i in eachindex(fos_samples)
-        f = fos_samples[i]
-        if isfinite(f) && f > 0.0 && f < FoS_min
-            FoS_min = f
-            fos_idx_min = i
-        end
-    end
-
-    # Guard against astronomical P from numerical blowup
-    if !isfinite(P_mean) || P_mean > 1e6
-        return (12.0, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # Betz ceiling (A2 fix) — reject designs exceeding the physical power
-    # limit for their swept area.  Was: only P_mean > 1e6 (a 1 TW overflow
-    # trap, ~10 million × the machine's ceiling).  The 1103 kW row passed
-    # it untouched and contaminated later generations.
-    # NOTE: swept area = π·R² uses the airborne ring radius.  Rod should
-    # tune this if the multi-line annulus area (n_lines × blade annulus)
-    # is the intended reference area.
-    P_betz = (16.0 / 27.0) * 0.5 * p.rho * π * p.rotor_radius^2 * v_rated^3 / 1000.0
-    P_aero_peak = maximum(P_finite)
-    if P_mean > P_betz || P_aero_peak > P_betz
-        return (12.0, P_mean, FoS_min, ω_eq, P_range, true, false, -1.0, -1.0, 0.0)
-    end
-
-    # Betz ceiling — physical admissibility check.
-    # Total projected swept area: hub rotor + expansion rotors (banked area).
-    # Betz power ceiling: 0.593 × ½ρv³ × A_projected.  P_mean must not exceed
-    # 1.1× this ceiling (10% tolerance for transient overshoot during window).
-    A_total = π * p.rotor_radius^2  # hub rotor, face-on
-    for rotor in result.rotors
-        bank_rad = rotor.bank_angle_deg * π / 180.0
-        A_total += π * rotor.blade_tip_radius^2 * cos(bank_rad)
-    end
-    Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * v_rated^3 / 1000.0
-    if P_mean > 1.1 * Betz_ceiling_kW
-        return (1e9, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
-    end
-
-    P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
-    drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
-    # Axial and bending util at the FoS-min sample (A1 fix).
-    # Was: independent maxima over each array — util_a + util_b ≠ 1/FoS_min.
-    # Now: extract from the same ring at the same sample that produced FoS_min.
-    # Identity: util_a + util_b = 1/FoS_min for a single beam at a single instant.
-    if fos_idx_min > 0 && fos_idx_min <= length(util_a_samples) &&
-       fos_idx_min <= length(util_b_samples)
-        util_a = util_a_samples[fos_idx_min]
-        util_b = util_b_samples[fos_idx_min]
-        expected = 1.0 / FoS_min
-        if !isapprox(util_a + util_b, expected; rtol=0.01)
-            @warn "A1 identity check failed" util_a util_b sum=util_a+util_b expected FoS_min fos_idx_min
-        end
-    else
-        util_a = -1.0
-        util_b = -1.0
-    end
-
-    # Stationarity gate: split window into halves, check drift (trend)
-    # AND amplitude (steadiness).  A limit cycle with a stable mean is
-    # not stationary — it must not oscillate violently.
-    n = length(P_finite)
-    stationary = false
-    if n >= 4
-        mid = n ÷ 2
-        P1 = P_finite[1:mid]; P2 = P_finite[mid+1:end]
-        nf = length(fos_finite)
-        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01 &&
-           nf >= 4
-            mid_f = nf ÷ 2
-            F1 = fos_finite[1:mid_f]; F2 = fos_finite[mid_f+1:end]
-            # Drift: half-window means must be stable
-            dP = abs(mean(P1) - mean(P2)) / mean(P1)
-            dF = abs(minimum(F1) - minimum(F2)) / max(mean(F1), 0.01)
-            # Amplitude: the design must not oscillate wildly around its mean.
-            # P_range is already computed above; FoS_range from fos_finite.
-            FoS_range = length(fos_finite) >= 2 ?
-                maximum(fos_finite) - minimum(fos_finite) : 0.0
-            P_steady = P_mean > 0.1 ? P_range / P_mean < 0.20 : false
-            FoS_steady = FoS_min > 0.01 ? FoS_range / FoS_min < 0.20 : false
-            stationary = dP < 0.10 && dF < 0.10 && P_steady && FoS_steady
-        end
-    end
-
-    fitness = v11_fitness(P_mean, FoS_min)
-    # F5 stationarity soft penalty: excess swing (beyond the gate's 20% of
-    # mean) is ADDED to fitness so the DE prefers steady designs.
-    # v11_fitness is negative (more negative = better), so we ADD the penalty
-    # (making swinging designs worse, i.e. less negative).
-    swing = P_mean > 0.1 ? P_range / P_mean : 0.0
-    excess = max(0.0, swing - STATIONARITY_SWING)
-    fitness = fitness + STATIONARITY_LAMBDA * excess
-    drifted = drift > 0.20  # >20% drift = flagged
-
-    # S3: mean lift-line tension over the window (real newtons, per-genome —
-    # the sized lifter's T_ref scaled by (v/v_ref)²).  Falls back to the
-    # sized device's design-point T_ref when no samples landed.
-    T_lift_mean = isempty(T_lift_samples) ?
-        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0) :
-        mean(T_lift_samples)
-
-    return (fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift_mean)
+    # power_W/v_rated ride in cfg (they were kwargs on the old copy-pasted
+    # body; on the shared evaluator the config is the single source).
+    return evaluate_windowed(x, beam_profile, p, cfg;
+        start_mode=:warm, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
+        lift_device=lift_device, trace_callback=trace_callback,
+        fitness_fn=(P, F, c) -> v11_fitness(P, F))
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -629,12 +144,13 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 """
-    warmstart_with_k_bracket(x, beam_profile, p; spoke, ...)
+    warmstart_with_k_bracket(x, beam_profile, p; spoke, ...) -> (ObjectiveResult, k)
 
 Evaluate warm-start v11 at 3 k values around the λ²-scaled prior and return
-the best result.  Prior: k̂ = p.k_mppt * λ_eff².  Bracket: k̂·{0.5, 1, 2}.
-
-Returns (best_fitness, best_k, P_mean, FoS_min, omega_eq, P_range, drift).
+the best `(ObjectiveResult, k)` pair.  Prior: k̂ = p.k_mppt * λ_eff².  Bracket:
+k̂·{0.5, 1, 2}.  Rejected evals never win the bracket (status gate), so an
+all-rejected genome comes back as `status == :reject` — it can no longer
+land in a campaign CSV as a real result.
 """
 function warmstart_with_k_bracket(
     x::AbstractVector,
@@ -642,6 +158,7 @@ function warmstart_with_k_bracket(
     p::SystemParams;
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
+    cfg::Union{Nothing,ObjectiveConfig}=nothing,  # base tunables (relax/window/knobs)
     spoke::Union{Nothing,SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # bearing damper retention factor
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
@@ -649,80 +166,18 @@ function warmstart_with_k_bracket(
     # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
     lift_device::Union{Nothing,LiftDevice,Function}=nothing,
 )
-    # x is the 14-D search genome (S1: x15 removed from the search space).
-    # k is owned by this bracket; we append it as the objective's internal
-    # x[15] channel.  A legacy 15-D vector (with x15 present) is accepted and
-    # sliced — x[15] is overwritten by the bracket regardless, so it is inert.
-    (length(x) == TRPT_V11_DIM || length(x) == TRPT_V11_DIM + 1) ||
-        error("warmstart_with_k_bracket expects $TRPT_V11_DIM-D genome, got $(length(x))")
-    x14 = x[1:TRPT_V11_DIM]
-    result = design_from_vector_v10(
-        x14, beam_profile, p; power_W=power_W, v_rated=v_rated
-    )
-    λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
-    k_prior = p.k_mppt * λ_eff^2
-
-    best_fitness = Inf
-    best_k = k_prior
-    best_P = 0.0; best_FoS = Inf; best_ω = 0.0
-    best_P_range = 0.0; best_drifted = true; best_stationary = false
-    best_util_a = -1.0; best_util_b = -1.0
-    best_T_lift = 0.0
-
-    # S2: skip duplicate k_try values: when k_prior·0.5 > K_MPPT_MAX all three
-    # points collapse to the ceiling → three identical sims for one data point.
-    tried_k = Set{Float64}()
-    for k_scale in [0.5, 1.0, 2.0]
-        k_try = clamp(k_prior * k_scale, 0.01, K_MPPT_MAX)
-        k_try in tried_k && continue
-        push!(tried_k, k_try)
-
-        x_k = vcat(x14, [log10(k_try)])  # objective's internal x[15] = log₁₀ k
-
-        fitness, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, util_a, util_b, T_lift =
-            objective_v11_warmstart(x_k, beam_profile, p;
-                power_W=power_W, v_rated=v_rated, spoke=spoke,
-                lin_damp=lin_damp, lift_device=lift_device)
-
-        # Skip garbage evals (NaN/Inf blowup returns 1e9 sentinel)
-        if !isfinite(fitness) || fitness >= 1e8
-            continue
-        end
-
-        if fitness < best_fitness
-            best_fitness = fitness
-            best_k = k_try
-            best_P = P_mean
-            best_FoS = FoS_min
-            best_ω = ω_eq
-            best_P_range = P_range
-            best_drifted = drifted
-            best_stationary = stationary
-            best_util_a = util_a
-            best_util_b = util_b
-            best_T_lift = T_lift
-        end
-    end
-
-    return (best_fitness, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary, best_util_a, best_util_b, best_T_lift)
+    scoring = (x14, c) -> objective_v11_warmstart(x14, beam_profile, p;
+        cfg=c, spoke=spoke, lin_damp=lin_damp, lift_device=lift_device)
+    return with_k_bracket(scoring, x, beam_profile, p;
+        power_W=power_W, v_rated=v_rated, cfg=cfg)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Snapshot mode — backwards-compat single-point evaluation
+# Snapshot mode — deleted 2026-08-09
 # ══════════════════════════════════════════════════════════════════════════════
-
-"""
-    objective_v11_snapshot(x, beam_profile, p; ...)
-
-Backwards-compatible snapshot mode: single equilibrium point, no window.
-Returns the same fitness structure as objective_v10 for comparison.
-"""
-function objective_v11_snapshot(
-    x::AbstractVector,
-    beam_profile::BeamProfile,
-    p::SystemParams;
-    power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
-)
-    return objective_v10(x[1:14], beam_profile, p; power_W=power_W, v_rated=v_rated)
-end
+# objective_v11_snapshot was a 9-line forwarder to objective_v10 (a static
+# v10 alias wearing a v11 name).  With the evaluator consolidation the
+# "snapshot" concept is obsolete: v11 cold IS the windowed eval, v10 is the
+# static solver — different protocols, no equality to assert.  The v10
+# regression pin moved into test_objective_v11.jl as a direct objective_v10
+# call.

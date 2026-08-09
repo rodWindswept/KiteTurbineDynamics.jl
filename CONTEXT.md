@@ -1,6 +1,6 @@
 # CONTEXT.md — KiteTurbineDynamics.jl
 
-**Last updated:** 2026-07-03
+**Last updated:** 2026-08-09
 
 ## What this is
 
@@ -160,6 +160,10 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | **MTR** | Moment-to-Tension Ratio ≈ 0.05 |
 | **DLF** | Design Load Factor — net inward radial force from taper/twist/gust. Calibrated to 1.2 from ODE. |
 | **Network rotor model** | N co-equal rotors sharing P/N each. Distributed per-ring loading. |
+| **Windowed evaluator** | `evaluate_windowed` — the one ODE protocol for the objective family (build → start → window run → gates → score). Version objectives are adapters over it (2026-08-09). |
+| **Objective config** | `ObjectiveConfig` — immutable per-eval tunables (k_mppt, relax/window horizons, V12 power-window knobs). Sweeps thread it per-eval; no module globals. |
+| **Eval result** | `EvalResult` — named eval result with `status` (:ok/:reject) as the single reject channel. Never infer rejection from the fitness value. |
+| **Minimal TRPT** | 1 flown bladed hub ring rotor + 1 ground ring = 2 rings. `expansion_params_from_rotors(..., minimal_hub=true)` maps it; builder geometry + A3 gate (n_rings ≥ 5) are the flagged follow-on. |
 
 ---
 
@@ -176,6 +180,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | `src/soft_ramp_controller.jl` | RampController state machine, FoS taper, collapse margin, dP/dk detection |
 | `src/objective_v6.jl` | V6 objective with network power sharing, distributed loading, +1e6 penalty barrier |
 | `src/objective_v10.jl` | V10 objective — rotor masks, tension gate, slenderness gate, k_mppt λ² scaling |
+| `src/objective_evaluator.jl` | **The windowed evaluator** (2026-08-09): `evaluate_windowed`, `ObjectiveConfig`, `EvalResult`, `with_k_bracket`, `build_system_from_v10` |
 | `src/sim_frame.jl` | `SimFrame`, `ExtendedSimFrame`, `capture_extended()` |
 | `src/ring_spacing.jl` | v4/v5 ring spacing (constant L/r), `ring_spacing_v4()`, density profile |
 | `src/trpt_optimization.jl` | `evaluate_design()`, structural FEA (Euler buckling + torsional collapse) |

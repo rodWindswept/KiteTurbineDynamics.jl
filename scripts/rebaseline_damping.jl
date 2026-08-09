@@ -67,12 +67,20 @@ const DT_FACTORS = [1.0, 2.0]   # DT = 4e-5, DT/2 = 2e-5
 function eval_one(x, lin_damp, dt_factor)
     # Use warmstart_with_k_bracket to find correct k (matches campaign eval)
     # The k-bracket picks best k; we extract it and run the ODE with our damping
-    best_f, best_k, best_P, best_FoS, best_ω, best_P_range, best_drifted, best_stationary,
-        best_ua, best_ub = KiteTurbineDynamics.warmstart_with_k_bracket(
-            x, PROFILE_ELLIPTICAL, params_v5_50kw();
-            power_W=50000.0, v_rated=11.0, lin_damp=lin_damp)
+    best_r, best_k = KiteTurbineDynamics.warmstart_with_k_bracket(
+        x, PROFILE_ELLIPTICAL, params_v5_50kw();
+        power_W=50000.0, v_rated=11.0, lin_damp=lin_damp)
+    best_f = best_r.fitness
+    best_P = best_r.P_mean
+    best_FoS = best_r.FoS_min
+    best_ω = best_r.ω_eq
+    best_P_range = best_r.P_range
+    best_drifted = best_r.drifted
+    best_stationary = best_r.stationary
+    best_ua = best_r.util_a
+    best_ub = best_r.util_b
 
-    if best_f >= 1e8 || !isfinite(best_f)
+    if best_r.status !== :ok
         return (NaN, NaN, NaN, 0, 0, NaN, NaN)
     end
 

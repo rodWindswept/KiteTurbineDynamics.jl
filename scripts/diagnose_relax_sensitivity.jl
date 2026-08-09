@@ -115,19 +115,27 @@ for row in eachrow(reachable)
             continue
         end
 
-        KTD.WARM_RELAX_S[]  = relax
-        KTD.WARM_WINDOW_S[] = WINDOW_S
-
         t0 = time()
         local res
         try
+            cfg = KTD.ObjectiveConfig(; relax_s=relax, window_s=WINDOW_S)
             res = KTD.warmstart_with_k_bracket(copy(x), BEAM, P_BASE;
-                power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE)
+                power_W=POWER_W, v_rated=V_RATED, spoke=SP, lift_device=LIFT_DEVICE,
+                cfg=cfg)
         catch e
             @printf("  relax=%6.1f s  EXCEPTION: %s\n", relax, sprint(showerror, e))
             continue
         end
-        _f, k_chosen, P_mean, FoS_min, ω_eq, P_range, drifted, stationary, _ua, _ub = res
+        best_r, k_chosen = res
+        P_mean = best_r.P_mean
+        FoS_min = best_r.FoS_min
+        ω_eq = best_r.ω_eq
+        P_range = best_r.P_range
+        drifted = best_r.drifted
+        stationary = best_r.stationary
+        _f = best_r.fitness
+        _ua = best_r.util_a
+        _ub = best_r.util_b
         el = time() - t0
 
         ratio = P_mean > 0 ? P_range / P_mean : NaN

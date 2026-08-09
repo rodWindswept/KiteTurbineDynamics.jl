@@ -279,10 +279,19 @@ function evaluate_anchor(x::AbstractVector, source::String)
         warmstart_with_k_bracket(x, BEAM, P_BASE; power_W=POWER_W, v_rated=V_RATED, spoke=SP)
     catch e
         @warn "warmstart failed for $gh" exception=e
-        (1e9, 0.0, 0.0, Inf, 0.0, 0.0, true, false, -1.0, -1.0)
+        (KiteTurbineDynamics.rejected_eval(), 0.0)
     end
 
-    f_v11, k_chosen, P_mean, FoS_min, ω_eq, P_range, drift, stationary, util_a, util_b = result
+    best_r, k_chosen = result
+    f_v11 = best_r.fitness
+    P_mean = best_r.P_mean
+    FoS_min = best_r.FoS_min
+    ω_eq = best_r.ω_eq
+    P_range = best_r.P_range
+    drift = best_r.drifted
+    stationary = best_r.stationary
+    util_a = best_r.util_a
+    util_b = best_r.util_b
     
     # ── Decode for metadata ──
     n_active = 0

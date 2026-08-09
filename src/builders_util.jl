@@ -44,6 +44,61 @@ function build_v10_tight_no_lowest(;
     return _build_v10_tight(; tether_diameter, r_bottom_scale, r_hub_scale, blade_scale, keep_lowest=false, drop=true, do_scale, t_scale)
 end
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Rotor → system-ring mapping (single authority, 2026-08-09)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    expansion_params_from_rotors(rotors, n_rings, n_lines; blade_scale=1.0,
+                                 minimal_hub=false) -> Vector{ExpansionRotorParams}
+
+The ONE mapping from campaign rotors (`RotorSpecV10`) to system rings.  The
+top rotor (ring_idx == n_rings) lands on the top ring; every other rotor
+lands on ring_idx + 1.
+
+Ring-count semantics (must agree with the geometry the builder produces):
+
+- `minimal_hub=false` (default, canonical): the top ring is a separate hub
+  ring — total system rings = n_rings + 2 (ground + n_rings flown + hub).
+- `minimal_hub=true`: the top flown ring IS the bladed hub — total system
+  rings = n_rings + 1.  This is the minimal TRPT (Rod, 2026-08-09): 1 flown
+  bladed hub ring rotor + 1 ground ring = 2 rings at n_rings = 1.
+
+Replaces five copy-pasted loops.  Two of them (the warmstart static pre-solve
+and objective_v10) used a raw `rotor.ring_idx` convention that put rotors one
+ring low on multi-ring machines — the same genome built different machines
+depending on which evaluator path decoded it (the "13-gon" wrong-geometry bug
+class, ac3db3c / 9ce8bed).  NOTE: `minimal_hub=true` is implemented at the
+mapping level; the builder geometry (n_rings − 1 in the ring count) and the
+A3 decode gate (n_rings ≥ 5) are the flagged follow-on before a minimal
+machine can be built end-to-end.
+"""
+function expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                       blade_scale::Float64=1.0,
+                                       minimal_hub::Bool=false)
+    sys_n_rings_total = minimal_hub ? n_rings + 1 : n_rings + 2
+    expansion_params = ExpansionRotorParams[]
+    for rotor in rotors
+        sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
+        er = ExpansionRotorParams(
+            n_lines,
+            rotor.blade_tip_radius * blade_scale,
+            rotor.blade_hub_radius * blade_scale,
+            rotor.blade_chord * blade_scale,
+            EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
+            rotor.bank_angle_deg,
+            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, blade_scale),
+            sys_ring, 1.0,
+        )
+        push!(expansion_params, er)
+    end
+    return expansion_params
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# V10 tight builder
+# ══════════════════════════════════════════════════════════════════════════════
+
 function _build_v10_tight(;
     tether_diameter::Float64, r_bottom_scale::Float64,
     r_hub_scale::Float64, blade_scale::Float64,
@@ -91,22 +146,9 @@ function _build_v10_tight(;
     n_exp = length(rotors)
 
     # ── Build expansion params (Gate 1c: n_blades = n_lines for balanced polygon) ──
-    expansion_params = ExpansionRotorParams[]
-    sys_n_rings_total = n_rings + 2
-    for rotor in rotors
-        sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
-        er = ExpansionRotorParams(
-            n_lines,
-            rotor.blade_tip_radius * blade_scale,
-            rotor.blade_hub_radius * blade_scale,
-            rotor.blade_chord * blade_scale,
-            EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
-            rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, blade_scale),
-            sys_ring, 1.0,
-        )
-        push!(expansion_params, er)
-    end
+    # Single-authority mapping — see expansion_params_from_rotors above.
+    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                                    blade_scale=blade_scale)
 
     p_base = params_v5_50kw()
     le = blade_scale

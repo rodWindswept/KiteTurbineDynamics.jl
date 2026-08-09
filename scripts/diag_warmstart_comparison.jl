@@ -11,24 +11,35 @@ const P = params_v5_50kw()
 function diag_one(label, x)
     println("=== $label ===")
     
-    # Full protocol
+    # Full protocol (k as explicit kwarg; x[15] no longer carries k)
     t0 = time()
-    f_full = objective_v11(x, PROFILE_ELLIPTICAL, P; spoke=SP)
+    k_full = length(x) >= 15 ? 10.0^x[15] : 1.0
+    f_full = objective_v11(x, PROFILE_ELLIPTICAL, P; spoke=SP,
+                           k_mppt=clamp(k_full, 0.01, KiteTurbineDynamics.K_MPPT_MAX))
     t_full = time() - t0
     
-    # Warm-start with k-bracket
+    # Warm-start with k-bracket (returns ObjectiveResult + k)
     t0 = time()
-    f_ws, k_ws, P_ws, FoS_ws, ω_ws, P_range, drift =
-        warmstart_with_k_bracket(x, PROFILE_ELLIPTICAL, P; spoke=SP)
+    r_ws, k_ws = warmstart_with_k_bracket(x, PROFILE_ELLIPTICAL, P; spoke=SP)
+    f_ws = r_ws.fitness
+    P_ws = r_ws.P_mean
+    FoS_ws = r_ws.FoS_min
+    ω_ws = r_ws.ω_eq
+    P_range = r_ws.P_range
+    drift = r_ws.drifted
     t_ws = time() - t0
     
     # Also get ω from full protocol — need to capture it.
     # Re-run warm-start single-k to get ω_full for comparison.
     # We'll use the same k that the bracket picked.
-    x_k = copy(x)
-    x_k[15] = log10(k_ws)
-    f_ws_single, P_s, FoS_s, ω_s, P_r, d = 
-        objective_v11_warmstart(x_k, PROFILE_ELLIPTICAL, P; spoke=SP)
+    r_single = objective_v11_warmstart(x, PROFILE_ELLIPTICAL, P; spoke=SP,
+                                       cfg=KiteTurbineDynamics.ObjectiveConfig(; k_mppt=k_ws))
+    f_ws_single = r_single.fitness
+    P_s = r_single.P_mean
+    FoS_s = r_single.FoS_min
+    ω_s = r_single.ω_eq
+    P_r = r_single.P_range
+    d = r_single.drifted
     
     # For full protocol ω, run a single-k eval and capture omega
     # (objective_v11 doesn't return ω, so we approximate from warm-start ω_eq)

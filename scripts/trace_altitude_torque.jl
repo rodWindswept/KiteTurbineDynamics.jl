@@ -128,8 +128,10 @@ for row in eachrow(targets)
     @printf("═══ %s  (campaign P=%.3f kW, FoS=%.4g) ═══\n",
             gh[1:12], row.P_mean_kw, row.FoS_min)
 
-    KTD.WARM_RELAX_S[]  = RELAX_S
-    KTD.WARM_WINDOW_S[] = WINDOW_S
+    # Horizon rides in an ObjectiveConfig (per-eval, immutable — the old
+    # module-Ref mutation was a data race under threaded campaigns)
+    trace_cfg = KTD.ObjectiveConfig(; relax_s=RELAX_S, window_s=WINDOW_S,
+                                    power_W=POWER_W, v_rated=V_RATED)
 
     dt        = KTD.V11_DT
     every     = max(1, round(Int, (1.0 / SAMPLE_HZ) / dt))
@@ -161,14 +163,14 @@ for row in eachrow(targets)
     t0 = time()
     res = try
         KTD.objective_v11_warmstart(copy(x), BEAM, P_BASE;
-            power_W=POWER_W, v_rated=V_RATED, spoke=SP,
+            cfg=trace_cfg, spoke=SP,
             lift_device=LIFT_DEVICE, trace_callback=tap)
     catch e
         @printf("  EXCEPTION: %s\n\n", sprint(showerror, e))
         continue
     end
     @printf("  %d samples in %.0f s;  objective returned P=%.4g kW FoS=%.4g\n",
-            nrow(T), time() - t0, res[2], res[3])
+            nrow(T), time() - t0, res.P_mean, res.FoS_min)
 
     if nrow(T) < 4
         println("  too few samples to judge\n"); continue
@@ -230,8 +232,8 @@ for row in eachrow(targets)
                     100dom, P_pred, shear, tau_net, verdict))
 end
 
-KTD.WARM_RELAX_S[]  = 10.0
-KTD.WARM_WINDOW_S[] = 30.0
+# (The old global-reset of WARM_RELAX_S/WARM_WINDOW_S is gone — horizons ride
+# per-eval in the ObjectiveConfig built at the top of the loop.)
 
 if nrow(summary) > 0
     sp = joinpath(OUT_DIR, "trace_altitude_summary.csv")

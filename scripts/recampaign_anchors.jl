@@ -82,10 +82,8 @@ function evaluate_anchor_lhs(x::Vector{Float64}, p::SystemParams)
     result = design_from_vector_v10(x[1:14], PROFILE_ELLIPTICAL, p)
     λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
     k_prior = clamp(p.k_mppt * λ_eff^2, 0.01, 1000.0)
-    x_k = copy(x)
-    x_k[15] = log10(k_prior)
     
-    f_v11 = objective_v11(x_k, PROFILE_ELLIPTICAL, p; spoke=spoke)
+    f_v11 = objective_v11(x, PROFILE_ELLIPTICAL, p; spoke=spoke, k_mppt=k_prior)
     
     return (; f_v10=f_v10, f_v11=f_v11, k_best=k_prior,
              P_mean=NaN, FoS_min=NaN, ω_eq=NaN, P_range=NaN, drift=false)
@@ -96,8 +94,13 @@ function evaluate_anchor_legacy(x::Vector{Float64}, p::SystemParams)
     spoke = KiteTurbineDynamics.SpokeParams(enabled=false)
     f_v10 = objective_v10(x[1:14], PROFILE_ELLIPTICAL, p)
     
-    f_v11, k_best, P_mean, FoS_min, ω_eq, P_range, drift =
-        warmstart_with_k_bracket(x, PROFILE_ELLIPTICAL, p; spoke=spoke)
+    r, k_best = warmstart_with_k_bracket(x, PROFILE_ELLIPTICAL, p; spoke=spoke)
+    f_v11 = r.fitness
+    P_mean = r.P_mean
+    FoS_min = r.FoS_min
+    ω_eq = r.ω_eq
+    P_range = r.P_range
+    drift = r.drifted
     
     return (; f_v10=f_v10, f_v11=f_v11, k_best=k_best,
              P_mean=P_mean, FoS_min=FoS_min, ω_eq=ω_eq, P_range=P_range, drift=drift)

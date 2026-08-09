@@ -38,6 +38,7 @@ include("bem.jl")
 include("objective_v5.jl")
 include("objective_v6.jl")
 include("objective_v10.jl")
+include("objective_evaluator.jl")   # shared windowed evaluator + result contract
 include("objective_v11.jl")
 include("objective_v12.jl")
 include("objective_feasibility.jl")
@@ -135,9 +136,13 @@ export TRPT_V6_DIM, search_bounds_v6, design_from_vector_v6, objective_v6
 export estimate_effective_radii
 export parasitic_drag_power
 export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
-export TRPT_V11_DIM, search_bounds_v11, objective_v11, objective_v11_snapshot
+export TRPT_V11_DIM, search_bounds_v11, objective_v11
 export objective_v11_warmstart, warmstart_with_k_bracket, v11_fitness
 export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, v12_fitness
+# Shared windowed evaluator (2026-08-09 consolidation)
+export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket
+# Rotor → system-ring mapping (single authority)
+export expansion_params_from_rotors
 export objective_feasibility
 export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
 export RotorSpecV10, VerificationResult, headless_verify, headless_verify_structural
@@ -175,5 +180,4 @@ export CFRPTube, CircularTube, EllipticalTube, AirfoilTube
 export AbstractEndCondition, FixedFixedEnds, PinPinEnds, effective_length_factor
 export StrutProperties, strut_properties, utilisation, SpacerRingDesign
 
-include("simulation.jl")
 end
