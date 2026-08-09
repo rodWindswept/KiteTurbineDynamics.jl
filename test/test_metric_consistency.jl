@@ -8,7 +8,7 @@ using Statistics
     sys, u0 = build_kite_turbine_system(p)
     ld = rotary_lifter_default()
 
-    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld)
+    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld, n_op=30_000)
     for ri in 1:sys.n_ring
         u_start[6*sys.n_total + sys.n_ring + ri] = 9.5
     end

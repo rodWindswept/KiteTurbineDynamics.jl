@@ -7,7 +7,7 @@
     ld  = rotary_lifter_default()
 
     println("  smoke: settling...")
-    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld)
+    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld, n_op=30_000)
 
     N  = sys.n_total
     Nr = sys.n_ring

@@ -42,7 +42,8 @@ end
 
     u_start = settle_to_operational_state(sys, u0, p, ω_rated;
                                            lift_device = lift_device,
-                                           wind_fn     = wind_fn)
+                                           wind_fn     = wind_fn,
+                                           n_op        = 30_000)
 
     N       = sys.n_total
     hub_gid = sys.rotor.node_id
@@ -174,7 +175,8 @@ end
     # Settle to operational state
     u_start = settle_to_operational_state(sys, u0, p, ω_rated;
                                            lift_device = lift_device,
-                                           wind_fn     = wind_fn)
+                                           wind_fn     = wind_fn,
+                                           n_op        = 30_000)
 
     N       = sys.n_total
     hub_gid = sys.rotor.node_id

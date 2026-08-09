@@ -10,7 +10,7 @@
     end
 
     # Settle to operational state
-    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld, wind_fn=wind_fn)
+    u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=ld, wind_fn=wind_fn, n_op=30_000)
 
     # Let's run a short pitch depower simulation for all 3 sequence options
     # Sized to 30,000 steps (1.2 s) to exceed the 1.0 s absolute delay of Seq 2 and 3

@@ -701,6 +701,13 @@ function settle_to_operational_state(
     ω_rated_max::Float64;
     lift_device::Union{Nothing, LiftDevice}=nothing,
     wind_fn::Union{Nothing, Function}=nothing,
+    # Operational-settle horizon in ODE steps (2026-08-07, CI-cost guard).
+    # 150_000 = 6 s simulated, the conservative bound "from any starting
+    # state" used by the dashboard.  Tests that only need a consistent start
+    # state (not full orbital equilibrium) pass a smaller n_op — the bearing
+    # and rope positions converge far earlier for the canonical 10 kW system.
+    # Default unchanged so every script/scratch caller behaves identically.
+    n_op::Int=150_000,
 )
     # Reset mechanical brake engagement
     sys.brake_engaged[] = false
@@ -852,10 +859,10 @@ function settle_to_operational_state(
         ode_params =
             lift_device === nothing ? (sys, p, wind_use) : (sys, p, wind_use, lift_device)
         dt_op = p.n_lines >= 8 ? 1e-5 : 4e-5
-        n_op = 150_000   # 6 s simulated — long enough for bearing+rope to
+        n_op_use = n_op  # 6 s simulated — long enough for bearing+rope to
         # reach orbital equilibrium from any starting state
 
-        for _ in 1:n_op
+        for _ in 1:n_op_use
             fill!(du2, 0.0)
             multibody_ode!(du2, u_start, ode_params, 0.0)
             @views u_start[(3N + 1):6N] .+= dt_op .* du2[(3N + 1):6N]
