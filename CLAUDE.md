@@ -95,9 +95,13 @@ Additional skills load as needed: `ktd-headless-analysis`, `ktd-controller-analy
 
 ### Agent skills — repo configuration
 
-- **Issue tracker**: GitHub Issues via the `gh` CLI. See `docs/agents/issue-tracker.md`.
-- **Triage labels**: five canonical roles — `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-- **Domain docs**: single-context — `CONTEXT.md` + `DECISIONS.md` at the repo root; ADRs in `docs/adr/`. See `docs/agents/domain.md`.
+Read by `to-tickets`, `triage`, `to-spec`, `wayfinder`, and `qa`.
+
+**Issue tracker.** GitHub Issues on `rodWindswept/KiteTurbineDynamics.jl`, driven by the `gh` CLI. Covers issue create/read/list/label/close, the PRs-as-triage-surface flag (currently off), and the `wayfinder` map-and-child-ticket operations. See [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
+
+**Triage labels.** The five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See [`docs/agents/triage-labels.md`](docs/agents/triage-labels.md).
+
+**Domain docs.** Single-context. `CONTEXT.md` (vocabulary, architecture) and `DECISIONS.md` (running decision log) at the repo root; ADRs in `docs/adr/`. Agent onboarding — repo map, physics rules, quick start — is in [`docs/agents/domain.md`](docs/agents/domain.md). Also see [`docs/agents/instrument-trust-log.md`](docs/agents/instrument-trust-log.md) for sanity bounds and [`docs/agents/genome-glossary.md`](docs/agents/genome-glossary.md) for DE genome terms.
 
 ## ── Key Files ──────────────────────────────────────────────────────────
 
