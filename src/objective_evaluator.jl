@@ -23,6 +23,29 @@
 # 12.0 rejection band are SCORES, produced by the adapter for valid evals;
 # they are never used as transport signals.
 
+
+# ── Helper: minimum airborne ring FoS ──────────────────────────────────
+
+"""
+    min_ring_fos(u, sys, p) -> Float64
+
+Return the minimum FoS across all airborne (non-ground) rings.
+Returns Inf if no valid FoS values are found.  Uses 
+internally — call sparingly (once per ramp chunk, not every ODE step).
+"""
+function min_ring_fos(u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams)
+    # Use a dummy wind function — ring FoS doesn't depend on wind direction
+    dummy_wf = (pos, t) -> [0.0, 0.0, 0.0]
+    ef = capture_extended(u, sys, p, 0.0, dummy_wf, nothing;
+        brake_engaged=sys.brake_engaged[])
+    airborne = Float64[]
+    for i in 2:length(ef.ring_fos)
+        v = ef.ring_fos[i]
+        (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
+    end
+    return isempty(airborne) ? Inf : minimum(airborne)
+end
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Protocol constants (fixed scoring/physics knobs — not swept)
 # ══════════════════════════════════════════════════════════════════════════════
@@ -78,6 +101,8 @@ Base.@kwdef struct ObjectiveConfig
     w_ceiling::Float64   = 2.0     # P > ceiling: quadratic weight
     w_fos_below::Float64 = 4.0     # FoS < target: steep quadratic
     w_fos_above::Float64 = 0.02    # FoS > target: gentle linear slope
+    fos_cap::Float64     = 16.0   # FoS above this is excessive mass — hard rejection
+    tether_diameter::Float64 = 0.003  # tether line diameter (m) — physical parameter, not a magic number
 end
 
 # Copy-with-overrides constructor.  (Base.@kwdef does not generate it;
@@ -87,10 +112,12 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          p_floor_kw=o.p_floor_kw, p_ceiling_kw=o.p_ceiling_kw,
                          fos_target=o.fos_target, fos_hard=o.fos_hard,
                          w_floor=o.w_floor, w_ceiling=o.w_ceiling,
-                         w_fos_below=o.w_fos_below, w_fos_above=o.w_fos_above)
+                         w_fos_below=o.w_fos_below, w_fos_above=o.w_fos_above,
+                         fos_cap=o.fos_cap, tether_diameter=o.tether_diameter)
     return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
-                           w_floor, w_ceiling, w_fos_below, w_fos_above)
+                           w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
+                           tether_diameter)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -133,7 +160,8 @@ rejected_eval(ω_eq::Float64=0.0) =
 # System builder — the protocol's build step (moved from objective_v11.jl)
 # ══════════════════════════════════════════════════════════════════════════════
 
-function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
+function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
+                              tether_diameter::Float64=0.003)
     (; design, rotors, n_rings) = result
     n_lines = design.n_lines
 
@@ -143,7 +171,6 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64)
                                                     blade_scale=blade_scale)
 
     p_base = params_v5_50kw()
-    tether_diameter = 0.003
     le = blade_scale
 
     # Compute design-aware per-ring mass from actual tube geometry instead of
@@ -256,7 +283,7 @@ function evaluate_windowed(
     # ── Build ODE system ─────────────────────────────────────────────────
     # blade_scale = 1.0 — the genome's λ values already scale blades via
     # design_from_vector_v10's RotorSpecV10.blade_tip_radius etc.
-    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt)
+    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt; tether_diameter=cfg.tether_diameter)
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
@@ -304,7 +331,7 @@ function evaluate_windowed(
         end
 
         # Settle rope geometry from ODE
-        u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf)
+        u_settled = settle_to_equilibrium(sys, u0, pc; wind_fn=wf, lift_device=lift_dev)
         if any(isnan.(u_settled)) || any(isinf.(u_settled))
             return rejected_eval(ω_eq)
         end
@@ -476,6 +503,15 @@ function evaluate_windowed(
         A_total += π * rotor.blade_tip_radius^2 * cos(bank_rad)
     end
     Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
+
+    # P_available gate (Betz floor): skip winds where the turbine cannot
+    # physically reach P_floor.  Uses rotor Cp (not Betz 0.593) so small/
+    # low-Cp rotors are correctly gated.  80% threshold prevents edge cases.
+    Betz_cp_kW = p.cp * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
+    if Betz_cp_kW < cfg.p_floor_kw * 0.8
+        return rejected_eval(ω_eq)
+    end
+
     if P_mean > 1.1 * Betz_ceiling_kW
         return rejected_eval(ω_eq)
     end
