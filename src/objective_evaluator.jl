@@ -66,6 +66,15 @@ const STATIONARITY_SWING = 0.20   # matches the gate's P_range/P_mean < 0.20
 # near the old ceiling — the optimum previously railed at 1000.
 const K_MPPT_MAX = 5000.0
 const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff system)
+
+# Hub-side sanity ceiling (2026-08-14): a hub-ring blade tip speed above
+# ~250 m/s exceeds what any composite rotor survives. This is an instrument
+# sanity bound (model-validity ceiling), not a material law — it exists to
+# reject numerically diverged hub rings (ω ~ 1e66, NaN-frozen chain) that the
+# ground-side metrics (P_gen, twist) cannot see. The v13 18m winner (r_hub
+# 0.47 m, inverted taper) diverged to ω_hub ≈ 3.5e66 within 5 s while
+# delivering 8.6 kW at the ground ring — the evaluator scored it −6.66.
+const HUB_TIP_SPEED_CEILING_MPS = 250.0
 # Cold-start window timing (the warm-start path takes relax/window from the
 # ObjectiveConfig; the cold path's "discard + window" is the same shape).
 const WINDOW_S  = 60.0   # scoring window after transient
@@ -163,6 +172,24 @@ ObjectiveResult(; status, fitness, P_mean, FoS_min, ω_eq, P_range,
 """Standard rejected evaluation — `ω_eq` carries through when known."""
 rejected_eval(ω_eq::Float64=0.0) =
     ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0, 0.0, false)
+
+"""
+    hub_sanity_ok(u, sys) -> Bool
+
+Hub-side sanity check (2026-08-14): the hub ring ω must be finite and its
+blade tip speed within the composite sanity ceiling. A diverged hub ring
+(ω ~ 1e66 from tiny-inertia freewheel with an inverted-taper hub) leaves the
+ground-side metrics (P_gen, twist) healthy-looking — the twist states
+NaN-freeze and the diverged ring's FoS samples get filtered — so the
+evaluator and gate must check the hub explicitly.
+"""
+function hub_sanity_ok(u::AbstractVector, sys::KiteTurbineSystem)
+    N = sys.n_total
+    Nr = sys.n_ring
+    hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
+    w_hub = u[6N + Nr + hub_ri]
+    return isfinite(w_hub) && abs(w_hub) * sys.rotor.radius <= HUB_TIP_SPEED_CEILING_MPS
+end
 
 """
     twist_collapse_check(u, sys) -> (crossed, max_ratio, worst_seg)
@@ -452,6 +479,7 @@ function evaluate_windowed(
 
     trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
     twist_flagged = Ref(false)  # V13: set on first per-segment twist crossing
+    hub_diverged = Ref(false)   # 2026-08-14: hub ring ω non-finite or tip speed past sanity ceiling
 
     function window_callback(uc, tc, s)
         # Diagnostic tap runs first and is scoring-neutral.
@@ -463,6 +491,11 @@ function evaluate_windowed(
             # crossing limit δα* fails the design regardless of power readings.
             if !twist_flagged[] && twist_collapse_check(uc, sys).crossed
                 twist_flagged[] = true
+            end
+            # Hub-side sanity: a diverged hub ring leaves ground-side metrics
+            # healthy (NaN-frozen twist, filtered FoS) — check it explicitly.
+            if !hub_diverged[] && !hub_sanity_ok(uc, sys)
+                hub_diverged[] = true
             end
             ef = capture_extended(
                 uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
@@ -522,6 +555,11 @@ function evaluate_windowed(
     if twist_flagged[]
         return ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0,
                                true, false, -1.0, -1.0, 0.0, 0.0, true)
+    end
+
+    # Hub-side divergence — hard rejection (2026-08-14, v13 18m winner exploit).
+    if hub_diverged[]
+        return rejected_eval(ω_eq)
     end
 
     # Find FoS_min and its sample index in the original arrays (A1 fix).

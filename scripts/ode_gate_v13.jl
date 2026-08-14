@@ -153,9 +153,20 @@ if abspath(PROGRAM_FILE) == @__FILE__
             row.crossed ? "YES" : "no", row.max_ratio)
     end
     tr = twist_report(r.u, r.sys, r.N, r.Nr)
-    println("  worst segment: ", tr.worst_seg, "  Δα=", round(tr.rows[tr.worst_seg].da_deg, digits=1),
-            "° vs δα*=", round(tr.rows[tr.worst_seg].dastar_deg, digits=1), "°")
-    println(r.ok ? "  ✅ GATE PASSES" : "  ❌ GATE FAILS",
+    if tr.worst_seg == 0
+        println("  no segment wind-up (max ratio 0.0)")
+    else
+        println("  worst segment: ", tr.worst_seg, "  Δα=", round(tr.rows[tr.worst_seg].da_deg, digits=1),
+                "° vs δα*=", round(tr.rows[tr.worst_seg].dastar_deg, digits=1), "°")
+    end
+    # Hub-side sanity: hub ring tip speed (composite sanity ceiling) — a
+    # diverged hub ring (ω ~ 1e66, NaN-frozen chain) is not "sustained power".
+    hub_ok = isfinite(r.w_hub_final) &&
+             r.w_hub_final * r.sys.rotor.radius <= HUB_TIP_SPEED_CEILING_MPS
+    ok = r.ok && hub_ok
+    println(r.ok && !hub_ok ? "  ❌ HUB DIVERGED — tip speed " * string(round(abs(r.w_hub_final) * r.sys.rotor.radius, digits=0)) * " m/s > " * string(HUB_TIP_SPEED_CEILING_MPS) * " m/s" : "")
+    println(ok ? "  ✅ GATE PASSES" : "  ❌ GATE FAILS",
             "  (P_gen_final=", round(r.P_gen_final, digits=2),
-            " kW, ω_gnd=", round(r.w_gnd_final, digits=2), " rad/s, crossed=", r.crossed, ")")
+            " kW, ω_gnd=", round(r.w_gnd_final, digits=2), " rad/s, crossed=", r.crossed,
+            ", hub_ok=", hub_ok, ")")
 end

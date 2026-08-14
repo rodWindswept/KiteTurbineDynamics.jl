@@ -109,6 +109,27 @@ println("  post-settle: crossed=", t0.crossed, " max_ratio=", round(t0.max_ratio
 check("B5a: post-settle state is not flagged", !t0.crossed && t0.max_ratio < 1.0)
 check("B5b: +π wound segment is flagged", t1.crossed)
 
+println("=== B6: 18m v13 winner (hub divergence) must be rejected ===")
+WINNER18V13 = joinpath(@__DIR__, "..", "scripts", "results", "v13_5kw_len18.0", "best_vector.csv")
+if isfile(WINNER18V13)
+    r6 = run_eval(read_vec(WINNER18V13), 18.0, 20.0)
+    println("  status=", r6.status, "  twist_crossed=", r6.twist_crossed,
+            "  P_mean=", round(r6.P_mean, digits=2), "  fitness=", round(r6.fitness, digits=3))
+    check("B6: hub-diverged design is :reject", r6.status === :reject)
+else
+    println("  (18m v13 winner CSV not present — skipping B6)")
+end
+
+println("=== B7: unit — hub_sanity_ok ===")
+hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
+ok0 = KiteTurbineDynamics.hub_sanity_ok(u, sys)
+u_hub = copy(u)
+u_hub[6N + Nr + hub_ri] = 1e20   # diverged hub ring ω
+ok1 = KiteTurbineDynamics.hub_sanity_ok(u_hub, sys)
+println("  settled: ok=", ok0, "   inflated ω_hub=1e20: ok=", ok1)
+check("B7a: settled state passes hub sanity", ok0)
+check("B7b: diverged hub ω fails hub sanity", !ok1)
+
 println()
 if isempty(failures)
     println("ALL ACCEPTANCE TESTS PASS")
