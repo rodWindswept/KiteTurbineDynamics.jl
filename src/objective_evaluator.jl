@@ -103,6 +103,10 @@ Base.@kwdef struct ObjectiveConfig
     w_fos_above::Float64 = 0.02    # FoS > target: gentle linear slope
     fos_cap::Float64     = 16.0   # FoS above this is excessive mass — hard rejection
     tether_diameter::Float64 = 0.003  # tether line diameter (m) — physical parameter, not a magic number
+    # V13 knobs (2026-08-13 — defaults preserve v12 behaviour exactly)
+    power_stat::Symbol  = :mean    # :mean = v12 full-window mean; :tail5 = last 5 samples (sustained power)
+    penalize_ceiling::Bool = true  # false → above-ceiling power at rated wind is headroom, not a flaw (Betz gate still rejects cheats)
+    kickstart_s::Float64 = 2.0     # cold-start PTO motor kick duration; 0.0 = off. Legacy ζ=1.5 stall crutch — the kick injects ~115× MPPT torque and winds chains past the collapse limit; v13 uses 0.0
 end
 
 # Copy-with-overrides constructor.  (Base.@kwdef does not generate it;
@@ -113,11 +117,13 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          fos_target=o.fos_target, fos_hard=o.fos_hard,
                          w_floor=o.w_floor, w_ceiling=o.w_ceiling,
                          w_fos_below=o.w_fos_below, w_fos_above=o.w_fos_above,
-                         fos_cap=o.fos_cap, tether_diameter=o.tether_diameter)
+                         fos_cap=o.fos_cap, tether_diameter=o.tether_diameter,
+                         power_stat=o.power_stat, penalize_ceiling=o.penalize_ceiling,
+                         kickstart_s=o.kickstart_s)
     return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
                            w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
-                           tether_diameter)
+                           tether_diameter, power_stat, penalize_ceiling, kickstart_s)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -145,16 +151,54 @@ struct ObjectiveResult
     util_a::Float64
     util_b::Float64
     T_lift::Float64
+    P_end::Float64        # mean of last 5 window samples (sustained power; V13)
+    twist_crossed::Bool   # per-segment twist past the geometric crossing limit (V13)
 end
 
 ObjectiveResult(; status, fitness, P_mean, FoS_min, ω_eq, P_range,
-           drifted, stationary, util_a, util_b, T_lift) =
+           drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed) =
     ObjectiveResult(status, fitness, P_mean, FoS_min, ω_eq, P_range,
-               drifted, stationary, util_a, util_b, T_lift)
+               drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed)
 
 """Standard rejected evaluation — `ω_eq` carries through when known."""
 rejected_eval(ω_eq::Float64=0.0) =
-    ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0)
+    ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0, 0.0, false)
+
+"""
+    twist_collapse_check(u, sys) -> (crossed, max_ratio, worst_seg)
+
+Torsional collapse detector (2026-08-13). Reads the RAW free-integrated α
+states (`u[6N+1:6N+Nr]` — no wrap; `capture_extended`'s `segment_twist`
+wraps mod 2π and cannot see multi-revolution wind-up). Per segment i:
+Δα_i = |α[i+1]−α[i]| vs the geometric crossing limit
+δα*_i = 2·asin(L_seg/√(2(L_seg²+2r_seg²))) with r = max(r_i, r_{i+1})
+(conservative: δα* decreases in r, so max r gives the tightest limit).
+Any segment past its limit = the lines have crossed = collapse.
+"""
+function twist_collapse_check(u::AbstractVector, sys::KiteTurbineSystem)
+    N = sys.n_total
+    Nr = sys.n_ring
+    crossed = false
+    max_ratio = 0.0
+    worst_seg = 0
+    for ri in 1:(Nr - 1)
+        r_i = (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
+        r_ip1 = (sys.nodes[sys.ring_ids[ri+1]]::RingNode).radius
+        r_seg = max(r_i, r_ip1)
+        p_i = u[(3 * (sys.ring_ids[ri] - 1) + 1):(3 * sys.ring_ids[ri])]
+        p_ip1 = u[(3 * (sys.ring_ids[ri+1] - 1) + 1):(3 * sys.ring_ids[ri+1])]
+        L_seg = norm(p_ip1 - p_i)
+        dastar = 2 * asin(min(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)), 1.0))
+        da = abs(u[6N + ri + 1] - u[6N + ri])  # α[i+1] − α[i], raw (α block: 6N+1..6N+Nr)
+        ratio = da / max(dastar, 1e-9)
+        if ratio > max_ratio
+            max_ratio = ratio
+            worst_seg = ri
+        end
+        crossed |= da > dastar
+    end
+    return (crossed=crossed, max_ratio=max_ratio, worst_seg=worst_seg)
+end
 
 # ══════════════════════════════════════════════════════════════════════════════
 # System builder — the protocol's build step (moved from objective_v11.jl)
@@ -372,12 +416,19 @@ function evaluate_windowed(
         orig_k = sys.k_mppt_ref[]
         try
             # PTO torque reversal: set k negative momentarily to motor the rotor
-            sys.k_mppt_ref[] = -60.0  # N·m·s²/rad² — motor torque
-            kick_steps = round(Int, 2.0 / V11_DT)  # 2 s kick
-            run_canonical_sim!(
-                u_settled, sys, pc, wf, kick_steps, V11_DT;
-                lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
-            )
+            # (LEGACY ζ=1.5 stall escape — with ζ=0.05 the settle reaches the
+            # productive branch directly and the kick is unnecessary; v13 sets
+            # cfg.kickstart_s = 0.0. The kick injects ~115× MPPT torque at the
+            # ground ring and can itself wind a healthy chain past its collapse
+            # limit.)
+            if cfg.kickstart_s > 0.0
+                sys.k_mppt_ref[] = -60.0  # N·m·s²/rad² — motor torque
+                kick_steps = round(Int, cfg.kickstart_s / V11_DT)
+                run_canonical_sim!(
+                    u_settled, sys, pc, wf, kick_steps, V11_DT;
+                    lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
+                )
+            end
         catch e
             @warn "Kickstart failed" exception = e
             sys.k_mppt_ref[] = orig_k
@@ -400,6 +451,7 @@ function evaluate_windowed(
     T_lift_samples = Float64[]  # per-sample lift-line tension (S3: real N)
 
     trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
+    twist_flagged = Ref(false)  # V13: set on first per-segment twist crossing
 
     function window_callback(uc, tc, s)
         # Diagnostic tap runs first and is scoring-neutral.
@@ -407,6 +459,11 @@ function evaluate_windowed(
 
         t_cum = s * V11_DT
         if t_cum > cfg.relax_s && s % sample_interval == 0
+            # V13 torsional collapse detector: any segment past its geometric
+            # crossing limit δα* fails the design regardless of power readings.
+            if !twist_flagged[] && twist_collapse_check(uc, sys).crossed
+                twist_flagged[] = true
+            end
             ef = capture_extended(
                 uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
             )
@@ -457,6 +514,15 @@ function evaluate_windowed(
     end
 
     P_mean = mean(P_finite)
+    # V13: sustained power = mean of the last 5 samples of the window (the
+    # tail measures transmission, not the hot-settle flywheel transient).
+    P_end = mean(P_finite[max(1, end - 4):end])
+
+    # V13 torsional collapse — hard rejection, carried in the result flag.
+    if twist_flagged[]
+        return ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0,
+                               true, false, -1.0, -1.0, 0.0, 0.0, true)
+    end
 
     # Find FoS_min and its sample index in the original arrays (A1 fix).
     # Was: FoS_min = minimum(fos_finite) — no index tracking, so util_a
@@ -543,7 +609,10 @@ function evaluate_windowed(
 
     # Score via the version seam.  A non-finite score is a hard rejection —
     # the adapter (e.g. v12_fitness's FoS < hard gate) signals it that way.
-    fitness = fitness_fn(P_mean, FoS_min, cfg)
+    # V13: power_stat=:tail5 feeds P_end (sustained power) to the seam;
+    # default :mean preserves v12 behaviour exactly.
+    P_score = cfg.power_stat === :tail5 ? P_end : P_mean
+    fitness = fitness_fn(P_score, FoS_min, cfg)
     if !isfinite(fitness)
         return rejected_eval(ω_eq)
     end
@@ -564,7 +633,8 @@ function evaluate_windowed(
         mean(T_lift_samples)
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
-                      drifted, stationary, util_a, util_b, T_lift_mean)
+                      drifted, stationary, util_a, util_b, T_lift_mean,
+                      P_end, twist_flagged[])
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

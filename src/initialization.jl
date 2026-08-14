@@ -94,7 +94,7 @@ function _build_kite_turbine_system_impl(
     end
 
     # ── Build sub-segment list ────────────────────────────────────────────
-    zeta = 1.5
+    zeta = p.zeta
     sub_segs = Vector{RopeSubSegment}()
     sizehint!(sub_segs, 4 * p.n_lines * n_seg)
 
@@ -688,6 +688,75 @@ function design_preload_from_sky_anchor(
 end
 
 """
+    settle_parasitic_drag_power(sys, p, ω, u) → Float64
+
+Parasitic drag power (W) at rotation speed ω for the settle's equilibrium
+scan.  Scalar midpoint approximation of the same terms the ODE applies:
+tether line drag (cylinder-in-crossflow, TRPT curvature factor 0.5) and
+ring beam drag (skin friction + axial crossflow).  Expansion profile drag
+is NOT included — `expansion_rotor_forces()` already nets it, and adding
+it here double-counts (see objective_v6.jl physics note).
+
+Proposal: docs/plans/2026-08-13-settle-drag-alignment.md
+"""
+function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
+                                     ω::Float64, u::Vector{Float64})
+    (ω <= 0.0) && return 0.0
+    rho = p.rho
+    nu = 1.5e-5  # kinematic viscosity of air (m²/s)
+
+    # ── Physical line count: max line_idx among TRPT sub-segments ────────
+    n_lines = 1
+    for sub in sys.sub_segs
+        if sub.end_a.is_ring && sub.end_b.is_ring
+            n_lines = max(n_lines, sub.end_a.line_idx)
+        end
+    end
+
+    # Ring node radii + positions in ground→hub order
+    n_rings = length(sys.ring_ids)
+    radii = [sys.nodes[sys.ring_ids[i]].radius for i in 1:n_rings]
+    pos = [u[(3*(sys.ring_ids[i]-1)+1):(3*sys.ring_ids[i])] for i in 1:n_rings]
+
+    # ── 1. Tether line drag (cylinder-in-crossflow, curvature factor 0.5) ─
+    P_tether = 0.0
+    for si in 1:(n_rings - 1)
+        L = norm(pos[si+1] - pos[si])
+        r_mid = (radii[si] + radii[si+1]) / 2
+        v_t = ω * r_mid
+        P_seg = 0.5 * rho * TETHER_DRAG_CD * p.tether_diameter * L * v_t^3
+        P_tether += n_lines * P_seg * 0.5   # TRPT curvature factor (0.5)
+    end
+
+    # ── 2. Ring beam drag (skin friction + axial crossflow) ──────────────
+    v_axial = p.v_wind_ref * cos(p.elevation_angle)
+    P_beam = 0.0
+    for ri in 2:(n_rings - 1)  # skip ground ring and hub ring
+        R = radii[ri]
+        Do = if sys.ring_Do_top[] > 0.0
+            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
+            scale = (R / r_ref)^sys.ring_Do_scale_exp[]
+            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
+        else
+            max(0.01396 * sqrt(R), 5e-4 / 0.05)
+        end
+        L_beam = 2.0 * R * sin(π / n_lines)
+        v_t = ω * R
+        # Skin friction (tangential flow along beam)
+        wetted_perim = π * Do * 1.2
+        surface_area = wetted_perim * L_beam
+        Re = v_t * L_beam / nu
+        Cf = 0.027 / Re^(1.0 / 7)
+        P_skin = 0.5 * rho * v_t^2 * surface_area * Cf * v_t
+        # Axial crossflow (wind hits beam broadside)
+        P_axial = 0.5 * rho * 0.3 * Do * L_beam * v_axial^3
+        P_beam += n_lines * (P_skin + P_axial)
+    end
+
+    return P_tether + P_beam
+end
+
+"""
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
 Initializes the system at the rated operating point to avoid torsional transients.
@@ -708,6 +777,10 @@ function settle_to_operational_state(
     # and rope positions converge far earlier for the canonical 10 kW system.
     # Default unchanged so every script/scratch caller behaves identically.
     n_op::Int=150_000,
+    # Parasitic drag in the equilibrium scan (2026-08-13, proposal
+    # docs/plans/2026-08-13-settle-drag-alignment.md).  Pass `nothing` or
+    # `(_...) -> 0.0` to reproduce the pre-change drag-free scan exactly.
+    drag_fn::Union{Nothing, Function}=settle_parasitic_drag_power,
 )
     # Reset mechanical brake engagement
     sys.brake_engaged[] = false
@@ -756,8 +829,9 @@ function settle_to_operational_state(
                 end
             end
             P_aero = P_aero_hub + P_aero_exp
+            P_par = drag_fn === nothing ? 0.0 : drag_fn(sys, p, w, u_start)
             P_gen = sys.k_mppt_ref[] * w^3  # use mutable ref so blade-scale overrides propagate to settle
-            if P_aero > P_gen
+            if P_aero - P_par > P_gen
                 ω_eq = w
                 break
             end

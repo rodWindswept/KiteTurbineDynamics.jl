@@ -10,6 +10,191 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-13] Evaluator v13 — the test that identifies realistic KTD designs
+
+**Context:** The 5 kW campaign evaluator crowned designs the corrected ODE gate rejects.
+Three scoring defects compounded (source-confirmed, then acceptance-tested): (1) it scored
+P_mean over a 10 s hot-settle window — flywheel energy, not transmission; (2) `v12_fitness`
+penalised power ABOVE the rung ceiling, so the seed (delivering ~7.5 kW) scored worse than
+a flywheel design decaying through the [2.5, 5.0] kW window; (3) it never read the twist
+state, so the torsionally-collapsing island-1 winner scored `:ok` at 6.3 kW. The acceptance
+tests then exposed two further protocol defects: the cold path's 2 s kickstart (k=−60, a
+legacy ζ=1.5 stall escape) itself wound a healthy seed's chain past δα*, and every 5 kW eval
+silently ran at `ObjectiveConfig`'s default `k_mppt=10.0` (~5× the scaled system's rated
+gain), inflating window power.
+
+**Choice made (v13, all opt-in via `ObjectiveConfig`; defaults preserve v12 exactly):**
+1. **Twist collapse rejection** — `twist_collapse_check(u, sys)` reads the raw free-integrated
+   α states (`u[6N+1:6N+Nr]`), per-segment Δα vs the geometric crossing limit
+   δα* = 2·asin(L/√(2(L²+2r²))), r = max(r_i, r_{i+1}); any crossing → hard reject. Exported;
+   `ObjectiveResult` carries `twist_crossed`.
+2. **Sustained power** — `power_stat=:tail5` feeds the fitness the mean of the last 5 window
+   samples (`P_end`), not the full-window mean.
+3. **No over-delivery penalty** — `penalize_ceiling=false`: above-ceiling power at rated wind
+   is headroom; the Betz hard gate still rejects cheating.
+4. **Ring-FoS soft target off at 5 kW** — `fos_target=fos_hard=1.5` (guarded in `v12_fitness`)
+   stops the below-target quadratic from favouring light/unloaded structures; torsional
+   safety is carried by the twist detector.
+5. **Kickstart off** — `kickstart_s=0.0`; with ζ=0.05 the settle reaches the productive
+   branch directly and the motor kick is an obsolete stall crutch that winds chains past δα*.
+6. **Rated MPPT gain** — `cfg.k_mppt = p.k_mppt` (the scaled system's gain, ≈1.94 at 5 kW),
+   not the 50 kW default 10.0.
+
+**Acceptance (test/test_evaluator_v13.jl, RED on master → all green):** B1 island-1 winner
+`:reject`, twist_crossed=true. B2 18 m flywheel winner `:reject`. B3 original seed `:ok`,
+twist_crossed=false, P_end=4.2 kW, fitness −1.075 — strictly outranks the flywheel design.
+B4 fitness(7.5) < fitness(3.5). B5 detector flags a +π-wound segment, not the post-settle
+state. Full suite green 1901/1901 (the metric-consistency grep guard's 8 flagged scripts
+were fixed to use `get_generator_torque`).
+
+**Alternatives:** keep the v12 evaluator and rely on post-hoc gating (rejected — the DE
+re-discovers the flywheel/collapse attractors every generation); lengthen the window only
+(rejected — the collapse and decay regimes need the twist detector and tail scoring, not
+just more samples).
+
+**Consequences:**
+- No verified 5 kW DE winner exists; the seed is the only design passing the corrected
+  evaluator. Previous v12 campaign fitness values are void for ranking purposes.
+- `scripts/run_v13_5kw.jl` is the new 5 kW campaign runner (full-genome telemetry).
+- v12 warmstart/ramp paths are untouched (defaults preserved bit-for-bit).
+
+**Status:** active. Proposal: `docs/plans/2026-08-13-evaluator-v13-realistic-ktd.md`.
+
+---
+
+## [2026-08-13] ODE gate reads generator-side power and per-segment twist (ode_gate_v13)
+
+**Context:** The 2026-08-13 power-budget investigation of the 5 kW island-1 winner found the
+V12 gate's `P = k·ω_hub³` metric was measuring freewheel power: during torsional collapse the
+hub held ~9–15 rad/s while the ground ring fell to zero. The gate reported "6.34 kW sustained"
+for a machine whose generator output was zero after t≈50 s. The collapse itself — twist
+concentrating at the top segment to 22,425° (62 revolutions) against a 42.6° crossing limit —
+was only visible in the twist state, which the gate never read.
+
+**Choice made:** Two instruments in the gate, both reading the ODE's own state:
+1. `P_gen = τ_gen·ω_gnd` with `τ_gen` from `get_generator_torque` (the exact function the ODE
+   uses; Mode 0 MPPT extracts at the ground ring, `src/ring_forces.jl:70`).
+2. Per-segment twist check: `Δα_i = |α[i+1]−α[i]|` vs the geometric crossing limit
+   `δα* = 2·asin(L/√(2(L²+2r²)))`, r = max(r_i, r_{i+1}) (conservative). Any segment past its
+   limit fails the gate regardless of power.
+Acceptance tests A1–A4 green (`test/test_gate_v13.jl`): the collapsing winner fails
+(twist ratio 169×, P_gen 0.84 kW); the post-settle state is not flagged (ratio 0.13); P_gen is
+numerically identical to a direct `τ_gen·ω_gnd` recomputation.
+
+**Verdicts under the new gate (2026-08-13):** 18 m winner ❌ (P_gen 4.06→1.41 kW, flywheel
+decay, no crossing), 25 m winner ❌ (4.18→0.86 kW), island-1 winner ❌ (twist collapse),
+original 5 kW seed ✅ (P_gen 8.0→4.12 kW, twist ratio 0.3, ω_gnd 12.85). The gate separates
+the three regimes — decay, collapse, and genuine transmission — and passes the seed.
+
+**Alternatives:** keep the hub metric (rejected — measured freewheel power); static torsional
+FoS gate alone (rejected for this change — it is a separate, still-open proposal to re-enable
+it as a hard gate at ≤7 kW; the ODE confirmed its collapse prediction).
+
+**Consequences:**
+- All 2026-08-12/13 5 kW "sustained power" verdicts are void: hub freewheel or flywheel
+  decay, not transmitted power. No verified DE winner exists at 5 kW; the seed passes.
+- The V12 campaign evaluator (10 s window) must be re-instrumented with the same two metrics
+  before any new campaign — DE ranked flywheel designs above the seed-like designs.
+- Gate scripts `gate_length_winners.jl` / `ode_gate_5kw_winner.jl` are historical record.
+
+**Status:** active. `scripts/ode_gate_v13.jl` is the reference gate.
+
+---
+
+## [2026-08-12] Rope structural damping ζ promoted to SystemParams (default 0.05)
+
+**Context:** Every ODE simulation — regardless of genome, k_mppt, or start-up strategy —
+converged to a stable reverse-rotation state at ω ≈ −0.2 rad/s. The static BEM scan predicted
+22 kW peak for the V10 Reinforced genome, but the ODE never produced sustained positive power.
+Two sessions of diagnostics (k_mppt sweeps, kickstart protocols, lift-device wiring) found no
+parameter-level fix.
+
+**Root cause:** `initialization.jl` hardcoded `zeta = 1.5` for all rope sub-segments, driving
+`c_damp = 2·ζ·√(EA/L·m)` to ~30-150× physical Dyneema material damping (ζ ≈ 0.01-0.05). The
+tension rectifier `max(0.0, EA·ε + c_damp·v)` in `rope_forces.jl` clips the damper contribution
+asymmetrically — the damper can add tension at full strength but is clipped when subtracting.
+Over any oscillation cycle this rectification leaves a non-zero mean force (DC bias), which at
+ζ=1.5 overwhelms the aero torque and parks the rotor at negative ω. A pure damper has no offset
+(equilibrium at ω=0); the rectifier is the symmetry-breaking term and ζ is its gain.
+
+**Diagnostics:** ΔL_z measurement across `orbital_damp_rope_velocities!` exonerated the orbital
+velocity overwrite (mean ΔL_z ≈ 0). Zeroing c_damp eliminated the stall (ω: 2.0→10.7 rad/s).
+ζ=0.05 (1/30th) confirmed: low-ω cold start → 10.56 rad/s, MPPT sustain, no stall.
+
+**Choice made:** Promote ζ to a `SystemParams` field with default 0.05. All callers pick it up
+through the grouped-spec constructor; `override_params` auto-adapts via `fieldnames`. The prior
+magic number is now tunable, traceable, and auditable in the DE genome if ever needed.
+
+**Consequences:**
+- Reverse-torque bias eliminated; ODE now sustains power at all tested scales
+- ζ=0.05 is physically grounded in Dyneema material damping, not stability headroom
+- Test suite: 1902 assertions green
+- See `handovers/handover-2026-08-12-zeta-damping-fix.md`
+
+**Status:** Active. Implemented 2026-08-12.
+
+## [2026-08-11] FoS hard cap at 16 in V12 fitness
+
+**Context:** DE campaigns were producing designs with FoS=287, dominating the population because
+the gentle linear above-target penalty (w_fos_above=0.02) let high-FoS designs score nearly as well
+as target-FoS designs. These are physically unbuildable machines with massive ring beams.
+
+**Choice made:** Added `fos_cap::Float64 = 16.0` to `ObjectiveConfig`. In `v12_fitness`, FoS > fos_cap
+returns `Inf` (hard rejection, status=:reject). This is NOT a penalty -- the design cannot progress.
+Below the cap, the existing gentle linear slope still allows the DE to follow a gradient toward the
+3.0 target.
+
+**Consequences:**
+- FoS=17 is rejected, FoS=16 is the maximum accepted value
+- DE no longer wastes generations on heavy designs
+- `fos_cap` is a tunable ObjectiveConfig field (default 16.0)
+- Tested: 6 new assertions in `test/test_objective_v12.jl`
+
+**Status:** Active. Implemented 2026-08-11.
+
+## [2026-08-11] P_available(v) Betz floor gate
+
+**Context:** The control-first design sweep (5-15 m/s) was rejecting geometries at low wind speeds
+because the evaluator could not hit P_rated at winds where physics cannot deliver it. At 5 m/s,
+available power is only (5/11)^3 ~ 9.4 percent of rated -- a 50 kW system cannot produce 25 kW
+at 5 m/s regardless of geometry quality.
+
+**Choice made:** Added a P_available(v) gate in `evaluate_windowed` that checks:
+`Cp * 0.5 * rho * A_total * v_rated^3 / 1000 >= P_floor * 0.8`
+If the wind cannot physically reach 80 percent of the power floor, the evaluation returns `:reject`.
+Uses the rotor actual Cp (not Betz 0.593) so small/low-Cp rotors gate correctly.
+
+**Consequences:**
+- Geometries are no longer falsely rejected at low wind speeds
+- The gate sits alongside the existing Betz ceiling check (P_mean < 1.1 * Betz_max)
+- 80 percent threshold prevents edge cases where the floor is just barely reachable
+
+**Status:** Active. Implemented 2026-08-11.
+
+## [2026-08-11] Ramp-controller evaluator (evaluate_ramp)
+
+**Context:** The DE evaluator used a 3-point k bracket (k_prior scaled by 0.5, 1, 2) with fixed
+k_mppt during the scoring window. The dashboard uses RampController (IDLE to RAMPING to HOLDING)
+which dynamically adjusts k with structural guards. The two paths could converge to different k
+values for the same genome.
+
+**Choice made:** Built `evaluate_ramp()` in `src/objective_evaluator_ramp.jl` -- a new evaluator
+that uses the RampController to discover the sustainable k_mppt dynamically. Protocol:
+warm pre-solve -> settle -> RampController chunked loop (2s ODE chunks with update_ramp!) ->
+60s scoring window (ramp continues, k never frozen) -> score via the same fitness_fn seam.
+k_mppt is NOT in the genome (14-D V10) -- it is an output of the evaluation.
+
+**Consequences:**
+- Dashboard and evaluator now share the same k-selection path
+- Ramp mode is 3-10x slower than bracket mode (acceptable for calibration campaigns)
+- Ramp results can calibrate the fast bracket lambda-squared scaling factor
+- V12 adapter: `objective_v12_ramp()`
+- Not yet CI-tested (short-horizon smoke test pending)
+
+**Status:** Active. Implemented 2026-08-11. Pending first calibration campaign.
+
+
+
 ## [2026-06-25] Bank angle bound tightened 35° → 25° for pitch depower blade-tip clearance
 
 **Context:** During pitch depower, the shaft elevates to ~65° from horizontal to spill

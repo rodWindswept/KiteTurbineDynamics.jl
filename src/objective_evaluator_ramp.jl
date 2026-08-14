@@ -281,5 +281,6 @@ function evaluate_ramp(
         mean(T_lift_samples)
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
-                      drifted, stationary, util_a, util_b, T_lift_mean)
+                      drifted, stationary, util_a, util_b, T_lift_mean,
+                      P_mean, false)
 end

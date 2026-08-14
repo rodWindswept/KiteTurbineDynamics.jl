@@ -351,15 +351,15 @@ function search_bounds_v4(
     beam_profile::BeamProfile;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
 )
-    # Do_top: hard bounds per Rod (2026-07-24), no scaling
-    Do_lo = 0.20
+    # Do_top: hard bounds per Rod (2026-08-10), no scaling
+    Do_lo = 0.15
     Do_hi = 0.440
 
     r_hub_lo = 1.50 * p.trpt_hub_radius    # raised floor from 0.30
     r_hub_hi = 8.00 * p.trpt_hub_radius
 
-    r_bot_lo = 1.5
-    r_bot_hi = 8.0
+    r_bot_lo = 1.0
+    r_bot_hi = 5.0
 
     Lr_lo = 0.2;
     Lr_hi = 3.0

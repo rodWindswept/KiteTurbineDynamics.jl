@@ -5,7 +5,7 @@
 ## Quick Start
 
 1. **Read these first:** `CONTEXT.md` (physics glossary) → `DECISIONS.md` (design rationale) → `CLAUDE.md` (dev commands)
-2. **Run the test suite:** `julia --project=. test/runtests.jl` (~21 min, 1861 tests). Never commit with failures.
+2. **Run the test suite:** `julia --project=. test/runtests.jl` (~22 min, 1902 tests). Never commit with failures.
 3. **Launch a dashboard:** `julia --project=. scripts/interactive_dashboard.jl --v10`
 4. **Understand the physics:** Every tether, bridle, and line must transmit force only in TENSION. Slack = failure.
 
@@ -16,7 +16,7 @@
 | Physics & decisions | `CONTEXT.md`, `DECISIONS.md` | Understand the TRPT, campaign history, design choices |
 | Dev commands | `CLAUDE.md`, `AGENTS.md` | Build, test, lint, run campaigns |
 | Source code | `src/` | 39 Julia files — entry at `src/KiteTurbineDynamics.jl` |
-| Test suite | `test/` | 33 test files, 1861 tests |
+| Test suite | `test/` | 33 test files, 1902 tests |
 | Campaign scripts | `scripts/` | DE optimisers, analysis, rendering |
 | Campaign results | `scripts/results/` | V2 through V10 Tight, CSVs and JSONs |
 | Reports | `docs/reports/`, `archive/reports/` | .docx and .md reports |
@@ -37,7 +37,7 @@
 - **Tension-only:** Every line/bridle/tether must be in tension. Negative cumulative thrust on any ring = infeasible design.
 - **k_mppt:** Generator control coefficient. MUST scale with λ² in the equilibrium solver (commit `1c86b69`).
 - **Ring mapping:** Hub ring is position 1, counting down the shaft. Ring index = n_rings − mask_pos + 1. Fixed +2 offset (commit `71ea694`).
-- **Static-vs-dynamic gap:** Static equilibrium solver predicts 50 kW; full multibody ODE shows ~12 kW. Gap exists because static solver's 1D power balance ignores torque transmission through TRPT.
+- **Static-vs-dynamic gap (RESOLVED 2026-08-12):** The historical gap (static solver predicts 50 kW; ODE shows ~12 kW / stalls at ω≈−0.2) was traced to hardcoded ζ=1.5 rope damping + the tension rectifier in `rope_forces.jl`, producing a DC reverse-torque bias. With ζ=0.05 (`SystemParams.zeta`), the ODE sustains power and matches BEM predictions. See DECISIONS.md [2026-08-12].
 
 ## Current Campaign State
 
@@ -46,6 +46,7 @@
 | V6.3 | 52.6 kg ⚠ | 6 expansion | Many small fans beat one big one. **⚠ Dynamically impossible** — parasitic drag 14,277× aero power. Maths artefact, not a real design. |
 | V10 | 76.75 kg | 1 | PCA decoupling, two-basin trap, slenderness gate |
 | **V10 Tight** | **49.2 kg** | **4** | k_mppt fix + ring-mapping fix unlocked multi-rotor |
+| **V12 5kW (RUNNING)** | — | — | Graduated ladder rung 1. Cold-start V12 evaluator (`scripts/run_v12_5kw.jl`), seeded population, per-gen genome saves. Predecessor V10 static campaign rejected: mass-minimisation shrank designs to 0.48 kg junk (no power gate). See `handover-2026-08-12-5kw-baseline.md` |
 
 ## What the Optimizer Is Telling Us
 

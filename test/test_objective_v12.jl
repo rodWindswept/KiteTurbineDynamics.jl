@@ -76,4 +76,20 @@ end
     if r.status === :ok
         @test isfinite(r.fitness)
     end
+@testset "v12_fitness — FoS cap hard rejection at 16" begin
+    cfg = ObjectiveConfig()
+    # FoS=16 is at cap edge: allowed (finite score)
+    @test isfinite(v12_fitness(30.0, 16.0, cfg))
+    # FoS=17 (and any above 16) is rejected: Inf
+    @test v12_fitness(30.0, 17.0, cfg) == Inf
+    @test v12_fitness(30.0, 287.0, cfg) == Inf
+    # FoS closer to target (3.0) is better (more negative) within [target, cap]
+    @test v12_fitness(30.0, 4.0, cfg) < v12_fitness(30.0, 8.0, cfg)
+    @test v12_fitness(30.0, 8.0, cfg) < v12_fitness(30.0, 16.0, cfg)
+    # Custom cap at 10: FoS=10 allowed, FoS=11 rejected
+    cfg10 = ObjectiveConfig(; fos_cap=10.0)
+    @test isfinite(v12_fitness(30.0, 10.0, cfg10))
+    @test v12_fitness(30.0, 11.0, cfg10) == Inf
+    @test v12_fitness(30.0, 4.0, cfg10) < v12_fitness(30.0, 10.0, cfg10)
+end
 end

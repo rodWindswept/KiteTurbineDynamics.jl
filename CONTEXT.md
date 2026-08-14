@@ -48,7 +48,7 @@ The kite turbine is a mostly-tensile, lightweight, fast-deployable structure:
 
 The TRPT is fundamentally a **low-torque, high-speed** transmission. The P(k) curve is hump-shaped — P_rated crosses at TWO k values:
 
-- **Left flank:** low k, high ω, high thrust → FoS-limited
+**Left flank:** low k, high ω, high thrust. The limiting factor on the left flank is torsional collapse margin — at high ω the TRPT twist accumulates faster and the system approaches the Tulloch collapse cliff. Line drag at high ω may act as a preserving torsional damper (pending assessment). FoS becomes limiting on the RIGHT flank where high generator torque reaction loads rings radially, placing ring beams in axial compression (Euler buckling).
 - **Right flank:** high k, low ω, high torsion → collapse-margin-limited, dynamically unreachable
 
 We design for the left flank: size blades so minimum power ≤ P_rated, size rings for thrust loads. Accept low k_mppt (2–20), high ω (150–300 rpm). Collapse margin is healthy (42–47°) on this flank.
@@ -68,8 +68,10 @@ Instead of "design a turbine, then hunt for a controller":
 1. Sweep wind speeds 5–15 m/s for a given geometry
 2. At each wind, bisection-hunt k_mppt that produces P_rated
 3. Record FoS at each point
-4. If min(FoS) ≥ 1.5 across all winds → viable design + control law k(v) in one pass
+4. If min(FoS) ≥ 1.5 across all winds (hard floor) and FoS ≈ 3.0 at rated (target) → viable design + control law k(v) in one pass
 5. If any point fails → geometry is infeasible, no controller can save it
+
+**P_available(v) gate (2026-08-11):** Some wind speeds cannot physically produce P_rated. At 5 m/s, available power is only (5/11)³ ≈ 9.4% of rated. A `P_available(v)` gate implemented in `evaluate_windowed` checks `Cp × ½ρv³A ≥ P_floor × 0.8` — if the wind cannot reach the power floor, the evaluation is skipped rather than rejecting the geometry.
 
 ### Expansion rotors are co-equal generators
 
@@ -158,7 +160,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | **Collapse margin** | δα* − |Δα| — distance to torsional collapse cliff. Smaller = worse. Monotonic safety indicator. |
 | **Force Ratio** | Tangential force / axial force at TRPT ring. Max ≈ 0.5 |
 | **MTR** | Moment-to-Tension Ratio ≈ 0.05 |
-| **DLF** | Design Load Factor — net inward radial force from taper/twist/gust. Calibrated to 1.2 from ODE. |
+| **DLF** | Design Load Factor — lumped envelope converting line tension to effective radial inward force per vertex. Computed from ODE statistics (`DLF_peak × 1.10`) in `trpt_optimization.jl`, calibrated via `scripts/calibrate_dlf.jl` on a 10 kW system across 6 load scenarios. The value 1.2 provides ~60% margin over the worst aero-only case (steady 11 m/s, DLF=0.83). Not a magic constant — recalibration needed for 50 kW and current spoke physics. |
 | **Network rotor model** | N co-equal rotors sharing P/N each. Distributed per-ring loading. |
 | **Windowed evaluator** | `evaluate_windowed` — the one ODE protocol for the objective family (build → start → window run → gates → score). Version objectives are adapters over it (2026-08-09). |
 | **Objective config** | `ObjectiveConfig` — immutable per-eval tunables (k_mppt, relax/window horizons, V12 power-window knobs). Sweeps thread it per-eval; no module globals. |
@@ -181,6 +183,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | `src/objective_v6.jl` | V6 objective with network power sharing, distributed loading, +1e6 penalty barrier |
 | `src/objective_v10.jl` | V10 objective — rotor masks, tension gate, slenderness gate, k_mppt λ² scaling |
 | `src/objective_evaluator.jl` | **The windowed evaluator** (2026-08-09): `evaluate_windowed`, `ObjectiveConfig`, `EvalResult`, `with_k_bracket`, `build_system_from_v10` |
+| `src/objective_evaluator_ramp.jl` | **Ramp-controller evaluator** (2026-08-11): `evaluate_ramp` — replaces the fixed-k bracket with a dynamically converging RampController. k_mppt is an output, not an input. |
 | `src/sim_frame.jl` | `SimFrame`, `ExtendedSimFrame`, `capture_extended()` |
 | `src/ring_spacing.jl` | v4/v5 ring spacing (constant L/r), `ring_spacing_v4()`, density profile |
 | `src/trpt_optimization.jl` | `evaluate_design()`, structural FEA (Euler buckling + torsional collapse) |

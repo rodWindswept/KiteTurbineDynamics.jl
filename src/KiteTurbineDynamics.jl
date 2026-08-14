@@ -39,6 +39,7 @@ include("objective_v5.jl")
 include("objective_v6.jl")
 include("objective_v10.jl")
 include("objective_evaluator.jl")   # shared windowed evaluator + result contract
+include("objective_evaluator_ramp.jl")  # ramp-controller evaluator
 include("objective_v11.jl")
 include("objective_v12.jl")
 include("objective_feasibility.jl")
@@ -138,9 +139,10 @@ export parasitic_drag_power
 export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
 export TRPT_V11_DIM, search_bounds_v11, objective_v11
 export objective_v11_warmstart, warmstart_with_k_bracket, v11_fitness
-export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, v12_fitness
+export evaluate_ramp, RAMP_CHUNK_S, RAMP_MAX_CHUNKS, RAMP_WINDOW_S
+export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, objective_v12_ramp, v12_fitness
 # Shared windowed evaluator (2026-08-09 consolidation)
-export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket
+export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket, twist_collapse_check
 # Rotor → system-ring mapping (single authority)
 export expansion_params_from_rotors
 export objective_feasibility

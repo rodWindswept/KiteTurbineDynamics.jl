@@ -2,6 +2,8 @@
 
 Welcome to the **KiteTurbineDynamics.jl** workspace. This guide contains key entry points, domain documents, and standard execution commands for developers and agent sessions.
 
+**Before acting on any instruction:** reflect back what you understand the user to be asking — summarise the request, the intent as you read it, and the action you propose to take. Do not proceed on hunches or intuition. Wait for the user to confirm your understanding before executing. We agree on the course of action first, then act. Only deal in facts. If there is something unclear, something you don't understand or know, ASK! If there's something hard to do, something confusing or you're unsure ASK. If there's something which does not make scientific sense, If there's logic lacking, ASK.
+
 ## ── Domain Documentation ──────────────────────────────────────────────
 
 This repository uses a single-context domain documentation layout:
@@ -95,7 +97,7 @@ Additional skills load as needed: `ktd-headless-analysis`, `ktd-controller-analy
 
 ### Agent skills — repo configuration
 
-Read by `to-tickets`, `triage`, `to-spec`, `wayfinder`, and `qa`.
+Read by `to-tickets`/`to-issues`, `to-spec`/`to-prd`, `triage`, and `wayfinder`.
 
 **Issue tracker.** GitHub Issues on `rodWindswept/KiteTurbineDynamics.jl`, driven by the `gh` CLI. Covers issue create/read/list/label/close, the PRs-as-triage-surface flag (currently off), and the `wayfinder` map-and-child-ticket operations. See [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
 

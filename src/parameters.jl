@@ -158,6 +158,10 @@ struct SystemParams
     back_anchor_fwd_x::Float64  # Extra downwind offset of ground anchor (m). Default: 11.0
 
     backline_payout::Float64  # Extra line paid out by winch (m). Default: 0.0
+
+    # Rope structural damping
+    zeta::Float64  # Sub-segment damping ratio (dimensionless). Dyneema ≈ 0.01–0.05.
+                   # Prior hardcoded 1.5 (2026-08-12 diagnosed as reverse-torque source).
 end
 
 """
@@ -203,6 +207,7 @@ function SystemParams(
         back.c_back_line,
         back.back_anchor_fwd_x,
         back.backline_payout,
+        0.05,  # zeta — Dyneema structural damping ratio
     )
 end
 

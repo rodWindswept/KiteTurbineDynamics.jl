@@ -32,21 +32,31 @@ function v12_fitness(P_mean::Float64, FoS_min::Float64,
     FoS_min < cfg.fos_hard && return Inf
 
     # ── Power window penalty ─────────────────────────────────────────────
+    # V13: penalize_ceiling=false → above-ceiling power at rated wind is
+    # headroom, not a flaw. The Betz hard gate in evaluate_windowed rejects
+    # physical cheating; the floor penalty is unchanged.
     pw = 1.0
     if P_mean < cfg.p_floor_kw
         pw += ((cfg.p_floor_kw - P_mean) / cfg.p_floor_kw)^2 * cfg.w_floor
-    elseif P_mean > cfg.p_ceiling_kw
+    elseif cfg.penalize_ceiling && P_mean > cfg.p_ceiling_kw
         pw += ((P_mean - cfg.p_ceiling_kw) / cfg.p_ceiling_kw)^2 * cfg.w_ceiling
     end
 
     # ── FoS target penalty (asymmetric) ──────────────────────────────────
     fw = 1.0
-    if FoS_min < cfg.fos_target
+    if cfg.fos_target - cfg.fos_hard < 1e-9
+        # V13: target == hard floor → no soft pressure above the floor
+        # (the hard gate covers FoS < fos_hard). Prevents the divide-by-zero
+        # gap formula from driving selection toward unloaded structures.
+        fw = 1.0
+    elseif FoS_min < cfg.fos_target
         # Quadratic below target: gap=0 at FOS_TARGET, gap=1 at FOS_HARD
         gap = (cfg.fos_target - FoS_min) / (cfg.fos_target - cfg.fos_hard)
         fw += gap^2 * cfg.w_fos_below
     else
-        # Linear above target: gentle slope so DE can follow gradient down
+        # Hard cap: FoS above fos_cap is excessive mass — reject.
+        # Linear above target: gentle slope so DE can follow gradient down.
+        FoS_min > cfg.fos_cap && return Inf
         fw += (FoS_min - cfg.fos_target) * cfg.w_fos_above
     end
 
@@ -139,4 +149,32 @@ function warmstart_with_k_bracket_v12(
         cfg=c, spoke=spoke, lin_damp=lin_damp, lift_device=lift_device)
     return with_k_bracket(scoring, x, beam_profile, p;
         power_W=power_W, v_rated=v_rated, cfg=cfg)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# V12 ramp-controller evaluator
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    objective_v12_ramp(x, beam_profile, p; cfg, spoke, ...) -> ObjectiveResult
+
+V12 ramp-controller evaluation.  Uses the RampController (IDLE → RAMPING →
+HOLDING) to discover the sustainable k_mppt dynamically.  The ramp continues
+through the scoring window — k is never frozen.  Scored with `v12_fitness`.
+"""
+function objective_v12_ramp(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    cfg::ObjectiveConfig=ObjectiveConfig(),
+    elev_angle::Float64=π / 6,
+    spoke::Union{Nothing,SpokeParams}=nothing,
+    lin_damp::Float64=0.05,
+    lift_device::Union{Nothing,LiftDevice,Function}=nothing,
+    trace_callback::Union{Nothing,Function}=nothing,
+)
+    return evaluate_ramp(x, beam_profile, p, cfg;
+        elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
+        lift_device=lift_device, trace_callback=trace_callback,
+        fitness_fn=(P, F, c) -> v12_fitness(P, F, c))
 end
