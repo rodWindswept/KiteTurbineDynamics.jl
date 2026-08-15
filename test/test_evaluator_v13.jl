@@ -120,15 +120,19 @@ else
     println("  (18m v13 winner CSV not present — skipping B6)")
 end
 
-println("=== B7: unit — hub_sanity_ok ===")
+println("=== B7: unit — tip_speed_sanity_ok ===")
 hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
-ok0 = KiteTurbineDynamics.hub_sanity_ok(u, sys)
+ok0 = KiteTurbineDynamics.tip_speed_sanity_ok(u, sys)
 u_hub = copy(u)
 u_hub[6N + Nr + hub_ri] = 1e20   # diverged hub ring ω
-ok1 = KiteTurbineDynamics.hub_sanity_ok(u_hub, sys)
-println("  settled: ok=", ok0, "   inflated ω_hub=1e20: ok=", ok1)
-check("B7a: settled state passes hub sanity", ok0)
-check("B7b: diverged hub ω fails hub sanity", !ok1)
+ok1 = KiteTurbineDynamics.tip_speed_sanity_ok(u_hub, sys)
+u_mid = copy(u)
+u_mid[6N + Nr + 2] = 1e3         # diverged MIDDLE ring ω (rim speed 1e3·r ≫ 100 m/s)
+ok2 = KiteTurbineDynamics.tip_speed_sanity_ok(u_mid, sys)
+println("  settled: ok=", ok0, "   hub ω=1e20: ok=", ok1, "   mid-ring ω=1e3: ok=", ok2)
+check("B7a: settled state passes tip-speed sanity", ok0)
+check("B7b: diverged hub ω fails tip-speed sanity", !ok1)
+check("B7c: diverged MIDDLE ring ω fails tip-speed sanity (all rings checked)", !ok2)
 
 println()
 if isempty(failures)

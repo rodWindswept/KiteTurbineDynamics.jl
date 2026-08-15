@@ -67,14 +67,13 @@ const STATIONARITY_SWING = 0.20   # matches the gate's P_range/P_mean < 0.20
 const K_MPPT_MAX = 5000.0
 const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff system)
 
-# Hub-side sanity ceiling (2026-08-14): a hub-ring blade tip speed above
-# ~250 m/s exceeds what any composite rotor survives. This is an instrument
-# sanity bound (model-validity ceiling), not a material law — it exists to
-# reject numerically diverged hub rings (ω ~ 1e66, NaN-frozen chain) that the
-# ground-side metrics (P_gen, twist) cannot see. The v13 18m winner (r_hub
-# 0.47 m, inverted taper) diverged to ω_hub ≈ 3.5e66 within 5 s while
-# delivering 8.6 kW at the ground ring — the evaluator scored it −6.66.
-const HUB_TIP_SPEED_CEILING_MPS = 250.0
+# Tip-speed sanity ceiling (2026-08-14): anchored to the design point —
+# ideal TSR ≈ 4 at v_rated = 11 m/s ⇒ ~44 m/s design tip speed, so 100 m/s
+# is ~2.3× headroom. Anything past it is a diverged state (the v13 18m
+# winner's hub ring hit tip speed ~1.8e70 m/s while the ground generator
+# read 8.6 kW) or a machine that cannot hold together. Instrument sanity
+# bound (model-validity ceiling), not a material law.
+const TIP_SPEED_CEILING_MPS = 100.0
 # Cold-start window timing (the warm-start path takes relax/window from the
 # ObjectiveConfig; the cold path's "discard + window" is the same shape).
 const WINDOW_S  = 60.0   # scoring window after transient
@@ -174,21 +173,39 @@ rejected_eval(ω_eq::Float64=0.0) =
     ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0, 0.0, false)
 
 """
-    hub_sanity_ok(u, sys) -> Bool
+    tip_speed_sanity_ok(u, sys) -> Bool
 
-Hub-side sanity check (2026-08-14): the hub ring ω must be finite and its
-blade tip speed within the composite sanity ceiling. A diverged hub ring
-(ω ~ 1e66 from tiny-inertia freewheel with an inverted-taper hub) leaves the
-ground-side metrics (P_gen, twist) healthy-looking — the twist states
-NaN-freeze and the diverged ring's FoS samples get filtered — so the
-evaluator and gate must check the hub explicitly.
+Tip-speed sanity check (2026-08-14, tightened per Rod: ceiling 100 m/s, the
+design point is ~44 m/s at TSR 4 / 11 m/s). Checks EVERYTHING that spins:
+
+1. every TRPT ring ω finite, and ring rim speed |ω_i|·radius_i ≤ ceiling
+2. hub rotor blade tip |ω_hub|·rotor.radius ≤ ceiling
+3. every expansion rotor tip |ω[ring_idx]|·blade_tip_radius ≤ ceiling
+
+NaN/Inf ω fails automatically (comparisons with NaN are false). A diverged
+ring (ω ~ 1e66 from a tiny freewheeling hub) leaves ground-side metrics
+(P_gen, twist) healthy-looking — twist NaN-freezes, broken-ring FoS gets
+filtered — so the evaluator and gate must check every spinning element.
 """
-function hub_sanity_ok(u::AbstractVector, sys::KiteTurbineSystem)
+function tip_speed_sanity_ok(u::AbstractVector, sys::KiteTurbineSystem)
     N = sys.n_total
     Nr = sys.n_ring
+    # 1. All rings: finite ω and rim speed within ceiling
+    for ri in 1:Nr
+        w = u[6N + Nr + ri]
+        r_ring = (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
+        (isfinite(w) && abs(w) * r_ring <= TIP_SPEED_CEILING_MPS) || return false
+    end
+    # 2. Hub rotor tip
     hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
     w_hub = u[6N + Nr + hub_ri]
-    return isfinite(w_hub) && abs(w_hub) * sys.rotor.radius <= HUB_TIP_SPEED_CEILING_MPS
+    (isfinite(w_hub) && abs(w_hub) * sys.rotor.radius <= TIP_SPEED_CEILING_MPS) || return false
+    # 3. Expansion rotor tips
+    for er in sys.expansion_rotors
+        w = u[6N + Nr + er.ring_idx]
+        (isfinite(w) && abs(w) * er.blade_tip_radius <= TIP_SPEED_CEILING_MPS) || return false
+    end
+    return true
 end
 
 """
@@ -492,9 +509,10 @@ function evaluate_windowed(
             if !twist_flagged[] && twist_collapse_check(uc, sys).crossed
                 twist_flagged[] = true
             end
-            # Hub-side sanity: a diverged hub ring leaves ground-side metrics
-            # healthy (NaN-frozen twist, filtered FoS) — check it explicitly.
-            if !hub_diverged[] && !hub_sanity_ok(uc, sys)
+            # Tip-speed sanity: a diverged ring leaves ground-side metrics
+            # healthy (NaN-frozen twist, filtered FoS) — check every ring
+            # rim and every rotor tip explicitly.
+            if !hub_diverged[] && !tip_speed_sanity_ok(uc, sys)
                 hub_diverged[] = true
             end
             ef = capture_extended(

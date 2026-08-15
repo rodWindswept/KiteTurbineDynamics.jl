@@ -39,6 +39,15 @@ gain), inflating window power.
    branch directly and the motor kick is an obsolete stall crutch that winds chains past δα*.
 6. **Rated MPPT gain** — `cfg.k_mppt = p.k_mppt` (the scaled system's gain, ≈1.94 at 5 kW),
    not the 50 kW default 10.0.
+7. **Tip-speed sanity (2026-08-14, tightened same day per Rod).** `tip_speed_sanity_ok(u, sys)`:
+   every TRPT ring rim and every rotor tip (hub + expansion) must stay ≤ 100 m/s — anchored
+   to the design point (~44 m/s at TSR 4, 11 m/s wind). The first v13 campaign (18 m) crowned
+   a design (−6.66) whose hub ring diverged to ω≈3.5e66 within 5 s (r_hub=0.474, inverted
+   taper, n_active=1) while P_gen read 8.6 kW and twist 0.0 — ground-side instruments cannot
+   see a diverged ring. The Betz gate is output-side (generator power vs swept-area ceiling)
+   and correctly passed it; state-integrity failures need state-variable ceilings. Hard reject
+   in the evaluator and gate; r_hub lo raised 0.2 → 0.7 m; acceptance B6/B7 green, suite
+   1901/1901.
 
 **Acceptance (test/test_evaluator_v13.jl, RED on master → all green):** B1 island-1 winner
 `:reject`, twist_crossed=true. B2 18 m flywheel winner `:reject`. B3 original seed `:ok`,

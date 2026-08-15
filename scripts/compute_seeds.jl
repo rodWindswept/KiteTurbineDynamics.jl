@@ -108,7 +108,10 @@ function tight_bounds(seed, kw)
     
     # Physical minima & overrides
     lo[1] = max(lo[1], 0.005)
-    lo[5] = max(lo[5], 0.2); hi[5] = max(hi[5], 2.2)  # r_hub: hi ≥ 2.2m (Rod, Daisy-proportioned at 5kW)
+    # r_hub lo=0.7 (Rod 2026-08-14): the DE repeatedly exploited tiny hubs
+    # (0.47/0.67m winners diverged the hub ring to ω~1e66-1e86). τ_cap ∝ r_min²;
+    # Daisy 1.5kW had r_hub=1.52m. Seed is 0.914m. hi ≥ 2.2 unchanged.
+    lo[5] = max(lo[5], 0.7); hi[5] = max(hi[5], 2.2)
     lo[6] = max(lo[6], 0.1)
     
     for i in 1:14

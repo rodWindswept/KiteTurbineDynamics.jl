@@ -142,7 +142,7 @@ export objective_v11_warmstart, warmstart_with_k_bracket, v11_fitness
 export evaluate_ramp, RAMP_CHUNK_S, RAMP_MAX_CHUNKS, RAMP_WINDOW_S
 export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, objective_v12_ramp, v12_fitness
 # Shared windowed evaluator (2026-08-09 consolidation)
-export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket, twist_collapse_check, hub_sanity_ok, HUB_TIP_SPEED_CEILING_MPS
+export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket, twist_collapse_check, tip_speed_sanity_ok, TIP_SPEED_CEILING_MPS
 # Rotor → system-ring mapping (single authority)
 export expansion_params_from_rotors
 export objective_feasibility

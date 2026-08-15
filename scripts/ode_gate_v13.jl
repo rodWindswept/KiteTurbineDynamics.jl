@@ -159,14 +159,14 @@ if abspath(PROGRAM_FILE) == @__FILE__
         println("  worst segment: ", tr.worst_seg, "  Δα=", round(tr.rows[tr.worst_seg].da_deg, digits=1),
                 "° vs δα*=", round(tr.rows[tr.worst_seg].dastar_deg, digits=1), "°")
     end
-    # Hub-side sanity: hub ring tip speed (composite sanity ceiling) — a
-    # diverged hub ring (ω ~ 1e66, NaN-frozen chain) is not "sustained power".
-    hub_ok = isfinite(r.w_hub_final) &&
-             r.w_hub_final * r.sys.rotor.radius <= HUB_TIP_SPEED_CEILING_MPS
+    # Tip-speed sanity: every ring rim and every rotor tip must stay under
+    # the ceiling (100 m/s — design point ~44 m/s at TSR 4, 11 m/s wind).
+    # A diverged ring (ω ~ 1e66, NaN-frozen chain) is not "sustained power".
+    hub_ok = tip_speed_sanity_ok(r.u, r.sys)
     ok = r.ok && hub_ok
-    println(r.ok && !hub_ok ? "  ❌ HUB DIVERGED — tip speed " * string(round(abs(r.w_hub_final) * r.sys.rotor.radius, digits=0)) * " m/s > " * string(HUB_TIP_SPEED_CEILING_MPS) * " m/s" : "")
+    println(r.ok && !hub_ok ? "  ❌ TIP SPEED VIOLATION > " * string(TIP_SPEED_CEILING_MPS) * " m/s (diverged ring/rotor)" : "")
     println(ok ? "  ✅ GATE PASSES" : "  ❌ GATE FAILS",
             "  (P_gen_final=", round(r.P_gen_final, digits=2),
             " kW, ω_gnd=", round(r.w_gnd_final, digits=2), " rad/s, crossed=", r.crossed,
-            ", hub_ok=", hub_ok, ")")
+            ", tip_ok=", hub_ok, ")")
 end
