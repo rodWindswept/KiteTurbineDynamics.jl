@@ -108,6 +108,10 @@ function tight_bounds(seed, kw)
     
     # Physical minima & overrides
     lo[1] = max(lo[1], 0.005)
+    # t_over_D floor 0.010 (Rod 2026-08-14): the v13 18m winner parked at
+    # 0.005 → 0.14 mm tube walls → 58 g rings flung by 5.7 kN rotor thrust.
+    # The floor is the SEED's own value — no thinner than the starting design.
+    lo[2] = max(lo[2], 0.010)
     # r_hub lo=0.7 (Rod 2026-08-14): the DE repeatedly exploited tiny hubs
     # (0.47/0.67m winners diverged the hub ring to ω~1e66-1e86). τ_cap ∝ r_min²;
     # Daisy 1.5kW had r_hub=1.52m. Seed is 0.914m. hi ≥ 2.2 unchanged.

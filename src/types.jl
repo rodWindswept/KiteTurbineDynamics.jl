@@ -151,6 +151,24 @@ struct KiteTurbineSystem
     # refs.
     ring_Do_scale_exp::Base.RefValue{Float64}
     ring_r_hub::Base.RefValue{Float64}
+
+    # Rope break state (2026-08-14): one flag per sub-segment (BitVector);
+    # any_broken is a dirty latch checked per step by run_canonical_sim!
+    # for the early-exit disqualification (Rod: option B).
+    broken_lines::BitVector
+    any_broken::Ref{Bool}
+    # Break detection is enabled only for REAL operation (run_canonical_sim!),
+    # not the settle's exploratory transients, which can over-strain a line
+    # momentarily while searching the equilibrium (would break healthy
+    # machines before their eval even starts).
+    breaks_enabled::Ref{Bool}
+    # Static mapping sub-seg index → TRPT segment index (1..n_ring-1; 0 for
+    # non-TRPT chain sub-segs like bridle/cyan). Precomputed at build because
+    # the per-sub-seg scan would be O(n) per step in the hot loop. TRPT lines
+    # are ring→rope-node→…→ring chains, so "both ends rings" is NOT the
+    # classification — membership is by node-gid range between consecutive
+    # ring_ids.
+    sub_seg_trpt_seg::Vector{Int}
 end
 
 # Default ring geometry (legacy circular 0.05 t/D, Do ∝ √R)

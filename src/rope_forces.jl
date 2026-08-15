@@ -1,13 +1,53 @@
 using LinearAlgebra
 
+# ══════════════════════════════════════════════════════════════════════════════
+# TRPT-segment classification (2026-08-14): a sub-seg belongs to TRPT segment
+# s (rings s ↔ s+1) when BOTH endpoint gids lie in [ring_ids[s], ring_ids[s+1]].
+# TRPT lines are ring→rope-node→…→ring chains; "both ends are rings" is never
+# true for them. 0 = not a TRPT chain sub-seg (bridle, cyan, lift).
+# ══════════════════════════════════════════════════════════════════════════════
+function trpt_seg_map(sub_segs, ring_ids)::Vector{Int}
+    map = zeros(Int, length(sub_segs))
+    n_seg = length(ring_ids) - 1
+    for (si, ss) in enumerate(sub_segs)
+        ga = ss.end_a.node_id
+        gb = ss.end_b.node_id
+        for s in 1:n_seg
+            lo = ring_ids[s]
+            hi = ring_ids[s + 1]
+            if lo <= ga <= hi && lo <= gb <= hi
+                map[si] = s
+                break
+            end
+        end
+    end
+    return map
+end
+
+# Rope break strain (2026-08-14, Rod): Dyneema SK99 ultimate strain ≈ 3.5%.
+# A sub-segment strained past this BREAKS: zero tension thereafter, and the
+# evaluation is disqualified at the break instant (option B — no wreckage
+# physics, no post-break simulation).
+const ROPE_BREAK_STRAIN = 0.035
+
 """
     get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb; rel_buf=nothing) -> tension::Float64
 
 Compute the physical spring-damper tension in a single rope sub-segment.
 Accepts pre-computed geometry from the caller to avoid duplicate allocations.
 When `rel_buf` (3-vector) is provided, uses it as scratch to avoid allocating `rel_vel`.
+
+Break semantics (2026-08-14): pass `idx` (the sub-seg's index in
+`sys.sub_segs`) and `broken::BitVector` — a broken sub-seg returns 0.0.
+Break DETECTION is done at line level in `compute_rope_forces!` (full
+ring-to-ring path strain vs ROPE_BREAK_STRAIN), not per numerical sub-seg —
+mid-node placement artifacts must not trip the criterion.
 """
-function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb; rel_buf=nothing)
+function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb;
+                                rel_buf=nothing, idx::Int=0, broken=nothing)
+    if broken !== nothing && idx > 0 && broken[idx]
+        return 0.0
+    end
     if rel_buf !== nothing
         @inbounds for k in 1:3; rel_buf[k] = vb[k] - va[k]; end
         vel_proj = rel_buf[1]*dir[1] + rel_buf[2]*dir[2] + rel_buf[3]*dir[3]
@@ -15,8 +55,7 @@ function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, 
         rel_vel = vb .- va
         vel_proj = dot(rel_vel, dir)
     end
-    strain = (current_len - ss.length_0) / ss.length_0
-    return max(0.0, ss.EA * strain + ss.c_damp * vel_proj)
+    return max(0.0, ss.EA * (current_len - ss.length_0) / ss.length_0 + ss.c_damp * vel_proj)
 end
 
 """
@@ -197,12 +236,16 @@ function compute_rope_forces!(
     v_mid = zeros(3);  drag  = zeros(3);  hdrag = zeros(3)
     r_a   = zeros(3);  r_b   = zeros(3)
     vrel_buf = zeros(3);  vperp_buf = zeros(3)
-    # C1 (2026-08-14): per-segment shaft-torque + tension accumulators for the
-    # post-loop saturation clamp (segment index = lower ring idx, 1..Nr-1).
-    seg_tau = zeros(Nr)
+    # C1 (2026-08-14): per-segment shaft-torque (both ends) + tension
+    # accumulators for the post-loop saturation clamp, and line-path strain
+    # accumulators for rope break (segment index = 1..Nr-1).
+    seg_tau_a = zeros(Nr)
+    seg_tau_b = zeros(Nr)
     seg_tension = zeros(Nr)
+    seg_pathlen = zeros(Nr)
+    seg_restlen = zeros(Nr)
 
-    for ss in sys.sub_segs
+    for (si, ss) in enumerate(sys.sub_segs)
         is_bridle = ss.end_a.node_id == sys.bearing_id
 
         # ── positions (in-place) ──
@@ -240,7 +283,12 @@ function compute_rope_forces!(
         inv_len = 1.0 / current_len
         @inbounds for k in 1:3; dir_v[k] = diff[k] * inv_len; end
 
-        tension = get_subsegment_tension(ss, diff, current_len, dir_v, va, vb; rel_buf=vrel_buf)
+        # Break detection only during real operation (breaks_enabled latch set
+        # by run_canonical_sim!); the settle's exploratory transients must not
+        # break healthy machines.
+        brk_flags = sys.breaks_enabled[] ? sys.broken_lines : nothing
+        tension = get_subsegment_tension(ss, diff, current_len, dir_v, va, vb;
+            rel_buf=vrel_buf, idx=si, broken=brk_flags)
         @inbounds for k in 1:3; F_vec[k] = tension * dir_v[k]; end
 
         # ── aerodynamic drag (in-place) ──
@@ -262,54 +310,49 @@ function compute_rope_forces!(
         end
 
         # ── spring force + torque ──
-        both_rings = ss.end_a.is_ring && ss.end_b.is_ring
-        if both_rings
-            # TRPT segment: accumulate shaft torque per segment for the C1
-            # saturation clamp (applied after the loop — the twisted rope
-            # cannot transmit more than its crossing-limit torque, and beyond
-            # it the moment must not reverse-sign and pump the rings).
-            seg = min(ri_a_p, ri_b_p)
+        seg = sys.sub_seg_trpt_seg[si]
+        if ss.end_a.is_ring
+            ri_a = ri_a_p
             ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
-            ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
             @inbounds for k in 1:3
                 r_a[k] = pa[k] - ctr_a_view[k]
-                r_b[k] = pb[k] - ctr_b_view[k]
                 forces[nid_a][k] += F_vec[k]
-                forces[nid_b][k] -= F_vec[k]
             end
             tau_a = (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
                     (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
                     (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
-            seg_tau[seg] += tau_a
-            seg_tension[seg] += tension
+            if seg > 0
+                seg_tau_a[seg] += tau_a          # TRPT end — defer for C1 clamp
+                seg_tension[seg] += tension
+            else
+                torques[ri_a] += tau_a           # non-TRPT ring (bridle) — direct
+            end
         else
-            if ss.end_a.is_ring
-                ri_a = ri_a_p  # from position block above
-                ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
-                @inbounds for k in 1:3
-                    r_a[k] = pa[k] - ctr_a_view[k]
-                    forces[nid_a][k] += F_vec[k]
-                end
-                torques[ri_a] += (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
-                                 (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
-                                 (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
-            else
-                @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
-            end
+            @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
+        end
 
-            if ss.end_b.is_ring
-                ri_b = ri_b_p  # from position block above
-                ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
-                @inbounds for k in 1:3
-                    r_b[k] = pb[k] - ctr_b_view[k]
-                    forces[nid_b][k] -= F_vec[k]
-                end
-                torques[ri_b] += (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
-                                 (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
-                                 (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
-            else
-                @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
+        if ss.end_b.is_ring
+            ri_b = ri_b_p
+            ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
+            @inbounds for k in 1:3
+                r_b[k] = pb[k] - ctr_b_view[k]
+                forces[nid_b][k] -= F_vec[k]
             end
+            tau_b = (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
+                    (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
+                    (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
+            if seg > 0
+                seg_tau_b[seg] += tau_b
+            else
+                torques[ri_b] += tau_b
+            end
+        else
+            @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
+        end
+
+        if seg > 0
+            seg_pathlen[seg] += current_len
+            seg_restlen[seg] += ss.length_0
         end
     end
 
@@ -319,8 +362,24 @@ function compute_rope_forces!(
     # r = ½(r_a+r_b). Clamped with sign preserved — no reversal past δα*,
     # so a wound segment can never pump a ring (the freewheel ratchet dies).
     for s in 1:(Nr - 1)
-        ts = seg_tau[s]
-        ts == 0.0 && continue
+        # Rope break at LINE level (2026-08-14, Rod — SK99 3.5%): the full
+        # ring-to-ring path strain must not exceed ROPE_BREAK_STRAIN. Path
+        # level (not per numerical sub-seg) so mid-node placement artifacts
+        # cannot trip it. Detection only during real operation. Runs BEFORE
+        # the torque-clamp continue so zero-torque segments still break.
+        if sys.breaks_enabled[]
+            line_strain = (seg_pathlen[s] - seg_restlen[s]) / max(seg_restlen[s], 1e-9)
+            if line_strain > ROPE_BREAK_STRAIN
+                for si2 in 1:length(sys.sub_segs)
+                    sys.sub_seg_trpt_seg[si2] == s && (sys.broken_lines[si2] = true)
+                end
+                sys.any_broken[] = true
+            end
+        end
+
+        ts_a = seg_tau_a[s]
+        ts_b = seg_tau_b[s]
+        (ts_a == 0.0 && ts_b == 0.0) && continue
         gid_a = sys.ring_ids[s]
         gid_b = sys.ring_ids[s+1]
         pos_a = @view u[(3*(gid_a-1)+1):(3*gid_a)]
@@ -333,8 +392,12 @@ function compute_rope_forces!(
         chord = sqrt(L_s^2 + 2 * r_s^2 * (1 - cos(dastar)))
         T_s = seg_tension[s] / max(p.n_lines, 1)
         tau_sat = p.n_lines * max(T_s, 0.0) * r_s^2 * sin(dastar) / max(chord, 1e-9)
-        tau_clamped = clamp(ts, -tau_sat, tau_sat)
-        torques[s] += tau_clamped
-        torques[s+1] -= tau_clamped
+        # Action-reaction: the segment transmits ONE torque; ring s sees +τ,
+        # ring s+1 sees −τ (Newton's third law on the shaft). The symmetric
+        # average of the two end accumulations is the transmitted value
+        # (they are equal-and-opposite up to numerical asymmetry).
+        tau_tr = clamp(0.5 * (ts_a - ts_b), -tau_sat, tau_sat)
+        torques[s] += tau_tr
+        torques[s+1] -= tau_tr
     end
 end

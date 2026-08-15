@@ -233,6 +233,10 @@ function _build_kite_turbine_system_impl(
         Ref(1.0),                    # ring_aspect_ratio (populated by builder)
         Ref(0.5),                    # ring_Do_scale_exp (populated by builder; 0.5 = legacy √R)
         Ref(0.0),                    # ring_r_hub (populated by builder; 0 = fall back to p.trpt_hub_radius)
+        falses(length(sub_segs)),    # broken_lines — rope break flags per sub-seg (2026-08-14)
+        Ref(false),                  # any_broken — dirty latch for run_canonical_sim! early exit
+        Ref(false),                  # breaks_enabled — set true only by run_canonical_sim! (real operation)
+        trpt_seg_map(sub_segs, ring_ids),  # sub_seg_trpt_seg — precomputed TRPT-segment mapping
     )
 
     # ── Initial state vector (straight-line rope placement) ───────────────

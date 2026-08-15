@@ -10,6 +10,53 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-14] Rope break physics — lines fail at SK99 strain, disqualifying the machine
+
+**Context:** After A2 (cp falloff), B (per-rotor Betz) and C1 (torque saturation)
+landed, P4 stayed red: the old 18 m winner still reached ω_hub = 3.54e69 via a
+new mechanism — *translational fling*. Its ultra-light hub ring (t_over_D =
+0.005 → 0.14 mm walls, ~58 g) is flung outward by rotor thrust; the spring law
+then integrated unbounded line stretch to ~1e135 N, whose torque exactly
+cancelled the aero brake at the balloon fixed point. The model had no rope
+failure, so tension was physically unbounded.
+
+**Choice made (2026-08-14, Rod):**
+1. **Break strain ε_break = 0.035** — Dyneema SK99 (3.5% ultimate strain).
+2. **Option B consequence — break = immediate disqualification.** At the first
+   step where a line exceeds the limit, the line is marked broken (zero
+   tension), `any_broken` latches, `run_canonical_sim!` stops at the step
+   boundary, and the evaluator rejects with `line_broken=true`. No wreckage
+   physics: post-break dynamics have no calibration data and cannot change a
+   verdict — the design is dead the instant a line fails.
+3. **Break criterion is line-path strain, not per-sub-seg strain.** TRPT lines
+   are ring→rope-node→…→ring chains; per-numerical-sub-seg strain trips on
+   mid-node placement artifacts (the legacy builder settles with a 340%-strained
+   rope node) and measures the wrong quantity. The full ring-to-ring path strain
+   (`sub_seg_trpt_seg` map, precomputed at build) is the physical line strain.
+4. **Breaks only during real operation.** `breaks_enabled` latches on in
+   `run_canonical_sim!`; the settle's exploratory ω-scan transients over-strain
+   lines momentarily and must not break healthy machines before their eval.
+5. **C1 reworked onto the TRPT-chain map** — the original `both_rings` branch
+   never fired for real TRPT lines (see context below), so the saturation clamp
+   was inert where it mattered. The clamp now operates on the per-segment
+   transmitted torque with action-reaction (`+τ` ring s, `−τ` ring s+1).
+6. **Companion fix (a) landed: t_over_D floor 0.010** (the seed's own value —
+   no thinner than the starting design); scale-aware static-gate re-enable is
+   Monday's retrospective item.
+7. `ObjectiveResult.line_broken` — rejection reason is recorded; B1 accepts
+   either structural signature (twist OR line break) since the collapse
+   design's failure mode is now the break.
+
+**Verified:** R1–R3, P1–P4, B1–B7, suite 1900/1900. The 18 m winner breaks at
+~44 kN elastic (≈105 kN sampled incl. viscous damper term), max|ω| = 17.9 rad/s
+— no balloon. Healthy seed unchanged in behaviour (ω_gnd 13.18, no break).
+
+**Still active:** yes. ε_break and the floor are rung-specific calibrations;
+the Monday retrospective covers the scale-aware gate question and the Q1
+(lin_damp) fling verdict.
+
+---
+
 ## [2026-08-13] Evaluator v13 — the test that identifies realistic KTD designs
 
 **Context:** The 5 kW campaign evaluator crowned designs the corrected ODE gate rejects.

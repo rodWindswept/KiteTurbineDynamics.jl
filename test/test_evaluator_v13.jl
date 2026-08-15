@@ -63,9 +63,13 @@ end
 println("=== B1: island-1 winner (collapse) through v13 ===")
 r1 = run_eval(read_vec(WINNER1), 21.2, 30.0)
 println("  status=", r1.status, "  twist_crossed=", r1.twist_crossed,
+        "  line_broken=", r1.line_broken,
         "  P_mean=", round(r1.P_mean, digits=2), "  P_end=", round(r1.P_end, digits=2))
-check("B1: collapse design is :reject with twist_crossed=true",
-      r1.status === :reject && r1.twist_crossed)
+# With rope-break physics (2026-08-14) the collapse design's hub fling now
+# BREAKS its lines before the twist detector trips — either structural
+# signature is a legitimate recorded rejection reason.
+check("B1: collapse design is :reject with a recorded structural failure (twist or line break)",
+      r1.status === :reject && (r1.twist_crossed || r1.line_broken))
 
 println("=== B2: 18m winner (flywheel) through v13 ===")
 r2 = run_eval(read_vec(WINNER18), 18.0, 20.0)

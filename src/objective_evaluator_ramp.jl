@@ -282,5 +282,5 @@ function evaluate_ramp(
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
                       drifted, stationary, util_a, util_b, T_lift_mean,
-                      P_mean, false)
+                      P_mean, false, false)
 end

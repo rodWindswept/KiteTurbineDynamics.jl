@@ -161,16 +161,20 @@ struct ObjectiveResult
     T_lift::Float64
     P_end::Float64        # mean of last 5 window samples (sustained power; V13)
     twist_crossed::Bool   # per-segment twist past the geometric crossing limit (V13)
+    line_broken::Bool     # any TRPT line exceeded ROPE_BREAK_STRAIN (2026-08-14)
 end
 
 ObjectiveResult(; status, fitness, P_mean, FoS_min, ω_eq, P_range,
-           drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed) =
+           drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed,
+           line_broken) =
     ObjectiveResult(status, fitness, P_mean, FoS_min, ω_eq, P_range,
-               drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed)
+               drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed,
+               line_broken)
 
 """Standard rejected evaluation — `ω_eq` carries through when known."""
-rejected_eval(ω_eq::Float64=0.0) =
-    ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0, 0.0, false)
+rejected_eval(ω_eq::Float64=0.0; line_broken::Bool=false, twist_crossed::Bool=false) =
+    ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0,
+                    0.0, twist_crossed, line_broken)
 
 """
     rotor_betz_ok(power_kw, swept_area_m2, v_wind_mps) -> Bool
@@ -588,6 +592,13 @@ function evaluate_windowed(
         return rejected_eval(ω_eq)
     end
 
+    # Rope break disqualification (2026-08-14, option B): any line strained
+    # past ROPE_BREAK_STRAIN stops the sim (early exit in run_canonical_sim!)
+    # and rejects the design here.
+    if sys.any_broken[]
+        return rejected_eval(ω_eq; line_broken=true)
+    end
+
     # ── Score ────────────────────────────────────────────────────────────
     # Filter NaN/Inf from samples before computing statistics
     P_finite = [p for p in P_samples if isfinite(p) && p >= 0.0]
@@ -606,7 +617,7 @@ function evaluate_windowed(
     # V13 torsional collapse — hard rejection, carried in the result flag.
     if twist_flagged[]
         return ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0,
-                               true, false, -1.0, -1.0, 0.0, 0.0, true)
+                               true, false, -1.0, -1.0, 0.0, 0.0, true, false)
     end
 
     # Hub-side divergence — hard rejection (2026-08-14, v13 18m winner exploit).
@@ -729,7 +740,7 @@ function evaluate_windowed(
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
                       drifted, stationary, util_a, util_b, T_lift_mean,
-                      P_end, twist_flagged[])
+                      P_end, twist_flagged[], false)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

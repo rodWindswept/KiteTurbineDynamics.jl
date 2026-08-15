@@ -81,6 +81,9 @@ function run_canonical_sim!(
 )
     N = sys.n_total
     Nr = sys.n_ring
+    # Real operation: enable rope-break detection from here on (option B).
+    # The settle's exploratory transients run with breaks disabled.
+    sys.breaks_enabled[] = true
     du = zeros(Float64, length(u))
     t = 0.0
     ode_params = if lift_device === nothing
@@ -98,6 +101,9 @@ function run_canonical_sim!(
     end
 
     for step in 1:n_steps
+        # Rope break early exit (2026-08-14, option B): a broken line
+        # disqualifies the design — stop simulating the broken machine.
+        sys.any_broken[] && break
         fill!(du, 0.0)
         # ── Pre-ODE NaN/Inf guard: clamp ω, α in state vector ──────────────
         # If α or ω became Inf/NaN in a prior step, the ODE evaluation will
