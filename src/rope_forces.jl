@@ -175,6 +175,7 @@ function compute_rope_forces!(
     perp2_tilt::Union{AbstractVector, Nothing}=nothing,
 )
     N = sys.n_total
+    Nr = sys.n_ring
     # Dynamic shaft direction
     hub_gid = sys.rotor.node_id
     hub_pos_r = u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
@@ -196,6 +197,10 @@ function compute_rope_forces!(
     v_mid = zeros(3);  drag  = zeros(3);  hdrag = zeros(3)
     r_a   = zeros(3);  r_b   = zeros(3)
     vrel_buf = zeros(3);  vperp_buf = zeros(3)
+    # C1 (2026-08-14): per-segment shaft-torque + tension accumulators for the
+    # post-loop saturation clamp (segment index = lower ring idx, 1..Nr-1).
+    seg_tau = zeros(Nr)
+    seg_tension = zeros(Nr)
 
     for ss in sys.sub_segs
         is_bridle = ss.end_a.node_id == sys.bearing_id
@@ -257,32 +262,79 @@ function compute_rope_forces!(
         end
 
         # ── spring force + torque ──
-        if ss.end_a.is_ring
-            ri_a = ri_a_p  # from position block above
+        both_rings = ss.end_a.is_ring && ss.end_b.is_ring
+        if both_rings
+            # TRPT segment: accumulate shaft torque per segment for the C1
+            # saturation clamp (applied after the loop — the twisted rope
+            # cannot transmit more than its crossing-limit torque, and beyond
+            # it the moment must not reverse-sign and pump the rings).
+            seg = min(ri_a_p, ri_b_p)
             ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
-            @inbounds for k in 1:3
-                r_a[k] = pa[k] - ctr_a_view[k]
-                forces[nid_a][k] += F_vec[k]
-            end
-            torques[ri_a] += (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
-                             (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
-                             (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
-        else
-            @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
-        end
-
-        if ss.end_b.is_ring
-            ri_b = ri_b_p  # from position block above
             ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
             @inbounds for k in 1:3
+                r_a[k] = pa[k] - ctr_a_view[k]
                 r_b[k] = pb[k] - ctr_b_view[k]
+                forces[nid_a][k] += F_vec[k]
                 forces[nid_b][k] -= F_vec[k]
             end
-            torques[ri_b] += (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
-                             (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
-                             (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
+            tau_a = (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
+                    (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
+                    (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
+            seg_tau[seg] += tau_a
+            seg_tension[seg] += tension
         else
-            @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
+            if ss.end_a.is_ring
+                ri_a = ri_a_p  # from position block above
+                ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
+                @inbounds for k in 1:3
+                    r_a[k] = pa[k] - ctr_a_view[k]
+                    forces[nid_a][k] += F_vec[k]
+                end
+                torques[ri_a] += (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
+                                 (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
+                                 (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
+            else
+                @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
+            end
+
+            if ss.end_b.is_ring
+                ri_b = ri_b_p  # from position block above
+                ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
+                @inbounds for k in 1:3
+                    r_b[k] = pb[k] - ctr_b_view[k]
+                    forces[nid_b][k] -= F_vec[k]
+                end
+                torques[ri_b] += (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
+                                 (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
+                                 (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
+            else
+                @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
+            end
         end
+    end
+
+    # ── C1: per-segment torque saturation (2026-08-14, Rod) ────────────────
+    # The chain transmits at most its physical crossing-limit torque:
+    # τ_sat = n_lines·T·r²·sin(δα*)/chord, δα* = 2·asin(L/√(2(L²+2r²))),
+    # r = ½(r_a+r_b). Clamped with sign preserved — no reversal past δα*,
+    # so a wound segment can never pump a ring (the freewheel ratchet dies).
+    for s in 1:(Nr - 1)
+        ts = seg_tau[s]
+        ts == 0.0 && continue
+        gid_a = sys.ring_ids[s]
+        gid_b = sys.ring_ids[s+1]
+        pos_a = @view u[(3*(gid_a-1)+1):(3*gid_a)]
+        pos_b = @view u[(3*(gid_b-1)+1):(3*gid_b)]
+        L_s = norm(pos_b - pos_a)
+        r_ring_a = (sys.nodes[gid_a]::RingNode).radius
+        r_ring_b = (sys.nodes[gid_b]::RingNode).radius
+        r_s = 0.5 * (r_ring_a + r_ring_b)
+        dastar = 2 * asin(min(L_s / sqrt(2 * (L_s^2 + 2 * r_s^2)), 1.0))
+        chord = sqrt(L_s^2 + 2 * r_s^2 * (1 - cos(dastar)))
+        T_s = seg_tension[s] / max(p.n_lines, 1)
+        tau_sat = p.n_lines * max(T_s, 0.0) * r_s^2 * sin(dastar) / max(chord, 1e-9)
+        tau_clamped = clamp(ts, -tau_sat, tau_sat)
+        torques[s] += tau_clamped
+        torques[s+1] -= tau_clamped
     end
 end

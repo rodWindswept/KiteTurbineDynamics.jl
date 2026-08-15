@@ -255,11 +255,25 @@ Interpolated from the AeroDyn v5.0.0 quasi-steady BEM table at 0° elevation
 (NACA4412, 3 blades, R=4.0 m).
 - Below λ=0: returns 0.0.
 - Within table (0 ≤ λ ≤ 8): linear interpolation.
-- Above λ=8: linear extrapolation using the last two table entries.
+- Above the table (2026-08-14): the blade's own rolloff continues with the
+  table's terminal slope to the derived zero crossing (λ ≈ 9.61 ≈ 1.85× the
+  design TSR), then blends into the flat-plate drag brake cp = −k·λ³ — a rotor
+  that overspeeds is BRAKED by its own blades, never fed.
 """
 function cp_at_tsr(lambda::Float64)::Float64
     lambda <= 0.0 && return 0.0
-    return _interp_bem(BEM_TSR, BEM_CP, lambda)
+    if lambda <= BEM_CP_END_TSR
+        return _interp_bem(BEM_TSR, BEM_CP, lambda)
+    elseif lambda <= BEM_CP_ZERO_TSR
+        # linear continuation of the blade's own rolloff (value + slope match)
+        return BEM_CP_END_VAL + BEM_CP_TERMINAL_SLOPE * (lambda - BEM_CP_END_TSR)
+    elseif lambda <= BEM_CP_ZERO_TSR + BEM_CP_BLEND_W
+        # cosine blend into the flat-plate drag brake
+        w = (lambda - BEM_CP_ZERO_TSR) / BEM_CP_BLEND_W
+        return -(0.5 * (1.0 - cos(pi * w))) * BEM_CP_DRAG_K * lambda^3
+    else
+        return -BEM_CP_DRAG_K * lambda^3
+    end
 end
 
 """
@@ -289,6 +303,23 @@ function _interp_bem(
     t = (lambda - tsr_table[i - 1]) / (tsr_table[i] - tsr_table[i - 1])
     return coeff_table[i - 1] + t * (coeff_table[i] - coeff_table[i - 1])
 end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# High-TSR rotor power falloff (2026-08-14 — Rod: "limit the rotor power within
+# its own aero characteristics"). Everything is DERIVED from the blade's own
+# table — no magic λ. The terminal slope defines the rolloff; the zero crossing
+# lands at ~1.85× the blade's design TSR (peak at λ=5.2 → zero at λ≈9.61);
+# beyond it the blade is a flat-plate drag brake: cp = −k·λ³ (braking grows
+# cubically). If a different blade table is ever substituted, the falloff
+# follows automatically.
+# ══════════════════════════════════════════════════════════════════════════════
+const BEM_CP_END_TSR        = BEM_TSR[end]
+const BEM_CP_END_VAL        = BEM_CP[end]
+const BEM_CP_TERMINAL_SLOPE =
+    (BEM_CP[end] - BEM_CP[end - 1]) / (BEM_TSR[end] - BEM_TSR[end - 1])
+const BEM_CP_ZERO_TSR       = BEM_CP_END_TSR - BEM_CP_END_VAL / BEM_CP_TERMINAL_SLOPE
+const BEM_CP_DRAG_K         = BEM_CP_END_VAL / BEM_CP_END_TSR^3
+const BEM_CP_BLEND_W        = 1.0   # cosine blend width past the zero crossing
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Tether aerodynamic drag

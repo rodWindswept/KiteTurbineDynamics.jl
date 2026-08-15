@@ -173,6 +173,21 @@ rejected_eval(ω_eq::Float64=0.0) =
     ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0, 0.0, false)
 
 """
+    rotor_betz_ok(power_kw, swept_area_m2, v_wind_mps) -> Bool
+
+Per-rotor Betz potential check (2026-08-14, Rod): a rotor's own extracted
+aerodynamic power must be ≤ 1.1× the Betz potential of its own swept disk
+(0.593·½ρv³A). NaN fails. Belt-and-braces with the cp falloff — mostly
+redundant when the aero model is honest, which is exactly what makes it a
+good regression tripwire for the model.
+"""
+function rotor_betz_ok(power_kw::Float64, swept_area_m2::Float64, v_wind_mps::Float64)::Bool
+    isfinite(power_kw) || return false
+    betz_kw = 0.593 * 0.5 * 1.225 * swept_area_m2 * v_wind_mps^3 / 1000.0
+    return power_kw <= 1.1 * betz_kw
+end
+
+"""
     tip_speed_sanity_ok(u, sys) -> Bool
 
 Tip-speed sanity check (2026-08-14, tightened per Rod: ceiling 100 m/s, the
@@ -497,6 +512,7 @@ function evaluate_windowed(
     trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
     twist_flagged = Ref(false)  # V13: set on first per-segment twist crossing
     hub_diverged = Ref(false)   # 2026-08-14: hub ring ω non-finite or tip speed past sanity ceiling
+    betz_rotor_flagged = Ref(false)  # 2026-08-14: any rotor's own power past its own Betz potential
 
     function window_callback(uc, tc, s)
         # Diagnostic tap runs first and is scoring-neutral.
@@ -518,6 +534,24 @@ function evaluate_windowed(
             ef = capture_extended(
                 uc, sys, pc, tc, wf, lift_dev; brake_engaged=sys.brake_engaged[]
             )
+            # Per-rotor Betz potential: each rotor's OWN extracted power must
+            # sit inside 1.1×Betz of its own swept disk (Rod 2026-08-14).
+            if !betz_rotor_flagged[]
+                n_er = length(sys.expansion_rotors)
+                for (i, pa_kw) in enumerate(ef.rotor_aero_power)
+                    A_i = if i == 1
+                        π * sys.rotor.radius^2
+                    elseif i - 1 <= n_er
+                        π * sys.expansion_rotors[i - 1].blade_tip_radius^2
+                    else
+                        0.0
+                    end
+                    if A_i > 0.0 && !rotor_betz_ok(pa_kw, A_i, cfg.v_rated)
+                        betz_rotor_flagged[] = true
+                        break
+                    end
+                end
+            end
             push!(P_samples, ef.base.P_kw)
             isfinite(ef.base.T_lift) && push!(T_lift_samples, ef.base.T_lift)
             airborne = Float64[]
@@ -577,6 +611,11 @@ function evaluate_windowed(
 
     # Hub-side divergence — hard rejection (2026-08-14, v13 18m winner exploit).
     if hub_diverged[]
+        return rejected_eval(ω_eq)
+    end
+
+    # Per-rotor Betz violation — hard rejection (2026-08-14, Rod).
+    if betz_rotor_flagged[]
         return rejected_eval(ω_eq)
     end
 
