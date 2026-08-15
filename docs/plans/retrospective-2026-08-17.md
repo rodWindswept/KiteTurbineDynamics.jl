@@ -66,8 +66,29 @@ physics is right and the threshold is wrong at 5 kW. Proposals on the table:
 
 ## 4. The scalability verdict (from ladder_v13.csv, run 2026-08-15)
 
-[FILL from the ladder results — does the seed-class design transmit at
-each rung? Where does it fail: twist? break? tip speed? Betz?]
+Corrected-model ODE gate, seed-class design, 7 rungs × 6 lengths:
+
+- **5–10 kW: PROVEN viable** in the design band — 4.4–7.9 kW transmitted at
+  18–30 m, no twist, no breaks, no tip-speed violations. Failures only at the
+  physical edges: 12 m (tip clearance), 25 m (marginal 2.2–2.4 kW), 40 m
+  (twist ratios 0.84–1.82 — crossing at 7 kW+).
+- **15 kW: viable at 18/25 m** (8.7/3.4 kW); other lengths clearance-limited
+  (bigger rotors hit the ground-offset check).
+- **25–50 kW: DENIED — total stall.** k_mppt=108.7 demands 25 kW but the
+  seed's swept area is 40 m² (Betz ceiling 19.3 kW, realistic aero ≈9.8 kW
+  at 11 m/s). The MPPT loads the machine, ω collapses to ~0.25 rad/s. Not a
+  model fault — the seed-scaling rule under-sizes high rungs ~2.5× against
+  Betz. The 25 kW rung needs bigger rotors, not just more rings/lines.
+- **40 m column: twist-limited at every rung** — long segments wind past the
+  crossing limit under the same seed line count; the C1 saturation clamps
+  torque but the twist detector rejects. Long tethers need more lines or
+  different segment geometry.
+
+**Message:** the corrected model gives a coherent, physical scalability
+envelope — viable at 5–15 kW in the design band, denied above by area, not
+by numerics. The graduated ladder therefore needs per-rung redesign (which is
+exactly what the DE does at each rung), and `seed_genome(kw)`'s high-rung
+scaling must grow swept area to the Betz budget before those rungs can pass.
 
 ## 5. Decisions to make Monday
 
