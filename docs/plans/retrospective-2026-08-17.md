@@ -90,6 +90,14 @@ by numerics. The graduated ladder therefore needs per-rung redesign (which is
 exactly what the DE does at each rung), and `seed_genome(kw)`'s high-rung
 scaling must grow swept area to the Betz budget before those rungs can pass.
 
+**Update (2026-08-15, evening):** the three DE campaigns at 5 kW completed
+and ALL re-gate green — 7.68 / 8.24 / 8.32 kW at 18.0 / 21.2 / 25.0 m. The
+25 m winner (8.32 kW) overturned the seed marginality this ladder found
+(2.25 kW at 25 m): the DE fixes what the seed class lacks. All three winners
+share one family: single rotor, r_hub at the 0.70 floor, n_lines growing with
+length. First honest campaign winners of the cycle — see the
+`regate_verdict.md` files in each `v13_5kw_len*` results folder.
+
 ## 5. Decisions to make Monday
 
 1. Adopt the model-admissibility checklist as a launch gate? (recommended)
