@@ -11,11 +11,11 @@ Provenance: docs/validation/daisy-anchor-provenance.md (thesis + Rod + logs).
 using KiteTurbineDynamics
 
 function build_april29_rig()
-    elevation_angle = deg2rad(85.0)     # near-vertical mast-mounted chain
+    elevation_angle = deg2rad(10.0)     # chain ~10° above horizontal (Rod: rotor low, square-on)
     rotor_radius    = 1.95              # R_rotor (derived from tip/rpm logs)
-    tether_length   = 4.3               # mast height (m)
+    tether_length   = 5.5               # chain length (~8×0.5 m + graded top spans)
     trpt_hub_radius = 0.35              # 70 cm dia hex rings
-    trpt_rL_ratio   = 0.895             # near-uniform rings: (0.35+0.35)*11/(2*4.3)
+    trpt_rL_ratio   = 0.70              # near-uniform rings: (0.35+0.35)*11/(2*5.5)
     n_lines         = 6
     n_rings         = 10                # intermediate → 12 rings total
     n_blades        = 6
@@ -27,7 +27,7 @@ function build_april29_rig()
 
     rho              = 1.225
     v_wind_ref       = 6.5              # mid-band of the measured 4.5-7.7 m/s
-    h_ref            = 4.3
+    h_ref            = 1.0              # rotor low to the ground (≈5.5·sin10°)
     cp               = 0.20             # thesis experimental Cp ~0.20-0.25
 
     # Control — sized for the measured plateau (~220 W, λ≈4)
@@ -65,7 +65,7 @@ function build_april29_rig()
 
     # Bucket lift: constant 118 N (12 kg), mast-top pulley (short line)
     lifter = StackedLifterParams(
-        118.0, 6.5, 85.0, 1.0, 12.0, 0.0, 700_000.0, 0.3,
+        118.0, 6.5, 10.0, 1.0, 12.0, 0.0, 700_000.0, 0.3,
     )
     println("April-29 rig: rings=", sys.n_ring, " (12)  blades=", n_blades,
             "  lines=", n_lines, "  R_rotor=", rotor_radius, " m  T_bucket=118 N")

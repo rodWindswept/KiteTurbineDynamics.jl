@@ -28,7 +28,10 @@ gate-threshold derivation ((b) in the model-admissibility checklist).
   6-blade rotor geometry (radius, chord, pitch), mast height, line length.
 
 **Geometry from Rod (2026-08-16):**
-- mast height ~4.3 m, ~15 cm between the bearing and the mast
+- mast height ~4.3 m (supports the bucket pulley); **chain elevation ≈ 10°**
+  — the rotor is LOW to the ground and square-on to the wind, unlike kite
+  flight; **blade bank = 0°** (visible in the video: blades in the rotor
+  disk plane)
 - **hex rings: 70 cm diameter; 50 cm spacing** for the PTO + first 8 TRPT
   rings, then grading up (larger rings, wider spacing) toward the rotor ring
 - **6 blades, 6 lines, line diameter 2 mm** (Rod, rig builder).
