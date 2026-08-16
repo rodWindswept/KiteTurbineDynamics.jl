@@ -27,16 +27,24 @@ gate-threshold derivation ((b) in the model-admissibility checklist).
 - **Missing for the model build:** 12-ring geometry (diameters, spacing),
   6-blade rotor geometry (radius, chord, pitch), mast height, line length.
 
-**Geometry from Rod (2026-08-16):** mast height ~4.3 m, only ~15 cm between
-the bearing and the mast; ~the same equipment as Oliver Tulloch's last
-measured TRPT in his PhD data (Config 8 lineage: 6 lines, 4 mm Dyneema,
-NACA4412).
+**Geometry from Rod (2026-08-16):**
+- mast height ~4.3 m, ~15 cm between the bearing and the mast
+- **hex rings: 70 cm diameter; 50 cm spacing** for the PTO + first 8 TRPT
+  rings, then grading up (larger rings, wider spacing) toward the rotor ring
+- **6 blades, 6 lines, line diameter 2 mm** (Rod, rig builder — the
+  notebook's "4 mm" is an unverified transcription of the flying Config 8;
+  thesis check pending when the PDF is available)
+- ~the same equipment as Oliver Tulloch's last measured TRPT in his PhD data
+- **Wind: ONLY the anemometer measured** (4.5-6.9 m/s, synced in the merged
+  sheet). The `wind con` channel is a controller estimate, not a sensor.
+- **Logged tension = AXIAL TENSION AT THE PTO WHEEL**, not the lift line:
+  the 18-22 kg reading includes the chain angle/pulley factors over the
+  12 kg bucket — a different quantity, not (only) sensor error.
 
 **Derived from the logged channels** (tip speed + rotor rpm + mast height —
 derived, not measured):
-- rotor radius ≈ v_tip/ω: 9.43 m/s at 47 rpm → **~1.9-2.0 m**
-- ring spacing: 4.3 m mast over 10 TRPT segments → **~0.36-0.4 m per
-  segment** (compact bench stack — small rings)
+- rotor radius ≈ v_tip/ω: 9.43 m/s at 47 rpm → **~1.9-2.0 m** ("whatever Rod
+  would normally make" — to be confirmed against build notes if available)
 - SRM cadence (117-132) vs rotor rpm (47) → **~2.5:1 PTO gearing**
 
 ### 2018-12-13 ("7Line Snap 1.4kW Peak")
