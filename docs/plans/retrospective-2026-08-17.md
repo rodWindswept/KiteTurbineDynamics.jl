@@ -98,10 +98,15 @@ share one family: single rotor, r_hub at the 0.70 floor, n_lines growing with
 length. First honest campaign winners of the cycle — see the
 `regate_verdict.md` files in each `v13_5kw_len*` results folder.
 
-## 5. Decisions to make Monday
+## 5. Decisions — Monday session (held early: 2026-08-15, with Rod)
 
-1. Adopt the model-admissibility checklist as a launch gate? (recommended)
-2. (b) threshold derivation — schedule and ownership.
-3. Campaign relaunch policy: ladder order (3→50 kW) vs parallel lengths?
-4. Q1 verdict → companion fix (c) in or out?
-5. Retire the void v13 results folders (archive, not delete)?
+1. **LOCKED: model-admissibility checklist as a launch gate** — adopted.
+   Implemented as `docs/validation/model-admissibility.md` (15 gates, each
+   with floor/calibration/acceptance-test/status; pre-launch procedure;
+   waiver log). No campaign launches without it.
+2. (b) threshold derivation — schedule and ownership: OPEN (recommended
+   before the 7 kW launch).
+3. Campaign relaunch policy: ladder order vs parallel lengths — OPEN.
+4. Q1 verdict → companion fix (c) in or out — OPEN (cheap test, deferred).
+5. Retire the void v13 results folders — archived as `void_v13_pre-fix_*`,
+   retirement note pending.
