@@ -65,7 +65,7 @@ check("R1b: a line stretched past 3.5% breaks (SK99)", bs)
 
 println("=== R2: end-to-end — 18m winner bounded or broken ===")
 function run_r2()
-    sys2, u02, pc2, p2 = build_from(joinpath(@__DIR__, "..", "scripts", "results", "v13_5kw_len18.0", "best_vector.csv"), 18.0)
+    sys2, u02, pc2, p2 = build_from(joinpath(@__DIR__, "..", "scripts", "results", "void_v13_pre-fix_len18.0", "best_vector.csv"), 18.0)
     wind_fn2(r, t) = [p2.v_wind_ref, 0.0, 0.0]
     u2 = settle_to_operational_state(sys2, copy(u02), pc2, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn2, n_op=30_000)
     N2 = sys2.n_total; Nr2 = sys2.n_ring

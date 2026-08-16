@@ -61,7 +61,7 @@ check("P3: NaN rotor power fails", !ok_nan)
 
 println("=== P4: the old 18m winner cannot freewheel under the fixed model ===")
 function run_p4()
-    WINNER = joinpath(@__DIR__, "..", "scripts", "results", "v13_5kw_len18.0", "best_vector.csv")
+    WINNER = joinpath(@__DIR__, "..", "scripts", "results", "void_v13_pre-fix_len18.0", "best_vector.csv")
     isfile(WINNER) || return nothing
     x = [parse(Float64, s) for s in split(strip(read(WINNER, String)), ",")]
     p = KiteTurbineDynamics.params_10kw()

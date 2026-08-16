@@ -28,7 +28,7 @@ faults), `docs/agents/exploit-register.md` (DE exploits and fixes),
 | 11 | **Clearance + Betz preflight** | tip-to-ground clearance, swept-area Betz budget before eval | gate_design preflight | ladder 15 kW cells (clearance-limited) | 12 m designs fail clearance; 25 kW seed stalls (40 m² vs 19.3 kW ceiling) | ACTIVE |
 | 12 | **Settle discipline** | breaks disabled during settle's exploratory transients; operational ω from settled state | `breaks_enabled` latch | R3 (healthy seed never breaks) | settle over-strains lines momentarily (340% artifact exposed) | ACTIVE |
 | 13 | **Static structural FoS gates** (b) | ring/torsional/buckling capacity vs load, small-scale threshold | currently DISABLED ≤ 7 kW | none current | seed scores 0.56 vs 1.5 target; Daisy 0.22 — threshold, not physics, is wrong | **NEEDS WORK — Monday's (b)** |
-| 14 | **Orbital-damping fling interaction** (Q1/c) | operator contributes no energy to light-ring fling | lin_damp=0 comparison | none yet | 58 g ring is doomed regardless; operator contribution unknown | **PENDING — Q1 verdict** |
+| 14 | **Orbital-damping fling interaction** (Q1/c) | operator contributes no energy to light-ring fling | lin_damp=0 comparison | Q1 verdict (diag_q1_lindamp.jl) | break at 5.0 s with AND without the operator — fling is mass/thrust physics, not numerics | **RESOLVED — (c) OUT** |
 | 15 | **Rapid-evaluator calibration** (W3) | rapid fitness maps to ODE verdicts within tolerance | parked | none | telemetry has rapid results only; needs 50-100 ODE evals | **PARKED by Rod** |
 
 ---
