@@ -27,6 +27,18 @@ gate-threshold derivation ((b) in the model-admissibility checklist).
 - **Missing for the model build:** 12-ring geometry (diameters, spacing),
   6-blade rotor geometry (radius, chord, pitch), mast height, line length.
 
+**Geometry from Rod (2026-08-16):** mast height ~4.3 m, only ~15 cm between
+the bearing and the mast; ~the same equipment as Oliver Tulloch's last
+measured TRPT in his PhD data (Config 8 lineage: 6 lines, 4 mm Dyneema,
+NACA4412).
+
+**Derived from the logged channels** (tip speed + rotor rpm + mast height —
+derived, not measured):
+- rotor radius ≈ v_tip/ω: 9.43 m/s at 47 rpm → **~1.9-2.0 m**
+- ring spacing: 4.3 m mast over 10 TRPT segments → **~0.36-0.4 m per
+  segment** (compact bench stack — small rings)
+- SRM cadence (117-132) vs rotor rpm (47) → **~2.5:1 PTO gearing**
+
 ### 2018-12-13 ("7Line Snap 1.4kW Peak")
 `/home/rod/Documents/kites/Test Data/2018 Dec 13 7Line Snap 1.4kW Peak`
 - **Machine power: SOLID.** `srm 2011-...csv` (SRM power meter, 2,217 samples,
