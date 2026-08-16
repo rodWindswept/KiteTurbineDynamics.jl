@@ -56,7 +56,7 @@ function build_april29_rig()
         1.0,                      # CL_blade
         0.01,                     # CD0_blade
         0.05,                     # k_induced
-        85.0,                     # bank_angle_deg — chain tilt
+        0.0,                      # bank_angle_deg — rotor faces the wind at the mast top
         m_blade,
         n_rings + 2,              # ring_idx — hub = last ring
         1.0,                      # shaft_coupling

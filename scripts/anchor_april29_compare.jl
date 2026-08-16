@@ -5,19 +5,25 @@ runs a 30 s window, records P_gen at the ground (PTO). Measured bins come
 from scripts/results/april29_anchor.csv (wind-binned plateau ~220 W).
 Writes scripts/results/april29_model_curve.csv. =#
 
-using KiteTurbineDynamics, Printf
+using KiteTurbineDynamics, Printf, Statistics
 include(joinpath(@__DIR__, "build_april29_rig.jl"))
 
-function run_one(v::Float64; window_s::Float64=30.0)
+function run_one(v::Float64; window_s::Float64=60.0)
     sys, u0, pc, lifter = build_april29_rig()
     wind_fn(r, t) = [v, 0.0, 0.0]
-    u = settle_to_operational_state(sys, copy(u0), pc, 60.0;
-        lift_device=lifter, wind_fn=wind_fn, n_op=30_000)
-    sys.k_mppt_ref[] = pc.k_mppt
+    # Cold start: the settle's analytical ω-scan misses this rig's
+    # equilibrium (small-scale fragility). Spin to ~6 rad/s and let the ODE
+    # find the equilibrium under MPPT — closer to the real rig's startup.
+    u = copy(u0)
     N = sys.n_total
     Nr = sys.n_ring
+    for ri in 1:Nr
+        u[6N + Nr + ri] = 6.0
+    end
+    sys.k_mppt_ref[] = pc.k_mppt
     gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx
     Ps = Float64[]
+    Ws = Float64[]
     for chunk in 1:round(Int, window_s / 5.0)
         run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / 4e-5), 4e-5;
             lift_device=lifter, lin_damp=0.05)
@@ -26,9 +32,10 @@ function run_one(v::Float64; window_s::Float64=30.0)
         tau_gen, _ = get_generator_torque(u, sys, pc, t, wind_fn;
             brake_engaged=sys.brake_engaged[])
         push!(Ps, tau_gen * max(w_gnd, 0.0))
+        push!(Ws, w_gnd)
         sys.any_broken[] && break
     end
-    return mean(Ps[max(1, end - 4):end]), u[6N + Nr + gnd_ri]
+    return mean(Ps[max(1, end - 4):end]), Ws[end]
 end
 
 function main()
