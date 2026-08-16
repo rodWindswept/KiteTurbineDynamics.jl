@@ -31,9 +31,18 @@ gate-threshold derivation ((b) in the model-admissibility checklist).
 - mast height ~4.3 m, ~15 cm between the bearing and the mast
 - **hex rings: 70 cm diameter; 50 cm spacing** for the PTO + first 8 TRPT
   rings, then grading up (larger rings, wider spacing) toward the rotor ring
-- **6 blades, 6 lines, line diameter 2 mm** (Rod, rig builder — the
-  notebook's "4 mm" is an unverified transcription of the flying Config 8;
-  thesis check pending when the PDF is available)
+- **6 blades, 6 lines, line diameter 2 mm** (Rod, rig builder).
+  PRIMARY-SOURCE CHECK (2026-08-16, `Tulloch, PhD Thesis Final
+  Submission.pdf`, Strathclyde folder on the Windswept drive):
+  the thesis NEVER states 4 mm — tethers are UHMWPE fibre; its drag-model
+  examples use 1.5 mm. The notebook's "4 mm" transcription is STRUCK
+  (unsupported). The April 29 rig is the thesis's **TRPT-5**: hex rings,
+  central tether REMOVED (thesis §3.1.3: the central tether reduced
+  outer-tether tension and did not directly aid torque transfer), 6 outer
+  tethers, and the 6-blade rotor is thesis-documented as producing MORE
+  power than the 3-blade at similar winds (higher solidity). Thesis ring
+  diameters: 0.42 m (GS wheel v1-3), 0.63 m (v4-5), "first six rings on
+  TRPT-5 slightly larger" — consistent with Rod's 70 cm.
 - ~the same equipment as Oliver Tulloch's last measured TRPT in his PhD data
 - **Wind: ONLY the anemometer measured** (4.5-6.9 m/s, synced in the merged
   sheet). The `wind con` channel is a controller estimate, not a sensor.
