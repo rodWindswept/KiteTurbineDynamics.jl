@@ -5,6 +5,28 @@ gate-threshold derivation ((b) in the model-admissibility checklist).
 
 ## The two candidate test days
 
+### PRIMARY ANCHOR: 2020-04-29 Mast Mount 6-rotor test
+`/home/rod/Documents/kites/Test Data/2020 April 29 Mast Mount 6 rotor test`
+- **Lift: KNOWN CONSTANT.** Rope over a mast-mounted pulley to a weighted
+  bucket — **12 kg** (scale photo, Rod 2026-08-16). No kite dynamics.
+- **Topology:** 12 rings = 10 TRPT rings + GS PTO ring + rotor ring;
+  **6-blade rotor**. Hexagonal ring tower (`29APR20-Hexring-Tower`).
+- **Controller software: AVAILABLE** — `29APR20-Hexring-Tower/` is the
+  Arduino controller source for the VESC (the controller-version
+  uncertainty of the other days does not apply).
+- **Machine log** (`29APR2020srm rodread-20200429150326.csv`, 1,218 samples
+  from 15:03:26): **109-161 W at cadence ~117-130** — sustained steady state.
+- **Wind** (merged log `29April all data.csv`, channel Wind_tip_TSR_TSRset):
+  **6.0-7.4 m/s**, logged at ~7 Hz.
+- **Tension log: 17.9-22.0 kg — DISAGREES with the 12 kg bucket.** Either
+  the sensor (unreliable, per Rod) or pulley geometry multiplies the line
+  load. The bucket value is the mechanical truth; the logged tension is
+  excluded from the comparison.
+- Also present: `29 April 2020 all data and analysis.xlsx` (2021, possibly
+  the unfinished efficiency calc), photos, video, 1.8 GB MOV.
+- **Missing for the model build:** 12-ring geometry (diameters, spacing),
+  6-blade rotor geometry (radius, chord, pitch), mast height, line length.
+
 ### 2018-12-13 ("7Line Snap 1.4kW Peak")
 `/home/rod/Documents/kites/Test Data/2018 Dec 13 7Line Snap 1.4kW Peak`
 - **Machine power: SOLID.** `srm 2011-...csv` (SRM power meter, 2,217 samples,
