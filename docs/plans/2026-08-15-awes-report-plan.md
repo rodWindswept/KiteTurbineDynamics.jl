@@ -59,8 +59,10 @@ diagram-patterns (heatmaps, implications captions), chart-prd convention
    and learnings** (failure → what we believed → what was true → the fix →
    the learning for the next rung) + prose. This replaces my earlier
    timeline idea per Rod.
-8. **Implications and open questions** — the 5 kW proof, the ≥25 kW denial
-   (area, not numerics), single-rotor dominance, the 7 kW next step.
+8. **Implications and open questions** — the 5 kW proof, the ≥25 kW rows
+   **unproven** (gate start-up artifact — see F3 caption and retrospective
+   §4 correction; the seed-rule area constraint remains a design argument,
+   not an ODE verdict), single-rotor dominance, the 7 kW next step.
 9. **Comparison with prior and parallel work** (inherited section).
 10. **Reproducibility** — condensed from REPRODUCIBILITY.md, ~11 h,
     one command per step.
@@ -89,14 +91,43 @@ human-in-the-loop evaluation**, each round logged in `review-<n>.md`, each
 fix applied before the next round. Data accuracy check: every plotted point
 diffed against its CSV row; every prose number greps back to `metrics.csv`.
 
-## Vision-tool requirement — OPEN QUESTION FOR ROD
+## Vision-tool requirement — RESOLVED (2026-08-16 session)
 
-The human-in-the-loop evaluation step needs image inspection. **This session
-has no vision-analysis tool** (checked: no `vision_analyze` available;
-deferred-tool catalog has only a2a/project plugins). Options: (a) Rod
-enables a vision-capable tool/model for this session, (b) I do the
-programmatic checks (pixel density, pdftotext, CSV diffs) and Rod does the
-visual rounds on the PNGs directly. Either works — but tell me which.
+`vision_analyze` is available (Gemini-backed) and was used through 11+
+strict review rounds on F9 alone. **Lesson learned the hard way:** a plain
+"does it look OK?" prompt ACCEPTS overlaps that a human rejects — Rod's
+HITL round caught text-on-data and legend collisions the lenient rounds
+passed. The standard is now: strict enumeration prompts ("enumerate EVERY
+instance where any text touches, crosses, or overlaps any other text OR
+data element; do not say 'legible'"), opaque white bboxes (alpha 1.0) for
+text over data, and legend/caption height math (caption height ≈ n_lines
+× 0.125 in; an 8-line caption on a 5.6-in figure is ~19% of the height).
+Also: the vision model cannot see white-on-white boxes (the invisible-box
+paradox) — trust matplotlib's bbox contract, not the model's "no box" read.
+Logged in the ktd-chart-design skill.
+
+## Status update (2026-08-16/17 session)
+
+| # | Figure | Status |
+|---|---|---|
+| F1 | TRPT schematic | pending (TikZ) |
+| F2 | Physics gate stack | pending |
+| F3 | Ladder heatmap | **DONE** — built, prose'd, vision-passed, 2 Rod HITL rounds (caption: plain language, numbers verified against ladder_v13.csv, ≥25 kW rows reframed as start-up stall — no physics verdict) |
+| F4 | Convergence curves | **DONE** — captions plain-language pass |
+| F5 | Winner design cards | pending (needs dashboard flight) |
+| F6 | Coherence traces | **DONE** — captions plain-language pass |
+| F7 | Failure census | **DONE** — reject classes defined from the code (power floor / FoS gate / above-Betz divergence flag); caption states campaigns ran 18/21.2/25 m only |
+| F8 | Failures-and-learnings table | pending (Monday retrospective feeds it — now includes the anchor session addendum) |
+| **F9** | **April-29 anchor (NEW)** | **DONE** — measured-vs-model power curve, 30-s means, model 234 vs 223 ± 79 W, Cp_sys ≈ 0.16 both (Oliver 0.166); the headline calibration result |
+
+Additional lessons folded into the review loop: every caption must
+introduce its own technical terms (no unexplained "rung"/"island"/
+"genome"), every number must grep back to its CSV, and each figure's
+place in the report's argument must be stateable in one sentence.
+
+**Prose discipline (Rod's standards, applied):** captions are the
+reader's only context — plain language, all numbers exact, nothing
+asserted that the CSV doesn't show.
 
 ## Bite-sized tasks (paths under `docs/outreach/report-figures/` and `docs/outreach/report-v2/`)
 
@@ -119,6 +150,15 @@ visual rounds on the PNGs directly. Either works — but tell me which.
 | Tuesday | dashboard flight → SimFrame renders for F5 |
 | Wed-Thu | F1/F2/F5/F8 + prose, review rounds |
 | Fri | assembly, Rod's final read, publish paths |
+
+**Status (2026-08-16/17):** F3/F4/F6/F7 + F9 done ahead of schedule
+(data figures complete; two Rod HITL rounds on F3/F9 with caption
+corrections). Remaining: report-v2/main.tex skeleton + metrics.csv (task
+1-2, not yet started), F1/F2/F5/F8, prose sections, assembly. The
+Monday retrospective now carries the anchor-session addendum (2026-08-16)
+— it feeds both F8 and §8, and it reopens the "≥25 kW denial" wording
+(the ladder cells are a gate start-up artifact — see retrospective §4
+correction).
 
 **Decisions recorded:** title chosen last; F8 = failures-and-learnings table
 + prose; publish = PDF general release + AWES forum + windswept.energy, full

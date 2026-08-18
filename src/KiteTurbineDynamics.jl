@@ -54,6 +54,7 @@ export ExpansionRotorParams, expansion_rotor_forces, effective_radius, expansion
 export EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED
 export solve_expansion_induction, expansion_cl, expansion_annulus_area
 export set_expansion_physics!, expansion_physics, LEGACY_PHYSICS_PRE_2026_07_18, ExpansionPhysics
+export GeneratorLoadMode, set_generator_load!
 export EXP_CL_SLOPE, EXP_CL_MAX, EXP_PHI_DESIGN, EXP_THETA_I, EXP_TSR_DESIGN
 export ExpansionStackConfig, build_expansion_stack
 export expansion_airborne_mass, expansion_phi, expansion_radius_summary, expansion_telemetry

@@ -171,6 +171,10 @@ struct StackedLifterParams <: LiftDevice
     m_lifter::Float64        # stack mass booked into the airborne budget (kg)
     line_EA::Float64         # lift line axial stiffness (N)
     line_length::Float64     # lift line length from TRPT hub to stack (m)
+    const_tension::Bool      # true = constant T_ref (hanging weight / bucket —
+                             # no v² scaling). 2026-08-16: the April-29 mast rig's
+                             # 12 kg bucket is a weight, not a kite: its tension
+                             # does not scale with wind.
 end
 
 """
@@ -205,7 +209,8 @@ function sized_lifter_for(
     F_vert = margin * m_airborne * g          # vertical requirement at v_ref
     T_ref = F_vert / sind(elevation_deg)      # line tension delivering it
     return StackedLifterParams(
-        T_ref, v_ref, elevation_deg, margin, m_airborne, m_lifter, line_EA, line_length
+        T_ref, v_ref, elevation_deg, margin, m_airborne, m_lifter, line_EA, line_length,
+        false,  # const_tension — sized lifters are aerodynamic (v² scaling)
     )
 end
 
@@ -226,7 +231,7 @@ function lift_force_steady(
     p::Union{Nothing,SystemParams}=nothing,
 )
     elev = p !== nothing ? rad2deg(p.lifter_elevation) : dev.elevation_deg
-    T = dev.T_ref * (v_wind / dev.v_ref)^2
+    T = dev.const_tension ? dev.T_ref : dev.T_ref * (v_wind / dev.v_ref)^2
     F_hub = T .* lift_line_direction(elev)
     return (F_hub, T, elev)
 end

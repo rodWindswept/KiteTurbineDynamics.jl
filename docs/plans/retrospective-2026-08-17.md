@@ -79,6 +79,42 @@ Corrected-model ODE gate, seed-class design, 7 rungs × 6 lengths:
   at 11 m/s). The MPPT loads the machine, ω collapses to ~0.25 rad/s. Not a
   model fault — the seed-scaling rule under-sizes high rungs ~2.5× against
   Betz. The 25 kW rung needs bigger rotors, not just more rings/lines.
+
+  **Correction (2026-08-17, anchor-session finding — supersedes the verdict
+  wording above, does not delete it):** the ω ≈ 0.25 rad/s stall is now
+  understood as a cold-start artifact of the gate at scale (the scaled MPPT
+  demand k·ω² plus the low-λ aero balance parks the machines before they
+  ever spin — the same mechanism later diagnosed on the April-29 anchor
+  rig). The ODE cells therefore carry no physics verdict of their own; the
+  ladder can only say "UNPROVEN at ≥25 kW by this gate". The seed-rule
+  area argument in the original finding (Betz ceiling 19.3 kW on ~40 m²,
+  high rungs under-sized ~2.5×) remains valid as a DESIGN constraint — the
+  seeds do need bigger rotors — but it is a scaling-rule argument, not
+  something the ODE demonstrated. Before the ladder can judge ≥25 kW: fix
+  the gate's cold-start balance at scale (warm start or k-bracket) AND grow
+  the high-rung seeds' swept area. See §6 addendum.
+
+  **Why it looks odd that the 50 kW-derived seed stalls at 50 kW — three
+  test-side reasons (2026-08-17, code-verified):**
+  (a) 50 kW at 11 m/s is standard physics — the swept area does the work
+  (P = ½ρv³·A·Cp·η): 50 kW @ 11 m/s needs A ≈ 160–190 m² (rotor radius
+  ≈ 7–8 m) at Cp 0.4–0.45, η 0.8–0.85. The seed carries only ~60 m²
+  (r_hub 2.889 × (1+λ_t 0.519) → R 4.39 m) — a ~16–20 kW rotor at 11 m/s,
+  consistent with its 50 kW label only at a ~15–16 m/s design wind. The
+  rating and the geometry disagree ~3×; that mismatch is the finding, not
+  an impossibility.
+  (b) k_mppt scales ∝ P^2.5 (parameters.jl:507) while the aero drive scales
+  ∝ P (area ∝ P): at 50 kW the generator demand at any ω is ~56× the 10 kW
+  machine's — the cold-start balance (aero vs k·ω²) collapses to ω ≈ 0.25.
+  This is a scaling-law artifact of the gate's controller, not the design.
+  (c) The V10_50KW seed itself was never aero-validated — compute_seeds.jl
+  marks it "structural proportions only — aero eval was broken". The ladder
+  at ≥25 kW tests a phantom at its native size.
+  Consequence: the ladder's meaningful signal is the DOWN-SCALED family
+  (5–15 kW works at 11 m/s); the ≥25 kW cells are non-verdicts on all three
+  grounds. Fix list for judging ≥25 kW: scale the seed swept area from the
+  power budget at the rating wind (A ∝ P, R ≈ 7.5 m for 50 kW @ 11 m/s),
+  k-bracket or warm start at scale, and an aero-validated 50 kW seed.
 - **40 m column: twist-limited at every rung** — long segments wind past the
   crossing limit under the same seed line count; the C1 saturation clamps
   torque but the twist detector rejects. Long tethers need more lines or
@@ -110,3 +146,48 @@ length. First honest campaign winners of the cycle — see the
 4. Q1 verdict → companion fix (c) in or out — OPEN (cheap test, deferred).
 5. Retire the void v13 results folders — archived as `void_v13_pre-fix_*`,
    retirement note pending.
+
+## 6. Addendum — the anchor session (2026-08-16/17, pre-retrospective)
+
+A full session was spent calibrating the model against the 29-Apr-2020
+mast-mount test (thesis config 9, the same field data behind Oliver's own
+Fig 5.2(f) — his largest model-experiment discrepancy). The findings
+belong in this retrospective because they are the same circle, one ring
+out: the model admits what the physics does not, and instrumentation
+found each layer.
+
+**What was wrong with the anchor model (all four layers found by
+instrumentation):**
+1. dt=4e-5 unstable on the 2 mm ropes (ω·dt ≈ 103 → rope-break at step 7)
+   — the "13.5 W at every wind" wind-blind artifact. Fixed: dt=4e-6.
+2. Generator clamp 2.25 N·m (tau_max_safe scaling) capped extraction ~9×
+   below the measured load. Fixed: measured τ(ω) table
+   (GeneratorLoadMode :table — 12 knots from 30-s steady blocks,
+   22.65→13.11 N·m over 9.75→12.86 rad/s; no-regen floor 2.5 rad/s).
+3. Bucket tension scaled with wind (T ∝ v² law → 22 N at low wind).
+   Fixed: `const_tension` flag (a hanging weight does not scale with v²).
+4. Expansion-rotor α-model + induction on the same 10.8 m² annulus as the
+   main rotor braked the machine to a stop in ~12 s (a→0.5, CL negative
+   at the 6-blade solidity). Fixed: anchor rig uses the main cp rotor
+   only — the thesis's own 6-blade representation (AeroDyn + solidity).
+
+**Data-science lesson (Rod's 30-s-average challenge):** raw 1-2 s rows
+carry 2-4 s gust lulls with phase-lagged power (rotor still ~110 rpm at
+3.3-4.4 m/s wind → "100.2% of Betz" bins that were transients, not wind
+error). The measured envelope is 30-s means: wind 5.5-7.0 m/s, P
+168-267 W, ω 9.8-12.9 rad/s. The τ(ω) table's low-ω knots were rebuilt
+from startup-transient rows the same way.
+
+**The calibration result (F9):** model 234 W vs measured 223 ± 79 W at
+6.25 m/s; Cp_sys ≈ 0.16 both, Oliver's spring-disc Cp_max = 0.166 — three
+independent derivations agree at the plateau. Speed gap remains (model
+parks at AeroDyn peak λ ≈ 7.6 vs field 4.35) — the thesis's own flagged
+6-blade modelling gap. Open items: commit decision (source changes
+staged, laptop-authoritative), Gemini vision pass over the test media,
+the self-start/EXP_CD_STALL item, and Rod's system-Cp point (no raw field
+Cp into the ODE — would double-count the generator).
+
+**Direct relevance to §4:** the ladder's ≥25 kW stall and the anchor's
+self-start blocker are the SAME mechanism at different scales — the
+cold-start balance. Fix once, and both the ladder's high rungs and the
+anchor's low-wind behaviour become testable properly.

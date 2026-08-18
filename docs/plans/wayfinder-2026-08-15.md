@@ -61,6 +61,25 @@ Inventory (facts):
 - Launch order: after W2/W3 land (calibration makes the rung cheaper), and
   after Monday's (b) verdict on the static gates.
 
+### W7 (done) + W8. The anchor/calibration session (2026-08-16/17) — DONE
+A full session calibrated the model against the 29-Apr-2020 mast test
+(thesis config 9) — four stacked faults found and fixed (dt=4e-6,
+measured τ(ω) table, const-tension bucket, no expansion rotor), the
+measured envelope re-derived at 30-s means (Rod's windowing challenge),
+and F9 built: model 234 W vs measured 223 ± 79 W at 6.25 m/s,
+Cp_sys ≈ 0.16 both (Oliver's spring-disc 0.166). Full details in the
+retrospective addendum. **Remaining from W8:**
+- Commit decision: `GeneratorLoadMode` + `const_tension` src changes are
+  staged (working tree, uncommitted) — laptop-authoritative sign-off.
+- Gemini vision pass over the April-29 photos/video (elevation/bank/ring
+  confirmation) — the vision system passed Rod's bucket-photo test; the
+  full media pass is still open.
+- Self-start/EXP_CD_STALL — the anchor's cold-start blocker, now known to
+  be the SAME mechanism as the ladder's ≥25 kW stall (see retrospective
+  §4 correction). One fix serves both.
+- Rod's system-Cp point: no raw field Cp into the ODE (double-counts the
+  generator/controller) — dropped as a calibration route, documented.
+
 ## Sequence
 
 ```
@@ -68,7 +87,20 @@ W1 (dashboard) ──┐
 W2 (pool)        ├── W4 (report) ── Monday retrospective ── (b) decision
 W3 (calibration)─┘                                        ── W6 (7 kW launch)
 W5 (tidy)        — anytime, needs Rod's answers
+W8 (anchor)      — DONE 2026-08-16/17; open: commit sign-off, media vision pass
 ```
+
+## Status update (2026-08-16/17 session)
+
+- W4 (report): in flight — F3/F4/F6/F7 + F9 built, prose'd, vision-passed,
+  two Rod HITL rounds. report-v2 skeleton + metrics.csv still pending.
+- W8 (anchor, new): DONE as above — the session that produced F9 and the
+  DECISIONS.md 2026-08-16 entry.
+- W6 (7 kW): unchanged — seed viable; still gated on Monday's (b) verdict
+  and W3. The retrospective's ≥25 kW correction does NOT affect the 7 kW
+  rung (the 7 kW seed spins up fine in the ladder).
+- W1/W2/W3/W5: unchanged (dashboard Tuesday, pool data-ready, W3 parked,
+  tidy awaiting Rod's answers).
 
 ## Open questions for Rod — RESOLVED (2026-08-15, evening)
 

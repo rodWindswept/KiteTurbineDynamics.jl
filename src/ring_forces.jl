@@ -1,5 +1,40 @@
 using LinearAlgebra
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Generator load mode (2026-08-16) — measured-load path for rig anchors
+# ══════════════════════════════════════════════════════════════════════════════
+# The legacy MPPT law (τ = k·ω², clamped by tau_max_safe below) is a control
+# abstraction for optimised 5-50 kW designs.  The April-29 mast rig's VESC
+# charged a battery at roughly constant current, so the measured generator
+# torque is τ ≈ P_set/ω — a constant-power load (plateau 216-228 W from the
+# Quarq power meter ÷ controller rpm).  `:const_power` mode implements that
+# measured load directly, bypassing k_mppt, elevation scaling and the
+# tau_max_safe clamp — whose (P_rated/10kW)² reference scaling crushes small
+# rigs (2.25 N·m at 300 W vs ~20 N·m measured).  Default `:mppt` is
+# bit-identical for all existing campaigns.
+@kwdef mutable struct GeneratorLoadMode
+    mode::Symbol = :mppt      # :mppt (legacy) | :const_power | :table (measured)
+    p_set::Float64 = 0.0      # W — constant-power setpoint (:const_power)
+    omega_pts::Vector{Float64} = Float64[]  # rad/s — measured τ(ω) knots (:table)
+    tau_pts::Vector{Float64} = Float64[]    # N·m — measured τ(ω) knots (:table)
+    tau_cap::Float64 = 0.0    # N·m — cap on τ (0 = no cap)
+    omega_floor::Float64 = 0.0  # rad/s — below this (incl. reversal) τ = 0
+end
+const GENERATOR_LOAD = Ref(GeneratorLoadMode())
+set_generator_load!(m::GeneratorLoadMode) = (GENERATOR_LOAD[] = m; m)
+
+"""Linear interpolation of the measured τ(ω) table, flat outside the knots."""
+function _interp_tau(gl::GeneratorLoadMode, omega::Float64)
+    pts = gl.omega_pts
+    n = length(pts)
+    (n == 0 || length(gl.tau_pts) != n) && return gl.tau_cap > 0.0 ? gl.tau_cap : 0.0
+    omega <= pts[1] && return gl.tau_pts[1]
+    omega >= pts[n] && return gl.tau_pts[n]
+    i = searchsortedlast(pts, omega)
+    f = (omega - pts[i]) / (pts[i + 1] - pts[i])
+    return gl.tau_pts[i] + f * (gl.tau_pts[i + 1] - gl.tau_pts[i])
+end
+
 """
     get_generator_torque(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams, t::Float64, wind_fn::Function;
                          brake_engaged::Bool) -> (tau_gen::Float64, new_brake_engaged::Bool)
@@ -23,6 +58,29 @@ function get_generator_torque(
 
     omega_hub = u[6N + Nr + hub_ri]
     omega_gnd = u[6N + Nr + gnd_ri]
+
+    # Measured-load path (2026-08-16): measured generator load for rig
+    # anchors.  `:const_power` = τ = P_set/ω; `:table` = linear interp of the
+    # measured τ(ω) knots (Quarq power ÷ controller rpm).  Below `omega_floor`
+    # (and for a stationary/reversed ground ring) τ = 0 — the real VESC's
+    # "Too Slow 4 gen" behaviour; without this the load locks a reversed ring
+    # at τ_cap and the sim stalls at low wind.  Bypasses MPPT scaling,
+    # elevation scaling and the tau_max_safe clamp; see GeneratorLoadMode.
+    gl = GENERATOR_LOAD[]
+    if gl.mode === :const_power || gl.mode === :table
+        if omega_gnd <= gl.omega_floor
+            return 0.0, brake_engaged
+        end
+        if gl.mode === :const_power
+            tau_gen = gl.p_set / omega_gnd
+        else
+            tau_gen = _interp_tau(gl, omega_gnd)
+        end
+        if gl.tau_cap > 0.0
+            tau_gen = min(tau_gen, gl.tau_cap)
+        end
+        return tau_gen, brake_engaged
+    end
     hub_pos = @view u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
 
     # Winch payout base and geometric scaling for system size

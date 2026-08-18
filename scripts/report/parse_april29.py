@@ -62,7 +62,8 @@ i_pow = find("power")
 i_cad = find("cadence")
 i_rpm = find("rpm")
 i_tip = find("tip")
-print("col idx:", i_wind, i_pow, i_cad, i_rpm, i_tip)
+i_ct = find("con time")
+print("col idx:", i_wind, i_pow, i_cad, i_rpm, i_tip, i_ct)
 
 out = []
 for r in sorted(rows):
@@ -75,20 +76,21 @@ for r in sorted(rows):
         cad = float(vals[i_cad]) if i_cad is not None else float("nan")
         rpm = float(vals[i_rpm]) if i_rpm is not None else float("nan")
         tip = float(vals[i_tip]) if i_tip is not None else float("nan")
+        ct = float(vals[i_ct]) if i_ct is not None else float("nan")
     except (ValueError, IndexError):
         continue
     if wind > 0 and p > 0:
-        out.append((wind, p, cad, rpm, tip))
+        out.append((wind, p, cad, rpm, tip, ct))
 
 with open(OUT, "w", newline="") as f:
     w = csv.writer(f)
-    w.writerow(["wind_ms", "power_w", "cadence", "con_rpm", "tip_ms"])
+    w.writerow(["wind_ms", "power_w", "cadence", "con_rpm", "tip_ms", "con_time_days"])
     w.writerows(out)
 print("rows written:", len(out))
 
 # wind-binned stats
 bins = {}
-for wind, p, cad, rpm, tip in out:
+for wind, p, cad, rpm, tip, ct in out:
     b = int(wind // 0.5) * 0.5 + 0.25
     bins.setdefault(b, []).append(p)
 print("wind_bin | n | P_mean | P_std")

@@ -10,6 +10,76 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-16] April-29 anchor: thesis geometry + measured generator load + stable dt
+
+**Context:** The April-29 (2020) mast-mount rig (thesis config 9 = TRPT-5, 6
+foam blades) is the calibration anchor for the 5 kW systems. The model was
+"wind-blind" — 13.5 W / 5.98 rad/s at every wind. Diagnosis (source trace +
+instrumented ODE) found two compounding artifacts, not rig physics:
+
+1. **Numerical instability, not aero decoupling.** The 2 mm UHMWPE rope
+   sub-segments (0.125 m) have a spring mode ω ≈ 2.6 MHz; explicit Euler at
+   dt=4e-5 runs at ω·dt ≈ 103 (unstable by ~50× vs the 5 kW config's ω·dt≈1).
+   The state diverges within ~8 steps, line-path strain exceeds the 3.5%
+   break threshold, and the 2026-08-14 rope-break detector (option B)
+   correctly kills the sim at step 7 — before any equilibrium exists. The
+   "13.5 W at every wind" was the initial state, never a steady state.
+2. **Generator torque clamp crushed the small rig.** `tau_max_safe =
+   2500·(p_rated_w/10000)²` gives 2.25 N·m at p_rated=300 W — P = 2.25·ω =
+   13.5 W at ω=6 exactly. The measured Quarq power ÷ controller rpm shows
+   the real load: plateau τ ≈ 20-24 N·m at ω ≈ 9.5-12.5 rad/s (~9× the
+   clamp), i.e. roughly constant power ~216-228 W (VESC charging a battery
+   at ~constant current; 6.9 A × 36 V ≈ 250 W electrical ✓).
+
+**Choice made (2026-08-16, Rod):**
+1. **Builder geometry per the thesis** (config 9, Rigid Wings §3.1.1):
+   rotor outer tip radius **2.22 m** (was 1.95), rotor ring **1.52 m** (was
+   0.35), TRPT-5 total length **9.5 m** (Table 3.1; was 5.5), blades span
+   1.0 m / chord 0.2 m / NACA 4412 / no twist / 4° pitch (was a 1.70 m
+   annulus on the 0.35 m ring). Lower TRPT sections stay 0.35 m radius
+   (70 cm hex rings); canonical taper law gives trpt_rL_ratio = 1.083.
+2. **Measured generator load**: new gated `GeneratorLoadMode`
+   (`set_generator_load!`): `:table` mode implements the measured τ(ω)
+   curve — 12 knots = 30-s steady-block means (Quarq power ÷ controller
+   rpm, 22.65→13.11 N·m over 9.75→12.86 rad/s; flat below/above; the
+   earlier low-ω knots came from startup-transient rows and were dropped
+   2026-08-16 pass-2 audit) — with a no-regen floor at 2.5 rad/s (the
+   VESC "Too Slow 4 gen" behaviour; below it, incl. reversal, τ=0;
+   without the floor a reversed ring locks at τ_cap and low-wind sims
+   stall). `:const_power` (τ = P_set/ω) remains for other uses. Both
+   bypass k_mppt, elevation scaling and the tau_max_safe clamp. Default
+   `:mppt` is bit-identical for all campaigns. The tau_max_safe quadratic
+   scaling remains flagged for a follow-up (latent for any small-rig sim).
+3. **dt = 4e-6 for anchor sims** (smoke-verified 2026-08-16: ω·dt ≈ 10 at
+   2 mm ropes, stable with the ζ=0.05 sub-segment damping; dt=4e-5 was
+   unstable — ω·dt ≈ 103, rope-break at step 7).  ~14.3k steps/s.
+4. **lifter_elevation = 10°** (was 85°): the bearing→mast-head line is the
+   10° axis extension; the 12 kg bucket (118 N) acts on the bearing upward
+   at 10° through the pulley. 85° described the bucket's hanging side,
+   which is only the tension source.  **Bucket tension is CONSTANT**: new
+   `StackedLifterParams.const_tension` flag (default false, bit-identical)
+   — a hanging weight does not scale with v² like a kite; the v² law
+   turned the 12 kg bucket into 22 N at low wind (slack chain).
+5. **i_pto = 0.25 kg·m²** (was 0.05): 0.63 m ground wheel + 1:2.14 chain
+   drive + 500 W generator (thesis §3.1.4) — the real drivetrain inertia.
+6. **No expansion rotor on the anchor rig.** The builder's "hub rotor" was
+   the same 10.8 m² annulus as the main rotor; the expansion-rotor α-model
+   + induction drives the disk loading to a→0.5 at the 6-blade solidity,
+   CL goes negative, and the element brakes the machine — bleeding it from
+   13 rad/s to a stop in ~12 s (diag 2026-08-16). The main cp_at_tsr rotor
+   IS the thesis's 6-blade representation (AeroDyn 3-blade + solidity
+   trick). The expansion-rotor model is untouched for the DE campaigns.
+
+**Verified:** anchor sim survives 25 s at dt=2e-6 with no rope break; spins
+up from the 6 rad/s warm start; P-vs-wind comparison vs the measured bins
+(212-227 W @ 5-8 m/s, 178-194 W @ 3.25-3.75 m/s). R1-R3 + full suite green.
+**Still active:** yes. Open follow-ups: tau_max_safe quadratic scaling;
+sensor reconciliation (con_rpm vs SRM cadence vs tip-derived R≈2.3 m — thesis
+2.22 m adopted); uniform 0.864 m ring spacing vs Rod's 50 cm lower + graded
+(ring_spacing_v4 if the comparison demands it).
+
+---
+
 ## [2026-08-14] Rope break physics — lines fail at SK99 strain, disqualifying the machine
 
 **Context:** After A2 (cp falloff), B (per-rotor Betz) and C1 (torque saturation)
