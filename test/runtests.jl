@@ -35,4 +35,5 @@ using KiteTurbineDynamics
     include("test_objective_v12.jl")
     include("test_physics_path_guard.jl")
     include("test_lift_kite_rotary.jl")
+    include("test_lift_kite_stacked.jl")
 end

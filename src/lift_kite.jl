@@ -203,6 +203,7 @@ function sized_lifter_for(
     line_EA::Float64=200_000.0,
     line_length::Float64=25.0,
     m_lifter::Float64=5.0,
+    const_tension::Bool=false,
 )
     g = 9.81
     m_airborne = expansion_airborne_mass(sys, p)
@@ -210,7 +211,7 @@ function sized_lifter_for(
     T_ref = F_vert / sind(elevation_deg)      # line tension delivering it
     return StackedLifterParams(
         T_ref, v_ref, elevation_deg, margin, m_airborne, m_lifter, line_EA, line_length,
-        false,  # const_tension — sized lifters are aerodynamic (v² scaling)
+        const_tension,  # false = aero v² scaling; true = flat T_ref (modulated lifter)
     )
 end
 
