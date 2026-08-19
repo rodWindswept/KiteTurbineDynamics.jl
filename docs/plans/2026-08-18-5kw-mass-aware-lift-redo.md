@@ -1,7 +1,8 @@
 # 5 kW Mass-Aware Lift Redo — Plan
 
 **Date:** 2026-08-18
-**Status:** Spec agreed with Rod; blocked on model-era decision (item 2) before launch.
+**Status:** Spec agreed with Rod; model era named (428f491), runner + gate
+aligned, smoke passed 2026-08-19 — launch pending Rod's go.
 
 ## Why this exists
 
@@ -98,10 +99,18 @@ lengths 18.0 / 21.2 / 25.0 m, 30×5 islands × 100 gen.
 
 ## OPEN — blocks launch
 
-- **Item 2 (model era):** anchor-session source changes (`lift_kite.jl`
-  const_tension, `ring_forces.jl` +58 lines, `KiteTurbineDynamics.jl`) sit
-  uncommitted in the desktop tree; laptop has not pushed since 16 Aug. The
-  redo must name its model era before launch.
+- **Item 2 (model era): RESOLVED 2026-08-19.** Era named
+  post-428f491_mass-aware-const-tension_ON; suite 1912/1912 green on 428f491;
+  smoke passed (T_in ≡ T_ref, 0.00% rel, all three lengths).
+- **Correction (2026-08-19): DE sizing.** The first campaign actually ran
+  10 pop × 3 islands × 30 gen (convergence CSVs: 91 rows each) — NOT
+  30×5×100 as stated above. The redo runner copies the real config per
+  decision 5 (identical except lift).
+- **Pre-flight (2026-08-19):** seed clearance 3.19 m (18.0), 3.65 m (21.2)
+  — pass ≥1.5 m. At 25.0 m the seed sits at 0.65 m and is clearance-rejected
+  by the runner gate, IDENTICAL to the first campaign (same seed/gate);
+  the DE explores from random population there. Betz: evaluator passed
+  status=:ok at all three lengths (P < 1.1 × Betz internal check).
 - **Item 3 (7 kW seed):** geometric seed vs winner-family seed, n_lines
   decision — still open, for the 7 kW spec after the redo.
 - **Item 4 ((b) verdict):** scale-aware static-gate re-enable for ≤7 kW —

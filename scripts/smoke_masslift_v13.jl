@@ -1,0 +1,83 @@
+#!/usr/bin/env julia --project=.
+# smoke_masslift_v13.jl — pre-launch acceptance for the 5kW mass-aware redo.
+#
+# For each length (18.0 / 21.2 / 25.0), run the campaign seed genome through
+# evaluate_windowed with lift_for (the exact runner path) and verify:
+#   1. status == :ok (window completes, no twist/collapse/clearance reject)
+#   2. in-run T_lift ≈ T_ref = 1.5 · m_airborne · g / sin(70°)  (≤5% rel)
+#      where m_airborne = expansion_airborne_mass(sys, pc) — the evaluator's
+#      own build chain, so the lifter is genuinely mass-aware per genome.
+#
+# Usage: julia --project=. scripts/smoke_masslift_v13.jl
+using KiteTurbineDynamics, Printf
+include(joinpath(@__DIR__, "compute_seeds.jl"))
+
+const KW = 5.0
+const PW = KW * 1000.0
+const V_RATED = 11.0
+const WINDOW_S = 20.0
+
+lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
+    sys, p; margin=1.5, v_ref=V_RATED, const_tension=true)
+
+function params_at_length(L::Float64)
+    p2 = params_10kw()
+    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 10.0, KW)
+end
+
+function main()
+    all_ok = true
+    for L in (18.0, 21.2, 25.0)
+        p_base = params_at_length(L)
+        cfg = ObjectiveConfig(;
+            power_W = PW, v_rated = V_RATED,
+            p_floor_kw = 2.5, p_ceiling_kw = 5.0,
+            relax_s = 5.0, window_s = WINDOW_S,
+            fos_target = 1.5, fos_hard = 1.5,
+            power_stat = :tail5, penalize_ceiling = false,
+            kickstart_s = 0.0,
+            k_mppt = p_base.k_mppt,
+            tether_diameter = p_base.tether_diameter,
+        )
+
+        seed_v = seed_genome(KW)
+        lo, hi = tight_bounds(seed_v, KW)
+        xr = clamp.(copy(seed_v), lo, hi)
+        xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
+        xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+
+        r = KiteTurbineDynamics.evaluate_windowed(
+            xr, PROFILE_ELLIPTICAL, p_base, cfg;
+            start_mode = :cold,
+            lift_device = lift_for,
+            fitness_fn = (P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+        )
+
+        # Expected tension via the evaluator's own build chain.
+        dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=PW)
+        sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
+            dec, 1.0, cfg.k_mppt; tether_diameter=cfg.tether_diameter)
+        m_airborne = KiteTurbineDynamics.expansion_airborne_mass(sys, pc)
+        T_exp = 1.5 * m_airborne * 9.81 / sind(70.0)
+
+        status_ok = r.status === :ok
+        rel = abs(r.T_lift - T_exp) / T_exp
+        passed = status_ok && rel <= 0.05
+        all_ok &= passed
+        @printf("L=%4.1f  status=%-6s  P_end=%6.2f kW  FoS=%6.2f  T_in=%7.1f N  T_exp=%7.1f N  rel=%5.2f%%  m_airborne=%7.2f kg  %s\n",
+            L, r.status, r.P_end, r.FoS_min, r.T_lift, T_exp, 100 * rel, m_airborne,
+            passed ? "PASS" : "** FAIL **")
+        flush(stdout)
+    end
+
+    println(all_ok ? "SMOKE: ALL PASS" : "SMOKE: FAILURES — do not launch")
+    return all_ok
+end
+
+exit(main() ? 0 : 1)

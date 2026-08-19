@@ -1516,3 +1516,26 @@ notifications generate noise during focused preparation.
 
 **Status:** All crons paused. AWS Paper Ingest, K1 Paper Ingest, Industry Doc Ingest
 all in 'paused' state as of 2026-06-23 15:17.
+
+### [2026-08-19] Mass-aware constant-tension lift regime — 5 kW redo
+
+**Context:** The first 5 kW v13 campaigns (18.0/21.2/25.0 m) ran a FIXED
+rotary lifter — tension was wind-dependent and identical for every genome.
+ODE gate matched the runner, but the regate passed no lift device at all.
+Rod (2026-08-18): the rung must be redone with mass-aware lift.
+
+**Decision:** Lift line tension = f(kite-turbine mass) ONLY: vertical
+component = 1.5 × m_airborne × g, FLAT at all wind speeds (const_tension,
+modulated-lifter assumption), applied per genome via
+`lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0,
+const_tension=true)`. All instruments (campaign runner, ode_gate_v13.jl,
+regate, ladder) resolve to the same lift_for. Lift kite mass does NOT enter
+the tension calc. First-campaign results retained as the **fixed-rotary
+regime** baseline for regime-vs-regime comparison (not voided); the redo is
+the **mass-aware constant-tension regime**.
+
+**Model era:** post-428f491_mass-aware-const-tension_ON (suite 1912/1912
+green on 428f491). Smoke acceptance 2026-08-19: status=:ok at all three
+lengths, in-run T_lift ≡ T_ref to 0.00% rel.
+
+**Status:** Redo runner + gate aligned + smoke passed; launch pending Rod's go.

@@ -90,7 +90,11 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
 
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
-    lift = rotary_lifter_default()
+    # Mass-aware constant-tension lift (2026-08-19) — same regime as the
+    # masslift campaign runner; regate + ladder inherit via gate_design.
+    lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
+        sys, p; margin=1.5, v_ref=11.0, const_tension=true)
+    lift = lift_for(sys, p)
     u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn, n_op=30_000)
     N = sys.n_total
     Nr = sys.n_ring
