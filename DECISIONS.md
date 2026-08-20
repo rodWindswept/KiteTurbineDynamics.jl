@@ -10,6 +10,57 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-20] Signed P_gen — τ_gen·ω_gnd everywhere (reverse regen reads negative)
+
+**Context:** `P_kw`/`P_gen` drifted to two masked variants after the 2026-08-13
+gate work: `src/sim_frame.jl` used `τ_gen·abs(ω_gnd)` (masks −ω → +) and
+`scripts/ode_gate_v13.jl` used `τ_gen·max(ω_gnd,0)` (masks −ω → 0). Both hide a
+reversed or regenerating generator. `get_generator_torque` is signed (damping
+terms + the `±tau_max_safe` clamp), so `τ_gen·ω_gnd` is the correct electrical
+power and is negative when the generator absorbs mechanical power.
+
+**Choice made (2026-08-20, science-worker, per DECISIONS [2026-08-12] rationale):**
+unify to signed `P = τ_gen·ω_gnd` in both readers. A reversed/regenerating
+generator reads negative, not positive (abs) or zero (max). The `:table` /
+`:const_power` no-regen floor (`ω_gnd ≤ omega_floor → τ=0`) is a τ-side clamp and
+is unaffected — below the floor P reads zero, never negative. Healthy designs
+(ω_gnd>0, τ_gen>0) are bit-identical.
+
+**Consequences:** new physics era for settle-based paths (signed-ness change in
+src/). Only designs that reverse or regenerate change value. Acceptance tests in
+`docs/plans/2026-08-20-science-track-acceptance-fixes.md`.
+
+**Still active:** yes.
+
+---
+
+## [2026-08-20] Lift-consistency invariant (Rod's ruling)
+
+**Context:** A4's bit-identity broke because the gate migrated to the
+mass-aware constant-tension lift (commit 0ee2d4c, 2026-08-19) while its test
+still settled with `rotary_lifter_default()`. Different lift → different settle
+→ ~3.5% drift.
+
+**Choice made (2026-08-20, Rod):** a lift regime uses ONE concept+values across
+every surface that adjusts lift tension — build, settle, ODE, gate, evaluator,
+runner, tests. The canonical mass-aware lift is
+`lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)`.
+Tests of the v13 gate/evaluator must settle/run with `lift_for`, never
+`rotary_lifter_default()`. Lift-agnostic physics tests may keep a stable
+fixture.
+
+**Consequences:** `lift_for` is hoisted to a single top-level definition in
+`scripts/ode_gate_v13.jl` (shared by gate + both v13 tests). Resolved same day:
+the gate and both v13 tests initially passed `lift_for(sys, p)` (params_at_length,
+n_lines=5) while `evaluate_windowed` passed `lift_for(sys, pc)` (genome-specific,
+n_lines=6) — a different airborne mass and lift tension. Rod ruled this a software
+bug (fixed reference vs the genome's own params), not a physics decision: all three
+call sites now pass `lift_for(sys, pc)` (6=6).
+
+**Still active:** yes.
+
+---
+
 ## [2026-08-16] April-29 anchor: thesis geometry + measured generator load + stable dt
 
 **Context:** The April-29 (2020) mast-mount rig (thesis config 9 = TRPT-5, 6

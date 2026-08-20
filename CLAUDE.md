@@ -21,7 +21,7 @@ In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (mo
 
 ### Julia Package & Test Commands
 
-* **Run Entire Test Suite** (23 test files):
+* **Run Entire Test Suite** (39 test files):
   ```bash
   julia --project=. test/runtests.jl
   ```
@@ -76,7 +76,7 @@ In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (mo
 
 ## ── Development Guidelines ────────────────────────────────────────────
 
-1. **Run the test suite before committing.** 23 test files. Never commit with red.
+1. **Run the test suite before committing.** 39 test files. Never commit with red.
 2. **Physics conservatism.** The TRPT rotor model must conform to BEM-coupled v2/v5 formulations. Expansion rotor model uses simplified 2D blade-element. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
 3. **Always use `run_canonical_sim!()`** for headless simulation — never hand-roll integrators.
 4. **Idempotent scripts.** Report-patching scripts must remain fully idempotent.

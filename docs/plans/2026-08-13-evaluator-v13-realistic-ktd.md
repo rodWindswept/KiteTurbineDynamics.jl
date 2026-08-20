@@ -1,5 +1,7 @@
 # Evaluator v13 — the test that identifies realistic KTD designs
 
+> **Correct as of 2026-08-13.** Test counts in this plan reflect the repository state on that date; see `test/runtests.jl` for the current suite.
+
 **Date:** 2026-08-13
 **Status:** IMPLEMENTED — acceptance tests B1–B5 green, full suite 1901/1901 (2026-08-13)
 **Scope:** `src/objective_evaluator.jl` (ObjectiveConfig, ObjectiveResult, evaluate_windowed),

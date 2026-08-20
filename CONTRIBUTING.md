@@ -8,7 +8,7 @@ KiteTurbineDynamics.jl is open-source (MIT) and actively developed. The quickest
    cd KiteTurbineDynamics.jl
    julia --project=. test/runtests.jl
    ```
-   917 tests in 23 files, Julia 1.12, ~3 min full suite. If the suite isn't green on your machine, that's a bug report we want.
+   Full suite via `test/runtests.jl`, Julia 1.12, ~3 min. If the suite isn't green on your machine, that's a bug report we want.
 
 2. **Read the decisions** — `DECISIONS.md` (2,252+ lines) documents every architectural choice from V6 through V10, including the mistakes and the simulator-integrity audit of July 2026. We keep the invalidated results visible; the drift history is part of the record.
 

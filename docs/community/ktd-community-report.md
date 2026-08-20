@@ -22,7 +22,7 @@ KiteTurbineDynamics.jl is an open-source (MIT) Julia framework for designing and
 | Multibody ODE solver | Production | 11-DoF, BEM-coupled v5, inertia relief, per-ring FEA |
 | Expansion rotor model | Working | Constant-CL, banked, distributed across TRPT rings |
 | Telemetry dashboard | v2 (development) | GLMakie, per-rotor gauges, control-map hunting |
-| Test suite | Production | 917 tests in 23 files, Julia 1.12 |
+| Test suite | Production | full suite via `test/runtests.jl`, Julia 1.12 |
 | Coaxial autogyro lift | Separate repo | 4-rotor stacked lift, 149 tests, v1 complete |
 
 **What we haven't built (and where you come in):**
@@ -320,7 +320,7 @@ All asks are **zero-cash, in-kind exchanges.** Each is scoped to a concrete deli
 https://github.com/rodread/KiteTurbineDynamics.jl
 License: MIT
 Language: Julia 1.12
-Tests: 917 in 23 files (~3 min full suite)
+Tests: full suite via `test/runtests.jl` (~3 min)
 ```
 
 ### 9.2 Key commands

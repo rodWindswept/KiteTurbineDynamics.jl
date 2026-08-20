@@ -130,7 +130,7 @@ function capture_frame(
     # Call stateless helper for generator torque:
     tau_gen, _ = get_generator_torque(u, sys, p, t, wind_fn; brake_engaged=brake_engaged)
 
-    P_kw = tau_gen * abs(omega_gnd) / 1000.0
+    P_kw = tau_gen * omega_gnd / 1000.0   # signed (2026-08-20): reversed ring reads negative
     pct_rated = p.p_rated_w > 0 ? P_kw * 1000.0 / p.p_rated_w * 100.0 : 0.0
 
     # Wind at hub

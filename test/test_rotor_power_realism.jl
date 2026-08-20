@@ -102,5 +102,5 @@ if isempty(failures)
     println("ALL ACCEPTANCE TESTS PASS")
 else
     println("FAILED: ", join(failures, ", "))
-    exit(1)
+    error("FAILED: " * join(failures, ", "))
 end

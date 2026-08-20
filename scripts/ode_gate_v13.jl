@@ -27,6 +27,15 @@ const MIN_CLEARANCE = 1.5
 const MIN_P_GEN_KW = 2.5
 const MIN_W_GND = 0.5
 
+"""Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20, Rod's ruling).
+
+One lift concept+values across build, settle, ODE, gate, evaluator, runner and
+tests.  `lift_for(sys, p)` is passed as the `lift_device` FUNCTION to
+`evaluate_windowed` (which calls it as `lift_for(sys, pc)`), and called directly
+as `lift_for(sys, pc)` by the gate and its tests."""
+lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
+    sys, p; margin=1.5, v_ref=11.0, const_tension=true)
+
 function params_at_length(p2, L::Float64, KW::Float64)
     geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
         L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
@@ -90,11 +99,8 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
 
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
-    # Mass-aware constant-tension lift (2026-08-19) — same regime as the
-    # masslift campaign runner; regate + ladder inherit via gate_design.
-    lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
-        sys, p; margin=1.5, v_ref=11.0, const_tension=true)
-    lift = lift_for(sys, p)
+    # Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20).
+    lift = lift_for(sys, pc)
     u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn, n_op=30_000)
     N = sys.n_total
     Nr = sys.n_ring
@@ -112,7 +118,7 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
         w_hub = u[6N + Nr + hub_ri]
         w_gnd = u[6N + Nr + gnd_ri]
         tau_gen, _ = get_generator_torque(u, sys, p, t, wind_fn; brake_engaged=sys.brake_engaged[])
-        P_gen = tau_gen * max(w_gnd, 0.0) / 1000.0
+        P_gen = tau_gen * w_gnd / 1000.0   # signed (2026-08-20): reversed ring reads negative
         tr = twist_report(u, sys, N, Nr)
         push!(trace, (t=t, w_hub=w_hub, w_gnd=w_gnd, P_gen=P_gen, tau_gen=tau_gen,
             crossed=tr.crossed, max_ratio=tr.max_ratio))

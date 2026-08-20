@@ -1,5 +1,7 @@
 # Codebase Audit — 2026-07-14
 
+> **Correct as of 2026-07-14.** Test/file/commit counts in this report reflect the repository state on that date and have since drifted; see `test/runtests.jl` for the current suite.
+
 Improvement list from a full repo survey: validation, hygiene, efficiency, and agent ergonomics. Prioritized P0 (correctness/data-loss risk) → P2 (efficiency/ergonomics). Every item names the exact files.
 
 ## P0 — Validation & data-loss risks

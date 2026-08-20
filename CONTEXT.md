@@ -233,7 +233,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 - Visualisation: GLMakie (V1 dashboard) + WGLMakie/Bonito (V2 cockpit)
 - Structural: Analytic Euler buckling + thin-wall second moment of area + Tulloch collapse criterion
 - **SI units throughout:** m, kg, Pa, rad, rad/s, N·m
-- **Test suite:** 24 test files, run via `julia --project=. test/runtests.jl`
+- **Test suite:** see `test/runtests.jl`, run via `julia --project=. test/runtests.jl`
 
 ---
 

@@ -43,27 +43,27 @@ xv[10] = clamp(xv[10], 0.0, Float64(N_VALID_MASKS))
 dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=PW)
 sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
 wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
-u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn, n_op=30_000)
+u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift_for(sys, pc), wind_fn=wind_fn, n_op=30_000)
 N = sys.n_total; Nr = sys.n_ring
 tr0 = twist_report(u, sys, N, Nr)
 println("  post-settle: crossed=", tr0.crossed, "  max_ratio=", round(tr0.max_ratio, digits=3))
 check("A3: no flag at post-settle (Δα≈0)", !tr0.crossed && tr0.max_ratio < 1.0)
 
-println("=== A4: P_gen == τ_gen·ω_gnd (unit consistency) ===")
-sys.k_mppt_ref[] = p.k_mppt
-run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / 4e-5), 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
-gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx
-w_gnd = max(u[6N + Nr + gnd_ri], 0.0)
-tau_gen, _ = get_generator_torque(u, sys, p, 5.0, wind_fn; brake_engaged=sys.brake_engaged[])
+println("=== A4: P_gen == τ_gen·ω_gnd (signed) from the gate's own state ===")
+# Recompute from the gate's returned final state — bit-identity regardless of
+# lift device (AC-LIFT). Signed convention post-2026-08-20 (Item 2).
+fin = r.trace[end]
+gnd_ri = (r.sys.nodes[r.sys.ring_ids[1]]::RingNode).ring_idx
+w_gnd = r.u[6*r.N + r.Nr + gnd_ri]
+tau_gen, _ = get_generator_torque(r.u, r.sys, p, fin.t, wind_fn; brake_engaged=r.sys.brake_engaged[])
 P_direct = tau_gen * w_gnd / 1000.0
-t5 = r.trace[1]
-println("  gate P_gen=", round(t5.P_gen, digits=3), " kW   direct P_gen=", round(P_direct, digits=3), " kW")
-check("A4: P_gen matches τ_gen·ω_gnd recomputation", isapprox(t5.P_gen, P_direct; rtol=1e-9))
+println("  gate P_gen=", round(fin.P_gen, digits=3), " kW   direct P_gen=", round(P_direct, digits=3), " kW")
+check("A4: P_gen matches τ_gen·ω_gnd recomputation (bit-identical)", isapprox(fin.P_gen, P_direct; rtol=1e-9))
 
 println()
 if isempty(failures)
     println("ALL ACCEPTANCE TESTS PASS")
 else
     println("FAILED: ", join(failures, ", "))
-    exit(1)
+    error("FAILED: " * join(failures, ", "))
 end

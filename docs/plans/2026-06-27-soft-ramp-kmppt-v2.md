@@ -1,5 +1,7 @@
 # TRPT Soft-Ramp k_mppt Controller — v2
 
+> **Correct as of 2026-06-27.** Test counts in this plan reflect the repository state on that date; see `test/runtests.jl` for the current suite.
+
 **Status:** Planned — Phase A ready to execute
 **Date:** 2026-06-27
 **Supersedes:** `docs/plans/2026-06-26-soft-ramp-kmppt.md`

@@ -36,4 +36,19 @@ using KiteTurbineDynamics
     include("test_physics_path_guard.jl")
     include("test_lift_kite_rotary.jl")
     include("test_lift_kite_stacked.jl")
+    @testset "evaluator_v13 acceptance" begin
+        include("test_evaluator_v13.jl")
+    end
+    @testset "gate_v13 acceptance" begin
+        include("test_gate_v13.jl")
+    end
+    @testset "rope_break acceptance" begin
+        include("test_rope_break.jl")
+    end
+    @testset "rotor_power_realism acceptance" begin
+        include("test_rotor_power_realism.jl")
+    end
+    @testset "settle_drag_alignment acceptance" begin
+        include("test_settle_drag_alignment.jl")
+    end
 end

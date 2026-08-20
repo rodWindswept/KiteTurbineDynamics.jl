@@ -8,7 +8,7 @@ CENTER: A scientifically accurate illustration of a TRPT kite turbine in flight 
 
 TOP LEFT: "KTD.jl" title in large synthwave font. "TRPT Kite Turbine Dynamics · BEM-Coupled Multi-Body Solver".
 
-TOP RIGHT: Key metrics in glowing cyan on dark panels. "13,831 LOC · 322 commits · 917+ tests green · V10 Campaign".
+TOP RIGHT: Key metrics in glowing cyan on dark panels. "Full test suite green (see test/runtests.jl) · V10 Campaign".
 
 BOTTOM LEFT: "Current Findings" — "Static k_mppt under-predicts dynamic by 3.3x" with sparkline. "Rigid NACA 4412 beats soft kites · Ct/Cp = 2.5 vs 8.3". "Collapse margin > FoS for TRPT safety".
 

@@ -5,7 +5,7 @@
 ## Quick Start
 
 1. **Read these first:** `CONTEXT.md` (physics glossary) → `DECISIONS.md` (design rationale) → `CLAUDE.md` (dev commands)
-2. **Run the test suite:** `julia --project=. test/runtests.jl` (~22 min, 1902 tests). Never commit with failures.
+2. **Run the test suite:** `julia --project=. test/runtests.jl` (see `test/runtests.jl` for the current set). Never commit with failures.
 3. **Launch a dashboard:** `julia --project=. scripts/interactive_dashboard.jl --v10`
 4. **Understand the physics:** Every tether, bridle, and line must transmit force only in TENSION. Slack = failure.
 
@@ -16,7 +16,7 @@
 | Physics & decisions | `CONTEXT.md`, `DECISIONS.md` | Understand the TRPT, campaign history, design choices |
 | Dev commands | `CLAUDE.md`, `AGENTS.md` | Build, test, lint, run campaigns |
 | Source code | `src/` | 39 Julia files — entry at `src/KiteTurbineDynamics.jl` |
-| Test suite | `test/` | 33 test files, 1902 tests |
+| Test suite | `test/` | see `test/runtests.jl` |
 | Campaign scripts | `scripts/` | DE optimisers, analysis, rendering |
 | Campaign results | `scripts/results/` | V2 through V10 Tight, CSVs and JSONs |
 | Reports | `docs/reports/`, `archive/reports/` | .docx and .md reports |

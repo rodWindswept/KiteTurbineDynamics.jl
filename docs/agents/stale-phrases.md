@@ -22,7 +22,7 @@ Replacement: ζ fix resolved the static-vs-dynamic gap — ODE now sustains powe
 
 ## 1861 tests
 Date: 2026-08-12
-Replacement: 1902 tests
+Replacement: see test/runtests.jl (the test count drifts — do not hardcode)
 
 ## zeta = 1.5
 Date: 2026-08-12

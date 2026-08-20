@@ -10,6 +10,8 @@ B2: 18m winner (flywheel decay)            → :reject OR (P_end < 2.5 AND worse
 B3: original seed (healthy)                → :ok, no twist, P_end ≥ 2.5, fitness beats B2's
 B4: unit — penalize_ceiling=false → more power strictly better
 B5: unit — twist_collapse_check flags wound state, not post-settle
+B6: 18m v13 winner (stabilized)            → :ok, hub tip < 100 m/s
+B7: unit — tip_speed_sanity_ok flags diverged hub/mid-ring ω
 =#
 
 using KiteTurbineDynamics, Printf, LinearAlgebra
@@ -51,7 +53,7 @@ function run_eval(x::Vector{Float64}, L::Float64, window_s::Float64)
     return KiteTurbineDynamics.evaluate_windowed(
         xr, BEAM, p, v13_cfg(window_s, p.k_mppt);
         start_mode=:cold,
-        lift_device=rotary_lifter_default(),
+        lift_device=lift_for,
         fitness_fn=(P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
     )
 end
@@ -101,7 +103,7 @@ p = params_at_length(params_10kw(), 21.2, KW)
 dec = design_from_vector_v10(read_vec(SEED_CSV), BEAM, p; power_W=PW)
 sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
 wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
-u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn, n_op=30_000)
+u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift_for(sys, pc), wind_fn=wind_fn, n_op=30_000)
 N = sys.n_total
 Nr = sys.n_ring
 t0 = KiteTurbineDynamics.twist_collapse_check(u, sys)
@@ -113,13 +115,18 @@ println("  post-settle: crossed=", t0.crossed, " max_ratio=", round(t0.max_ratio
 check("B5a: post-settle state is not flagged", !t0.crossed && t0.max_ratio < 1.0)
 check("B5b: +π wound segment is flagged", t1.crossed)
 
-println("=== B6: 18m v13 winner (hub divergence) must be rejected ===")
+println("=== B6: 18m v13 winner is healthy (:ok, hub tip < 100 m/s) ===")
 WINNER18V13 = joinpath(@__DIR__, "..", "scripts", "results", "v13_5kw_len18.0", "best_vector.csv")
 if isfile(WINNER18V13)
     r6 = run_eval(read_vec(WINNER18V13), 18.0, 20.0)
-    println("  status=", r6.status, "  twist_crossed=", r6.twist_crossed,
-            "  P_mean=", round(r6.P_mean, digits=2), "  fitness=", round(r6.fitness, digits=3))
-    check("B6: hub-diverged design is :reject", r6.status === :reject)
+    println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2), "  fitness=", round(r6.fitness, digits=3))
+    check("B6a: stabilized 18m winner is :ok", r6.status === :ok)
+    g6 = gate_design(read_vec(WINNER18V13); L=18.0, KW=KW)
+    hub_ri = (g6.sys.nodes[g6.sys.rotor.node_id]::RingNode).ring_idx
+    w_hub = g6.u[6*g6.N + g6.Nr + hub_ri]
+    hub_tip = abs(w_hub) * g6.sys.rotor.radius
+    println("  hub_tip=", round(hub_tip, digits=1), " m/s")
+    check("B6b: hub tip < 100 m/s (and every ring/rotor)", hub_tip < 100.0 && tip_speed_sanity_ok(g6.u, g6.sys))
 else
     println("  (18m v13 winner CSV not present — skipping B6)")
 end
@@ -143,5 +150,5 @@ if isempty(failures)
     println("ALL ACCEPTANCE TESTS PASS")
 else
     println("FAILED: ", join(failures, ", "))
-    exit(1)
+    error("FAILED: " * join(failures, ", "))
 end
