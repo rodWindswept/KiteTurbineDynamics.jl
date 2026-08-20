@@ -30,11 +30,5 @@ jobs:
             Pkg.instantiate()
           '
 
-      - name: Run structural tests
-        run: |
-          julia --project=. -e '
-            using Test, KiteTurbineDynamics
-            @testset "Structural golden traces" begin
-              include("test/test_golden_traces.jl")
-            end
-          '
+      - name: Run fast unit suite
+        run: julia --project=. test/runtests.jl

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# .githooks/pre-push — warn when a push touches the slow acceptance paths.
+# Version: 0.1.0 | Date: 2026-08-20 | Author: Windswept & Interesting
+#
+# The acceptance suite (test/acceptance_runtests.jl) is ~5-8 min and runs in
+# CI only when the paths below change. This hook WARNS (does not block) so a
+# physics change is not pushed without the acceptance suite having run.
+# CI (.github/workflows/acceptance.yml) is the authoritative gate.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)"
+if [ -z "$REMOTE" ]; then
+    exit 0
+fi
+
+CHANGED="$(git diff --name-only "$REMOTE"...HEAD 2>/dev/null || true)"
+
+# Keep this list in sync with .github/workflows/acceptance.yml.
+MATCH="$(printf '%s\n' "$CHANGED" | grep -E '^(src/|scripts/ode_gate_v13\.jl|scripts/compute_seeds\.jl|test/acceptance_runtests\.jl|test/test_(evaluator_v13|gate_v13|rope_break|rotor_power_realism|settle_drag_alignment)\.jl)$' || true)"
+
+if [ -n "$MATCH" ]; then
+    echo ""
+    echo "WARNING: this push touches acceptance-path files (src/ physics or the acceptance tests)."
+    echo "Run the acceptance suite:"
+    echo "    julia --project=. test/acceptance_runtests.jl"
+    echo "CI will also run it (see .github/workflows/acceptance.yml)."
+    echo ""
+fi
+exit 0

@@ -10,6 +10,34 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-20] Test-suite split: fast unit vs slow acceptance
+
+**Context:** Wiring the five ODE-heavy acceptance tests into test/runtests.jl
+made the default suite jump from ~3.5 min to ~40 min. Each acceptance file runs
+a 30,000-step settle plus 5-30 s simulation windows at dt=4e-5. The five files
+were originally standalone scripts for exactly this reason.
+
+**Choice made:** split the suite.
+- test/runtests.jl = the 34 fast unit tests (~3.5 min). Run before every commit.
+- test/acceptance_runtests.jl = the five ODE acceptance tests, run as five
+  parallel subprocesses (~18 min). Run before a merge that touches physics.
+
+**Mechanism (so the acceptance tests run only when they must, never again
+hidden):**
+- CI: .github/workflows/acceptance.yml runs the acceptance suite only when
+  src/, scripts/ode_gate_v13.jl, scripts/compute_seeds.jl, or the five
+  acceptance files change, or on a merge to master.
+- Local: .githooks/pre-push warns when a push touches those paths.
+- The fast unit suite runs on every push/PR in ci.yml.
+
+**Rule:** never wire the acceptance files into test/runtests.jl. If you do, the
+default suite jumps to ~40 min. The two test files carry header comments that
+repeat this rule.
+
+**Still active:** yes.
+
+---
+
 ## [2026-08-20] Signed P_gen — τ_gen·ω_gnd everywhere (reverse regen reads negative)
 
 **Context:** `P_kw`/`P_gen` drifted to two masked variants after the 2026-08-13

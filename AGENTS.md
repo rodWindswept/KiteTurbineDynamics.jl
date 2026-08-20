@@ -17,8 +17,11 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 
 ## Working agreement
 
-- **Run the suite.** Run `julia --project=. test/runtests.jl` before committing.
-  Never commit with a red suite.
+- **Run the suite.** Run `julia --project=. test/runtests.jl` before committing
+  (fast unit tests, ~3.5 min). Never commit with a red suite.
+- **Acceptance tests.** The five slow ODE acceptance tests live in
+  `test/acceptance_runtests.jl` (~18 min, parallel). Run them before a merge
+  that touches `src/` physics. See DECISIONS.md [2026-08-20].
 - **Physics conservatism.** Physical calculations must conform to the
   BEM-coupled v2/v5 solver formulations described in `DECISIONS.md`.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
@@ -30,7 +33,9 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 ## Conventions
 
 - New `src/` file → add the matching `include(...)` (and any `export`) in
-  `src/KiteTurbineDynamics.jl`, and wire a test file into `test/runtests.jl`.
+  `src/KiteTurbineDynamics.jl`. Wire a STATIC unit test into `test/runtests.jl`.
+  A test that runs an ODE window (20-30 s simulation) is an acceptance test:
+  put it in `test/acceptance_runtests.jl`, never in `test/runtests.jl`.
 - Citations and licensing: MIT (`LICENSE`); cite via `CITATION.cff`.
 
 ## Skills & issue tracking

@@ -1,3 +1,14 @@
+# test/runtests.jl — FAST UNIT SUITE (~3.5 min)
+#
+# UNIT TESTS ONLY. Static checks: geometry, BEM tables, parameters, types.
+#
+# The five ODE-heavy acceptance tests are NOT here. They live in
+# test/acceptance_runtests.jl and run 20-30 s simulation windows each
+# (~35 min sequential; ~18 min parallel). Do NOT wire them into this file.
+#
+# See DECISIONS.md [2026-08-20] "Test-suite split: fast unit vs slow acceptance".
+#
+# Run:  julia --project=. test/runtests.jl
 using Test
 using KiteTurbineDynamics
 
@@ -36,19 +47,4 @@ using KiteTurbineDynamics
     include("test_physics_path_guard.jl")
     include("test_lift_kite_rotary.jl")
     include("test_lift_kite_stacked.jl")
-    @testset "evaluator_v13 acceptance" begin
-        include("test_evaluator_v13.jl")
-    end
-    @testset "gate_v13 acceptance" begin
-        include("test_gate_v13.jl")
-    end
-    @testset "rope_break acceptance" begin
-        include("test_rope_break.jl")
-    end
-    @testset "rotor_power_realism acceptance" begin
-        include("test_rotor_power_realism.jl")
-    end
-    @testset "settle_drag_alignment acceptance" begin
-        include("test_settle_drag_alignment.jl")
-    end
 end

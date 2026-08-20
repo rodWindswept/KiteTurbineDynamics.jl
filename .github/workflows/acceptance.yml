@@ -1,0 +1,57 @@
+name: Acceptance
+
+# Slow ODE acceptance suite (~5-8 min, parallel). Runs only when the physics
+# paths below change, or on a merge to master. Keeps CI fast on docs/test-only
+# changes. The fast unit suite is in ci.yml. See DECISIONS.md [2026-08-20].
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'scripts/ode_gate_v13.jl'
+      - 'scripts/compute_seeds.jl'
+      - 'test/acceptance_runtests.jl'
+      - 'test/test_evaluator_v13.jl'
+      - 'test/test_gate_v13.jl'
+      - 'test/test_rope_break.jl'
+      - 'test/test_rotor_power_realism.jl'
+      - 'test/test_settle_drag_alignment.jl'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'scripts/ode_gate_v13.jl'
+      - 'scripts/compute_seeds.jl'
+      - 'test/acceptance_runtests.jl'
+      - 'test/test_evaluator_v13.jl'
+      - 'test/test_gate_v13.jl'
+      - 'test/test_rope_break.jl'
+      - 'test/test_rotor_power_realism.jl'
+      - 'test/test_settle_drag_alignment.jl'
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone CoaxialAutogyroStacking
+        run: |
+          git clone https://github.com/rodWindswept/CoaxialAutogyroStacking.jl.git ../CoaxialAutogyroStacking.jl
+          echo "CoaxialAutogyroStacking cloned"
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.12'
+
+      - name: Instantiate + develop
+        run: |
+          julia --project=. -e '
+            using Pkg
+            Pkg.develop(path="../CoaxialAutogyroStacking.jl")
+            Pkg.instantiate()
+          '
+
+      - name: Run acceptance suite
+        run: julia --project=. test/acceptance_runtests.jl

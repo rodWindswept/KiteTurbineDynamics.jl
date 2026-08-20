@@ -21,10 +21,15 @@ In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (mo
 
 ### Julia Package & Test Commands
 
-* **Run Entire Test Suite** (39 test files):
+* **Run the fast unit suite** (34 test files, ~3.5 min):
   ```bash
   julia --project=. test/runtests.jl
   ```
+* **Run the slow acceptance suite** (5 ODE files, ~18 min, parallel):
+  ```bash
+  julia --project=. test/acceptance_runtests.jl
+  ```
+  Run this before a merge that touches src/ physics. CI runs it only when those paths change (see .github/workflows/acceptance.yml).
   Use `script -q -c "julia --project=. test/runtests.jl" /dev/null` for live output (Julia buffers stdout).
 
 * **Launch Interactive Dashboard** (GLMakie):
