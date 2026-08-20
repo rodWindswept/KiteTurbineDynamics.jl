@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit — habit-hook sensors, fired live at commit time.
+# Version: 0.1.0 | Date: 2026-08-20 | Author: Windswept & Interesting
+#
+# Runs the deterministic sensors on staged files and blocks on breach.
+# Sensors: ste (STE-100 prose) and provenance (campaign CSV stamp).
+# Deliberate bypass: git commit --no-verify
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+FAIL=0
+
+# 1. STE linter on staged markdown (blocks at >= 2.0 violations/100w)
+MD_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.(md|markdown)$' || true)
+if [ -n "$MD_FILES" ]; then
+    python3 ste-lint.py --fail-above 2.0 $MD_FILES || FAIL=1
+fi
+
+# 2. Provenance on staged campaign CSVs
+CSV_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.csv$' || true)
+if [ -n "$CSV_FILES" ]; then
+    python3 check-provenance.py $CSV_FILES || FAIL=1
+fi
+
+if [ "$FAIL" = "1" ]; then
+    echo ""
+    echo "Habit-hook sensors fired. Fix the [HOOK:...] items above, then re-commit."
+    echo "Deliberate bypass: git commit --no-verify"
+    exit 1
+fi
+exit 0
