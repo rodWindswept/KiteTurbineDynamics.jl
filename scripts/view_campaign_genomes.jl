@@ -1,13 +1,12 @@
 #!/usr/bin/env julia
 # scripts/view_campaign_genomes.jl
 #
-# Genome Form Browser — decode any 14-dim V13 5 kW genome from a campaign
-# telemetry CSV and render its 3D form (rings, tethers, knuckles, expansion
-# rotors) beside the genome's scores, with prev/next navigation across the
-# campaign set.  Purpose: review the visual form a builder produced and
-# compare it to that genome's scores.
+# Genome Form Browser / Chooser — decode 14-dim V13 5 kW genomes from campaign
+# telemetry CSVs, filter them by decoded physical parameters, browse matching
+# designs as cards, and view any selected design in 3D beside its scores.
 #
 # Reference: docs/plans/2026-08-20-genome-form-browser.md
+#            docs/plans/2026-08-20-genome-chooser.md
 #
 # The 14-dim genome is x1..x14 (TRPT_V10_DIM).  k_mppt left the vector on
 # 2026-08-09, so this script reads only those 14 columns and nothing beyond.
@@ -17,20 +16,24 @@
 # but performs no physics, builds no ODE system, and touches no CSV.
 #
 # Usage:
-#   julia --project=. scripts/view_campaign_genomes.jl [csv_path] [options]
+#   julia --project=. scripts/view_campaign_genomes.jl [input ...] [options]
 #
-#   csv_path             telemetry CSV (default: first existing v13_5kw_lenX)
-#   --hash=S             first row whose genome fingerprint contains S
-#   --row=N              1-based row index to load (default 1)
-#   --png=PATH           headless render of the current row to PATH, then exit
-#   --selfcheck          assert geometry (AC3) + score-panel equality (AC6), exit
-#   --nav-check=N        step through N rows logging each decoded genome (AC5), exit
+#   input                 results directory (default: scripts/results/) or one
+#                         or more telemetry.csv paths.  A directory is scanned
+#                         for v13_5kw_len*/telemetry.csv and the files are
+#                         concatenated (each row keeps its own tether column).
+#   --hash=S              first row whose genome fingerprint contains S
+#   --row=N               1-based global row index to load (default 1)
+#   --png=PATH            headless render of the selected row's viewport, exit
+#   --selfcheck           assert geometry (AC3) + score-panel equality (AC6), exit
+#   --check               run AC8-AC17 (filter/highlights/multi-CSV) assertions, exit
+#   --nav-check=N         step through N rows logging each decoded genome (AC5), exit
 
 using Pkg
 Pkg.activate(dirname(@__DIR__))
 
 using KiteTurbineDynamics
-using CSV, DataFrames, Printf, LinearAlgebra
+using CSV, DataFrames, Printf, LinearAlgebra, Statistics, Random
 
 const ROOT = dirname(@__DIR__)
 const RESULTS = joinpath(ROOT, "scripts", "results")
@@ -60,15 +63,18 @@ end
 # Backend selection — GLMakie for the desktop, CairoMakie fallback so the same
 # script renders headless (GKSwstype=nul / no DISPLAY) for agent verification.
 # ══════════════════════════════════════════════════════════════════════════════
+const BACKEND = Ref{Symbol}(:none)
 const M = try
     @eval using GLMakie
     GLMakie.activate!()
+    BACKEND[] = :glmakie
     @info "GLMakie backend active"
     GLMakie
 catch err
     @warn "GLMakie unavailable ($err) — falling back to CairoMakie"
     @eval using CairoMakie
     CairoMakie.activate!()
+    BACKEND[] = :cairomakie
     CairoMakie
 end
 
@@ -107,21 +113,235 @@ function decode_genome(x::Vector{Float64}, L::Float64)
     return (dec=dec, radii=radii)
 end
 
-"Extract the campaign tether length from the header comment, else the tether col."
-function campaign_length(csv_path::String, df::DataFrame)
-    open(csv_path, "r") do io
-        for _ in 1:5
-            line = readline(io; keep=true)
-            startswith(line, "#") || break
-            m = match(r"length=([0-9.]+)", line)
-            m === nothing || return parse(Float64, m.captures[1])
-        end
+# ══════════════════════════════════════════════════════════════════════════════
+# Decoded physical parameters (cached once at load — pure geometry, no ODE)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"Filterable/decoded physical parameters of a decoded genome."
+struct DecodedParams
+    r_hub::Float64
+    r_bot::Float64
+    n_lines::Int
+    n_rings::Int
+    n_active::Int
+    lam_top::Float64
+    lam_bot::Float64
+    bank_top::Float64
+    bank_bot::Float64
+    tether::Float64
+    density_profile::Float64
+end
+
+"The ten filterable parameter names (n_rings is card-display only, not a filter)."
+const FILTER_PARAMS = [
+    :r_hub, :r_bot, :n_lines, :n_active, :lam_top, :lam_bot,
+    :bank_top, :bank_bot, :tether, :density_profile,
+]
+
+param_value(p::DecodedParams, s::Symbol) = getproperty(p, s)
+
+"Extract the decoded filter params from a genome, reusing the single decode path."
+function decode_params(x::Vector{Float64}, L::Float64)
+    dec, _ = decode_genome(x, L)
+    return DecodedParams(
+        dec.design.r_hub, dec.design.r_bottom, dec.design.n_lines, dec.n_rings,
+        dec.n_active, x[13], x[14], x[11], x[12], L, dec.design.density_profile,
+    )
+end
+
+"Decode every row once into a cached params + fingerprint table."
+function decode_all(df::DataFrame)
+    params = Vector{DecodedParams}(undef, nrow(df))
+    fps = Vector{String}(undef, nrow(df))
+    for i in 1:nrow(df)
+        x = [df[i, Symbol("x$j")] for j in 1:14]
+        params[i] = decode_params(x, Float64(df[i, :tether]))
+        fps[i] = genome_fingerprint(x)
     end
-    return Float64(df[1, :tether])
+    return (params=params, fingerprints=fps)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Geometry helpers
+# Filtering
+# ══════════════════════════════════════════════════════════════════════════════
+
+"Observed min/max of each filter param across the loaded set (never hardcoded)."
+function full_bounds(params::Vector{DecodedParams})
+    d = Dict{Symbol,Tuple{Float64,Float64}}()
+    for s in FILTER_PARAMS
+        vals = [Float64(param_value(p, s)) for p in params]
+        d[s] = (minimum(vals), maximum(vals))
+    end
+    return d
+end
+
+"A row matches when every param sits inside its (lo, hi) range (AND-combination)."
+function matches(p::DecodedParams, f::Dict{Symbol,Tuple{Float64,Float64}})
+    for s in FILTER_PARAMS
+        lo, hi = f[s]
+        v = Float64(param_value(p, s))
+        (lo <= v <= hi) || return false
+    end
+    return true
+end
+
+"Global 1-based row indices matching the filter."
+function apply_filter(params::Vector{DecodedParams}, f)
+    return [i for i in eachindex(params) if matches(params[i], f)]
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Highlights (deterministic)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"argmax over finite entries (rejected rows carry NaN FoS/P_mean)."
+function argmax_finite(v)
+    best = 0
+    bestval = -Inf
+    for (i, x) in enumerate(v)
+        isfinite(x) || continue
+        if x > bestval
+            bestval = x
+            best = i
+        end
+    end
+    return best
+end
+
+"Standouts: min fitness, max finite FoS, max finite P_mean, best finite clearance."
+function standouts(df::DataFrame)
+    return unique([
+        argmin(df.fitness),
+        argmax_finite(df.FoS),
+        argmax_finite(df.P_mean),
+        argmax_finite(df.clearance),
+    ])
+end
+
+"Non-dominated front over (fitness ↓, FoS ↑, P_mean ↑); NaN-objective rows excluded."
+function pareto_front(df::DataFrame)
+    idxs = [
+        i for i in 1:nrow(df)
+        if isfinite(df[i, :FoS]) && isfinite(df[i, :P_mean])
+    ]
+    n = length(idxs)
+    dominated = falses(n)
+    for a in 1:n
+        for b in 1:n
+            a == b && continue
+            ia, ib = idxs[a], idxs[b]
+            better = (df[ib, :fitness] <= df[ia, :fitness]) &&
+                     (df[ib, :FoS] >= df[ia, :FoS]) &&
+                     (df[ib, :P_mean] >= df[ia, :P_mean])
+            strict = (df[ib, :fitness] < df[ia, :fitness]) ||
+                     (df[ib, :FoS] > df[ia, :FoS]) ||
+                     (df[ib, :P_mean] > df[ia, :P_mean])
+            if better && strict
+                dominated[a] = true
+                break
+            end
+        end
+    end
+    return idxs[.!dominated]
+end
+
+"Min and max design (row index) per decoded dimension, deduplicated."
+function per_dim_extremes(params::Vector{DecodedParams})
+    reps = Int[]
+    for s in FILTER_PARAMS
+        vals = [Float64(param_value(p, s)) for p in params]
+        push!(reps, argmin(vals), argmax(vals))
+    end
+    return unique(reps)
+end
+
+"Z-score standardise a vector (constant vector → zeros)."
+function standardize(v::Vector{Float64})
+    μ = mean(v)
+    σ = std(v)
+    σ < 1e-12 && return zeros(length(v))
+    return (v .- μ) ./ σ
+end
+
+"""
+    kmeans_reps(X, k; seed) -> k distinct row indices
+
+Pure-Julia k-means on a standardised feature matrix.  Deterministic for a fixed
+seed.  Representative per cluster = member nearest the centroid; collisions are
+backfilled with unused rows so exactly k distinct indices are returned.
+"""
+function kmeans_reps(X::Matrix{Float64}, k::Int; seed::Int=42, max_iters::Int=100)
+    n = size(X, 1)
+    k = min(max(k, 1), n)
+    rng = MersenneTwister(seed)
+    perm = randperm(rng, n)
+    centroids = copy(X[perm[1:k], :])
+    labels = zeros(Int, n)
+    for _ in 1:max_iters
+        changed = false
+        for i in 1:n
+            d = [sum(abs2, X[i, :] .- centroids[j, :]) for j in 1:k]
+            l = argmin(d)
+            if labels[i] != l
+                labels[i] = l
+                changed = true
+            end
+        end
+        for j in 1:k
+            mem = [i for i in 1:n if labels[i] == j]
+            isempty(mem) && continue
+            centroids[j, :] = vec(sum(X[mem, :]; dims=1)) ./ length(mem)
+        end
+        changed || break
+    end
+    reps = Int[]
+    for j in 1:k
+        mem = [i for i in 1:n if labels[i] == j]
+        if isempty(mem)
+            push!(reps, perm[j])
+        else
+            push!(reps, mem[argmin([sum(abs2, X[i, :] .- centroids[j, :]) for i in mem])])
+        end
+    end
+    result = Int[]
+    for r in reps
+        r in result || push!(result, r)
+    end
+    i = 1
+    while length(result) < k
+        i in result || push!(result, i)
+        i += 1
+    end
+    return sort(result[1:k])
+end
+
+"Cluster representatives over standardised decoded params (k-means, k=5, seed 42)."
+function cluster_reps(params::Vector{DecodedParams}, k::Int=5)
+    cols = [[Float64(param_value(p, s)) for p in params] for s in FILTER_PARAMS]
+    X = hcat([standardize(c) for c in cols]...)
+    return kmeans_reps(X, k)
+end
+
+"HIGHLIGHT_MODES = selectable highlight sets."
+const HIGHLIGHT_MODES = ["Standouts", "Pareto front", "Per-dimension extremes",
+    "Cluster representatives"]
+
+"Row indices for the selected highlight mode."
+function highlights_for_mode(mode::String, df::DataFrame, params::Vector{DecodedParams})
+    if mode == "Standouts"
+        return standouts(df)
+    elseif mode == "Pareto front"
+        return pareto_front(df)
+    elseif mode == "Per-dimension extremes"
+        return per_dim_extremes(params)
+    elseif mode == "Cluster representatives"
+        return cluster_reps(params, 5)
+    end
+    return standouts(df)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Geometry helpers + rendering (reused from the form browser)
 # ══════════════════════════════════════════════════════════════════════════════
 
 "Vertex positions (n_lines-gon) for every ring, ground-first order."
@@ -150,10 +370,6 @@ function do_colour(Do, Do_min, Do_max)
     return M.cgrad(:viridis)[t]
 end
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Rendering
-# ══════════════════════════════════════════════════════════════════════════════
-
 "Draw one expansion rotor as a banked blade disc at its ring's z height."
 function draw_rotor!(ax3, rotor, z::Float64, n_blades::Int)
     β = deg2rad(rotor.bank_angle_deg)
@@ -161,15 +377,12 @@ function draw_rotor!(ax3, rotor, z::Float64, n_blades::Int)
     hub = rotor.blade_hub_radius
     θ = collect(range(0.0, 2π, length=96))
 
-    # Disc plane tilted by β about the x-axis; centre at (0, 0, z).
     for (r, lw) in ((tip, 2.5), (hub, 1.2))
         xs = [r * cos(t) for t in θ]
         ys = [r * sin(t) * cos(β) for t in θ]
         zs = [z + r * sin(t) * sin(β) for t in θ]
         M.lines!(ax3, xs, ys, zs, color=:deepskyblue, linewidth=lw)
     end
-
-    # Radial blades (n_blades = n_lines, matching the balanced polygon).
     for k in 1:n_blades
         a = 2π * (k - 1) / n_blades
         M.lines!(
@@ -182,18 +395,15 @@ function draw_rotor!(ax3, rotor, z::Float64, n_blades::Int)
     end
 end
 
-"Clear and redraw the full 3D form for the decoded genome in `st`."
-function draw_form!(ax3, st)
+"Clear and redraw the full 3D form for a decoded genome."
+function draw_form!(ax3, dec, radii::Vector{Float64})
     M.empty!(ax3)
-    dec = st.dec
-    radii = st.radii
     verts = ring_vertices(dec, radii)
     n_v = dec.design.n_lines
     Do_vals = ring_do(dec, radii)
     Do_min = minimum(Do_vals)
     Do_max = maximum(Do_vals)
 
-    # Ring polygons — linewidth scales with Do, colour from viridis.
     for i in eachindex(verts)
         col = do_colour(Do_vals[i], Do_min, Do_max)
         lw = 3.0 + 6.0 * (Do_vals[i] - Do_min) / max(Do_max - Do_min, 1e-9)
@@ -206,7 +416,6 @@ function draw_form!(ax3, st)
         end
     end
 
-    # Tethers — same vertex index across rings.
     for k in 1:n_v
         xs = [verts[i][k][1] for i in eachindex(verts)]
         ys = [verts[i][k][2] for i in eachindex(verts)]
@@ -214,13 +423,11 @@ function draw_form!(ax3, st)
         M.lines!(ax3, xs, ys, zs, color=(:grey30, 0.7), linewidth=1.2)
     end
 
-    # Knuckles — red spheres at every vertex.
     for i in eachindex(verts), p in verts[i]
         M.scatter!(ax3, [p[1]], [p[2]], [p[3]], markersize=10, color=:red,
             strokewidth=0)
     end
 
-    # Expansion rotors — banked blade discs at their ring heights.
     for rotor in dec.rotors
         z = dec.zs[clamp(rotor.ring_idx, 1, length(dec.zs))]
         draw_rotor!(ax3, rotor, z, n_v)
@@ -266,13 +473,23 @@ function score_panel_text(row, df, dec)
     return join(lines, "\n")
 end
 
+"Compact single-card text (stat tile)."
+function card_text(df::DataFrame, params::Vector{DecodedParams}, decset, rid::Int)
+    row = df[rid, :]
+    p = params[rid]
+    fp = first(decset.fingerprints[rid], 12)
+    return @sprintf("%d/%d/%d %s\nP=%.2f FoS=%.3g f=%.4g %s\nn=%d/%d/%d r=%.2f t=%.1f",
+        row.island, row.gen, row.idx, fp,
+        row.P_mean, row.FoS, row.fitness, row.status,
+        p.n_lines, p.n_rings, p.n_active, p.r_hub, p.tether)
+end
+
 # ══════════════════════════════════════════════════════════════════════════════
-# Browser state + navigation
+# Browser state + navigation (kept for --selfcheck / --nav-check / --png)
 # ══════════════════════════════════════════════════════════════════════════════
 
 mutable struct BrowserState
     df::DataFrame
-    L::Float64
     i::Int
     dec::Any
     radii::Vector{Float64}
@@ -284,7 +501,7 @@ function load_row!(st::BrowserState, i::Int)
     st.i = clamp(i, 1, nrow(st.df))
     row = st.df[st.i, :]
     x = [row[Symbol("x$j")] for j in 1:14]
-    st.dec, st.radii = decode_genome(x, st.L)
+    st.dec, st.radii = decode_genome(x, Float64(row.tether))
     st.fingerprint = genome_fingerprint(x)
     dec = st.dec
     println(@sprintf(
@@ -297,7 +514,7 @@ function load_row!(st::BrowserState, i::Int)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Assertions (AC3 + AC6) — pure numeric, headless
+# Assertions — AC3+AC6 (selfcheck) and AC8-AC17 (check)
 # ══════════════════════════════════════════════════════════════════════════════
 
 function selfcheck(st::BrowserState, row)
@@ -326,7 +543,6 @@ function selfcheck(st::BrowserState, row)
     check("rotor count == dec.n_active", length(dec.rotors) == dec.n_active,
         "$(length(dec.rotors)) == $(dec.n_active)")
 
-    # AC6 — score panel values equal the CSV fields for the loaded row.
     for (label, field) in [
         ("P_mean", :P_mean), ("FoS", :FoS), ("fitness", :fitness),
         ("status", :status), ("clearance", :clearance),
@@ -347,24 +563,313 @@ function selfcheck(st::BrowserState, row)
     return ok
 end
 
+function fullcheck(df::DataFrame, params::Vector{DecodedParams}, decset)
+    ok = Ref(true)
+    function check(label, pass, detail)
+        println((pass ? "PASS  " : "FAIL  ") * label * "  —  " * detail)
+        ok[] &= pass
+    end
+
+    full = full_bounds(params)
+
+    # AC11 — multi-CSV concatenation.
+    srcs = sort(unique(df.source))
+    per_src = [count(==(s), df.source) for s in srcs]
+    check("AC11 found 3 length sources", length(srcs) == 3,
+        "sources=$(srcs)")
+    check("AC11 combined == sum of per-source counts",
+        nrow(df) == sum(per_src), "$(nrow(df)) == $(sum(per_src))")
+    tethers = sort(unique(df.tether))
+    check("AC11 tether values == {18,21.2,25}",
+        length(tethers) == 3 && isapprox(tethers, [18.0, 21.2, 25.0]),
+        "tethers=$(tethers)")
+
+    # AC10 — slider ranges == observed min/max.
+    bounds_ok = true
+    for s in FILTER_PARAMS
+        vals = [Float64(param_value(p, s)) for p in params]
+        lo, hi = full[s]
+        bounds_ok &= (lo == minimum(vals)) && (hi == maximum(vals))
+    end
+    check("AC10 slider bounds == observed min/max", bounds_ok,
+        "all $(length(FILTER_PARAMS)) params")
+
+    # AC8 + AC9 — filter correctness + live count.
+    f_n6 = copy(full)
+    f_n6[:n_lines] = (6.0, 6.0)
+    m1 = apply_filter(params, f_n6)
+    csv1 = findall(==(6), df.n_lines)
+    check("AC8 single-slider n_lines==6 == CSV", Set(m1) == Set(csv1),
+        "$(length(m1)) rows (CSV $(length(csv1)))")
+    check("AC9 live count == match set size",
+        length(m1) == count(matches(p, f_n6) for p in params),
+        "count=$(length(m1))")
+
+    f_multi = copy(f_n6)
+    f_multi[:tether] = (18.0, 18.0)
+    m2 = apply_filter(params, f_multi)
+    csv2 = findall((df.n_lines .== 6) .& (df.tether .== 18.0))
+    check("AC8 multi-slider AND-combine", Set(m2) == Set(csv2),
+        "$(length(m2)) rows (CSV $(length(csv2)))")
+
+    # AC12 — card selection loads the correct row.
+    if !isempty(m1)
+        rid = m1[1]
+        row = df[rid, :]
+        x = [row[Symbol("x$j")] for j in 1:14]
+        dec, _ = decode_genome(x, Float64(row.tether))
+        check("AC12 card selection fingerprint == row genome",
+            genome_fingerprint(x) == decset.fingerprints[rid],
+            "rid=$rid fp=$(first(decset.fingerprints[rid], 16)) n_active=$(dec.n_active)")
+    else
+        check("AC12 card selection", false, "no matching rows to select")
+    end
+
+    # AC13 — standouts.
+    st = standouts(df)
+    check("AC13 winner == argmin(fitness)",
+        argmin(df.fitness) in st,
+        "winner fit=$(df[argmin(df.fitness), :fitness])")
+    check("AC13 max FoS == argmax(finite)",
+        argmax_finite(df.FoS) in st,
+        "FoS=$(df[argmax_finite(df.FoS), :FoS])")
+    check("AC13 max P_mean == argmax(finite)",
+        argmax_finite(df.P_mean) in st,
+        "P_mean=$(df[argmax_finite(df.P_mean), :P_mean])")
+    check("AC13 best clearance == argmax(finite)",
+        argmax_finite(df.clearance) in st,
+        "clearance=$(df[argmax_finite(df.clearance), :clearance])")
+
+    # AC14 — Pareto front is non-dominated (programmatic re-check).
+    pf = pareto_front(df)
+    nondom = true
+    for a in pf, b in pf
+        a == b && continue
+        if (df[b, :fitness] <= df[a, :fitness]) &&
+           (df[b, :FoS] >= df[a, :FoS]) &&
+           (df[b, :P_mean] >= df[a, :P_mean]) &&
+           ((df[b, :fitness] < df[a, :fitness]) ||
+            (df[b, :FoS] > df[a, :FoS]) ||
+            (df[b, :P_mean] > df[a, :P_mean]))
+            nondom = false
+        end
+    end
+    check("AC14 Pareto front non-dominated", nondom, "$(length(pf)) members")
+
+    # AC15 — per-dimension extremes == argmin/argmax.
+    ext_ok = true
+    for s in FILTER_PARAMS
+        vals = [Float64(param_value(p, s)) for p in params]
+        imin, imax = argmin(vals), argmax(vals)
+        ext_ok &= (imin in per_dim_extremes(params)) && (imax in per_dim_extremes(params))
+    end
+    check("AC15 per-dim extremes cover argmin/argmax", ext_ok,
+        "$(length(per_dim_extremes(params))) unique designs")
+
+    # AC16 — cluster reps: k=5 distinct valid rows.
+    reps = cluster_reps(params, 5)
+    check("AC16 cluster reps k=5 distinct valid rows",
+        length(reps) == 5 && allunique(reps) &&
+        all(1 .<= reps .<= nrow(df)),
+        "reps=$(reps)")
+
+    # AC17 — density_profile filtering (not a CSV column).
+    r = reps[1]
+    dp = params[r].density_profile
+    f_dp = copy(full)
+    f_dp[:density_profile] = (dp, dp)
+    mdp = apply_filter(params, f_dp)
+    check("AC17 density_profile filter selects the decoded row",
+        r in mdp, "row $r dp=$dp")
+    all_dp_match = all(params[i].density_profile == dp for i in mdp)
+    check("AC17 density_profile match set all == decoded dp",
+        all_dp_match, "$(length(mdp)) rows")
+
+    println(ok[] ? "CHECK: ALL PASS" : "CHECK: FAILURES PRESENT")
+    return ok[]
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Data loading
+# ══════════════════════════════════════════════════════════════════════════════
+
+"Scan a directory for v13_5kw_len*/telemetry.csv (one level deep, sorted)."
+function collect_telemetry_csvs(dir::String)
+    isdir(dir) || return String[]
+    subdirs = sort(filter(d -> startswith(d, "v13_5kw_len"), readdir(dir)))
+    paths = String[]
+    for d in subdirs
+        p = joinpath(dir, d, "telemetry.csv")
+        isfile(p) && push!(paths, p)
+    end
+    return paths
+end
+
+"Expand a list of directory/file inputs into a list of CSV paths."
+function expand_inputs(inputs::Vector{String})
+    paths = String[]
+    for p in inputs
+        if isdir(p)
+            append!(paths, collect_telemetry_csvs(p))
+        else
+            push!(paths, p)
+        end
+    end
+    return paths
+end
+
+"Load and concatenate several telemetry CSVs, tagging each row with its source."
+function load_set(paths::Vector{String})
+    isempty(paths) && error("no telemetry CSVs found (searched $RESULTS)")
+    dfs = DataFrame[]
+    for p in paths
+        isfile(p) || error("telemetry CSV not found: $p")
+        d = CSV.read(p, DataFrame; comment="#")
+        d[!, :source] .= joinpath(basename(dirname(p)), basename(p))
+        push!(dfs, d)
+    end
+    return vcat(dfs...; cols=:union)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# UI builders (chooser window + viewport window)
+# ══════════════════════════════════════════════════════════════════════════════
+
+"Viewport window: 3D form + score panel, driven by the `selected` row Observable."
+function build_viewport(df::DataFrame, selected)
+    fig = M.Figure(size=(900, 900), backgroundcolor=:white)
+    ax3 = M.Axis3(fig[1, 1],
+        backgroundcolor=:white,
+        xlabel="x (m)", ylabel="y (m)", zlabel="z (m)",
+        xgridcolor=(:black, 0.1), ygridcolor=(:black, 0.1), zgridcolor=(:black, 0.1),
+        title="",
+        aspect=(1, 1, 1.2))
+    panel = M.Label(fig[1, 2], "", fontsize=15, halign=:left, valign=:top,
+        tellwidth=false, tellheight=false)
+    M.colsize!(fig.layout, 1, M.Relative(0.72))
+    M.colsize!(fig.layout, 2, M.Relative(0.28))
+
+    function render(rid)
+        rid = clamp(rid, 1, nrow(df))
+        row = df[rid, :]
+        x = [row[Symbol("x$j")] for j in 1:14]
+        dec, radii = decode_genome(x, Float64(row.tether))
+        draw_form!(ax3, dec, radii)
+        panel.text = score_panel_text(row, df, dec)
+        ax3.title = @sprintf("%s — genome %d/%d/%d (%s)", row.source, row.island,
+            row.gen, row.idx, first(genome_fingerprint(x), 16))
+    end
+    M.on(selected) do rid
+        render(rid)
+    end
+    render(selected[])
+    return fig
+end
+
+"Add a labelled range slider; returns the slider. Integer params snap to ints."
+function add_slider(gl, r::Int, name::String, lo::Float64, hi::Float64, integer::Bool)
+    M.Label(gl[r, 1], name, fontsize=11, halign=:left, tellwidth=false)
+    rng = if integer
+        round(Int, lo):round(Int, hi)
+    elseif lo ≈ hi
+        LinRange(lo, hi + 1e-6, 2)
+    else
+        LinRange(lo, hi, 400)
+    end
+    return M.IntervalSlider(gl[r, 2], range=rng, startvalues=(lo, hi), width=180)
+end
+
+"Chooser window: filter sliders + highlights menu + card grid."
+function build_chooser(df::DataFrame, params::Vector{DecodedParams}, decset, selected)
+    full = full_bounds(params)
+    fig = M.Figure(size=(1250, 900), backgroundcolor=:white)
+
+    fl = M.GridLayout(fig[1, 1])
+    M.Label(fl[1, 1:2], "Filters", fontsize=16, halign=:left, tellwidth=false)
+
+    sliders = Dict{Symbol,Any}()
+    sliders[:r_hub] = add_slider(fl, 2, "r_hub (m)", full[:r_hub]..., false)
+    sliders[:r_bot] = add_slider(fl, 3, "r_bot (m)", full[:r_bot]..., false)
+    sliders[:n_lines] = add_slider(fl, 4, "n_lines", full[:n_lines]..., true)
+    sliders[:n_active] = add_slider(fl, 5, "n_active", full[:n_active]..., true)
+    sliders[:lam_top] = add_slider(fl, 6, "lam_top (λ)", full[:lam_top]..., false)
+    sliders[:lam_bot] = add_slider(fl, 7, "lam_bot (λ)", full[:lam_bot]..., false)
+    sliders[:bank_top] = add_slider(fl, 8, "bank_top (deg)", full[:bank_top]..., false)
+    sliders[:bank_bot] = add_slider(fl, 9, "bank_bot (deg)", full[:bank_bot]..., false)
+    sliders[:tether] = add_slider(fl, 10, "tether (m)", full[:tether]..., false)
+    sliders[:density_profile] = add_slider(fl, 11, "density_profile", full[:density_profile]..., false)
+
+    count_label = M.Label(fl[12, 1:2], "", fontsize=14, halign=:left, tellwidth=false)
+
+    M.Label(fl[13, 1:2], "Highlights", fontsize=16, halign=:left, tellwidth=false)
+    mode_menu = M.Menu(fl[14, 1:2], options=HIGHLIGHT_MODES, default="Standouts",
+        width=200)
+
+    # Card grid (fixed slots; labels + row mapping update on recompute).
+    cg = M.GridLayout(fig[1, 2])
+    CARD_COLS = 3
+    CARD_ROWS = 8
+    card_buttons = Vector{Any}(undef, CARD_COLS * CARD_ROWS)
+    card_rids = zeros(Int, CARD_COLS * CARD_ROWS)
+    for k in 1:(CARD_COLS * CARD_ROWS)
+        c = mod1(k, CARD_COLS)
+        r = (k - 1) ÷ CARD_COLS + 1
+        card_buttons[k] = M.Button(cg[r, c], label="", width=180, height=70)
+    end
+
+    function current_spec()
+        d = Dict{Symbol,Tuple{Float64,Float64}}()
+        for s in FILTER_PARAMS
+            v = sliders[s].interval[]
+            d[s] = (Float64(v[1]), Float64(v[2]))
+        end
+        return d
+    end
+
+    function recompute!()
+        spec = current_spec()
+        matching = apply_filter(params, spec)
+        count_label.text = "$(length(matching)) / $(nrow(df)) matching"
+        hl = highlights_for_mode(mode_menu.selection[], df, params)
+        display_rids = unique(vcat(hl, matching))
+        for k in 1:length(card_buttons)
+            rid = k <= length(display_rids) ? display_rids[k] : 0
+            card_rids[k] = rid
+            card_buttons[k].label = rid == 0 ? "" : card_text(df, params, decset, rid)
+        end
+    end
+
+    for k in 1:length(card_buttons)
+        M.on(card_buttons[k].clicks) do _
+            rid = card_rids[k]
+            rid > 0 && (selected[] = rid)
+        end
+    end
+    for s in FILTER_PARAMS
+        M.on(sliders[s].interval) do _
+            recompute!()
+        end
+    end
+    M.on(mode_menu.selection) do _
+        recompute!()
+    end
+
+    recompute!()
+    return fig
+end
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CLI
 # ══════════════════════════════════════════════════════════════════════════════
 
-function default_csv()
-    for L in ("18.0", "21.2", "25.0")
-        p = joinpath(RESULTS, "v13_5kw_len$L", "telemetry.csv")
-        isfile(p) && return p
-    end
-    return joinpath(RESULTS, "v13_5kw_len18.0", "telemetry.csv")
-end
-
 function parse_args(args)
-    csv_path = default_csv()
+    inputs = String[]
     hash_filt = ""
     row_idx = 1
     png_path = nothing
+    smoke_prefix = nothing
     do_selfcheck = false
+    do_check = false
     nav_check = 0
 
     i = 1
@@ -376,104 +881,99 @@ function parse_args(args)
             row_idx = parse(Int, a[7:end])
         elseif startswith(a, "--png=")
             png_path = a[7:end]
+        elseif startswith(a, "--smoke=")
+            smoke_prefix = a[9:end]
         elseif a == "--selfcheck"
             do_selfcheck = true
+        elseif a == "--check"
+            do_check = true
         elseif startswith(a, "--nav-check=")
             nav_check = parse(Int, a[13:end])
         elseif startswith(a, "-")
             error("unknown flag: $a")
         else
-            csv_path = a
+            push!(inputs, a)
         end
         i += 1
     end
-    return (csv_path, hash_filt, row_idx, png_path, do_selfcheck, nav_check)
+    return (inputs, hash_filt, row_idx, png_path, smoke_prefix, do_selfcheck,
+        do_check, nav_check)
 end
 
 function main()
-    csv_path, hash_filt, row_idx, png_path, do_selfcheck, nav_check = parse_args(ARGS)
-    isfile(csv_path) || error("telemetry CSV not found: $csv_path")
+    inputs, hash_filt, row_idx, png_path, smoke_prefix, do_selfcheck, do_check,
+        nav_check = parse_args(ARGS)
 
-    df = CSV.read(csv_path, DataFrame; comment="#")
-    L = campaign_length(csv_path, df)
+    paths = expand_inputs(isempty(inputs) ? [RESULTS] : inputs)
+    df = load_set(paths)
+    decset = decode_all(df)
+    params = decset.params
 
-    # Resolve starting row: --hash, then --row.
     start_i = row_idx
     if !isempty(hash_filt)
-        match_i = findfirst(
-            i -> occursin(hash_filt, genome_fingerprint([df[i, Symbol("x$j")] for j in 1:14])),
-            1:nrow(df),
-        )
-        match_i === nothing && error("no genome matching --hash=$hash_filt")
-        start_i = match_i
+        m = findfirst(i -> occursin(hash_filt, decset.fingerprints[i]), 1:nrow(df))
+        m === nothing && error("no genome matching --hash=$hash_filt")
+        start_i = m
+    end
+    start_i = clamp(start_i, 1, nrow(df))
+
+    if do_check
+        exit(fullcheck(df, params, decset) ? 0 : 1)
     end
 
-    st = BrowserState(df, L, start_i, nothing, Float64[], "")
-    load_row!(st, start_i)
-    row = st.df[st.i, :]
+    if do_selfcheck
+        st = BrowserState(df, start_i, nothing, Float64[], "")
+        load_row!(st, start_i)
+        exit(selfcheck(st, st.df[start_i, :]) ? 0 : 1)
+    end
 
-    # AC5 — navigation: step prev/next, logging each loaded row.
     if nav_check > 0
-        println("NAV-CHECK over $(nav_check) rows:")
+        st = BrowserState(df, start_i, nothing, Float64[], "")
+        load_row!(st, start_i)
+        println("NAV-CHECK over $nav_check rows:")
         for k in 1:nav_check
             load_row!(st, mod1(start_i + k, nrow(df)))
         end
         return
     end
 
-    if do_selfcheck
-        exit(selfcheck(st, row) ? 0 : 1)
-    end
-
-    # ── Figure ────────────────────────────────────────────────────────────────
-    fig = M.Figure(size=(1400, 900), backgroundcolor=:white)
-    ax3 = M.Axis3(fig[1, 1],
-        backgroundcolor=:white,
-        xlabel="x (m)", ylabel="y (m)", zlabel="z (m)",
-        xgridcolor=(:black, 0.1), ygridcolor=(:black, 0.1), zgridcolor=(:black, 0.1),
-        title=@sprintf("%s — genome %d/%d/%d (%s)", basename(csv_path),
-            row.island, row.gen, row.idx, first(st.fingerprint, 16)),
-        aspect=(1, 1, 1.2))
-    panel = M.Label(fig[1, 2],
-        score_panel_text(row, df, st.dec),
-        fontsize=16, halign=:left, valign=:top, tellwidth=false, tellheight=false)
-    M.colsize!(fig.layout, 1, M.Relative(0.7))
-    M.colsize!(fig.layout, 2, M.Relative(0.3))
-
-    draw_form!(ax3, st)
-    ax3.azimuth[] = -π / 3.2
-    ax3.elevation[] = π / 9
-    ax3.perspectiveness[] = 0.4
+    selected = M.Observable(start_i)
 
     if png_path !== nothing
+        fig = build_viewport(df, selected)
         M.save(png_path, fig, px_per_unit=2)
         println("wrote $png_path")
         return
     end
 
-    # ── Interactive navigation (desktop) ──────────────────────────────────────
-    function redraw!()
-        draw_form!(ax3, st)
-        r = st.df[st.i, :]
-        panel.text = score_panel_text(r, df, st.dec)
-        ax3.title = @sprintf("%s — genome %d/%d/%d (%s)", basename(csv_path),
-            r.island, r.gen, r.idx, first(st.fingerprint, 16))
+    if smoke_prefix !== nothing
+        chooser = build_chooser(df, params, decset, selected)
+        viewport = build_viewport(df, selected)
+        cp = smoke_prefix * "_chooser.png"
+        vp = smoke_prefix * "_viewport.png"
+        M.save(cp, chooser, px_per_unit=2)
+        M.save(vp, viewport, px_per_unit=2)
+        println("wrote $cp")
+        println("wrote $vp")
+        return
     end
 
-    prev_btn = M.Button(fig[2, 1], label="◀ Prev")
-    next_btn = M.Button(fig[2, 2], label="Next ▶")
-    M.on(prev_btn.clicks) do _
-        load_row!(st, st.i - 1)
-        redraw!()
-    end
-    M.on(next_btn.clicks) do _
-        load_row!(st, st.i + 1)
-        redraw!()
-    end
+    chooser = build_chooser(df, params, decset, selected)
+    viewport = build_viewport(df, selected)
 
-    M.display(fig)
-    println("Genome Form Browser open — use ◀ Prev / Next ▶ or the buttons.")
-    println("Loaded $(st.i)/$(nrow(df)): $(st.fingerprint)")
+    if BACKEND[] === :glmakie
+        s1 = GLMakie.Screen()
+        display(s1, chooser)
+        s2 = GLMakie.Screen()
+        display(s2, viewport)
+        println("Genome Chooser open — chooser window (filters/cards) + viewport window (3D).")
+    else
+        # CairoMakie headless fallback — render both to PNG as a best effort.
+        M.save(joinpath(tempdir(), "genome_chooser.png"), chooser, px_per_unit=2)
+        M.save(joinpath(tempdir(), "genome_viewport.png"), viewport, px_per_unit=2)
+        println("CairoMakie fallback — saved chooser + viewport PNGs (no interactive window).")
+    end
+    println("Loaded $(start_i)/$(nrow(df)): $(decset.fingerprints[start_i])")
 end
 
 main()
