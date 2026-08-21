@@ -33,7 +33,7 @@ Cp_sys 0.15–0.18. The NZTC 50 kW BOM is explicitly NOT an anchor.
 | Seed blade_scale | 1.0 | full-span reference |
 | r_hub bound lo | 0.7 m | annulus feasibility r_ring ≥ 0.3·span enforced by `rotor_annulus_ok` |
 | Lift | mass-aware constant-tension, 1.5× m·g | unchanged |
-| Physics era | post-annulus + λ² mass + rung-scaling | fast suite 1912/1912 green |
+| Physics era | post-annulus + λ² mass + rung-scaling | fast suite 1918/1918 green |
 
 ## Expected outcome (sanity check)
 

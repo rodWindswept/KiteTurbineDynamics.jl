@@ -20,7 +20,7 @@
    every 5 kW genome carried 12.0757 kg/blade (95% of mass, φ ≈ 18 kg/kW).
    Full analysis in `docs/reports/grounded-economics-v13.md`.
 
-3. **Five physics fixes implemented + verified** (fast suite 1912/1912 green
+3. **Five physics fixes implemented + verified** (fast suite 1918/1918 green
    through all of them; DECISIONS.md [2026-08-20]):
    a. `base_params` kwarg on `build_system_from_v10` (rung-scaling; 50 kW
       default = legacy bit-identical).
@@ -121,14 +121,14 @@ re-baseline) · `windswept-knowledge` · `awe-knowledge`
 - **docs/**: reports/grounded-economics-v13.md, reports/field-test-proposal-draft.md,
   plans/2026-08-20-daisy-anchored-5kw-rerun.md,
   validation/tulloch-prototype-configurations.md, agents/genome-glossary.md
-- **root**: DECISIONS.md (three [2026-08-20] entries), CONTEXT.md, .gitignore
+- **root**: DECISIONS.md (two new [2026-08-20] entries: contamination+fixes, FoS 2.5+carbon. The mass-min objective is documented inside both), CONTEXT.md, .gitignore
 
 ## Verification before anything new
 
 ```bash
-cd ~/Documents/GitHub/KiteTurbineDynamics.jl && git pull --rebase   # multi-writer; laptop authoritative
+cd ~/Documents/GitHub/KiteTurbineDynamics.jl && git pull --rebase   # multi-writer; pull-before-push
 export JULIA_DEPOT_PATH=$PWD/.julia_depot:~/.julia
 export PATH=$PWD/.julia_depot/bin:$PATH
-julia --project=. test/runtests.jl              # fast: expect 1912/1912
+julia --project=. test/runtests.jl              # fast: expect 1918/1918
 # acceptance: expected RED (old-physics expectations) until re-baselined
 ```

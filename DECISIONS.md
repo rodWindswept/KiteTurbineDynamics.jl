@@ -1688,7 +1688,7 @@ Open physics item surfaced: main-rotor BEM power uses rotor_radius = 5.0 m
 regardless of λ — power is not λ-scaled while mass now is; examine in the
 re-run.
 
-**Status:** All five fixes implemented; fast suite 1912/1912 green through
+**Status:** All five fixes implemented; fast suite 1918/1918 green through
 all of them. Re-gate after the mass fix alone: winners PASS with power
 retained (7.143 / 6.254 / 7.130 kW) — the mass fix is aero-neutral. **After
 the radius fix (item 4) and the annulus fix (item 5), the OLD winners are
@@ -1727,7 +1727,7 @@ mass — `fitness_fn(P, FoS, cfg, mass)` with `mass = expansion_airborne_mass
 backward compatible); new `mass_min_fitness(P, FoS, cfg, mass)` = `Inf` below
 either hard floor (`FoS < cfg.fos_hard`, `P < cfg.p_floor_kw`) else `mass`.
 All adapter lambdas (src + scripts + test_evaluator_v13) updated to 4-arg;
-unit test added; fast suite 1912/1912 green. **Remaining to wire before the
+unit test added; fast suite 1918/1918 green. **Remaining to wire before the
 re-run:** set `fos_hard = 2.5` and `fitness_fn = mass_min_fitness` in the
 campaign runner, and build the mast/Daisy-up base.
 
