@@ -56,10 +56,16 @@ sweep-selected k=5.39 at 5 kW, power floor 5.0 kW (was 2.5), L default
 18.8 m. One machine + one lift + one operating point across runner,
 smoke, gate, regate, ladder.
 
-**Open:** Daisy i_pto not measured (0.3 kg·m² placeholder); Gate 1c
-(n_blades = n_lines) doubles blade mass vs Daisy's measured 3 blades — flag
-before quoting φ; mass exponent φ ≈ 1.3 anchor vs P^1.35 scaling
-underdetermined.
+**Open:** Daisy i_pto not measured (0.3 kg·m² placeholder); φ mass exponent
+underdetermined (field tests).
+
+**RESOLVED 2026-08-21 — Gate 1c blade mass:** the builder forces
+n_blades = n_lines (balanced polygon) while Daisy measured 3 blades on 6
+lines, doubling blade mass (6 × 420 g vs measured 1.26 kg/ring). Fixed by
+renormalising the anchor's per-blade mass to 210 g (3 × 0.420 / 6) so the
+built machine's 6-blade rotors total the measured 1.26 kg/ring — same
+precedent as params_10kw m_blade 11/5 (2026-07-18). Only Daisy had the
+mismatch; all other params sets are n_blades = n_lines consistent.
 
 **Still active:** yes.
 

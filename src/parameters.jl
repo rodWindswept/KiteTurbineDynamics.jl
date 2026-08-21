@@ -311,7 +311,8 @@ end
 MEASURED anchor — Tulloch PhD Daisy prototype, config 8 (optimised rigid
 rotor, 3-blade).  Source: `docs/validation/tulloch-prototype-configurations.md`
 (2026-08-20, Rod): ring 1.52 m, tips 1.22/2.22 m (70/30 annulus 10.8 m²),
-solidity 7.5%, NACA 4412, blade 420 g, TRPT length 10.31 m, n_lines 6,
+solidity 7.5%, NACA 4412, blade 420 g (measured; 210 g effective under
+Gate 1c — see m_blade), TRPT length 10.31 m, n_lines 6,
 flying weight <2 kg at >1.5 kW (φ ≈ 1.3 kg/kW), Cp_sys 0.15–0.18, tether
 2 mm, k_mppt = 0.175 from the measured 624 W @ 146 rpm (ω = 15.29 rad/s)
 operating point (τ = P/ω = 40.8 N·m, k = τ/ω² = 0.175).
@@ -338,7 +339,13 @@ function params_daisy()::SystemParams
         0.4,                # m_ring (kg) — superseded by geometry-based
                             # m_ring_design in the v10 builder; kept for
                             # non-builder paths
-        0.420,              # m_blade (kg) — Daisy blade 420 g (measured)
+        0.210,              # m_blade (kg) — effective per-blade under Gate 1c:
+                            # measured Daisy blade 420 g × 3 blades = 1.26 kg/ring;
+                            # the v10 builder forces n_blades = n_lines (6) for a
+                            # balanced polygon, so 3 × 0.420 / 6 = 0.210 kg/blade
+                            # preserves the measured 1.26 kg/ring total
+                            # (Rod 2026-08-21; same renormalisation precedent as
+                            # params_10kw m_blade 11/5 ratified 2026-07-18)
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
