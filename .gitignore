@@ -48,3 +48,6 @@ trajectory_analysis/
 
 # Local python libs (sandbox workaround). Never commit.
 .pylibs/
+
+# Hermes agent workspace (plans, scratch). Never commit.
+.hermes/

@@ -1,0 +1,52 @@
+{
+  "schema": "ktd-gh-design/v1",
+  "label": "example 3x5",
+  "n_lines": 5,
+  "n_rings": 4,
+  "r_hub_m": 4.0,
+  "r_bottom_m": 1.0,
+  "tether_length_m": 30.0,
+  "ring_radii_m": [
+    1.0,
+    1.5,
+    2.2,
+    3.0,
+    3.6,
+    4.0
+  ],
+  "ring_z_m": [
+    0.0,
+    5.0,
+    11.0,
+    18.0,
+    24.0,
+    30.0
+  ],
+  "mean_Lr": 2.6665,
+  "rotors": [
+    {
+      "ring_idx": 4,
+      "n_blades": 5,
+      "hub_offset_m": -0.299,
+      "tip_offset_m": 0.7008,
+      "chord_m": 0.15,
+      "bank_angle_deg": 0.0
+    },
+    {
+      "ring_idx": 5,
+      "n_blades": 5,
+      "hub_offset_m": -0.2991,
+      "tip_offset_m": 0.7007,
+      "chord_m": 0.15,
+      "bank_angle_deg": 0.0
+    },
+    {
+      "ring_idx": 6,
+      "n_blades": 5,
+      "hub_offset_m": -0.2992,
+      "tip_offset_m": 0.7006,
+      "chord_m": 0.15,
+      "bank_angle_deg": 0.0
+    }
+  ]
+}

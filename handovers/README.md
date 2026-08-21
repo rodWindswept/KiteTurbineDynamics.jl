@@ -30,6 +30,7 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 | `handover-2026-07-23-feasibility-first-local-manager.md` | Jul 23 | Feasibility-first campaign (local manager) |
 | `handover-2026-07-23-feasibility-first-stornoway.md` | Jul 23 | Feasibility-first campaign (Stornoway) |
 | `handover-2026-07-14-audit.md` | Jul 14 | Audit |
+| `handover-2026-07-16-figure-data-fixes.md` | Jul 16 | Outreach figure review — data-side fixes |
 | `gate2-restart-2026-07-07.md` | Jul 7 | Gate 2 restart |
 | `handover-2026-07-06-prd0006.md` | Jul 6 | PRD 0006 |
 | `handover-2026-07-01-dashboard-v2-refinements.md` | Jul 1 | Dashboard v2 cockpit refinements |
