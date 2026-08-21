@@ -408,7 +408,11 @@ function design_from_vector_v4(
 )
     n_lines = clamp(Int(round(x[8])), 3, 16)
     r_hub = x[5]
-    r_bot = clamp(x[6], 1.5, 8.0)
+    # Ground-ring radius floor: 0.1 m allows Daisy-scale rungs (Daisy
+    # r_bottom = 0.315 m, 5 kW seed = 0.575 m).  Was clamp(x[6], 1.5, 8.0) —
+    # a 50 kW-era floor that silently forced every small-rung genome to
+    # r_bottom = 1.5 m (2026-08-21, Daisy-anchored 5 kW seed stall).
+    r_bot = clamp(x[6], 0.1, 8.0)
     # Ensure r_bottom ≤ r_hub (ground ring never wider than hub ring)
     r_bot = min(r_bot, r_hub)
     # Density profile: element 9 for variable ring density

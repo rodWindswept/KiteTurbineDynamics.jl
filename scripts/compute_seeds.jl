@@ -61,7 +61,11 @@ function seed_genome(kw)
     g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
     g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
     g[9] = 0.0                            # density_profile: uniform
-    g[10] = 1.0                           # rotor mask: single rotor (config 8)
+    g[10] = 0.0                           # rotor mask proxy 0.0 = mask #1 = SINGLE hub
+                                          # rotor (Daisy config 8).  NOTE: proxy 1.0
+                                          # decodes to a 2-rotor mask — the low rotor
+                                          # then fails rotor_annulus_ok at small r_bottom
+                                          # (0.575 m < 0.3·span) — see DECISIONS [2026-08-21].
     g[11] = 0.0                           # bank_top
     g[12] = 0.0                           # bank_bottom
     g[13] = 1.0                           # blade_scale_top: full span

@@ -609,7 +609,13 @@ function evaluate_windowed(
                         # main rotor: swept ANNULUS (2026-08-20, ring-anchored 70/30)
                         π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
                     elseif i - 1 <= n_er
-                        π * sys.expansion_rotors[i - 1].blade_tip_radius^2
+                        # expansion rotor: same annulus the ODE sweeps
+                        # (was full disk π·tip² — ignored the inboard hub cutout)
+                        er = sys.expansion_rotors[i - 1]
+                        ri = er.ring_idx
+                        r_ring = (1 <= ri <= sys.n_ring) ?
+                            (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
+                        expansion_annulus_area(er, r_ring)
                     else
                         0.0
                     end
@@ -732,10 +738,18 @@ function evaluate_windowed(
     # this gate with a contradictory area model AND referenced P_range before
     # assignment — a live UndefVarError on the rejection path it existed to
     # serve.  This annulus-area version is the intended physics.)
-    A_total = π * p.rotor_radius^2  # hub rotor, face-on
-    for rotor in result.rotors
-        bank_rad = rotor.bank_angle_deg * π / 180.0
-        A_total += π * rotor.blade_tip_radius^2 * cos(bank_rad)
+    # Total projected swept area — the SAME annulus areas the ODE actually
+    # sweeps (2026-08-21): hub rotor via main_rotor_swept_area, expansion
+    # rotors via expansion_annulus_area.  Was: base-theory p.rotor_radius
+    # for the hub and raw blade-tip OFFSETS for the rotors — neither matched
+    # the decoded ring-anchored geometry, so the Betz ceiling checked a
+    # different machine than the one simulated.
+    A_total = main_rotor_swept_area(sys)
+    for er in sys.expansion_rotors
+        ri = er.ring_idx
+        r_ring = (1 <= ri <= sys.n_ring) ?
+            (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
+        A_total += expansion_annulus_area(er, r_ring)
     end
     Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
 

@@ -46,8 +46,8 @@ const GROUND_OFFSET = 1.0
 const MIN_CLEARANCE = 1.5   # m — hard gate on lowest active rotor tip
 const WINDOW_S = 20.0       # measurement window (sustained power + twist detector)
 
-# ── Provenance (mass-aware constant-tension regime) ─────────────────────
-const PHYSICS_ERA = "post-428f491_mass-aware-const-tension_ON"
+# ── Provenance (Daisy-anchored, mass-aware constant-tension regime) ──────
+const PHYSICS_ERA = "post-4ce9fd0_daisy-anchored-5kw"
 const GIT_HASH = try
     read(chomp, `git rev-parse HEAD`)
 catch
@@ -67,12 +67,14 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io)
     println(io, "- **Campaign:** 5 kW v13 DE, mass-aware constant-tension lift REDO")
     println(io, "- **Runner:** scripts/run_v13_5kw_masslift.jl")
-    println(io, "- **Physics era:** $(PHYSICS_ERA)")
+    println(io, "- **Physics era:** $(PHYSICS_ERA)  (2026-08-21: Daisy-anchored base params, r_bottom clamp fix, lifter mass excluded from tension, annulus-aligned Betz gates)")
     println(io, "- **Launch git HEAD:** $(GIT_HASH)")
     println(io, "- **Regime:** `lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)`")
-    println(io, "  — vertical lift = 1.5 × m_airborne × g, m_airborne = expansion_airborne_mass(sys, p)")
-    println(io, "  per genome; line tension = F_vert / sin(70°), FLAT at all wind speeds")
-    println(io, "  (modulated lifter, no v² scaling). Lift kite mass NOT in the tension calc.")
+    println(io, "  — vertical lift = 1.5 × m_airborne × g, m_airborne = expansion_airborne_mass(sys, p;")
+    println(io, "  include_lifter=false) per genome (lifter's own mass does NOT drive the tension,")
+    println(io, "  Rod 2026-08-21); line tension = F_vert / sin(70°), FLAT at all wind speeds")
+    println(io, "  (modulated lifter, no v² scaling).")
+    println(io, "- **Base params:** params_daisy() (measured Tulloch anchor) scaled 1.5 → 5 kW via mass_scale.")
     println(io, "- **Baseline (fixed-rotary regime):** scripts/results/v13_5kw_len$(LENGTH)/")
     println(io, "  + lift_tension_retrospective.csv (rotary_lifter_default(), wind-dependent tension)")
     println(io, "- **Identical to first campaign:** seeds (seed_genome(5.0)), RNG (Random.seed!(42+island-1)),")
@@ -82,16 +84,18 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io, "- **Plan:** docs/plans/2026-08-18-5kw-mass-aware-lift-redo.md")
 end
 
-# ── Params with custom tether length ─────────────────────────────────────
+# ── Params with custom tether length — DAISY-ANCHORED (2026-08-21, Rod) ──
+# All rung scaling anchors on the MEASURED 1.5 kW Daisy (params_daisy), never
+# the 10 kW DRR theory or the 50 kW BOM.  mass_scale from 1.5 → KW.
 function params_at_length(L::Float64)
-    p2 = params_10kw()
+    p2 = params_daisy()
     geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
         L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
     mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
     ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
     back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 10.0, KW)
+    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
 end
 
 p_base = params_at_length(LENGTH)
@@ -112,7 +116,11 @@ cfg = ObjectiveConfig(;
     fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly
-    k_mppt = p_base.k_mppt,   # the scaled system's rated MPPT gain, NOT the 50kW default 10.0
+    k_mppt = 5.39,   # k sweep 2026-08-21 (scripts/results/k_sweep_daisy_5kw.csv):
+                     # knee at k≈4.0 (P_end 5.02); Daisy 3-blade anchor scaled
+                     # 0.42·(5/1.5)^2.5 = 5.39 → P_end 6.09 kW, plateau through
+                     # k=9 (6.46).  Below 4.0 the seed rejects at 0 kW.
+                     # NOT p_base.k_mppt (3.55, sub-knee).
     tether_diameter = p_base.tether_diameter,
 )
 

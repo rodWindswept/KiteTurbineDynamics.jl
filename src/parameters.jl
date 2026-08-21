@@ -306,6 +306,68 @@ function params_10kw()::SystemParams
 end
 
 """
+    params_daisy() → SystemParams
+
+MEASURED anchor — Tulloch PhD Daisy prototype, config 8 (optimised rigid
+rotor, 3-blade).  Source: `docs/validation/tulloch-prototype-configurations.md`
+(2026-08-20, Rod): ring 1.52 m, tips 1.22/2.22 m (70/30 annulus 10.8 m²),
+solidity 7.5%, NACA 4412, blade 420 g, TRPT length 10.31 m, n_lines 6,
+flying weight <2 kg at >1.5 kW (φ ≈ 1.3 kg/kW), Cp_sys 0.15–0.18, tether
+2 mm, k_mppt = 0.175 from the measured 624 W @ 146 rpm (ω = 15.29 rad/s)
+operating point (τ = P/ω = 40.8 N·m, k = τ/ω² = 0.175).
+
+Rod 2026-08-21: ALL rung scaling anchors HERE — the 50 kW BOM and 10 kW DRR
+designs are theory/extrapolation, not measured anchors.  Rungs scale up with
+`mass_scale(params_daisy(), 1.5, target_kw)`.
+"""
+function params_daisy()::SystemParams
+    geo = GeometrySpec(
+        π / 6,              # elevation_angle = 30° (model convention)
+        deg2rad(70.0),      # lifter_elevation = 70° (model convention)
+        2.22,               # rotor_radius (m) — Daisy outer tip (measured)
+        10.31,              # tether_length (m) — Daisy config 8 TRPT (measured)
+        1.52,               # trpt_hub_radius (m) — Daisy ring (measured)
+        1.083,              # trpt_rL_ratio — April-29 taper law (documented)
+        6,                  # n_lines — Daisy (measured)
+        4,                  # n_rings — spacing-law count for 10.31 m
+        3,                  # n_blades — Daisy 3-blade rotor (measured)
+    )
+    mat = MaterialSpec(
+        0.002,              # tether_diameter (m) — Daisy 2 mm (measured)
+        100e9,              # e_modulus (Pa) — Dyneema ~100 GPa
+        0.4,                # m_ring (kg) — superseded by geometry-based
+                            # m_ring_design in the v10 builder; kept for
+                            # non-builder paths
+        0.420,              # m_blade (kg) — Daisy blade 420 g (measured)
+    )
+    aero = AeroSpec(
+        1.225,              # rho (kg/m³)
+        11.0,               # v_wind_ref (m/s) — rated wind at h_ref
+        5.155,              # h_ref (m) — hub altitude = 10.31 × sin(30°)
+        0.16,               # cp — measured Cp_sys band 0.15–0.18 (thesis)
+    )
+    ctrl = ControlSpec(
+        0.3,                # i_pto (kg·m²) — Daisy drivetrain inertia NOT
+                            # measured; small-rig placeholder at April-29
+                            # scale (flag: measure/derive before quoting)
+        0.175,              # k_mppt (N·m·s²/rad²) — measured operating point:
+                            # 624 W @ 146 rpm → τ=40.8 N·m, k=τ/ω²=0.175
+        1500.0,             # p_rated_w (W) — Daisy >1.5 kW record
+        deg2rad(23.0),      # β_min — RESERVED
+        deg2rad(67.0),      # β_max — RESERVED
+        deg2rad(1.0),       # β_rate_max — RESERVED
+        5e-5,               # kp_elev — RESERVED
+    )
+    back = BackLineSpec(
+        314_000.0,          # EA_back_line (N) — 100 GPa × π(0.001)² (2 mm)
+        172.0,              # c_back_line (N·s/m) — 500 × (10.31/30) length scale
+        3.78,               # back_anchor_fwd_x (m) — 11.0 × (10.31/30)
+        0.0,                # backline_payout
+    )
+    return SystemParams(geo, mat, aero, ctrl, back)
+end
+
+"""
     params_50kw()
 
 50 kW target configuration, geometrically scaled from the 10 kW prototype.

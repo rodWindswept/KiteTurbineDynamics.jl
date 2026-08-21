@@ -206,7 +206,12 @@ function sized_lifter_for(
     const_tension::Bool=false,
 )
     g = 9.81
-    m_airborne = expansion_airborne_mass(sys, p)
+    # Sizing mass EXCLUDES the lifter's own 5 kg (Rod 2026-08-21): the stack
+    # provides its own lift, so the required line tension carries the
+    # machine, not the lifter.  Was expansion_airborne_mass(sys, p) incl.
+    # the flat 5.0 kg lifter — the runner's PROVENANCE note claiming
+    # "Lift kite mass NOT in the tension calc" was wrong until this fix.
+    m_airborne = expansion_airborne_mass(sys, p; include_lifter=false)
     F_vert = margin * m_airborne * g          # vertical requirement at v_ref
     T_ref = F_vert / sind(elevation_deg)      # line tension delivering it
     return StackedLifterParams(

@@ -52,11 +52,15 @@ end
     seed14 = [0.019, 0.01, 0.88, 1.0, 0.914, 0.632, 2.988, 13.0, -0.11, 18.56, 31.99, 35.0, 0.519, 0.1]
     dec = design_from_vector_v10(seed14, PROFILE_ELLIPTICAL, p; power_W = 5000.0, v_rated = 11.0)
     sys, u0, pc = KTD.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter = p.tether_diameter)
-    m_air = expansion_airborne_mass(sys, pc)
+    m_air = expansion_airborne_mass(sys, pc)                    # includes the flat 5.0 kg lifter
+    m_air_no_lifter = expansion_airborne_mass(sys, pc; include_lifter = false)
 
     dev_sized = KTD.sized_lifter_for(sys, pc; margin = 1.5, v_ref = 11.0, const_tension = true)
     @test dev_sized.const_tension === true
-    @test dev_sized.T_ref ≈ 1.5 * m_air * 9.81 / sind(70.0) rtol = 1e-9
+    # Rod 2026-08-21: the lifter's own mass must NOT drive the required
+    # lift-line tension (the stack carries itself with its own lift).
+    @test dev_sized.T_ref ≈ 1.5 * m_air_no_lifter * 9.81 / sind(70.0) rtol = 1e-9
+    @test dev_sized.m_airborne_ref ≈ m_air_no_lifter rtol = 1e-9
 
     # Flat at low wind even when the SystemParams elevation is passed in
     _, Ts3, _ = lift_force_steady(dev_sized, pc.rho, 3.0, pc)

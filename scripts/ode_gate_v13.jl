@@ -12,7 +12,7 @@ Instruments (both read the ODE's own state):
      Any segment past its limit ⇒ torsional collapse ⇒ fail regardless of power.
 
 Window: 30 s in 5 s chunks after settle (ceiling 60, 30k ops). Also kept:
-clearance ≥ 1.5 m, P_gen ≥ 2.5 kW, ω_gnd > 0.5 rad/s.
+clearance ≥ 1.5 m, P_gen ≥ 5.0 kW (campaign hard floor, 2026-08-21), ω_gnd > 0.5 rad/s.
 
 Usage: julia --project=. scripts/ode_gate_v13.jl [csv_path] [--length L] [--kw P]
 =#
@@ -24,7 +24,7 @@ const DT = 4e-5
 const ELEV = π / 6
 const GROUND_OFFSET = 1.0
 const MIN_CLEARANCE = 1.5
-const MIN_P_GEN_KW = 2.5
+const MIN_P_GEN_KW = 5.0   # campaign power floor (mass_min_fitness hard floor; was 2.5 pre-Daisy era)
 const MIN_W_GND = 0.5
 
 """Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20, Rod's ruling).
@@ -43,7 +43,10 @@ function params_at_length(p2, L::Float64, KW::Float64)
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
     ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
     back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 10.0, KW)
+    # Daisy-anchored (2026-08-21): scale from the measured 1.5 kW anchor —
+    # matches run_v13_5kw_masslift.jl / smoke_masslift_v13.jl. Was 10.0 (10 kW
+    # DRR theory), which gated a DIFFERENT machine than the campaign.
+    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
 end
 
 """Per-segment twist vs geometric crossing limit. Returns (crossed, max_ratio,
@@ -77,8 +80,12 @@ function twist_report(u, sys, N, Nr)
 end
 
 function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
-        window_s::Float64=30.0, p2=params_10kw())
+        window_s::Float64=30.0, p2=params_daisy())
     p = params_at_length(p2, L, KW)
+    # 5 kW operating point: sweep-selected k (scripts/results/k_sweep_daisy_5kw.csv,
+    # 2026-08-21). Theory-scaled p.k_mppt (3.55) is sub-knee — the seed rejects at
+    # 0 kW below k≈4.0. MUST match run_v13_5kw_masslift.jl cfg.k_mppt.
+    k_mp = KW == 5.0 ? 5.39 : p.k_mppt
     xv = copy(x)
     xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
     xv[10] = clamp(xv[10], 0.0, Float64(N_VALID_MASKS))
@@ -97,7 +104,7 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     end
     clearance = GROUND_OFFSET + z_low * sin(ELEV) - r_tip_low
 
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt;
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
         tether_diameter=p.tether_diameter, base_params=p)
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
     # Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20).
@@ -105,7 +112,7 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn, n_op=30_000)
     N = sys.n_total
     Nr = sys.n_ring
-    sys.k_mppt_ref[] = p.k_mppt
+    sys.k_mppt_ref[] = k_mp
 
     hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
     gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx
@@ -138,7 +145,7 @@ end
 function parse_args()
     csv = length(ARGS) > 0 && !startswith(ARGS[1], "--") ? ARGS[1] :
           joinpath(@__DIR__, "results", "v12_5kw_coldstart", "island_1_best.csv")
-    L = 21.2
+    L = 18.8   # Daisy-up 5 kW length (runner default, 2026-08-21)
     KW = 5.0
     for (i, a) in enumerate(ARGS)
         if a == "--length" && i < length(ARGS)

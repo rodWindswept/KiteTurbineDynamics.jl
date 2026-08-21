@@ -34,7 +34,9 @@ Components:
 - Expansion rotor mass: sum of mass_per_rotor across all expansion rotors
 - Lifter mass: 5.0 kg (rotary lifter estimate)
 """
-function expansion_airborne_mass(sys::KiteTurbineSystem, p::SystemParams)
+function expansion_airborne_mass(
+    sys::KiteTurbineSystem, p::SystemParams; include_lifter::Bool=true
+)
     # Tether mass
     m_tether =
         p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
@@ -48,10 +50,12 @@ function expansion_airborne_mass(sys::KiteTurbineSystem, p::SystemParams)
     # Expansion rotors
     m_expansion = sum(er -> er.mass, sys.expansion_rotors; init=0.0)
 
-    # Lifter (autogyro rotor + lines)
+    # Lifter (autogyro rotor + lines).  Rod 2026-08-21: the lifter's own mass
+    # must NOT drive the lift-line tension requirement (the stack carries
+    # itself with its own lift) — tension sizing uses include_lifter=false.
     m_lifter = 5.0
 
-    return m_tether + m_rings + m_blades + m_expansion + m_lifter
+    return m_tether + m_rings + m_blades + m_expansion + (include_lifter ? m_lifter : 0.0)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

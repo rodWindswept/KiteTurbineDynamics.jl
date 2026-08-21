@@ -10,6 +10,61 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-08-21] Daisy-anchored 5 kW seed fixes (rung scaling, lifter tension, annulus gates)
+
+**Context:** The Daisy seed for the 5 kW mass-min re-run stalls
+(`:reject`, 0 kW). Desktop reproduction (`scripts/diag_daisy_seed_stall.jl`)
+showed the ODE actually sustains ω_gnd = 7.87 rad/s — the machine was fine;
+the generator gain was wrong. `params_at_length` theory-scaled k_mppt from
+`params_10kw` (a 10 kW DRR design) → k = 1.94 → P = k·ω³ ≈ 0.95 kW, an order
+of magnitude below the 5 kW floor. Rod 2026-08-21: all rung scaling anchors
+on the MEASURED 1.5 kW Daisy (Tulloch config 8), never on the 10 kW DRR
+theory or the 50 kW BOM (extrapolation, not anchor).
+
+**Choices made (Rod):**
+1. **`params_daisy()`** — measured anchor (ring 1.52 m, tips 1.22/2.22 m,
+   blade 420 g, TRPT 10.31 m, 6 lines, 3 blades, tether 2 mm,
+   k = 0.175 @ 624 W/146 rpm, Cp_sys 0.16). Rungs scale via
+   `mass_scale(params_daisy(), 1.5, target_kw)`.
+2. **r_bottom decoder clamp** 1.5 m → 0.1 m (50 kW-era floor blocked
+   Daisy-scale geometry; seed gene 0.575 was silently forced to 1.5 m).
+3. **Lifter mass excluded from lift-line tension sizing** — the stack
+   carries itself with its own lift; `sized_lifter_for` now sizes on
+   `expansion_airborne_mass(; include_lifter=false)`. The runner PROVENANCE
+   note claiming this was already true was wrong until this fix.
+4. **Betz gates aligned to the ODE's annulus areas** — the ceiling used
+   base-theory hub radius + blade offsets; expansion per-rotor Betz used full
+   disk. Both now use the same π(r_out²−r_in²) annuli the ODE sweeps
+   (main_rotor_swept_area / expansion_annulus_area). The `A = 2π·r_ring·L`
+   identity comment corrected (valid only for a 50/50 split).
+5. **Runner/smoke reference-tension path** passes `base_params=p_base`
+   (was defaulting to the 50 kW base → phantom 81 kg / φ 16.3).
+
+**Consequences:** new physics era for the 5 kW rung
+(`post-4ce9fd0_daisy-anchored-5kw`); 50 kW default paths bit-identical.
+k_mppt for the 5 kW seed determined by sweep (k=5.39, knee at k≈4.0 —
+theory-scaled 3.55 is sub-knee and rejects at 0 kW); seed smoke must
+pass before the campaign launches. Lifter test updated to assert the new
+tension convention.
+
+**Gate alignment (same machine, same rules — Rod 2026-08-21):**
+`ode_gate_v13.jl` (and regate/ladder via include) previously built the
+10 kW-DRR-theory machine (`params_10kw`, `mass_scale(..., 10.0, KW)`,
+theory k) — a different machine than the campaign runner. Aligned to the
+Daisy anchor: `params_daisy` base, `mass_scale(..., 1.5, KW)`,
+sweep-selected k=5.39 at 5 kW, power floor 5.0 kW (was 2.5), L default
+18.8 m. One machine + one lift + one operating point across runner,
+smoke, gate, regate, ladder.
+
+**Open:** Daisy i_pto not measured (0.3 kg·m² placeholder); Gate 1c
+(n_blades = n_lines) doubles blade mass vs Daisy's measured 3 blades — flag
+before quoting φ; mass exponent φ ≈ 1.3 anchor vs P^1.35 scaling
+underdetermined.
+
+**Still active:** yes.
+
+---
+
 ## [2026-08-20] Test-suite split: fast unit vs slow acceptance
 
 **Context:** Wiring the five ODE-heavy acceptance tests into test/runtests.jl

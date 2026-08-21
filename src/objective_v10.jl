@@ -198,7 +198,11 @@ function design_from_vector_v10(
         # to the TRPT ring at 70% outboard / 30% inboard of its span, so
         # blade_tip = +0.7·span (OUTBOARD offset) and blade_hub = −0.3·span
         # (INBOARD offset, negative).  The swept annulus is r_out = r_ring +
-        # 0.7·span, r_in = r_ring − 0.3·span, A = π(r_out² − r_in²) = 2π·r_ring·L.
+        # 0.7·span, r_in = r_ring − 0.3·span, A = π(r_out² − r_in²).
+        # NOTE (2026-08-21): the identity A = 2π·r_ring·span holds ONLY for a
+        # 50/50 split (ring at the annulus midpoint) — for 70/30 it understates
+        # the area (Daisy: π(2.22²−1.22²) = 10.81 m² vs 2π·1.52·1.0 = 9.55 m²),
+        # so the annulus formula π(r_out² − r_in²) is the only correct one.
         # Span magnitude preserved from the 0.25-hub era (0.75·r_rotor·λ) so the
         # blade size scale is unchanged; the convention is now consistent with
         # the expansion rotors (expansion_rotor.jl: expansion_annulus_area).
