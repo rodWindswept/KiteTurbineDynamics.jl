@@ -92,4 +92,20 @@ end
     @test v12_fitness(30.0, 11.0, cfg10) == Inf
     @test v12_fitness(30.0, 4.0, cfg10) < v12_fitness(30.0, 10.0, cfg10)
 end
+
+@testset "mass_min_fitness — hard floors, minimise true mass" begin
+    # Rod 2026-08-20: FoS floor 2.5; power floor = rung rating; score = mass.
+    cfg = ObjectiveConfig(; fos_hard=2.5, p_floor_kw=5.0)
+
+    # Feasible: returns the mass (positive, DE minimises it)
+    @test mass_min_fitness(7.5, 3.0, cfg, 6.3) == 6.3
+    @test mass_min_fitness(5.0, 2.5, cfg, 10.0) == 10.0      # exactly at both floors
+    # Lighter wins at equal power + FoS
+    @test mass_min_fitness(7.5, 3.0, cfg, 4.0) < mass_min_fitness(7.5, 3.0, cfg, 9.0)
+
+    # Hard gates (both are reject signals, not soft penalties)
+    @test mass_min_fitness(7.5, 2.4, cfg, 6.3) == Inf        # FoS below floor
+    @test mass_min_fitness(4.9, 3.0, cfg, 6.3) == Inf        # power below floor
+    @test isfinite(mass_min_fitness(5.1, 2.6, cfg, 6.3))
+end
 end

@@ -22,6 +22,9 @@ function _build_kite_turbine_system_impl(
     kite_mass::Float64=5.0,
     kite_tether_length::Float64=20.0,
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
+    rotor_blade_hub_radius::Float64=0.0,  # inner tip r_in of the main rotor's swept
+    # annulus (≥ 0); 0.0 = legacy full disk π·R².  Swept area = π(R² − r_in²)
+    # (2026-08-20: ring-anchored 70/30 annulus, consistent with expansion rotors).
 )
     n_seg = length(seg_lengths)
     n_ring = n_seg + 1
@@ -133,7 +136,7 @@ function _build_kite_turbine_system_impl(
         end
     end
 
-    rotor = RotorSpec(ring_ids[end], p.rotor_radius, m_rotor, m_rotor * p.rotor_radius^2)
+    rotor = RotorSpec(ring_ids[end], p.rotor_radius, rotor_blade_hub_radius, m_rotor, m_rotor * p.rotor_radius^2)
     kite = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1, kite_tether_length)
 
     # ── Bearing node + bridle segments + sky anchor + cyan line ──────────
@@ -290,6 +293,7 @@ function build_kite_turbine_system(
     kite_mass::Float64=5.0,
     kite_tether_length::Float64=20.0,
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
+    rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
 )
     n_seg = p.n_rings + 1
     r_top = p.trpt_hub_radius
@@ -314,6 +318,7 @@ function build_kite_turbine_system(
         kite_mass=kite_mass,
         kite_tether_length=kite_tether_length,
         expansion_rotors=expansion_rotors,
+        rotor_blade_hub_radius=rotor_blade_hub_radius,
     )
 end
 
@@ -338,6 +343,7 @@ function build_kite_turbine_system_v5(
     kite_mass::Float64=5.0,
     kite_tether_length::Float64=20.0,
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
+    rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v4(
         p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr
@@ -356,6 +362,7 @@ function build_kite_turbine_system_v5(
         kite_mass=kite_mass,
         kite_tether_length=kite_tether_length,
         expansion_rotors=expansion_rotors,
+        rotor_blade_hub_radius=rotor_blade_hub_radius,
     )
 end
 
@@ -813,10 +820,11 @@ function settle_to_operational_state(
         # Includes expansion rotor power if present (V10 Tight et al.).
         has_exp = !isempty(sys.expansion_rotors)
         for w in range(ω_rated_max, 0.1; length=200)
-            # Hub rotor power
+            # Hub rotor power — swept ANNULUS π(R² − r_in²) (2026-08-20, consistent
+            # with expansion rotors; 0.0 inner tip = legacy full disk).
             lambda = w * sys.rotor.radius / v_mag
             P_aero_hub =
-                0.5 * p.rho * v_mag^3 * π * sys.rotor.radius^2 *
+                0.5 * p.rho * v_mag^3 * π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
                 cp_at_tsr(lambda) * cos(p.elevation_angle)^2.65
             # Expansion rotor power (simplified: each rotor contributes from its own swept area)
             P_aero_exp = 0.0

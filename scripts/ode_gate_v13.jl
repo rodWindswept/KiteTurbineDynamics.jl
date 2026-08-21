@@ -97,7 +97,8 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     end
     clearance = GROUND_OFFSET + z_low * sin(ELEV) - r_tip_low
 
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p.k_mppt;
+        tether_diameter=p.tether_diameter, base_params=p)
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
     # Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20).
     lift = lift_for(sys, pc)

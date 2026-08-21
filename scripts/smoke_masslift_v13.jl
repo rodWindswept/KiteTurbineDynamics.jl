@@ -56,7 +56,7 @@ function main()
             xr, PROFILE_ELLIPTICAL, p_base, cfg;
             start_mode = :cold,
             lift_device = lift_for,
-            fitness_fn = (P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+            fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.v12_fitness(P, F, c, m),
         )
 
         # Expected tension via the evaluator's own build chain.

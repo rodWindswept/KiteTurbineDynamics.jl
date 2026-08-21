@@ -42,7 +42,8 @@ for row in eachrow(ch)
                       pt_row.Do_scale_exp[1], pt_row.r_hub_m[1], pt_row.r_bottom_m[1],
                       pt_row.target_Lr[1], pt_row.n_lines[1], pt_row.density_profile[1],
                       pt_row.rotor_mask_proxy[1], pt_row.bank_top[1], pt_row.bank_bottom[1],
-                      pt_row.lambda_top[1], pt_row.lambda_bottom[1]]
+                      hasproperty(pt_row, :blade_scale_top) ? pt_row.blade_scale_top[1] : pt_row.lambda_top[1],
+                      hasproperty(pt_row, :blade_scale_bottom) ? pt_row.blade_scale_bottom[1] : pt_row.lambda_bottom[1]]
             push!(global_best_traj, (0.0, row.island, row.iteration, params))
             push!(global_best_island_traj, (row.island, row.mass_kg, params))
         end
@@ -62,7 +63,7 @@ n_lines_vals = [round(Int, clamp(p[8], 3, 16)) for p in [p for (_, _, _, p) in g
 # Decode rotor masks
 n_rotor_vals = Int[]
 bank_top_vals = Float64[]
-lambda_top_vals = Float64[]
+blade_scale_top_vals = Float64[]
 r_bottom_vals = Float64[]
 r_hub_vals = Float64[]
 for (_, _, _, p) in global_best_traj
@@ -73,16 +74,16 @@ for (_, _, _, p) in global_best_traj
         push!(n_rotor_vals, res.n_active)
         if !isempty(res.rotors)
             push!(bank_top_vals, res.rotors[1].bank_angle_deg)
-            push!(lambda_top_vals, res.rotors[1].blade_scale)
+            push!(blade_scale_top_vals, res.rotors[1].blade_scale)
         else
             push!(bank_top_vals, NaN)
-            push!(lambda_top_vals, NaN)
+            push!(blade_scale_top_vals, NaN)
         end
         push!(r_bottom_vals, res.design.r_bottom)
         push!(r_hub_vals, res.design.r_hub)
     catch
         push!(n_rotor_vals, 0)
-        push!(bank_top_vals, NaN); push!(lambda_top_vals, NaN)
+        push!(bank_top_vals, NaN); push!(blade_scale_top_vals, NaN)
         push!(r_bottom_vals, NaN); push!(r_hub_vals, NaN)
     end
 end
@@ -145,12 +146,12 @@ ax_bank = Axis(fig[4, 1];
 scatter!(ax_bank, 1:n_steps, bank_top_vals; color=colors, markersize=10)
 ylims!(ax_bank, 0, 36)
 
-# ── Panel F: lambda_top ───────────────────────────────────────────────
+# ── Panel F: blade scale (top rotor) ─────────────────────────────────
 ax_lam = Axis(fig[4, 2];
-    xlabel="Global best step", ylabel="λ (blade scale)",
+    xlabel="Global best step", ylabel="blade scale",
     title="F: Blade Scale (top rotor)",
     backgroundcolor=RGBf(0.08,0.08,0.12))
-scatter!(ax_lam, 1:n_steps, lambda_top_vals; color=colors, markersize=10)
+scatter!(ax_lam, 1:n_steps, blade_scale_top_vals; color=colors, markersize=10)
 
 # ── Panel G: Mass by island ───────────────────────────────────────────
 ax_island = Axis(fig[4, 3];

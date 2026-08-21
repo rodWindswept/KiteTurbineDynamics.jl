@@ -100,10 +100,11 @@ end
 end
 
 @testset "expansion_params_from_rotors — blade_scale flows" begin
-    rotors = [RotorSpecV10(1, 25.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2)]
+    # blade_hub is the INBOARD offset (negative, ring-anchored 70/30, 2026-08-20).
+    rotors = [RotorSpecV10(1, 25.0, 1.0, 11.0, 1.0, 3.0, -0.5, 0.2)]
     ps = expansion_params_from_rotors(rotors, 2, 12; blade_scale=2.0)
     @test ps[1].blade_tip_radius ≈ 6.0   # 3.0 × 2.0
-    @test ps[1].blade_hub_radius ≈ 1.0   # 0.5 × 2.0
+    @test ps[1].blade_hub_radius ≈ -1.0  # −0.5 × 2.0
 end
 
 @testset "expansion_params_from_rotors — minimal machine (Rod's definition)" begin

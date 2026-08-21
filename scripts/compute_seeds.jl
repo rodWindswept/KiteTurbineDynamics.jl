@@ -44,23 +44,29 @@ function seed_n_lines(kw::Float64)::Float64
 end
 
 function seed_genome(kw)
-    geom_scale = sqrt(kw / 50.0)
-    g = copy(V10_50KW)
-    g[1] *= geom_scale   # Do_top
-    g[5] *= geom_scale   # r_hub
-    g[6] *= geom_scale   # r_bottom
-    g[8] = seed_n_lines(kw)
+    # Daisy-up scaling (Rod 2026-08-20): anchor on the MEASURED 1.5 kW Daisy
+    # (config 8: r_hub 1.52 m, r_bottom 0.315 m, tether 10.31 m, 6 lines,
+    # 3 blades, solidity 7.5%, NACA 4412, ~12 mm carbon rod ring) — NOT the
+    # 50 kW V10 winner.  Scale UP by sqrt(kw/1.5).  blade_scale = 1.0 is the
+    # Daisy's full-span reference (span ∝ blade_scale).
+    geom_scale = sqrt(kw / 1.5)
+
+    g = zeros(14)
+    g[1] = 0.010 * geom_scale            # Do_top: Daisy ring ≈ 10-12 mm carbon rod
+    g[2] = 0.055                          # t_over_D: 0.5 mm wall on ~9 mm rod (Daisy blades)
+    g[3] = 1.0                            # beam_aspect: circular
+    g[4] = 1.0                            # Do_scale_exp: uniform tube
+    g[5] = DAISY.r_hub * geom_scale       # r_hub
+    g[6] = DAISY.r_bottom * geom_scale    # r_bottom
+    g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
+    g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
+    g[9] = 0.0                            # density_profile: uniform
+    g[10] = 1.0                           # rotor mask: single rotor (config 8)
+    g[11] = 0.0                           # bank_top
+    g[12] = 0.0                           # bank_bottom
+    g[13] = 1.0                           # blade_scale_top: full span
+    g[14] = 1.0                           # blade_scale_bottom
     g[10] = clamp(g[10], 0.0, Float64(N_VALID_MASKS))
-    
-    # Cross-check against Daisy proportions at small scale
-    if kw <= 10.0
-        # Daisy r/tether = 1.52/10.31 = 0.147
-        # Our scaled r_hub should be comparable order of magnitude
-        daisy_ratio = DAISY.r_hub / DAISY.tether
-        # params_10kw scaled to kw has tether_length*geom_scale
-        # This is just a sanity check — not an override
-    end
-    
     return g
 end
 
@@ -70,8 +76,8 @@ function tight_bounds(seed, kw)
     #   r_hub: wider spread (+80%) — Daisy 1.5kW has 1.52m, our 0.91m seed needs headroom
     #   target_Lr: lo=1.0 (Tulloch: L/r can be as high as 6; minimum ~1.0 for stability)
     #   bank angles: lo=0° (blades exactly in rotor plane)
-    #   λ: hi=1.0 (not 2.0) — too many weak-aero stalling turbines at λ>1
-    #   λ_bottom: same hi as λ_top — no tight ceiling
+    #   blade_scale: hi=1.0 (not 2.0) — too many weak-aero stalling turbines at scale>1
+    #   blade_scale_bottom: same hi as blade_scale_top — no tight ceiling
     sp = [0.50, 0.50, 0.50, 0.60,    # Do_top, t/D, aspect, taper_exp
           0.80, 0.50, 0.40, 0.00,    # r_hub, r_bot, Lr, n_lines (handled below)
           1.0,                        # density: full range

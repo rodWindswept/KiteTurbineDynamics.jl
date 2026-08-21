@@ -112,7 +112,7 @@ function _build_v10_tight(;
     x = copy(x_raw)
     # v4 layout: Do_top, t_over_D, beam_aspect, Do_scale_exp, r_hub, r_bottom,
     #            target_Lr, n_lines, density_profile, rotor_mask,
-    #            bank_top, bank_bottom, λ_top, λ_bottom
+    #            bank_top, bank_bottom, blade_scale_top, blade_scale_bottom
     # n_lines (x[8]) and rotor_mask (x[10]) are decoded and clamped by the
     # authoritative decoder chain — design_from_vector_v4 (ring_spacing.jl:408,
     # n_lines ∈ [3,12]) and decode_rotor_mask (objective_v10.jl:69, mask ∈ [0,59]).
@@ -219,8 +219,8 @@ end
 #   packed 32.0              → decoder rotor_mask
 #   packed 35.0              → decoder bank_top   (clamp → 25°)
 #   packed n_active(4)       → decoder bank_bottom (4°)
-#   packed 1.0               → decoder λ_top
-#   packed aspect(0.88)      → decoder λ_bottom   (λ gradient 1.0→0.88)
+#   packed 1.0               → decoder blade_scale_top
+#   packed aspect(0.88)      → decoder blade_scale_bottom   (blade-scale gradient 1.0→0.88)
 
 """
     build_phantom_triangle(; kwargs...)

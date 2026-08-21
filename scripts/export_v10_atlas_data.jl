@@ -18,7 +18,8 @@ function pc_proj(row)
     x = [row.Do_top_m, row.t_over_D, row.beam_aspect, row.Do_scale_exp,
          row.r_hub_m, row.r_bottom_m, row.target_Lr, row.n_lines,
          row.density_profile, row.rotor_mask_proxy, row.bank_top, row.bank_bottom,
-         row.lambda_top, row.lambda_bottom]
+         hasproperty(row, :blade_scale_top) ? row.blade_scale_top : row.lambda_top,
+         hasproperty(row, :blade_scale_bottom) ? row.blade_scale_bottom : row.lambda_bottom]
     xc = (x .- pca_mean) ./ max.(pca_std, 1e-10)
     (dot(xc, pca_V[:,1]), dot(xc, pca_V[:,2]))
 end
@@ -33,7 +34,7 @@ end
 # Export full dataset with per-parameter fields (sample every 3rd)
 println("Exporting atlas data...")
 open("/tmp/v10_atlas.csv", "w") do f
-    write(f, "pc1,pc2,mass,n_lines,n_rotors,r_hub,r_bottom,bank_top,lambda_top,t_over_D,target_Lr,Do_top\n")
+    write(f, "pc1,pc2,mass,n_lines,n_rotors,r_hub,r_bottom,bank_top,blade_scale_top,t_over_D,target_Lr,Do_top\n")
     for i in 1:3:nrow(pt)
         row = pt[i, :]
         pc1, pc2 = pc_proj(row)
@@ -43,10 +44,10 @@ open("/tmp/v10_atlas.csv", "w") do f
             n_rotors = decode_n_rotors(row.rotor_mask_proxy)
             write(f, "$pc1,$pc2,$mass,$(row.n_lines),$n_rotors,")
             write(f, "$(row.r_hub_m),$(row.r_bottom_m),$(row.bank_top),")
-            write(f, "$(row.lambda_top),$(row.t_over_D),$(row.target_Lr),$(row.Do_top_m)\n")
+            write(f, "$(hasproperty(row, :blade_scale_top) ? row.blade_scale_top : row.lambda_top),$(row.t_over_D),$(row.target_Lr),$(row.Do_top_m)\n")
         end
     end
 end
 
 println("Atlas data exported to /tmp/v10_atlas.csv")
-println("Columns: pc1,pc2,mass,n_lines,n_rotors,r_hub,r_bottom,bank_top,lambda_top,t_over_D,target_Lr,Do_top")
+println("Columns: pc1,pc2,mass,n_lines,n_rotors,r_hub,r_bottom,bank_top,blade_scale_top,t_over_D,target_Lr,Do_top")

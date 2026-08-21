@@ -191,6 +191,22 @@ function rotor_betz_ok(power_kw::Float64, swept_area_m2::Float64, v_wind_mps::Fl
     return power_kw <= 1.1 * betz_kw
 end
 
+"""Rotors must sweep a valid ANNULUS: inner tip radius ≥ 0 for the main rotor
+and every expansion rotor (the ring-anchored 70/30 split: r_ring ≥ 0.3·span,
+2026-08-20). A negative inner tip means the blade's inboard 30% crosses the
+shaft axis — geometrically impossible. Returns false if any rotor violates it."""
+function rotor_annulus_ok(sys::KiteTurbineSystem)
+    sys.rotor.blade_hub_radius >= 0.0 || return false
+    for er in sys.expansion_rotors
+        if 1 <= er.ring_idx <= length(sys.ring_ids)
+            r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).radius
+            r_in = r_nom + er.blade_hub_radius   # blade_hub < 0 (inboard offset)
+            r_in >= 0.0 || return false
+        end
+    end
+    return true
+end
+
 """
     tip_speed_sanity_ok(u, sys) -> Bool
 
@@ -268,7 +284,8 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
-                              tether_diameter::Float64=0.003)
+                              tether_diameter::Float64=0.003,
+                              base_params::Union{Nothing,SystemParams}=nothing)
     (; design, rotors, n_rings) = result
     n_lines = design.n_lines
 
@@ -277,7 +294,12 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
                                                     blade_scale=blade_scale)
 
-    p_base = params_v5_50kw()
+    # Rung-scaled campaign base when provided (5 kW campaigns pass their own
+    # params_at_length base); default is the 50 kW base so existing 50 kW
+    # callers are unchanged.  (2026-08-20: previously hard-coded
+    # params_v5_50kw(), which contaminated every other rung with 50 kW blade
+    # mass — see docs/reports/grounded-economics-v13.md §4b.)
+    p_base = base_params === nothing ? params_v5_50kw() : base_params
     le = blade_scale
 
     # Compute design-aware per-ring mass from actual tube geometry instead of
@@ -299,19 +321,48 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     m_ring_design = design.n_lines * ρ_cfrp * area_avg * L_avg
     m_ring_design = max(m_ring_design, 0.05)  # floor: 50 g
 
-    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
+    # Main (hub) rotor — ring-anchored annulus (2026-08-20): the blade attaches
+    # to the hub ring (design.r_hub) at 70% outboard / 30% inboard of its span,
+    # so r_out = r_hub + 0.7·span and r_in = r_hub − 0.3·span.  sys.rotor.radius
+    # = r_out (TSR / tip-speed reference); the swept area is the ANNULUS
+    # π(r_out² − r_in²), carried via rotor_blade_hub_radius = r_in.  Consistent
+    # with the expansion rotors; 0.0 inner tip = legacy full disk.
+    hub_rotor = nothing
+    for r in rotors
+        if r.ring_idx == n_rings   # top ring = hub rotor
+            hub_rotor = r
+            break
+        end
+    end
+    if hub_rotor === nothing
+        R_main = 5.0 * le
+        r_in = 0.0
+    else
+        R_main = design.r_hub + hub_rotor.blade_tip_radius     # r_out
+        r_in = max(design.r_hub + hub_rotor.blade_hub_radius, 0.0)  # r_in ≥ 0
+    end
+    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, R_main,
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
+    # Main-rotor blade mass: rung-scaled base × λ_eff², where λ_eff is the
+    # genome's blade scale for the reference rotor (area scales as λ²; the
+    # same convention as the k_mppt λ²-scaling, objective_evaluator.jl:426).
+    # Previously p_base.m_blade × le² with the 50 kW base and le=1.0 — the
+    # 50 kW blade-mass contamination (2026-08-20, §4b).  The λ² factor is a
+    # deliberate physics change for any run with λ<1 rotors (blades scale
+    # with area), not just the 5 kW rung.
+    λ_eff = isempty(rotors) ? 1.0 : rotors[1].blade_scale
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
-                       p_base.m_blade * le^2)
+                       p_base.m_blade * le^2 * λ_eff^2)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
                        p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
     back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
     pc = SystemParams(geo, mat, aero, ctrl, back)
 
-    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params)
+    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params,
+                                        rotor_blade_hub_radius=r_in)
 
     # Populate ring beam geometry from the genome so ring_element_analysis uses
     # the DE's Do_top/t_over_D rather than falling through to the hard-coded
@@ -390,7 +441,18 @@ function evaluate_windowed(
     # ── Build ODE system ─────────────────────────────────────────────────
     # blade_scale = 1.0 — the genome's λ values already scale blades via
     # design_from_vector_v10's RotorSpecV10.blade_tip_radius etc.
-    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt; tether_diameter=cfg.tether_diameter)
+    # base_params = p — the campaign's rung-scaled base (5 kW campaigns pass
+    # their params_at_length base; 50 kW default keeps legacy callers
+    # bit-identical).  Fixes the 50 kW blade-mass contamination (2026-08-20).
+    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt;
+        tether_diameter=cfg.tether_diameter, base_params=p)
+
+    # Annulus gate (2026-08-20): every rotor must sweep a valid annulus
+    # (inner tip ≥ 0, the r_ring ≥ 0.3·span constraint of the 70/30 split).
+    if !rotor_annulus_ok(sys)
+        return rejected_eval()
+    end
+
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
@@ -544,7 +606,8 @@ function evaluate_windowed(
                 n_er = length(sys.expansion_rotors)
                 for (i, pa_kw) in enumerate(ef.rotor_aero_power)
                     A_i = if i == 1
-                        π * sys.rotor.radius^2
+                        # main rotor: swept ANNULUS (2026-08-20, ring-anchored 70/30)
+                        π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
                     elseif i - 1 <= n_er
                         π * sys.expansion_rotors[i - 1].blade_tip_radius^2
                     else
@@ -717,8 +780,13 @@ function evaluate_windowed(
     # the adapter (e.g. v12_fitness's FoS < hard gate) signals it that way.
     # V13: power_stat=:tail5 feeds P_end (sustained power) to the seam;
     # default :mean preserves v12 behaviour exactly.
+    # 2026-08-20: the seam now also receives the TRUE physics mass
+    # (expansion_airborne_mass) so the mass-minimisation objective can score
+    # on it — same mass the lift sizing and economics use.  Adapters that
+    # don't use mass ignore the 4th argument.
     P_score = cfg.power_stat === :tail5 ? P_end : P_mean
-    fitness = fitness_fn(P_score, FoS_min, cfg)
+    m_airborne = expansion_airborne_mass(sys, pc)
+    fitness = fitness_fn(P_score, FoS_min, cfg, m_airborne)
     if !isfinite(fitness)
         return rejected_eval(ω_eq)
     end

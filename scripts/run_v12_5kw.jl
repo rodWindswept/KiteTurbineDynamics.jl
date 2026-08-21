@@ -49,7 +49,7 @@ function eval_v12_cold(x::Vector{Float64})
             xr, beam_profile, p_base, cfg;
             start_mode = :cold,
             lift_device = rotary_lifter_default(),
-            fitness_fn = (P, FoS, c) -> KiteTurbineDynamics.v12_fitness(P, FoS, c),
+            fitness_fn = (P, FoS, c, m) -> KiteTurbineDynamics.v12_fitness(P, FoS, c, m),
         )
         result = r.status === :reject ? 1e9 : r.fitness
     catch e

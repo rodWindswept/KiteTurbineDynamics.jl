@@ -58,7 +58,7 @@ println("Seed: status=", r.status, " P=", round(r.P_kW, digits=2), "kW ω=", rou
 # ── Perturbation sweep ±10%, ±20% on each dimension ──────────────────
 println("\n=== Consistency Check — ±10%, ±20% perturbations ===")
 lo, hi = tight_bounds(seed, KW)
-dims = ["Do_top","t/D","aspect","Do_exp","r_hub","r_bot","Lr","n_lines","density","mask","bank_t","bank_b","λ_top","λ_bot"]
+dims = ["Do_top","t/D","aspect","Do_exp","r_hub","r_bot","Lr","n_lines","density","mask","bank_t","bank_b","blade_scale_t","blade_scale_b"]
 results = Float64[]
 for i in 1:14
     for frac in [-0.2, -0.1, 0.1, 0.2]

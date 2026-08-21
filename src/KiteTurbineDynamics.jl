@@ -141,7 +141,7 @@ export TRPT_V10_DIM, search_bounds_v10, design_from_vector_v10, objective_v10
 export TRPT_V11_DIM, search_bounds_v11, objective_v11
 export objective_v11_warmstart, warmstart_with_k_bracket, v11_fitness
 export evaluate_ramp, RAMP_CHUNK_S, RAMP_MAX_CHUNKS, RAMP_WINDOW_S
-export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, objective_v12_ramp, v12_fitness
+export objective_v12, objective_v12_warmstart, warmstart_with_k_bracket_v12, objective_v12_ramp, v12_fitness, mass_min_fitness
 # Shared windowed evaluator (2026-08-09 consolidation)
 export ObjectiveConfig, ObjectiveResult, evaluate_windowed, with_k_bracket, twist_collapse_check, tip_speed_sanity_ok, TIP_SPEED_CEILING_MPS, rotor_betz_ok, ROPE_BREAK_STRAIN
 # Rotor → system-ring mapping (single authority)

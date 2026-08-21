@@ -22,8 +22,8 @@ using KiteTurbineDynamics
     x[10] = 8.0     # rotor_mask proxy
     x[11] = 15.0    # bank_top
     x[12] = 5.0     # bank_bottom
-    x[13] = 0.5     # lambda_top
-    x[14] = 0.3     # lambda_bottom
+    x[13] = 0.5     # blade_scale_top
+    x[14] = 0.3     # blade_scale_bottom
 
     p = params_v5_50kw()
     beam = PROFILE_ELLIPTICAL

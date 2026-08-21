@@ -12,7 +12,8 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 
 | File | Date | Topic |
 |------|------|-------|
-| `handover-2026-08-12-5kw-baseline.md` | Aug 12 | **CURRENT** — 5kW baseline: ODE viability confirmed (2.7 kW), static/ramp evaluator false-negatives diagnosed, torsional FoS power-dependence, V12 cold-start campaign config |
+| `handover-2026-08-20-model-scaling-daisy-anchor.md` | Aug 20 | **CURRENT** — 50 kW blade-mass/radius/annulus contamination fixed; Daisy anchor saved; mass-minimisation objective (FoS 2.5); 5 kW re-run config assembled; Daisy seed stall = the open task |
+| `handover-2026-08-12-5kw-baseline.md` | Aug 12 | 5kW baseline: ODE viability confirmed (2.7 kW), static/ramp evaluator false-negatives diagnosed, torsional FoS power-dependence, V12 cold-start campaign config |
 | `handover-2026-08-12-zeta-damping-fix.md` | Aug 12 | ζ=1.5 damping + tension rectifier = reverse torque; ζ promoted to SystemParams (0.05) |
 | `handover-2026-08-11-bem-ode-gap.md` | Aug 11 | BEM/ODE gap investigation — SUPERSEDED by ζ fix (see above) |
 | `handover-2026-08-11-dt-stability-and-parallelism.md` | Aug 11 | dt stability; orbital damping hypothesis tested & exonerated 2026-08-12 |

@@ -75,7 +75,9 @@ end
 
 struct RotorSpec
     node_id::Int
-    radius::Float64
+    radius::Float64          # OUTER tip radius r_out (m) — TSR + tip-speed reference
+    blade_hub_radius::Float64  # INNER tip radius r_in of the swept annulus (m, ≥ 0).
+                             # Swept area = π(r_out² − r_in²). 0.0 = legacy full disk.
     mass::Float64
     inertia_z::Float64
 end

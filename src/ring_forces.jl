@@ -23,6 +23,12 @@ end
 const GENERATOR_LOAD = Ref(GeneratorLoadMode())
 set_generator_load!(m::GeneratorLoadMode) = (GENERATOR_LOAD[] = m; m)
 
+"""Main-rotor swept ANNULUS area π(r_out² − r_in²) (2026-08-20, ring-anchored
+70/30 geometry consistent with the expansion rotors).  blade_hub_radius = 0.0
+is the legacy full disk π·R² — bit-identical for non-annulus builders."""
+main_rotor_swept_area(sys) =
+    π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
+
 """Linear interpolation of the measured τ(ω) table, flat outside the knots."""
 function _interp_tau(gl::GeneratorLoadMode, omega::Float64)
     pts = gl.omega_pts
@@ -195,8 +201,7 @@ function compute_ring_forces!(
             0.5 *
             p.rho *
             v_hub_mag^2 *
-            π *
-            sys.rotor.radius^2 *
+            main_rotor_swept_area(sys) *
             ct_at_tsr(lambda_t) *
             cos(elev_angle)^2.0   # cos²·⁰ — thrust elevation factor
         tether_dir = hub_pos .- @view(u[1:3])   # ground is node 1
@@ -212,8 +217,7 @@ function compute_ring_forces!(
                 0.5 *
                 p.rho *
                 v_hub_mag^3 *
-                π *
-                sys.rotor.radius^2 *
+                main_rotor_swept_area(sys) *
                 cp_at_tsr(lambda_t) *
                 cos(elev_angle)^2.65  # cos²·⁶⁵ — power elevation factor (from AeroDyn sweep)
             tau_aero = P_aero / max(omega_rotor, 0.5)
@@ -221,7 +225,7 @@ function compute_ring_forces!(
             CD_reverse = 1.3                           # NACA4412 CD at AoA 40–70°
             chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
             R_o = sys.rotor.radius
-            R_i = 0.4 * R_o                           # inner tip cutout at TRPT hub
+            R_i = sys.rotor.blade_hub_radius > 0.0 ? sys.rotor.blade_hub_radius : 0.4 * R_o
             R_eff = 0.70 * R_o                          # 70% representative radius
             span = R_o - R_i                           # blade span
             ω_abs = abs(omega_rotor)
@@ -267,8 +271,7 @@ function compute_ring_forces!(
                     0.5 *
                     p.rho *
                     v_hub_mag^2 *
-                    π *
-                    sys.rotor.radius^2 *
+                    main_rotor_swept_area(sys) *
                     ct_at_tsr(lambda_t) *
                     cos(elev_angle)^2.0
 

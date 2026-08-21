@@ -35,8 +35,8 @@ against source on any tactical decision that depends on them.
 | x10 | rotor_mask | 0.0 | 60.0 | `clamp(round(Int, x), 0, N_VALID_MASKS-1)` | `decode_rotor_mask` → 60 valid bitmask patterns | Expansion rotor station placement. Each set bit = one ring station carrying a full complement of n_lines blades. **n_active = count of set bits.** | **CONFIRMED EXPLOIT.** DE selects n_active=1 → all 50 kW concentrated at one station. Lower total structural loading from fewer stations. |
 | x11 | bank_top (°) | 0.0 | 25.0 | `clamp(x[11], 0, 25)` | `design_from_vector_v10` | Topmost expansion rotor bank angle. | Not yet observed gaming |
 | x12 | bank_bottom (°) | 0.0 | 25.0 | `clamp(x[12], 0, 25)` | `design_from_vector_v10` | Bottommost expansion rotor bank angle. | Not yet observed gaming |
-| x13 | λ_top | 0.1 | 2.0 | `clamp(x[13], 0.1, 2.0)` | `design_from_vector_v10` | Blade linear scale at top station. λ=1.0 = reference blade. Area scales as λ². | DE can minimise λ to unload structure |
-| x14 | λ_bottom | 0.1 | 2.0 | `clamp(x[14], 0.1, 2.0)` | `design_from_vector_v10` | Blade linear scale at bottom station. Interpolated linearly between stations. | Same as λ_top |
+| x13 | blade_scale_top | 0.1 | 2.0 | `clamp(x[13], 0.1, 2.0)` | `design_from_vector_v10` | **Blade linear scale** at top station. λ=1.0 = reference blade. Area scales as λ². **Named blade_scale (NOT λ) since 2026-08-20 — λ is reserved for tip-speed ratio (TSR) throughout the codebase.** | DE can minimise to unload structure |
+| x14 | blade_scale_bottom | 0.1 | 2.0 | `clamp(x[14], 0.1, 2.0)` | `design_from_vector_v10` | Blade linear scale at bottom station. Interpolated linearly between stations. Same rename as x13. | Same as blade_scale_top |
 
 ## Variable 15: removed 2026-08-07 (S1 audit)
 
@@ -59,6 +59,7 @@ x[10]   → decode_rotor_mask()      → bitmask → expansion rotor station pos
                                          n_active = count of set bits
                                          P_per_rotor = 50 kW / n_active
 x[11:14] → design_from_vector_v10() → bank angles + blade scales per station
+                                         (x13/x14 = blade_scale_top/bottom, 2026-08-20 rename)
 x[15]   → 10^x[15]                 → k_mppt applied directly, no λ² scaling
 ```
 

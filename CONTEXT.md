@@ -152,7 +152,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | Term | Meaning |
 |------|---------|
 | **TRPT** | Tensile Rotary Power Transmission — helical tether shaft between polygonal spacer rings |
-| **TSR (λ)** | Tip-Speed Ratio: blade-tip speed ÷ wind speed |
+| **TSR (λ)** | Tip-Speed Ratio: blade-tip speed ÷ wind speed. **λ is reserved for TSR only (2026-08-20)** — the V10+ genome's blade-scale genes are named `blade_scale_top`/`blade_scale_bottom` (x13/x14), NOT λ. |
 | **Cp** | Rotor power coefficient ≈ 0.22 at TSR 4.1 (BEM, NACA 4412) |
 | **Ct** | Rotor thrust coefficient ≈ 0.55 at rated |
 | **k_mppt** | MPPT gain: `τ_gen = k_mppt · ω²` (N·m·s²/rad²) |

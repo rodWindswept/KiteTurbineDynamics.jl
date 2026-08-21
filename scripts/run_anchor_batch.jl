@@ -69,7 +69,7 @@ lo_full, hi_full = search_bounds_v11(P_BASE, BEAM; max_ground_radius=5.0)
 #   Rod directive: union of Phase 0 screened + physics-obvious dims.
 #   Phase 0 top-6:  beam_aspect(3), Do_top(1), r_hub(5), t_over_D(2),
 #                   Do_scale_exp(4), n_lines(8)
-#   Physics-obvious: n_lines(8), λ_top(13), λ_bottom(14), r_hub(5), r_bottom(6)
+#   Physics-obvious: n_lines(8), blade_scale_top(13), blade_scale_bottom(14), r_hub(5), r_bottom(6)
 #   Union: 1,2,3,4,5,6,8,13,14  (9 dims; n_lines is categorical → stratify)
 #   Rod said "~7 dims" — ok for 60-100 LHS points.
 const ACTIVE_DIMS = [1, 2, 3, 4, 5, 6, 13, 14]  # excludes n_lines (stratified)

@@ -76,7 +76,7 @@ TELE_CSV = joinpath(OUT_DIR, "telemetry.csv")
 open(TELE_CSV, "w") do io
     println(io, "# v13_5kw telemetry  length=$LENGTH  window=$WINDOW_S  min_clearance=$MIN_CLEARANCE")
     println(io, "island,gen,idx,fitness,status,P_mean,P_end,FoS,twist_crossed,clearance," *
-        "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,lam_top,lam_bot,tether," *
+        "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether," *
         join(["x$j" for j in 1:14], ","))
 end
 
@@ -161,7 +161,7 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
                     xr, beam_profile, p_base, cfg;
                     start_mode = :cold,
                     lift_device = rotary_lifter_default(),
-                    fitness_fn = (P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+                    fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.v12_fitness(P, F, c, m),
                 )
             end
             if r === nothing

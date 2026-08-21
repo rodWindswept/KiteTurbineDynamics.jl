@@ -146,14 +146,14 @@ function capture_frame(
 
     Δω = omega_hub - omega_gnd
 
-    # Torque balance (matches ring_forces.jl physics)
+    # Torque balance (matches ring_forces.jl physics; swept ANNULUS 2026-08-20)
     lambda_t = abs(omega_hub) * sys.rotor.radius / max(V_hub, 0.1)
     P_aero =
         0.5 *
         p.rho *
         V_hub^3 *
         π *
-        sys.rotor.radius^2 *
+        (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
         cp_at_tsr(lambda_t) *
         cos(p.elevation_angle)^2.65
     tau_aero = P_aero / max(abs(omega_hub), 0.5)
@@ -452,7 +452,8 @@ function capture_extended(
     rl, ra, rg, ro = String[], Float64[], Float64[], Float64[]
     lambda = clamp(abs(base.omega_hub) * sys.rotor.radius / V_hub, 0.0, 12.0)
     cp = cp_at_tsr(lambda)
-    Pa = 0.5 * p.rho * V_hub^3 * π * sys.rotor.radius^2 * cp * cos(p.elevation_angle)^2.65
+    Pa = 0.5 * p.rho * V_hub^3 * π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
+         cp * cos(p.elevation_angle)^2.65
     # Hub "ground" power = the hub rotor's OWN contribution referred to the ground
     # shaft (tau_aero · omega_gnd), NOT base.P_kw. base.P_kw is the TOTAL generator
     # electrical output (it also reacts the expansion-rotor torques); using it here

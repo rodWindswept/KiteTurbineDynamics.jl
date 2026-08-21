@@ -1618,3 +1618,142 @@ green on 428f491). Smoke acceptance 2026-08-19: status=:ok at all three
 lengths, in-run T_lift ≡ T_ref to 0.00% rel.
 
 **Status:** Redo runner + gate aligned + smoke passed; launch pending Rod's go.
+
+### [2026-08-20] 50 kW blade-mass contamination — fixed; λ reserved for TSR
+
+**Context:** The 5 kW v13 winners carried 133–157 kg of blades — 95% of
+airborne mass, φ ≈ 17–20 kg/kW. Rod's hypothesis: the 5 kW campaign does not
+penalise low power-to-weight devices. **Confirmed, stronger than suspected:**
+`build_system_from_v10` hard-coded `p_base = params_v5_50kw()` and
+`m_blade = p_base.m_blade · le²` (le = 1.0) → 12.0757 kg/blade on EVERY rung,
+while the campaign's own scaled base gives 0.863 kg (14× discrepancy); λ
+scaling reached the expansion rotors (0.37 kg) but never the main blades. The
+v12_fitness objective has no mass term (mass was removed from the objective
+at V11 after DECISIONS [2026-06-21] — mass-in-objective broke the DE), so the
+contamination was invisible: power ∝ lines, blade mass = 12.0757 × lines →
+maximising power maximised mass (corr(fitness, mass) = −0.175; best-5 designs
+all 139–151 kg; lightest-5 at 41.8 kg scored worse). The mass-aware lift
+tension was inflated ~9× (2,175 N vs ~240 N).
+
+**Decision (Rod's approval, 2026-08-20):**
+1. **Rung-scale the build base:** `build_system_from_v10` gains a
+   `base_params` kwarg (default `params_v5_50kw()` → legacy 50 kW callers
+   bit-identical); `evaluate_windowed`, `ode_gate_v13.jl` and the economics
+   script pass the campaign's scaled base.
+2. **λ²-scale main-rotor blade mass:** `m_blade = base_params.m_blade ·
+   λ_eff²`, `λ_eff = rotors[1].blade_scale` (the existing k_mppt λ²
+   convention). Deliberate physics change for any λ<1 rotor, not just 5 kW.
+3. **λ reserved for TSR only:** genome genes x13/x14 renamed
+   `blade_scale_top`/`blade_scale_bottom` across the decoder, telemetry
+   headers, genome chooser, recampaign, export/plot tools, genome glossary
+   and CONTEXT.md (backward-compatible reads of historical `lambda_top`/
+   `lam_top` CSVs).
+4. **Main-rotor radius λ-blind — RESOLVED (Rod: "obvious physics scaling
+   failure... needs resolved"):** `build_system_from_v10` had hard-coded
+   `rotor_radius = 5.0·le`, so the ODE swept area (∝R²), TSR and blade chord
+   ignored the rung and the genome's blade_scale — aero power was λ-blind
+   while blade mass was λ²-scaled, and the DE exploited it (λ→0 blades with
+   full 5 m-disk power). Now `rotor_radius = hub_rotor.blade_tip_radius`
+   (= r_rotor × blade_scale), completing the k_mppt λ²-scaling intent.
+5. **Ring-anchored 70/30 annulus for ALL rotors (Rod, 2026-08-20):** the
+   main rotor is now a first-class parametric rotor like the expansion
+   rotors — blade span is a genome parameter (λ), anchored at the RING
+   radius with the 70/30 split (70% outboard / 30% inboard of the span),
+   consistent across the decoder (`blade_tip = +0.7·span`, `blade_hub =
+   −0.3·span`), the builders and every evaluator. The ODE swept area is the
+   ANNULUS `π(r_out² − r_in²)` with `r_out = r_ring + 0.7·span`, `r_in =
+   r_ring − 0.3·span` (via the new `RotorSpec.blade_hub_radius` and
+   `main_rotor_swept_area`); TSR uses r_out. **`r_ring ≥ 0.3·span` is a hard
+   gate** (`rotor_annulus_ok`) — inner tips may not cross the shaft axis.
+   **Calibrated against the thesis:** the Daisy rigid rotor is exactly this —
+   ring radius 1.52 m, inner tip 1.22 m, outer tip 2.22 m (outboard 0.70 m =
+   0.7·span, inboard 0.30 m = 0.3·span). The old decoder hub (0.25·R, positive)
+   and the full-disk ODE area are retired.
+
+**Why this choice:** the contamination made every non-50 kW rung carry 50 kW
+blades, inflating φ ~20× and the mass-aware lift ~9×, and poisoning the
+economics (LCOE 14.8–16.4 p/kWh). Fixing the build (not the objective) is
+the minimal correct change: rung-scaling + λ² are the same physics the
+expansion rotors already implement, and the 50 kW default keeps legacy
+callers bit-identical.
+
+**Consequences:** on the SAME (old, mass-blind) winners the fixed mass model
+gives airborne 6.3–7.0 kg, φ ≈ 0.8–0.9 kg/kW, capital ≈ £9.4k, LCOE ≈
+5.5–5.8 p/kWh and ≈ 1.24 gCO₂e/kWh @ CF 0.30 — but those winners were still
+mass-blind-optimised, and the recorded P_gen was gated with the inflated
+lift. **Remaining:** acceptance suite; re-gate the winners; mass-aware
+objective (φ target — Daisy-scale ~1–2 kg/kW production, prototype-realistic
+3–5 kg/kW, Rod's call); 5 kW re-run; full-scope 2026 LCOE/LCA workbook.
+Open physics item surfaced: main-rotor BEM power uses rotor_radius = 5.0 m
+regardless of λ — power is not λ-scaled while mass now is; examine in the
+re-run.
+
+**Status:** All five fixes implemented; fast suite 1912/1912 green through
+all of them. Re-gate after the mass fix alone: winners PASS with power
+retained (7.143 / 6.254 / 7.130 kW) — the mass fix is aero-neutral. **After
+the radius fix (item 4) and the annulus fix (item 5), the OLD winners are
+VOID: the 18 m winner (r_hub 0.7 m ring, r_out 1.08 m, 2.73 m² annulus,
+Betz cap ≈ 1.3 kW) cannot reach 5 kW.** The 5 kW re-run is now mandatory;
+no 5 kW economics are quotable until then. The re-run will use the
+mast/Daisy-up base (Rod: scale UP from the 1.5 kW Daisy and the mast test,
+not down from 50 kW — thesis ring 1.52 m, tips 1.22/2.22 m; the 10 kW
+General Release report was itself "scaling the existing 1.5 kW kite
+turbine") and a hard-constraint mass-minimisation objective (power + FoS
+floors hard-reject; score = true physics mass). Acceptance suite: expected
+red (old-physics expectations) — re-baseline on the re-run's winners.
+Working tree NOT commit-ready.
+
+### [2026-08-20] FoS floor 2.5 + NZTC carbon LCA + certification route
+
+**Context:** Rod asked whether an FoS floor of 2.5/3.0 would be too lenient
+for flying permission/certification. The model's FoS metric is uncalibrated
+(the Daisy flew successfully while the model scored it ≈ 0.22 — gate 13,
+static FoS currently DISABLED ≤ 7 kW), so an absolute floor is a design
+policy, not a validated certification number. The certification route is not
+a single FoS figure — it is the safety case (CAP 393 / CAA Article 253 for
+<2 kg small kites; SORA for larger; the AWE White Paper on safe operation &
+airspace integration).
+
+**Decision (Rod):** FoS floor = **minimum 2.5 at all points we measure**,
+"until we know better through field trials and breakages". Re-enable the
+static structural FoS gates (gate 13) at the 2.5 floor for the re-run; the
+mass-minimisation objective minimises mass ABOVE that hard floor. Note
+2.5 is MORE conservative than the repo's prior 1.5/1.8 (IEC 61400 ~1.35
+partial factors; aerospace ~1.5 ultimate).
+
+**Implemented (2026-08-20):** the evaluator seam now passes the TRUE physics
+mass — `fitness_fn(P, FoS, cfg, mass)` with `mass = expansion_airborne_mass
+(sys, pc)`; `v11_fitness`/`v12_fitness` gained 4-arg overloads (mass ignored,
+backward compatible); new `mass_min_fitness(P, FoS, cfg, mass)` = `Inf` below
+either hard floor (`FoS < cfg.fos_hard`, `P < cfg.p_floor_kw`) else `mass`.
+All adapter lambdas (src + scripts + test_evaluator_v13) updated to 4-arg;
+unit test added; fast suite 1912/1912 green. **Remaining to wire before the
+re-run:** set `fos_hard = 2.5` and `fitness_fn = mass_min_fitness` in the
+campaign runner, and build the mast/Daisy-up base.
+
+**Sources:** Airborne Wind Europe folder (`04_Business/AWES Co-opetition &
+Market Analysis/Airborne Wind Europe/`): `AWE White Paper on safe operation
+and airspace integration_v1.0.pdf`, airspace-integration recommendations
+(Task 48 WP3), AWE-Definitions tables, AWE Sites 2024.xlsx — the SORA +
+airspace-permission + safe-operation guides for the field-test proposal's
+certification section.
+
+**Carbon LCA (extracted, NZTC TechX):** `02_Funding/Applications/NZTC
+TechX/Impact Assessment/Carbon Impact Model_v2.xlsx` is a full 50 kW LCA
+"based on scaling the 1.5 kW Daisy" (per the sheet): BOM — airborne 25 kg
+(carbon epoxy 5, Dyneema 6.5, foam 7.5, Dacron 3, PLA 3), ground 823 kg
+(steel 681, copper 112, circuits 9, battery 2, PLA 19); CF 0.528; 20 y;
+total 3,632 kg CO₂e → **0.78 gCO₂e/kWh**. IdeMat carbon factors (the ones
+the LCA uses): carbon epoxy **88.9** kgCO₂e/kg (vs the Economics module's
+24 — a 3.7× under-count), Dyneema 1.70, PUR foam 3.50, PET/Dacron 1.66,
+PLA 3.57, steel 0.958, copper 3.24, PCB 26.3, LiFePO4 battery 94.1. The
+Economics module's carbon factors must be replaced with these before any
+gCO₂/kWh figure is quoted. **The 50 kW BOM is NOT an anchor (Rod, 2026-08-20)
+— it is extrapolation on shaky data.** The measured anchor is the Daisy:
+blade = 420 g foam + shrink skin + 2 carbon rods (9 mm OD / 0.5 mm wall) +
+3D fuselage; flying weight **< 2 kg** at **> 1.5 kW @ 10 m/s** (AWEC 2019);
+624 W / 146 rpm / 6-blade / 11.2 m² / ζ=3.77 (Dec 2019 blog). Cross-check:
+the annulus π(2.22²−1.22²) = 10.8 m² matches the measured 11.2 m²; Daisy
+φ ≈ 1.3 kg/kW → 5 kW ≈ 4–7 kg, consistent with the fixed model's φ ≈
+1 kg/kW. Mass exponent underdetermined from one point; field tests measure
+it.

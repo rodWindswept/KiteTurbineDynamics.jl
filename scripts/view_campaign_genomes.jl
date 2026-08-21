@@ -124,8 +124,8 @@ struct DecodedParams
     n_lines::Int
     n_rings::Int
     n_active::Int
-    lam_top::Float64
-    lam_bot::Float64
+    blade_scale_top::Float64
+    blade_scale_bottom::Float64
     bank_top::Float64
     bank_bot::Float64
     tether::Float64
@@ -134,7 +134,7 @@ end
 
 "The ten filterable parameter names (n_rings is card-display only, not a filter)."
 const FILTER_PARAMS = [
-    :r_hub, :r_bot, :n_lines, :n_active, :lam_top, :lam_bot,
+    :r_hub, :r_bot, :n_lines, :n_active, :blade_scale_top, :blade_scale_bottom,
     :bank_top, :bank_bot, :tether, :density_profile,
 ]
 
@@ -792,8 +792,8 @@ function build_chooser(df::DataFrame, params::Vector{DecodedParams}, decset, sel
     sliders[:r_bot] = add_slider(fl, 3, "r_bot (m)", full[:r_bot]..., false)
     sliders[:n_lines] = add_slider(fl, 4, "n_lines", full[:n_lines]..., true)
     sliders[:n_active] = add_slider(fl, 5, "n_active", full[:n_active]..., true)
-    sliders[:lam_top] = add_slider(fl, 6, "lam_top (λ)", full[:lam_top]..., false)
-    sliders[:lam_bot] = add_slider(fl, 7, "lam_bot (λ)", full[:lam_bot]..., false)
+    sliders[:blade_scale_top] = add_slider(fl, 6, "blade_scale_top", full[:blade_scale_top]..., false)
+    sliders[:blade_scale_bottom] = add_slider(fl, 7, "blade_scale_bottom", full[:blade_scale_bottom]..., false)
     sliders[:bank_top] = add_slider(fl, 8, "bank_top (deg)", full[:bank_top]..., false)
     sliders[:bank_bot] = add_slider(fl, 9, "bank_bot (deg)", full[:bank_bot]..., false)
     sliders[:tether] = add_slider(fl, 10, "tether (m)", full[:tether]..., false)

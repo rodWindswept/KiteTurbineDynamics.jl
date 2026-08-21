@@ -38,7 +38,7 @@ seed = seed_genome(KW)
 println("Seed settle ω = ", round(ω_seed, digits=2), " rad/s  (", round(ω_seed*60/(2π), digits=1), " rpm)")
 
 lo, hi = tight_bounds(seed, KW)
-dims = ["Do_top","t/D","aspect","Do_exp","r_hub","r_bot","Lr","n_lines","density","mask","bank_t","bank_b","λ_top","λ_bot"]
+dims = ["Do_top","t/D","aspect","Do_exp","r_hub","r_bot","Lr","n_lines","density","mask","bank_t","bank_b","blade_scale_t","blade_scale_b"]
 println("\nDimension          -20%     -10%     seed    +10%    +20%    range")
 for i in 1:14
     vals = Float64[]

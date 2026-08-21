@@ -62,8 +62,10 @@ function collect_legacy_front_members()
             x[10] = hasproperty(row, :rotor_mask_proxy) ? row.rotor_mask_proxy : 8.0
             x[11] = hasproperty(row, :bank_top) ? row.bank_top : 15.0
             x[12] = hasproperty(row, :bank_bottom) ? row.bank_bottom : 5.0
-            x[13] = hasproperty(row, :lambda_top) ? row.lambda_top : 0.5
-            x[14] = hasproperty(row, :lambda_bottom) ? row.lambda_bottom : 0.3
+            x[13] = hasproperty(row, :blade_scale_top) ? row.blade_scale_top :
+                    (hasproperty(row, :lambda_top) ? row.lambda_top : 0.5)
+            x[14] = hasproperty(row, :blade_scale_bottom) ? row.blade_scale_bottom :
+                    (hasproperty(row, :lambda_bottom) ? row.lambda_bottom : 0.3)
             x[15] = 1.0  # log10(k=10) — reasonable default
             push!(members, x)
         end

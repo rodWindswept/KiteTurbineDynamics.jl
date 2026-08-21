@@ -65,7 +65,7 @@ cfg = ObjectiveConfig(;
 TELE_CSV = joinpath(OUT_DIR, "telemetry.csv")
 open(TELE_CSV, "w") do io
     println(io, "# v12_5kw_v3 telemetry  length=$LENGTH  min_clearance=$MIN_CLEARANCE")
-    println(io, "island,gen,idx,fitness,status,P_kW,FoS,n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,lam_top,lam_bot,clearance,tether")
+    println(io, "island,gen,idx,fitness,status,P_kW,FoS,n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,clearance,tether")
 end
 
 function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
@@ -152,7 +152,7 @@ function eval_v12(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
                     xr, beam_profile, p_base, cfg;
                     start_mode = :cold,
                     lift_device = rotary_lifter_default(),
-                    fitness_fn = (P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+                    fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.v12_fitness(P, F, c, m),
                 )
             end
             if r === nothing

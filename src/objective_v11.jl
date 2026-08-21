@@ -24,7 +24,7 @@
 # VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask are available
 # from objective_v10.jl which is included before this file.
 
-# 14-D search space: the V10 genome (Do_top … λ_bottom).  x15 (log₁₀ k_mppt)
+# 14-D search space: the V10 genome (Do_top … blade_scale_bottom).  x15 (log₁₀ k_mppt)
 # was removed 2026-08-07 (S1 audit): warmstart_with_k_bracket overwrote it
 # before every eval, so the DE's 15th gene had zero fitness effect and only
 # railed at a bound.  k is owned solely by the bracket's λ²-scaled prior.
@@ -61,6 +61,12 @@ function v11_fitness(P_mean::Float64, FoS_min::Float64)::Float64
     return -P_mean / fos_penalty
 end
 
+"""4-arg seam overload (2026-08-20): v11 is power-based; `cfg` and `mass` are
+ignored so the shared evaluator seam `fitness_fn(P, F, cfg, mass)` stays
+compatible."""
+v11_fitness(P_mean::Float64, FoS_min::Float64, cfg::ObjectiveConfig, mass::Float64) =
+    v11_fitness(P_mean, FoS_min)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # V11 cold-start objective — scalar fitness (settle → kickstart → 60 s window)
 # ══════════════════════════════════════════════════════════════════════════════
@@ -93,7 +99,7 @@ function objective_v11(
                           power_W=power_W, v_rated=v_rated)
     return evaluate_windowed(x, beam_profile, p, cfg;
         start_mode=:cold, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
-        lift_device=lift_device, fitness_fn=(P, F, c) -> v11_fitness(P, F)).fitness
+        lift_device=lift_device, fitness_fn=(P, F, c, m) -> v11_fitness(P, F, c, m)).fitness
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -136,7 +142,7 @@ function objective_v11_warmstart(
     return evaluate_windowed(x, beam_profile, p, cfg;
         start_mode=:warm, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
         lift_device=lift_device, trace_callback=trace_callback,
-        fitness_fn=(P, F, c) -> v11_fitness(P, F))
+        fitness_fn=(P, F, c, m) -> v11_fitness(P, F, c, m))
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

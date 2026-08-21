@@ -18,7 +18,8 @@ function pc_proj(row)
     x = [row.Do_top_m, row.t_over_D, row.beam_aspect, row.Do_scale_exp,
          row.r_hub_m, row.r_bottom_m, row.target_Lr, row.n_lines,
          row.density_profile, row.rotor_mask_proxy, row.bank_top, row.bank_bottom,
-         row.lambda_top, row.lambda_bottom]
+         hasproperty(row, :blade_scale_top) ? row.blade_scale_top : row.lambda_top,
+         hasproperty(row, :blade_scale_bottom) ? row.blade_scale_bottom : row.lambda_bottom]
     xc = (x .- pca_mean) ./ max.(pca_std, 1e-10)
     (dot(xc, pca_V[:,1]), dot(xc, pca_V[:,2]))
 end

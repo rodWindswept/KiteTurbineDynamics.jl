@@ -467,7 +467,7 @@ function _checkpoint_island(out_dir, island, all_history, island_bests, param_tr
     ib_rows = [(i, m, v) for (i, m, v) in island_bests if i <= island]
     if !isempty(ib_rows)
         col_names = ["Do_top_m", "t_over_D", "beam_aspect", "Do_scale_exp", "r_hub_m", "r_bottom_m",
-                     "target_Lr", "n_lines", "density_profile", "rotor_mask_proxy", "bank_top", "bank_bottom", "lambda_top", "lambda_bottom"]
+                     "target_Lr", "n_lines", "density_profile", "rotor_mask_proxy", "bank_top", "bank_bottom", "blade_scale_top", "blade_scale_bottom"]
         ib_df = DataFrame(island=Int[], mass_kg=Float64[])
         for c in col_names; ib_df[!, c] = Float64[]; end
         for (i, m, v) in ib_rows
@@ -530,7 +530,7 @@ function _save_final_results(out_dir, global_best_x, global_best_cost, global_be
 
     # Full parameter trace
     col_names = ["Do_top_m", "t_over_D", "beam_aspect", "Do_scale_exp", "r_hub_m", "r_bottom_m",
-                 "target_Lr", "n_lines", "density_profile", "rotor_mask_proxy", "bank_top", "bank_bottom", "lambda_top", "lambda_bottom"]
+                 "target_Lr", "n_lines", "density_profile", "rotor_mask_proxy", "bank_top", "bank_bottom", "blade_scale_top", "blade_scale_bottom"]
     pt_df = DataFrame(island=Int[], iteration=Int[])
     for c in col_names; pt_df[!, c] = Float64[]; end
     for (i, it, v) in param_trace

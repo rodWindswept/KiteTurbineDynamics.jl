@@ -28,7 +28,7 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 
 # ── CLI ─────────────────────────────────────────────────────────────────
 function parse_length_arg()
-    L = 21.2
+    L = 18.8   # Daisy-up 5 kW length: 10.31 m × √(5/1.5) (Rod 2026-08-20)
     for (i, a) in enumerate(ARGS)
         if a == "--length" && i < length(ARGS)
             L = parse(Float64, ARGS[i+1])
@@ -100,12 +100,16 @@ seed_v = seed_genome(KW)
 lo, hi = tight_bounds(seed_v, KW)
 dim = length(lo)
 
-# V13 config — see proposal for the reasoning behind each knob.
+# V14 config (2026-08-20, Rod): hard-constraint MASS-minimisation on the
+# Daisy-anchored base.  FoS floor 2.5 at all points; power floor = rung
+# rating (5 kW); score = true physics mass.  Replaces the V13 power-scoring
+# (v12_fitness) with mass_min_fitness — the DE finds the lightest machine
+# that reliably makes rated power at FoS ≥ 2.5.
 cfg = ObjectiveConfig(;
     power_W = PW, v_rated = V_RATED,
-    p_floor_kw = 2.5, p_ceiling_kw = 5.0,
+    p_floor_kw = 5.0, p_ceiling_kw = 5.0,
     relax_s = 5.0, window_s = WINDOW_S,
-    fos_target = 1.5, fos_hard = 1.5,
+    fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly
     k_mppt = p_base.k_mppt,   # the scaled system's rated MPPT gain, NOT the 50kW default 10.0
@@ -117,7 +121,7 @@ TELE_CSV = joinpath(OUT_DIR, "telemetry.csv")
 open(TELE_CSV, "w") do io
     println(io, "# v13_5kw_masslift telemetry  length=$(LENGTH)  window=$(WINDOW_S)  min_clearance=$(MIN_CLEARANCE)  lift=mass-aware-const-tension  margin=1.5  era=$(PHYSICS_ERA)  git=$(GIT_HASH)")
     println(io, "island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,clearance," *
-        "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,lam_top,lam_bot,tether," *
+        "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether," *
         join(["x$j" for j in 1:14], ","))
 end
 
@@ -203,7 +207,7 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
                     xr, beam_profile, p_base, cfg;
                     start_mode = :cold,
                     lift_device = lift_for,
-                    fitness_fn = (P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+                    fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
                 )
             end
             if r === nothing

@@ -54,7 +54,7 @@ function run_eval(x::Vector{Float64}, L::Float64, window_s::Float64)
         xr, BEAM, p, v13_cfg(window_s, p.k_mppt);
         start_mode=:cold,
         lift_device=lift_for,
-        fitness_fn=(P, F, c) -> KiteTurbineDynamics.v12_fitness(P, F, c),
+        fitness_fn=(P, F, c, m) -> KiteTurbineDynamics.v12_fitness(P, F, c, m),
     )
 end
 

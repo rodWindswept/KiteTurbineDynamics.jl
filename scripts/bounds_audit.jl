@@ -14,7 +14,7 @@ const DIM_NAMES = [
     "Do_top (m)", "t_over_D", "beam_aspect", "Do_scale_exp",
     "r_hub (m)", "r_bottom (m)", "target_Lr", "n_lines",
     "density_profile", "rotor_mask", "bank_top (°)", "bank_bottom (°)",
-    "λ_top", "λ_bottom"
+    "blade_scale_top", "blade_scale_bottom"
 ]
 
 const DIM_NOTES = [

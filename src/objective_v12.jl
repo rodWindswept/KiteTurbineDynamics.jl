@@ -63,6 +63,33 @@ function v12_fitness(P_mean::Float64, FoS_min::Float64,
     return -P_mean / (pw * fw)
 end
 
+"""4-arg seam overload (2026-08-20): `mass` is passed but v12 is power-based —
+ignored.  Keeps the shared evaluator seam `fitness_fn(P, F, cfg, mass)`
+compatible with the power-scoring objectives."""
+v12_fitness(P_mean::Float64, FoS_min::Float64, cfg::ObjectiveConfig, mass::Float64) =
+    v12_fitness(P_mean, FoS_min, cfg)
+
+"""
+    mass_min_fitness(P_mean, FoS_min, cfg, mass) -> Float64
+
+Hard-constraint mass-minimisation objective (Rod, 2026-08-20).  Minimise the
+TRUE physics mass subject to two HARD floors:
+
+  - FoS_min < cfg.fos_hard  → Inf  (structural reliability; re-run uses 2.5)
+  - P_mean  < cfg.p_floor_kw → Inf (aero/power requirement; the rung rating)
+
+Both are reject signals (Inf), not soft penalties — the DE cannot trade power
+or safety against mass.  Score = `mass` (kg, positive → DE minimises it).
+The swept-area (annulus) and rung/λ mass scaling make the λ→0 and heavy-blade
+exploits impossible, so the classical minimum-mass design falls out directly.
+"""
+function mass_min_fitness(P_mean::Float64, FoS_min::Float64,
+                          cfg::ObjectiveConfig, mass::Float64)::Float64
+    FoS_min < cfg.fos_hard && return Inf
+    P_mean < cfg.p_floor_kw && return Inf
+    return mass
+end
+
 # ══════════════════════════════════════════════════════════════════════════════
 # V12 cold-start objective — V12 scoring over the shared cold protocol
 # ══════════════════════════════════════════════════════════════════════════════
@@ -91,7 +118,7 @@ function objective_v12(
     return evaluate_windowed(x, beam_profile, p, cfg;
         start_mode=:cold, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
         lift_device=lift_device,
-        fitness_fn=(P, F, c) -> v12_fitness(P, F, c)).fitness
+        fitness_fn=(P, F, c, m) -> v12_fitness(P, F, c, m)).fitness
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -121,7 +148,7 @@ function objective_v12_warmstart(
     return evaluate_windowed(x, beam_profile, p, cfg;
         start_mode=:warm, elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
         lift_device=lift_device, trace_callback=trace_callback,
-        fitness_fn=(P, F, c) -> v12_fitness(P, F, c))
+        fitness_fn=(P, F, c, m) -> v12_fitness(P, F, c, m))
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -176,5 +203,5 @@ function objective_v12_ramp(
     return evaluate_ramp(x, beam_profile, p, cfg;
         elev_angle=elev_angle, spoke=spoke, lin_damp=lin_damp,
         lift_device=lift_device, trace_callback=trace_callback,
-        fitness_fn=(P, F, c) -> v12_fitness(P, F, c))
+        fitness_fn=(P, F, c, m) -> v12_fitness(P, F, c, m))
 end

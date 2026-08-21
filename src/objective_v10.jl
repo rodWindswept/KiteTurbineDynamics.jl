@@ -22,8 +22,8 @@
 #   x[10]  rotor_mask       [int]  proxy -> 60 valid bitmasks
 #   x[11]  bank_top         [deg]  bank at ring 1 (0-25)
 #   x[12]  bank_bottom      [deg]  bank at lowest rotor (0-25)
-#   x[13]  lambda_top       [-]    blade scale at ring 1 (0.005-2.0)
-#   x[14]  lambda_bottom    [-]    blade scale at lowest rotor (0.005-2.0)
+#   x[13]  blade_scale_top    [-]    blade linear scale at ring 1 (0.005-2.0); area ∝ λ²
+#   x[14]  blade_scale_bottom [-]    blade linear scale at lowest rotor (0.005-2.0)
 
 const TRPT_V10_DIM = 14
 
@@ -162,9 +162,11 @@ function design_from_vector_v10(
     bank_top = clamp(x[11], 0.0, 25.0)
     bank_bottom = clamp(x[12], 0.0, 25.0)
 
-    # Blade scale gradient (x[13]=λ_top, x[14]=λ_bottom)
-    λ_top = clamp(x[13], 0.1, 2.0)
-    λ_bottom = clamp(x[14], 0.1, 2.0)
+    # Blade scale gradient (x[13]=blade_scale_top, x[14]=blade_scale_bottom).
+    # 2026-08-20 rename: these genes are a BLADE LINEAR SCALE (area ∝ λ²),
+    # not a tip-speed ratio — λ is reserved for TSR throughout the codebase.
+    blade_scale_top = clamp(x[13], 0.1, 2.0)
+    blade_scale_bottom = clamp(x[14], 0.1, 2.0)
 
     # Hub altitude from shaft geometry (rings already computed above)
     hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
@@ -182,7 +184,7 @@ function design_from_vector_v10(
         # Gradient interpolation
         t = n_active > 1 ? (i - 1) / (n_active - 1) : 0.0
         bank_i = bank_top + t * (bank_bottom - bank_top)
-        λ_i = λ_top + t * (λ_bottom - λ_top)
+        blade_scale_i = blade_scale_top + t * (blade_scale_bottom - blade_scale_top)
 
         # Wind speed at this ring's altitude
         ring_z = zs[pos]  # pos is now ring index (ground→hub)
@@ -192,12 +194,21 @@ function design_from_vector_v10(
         # BEM rotor radius for this rotor at local wind speed
         r_rotor_i = BEM.rotor_radius_for_power(P_per_rotor, v_i, design.n_lines)
 
-        blade_tip = r_rotor_i * λ_i
-        blade_hub = 0.25 * r_rotor_i * λ_i
-        blade_chord = 0.113 * r_rotor_i * λ_i
+        # Ring-anchored 70/30 blade split (2026-08-20, Rod): the blade attaches
+        # to the TRPT ring at 70% outboard / 30% inboard of its span, so
+        # blade_tip = +0.7·span (OUTBOARD offset) and blade_hub = −0.3·span
+        # (INBOARD offset, negative).  The swept annulus is r_out = r_ring +
+        # 0.7·span, r_in = r_ring − 0.3·span, A = π(r_out² − r_in²) = 2π·r_ring·L.
+        # Span magnitude preserved from the 0.25-hub era (0.75·r_rotor·λ) so the
+        # blade size scale is unchanged; the convention is now consistent with
+        # the expansion rotors (expansion_rotor.jl: expansion_annulus_area).
+        span = 0.75 * r_rotor_i * blade_scale_i
+        blade_tip = 0.7 * span
+        blade_hub = -0.3 * span
+        blade_chord = 0.113 * r_rotor_i * blade_scale_i
 
         push!(rotors, RotorSpecV10(
-            pos, bank_i, λ_i, v_i, r_rotor_i, blade_tip, blade_hub, blade_chord,
+            pos, bank_i, blade_scale_i, v_i, r_rotor_i, blade_tip, blade_hub, blade_chord,
         ))
     end
 
@@ -222,7 +233,7 @@ function search_bounds_v10(
     base_lo[6] = max(base_lo[6], 0.5)        # r_bottom min: 0.5 m (was ~0.1)
     base_hi[8] = min(base_hi[8], 16.0)       # n_lines max: 16 (was 24)
 
-    # V10 additional vars: rotor_mask, bank_top, bank_bottom, λ_top, λ_bottom
+    # V10 additional vars: rotor_mask, bank_top, bank_bottom, blade_scale_top, blade_scale_bottom
     v10_lo = [0.0, 0.0, 0.0, 0.1, 0.1]     # mask proxy, banks, lambdas (λ floor 0.1 per Rod 2026-07-24)
     v10_hi = [Float64(N_VALID_MASKS), 25.0, 25.0, 2.0, 2.0]
 
@@ -307,12 +318,14 @@ function objective_v10(
     r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
 
     # ── Effective k_mppt scaled by blade area ──────────────────────────
-    # k_mppt ∝ rotor swept area ∝ λ².  A λ=0.5 rotor has ¼ the swept area
-    # of λ=1.0 and should expect ¼ the power.  Without this scaling, the
-    # DE converges to λ→0 to save blade mass (∝ λ³) while the equilibrium
-    # solver compensates with higher ω — but the rotor lacks startup torque
-    # to reach that ω in the ODE.  Scaling k_mppt with λ² inside the
-    # equilibrium solve aligns the static objective with the dynamic reality.
+    # k_mppt ∝ rotor swept area ∝ blade_scale².  A blade_scale=0.5 rotor has ¼
+    # the swept area of blade_scale=1.0 and should expect ¼ the power.  Without
+    # this scaling, the DE converges to blade_scale→0 to save blade mass
+    # (∝ blade_scale³) while the equilibrium solver compensates with higher ω
+    # — but the rotor lacks startup torque to reach that ω in the ODE.
+    # Scaling k_mppt with blade_scale² inside the equilibrium solve aligns the
+    # static objective with the dynamic reality.  (2026-08-20: renamed λ →
+    # blade_scale; λ is reserved for tip-speed ratio.)
     λ_eff = rotors[1].blade_scale
     k_mppt_eff = p.k_mppt * λ_eff^2
     ctrl_scaled = ControlSpec(p.i_pto, k_mppt_eff, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)

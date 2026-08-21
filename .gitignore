@@ -14,6 +14,10 @@ deps/build.log
 docs/build/
 docs/site/
 
+# Local Julia depot (sandbox workaround: ~/.julia is read-only and /tmp is
+# ephemeral per command, so the depot lives in the workspace). Never commit.
+.julia_depot/
+
 # Python caches
 __pycache__/
 *.pyc
@@ -41,3 +45,6 @@ trajectory_analysis/
 # Temporary/monitor CSVs — but NOT campaign results
 *.csv
 !scripts/results/**/*.csv
+
+# Local python libs (sandbox workaround). Never commit.
+.pylibs/
