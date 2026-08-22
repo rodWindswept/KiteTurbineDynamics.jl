@@ -1,6 +1,6 @@
 # CONTEXT.md — KiteTurbineDynamics.jl
 
-**Last updated:** 2026-08-09
+**Last updated:** 2026-08-22
 
 ## What this is
 
@@ -162,9 +162,11 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | **MTR** | Moment-to-Tension Ratio ≈ 0.05 |
 | **DLF** | Design Load Factor — lumped envelope converting line tension to effective radial inward force per vertex. Computed from ODE statistics (`DLF_peak × 1.10`) in `trpt_optimization.jl`, calibrated via `scripts/calibrate_dlf.jl` on a 10 kW system across 6 load scenarios. The value 1.2 provides ~60% margin over the worst aero-only case (steady 11 m/s, DLF=0.83). Not a magic constant — recalibration needed for 50 kW and current spoke physics. |
 | **Network rotor model** | N co-equal rotors sharing P/N each. Distributed per-ring loading. |
-| **Windowed evaluator** | `evaluate_windowed` — the one ODE protocol for the objective family (build → start → window run → gates → score). Version objectives are adapters over it (2026-08-09). |
+| **Windowed evaluator** | `evaluate_windowed` — the one ODE protocol for the objective family (build → start → window run → gates → score). Version objectives are adapters over it (2026-08-09). **Honest window (2026-08-22):** relax 10 s + window 40 s, `power_stat=:tail5` at 35–40 s — the 20 s window sampled the settle decay and flattered power (5.97 kW read vs 3.15 kW true). |
 | **Objective config** | `ObjectiveConfig` — immutable per-eval tunables (k_mppt, relax/window horizons, V12 power-window knobs). Sweeps thread it per-eval; no module globals. |
-| **Eval result** | `EvalResult` — named eval result with `status` (:ok/:reject) as the single reject channel. Never infer rejection from the fitness value. |
+| **Eval result** | `EvalResult` — named eval result with `status` (:ok/:reject) as the single reject channel. Never infer rejection from the fitness value. Honest rejects carry the measured window statistics (2026-08-21). |
+| **Blade-mass law** | `m_per_blade = m_ref · λ³` — ONE volume law for main and expansion rotors (2026-08-22, Rod). `M_BLADE_REF_KG = 0.420` (measured Daisy blade); per-blade knuckle floor 0.050 kg enters the airborne mass. Replaces the λ² main-rotor term and the CFRP expansion constants. |
+| **Main rotor modelled once** | The hub ring hosts ONLY the cp/ct rotor — `expansion_params_from_rotors` excludes the decoder's hub rotor (ring_idx == n_rings). Mapping it as an expansion rotor double-modelled the annulus (expansion α/induction brake at 6-blade solidity) and double-counted its mass (fixed 2026-08-22). |
 | **Minimal TRPT** | 1 flown bladed hub ring rotor + 1 ground ring = 2 rings. `expansion_params_from_rotors(..., minimal_hub=true)` maps it; builder geometry + A3 gate (n_rings ≥ 5) are the flagged follow-on. |
 
 ---
@@ -213,6 +215,8 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 ## Known limitations
 
 - **Static solver under-predicts dynamic k_mppt by ~3.3×.** DE campaigns use static equilibrium; dynamic verification must follow. Use `--conservative` flag (k_mppt_safety=3.0) for static campaigns.
+- **Settle-vs-ODE equilibrium gap (2026-08-22, workstream open).** `settle_to_operational_state` parks ~11.96 rad/s where the ODE equilibrates ~14.3+ rad/s (under-predicts — the old over-prediction was the removed hub-brake). Proposal: `docs/plans/2026-08-22-settle-ode-gap-workstream.md`.
+- **Physics-validation ledger** (`docs/validation/physics-validation-ledger.md`) — every load-bearing claim maps to a source + status; retired claims (hub-brake "3.15 kW", 210 g blades, 34.3 m "18.8 m" machines) are recorded there, do not resurrect.
 - **Not yet fully parametric.** Node/ring/line counts derived from configurations rather than flowing entirely from `SystemParams`.
 - **Elevation angle β fixed at 30°** in most campaigns. V9 freed it but others clamped it.
 - **No blade pitch control.** Angle of attack is fixed. Bridling as control input not implemented.
