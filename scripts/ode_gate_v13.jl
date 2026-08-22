@@ -46,7 +46,11 @@ function params_at_length(p2, L::Float64, KW::Float64)
     # Daisy-anchored (2026-08-21): scale from the measured 1.5 kW anchor —
     # matches run_v13_5kw_masslift.jl / smoke_masslift_v13.jl. Was 10.0 (10 kW
     # DRR theory), which gated a DIFFERENT machine than the campaign.
-    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    scaled = mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    # LENGTH FIX (2026-08-22): mass_scale also scales the tether length by the
+    # rung geom_scale, so params_at_length(18.8) silently built a 34.3 m machine.
+    # L is the FINAL machine length — restore it after rung scaling.
+    return override_params(scaled; tether_length=L)
 end
 
 """Per-segment twist vs geometric crossing limit. Returns (crossed, max_ratio,

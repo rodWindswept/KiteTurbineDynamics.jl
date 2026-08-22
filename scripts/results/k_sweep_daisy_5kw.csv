@@ -1,3 +1,8 @@
+# SUPERSEDED 2026-08-22 — measured on the WRONG-LENGTH machine (34.3 m, not
+# 18.8 m: params_at_length double-scaled L via mass_scale) with the flattered
+# 20 s window and the pre-mass-law 210 g blades.  Re-sweep under the honest
+# window (relax 10 + window 40) on the corrected 18.8 m machine with the
+# unified lambda^3 blade-mass law before any launch (DECISIONS [2026-08-22]).
 k,status,P_mean,P_end,omega_eq,FoS_min,T_lift,wall_s
 0.5,reject,1.0822819262935142,0.7656037568522034,0.0,309.47506466004296,205.38554510460685,83.68929886817932
 1.0,reject,2.0788358807969347,1.4849441894435067,0.0,255.77824490877973,205.38554510460685,73.82886910438538

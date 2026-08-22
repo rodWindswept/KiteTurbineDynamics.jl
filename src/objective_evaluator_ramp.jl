@@ -56,7 +56,14 @@ function evaluate_ramp(
     end
 
     # ── Build ODE system ─────────────────────────────────────────────────
-    sys, u0, pc = build_system_from_v10(result, 1.0, cfg.k_mppt; tether_diameter=cfg.tether_diameter)
+    # base_params=p — the rung-scaled campaign base (2026-08-22).  This call
+    # previously omitted it, so the ramp evaluator built EVERY rung with the
+    # 50 kW base (12.0757 kg/blade) — the same contamination DECISIONS
+    # [2026-08-20] fixed for evaluate_windowed, missed here.  evaluate_windowed
+    # and evaluate_ramp must build the same machine.
+    sys, u0, pc = build_system_from_v10(result, 1.0, cfg.k_mppt;
+                                        tether_diameter=cfg.tether_diameter,
+                                        base_params=p)
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
@@ -68,7 +75,8 @@ function evaluate_ramp(
     end
 
     # ── Warm pre-solve (shared with :warm path) ──────────────────────────
-    expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
+    expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                                        m_blade_ref=p.m_blade)
     _, radii, _ = ring_spacing_v4(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
         density_profile=design.density_profile,

@@ -28,7 +28,12 @@ function params_at_length(L::Float64)
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
     ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
     back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    scaled = mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    # LENGTH FIX (2026-08-22): mass_scale also scales the tether length by the
+    # rung geom_scale (sqrt(5/1.5) ~ 1.826), so params_at_length(18.8) silently
+    # built a 34.3 m machine while h_ref/masses described an 18.8 m machine.
+    # L is the FINAL machine length — restore it after rung scaling.
+    return override_params(scaled; tether_length=L)
 end
 
 p_base = params_at_length(LENGTH)
