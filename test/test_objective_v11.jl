@@ -30,7 +30,9 @@ end
 # ══════════════════════════════════════════════════════════════════════════════
 
 @testset "v11_fitness — FoS ≥ FOS_GATE: no penalty" begin
-    @test v11_fitness(100.0, Inf) == -100.0
+    # FoS=Inf (null structural measurement) is a REJECT (Inf), not a healthy
+    # score — was -100.0, the exploit-register row-1 class (guard 2026-08-22).
+    @test v11_fitness(100.0, Inf) == Inf
     @test v11_fitness(100.0, FD)  == -100.0
     @test v11_fitness(100.0, FD * 2.0) == -100.0
 end

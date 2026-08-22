@@ -28,8 +28,11 @@ as a hard rejection (status=:reject) — this is a reject signal, not a score.
 """
 function v12_fitness(P_mean::Float64, FoS_min::Float64,
                      cfg::ObjectiveConfig=ObjectiveConfig())::Float64
-    # Hard gate
-    FoS_min < cfg.fos_hard && return Inf
+    # Hard gate — non-finite FoS (null structural measurement) is a REJECT,
+    # not a pass: `Inf < fos_hard` is false, so an unguarded comparison lets
+    # a machine with unmeasured ring loads score as feasible (exploit-register
+    # row 1, fixed in objective_feasibility 5d02d45; added here 2026-08-22).
+    (!isfinite(FoS_min) || FoS_min < cfg.fos_hard) && return Inf
 
     # ── Power window penalty ─────────────────────────────────────────────
     # V13: penalize_ceiling=false → above-ceiling power at rated wind is
@@ -85,7 +88,10 @@ exploits impossible, so the classical minimum-mass design falls out directly.
 """
 function mass_min_fitness(P_mean::Float64, FoS_min::Float64,
                           cfg::ObjectiveConfig, mass::Float64)::Float64
-    FoS_min < cfg.fos_hard && return Inf
+    # Non-finite FoS guard (2026-08-22): `Inf < fos_hard` is false, so a
+    # machine with null structural measurement used to pass the floor and
+    # score its mass (exploit-register row 1 class).  Reject it.
+    (!isfinite(FoS_min) || FoS_min < cfg.fos_hard) && return Inf
     P_mean < cfg.p_floor_kw && return Inf
     return mass
 end

@@ -57,6 +57,10 @@ Monotonicity properties:
   ∂fitness/∂P  < 0  always
 """
 function v11_fitness(P_mean::Float64, FoS_min::Float64)::Float64
+    # Non-finite FoS guard (2026-08-22): FoS=Inf previously scored the best
+    # possible fitness (-P with penalty 1.0) — a null structural measurement
+    # outranking every real design (exploit-register row 1 class).
+    !isfinite(FoS_min) && return Inf
     fos_penalty = FoS_min < FOS_GATE ? FOS_GATE / FoS_min : 1.0
     return -P_mean / fos_penalty
 end
