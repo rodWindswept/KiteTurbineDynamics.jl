@@ -79,6 +79,18 @@ derives from the rated operating point).  Remove the magic 2500.
 
 ## Sequencing
 
+0. **URGENT — non-finite-FoS guard in mass/v12 fitness (2026-08-22, found
+   during campaign monitoring).** `mass_min_fitness` (`objective_v12.jl:86`)
+   and `v12_fitness` (`objective_v12.jl:29`) test `FoS_min < cfg.fos_hard`
+   WITHOUT an isfinite guard — `FoS_min = Inf` (null structural measurement,
+   exploit-register row 1, fixed in `objective_feasibility` but NOT here)
+   passes the floor and scores the mass.  A machine that transmits ≥5 kW
+   with unmeasured ring loads (FoS=Inf) would be crowned.  **Fix (TDD,
+   immediately after the running campaign):** `(!isfinite(FoS_min) ||
+   FoS_min < cfg.fos_hard) && return Inf`; RED test in test_objective_v12.
+   MONITOR the running campaign's telemetry for `ok` rows with FoS=Inf —
+   if any appear, the campaign is polluted and must be killed/restarted
+   after the fix.
 1. Campaign completes (running now, ~22–35 h) → winners re-gated.
 2. Land fix 1 (torque cap) + fix 4 (magic law) as one TDD change with the
    acceptance tests — then re-run the honest k sweep once to confirm the
