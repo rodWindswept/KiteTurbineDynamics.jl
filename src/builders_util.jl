@@ -80,10 +80,17 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
     # kwarg defaults evaluate in the CALLER's scope — resolve the module
     # constant inside the body (2026-08-22).
     m_ref = m_blade_ref === nothing ? M_BLADE_REF_KG : m_blade_ref
-    sys_n_rings_total = minimal_hub ? n_rings + 1 : n_rings + 2
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
-        sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
+        # HUB EXCLUSION (2026-08-22): the rotor on the TOP ring (ring_idx ==
+        # n_rings) is the MAIN rotor — the ODE models it with the cp/ct rotor
+        # (ring_forces.jl), and mapping it here as an expansion rotor
+        # DOUBLE-MODELLED the same annulus (expansion α/induction brake at
+        # high solidity killed the 5 kW seed: ω → −0.6 rad/s freewheeling)
+        # and DOUBLE-COUNTED its blade mass in expansion_airborne_mass.
+        # Expansion rotors are ADDITIONAL rotors on intermediate rings only.
+        rotor.ring_idx == n_rings && continue
+        sys_ring = rotor.ring_idx + 1
         # Unified blade-mass law (2026-08-22): m_assembly = n_blades · m_ref · λ³
         # with λ the TOTAL linear scale (decoded genome blade_scale × any
         # builder dial).  m_ref = the rung's per-blade reference mass
@@ -283,7 +290,11 @@ function build_phantom_triangle(;
     expansion_params = ExpansionRotorParams[]
     p_base = params_v5_50kw()
     for rotor in rotors
-        sr = rotor.ring_idx == n_rings ? n_rings + 2 : rotor.ring_idx + 1
+        # HUB EXCLUSION (2026-08-22): the hub rotor is the MAIN rotor —
+        # mapping it as an expansion rotor double-modelled the annulus and
+        # double-counted its mass (see expansion_params_from_rotors).
+        rotor.ring_idx == n_rings && continue
+        sr = rotor.ring_idx + 1
         er = ExpansionRotorParams(
             n_lines,
             rotor.blade_tip_radius * blade_scale,

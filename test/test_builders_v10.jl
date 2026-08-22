@@ -80,7 +80,7 @@ end
 # Ring mapping — single authority (2026-08-09)
 # ══════════════════════════════════════════════════════════════════════════════
 
-@testset "expansion_params_from_rotors — canonical +1 mapping" begin
+@testset "expansion_params_from_rotors — canonical +1 mapping, hub excluded" begin
     # RotorSpecV10(ring_idx, bank_angle_deg, blade_scale, v_wind, r_rotor,
     #              blade_tip_radius, blade_hub_radius, blade_chord)
     rotors = [
@@ -89,12 +89,13 @@ end
         RotorSpecV10(3, 15.0, 1.0, 11.0, 1.0, 3.2, 0.5, 0.2),
     ]
     # n_rings=3, canonical: total = 3 + 2 = 5 rings (ground + 3 flown + hub).
-    # Rotor at ring 1 → sys ring 2; ring 2 → sys ring 3; top rotor → sys ring 5.
+    # HUB EXCLUSION (2026-08-22): ring_idx == n_rings (3) is the MAIN rotor —
+    # no expansion entry (double-modelled annulus / double-counted mass).
+    # Rotor at ring 1 → sys ring 2; ring 2 → sys ring 3.
     ps = expansion_params_from_rotors(rotors, 3, 12)
-    @test length(ps) == 3
+    @test length(ps) == 2
     @test ps[1].ring_idx == 2
     @test ps[2].ring_idx == 3
-    @test ps[3].ring_idx == 5
     # n_blades = n_lines flows through
     @test all(p.n_blades == 12 for p in ps)
 end
@@ -109,18 +110,19 @@ end
 
 @testset "expansion_params_from_rotors — minimal machine (Rod's definition)" begin
     # Minimal TRPT: 1 flown bladed hub ring rotor + 1 ground ring = 2 rings.
-    # n_rings=1, minimal_hub=true → total = 2; the single rotor (ring_idx ==
-    # n_rings) lands on the top ring (ring_idx 2).
+    # The single rotor (ring_idx == n_rings) IS the hub/main rotor — under the
+    # hub exclusion (2026-08-22) it produces NO expansion entry: the minimal
+    # machine is hub-only by construction.
     rotors = [RotorSpecV10(1, 15.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2)]
     ps = expansion_params_from_rotors(rotors, 1, 12; minimal_hub=true)
-    @test length(ps) == 1
-    @test ps[1].ring_idx == 2
-    # Multi-ring minimal: top rotor on ring n_rings+1, others one above index
+    @test isempty(ps)
+    # Multi-ring minimal: the intermediate rotor maps one above its index;
+    # the top rotor (ring_idx == n_rings) is the hub and is excluded.
     rotors3 = [
         RotorSpecV10(1, 25.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2),
         RotorSpecV10(2, 20.0, 1.0, 11.0, 1.0, 3.1, 0.5, 0.2),
     ]
     ps3 = expansion_params_from_rotors(rotors3, 2, 12; minimal_hub=true)
-    @test ps3[1].ring_idx == 2
-    @test ps3[2].ring_idx == 3   # top rotor IS the hub ring (no separate hub)
+    @test length(ps3) == 1
+    @test ps3[1].ring_idx == 2   # intermediate only; hub rotor excluded
 end

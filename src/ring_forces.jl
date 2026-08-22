@@ -252,6 +252,13 @@ function compute_ring_forces!(
         # angle into radial (spreading) and axial (thrust) components.
         if !isempty(sys.expansion_rotors)
             for er in sys.expansion_rotors
+                # HUB GUARD (2026-08-22): the ring hosting the MAIN rotor must
+                # never also get the expansion model — the same annulus would
+                # be double-modelled (the expansion α/induction model brakes
+                # at high solidity; killed the 5 kW seed).  expansion_params_
+                # from_rotors now excludes the hub; this guards any other path
+                # that still maps it.
+                er.ring_idx == hub_ri && continue
                 ring_gid = sys.ring_ids[er.ring_idx]
                 ring_pos = @view u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
                 ring_ri = (sys.nodes[ring_gid]::RingNode).ring_idx

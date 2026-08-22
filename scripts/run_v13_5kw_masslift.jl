@@ -44,7 +44,9 @@ const ELEV = π / 6
 const V_RATED = 11.0
 const GROUND_OFFSET = 1.0
 const MIN_CLEARANCE = 1.5   # m — hard gate on lowest active rotor tip
-const WINDOW_S = 20.0       # measurement window (sustained power + twist detector)
+const WINDOW_S = 40.0       # HONEST measurement window (2026-08-21 open task): the 20 s
+                              # window sampled the settle decay (P_end 5.97 kW vs true equilibrium
+                              # k·ω³ ≈ 3.15 kW); tail5 now sits at 35-40 s. relax_s matches.
 
 # ── Provenance (Daisy-anchored, mass-aware constant-tension regime) ──────
 const PHYSICS_ERA = "post-4ce9fd0_daisy-anchored-5kw"
@@ -117,7 +119,7 @@ dim = length(lo)
 cfg = ObjectiveConfig(;
     power_W = PW, v_rated = V_RATED,
     p_floor_kw = 5.0, p_ceiling_kw = 5.0,
-    relax_s = 5.0, window_s = WINDOW_S,
+    relax_s = 10.0, window_s = WINDOW_S,
     fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly

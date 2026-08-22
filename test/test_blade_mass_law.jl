@@ -37,6 +37,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "build_system_from_v10 — main rotor scales λ³" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
+        x[10] = 0.6                    # 2 rotors: hub + 1 intermediate expansion
         x[13] = 0.5; x[14] = 0.5      # blade_scale_top/bottom → λ_eff = 0.5
         base = params_daisy()
         result = design_from_vector_v10(
@@ -50,10 +51,16 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         @test pc.m_blade ≈ base.m_blade * λ_eff^3 rtol=1e-9
         @test !isapprox(pc.m_blade, base.m_blade * λ_eff^2; rtol=1e-9)
 
-        # every expansion assembly: n_blades × rung base × (decoded λ)³
-        @test length(sys.expansion_rotors) == length(result.rotors)
-        for (i, er) in enumerate(sys.expansion_rotors)
-            λ_er = result.rotors[i].blade_scale
+        # HUB EXCLUSION (2026-08-22): the hub rotor (ring_idx == n_rings) is
+        # the MAIN rotor — no expansion entry, no double-modelled annulus,
+        # no double-counted mass.  Only INTERMEDIATE rotors become expansion
+        # entries, one per decoded rotor with ring_idx != n_rings.
+        non_hub = filter(r -> r.ring_idx != result.n_rings, result.rotors)
+        @test length(sys.expansion_rotors) == length(non_hub)
+        hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
+        @test all(er.ring_idx != hub_ri for er in sys.expansion_rotors)
+        for (er, rotor) in zip(sys.expansion_rotors, non_hub)
+            λ_er = rotor.blade_scale
             @test er.mass ≈ er.n_blades * base.m_blade * λ_er^3 rtol=1e-9
         end
     end
@@ -61,6 +68,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "knuckle floor + full airborne accounting" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
+        x[10] = 0.6                    # hub + 1 expansion rotor
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -85,6 +93,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "geometry_fingerprint does not double-count blade mass" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
+        x[10] = 0.6                    # hub + 1 expansion rotor (non-vacuous)
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -92,6 +101,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
             result, 1.0, 5.39; base_params=base
         )
+        @test length(sys.expansion_rotors) == 1   # non-vacuous guard
         fp = KiteTurbineDynamics.geometry_fingerprint(
             sys, pc, result.design; blade_scale=1.0
         )

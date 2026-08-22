@@ -1876,3 +1876,38 @@ const_tension), main blades 12.8 kg + 1 expansion rotor 12.8 kg + knuckles
 **Remaining:** k re-sweep under the honest window on the corrected machine
 (2026-08-21 open task); acceptance suite re-baseline on the re-run's
 winners; ODE-inertia knuckles.
+
+### [2026-08-22] Hub-rotor double-model eliminated — expansion mapping excludes the main rotor
+
+**Context:** the honest-window k sweep on the corrected 18.8 m machine showed
+the seed decaying to ω ≈ −0.2 rad/s (backward) at EVERY k — even freewheeling
+(k=0). Bisection isolated it: a build WITHOUT the expansion mapping sustained
+and accelerated (ω → 14.2 rad/s at k=5.39), the canonical build died.
+`expansion_params_from_rotors` mapped the HUB rotor (decoder ring_idx ==
+n_rings, "mask position 1") into `sys.expansion_rotors` on the hub ring, so
+the ODE applied BOTH the main cp/ct rotor AND the expansion α/induction model
+to the SAME annulus. At 6-blade solidity the expansion model brakes (the same
+mechanism the 2026-08-17 anchor session found and worked around by using the
+main cp rotor only). The hub entry ALSO double-counted blade mass in
+`expansion_airborne_mass` (the 5 kW seed's 12.8 kg blades appeared twice).
+
+**Decision:** the hub rotor is the MAIN rotor — it is modelled by the cp/ct
+rotor at the hub ring and must NOT appear in the expansion list.
+1. `expansion_params_from_rotors` (and the phantom builder's inline loop)
+   skip rotors with ring_idx == n_rings. Expansion rotors are ADDITIONAL
+   rotors on intermediate rings only. `minimal_hub` machines are hub-only by
+   construction (empty expansion list).
+2. Defensive guard in ring_forces.jl: the expansion loop skips the hub ring.
+3. Verified: the canonical 5 kW seed now sustains and accelerates (ω 12.16 →
+   14.33 rad/s over 20 s at k=5.39; P_gen ≈ 9 kW at 20 s and climbing — the
+   60 m² seed is OVER-rotored for 5 kW, the DE's job is to shrink it).
+4. This changes the dynamics (and mass accounting) of EVERY multi-rotor
+   machine since the "unified rotors" decoder (2026-08-20) — including the
+   V10 50 kW family, whose hub was being braked/double-counted. All prior
+   results from that era are superseded; acceptance suite re-baseline covers
+   it. Fast suite 1926/1926 green.
+
+**Remaining:** honest k re-sweep on the fixed machine (running); settle-vs-ODE
+gap workstream (Option 2) stays a parallel proposal — the settle now
+UNDER-predicts the ODE equilibrium (11.96 vs ~14+ rad/s), a different (less
+harmful) mismatch than the 2026-08-13 over-prediction.

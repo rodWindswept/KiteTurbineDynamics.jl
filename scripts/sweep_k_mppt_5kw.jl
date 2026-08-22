@@ -14,7 +14,10 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 const KW = 5.0
 const PW = KW * 1000.0
 const V_RATED = 11.0
-const WINDOW_S = 20.0
+const WINDOW_S = 40.0   # HONEST window (2026-08-21 open task): relax 10 + window 40,
+                        # tail5 at 35-40 s — the old 20 s window sampled the
+                        # settle decay (seed read 5.97 kW but truly sustains
+                        # k·ω³ ≈ 3.15 kW at equilibrium)
 const LENGTH = 18.8
 
 lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
@@ -62,13 +65,14 @@ m_air = KiteTurbineDynamics.expansion_airborne_mass(sys0, pc0; include_lifter=fa
     π * (sys0.rotor.radius^2 - sys0.rotor.blade_hub_radius^2))
 
 rows = DataFrame(k=Float64[], status=Symbol[], P_mean=Float64[], P_end=Float64[],
-                 omega_eq=Float64[], FoS_min=Float64[], T_lift=Float64[], wall_s=Float64[])
+                 omega_eq=Float64[], omega_final=Float64[], FoS_min=Float64[],
+                 T_lift=Float64[], wall_s=Float64[])
 println("\n═ k sweep — seed via runner path (mass_min, cold, L=$LENGTH) ═")
 for k in K_SWEEP
     cfg = ObjectiveConfig(;
         power_W = PW, v_rated = V_RATED,
         p_floor_kw = 5.0, p_ceiling_kw = 5.0,
-        relax_s = 5.0, window_s = WINDOW_S,
+        relax_s = 10.0, window_s = WINDOW_S,
         fos_target = 2.5, fos_hard = 2.5,
         power_stat = :tail5, penalize_ceiling = false,
         kickstart_s = 0.0,
@@ -76,20 +80,38 @@ for k in K_SWEEP
         tether_diameter = p_base.tether_diameter,
     )
     t0 = time()
+    # Gap metric (2026-08-13 / 2026-08-21): settle ω_eq vs the window-end
+    # ground-ring ω.  A large gap means the fitness window still rides the
+    # settle decay — the window must outlast the relaxation.
+    last_omega = Ref(0.0)
+    function gap_trace(u, t, s, ctx)
+        sys = ctx.sys
+        N = sys.n_total; Nr = sys.n_ring
+        last_omega[] = u[6N + Nr + 1]   # ground-ring ω
+        return nothing
+    end
     r = KiteTurbineDynamics.evaluate_windowed(
         xr, PROFILE_ELLIPTICAL, p_base, cfg;
         start_mode = :cold,
         lift_device = lift_for,
+        trace_callback = gap_trace,
         fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
     )
     wall = time() - t0
-    push!(rows, (k, r.status, r.P_mean, r.P_end, r.ω_eq, r.FoS_min, r.T_lift, wall))
-    @printf("k=%5.2f  status=%-6s  P_mean=%6.2f kW  P_end=%6.2f kW  ω_eq=%6.2f  FoS=%6.2f  T_lift=%7.1f N  (%4.0f s)\n",
-        k, r.status, r.P_mean, r.P_end, r.ω_eq, r.FoS_min, r.T_lift, wall)
+    gap = r.ω_eq > 0 ? 100 * (r.ω_eq - last_omega[]) / r.ω_eq : NaN
+    push!(rows, (k, r.status, r.P_mean, r.P_end, r.ω_eq, last_omega[], r.FoS_min, r.T_lift, wall))
+    @printf("k=%5.2f  status=%-6s  P_mean=%6.2f kW  P_end=%6.2f kW  ω_eq=%6.2f → %6.2f (%+4.1f%%)  FoS=%6.2f  T_lift=%7.1f N  (%4.0f s)\n",
+        k, r.status, r.P_mean, r.P_end, r.ω_eq, last_omega[], gap, r.FoS_min, r.T_lift, wall)
     flush(stdout)
 end
 
 OUT = joinpath(@__DIR__, "results", "k_sweep_daisy_5kw.csv")
 mkpath(dirname(OUT))
-CSV.write(OUT, rows)
+header = "# HONEST-WINDOW k sweep (2026-08-22): relax 10 + window 40 s, tail5 at 35-40 s;\n" *
+         "# corrected 18.8 m machine (length double-scaling fixed) + unified lambda^3 blade-mass law;\n" *
+         "# omega_final = ground-ring omega at window end; gap = (omega_eq - omega_final)/omega_eq.\n"
+open(OUT, "w") do io
+    write(io, header)
+    CSV.write(io, rows)
+end
 println("\nSweep written to $OUT")
