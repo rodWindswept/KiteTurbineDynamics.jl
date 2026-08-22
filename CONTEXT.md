@@ -241,17 +241,17 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 
 ---
 
-## Project room files (repo root)
+## Project room files
 
 | File | Purpose |
 |------|---------|
-| `01_source_inventory.md` | Every file: path, type, date, authority, limitations |
-| `02_conflict_log.md` | 8 documented conflicts surfaced for review |
-| `03_missing_context.md` | 10 identified gaps |
-| `04_duplicates_report.md` | Version families (4 resolved, 5 open) |
+| `docs/case-notes/01_source_inventory.md` | Every file: path, type, date, authority, limitations |
+| `docs/case-notes/02_conflict_log.md` | 8 documented conflicts surfaced for review |
+| `docs/case-notes/03_missing_context.md` | 10 identified gaps |
+| `docs/case-notes/04_duplicates_report.md` | Version families (4 resolved, 5 open) |
 | `PROJECT_ROOM.md` | Index + cleanup status + campaign metrics |
-| `DECISIONS.md` | 2,252-line running decision log (latest: 2026-07-01) |
-| `PLAN.md` | Implementation roadmap |
+| `DECISIONS.md` | Running decision log (latest: 2026-08-22) |
+| `docs/archive/` | Superseded docs (PLAN.md, RESTART_INSTRUCTIONS.md, TODO.md) |
 | `AGENTS.md` | Cross-tool agent entry point |
 | `CLAUDE.md` | Developer commands + agent guide |
 | `CITATION.cff` | Paper citation metadata |
