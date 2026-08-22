@@ -45,8 +45,12 @@
 |----------|-----------|--------|-------------|
 | V6.3 | 52.6 kg ⚠ | 6 expansion | Many small fans beat one big one. **⚠ Dynamically impossible** — parasitic drag 14,277× aero power. Maths artefact, not a real design. |
 | V10 | 76.75 kg | 1 | PCA decoupling, two-basin trap, slenderness gate |
-| **V10 Tight** | **49.2 kg** | **4** | k_mppt fix + ring-mapping fix unlocked multi-rotor |
-| **V12 5kW (RUNNING)** | — | — | Graduated ladder rung 1. Cold-start V12 evaluator (`scripts/run_v12_5kw.jl`), seeded population, per-gen genome saves. Predecessor V10 static campaign rejected: mass-minimisation shrank designs to 0.48 kg junk (no power gate). See `handover-2026-08-12-5kw-baseline.md` |
+| **V10 Tight (RETRACTED)** | 49.2 kg | 4 | centre-constraint spokes artificially stiff — retracted 2026-07-13 |
+| **5 kW validated base (2026-08-22)** | — | 1 (hub) | Honest-window evaluator (relax 10 + window 40), unified λ³ blade-mass law (m_ref 0.420 kg), main rotor modelled once (hub double-model removed), k=2.24, 18.8 m. **DE CAMPAIGN RUNNING** (`scripts/run_v13_5kw_masslift.jl`, mass_min, FoS 2.5, P floor 5 kW). Seed sustains 8.0 kW on 60 m². See `handover-2026-08-22-validated-5kw-campaign-launched.md`. |
+
+Pre-2026-08-22 5 kW winners are VOID (50 kW blade mass, wrong-length machine,
+hub double-model). See `docs/validation/physics-validation-ledger.md` for what
+is believed and why.
 
 ## What the Optimizer Is Telling Us
 
