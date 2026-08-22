@@ -29,14 +29,17 @@ re-verified against HEAD on 2026-08-22.
   20–24 N·m (9× under-clamp, audit §2.4) — the quadratic law is
   wrong at small scale, exactly where we now work.
 - **BINDING AT 5 kW — MEASURED (2026-08-22, settle-gap diag):** the seed's
-  ODE trace shows P_gen = 625·ω exactly once ω > 10.8 rad/s — the machine
-  spins UP past the unclamped MPPT equilibrium because the clamp cannot
-  load it further (unclamped demand at ω 14.19 is k·ω² = 1085 N·m vs
-  clamp 625).  The seed's "sustained 8.95 kW" is CLAMP-LIMITED
-  (625 N·m × 14.4 rad/s), not a k·ω³ operating point.  The running 5 kW
-  campaign is therefore optimising against the clamp as much as the power
-  floor; winners must be interpreted with this in mind, and Stage A gains a
-  variant comparing the cap law (see model-comparison plan A5).
+  ODE trace at k=5.39 shows P_gen = 625·ω exactly once ω > 10.8 rad/s — the
+  machine spins UP past the unclamped MPPT equilibrium because the clamp
+  cannot load it further (unclamped demand at ω 14.19 is k·ω² = 1085 N·m vs
+  clamp 625).  The seed's "sustained 8.95 kW" at k=5.39 is CLAMP-LIMITED
+  (625 N·m × 14.4 rad/s), not a k·ω³ operating point.
+- **Campaign at k=2.24 is BELOW the clamp (verified 2026-08-22):** the DE's
+  winner-class designs operate at τ = 2.24·ω² with ω ≈ 13–16 rad/s → τ ≈
+  380–570 N·m < 625 N·m; the clamp binds only above ω 16.7 (~10 kW) at this
+  k.  The running campaign's winners are MPPT-limited, not clamp-limited.
+  The A5 variant (cap-law comparison) still matters at the boundaries and for
+  any future k re-sweep above k≈3.
 
 **Proposed fix:** a single `generator_torque_cap(p)` derived from the
 machine's RATED torque.  τ_rated = P_rated/ω_rated with ω_rated ∝ v/R and
