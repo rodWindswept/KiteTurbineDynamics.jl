@@ -99,3 +99,15 @@ derives from the rated operating point).  Remove the magic 2500.
 4. Minor batch.
 5. Re-baseline acceptance suite once (all convention fixes together) rather
    than per-fix, to amortise the ODE test cost.
+
+## Verified addendum (2026-08-22, campaign monitoring)
+
+- **n_rings ≥ 5 model-validity bound (2026-07-25 A3):** only `n_rings < 1`
+  is gated (`objective_evaluator.jl:439`).  At 18.8 m the decoder's minimum
+  is n_rings = 6 (target_Lr = 2.8), so the degenerate n_rings=3 family
+  (50 kW / 67 m blowups) is structurally closed for THIS campaign — verified
+  on the current HEAD.  Add the bound anyway as a model-validity gate for
+  longer tethers (Stage-B campaigns at other lengths).
+- The FoS=Inf exploit (item 0) therefore needs a real FoS-capture failure
+  (not the n_rings shortcut) to fire at 5 kW — narrow but not impossible;
+  telemetry monitoring continues.
