@@ -800,9 +800,27 @@ function evaluate_windowed(
     # don't use mass ignore the 4th argument.
     P_score = cfg.power_stat === :tail5 ? P_end : P_mean
     m_airborne = expansion_airborne_mass(sys, pc)
+
+    # S3: mean lift-line tension over the window (real newtons, per-genome —
+    # the sized lifter's T_ref scaled by (v/v_ref)²).  Falls back to the
+    # sized device's design-point T_ref when no samples landed.  Computed
+    # BEFORE the fitness seam so honest rejects carry it too (2026-08-21).
+    T_lift_mean = isempty(T_lift_samples) ?
+        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0) :
+        mean(T_lift_samples)
+
     fitness = fitness_fn(P_score, FoS_min, cfg, m_airborne)
     if !isfinite(fitness)
-        return rejected_eval(ω_eq)
+        # HONEST REJECT (2026-08-21): a below-floor / below-FoS design still
+        # measured real power and load in the window (e.g. the k=4.0 seed:
+        # P_mean≈6.5 kW, P_end≈4.5 kW < 5.0 floor — the k sweep read this as
+        # a "0 kW stall" because rejected_eval zeroed every field).  Carry
+        # the measured statistics so telemetry shows WHY the design failed.
+        # Status stays :reject and fitness stays Inf — gates and the DE are
+        # unchanged; only the recorded numbers become truthful.
+        return ObjectiveResult(:reject, Inf, P_mean, FoS_min, ω_eq, P_range,
+                          drift > 0.20, stationary, util_a, util_b, T_lift_mean,
+                          P_end, twist_flagged[], false)
     end
     # F5 stationarity soft penalty: excess swing (beyond the gate's 20% of
     # mean) is ADDED to fitness so the DE prefers steady designs.
@@ -812,13 +830,6 @@ function evaluate_windowed(
     excess = max(0.0, swing - STATIONARITY_SWING)
     fitness = fitness + STATIONARITY_LAMBDA * excess
     drifted = drift > 0.20  # >20% drift = flagged
-
-    # S3: mean lift-line tension over the window (real newtons, per-genome —
-    # the sized lifter's T_ref scaled by (v/v_ref)²).  Falls back to the
-    # sized device's design-point T_ref when no samples landed.
-    T_lift_mean = isempty(T_lift_samples) ?
-        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0) :
-        mean(T_lift_samples)
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
                       drifted, stationary, util_a, util_b, T_lift_mean,

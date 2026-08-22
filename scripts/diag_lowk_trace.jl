@@ -1,7 +1,6 @@
 #!/usr/bin/env julia
-# Chain-state trace: segment twist, tension, transmitted torque through the
-# window for k=4.0 (rejects) vs k=5.39 (ok).  Determines whether the low-k
-# reject is slack-chain (twist unwound, tension ~0) or something else.
+# Trace WHERE the low-k reject happens: run evaluate_windowed at k=0.5 and
+# k=5.39 with the trace callback, print result + ω_gnd samples.
 using KiteTurbineDynamics, Printf
 include(joinpath(@__DIR__, "compute_seeds.jl"))
 
@@ -32,7 +31,7 @@ xr = clamp.(copy(seed_v), lo, hi)
 xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
 xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
 
-function trace_at(k::Float64)
+function run_at(k::Float64)
     cfg = ObjectiveConfig(;
         power_W = PW, v_rated = V_RATED,
         p_floor_kw = 5.0, p_ceiling_kw = 5.0,
@@ -43,25 +42,15 @@ function trace_at(k::Float64)
         k_mppt = k,
         tether_diameter = p_base.tether_diameter,
     )
-    # rows: t, omega_gnd, segment1 twist (deg), segment1 tension (N),
-    #       P (kw), tau_gen (Nm)
-    rows = Tuple{Float64,Float64,Float64,Float64,Float64,Float64}[]
+    ω_trace = Float64[]
     trace_cb = (u, t, step, ctx) -> begin
         sysc = ctx.sys
         Nr = sysc.n_ring; N = sysc.n_total
-        omega_gnd = u[6N + Nr + 1]
-        if length(rows) < 3 || step % 800 == 0
-            ef = capture_extended(u, sysc, ctx.pc, t, ctx.wf, ctx.lift_device;
-                                  brake_engaged=sysc.brake_engaged[])
-            τs = ef.segment_torque
-            tw = ef.segment_twist_deg
-            te = ef.segment_tension
-            t1 = length(τs) >= 1 ? τs[1] : NaN
-            tw1 = length(tw) >= 1 ? tw[1] : NaN
-            te1 = length(te) >= 1 ? te[1] : NaN
-            push!(rows, (t, omega_gnd, tw1, te1, ef.base.P_kw, t1))
+        if length(ω_trace) < 20 || step % 500 == 0
+            push!(ω_trace, u[6N + Nr + 1])
         end
     end
+    println("── k=$k ──")
     t0 = time()
     r = KiteTurbineDynamics.evaluate_windowed(
         xr, PROFILE_ELLIPTICAL, p_base, cfg;
@@ -70,15 +59,17 @@ function trace_at(k::Float64)
         trace_callback = trace_cb,
         fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
     )
-    println("── k=$k  status=$(r.status)  P_mean=$(round(r.P_mean,digits=2))  P_end=$(round(r.P_end,digits=2))  FoS=$(r.FoS_min)  ($(round(time()-t0,digits=1))s) ──")
-    println("  t(s)   ω_gnd   seg1_twist(°)  seg1_T(N)  P(kW)  τ_rope(Nm)")
-    for (t, w, tw1, te1, pk, t1) in rows
-        @printf("  %5.1f  %6.2f   %9.2f    %8.1f  %5.2f  %7.1f\n", t, w, tw1, te1, pk, t1)
+    println("  wall=$(round(time()-t0, digits=1))s  status=$(r.status)  P_mean=$(r.P_mean)  P_end=$(r.P_end)  FoS=$(r.FoS_min)  fitness=$(r.fitness)")
+    println("  ω_gnd first: ", [round(w, digits=2) for w in ω_trace[1:min(6, end)]])
+    if length(ω_trace) > 6
+        println("  ω_gnd last:  ", [round(w, digits=2) for w in ω_trace[max(1, end-5):end]])
+        println("  ω_gnd max=$(round(maximum(ω_trace), digits=2))  min=$(round(minimum(ω_trace), digits=2))  n=$(length(ω_trace))")
     end
     flush(stdout)
+    return r
 end
 
-for k in [4.0, 5.39]
-    trace_at(k)
+for k in [0.5, 3.0, 4.0, 5.39]
+    run_at(k)
 end
 println("DONE")

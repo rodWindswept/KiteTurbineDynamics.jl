@@ -1,7 +1,6 @@
 #!/usr/bin/env julia
-# Chain-state trace: segment twist, tension, transmitted torque through the
-# window for k=4.0 (rejects) vs k=5.39 (ok).  Determines whether the low-k
-# reject is slack-chain (twist unwound, tension ~0) or something else.
+# Per-segment twist trace WITHOUT capture_extended (pure state reads) +
+# result flags (twist_crossed, line_broken) for k=4.0 / 5.39 / 0.5.
 using KiteTurbineDynamics, Printf
 include(joinpath(@__DIR__, "compute_seeds.jl"))
 
@@ -32,6 +31,9 @@ xr = clamp.(copy(seed_v), lo, hi)
 xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
 xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
 
+# collapse limit used by twist_collapse_check — find it
+const TW_CHECK = KiteTurbineDynamics.twist_collapse_check
+
 function trace_at(k::Float64)
     cfg = ObjectiveConfig(;
         power_W = PW, v_rated = V_RATED,
@@ -43,23 +45,16 @@ function trace_at(k::Float64)
         k_mppt = k,
         tether_diameter = p_base.tether_diameter,
     )
-    # rows: t, omega_gnd, segment1 twist (deg), segment1 tension (N),
-    #       P (kw), tau_gen (Nm)
-    rows = Tuple{Float64,Float64,Float64,Float64,Float64,Float64}[]
+    # sample per 1 s: t, omega_gnd, all 12 segment twists (deg)
+    rows = Tuple{Float64,Float64,Vector{Float64}}[]
     trace_cb = (u, t, step, ctx) -> begin
         sysc = ctx.sys
         Nr = sysc.n_ring; N = sysc.n_total
         omega_gnd = u[6N + Nr + 1]
-        if length(rows) < 3 || step % 800 == 0
-            ef = capture_extended(u, sysc, ctx.pc, t, ctx.wf, ctx.lift_device;
-                                  brake_engaged=sysc.brake_engaged[])
-            τs = ef.segment_torque
-            tw = ef.segment_twist_deg
-            te = ef.segment_tension
-            t1 = length(τs) >= 1 ? τs[1] : NaN
-            tw1 = length(tw) >= 1 ? tw[1] : NaN
-            te1 = length(te) >= 1 ? te[1] : NaN
-            push!(rows, (t, omega_gnd, tw1, te1, ef.base.P_kw, t1))
+        if step % 4000 == 0 || length(rows) < 2
+            alpha = u[(6N + 1):(6N + Nr)]
+            twists = [rad2deg(abs(alpha[i+1] - alpha[i])) for i in 1:(Nr-1)]
+            push!(rows, (t, omega_gnd, twists))
         end
     end
     t0 = time()
@@ -70,15 +65,24 @@ function trace_at(k::Float64)
         trace_callback = trace_cb,
         fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
     )
-    println("── k=$k  status=$(r.status)  P_mean=$(round(r.P_mean,digits=2))  P_end=$(round(r.P_end,digits=2))  FoS=$(r.FoS_min)  ($(round(time()-t0,digits=1))s) ──")
-    println("  t(s)   ω_gnd   seg1_twist(°)  seg1_T(N)  P(kW)  τ_rope(Nm)")
-    for (t, w, tw1, te1, pk, t1) in rows
-        @printf("  %5.1f  %6.2f   %9.2f    %8.1f  %5.2f  %7.1f\n", t, w, tw1, te1, pk, t1)
+    println("── k=$k  status=$(r.status)  P_mean=$(round(r.P_mean,digits=2))  P_end=$(round(r.P_end,digits=2))  FoS=$(r.FoS_min)  twist_crossed=$(r.twist_crossed)  line_broken=$(r.line_broken)  ($(round(time()-t0,digits=1))s) ──")
+    if !isempty(rows)
+        println("  t(s)  ω_gnd   per-segment twist (deg): 1..12")
+        for (t, w, tw) in rows
+            @printf("  %5.1f %6.2f  %s\n", t, w, join([@sprintf("%6.2f", x) for x in tw], " "))
+        end
+        # last row: max twist and which segment
+        t_last, w_last, tw_last = rows[end]
+        mx, mi = findmax(tw_last)
+        @printf("  LAST: max twist %.2f° at segment %d, ω_gnd=%.2f\n", mx, mi, w_last)
+        t1, w1, tw1 = rows[1]
+        mx1, mi1 = findmax(tw1)
+        @printf("  FIRST: max twist %.2f° at segment %d, ω_gnd=%.2f\n", mx1, mi1, w1)
     end
     flush(stdout)
 end
 
-for k in [4.0, 5.39]
+for k in [4.0, 5.39, 0.5]
     trace_at(k)
 end
 println("DONE")

@@ -15,9 +15,12 @@
 #   test_rotor_power_realism.jl  (P1-P4)  Betz limit, cp table, no divergence.
 #   test_settle_drag_alignment.jl (A-E)   settle omega matches the 20 s ODE
 #                                         final (drag-alignment); drag model sane.
+#   test_settle_lowk_honest.jl    (A1-A3)  low-k rejects carry honest telemetry
+#                                         (no 0 kW/FoS=Inf disguise); settle
+#                                         scan clamps to rising side of cp.
 #
-# WHY NOT IN runtests.jl: these five are ~35 min of the suite when run in
-# sequence. They run here as five INDEPENDENT subprocesses in PARALLEL
+# WHY NOT IN runtests.jl: these six are ~40 min of the suite when run in
+# sequence. They run here as six INDEPENDENT subprocesses in PARALLEL
 # (~18 min wall-clock, bounded by the slowest file, test_evaluator_v13.jl),
 # so the fast unit suite stays fast.
 #
@@ -35,6 +38,7 @@ const ACCEPTANCE_FILES = [
     "test_rope_break",
     "test_rotor_power_realism",
     "test_settle_drag_alignment",
+    "test_settle_lowk_honest",
 ]
 
 # Launch each acceptance file as its own julia process. Each file is a

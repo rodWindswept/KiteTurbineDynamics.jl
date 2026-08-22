@@ -1,7 +1,6 @@
 #!/usr/bin/env julia
-# Chain-state trace: segment twist, tension, transmitted torque through the
-# window for k=4.0 (rejects) vs k=5.39 (ok).  Determines whether the low-k
-# reject is slack-chain (twist unwound, tension ~0) or something else.
+# Which gate rejects k=4.0?  Pure state reads only (no capture_extended):
+# per-ring omega, hand-computed P = k·ω_gnd³, hub tip speed vs ceiling.
 using KiteTurbineDynamics, Printf
 include(joinpath(@__DIR__, "compute_seeds.jl"))
 
@@ -43,23 +42,17 @@ function trace_at(k::Float64)
         k_mppt = k,
         tether_diameter = p_base.tether_diameter,
     )
-    # rows: t, omega_gnd, segment1 twist (deg), segment1 tension (N),
-    #       P (kw), tau_gen (Nm)
-    rows = Tuple{Float64,Float64,Float64,Float64,Float64,Float64}[]
+    rows = Tuple{Float64,Float64,Float64,Float64,Float64}[]
     trace_cb = (u, t, step, ctx) -> begin
         sysc = ctx.sys
         Nr = sysc.n_ring; N = sysc.n_total
-        omega_gnd = u[6N + Nr + 1]
-        if length(rows) < 3 || step % 800 == 0
-            ef = capture_extended(u, sysc, ctx.pc, t, ctx.wf, ctx.lift_device;
-                                  brake_engaged=sysc.brake_engaged[])
-            τs = ef.segment_torque
-            tw = ef.segment_twist_deg
-            te = ef.segment_tension
-            t1 = length(τs) >= 1 ? τs[1] : NaN
-            tw1 = length(tw) >= 1 ? tw[1] : NaN
-            te1 = length(te) >= 1 ? te[1] : NaN
-            push!(rows, (t, omega_gnd, tw1, te1, ef.base.P_kw, t1))
+        w_gnd = u[6N + Nr + 1]
+        hub_ri = (sysc.nodes[sysc.rotor.node_id]::RingNode).ring_idx
+        w_hub = u[6N + Nr + hub_ri]
+        P_hand = sysc.k_mppt_ref[] * w_gnd^3 / 1000.0
+        tip_mps = w_hub * sysc.rotor.radius
+        if step % 4000 == 0 || length(rows) < 2
+            push!(rows, (t, w_gnd, w_hub, P_hand, tip_mps))
         end
     end
     t0 = time()
@@ -70,11 +63,12 @@ function trace_at(k::Float64)
         trace_callback = trace_cb,
         fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
     )
-    println("── k=$k  status=$(r.status)  P_mean=$(round(r.P_mean,digits=2))  P_end=$(round(r.P_end,digits=2))  FoS=$(r.FoS_min)  ($(round(time()-t0,digits=1))s) ──")
-    println("  t(s)   ω_gnd   seg1_twist(°)  seg1_T(N)  P(kW)  τ_rope(Nm)")
-    for (t, w, tw1, te1, pk, t1) in rows
-        @printf("  %5.1f  %6.2f   %9.2f    %8.1f  %5.2f  %7.1f\n", t, w, tw1, te1, pk, t1)
+    println("── k=$k  status=$(r.status)  P_mean=$(r.P_mean)  P_end=$(r.P_end)  FoS=$(r.FoS_min)  twist=$(r.twist_crossed)  broken=$(r.line_broken)  ($(round(time()-t0,digits=1))s) ──")
+    println("  t(s)   ω_gnd   ω_hub   P_hand(kW)  tip(m/s)")
+    for (t, wg, wh, ph, tip) in rows
+        @printf("  %5.1f  %6.2f  %6.2f   %6.2f    %7.1f\n", t, wg, wh, ph, tip)
     end
+    println("  TIP_SPEED_CEILING = $(KiteTurbineDynamics.TIP_SPEED_CEILING_MPS) m/s")
     flush(stdout)
 end
 

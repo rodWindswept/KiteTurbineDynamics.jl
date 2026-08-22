@@ -819,7 +819,19 @@ function settle_to_operational_state(
         # highest ω where P_aero > P_gen to avoid the trivial P=0 stall state.
         # Includes expansion rotor power if present (V10 Tight et al.).
         has_exp = !isempty(sys.expansion_rotors)
-        for w in range(ω_rated_max, 0.1; length=200)
+        # 2026-08-21: clamp the scan top to the cp peak.  The unclamped scan
+        # starts at ω_rated_max and takes the FIRST ω where the simplified
+        # P_aero > P_gen; at LOW k that crossing sits at the cp TABLE EDGE
+        # (λ=8.0, cp=0.138 — half the peak) where the settle model's ~10%
+        # margin is erased by ODE losses the settle doesn't model (rope drag,
+        # bearing/orbital damping).  The ODE then opens the window in a long
+        # decay transient and low-k machines read as zero-power.  Parking the
+        # settle at the cp peak (max torque surplus) gives the ODE a robust
+        # start; the ODE finds its own equilibrium from there.  For high k
+        # the crossing is already below the peak → bit-identical behaviour.
+        λ_peak = BEM_TSR[argmax(BEM_CP)]
+        ω_scan_top = min(ω_rated_max, λ_peak * v_mag / sys.rotor.radius)
+        for w in range(ω_scan_top, 0.1; length=200)
             # Hub rotor power — swept ANNULUS π(R² − r_in²) (2026-08-20, consistent
             # with expansion rotors; 0.0 inner tip = legacy full disk).
             lambda = w * sys.rotor.radius / v_mag
