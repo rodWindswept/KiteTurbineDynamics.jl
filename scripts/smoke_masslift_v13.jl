@@ -18,7 +18,7 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 const KW = 5.0
 const PW = KW * 1000.0
 const V_RATED = 11.0
-const WINDOW_S = 20.0
+const WINDOW_S = 40.0   # HONEST window (2026-08-22), matches the runner
 
 lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
     sys, p; margin=1.5, v_ref=V_RATED, const_tension=true)
@@ -46,11 +46,11 @@ function main()
         cfg = ObjectiveConfig(;
             power_W = PW, v_rated = V_RATED,
             p_floor_kw = 5.0, p_ceiling_kw = 5.0,
-            relax_s = 5.0, window_s = WINDOW_S,
+            relax_s = 10.0, window_s = WINDOW_S,
             fos_target = 2.5, fos_hard = 2.5,
             power_stat = :tail5, penalize_ceiling = false,
             kickstart_s = 0.0,
-            k_mppt = 5.39,   # sweep-selected operating point (see runner)
+            k_mppt = 2.24,   # honest 6-blade anchor, 2026-08-22 sweep (see runner)
             tether_diameter = p_base.tether_diameter,
         )
 

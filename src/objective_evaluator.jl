@@ -542,6 +542,11 @@ function evaluate_windowed(
         if u_settled === nothing
             return rejected_eval()
         end
+        # Carry the settle's ground-ring ω into the result's ω_eq (2026-08-22):
+        # the cold path previously left ω_eq = 0.0, so telemetry read "settle
+        # failed" when it had parked at a perfectly good operating point.  The
+        # sweep's ω_settle−ω_final gap metric depends on this.
+        ω_eq = u_settled[6 * sys.n_total + sys.n_ring + 1]
 
         orig_k = sys.k_mppt_ref[]
         try

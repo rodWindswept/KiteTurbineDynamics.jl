@@ -123,13 +123,16 @@ cfg = ObjectiveConfig(;
     fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly
-    k_mppt = 5.39,   # k sweep 2026-08-22 honest re-run (scripts/results/k_sweep_daisy_5kw.csv):
-                     # knee moved with Gate-1c physics — k=4.0 now rejects
-                     # (P_end 4.94 kW < 5.0 floor); k=5.39 ok (P_end 5.97 kW,
-                     # window-flattered — true equilibrium 3.15 kW at k·ω³).
-                     # RE-SWEEP under the honest window (relax 10 + window 40)
-                     # before launch (2026-08-21 open task).
-                     # NOT p_base.k_mppt (3.55, sub-knee).
+    k_mppt = 2.24,   # HONEST k (2026-08-22 sweep on the FIXED machine — hub
+                     # double-model removed, 18.8 m, unified λ³ mass law):
+                     # the 6-blade Daisy anchor scaled 0.175·(5/1.5)^2.5 =
+                     # 2.24 sustains 8.0 kW (P_end, converged window) at ω 15.3
+                     # (tip 73 m/s), FoS 36.  k=1.0 sustains 5.45 kW but at
+                     # ω 17.6 (tip 85 m/s, near the 100 m/s ceiling).  The old
+                     # 5.39 (3-blade anchor) was chosen on the BROKEN machine
+                     # and is retired (it forces ~9 kW from the 60 m² seed).
+                     # Sweep: scripts/results/k_sweep_daisy_5kw.csv.
+                     # NOT p_base.k_mppt (3.55 — mass_scale'd, unanchored).
     tether_diameter = p_base.tether_diameter,
 )
 
