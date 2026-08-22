@@ -1818,3 +1818,61 @@ the annulus π(2.22²−1.22²) = 10.8 m² matches the measured 11.2 m²; Daisy
 φ ≈ 1.3 kg/kW → 5 kW ≈ 4–7 kg, consistent with the fixed model's φ ≈
 1 kg/kW. Mass exponent underdetermined from one point; field tests measure
 it.
+### [2026-08-22] Unified blade-mass law: m = m_ref · λ³ + knuckle floor
+
+**Context:** three mutually inconsistent blade-mass models coexisted: the
+main-rotor AREA law (`m_blade · λ²`, objective_evaluator.jl), the CFRP
+CUBE law for expansion rotors (`(0.3 + 0.1·tip)·λ³`, expansion_rotor.jl),
+and the empirical rung law (`m ∝ P^1.35`). Rod (2026-08-22): rigid-foam
+blades scale with VOLUME (λ³), not area — the λ² term and the CFRP
+constants are rejected. The Daisy blade anchor is **420 g** (measured; the
+same wings/fuselages on both the 3-blade and 6-blade rotors) — the Gate 1c
+renormalisation to 210 g is REVERSED: the built 6-blade rotor carries
+6 × 420 g = 2.52 kg/ring.
+
+**Decision (Rod's approval, 2026-08-22):**
+1. **Unified law:** `m_per_blade = m_ref · λ³` for main AND expansion
+   rotors, `m_ref` = the rung's per-blade reference mass (`M_BLADE_REF_KG`
+   = 0.420 kg at the Daisy rung; higher rungs pass their mass_scale'd
+   base). λ = decoded genome blade_scale × builder dial. The λ³ law
+   composes ON TOP of rung scaling (m_ref ∝ P^1.35) — the rung scales the
+   reference blade geometry, λ scales within a rung. k_mppt stays λ²
+   (power ∝ swept area ∝ λ²); only the mass law changes.
+2. **Knuckle floor:** every blade node carries ≥ `OPT_KNUCKLE_MASS_KG`
+   (0.050 kg, approved 2026-04-20), added into `expansion_airborne_mass`
+   (the DE score AND the lift sizing input). ODE-inertia knuckles flagged
+   as follow-on.
+3. **420 g anchor restored** in `params_daisy`; `M_BLADE_REF_KG = 0.420`
+   exported.
+4. **`geometry_fingerprint` double-count fixed** (`er.mass × er.n_blades`
+   where `er.mass` is already the assembly total).
+5. **Airborne ring count fixed:** `sys.n_ring − 1` (was `p.n_rings`,
+   missing the hub ring).
+6. **Ramp evaluator contamination fixed:** `evaluate_ramp` did NOT pass
+   `base_params=p` to `build_system_from_v10` — it built every rung with
+   the 50 kW base (12.0757 kg/blade), the same contamination DECISIONS
+   [2026-08-20] fixed for `evaluate_windowed`. Both evaluators now build
+   the same machine.
+7. **Length double-scaling fixed:** `params_at_length(L)` in the runner,
+   smoke, gate and k-sweep mass_scaled the explicitly-passed length again
+   (×√(5/1.5) ≈ 1.826) — "18.8 m" machines were actually 34.3 m while
+   h_ref/masses described 18.8 m. `tether_length` is now restored to L
+   after rung scaling. **All 5 kW ODE evidence from 2026-08-21 onward was
+   measured on the wrong-length machine and is superseded** (the k sweep
+   is re-run under the honest window, 2026-08-21 open task).
+8. **Seed rotor-area discrepancy flagged:** the built seed sweeps ≈ 60 m²
+   (decoder sizes against the hub wind v_i ≈ 8.7 m/s, r_out ≈ 4.8 m) —
+   NOT the ~10.8 m² the 2026-08-21 handover assumed. The honest-window
+   traces must measure the true sustained power of the corrected machine.
+
+**Verification:** RED tests first (`test/test_blade_mass_law.jl`, 15
+assertions: λ³ law, 420 g anchor, knuckle floor, fingerprint, rung base);
+implemented; fast suite **1936/1936 green**. Seed consequences on the
+corrected 18.8 m machine: m_airborne (no lifter) = 29.85 kg (was 13.12 kg
+at the wrong length / 210 g law), T_lift(ref) = 467 N (1.5× margin,
+const_tension), main blades 12.8 kg + 1 expansion rotor 12.8 kg + knuckles
+0.6 kg.
+
+**Remaining:** k re-sweep under the honest window on the corrected machine
+(2026-08-21 open task); acceptance suite re-baseline on the re-run's
+winners; ODE-inertia knuckles.

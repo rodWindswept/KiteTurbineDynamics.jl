@@ -116,6 +116,7 @@ export evaluate_design, baseline_design, search_bounds, design_from_vector, obje
 export peak_hub_thrust
 export OPT_E_CFRP, OPT_RHO_CFRP, OPT_KNUCKLE_MASS_KG, OPT_V_PEAK, OPT_FOS_REQUIRED
 export OPT_DESIGN_LOAD_FACTOR
+export M_BLADE_REF_KG   # unified blade-mass law reference (2026-08-22)
 
 # TRPT v2: enriched axial-profile family + 12-DoF search space (Phase A of cartography)
 export AxialProfile,

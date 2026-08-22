@@ -289,11 +289,6 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     (; design, rotors, n_rings) = result
     n_lines = design.n_lines
 
-    # Build expansion rotor params (Gate 1c: n_blades = n_lines) — single
-    # authority mapping, see builders_util.jl:expansion_params_from_rotors.
-    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                    blade_scale=blade_scale)
-
     # Rung-scaled campaign base when provided (5 kW campaigns pass their own
     # params_at_length base); default is the 50 kW base so existing 50 kW
     # callers are unchanged.  (2026-08-20: previously hard-coded
@@ -301,6 +296,14 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # mass — see docs/reports/grounded-economics-v13.md §4b.)
     p_base = base_params === nothing ? params_v5_50kw() : base_params
     le = blade_scale
+
+    # Build expansion rotor params (Gate 1c: n_blades = n_lines) — single
+    # authority mapping, see builders_util.jl:expansion_params_from_rotors.
+    # Unified blade-mass law (2026-08-22): assembly = n_lines · p_base.m_blade
+    # · λ³ with λ the rotor's decoded blade_scale (builder dial 1.0 here).
+    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                                    blade_scale=blade_scale,
+                                                    m_blade_ref=p_base.m_blade)
 
     # Compute design-aware per-ring mass from actual tube geometry instead of
     # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
@@ -345,16 +348,17 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
-    # Main-rotor blade mass: rung-scaled base × λ_eff², where λ_eff is the
-    # genome's blade scale for the reference rotor (area scales as λ²; the
-    # same convention as the k_mppt λ²-scaling, objective_evaluator.jl:426).
-    # Previously p_base.m_blade × le² with the 50 kW base and le=1.0 — the
-    # 50 kW blade-mass contamination (2026-08-20, §4b).  The λ² factor is a
-    # deliberate physics change for any run with λ<1 rotors (blades scale
-    # with area), not just the 5 kW rung.
+    # Main-rotor blade mass: rung-scaled base × λ_eff³, where λ_eff is the
+    # genome's blade scale for the reference rotor.  VOLUME law (2026-08-22,
+    # Rod): rigid-foam blades scale with λ³, not λ² — the λ² (area) term is
+    # rejected.  The k_mppt λ²-scaling (objective_evaluator.jl:426) is
+    # UNCHANGED — power ∝ swept area ∝ λ² is correct physics; only the mass
+    # law changes (mass ∝ volume ∝ λ³).  Previously p_base.m_blade × le² ×
+    # λ_eff² with the 50 kW base and le=1.0 — the 50 kW blade-mass
+    # contamination (2026-08-20, §4b).
     λ_eff = isempty(rotors) ? 1.0 : rotors[1].blade_scale
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
-                       p_base.m_blade * le^2 * λ_eff^2)
+                       p_base.m_blade * le^3 * λ_eff^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
                        p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
@@ -478,7 +482,8 @@ function evaluate_windowed(
         # disagreed about which machine they were solving).  Blade scale 1.0
         # matches the ODE build; the old `expansion_blade_mass(tip, λ)` call
         # also disagreed with the ODE path's mass for λ ≠ 1 rotors.
-        expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
+        expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                                            m_blade_ref=p.m_blade)
 
         _, radii, _ = ring_spacing_v4(
             design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;

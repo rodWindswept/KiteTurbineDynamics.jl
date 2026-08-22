@@ -27,7 +27,10 @@
         m_exp  = expansion_airborne_mass(sys_exp, p)
         m_base = expansion_airborne_mass(sys_base, p)
 
-        @test m_exp - m_base ≈ 1.5 atol=0.1
+        # Delta = 3 × mass_per_rotor (0.5) + knuckle floor for every expansion
+        # blade node (3 rotors × er.n_blades × 0.050) (2026-08-22).
+        expected = 3 * 0.5 + 3 * p.n_blades * KiteTurbineDynamics.OPT_KNUCKLE_MASS_KG
+        @test m_exp - m_base ≈ expected atol=0.1
     end
 
     # === Test 3: φ computation (mass/power ratio) ===

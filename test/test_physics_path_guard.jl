@@ -30,7 +30,7 @@ using KiteTurbineDynamics
 
     # ── Evaluate under DEFAULT physics (all flags ON) ──────────────────
     # Default state after module load: all true
-    set_expansion_physics!(ExpansionPhysics(true, true, true))
+    set_expansion_physics!(ExpansionPhysics(true, true))
     f_default = objective_v10(x, beam, p)
     @test isfinite(f_default)
 
@@ -40,7 +40,7 @@ using KiteTurbineDynamics
     # Legacy may produce Inf on this genome — that's a valid "different" result
 
     # ── RESTORE default physics ────────────────────────────────────────
-    set_expansion_physics!(ExpansionPhysics(true, true, true))
+    set_expansion_physics!(ExpansionPhysics(true, true))
 
     # ── The guard ──────────────────────────────────────────────────────
     @test !isfinite(f_legacy) || f_default != f_legacy

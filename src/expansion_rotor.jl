@@ -136,8 +136,12 @@ end
 #      T_M uses Glauert/Buhl empirical branch above a = 0.4.
 # Toggle: unified expansion_rotor_physics (2026-07-18, pre_gates_scoping.md GATE 2).
 # Replaces the scattered per-feature flags (EXPANSION_INDUCTION, soon blade_inertia,
-# corrected_mass, eventually wake_coupling) with a single struct — one atomic pin
+# eventually wake_coupling) with a single struct — one atomic pin
 # per era, safe by construction where multiple partial toggles were interacting silently.
+# NOTE (2026-08-22): corrected_mass was removed from the struct — the unified
+# blade-mass law (m = m_ref·λ³, DECISIONS [2026-08-22]) is unconditional, so the
+# n_blades-era toggle is dead.  Legacy-reproduction scripts get the new law by
+# decision (the CFRP (0.3+0.1·tip) law it gated was wrong for rigid foam).
 #
 # Legacy reproduction scripts (phantom gate, archived sweep CSVs) call
 #   set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
@@ -146,11 +150,10 @@ end
 @kwdef mutable struct ExpansionPhysics
     induction::Bool      = true    # per-annulus induction + α model
     blade_inertia::Bool  = true    # blade mass in rotational ODE (Gate 2b)
-    corrected_mass::Bool = true    # n_blades factor in expansion_blade_mass (Gate 2a)
 end
 
 "Named era — pinned by all legacy-reproduction scripts."
-const LEGACY_PHYSICS_PRE_2026_07_18 = ExpansionPhysics(false, false, false)
+const LEGACY_PHYSICS_PRE_2026_07_18 = ExpansionPhysics(false, false)
 
 const EXPANSION_PHYSICS = Ref{ExpansionPhysics}(ExpansionPhysics())
 
@@ -442,35 +445,37 @@ function expansion_rotor_inertia(er::ExpansionRotorParams, r_nominal::Float64)
 end
 
 """
-    expansion_blade_mass(blade_tip_radius, blade_scale, n_blades=nothing) -> Float64
+    expansion_blade_mass(blade_tip_radius, blade_scale, n_blades=nothing;
+                         m_ref=M_BLADE_REF_KG) -> Float64
 
 Total blade mass for one expansion rotor assembly (all `n_blades` blades).
 
-**Semantics choice (Rod, 2026-07-18):** the legacy ``(0.3 + 0.1·tip)·λ³`` value
-was calibrated during the 3-blade era (Daisy, legacy triangle, legacy 12-gon all
-used n_blades=3).  It is treated as the correct TOTAL mass for a 3-blade assembly.
-When `EXPANSION_PHYSICS[].corrected_mass` is true, the assembly total is
-``(n_blades/3) · legacy_total`` — Daisy (3-blade) is invariant by construction,
-while a 12-blade assembly scales by ×4.  The alternative reading (legacy was
-per-blade all along) would shift Daisy by ×3 and fail the extant hardware validation.
-
-Mass scales with the cube of blade linear dimension: mass ∝ volume ∝ span³.
-The empirical constants (0.3 kg base + 0.1 kg/m per unit tip radius) are
-calibrated from CFRP blade mass estimates for the V10 configuration.
+**Unified volume law (2026-08-22, Rod):** rigid-foam blades scale with VOLUME,
+``m_per_blade = m_ref · λ³``.  `m_ref` defaults to the MEASURED Daisy blade
+(0.420 kg at the Daisy reference geometry); rung-scaled builds pass their own
+rung base (`p_base.m_blade`) so the rung and λ scalings compose.  Replaces the
+CFRP ``(0.3 + 0.1·tip)·λ³`` constants (wrong for rigid foam: at tip 0.7, λ=1
+they gave 0.37 kg/3-blade assembly vs the measured 1.26 kg) and the
+`corrected_mass` era toggle (dead under the unconditional law).
 
 # Arguments
-- `blade_tip_radius`: outer tip radius (m), post-70/30 geometry
-- `blade_scale`: dimensionless scalar (span/chord/mass), λ in [0, 1]
-- `n_blades`: number of blades — used only when `corrected_mass` is on
-  (default: nothing → legacy behaviour preserved for backward compat)
+- `blade_tip_radius`: retained for signature compatibility — the law is a
+  pure similarity law through λ; tip radius does not enter the mass.
+- `blade_scale`: dimensionless scalar (span/chord/mass), λ
+- `n_blades`: number of blades (default nothing → 3, the legacy assembly
+  convention, preserved for backward-compatible signatures)
+- `m_ref`: per-blade reference mass at λ=1 (default 0.420 kg)
 """
-function expansion_blade_mass(blade_tip_radius::Float64, blade_scale::Float64, n_blades::Union{Int,Nothing}=nothing)::Float64
-    legacy_total = (0.3 + 0.1 * blade_tip_radius) * blade_scale^3
-    if !EXPANSION_PHYSICS[].corrected_mass || n_blades === nothing || n_blades <= 0
-        return legacy_total
-    end
-    # Corrected: legacy_total was for 3 blades; scale to n_blades
-    return legacy_total * n_blades / 3
+function expansion_blade_mass(
+    blade_tip_radius::Float64, blade_scale::Float64,
+    n_blades::Union{Int,Nothing}=nothing;
+    m_ref::Union{Nothing,Float64}=nothing,
+)::Float64
+    # kwarg defaults evaluate in the CALLER's scope — resolve the module
+    # constant inside the body (2026-08-22).
+    mref = m_ref === nothing ? M_BLADE_REF_KG : m_ref
+    n = n_blades === nothing ? 3 : max(n_blades, 0)
+    return n * mref * blade_scale^3
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

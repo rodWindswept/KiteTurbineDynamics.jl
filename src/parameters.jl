@@ -2,6 +2,20 @@
 # Physical constants, spec structs, and preset configurations for the TRPT Kite Turbine Simulator.
 
 const DYNEEMA_DENSITY = 970.0   # kg/m³
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Unified blade-mass reference (2026-08-22, Rod)
+# ══════════════════════════════════════════════════════════════════════════════
+# Rigid-foam blades scale with VOLUME: m_per_blade = m_ref · λ³, where λ is the
+# total blade linear scale (genome blade_scale × any builder dial) and m_ref is
+# the rung's reference per-blade mass.  M_BLADE_REF_KG is the MEASURED Daisy
+# blade (420 g at the Daisy reference geometry, span 1.0 m) — the anchor point
+# of the law.  Higher rungs scale m_ref via mass_scale (P^1.35).  Replaces the
+# main-rotor λ² (area) term and the CFRP (0.3 + 0.1·tip) expansion constants.
+# The Gate 1c renormalisation (420 → 210 g) is REVERSED: the 6-blade machine
+# carries 6 × 420 g = 2.52 kg/ring (Rod 2026-08-22).
+# See docs/plans/2026-08-22-blade-mass-volume-law.md and DECISIONS [2026-08-22].
+const M_BLADE_REF_KG = 0.420
 # All numerical values derived from:
 #   - "Rotary AWES Julia Simulation Framework.pdf"         (Framework PDF)
 #   - "Kite Turbine Mass Scaling Analysis.pdf"              (Mass Scaling PDF)
@@ -339,13 +353,14 @@ function params_daisy()::SystemParams
         0.4,                # m_ring (kg) — superseded by geometry-based
                             # m_ring_design in the v10 builder; kept for
                             # non-builder paths
-        0.210,              # m_blade (kg) — effective per-blade under Gate 1c:
-                            # measured Daisy blade 420 g × 3 blades = 1.26 kg/ring;
-                            # the v10 builder forces n_blades = n_lines (6) for a
-                            # balanced polygon, so 3 × 0.420 / 6 = 0.210 kg/blade
-                            # preserves the measured 1.26 kg/ring total
-                            # (Rod 2026-08-21; same renormalisation precedent as
-                            # params_10kw m_blade 11/5 ratified 2026-07-18)
+        0.420,              # m_blade (kg) — MEASURED Daisy blade, restored
+                            # (Rod 2026-08-22): the same 420 g rigid-foam wing
+                            # was used on both the 3-blade and 6-blade rotors;
+                            # the Gate 1c renormalisation (420→210 g so 6
+                            # blades total the 3-blade's 1.26 kg/ring) is
+                            # REVERSED — the built 6-blade rotor carries
+                            # 6 × 0.420 = 2.52 kg/ring.  Per-blade mass scales
+                            # as m_blade · λ³ in the v10 builder (volume law).
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)

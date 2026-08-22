@@ -19,20 +19,27 @@
 # ══════════════════════════════════════════════════════════════════════════════
 # Airborne mass computation
 # ══════════════════════════════════════════════════════════════════════════════
-
-const DYNEEMA_DENSITY = 970.0  # kg/m³
+# NOTE: DYNEEMA_DENSITY comes from parameters.jl (single source); this file
+# previously redefined it (duplicate-representation class, instrument-trust-log).
 
 """
     expansion_airborne_mass(sys::KiteTurbineSystem, p::SystemParams) -> Float64
 
-Compute total airborne mass including expansion rotors.
+Compute total airborne mass including expansion rotors.  This is the TRUE
+physics mass — the DE's mass-minimisation score and the lift-sizing input
+(1.5 × m_airborne × g), so it must be complete and consistent.
 
 Components:
 - Tether mass: n_lines × length × ρ × π·(d/2)²
-- Ring mass: n_rings × m_ring (structural rings)
-- Blade mass: n_blades × m_blade (main rotor blades)
+- Ring mass: ALL airborne rings (sys.n_ring − 1, i.e. ground excluded, hub
+  included) × m_ring — was p.n_rings, missing the hub ring (2026-08-22)
+- Blade mass: n_blades × m_blade (main rotor blades, per-blade)
 - Expansion rotor mass: sum of mass_per_rotor across all expansion rotors
-- Lifter mass: 5.0 kg (rotary lifter estimate)
+  (each an ASSEMBLY total under the unified λ³ law)
+- Knuckle mass (2026-08-22, Rod): every blade node carries ≥
+  OPT_KNUCKLE_MASS_KG (0.050 kg) — main rotor blades + every expansion blade
+- Lifter mass: 5.0 kg (rotary lifter estimate); excluded from tension sizing
+  (Rod 2026-08-21 — the stack carries itself with its own lift)
 """
 function expansion_airborne_mass(
     sys::KiteTurbineSystem, p::SystemParams; include_lifter::Bool=true
@@ -41,21 +48,29 @@ function expansion_airborne_mass(
     m_tether =
         p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
 
-    # Structural rings
-    m_rings = p.n_rings * p.m_ring
+    # Structural rings — ALL airborne rings (system total minus the ground
+    # ring), so the hub ring is counted.  m_ring is the design-aware average
+    # ring mass (build_system_from_v10).
+    m_rings = (sys.n_ring - 1) * p.m_ring
 
     # Main rotor blades
     m_blades = p.n_blades * p.m_blade
 
-    # Expansion rotors
+    # Expansion rotors (assembly totals)
     m_expansion = sum(er -> er.mass, sys.expansion_rotors; init=0.0)
+
+    # Knuckle floor (2026-08-22): every blade node carries at least the
+    # approved knuckle mass (OPT_KNUCKLE_MASS_KG, 0.050 kg).
+    n_blade_nodes = p.n_blades + sum(er -> er.n_blades, sys.expansion_rotors; init=0)
+    m_knuckles = n_blade_nodes * OPT_KNUCKLE_MASS_KG
 
     # Lifter (autogyro rotor + lines).  Rod 2026-08-21: the lifter's own mass
     # must NOT drive the lift-line tension requirement (the stack carries
     # itself with its own lift) — tension sizing uses include_lifter=false.
     m_lifter = 5.0
 
-    return m_tether + m_rings + m_blades + m_expansion + (include_lifter ? m_lifter : 0.0)
+    return m_tether + m_rings + m_blades + m_expansion + m_knuckles +
+           (include_lifter ? m_lifter : 0.0)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -34,7 +34,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
 
     # ── Test 1: Betz cap + solver convergence ────────────────────────────
     @testset "Betz cap + convergence (property grid)" begin
-        set_expansion_physics!(ExpansionPhysics(true, true, true))
+        set_expansion_physics!(ExpansionPhysics(true, true))
         for (er, rnom) in ((tri_rotor(0.69), 2.99), (tri_rotor(0.85), 2.99), (tri_rotor(1.0), 2.99),
                            (gon_rotor(0.69), 2.4),  (gon_rotor(0.85), 2.4),  (gon_rotor(1.0), 2.4)),
             ω in (1.0, 2.0, 5.0, 10.0, 20.0, 30.0, 45.0, 60.0),
@@ -74,7 +74,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
         @test converged
         @test a < 0.01
 
-        set_expansion_physics!(ExpansionPhysics(true, true, true))
+        set_expansion_physics!(ExpansionPhysics(true, true))
         F_r1, F_a1, τ1, _, _ = expansion_rotor_forces(er, RHO, v, ω, 30.0, rnom, 20_000.0, 3)
         set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
         F_r0, F_a0, τ0, _, _ = expansion_rotor_forces(er, RHO, v, ω, 30.0, rnom, 20_000.0, 3)
@@ -90,7 +90,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
         # (Full ±5% Bergey-Cp calibration re-run = validation-phase script gate.)
         daisy_er = ExpansionRotorParams(5, 0.7*1.55, -0.3*1.55, 0.113*1.55,
             1.0, 0.02, 0.05, 0.0, 0.5, 24, 1.0)
-        set_expansion_physics!(ExpansionPhysics(true, true, true))
+        set_expansion_physics!(ExpansionPhysics(true, true))
         for ω in (5.0, 10.0, 15.0, 20.0), v in (6.0, 10.0)
             a, converged, _, _ = solve_expansion_induction(daisy_er, RHO, v, ω, 30.0, 0.0)
             @test converged
@@ -106,7 +106,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
         wf(pos, t) = [0.0, 0.0, 0.0]   # gravity-only: benign, no NaN transients
         # fresh system per run — run_canonical_sim! mutates sys internals,
         # so sharing one sys would alias state across the toggle branches
-        set_expansion_physics!(ExpansionPhysics(true, true, true))
+        set_expansion_physics!(ExpansionPhysics(true, true))
         sysA, u0A = build_kite_turbine_system(p)
         @test isempty(sysA.expansion_rotors)
         uA = copy(u0A); run_canonical_sim!(uA, sysA, p, wf, 50, 0.002; lift_device=nothing)
@@ -116,7 +116,7 @@ gon_rotor(λ) = ExpansionRotorParams(12, 2.091*λ/0.85, -0.896*λ/0.85, 0.338*λ
         @test isequal(uA, uB)                     # bit-for-bit (NaN-safe)
     end
 
-    set_expansion_physics!(_prev_induction ? ExpansionPhysics(true, true, true) : LEGACY_PHYSICS_PRE_2026_07_18)
+    set_expansion_physics!(_prev_induction ? ExpansionPhysics(true, true) : LEGACY_PHYSICS_PRE_2026_07_18)
 end
 
 println("\n✓ expansion induction acceptance tests complete")

@@ -75,11 +75,20 @@ machine can be built end-to-end.
 """
 function expansion_params_from_rotors(rotors, n_rings, n_lines;
                                        blade_scale::Float64=1.0,
-                                       minimal_hub::Bool=false)
+                                       minimal_hub::Bool=false,
+                                       m_blade_ref::Union{Nothing,Float64}=nothing)
+    # kwarg defaults evaluate in the CALLER's scope — resolve the module
+    # constant inside the body (2026-08-22).
+    m_ref = m_blade_ref === nothing ? M_BLADE_REF_KG : m_blade_ref
     sys_n_rings_total = minimal_hub ? n_rings + 1 : n_rings + 2
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
         sys_ring = rotor.ring_idx == n_rings ? sys_n_rings_total : rotor.ring_idx + 1
+        # Unified blade-mass law (2026-08-22): m_assembly = n_blades · m_ref · λ³
+        # with λ the TOTAL linear scale (decoded genome blade_scale × any
+        # builder dial).  m_ref = the rung's per-blade reference mass
+        # (Daisy 0.420 kg; higher rungs pass their mass_scale'd base).
+        λ_total = rotor.blade_scale * blade_scale
         er = ExpansionRotorParams(
             n_lines,
             rotor.blade_tip_radius * blade_scale,
@@ -87,7 +96,8 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
             rotor.blade_chord * blade_scale,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
             rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, blade_scale),
+            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, λ_total,
+                                 n_lines; m_ref=m_ref),
             sys_ring, 1.0,
         )
         push!(expansion_params, er)
@@ -147,17 +157,18 @@ function _build_v10_tight(;
 
     # ── Build expansion params (Gate 1c: n_blades = n_lines for balanced polygon) ──
     # Single-authority mapping — see expansion_params_from_rotors above.
-    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                    blade_scale=blade_scale)
-
     p_base = params_v5_50kw()
+    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
+                                                    blade_scale=blade_scale,
+                                                    m_blade_ref=p_base.m_blade)
+
     le = blade_scale
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring,
-                       p_base.m_blade * le^2)
+                       p_base.m_blade * le^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     km = p_base.k_mppt * le^2
     ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
@@ -270,6 +281,7 @@ function build_phantom_triangle(;
     n_lines = result.design.n_lines
     n_rings = result.n_rings
     expansion_params = ExpansionRotorParams[]
+    p_base = params_v5_50kw()
     for rotor in rotors
         sr = rotor.ring_idx == n_rings ? n_rings + 2 : rotor.ring_idx + 1
         er = ExpansionRotorParams(
@@ -279,19 +291,20 @@ function build_phantom_triangle(;
             rotor.blade_chord * blade_scale,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
             rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, blade_scale),
+            expansion_blade_mass(rotor.blade_tip_radius * blade_scale,
+                                 rotor.blade_scale * blade_scale, n_lines;
+                                 m_ref=p_base.m_blade),
             sr, 1.0,
         )
         push!(expansion_params, er)
     end
-    p_base = params_v5_50kw()
     le = blade_scale
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
                        result.design.tether_length, result.design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, result.n_rings, n_lines)
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring,
-                       p_base.m_blade * le^2)
+                       p_base.m_blade * le^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     km = p_base.k_mppt * le^2
     ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
@@ -333,7 +346,10 @@ function geometry_fingerprint(sys, p, design; blade_scale::Float64=1.0)
         span = er.blade_tip_radius - er.blade_hub_radius
         area = er.n_blades * er.blade_chord * span
         total_area += area
-        total_mass += er.mass * er.n_blades
+        total_mass += er.mass   # er.mass is the ASSEMBLY total (n_blades blades) —
+                                # was er.mass × er.n_blades, a ×n_blades
+                                # double-count that poisoned every audit
+                                # (fixed 2026-08-22)
         println(io, "# rotor$(i): ring=$(er.ring_idx) n_blades=$(er.n_blades) tip=$(round(er.blade_tip_radius,digits=3))m chord=$(round(er.blade_chord,digits=3))m span=$(round(span,digits=3))m area=$(round(area,digits=3))m² bank=$(round(er.bank_angle_deg,digits=1))° mass=$(round(er.mass,digits=3))kg")
     end
     println(io, "# total_blade_area=$(round(total_area,digits=3))m² total_blade_mass=$(round(total_mass,digits=3))kg n_rotors=$(length(sys.expansion_rotors))")

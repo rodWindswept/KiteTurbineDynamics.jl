@@ -451,11 +451,13 @@ function objective_v10(
     # Already verified: ω_eq exists → power balance holds
 
     # ── Feasible: compute total mass ─────────────────────────────────────
-    # Expansion rotor mass
+    # Expansion rotor mass — unified blade-mass law (2026-08-22): each
+    # assembly = n_lines · m_ref · λ³ (was the CFRP (0.3+0.1·tip)·λ³ sum —
+    # wrong for rigid foam; kept in sync with builders_util).
     m_expansion = 0.0
     for rotor in rotors
         blade_s = rotor.blade_scale
-        m_expansion += (0.3 + 0.1 * rotor.blade_tip_radius) * blade_s^3
+        m_expansion += design.n_lines * M_BLADE_REF_KG * blade_s^3
     end
 
     # Tether mass
