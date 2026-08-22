@@ -69,7 +69,7 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io)
     println(io, "- **Campaign:** 5 kW v13 DE, mass-aware constant-tension lift REDO")
     println(io, "- **Runner:** scripts/run_v13_5kw_masslift.jl")
-    println(io, "- **Physics era:** $(PHYSICS_ERA)  (2026-08-21: Daisy-anchored base params, r_bottom clamp fix, lifter mass excluded from tension, annulus-aligned Betz gates, Gate 1c blade mass renormalised 420->210 g)")
+    println(io, "- **Physics era:** $(PHYSICS_ERA)  (2026-08-22: Daisy-anchored base params, r_bottom clamp fix, lifter mass excluded from tension, annulus-aligned Betz gates, unified lambda^3 blade-mass law with the 420 g anchor restored, hub double-model removed, honest window relax 10 + window 40, k=2.24)")
     println(io, "- **Launch git HEAD:** $(GIT_HASH)")
     println(io, "- **Regime:** `lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)`")
     println(io, "  — vertical lift = 1.5 × m_airborne × g, m_airborne = expansion_airborne_mass(sys, p;")
