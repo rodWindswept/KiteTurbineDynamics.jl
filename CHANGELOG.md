@@ -170,3 +170,38 @@ Dates are YYYY-MM-DD. Versions track major campaign generations.
 - Emergent torsional coupling from rope attachment geometry
 - Tensile-only spring law (lines go slack naturally under overtwist)
 - Initial project room: CONTEXT.md, DECISIONS.md, PLAN.md, AGENTS.md, CLAUDE.md
+
+## [0.11.0] — 2026-08-22
+
+### Added
+- Unified blade-mass law `m = m_ref·λ³` (`M_BLADE_REF_KG = 0.420`, measured
+  Daisy blade) for main and expansion rotors, with the per-blade knuckle
+  floor (0.050 kg) in the airborne mass — replaces three inconsistent laws
+  (main λ², CFRP expansion constants, Gate-1c 210 g renormalisation)
+- Honest-window evaluator: relax 10 s + window 40 s, `power_stat=:tail5` at
+  35–40 s — the running power, not the settle transient
+- Honest k sweep (`scripts/results/k_sweep_daisy_5kw.csv`); 5 kW campaign
+  operating point k=2.24 (6-blade Daisy anchor scaled)
+- Physics-validation ledger (`docs/validation/physics-validation-ledger.md`),
+  convention-fix proposals, acceptance re-baseline catalog
+
+### Fixed
+- Hub-rotor double-model: the main rotor is modelled ONCE — the expansion
+  mapping excluded the hub (it was braking at 6-blade solidity and
+  double-counting blade mass; the old "3.15 kW equilibrium" was this artefact)
+- Campaign length double-scaling: "18.8 m" machines were actually 34.3 m
+  (`params_at_length` re-scaled L); runner/smoke/gate/sweep now build the
+  real 18.8 m machine
+- Ramp evaluator built every rung with the 50 kW base (12.0757 kg/blade) —
+  the 2026-08-20 contamination, missed in that path
+- Settle-scan cp-peak clamp + honest low-k reject telemetry (no more
+  fabricated "0 kW stall")
+- Runner provenance (GIT_HASH, banner) now truthful
+
+### Campaigns
+- 5 kW DE campaign launched on the validated base: mass-minimisation,
+  FoS floor 2.5, P floor 5 kW, L=18.8 m, k=2.24, honest window
+  (`scripts/results/v13_5kw_masslift_len18.8/`)
+
+---
+

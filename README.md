@@ -64,8 +64,8 @@ KiteTurbineDynamics.jl/
 │   ├── run_v*_campaign.jl        DE campaign runners
 │   └── results/                  Simulation CSVs (campaign CSVs tracked)
 ├── test/
-│   ├── runtests.jl               24 test suites wired
-│   └── test_*.jl                 24 unit test files
+│   ├── runtests.jl               FAST unit suite (35 files, 1926 tests wired)
+│   ├── acceptance_runtests.jl    SLOW ODE acceptance suite (6 files, parallel)
 ├── docs/
 │   ├── adr/                      Architecture Decision Records
 │   ├── outreach/                 Phase E design landscape charts + figures
@@ -105,7 +105,7 @@ julia --project=. -e 'using Pkg; Pkg.develop(path="../CoaxialAutogyroStacking.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-All 24 test suites should pass.
+All fast unit tests pass (1926/1926, ~1 min); the slow ODE acceptance suite runs via test/acceptance_runtests.jl (~18 min, parallel) and is re-baselined on each campaign's winners.
 
 ### GLMakie interactive dashboard
 
