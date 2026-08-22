@@ -49,7 +49,7 @@ const WINDOW_S = 20.0       # measurement window (sustained power + twist detect
 # ── Provenance (Daisy-anchored, mass-aware constant-tension regime) ──────
 const PHYSICS_ERA = "post-4ce9fd0_daisy-anchored-5kw"
 const GIT_HASH = try
-    read(chomp, `git rev-parse HEAD`)
+    chomp(read(`git rev-parse HEAD`, String))
 catch
     "unknown"
 end
@@ -116,10 +116,12 @@ cfg = ObjectiveConfig(;
     fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly
-    k_mppt = 5.39,   # k sweep 2026-08-21 (scripts/results/k_sweep_daisy_5kw.csv):
-                     # knee at k≈4.0 (P_end 5.02); Daisy 3-blade anchor scaled
-                     # 0.42·(5/1.5)^2.5 = 5.39 → P_end 6.09 kW, plateau through
-                     # k=9 (6.46).  Below 4.0 the seed rejects at 0 kW.
+    k_mppt = 5.39,   # k sweep 2026-08-22 honest re-run (scripts/results/k_sweep_daisy_5kw.csv):
+                     # knee moved with Gate-1c physics — k=4.0 now rejects
+                     # (P_end 4.94 kW < 5.0 floor); k=5.39 ok (P_end 5.97 kW,
+                     # window-flattered — true equilibrium 3.15 kW at k·ω³).
+                     # RE-SWEEP under the honest window (relax 10 + window 40)
+                     # before launch (2026-08-21 open task).
                      # NOT p_base.k_mppt (3.55, sub-knee).
     tether_diameter = p_base.tether_diameter,
 )
@@ -249,7 +251,7 @@ println("  V13 Cold-Start DE — 5kW MASS-AWARE LIFT REDO (constant tension)")
 println("  Tether length: $LENGTH m (min clearance gate: $MIN_CLEARANCE m)")
 println("  Lift: 1.5 × m_airborne × g / sin(70°) per genome, flat (const_tension=true)")
 println("  Era: $PHYSICS_ERA   git: $GIT_HASH")
-println("  Window: $WINDOW_S s; power_stat=:tail5; penalize_ceiling=false; fos_target=1.5")
+println("  Window: $WINDOW_S s; power_stat=:tail5; penalize_ceiling=false; fos_target=$(cfg.fos_target); fos_hard=$(cfg.fos_hard)")
 println("  $popsize pop × $n_islands islands × $max_iter gen")
 println("  Full per-eval telemetry (genome + decoded + T_lift) → $TELE_CSV")
 println("═"^60)
