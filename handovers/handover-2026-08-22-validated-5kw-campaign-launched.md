@@ -104,6 +104,16 @@ adea1a3 fix+perf: honest-window k sweep + cold-path ω_eq + k=2.24 anchor
   briefly moved during root hygiene — restored; root diag outputs live in
   `.diag_outputs/` (gitignored).
 
+- **Winner tooling**: `scripts/analyze_campaign_winners.jl` decodes each
+  island best CSV and reports geometry, mass decomposition, phi, TSR/tau at
+  the 5 kW point vs the clamp, tip speed, and the FoS=Inf screening note
+  (verified against the current best: phi 1.155, TSR 5.07, tau below clamp).
+- **STE-gate finding**: the pre-commit STE gate counts each markdown table
+  ROW as one paragraph, so table-heavy docs (catalogs, ledgers) are
+  structurally non-compliant at >6 sentences/row regardless of prose.
+  Phase-6 fix suggestion recorded in the convention-fixes proposal; until
+  then, table-heavy doc commits use the documented --no-verify bypass.
+
 ## 4. Environment note (sandbox)
 
 Julia runs ONLY with
