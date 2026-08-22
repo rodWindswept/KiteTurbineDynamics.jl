@@ -32,6 +32,7 @@ const-tension lift) and varies exactly ONE model axis.
 | A2 | knuckle floor off | how much of the winner mass is knuckles (0.050 kg/blade)? |
 | A3 | window: 20 s (old) vs 40 s (honest) | quantify the flattery effect on the winner (expect heavier/more-rotored winners under the honest window) |
 | A4 | k: fixed 2.24 vs k-bracket vs ramp controller | does the generator-gain discovery method change the winner? (evaluate_ramp now builds the right machine) |
+| A5 | generator cap: quadratic `tau_max_safe` (current) vs margin-based cap | **MEASURED BINDING (2026-08-22):** the 625 N·m quadratic clamp is the active constraint at 5 kW (seed P_gen = 625·ω once ω > 10.8). Does a physics-based cap (τ_rated with ≥50% margin, convention-fixes item 1) change the winner family? |
 
 Implementation notes: A1/A2 are one-line law toggles behind a config kwarg
 (after the mass-law proposal lands, keep the law functions parameterised);
