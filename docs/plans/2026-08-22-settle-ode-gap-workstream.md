@@ -51,6 +51,19 @@ Candidates for the mismatch (to be measured, not assumed):
    The ratio identifies the mismatch magnitude per candidate (vary one at a time).
 3. Output: `scripts/diag_settle_gap.jl` → CSV + a short report.
 
+**MEASURED (2026-08-22, `scripts/diag_settle_gap.jl` on the fixed machine):**
+settle parks at ω 11.96; the ODE climbs to 14.19 rad/s at 10 s and is still
+rising.  Gap = +18.7% (settle UNDER-predicts).  The old over-prediction
+(2026-08-13) was partly the removed hub brake.  IMPORTANT: the ODE's
+end-state power (8.87 kW) is CLAMP-LIMITED — P_gen = tau_max_safe·ω = 625·ω
+once ω > 10.8 rad/s (the quadratic generator clamp binds; convention-fixes
+item 1).  The settle-vs-ODE gap and the clamp interaction must be separated:
+the settle model does NOT know about tau_max_safe, so its balance
+(P_aero = k·ω³) differs from the ODE's true balance (P_aero = min(k·ω²,
+tau_max)·ω + losses) above the clamp point.  Fix the cap law (convention
+fixes) BEFORE re-measuring the settle gap — otherwise the gap mixes both
+effects.
+
 ## Fix shape (if confirmed)
 
 Bring the settle's aero model in line with the ODE (same Cp reference radius,
