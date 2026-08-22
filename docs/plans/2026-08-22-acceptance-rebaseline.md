@@ -38,6 +38,10 @@ exploit.
 ## Sequencing (with the other post-campaign work)
 
 1. Campaign finishes → winners picked + re-gated (`ode_gate_v13.jl`).
+   **Screen every ok winner for the FoS=Inf signature** (the campaign's DE
+   ran on the pre-guard evaluator — commit 402697b landed the guard
+   mid-campaign; telemetry showed zero FoS=Inf ok-rows, but the re-gate
+   must confirm it per winner).
 2. Land the non-finite-FoS guard (TDD, RED test first).
 3. Re-baseline this catalog on the winners + current HEAD (one commit).
 4. Land the convention fixes (brake cap etc.) — then RE-RUN the acceptance
