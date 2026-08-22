@@ -3,10 +3,11 @@
 **From:** AI agent (desktop session)
 **To:** next agent session (laptop or desktop)
 **Repo:** /home/rod/Documents/GitHub/KiteTurbineDynamics.jl
-**State:** HEAD `adea1a3` + 6 earlier commits this session (see §3). Working
-tree clean except `.claude/worktrees` (ignored). **NOT PUSHED — the sandbox
-has no GitHub credentials; push with `git push origin master` from a
-credentialed machine (pull --rebase first, multi-writer).**
+**State:** HEAD `402697b` + 16 commits this session (see §3 + addendum).
+Working tree clean except `.claude/worktrees` (ignored) and the campaign
+results dir (untracked until the campaign completes). **NOT PUSHED — the
+sandbox has no GitHub credentials; push with `git push origin master` from
+a credentialed machine (pull --rebase first, multi-writer).**
 **Campaign:** 5 kW DE **RUNNING** (launched 14:12, ~22–35 h expected) — see §5.
 
 ---
@@ -76,6 +77,33 @@ cc92a6b fix+physics: hub-rotor double-model eliminated
 adea1a3 fix+perf: honest-window k sweep + cold-path ω_eq + k=2.24 anchor
 ```
 
+## 3b. Addendum (2026-08-22, rounds 10-13) — what changed since launch
+
+- **FoS=Inf guard LANDED mid-campaign** (commit `402697b`, per Rod's choice):
+  mass_min_fitness / v12_fitness / v11_fitness now reject non-finite FoS
+  (the exploit-register row-1 class, found during telemetry monitoring).
+  The campaign's DE ran pre-guard (provenance = launch hash); telemetry
+  shows ZERO FoS=Inf ok-rows; the re-gate screens winners for the signature.
+  Fast suite 1936/1936.
+- **tau_max_safe clamp MEASURED BINDING at k=5.39** (625 N·m = P_gen/ω exactly
+  in the settle-gap trace) but **verified BELOW the clamp at the campaign's
+  k=2.24** (τ 380-570 N·m) — winners are MPPT-limited, not clamp-distorted.
+  Stage-A variant A5 compares the cap law.  Convention-fixes item 1.
+- **Settle-gap measured on the fixed machine**: settle 11.96 vs ODE 14.19
+  rad/s (+18.7% under-prediction); re-measure after the cap fix (the clamp
+  confounds the ODE side).
+- **Repo quality hooks ACTIVATED** (`git config core.hooksPath .githooks`):
+  pre-commit STE + provenance gates are live; the session docs breach the
+  STE 2.0/100w standard (dominantly long-sentence/paragraph violations) —
+  the documented `--no-verify` bypass is used with recorded reasons; the
+  file-level STE cleanup is Phase-6 work.
+- **Docs de-staled**: README test counts (42 files/1926 fast + 6 acceptance),
+  CHANGELOG 0.11.0 (validated 5 kW era), CONTEXT project-room table +
+  vocabulary (honest window, mass law, hub-exclusion), domain.md campaign
+  state.  `v6_campaign_network_50kw_20260615_1219.log.gz` (tracked) was
+  briefly moved during root hygiene — restored; root diag outputs live in
+  `.diag_outputs/` (gitignored).
+
 ## 4. Environment note (sandbox)
 
 Julia runs ONLY with
@@ -106,17 +134,14 @@ human/laptop task.
 
 ## 6. Open items (priority order)
 
-1. **Push** the 7 commits (no credentials in sandbox).
+1. **Push** the ~17 commits (no credentials in sandbox).
 2. **Monitor the campaign** (§5); kill/restart if telemetry shows an
    evaluator regression (the honest window should hold).
-3. **Option-2 workstream** (approved, proposal written):
-   `docs/plans/2026-08-22-settle-ode-gap-workstream.md` — the settle now
-   UNDER-predicts the ODE equilibrium (11.96 vs ~14.3 rad/s; the old
-   over-prediction was partly the hub-brake).  Diag script
-   `scripts/diag_settle_gap.jl` traces the gap; fix (shared init) after the
-   campaign, TDD-style.
-4. **Acceptance suite re-baseline** on the campaign winners (gates
-   calibrated on pre-fix physics are red-by-design).
+3. **Option-2 workstream**: measured (settle 11.96 vs ODE 14.19, +18.7%
+   under-prediction; clamp-confounded — re-measure after the cap fix).
+4. **Acceptance suite re-baseline** on the campaign winners (catalog in
+   `docs/plans/2026-08-22-acceptance-rebaseline.md`; the re-gate screens
+   winners for the FoS=Inf signature since the DE ran pre-guard).
 5. **ODE-inertia knuckles** (flagged in the mass-law proposal — the ODE
    rotor inertia counts blades only; the DE score counts knuckles).
 6. **i_pto = 0.3 kg·m² placeholder** in `params_daisy` (unmeasured).
