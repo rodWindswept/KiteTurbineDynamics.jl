@@ -121,3 +121,16 @@ derives from the rated operating point).  Remove the magic 2500.
 - The FoS=Inf exploit (item 0) therefore needs a real FoS-capture failure
   (not the n_rings shortcut) to fire at 5 kW — narrow but not impossible;
   telemetry monitoring continues.
+
+## Verified addendum (2026-08-22) — STE gate vs markdown tables
+
+The pre-commit STE gate counts each table ROW as one paragraph and flags
+`long_paragraph(>6s)` when the row's cells total more than six sentences.
+Markdown tables cannot split rows across lines, so any table row with
+information-dense cells is structurally non-compliant regardless of prose
+quality.  Session plan/ledger docs (catalog tables, ledger tables) therefore
+breach the 2.0/100w gate by construction.  **Recommendation for Phase 6:**
+exempt markdown table rows from the paragraph rule (lint the row cells as
+sentences, not the row as a paragraph), then enforce the prose rules on the
+remaining prose.  Until then, commits touching table-heavy docs use the
+documented `--no-verify` bypass.
