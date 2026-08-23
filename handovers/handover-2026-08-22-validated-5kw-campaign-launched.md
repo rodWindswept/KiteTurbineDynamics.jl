@@ -123,7 +123,7 @@ adea1a3 fix+perf: honest-window k sweep + cold-path ω_eq + k=2.24 anchor
    global best fitness 6.76 kg) and the prepared winner verification CAUGHT A
    REAL EXPLOIT: every winner chose small λ (0.50-0.69) with the BEM-sized
    r_rotor (3.32 m), so the decoded span (1.24-1.71 m) is LONGER than the
-   Daisy reference yet the λ³ law priced it 15.4× under.  Winners VOID.
+   Daisy reference yet the λ³ law priced it at 0.26-0.70 kg vs the span³ truth 0.80-2.10 kg (~3.0× under; volume error span³/λ³ ≈ 15.4× masked by the rung reference).  Winners VOID.
 2. **Span³ law landed** (commit 807efa6): m = M_BLADE_REF_KG·(span/1.0)³ with
    span the decoded blade span (tip − hub, × builder dial), main + expansion
    rotors; the m_blade_ref threading removed; tests (incl. the 1.238 m

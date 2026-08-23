@@ -1921,9 +1921,12 @@ blade_scale λ (0.50-0.69) with the BEM-sized r_rotor (3.32 m, pinned by the
 3-line power sizing), so the decoded blade span = 0.75·r_rotor·λ =
 1.24-1.71 m — LONGER than the Daisy reference (1.0 m) — yet the λ³ mass law
 priced them at 0.26-0.70 kg/blade (the Daisy anchor is 0.42 kg at span 1.0).
-The span³ price for the same blades: 4.0-10.7 kg (15.4× heavier).  The DE
-maximised swept area per priced mass by trading λ against r_rotor, which the
-λ³-only law could not see (span ∝ r_rotor·λ, mass ∝ λ³).
+The span³ price for the same blades: 0.42·(span/1.0)³ = 0.80-2.10 kg/blade —
+about 3.0× heavier.  (The λ³ law's volume error is span³/λ³ ≈ 15.4×, but
+its baked-in rung reference 2.13 kg = 5.08× the 0.42 anchor masked most of
+it, netting a 3× absolute under-price.  Both scalings are stated for the
+record.)  The DE maximised swept area per priced mass by trading λ against
+r_rotor, which the λ³-only law could not see (span ∝ r_rotor·λ, mass ∝ λ³).
 
 **Decision:** the law must price the DECODED span: `m_per_blade =
 M_BLADE_REF_KG · (span/1.0)³` with span = blade_tip − blade_hub (× builder
