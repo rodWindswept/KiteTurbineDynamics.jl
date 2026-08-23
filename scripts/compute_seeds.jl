@@ -52,7 +52,10 @@ function seed_genome(kw)
     geom_scale = sqrt(kw / 1.5)
 
     g = zeros(14)
-    g[1] = 0.010 * geom_scale            # Do_top: Daisy ring ≈ 10-12 mm carbon rod
+    g[1] = 0.025 * geom_scale            # Do_top: raised for the honest span³
+                                          # blade mass (2026-08-22): the λ³-era
+                                          # seed (0.0183) scored FoS 0.45 under its
+                                          # own honest mass/lift
     g[2] = 0.055                          # t_over_D: 0.5 mm wall on ~9 mm rod (Daisy blades)
     g[3] = 1.0                            # beam_aspect: circular
     g[4] = 1.0                            # Do_scale_exp: uniform tube
@@ -68,8 +71,12 @@ function seed_genome(kw)
                                           # (0.575 m < 0.3·span) — see DECISIONS [2026-08-21].
     g[11] = 0.0                           # bank_top
     g[12] = 0.0                           # bank_bottom
-    g[13] = 1.0                           # blade_scale_top: full span
-    g[14] = 1.0                           # blade_scale_bottom
+    g[13] = 0.6                           # blade_scale_top: λ 0.6 — the honest
+                                          # span³ law prices a λ=1 blade at 9.9 kg
+                                          # (2.87 m span at the decoder's r_rotor);
+                                          # λ 0.5 stalled below the 5 kW aero floor
+                                          # (A 27.6 m² ~ 4.7 kW); λ 0.6 → A 33.6 m² ~ 5.7 kW
+    g[14] = 0.6                           # blade_scale_bottom: same as top
     g[10] = clamp(g[10], 0.0, Float64(N_VALID_MASKS))
     return g
 end
