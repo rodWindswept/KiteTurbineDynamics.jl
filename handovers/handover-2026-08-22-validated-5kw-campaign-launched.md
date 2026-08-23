@@ -3,7 +3,10 @@
 **From:** AI agent (desktop session)
 **To:** next agent session (laptop or desktop)
 **Repo:** /home/rod/Documents/GitHub/KiteTurbineDynamics.jl
-**State:** HEAD `402697b` + 16 commits this session (see §3 + addendum).
+**State:** HEAD `edd7f5f` + 30 commits this session.  **MAJOR UPDATE: the
+first campaign COMPLETED and its winners are VOID (λ³ mass-law exploit).**
+The span³ law is landed, the seed re-seeded, the smoke passes, and the
+CAMPAIGN RE-RUN is running (~12-13 h).  See §3c.
 Working tree clean except `.claude/worktrees` (ignored) and the campaign
 results dir (untracked until the campaign completes). **NOT PUSHED — the
 sandbox has no GitHub credentials; push with `git push origin master` from
@@ -113,6 +116,32 @@ adea1a3 fix+perf: honest-window k sweep + cold-path ω_eq + k=2.24 anchor
   structurally non-compliant at >6 sentences/row regardless of prose.
   Phase-6 fix suggestion recorded in the convention-fixes proposal; until
   then, table-heavy doc commits use the documented --no-verify bypass.
+
+## 3c. MAJOR UPDATE — first campaign VOID, span³ law, re-run (2026-08-22)
+
+1. **The first campaign completed** (12.75 h, 3 islands × 30 gens, 930 evals,
+   global best fitness 6.76 kg) and the prepared winner verification CAUGHT A
+   REAL EXPLOIT: every winner chose small λ (0.50-0.69) with the BEM-sized
+   r_rotor (3.32 m), so the decoded span (1.24-1.71 m) is LONGER than the
+   Daisy reference yet the λ³ law priced it 15.4× under.  Winners VOID.
+2. **Span³ law landed** (commit 807efa6): m = M_BLADE_REF_KG·(span/1.0)³ with
+   span the decoded blade span (tip − hub, × builder dial), main + expansion
+   rotors; the m_blade_ref threading removed; tests (incl. the 1.238 m
+   exploit guard); fast suite 1937/1937; DECISIONS [2026-08-22]; ledger E7.
+   Evidence archived: `scripts/results/archive_void_20260822_lambda3_exploit/`
+   (their FoS was finite and power honest — the exploit was mass pricing only).
+3. **Seed re-seeded** (edd7f5f): λ 0.6 + Do_top 0.025 (the λ³-era seed scored
+   FoS 0.45 at its own honest 999 N lift; λ 0.5 stalled below the 5 kW aero
+   floor).  Smoke PASSES on the honest physics: P 5.92 kW sustained, FoS 25.1,
+   T exact (504.7 N, 0.00% rel), m_airborne 32.23 kg.
+4. **CAMPAIGN RE-RUN RUNNING** (~12-13 h) — log
+   `/tmp/v13_campaign_len18.8_rerun.log`, provenance git `edd7f5f` (span³
+   era).  ITS WINNERS ARE THE FIRST TRUSTWORTHY 5 kW DESIGNS.  Monitor the
+   telemetry for the FoS=Inf signature as before; process winners with
+   analyze_campaign_winners.jl → ode_gate_v13.jl → acceptance re-baseline.
+5. **Also noted:** two DomainError settle warnings in the first campaign's log
+   (negative values under fractional exponents) — caught by try/catch; fold
+   into the settle workstream.
 
 ## 4. Environment note (sandbox)
 
