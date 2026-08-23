@@ -28,7 +28,7 @@ const-tension lift) and varies exactly ONE model axis.
 | Run | Axis | What it answers |
 |---|---|---|
 | A0 (DONE) | baseline | the lightest honest 5 kW machine under the validated model |
-| A1 | mass law: λ² (area) instead of λ³ | sensitivity of the winner to the mass exponent — how much does the λ³ decision matter? |
+| A1 | mass-law exponent: **^2.63** vs **^3.0** (span law `m = 0.42·(span/1.0)^e`) | sensitivity of the winner to the blade-mass exponent.  Literature brackets 2.29–3.07 (Jamieson all-data 2.29; Sommerfeld κ 2.7/3.0/3.3; our rung law R^2.7); the recorded base is ^3.0 (foam, no spar-shedding).  ^2.63 blunts the tiny-blade end +29%, −15% at span 1.5 — measure, don't assume |
 | A2 | knuckle floor off | how much of the winner mass is knuckles (0.050 kg/blade)? |
 | A3 | window: 20 s (old) vs 40 s (honest) | quantify the flattery effect on the winner (expect heavier/more-rotored winners under the honest window) |
 | A4 | k: fixed 2.24 vs k-bracket vs ramp controller | does the generator-gain discovery method change the winner? (evaluate_ramp now builds the right machine) |
