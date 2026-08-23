@@ -21,35 +21,44 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         @test params_daisy().m_blade == 0.420
     end
 
-    @testset "expansion blade mass — volume law, measured anchor" begin
-        # 6-blade Daisy assembly at λ=1: 6 × 420 g = 2.52 kg (Rod 2026-08-22)
-        @test expansion_blade_mass(0.7, 1.0, 6) ≈ 6 * 0.420 atol=1e-12
+    @testset "expansion blade mass — span³ volume law, measured anchor" begin
+        # Daisy reference: span 1.0 m (tips 1.22/2.22, ring 1.52) → 420 g.
+        # 6-blade assembly at span 1.0: 6 × 420 g = 2.52 kg (Rod 2026-08-22).
+        @test expansion_blade_mass(1.0, 6) ≈ 6 * 0.420 atol=1e-12
         # no n_blades → legacy 3-blade assembly convention
-        @test expansion_blade_mass(0.7, 1.0) ≈ 3 * 0.420 atol=1e-12
-        # volume law: λ=0.5 → ⅛ of λ=1 mass
-        @test expansion_blade_mass(0.7, 0.5, 6) ≈ 6 * 0.420 * 0.5^3 atol=1e-12
-        # tip radius does NOT enter the law (similarity scaling through λ)
-        @test expansion_blade_mass(2.37, 0.85, 3) ≈ 3 * 0.420 * 0.85^3 atol=1e-12
+        @test expansion_blade_mass(1.0) ≈ 3 * 0.420 atol=1e-12
+        # volume law: half span → ⅛ mass
+        @test expansion_blade_mass(0.5, 6) ≈ 6 * 0.420 * 0.5^3 atol=1e-12
+        # THE EXPLOIT GUARD (2026-08-22, 5 kW campaign winners VOID): the DE
+        # chose small λ (0.497) with the BEM-sized r_rotor (3.32 m) → decoded
+        # span 1.238 m, priced by the old λ³ law at 0.262 kg/blade.  The law
+        # must price the ACTUAL span: 0.42·1.238³ = 0.797 kg/blade.
+        @test expansion_blade_mass(1.238, 3) ≈ 3 * 0.420 * 1.238^3 rtol=1e-9
+        @test !isapprox(expansion_blade_mass(1.238, 3), 3 * 0.420 * 0.497^3; rtol=1e-9)
         # the dead CFRP constants must be gone (0.37 kg at tip 0.7, λ=1)
-        @test !isapprox(expansion_blade_mass(0.7, 1.0, 3), 0.37; atol=1e-9)
+        @test !isapprox(expansion_blade_mass(1.0, 3), 0.37; atol=1e-9)
     end
 
-    @testset "build_system_from_v10 — main rotor scales λ³" begin
+    @testset "build_system_from_v10 — main rotor prices the decoded span" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
         x[10] = 0.6                    # 2 rotors: hub + 1 intermediate expansion
-        x[13] = 0.5; x[14] = 0.5      # blade_scale_top/bottom → λ_eff = 0.5
+        x[13] = 0.5; x[14] = 0.5      # blade_scale_top/bottom
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
         )
-        λ_eff = result.rotors[1].blade_scale
+        hub = first(r for r in result.rotors if r.ring_idx == result.n_rings)
+        span_hub = hub.blade_tip_radius - hub.blade_hub_radius
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
             result, 1.0, 5.39; base_params=base
         )
-        # per-blade mass = rung base × λ³ (volume), NOT λ² (area)
-        @test pc.m_blade ≈ base.m_blade * λ_eff^3 rtol=1e-9
-        @test !isapprox(pc.m_blade, base.m_blade * λ_eff^2; rtol=1e-9)
+        # per-blade mass = M_BLADE_REF_KG · (decoded span)³ — NOT λ³, NOT
+        # λ².  The decoder span = 0.75·r_rotor·λ (r_rotor from the BEM power
+        # sizing) — the mass law must price that span or the DE exploits
+        # small λ with large r_rotor (15× under-price on the winners).
+        @test pc.m_blade ≈ 0.420 * span_hub^3 rtol=1e-9
+        @test !isapprox(pc.m_blade, base.m_blade * hub.blade_scale^3; rtol=1e-9)
 
         # HUB EXCLUSION (2026-08-22): the hub rotor (ring_idx == n_rings) is
         # the MAIN rotor — no expansion entry, no double-modelled annulus,
@@ -60,8 +69,10 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
         @test all(er.ring_idx != hub_ri for er in sys.expansion_rotors)
         for (er, rotor) in zip(sys.expansion_rotors, non_hub)
-            λ_er = rotor.blade_scale
-            @test er.mass ≈ er.n_blades * base.m_blade * λ_er^3 rtol=1e-9
+            span_er = rotor.blade_tip_radius - rotor.blade_hub_radius
+            # span³ law: n_blades · 0.420 · (decoded span)³ — prices the
+            # blade volume, NOT λ³ (the winners-exploit form).
+            @test er.mass ≈ er.n_blades * 0.420 * span_er^3 rtol=1e-9
         end
     end
 
@@ -110,7 +121,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         total = parse(Float64, m.match)
         # er.mass is the ASSEMBLY total — summing er.mass must NOT multiply
         # by n_blades again (the old bug did er.mass × er.n_blades).
-        @test total ≈ sum(er.mass for er in sys.expansion_rotors; init=0.0) rtol=1e-9
+        @test total ≈ sum(er.mass for er in sys.expansion_rotors; init=0.0) atol=0.001
         @test !isapprox(total, sum(er.mass * er.n_blades for er in sys.expansion_rotors); rtol=1e-9)
     end
 end

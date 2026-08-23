@@ -139,7 +139,8 @@ end
 # eventually wake_coupling) with a single struct — one atomic pin
 # per era, safe by construction where multiple partial toggles were interacting silently.
 # NOTE (2026-08-22): corrected_mass was removed from the struct — the unified
-# blade-mass law (m = m_ref·λ³, DECISIONS [2026-08-22]) is unconditional, so the
+# blade-mass law (m = M_BLADE_REF_KG·(span/1.0)³, pricing the DECODED span;
+# DECISIONS [2026-08-22]) is unconditional, so the
 # n_blades-era toggle is dead.  Legacy-reproduction scripts get the new law by
 # decision (the CFRP (0.3+0.1·tip) law it gated was wrong for rigid foam).
 #
@@ -445,37 +446,42 @@ function expansion_rotor_inertia(er::ExpansionRotorParams, r_nominal::Float64)
 end
 
 """
-    expansion_blade_mass(blade_tip_radius, blade_scale, n_blades=nothing;
-                         m_ref=M_BLADE_REF_KG) -> Float64
+    expansion_blade_mass(span, n_blades=nothing; span_ref=1.0) -> Float64
 
 Total blade mass for one expansion rotor assembly (all `n_blades` blades).
 
-**Unified volume law (2026-08-22, Rod):** rigid-foam blades scale with VOLUME,
-``m_per_blade = m_ref · λ³``.  `m_ref` defaults to the MEASURED Daisy blade
-(0.420 kg at the Daisy reference geometry); rung-scaled builds pass their own
-rung base (`p_base.m_blade`) so the rung and λ scalings compose.  Replaces the
-CFRP ``(0.3 + 0.1·tip)·λ³`` constants (wrong for rigid foam: at tip 0.7, λ=1
-they gave 0.37 kg/3-blade assembly vs the measured 1.26 kg) and the
-`corrected_mass` era toggle (dead under the unconditional law).
+**Span³ volume law (2026-08-22, corrected):** rigid-foam blades scale with
+VOLUME, and the decoder's blade linear scale is the SPAN
+(`span = blade_tip − blade_hub = 0.75·r_rotor·λ` with r_rotor from the BEM
+power sizing), so the honest law prices the decoded span:
+
+    m_per_blade = M_BLADE_REF_KG · (span / span_ref)³
+
+`M_BLADE_REF_KG = 0.420` is the MEASURED Daisy blade at the reference span
+`span_ref = 1.0 m` (tips 1.22/2.22, ring 1.52).  The rung and the genome
+enter through the decoded span; the law is absolute, not λ-relative.
+
+**Why not λ³ (the 2026-08-22 correction):** the first implementation priced
+`m = m_ref·λ³`, assuming λ is the total linear scale.  The decoder instead
+sets span = 0.75·r_rotor·λ with r_rotor fixed by the BEM sizing, so the DE
+could choose small λ with large r_rotor: blades LONGER than the Daisy
+reference priced as if tiny.  The completed 5 kW campaign's winners were all
+such artifacts (span 1.24-1.71 m priced at λ³ = 15× under the true volume;
+global best φ 0.315 kg/kW vs the 1.3 anchor).  Priced by span, the same
+blades weigh 3-15× more.  All winners VOID; campaign re-runs on this law.
 
 # Arguments
-- `blade_tip_radius`: retained for signature compatibility — the law is a
-  pure similarity law through λ; tip radius does not enter the mass.
-- `blade_scale`: dimensionless scalar (span/chord/mass), λ
+- `span`: decoded blade span (m), tip − hub, × any builder dial
 - `n_blades`: number of blades (default nothing → 3, the legacy assembly
   convention, preserved for backward-compatible signatures)
-- `m_ref`: per-blade reference mass at λ=1 (default 0.420 kg)
+- `span_ref`: reference span at the anchor (default 1.0 m, Daisy)
 """
 function expansion_blade_mass(
-    blade_tip_radius::Float64, blade_scale::Float64,
-    n_blades::Union{Int,Nothing}=nothing;
-    m_ref::Union{Nothing,Float64}=nothing,
+    span::Float64, n_blades::Union{Int,Nothing}=nothing;
+    span_ref::Float64=1.0,
 )::Float64
-    # kwarg defaults evaluate in the CALLER's scope — resolve the module
-    # constant inside the body (2026-08-22).
-    mref = m_ref === nothing ? M_BLADE_REF_KG : m_ref
     n = n_blades === nothing ? 3 : max(n_blades, 0)
-    return n * mref * blade_scale^3
+    return n * M_BLADE_REF_KG * (span / span_ref)^3
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

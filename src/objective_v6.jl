@@ -112,7 +112,7 @@ function design_from_vector_v6(
             CD0_blade=EXP_CD0_DESIGN,
             k_induced=EXP_K_INDUCED,
             bank_angle_deg=bank_deg,
-            mass_per_rotor=expansion_blade_mass(blade_tip_radius, blade_scale),
+            mass_per_rotor=expansion_blade_mass(blade_tip_radius),  # frozen v6: tip as span proxy (span³ law, 2026-08-22)
             shaft_coupling=1.0,
         )
     else

@@ -75,11 +75,7 @@ machine can be built end-to-end.
 """
 function expansion_params_from_rotors(rotors, n_rings, n_lines;
                                        blade_scale::Float64=1.0,
-                                       minimal_hub::Bool=false,
-                                       m_blade_ref::Union{Nothing,Float64}=nothing)
-    # kwarg defaults evaluate in the CALLER's scope — resolve the module
-    # constant inside the body (2026-08-22).
-    m_ref = m_blade_ref === nothing ? M_BLADE_REF_KG : m_blade_ref
+                                       minimal_hub::Bool=false)
     expansion_params = ExpansionRotorParams[]
     for rotor in rotors
         # HUB EXCLUSION (2026-08-22): the rotor on the TOP ring (ring_idx ==
@@ -91,11 +87,12 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
         # Expansion rotors are ADDITIONAL rotors on intermediate rings only.
         rotor.ring_idx == n_rings && continue
         sys_ring = rotor.ring_idx + 1
-        # Unified blade-mass law (2026-08-22): m_assembly = n_blades · m_ref · λ³
-        # with λ the TOTAL linear scale (decoded genome blade_scale × any
-        # builder dial).  m_ref = the rung's per-blade reference mass
-        # (Daisy 0.420 kg; higher rungs pass their mass_scale'd base).
-        λ_total = rotor.blade_scale * blade_scale
+        # Span³ blade-mass law (2026-08-22): m_assembly = n_blades ·
+        # M_BLADE_REF_KG · (span/1.0)³ with span the DECODED blade span
+        # (tip − hub, × any builder dial).  Prices the real blade volume —
+        # the λ³-only law let the DE exploit small λ with large r_rotor
+        # (winners priced 15× under; campaign VOID, re-run on this law).
+        span_total = (rotor.blade_tip_radius - rotor.blade_hub_radius) * blade_scale
         er = ExpansionRotorParams(
             n_lines,
             rotor.blade_tip_radius * blade_scale,
@@ -103,8 +100,7 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
             rotor.blade_chord * blade_scale,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
             rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale, λ_total,
-                                 n_lines; m_ref=m_ref),
+            expansion_blade_mass(span_total, n_lines),
             sys_ring, 1.0,
         )
         push!(expansion_params, er)
@@ -166,16 +162,17 @@ function _build_v10_tight(;
     # Single-authority mapping — see expansion_params_from_rotors above.
     p_base = params_v5_50kw()
     expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                    blade_scale=blade_scale,
-                                                    m_blade_ref=p_base.m_blade)
+                                                    blade_scale=blade_scale)
 
     le = blade_scale
+    hub_rotor_t = first(r for r in rotors if r.ring_idx == n_rings)
+    span_hub = (hub_rotor_t.blade_tip_radius - hub_rotor_t.blade_hub_radius) * le
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring,
-                       p_base.m_blade * le^3)
+                       KiteTurbineDynamics.M_BLADE_REF_KG * span_hub^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     km = p_base.k_mppt * le^2
     ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
@@ -295,6 +292,7 @@ function build_phantom_triangle(;
         # double-counted its mass (see expansion_params_from_rotors).
         rotor.ring_idx == n_rings && continue
         sr = rotor.ring_idx + 1
+        span_er = (rotor.blade_tip_radius - rotor.blade_hub_radius) * blade_scale
         er = ExpansionRotorParams(
             n_lines,
             rotor.blade_tip_radius * blade_scale,
@@ -302,20 +300,20 @@ function build_phantom_triangle(;
             rotor.blade_chord * blade_scale,
             EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED,
             rotor.bank_angle_deg,
-            expansion_blade_mass(rotor.blade_tip_radius * blade_scale,
-                                 rotor.blade_scale * blade_scale, n_lines;
-                                 m_ref=p_base.m_blade),
+            expansion_blade_mass(span_er, n_lines),
             sr, 1.0,
         )
         push!(expansion_params, er)
     end
     le = blade_scale
+    hub_p = first(r for r in rotors if r.ring_idx == n_rings)
+    span_hub_p = (hub_p.blade_tip_radius - hub_p.blade_hub_radius) * le
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, 5.0 * le,
                        result.design.tether_length, result.design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, result.n_rings, n_lines)
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, p_base.m_ring,
-                       p_base.m_blade * le^3)
+                       KiteTurbineDynamics.M_BLADE_REF_KG * span_hub_p^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     km = p_base.k_mppt * le^2
     ctrl = ControlSpec(p_base.i_pto, km, p_base.p_rated_w, p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)

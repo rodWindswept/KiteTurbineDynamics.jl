@@ -75,8 +75,7 @@ function evaluate_ramp(
     end
 
     # ── Warm pre-solve (shared with :warm path) ──────────────────────────
-    expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                        m_blade_ref=p.m_blade)
+    expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
     _, radii, _ = ring_spacing_v4(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
         density_profile=design.density_profile,

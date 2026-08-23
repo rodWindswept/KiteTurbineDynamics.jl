@@ -1911,3 +1911,45 @@ rotor at the hub ring and must NOT appear in the expansion list.
 gap workstream (Option 2) stays a parallel proposal — the settle now
 UNDER-predicts the ODE equilibrium (11.96 vs ~14+ rad/s), a different (less
 harmful) mismatch than the 2026-08-13 over-prediction.
+
+### [2026-08-22] Blade-mass law CORRECTED to price the decoded span (winners exploit; campaign VOID)
+
+**Context:** the first 5 kW DE campaign COMPLETED (12.75 h, 3 islands × 30
+gens, 930 evals, global best fitness 6.76 kg).  The prepared winner
+verification caught a systematic exploit: every winner chose small
+blade_scale λ (0.50-0.69) with the BEM-sized r_rotor (3.32 m, pinned by the
+3-line power sizing), so the decoded blade span = 0.75·r_rotor·λ =
+1.24-1.71 m — LONGER than the Daisy reference (1.0 m) — yet the λ³ mass law
+priced them at 0.26-0.70 kg/blade (the Daisy anchor is 0.42 kg at span 1.0).
+The span³ price for the same blades: 4.0-10.7 kg (15.4× heavier).  The DE
+maximised swept area per priced mass by trading λ against r_rotor, which the
+λ³-only law could not see (span ∝ r_rotor·λ, mass ∝ λ³).
+
+**Decision:** the law must price the DECODED span: `m_per_blade =
+M_BLADE_REF_KG · (span/1.0)³` with span = blade_tip − blade_hub (× builder
+dial), for main and expansion rotors.  This is the same volume-scaling
+decision (2026-08-22) implemented against the model's actual geometry: at
+the Daisy reference (span 1.0 m) it returns exactly 0.420 kg ✓; anywhere
+else it prices the true blade volume.  The rung and the genome enter through
+the span (r_rotor from the BEM sizing, λ from the genome); the rung-scaled
+`p_base.m_blade` no longer feeds the blade term (it stays as the legacy
+non-builder fallback).  The `m_blade_ref` threading added earlier is
+removed.
+
+**Consequences:**
+1. **The completed campaign's winners are VOID** — archived as evidence
+   (`scripts/results/v13_5kw_masslift_len18.8/` bannered; ledger retired
+   claims E7).  Their telemetry is still useful: FoS was finite (5.7-11.7,
+   the pre-guard FoS=Inf screening passed) and they sustained 5.19-5.28 kW
+   honestly — the exploit was purely the mass pricing, not the aero.
+2. The seed's blade mass rises (6-line seed: span 2.02 m at λ=1 →
+   0.42·2.02³ = 3.46 kg/blade vs 2.13 before) — the honest volume of the
+   decoded blade.
+3. **Campaign re-run** on the corrected law (~13 h) — its winners are the
+   first trustworthy 5 kW designs.
+4. Tests: test_blade_mass_law (span³ + the 1.238 m exploit guard),
+   test_physics_inertia_mass, builders mapping — updated; fast suite green.
+
+**Also noted (robustness):** two `DomainError` settle warnings (negative
+values under fractional exponents) in the campaign log — caught by
+try/catch; fold into the settle workstream.

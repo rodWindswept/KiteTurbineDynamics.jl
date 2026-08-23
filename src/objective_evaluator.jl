@@ -299,11 +299,10 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
 
     # Build expansion rotor params (Gate 1c: n_blades = n_lines) — single
     # authority mapping, see builders_util.jl:expansion_params_from_rotors.
-    # Unified blade-mass law (2026-08-22): assembly = n_lines · p_base.m_blade
-    # · λ³ with λ the rotor's decoded blade_scale (builder dial 1.0 here).
+    # Span³ blade-mass law (2026-08-22): assembly = n_lines ·
+    # M_BLADE_REF_KG · (decoded span)³ (builder dial 1.0 here).
     expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                    blade_scale=blade_scale,
-                                                    m_blade_ref=p_base.m_blade)
+                                                    blade_scale=blade_scale)
 
     # Compute design-aware per-ring mass from actual tube geometry instead of
     # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
@@ -348,17 +347,19 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
                        n_lines, n_rings, n_lines)
-    # Main-rotor blade mass: rung-scaled base × λ_eff³, where λ_eff is the
-    # genome's blade scale for the reference rotor.  VOLUME law (2026-08-22,
-    # Rod): rigid-foam blades scale with λ³, not λ² — the λ² (area) term is
-    # rejected.  The k_mppt λ²-scaling (objective_evaluator.jl:426) is
+    # Main-rotor blade mass: SPAN³ law (2026-08-22 correction) — the blade
+    # is priced by its DECODED span, m = M_BLADE_REF_KG·(span/1.0)³, because
+    # the decoder sets span = 0.75·r_rotor·λ with r_rotor from the BEM power
+    # sizing.  The earlier λ³-only implementation let the DE choose small λ
+    # with large r_rotor: blades LONGER than the Daisy reference priced 15×
+    # under (the completed 5 kW campaign's winners were all such artifacts
+    # and are VOID).  The k_mppt λ²-scaling (objective_evaluator.jl:426) is
     # UNCHANGED — power ∝ swept area ∝ λ² is correct physics; only the mass
-    # law changes (mass ∝ volume ∝ λ³).  Previously p_base.m_blade × le² ×
-    # λ_eff² with the 50 kW base and le=1.0 — the 50 kW blade-mass
-    # contamination (2026-08-20, §4b).
-    λ_eff = isempty(rotors) ? 1.0 : rotors[1].blade_scale
+    # law changed (mass ∝ volume ∝ span³).
+    span_hub = (hub_rotor === nothing) ? 0.0 :
+        (hub_rotor.blade_tip_radius - hub_rotor.blade_hub_radius) * le
     mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
-                       p_base.m_blade * le^3 * λ_eff^3)
+                       M_BLADE_REF_KG * span_hub^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
                        p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
@@ -482,8 +483,7 @@ function evaluate_windowed(
         # disagreed about which machine they were solving).  Blade scale 1.0
         # matches the ODE build; the old `expansion_blade_mass(tip, λ)` call
         # also disagreed with the ODE path's mass for λ ≠ 1 rotors.
-        expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                            m_blade_ref=p.m_blade)
+        expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
 
         _, radii, _ = ring_spacing_v4(
             design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;

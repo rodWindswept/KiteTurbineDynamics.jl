@@ -68,6 +68,7 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 | E4 | "m_blade = 210 g (Gate 1c renormalisation)" | 420 g measured anchor restored; 6-blade = 2.52 kg/ring |
 | E5 | "18.8 m machines" (2026-08-21 era) | actually 34.3 m (params_at_length double-scaling); fixed |
 | E6 | CFRP expansion blade law (0.3+0.1·tip)·λ³ | wrong for rigid foam (3.4× under vs measured at λ=1) |
+| E7 | **"6.76 kg 5 kW winner" (completed 2026-08-22 campaign)** | blade mass priced m_ref·λ³ while span = 0.75·r_rotor·λ (r_rotor BEM-sized): spans 1.24-1.71 m priced at λ³ = 15.4× under the span³ truth. Winners VOID; campaign re-runs on the span³ law (DECISIONS [2026-08-22]) |
 
 ---
 

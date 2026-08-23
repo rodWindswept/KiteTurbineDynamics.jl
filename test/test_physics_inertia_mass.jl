@@ -1,7 +1,7 @@
 # test/test_physics_inertia_mass.jl
 # Acceptance tests for Gate 2b — blade inertia (axis-radius rod integral).
 # Blade-mass expectations follow the UNIFIED volume law (2026-08-22, Rod):
-# m_assembly = n_blades · m_ref · λ³ with m_ref = 0.420 kg (measured Daisy
+# m_assembly = n_blades · M_BLADE_REF_KG · (span/1.0)³ with 0.420 kg (measured Daisy
 # blade) — replaces the CFRP (0.3+0.1·tip)·λ³ constants and the corrected_mass
 # era toggle.  See docs/plans/2026-08-22-blade-mass-volume-law.md.
 using Test, LinearAlgebra
@@ -37,8 +37,8 @@ import KiteTurbineDynamics: ExpansionRotorParams, ExpansionPhysics,
     @testset "inertia: Daisy rotor is physically plausible" begin
         # Daisy blade: tip=0.7, hub=-0.3 (blade-local offsets), n=3,
         # r_nominal=1.52 → r₂=2.22, r₁=1.22.  Assembly mass under the unified
-        # λ³ law at λ=1: 3 × 0.420 = 1.26 kg → m_per_blade = 0.420 kg.
-        m_blade = expansion_blade_mass(0.7, 1.0, 3)   # 1.26 kg assembly
+        # span³ law at span 1.0: 3 × 0.420 = 1.26 kg → m_per_blade = 0.420 kg.
+        m_blade = expansion_blade_mass(1.0, 3)         # span 1.0 (tip 0.7 - hub -0.3) -> 1.26 kg assembly
         m_per_blade = m_blade / 3                     # 0.420 kg each
         er = ExpansionRotorParams(3, 0.7, -0.3, 0.113*1.55, 1.0, 0.02, 0.05, 28.0, m_blade, 5, 1.0)
         J = expansion_rotor_inertia(er, 1.52)
@@ -51,26 +51,26 @@ import KiteTurbineDynamics: ExpansionRotorParams, ExpansionPhysics,
     end
 
     # ── Mass: unified volume law (2026-08-22) ────────────────────────────
-    @testset "mass: unified λ³ law, measured anchor" begin
-        # Daisy 3-blade assembly at λ=1: 3 × 420 g = 1.26 kg (measured)
-        m3 = expansion_blade_mass(0.7, 1.0, 3)
+    @testset "mass: unified span³ law, measured anchor" begin
+        # Daisy 3-blade assembly at span 1.0: 3 × 420 g = 1.26 kg (measured)
+        m3 = expansion_blade_mass(1.0, 3)
         @test m3 ≈ 3 * 0.420 atol=1e-12
         # 12-blade assembly = 12 × 0.420 = 5.04 kg
-        m12 = expansion_blade_mass(0.7, 1.0, 12)
+        m12 = expansion_blade_mass(1.0, 12)
         @test m12 ≈ 12 * 0.420 atol=1e-12
         # the era toggle no longer affects the law
         set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
-        @test expansion_blade_mass(0.7, 1.0, 3) ≈ m3 atol=1e-12
+        @test expansion_blade_mass(1.0, 3) ≈ m3 atol=1e-12
         set_expansion_physics!(ExpansionPhysics(true, true))
-        @test expansion_blade_mass(0.7, 1.0, 3) ≈ m3 atol=1e-12
+        @test expansion_blade_mass(1.0, 3) ≈ m3 atol=1e-12
     end
 
     # ── Mass: non-default blade_scale ────────────────────────────────────
     @testset "mass: blade_scale 0.85 (triangle3)" begin
         # volume law: 3 × 0.420 × 0.85³ (the old CFRP comparison is dead —
-        # (0.3 + 0.1·tip)·λ³ was rejected for rigid foam)
-        m_triangle = expansion_blade_mass(2.37/0.85*0.85, 0.85, 3)  # tip=2.37 at λ=0.85
-        @test m_triangle ≈ 3 * 0.420 * 0.85^3 atol=1e-12
+        # (0.3 + 0.1·tip)·λ³ was rejected for rigid foam; the span³ law replaced the λ³ form after the winners exploit)
+        m_triangle = expansion_blade_mass(2.37, 3)   # span 2.37 m -> 3 x 0.42 x 2.37^3
+        @test m_triangle ≈ 3 * 0.420 * 2.37^3 atol=1e-12
     end
 
     set_expansion_physics!(_prev)
