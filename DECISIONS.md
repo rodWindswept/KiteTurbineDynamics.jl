@@ -1956,3 +1956,19 @@ removed.
 **Also noted (robustness):** two `DomainError` settle warnings (negative
 values under fractional exponents) in the campaign log — caught by
 try/catch; fold into the settle workstream.
+
+### [2026-08-22] Blade-mass exponent confirmed ^3.0 against the AWES references
+
+**Context:** after landing the span³ law, the exponent was challenged: real
+rigid blades scale sub-cubically.  A search of the repo's own references
+confirmed the bracketing norms: pure foam R³; Kitepower WES 2025 rigid-wing
+AWES ~R^2.62 (mass 700→10,663 kg over 20→160 m², the closest published
+category); production wind-turbine blades R^2.2–2.5 (DNV 2.2, NREL/WISDEM
+2.44–2.54, WindPACT 2.87).  The Daisy blade is foam core + shrink skin + 2
+carbon spar tubes, so the spar contribution argues sub-cubic.
+
+**Decision (Rod):** KEEP ^3.0 — the pure-volume law, Rod's recorded position
+("foam-core + shrink-wrap stays near R³").  The ^3.0 span³ law is the
+conservative upper bound; the carbon spars are a small fraction of the blade
+mass at the anchor and are absorbed into the 420 g calibration.  Revisit if
+field tests show the exponent is sub-cubic.
