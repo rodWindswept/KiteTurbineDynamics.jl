@@ -18,6 +18,7 @@ using KiteTurbineDynamics
     include("test_bem_unified.jl")
     include("test_blade_geometry.jl")
     include("test_blade_mass_law.jl")
+    include("test_campaign_k_alignment.jl")
     include("test_golden_traces.jl")
     include("test_expansion_rotor.jl")
     include("test_expansion_stack.jl")

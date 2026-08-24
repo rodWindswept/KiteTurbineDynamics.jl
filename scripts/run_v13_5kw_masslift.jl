@@ -27,16 +27,27 @@ using KiteTurbineDynamics, Printf, DataFrames, CSV, Random, Statistics
 include(joinpath(@__DIR__, "compute_seeds.jl"))
 
 # ── CLI ─────────────────────────────────────────────────────────────────
-function parse_length_arg()
+function parse_cli()
     L = 18.8   # Daisy-up 5 kW length: 10.31 m × √(5/1.5) (Rod 2026-08-20)
     for (i, a) in enumerate(ARGS)
         if a == "--length" && i < length(ARGS)
             L = parse(Float64, ARGS[i+1])
         end
     end
-    return L
+    # Run-log path (2026-08-24): recorded in PROVENANCE.md at launch so every
+    # runtime/claim in the results record is independently verifiable from the
+    # log.  Launch convention: julia ... --log <path> | tee <path>.
+    log = "/tmp/v13_campaign_len$(L)_rerun.log"
+    for (i, a) in enumerate(ARGS)
+        if a == "--log" && i < length(ARGS)
+            log = ARGS[i+1]
+        end
+    end
+    return (L=L, log=log)
 end
-const LENGTH = parse_length_arg()
+const CLI = parse_cli()
+const LENGTH = CLI.L
+const RUN_LOG = CLI.log
 
 const KW = 5.0
 const PW = KW * 1000.0
@@ -71,6 +82,7 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io, "- **Runner:** scripts/run_v13_5kw_masslift.jl")
     println(io, "- **Physics era:** $(PHYSICS_ERA)  (2026-08-22: Daisy-anchored base params, r_bottom clamp fix, lifter mass excluded from tension, annulus-aligned Betz gates, span^3 blade-mass law (m = 0.420·(decoded span/1.0)^3) with the 420 g anchor, hub double-model removed, honest window relax 10 + window 40, k=2.24)")
     println(io, "- **Launch git HEAD:** $(GIT_HASH)")
+    println(io, "- **Run log:** $(RUN_LOG)  (runtime claims cite the `Campaign complete in Ns` line from this file)")
     println(io, "- **Regime:** `lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)`")
     println(io, "  — vertical lift = 1.5 × m_airborne × g, m_airborne = expansion_airborne_mass(sys, p;")
     println(io, "  include_lifter=false) per genome (lifter's own mass does NOT drive the tension,")
