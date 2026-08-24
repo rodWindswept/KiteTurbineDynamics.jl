@@ -1,0 +1,1 @@
+island=3 gen=30 fitness=8.728790737209845 length=18.8
