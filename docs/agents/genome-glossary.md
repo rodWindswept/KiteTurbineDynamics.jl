@@ -12,17 +12,51 @@ file wins until a commit corrects it.
 asserted. Until the test lands, bounds and clamp sites should be cross-checked
 against source on any tactical decision that depends on them.
 
+### ⚠️ Two scales — 50 kW search bounds vs 5 kW campaign bounds
+
+The `Low`/`High` columns below are the **50 kW search bounds**
+(`search_bounds_v4`/`v10`).  The **5 kW campaign does NOT use them** — it runs a
+Daisy-anchored seed (`seed_genome(5.0)` in `scripts/compute_seeds.jl`) with
+`tight_bounds` (± a fraction around that seed).  The two scales differ by the
+Daisy rung factor √(5/1.5) ≈ 1.83.  Actual 5 kW campaign values (2026-08-24):
+
+| # | Name | seed | tight range |
+|---|------|------|-------------|
+| 1 | Do_top (m) | 0.046 | [0.023, 0.068] |
+| 2 | t_over_D | 0.055 | [0.028, 0.083] |
+| 3 | aspect_ratio | 1.0 | [0.5, 1.5] (dead) |
+| 4 | Do_scale_exp | 1.0 | [0.4, 1.6] |
+| 5 | r_hub (m) | 2.775 | [0.700, 4.995] |
+| 6 | r_bottom (m) | 0.575 | [0.288, 0.863] |
+| 7 | target_Lr | 2.0 | [1.0, 2.8] |
+| 8 | n_lines | 6 | [3, 16] |
+| 9 | density_profile | 0.0 | [−0.8, 0.8] |
+| 10 | rotor_mask | 0 | [0, 19] |
+| 11 | bank_top (°) | 0 | [0, 22] |
+| 12 | bank_bottom (°) | 0 | [0, 22] |
+| 13 | blade_scale_top | 0.6 | [0.12, 1.0] |
+| 14 | blade_scale_bottom | 0.6 | [0.12, 1.0] |
+
+`tight_bounds` are **seed-relative** — re-seeding shifts the range; the
+`Low`/`High` columns are fixed but describe the 50 kW design space.
+
+> **Terminology (2026-08-24).** There is **no central rigid hub** on these flying
+> rings — say **"topmost rotor ring"**, not "hub".  And **`λ` is reserved for
+> tip-speed ratio (TSR)** — the rotor-size gene x13/x14 is **"blade scale"**
+> (written out longhand), never "λ".  A blade-scale value is a *linear* scale on
+> blade span (swept area ∝ (blade scale)²), unrelated to TSR.
+
 ---
 
 ## Variables 1–9: V4/V5 base genome (geometry)
 
 | # | Name | Low | High | Clamp | Decoder | Physical meaning | Objective | Gaming risk |
 |---|------|-----|------|-------|---------|------------------|-----------|-------------|
-| x1 | Do_top (m) | 0.20 | 0.440 | — | `design_from_vector_v4` | Beam tube outer diameter at hub ring. Dominant FoS lever: I ∝ Do⁴. | v10: mass. v11-feas: FoS penalty. | DE reduces Do to reduce FoS penalty (not mass — v11 has no mass term). FoS floor catches it at scoring. |
+| x1 | Do_top (m) | 0.20 | 0.440 | — | `design_from_vector_v4` | Beam tube outer diameter at the topmost rotor ring. Dominant FoS lever: I ∝ Do⁴. | v10: mass. v11-feas: FoS penalty. | DE reduces Do to reduce FoS penalty (not mass — v11 has no mass term). FoS floor catches it at scoring. |
 | x2 | t_over_D | 0.01 | 0.15 | — | `design_from_vector_v4` | Wall thickness ratio. At 0.15 tube is near-solid rod. Secondary FoS lever. | v10: mass. v11-feas: FoS penalty. | DE pushes toward min; ~32% I gain from 0.15→solid not worth the mass |
 | x3 | aspect_ratio | 1.0 | 1.0 | — | `design_from_vector_v4` | Beam cross-section ellipticity. Fixed at 1.0 (circular) per Rod 2026-07-24. **DEAD DIMENSION** — the DE mutates across it with zero effect. | Neither | Not gamed — clamped to single value. Dead dimension wastes eval budget. |
 | x4 | Do_scale_exp | 0.0 | 1.0 | — | `design_from_vector_v4` | Tube diameter taper rate from hub toward ground. 0 = uniform Do; 1 = ground-ring Do → 0. Ground ring excluded from FoS (`sim_frame.jl:167`) but mass counts in airborne mass (`expansion_analysis.jl:43`). | v10: mass. v11-feas: FoS via intermediate rings only. | In v10: DE tapers to save mass. In v11: DE may un-taper to stiffen intermediate rings (the only ones FoS scores). |
-| x5 | r_hub (m) | 1.50× ref | 8.00× ref | — | `design_from_vector_v4` | Hub ring radius. Sets swept area (power) and bending moment arm. | v10: mass + power. v11-feas: P_mean + FoS penalty. | Larger = more power, more bending. Classic trade-off. |
+| x5 | r_hub (m) | 1.50× ref | 8.00× ref | — | `design_from_vector_v4` | Topmost rotor ring radius (the TRPT has no central rigid hub — it's the radius of the topmost flying ring). Sets swept area (power) and bending moment arm. | v10: mass + power. v11-feas: P_mean + FoS penalty. | Larger = more power, more bending. Classic trade-off. |
 | x6 | r_bottom (m) | 1.5 | 8.0 | `clamp(x[6], 0.1, max_ground_radius)` | `design_from_vector_v4` | Ground ring radius. Must be ≤ r_hub (enforced by decoder at `ring_spacing.jl:412`). | v11-feas: FoS via intermediate rings. | **SUSPECTED EXPLOIT.** r_bot ≪ r_hub → extreme taper → unloaded lower rings → high FoS on unloaded stations. Not yet gated — register row pending. |
 | x7 | target_Lr | 0.2 | 3.0 | — | `design_from_vector_v4` | Target ring spacing ratio L/r. High values → fewer rings. | v11-feas: FoS via ring count. | **CONFIRMED EXPLOIT.** DE maximises Lr → n_rings→3 → degenerate geometry → FoS=Inf → −1.0 (not mass — v11 has no mass term). 16/17 blowups at n_rings=3. |
 | x8 | n_lines | 3 | 24 (bounds) / 16 (V10 cap) / **12 (decoder clamp)** | `clamp(Int(round(x[8])), 3, 12)` at `ring_spacing.jl:409` | `design_from_vector_v4` | Polygon vertex count = blade count. | v10: mass. v11-feas: FoS penalty via ring compression. | **DEAD ZONE: x8 ∈ (12, 24] decodes to 12.** ~27% of the genome range is a plateau — the DE gets no discrimination. Blowup family at x8 mean 15.09 sits in this zone. Fix the bound or raise the clamp before relaunch. |

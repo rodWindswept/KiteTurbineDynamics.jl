@@ -2092,3 +2092,80 @@ reversal.  Whether this τ(ω) shape is correct physics (blade stall at low TSR)
 or an induction-model artefact needs a focused look before 2-rotor designs are
 viable.  See also: cylinder+cone radius-profile sketch (planned) to give both
 rotors the same anchor radius — the field-tested geometry.
+
+### [2026-08-24] Session lessons — transferable rules from the geometry audit + 2-rotor investigation
+
+Cross-cutting lessons from this session (build-geometry audit → seed-stall →
+2-rotor exploration).  These are RULES, not one-off fixes:
+
+1. **`dt=4e-5` is a single-point calibration, not a constant.**  It is stable
+   only for sub-segs ≥ ~0.5 m.  The `ring_spacing_v4` geometric taper makes
+   sub-segs non-uniform (seed's shortest 0.3119 m), which broke the fixed dt in
+   the settles AND the window (NaN / strain spike / spurious break).  RULE: any
+   geometry change must re-check the MINIMUM sub-seg against the dt stability
+   limit; dt must be adaptive (`stable_dt_for_system`), keyed on Lmin — never on
+   `n_lines`.
+2. **`blade_tip_radius` / `blade_hub_radius` are OFFSETS from `r_nom`, not
+   absolute radii.**  `r_out = r_nom + tip·cos(bank)`.  Using them directly
+   (settle ω-scan did `π(tip²−hub²)`) drops `r_nom` and under-counts a
+   lower-ring rotor's area ~6×.  RULE: any field named `*_radius` on a rotor is
+   an offset until proven otherwise; compute absolute area via
+   `expansion_annulus_area(er, r_nom)`.
+3. **Torque has a SPATIAL profile along the shaft.**  The settle's torque-chain
+   bisection winds a UNIFORM `τ_target = k·ω²` in every segment, but aero torque
+   is injected at specific rings (hub + each expansion rotor).  Winding the
+   top segment for the full `k·ω²` when it only carries `τ_hub` over-winds it →
+   the hub unwinds → the chain collapses below `k·ω²` → runaway deceleration.
+   RULE: multi-rotor settles/controllers must subtract expansion-rotor torque
+   from the segments ABOVE each rotor (`τ_seg = τ_gen − Σ τ_exp below`).
+4. **Tether drag is PERPENDICULAR-velocity only.**  A line wrapping tangentially
+   around the shaft moves along its own direction, so `ω·r` contributes NO drag;
+   only the axial wind (~11 m/s) does.  `tether_drag_force` correctly uses
+   `v_perp = v_rel − (v_rel·dir)·dir`; the settle's `v_t = ω·r_mid` (cubed) is
+   wrong, and its `n_lines` loop (looks for ring→ring sub-segs, of which there
+   are 0) returns 1 instead of 6.  RULE: line drag is SMALL (~50–80 N·m), not a
+   first-order loss; don't model it as ∝ (ω·r)³.
+5. **A static torque balance can lie about stability.**  For the 2-rotor seed the
+   static `τ_aero − τ_drag − τ_gen` is positive down to ω≈3 (predicts a stable
+   equilibrium at ω≈11.7), yet the ODE runs to 0 — because the settle's twist is
+   wound for the wrong (uniform) torque (rule 3).  RULE: instrument the ODE's
+   per-ring torque before concluding a stall is physical.
+6. **The wrong geometry hid a weak seed.**  The linear-taper builder's fat bottom
+   ring (2.224 m) masked the fact that the corrected seed (r_bottom 0.575) has
+   FoS ≈ 1.01 — genuinely too weak.  RULE: re-smoke every seed after a geometry
+   change; a previously-feasible seed is not evidence the corrected geometry is.
+
+Follow-on work these rules imply (open): torque-chain bisection aero injection
+(rule 3), settle drag-model consistency with `tether_drag_force` (rule 4),
+cylinder+cone radius profile to give all rotors a common `r_nom` (reduces the
+rule-2/rule-3 asymmetry), and a balanced controller replacing the uniform
+`k·ω²` law.
+
+### [2026-08-24] Drag + bisection fixes landed; 2-rotor stall traced to a ~94× settle-vs-ODE twist mismatch
+
+**Fix #1 (drag consistency):** `settle_parasitic_drag_power` had `n_lines` stuck
+at 1 (the loop looked for ring→ring sub-segs, of which there are none) and an
+ad-hoc "curvature factor 0.5" that halved the tether drag below the ODE's
+`tether_drag_force`.  Both removed → the settle's ω-scan now sees the same drag
+as the ODE (2-rotor seed settle ω 13.88 → 9.94).
+
+**Fix #2 (bisection aero injection):** the torque-chain bisection wound a
+UNIFORM `τ_target = k·ω²` in every segment.  It now subtracts each expansion
+rotor's driving torque `τ_exp` from the target carried to the segment ABOVE it
+(`τ_target = −τ_b − τ_exp`), so the chain carries `τ_gen` below a rotor and
+`τ_gen − τ_exp` above it.  The settle's twist profile is now non-uniform (segments
+above the ring-6 rotor drop to Δα≈0.001 vs 0.006–0.015 below).  Fast suite 1954/1954.
+
+**Still open — the 2-rotor stall is NOT cleared.**  Instrumenting the ODE at the
+settle state shows the bisection's `τ_fn_a(Δα=0.015) = 221 N·m` (matches its
+`k·ω²` target) but the ODE's actual rope torque on the ground ring is
+**2.36 N·m** — a ~94× mismatch.  So the settle winds the twist for the right
+torque per ITS model, but the ODE's rope transmits ~100× less, the generator
+(k·ω²) outruns the transmitted torque, and the machine decelerates to reversal.
+The bisection's simplified chord-torque model (`T=EA·(chord−L)/L`, straight
+chord) does not match the ODE's discretised sub-segment rope physics.  This is a
+settle-vs-ODE fidelity gap, not a sign error — it needs a dedicated look at why
+the ODE's per-sub-seg rope torque is ~100× smaller than the chord model
+(candidate: sub-seg direction/radius at the ring-attachment end, the tension
+rectifier, or the C1 torque clamp).  Until it is resolved, multi-rotor settles
+wind the wrong twist and 2-rotor designs are not evaluable.

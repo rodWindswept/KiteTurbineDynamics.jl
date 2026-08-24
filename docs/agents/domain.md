@@ -46,11 +46,12 @@
 | V6.3 | 52.6 kg ⚠ | 6 expansion | Many small fans beat one big one. **⚠ Dynamically impossible** — parasitic drag 14,277× aero power. Maths artefact, not a real design. |
 | V10 | 76.75 kg | 1 | PCA decoupling, two-basin trap, slenderness gate |
 | **V10 Tight (RETRACTED)** | 49.2 kg | 4 | centre-constraint spokes artificially stiff — retracted 2026-07-13 |
-| **5 kW validated base (2026-08-22)** | — | 1 (hub) | Honest-window evaluator (relax 10 + window 40), unified λ³ blade-mass law (m_ref 0.420 kg), main rotor modelled once (hub double-model removed), k=2.24, 18.8 m. **DE CAMPAIGN RUNNING** (`scripts/run_v13_5kw_masslift.jl`, mass_min, FoS 2.5, P floor 5 kW). Seed sustains 8.0 kW on 60 m². See `handover-2026-08-22-validated-5kw-campaign-launched.md`. |
+| **5 kW base (2026-08-22 → 08-24)** | — | 1 (hub) | Honest-window evaluator (relax 10 + window 40), span³ blade-mass law (m_ref 0.420 kg), main rotor modelled once, k=2.24, 18.8 m. **Campaign NOT relaunched** — the 08-24 build-geometry audit found x6/x7/x9 were dead genes (ODE ran the wrong taper), so the re-run's winners are VOID too. Corrected-geometry seed now runs P=5.39 kW on 33.7 m² but FoS≈1.01 (genuinely weak, needs re-seed). 08-24 fixes landed: adaptive dt (`stable_dt_for_system`), per-segment preload restore, settle ω-scan absolute radii. See DECISIONS.md [2026-08-24] ×3. |
 
-Pre-2026-08-22 5 kW winners are VOID (50 kW blade mass, wrong-length machine,
-hub double-model). See `docs/validation/physics-validation-ledger.md` for what
-is believed and why.
+**All 5 kW winners before 2026-08-24 are VOID** — both the 50 kW blade-mass /
+wrong-length / hub double-model bugs (pre-08-22) AND the dead-geometry-genes bug
+(08-22 re-run ran the linear-taper geometry while optimising the tapered genes).
+See `docs/validation/physics-validation-ledger.md` for what is believed and why.
 
 ## What the Optimizer Is Telling Us
 

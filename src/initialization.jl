@@ -760,27 +760,30 @@ function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
     rho = p.rho
     nu = 1.5e-5  # kinematic viscosity of air (m²/s)
 
-    # ── Physical line count: max line_idx among TRPT sub-segments ────────
-    n_lines = 1
-    for sub in sys.sub_segs
-        if sub.end_a.is_ring && sub.end_b.is_ring
-            n_lines = max(n_lines, sub.end_a.line_idx)
-        end
-    end
+    # ── Physical line count ──────────────────────────────────────────────
+    # 2026-08-24 (geometry audit): the old loop looked for sub-segments whose
+    # BOTH ends are rings — but TRPT sub-segs are ring→rope→…→ring, so there are
+    # none and n_lines was always 1 (6× drag under-count).  Use the params count.
+    n_lines = p.n_lines
 
     # Ring node radii + positions in ground→hub order
     n_rings = length(sys.ring_ids)
     radii = [sys.nodes[sys.ring_ids[i]].radius for i in 1:n_rings]
     pos = [u[(3*(sys.ring_ids[i]-1)+1):(3*sys.ring_ids[i])] for i in 1:n_rings]
 
-    # ── 1. Tether line drag (cylinder-in-crossflow, curvature factor 0.5) ─
+    # ── 1. Tether line drag ───────────────────────────────────────────────
+    # The line runs mostly AXIAL (along the shaft), so its tangential velocity
+    # ω·r_mid is PERPENDICULAR to the line — the full tangential velocity is the
+    # drag-inducing v_perp (matches tether_drag_force's perpendicular-only drag).
+    # The old "curvature factor 0.5" halved this ad hoc and disagreed with the
+    # ODE; removed for consistency (2026-08-24).
     P_tether = 0.0
     for si in 1:(n_rings - 1)
         L = norm(pos[si+1] - pos[si])
         r_mid = (radii[si] + radii[si+1]) / 2
         v_t = ω * r_mid
         P_seg = 0.5 * rho * TETHER_DRAG_CD * p.tether_diameter * L * v_t^3
-        P_tether += n_lines * P_seg * 0.5   # TRPT curvature factor (0.5)
+        P_tether += n_lines * P_seg
     end
 
     # ── 2. Ring beam drag (skin friction + axial crossflow) ──────────────
@@ -1113,7 +1116,27 @@ function settle_to_operational_state(
             r_vec_b = pb_j .- ctr_b
             τ_b += T_j * dot(cross(r_vec_b, -dir_j), sd)
         end
-        τ_target_a = -τ_b   # next lower ring must cancel this segment's load on ring_b
+
+        # Expansion rotor aero-torque injection at ring b (2026-08-24, geometry
+        # audit rule 3): the chain carries τ_gen below an expansion rotor but
+        # τ_gen − τ_exp ABOVE it.  Winding the segment above for the full τ_gen
+        # over-winds it — the ring then sees chain-torque > its own aero and
+        # unwinds, collapsing the transmission (the 2-rotor stall).  Subtract the
+        # rotor's driving torque from the target carried to the next segment.
+        τ_exp_b = 0.0
+        for er in sys.expansion_rotors
+            er.ring_idx == nb.ring_idx || continue
+            er_gid = sys.ring_ids[er.ring_idx]
+            er_pos = u_start[(3 * (er_gid - 1) + 1):(3 * er_gid)]
+            vw = wind_fn === nothing ? [p.v_wind_ref, 0.0, 0.0] : wind_fn(er_pos, 0.0)
+            vw_mag = norm(vw)
+            er_rnom = (sys.nodes[er_gid]::RingNode).radius
+            τ_exp_b = expansion_rotor_forces(
+                er, p.rho, vw_mag, ω_eq, rad2deg(p.elevation_angle), er_rnom, 100.0, p.n_lines
+            )[3]
+            break
+        end
+        τ_target_a = -τ_b - τ_exp_b   # next lower ring cancels ring_b's load AND the rotor's aero
 
         α_cum += Δα_eq
         u_start[6N + nb.ring_idx] = α_cum
