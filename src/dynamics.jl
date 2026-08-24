@@ -88,7 +88,7 @@ function multibody_ode!(du, u, params, t)
         # Do(r) = Do_top·(r/r_hub)^Do_scale_exp (2026-08-07, F4b audit).
         Do_tube = if sys.ring_Do_top[] > 0.0
             r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
-            scale = (R / r_ref)^sys.ring_Do_scale_exp[]
+            scale = max(R / r_ref, 0.0)^sys.ring_Do_scale_exp[]
             max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
         else
             max(0.01396 * sqrt(R), 5e-4 / 0.05)

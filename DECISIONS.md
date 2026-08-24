@@ -1972,3 +1972,29 @@ carbon spar tubes, so the spar contribution argues sub-cubic.
 conservative upper bound; the carbon spars are a small fraction of the blade
 mass at the anchor and are absorbed into the 420 g calibration.  Revisit if
 field tests show the exponent is sub-cubic.
+
+### [2026-08-24] Settle DomainError root cause: negative ring radii from the linear-taper builder
+
+**Context:** both 5 kW campaigns logged ~5 `DomainError` settle failures
+("Exponentiation yielding a complex result") out of ~930 evals, caught by
+try/catch (non-fatal → reject).  A random-genome reproduction
+(`scripts/repro_domainerror.jl`) pinned the exact site: `multibody_ode!` at
+`dynamics.jl:91` — `scale = (R/r_ref)^Do_scale_exp` with `R` a NEGATIVE ring
+radius and `Do_scale_exp` a fractional genome value (0.52).
+
+**Root cause:** `build_kite_turbine_system` (the campaign's linear-taper
+builder) derives the bottom radius as `r_bot = 2·L·trpt_rL_ratio/n_seg −
+r_top`, which goes NEGATIVE for large-hub genomes (e.g. r_hub 4.17 m →
+r_bot −0.776 m).  Negative ring radii are unphysical, and the fractional
+taper exponent then throws.  **Deeper finding:** this builder derives r_bot
+from `trpt_rL_ratio` (a fixed base param, 1.083) and `r_top` (design.r_hub),
+NOT the genome's `r_bottom` (x6) — so x6 only shifts n_rings, not the ODE's
+actual bottom radius.  This is a geometry-consistency issue (a partially-dead
+gene, like x3 aspect_ratio) to resolve in the geometry workstream, separate
+from the DomainError.
+
+**Fix (landed):** clamp `r_bot ≥ 0.1` (the decoder's r_bottom floor) in
+`build_kite_turbine_system`; defensive `max(R/r_ref, 0.0)` at
+`dynamics.jl:91`.  Test: a large-hub genome builds with all ring radii ≥ 0.1
+(test_blade_mass_law, 19/19).  Follow-on: carry the design's r_bottom through
+GeometrySpec so the ODE geometry matches the decoder (geometry-consistency).

@@ -124,6 +124,25 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         @test total ≈ sum(er.mass for er in sys.expansion_rotors; init=0.0) atol=0.001
         @test !isapprox(total, sum(er.mass * er.n_blades for er in sys.expansion_rotors); rtol=1e-9)
     end
+
+    @testset "builder: linear taper never produces negative ring radii (2026-08-24)" begin
+        include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
+        # A large-hub genome whose rL_ratio-derived bottom radius was negative
+        # (-0.776 m) -> (R/r_hub)^Do_scale_exp threw DomainError in the settle.
+        x = [0.0639,0.0615,1.3501,0.5178,4.1696,0.4637,1.1246,14.0,0.6913,13.8991,17.5721,19.7204,0.4989,0.5363]
+        p2 = params_daisy()
+        geo0 = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius, 18.8, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+        mat0 = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+        aero0 = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+        ctrl0 = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+        back0 = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+        p_base = override_params(mass_scale(SystemParams(geo0, mat0, aero0, ctrl0, back0), 1.5, 5.0); tether_length=18.8)
+        xr = copy(x); xr[8] = Float64(round(Int, clamp(xr[8], 3, 16))); xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+        result = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=5000.0, v_rated=11.0)
+        sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, 2.24; base_params=p_base)
+        radii = [sys.nodes[sys.ring_ids[i]].radius for i in 1:sys.n_ring]
+        @test all(r -> r >= 0.1, radii)
+    end
 end
 
 println("\n✓ unified blade-mass law tests complete")

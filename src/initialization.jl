@@ -297,7 +297,14 @@ function build_kite_turbine_system(
 )
     n_seg = p.n_rings + 1
     r_top = p.trpt_hub_radius
-    r_bot = 2.0 * p.tether_length * p.trpt_rL_ratio / n_seg - r_top
+    # Linear-taper bottom radius.  The rL_ratio-derived formula can go
+    # NEGATIVE for large-hub genomes (r_top big, n_seg small) — a ring with
+    # negative radius is unphysical and later hits (R/r_hub)^Do_scale_exp
+    # with a fractional exponent (DomainError, 2026-08-24).  Clamp to the
+    # decoder's r_bottom floor.  NOTE: this builder derives r_bot from
+    # trpt_rL_ratio, NOT the genome's r_bottom (x6) — see DECISIONS
+    # [2026-08-24] geometry-consistency finding.
+    r_bot = max(2.0 * p.tether_length * p.trpt_rL_ratio / n_seg - r_top, 0.1)
 
     ring_radii = Vector{Float64}(undef, n_seg + 1)
     ring_radii[1] = r_bot
