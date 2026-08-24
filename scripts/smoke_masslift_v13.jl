@@ -50,7 +50,7 @@ function main()
             fos_target = 2.5, fos_hard = 2.5,
             power_stat = :tail5, penalize_ceiling = false,
             kickstart_s = 0.0,
-            k_mppt = 2.24,   # honest 6-blade anchor, 2026-08-22 sweep (see runner)
+            k_mppt = K_MPPT_5KW_HONEST,   # single source (compute_seeds.jl)
             tether_diameter = p_base.tether_diameter,
         )
 

@@ -86,11 +86,11 @@ end
 function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
         window_s::Float64=30.0, p2=params_daisy())
     p = params_at_length(p2, L, KW)
-    # 5 kW operating point: honest-window k sweep 2026-08-22 (scripts/results/
-    # k_sweep_daisy_5kw.csv): k=2.24 sustained (below the generator-clamp).
-    # k=5.39 (earlier sweep) was flattered by the 20 s window — do NOT use.
-    # MUST match run_v13_5kw_masslift.jl cfg.k_mppt.
-    k_mp = KW == 5.0 ? 2.24 : p.k_mppt
+    # 5 kW operating point: single source of truth (compute_seeds.jl,
+    # K_MPPT_5KW_HONEST) — honest-window k sweep 2026-08-22.  k=5.39 was the
+    # superseded 20 s-window sweep value (trust-log 2026-08-24 row); do NOT
+    # reintroduce a local literal here.
+    k_mp = KW == 5.0 ? K_MPPT_5KW_HONEST : p.k_mppt
     xv = copy(x)
     xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
     xv[10] = clamp(xv[10], 0.0, Float64(N_VALID_MASKS))

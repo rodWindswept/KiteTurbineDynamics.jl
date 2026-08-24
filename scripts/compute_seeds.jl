@@ -25,6 +25,14 @@ const V10_50KW = [
 
 const RUNGS = [5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0]
 
+# Single source of truth for the 5 kW campaign operating point (2026-08-24).
+# Honest-window k sweep 2026-08-22 (scripts/results/k_sweep_daisy_5kw.csv):
+# 6-blade Daisy anchor scaled 0.175·(5/1.5)^2.5.  EVERY k_mppt consumer
+# (runner, smoke, gate, analysis tools) MUST read this constant — local
+# literals drifted twice (trust-log 2026-08-13 k=10.0 row; 2026-08-24
+# stale-k=5.39 gate row).
+const K_MPPT_5KW_HONEST = 2.24
+
 function seed_n_lines(kw::Float64)::Float64
     # Daisy: 6 lines at 1.5kW → extrapolate to target scale
     # Conservative: fewer lines at small scale (less load sharing needed)

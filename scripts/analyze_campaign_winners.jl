@@ -13,7 +13,8 @@ using KiteTurbineDynamics, Printf, LinearAlgebra
 const KW = 5.0
 const PW = KW * 1000.0
 const V_RATED = 11.0
-const K_MPPT = 2.24          # campaign cfg k_mppt (runner, 2026-08-22)
+include(joinpath(@__DIR__, "compute_seeds.jl"))
+const K_MPPT = K_MPPT_5KW_HONEST   # campaign cfg k_mppt (single source, compute_seeds.jl)
 const LENGTH = 18.8
 
 OUT_DIR = length(ARGS) > 0 ? ARGS[1] :

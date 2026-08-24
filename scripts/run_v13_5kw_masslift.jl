@@ -123,8 +123,9 @@ cfg = ObjectiveConfig(;
     fos_target = 2.5, fos_hard = 2.5,   # FoS ≥ 2.5 at all points (until field data)
     power_stat = :tail5, penalize_ceiling = false,
     kickstart_s = 0.0,   # ζ=0.05: settle reaches the productive branch directly
-    k_mppt = 2.24,   # HONEST k (2026-08-22 sweep on the FIXED machine — hub
-                     # double-model removed, 18.8 m, unified λ³ mass law):
+    k_mppt = K_MPPT_5KW_HONEST,   # single source (compute_seeds.jl).  HONEST k
+                     # (2026-08-22 sweep on the FIXED machine — hub
+                     # double-model removed, 18.8 m, unified span³ mass law):
                      # the 6-blade Daisy anchor scaled 0.175·(5/1.5)^2.5 =
                      # 2.24 sustains 8.0 kW (P_end, converged window) at ω 15.3
                      # (tip 73 m/s), FoS 36.  k=1.0 sustains 5.45 kW but at

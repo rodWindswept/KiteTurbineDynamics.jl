@@ -3,8 +3,8 @@
 First trustworthy 5 kW designs.  Era: span³ blade-mass law (m = 0.420·(span/1.0)³,
 ^3.0 exponent per Rod), 18.8 m, k=2.24, honest window (relax 10 + window 40),
 mass-min objective, FoS floor 2.5, P floor 5 kW.  Campaign: 3 islands × 30 gens,
-**928 evals** (930 CSV rows incl. header), ~12.3 h wall per the launch session
-(≈48 s/eval), launch git `edd7f5f`.
+**928 evals** (930 CSV rows incl. header), **44,396 s (12.3 h) wall per the
+run log** (`Campaign complete in 44396.0s`), ≈48 s/eval, launch git `edd7f5f`.
 
 Note on the objective mass: fitness (kg) = m_airborne + 5.0 kg lifter.  The
 lifter mass is included in the DE score but excluded from the lift-line
