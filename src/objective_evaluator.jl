@@ -461,6 +461,13 @@ function evaluate_windowed(
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt;
         tether_diameter=cfg.tether_diameter, base_params=p)
 
+    # Adaptive window time step (2026-08-24, build-geometry audit): the
+    # geometric taper (ring_spacing_v4) can shorten ground-end sub-segs below
+    # the 0.5 m that V11_DT=4e-5 was calibrated for; at 4e-5 the rope positions
+    # destabilise (strain spike → spurious rope break).  Same shortest-sub-seg
+    # law as the settles.
+    dt = stable_dt_for_system(sys, pc)
+
     # Annulus gate (2026-08-20): every rotor must sweep a valid annulus
     # (inner tip ≥ 0, the r_ring ≥ 0.3·span constraint of the 70/30 split).
     if !rotor_annulus_ok(sys)
@@ -567,9 +574,9 @@ function evaluate_windowed(
             # limit.)
             if cfg.kickstart_s > 0.0
                 sys.k_mppt_ref[] = -60.0  # N·m·s²/rad² — motor torque
-                kick_steps = round(Int, cfg.kickstart_s / V11_DT)
+                kick_steps = round(Int, cfg.kickstart_s / dt)
                 run_canonical_sim!(
-                    u_settled, sys, pc, wf, kick_steps, V11_DT;
+                    u_settled, sys, pc, wf, kick_steps, dt;
                     lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
                 )
             end
@@ -585,8 +592,8 @@ function evaluate_windowed(
 
     # ── Run relaxation + window ──────────────────────────────────────────
     total_s = cfg.relax_s + cfg.window_s
-    total_n = round(Int, total_s / V11_DT)
-    sample_interval = round(Int, 1.0 / V11_DT)
+    total_n = round(Int, total_s / dt)
+    sample_interval = round(Int, 1.0 / dt)
 
     P_samples = Float64[]
     fos_samples = Float64[]
@@ -603,7 +610,7 @@ function evaluate_windowed(
         # Diagnostic tap runs first and is scoring-neutral.
         trace_callback !== nothing && trace_callback(uc, tc, s, trace_ctx)
 
-        t_cum = s * V11_DT
+        t_cum = s * dt
         if t_cum > cfg.relax_s && s % sample_interval == 0
             # V13 torsional collapse detector: any segment past its geometric
             # crossing limit δα* fails the design regardless of power readings.
@@ -672,7 +679,7 @@ function evaluate_windowed(
 
     try
         run_canonical_sim!(
-            u_settled, sys, pc, wf, total_n, V11_DT;
+            u_settled, sys, pc, wf, total_n, dt;
             lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
         )
     catch e

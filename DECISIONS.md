@@ -2024,3 +2024,46 @@ the ODE ran).  Re-smoke + re-run the campaign on the corrected geometry.  The
 seed's ODE geometry changes (bottom ring now = decoded r_bottom), so the k
 sweep, settle-gap, and smoke numbers shift.  Full audit doc:
 `docs/plans/2026-08-24-build-geometry-audit.md`.
+
+### [2026-08-24] Seed "stall" was a NaN-poisoned settle, not physics; three wrong-geometry bugs fixed
+
+**Context:** after the build-geometry fix (v5/`ring_spacing_v4` taper in the
+ODE), the corrected-geometry seed smoke-tested as `P=0, FoS=Inf, ω pinned at
+60 rad/s`.  Diagnosis traced the stall to `settle_to_operational_state`'s
+ω-scan returning the `ω_rated_max=60` fallback because its parasitic-drag term
+returned NaN, making `P_aero − NaN > P_gen` false everywhere.
+
+**Root cause chain (all wrong-geometry, same class as the audit):** the
+geometric taper produces NON-UNIFORM sub-segments — the seed's shortest
+ground-end sub-seg is 0.3119 m (vs ~0.67 m uniform in the old linear-taper
+builder, and the 0.5 m that `dt=4e-5` was calibrated for).  Three consumers
+assumed either uniform spacing or the fixed 4e-5 step:
+
+1. **`settle_to_equilibrium` / `settle_to_operational_state`** keyed their
+   step off `n_lines >= 8` (→1e-5), not the actual shortest sub-seg.  A
+   6-line seed with a steep taper NaNs the rope positions (settle step 41).
+   NaN ring positions → `settle_parasitic_drag_power` NaN → scan fails → ω=60.
+2. **`settle_to_operational_state` axial-preload restore** placed rings at
+   UNIFORM `seg_len = tether_length/n_seg` (2.686 m) while the built geometry
+   has non-uniform segments (bottom 1.248 m).  Bottom ring placed 2.15× out →
+   115% path strain → instant rope break.
+3. **Scoring window (`V11_DT=4e-5`)** destabilised the 0.31 m bottom sub-seg
+   from the settled (preloaded, twisted, ω≈13) state: 41% strain spike in the
+   first 1 ms → spurious break.  dt-independent only because the OLD test ran
+   on the buggy uniform settle; on the fixed settle the spike is dt-dependent
+   (4e-5 breaks, 2e-5/1e-5 stable at 0.79%).
+
+**Fix (landed):** new `stable_dt_for_system(sys, p)` = `min(4e-5,
+4e-5·√(Lmin/0.5)/1.5)` (1.5× margin below the empirical stability boundary;
+Rod chose 1.5×).  Threaded through both settles AND the scoring window
+(per-design `dt`, replacing the fixed `V11_DT`).  The preload restore now uses
+per-segment rest length `4·sub_segs[(k−1)·n_lines·4+1].length_0` and
+per-segment axial stiffness `EA_tot/L_seg_k`.
+
+**Result:** smoke now runs the corrected seed to `P_mean=5.39 kW,
+P_end=5.23 kW, lift tension 0.00% err`, but `FoS_min=1.01` (oscillating
+0.87–2.5) — the mass-min seed is genuinely too weak at its true geometry and
+needs re-seeding/evolving.  Not a numerical artifact: the FoS floor rejection
+is real.  Fast suite passes (see trust-log).  Remaining uniform-spacing uses
+are legacy (linear-taper builder, old optimizer) or explicitly approximate
+(damper sizing `ring_forces.jl:419`, build-time stretch ~0.3 mm).

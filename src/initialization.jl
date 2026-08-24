@@ -376,6 +376,39 @@ function build_kite_turbine_system_v5(
 end
 
 """
+    stable_dt_for_system(sys, p; dt_ref=4e-5, L_ref=0.5, margin=1.5) → Float64
+
+Stable semi-implicit-Euler time step for the built system's shortest TRPT
+sub-segment.  The canonical dt_ref=4e-5 is calibrated for L_ref=0.5 m sub-segs
+(ω_max ≈ 20 000 rad/s, see settle_to_equilibrium); the geometric taper
+(`ring_spacing_v4`) can produce much shorter ground-end sub-segs whose higher
+natural frequency ω_max ∝ 1/√L₀ exceeds the stability limit at dt_ref and NaNs
+the rope positions.  dt is scaled by √(Lmin/L_ref) with a safety `margin`, and
+clamped to dt_ref (never above the calibrated ceiling).
+
+Replaces the old `n_lines >= 8 → 1e-5` heuristic, which keyed off line count
+instead of the actual shortest segment — a 6-line design with a steep taper can
+still destabilise, while an 8-line design with long segments was needlessly
+slowed 4×.  (Build-geometry audit 2026-08-24.)
+"""
+function stable_dt_for_system(
+    sys::KiteTurbineSystem,
+    p::SystemParams;
+    dt_ref::Float64=4e-5,
+    L_ref::Float64=0.5,
+    margin::Float64=1.5,
+)
+    Lmin = Inf
+    for ss in sys.sub_segs
+        Lmin = min(Lmin, ss.length_0)
+    end
+    if !isfinite(Lmin) || Lmin <= 0.0
+        return dt_ref / margin   # degenerate geometry — conservative fallback
+    end
+    return min(dt_ref, dt_ref * sqrt(Lmin / L_ref) / margin)
+end
+
+"""
     settle_to_equilibrium(sys, u0, p; n_steps, dt) → Vector{Float64}
 
 Explicit damped integrator that lets rope nodes sag under gravity without the
@@ -399,13 +432,15 @@ function settle_to_equilibrium(
     dt::Float64=4e-5,
     damp::Float64=0.05,
 )
-    # Auto-adjust dt for high-line-count systems: shorter ground-end segments
-    # (e.g., 0.17 m in v5 vs 0.50 m canonical) have higher natural frequencies
-    # that exceed the semi-implicit Euler stability limit at dt=4e-5.
-    # Scaling: ω_max ∝ 1/√L₀, so for L₀=0.17 m we need dt ≈ 4e-5×√(0.17/0.50) ≈ 2.3e-5
-    # Conservative bound: n_lines ≥ 8 → dt = 1e-5
-    local dt_use = p.n_lines >= 8 ? 1e-5 : dt
-    local n_use = p.n_lines >= 8 ? n_steps * 4 : n_steps  # 4× steps to match sim time
+    # Auto-adjust dt to the SHORTEST sub-segment actually built (2026-08-24,
+    # build-geometry audit): the geometric taper (ring_spacing_v4) can produce
+    # ground-end sub-segs far shorter than the canonical 0.5 m, whose higher
+    # natural frequency ω_max ∝ 1/√L₀ exceeds the semi-implicit Euler stability
+    # limit at dt=4e-5 and NaNs the rope positions.  Keying off n_lines ≥ 8 was
+    # wrong: a 6-line design with a steep taper still destabilises, and an
+    # 8-line design with long segments is needlessly slowed 4×.
+    local dt_use = min(dt, stable_dt_for_system(sys, p))
+    local n_use = round(Int, n_steps * dt / dt_use)  # preserve simulated time
     u = copy(u0)
     N = sys.n_total
     Nr = sys.n_ring
@@ -892,7 +927,6 @@ function settle_to_operational_state(
             T_cyan_des = design_preload_from_sky_anchor(p, lift_device)
             n_seg_r = Nr - 1
             EA_tot = p.n_lines * p.e_modulus * π * (p.tether_diameter / 2)^2
-            k_ax = EA_tot / (p.tether_length / n_seg_r)
             m_rotor_d = p.n_blades * p.m_blade
             kite_m_d = sys.kite.mass
             v_r = p.v_wind_ref
@@ -905,15 +939,21 @@ function settle_to_operational_state(
             for i in (n_seg_r - 1):-1:1
                 F_ax[i] = F_ax[i + 1] + g_inc
             end
-            seg_len = p.tether_length / n_seg_r
+            # Per-segment rest lengths from the BUILT geometry (ring_spacing_v4
+            # geometric taper) — NOT uniform tether_length/n_seg.  The preload
+            # restore previously used a uniform seg_len, which over-stretched the
+            # short bottom segment (115% strain → immediate rope break) once the
+            # build switched to tapered spacing.  (Build-geometry audit 2026-08-24.)
             rp = zeros(3)
             for k in 1:Nr
                 gid = sys.ring_ids[k]
                 idx = (3 * (gid - 1) + 1):(3 * gid)
                 u_start[idx] .= rp
                 if k < Nr
-                    stretch = max(0.0, F_ax[k] / k_ax)
-                    rp .+= (seg_len + stretch) .* sd_r
+                    L_seg_k = 4 * sys.sub_segs[(k - 1) * p.n_lines * 4 + 1].length_0
+                    k_ax_k = EA_tot / L_seg_k
+                    stretch = max(0.0, F_ax[k] / k_ax_k)
+                    rp .+= (L_seg_k + stretch) .* sd_r
                 end
             end
         else
@@ -965,7 +1005,7 @@ function settle_to_operational_state(
         wind_use = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
         ode_params =
             lift_device === nothing ? (sys, p, wind_use) : (sys, p, wind_use, lift_device)
-        dt_op = p.n_lines >= 8 ? 1e-5 : 4e-5
+        dt_op = stable_dt_for_system(sys, p)
         n_op_use = n_op  # 6 s simulated — long enough for bearing+rope to
         # reach orbital equilibrium from any starting state
 
