@@ -366,8 +366,17 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
     pc = SystemParams(geo, mat, aero, ctrl, back)
 
-    sys, u0 = build_kite_turbine_system(pc; expansion_rotors=expansion_params,
-                                        rotor_blade_hub_radius=r_in)
+    # v5 builder: ring geometry from ring_spacing_v4 (the DECODED taper),
+    # NOT the linear-taper build_kite_turbine_system which derived r_bot from
+    # the FIXED trpt_rL_ratio and dropped r_bottom/target_Lr/density_profile
+    # (x6/x7/x9 dead in the ODE; negative radii for large hubs; DECISIONS
+    # [2026-08-24]).
+    sys, u0 = build_kite_turbine_system_v5(
+        pc, design.target_Lr, design.r_bottom;
+        density_profile=design.density_profile,
+        expansion_rotors=expansion_params,
+        rotor_blade_hub_radius=r_in,
+    )
 
     # Populate ring beam geometry from the genome so ring_element_analysis uses
     # the DE's Do_top/t_over_D rather than falling through to the hard-coded

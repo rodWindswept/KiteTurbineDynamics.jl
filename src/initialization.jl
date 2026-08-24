@@ -346,6 +346,7 @@ function build_kite_turbine_system_v5(
     p::SystemParams,
     target_Lr::Float64,
     r_bottom::Float64;
+    density_profile::Float64=0.0,
     kite_area::Float64=10.0,
     kite_mass::Float64=5.0,
     kite_tether_length::Float64=20.0,
@@ -353,7 +354,8 @@ function build_kite_turbine_system_v5(
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v4(
-        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr
+        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr;
+        density_profile=density_profile,
     )
 
     seg_lengths = diff(z_positions)

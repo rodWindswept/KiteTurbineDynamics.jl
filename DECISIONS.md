@@ -1998,3 +1998,29 @@ from the DomainError.
 `dynamics.jl:91`.  Test: a large-hub genome builds with all ring radii ≥ 0.1
 (test_blade_mass_law, 19/19).  Follow-on: carry the design's r_bottom through
 GeometrySpec so the ODE geometry matches the decoder (geometry-consistency).
+
+### [2026-08-24] Build-geometry audit: ODE ring geometry now matches the decoder (x6/x7/x9 were dead)
+
+**Context:** while fixing the settle DomainError (negative ring radii), a
+broader geometry audit (Rod's request: catch all wrong-geometry issues in one
+pass) revealed a systemic bug: `build_system_from_v10` built the ODE system
+with the LINEAR-taper `build_kite_turbine_system`, which derives the bottom
+radius from the FIXED base `trpt_rL_ratio` (1.083) + hub radius and ignores
+the genome's geometry genes x6 (r_bottom), x7 (target_Lr), x9
+(density_profile).  The decoded winner (r_bottom 0.479 m) was simulated as a
+machine with r_bottom 2.224 m (4.6× too fat).  The DE optimised three dead
+genes, and every 5 kW result since the evaluator consolidation used the
+wrong geometry — the ADR-0005 wrong-geometry class, persisting in the
+builder choice.
+
+**Decision/fix:** `build_system_from_v10` now calls
+`build_kite_turbine_system_v5` (the `ring_spacing_v4` geometry) with
+`design.target_Lr`, `design.r_bottom`, `design.density_profile`;
+`build_kite_turbine_system_v5` gained the `density_profile` kwarg.  Regression
+test asserts ODE ground-ring radius == decoded r_bottom and hub == r_hub.
+
+**Consequences:** the re-run's winners are VOID (their geometry was not what
+the ODE ran).  Re-smoke + re-run the campaign on the corrected geometry.  The
+seed's ODE geometry changes (bottom ring now = decoded r_bottom), so the k
+sweep, settle-gap, and smoke numbers shift.  Full audit doc:
+`docs/plans/2026-08-24-build-geometry-audit.md`.

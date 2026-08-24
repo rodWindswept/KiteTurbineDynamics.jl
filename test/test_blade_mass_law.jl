@@ -142,6 +142,13 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(result, 1.0, 2.24; base_params=p_base)
         radii = [sys.nodes[sys.ring_ids[i]].radius for i in 1:sys.n_ring]
         @test all(r -> r >= 0.1, radii)
+        # KEY INVARIANT (2026-08-24 geometry audit): the ODE ring geometry
+        # MUST match the DECODED design — ground ring == r_bottom, hub ring ==
+        # r_hub (the linear-taper builder dropped r_bottom/target_Lr/
+        # density_profile, so x6/x7/x9 were dead and the ODE ran a different
+        # machine than the genome decoded).
+        @test radii[1] ≈ result.design.r_bottom atol=1e-6
+        @test radii[end] ≈ result.design.r_hub atol=1e-6
     end
 end
 
