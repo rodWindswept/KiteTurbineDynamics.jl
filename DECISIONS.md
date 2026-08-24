@@ -2067,3 +2067,28 @@ needs re-seeding/evolving.  Not a numerical artifact: the FoS floor rejection
 is real.  Fast suite passes (see trust-log).  Remaining uniform-spacing uses
 are legacy (linear-taper builder, old optimizer) or explicitly approximate
 (damper sizing `ring_forces.jl:419`, build-time stretch ~0.3 mm).
+
+### [2026-08-24] Settle ω-scan used expansion-rotor OFFSETS, not absolute radii (multi-rotor bug)
+
+**Context:** probing a 2-rotor seed (main hub + one expansion rotor) surfaced
+that the settle's ω-scan computed expansion-rotor power as
+`π·(blade_tip² − blade_hub²)` — but `blade_tip`/`blade_hub` are OFFSETS from
+the rotor's ring radius (0.7·span / −0.3·span), not absolute radii.  Dropping
+`r_nominal` under-counted a lower-ring rotor's swept area ~5.8× (2.76 vs
+15.96 m² at ring 6) and its TSR ~2.4×, so the settle parked at a wrong ω.
+
+**Fix (landed):** the scan now uses `expansion_annulus_area(er, r_nom)` and
+the ODE's mean-radius TSR convention `r_nom + (hub+tip)/2·cos(bank)`.  Settle
+ω for the 2-rotor seed moved 11.36 → 13.88 rad/s.  The ODE force, Betz gate,
+total-area, and dashboard already used absolute radii — only the settle (and
+the ramp evaluator's `π·tip²`) were wrong.  Fast suite 1954/1954.
+
+**Still open:** the 2-rotor config STALLS in the ODE regardless (ω decays and
+reverses, P→0) even after the settle fix.  The expansion rotor's torque is
+NON-MONOTONIC in ω — driving (+291 N·m at ω=10) above ~4 rad/s, braking
+(−86 N·m at ω=3) below — so the machine decelerates through the generator
+load, crosses the zero-torque point, and the rotor drags it into a runaway
+reversal.  Whether this τ(ω) shape is correct physics (blade stall at low TSR)
+or an induction-model artefact needs a focused look before 2-rotor designs are
+viable.  See also: cylinder+cone radius-profile sketch (planned) to give both
+rotors the same anchor radius — the field-tested geometry.

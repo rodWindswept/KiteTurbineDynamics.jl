@@ -886,14 +886,18 @@ function settle_to_operational_state(
             P_aero_exp = 0.0
             if has_exp
                 for er in sys.expansion_rotors
-                    r_tip = er.blade_tip_radius
-                    r_hub = er.blade_hub_radius
-                    area = π * (r_tip^2 - r_hub^2)
-                    # Use the rotor's own radius for TSR, not the hub radius
-                    lambda_er = clamp(w * r_tip / v_mag, 0.0, 12.0)
+                    # 2026-08-24 (geometry audit): er.blade_tip/hub are OFFSETS
+                    # from the rotor's ring radius, not absolute radii.  The old
+                    # π(tip²−hub²) dropped r_nom entirely — under-counting a
+                    # lower-ring rotor's area ~6× (and its TSR ~2.4×) so the scan
+                    # parked at a wrong ω.  Use the same annulus + mean-radius
+                    # convention as the ODE (expansion_annulus_area, r_mean).
+                    r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).radius
+                    area = expansion_annulus_area(er, r_nom)
+                    r_rep = r_nom + (er.blade_hub_radius + er.blade_tip_radius) / 2 * cosd(er.bank_angle_deg)
+                    lambda_er = clamp(w * r_rep / v_mag, 0.0, 12.0)
                     cp_er = cp_at_tsr(lambda_er)
-                    P_aero_exp += 0.5 * p.rho * v_mag^3 * area * cp_er *
-                                  cosd(er.bank_angle_deg)  # bank angle reduces effective area
+                    P_aero_exp += 0.5 * p.rho * v_mag^3 * area * cp_er
                 end
             end
             P_aero = P_aero_hub + P_aero_exp
