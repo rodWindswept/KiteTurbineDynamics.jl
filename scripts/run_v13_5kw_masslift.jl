@@ -147,6 +147,11 @@ cfg = ObjectiveConfig(;
                      # Sweep: scripts/results/k_sweep_daisy_5kw.csv.
                      # NOT p_base.k_mppt (3.55 — mass_scale'd, unanchored).
     tether_diameter = p_base.tether_diameter,
+    simple_rotors = true,   # x10 = rotor count {1,2,3} (14-D re-seed, 2026-08-25)
+    power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
+    cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
+    rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
+    blocking_factor = 1.0,
 )
 
 # ── Telemetry CSV — FULL genome + decoded values, flushed per row ────────
@@ -223,11 +228,14 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
     end
     xr = copy(x)
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # simple_rotors: x10 = rotor count {1,2,3}
 
     result = Inf; status = :reject; clearance = Inf; r = nothing; dec = nothing
     try
-        dec = design_from_vector_v10(xr, beam_profile, p_base; power_W=PW)
+        dec = design_from_vector_v10(xr, beam_profile, p_base; power_W=PW,
+            cylinder_cone=true, simple_rotors=true,
+            power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
+            rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor)
         clearance = lowest_rotor_clearance(dec)
         # ── HARD GATE: ground clearance ────────────────────────────────
         if clearance < MIN_CLEARANCE

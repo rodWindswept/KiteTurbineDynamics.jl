@@ -211,8 +211,15 @@ function design_from_vector_v10(
     hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
 
     # Power per rotor (2026-08-25): power_split gives the TOP rotor its fraction,
-    # the rest share (1 − power_split).  nothing = equal P/n (legacy).
-    power_split = power_split === nothing ? 1.0 / max(n_active, 1) : clamp(power_split, 0.0, 1.0)
+    # the rest share (1 − power_split).  The 14-D genome carries NO power_split
+    # gene — the value is a sweep knob (ObjectiveConfig.power_split) threaded
+    # through the `power_split` kwarg.  If unset (nothing), simple_rotors falls
+    # back to equal P/n (legacy); the x[15] probe is retained defensively.
+    if power_split === nothing
+        power_split = (simple_rotors && length(x) >= 15) ? clamp(x[15], 0.2, 0.8) : 1.0 / max(n_active, 1)
+    else
+        power_split = clamp(power_split, 0.0, 1.0)
+    end
 
     # Min rotor spacing check (2026-08-25): the concurrent top rotors sit on
     # adjacent rings (spacing target_Lr·r_hub); reject if that is tighter than

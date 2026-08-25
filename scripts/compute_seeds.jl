@@ -60,7 +60,8 @@ function seed_genome(kw)
     geom_scale = sqrt(kw / 1.5)
 
     g = zeros(14)
-    g[1] = 0.025 * geom_scale            # Do_top: raised for the honest span³
+    g[1] = 0.06                          # Do_top: the 3-rotor stack needs ~0.06 at 5 kW
+                                          # (2026-08-25: 0.025·geom_scale gave FoS 2.43 < 2.5)
                                           # blade mass (2026-08-22): the λ³-era
                                           # seed (0.0183) scored FoS 0.45 under its
                                           # own honest mass/lift
@@ -72,20 +73,13 @@ function seed_genome(kw)
     g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
     g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
     g[9] = 0.0                            # density_profile: uniform
-    g[10] = 0.0                           # rotor mask proxy 0.0 = mask #1 = SINGLE hub
-                                          # rotor (Daisy config 8).  NOTE: proxy 1.0
-                                          # decodes to a 2-rotor mask — the low rotor
-                                          # then fails rotor_annulus_ok at small r_bottom
-                                          # (0.575 m < 0.3·span) — see DECISIONS [2026-08-21].
+    g[10] = 3.0                           # rotor count (simple_rotors mode): 3 co-axial
+                                          # top rotors = the lightest feasible stack
+                                          # (2026-08-25 sweep: 37.7 kg vs 59.4 kg single)
     g[11] = 0.0                           # bank_top
     g[12] = 0.0                           # bank_bottom
-    g[13] = 0.6                           # blade_scale_top: λ 0.6 — the honest
-                                          # span³ law prices a λ=1 blade at 9.9 kg
-                                          # (2.87 m span at the decoder's r_rotor);
-                                          # λ 0.5 stalled below the 5 kW aero floor
-                                          # (A 27.6 m² ~ 4.7 kW); λ 0.6 → A 33.6 m² ~ 5.7 kW
-    g[14] = 0.6                           # blade_scale_bottom: same as top
-    g[10] = clamp(g[10], 0.0, Float64(N_VALID_MASKS))
+    g[13] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
+    g[14] = 0.7                           # blade_scale_bottom: same as top
     return g
 end
 
@@ -100,7 +94,7 @@ function tight_bounds(seed, kw)
     sp = [0.50, 0.50, 0.50, 0.60,    # Do_top, t/D, aspect, taper_exp
           0.80, 0.50, 0.40, 0.00,    # r_hub, r_bot, Lr, n_lines (handled below)
           1.0,                        # density: full range
-          0.80, 0.80, 0.80, 0.80, 0.80]  # mask, bank_t, bank_b, λ_t, λ_b
+          0.80, 0.80, 0.80, 0.80, 0.80]  # count, bank_t, bank_b, blade_t, blade_b
     
     lo = zeros(14); hi = zeros(14)
     for i in 1:14
@@ -111,14 +105,14 @@ function tight_bounds(seed, kw)
         elseif i == 9
             lo[i] = -0.8; hi[i] = 0.8
         elseif i == 10
-            # rotor_mask: integer bit mask, full range
-            lo[i] = 0.0; hi[i] = Float64(N_VALID_MASKS)
+            # rotor count (simple_rotors mode): {1,2,3}
+            lo[i] = 1.0; hi[i] = 3.0
         elseif i in (11, 12)
             # bank angles: 0° minimum, 22° maximum (Rod: >22° back-winds blades on slanted TRPT)
             lo[i] = 0.0
             hi[i] = 22.0
         elseif i in (13, 14)
-            # λ: hi=1.0 (Rod: too many weak-aero stalling turbines above 1.0)
+            # blade scale: hi=1.0 (Rod: too many weak-aero stalling turbines above 1.0)
             lo[i] = max(0.05, seed[i] * (1.0 - sp[i]))
             hi[i] = 1.0
         elseif i == 7
