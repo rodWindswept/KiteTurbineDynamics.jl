@@ -127,7 +127,7 @@ function design_from_vector_v10(
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
     cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
-    simple_rotors::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
+    rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
     rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
     power_split::Union{Nothing,Float64}=nothing,   # top-rotor power fraction; nothing = equal P/n
@@ -139,7 +139,7 @@ function design_from_vector_v10(
     )
 
     # Rotor placement (x[10] = rotor_mask proxy)
-    if simple_rotors
+    if rotor_count_mode
         # 1/2/3 concurrent top rotors (2026-08-25): re-interpret x10 as a count.
         # The bitmask decode stays untouched for the legacy/static path.
         n_rotors = clamp(round(Int, x[10]), 1, 3)
@@ -162,7 +162,7 @@ function design_from_vector_v10(
         # concurrent rotors at the SAME radius, spaced by the ring spacing
         # (target_Lr·r_top).  The min-rotor-spacing (frac·2·r_rotor) is a CHECK
         # below, not the harvest length.
-        if simple_rotors
+        if rotor_count_mode
             n_rotors = clamp(round(Int, x[10]), 1, 3)
             harvest_length = (n_rotors - 1) * design.target_Lr * design.r_hub
         end
@@ -213,10 +213,10 @@ function design_from_vector_v10(
     # Power per rotor (2026-08-25): power_split gives the TOP rotor its fraction,
     # the rest share (1 − power_split).  The 14-D genome carries NO power_split
     # gene — the value is a sweep knob (ObjectiveConfig.power_split) threaded
-    # through the `power_split` kwarg.  If unset (nothing), simple_rotors falls
+    # through the `power_split` kwarg.  If unset (nothing), rotor_count_mode falls
     # back to equal P/n (legacy); the x[15] probe is retained defensively.
     if power_split === nothing
-        power_split = (simple_rotors && length(x) >= 15) ? clamp(x[15], 0.2, 0.8) : 1.0 / max(n_active, 1)
+        power_split = (rotor_count_mode && length(x) >= 15) ? clamp(x[15], 0.2, 0.8) : 1.0 / max(n_active, 1)
     else
         power_split = clamp(power_split, 0.0, 1.0)
     end
@@ -225,7 +225,7 @@ function design_from_vector_v10(
     # adjacent rings (spacing target_Lr·r_hub); reject if that is tighter than
     # rotor_spacing_frac · 2·r_rotor.
     spacing_ok = true
-    if simple_rotors && n_active > 1
+    if rotor_count_mode && n_active > 1
         ring_spacing = design.target_Lr * design.r_hub
         r_rotor_ref = BEM.rotor_radius_for_power(power_W / n_active, v_rated, design.n_lines)
         spacing_ok = ring_spacing >= rotor_spacing_frac * 2 * r_rotor_ref

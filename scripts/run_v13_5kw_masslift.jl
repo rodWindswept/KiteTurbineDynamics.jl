@@ -29,9 +29,12 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 # ── CLI ─────────────────────────────────────────────────────────────────
 function parse_cli()
     L = 18.8   # Daisy-up 5 kW length: 10.31 m × √(5/1.5) (Rod 2026-08-20)
+    island = 0  # 0 = all islands sequentially; N = run island N only (parallel mode)
     for (i, a) in enumerate(ARGS)
         if a == "--length" && i < length(ARGS)
             L = parse(Float64, ARGS[i+1])
+        elseif a == "--island" && i < length(ARGS)
+            island = parse(Int, ARGS[i+1])
         end
     end
     # Run-log path (2026-08-24): recorded in PROVENANCE.md at launch so every
@@ -43,11 +46,12 @@ function parse_cli()
             log = ARGS[i+1]
         end
     end
-    return (L=L, log=log)
+    return (L=L, log=log, island=island)
 end
 const CLI = parse_cli()
 const LENGTH = CLI.L
 const RUN_LOG = CLI.log
+const ISLAND = CLI.island   # 0 = all islands; N = island N only
 
 const KW = 5.0
 const PW = KW * 1000.0
@@ -71,7 +75,13 @@ end
 lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
     sys, p; margin=1.5, v_ref=V_RATED, const_tension=true)
 
-const OUT_DIR = joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)")
+# Per-island output isolation (2026-08-25, parallel mode): each island process
+# writes to its own subdir so 3 concurrent processes never clobber each other.
+# `_rotorcount` tag distinguishes this co-axial 1-3-rotor (rotor_count_mode)
+# campaign from the prior VERIFIED bitmask-era run (v13_5kw_masslift_len18.8).
+const OUT_DIR = ISLAND > 0 ?
+    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount", "island_$(ISLAND)") :
+    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount")
 mkpath(OUT_DIR)
 
 # ── Launch provenance note ──────────────────────────────────────────────
@@ -93,7 +103,7 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io, "  + lift_tension_retrospective.csv (rotary_lifter_default(), wind-dependent tension)")
     println(io, "- **Identical to first campaign:** seeds (seed_genome(5.0)), RNG (Random.seed!(42+island-1)),")
     println(io, "  tight bounds, DE sizing 10×3×30, length $(LENGTH) m.")
-    println(io, "- **V13 rotor-geometry knobs (2026-08-25 re-seed):** simple_rotors=true (x10 = rotor count")
+    println(io, "- **V13 rotor-geometry knobs (2026-08-25 re-seed):** rotor_count_mode=true (x10 = rotor count")
     println(io, "  {1,2,3}), power_split=0.6 (top rotor fraction), cone_slope_deg=22.0,")
     println(io, "  rotor_spacing_frac=0.8, blocking_factor=1.0, cylinder_cone=true (three-section")
     println(io, "  TRPT: transmission cylinder + 22° cone + harvest cylinder).")
@@ -152,7 +162,7 @@ cfg = ObjectiveConfig(;
                      # Sweep: scripts/results/k_sweep_daisy_5kw.csv.
                      # NOT p_base.k_mppt (3.55 — mass_scale'd, unanchored).
     tether_diameter = p_base.tether_diameter,
-    simple_rotors = true,   # x10 = rotor count {1,2,3} (14-D re-seed, 2026-08-25)
+    rotor_count_mode = true,   # x10 = rotor count {1,2,3} (14-D re-seed, 2026-08-25)
     power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
     cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
@@ -233,12 +243,12 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
     end
     xr = copy(x)
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # simple_rotors: x10 = rotor count {1,2,3}
+    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: x10 = rotor count {1,2,3}
 
     result = Inf; status = :reject; clearance = Inf; r = nothing; dec = nothing
     try
         dec = design_from_vector_v10(xr, beam_profile, p_base; power_W=PW,
-            cylinder_cone=true, simple_rotors=true,
+            cylinder_cone=true, rotor_count_mode=true,
             power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
             rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor)
         clearance = lowest_rotor_clearance(dec)
@@ -289,6 +299,7 @@ println("  Lift: 1.5 × m_airborne × g / sin(70°) per genome, flat (const_tens
 println("  Era: $PHYSICS_ERA   git: $GIT_HASH")
 println("  Window: $WINDOW_S s; power_stat=:tail5; penalize_ceiling=false; fos_target=$(cfg.fos_target); fos_hard=$(cfg.fos_hard)")
 println("  $popsize pop × $n_islands islands × $max_iter gen")
+ISLAND > 0 && println("  [parallel mode] running island $ISLAND of $n_islands only")
 println("  Full per-eval telemetry (genome + decoded + T_lift) → $TELE_CSV")
 println("═"^60)
 flush(stdout)
@@ -305,7 +316,8 @@ campaign_start = time()
 global_best_x = nothing
 global_best_cost = Inf
 
-for island in 1:n_islands
+island_range = ISLAND > 0 ? (ISLAND:ISLAND) : (1:n_islands)
+for island in island_range
     global global_best_x, global_best_cost
     Random.seed!(42 + island - 1)
     println("\n  -- Island $island / $n_islands " * "-"^28)
@@ -379,8 +391,12 @@ for island in 1:n_islands
 end
 
 elapsed_total = round(time() - campaign_start, digits=0)
-println("\n  Campaign complete in $(elapsed_total)s")
-println("  Global best fitness: $(round(global_best_cost, digits=2))")
+if ISLAND > 0
+    println("  Island $ISLAND complete in $(elapsed_total)s — best fitness $(round(global_best_cost, digits=2))")
+else
+    println("\n  Campaign complete in $(elapsed_total)s")
+    println("  Global best fitness: $(round(global_best_cost, digits=2))")
+end
 if global_best_x !== nothing
     open(joinpath(OUT_DIR, "best_vector.csv"), "w") do f
         write(f, join(string.(global_best_x), ","))

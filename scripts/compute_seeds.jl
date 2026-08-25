@@ -73,7 +73,7 @@ function seed_genome(kw)
     g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
     g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
     g[9] = 0.0                            # density_profile: uniform
-    g[10] = 3.0                           # rotor count (simple_rotors mode): 3 co-axial
+    g[10] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial
                                           # top rotors = the lightest feasible stack
                                           # (2026-08-25 sweep: 37.7 kg vs 59.4 kg single)
     g[11] = 0.0                           # bank_top
@@ -105,7 +105,7 @@ function tight_bounds(seed, kw)
         elseif i == 9
             lo[i] = -0.8; hi[i] = 0.8
         elseif i == 10
-            # rotor count (simple_rotors mode): {1,2,3}
+            # rotor count (rotor_count_mode): {1,2,3}
             lo[i] = 1.0; hi[i] = 3.0
         elseif i in (11, 12)
             # bank angles: 0° minimum, 22° maximum (Rod: >22° back-winds blades on slanted TRPT)

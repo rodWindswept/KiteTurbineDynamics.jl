@@ -116,7 +116,7 @@ Base.@kwdef struct ObjectiveConfig
     penalize_ceiling::Bool = true  # false → above-ceiling power at rated wind is headroom, not a flaw (Betz gate still rejects cheats)
     kickstart_s::Float64 = 2.0     # cold-start PTO motor kick duration; 0.0 = off. Legacy ζ=1.5 stall crutch — the kick injects ~115× MPPT torque and winds chains past the collapse limit; v13 uses 0.0
     # V13 rotor-geometry knobs (2026-08-25 — defaults preserve v12/v13 behaviour exactly)
-    simple_rotors::Bool     = false  # true → x10 is rotor count {1,2,3}, not a bitmask
+    rotor_count_mode::Bool     = false  # true → x10 is rotor count {1,2,3}, not a bitmask
     power_split::Float64    = 0.6    # top-rotor power fraction (0.2-0.8; top-heavy wins)
     cone_slope_deg::Float64 = 22.0   # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac::Float64 = 0.8 # min rotor spacing as fraction of 2·r_rotor (Rod: 0.8 diameters)
@@ -134,14 +134,14 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          fos_cap=o.fos_cap, tether_diameter=o.tether_diameter,
                          power_stat=o.power_stat, penalize_ceiling=o.penalize_ceiling,
                          kickstart_s=o.kickstart_s,
-                         simple_rotors=o.simple_rotors, power_split=o.power_split,
+                         rotor_count_mode=o.rotor_count_mode, power_split=o.power_split,
                          cone_slope_deg=o.cone_slope_deg, rotor_spacing_frac=o.rotor_spacing_frac,
                          blocking_factor=o.blocking_factor)
     return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
                            w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
                            tether_diameter, power_stat, penalize_ceiling, kickstart_s,
-                           simple_rotors, power_split, cone_slope_deg,
+                           rotor_count_mode, power_split, cone_slope_deg,
                            rotor_spacing_frac, blocking_factor)
 end
 
@@ -455,7 +455,7 @@ function evaluate_windowed(
     x14 = x[1:TRPT_V10_DIM]
     result = design_from_vector_v10(
         x14, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
-        cylinder_cone=true, simple_rotors=cfg.simple_rotors,
+        cylinder_cone=true, rotor_count_mode=cfg.rotor_count_mode,
         power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
         rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor
     )
