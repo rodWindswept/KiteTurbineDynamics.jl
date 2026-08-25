@@ -450,6 +450,12 @@ function evaluate_windowed(
         return rejected_eval()  # no rotors = infeasible
     end
 
+    # Min rotor spacing (2026-08-25): reject concurrent top rotors that are
+    # tighter than rotor_spacing_frac · 2·r_rotor.
+    if haskey(result, :spacing_ok) && !result.spacing_ok
+        return rejected_eval()
+    end
+
     # n_rings gate — require at least 1 intermediate (flown) ring.
     if result.n_rings < 1
         return rejected_eval()

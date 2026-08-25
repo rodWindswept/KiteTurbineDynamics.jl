@@ -130,6 +130,8 @@ function design_from_vector_v10(
     simple_rotors::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
     rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
+    power_split::Union{Nothing,Float64}=nothing,   # top-rotor power fraction; nothing = equal P/n
+    blocking_factor::Float64=1.0,   # downstream-rotor inflow de-rating (1.0 = no wake/blocking)
 )
     # Base v5 design (first 9 vars)
     design = design_from_vector_v5(
@@ -208,8 +210,19 @@ function design_from_vector_v10(
     # Hub altitude from shaft geometry (rings already computed above)
     hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
 
-    # Power per rotor
-    P_per_rotor = n_active > 0 ? power_W / n_active : power_W
+    # Power per rotor (2026-08-25): power_split gives the TOP rotor its fraction,
+    # the rest share (1 − power_split).  nothing = equal P/n (legacy).
+    power_split = power_split === nothing ? 1.0 / max(n_active, 1) : clamp(power_split, 0.0, 1.0)
+
+    # Min rotor spacing check (2026-08-25): the concurrent top rotors sit on
+    # adjacent rings (spacing target_Lr·r_hub); reject if that is tighter than
+    # rotor_spacing_frac · 2·r_rotor.
+    spacing_ok = true
+    if simple_rotors && n_active > 1
+        ring_spacing = design.target_Lr * design.r_hub
+        r_rotor_ref = BEM.rotor_radius_for_power(power_W / n_active, v_rated, design.n_lines)
+        spacing_ok = ring_spacing >= rotor_spacing_frac * 2 * r_rotor_ref
+    end
 
     # Build rotor specs
     rotors = RotorSpecV10[]
@@ -223,13 +236,16 @@ function design_from_vector_v10(
         bank_i = bank_top + t * (bank_bottom - bank_top)
         blade_scale_i = blade_scale_top + t * (blade_scale_bottom - blade_scale_top)
 
-        # Wind speed at this ring's altitude
+        # Wind speed at this ring's altitude; downstream rotors see de-rated
+        # inflow (blocking_factor — a named placeholder, not CFD).
         ring_z = zs[pos]  # pos is now ring index (ground→hub)
         ring_altitude = max(ring_z * sind(30.0), 1.0)
         v_i = wind_speed_at_ring(ring_altitude, hub_altitude, v_rated)
+        i > 1 && (v_i *= blocking_factor)
 
-        # BEM rotor radius for this rotor at local wind speed
-        r_rotor_i = BEM.rotor_radius_for_power(P_per_rotor, v_i, design.n_lines)
+        # BEM rotor radius for this rotor at its power share + local wind speed
+        P_i = (i == 1) ? power_split * power_W : (1.0 - power_split) * power_W / max(n_active - 1, 1)
+        r_rotor_i = BEM.rotor_radius_for_power(P_i, v_i, design.n_lines)
 
         # Ring-anchored 70/30 blade split (2026-08-20, Rod): the blade attaches
         # to the TRPT ring at 70% outboard / 30% inboard of its span, so
@@ -254,7 +270,7 @@ function design_from_vector_v10(
     end
 
     return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, mask=mask, n_active=n_active,
-            taper_start_z=taper_start_z, harvest_length=harvest_length)
+            taper_start_z=taper_start_z, harvest_length=harvest_length, spacing_ok=spacing_ok)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
