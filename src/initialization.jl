@@ -89,6 +89,15 @@ function _build_kite_turbine_system_impl(
         gid_ring = 1 + s * stride
         inertia_z =
             (s < n_seg) ? p.m_ring * ring_radii[s + 1]^2 : m_rotor * p.rotor_radius^2
+        # Expansion-rotor blade mass is a ROTARY INERTIA J_rotor, not a torque.
+        # It was previously misapplied as J·θ in ring_forces.jl — a spurious
+        # torsional spring anchored at θ=0 that braked multi-rotor machines to
+        # reversal (2026-08-25 finding).  Add it to I_z so dω/dt = τ/(I_z+J_rotor)
+        # naturally.  Gated by EXPANSION_PHYSICS[].blade_inertia like the old term.
+        for er in expansion_rotors
+            (er.ring_idx == s + 1 && EXPANSION_PHYSICS[].blade_inertia) || continue
+            inertia_z += expansion_rotor_inertia(er, ring_radii[s + 1])
+        end
         mass_node = (s < n_seg) ? p.m_ring : m_rotor
         nodes[gid_ring] = RingNode(
             gid_ring, s+1, mass_node, ring_radii[s + 1], inertia_z, false
@@ -951,13 +960,22 @@ function settle_to_operational_state(
             # restore previously used a uniform seg_len, which over-stretched the
             # short bottom segment (115% strain → immediate rope break) once the
             # build switched to tapered spacing.  (Build-geometry audit 2026-08-24.)
+            #
+            # 2026-08-25: use the AXIAL gap, not the 3D chord.  sub_segs.length_0
+            # is the chord sqrt(L_axial² + Δr²)/4 (radial taper included), so
+            # advancing along the shaft by 4·length_0 double-counted Δr and
+            # over-tensioned every line 18-22× (44.7 kN vs ~2 kN design).  Recover
+            # L_axial = sqrt(chord² − Δr²).
             rp = zeros(3)
             for k in 1:Nr
                 gid = sys.ring_ids[k]
                 idx = (3 * (gid - 1) + 1):(3 * gid)
                 u_start[idx] .= rp
                 if k < Nr
-                    L_seg_k = 4 * sys.sub_segs[(k - 1) * p.n_lines * 4 + 1].length_0
+                    r_k = (sys.nodes[sys.ring_ids[k]]::RingNode).radius
+                    r_k1 = (sys.nodes[sys.ring_ids[k + 1]]::RingNode).radius
+                    chord_3d = 4 * sys.sub_segs[(k - 1) * p.n_lines * 4 + 1].length_0
+                    L_seg_k = sqrt(max(chord_3d^2 - (r_k1 - r_k)^2, 0.0))
                     k_ax_k = EA_tot / L_seg_k
                     stretch = max(0.0, F_ax[k] / k_ax_k)
                     rp .+= (L_seg_k + stretch) .* sd_r
@@ -1098,23 +1116,33 @@ function settle_to_operational_state(
                 τ
             end
 
-        lo, hi = 0.001, π / 4
-        for _ in 1:60
-            mid = (lo + hi) / 2
-            τ_fn_a(mid) < τ_target_a ? (lo = mid) : (hi = mid)
-        end
-        Δα_eq = (lo + hi) / 2
+        # Rope is TENSION-ONLY: a non-positive target (an expansion rotor driving
+        # harder than the generator absorbs, so the segment above it must brake)
+        # is unreachable — the line goes slack and transmits ~0 torque.  The old
+        # strictly-positive floor [0.001, π/4] railed here and delivered a spurious
+        # +45 N·m instead (2026-08-25 finding).  Slack it explicitly.
+        if τ_target_a <= 0.0
+            Δα_eq = 0.0
+            τ_b = 0.0
+        else
+            lo, hi = 0.001, π / 4
+            for _ in 1:60
+                mid = (lo + hi) / 2
+                τ_fn_a(mid) < τ_target_a ? (lo = mid) : (hi = mid)
+            end
+            Δα_eq = (lo + hi) / 2
 
-        τ_b = 0.0
-        for j in 1:p.n_lines
-            pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
-            pb_j = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
-            chord_j = norm(pb_j .- pa_j)
-            chord_j < 1e-9 && continue
-            T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
-            dir_j = (pb_j .- pa_j) ./ chord_j
-            r_vec_b = pb_j .- ctr_b
-            τ_b += T_j * dot(cross(r_vec_b, -dir_j), sd)
+            τ_b = 0.0
+            for j in 1:p.n_lines
+                pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
+                pb_j = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
+                chord_j = norm(pb_j .- pa_j)
+                chord_j < 1e-9 && continue
+                T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
+                dir_j = (pb_j .- pa_j) ./ chord_j
+                r_vec_b = pb_j .- ctr_b
+                τ_b += T_j * dot(cross(r_vec_b, -dir_j), sd)
+            end
         end
 
         # Expansion rotor aero-torque injection at ring b (2026-08-24, geometry

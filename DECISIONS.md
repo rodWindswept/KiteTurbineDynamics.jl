@@ -2169,3 +2169,44 @@ the ODE's per-sub-seg rope torque is ~100× smaller than the chord model
 (candidate: sub-seg direction/radius at the ring-attachment end, the tension
 rectifier, or the C1 torque clamp).  Until it is resolved, multi-rotor settles
 wind the wrong twist and 2-rotor designs are not evaluable.
+
+### [2026-08-25] CORRECTION: the "94× mismatch" was an instrumentation artefact; the real 2-rotor stall was a J·θ term
+
+**Retraction.**  The 2026-08-24 entry above ("~94× settle-vs-ODE twist mismatch")
+is WRONG.  The "2.36 N·m rope torque" I measured was `torques[1]` read AFTER the
+generator reaction had already been subtracted — the net residual of τ_rope ≈
++228 N·m vs τ_gen ≈ −226 N·m (a 1.06% settle-convergence error), not the rope
+torque.  A second agent re-measured both torque models on the same settled state
+and found the bisection chord model and the ODE sub-seg rope chain agree to
+**five significant figures** in both the 1-rotor and 2-rotor seeds.  All three
+"candidate causes" I recorded (sub-seg geometry, tension rectifier, C1 clamp)
+are cleared: sub-seg tension 7459.4 N vs chord 7458.7 N, the rectifier never
+engages (every line in tension), and the C1 cap sits 46–175× above the operating
+torque.
+
+**Real cause (confirmed, A/B-tested):** `ring_forces.jl:314` computed
+`torques[ri] -= J_rotor * alpha[ri]` where `alpha` is the accumulated twist ANGLE
+θ (`u[6N+1:6N+Nr]`), not angular acceleration α̈.  That is J·θ — a spurious
+torsional spring anchored at θ=0 — and since θ grows at ω≈10 rad/s without wrap,
+the braking grew without bound (θ=26 rad → −976 N·m at t=3 s), four times the
+generator torque, reversing the machine.  The term only executed when
+`sys.expansion_rotors` was non-empty, which is why every 1-rotor seed worked and
+every 2-rotor seed died.  `test_physics_inertia_mass.jl` only checks the J VALUE,
+never how J is used, so the fast suite stayed green.
+
+**Fix:** blade mass is rotary INERTIA.  It now enters `initialization.jl` at
+build time (added to the ring's `inertia_z`, gated by `EXPANSION_PHYSICS[].blade_inertia`)
+so `dω/dt = τ/(I_z + J_rotor)` in `dynamics.jl:176`; the `J·θ` torque term is
+removed.  A/B: with the term removed the 2-rotor seed spins up to ω≈14 rad/s and
+holds 4–7 kW (was 0 kW, reversal).
+
+**Second bug (mine, from a09ecf6):** the preload restore used `4·sub_segs.length_0`
+as the axial gap, but `length_0` is the 3D chord `sqrt(L_axial²+Δr²)/4` — it
+double-counted the radial taper and over-tensioned every line 18–22× (44.7 kN vs
+~2 kN design).  Fixed to recover `L_axial = sqrt(chord²−Δr²)`.  Consequence: the
+"corrected seed has FoS≈1.01, genuinely too weak" conclusion was measured under
+that over-tension and is UNSUPPORTED — re-derive it.
+
+**Third (secondary):** the bisection floor `[0.001, π/4]` could not wind the
+negative twist an over-driving expansion rotor demands; it now slacks the
+segment (Δα=0, τ=0) when the target is ≤0.

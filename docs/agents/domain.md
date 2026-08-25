@@ -39,6 +39,33 @@
 - **Ring mapping:** Hub ring is position 1, counting down the shaft. Ring index = n_rings − mask_pos + 1. Fixed +2 offset (commit `71ea694`).
 - **Static-vs-dynamic gap (RESOLVED 2026-08-12):** The historical gap (static solver predicts 50 kW; ODE shows ~12 kW / stalls at ω≈−0.2) was traced to hardcoded ζ=1.5 rope damping + the tension rectifier in `rope_forces.jl`, producing a DC reverse-torque bias. With ζ=0.05 (`SystemParams.zeta`), the ODE sustains power and matches BEM predictions. See DECISIONS.md [2026-08-12].
 
+## Gotchas for New Agents (instrumentation traps, 2026-08-25)
+
+These have each caused a wrong diagnosis or a silent bug. Read before debugging:
+
+1. **State vector layout.** `u[1:3N]` positions, `u[3N+1:6N]` velocities,
+   `u[6N+1:6N+Nr]` = twist **ANGLE θ (α)**, `u[6N+Nr+1:6N+2Nr]` = angular
+   **velocity ω**. α is an accumulated angle, NOT angular acceleration α̈ — a
+   `J·α` term is dimensionally `kg·m²·rad` (not a torque) and was the source of a
+   spurious torsional spring (see trust-log 2026-08-25).
+2. **`blade_tip_radius` / `blade_hub_radius` are OFFSETS from the ring radius
+   `r_nom`** (0.7·span / −0.3·span), not absolute radii. Absolute area is
+   `expansion_annulus_area(er, r_nom)`; using the offsets directly drops `r_nom`
+   and under-counts a lower-ring rotor ~6×.
+3. **`torques[ri]` includes the generator reaction.** Reading `torques[1]` (or
+   `du[6N+Nr+1]·I_z`) gives the NET residual of a near-cancellation (rope ≈
+   +228 vs gen ≈ −226), NOT the rope torque. To measure rope torque, compute it
+   directly; don't read the residual and call it a physics gap.
+4. **Blade mass is rotary INERTIA, never a torque.** It belongs in
+   `dω/dt = τ/(I_z + J_rotor)` (added to the ring's `inertia_z` at build time).
+5. **`dt=4e-5` is a calibration, not a constant** — stable only for sub-segs
+   ≥ ~0.5 m. The `ring_spacing_v4` taper shortens them; always use
+   `stable_dt_for_system(sys, p)`, never a literal dt or an `n_lines`-based step.
+6. **`sub_segs.length_0` is the 3D chord** `sqrt(L_axial² + Δr²)/4` (radial
+   taper included), NOT the axial gap. Axial placement/stretch must use the
+   axial gap `sqrt(chord² − Δr²)`; using `4·length_0` as an axial length
+   over-tensioned every line 18–22×.
+
 ## Current Campaign State
 
 | Campaign | Best Mass | Rotors | Key Finding |

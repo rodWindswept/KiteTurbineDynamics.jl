@@ -307,12 +307,12 @@ function compute_ring_forces!(
 
                 # ── Blade inertia (2026-07-18) ──────────────────────────────
                 # Gate 2b: rotary inertia of the expansion-rotor blade annulus
-                # about the shaft axis.  Gated by EXPANSION_PHYSICS[].blade_inertia;
-                # applies only in transient (α≠0), vanishes at steady state.
-                if EXPANSION_PHYSICS[].blade_inertia
-                    J_rotor = expansion_rotor_inertia(er, r_nom)
-                    torques[ring_ri] -= J_rotor * alpha[ring_ri]  # I·α opposes
-                end
+                # about the shaft axis.  NOTE (2026-08-25): this mass is now added
+                # to the ring's rotational inertia at build time (initialization.jl)
+                # so dω/dt = τ/(I_z + J_rotor).  The old J·θ torque here used the
+                # twist ANGLE as an angular acceleration — a spurious torsional
+                # spring that braked multi-rotor machines to reversal.  Do NOT
+                # reintroduce a torque term; blade mass is inertia, not torque.
 
                 # ── Spoke drag torque (2026-07-06) ──────────────────────────
                 # Radial spokes from ring vertices to center node experience
