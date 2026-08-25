@@ -356,7 +356,8 @@ function build_kite_turbine_system_v5(
     target_Lr::Float64,
     r_bottom::Float64;
     density_profile::Float64=0.0,
-    taper_start_z::Float64=0.0,  # cylinder+cone: constant r_hub above this z (0 = full cone)
+    taper_start_z::Float64=0.0,  # transmission-cylinder length (0 = full cone)
+    harvest_length::Float64=0.0,  # harvest-cylinder length at r_hub (top rotors)
     kite_area::Float64=10.0,
     kite_mass::Float64=5.0,
     kite_tether_length::Float64=20.0,
@@ -364,7 +365,7 @@ function build_kite_turbine_system_v5(
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v5(
-        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr, taper_start_z;
+        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr, taper_start_z, harvest_length;
         density_profile=density_profile,
     )
 

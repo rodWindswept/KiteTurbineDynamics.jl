@@ -126,7 +126,10 @@ function design_from_vector_v10(
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
-    cylinder_cone::Bool=false,   # 2026-08-25: constant-r_hub rotor section (opt-in, ODE path)
+    cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
+    simple_rotors::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
+    cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
+    rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
 )
     # Base v5 design (first 9 vars)
     design = design_from_vector_v5(
@@ -134,7 +137,15 @@ function design_from_vector_v10(
     )
 
     # Rotor placement (x[10] = rotor_mask proxy)
-    mask, _, positions_raw = decode_rotor_mask(x[10])
+    if simple_rotors
+        # 1/2/3 concurrent top rotors (2026-08-25): re-interpret x10 as a count.
+        # The bitmask decode stays untouched for the legacy/static path.
+        n_rotors = clamp(round(Int, x[10]), 1, 3)
+        mask = UInt16(0)
+        positions_raw = collect(1:n_rotors)   # positions 1..n_rotors from the hub
+    else
+        mask, _, positions_raw = decode_rotor_mask(x[10])
+    end
 
     # Cylinder+cone (2026-08-25, OPT-IN): a small-radius transmission cylinder
     # [0, taper_start_z] below a steep cone [taper_start_z, tether_length] (the
@@ -143,14 +154,27 @@ function design_from_vector_v10(
     # fixed by the radius step, not the rotor position.  Off by default (frozen
     # legacy static solver keeps the full cone).
     taper_start_z = 0.0
-    if cylinder_cone && length(positions_raw) > 1 && design.r_hub > design.r_bottom
-        cone_length = (design.r_hub - design.r_bottom) / tan(deg2rad(22.0))
-        taper_start_z = clamp(design.tether_length - cone_length, 0.0, design.tether_length)
+    harvest_length = 0.0
+    if cylinder_cone && design.r_hub > design.r_bottom
+        # Harvest cylinder (top, r_top): enough ring intervals for n_rotors
+        # concurrent rotors at the SAME radius, spaced by the ring spacing
+        # (target_Lr·r_top).  The min-rotor-spacing (frac·2·r_rotor) is a CHECK
+        # below, not the harvest length.
+        if simple_rotors
+            n_rotors = clamp(round(Int, x[10]), 1, 3)
+            harvest_length = (n_rotors - 1) * design.target_Lr * design.r_hub
+        end
+        cone_length = (design.r_hub - design.r_bottom) / tan(deg2rad(cone_slope_deg))
+        taper_start_z = clamp(
+            design.tether_length - harvest_length - cone_length, 0.0,
+            max(design.tether_length - harvest_length, 0.0)
+        )
     end
 
-    # Ring geometry (full cone when taper_start_z == 0).
+    # Ring geometry (full cone when taper_start_z == 0 and harvest_length == 0).
     zs, _, _ = ring_spacing_v5(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr, taper_start_z;
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr,
+        taper_start_z, harvest_length;
         density_profile=design.density_profile,
     )
     n_rings = length(zs)
@@ -230,7 +254,7 @@ function design_from_vector_v10(
     end
 
     return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, mask=mask, n_active=n_active,
-            taper_start_z=taper_start_z)
+            taper_start_z=taper_start_z, harvest_length=harvest_length)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

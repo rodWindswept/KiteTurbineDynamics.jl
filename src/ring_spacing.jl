@@ -151,38 +151,48 @@ function ring_spacing_v5(
     r_bottom::Float64,
     tether_length::Float64,
     target_Lr::Float64,
-    taper_start_z::Float64;
+    taper_start_z::Float64,
+    harvest_length::Float64=0.0;
     max_rings::Int=20,
     density_profile::Float64=0.0,
 )::Tuple{Vector{Float64}, Vector{Float64}, Int}
     taper_start_z = clamp(taper_start_z, 0.0, tether_length)
-    if taper_start_z <= 0.0
-        # full cone (no transmission cylinder)
-        return ring_spacing_v4(
-            r_top, r_bottom, tether_length, target_Lr;
-            max_rings=max_rings, density_profile=density_profile
-        )
+    harvest_length = clamp(harvest_length, 0.0, max(tether_length - taper_start_z, 0.0))
+    L_trans = taper_start_z
+    L_cone  = max(tether_length - taper_start_z - harvest_length, 0.0)
+    L_harv  = harvest_length
+
+    # Three sections (ground-first): transmission cylinder (r_bottom), cone
+    # (r_bottom → r_top), harvest cylinder (r_top, the rotors).
+    secs = Tuple{Float64,Vector{Float64},Vector{Float64}}[]  # (z_offset, zs, rs)
+    if L_trans > 0
+        z, r, _ = ring_spacing_v4(r_bottom, r_bottom, L_trans, target_Lr;
+                                  max_rings=max_rings, density_profile=density_profile)
+        push!(secs, (0.0, z, r))
     end
-    if taper_start_z >= tether_length
-        # full transmission cylinder (no cone)
-        return ring_spacing_v4(
-            r_bottom, r_bottom, tether_length, target_Lr;
-            max_rings=max_rings, density_profile=density_profile
-        )
+    if L_cone > 0
+        z, r, _ = ring_spacing_v4(r_top, r_bottom, L_cone, target_Lr;
+                                  max_rings=max_rings, density_profile=density_profile)
+        push!(secs, (L_trans, z, r))
     end
-    # Transmission cylinder (constant r_bottom) over [0, taper_start_z]
-    z_cyl, r_cyl, _ = ring_spacing_v4(
-        r_bottom, r_bottom, taper_start_z, target_Lr;
+    if L_harv > 0
+        z, r, _ = ring_spacing_v4(r_top, r_top, L_harv, target_Lr;
+                                  max_rings=max_rings, density_profile=density_profile)
+        push!(secs, (L_trans + L_cone, z, r))
+    end
+    isempty(secs) && return ring_spacing_v4(
+        r_top, r_bottom, tether_length, target_Lr;
         max_rings=max_rings, density_profile=density_profile
     )
-    # Cone (r_bottom → r_top) over [taper_start_z, tether_length]
-    z_cone, r_cone, _ = ring_spacing_v4(
-        r_top, r_bottom, tether_length - taper_start_z, target_Lr;
-        max_rings=max_rings, density_profile=density_profile
-    )
-    # Splice ground-first; drop the duplicated ring at taper_start_z.
-    z_all = vcat(z_cyl[1:(end - 1)], z_cone .+ taper_start_z)
-    r_all = vcat(r_cyl[1:(end - 1)], r_cone)
+
+    z_all = Float64[]; r_all = Float64[]
+    for (i, (off, z, r)) in enumerate(secs)
+        if i == 1
+            append!(z_all, z); append!(r_all, r)
+        else
+            append!(z_all, z[2:end] .+ off); append!(r_all, r[2:end])
+        end
+    end
     return (z_all, r_all, length(r_all) - 2)
 end
 
