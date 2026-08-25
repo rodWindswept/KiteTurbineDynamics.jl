@@ -136,12 +136,15 @@ end
     ring_spacing_v5(r_top, r_bottom, tether_length, target_Lr, taper_start_z;
                     max_rings=20, density_profile=0.0) → (z_positions, radii, n_rings)
 
-Cylinder + cone radius profile (2026-08-25): constant radius `r_top` from the
-hub down to `taper_start_z` (the "rotor section" — every rotor on a common anchor
-radius), then the existing geometric taper from `r_top` down to `r_bottom` over
-the structural base below.  Composed from two `ring_spacing_v4` sections (the
-cone over [0, taper_start_z], the cylindrical degenerate case over
-[taper_start_z, tether_length]) spliced at the shared ring.
+Three-section radius profile (2026-08-25, Tulloch-proposed geometry):
+1. **transmission cylinder** `[0, taper_start_z]` — constant radius `r_bottom`
+   (small, low drag, no ring compression: ϕ = 0);
+2. **steep cone** `[taper_start_z, tether_length]` — `r_bottom → r_top`, the
+   transition whose rings carry the signed compression (Wacker §4.2.4).
+
+`taper_start_z` is the transmission-cylinder length; the decoder derives it from
+the 22°-bounded cone slope so the radius step is a controlled bend (Tulloch:
+"avoid any abrupt changes in diameter").
 """
 function ring_spacing_v5(
     r_top::Float64,
@@ -154,25 +157,32 @@ function ring_spacing_v5(
 )::Tuple{Vector{Float64}, Vector{Float64}, Int}
     taper_start_z = clamp(taper_start_z, 0.0, tether_length)
     if taper_start_z <= 0.0
-        # full cone (no cylinder section)
+        # full cone (no transmission cylinder)
         return ring_spacing_v4(
             r_top, r_bottom, tether_length, target_Lr;
             max_rings=max_rings, density_profile=density_profile
         )
     end
-    # Cone (taper) over [0, taper_start_z]
-    z_cone, r_cone, _ = ring_spacing_v4(
-        r_top, r_bottom, taper_start_z, target_Lr;
+    if taper_start_z >= tether_length
+        # full transmission cylinder (no cone)
+        return ring_spacing_v4(
+            r_bottom, r_bottom, tether_length, target_Lr;
+            max_rings=max_rings, density_profile=density_profile
+        )
+    end
+    # Transmission cylinder (constant r_bottom) over [0, taper_start_z]
+    z_cyl, r_cyl, _ = ring_spacing_v4(
+        r_bottom, r_bottom, taper_start_z, target_Lr;
         max_rings=max_rings, density_profile=density_profile
     )
-    # Cylinder (constant r_top) over [taper_start_z, tether_length]
-    z_cyl, r_cyl, _ = ring_spacing_v4(
-        r_top, r_top, tether_length - taper_start_z, target_Lr;
+    # Cone (r_bottom → r_top) over [taper_start_z, tether_length]
+    z_cone, r_cone, _ = ring_spacing_v4(
+        r_top, r_bottom, tether_length - taper_start_z, target_Lr;
         max_rings=max_rings, density_profile=density_profile
     )
     # Splice ground-first; drop the duplicated ring at taper_start_z.
-    z_all = vcat(z_cone[1:(end - 1)], z_cyl .+ taper_start_z)
-    r_all = vcat(r_cone[1:(end - 1)], r_cyl)
+    z_all = vcat(z_cyl[1:(end - 1)], z_cone .+ taper_start_z)
+    r_all = vcat(r_cyl[1:(end - 1)], r_cone)
     return (z_all, r_all, length(r_all) - 2)
 end
 

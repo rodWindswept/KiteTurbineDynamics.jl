@@ -136,22 +136,16 @@ function design_from_vector_v10(
     # Rotor placement (x[10] = rotor_mask proxy)
     mask, _, positions_raw = decode_rotor_mask(x[10])
 
-    # Cylinder+cone (2026-08-25, OPT-IN): the "rotor section" above the lowest
-    # active rotor is a constant-r_hub cylinder (common anchor radius for all
-    # rotors); the base below tapers.  Off by default so the frozen legacy
-    # static solver (objective_v10) keeps the full cone.  positions_raw are
-    # 1-based from the hub (1 = hub), so the lowest rotor is the largest p; the
-    # cone starts at the ring just below it.
+    # Cylinder+cone (2026-08-25, OPT-IN): a small-radius transmission cylinder
+    # [0, taper_start_z] below a steep cone [taper_start_z, tether_length] (the
+    # Tulloch-proposed geometry).  The cone length is the 22°-bounded slope
+    # (Tulloch: "avoid any abrupt changes in diameter"), so taper_start_z is
+    # fixed by the radius step, not the rotor position.  Off by default (frozen
+    # legacy static solver keeps the full cone).
     taper_start_z = 0.0
-    if cylinder_cone && length(positions_raw) > 1
-        zs_full, _, _ = ring_spacing_v4(
-            design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
-            density_profile=design.density_profile,
-        )
-        n_rings_full = length(zs_full)
-        p_max = maximum(positions_raw)
-        below_ring_full = clamp(n_rings_full - p_max, 1, n_rings_full)
-        taper_start_z = zs_full[below_ring_full]
+    if cylinder_cone && length(positions_raw) > 1 && design.r_hub > design.r_bottom
+        cone_length = (design.r_hub - design.r_bottom) / tan(deg2rad(22.0))
+        taper_start_z = clamp(design.tether_length - cone_length, 0.0, design.tether_length)
     end
 
     # Ring geometry (full cone when taper_start_z == 0).

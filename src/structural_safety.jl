@@ -112,7 +112,12 @@ function ring_safety_frame(u      ::AbstractVector,
                 T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
                 r_vec = pb .- ctr
                 dir   = (pb .- pa) ./ len   # rope direction toward ring
-                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
+                # Signed radial force (Wacker §4.2.4, 2026-08-25): keep the sign.
+                # dot(dir, r̂) > 0 → the tether pulls this ring INWARD (compression);
+                # dot(dir, r̂) < 0 → OUTWARD (net hoop expansion/tension).  The old
+                # abs(dot(−dir, r̂)) discarded this sign and treated expansion as
+                # compression.  (dir points from the OTHER ring toward THIS ring.)
+                F_inward += T * dot(dir, r_vec ./ max(norm(r_vec), 1e-9))
             else
                 pb = ss.end_b.is_ring ? begin
                         node_b = sys.nodes[ss.end_b.node_id]::RingNode
@@ -126,7 +131,12 @@ function ring_safety_frame(u      ::AbstractVector,
                 T   = max(0.0, ss.EA * (len - ss.length_0) / ss.length_0)
                 r_vec = pa .- ctr
                 dir   = (pa .- pb) ./ len   # rope direction toward ring
-                F_inward += T * abs(dot(-dir, r_vec ./ max(norm(r_vec), 1e-9)))
+                # Signed radial force (Wacker §4.2.4, 2026-08-25): keep the sign.
+                # dot(dir, r̂) > 0 → the tether pulls this ring INWARD (compression);
+                # dot(dir, r̂) < 0 → OUTWARD (net hoop expansion/tension).  The old
+                # abs(dot(−dir, r̂)) discarded this sign and treated expansion as
+                # compression.  (dir points from the OTHER ring toward THIS ring.)
+                F_inward += T * dot(dir, r_vec ./ max(norm(r_vec), 1e-9))
             end
         end
 
@@ -167,7 +177,7 @@ function ring_safety_frame(u      ::AbstractVector,
         I_design  = tube_I(Do_design, t_design)
         P_crit    = π^2 * E_CFRP * I_design / L_poly^2
 
-        util = N_comp  / max(P_crit, 1e-9)
+        util = max(N_comp, 0.0) / max(P_crit, 1e-9)   # only compression utilises; hoop expansion = tension = safe
         fos  = P_crit  / max(N_comp,  1e-9)
 
         push!(results, (ring_id     = k,
