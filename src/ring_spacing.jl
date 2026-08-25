@@ -132,6 +132,50 @@ function ring_spacing_v4(
     return (z_positions, radii, n_segs - 1)
 end
 
+"""
+    ring_spacing_v5(r_top, r_bottom, tether_length, target_Lr, taper_start_z;
+                    max_rings=20, density_profile=0.0) → (z_positions, radii, n_rings)
+
+Cylinder + cone radius profile (2026-08-25): constant radius `r_top` from the
+hub down to `taper_start_z` (the "rotor section" — every rotor on a common anchor
+radius), then the existing geometric taper from `r_top` down to `r_bottom` over
+the structural base below.  Composed from two `ring_spacing_v4` sections (the
+cone over [0, taper_start_z], the cylindrical degenerate case over
+[taper_start_z, tether_length]) spliced at the shared ring.
+"""
+function ring_spacing_v5(
+    r_top::Float64,
+    r_bottom::Float64,
+    tether_length::Float64,
+    target_Lr::Float64,
+    taper_start_z::Float64;
+    max_rings::Int=20,
+    density_profile::Float64=0.0,
+)::Tuple{Vector{Float64}, Vector{Float64}, Int}
+    taper_start_z = clamp(taper_start_z, 0.0, tether_length)
+    if taper_start_z <= 0.0
+        # full cone (no cylinder section)
+        return ring_spacing_v4(
+            r_top, r_bottom, tether_length, target_Lr;
+            max_rings=max_rings, density_profile=density_profile
+        )
+    end
+    # Cone (taper) over [0, taper_start_z]
+    z_cone, r_cone, _ = ring_spacing_v4(
+        r_top, r_bottom, taper_start_z, target_Lr;
+        max_rings=max_rings, density_profile=density_profile
+    )
+    # Cylinder (constant r_top) over [taper_start_z, tether_length]
+    z_cyl, r_cyl, _ = ring_spacing_v4(
+        r_top, r_top, tether_length - taper_start_z, target_Lr;
+        max_rings=max_rings, density_profile=density_profile
+    )
+    # Splice ground-first; drop the duplicated ring at taper_start_z.
+    z_all = vcat(z_cone[1:(end - 1)], z_cyl .+ taper_start_z)
+    r_all = vcat(r_cone[1:(end - 1)], r_cyl)
+    return (z_all, r_all, length(r_all) - 2)
+end
+
 # ── v4 design struct ─────────────────────────────────────────────────────────
 """
     TRPTDesignV4
@@ -158,8 +202,9 @@ struct TRPTDesignV4
     tether_length::Float64
     n_lines::Int
     density_profile::Float64  # ring density bias: 0=uniform, >0=more at bottom
+    taper_start_z::Float64    # cylinder+cone: constant r_hub above this z (0 = full cone)
 
-    # Inner constructor: defaults density_profile to 0.0 for backward compatibility
+    # Inner constructor: defaults density_profile and taper_start_z for backward compat
     function TRPTDesignV4(
         beam_profile::BeamProfile,
         Do_top::Float64,
@@ -172,11 +217,12 @@ struct TRPTDesignV4
         tether_length::Float64,
         n_lines::Int,
         density_profile::Float64=0.0,
+        taper_start_z::Float64=0.0,
     )
         return new(
             beam_profile, Do_top, t_over_D, beam_aspect, Do_scale_exp,
             r_hub, r_bottom, target_Lr, tether_length, n_lines,
-            density_profile,
+            density_profile, taper_start_z,
         )
     end
 end

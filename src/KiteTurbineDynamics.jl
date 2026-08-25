@@ -127,7 +127,7 @@ export search_bounds_v2, design_from_vector_v2, objective_v2, baseline_design_v2
 export TRPT_V2_DIM
 
 # TRPT v4: constant L/r ring spacing (replaces n_rings+taper_ratio with target_Lr+r_bottom)
-export ring_spacing_v4
+export ring_spacing_v4, ring_spacing_v5
 export TRPTDesignV4
 export OPT_MAX_GROUND_RADIUS, TRPT_V4_DIM
 export search_bounds_v4, design_from_vector_v4, objective_v4, baseline_design_v4

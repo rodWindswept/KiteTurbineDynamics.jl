@@ -126,6 +126,7 @@ function design_from_vector_v10(
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
+    cylinder_cone::Bool=false,   # 2026-08-25: constant-r_hub rotor section (opt-in, ODE path)
 )
     # Base v5 design (first 9 vars)
     design = design_from_vector_v5(
@@ -135,15 +136,33 @@ function design_from_vector_v10(
     # Rotor placement (x[10] = rotor_mask proxy)
     mask, _, positions_raw = decode_rotor_mask(x[10])
 
-    # Compute ring geometry first to know ring count
-    zs, _, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+    # Cylinder+cone (2026-08-25, OPT-IN): the "rotor section" above the lowest
+    # active rotor is a constant-r_hub cylinder (common anchor radius for all
+    # rotors); the base below tapers.  Off by default so the frozen legacy
+    # static solver (objective_v10) keeps the full cone.  positions_raw are
+    # 1-based from the hub (1 = hub), so the lowest rotor is the largest p; the
+    # cone starts at the ring just below it.
+    taper_start_z = 0.0
+    if cylinder_cone && length(positions_raw) > 1
+        zs_full, _, _ = ring_spacing_v4(
+            design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
+            density_profile=design.density_profile,
+        )
+        n_rings_full = length(zs_full)
+        p_max = maximum(positions_raw)
+        below_ring_full = clamp(n_rings_full - p_max, 1, n_rings_full)
+        taper_start_z = zs_full[below_ring_full]
+    end
+
+    # Ring geometry (full cone when taper_start_z == 0).
+    zs, _, _ = ring_spacing_v5(
+        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr, taper_start_z;
         density_profile=design.density_profile,
     )
     n_rings = length(zs)
 
     # Map rotor mask positions to ring indices (intermediate ring numbering).
-    # ring_spacing_v4 returns n_rings intermediate ring positions.
+    # ring_spacing_v5 returns n_rings intermediate ring positions.
     # The system builder adds ground (ring 1) and hub (ring n_rings+2) later;
     # rotor ring indices here use intermediate numbering [1, n_rings]
     # and are remapped to system numbering in build_from_campaign_v10.
@@ -216,7 +235,8 @@ function design_from_vector_v10(
         ))
     end
 
-    return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, mask=mask, n_active=n_active)
+    return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, mask=mask, n_active=n_active,
+            taper_start_z=taper_start_z)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -2210,3 +2210,21 @@ that over-tension and is UNSUPPORTED — re-derive it.
 **Third (secondary):** the bisection floor `[0.001, π/4]` could not wind the
 negative twist an over-driving expansion rotor demands; it now slacks the
 segment (Δα=0, τ=0) when the target is ≤0.
+
+### [2026-08-25] Terminology correction: "λ" is TSR only — the blade-mass law is "span³", not "λ³"
+
+**Context:** a grep for λ across the docs showed the symbol is widely used for the
+BLADE SCALE (the x13/x14 rotor-size gene), not the tip-speed ratio — including the
+canonical "blade-mass law `m = m_ref·λ³`".  CONTEXT.md even self-contradicted
+(line 155 "λ is reserved for TSR only" vs line 168 "m = m_ref·λ³").
+
+**Convention (reaffirmed, 2026-08-20):** `λ` = tip-speed ratio (TSR) ONLY.  The
+rotor-size gene is **`blade_scale`** (written out longhand; no Greek letter).  The
+mass law is **`m_per_blade = m_ref·(span/span_ref)³`** — mass scales with blade
+SPAN (`span = 0.75·r_rotor·blade_scale`), so call it the **span³ law**, never "λ³".
+
+**Scope:** CONTEXT.md fixed.  Historical docs (CHANGELOG, `references/`,
+`.hermes/plans/`, pre-rename DECISIONS entries) still say "λ" for blade scale —
+those are legacy snapshots; read them with the rename in mind, don't propagate the
+old symbol into new text.  The active guides (CONTEXT.md, genome-glossary.md,
+domain.md) now state the convention.

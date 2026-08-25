@@ -287,6 +287,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
                               tether_diameter::Float64=0.003,
                               base_params::Union{Nothing,SystemParams}=nothing)
     (; design, rotors, n_rings) = result
+    taper_start_z = haskey(result, :taper_start_z) ? result.taper_start_z : 0.0
     n_lines = design.n_lines
 
     # Rung-scaled campaign base when provided (5 kW campaigns pass their own
@@ -374,6 +375,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     sys, u0 = build_kite_turbine_system_v5(
         pc, design.target_Lr, design.r_bottom;
         density_profile=design.density_profile,
+        taper_start_z=taper_start_z,
         expansion_rotors=expansion_params,
         rotor_blade_hub_radius=r_in,
     )
@@ -439,7 +441,7 @@ function evaluate_windowed(
         error("evaluate_windowed expects $TRPT_V10_DIM-D genome, got $(length(x))")
     x14 = x[1:TRPT_V10_DIM]
     result = design_from_vector_v10(
-        x14, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated
+        x14, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated, cylinder_cone=true
     )
     if result.n_active == 0
         return rejected_eval()  # no rotors = infeasible
