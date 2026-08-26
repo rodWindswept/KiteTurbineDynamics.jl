@@ -359,7 +359,7 @@ foreach(print_summary, previews)
 
 # ── Render ───────────────────────────────────────────────────────────────────
 if length(previews) == 1
-    fig = Figure(; resolution=(1400, 560))
+    fig = Figure(; size=(1400, 560))
     ax3d = Axis3(
         fig[1, 1]; title=previews[1].label, xlabel="x (m)", ylabel="y (m)", zlabel="z (m)"
     )
@@ -373,7 +373,7 @@ if length(previews) == 1
     end
 else
     n = length(previews)
-    fig = Figure(; resolution=(380 * n, 380))
+    fig = Figure(; size=(380 * n, 380))
     for (i, pv) in enumerate(previews)
         ax = Axis3(fig[1, i]; title=pv.label)
         draw_geometry_3d!(ax, pv)
@@ -386,5 +386,14 @@ if headless
     save(dest, fig)
     println("\nWrote $dest")
 else
-    display(fig)
+    # Keep the GLMakie window alive until the user closes it.  A bare
+    # display(fig) in a script lets the process exit and the window vanish
+    # immediately.  Block on the Screen (Base.isopen(::Screen) is defined);
+    # a Scene has no isopen method.
+    screen = GLMakie.Screen()
+    display(screen, fig)
+    println("\nViewer open — close the window to exit.")
+    while isopen(screen)
+        sleep(0.25)
+    end
 end
