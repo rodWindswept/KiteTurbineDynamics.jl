@@ -45,6 +45,7 @@ using KiteTurbineDynamics
     include("test_physics_inertia_mass.jl")
     include("test_documented_claims.jl")
     include("test_fos_guard.jl")
+    include("test_airborne_fos.jl")
     include("test_objective_v11.jl")
     include("test_objective_v12.jl")
     include("test_physics_path_guard.jl")

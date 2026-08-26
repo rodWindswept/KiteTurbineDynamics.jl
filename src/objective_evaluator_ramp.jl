@@ -177,22 +177,13 @@ function evaluate_ramp(
                     push!(P_samples, ef.base.P_kw)
                     isfinite(ef.base.T_lift) && push!(T_lift_samples, ef.base.T_lift)
 
-                    airborne = Float64[]
-                    for i in 2:length(ef.ring_fos)
-                        v = ef.ring_fos[i]
-                        (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
-                    end
-                    f_min = isempty(airborne) ? Inf : minimum(airborne)
+                    f_min, worst_idx = min_airborne_fos(ef.ring_fos)
                     push!(fos_samples, f_min)
 
-                    if !isempty(airborne)
-                        worst_idx = argmin(airborne) + 1
-                        if worst_idx <= length(ef.ring_util_axial)
-                            push!(util_a_samples, ef.ring_util_axial[worst_idx])
-                            push!(util_b_samples, ef.ring_util_bending[worst_idx])
-                        else
-                            push!(util_a_samples, -1.0); push!(util_b_samples, -1.0)
-                        end
+                    if worst_idx > 0 && worst_idx <= length(ef.ring_util_axial) &&
+                       worst_idx <= length(ef.ring_util_bending)
+                        push!(util_a_samples, ef.ring_util_axial[worst_idx])
+                        push!(util_b_samples, ef.ring_util_bending[worst_idx])
                     else
                         push!(util_a_samples, -1.0); push!(util_b_samples, -1.0)
                     end

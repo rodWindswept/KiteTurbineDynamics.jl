@@ -27,10 +27,38 @@
 # ── Helper: minimum airborne ring FoS ──────────────────────────────────
 
 """
+    min_airborne_fos(ring_fos) -> (fos_min, idx)
+
+Minimum FoS across ALL entries of `ring_fos`.  `ring_fos` is already
+airborne-only — `ring_element_analysis` strips the ground ring and the hub
+(`sys.ring_ids[2:end-1]`), so entry 1 is the lowest FLOATING ring (e.g. the
+transmission-cylinder ring in the three-section geometry), NOT the ground ring.
+
+Returns `(Inf, 0)` when no valid (finite, > 0) entry exists.
+
+2026-08-25 off-by-one fix: the old inline `for i in 2:length(ring_fos)` skipped
+`ring_fos[1]` under the mistaken belief it was the ground ring — hiding the
+buckled transmission-cylinder ring (FoS 0.57) behind the top-ring FoS (67.54)
+and letting structurally-invalid designs pass the FoS gate.
+"""
+function min_airborne_fos(ring_fos::AbstractVector)
+    fos_min = Inf
+    idx = 0
+    for i in eachindex(ring_fos)
+        v = ring_fos[i]
+        if isfinite(v) && v > 0.0 && v < fos_min
+            fos_min = v
+            idx = i
+        end
+    end
+    return (fos_min, idx)
+end
+
+"""
     min_ring_fos(u, sys, p) -> Float64
 
 Return the minimum FoS across all airborne (non-ground) rings.
-Returns Inf if no valid FoS values are found.  Uses 
+Returns Inf if no valid FoS values are found.  Uses `capture_extended`
 internally — call sparingly (once per ramp chunk, not every ODE step).
 """
 function min_ring_fos(u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams)
@@ -38,12 +66,8 @@ function min_ring_fos(u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParam
     dummy_wf = (pos, t) -> [0.0, 0.0, 0.0]
     ef = capture_extended(u, sys, p, 0.0, dummy_wf, nothing;
         brake_engaged=sys.brake_engaged[])
-    airborne = Float64[]
-    for i in 2:length(ef.ring_fos)
-        v = ef.ring_fos[i]
-        (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
-    end
-    return isempty(airborne) ? Inf : minimum(airborne)
+    fos_min, _ = min_airborne_fos(ef.ring_fos)
+    return fos_min
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -677,23 +701,14 @@ function evaluate_windowed(
             end
             push!(P_samples, ef.base.P_kw)
             isfinite(ef.base.T_lift) && push!(T_lift_samples, ef.base.T_lift)
-            airborne = Float64[]
-            for i in 2:length(ef.ring_fos)
-                v = ef.ring_fos[i]
-                (!isnan(v) && !isinf(v) && v > 0) && push!(airborne, v)
-            end
-            push!(fos_samples, isempty(airborne) ? Inf : minimum(airborne))
+            fos_min_frame, fos_idx_frame = min_airborne_fos(ef.ring_fos)
+            push!(fos_samples, fos_min_frame)
             # Axial and bending shares at worst-FoS ring (A1 fix — always push
             # to keep array lengths aligned with fos_samples)
-            if !isempty(airborne)
-                worst_idx = argmin(airborne) + 1  # +1 for 1-based indexing
-                if worst_idx <= length(ef.ring_util_axial)
-                    push!(util_a_samples, ef.ring_util_axial[worst_idx])
-                    push!(util_b_samples, ef.ring_util_bending[worst_idx])
-                else
-                    push!(util_a_samples, -1.0)
-                    push!(util_b_samples, -1.0)
-                end
+            if fos_idx_frame > 0 && fos_idx_frame <= length(ef.ring_util_axial) &&
+               fos_idx_frame <= length(ef.ring_util_bending)
+                push!(util_a_samples, ef.ring_util_axial[fos_idx_frame])
+                push!(util_b_samples, ef.ring_util_bending[fos_idx_frame])
             else
                 push!(util_a_samples, -1.0)
                 push!(util_b_samples, -1.0)
