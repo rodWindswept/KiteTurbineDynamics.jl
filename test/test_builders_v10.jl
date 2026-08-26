@@ -80,22 +80,26 @@ end
 # Ring mapping — single authority (2026-08-09)
 # ══════════════════════════════════════════════════════════════════════════════
 
-@testset "expansion_params_from_rotors — canonical +1 mapping, hub excluded" begin
+@testset "expansion_params_from_rotors — system ring numbering, hub excluded" begin
     # RotorSpecV10(ring_idx, bank_angle_deg, blade_scale, v_wind, r_rotor,
     #              blade_tip_radius, blade_hub_radius, blade_chord)
+    # ring_idx is SYSTEM numbering (1 = ground, n_rings = hub), as produced by
+    # design_from_vector_v10 (ring_idx = n_rings − p + 1).  A rotor at ring k
+    # maps to system ring k (identity); the top rotor (ring_idx == n_rings) is
+    # the MAIN rotor and is excluded.
     rotors = [
-        RotorSpecV10(1, 25.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2),
-        RotorSpecV10(2, 20.0, 1.0, 11.0, 1.0, 3.1, 0.5, 0.2),
-        RotorSpecV10(3, 15.0, 1.0, 11.0, 1.0, 3.2, 0.5, 0.2),
+        RotorSpecV10(7, 25.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2),  # hub — excluded
+        RotorSpecV10(6, 20.0, 1.0, 11.0, 1.0, 3.1, 0.5, 0.2),  # → ring 6
+        RotorSpecV10(5, 15.0, 1.0, 11.0, 1.0, 3.2, 0.5, 0.2),  # → ring 5
     ]
-    # n_rings=3, canonical: total = 3 + 2 = 5 rings (ground + 3 flown + hub).
-    # HUB EXCLUSION (2026-08-22): ring_idx == n_rings (3) is the MAIN rotor —
-    # no expansion entry (double-modelled annulus / double-counted mass).
-    # Rotor at ring 1 → sys ring 2; ring 2 → sys ring 3.
-    ps = expansion_params_from_rotors(rotors, 3, 12)
+    # 2026-08-26: identity mapping (NO +1).  The old `sys_ring = ring_idx + 1`
+    # shifted every expansion rotor one ring toward the hub (a 3-rotor stack
+    # [7,6,5] built as expansion {7,6} instead of {6,5} — the middle rotor
+    # landed on the hub and was skipped, the bottom rotor landed on ring 6).
+    ps = expansion_params_from_rotors(rotors, 7, 12)
     @test length(ps) == 2
-    @test ps[1].ring_idx == 2
-    @test ps[2].ring_idx == 3
+    @test ps[1].ring_idx == 6
+    @test ps[2].ring_idx == 5
     # n_blades = n_lines flows through
     @test all(p.n_blades == 12 for p in ps)
 end
@@ -116,13 +120,45 @@ end
     rotors = [RotorSpecV10(1, 15.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2)]
     ps = expansion_params_from_rotors(rotors, 1, 12; minimal_hub=true)
     @test isempty(ps)
-    # Multi-ring minimal: the intermediate rotor maps one above its index;
-    # the top rotor (ring_idx == n_rings) is the hub and is excluded.
+    # Multi-ring minimal: the intermediate rotor maps to its own system ring
+    # (identity); the top rotor (ring_idx == n_rings) is the hub and is excluded.
     rotors3 = [
         RotorSpecV10(1, 25.0, 1.0, 11.0, 1.0, 3.0, 0.5, 0.2),
         RotorSpecV10(2, 20.0, 1.0, 11.0, 1.0, 3.1, 0.5, 0.2),
     ]
     ps3 = expansion_params_from_rotors(rotors3, 2, 12; minimal_hub=true)
     @test length(ps3) == 1
-    @test ps3[1].ring_idx == 2   # intermediate only; hub rotor excluded
+    @test ps3[1].ring_idx == 1   # intermediate rotor → its own system ring; hub excluded
+end
+
+@testset "V10 builder — decode→build rotor ring placement (2026-08-26)" begin
+    # End-to-end: a 3-rotor genome (rotor_count_mode, three-section geometry)
+    # must place the hub rotor on the TOP ring and each expansion rotor on ITS
+    # OWN ring — never shifted +1 toward the hub.  Regresses the mapping bug
+    # that turned a [hub=7, 6, 5] stack into expansion {7, 6}.
+    x = [0.06, 0.01, 1.0, 1.0, 2.775, 0.575, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
+    # Daisy 1.5 kW → 5 kW, tether length restored (mirrors run_v13_5kw_masslift).
+    p2 = params_daisy()
+    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        18.8, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    p = override_params(mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0); tether_length=18.8)
+
+    dec = KiteTurbineDynamics.design_from_vector_v10(
+        x, PROFILE_ELLIPTICAL, p; power_W=5000.0,
+        cylinder_cone=true, rotor_count_mode=true,
+        power_split=0.6, cone_slope_deg=22.0,
+        rotor_spacing_frac=0.8, blocking_factor=1.0)
+
+    @test dec.n_active == 3
+    n = dec.n_rings
+    # Hub rotor on the top ring; the two expansion rotors on the rings below.
+    @test [r.ring_idx for r in dec.rotors] == [n, n - 1, n - 2]
+
+    sys, u0, _ = KiteTurbineDynamics.build_system_from_v10(
+        dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
+    @test [er.ring_idx for er in sys.expansion_rotors] == [n - 1, n - 2]
 end

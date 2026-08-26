@@ -52,26 +52,29 @@ end
     expansion_params_from_rotors(rotors, n_rings, n_lines; blade_scale=1.0,
                                  minimal_hub=false) -> Vector{ExpansionRotorParams}
 
-The ONE mapping from campaign rotors (`RotorSpecV10`) to system rings.  The
-top rotor (ring_idx == n_rings) lands on the top ring; every other rotor
-lands on ring_idx + 1.
+The ONE mapping from campaign rotors (`RotorSpecV10`) to system rings.
 
-Ring-count semantics (must agree with the geometry the builder produces):
+`RotorSpecV10.ring_idx` is **system numbering** (1 = ground, `n_rings` = hub),
+as produced by `design_from_vector_v10`'s `ring_idx = n_rings − p + 1` and
+consumed by `build_system_from_v10`'s hub test `ring_idx == n_rings` and the
+ODE's `sys.ring_ids[er.ring_idx]`.  A rotor at ring `k` maps to system ring
+`k` (identity).  The top rotor (ring_idx == n_rings) is the MAIN/hub rotor
+and is excluded (no expansion entry — it is modelled by the cp/ct rotor).
 
-- `minimal_hub=false` (default, canonical): the top ring is a separate hub
-  ring — total system rings = n_rings + 2 (ground + n_rings flown + hub).
-- `minimal_hub=true`: the top flown ring IS the bladed hub — total system
-  rings = n_rings + 1.  This is the minimal TRPT (Rod, 2026-08-09): 1 flown
-  bladed hub ring rotor + 1 ground ring = 2 rings at n_rings = 1.
+**2026-08-26 fix:** the old `sys_ring = rotor.ring_idx + 1` was a leftover from
+a flown-ring-numbering convention (1..n_flown, system = flown + 1 for the
+ground ring).  Since `ring_idx = n_rings − p + 1` already produces system
+numbering (n_rings = total rings incl. ground+hub), the `+1` double-counted
+the ground ring and shifted every expansion rotor ONE RING TOWARD THE HUB:
+a 3-rotor stack [hub=7, 6, 5] built as expansion rotors at {7, 6} instead of
+{6, 5} — the middle rotor landed on the hub (where `ring_forces.jl` skips it)
+and the bottom rotor landed on the middle ring.  This silently turned every
+multi-rotor design into one fewer effective rotor.
 
-Replaces five copy-pasted loops.  Two of them (the warmstart static pre-solve
-and objective_v10) used a raw `rotor.ring_idx` convention that put rotors one
-ring low on multi-ring machines — the same genome built different machines
-depending on which evaluator path decoded it (the "13-gon" wrong-geometry bug
-class, ac3db3c / 9ce8bed).  NOTE: `minimal_hub=true` is implemented at the
-mapping level; the builder geometry (n_rings − 1 in the ring count) and the
-A3 decode gate (n_rings ≥ 5) are the flagged follow-on before a minimal
-machine can be built end-to-end.
+`minimal_hub=true` is the minimal TRPT (1 flown bladed hub ring + 1 ground
+ring) and is implemented at the mapping level only; the builder geometry and
+the A3 decode gate are the flagged follow-on before a minimal machine can be
+built end-to-end.
 """
 function expansion_params_from_rotors(rotors, n_rings, n_lines;
                                        blade_scale::Float64=1.0,
@@ -86,7 +89,7 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
         # and DOUBLE-COUNTED its blade mass in expansion_airborne_mass.
         # Expansion rotors are ADDITIONAL rotors on intermediate rings only.
         rotor.ring_idx == n_rings && continue
-        sys_ring = rotor.ring_idx + 1
+        sys_ring = rotor.ring_idx
         # Span³ blade-mass law (2026-08-22): m_assembly = n_blades ·
         # M_BLADE_REF_KG · (span/1.0)³ with span the DECODED blade span
         # (tip − hub, × any builder dial).  Prices the real blade volume —
@@ -291,7 +294,7 @@ function build_phantom_triangle(;
         # mapping it as an expansion rotor double-modelled the annulus and
         # double-counted its mass (see expansion_params_from_rotors).
         rotor.ring_idx == n_rings && continue
-        sr = rotor.ring_idx + 1
+        sr = rotor.ring_idx
         span_er = (rotor.blade_tip_radius - rotor.blade_hub_radius) * blade_scale
         er = ExpansionRotorParams(
             n_lines,
