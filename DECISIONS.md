@@ -2228,3 +2228,123 @@ SPAN (`span = 0.75·r_rotor·blade_scale`), so call it the **span³ law**, never
 those are legacy snapshots; read them with the rename in mind, don't propagate the
 old symbol into new text.  The active guides (CONTEXT.md, genome-glossary.md,
 domain.md) now state the convention.
+
+### [2026-08-25] Three-section TRPT geometry + signed hoop compression (Wacker §4.2.4)
+
+**Context:** the 08-24 build-geometry audit left the radius profile as a
+two-section cylinder+cone.  To let the DE trade line drag against ring count,
+mass, and transition compression on a validated foundation, the profile was
+reworked to the Tulloch-proposed **three-section** form: a small-radius
+**transmission cylinder** → a steep, 22°-bounded **cone** → a full-radius
+**harvest cylinder** carrying the rotors.  This is the field-tested geometry
+(Tulloch: a low-drag *minimum*-radius transmission section, 22° cone "to avoid
+any abrupt changes in diameter").
+
+**Changes landed:**
+
+- `ring_spacing_v5` gained a `harvest_length` kwarg and now composes three
+  `ring_spacing_v4` sections ground-first: transmission cylinder `[0,
+  taper_start_z]` at `r_bottom`, cone `[taper_start_z, tether_length −
+  harvest_length]` (`r_bottom → r_top`), harvest cylinder at `r_top`.
+  `taper_start_z` is derived from the 22°-bounded cone slope, not the rotor
+  position.
+- `structural_safety.jl` `ring_safety_frame` now keeps the SIGN of the radial
+  force: `F_inward += T · dot(dir, r̂)` (was `T · abs(dot(−dir, r̂))`).  Wacker
+  §4.2.4 signed frame force — `dot(dir, r̂) > 0` compresses, `< 0` is net hoop
+  expansion/tension.  Buckling utilisation now `max(N_comp, 0)/P_crit`, so
+  hoop expansion no longer reads as a compression failure.
+- Source extracts committed under `docs/validation/`
+  (`wacker-frame-force-extract.md`, `tulloch-hoop-compression-extract.md`,
+  plus the full thesis extracts).
+
+**Status: NOT validated.**  The first campaign on this geometry produced a
+structurally-invalid winner (see [2026-08-26] below).  Do not quote any
+three-section result until the geometry is smoke-tested on the current FoS
+path and the transmission cylinder is shown not to buckle.
+
+### [2026-08-25] rotor_count_mode (1/2/3 concurrent top rotors) + power_split + per-island parallel campaign
+
+**Context:** the 60-pattern rotor bitmask (`decode_rotor_mask`) was awkward to
+sweep.  x10 was re-interpreted as a rotor **count** `{1,2,3}` under
+`rotor_count_mode` — same expansion-rotor physics, only the gene decode
+changes.  The legacy bitmask path is untouched for the frozen static solver.
+
+**Changes landed:**
+
+- `design_from_vector_v10` gained `rotor_count_mode`, `cone_slope_deg` (22°),
+  `rotor_spacing_frac` (0.8), `power_split` (top-rotor power fraction; a sweep
+  knob on `ObjectiveConfig`, not a genome gene), and `blocking_factor`
+  (downstream-rotor inflow de-rating; `1.0` = no wake — a named placeholder,
+  not CFD).  Min-rotor-spacing check `ring_spacing ≥ frac · 2·r_rotor`.
+- `compute_seeds.jl` re-seeded: `Do_top 0.06`, `x10 = 3`, `blade_scale 0.7`.
+  The rationale "3-rotor stack 37.7 kg vs 59.4 kg single" was measured on the
+  PRE-FoS-fix code — treat it as unverified (see [2026-08-26]).
+- `run_v13_5kw_masslift.jl` gained `--island N` (parallel mode; each island
+  writes its own `island_N/` subdir) and a `_rotorcount` output tag.
+  `scripts/combine_islands_v13.jl` (new, idempotent) merges island bests.
+- Campaign `v13_5kw_masslift_len18.8_rotorcount` launched (3 islands parallel).
+
+### [2026-08-26] FoS_min off-by-one hid the buckled lowest ring — rotorcount winner VOID
+
+**Context:** `ring_element_analysis` already strips the ground ring AND the hub
+(`sys.ring_ids[2:end-1]`), so `ef.ring_fos[1]` is the lowest **floating** ring
+(the transmission-cylinder ring in three-section geometry).  `min_ring_fos`,
+`evaluate_windowed`, and `objective_evaluator_ramp` iterated from index 2
+instead of 1, silently skipping that ring.
+
+**Symptom:** on the rotorcount island-3 winner this hid FoS **0.57**
+(transmission cylinder buckled, util 1.75) behind the top-ring FoS 67.54 — so
+the FoS gate passed a structurally-invalid design.
+
+**Fix:** `min_airborne_fos(ring_fos) → (fos_min, idx)` — a single authority
+that iterates every airborne ring; wired into `min_ring_fos`,
+`evaluate_windowed`, `objective_evaluator_ramp`.  Regression test
+`test/test_airborne_fos.jl` pins the "index 1 included" contract.
+
+**Consequence:** winner re-eval → **reject** (FoS_min 0.556).  The
+`v13_5kw_masslift_len18.8_rotorcount` campaign has **no valid winner**, and
+islands 1/2 stopped early (gen 13/9 of 30).  This is the "geometry far from
+expected" symptom's second root cause (the first was the 08-24 dead genes):
+a structurally-invalid form passed the gate and was reported as a healthy
+winner.
+
+### [2026-08-26] Session recovery note
+
+The 08-25 → 08-26 session (three-section geometry + rotor_count_mode +
+parallel campaign + the two 08-26 bugfixes) **crashed before writing a
+handover or any DECISIONS entry**.  The three entries above record that work
+after the fact.  Full post-mortem and lessons:
+`docs/plans/retrospective-2026-08-26-crashed-session.md`.
+
+### [2026-08-26] Rotor→system-ring `+1` off-by-one — multi-rotor designs were one rotor short
+
+**Finding (surfaced by the new visual seed check, `scripts/preview_genome_geometry.jl`).**
+`expansion_params_from_rotors` mapped `sys_ring = rotor.ring_idx + 1`, a
+leftover from a flown-ring-numbering convention.  But `design_from_vector_v10`
+already emits `ring_idx = n_rings − p + 1` in **system** numbering
+(`n_rings` = total rings incl. ground+hub; `n_rings` = hub), confirmed by
+`build_system_from_v10`'s hub test `ring_idx == n_rings` and the ODE's
+`sys.ring_ids[er.ring_idx]`.  The `+1` double-counted the ground ring and
+shifted **every expansion rotor one ring toward the hub**.
+
+**Symptom:** a 3-rotor genome decoded as `RotorSpecV10.ring_idx = [7, 6, 5]`
+(hub + two below), but built `ExpansionRotorParams.ring_idx = [7, 6]` — the
+middle rotor landed on the hub (where `ring_forces.jl` skips it) and the
+bottom rotor landed on the middle ring.  Every `n_active ≥ 2` design silently
+ran with one fewer effective rotor.  This is the rotor-count analogue of the
+08-24 dead genes: the geometry the ODE ran was not the geometry the genome
+specified, and it is exactly what "reported forms far from expected" meant for
+the rotorcount campaign.
+
+**Fix:** `sys_ring = rotor.ring_idx` (identity) in `expansion_params_from_rotors`
+and its duplicate loop in `builders_util.jl`; docstring rewritten to state the
+system-numbering contract.  Regression tests: `test/test_builders_v10.jl`
+("system ring numbering" unit test + "decode→build rotor ring placement"
+end-to-end).  Single-rotor (`n_active == 1`) is unaffected (no expansion
+rotors), so the FR4 invariant and the validated 5 kW single-rotor results hold.
+
+**Consequence:** the crashed session's `v13_5kw_masslift_len18.8_rotorcount`
+campaign was evaluating machines with mis-placed rotors; its "3-rotor stack
+37.7 kg vs 59.4 kg single" seed rationale is doubly void (pre-FoS-fix AND
+wrong rotor placement).  The rotorcount campaign must be re-run only after the
+three-section geometry smoke-tests green on this fixed mapping.

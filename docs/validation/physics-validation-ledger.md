@@ -1,4 +1,4 @@
-# Physics Validation Ledger — what we trust, what is open (2026-08-22)
+# Physics Validation Ledger — what we trust, what is open (2026-08-22; re-statused 2026-08-26)
 
 **Purpose:** one place that maps every load-bearing physics claim in the
 simulator to its source and its validation status — so no number is quoted
@@ -41,7 +41,7 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 | C1 | BEM Cp/CT tables (NACA 4412, λ 0–8) | AeroDyn v5.0.0 quasi-steady, 0° elevation | CT(λ) rises monotonically to ~1.01 then clamps — real rotors peak earlier; validate vs high-thrust AeroDyn runs | SUPPORTED (AeroDyn) / CT(λ>6) OPEN |
 | C2 | Cp scaling to other blade counts | Prandtl tip-loss + solidity penalty (k≈0.7 Cp, 0.5 CT) | exponents FLAGGED approximate in bem.jl — need AeroDyn sweeps n_lines 3–8 | SUPPORTED / OPEN |
 | C3 | cp falloff / drag brake past λ≈9.61 | derived from the blade's own table (2026-08-14) | none — gate 4 active | SUPPORTED |
-| C4 | Elevation projection cos² (thrust) / cos^2.65 (power) | AeroDyn sweep at elevation | double-count risk if the table already includes elevation — reconcile | OPEN |
+| C4 | Elevation projection cos² (thrust) / cos^2.65 (power) | AeroDyn sweep at elevation | **RETIRED 2026-08-26:** the BEM tables are explicitly 0° elevation (`aerodynamics.jl`), and `ring_forces.jl:206/222` applies cos²/cos^2.65 ONCE on top — no double-count. The exponent values stay SUPPORTED (AeroDyn sweep, not closed-loop) | RESOLVED (no double-count) |
 | C5 | Tulloch torsional-collapse criterion δα* | thesis | Daisy scores tors≈0.22 while flying fine — threshold, not physics (gate 13, small-scale) | SUPPORTED / small-scale threshold OPEN |
 | C6 | Dyneema SK99 rope break ε=3.5% | SK99 datasheet | — | SUPPORTED |
 | C7 | Mass exponent P^1.35 (rung scaling) | "Mass Scaling PDF" | underdetermined from one point; field tests measure | SUPPORTED / OPEN |
@@ -50,13 +50,13 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 
 | # | Item | Why it matters | Action |
 |---|------|----------------|--------|
-| D1 | `lin_damp = 0.05` (orbital rope damper) | high-sensitivity knob, never hardware-calibrated | dt-paired damping sweep (queued gate, trust-log) |
-| D2 | `i_pto = 0.3 kg·m²` placeholder (Daisy) | drivetrain inertia in settle/ODE | measure or derive from April-29 rig gearing |
-| D3 | mass exponent for φ (kg/kW) | φ ≈ 1.3 kg/kW at Daisy; 5 kW target band | field tests |
-| D4 | brake-torque cap law (linear vs quadratic) | 2× discrepancy at 5 kW; 9× under-clamp at 300 W vs measured | proposal written (2026-08-22-physics-convention-fixes.md) |
-| D5 | ring numbering docs (code ground=1, docs hub=1) | audit confusion | convention-fix proposal |
-| D6 | P_kw sign-masking in sim_frame | reversed ring reads positive | convention-fix proposal |
-| D7 | ODE-inertia knuckles | DE score counts them, ODE inertia does not | flagged follow-on (mass-law proposal) |
+| D1 | `lin_damp = 0.05` (orbital rope damper) | high-sensitivity knob, never hardware-calibrated | OPEN — dt-paired damping sweep still QUEUED (trust-log "Queued Gates"); exonerated as the reverse-torque source (2026-08-12) but the rate itself is uncalibrated |
+| D2 | `i_pto = 0.3 kg·m²` placeholder (Daisy) | drivetrain inertia in settle/ODE | OPEN — needs measurement or derivation from the April-29 rig gearing; no hardware data in repo |
+| D3 | mass exponent for φ (kg/kW) | φ ≈ 1.3 kg/kW at Daisy; 5 kW target band | OPEN — field tests only |
+| D4 | brake-torque cap law (linear vs quadratic) | 2× discrepancy at 5 kW; 9× under-clamp at 300 W vs measured | OPEN — proposal `docs/plans/2026-08-22-physics-convention-fixes.md` §1 (single `generator_torque_cap(p)` from rated torque); MAJOR, needs its own TDD session + acceptance re-baseline (plan sequencing step 2). Campaign-at-k=2.24 verified below the clamp (2026-08-22) |
+| D5 | ring numbering docs (code ground=1, docs hub=1) | audit confusion — and it hid a real bug: `expansion_params_from_rotors` added `+1` to an already-system-numbered `ring_idx`, shifting every expansion rotor one ring toward the hub (multi-rotor designs ran one rotor short) | **CODE FIXED 2026-08-26** (`sys_ring = rotor.ring_idx`, DECISIONS [2026-08-26]); docs still need the hub=1/ground=1 convention-fix proposal |
+| D6 | P_kw sign-masking in sim_frame | reversed ring reads positive | **RESOLVED 2026-08-20:** `sim_frame.jl:133` is `P_kw = tau_gen * omega_gnd / 1000.0` (signed; reversed reads negative). Dashboard still labels it "electrical" (it is mechanical shaft power) — cosmetic follow-on |
+| D7 | ODE-inertia knuckles | DE score counts them, ODE inertia does not | **PARTIAL (2026-08-25/26):** blade rotary inertia now enters `inertia_z` (J·θ fix); the 0.050 kg/blade knuckle floor (`OPT_KNUCKLE_MASS_KG`) still enters `expansion_airborne_mass` (DE score/lift) but NOT `expansion_rotor_inertia` (ODE). Small, non-breaking gap — fold into the mass-law follow-on |
 
 ## E. Retired claims (SUPERSEDED — do not resurrect)
 
