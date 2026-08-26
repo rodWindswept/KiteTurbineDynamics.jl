@@ -24,6 +24,7 @@ end
 
 const BASE = joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount")
 
+let
 isdir(BASE) || error("campaign root not found: $BASE")
 islands = sort([d for d in readdir(BASE; join=true)
                 if isdir(d) && occursin("island_", basename(d))])
@@ -81,3 +82,4 @@ end
 
 @printf("\nGlobal best: island %d, fitness %.3f\n", best_island, best_fitness)
 println("Wrote best_vector.csv, global_best_meta.txt, combined_summary.csv to $BASE")
+end
