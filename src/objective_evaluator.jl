@@ -380,6 +380,9 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
         R_main = design.r_hub + hub_rotor.blade_tip_radius     # r_out
         r_in = max(design.r_hub + hub_rotor.blade_hub_radius, 0.0)  # r_in ≥ 0
     end
+    # Main (hub) rotor wake de-rate (2026-08-26): the hub is the most-downwind
+    # rotor in a co-axial stack, so it carries the decoder's wind_factor.
+    main_rotor_wind_factor = hub_rotor === nothing ? 1.0 : hub_rotor.wind_factor
     geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, R_main,
                        design.tether_length, design.r_hub,
                        p_base.trpt_rL_ratio,
@@ -415,6 +418,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
         harvest_length=harvest_length,
         expansion_rotors=expansion_params,
         rotor_blade_hub_radius=r_in,
+        main_rotor_wind_factor=main_rotor_wind_factor,
     )
 
     # Populate ring beam geometry from the genome so ring_element_analysis uses

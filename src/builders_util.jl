@@ -105,6 +105,7 @@ function expansion_params_from_rotors(rotors, n_rings, n_lines;
             rotor.bank_angle_deg,
             expansion_blade_mass(span_total, n_lines),
             sys_ring, 1.0,
+            rotor.wind_factor,   # 2026-08-26: downstream wake de-rate (1.0 = freestream)
         )
         push!(expansion_params, er)
     end

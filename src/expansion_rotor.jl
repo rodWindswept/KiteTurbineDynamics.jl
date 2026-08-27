@@ -120,7 +120,16 @@ struct ExpansionRotorParams
     mass::Float64
     ring_idx::Int
     shaft_coupling::Float64
+    wind_factor::Float64        # inflow multiplier (1.0 = freestream; <1 = downstream wake)
 end
+
+# Backward-compat: legacy 11-arg construction means freestream (no blocking).
+ExpansionRotorParams(n_blades, blade_tip_radius, blade_hub_radius, blade_chord,
+                     CL_blade, CD0_blade, k_induced, bank_angle_deg, mass,
+                     ring_idx, shaft_coupling) =
+    ExpansionRotorParams(n_blades, blade_tip_radius, blade_hub_radius, blade_chord,
+                         CL_blade, CD0_blade, k_induced, bank_angle_deg, mass,
+                         ring_idx, shaft_coupling, 1.0)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Per-annulus axial induction + α model (2026-07-18, induction_fix_proposal.md)

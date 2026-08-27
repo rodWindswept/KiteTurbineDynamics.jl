@@ -33,6 +33,13 @@ const RUNGS = [5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0]
 # stale-k=5.39 gate row).
 const K_MPPT_5KW_HONEST = 2.24
 
+# Single source of truth for co-axial wake blocking (2026-08-26, Rod).
+# Downstream (upper) rotors produce 0.75× freestream power; P ∝ v³, so the
+# inflow multiplier is 0.75^(1/3) ≈ 0.9086.  Threaded as the per-rotor
+# wind_factor from the decode into the ODE (src/ring_forces.jl), so the
+# de-rate is real, not a sizing-only placeholder.
+const BLOCKING_WIND_FACTOR_5KW = 0.75^(1 / 3)
+
 function seed_n_lines(kw::Float64)::Float64
     # Daisy: 6 lines at 1.5kW → extrapolate to target scale
     # Conservative: fewer lines at small scale (less load sharing needed)
@@ -68,7 +75,14 @@ function seed_genome(kw)
     g[2] = 0.055                          # t_over_D: 0.5 mm wall on ~9 mm rod (Daisy blades)
     g[3] = 1.0                            # beam_aspect: circular
     g[4] = 1.0                            # Do_scale_exp: uniform tube
-    g[5] = DAISY.r_hub * geom_scale       # r_hub
+    # r_hub — RE-SEED 2026-08-26: 2.4 m (was DAISY.r_hub·geom_scale = 2.775 m).
+    # A 3-rotor co-axial stack needs a SMALLER per-rotor annulus than the
+    # single-rotor Daisy scaling once the downstream wake de-rate is real
+    # (hub + middle at 0.75× power): the 2.775 m seed makes only 4.37 kW under
+    # blocking (reject).  Measured on the fixed evaluator (cold start, k=2.24,
+    # honest window): r_hub 2.4 → P 5.12 kW, FoS 10.6, fitness 53.7 kg, and it
+    # clears the geometrically-correct ground clearance with margin.
+    g[5] = 2.4                          # r_hub
     g[6] = DAISY.r_bottom * geom_scale    # r_bottom
     g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
     g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)

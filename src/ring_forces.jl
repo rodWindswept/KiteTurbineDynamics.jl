@@ -192,7 +192,9 @@ function compute_ring_forces!(
     elev_angle = atan(hub_pos[3], sqrt(hub_pos[1]^2 + hub_pos[2]^2))
 
     # ── Rotor disc aerodynamics — CT thrust only ──────────────────────────
-    v_hub_mag = norm(v_wind)
+    # Main (hub) rotor inflow de-rate (2026-08-26): the hub is downstream in a
+    # co-axial stack, so it sees wind_factor · freestream wind (P ∝ v³).
+    v_hub_mag = norm(v_wind) * sys.rotor.wind_factor
     if v_hub_mag > 0.1
         omega_rotor = omega[hub_ri]
         lambda_t = abs(omega_rotor) * sys.rotor.radius / v_hub_mag
@@ -271,7 +273,10 @@ function compute_ring_forces!(
                 r_nom = (sys.nodes[ring_gid]::RingNode).radius
 
                 v_wind_ring = wind_fn(ring_pos, t)
-                v_wind_mag_ring = norm(v_wind_ring)
+                # Per-rotor wake de-rate (2026-08-26): downstream expansion
+                # rotors see wind_factor · freestream; the lowest (upstream)
+                # rotor keeps wind_factor = 1.0.
+                v_wind_mag_ring = norm(v_wind_ring) * er.wind_factor
 
                 # Tether tension estimate from main rotor thrust
                 T_est =

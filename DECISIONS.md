@@ -2348,3 +2348,57 @@ campaign was evaluating machines with mis-placed rotors; its "3-rotor stack
 37.7 kg vs 59.4 kg single" seed rationale is doubly void (pre-FoS-fix AND
 wrong rotor placement).  The rotorcount campaign must be re-run only after the
 three-section geometry smoke-tests green on this fixed mapping.
+
+### [2026-08-27] Downstream wake blocking + clearance authority + 5 kW re-seed
+
+Closes the two Rod-flagged pre-campaign items from the 08-26 recovery handover,
+plus the re-gate decode mismatch, so a full valid rotorcount DE run is possible.
+
+**1. Wake blocking — direction + real per-rotor de-rate (Rod's ruling).**
+Wind flows UP the shaft (the hub is downwind — thrust is "upward+downwind along
+shaft"), so the UPPER rotors are downstream and the LOWEST rotor sees
+freestream.  In a 3-rotor stack the top TWO are blocked, the bottom is not;
+blocking is NON-CUMULATIVE (each downstream rotor is blocked once by its
+immediate upstream neighbour — 0.75× freestream power, NOT 0.75² for the hub).
+`blocking_factor` is the INFLOW multiplier `0.75^(1/3) ≈ 0.9086` (P ∝ v³).  The
+old code de-rated `i > 1` (the LOWER rotors) — backwards — and only fed rotor
+SIZING, never the ODE.  Now `RotorSpecV10.wind_factor` is computed in the
+decode (`i < n_active ? blocking_factor : 1.0`), threaded through
+`expansion_params_from_rotors` → `ExpansionRotorParams.wind_factor`, and the
+main rotor's factor through `RotorSpec.wind_factor` (builder →
+`build_system_from_v10`).  `ring_forces.jl` multiplies the ODE wind by the
+factor for BOTH the main and expansion rotors, so the de-rate is real in the
+slow solver, not a sizing-only placeholder.
+
+**2. Ground-clearance authority (geometrically correct).**
+`lowest_rotor_clearance` (new, in `objective_v10.jl`) is the single authority,
+replacing four duplicated offset-only copies (runner, gate, two preflights).
+Two fixes: (a) the tip is the ABSOLUTE `ring_radius + blade_tip_radius`, not
+the 0.7·span offset (the 08-24 offset-vs-absolute class); (b) the tip drop
+accounts for the shaft elevation (`tip·cos(elev)`, not full `tip`) AND the
+blade bank angle (the outer tip swings toward the ground station by
+`tip·sin(bank)` down-shaft and `tip·cos(bank)` radially).  The decode now
+returns `radii` (ground-first, from `ring_spacing_v5`) alongside `zs` so the
+helper has ring radii without rebuilding.
+
+**3. Re-seed — r_hub 2.4 (was 2.775).**
+The Daisy-scaled single-rotor r_hub (2.775 m) is wrong for a 3-rotor co-axial
+stack under real blocking: it makes only 4.37 kW (reject) and its lowest rotor
+tip sits at 1.32 m (conservative formula) / 1.79 m (correct formula).  The
+re-seed keeps 3 rotors + blade_scale 0.7 but shrinks the per-rotor annulus to
+r_hub 2.4 m: measured on the fixed evaluator (cold start, k=2.24, honest
+window) — clearance 2.89 m, P 5.12 kW, FoS 10.6, fitness 53.7 kg, tension
+exact.  The old "3-rotor 37.7 kg vs 59.4 kg single" rationale is superseded.
+
+**4. Re-gate decode alignment.**
+`ode_gate_v13.jl` and `smoke_masslift_v13.jl` decoded with the legacy defaults
+(bitmask, full cone, no blocking) — gating a DIFFERENT machine than the
+campaign built.  Both now decode with `rotor_count_mode + cylinder_cone +
+power_split + cone_slope_deg + rotor_spacing_frac + blocking_factor` matching
+the runner, and `x10` rounds to `{1,2,3}`.
+
+**Tests:** `test/test_wind_blocking.jl` (wired into `runtests.jl`) pins the
+decode direction (hub+middle blocked, bottom freestream), the radii threading,
+the absolute-tip + elevation + bank clearance, the legacy-constructor
+`wind_factor=1.0` defaults, and the `expansion_params_from_rotors` propagation.
+Fast suite 1991/1991.

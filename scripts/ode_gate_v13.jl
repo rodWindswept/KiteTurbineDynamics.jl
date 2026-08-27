@@ -91,23 +91,23 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     # superseded 20 s-window sweep value (trust-log 2026-08-24 row); do NOT
     # reintroduce a local literal here.
     k_mp = KW == 5.0 ? K_MPPT_5KW_HONEST : p.k_mppt
+    bf = KW == 5.0 ? BLOCKING_WIND_FACTOR_5KW : 1.0
     xv = copy(x)
     xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
-    xv[10] = clamp(xv[10], 0.0, Float64(N_VALID_MASKS))
-    dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=KW * 1000.0)
+    xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: x10 = count {1,2,3}
+    # 2026-08-26: decode with the SAME knobs as run_v13_5kw_masslift.jl so the
+    # gate re-evaluates the machine the campaign actually built — rotor_count_mode
+    # + three-section geometry + power_split + wake blocking.  The legacy default
+    # decode (bitmask, full cone, no blocking) gated a DIFFERENT machine.
+    dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=KW * 1000.0,
+        cylinder_cone=true, rotor_count_mode=true,
+        power_split=0.6, cone_slope_deg=22.0,
+        rotor_spacing_frac=0.8, blocking_factor=bf)
 
-    # Pre-flight clearance
-    zs = dec.zs
-    z_low = Inf
-    r_tip_low = 0.0
-    for rotor in dec.rotors
-        zr = zs[clamp(rotor.ring_idx, 1, length(zs))]
-        if zr < z_low
-            z_low = zr
-            r_tip_low = rotor.blade_tip_radius
-        end
-    end
-    clearance = GROUND_OFFSET + z_low * sin(ELEV) - r_tip_low
+    # Pre-flight clearance — ABSOLUTE tip radius (ring radius + blade_tip), via
+    # the single-authority helper (was blade_tip offset alone; 2026-08-26).
+    clearance = KiteTurbineDynamics.lowest_rotor_clearance(
+        dec; ground_offset=GROUND_OFFSET, elevation_deg=rad2deg(ELEV))
 
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
         tether_diameter=p.tether_diameter, base_params=p)

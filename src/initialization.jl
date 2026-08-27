@@ -25,6 +25,8 @@ function _build_kite_turbine_system_impl(
     rotor_blade_hub_radius::Float64=0.0,  # inner tip r_in of the main rotor's swept
     # annulus (≥ 0); 0.0 = legacy full disk π·R².  Swept area = π(R² − r_in²)
     # (2026-08-20: ring-anchored 70/30 annulus, consistent with expansion rotors).
+    main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
+    # (1.0 = freestream; <1 = downstream wake de-rate, 2026-08-26).
 )
     n_seg = length(seg_lengths)
     n_ring = n_seg + 1
@@ -145,7 +147,8 @@ function _build_kite_turbine_system_impl(
         end
     end
 
-    rotor = RotorSpec(ring_ids[end], p.rotor_radius, rotor_blade_hub_radius, m_rotor, m_rotor * p.rotor_radius^2)
+    rotor = RotorSpec(ring_ids[end], p.rotor_radius, rotor_blade_hub_radius,
+                      m_rotor, m_rotor * p.rotor_radius^2, main_rotor_wind_factor)
     kite = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1, kite_tether_length)
 
     # ── Bearing node + bridle segments + sky anchor + cyan line ──────────
@@ -303,6 +306,7 @@ function build_kite_turbine_system(
     kite_tether_length::Float64=20.0,
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
+    main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
 )
     n_seg = p.n_rings + 1
     r_top = p.trpt_hub_radius
@@ -335,6 +339,7 @@ function build_kite_turbine_system(
         kite_tether_length=kite_tether_length,
         expansion_rotors=expansion_rotors,
         rotor_blade_hub_radius=rotor_blade_hub_radius,
+        main_rotor_wind_factor=main_rotor_wind_factor,
     )
 end
 
@@ -363,6 +368,7 @@ function build_kite_turbine_system_v5(
     kite_tether_length::Float64=20.0,
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
+    main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v5(
         p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr, taper_start_z, harvest_length;
@@ -383,6 +389,7 @@ function build_kite_turbine_system_v5(
         kite_tether_length=kite_tether_length,
         expansion_rotors=expansion_rotors,
         rotor_blade_hub_radius=rotor_blade_hub_radius,
+        main_rotor_wind_factor=main_rotor_wind_factor,
     )
 end
 

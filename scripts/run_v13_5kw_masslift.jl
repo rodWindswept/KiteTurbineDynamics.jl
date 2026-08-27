@@ -166,7 +166,7 @@ cfg = ObjectiveConfig(;
     power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
     cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
-    blocking_factor = 1.0,
+    blocking_factor = BLOCKING_WIND_FACTOR_5KW,   # downstream (upper) rotors: 0.75× power
 )
 
 # ── Telemetry CSV — FULL genome + decoded values, flushed per row ────────
@@ -201,21 +201,14 @@ function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
     end
 end
 
-# ── Clearance computation (pure geometry) ────────────────────────────────
-function lowest_rotor_clearance(dec)
-    zs = dec.zs
-    z_low = Inf
-    r_tip_low = 0.0
-    for rotor in dec.rotors
-        zr = zs[clamp(rotor.ring_idx, 1, length(zs))]
-        if zr < z_low
-            z_low = zr
-            r_tip_low = rotor.blade_tip_radius
-        end
-    end
-    z_low == Inf && return Inf
-    return GROUND_OFFSET + z_low * sin(ELEV) - r_tip_low
-end
+# ── Clearance computation (single authority) ─────────────────────────────
+# Ground clearance of the lowest rotor's OUTER tip, using the ABSOLUTE tip
+# radius (ring radius + blade_tip offset) — KiteTurbineDynamics.lowest_rotor_clearance
+# (2026-08-26).  The old local version used blade_tip_radius alone (the 0.7·span
+# offset) and over-counted clearance by the ring radius, so the 1.5 m gate
+# never bit.  Defaults match GROUND_OFFSET/ELEV (1.0 m, 30°).
+lowest_rotor_clearance(dec) = KiteTurbineDynamics.lowest_rotor_clearance(
+    dec; ground_offset=GROUND_OFFSET, elevation_deg=rad2deg(ELEV))
 
 # ── Per-eval timeout (2026-08-13: len21 hung 1.6h on a stiff eval) ───────
 # NOTE: @async cannot interrupt a tight Euler loop — timed-out evals keep

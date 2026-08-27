@@ -52,13 +52,15 @@ function main()
             kickstart_s = 0.0,
             k_mppt = K_MPPT_5KW_HONEST,   # single source (compute_seeds.jl)
             tether_diameter = p_base.tether_diameter,
+            rotor_count_mode = true,   # match the runner (x10 = count {1,2,3})
+            blocking_factor = BLOCKING_WIND_FACTOR_5KW,   # downstream (upper) rotors
         )
 
         seed_v = seed_genome(KW)
         lo, hi = tight_bounds(seed_v, KW)
         xr = clamp.(copy(seed_v), lo, hi)
         xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-        xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+        xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: x10 = count {1,2,3}
 
         r = KiteTurbineDynamics.evaluate_windowed(
             xr, PROFILE_ELLIPTICAL, p_base, cfg;
@@ -68,8 +70,13 @@ function main()
         )
 
         # Expected tension via the evaluator's own build chain — with the
-        # rung-scaled base (base_params=p_base), lifter excluded.
-        dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=PW)
+        # rung-scaled base (base_params=p_base), lifter excluded.  Decode with
+        # the SAME knobs as the runner so m_airborne is the machine the campaign
+        # actually builds (rotor_count_mode + three-section + blocking).
+        dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=PW,
+            cylinder_cone=true, rotor_count_mode=true,
+            power_split=0.6, cone_slope_deg=22.0,
+            rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
             dec, 1.0, cfg.k_mppt; tether_diameter=cfg.tether_diameter,
             base_params=p_base)

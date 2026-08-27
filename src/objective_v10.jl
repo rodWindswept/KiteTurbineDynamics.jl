@@ -107,12 +107,19 @@ struct RotorSpecV10
     ring_idx::Int         # which TRPT ring (1-based from hub)
     bank_angle_deg::Float64
     blade_scale::Float64
-    v_wind::Float64       # local wind speed at this ring (m/s)
+    v_wind::Float64       # local (post-blocking) wind speed at this ring (m/s)
     r_rotor::Float64      # BEM rotor radius for this rotor (m)
     blade_tip_radius::Float64
     blade_hub_radius::Float64
     blade_chord::Float64
+    wind_factor::Float64  # inflow multiplier (1.0 = freestream; <1 = downstream wake)
 end
+
+# Backward-compat: legacy 8-arg construction means freestream (no blocking).
+RotorSpecV10(ring_idx, bank_angle_deg, blade_scale, v_wind, r_rotor,
+             blade_tip_radius, blade_hub_radius, blade_chord) =
+    RotorSpecV10(ring_idx, bank_angle_deg, blade_scale, v_wind, r_rotor,
+                 blade_tip_radius, blade_hub_radius, blade_chord, 1.0)
 
 """
     design_from_vector_v10(x, beam_profile, p; max_ground_radius, power_W, v_rated)
@@ -174,7 +181,7 @@ function design_from_vector_v10(
     end
 
     # Ring geometry (full cone when taper_start_z == 0 and harvest_length == 0).
-    zs, _, _ = ring_spacing_v5(
+    zs, radii, _ = ring_spacing_v5(
         design.r_hub, design.r_bottom, design.tether_length, design.target_Lr,
         taper_start_z, harvest_length;
         density_profile=design.density_profile,
@@ -243,12 +250,17 @@ function design_from_vector_v10(
         bank_i = bank_top + t * (bank_bottom - bank_top)
         blade_scale_i = blade_scale_top + t * (blade_scale_bottom - blade_scale_top)
 
-        # Wind speed at this ring's altitude; downstream rotors see de-rated
-        # inflow (blocking_factor — a named placeholder, not CFD).
+        # Wind speed at this ring's altitude.  Co-axial wake blocking
+        # (2026-08-26, Rod): wind flows UP the shaft (hub is downwind), so the
+        # UPPER rotors are downstream and see de-rated inflow; the LOWEST rotor
+        # (i == n_active, the last in top→bottom order) sees freestream.
+        # wind_factor is the inflow multiplier threaded to the ODE, so the
+        # de-rate is real (P ∝ v³), not a sizing-only placeholder.
         ring_z = zs[pos]  # pos is now ring index (ground→hub)
         ring_altitude = max(ring_z * sind(30.0), 1.0)
         v_i = wind_speed_at_ring(ring_altitude, hub_altitude, v_rated)
-        i > 1 && (v_i *= blocking_factor)
+        wind_factor_i = i < n_active ? blocking_factor : 1.0
+        v_i *= wind_factor_i
 
         # BEM rotor radius for this rotor at its power share + local wind speed
         P_i = (i == 1) ? power_split * power_W : (1.0 - power_split) * power_W / max(n_active - 1, 1)
@@ -273,11 +285,56 @@ function design_from_vector_v10(
 
         push!(rotors, RotorSpecV10(
             pos, bank_i, blade_scale_i, v_i, r_rotor_i, blade_tip, blade_hub, blade_chord,
+            wind_factor_i,
         ))
     end
 
-    return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, mask=mask, n_active=n_active,
-            taper_start_z=taper_start_z, harvest_length=harvest_length, spacing_ok=spacing_ok)
+    return (design=design, rotors=rotors, n_rings=n_rings, zs=zs, radii=radii, mask=mask,
+            n_active=n_active, taper_start_z=taper_start_z, harvest_length=harvest_length,
+            spacing_ok=spacing_ok)
+end
+
+"""
+    lowest_rotor_clearance(dec; ground_offset=1.0, elevation_deg=30.0) → Float64
+
+Ground clearance (m) of the LOWEST point of any active rotor's outer tip.
+
+Geometrically correct (2026-08-26, Rod): the rotor disc is perpendicular to a
+shaft at `elevation_deg`, and each blade is banked `bank_angle_deg` out of that
+plane (outer tip swung toward the next ring / ground station).  For a rotor on
+a ring of radius `r_ring` at shaft distance `z`, with outer-tip OFFSET `tip`
+(0.7·span) and bank `bank`:
+
+    tip shaft distance  = z − tip·sin(bank)          (bank swings tip down-shaft)
+    tip radial extent   = r_ring + tip·cos(bank)
+    tip altitude        = ground_offset + (z − tip·sin(bank))·sin(elev)
+                          − (r_ring + tip·cos(bank))·cos(elev)
+
+The clearance is the minimum tip altitude over all rotors.  The tip is the
+ABSOLUTE radius (`r_ring + tip`), never the `tip` offset alone — the offset is
+~0.7·span, so using it alone over-counts clearance by the ring radius (the
+08-24 settle-ω-scan offset-vs-absolute class).
+
+`dec` is the NamedTuple from `design_from_vector_v10` (fields `zs`, `radii`,
+`rotors`, all ground-first; `radii` and `zs` share indices).
+"""
+function lowest_rotor_clearance(dec; ground_offset::Float64=1.0,
+                                elevation_deg::Float64=30.0)
+    zs = dec.zs
+    radii = dec.radii
+    clearance = Inf
+    for rotor in dec.rotors
+        idx = clamp(rotor.ring_idx, 1, length(zs))
+        z = zs[idx]
+        r_ring = radii[idx]
+        tip = rotor.blade_tip_radius
+        bank = rotor.bank_angle_deg
+        alt_tip = ground_offset +
+                  (z - tip * sind(bank)) * sind(elevation_deg) -
+                  (r_ring + tip * cosd(bank)) * cosd(elevation_deg)
+        clearance = min(clearance, alt_tip)
+    end
+    return clearance
 end
 
 # ══════════════════════════════════════════════════════════════════════════════

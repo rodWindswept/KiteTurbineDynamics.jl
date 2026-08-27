@@ -80,7 +80,12 @@ struct RotorSpec
                              # Swept area = π(r_out² − r_in²). 0.0 = legacy full disk.
     mass::Float64
     inertia_z::Float64
+    wind_factor::Float64     # inflow multiplier (1.0 = freestream; <1 = downstream wake)
 end
+
+# Backward-compat: legacy 5-arg construction means freestream (no blocking).
+RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z) =
+    RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z, 1.0)
 
 struct KiteSpec
     node_id::Int
