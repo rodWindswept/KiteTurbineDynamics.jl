@@ -40,6 +40,11 @@ Reads the re-seeded genome across `power_split ∈ {0.3, 0.4, 0.5, 0.6, 0.7}` an
 prints `clearance / status / P_mean / FoS / fitness`.  **Choose the power_split
 whose `status=ok` has the lowest fitness, re-checking clearance ≥ 1.5 m.**
 
+**Result (pre-computed 2026-08-27, commit `e97d799`):** `0.6` already wins.
+`0.3/0.4/0.5` reject on power (4.50/4.72/4.93 kW), `0.6` → ok at 53.69 kg,
+`0.7` → ok but heavier at 55.30 kg.  **No change needed — keep `0.6`.**  You can
+skip this step and go straight to §2, or re-run to confirm on a fresh checkout.
+
 If the chosen value ≠ `0.6`, update it in all four places (grep `0.6` /
 `power_split`):
 1. `scripts/run_v13_5kw_masslift.jl` → `cfg.power_split`
