@@ -43,6 +43,11 @@ Tests: `test/test_wind_blocking.jl` (new, wired into `runtests.jl`).  Suite
 
 ## 3. Next steps (in order)
 
+**Full launch instruction set (for the agent managing the ~12 h run):
+`docs/plans/2026-08-27-campaign-launch-runbook.md`** — archive the VOID dir,
+re-sweep power_split (`scripts/sweep_power_split.jl`), launch the 3 islands,
+monitor, combine, re-gate, rebaseline.  Summary below:
+
 1. **Launch the re-campaign.** `v13_5kw_masslift_len18.8_rotorcount` results
    dir already exists (VOID).  Re-launch with a FRESH dir (the runner writes
    into the same `_rotorcount` path — move/archive the VOID dir first, or the
