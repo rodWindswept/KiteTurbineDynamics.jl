@@ -18,7 +18,7 @@ const K_MPPT = K_MPPT_5KW_HONEST   # campaign cfg k_mppt (single source, compute
 const LENGTH = 18.8
 
 OUT_DIR = length(ARGS) > 0 ? ARGS[1] :
-          joinpath(@__DIR__, "results", "v13_5kw_masslift_len18.8")
+          joinpath(@__DIR__, "results", "v13_5kw_masslift_len18.8_rotorcount")
 
 function params_at_length(L::Float64)
     p2 = params_daisy()
@@ -39,12 +39,25 @@ println("  5 kW campaign winner analysis   dir: $OUT_DIR")
 println("  base: params_daisy scaled 1.5 → 5 kW, L=$LENGTH m, k=$K_MPPT (cfg)")
 println("═"^70)
 
-files = sort(filter(f -> occursin(r"island_[123]_best\.csv", f), readdir(OUT_DIR)))
-isempty(files) && error("no island_N_best.csv files in $OUT_DIR")
+files = String[]
+for d in ("island_1", "island_2", "island_3")
+    p = joinpath(OUT_DIR, d)
+    isdir(p) || continue
+    for f in readdir(p)
+        occursin(r"island_[123]_best\.csv", f) && push!(files, joinpath(d, f))
+    end
+end
+sort!(files)
+isempty(files) && error("no island_N_best.csv files in $OUT_DIR/island_N")
 
 for f in files
     x = [parse(Float64, s) for s in split(strip(read(joinpath(OUT_DIR, f), String)), ",")]
-    result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p_base; power_W=PW, v_rated=V_RATED)
+    # Decode with the campaign knobs (mirrors run_v13_5kw_masslift.jl eval_v13
+    # and ode_gate_v13.jl gate_design) — the legacy bitmask/full-cone path
+    # decoded a different machine.
+    result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p_base; power_W=PW, v_rated=V_RATED,
+        cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+        cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
         result, 1.0, K_MPPT; base_params=p_base)
 
