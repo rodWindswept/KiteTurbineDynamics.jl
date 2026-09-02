@@ -2402,3 +2402,49 @@ decode direction (hub+middle blocked, bottom freestream), the radii threading,
 the absolute-tip + elevation + bank clearance, the legacy-constructor
 `wind_factor=1.0` defaults, and the `expansion_params_from_rotors` propagation.
 Fast suite 1991/1991.
+
+### [2026-09-02] Rotorcount winner VOID on mass model — fitness + mass law redesign
+
+**Context:** the 08-28 rotorcount campaign's global best (9.618 kg, single
+rotor, r_hub 4.31 m, 3 lines, Do 0.03, t/D 0.0275, Do_scale_exp 1.6) re-gated
+clean on power (5.1 kW) and FoS (17.6) but its no-lifter airborne mass
+(4.43 kg, φ 0.886 kg/kW) is below the Daisy anchor (~1.3) — the weight model
+under-prices this corner.  Investigation (this session) found three weight
+bugs and one consistency bug; the winner is therefore **VOID as a physical
+design** (ODE power/FoS are real, the mass/fitness ranking is not).
+
+**Weight bugs (see `docs/plans/2026-09-02-mass-model-audit.md`):**
+1. **No minimum tube size** — `Do(r) = Do_top·(r/r_hub)^Do_scale_exp` shrinks
+   the transmission rings to 2.3 mm / 0.06 mm wall (3 g each); the DE made the
+   lower tower ~15 g.  Only the wall/OD *ratio* was floored, not the absolute
+   size.
+2. **Uniform-average ring mass** — `build_system_from_v10` prices all rings with
+   one `m_ring` from `r_avg = 0.5·(r_hub+r_bottom)`.  Per-ring truth for the
+   winner: 5 transmission rings ≈ 3 g + hub 2.71 kg = 2.73 kg, vs the model's
+   5×0.317 = 1.59 kg (1.72× under-count).
+3. **Ring-vertex knuckles unpriced** — `expansion_airborne_mass` counts only
+   blade knuckles (`n_blades·0.050`); the ring→cable joints (≈ n_rings·n_lines)
+   are priced in the static optimiser (`knuckle_mass_at_ring`) and economics
+   model but not in the DE's mass.
+
+**Consistency bug:** the 0.75× wake de-rate is applied in `ring_forces.jl` (the
+ODE) and in rotor sizing, but **not** in the cold-start settle equilibrium scan
+(`settle_to_operational_state`, `initialization.jl` ~903–921), which uses full
+wind for every rotor.  Multi-rotor designs therefore settle at a too-high ω and
+decay — the concrete mechanism behind island 3's gate 7.45 kW → evaluator
+5.37 kW.  Single-rotor designs are unaffected (wind_factor 1.0).
+
+**Decisions (Rod, 2026-09-02):**
+- **Fitness gains "appropriateness + safety" terms**: minimise mass, but
+  penalise P > 5 kW (no over-rated machine — "appropriate power-to-weight"),
+  penalise approaching overtwist, and penalise high beam utilisation (low
+  FoS margin).  Replaces the pure `mass_min_fitness` (hard-gate-only) shape.
+- **Minimum tube wall thickness = 2 mm**; **per-ring mass summation** (no
+  uniform-average shortcut); **every ring-vertex knuckle counted**, consistently.
+- **One-source-of-truth rule** for every shared physical quantity (ring mass,
+  knuckle mass, wake factor) — the recurring "inconsistent calculation" class
+  must not recur.
+- **Re-seed with safer, slightly heavier genomes** before the next attempt;
+  single-rotor dominance is to be re-confirmed, not assumed (its magnitude is
+  inflated by the weight bugs).
+- Fast-solver→ODE mapping deferred until the settle-scan blocking fix lands.

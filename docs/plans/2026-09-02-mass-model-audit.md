@@ -1,176 +1,250 @@
-# Mass-model audit — big-hub / thin-tube / 3-line corner (2026-09-02)
+# Why the 5 kW winner is not trustworthy, and what we are changing (2026-09-02)
 
-**Status:** SCOPED, with initial findings from the 2026-09-02 session.  This is
-the fresh-ticket context for the mass-model audit that gates the 5 kW winner.
-
-**Why:** the 5 kW rotorcount campaign (`v13_5kw_masslift_len18.8_rotorcount`,
-completed 2026-08-28) produced a global-best fitness of **9.618 kg**, but its
-no-lifter airborne mass is **4.43 kg → φ 0.886 kg/kW**, below the Daisy anchor
-(≈1.3).  A first-principles CFRP estimate of the ring set alone is ~2.6× that.
-This document captures the repro case, the suspected causes, and what to audit
-so the winner is either accepted as physical or re-run on a corrected law.
+**Purpose.** This document explains, in plain language, why our last 5 kW
+design search produced a result we cannot believe, what specifically went
+wrong, and the decisions we are making so the next attempt is correct.  It is
+written so a new person can read this one document and know exactly what is
+wrong and what to do.  No shorthand; each idea is spelled out.
 
 ---
 
-## 1. Repro case — island 1 (global best) genome
+## 1. What happened, in plain terms
 
-```
-0.03, 0.0275, 0.513, 1.6, 4.314, 0.862, 2.722, 3.0, -0.173, 1.0, 1.173, 0.153, 0.635, 0.14
-```
+We ran a design search — a computer program that tries thousands of candidate
+machine designs and keeps the best.  "Best" here meant "lightest that still
+makes 5 kW and does not break".  The search finished and reported a winning
+design weighing **9.6 kg**.
 
-| gene | value | meaning |
-|---|---|---|
-| x1 Do_top | 0.03 m | hub tube outer dim 30 mm |
-| x2 t_over_D | 0.0275 | wall = 2.75 % of Do |
-| x4 Do_scale_exp | 1.6 | Do(r) = Do_top·(r/r_hub)^1.6 |
-| x5 r_hub | 4.314 m | hub ring radius |
-| x6 r_bottom | 0.862 m | transmission-cylinder radius |
-| x7 target_Lr | 2.722 | ring slenderness target |
-| x8 n_lines | 3 | triangle TRPT |
-| x10 rotor_count | 1 | single rotor (n_active = 1) |
-| x13/x14 blade_scale | 0.635 / 0.14 | blade linear scale |
+But when we checked the winner by hand, its weight is *less than physically
+possible*.  A rough calculation of just the ring tubes (the circular frames of
+the tower) says those tubes alone should weigh about **2.6 times more than the
+winner claims for the entire tower**.  That is the warning sign.
 
-Decoded: 6 rings total (5 transmission at r 0.862 + 1 hub at r 4.314), single
-rotor at the hub, 3 lines, 3 blades.
+What this means: the optimiser found a **loophole in how we estimate weight**,
+and it exploited the loophole.  It did not find a real machine; it found an
+imaginary one that our weight formula lets exist for free.
 
-## 2. The two "mass" numbers (not a contradiction)
+To be clear about what *is* and *is not* wrong:
 
-- **Fitness 9.618 kg** = `expansion_airborne_mass(include_lifter=true)` — the
-  airborne structure **plus a fixed 5.0 kg rotary-lifter estimate**.
-- **4.43 kg** = `expansion_airborne_mass(include_lifter=false)` — the structure
-  alone (what the audit quotes).
+- The **power check was real and passed** — the winner does genuinely make
+  about 5.1 kW.
+- The **strength check was real and passed** — the winner does not buckle
+  (safety factor 17.6, above the required 2.5).
+- The **weight estimate is what is broken**.  And because the optimiser's job
+  is "find the lightest machine", a broken weight estimate means it found the
+  lightest *imaginary* machine, not the lightest *real* one.
 
-So `9.618 ≈ 4.43 + 5.0` (small instrument/rounding difference).  The lifter is
-a constant offset; it does not change the DE's *ranking*, only the absolute
-fitness label.
+## 2. The two weight numbers, explained (9.6 kg vs 4.4 kg)
 
-## 3. Scoring — what the fitness is (and what changed)
+These are the same thing, measured two ways:
 
-- **Current (V14, 2026-08-20):** `mass_min_fitness(P, FoS, cfg, mass)` =
-  **pure `mass`**, with TWO hard reject gates — `FoS < fos_hard` (2.5) → Inf,
-  and `P < p_floor` (5.0 kW) → Inf.  FoS and power are *gates*, not scored
-  terms.  There is **no soft FoS term** and **no double-counting** here.
-- **Previous (V12/V13):** `v12_fitness(P, FoS, cfg)` = `-P/(pw·fw)` where `pw`
-  is the power-window penalty and `fw` is the FoS-target penalty (quadratic
-  below target, linear above, hard reject below `fos_hard`).  This is the
-  "power + FoS combined scoring" Rod recalls.  It scored POWER (more negative
-  = better), not mass.
+- **9.6 kg** is the "fitness" score the optimiser minimises.  It is the tower
+  structure (rings, blades, cables, joints) **plus a fixed 5 kg lifting
+  kite/rotor** that every design carries.
+- **4.4 kg** is the tower structure **alone**, without that 5 kg lifter.
 
-The switch (V14, "hard-constraint mass-minimisation") happened **2026-08-20**
-(commit history; runner comment "Replaces the V13 power-scoring (v12_fitness)
-with mass_min_fitness").  `mass_min_fitness` lives in `src/objective_v12.jl`.
+So `9.6 ≈ 4.4 + 5.0`.  They are not two contradictory answers; one includes the
+lifter and one leaves it out.  (When we recompute it ourselves we get 4.6 kg
+for the structure; the 4.4 vs 4.6 difference is a small mismatch between two
+separate reporting tools, and it is tiny compared to the real problem below.)
 
-## 4. Mass model — where the under-count is (investigated 2026-09-02)
+## 3. Three bugs in how we estimate weight
 
-The DE's structural mass is `expansion_airborne_mass` (`src/expansion_analysis.jl`):
-tether + `(n_ring-1)·p.m_ring` + `n_blades·p.m_blade` + expansion assemblies +
-blade-knuckles (`n_blades·0.050`) + lifter.
+The weight formula has three separate mistakes.  Each one, on its own, makes
+the winner look lighter than it is.  Together they explain the whole problem.
 
-`p.m_ring` is a **single uniform average** computed in `build_system_from_v10`
-(`src/objective_evaluator.jl` ~line 354):
+### 3.1 There is no minimum tube size — the tower can become toothpick-thin
 
-```
-r_avg = 0.5·(r_hub + r_bottom)
-Do_avg = Do_top·(r_avg/r_hub)^Do_scale_exp
-m_ring = n_lines · ρ · π/4·(Do_avg² − (Do_avg−2t_avg)²) · 2·r_avg·sin(π/n_lines)
-```
+The tower rings are made of tubes.  The software sizes each tube by a rule
+that makes tubes **thinner as you go down the tower**.  The rule was allowed to
+run all the way down with no stop.
 
-**Finding A — no minimum tube diameter floor.** `Do(r) = 0.03·(r/4.314)^1.6`
-gives the transmission rings (r 0.862) a tube of **2.3 mm diameter / 0.06 mm
-wall** — 3 g each, physically unmakable.  The DE exploits the steep taper to
-make the whole transmission cylinder ~15 g (5 rings × 3 g).  There is a
-`t_over_D` floor (0.010) and a per-ring mass floor (0.05 kg applied to the
-*average*, not per-ring), but **no minimum absolute Do**.
+For the winning design, the bottom rings ended up as tubes **2.3 millimetres
+wide with a 0.06 millimetre wall**.  That wall is about the thickness of a
+human hair.  No such tube can be manufactured, and it would crumple instantly.
+The optimiser exploited this: it made the entire lower tower nearly
+weightless (5 rings × 3 grams each = 15 grams).
 
-**Finding B — uniform average vs per-ring sum.**  For the winner the per-ring
-true ring mass is:
+**What was ignored:** there was no rule saying "a tube must be at least this
+thick".  We only limited the *ratio* of wall-to-diameter, not the absolute
+size.
 
-| ring | r (m) | Do (mm) | wall (mm) | L (m) | mass (kg) |
-|---|---|---|---|---|---|
-| 1–5 | 0.862 | 2.28 | 0.06 | 1.49 | 0.003 each |
-| 6 (hub) | 4.314 | 30.0 | 0.82 | 7.47 | 2.712 |
+**Decision:** a tube's **wall thickness must be at least 2 mm** (Rod,
+2026-09-02).  (See §6 for the full rule.)
 
-True summed ring mass = **2.728 kg** vs the model's uniform `5 × 0.317 =
-1.586 kg` — a **1.72× under-count**.  The average is dominated by the tiny
-transmission rings; the hub ring (2.7 kg) is under-weighted.  A realistic
-minimum-Do floor would widen this further (the "crude 2.6×" estimate in
-`regate_verdict.md` likely assumed a sane minimum tube size).
+### 3.2 The weight uses ONE average ring, instead of adding each ring up
 
-**Finding C — ring-vertex knuckles are unpriced in the DE.**  The DE counts
-only *blade* knuckles (`n_blades·0.050`).  The line-attachment knuckles at the
-ring vertices (≈ `n_rings × n_lines` of them) are priced in the STATIC
-optimiser (`knuckle_mass_at_ring`, `src/trpt_optimization.jl`) and in the
-economics model (`economics.jl`, 0.015 kg each) but **not** in
-`expansion_airborne_mass`.  So the DE gets ring vertices for free.
+To save effort, the software guessed the total ring weight by computing the
+weight of **one average ring** and multiplying by the number of rings.  That
+only works if all the rings are roughly the same size.  They are not.
 
-**Finding D — n_lines = 3 is a triangle.**  A 3-line TRPT is a degenerate
-polygon (see `docs/plans/fix_xvector_rerun_sweeps.md` "triangle3").  It is
-inside the DE bounds `[3, 16]` but outside the geometry the structural model
-(Daisy 6-line, polygon-frame buckling) was validated on.
+For the winner, the rings are wildly different:
 
-## 4b. Blocking-consistency gap (found 2026-09-02 — separate from the mass law)
+| ring | tube width | wall | weight |
+|---|---|---|---|
+| bottom rings (5 of them) | 2.3 mm | 0.06 mm | 3 grams each |
+| top ring (1 of them) | 30 mm | 0.82 mm | 2.7 kilograms |
 
-The 0.75× downstream de-rate is applied in the ODE force model
-(`src/ring_forces.jl`) and in the rotor sizing (`design_from_vector_v10`), but
-**NOT in the cold-start settle equilibrium scan** (`settle_to_operational_state`,
-`src/initialization.jl` ~line 903–921).  That scan computes the starting `ω_eq`
-from `P_aero_hub` and `P_aero_exp` using the **full** `v_mag` for every rotor,
-ignoring `sys.rotor.wind_factor` / `er.wind_factor`.
+The "average" came out at 0.32 kg per ring, so the software said
+`5 × 0.32 = 1.6 kg`.  Adding the rings up **individually** gives **2.7 kg** —
+about 1.7 times more.  The average hid the fact that the top ring dominates.
 
-Consequence: for multi-rotor designs the settle over-estimates aero power (it
-assumes the blocked upper rotors see freestream), so it parks `ω` too high; the
-ODE then decays from that overshoot to the true blocked equilibrium.  This is
-the concrete mechanism behind island 3's gate 7.45 kW (5–30 s) → evaluator
-tail5 5.37 kW (45–50 s) decay (the "settle-ODE gap").  Single-rotor winners
-(n_active = 1, wind_factor = 1.0) are unaffected.
+**What was ignored:** the rings are not one size; the top ring is 900 times
+heavier than a bottom ring.  Averaging erased that.
 
-**Fix:** multiply the scan's `v_mag` by `sys.rotor.wind_factor` in the
-`P_aero_hub` term and by `er.wind_factor` in the `P_aero_exp` loop, so the
-settle starts from the blocked equilibrium.  This is a blocking-consistency
-fix, not a mass-law change; it should land before any re-run is trusted.
+**Decision:** ring weight must be **summed ring by ring**, each ring priced at
+its own diameter and wall.  No averaging.  (See §6.)
 
-## 5. Audit checklist (what the fresh session must decide)
+### 3.3 The joints where cables meet rings were counted as free
 
-1. **Minimum absolute tube diameter/wall** — floor `Do` (e.g. ≥ 10–15 mm) or
-   `t` (e.g. ≥ 0.5 mm) so transmission rings cannot collapse to 2.3 mm / 0.06 mm.
-2. **Per-ring mass summation** — replace the single `r_avg` with a sum over
-   `ring_spacing_v5` radii (the decode already returns `radii`), so the hub
-   ring is priced at its true 2.7 kg.
-3. **Ring-vertex knuckle mass** — add `n_rings × n_lines` knuckles (or
-   `knuckle_mass_at_ring`) into `expansion_airborne_mass`, matching the static
-   optimiser.
-4. **n_lines floor** — decide whether `n_lines = 3` (triangle) is admissible;
-   floor at 4 or 5 if not.
-5. **Re-derive the ring mass vs a CFRP supplier/tube table** at 30 mm / 0.82 mm
-   wall and at the Daisy's ring, to anchor the law.
+Where each cable attaches to a ring there is a metal joint (we call it a
+"knuckle").  These joints have real weight, and there are many of them — one
+at every cable-on-ring meeting point.
 
-After the audit: fix the law → re-seed → re-run (or re-gate + re-seed), then
-acceptance re-baseline.  Do NOT seed the 7 kW rung with island 1 before this.
+The software counted the knuckles on the **blades**, but **forgot to count the
+knuckles where the cables attach to the rings**.  So all those ring joints
+weighed nothing.
 
-## 6. Files / functions for the fresh session
+**What was ignored:** the ring-to-cable joints.  For a design with 3 cables
+and 6 rings, that is 18 joints, all free.
 
-- Mass: `src/expansion_analysis.jl` (`expansion_airborne_mass`),
-  `src/objective_evaluator.jl` (`build_system_from_v10` ~line 354),
-  `src/expansion_rotor.jl` (`expansion_blade_mass`),
-  `src/trpt_optimization.jl` (`knuckle_mass_at_ring`, `OPT_KNUCKLE_MASS_KG`),
-  `src/parameters.jl` (`M_BLADE_REF_KG = 0.420`).
-- Scoring: `src/objective_v12.jl` (`mass_min_fitness`, `v12_fitness`),
-  `src/objective_v11.jl` (`v11_fitness`).
-- Blocking/clearance: `src/objective_v10.jl` (`design_from_vector_v10`,
-  `lowest_rotor_clearance`), `src/ring_forces.jl` (ODE de-rate).
-- Winner + verdict: `scripts/results/v13_5kw_masslift_len18.8_rotorcount/best_vector.csv`,
-  `.../regate_verdict.md`.
-- Campaign runner: `scripts/run_v13_5kw_masslift.jl`; seeds:
-  `scripts/compute_seeds.jl`.
-- Handover: `handovers/handover-2026-08-28-rotorcount-campaign-complete.md`.
+**Decision:** every ring-to-cable joint must be counted, using the **same**
+joint-weight rule everywhere.  (See §6 and §7.)
 
-## 7. Related open questions (from the 2026-09-02 discussion)
+## 4. The wake-blocking rule was applied in the wrong places (the inconsistency)
 
-- **Single-rotor dominance** — re-confirm (it is real — fewer rings/lines/blades
-  — but its *magnitude* is inflated by Finding A/B).
-- **Island-3 settle-gap** (gate 7.45 kW vs evaluator tail5 5.37 kW) —
-  `docs/plans/2026-08-22-settle-ode-gap-workstream.md`.
-- **n_lines = 2 flown instability** — consider a stability / overtwist-margin
-  term in fitness (separate workstream, see main discussion).
-- **fast→ODE result-space mapping** — proposed parallel workstream to cut
-  per-eval ODE cost.
+This is a different kind of bug — not weight, but **consistency**.
+
+**Background.** When two rotors are stacked behind each other, the front rotor
+takes energy out of the wind and the rotor behind it gets less wind.  We added
+a rule for this: a rotor that sits behind another only gets **75% of the
+power** it would get in clean air.  (We call this "wake blocking".)
+
+**The bug.** The simulation runs in two steps:
+
+1. A quick "settle" step that works out a sensible **starting spin speed**
+   before the careful simulation begins.  It adds up the wind power on each
+   rotor to guess the right speed.
+2. The careful, slow simulation that then runs the machine in detail.
+
+We applied the 75% wake-blocking rule in the **careful simulation (step 2)**,
+but we **forgot to apply it in the quick settle step (step 1)**.
+
+So the settle step thinks the rear rotors get **full** wind (more power), and
+it sets the starting spin speed **too high**.  The careful simulation then
+starts from that too-high speed and **slowly winds down** to the correct slower
+speed.
+
+**What this looked like:** one design appeared to make 7.45 kW in the early
+seconds and only 5.37 kW later — not because anything was wrong with the run,
+but because it started too fast and was still winding down.  A design with a
+single rotor is *not* affected (it is not behind anything, so there is no
+wake rule to apply); this only bites machines with more than one rotor.
+
+**Decision:** apply the 75% wake rule in the **settle step and the careful
+simulation**, using exactly the same value from exactly the same place, so the
+two agree.
+
+## 5. The new fitness score — what "good" now means
+
+The old score was "lightest, as long as it makes at least 5 kW and does not
+break".  That alone lets the optimiser find machines that are too light to be
+real (the weight loopholes above) and machines that are barely safe.
+
+The new score keeps "light" but adds **"appropriate and safe"** (Rod,
+2026-09-02):
+
+1. **Light** — minimise mass (still the main goal).
+2. **Not over-powered** — a machine that makes *more* than 5 kW is wasting
+   material we do not need.  Going over 5 kW should be **penalised**, so the
+   target is "close to 5 kW, not above it".
+3. **Not near twist-collapse** — a machine that is close to twisting too far
+   (the cables winding past their safe angle) should be **penalised**.  We want
+   a comfortable margin away from overtwist, not a machine parked on the edge.
+4. **Not near the strength limit** — a machine whose rings are close to their
+   buckling limit (safety factor just above 2.5) should be **penalised** too.
+   High "beam utilisation" (little safety margin) is unsafe and should cost.
+
+In short: **light, ~5 kW (not more), with a comfortable safety margin in both
+twist and strength.**  The exact penalty strengths are to be decided; the shape
+is: small penalty far from the limit, growing penalty as you approach it, and
+a hard reject if you cross it.
+
+## 6. The new weight rules (hard requirements)
+
+1. **Minimum tube wall thickness = 2 mm.**  No tube may have a wall thinner
+   than 2 mm, no matter how small its diameter.  (This also forces a minimum
+   sensible tube size, since a 2 mm wall cannot fit inside a 2 mm tube.)
+2. **Ring weight is summed ring by ring.**  Each ring's weight is computed from
+   its own diameter, wall, and length, then added together.  No single
+   "average ring" shortcut.
+3. **Every ring-to-cable joint is counted.**  Each knuckle weighs the same
+   everywhere (one shared rule), and they are all included.
+
+## 7. The consistency rule (one source of truth)
+
+We keep getting caught out because **the same physical number is computed in
+several different places with slightly different rules, and they disagree**.
+The ring weight was averaged in one place and would be summed in another; the
+knuckles were counted in some places and not others; the wake rule was applied
+in the simulation but not the settle step.
+
+The rule going forward: **each physical quantity is computed in exactly one
+place in the code, and every other part of the software uses that one place.**
+Concretely, this means:
+
+- one ring-weight function (used by the DE score, the gate, and any report);
+- one knuckle-weight rule (same value, same count, everywhere);
+- one wake-blocking value (same 75% power rule, applied in settle and simulation
+  alike).
+
+Where a quantity is already duplicated, the first task is to delete the copies
+and point everyone at the single source.
+
+## 8. The next starting designs ("seeds")
+
+The next search must start from **safe, slightly heavier** designs, not from the
+suspicious light corner (Rod, 2026-09-02).  A good seed is one that is clearly
+real and clearly safe even if it is not the lightest, so the optimiser explores
+sensible territory rather than re-finding the loophole.  Concretely: thicker
+tube walls (≥ 2 mm), a modest hub radius, enough cables that the geometry is
+not degenerate, and a comfortable strength margin well above 2.5.
+
+The specific seed values are a follow-on task; the principle is "start safe,
+optimise toward light" rather than "start at the edge".
+
+## 9. What to do, in order (for the new person)
+
+1. Fix the weight formula (§6): minimum 2 mm wall, per-ring summing, all
+   knuckles counted.
+2. Fix the wake rule in the settle step so it matches the simulation (§4).
+3. Rebuild the fitness score with the appropriateness + safety penalties (§5).
+4. Apply the one-source-of-truth rule to ring weight, knuckle weight, and wake
+   blocking (§7).
+5. Pick new, safer seed designs (§8).
+6. Re-run the search.
+7. Re-check the winner the same way we did here (does its weight pass a
+   by-hand sanity check? is its power close to 5 kW, not over? is it safely away
+   from twist and buckling limits?).
+8. Only then re-baseline the slow acceptance tests.
+
+## 10. Where each thing lives in the code
+
+- Ring weight (the average + the bugs): `src/objective_evaluator.jl`
+  (`build_system_from_v10`, search for "m_ring_design"); the total airborne
+  weight: `src/expansion_analysis.jl` (`expansion_airborne_mass`).
+- Knuckle weight: `src/trpt_optimization.jl` (`knuckle_mass_at_ring`,
+  `OPT_KNUCKLE_MASS_KG`); note the DE's mass does NOT use it today — that is
+  bug 3.3.
+- Blade weight: `src/expansion_rotor.jl` (`expansion_blade_mass`), anchored by
+  `M_BLADE_REF_KG = 0.420` in `src/parameters.jl`.
+- The fitness score: `src/objective_v12.jl` (`mass_min_fitness` and the older
+  `v12_fitness`).
+- Wake blocking: `src/objective_v10.jl` (`design_from_vector_v10`),
+  `src/ring_forces.jl` (the careful simulation), and `src/initialization.jl`
+  (`settle_to_operational_state` — the settle step that is missing the rule).
+- The winning genome and its re-check: `scripts/results/v13_5kw_masslift_len18.8_rotorcount/best_vector.csv`
+  and `.../regate_verdict.md`.
+- The design-search runner: `scripts/run_v13_5kw_masslift.jl`; the seed
+  definitions: `scripts/compute_seeds.jl`.
+- Previous handover: `handovers/handover-2026-08-28-rotorcount-campaign-complete.md`.
