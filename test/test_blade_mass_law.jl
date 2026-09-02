@@ -93,11 +93,15 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
         m_knuckles = (pc.n_blades + sum(er.n_blades for er in sys.expansion_rotors)) * knuckle_kg
         m_tether = pc.n_lines * pc.tether_length *
             (KiteTurbineDynamics.DYNEEMA_DENSITY * π * (pc.tether_diameter / 2)^2)
-        m_rings = (sys.n_ring - 1) * pc.m_ring      # ALL airborne rings (incl. hub)
+        # 2026-09-02 (T1): ring mass is the PER-RING sum (sys.ring_mass_total),
+        # not the old (n_ring−1)·pc.m_ring average; and the ring→cable knuckles
+        # are now counted (sys.ring_knuckle_mass).
+        m_rings = sys.ring_mass_total[]
+        m_ring_knuckles = sys.ring_knuckle_mass[]
         m_main = pc.n_blades * pc.m_blade
         m_exp = sum(er.mass for er in sys.expansion_rotors; init=0.0)
 
-        @test m_air ≈ m_tether + m_rings + m_main + m_exp + m_knuckles rtol=1e-9
+        @test m_air ≈ m_tether + m_rings + m_main + m_exp + m_knuckles + m_ring_knuckles rtol=1e-9
         @test m_knuckles > 0.0
     end
 

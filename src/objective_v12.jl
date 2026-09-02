@@ -97,6 +97,77 @@ function mass_min_fitness(P_mean::Float64, FoS_min::Float64,
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Appropriateness + safety fitness (T3, 2026-09-02)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# PLACEHOLDER penalty weights — Rod to tune later.  Each one converts a
+# dimensionless (or unit-carrying) penalty term into kilograms, so the returned
+# fitness stays in mass units and the DE can minimise it directly.  The numbers
+# below are starting points, NOT calibrated values.
+#
+#   W_OVERPOWER_KG_PER_KW2 = 5.0   → a 1 kW excess (20% over a 5 kW ceiling)
+#                                    adds 5 kg, ~10% of a 50 kg machine.
+#   W_TWIST_KG              = 1.0   → twist_ratio 0.5 adds 1 kg; 0.9 adds 81 kg;
+#                                    0.99 adds ~9800 kg (effectively rejected).
+#   W_UTILISATION_KG        = 20.0  → FoS at the floor (zero margin) adds 20 kg;
+#                                    FoS 2× floor adds 5 kg; FoS 17.6 adds ~0.4 kg.
+const W_OVERPOWER_KG_PER_KW2 = 5.0     # kg per (excess power in kW)²
+const W_TWIST_KG              = 1.0     # kg per (twist_ratio / twist_margin)²
+const W_UTILISATION_KG        = 20.0    # kg per (fos_hard / FoS_min)²
+
+"""
+    appropriate_mass_fitness(P_mean, FoS_min, cfg, mass; twist_ratio=0.0) -> Float64
+
+Mass-plus-penalties fitness (T3, 2026-09-02).  "Good" now means **light AND
+appropriate AND safe**, not merely light.
+
+Keeps the exact hard reject gates from `mass_min_fitness`:
+  - non-finite `FoS_min`, or `FoS_min < cfg.fos_hard` → `Inf`  (structural)
+  - `P_mean < cfg.p_floor_kw` → `Inf`  (power floor)
+
+Then returns `mass + penalties`, with three soft penalty terms:
+
+1. **Over-power** — `P_mean > cfg.p_ceiling_kw` wastes material (a machine
+   making more than rated power is carrying rotor/tether it does not need).
+   Quadratic in the excess: `W_OVERPOWER_KG_PER_KW2 · max(P_mean − p_ceiling, 0)²`.
+2. **Over-twist** — `twist_ratio` is (actual twist)/(geometric crossing limit),
+   the same `max_ratio` the gate's `twist_report` computes, so 0 = no twist and
+   1 = at the collapse limit.  Penalty diverges as the twist margin
+   `(1 − twist_ratio)` shrinks: `W_TWIST_KG · (twist_ratio / margin)²`.
+   Defaults to `0.0` (= no penalty) so this function is unit-testable in
+   isolation; wiring the live ratio from the evaluator is a follow-on.
+3. **Beam utilisation** — `FoS_min` close to `cfg.fos_hard` leaves little
+   safety margin.  Penalty grows with the utilisation ratio
+   `(cfg.fos_hard / FoS_min)²`, which is 1 at the floor and → 0 for large FoS.
+
+Returns `Inf` for the same hard-reject conditions as `mass_min_fitness`.
+"""
+function appropriate_mass_fitness(P_mean::Float64, FoS_min::Float64,
+                                  cfg::ObjectiveConfig, mass::Float64;
+                                  twist_ratio::Float64=0.0)::Float64
+    # ── Hard reject gates (unchanged from mass_min_fitness) ──────────────
+    (!isfinite(FoS_min) || FoS_min < cfg.fos_hard) && return Inf
+    P_mean < cfg.p_floor_kw && return Inf
+
+    # ── 1. Over-power penalty — quadratic in the excess above the ceiling ─
+    excess_kw = max(P_mean - cfg.p_ceiling_kw, 0.0)
+    penalty_overpower = W_OVERPOWER_KG_PER_KW2 * excess_kw^2
+
+    # ── 2. Over-twist penalty — diverges as twist_ratio approaches 1 ─────
+    penalty_twist = 0.0
+    if twist_ratio > 0.0
+        r = min(twist_ratio, 1.0)          # r ≥ 1 = collapse; clamp to avoid NaN
+        margin = max(1.0 - r, 1e-6)        # never divide by zero
+        penalty_twist = W_TWIST_KG * (r / margin)^2
+    end
+
+    # ── 3. Beam-utilisation penalty — grows as FoS approaches the floor ──
+    penalty_util = W_UTILISATION_KG * (cfg.fos_hard / FoS_min)^2
+
+    return mass + penalty_overpower + penalty_twist + penalty_util
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # V12 cold-start objective — V12 scoring over the shared cold protocol
 # ══════════════════════════════════════════════════════════════════════════════
 

@@ -135,15 +135,22 @@ it sets the starting spin speed **too high**.  The careful simulation then
 starts from that too-high speed and **slowly winds down** to the correct slower
 speed.
 
-**What this looked like:** one design appeared to make 7.45 kW in the early
-seconds and only 5.37 kW later — not because anything was wrong with the run,
-but because it started too fast and was still winding down.  A design with a
-single rotor is *not* affected (it is not behind anything, so there is no
-wake rule to apply); this only bites machines with more than one rotor.
-
 **Decision:** apply the 75% wake rule in the **settle step and the careful
 simulation**, using exactly the same value from exactly the same place, so the
-two agree.
+two agree.  (This fix is now landed — ticket T2.)
+
+**What it does and does not fix (measured):** applying the rule in the settle
+step makes the two agree, but at our operating point (k_mppt = 2.24) the settle
+already saturates at a deliberate "cp-peak clamp" that parks the spin speed
+*above* the true MPPT point, so the wake rule moves nothing there (0 % change).
+It matters at higher k (about 7–8 % lower spin speed).
+
+**Important correction:** the one design that appeared to make 7.45 kW early
+and 5.37 kW later (island 3) is **not** caused by this bug.  That slow wind-down
+is the separate, pre-existing "settle-ODE gap" — the cp-peak clamp starts the
+machine too fast on purpose, and the careful simulation winds down to its true
+equilibrium regardless of the wake rule.  It is tracked in
+`docs/plans/2026-08-22-settle-ode-gap-workstream.md` and needs its own fix.
 
 ## 5. The new fitness score — what "good" now means
 

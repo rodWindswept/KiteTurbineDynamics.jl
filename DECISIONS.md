@@ -2430,9 +2430,12 @@ design** (ODE power/FoS are real, the mass/fitness ranking is not).
 **Consistency bug:** the 0.75× wake de-rate is applied in `ring_forces.jl` (the
 ODE) and in rotor sizing, but **not** in the cold-start settle equilibrium scan
 (`settle_to_operational_state`, `initialization.jl` ~903–921), which uses full
-wind for every rotor.  Multi-rotor designs therefore settle at a too-high ω and
-decay — the concrete mechanism behind island 3's gate 7.45 kW → evaluator
-5.37 kW.  Single-rotor designs are unaffected (wind_factor 1.0).
+wind for every rotor.  **Correction (2026-09-02, after T2 measurement):** this
+is a real consistency gap and is fixed, but it is **not** the cause of island
+3's 7.45 kW → 5.37 kW decay — at the campaign's k=2.24 the settle already
+saturates at the cp-peak clamp, so the wake rule moves nothing (0 %).  Island
+3's decay is the separate settle-ODE gap (`2026-08-22-settle-ode-gap-workstream`).
+Single-rotor designs are unaffected by the blocking gap (wind_factor 1.0).
 
 **Decisions (Rod, 2026-09-02):**
 - **Fitness gains "appropriateness + safety" terms**: minimise mass, but

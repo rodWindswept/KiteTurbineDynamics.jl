@@ -48,10 +48,12 @@ function expansion_airborne_mass(
     m_tether =
         p.n_lines * p.tether_length * (DYNEEMA_DENSITY * π * (p.tether_diameter / 2)^2)
 
-    # Structural rings — ALL airborne rings (system total minus the ground
-    # ring), so the hub ring is counted.  m_ring is the design-aware average
-    # ring mass (build_system_from_v10).
-    m_rings = (sys.n_ring - 1) * p.m_ring
+    # Structural rings — the TRUE per-ring sum (2026-09-02, ticket T1).  The
+    # builder (build_system_from_v10) computes it once from the actual radius
+    # profile and stores it in sys.ring_mass_total.  Fall back to the old
+    # (n_ring − 1)·p.m_ring average for legacy systems built before this field
+    # existed (it defaults to 0.0 there).
+    m_rings = sys.ring_mass_total[] > 0.0 ? sys.ring_mass_total[] : (sys.n_ring - 1) * p.m_ring
 
     # Main rotor blades
     m_blades = p.n_blades * p.m_blade
@@ -59,10 +61,12 @@ function expansion_airborne_mass(
     # Expansion rotors (assembly totals)
     m_expansion = sum(er -> er.mass, sys.expansion_rotors; init=0.0)
 
-    # Knuckle floor (2026-08-22): every blade node carries at least the
-    # approved knuckle mass (OPT_KNUCKLE_MASS_KG, 0.050 kg).
+    # Knuckles (2026-09-02, T1): blade knuckles (≥ OPT_KNUCKLE_MASS_KG each)
+    # PLUS the ring→cable joints.  The ring joints are summed per-ring by the
+    # builder with the shared geometric rule knuckle_mass_at_ring and stored in
+    # sys.ring_knuckle_mass (0.0 for legacy systems → no change).
     n_blade_nodes = p.n_blades + sum(er -> er.n_blades, sys.expansion_rotors; init=0)
-    m_knuckles = n_blade_nodes * OPT_KNUCKLE_MASS_KG
+    m_knuckles = n_blade_nodes * OPT_KNUCKLE_MASS_KG + sys.ring_knuckle_mass[]
 
     # Lifter (autogyro rotor + lines).  Rod 2026-08-21: the lifter's own mass
     # must NOT drive the lift-line tension requirement (the stack carries

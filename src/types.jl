@@ -159,6 +159,14 @@ struct KiteTurbineSystem
     ring_Do_scale_exp::Base.RefValue{Float64}
     ring_r_hub::Base.RefValue{Float64}
 
+    # True airborne ring structural mass and ring→cable knuckle mass, summed
+    # per-ring by the builder (build_system_from_v10) and read by
+    # expansion_airborne_mass.  0.0 = not yet populated (legacy builders that
+    # predate these fields); expansion_airborne_mass falls back to the old
+    # (n_ring − 1)·p.m_ring average in that case.
+    ring_mass_total::Base.RefValue{Float64}
+    ring_knuckle_mass::Base.RefValue{Float64}
+
     # Rope break state (2026-08-14): one flag per sub-segment (BitVector);
     # any_broken is a dirty latch checked per step by run_canonical_sim!
     # for the early-exit disqualification (Rod: option B).

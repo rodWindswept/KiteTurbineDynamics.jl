@@ -106,7 +106,11 @@ function compute_mass_breakdown(p)   # p is a SystemParams-like struct (duck-typ
 
     # Knuckle count: one per line per ring
     knuckle_count = p.n_rings * p.n_lines
-    # Approximate knuckle mass ~0.015 kg each (machined aluminium, M3 clevis size)
+    # Cost-only aluminium clevis estimate (~0.015 kg each).  The PHYSICS knuckle
+    # mass is the single shared rule knuckle_mass_at_ring(Do, t_over_D, n_sides)
+    # (src/trpt_optimization.jl); the DE's expansion_airborne_mass uses it for
+    # the ring→cable joints (2026-09-02, T1).  This aluminium figure stays for
+    # the cost model only and must not leak into the airborne mass.
     knuckle_mass_each = 0.015
     knuckle_kg = knuckle_count * knuckle_mass_each
 

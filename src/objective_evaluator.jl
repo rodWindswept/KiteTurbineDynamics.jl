@@ -341,24 +341,35 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
                                                     blade_scale=blade_scale)
 
-    # Compute design-aware per-ring mass from actual tube geometry instead of
-    # the hard-coded 0.4 kg constant.  Without this, the DE can max out Do_top
-    # and get free structural stiffness with zero mass penalty — producing
-    # campaigns that report green but design physically impossible machines.
-    # Tube: Do = Do_top × (r/r_hub)^Do_scale_exp, t = t_over_D × Do.
-    # Mass per ring ≈ n_lines × ρ_cfrp × π × Do × t × L_beam
-    # Use the average ring radius (linear taper) for a representative value.
-    # NOTE: taper exponent comes from the genome (Do_scale_exp, x4), matching
-    # the structural analysis — previously hard-coded √R (0.5), which let the
-    # DE pick exp=1.0 for free (2026-08-07, F4b audit).
-    r_avg = 0.5 * (design.r_hub + design.r_bottom)
-    Do_avg = design.Do_top * (r_avg / design.r_hub)^design.Do_scale_exp
-    t_avg = design.t_over_D * Do_avg
-    L_avg = 2.0 * r_avg * sin(π / design.n_lines)
-    ρ_cfrp = 1600.0  # kg/m³ — matches SpacerRingDesign default
-    area_avg = π / 4.0 * (Do_avg^2 - (Do_avg - 2t_avg)^2)
-    m_ring_design = design.n_lines * ρ_cfrp * area_avg * L_avg
-    m_ring_design = max(m_ring_design, 0.05)  # floor: 50 g
+    # Design-aware ring mass, summed PER RING (2026-09-02, ticket T1).  The old
+    # single "average ring" from r_avg = 0.5·(r_hub+r_bottom) under-counted the
+    # hub ring: the Do(r) taper makes small-radius rings tiny, so the average
+    # hid the 2.7 kg hub ring behind 3 g transmission rings.  Price each ring at
+    # its own radius with ring_beam_mass (which enforces the 2 mm wall floor).
+    # The decode returns `radii` ground-first from ring_spacing_v5; airborne
+    # rings are radii[2:end] (the ground ring is excluded, matching
+    # expansion_airborne_mass's n_ring − 1 count).
+    ring_radii_dec = result.radii
+    ring_masses = [
+        ring_beam_mass(
+            design.Do_top * (r / design.r_hub)^design.Do_scale_exp,
+            design.t_over_D, n_lines,
+            2.0 * r * sin(π / n_lines),
+        ) for r in ring_radii_dec[2:end]
+    ]
+    ring_mass_total = sum(ring_masses)
+    # Representative per-ring mass for the ODE node mass/inertia — still a
+    # single uniform value there, but now the mean of the true per-ring masses.
+    m_ring_rep = isempty(ring_masses) ? 0.0 : ring_mass_total / length(ring_masses)
+    # Ring→cable knuckles: one per line per airborne ring, priced by the shared
+    # geometric rule knuckle_mass_at_ring (single source, T1) — no flat 0.015 kg
+    # estimate, no blade-only count.
+    ring_knuckle_total = sum(
+        n_lines * knuckle_mass_at_ring(
+            design.Do_top * (r / design.r_hub)^design.Do_scale_exp,
+            design.t_over_D, n_lines,
+        ) for r in ring_radii_dec[2:end]; init=0.0
+    )
 
     # Main (hub) rotor — ring-anchored annulus (2026-08-20): the blade attaches
     # to the hub ring (design.r_hub) at 70% outboard / 30% inboard of its span,
@@ -398,7 +409,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # law changed (mass ∝ volume ∝ span³).
     span_hub = (hub_rotor === nothing) ? 0.0 :
         (hub_rotor.blade_tip_radius - hub_rotor.blade_hub_radius) * le
-    mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_design,
+    mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_rep,
                        M_BLADE_REF_KG * span_hub^3)
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
     ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
@@ -434,6 +445,11 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     sys.ring_aspect_ratio[] = design.beam_aspect
     sys.ring_Do_scale_exp[] = design.Do_scale_exp
     sys.ring_r_hub[]        = design.r_hub
+
+    # True per-ring ring mass + ring→cable knuckle mass (2026-09-02, T1) — the
+    # single source expansion_airborne_mass reads instead of (n_ring−1)·p.m_ring.
+    sys.ring_mass_total[]   = ring_mass_total
+    sys.ring_knuckle_mass[] = ring_knuckle_total
 
     return sys, u0, pc
 end

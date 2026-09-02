@@ -24,6 +24,13 @@ const OPT_T_OVER_D_MAX = 0.15     # unitless — above this, tube collapses to s
 const OPT_T_OVER_D_MIN = 0.01     # unitless — below this, local shell buckling governs (V6.2: widened from 0.02)
 const OPT_KNUCKLE_MASS_KG = 0.050    # kg — per-vertex knuckle (user approval 2026-04-20)
 
+# Minimum manufacturable tube WALL thickness (2026-09-02, Rod — ticket T1).
+# The DE's Do(r) = Do_top·(r/r_hub)^Do_scale_exp let small-radius rings
+# collapse to ~0.06 mm walls; enforce 2 mm everywhere a tube wall is sized.
+# This also forces a minimum sensible OD, since a 2 mm wall cannot fit inside
+# a <4 mm tube (handled by clamping the wall to a solid rod below that size).
+const MIN_TUBE_WALL_M = 2e-3    # m — 2 mm min wall
+
 # ── Peak design load conditions ──────────────────────────────────────────────
 const OPT_V_PEAK = 25.0   # m/s — peak design wind speed
 const OPT_CT_PEAK = 1.0   # max BEM thrust coefficient (conservative)
@@ -55,6 +62,33 @@ function knuckle_mass_at_ring(Do::Float64, t_over_D::Float64, n_sides::Int)
     L_bend = Do * 4.0 / n_sides
     L_eff = 2 * L_clamp + L_bend
     return RHO_KNUCKLE * π * Do * t * L_eff
+end
+
+"""
+    tube_wall_thickness(Do, t_over_D) → Float64
+
+Wall thickness of a CFRP tube with outer diameter `Do` and wall ratio
+`t_over_D`, floored at `MIN_TUBE_WALL_M` (2 mm) and clamped to a solid rod
+(`t ≤ Do/2`) so a tube thinner than 4 mm cannot take a wall that exceeds its
+own radius.  Single authority for the wall used in ring mass (2026-09-02, T1).
+"""
+function tube_wall_thickness(Do::Float64, t_over_D::Float64)::Float64
+    return min(max(t_over_D * Do, MIN_TUBE_WALL_M), Do / 2.0)
+end
+
+"""
+    ring_beam_mass(Do, t_over_D, n_lines, L) → Float64
+
+Mass (kg) of one polygon ring made of `n_lines` hollow CFRP tube segments,
+each of length `L`, outer diameter `Do`, wall `tube_wall_thickness(Do, t_over_D)`.
+This is the single authority for ring beam mass (2026-09-02, T1): the builder
+and the airborne-mass sum both use it, so the ring weight is never averaged or
+computed twice.
+"""
+function ring_beam_mass(Do::Float64, t_over_D::Float64, n_lines::Int, L::Float64)::Float64
+    t = tube_wall_thickness(Do, t_over_D)
+    area = π / 4.0 * (Do^2 - (Do - 2.0 * t)^2)
+    return n_lines * OPT_RHO_CFRP * area * L
 end
 
 # ── Combined design-load factor (DLF) ────────────────────────────────────────

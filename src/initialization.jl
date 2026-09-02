@@ -248,6 +248,8 @@ function _build_kite_turbine_system_impl(
         Ref(1.0),                    # ring_aspect_ratio (populated by builder)
         Ref(0.5),                    # ring_Do_scale_exp (populated by builder; 0.5 = legacy √R)
         Ref(0.0),                    # ring_r_hub (populated by builder; 0 = fall back to p.trpt_hub_radius)
+        Ref(0.0),                    # ring_mass_total (populated by build_system_from_v10; T1)
+        Ref(0.0),                    # ring_knuckle_mass (populated by build_system_from_v10; T1)
         falses(length(sub_segs)),    # broken_lines — rope break flags per sub-seg (2026-08-14)
         Ref(false),                  # any_broken — dirty latch for run_canonical_sim! early exit
         Ref(false),                  # breaks_enabled — set true only by run_canonical_sim! (real operation)
@@ -833,6 +835,43 @@ function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
 end
 
 """
+    settle_aero_power(sys::KiteTurbineSystem, p::SystemParams, w::Float64, v_mag::Float64) -> Float64
+
+Aerodynamic power (hub + expansion rotors) at shaft speed `w` (rad/s) and
+freestream wind `v_mag` (m/s), with the per-rotor wake de-rate applied
+(2026-09-02).  The hub rotor sees `v_mag · sys.rotor.wind_factor` and each
+expansion rotor sees `v_mag · er.wind_factor`, matching `ring_forces.jl`.  The
+cold-start settle scan uses this so a multi-rotor machine starts at its blocked
+equilibrium instead of overshooting and then decaying in the ODE (the island-3
+settle-gap mechanism).
+"""
+function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
+                           w::Float64, v_mag::Float64)::Float64
+    # Hub rotor — de-rate by the main rotor's wind factor (0.75^(1/3) when it is
+    # downstream of a lower rotor, 1.0 otherwise).
+    v_hub = v_mag * sys.rotor.wind_factor
+    lambda = w * sys.rotor.radius / v_hub
+    P_hub = 0.5 * p.rho * v_hub^3 *
+            π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
+            cp_at_tsr(lambda) * cos(p.elevation_angle)^2.65
+    # Expansion rotors — each de-rated by its own wind factor (the lowest,
+    # upstream rotor keeps 1.0).
+    P_exp = 0.0
+    for er in sys.expansion_rotors
+        v_er = v_mag * er.wind_factor
+        # 2026-08-24 (geometry audit): er.blade_tip/hub are OFFSETS from the
+        # rotor's ring radius, not absolute radii.  Use the same annulus +
+        # mean-radius convention as the ODE (expansion_annulus_area, r_mean).
+        r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).radius
+        area = expansion_annulus_area(er, r_nom)
+        r_rep = r_nom + (er.blade_hub_radius + er.blade_tip_radius) / 2 * cosd(er.bank_angle_deg)
+        lambda_er = clamp(w * r_rep / v_er, 0.0, 12.0)
+        P_exp += 0.5 * p.rho * v_er^3 * area * cp_at_tsr(lambda_er)
+    end
+    return P_hub + P_exp
+end
+
+"""
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
 Initializes the system at the rated operating point to avoid torsional transients.
@@ -883,7 +922,6 @@ function settle_to_operational_state(
         # where aerodynamic torque equals generator torque. We look for the
         # highest ω where P_aero > P_gen to avoid the trivial P=0 stall state.
         # Includes expansion rotor power if present (V10 Tight et al.).
-        has_exp = !isempty(sys.expansion_rotors)
         # 2026-08-21: clamp the scan top to the cp peak.  The unclamped scan
         # starts at ω_rated_max and takes the FIRST ω where the simplified
         # P_aero > P_gen; at LOW k that crossing sits at the cp TABLE EDGE
@@ -897,31 +935,10 @@ function settle_to_operational_state(
         λ_peak = BEM_TSR[argmax(BEM_CP)]
         ω_scan_top = min(ω_rated_max, λ_peak * v_mag / sys.rotor.radius)
         for w in range(ω_scan_top, 0.1; length=200)
-            # Hub rotor power — swept ANNULUS π(R² − r_in²) (2026-08-20, consistent
-            # with expansion rotors; 0.0 inner tip = legacy full disk).
-            lambda = w * sys.rotor.radius / v_mag
-            P_aero_hub =
-                0.5 * p.rho * v_mag^3 * π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
-                cp_at_tsr(lambda) * cos(p.elevation_angle)^2.65
-            # Expansion rotor power (simplified: each rotor contributes from its own swept area)
-            P_aero_exp = 0.0
-            if has_exp
-                for er in sys.expansion_rotors
-                    # 2026-08-24 (geometry audit): er.blade_tip/hub are OFFSETS
-                    # from the rotor's ring radius, not absolute radii.  The old
-                    # π(tip²−hub²) dropped r_nom entirely — under-counting a
-                    # lower-ring rotor's area ~6× (and its TSR ~2.4×) so the scan
-                    # parked at a wrong ω.  Use the same annulus + mean-radius
-                    # convention as the ODE (expansion_annulus_area, r_mean).
-                    r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).radius
-                    area = expansion_annulus_area(er, r_nom)
-                    r_rep = r_nom + (er.blade_hub_radius + er.blade_tip_radius) / 2 * cosd(er.bank_angle_deg)
-                    lambda_er = clamp(w * r_rep / v_mag, 0.0, 12.0)
-                    cp_er = cp_at_tsr(lambda_er)
-                    P_aero_exp += 0.5 * p.rho * v_mag^3 * area * cp_er
-                end
-            end
-            P_aero = P_aero_hub + P_aero_exp
+            # Aero power with the per-rotor wake de-rate applied (2026-09-02) —
+            # the same factors the ODE uses, so a multi-rotor machine settles at
+            # its blocked equilibrium instead of overshooting and then decaying.
+            P_aero = settle_aero_power(sys, p, w, v_mag)
             P_par = drag_fn === nothing ? 0.0 : drag_fn(sys, p, w, u_start)
             P_gen = sys.k_mppt_ref[] * w^3  # use mutable ref so blade-scale overrides propagate to settle
             if P_aero - P_par > P_gen
