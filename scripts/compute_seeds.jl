@@ -113,12 +113,19 @@ function tight_bounds(seed, kw)
     
     lo = zeros(14); hi = zeros(14)
     for i in 1:14
-        if i == 8
-            # n_lines: full canonical range [3, 16] (unchanged).  n_lines = 2 is
-            # flown-unstable (Rod); the floor stays at 3 — a triangle is a valid
-            # polygon and the DE may choose it.
+        if i == 1
+            # Do_top: hi = +100% of the seed (seed × 2); lo PINNED at 0.03 m
+            # (Rod 2026-09-02), decoupled from the seed's ±50% spread.  The 2 mm
+            # wall floor in the mass model already guards thin tubes, so this lo
+            # only bounds the search space.
+            lo[i] = 0.03
+            hi[i] = seed[i] * 2.0
+        elseif i == 8
+            # n_lines: [3, 9] (Rod 2026-09-02).  n_lines = 2 is flown-unstable;
+            # the floor stays at 3 — a triangle is a valid polygon.  Ceiling 9
+            # (was 16): no design need more than 9 lines at this scale.
             lo[i] = 3.0
-            hi[i] = 16.0
+            hi[i] = 9.0
         elseif i == 9
             lo[i] = -0.8; hi[i] = 0.8
         elseif i == 10
@@ -143,7 +150,6 @@ function tight_bounds(seed, kw)
     end
     
     # Physical minima & overrides
-    lo[1] = max(lo[1], 0.005)
     # t_over_D floor 0.010 (Rod 2026-08-14): the v13 18m winner parked at
     # 0.005 → 0.14 mm tube walls → 58 g rings flung by 5.7 kN rotor thrust.
     # The floor is the SEED's own value — no thinner than the starting design.
