@@ -114,11 +114,10 @@ function tight_bounds(seed, kw)
     lo = zeros(14); hi = zeros(14)
     for i in 1:14
         if i == 8
-            # n_lines: canonical range, floored at 4 (2026-09-02, Rod).  A 3-line
-            # "triangle" TRPT is a degenerate polygon (and 2 lines are flown-
-            # unstable); the polygon-buckling model is only valid ≥ 4 sides.  The
-            # 08-28 winner exploited n_lines = 3.  Floor 4, ceiling 16 unchanged.
-            lo[i] = 4.0
+            # n_lines: full canonical range [3, 16] (unchanged).  n_lines = 2 is
+            # flown-unstable (Rod); the floor stays at 3 — a triangle is a valid
+            # polygon and the DE may choose it.
+            lo[i] = 3.0
             hi[i] = 16.0
         elseif i == 9
             lo[i] = -0.8; hi[i] = 0.8
