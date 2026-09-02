@@ -671,6 +671,7 @@ function evaluate_windowed(
 
     trace_ctx = (; sys=sys, pc=pc, wf=wf, lift_device=lift_dev)
     twist_flagged = Ref(false)  # V13: set on first per-segment twist crossing
+    twist_ratio_max = Ref(0.0)  # 2026-09-02: worst twist/crossing ratio over the window
     hub_diverged = Ref(false)   # 2026-08-14: hub ring ω non-finite or tip speed past sanity ceiling
     betz_rotor_flagged = Ref(false)  # 2026-08-14: any rotor's own power past its own Betz potential
 
@@ -682,7 +683,11 @@ function evaluate_windowed(
         if t_cum > cfg.relax_s && s % sample_interval == 0
             # V13 torsional collapse detector: any segment past its geometric
             # crossing limit δα* fails the design regardless of power readings.
-            if !twist_flagged[] && twist_collapse_check(uc, sys).crossed
+            # Track the worst twist/crossing ratio so the over-twist safety
+            # penalty below can be applied (2026-09-02).
+            tr = twist_collapse_check(uc, sys)
+            twist_ratio_max[] = max(twist_ratio_max[], tr.max_ratio)
+            if !twist_flagged[] && tr.crossed
                 twist_flagged[] = true
             end
             # Tip-speed sanity: a diverged ring leaves ground-side metrics
@@ -914,6 +919,15 @@ function evaluate_windowed(
     swing = P_mean > 0.1 ? P_range / P_mean : 0.0
     excess = max(0.0, swing - STATIONARITY_SWING)
     fitness = fitness + STATIONARITY_LAMBDA * excess
+    # Over-twist safety penalty (2026-09-02, Rod): penalise approaching the
+    # geometric twist-crossing limit.  Applied here, alongside the stationarity
+    # penalty, so it is LIVE for every objective (a near-collapse machine is
+    # unsafe regardless of what we are optimising).  Same weight + form as
+    # appropriate_mass_fitness's twist_ratio keyword (W_TWIST_KG).
+    if twist_ratio_max[] > 0.0
+        tr = min(twist_ratio_max[], 1.0)
+        fitness = fitness + W_TWIST_KG * (tr / max(1.0 - tr, 1e-6))^2
+    end
     drifted = drift > 0.20  # >20% drift = flagged
 
     return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
