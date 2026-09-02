@@ -67,11 +67,11 @@ function seed_genome(kw)
     geom_scale = sqrt(kw / 1.5)
 
     g = zeros(14)
-    g[1] = 0.06                          # Do_top: the 3-rotor stack needs ~0.06 at 5 kW
-                                          # (2026-08-25: 0.025·geom_scale gave FoS 2.43 < 2.5)
-                                          # blade mass (2026-08-22): the λ³-era
-                                          # seed (0.0183) scored FoS 0.45 under its
-                                          # own honest mass/lift
+    g[1] = 0.08                          # Do_top: RE-SEED 2026-09-02 (was 0.06).  Under the
+                                          # corrected mass model the 0.06 seed's higher lift
+                                          # tension drops FoS to 5.19; 0.08 restores a comfortable
+                                          # FoS 7.2 (Rod: "less fit, more safe" seed — heavier
+                                          # but safer).  The DE can tune Do back down from here.
     g[2] = 0.055                          # t_over_D: 0.5 mm wall on ~9 mm rod (Daisy blades)
     g[3] = 1.0                            # beam_aspect: circular
     g[4] = 1.0                            # Do_scale_exp: uniform tube
@@ -87,9 +87,10 @@ function seed_genome(kw)
     g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
     g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
     g[9] = 0.0                            # density_profile: uniform
-    g[10] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial
-                                          # top rotors = the lightest feasible stack
-                                          # (2026-08-25 sweep: 37.7 kg vs 59.4 kg single)
+    g[10] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial top rotors.
+                                          # The 08-25 "37.7 vs 59.4 kg single" rationale is void
+                                          # (measured pre-FoS-fix); keep 3 for a multi-rotor seed
+                                          # so the DE explores 1/2/3 from a safe start.
     g[11] = 0.0                           # bank_top
     g[12] = 0.0                           # bank_bottom
     g[13] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
@@ -113,8 +114,11 @@ function tight_bounds(seed, kw)
     lo = zeros(14); hi = zeros(14)
     for i in 1:14
         if i == 8
-            # n_lines: full canonical range [3, 16]
-            lo[i] = 3.0
+            # n_lines: canonical range, floored at 4 (2026-09-02, Rod).  A 3-line
+            # "triangle" TRPT is a degenerate polygon (and 2 lines are flown-
+            # unstable); the polygon-buckling model is only valid ≥ 4 sides.  The
+            # 08-28 winner exploited n_lines = 3.  Floor 4, ceiling 16 unchanged.
+            lo[i] = 4.0
             hi[i] = 16.0
         elseif i == 9
             lo[i] = -0.8; hi[i] = 0.8

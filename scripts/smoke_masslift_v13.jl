@@ -66,7 +66,7 @@ function main()
             xr, PROFILE_ELLIPTICAL, p_base, cfg;
             start_mode = :cold,
             lift_device = lift_for,
-            fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
+            fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
         )
 
         # Expected tension via the evaluator's own build chain — with the

@@ -256,7 +256,7 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
                     xr, beam_profile, p_base, cfg;
                     start_mode = :cold,
                     lift_device = lift_for,
-                    fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
+                    fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
                 )
             end
             if r === nothing
