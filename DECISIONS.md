@@ -2451,3 +2451,34 @@ Single-rotor designs are unaffected by the blocking gap (wind_factor 1.0).
   single-rotor dominance is to be re-confirmed, not assumed (its magnitude is
   inflated by the weight bugs).
 - Fast-solver→ODE mapping deferred until the settle-scan blocking fix lands.
+
+### [2026-09-04] Corrected 5 kW campaign — valid winner, mass model verified
+
+**Result:** the re-run (`v13_5kw_masslift_len18.8_rotorcount`, launch git
+`cb12183`) completed all 30 generations on all three islands.  Global best =
+island 1, fitness **18.49 kg**.  Re-gate PASSES (P 5.41 kW, FoS 17.19,
+clearance 5.73 m, twist ratio 0.5, tip sanity ok).  See
+`scripts/results/v13_5kw_masslift_len18.8_rotorcount/regate_verdict.md`.
+
+**The corrected mass model closes the exploit.**  The winner is the SAME corner
+as the 08-28 VOID winner (single rotor, n_lines = 3, r_hub 4.32 m at the hi
+bound, Do 0.03 m at the lo bound) but now at a **defensible no-lifter mass of
+10.94 kg** instead of a bogus 4.4 kg — a ~2.5× correction driven by the 2 mm
+wall floor + per-ring sum + ring knuckles.  Breakdown: hub ring 6.32 kg (30 mm /
+2 mm wall), 5 transmission rings 0.95 kg (6.2 mm / 2 mm), blades 3.11 kg,
+knuckles 0.19 kg, tether 0.57 kg.  The old toothpick 2.3 mm / 0.06 mm rings are
+gone (now floored to 2 mm wall).
+
+**Findings to carry forward (not re-run yet):**
+- **Single rotor + triangle (`n_lines = 3`) dominates again.**  `n_lines = 3` is
+  allowed (only 2 is flown-unstable per Rod); the triangle form is flagged for
+  Rod's review, not auto-constrained.
+- **FoS 17.2 vs the 2.5 floor** → the 30 mm OD / 2 mm wall baseline is
+  over-conservative for 5 kW; there is structural weight to shed, noted not
+  re-run.
+- The winner is slightly over-rated (5.4 kW vs 5.0); `appropriate_mass_fitness`
+  charges it correctly (fitness 18.49 = 15.94 raw + ~2.5 penalty).
+
+**Next:** acceptance re-baseline on this winner (in progress);
+`docs/plans/2026-09-02-future-work-and-reporting.md` holds the dashboard check,
+the reporting plan, the 1.5 kW campaign, and the tidal-device scoping.
