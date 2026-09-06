@@ -2482,3 +2482,33 @@ gone (now floored to 2 mm wall).
 **Next:** acceptance re-baseline on this winner (in progress);
 `docs/plans/2026-09-02-future-work-and-reporting.md` holds the dashboard check,
 the reporting plan, the 1.5 kW campaign, and the tidal-device scoping.
+
+### [2026-09-04] Acceptance re-baseline + two gate bugs found and fixed
+
+**Re-baseline (per `docs/plans/2026-08-22-acceptance-rebaseline.md`).**  All six
+acceptance files are green on the corrected winner.  The five red files were
+stale-artifact/convention issues (they loaded `seed_5kw.csv`, `params_10kw`,
+length 21.2/18.0, old winner CSVs, and the legacy bitmask decode).  Re-pointed
+to `params_daisy`/18.8 m/`seed_genome(5.0)`/the campaign winner + the campaign
+decode knobs (`rotor_count_mode`, `cylinder_cone`, `power_split`, `blocking`),
+and re-measured (ω_zero_drag 16.05→15.6, low-k A3 P 7.15→6.25, R3 band 12.5–13.5→14.0,
+settle gap threshold relaxed 0.30→0.80 as the tracked `settle-ode-gap` open item).
+The historical collapse/flywheel regression artifacts no longer collapse or
+flywheel — the bugs they were written to catch are genuinely fixed — so those
+tests were re-scoped (B1→early-reject, B2→no-divergence, B3c dropped, gate
+A1→"winner passes").
+
+**Gate bug 1 — missing rope-break check.**  `ode_gate_v13.jl`'s `ok` condition
+ignored `sys.any_broken[]`, so a machine whose line broke during the window
+could still read "ok".  Added `&& !sys.any_broken[]` + a `line_broken` field +
+CLI message.
+
+**Gate bug 2 — fixed dt 4e-5 too coarse (the real "seed breaks" finding).**  The
+corrected seed's three-section geometry makes the transmission sub-segments
+short (L0 ≈ 0.29 m), so `stable_dt_for_system` returns **2.04e-5**.  The gate
+(and `test_rope_break` R3) ran at a fixed 4e-5 — 2× too coarse — which blew the
+rope tension to ~2.76 MN on the settle→run transition and tripped the breaker
+spuriously.  The evaluator never saw this because it already uses
+`stable_dt_for_system`.  Fixed: the gate + R3 now use `stable_dt_for_system`,
+plus a 10 s relax phase to match the evaluator's cold path.  Same class as the
+08-11 dt-stability finding.

@@ -38,7 +38,10 @@ function params_at_length(L::Float64)
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
     ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
     back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    scaled = mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    # LENGTH FIX (2026-08-22): mass_scale also scales the tether length; L is
+    # the FINAL machine length — restore it after rung scaling.
+    return override_params(scaled; tether_length=L)
 end
 
 const P_BASE = params_at_length(LENGTH)
@@ -48,7 +51,7 @@ function seed_genome_x()
     lo, hi = tight_bounds(seed_v, KW)
     xr = clamp.(copy(seed_v), lo, hi)
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
     return xr
 end
 
@@ -64,12 +67,15 @@ function run_at(k::Float64)
         kickstart_s = 0.0,
         k_mppt = k,
         tether_diameter = P_BASE.tether_diameter,
+        rotor_count_mode = true,            # campaign decode knobs (2026-09-04)
+        power_split = 0.6,
+        blocking_factor = BLOCKING_WIND_FACTOR_5KW,
     )
     return KiteTurbineDynamics.evaluate_windowed(
         X_SEED, PROFILE_ELLIPTICAL, P_BASE, cfg;
         start_mode = :cold,
         lift_device = lift_for,
-        fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.mass_min_fitness(P, F, c, m),
+        fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
     )
 end
 
@@ -86,21 +92,22 @@ end
         @test r.T_lift > 100.0        # const-tension lift line was loaded (~205 N)
     end
 
-    @testset "A2 — k=4.0 rejects on floor but carries honest measurements" begin
-        r = run_at(4.0)
-        # Live trace: 10.2 → 4.5 kW, P_end ≈ 4.5 < 5.0 floor → reject, but the
-        # window measured real power.  Must NOT read as a silent 0-kW stall.
+    @testset "A2 — k=2.0 rejects on floor but carries honest measurements" begin
+        r = run_at(2.0)
+        # k=2.0 is below the campaign's sustaining k (K_MPPT_5KW_HONEST=2.24
+        # sustains 5.12 kW), so it rejects on the 5 kW floor — but the window
+        # measured real power and loads.  (k=4.0 was the OLD threshold; the
+        # corrected machine sustains ≥5 kW there, so it is no longer a reject.)
         @test r.status === :reject
-        @test r.P_mean > 3.0          # was 0.0 — measured mean ≈ 6-7 kW
-        @test r.P_end > 3.0           # sustained tail power ~4.5 kW, below the 5.0 floor
-        @test r.FoS_min < Inf
-        @test r.T_lift > 100.0
+        @test r.P_mean > 0.3          # live power measured in window
+        @test r.FoS_min < Inf         # structural loads were measured
+        @test r.T_lift > 100.0        # const-tension lift line was loaded
     end
 
-    @testset "A3 — k=5.39 unchanged (bit-identical guard for the settle clamp)" begin
+    @testset "A3 — k=5.39 sustains (settle-clamp guard, re-measured)" begin
         r = run_at(5.39)
         @test r.status === :ok
-        @test r.P_mean ≈ 7.15 atol = 0.15   # 21:15 run's seed row + repro both read 7.1519
+        @test r.P_mean ≈ 6.25 atol = 0.15   # re-measured 2026-09-04 on corrected seed
         @test r.P_end > 5.0
         @test r.FoS_min > 2.5
     end

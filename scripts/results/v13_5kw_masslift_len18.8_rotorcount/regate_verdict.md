@@ -1,50 +1,74 @@
-# Regate verdict — v13 5 kW rotorcount campaign (len 18.8 m)
+# Regate verdict — 5 kW rotorcount campaign, corrected mass model (len 18.8 m)
 
-**Date:** 2026-08-28
+**Date:** 2026-09-02
 **Campaign dir:** `scripts/results/v13_5kw_masslift_len18.8_rotorcount/`
-**Git era (launch):** `7524a90` (post-4ce9fd0_daisy-anchored-5kw; power_split 0.6, blocking 0.75^(1/3), k 2.24)
-**Instruments:** `scripts/ode_gate_v13.jl` (independent 30 s ODE window, decode-aligned),
-evaluator rows from per-island `telemetry.csv` (40 s window, tail5), `scripts/analyze_campaign_winners.jl`
-(decode-aligned after path+knob fix, see git log).
+**Git era (launch):** `cb12183` — post mass-model fix (2 mm wall, per-ring sum,
+ring knuckles), settle-blocking fix, `appropriate_mass_fitness`, Do `[0.03, 0.16]` m,
+n_lines `[3, 9]`.
+**Instruments:** `scripts/ode_gate_v13.jl` (independent 30 s ODE window,
+decode-aligned), evaluator rows from per-island `telemetry.csv` (40 s window,
+tail5).
 
 ## Question
 
-Does this campaign produce a valid 5 kW design? Per runbook §6: re-gates clean with
-finite FoS ≥ 2.5, P ≥ 5 kW, clearance ≥ 1.5 m, no twist crossing, tip sanity.
+Does this campaign produce a valid 5 kW design under the corrected physics?
+Per runbook §6: re-gates clean with finite FoS ≥ 2.5, P ≥ 5 kW, clearance
+≥ 1.5 m, no twist crossing, tip sanity — **and** the mass now passes a by-hand
+sanity check (the failure mode of the previous, VOID campaign).
 
 ## Results (per island winner, gen 30)
 
-| Island | fitness kg | status | P_mean / P_end kW | FoS | clear. m | gate P_gen kW | ω_gnd | twist | n_lines/rings/n_active | r_hub m | m_airb. (no lifter) kg | phi kg/kW |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 (global best) | 9.618 | ok | 5.13 / 5.14 | 17.6 | 5.91 | 5.31 | 13.33 | 0.6× | 3/6/1 | 4.16 | 4.432 | 0.886 |
-| 2 | 11.021 | ok | 5.45 / 5.46 | 16.74 | 5.91 | 5.65 | 13.62 | 0.6× | 3/6/1 | 4.155 | 5.835 | 1.167 |
-| 3 | 37.911 | ok | 5.34 / 5.37 | 27.0 | 3.25 | 7.45 | 14.93 | 0.1× | 7/8/3 | 2.385 | 32.477 | 6.495 |
+| island | fitness kg | n_active | n_lines | r_hub m | P kW (eval) | FoS | clear. m | gate |
+|---|---|---|---|---|---|---|---|---|
+| 1 (global best) | 18.49 | 1 | 3 | 4.32 | 5.41 | 17.19 | 5.73 | PASS |
+| 2 | 23.83 | — | — | — | — | — | — | not re-gated |
+| 3 | 37.23 | — | — | — | — | — | — | not re-gated |
 
-All three: `twist_crossed=false`, tip sanity ok, `tau_gen < tau_max_safe` (382.6 vs 625 N·m),
-no FoS=Inf on any `ok` row (all Inf rows are `reject`/`reject_twist` — guard working).
+## Winner detail (island 1, global best)
+
+- **Genome:** `0.03, 0.0277, 0.788, 0.984, 4.32, 0.863, 2.799, 3.0, 0.698, 1.38, 19.95, 6.69, 0.70, 1.0`
+- **Form:** single rotor (`n_active = 1`), **n_lines = 3** (triangle), 6 rings,
+  r_hub 4.32 m (at the hi bound), r_bottom 0.86 m, Do_top 0.03 m (at the lo
+  bound), t/D 0.0277, Do_scale_exp 0.98.
+- **Re-gate (ode_gate_v13.jl):** P_gen 5.47→5.62 kW over 5–30 s (stable),
+  ω_gnd 13.5 rad/s, twist ratio 0.5 (worst segment 41° vs 78.8° limit),
+  tip sanity ok, clearance 5.73 m → **PASS**.
+- **Evaluator:** P_mean 5.41 kW / P_end 5.42 kW, **FoS_min 17.19**, status ok.
+
+## Mass sanity (the point of this re-run)
+
+No-lifter airborne mass **10.94 kg**, broken down:
+
+| component | mass |
+|---|---|
+| hub ring (30 mm OD / 2 mm wall, 3 × 7.5 m) | 6.32 kg |
+| 5 transmission rings (6.2 mm OD / 2 mm wall) | 0.95 kg |
+| blades | 3.11 kg |
+| knuckles (blade + ring) | 0.19 kg |
+| tether | 0.57 kg |
+
+The 2 mm wall floor is doing its job — the previous VOID winner's toothpick
+2.3 mm / 0.06 mm transmission rings are now real 6.2 mm / 2 mm tubes.  Raw mass
+with the 5 kg lifter is 15.94 kg; the 18.49 kg fitness includes ~2.5 kg of
+penalties (the machine is slightly over-rated at 5.4 kW, which
+`appropriate_mass_fitness` correctly charges).
 
 ## Verdict
 
-- **Telemetry intact:** 310 evals/island, per-eval rows flushed, statuses span
-  ok / clearance_reject / reject / reject_twist. No ok-row shows the FoS=Inf signature.
-- **Gate:** all three island winners PASS the independent ODE gate.
-- **Global best by fitness = island 1** (9.618 kg): single-rotor, 3-line, r_hub 4.16 m,
-  30 mm tube design sustaining 5.14 kW (evaluator) / 5.31 kW (gate), FoS 17.6, clearance 5.91 m.
-- **Caveat A (mass plausibility — for Rod):** island 1's m_airborne is 4.432 kg → phi 0.886 kg/kW,
-  *below* the Daisy anchor (≈1.3). The decoded geometry (r_hub 4.16 m, 6 rings, Do 0.03,
-  t/D 0.0275) with a crude CFRP-tube estimate for the ring set alone is ~2.6× that.
-  The mass law at this corner of the design space needs an audit before the 9.62 kg
-  fitness is believed as a physical design (the ODE power and FoS are instrument-level passes).
-- **Caveat B (settle-gap decay — island 3):** gate reads 7.45 kW flat over 5–30 s, evaluator
-  tail5 reads 5.37 kW at 45–50 s — a slow decay, consistent with the known settle-ω
-  overshoot (settle-ODE gap workstream). Island 3 still passes both instruments, but its
-  true sustained power is at the floor; the 3-rotor design pays 6.5 kg/kW.
-- **Design conclusion (record, not exploit):** single-rotor (n_active=1) dominates —
-  islands 1 and 2 both converged there (third campaign with this pattern, cf. 08-15 note).
+- **The corrected mass model closes the exploit.** The winner is the SAME
+  corner as before (single rotor, n_lines = 3, r_hub at max, Do at min) but now
+  at a defensible 10.9 kg instead of a bogus 4.4 kg — a ~2.5× correction driven
+  by the 2 mm wall floor + per-ring sum + ring knuckles.
+- **Re-gate passes.** Power, FoS, clearance, twist and tip speed all clean.
+- **Single rotor + triangle dominates again.** `n_lines = 3` is allowed (only
+  `n_lines = 2` is flown-unstable per Rod), but the winner landing on a triangle
+  is flagged for review.
+- **FoS 17 is well above the 2.5 floor.** Suggests the 30 mm OD / 2 mm wall
+  baseline is over-conservative for 5 kW; noted, not re-run.
 
 ## Disposition (pending Rod)
 
-1. Mass-law audit for the big-hub/small-tube corner (island 1) — gate the *mass model*,
-   not the ODE, before accepting the 9.62 kg winner as the 5 kW design.
-2. Acceptance re-baseline (§7) — blocked on (1) per Rod's review.
-3. Results push to origin — pending Rod (repo convention keeps telemetry untracked).
+1. Review the `n_lines = 3` triangle form (accept or constrain).
+2. Acceptance re-baseline on this winner (next step).
+3. Note FoS 17 → possible relaxation of the 30 mm / 2 mm baseline (future).
+4. Results push to origin (repo convention keeps telemetry untracked).

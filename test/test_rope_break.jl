@@ -2,14 +2,16 @@
 #= test_rope_break.jl — acceptance tests for rope-break physics
 (proposal: docs/plans/2026-08-14-rope-break-fling.md; Rod: SK99, option B —
 break = immediate disqualification, sim stops at the break).
-RED on master, GREEN after implementation. Standalone.
+Re-baselined 2026-09-04 to the corrected 5 kW campaign (daisy params @ 18.8 m,
+campaign decode knobs, mass-aware const-tension lift). Standalone.
 
 R1: unit — a sub-segment strained past 3.5% returns zero tension and sets
     the broken flag; below the limit it is untouched.
-R2: end-to-end — the 18m v13 winner must NOT reach the balloon fixed point:
-    either the lines break (sim stops, tension bounded) or |ω| stays ≤ 1e3.
+R2: end-to-end — the pre-fix 18m winner (regression artifact) must NOT reach
+    the balloon fixed point: either the lines break (sim stops, tension
+    bounded) or |ω| stays ≤ 1e3.
 R3: non-regression — the healthy seed runs 30 s without a break and lands
-    in its known operating band (ω_gnd ≈ 12.5–13.5 rad/s).
+    in its known operating band (ω_gnd, re-measured on the corrected seed).
 =#
 
 using KiteTurbineDynamics, Printf, LinearAlgebra
@@ -21,40 +23,64 @@ function check(name::String, cond::Bool)
     cond || push!(failures, name)
 end
 
-# Shared: build a system from a genome CSV at a given length (like the gate).
-function build_from(csv_path::String, L::Float64)
-    x = [parse(Float64, s) for s in split(strip(read(csv_path, String)), ",")]
-    p = KiteTurbineDynamics.params_10kw()
+# Campaign-aligned params: Daisy 1.5 kW → 5 kW at length L (mirrors
+# run_v13_5kw_masslift.jl params_at_length).  mass_scale also scales the tether
+# length, so the FINAL length is restored via override_params (2026-08-22 fix).
+function params_at_length(L::Float64)
+    p2 = KiteTurbineDynamics.params_daisy()
     KW = 5.0
-    geo = KiteTurbineDynamics.GeometrySpec(p.elevation_angle, p.lifter_elevation, p.rotor_radius,
-        L, p.trpt_hub_radius, p.trpt_rL_ratio, p.n_lines, p.n_rings, p.n_blades)
-    mat = KiteTurbineDynamics.MaterialSpec(p.tether_diameter, p.e_modulus, p.m_ring, p.m_blade)
-    aero = KiteTurbineDynamics.AeroSpec(p.rho, p.v_wind_ref, p.h_ref, p.cp)
-    ctrl = KiteTurbineDynamics.ControlSpec(p.i_pto, p.k_mppt, p.p_rated_w, p.β_min, p.β_max, p.β_rate_max, p.kp_elev)
-    back = KiteTurbineDynamics.BackLineSpec(p.EA_back_line, p.c_back_line, p.back_anchor_fwd_x, p.backline_payout)
-    pl = KiteTurbineDynamics.mass_scale(KiteTurbineDynamics.SystemParams(geo, mat, aero, ctrl, back), 10.0, KW)
+    geo = KiteTurbineDynamics.GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = KiteTurbineDynamics.MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = KiteTurbineDynamics.AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = KiteTurbineDynamics.ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = KiteTurbineDynamics.BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    scaled = KiteTurbineDynamics.mass_scale(KiteTurbineDynamics.SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
+    return KiteTurbineDynamics.override_params(scaled; tether_length=L)
+end
+
+# Campaign mass-aware constant-tension lift (mirrors ode_gate_v13.jl).
+lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
+    sys, p; margin=1.5, v_ref=11.0, const_tension=true)
+
+# Shared: build a system from a GENOME VECTOR at a given length, with the
+# campaign decode knobs (x[10] = rotor count {1,2,3}).
+function build_from(x::Vector{Float64}, L::Float64)
+    pl = params_at_length(L)
     xr = copy(x)
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
-    dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, pl; power_W=5000.0)
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, pl.k_mppt; tether_diameter=pl.tether_diameter)
+    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, pl; power_W=5000.0,
+        cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+        cone_slope_deg=22.0, rotor_spacing_frac=0.8,
+        blocking_factor=BLOCKING_WIND_FACTOR_5KW)
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;
+        tether_diameter=pl.tether_diameter, base_params=pl)
     return sys, u0, pc, pl
+end
+
+function read_genome_csv(csv_path::String)
+    return [parse(Float64, s) for s in split(strip(read(csv_path, String)), ",")]
 end
 
 println("=== R1: line-level break criterion (healthy vs 5% line stretch) ===")
 function run_r1()
-    sys, u0, pc, p = build_from(joinpath(@__DIR__, "..", "scripts", "results", "seed_5kw.csv"), 21.2)
+    sys, u0, pc, p = build_from(seed_genome(5.0), 18.8)
+    lift = rotary_lifter_default()
     wind_fn1(r, t) = [p.v_wind_ref, 0.0, 0.0]
-    u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn1, n_op=30_000)
-    sys.k_mppt_ref[] = p.k_mppt
+    sys.k_mppt_ref[] = K_MPPT_5KW_HONEST   # campaign k for settle AND run
+    u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn1, n_op=30_000)
     # one real-operation step from the healthy settle: no break expected
-    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
+    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05)
     broke_healthy = sys.any_broken[]
-    # stretch the top TRPT line ~5% by displacing the hub ring axially
+    # Stretch the top TRPT line WELL past the 3.5% break threshold by displacing
+    # the hub ring axially by 20% of a segment length (2026-09-04: the corrected
+    # seed's top segment is longer than the old machine's, so 5% of the average
+    # segment no longer crosses 3.5% strain).
     gid_hub = sys.ring_ids[sys.n_ring]
     L_seg = pc.tether_length / (sys.n_ring - 1)
-    u[(3*(gid_hub-1)+1):(3*gid_hub)] .+= 0.05 * L_seg .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
+    u[(3*(gid_hub-1)+1):(3*gid_hub)] .+= 0.20 * L_seg .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
+    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05)
     broke_stretched = sys.any_broken[]
     return broke_healthy, broke_stretched
 end
@@ -63,17 +89,21 @@ println("  healthy step → broken=", bh, "   +5% line stretch step → broken="
 check("R1a: healthy operation does not break lines", !bh)
 check("R1b: a line stretched past 3.5% breaks (SK99)", bs)
 
-println("=== R2: end-to-end — 18m winner bounded or broken ===")
+println("=== R2: end-to-end — pre-fix 18m winner bounded or broken (regression) ===")
 function run_r2()
-    sys2, u02, pc2, p2 = build_from(joinpath(@__DIR__, "..", "scripts", "results", "void_v13_pre-fix_len18.0", "best_vector.csv"), 18.0)
+    # Regression artifact: the pre-fix 18m winner must STILL not reach the
+    # balloon fixed point (bounded |ω| or line break).
+    sys2, u02, pc2, p2 = build_from(
+        read_genome_csv(joinpath(@__DIR__, "..", "scripts", "results", "void_v13_pre-fix_len18.0", "best_vector.csv")), 18.8)
+    lift = rotary_lifter_default()
     wind_fn2(r, t) = [p2.v_wind_ref, 0.0, 0.0]
-    u2 = settle_to_operational_state(sys2, copy(u02), pc2, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn2, n_op=30_000)
+    sys2.k_mppt_ref[] = K_MPPT_5KW_HONEST   # campaign k for settle AND run
+    u2 = settle_to_operational_state(sys2, copy(u02), pc2, 60.0; lift_device=lift, wind_fn=wind_fn2, n_op=30_000)
     N2 = sys2.n_total; Nr2 = sys2.n_ring
-    sys2.k_mppt_ref[] = p2.k_mppt
     wmax = 0.0
     Tmax = 0.0
     for chunk in 1:6
-        run_canonical_sim!(u2, sys2, pc2, wind_fn2, round(Int, 5.0 / 4e-5), 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
+        run_canonical_sim!(u2, sys2, pc2, wind_fn2, round(Int, 5.0 / 4e-5), 4e-5; lift_device=lift, lin_damp=0.05)
         wmax = max(wmax, maximum(abs, @view u2[(6N2 + Nr2 + 1):(6N2 + 2Nr2)]))
         Tmax = max(Tmax, get_max_rope_tension(u2, sys2, pc2)[1])
         sys2.any_broken[] && break
@@ -91,20 +121,29 @@ check("R2: tension stays bounded (≤ 2e5 N; elastic break ≈ 44 kN)", Tmax2 <=
 
 println("=== R3: non-regression — seed stays healthy ===")
 function run_r3()
-    sys3, u03, pc3, p3 = build_from(joinpath(@__DIR__, "..", "scripts", "results", "seed_5kw.csv"), 21.2)
+    sys3, u03, pc3, p3 = build_from(seed_genome(5.0), 18.8)
+    lift = rotary_lifter_default()
     wind_fn3(r, t) = [p3.v_wind_ref, 0.0, 0.0]
-    u3 = settle_to_operational_state(sys3, copy(u03), pc3, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn3, n_op=30_000)
+    sys3.k_mppt_ref[] = K_MPPT_5KW_HONEST   # campaign k for settle AND run
+    u3 = settle_to_operational_state(sys3, copy(u03), pc3, 60.0; lift_device=lift, wind_fn=wind_fn3, n_op=30_000)
     N3 = sys3.n_total; Nr3 = sys3.n_ring
-    sys3.k_mppt_ref[] = p3.k_mppt
+    # 2026-09-04: use the STABLE dt (not fixed 4e-5) + a 10 s relax phase, both
+    # to match the evaluator's cold path.  The fixed 4e-5 is 2× too coarse for
+    # the seed's short transmission sub-segs and blows the rope tension to
+    # ~2.76 MN on the settle→run transition (false break).
+    dt3 = KiteTurbineDynamics.stable_dt_for_system(sys3, pc3)
+    for _ in 1:2
+        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05)
+    end
     for chunk in 1:6
-        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / 4e-5), 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
+        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05)
     end
     return u3[6N3 + Nr3 + 1], sys3.any_broken[]
 end
 w_gnd3, broke3 = run_r3()
 println("  ω_gnd @30s = ", round(w_gnd3, digits=2), " rad/s  broken=", broke3)
 check("R3: seed never breaks", !broke3)
-check("R3: seed lands in its known band (12.5–13.5 rad/s)", 12.5 <= w_gnd3 <= 13.5)
+check("R3: seed lands in its known band (ω_gnd re-measured)", 14.0 <= w_gnd3 <= 16.5)
 
 println()
 if isempty(failures)

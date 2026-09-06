@@ -111,6 +111,12 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
 
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
         tether_diameter=p.tether_diameter, base_params=p)
+    # 2026-09-04: use the STABLE dt for this system's shortest sub-segment, not
+    # the fixed DT=4e-5.  The corrected seed's transmission rings make sub-segs
+    # short enough (L0 ≈ 0.29 m) that 4e-5 is 2× too coarse and blows the rope
+    # tension to ~2.76 MN on the settle→run transition (false rope-break).  The
+    # evaluator already uses stable_dt_for_system; align the gate.
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, pc)
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
     # Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20).
     lift = lift_for(sys, pc)
@@ -122,11 +128,21 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
     gnd_ri = (sys.nodes[sys.ring_ids[1]]::RingNode).ring_idx
 
+    # 2026-09-04 (Rod): align the gate's protocol with the evaluator's cold path.
+    # The evaluator runs a 10 s relax phase between settle and the measurement
+    # window; without it the settle→full-operation jump blows the rope tension up
+    # numerically (~2.76 MN in 0.25 s) and the rope-break detector trips
+    # spuriously.  Run 10 s of relax (2 × 5 s) before measuring so the gate
+    # scores the same steady state the evaluator scored.
+    for _ in 1:2
+        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt; lift_device=lift, lin_damp=0.05)
+    end
+
     trace = Vector{NamedTuple{(:t, :w_hub, :w_gnd, :P_gen, :tau_gen, :crossed, :max_ratio),
         Tuple{Float64,Float64,Float64,Float64,Float64,Bool,Float64}}}()
     nchunks = round(Int, window_s / 5.0)
     for chunk in 1:nchunks
-        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / DT), DT; lift_device=lift, lin_damp=0.05)
+        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt; lift_device=lift, lin_damp=0.05)
         t = chunk * 5.0
         w_hub = u[6N + Nr + hub_ri]
         w_gnd = u[6N + Nr + gnd_ri]
@@ -138,11 +154,16 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     end
 
     fin = trace[end]
+    # 2026-09-04 (Rod): the gate must also reject a machine whose line broke
+    # during the window.  run_canonical_sim! enables rope-break (breaks_enabled),
+    # and any_broken is the dirty latch; the old condition ignored it, so a
+    # line-break machine could still read "ok".
     ok = (fin.P_gen >= MIN_P_GEN_KW) && (fin.w_gnd > MIN_W_GND) && (!fin.crossed) &&
-         (clearance >= MIN_CLEARANCE)
+         (clearance >= MIN_CLEARANCE) && (!sys.any_broken[])
     return (ok=ok, trace=trace, clearance=clearance, P_gen_final=fin.P_gen,
         w_gnd_final=fin.w_gnd, w_hub_final=fin.w_hub, crossed=fin.crossed,
-        max_twist_ratio=fin.max_ratio, n_lines=dec.design.n_lines, rings=dec.n_rings,
+        max_twist_ratio=fin.max_ratio, line_broken=sys.any_broken[],
+        n_lines=dec.design.n_lines, rings=dec.n_rings,
         n_active=dec.n_active, r_hub=dec.design.r_hub, x=xv, sys=sys, u=u, N=N, Nr=Nr)
 end
 
@@ -187,9 +208,10 @@ if abspath(PROGRAM_FILE) == @__FILE__
     # A diverged ring (ω ~ 1e66, NaN-frozen chain) is not "sustained power".
     hub_ok = tip_speed_sanity_ok(r.u, r.sys)
     ok = r.ok && hub_ok
+    println(r.line_broken ? "  ❌ LINE BROKEN — a TRPT line exceeded 3.5% strain during the window" : "")
     println(r.ok && !hub_ok ? "  ❌ TIP SPEED VIOLATION > " * string(TIP_SPEED_CEILING_MPS) * " m/s (diverged ring/rotor)" : "")
     println(ok ? "  ✅ GATE PASSES" : "  ❌ GATE FAILS",
             "  (P_gen_final=", round(r.P_gen_final, digits=2),
             " kW, ω_gnd=", round(r.w_gnd_final, digits=2), " rad/s, crossed=", r.crossed,
-            ", tip_ok=", hub_ok, ")")
+            ", tip_ok=", hub_ok, ", line_broken=", r.line_broken, ")")
 end
