@@ -12,7 +12,8 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 
 | File | Date | Topic |
 |------|------|-------|
-| `handover-2026-08-21-daisy-anchored-5kw-campaign.md` | Aug 21 | **CURRENT** — gate aligned to Daisy anchor; Gate 1c blade mass fixed; smoke passed at 18.8; launch killed when the gate caught 20 s window flattering power (seed sustains 3.15 kW, not 5); open task = honest-window decision |
+| `handover-2026-09-07-closed-form-beam-sizing.md` | Sep 07 | **CURRENT** — "shed structure" plan inverted (true FoS ≈ 1.2, under-strength); closed-form beam-sizing architecture proposed (REV 2) + orientation/off-by-one fixes landed + `solve_ring_Do` added; load case = generator load step; feather deferred. Next: `size_beams_closed_form` + evaluator wiring |
+| `handover-2026-08-21-daisy-anchored-5kw-campaign.md` | Aug 21 | gate aligned to Daisy anchor; Gate 1c blade mass fixed; smoke passed at 18.8 |
 | `handover-2026-08-20-model-scaling-daisy-anchor.md` | Aug 20 | 50 kW blade-mass/radius/annulus contamination fixed; Daisy anchor saved; mass-minimisation objective (FoS 2.5); 5 kW re-run config assembled; Daisy seed stall = the open task |
 | `handover-2026-08-12-5kw-baseline.md` | Aug 12 | 5kW baseline: ODE viability confirmed (2.7 kW), static/ramp evaluator false-negatives diagnosed, torsional FoS power-dependence, V12 cold-start campaign config |
 | `handover-2026-08-12-zeta-damping-fix.md` | Aug 12 | ζ=1.5 damping + tension rectifier = reverse torque; ζ promoted to SystemParams (0.05) |

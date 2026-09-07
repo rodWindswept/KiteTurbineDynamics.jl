@@ -72,8 +72,8 @@ Wall thickness of a CFRP tube with outer diameter `Do` and wall ratio
 (`t ≤ Do/2`) so a tube thinner than 4 mm cannot take a wall that exceeds its
 own radius.  Single authority for the wall used in ring mass (2026-09-02, T1).
 """
-function tube_wall_thickness(Do::Float64, t_over_D::Float64)::Float64
-    return min(max(t_over_D * Do, MIN_TUBE_WALL_M), Do / 2.0)
+function tube_wall_thickness(Do::Float64, t_over_D::Float64; min_wall_m::Float64=MIN_TUBE_WALL_M)::Float64
+    return min(max(t_over_D * Do, min_wall_m), Do / 2.0)
 end
 
 """
@@ -85,10 +85,54 @@ This is the single authority for ring beam mass (2026-09-02, T1): the builder
 and the airborne-mass sum both use it, so the ring weight is never averaged or
 computed twice.
 """
-function ring_beam_mass(Do::Float64, t_over_D::Float64, n_lines::Int, L::Float64)::Float64
-    t = tube_wall_thickness(Do, t_over_D)
+function ring_beam_mass(Do::Float64, t_over_D::Float64, n_lines::Int, L::Float64; min_wall_m::Float64=MIN_TUBE_WALL_M)::Float64
+    t = tube_wall_thickness(Do, t_over_D; min_wall_m=min_wall_m)
     area = π / 4.0 * (Do^2 - (Do - 2.0 * t)^2)
     return n_lines * OPT_RHO_CFRP * area * L
+end
+
+"""
+    solve_ring_Do(N_comp, L, t_over_D; min_wall_m, fos_req, ends) → Do
+
+Solve the tube outer diameter `Do` (m) of one polygon-ring beam (length `L`)
+so its Euler buckling capacity meets `fos_req × N_comp`:
+
+    P_crit = strut_properties(CircularTube(Do, t_eff), L, ends).P_crit
+    t_eff  = tube_wall_thickness(Do, t_over_D; min_wall_m) / Do
+
+`P_crit` is monotone in `Do`, so a bisection converges.  Uses the single wall
+authority `tube_wall_thickness` and a single end condition (`ends`) so the
+closed-form solve and the verification FEA agree (REV 2 §6).  Returns `Do` (m);
+returns the manufacturable floor when `N_comp ≤ 0` (no compression).
+"""
+function solve_ring_Do(
+    N_comp::Float64,
+    L::Float64,
+    t_over_D::Float64;
+    min_wall_m::Float64=MIN_TUBE_WALL_M,
+    fos_req::Float64=2.5,
+    ends=FixedFixedEnds(),
+)
+    N_comp <= 0.0 && return 1e-3
+    lo = 1e-3
+    hi = 0.5
+    # Grow hi until feasible (P_crit ≥ fos_req · N_comp).
+    while strut_properties(
+        CircularTube(hi, tube_wall_thickness(hi, t_over_D; min_wall_m=min_wall_m) / hi),
+        L, ends,
+    ).P_crit < fos_req * N_comp
+        hi *= 2.0
+    end
+    for _ in 1:80
+        mid = 0.5 * (lo + hi)
+        t_eff = tube_wall_thickness(mid, t_over_D; min_wall_m=min_wall_m) / mid
+        if strut_properties(CircularTube(mid, t_eff), L, ends).P_crit >= fos_req * N_comp
+            hi = mid
+        else
+            lo = mid
+        end
+    end
+    return hi
 end
 
 # ── Combined design-load factor (DLF) ────────────────────────────────────────
@@ -397,13 +441,14 @@ function _evaluate_trpt_design_impl(
     # Single-rotor (backward compatible): all thrust at the hub ring.
     use_distributed = thrust_per_ring !== nothing
 
-    # Per-ring thrust (for line tension distribution)
+    # Per-ring thrust (for line tension distribution).  radii is GROUND-FIRST
+    # (index 1 = ground, index n_rings_tot = hub), so the single rotor's thrust
+    # sits at the LAST index (hub), not the first.
     T_ring = if use_distributed
         thrust_per_ring
     else
-        # Single-rotor: all thrust at hub ring (index end, since radii[1]=hub)
         T_single = peak_hub_thrust(r_rotor, elev_angle; v=v_rated, CT=OPT_CT_RATED)
-        vcat(T_single, zeros(n_rings_tot - 1))
+        vcat(zeros(n_rings_tot - 1), T_single)
     end
 
     T_total_rated = sum(T_ring)
@@ -416,7 +461,7 @@ function _evaluate_trpt_design_impl(
         [t / T_total_rated * tau_total for t in T_ring]
     else
         tau_total = P_rated / omega_rotor
-        vcat(tau_total, zeros(n_rings_tot - 1))
+        vcat(zeros(n_rings_tot - 1), tau_total)
     end
 
     # ── Torsional stability (per-segment, cumulative torque) ───────────────
@@ -425,8 +470,8 @@ function _evaluate_trpt_design_impl(
     for i in 1:n_seg
         r_min = min(torsion_radii[i], torsion_radii[i + 1])
         L = L_seg[i]
-        # Torque from all rings ABOVE this segment (indices 1..i)
-        tau_above = sum(tau_ring_rated[1:i])
+        # Torque from all rings ABOVE this segment (ground-first: indices i+1..end)
+        tau_above = sum(tau_ring_rated[(i + 1):end])
         τ_cap = T_total_rated * r_min^2 / sqrt(L^2 + 2 * r_min^2)
         tfos = τ_cap / max(tau_above, 1e-9)
         min_torsional_fos = min(min_torsional_fos, tfos)
@@ -440,13 +485,15 @@ function _evaluate_trpt_design_impl(
         [t * (v_peak / v_rated)^2 for t in T_ring]
     else
         T_pk = peak_hub_thrust(r_rotor, elev_angle; v=v_peak)
-        vcat(T_pk, zeros(n_rings_tot - 1))
+        vcat(zeros(n_rings_tot - 1), T_pk)
     end
 
-    cumulative_T_rated = cumsum(T_ring)
-    cumulative_T_peak  = cumsum(T_ring_peak)
-    T_line_axial_rated = cumulative_T_rated[end] / design.n_lines
-    T_line_axial_peak  = cumulative_T_peak[end] / design.n_lines
+    # Ground-first cumulative: tension below ring i = sum of thrust above ring i
+    # (rings i..end).  reverse(cumsum(reverse(x)))[i] == sum(x[i:end]).
+    cumulative_T_rated = reverse(cumsum(reverse(T_ring)))
+    cumulative_T_peak  = reverse(cumsum(reverse(T_ring_peak)))
+    T_line_axial_rated = T_total_rated / design.n_lines
+    T_line_axial_peak  = sum(T_ring_peak) / design.n_lines
 
     # ── Per-ring structural analysis ─────────────────────────────────────────
     fos_per_ring = Float64[]

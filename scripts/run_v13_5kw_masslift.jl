@@ -30,11 +30,23 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 function parse_cli()
     L = 18.8   # Daisy-up 5 kW length: 10.31 m × √(5/1.5) (Rod 2026-08-20)
     island = 0  # 0 = all islands sequentially; N = run island N only (parallel mode)
+    gen = 30    # DE generations per island (full campaign = 30; short run = 10)
+    min_wall_mm = 2.0   # ring tube wall floor (mm). 1.5 = mass-relaxation exploration.
+    do_min = 0.03       # Do_top search lower bound (m). 0.02 = relaxed-OD exploration.
+    tag = ""            # output-dir suffix ("" = canonical _rotorcount dir)
     for (i, a) in enumerate(ARGS)
         if a == "--length" && i < length(ARGS)
             L = parse(Float64, ARGS[i+1])
         elseif a == "--island" && i < length(ARGS)
             island = parse(Int, ARGS[i+1])
+        elseif a == "--gen" && i < length(ARGS)
+            gen = parse(Int, ARGS[i+1])
+        elseif a == "--min-wall-mm" && i < length(ARGS)
+            min_wall_mm = parse(Float64, ARGS[i+1])
+        elseif a == "--do-min" && i < length(ARGS)
+            do_min = parse(Float64, ARGS[i+1])
+        elseif a == "--tag" && i < length(ARGS)
+            tag = ARGS[i+1]
         end
     end
     # Run-log path (2026-08-24): recorded in PROVENANCE.md at launch so every
@@ -46,12 +58,15 @@ function parse_cli()
             log = ARGS[i+1]
         end
     end
-    return (L=L, log=log, island=island)
+    return (L=L, log=log, island=island, gen=gen, min_wall_mm=min_wall_mm, do_min=do_min, tag=tag)
 end
 const CLI = parse_cli()
 const LENGTH = CLI.L
 const RUN_LOG = CLI.log
 const ISLAND = CLI.island   # 0 = all islands; N = island N only
+const MIN_WALL_M = CLI.min_wall_mm * 1e-3   # wall floor (m) for ObjectiveConfig
+const DO_MIN = CLI.do_min
+const RUN_TAG = isempty(CLI.tag) ? "" : "_" * CLI.tag
 
 const KW = 5.0
 const PW = KW * 1000.0
@@ -80,8 +95,8 @@ lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
 # `_rotorcount` tag distinguishes this co-axial 1-3-rotor (rotor_count_mode)
 # campaign from the prior VERIFIED bitmask-era run (v13_5kw_masslift_len18.8).
 const OUT_DIR = ISLAND > 0 ?
-    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount", "island_$(ISLAND)") :
-    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount")
+    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount$(RUN_TAG)", "island_$(ISLAND)") :
+    joinpath(@__DIR__, "results", "v13_5kw_masslift_len$(LENGTH)_rotorcount$(RUN_TAG)")
 mkpath(OUT_DIR)
 
 # ── Launch provenance note ──────────────────────────────────────────────
@@ -135,7 +150,7 @@ end
 p_base = params_at_length(LENGTH)
 beam_profile = PROFILE_ELLIPTICAL
 seed_v = seed_genome(KW)
-lo, hi = tight_bounds(seed_v, KW)
+lo, hi = tight_bounds(seed_v, KW; do_min=DO_MIN)
 dim = length(lo)
 
 # V14 config (2026-08-20, Rod): hard-constraint MASS-minimisation on the
@@ -166,7 +181,8 @@ cfg = ObjectiveConfig(;
     power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
     cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
-    blocking_factor = BLOCKING_WIND_FACTOR_5KW,   # downstream (upper) rotors: 0.75× power
+    blocking_factor = BLOCKING_WIND_FACTOR_5KW,
+    min_wall_m = MIN_WALL_M,   # downstream (upper) rotors: 0.75× power
 )
 
 # ── Telemetry CSV — FULL genome + decoded values, flushed per row ────────
@@ -283,7 +299,7 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
 end
 
 # ── DE settings (identical to first campaign) ────────────────────────────
-popsize = 10; n_islands = 3; max_iter = 30
+popsize = 10; n_islands = 3; max_iter = CLI.gen
 
 println("═"^60)
 println("  V13 Cold-Start DE — 5kW MASS-AWARE LIFT REDO (constant tension)")

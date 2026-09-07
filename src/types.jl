@@ -166,6 +166,10 @@ struct KiteTurbineSystem
     # (n_ring − 1)·p.m_ring average in that case.
     ring_mass_total::Base.RefValue{Float64}
     ring_knuckle_mass::Base.RefValue{Float64}
+    # Minimum tube wall shared by the mass model and the FoS model (single
+    # authority tube_wall_thickness).  Default 2 mm; the mass-relaxation
+    # campaigns override it (e.g. 1.5 mm) via build_system_from_v10.
+    min_wall_m::Base.RefValue{Float64}
 
     # Rope break state (2026-08-14): one flag per sub-segment (BitVector);
     # any_broken is a dirty latch checked per step by run_canonical_sim!

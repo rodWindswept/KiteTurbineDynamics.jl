@@ -145,6 +145,7 @@ Base.@kwdef struct ObjectiveConfig
     cone_slope_deg::Float64 = 22.0   # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac::Float64 = 0.8 # min rotor spacing as fraction of 2·r_rotor (Rod: 0.8 diameters)
     blocking_factor::Float64 = 1.0   # wake blocking between co-axial rotors (1.0 = full)
+    min_wall_m::Float64 = MIN_TUBE_WALL_M  # ring tube wall floor (2 mm); mass-relaxation campaigns lower it (e.g. 1.5 mm)
 end
 
 # Copy-with-overrides constructor.  (Base.@kwdef does not generate it;
@@ -160,13 +161,13 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          kickstart_s=o.kickstart_s,
                          rotor_count_mode=o.rotor_count_mode, power_split=o.power_split,
                          cone_slope_deg=o.cone_slope_deg, rotor_spacing_frac=o.rotor_spacing_frac,
-                         blocking_factor=o.blocking_factor)
+                         blocking_factor=o.blocking_factor, min_wall_m=o.min_wall_m)
     return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
                            w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
                            tether_diameter, power_stat, penalize_ceiling, kickstart_s,
                            rotor_count_mode, power_split, cone_slope_deg,
-                           rotor_spacing_frac, blocking_factor)
+                           rotor_spacing_frac, blocking_factor, min_wall_m)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -320,7 +321,8 @@ end
 
 function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
                               tether_diameter::Float64=0.003,
-                              base_params::Union{Nothing,SystemParams}=nothing)
+                              base_params::Union{Nothing,SystemParams}=nothing,
+                              min_wall_m::Float64=MIN_TUBE_WALL_M)
     (; design, rotors, n_rings) = result
     taper_start_z = haskey(result, :taper_start_z) ? result.taper_start_z : 0.0
     harvest_length = haskey(result, :harvest_length) ? result.harvest_length : 0.0
@@ -354,7 +356,8 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
         ring_beam_mass(
             design.Do_top * (r / design.r_hub)^design.Do_scale_exp,
             design.t_over_D, n_lines,
-            2.0 * r * sin(π / n_lines),
+            2.0 * r * sin(π / n_lines);
+            min_wall_m=min_wall_m,
         ) for r in ring_radii_dec[2:end]
     ]
     ring_mass_total = sum(ring_masses)
@@ -450,6 +453,7 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # single source expansion_airborne_mass reads instead of (n_ring−1)·p.m_ring.
     sys.ring_mass_total[]   = ring_mass_total
     sys.ring_knuckle_mass[] = ring_knuckle_total
+    sys.min_wall_m[]        = min_wall_m
 
     return sys, u0, pc
 end
@@ -527,7 +531,7 @@ function evaluate_windowed(
     # their params_at_length base; 50 kW default keeps legacy callers
     # bit-identical).  Fixes the 50 kW blade-mass contamination (2026-08-20).
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt;
-        tether_diameter=cfg.tether_diameter, base_params=p)
+        tether_diameter=cfg.tether_diameter, base_params=p, min_wall_m=cfg.min_wall_m)
 
     # Adaptive window time step (2026-08-24, build-geometry audit): the
     # geometric taper (ring_spacing_v4) can shorten ground-end sub-segs below

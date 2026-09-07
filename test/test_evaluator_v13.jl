@@ -5,12 +5,18 @@ Re-baselined 2026-09-04 to the corrected 5 kW campaign (daisy params @ 18.8 m,
 campaign decode knobs, appropriate_mass_fitness).  Standalone (not wired into
 runtests.jl — B1-B3 run 20-30s ODE windows).
 
+Re-baselined 2026-09-07 (aligned FoS): the wall-floor alignment (OD floor →
+tube_wall_thickness single authority, DECISIONS [2026-09-06]) removed the
+fictitious FoS 17.19 — the campaign winner's 6.2 mm / 2 mm transmission rings
+are UNDER the 2.5 floor (true FoS ≈ 1.2).  B6 now asserts the gate REJECTS the
+under-strength winner while its power delivery stays ≥ 5 kW.
+
 B1: island-1 winner (torsional collapse)  → :reject + twist_crossed=true
 B2: 18m winner (flywheel decay)            → :reject OR (P_end < floor AND worse fitness than seed)
 B3: original seed (healthy)                → :ok, no twist, P_end ≥ floor, fitness beats B2's
 B4: unit — penalize_ceiling=false → more power strictly better
 B5: unit — twist_collapse_check flags wound state, not post-settle
-B6: 18m v13 winner (stabilized)            → :ok, hub tip < 100 m/s
+B6: 5 kW v13 winner (under-strength)       → :reject with FoS < 2.5, P_mean ≥ floor, hub tip < 100 m/s
 B7: unit — tip_speed_sanity_ok flags diverged hub/mid-ring ω
 =#
 
@@ -135,11 +141,24 @@ println("  post-settle: crossed=", t0.crossed, " max_ratio=", round(t0.max_ratio
 check("B5a: post-settle state is not flagged", !t0.crossed && t0.max_ratio < 1.0)
 check("B5b: +π wound segment is flagged", t1.crossed)
 
-println("=== B6: campaign winner is healthy (:ok, hub tip < 100 m/s) ===")
+println("=== B6: campaign winner under the ALIGNED FoS model ===")
 if isfile(WINNER18V13)
     r6 = run_eval(read_vec(WINNER18V13), L18, 20.0)
-    println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2), "  fitness=", round(r6.fitness, digits=3))
-    check("B6a: campaign winner is :ok", r6.status === :ok)
+    println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2),
+            "  FoS_min=", round(r6.FoS_min, digits=2),
+            "  fitness=", round(r6.fitness, digits=3))
+    # Re-baselined 2026-09-07 (aligned FoS, DECISIONS [2026-09-06]): the old
+    # OD floor (`5e-4/t_over_D`) inflated the winner's 6.2 mm transmission
+    # rings to a fictitious 18 mm and FoS 17.19.  With the wall floor aligned
+    # to tube_wall_thickness (2 mm single authority) the true ring FoS is
+    # ≈ 1.2, UNDER the 2.5 floor — the gate must REJECT the winner.  A
+    # regression to the OD-floor FoS would flip this back to :ok and fail.
+    check("B6a: gate rejects the under-strength winner (status :reject, FoS < 2.5)",
+          r6.status === :reject && r6.FoS_min < 2.5)
+    # The rejection is STRUCTURAL, not a power failure: the machine still
+    # delivers ≥ 5 kW while being under-strength (the 2026-09-06 finding).
+    check("B6c: winner still delivers ≥ 5.0 kW while rejected (structure, not power)",
+          r6.P_mean >= 5.0)
     g6 = gate_design(read_vec(WINNER18V13); L=L18, KW=KW)
     hub_ri = (g6.sys.nodes[g6.sys.rotor.node_id]::RingNode).ring_idx
     w_hub = g6.u[6*g6.N + g6.Nr + hub_ri]

@@ -10,6 +10,36 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-06] TRPT beam sizing: load case = generator load step; high-wind feather deferred
+
+**Context:** Re-gating the 5 kW winner with the aligned FoS model (wall floor →
+`tube_wall_thickness`) showed the old "FoS 17.2" was an OD-floor artifact — the
+true transmission-ring FoS is ≈ 1.2, and the closed-form peak-wind sizing reads
+≈ 0.002. The "shed structure" direction in `2026-09-02-future-work-and-reporting.md`
+§2 is inverted. A scenario sweep (`scratch/scenario_sweep.jl`) was run to find
+the sizing `(Q_max, T_min)` for a closed-form beam solver (proposal
+`docs/plans/2026-09-06-closed-form-beam-sizing.md`).
+
+**Choices made (Rod):**
+1. **Sizing load case = a bounded generator load step** (nominal `k_mppt × 2`),
+   measured `F_helix ≈ 1278 N/vertex` on the hub segment. The lull is benign
+   under MPPT (`τ = k·ω²` couples Q to ω, so a wind drop lowers Q with T); the
+   load step is the only state that raises Q while T is low.
+2. **High-wind feather is deferred** — the ODE aero has no feather term
+   (`ct_at_tsr`/`cp_at_tsr` only), so "feather above rated" needs a model change
+   (a feather factor reducing effective wind / Cp / Ct), not just a scenario.
+   Easing `k_mppt` is the wrong substitute (rotor spins up to twist 87.9° > 78.8°).
+3. **Hub ring is a first-class load case** — `F_helix ∝ r` puts the max inward
+   force on the hub segment, which both the FEA (`ring_ids[2:end-1]`) and the
+   closed form (`is_buckling_ring`) currently skip.
+
+**Consequences:** the closed-form beam solver sizes against the load-step `(Q, T)`;
+the high-wind structural case stays un-modelled until the feather factor lands;
+the hub ring must be added to the structural checks. The load-step magnitude
+(instant step vs soft-ramp) is a detail to pin down with `RampController`.
+
+---
+
 ## [2026-08-21] Daisy-anchored 5 kW seed fixes (rung scaling, lifter tension, annulus gates)
 
 **Context:** The Daisy seed for the 5 kW mass-min re-run stalls

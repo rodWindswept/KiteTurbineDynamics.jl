@@ -283,9 +283,13 @@ end
     sys.ring_Do_scale_exp[] = exp_taper
     sys.ring_r_hub[]        = r_hub
 
-    # Design-path Do at this ring (the reference law)
+    # Design-path Do at this ring (the reference law) — raw taper, no OD floor.
     scale_design = (R / r_hub)^exp_taper
-    Do_design = max(Do_top * scale_design, 5e-4 / t_over_D)
+    Do_design = Do_top * scale_design
+    # Single-authority wall (mass model + aligned FoS): floored at min_wall_m
+    # (2 mm default), clamped to Do/2.  The sys-ref branch now uses this too.
+    t_design = KiteTurbineDynamics.tube_wall_thickness(Do_design, t_over_D)
+    t_over_D_design = t_design / Do_design
 
     # Campaign path: analyse_ring with design === nothing
     frame = KiteTurbineDynamics.analyse_ring(
@@ -293,10 +297,10 @@ end
     )
 
     # Compare the frame's worst beam against strut_properties of the
-    # design-law tube (N_crit and M_el are pure geometry — no load dependence).
+    # single-authority tube (N_crit and M_el are pure geometry — no load dependence).
     L_beam = 2.0 * R * sin(π / p.n_lines)
     props_design = KiteTurbineDynamics.strut_properties(
-        KiteTurbineDynamics.CircularTube(Do_design, t_over_D), L_beam,
+        KiteTurbineDynamics.CircularTube(Do_design, t_over_D_design), L_beam,
         KiteTurbineDynamics.FixedFixedEnds()
     )
     frame_beam = frame.beams[argmax([b.utilisation for b in frame.beams])]
@@ -311,8 +315,9 @@ end
     legacy_beam = frame_legacy.beams[argmax([b.utilisation for b in frame_legacy.beams])]
     @test !isapprox(frame_beam.N_crit, legacy_beam.N_crit, rtol=1e-3)
 
-    # t_over_D floor must be gone: t_over_D = 0.02 must NOT be floored to 0.05.
-    # A 0.02 wall tube has smaller M_el than a 0.05 wall tube at same Do.
+    # The wall floor is now the MASS floor (2 mm), NOT the old 0.05 t/D ratio.
+    # A 0.05-ratio tube has a thicker wall than the floored 2 mm at this Do,
+    # so its M_el must exceed the floored tube's.
     props_floor = KiteTurbineDynamics.strut_properties(
         KiteTurbineDynamics.CircularTube(Do_design, 0.05), L_beam,
         KiteTurbineDynamics.FixedFixedEnds()

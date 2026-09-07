@@ -147,7 +147,13 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           config_name::String = "Canonical 5-line")
 
     n_frames = length(frames)
-    n_seg    = p.n_rings + 1
+    # Segment count = consecutive-ring pairs = sys.n_ring - 1.  Derive it from the
+    # BUILT system, not p.n_rings: build_system_from_v10 (v13 5 kW) builds
+    # sys.n_ring == p.n_rings (the decode's ring count already includes ground +
+    # hub), whereas the canonical builder has sys.n_ring == p.n_rings + 2.  The old
+    # `p.n_rings + 1` therefore overshoots by one for v13 and indexes ring_ids
+    # past its end (BoundsError in _rope_line_pts).
+    n_seg    = sys.n_ring - 1
     N        = sys.n_total
     Nr       = sys.n_ring
 
@@ -1064,7 +1070,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                  "V10 unified rotors", "V10 Tight (no lowest expansion)", "V10 Island 51 alt-basin",
                  "V10 Reinforced", "V9.0 50kW equilibrium", "V9.0 10kW equilibrium",
                  "V6.7 drag-constrained", "V6.5 3-line triangle", "V6.4 3-line triangle",
-                 "V6.3 7-line heptagon", "V6.2 12-line dodecagon", "Daisy Proto 1kW"],
+                 "V6.3 7-line heptagon", "V6.2 12-line dodecagon", "Daisy Proto 1kW",
+                 "V13 5kW mass-aware winner"],
         default=config_name, width=270)
 
     # Also disable menu when not idle

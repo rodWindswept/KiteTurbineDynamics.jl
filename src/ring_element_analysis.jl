@@ -493,30 +493,33 @@ function analyse_ring(
             r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
             exp_taper = sys.ring_Do_scale_exp[]
             scale = (R / r_ref)^exp_taper
-            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
+            sys.ring_Do_top[] * scale
         else
-            max(0.01396 * sqrt(R), 5e-4 / 0.05)
+            0.01396 * sqrt(R)
         end
         t_over_D = max(sys.ring_toverD[], 1e-4)
-        CircularTube(Do, t_over_D)
+        t_val = tube_wall_thickness(Do, t_over_D; min_wall_m=sys.min_wall_m[])
+        CircularTube(Do, t_val / Do)
     else
         # Dynamic scaling matching optimization specs
         scale = (R / design.r_hub)^design.Do_scale_exp
-        Do_scaled = max(design.Do_top * scale, 5e-4 / design.t_over_D)
+        Do_raw = design.Do_top * scale
+        t_val = tube_wall_thickness(Do_raw, design.t_over_D; min_wall_m=sys.min_wall_m[])
+        t_over_D_eff = t_val / Do_raw
 
         if design.profile == PROFILE_CIRCULAR
-            CircularTube(Do_scaled, design.t_over_D)
+            CircularTube(Do_raw, t_over_D_eff)
         elseif design.profile == PROFILE_ELLIPTICAL
-            EllipticalTube(Do_scaled, design.t_over_D, design.aspect_ratio)
+            EllipticalTube(Do_raw, t_over_D_eff, design.aspect_ratio)
         else
-            AirfoilTube(Do_scaled, design.t_over_D, design.aspect_ratio)
+            AirfoilTube(Do_raw, t_over_D_eff, design.aspect_ratio)
         end
     end
 
     # Retrieve cached properties for the active tube (FixedFixed ends in space frame)
     props = strut_properties(active_tube, L_beam, FixedFixedEnds())
     Do_val = active_tube.profile.Do
-    t_val = max(active_tube.profile.t_over_D * Do_val, 5e-4)
+    # t_val already floored above via tube_wall_thickness (mass-model single authority)
 
     # Build tp NamedTuple for compatibility, including custom E, G, σ_yield
     tp = (

@@ -58,6 +58,17 @@ end
     @test KiteTurbineDynamics.tube_wall_thickness(2.3e-3, 0.0275) ≈ 1.15e-3
 end
 
+@testset "mass model — min_wall_m swept knob (2026-09-06)" begin
+    # Default floor stays 2 mm (backward compatible).
+    @test KiteTurbineDynamics.tube_wall_thickness(30e-3, 0.0275) ≈ 2e-3
+    # Relaxed 1.5 mm floor lets the same tube price a thinner wall.
+    @test KiteTurbineDynamics.tube_wall_thickness(30e-3, 0.0275; min_wall_m=1.5e-3) ≈ 1.5e-3
+    # A wall already above the floor is untouched by either.
+    @test KiteTurbineDynamics.tube_wall_thickness(0.1, 0.0275; min_wall_m=1.5e-3) ≈ 2.75e-3
+    # Solid-rod clamp still applies under the relaxed floor.
+    @test KiteTurbineDynamics.tube_wall_thickness(2.3e-3, 0.0275; min_wall_m=1.5e-3) ≈ 1.15e-3
+end
+
 @testset "mass model 2026-09 — per-ring sum beats the old average" begin
     sys, _, dec = winner_system()
     d = dec.design

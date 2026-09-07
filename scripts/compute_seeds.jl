@@ -98,7 +98,7 @@ function seed_genome(kw)
     return g
 end
 
-function tight_bounds(seed, kw)
+function tight_bounds(seed, kw; do_min::Float64=0.03)
     # Spread: ± fraction around seed for each dimension
     # Corrections per Rod 2026-08-12:
     #   r_hub: wider spread (+80%) — Daisy 1.5kW has 1.52m, our 0.91m seed needs headroom
@@ -114,11 +114,11 @@ function tight_bounds(seed, kw)
     lo = zeros(14); hi = zeros(14)
     for i in 1:14
         if i == 1
-            # Do_top: hi = +100% of the seed (seed × 2); lo PINNED at 0.03 m
-            # (Rod 2026-09-02), decoupled from the seed's ±50% spread.  The 2 mm
-            # wall floor in the mass model already guards thin tubes, so this lo
-            # only bounds the search space.
-            lo[i] = 0.03
+            # Do_top: hi = +100% of the seed (seed × 2); lo PINNED at do_min
+            # (0.03 m baseline, Rod 2026-09-02; mass-relaxation runs pass 0.02),
+            # decoupled from the seed's ±50% spread.  The wall floor in the mass
+            # model already guards thin tubes, so this lo only bounds the search.
+            lo[i] = do_min
             hi[i] = seed[i] * 2.0
         elseif i == 8
             # n_lines: [3, 9] (Rod 2026-09-02).  n_lines = 2 is flown-unstable;

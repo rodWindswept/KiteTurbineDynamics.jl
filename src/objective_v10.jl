@@ -472,11 +472,10 @@ function objective_v10(
         return max(m_base, 1.0) * min(power_W / max(P_gen_eq, 1.0), 100.0) + 1_000_000.0
     end
 
-    # ── Per-ring thrust (hub-equivalent: ring 1 rotor thrust) ─────────────
+    # ── Per-ring thrust (GROUND-FIRST: index 1 = ground, index n_rings_tot = hub) ──
     thrust_per_ring = zeros(Float64, n_rings_tot)
-    # All rotors contribute thrust at their ring
-    # For simplicity, use the reference rotor thrust at ring 1
-    thrust_per_ring[1] = peak_hub_thrust(
+    # Main (hub) rotor thrust sits at the hub ring (LAST index), not the ground.
+    thrust_per_ring[n_rings_tot] = peak_hub_thrust(
         r_ref, elev_angle; v=v_rated, CT=KiteTurbineDynamics.OPT_CT_RATED
     )
 
@@ -484,27 +483,31 @@ function objective_v10(
     r_eff = copy(radii)
     F_radial_per_ring = zeros(Float64, n_rings_tot)
     tau_net_per_ring = zeros(Float64, n_rings_tot)
-    cumulative_thrust = cumsum(thrust_per_ring)
+    # Tension ABOVE each ring: reverse cumsum gives [sum(x[i:end]) for i].
+    # NOTE (known approximation): computed once before the loop, so each rotor's
+    # T_above is based on the hub thrust only, not the higher rotors' F_axial.
+    cumulative_thrust = reverse(cumsum(reverse(thrust_per_ring)))
 
     for er in expansion_params
-        ri = er.ring_idx
-        if ri > n_rings_tot || ri < 1
+        ri = er.ring_idx          # intermediate numbering [1, n_rings]
+        gi = ri + 1               # ground-first index (radii[1] = ground ring)
+        if gi > n_rings_tot || gi < 1
             continue
         end
-        r_nom = radii[ri]
-        T_above = ri > 1 ? cumulative_thrust[ri - 1] / n_lines : 0.0
+        r_nom = radii[gi]
+        T_above = gi < n_rings_tot ? cumulative_thrust[gi + 1] / n_lines : 0.0
 
         F_radial, F_axial, tau_net, r_new, _ = expansion_rotor_forces(
             er, rho, v_rated, ω_eq, elev_deg, r_nom, T_above, n_lines
         )
 
-        r_eff[ri] = r_new
-        F_radial_per_ring[ri] = F_radial
-        tau_net_per_ring[ri] = tau_net
-        thrust_per_ring[ri] += F_axial
+        r_eff[gi] = r_new
+        F_radial_per_ring[gi] = F_radial
+        tau_net_per_ring[gi] = tau_net
+        thrust_per_ring[gi] += F_axial
     end
 
-    cumulative_thrust = cumsum(thrust_per_ring)
+    cumulative_thrust = reverse(cumsum(reverse(thrust_per_ring)))
 
     # ── Structural evaluation ────────────────────────────────────────────
     eval_result = evaluate_design(

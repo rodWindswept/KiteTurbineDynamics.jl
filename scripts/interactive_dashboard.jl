@@ -7,6 +7,7 @@
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, LinearAlgebra, ArgParse, CSV, DataFrames, GLMakie, JSON3
 include(joinpath(@__DIR__, "daisy_builder.jl"))
+include(joinpath(@__DIR__, "compute_seeds.jl"))
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -68,6 +69,9 @@ function parse_commandline()
             action = :store_true
         "--v67"
             help = "Use V6.7 campaign winner (drag-constrained, streamlined Cd)"
+            action = :store_true
+        "--v13"
+            help = "Use V13 5kW mass-aware winner (single rotor, 3-line, r_hub 4.32 m, 18.49 kg)"
             action = :store_true
         "--expansion"
             help = "Add expansion rotors at given bank angle (deg, default 20)"
@@ -345,6 +349,50 @@ function build_from_campaign(campaign_dir::String, label::String; params_fn=para
     return sys, u0, p_campaign, label
 end
 
+# ── Build the V13 5 kW mass-aware winner (raw vector + design_from_vector_v10) ──
+# Daisy-anchored 5 kW base params at length L (mirror run_v13_5kw_masslift.jl /
+# ode_gate_v13.jl so the cockpit shows the SAME machine the campaign gated).
+function params_at_length_5kw(L::Float64)
+    p2 = params_daisy()
+    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    scaled = mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0)
+    # mass_scale also scales tether length by the rung geom_scale; L is the FINAL
+    # machine length — restore it after scaling (2026-08-22 LENGTH FIX).
+    return override_params(scaled; tether_length=L)
+end
+
+function build_from_campaign_v13(campaign_dir::String, label::String; L::Float64=18.8, KW::Float64=5.0)
+    vec_path = joinpath(dirname(@__DIR__), "scripts", "results", campaign_dir, "best_vector.csv")
+    isfile(vec_path) || error("best_vector.csv not found at $vec_path — run campaign first")
+    x_raw = parse.(Float64, split(readline(vec_path), ","))
+    x = copy(x_raw)
+    # Discrete genes, rounded exactly as the runner + re-gate do.
+    x[8]  = Float64(round(Int, clamp(x[8], 3, 16)))   # n_lines
+    x[10] = Float64(round(Int, clamp(x[10], 1, 3)))   # rotor count {1,2,3}
+
+    p_base = params_at_length_5kw(L)
+    k_mp = K_MPPT_5KW_HONEST                       # single source (compute_seeds.jl)
+    bf = BLOCKING_WIND_FACTOR_5KW
+
+    dec = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p_base; power_W=KW * 1000.0,
+        cylinder_cone=true, rotor_count_mode=true,
+        power_split=0.6, cone_slope_deg=22.0,
+        rotor_spacing_frac=0.8, blocking_factor=bf)
+
+    sys, u0, p = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
+        tether_diameter=p_base.tether_diameter, base_params=p_base)
+    sys.k_mppt_ref[] = k_mp   # belt-and-braces, matches ode_gate_v13.jl
+
+    println("$label: n_lines=$(dec.design.n_lines)  n_active=$(dec.n_active)  rings=$(dec.n_rings)")
+    println("  r_hub=$(round(dec.design.r_hub, digits=2)) m  r_bottom=$(round(dec.design.r_bottom, digits=2)) m")
+    return sys, u0, p, label
+end
+
 function main()
     args = parse_commandline()
 
@@ -355,7 +403,8 @@ function main()
     end
 
     # Determine initial config from CLI flags
-    current_config = args["v10-reinforced"] ? "V10 Reinforced" :
+    current_config = args["v13"] ? "V13 5kW mass-aware winner" :
+                     args["v10-reinforced"] ? "V10 Reinforced" :
                      args["daisy"] ? "Daisy Proto 1kW" : args["v10-tight"] ? "V10 Tight (no lowest expansion)" :
                      args["v10-island51"] ? "V10 Island 51 alt-basin" :
                      args["v10"] ? "V10 unified rotors" :
@@ -427,6 +476,8 @@ function main()
         elseif current_config == "Daisy Proto 1kW"
             sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
             current_config = "Daisy Proto 1kW"
+        elseif current_config == "V13 5kW mass-aware winner"
+            sys, u0, p, label = build_from_campaign_v13("v13_5kw_masslift_len18.8_rotorcount", "V13 5kW mass-aware winner")
         elseif current_config == "V10-Spoke λ0.90 (safest)"
             sys, u0, p, label = build_v10_tight(blade_scale=0.90)
             current_config = label
@@ -460,16 +511,30 @@ function main()
             sys, u0 = build_kite_turbine_system(p; expansion_rotors=stack)
             println("  Expansion: $n_exp rotors, bank=$bank_deg deg, blade_r=$(round(r_rotor;digits=1)) m")
         end
-        # Custom wind function
-        wind_fn = (pos, t) -> begin
-            z  = max(pos[3], 1.0)
-            sh = (z / p.h_ref)^(1.0/7.0)
-            [v_target * sh, 0.0, 0.0]
+        is_v13 = current_config == "V13 5kW mass-aware winner"
+        # Custom wind function.  The 5 kW campaign + re-gate ran UNIFORM wind
+        # (ode_gate_v13.jl: wind_fn(r,t) = [v_wind_ref, 0, 0]); keep uniform for
+        # v13 so the cockpit reproduces the gated operating point instead of a
+        # power-law-sheared over-drive.
+        wind_fn = if is_v13
+            (pos, t) -> [v_target, 0.0, 0.0]
+        else
+            (pos, t) -> begin
+                z  = max(pos[3], 1.0)
+                sh = (z / p.h_ref)^(1.0/7.0)
+                [v_target * sh, 0.0, 0.0]
+            end
         end
 
-        println("Initializing at rated power equilibrium (ω=9.5)...")
-        default_lift = rotary_lifter_default()
-        u_start = settle_to_operational_state(sys, u0, p, 9.5; lift_device=default_lift, wind_fn=wind_fn)
+        # v13 uses the campaign's mass-aware constant-tension lifter (not the
+        # wind-dependent rotary default) and the 60 rad/s settle scan top the
+        # evaluator + re-gate use (the 5 kW machine runs ~13.5 rad/s).
+        default_lift = is_v13 ?
+            sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true) :
+            rotary_lifter_default()
+        settle_omega = is_v13 ? 60.0 : 9.5
+        println("Initializing at rated power equilibrium (ω=$settle_omega)...")
+        u_start = settle_to_operational_state(sys, u0, p, settle_omega; lift_device=default_lift, wind_fn=wind_fn)
 
         N  = sys.n_total
         Nr = sys.n_ring
@@ -481,6 +546,12 @@ function main()
         if current_config == "v5 Optimized 8-line"
             DT = 1e-5
             SAVE_EVERY = 2000  # keep ~same frames per simulated second
+        elseif is_v13
+            # 5 kW winner's transmission sub-segments (L0 ≈ 0.29 m) are stiff
+            # enough that the canonical 4e-5 is ~2× too coarse and trips a false
+            # rope-break on the settle→run transition (ode_gate_v13.jl, 2026-09-04).
+            DT = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+            SAVE_EVERY = 1000   # keep ~same frames per simulated second as 4e-5/500
         end
         n_steps = round(Int, args["duration"] / DT)
 
@@ -488,6 +559,15 @@ function main()
             # ── HEADLESS MODE ──
             println("Running headless simulation: $(args["duration"])s at $(v_target)m/s...")
             u = copy(u_start)
+            if is_v13
+                # 10 s relax between settle and the measured window — without it
+                # the settle→full-operation jump trips a spurious rope-break
+                # (ode_gate_v13.jl, 2026-09-04).
+                for _ in 1:2
+                    run_canonical_sim!(u, sys, p, wind_fn, round(Int, 5.0 / DT), DT;
+                        lift_device = default_lift, lin_damp = LIN_DAMP)
+                end
+            end
             results = DataFrame(t=Float64[], hub_z=Float64[], omega_hub=Float64[], P_kw=Float64[])
             run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
                 lift_device = default_lift,
@@ -511,6 +591,15 @@ function main()
             frames   = Vector{Vector{Float64}}(undef, n_frames)
             times    = Vector{Float64}(undef, n_frames)
             u        = copy(u_start)
+
+            if is_v13
+                # 10 s relax between settle and the displayed window — mirrors the
+                # evaluator's relax phase (ode_gate_v13.jl, 2026-09-04).
+                for _ in 1:2
+                    run_canonical_sim!(u, sys, p, wind_fn, round(Int, 5.0 / DT), DT;
+                        lift_device = default_lift, lin_damp = LIN_DAMP)
+                end
+            end
 
             println("Simulating $(args["duration"])s ($n_steps steps → $n_frames frames)...")
             let fi = 1
