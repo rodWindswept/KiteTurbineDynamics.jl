@@ -52,7 +52,10 @@ using Statistics
         t_frame = times[i]
 
         tau_gen, _ = get_generator_torque(u_frame, sys, p, t_frame, wind_fn; brake_engaged=sys.brake_engaged[])
-        P_expected = tau_gen * abs(sf.omega_gnd) / 1000.0
+        # Signed (2026-08-20): P = τ_gen·ω_gnd.  The masked `abs(ω_gnd)` form
+        # this line used to carry re-derived P at positive ω only, so a
+        # reversion to abs()/max(ω,0) masking passed unnoticed.
+        P_expected = tau_gen * sf.omega_gnd / 1000.0
 
         @test sf.P_kw ≈ P_expected atol=1e-12
         T_max_expected, _ = get_max_rope_tension(u_frame, sys, p)
@@ -72,6 +75,48 @@ using Statistics
     omega_gnd_now = u_brake[sys.n_total * 6 + sys.n_ring + 1]
     expected_brake_torque = 1500.0 * power_scale * tanh(20.0 * omega_gnd_now)
     @test tau_brake ≈ expected_brake_torque atol=1e-12
+end
+
+@testset "signed P_gen — reversal/regeneration must read negative" begin
+    # DECISIONS [2026-08-20] banned the abs(ω_gnd)/max(ω,0) masking of P_gen.
+    # The consistency testset above could not catch a reversion: it re-derived P
+    # at positive ω only.  This drives sign-opposite states through the real
+    # control law and asserts the signed contract P = τ_gen·ω_gnd, so a
+    # reversion to the masked form fails HERE.
+    p = params_10kw()
+    sys, u0 = build_kite_turbine_system(p)
+    N = sys.n_total
+    Nr = sys.n_ring
+    gnd_idx = 6N + Nr + 1          # ground-ring ω (layout: 6N + Nr + ring_idx)
+    u = copy(u0)
+    wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
+
+    prev = KiteTurbineDynamics.GENERATOR_LOAD[]
+    try
+        # Measured τ(ω) curve: a static positive load, no cap, floor far below
+        # the tested band (so the floor clamp is not what produces the sign).
+        set_generator_load!(GeneratorLoadMode(;
+            mode=:table,
+            omega_pts=[-10.0, -1.0, 10.0], tau_pts=[8.0, 8.0, 20.0],
+            tau_cap=0.0, omega_floor=-100.0,
+        ))
+
+        # (a) Motoring: τ > 0, ω > 0 → P > 0.
+        u[gnd_idx] = 10.0
+        tau_pos, _ = get_generator_torque(u, sys, p, 0.0, wind_fn; brake_engaged=false)
+        @test tau_pos > 0.0
+        @test tau_pos * u[gnd_idx] / 1000.0 > 0.0
+
+        # (b) Reversed ring: τ > 0, ω < 0 → P MUST be negative.
+        u[gnd_idx] = -5.0
+        tau_rev, _ = get_generator_torque(u, sys, p, 0.0, wind_fn; brake_engaged=false)
+        P_signed = tau_rev * u[gnd_idx] / 1000.0
+        @test tau_rev > 0.0
+        @test P_signed < 0.0                                  # the contract
+        @test tau_rev * abs(u[gnd_idx]) / 1000.0 > 0.0        # the banned form masks it
+    finally
+        set_generator_load!(prev)
+    end
 end
 
 @testset "grep guard for inline power formulas" begin

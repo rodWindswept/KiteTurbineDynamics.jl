@@ -33,4 +33,30 @@ using KiteTurbineDynamics
     @test mass_min_fitness(6.0, 3.0, cfg, 10.0) == 10.0   # feasible -> mass
 end
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 2026-09-08 audit (recommendation 1): the LIVE scoring seam had no guard.
+# `appropriate_mass_fitness` is the fitness the 5 kW campaign runner scores with
+# (run_v13_5kw_masslift.jl:275).  Its v11/v12 siblings are guarded above; a
+# regression that dropped the isfinite check from appropriate_mass_fitness alone
+# would leave every test above GREEN — the sharpest false-confidence gap in the
+# suite.
+# ══════════════════════════════════════════════════════════════════════════════
+@testset "appropriate_mass_fitness — non-finite FoS (live campaign seam)" begin
+    cfg = ObjectiveConfig(; fos_hard=2.5, p_floor_kw=5.0)
+
+    # A null structural measurement cannot buy a feasible mass score.
+    @test KiteTurbineDynamics.appropriate_mass_fitness(6.0, Inf, cfg, 10.0) == Inf
+    @test KiteTurbineDynamics.appropriate_mass_fitness(6.0, NaN, cfg, 10.0) == Inf
+    @test KiteTurbineDynamics.appropriate_mass_fitness(6.0, -Inf, cfg, 10.0) == Inf
+
+    # The legitimate hard floors stay intact …
+    @test KiteTurbineDynamics.appropriate_mass_fitness(6.0, 1.9, cfg, 10.0) == Inf
+    @test KiteTurbineDynamics.appropriate_mass_fitness(4.0, 3.0, cfg, 10.0) == Inf
+
+    # … and a feasible machine returns finite mass-plus-penalties (penalties only add).
+    f = KiteTurbineDynamics.appropriate_mass_fitness(6.0, 3.0, cfg, 10.0)
+    @test isfinite(f)
+    @test f >= 10.0
+end
+
 println("\n✓ fos-guard acceptance tests complete (expect RED until the guard lands)")

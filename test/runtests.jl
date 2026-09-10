@@ -55,4 +55,5 @@ using KiteTurbineDynamics
     include("test_mass_model_2026_09.jl")
     include("test_settle_blocking_2026_09.jl")
     include("test_fitness_appropriateness_2026_09.jl")
+    include("test_system_defaults.jl")
 end

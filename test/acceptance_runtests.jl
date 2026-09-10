@@ -1,6 +1,6 @@
 # test/acceptance_runtests.jl — SLOW ACCEPTANCE SUITE (~18 min, parallel)
 #
-# The five ODE-heavy acceptance tests. Each builds a genome, settles it
+# The seven ODE-heavy acceptance tests. Each builds a genome, settles it
 # (30,000 steps) and runs a 5-30 s simulation window at dt=4e-5. These are
 # the DYNAMIC checks that a static unit test cannot see:
 #
@@ -18,9 +18,14 @@
 #   test_settle_lowk_honest.jl    (A1-A3)  low-k rejects carry honest telemetry
 #                                         (no 0 kW/FoS=Inf disguise); settle
 #                                         scan clamps to rising side of cp.
+#   test_physics_path_ode.jl     (P1-P2)  the ODE cold path honours the
+#                                         EXPANSION_PHYSICS toggles: the seed
+#                                         is healthy under DEFAULT physics and
+#                                         LEGACY must give a different result
+#                                         (2026-09-08 audit recommendation 2).
 #
-# WHY NOT IN runtests.jl: these six are ~40 min of the suite when run in
-# sequence. They run here as six INDEPENDENT subprocesses in PARALLEL
+# WHY NOT IN runtests.jl: these seven are ~40 min of the suite when run in
+# sequence. They run here as seven INDEPENDENT subprocesses in PARALLEL
 # (~18 min wall-clock, bounded by the slowest file, test_evaluator_v13.jl),
 # so the fast unit suite stays fast.
 #
@@ -39,6 +44,7 @@ const ACCEPTANCE_FILES = [
     "test_rotor_power_realism",
     "test_settle_drag_alignment",
     "test_settle_lowk_honest",
+    "test_physics_path_ode",
 ]
 
 # Launch each acceptance file as its own julia process. Each file is a

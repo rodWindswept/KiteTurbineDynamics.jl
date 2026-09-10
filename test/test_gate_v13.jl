@@ -71,6 +71,26 @@ P_direct = tau_gen * w_gnd / 1000.0
 println("  gate P_gen=", round(fin.P_gen, digits=3), " kW   direct P_gen=", round(P_direct, digits=3), " kW")
 check("A4: P_gen matches τ_gen·ω_gnd recomputation (bit-identical)", isapprox(fin.P_gen, P_direct; rtol=1e-9))
 
+println("=== A5: a broken-line machine must hard-reject (gate bug 1, 2026-09-04) ===")
+# Bug 1: the gate verdict ignored the rope-break latch, so a machine whose line
+# broke during the window could still read ok.  Drive a machine whose lines
+# GENUINELY break — an under-strength tether (low EA ⇒ the const-tension lift
+# over-strains it) — and assert the gate rejects on the latch.
+# Tuning (probe 2026-09-10, seed genome): p2.tether_diameter 0.0005 → healthy
+# (ok=true, P_gen 6.19 kW); 0.00025 → line breaks, gate rejects.  mass_scale
+# multiplies the diameter by sqrt(5/1.5) ≈ 1.83 on the way to the built machine.
+p_thin = override_params(params_daisy(); tether_diameter=0.00025)
+rb = gate_design(seed_genome(KW); L=L18, KW=KW, p2=p_thin)
+println("  thin-tether gate: ok=", rb.ok, "  line_broken=", rb.line_broken,
+        "  P_gen_final=", round(rb.P_gen_final, digits=2), " kW",
+        "  ω_gnd=", round(rb.w_gnd_final, digits=2),
+        "  clearance=", round(rb.clearance, digits=2), " m")
+check("A5: the broken machine's power/ω/clearance alone would pass the gate",
+      rb.P_gen_final >= MIN_P_GEN_KW && rb.w_gnd_final > MIN_W_GND &&
+      rb.clearance >= MIN_CLEARANCE)
+check("A5: the rope-break latch is set", rb.line_broken)
+check("A5: the gate rejects the broken-line machine", !rb.ok)
+
 println()
 if isempty(failures)
     println("ALL ACCEPTANCE TESTS PASS")
