@@ -9,6 +9,11 @@ Read `docs/plans/2026-09-11-settle-ode-coherence.md` first — it is the live pl
 
 ## 1. Running Julia in this sandbox (read this first)
 
+> **SUPERSEDED 2026-09-12.** Use `scripts/ktd-julia` and `scripts/ktd-format`; see
+> `handovers/handover-2026-09-12-session-state-and-preload-rootcause.md` §2. The
+> commands below still work, but they are no longer the canonical form, and
+> JuliaFormatter **is** now installed.
+
 * `/snap/bin/julia` **does not work** (`cannot create transient scope: DBus error …
   [Process 3 is a kernel thread, refusing.]`, exit 46). Use the raw binary.
 * Canonical invocation, from the repo root:
@@ -29,14 +34,19 @@ Read `docs/plans/2026-09-11-settle-ode-coherence.md` first — it is the live pl
 
 ## 2. Standing constraints (do not violate)
 
+> **PARTLY SUPERSEDED 2026-09-12.** The final bullet is now wrong: `git` head is
+> `98c438c` and all the work described in this document is committed. See the
+> 2026-09-12 handover §3.
+
 * **Campaigns are paused.** A short `--gen 1` campaign was pre-authorised once the
   R7 code was green; it has now been run (see §7). Do not launch another without
   explicit go-ahead.
 * The **six static guards** are done and pushed (`b427143`) — do not redo them.
 * **NAS brain sync belongs to Hermes** — do not touch it.
 * The **imported desktop sessions are read-only** — do not resume or edit them.
-* `git` head is `853d551`. Everything from R7–R10, R11 and this session is
-  **uncommitted in the working tree**.
+* ~~`git` head is `853d551`. Everything from R7–R10, R11 and this session is
+  **uncommitted in the working tree**.~~ **SUPERSEDED 2026-09-12:** head is
+  `98c438c`; all of it is committed across nine commits.
 
 ## 3. What this session delivered
 
@@ -319,7 +329,7 @@ adds no packages; importing the package pulls 209 and ModelingToolkit v11).
 |---|---|
 | `src/initialization.jl` | `design_axial_preload`, `_matched_place_twist`, restructured `settle_to_operational_state` |
 | `test/test_settle_preload_consistency.jl` | new fast guard (2 testsets, ~24 s) |
-| `test/runtests.jl` | wires the above in (now 42 files) |
+| `test/runtests.jl` | wires the above in (42 files then; 50 now) |
 | `docs/plans/2026-09-11-settle-ode-coherence.md` | **live plan** — root cause, fix, verification, §2.4 preload spec, §5 verdicts |
 | `docs/plans/2026-09-11-settle-fix-acceptance-reds.md` | per-test diagnosis with evidence E1–E9 |
 | `docs/plans/2026-09-11-tether-drag-validation.md` | Tveide validation + derived equivalence |
@@ -345,6 +355,8 @@ adds no packages; importing the package pulls 209 and ModelingToolkit v11).
 5. Then the tilt limitation, then the drag-factor commit, then the wobble policy.
 6. Only then re-run the campaign.
 
-Nothing in `src/`/`test/` is committed. Do not commit until acceptance is green —
+~~Nothing in `src/`/`test/` is committed. Do not commit until acceptance is green —
 the current tree has a verified fix and three red tests, two of which are real
-findings.
+findings.~~ **SUPERSEDED 2026-09-12:** Rod directed that this be committed
+regardless, to create a rollback point, with the three reds recorded as real
+findings rather than breakage. All of it is committed.
