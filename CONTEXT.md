@@ -1,6 +1,6 @@
 # CONTEXT.md — KiteTurbineDynamics.jl
 
-**Last updated:** 2026-08-22
+**Last updated:** 2026-09-11
 
 ## What this is
 
@@ -214,8 +214,13 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 
 ## Known limitations
 
+- **Real FoS shortfall — the current blocker (2026-09-11).** With the settle↔ODE coherence fix in place, the 5 kW seed produces rated power (5.139 kW) at healthy twist but reads **FoS 1.31 (20 s) / 1.83 (5 s)** against the 2.5 floor. The previously recorded 2.78 `:ok` was **inflated by the under-twisted start state**, so the R7 closed-form beam sizing is optimistic and `SIZING_FOS_MARGIN` was calibrated against an artefact window. Do not re-baseline the acceptance tests to a passing status — that pins a real safety signal. Plan: `docs/plans/2026-09-11-settle-ode-coherence.md` §5.
+- **Axial-preload formula is unvalidated (2026-09-11, OPEN, approved to fix).** `design_axial_preload` resolves rotor thrust as a horizontal force and the airborne weight as `W/sin β`. The ODE applies thrust **along the shaft axis** (`src/ring_forces.jl:215`), so the thrust round-trip is numerically neutral but the weight term is not (axial gravity is `W·sin β`, and the sign assumes the lift kite carries the weight). The ODE settles to 301 → 208 N/line where the formula prescribes 283 → 265. Fix is specified in the plan §2.4: a scalar fixed point on the ODE's own hub axial balance.
+- **Ring-plane tilt in the settle (~35 % tension error).** `_matched_place_twist` assumes ring planes perpendicular to the shaft axis; where the settled `_tilted_ring_basis` tilt is significant the achieved preload tension runs ~35 % high. Twist (and so the wind-up fix) is unaffected. Two corrections attempted and failed — see plan §2.3.
 - **Static solver under-predicts dynamic k_mppt by ~3.3×.** DE campaigns use static equilibrium; dynamic verification must follow. Use `--conservative` flag (k_mppt_safety=3.0) for static campaigns.
-- **Settle-vs-ODE equilibrium gap (2026-08-22, workstream open).** `settle_to_operational_state` parks ~11.96 rad/s where the ODE equilibrates ~14.3+ rad/s (under-predicts — the old over-prediction was the removed hub-brake). Proposal: `docs/plans/2026-08-22-settle-ode-gap-workstream.md`.
+- **Settle-vs-ODE equilibrium gap (2026-08-22).** `settle_to_operational_state` parks ~11.96 rad/s where the ODE equilibrates ~14.3+ rad/s (under-predicts — the old over-prediction was the removed hub-brake). Proposal: `docs/plans/2026-08-22-settle-ode-gap-workstream.md`. **The twist half of this gap was root-caused and fixed on 2026-09-11** — it was the axial preload, not frame softness; the ω-parking half is still open.
+- **Artificial rope damper with no physical basis.** `lin_damp = 0.05` in `evaluate_windowed` is a numerical crutch, mislabelled "bearing damper", that dominates the structural loads (off: 95–606 N; on: 90–217 N).
+- **Undamped ~10 s lateral shaft wobble.** A real lightly-damped mode (hub swings up to 0.49 m). Line drag cannot damp it (line Re ≈ 1500, ζ ≈ 0.001). Reframed as a **wobble-policy decision**: structural damper vs dynamic amplification factor vs wobble gate.
 - **Physics-validation ledger** (`docs/validation/physics-validation-ledger.md`) — every load-bearing claim maps to a source + status; retired claims (hub-brake "3.15 kW", 210 g blades, 34.3 m "18.8 m" machines) are recorded there, do not resurrect.
 - **Not yet fully parametric.** Node/ring/line counts derived from configurations rather than flowing entirely from `SystemParams`.
 - **Elevation angle β fixed at 30°** in most campaigns. V9 freed it but others clamped it.
@@ -250,7 +255,7 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | `docs/case-notes/03_missing_context.md` | 10 identified gaps |
 | `docs/case-notes/04_duplicates_report.md` | Version families (4 resolved, 5 open) |
 | `PROJECT_ROOM.md` | Index + cleanup status + campaign metrics |
-| `DECISIONS.md` | Running decision log (latest: 2026-08-22) |
+| `DECISIONS.md` | Running decision log (latest: 2026-09-11) |
 | `docs/archive/` | Superseded docs (PLAN.md, RESTART_INSTRUCTIONS.md, TODO.md) |
 | `AGENTS.md` | Cross-tool agent entry point |
 | `CLAUDE.md` | Developer commands + agent guide |

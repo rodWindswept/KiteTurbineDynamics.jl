@@ -12,7 +12,9 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 
 | File | Date | Topic |
 |------|------|-------|
-| `handover-2026-09-07-closed-form-beam-sizing.md` | Sep 07 | **CURRENT** — "shed structure" plan inverted (true FoS ≈ 1.2, under-strength); closed-form beam-sizing architecture proposed (REV 2) + orientation/off-by-one fixes landed + `solve_ring_Do` added; load case = generator load step; feather deferred. Next: `size_beams_closed_form` + evaluator wiring |
+| `handover-2026-09-11-settle-ode-coherence.md` | Sep 11 | **CURRENT** — settle↔ODE coherence fixed (matched-place twist+axial solve; wind-up root cause corrected — axial preload, not frame softness). Acceptance 5/8: the corrected state does **not** stall, it exposes a **real FoS shortfall** (seed 1.31–2.31 vs a 2.5 floor) — do not re-baseline. Next: derive the axial preload from the ODE kernel (Rod approved), then re-derive loads/margin/window |
+| `handover-2026-09-10-r7-complete.md` | Sep 10 | R7–R10 + R11 deliverables complete; short campaign blocked by the (then-misdiagnosed) settle gap |
+| `handover-2026-09-07-closed-form-beam-sizing.md` | Sep 07 | "shed structure" plan inverted (true FoS ≈ 1.2, under-strength); closed-form beam-sizing architecture proposed (REV 2) + orientation/off-by-one fixes landed + `solve_ring_Do` added; load case = generator load step; feather deferred |
 | `handover-2026-08-21-daisy-anchored-5kw-campaign.md` | Aug 21 | gate aligned to Daisy anchor; Gate 1c blade mass fixed; smoke passed at 18.8 |
 | `handover-2026-08-20-model-scaling-daisy-anchor.md` | Aug 20 | 50 kW blade-mass/radius/annulus contamination fixed; Daisy anchor saved; mass-minimisation objective (FoS 2.5); 5 kW re-run config assembled; Daisy seed stall = the open task |
 | `handover-2026-08-12-5kw-baseline.md` | Aug 12 | 5kW baseline: ODE viability confirmed (2.7 kW), static/ramp evaluator false-negatives diagnosed, torsional FoS power-dependence, V12 cold-start campaign config |

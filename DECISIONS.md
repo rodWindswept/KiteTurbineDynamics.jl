@@ -10,6 +10,318 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-11] Settle↔ODE coherence: matched-place twist+axial solve (wind-up root cause corrected)
+
+**Context:** Every ODE window opened with a large jerk and then wound up for
+~100 s (cumulative twist 42.5° → 294°). The returned state's first-frame residual
+was measured at 3.05 kN node force imbalance (≈390 g) and 87 N·m ring torque
+imbalance (23 % of τ_gen), and `n_op = 30 000` vs `150 000` gave **bit-identical**
+output — so the operational settle was converged and the defect was structural.
+
+The workstream doc (§2.16, 2026-09-10) had attributed it to a "~270× torsionally
+softer frame" whose rings move laterally to hold the chord. **That diagnosis was
+wrong** and now carries a SUPERSEDED banner.
+
+**Measured root cause.** The preload restore set each segment's ring **axial gap**
+for the *untwisted* line and only then applied the twist. Since
+`chord² = L_ax² + r_a² + r_b² − 2·r_a·r_b·cos Δα`, the twist term alone stretches
+the line: at the Δα = 6.58° the old bisection converged to, that twist strain was
+1.6e-3 — **six times** the intended preload strain (2.7e-4). The segment therefore
+behaved ~7× too stiff in torsion, the settle returned a ~7× under-twisted state,
+and the ODE relieved it by shortening the transmission. Evidence: settle vs run
+showed **identical transmitted torque profiles**, twist 6.58° vs 48.85°, line
+tension 1947…601 N vs 301…208 N, chord within 1.6 %, ring lateral offsets ≤0.032 m.
+
+**Decisions:**
+1. **`_matched_place_twist`** (`src/initialization.jl`) solves `(Δα, L_ax)`
+   together per segment in closed form, so each segment carries the intended
+   preload `T_s = F_ax[s]/n_lines` at its final twist:
+   `chord = chord0·(1 + T_s/EA_single)`, `sin Δα = τ_target·chord/(n_lines·T_s·r_a·r_b)`,
+   `L_ax = √(chord² − r_a² − r_b² + 2·r_a·r_b·cos Δα)`. `O(Nr)` arithmetic, no ODE
+   calls, no per-eval cost — it *replaces* the pinned position restore and the
+   separate twist bisection rather than adding to them.
+2. **`design_axial_preload(sys, p, lift_device)`** extracted and exported, so the
+   intended preload is testable and singular.
+3. **The legacy torque-chain bisection is retained unchanged** for the
+   `lift_device === nothing` path (control-map / calibration scripts and several
+   tests use it). Rope-node interpolation was moved out of it so both paths share
+   one implementation.
+4. **The transmission shortens** (18.805 → 18.173 m). Per Rod (2026-09-11) this is
+   not the tether line shortening but the transmission *axis* shortening under
+   torsional deformation, as the lines wrap around the axis. Accepted.
+5. **New fast guard** `test/test_settle_preload_consistency.jl`: settled tension
+   must equal `F_ax/n_lines` (15 %) and the first segment must be past 30°, on two
+   geometries.
+
+**Verified:** first segment 6.58° → 51.94°, cumulative 42.5° → 277.43°, tension
+1947…601 N → 283…265 N, and 277.4° → 299.7° over 60 s **then flat** (no wind-up);
+ω 12.98 → 13.24; ≈5.2 kW steady. Fast suite 2084/2084.
+
+**Alternatives rejected (all tested — do not retry):** a full-state damped Newton
+on the ODE residual (force residual improved but ring torque got worse, 87 → 225
+N·m, walked the lines slack); a staged positions-Newton + triangular twist
+bisection (diverged, twist 751°, tension 88 kN); simply unpinning the rings
+(`dt²·(F/m)` drift, unphysical twist distribution). The lesson: the coupling that
+matters is *axial geometry ↔ twist within one segment*, and solving it locally in
+closed form is cheaper and more robust than any global free-state solve.
+
+**Status:** implemented, in the working tree, **uncommitted**. Acceptance 5/8 —
+see the next entry. Open limitation: the chord solve assumes ring planes
+perpendicular to the shaft axis; where the settled tilt
+(`_tilted_ring_basis`) is significant the achieved tension runs ~35 % high (a
+14-segment geometry trips it; the campaign seed and a 3-rotor geometry are exact).
+**Twist, and so the wind-up fix, is unaffected** because Δα does not depend on
+`L_ax`. Two corrections were attempted and failed (post-settle second pass with
+the settled tilt basis; exact-chord solve) — both need a real debug, not a patch.
+
+**Plan:** `docs/plans/2026-09-11-settle-ode-coherence.md`.
+**Handover:** `handovers/handover-2026-09-11-settle-ode-coherence.md`.
+
+---
+
+## [2026-09-11] Corrected settle exposes a REAL FoS shortfall; do not re-baseline the red tests
+
+**Context:** The matched-place settle left `test/acceptance_runtests.jl` at 5/8.
+Diagnosis (`docs/plans/2026-09-11-settle-fix-acceptance-reds.md`) found one stale
+trigger and two real findings — and the headline is **not** a stall.
+
+**Decisions:**
+1. **`physics_path_ode` P1 is a real regression, and it must not be re-baselined.**
+   `status=reject`, `P_mean = P_end = 5.1390 kW`, `twist_crossed=false` — the
+   corrected state produces rated power at healthy twist; the **only** failing gate
+   is `FoS_min = 2.3139 < fos_hard = 2.5` (`src/objective_v12.jl:149`). The
+   previously recorded 2.78 `:ok` was **inflated by the under-twisted start**.
+   P1's config also omits `tether_diameter`, building 0.003 vs the campaign
+   0.003651 — and that is not FoS-neutral (rope self-weight enters the beam load,
+   `src/trpt_optimization.jl:443`); with the campaign tether the seed reads
+   **FoS 1.83 (5 s) / 1.31 (20 s)**. **The R7 beam sizing is therefore optimistic**,
+   and the earlier `SIZING_FOS_MARGIN` bump 1.15 → 1.3 (P1: 2.448 → 2.783) was
+   tuning a margin against an artefact window.
+2. **`settle_lowk_honest` A3 — fix the test, do not re-baseline `P_end`.**
+   `seed_genome_x()` (`test/test_settle_lowk_honest.jl:53-54`) applies **legacy 14-D
+   clamps `xr[8]`/`xr[10]` to the canonical 10-D genome**, so `bank_bottom` 0 → 3
+   and `blade_scale_bottom` 0.7 → 1.0; that over-loaded machine crosses the twist
+   limit. The twist-collapse sentinel (`src/objective_evaluator.jl:790-793`)
+   **zeroes `P_mean`/`P_end`/`FoS`**, which is why `P_end = 0.0` is not a
+   measurement and why `FoS_min = Inf` made the `FoS > 2.5` check pass spuriously.
+   Fix the indices to `xr[4]`/`xr[6]`.
+3. **`gate_v13` A5 — stale trigger, re-baseline the fixture.** The latch is a
+   *strain* limit (`ROPE_BREAK_STRAIN = 0.035`, `src/rope_forces.jl:31`), so it is
+   tension-independent and still sound at 283 N. The thin test line
+   (`test/test_gate_v13.jl:82`, d = 0.00025) only ever broke because the inflated
+   preload pushed its strain past 3.5 %; it now sits at 1.73 %. Use d = 0.00020
+   (verified to pass all three A5 checks), or lower `e_modulus` as a cleaner
+   fixture so the break does not happen during the settle.
+4. **Order of work (Rod, 2026-09-11):** preload derivation first, then re-derive
+   loads → re-check `SIZING_FOS_MARGIN` and the seed's structural margin → re-check
+   the window → only then re-baseline. The FoS shortfall is the real blocker.
+5. **The FoS baseline must be min-over-long-window**, because the FoS trace
+   oscillates in a ~2 s limit cycle; a 5 s window reads 1.83 where 20 s reads 1.31.
+
+**Status:** active and blocking. `src/` change uncommitted; acceptance must not be
+"fixed" by editing expectations.
+
+### Preload formula recorded OPEN in the same session
+
+`design_axial_preload` was lifted **verbatim** from the old initialiser, so the fix
+inherited its formula. Rod (2026-09-11) flagged that resolving rotor thrust as a
+horizontal force is wrong, and the model agrees: the ODE applies thrust **along
+the shaft axis** (`src/ring_forces.jl:215`, `forces[hub_gid] .+= thrust_mag .*
+tether_dir`), with `cos²β` at `:208` already the normal-wind projection. So the
+`·sin(β)` then `/sin(β)` round-trip is numerically neutral but conceptually wrong,
+while `−W/sin(β)` is **not** neutral — it resolves a vertical load axially where
+the axial component of gravity is `−W·sin(β)` (−384 N vs −96 N at β = 30°), and its
+sign silently assumes the lift kite, not the shaft, carries the weight. The gap is
+already visible: the ODE settles to 301 → 208 N/line while the formula prescribes
+283 → 265, which is consistent with the residual ~8 % twist drift still observed.
+
+**Decision:** replace the hand-built `F_top` with a scalar fixed point on the ODE's
+own hub axial balance (`T_top -= 0.7·m_hub·a_ax`, converge at 1e-2 N), keeping the
+old expression **only** as a first guess, and returning a hard failure rather than
+silently falling back. Validate across β = 30/45/60/70° and ≥2 ring counts, and
+assert it reproduces the ODE's measured tensions — a **correctness** guard, since
+the existing guard is only self-consistency and would pass with a wrong `F_ax`.
+Spec: `docs/plans/2026-09-11-settle-ode-coherence.md` §2.4.
+
+**Status:** OPEN, approved, not started — the next task.
+
+---
+
+## [2026-09-11] Tether-drag factor validated against Tveide; TRPT is not a Tethers.jl problem
+
+**Context:** Rod's brief asked to validate or replace
+`tether_curvature_factor = 0.5` (`src/objective_v6.jl:246`, applied `:334`) — the
+**static** estimator that feeds R7's equilibrium ω, not the live ODE path.
+
+**Decisions:**
+1. **The conversion is derived, not hypothesised.** From Tveide's own
+   `solved_drag_coefficient_multiplier` (`src/TetherDragODESolver.jl:291-301`),
+   `P_true = multiplier · ½ρ Cd d ω³ L r1³`, giving
+   **`factor_KTD = multiplier · 4·r1³ / (r0³ + r0²r1 + r0·r1² + r1³)`**.
+   Falsifiable check: a belly-free straight taper predicts
+   `multiplier = Σr³/(4r1³) = 0.3277` at KTD geometry; the solver's high-tension
+   limit returns `1.007/3.052 = 0.330`. (The constant-radius case is degenerate —
+   both candidate formulae give 1.0 — so the straight-**taper** check is the real
+   one.)
+2. **At KTD's operating point (305 N, zero twist) the factor is ≈1.09**, so 0.5
+   under-estimates tether drag ≈2.2×. Since the live ODE path already behaves as
+   factor 1.0, landing this is itself a settle↔ODE coherence fix.
+3. **Land it as a separate commit with its own acceptance run**, so the FoS effect
+   of each change stays attributable.
+4. **Tethers.jl 2.0.0 is scoped out for the TRPT shaft.** Per Rod: it belongs to
+   the single-line yo-yo AWES family (one tether, ground station to kite, fixed
+   rotation reference), not to the many individual tethers of a TRPT system. The
+   source agrees (`Tether_quasisteady.jl:473-476` pins the ground end at the
+   origin and derives ω about that axis; no twist DOF, no torsional stiffness,
+   normal-only drag, no internal damping). Its only legitimate KTD use is as an
+   **offline** reference for the not-yet-built lift/back-line catenary
+   (`docs/plans/2026-05-08-multi-segment-lift-backline.md`), via vendoring the two
+   QSM files. **No TRPT result should be validated against it.**
+
+**Outstanding:** `TETHER_DRAG_CD = 1.0` vs Dunker (VIV +300 %, galloping +210 %;
+KTD line Re ≈1500 is inside the VIV range); confirm ring-strut drag
+(`TUBE_DRAG_CD = 1.2`) and Wacker's frame-drag share are counted once. Low-tension
+caveat: Tveide returns a negative efficiency ratio at 150–305 N.
+
+**Status:** validation complete and documented
+(`docs/plans/2026-09-11-tether-drag-validation.md`,
+`docs/plans/2026-09-11-tethers-jl-assessment.md`); the drag-factor code change is
+deliberately **not landed**.
+
+---
+
+## [2026-09-10] R7: closed-form beam sizing wired, free beam genes dropped (14-D → 10-D genome)
+
+**Context:** The v13 evaluator treated the four beam cross-section genes
+(`Do_top`, `t_over_D`, `beam_aspect`, `Do_scale_exp`) as free DE dimensions and
+validated them with a per-window frame FEA. That is slow and it let the 5 kW
+winner land on 6.2 mm transmission rings at true FoS ≈ 1.2. The beam is
+load-derived: once the rotors are decoded the thrust/torque/tension are fixed.
+
+**Load-build investigation (Rod's question: why was the ODE line tension ~2.5×
+the static estimate?).** Measured on the settled 5 kW seed
+(`scratch/r7_tension_budget.jl`):
+
+- ODE segment tension ≈ 365 N/line at the ground = rotor thrust (≈ 250 N/line,
+  from the **decoded** 3.66 m annulus at the operating `ct_at_tsr(λ) ≈ 0.79`)
+  + constant-tension lifter (≈ 72 N/line) + ≈ 15 % weight/tilt/dynamic.
+- The legacy static build used `BEM.rotor_radius_for_power(P, v_local)` (≈ 2.1 m
+  — a *radius for power*, not the rotor) with `CT = 0.55` and omitted the lifter,
+  giving 145 N. **That, not the DLF, was the discrepancy.** The 2026-09-06
+  "effective DLF ≈ 0.18" was `N_comp / T_line` with the *ODE* tension on the
+  `n_lines = 3` winner; the same vertex force carries the polygon factor and is
+  0.32 in the `n_lines = 6` seed's transmission cylinder.
+- The per-ring axial load is `F_kink + F_helix`: a **signed taper kink**
+  (exact geometry; 0 at a constant-radius cylinder, up to 0.46·T at the cone
+  top) plus a **torque-helix** term (0.32·T). Bending is negligible
+  (FEA util_ax 2.4 vs util_bend 0.002).
+
+**Decisions:**
+1. **Canonical 10-D genome.** `TRPT_V10_DIM = 10`; the four beam genes are gone.
+   Layout: `[r_hub, r_bottom, target_Lr, n_lines, density_profile,
+   rotor_count, bank_top, bank_bottom, blade_scale_top, blade_scale_bottom]`.
+   Legacy 14-D vectors are still accepted and sliced (`canonical_v10`), so old
+   call sites and CSVs keep working; the live evaluator ignores the legacy beam
+   genes and re-sizes.
+2. **`size_beams_closed_form(dec, p_base, cfg)`** derives every ring's tube:
+   `F_v = F_kink(signed) + HELIX_LOAD_FACTOR·T_line`, `T_line = TENSION_LOAD_MARGIN
+   ·thrust/n_lines + T_lift/n_lines`, `solve_ring_Do` per ring with
+   `FixedFixedEnds` and `SIZING_FOS_MARGIN`. Centrifugal relief is NOT applied:
+   the ODE models blade/ring rotational mass as inertia and `analyse_ring` has
+   no radial centrifugal term, so applying it made the closed form under-size
+   against its own verifier. Recorded as a model gap.
+3. **One tube authority:** the solved per-ring `Do` vector lives in
+   `sys.ring_Do_per_ring` and every consumer reads it through `ring_Do_at` — the
+   ODE ring-beam drag (`dynamics.jl`), the settle parasitic drag
+   (`initialization.jl`) and the verification FEA (`ring_element_analysis.jl`).
+   Empty vector = legacy taper-law fallback.
+4. **Hub ring is a first-class load case.** `ring_element_analysis` now includes
+   it (`ring_ids[2:end]`; ground ring still excluded) and the closed form sizes
+   it at the worse of the rated load and `(T_peak, ω = 0)`. Both legacy paths
+   skipped it — the hidden weakest ring class.
+5. **`t_over_D` pinned** (0.055) with `min_wall_m` as the wall floor (REV 2 §7.6).
+
+**Verification:** fast suite 2117/2117; `test_evaluator_v13.jl` B6 re-baselined —
+the previously under-strength winner is re-sized and now reads `:ok` with
+`FoS_min 4.85` at `P_mean 5.41 kW`. FEA on the 5 kW seed: `FoS_min 2.89`
+(floor 2.5). `gate_design` now builds the same sized tube the evaluator scores.
+
+**Open blocker (found when the re-baseline campaign was launched):** over the
+40 s honest window the seed's `twist_ratio` climbs monotonically 0.52 → 0.81
+while power and ω stay steady, spiking the transmission-ring load and dropping
+the windowed FoS to 1.63 (below the 2.5 gate) — even though the 5 s acceptance
+window reads 2.78. **Diagnosed 2026-09-10** (`docs/plans/2026-09-10-shaft-windup-workstream.md`):
+two effects stack. (i) `settle_to_operational_state` initialises the shaft at
+only **42.5°** cumulative twist while the running equilibrium is **≈ 294°** (first
+segment 6.6° vs 48.8°). Diagnosed 2026-09-10: the settle's torque law is
+*identical* to the ODE's (`compute_rope_forces!` curves agree to machine
+precision — both are genuine equilibria), but the settle assumes a **rigid
+frame**. At 48.8° a rigid frame would need a 1.266 m chord (stretching the line
+→ ~25 kN); the running shaft keeps the chord at 1.171 m by **moving the rings**,
+so it is ~270× torsionally softer. Matching the ODE therefore needs a coupled
+position+twist static equilibrium, not a twist-target tweak. (ii) Underneath it, the transmission-ring load
+carries a **sustained ≈ 10 s limit cycle** (`N_comp` 120 ↔ 200 N, FoS 1.9 ↔ 2.8)
+that does not decay over 140 s; the static closed-form sizing cannot cover its
+trough. The cycle is **physical, not numerical**: halving `dt` roughly doubles
+its amplitude (the coarse step was damping a real mode). **Damping audit
+(2026-09-10):** the old per-step-unscaled damping mistake is NOT on the live
+path (`run_canonical_sim!` applies only the dt-scaled rope damper; the unscaled
+`ang_damp` is legacy and off), but that rope damper is itself the problem —
+`lin_damp = 0.05` is an artificial ~13 µs numerical stabiliser with no physical
+basis, and it dominates the loads (`N_comp` swings 95–606 N with it off vs
+90–217 N at 0.05). It is also mislabelled a "bearing damper" (it damps rope
+nodes). Every FoS and beam size currently depends on it. **The mode is shaft
+lateral wobble** (`scratch/r7_mode_id.jl`): `N_comp` tracks the ring-centre
+lateral offsets (hub ring swings up to 0.49 m sideways, r = 0.65), not twist,
+and it does not decay under the model's physical damping alone
+(`scratch/r7_phys_damp.jl`: range 473 → 402 over 120 s with the artificial damper
+off). A deliberate model feature — the orbital-damper docstring leaves rings free
+to wobble — that the static strut sizing cannot cover. Not a beam-sizing miss,
+not a torsional-collapse instability. Fix options are in the workstream doc
+(re-examine the rope damper first, then decide the wobble policy); Rod has
+assigned it its own workstream, so the campaign stays paused until it lands.
+
+**Campaign outcome (collected 2026-09-10).** The pre-authorised short campaign
+did run: 3 islands, `--gen 1`, tag `r7rebase`. Island 3 completed (20 evals,
+8035 s); islands 1/2 were killed early by the harness (10 / 17 evals). Across
+**47 genomes: zero valid** — 39 `reject`, 5 `reject_twist`, 3 `clearance_reject`,
+0 `ok`. So the R7 evaluator's early population cannot simultaneously meet
+FoS ≥ 2.5 and P ≥ 5 kW; the wobble-driven strut load is the gate. Line drag
+cannot damp it (round 7: line Re ≈ 1500, drag force at the wobble peak 0.003 N,
+mode damping ratio ζ ≈ 0.001) — the fix is a wobble-policy decision (structural
+damper vs dynamic amplification factor vs wobble gate) or a coupled settle, both
+scoped in `docs/plans/2026-09-10-shaft-windup-workstream.md`.
+
+**Supersedes:** the "effective DLF ≈ 0.18" reading in the 2026-09-06 plan (§10)
+as a *sizing coefficient*. The 0.18 remains correct as an ODE-tension ratio.
+
+---
+
+## [2026-09-10] R10: archive the dead-builder-only tests, era-pin the provenance ones
+
+**Context:** the 2026-09-08 test-appropriateness audit found 8 LEGACY-ONLY test
+files — green against code the v13 chain never calls, so a green run reads as a
+false "v13 health" signal. Rod's call (2026-09-10): archive the
+dead-builder-only files, era-pin the provenance-valuable ones.
+
+**Decision:**
+- **Archived** to `test/archive/` and removed from `test/runtests.jl`
+  (reasons in `test/archive/README.md`): `test_parameters` (pins `params_10kw`,
+  the DRR anchor), `test_expansion_stack` (only caller is `objective_v6`),
+  `test_trpt_axial_profiles` (v2 design stack removed in v4),
+  `test_physics_path_guard` (guards the static `objective_v10`; the live guard is
+  `test_physics_path_ode`).
+- **Era-pinned** (still run, with an `ERA PIN` header that says a green run is
+  not a v13 signal): `test_blade_geometry`, `test_documented_claims`,
+  `test_lift_kite_rotary`.
+- Fast suite: 44 → 40 files, 2049 assertions green.
+
+**Follow-up:** the museum-pin *testsets* inside live files (first seven of
+`test_builders_v10.jl`; testsets 4-6/8-9 of `test_ring_spacing_v4.jl`) were not
+split out.
+
+---
+
 ## [2026-09-06] TRPT beam sizing: load case = generator load step; high-wind feather deferred
 
 **Context:** Re-gating the 5 kW winner with the aligned FoS model (wall floor →
@@ -40,7 +352,715 @@ the hub ring must be added to the structural checks. The load-step magnitude
 
 ---
 
+## [2026-09-04] Corrected 5 kW campaign — valid winner, mass model verified
+
+**Result:** the re-run (`v13_5kw_masslift_len18.8_rotorcount`, launch git
+`cb12183`) completed all 30 generations on all three islands.  Global best =
+island 1, fitness **18.49 kg**.  Re-gate PASSES (P 5.41 kW, FoS 17.19,
+clearance 5.73 m, twist ratio 0.5, tip sanity ok).  See
+`scripts/results/v13_5kw_masslift_len18.8_rotorcount/regate_verdict.md`.
+
+**The corrected mass model closes the exploit.**  The winner is the SAME corner
+as the 08-28 VOID winner (single rotor, n_lines = 3, r_hub 4.32 m at the hi
+bound, Do 0.03 m at the lo bound) but now at a **defensible no-lifter mass of
+10.94 kg** instead of a bogus 4.4 kg — a ~2.5× correction driven by the 2 mm
+wall floor + per-ring sum + ring knuckles.  Breakdown: hub ring 6.32 kg (30 mm /
+2 mm wall), 5 transmission rings 0.95 kg (6.2 mm / 2 mm), blades 3.11 kg,
+knuckles 0.19 kg, tether 0.57 kg.  The old toothpick 2.3 mm / 0.06 mm rings are
+gone (now floored to 2 mm wall).
+
+**Findings to carry forward (not re-run yet):**
+- **Single rotor + triangle (`n_lines = 3`) dominates again.**  `n_lines = 3` is
+  allowed (only 2 is flown-unstable per Rod); the triangle form is flagged for
+  Rod's review, not auto-constrained.
+- **FoS 17.2 vs the 2.5 floor** → the 30 mm OD / 2 mm wall baseline is
+  over-conservative for 5 kW; there is structural weight to shed, noted not
+  re-run.
+- The winner is slightly over-rated (5.4 kW vs 5.0); `appropriate_mass_fitness`
+  charges it correctly (fitness 18.49 = 15.94 raw + ~2.5 penalty).
+
+**Next:** acceptance re-baseline on this winner (in progress);
+`docs/plans/2026-09-02-future-work-and-reporting.md` holds the dashboard check,
+the reporting plan, the 1.5 kW campaign, and the tidal-device scoping.
+
+## [2026-09-04] Acceptance re-baseline + two gate bugs found and fixed
+
+**Re-baseline (per `docs/plans/2026-08-22-acceptance-rebaseline.md`).**  All six
+acceptance files are green on the corrected winner.  The five red files were
+stale-artifact/convention issues (they loaded `seed_5kw.csv`, `params_10kw`,
+length 21.2/18.0, old winner CSVs, and the legacy bitmask decode).  Re-pointed
+to `params_daisy`/18.8 m/`seed_genome(5.0)`/the campaign winner + the campaign
+decode knobs (`rotor_count_mode`, `cylinder_cone`, `power_split`, `blocking`),
+and re-measured (ω_zero_drag 16.05→15.6, low-k A3 P 7.15→6.25, R3 band 12.5–13.5→14.0,
+settle gap threshold relaxed 0.30→0.80 as the tracked `settle-ode-gap` open item).
+The historical collapse/flywheel regression artifacts no longer collapse or
+flywheel — the bugs they were written to catch are genuinely fixed — so those
+tests were re-scoped (B1→early-reject, B2→no-divergence, B3c dropped, gate
+A1→"winner passes").
+
+**Gate bug 1 — missing rope-break check.**  `ode_gate_v13.jl`'s `ok` condition
+ignored `sys.any_broken[]`, so a machine whose line broke during the window
+could still read "ok".  Added `&& !sys.any_broken[]` + a `line_broken` field +
+CLI message.
+
+**Gate bug 2 — fixed dt 4e-5 too coarse (the real "seed breaks" finding).**  The
+corrected seed's three-section geometry makes the transmission sub-segments
+short (L0 ≈ 0.29 m), so `stable_dt_for_system` returns **2.04e-5**.  The gate
+(and `test_rope_break` R3) ran at a fixed 4e-5 — 2× too coarse — which blew the
+rope tension to ~2.76 MN on the settle→run transition and tripped the breaker
+spuriously.  The evaluator never saw this because it already uses
+`stable_dt_for_system`.  Fixed: the gate + R3 now use `stable_dt_for_system`,
+plus a 10 s relax phase to match the evaluator's cold path.  Same class as the
+08-11 dt-stability finding.
+
+## [2026-09-02] Rotorcount winner VOID on mass model — fitness + mass law redesign
+
+**Context:** the 08-28 rotorcount campaign's global best (9.618 kg, single
+rotor, r_hub 4.31 m, 3 lines, Do 0.03, t/D 0.0275, Do_scale_exp 1.6) re-gated
+clean on power (5.1 kW) and FoS (17.6) but its no-lifter airborne mass
+(4.43 kg, φ 0.886 kg/kW) is below the Daisy anchor (~1.3) — the weight model
+under-prices this corner.  Investigation (this session) found three weight
+bugs and one consistency bug; the winner is therefore **VOID as a physical
+design** (ODE power/FoS are real, the mass/fitness ranking is not).
+
+**Weight bugs (see `docs/plans/2026-09-02-mass-model-audit.md`):**
+1. **No minimum tube size** — `Do(r) = Do_top·(r/r_hub)^Do_scale_exp` shrinks
+   the transmission rings to 2.3 mm / 0.06 mm wall (3 g each); the DE made the
+   lower tower ~15 g.  Only the wall/OD *ratio* was floored, not the absolute
+   size.
+2. **Uniform-average ring mass** — `build_system_from_v10` prices all rings with
+   one `m_ring` from `r_avg = 0.5·(r_hub+r_bottom)`.  Per-ring truth for the
+   winner: 5 transmission rings ≈ 3 g + hub 2.71 kg = 2.73 kg, vs the model's
+   5×0.317 = 1.59 kg (1.72× under-count).
+3. **Ring-vertex knuckles unpriced** — `expansion_airborne_mass` counts only
+   blade knuckles (`n_blades·0.050`); the ring→cable joints (≈ n_rings·n_lines)
+   are priced in the static optimiser (`knuckle_mass_at_ring`) and economics
+   model but not in the DE's mass.
+
+**Consistency bug:** the 0.75× wake de-rate is applied in `ring_forces.jl` (the
+ODE) and in rotor sizing, but **not** in the cold-start settle equilibrium scan
+(`settle_to_operational_state`, `initialization.jl` ~903–921), which uses full
+wind for every rotor.  **Correction (2026-09-02, after T2 measurement):** this
+is a real consistency gap and is fixed, but it is **not** the cause of island
+3's 7.45 kW → 5.37 kW decay — at the campaign's k=2.24 the settle already
+saturates at the cp-peak clamp, so the wake rule moves nothing (0 %).  Island
+3's decay is the separate settle-ODE gap (`2026-08-22-settle-ode-gap-workstream`).
+Single-rotor designs are unaffected by the blocking gap (wind_factor 1.0).
+
+**Decisions (Rod, 2026-09-02):**
+- **Fitness gains "appropriateness + safety" terms**: minimise mass, but
+  penalise P > 5 kW (no over-rated machine — "appropriate power-to-weight"),
+  penalise approaching overtwist, and penalise high beam utilisation (low
+  FoS margin).  Replaces the pure `mass_min_fitness` (hard-gate-only) shape.
+- **Minimum tube wall thickness = 2 mm**; **per-ring mass summation** (no
+  uniform-average shortcut); **every ring-vertex knuckle counted**, consistently.
+- **One-source-of-truth rule** for every shared physical quantity (ring mass,
+  knuckle mass, wake factor) — the recurring "inconsistent calculation" class
+  must not recur.
+- **Re-seed with safer, slightly heavier genomes** before the next attempt;
+  single-rotor dominance is to be re-confirmed, not assumed (its magnitude is
+  inflated by the weight bugs).
+- Fast-solver→ODE mapping deferred until the settle-scan blocking fix lands.
+
+## [2026-08-27] Downstream wake blocking + clearance authority + 5 kW re-seed
+
+Closes the two Rod-flagged pre-campaign items from the 08-26 recovery handover,
+plus the re-gate decode mismatch, so a full valid rotorcount DE run is possible.
+
+**1. Wake blocking — direction + real per-rotor de-rate (Rod's ruling).**
+Wind flows UP the shaft (the hub is downwind — thrust is "upward+downwind along
+shaft"), so the UPPER rotors are downstream and the LOWEST rotor sees
+freestream.  In a 3-rotor stack the top TWO are blocked, the bottom is not;
+blocking is NON-CUMULATIVE (each downstream rotor is blocked once by its
+immediate upstream neighbour — 0.75× freestream power, NOT 0.75² for the hub).
+`blocking_factor` is the INFLOW multiplier `0.75^(1/3) ≈ 0.9086` (P ∝ v³).  The
+old code de-rated `i > 1` (the LOWER rotors) — backwards — and only fed rotor
+SIZING, never the ODE.  Now `RotorSpecV10.wind_factor` is computed in the
+decode (`i < n_active ? blocking_factor : 1.0`), threaded through
+`expansion_params_from_rotors` → `ExpansionRotorParams.wind_factor`, and the
+main rotor's factor through `RotorSpec.wind_factor` (builder →
+`build_system_from_v10`).  `ring_forces.jl` multiplies the ODE wind by the
+factor for BOTH the main and expansion rotors, so the de-rate is real in the
+slow solver, not a sizing-only placeholder.
+
+**2. Ground-clearance authority (geometrically correct).**
+`lowest_rotor_clearance` (new, in `objective_v10.jl`) is the single authority,
+replacing four duplicated offset-only copies (runner, gate, two preflights).
+Two fixes: (a) the tip is the ABSOLUTE `ring_radius + blade_tip_radius`, not
+the 0.7·span offset (the 08-24 offset-vs-absolute class); (b) the tip drop
+accounts for the shaft elevation (`tip·cos(elev)`, not full `tip`) AND the
+blade bank angle (the outer tip swings toward the ground station by
+`tip·sin(bank)` down-shaft and `tip·cos(bank)` radially).  The decode now
+returns `radii` (ground-first, from `ring_spacing_v5`) alongside `zs` so the
+helper has ring radii without rebuilding.
+
+**3. Re-seed — r_hub 2.4 (was 2.775).**
+The Daisy-scaled single-rotor r_hub (2.775 m) is wrong for a 3-rotor co-axial
+stack under real blocking: it makes only 4.37 kW (reject) and its lowest rotor
+tip sits at 1.32 m (conservative formula) / 1.79 m (correct formula).  The
+re-seed keeps 3 rotors + blade_scale 0.7 but shrinks the per-rotor annulus to
+r_hub 2.4 m: measured on the fixed evaluator (cold start, k=2.24, honest
+window) — clearance 2.89 m, P 5.12 kW, FoS 10.6, fitness 53.7 kg, tension
+exact.  The old "3-rotor 37.7 kg vs 59.4 kg single" rationale is superseded.
+
+**4. Re-gate decode alignment.**
+`ode_gate_v13.jl` and `smoke_masslift_v13.jl` decoded with the legacy defaults
+(bitmask, full cone, no blocking) — gating a DIFFERENT machine than the
+campaign built.  Both now decode with `rotor_count_mode + cylinder_cone +
+power_split + cone_slope_deg + rotor_spacing_frac + blocking_factor` matching
+the runner, and `x10` rounds to `{1,2,3}`.
+
+**Tests:** `test/test_wind_blocking.jl` (wired into `runtests.jl`) pins the
+decode direction (hub+middle blocked, bottom freestream), the radii threading,
+the absolute-tip + elevation + bank clearance, the legacy-constructor
+`wind_factor=1.0` defaults, and the `expansion_params_from_rotors` propagation.
+Fast suite 1991/1991.
+
+## [2026-08-26] FoS_min off-by-one hid the buckled lowest ring — rotorcount winner VOID
+
+**Context:** `ring_element_analysis` already strips the ground ring AND the hub
+(`sys.ring_ids[2:end-1]`), so `ef.ring_fos[1]` is the lowest **floating** ring
+(the transmission-cylinder ring in three-section geometry).  `min_ring_fos`,
+`evaluate_windowed`, and `objective_evaluator_ramp` iterated from index 2
+instead of 1, silently skipping that ring.
+
+**Symptom:** on the rotorcount island-3 winner this hid FoS **0.57**
+(transmission cylinder buckled, util 1.75) behind the top-ring FoS 67.54 — so
+the FoS gate passed a structurally-invalid design.
+
+**Fix:** `min_airborne_fos(ring_fos) → (fos_min, idx)` — a single authority
+that iterates every airborne ring; wired into `min_ring_fos`,
+`evaluate_windowed`, `objective_evaluator_ramp`.  Regression test
+`test/test_airborne_fos.jl` pins the "index 1 included" contract.
+
+**Consequence:** winner re-eval → **reject** (FoS_min 0.556).  The
+`v13_5kw_masslift_len18.8_rotorcount` campaign has **no valid winner**, and
+islands 1/2 stopped early (gen 13/9 of 30).  This is the "geometry far from
+expected" symptom's second root cause (the first was the 08-24 dead genes):
+a structurally-invalid form passed the gate and was reported as a healthy
+winner.
+
+## [2026-08-26] Session recovery note
+
+The 08-25 → 08-26 session (three-section geometry + rotor_count_mode +
+parallel campaign + the two 08-26 bugfixes) **crashed before writing a
+handover or any DECISIONS entry**.  The three entries above record that work
+after the fact.  Full post-mortem and lessons:
+`docs/plans/retrospective-2026-08-26-crashed-session.md`.
+
+## [2026-08-26] Rotor→system-ring `+1` off-by-one — multi-rotor designs were one rotor short
+
+**Finding (surfaced by the new visual seed check, `scripts/preview_genome_geometry.jl`).**
+`expansion_params_from_rotors` mapped `sys_ring = rotor.ring_idx + 1`, a
+leftover from a flown-ring-numbering convention.  But `design_from_vector_v10`
+already emits `ring_idx = n_rings − p + 1` in **system** numbering
+(`n_rings` = total rings incl. ground+hub; `n_rings` = hub), confirmed by
+`build_system_from_v10`'s hub test `ring_idx == n_rings` and the ODE's
+`sys.ring_ids[er.ring_idx]`.  The `+1` double-counted the ground ring and
+shifted **every expansion rotor one ring toward the hub**.
+
+**Symptom:** a 3-rotor genome decoded as `RotorSpecV10.ring_idx = [7, 6, 5]`
+(hub + two below), but built `ExpansionRotorParams.ring_idx = [7, 6]` — the
+middle rotor landed on the hub (where `ring_forces.jl` skips it) and the
+bottom rotor landed on the middle ring.  Every `n_active ≥ 2` design silently
+ran with one fewer effective rotor.  This is the rotor-count analogue of the
+08-24 dead genes: the geometry the ODE ran was not the geometry the genome
+specified, and it is exactly what "reported forms far from expected" meant for
+the rotorcount campaign.
+
+**Fix:** `sys_ring = rotor.ring_idx` (identity) in `expansion_params_from_rotors`
+and its duplicate loop in `builders_util.jl`; docstring rewritten to state the
+system-numbering contract.  Regression tests: `test/test_builders_v10.jl`
+("system ring numbering" unit test + "decode→build rotor ring placement"
+end-to-end).  Single-rotor (`n_active == 1`) is unaffected (no expansion
+rotors), so the FR4 invariant and the validated 5 kW single-rotor results hold.
+
+**Consequence:** the crashed session's `v13_5kw_masslift_len18.8_rotorcount`
+campaign was evaluating machines with mis-placed rotors; its "3-rotor stack
+37.7 kg vs 59.4 kg single" seed rationale is doubly void (pre-FoS-fix AND
+wrong rotor placement).  The rotorcount campaign must be re-run only after the
+three-section geometry smoke-tests green on this fixed mapping.
+
+## [2026-08-25] CORRECTION: the "94× mismatch" was an instrumentation artefact; the real 2-rotor stall was a J·θ term
+
+**Retraction.**  The 2026-08-24 entry above ("~94× settle-vs-ODE twist mismatch")
+is WRONG.  The "2.36 N·m rope torque" I measured was `torques[1]` read AFTER the
+generator reaction had already been subtracted — the net residual of τ_rope ≈
++228 N·m vs τ_gen ≈ −226 N·m (a 1.06% settle-convergence error), not the rope
+torque.  A second agent re-measured both torque models on the same settled state
+and found the bisection chord model and the ODE sub-seg rope chain agree to
+**five significant figures** in both the 1-rotor and 2-rotor seeds.  All three
+"candidate causes" I recorded (sub-seg geometry, tension rectifier, C1 clamp)
+are cleared: sub-seg tension 7459.4 N vs chord 7458.7 N, the rectifier never
+engages (every line in tension), and the C1 cap sits 46–175× above the operating
+torque.
+
+**Real cause (confirmed, A/B-tested):** `ring_forces.jl:314` computed
+`torques[ri] -= J_rotor * alpha[ri]` where `alpha` is the accumulated twist ANGLE
+θ (`u[6N+1:6N+Nr]`), not angular acceleration α̈.  That is J·θ — a spurious
+torsional spring anchored at θ=0 — and since θ grows at ω≈10 rad/s without wrap,
+the braking grew without bound (θ=26 rad → −976 N·m at t=3 s), four times the
+generator torque, reversing the machine.  The term only executed when
+`sys.expansion_rotors` was non-empty, which is why every 1-rotor seed worked and
+every 2-rotor seed died.  `test_physics_inertia_mass.jl` only checks the J VALUE,
+never how J is used, so the fast suite stayed green.
+
+**Fix:** blade mass is rotary INERTIA.  It now enters `initialization.jl` at
+build time (added to the ring's `inertia_z`, gated by `EXPANSION_PHYSICS[].blade_inertia`)
+so `dω/dt = τ/(I_z + J_rotor)` in `dynamics.jl:176`; the `J·θ` torque term is
+removed.  A/B: with the term removed the 2-rotor seed spins up to ω≈14 rad/s and
+holds 4–7 kW (was 0 kW, reversal).
+
+**Second bug (mine, from a09ecf6):** the preload restore used `4·sub_segs.length_0`
+as the axial gap, but `length_0` is the 3D chord `sqrt(L_axial²+Δr²)/4` — it
+double-counted the radial taper and over-tensioned every line 18–22× (44.7 kN vs
+~2 kN design).  Fixed to recover `L_axial = sqrt(chord²−Δr²)`.  Consequence: the
+"corrected seed has FoS≈1.01, genuinely too weak" conclusion was measured under
+that over-tension and is UNSUPPORTED — re-derive it.
+
+**Third (secondary):** the bisection floor `[0.001, π/4]` could not wind the
+negative twist an over-driving expansion rotor demands; it now slacks the
+segment (Δα=0, τ=0) when the target is ≤0.
+
+## [2026-08-25] Terminology correction: "λ" is TSR only — the blade-mass law is "span³", not "λ³"
+
+**Context:** a grep for λ across the docs showed the symbol is widely used for the
+BLADE SCALE (the x13/x14 rotor-size gene), not the tip-speed ratio — including the
+canonical "blade-mass law `m = m_ref·λ³`".  CONTEXT.md even self-contradicted
+(line 155 "λ is reserved for TSR only" vs line 168 "m = m_ref·λ³").
+
+**Convention (reaffirmed, 2026-08-20):** `λ` = tip-speed ratio (TSR) ONLY.  The
+rotor-size gene is **`blade_scale`** (written out longhand; no Greek letter).  The
+mass law is **`m_per_blade = m_ref·(span/span_ref)³`** — mass scales with blade
+SPAN (`span = 0.75·r_rotor·blade_scale`), so call it the **span³ law**, never "λ³".
+
+**Scope:** CONTEXT.md fixed.  Historical docs (CHANGELOG, `references/`,
+`.hermes/plans/`, pre-rename DECISIONS entries) still say "λ" for blade scale —
+those are legacy snapshots; read them with the rename in mind, don't propagate the
+old symbol into new text.  The active guides (CONTEXT.md, genome-glossary.md,
+domain.md) now state the convention.
+
+## [2026-08-25] Three-section TRPT geometry + signed hoop compression (Wacker §4.2.4)
+
+**Context:** the 08-24 build-geometry audit left the radius profile as a
+two-section cylinder+cone.  To let the DE trade line drag against ring count,
+mass, and transition compression on a validated foundation, the profile was
+reworked to the Tulloch-proposed **three-section** form: a small-radius
+**transmission cylinder** → a steep, 22°-bounded **cone** → a full-radius
+**harvest cylinder** carrying the rotors.  This is the field-tested geometry
+(Tulloch: a low-drag *minimum*-radius transmission section, 22° cone "to avoid
+any abrupt changes in diameter").
+
+**Changes landed:**
+
+- `ring_spacing_v5` gained a `harvest_length` kwarg and now composes three
+  `ring_spacing_v4` sections ground-first: transmission cylinder `[0,
+  taper_start_z]` at `r_bottom`, cone `[taper_start_z, tether_length −
+  harvest_length]` (`r_bottom → r_top`), harvest cylinder at `r_top`.
+  `taper_start_z` is derived from the 22°-bounded cone slope, not the rotor
+  position.
+- `structural_safety.jl` `ring_safety_frame` now keeps the SIGN of the radial
+  force: `F_inward += T · dot(dir, r̂)` (was `T · abs(dot(−dir, r̂))`).  Wacker
+  §4.2.4 signed frame force — `dot(dir, r̂) > 0` compresses, `< 0` is net hoop
+  expansion/tension.  Buckling utilisation now `max(N_comp, 0)/P_crit`, so
+  hoop expansion no longer reads as a compression failure.
+- Source extracts committed under `docs/validation/`
+  (`wacker-frame-force-extract.md`, `tulloch-hoop-compression-extract.md`,
+  plus the full thesis extracts).
+
+**Status: NOT validated.**  The first campaign on this geometry produced a
+structurally-invalid winner (see [2026-08-26] below).  Do not quote any
+three-section result until the geometry is smoke-tested on the current FoS
+path and the transmission cylinder is shown not to buckle.
+
+## [2026-08-25] rotor_count_mode (1/2/3 concurrent top rotors) + power_split + per-island parallel campaign
+
+**Context:** the 60-pattern rotor bitmask (`decode_rotor_mask`) was awkward to
+sweep.  x10 was re-interpreted as a rotor **count** `{1,2,3}` under
+`rotor_count_mode` — same expansion-rotor physics, only the gene decode
+changes.  The legacy bitmask path is untouched for the frozen static solver.
+
+**Changes landed:**
+
+- `design_from_vector_v10` gained `rotor_count_mode`, `cone_slope_deg` (22°),
+  `rotor_spacing_frac` (0.8), `power_split` (top-rotor power fraction; a sweep
+  knob on `ObjectiveConfig`, not a genome gene), and `blocking_factor`
+  (downstream-rotor inflow de-rating; `1.0` = no wake — a named placeholder,
+  not CFD).  Min-rotor-spacing check `ring_spacing ≥ frac · 2·r_rotor`.
+- `compute_seeds.jl` re-seeded: `Do_top 0.06`, `x10 = 3`, `blade_scale 0.7`.
+  The rationale "3-rotor stack 37.7 kg vs 59.4 kg single" was measured on the
+  PRE-FoS-fix code — treat it as unverified (see [2026-08-26]).
+- `run_v13_5kw_masslift.jl` gained `--island N` (parallel mode; each island
+  writes its own `island_N/` subdir) and a `_rotorcount` output tag.
+  `scripts/combine_islands_v13.jl` (new, idempotent) merges island bests.
+- Campaign `v13_5kw_masslift_len18.8_rotorcount` launched (3 islands parallel).
+
+## [2026-08-24] Settle DomainError root cause: negative ring radii from the linear-taper builder
+
+**Context:** both 5 kW campaigns logged ~5 `DomainError` settle failures
+("Exponentiation yielding a complex result") out of ~930 evals, caught by
+try/catch (non-fatal → reject).  A random-genome reproduction
+(`scripts/repro_domainerror.jl`) pinned the exact site: `multibody_ode!` at
+`dynamics.jl:91` — `scale = (R/r_ref)^Do_scale_exp` with `R` a NEGATIVE ring
+radius and `Do_scale_exp` a fractional genome value (0.52).
+
+**Root cause:** `build_kite_turbine_system` (the campaign's linear-taper
+builder) derives the bottom radius as `r_bot = 2·L·trpt_rL_ratio/n_seg −
+r_top`, which goes NEGATIVE for large-hub genomes (e.g. r_hub 4.17 m →
+r_bot −0.776 m).  Negative ring radii are unphysical, and the fractional
+taper exponent then throws.  **Deeper finding:** this builder derives r_bot
+from `trpt_rL_ratio` (a fixed base param, 1.083) and `r_top` (design.r_hub),
+NOT the genome's `r_bottom` (x6) — so x6 only shifts n_rings, not the ODE's
+actual bottom radius.  This is a geometry-consistency issue (a partially-dead
+gene, like x3 aspect_ratio) to resolve in the geometry workstream, separate
+from the DomainError.
+
+**Fix (landed):** clamp `r_bot ≥ 0.1` (the decoder's r_bottom floor) in
+`build_kite_turbine_system`; defensive `max(R/r_ref, 0.0)` at
+`dynamics.jl:91`.  Test: a large-hub genome builds with all ring radii ≥ 0.1
+(test_blade_mass_law, 19/19).  Follow-on: carry the design's r_bottom through
+GeometrySpec so the ODE geometry matches the decoder (geometry-consistency).
+
+## [2026-08-24] Build-geometry audit: ODE ring geometry now matches the decoder (x6/x7/x9 were dead)
+
+**Context:** while fixing the settle DomainError (negative ring radii), a
+broader geometry audit (Rod's request: catch all wrong-geometry issues in one
+pass) revealed a systemic bug: `build_system_from_v10` built the ODE system
+with the LINEAR-taper `build_kite_turbine_system`, which derives the bottom
+radius from the FIXED base `trpt_rL_ratio` (1.083) + hub radius and ignores
+the genome's geometry genes x6 (r_bottom), x7 (target_Lr), x9
+(density_profile).  The decoded winner (r_bottom 0.479 m) was simulated as a
+machine with r_bottom 2.224 m (4.6× too fat).  The DE optimised three dead
+genes, and every 5 kW result since the evaluator consolidation used the
+wrong geometry — the ADR-0005 wrong-geometry class, persisting in the
+builder choice.
+
+**Decision/fix:** `build_system_from_v10` now calls
+`build_kite_turbine_system_v5` (the `ring_spacing_v4` geometry) with
+`design.target_Lr`, `design.r_bottom`, `design.density_profile`;
+`build_kite_turbine_system_v5` gained the `density_profile` kwarg.  Regression
+test asserts ODE ground-ring radius == decoded r_bottom and hub == r_hub.
+
+**Consequences:** the re-run's winners are VOID (their geometry was not what
+the ODE ran).  Re-smoke + re-run the campaign on the corrected geometry.  The
+seed's ODE geometry changes (bottom ring now = decoded r_bottom), so the k
+sweep, settle-gap, and smoke numbers shift.  Full audit doc:
+`docs/plans/2026-08-24-build-geometry-audit.md`.
+
+## [2026-08-24] Seed "stall" was a NaN-poisoned settle, not physics; three wrong-geometry bugs fixed
+
+**Context:** after the build-geometry fix (v5/`ring_spacing_v4` taper in the
+ODE), the corrected-geometry seed smoke-tested as `P=0, FoS=Inf, ω pinned at
+60 rad/s`.  Diagnosis traced the stall to `settle_to_operational_state`'s
+ω-scan returning the `ω_rated_max=60` fallback because its parasitic-drag term
+returned NaN, making `P_aero − NaN > P_gen` false everywhere.
+
+**Root cause chain (all wrong-geometry, same class as the audit):** the
+geometric taper produces NON-UNIFORM sub-segments — the seed's shortest
+ground-end sub-seg is 0.3119 m (vs ~0.67 m uniform in the old linear-taper
+builder, and the 0.5 m that `dt=4e-5` was calibrated for).  Three consumers
+assumed either uniform spacing or the fixed 4e-5 step:
+
+1. **`settle_to_equilibrium` / `settle_to_operational_state`** keyed their
+   step off `n_lines >= 8` (→1e-5), not the actual shortest sub-seg.  A
+   6-line seed with a steep taper NaNs the rope positions (settle step 41).
+   NaN ring positions → `settle_parasitic_drag_power` NaN → scan fails → ω=60.
+2. **`settle_to_operational_state` axial-preload restore** placed rings at
+   UNIFORM `seg_len = tether_length/n_seg` (2.686 m) while the built geometry
+   has non-uniform segments (bottom 1.248 m).  Bottom ring placed 2.15× out →
+   115% path strain → instant rope break.
+3. **Scoring window (`V11_DT=4e-5`)** destabilised the 0.31 m bottom sub-seg
+   from the settled (preloaded, twisted, ω≈13) state: 41% strain spike in the
+   first 1 ms → spurious break.  dt-independent only because the OLD test ran
+   on the buggy uniform settle; on the fixed settle the spike is dt-dependent
+   (4e-5 breaks, 2e-5/1e-5 stable at 0.79%).
+
+**Fix (landed):** new `stable_dt_for_system(sys, p)` = `min(4e-5,
+4e-5·√(Lmin/0.5)/1.5)` (1.5× margin below the empirical stability boundary;
+Rod chose 1.5×).  Threaded through both settles AND the scoring window
+(per-design `dt`, replacing the fixed `V11_DT`).  The preload restore now uses
+per-segment rest length `4·sub_segs[(k−1)·n_lines·4+1].length_0` and
+per-segment axial stiffness `EA_tot/L_seg_k`.
+
+**Result:** smoke now runs the corrected seed to `P_mean=5.39 kW,
+P_end=5.23 kW, lift tension 0.00% err`, but `FoS_min=1.01` (oscillating
+0.87–2.5) — the mass-min seed is genuinely too weak at its true geometry and
+needs re-seeding/evolving.  Not a numerical artifact: the FoS floor rejection
+is real.  Fast suite passes (see trust-log).  Remaining uniform-spacing uses
+are legacy (linear-taper builder, old optimizer) or explicitly approximate
+(damper sizing `ring_forces.jl:419`, build-time stretch ~0.3 mm).
+
+## [2026-08-24] Settle ω-scan used expansion-rotor OFFSETS, not absolute radii (multi-rotor bug)
+
+**Context:** probing a 2-rotor seed (main hub + one expansion rotor) surfaced
+that the settle's ω-scan computed expansion-rotor power as
+`π·(blade_tip² − blade_hub²)` — but `blade_tip`/`blade_hub` are OFFSETS from
+the rotor's ring radius (0.7·span / −0.3·span), not absolute radii.  Dropping
+`r_nominal` under-counted a lower-ring rotor's swept area ~5.8× (2.76 vs
+15.96 m² at ring 6) and its TSR ~2.4×, so the settle parked at a wrong ω.
+
+**Fix (landed):** the scan now uses `expansion_annulus_area(er, r_nom)` and
+the ODE's mean-radius TSR convention `r_nom + (hub+tip)/2·cos(bank)`.  Settle
+ω for the 2-rotor seed moved 11.36 → 13.88 rad/s.  The ODE force, Betz gate,
+total-area, and dashboard already used absolute radii — only the settle (and
+the ramp evaluator's `π·tip²`) were wrong.  Fast suite 1954/1954.
+
+**Still open:** the 2-rotor config STALLS in the ODE regardless (ω decays and
+reverses, P→0) even after the settle fix.  The expansion rotor's torque is
+NON-MONOTONIC in ω — driving (+291 N·m at ω=10) above ~4 rad/s, braking
+(−86 N·m at ω=3) below — so the machine decelerates through the generator
+load, crosses the zero-torque point, and the rotor drags it into a runaway
+reversal.  Whether this τ(ω) shape is correct physics (blade stall at low TSR)
+or an induction-model artefact needs a focused look before 2-rotor designs are
+viable.  See also: cylinder+cone radius-profile sketch (planned) to give both
+rotors the same anchor radius — the field-tested geometry.
+
+## [2026-08-24] Session lessons — transferable rules from the geometry audit + 2-rotor investigation
+
+Cross-cutting lessons from this session (build-geometry audit → seed-stall →
+2-rotor exploration).  These are RULES, not one-off fixes:
+
+1. **`dt=4e-5` is a single-point calibration, not a constant.**  It is stable
+   only for sub-segs ≥ ~0.5 m.  The `ring_spacing_v4` geometric taper makes
+   sub-segs non-uniform (seed's shortest 0.3119 m), which broke the fixed dt in
+   the settles AND the window (NaN / strain spike / spurious break).  RULE: any
+   geometry change must re-check the MINIMUM sub-seg against the dt stability
+   limit; dt must be adaptive (`stable_dt_for_system`), keyed on Lmin — never on
+   `n_lines`.
+2. **`blade_tip_radius` / `blade_hub_radius` are OFFSETS from `r_nom`, not
+   absolute radii.**  `r_out = r_nom + tip·cos(bank)`.  Using them directly
+   (settle ω-scan did `π(tip²−hub²)`) drops `r_nom` and under-counts a
+   lower-ring rotor's area ~6×.  RULE: any field named `*_radius` on a rotor is
+   an offset until proven otherwise; compute absolute area via
+   `expansion_annulus_area(er, r_nom)`.
+3. **Torque has a SPATIAL profile along the shaft.**  The settle's torque-chain
+   bisection winds a UNIFORM `τ_target = k·ω²` in every segment, but aero torque
+   is injected at specific rings (hub + each expansion rotor).  Winding the
+   top segment for the full `k·ω²` when it only carries `τ_hub` over-winds it →
+   the hub unwinds → the chain collapses below `k·ω²` → runaway deceleration.
+   RULE: multi-rotor settles/controllers must subtract expansion-rotor torque
+   from the segments ABOVE each rotor (`τ_seg = τ_gen − Σ τ_exp below`).
+4. **Tether drag is PERPENDICULAR-velocity only.**  A line wrapping tangentially
+   around the shaft moves along its own direction, so `ω·r` contributes NO drag;
+   only the axial wind (~11 m/s) does.  `tether_drag_force` correctly uses
+   `v_perp = v_rel − (v_rel·dir)·dir`; the settle's `v_t = ω·r_mid` (cubed) is
+   wrong, and its `n_lines` loop (looks for ring→ring sub-segs, of which there
+   are 0) returns 1 instead of 6.  RULE: line drag is SMALL (~50–80 N·m), not a
+   first-order loss; don't model it as ∝ (ω·r)³.
+5. **A static torque balance can lie about stability.**  For the 2-rotor seed the
+   static `τ_aero − τ_drag − τ_gen` is positive down to ω≈3 (predicts a stable
+   equilibrium at ω≈11.7), yet the ODE runs to 0 — because the settle's twist is
+   wound for the wrong (uniform) torque (rule 3).  RULE: instrument the ODE's
+   per-ring torque before concluding a stall is physical.
+6. **The wrong geometry hid a weak seed.**  The linear-taper builder's fat bottom
+   ring (2.224 m) masked the fact that the corrected seed (r_bottom 0.575) has
+   FoS ≈ 1.01 — genuinely too weak.  RULE: re-smoke every seed after a geometry
+   change; a previously-feasible seed is not evidence the corrected geometry is.
+
+Follow-on work these rules imply (open): torque-chain bisection aero injection
+(rule 3), settle drag-model consistency with `tether_drag_force` (rule 4),
+cylinder+cone radius profile to give all rotors a common `r_nom` (reduces the
+rule-2/rule-3 asymmetry), and a balanced controller replacing the uniform
+`k·ω²` law.
+
+## [2026-08-24] Drag + bisection fixes landed; 2-rotor stall traced to a ~94× settle-vs-ODE twist mismatch
+
+**Fix #1 (drag consistency):** `settle_parasitic_drag_power` had `n_lines` stuck
+at 1 (the loop looked for ring→ring sub-segs, of which there are none) and an
+ad-hoc "curvature factor 0.5" that halved the tether drag below the ODE's
+`tether_drag_force`.  Both removed → the settle's ω-scan now sees the same drag
+as the ODE (2-rotor seed settle ω 13.88 → 9.94).
+
+**Fix #2 (bisection aero injection):** the torque-chain bisection wound a
+UNIFORM `τ_target = k·ω²` in every segment.  It now subtracts each expansion
+rotor's driving torque `τ_exp` from the target carried to the segment ABOVE it
+(`τ_target = −τ_b − τ_exp`), so the chain carries `τ_gen` below a rotor and
+`τ_gen − τ_exp` above it.  The settle's twist profile is now non-uniform (segments
+above the ring-6 rotor drop to Δα≈0.001 vs 0.006–0.015 below).  Fast suite 1954/1954.
+
+**Still open — the 2-rotor stall is NOT cleared.**  Instrumenting the ODE at the
+settle state shows the bisection's `τ_fn_a(Δα=0.015) = 221 N·m` (matches its
+`k·ω²` target) but the ODE's actual rope torque on the ground ring is
+**2.36 N·m** — a ~94× mismatch.  So the settle winds the twist for the right
+torque per ITS model, but the ODE's rope transmits ~100× less, the generator
+(k·ω²) outruns the transmitted torque, and the machine decelerates to reversal.
+The bisection's simplified chord-torque model (`T=EA·(chord−L)/L`, straight
+chord) does not match the ODE's discretised sub-segment rope physics.  This is a
+settle-vs-ODE fidelity gap, not a sign error — it needs a dedicated look at why
+the ODE's per-sub-seg rope torque is ~100× smaller than the chord model
+(candidate: sub-seg direction/radius at the ring-attachment end, the tension
+rectifier, or the C1 torque clamp).  Until it is resolved, multi-rotor settles
+wind the wrong twist and 2-rotor designs are not evaluable.
+
+## [2026-08-22] Unified blade-mass law: m = m_ref · λ³ + knuckle floor
+
+> **Terminology (2026-08-25):** the law scales with blade SPAN, not λ (λ is
+> tip-speed ratio). Read every `λ³` in this entry as `span³`; see
+> [2026-08-25] "Terminology correction: λ is TSR only — the blade-mass law is
+> span³, not λ³". The heading is left as the historical title.
+
+**Context:** three mutually inconsistent blade-mass models coexisted: the
+main-rotor AREA law (`m_blade · λ²`, objective_evaluator.jl), the CFRP
+CUBE law for expansion rotors (`(0.3 + 0.1·tip)·λ³`, expansion_rotor.jl),
+and the empirical rung law (`m ∝ P^1.35`). Rod (2026-08-22): rigid-foam
+blades scale with VOLUME (λ³), not area — the λ² term and the CFRP
+constants are rejected. The Daisy blade anchor is **420 g** (measured; the
+same wings/fuselages on both the 3-blade and 6-blade rotors) — the Gate 1c
+renormalisation to 210 g is REVERSED: the built 6-blade rotor carries
+6 × 420 g = 2.52 kg/ring.
+
+**Decision (Rod's approval, 2026-08-22):**
+1. **Unified law:** `m_per_blade = m_ref · λ³` for main AND expansion
+   rotors, `m_ref` = the rung's per-blade reference mass (`M_BLADE_REF_KG`
+   = 0.420 kg at the Daisy rung; higher rungs pass their mass_scale'd
+   base). λ = decoded genome blade_scale × builder dial. The λ³ law
+   composes ON TOP of rung scaling (m_ref ∝ P^1.35) — the rung scales the
+   reference blade geometry, λ scales within a rung. k_mppt stays λ²
+   (power ∝ swept area ∝ λ²); only the mass law changes.
+2. **Knuckle floor:** every blade node carries ≥ `OPT_KNUCKLE_MASS_KG`
+   (0.050 kg, approved 2026-04-20), added into `expansion_airborne_mass`
+   (the DE score AND the lift sizing input). ODE-inertia knuckles flagged
+   as follow-on.
+3. **420 g anchor restored** in `params_daisy`; `M_BLADE_REF_KG = 0.420`
+   exported.
+4. **`geometry_fingerprint` double-count fixed** (`er.mass × er.n_blades`
+   where `er.mass` is already the assembly total).
+5. **Airborne ring count fixed:** `sys.n_ring − 1` (was `p.n_rings`,
+   missing the hub ring).
+6. **Ramp evaluator contamination fixed:** `evaluate_ramp` did NOT pass
+   `base_params=p` to `build_system_from_v10` — it built every rung with
+   the 50 kW base (12.0757 kg/blade), the same contamination DECISIONS
+   [2026-08-20] fixed for `evaluate_windowed`. Both evaluators now build
+   the same machine.
+7. **Length double-scaling fixed:** `params_at_length(L)` in the runner,
+   smoke, gate and k-sweep mass_scaled the explicitly-passed length again
+   (×√(5/1.5) ≈ 1.826) — "18.8 m" machines were actually 34.3 m while
+   h_ref/masses described 18.8 m. `tether_length` is now restored to L
+   after rung scaling. **All 5 kW ODE evidence from 2026-08-21 onward was
+   measured on the wrong-length machine and is superseded** (the k sweep
+   is re-run under the honest window, 2026-08-21 open task).
+8. **Seed rotor-area discrepancy flagged:** the built seed sweeps ≈ 60 m²
+   (decoder sizes against the hub wind v_i ≈ 8.7 m/s, r_out ≈ 4.8 m) —
+   NOT the ~10.8 m² the 2026-08-21 handover assumed. The honest-window
+   traces must measure the true sustained power of the corrected machine.
+
+**Verification:** RED tests first (`test/test_blade_mass_law.jl`, 15
+assertions: λ³ law, 420 g anchor, knuckle floor, fingerprint, rung base);
+implemented; fast suite **1936/1936 green**. Seed consequences on the
+corrected 18.8 m machine: m_airborne (no lifter) = 29.85 kg (was 13.12 kg
+at the wrong length / 210 g law), T_lift(ref) = 467 N (1.5× margin,
+const_tension), main blades 12.8 kg + 1 expansion rotor 12.8 kg + knuckles
+0.6 kg.
+
+**Remaining:** k re-sweep under the honest window on the corrected machine
+(2026-08-21 open task); acceptance suite re-baseline on the re-run's
+winners; ODE-inertia knuckles.
+
+## [2026-08-22] Hub-rotor double-model eliminated — expansion mapping excludes the main rotor
+
+**Context:** the honest-window k sweep on the corrected 18.8 m machine showed
+the seed decaying to ω ≈ −0.2 rad/s (backward) at EVERY k — even freewheeling
+(k=0). Bisection isolated it: a build WITHOUT the expansion mapping sustained
+and accelerated (ω → 14.2 rad/s at k=5.39), the canonical build died.
+`expansion_params_from_rotors` mapped the HUB rotor (decoder ring_idx ==
+n_rings, "mask position 1") into `sys.expansion_rotors` on the hub ring, so
+the ODE applied BOTH the main cp/ct rotor AND the expansion α/induction model
+to the SAME annulus. At 6-blade solidity the expansion model brakes (the same
+mechanism the 2026-08-17 anchor session found and worked around by using the
+main cp rotor only). The hub entry ALSO double-counted blade mass in
+`expansion_airborne_mass` (the 5 kW seed's 12.8 kg blades appeared twice).
+
+**Decision:** the hub rotor is the MAIN rotor — it is modelled by the cp/ct
+rotor at the hub ring and must NOT appear in the expansion list.
+1. `expansion_params_from_rotors` (and the phantom builder's inline loop)
+   skip rotors with ring_idx == n_rings. Expansion rotors are ADDITIONAL
+   rotors on intermediate rings only. `minimal_hub` machines are hub-only by
+   construction (empty expansion list).
+2. Defensive guard in ring_forces.jl: the expansion loop skips the hub ring.
+3. Verified: the canonical 5 kW seed now sustains and accelerates (ω 12.16 →
+   14.33 rad/s over 20 s at k=5.39; P_gen ≈ 9 kW at 20 s and climbing — the
+   60 m² seed is OVER-rotored for 5 kW, the DE's job is to shrink it).
+4. This changes the dynamics (and mass accounting) of EVERY multi-rotor
+   machine since the "unified rotors" decoder (2026-08-20) — including the
+   V10 50 kW family, whose hub was being braked/double-counted. All prior
+   results from that era are superseded; acceptance suite re-baseline covers
+   it. Fast suite 1926/1926 green.
+
+**Remaining:** honest k re-sweep on the fixed machine (running); settle-vs-ODE
+gap workstream (Option 2) stays a parallel proposal — the settle now
+UNDER-predicts the ODE equilibrium (11.96 vs ~14+ rad/s), a different (less
+harmful) mismatch than the 2026-08-13 over-prediction.
+
+## [2026-08-22] Blade-mass law CORRECTED to price the decoded span (winners exploit; campaign VOID)
+
+**Context:** the first 5 kW DE campaign COMPLETED (12.75 h, 3 islands × 30
+gens, 930 evals, global best fitness 6.76 kg).  The prepared winner
+verification caught a systematic exploit: every winner chose small
+blade_scale λ (0.50-0.69) with the BEM-sized r_rotor (3.32 m, pinned by the
+3-line power sizing), so the decoded blade span = 0.75·r_rotor·λ =
+1.24-1.71 m — LONGER than the Daisy reference (1.0 m) — yet the λ³ mass law
+priced them at 0.26-0.70 kg/blade (the Daisy anchor is 0.42 kg at span 1.0).
+The span³ price for the same blades: 0.42·(span/1.0)³ = 0.80-2.10 kg/blade —
+about 3.0× heavier.  (The λ³ law's volume error is span³/λ³ ≈ 15.4×, but
+its baked-in rung reference 2.13 kg = 5.08× the 0.42 anchor masked most of
+it, netting a 3× absolute under-price.  Both scalings are stated for the
+record.)  The DE maximised swept area per priced mass by trading λ against
+r_rotor, which the λ³-only law could not see (span ∝ r_rotor·λ, mass ∝ λ³).
+
+**Decision:** the law must price the DECODED span: `m_per_blade =
+M_BLADE_REF_KG · (span/1.0)³` with span = blade_tip − blade_hub (× builder
+dial), for main and expansion rotors.  This is the same volume-scaling
+decision (2026-08-22) implemented against the model's actual geometry: at
+the Daisy reference (span 1.0 m) it returns exactly 0.420 kg ✓; anywhere
+else it prices the true blade volume.  The rung and the genome enter through
+the span (r_rotor from the BEM sizing, λ from the genome); the rung-scaled
+`p_base.m_blade` no longer feeds the blade term (it stays as the legacy
+non-builder fallback).  The `m_blade_ref` threading added earlier is
+removed.
+
+**Consequences:**
+1. **The completed campaign's winners are VOID** — archived as evidence
+   (`scripts/results/v13_5kw_masslift_len18.8/` bannered; ledger retired
+   claims E7).  Their telemetry is still useful: FoS was finite (5.7-11.7,
+   the pre-guard FoS=Inf screening passed) and they sustained 5.19-5.28 kW
+   honestly — the exploit was purely the mass pricing, not the aero.
+2. The seed's blade mass rises (6-line seed: span 2.02 m at λ=1 →
+   0.42·2.02³ = 3.46 kg/blade vs 2.13 before) — the honest volume of the
+   decoded blade.
+3. **Campaign re-run** on the corrected law (~13 h) — its winners are the
+   first trustworthy 5 kW designs.
+4. Tests: test_blade_mass_law (span³ + the 1.238 m exploit guard),
+   test_physics_inertia_mass, builders mapping — updated; fast suite green.
+
+**Also noted (robustness):** two `DomainError` settle warnings (negative
+values under fractional exponents) in the campaign log — caught by
+try/catch; fold into the settle workstream.
+
+## [2026-08-22] Blade-mass exponent confirmed ^3.0 against the AWES references
+
+**Context:** after landing the span³ law, the exponent was challenged: real
+rigid blades scale sub-cubically.  A search of the repo's own references
+confirmed the bracketing norms: pure foam R³; Kitepower WES 2025 rigid-wing
+AWES ~R^2.62 (mass 700→10,663 kg over 20→160 m², the closest published
+category); production wind-turbine blades R^2.2–2.5 (DNV 2.2, NREL/WISDEM
+2.44–2.54, WindPACT 2.87).  The Daisy blade is foam core + shrink skin + 2
+carbon spar tubes, so the spar contribution argues sub-cubic.
+
+**Decision (Rod):** KEEP ^3.0 — the pure-volume law, Rod's recorded position
+("foam-core + shrink-wrap stays near R³").  The ^3.0 span³ law is the
+conservative upper bound; the carbon spars are a small fraction of the blade
+mass at the anchor and are absorbed into the 420 g calibration.  Revisit if
+field tests show the exponent is sub-cubic.
+
 ## [2026-08-21] Daisy-anchored 5 kW seed fixes (rung scaling, lifter tension, annulus gates)
+
+> **SUPERSEDED — `k = 5.39` is retired.** The sweep below selected `k = 5.39`
+> on the pre-fix machine (hub-rotor double-model still live, area-based blade
+> mass, broken rung length). The aligned 5 kW gate value is **`k = 2.24`**
+> (`K_MPPT_5KW_HONEST`, `scripts/compute_seeds.jl`), pinned by
+> `test/test_campaign_k_alignment.jl`. Do not cite 5.39 as the current
+> operating point — see DECISIONS [2026-08-22] and the `k_sweep_daisy_5kw.csv`
+> sweep.
 
 **Context:** The Daisy seed for the 5 kW mass-min re-run stalls
 (`:reject`, 0 kW). Desktop reproduction (`scripts/diag_daisy_seed_stall.jl`)
@@ -179,6 +1199,168 @@ call sites now pass `lift_for(sys, pc)` (6=6).
 **Still active:** yes.
 
 ---
+
+## [2026-08-20] 50 kW blade-mass contamination — fixed; λ reserved for TSR
+
+**Context:** The 5 kW v13 winners carried 133–157 kg of blades — 95% of
+airborne mass, φ ≈ 17–20 kg/kW. Rod's hypothesis: the 5 kW campaign does not
+penalise low power-to-weight devices. **Confirmed, stronger than suspected:**
+`build_system_from_v10` hard-coded `p_base = params_v5_50kw()` and
+`m_blade = p_base.m_blade · le²` (le = 1.0) → 12.0757 kg/blade on EVERY rung,
+while the campaign's own scaled base gives 0.863 kg (14× discrepancy); λ
+scaling reached the expansion rotors (0.37 kg) but never the main blades. The
+v12_fitness objective has no mass term (mass was removed from the objective
+at V11 after DECISIONS [2026-06-21] — mass-in-objective broke the DE), so the
+contamination was invisible: power ∝ lines, blade mass = 12.0757 × lines →
+maximising power maximised mass (corr(fitness, mass) = −0.175; best-5 designs
+all 139–151 kg; lightest-5 at 41.8 kg scored worse). The mass-aware lift
+tension was inflated ~9× (2,175 N vs ~240 N).
+
+**Decision (Rod's approval, 2026-08-20):**
+1. **Rung-scale the build base:** `build_system_from_v10` gains a
+   `base_params` kwarg (default `params_v5_50kw()` → legacy 50 kW callers
+   bit-identical); `evaluate_windowed`, `ode_gate_v13.jl` and the economics
+   script pass the campaign's scaled base.
+2. **λ²-scale main-rotor blade mass:** `m_blade = base_params.m_blade ·
+   λ_eff²`, `λ_eff = rotors[1].blade_scale` (the existing k_mppt λ²
+   convention). Deliberate physics change for any λ<1 rotor, not just 5 kW.
+3. **λ reserved for TSR only:** genome genes x13/x14 renamed
+   `blade_scale_top`/`blade_scale_bottom` across the decoder, telemetry
+   headers, genome chooser, recampaign, export/plot tools, genome glossary
+   and CONTEXT.md (backward-compatible reads of historical `lambda_top`/
+   `lam_top` CSVs).
+4. **Main-rotor radius λ-blind — RESOLVED (Rod: "obvious physics scaling
+   failure... needs resolved"):** `build_system_from_v10` had hard-coded
+   `rotor_radius = 5.0·le`, so the ODE swept area (∝R²), TSR and blade chord
+   ignored the rung and the genome's blade_scale — aero power was λ-blind
+   while blade mass was λ²-scaled, and the DE exploited it (λ→0 blades with
+   full 5 m-disk power). Now `rotor_radius = hub_rotor.blade_tip_radius`
+   (= r_rotor × blade_scale), completing the k_mppt λ²-scaling intent.
+5. **Ring-anchored 70/30 annulus for ALL rotors (Rod, 2026-08-20):** the
+   main rotor is now a first-class parametric rotor like the expansion
+   rotors — blade span is a genome parameter (λ), anchored at the RING
+   radius with the 70/30 split (70% outboard / 30% inboard of the span),
+   consistent across the decoder (`blade_tip = +0.7·span`, `blade_hub =
+   −0.3·span`), the builders and every evaluator. The ODE swept area is the
+   ANNULUS `π(r_out² − r_in²)` with `r_out = r_ring + 0.7·span`, `r_in =
+   r_ring − 0.3·span` (via the new `RotorSpec.blade_hub_radius` and
+   `main_rotor_swept_area`); TSR uses r_out. **`r_ring ≥ 0.3·span` is a hard
+   gate** (`rotor_annulus_ok`) — inner tips may not cross the shaft axis.
+   **Calibrated against the thesis:** the Daisy rigid rotor is exactly this —
+   ring radius 1.52 m, inner tip 1.22 m, outer tip 2.22 m (outboard 0.70 m =
+   0.7·span, inboard 0.30 m = 0.3·span). The old decoder hub (0.25·R, positive)
+   and the full-disk ODE area are retired.
+
+**Why this choice:** the contamination made every non-50 kW rung carry 50 kW
+blades, inflating φ ~20× and the mass-aware lift ~9×, and poisoning the
+economics (LCOE 14.8–16.4 p/kWh). Fixing the build (not the objective) is
+the minimal correct change: rung-scaling + λ² are the same physics the
+expansion rotors already implement, and the 50 kW default keeps legacy
+callers bit-identical.
+
+**Consequences:** on the SAME (old, mass-blind) winners the fixed mass model
+gives airborne 6.3–7.0 kg, φ ≈ 0.8–0.9 kg/kW, capital ≈ £9.4k, LCOE ≈
+5.5–5.8 p/kWh and ≈ 1.24 gCO₂e/kWh @ CF 0.30 — but those winners were still
+mass-blind-optimised, and the recorded P_gen was gated with the inflated
+lift. **Remaining:** acceptance suite; re-gate the winners; mass-aware
+objective (φ target — Daisy-scale ~1–2 kg/kW production, prototype-realistic
+3–5 kg/kW, Rod's call); 5 kW re-run; full-scope 2026 LCOE/LCA workbook.
+Open physics item surfaced: main-rotor BEM power uses rotor_radius = 5.0 m
+regardless of λ — power is not λ-scaled while mass now is; examine in the
+re-run.
+
+**Status:** All five fixes implemented; fast suite 1918/1918 green through
+all of them. Re-gate after the mass fix alone: winners PASS with power
+retained (7.143 / 6.254 / 7.130 kW) — the mass fix is aero-neutral. **After
+the radius fix (item 4) and the annulus fix (item 5), the OLD winners are
+VOID: the 18 m winner (r_hub 0.7 m ring, r_out 1.08 m, 2.73 m² annulus,
+Betz cap ≈ 1.3 kW) cannot reach 5 kW.** The 5 kW re-run is now mandatory;
+no 5 kW economics are quotable until then. The re-run will use the
+mast/Daisy-up base (Rod: scale UP from the 1.5 kW Daisy and the mast test,
+not down from 50 kW — thesis ring 1.52 m, tips 1.22/2.22 m; the 10 kW
+General Release report was itself "scaling the existing 1.5 kW kite
+turbine") and a hard-constraint mass-minimisation objective (power + FoS
+floors hard-reject; score = true physics mass). Acceptance suite: expected
+red (old-physics expectations) — re-baseline on the re-run's winners.
+Working tree NOT commit-ready.
+
+## [2026-08-20] FoS floor 2.5 + NZTC carbon LCA + certification route
+
+**Context:** Rod asked whether an FoS floor of 2.5/3.0 would be too lenient
+for flying permission/certification. The model's FoS metric is uncalibrated
+(the Daisy flew successfully while the model scored it ≈ 0.22 — gate 13,
+static FoS currently DISABLED ≤ 7 kW), so an absolute floor is a design
+policy, not a validated certification number. The certification route is not
+a single FoS figure — it is the safety case (CAP 393 / CAA Article 253 for
+<2 kg small kites; SORA for larger; the AWE White Paper on safe operation &
+airspace integration).
+
+**Decision (Rod):** FoS floor = **minimum 2.5 at all points we measure**,
+"until we know better through field trials and breakages". Re-enable the
+static structural FoS gates (gate 13) at the 2.5 floor for the re-run; the
+mass-minimisation objective minimises mass ABOVE that hard floor. Note
+2.5 is MORE conservative than the repo's prior 1.5/1.8 (IEC 61400 ~1.35
+partial factors; aerospace ~1.5 ultimate).
+
+**Implemented (2026-08-20):** the evaluator seam now passes the TRUE physics
+mass — `fitness_fn(P, FoS, cfg, mass)` with `mass = expansion_airborne_mass
+(sys, pc)`; `v11_fitness`/`v12_fitness` gained 4-arg overloads (mass ignored,
+backward compatible); new `mass_min_fitness(P, FoS, cfg, mass)` = `Inf` below
+either hard floor (`FoS < cfg.fos_hard`, `P < cfg.p_floor_kw`) else `mass`.
+All adapter lambdas (src + scripts + test_evaluator_v13) updated to 4-arg;
+unit test added; fast suite 1918/1918 green. **Remaining to wire before the
+re-run:** set `fos_hard = 2.5` and `fitness_fn = mass_min_fitness` in the
+campaign runner, and build the mast/Daisy-up base.
+
+**Sources:** Airborne Wind Europe folder (`04_Business/AWES Co-opetition &
+Market Analysis/Airborne Wind Europe/`): `AWE White Paper on safe operation
+and airspace integration_v1.0.pdf`, airspace-integration recommendations
+(Task 48 WP3), AWE-Definitions tables, AWE Sites 2024.xlsx — the SORA +
+airspace-permission + safe-operation guides for the field-test proposal's
+certification section.
+
+**Carbon LCA (extracted, NZTC TechX):** `02_Funding/Applications/NZTC
+TechX/Impact Assessment/Carbon Impact Model_v2.xlsx` is a full 50 kW LCA
+"based on scaling the 1.5 kW Daisy" (per the sheet): BOM — airborne 25 kg
+(carbon epoxy 5, Dyneema 6.5, foam 7.5, Dacron 3, PLA 3), ground 823 kg
+(steel 681, copper 112, circuits 9, battery 2, PLA 19); CF 0.528; 20 y;
+total 3,632 kg CO₂e → **0.78 gCO₂e/kWh**. IdeMat carbon factors (the ones
+the LCA uses): carbon epoxy **88.9** kgCO₂e/kg (vs the Economics module's
+24 — a 3.7× under-count), Dyneema 1.70, PUR foam 3.50, PET/Dacron 1.66,
+PLA 3.57, steel 0.958, copper 3.24, PCB 26.3, LiFePO4 battery 94.1. The
+Economics module's carbon factors must be replaced with these before any
+gCO₂/kWh figure is quoted. **The 50 kW BOM is NOT an anchor (Rod, 2026-08-20)
+— it is extrapolation on shaky data.** The measured anchor is the Daisy:
+blade = 420 g foam + shrink skin + 2 carbon rods (9 mm OD / 0.5 mm wall) +
+3D fuselage; flying weight **< 2 kg** at **> 1.5 kW @ 10 m/s** (AWEC 2019);
+624 W / 146 rpm / 6-blade / 11.2 m² / ζ=3.77 (Dec 2019 blog). Cross-check:
+the annulus π(2.22²−1.22²) = 10.8 m² matches the measured 11.2 m²; Daisy
+φ ≈ 1.3 kg/kW → 5 kW ≈ 4–7 kg, consistent with the fixed model's φ ≈
+1 kg/kW. Mass exponent underdetermined from one point; field tests measure
+it.
+
+## [2026-08-19] Mass-aware constant-tension lift regime — 5 kW redo
+
+**Context:** The first 5 kW v13 campaigns (18.0/21.2/25.0 m) ran a FIXED
+rotary lifter — tension was wind-dependent and identical for every genome.
+ODE gate matched the runner, but the regate passed no lift device at all.
+Rod (2026-08-18): the rung must be redone with mass-aware lift.
+
+**Decision:** Lift line tension = f(kite-turbine mass) ONLY: vertical
+component = 1.5 × m_airborne × g, FLAT at all wind speeds (const_tension,
+modulated-lifter assumption), applied per genome via
+`lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0,
+const_tension=true)`. All instruments (campaign runner, ode_gate_v13.jl,
+regate, ladder) resolve to the same lift_for. Lift kite mass does NOT enter
+the tension calc. First-campaign results retained as the **fixed-rotary
+regime** baseline for regime-vs-regime comparison (not voided); the redo is
+the **mass-aware constant-tension regime**.
+
+**Model era:** post-428f491_mass-aware-const-tension_ON (suite 1912/1912
+green on 428f491). Smoke acceptance 2026-08-19: status=:ok at all three
+lengths, in-run T_lift ≡ T_ref to 0.00% rel.
+
+**Status:** Redo runner + gate aligned + smoke passed; launch pending Rod's go.
 
 ## [2026-08-16] April-29 anchor: thesis geometry + measured generator load + stable dt
 
@@ -489,8 +1671,6 @@ k_mppt is NOT in the genome (14-D V10) -- it is an output of the evaluation.
 
 **Status:** Active. Implemented 2026-08-11. Pending first calibration campaign.
 
-
-
 ## [2026-06-25] Bank angle bound tightened 35° → 25° for pitch depower blade-tip clearance
 
 **Context:** During pitch depower, the shaft elevates to ~65° from horizontal to spill
@@ -538,6 +1718,155 @@ regardless of bridling configuration.
 
 **Status:** Active. Pending code change in search_bounds_v6, search_bounds_v10,
 design_from_vector_v6, design_from_vector_v10.
+
+## [2026-06-21] V10 v2 diagnostic campaign — fixes to search machinery confirmed correct but insufficient to shift the fitness landscape
+
+**Context:** A dashboard investigation of the V10 winner (island 41, 76.75 kg,
+1 rotor at hub) revealed it is dynamically dead: 0.0 kW, −2 rpm, 144 slack
+lines, bouncing lift kite, misaligned hub ring.  The single hub rotor
+concentrates all thrust at the top ring; upper tethers go slack under dynamic
+load and torque cannot transmit to the generator at the ground ring.
+
+Three fixes were applied to the V10 search machinery before a diagnostic
+re-run (v2):
+
+1. **Rotor-position clamp removed** (`design_from_vector_v10`).  The old code
+   applied `max_positions = n_rings ÷ 2`, silently discarding rotor mask
+   positions beyond the top half of rings.  For the V10 winner (n_rings=7,
+   mask positions [1,4,7,10]), only position 1 survived — positions 4, 7, 10
+   were killed.  The DE selected 4-rotor masks but the objective only evaluated
+   1 rotor.  The atlas visualisation (`export_v10_atlas_data.jl`) reported
+   `n_rotors = count_ones(mask)` (the raw bit count, 4) rather than the
+   clamped `n_active` (1), creating a silent rotor-count mismatch between
+   what the pairs plot showed and what the campaign actually optimised.
+
+2. **Tension-distribution gate added** (`objective_v10`, gate 6b).  After the
+   structural evaluation, checks `minimum(cumulative_thrust) / n_lines > 0` —
+   every tether segment must carry positive tension at ω_eq.  A slack segment
+   means the TRPT cannot transmit expansion-rotor torque to the ground-ring
+   generator.  Rejects designs with a mass-scaled penalty + 1e6.
+
+3. **Hub-rotor mask filter** (`_generate_valid_rotor_masks`).  41 of 60 masks
+   lacked a rotor at position 1 (hub, highest wind).  These were filtered out
+   by adding `(m & 1) == 0 && continue`, reducing the valid set to 19 masks,
+   all with a hub rotor.  Eliminates DE search time wasted on configurations
+   that place the first rotor partway down the shaft.
+
+Additionally, the dashboard's MPPT gain slider range was widened from
+`1:1:50` to `1:1:2000` after discovering that `params_v5_50kw().k_mppt ≈ 615`
+was out of range — the dashboard was testing at k_mppt=50 (8% of campaign
+value), explaining the "massive overpower" symptom reported during dashboard
+testing.
+
+**What the v2 diagnostic run showed:**
+
+The v2 campaign was launched (`launch_v10_50kw_v2.sh`, 60 islands, 80 pop)
+and stopped after 22 islands.  Every island converged to the same basin as
+v1: **n_active=1, 76.7 kg, 41 rpm**.  The tension-distribution gate did not
+trigger on single-rotor designs — `cumulative_thrust` is monotonically
+positive when all thrust comes from the hub ring.  Multi-rotor masks (e.g.
+[1,4], [1,5]) are now available but the DE has no incentive to select them:
+a second rotor costs blade mass with no offsetting benefit in the objective.
+
+**Why the fixes didn't change the outcome:**
+
+The fixes addressed structural problems in the *search machinery* (clamp,
+masks, gates) but did not change the *fitness landscape*.  Lower mass always
+wins, a second rotor always costs mass, and the static tension gate sees
+positive cumulative thrust for 1-rotor designs.  The 144 slack lines observed
+in the dashboard are a *dynamic* effect from the lift-kite interaction —
+tension oscillates, bridles go slack, and the static equilibrium solver
+cannot model this.
+
+**What would actually shift the DE toward multi-rotor designs:**
+
+1. **Model the lift kite in the objective's force balance.**  The lift kite's
+   tension vector changes the tether force distribution.  Without it, the
+   static solver thinks tethers are fine when the ODE shows they collapse.
+
+2. **Add a thrust-spreading incentive.**  Penalise designs where >80% of
+   cumulative thrust comes from a single ring.  This would make 2-rotor
+   designs at rings [7,4] competitive against 1-rotor at ring 7 alone.
+
+3. **Replace the static tension check with a dynamic proxy.**  The
+   `headless_verify_structural` (gravity-settle only) catches degenerate
+   geometry but not dynamic slack.  A cheap dynamic check — perhaps a very
+   short wind-driven ODE settle with lift device — could close this gap
+   without the full 5-minute `headless_verify` scan.
+
+**Status:** The three search-machinery fixes are committed and correct — they
+enable multi-rotor exploration and prevent silent rotor-count mismatches.
+They do not, by themselves, change the optimum.  The V10 campaign must be
+re-run with at least a thrust-spreading incentive or lift-kite modelling
+before a multi-rotor design can emerge.  See `docs/plans/2026-06-21-rotor-
+position-clamp-tension-gate.md` for the implementation record.
+
+---
+
+## [2026-06-21] Ring-count mismatch — rotor on wrong ring, bridles slack, k_mppt blade-area scaling
+
+**Context:** Dashboard testing of the V10 winner (76.75 kg, 1 rotor, bank=35°,
+λ=0.234) revealed 0 kW, −2 rpm, 144 slack lines, and a bouncing lift kite.
+Systematic tracing through the ODE state revealed three compounding issues.
+
+**Issue 1 — Rotor on wrong ring.** `design_from_vector_v10` uses intermediate
+ring numbering (1..n_rings from `ring_spacing_v4`). `build_kite_turbine_system`
+adds ground (ring 1) and hub (ring n_rings+2) rings, creating a +2 offset.
+A rotor meant for the hub (mask position 1 → intermediate ring n_rings) was
+placed at system ring n_rings (an intermediate ring at r=5.26m) instead of
+ring n_rings+2 (the actual hub at r=3.70m).  Rotor thrust and bridle
+connections were on different rings — 12/13 bridles slack, tension chain
+broken.  **Fix:** Remap ring indices in `build_from_campaign_v10` and
+`_build_verify_system`: intermediate ring i → system ring i+1, and the
+hub-proxy ring (intermediate ring n_rings) → system ring n_rings+2.
+
+**Issue 2 — Blade scale λ exploited as mass cheat.** The DE converged to
+λ=0.234 because blade mass ∝ λ³. The static equilibrium solver found ω_eq
+at k_mppt=615 regardless of λ — tiny blades were "compensated" with higher
+ω in the solver, but the ODE showed the rotor lacks startup torque to reach
+that ω.  At λ=0.234 (tip=2.7m): stalls at 10 rpm, 0.6 kW.  At λ=1.0
+(tip=11.5m): spins to 35 rpm, 31 kW.  **Fix:** Scale k_mppt by λ² inside
+the equilibrium solver (`k_mppt_eff = p.k_mppt × λ²`).  A λ=0.5 rotor has
+¼ the swept area of λ=1.0 and should expect ¼ the power.  The scaled
+k_mppt is passed to `solve_equilibrium_self_consistent` so ω_eq is found
+for the correctly-sized generator load.  Applied in both `objective_v10`
+and `build_from_campaign_v10` for dashboard consistency.
+
+**Issue 3 — Lift kite tension adequate but structural tension degrades.**
+After fixes 1 and 2, all 12 bridles are taut (139-161N).  The lift kite
+provides 1.53 kN vs 0.75 kN system weight — healthy 2× margin.  Initial
+slack drops from 36% to 5%.  After 2s simulation: 19% slack, 2.3 rpm,
+0 kW — tension still degrades dynamically.  Force balance at hub shows
+bridle axial force (1.53 kN) slightly exceeds rotor thrust (1.36 kN) plus
+axial weight (0.38 kN) by 0.21 kN — the lift kite is marginally too weak
+to maintain axial preload under dynamic conditions.  Not yet resolved;
+the rotary lifter radius/elevation factor may need tuning, or a second
+rotor to increase total thrust.
+
+**Status:** Issues 1 and 2 are fixed and committed (commits 71ea694 and
+1c86b69).  Issue 3 (dynamic tension degradation) remains open.
+
+The tight-bounded campaign with k_mppt scaling (`launch_v10_tight.sh`,
+commit 04f2d18 with widened validation gates) found a fundamentally
+different basin: **49.20 kg, 4 rotors, λ=0.519, r_hub=2.89m, ω=59 rpm**
+— a 36% mass reduction from the V10v1 76.75 kg baseline.  The k_mppt
+λ² scaling prevented the DE from converging to λ→0; the ring-mapping
+fix placed rotors on the correct hub ring; the hub-rotor mask filter
+reduced the search space from 60 to 19 masks.
+
+However, post-campaign dynamic verification (`headless_verify` k_mppt
+scan) shows the design is still dynamically dead: 12.1 kW at 55.6 rpm
+(24% rated) vs the static solver's prediction of 50 kW at 59 rpm.  The
+static-vs-dynamic power gap persists — the equilibrium solver and the
+multibody ODE disagree on the operating point even with the k_mppt
+scaling fix.  Five parameters are screaming at bounds (Do_top, t_over_D,
+r_bottom, target_Lr, λ_bottom), indicating the true optimum lies outside
+the current tight envelope.
+
+Full analysis: `docs/reports/v10-tight-analysis.md`.
+Landscape diagram: `docs/awes-forum-diagrams/v10-tight-landscape.png`.
+
+---
 
 ## [2026-06-20] V11: Tapered tether diameters — top tethers carry less load, don't need the same SWL
 
@@ -769,155 +2098,6 @@ elliptical beam profile only).  First campaign launch produced a 49.1 kg winner
 (n=12, 2 rotors, r_bottom=2.1 m free); a second launch with tightened bounds is
 in progress.  Dashboard verification of the winner is mandatory per the
 [2026-06-20] dashboard decision above.
-
----
-
-## [2026-06-21] V10 v2 diagnostic campaign — fixes to search machinery confirmed correct but insufficient to shift the fitness landscape
-
-**Context:** A dashboard investigation of the V10 winner (island 41, 76.75 kg,
-1 rotor at hub) revealed it is dynamically dead: 0.0 kW, −2 rpm, 144 slack
-lines, bouncing lift kite, misaligned hub ring.  The single hub rotor
-concentrates all thrust at the top ring; upper tethers go slack under dynamic
-load and torque cannot transmit to the generator at the ground ring.
-
-Three fixes were applied to the V10 search machinery before a diagnostic
-re-run (v2):
-
-1. **Rotor-position clamp removed** (`design_from_vector_v10`).  The old code
-   applied `max_positions = n_rings ÷ 2`, silently discarding rotor mask
-   positions beyond the top half of rings.  For the V10 winner (n_rings=7,
-   mask positions [1,4,7,10]), only position 1 survived — positions 4, 7, 10
-   were killed.  The DE selected 4-rotor masks but the objective only evaluated
-   1 rotor.  The atlas visualisation (`export_v10_atlas_data.jl`) reported
-   `n_rotors = count_ones(mask)` (the raw bit count, 4) rather than the
-   clamped `n_active` (1), creating a silent rotor-count mismatch between
-   what the pairs plot showed and what the campaign actually optimised.
-
-2. **Tension-distribution gate added** (`objective_v10`, gate 6b).  After the
-   structural evaluation, checks `minimum(cumulative_thrust) / n_lines > 0` —
-   every tether segment must carry positive tension at ω_eq.  A slack segment
-   means the TRPT cannot transmit expansion-rotor torque to the ground-ring
-   generator.  Rejects designs with a mass-scaled penalty + 1e6.
-
-3. **Hub-rotor mask filter** (`_generate_valid_rotor_masks`).  41 of 60 masks
-   lacked a rotor at position 1 (hub, highest wind).  These were filtered out
-   by adding `(m & 1) == 0 && continue`, reducing the valid set to 19 masks,
-   all with a hub rotor.  Eliminates DE search time wasted on configurations
-   that place the first rotor partway down the shaft.
-
-Additionally, the dashboard's MPPT gain slider range was widened from
-`1:1:50` to `1:1:2000` after discovering that `params_v5_50kw().k_mppt ≈ 615`
-was out of range — the dashboard was testing at k_mppt=50 (8% of campaign
-value), explaining the "massive overpower" symptom reported during dashboard
-testing.
-
-**What the v2 diagnostic run showed:**
-
-The v2 campaign was launched (`launch_v10_50kw_v2.sh`, 60 islands, 80 pop)
-and stopped after 22 islands.  Every island converged to the same basin as
-v1: **n_active=1, 76.7 kg, 41 rpm**.  The tension-distribution gate did not
-trigger on single-rotor designs — `cumulative_thrust` is monotonically
-positive when all thrust comes from the hub ring.  Multi-rotor masks (e.g.
-[1,4], [1,5]) are now available but the DE has no incentive to select them:
-a second rotor costs blade mass with no offsetting benefit in the objective.
-
-**Why the fixes didn't change the outcome:**
-
-The fixes addressed structural problems in the *search machinery* (clamp,
-masks, gates) but did not change the *fitness landscape*.  Lower mass always
-wins, a second rotor always costs mass, and the static tension gate sees
-positive cumulative thrust for 1-rotor designs.  The 144 slack lines observed
-in the dashboard are a *dynamic* effect from the lift-kite interaction —
-tension oscillates, bridles go slack, and the static equilibrium solver
-cannot model this.
-
-**What would actually shift the DE toward multi-rotor designs:**
-
-1. **Model the lift kite in the objective's force balance.**  The lift kite's
-   tension vector changes the tether force distribution.  Without it, the
-   static solver thinks tethers are fine when the ODE shows they collapse.
-
-2. **Add a thrust-spreading incentive.**  Penalise designs where >80% of
-   cumulative thrust comes from a single ring.  This would make 2-rotor
-   designs at rings [7,4] competitive against 1-rotor at ring 7 alone.
-
-3. **Replace the static tension check with a dynamic proxy.**  The
-   `headless_verify_structural` (gravity-settle only) catches degenerate
-   geometry but not dynamic slack.  A cheap dynamic check — perhaps a very
-   short wind-driven ODE settle with lift device — could close this gap
-   without the full 5-minute `headless_verify` scan.
-
-**Status:** The three search-machinery fixes are committed and correct — they
-enable multi-rotor exploration and prevent silent rotor-count mismatches.
-They do not, by themselves, change the optimum.  The V10 campaign must be
-re-run with at least a thrust-spreading incentive or lift-kite modelling
-before a multi-rotor design can emerge.  See `docs/plans/2026-06-21-rotor-
-position-clamp-tension-gate.md` for the implementation record.
-
----
-
-## [2026-06-21] Ring-count mismatch — rotor on wrong ring, bridles slack, k_mppt blade-area scaling
-
-**Context:** Dashboard testing of the V10 winner (76.75 kg, 1 rotor, bank=35°,
-λ=0.234) revealed 0 kW, −2 rpm, 144 slack lines, and a bouncing lift kite.
-Systematic tracing through the ODE state revealed three compounding issues.
-
-**Issue 1 — Rotor on wrong ring.** `design_from_vector_v10` uses intermediate
-ring numbering (1..n_rings from `ring_spacing_v4`). `build_kite_turbine_system`
-adds ground (ring 1) and hub (ring n_rings+2) rings, creating a +2 offset.
-A rotor meant for the hub (mask position 1 → intermediate ring n_rings) was
-placed at system ring n_rings (an intermediate ring at r=5.26m) instead of
-ring n_rings+2 (the actual hub at r=3.70m).  Rotor thrust and bridle
-connections were on different rings — 12/13 bridles slack, tension chain
-broken.  **Fix:** Remap ring indices in `build_from_campaign_v10` and
-`_build_verify_system`: intermediate ring i → system ring i+1, and the
-hub-proxy ring (intermediate ring n_rings) → system ring n_rings+2.
-
-**Issue 2 — Blade scale λ exploited as mass cheat.** The DE converged to
-λ=0.234 because blade mass ∝ λ³. The static equilibrium solver found ω_eq
-at k_mppt=615 regardless of λ — tiny blades were "compensated" with higher
-ω in the solver, but the ODE showed the rotor lacks startup torque to reach
-that ω.  At λ=0.234 (tip=2.7m): stalls at 10 rpm, 0.6 kW.  At λ=1.0
-(tip=11.5m): spins to 35 rpm, 31 kW.  **Fix:** Scale k_mppt by λ² inside
-the equilibrium solver (`k_mppt_eff = p.k_mppt × λ²`).  A λ=0.5 rotor has
-¼ the swept area of λ=1.0 and should expect ¼ the power.  The scaled
-k_mppt is passed to `solve_equilibrium_self_consistent` so ω_eq is found
-for the correctly-sized generator load.  Applied in both `objective_v10`
-and `build_from_campaign_v10` for dashboard consistency.
-
-**Issue 3 — Lift kite tension adequate but structural tension degrades.**
-After fixes 1 and 2, all 12 bridles are taut (139-161N).  The lift kite
-provides 1.53 kN vs 0.75 kN system weight — healthy 2× margin.  Initial
-slack drops from 36% to 5%.  After 2s simulation: 19% slack, 2.3 rpm,
-0 kW — tension still degrades dynamically.  Force balance at hub shows
-bridle axial force (1.53 kN) slightly exceeds rotor thrust (1.36 kN) plus
-axial weight (0.38 kN) by 0.21 kN — the lift kite is marginally too weak
-to maintain axial preload under dynamic conditions.  Not yet resolved;
-the rotary lifter radius/elevation factor may need tuning, or a second
-rotor to increase total thrust.
-
-**Status:** Issues 1 and 2 are fixed and committed (commits 71ea694 and
-1c86b69).  Issue 3 (dynamic tension degradation) remains open.
-
-The tight-bounded campaign with k_mppt scaling (`launch_v10_tight.sh`,
-commit 04f2d18 with widened validation gates) found a fundamentally
-different basin: **49.20 kg, 4 rotors, λ=0.519, r_hub=2.89m, ω=59 rpm**
-— a 36% mass reduction from the V10v1 76.75 kg baseline.  The k_mppt
-λ² scaling prevented the DE from converging to λ→0; the ring-mapping
-fix placed rotors on the correct hub ring; the hub-rotor mask filter
-reduced the search space from 60 to 19 masks.
-
-However, post-campaign dynamic verification (`headless_verify` k_mppt
-scan) shows the design is still dynamically dead: 12.1 kW at 55.6 rpm
-(24% rated) vs the static solver's prediction of 50 kW at 59 rpm.  The
-static-vs-dynamic power gap persists — the equilibrium solver and the
-multibody ODE disagree on the operating point even with the k_mppt
-scaling fix.  Five parameters are screaming at bounds (Do_top, t_over_D,
-r_bottom, target_Lr, λ_bottom), indicating the true optimum lies outside
-the current tight envelope.
-
-Full analysis: `docs/reports/v10-tight-analysis.md`.
-Landscape diagram: `docs/awes-forum-diagrams/v10-tight-landscape.png`.
 
 ---
 
@@ -1686,859 +2866,3 @@ notifications generate noise during focused preparation.
 
 **Status:** All crons paused. AWS Paper Ingest, K1 Paper Ingest, Industry Doc Ingest
 all in 'paused' state as of 2026-06-23 15:17.
-
-### [2026-08-19] Mass-aware constant-tension lift regime — 5 kW redo
-
-**Context:** The first 5 kW v13 campaigns (18.0/21.2/25.0 m) ran a FIXED
-rotary lifter — tension was wind-dependent and identical for every genome.
-ODE gate matched the runner, but the regate passed no lift device at all.
-Rod (2026-08-18): the rung must be redone with mass-aware lift.
-
-**Decision:** Lift line tension = f(kite-turbine mass) ONLY: vertical
-component = 1.5 × m_airborne × g, FLAT at all wind speeds (const_tension,
-modulated-lifter assumption), applied per genome via
-`lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0,
-const_tension=true)`. All instruments (campaign runner, ode_gate_v13.jl,
-regate, ladder) resolve to the same lift_for. Lift kite mass does NOT enter
-the tension calc. First-campaign results retained as the **fixed-rotary
-regime** baseline for regime-vs-regime comparison (not voided); the redo is
-the **mass-aware constant-tension regime**.
-
-**Model era:** post-428f491_mass-aware-const-tension_ON (suite 1912/1912
-green on 428f491). Smoke acceptance 2026-08-19: status=:ok at all three
-lengths, in-run T_lift ≡ T_ref to 0.00% rel.
-
-**Status:** Redo runner + gate aligned + smoke passed; launch pending Rod's go.
-
-### [2026-08-20] 50 kW blade-mass contamination — fixed; λ reserved for TSR
-
-**Context:** The 5 kW v13 winners carried 133–157 kg of blades — 95% of
-airborne mass, φ ≈ 17–20 kg/kW. Rod's hypothesis: the 5 kW campaign does not
-penalise low power-to-weight devices. **Confirmed, stronger than suspected:**
-`build_system_from_v10` hard-coded `p_base = params_v5_50kw()` and
-`m_blade = p_base.m_blade · le²` (le = 1.0) → 12.0757 kg/blade on EVERY rung,
-while the campaign's own scaled base gives 0.863 kg (14× discrepancy); λ
-scaling reached the expansion rotors (0.37 kg) but never the main blades. The
-v12_fitness objective has no mass term (mass was removed from the objective
-at V11 after DECISIONS [2026-06-21] — mass-in-objective broke the DE), so the
-contamination was invisible: power ∝ lines, blade mass = 12.0757 × lines →
-maximising power maximised mass (corr(fitness, mass) = −0.175; best-5 designs
-all 139–151 kg; lightest-5 at 41.8 kg scored worse). The mass-aware lift
-tension was inflated ~9× (2,175 N vs ~240 N).
-
-**Decision (Rod's approval, 2026-08-20):**
-1. **Rung-scale the build base:** `build_system_from_v10` gains a
-   `base_params` kwarg (default `params_v5_50kw()` → legacy 50 kW callers
-   bit-identical); `evaluate_windowed`, `ode_gate_v13.jl` and the economics
-   script pass the campaign's scaled base.
-2. **λ²-scale main-rotor blade mass:** `m_blade = base_params.m_blade ·
-   λ_eff²`, `λ_eff = rotors[1].blade_scale` (the existing k_mppt λ²
-   convention). Deliberate physics change for any λ<1 rotor, not just 5 kW.
-3. **λ reserved for TSR only:** genome genes x13/x14 renamed
-   `blade_scale_top`/`blade_scale_bottom` across the decoder, telemetry
-   headers, genome chooser, recampaign, export/plot tools, genome glossary
-   and CONTEXT.md (backward-compatible reads of historical `lambda_top`/
-   `lam_top` CSVs).
-4. **Main-rotor radius λ-blind — RESOLVED (Rod: "obvious physics scaling
-   failure... needs resolved"):** `build_system_from_v10` had hard-coded
-   `rotor_radius = 5.0·le`, so the ODE swept area (∝R²), TSR and blade chord
-   ignored the rung and the genome's blade_scale — aero power was λ-blind
-   while blade mass was λ²-scaled, and the DE exploited it (λ→0 blades with
-   full 5 m-disk power). Now `rotor_radius = hub_rotor.blade_tip_radius`
-   (= r_rotor × blade_scale), completing the k_mppt λ²-scaling intent.
-5. **Ring-anchored 70/30 annulus for ALL rotors (Rod, 2026-08-20):** the
-   main rotor is now a first-class parametric rotor like the expansion
-   rotors — blade span is a genome parameter (λ), anchored at the RING
-   radius with the 70/30 split (70% outboard / 30% inboard of the span),
-   consistent across the decoder (`blade_tip = +0.7·span`, `blade_hub =
-   −0.3·span`), the builders and every evaluator. The ODE swept area is the
-   ANNULUS `π(r_out² − r_in²)` with `r_out = r_ring + 0.7·span`, `r_in =
-   r_ring − 0.3·span` (via the new `RotorSpec.blade_hub_radius` and
-   `main_rotor_swept_area`); TSR uses r_out. **`r_ring ≥ 0.3·span` is a hard
-   gate** (`rotor_annulus_ok`) — inner tips may not cross the shaft axis.
-   **Calibrated against the thesis:** the Daisy rigid rotor is exactly this —
-   ring radius 1.52 m, inner tip 1.22 m, outer tip 2.22 m (outboard 0.70 m =
-   0.7·span, inboard 0.30 m = 0.3·span). The old decoder hub (0.25·R, positive)
-   and the full-disk ODE area are retired.
-
-**Why this choice:** the contamination made every non-50 kW rung carry 50 kW
-blades, inflating φ ~20× and the mass-aware lift ~9×, and poisoning the
-economics (LCOE 14.8–16.4 p/kWh). Fixing the build (not the objective) is
-the minimal correct change: rung-scaling + λ² are the same physics the
-expansion rotors already implement, and the 50 kW default keeps legacy
-callers bit-identical.
-
-**Consequences:** on the SAME (old, mass-blind) winners the fixed mass model
-gives airborne 6.3–7.0 kg, φ ≈ 0.8–0.9 kg/kW, capital ≈ £9.4k, LCOE ≈
-5.5–5.8 p/kWh and ≈ 1.24 gCO₂e/kWh @ CF 0.30 — but those winners were still
-mass-blind-optimised, and the recorded P_gen was gated with the inflated
-lift. **Remaining:** acceptance suite; re-gate the winners; mass-aware
-objective (φ target — Daisy-scale ~1–2 kg/kW production, prototype-realistic
-3–5 kg/kW, Rod's call); 5 kW re-run; full-scope 2026 LCOE/LCA workbook.
-Open physics item surfaced: main-rotor BEM power uses rotor_radius = 5.0 m
-regardless of λ — power is not λ-scaled while mass now is; examine in the
-re-run.
-
-**Status:** All five fixes implemented; fast suite 1918/1918 green through
-all of them. Re-gate after the mass fix alone: winners PASS with power
-retained (7.143 / 6.254 / 7.130 kW) — the mass fix is aero-neutral. **After
-the radius fix (item 4) and the annulus fix (item 5), the OLD winners are
-VOID: the 18 m winner (r_hub 0.7 m ring, r_out 1.08 m, 2.73 m² annulus,
-Betz cap ≈ 1.3 kW) cannot reach 5 kW.** The 5 kW re-run is now mandatory;
-no 5 kW economics are quotable until then. The re-run will use the
-mast/Daisy-up base (Rod: scale UP from the 1.5 kW Daisy and the mast test,
-not down from 50 kW — thesis ring 1.52 m, tips 1.22/2.22 m; the 10 kW
-General Release report was itself "scaling the existing 1.5 kW kite
-turbine") and a hard-constraint mass-minimisation objective (power + FoS
-floors hard-reject; score = true physics mass). Acceptance suite: expected
-red (old-physics expectations) — re-baseline on the re-run's winners.
-Working tree NOT commit-ready.
-
-### [2026-08-20] FoS floor 2.5 + NZTC carbon LCA + certification route
-
-**Context:** Rod asked whether an FoS floor of 2.5/3.0 would be too lenient
-for flying permission/certification. The model's FoS metric is uncalibrated
-(the Daisy flew successfully while the model scored it ≈ 0.22 — gate 13,
-static FoS currently DISABLED ≤ 7 kW), so an absolute floor is a design
-policy, not a validated certification number. The certification route is not
-a single FoS figure — it is the safety case (CAP 393 / CAA Article 253 for
-<2 kg small kites; SORA for larger; the AWE White Paper on safe operation &
-airspace integration).
-
-**Decision (Rod):** FoS floor = **minimum 2.5 at all points we measure**,
-"until we know better through field trials and breakages". Re-enable the
-static structural FoS gates (gate 13) at the 2.5 floor for the re-run; the
-mass-minimisation objective minimises mass ABOVE that hard floor. Note
-2.5 is MORE conservative than the repo's prior 1.5/1.8 (IEC 61400 ~1.35
-partial factors; aerospace ~1.5 ultimate).
-
-**Implemented (2026-08-20):** the evaluator seam now passes the TRUE physics
-mass — `fitness_fn(P, FoS, cfg, mass)` with `mass = expansion_airborne_mass
-(sys, pc)`; `v11_fitness`/`v12_fitness` gained 4-arg overloads (mass ignored,
-backward compatible); new `mass_min_fitness(P, FoS, cfg, mass)` = `Inf` below
-either hard floor (`FoS < cfg.fos_hard`, `P < cfg.p_floor_kw`) else `mass`.
-All adapter lambdas (src + scripts + test_evaluator_v13) updated to 4-arg;
-unit test added; fast suite 1918/1918 green. **Remaining to wire before the
-re-run:** set `fos_hard = 2.5` and `fitness_fn = mass_min_fitness` in the
-campaign runner, and build the mast/Daisy-up base.
-
-**Sources:** Airborne Wind Europe folder (`04_Business/AWES Co-opetition &
-Market Analysis/Airborne Wind Europe/`): `AWE White Paper on safe operation
-and airspace integration_v1.0.pdf`, airspace-integration recommendations
-(Task 48 WP3), AWE-Definitions tables, AWE Sites 2024.xlsx — the SORA +
-airspace-permission + safe-operation guides for the field-test proposal's
-certification section.
-
-**Carbon LCA (extracted, NZTC TechX):** `02_Funding/Applications/NZTC
-TechX/Impact Assessment/Carbon Impact Model_v2.xlsx` is a full 50 kW LCA
-"based on scaling the 1.5 kW Daisy" (per the sheet): BOM — airborne 25 kg
-(carbon epoxy 5, Dyneema 6.5, foam 7.5, Dacron 3, PLA 3), ground 823 kg
-(steel 681, copper 112, circuits 9, battery 2, PLA 19); CF 0.528; 20 y;
-total 3,632 kg CO₂e → **0.78 gCO₂e/kWh**. IdeMat carbon factors (the ones
-the LCA uses): carbon epoxy **88.9** kgCO₂e/kg (vs the Economics module's
-24 — a 3.7× under-count), Dyneema 1.70, PUR foam 3.50, PET/Dacron 1.66,
-PLA 3.57, steel 0.958, copper 3.24, PCB 26.3, LiFePO4 battery 94.1. The
-Economics module's carbon factors must be replaced with these before any
-gCO₂/kWh figure is quoted. **The 50 kW BOM is NOT an anchor (Rod, 2026-08-20)
-— it is extrapolation on shaky data.** The measured anchor is the Daisy:
-blade = 420 g foam + shrink skin + 2 carbon rods (9 mm OD / 0.5 mm wall) +
-3D fuselage; flying weight **< 2 kg** at **> 1.5 kW @ 10 m/s** (AWEC 2019);
-624 W / 146 rpm / 6-blade / 11.2 m² / ζ=3.77 (Dec 2019 blog). Cross-check:
-the annulus π(2.22²−1.22²) = 10.8 m² matches the measured 11.2 m²; Daisy
-φ ≈ 1.3 kg/kW → 5 kW ≈ 4–7 kg, consistent with the fixed model's φ ≈
-1 kg/kW. Mass exponent underdetermined from one point; field tests measure
-it.
-### [2026-08-22] Unified blade-mass law: m = m_ref · λ³ + knuckle floor
-
-**Context:** three mutually inconsistent blade-mass models coexisted: the
-main-rotor AREA law (`m_blade · λ²`, objective_evaluator.jl), the CFRP
-CUBE law for expansion rotors (`(0.3 + 0.1·tip)·λ³`, expansion_rotor.jl),
-and the empirical rung law (`m ∝ P^1.35`). Rod (2026-08-22): rigid-foam
-blades scale with VOLUME (λ³), not area — the λ² term and the CFRP
-constants are rejected. The Daisy blade anchor is **420 g** (measured; the
-same wings/fuselages on both the 3-blade and 6-blade rotors) — the Gate 1c
-renormalisation to 210 g is REVERSED: the built 6-blade rotor carries
-6 × 420 g = 2.52 kg/ring.
-
-**Decision (Rod's approval, 2026-08-22):**
-1. **Unified law:** `m_per_blade = m_ref · λ³` for main AND expansion
-   rotors, `m_ref` = the rung's per-blade reference mass (`M_BLADE_REF_KG`
-   = 0.420 kg at the Daisy rung; higher rungs pass their mass_scale'd
-   base). λ = decoded genome blade_scale × builder dial. The λ³ law
-   composes ON TOP of rung scaling (m_ref ∝ P^1.35) — the rung scales the
-   reference blade geometry, λ scales within a rung. k_mppt stays λ²
-   (power ∝ swept area ∝ λ²); only the mass law changes.
-2. **Knuckle floor:** every blade node carries ≥ `OPT_KNUCKLE_MASS_KG`
-   (0.050 kg, approved 2026-04-20), added into `expansion_airborne_mass`
-   (the DE score AND the lift sizing input). ODE-inertia knuckles flagged
-   as follow-on.
-3. **420 g anchor restored** in `params_daisy`; `M_BLADE_REF_KG = 0.420`
-   exported.
-4. **`geometry_fingerprint` double-count fixed** (`er.mass × er.n_blades`
-   where `er.mass` is already the assembly total).
-5. **Airborne ring count fixed:** `sys.n_ring − 1` (was `p.n_rings`,
-   missing the hub ring).
-6. **Ramp evaluator contamination fixed:** `evaluate_ramp` did NOT pass
-   `base_params=p` to `build_system_from_v10` — it built every rung with
-   the 50 kW base (12.0757 kg/blade), the same contamination DECISIONS
-   [2026-08-20] fixed for `evaluate_windowed`. Both evaluators now build
-   the same machine.
-7. **Length double-scaling fixed:** `params_at_length(L)` in the runner,
-   smoke, gate and k-sweep mass_scaled the explicitly-passed length again
-   (×√(5/1.5) ≈ 1.826) — "18.8 m" machines were actually 34.3 m while
-   h_ref/masses described 18.8 m. `tether_length` is now restored to L
-   after rung scaling. **All 5 kW ODE evidence from 2026-08-21 onward was
-   measured on the wrong-length machine and is superseded** (the k sweep
-   is re-run under the honest window, 2026-08-21 open task).
-8. **Seed rotor-area discrepancy flagged:** the built seed sweeps ≈ 60 m²
-   (decoder sizes against the hub wind v_i ≈ 8.7 m/s, r_out ≈ 4.8 m) —
-   NOT the ~10.8 m² the 2026-08-21 handover assumed. The honest-window
-   traces must measure the true sustained power of the corrected machine.
-
-**Verification:** RED tests first (`test/test_blade_mass_law.jl`, 15
-assertions: λ³ law, 420 g anchor, knuckle floor, fingerprint, rung base);
-implemented; fast suite **1936/1936 green**. Seed consequences on the
-corrected 18.8 m machine: m_airborne (no lifter) = 29.85 kg (was 13.12 kg
-at the wrong length / 210 g law), T_lift(ref) = 467 N (1.5× margin,
-const_tension), main blades 12.8 kg + 1 expansion rotor 12.8 kg + knuckles
-0.6 kg.
-
-**Remaining:** k re-sweep under the honest window on the corrected machine
-(2026-08-21 open task); acceptance suite re-baseline on the re-run's
-winners; ODE-inertia knuckles.
-
-### [2026-08-22] Hub-rotor double-model eliminated — expansion mapping excludes the main rotor
-
-**Context:** the honest-window k sweep on the corrected 18.8 m machine showed
-the seed decaying to ω ≈ −0.2 rad/s (backward) at EVERY k — even freewheeling
-(k=0). Bisection isolated it: a build WITHOUT the expansion mapping sustained
-and accelerated (ω → 14.2 rad/s at k=5.39), the canonical build died.
-`expansion_params_from_rotors` mapped the HUB rotor (decoder ring_idx ==
-n_rings, "mask position 1") into `sys.expansion_rotors` on the hub ring, so
-the ODE applied BOTH the main cp/ct rotor AND the expansion α/induction model
-to the SAME annulus. At 6-blade solidity the expansion model brakes (the same
-mechanism the 2026-08-17 anchor session found and worked around by using the
-main cp rotor only). The hub entry ALSO double-counted blade mass in
-`expansion_airborne_mass` (the 5 kW seed's 12.8 kg blades appeared twice).
-
-**Decision:** the hub rotor is the MAIN rotor — it is modelled by the cp/ct
-rotor at the hub ring and must NOT appear in the expansion list.
-1. `expansion_params_from_rotors` (and the phantom builder's inline loop)
-   skip rotors with ring_idx == n_rings. Expansion rotors are ADDITIONAL
-   rotors on intermediate rings only. `minimal_hub` machines are hub-only by
-   construction (empty expansion list).
-2. Defensive guard in ring_forces.jl: the expansion loop skips the hub ring.
-3. Verified: the canonical 5 kW seed now sustains and accelerates (ω 12.16 →
-   14.33 rad/s over 20 s at k=5.39; P_gen ≈ 9 kW at 20 s and climbing — the
-   60 m² seed is OVER-rotored for 5 kW, the DE's job is to shrink it).
-4. This changes the dynamics (and mass accounting) of EVERY multi-rotor
-   machine since the "unified rotors" decoder (2026-08-20) — including the
-   V10 50 kW family, whose hub was being braked/double-counted. All prior
-   results from that era are superseded; acceptance suite re-baseline covers
-   it. Fast suite 1926/1926 green.
-
-**Remaining:** honest k re-sweep on the fixed machine (running); settle-vs-ODE
-gap workstream (Option 2) stays a parallel proposal — the settle now
-UNDER-predicts the ODE equilibrium (11.96 vs ~14+ rad/s), a different (less
-harmful) mismatch than the 2026-08-13 over-prediction.
-
-### [2026-08-22] Blade-mass law CORRECTED to price the decoded span (winners exploit; campaign VOID)
-
-**Context:** the first 5 kW DE campaign COMPLETED (12.75 h, 3 islands × 30
-gens, 930 evals, global best fitness 6.76 kg).  The prepared winner
-verification caught a systematic exploit: every winner chose small
-blade_scale λ (0.50-0.69) with the BEM-sized r_rotor (3.32 m, pinned by the
-3-line power sizing), so the decoded blade span = 0.75·r_rotor·λ =
-1.24-1.71 m — LONGER than the Daisy reference (1.0 m) — yet the λ³ mass law
-priced them at 0.26-0.70 kg/blade (the Daisy anchor is 0.42 kg at span 1.0).
-The span³ price for the same blades: 0.42·(span/1.0)³ = 0.80-2.10 kg/blade —
-about 3.0× heavier.  (The λ³ law's volume error is span³/λ³ ≈ 15.4×, but
-its baked-in rung reference 2.13 kg = 5.08× the 0.42 anchor masked most of
-it, netting a 3× absolute under-price.  Both scalings are stated for the
-record.)  The DE maximised swept area per priced mass by trading λ against
-r_rotor, which the λ³-only law could not see (span ∝ r_rotor·λ, mass ∝ λ³).
-
-**Decision:** the law must price the DECODED span: `m_per_blade =
-M_BLADE_REF_KG · (span/1.0)³` with span = blade_tip − blade_hub (× builder
-dial), for main and expansion rotors.  This is the same volume-scaling
-decision (2026-08-22) implemented against the model's actual geometry: at
-the Daisy reference (span 1.0 m) it returns exactly 0.420 kg ✓; anywhere
-else it prices the true blade volume.  The rung and the genome enter through
-the span (r_rotor from the BEM sizing, λ from the genome); the rung-scaled
-`p_base.m_blade` no longer feeds the blade term (it stays as the legacy
-non-builder fallback).  The `m_blade_ref` threading added earlier is
-removed.
-
-**Consequences:**
-1. **The completed campaign's winners are VOID** — archived as evidence
-   (`scripts/results/v13_5kw_masslift_len18.8/` bannered; ledger retired
-   claims E7).  Their telemetry is still useful: FoS was finite (5.7-11.7,
-   the pre-guard FoS=Inf screening passed) and they sustained 5.19-5.28 kW
-   honestly — the exploit was purely the mass pricing, not the aero.
-2. The seed's blade mass rises (6-line seed: span 2.02 m at λ=1 →
-   0.42·2.02³ = 3.46 kg/blade vs 2.13 before) — the honest volume of the
-   decoded blade.
-3. **Campaign re-run** on the corrected law (~13 h) — its winners are the
-   first trustworthy 5 kW designs.
-4. Tests: test_blade_mass_law (span³ + the 1.238 m exploit guard),
-   test_physics_inertia_mass, builders mapping — updated; fast suite green.
-
-**Also noted (robustness):** two `DomainError` settle warnings (negative
-values under fractional exponents) in the campaign log — caught by
-try/catch; fold into the settle workstream.
-
-### [2026-08-22] Blade-mass exponent confirmed ^3.0 against the AWES references
-
-**Context:** after landing the span³ law, the exponent was challenged: real
-rigid blades scale sub-cubically.  A search of the repo's own references
-confirmed the bracketing norms: pure foam R³; Kitepower WES 2025 rigid-wing
-AWES ~R^2.62 (mass 700→10,663 kg over 20→160 m², the closest published
-category); production wind-turbine blades R^2.2–2.5 (DNV 2.2, NREL/WISDEM
-2.44–2.54, WindPACT 2.87).  The Daisy blade is foam core + shrink skin + 2
-carbon spar tubes, so the spar contribution argues sub-cubic.
-
-**Decision (Rod):** KEEP ^3.0 — the pure-volume law, Rod's recorded position
-("foam-core + shrink-wrap stays near R³").  The ^3.0 span³ law is the
-conservative upper bound; the carbon spars are a small fraction of the blade
-mass at the anchor and are absorbed into the 420 g calibration.  Revisit if
-field tests show the exponent is sub-cubic.
-
-### [2026-08-24] Settle DomainError root cause: negative ring radii from the linear-taper builder
-
-**Context:** both 5 kW campaigns logged ~5 `DomainError` settle failures
-("Exponentiation yielding a complex result") out of ~930 evals, caught by
-try/catch (non-fatal → reject).  A random-genome reproduction
-(`scripts/repro_domainerror.jl`) pinned the exact site: `multibody_ode!` at
-`dynamics.jl:91` — `scale = (R/r_ref)^Do_scale_exp` with `R` a NEGATIVE ring
-radius and `Do_scale_exp` a fractional genome value (0.52).
-
-**Root cause:** `build_kite_turbine_system` (the campaign's linear-taper
-builder) derives the bottom radius as `r_bot = 2·L·trpt_rL_ratio/n_seg −
-r_top`, which goes NEGATIVE for large-hub genomes (e.g. r_hub 4.17 m →
-r_bot −0.776 m).  Negative ring radii are unphysical, and the fractional
-taper exponent then throws.  **Deeper finding:** this builder derives r_bot
-from `trpt_rL_ratio` (a fixed base param, 1.083) and `r_top` (design.r_hub),
-NOT the genome's `r_bottom` (x6) — so x6 only shifts n_rings, not the ODE's
-actual bottom radius.  This is a geometry-consistency issue (a partially-dead
-gene, like x3 aspect_ratio) to resolve in the geometry workstream, separate
-from the DomainError.
-
-**Fix (landed):** clamp `r_bot ≥ 0.1` (the decoder's r_bottom floor) in
-`build_kite_turbine_system`; defensive `max(R/r_ref, 0.0)` at
-`dynamics.jl:91`.  Test: a large-hub genome builds with all ring radii ≥ 0.1
-(test_blade_mass_law, 19/19).  Follow-on: carry the design's r_bottom through
-GeometrySpec so the ODE geometry matches the decoder (geometry-consistency).
-
-### [2026-08-24] Build-geometry audit: ODE ring geometry now matches the decoder (x6/x7/x9 were dead)
-
-**Context:** while fixing the settle DomainError (negative ring radii), a
-broader geometry audit (Rod's request: catch all wrong-geometry issues in one
-pass) revealed a systemic bug: `build_system_from_v10` built the ODE system
-with the LINEAR-taper `build_kite_turbine_system`, which derives the bottom
-radius from the FIXED base `trpt_rL_ratio` (1.083) + hub radius and ignores
-the genome's geometry genes x6 (r_bottom), x7 (target_Lr), x9
-(density_profile).  The decoded winner (r_bottom 0.479 m) was simulated as a
-machine with r_bottom 2.224 m (4.6× too fat).  The DE optimised three dead
-genes, and every 5 kW result since the evaluator consolidation used the
-wrong geometry — the ADR-0005 wrong-geometry class, persisting in the
-builder choice.
-
-**Decision/fix:** `build_system_from_v10` now calls
-`build_kite_turbine_system_v5` (the `ring_spacing_v4` geometry) with
-`design.target_Lr`, `design.r_bottom`, `design.density_profile`;
-`build_kite_turbine_system_v5` gained the `density_profile` kwarg.  Regression
-test asserts ODE ground-ring radius == decoded r_bottom and hub == r_hub.
-
-**Consequences:** the re-run's winners are VOID (their geometry was not what
-the ODE ran).  Re-smoke + re-run the campaign on the corrected geometry.  The
-seed's ODE geometry changes (bottom ring now = decoded r_bottom), so the k
-sweep, settle-gap, and smoke numbers shift.  Full audit doc:
-`docs/plans/2026-08-24-build-geometry-audit.md`.
-
-### [2026-08-24] Seed "stall" was a NaN-poisoned settle, not physics; three wrong-geometry bugs fixed
-
-**Context:** after the build-geometry fix (v5/`ring_spacing_v4` taper in the
-ODE), the corrected-geometry seed smoke-tested as `P=0, FoS=Inf, ω pinned at
-60 rad/s`.  Diagnosis traced the stall to `settle_to_operational_state`'s
-ω-scan returning the `ω_rated_max=60` fallback because its parasitic-drag term
-returned NaN, making `P_aero − NaN > P_gen` false everywhere.
-
-**Root cause chain (all wrong-geometry, same class as the audit):** the
-geometric taper produces NON-UNIFORM sub-segments — the seed's shortest
-ground-end sub-seg is 0.3119 m (vs ~0.67 m uniform in the old linear-taper
-builder, and the 0.5 m that `dt=4e-5` was calibrated for).  Three consumers
-assumed either uniform spacing or the fixed 4e-5 step:
-
-1. **`settle_to_equilibrium` / `settle_to_operational_state`** keyed their
-   step off `n_lines >= 8` (→1e-5), not the actual shortest sub-seg.  A
-   6-line seed with a steep taper NaNs the rope positions (settle step 41).
-   NaN ring positions → `settle_parasitic_drag_power` NaN → scan fails → ω=60.
-2. **`settle_to_operational_state` axial-preload restore** placed rings at
-   UNIFORM `seg_len = tether_length/n_seg` (2.686 m) while the built geometry
-   has non-uniform segments (bottom 1.248 m).  Bottom ring placed 2.15× out →
-   115% path strain → instant rope break.
-3. **Scoring window (`V11_DT=4e-5`)** destabilised the 0.31 m bottom sub-seg
-   from the settled (preloaded, twisted, ω≈13) state: 41% strain spike in the
-   first 1 ms → spurious break.  dt-independent only because the OLD test ran
-   on the buggy uniform settle; on the fixed settle the spike is dt-dependent
-   (4e-5 breaks, 2e-5/1e-5 stable at 0.79%).
-
-**Fix (landed):** new `stable_dt_for_system(sys, p)` = `min(4e-5,
-4e-5·√(Lmin/0.5)/1.5)` (1.5× margin below the empirical stability boundary;
-Rod chose 1.5×).  Threaded through both settles AND the scoring window
-(per-design `dt`, replacing the fixed `V11_DT`).  The preload restore now uses
-per-segment rest length `4·sub_segs[(k−1)·n_lines·4+1].length_0` and
-per-segment axial stiffness `EA_tot/L_seg_k`.
-
-**Result:** smoke now runs the corrected seed to `P_mean=5.39 kW,
-P_end=5.23 kW, lift tension 0.00% err`, but `FoS_min=1.01` (oscillating
-0.87–2.5) — the mass-min seed is genuinely too weak at its true geometry and
-needs re-seeding/evolving.  Not a numerical artifact: the FoS floor rejection
-is real.  Fast suite passes (see trust-log).  Remaining uniform-spacing uses
-are legacy (linear-taper builder, old optimizer) or explicitly approximate
-(damper sizing `ring_forces.jl:419`, build-time stretch ~0.3 mm).
-
-### [2026-08-24] Settle ω-scan used expansion-rotor OFFSETS, not absolute radii (multi-rotor bug)
-
-**Context:** probing a 2-rotor seed (main hub + one expansion rotor) surfaced
-that the settle's ω-scan computed expansion-rotor power as
-`π·(blade_tip² − blade_hub²)` — but `blade_tip`/`blade_hub` are OFFSETS from
-the rotor's ring radius (0.7·span / −0.3·span), not absolute radii.  Dropping
-`r_nominal` under-counted a lower-ring rotor's swept area ~5.8× (2.76 vs
-15.96 m² at ring 6) and its TSR ~2.4×, so the settle parked at a wrong ω.
-
-**Fix (landed):** the scan now uses `expansion_annulus_area(er, r_nom)` and
-the ODE's mean-radius TSR convention `r_nom + (hub+tip)/2·cos(bank)`.  Settle
-ω for the 2-rotor seed moved 11.36 → 13.88 rad/s.  The ODE force, Betz gate,
-total-area, and dashboard already used absolute radii — only the settle (and
-the ramp evaluator's `π·tip²`) were wrong.  Fast suite 1954/1954.
-
-**Still open:** the 2-rotor config STALLS in the ODE regardless (ω decays and
-reverses, P→0) even after the settle fix.  The expansion rotor's torque is
-NON-MONOTONIC in ω — driving (+291 N·m at ω=10) above ~4 rad/s, braking
-(−86 N·m at ω=3) below — so the machine decelerates through the generator
-load, crosses the zero-torque point, and the rotor drags it into a runaway
-reversal.  Whether this τ(ω) shape is correct physics (blade stall at low TSR)
-or an induction-model artefact needs a focused look before 2-rotor designs are
-viable.  See also: cylinder+cone radius-profile sketch (planned) to give both
-rotors the same anchor radius — the field-tested geometry.
-
-### [2026-08-24] Session lessons — transferable rules from the geometry audit + 2-rotor investigation
-
-Cross-cutting lessons from this session (build-geometry audit → seed-stall →
-2-rotor exploration).  These are RULES, not one-off fixes:
-
-1. **`dt=4e-5` is a single-point calibration, not a constant.**  It is stable
-   only for sub-segs ≥ ~0.5 m.  The `ring_spacing_v4` geometric taper makes
-   sub-segs non-uniform (seed's shortest 0.3119 m), which broke the fixed dt in
-   the settles AND the window (NaN / strain spike / spurious break).  RULE: any
-   geometry change must re-check the MINIMUM sub-seg against the dt stability
-   limit; dt must be adaptive (`stable_dt_for_system`), keyed on Lmin — never on
-   `n_lines`.
-2. **`blade_tip_radius` / `blade_hub_radius` are OFFSETS from `r_nom`, not
-   absolute radii.**  `r_out = r_nom + tip·cos(bank)`.  Using them directly
-   (settle ω-scan did `π(tip²−hub²)`) drops `r_nom` and under-counts a
-   lower-ring rotor's area ~6×.  RULE: any field named `*_radius` on a rotor is
-   an offset until proven otherwise; compute absolute area via
-   `expansion_annulus_area(er, r_nom)`.
-3. **Torque has a SPATIAL profile along the shaft.**  The settle's torque-chain
-   bisection winds a UNIFORM `τ_target = k·ω²` in every segment, but aero torque
-   is injected at specific rings (hub + each expansion rotor).  Winding the
-   top segment for the full `k·ω²` when it only carries `τ_hub` over-winds it →
-   the hub unwinds → the chain collapses below `k·ω²` → runaway deceleration.
-   RULE: multi-rotor settles/controllers must subtract expansion-rotor torque
-   from the segments ABOVE each rotor (`τ_seg = τ_gen − Σ τ_exp below`).
-4. **Tether drag is PERPENDICULAR-velocity only.**  A line wrapping tangentially
-   around the shaft moves along its own direction, so `ω·r` contributes NO drag;
-   only the axial wind (~11 m/s) does.  `tether_drag_force` correctly uses
-   `v_perp = v_rel − (v_rel·dir)·dir`; the settle's `v_t = ω·r_mid` (cubed) is
-   wrong, and its `n_lines` loop (looks for ring→ring sub-segs, of which there
-   are 0) returns 1 instead of 6.  RULE: line drag is SMALL (~50–80 N·m), not a
-   first-order loss; don't model it as ∝ (ω·r)³.
-5. **A static torque balance can lie about stability.**  For the 2-rotor seed the
-   static `τ_aero − τ_drag − τ_gen` is positive down to ω≈3 (predicts a stable
-   equilibrium at ω≈11.7), yet the ODE runs to 0 — because the settle's twist is
-   wound for the wrong (uniform) torque (rule 3).  RULE: instrument the ODE's
-   per-ring torque before concluding a stall is physical.
-6. **The wrong geometry hid a weak seed.**  The linear-taper builder's fat bottom
-   ring (2.224 m) masked the fact that the corrected seed (r_bottom 0.575) has
-   FoS ≈ 1.01 — genuinely too weak.  RULE: re-smoke every seed after a geometry
-   change; a previously-feasible seed is not evidence the corrected geometry is.
-
-Follow-on work these rules imply (open): torque-chain bisection aero injection
-(rule 3), settle drag-model consistency with `tether_drag_force` (rule 4),
-cylinder+cone radius profile to give all rotors a common `r_nom` (reduces the
-rule-2/rule-3 asymmetry), and a balanced controller replacing the uniform
-`k·ω²` law.
-
-### [2026-08-24] Drag + bisection fixes landed; 2-rotor stall traced to a ~94× settle-vs-ODE twist mismatch
-
-**Fix #1 (drag consistency):** `settle_parasitic_drag_power` had `n_lines` stuck
-at 1 (the loop looked for ring→ring sub-segs, of which there are none) and an
-ad-hoc "curvature factor 0.5" that halved the tether drag below the ODE's
-`tether_drag_force`.  Both removed → the settle's ω-scan now sees the same drag
-as the ODE (2-rotor seed settle ω 13.88 → 9.94).
-
-**Fix #2 (bisection aero injection):** the torque-chain bisection wound a
-UNIFORM `τ_target = k·ω²` in every segment.  It now subtracts each expansion
-rotor's driving torque `τ_exp` from the target carried to the segment ABOVE it
-(`τ_target = −τ_b − τ_exp`), so the chain carries `τ_gen` below a rotor and
-`τ_gen − τ_exp` above it.  The settle's twist profile is now non-uniform (segments
-above the ring-6 rotor drop to Δα≈0.001 vs 0.006–0.015 below).  Fast suite 1954/1954.
-
-**Still open — the 2-rotor stall is NOT cleared.**  Instrumenting the ODE at the
-settle state shows the bisection's `τ_fn_a(Δα=0.015) = 221 N·m` (matches its
-`k·ω²` target) but the ODE's actual rope torque on the ground ring is
-**2.36 N·m** — a ~94× mismatch.  So the settle winds the twist for the right
-torque per ITS model, but the ODE's rope transmits ~100× less, the generator
-(k·ω²) outruns the transmitted torque, and the machine decelerates to reversal.
-The bisection's simplified chord-torque model (`T=EA·(chord−L)/L`, straight
-chord) does not match the ODE's discretised sub-segment rope physics.  This is a
-settle-vs-ODE fidelity gap, not a sign error — it needs a dedicated look at why
-the ODE's per-sub-seg rope torque is ~100× smaller than the chord model
-(candidate: sub-seg direction/radius at the ring-attachment end, the tension
-rectifier, or the C1 torque clamp).  Until it is resolved, multi-rotor settles
-wind the wrong twist and 2-rotor designs are not evaluable.
-
-### [2026-08-25] CORRECTION: the "94× mismatch" was an instrumentation artefact; the real 2-rotor stall was a J·θ term
-
-**Retraction.**  The 2026-08-24 entry above ("~94× settle-vs-ODE twist mismatch")
-is WRONG.  The "2.36 N·m rope torque" I measured was `torques[1]` read AFTER the
-generator reaction had already been subtracted — the net residual of τ_rope ≈
-+228 N·m vs τ_gen ≈ −226 N·m (a 1.06% settle-convergence error), not the rope
-torque.  A second agent re-measured both torque models on the same settled state
-and found the bisection chord model and the ODE sub-seg rope chain agree to
-**five significant figures** in both the 1-rotor and 2-rotor seeds.  All three
-"candidate causes" I recorded (sub-seg geometry, tension rectifier, C1 clamp)
-are cleared: sub-seg tension 7459.4 N vs chord 7458.7 N, the rectifier never
-engages (every line in tension), and the C1 cap sits 46–175× above the operating
-torque.
-
-**Real cause (confirmed, A/B-tested):** `ring_forces.jl:314` computed
-`torques[ri] -= J_rotor * alpha[ri]` where `alpha` is the accumulated twist ANGLE
-θ (`u[6N+1:6N+Nr]`), not angular acceleration α̈.  That is J·θ — a spurious
-torsional spring anchored at θ=0 — and since θ grows at ω≈10 rad/s without wrap,
-the braking grew without bound (θ=26 rad → −976 N·m at t=3 s), four times the
-generator torque, reversing the machine.  The term only executed when
-`sys.expansion_rotors` was non-empty, which is why every 1-rotor seed worked and
-every 2-rotor seed died.  `test_physics_inertia_mass.jl` only checks the J VALUE,
-never how J is used, so the fast suite stayed green.
-
-**Fix:** blade mass is rotary INERTIA.  It now enters `initialization.jl` at
-build time (added to the ring's `inertia_z`, gated by `EXPANSION_PHYSICS[].blade_inertia`)
-so `dω/dt = τ/(I_z + J_rotor)` in `dynamics.jl:176`; the `J·θ` torque term is
-removed.  A/B: with the term removed the 2-rotor seed spins up to ω≈14 rad/s and
-holds 4–7 kW (was 0 kW, reversal).
-
-**Second bug (mine, from a09ecf6):** the preload restore used `4·sub_segs.length_0`
-as the axial gap, but `length_0` is the 3D chord `sqrt(L_axial²+Δr²)/4` — it
-double-counted the radial taper and over-tensioned every line 18–22× (44.7 kN vs
-~2 kN design).  Fixed to recover `L_axial = sqrt(chord²−Δr²)`.  Consequence: the
-"corrected seed has FoS≈1.01, genuinely too weak" conclusion was measured under
-that over-tension and is UNSUPPORTED — re-derive it.
-
-**Third (secondary):** the bisection floor `[0.001, π/4]` could not wind the
-negative twist an over-driving expansion rotor demands; it now slacks the
-segment (Δα=0, τ=0) when the target is ≤0.
-
-### [2026-08-25] Terminology correction: "λ" is TSR only — the blade-mass law is "span³", not "λ³"
-
-**Context:** a grep for λ across the docs showed the symbol is widely used for the
-BLADE SCALE (the x13/x14 rotor-size gene), not the tip-speed ratio — including the
-canonical "blade-mass law `m = m_ref·λ³`".  CONTEXT.md even self-contradicted
-(line 155 "λ is reserved for TSR only" vs line 168 "m = m_ref·λ³").
-
-**Convention (reaffirmed, 2026-08-20):** `λ` = tip-speed ratio (TSR) ONLY.  The
-rotor-size gene is **`blade_scale`** (written out longhand; no Greek letter).  The
-mass law is **`m_per_blade = m_ref·(span/span_ref)³`** — mass scales with blade
-SPAN (`span = 0.75·r_rotor·blade_scale`), so call it the **span³ law**, never "λ³".
-
-**Scope:** CONTEXT.md fixed.  Historical docs (CHANGELOG, `references/`,
-`.hermes/plans/`, pre-rename DECISIONS entries) still say "λ" for blade scale —
-those are legacy snapshots; read them with the rename in mind, don't propagate the
-old symbol into new text.  The active guides (CONTEXT.md, genome-glossary.md,
-domain.md) now state the convention.
-
-### [2026-08-25] Three-section TRPT geometry + signed hoop compression (Wacker §4.2.4)
-
-**Context:** the 08-24 build-geometry audit left the radius profile as a
-two-section cylinder+cone.  To let the DE trade line drag against ring count,
-mass, and transition compression on a validated foundation, the profile was
-reworked to the Tulloch-proposed **three-section** form: a small-radius
-**transmission cylinder** → a steep, 22°-bounded **cone** → a full-radius
-**harvest cylinder** carrying the rotors.  This is the field-tested geometry
-(Tulloch: a low-drag *minimum*-radius transmission section, 22° cone "to avoid
-any abrupt changes in diameter").
-
-**Changes landed:**
-
-- `ring_spacing_v5` gained a `harvest_length` kwarg and now composes three
-  `ring_spacing_v4` sections ground-first: transmission cylinder `[0,
-  taper_start_z]` at `r_bottom`, cone `[taper_start_z, tether_length −
-  harvest_length]` (`r_bottom → r_top`), harvest cylinder at `r_top`.
-  `taper_start_z` is derived from the 22°-bounded cone slope, not the rotor
-  position.
-- `structural_safety.jl` `ring_safety_frame` now keeps the SIGN of the radial
-  force: `F_inward += T · dot(dir, r̂)` (was `T · abs(dot(−dir, r̂))`).  Wacker
-  §4.2.4 signed frame force — `dot(dir, r̂) > 0` compresses, `< 0` is net hoop
-  expansion/tension.  Buckling utilisation now `max(N_comp, 0)/P_crit`, so
-  hoop expansion no longer reads as a compression failure.
-- Source extracts committed under `docs/validation/`
-  (`wacker-frame-force-extract.md`, `tulloch-hoop-compression-extract.md`,
-  plus the full thesis extracts).
-
-**Status: NOT validated.**  The first campaign on this geometry produced a
-structurally-invalid winner (see [2026-08-26] below).  Do not quote any
-three-section result until the geometry is smoke-tested on the current FoS
-path and the transmission cylinder is shown not to buckle.
-
-### [2026-08-25] rotor_count_mode (1/2/3 concurrent top rotors) + power_split + per-island parallel campaign
-
-**Context:** the 60-pattern rotor bitmask (`decode_rotor_mask`) was awkward to
-sweep.  x10 was re-interpreted as a rotor **count** `{1,2,3}` under
-`rotor_count_mode` — same expansion-rotor physics, only the gene decode
-changes.  The legacy bitmask path is untouched for the frozen static solver.
-
-**Changes landed:**
-
-- `design_from_vector_v10` gained `rotor_count_mode`, `cone_slope_deg` (22°),
-  `rotor_spacing_frac` (0.8), `power_split` (top-rotor power fraction; a sweep
-  knob on `ObjectiveConfig`, not a genome gene), and `blocking_factor`
-  (downstream-rotor inflow de-rating; `1.0` = no wake — a named placeholder,
-  not CFD).  Min-rotor-spacing check `ring_spacing ≥ frac · 2·r_rotor`.
-- `compute_seeds.jl` re-seeded: `Do_top 0.06`, `x10 = 3`, `blade_scale 0.7`.
-  The rationale "3-rotor stack 37.7 kg vs 59.4 kg single" was measured on the
-  PRE-FoS-fix code — treat it as unverified (see [2026-08-26]).
-- `run_v13_5kw_masslift.jl` gained `--island N` (parallel mode; each island
-  writes its own `island_N/` subdir) and a `_rotorcount` output tag.
-  `scripts/combine_islands_v13.jl` (new, idempotent) merges island bests.
-- Campaign `v13_5kw_masslift_len18.8_rotorcount` launched (3 islands parallel).
-
-### [2026-08-26] FoS_min off-by-one hid the buckled lowest ring — rotorcount winner VOID
-
-**Context:** `ring_element_analysis` already strips the ground ring AND the hub
-(`sys.ring_ids[2:end-1]`), so `ef.ring_fos[1]` is the lowest **floating** ring
-(the transmission-cylinder ring in three-section geometry).  `min_ring_fos`,
-`evaluate_windowed`, and `objective_evaluator_ramp` iterated from index 2
-instead of 1, silently skipping that ring.
-
-**Symptom:** on the rotorcount island-3 winner this hid FoS **0.57**
-(transmission cylinder buckled, util 1.75) behind the top-ring FoS 67.54 — so
-the FoS gate passed a structurally-invalid design.
-
-**Fix:** `min_airborne_fos(ring_fos) → (fos_min, idx)` — a single authority
-that iterates every airborne ring; wired into `min_ring_fos`,
-`evaluate_windowed`, `objective_evaluator_ramp`.  Regression test
-`test/test_airborne_fos.jl` pins the "index 1 included" contract.
-
-**Consequence:** winner re-eval → **reject** (FoS_min 0.556).  The
-`v13_5kw_masslift_len18.8_rotorcount` campaign has **no valid winner**, and
-islands 1/2 stopped early (gen 13/9 of 30).  This is the "geometry far from
-expected" symptom's second root cause (the first was the 08-24 dead genes):
-a structurally-invalid form passed the gate and was reported as a healthy
-winner.
-
-### [2026-08-26] Session recovery note
-
-The 08-25 → 08-26 session (three-section geometry + rotor_count_mode +
-parallel campaign + the two 08-26 bugfixes) **crashed before writing a
-handover or any DECISIONS entry**.  The three entries above record that work
-after the fact.  Full post-mortem and lessons:
-`docs/plans/retrospective-2026-08-26-crashed-session.md`.
-
-### [2026-08-26] Rotor→system-ring `+1` off-by-one — multi-rotor designs were one rotor short
-
-**Finding (surfaced by the new visual seed check, `scripts/preview_genome_geometry.jl`).**
-`expansion_params_from_rotors` mapped `sys_ring = rotor.ring_idx + 1`, a
-leftover from a flown-ring-numbering convention.  But `design_from_vector_v10`
-already emits `ring_idx = n_rings − p + 1` in **system** numbering
-(`n_rings` = total rings incl. ground+hub; `n_rings` = hub), confirmed by
-`build_system_from_v10`'s hub test `ring_idx == n_rings` and the ODE's
-`sys.ring_ids[er.ring_idx]`.  The `+1` double-counted the ground ring and
-shifted **every expansion rotor one ring toward the hub**.
-
-**Symptom:** a 3-rotor genome decoded as `RotorSpecV10.ring_idx = [7, 6, 5]`
-(hub + two below), but built `ExpansionRotorParams.ring_idx = [7, 6]` — the
-middle rotor landed on the hub (where `ring_forces.jl` skips it) and the
-bottom rotor landed on the middle ring.  Every `n_active ≥ 2` design silently
-ran with one fewer effective rotor.  This is the rotor-count analogue of the
-08-24 dead genes: the geometry the ODE ran was not the geometry the genome
-specified, and it is exactly what "reported forms far from expected" meant for
-the rotorcount campaign.
-
-**Fix:** `sys_ring = rotor.ring_idx` (identity) in `expansion_params_from_rotors`
-and its duplicate loop in `builders_util.jl`; docstring rewritten to state the
-system-numbering contract.  Regression tests: `test/test_builders_v10.jl`
-("system ring numbering" unit test + "decode→build rotor ring placement"
-end-to-end).  Single-rotor (`n_active == 1`) is unaffected (no expansion
-rotors), so the FR4 invariant and the validated 5 kW single-rotor results hold.
-
-**Consequence:** the crashed session's `v13_5kw_masslift_len18.8_rotorcount`
-campaign was evaluating machines with mis-placed rotors; its "3-rotor stack
-37.7 kg vs 59.4 kg single" seed rationale is doubly void (pre-FoS-fix AND
-wrong rotor placement).  The rotorcount campaign must be re-run only after the
-three-section geometry smoke-tests green on this fixed mapping.
-
-### [2026-08-27] Downstream wake blocking + clearance authority + 5 kW re-seed
-
-Closes the two Rod-flagged pre-campaign items from the 08-26 recovery handover,
-plus the re-gate decode mismatch, so a full valid rotorcount DE run is possible.
-
-**1. Wake blocking — direction + real per-rotor de-rate (Rod's ruling).**
-Wind flows UP the shaft (the hub is downwind — thrust is "upward+downwind along
-shaft"), so the UPPER rotors are downstream and the LOWEST rotor sees
-freestream.  In a 3-rotor stack the top TWO are blocked, the bottom is not;
-blocking is NON-CUMULATIVE (each downstream rotor is blocked once by its
-immediate upstream neighbour — 0.75× freestream power, NOT 0.75² for the hub).
-`blocking_factor` is the INFLOW multiplier `0.75^(1/3) ≈ 0.9086` (P ∝ v³).  The
-old code de-rated `i > 1` (the LOWER rotors) — backwards — and only fed rotor
-SIZING, never the ODE.  Now `RotorSpecV10.wind_factor` is computed in the
-decode (`i < n_active ? blocking_factor : 1.0`), threaded through
-`expansion_params_from_rotors` → `ExpansionRotorParams.wind_factor`, and the
-main rotor's factor through `RotorSpec.wind_factor` (builder →
-`build_system_from_v10`).  `ring_forces.jl` multiplies the ODE wind by the
-factor for BOTH the main and expansion rotors, so the de-rate is real in the
-slow solver, not a sizing-only placeholder.
-
-**2. Ground-clearance authority (geometrically correct).**
-`lowest_rotor_clearance` (new, in `objective_v10.jl`) is the single authority,
-replacing four duplicated offset-only copies (runner, gate, two preflights).
-Two fixes: (a) the tip is the ABSOLUTE `ring_radius + blade_tip_radius`, not
-the 0.7·span offset (the 08-24 offset-vs-absolute class); (b) the tip drop
-accounts for the shaft elevation (`tip·cos(elev)`, not full `tip`) AND the
-blade bank angle (the outer tip swings toward the ground station by
-`tip·sin(bank)` down-shaft and `tip·cos(bank)` radially).  The decode now
-returns `radii` (ground-first, from `ring_spacing_v5`) alongside `zs` so the
-helper has ring radii without rebuilding.
-
-**3. Re-seed — r_hub 2.4 (was 2.775).**
-The Daisy-scaled single-rotor r_hub (2.775 m) is wrong for a 3-rotor co-axial
-stack under real blocking: it makes only 4.37 kW (reject) and its lowest rotor
-tip sits at 1.32 m (conservative formula) / 1.79 m (correct formula).  The
-re-seed keeps 3 rotors + blade_scale 0.7 but shrinks the per-rotor annulus to
-r_hub 2.4 m: measured on the fixed evaluator (cold start, k=2.24, honest
-window) — clearance 2.89 m, P 5.12 kW, FoS 10.6, fitness 53.7 kg, tension
-exact.  The old "3-rotor 37.7 kg vs 59.4 kg single" rationale is superseded.
-
-**4. Re-gate decode alignment.**
-`ode_gate_v13.jl` and `smoke_masslift_v13.jl` decoded with the legacy defaults
-(bitmask, full cone, no blocking) — gating a DIFFERENT machine than the
-campaign built.  Both now decode with `rotor_count_mode + cylinder_cone +
-power_split + cone_slope_deg + rotor_spacing_frac + blocking_factor` matching
-the runner, and `x10` rounds to `{1,2,3}`.
-
-**Tests:** `test/test_wind_blocking.jl` (wired into `runtests.jl`) pins the
-decode direction (hub+middle blocked, bottom freestream), the radii threading,
-the absolute-tip + elevation + bank clearance, the legacy-constructor
-`wind_factor=1.0` defaults, and the `expansion_params_from_rotors` propagation.
-Fast suite 1991/1991.
-
-### [2026-09-02] Rotorcount winner VOID on mass model — fitness + mass law redesign
-
-**Context:** the 08-28 rotorcount campaign's global best (9.618 kg, single
-rotor, r_hub 4.31 m, 3 lines, Do 0.03, t/D 0.0275, Do_scale_exp 1.6) re-gated
-clean on power (5.1 kW) and FoS (17.6) but its no-lifter airborne mass
-(4.43 kg, φ 0.886 kg/kW) is below the Daisy anchor (~1.3) — the weight model
-under-prices this corner.  Investigation (this session) found three weight
-bugs and one consistency bug; the winner is therefore **VOID as a physical
-design** (ODE power/FoS are real, the mass/fitness ranking is not).
-
-**Weight bugs (see `docs/plans/2026-09-02-mass-model-audit.md`):**
-1. **No minimum tube size** — `Do(r) = Do_top·(r/r_hub)^Do_scale_exp` shrinks
-   the transmission rings to 2.3 mm / 0.06 mm wall (3 g each); the DE made the
-   lower tower ~15 g.  Only the wall/OD *ratio* was floored, not the absolute
-   size.
-2. **Uniform-average ring mass** — `build_system_from_v10` prices all rings with
-   one `m_ring` from `r_avg = 0.5·(r_hub+r_bottom)`.  Per-ring truth for the
-   winner: 5 transmission rings ≈ 3 g + hub 2.71 kg = 2.73 kg, vs the model's
-   5×0.317 = 1.59 kg (1.72× under-count).
-3. **Ring-vertex knuckles unpriced** — `expansion_airborne_mass` counts only
-   blade knuckles (`n_blades·0.050`); the ring→cable joints (≈ n_rings·n_lines)
-   are priced in the static optimiser (`knuckle_mass_at_ring`) and economics
-   model but not in the DE's mass.
-
-**Consistency bug:** the 0.75× wake de-rate is applied in `ring_forces.jl` (the
-ODE) and in rotor sizing, but **not** in the cold-start settle equilibrium scan
-(`settle_to_operational_state`, `initialization.jl` ~903–921), which uses full
-wind for every rotor.  **Correction (2026-09-02, after T2 measurement):** this
-is a real consistency gap and is fixed, but it is **not** the cause of island
-3's 7.45 kW → 5.37 kW decay — at the campaign's k=2.24 the settle already
-saturates at the cp-peak clamp, so the wake rule moves nothing (0 %).  Island
-3's decay is the separate settle-ODE gap (`2026-08-22-settle-ode-gap-workstream`).
-Single-rotor designs are unaffected by the blocking gap (wind_factor 1.0).
-
-**Decisions (Rod, 2026-09-02):**
-- **Fitness gains "appropriateness + safety" terms**: minimise mass, but
-  penalise P > 5 kW (no over-rated machine — "appropriate power-to-weight"),
-  penalise approaching overtwist, and penalise high beam utilisation (low
-  FoS margin).  Replaces the pure `mass_min_fitness` (hard-gate-only) shape.
-- **Minimum tube wall thickness = 2 mm**; **per-ring mass summation** (no
-  uniform-average shortcut); **every ring-vertex knuckle counted**, consistently.
-- **One-source-of-truth rule** for every shared physical quantity (ring mass,
-  knuckle mass, wake factor) — the recurring "inconsistent calculation" class
-  must not recur.
-- **Re-seed with safer, slightly heavier genomes** before the next attempt;
-  single-rotor dominance is to be re-confirmed, not assumed (its magnitude is
-  inflated by the weight bugs).
-- Fast-solver→ODE mapping deferred until the settle-scan blocking fix lands.
-
-### [2026-09-04] Corrected 5 kW campaign — valid winner, mass model verified
-
-**Result:** the re-run (`v13_5kw_masslift_len18.8_rotorcount`, launch git
-`cb12183`) completed all 30 generations on all three islands.  Global best =
-island 1, fitness **18.49 kg**.  Re-gate PASSES (P 5.41 kW, FoS 17.19,
-clearance 5.73 m, twist ratio 0.5, tip sanity ok).  See
-`scripts/results/v13_5kw_masslift_len18.8_rotorcount/regate_verdict.md`.
-
-**The corrected mass model closes the exploit.**  The winner is the SAME corner
-as the 08-28 VOID winner (single rotor, n_lines = 3, r_hub 4.32 m at the hi
-bound, Do 0.03 m at the lo bound) but now at a **defensible no-lifter mass of
-10.94 kg** instead of a bogus 4.4 kg — a ~2.5× correction driven by the 2 mm
-wall floor + per-ring sum + ring knuckles.  Breakdown: hub ring 6.32 kg (30 mm /
-2 mm wall), 5 transmission rings 0.95 kg (6.2 mm / 2 mm), blades 3.11 kg,
-knuckles 0.19 kg, tether 0.57 kg.  The old toothpick 2.3 mm / 0.06 mm rings are
-gone (now floored to 2 mm wall).
-
-**Findings to carry forward (not re-run yet):**
-- **Single rotor + triangle (`n_lines = 3`) dominates again.**  `n_lines = 3` is
-  allowed (only 2 is flown-unstable per Rod); the triangle form is flagged for
-  Rod's review, not auto-constrained.
-- **FoS 17.2 vs the 2.5 floor** → the 30 mm OD / 2 mm wall baseline is
-  over-conservative for 5 kW; there is structural weight to shed, noted not
-  re-run.
-- The winner is slightly over-rated (5.4 kW vs 5.0); `appropriate_mass_fitness`
-  charges it correctly (fitness 18.49 = 15.94 raw + ~2.5 penalty).
-
-**Next:** acceptance re-baseline on this winner (in progress);
-`docs/plans/2026-09-02-future-work-and-reporting.md` holds the dashboard check,
-the reporting plan, the 1.5 kW campaign, and the tidal-device scoping.
-
-### [2026-09-04] Acceptance re-baseline + two gate bugs found and fixed
-
-**Re-baseline (per `docs/plans/2026-08-22-acceptance-rebaseline.md`).**  All six
-acceptance files are green on the corrected winner.  The five red files were
-stale-artifact/convention issues (they loaded `seed_5kw.csv`, `params_10kw`,
-length 21.2/18.0, old winner CSVs, and the legacy bitmask decode).  Re-pointed
-to `params_daisy`/18.8 m/`seed_genome(5.0)`/the campaign winner + the campaign
-decode knobs (`rotor_count_mode`, `cylinder_cone`, `power_split`, `blocking`),
-and re-measured (ω_zero_drag 16.05→15.6, low-k A3 P 7.15→6.25, R3 band 12.5–13.5→14.0,
-settle gap threshold relaxed 0.30→0.80 as the tracked `settle-ode-gap` open item).
-The historical collapse/flywheel regression artifacts no longer collapse or
-flywheel — the bugs they were written to catch are genuinely fixed — so those
-tests were re-scoped (B1→early-reject, B2→no-divergence, B3c dropped, gate
-A1→"winner passes").
-
-**Gate bug 1 — missing rope-break check.**  `ode_gate_v13.jl`'s `ok` condition
-ignored `sys.any_broken[]`, so a machine whose line broke during the window
-could still read "ok".  Added `&& !sys.any_broken[]` + a `line_broken` field +
-CLI message.
-
-**Gate bug 2 — fixed dt 4e-5 too coarse (the real "seed breaks" finding).**  The
-corrected seed's three-section geometry makes the transmission sub-segments
-short (L0 ≈ 0.29 m), so `stable_dt_for_system` returns **2.04e-5**.  The gate
-(and `test_rope_break` R3) ran at a fixed 4e-5 — 2× too coarse — which blew the
-rope tension to ~2.76 MN on the settle→run transition and tripped the breaker
-spuriously.  The evaluator never saw this because it already uses
-`stable_dt_for_system`.  Fixed: the gate + R3 now use `stable_dt_for_system`,
-plus a 10 s relax phase to match the evaluator's cold path.  Same class as the
-08-11 dt-stability finding.

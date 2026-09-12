@@ -28,7 +28,7 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 
 | # | Claim | Evidence | Status |
 |---|-------|----------|--------|
-| B1 | Unified blade-mass law m = m_ref·λ³ | measured 420 g anchor; test_blade_mass_law (15 assertions); seed m_airborne 17.12 kg decomposes exactly | VALIDATED (internal consistency) |
+| B1 | Unified blade-mass law m = m_ref·span³ | measured 420 g anchor; test_blade_mass_law (15 assertions); seed m_airborne 17.12 kg decomposes exactly | VALIDATED (internal consistency) |
 | B2 | Main rotor is modelled ONCE (no expansion double-model) | bisection: pure-main build sustains (ω→14.2), canonical-with-hub-entry died (ω→−0.2) — identical aero formula both ways | VALIDATED (fix cc92a6b) |
 | B3 | Honest window measures running power | P_mean ≈ P_end at every k in the 40 s-window sweep; the old 20 s flattery is gone | VALIDATED |
 | B4 | 60 m² seed sustains ~8–9 kW at k=2.24 | honest sweep + smoke (8.00 kW, FoS 36, tip 73 m/s) | VALIDATED (in-model) |
