@@ -12,10 +12,14 @@ This repository uses a single-context domain documentation layout:
 * **Changelog**: [CHANGELOG.md](CHANGELOG.md) — user-facing version history.
 * **Architectural Decisions**: [docs/adr/0001-inertia-relief.md](docs/adr/0001-inertia-relief.md)
 * **Agent domain docs**: [docs/agents/domain.md](docs/agents/domain.md)
+* **Structure & load path**: [docs/agents/physics-topology.md](docs/agents/physics-topology.md) — mandatory before geometry / tension / load-path work
 
 ## ── Essential Reads Before Any KTD.jl Session ────────────────────────
 
-In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (most recent file) → `docs/plans/` (active plan).
+In order: [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md)
+(structure, load path, rotor models, pre-flight checklist — **mandatory before any
+geometry, tension or load-path work**) → `CONTEXT.md` → `DECISIONS.md` (last ~200
+lines) → `handovers/` (most recent file) → `docs/plans/` (active plan).
 
 ## ── Developer Commands ────────────────────────────────────────────────
 

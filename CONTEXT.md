@@ -1,6 +1,12 @@
 # CONTEXT.md — KiteTurbineDynamics.jl
 
-**Last updated:** 2026-09-11
+**Last updated:** 2026-09-12
+
+> **Before any geometry, tension, load-path or rotor-model work, read
+> [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md).**
+> It names every line in the lift chain, states the taut-chain rule, gives the
+> per-ring rotor-model rule, and lists the mistakes that come from re-deriving the
+> structure from expectation instead of from this record.
 
 ## What this is
 
@@ -15,28 +21,45 @@ The simulator sizes and stress-tests designs from **10 kW to 50 kW** via differe
 The kite turbine is a mostly-tensile, lightweight, fast-deployable structure:
 
 ```
-                    ┌─────────────────┐
-                    │   LIFT KITE      │  ← Elevation support
-                    │   (passive/rotary)│
-                    └────────┬────────┘
-                             │ lift line
-                    ┌────────▼────────┐
-                    │  LIFT BEARING    │  ← Swivel joint
-                    └────────┬────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-    ┌────▼────┐         ┌────▼────┐         ┌────▼────┐
-    │  ROTOR  │─────────│  TRPT   │─────────│ GROUND  │
-    │ (blades)│  torque  │ (shaft) │  torque  │ STATION │
-    │  ring   │─────────│ tethers │─────────│(gen+PTO)│
-    └─────────┘         └─────────┘         └─────────┘
+                    ┌──────────────────┐
+                    │    LIFT KITE     │  ← launched first; lift only
+                    └────────┬─────────┘     (no torque, no drive)
+                             │ LIFT LINE
+                    ┌────────▼─────────┐
+                    │  SKY HOOK        │  ← three-way knot; altitude limited
+                    │ (SkyAnchorNode)  │     by the backline
+                    └───┬──────────┬───┘
+        BACKLINE ───────┘          └─────── CYAN LINE
+     (partially elastic;                        │
+      altitude limiter,                  ┌──────▼───────┐
+      NOT a load path)                   │ LIFT BEARING │  ← swivel on the axis
+                                         └──────┬───────┘
+                                                │ BRIDLES (n_lines)
+                          ┌─────────────────────▼─────────────────────┐
+                          │              MAIN ROTOR                   │
+                          │   (TOPMOST ring — autogyro thrust + the   │
+                          │    lift chain both hold it up)            │
+                          └─────────────────────┬─────────────────────┘
+                                                │ TRPT (helical tethers)
+                          ┌─────────────────────▼─────────────────────┐
+                          │        GROUND STATION (gen + PTO)         │
+                          └───────────────────────────────────────────┘
 ```
 
+**Only the ground ring and the backline anchor touch the ground.** Everything
+above is airborne and free; the TRPT is a tensegrity column whose form follows the
+tension balance, not a rigid shaft. **Read
+[`docs/agents/physics-topology.md`](docs/agents/physics-topology.md) before any
+geometry, tension or load-path work** — it names every line above and records the
+mistakes that come from re-deriving this from expectation.
+
 **Key components:**
-- **Rotor:** Spinning ring of autogyro kite blades — generates torque from wind
-- **TRPT:** Tensile Rotary Power Transmission — helical tether lines between polygon rings, transmits torque to ground via twist propagation
-- **Ground station:** Generator + PTO — extracts power via `τ_gen = k_mppt · ω²`
+- **Main rotor:** the **topmost** ring's autogyro blades. Everything below it is the transmission for this rotor's torque. A rotor below may additionally be a banked-blade **expansion rotor** (extra torque + thrust).
+- **Lift chain:** lift kite → lift line → sky hook → cyan line → lift bearing → bridles → main rotor. The lifter applies **1.5 × airborne weight** vertically, **throughout operation**.
+- **TRPT:** Tensile Rotary Power Transmission — helical tether lines between polygon rings, transmits torque to ground via twist propagation.
+- **Ground station:** Generator + PTO — extracts power via `τ_gen = k_mppt · ω²`.
+
+**Critical failure mode — slack lift chain:** if the bridles go slack the lift chain is structurally decoupled from the rotor. Recorded three times in `DECISIONS.md`. Tension-only lines must be in tension at the operating point.
 
 **Critical failure mode — torsional collapse:** When applied torque exceeds geometric torsional capacity (Tulloch/Wacker criterion), the helical lines overtwist past their kinematic stability limit. Rings converge, lines cross and wind toward the axis, power transmission fails. This is geometric collapse, not material failure — and happens in seconds.
 
@@ -151,7 +174,15 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 
 | Term | Meaning |
 |------|---------|
-| **TRPT** | Tensile Rotary Power Transmission — helical tether shaft between polygonal spacer rings |
+| **Main rotor** | The **topmost** rotor of the TRPT. Everything below it is the transmission for its torque. Historically called the "hub rotor" — **use "main rotor"**; "hub" is not a rotor term. |
+| **Expansion rotor** | Banked-blade rotor on a TRPT ring; generates radial force (spreading the tethers outward) **plus its own axial thrust and torque**. **Any rotor may be one, including the main rotor** (2026-09-12). |
+| **Lift kite / lifter** | Topmost kite. Launched first; lifts the rig into a tensile state. Provides lift only — no torque, no drive. |
+| **Lift line** | 1 line, kite ↔ sky hook. Sized to deliver **1.5 × airborne weight** vertically at the lift bearing, throughout operation. |
+| **Sky hook (SkyAnchorNode)** | Three-way knot: lift line, backline, cyan line. Its altitude is limited by the backline. |
+| **Backline** | 1 line, sky hook ↔ backline ground anchor. **Partially elasticated in the field** — takes up slack, stays lightly tensioned, tightens hard only at the dyneema length. **An altitude limiter, not a load path.** |
+| **Cyan line** | 1 line, sky hook ↔ lift bearing. Carries the TRPT load. `CYAN_L0 = 5.0 m` (placeholder). |
+| **Bridles** ("gold bridles") | `n_lines` lines, lift bearing ↔ main-rotor attachment vertices. All the **same fixed length**, set once before launch, forming a **shallow cone at the apex** so they crush the ring less. **These are the load path that lets the lift chain carry the main rotor.** Not the same lines as the cyan line. |
+| **TRPT** | Tensile Rotary Power Transmission — helical tether shaft between polygonal spacer rings. A **tensegrity** column: form follows the tension balance. |
 | **TSR (λ)** | Tip-Speed Ratio: blade-tip speed ÷ wind speed. **λ is reserved for TSR only (2026-08-20)** — the V10+ genome's blade-scale genes are named `blade_scale_top`/`blade_scale_bottom` (x13/x14), NOT λ. |
 | **Cp** | Rotor power coefficient ≈ 0.22 at TSR 4.1 (BEM, NACA 4412) |
 | **Ct** | Rotor thrust coefficient ≈ 0.55 at rated |
@@ -166,8 +197,8 @@ The controller (`src/soft_ramp_controller.jl`) manages generator loading to trac
 | **Objective config** | `ObjectiveConfig` — immutable per-eval tunables (k_mppt, relax/window horizons, V12 power-window knobs). Sweeps thread it per-eval; no module globals. |
 | **Eval result** | `EvalResult` — named eval result with `status` (:ok/:reject) as the single reject channel. Never infer rejection from the fitness value. Honest rejects carry the measured window statistics (2026-08-21). |
 | **Blade-mass law** | `m_per_blade = m_ref · (span/span_ref)³` — ONE volume law for main and expansion rotors (2026-08-22, Rod). `M_BLADE_REF_KG = 0.420` (measured Daisy blade), `span_ref = 1.0 m`; per-blade knuckle floor 0.050 kg enters the airborne mass. **Not "λ³"**: λ is TSR; the mass scales with blade SPAN (span = 0.75·r_rotor·blade_scale), so write "span³", never "λ³". Replaces the old blade_scale² main-rotor AREA term and the CFRP expansion constants. |
-| **Main rotor modelled once** | The hub ring hosts ONLY the cp/ct rotor — `expansion_params_from_rotors` excludes the decoder's hub rotor (ring_idx == n_rings). Mapping it as an expansion rotor double-modelled the annulus (expansion α/induction brake at 6-blade solidity) and double-counted its mass (fixed 2026-08-22). |
-| **Minimal TRPT** | 1 flown bladed hub ring rotor + 1 ground ring = 2 rings. `expansion_params_from_rotors(..., minimal_hub=true)` maps it; builder geometry + A3 gate (n_rings ≥ 5) are the flagged follow-on. |
+| **Rotor model per ring (2026-09-12)** | **Any rotor may be a banked-blade expansion rotor, including the main rotor.** Where a ring carries banked blades, the banked-blade expansion model **REPLACES** the cp/ct disc model at that ring — never both, never neither. This supersedes the 2026-08-22 rule "the hub ring hosts ONLY the cp/ct rotor", which is why `expansion_params_from_rotors` used to exclude the top ring. |
+| **Minimal TRPT** | 1 flown bladed main rotor + 1 ground ring = 2 rings. `expansion_params_from_rotors(..., minimal_hub=true)` maps it; builder geometry + A3 gate (n_rings ≥ 5) are the flagged follow-on. |
 
 ---
 

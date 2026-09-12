@@ -4,9 +4,14 @@
 
 ## Quick Start
 
-1. **Read these first:** `CONTEXT.md` (physics glossary) → `DECISIONS.md` (design rationale) → `CLAUDE.md` (dev commands)
-2. **Run the test suite:** `julia --project=. test/runtests.jl` (see `test/runtests.jl` for the current set). Never commit with failures.
-3. **Launch a dashboard:** `julia --project=. scripts/interactive_dashboard.jl --v10`
+1. **Read these first:** [`physics-topology.md`](physics-topology.md) (structure,
+   load path, rotor models — **mandatory before geometry/tension/load-path work**)
+   → `CONTEXT.md` (physics glossary) → `DECISIONS.md` (design rationale) →
+   `CLAUDE.md` (dev commands)
+2. **Run the test suite:** `scripts/ktd-julia test/runtests.jl`. Never commit with
+   failures. **Plain `julia --project=.` does NOT work in this sandbox** — use the
+   wrapper (`scripts/ktd-julia`), which stacks the writable depot.
+3. **Launch a dashboard:** `scripts/ktd-julia scripts/interactive_dashboard.jl --v10`
 4. **Understand the physics:** Every tether, bridle, and line must transmit force only in TENSION. Slack = failure.
 
 ## Repository Map
@@ -14,6 +19,7 @@
 | What | Where | Why |
 |------|-------|-----|
 | Physics & decisions | `CONTEXT.md`, `DECISIONS.md` | Understand the TRPT, campaign history, design choices |
+| **Structure & load path** | **`docs/agents/physics-topology.md`** | **Mandatory before geometry / tension / load-path / rotor-model work** |
 | Dev commands | `CLAUDE.md`, `AGENTS.md` | Build, test, lint, run campaigns |
 | Source code | `src/` | 39 Julia files — entry at `src/KiteTurbineDynamics.jl` |
 | Test suite | `test/` | see `test/runtests.jl` |
@@ -61,10 +67,49 @@ These have each caused a wrong diagnosis or a silent bug. Read before debugging:
 5. **`dt=4e-5` is a calibration, not a constant** — stable only for sub-segs
    ≥ ~0.5 m. The `ring_spacing_v4` taper shortens them; always use
    `stable_dt_for_system(sys, p)`, never a literal dt or an `n_lines`-based step.
-6. **`sub_segs.length_0` is the 3D chord** `sqrt(L_axial² + Δr²)/4` (radial
-   taper included), NOT the axial gap. Axial placement/stretch must use the
+6. **`sub_segs.length_0` is the 3D chord** `sqrt(L_axial² + Δr²)/4` (radial taper
+   included), NOT the axial gap. Axial placement/stretch must use the
    axial gap `sqrt(chord² − Δr²)`; using `4·length_0` as an axial length
    over-tensioned every line 18–22×.
+
+## Gotchas — lift chain, load path and rotor models (2026-09-12)
+
+These caused a full session of wrong diagnoses. Full detail:
+[`physics-topology.md`](physics-topology.md).
+
+7. **Only the ground ring and the backline anchor touch the ground.** Every other
+   node is airborne and free. The TRPT is a **tensegrity** column whose form
+   follows the tension balance — not a rigid shaft with a fixed length.
+8. **Four different lines, four different names.** *Lift line* (kite ↔ sky hook),
+   *backline* (sky hook ↔ ground anchor), *cyan line* (sky hook ↔ lift bearing,
+   1 line), *bridles* (lift bearing ↔ main-rotor vertices, `n_lines` lines). The
+   bridles are the load path that lets the lift chain carry the main rotor.
+   **Never write "bridles (cyan lines)"** — they are different links with
+   different tensions.
+9. **The lift chain must be TAUT.** The lifter applies **1.5 × airborne weight**
+   vertically at the lift bearing *throughout operation*. If the bridles read
+   0.0 N the lift chain is structurally decoupled from the rotor — a **named
+   failure mode** (`DECISIONS.md:1806-1822`, `:2108-2120`), not a resting state.
+10. **`bearing_offset = 6.0` is a PLACEHOLDER**, carried over from other tested
+    systems; the bearing's axial design point was never chosen. The same applies to
+    the derived bridle rest length (6.462198 m). Derive them from the taut-chain
+    balance; do not treat them as measured geometry.
+11. **Angles invert: "shallow at the apex" is the design intent.** Shallow apex
+    (small angle between bridles) ⇒ more axis-aligned ⇒ **less radial ring
+    compression**. The ring-plane angle is the complement and is therefore
+    *large* (~59° on the seed vs ~31° from the axis). Always state the frame.
+12. **Include EVERY rotor's thrust.** The seed has 3 rotors; the main rotor is only
+    ~15 % of the axial thrust (309 N of 2044 N), the two expansion rotors ~85 %.
+    A main-rotor-only budget is wrong by ~6.6×.
+13. **The topmost rotor IS the main rotor.** "Hub" is not a rotor term. Everything
+    below the main rotor is transmission for its torque. **Any rotor may be a
+    banked-blade expansion rotor, including the main rotor**, and where banked
+    blades are fitted the expansion model **replaces** the cp/ct disc model at that
+    ring (2026-09-12) — superseding the 2026-08-22 hub exclusion.
+14. **Search for silent no-ops before trusting a result.** `continue`, `clamp`,
+    `max(0.0, …)` and fallback branches have hidden at least four separate
+    defects (`physics-topology.md` §6). A physical precondition that cannot be met
+    must **raise**, not clamp or skip.
 
 ## Current Campaign State
 

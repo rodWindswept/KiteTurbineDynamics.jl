@@ -10,6 +10,72 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-12] Lift-chain topology, rotor naming, and per-ring rotor models — recorded so they stop being re-derived
+
+**Context.** Over 2026-09-11/12 a series of errors shared one character: the
+structure was re-derived *from expectation* rather than from the recorded design,
+and each one had to be corrected by Rod restating how the machine works. The
+lessons existed in the repo but in no agent-facing place — `docs/plans/2026-05-12-sky-anchor-node.md`
+(the lift chain), `DECISIONS.md:1776-1779`, `:1806-1822`, `:2108-2120` (slack
+bridles), and `docs/plans/2026-09-10-shaft-windup-workstream.md:209` (the load
+path). Meanwhile `CONTEXT.md` — the first read for every agent — drew the lift
+line going straight into the lift bearing with **no sky anchor, no backline and
+no bridles**, teaching a topology that omits the entire lift chain.
+
+**Decisions recorded (all Rod, 2026-09-12).**
+
+1. **Naming.** The topmost rotor is the **main rotor** (previously called the
+   "hub rotor"). "Hub" is not a rotor term. Everything below the main rotor is
+   the transmission for that rotor's torque; a rotor below may additionally be an
+   expansion rotor, adding further torque and thrust.
+2. **The lift chain is four named links, never one.** *Lift line* (kite ↔ sky
+   hook), *backline* (sky hook ↔ backline ground anchor), *cyan line* (sky hook ↔
+   lift bearing, 1 line), *bridles* (lift bearing ↔ main-rotor vertices,
+   `n_lines` lines, drawn "gold"). The **bridles are the load path** that lets the
+   lift chain carry the main rotor. Only the ground ring and the backline anchor
+   touch the ground; everything else is airborne and free.
+3. **The lift chain must be taut throughout operation.** The lifter is sized for
+   **1.5 × airborne-weight vertical component** at the lift bearing, applied
+   continuously — the topmost kite is launched first, pulls the rig into a tensile
+   state, and that state persists. Slack bridles = structural decoupling, a named
+   failure mode, not a resting state.
+4. **Bridles: one fixed length each, set before launch, forming a shallow cone at
+   the APEX** so they tend less to crush the ring. Shallow apex ⇒ more
+   axis-aligned ⇒ less radial compression; enough blade banking can make the ring
+   **tensile rather than compressed**.
+5. **The backline is an altitude limiter, not a load path.** Partially elasticated
+   in the field (elastic sewn into the dyneema): takes up slack, stays in light
+   tension, tightens hard only at the dyneema length.
+6. **Any rotor may be a banked-blade expansion rotor, including the main rotor.**
+   Where banked blades are fitted, the banked-blade expansion model **REPLACES**
+   the cp/ct disc model at that ring — never both. This **supersedes** the
+   2026-08-22 hub exclusion ("the hub ring hosts ONLY the cp/ct rotor"), which was
+   a workaround for a double-modelling symptom, not a physical rule.
+7. **`bearing_offset = 6.0` and the derived bridle rest length (6.462198 m) are
+   placeholders** carried over from other tested systems; the bearing's axial
+   design point was never chosen. Measured, the correct geometry is ~3.99 m axial
+   / ~4.66 m 3D (~31° from axis, ~59° at the ring plane).
+
+**Alternatives considered.** Leaving the lessons in the existing docs and relying
+on agents to find them — rejected, that is exactly what failed. Enabling per-ring
+banked-blade models by simply deleting the exclusion guard — rejected as unsafe:
+the main-rotor thrust is hardcoded at `hub_gid` (`ring_forces.jl:215`), the guard
+is a *silent* `continue`, and `expansion_airborne_mass` would double-count the
+main rotor's blades (`expansion_analysis.jl:59-62`).
+
+**Consequences and open work.** The topology is now stated in
+`docs/agents/physics-topology.md` (mandatory pre-read, linked from `CONTEXT.md`
+and `docs/agents/domain.md`); `CONTEXT.md`'s structure diagram is corrected and
+its vocabulary table gained every line name. Still **open**: the bridle/bearing
+geometry fix, making the silent guards raise, per-ring rotor-model selection with
+the replace rule, and re-deriving the preload/loads with **all three rotors'**
+thrust (main rotor is only ~15 % of the total, 309 N of 2044 N — a
+main-rotor-only budget is wrong by 6.6×).
+
+**Status:** Active. Supersedes the 2026-08-22 hub-exclusion rule.
+
+---
+
 ## [2026-09-11] Settle↔ODE coherence: matched-place twist+axial solve (wind-up root cause corrected)
 
 **Context:** Every ODE window opened with a large jerk and then wound up for

@@ -59,3 +59,27 @@ Replacement: still true at 50kW; at ≤7kW use cold-start; 5kW seed passes ODE g
 ## ODE never sustains power
 Date: 2026-08-12
 Replacement: with ζ=0.05 the ODE sustains power at all tested scales
+
+## The hub ring hosts ONLY the cp/ct rotor
+Date: 2026-09-12
+Replacement: Any rotor may be a banked-blade expansion rotor, including the main rotor (topmost). Where banked blades are fitted, the expansion model REPLACES the cp/ct disc model at that ring. See docs/agents/physics-topology.md §4
+
+## expansion_params_from_rotors excludes the decoder's hub rotor
+Date: 2026-09-12
+Replacement: expansion_params_from_rotors must be able to map the topmost rotor when it carries banked blades; the 2026-08-22 exclusion is superseded
+
+## Expansion rotors are ADDITIONAL rotors on intermediate rings only
+Date: 2026-09-12
+Replacement: expansion (banked-blade) rotors may be fitted to any ring, including the topmost/main rotor ring
+
+## hub rotor
+Date: 2026-09-12
+Replacement: main rotor (the topmost rotor). "Hub" is not a rotor term — see docs/agents/physics-topology.md §4
+
+## bridles (cyan lines)
+Date: 2026-09-12
+Replacement: bridles and the cyan line are different lines: bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line). See docs/agents/physics-topology.md §2
+
+## bearing_offset = 6.0 is the bearing design position
+Date: 2026-09-12
+Replacement: 6.0 is a PLACEHOLDER from other tested systems; the bearing's axial design point was never chosen. Measured correct geometry ~3.99 m axial / ~4.66 m 3D bridle

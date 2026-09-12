@@ -7,12 +7,17 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 
 ## Start here
 
-1. **Domain & context** — [`CONTEXT.md`](CONTEXT.md) and [`DECISIONS.md`](DECISIONS.md)
+1. **Structure & load path (read first)** — [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md)
+   names every line in the lift chain, states the taut-chain and per-ring
+   rotor-model rules, and carries the pre-flight checklist. **Mandatory before any
+   geometry, tension or load-path work** — this is where the repeated
+   "re-derived it from expectation instead of from the record" mistakes live.
+2. **Domain & context** — [`CONTEXT.md`](CONTEXT.md) and [`DECISIONS.md`](DECISIONS.md)
    at the repo root explain the TRPT kite-turbine physics and the design choices
    behind the current model.
-2. **Architecture decisions** — see [`docs/adr/`](docs/adr/) (e.g.
+3. **Architecture decisions** — see [`docs/adr/`](docs/adr/) (e.g.
    `0001-inertia-relief.md`).
-3. **Developer commands** — the canonical build/test/campaign commands live in
+4. **Developer commands** — the canonical build/test/campaign commands live in
    [`CLAUDE.md`](CLAUDE.md).
 
 ## Working agreement
@@ -31,6 +36,14 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
   logic.
 - **SI units; angles in degrees at the API boundary.** Match existing
   conventions in `src/`.
+- **Re-derive nothing about the structure.** The lift chain, line names, rotor
+  models and standing geometry are recorded in
+  [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md). Run its
+  **pre-flight checklist** before any geometry, tension, load-path or rotor-model
+  work. If you are about to "simplify" the load path or the ring model, stop and
+  read it first — re-deriving these from expectation has repeatedly cost a session.
+- **Tension-only means tension.** Every line above the ground ring must be taut at
+  the operating point. Slack is a defect to diagnose, never a resting state.
 
 ## Conventions
 
@@ -42,4 +55,6 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 
 ## Skills & issue tracking
 
-See `docs/agents/` — `issue-tracker.md`, `triage-labels.md`, `domain.md`.
+See `docs/agents/` — `physics-topology.md` (structure, load path, rotor models),
+`issue-tracker.md`, `triage-labels.md`, `domain.md`,
+`instrument-trust-log.md` (instrument fault ledger).
