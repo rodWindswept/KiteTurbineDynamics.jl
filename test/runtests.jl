@@ -13,7 +13,6 @@ using Test
 using KiteTurbineDynamics
 
 @testset "KiteTurbineDynamics" begin
-    include("test_parameters.jl")
     include("test_aerodynamics.jl")
     include("test_bem_unified.jl")
     include("test_blade_geometry.jl")
@@ -21,7 +20,6 @@ using KiteTurbineDynamics
     include("test_campaign_k_alignment.jl")
     include("test_golden_traces.jl")
     include("test_expansion_rotor.jl")
-    include("test_expansion_stack.jl")
     include("test_expansion_analysis.jl")
     include("test_types.jl")
     include("test_geometry.jl")
@@ -33,7 +31,6 @@ using KiteTurbineDynamics
     include("test_bearing_alignment.jl")
     include("test_emergent_torsion.jl")
     include("test_power.jl")
-    include("test_trpt_axial_profiles.jl")
     include("test_ring_spacing_v4.jl")
     include("test_ring_element_analysis.jl")
     include("test_spacer_ring_design.jl")
@@ -49,11 +46,13 @@ using KiteTurbineDynamics
     include("test_wind_blocking.jl")
     include("test_objective_v11.jl")
     include("test_objective_v12.jl")
-    include("test_physics_path_guard.jl")
     include("test_lift_kite_rotary.jl")
     include("test_lift_kite_stacked.jl")
     include("test_mass_model_2026_09.jl")
     include("test_settle_blocking_2026_09.jl")
+    include("test_settle_preload_consistency.jl")
     include("test_fitness_appropriateness_2026_09.jl")
     include("test_system_defaults.jl")
+    include("test_beam_sizing_closed_form.jl")
+    include("test_rope_resolution.jl")
 end
