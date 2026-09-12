@@ -51,6 +51,7 @@ using KiteTurbineDynamics
     include("test_mass_model_2026_09.jl")
     include("test_settle_blocking_2026_09.jl")
     include("test_settle_preload_consistency.jl")
+    include("test_settle_validity.jl")   # 2026-09-12: taut chain + force balance + smooth handoff
     include("test_fitness_appropriateness_2026_09.jl")
     include("test_system_defaults.jl")
     include("test_beam_sizing_closed_form.jl")
