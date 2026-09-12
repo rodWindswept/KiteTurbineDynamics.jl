@@ -77,7 +77,7 @@ open(TELE_CSV, "w") do io
     println(io, "# v13_5kw telemetry  length=$LENGTH  window=$WINDOW_S  min_clearance=$MIN_CLEARANCE")
     println(io, "island,gen,idx,fitness,status,P_mean,P_end,FoS,twist_crossed,clearance," *
         "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether," *
-        join(["x$j" for j in 1:14], ","))
+        join(["x$j" for j in 1:10], ","))
 end
 
 function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
@@ -93,8 +93,8 @@ function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
             round(clearance, digits=2),
             dec.design.n_lines, dec.n_rings, dec.n_active,
             round(dec.design.r_hub, digits=3), round(dec.design.r_bottom, digits=3),
-            round(x[11], digits=1), round(x[12], digits=1),
-            round(x[13], digits=3), round(x[14], digits=3),
+            round(x[7], digits=1), round(x[8], digits=1),
+            round(x[9], digits=3), round(x[10], digits=3),
             LENGTH,
             [round(v, digits=6) for v in x]...,
         ]
@@ -143,8 +143,8 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
         return EVAL_CACHE[key]
     end
     xr = copy(x)
-    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = clamp(xr[10], 0.0, Float64(N_VALID_MASKS))
+    xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))   # n_lines (R7 10-D layout)
+    xr[6] = clamp(xr[6], 0.0, Float64(N_VALID_MASKS))  # rotor mask proxy
 
     result = Inf; status = :reject; clearance = Inf; r = nothing; dec = nothing
     try

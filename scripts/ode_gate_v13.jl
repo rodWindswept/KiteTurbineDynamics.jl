@@ -93,8 +93,13 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     k_mp = KW == 5.0 ? K_MPPT_5KW_HONEST : p.k_mppt
     bf = KW == 5.0 ? BLOCKING_WIND_FACTOR_5KW : 1.0
     xv = copy(x)
-    xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
-    xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: x10 = count {1,2,3}
+    if length(xv) >= 14
+        xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
+        xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    else
+        xv[4] = Float64(round(Int, clamp(xv[4], 3, 16)))    # R7 10-D layout
+        xv[6] = Float64(round(Int, clamp(xv[6], 1, 3)))
+    end
     # 2026-08-26: decode with the SAME knobs as run_v13_5kw_masslift.jl so the
     # gate re-evaluates the machine the campaign actually built — rotor_count_mode
     # + three-section geometry + power_split + wake blocking.  The legacy default
@@ -109,8 +114,17 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     clearance = KiteTurbineDynamics.lowest_rotor_clearance(
         dec; ground_offset=GROUND_OFFSET, elevation_deg=rad2deg(ELEV))
 
+    # R7 (2026-09-10): build the SAME closed-form sized tube the campaign
+    # evaluator scores — otherwise the gate validates the legacy taper-law
+    # machine, not the one that was sized.
+    cfg_gate = KiteTurbineDynamics.ObjectiveConfig(;
+        power_W=KW * 1000.0, v_rated=11.0, p_floor_kw=KW,
+        fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
+        rotor_count_mode=true, power_split=0.6, blocking_factor=bf)
+    sizing = KiteTurbineDynamics.size_beams_closed_form(dec, p, cfg_gate)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
-        tether_diameter=p.tether_diameter, base_params=p)
+        tether_diameter=p.tether_diameter, base_params=p, min_wall_m=2e-3,
+        beam_sizing=sizing)
     # 2026-09-04: use the STABLE dt for this system's shortest sub-segment, not
     # the fixed DT=4e-5.  The corrected seed's transmission rings make sub-segs
     # short enough (L0 ≈ 0.29 m) that 4e-5 is 2× too coarse and blows the rope

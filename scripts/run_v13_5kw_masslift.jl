@@ -191,7 +191,7 @@ open(TELE_CSV, "w") do io
     println(io, "# v13_5kw_masslift telemetry  length=$(LENGTH)  window=$(WINDOW_S)  min_clearance=$(MIN_CLEARANCE)  lift=mass-aware-const-tension  margin=1.5  era=$(PHYSICS_ERA)  git=$(GIT_HASH)")
     println(io, "island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,clearance," *
         "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether," *
-        join(["x$j" for j in 1:14], ","))
+        join(["x$j" for j in 1:10], ","))
 end
 
 function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
@@ -208,8 +208,8 @@ function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
             round(clearance, digits=2),
             dec.design.n_lines, dec.n_rings, dec.n_active,
             round(dec.design.r_hub, digits=3), round(dec.design.r_bottom, digits=3),
-            round(x[11], digits=1), round(x[12], digits=1),
-            round(x[13], digits=3), round(x[14], digits=3),
+            round(x[7], digits=1), round(x[8], digits=1),
+            round(x[9], digits=3), round(x[10], digits=3),
             LENGTH,
             [round(v, digits=6) for v in x]...,
         ]
@@ -251,8 +251,8 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
         return EVAL_CACHE[key]
     end
     xr = copy(x)
-    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: x10 = rotor count {1,2,3}
+    xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))   # n_lines (R7 10-D layout)
+    xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))    # rotor_count_mode: rotor count {1,2,3}
 
     result = Inf; status = :reject; clearance = Inf; r = nothing; dec = nothing
     try
@@ -335,7 +335,7 @@ for island in island_range
 
     population = Vector{Vector{Float64}}(undef, popsize)
     population[1] = clamp.(copy(seed_v), lo, hi)
-    population[1][8] = Float64(round(Int, clamp(population[1][8], 3, 16)))
+    population[1][4] = Float64(round(Int, clamp(population[1][4], 3, 16)))
     for k in 2:popsize
         population[k] = lo .+ rand(Float64, dim) .* (hi .- lo)
     end
@@ -365,7 +365,7 @@ for island in island_range
             for j in 1:dim
                 trial[j] = (rand() <= CR || j == j_rand) ? mutant[j] : population[i][j]
             end
-            trial[8] = Float64(round(Int, clamp(trial[8], 3, 16)))
+            trial[4] = Float64(round(Int, clamp(trial[4], 3, 16)))
             cost_trial = eval_v13(trial, island, iteration, i)
             if cost_trial <= costs[i]
                 population[i] = trial

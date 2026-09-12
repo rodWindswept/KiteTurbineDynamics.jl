@@ -1,0 +1,1 @@
+island=1 gen=1 fitness=1.0e9 length=18.8

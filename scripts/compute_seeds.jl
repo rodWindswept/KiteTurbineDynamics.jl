@@ -64,17 +64,13 @@ function seed_genome(kw)
     # 3 blades, solidity 7.5%, NACA 4412, ~12 mm carbon rod ring) — NOT the
     # 50 kW V10 winner.  Scale UP by sqrt(kw/1.5).  blade_scale = 1.0 is the
     # Daisy's full-span reference (span ∝ blade_scale).
+    #
+    # R7 (2026-09-10): CANONICAL 10-D genome.  The four free beam genes
+    # (Do_top, t_over_D, beam_aspect, Do_scale_exp) are gone — the beam is
+    # load-derived by size_beams_closed_form.
     geom_scale = sqrt(kw / 1.5)
 
-    g = zeros(14)
-    g[1] = 0.08                          # Do_top: RE-SEED 2026-09-02 (was 0.06).  Under the
-                                          # corrected mass model the 0.06 seed's higher lift
-                                          # tension drops FoS to 5.19; 0.08 restores a comfortable
-                                          # FoS 7.2 (Rod: "less fit, more safe" seed — heavier
-                                          # but safer).  The DE can tune Do back down from here.
-    g[2] = 0.055                          # t_over_D: 0.5 mm wall on ~9 mm rod (Daisy blades)
-    g[3] = 1.0                            # beam_aspect: circular
-    g[4] = 1.0                            # Do_scale_exp: uniform tube
+    g = zeros(10)
     # r_hub — RE-SEED 2026-08-26: 2.4 m (was DAISY.r_hub·geom_scale = 2.775 m).
     # A 3-rotor co-axial stack needs a SMALLER per-rotor annulus than the
     # single-rotor Daisy scaling once the downstream wake de-rate is real
@@ -82,64 +78,56 @@ function seed_genome(kw)
     # blocking (reject).  Measured on the fixed evaluator (cold start, k=2.24,
     # honest window): r_hub 2.4 → P 5.12 kW, FoS 10.6, fitness 53.7 kg, and it
     # clears the geometrically-correct ground clearance with margin.
-    g[5] = 2.4                          # r_hub
-    g[6] = DAISY.r_bottom * geom_scale    # r_bottom
-    g[7] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
-    g[8] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
-    g[9] = 0.0                            # density_profile: uniform
-    g[10] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial top rotors.
+    g[1] = 2.4                          # r_hub
+    g[2] = DAISY.r_bottom * geom_scale    # r_bottom
+    g[3] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
+    g[4] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
+    g[5] = 0.0                            # density_profile: uniform
+    g[6] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial top rotors.
                                           # The 08-25 "37.7 vs 59.4 kg single" rationale is void
                                           # (measured pre-FoS-fix); keep 3 for a multi-rotor seed
                                           # so the DE explores 1/2/3 from a safe start.
-    g[11] = 0.0                           # bank_top
-    g[12] = 0.0                           # bank_bottom
-    g[13] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
-    g[14] = 0.7                           # blade_scale_bottom: same as top
+    g[7] = 0.0                           # bank_top
+    g[8] = 0.0                           # bank_bottom
+    g[9] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
+    g[10] = 0.7                          # blade_scale_bottom: same as top
     return g
 end
 
 function tight_bounds(seed, kw; do_min::Float64=0.03)
+    # R7 (2026-09-10): canonical 10-D bounds.  `do_min` is retained for CLI
+    # backward compatibility but is now inert (no Do_top gene).
     # Spread: ± fraction around seed for each dimension
-    # Corrections per Rod 2026-08-12:
     #   r_hub: wider spread (+80%) — Daisy 1.5kW has 1.52m, our 0.91m seed needs headroom
     #   target_Lr: lo=1.0 (Tulloch: L/r can be as high as 6; minimum ~1.0 for stability)
     #   bank angles: lo=0° (blades exactly in rotor plane)
     #   blade_scale: hi=1.0 (not 2.0) — too many weak-aero stalling turbines at scale>1
-    #   blade_scale_bottom: same hi as blade_scale_top — no tight ceiling
-    sp = [0.50, 0.50, 0.50, 0.60,    # Do_top, t/D, aspect, taper_exp
-          0.80, 0.50, 0.40, 0.00,    # r_hub, r_bot, Lr, n_lines (handled below)
+    sp = [0.80, 0.50, 0.40, 0.00,    # r_hub, r_bot, Lr, n_lines (handled below)
           1.0,                        # density: full range
           0.80, 0.80, 0.80, 0.80, 0.80]  # count, bank_t, bank_b, blade_t, blade_b
-    
-    lo = zeros(14); hi = zeros(14)
-    for i in 1:14
-        if i == 1
-            # Do_top: hi = +100% of the seed (seed × 2); lo PINNED at do_min
-            # (0.03 m baseline, Rod 2026-09-02; mass-relaxation runs pass 0.02),
-            # decoupled from the seed's ±50% spread.  The wall floor in the mass
-            # model already guards thin tubes, so this lo only bounds the search.
-            lo[i] = do_min
-            hi[i] = seed[i] * 2.0
-        elseif i == 8
+
+    lo = zeros(10); hi = zeros(10)
+    for i in 1:10
+        if i == 4
             # n_lines: [3, 9] (Rod 2026-09-02).  n_lines = 2 is flown-unstable;
             # the floor stays at 3 — a triangle is a valid polygon.  Ceiling 9
             # (was 16): no design need more than 9 lines at this scale.
             lo[i] = 3.0
             hi[i] = 9.0
-        elseif i == 9
+        elseif i == 5
             lo[i] = -0.8; hi[i] = 0.8
-        elseif i == 10
+        elseif i == 6
             # rotor count (rotor_count_mode): {1,2,3}
             lo[i] = 1.0; hi[i] = 3.0
-        elseif i in (11, 12)
+        elseif i in (7, 8)
             # bank angles: 0° minimum, 22° maximum (Rod: >22° back-winds blades on slanted TRPT)
             lo[i] = 0.0
             hi[i] = 22.0
-        elseif i in (13, 14)
+        elseif i in (9, 10)
             # blade scale: hi=1.0 (Rod: too many weak-aero stalling turbines above 1.0)
             lo[i] = max(0.05, seed[i] * (1.0 - sp[i]))
             hi[i] = 1.0
-        elseif i == 7
+        elseif i == 3
             # target_Lr: lo=1.0 (Tulloch: L/r minimum for stable torque transmission)
             lo[i] = 1.0
             hi[i] = seed[i] * (1.0 + sp[i])
@@ -148,22 +136,18 @@ function tight_bounds(seed, kw; do_min::Float64=0.03)
             hi[i] = seed[i] * (1.0 + sp[i])
         end
     end
-    
+
     # Physical minima & overrides
-    # t_over_D floor 0.010 (Rod 2026-08-14): the v13 18m winner parked at
-    # 0.005 → 0.14 mm tube walls → 58 g rings flung by 5.7 kN rotor thrust.
-    # The floor is the SEED's own value — no thinner than the starting design.
-    lo[2] = max(lo[2], 0.010)
     # r_hub lo=0.7 (Rod 2026-08-14): the DE repeatedly exploited tiny hubs
     # (0.47/0.67m winners diverged the hub ring to ω~1e66-1e86). τ_cap ∝ r_min²;
     # Daisy 1.5kW had r_hub=1.52m. Seed is 0.914m. hi ≥ 2.2 unchanged.
-    lo[5] = max(lo[5], 0.7); hi[5] = max(hi[5], 2.2)
-    lo[6] = max(lo[6], 0.1)
-    
-    for i in 1:14
+    lo[1] = max(lo[1], 0.7); hi[1] = max(hi[1], 2.2)
+    lo[2] = max(lo[2], 0.1)
+
+    for i in 1:10
         if lo[i] >= hi[i]; lo[i] = hi[i] * 0.5; end
     end
-    
+
     return lo, hi
 end
 
@@ -176,14 +160,14 @@ for kw in RUNGS
     seed = seed_genome(kw)
     lo, hi = tight_bounds(seed, kw)
     bad = findall(lo .>= hi)
-    n_bad = count(i -> seed[i] < lo[i] || seed[i] > hi[i], 1:14)
+    n_bad = count(i -> seed[i] < lo[i] || seed[i] > hi[i], 1:10)
     
     # Compute Daisy-scaled r_hub for comparison
     daisy_r_hub_scaled = DAISY.r_hub * sqrt(kw / 1.5)
     
     println("── $kw kW  (geom_scale=$(round(sqrt(kw/50), digits=3)), Daisy-scaled r_hub=$(round(daisy_r_hub_scaled, digits=2))m) ──")
-    println("  n_lines seed = $(Int(seed[8]))  (bounds [$(Int(lo[8])), $(Int(hi[8]))])")
-    println("  r_hub   seed = $(round(seed[5], digits=3)) m")
+    println("  n_lines seed = $(Int(seed[4]))  (bounds [$(Int(lo[4])), $(Int(hi[4]))])")
+    println("  r_hub   seed = $(round(seed[1], digits=3)) m")
     println("  seed = [", join(round.(seed, digits=4), ", "), "]")
     println("  lo   = [", join(round.(lo, digits=4), ", "), "]")
     println("  hi   = [", join(round.(hi, digits=4), ", "), "]")

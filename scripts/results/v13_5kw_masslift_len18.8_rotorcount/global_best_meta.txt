@@ -1,0 +1,1 @@
+island=1 fitness=18.49236259398345 length=18.8

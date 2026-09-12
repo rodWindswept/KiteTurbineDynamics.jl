@@ -113,8 +113,14 @@ end
 
 # Round the discrete genome genes the way the campaign runner does.
 function round_discrete!(x::Vector{Float64})
-    x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
-    x[10] = Float64(round(Int, clamp(x[10], 1, 3)))
+    if length(x) >= 14
+        x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
+        x[10] = Float64(round(Int, clamp(x[10], 1, 3)))
+    else
+        # R7 canonical 10-D layout
+        x[4] = Float64(round(Int, clamp(x[4], 3, 16)))
+        x[6] = Float64(round(Int, clamp(x[6], 1, 3)))
+    end
     return x
 end
 
