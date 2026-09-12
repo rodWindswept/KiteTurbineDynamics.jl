@@ -2,7 +2,7 @@
 
 **Purpose:** Shared cross-instance truth source for both Hermes instances (laptop + desktop) working on KiteTurbineDynamics.jl.  Durable state lives version-controlled, not in either instance's private memory.  Read at session start.
 
-**Last updated:** 2026-08-12
+**Last updated:** 2026-09-12
 
 ## Duplicate-Representation Audit
 

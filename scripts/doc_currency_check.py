@@ -144,19 +144,55 @@ AGENT_DOCS = [
     os.path.join(REPO, "docs", "agents", "domain.md"),
     os.path.join(REPO, "docs", "agents", "instrument-trust-log.md"),
     os.path.join(REPO, "docs", "agents", "genome-glossary.md"),
+    # 2026-09-12: the structure/load-path page and the corrected glossary now
+    # carry the canonical topology, so they must be scanned too.
+    os.path.join(REPO, "docs", "agents", "physics-topology.md"),
+    os.path.join(REPO, "docs", "agents", "physics-validation-ledger.md"),
     os.path.join(REPO, "CONTEXT.md"),
 ]
 
 def check_stale_phrases():
+    """Scan agent docs for superseded phrasings.
+
+    Two refinements (2026-09-12) after this check produced false positives on
+    the docs that *teach* the correction:
+      - a line that PROHIBITS a phrase ("never write 'X'", "do not write X")
+        is quoting it to forbid it, not asserting it — skip such lines;
+      - report the line number, so the fix is obvious.
+    """
+    # Markers that mean the phrase is being quoted in order to ban it, or is
+    # being recorded as superseded history rather than asserted as current.
+    negation = (
+        "never write", "do not write", "don't write", "avoid writing",
+        "never say", "do not use", "don't use", "never call",
+        "do not ", "don't ", "avoid ",
+        "retired", "historically called", "previously called",
+        "formerly called", "was called", "is a placeholder",
+        "not a rotor term", "superseded",
+    )
+    # Markdown emphasis inside a phrase (e.g. ``"hub **rotor**"``) would defeat a
+    # plain substring test, so compare on a de-emphasised copy of the line.
+    def _plain(s):
+        return s.replace("**", "").replace("*", "").replace("`", "")
+
     for doc in AGENT_DOCS:
         if not os.path.exists(doc):
             continue
         with open(doc, errors="ignore") as f:
-            content = f.read()
+            lines = f.read().splitlines()
         for phrase, replacement in STALE_PHRASES:
-            if phrase in content:
+            plain_phrase = _plain(phrase)
+            for n, line in enumerate(lines, 1):
+                if plain_phrase not in _plain(line):
+                    continue
+                low = _plain(line).lower()
+                if any(mark in low for mark in negation):
+                    continue        # quoting it to forbid it, or as history
                 rel = os.path.relpath(doc, REPO)
-                ISSUES.append(f"{rel} contains stale phrase '{phrase}' → {replacement}")
+                ISSUES.append(
+                    f"{rel}:{n} contains stale phrase '{phrase}' → {replacement}"
+                )
+                break
 
 
 # ── Check 5: superseded handover cross-references ─────────────────────────
