@@ -242,7 +242,7 @@ function build_rerun!(
                         for s2 in 1:n_seg_dyn
                             seg_sum_d = 0.0
                             for j in 1:p_run2.n_lines
-                                seg_nat_len_d = 4 * sys.sub_segs[(s2-1)*p_run2.n_lines*4 + 1].length_0
+                                seg_nat_len_d = ROPE_SUBSEGS * sys.sub_segs[(s2-1)*p_run2.n_lines*ROPE_SUBSEGS + 1].length_0
                                 gid_a_d = sys.ring_ids[s2]; gid_b_d = sys.ring_ids[s2+1]
                                 na_d    = sys.nodes[gid_a_d]::RingNode
                                 nb_d    = sys.nodes[gid_b_d]::RingNode

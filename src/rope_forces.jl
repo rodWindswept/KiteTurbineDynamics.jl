@@ -134,7 +134,7 @@ function get_segment_tension(
     p::SystemParams,
     s::Int,
     j::Int;
-    sub_idx::Int=2,
+    sub_idx::Int=cld(ROPE_SUBSEGS, 2),
 )
     N = sys.n_total
     Nr = sys.n_ring
@@ -169,7 +169,7 @@ function get_segment_tension(
         end
     end
 
-    idx = (s - 1) * p.n_lines * 4 + (j - 1) * 4 + sub_idx
+    idx = (s - 1) * p.n_lines * ROPE_SUBSEGS + (j - 1) * ROPE_SUBSEGS + sub_idx
     idx > length(sys.sub_segs) && return 0.0
     ss = sys.sub_segs[idx]
 

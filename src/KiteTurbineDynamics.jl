@@ -62,6 +62,7 @@ export expansion_airborne_mass, expansion_phi, expansion_radius_summary, expansi
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
 export AbstractNode,
     RingNode, RopeNode, BearingNode, SkyAnchorNode, HubVertexNode, KiteTurbineSystem
+export ROPE_SUBSEGS, ROPE_NODES_PER_LINE   # rope discretisation (2026-09-10)
 export shaft_perp_basis, attachment_point, rope_helix_pos
 export build_kite_turbine_system, build_kite_turbine_system_v5, state_size
 export compute_rope_forces!, compute_ring_forces!, apply_brake_constraint!
@@ -117,6 +118,10 @@ export peak_hub_thrust
 export OPT_E_CFRP, OPT_RHO_CFRP, OPT_KNUCKLE_MASS_KG, OPT_V_PEAK, OPT_FOS_REQUIRED
 export OPT_DESIGN_LOAD_FACTOR
 export M_BLADE_REF_KG   # unified blade-mass law reference (2026-08-22)
+# Closed-form beam sizing (R7, 2026-09-10): the load-derived replacement for the
+# four free beam genes.
+export size_beams_closed_form, BeamSizing, solve_ring_Do, HELIX_LOAD_FACTOR,
+    tube_wall_thickness, ring_beam_mass, knuckle_mass_at_ring
 
 # TRPT v2: enriched axial-profile family + 12-DoF search space (Phase A of cartography)
 export AxialProfile,

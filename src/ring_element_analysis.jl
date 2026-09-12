@@ -481,22 +481,12 @@ function analyse_ring(
     # Tube properties for gravity and drag
     L_beam = 2.0 * R * sin(π / n)
     active_tube = if design === nothing
-        # Use system's ring geometry fields (populated by builder from design vector).
-        # When ring_Do_top is wired (via build_system_from_v10), reproduce the
-        # design path's taper law EXACTLY: Do(r) = Do_top·(r/r_hub)^Do_scale_exp,
-        # with the genome's raw t_over_D (no 0.05 floor — the design branch has
-        # none, and flooring silently thickened every sub-0.05 wall the DE chose).
-        # Falls back to legacy 0.01396*sqrt(R) when ring_Do_top is zero
-        # (backward compatibility).  Refs are zero when the builder predates
-        # them, in which case use the legacy √R law via exp=0.5 / p.trpt_hub_radius.
-        Do = if sys.ring_Do_top[] > 0.0
-            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
-            exp_taper = sys.ring_Do_scale_exp[]
-            scale = (R / r_ref)^exp_taper
-            sys.ring_Do_top[] * scale
-        else
-            0.01396 * sqrt(R)
-        end
+        # Single authority (R7, 2026-09-10): `ring_Do_at` returns the solved
+        # per-ring section when wired (via build_system_from_v10), else the
+        # legacy taper law `Do_top·(r/r_hub)^exp`, else 0.01396·√R.  The same
+        # helper the ODE ring-beam drag and the settle drag read, so the
+        # verification FEA always validates the tube that was actually sized.
+        Do = ring_Do_at(sys, ri, R, p)
         t_over_D = max(sys.ring_toverD[], 1e-4)
         t_val = tube_wall_thickness(Do, t_over_D; min_wall_m=sys.min_wall_m[])
         CircularTube(Do, t_val / Do)
@@ -639,7 +629,8 @@ end
 """
     ring_element_analysis(u, alpha, sys, p, t, wind_fn) → Vector{RingElementFrame}
 
-Run per-beam structural analysis for all intermediate rings (skipping ground and hub).
+Run per-beam structural analysis for all airborne rings (ground ring excluded —
+it is ground-supported; the HUB ring is now included, R7 2026-09-10).
 Replaces `ring_safety_frame()` as the primary structural post-processing function.
 """
 function ring_element_analysis(
@@ -652,7 +643,11 @@ function ring_element_analysis(
     design::Union{Nothing, SpacerRingDesign}=nothing,
 )::Vector{RingElementFrame}
     results = Vector{RingElementFrame}()
-    for (k, ring_gid) in enumerate(sys.ring_ids[2:(end - 1)])
+    # R7 (2026-09-10): include the HUB ring (`2:end`) — both legacy structural
+    # paths skipped it (`2:end-1`), and it is the hidden weakest ring that
+    # VOIDed the rotorcount winner.  The ground ring (1) stays excluded: it is
+    # ground-supported and does not count against airborne mass.
+    for (k, ring_gid) in enumerate(sys.ring_ids[2:end])
         frame = try
             analyse_ring(u, sys, ring_gid, alpha, p, t, wind_fn, design)
         catch e

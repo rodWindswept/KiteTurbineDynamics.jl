@@ -30,9 +30,9 @@ function _build_kite_turbine_system_impl(
 )
     n_seg = length(seg_lengths)
     n_ring = n_seg + 1
-    n_rope = p.n_lines * 3 * n_seg
+    n_rope = p.n_lines * ROPE_NODES_PER_LINE * n_seg
     n_total = n_ring + n_rope + 2       # +1 for bearing, +1 for sky anchor
-    stride = 1 + p.n_lines * 3
+    stride = 1 + p.n_lines * ROPE_NODES_PER_LINE
 
     β = p.elevation_angle
     shaft_dir = [cos(β), 0.0, sin(β)]
@@ -79,12 +79,12 @@ function _build_kite_turbine_system_impl(
         r_b = ring_radii[s + 1]
         # 3D chord includes radial taper spread: chord² = L_axial² + Δr²
         chord_3d = sqrt(seg_lengths[s]^2 + (r_b - r_a)^2)
-        sub_len_0_s = chord_3d / 4.0
+        sub_len_0_s = chord_3d / ROPE_SUBSEGS
         m_rope_sub_s = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0_s
 
         for j in 1:p.n_lines
-            for m in 1:3
-                gid = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+            for m in 1:ROPE_NODES_PER_LINE
+                gid = (s-1)*stride + 2 + (j-1)*ROPE_NODES_PER_LINE + (m-1)
                 nodes[gid] = RopeNode(gid, m_rope_sub_s, j, s, m)
             end
         end
@@ -118,20 +118,20 @@ function _build_kite_turbine_system_impl(
         r_a_seg = ring_radii[s]
         r_b_seg = ring_radii[s + 1]
         chord_3d_s = sqrt(seg_lengths[s]^2 + (r_b_seg - r_a_seg)^2)
-        sub_len_0_s = chord_3d_s / 4.0
+        sub_len_0_s = chord_3d_s / ROPE_SUBSEGS
         m_rope_sub_s = DYNEEMA_DENSITY * π * (p.tether_diameter/2)^2 * sub_len_0_s
         c_damp_s = 2.0 * zeta * sqrt(EA_single / sub_len_0_s * m_rope_sub_s)
 
         for j in 1:p.n_lines
-            ends = Vector{SubSegmentEnd}(undef, 5)
+            ends = Vector{SubSegmentEnd}(undef, ROPE_SUBSEGS + 1)
             ends[1] = SubSegmentEnd(ring_a_gid, true, j)
-            for m in 1:3
-                gid = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+            for m in 1:ROPE_NODES_PER_LINE
+                gid = (s-1)*stride + 2 + (j-1)*ROPE_NODES_PER_LINE + (m-1)
                 ends[m + 1] = SubSegmentEnd(gid, false, j)
             end
-            ends[5] = SubSegmentEnd(ring_b_gid, true, j)
+            ends[ROPE_SUBSEGS + 1] = SubSegmentEnd(ring_b_gid, true, j)
 
-            for sub in 1:4
+            for sub in 1:ROPE_SUBSEGS
                 push!(
                     sub_segs,
                     RopeSubSegment(
@@ -248,6 +248,7 @@ function _build_kite_turbine_system_impl(
         Ref(1.0),                    # ring_aspect_ratio (populated by builder)
         Ref(0.5),                    # ring_Do_scale_exp (populated by builder; 0.5 = legacy √R)
         Ref(0.0),                    # ring_r_hub (populated by builder; 0 = fall back to p.trpt_hub_radius)
+        Ref(Float64[]),              # ring_Do_per_ring (R7 closed-form sizes; empty = taper-law fallback)
         Ref(0.0),                    # ring_mass_total (populated by build_system_from_v10; T1)
         Ref(0.0),                    # ring_knuckle_mass (populated by build_system_from_v10; T1)
         Ref(MIN_TUBE_WALL_M),        # min_wall_m (mass + FoS wall floor; default 2 mm)
@@ -276,9 +277,9 @@ function _build_kite_turbine_system_impl(
             pb = attachment_point(
                 ring_b_pos, ring_radii[s + 1], alpha_b, j, p.n_lines, perp1, perp2
             )
-            for m in 1:3
-                frac = m / 4.0
-                gid = (s-1)*stride + 2 + (j-1)*3 + (m-1)
+            for m in 1:ROPE_NODES_PER_LINE
+                frac = m / ROPE_SUBSEGS
+                gid = (s-1)*stride + 2 + (j-1)*ROPE_NODES_PER_LINE + (m-1)
                 u0[(3 * (gid - 1) + 1):(3 * gid)] .= rope_helix_pos(pa, pb, frac)
             end
         end
@@ -357,7 +358,7 @@ Differences from build_kite_turbine_system():
   - Ring positions/radii computed by ring_spacing_v4 (non-uniform axial spacing)
   - n_rings is an output of ring_spacing_v4, not a SystemParams field
   - Segment natural lengths are non-uniform (derived from z_positions)
-  - Uses stride = 1 + p.n_lines * 3 (generalises to any n_lines)
+  - Uses stride = 1 + p.n_lines * ROPE_NODES_PER_LINE (generalises to any n_lines)
 """
 function build_kite_turbine_system_v5(
     p::SystemParams,
@@ -534,7 +535,7 @@ function set_orbital_velocities!(
         gid = node.id
         s = node.seg_idx
         j = node.line_idx
-        frac = node.sub_idx / 4.0
+        frac = node.sub_idx / ROPE_SUBSEGS
 
         na = sys.nodes[sys.ring_ids[s]]::RingNode
         nb = sys.nodes[sys.ring_ids[s + 1]]::RingNode
@@ -595,7 +596,7 @@ function orbital_damp_rope_velocities!(
         gid = node.id
         s = node.seg_idx
         j = node.line_idx
-        frac = node.sub_idx / 4.0
+        frac = node.sub_idx / ROPE_SUBSEGS
 
         na = sys.nodes[sys.ring_ids[s]]::RingNode
         nb = sys.nodes[sys.ring_ids[s + 1]]::RingNode
@@ -812,13 +813,10 @@ function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
     P_beam = 0.0
     for ri in 2:(n_rings - 1)  # skip ground ring and hub ring
         R = radii[ri]
-        Do = if sys.ring_Do_top[] > 0.0
-            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
-            scale = (R / r_ref)^sys.ring_Do_scale_exp[]
-            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
-        else
-            max(0.01396 * sqrt(R), 5e-4 / 0.05)
-        end
+        # Single authority (R7, 2026-09-10): solved per-ring section when wired,
+        # else the legacy taper law / √R fallback.  Shared with the ODE drag and
+        # the FEA so all three see the same tube.
+        Do = ring_Do_at(sys, ri, R, p)
         L_beam = 2.0 * R * sin(π / n_lines)
         v_t = ω * R
         # Skin friction (tangential flow along beam)
@@ -873,10 +871,160 @@ function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
 end
 
 """
+    design_axial_preload(sys, p, lift_device) -> Vector{Float64}
+
+Total axial force (all lines, newtons) carried by each inter-ring segment at the
+design operating point: the aero + weight + cyan-line load at the top, plus the
+cumulative ring weight added going down the shaft.
+
+This is the **intended** preload.  `_matched_place_twist` prescribes it as the
+per-line tension (`F_ax/n_lines`) and derives the twist and axial geometry from
+it, so the settle's returned line tension can be checked against it directly —
+the consistency guard for the 2026-09-11 wind-up fix.
+"""
+function design_axial_preload(
+    sys::KiteTurbineSystem, p::SystemParams, lift_device::Union{Nothing, LiftDevice}
+)
+    lift_device === nothing && return Float64[]
+    n_seg = sys.n_ring - 1
+    β = p.elevation_angle
+    T_cyan = design_preload_from_sky_anchor(p, lift_device)
+    thrust = 0.5 * p.rho * p.v_wind_ref^2 * π * p.rotor_radius^2 * 0.8 * cos(β)^2
+    m_rotor = p.n_blades * p.m_blade
+    F_aero_z = thrust * sin(β) + (m_rotor + sys.kite.mass) * (-9.81)
+    F_top = max(F_aero_z / sin(β) + T_cyan, 20.0)
+    g_inc = p.m_ring * 9.81 / sin(β)
+    F_ax = zeros(n_seg)
+    F_ax[n_seg] = F_top
+    for i in (n_seg - 1):-1:1
+        F_ax[i] = F_ax[i + 1] + g_inc
+    end
+    return F_ax
+end
+
+"""
+    _matched_place_twist(sys, p, F_ax, τ_eq, ω_eq, wind_fn, sd_r)
+
+Solve the TRPT twist and the *axial* transmission geometry **together**, segment
+by segment, so each segment carries the intended preload tension `F_ax/n_lines`
+at its final twist (2026-09-11 settle↔ODE coherence fix).
+
+The previous initialiser set the ring axial gap for the **untwisted** line and
+only then twisted it.  Because the attachment chord is
+
+    chord(Δα, L_ax)² = L_ax² + r_a² + r_b² − 2·r_a·r_b·cos(Δα)
+
+the twist term `2·r_a·r_b·(1 − cos Δα)` alone stretches the line.  At the
+Δα = 6.6° the old bisection converged to, that twist strain (1.6e-3) was six
+times the intended preload strain (2.7e-4), so the segment looked ~7× too stiff
+in torsion and the returned state was ~7× under-twisted.  The ODE then spent
+~100 s shortening the transmission to relieve it — the wind-up.
+
+Here the tension is **prescribed** (`T_s = F_ax[s]/n_lines`) and the geometry is
+derived from it, so the inconsistency cannot arise:
+
+    chord_s = chord0_s · (1 + T_s / EA_single)
+    n_lines · T_s · r_a · r_b · sin(Δα) / chord_s = τ_target
+    L_ax    = √(chord_s² − r_a² − r_b² + 2·r_a·r_b·cos Δα)
+
+Closed form: `O(Nr)` arithmetic, no ODE calls, no per-eval cost.  The
+transmission tube comes out shorter than the untwisted design length — the
+physical effect of torsional deformation, as the set of lines wraps around the
+axis (Rod, 2026-09-11).
+
+Returns `(α, ctrs)`: per-ring rotation angles (`α[1] = 0`, ground reference) and
+ring centres along `sd_r`.
+"""
+function _matched_place_twist(
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    F_ax::Vector{Float64},
+    τ_eq::Float64,
+    ω_eq::Float64,
+    wind_fn::Union{Nothing, Function},
+    sd_r::Vector{Float64},
+)
+    Nr = sys.n_ring
+    n_seg = Nr - 1
+    EA_single = p.e_modulus * π * (p.tether_diameter / 2)^2
+
+    α = zeros(Nr)
+    ctrs = [zeros(3) for _ in 1:Nr]
+    τ_carry = τ_eq
+
+    for s in 1:n_seg
+        gid_a = sys.ring_ids[s]
+        gid_b = sys.ring_ids[s + 1]
+        # Line-attachment radius.  Must match `get_segment_tension`, which uses
+        # `sys.effective_radii` once expansion rotors are present (2026-09-11:
+        # using the bare ring radius here left a 55 % tension error on the
+        # 3-rotor case, because the attachments sit at the effective radius).
+        r_a = isempty(sys.expansion_rotors) ? (sys.nodes[gid_a]::RingNode).radius :
+              sys.effective_radii[s]
+        r_b = isempty(sys.expansion_rotors) ? (sys.nodes[gid_b]::RingNode).radius :
+              sys.effective_radii[s + 1]
+        chord0 =
+            ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
+        T_s = F_ax[s] / p.n_lines
+
+        Δα = 0.0
+        L_ax = chord0
+        if τ_carry > 0.0 && T_s > 0.0 && r_a * r_b > 0.0
+            # Prescribe the tension → the chord, then solve the torque balance.
+            #
+            # KNOWN LIMITATION (2026-09-11): this uses the law of cosines for a
+            # ring plane perpendicular to the shaft axis.  The ODE's actual
+            # attachment planes are tilted by `_tilted_ring_basis` (from the
+            # bearing offset), which shifts the chord by ~0.1 mm.  The intended
+            # preload strain is only ~0.3 mm on a 1.19 m segment, so where the
+            # settled tilt is significant the achieved tension can be ~35 % high
+            # (see test/test_settle_preload_consistency.jl, second case).  The
+            # twist — and therefore the wind-up fix — is unaffected (Δα does not
+            # depend on L_ax).  Correcting it needs the settled tilt basis, i.e. a
+            # second pass after the operational settle.
+            chord = chord0 * (1 + T_s / EA_single)
+            sinΔα = τ_carry * chord / (p.n_lines * T_s * r_a * r_b)
+            Δα = asin(clamp(sinΔα, -1.0, 1.0))
+            L2 = chord^2 - (r_a^2 + r_b^2 - 2 * r_a * r_b * cos(Δα))
+            L_ax = sqrt(max(L2, 1e-9))
+        end
+
+        α[s + 1] = α[s] + Δα
+        ctrs[s + 1] = ctrs[s] .+ L_ax .* sd_r
+
+        # Expansion rotor aero-torque injection at ring b (2026-08-24 geometry
+        # audit rule 3): the chain carries τ_gen below an expansion rotor but
+        # τ_gen − τ_exp above it.  Same treatment as the legacy bisection —
+        # a non-positive target leaves the segment slack (τ_b = 0).
+        τ_exp_b = 0.0
+        for er in sys.expansion_rotors
+            er.ring_idx == (sys.nodes[gid_b]::RingNode).ring_idx || continue
+            vw = wind_fn === nothing ? [p.v_wind_ref, 0.0, 0.0] : wind_fn(ctrs[s + 1], 0.0)
+            τ_exp_b = expansion_rotor_forces(
+                er,
+                p.rho,
+                norm(vw),
+                ω_eq,
+                rad2deg(p.elevation_angle),
+                (sys.nodes[gid_b]::RingNode).radius,
+                100.0,
+                p.n_lines,
+            )[3]
+            break
+        end
+        τ_carry = τ_carry > 0.0 ? τ_carry - τ_exp_b : -τ_exp_b
+    end
+
+    return α, ctrs
+end
+
+"""
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
 Initializes the system at the rated operating point to avoid torsional transients.
-Uses a torque-chain bisection method to find the exact helical equilibrium of the ropes.
+With a lift device the ring geometry is solved by `_matched_place_twist` (twist
+and axial gap together, so the intended preload tension holds at the final
+twist); the legacy torque-chain bisection remains for the no-lift path.
 This logic was shadowed directly from the interactive dashboard.
 """
 function settle_to_operational_state(
@@ -967,46 +1115,19 @@ function settle_to_operational_state(
     sd_r = [cos(β_r), 0.0, sin(β_r)]
     let
         if lift_device !== nothing
-            T_cyan_des = design_preload_from_sky_anchor(p, lift_device)
-            n_seg_r = Nr - 1
-            EA_tot = p.n_lines * p.e_modulus * π * (p.tether_diameter / 2)^2
-            m_rotor_d = p.n_blades * p.m_blade
-            kite_m_d = sys.kite.mass
-            v_r = p.v_wind_ref
-            thrust_r = 0.5 * p.rho * v_r^2 * π * p.rotor_radius^2 * 0.8 * cos(β_r)^2
-            F_aero_z_r = thrust_r * sin(β_r) + (m_rotor_d + kite_m_d) * (-9.81)
-            F_top_ax_r = max(F_aero_z_r / sin(β_r) + T_cyan_des, 20.0)
-            g_inc = p.m_ring * 9.81 / sin(β_r)
-            F_ax = zeros(n_seg_r)
-            F_ax[n_seg_r] = F_top_ax_r
-            for i in (n_seg_r - 1):-1:1
-                F_ax[i] = F_ax[i + 1] + g_inc
-            end
-            # Per-segment rest lengths from the BUILT geometry (ring_spacing_v4
-            # geometric taper) — NOT uniform tether_length/n_seg.  The preload
-            # restore previously used a uniform seg_len, which over-stretched the
-            # short bottom segment (115% strain → immediate rope break) once the
-            # build switched to tapered spacing.  (Build-geometry audit 2026-08-24.)
-            #
-            # 2026-08-25: use the AXIAL gap, not the 3D chord.  sub_segs.length_0
-            # is the chord sqrt(L_axial² + Δr²)/4 (radial taper included), so
-            # advancing along the shaft by 4·length_0 double-counted Δr and
-            # over-tensioned every line 18-22× (44.7 kN vs ~2 kN design).  Recover
-            # L_axial = sqrt(chord² − Δr²).
-            rp = zeros(3)
+            F_ax = design_axial_preload(sys, p, lift_device)
+            # ── Matched-place twist + axial geometry (2026-09-11) ───────────
+            # Solve the twist and the axial gap TOGETHER so each segment carries
+            # the intended preload tension at its final twist.  The old restore
+            # set the axial gap for the untwisted line and then twisted it, which
+            # inflated the tension ~7× and left the state ~7× under-twisted — the
+            # wind-up.  See `_matched_place_twist` and
+            # docs/plans/2026-09-11-settle-ode-coherence.md.
+            α_matched, ctrs = _matched_place_twist(sys, p, F_ax, τ_eq, ω_eq, wind_fn, sd_r)
             for k in 1:Nr
                 gid = sys.ring_ids[k]
-                idx = (3 * (gid - 1) + 1):(3 * gid)
-                u_start[idx] .= rp
-                if k < Nr
-                    r_k = (sys.nodes[sys.ring_ids[k]]::RingNode).radius
-                    r_k1 = (sys.nodes[sys.ring_ids[k + 1]]::RingNode).radius
-                    chord_3d = 4 * sys.sub_segs[(k - 1) * p.n_lines * 4 + 1].length_0
-                    L_seg_k = sqrt(max(chord_3d^2 - (r_k1 - r_k)^2, 0.0))
-                    k_ax_k = EA_tot / L_seg_k
-                    stretch = max(0.0, F_ax[k] / k_ax_k)
-                    rp .+= (L_seg_k + stretch) .* sd_r
-                end
+                u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[k]
+                u_start[6N + k] = α_matched[k]
             end
         else
             for k in 1:Nr
@@ -1023,15 +1144,11 @@ function settle_to_operational_state(
         u_start[(3 * (sys.ring_ids[k] - 1) + 1):(3 * sys.ring_ids[k])] for k in 1:Nr
     ]
 
-    EA_rope = p.e_modulus * π * (p.tether_diameter / 2)^2
-    # shaft direction for torque projections: ring positions were restored to
-    # design-preloaded values along [cos β, 0, sin β]; normalising the hub
-    # position recovers that direction exactly.  sd_r (computed above) is the
-    # same vector — used here as the fallback when hub is near origin.
+    # Shaft direction for the legacy torque projections: with a lift device the
+    # matched solve placed the rings along sd_r, so normalising the hub position
+    # recovers that direction exactly.  (sd_r above is the fallback near origin.)
     hub_p_settled = u_start[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)]
-    hp_mag = norm(hub_p_settled)
-    sd = hp_mag > 0.1 ? hub_p_settled ./ hp_mag : sd_r
-    stride = 1 + p.n_lines * 3
+    stride = 1 + p.n_lines * ROPE_NODES_PER_LINE
 
     # 1. Uniform ω — zero inter-ring velocity difference at t=0
     for ri in 1:Nr
@@ -1108,103 +1225,126 @@ function settle_to_operational_state(
     hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
     pp1, pp2 = _tilted_ring_basis(u_start, sys, hub_gid, hub_ri)
 
-    # 2. Per-segment equilibrium twist via torque-chain bisection.
-    u_start[6N + 1] = 0.0   # ground ring: α = 0 (reference)
-    α_cum = 0.0
-    τ_target_a = τ_eq    # torque needed on the LOWER ring of the first segment
+    if lift_device === nothing
+        # ── Legacy path: pinned-frame torque-chain bisection ────────────────
+        # With no lift device there is no aero-derived axial preload, so the
+        # matched-place solve in `_matched_place_twist` does not apply and the
+        # original bisection is retained unchanged (control-map / calibration
+        # scripts and several tests call the settle without a lift device).
+        EA_rope = p.e_modulus * π * (p.tether_diameter / 2)^2
+        sd = if norm(hub_p_settled) > 0.1
+            hub_p_settled ./ norm(hub_p_settled)
+        else
+            sd_r
+        end
 
+        u_start[6N + 1] = 0.0   # ground ring: α = 0 (reference)
+        α_cum = 0.0
+        τ_target_a = τ_eq    # torque needed on the LOWER ring of the first segment
+
+        for s in 1:(Nr - 1)
+            gid_a = sys.ring_ids[s]
+            gid_b = sys.ring_ids[s + 1]
+            na = sys.nodes[gid_a]::RingNode
+            nb = sys.nodes[gid_b]::RingNode
+
+            ctr_a = u_start[(3 * (gid_a - 1) + 1):(3 * gid_a)]
+            ctr_b = u_start[(3 * (gid_b - 1) + 1):(3 * gid_b)]
+
+            # Natural segment length derived from sub_segs (supports non-uniform spacing)
+            L_seg_s = ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
+
+            τ_fn_a =
+                (Δα) -> begin
+                    τ = 0.0
+                    for j in 1:p.n_lines
+                        pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
+                        pb_j = attachment_point(
+                            ctr_b, nb.radius, α_cum + Δα, j, p.n_lines, pp1, pp2
+                        )
+                        chord_j = norm(pb_j .- pa_j)
+                        chord_j < 1e-9 && continue
+                        T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
+                        dir_j = (pb_j .- pa_j) ./ chord_j
+                        r_vec_a = pa_j .- ctr_a
+                        τ += T_j * dot(cross(r_vec_a, dir_j), sd)
+                    end
+                    τ
+                end
+
+            # Rope is TENSION-ONLY: a non-positive target (an expansion rotor driving
+            # harder than the generator absorbs, so the segment above it must brake)
+            # is unreachable — the line goes slack and transmits ~0 torque.  The old
+            # strictly-positive floor [0.001, π/4] railed here and delivered a spurious
+            # +45 N·m instead (2026-08-25 finding).  Slack it explicitly.
+            if τ_target_a <= 0.0
+                Δα_eq = 0.0
+                τ_b = 0.0
+            else
+                lo, hi = 0.001, π / 4
+                for _ in 1:60
+                    mid = (lo + hi) / 2
+                    τ_fn_a(mid) < τ_target_a ? (lo = mid) : (hi = mid)
+                end
+                Δα_eq = (lo + hi) / 2
+
+                τ_b = 0.0
+                for j in 1:p.n_lines
+                    pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
+                    pb_j = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
+                    chord_j = norm(pb_j .- pa_j)
+                    chord_j < 1e-9 && continue
+                    T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
+                    dir_j = (pb_j .- pa_j) ./ chord_j
+                    r_vec_b = pb_j .- ctr_b
+                    τ_b += T_j * dot(cross(r_vec_b, -dir_j), sd)
+                end
+            end
+
+            # Expansion rotor aero-torque injection at ring b (2026-08-24, geometry
+            # audit rule 3): the chain carries τ_gen below an expansion rotor but
+            # τ_gen − τ_exp ABOVE it.  Winding the segment above for the full τ_gen
+            # over-winds it — the ring then sees chain-torque > its own aero and
+            # unwinds, collapsing the transmission (the 2-rotor stall).  Subtract the
+            # rotor's driving torque from the target carried to the next segment.
+            τ_exp_b = 0.0
+            for er in sys.expansion_rotors
+                er.ring_idx == nb.ring_idx || continue
+                er_gid = sys.ring_ids[er.ring_idx]
+                er_pos = u_start[(3 * (er_gid - 1) + 1):(3 * er_gid)]
+                vw = wind_fn === nothing ? [p.v_wind_ref, 0.0, 0.0] : wind_fn(er_pos, 0.0)
+                vw_mag = norm(vw)
+                er_rnom = (sys.nodes[er_gid]::RingNode).radius
+                τ_exp_b = expansion_rotor_forces(
+                    er, p.rho, vw_mag, ω_eq, rad2deg(p.elevation_angle), er_rnom, 100.0, p.n_lines
+                )[3]
+                break
+            end
+            τ_target_a = -τ_b - τ_exp_b   # next lower ring cancels ring_b's load AND the rotor's aero
+
+            α_cum += Δα_eq
+            u_start[6N + nb.ring_idx] = α_cum
+        end
+    end
+
+    # 3. Rope nodes consistent with the equilibrium twist for each segment.
+    # Runs on both paths: the ring twist is already final (matched solve for the
+    # lift path, bisection for the legacy path).
     for s in 1:(Nr - 1)
         gid_a = sys.ring_ids[s]
         gid_b = sys.ring_ids[s + 1]
         na = sys.nodes[gid_a]::RingNode
         nb = sys.nodes[gid_b]::RingNode
-
         ctr_a = u_start[(3 * (gid_a - 1) + 1):(3 * gid_a)]
         ctr_b = u_start[(3 * (gid_b - 1) + 1):(3 * gid_b)]
-
-        # Natural segment length derived from sub_segs (supports non-uniform spacing)
-        L_seg_s = 4 * sys.sub_segs[(s - 1) * p.n_lines * 4 + 1].length_0
-
-        τ_fn_a =
-            (Δα) -> begin
-                τ = 0.0
-                for j in 1:p.n_lines
-                    pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
-                    pb_j = attachment_point(
-                        ctr_b, nb.radius, α_cum + Δα, j, p.n_lines, pp1, pp2
-                    )
-                    chord_j = norm(pb_j .- pa_j)
-                    chord_j < 1e-9 && continue
-                    T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
-                    dir_j = (pb_j .- pa_j) ./ chord_j
-                    r_vec_a = pa_j .- ctr_a
-                    τ += T_j * dot(cross(r_vec_a, dir_j), sd)
-                end
-                τ
-            end
-
-        # Rope is TENSION-ONLY: a non-positive target (an expansion rotor driving
-        # harder than the generator absorbs, so the segment above it must brake)
-        # is unreachable — the line goes slack and transmits ~0 torque.  The old
-        # strictly-positive floor [0.001, π/4] railed here and delivered a spurious
-        # +45 N·m instead (2026-08-25 finding).  Slack it explicitly.
-        if τ_target_a <= 0.0
-            Δα_eq = 0.0
-            τ_b = 0.0
-        else
-            lo, hi = 0.001, π / 4
-            for _ in 1:60
-                mid = (lo + hi) / 2
-                τ_fn_a(mid) < τ_target_a ? (lo = mid) : (hi = mid)
-            end
-            Δα_eq = (lo + hi) / 2
-
-            τ_b = 0.0
-            for j in 1:p.n_lines
-                pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
-                pb_j = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
-                chord_j = norm(pb_j .- pa_j)
-                chord_j < 1e-9 && continue
-                T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
-                dir_j = (pb_j .- pa_j) ./ chord_j
-                r_vec_b = pb_j .- ctr_b
-                τ_b += T_j * dot(cross(r_vec_b, -dir_j), sd)
-            end
-        end
-
-        # Expansion rotor aero-torque injection at ring b (2026-08-24, geometry
-        # audit rule 3): the chain carries τ_gen below an expansion rotor but
-        # τ_gen − τ_exp ABOVE it.  Winding the segment above for the full τ_gen
-        # over-winds it — the ring then sees chain-torque > its own aero and
-        # unwinds, collapsing the transmission (the 2-rotor stall).  Subtract the
-        # rotor's driving torque from the target carried to the next segment.
-        τ_exp_b = 0.0
-        for er in sys.expansion_rotors
-            er.ring_idx == nb.ring_idx || continue
-            er_gid = sys.ring_ids[er.ring_idx]
-            er_pos = u_start[(3 * (er_gid - 1) + 1):(3 * er_gid)]
-            vw = wind_fn === nothing ? [p.v_wind_ref, 0.0, 0.0] : wind_fn(er_pos, 0.0)
-            vw_mag = norm(vw)
-            er_rnom = (sys.nodes[er_gid]::RingNode).radius
-            τ_exp_b = expansion_rotor_forces(
-                er, p.rho, vw_mag, ω_eq, rad2deg(p.elevation_angle), er_rnom, 100.0, p.n_lines
-            )[3]
-            break
-        end
-        τ_target_a = -τ_b - τ_exp_b   # next lower ring cancels ring_b's load AND the rotor's aero
-
-        α_cum += Δα_eq
-        u_start[6N + nb.ring_idx] = α_cum
-
-        # 3. Rope nodes consistent with equilibrium twist for this segment.
         α_a = u_start[6N + na.ring_idx]
         α_b = u_start[6N + nb.ring_idx]
         for j in 1:p.n_lines
             pa = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
             pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
-            for m in 1:3
-                frac = m / 4.0
-                gid = (s - 1) * stride + 2 + (j - 1) * 3 + (m - 1)
+            for m in 1:ROPE_NODES_PER_LINE
+                frac = m / ROPE_SUBSEGS
+                gid = (s - 1) * stride + 2 + (j - 1) * ROPE_NODES_PER_LINE + (m - 1)
                 u_start[(3 * (gid - 1) + 1):(3 * gid)] .= pa .+ frac .* (pb .- pa)
             end
         end
@@ -1218,3 +1358,4 @@ function settle_to_operational_state(
 end
 export settle_to_operational_state
 export design_preload_from_sky_anchor
+export design_axial_preload

@@ -82,17 +82,12 @@ function multibody_ode!(du, u, params, t)
         R = node.radius
         ri = node.ring_idx
         α_ring = alpha[ri]
-        # Design-aware tube outer diameter: use DE-chosen Do_top when wired
-        # (via build_system_from_v10), otherwise fall back to legacy
-        # 0.01396*sqrt(R) scaling.  Matches the analyse_ring taper law
-        # Do(r) = Do_top·(r/r_hub)^Do_scale_exp (2026-08-07, F4b audit).
-        Do_tube = if sys.ring_Do_top[] > 0.0
-            r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
-            scale = max(R / r_ref, 0.0)^sys.ring_Do_scale_exp[]
-            max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
-        else
-            max(0.01396 * sqrt(R), 5e-4 / 0.05)
-        end
+        # Design-aware tube outer diameter: the single authority
+        # `ring_Do_at` — the R7 solved per-ring section when wired (via
+        # build_system_from_v10), else the legacy `Do_top·(r/r_hub)^exp` taper
+        # law, else 0.01396·√R.  Shared with the settle drag and the FEA so all
+        # three validate the same tube (2026-09-10).
+        Do_tube = ring_Do_at(sys, s, R, p)
         n_lines = p.n_lines
         L_beam = 2.0 * R * sin(π / n_lines)
 

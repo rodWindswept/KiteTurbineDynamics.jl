@@ -194,8 +194,8 @@ function capture_frame(
         pb_sag = attachment_point(
             ctr_b2, nb2.radius, u[6N + nb2.ring_idx], 1, p.n_lines, perp1, perp2
         )
-        stride_s = 1 + p.n_lines * 3
-        gid_mid = (s-1)*stride_s + 3  # second rope node on line 1
+        stride_s = 1 + p.n_lines * ROPE_NODES_PER_LINE
+        gid_mid = (s-1)*stride_s + 2 + (cld(ROPE_NODES_PER_LINE, 2) - 1)  # middle rope node, line 1
         pm = u[(3 * (gid_mid - 1) + 1):(3 * gid_mid)]
         AB = pb_sag .- pa_sag;
         len2 = dot(AB, AB)

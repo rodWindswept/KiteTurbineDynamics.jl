@@ -135,6 +135,335 @@ function solve_ring_Do(
     return hi
 end
 
+# ── Closed-form sizing load model (R7, 2026-09-10) ────────────────────────────
+# The sizing load per ring is the signed sum of three terms (REV 2 §5):
+#
+#     F_v = F_kink + F_helix − F_centrifugal
+#
+# * F_kink — the taper-transition (kink) force: the radial component of each
+#   adjacent segment's line tension.  Exact geometry, signed: outward where the
+#   line below leans outward (cylinder→cone transition), inward at the cone top.
+# * F_helix — the torque-helix inward force.  Measured on the settled 5 kW seed
+#   (2026-09-10, `scratch/r7_tension_budget.jl`): in the constant-radius
+#   transmission cylinder F_kink = 0 and the FEA beam axial force is
+#   `N_comp / T_line = 0.32` — that ratio IS the helix term.  (The 2026-09-06
+#   `DLF ≈ 0.18` was measured on the n_lines=3 winner, where the same vertex
+#   force is `N·2sin(π/3) / T_line`; the two agree once the polygon factor is
+#   applied.)  Linear in `T_line` at the rated operating point.
+# * F_centrifugal — outward relief from the ring's own rotating mass; zero at
+#   ω = 0, which is why the (T_peak, ω=0) hub case is the binding one.
+const HELIX_LOAD_FACTOR = 0.32   # F_helix / T_line, measured on the 5 kW seed
+
+# The static thrust tension under-predicts the settled ODE segment tension by
+# ≈ 15–20 % (ring weight projected on the shaft, ring-plane tilt, and the
+# dynamic component).  Measured 2026-09-10: ODE seg-1 tension 365 N vs static
+# thrust + lifter 308 N.  Applied to the thrust-derived part only — the lifter
+# floor is known exactly.
+const TENSION_LOAD_MARGIN = 1.2
+
+# Closed-form → FEA approximation margin on the FoS requirement.  The solve is
+# Euler-only on a single beam (one K, one wall); the verification FEA is a space
+# frame that also carries bending (`util = N/N_crit + M/M_el`).  Measured
+# 2026-09-10 on the 5 kW seed: with a 1.0 margin the FEA read FoS 1.85 (cone-top
+# kink) and 2.34 (bending-dominated harvest ring) against a 2.5 floor; the
+# 5 s acceptance window can dip ~15 % below the static FEA reading.  1.3 leaves
+# the windowed FEA at ≥ 2.5 with headroom.
+const SIZING_FOS_MARGIN = 1.3
+
+"""
+    BeamSizing
+
+Per-ring closed-form beam sections solved by [`size_beams_closed_form`](@ref).
+
+Ground-first: index 1 is the ground ring, `length(radii)` is the hub ring.
+`Do_per_ring[i]` is the solved outer diameter so the ring's Euler buckling
+capacity (single wall authority `tube_wall_thickness`, single end condition)
+meets `fos_req` under the signed kink + helix load.
+"""
+struct BeamSizing
+    Do_per_ring::Vector{Float64}      # m — outer diameter per ring (ground-first)
+    t_over_D::Float64                 # pinned wall ratio (single authority)
+    N_comp_per_ring::Vector{Float64}  # N — axial compression per ring
+    T_line_per_ring::Vector{Float64}  # N — line tension per ring
+    fos_per_ring::Vector{Float64}     # Euler FoS at the solved Do
+    fos_req::Float64
+    helix_factor::Float64
+    omega_eq::Float64                 # rad/s — equilibrium shaft speed used
+end
+
+"""
+    size_beams_closed_form(dec, p_base, cfg; t_over_D, ends) → BeamSizing
+
+Size every TRPT ring's tube closed-form from the decoder's rotor stack (R7,
+2026-09-10).  Drop-in replacement for the four free beam genes: once the rotors
+are decoded the thrust/torque/tension are fixed, and the beam follows.
+
+The load build reproduces `objective_v10`'s per-ring build on the **v5
+three-section geometry** (`dec.radii`/`dec.zs`) with these corrections:
+
+1. **Ground-first orientation.** `rotor.ring_idx` is already a ground-first
+   system ring index (hub = `length(radii)`); the build uses `gi = ri` (the
+   legacy caller applied `gi = ri + 1`, shifting every expansion rotor one ring
+   toward the hub).
+2. **Hub rotor counted once.** Expansion params come from the single authority
+   `expansion_params_from_rotors`, which excludes the hub rotor.
+3. **Top-down tension.** Each expansion rotor's `T_above` is the cumulative
+   thrust of the rings actually above it, computed after the higher rotors have
+   been placed.
+4. **Actual hub annulus + operating CT.** The legacy build used a BEM *radius
+   for power* at the sheared local wind (~2.1 m) while the ODE rotor is the
+   decoded blade tip (≈ 3.66 m); thrust ∝ R², a ≈ 3× under-estimate.  The
+   thrust now uses the decoded annulus and `ct_at_tsr(λ)` at the equilibrium ω.
+5. **Lifter tension floor.** The constant-tension lifter pre-tensions every
+   segment (`T_lift / n_lines`), so `T_min` is not zero.  The ODE budget
+   (`scratch/r7_tension_budget.jl`) is thrust + lift + weight/tilt.
+
+`F_v = F_kink(signed) + HELIX_LOAD_FACTOR·T_line` (centrifugal relief is NOT
+applied — see the in-loop note), and `solve_ring_Do` is called per ring with a
+`SIZING_FOS_MARGIN` because the solve is Euler-only while the verification FEA
+also carries bending.  The **hub ring is a first-class load case**: sized at the
+worse of the rated load and `(T_peak, ω = 0)` — peak-wind thrust with the rotor
+stopped, i.e. no helix torque.  Beam self-mass (and therefore the lifter
+tension) feeds back, so `n_mass_passes` fixed-point passes are run.
+
+`cfg` is duck-typed (defined later in the include order) and supplies
+`power_W`, `v_rated`, `min_wall_m`, `fos_hard` and `t_over_D`.
+"""
+function size_beams_closed_form(
+    dec,
+    p_base,
+    cfg;
+    t_over_D::Float64=cfg.t_over_D,
+    ends=FixedFixedEnds(),
+    n_mass_passes::Int=3,
+    hub_peak_load::Bool=true,
+    helix_factor::Float64=HELIX_LOAD_FACTOR,
+)
+    design = dec.design
+    rotors = dec.rotors
+    radii = dec.radii
+    zs = dec.zs
+    n_rings_tot = length(radii)
+    n_lines = design.n_lines
+    n_active = dec.n_active
+    elev_rad = π / 6
+    elev_deg = rad2deg(elev_rad)
+    n_seg = n_rings_tot - 1
+    L_seg = diff(zs)
+    den = 2.0 * sin(π / n_lines)
+
+    # ── 1. Expansion params EXCLUDING the hub rotor (single authority) ──────
+    expansion_params = expansion_params_from_rotors(rotors, n_rings_tot, n_lines)
+
+    # ── 2. Equilibrium shaft speed (the solve objective_v10 uses) ───────────
+    P_per_rotor = n_active > 0 ? cfg.power_W / n_active : cfg.power_W
+    v_ref_rotor = isempty(rotors) ? cfg.v_rated : rotors[1].v_wind
+    λ_eff = n_active > 0 ? rotors[1].blade_scale : 1.0
+    k_mppt_eff = p_base.k_mppt * λ_eff^2
+    p_scaled = override_params(p_base; k_mppt=k_mppt_eff)
+    ω_solved, _ = solve_equilibrium_self_consistent(
+        design, expansion_params, p_scaled, n_lines, radii, zs;
+        P_per_rotor=P_per_rotor, v_wind=cfg.v_rated, elev_rad=elev_rad,
+    )
+    ω_num = (ω_solved === nothing || !isfinite(ω_solved)) ? 0.0 : ω_solved
+
+    # ── 3. Hub (main) rotor thrust from its ACTUAL swept annulus ────────────
+    hub_rotor = nothing
+    for rot in rotors
+        if rot.ring_idx == n_rings_tot
+            hub_rotor = rot
+            break
+        end
+    end
+    T_hub = if hub_rotor === nothing
+        r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
+        peak_hub_thrust(r_ref, elev_rad; v=cfg.v_rated, CT=OPT_CT_RATED)
+    else
+        v_hub = max(cfg.v_rated * hub_rotor.wind_factor, 0.1)
+        r_out = radii[n_rings_tot] + hub_rotor.blade_tip_radius
+        r_in = max(radii[n_rings_tot] + hub_rotor.blade_hub_radius, 0.0)
+        A_hub = π * (r_out^2 - r_in^2)
+        λ_op = ω_num > 0.0 ? ω_num * r_out / v_hub : 0.0
+        ct_op = λ_op > 0.0 ? clamp(ct_at_tsr(λ_op), 0.0, 1.0) : OPT_CT_RATED
+        0.5 * p_base.rho * v_hub^2 * A_hub * ct_op * cos(elev_rad)^2
+    end
+
+    # Expansion rotors: axial thrust lands on the rotor's OWN ring (gi = ri).
+    thrust_per_ring = zeros(Float64, n_rings_tot)
+    thrust_per_ring[n_rings_tot] = T_hub
+    F_radial_per_ring = zeros(Float64, n_rings_tot)
+    for er in sort(expansion_params; by=r -> r.ring_idx, rev=true)
+        gi = er.ring_idx
+        (1 <= gi <= n_rings_tot) || continue
+        T_above = gi < n_rings_tot ?
+            sum(@view thrust_per_ring[(gi + 1):end]) / n_lines : 0.0
+        F_radial, F_axial, _, _, _ = expansion_rotor_forces(
+            er, p_base.rho, cfg.v_rated, ω_num, elev_deg, radii[gi], T_above, n_lines
+        )
+        thrust_per_ring[gi] += F_axial
+        F_radial_per_ring[gi] += F_radial
+    end
+
+    # Per-segment axial tension from rotor thrust (before the lifter floor).
+    T_seg_thrust = zeros(Float64, n_seg)
+    for s in 1:n_seg
+        T_seg_thrust[s] = sum(@view thrust_per_ring[(s + 1):end]) / n_lines
+    end
+
+    # ── 4. Per-ring sizing (fixed-point passes for beam mass + lifter) ──────
+    Do_per_ring = fill(0.05, n_rings_tot)
+    N_comp_per_ring = zeros(Float64, n_rings_tot)
+    N_rated_per_ring = zeros(Float64, n_rings_tot)  # compression before the hub peak case
+    T_line_per_ring = zeros(Float64, n_rings_tot)
+    for _pass in 1:max(n_mass_passes, 1)
+        # Constant-tension lifter floor for THIS pass's beam mass.  Mirrors
+        # sized_lifter_for(margin=1.5, elevation=70°) — the machine carries
+        # itself, so the lifter's own 5 kg is excluded (Rod 2026-08-21).
+        m_air = _closed_form_airborne_mass(Do_per_ring, dec, p_base, t_over_D, cfg)
+        T_lift_line = 1.5 * m_air * 9.81 / sind(70.0) / n_lines
+
+        for i in 1:n_rings_tot
+            r = radii[i]
+            L_poly = 2.0 * r * sin(π / n_lines)
+            line_len_below = i > 1 ?
+                sqrt(L_seg[i - 1]^2 + (radii[i] - radii[i - 1])^2) : NaN
+            line_len_above = i < n_rings_tot ?
+                sqrt(L_seg[i]^2 + (radii[i + 1] - radii[i])^2) : NaN
+            T_below = TENSION_LOAD_MARGIN * (i > 1 ? T_seg_thrust[i - 1] : 0.0) + T_lift_line
+            T_above = TENSION_LOAD_MARGIN * (i < n_rings_tot ? T_seg_thrust[i] : 0.0) +
+                      T_lift_line
+
+            # Signed taper kink: tension pulls each ring toward its neighbours.
+            F_kink = 0.0
+            if i > 1
+                F_kink += T_below * (r - radii[i - 1]) / line_len_below
+            end
+            if i < n_rings_tot
+                F_kink += T_above * (r - radii[i + 1]) / line_len_above
+            end
+            T_line = max(T_below, T_above)
+
+            # Hub ring = (T_peak, ω = 0): no centrifugal relief, no helix.
+            # Ground ring (1) is fixed and does not rotate.
+            ω_i = (i == 1 || i == n_rings_tot) ? 0.0 : ω_num
+
+            # (beam + knuckle self-mass enters the lifter floor through
+            #  `_closed_form_airborne_mass` above, not through a radial relief)
+
+            # Centrifugal relief is NOT applied.  A rotating ring's own mass does
+            # relieve compression physically, but the ODE models blade/ring
+            # rotational mass as INERTIA (`dω/dt = τ/(I_z + J_rotor)`,
+            # 2026-08-25) and `analyse_ring` applies no radial centrifugal term,
+            # so the verification FEA sees pure kink + helix.  Applying the
+            # relief here made the closed form under-size against its own
+            # verifier (ring 7 FEA FoS 1.85).  Recorded as a model gap.
+            F_helix = (ω_i > 0.0) ? helix_factor * T_line : 0.0
+            N_comp = max(F_kink + F_helix, 0.0) / den
+            N_rated_per_ring[i] = N_comp
+            Do_rated = solve_ring_Do(
+                N_comp, L_poly, t_over_D;
+                min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * SIZING_FOS_MARGIN, ends=ends,
+            )
+
+            # Hub ring: additionally size at (T_peak, ω = 0) — peak wind,
+            # rotor stopped.  Thrust scales v², the helix vanishes, and the
+            # centrifugal relief is gone.
+            if i == n_rings_tot && hub_peak_load
+                scale_pk = (OPT_V_PEAK / cfg.v_rated)^2
+                T_below_pk = TENSION_LOAD_MARGIN * T_seg_thrust[1] * scale_pk + T_lift_line
+                F_kink_pk = T_below_pk * (r - radii[i - 1]) / line_len_below
+                N_peak = max(F_kink_pk, 0.0) / den
+                Do_peak = solve_ring_Do(
+                    N_peak, L_poly, t_over_D;
+                    min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * SIZING_FOS_MARGIN, ends=ends,
+                )
+                if Do_peak > Do_rated
+                    Do_rated = Do_peak
+                    N_comp = max(N_comp, N_peak)
+                    T_line = max(T_line, T_below_pk)
+                end
+            end
+
+            Do_per_ring[i] = Do_rated
+            N_comp_per_ring[i] = N_comp
+            T_line_per_ring[i] = T_line
+        end
+
+        # ── Structural-spine floor for outward-dominated rings ──────────────
+        # When the signed kink + helix is smaller than the outward spreading
+        # force plus centrifugal relief, the Euler solve returns the 1 mm
+        # floor.  A 1 mm tube is not a manufacturable TRPT ring, and those
+        # rings are bending/tension dominated — a capacity the Euler-only solve
+        # does not model (REV 2 §7.3 defers the bending estimate).  Floor them
+        # at the strongest compression-sized ring.
+        spine = 0.0
+        for i in 1:n_rings_tot
+            N_rated_per_ring[i] > 0.0 && (spine = max(spine, Do_per_ring[i]))
+        end
+        if spine > 0.0
+            for i in 1:n_rings_tot
+                if N_rated_per_ring[i] <= 0.0
+                    Do_per_ring[i] = max(Do_per_ring[i], spine)
+                end
+            end
+        end
+    end
+
+    # ── 5. Report the Euler FoS actually achieved at the solved Do ──────────
+    fos_per_ring = fill(Inf, n_rings_tot)
+    for i in 1:n_rings_tot
+        L_poly = 2.0 * radii[i] * sin(π / n_lines)
+        t_eff = tube_wall_thickness(
+            Do_per_ring[i], t_over_D; min_wall_m=cfg.min_wall_m
+        ) / Do_per_ring[i]
+        P_crit = strut_properties(CircularTube(Do_per_ring[i], t_eff), L_poly, ends).P_crit
+        fos_per_ring[i] = N_comp_per_ring[i] > 0.0 ? P_crit / N_comp_per_ring[i] : Inf
+    end
+
+    return BeamSizing(
+        Do_per_ring, t_over_D, N_comp_per_ring, T_line_per_ring,
+        fos_per_ring, cfg.fos_hard, helix_factor, ω_num,
+    )
+end
+
+"""
+    _closed_form_airborne_mass(Do_per_ring, dec, p_base, t_over_D, cfg) → Float64
+
+Airborne mass (kg) implied by a per-ring Do vector, mirroring
+`expansion_airborne_mass(sys, p; include_lifter=false)` so `size_beams_closed_form`
+can size the constant-tension lifter before a system exists.  Ring beam +
+knuckle mass are summed per ring over the airborne rings (`2:end`), plus the
+tether, main-rotor blades and expansion-rotor assemblies.
+"""
+function _closed_form_airborne_mass(Do_per_ring, dec, p_base, t_over_D, cfg)
+    design = dec.design
+    n_lines = design.n_lines
+    radii = dec.radii
+    m_tether = n_lines * design.tether_length *
+               (DYNEEMA_DENSITY * π * (p_base.tether_diameter / 2)^2)
+    m_rings = 0.0
+    m_knuckle = 0.0
+    for i in 2:length(radii)
+        L_poly = 2.0 * radii[i] * sin(π / n_lines)
+        m_rings += ring_beam_mass(
+            Do_per_ring[i], t_over_D, n_lines, L_poly; min_wall_m=cfg.min_wall_m
+        )
+        m_knuckle += n_lines * knuckle_mass_at_ring(Do_per_ring[i], t_over_D, n_lines)
+    end
+    expansion_params = expansion_params_from_rotors(dec.rotors, length(radii), n_lines)
+    m_expansion = sum(er -> er.mass, expansion_params; init=0.0)
+    m_blades = 0.0
+    for rot in dec.rotors
+        if rot.ring_idx == length(radii)
+            span = rot.blade_tip_radius - rot.blade_hub_radius
+            m_blades += n_lines * M_BLADE_REF_KG * span^3
+        end
+    end
+    n_blade_nodes = n_lines + sum(er -> er.n_blades, expansion_params; init=0)
+    return m_tether + m_rings + m_knuckle + m_expansion + m_blades +
+           n_blade_nodes * OPT_KNUCKLE_MASS_KG
+end
+
 # ── Combined design-load factor (DLF) ────────────────────────────────────────
 # Under perfectly uniform taper + zero twist + zero gust, the net radial force
 # per pentagon vertex is ZERO (tension components from segments above and below

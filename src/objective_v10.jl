@@ -9,23 +9,26 @@
 #
 # Reference: docs/plans/2026-06-20-v10-full-dynamic-constraints.md
 #
-# Design vector (14 DoF), beam profile: elliptical only (circular via aspect=1.0)
-#   x[1]   Do_top           [m]    beam OD at hub  (min 0.05)
-#   x[2]   t_over_D         [-]    wall thickness ratio
-#   x[3]   beam_aspect      [-]    elliptical b/a (1.0 = circular)
-#   x[4]   Do_scale_exp     [-]    Do(r) = Do_top*(r/r_hub)^exp
-#   x[5]   r_hub            [m]    hub ring radius
-#   x[6]   r_bottom         [m]    ground ring radius  (min 0.5)
-#   x[7]   target_Lr        [-]    common L/r target
-#   x[8]   n_lines          [int]  polygon sides (3-16)
-#   x[9]   density_profile  [-]    ring density bias (-0.8..0.8)
-#   x[10]  rotor_mask       [int]  proxy -> 60 valid bitmasks
-#   x[11]  bank_top         [deg]  bank at ring 1 (0-25)
-#   x[12]  bank_bottom      [deg]  bank at lowest rotor (0-25)
-#   x[13]  blade_scale_top    [-]    blade linear scale at ring 1 (0.005-2.0); area ∝ λ²
-#   x[14]  blade_scale_bottom [-]    blade linear scale at lowest rotor (0.005-2.0)
+# Design vector — CANONICAL 10-DoF (R7, 2026-09-10).  The four free beam genes
+# (Do_top, t_over_D, beam_aspect, Do_scale_exp) are gone: the beam is
+# load-derived by `size_beams_closed_form`.  Beam profile: elliptical only
+# (circular via aspect=1.0, which the sizing pins).
+#   x[1]   r_hub            [m]    hub ring radius
+#   x[2]   r_bottom         [m]    ground ring radius  (min 0.5)
+#   x[3]   target_Lr        [-]    common L/r target
+#   x[4]   n_lines          [int]  polygon sides (3-16)
+#   x[5]   density_profile  [-]    ring density bias (-0.8..0.8)
+#   x[6]   rotor_mask       [int]  proxy -> 60 valid bitmasks (or rotor count)
+#   x[7]   bank_top         [deg]  bank at ring 1 (0-25)
+#   x[8]   bank_bottom      [deg]  bank at lowest rotor (0-25)
+#   x[9]   blade_scale_top    [-]  blade linear scale at ring 1 (0.005-2.0); area ∝ λ²
+#   x[10]  blade_scale_bottom [-]  blade linear scale at lowest rotor (0.005-2.0)
+#
+# LEGACY 14-D (accepted on input, sliced by `canonical_v10`):
+#   x[1..4] = Do_top, t_over_D, beam_aspect, Do_scale_exp, then the 10 above.
 
-const TRPT_V10_DIM = 14
+const TRPT_V10_DIM = 10          # canonical genome (R7, 2026-09-10): four beam genes removed
+const TRPT_V10_DIM_LEGACY = 14   # pre-R7 genome: x1-x4 = Do_top, t_over_D, beam_aspect, Do_scale_exp
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Valid rotor masks — top 10 rings, ≥2 bare rings between active rotors
@@ -122,11 +125,96 @@ RotorSpecV10(ring_idx, bank_angle_deg, blade_scale, v_wind, r_rotor,
                  blade_tip_radius, blade_hub_radius, blade_chord, 1.0)
 
 """
+    canonical_v10(x) → Vector{Float64}
+
+Return the canonical **10-D** V10 genome (R7, 2026-09-10): the four free beam
+genes `Do_top, t_over_D, beam_aspect, Do_scale_exp` are gone; the closed-form
+sizing derives the tube instead.
+
+Canonical layout: `[r_hub, r_bottom, target_Lr, n_lines, density_profile,
+rotor_count, bank_top, bank_bottom, blade_scale_top, blade_scale_bottom]`.
+
+A legacy 14-D vector (or 15-D with the retired log₁₀ k) is accepted and sliced:
+`x[5:14]` is exactly the canonical core.  This is the single normalisation the
+whole evaluator family uses, so old call sites keep working while the campaign
+runs the reduced genome.
+"""
+function canonical_v10(x::AbstractVector)
+    if length(x) >= TRPT_V10_DIM_LEGACY
+        return collect(Float64, x[5:14])
+    elseif length(x) >= TRPT_V10_DIM
+        return collect(Float64, x[1:TRPT_V10_DIM])
+    end
+    error("canonical_v10 expects ≥ $TRPT_V10_DIM values, got $(length(x))")
+end
+
+"""
+    _normalize_v10_14(x; beam_Do_top, beam_t_over_D, beam_aspect, beam_Do_scale_exp)
+        → Vector{Float64}
+
+Expand a canonical 10-D genome back to the 14-D layout the decoder body uses,
+synthesising the four derived beam genes.  For a legacy 14-D input the vector is
+returned unchanged (the legacy beam genes are preserved for the static paths).
+"""
+function _normalize_v10_14(
+    x::AbstractVector;
+    beam_Do_top::Float64=0.05,
+    beam_t_over_D::Float64=0.055,
+    beam_aspect::Float64=1.0,
+    beam_Do_scale_exp::Float64=1.0,
+)
+    if length(x) >= TRPT_V10_DIM_LEGACY
+        return collect(Float64, x[1:TRPT_V10_DIM_LEGACY])
+    elseif length(x) >= TRPT_V10_DIM
+        core = collect(Float64, x[1:TRPT_V10_DIM])
+        return vcat([beam_Do_top, beam_t_over_D, beam_aspect, beam_Do_scale_exp], core)
+    end
+    error("design_from_vector_v10 expects ≥ $TRPT_V10_DIM values, got $(length(x))")
+end
+
+"""
     design_from_vector_v10(x, beam_profile, p; max_ground_radius, power_W, v_rated)
 
 Decode a V10 design vector into a TRPTDesignV4 and an array of RotorSpecV10.
+
+Accepts the canonical **10-D** genome (R7, 2026-09-10) or the legacy **14-D**
+genome.  On the 10-D path the four beam genes are synthesised from the keyword
+base (`beam_t_over_D` etc.) — the live evaluator overrides them with the
+closed-form `size_beams_closed_form` sections, so the values here only keep the
+struct well-formed for static callers.
 """
 function design_from_vector_v10(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams;
+    max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
+    power_W::Float64=50000.0,
+    v_rated::Float64=11.0,
+    cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
+    rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
+    cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
+    rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
+    power_split::Union{Nothing,Float64}=nothing,   # top-rotor power fraction; nothing = equal P/n
+    blocking_factor::Float64=1.0,   # downstream-rotor inflow de-rating (1.0 = no wake/blocking)
+    beam_Do_top::Float64=0.05,
+    beam_t_over_D::Float64=0.055,
+    beam_aspect::Float64=1.0,
+    beam_Do_scale_exp::Float64=1.0,
+)
+    x14 = _normalize_v10_14(
+        x; beam_Do_top=beam_Do_top, beam_t_over_D=beam_t_over_D,
+        beam_aspect=beam_aspect, beam_Do_scale_exp=beam_Do_scale_exp,
+    )
+    return _decode_v10_14(
+        x14, beam_profile, p;
+        max_ground_radius=max_ground_radius, power_W=power_W, v_rated=v_rated,
+        cylinder_cone=cylinder_cone, rotor_count_mode=rotor_count_mode,
+        cone_slope_deg=cone_slope_deg, rotor_spacing_frac=rotor_spacing_frac,
+        power_split=power_split, blocking_factor=blocking_factor,
+    )
+end
+
+function _decode_v10_14(
     x::AbstractVector,
     beam_profile::BeamProfile,
     p::SystemParams;

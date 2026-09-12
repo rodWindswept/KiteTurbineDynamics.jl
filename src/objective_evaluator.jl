@@ -146,6 +146,12 @@ Base.@kwdef struct ObjectiveConfig
     rotor_spacing_frac::Float64 = 0.8 # min rotor spacing as fraction of 2·r_rotor (Rod: 0.8 diameters)
     blocking_factor::Float64 = 1.0   # wake blocking between co-axial rotors (1.0 = full)
     min_wall_m::Float64 = MIN_TUBE_WALL_M  # ring tube wall floor (2 mm); mass-relaxation campaigns lower it (e.g. 1.5 mm)
+    # R7 (2026-09-10): the four free beam genes (Do_top/t_over_D/beam_aspect/
+    # Do_scale_exp) are gone from the genome; the closed-form solve pins
+    # t_over_D and `min_wall_m` is the wall floor.  The load is the signed
+    # taper kink + the measured torque helix (`HELIX_LOAD_FACTOR`), with the
+    # constant-tension lifter floor — not the legacy flat 1.2 envelope.
+    t_over_D::Float64 = 0.055  # pinned wall ratio for the closed-form beam solve
 end
 
 # Copy-with-overrides constructor.  (Base.@kwdef does not generate it;
@@ -161,13 +167,14 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          kickstart_s=o.kickstart_s,
                          rotor_count_mode=o.rotor_count_mode, power_split=o.power_split,
                          cone_slope_deg=o.cone_slope_deg, rotor_spacing_frac=o.rotor_spacing_frac,
-                         blocking_factor=o.blocking_factor, min_wall_m=o.min_wall_m)
+                         blocking_factor=o.blocking_factor, min_wall_m=o.min_wall_m,
+                         t_over_D=o.t_over_D)
     return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
                            w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
                            tether_diameter, power_stat, penalize_ceiling, kickstart_s,
                            rotor_count_mode, power_split, cone_slope_deg,
-                           rotor_spacing_frac, blocking_factor, min_wall_m)
+                           rotor_spacing_frac, blocking_factor, min_wall_m, t_over_D)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -322,7 +329,8 @@ end
 function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
                               tether_diameter::Float64=0.003,
                               base_params::Union{Nothing,SystemParams}=nothing,
-                              min_wall_m::Float64=MIN_TUBE_WALL_M)
+                              min_wall_m::Float64=MIN_TUBE_WALL_M,
+                              beam_sizing::Union{Nothing,BeamSizing}=nothing)
     (; design, rotors, n_rings) = result
     taper_start_z = haskey(result, :taper_start_z) ? result.taper_start_z : 0.0
     harvest_length = haskey(result, :harvest_length) ? result.harvest_length : 0.0
@@ -351,14 +359,21 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # The decode returns `radii` ground-first from ring_spacing_v5; airborne
     # rings are radii[2:end] (the ground ring is excluded, matching
     # expansion_airborne_mass's n_ring − 1 count).
+    #
+    # R7 (2026-09-10): when the closed-form sizing is supplied the tube is the
+    # SOLVED per-ring section; otherwise the legacy `Do_top·(r/r_hub)^exp` taper
+    # law is reproduced exactly (backward compatible).
     ring_radii_dec = result.radii
+    t_over_D = beam_sizing === nothing ? design.t_over_D : beam_sizing.t_over_D
+    Do_per_ring = beam_sizing === nothing ?
+        [design.Do_top * (r / design.r_hub)^design.Do_scale_exp for r in ring_radii_dec] :
+        copy(beam_sizing.Do_per_ring)
     ring_masses = [
         ring_beam_mass(
-            design.Do_top * (r / design.r_hub)^design.Do_scale_exp,
-            design.t_over_D, n_lines,
-            2.0 * r * sin(π / n_lines);
+            Do_per_ring[i], t_over_D, n_lines,
+            2.0 * ring_radii_dec[i] * sin(π / n_lines);
             min_wall_m=min_wall_m,
-        ) for r in ring_radii_dec[2:end]
+        ) for i in 2:length(ring_radii_dec)
     ]
     ring_mass_total = sum(ring_masses)
     # Representative per-ring mass for the ODE node mass/inertia — still a
@@ -369,9 +384,8 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # estimate, no blade-only count.
     ring_knuckle_total = sum(
         n_lines * knuckle_mass_at_ring(
-            design.Do_top * (r / design.r_hub)^design.Do_scale_exp,
-            design.t_over_D, n_lines,
-        ) for r in ring_radii_dec[2:end]; init=0.0
+            Do_per_ring[i], t_over_D, n_lines,
+        ) for i in 2:length(ring_radii_dec); init=0.0
     )
 
     # Main (hub) rotor — ring-anchored annulus (2026-08-20): the blade attaches
@@ -444,10 +458,14 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # path (design === nothing) reproduces the design path's taper law
     # Do(r) = Do_top·(r/r_hub)^exp exactly (2026-08-07, F4b audit).
     sys.ring_Do_top[]       = design.Do_top
-    sys.ring_toverD[]       = design.t_over_D
+    sys.ring_toverD[]       = t_over_D
     sys.ring_aspect_ratio[] = design.beam_aspect
     sys.ring_Do_scale_exp[] = design.Do_scale_exp
     sys.ring_r_hub[]        = design.r_hub
+    # R7: the solved per-ring section is the single authority the drag model and
+    # the FEA read via `ring_Do_at`.  Empty for legacy (taper-law fallback) so
+    # un-sized callers keep bit-identical behaviour.
+    sys.ring_Do_per_ring[]  = beam_sizing === nothing ? Float64[] : Do_per_ring
 
     # True per-ring ring mass + ring→cable knuckle mass (2026-09-02, T1) — the
     # single source expansion_airborne_mass reads instead of (n_ring−1)·p.m_ring.
@@ -498,14 +516,15 @@ function evaluate_windowed(
     fitness_fn::Function,       # the version seam — required
 )
     # ── Decode genome ────────────────────────────────────────────────────
-    (length(x) == TRPT_V10_DIM || length(x) == TRPT_V10_DIM + 1) ||
-        error("evaluate_windowed expects $TRPT_V10_DIM-D genome, got $(length(x))")
-    x14 = x[1:TRPT_V10_DIM]
+    (length(x) in (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)) ||
+        error("evaluate_windowed expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))")
+    x_canon = canonical_v10(x)
     result = design_from_vector_v10(
-        x14, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
+        x_canon, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
         cylinder_cone=true, rotor_count_mode=cfg.rotor_count_mode,
         power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
-        rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor
+        rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor,
+        beam_t_over_D=cfg.t_over_D,
     )
     if result.n_active == 0
         return rejected_eval()  # no rotors = infeasible
@@ -524,6 +543,12 @@ function evaluate_windowed(
 
     k_mppt = clamp(cfg.k_mppt, 0.01, K_MPPT_MAX)
 
+    # ── Closed-form beam sizing (R7, 2026-09-10) ─────────────────────────
+    # The four free beam genes are gone: derive every ring's tube from the
+    # decoded rotor stack, then hand the solved section to the builder so the
+    # drag model, the mass model and the verification FEA all see the same tube.
+    sizing = size_beams_closed_form(result, p, cfg)
+
     # ── Build ODE system ─────────────────────────────────────────────────
     # blade_scale = 1.0 — the genome's λ values already scale blades via
     # design_from_vector_v10's RotorSpecV10.blade_tip_radius etc.
@@ -531,7 +556,8 @@ function evaluate_windowed(
     # their params_at_length base; 50 kW default keeps legacy callers
     # bit-identical).  Fixes the 50 kW blade-mass contamination (2026-08-20).
     sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt;
-        tether_diameter=cfg.tether_diameter, base_params=p, min_wall_m=cfg.min_wall_m)
+        tether_diameter=cfg.tether_diameter, base_params=p, min_wall_m=cfg.min_wall_m,
+        beam_sizing=sizing)
 
     # Adaptive window time step (2026-08-24, build-geometry audit): the
     # geometric taper (ring_spacing_v4) can shorten ground-end sub-segs below
@@ -564,29 +590,12 @@ function evaluate_windowed(
     # ── Start protocol ───────────────────────────────────────────────────
     ω_eq = 0.0
     if start_mode === :warm
-        # Static equilibrium pre-solve (same path as objective_v10).
-        # The rotor→ring mapping is now the SAME single authority the ODE
-        # builder uses (was: raw rotor.ring_idx here — one ring low on
-        # multi-ring machines, so the static pre-solve and the ODE run
-        # disagreed about which machine they were solving).  Blade scale 1.0
-        # matches the ODE build; the old `expansion_blade_mass(tip, λ)` call
-        # also disagreed with the ODE path's mass for λ ≠ 1 rotors.
-        expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
-
-        _, radii, _ = ring_spacing_v4(
-            design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
-            density_profile=design.density_profile,
-        )
-
-        λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
-        k_mppt_eff = p.k_mppt * λ_eff^2  # λ²-scaling for static solver
-        p_scaled = override_params(p; k_mppt=k_mppt_eff)
-
-        ω_eq, r_ref = solve_equilibrium_self_consistent(
-            design, expansion_params_v10, p_scaled, n_lines, radii, zs;
-            P_per_rotor=cfg.power_W / max(result.n_active, 1),
-            v_wind=cfg.v_rated, elev_rad=elev_angle,
-        )
+        # Static equilibrium pre-solve.  R7 (2026-09-10): reuse the equilibrium
+        # speed `size_beams_closed_form` already solved on the SAME v5 geometry
+        # and hub-excluded rotor stack — the warm path used to re-solve against
+        # `ring_spacing_v4` radii (a different geometry than the ODE builds), so
+        # the static pre-solve and the ODE disagreed about the machine.
+        ω_eq = sizing.omega_eq
 
         if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
             return rejected_eval()
@@ -961,11 +970,11 @@ function with_k_bracket(
     v_rated::Float64=11.0,
     cfg::Union{Nothing,ObjectiveConfig}=nothing,  # base tunables (relax/window/knobs)
 )
-    (length(x) == TRPT_V10_DIM || length(x) == TRPT_V10_DIM + 1) ||
-        error("with_k_bracket expects $TRPT_V10_DIM-D genome, got $(length(x))")
-    x14 = x[1:TRPT_V10_DIM]
+    (length(x) in (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)) ||
+        error("with_k_bracket expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))")
+    x_canon = canonical_v10(x)
     result = design_from_vector_v10(
-        x14, beam_profile, p; power_W=power_W, v_rated=v_rated
+        x_canon, beam_profile, p; power_W=power_W, v_rated=v_rated
     )
     λ_eff = result.n_active > 0 ? result.rotors[1].blade_scale : 1.0
     k_prior = p.k_mppt * λ_eff^2
@@ -981,7 +990,7 @@ function with_k_bracket(
         push!(tried_k, k_try)
 
         c = ObjectiveConfig(base_cfg; k_mppt=k_try, power_W=power_W, v_rated=v_rated)
-        r = scoring(x14, c)
+        r = scoring(x_canon, c)
 
         if r.status === :ok && r.fitness < best.fitness
             best = r

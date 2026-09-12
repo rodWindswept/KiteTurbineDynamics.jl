@@ -42,11 +42,12 @@ function evaluate_ramp(
     fitness_fn::Function,       # the version seam — required
 )
     # ── Decode genome ────────────────────────────────────────────────────
-    (length(x) == TRPT_V10_DIM || length(x) == TRPT_V10_DIM + 1) ||
-        error("evaluate_ramp expects $TRPT_V10_DIM-D genome, got $(length(x))")
-    x14 = x[1:TRPT_V10_DIM]
+    (length(x) in (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)) ||
+        error("evaluate_ramp expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))")
+    x_canon = canonical_v10(x)
     result = design_from_vector_v10(
-        x14, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated
+        x_canon, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
+        beam_t_over_D=cfg.t_over_D,
     )
     if result.n_active == 0
         return rejected_eval()
@@ -54,6 +55,9 @@ function evaluate_ramp(
     if result.n_rings < 1
         return rejected_eval()
     end
+
+    # R7 closed-form beam sizing (2026-09-10): same authority as evaluate_windowed.
+    sizing = size_beams_closed_form(result, p, cfg)
 
     # ── Build ODE system ─────────────────────────────────────────────────
     # base_params=p — the rung-scaled campaign base (2026-08-22).  This call
@@ -63,7 +67,8 @@ function evaluate_ramp(
     # and evaluate_ramp must build the same machine.
     sys, u0, pc = build_system_from_v10(result, 1.0, cfg.k_mppt;
                                         tether_diameter=cfg.tether_diameter,
-                                        base_params=p)
+                                        base_params=p, min_wall_m=cfg.min_wall_m,
+                                        beam_sizing=sizing)
     (; design, rotors, n_rings, zs) = result
     n_lines = design.n_lines
 
@@ -75,21 +80,9 @@ function evaluate_ramp(
     end
 
     # ── Warm pre-solve (shared with :warm path) ──────────────────────────
-    expansion_params_v10 = expansion_params_from_rotors(rotors, n_rings, n_lines)
-    _, radii, _ = ring_spacing_v4(
-        design.r_hub, design.r_bottom, design.tether_length, design.target_Lr;
-        density_profile=design.density_profile,
-    )
-
-    λ_eff = result.n_active > 0 ? rotors[1].blade_scale : 1.0
-    k_mppt_eff = p.k_mppt * λ_eff^2
-    p_scaled = override_params(p; k_mppt=k_mppt_eff)
-
-    ω_eq, r_ref = solve_equilibrium_self_consistent(
-        design, expansion_params_v10, p_scaled, n_lines, radii, zs;
-        P_per_rotor=cfg.power_W / max(result.n_active, 1),
-        v_wind=cfg.v_rated, elev_rad=elev_angle,
-    )
+    # R7: reuse the equilibrium speed the sizing solve already found on the
+    # SAME v5 geometry (was a second solve against ring_spacing_v4 radii).
+    ω_eq = sizing.omega_eq
     if ω_eq === nothing || isnan(ω_eq) || ω_eq <= 0.0
         return rejected_eval()
     end

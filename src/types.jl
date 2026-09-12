@@ -1,5 +1,16 @@
 abstract type AbstractNode end
 
+# ── Rope discretisation (2026-09-10) ─────────────────────────────────────────
+# Number of sub-segments each line is split into between two adjacent rings.
+# The rope carries `ROPE_SUBSEGS − 1` interior nodes per line per ring gap.
+# 4 is the historical value; Rod (2026-09-10) flagged that more, smaller
+# segments make the line motion less jerky (5 already helps), which matters
+# because the transmission-ring loads are driven by the shaft's lateral wobble.
+# Raising this changes `n_total`, `stride` and every rope-node index, so it is a
+# full physics re-baseline (golden traces, mass, loads).
+const ROPE_SUBSEGS = 4
+const ROPE_NODES_PER_LINE = ROPE_SUBSEGS - 1   # interior nodes per ring gap
+
 """Abstract supertype for all lift device configurations."""
 abstract type LiftDevice end
 
@@ -159,6 +170,15 @@ struct KiteTurbineSystem
     ring_Do_scale_exp::Base.RefValue{Float64}
     ring_r_hub::Base.RefValue{Float64}
 
+    # Per-ring solved tube outer diameters (m), ground-first, one entry per ring
+    # (index 1 = ground, end = hub) — R7 closed-form beam sizing (2026-09-10).
+    # The single authority every consumer that measures or validates the TRPT
+    # geometry reads: the ODE ring-beam drag (dynamics.jl), the settle parasitic
+    # drag (initialization.jl) and the verification FEA (ring_element_analysis).
+    # EMPTY = not sized (legacy builders) → consumers fall back to the
+    # `ring_Do_top · (r/r_hub)^Do_scale_exp` taper law.
+    ring_Do_per_ring::Base.RefValue{Vector{Float64}}
+
     # True airborne ring structural mass and ring→cable knuckle mass, summed
     # per-ring by the builder (build_system_from_v10) and read by
     # expansion_airborne_mass.  0.0 = not yet populated (legacy builders that
@@ -194,6 +214,34 @@ end
 # Used when builder doesn't populate these fields
 function default_ring_do(R::Float64)
     return max(0.01396 * sqrt(R), 5e-4 / 0.05)
+end
+
+"""
+    ring_Do_at(sys, ring_idx, r, p) → Float64
+
+The outer diameter (m) of the ring at ground-first index `ring_idx` on a ring of
+radius `r`.  SINGLE AUTHORITY for every consumer that measures or validates the
+TRPT ring geometry — the ODE ring-beam drag (`dynamics.jl`), the settle
+parasitic drag (`initialization.jl`) and the verification FEA
+(`ring_element_analysis.jl`) all read this, so they always see the same tube.
+
+Resolution order (R7, 2026-09-10):
+1. `sys.ring_Do_per_ring[ring_idx]` — the solved closed-form section;
+2. the legacy taper law `ring_Do_top · (r/r_hub)^Do_scale_exp` (floored so the
+   wall never falls below `5e-4 / t_over_D`) when the per-ring vector is empty;
+3. the pre-V10 `0.01396·√r` fallback for builders that predate both.
+"""
+function ring_Do_at(sys::KiteTurbineSystem, ring_idx::Int, r::Float64, p::SystemParams)
+    v = sys.ring_Do_per_ring[]
+    if !isempty(v) && 1 <= ring_idx <= length(v)
+        return v[ring_idx]
+    end
+    if sys.ring_Do_top[] > 0.0
+        r_ref = sys.ring_r_hub[] > 0.0 ? sys.ring_r_hub[] : p.trpt_hub_radius
+        scale = max(r / r_ref, 0.0)^sys.ring_Do_scale_exp[]
+        return max(sys.ring_Do_top[] * scale, 5e-4 / max(sys.ring_toverD[], 1e-4))
+    end
+    return default_ring_do(r)
 end
 
 # Default kite time constant (s).

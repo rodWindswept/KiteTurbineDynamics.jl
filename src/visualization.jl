@@ -61,9 +61,9 @@ function _rope_line_pts(u, sys, p, s, j)
     pts   = Vector{Vector{Float64}}(undef, 5)
     pts[1] = pa
     # Compute stride from p.n_lines (not hardcoded: 5→16, 8→25)
-    _stride = 1 + p.n_lines * 3
-    for m in 1:3
-        gid      = (s-1)*_stride + 2 + (j-1)*3 + (m-1)
+    _stride = 1 + p.n_lines * ROPE_NODES_PER_LINE
+    for m in 1:ROPE_NODES_PER_LINE
+        gid      = (s-1)*_stride + 2 + (j-1)*ROPE_NODES_PER_LINE + (m-1)
         pts[m+1] = u[3*(gid-1)+1 : 3*gid]
     end
     pts[5] = pb
@@ -72,7 +72,7 @@ end
 
 """Tension of the middle (rope→rope) sub-segment for tether line j of segment s."""
 function _mid_tension(u, sys, p, s, j)
-    idx = (s-1) * p.n_lines * 4 + (j-1) * 4 + 2
+    idx = (s-1) * p.n_lines * ROPE_SUBSEGS + (j-1) * ROPE_SUBSEGS + cld(ROPE_SUBSEGS, 2)
     idx > length(sys.sub_segs) && return 0.0
     ss  = sys.sub_segs[idx]
     pa  = u[3*(ss.end_a.node_id-1)+1 : 3*ss.end_a.node_id]
@@ -111,7 +111,7 @@ function _max_sag_mm(u, sys, p)
         ctr_a = u[3*(gid_a-1)+1:3*gid_a]; ctr_b = u[3*(gid_b-1)+1:3*gid_b]
         pa = attachment_point(ctr_a, na.radius, u[6N+na.ring_idx], 1, p.n_lines, pp1, pp2)
         pb = attachment_point(ctr_b, nb.radius, u[6N+nb.ring_idx], 1, p.n_lines, pp1, pp2)
-        gid_mid = (s-1)*(1 + p.n_lines*3) + 3
+        gid_mid = (s-1)*(1 + p.n_lines*ROPE_NODES_PER_LINE) + 2 + (cld(ROPE_NODES_PER_LINE, 2) - 1)
         pm  = u[3*(gid_mid-1)+1:3*gid_mid]
         AB  = pb .- pa; len2 = dot(AB, AB)
         len2 < 1e-18 && continue
@@ -176,7 +176,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     _ea_rope = sys.sub_segs[1].EA
     # Per-segment natural length — critical for v5 non-uniform spacing.
     # Sub-segments within a segment all share the same natural length.
-    _seg_nat_len = (s) -> 4 * sys.sub_segs[(s-1)*p.n_lines*4 + 1].length_0
+    _seg_nat_len = (s) -> ROPE_SUBSEGS * sys.sub_segs[(s-1)*p.n_lines*ROPE_SUBSEGS + 1].length_0
     _seg_T = (u, s, j) -> begin
         gid_a = sys.ring_ids[s];      gid_b = sys.ring_ids[s + 1]
         na    = sys.nodes[gid_a]::RingNode
