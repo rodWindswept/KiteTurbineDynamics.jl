@@ -173,9 +173,13 @@ with a wrong `F_ax`. A correctness guard is needed.
 **Spec** (§2.4 of the coherence plan, with the full code sketch): demote the old
 formula to a first guess, then close a scalar fixed point on the ODE's own hub
 axial balance — place the geometry, evaluate the hub's net axial residual with
-`multibody_ode!` (no time integration), correct `T_top -= 0.7·m_hub·a_ax`,
-converge at `|m_hub·a_ax| < 1e-2 N` (sign: hub accelerating *up*-shaft ⇒ rope
-pulling too hard ⇒ reduce). Traps:
+`multibody_ode!` (no time integration), correct `T_top += 0.7·m_hub·a_ax`,
+converge at `|m_hub·a_ax| < 1e-2 N`. **Sign corrected 2026-09-12:** the rope hangs
+below the hub and pulls it *down*-shaft, so a hub accelerating *up*-shaft means that
+pull is too small and `T_top` must rise. The originally printed `-=` was inverted and
+diverges. Measured `df/dT = −1.073`, so the 0.7 gives a per-iteration contraction of
+0.249 (measured 0.21). The probe's four fixed iterations reached 1158.97 N with
+residual −4.47 N, still above tolerance; the true fixed point is ≈1155 N. Traps:
 
 * Reuse `_matched_place_twist` so the geometry stays consistent with the twist
   solve.

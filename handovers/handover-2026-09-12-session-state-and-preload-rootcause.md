@@ -101,12 +101,24 @@ function is coherent.
 **Evidence:** `scratch/preload_rootcause.jl`, `scratch/preload_sweep_omega.jl`,
 `scratch/preload_segment_dump.jl` (all committed, all read-only probes).
 
-**Corrected fixed point** from the valid probe — drive the ODE's own hub axial
-residual to zero: `T_top` 1588.73 → 1252.91 → 1174.86 → **1158.97 N**, residual
-−479.75 → −111.50 → −22.70 → **−4.47 N**. That is **≈27 % below**
-`design_axial_preload`'s 1588.73 N.
+**Corrected fixed point** — drive the ODE's own hub axial residual to zero. The
+probe's four iterations give `T_top` 1588.73 → 1252.91 → 1174.86 → **1158.97 N** with
+residual −479.75 → −111.50 → −22.70 → **−4.47 N**. The probe hard-codes four
+iterations, so 1158.97 N is **not** converged: the residual is still above the `1e-2`
+tolerance. Extrapolating at the measured 0.21 contraction puts the fixed point near
+**1155 N**, i.e. **≈27 % below** `design_axial_preload`'s 1588.73 N.
 
 ## 5. The approved next task (not started)
+
+> **BLOCKER FOUND 2026-09-12 (later session) — read this before starting.** The
+> fixed point was implemented as a read-only probe before any `src/` change and it
+> does **not** solve: the equilibrium demand (`T_top = 1155.1 N`) lies 119.9 N
+> *below* the geometric realisability floor (`T_top ≥ 1274.5 N`, binding segment 4),
+> so no top tension satisfies both. Implementing §5 as written would silently
+> saturate segments 1–4 at the `asin` clamp (90°) with no error. Full numbers in plan
+> §2.4.1; evidence in `scratch/preload_equilibrium_exists.jl` and
+> `scratch/preload_floor_exact.jl`. Do **not** start with item 2. Item 1 is still
+> correct and still worth doing, but the load-bearing defect is the clamp.
 
 Implement the kernel-derived preload fixed point in `src/initialization.jl`:
 

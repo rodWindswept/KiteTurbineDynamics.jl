@@ -242,8 +242,9 @@ function design_axial_preload(sys, p, lift_device)   # signature unchanged
         u    = _place_for_preload(sys, p, F_ax, lift_device)   # _matched_place_twist + rope interpolation
         du   = ODE-residual at u with the running velocity field (ring ω = ω_eq, rope nodes orbital)
         a_ax = dot(du[3N + 3*(hub-1) + 1 : 3N + 3*hub], sd)
-        # hub accelerating UP the shaft ⇒ the rope is pulling too hard ⇒ reduce
-        T_top -= 0.7 * m_hub * a_ax
+        # The rope hangs below the hub and pulls it DOWN-shaft.  A hub accelerating
+        # UP-shaft (a_ax > 0) means that pull is too SMALL, so T_top is too LOW.
+        T_top += 0.7 * m_hub * a_ax
         abs(m_hub * a_ax) < 1e-2 && break
     end
     return _axial_profile(sys, p, T_top)
@@ -251,9 +252,20 @@ end
 ```
 
 Notes and traps:
-- **Sign**: `a_ax > 0` (hub accelerating up-shaft) ⇒ `T_top` too high. Relaxation
-  factor 0.7; the map should contract because the transmission is far stiffer than
-  the hub's inertia.
+- **Sign** (corrected 2026-09-12; the earlier version of this note was inverted and
+  diverged): the rope hangs below the hub and its tension pulls the hub
+  **down**-shaft. A hub accelerating **up**-shaft (`a_ax > 0`) therefore means that
+  pull is too small, so `T_top` is too **low** and must **increase**:
+  `T_top += 0.7 * m_hub * a_ax`.
+- **Gain and convergence, measured** (`scratch/preload_kernel_probe.log`, ±1 N scan at
+  `T₀ = 1588.735`): `f(1587.735) = −478.674`, `f(1588.735) = −479.747`,
+  `f(1589.735) = −480.819`, so `df/dT = −1.073`. Newton is `T ← T − f/(df/dT)`, i.e.
+  `T + 0.932·f`; the 0.7 is a deliberate under-relaxation. Per-iteration error
+  contraction is `1 − 0.7·1.073 = 0.249`; measured 0.232 / 0.204 / 0.197.
+- **The probe did not converge.** `preload_kernel_probe.jl` hard-codes `for it in 1:4`,
+  so it stopped at `T_top = 1158.97 N` with residual `−4.47 N`, still above the `1e-2`
+  tolerance. Extrapolating at 0.21 puts the fixed point near **1155 N** in ~8
+  iterations. Do not treat 1158.97 as converged.
 - `_place_for_preload` must reuse `_matched_place_twist` so the geometry stays
   consistent with the twist solve; the rope nodes only need interpolation good
   enough for a force estimate (the final settle re-interpolates them anyway).
@@ -275,6 +287,59 @@ Notes and traps:
 `SIZING_FOS_MARGIN` and the seed's structural margin → re-check the window, and
 only then re-baseline anything. The FoS shortfall (§5) is the real blocker, not a
 test artefact.
+
+#### 2.4.1 BLOCKER found before implementation (2026-09-12) — the derived preload is not realisable
+
+The fixed point above was implemented as the scratch probe
+`scratch/preload_equilibrium_exists.jl` before any change to `src/`, and it does
+**not** solve. Two independent constraints have no overlap at the campaign seed:
+
+1. **Axial equilibrium** (the fixed point's own target). The hub axial residual is
+   monotone and near-linear in `T_top` (slope ≈ −1.1). The corrected-sign
+   iteration `T_top += 0.7·m_hub·a_ax` converges to
+   **`T_top = 1155.09 N`** (residual −0.0065 N, 8 iterations, per-iteration
+   contraction 0.1949).
+2. **Geometric realisability.** The closed form needs `sin(Δα) ≤ 1`, i.e. a
+   **per-segment tension floor**
+
+   ```
+   T_s ≥ τ · chord / (n_lines · r_a · r_b).
+   ```
+
+   At the seed (τ = 377.598 N·m, n_lines = 6) segments 1–4 (the constant-radius
+   lower transmission, r_a = r_b = 0.57511 m) each need `T_s ≥ 222.82 N/line`.
+   Expressed as a top tension on the design profile
+   `F_ax[s] = T_top + (n_seg − s)·15.613 N`, the **binding segment is 4**:
+   **`T_top ≥ 1274.47 N`**. Segment 1 needs only 1227.63 N because it carries less
+   accumulated ring weight above it. The design's own first guess, 1588.73 N,
+   clears the floor (worst `sin(Δα)` = 0.8097).
+
+The equilibrium demand (1155.1 N) is **119.9 N below** the realisability floor
+(1274.5 N). At the floor the hub still carries **−135.9 N** of excess tension. So
+the preload the hub wants cannot be built, and the preload that can be built leaves
+the hub out of balance. At `T_top = 1274.5 N` segment 4 sits at `Δα = 90°` exactly
+— the boundary of the torque the lower transmission can carry.
+
+**Consequence: do not implement §2.4 as written.** It converges (item 1's
+corrected sign is verified) but the converged value silently saturates segments
+1–4 at the `asin` ceiling, because `_matched_place_twist` does
+`asin(clamp(sinΔα, -1, 1))` and returns **90° with no error** when `sinΔα > 1`.
+That is a second silent-truncation defect of exactly the class §5 item 1 targets —
+and it is the more dangerous one, because it produces a plausible-looking
+geometry whose twist is wrong.
+
+**The open question is not the formula, it is the sizing.** The lower transmission
+(six segments at r = 0.57511 m) cannot carry τ = 377.598 N·m at the tension the hub
+equilibrium requires. A larger attachment radius helps directly
+(`τ_max = n_lines·T_s·r_a·r_b/chord` at `sin Δα = 1`), as would more lines or lower
+k_mppt. This is a closed-form sizing criterion that belongs alongside the
+`SIZING_FOS_MARGIN` re-derivation, and it should be added to the R7 beam sizing as
+a **torsional realisability** check.
+
+Evidence: `scratch/preload_equilibrium_exists.jl` (the sweep),
+`scratch/preload_fixedpoint_conv.jl` (corrected-sign convergence + asin audit),
+`scratch/preload_alpha_reconcile.jl` (the three disagreeing twist numbers),
+`scratch/preload_settle_chain.jl` (the airborne assembly's state).
 
 ### 2.5 Rejected approaches (tested, do not retry)
 
