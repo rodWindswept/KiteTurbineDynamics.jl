@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# scripts/ktd-julia — run Julia against this repo's canonical sandbox environment.
+#
+# WHY THIS EXISTS
+#   In this sandbox `~/.julia` is mounted read-only and /tmp does not persist
+#   between commands, so the writable package depot lives inside the repo and
+#   must be *stacked* on top of the read-only system depot.  Calling
+#   `julia --project=. ...` directly fails with
+#       ERROR: failed to find source of parent package: "IntervalArithmetic"
+#   because only the system depot is searched for package sources.
+#
+#   `/snap/bin/julia` is also broken here (DBus error, exit 46).  The working
+#   binary is the snap's raw path, reached through the revision-independent
+#   `/snap/julia/current` symlink so a snap refresh does not break this script.
+#
+# USAGE
+#   scripts/ktd-julia test/runtests.jl
+#   scripts/ktd-julia --threads=auto scripts/run_v10_campaign.jl
+#   scripts/ktd-julia -e 'using KiteTurbineDynamics; println("ok")'
+#
+#   KTD_PROJECT=/path/to/env scripts/ktd-julia ...    # use another environment
+#
+# See handovers/handover-2026-09-11-settle-ode-coherence.md section 1.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+# Locate a Julia binary.  Prefer the revision-independent snap symlink; fall
+# back to PATH so CI (julia-actions/setup-julia) works unchanged.
+JULIA_BIN=""
+for cand in /snap/julia/current/bin/julia /snap/julia/*/bin/julia; do
+    if [ -x "$cand" ]; then
+        JULIA_BIN="$cand"
+        break
+    fi
+done
+if [ -z "$JULIA_BIN" ]; then
+    JULIA_BIN="$(command -v julia || true)"
+fi
+if [ -z "$JULIA_BIN" ]; then
+    echo "ktd-julia: no Julia binary found (tried /snap/julia/current and PATH)" >&2
+    exit 127
+fi
+
+# Stack the writable repo-local depot in front of the read-only system depot.
+# Only when the repo-local depot exists and the caller has not set one, so CI
+# keeps its own environment.
+if [ -d "$ROOT/.julia_depot" ] && [ -z "${JULIA_DEPOT_PATH:-}" ]; then
+    export JULIA_DEPOT_PATH="$ROOT/.julia_depot:$HOME/.julia"
+fi
+
+# The acceptance runner spawns `julia` child processes by name.
+export PATH="$ROOT/.julia_depot/bin:$PATH"
+
+PROJECT="${KTD_PROJECT:-$ROOT}"
+exec "$JULIA_BIN" --project="$PROJECT" --startup-file=no "$@"

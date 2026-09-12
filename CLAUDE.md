@@ -21,47 +21,62 @@ In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (mo
 
 ### Julia Package & Test Commands
 
-* **Run the fast unit suite** (42 test files, ~2 min):
+**Always invoke Julia through `scripts/ktd-julia`.** In this sandbox `~/.julia` is
+read-only and /tmp does not persist. The writable depot therefore lives in
+`.julia_depot/`, and it must sit on top of the system depot in the search path. Plain
+`julia --project=.` fails with `failed to find source of parent package:
+"IntervalArithmetic"`. The wrapper sets the stacked depot, pins `--startup-file=no`, and
+puts the acceptance children's `julia` on `PATH`. It runs the snap's revision-independent
+`/snap/julia/current` binary, because `/snap/bin/julia` is broken here (DBus, exit 46).
+It falls back to `julia` on `PATH`, so CI is unaffected.
+
+* **Run the fast unit suite** (50 test files, ~2.6 min):
   ```bash
-  julia --project=. test/runtests.jl
+  scripts/ktd-julia test/runtests.jl
   ```
 * **Run the slow acceptance suite** (8 ODE files, ~18 min, parallel):
   ```bash
-  julia --project=. test/acceptance_runtests.jl
+  scripts/ktd-julia test/acceptance_runtests.jl
   ```
   Run this before a merge that touches src/ physics. CI runs it only when those paths change (see .github/workflows/acceptance.yml).
-  Use `script -q -c "julia --project=. test/runtests.jl" /dev/null` for live output (Julia buffers stdout).
+  Use `script -q -c "scripts/ktd-julia test/runtests.jl" /dev/null` for live output (Julia buffers stdout).
+
+* **Format** (JuliaFormatter, Blue style from `.JuliaFormatter.toml`):
+  ```bash
+  scripts/ktd-format
+  ```
 
 * **Launch Interactive Dashboard** (GLMakie):
   ```bash
-  julia --project=. scripts/interactive_dashboard.jl           # V1
-  julia --project=. scripts/interactive_dashboard.jl --v2      # V2 cockpit
+  scripts/ktd-julia scripts/interactive_dashboard.jl           # V1
+  scripts/ktd-julia scripts/interactive_dashboard.jl --v2      # V2 cockpit
   ```
 
 ### DE Campaigns (V6.2 → V10)
 
-* **Clear Julia cache** before any campaign (critical — stale .ji files cause silent errors):
-  ```bash
-  rm -f ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.ji ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.so
-  ```
+* **Precompile cache:** this package has no cache to clear. `src/KiteTurbineDynamics.jl:3`
+  sets `__precompile__(false)`, so every run rebuilds the module from source. The command
+  formerly here pointed at the read-only `~/.julia` and silently did nothing. Do not
+  blanket-delete `.julia_depot/compiled/`: that directory holds the dependency caches, and
+  a full re-precompile is expensive.
 * **Run V10 campaign** (14-DoF, unified rotors):
   ```bash
-  julia --project=. --threads=auto scripts/run_v10_campaign.jl
+  scripts/ktd-julia --threads=auto scripts/run_v10_campaign.jl
   ```
 * **Verify a campaign result** against current code:
   ```bash
-  julia --project=. -e 'using KiteTurbineDynamics; ... evaluate_design(...)'
+  scripts/ktd-julia -e 'using KiteTurbineDynamics; ... evaluate_design(...)'
   ```
 
 ### Controller & Headless Simulation
 
 * **k_mppt bisection hunt** (finds P_rated operating point):
   ```bash
-  julia --project=. scripts/hunt_kmppt_bisect.jl
+  scripts/ktd-julia scripts/hunt_kmppt_bisect.jl
   ```
 * **Headless trace recording** (6 scenarios, open-loop vs soft-ramp):
   ```bash
-  julia --project=. scripts/record_ramp_traces.jl
+  scripts/ktd-julia scripts/record_ramp_traces.jl
   ```
 * **Publication charts** from ramp traces:
   ```bash
@@ -72,21 +87,21 @@ In order: `CONTEXT.md` → `DECISIONS.md` (last ~200 lines) → `handovers/` (mo
 
 * **Per-ring FoS sweep** (identify which rings buckle):
   ```bash
-  julia --project=. scripts/sweep_v10_ring_detail.jl
+  scripts/ktd-julia scripts/sweep_v10_ring_detail.jl
   ```
 * **3D design overlay** (compare 2+ TRPT designs):
   ```bash
-  julia --project=. scripts/overlay_designs.jl
+  scripts/ktd-julia scripts/overlay_designs.jl
   ```
 
 ## ── Development Guidelines ────────────────────────────────────────────
 
-1. **Run the test suite before committing.** 42 fast + 8 acceptance files. Never commit with red.
+1. **Run the test suite before committing.** 50 fast + 8 acceptance files. Never commit with red.
 2. **Physics conservatism.** The TRPT rotor model must conform to BEM-coupled v2/v5 formulations. Expansion rotor model uses simplified 2D blade-element. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
 3. **Always use `run_canonical_sim!()`** for headless simulation — never hand-roll integrators.
 4. **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
 5. **Progressive CSV saves.** Write each scenario's CSV immediately after completion, not all at the end.
-6. **Clear Julia cache after src/ edits.** `rm ~/.julia/compiled/v1.12/KiteTurbineDynamics/*.ji`
+6. **No cache to clear after src/ edits.** `KiteTurbineDynamics` is `__precompile__(false)`, so every run rebuilds it from source. See the campaign-cache note above.
 
 ## ── Agent Skills (for Hermes Agents) ──────────────────────────────────
 

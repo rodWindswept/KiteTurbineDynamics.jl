@@ -17,16 +17,18 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 
 ## Working agreement
 
-- **Run the suite.** Run `julia --project=. test/runtests.jl` before committing
-  (fast unit tests, ~3.5 min). Never commit with a red suite.
-- **Acceptance tests.** The five slow ODE acceptance tests live in
+- **Run the suite.** Run `scripts/ktd-julia test/runtests.jl` before committing
+  (fast unit tests, 50 files, ~2.6 min). Never commit with a red suite. Plain
+  `julia --project=.` does not work in this sandbox — see [`CLAUDE.md`](CLAUDE.md).
+- **Acceptance tests.** The eight slow ODE acceptance tests live in
   `test/acceptance_runtests.jl` (~18 min, parallel). Run them before a merge
   that touches `src/` physics. See DECISIONS.md [2026-08-20].
 - **Physics conservatism.** Physical calculations must conform to the
   BEM-coupled v2/v5 solver formulations described in `DECISIONS.md`.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
-- **Formatting.** Run JuliaFormatter (config in `.JuliaFormatter.toml`,
-  Blue style) before committing so diffs stay focused on logic.
+- **Formatting.** Run `scripts/ktd-format` (JuliaFormatter, config in
+  `.JuliaFormatter.toml`, Blue style) before committing so diffs stay focused on
+  logic.
 - **SI units; angles in degrees at the API boundary.** Match existing
   conventions in `src/`.
 

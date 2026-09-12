@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# scripts/ktd-format — run JuliaFormatter over the repo (Blue style, margin 92).
+#
+# JuliaFormatter is deliberately NOT a project dependency, so it lives in its own
+# environment inside the writable depot.  Create that environment once with:
+#
+#   scripts/ktd-julia -e 'using Pkg; Pkg.activate(".julia_depot/fmt_env"); Pkg.add("JuliaFormatter")'
+#
+# Config comes from .JuliaFormatter.toml at the repo root.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+FMT_ENV="$ROOT/.julia_depot/fmt_env"
+
+if [ ! -f "$FMT_ENV/Project.toml" ]; then
+    echo "ktd-format: no JuliaFormatter environment at $FMT_ENV" >&2
+    echo "Create it once with:" >&2
+    echo "  scripts/ktd-julia -e 'using Pkg; Pkg.activate(\".julia_depot/fmt_env\"); Pkg.add(\"JuliaFormatter\")'" >&2
+    exit 1
+fi
+
+export KTD_PROJECT="$FMT_ENV"
+exec "$ROOT/scripts/ktd-julia" -e 'using JuliaFormatter; format(".")'
