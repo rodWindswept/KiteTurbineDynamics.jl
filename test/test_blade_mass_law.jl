@@ -1,4 +1,4 @@
-# test/test_blade_mass_law.jl — unified blade-mass law: m = m_ref · λ³ (2026-08-22)
+# test/test_blade_mass_law.jl — unified blade-mass law: m = m_ref · span³ (2026-08-22)
 #
 # Rod (2026-08-22): rigid-foam blades scale with VOLUME (λ³), not area (λ²).
 # The main-rotor λ² term and the CFRP (0.3 + 0.1·tip) expansion constants are
@@ -42,8 +42,8 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "build_system_from_v10 — main rotor prices the decoded span" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
-        x[10] = 0.6                    # 2 rotors: hub + 1 intermediate expansion
-        x[13] = 0.5; x[14] = 0.5      # blade_scale_top/bottom
+        x[6] = 0.6                     # 2 rotors: hub + 1 intermediate expansion (R7 10-D)
+        x[9] = 0.5; x[10] = 0.5       # blade_scale_top/bottom
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -79,7 +79,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "knuckle floor + full airborne accounting" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
-        x[10] = 0.6                    # hub + 1 expansion rotor
+        x[6] = 0.6                     # hub + 1 expansion rotor (R7 10-D)
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -108,7 +108,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     @testset "geometry_fingerprint does not double-count blade mass" begin
         include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         x = seed_genome(5.0)
-        x[10] = 0.6                    # hub + 1 expansion rotor (non-vacuous)
+        x[6] = 0.6                     # hub + 1 expansion rotor (non-vacuous, R7 10-D)
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0

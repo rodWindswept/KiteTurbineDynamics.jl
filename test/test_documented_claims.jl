@@ -1,3 +1,10 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ERA PIN — provenance, NOT a v13 health signal (R10, 2026-09-10).
+# Every number pinned here is v10-era / DRR-era (12-gon 2.889/2.0 m, v6.2
+# 74.17 kg, params_10kw blade mass).  None constrain the v13 machine — the
+# v13-era claims are pinned by test_blade_mass_law.jl, test_campaign_k_alignment.jl
+# and test_mass_model_2026_09.jl.  Kept as a deliberate external-claim guard.
+# ──────────────────────────────────────────────────────────────────────────────
 # test/test_documented_claims.jl
 #
 # Guards the load-bearing numbers quoted in external-facing documents.

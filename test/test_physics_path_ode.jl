@@ -150,7 +150,12 @@ differ =
         default_result !== nothing &&
         (
             legacy_result.status !== default_result.status ||
-            legacy_result.fitness != default_result.fitness
+            legacy_result.fitness != default_result.fitness ||
+            # R7 (2026-09-10): under LEGACY physics both paths may reject, so
+            # status+fitness alone are not discriminating.  The measured window
+            # statistics are — LEGACY gives P_mean = 0 while DEFAULT sustains.
+            legacy_result.P_mean != default_result.P_mean ||
+            legacy_result.FoS_min != default_result.FoS_min
         )
     )
 check("P2: LEGACY physics changes the ODE result (toggles reach the live path)", differ)

@@ -27,8 +27,8 @@ end
 function build_system(rotor_count::Float64)
     p = params_5kw_188()
     x = seed_genome(5.0)
-    x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
-    x[10] = rotor_count
+    x[4] = Float64(round(Int, clamp(x[4], 3, 16)))   # n_lines (R7 10-D layout)
+    x[6] = rotor_count                              # rotor count
     dec = KiteTurbineDynamics.design_from_vector_v10(x, PROFILE_ELLIPTICAL, p;
         power_W=5000.0, cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)

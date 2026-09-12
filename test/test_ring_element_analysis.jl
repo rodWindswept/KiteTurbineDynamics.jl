@@ -116,7 +116,7 @@ end
     
     # 1. Run without wind
     res_no_wind = ring_element_analysis(u0, collect(alpha_vec), sys, p, 0.0, nothing)
-    @test length(res_no_wind) == Nr - 2
+    @test length(res_no_wind) == Nr - 1   # R7: hub ring now included (ground still skipped)
     
     # Each ring's maximum utilisation should be non-zero (due to gravity!)
     for f in res_no_wind

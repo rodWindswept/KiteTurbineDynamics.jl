@@ -1,3 +1,12 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ERA PIN — provenance, NOT a v13 health signal (R10, 2026-09-10).
+# The 70/30 ring-anchored split assertions below were written against the DEAD
+# `build_v10_tight*` builder.  The invariant is LIVE (design_from_vector_v10),
+# but the live pin is the decode assertion added by the 2026-09-08 guard, and
+# the end-to-end pins live in test_builders_v10.jl / test_blade_mass_law.jl /
+# test_wind_blocking.jl.  A green run here does NOT mean the v13 decode is
+# correct.  Kept for provenance; see docs/reports/2026-09-08-test-suite-inventory.md.
+# ──────────────────────────────────────────────────────────────────────────────
 #!/usr/bin/env julia
 # test/test_blade_geometry.jl
 # Assertion: expansion rotor blades use the ring-anchored 70/30 split

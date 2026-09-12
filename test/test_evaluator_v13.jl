@@ -5,18 +5,17 @@ Re-baselined 2026-09-04 to the corrected 5 kW campaign (daisy params @ 18.8 m,
 campaign decode knobs, appropriate_mass_fitness).  Standalone (not wired into
 runtests.jl — B1-B3 run 20-30s ODE windows).
 
-Re-baselined 2026-09-07 (aligned FoS): the wall-floor alignment (OD floor →
-tube_wall_thickness single authority, DECISIONS [2026-09-06]) removed the
-fictitious FoS 17.19 — the campaign winner's 6.2 mm / 2 mm transmission rings
-are UNDER the 2.5 floor (true FoS ≈ 1.2).  B6 now asserts the gate REJECTS the
-under-strength winner while its power delivery stays ≥ 5 kW.
+Re-baselined 2026-09-10 (R7): the four free beam genes are removed and every
+ring's tube is sized closed-form (`size_beams_closed_form`).  The 2026-09-07
+"under-strength winner" artifact can no longer recur, so B6 now asserts the
+re-sized winner is :ok with FoS ≥ 2.5 while still delivering ≥ 5 kW.
 
 B1: island-1 winner (torsional collapse)  → :reject + twist_crossed=true
 B2: 18m winner (flywheel decay)            → :reject OR (P_end < floor AND worse fitness than seed)
 B3: original seed (healthy)                → :ok, no twist, P_end ≥ floor, fitness beats B2's
 B4: unit — penalize_ceiling=false → more power strictly better
 B5: unit — twist_collapse_check flags wound state, not post-settle
-B6: 5 kW v13 winner (under-strength)       → :reject with FoS < 2.5, P_mean ≥ floor, hub tip < 100 m/s
+B6: 5 kW v13 winner (re-sized closed-form) → :ok, FoS ≥ 2.5, P_mean ≥ floor, hub tip < 100 m/s
 B7: unit — tip_speed_sanity_ok flags diverged hub/mid-ring ω
 =#
 
@@ -61,8 +60,14 @@ end
 function run_eval(x::Vector{Float64}, L::Float64, window_s::Float64)
     p = params_at_length(params_daisy(), L, KW)
     xr = copy(x)
-    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    # Accept the legacy 14-D campaign CSVs AND the canonical 10-D genome (R7).
+    if length(xr) >= 14
+        xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
+        xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    else
+        xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))    # n_lines
+        xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))     # rotor count
+    end
     return KiteTurbineDynamics.evaluate_windowed(
         xr, BEAM, p, v13_cfg(window_s, K_MPPT_5KW_HONEST);
         start_mode=:cold,
@@ -78,8 +83,13 @@ end
 # Corrected seed genome (seed_genome(5.0)), rounded like the campaign.
 function seed_x()
     x = seed_genome(5.0)
-    x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
-    x[10] = Float64(round(Int, clamp(x[10], 1, 3)))
+    if length(x) >= 14
+        x[8] = Float64(round(Int, clamp(x[8], 3, 16)))
+        x[10] = Float64(round(Int, clamp(x[10], 1, 3)))
+    else
+        x[4] = Float64(round(Int, clamp(x[4], 3, 16)))
+        x[6] = Float64(round(Int, clamp(x[6], 1, 3)))
+    end
     return x
 end
 
@@ -147,18 +157,17 @@ if isfile(WINNER18V13)
     println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2),
             "  FoS_min=", round(r6.FoS_min, digits=2),
             "  fitness=", round(r6.fitness, digits=3))
-    # Re-baselined 2026-09-07 (aligned FoS, DECISIONS [2026-09-06]): the old
-    # OD floor (`5e-4/t_over_D`) inflated the winner's 6.2 mm transmission
-    # rings to a fictitious 18 mm and FoS 17.19.  With the wall floor aligned
-    # to tube_wall_thickness (2 mm single authority) the true ring FoS is
-    # ≈ 1.2, UNDER the 2.5 floor — the gate must REJECT the winner.  A
-    # regression to the OD-floor FoS would flip this back to :ok and fail.
-    check("B6a: gate rejects the under-strength winner (status :reject, FoS < 2.5)",
-          r6.status === :reject && r6.FoS_min < 2.5)
-    # The rejection is STRUCTURAL, not a power failure: the machine still
-    # delivers ≥ 5 kW while being under-strength (the 2026-09-06 finding).
-    check("B6c: winner still delivers ≥ 5.0 kW while rejected (structure, not power)",
-          r6.P_mean >= 5.0)
+    # Re-baselined 2026-09-10 (R7 closed-form sizing): the four free beam genes
+    # are gone, so the under-strength artifact (6.2 mm / FoS ≈ 1.2 transmission
+    # rings) cannot recur — `size_beams_closed_form` re-sizes the winner's rotor
+    # stack to meet the 2.5 floor.  B6 now asserts the R7 invariant: the same
+    # winner genome evaluates :ok with FoS ≥ 2.5 while still delivering ≥ 5 kW.
+    # A regression that reinstated the free beam genes (or an under-sizing load
+    # model) would drop FoS below the floor and fail here.
+    check("B6a: R7 closed-form sizing meets the floor (status :ok, FoS ≥ 2.5)",
+          r6.status === :ok && r6.FoS_min >= 2.5)
+    # The machine still delivers its rated power after the structural re-size.
+    check("B6c: winner still delivers ≥ 5.0 kW", r6.P_mean >= 5.0)
     g6 = gate_design(read_vec(WINNER18V13); L=L18, KW=KW)
     hub_ri = (g6.sys.nodes[g6.sys.rotor.node_id]::RingNode).ring_idx
     w_hub = g6.u[6*g6.N + g6.Nr + hub_ri]

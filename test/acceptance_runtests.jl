@@ -1,6 +1,6 @@
 # test/acceptance_runtests.jl — SLOW ACCEPTANCE SUITE (~18 min, parallel)
 #
-# The seven ODE-heavy acceptance tests. Each builds a genome, settles it
+# The eight ODE-heavy acceptance tests. Each builds a genome, settles it
 # (30,000 steps) and runs a 5-30 s simulation window at dt=4e-5. These are
 # the DYNAMIC checks that a static unit test cannot see:
 #
@@ -23,8 +23,11 @@
 #                                         is healthy under DEFAULT physics and
 #                                         LEGACY must give a different result
 #                                         (2026-09-08 audit recommendation 2).
+#   test_jtheta_no_reversal.jl   (R8)     a 2-rotor seed must not reverse over
+#                                         20 s (the removed spurious J·θ
+#                                         torsional spring, 2026-08-25).
 #
-# WHY NOT IN runtests.jl: these seven are ~40 min of the suite when run in
+# WHY NOT IN runtests.jl: these eight are ~45 min of the suite when run in
 # sequence. They run here as seven INDEPENDENT subprocesses in PARALLEL
 # (~18 min wall-clock, bounded by the slowest file, test_evaluator_v13.jl),
 # so the fast unit suite stays fast.
@@ -45,6 +48,7 @@ const ACCEPTANCE_FILES = [
     "test_settle_drag_alignment",
     "test_settle_lowk_honest",
     "test_physics_path_ode",
+    "test_jtheta_no_reversal",
 ]
 
 # Launch each acceptance file as its own julia process. Each file is a

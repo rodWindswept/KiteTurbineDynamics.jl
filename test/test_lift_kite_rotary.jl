@@ -1,3 +1,9 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ERA PIN — provenance, NOT a v13 health signal (R10, 2026-09-10).
+# The RotaryLifter is the SUPERSEDED fixed-rotary regime; the live chain uses
+# `sized_lifter_for` / StackedLifterParams with const_tension=true.  A green run
+# here does NOT exercise the mass-aware constant-tension lifter.
+# ──────────────────────────────────────────────────────────────────────────────
 # test/test_lift_kite_rotary.jl
 # Verify RotaryLifter force model (uses PCA-2 from CoaxialAutogyroStacking)
 
