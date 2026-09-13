@@ -99,10 +99,13 @@ function main()
         push!(m, mm)
         push!(az, du[(3N + 3 * (gid - 1) + 3)])
     end
-    @printf("total vertical force over all nodes = %+.6f N  (sum m*az)\n",
-        sum(m .* az))
-    @printf("total airborne mass                 = %.4f kg\n", sum(m))
-    @printf("total weight (down)                 = %.4f N\n", sum(m) * 9.81)
+    air = 2:N                      # exclude node 1, the 1e30 kg ground anchor
+    @printf("total vertical force, AIRBORNE nodes only = %+.6f N  (sum m*az)\n",
+        sum(m[i] * az[i] for i in air))
+    @printf("airborne mass (excl. ground anchor)       = %.4f kg\n", sum(m[i] for i in air))
+    @printf("total weight (down)                       = %.4f N\n",
+        sum(m[i] for i in air) * 9.81)
+    @printf("(node 1 ground anchor mass = %g kg, excluded)\n", m[1])
 
     # biggest offenders
     idx = sortperm(abs.(m .* az); rev=true)[1:6]
