@@ -53,8 +53,26 @@
 #        the solve (partially done) AND use a trust region rather than a decaying
 #        lambda.
 #
-# The formulation itself is believed correct and the numbers check out; only the
-# linear algebra of the step needs changing.
+# UPDATE after QR + per-DOF scaling (still not converging):
+#   QR fixed the step SIZE (1.2e-5 -> ~1e-2 m) and per-DOF column scaling fixed
+#   the direction, but the solve still CREEPS: 200 iterations moved the hub
+#   perpendicular offset only 0.3 mm against a required bow of ~1.5 m, with
+#   ||F||_inf stuck at 251 N.
+#
+#   Diagnosis: with every ROPE NODE as an independent free DOF, any global motion
+#   of the machine is resisted by AXIAL STRETCHING of the very stiff lines.  A real
+#   bow is a large GEOMETRIC rearrangement -- the cable directions reorient to
+#   carry the weight -- with almost no stretching.  In this formulation the
+#   network must pass through heavily-stretched intermediate configurations to get
+#   there, so the solver faces a huge spurious energy barrier and inches along.
+#
+#   NEXT FORMULATION (not yet implemented): SLAVE the rope nodes to the ring
+#   geometry.  Solve only for ring centres + bearing + sky anchor (3*10 = 30 DOF
+#   instead of 471), and set the rope nodes from the segment structure after each
+#   step.  That removes the stretching modes from the search space.  Care is needed
+#   because the lines are TWISTED helices -- interpolate along the true segment
+#   geometry (as `settle_to_operational_state` does at its end), never along
+#   straight chords (that was the error that produced the fake 500 kN/m).
 #
 #   scripts/ktd-julia scratch/static_solve2.jl
 
@@ -242,12 +260,12 @@ function main()
     F = F0
     lam = 1e-3
     t0 = time()
-    for it in 0:40
+    for it in 0:200
         nrm = norm(F)
         d = pos(u, hub)
         @printf("  %5d %14.6e %14.6f %14.6f %14.6f\n", it, nrm, maximum(abs.(F)),
             dot(d, axis0), norm(d .- dot(d, axis0) .* axis0))
-        if maximum(abs.(F)) < 0.05 || it == 40
+        if maximum(abs.(F)) < 0.05 || it == 200
             break
         end
 
@@ -270,26 +288,51 @@ function main()
         dx = zeros(dm.ndof)
         step_acc = 0.0
         lam_acc = 0.0
-        for _ in 1:30
-            A = JtJ + (lam * scale) * I
-            local dxs
+        # ── least-squares step WITHOUT forming the normal equations ──────────
+        # Forming JtJ squares the condition number (max|J| ~ 1e7 -> JtJ ~ 1e14),
+        # which destroyed the bow-carrying directions in double precision and made
+        # every accepted step ~1.2e-5 m instead of ~1 m.  Instead augment J with
+        # sqrt(lambda) * I and solve the augmented least-squares problem by QR:
+        #
+        #     [ J            ]        [ -F ]
+        #     [ sqrt(l)*I    ] dx  =  [  0 ]
+        #
+        # This is algebraically the same as LM but numerically far better behaved.
+        n = dm.ndof
+        # PER-DOF SCALING: rope nodes displace ~1e-3 m while the bow needs ~1 m, so
+        # the raw step is dominated by the stiff small-amplitude DOFs.  Work in
+        # units of the column norm of J (i.e. dx = W * dz with W = diag(1/colnorm))
+        # so every DOF is asked for a comparable fraction of its own sensitivity.
+        colnorm = [max(norm(@view J[:, j]), 1e-12) for j in 1:n]
+        Js = J * Diagonal(1.0 ./ colnorm)
+        for _ in 1:20
+            aug = zeros(2n, n)
+            @views aug[1:n, :] .= Js
+            sq = sqrt(lam) * maximum(abs.(Js))
+            for i in 1:n
+                aug[n + i, i] = sq
+            end
+            rhs = zeros(2n)
+            @views rhs[1:n] .= -F
+            local dzs
             try
-                dxs = A \ (-JtF)
+                dzs = qr(aug) \ rhs
             catch
                 lam *= 10
                 continue
             end
-            any(!isfinite, dxs) && (lam *= 10; continue)
-            dx = W * dxs          # unscale back to physical DOF space
+            any(!isfinite, dzs) && (lam *= 10; continue)
+            dxs = dzs ./ colnorm          # back to physical DOF space
             improved = false
-            for s in (1.0, 0.5, 0.25, 0.1, 0.05)
+            for st in (1.0, 0.5, 0.25, 0.1, 0.05)
                 ut = copy(u)
-                apply_step!(ut, dm, N, dx, s)
+                apply_step!(ut, dm, N, dxs, st)
                 Ft = resid!(ut)
                 if norm(Ft) < nrm
                     u, F = ut, Ft
-                    lam = max(lam * 0.3, 1e-10)
-                    step_acc = s
+                    dx = dxs
+                    lam = max(lam * 0.3, 1e-12)
+                    step_acc = st
                     lam_acc = lam
                     accepted = true
                     improved = true
