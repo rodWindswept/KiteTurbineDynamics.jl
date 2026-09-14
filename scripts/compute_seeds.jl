@@ -91,6 +91,34 @@ function seed_genome(kw)
     g[8] = 0.0                           # bank_bottom
     g[9] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
     g[10] = 0.7                          # blade_scale_bottom: same as top
+    # RE-SEED PROPOSAL 2026-09-14 — NOT LANDED.  See
+    # handovers/handover-2026-09-14-verified-state-reseed-boundary-and-priority-correction.md
+    # section 6, and scratch/spec_seed_candidate.jl / scratch/diag_lift_line_switch.jl.
+    #
+    # A viable, mid-range, 3-rotor/6-line replacement was found and measured
+    # through the campaign evaluator at the full 30 s window:
+    #   [2.6, 0.5751086853804245, 2.0, 6.0, 0.0, 3.0, 11.0, 11.0, 0.8, 0.8]
+    #   :ok, P_end 5.07 kW, P_mean 5.04 kW, FoS_min 3.59, no twist crossing,
+    #   no line break, twist demand 0.789.  9 of its 10 genes are mid-range; only
+    #   rotor_count sits at a bound, which is unavoidable ([1,3] and 3 is the
+    #   deliberate architecture).  BANK = 11 degrees is DECIDED (Rod 2026-09-14);
+    #   0 / 11 / 22 degrees were all measured viable, so it is not a trade-off.
+    #
+    # WHY IT CANNOT LAND YET.  With it the operational settle's bridle tension
+    # collapses to 0.000 N.  Two explanations were tested and both are WRONG:
+    #   * the lift-chain design constants are NOT radius-dependent — measured
+    #     settled bearing offset 3.9898 m (r_hub 2.4) vs 3.9897 m (r_hub 2.6);
+    #     the bearing hangs one cyan-length below the sky anchor, so r_hub does
+    #     not enter.  Do not re-derive them per genome.
+    #   * the lift line's hard on/off switch is NOT engaged either way — measured
+    #     kite-to-sky distance ~8.99 m against a 24.75 m threshold, for BOTH this
+    #     seed and the current one, and the current one's chain is taut anyway.
+    # MEASURED CAUSE: the candidate's chain is healthy at 1000 relaxation steps
+    # (bridle 646 N) and collapses between 1000 and 2000 steps (sky anchor drops
+    # 0.25 m, bridle -> 0).  It is a LATE DIVERGENCE OF THE RELAXATION — i.e. the
+    # settle places the machine and relaxes, it does not solve for equilibrium.
+    # That is open item 1 of handover-2026-09-12 section 9.  The seed must wait
+    # for the static equilibrium solver; do not land it before then.
     return g
 end
 

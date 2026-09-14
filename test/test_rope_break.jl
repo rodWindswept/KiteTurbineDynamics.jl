@@ -98,7 +98,17 @@ function run_r2()
     lift = rotary_lifter_default()
     wind_fn2(r, t) = [p2.v_wind_ref, 0.0, 0.0]
     sys2.k_mppt_ref[] = K_MPPT_5KW_HONEST   # campaign k for settle AND run
-    u2 = settle_to_operational_state(sys2, copy(u02), pc2, 60.0; lift_device=lift, wind_fn=wind_fn2, n_op=30_000)
+    u2 = try
+        settle_to_operational_state(sys2, copy(u02), pc2, 60.0; lift_device=lift, wind_fn=wind_fn2, n_op=30_000)
+    catch e
+        # 2026-09-13: the initialiser now REFUSES a design point past the torsional
+        # realisability cliff (physics-topology.md §6) instead of silently placing a
+        # multi-turn wind-up.  This historical pre-fix genome sits at sin Δα = 35.6
+        # — it is not a machine.  Refusal is the STRONGEST form of "does not reach
+        # the balloon fixed point", which is the regression this test exists for.
+        @info "R2: historical genome REFUSED by the settle (unrealisable)" exception = e
+        return (0.0, 0.0, false, true)
+    end
     N2 = sys2.n_total; Nr2 = sys2.n_ring
     wmax = 0.0
     Tmax = 0.0
@@ -108,11 +118,12 @@ function run_r2()
         Tmax = max(Tmax, get_max_rope_tension(u2, sys2, pc2)[1])
         sys2.any_broken[] && break
     end
-    return wmax, Tmax, sys2.any_broken[]
+    return wmax, Tmax, sys2.any_broken[], false
 end
-wmax2, Tmax2, broke2 = run_r2()
-println("  max|ω|=", wmax2, "  max tension=", round(Tmax2, digits=1), " N  broken=", broke2)
-check("R2: no balloon fixed point — bounded |ω| or broken", broke2 || (isfinite(wmax2) && wmax2 <= 1e3))
+wmax2, Tmax2, broke2, refused2 = run_r2()
+println("  refused=", refused2, "  max|ω|=", wmax2, "  max tension=", round(Tmax2, digits=1), " N  broken=", broke2)
+check("R2: no balloon fixed point — refused, bounded |ω| or broken",
+    refused2 || broke2 || (isfinite(wmax2) && wmax2 <= 1e3))
 # Elastic break tension at 3.5% strain ≈ 44 kN (SK99, 4 mm); the sampled
 # total includes the damper's viscous regularization term (does not stretch
 # the line), so the bar is 2e5 N — still ~1e130 below the balloon values

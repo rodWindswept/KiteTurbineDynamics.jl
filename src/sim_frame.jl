@@ -422,25 +422,35 @@ function capture_extended(
     end
 
     # ── Per-segment transmitted torque ─────────────────────────────
-    # Real transmitted torque through each rope segment, from the SAME TRPT
-    # torsional constitutive law documented in ring_forces.jl (§torsional
-    # stiffness / Tulloch curve):
-    #     τ_s = n_lines · T_s · r_s² · sin(Δα_s) / chord_s,
-    #     chord_s = √(L_seg² + 2·r_s²·(1 − cos Δα_s))
-    # evaluated on the ACTUAL per-segment line tension (segment_tension) and
-    # inter-ring twist (segment_twist) from THIS frame. This is the torque the
-    # twisted rope is physically carrying — not a ground→hub interpolation.
-    # It naturally builds along the shaft (steps at driving rings) and captures
-    # torsional dynamics. Telemetry-only: does not feed back into the solver.
-    L_seg = p.tether_length / n_seg
+    # Real transmitted torque through each rope segment, from the TRPT torsional
+    # constitutive law documented in ring_forces.jl (§torsional stiffness /
+    # Tulloch curve):
+    #     τ_s = n_lines · T_s · r_a · r_b · sin(Δα_s) / chord_s,
+    #     chord_s = √(L_ax² + r_a² + r_b² − 2·r_a·r_b·cos Δα_s)
+    # evaluated on the ACTUAL per-segment line tension and inter-ring twist from
+    # THIS frame. Telemetry-only: does not feed back into the solver.
+    #
+    # FIXED 2026-09-13.  The previous version used a UNIFORM
+    # `L_seg = tether_length/n_seg` (2.35 m), the MEAN radius squared and an
+    # equal-radius chord.  The seed's ring spacing is strongly non-uniform (real
+    # axial gaps 0.93 m to 4.79 m) and r_a != r_b (it is a cone), so it reported
+    # 180…660 N·m across segments that all carry a uniform 377.6 N·m — a factor
+    # 2.6 error, and it under-reported the twist margin by the same class of
+    # mistake.  See scratch/reconcile_realisability.jl.
+    sd_tq = hub_ctr ./ max(norm(hub_ctr), 1e-9)
     segment_torque = Float64[]
     for s in 1:n_seg
-        r_a = (sys.nodes[sys.ring_ids[s]]::RingNode).radius
-        r_b = (sys.nodes[sys.ring_ids[s+1]]::RingNode).radius
-        r_s = 0.5 * (r_a + r_b)
-        dα  = deg2rad(segment_twist[s])
-        chord = sqrt(L_seg^2 + 2 * r_s^2 * (1 - cos(dα)))
-        τ_s = p.n_lines * segment_tension[s] * r_s^2 * sin(abs(dα)) / max(chord, 1e-9)
+        ga, gb = sys.ring_ids[s], sys.ring_ids[s + 1]
+        na_r = sys.nodes[ga]::RingNode
+        nb_r = sys.nodes[gb]::RingNode
+        r_a = isempty(sys.expansion_rotors) ? na_r.radius : sys.effective_radii[s]
+        r_b = isempty(sys.expansion_rotors) ? nb_r.radius : sys.effective_radii[s + 1]
+        ca = u[(3 * (ga - 1) + 1):(3 * ga)]
+        cb = u[(3 * (gb - 1) + 1):(3 * gb)]
+        L_ax = dot(cb .- ca, sd_tq)
+        dα = deg2rad(segment_twist[s])
+        chord = sqrt(max(L_ax^2 + r_a^2 + r_b^2 - 2 * r_a * r_b * cos(dα), 1e-12))
+        τ_s = p.n_lines * segment_tension[s] * r_a * r_b * sin(abs(dα)) / chord
         push!(segment_torque, τ_s)
     end
 

@@ -34,7 +34,7 @@ function multibody_ode!(du, u, params, t)
     # to prevent feedback instability.
     bearing_gid = sys.bearing_id
     bearing_pos = u[(3 * (bearing_gid - 1) + 1):(3 * bearing_gid)]
-    bearing_design = hub_pos .+ 6.0 .* shaft_dir  # 6m offset along shaft
+    bearing_design = hub_pos .+ BEARING_OFFSET_DESIGN .* shaft_dir
     bearing_error = bearing_pos .- bearing_design
     tilt_perp = bearing_error .- dot(bearing_error, shaft_dir) .* shaft_dir
     tilt_mag = norm(tilt_perp)

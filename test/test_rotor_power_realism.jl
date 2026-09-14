@@ -79,7 +79,17 @@ function run_p4()
     dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p18; power_W=5000.0)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, p18.k_mppt; tether_diameter=p18.tether_diameter)
     wind_fn(r, t) = [p18.v_wind_ref, 0.0, 0.0]
-    u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn, n_op=30_000)
+    u = try
+        settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=rotary_lifter_default(), wind_fn=wind_fn, n_op=30_000)
+    catch e
+        # 2026-09-13: the initialiser now REFUSES a design point past the torsional
+        # realisability cliff (physics-topology.md §6) instead of silently placing a
+        # multi-turn wind-up.  This historical pre-fix genome sits at sin Δα = 28.8
+        # — it is not a machine.  Refusal is the strongest form of "cannot
+        # freewheel under the fixed model", which is what P4 asserts.
+        @info "P4: historical genome REFUSED by the settle (unrealisable)" exception = e
+        return (0.0, true)
+    end
     N = sys.n_total; Nr = sys.n_ring
     sys.k_mppt_ref[] = p18.k_mppt
     wmax = 0.0
@@ -87,14 +97,16 @@ function run_p4()
         run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / 4e-5), 4e-5; lift_device=rotary_lifter_default(), lin_damp=0.05)
         wmax = max(wmax, maximum(abs, @view u[(6N + Nr + 1):(6N + 2Nr)]))
     end
-    return wmax
+    return wmax, false
 end
-wmax = run_p4()
-if wmax === nothing
+res_p4 = run_p4()
+if res_p4 === nothing
     println("  (18m winner CSV not present — skipping P4)")
 else
-    println("  max |ω| over 30s = ", wmax)
-    check("P4: no divergence — max |ω| stays finite (≤ 1e6 rad/s)", isfinite(wmax) && wmax <= 1e6)
+    wmax, refused = res_p4
+    println("  refused=", refused, "  max |ω| over 30s = ", wmax)
+    check("P4: no divergence — refused or max |ω| stays finite (≤ 1e6 rad/s)",
+        refused || (isfinite(wmax) && wmax <= 1e6))
 end
 
 println()

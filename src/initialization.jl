@@ -1,5 +1,23 @@
 using LinearAlgebra
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Lift-chain design constants (2026-09-13)
+# ══════════════════════════════════════════════════════════════════════════════
+# The bearing's AXIAL DESIGN POINT, measured as the lift chain's own equilibrium
+# on the 5 kW / 18.8 m seed: ~3.99 m axial gives the ~4.658 m 3D bridle at 31°
+# from the axis / 59° at the ring plane (docs/agents/physics-topology.md §3.1).
+#
+# The old value was 6.0, a placeholder carried over from other tested systems,
+# and it was ALSO used to cut the bridle rest length (sqrt(6.0² + 2.4²) =
+# 6.4622 m).  The chain's own equilibrium puts the bearing 3.99 m up, so the
+# bridles came out 1.80 m too long and never engaged: the lift reached the
+# bearing and stopped there (measured 2026-09-13, scratch/diag_lift_chain.jl).
+const BEARING_OFFSET_DESIGN = 3.99        # m, main rotor centre → lift bearing, +shaft
+const CYAN_L0_DESIGN = 5.0                # m, lift bearing → sky anchor
+const BEARING_MASS_KG = 0.3               # kg, bearing + skateboard wheel
+const SKY_ANCHOR_MASS_KG = 0.3            # kg, splice/knot (not the lifter)
+const BRIDLE_EA_DESIGN = 500_000.0        # N, 2 mm Dyneema bridle
+
 """
     _build_kite_turbine_system_impl(p, ring_radii, seg_lengths; kite_*)
 
@@ -163,7 +181,7 @@ function _build_kite_turbine_system_impl(
     BRIDLE_EA = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
     BRIDLE_C_DAMP = 500.0         # N·s/m — ~80% of critical for bearing mass
     BRIDLE_DIAM = 0.002         # m  — 2mm Dyneema bridle line
-    bearing_offset = 6.0           # m above hub centre (along shaft)
+    bearing_offset = BEARING_OFFSET_DESIGN   # m above hub centre (along shaft)
 
     SKY_ANCHOR_MASS = 0.3           # kg — small splice/knot, not the lifter itself
     CYAN_L0 = 5.0           # m — bearing↔sky-anchor line ("a few m")
@@ -467,6 +485,10 @@ function settle_to_equilibrium(
     N = sys.n_total
     Nr = sys.n_ring
     du = zeros(Float64, length(u))
+    # Cut the bridles for the design preload (2026-09-13): the builder cuts them
+    # to the bare design gap, which is zero strain, so the cone can never carry
+    # the lift however correct the geometry is.
+    apply_design_bridle_preload!(sys, u0, p, lift_device)
     wind_zero = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
     ode_params =
         lift_device === nothing ? (sys, p, wind_zero) : (sys, p, wind_zero, lift_device)
@@ -733,8 +755,8 @@ Returns T_cyan (clamped to ≥ 0).
 function design_preload_from_sky_anchor(
     p::SystemParams,
     lift_device::LiftDevice;
-    bearing_offset::Float64=6.0,
-    cyan_L0::Float64=5.0,
+    bearing_offset::Float64=BEARING_OFFSET_DESIGN,
+    cyan_L0::Float64=CYAN_L0_DESIGN,
     m_sky::Float64=0.3,
 )
     β = p.elevation_angle
@@ -871,39 +893,291 @@ function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
 end
 
 """
-    design_axial_preload(sys, p, lift_device) -> Vector{Float64}
+    lift_chain_design(sys, p, lift_device, hub_pos; omega_eq) -> NamedTuple
+
+Closed-form load split of the lift chain at the design point, from the two static
+sections (Rod 2026-09-13).
+
+Orientation (verified against `src/ring_forces.jl:209-215`, not assumed):
+
+    ŝ        = unit ground→main-rotor = [cos β, 0, sin β]   ("up-shaft")
+    thrust   acts along +ŝ (downwind; the hub is downwind of the ground station)
+    bridles  pull the main rotor +ŝ and the lift bearing −ŝ
+    gravity  axial component = −W·sin β
+
+    Section A — the lift bearing alone:
+        n·T_b·cos θ  =  T_cyan·(cyan_dir·ŝ) − W_bearing·sin β
+    Section B — cut the TRPT just below the main rotor:
+        T_top  =  T_thrust + n·T_b·cos θ − W_rotor·sin β
+
+The back line is an **altitude limiter, not a load path** (Rod 2026-09-12), so at
+the design point it is SLACK and the whole lift projection lands on the cyan
+line.  `design_preload_from_sky_anchor` instead solves as though it were taut at
+design; measured 2026-09-13 that starves the chain and puts `T_top` 124 N BELOW
+the torsional-realisability floor (plan §2.4.1), whereas with the back line slack
+the preload is realisable by +70 N.  The back line's state therefore decides
+realisability, and its tension-only altitude-limiter role is the correct one.
+"""
+function lift_chain_design(
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    lift_device::Union{Nothing,LiftDevice},
+    hub_pos::AbstractVector;
+    omega_eq::Float64=0.0,
+)
+    lift_device === nothing && return nothing
+    β = p.elevation_angle
+    sh = [cos(β), 0.0, sin(β)]
+    perp1, perp2 = shaft_perp_basis(sh)
+
+    hub_gid = sys.rotor.node_id
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    R_hub =
+        isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
+        sys.effective_radii[hub_ri]
+
+    bearing_pos = hub_pos .+ BEARING_OFFSET_DESIGN .* sh
+    sky_pos = bearing_pos .+ CYAN_L0_DESIGN .* sh
+    cyan_dir = normalize(bearing_pos .- sky_pos)       # sky → bearing (down-shaft)
+
+    _, T_lift, el_deg = lift_force_steady(lift_device, p.rho, p.v_wind_ref, p)
+    el = deg2rad(el_deg)
+    lift_dir = [cos(el), 0.0, sin(el)]
+    # Sky anchor with the back line slack: the cyan line balances lift + sky weight.
+    T_cyan = max(
+        -dot(T_lift .* lift_dir .+ [0.0, 0.0, -SKY_ANCHOR_MASS_KG * 9.81], cyan_dir), 0.0
+    )
+    T_cyan_ax = -T_cyan * dot(cyan_dir, sh)            # on the bearing, up-shaft
+
+    pa = attachment_point(hub_pos, R_hub, 0.0, 1, p.n_lines, perp1, perp2)
+    gap = norm(bearing_pos .- pa)
+    cosθ = BEARING_OFFSET_DESIGN / gap
+    T_bridle = max(
+        (T_cyan_ax - BEARING_MASS_KG * 9.81 * sin(β)) / (p.n_lines * cosθ), 0.0
+    )
+
+    # ODE-consistent main-rotor thrust (same formulation as ring_forces.jl:202-215)
+    v_hub = p.v_wind_ref * sys.rotor.wind_factor
+    # Evaluate the thrust at the CALLER's operating ω.  This read
+    # `omega_eq > 0.0 ? omega_eq : 12.983466` — a fallback that is the CAMPAIGN
+    # SEED's own equilibrium ω — so every design's preload was computed at a
+    # foreign design's speed, and ω = 0 (a legitimate non-rotating state, thrust 0
+    # via `ct_at_tsr(0.0) == 0.0`) was unrepresentable.  Measured 2026-09-13:
+    # (4 lines, 3 rotors) operates at 13.3995 rad/s and (6 lines, 1 rotor) at
+    # 11.3988; they were 2.3 % / 13.2 % off their own reference purely from that
+    # substitution.  Do not reintroduce a fallback here.
+    ω = omega_eq
+    λ = abs(ω) * sys.rotor.radius / max(v_hub, 1e-6)
+    T_thrust =
+        0.5 * p.rho * v_hub^2 * main_rotor_swept_area(sys) * ct_at_tsr(λ) * cos(β)^2
+    W_rotor = p.n_blades * p.m_blade * 9.81
+
+    T_top = T_thrust + p.n_lines * T_bridle * cosθ - W_rotor * sin(β)
+
+    return (;
+        T_cyan, T_cyan_ax, T_bridle, T_top, gap, cosθ, bearing_pos, sky_pos,
+        T_thrust, W_rotor,
+    )
+end
+
+"""
+    apply_design_bridle_preload!(sys, u_design, p, lift_device; omega_eq)
+
+Cut the six bridle rest lengths for the design preload.
+
+`_build_kite_turbine_system_impl` sets `bridle_L0` equal to the design 3D gap,
+i.e. ZERO strain, so however correct the geometry is the cone carries nothing at
+the design point.  A tension-only line that must carry preload has to be cut
+**shorter** than its design gap:
+
+    bridle_L0 = gap / (1 + T_bridle / EA)
+
+Derived from the design geometry (`u_design`), never from the current rest
+length, so it is idempotent.
+"""
+function apply_design_bridle_preload!(
+    sys::KiteTurbineSystem,
+    u_design::AbstractVector,
+    p::SystemParams,
+    lift_device::Union{Nothing,LiftDevice};
+    omega_eq::Float64=0.0,
+)
+    lift_device === nothing && return nothing
+    hub_gid = sys.rotor.node_id
+    hub_pos = u_design[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
+    d = lift_chain_design(sys, p, lift_device, hub_pos; omega_eq=omega_eq)
+    d === nothing && return nothing
+    L0 = d.gap / (1.0 + d.T_bridle / BRIDLE_EA_DESIGN)
+    newsegs = RopeSubSegment[]
+    for ss in sys.sub_segs
+        na, nb = ss.end_a.node_id, ss.end_b.node_id
+        is_bridle =
+            (na == sys.bearing_id && nb == hub_gid) ||
+            (na == hub_gid && nb == sys.bearing_id)
+        push!(
+            newsegs,
+            is_bridle ? RopeSubSegment(ss.end_a, ss.end_b, L0, ss.EA, ss.c_damp, ss.diameter) :
+            ss,
+        )
+    end
+    sys.sub_segs[:] = newsegs
+    return d
+end
+
+"""
+    design_axial_preload(sys, p, lift_device, u_design; omega_eq) -> Vector{Float64}
 
 Total axial force (all lines, newtons) carried by each inter-ring segment at the
-design operating point: the aero + weight + cyan-line load at the top, plus the
-cumulative ring weight added going down the shaft.
+design operating point: the section-B top tension, plus the cumulative ring
+weight added going down the shaft.
 
-This is the **intended** preload.  `_matched_place_twist` prescribes it as the
+This is the **intended** preload.  `trpt_matched_place` prescribes it as the
 per-line tension (`F_ax/n_lines`) and derives the twist and axial geometry from
 it, so the settle's returned line tension can be checked against it directly —
 the consistency guard for the 2026-09-11 wind-up fix.
+
+Replaces the old hand-built `F_top` (2026-09-13), which had three defects:
+  * thrust used `0.8` and `v_wind_ref` where the ODE uses `ct_at_tsr(λ)` at the
+    hub-height wind → 1868 N against the kernel's 1068 N;
+  * the weight term resolved a VERTICAL load axially as `−W/sin β` where the
+    axial component of gravity is `−W·sin β` (a factor 1/sin²β = 4 at 30°);
+  * it charged the KITE's mass at the rotor, and took `T_cyan` from the
+    sky-anchor balance with the back line TAUT — but the back line is an
+    altitude limiter and is slack at the design point.
 """
 function design_axial_preload(
-    sys::KiteTurbineSystem, p::SystemParams, lift_device::Union{Nothing, LiftDevice}
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    lift_device::Union{Nothing,LiftDevice},
+    u_design::AbstractVector;
+    omega_eq::Float64=0.0,
+    wind_fn::Union{Nothing,Function}=nothing,
+    realisability_margin::Float64=TRPT_REALISABILITY_TENSION_MARGIN,
 )
     lift_device === nothing && return Float64[]
+    hub_pos = u_design[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)]
+    d = lift_chain_design(sys, p, lift_device, hub_pos; omega_eq=omega_eq)
+    d === nothing && return Float64[]
     n_seg = sys.n_ring - 1
     β = p.elevation_angle
-    T_cyan = design_preload_from_sky_anchor(p, lift_device)
-    thrust = 0.5 * p.rho * p.v_wind_ref^2 * π * p.rotor_radius^2 * 0.8 * cos(β)^2
-    m_rotor = p.n_blades * p.m_blade
-    F_aero_z = thrust * sin(β) + (m_rotor + sys.kite.mass) * (-9.81)
-    F_top = max(F_aero_z / sin(β) + T_cyan, 20.0)
-    g_inc = p.m_ring * 9.81 / sin(β)
+    F_top = max(d.T_top, 20.0)
+    g_inc = p.m_ring * 9.81 * sin(β)     # axial component of one ring's weight
     F_ax = zeros(n_seg)
-    F_ax[n_seg] = F_top
-    for i in (n_seg - 1):-1:1
-        F_ax[i] = F_ax[i + 1] + g_inc
+    # Preload profile: F_top on the top segment, plus the axial ring weight
+    # accumulated going down the shaft.
+    rebuild! = function ()
+        F_ax[n_seg] = F_top
+        for i in (n_seg - 1):-1:1
+            F_ax[i] = F_ax[i + 1] + g_inc
+        end
+        return nothing
+    end
+    rebuild!()
+
+    # ── Realisability floor (2026-09-13) ────────────────────────────────────
+    # A segment carrying τ at tension T_s can only twist to
+    # sin Δα = τ·chord/(n_lines·T_s·r_a·r_b) ≤ 1.  Below that tension no twist
+    # transmits the torque at all.  Enforce `demand ≤ 1/realisability_margin` by
+    # raising F_top (which raises every segment equally, and τ_max is monotone
+    # increasing in tension).  Demand ∝ 1/T_s, so one multiplicative step lands
+    # close; iterate to convergence.
+    if realisability_margin > 1.0
+        τ_eq = sys.k_mppt_ref[] * omega_eq^2
+        target = 1.0 / realisability_margin
+        F_top_bare = F_top
+        F_ax_bare = copy(F_ax)
+        cleared = false
+        for _ in 1:12
+            place = trpt_matched_place(
+                sys, p, F_ax, τ_eq, omega_eq, wind_fn; raise_on_unrealisable=false
+            )
+            worst = maximum(place.demand)
+            # The update below (`F_top *= worst·margin`) has its fixed point exactly
+            # AT the target — `worst → 1/margin` — so a bare `worst <= target` can
+            # never latch: the iterate approaches from above and stalls on the last
+            # ulp.  Measured 2026-09-13 (scratch/diag_preload_enforcement.jl): the
+            # campaign seed sat at 0.9523809523809524 against a target of
+            # 0.9523809523809523 and never cleared in 12 iterations.  Accept
+            # at-or-below the margin to numerical rounding.
+            if worst <= target * (1.0 + 1e-9)
+                cleared = true
+                break
+            end
+            F_top *= worst * realisability_margin
+            rebuild!()
+            # BOUND (2026-09-13): the floor is a design constraint, not a licence
+            # to rescue any genome.  A design only a few percent past the cliff is
+            # a real machine with a slightly low preload and is repaired here; one
+            # tens of times past it is not a machine at all, and silently raising
+            # the preload 30× to place it would be exactly the kind of plausible
+            # nonsense this repo keeps getting bitten by.  Refuse instead.
+            if F_top > TRPT_REALISABILITY_MAX_PRELOAD_FACTOR * F_top_bare
+                break
+            end
+        end
+        if !cleared
+            # Cannot meet the floor within the allowed preload increase.  Raise on
+            # the UN-RAISED profile — raising F_top is precisely what we are
+            # declining to do, so the diagnostic must see the design as designed,
+            # not as escalated (and `F_ax` has already been escalated by the loop,
+            # which would otherwise look realisable and silently pass).
+            trpt_matched_place(sys, p, F_ax_bare, τ_eq, omega_eq, wind_fn)
+        end
     end
     return F_ax
 end
 
 """
-    _matched_place_twist(sys, p, F_ax, τ_eq, ω_eq, wind_fn, sd_r)
+    TRPT_REALISABILITY_TENSION_MARGIN
+
+Tension the design preload must hold **above** the per-segment torsional
+realisability floor.  A segment carrying τ at tension `T_s` needs
+
+    sin Δα = τ · chord / (n_lines · T_s · r_a · r_b) ≤ 1,
+
+so the floor is `T_s ≥ τ·chord/(n_lines·r_a·r_b)`; this margin tightens that to
+`sin Δα ≤ 1 / TRPT_REALISABILITY_TENSION_MARGIN`.
+
+WHY IT EXISTS (2026-09-13).  Measured on this tree, the seed family sits within
+~3 % of the cliff and several designs were PAST it — the `test_physics_path_ode`
+and `test_evaluator_v13` seed at sin Δα = **1.0325**, the
+`test_jtheta_no_reversal` 2-rotor seed at **1.0332**, the
+`test_settle_lowk_honest` honest-k seed at **1.0366** — against the campaign
+seed's 0.983 (only 1.7 % clear).  The old `asin(clamp(·, -1, 1))` placed those as
+multi-turn wind-ups, so the shortfall never surfaced anywhere.  A consistent ~3 %
+shortfall across independent seeds is a systematic preload underestimate, not
+several independent bad designs.
+
+`1.05` clears every measured shortfall with headroom and lifts the campaign
+seed's binding segment from sin Δα = 0.983 to ≤ 0.952.  It is a **design
+constraint, not a fit** — and raising it raises the transmission tension, hence
+ring compression and the FoS demand, so it feeds the sizing chain
+(`SIZING_FOS_MARGIN`) and needs the load → sizing → acceptance re-baseline of
+handover 2026-09-13 §11 step 6.  Tune it here, in one place, and re-run
+`test/test_trpt_realisability.jl`.
+"""
+const TRPT_REALISABILITY_TENSION_MARGIN = 1.05
+
+"""
+    TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
+
+Largest factor by which `design_axial_preload` may raise the top tension to
+clear the realisability floor before it gives up and refuses the design.
+
+The floor is a **design constraint, not a licence to rescue any genome**.  A
+design a few percent past the cliff is a real machine with a slightly low
+preload — measured 2026-09-13, the worst real shortfall was 3.7 % and needs a
+~9 % tension increase, comfortably inside 1.5.  A design tens of times past it is
+not a machine: `test_rope_break`'s historical pre-fix winner sits at
+sin Δα = **35.6** and would "clear" the floor only at a ~37× preload, which is
+nonsense that would then flow silently into the pipeline.  Past this factor the
+solver RAISES instead (physics-topology.md §6).
+"""
+const TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5
+
+"""
+    trpt_matched_place(sys, p, F_ax, τ_eq, ω_eq, wind_fn; raise_on_unrealisable=true)
+        -> (; α, ctrs, demand, τ_carry, τ_max, chord, T_s, r_a, r_b)
 
 Solve the TRPT twist and the *axial* transmission geometry **together**, segment
 by segment, so each segment carries the intended preload tension `F_ax/n_lines`
@@ -932,24 +1206,49 @@ transmission tube comes out shorter than the untwisted design length — the
 physical effect of torsional deformation, as the set of lines wraps around the
 axis (Rod, 2026-09-11).
 
-Returns `(α, ctrs)`: per-ring rotation angles (`α[1] = 0`, ground reference) and
-ring centres along `sd_r`.
+Returns `(; α, ctrs, demand, τ_carry, τ_max, chord, T_s, r_a, r_b)`: per-ring
+rotation angles (`α[1] = 0`, ground reference), ring centres along the elevation
+axis, and one **realisability diagnostic** per segment —
+
+    τ_carry  the torque that segment must transmit,
+    τ_max    the most it CAN transmit at its prescribed tension (sin Δα = 1),
+    demand   τ_carry / τ_max = the sin Δα the segment is asked for.
+
+`demand > 1` is past the torsional cliff: no twist transmits that torque at that
+tension.  The old code wrote `asin(clamp(sinΔα, -1, 1))`, which silently saturated
+Δα at 90° and placed a physically meaningless multi-turn wind-up while every guard
+still passed (the tension stays self-consistent at whatever Δα was chosen).
+Measured 2026-09-13: 4 segments × 90° at `n_lines=4`/3 rotors, 12 × 90° at
+`n_lines=6`/1 rotor.  `physics-topology.md` §6 is explicit — when a physical
+precondition cannot be met, RAISE, do not clamp.  A `demand > 1` therefore raises.
+
+`raise_on_unrealisable=false` restores the old clamp so the guard can MEASURE the
+over-cliff demand instead of only observing the throw.  It is a diagnostic mode;
+do not use it on a production path.
 """
-function _matched_place_twist(
+function trpt_matched_place(
     sys::KiteTurbineSystem,
     p::SystemParams,
     F_ax::Vector{Float64},
     τ_eq::Float64,
     ω_eq::Float64,
-    wind_fn::Union{Nothing, Function},
-    sd_r::Vector{Float64},
+    wind_fn::Union{Nothing, Function};
+    raise_on_unrealisable::Bool=true,
 )
     Nr = sys.n_ring
     n_seg = Nr - 1
     EA_single = p.e_modulus * π * (p.tether_diameter / 2)^2
+    sd_r = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
 
     α = zeros(Nr)
     ctrs = [zeros(3) for _ in 1:Nr]
+    demand = zeros(n_seg)
+    τ_carry_v = zeros(n_seg)
+    τ_max = zeros(n_seg)
+    chord_v = zeros(n_seg)
+    T_v = zeros(n_seg)
+    r_a_v = zeros(n_seg)
+    r_b_v = zeros(n_seg)
     τ_carry = τ_eq
 
     for s in 1:n_seg
@@ -967,6 +1266,9 @@ function _matched_place_twist(
             ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
         T_s = F_ax[s] / p.n_lines
 
+        r_a_v[s], r_b_v[s], T_v[s] = r_a, r_b, T_s
+        τ_carry_v[s] = τ_carry
+
         Δα = 0.0
         L_ax = chord0
         if τ_carry > 0.0 && T_s > 0.0 && r_a * r_b > 0.0
@@ -975,16 +1277,34 @@ function _matched_place_twist(
             # KNOWN LIMITATION (2026-09-11): this uses the law of cosines for a
             # ring plane perpendicular to the shaft axis.  The ODE's actual
             # attachment planes are tilted by `_tilted_ring_basis` (from the
-            # bearing offset), which shifts the chord by ~0.1 mm.  The intended
-            # preload strain is only ~0.3 mm on a 1.19 m segment, so where the
-            # settled tilt is significant the achieved tension can be ~35 % high
-            # (see test/test_settle_preload_consistency.jl, second case).  The
-            # twist — and therefore the wind-up fix — is unaffected (Δα does not
-            # depend on L_ax).  Correcting it needs the settled tilt basis, i.e. a
-            # second pass after the operational settle.
+            # bearing offset), which shifts the chord.  Correcting it needs the
+            # settled tilt basis, i.e. a second pass after the operational settle.
+            #
+            # Retracted 2026-09-13: the "~35 % high" figure once quoted here came
+            # from the old second case in test_settle_preload_consistency.jl, which
+            # was BOTH over-cliff and evaluated against a reference computed at a
+            # foreign ω.  Against the settle's own ω that error is 0.0, so the tilt
+            # limitation is currently UNQUANTIFIED rather than 35 % — do not quote
+            # the old number.
             chord = chord0 * (1 + T_s / EA_single)
-            sinΔα = τ_carry * chord / (p.n_lines * T_s * r_a * r_b)
-            Δα = asin(clamp(sinΔα, -1.0, 1.0))
+            chord_v[s] = chord
+            τ_max[s] = p.n_lines * T_s * r_a * r_b / chord
+            demand[s] = τ_carry / τ_max[s]
+            if demand[s] > 1.0
+                raise_on_unrealisable && error(
+                    "TRPT segment $s of $n_seg is past the torsional realisability " *
+                    "cliff: transmitting τ = $(round(τ_carry; digits=2)) N·m at " *
+                    "T = $(round(T_s; digits=2)) N/line needs sin(Δα) = " *
+                    "$(round(demand[s]; digits=4)) > 1; the ceiling at that tension " *
+                    "is $(round(τ_max[s]; digits=2)) N·m.  The design point is " *
+                    "unrealisable — widen the transmission (more lines, larger " *
+                    "attachment radius, lower k_mppt) or lower the operating torque.  " *
+                    "See test/test_trpt_realisability.jl.",
+                )
+            end
+            # `min` is the DIAGNOSTIC clamp, reachable only when
+            # `raise_on_unrealisable=false`; the production path has already raised.
+            Δα = asin(min(demand[s], 1.0))
             L2 = chord^2 - (r_a^2 + r_b^2 - 2 * r_a * r_b * cos(Δα))
             L_ax = sqrt(max(L2, 1e-9))
         end
@@ -1015,14 +1335,17 @@ function _matched_place_twist(
         τ_carry = τ_carry > 0.0 ? τ_carry - τ_exp_b : -τ_exp_b
     end
 
-    return α, ctrs
+    return (;
+        α, ctrs, demand, τ_carry=τ_carry_v, τ_max, chord=chord_v, T_s=T_v,
+        r_a=r_a_v, r_b=r_b_v,
+    )
 end
 
 """
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
 Initializes the system at the rated operating point to avoid torsional transients.
-With a lift device the ring geometry is solved by `_matched_place_twist` (twist
+With a lift device the ring geometry is solved by `trpt_matched_place` (twist
 and axial gap together, so the intended preload tension holds at the final
 twist); the legacy torque-chain bisection remains for the no-lift path.
 This logic was shadowed directly from the interactive dashboard.
@@ -1115,19 +1438,36 @@ function settle_to_operational_state(
     sd_r = [cos(β_r), 0.0, sin(β_r)]
     let
         if lift_device !== nothing
-            F_ax = design_axial_preload(sys, p, lift_device)
+            # Cut the six bridles for the design preload FIRST (the cone is
+            # placed, not force-balanced), then prescribe the transmission
+            # preload from the same two-section balance.  2026-09-13.
+            apply_design_bridle_preload!(sys, u0, p, lift_device; omega_eq=ω_eq)
+            F_ax = design_axial_preload(sys, p, lift_device, u0; omega_eq=ω_eq, wind_fn=wind_fn)
             # ── Matched-place twist + axial geometry (2026-09-11) ───────────
             # Solve the twist and the axial gap TOGETHER so each segment carries
             # the intended preload tension at its final twist.  The old restore
             # set the axial gap for the untwisted line and then twisted it, which
             # inflated the tension ~7× and left the state ~7× under-twisted — the
-            # wind-up.  See `_matched_place_twist` and
+            # wind-up.  See `trpt_matched_place` and
             # docs/plans/2026-09-11-settle-ode-coherence.md.
-            α_matched, ctrs = _matched_place_twist(sys, p, F_ax, τ_eq, ω_eq, wind_fn, sd_r)
+            placement = trpt_matched_place(sys, p, F_ax, τ_eq, ω_eq, wind_fn)
+            α_matched, ctrs = placement.α, placement.ctrs
             for k in 1:Nr
                 gid = sys.ring_ids[k]
                 u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[k]
                 u_start[6N + k] = α_matched[k]
+            end
+            # Place the LIFT CHAIN at its design geometry too (2026-09-13).  The
+            # bearing and sky anchor were previously left wherever the short
+            # equilibrium relaxation put them — not the design point — so the
+            # preloaded bridles could never sit at their design tension.  The
+            # two-section balance in `lift_chain_design` is consistent AT this
+            # geometry (each section sums to ~0), so this is the equilibrium, not
+            # an imposed guess.
+            for (gid, off) in ((sys.bearing_id, BEARING_OFFSET_DESIGN),
+                               (sys.sky_anchor_id, BEARING_OFFSET_DESIGN + CYAN_L0_DESIGN))
+                u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[Nr] .+ off .* sd_r
+                u_start[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
             end
         else
             for k in 1:Nr
@@ -1228,7 +1568,7 @@ function settle_to_operational_state(
     if lift_device === nothing
         # ── Legacy path: pinned-frame torque-chain bisection ────────────────
         # With no lift device there is no aero-derived axial preload, so the
-        # matched-place solve in `_matched_place_twist` does not apply and the
+        # matched-place solve in `trpt_matched_place` does not apply and the
         # original bisection is retained unchanged (control-map / calibration
         # scripts and several tests call the settle without a lift device).
         EA_rope = p.e_modulus * π * (p.tether_diameter / 2)^2
@@ -1359,3 +1699,4 @@ end
 export settle_to_operational_state
 export design_preload_from_sky_anchor
 export design_axial_preload
+export trpt_matched_place

@@ -134,9 +134,26 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
     # Canonical mass-aware constant-tension lift (AC-LIFT, 2026-08-20).
     lift = lift_for(sys, pc)
-    u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn, n_op=30_000)
     N = sys.n_total
     Nr = sys.n_ring
+    trace = Vector{NamedTuple{(:t, :w_hub, :w_gnd, :P_gen, :tau_gen, :crossed, :max_ratio),
+        Tuple{Float64,Float64,Float64,Float64,Float64,Bool,Float64}}}()
+    # 2026-09-13: `trpt_matched_place` now RAISES on a design point past the
+    # torsional realisability cliff instead of silently clamping the twist to 90°
+    # (physics-topology.md §6).  The evaluator already converts that raise into a
+    # rejection (`objective_evaluator.jl:631-638`); the gate must do the same, or
+    # the campaign re-gate crashes on an unrealisable winner instead of reporting
+    # it rejected.  Same contract: `ok=false`, no trace.
+    u = try
+        settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn, n_op=30_000)
+    catch e
+        @warn "Gate: settle refused an unrealisable design point — verdict REJECTED" exception = e
+        return (ok=false, trace=trace, clearance=clearance, P_gen_final=0.0,
+            w_gnd_final=0.0, w_hub_final=0.0, crossed=false, max_twist_ratio=0.0,
+            line_broken=false, n_lines=dec.design.n_lines, rings=dec.n_rings,
+            n_active=dec.n_active, r_hub=dec.design.r_hub, x=xv, sys=sys, u=u0,
+            N=N, Nr=Nr)
+    end
     sys.k_mppt_ref[] = k_mp
 
     hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
@@ -152,8 +169,6 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
         run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt; lift_device=lift, lin_damp=0.05)
     end
 
-    trace = Vector{NamedTuple{(:t, :w_hub, :w_gnd, :P_gen, :tau_gen, :crossed, :max_ratio),
-        Tuple{Float64,Float64,Float64,Float64,Float64,Bool,Float64}}}()
     nchunks = round(Int, window_s / 5.0)
     for chunk in 1:nchunks
         run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt; lift_device=lift, lin_damp=0.05)

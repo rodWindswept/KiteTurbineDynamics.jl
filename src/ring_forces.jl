@@ -518,8 +518,8 @@ function compute_ring_forces!(
     # MUST match initialization.jl.  Centralising them on `sys` is a future
     # cleanup; for now they're duplicated with this comment as the link.
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
-    bearing_offset = 6.0
-    cyan_L0 = 5.0
+    bearing_offset = BEARING_OFFSET_DESIGN
+    cyan_L0 = CYAN_L0_DESIGN
 
     # 2D projection: horizontal plane distance + vertical (anchor at z=0)
     b_dx = sqrt((sky_anchor_pos[1] - back_ax)^2 + sky_anchor_pos[2]^2)

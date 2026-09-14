@@ -93,6 +93,21 @@ function bridle_total_tension(u, sys, p, N, Nr)
     return total
 end
 
+"Tension in the cyan line (sky anchor <-> lift bearing), by its own spring law."
+function cyan_tension(u, sys, p)
+    total = 0.0
+    for ss in sys.sub_segs
+        na, nb = ss.end_a.node_id, ss.end_b.node_id
+        (
+            (na == sys.sky_anchor_id && nb == sys.bearing_id) ||
+            (na == sys.bearing_id && nb == sys.sky_anchor_id)
+        ) || continue
+        L = norm(pos(u, ss.end_b.node_id) .- pos(u, ss.end_a.node_id))
+        total += ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
+    end
+    return total
+end
+
 function axial_residuals(u, sys, p, wf, lift, N, sd)
     du = zeros(length(u))
     KiteTurbineDynamics.multibody_ode!(du, u, (sys, p, wf, lift), 0.0)
@@ -120,20 +135,33 @@ end
     @test minimum(om) > 0.0                       # not a 0-rpm handoff
     @test maximum(om) - minimum(om) < 1e-6        # rings co-rotating, no slip
 
-    # ── V3 every line above the ground ring carries load ──────────────────────
-    # The lift chain must carry the airborne assembly, so the bridles must be in
-    # tension.  0.0 N means the lift never reaches the rotor: the failure mode
-    # recorded three times in DECISIONS.md (1776-1779, 1806-1822, 2108-2120).
+    # ── V3 the LIFT CHAIN stays connected ─────────────────────────────────────
+    # RESTATED 2026-09-13 to Rod's ruling.  The mandatory-taut set is the LIFT
+    # LINE (kite -> sky anchor) and the CYAN LINE (sky anchor -> lift bearing) —
+    # the load path that actually carries the rotor.  The BRIDLE CONE and the
+    # TRPT LINES MAY SLACK.  The previous assertion was
+    # `bridle > 0.25 * lift_req`, which encoded the superseded "every line above
+    # the ground ring is taut" rule and had to be REPLACED, not promoted.
+    #
+    # The BACK LINE is deliberately NOT asserted taut: it is an ALTITUDE LIMITER,
+    # not a load path, and is slack at the design point by design — see
+    # physics-topology.md §3.2 and handover 2026-09-13 §4.  Asserting it taut would
+    # re-introduce the modelling error that made the plan's preload look
+    # unrealisable.  Its tension is recorded for the log only.
+    ef = KiteTurbineDynamics.capture_extended(u, sys, p, 0.0, wf, lift)
+    T_lift = ef.base.T_lift
+    T_cyan = cyan_tension(u, sys, p)
     bridle = bridle_total_tension(u, sys, p, N, Nr)
     lift_req = 1.5 * expansion_airborne_mass(sys, p; include_lifter=false) * 9.81
-    @info "bridle total tension" bridle lift_requirement=lift_req
-    @test_broken bridle > 0.25 * lift_req         # >= 25 % of the 1.5x-W requirement
+    @info "lift chain" T_lift T_cyan bridle lift_requirement=lift_req
+    @test T_lift > 0.0        # the lifter is pulling...
+    @test T_cyan > 0.0        # ...and the pull actually reaches the lift bearing
 
     # ── V2 the airborne assembly is in force balance ──────────────────────────
     res, acc0 = axial_residuals(u, sys, p, wf, lift, N, sd)
     @info "axial residuals (N)" hub=res["hub"] bearing=res["bearing"] sky=res["sky"]
     @test_broken abs(res["hub"]) < 50.0
-    @test_broken abs(res["bearing"]) < 50.0
+    @test abs(res["bearing"]) < 50.0              # promoted 2026-09-13: now balanced
     @test_broken abs(res["sky"]) < 50.0
 
     # ── V6 the handoff is smooth (no first-frame jerk) ────────────────────────
