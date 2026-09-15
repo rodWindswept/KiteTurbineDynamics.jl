@@ -38,39 +38,12 @@
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
+include(joinpath(@__DIR__, "settle_case_builders.jl"))
 
-function validity_params()
-    p2 = params_daisy()
-    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
-        18.8, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
-    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
-    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
-    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
-    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return override_params(mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0);
-                           tether_length=18.8)
-end
-
-# The campaign seed, built exactly as test_settle_preload_consistency.jl does.
-function validity_case()
-    p = validity_params()
-    x = seed_genome(5.0)
-    dec = KiteTurbineDynamics.design_from_vector_v10(x, PROFILE_ELLIPTICAL, p;
-        power_W=5000.0, cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
-        cone_slope_deg=22.0, rotor_spacing_frac=0.8,
-        blocking_factor=BLOCKING_WIND_FACTOR_5KW)
-    cfg = ObjectiveConfig(; power_W=5000.0, v_rated=11.0, p_floor_kw=5.0, p_ceiling_kw=5.0,
-        fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
-        rotor_count_mode=true, power_split=0.6, blocking_factor=BLOCKING_WIND_FACTOR_5KW,
-        k_mppt=K_MPPT_5KW_HONEST)
-    sizing = size_beams_closed_form(dec, p, cfg)
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;
-        tether_diameter=p.tether_diameter, base_params=p, min_wall_m=2e-3, beam_sizing=sizing)
-    sys.k_mppt_ref[] = K_MPPT_5KW_HONEST
-    lift = sized_lifter_for(sys, pc; margin=1.5, v_ref=11.0, const_tension=true)
-    wf = (r, t) -> [11.0 * (max(r[3], 1.0) / p.h_ref)^(1 / 7), 0.0, 0.0]
-    return sys, u0, pc, lift, wf
-end
+# The campaign seed case comes from the ONE shared definition in
+# settle_case_builders.jl, so this guard cannot drift from the preload/realisability
+# guards (2026-09-14: de-duplicated — the local validity_params/validity_case copies
+# were the exact drift hazard the shared file exists to prevent).
 
 pos(u, gid) = u[(3 * (gid - 1) + 1):(3 * gid)]
 
@@ -108,6 +81,19 @@ function cyan_tension(u, sys, p)
     return total
 end
 
+"Force applied to the sky anchor by the lift device: mass × (accel with lift − accel without)."
+function lift_force_applied(u, sys, p, wf, lift)
+    N = sys.n_total
+    du_on = zeros(length(u))
+    KiteTurbineDynamics.multibody_ode!(du_on, u, (sys, p, wf, lift), 0.0)
+    du_off = zeros(length(u))
+    KiteTurbineDynamics.multibody_ode!(du_off, u, (sys, p, wf), 0.0)
+    g = sys.sky_anchor_id
+    m = (sys.nodes[g]).mass
+    return m .* (du_on[(3N + 3 * (g - 1) + 1):(3N + 3 * g)] .-
+                 du_off[(3N + 3 * (g - 1) + 1):(3N + 3 * g)])
+end
+
 function axial_residuals(u, sys, p, wf, lift, N, sd)
     du = zeros(length(u))
     KiteTurbineDynamics.multibody_ode!(du, u, (sys, p, wf, lift), 0.0)
@@ -122,7 +108,7 @@ function axial_residuals(u, sys, p, wf, lift, N, sd)
 end
 
 @testset "settle validity — hands the ODE a load-carrying, balanced state" begin
-    sys, u0, p, lift, wf = validity_case()
+    sys, u0, p, lift, wf = build_case(nothing, nothing)
     N, Nr = sys.n_total, sys.n_ring
     hub = sys.rotor.node_id
 
@@ -149,13 +135,16 @@ end
     # re-introduce the modelling error that made the plan's preload look
     # unrealisable.  Its tension is recorded for the log only.
     ef = KiteTurbineDynamics.capture_extended(u, sys, p, 0.0, wf, lift)
-    T_lift = ef.base.T_lift
     T_cyan = cyan_tension(u, sys, p)
     bridle = bridle_total_tension(u, sys, p, N, Nr)
     lift_req = 1.5 * expansion_airborne_mass(sys, p; include_lifter=false) * 9.81
-    @info "lift chain" T_lift T_cyan bridle lift_requirement=lift_req
-    @test T_lift > 0.0        # the lifter is pulling...
-    @test T_cyan > 0.0        # ...and the pull actually reaches the lift bearing
+    # The lift line is mandatory-taut: assert the FORCE actually applied to the
+    # sky anchor, not `ef.base.T_lift` (which is `lift_force_steady` — a device+
+    # wind function that stays nonzero with the line cut, 2026-09-14 finding).
+    f_lift = lift_force_applied(u, sys, p, wf, lift)
+    @info "lift chain" applied_lift=norm(f_lift) lift_ref=ef.base.T_lift T_cyan bridle lift_requirement=lift_req
+    @test norm(f_lift) > 0.5 * lift_req   # the pull actually reaches the sky anchor
+    @test T_cyan > 0.0                    # ...and passes down the cyan line to the bearing
 
     # ── V2 the airborne assembly is in force balance ──────────────────────────
     res, acc0 = axial_residuals(u, sys, p, wf, lift, N, sd)

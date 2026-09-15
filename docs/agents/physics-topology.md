@@ -124,32 +124,42 @@ A shallower apex means the lines are more **aligned with the axis**, so the same
 tension produces **less radial compression** on the ring, and enough banking can
 make the ring **tensile rather than compressed**.
 
-Measured on the 5 kW / 18.8 m seed, the correct geometry is approximately:
+The bridle cone is fixed by ONE design input — its half-angle — measured on the
+5 kW / 18.8 m seed (2026-09-13):
 
 | quantity | value |
 |---|---|
-| lift-bearing offset from the main rotor (axial) | ~3.99 m |
-| ring radius at the main rotor | 2.4 m |
-| bridle 3D length | ~4.66 m |
-| apex half-angle / angle from shaft axis | ~31° |
-| angle at the ring plane | ~59° |
+| bridle cone half-angle (from the shaft axis) | 31° |
+| angle at the ring plane | 59° |
+| ring radius at the main rotor (seed) | 2.4 m |
 
-`bearing_offset = 6.0` (`initialization.jl:166`) and the derived bridle rest
-length (6.462198 m) are a **placeholder carried over from other tested systems**
-(Rod 2026-09-12). The axial design point was never chosen. Treat both as
-provisional, and derive them from the taut-chain balance rather than trusting them.
+Everything else is **DERIVED from the top-ring radius** (2026-09-14, Rod — the
+offset must never be a prespecified number):
 
-### 3.2 The back line is not a load path
+    bearing_offset(r_top) = r_top / tan(31°)     (= 3.99 m at 2.4 m radius)
+    bridle 3D length      = r_top / sin(31°)     (= 4.66 m at 2.4 m radius)
+
+The bearing sits at the apex of the cone, one cyan-line length below the sky
+anchor.  The old `bearing_offset = 6.0` (and later `BEARING_OFFSET_DESIGN = 3.99`)
+were single numbers standing in for this radius-dependent geometry, and both are
+removed.  The single authority in code is
+`bridle_bearing_offset(r_top)` in `src/initialization.jl`.
+
+### 3.2 The back line is an altitude limiter, not a load path
 
 In the field the backline was partially elasticated (elastic sewn into the dyneema
 at several points): it takes up slack to stay tidy and only tightens hard once
 pulled to the dyneema length. It exists to **restrict the altitude of the sky
 hook**, not to carry the machine.
 
-The code models it as a rigid catenary that is tension-only
-(`ring_forces.jl:511-560`), so at some settled positions it reads **slack by ~1 m**
-and contributes nothing. If the sky hook rises, the backline goes taut and limits
-altitude.
+The code models it as a rigid catenary that is tension-only (`ring_forces.jl`).
+Its design rest length is built from the sky-anchor design position (tether length
++ the DERIVED bearing offset + cyan length).  Whether it sits slack or taut at the
+design point depends on that rest length — it was ~1 m of slack under the old 6.0
+reference and ~0 under the derived offset, and a deliberate slack allowance has
+**not** been chosen (open — see the load-split work).  A taut back line is not
+itself a defect; what must hold is that the lift reaches the rotor via sky hook →
+cyan → bearing → bridle cone.
 
 Do not treat a slack backline as evidence that the chain is broken, and
 do not treat a taut backline as evidence that it carries the rotor.
@@ -203,8 +213,10 @@ Every item corresponds to a mistake that cost a session.
    chain has no connection to the rotor. That is the finding, not a detail.
 
 3. **Is this constant measured, derived, or a placeholder?** Trace it to its
-   source. `bearing_offset = 6.0`, the bridle rest length and `cyan_L0 = 5.0` are
-   placeholders. `1.5 ×` is the lifter sizing margin.
+   source. `cyan_L0 = 5.0` is a cut rope length (a fixed physical input).
+   `bearing_offset` and the bridle rest length are **DERIVED** from the top-ring
+   radius via `bridle_bearing_offset(r_top) = r_top / tan(31°)`. `1.5 ×` is the
+   lifter sizing margin.
 
 4. **Which frame are you measuring an angle in?** Apex, shaft-axis and ring-plane
    angles are complements of each other. State the frame explicitly.

@@ -514,11 +514,14 @@ function compute_ring_forces!(
     # kite lift wins at the sky anchor, the sky anchor rises and pulls the
     # bearing up via the cyan line, tilting the rotor and spilling wind.
     #
-    # NOTE: the geometric constants 6.0 (bearing_offset) and 5.0 (CYAN_L0)
-    # MUST match initialization.jl.  Centralising them on `sys` is a future
-    # cleanup; for now they're duplicated with this comment as the link.
+    # NOTE: the back line's design rest length is built from the DERIVED bearing
+    # offset (the bridle-cone apex) and the cyan cut length.  Both must match
+    # initialization.jl — the offset via `bridle_bearing_offset(r_top)`, never a
+    # hardcoded number (2026-09-14, Rod).
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
-    bearing_offset = BEARING_OFFSET_DESIGN
+    r_top = isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
+            sys.effective_radii[hub_ri]
+    bearing_offset = bridle_bearing_offset(r_top)
     cyan_L0 = CYAN_L0_DESIGN
 
     # 2D projection: horizontal plane distance + vertical (anchor at z=0)

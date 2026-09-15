@@ -10,6 +10,54 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-14] Bearing offset derived from the bridle cone; torsional realisability raises instead of clamping
+
+**Context.** Two silent-truncation defects and one radius-dependent geometry
+collided across 2026-09-13/14.  (1) The TRPT placement wrote
+`asin(clamp(sin Δα, -1, 1))`, so a torque unreachable at the available tension
+silently became a 90° twist per segment — multi-turn wind-ups that every guard
+passed.  (2) `lift_chain_design` substituted the campaign seed's own equilibrium
+speed `12.983466 rad/s` for any caller that did not pass a speed, so ω = 0 (a
+stationary rotor) was unrepresentable and every design's preload was evaluated at
+a foreign speed.  (3) The lift-bearing axial offset was a single prespecified
+number (`6.0`, then `BEARING_OFFSET_DESIGN = 3.99`) that only holds for one
+top-ring radius, when it is in fact a function of radius.
+
+**Decided (Rod, 2026-09-14).**
+
+1. **The bearing offset is derived, never prespecified.** The bridle cone is
+   fixed by ONE design input — its half-angle, 31° from the shaft axis (59° at
+   the ring plane) — measured on the 5 kW / 18.8 m seed.  The bearing sits at the
+   cone apex, so
+   `bearing_offset(r_top) = r_top / tan(31°)` and `bridle_length(r_top) = r_top / sin(31°)`.
+   A different genome (a different top-ring radius) gives a different offset.
+   `BEARING_OFFSET_DESIGN` and the earlier `6.0` placeholder are removed; the
+   single authority is `bridle_bearing_offset(r_top)` in `src/initialization.jl`.
+   The cyan line (`CYAN_L0_DESIGN = 5.0`) remains a fixed cut rope length.
+2. **A physical precondition that cannot be met raises, never clamps.**
+   `trpt_matched_place` returns per-segment realisability figures and raises past
+   `sin Δα > 1`, naming the segment, torque, tension and ceiling.  The design
+   preload additionally enforces a tension floor above the realisability cliff via
+   two named constants, `TRPT_REALISABILITY_TENSION_MARGIN = 1.05` and
+   `TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5` (past which the design is refused
+   rather than silently rescued).  This changes transmission tension, hence ring
+   compression, FoS demand and sizing — it needs the load → `SIZING_FOS_MARGIN` →
+   acceptance re-baseline before a campaign.
+3. **The preload is evaluated at the caller's speed.** The `12.983466` fallback is
+   gone; `ct_at_tsr(0.0) == 0.0` makes a stationary rotor mean zero thrust.
+4. **Re-seed candidate bank angle = 11°.** The viable 5 kW candidate
+   `[2.6, 0.5751, 2.0, 6.0, 0.0, 3.0, 11.0, 11.0, 0.8, 0.8]` (3 rotors / 6 lines,
+   bank 11°) is fully specified but not yet landed: its operational settle still
+   diverges (open — the static equilibrium solve), independent of the constants.
+
+**Still open.** (a) The back line's deliberate design-slack allowance is
+unchosen — it was ~1 m under the old 6.0 reference and ~0 under the derived
+offset; whether a taut back line is acceptable is the load-split question.  (b) The
+zero-torque no-op in `trpt_matched_place` (a dead preload knob) remains STILL OPEN
+in `physics-topology.md` §6.
+
+---
+
 ## [2026-09-12] Lift-chain topology, rotor naming, and per-ring rotor models — recorded so they stop being re-derived
 
 **Context.** Over 2026-09-11/12 a series of errors shared one character: the
@@ -55,6 +103,11 @@ no bridles**, teaching a topology that omits the entire lift chain.
    placeholders** carried over from other tested systems; the bearing's axial
    design point was never chosen. Measured, the correct geometry is ~3.99 m axial
    / ~4.66 m 3D (~31° from axis, ~59° at the ring plane).
+   **SUPERSEDED 2026-09-14 (Rod):** the offset is not a placeholder to be chosen —
+   it is **derived** from the top-ring radius at the bridle-cone apex,
+   `bridle_bearing_offset(r_top) = r_top / tan(31°)`. The ~3.99 m here is simply
+   that function evaluated at the 2.4 m seed radius, not a universal constant. See
+   the [2026-09-14] entry at the top of this file.
 
 **Alternatives considered.** Leaving the lessons in the existing docs and relying
 on agents to find them — rejected, that is exactly what failed. Enabling per-ring

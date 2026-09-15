@@ -1,19 +1,26 @@
 using LinearAlgebra
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Lift-chain design constants (2026-09-13)
+# Lift-chain design constants (2026-09-14)
 # ══════════════════════════════════════════════════════════════════════════════
-# The bearing's AXIAL DESIGN POINT, measured as the lift chain's own equilibrium
-# on the 5 kW / 18.8 m seed: ~3.99 m axial gives the ~4.658 m 3D bridle at 31°
-# from the axis / 59° at the ring plane (docs/agents/physics-topology.md §3.1).
+# The lift bearing sits on the shaft axis at the APEX of the bridle cone.  The
+# fixed design input is the cone HALF-ANGLE (measured 31° from the shaft axis /
+# 59° at the ring plane on the 5 kW / 18.8 m seed — docs/agents/physics-topology.md
+# §3.1).  The bearing's axial offset is DERIVED from the top-ring radius:
 #
-# The old value was 6.0, a placeholder carried over from other tested systems,
-# and it was ALSO used to cut the bridle rest length (sqrt(6.0² + 2.4²) =
-# 6.4622 m).  The chain's own equilibrium puts the bearing 3.99 m up, so the
-# bridles came out 1.80 m too long and never engaged: the lift reached the
-# bearing and stopped there (measured 2026-09-13, scratch/diag_lift_chain.jl).
-const BEARING_OFFSET_DESIGN = 3.99        # m, main rotor centre → lift bearing, +shaft
-const CYAN_L0_DESIGN = 5.0                # m, lift bearing → sky anchor
+#     bearing_offset(r_top) = r_top / tan(cone_half_angle)
+#     bridle 3D length      = r_top / sin(cone_half_angle)
+#
+# so a different genome (a different top-ring radius) gives a different offset.
+# The offset is never a prespecified number anywhere: both `BEARING_OFFSET_DESIGN
+# = 3.99` and the earlier `6.0` placeholder stood in for a radius-dependent
+# geometry and have been removed (2026-09-14, Rod).
+const BRIDLE_CONE_HALF_ANGLE_DEG = 31.0  # degrees from the shaft axis (59° at the ring plane)
+
+"Bearing axial offset above the top ring, derived from that ring's radius."
+bridle_bearing_offset(r_top::Float64) = r_top / tand(BRIDLE_CONE_HALF_ANGLE_DEG)
+
+const CYAN_L0_DESIGN = 5.0                # m, lift bearing → sky anchor (a cut rope length)
 const BEARING_MASS_KG = 0.3               # kg, bearing + skateboard wheel
 const SKY_ANCHOR_MASS_KG = 0.3            # kg, splice/knot (not the lifter)
 const BRIDLE_EA_DESIGN = 500_000.0        # N, 2 mm Dyneema bridle
@@ -181,10 +188,10 @@ function _build_kite_turbine_system_impl(
     BRIDLE_EA = 500_000.0     # N  — stiff bridle lines (Dyneema 2mm)
     BRIDLE_C_DAMP = 500.0         # N·s/m — ~80% of critical for bearing mass
     BRIDLE_DIAM = 0.002         # m  — 2mm Dyneema bridle line
-    bearing_offset = BEARING_OFFSET_DESIGN   # m above hub centre (along shaft)
+    bearing_offset = bridle_bearing_offset(ring_radii[end])   # apex of the bridle cone, derived from the top-ring radius
 
     SKY_ANCHOR_MASS = 0.3           # kg — small splice/knot, not the lifter itself
-    CYAN_L0 = 5.0           # m — bearing↔sky-anchor line ("a few m")
+    CYAN_L0 = CYAN_L0_DESIGN        # m — bearing↔sky-anchor line (a cut rope length)
     CYAN_EA = 500_000.0     # N  — same Dyneema as bridles
     CYAN_C_DAMP = 500.0         # N·s/m — same critical fraction
     CYAN_DIAM = 0.003         # m  — 3 mm Dyneema (carries lifter load)
@@ -755,7 +762,7 @@ Returns T_cyan (clamped to ≥ 0).
 function design_preload_from_sky_anchor(
     p::SystemParams,
     lift_device::LiftDevice;
-    bearing_offset::Float64=BEARING_OFFSET_DESIGN,
+    bearing_offset::Float64,  # required: derive via bridle_bearing_offset(r_top), no default
     cyan_L0::Float64=CYAN_L0_DESIGN,
     m_sky::Float64=0.3,
 )
@@ -936,7 +943,8 @@ function lift_chain_design(
         isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
         sys.effective_radii[hub_ri]
 
-    bearing_pos = hub_pos .+ BEARING_OFFSET_DESIGN .* sh
+    bearing_offset = bridle_bearing_offset(R_hub)
+    bearing_pos = hub_pos .+ bearing_offset .* sh
     sky_pos = bearing_pos .+ CYAN_L0_DESIGN .* sh
     cyan_dir = normalize(bearing_pos .- sky_pos)       # sky → bearing (down-shaft)
 
@@ -951,7 +959,7 @@ function lift_chain_design(
 
     pa = attachment_point(hub_pos, R_hub, 0.0, 1, p.n_lines, perp1, perp2)
     gap = norm(bearing_pos .- pa)
-    cosθ = BEARING_OFFSET_DESIGN / gap
+    cosθ = bearing_offset / gap
     T_bridle = max(
         (T_cyan_ax - BEARING_MASS_KG * 9.81 * sin(β)) / (p.n_lines * cosθ), 0.0
     )
@@ -1464,8 +1472,13 @@ function settle_to_operational_state(
             # two-section balance in `lift_chain_design` is consistent AT this
             # geometry (each section sums to ~0), so this is the equilibrium, not
             # an imposed guess.
-            for (gid, off) in ((sys.bearing_id, BEARING_OFFSET_DESIGN),
-                               (sys.sky_anchor_id, BEARING_OFFSET_DESIGN + CYAN_L0_DESIGN))
+            hub_gid = sys.rotor.node_id
+            hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+            r_top = isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
+                    sys.effective_radii[hub_ri]
+            bearing_offset = bridle_bearing_offset(r_top)
+            for (gid, off) in ((sys.bearing_id, bearing_offset),
+                               (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN))
                 u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[Nr] .+ off .* sd_r
                 u_start[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
             end

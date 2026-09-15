@@ -1,5 +1,13 @@
 # scratch/spec_seed_candidate.jl
 #
+# SUPERSEDED 2026-09-14: this probe's screening (the candidate is viable) and its
+# bank-angle isolation (0/11/22° all viable) still hold, and the candidate is
+# recorded in DECISIONS.md [2026-09-14] and scripts/compute_seeds.jl.  Its
+# follow-on conclusion "the candidate disconnects the lift chain so cannot land"
+# was WRONG-CAUSED: the disconnection came from the back-line rest length
+# (bearing_offset 6.0 → 3.99 in ring_forces.jl), now fixed by deriving the offset
+# from the top-ring radius.
+#
 # Purpose (2026-09-13, DSH session; Rod's request): the current 5 kW seed is not
 # viable under the corrected physics — the evaluator rejects it with
 # `twist_crossed=true`, which is what makes test_evaluator_v13 B3 and

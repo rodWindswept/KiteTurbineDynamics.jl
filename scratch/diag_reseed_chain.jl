@@ -1,5 +1,13 @@
 # scratch/diag_reseed_chain.jl
 #
+# SUPERSEDED 2026-09-14: this probe's stage-by-stage trace is valid, but its
+# conclusion — "the disconnection happens inside the OPERATIONAL settle, not from
+# the constants" — is WRONG-CAUSED.  The disconnection came from the back-line
+# rest length: ring_forces.jl changed bearing_offset 6.0 → 3.99 in the same commit,
+# engaging the back line during the settle and dragging the sky anchor down.
+# The offset is now derived from the top-ring radius (bridle_bearing_offset), so
+# this trace no longer describes current behaviour.
+#
 # Purpose (2026-09-13, DSH session): scratch/derive_lift_chain_constants.jl showed
 # the lift-chain DESIGN constants are radius-independent (bearing offset 3.9898 m
 # for the old seed vs 3.9897 m for the candidate) and that the candidate's bridle

@@ -34,7 +34,10 @@ function multibody_ode!(du, u, params, t)
     # to prevent feedback instability.
     bearing_gid = sys.bearing_id
     bearing_pos = u[(3 * (bearing_gid - 1) + 1):(3 * bearing_gid)]
-    bearing_design = hub_pos .+ BEARING_OFFSET_DESIGN .* shaft_dir
+    # Tilt reads only the PERPENDICULAR drift; any axial offset cancels in the
+    # projection below, so the design point is the hub centre (bearing_offset is
+    # radius-derived, never a constant).
+    bearing_design = hub_pos
     bearing_error = bearing_pos .- bearing_design
     tilt_perp = bearing_error .- dot(bearing_error, shaft_dir) .* shaft_dir
     tilt_mag = norm(tilt_perp)

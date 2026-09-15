@@ -102,10 +102,18 @@ for (name, x10) in (("OLD (control, r_hub 2.4)", OLD_SEED), ("NEW (candidate, r_
 end
 
 old_off = measured["OLD (control, r_hub 2.4)"]
+new_off = measured["NEW (candidate, r_hub 2.6)"]
 println("\n=== validation ===")
-println("old-seed measured offset = ", round(old_off; digits=4),
-        "   BEARING_OFFSET_DESIGN = ", BEARING_OFFSET_DESIGN,
-        "   (handover measured 3.99)")
-@test isapprox(old_off, BEARING_OFFSET_DESIGN; atol=0.5)
-println("new-seed proposed offset = ", round(measured["NEW (candidate, r_hub 2.6)"]; digits=4))
+# The bearing offset is DERIVED from the top-ring radius at the bridle-cone apex:
+#     bearing_offset(r_top) = r_top / tan(31°)
+# (2026-09-14, Rod: the offset must never be a prespecified number.)  The settle
+# must sit AT that apex for each radius, and the two offsets must DIFFER.
+exp_old = KiteTurbineDynamics.bridle_bearing_offset(2.4)
+exp_new = KiteTurbineDynamics.bridle_bearing_offset(2.6)
+println("  derived r_top=2.4 -> ", round(exp_old; digits=4), "   settled -> ", round(old_off; digits=4))
+println("  derived r_top=2.6 -> ", round(exp_new; digits=4), "   settled -> ", round(new_off; digits=4))
+@test isapprox(old_off, exp_old; atol=0.5)
+@test isapprox(new_off, exp_new; atol=0.5)
+@test !isapprox(old_off, new_off; atol=0.05)   # the offset MUST scale with radius
+println("  (offset scales with radius: ", round(abs(old_off - new_off); digits=4), " m apart)")
 println("\n=== done ===")
