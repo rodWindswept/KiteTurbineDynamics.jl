@@ -938,10 +938,14 @@ function lift_chain_design(
     perp1, perp2 = shaft_perp_basis(sh)
 
     hub_gid = sys.rotor.node_id
-    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
-    R_hub =
-        isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
-        sys.effective_radii[hub_ri]
+    # The bridle cone is fixed by the ring's RESTING radius.  It must not move
+    # because the top rotor is an expansion rotor with banked blades (Rod,
+    # 2026-09-15): any in-operation expansion is small and is not a design
+    # geometry input.  `sys.effective_radii` is deliberately NOT read here — it
+    # is a copy of the nominal radii today only because the per-step expansion
+    # update was removed (ring_forces.jl:335), so reading it would silently
+    # change the cone the day a banked main rotor lands.
+    R_hub = (sys.nodes[hub_gid]::RingNode).radius
 
     bearing_offset = bridle_bearing_offset(R_hub)
     bearing_pos = hub_pos .+ bearing_offset .* sh
@@ -1473,9 +1477,9 @@ function settle_to_operational_state(
             # geometry (each section sums to ~0), so this is the equilibrium, not
             # an imposed guess.
             hub_gid = sys.rotor.node_id
-            hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
-            r_top = isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
-                    sys.effective_radii[hub_ri]
+            # RESTING radius — see the note in `lift_chain_design`.  The cone does
+            # not move because the top rotor is banked (Rod, 2026-09-15).
+            r_top = (sys.nodes[hub_gid]::RingNode).radius
             bearing_offset = bridle_bearing_offset(r_top)
             for (gid, off) in ((sys.bearing_id, bearing_offset),
                                (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN))

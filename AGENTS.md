@@ -43,7 +43,10 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
   work. If you are about to "simplify" the load path or the ring model, stop and
   read it first — re-deriving these from expectation has repeatedly cost a session.
 - **Tension-only means tension.** Every line above the ground ring must be taut at
-  the operating point. Slack is a defect to diagnose, never a resting state.
+  the design operating point, in the steady state. Lines cannot push: a gust, a
+  lull or a control transient will briefly unload one, and that is expected, not a
+  defect. **Sustained** slack at the operating point is the defect — diagnose it,
+  never accept it as a resting state.
 
 ## Conventions
 

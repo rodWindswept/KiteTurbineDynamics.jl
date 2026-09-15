@@ -10,6 +10,195 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-15] The bridle cone is fixed by the ring's resting radius, not by expansion or blade state
+
+**Context.** `bridle_bearing_offset` was called from three sites in
+`initialization.jl`: construction (`:191`, from `ring_radii[end]`), design preload
+(`:946`) and settle placement (`:1478`) — the latter two from
+`sys.effective_radii[hub_ri]` whenever expansion rotors are present. They agreed
+only because `sys.effective_radii` is a plain copy of the nominal radii (`:270`)
+and the per-step expansion update was removed on 2026-06-14
+(`ring_forces.jl:335`). The 2026-09-14 re-seed candidate carries a **banked main
+rotor**, so the two paths were set to diverge: the bearing node would be built at
+one offset while the preload and the settle assumed another.
+
+**Decided (Rod, 2026-09-15).** The bridle cone is a **fixed design geometry**, set
+per genome from the **resting radius of the topmost rotor ring**. It must not move
+because a rotor is configured as an expansion rotor with banked blades; any
+in-operation expansion is small and is not a design-geometry input. The cone is
+therefore single-sourced on `(sys.nodes[hub_gid]::RingNode).radius`, which is what
+construction already used.
+
+**Change.** The `effective_radii` branches in `lift_chain_design` and in the
+settle placement are removed; both now read the ring's resting radius. Behaviour
+is unchanged today, because the two values are equal — the point is that it stays
+correct when banked main rotors land.
+
+**Status:** active.
+
+---
+
+## [2026-09-15] Back line is taut at the design point; the taut-chain rule is about steady state; lower the lift angle rather than raise the margin
+
+**Context.** The 2026-09-14 handover §8 recorded two measurements that disagreed
+about the back line — taut on 2026-09-12 at a 6.0 m bearing offset, slack on
+2026-09-13 at 3.99 m — and noted that nothing on the record reconciled them,
+blocking the load-split re-derivation. `physics-topology.md` §3.2 carried
+design-point slack as an **open** question, while the live code asserted slack
+outright (`design_axial_preload` docstring, `initialization.jl:1053-1054`).
+
+**The bearing offset is not the explanation.** `physics-topology.md:139` records
+the derived offset as **3.99 m at a 2.4 m top-ring radius**, which is the 5 kW
+seed. So the 09-13 numbers were taken at the correct geometry for this seed and
+the disagreement is real, not a stale-placeholder artefact. (The placeholder
+defect was applying 3.99 m to *every* genome regardless of radius, not the value
+itself.)
+
+**Decided (Rod, 2026-09-15).**
+
+1. **The back line is taut at the design point and carries residual vertical
+   tension.** The sky anchor must be in balance and the lift line over-lifts
+   (1.5 × airborne weight, vertical), so the surplus has to go somewhere. A
+   deliberate design-point slack allowance is **rejected**; the open question in
+   `physics-topology.md` §3.2 is closed.
+2. **The elastic is what makes it altitude-limiting.** The back line is soft
+   through the climb and engages when the machine reaches its target elevation
+   (normally 30°). It may go slack in operation when wind or lift drops — an
+   off-design transient, not the design point.
+3. **The taut-chain rule applies to the steady design operating point, not to
+   every instant.** Lines cannot push; a gust, a lull or a control transient will
+   briefly unload one. **Sustained** slack at the operating point is the defect.
+   `AGENTS.md` and `physics-topology.md` §3 reworded accordingly.
+
+**Consequence — a design finding, not a reason to revert.** At the 3.99 m derived
+offset a taut back line leaves `T_top` = 1150.0 N against the 1274.47 N
+torque-transmission floor: the seed as preloaded **cannot transmit its rated
+torque** (`scratch/design_chain_preload.jl`, 2026-09-13 §4). With the back line
+slack, `T_top` = 1344.7 N and it clears. The taut ruling therefore forces a change
+to the preload path.
+
+**The preferred lever: lower the lift-line elevation, not the margin.** The
+vertical requirement is fixed at 1.5 × weight by design either way, so only the
+horizontal component moves:
+
+| Change | Downwind force at the sky anchor | Total lifter tension |
+|---|---|---|
+| lift elevation 70° → 65° | **+28%** (cot 70° = 0.364 → cot 65° = 0.466) | **+3.7%** (1/sin) |
+| margin 1.5 → 1.6 | +6.7% | +6.7%, and the lifter stack scales with it |
+
+The angle change buys horizontal force far more cheaply than the margin does —
+on the Daisy design directions, ≈ 4× the cyan-tension gain for about half the
+extra lifter tension (≈ 7× per unit of lifter tension). Raising the margin also
+scales the lifter stack with the machine, which Rod judged greedy and unscalable.
+
+**Direction of the split.** From the sky-anchor balance at the Daisy design
+directions (`design_preload_from_sky_anchor`, `initialization.jl:762-794`;
+`back_dir` |x| ≈ 0.29, `cyan_dir` |x| ≈ 0.87): extra downwind force lands mostly
+on the shallow **cyan** line — which raises bearing preload, the point of the
+change — while back-line tension **falls**. So the angle lever and a loaded back
+line pull against each other, and the engagement point of the elastic sets the
+balance. Magnitudes must be re-run on the actual seed geometry; the directions
+above are Daisy's.
+
+**Status:** active.
+
+---
+
+## [2026-09-15] Six-week review rulings: 5 kW design first, bow is an output, the wobble is gated, every damper must be justified
+
+**Context.** An external six-week review (2026-09-15) asked three questions of Rod
+and recommended a campaign moratorium with a written exit gate. The review
+claimed `lin_damp = 0.05` "masks loads". A source check confirmed the claim but
+found it was **not new**: the damping audit of 2026-09-10 (entry below;
+`docs/plans/2026-09-10-shaft-windup-workstream.md` §2.7) had already established
+that `lin_damp = 0.05` is an artificial ~13 µs numerical stabiliser acting on
+**rope** nodes with no physical basis, and that it is mislabelled a "bearing
+damper". The review's value is its ordering and its exit gate, not the damping
+finding — which had been re-derived rather than read from the record.
+
+**Damping inventory (source-verified, HEAD `2d6233b`).** Four separate mechanisms;
+only one is unjustified:
+
+| Mechanism | Where | Basis | On the canonical path? |
+|---|---|---|---|
+| `p.zeta = 0.05` rope material damping | `parameters.jl:177,224` → `rope_forces.jl:58` | Dyneema hysteresis, ζ ≈ 0.01–0.05 | yes (inside the ODE force) |
+| `TETHER_DRAG_CD = 1.0` line aerodynamic drag | `aerodynamics.jl:346-389` | Tveide-validated (factor ≈ 1.09, **not yet landed**) | yes |
+| `lin_damp = 0.05` rope-node oscillation retention | `initialization.jl:599-657` via `simulation.jl:193` | **artificial**, rate ≈ 7.5e4 s⁻¹ (13 µs) | yes — the only artificial damper |
+| `bearing_tr_damp`, `ang_damp` | `initialization.jl:698,725-738` | legacy | **no** — `run_canonical_sim!` (`simulation.jl:70-81`) accepts neither |
+
+So the damper long believed suspect (the bearing one) has never been active in a
+campaign evaluation, while the rope damper shapes every FoS. The four
+`# bearing damper retention factor` labels on `lin_damp`
+(`objective_evaluator.jl:508`, `objective_v11.jl:96,132,173`) are corrected.
+
+**Decided (Rod, 2026-09-15).**
+
+1. **Q4 deliverable: the validated 5 kW design, then the validation, then the
+   report.** Priority is the 5 kW model-space analysis. Once that space is
+   explored and openly reported, the 1.5 kW Daisy-scale validation follows; the
+   two together form the technical report. The end-October Alicante visit stands,
+   with prep starting after the 5 kW space is reported. 10–50 kW systems are on
+   hold. This **reverses** review recommendation 4 (1.5 kW before 5 kW) and is
+   compatible with recommendation 1: the moratorium's exit gate is simply what
+   the 5 kW design must pass.
+2. **Bow is an output, not a constraint.** "Bow" is sag — lateral deflection of
+   the column axis from the design line, in the tilted plane, carrying the
+   perpendicular component of hub weight. It is explicitly **not a translation**:
+   a global sideways move of the ring stack is very stiff (0.5 m → 204 kN,
+   k ≈ 3.5e5 N/m) because the pinned ground anchor stretches the lines, whereas
+   the real bow is a rearrangement in which the lines reorient at near-constant
+   length (2026-09-12 handover §5). The **1.5 m figure must not be quoted as a
+   result** — it is a rigid-tilt estimate, while the relaxation probe returned
+   0.116–0.776 m as a function of bridle rest length and did not converge. A
+   settle/ODE bow disagreement is a re-initialisation or force-scaling bug, not a
+   design question.
+3. **Every damping term must be justified.** No damping may sit in the model as
+   an unexplained stabiliser. `lin_damp` survives only as a *declared, pinned*
+   numerical stabiliser, with its value and its artificiality stated wherever
+   loads are reported — never as a load-shaping knob. The DT-paired sweep
+   (`scripts/results/recampaign/sweep_damp_rate_dtpaired.csv`) shows no setting
+   is both dt-converged and admissible, and workstream §2.5 shows even
+   `lin_damp = 0.60` (12× nominal, not physical) leaves the FoS trough at 1.97
+   against a 2.5 gate.
+4. **Wobble policy: gate it (review option (c)).** Option (a), a new
+   physically-justified lateral damping mechanism, is a research project. Option
+   (b), a dynamic amplification factor, is rejected: a DLF is a lumped
+   catch-all, this repo already uses "DLF" for something else ("Design Load
+   Factor", `CONTEXT.md:194`), and its value has already moved between 1.2 and
+   0.18 readings depending on which ratio is used.
+
+**The wobble gate (form fixed; thresholds calibrated once the static solver
+lands).** The wobble is a ~10 s lateral ring-centre oscillation (hub swings to
+0.49 m). It **cannot** be specified from a force/damping balance: the model's
+physical damping does not decay it over 120 s (§2.10), and aero drag alone is
+ζ ≈ 0.001 (§2.15), so no steady amplitude is set by dissipation and the
+amplitude the model shows today is the artificial damper's fingerprint. Two
+criteria instead:
+
+- **Shape:** through the excursion, no line above the ground ring goes slack.
+  This is already the standing rule (`AGENTS.md`) and is derivable, unlike an
+  absolute metre figure. The prototype displacement threshold is a fraction of
+  ring radius, so it scales with the machine.
+- **Load:** FoS ≥ target at the **cycle peak**, not the mean. Undamped, ring
+  compression swings ≈ 95–606 N against 90–217 N at the artificial 0.05, so this
+  is what stops the wobble hiding inside FoS.
+- Evaluated at the design operating point over ≥ 120 s, with only justified
+  damping active.
+
+Because the real modal damping is near zero, the wobble must be assumed to
+persist for the machine's life — a fatigue question as well as a peak-load one.
+The wobble is a shape mode coupled to the axial preload, so its number will move
+when the back-line contradiction and load split are resolved.
+
+**Consequences.** The campaign exit gate (review recommendation 1) is adopted and
+recorded in `docs/plans/ACTIVE.md`, which now supersedes the per-handover
+priority lists. Sequence: back-line contradiction → load split → static solver by
+dynamic relaxation → 5 kW space → 1.5 kW validation → report.
+
+**Status:** active.
+
+---
+
 ## [2026-09-14] Bearing offset derived from the bridle cone; torsional realisability raises instead of clamping
 
 **Context.** Two silent-truncation defects and one radius-dependent geometry

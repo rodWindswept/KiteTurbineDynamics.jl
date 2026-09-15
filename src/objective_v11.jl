@@ -93,7 +93,7 @@ function objective_v11(
     v_rated::Float64=11.0,
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
-    lin_damp::Float64=0.05,     # bearing damper retention factor
+    lin_damp::Float64=0.05,     # rope-node oscillation retention (artificial; NOT the bearing damper)
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
     # system exists, so the device can be sized to this genome's airborne mass.
     lift_device::Union{Nothing,LiftDevice,Function}=nothing,
@@ -129,7 +129,7 @@ function objective_v11_warmstart(
     cfg::ObjectiveConfig=ObjectiveConfig(),
     elev_angle::Float64=π / 6,
     spoke::Union{Nothing,SpokeParams}=nothing,
-    lin_damp::Float64=0.05,     # bearing damper retention factor
+    lin_damp::Float64=0.05,     # rope-node oscillation retention (artificial; NOT the bearing damper)
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
     # system exists, so the device can be sized to this genome's airborne mass —
     # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
@@ -170,7 +170,7 @@ function warmstart_with_k_bracket(
     v_rated::Float64=11.0,
     cfg::Union{Nothing,ObjectiveConfig}=nothing,  # base tunables (relax/window/knobs)
     spoke::Union{Nothing,SpokeParams}=nothing,
-    lin_damp::Float64=0.05,     # bearing damper retention factor
+    lin_damp::Float64=0.05,     # rope-node oscillation retention (artificial; NOT the bearing damper)
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
     # system exists, so the device can be sized to this genome's airborne mass —
     # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.

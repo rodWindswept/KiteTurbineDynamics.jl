@@ -100,8 +100,11 @@ not a benign state. See `DECISIONS.md:1806-1822` ("12/13 bridles slack, tension
 chain broken") and `:2108-2120` ("the gold bridles go completely slack (Tension =
 0.0 N) ... structurally decouples the ground generator from the airborne rotor").
 
-**Rule: every line above the ground ring must be in tension at the operating
-point. Treat slack as a defect to diagnose, never as a resting state to accept.**
+**Rule: every line above the ground ring must be in tension at the design
+operating point, in the steady state. Treat *sustained* slack there as a defect to
+diagnose, never as a resting state to accept.** Transient slack is expected —
+lines cannot push, and a gust, a lull or a control transient will briefly unload
+one, so a single-frame snapshot is not evidence about tautness. Step the loop.
 
 ### 3.1 Bridle geometry: shallow at the APEX
 
@@ -154,12 +157,28 @@ hook**, not to carry the machine.
 
 The code models it as a rigid catenary that is tension-only (`ring_forces.jl`).
 Its design rest length is built from the sky-anchor design position (tether length
-+ the DERIVED bearing offset + cyan length).  Whether it sits slack or taut at the
-design point depends on that rest length — it was ~1 m of slack under the old 6.0
-reference and ~0 under the derived offset, and a deliberate slack allowance has
-**not** been chosen (open — see the load-split work).  A taut back line is not
-itself a defect; what must hold is that the lift reaches the rotor via sky hook →
-cyan → bearing → bridle cone.
++ the DERIVED bearing offset + cyan length).  It sat ~1 m slack under the old 6.0
+reference and ~0 under the derived offset.
+
+**RULED (Rod, 2026-09-15): the back line is TAUT at the design point and carries
+residual vertical tension.** The sky anchor must be in balance, and the lift line
+over-lifts (1.5 × airborne weight vertical), so the surplus has somewhere to go. A
+deliberate design-point slack allowance is therefore **rejected** — this closes the
+open question previously recorded here. The elastic is what makes it
+altitude-limiting: the back line is soft through the climb and engages when the
+machine reaches its target elevation (normally 30°). It may go slack in operation
+when wind or lift drops — an off-design transient, not the design point.
+
+**It also has two safety jobs** (Rod, 2026-09-15): it **contains the machine if the
+TRPT breaks** — the anchored back line is what stops the lift line dragging the
+machinery away, or components flying free — and it **carries the machine while
+raising and lowering it in tension**, for deployment, recovery, and high-wind /
+high-altitude stalling. Its design load is therefore the worst of {design point,
+hoisting, break containment, high-wind handling} — **not** the steady design
+tension. None of those cases is quantified yet. See `docs/lift/README.md`.
+
+A taut back line is not itself a defect; what must hold is that the lift reaches
+the rotor via sky hook → cyan → bearing → bridle cone.
 
 Do not treat a slack backline as evidence that the chain is broken, and
 do not treat a taut backline as evidence that it carries the rotor.
