@@ -25,6 +25,74 @@ const BEARING_MASS_KG = 0.3               # kg, bearing + skateboard wheel
 const SKY_ANCHOR_MASS_KG = 0.3            # kg, splice/knot (not the lifter)
 const BRIDLE_EA_DESIGN = 500_000.0        # N, 2 mm Dyneema bridle
 
+# ── Back line — bi-linear, tension-only (Rod, 2026-09-15; landed 2026-09-16) ──
+#
+# One authority for the back-line constitutive law.  Both the ODE force path
+# (`ring_forces.jl`) and the design preload (`design_axial_preload` below) call
+# `back_line_tension`, so the trim and the force model cannot drift apart.
+#
+# The line runs from the sky anchor down to a fixed ground anchor.  It is not
+# plain Dyneema: 8 sections of 4 mm bungee are sewn in series with the 3 mm
+# Dyneema.  Each bungee rests at 30 cm and reaches 40 cm at full backline
+# tension, so the line has 80 cm of SOFT TRAVEL and hardens into the Dyneema at
+# the design length.  The Dyneema itself does not stretch.
+#
+# At the design point the line sits on its hard stop: bungee fully extended,
+# Dyneema taut, carrying the design tension.  Any lift reduction contracts the
+# bungee into the soft region and unloads the line.  The field sets the trimmed
+# length at launch (`backline_payout`), which fixes the sky anchor's maximum
+# height and so the rig's maximum elevation (Rod, 2026-09-16).
+const BACK_LINE_E_SUM_N = 2.4             # N, Σ E_i of the 8 bungee sections (= 8 · 0.30 m)
+const BACK_LINE_SOFT_TRAVEL_M = 0.8       # m, Σ(ℓ_full,i − ℓ_rest,i) — 8 × 10 cm
+
+"""
+    back_line_tension(d, trimmed_length, payout, EA) -> T
+
+Tension (N) in the bi-linear back line, as a function of the ground-anchor to
+sky-anchor distance `d` (m), the trimmed design length (m), the winch payout
+(m) and the Dyneema stiffness `EA` (N).
+
+Tension-only, and the design point sits on the HARD STOP.  The line is trimmed so
+that at the design length the bungee is fully extended and the Dyneema is taut:
+
+  * `d ≤ trimmed_length − travel`: bungee relaxed, no tension.
+  * `trimmed_length − travel < d ≤ trimmed_length`: SOFT.  The bungee contracts
+    as the line shortens, so tension falls linearly from `T_design` at the
+    trimmed length to 0 at the far end of the travel.
+  * `d > trimmed_length`: HARD.  The bungee is fully extended, so the Dyneema
+    takes the load and the line is far stiffer.
+
+`T_design = ΣE_i / (1 + travel/trimmed_length)` is the tension at full bungee
+extension, and `k_soft = T_design / travel`.  Anchor used: each bungee is
+`ΣE_i/8 = 0.30 m` at rest and carries the full line tension, so at full extension
+`T_design` is set by `ΣE_i / (rest length of the whole line)`.  That makes the
+hard stop a fixed property of the trimmed geometry, and it makes `T_design` the
+one quantity to revisit when the load split is re-derived from a solved
+equilibrium.
+
+`payout` is excluded from the two distances above because the field trim pays
+line out to set the sky anchor's height (Rod, 2026-09-16).
+
+Self-checking: returns 0 below the travel, is continuous at the trimmed length
+(reaching `T_design` from both sides), and is monotone in `d`.
+"""
+function back_line_tension(
+    d::Float64, trimmed_length::Float64, payout::Float64, EA::Float64
+)
+    (trimmed_length > 0.0 && EA > 0.0 && payout >= 0.0) || error(
+        "back_line_tension: bad geometry - trimmed_length=$trimmed_length, EA=$EA, payout=$payout",
+    )
+    (BACK_LINE_E_SUM_N > 0.0 && BACK_LINE_SOFT_TRAVEL_M > 0.0) ||
+        error("back_line_tension: bungee constants must be positive")
+
+    travel = BACK_LINE_SOFT_TRAVEL_M
+    T_design = BACK_LINE_E_SUM_N / (1.0 + travel / trimmed_length)
+    k_soft = T_design / travel
+    d <= trimmed_length - travel && return 0.0                    # bungee relaxed
+    d <= trimmed_length && return k_soft * (d - trimmed_length + travel)  # SOFT
+    return T_design + EA * (d - trimmed_length) / trimmed_length  # HARD: Dyneema
+end
+
 """
     _build_kite_turbine_system_impl(p, ring_radii, seg_lengths; kite_*)
 
@@ -1054,8 +1122,15 @@ Replaces the old hand-built `F_top` (2026-09-13), which had three defects:
   * the weight term resolved a VERTICAL load axially as `−W/sin β` where the
     axial component of gravity is `−W·sin β` (a factor 1/sin²β = 4 at 30°);
   * it charged the KITE's mass at the rotor, and took `T_cyan` from the
-    sky-anchor balance with the back line TAUT — but the back line is an
-    altitude limiter and is slack at the design point.
+    sky-anchor balance with the back line TAUT.
+
+DEFERRED (2026-09-16): the sky-anchor balance in `lift_chain_design` below still
+solves the back line as SLACK.  The 2026-09-15 ruling is that it is TAUT at the
+design point, and `ring_forces.jl` now carries the bi-linear bungee element, so
+this balance is the remaining contradiction.  It cannot be closed in closed form:
+the taut balance needs the sky anchor's actual settled position, which is what
+the static equilibrium solver exists to produce.  Until it lands, treat the load
+split as UNRESOLVED and the tensions here as provisional.
 """
 function design_axial_preload(
     sys::KiteTurbineSystem,

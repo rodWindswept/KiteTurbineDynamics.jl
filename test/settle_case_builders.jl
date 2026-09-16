@@ -20,8 +20,15 @@ function params_5kw_188()
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
     ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
     back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
-    return override_params(mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0);
-                           tether_length=18.8)
+    # EA_back_line is PINNED here, after the scaling (Rod, 2026-09-16).  The 5 kW
+    # back line is 3 mm Dyneema: EA = 100 GPa × π(0.003)²/4 ≈ 707 kN.  It must be
+    # pinned AFTER `mass_scale`, because that multiplies the field by
+    # geom_scale = 1.826 and would otherwise carry the 1.5 kW 2 mm figure up to
+    # 1.29 MN, about 1.8x the spec.  Back-line tension is linear in EA, so the
+    # bungee stiffness would inherit that error.
+    return override_params(
+        mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0);
+        tether_length=18.8, EA_back_line=707_000.0)
 end
 
 # `nothing` for a gene keeps the seed's own value (the campaign seed).

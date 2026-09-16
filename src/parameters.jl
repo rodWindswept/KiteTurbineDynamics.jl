@@ -381,7 +381,12 @@ function params_daisy()::SystemParams
         5e-5,               # kp_elev — RESERVED
     )
     back = BackLineSpec(
-        314_000.0,          # EA_back_line (N) — 100 GPa × π(0.001)² (2 mm)
+        # EA_back_line (N) — 2 mm Dyneema at the 1.5 kW Daisy scale:
+        # 100 GPa × π(0.001)² ≈ 314 kN.  The 5 kW line is 3 mm and is PINNED in
+        # `params_5kw_188` AFTER `mass_scale`; see the note there.  Do not put the
+        # 5 kW figure here, because `mass_scale` multiplies this field by
+        # geom_scale = 1.826 and would inflate it to 1.29 MN.
+        314_000.0,
         172.0,              # c_back_line (N·s/m) — 500 × (10.31/30) length scale
         3.78,               # back_anchor_fwd_x (m) — 11.0 × (10.31/30)
         0.0,                # backline_payout

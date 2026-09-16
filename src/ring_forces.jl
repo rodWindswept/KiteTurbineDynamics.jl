@@ -537,29 +537,27 @@ function compute_ring_forces!(
     design_sky_anchor_x = L_axis_design * cos(p.elevation_angle)
     design_sky_anchor_z = L_axis_design * sin(p.elevation_angle)
     back_L0_design = sqrt((design_sky_anchor_x - back_ax)^2 + design_sky_anchor_z^2)
-    # L₀ = design distance + payout (winch releases line)
-    back_L0 = back_L0_design + p.backline_payout
+    # Payout is the winch trim: it moves the hard stop, and `back_line_tension`
+    # applies it.  The line's self weight (~0.067 N/m) is negligible against the
+    # design tension and is dropped with the catenary (2026-09-16).
 
-    # Tension-only: slack if anchor-to-sky-anchor distance < rest length
-    if b_dist > back_L0 + 1e-6
-        # Backline weight (3 mm Dyneema)
-        w_back = dyneema_weight_Npm(0.003)
-
-        # Catenary in the vertical plane: anchor at (0,0), sky anchor at (b_dx, b_dz)
-        _, _, Fx_top, Fz_top, _ = catenary_forces(
-            0.0, 0.0, b_dx, b_dz, back_L0, w_back, p.EA_back_line
-        )
-
-        # Fx < 0 (pulls toward anchor), Fz < 0 (pulls down).
+    # Tension-only and bi-linear (2026-09-16, Rod): soft over the bungee's 80 cm
+    # of travel, then hard once the Dyneema is taut.  One authority,
+    # `back_line_tension`, so the force model and the design preload cannot drift.
+    T_back = back_line_tension(b_dist, back_L0_design, p.backline_payout, p.EA_back_line)
+    if T_back > 0.0
+        # Near-vertical, so the force is dominated by its vertical component.
+        # Fx < 0 (pulls toward the anchor), Fz < 0 (pulls down).
         if b_dx > 1e-12
             uh_x = (sky_anchor_pos[1] - back_ax) / b_dx
             uh_y = sky_anchor_pos[2] / b_dx
         else
             uh_x, uh_y = 0.0, 0.0
         end
-        forces[sky_anchor_gid][1] += Fx_top * uh_x
-        forces[sky_anchor_gid][2] += Fx_top * uh_y
-        forces[sky_anchor_gid][3] += Fz_top
+        F_back_h = T_back * sin(atan(b_dx, b_dz))    # horizontal share
+        forces[sky_anchor_gid][1] -= F_back_h * uh_x
+        forces[sky_anchor_gid][2] -= F_back_h * uh_y
+        forces[sky_anchor_gid][3] -= T_back * cos(atan(b_dx, b_dz))
     end
 end
 
