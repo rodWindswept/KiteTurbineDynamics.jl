@@ -10,6 +10,77 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-16] Gate on the measured peak demand; keep the realisability margin at 1.05
+
+**Context.** `TRPT_REALISABILITY_TENSION_MARGIN = 1.05` converts the torsional
+cliff (`sin Δα ≤ 1`) into a floor on `T_top`. At the 5 kW seed the floor is
+**1388.18 N** against **1321.31 N** at margin 1.00, a ratio of 1.0506, which is
+exactly the margin (`ACTIVE.md`, item 2; 2026-09-15 handover §7). The margin
+therefore buys about **+5 % torque**, and the wind-up transient — the rotor
+descending as the twist engages, torque and power rising — consumes about that
+much again (2026-09-10 workstream §3). The open question left by the 2026-09-15
+session was whether to raise the margin a few percent to cover the transient, or
+to gate on the measured peak demand.
+
+**Decided (Rod, 2026-09-16).** **Gate on the measured peak demand. Do not raise
+1.05 to cover the wind-up transient.** Raise the margin only against a specific
+gust case that needs static headroom, and then record what it is sized against.
+
+**Why.** The two quantities are different in kind. The margin is a
+**steady-state** realisability criterion, derived from the geometric crossing
+limit `sin Δα = 1`. The wind-up is a **transient demand** in the same family as
+the limit cycle. Raising the margin to absorb a transient makes the design
+preload carry gust duty, which `ACTIVE.md` already records as the trap: raising
+the margin scales every component, including the lifter stack. A margin chosen
+from a measurement also yields the documented basis the record demands. A margin
+chosen because the cycle looked alarming yields nothing reusable.
+
+**Consequence.** The measurement must record the peak demand, not the mean. See
+the companion entry below, which fixes when the gate window starts and therefore
+what "peak" means.
+
+**Status:** active.
+
+---
+
+## [2026-09-16] The wobble gate window starts after a relax; the wind-up is therefore a separate measurement
+
+**Context.** The 5 kW campaign exit gate requires a wobble evaluation at the
+design operating point over **≥ 120 s** with only justified damping active, with
+two acceptance items: no line above the ground ring goes slack, and FoS at the
+cycle peak. The 2026-09-10 workstream records the wind-up as "the first ~100 s of
+every run", carrying a sustained ≈ 10 s, ± 25 % limit cycle on the
+transmission-ring load.
+
+**Decided (Rod, 2026-09-16).** **The 120 s window starts after a relax, not at
+cold start.** In evaluator terms `cfg.relax_s` must be long enough to discard the
+wind-up, with `cfg.window_s ≥ 120`. `objective_evaluator.jl:696` samples only once
+`t_cum > cfg.relax_s`, so a short relax measures the startup transient instead of
+the operating point. `relax_s` defaults to 10.0, so it must rise to at least the
+wind-up duration.
+
+**Consequence — the gate does not cover the wind-up, and that gap must not be
+left implicit.** A post-relax window contains the limit cycle but not the
+spin-up. Therefore:
+
+1. The gate's "cycle peak" is a **steady-state** peak. The peak demand that
+   governs the margin entry above is that cycle peak.
+2. The **wind-up peak demand** becomes its own measurement at the same operating
+   point, and it belongs to the **back-line handling cases** (design point,
+   hoisting, break containment, high-wind handling), where it joins the same
+   class of transient as recovery and hoisting. Before this ruling it had no
+   owner.
+3. Report the wind-up peak and the steady cycle peak **separately**.
+
+**Instrument caveat.** Measure the peak with `lin_damp = 0.05` and with it
+disabled. If the peak moves materially, the gate is instrument-dependent until
+the `lin_damp` question in `docs/agents/instrument-trust-log.md` is settled, which
+is still OPEN.
+
+**Status:** active.
+
+---
+
 ## [2026-09-15] The bridle cone is fixed by the ring's resting radius, not by expansion or blade state
 
 **Context.** `bridle_bearing_offset` was called from three sites in

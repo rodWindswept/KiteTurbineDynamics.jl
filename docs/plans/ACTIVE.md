@@ -5,7 +5,7 @@ lists inside every handover (including the 2026-09-14 handover §12). One item p
 session. If a session's work is not the current item, it is a detour and should
 be named as one.
 
-Last updated: 2026-09-15.
+Last updated: 2026-09-16.
 
 ## Standing rules
 
@@ -50,119 +50,79 @@ can transmit its rated torque at all.
 (unrealisable, −124.5 N); slack → 1344.7 N (realisable, +70.2 N)
 (`scratch/design_chain_preload.jl`, 2026-09-13 §4).
 
-**Work in order:**
+**Status (2026-09-16).** Two of the four pieces are done and committed. What
+remains is the **bungee remit** and one rigging figure. Do not re-do 1 or 2.
 
-1. **The offset question is settled — no re-run needed.** `physics-topology.md:139`
-   records the derived offset as 3.99 m at a 2.4 m top-ring radius, which is the
-   5 kW seed. So the 09-13 taut/slack numbers were taken at the correct geometry
-   for this seed and they stand. (The placeholder defect was applying 3.99 m to
-   *every* genome regardless of radius, not the value itself.)
-2. **Model the back line as taut at the design point** and re-derive the load
-   split from that. Expect the realisability floor to bind. If it does, the fix is
-   a design change — see the lever below — not a return to slack.
-3. **Rigging (Rod, 2026-09-15):** the back line is soft through the climb and
-   engages at the target elevation (normally 30°). So at the design point it is
-   taut but only just engaged, carrying residual tension. The code models a rigid
-   catenary (`EA_back_line = 314 kN`, `parameters.jl:384`) with no elastic. The
-   band length/stiffness that sets how sharply it engages is **still to be
-   specified**; carry it as a parameter if no field figure exists.
-4. **Design lever if the floor binds: lower the lift-line elevation, not the
-   margin.** 70° → 65° raises the downwind force at the sky anchor by 28% for a
-   3.7% rise in lifter tension, and most of it lands on the shallow cyan line —
-   which is what raises bearing preload. Raising the margin 1.5 → 1.6 costs 6.7%
-   on every component and scales the lifter stack. See `DECISIONS.md`
-   [2026-09-15]. Magnitudes to be re-run on the seed geometry before use.
+1. ✅ **The offset question is settled, and the derivation has landed in source.**
+   `2d6233b` removed `BEARING_OFFSET_DESIGN` and made `bridle_bearing_offset(r_top)
+   = r_top / tand(31°)` (`initialization.jl:21`) the single authority. Every call
+   site derives it (`:191`, `:950`, `:1483`, `ring_forces.jl:524`). `7fa059e`
+   removed the two `effective_radii` branches, so the cone reads the topmost ring's
+   resting radius everywhere. The remaining `effective_radii` reads are the
+   expansion-rotor paths, which is correct. The change preserves behaviour today.
+   Construction now closes the latent trap, so convention no longer holds it shut.
+2. ✅ **The taut load split is measured where the ruling needs it.** The closed form
+   reproduces the 09-13 record exactly (taut `T_top` 1149.8 N vs 1150.0, slack
+   1344.7 N exact), so the numbers stand at this seed's geometry. At the design
+   point (lift 70°, taut) `demand` = **1.147** against a 0.9524 target. That is past
+   the torsional cliff, not inside a thin margin. The floor computes to
+   **1388.2 N**, not the record's 1274.47 N. Two criteria and a stale ring mass
+   explain that 8.9 % gap (§7 of the 2026-09-15 handover), so quote 1388.2 N.
+3. ▶ **The bungee remit: model the back line as the field rigging describes it,
+   then re-derive the load split from that. OPEN.** `grep -i bungee src/` is empty.
+   The code is still a single rigid catenary (`ring_forces.jl:510`), the sky-anchor
+   solve is still **slack** (`initialization.jl:958`), and the docstring still says
+   the line "is slack at the design point" (`:1053-1058`). The ruling contradicts
+   all three. This is the dominant gap. Until the taut bi-linear element is in
+   `src/`, no evaluator run reflects the ruling.
+4. ○ **Rigging engagement (Rod, 2026-09-15):** soft through the climb, engaging at
+   the target elevation (normally 30°), so at the design point it is taut but only
+   just engaged. The band length and stiffness that set how sharply it engages are
+   **still to be specified**. Carry them as parameters if no field figure exists.
+   This is the one figure the bungee remit needs from outside the model.
 
-**Done when:** the load split is re-derived with a taut back line at the derived
-offset, and the back-line model used matches the field rigging.
+**Bungee remit - definition of done.** The back line becomes a **bi-linear,
+tension-only** element. It stays soft over 0-80 cm of extension at
+`k_soft = T_design / 0.8` N/m (8 bungee sections in series, each carrying full line
+tension and stretched 10 cm at design, so **no extra field data is needed**). It
+goes hard beyond that at the Dyneema `EA ≈ 707 kN` (3 mm). At the design point the
+line sits at its **hard length**: bungee fully extended, Dyneema taut. That is
+exactly "taut at design". The 80 cm of soft travel is what lets it slack
+off-design. The design tension is itself the unknown in the solve, so this is a
+**self-consistent iterate**. It cannot close before the static solver lands
+(item 3), because the iterate needs an equilibrium the settle does not yet produce.
+`EA_back_line` (`parameters.jl:384`, currently 314 kN labelled 2 mm) must carry the
+3 mm 5 kW figure.
 
-**Back-line spec (Rod, 2026-09-15).** 5 kW system: **3 mm Dyneema**, with **8
-sections of 4 mm bungee sewn in series** along the line. Each bungee rests at
-30 cm and is at **40 cm at full backline tension**; as tension drops those 8
-sections contract and shorten the line by up to **8 × 10 cm = 80 cm**. The
-bungees do **not** add extension to the Dyneema — the Dyneema does not stretch.
-The bungee is the only compliance, and it is what gives the line 80 cm of soft
-travel. At full tension the Dyneema is taut and the line is at its hard length.
+The probe measures `k_soft` = **439 N/m** over the 0.80 m off-design, consistent
+with `T_design / 0.8`.
 
-- Model: a **bi-linear, tension-only element**. Soft over 0–80 cm of extension,
-  stiffness `k_soft = T_design / 0.8` N/m — 8 springs in series, each carrying the
-  full line tension and stretched 10 cm at design, so **no extra field data is
-  needed**. Hard beyond that at the Dyneema's `EA ≈ 707 kN`. The design tension is
-  itself the unknown being solved, so this is a self-consistent iterate.
-- The code today is a **single rigid catenary** (`ring_forces.jl:510`) with no
-  bungee. `EA_back_line` is 314 kN (labelled 2 mm) at Daisy scale and 700 kN
-  (3 mm) in the 10 kW set (`parameters.jl:384`, `:305`); the 5 kW value must be
-  set to the 3 mm figure.
-- Consequence for the ruling: at the design point the line sits at its **hard
-  length** — bungee fully extended, Dyneema taut — which is exactly "taut at
-  design". The 80 cm of soft travel is what lets it slack off-design, and the
-  hard length is what caps the sky anchor's altitude.
+**Elevation is the expensive lever, not the clean one.** Lowering the lift-line
+elevation raises the downwind force at the sky anchor by `cot(el)`, and that force
+lands on the shallow cyan line as bearing preload. 70° → 65° is +28 % for a 3.7 %
+rise in lifter tension, and the cyan line reaches ≈ 2.31× its 70° duty at 50°. The
+2026-09-15 record treated this as the lever of first resort. The measured floor and
+mass numbers below reverse that ranking. **Pull `target_Lr` first. Hold the
+elevation lever for the case where L/r alone cannot clear.** See `DECISIONS.md`
+[2026-09-15]. Magnitudes to be re-run on the seed geometry before use.
 
-**Latent trap in the bearing offset — fix before banked main rotors land.**
-`bridle_bearing_offset` is called from three places (all `initialization.jl`):
-construction at `:191` from `ring_radii[end]`; design preload at `:946` and settle
-placement at `:1478` from `sys.effective_radii[hub_ri]`. They agree **today only
-because `effective_radii` is a copy of the nominal radii** (`:270`) and the
-per-step expansion update was removed on 2026-06-14 (`ring_forces.jl:335`). The
-re-seed candidate carries a **banked main rotor**, at which point `effective_radii`
-must start differing from the nominal radius and the bearing node will be built at
-one offset while the preload and settle assume another. Single-source the offset.
+**The elevation band is a budget increase, not a clean fix.** `T_cyan` rises and
+`T_back` falls monotonically as the angle drops. The floor clears at el ≤ 50° and
+the back line slacks at el ≤ 30°, so the valid band is **31°-50°, 19° wide**. At 65°
+the design is still 185 N short, so "slightly" is not enough. The change is ≈ 20°.
+However, that clearing is paid for, not solved. At 50° `T_lift` is 563 N against
+459 N (**+23 %**) and the cyan line carries **≈ 2.31×** its 70° downwind duty. The
+**clean** fix is `target_Lr` (x[3]), which scales the realisability floor **exactly**
+with the chord: 1388 / 1050 / 840 N at L/r 2.0 / 1.5 / 1.2. At 6 lines, L/r 2.0 →
+1.5 moves airborne mass 29.31 → 29.22 kg (**−0.3 %**), because the closed-form
+sizing makes each ring lighter as spans shorten. **So pull L/r. Treat the band as
+the fallback if L/r alone ever proves insufficient.** The two have never been
+measured together. Ring count rises 8 → 12 → 17, which is +50 % rings at L/r 1.5.
 
-**Result (2026-09-15, `scratch/taut_backline_angle_sweep.jl`).** The closed form
-reproduces the 09-13 record exactly (taut `T_top` 1149.8 N vs 1150.0; slack
-1344.7 N exact), so the chain is validated before any of it is read.
-
-- **At the design point (lift 70°, back line taut): `T_top` = 1149.8 N and
-  `demand` = 1.147** — past the torsional cliff (1.0), not merely inside a thin
-  margin.
-- **The floor at this operating point computes to 1388.2 N, not the 1274.47 N on
-  the record** — an 8.9 % discrepancy, unresolved. It moves the clearing angle, so
-  trace it before quoting either number.
-- **The lift-angle lever works, monotonically and asserted:** `T_cyan` rises and
-  `T_back` falls as the angle drops.
-- **Clears the floor at el ≤ 50°; the back line slacks at el ≤ 30° → valid band
-  31°–50°, 19° wide.** At 65° it is still 185 N short, so "slightly" is not
-  enough — the change is ≈ 20°.
-- Cost at 50°: `T_lift` 563 N vs 459 N (+23 %); `T_back` 228 N vs 351 N.
-- **Off-design (bungee):** `k_soft` = 439 N/m over the 0.80 m; at design the line
-  sits exactly at its hard stop, so any lift reduction moves it into the soft
-  region. It stays taut down to ≈ 0 lift, then goes slack and the cyan line alone
-  carries.
-- **Two preload levers that do not touch the lift line: `n_lines` (x[4]) and
-  `target_Lr` (x[3]).** Measured on a 3 × 3 grid
-  (`scratch/levers_linecount_ringdensity.jl`). Worst realisability demand at the
-  design preload, ✓ = at or under the 0.952 target:
-
-  | lines \ L/r | 2.0 | 1.5 | 1.2 |
-  |---|---|---|---|
-  | 6 | 1.147 ✗ | **0.871 ✓** | 0.697 ✓ |
-  | 8 | 1.005 ✗ | 0.764 ✓ | 0.612 ✓ |
-  | 10 | 0.890 ✓ | 0.677 ✓ | 0.543 ✓ |
-
-  **Both analytical predictions made for this were wrong, and the measurements
-  say why:**
-  - **`target_Lr` is the clean lever.** The floor scales *exactly* with it —
-    1388 / 1050 / 840 N at L/r 2.0 / 1.5 / 1.2, ratios 0.757 and 0.605 against
-    0.75 and 0.60. Demand ∝ chord, as the formula gives. Lower L/r ⇒ more rings
-    (n_seg 8 → 12 → 17) ⇒ shorter chords.
-  - **`n_lines` does NOT reduce demand at fixed tension.** The floor sits at
-    ~1389 N at 6, 8 *and* 10 lines. The bridle-term cancellation is algebraically
-    real, but whatever cancels the `1/n_lines` in `τ_max` cancels it too.
-    `n_lines` helps only *indirectly*, by changing the design: `T_thrust` rises
-    1067.6 → 1205.6 → 1340.4 N and the lifter is sized to a heavier machine, so
-    `T_top` rises 1149.8 → 1316.4 → 1489.5 N.
-  - **Cleanest single fix: 6 lines at L/r 1.5 clears** — no extra lines, no
-    lift-angle change, no extra back-line duty. Cost: n_seg 8 → 12, i.e. 50 %
-    more rings (mass, drag, complexity).
-  - **`T_thrust` moves with `n_lines` because the *rotor* does**: `R_rotor`
-    3.6572 → 3.7679 → 3.8704 m and `A_sw` 31.14 → 34.27 → 37.22 m². Mechanism
-    identified; a design coupling, not a physics bug.
-  - **MASS — and it reverses the ranking.** L/r is near mass-neutral: at 6 lines,
-    L/r 2.0 → 1.5 moves airborne mass 29.31 → 29.22 kg (**−0.3 %**) for a floor of
-    1388 → 1050 N. `n_lines` is the expensive one: 6 → 10 lines is 29.31 → 64.48 kg
-    (**+120 %**) for a floor of 1388 → 1390 N. **So pull L/r, not lines.** (Ring
-    mass +3.4 % for +50 % rings — the closed-form sizing makes each ring lighter
-    as spans shorten.) Via `scratch/diag_floor_mass_and_thrust.jl`.
+`n_lines` (x[4]) is **not** a lever for demand. The floor sits at ~1389 N at 6, 8
+and 10 lines. It changes the design indirectly, because the *rotor* grows with it
+(`T_thrust` 1067.6 → 1205.6 → 1340.4 N). It is also the expensive axis: 6 → 10
+lines is 29.31 → 64.48 kg (**+120 %**). Detail: 2026-09-15 handover §7.
 
 **Realisability floor — the 1388 vs 1274 N question is RESOLVED.**
 `docs/plans/2026-09-11-settle-ode-coherence.md` §2.4.1 holds **T_top ≥ 1274.47 N**
@@ -174,9 +134,29 @@ the code uses **3.903 N** (`p.m_ring = 0.7958 kg` against the plan's implied
 ≈ 3.18 kg; ring mass moved during the mass-model audit). Two criteria and a stale
 ring mass, **not a contradiction**.
 
-**Still open for Rod:** the 5 % margin absorbs only ≈ +5 % torque, and the wind-up
-transient (rotor descending as the twist engages, power and torque rising) eats
-exactly that margin. Raise the margin, or gate on measured peak `demand`.
+**Ruling (2026-09-16): gate on the measured peak demand. Do not raise 1.05 to cover
+the transient.** The margin and the wind-up transient are different quantities at
+different phases. The margin is a *steady-state* realisability criterion
+(`sin Δα ≤ 1`), not a transient allowance. The measurement also supplies the basis
+that the margin must be documented against. Details in the wobble-gate section
+below.
+
+**Back-line spec (Rod, 2026-09-15).** 5 kW system: **3 mm Dyneema**, with **8
+sections of 4 mm bungee sewn in series**. Each bungee rests at 30 cm and sits at
+**40 cm at full backline tension**. As tension drops, those sections contract and
+shorten the line by up to **8 × 10 cm = 80 cm**. The bungees do **not** add
+extension to the Dyneema, which does not stretch. The bungee is the only
+compliance. At full tension the line is at its hard length.
+
+**Measured** (`scratch/taut_backline_angle_sweep.jl`). The lift-angle lever works
+monotonically (asserted). Off-design the line stays taut down to ≈ 0 lift, then
+goes slack and the cyan line alone carries.
+
+**Files (2026-09-16).** `ring_forces.jl:510` (rigid catenary, no bungee),
+`initialization.jl:958` (sky-anchor solve still slack),
+`initialization.jl:1053-1058` (docstring says "slack at the design point"),
+`parameters.jl:384` (`EA_back_line` still 314 kN, labelled 2 mm). All four must
+change together. A partial edit leaves the ruling in the docs and not in the code.
 
 ### 3. Finish the static equilibrium solver (dynamic relaxation)
 
@@ -280,34 +260,64 @@ cone, TRPT — which is the trade this item exists to size.
 All four before a campaign launch:
 
 - [ ] Acceptance suite 8/8, **unrebased**.
-- [ ] Back-line contradiction resolved (item 2).
-- [ ] Load split re-derived (item 2).
+- [ ] Back-line contradiction resolved (item 2). **Ruled 2026-09-16: the line is
+  taut and bi-linear. The code change is the bungee remit.**
+- [ ] Load split re-derived (item 2). **Not yet. This needs the taut element in
+  `src/` and the static solver.**
 - [ ] V2 / V3 / V6 promoted.
 
-Plus the wobble gate, evaluated at the design operating point over ≥ 120 s with
-only justified damping active:
+Plus the wobble gate, evaluated at the design operating point over **≥ 120 s with
+only justified damping active**:
 
 - [ ] No line above the ground ring goes slack through the excursion.
 - [ ] FoS ≥ target at the **cycle peak**, not the mean.
+
+**Gate window (ruled 2026-09-16): the 120 s starts after a relax, not at cold
+start.** In evaluator terms that means `cfg.relax_s` long enough to discard the
+wind-up, with `cfg.window_s ≥ 120`. `objective_evaluator.jl:696` only samples once
+`t_cum > cfg.relax_s`, so a short relax measures the startup transient instead of
+the operating point. `relax_s` defaults to 10.0 and the wind-up runs ~100 s, so the
+relax must rise to at least that.
+
+**Consequence: the gate does not cover the wind-up, and that is now a separate
+measurement.** The workstream (`docs/plans/2026-09-10-shaft-windup-workstream.md`)
+records the wind-up as "the first ~100 s of every run", with a sustained ≈ 10 s,
+± 25 % limit cycle on the transmission-ring load. A post-relax window sees the
+cycle but not the spin-up, so:
+
+- Record the wind-up peak demand and the steady cycle peak **separately**, at the
+  same operating point.
+- The wind-up peak belongs to the **back-line handling cases** in Concerns, since
+  it is the same class of transient as hoisting and recovery. It must not be left
+  with no owner.
+- The "transient" in the wind-up question then means spin-up specifically.
+
+This is also the measurement basis for the margin ruling in item 2. Measure the
+peak with `lin_damp = 0.05` and with it disabled. If the peak moves materially, the
+gate is instrument-dependent until the `lin_damp` question in
+`docs/agents/instrument-trust-log.md` is settled.
 
 ## Noted for later (Rod, 2026-09-15)
 
 Levers against gust demand on the torsional margin, roughly cheapest first:
 
 1. **Raise `TRPT_REALISABILITY_TENSION_MARGIN` a few percent** above 1.05. Cheap
-   and immediate; it buys torque headroom directly, at the cost of preload and
+   and immediate. It buys torque headroom directly, at the cost of preload and
    therefore lifter tension. Document the chosen margin and what it is sized
-   against.
-2. **A generation governing routine** — back the torque demand off when the
+   against. **Superseded for the wind-up transient (2026-09-16): gate on the
+   measured peak instead. This lever stays available if a *gust* case needs static
+   headroom.**
+2. **A generation governing routine** - back the torque demand off when the
    transient asks for more twist than the shaft can deliver, rather than relying
    on a static margin.
-3. **Backline release / rotor tilting** — let the machine tilt or pay the back
+3. **Backline release / rotor tilting** - let the machine tilt or pay the back
    line out to shed the transient instead of absorbing it.
 
-4. **Realisability margin vs gust transient** — aspirational, further down the
-   road: record the torque margin a gust actually consumes. The 5 % steady margin
-   does not cover the wind-up transient (rotor descending as the twist engages,
-   torque rising). Cross-logged in `docs/lift/README.md`.
+4. **Realisability margin vs gust transient** - aspirational, further down the
+   road: record the torque margin a gust actually consumes. **Partly ruled
+   2026-09-16: measure the peak first, then set the margin on it.** The 5 % steady
+   margin does not cover the wind-up transient (rotor descending as the twist
+   engages, torque rising). Cross-logged in `docs/lift/README.md`.
 
 5. **STE style debt.** `.githooks/pre-commit` runs `ste-lint.py --fail-above 2.0`
    on staged markdown. `DECISIONS.md` sits at **3.34 violations / 100 words**
