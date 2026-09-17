@@ -19,7 +19,21 @@ include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
 
 const KW = 5.0
 const PW = KW * 1000.0
-const DT = 4e-5
+
+# NO hardcoded dt (2026-09-16, Rod).  `stable_dt_for_system` is a function of the
+# BUILT system's shortest sub-segment, so a fixed literal pins a test to one
+# geometry.  The canonical 4e-5 is calibrated for 0.5 m sub-segments; the 5 kW
+# taper builds ~0.29 m sub-segments, for which it returns ~2.04e-5 — the old
+# literal was 1.96x over the linear stability limit for exactly the machine this
+# test measures.  The existing precedent is test_rope_break.jl and
+# test_jtheta_no_reversal.jl, and ode_gate_v13.jl:132 carries the same note.
+# Smaller dt is MORE trustworthy for a drag-alignment assertion, not heavier: it
+# reduces truncation error.  Stability is asserted where resolution is the
+# subject (the rope-resolution guard), not here.
+
+"""Steps for a `t_seconds` window at this system's stable dt."""
+stable_dt(sys, p) = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+window_steps(sys, p, t_seconds) = round(Int, t_seconds / stable_dt(sys, p))
 
 # Corrected 5 kW seed (compute_seeds.jl: 3 rotors, r_hub 2.4 m, n_lines 6,
 # Do 0.08, blade_scale 0.7) — the OLD hardcoded SEED5 (pre-Daisy r_hub 0.914)
@@ -106,7 +120,8 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
             lift_device=lift, wind_fn=wind_fn, n_op=30_000)
         ω_settle = hub_omega(u, sys)
         sys.k_mppt_ref[] = K_MPPT_5KW_HONEST
-        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 20.0/DT), DT;
+        dt = stable_dt(sys, pc)
+        run_canonical_sim!(u, sys, pc, wind_fn, window_steps(sys, pc, 20.0), dt;
             lift_device=lift, lin_damp=0.05)
         ω_final = hub_omega(u, sys)
         gap = abs(ω_settle - ω_final) / ω_settle
@@ -144,7 +159,8 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
         u = settle_to_operational_state(sys, copy(u0), pc, 60.0;
             lift_device=lift, wind_fn=wind_fn, n_op=30_000)
         sys.k_mppt_ref[] = K_MPPT_5KW_HONEST
-        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 20.0/DT), DT;
+        dt = stable_dt(sys, pc)
+        run_canonical_sim!(u, sys, pc, wind_fn, window_steps(sys, pc, 20.0), dt;
             lift_device=lift, lin_damp=0.05)
         ωf = hub_omega(u, sys)
         Pf = sys.k_mppt_ref[] * ωf^3 / 1000.0

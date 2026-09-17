@@ -15,6 +15,7 @@ using KiteTurbineDynamics
 @testset "KiteTurbineDynamics" begin
     include("test_aerodynamics.jl")
     include("test_back_line_element.jl")
+    include("test_dt_guard.jl")
     include("test_bem_unified.jl")
     include("test_blade_geometry.jl")
     include("test_blade_mass_law.jl")

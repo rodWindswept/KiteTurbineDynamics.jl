@@ -14,8 +14,10 @@
 
     # Let's run a short pitch depower simulation for all 3 sequence options
     # Sized to 30,000 steps (1.2 s) to exceed the 1.0 s absolute delay of Seq 2 and 3
-    n_steps = 30000
-    dt = 4e-5
+    # dt DERIVED from the built system (2026-09-16, Rod), never a literal.  The
+    # window must still exceed the 1.0 s absolute delay of Seq 2 and 3.
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+    n_steps = round(Int, 1.2 / dt)
     
     println("  testing Sequence 1 (Stall -> Lift)...")
     u1 = copy(u_start)

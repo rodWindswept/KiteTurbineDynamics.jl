@@ -21,8 +21,11 @@ using LinearAlgebra
     # 2 s transient — torsional spring dynamics dominate (rope nodes start at zero-twist).
     # We verify that: (a) aero torque drove the hub, (b) torsional coupling propagated
     # angular momentum to the ground ring (= generator input shaft).
+    # dt DERIVED from the built system (2026-09-16, Rod), never a literal: the
+    # step count follows so the 2 s window is preserved.
+    _dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
     u_final = simulate(sys, u_start, p, wind_fn;
-                       n_steps=50_000, dt=4e-5,
+                       n_steps=round(Int, 2.0 / _dt), dt=_dt,
                        lin_damp=0.05, ang_damp=1.0)
 
     alpha_gnd = u_final[6N + 1]         # ground ring accumulated twist

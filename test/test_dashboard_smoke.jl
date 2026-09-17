@@ -17,10 +17,12 @@
         [p.v_wind_ref * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
     end
 
-    n_steps = 1000
-    dt = 4e-5
-    SAVE_EVERY = 500
-    n_frames = n_steps ÷ SAVE_EVERY
+    # dt DERIVED from the built system (2026-09-16, Rod), never a literal; the
+    # sample interval and step count follow so the window and frame count hold.
+    n_frames = 2
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+    SAVE_EVERY = max(1, round(Int, 0.04 / dt) ÷ n_frames)
+    n_steps = SAVE_EVERY * n_frames
     frames = Vector{Vector{Float64}}(undef, n_frames)
     times  = Vector{Float64}(undef, n_frames)
 

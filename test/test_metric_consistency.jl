@@ -18,10 +18,16 @@ using Statistics
         [p.v_wind_ref * (z / p.h_ref)^(1.0/7.0), 0.0, 0.0]
     end
 
-    n_steps = 1000
-    dt = 4e-5
-    SAVE_EVERY = 200
-    n_frames = n_steps ÷ SAVE_EVERY
+    # dt is DERIVED from the built system, never a literal (2026-09-16, Rod):
+    # `stable_dt_for_system` scales with the shortest TRPT sub-segment, so a fixed
+    # 4e-5 pins this test to one geometry and was 1.96x over the stability limit
+    # for the 5 kW taper.  The frame COUNT and the 0.04 s window are preserved, so
+    # the sample interval and step count follow from the stable dt.
+    n_frames = 5
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+    n_steps = round(Int, 0.04 / dt)
+    SAVE_EVERY = max(1, n_steps ÷ n_frames)
+    n_steps = SAVE_EVERY * n_frames
     frames = Vector{Vector{Float64}}(undef, n_frames)
     times  = Vector{Float64}(undef, n_frames)
 
