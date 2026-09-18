@@ -112,7 +112,16 @@ function evaluate_ramp(
     init_geometry!(ctrl, sys, pc)
 
     # ── Ramp loop: chunked ODE with update_ramp! between chunks ──────────
-    chunk_steps = round(Int, RAMP_CHUNK_S / V11_DT)
+    # dt is DERIVED from the built system (2026-09-16, Rod), NOT the raw V11_DT
+    # constant.  `stable_dt_for_system` scales with the shortest TRPT sub-segment
+    # and the 5 kW taper returns ~2.04e-5 against V11_DT = 4e-5, a factor 1.96
+    # over the linear stability limit.  The window path (objective_evaluator.jl)
+    # already derives it; this path did not, so ramp traces could integrate at an
+    # unstable step.  Same defect class as the test-suite dt fault (commit
+    # ae864a6).  All the window/chunk step counts below are scaled by this value,
+    # so the simulated chunk and window durations are preserved.
+    dt = stable_dt_for_system(sys, pc)
+    chunk_steps = round(Int, RAMP_CHUNK_S / dt)
     holding_reached = false
     ramp_chunks_used = 0
     t_cum = 0.0
@@ -120,7 +129,7 @@ function evaluate_ramp(
     for chunk in 1:RAMP_MAX_CHUNKS
         try
             run_canonical_sim!(
-                u, sys, pc, wf, chunk_steps, V11_DT;
+                u, sys, pc, wf, chunk_steps, dt;
                 lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
             )
         catch e
@@ -134,7 +143,7 @@ function evaluate_ramp(
         min_fos_val = min_ring_fos(u, sys, pc)
         collapse_margin = min_collapse_margin(u, sys, ctrl)
 
-        update_ramp!(ctrl, sys, sf, V11_DT;
+        update_ramp!(ctrl, sys, sf, dt;
             min_fos=min_fos_val, collapse_margin_deg=collapse_margin)
 
         if ctrl.state === HOLDING
@@ -144,8 +153,8 @@ function evaluate_ramp(
     end
 
     # ── Scoring window (ramp continues) ───────────────────────────────────
-    window_n = round(Int, RAMP_WINDOW_S / V11_DT)
-    sample_interval = round(Int, 1.0 / V11_DT)
+    window_n = round(Int, RAMP_WINDOW_S / dt)
+    sample_interval = round(Int, 1.0 / dt)
 
     P_samples = Float64[]
     fos_samples = Float64[]
@@ -158,7 +167,7 @@ function evaluate_ramp(
 
     try
         run_canonical_sim!(
-            u, sys, pc, wf, window_n, V11_DT;
+            u, sys, pc, wf, window_n, dt;
             lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke,
             callback=(uc, tc, s) -> begin
                 trace_callback !== nothing && trace_callback(uc, tc, s, trace_ctx)
@@ -187,7 +196,7 @@ function evaluate_ramp(
                     sf2 = capture_frame(uc, sys, pc, tc, wf, lift_dev)
                     min_fos2 = min_ring_fos(uc, sys, pc)
                     cm2 = min_collapse_margin(uc, sys, ctrl)
-                    update_ramp!(ctrl, sys, sf2, V11_DT;
+                    update_ramp!(ctrl, sys, sf2, dt;
                         min_fos=min_fos2, collapse_margin_deg=cm2)
                 end
             end
