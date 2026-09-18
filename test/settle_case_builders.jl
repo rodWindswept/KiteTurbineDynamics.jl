@@ -32,9 +32,15 @@ function params_5kw_188()
 end
 
 # `nothing` for a gene keeps the seed's own value (the campaign seed).
-function build_case(n_lines, rotor_count)
-    p = params_5kw_188()
-    x = seed_genome(5.0)
+#
+# `genome` pins the case to a FROZEN genome instead of the campaign seed.  A test
+# whose assertions reproduce particular MEASURED numbers must pin its own genome:
+# otherwise re-seeding the campaign silently invalidates it (2026-09-16, the L/r
+# 1.5 re-seed moved test_trpt_realisability.jl's binding segment from 4 to 8).
+# Tests that are genuinely about the campaign seed keep the default.
+function build_case(n_lines, rotor_count; genome=nothing, p=params_5kw_188())
+    x = genome === nothing ? seed_genome(5.0) : copy(genome)
+    length(x) == TRPT_V10_DIM || error("pinned genome must be $TRPT_V10_DIM-D, got $(length(x))")
     n_lines === nothing || (x[4] = Float64(n_lines))
     rotor_count === nothing || (x[6] = rotor_count)
     x[4] = Float64(round(Int, clamp(x[4], 3, 16)))

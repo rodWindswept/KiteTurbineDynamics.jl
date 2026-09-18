@@ -80,7 +80,18 @@ function seed_genome(kw)
     # clears the geometrically-correct ground clearance with margin.
     g[1] = 2.4                          # r_hub
     g[2] = DAISY.r_bottom * geom_scale    # r_bottom
-    g[3] = 2.0                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
+    g[3] = 1.5                            # target_Lr: ring spacing ratio (Tulloch L/r ≥ 1)
+                                          # RE-SEED 2026-09-16 (Rod): 2.0 -> 1.5.  At 2.0 the
+                                          # seed sits exactly ON the torsional realisability floor
+                                          # (measured demand 0.9524 against the 1/1.05 = 0.9524
+                                          # target, zero headroom), so the taut back line's tension
+                                          # drop at design tips it past the cliff and the evaluator
+                                          # reports twist_crossed = true.  L/r scales the floor
+                                          # exactly with the chord: measured demand 1.147 -> 0.871
+                                          # at 6 lines, for -0.3 % airborne mass (29.31 -> 29.22 kg),
+                                          # because the closed-form ring sizing makes each ring
+                                          # lighter as spans shorten.  Cost: 8 -> 12 rings.  See
+                                          # docs/plans/ACTIVE.md item 2 and DECISIONS.md [2026-09-15].
     g[4] = seed_n_lines(kw)               # 6 at ≤5 kW (Daisy-proven)
     g[5] = 0.0                            # density_profile: uniform
     g[6] = 3.0                           # rotor count (rotor_count_mode): 3 co-axial top rotors.

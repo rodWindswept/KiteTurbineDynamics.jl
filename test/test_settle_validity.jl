@@ -112,20 +112,32 @@ end
     N, Nr = sys.n_total, sys.n_ring
     hub = sys.rotor.node_id
 
-    # n_op raised from 2_000 to 50_000 (Rod, 2026-09-16).  These are highly
-    # elastic devices, and 2_000 steps is NOT a converged settle once the back
-    # line carries load: measured on this build, the cyan line is still slack at
-    # 20_000 steps (T_cyan = 0.0) and engages only by ~30_000.  The bearing and
-    # sky axial residuals are exactly 0.0 at and above 50_000.  Measured
-    # (scratch/diag_ea_and_convergence.jl):
+    # n_op raised 2_000 -> 50_000 -> 300_000 (Rod, 2026-09-16).  These are highly
+    # elastic devices and the horizon is NOT universal: it must be long enough for
+    # the build under test.  Two measurements, on two different campaign seeds:
+    #
+    #   L/r 2.0 seed (12 rings), scratch/diag_ea_and_convergence.jl
     #     n_op    T_cyan   hub res  bearing res  sky res
-    #     2_000     0.0     -49.1      -214.2    -1925.2
-    #    20_000     0.0    -248.8       -14.6      360.3
-    #    30_000   224.9     -40.3         0.0       -0.1
-    #    50_000   220.2     -45.0         0.0        0.0
-    #    100_000  217.3     -47.9         0.0        0.0
+    #     2_000      0.0     -49.1      -214.2    -1925.2
+    #     20_000     0.0    -248.8       -14.6      360.3
+    #     30_000   224.9     -40.3         0.0       -0.1
+    #     50_000   220.2     -45.0         0.0        0.0
+    #     100_000  217.3     -47.9         0.0        0.0
+    #
+    #   L/r 1.5 seed (13 rings), scratch/tmp_hub_conv.jl
+    #     n_op     hub res  bearing res  sky res
+    #     50_000     66.9       0.003      0.036
+    #     150_000    52.33      0.001      0.018
+    #     300_000    43.54      0.0        0.003
+    #     600_000    41.71      0.0        0.0
+    #
+    # The 13-ring seed equilibrates more slowly and its hub residual has a floor
+    # near 42 N, so 50_000 (where the 12-ring seed reads 45.0 N) reads 66.9 N here
+    # and fails the 50 N bar.  300_000 gives real margin (43.5 N) at triple the
+    # runtime.  The residual is the handoff imbalance the static solver exists to
+    # remove; this horizon is a workaround, not a fix.
     u = settle_to_operational_state(sys, u0, p, 60.0;
-        lift_device=lift, wind_fn=wf, n_op=50_000)
+        lift_device=lift, wind_fn=wf, n_op=300_000)
     sd = normalize(pos(u, hub))
 
     # ── V1 rotation present and uniform (the PTO needs rotation) ──────────────

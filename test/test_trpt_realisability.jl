@@ -45,6 +45,23 @@ const OMEGA_SEED = 12.983466
 const OMEGA_4L3R = 13.399535
 const OMEGA_6L1R = 11.398798
 
+# ── FROZEN GENOME (2026-09-16, Rod) ─────────────────────────────────────────
+# This file reproduces INDEPENDENTLY MEASURED numbers (the 2026-09-13 handover's
+# table: binding segment 4, demand[1] ~ 0.974, demand[4] ~ 0.983, twist 79.4°,
+# τ_carry[7] ~ 329.9, τ_carry[8] ~ 238.2).  Those are properties of ONE design
+# point, so the test must PIN that design rather than inherit the campaign seed.
+#
+# It previously called `build_case(nothing, nothing)`, which tracks
+# `seed_genome(5.0)`.  The 2026-09-16 L/r 2.0 -> 1.5 re-seed then moved the
+# binding segment from 4 to 8 and every pinned value with it, turning 13 green
+# assertions red for a change that IMPROVED the design (demand 0.974 -> 0.7357,
+# twist 79.4° -> 47.7°).  That was a test-coupling defect, not a regression.
+#
+# This is `seed_genome(5.0)` as measured at the L/r 2.0 campaign seed.  It is a
+# FIXTURE: do not update it when the campaign seed moves.  Values are written out
+# literally so a change in `params_daisy`/`DAISY` scaling cannot silently move it.
+const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
+
 @testset "TRPT realisability — the matched-place solve must refuse the cliff" begin
     # ── A. the seam reproduces the handover's table (margin DISABLED) ────────
     # `realisability_margin=1.0` turns off the preload floor enforcement, so this
@@ -52,7 +69,7 @@ const OMEGA_6L1R = 11.398798
     # cross-validated table describes.  Reproducing it is the check that the seam
     # is behaviour-preserving, not a re-derivation.  (scoped: the constant is a
     # documented design constraint, so the enforced result differs by design.)
-    sys, u0, pc, lift, wf = build_case(nothing, nothing)
+    sys, u0, pc, lift, wf = build_case(nothing, nothing; genome=SEED_LR20)
     F_ax = design_axial_preload(
         sys, pc, lift, u0; omega_eq=OMEGA_SEED, realisability_margin=1.0
     )
@@ -95,7 +112,7 @@ const OMEGA_6L1R = 11.398798
 
     # ── B. the seam still REFUSES an over-cliff design point ────────────────
     for (nl, rc, ω) in ((4, 3.0, OMEGA_4L3R), (6, 1.0, OMEGA_6L1R))
-        sys2, u02, pc2, lift2, wf2 = build_case(nl, rc)
+        sys2, u02, pc2, lift2, wf2 = build_case(nl, rc; genome=SEED_LR20)
         F2 = design_axial_preload(
             sys2, pc2, lift2, u02; omega_eq=ω, wind_fn=wf2, realisability_margin=1.0
         )
@@ -110,7 +127,7 @@ const OMEGA_6L1R = 11.398798
     # ── C. end-to-end: the preload floor REPAIRS those designs ──────────────
     # Before the margin existed the settle raised on this machine.  With it, the
     # settle succeeds and its placement clears the floor.
-    sys3, u03, pc3, lift3, wf3 = build_case(4, 3.0)
+    sys3, u03, pc3, lift3, wf3 = build_case(4, 3.0; genome=SEED_LR20)
     u3 = settle_to_operational_state(
         sys3, copy(u03), pc3, 60.0; lift_device=lift3, wind_fn=wf3, n_op=2_000
     )
@@ -125,7 +142,7 @@ const OMEGA_6L1R = 11.398798
     # `lift_chain_design` used to substitute 12.983466 — the seed's own ω —
     # whenever `omega_eq <= 0`, which made ω = 0 (a non-rotating rotor) both
     # unrepresentable and silently borrowed another design's speed.
-    sys4, u04, pc4, lift4, _ = build_case(6, 1.0)
+    sys4, u04, pc4, lift4, _ = build_case(6, 1.0; genome=SEED_LR20)
     hub4 = u04[(3 * (sys4.rotor.node_id - 1) + 1):(3 * sys4.rotor.node_id)]
     d0 = KiteTurbineDynamics.lift_chain_design(sys4, pc4, lift4, hub4; omega_eq=0.0)
     dop = KiteTurbineDynamics.lift_chain_design(sys4, pc4, lift4, hub4; omega_eq=OMEGA_6L1R)
