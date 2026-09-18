@@ -280,6 +280,37 @@ cone, TRPT — which is the trade this item exists to size.
 
 ## Concerns
 
+0. **Rope-break detection is a BAY AVERAGE, not a line criterion — and the model
+   already breaks TRPT lines during the settle→run transient (2026-09-16).**
+   Found while diagnosing `test_gate_v13` A5. `trpt_seg_map` (`rope_forces.jl:9`)
+   keys on node-id range only, so every line in a bay accumulates into one slot
+   and the tested strain is the bay **average**: an overloaded line is diluted by
+   its `n_lines−1` neighbours. Measured on the L/r 1.5 seed: per-line peak
+   **0.022492** against a bay average of **0.020144** (bay 2, line 3) — a 12 %
+   understatement. Fix written and parked at
+   `scratch/perline_break_detection.patch`: per-line `(bay, line)` accumulation,
+   single-line snap, plus bridle and cyan monitoring (they are not TRPT bays, so
+   `for s in 1:(Nr-1)` never watched them and a severed lift chain could not
+   disqualify an evaluation).
+
+   **It cannot land yet, and the reason is a finding in its own right.** With the
+   per-line criterion the model breaks healthy machines during the settle→run
+   transient: `test_metric_consistency.jl` and `test_dashboard_smoke.jl` exit
+   early (`UndefRefError` on unfilled frames) because a line reaches
+   **0.0373** (bay 2 line 3) and **0.0354** (bay 1 line 3), over the 0.035 limit.
+   This is real within the model — it is the settle handing over a frame that is
+   not in force balance, and the rings relaxing from the pinned design geometry
+   into the free-deforming one. The OLD bay-averaged criterion was **masking it**.
+   So the correct order is: per-line detection is right, but it must land *with*
+   the static solver (or a documented transient allowance), not before it. Fast
+   suite with the patch: 2122 pass / 2 errored. Without it: green.
+
+   Also: A5's fixture is re-tuned separately. Its 0.25 mm tether gives a built
+   0.456 mm line whose peak per-line strain is **0.0225**, under the 3.5 % limit,
+   so that machine legitimately does not break; the old pass relied on the
+   unphysical wind-up transient removed on 2026-09-11. Re-calibrate to ~0.19-0.20
+   mm requested and pin a frozen genome.
+
 1. **Back-line handling demand and safety.** Rod, 2026-09-15; one of the main
    reasons the **Shell Gamechanger 10 kW automation project was closed**. The back
    line has two jobs beyond carrying the design-point tension:
