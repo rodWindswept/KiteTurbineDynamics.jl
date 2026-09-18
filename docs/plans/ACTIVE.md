@@ -131,10 +131,18 @@ T_bridle 67.6 N).
 
 Effect on the suites:
 
-- **Acceptance 4/8 -> 5/8.** `test_evaluator_v13` flips FAIL -> PASS.
-  `test_gate_v13` (rope-break latch), `test_settle_lowk_honest` (low-k reject) and
-  `test_physics_path_ode` (seed healthy under DEFAULT physics) still fail, and
-  none of the three is seed-related. So the re-seed buys **one of the four**.
+- **Acceptance 4/8 -> 5/8.** `test_evaluator_v13` flips FAIL -> PASS. So the
+  re-seed buys **one of the four**. The three that remain have THREE DIFFERENT
+  causes and no single fix (corrected 2026-09-16; they are not one problem):
+
+  | test | failure | what it is |
+  |---|---|---|
+  | `test_gate_v13` | A5: a broken-line machine must hard-reject | the gate is **not latching a rope break**. A safety-detector defect, not power or realisability |
+  | `test_settle_lowk_honest` | `status = reject`, `P_end = 0.0` | the low-k path rejects |
+  | `test_physics_path_ode` | P1: seed not healthy under DEFAULT physics | the default-physics path |
+
+  The last two are plausibly realisability/settle related; **A5 is not**, and I
+  previously conflated all three. Each needs its own diagnosis.
 - **Fast suite stays 2139 pass / 0 fail / 1 broken.**
 
 Landing it green needed two fixes that are worth keeping in mind:
