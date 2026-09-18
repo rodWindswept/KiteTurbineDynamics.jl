@@ -30,6 +30,14 @@
 # numeric literal, or passed as a bare numeric literal to run_canonical_sim!.
 # It does not police unrelated numbers, and it does not require any particular
 # dt value — only that the value comes from `stable_dt_for_system`.
+#
+# SCOPE: `test/` only.  `scripts/` is deliberately NOT scanned.  It holds
+# exploratory one-off diagnostics for which pinning one geometry is often the
+# point, so a blanket rule there would produce noise rather than safety.  The
+# scripts that feed published or campaign results are audited by hand and fixed
+# as found: `scripts/record_ramp_traces.jl` was converted on 2026-09-16.  The
+# PRODUCTION paths are the ones that must never drift, and both now derive the
+# step (`objective_evaluator.jl:567`, `objective_evaluator_ramp.jl`).
 
 using Test
 

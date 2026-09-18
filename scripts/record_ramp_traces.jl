@@ -23,8 +23,8 @@ OUT_DIR = joinpath(@__DIR__, "results", "ramp_traces")
 mkpath(OUT_DIR)
 
 # ── Simulation parameters ─────────────────────────────────────────────────
-const DT         = 4e-5           # ODE step (s)
 const SAVE_EVERY = 500            # frames every ~0.02s
+const DT_REF     = 4e-5           # ODE step the SAVE_EVERY spacing was calibrated at
 const T_SPINUP   = 5.0            # gravity + operational settle before recording
 const T_SIM      = 60.0           # recorded duration (s)
 const T_RAMP_WIND = 150.0         # wind ramp duration (s)
@@ -110,17 +110,25 @@ function run_scenario(
     println("done")
 
     # ── Simulation loop via run_canonical_sim! (same integrator as dashboard) ──
+    # dt is DERIVED from the built system (2026-09-16, Rod), not a fixed literal.
+    # `stable_dt_for_system` scales with the shortest TRPT sub-segment, so a fixed
+    # 4e-5 pins these traces to one geometry and is not stable for a finer mesh
+    # (see the dt fault in docs/agents/instrument-trust-log.md).  SAVE_EVERY is
+    # rescaled so the frame spacing in SECONDS is preserved at its calibrated
+    # value, which is what the published traces assume.
     df = empty_trace_df()
-    n_steps = round(Int, t_sim / DT)
-    frame_dt = DT * SAVE_EVERY
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
+    save_every = max(1, round(Int, SAVE_EVERY * (DT_REF / dt)))
+    n_steps = round(Int, t_sim / dt)
+    frame_dt = dt * save_every
     t0w = time()
     last_report = Ref(0.0)
 
-    run_canonical_sim!(u, sys, p, wind_fn, n_steps, DT;
+    run_canonical_sim!(u, sys, p, wind_fn, n_steps, dt;
         lift_device = lift_device,
         lin_damp = 0.05,   # matches dashboard's LIN_DAMP
         callback = (u_curr, t_curr, step) -> begin
-            if step % SAVE_EVERY == 0
+            if step % save_every == 0
                 sf = capture_frame(u_curr, sys, p, t_curr, wind_fn, lift_device;
                     brake_engaged=sys.brake_engaged[])
                 N = sys.n_total; Nr = sys.n_ring
@@ -181,7 +189,8 @@ function main()
     println("═"^72)
     println("Soft-Ramp k_mppt Trace Recording")
     println("═"^72)
-    println("T_sim = $(T_SIM)s, DT = $(DT)s, save every $(SAVE_EVERY) steps (~$(round(DT*SAVE_EVERY*1000, digits=1))ms)")
+    println("T_sim = $(T_SIM)s; each case derives its own dt via stable_dt_for_system, ",
+            "with the frame spacing held at ~$(round(DT_REF * SAVE_EVERY * 1000, digits=1))ms")
     println()
 
     # ── 1. Canonical 5-line 10 kW ─────────────────────────────────────────
