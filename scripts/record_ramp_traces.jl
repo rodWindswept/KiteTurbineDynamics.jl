@@ -127,6 +127,7 @@ function run_scenario(
     run_canonical_sim!(u, sys, p, wind_fn, n_steps, dt;
         lift_device = lift_device,
         lin_damp = 0.05,   # matches dashboard's LIN_DAMP
+        breaks_enabled = true,   # operational run: a broken line must be detectable
         callback = (u_curr, t_curr, step) -> begin
             if step % save_every == 0
                 sf = capture_frame(u_curr, sys, p, t_curr, wind_fn, lift_device;

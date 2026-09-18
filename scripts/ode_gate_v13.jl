@@ -171,7 +171,20 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
 
     nchunks = round(Int, window_s / 5.0)
     for chunk in 1:nchunks
-        run_canonical_sim!(u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt; lift_device=lift, lin_damp=0.05)
+        # breaks_enabled=true ONLY on the measurement window (Rod, 2026-09-16).
+        # The 10 s relax above runs with detection OFF so a start-up transient
+        # cannot trip it; the window is the steady state actually scored, and the
+        # gate MUST be able to reject a machine whose line breaks there.
+        #
+        # This gate calls `run_canonical_sim!` DIRECTLY, not through
+        # `objective_evaluator`.  When that function's `breaks_enabled` default
+        # became `false` (commit ea78651) the gate silently lost break detection
+        # entirely: a broken-line machine would have read `ok`.  Do not rely on
+        # an evaluator default here.
+        run_canonical_sim!(
+            u, sys, pc, wind_fn, round(Int, 5.0 / dt), dt;
+            lift_device=lift, lin_damp=0.05, breaks_enabled=true
+        )
         t = chunk * 5.0
         w_hub = u[6N + Nr + hub_ri]
         w_gnd = u[6N + Nr + gnd_ri]

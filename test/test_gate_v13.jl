@@ -76,11 +76,23 @@ println("=== A5: a broken-line machine must hard-reject (gate bug 1, 2026-09-04)
 # broke during the window could still read ok.  Drive a machine whose lines
 # GENUINELY break — an under-strength tether (low EA ⇒ the const-tension lift
 # over-strains it) — and assert the gate rejects on the latch.
-# Tuning (probe 2026-09-10, seed genome): p2.tether_diameter 0.0005 → healthy
-# (ok=true, P_gen 6.19 kW); 0.00025 → line breaks, gate rejects.  mass_scale
-# multiplies the diameter by sqrt(5/1.5) ≈ 1.83 on the way to the built machine.
-p_thin = override_params(params_daisy(); tether_diameter=0.00025)
-rb = gate_design(seed_genome(KW); L=L18, KW=KW, p2=p_thin)
+# FROZEN FIXTURE (2026-09-16, Rod).  This case must NOT track the campaign seed:
+# the diameter below is TUNED, so re-seeding silently detunes the test.  That is
+# exactly what happened on the L/r 2.0 -> 1.5 re-seed (commit 04a31bf): at the
+# old 0.00025 the built 0.456 mm line peaked at 0.0225 per-line strain, under the
+# 3.5 % limit, so it stopped breaking and A5's premise evaporated — leaving the
+# gate-bug guard silently unexercised.  Values are literal so a change in
+# `params_daisy`/DAISY scaling cannot move them.
+const SEED_LR15_FROZEN = [2.4, 0.5751086853804245, 1.5, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
+#
+# Diameter re-calibrated on this fixture (measured sweep, 5 s window, break
+# detection ON): 0.00025 -> line_broken=false, ok=true (premise fails);
+# 0.00020 -> true/false; 0.00016 -> true/false; 0.00012 -> true/false.
+# 0.00016 is chosen for margin inside that band.  mass_scale multiplies it by
+# sqrt(5/1.5) ≈ 1.826, so the BUILT diameter is ~0.292 mm (EA ≈ 6.7 kN), at which
+# the operational tension reaches 3.5 % strain and the line genuinely snaps.
+p_thin = override_params(params_daisy(); tether_diameter=0.00016)
+rb = gate_design(SEED_LR15_FROZEN; L=L18, KW=KW, p2=p_thin)
 println("  thin-tether gate: ok=", rb.ok, "  line_broken=", rb.line_broken,
         "  P_gen_final=", round(rb.P_gen_final, digits=2), " kW",
         "  ω_gnd=", round(rb.w_gnd_final, digits=2),
@@ -88,6 +100,10 @@ println("  thin-tether gate: ok=", rb.ok, "  line_broken=", rb.line_broken,
 check("A5: the broken machine's power/ω/clearance alone would pass the gate",
       rb.P_gen_final >= MIN_P_GEN_KW && rb.w_gnd_final > MIN_W_GND &&
       rb.clearance >= MIN_CLEARANCE)
+# PRECONDITION FIRST.  If the fixture stops breaking, fail HERE with a clear
+# message instead of letting the checks below pass vacuously against a machine
+# that never broke — the silent detune that hid this guard before.
+check("A5: the line ACTUALLY broke (fixture precondition)", rb.line_broken)
 check("A5: the rope-break latch is set", rb.line_broken)
 check("A5: the gate rejects the broken-line machine", !rb.ok)
 

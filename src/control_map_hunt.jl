@@ -105,7 +105,7 @@ function run_capture(
     local collapse_margin=Inf; local T_max=0.0
 
     run_canonical_sim!(u, sys, p, wf, n_steps, DT;
-        lift_device=lift_device, lin_damp=0.05,
+        lift_device=lift_device, lin_damp=0.05, breaks_enabled=true,
         callback=(u_curr, t_curr, step) -> begin
             if step == n_steps
                 ef = capture_extended(u_curr, sys, p, t_curr, wf, lift_device;
@@ -162,7 +162,7 @@ function run_verify_timeseries(
     slices = VerifySlice[]
 
     run_canonical_sim!(u, sys, p, wf, n_steps, DT;
-        lift_device=lift_device, lin_damp=0.05,
+        lift_device=lift_device, lin_damp=0.05, breaks_enabled=true,
         callback=(u_curr, t_curr, step) -> begin
             # 10 Hz scalar capture (cheap)
             if step % TRACE_EVERY == 0 || step == n_steps
