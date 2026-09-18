@@ -130,7 +130,8 @@ function evaluate_ramp(
         try
             run_canonical_sim!(
                 u, sys, pc, wf, chunk_steps, dt;
-                lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
+                lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke,
+                breaks_enabled=true
             )
         catch e
             @warn "Ramp chunk $chunk failed" exception = e
@@ -169,6 +170,7 @@ function evaluate_ramp(
         run_canonical_sim!(
             u, sys, pc, wf, window_n, dt;
             lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke,
+            breaks_enabled=true,
             callback=(uc, tc, s) -> begin
                 trace_callback !== nothing && trace_callback(uc, tc, s, trace_ctx)
 

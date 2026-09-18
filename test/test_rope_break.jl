@@ -71,7 +71,8 @@ function run_r1()
     sys.k_mppt_ref[] = K_MPPT_5KW_HONEST   # campaign k for settle AND run
     u = settle_to_operational_state(sys, copy(u0), pc, 60.0; lift_device=lift, wind_fn=wind_fn1, n_op=30_000)
     # one real-operation step from the healthy settle: no break expected
-    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05)
+    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05,
+        breaks_enabled=true)
     broke_healthy = sys.any_broken[]
     # Stretch the top TRPT line WELL past the 3.5% break threshold by displacing
     # the hub ring axially by 20% of a segment length (2026-09-04: the corrected
@@ -80,7 +81,8 @@ function run_r1()
     gid_hub = sys.ring_ids[sys.n_ring]
     L_seg = pc.tether_length / (sys.n_ring - 1)
     u[(3*(gid_hub-1)+1):(3*gid_hub)] .+= 0.20 * L_seg .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05)
+    run_canonical_sim!(u, sys, pc, wind_fn1, 1, 4e-5; lift_device=lift, lin_damp=0.05,
+        breaks_enabled=true)
     broke_stretched = sys.any_broken[]
     return broke_healthy, broke_stretched
 end
@@ -113,7 +115,8 @@ function run_r2()
     wmax = 0.0
     Tmax = 0.0
     for chunk in 1:6
-        run_canonical_sim!(u2, sys2, pc2, wind_fn2, round(Int, 5.0 / 4e-5), 4e-5; lift_device=lift, lin_damp=0.05)
+        run_canonical_sim!(u2, sys2, pc2, wind_fn2, round(Int, 5.0 / 4e-5), 4e-5; lift_device=lift, lin_damp=0.05,
+            breaks_enabled=true)
         wmax = max(wmax, maximum(abs, @view u2[(6N2 + Nr2 + 1):(6N2 + 2Nr2)]))
         Tmax = max(Tmax, get_max_rope_tension(u2, sys2, pc2)[1])
         sys2.any_broken[] && break
@@ -144,10 +147,12 @@ function run_r3()
     # ~2.76 MN on the settle→run transition (false break).
     dt3 = KiteTurbineDynamics.stable_dt_for_system(sys3, pc3)
     for _ in 1:2
-        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05)
+        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05,
+            breaks_enabled=true)
     end
     for chunk in 1:6
-        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05)
+        run_canonical_sim!(u3, sys3, pc3, wind_fn3, round(Int, 5.0 / dt3), dt3; lift_device=lift, lin_damp=0.05,
+            breaks_enabled=true)
     end
     return u3[6N3 + Nr3 + 1], sys3.any_broken[]
 end

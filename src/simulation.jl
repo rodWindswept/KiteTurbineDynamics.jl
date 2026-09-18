@@ -78,12 +78,19 @@ function run_canonical_sim!(
     lin_damp::Float64=0.05,
     callback::Union{Nothing, Function}=nothing,
     spoke::Union{Nothing, KiteTurbineDynamics.SpokeParams}=nothing,
+    # Rope-break detection (Rod, 2026-09-16).  Operational callers that measure a
+    # STEADY state enable it and must follow the established protocol of a relax
+    # phase between settle and measurement (`objective_evaluator.jl`,
+    # `ode_gate_v13.jl`; DECISIONS.md [2026-09-04]): rope break is an operational
+    # LIMIT STATE, not a start-up impulse detector.  Short startup/smoke windows
+    # that do not test breaking leave it off, so a frame-zero velocity transient
+    # cannot abort them.
+    breaks_enabled::Bool=false,
 )
     N = sys.n_total
     Nr = sys.n_ring
-    # Real operation: enable rope-break detection from here on (option B).
-    # The settle's exploratory transients run with breaks disabled.
-    sys.breaks_enabled[] = true
+    # Break detection is gated on the caller's protocol, not forced.
+    sys.breaks_enabled[] = breaks_enabled
     du = zeros(Float64, length(u))
     t = 0.0
     ode_params = if lift_device === nothing

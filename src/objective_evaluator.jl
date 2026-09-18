@@ -658,7 +658,8 @@ function evaluate_windowed(
                 kick_steps = round(Int, cfg.kickstart_s / dt)
                 run_canonical_sim!(
                     u_settled, sys, pc, wf, kick_steps, dt;
-                    lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke
+                    lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke,
+                    breaks_enabled=true
                 )
             end
         catch e
@@ -757,7 +758,8 @@ function evaluate_windowed(
     try
         run_canonical_sim!(
             u_settled, sys, pc, wf, total_n, dt;
-            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback
+            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback,
+            breaks_enabled=true
         )
     catch e
         @warn "Window sim failed" exception = e

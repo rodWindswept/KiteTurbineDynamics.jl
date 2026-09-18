@@ -242,8 +242,20 @@ function compute_rope_forces!(
     seg_tau_a = zeros(Nr)
     seg_tau_b = zeros(Nr)
     seg_tension = zeros(Nr)
-    seg_pathlen = zeros(Nr)
-    seg_restlen = zeros(Nr)
+    # Rope break is a LINE criterion, not a bay criterion (2026-09-16, Rod).
+    # `trpt_seg_map` keys on node-id range only, so every line in a bay used to
+    # accumulate into ONE slot and the tested strain was the bay AVERAGE: an
+    # overloaded line diluted by its n_lines-1 neighbours. Preallocated.
+    line_pathlen = zeros(Nr, p.n_lines)
+    line_restlen = zeros(Nr, p.n_lines)
+    # Bridles and the cyan line are not TRPT chains (`trpt_seg_map` returns 0),
+    # so the old `for s in 1:(Nr-1)` loop never monitored them and a severed lift
+    # chain could not disqualify an evaluation. Per-bridle, NOT summed: summing
+    # the cone would repeat the same averaging defect removed from the TRPT lines.
+    bridle_pathlen = zeros(p.n_lines)
+    bridle_restlen = zeros(p.n_lines)
+    cyan_pathlen = 0.0
+    cyan_restlen = 0.0
 
     for (si, ss) in enumerate(sys.sub_segs)
         is_bridle = ss.end_a.node_id == sys.bearing_id
@@ -351,8 +363,21 @@ function compute_rope_forces!(
         end
 
         if seg > 0
-            seg_pathlen[seg] += current_len
-            seg_restlen[seg] += ss.length_0
+            lj = ss.end_a.line_idx
+            if 1 <= seg <= (Nr - 1) && 1 <= lj <= p.n_lines
+                line_pathlen[seg, lj] += current_len
+                line_restlen[seg, lj] += ss.length_0
+            end
+        elseif is_bridle
+            lj = ss.end_a.line_idx
+            if 1 <= lj <= p.n_lines
+                bridle_pathlen[lj] += current_len
+                bridle_restlen[lj] += ss.length_0
+            end
+        elseif (nid_a == sys.bearing_id && nid_b == sys.sky_anchor_id) ||
+               (nid_a == sys.sky_anchor_id && nid_b == sys.bearing_id)
+            cyan_pathlen += current_len
+            cyan_restlen += ss.length_0
         end
     end
 
@@ -368,10 +393,21 @@ function compute_rope_forces!(
         # cannot trip it. Detection only during real operation. Runs BEFORE
         # the torque-clamp continue so zero-torque segments still break.
         if sys.breaks_enabled[]
-            line_strain = (seg_pathlen[s] - seg_restlen[s]) / max(seg_restlen[s], 1e-9)
-            if line_strain > ROPE_BREAK_STRAIN
+            for lj in 1:p.n_lines
+                rl = line_restlen[s, lj]
+                rl > 1e-9 || continue
+                (line_pathlen[s, lj] - rl) / rl > ROPE_BREAK_STRAIN || continue
+                # Only the overloaded LINE snaps (Rod, 2026-09-16). Physical
+                # Dyneema tethers are independent members, and the `any_broken`
+                # early exit already disqualifies the whole evaluation at the
+                # break instant, so deleting the neighbours is neither physical
+                # nor necessary. Match on (bay, line) only: TRPT sub-segments span
+                # ring -> rope nodes, so "both ends are rings" is NEVER true
+                # (rope_forces.jl:6) and that filter would make this dead code.
                 for si2 in 1:length(sys.sub_segs)
-                    sys.sub_seg_trpt_seg[si2] == s && (sys.broken_lines[si2] = true)
+                    sys.sub_segs[si2].end_a.line_idx == lj || continue
+                    sys.sub_seg_trpt_seg[si2] == s || continue
+                    sys.broken_lines[si2] = true
                 end
                 sys.any_broken[] = true
             end
@@ -399,5 +435,23 @@ function compute_rope_forces!(
         tau_tr = clamp(0.5 * (ts_a - ts_b), -tau_sat, tau_sat)
         torques[s] += tau_tr
         torques[s+1] -= tau_tr
+    end
+
+    # Bridle cone and cyan line: the same 3.5% geometric limit. Ultimate breaking
+    # strain is an intensive material property of Dyneema SK99, independent of
+    # line length, diameter or EA, so a 2 mm bridle and a 3 mm cyan fail at the
+    # same strain as a transmission line. Healthy margins are large (cyan ~350 N
+    # on ~500 kN EA is ~0.07% strain), so this trips only on a real lift-chain
+    # overload or detachment. Each is a single sub-segment per line, so the
+    # accumulated path length IS that line's length.
+    if sys.breaks_enabled[]
+        for lj in 1:p.n_lines
+            rl = bridle_restlen[lj]
+            rl > 1e-9 || continue
+            (bridle_pathlen[lj] - rl) / rl > ROPE_BREAK_STRAIN && (sys.any_broken[] = true)
+        end
+        if cyan_restlen > 1e-9 && (cyan_pathlen - cyan_restlen) / cyan_restlen > ROPE_BREAK_STRAIN
+            sys.any_broken[] = true
+        end
     end
 end
