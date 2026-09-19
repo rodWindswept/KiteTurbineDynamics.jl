@@ -68,13 +68,17 @@ remains is the **bungee remit** and one rigging figure. Do not re-do 1 or 2.
    the torsional cliff, not inside a thin margin. The floor computes to
    **1388.2 N**, not the record's 1274.47 N. Two criteria and a stale ring mass
    explain that 8.9 % gap (§7 of the 2026-09-15 handover), so quote 1388.2 N.
-3. ▶ **The bungee remit: model the back line as the field rigging describes it,
-   then re-derive the load split from that. OPEN.** `grep -i bungee src/` is empty.
-   The code is still a single rigid catenary (`ring_forces.jl:510`), the sky-anchor
-   solve is still **slack** (`initialization.jl:958`), and the docstring still says
-   the line "is slack at the design point" (`:1053-1058`). The ruling contradicts
-   all three. This is the dominant gap. Until the taut bi-linear element is in
-   `src/`, no evaluator run reflects the ruling.
+3. ✅ **The bungee ELEMENT has landed (`21cf73b`, 2026-09-16).** The back line is
+   a bi-linear, tension-only element: `back_line_tension` at
+   `initialization.jl:28-92`, wired into the force path at `ring_forces.jl:544`.
+   `EA_back_line` carries the 3 mm Dyneema figure (700 kN,
+   `parameters.jl:305`). **The remaining half of this item is the LOAD SPLIT.**
+   The sky-anchor balance in `lift_chain_design` still solves the back line as
+   SLACK (`initialization.jl:1026`), now explicitly marked DEFERRED with its
+   reason (`initialization.jl:1125-1133`). It cannot be closed in closed form:
+   the taut balance needs the sky anchor's actual settled position, which is what
+   the static solver (item 3) exists to produce. Until that lands, treat the load
+   split as UNRESOLVED and the quoted tensions as provisional.
 4. ○ **Rigging engagement (Rod, 2026-09-15):** soft through the climb, engaging at
    the target elevation (normally 30°), so at the design point it is taut but only
    just engaged. The band length and stiffness that set how sharply it engages are
@@ -216,11 +220,14 @@ compliance. At full tension the line is at its hard length.
 monotonically (asserted). Off-design the line stays taut down to ≈ 0 lift, then
 goes slack and the cyan line alone carries.
 
-**Files (2026-09-16).** `ring_forces.jl:510` (rigid catenary, no bungee),
-`initialization.jl:958` (sky-anchor solve still slack),
-`initialization.jl:1053-1058` (docstring says "slack at the design point"),
-`parameters.jl:384` (`EA_back_line` still 314 kN, labelled 2 mm). All four must
-change together. A partial edit leaves the ruling in the docs and not in the code.
+**Files — state at 2026-09-16 (CORRECTED; the earlier list was stale).**
+`ring_forces.jl:544` — bi-linear bungee element, **LANDED** (`21cf73b`).
+`parameters.jl:305` — `EA_back_line` = **700 kN**, the 3 mm figure,
+**LANDED**; `:389` keeps 314 kN as the correct 1.5 kW base, because `mass_scale`
+multiplies it. `initialization.jl:1026` — sky-anchor balance **STILL SLACK**,
+now explicitly DEFERRED. `initialization.jl:1125-1133` — the docstring records
+the deferral instead of asserting slack is correct. So the element half is DONE;
+the balance half is blocked on item 3, which is why item 3 comes next.
 
 ### 3. Finish the static equilibrium solver (dynamic relaxation)
 
