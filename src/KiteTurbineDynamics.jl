@@ -121,6 +121,7 @@ export M_BLADE_REF_KG   # unified blade-mass law reference (2026-08-22)
 # Closed-form beam sizing (R7, 2026-09-10): the load-derived replacement for the
 # four free beam genes.
 export size_beams_closed_form, BeamSizing, solve_ring_Do, HELIX_LOAD_FACTOR,
+    MIN_RING_DO_M, SIZING_FOS_MARGIN,
     tube_wall_thickness, ring_beam_mass, knuckle_mass_at_ring
 
 # TRPT v2: enriched axial-profile family + 12-DoF search space (Phase A of cartography)

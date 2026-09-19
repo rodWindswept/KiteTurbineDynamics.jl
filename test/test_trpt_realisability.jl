@@ -32,6 +32,15 @@
 # The campaign seed is realisable but was TIGHT — the handover's table puts the
 # binding segment at Δα ≈ 79.4°, 10.6° from the 90° collapse.  That margin is
 # asserted here as an angle, not as "+N N above a floor".
+#
+# RE-BASELINED 2026-09-16 (second time).  The SIZING MODEL moved, not the genome:
+# `HELIX_LOAD_FACTOR` 0.32 -> 1.2 (the 0.32 was a stale pre-re-seed calibration)
+# and `MIN_RING_DO_M` = 10 mm.  The tubes are now thicker, so ring mass, the
+# lifter floor and every tension-derived number moved with them.  The pins below
+# are re-measured on this fixture.  The design IMPROVED on every axis: demand[4]
+# 0.983 -> 0.9531, binding twist 79.4° -> 72.99°, cliff margin 15° -> 17.01°,
+# τ_carry[8] 238.2 -> 235.35.  As in the 2026-09-16 re-seed re-baseline above,
+# this is a recorded improvement, NOT a regression.
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
@@ -80,21 +89,22 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     @test all(r.demand .>= 0.0)
     @test maximum(r.demand) < 1.0                  # realisable at the design point
     @test argmax(r.demand) == 4                    # binding segment (handover §5)
-    @test r.demand[1] ≈ 0.974 atol = 5e-3
-    @test r.demand[4] ≈ 0.983 atol = 5e-3
-    @test rad2deg(asin(r.demand[4])) ≈ 79.4 atol = 0.5
+    @test r.demand[1] ≈ 0.9416 atol = 5e-3
+    @test r.demand[4] ≈ 0.9531 atol = 5e-3
+    @test rad2deg(asin(r.demand[4])) ≈ 72.99 atol = 0.5
     # Demand falls going up the shaft because each rotor injects its own torque:
     # segs 1-6 carry the generator load, seg 7 carries it less the ring-7
     # expansion rotor, seg 8 less that again.
     @test r.τ_carry[7] ≈ 329.9 atol = 2.0
-    @test r.τ_carry[8] ≈ 238.2 atol = 2.0
-    @test r.demand[7] ≈ 0.204 atol = 5e-3
-    @test r.demand[8] ≈ 0.148 atol = 5e-3
+    @test r.τ_carry[8] ≈ 235.35 atol = 2.0
+    @test r.demand[7] ≈ 0.1975 atol = 5e-3
+    @test r.demand[8] ≈ 0.1421 atol = 5e-3
     # The margin is a DESIGN CONSTRAINT to widen, and on the unmargined design it
     # is tight: state it as an angle.
     margin_deg = 90.0 - rad2deg(asin(maximum(r.demand)))
     @test margin_deg > 0.0
-    @test margin_deg < 15.0
+    @test margin_deg ≈ 17.01 atol = 0.1     # pinned (re-baselined 2026-09-16)
+    @test margin_deg < 20.0                 # still tight against the cliff
 
     # ── A2. the SHIPPED design clears the floor by the stated margin ─────────
     m = KiteTurbineDynamics.TRPT_REALISABILITY_TENSION_MARGIN

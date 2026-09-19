@@ -14,9 +14,14 @@
 #     FoS floor, and the corrected ground-first load build accumulates line
 #     tension downward (each rotor's thrust lands on its own ring; the legacy
 #     `gi = ri + 1` off-by-one shifted it one ring toward the hub).
-#  C. The kink + helix load model reproduces the settled-ODE load structure:
-#     a constant-radius transmission cylinder has equal N per ring, and the
-#     cone-top kink dominates the ring above it.
+#  C. The kink + helix load model.  Guard C pins the closed form's OWN
+#     structure (a flat helix term on a constant-tension cylinder gives equal N
+#     per ring).  It is NOT a reproduction of the settled-ODE load structure:
+#     measured 2026-09-16, the FEA's ring axial force DECAYS roughly linearly
+#     along the cylinder (N·den/T_line 1.186 -> 0.866 over rings 2-8), because
+#     the axial force accumulates downward.  The equality in the testset below
+#     remains a true property of the model; the model is a conservative
+#     ENVELOPE of the ODE.  See scratch/diag_helix_calibration.jl.
 
 using Test, KiteTurbineDynamics
 
@@ -50,9 +55,29 @@ function cfg_5kw(; min_wall_m=2e-3, fos_hard=2.5)
                            t_over_D=0.055)
 end
 
-@testset "helix load factor is the measured value (R7)" begin
-    @test HELIX_LOAD_FACTOR ≈ 0.32 atol=1e-12
-    @test HELIX_LOAD_FACTOR < OPT_DESIGN_LOAD_FACTOR   # measured < legacy envelope
+@testset "helix load factor is the re-measured envelope (corrected 2026-09-16)" begin
+    # R7 replaced the legacy `OPT_DESIGN_LOAD_FACTOR` envelope (1.2) with a
+    # "measured" 0.32.  That calibration was STALE: it was taken on the
+    # pre-re-seed machine (L/r 2.0, 8 rings) and, per the sizing-margin probe
+    # header, without the full matched twist.  On the current re-seeded machine
+    # (L/r 1.5, 13 rings, matched twist) the FEA reads N_comp / T_line = 1.186 at
+    # the bottom of the transmission cylinder, so 0.32 under-sized every
+    # cylinder ring by up to 3.7x.  The envelope is restored.
+    # See scratch/diag_helix_calibration.jl.
+    @test HELIX_LOAD_FACTOR ≈ OPT_DESIGN_LOAD_FACTOR atol=1e-12
+    @test HELIX_LOAD_FACTOR > 0.32        # the stale value is retracted
+end
+
+@testset "manufacturability floor on the ring tube Do" begin
+    # Without this floor the solve returns ~5.5 mm for a lightly compressed
+    # cylinder ring, where a 2 mm wall is t/D ≈ 0.36 — a wire.  The wall clamp,
+    # not `fos_req`, then set every section, which made SIZING_FOS_MARGIN inert.
+    @test MIN_RING_DO_M ≈ 0.010 atol=1e-12
+    s_floor = size_beams_closed_form(decode_seed(), params_5kw_188(), cfg_5kw())
+    @test all(>=(MIN_RING_DO_M - 1e-12), s_floor.Do_per_ring)
+    # 10 mm on the pinned wall ratio is a real tube, not a solid wire.
+    @test all(i -> tube_wall_thickness(s_floor.Do_per_ring[i], s_floor.t_over_D) /
+                   s_floor.Do_per_ring[i] < 0.25, eachindex(s_floor.Do_per_ring))
 end
 
 @testset "solve_ring_Do — floor, monotonicity, FoS, fos_req" begin

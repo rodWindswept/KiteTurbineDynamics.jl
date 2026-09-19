@@ -30,8 +30,16 @@ include(joinpath(@__DIR__, "..", "scripts", "ode_gate_v13.jl"))
 const KW = 5.0
 const L18 = 18.8
 const X = seed_genome(KW)
-const MARGINS = (1.3, 1.5, 1.7)
+const MARGINS = (1.3, 1.45, 1.5, 1.55, 1.7)
 const WINDOWS = (5.0,)   # 20 s only for the winner, later
+
+# 2026-09-16 RE-SWEEP.  The first sweep (margins 1.3/1.5/1.7 -> FoS
+# 0.609/0.682/0.670, non-monotonic) was INERT: every cylinder ring sat on the
+# 2 mm wall clamp (Do ~5.5 mm, t/D ~0.36 — a wire), so `fos_req` could not move
+# the section.  Two fixes landed: HELIX_LOAD_FACTOR 0.32 -> 1.2 (the stale
+# calibration under-sized the load 3.7x) and MIN_RING_DO_M = 12 mm (no wire
+# sections).  The margin is now expected to be a live lever, so the band around
+# 1.5 — the value the original plan targeted — is resolved finely.
 
 """Build the 5 kW seed with a given sizing margin and the CORRECT tether."""
 function build_with_margin(M)

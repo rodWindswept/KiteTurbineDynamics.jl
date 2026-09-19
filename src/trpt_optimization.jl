@@ -143,16 +143,30 @@ end
 # * F_kink — the taper-transition (kink) force: the radial component of each
 #   adjacent segment's line tension.  Exact geometry, signed: outward where the
 #   line below leans outward (cylinder→cone transition), inward at the cone top.
-# * F_helix — the torque-helix inward force.  Measured on the settled 5 kW seed
-#   (2026-09-10, `scratch/r7_tension_budget.jl`): in the constant-radius
-#   transmission cylinder F_kink = 0 and the FEA beam axial force is
-#   `N_comp / T_line = 0.32` — that ratio IS the helix term.  (The 2026-09-06
-#   `DLF ≈ 0.18` was measured on the n_lines=3 winner, where the same vertex
-#   force is `N·2sin(π/3) / T_line`; the two agree once the polygon factor is
-#   applied.)  Linear in `T_line` at the rated operating point.
+# * F_helix — the torque-helix inward force, `HELIX_LOAD_FACTOR · T_line`.
+#
+#   THE 0.32 CALIBRATION WAS STALE AND IS RETRACTED (2026-09-16).  It was
+#   measured 2026-09-10 on the pre-re-seed machine (L/r 2.0, 8 rings) and, per
+#   the sizing-margin probe header, without the full matched twist.  On the
+#   current re-seeded machine (L/r 1.5, 13 rings, matched twist) the FEA reads
+#   `N_comp / T_line` = **1.186** at the bottom of the transmission cylinder, so
+#   0.32 under-sized every cylinder ring by up to 3.7x.  Measured with
+#   `scratch/diag_helix_calibration.jl` on `SEED_LR15_FROZEN`, which is
+#   byte-identical to `seed_genome(5.0)`.
+#
+#   The value below is the LEGACY ENVELOPE (`OPT_DESIGN_LOAD_FACTOR` = 1.2,
+#   "F_in_per_vertex = DLF × T_line") that R7 replaced with the 0.32.  The
+#   re-measurement VINDICATES the envelope: this closed form's `T_line` (~360 N)
+#   already runs above the FEA's mean segment tension (~232 N), so `1.2·T_line`
+#   envelopes the FEA's worst-sample beam axial force (432 N against 427 N at
+#   ring 2).  This is a deliberate conservative envelope, not a fit: the FEA's
+#   ratio decays ≈ linearly to 0.866 by ring 8, because the ring axial force
+#   ACCUMULATES downward — a local per-ring term cannot reproduce that shape.
+#   A decay profile would save upper-cylinder mass; deferred, the envelope is
+#   the safe choice.
 # * F_centrifugal — outward relief from the ring's own rotating mass; zero at
 #   ω = 0, which is why the (T_peak, ω=0) hub case is the binding one.
-const HELIX_LOAD_FACTOR = 0.32   # F_helix / T_line, measured on the 5 kW seed
+const HELIX_LOAD_FACTOR = 1.2    # F_helix / T_line; re-measured envelope (2026-09-16)
 
 # The static thrust tension under-predicts the settled ODE segment tension by
 # ≈ 15–20 % (ring weight projected on the shaft, ring-plane tilt, and the
@@ -168,7 +182,31 @@ const TENSION_LOAD_MARGIN = 1.2
 # kink) and 2.34 (bending-dominated harvest ring) against a 2.5 floor; the
 # 5 s acceptance window can dip ~15 % below the static FEA reading.  1.3 leaves
 # the windowed FEA at ≥ 2.5 with headroom.
+#
+# RE-OPENED 2026-09-16.  That calibration was made while the helix term was
+# under-sized (HELIX_LOAD_FACTOR = 0.32), so `fos_req` was never the binding
+# constraint and 1.3 was never really exercised.  With the load model corrected
+# the margin becomes a LIVE lever again and must be re-swept against the
+# 5 s (P1) and 20 s (A3) windows.
 const SIZING_FOS_MARGIN = 1.3
+
+# ── Manufacturability floor on the ring tube outer diameter ──────────────────
+# The Euler solve happily returns ~5.5 mm for a lightly compressed ring, because
+# a 2 mm min-wall on a 5.5 mm OD is t/D ≈ 0.36 — a solid wire, not a tube, and
+# not a manufacturable TRPT ring member.  It also made the sizing target INERT:
+# every cylinder ring sat on the wall clamp, so `fos_req` (and therefore
+# `SIZING_FOS_MARGIN`) could not move the section at all.  Measured 2026-09-16:
+# margins 1.3 / 1.5 / 1.7 gave FoS 0.609 / 0.682 / 0.670 — non-monotonic, i.e.
+# noise.  Flooring Do here puts the solve back in a real tube regime.
+#
+# VALUE (measured, `scratch/probe_do_floor_margin.jl`, margin 1.3, both windows):
+#   6 mm -> FoS 2.294 (FAILS the 2.5 floor)   m_air 31.824 kg
+#   8 mm -> FoS 2.521 (0.8 % headroom)        m_air 31.909 kg
+#  10 mm -> FoS 4.164 (5 s AND 20 s)          m_air 32.492 kg   <-- chosen
+#  12 mm -> FoS 5.336 / 5.171                 m_air 33.115 kg
+# 10 mm is the lightest floor with real headroom; 12 mm buys 1.0 more FoS for
+# 0.62 kg.  10 mm on a 2 mm wall is t/D = 0.2 — a genuine tube.
+const MIN_RING_DO_M = 0.010
 
 """
     BeamSizing
@@ -244,6 +282,11 @@ function size_beams_closed_form(
     # re-baselines ring mass and the whole campaign, and that decision needs a
     # measured basis rather than a guess.  Default preserves current behaviour.
     sizing_fos_margin::Float64=SIZING_FOS_MARGIN,
+    # Manufacturability floor on the tube outer diameter.  Exposed for the same
+    # reason as `sizing_fos_margin`: it is global (every ring, every design) and
+    # it BINDS — once the load model was corrected, all seven cylinder rings sat
+    # on this floor — so its value needs a measured basis, not a guess.
+    min_Do_m::Float64=MIN_RING_DO_M,
 )
     design = dec.design
     rotors = dec.rotors
@@ -412,6 +455,16 @@ function size_beams_closed_form(
                     Do_per_ring[i] = max(Do_per_ring[i], spine)
                 end
             end
+        end
+
+        # ── Absolute manufacturability floor on the tube outer diameter ──────
+        # Applied HERE, inside the mass fixed-point pass, so a floored section
+        # feeds back into the lifter tension and the next pass.  Without it the
+        # cylinder rings sit at ~5.5 mm with a 2 mm wall (t/D ≈ 0.36, a wire),
+        # and the wall clamp — not `fos_req` — sets every section, which is what
+        # made SIZING_FOS_MARGIN inert.  See MIN_RING_DO_M.
+        for i in 1:n_rings_tot
+            Do_per_ring[i] = max(Do_per_ring[i], min_Do_m)
         end
     end
 
