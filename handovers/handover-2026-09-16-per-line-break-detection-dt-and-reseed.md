@@ -9,7 +9,8 @@
 > the wall clamp was setting every section. Fixed by widening `HELIX_LOAD_FACTOR`
 > from 0.32 to a 1.2 envelope and setting `MIN_RING_DO_M = 10 mm`, with
 > **`SIZING_FOS_MARGIN` unchanged at 1.3**. Cost: +3.276 kg airborne.
-> **Acceptance is back to 8/8.**
+> **Acceptance is reported back to 8/8** (per that session's record; not
+> independently re-measured here).
 >
 > So: **do not inflate the global FoS margin.** §5's recommendation to sweep it was
 > the wrong branch, and §7's incomplete sweep is moot. The decision rule in §7
@@ -62,7 +63,7 @@ Test state at handover:
 | Fast (50 files) | **2139 pass / 0 fail / 1 broken**, exit 0 |
 | Acceptance (8 files) | **6 pass / 2 fail** — `test_settle_lowk_honest`, `test_physics_path_ode` |
 
-Campaign exit gate needs 8/8 unrebased, so **2 short**.
+Campaign exit gate needs 8/8 unrebased, so **2 short at this point in the session**. Both were subsequently fixed — see the SUPERSEDED banner above; **8/8 is per `8feeb23`'s record, not re-measured by this author.**
 
 ## 3. UNCOMMITTED — read this first
 
