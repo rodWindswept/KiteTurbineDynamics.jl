@@ -10,6 +10,78 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-16] Ring sizing load model was 3.7x low: restore the 1.2 helix envelope and floor the tube Do
+
+**Context.** Two acceptance tests (`test_physics_path_ode` P1, `test_settle_lowk_honest`
+A3) rejected on the windowed FEA FoS floor while power and twist were healthy. The
+plan of record was to raise `SIZING_FOS_MARGIN`, the global constant that scales the
+closed-form Euler sizing target (`fos_hard × margin`). A sweep of the newly exposed
+keyword (`scratch/probe_sizing_margin.jl`) showed that lever was **inert**: margins
+1.3 / 1.5 / 1.7 gave FoS_min **0.609 / 0.682 / 0.670** — non-monotonic, and nowhere
+near the 2.5 floor. Airborne mass was never the binding constraint (+0.70 kg across
+the whole range).
+
+**Diagnosis (measured).** Separating the load and capacity terms
+(`scratch/diag_margin_fos_components.jl`) showed three facts:
+
+- **Capacity ratio exactly 1.000 on every ring.** `P_crit_sizing == P_crit_FEA`
+  (374.6 N against 374.6 N). Both `solve_ring_Do` and the verification FEA use the
+  same `CircularTube` and the same wall authority. `capture_extended` calls
+  `ring_element_analysis` with 6 arguments, so `design === nothing` and the FEA takes
+  the circular branch (`ring_element_analysis.jl:492`). A profile mismatch was
+  considered and **ruled out**.
+- **Load ratio 2.1 to 3.7.** The closed form fed `N_comp = 115.25 N` to every
+  cylinder ring while the FEA's beam axial force ran **427 to 241 N**.
+- **The wall clamp, not `fos_req`, set every section.** Every cylinder ring came back
+  at 5.505 mm with a 2 mm wall, t/D of about 0.36: a solid wire, not a tube.
+
+`HELIX_LOAD_FACTOR = 0.32` was the cause. Its comment records it as measured
+2026-09-10 on the **pre-re-seed** machine (L/r 2.0, 8 rings) and, per the probe
+header, without the full matched twist. On the re-seeded machine (L/r 1.5, 13 rings,
+matched twist, `04a31bf`) the FEA reads `N_comp / T_line` = **1.186** at the bottom
+of the transmission cylinder (`scratch/diag_helix_calibration.jl`, on
+`SEED_LR15_FROZEN`, which is byte-identical to `seed_genome(5.0)`).
+
+**Decided (Rod, 2026-09-16).** Re-calibrate the load model rather than the margin,
+and floor the tube Do.
+
+1. `HELIX_LOAD_FACTOR` **0.32 to 1.2**, the legacy envelope (`OPT_DESIGN_LOAD_FACTOR`,
+   calibrated 2026-04-20) that R7 replaced. The re-measurement vindicates it: this
+   closed form's `T_line` (about 360 N) already runs above the FEA's mean segment
+   tension (about 232 N), so `1.2·T_line` envelopes the FEA's worst-sample axial
+   force (432 N against 427 N).
+2. `MIN_RING_DO_M` = **10 mm**, a manufacturability floor, exposed as a `min_Do_m`
+   keyword. Measured (`scratch/probe_do_floor_margin.jl`, margin 1.3): 6 mm gives FoS
+   2.294 (fails), 8 mm gives 2.521, 10 mm gives **4.164 in both the 5 s and 20 s
+   windows**, 12 mm gives 5.336. 10 mm is the lightest floor with real headroom.
+
+`SIZING_FOS_MARGIN` stays at **1.3**. It needed no change: with the load model
+corrected the floor clears on its own.
+
+**Alternatives considered.** (a) Make the sizing solve use `EllipticalTube`: ruled out
+by measurement, because capacity already matches exactly, so it would raise capacity
+with the load unchanged, choose a *thinner* tube and **lower** the FoS. (b) Fix the
+margin alone: measured inert. (c) A decaying helix profile: the FEA's ratio falls
+about linearly to 0.866 by ring 8 because the axial force **accumulates downward**, a
+shape no local per-ring term reproduces. The flat envelope is conservative; the decay
+is deferred.
+
+**Consequence.** The design is **heavier**: airborne mass 29.216 to 32.492 kg
+(**+3.276 kg, +11 %**) at the 10 mm floor. The earlier sub-1 kg estimate assumed only
+the cylinder rings would grow. In fact the corrected load also grows the upper and hub
+rings (`Do_max` 14.8 to 19.0 mm), and that dominates. The pre-fix 29.216 kg machine was
+not a valid baseline, because it read FoS 0.61 against a 2.5 floor. This is the price
+of validity, not a regression.
+
+**Result.** Acceptance **6/8 to 8/8**, all eight files green. Fast suite **2144 pass /
+0 fail / 1 broken**. `test_trpt_realisability.jl`'s frozen-fixture pins were
+re-baselined once for the new tube mass, and the design **improved** on every axis:
+demand[4] 0.983 to 0.9531, binding twist 79.4° to 72.99°, cliff margin 15° to 17.01°.
+
+**Status:** active.
+
+---
+
 ## [2026-09-16] Gate on the measured peak demand; keep the realisability margin at 1.05
 
 **Context.** `TRPT_REALISABILITY_TENSION_MARGIN = 1.05` converts the torsional

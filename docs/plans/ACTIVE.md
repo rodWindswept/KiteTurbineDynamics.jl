@@ -129,11 +129,38 @@ lines is 29.31 → 64.48 kg (**+120 %**). Detail: 2026-09-15 handover §7.
 2.599, `twist_crossed=false`, 13 rings, lift chain connected (T_cyan 349.0 N,
 T_bridle 67.6 N).
 
+> **CORRECTION (2026-09-16, later the same day). The `FoS` 2.599 in that record is
+> VOID.** It was measured with the **unscaled 0.003 m tether**, whereas every
+> campaign and gate path sets `tether_diameter = p_base.tether_diameter`
+> (scaled, **0.003651 m**; `run_v13_5kw.jl:71`, `run_v13_5kw_masslift.jl:179`).
+> `test_physics_path_ode.jl` was the outlier that omitted it. Re-measured on the
+> honest line (`scratch/diag_p1_tether_kick.jl`): 0.003 m + `kickstart_s=2.0`
+> gives FoS 2.054 (reject); 0.003 m + `kickstart_s=0.0` gives **2.599, status ok**
+> — the recorded figure exactly; the scaled line gives **1.506 to 1.547, reject**.
+> So the record describes a machine with a thinner line than the protocol
+> requires. Do not quote 2.599. See the sizing-model entry below and
+> `DECISIONS.md` [2026-09-16].
+
 Effect on the suites:
 
-- **Acceptance 4/8 -> 5/8.** `test_evaluator_v13` flips FAIL -> PASS. So the
-  re-seed buys **one of the four**. The three that remain have THREE DIFFERENT
-  causes and no single fix (corrected 2026-09-16; they are not one problem):
+- **Acceptance 6/8 -> 8/8 (2026-09-16).** All eight files green, including the two
+  that carried the FoS-floor defect (`test_physics_path_ode` P1, 5 s window, and
+  `test_settle_lowk_honest` A3, 20 s window). The cause was **not** the sizing
+  margin and **not** a profile mismatch: the closed-form ring **load** model was
+  3.7x low. `HELIX_LOAD_FACTOR` 0.32 -> 1.2 and `MIN_RING_DO_M` = 10 mm. Detail
+  and the measured tables: `DECISIONS.md` [2026-09-16]; probes
+  `scratch/diag_margin_fos_components.jl`, `scratch/diag_helix_calibration.jl`,
+  `scratch/probe_do_floor_margin.jl`.
+- **Fast suite 2144 pass / 0 fail / 1 broken** (was 2139; +5 new assertions).
+
+The earlier 4/8 -> 5/8 note is retained below for the record. Its three-failure
+table was superseded the same day by the sizing-model fix above; `test_gate_v13`
+A5 was fixed separately by the per-line break-detection work (Concern 0).
+
+**Superseded note (2026-09-16, earlier).** Acceptance 4/8 -> 5/8:
+`test_evaluator_v13` flipped FAIL -> PASS, so the re-seed bought **one of the
+four**. The three then-remaining were believed to have three different causes and
+no single fix:
 
   | test | failure | what it is |
   |---|---|---|
@@ -141,9 +168,9 @@ Effect on the suites:
   | `test_settle_lowk_honest` | `status = reject`, `P_end = 0.0` | the low-k path rejects |
   | `test_physics_path_ode` | P1: seed not healthy under DEFAULT physics | the default-physics path |
 
-  The last two are plausibly realisability/settle related; **A5 is not**, and I
-  previously conflated all three. Each needs its own diagnosis.
-- **Fast suite stays 2139 pass / 0 fail / 1 broken.**
+  The last two are plausibly realisability/settle related; **A5 is not**. The
+  diagnosis above corrected this: the last two were one cause (the load model),
+  and A5 was a third, separate one. Fast suite then: 2139 pass / 0 fail / 1 broken.
 
 Landing it green needed two fixes that are worth keeping in mind:
 
@@ -327,7 +354,10 @@ cone, TRPT — which is the trade this item exists to size.
 
 All four before a campaign launch:
 
-- [ ] Acceptance suite 8/8, **unrebased**.
+- [x] Acceptance suite 8/8, **unrebased**. **(2026-09-16.)** The acceptance files
+  themselves are unrebased. The one fixture that moved is the FAST test
+  `test_trpt_realisability.jl`, re-baselined once for the corrected tube mass; its
+  design improved on every axis (`DECISIONS.md` [2026-09-16]).
 - [ ] Back-line contradiction resolved (item 2). **Ruled 2026-09-16: the line is
   taut and bi-linear. The code change is the bungee remit.**
 - [ ] Load split re-derived (item 2). **Not yet. This needs the taut element in
