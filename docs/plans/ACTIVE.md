@@ -229,16 +229,44 @@ now explicitly DEFERRED. `initialization.jl:1125-1133` — the docstring records
 the deferral instead of asserting slack is correct. So the element half is DONE;
 the balance half is blocked on item 3, which is why item 3 comes next.
 
-### 3. Finish the static equilibrium solver (dynamic relaxation)
+### 3. Finish the static equilibrium solver (dynamic relaxation) — ▶ PROTOTYPE DONE
+
+**Status 2026-09-19: the prototype is DONE and MET the target.** It is
+`scratch/prototype_static_solver.jl`: Barnes kinetic damping on the conservative
+force path, per-node fictitious mass from local stiffness, positions only.
+Measured on the campaign seed: static `acc0` **284.5 → 71.4 m/s² (29.0 → 7.27 g)**
+against the 10 g bar, hub residual **88.7 → 6.59 N**, bearing 0.17 N, sky 0.10 N,
+max node displacement **0.893 m**, with `omega` and `alpha` asserted untouched.
+It was still falling at the 20 000-iteration cap.
+
+**The acceptance metric had to be corrected first, and that was the finding that
+unblocked it.** V6 read `multibody_ode!` on the SETTLED state, whose velocity
+block IS the legitimate ~32 m/s rotation, so **98.4 %** of `acc0` was aero drag on
+correctly-spinning nodes: a 39 N drag force on a 2.25 g rope node read as
+**1780 g**. No equilibrium solver could have removed that. V6 now measures
+`static_acc0` (node translational velocities zeroed, `omega` retained), and the
+assertion still reads `@test_broken acc0 < 10 g` — this is NOT a re-baseline. The
+real defect is **238 N on `RingNode` 11**. See `DECISIONS.md` [2026-09-16] and
+`docs/agents/instrument-trust-log.md` [2026-09-16].
+
+**REMAINING — the next unit of work:**
+
+1. Port the prototype into `src/initialization.jl` as the final pass of
+   `settle_to_operational_state`.
+2. Promote V6 (`test/test_settle_validity.jl:238`) from `@test_broken` to `@test`.
+3. Re-run BOTH suites. **Expect pinned numbers to move and re-baseline them
+   deliberately**: the settle feeds every evaluation, so every settled-state
+   quantity shifts. The sizing change earlier in this sequence moved
+   `test_trpt_realisability.jl`'s pins the same way, and there the design improved.
+4. Confirm the other half of the definition of done below — that the settle and
+   the ODE agree on the bowed shape. `acc0` alone does not establish it.
+
+The spec that was followed, retained because it is what made it work:
 
 The settle *places* the machine and relaxes it briefly; it does not solve for
 equilibrium. That is why the hub and sky-anchor force residuals and the
 first-frame acceleration still fail, and why the re-seed candidate cannot land
 (2026-09-14 handover §6.4).
-
-Method: dynamic relaxation with kinetic damping (Barnes) on the existing force
-evaluator. Prototype in `scratch/` first, against one known settle, with the
-three failing assertions in `test/test_settle_validity.jl` as acceptance.
 
 Discipline that makes or breaks it:
 

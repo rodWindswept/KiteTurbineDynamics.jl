@@ -183,11 +183,19 @@ const TENSION_LOAD_MARGIN = 1.2
 # 5 s acceptance window can dip ~15 % below the static FEA reading.  1.3 leaves
 # the windowed FEA at ≥ 2.5 with headroom.
 #
-# RE-OPENED 2026-09-16.  That calibration was made while the helix term was
-# under-sized (HELIX_LOAD_FACTOR = 0.32), so `fos_req` was never the binding
-# constraint and 1.3 was never really exercised.  With the load model corrected
-# the margin becomes a LIVE lever again and must be re-swept against the
-# 5 s (P1) and 20 s (A3) windows.
+# RE-OPENED 2026-09-16 and RE-SWEPT the same day.  That calibration was made
+# while the helix term was under-sized (HELIX_LOAD_FACTOR = 0.32), so `fos_req`
+# was never the binding constraint and 1.3 was never really exercised.  With the
+# load model corrected the margin became a LIVE lever again, so it was
+# re-measured against the 5 s (P1) and 20 s (A3) windows:
+#   * `scratch/probe_sizing_margin.jl`, 5 s window, margins
+#     1.3 / 1.45 / 1.5 / 1.55 / 1.7 -> FoS 5.336 / 5.66 / 5.855 / 5.732 / 6.895.
+#     Every value clears the 2.5 floor, and the lever is monotone again.
+#   * `scratch/probe_do_floor_margin.jl`, at the landed 10 mm floor, margin 1.3
+#     -> FoS 4.164 in BOTH the 5 s and 20 s windows (+3.276 kg airborne).
+# 1.3 therefore STANDS and needs no further sweep: it already carries ~66 %
+# headroom, and raising it only adds ring mass.  Reopen this only if a test moves
+# the floor, or if the deferred decaying helix profile changes the load model.
 const SIZING_FOS_MARGIN = 1.3
 
 # ── Manufacturability floor on the ring tube outer diameter ──────────────────

@@ -11,10 +11,15 @@ scripts/ktd-format                                 # JuliaFormatter, Blue style
 scripts/ktd-julia scratch/<probe>.jl               # any scratch probe
 ```
 
-Live output with exit status:
+Live output — **but `script` MASKS the exit code, so do NOT trust `$?`**:
 ```bash
 script -q -c "scripts/ktd-julia test/runtests.jl" /dev/null
 ```
+Verified 2026-09-19 on this host: `script -q -c "exit 3" /dev/null; echo $?` prints
+**0**. A red suite therefore reads as green by exit code. Read the
+`Test Summary:` line, or the `ERROR: LoadError: Some tests did not pass` line,
+instead. Already on the record: `docs/agents/instrument-trust-log.md` [2026-09-13].
+(`CLAUDE.md` still recommends the masking form uncorrected.)
 
 ---
 
@@ -74,7 +79,8 @@ Port the proven algorithm from [`scratch/prototype_static_solver.jl`](../scratch
 
 ### Step 2: Promote V6 in `test/test_settle_validity.jl`
 With the static solver active, `acc0` drops to $7.27\text{ g} < 10\text{ g}$.
-Promote line 194 from `@test_broken` to `@test`:
+Promote the V6 assertion — `test/test_settle_validity.jl:238`, quote it rather
+than the line number, which drifts — from `@test_broken` to `@test`:
 ```julia
 @test acc0_static < 10.0 * 9.81   # < 10 g
 ```
@@ -93,3 +99,18 @@ scripts/ktd-julia test/runtests.jl
 scripts/ktd-julia test/acceptance_runtests.jl
 ```
 Confirm all 50 fast tests and all 8 slow acceptance tests pass cleanly.
+
+**Expect pinned numbers to MOVE, and re-baseline them deliberately.** The settle
+feeds every evaluation, so wiring the solver in shifts every settled-state
+quantity: power, twist, tensions, FoS, and every frozen-fixture pin. The sizing
+change earlier in this same sequence did exactly that and moved
+`test/test_trpt_realisability.jl`'s `demand`/twist/`τ_carry` pins. When a pin
+moves, record the new value WITH the cause and the direction of the change (in
+that case the design improved), and do not quietly re-baseline. Also confirm the
+"settle and the ODE agree on the bowed shape" half of this item's definition of
+done — `acc0` alone does not establish it.
+
+Runtime note: the prototype used 20 000 DR iterations, each one full force
+evaluation, against a settle of 300 000 steps — roughly +7 % on the settle, and
+it was still falling at the cap, so choose the cap on evidence rather than
+copying 20 000.
