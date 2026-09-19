@@ -238,6 +238,12 @@ function size_beams_closed_form(
     n_mass_passes::Int=3,
     hub_peak_load::Bool=true,
     helix_factor::Float64=HELIX_LOAD_FACTOR,
+    # Margin between the closed-form Euler solve and the windowed FEA acceptance
+    # floor.  Exposed as a keyword (2026-09-16, Rod) so it can be SWEPT without
+    # editing a `const`: it is global — every ring, every design — so any change
+    # re-baselines ring mass and the whole campaign, and that decision needs a
+    # measured basis rather than a guess.  Default preserves current behaviour.
+    sizing_fos_margin::Float64=SIZING_FOS_MARGIN,
 )
     design = dec.design
     rotors = dec.rotors
@@ -362,7 +368,7 @@ function size_beams_closed_form(
             N_rated_per_ring[i] = N_comp
             Do_rated = solve_ring_Do(
                 N_comp, L_poly, t_over_D;
-                min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * SIZING_FOS_MARGIN, ends=ends,
+                min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * sizing_fos_margin, ends=ends,
             )
 
             # Hub ring: additionally size at (T_peak, ω = 0) — peak wind,
@@ -375,7 +381,7 @@ function size_beams_closed_form(
                 N_peak = max(F_kink_pk, 0.0) / den
                 Do_peak = solve_ring_Do(
                     N_peak, L_poly, t_over_D;
-                    min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * SIZING_FOS_MARGIN, ends=ends,
+                    min_wall_m=cfg.min_wall_m, fos_req=cfg.fos_hard * sizing_fos_margin, ends=ends,
                 )
                 if Do_peak > Do_rated
                     Do_rated = Do_peak

@@ -64,6 +64,9 @@ end
 
 lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)
 
+const X = seed_genome(KW)
+const P = params_at_length(L18)
+
 const CFG = ObjectiveConfig(;
     power_W=KW * 1000.0,
     p_floor_kw=KW,
@@ -77,12 +80,17 @@ const CFG = ObjectiveConfig(;
     cone_slope_deg=22.0,
     rotor_spacing_frac=0.8,
     blocking_factor=BLOCKING_WIND_FACTOR_5KW,
+    # Rod 2026-09-16: align the config's tether with the rung-scaled params.
+    # `cfg.tether_diameter` drives BOTH the design MaterialSpec
+    # (objective_evaluator.jl:429) and the ODE build (:559), while `P` carries
+    # the scaled 0.003651 m.  Leaving this at the 0.003 default sized the beam
+    # tube and the dynamic line for two DIFFERENT stiffnesses: the closed-form
+    # FoS was computed against the thinner line.  This is the same alignment
+    # the sizing-margin probe makes.
+    tether_diameter=P.tether_diameter,
     relax_s=5.0,
     window_s=5.0,
 )
-
-const X = seed_genome(KW)
-const P = params_at_length(L18)
 
 function run_eval()
     return KiteTurbineDynamics.evaluate_windowed(
