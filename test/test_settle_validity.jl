@@ -21,7 +21,12 @@
 #   V5  twist drift over 1 s                       0.00      -> uninformative: the
 #       twist is pinned while the structure oscillates, so this must NOT be used
 #       as a smoothness proxy
-#   V6  max node acceleration at t=0        10310.49 m/s^2    -> FAIL (about 1000 g)
+#   V6  max node acceleration at t=0    measured 17_468 m/s^2  -> FAIL, but the
+#       metric was measuring the WRONG THING.  See the V6 note in the body: 98.4 %
+#       of it was the aero drag of nodes spinning at ~32 m/s, and the argmax was a
+#       2.25 g rope node.  Corrected 2026-09-16 to the STATIC residual (node
+#       translational velocities zeroed, omega retained), which reads 284.5 m/s^2
+#       (29 g) on RingNode 11 -- a real imbalance the static solver can remove.
 #
 # These are recorded as FAILING assertions, deliberately: the test is the durable
 # record that the settle is not yet valid, and it prevents the defect from being
@@ -107,6 +112,36 @@ function axial_residuals(u, sys, p, wf, lift, N, sd)
     return out, acc
 end
 
+"""
+Max node acceleration at the handoff, measured on the STATIC force path: node
+TRANSLATIONAL velocities are zeroed so the rope material damper and the
+aerodynamic drag vanish and only the unbalanced elastic/gravity/rotor forces
+remain.  `omega` is RETAINED, so the rotor thrust and torque stay in the load
+case (`ACTIVE.md` item 3 mandates exactly this force path).
+
+WHY this is not the raw `multibody_ode!` reading.  Measured 2026-09-16
+(`scratch/diag_acc0_velocity.jl`) on the settled state of `build_case(nothing,
+nothing)`:
+
+    (1) as-is (raw)                  17_468 m/s^2   argmax = RopeNode, 0.00225 kg
+    (2) translational vel = 0           284.5 m/s^2    argmax = RingNode 11, 0.836 kg
+    (3) all vel = 0 (incl. omega)       152.2 m/s^2    argmax = RingNode 11
+
+The settled state carries `max |v| = 32.2 m/s`, `rms = 9.1 m/s`, which is the
+legitimate rigid rotation (`omega·r ~ 13.45 · 2.4 ~ 32`); V1 already asserts the
+non-rotational velocity is 0.0 m/s.  So 98.4 % of the raw reading is drag on
+nodes that are correctly spinning, and a 39 N drag force on a 2.25 g rope node
+reads as 1780 g.  NO equilibrium solver can remove that: it is a correct
+operating-point force, not a handoff shock.
+"""
+function static_acc0(u, sys, p, wf, lift, N)
+    u_static = copy(u)
+    u_static[(3N + 1):(6N)] .= 0.0      # zero linear node velocities; keep omega
+    du = zeros(length(u_static))
+    KiteTurbineDynamics.multibody_ode!(du, u_static, (sys, p, wf, lift), 0.0)
+    return maximum(norm(du[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]) for g in 1:N)
+end
+
 @testset "settle validity — hands the ODE a load-carrying, balanced state" begin
     sys, u0, p, lift, wf = build_case(nothing, nothing)
     N, Nr = sys.n_total, sys.n_ring
@@ -182,14 +217,23 @@ end
     @test abs(res["sky"]) < 50.0
 
     # ── V6 the handoff is smooth (no first-frame jerk) ────────────────────────
-    # STILL BROKEN, and now the only thing this testset does not hold.  At the
-    # converged settle the AXIAL residual is ~0 on all three nodes, but the max
-    # node acceleration is ~12_100 m/s^2 (~1240 g).  So the assembly is balanced
-    # in the shaft direction yet some node still sees a large transverse
-    # unbalanced force, or a light node sees a moderate one.  This is the
-    # coupled position+twist equilibrium the static solver exists to solve
-    # (docs/plans/2026-09-10-shaft-windup-workstream.md), not a settle-duration
-    # problem: it does not move with n_op.
-    @info "max node acceleration at t=0" acc0
-    @test_broken acc0 < 10.0 * 9.81               # < 10 g
+    # STILL BROKEN, and now the only thing this testset does not hold.
+    #
+    # METRIC CORRECTED 2026-09-16 (Rod; the correction is in `static_acc0`'s
+    # docstring, not a quiet re-baseline).  The raw reading was 17_468 m/s^2
+    # (1780 g) and it was measuring the machine's own spinning drag, not a handoff
+    # shock: 98.4 % of it vanished the moment node translational velocities were
+    # zeroed, per the force path ACTIVE.md item 3 already mandates.  The argmax
+    # was a 2.25 g rope node carrying 39 N of drag.
+    #
+    # What remains IS the real defect, and it is not a settle-duration problem (it
+    # does not move with n_op): at the converged settle the AXIAL residual is ~0 on
+    # hub, bearing and sky, yet RingNode 11 carries a 238 N unbalanced force.  That
+    # is the coupled position+twist equilibrium the static solver exists to solve
+    # (docs/plans/2026-09-10-shaft-windup-workstream.md).  Target: < 82 N.
+    #
+    # WHEN the static solver lands, promote this to @test.
+    acc0_static = static_acc0(u, sys, p, wf, lift, N)
+    @info "max node acceleration at t=0" acc0_static acc0_raw=acc0
+    @test_broken acc0_static < 10.0 * 9.81        # < 10 g (currently ~29 g, ring 11)
 end

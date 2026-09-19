@@ -10,6 +10,63 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-16] `acc0` measured spinning drag, not the handoff jerk: correct the metric before building the static solver
+
+**Context.** `test_settle_validity.jl` V6 is the last `@test_broken`:
+`@test_broken acc0 < 10.0 * 9.81`, read from `multibody_ode!` on the settled state.
+The value was ~12 000 to 18 000 m/s^2, and the test's own comment recorded the
+puzzle: hub, bearing and sky are balanced along the shaft to under 50 N, yet some
+node still accelerates at over 1000 g, and it does not move with `n_op`.
+`ACTIVE.md` item 3 plans a dynamic-relaxation static solver to fix it.
+
+**Diagnosis (measured).** Two probes on the same settled state:
+
+- `scratch/diag_acc0_node.jl` — the argmax is a **`RopeNode` of 2.25 g** carrying
+  **39.3 N**. So the headline number is a mass artefact: `a = F/m` with a tiny `m`.
+  A genuine imbalance is also present, on **`RingNode` 11: 0.836 kg, 661.9 N**.
+- `scratch/diag_acc0_velocity.jl` — the same state measured three ways:
+
+  | force path | acc0 | g | argmax |
+  |---|---|---|---|
+  | as-is (the test's metric) | 17 468 m/s^2 | 1780.6 | `RopeNode`, 2.25 g |
+  | node translational velocities zeroed, `omega` kept | **284.5** | **29.0** | `RingNode` 11, 0.836 kg |
+  | all velocities zeroed | 152.2 | 15.5 | `RingNode` 11 |
+
+  The settled state carries `max |v| = 32.2 m/s`, rms 9.1 m/s, which is the
+  legitimate rigid rotation (`omega·r` is about 13.45 · 2.4, about 32 m/s). V1
+  already asserts the non-rotational velocity is 0.0 m/s.
+
+**Decided (Rod, 2026-09-16).** **Correct the metric to the static residual, then
+build the solver.**
+
+1. V6 now measures `static_acc0`: node translational velocities zeroed, `omega`
+   retained. That is exactly the force path `ACTIVE.md` item 3 already mandates
+   ("call the force path with velocities zero, so the rope material damper and the
+   aerodynamic drag vanish and the force field is conservative").
+2. The assertion **stays** `@test_broken acc0 < 10 g`. This is not a re-baseline
+   and does not weaken the guard.
+3. The static solver then targets the real defect: **238 N on `RingNode` 11**,
+   which is 29 g against the 10 g bar.
+
+**Why.** **98.4 %** of the raw reading was aero drag on nodes that are correctly
+spinning. Drag is a smooth, continuous function of velocity at the operating
+point, so it is not a handoff shock. No equilibrium solver could remove it, and a
+solver aimed at the raw number would have been chasing a correct operating-point
+force. The remaining 284.5 m/s^2 is a real, solvable imbalance.
+
+**Correction to the record.** The instrument-trust-log row of 2026-09-16 attributed
+the rope-node force to "a rope-tension imbalance, not a rotor term". That
+attribution is wrong: the force vanishes when the velocities are zeroed, so it is
+velocity-dependent, that is, drag and damper. The log row is corrected in place.
+
+**Consequence.** Item 3's definition of done is now measurable. The target is
+`RingNode` 11's 238 N down to under 82 N. When the solver achieves it, promote V6
+to `@test`.
+
+**Status:** active.
+
+---
+
 ## [2026-09-16] Ring sizing load model was 3.7x low: restore the 1.2 helix envelope and floor the tube Do
 
 **Context.** Two acceptance tests (`test_physics_path_ode` P1, `test_settle_lowk_honest`
