@@ -50,8 +50,18 @@ function seed_genome_x()
     seed_v = seed_genome(KW)
     lo, hi = tight_bounds(seed_v, KW)
     xr = clamp.(copy(seed_v), lo, hi)
-    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    # CANONICAL 10-D INDICES (fixed 2026-09-16, Rod).  These were the legacy 14-D
+    # integer positions: on the 10-D genome x[8] is bank_bottom and x[10] is
+    # blade_scale_bottom, so the old code clamped a BANK ANGLE to [3,16] (forcing
+    # bank_bottom = 3.0 deg on a seed whose value is 0.0) and clamped
+    # blade_scale_bottom to [1,3] (forcing 1.0 on a seed whose value is 0.7).
+    # Both silently changed the machine: the bottom rotor gained bank and lost
+    # blade scale, and the resulting twist collapse gave status = :reject with
+    # P_end = 0.0, which the test then read as "the low-k path is dishonest".
+    # The integer genes are x[4] = n_lines and x[6] = rotor_count.  See
+    # DECISIONS.md, and settle_case_builders.jl:40-41 which already had it right.
+    xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))   # n_lines
+    xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))    # rotor_count_mode: {1,2,3}
     return xr
 end
 
