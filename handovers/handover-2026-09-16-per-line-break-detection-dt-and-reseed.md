@@ -1,5 +1,28 @@
 # Handover — per-line break detection, the dt fault class, and the L/r 1.5 re-seed (2026-09-16)
 
+
+> **SUPERSEDED 2026-09-19 — read this before acting on §3, §5 or §7.**
+>
+> Subsequent work found the **real** root cause of the two acceptance failures, and
+> it was **not** `SIZING_FOS_MARGIN`. The closed-form ring load model was **3.7x
+> low**: the capacity ratio read exactly 1.000 while the load ratio was 2.1-3.7, and
+> the wall clamp was setting every section. Fixed by widening `HELIX_LOAD_FACTOR`
+> from 0.32 to a 1.2 envelope and setting `MIN_RING_DO_M = 10 mm`, with
+> **`SIZING_FOS_MARGIN` unchanged at 1.3**. Cost: +3.276 kg airborne.
+> **Acceptance is back to 8/8.**
+>
+> So: **do not inflate the global FoS margin.** §5's recommendation to sweep it was
+> the wrong branch, and §7's incomplete sweep is moot. The decision rule in §7
+> anticipated this ("if the required margin blows up mass ... inspect the static
+> tension multiplier") and that is the branch taken.
+>
+> `src/trpt_optimization.jl` is **no longer uncommitted** — §3 is resolved; the
+> sweepable-margin keyword and P1's tether alignment landed in `7014445`.
+>
+> Records: `8471dd5` (the fix), `8feeb23` (the record), `cfe67a9` (ACTIVE),
+> `DECISIONS.md` [2026-09-16]. The **§8 mistake list, the per-line break-detection
+> record (§2 item 4) and the `dt` fault class (§2 item 2) remain valid.**
+
 ## 1. How to run things
 
 Julia through the wrapper only — plain `julia --project=.` fails in this sandbox
