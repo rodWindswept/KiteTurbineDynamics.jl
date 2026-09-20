@@ -10,6 +10,72 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-20] Taut back-line load split, circle-intersection sky anchor, and discrete geometric crossing limit in realisability sizing
+
+**Context.** `ACTIVE.md` item 2 remained partially unresolved: while the bi-linear
+back-line element had landed in `21cf73b`, the sky-anchor force balance in
+`lift_chain_design` still solved the back line as slack, projecting resultant forces
+onto the cyan line. Under that slack assumption, the unmargined L/r 2.0 design
+appeared realisable because T_top was artificially inflated to ~1416 N.
+Solving the honest planar 2×2 balance between the lift line, back line, and cyan
+line dropped T_top to ~1164 N, exposing torsional cliff and line-crossing
+failures across both fast and acceptance suites.
+
+**Findings.**
+1. **The continuum sin-law cliff (sin Δα ≤ 1) is insufficient to prevent line crossing.**
+   A continuous membrane model breaks down at Δα = 90° (demand = 1.0),
+   so a demand target of ≤ 1/1.05 = 0.9524 permitted twist up to 72.25°.
+   However, a discrete TRPT truss physically collides/crosses at the geometric limit:
+   δα* = 2·asin(L / √(2(L² + 2r²))).
+   On the campaign seed, δα* ≈ 54.01°. At the honest taut preload,
+   the placed twist reached Δα = 58.93° (crossing ratio 1.0911) while demand
+   read only 0.8565. The demand-only check declared ample headroom on a machine whose
+   lines had already physically crossed, causing ODE integration failures (twist_crossed = true).
+2. **The 2×2 load balance depends sensitively on hub position.**
+   The sky anchor's equilibrium sits 0.815 m away from the ideal uncontracted shaft axis.
+   Solving the 2×2 balance with the hub placed at rigid u0 versus the contracted hub
+   position (ctrs[Nr]) produces a 17% tension discrepancy.
+3. **The back-line calibration derivation.**
+   The placeholder derivation of T_design ≈ 2.27 N was based on
+   ΣE_i (stiffness, not tension). Calibrated against the measured operating
+   equilibrium on the campaign seed, the operating tension is 320.0 N, yielding
+   k_soft = 400.0 N/m over 0.80 m soft travel.
+4. **Thin-tether break fixture (A5) cannot clear the crossing floor.**
+   Testing rope-break detection via an extreme thin tether (0.16 mm) is mathematically
+   incompatible with the crossing floor: a thin tether lacks stiffness, driving the
+   required crossing preload past the 1.5× cap (TRPT_REALISABILITY_MAX_PRELOAD_FACTOR),
+   causing settle refusal rather than an operational rope break.
+
+**Decided (2026-09-20).**
+1. **Taut 2×2 split and closed-form circle intersection:**
+   `lift_chain_design` solves the exact 2×2 equilibrium (`_sky_anchor_taut_split`),
+   and `_sky_anchor_design_pos` computes the sky-anchor position via closed-form circle
+   intersection of the lift line and back line catenary lengths. This matches the settled
+   ODE equilibrium within 6.4 mm.
+2. **Settle places first, then sizes preload at the contracted hub:**
+   `settle_to_operational_state` derives rigid preload, performs initial matched placement
+   to find the contracted hub position, and sizes the final preload and lift-chain geometry
+   from that contracted position.
+3. **Geometric crossing limit governs preload sizing:**
+   `design_axial_preload` and the settle's realisability closure enforce both
+   continuum demand and `max_segment_cross_ratio(r, sys) <= 1/1.05`, scaling F_top
+   by `max(worst_demand, worst_cross) * margin`.
+4. **Barnes DR polish retuned:**
+   `OPERATIONAL_POLISH_DT = 5e-5` (80 000 iterations) provides smooth kinetic damping
+   across the non-smooth bi-linear hard stop.
+5. **A5 break-detection fixture re-baselined via elasticity (E = 0.7 GPa):**
+   Adopting the recorded [2026-09-11] precedent (line 734), the fixture maintains standard
+   diameter and physical mass/geometry, settles cleanly under the crossing floor at 3.0%
+   strain, and reliably breaks past the 3.5% SK99 limit under 5 kW operating loads.
+6. **SEED_LR20 fixture updated to assert refusal:**
+   The frozen L/r 2.0 fixture (`test_trpt_realisability.jl`) now asserts that the L/r 2.0
+   machine is refused under the taut split and crossing floor (crossing ratio 1.4716
+   requires > 1.5× preload), mathematically confirming why the project moved to L/r 1.5.
+
+**Suites.** Fast suite: 2149 / 2149 PASS. Acceptance suite: 8 / 8 PASS.
+
+---
+
 ## [2026-09-19] The settle's final polish solves the FULL operating equilibrium, not a drag-free one
 
 **Context.** Handover 2026-09-19 §5 wired the Barnes kinetic-damping dynamic

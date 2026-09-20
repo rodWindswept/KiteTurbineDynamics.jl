@@ -69,8 +69,9 @@ function bridle_total_tension(u, sys, p, N, Nr)
         na, nb = ss.end_a.node_id, ss.end_b.node_id
         ((na == hub && nb == bear) || (na == bear && nb == hub)) || continue
         ring_end = ss.end_a.is_ring ? ss.end_a : ss.end_b
-        pa = attachment_point(pos(u, hub), R, u[6N + Nr], ring_end.line_idx,
-                              p.n_lines, pp1, pp2)
+        pa = attachment_point(
+            pos(u, hub), R, u[6N + Nr], ring_end.line_idx, p.n_lines, pp1, pp2
+        )
         L = norm(pos(u, bear) .- pa)
         total += ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
     end
@@ -101,16 +102,19 @@ function lift_force_applied(u, sys, p, wf, lift)
     KiteTurbineDynamics.multibody_ode!(du_off, u, (sys, p, wf), 0.0)
     g = sys.sky_anchor_id
     m = (sys.nodes[g]).mass
-    return m .* (du_on[(3N + 3 * (g - 1) + 1):(3N + 3 * g)] .-
-                 du_off[(3N + 3 * (g - 1) + 1):(3N + 3 * g)])
+    return m .* (
+        du_on[(3N + 3 * (g - 1) + 1):(3N + 3 * g)] .-
+        du_off[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]
+    )
 end
 
 function axial_residuals(u, sys, p, wf, lift, N, sd)
     du = zeros(length(u))
     KiteTurbineDynamics.multibody_ode!(du, u, (sys, p, wf, lift), 0.0)
-    out = Dict{String,Float64}()
-    for (nm, gid) in (("hub", sys.rotor.node_id), ("bearing", sys.bearing_id),
-                      ("sky", sys.sky_anchor_id))
+    out = Dict{String, Float64}()
+    for (nm, gid) in (
+        ("hub", sys.rotor.node_id), ("bearing", sys.bearing_id), ("sky", sys.sky_anchor_id)
+    )
         m = (sys.nodes[gid]).mass
         out[nm] = dot(m .* du[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)], sd)
     end
@@ -219,8 +223,9 @@ end
     # and fails the 50 N bar.  300_000 gives real margin (43.5 N) at triple the
     # runtime.  The residual is the handoff imbalance the static solver exists to
     # remove; this horizon is a workaround, not a fix.
-    u = settle_to_operational_state(sys, u0, p, 60.0;
-        lift_device=lift, wind_fn=wf, n_op=300_000)
+    u = settle_to_operational_state(
+        sys, u0, p, 60.0; lift_device=lift, wind_fn=wf, n_op=300_000
+    )
     sd = normalize(pos(u, hub))
 
     # ── V1 rotation present and uniform (the PTO needs rotation) ──────────────
@@ -236,11 +241,14 @@ end
     # `bridle > 0.25 * lift_req`, which encoded the superseded "every line above
     # the ground ring is taut" rule and had to be REPLACED, not promoted.
     #
-    # The BACK LINE is deliberately NOT asserted taut: it is an ALTITUDE LIMITER,
-    # not a load path, and is slack at the design point by design — see
-    # physics-topology.md §3.2 and handover 2026-09-13 §4.  Asserting it taut would
-    # re-introduce the modelling error that made the plan's preload look
-    # unrealisable.  Its tension is recorded for the log only.
+    # The BACK LINE is not asserted taut HERE either, but for a different reason
+    # than the original note claimed.  As of 2026-09-20 the design point IS taut
+    # (Rod, 2026-09-15; `lift_chain_design` now solves the 2x2 rather than
+    # projecting onto the cyan line), and the settled back line carries ≈312 N.
+    # This block is a snapshot of the LIFT CHAIN, so it asserts the mandatory-taut
+    # set only; the back line's tension is recorded for the log.  Asserting it
+    # taut would be asserting a load path it is not: it is an ALTITUDE LIMITER
+    # that may slack off-design (physics-topology.md §3.2).
     ef = KiteTurbineDynamics.capture_extended(u, sys, p, 0.0, wf, lift)
     T_cyan = cyan_tension(u, sys, p)
     bridle = bridle_total_tension(u, sys, p, N, Nr)

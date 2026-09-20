@@ -44,6 +44,17 @@ const BRIDLE_EA_DESIGN = 500_000.0        # N, 2 mm Dyneema bridle
 # height and so the rig's maximum elevation (Rod, 2026-09-16).
 const BACK_LINE_E_SUM_N = 2.4             # N, Σ E_i of the 8 bungee sections (= 8 · 0.30 m)
 const BACK_LINE_SOFT_TRAVEL_M = 0.8       # m, Σ(ℓ_full,i − ℓ_rest,i) — 8 × 10 cm
+# Design-point tension at the HARD STOP, and the one calibration number in this
+# element.  It is the back-line share of the sky-anchor balance at the operating
+# equilibrium, measured on the campaign seed 2026-09-19 (`scratch/probe_taut_split.jl`):
+# the taut 2x2 solve gives 319.75 N and the ODE settled state reads 313.51 N.
+# Landing it here keeps the design point ON the hard stop, as the spec requires
+# ("bungee fully extended, Dyneema taut"), instead of the old placeholder
+# `ΣE_i/(1+travel/trimmed) = 2.27 N`, which forced the line ~6 mm past the stop into
+# the Dyneema and made `k_soft` 141x too soft.  `BACK_LINE_E_SUM_N` stays the
+# physical ΣE_i of the 8 sections; see `back_line_tension` for why the two are
+# separate numbers.
+const BACK_LINE_T_DESIGN_N = 320.0         # N, back-line tension at the hard stop
 
 """
     back_line_tension(d, trimmed_length, payout, EA) -> T
@@ -62,13 +73,15 @@ that at the design length the bungee is fully extended and the Dyneema is taut:
   * `d > trimmed_length`: HARD.  The bungee is fully extended, so the Dyneema
     takes the load and the line is far stiffer.
 
-`T_design = ΣE_i / (1 + travel/trimmed_length)` is the tension at full bungee
-extension, and `k_soft = T_design / travel`.  Anchor used: each bungee is
-`ΣE_i/8 = 0.30 m` at rest and carries the full line tension, so at full extension
-`T_design` is set by `ΣE_i / (rest length of the whole line)`.  That makes the
-hard stop a fixed property of the trimmed geometry, and it makes `T_design` the
-one quantity to revisit when the load split is re-derived from a solved
-equilibrium.
+`T_design` is the tension at full bungee extension and `k_soft = T_design / travel`.
+It is the element's ONE calibration constant (`BACK_LINE_T_DESIGN_N`), set from the
+back line's share of the sky-anchor balance at the measured operating equilibrium.
+It is deliberately NOT `ΣE_i/(1+travel/trimmed_length)` (which is 2.27 N here): that
+expression is the series stiffness of the pack per unit extension of the whole
+line, not the tension the line carries, so using it placed the hard stop ~6 mm
+short of the operating point — the Dyneema then took 313 N while the bungee sat
+at 2 N, and `k_soft` came out 141x too soft.  `ΣE_i` is retained above as the
+physical bungee stiffness reference; the calibration is `T_design`.
 
 `payout` is excluded from the two distances above because the field trim pays
 line out to set the sky anchor's height (Rod, 2026-09-16).
@@ -84,9 +97,11 @@ function back_line_tension(
     )
     (BACK_LINE_E_SUM_N > 0.0 && BACK_LINE_SOFT_TRAVEL_M > 0.0) ||
         error("back_line_tension: bungee constants must be positive")
+    BACK_LINE_T_DESIGN_N > 0.0 ||
+        error("back_line_tension: BACK_LINE_T_DESIGN_N must be positive")
 
     travel = BACK_LINE_SOFT_TRAVEL_M
-    T_design = BACK_LINE_E_SUM_N / (1.0 + travel / trimmed_length)
+    T_design = BACK_LINE_T_DESIGN_N
     k_soft = T_design / travel
     d <= trimmed_length - travel && return 0.0                    # bungee relaxed
     d <= trimmed_length && return k_soft * (d - trimmed_length + travel)  # SOFT
@@ -240,8 +255,14 @@ function _build_kite_turbine_system_impl(
         end
     end
 
-    rotor = RotorSpec(ring_ids[end], p.rotor_radius, rotor_blade_hub_radius,
-                      m_rotor, m_rotor * p.rotor_radius^2, main_rotor_wind_factor)
+    rotor = RotorSpec(
+        ring_ids[end],
+        p.rotor_radius,
+        rotor_blade_hub_radius,
+        m_rotor,
+        m_rotor * p.rotor_radius^2,
+        main_rotor_wind_factor,
+    )
     kite = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1, kite_tether_length)
 
     # ── Bearing node + bridle segments + sky anchor + cyan line ──────────
@@ -361,7 +382,7 @@ function _build_kite_turbine_system_impl(
     for s in 1:n_seg
         ring_a_pos = ring_pos[s]
         ring_b_pos = ring_pos[s + 1]
-        alpha_a = 0.0;
+        alpha_a = 0.0
         alpha_b = 0.0
         for j in 1:p.n_lines
             pa = attachment_point(
@@ -468,7 +489,12 @@ function build_kite_turbine_system_v5(
     main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v5(
-        p.trpt_hub_radius, r_bottom, p.tether_length, target_Lr, taper_start_z, harvest_length;
+        p.trpt_hub_radius,
+        r_bottom,
+        p.tether_length,
+        target_Lr,
+        taper_start_z,
+        harvest_length;
         density_profile=density_profile,
     )
 
@@ -636,7 +662,7 @@ function set_orbital_velocities!(
 
         na = sys.nodes[sys.ring_ids[s]]::RingNode
         nb = sys.nodes[sys.ring_ids[s + 1]]::RingNode
-        ri_a = na.ring_idx;
+        ri_a = na.ring_idx
         ri_b = nb.ring_idx
         φ_a = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
         φ_b = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
@@ -665,7 +691,11 @@ suppressed orbital rotation (requiring O(1e5) m/s² of force to sustain it) and
 caused the hub to decelerate and reverse despite positive aero torque.
 """
 function orbital_damp_rope_velocities!(
-    u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams, lin_damp::Float64, dt::Float64
+    u::Vector{Float64},
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    lin_damp::Float64,
+    dt::Float64,
 )
     N = sys.n_total
     Nr = sys.n_ring
@@ -697,7 +727,7 @@ function orbital_damp_rope_velocities!(
 
         na = sys.nodes[sys.ring_ids[s]]::RingNode
         nb = sys.nodes[sys.ring_ids[s + 1]]::RingNode
-        ri_a = na.ring_idx;
+        ri_a = na.ring_idx
         ri_b = nb.ring_idx
         # ── NaN/Inf guard: expansion-force destabilisation can drive α, ω → ±Inf.
         #     When this happens the simulation has lost physical meaning — skip
@@ -706,8 +736,7 @@ function orbital_damp_rope_velocities!(
         #     rings flying apart, which is the correct diagnostic signal.
         φ_a = alpha[ri_a] + (j - 1) * (2π / p.n_lines)
         φ_b = alpha[ri_b] + (j - 1) * (2π / p.n_lines)
-        if isfinite(φ_a) && isfinite(φ_b) &&
-           isfinite(omega[ri_a]) && isfinite(omega[ri_b])
+        if isfinite(φ_a) && isfinite(φ_b) && isfinite(omega[ri_a]) && isfinite(omega[ri_b])
             v_a = omega[ri_a] * na.radius * (-sin(φ_a) .* pp1 .+ cos(φ_a) .* pp2)
             v_b = omega[ri_b] * nb.radius * (-sin(φ_b) .* pp1 .+ cos(φ_b) .* pp2)
             v_orbital = (1.0 - frac) .* v_a .+ frac .* v_b
@@ -873,8 +902,9 @@ it here double-counts (see objective_v6.jl physics note).
 
 Proposal: docs/plans/2026-08-13-settle-drag-alignment.md
 """
-function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
-                                     ω::Float64, u::Vector{Float64})
+function settle_parasitic_drag_power(
+    sys::KiteTurbineSystem, p::SystemParams, ω::Float64, u::Vector{Float64}
+)
     (ω <= 0.0) && return 0.0
     rho = p.rho
     nu = 1.5e-5  # kinematic viscosity of air (m²/s)
@@ -888,7 +918,7 @@ function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
     # Ring node radii + positions in ground→hub order
     n_rings = length(sys.ring_ids)
     radii = [sys.nodes[sys.ring_ids[i]].radius for i in 1:n_rings]
-    pos = [u[(3*(sys.ring_ids[i]-1)+1):(3*sys.ring_ids[i])] for i in 1:n_rings]
+    pos = [u[(3 * (sys.ring_ids[i] - 1) + 1):(3 * sys.ring_ids[i])] for i in 1:n_rings]
 
     # ── 1. Tether line drag ───────────────────────────────────────────────
     # The line runs mostly AXIAL (along the shaft), so its tangential velocity
@@ -898,8 +928,8 @@ function settle_parasitic_drag_power(sys::KiteTurbineSystem, p::SystemParams,
     # ODE; removed for consistency (2026-08-24).
     P_tether = 0.0
     for si in 1:(n_rings - 1)
-        L = norm(pos[si+1] - pos[si])
-        r_mid = (radii[si] + radii[si+1]) / 2
+        L = norm(pos[si + 1] - pos[si])
+        r_mid = (radii[si] + radii[si + 1]) / 2
         v_t = ω * r_mid
         P_seg = 0.5 * rho * TETHER_DRAG_CD * p.tether_diameter * L * v_t^3
         P_tether += n_lines * P_seg
@@ -941,15 +971,21 @@ cold-start settle scan uses this so a multi-rotor machine starts at its blocked
 equilibrium instead of overshooting and then decaying in the ODE (the island-3
 settle-gap mechanism).
 """
-function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
-                           w::Float64, v_mag::Float64)::Float64
+function settle_aero_power(
+    sys::KiteTurbineSystem, p::SystemParams, w::Float64, v_mag::Float64
+)::Float64
     # Hub rotor — de-rate by the main rotor's wind factor (0.75^(1/3) when it is
     # downstream of a lower rotor, 1.0 otherwise).
     v_hub = v_mag * sys.rotor.wind_factor
     lambda = w * sys.rotor.radius / v_hub
-    P_hub = 0.5 * p.rho * v_hub^3 *
-            π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
-            cp_at_tsr(lambda) * cos(p.elevation_angle)^2.65
+    P_hub =
+        0.5 *
+        p.rho *
+        v_hub^3 *
+        π *
+        (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
+        cp_at_tsr(lambda) *
+        cos(p.elevation_angle)^2.65
     # Expansion rotors — each de-rated by its own wind factor (the lowest,
     # upstream rotor keeps 1.0).
     P_exp = 0.0
@@ -960,7 +996,9 @@ function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
         # mean-radius convention as the ODE (expansion_annulus_area, r_mean).
         r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::RingNode).radius
         area = expansion_annulus_area(er, r_nom)
-        r_rep = r_nom + (er.blade_hub_radius + er.blade_tip_radius) / 2 * cosd(er.bank_angle_deg)
+        r_rep =
+            r_nom +
+            (er.blade_hub_radius + er.blade_tip_radius) / 2 * cosd(er.bank_angle_deg)
         lambda_er = clamp(w * r_rep / v_er, 0.0, 12.0)
         P_exp += 0.5 * p.rho * v_er^3 * area * cp_at_tsr(lambda_er)
     end
@@ -968,7 +1006,165 @@ function settle_aero_power(sys::KiteTurbineSystem, p::SystemParams,
 end
 
 """
-    lift_chain_design(sys, p, lift_device, hub_pos; omega_eq) -> NamedTuple
+    _back_from_circle_intersection(c1, c2; ra, rb, ea) -> (x, z) or nothing
+
+Upper intersection of a circle of radius `ra` about `c1` with one of radius `rb`
+about `c2`, both in the (x, z) plane, or `nothing` when they do not meet.
+
+The two lines bounding the sky anchor are both cut lengths, so the anchor's
+design position is where their circles cross:
+
+  * the BACK LINE: centred on the ground anchor, radius = its rest length;
+  * the CYAN LINE: centred on the lift bearing, radius = `CYAN_L0_DESIGN`.
+
+The upper intersection is the physical one (the lower sits below ground).  This
+is a closed form, chosen over a root-finder (Rod, 2026-09-20): the earlier note
+that "the taut balance needs the sky anchor's actual settled position, which is
+what the static equilibrium solver exists to produce" is unnecessarily
+pessimistic — the intersection reproduces the 2026-09-19 settled position to
+6.4 mm (`scratch/probe_circle_intersect.jl`).  `ea` is the relative slack on the
+separation test, which is what lets a tangent or missing pair return `nothing`
+instead of a NaN from `sqrt` of a negative.
+"""
+function _back_from_circle_intersection(
+    c1::AbstractVector, c2::AbstractVector; ra::Float64, rb::Float64, ea::Float64=1e-9
+)::Union{Nothing, NTuple{2, Float64}}
+    (ra > 0.0 && rb > 0.0) ||
+        error("_back_from_circle_intersection: radii must be positive")
+    d = hypot(c2[1] - c1[1], c2[2] - c1[2])
+    (d < 1e-12 || d > (1.0 + ea) * (ra + rb) || d < (1.0 - ea) * abs(ra - rb)) &&
+        return nothing
+    a = (ra^2 - rb^2 + d^2) / (2d)
+    h2 = ra^2 - a^2
+    h2 < 0.0 && return nothing
+    h = sqrt(h2)
+    ux = (c2[1] - c1[1]) / d
+    uz = (c2[2] - c1[2]) / d
+    # Base point on the centre line, then step `h` along the perpendicular.
+    ax = c1[1] + a * ux
+    az = c1[2] + a * uz
+    p1 = (ax - h * uz, az + h * ux)
+    p2 = (ax + h * uz, az - h * ux)
+    return p1[2] >= p2[2] ? p1 : p2
+end
+
+"""
+    _design_lift_chain_geometry(sys, p, hub_pos) -> (bearing_pos, sky_pos)
+
+The design placement of the lift bearing and sky anchor for a top ring at
+`hub_pos`, both on the shaft axis.
+
+Used by the design preload path, which is given only a hub position and must
+recover the load-path geometry from it.  The caller must pass the OPERATING hub
+position — the placement `trpt_matched_place` contracts to — not the raw rigid
+placement, or the split is evaluated at a geometry the machine never occupies
+(measured 2026-09-20: raw gives 172/390 N, the placed hub gives 223/364 N, and
+the settled equilibrium is 282/284 N).
+"""
+function _design_lift_chain_geometry(
+    sys::KiteTurbineSystem, p::SystemParams, hub_pos::AbstractVector
+)
+    β = p.elevation_angle
+    sh = [cos(β), 0.0, sin(β)]
+    hub_gid = sys.rotor.node_id
+    # RESTING radius — the cone does not move because the top rotor is banked
+    # (Rod, 2026-09-15).  See the note in `lift_chain_design`.
+    bo = bridle_bearing_offset((sys.nodes[hub_gid]::RingNode).radius)
+    bearing_pos = hub_pos .+ bo .* sh
+    return bearing_pos, bearing_pos .+ CYAN_L0_DESIGN .* sh
+end
+
+"""
+    back_line_design_length(p, bearing_pos, sh) -> Float64
+
+Design rest length (m) of the back line: the ground anchor to the DESIGN sky
+anchor, which sits `bridle_bearing_offset + CYAN_L0_DESIGN` along the shaft from
+the top ring.  This is the CUT length of the physical line, so it is built from
+the design shaft, not from wherever the bowed rig puts the anchor.
+"""
+function back_line_design_length(
+    p::SystemParams, bearing_pos::AbstractVector, sh::AbstractVector
+)
+    back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
+    design_sky = bearing_pos .+ CYAN_L0_DESIGN .* sh
+    return hypot(design_sky[1] - back_ax, design_sky[3])
+end
+
+"""
+    _sky_anchor_design_pos(p, bearing_pos) -> (sky_pos, back_dir)
+
+Design position of the sky anchor and the resulting unit vector to the ground
+back anchor.
+
+The design point sits on BOTH lines' cut lengths, so the sky anchor is the upper
+intersection of the back-line and cyan-line circles.  Both are treated as rigid
+at their rest lengths here: at the design point the line is on its hard stop
+(bungee fully extended, Dyneema taut), so the small operating stretch is not a
+design geometry input.
+
+The circle data are the same for every caller — this is the ONE authority, so
+`lift_chain_design`'s split and the preload cannot drift.  The back-line radius
+is its cut length, built from the sky anchor's position on the DESIGN shaft; it
+does not move when the rig bows under load (the anchor does).
+"""
+function _sky_anchor_design_pos(p::SystemParams, bearing_pos::AbstractVector)
+    β = p.elevation_angle
+    sh = [cos(β), 0.0, sin(β)]
+    back_ax = p.tether_length * cos(β) + p.back_anchor_fwd_x
+    back_L0 = back_line_design_length(p, bearing_pos, sh)
+
+    hit = _back_from_circle_intersection(
+        [back_ax, 0.0],
+        [bearing_pos[1], bearing_pos[3]];
+        ra=back_L0,
+        rb=CYAN_L0_DESIGN,
+        ea=1e-6,
+    )
+    # A non-intersection, or an intersection below the ground plane, is degenerate
+    # geometry rather than a physical state: fall back to the rigid placement the
+    # builder uses rather than inventing a position.
+    sky = if hit === nothing || hit[2] <= 0.0
+        bearing_pos .+ CYAN_L0_DESIGN .* sh
+    else
+        [hit[1], 0.0, hit[2]]
+    end
+    back_dir = normalize([back_ax, 0.0, 0.0] .- sky)
+    return sky, back_dir
+end
+
+"""
+    _sky_anchor_taut_split(cyan_dir, back_dir, lift_dir, T_lift, m_sky) -> (T_back, T_cyan)
+
+The 2x2 sky-anchor balance with the back line TAUT (Rod, 2026-09-15 ruling),
+solved in the (x, z) plane:
+
+    T_back·back_dir + T_cyan·cyan_dir = −T_lift·lift_dir + [0, 0, m_sky·g]
+
+`T_cyan` and `T_back` are the two unknowns; the y components vanish (the rig is
+symmetric about y = 0).  Returns them in that order so the caller can pick the
+dominant, back-line-carrying branch.
+
+A non-positive `T_back` means the back line would have to push, i.e. it is slack
+at this geometry: the caller must then fall back to the cyan-only projection.
+This function does not clamp — `physics-topology.md` §6 forbids silently turning
+an unreachable balance into a plausible-looking one.
+"""
+function _sky_anchor_taut_split(
+    cyan_dir::AbstractVector,
+    back_dir::AbstractVector,
+    lift_dir::AbstractVector,
+    T_lift::Float64,
+    m_sky::Float64,
+)
+    A = [back_dir[1] cyan_dir[1]; back_dir[3] cyan_dir[3]]
+    rhs = [-T_lift * lift_dir[1]; -T_lift * lift_dir[3] + m_sky * 9.81]
+    sol = A \ rhs
+    return sol[1], sol[2]
+end
+
+"""
+    lift_chain_design(sys, p, lift_device, hub_pos; omega_eq, bearing_pos, sky_pos)
+        -> NamedTuple
 
 Closed-form load split of the lift chain at the design point, from the two static
 sections (Rod 2026-09-13).
@@ -985,20 +1181,33 @@ Orientation (verified against `src/ring_forces.jl:209-215`, not assumed):
     Section B — cut the TRPT just below the main rotor:
         T_top  =  T_thrust + n·T_b·cos θ − W_rotor·sin β
 
-The back line is an **altitude limiter, not a load path** (Rod 2026-09-12), so at
-the design point it is SLACK and the whole lift projection lands on the cyan
-line.  `design_preload_from_sky_anchor` instead solves as though it were taut at
-design; measured 2026-09-13 that starves the chain and puts `T_top` 124 N BELOW
-the torsional-realisability floor (plan §2.4.1), whereas with the back line slack
-the preload is realisable by +70 N.  The back line's state therefore decides
-realisability, and its tension-only altitude-limiter role is the correct one.
+THE BACK LINE IS TAUT AT THE DESIGN POINT (Rod, 2026-09-15 ruling).  The sky
+anchor's (x, z) balance is therefore solved as a 2x2 for `(T_back, T_cyan)`
+rather than projecting the whole lift onto the cyan line.  The earlier SLACK
+projection (and the 2026-09-13 decision that encoded it) is superseded: it
+over-predicted `T_cyan` by 73 % (388.3 N where the balance gives 245.5 N) and
+`T_top` by 188 N.
+
+The anchor position is the geometry the two cut lines actually define: the upper
+intersection of the back-line and cyan-line circles (`_sky_anchor_design_pos`).
+At the operating equilibrium this reproduces the settled anchor to 6.4 mm, so the
+split it yields (245.5 N cyan / 320.2 N back) matches the ODE's measured
+252.5 N / 313.5 N within 2.7 %.  `bearing_pos` / `sky_pos` may be passed in when
+the caller already holds the operating positions; the caller is then responsible
+for their consistency, since the default is the closed-form design placement.
+
+If the 2x2 returns a non-positive `T_back`, the back line cannot be taut at that
+geometry and the cyan-only projection is used instead.  Both branches are
+computed and the choice is recorded in `back_taut` — never a silent clamp.
 """
 function lift_chain_design(
     sys::KiteTurbineSystem,
     p::SystemParams,
-    lift_device::Union{Nothing,LiftDevice},
+    lift_device::Union{Nothing, LiftDevice},
     hub_pos::AbstractVector;
     omega_eq::Float64=0.0,
+    bearing_pos::Union{Nothing, AbstractVector}=nothing,
+    sky_pos::Union{Nothing, AbstractVector}=nothing,
 )
     lift_device === nothing && return nothing
     β = p.elevation_angle
@@ -1016,25 +1225,39 @@ function lift_chain_design(
     R_hub = (sys.nodes[hub_gid]::RingNode).radius
 
     bearing_offset = bridle_bearing_offset(R_hub)
-    bearing_pos = hub_pos .+ bearing_offset .* sh
-    sky_pos = bearing_pos .+ CYAN_L0_DESIGN .* sh
-    cyan_dir = normalize(bearing_pos .- sky_pos)       # sky → bearing (down-shaft)
+    # Design (shaft-axis) placement, recovered from the hub position.  It is also
+    # the degenerate-geometry fallback when the circles do not meet.
+    bearing_rigid, _ = _design_lift_chain_geometry(sys, p, hub_pos)
+    bearing_use = bearing_pos === nothing ? bearing_rigid : bearing_pos
+    (sky_use, back_dir) = _sky_anchor_design_pos(p, bearing_use)
+    sky_use = sky_pos === nothing ? sky_use : sky_pos
+    # With an explicitly supplied sky anchor, re-derive the back-line direction
+    # from it so the split responds to the position the caller actually holds.
+    if sky_pos !== nothing
+        back_ax = p.tether_length * cos(β) + p.back_anchor_fwd_x
+        back_dir = normalize([back_ax, 0.0, 0.0] .- sky_use)
+    end
+    cyan_dir = normalize(bearing_use .- sky_use)       # sky → bearing (down-shaft)
 
     _, T_lift, el_deg = lift_force_steady(lift_device, p.rho, p.v_wind_ref, p)
     el = deg2rad(el_deg)
     lift_dir = [cos(el), 0.0, sin(el)]
-    # Sky anchor with the back line slack: the cyan line balances lift + sky weight.
-    T_cyan = max(
-        -dot(T_lift .* lift_dir .+ [0.0, 0.0, -SKY_ANCHOR_MASS_KG * 9.81], cyan_dir), 0.0
-    )
-    T_cyan_ax = -T_cyan * dot(cyan_dir, sh)            # on the bearing, up-shaft
+    sky_weight = [0.0, 0.0, -SKY_ANCHOR_MASS_KG * 9.81]
 
-    pa = attachment_point(hub_pos, R_hub, 0.0, 1, p.n_lines, perp1, perp2)
-    gap = norm(bearing_pos .- pa)
-    cosθ = bearing_offset / gap
-    T_bridle = max(
-        (T_cyan_ax - BEARING_MASS_KG * 9.81 * sin(β)) / (p.n_lines * cosθ), 0.0
+    # ── Sky anchor: taut 2x2, with the cyan-only projection as the slack branch ─
+    T_back_taut, T_cyan_taut = _sky_anchor_taut_split(
+        cyan_dir, back_dir, lift_dir, T_lift, SKY_ANCHOR_MASS_KG
     )
+    if T_back_taut > 0.0
+        T_cyan, T_back = T_cyan_taut, T_back_taut
+    else
+        # The back line would have to push — it is slack here.  Cyan alone carries
+        # lift + sky weight.  This branch is loud in `back_taut` for the caller.
+        T_cyan = max(-dot(T_lift .* lift_dir .+ sky_weight, cyan_dir), 0.0)
+        T_back = 0.0
+    end
+    back_taut = T_back > 0.0
+    T_cyan_ax = -T_cyan * dot(cyan_dir, sh)            # on the bearing, up-shaft
 
     # ODE-consistent main-rotor thrust (same formulation as ring_forces.jl:202-215)
     v_hub = p.v_wind_ref * sys.rotor.wind_factor
@@ -1048,20 +1271,35 @@ function lift_chain_design(
     # substitution.  Do not reintroduce a fallback here.
     ω = omega_eq
     λ = abs(ω) * sys.rotor.radius / max(v_hub, 1e-6)
-    T_thrust =
-        0.5 * p.rho * v_hub^2 * main_rotor_swept_area(sys) * ct_at_tsr(λ) * cos(β)^2
+    T_thrust = 0.5 * p.rho * v_hub^2 * main_rotor_swept_area(sys) * ct_at_tsr(λ) * cos(β)^2
     W_rotor = p.n_blades * p.m_blade * 9.81
+
+    # ── Bridle cone: how much of the cyan tension reaches the top ring ────────
+    pa = attachment_point(hub_pos, R_hub, 0.0, 1, p.n_lines, perp1, perp2)
+    gap = norm(bearing_use .- pa)
+    cosθ = bearing_offset / gap
+    T_bridle = max((T_cyan_ax - BEARING_MASS_KG * 9.81 * sin(β)) / (p.n_lines * cosθ), 0.0)
 
     T_top = T_thrust + p.n_lines * T_bridle * cosθ - W_rotor * sin(β)
 
     return (;
-        T_cyan, T_cyan_ax, T_bridle, T_top, gap, cosθ, bearing_pos, sky_pos,
-        T_thrust, W_rotor,
+        T_cyan,
+        T_back,
+        T_cyan_ax,
+        T_bridle,
+        T_top,
+        gap,
+        cosθ,
+        back_taut,
+        bearing_pos=bearing_use,
+        sky_pos=sky_use,
+        T_thrust,
+        W_rotor,
     )
 end
 
 """
-    apply_design_bridle_preload!(sys, u_design, p, lift_device; omega_eq)
+    apply_design_bridle_preload!(sys, u_design, p, lift_device; omega_eq, hub_pos)
 
 Cut the six bridle rest lengths for the design preload.
 
@@ -1072,20 +1310,26 @@ the design point.  A tension-only line that must carry preload has to be cut
 
     bridle_L0 = gap / (1 + T_bridle / EA)
 
-Derived from the design geometry (`u_design`), never from the current rest
-length, so it is idempotent.
+Derived from the design geometry, never from the current rest length, so it is
+idempotent.  `hub_pos` overrides the state's top ring with the OPERATING
+(contracted) hub from `trpt_matched_place`; see `_design_lift_chain_geometry`.
 """
 function apply_design_bridle_preload!(
     sys::KiteTurbineSystem,
     u_design::AbstractVector,
     p::SystemParams,
-    lift_device::Union{Nothing,LiftDevice};
+    lift_device::Union{Nothing, LiftDevice};
     omega_eq::Float64=0.0,
+    hub_pos::Union{Nothing, AbstractVector}=nothing,
 )
     lift_device === nothing && return nothing
     hub_gid = sys.rotor.node_id
-    hub_pos = u_design[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
-    d = lift_chain_design(sys, p, lift_device, hub_pos; omega_eq=omega_eq)
+    # `hub_pos` overrides the state's top ring: the settle passes the OPERATING
+    # (contracted) hub from `trpt_matched_place` so the split is evaluated where
+    # the machine actually sits.  See `_design_lift_chain_geometry`.
+    hub_use =
+        hub_pos === nothing ? u_design[(3 * (hub_gid - 1) + 1):(3 * hub_gid)] : hub_pos
+    d = lift_chain_design(sys, p, lift_device, hub_use; omega_eq=omega_eq)
     d === nothing && return nothing
     L0 = d.gap / (1.0 + d.T_bridle / BRIDLE_EA_DESIGN)
     newsegs = RopeSubSegment[]
@@ -1096,12 +1340,77 @@ function apply_design_bridle_preload!(
             (na == hub_gid && nb == sys.bearing_id)
         push!(
             newsegs,
-            is_bridle ? RopeSubSegment(ss.end_a, ss.end_b, L0, ss.EA, ss.c_damp, ss.diameter) :
-            ss,
+            if is_bridle
+                RopeSubSegment(ss.end_a, ss.end_b, L0, ss.EA, ss.c_damp, ss.diameter)
+            else
+                ss
+            end,
         )
     end
     sys.sub_segs[:] = newsegs
     return d
+end
+
+"""
+    max_segment_cross_ratio(u, sys) -> Float64
+
+Largest per-segment `Δα / δα*` in the state `u`: the actual twist between
+adjacent rings as a fraction of the geometric line-crossing limit
+
+    δα* = 2·asin(L_seg / √(2(L_seg² + 2r²))),   r = max(r_a, r_b)
+
+`≥ 1` means the lines have crossed.  This is the discrete-truss bound that
+`objective_evaluator.jl`'s `twist_collapse_check` gates the ODE window on, and it
+is far tighter than the continuum `sin Δα ≤ 1` limit.  The design floor and the
+settle's equilibrium correction both have to respect it, not just the sin law.
+"""
+function max_segment_cross_ratio(u::AbstractVector, sys::KiteTurbineSystem)
+    N, Nr = sys.n_total, sys.n_ring
+    worst = 0.0
+    for ri in 1:(Nr - 1)
+        r_a = (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
+        r_b = (sys.nodes[sys.ring_ids[ri + 1]]::RingNode).radius
+        r = max(r_a, r_b)
+        gid_a, gid_b = sys.ring_ids[ri], sys.ring_ids[ri + 1]
+        pa = u[(3 * (gid_a - 1) + 1):(3 * gid_a)]
+        pb = u[(3 * (gid_b - 1) + 1):(3 * gid_b)]
+        L = norm(pb .- pa)
+        L <= 0.0 && continue
+        dastar = 2 * asin(min(L / sqrt(2 * (L^2 + 2 * r^2)), 1.0))
+        dastar <= 0.0 && continue
+        ratio = abs(u[6N + ri + 1] - u[6N + ri]) / dastar
+        worst = max(worst, ratio)
+    end
+    return worst
+end
+
+"""
+    max_segment_cross_ratio(place, sys) -> Float64
+
+Largest per-segment `Δα / δα*` of a `trpt_matched_place` result: the placing twist
+as a fraction of the geometric line-crossing limit
+
+    δα* = 2·asin(L_seg / √(2(L_seg² + 2r²))),   r = max(r_a, r_b)
+
+computed from the PLACED ring centres and radii.  `≥ 1` means the lines have
+crossed.  This is the discrete-truss bound `objective_evaluator.jl`'s
+`twist_collapse_check` gates the ODE window on; it is much tighter than the
+continuum `sin Δα ≤ 1` limit, so the design floor must respect both.
+"""
+function max_segment_cross_ratio(place, sys::KiteTurbineSystem)
+    worst = 0.0
+    for ri in 1:(sys.n_ring - 1)
+        r_a = (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
+        r_b = (sys.nodes[sys.ring_ids[ri + 1]]::RingNode).radius
+        r = max(r_a, r_b)
+        L = norm(place.ctrs[ri + 1] .- place.ctrs[ri])
+        L <= 0.0 && continue
+        dastar = 2 * asin(min(L / sqrt(2 * (L^2 + 2 * r^2)), 1.0))
+        dastar <= 0.0 && continue
+        ratio = abs(place.α[ri + 1] - place.α[ri]) / dastar
+        worst = max(worst, ratio)
+    end
+    return worst
 end
 
 """
@@ -1124,26 +1433,46 @@ Replaces the old hand-built `F_top` (2026-09-13), which had three defects:
   * it charged the KITE's mass at the rotor, and took `T_cyan` from the
     sky-anchor balance with the back line TAUT.
 
-DEFERRED (2026-09-16): the sky-anchor balance in `lift_chain_design` below still
-solves the back line as SLACK.  The 2026-09-15 ruling is that it is TAUT at the
-design point, and `ring_forces.jl` now carries the bi-linear bungee element, so
-this balance is the remaining contradiction.  It cannot be closed in closed form:
-the taut balance needs the sky anchor's actual settled position, which is what
-the static equilibrium solver exists to produce.  Until it lands, treat the load
-split as UNRESOLVED and the tensions here as provisional.
+RESOLVED (2026-09-20): the sky-anchor balance in `lift_chain_design` now solves the
+back line as TAUT, per the 2026-09-15 ruling, and the ruling needed no settled
+state after all — the design anchor is the closed-form upper intersection of the
+back-line and cyan-line circles (`_sky_anchor_design_pos`).  The earlier DEFERRED
+note here claimed that "the taut balance needs the sky anchor's actual settled
+position, which is what the static equilibrium solver exists to produce"; that is
+false: the two cut lengths pin the anchor position directly, and the 2x2 then
+gives the split.
+
+WHAT GEOMETRY THE SPLIT IS EVALUATED AT MATTERS (2026-09-20).  The 2x2 is
+ill-conditioned — the cyan and back lines are near-parallel at the sky anchor —
+so the split is strongly sensitive to the hub position it is built from.  Measured
+on the campaign seed with the taut split: the raw rigid placement (|hub| 18.80 m)
+gives 172/390 N, the CONTRACTED placement `trpt_matched_place` produces
+(|hub| 16.97 m) gives 223/364 N, and the settled equilibrium is 282/284 N against
+the 2026-09-19 ODE measurement of 252.5/313.5 N.  `settle_to_operational_state`
+therefore places first and passes the placed hub in via `hub_pos`, so the design
+point is the operating geometry rather than one the machine never occupies.
+Callers that pass nothing get the state's own top ring — correct when that state
+already holds the operating placement.
 """
 function design_axial_preload(
     sys::KiteTurbineSystem,
     p::SystemParams,
-    lift_device::Union{Nothing,LiftDevice},
+    lift_device::Union{Nothing, LiftDevice},
     u_design::AbstractVector;
     omega_eq::Float64=0.0,
-    wind_fn::Union{Nothing,Function}=nothing,
+    wind_fn::Union{Nothing, Function}=nothing,
     realisability_margin::Float64=TRPT_REALISABILITY_TENSION_MARGIN,
+    hub_pos::Union{Nothing, AbstractVector}=nothing,
 )
     lift_device === nothing && return Float64[]
-    hub_pos = u_design[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)]
-    d = lift_chain_design(sys, p, lift_device, hub_pos; omega_eq=omega_eq)
+    # `hub_pos` overrides the state's top ring with the OPERATING (contracted)
+    # hub; see `_design_lift_chain_geometry`.
+    hub_use = if hub_pos === nothing
+        u_design[(3 * (sys.rotor.node_id - 1) + 1):(3 * sys.rotor.node_id)]
+    else
+        hub_pos
+    end
+    d = lift_chain_design(sys, p, lift_device, hub_use; omega_eq=omega_eq)
     d === nothing && return Float64[]
     n_seg = sys.n_ring - 1
     β = p.elevation_angle
@@ -1161,13 +1490,22 @@ function design_axial_preload(
     end
     rebuild!()
 
-    # ── Realisability floor (2026-09-13) ────────────────────────────────────
-    # A segment carrying τ at tension T_s can only twist to
-    # sin Δα = τ·chord/(n_lines·T_s·r_a·r_b) ≤ 1.  Below that tension no twist
-    # transmits the torque at all.  Enforce `demand ≤ 1/realisability_margin` by
-    # raising F_top (which raises every segment equally, and τ_max is monotone
-    # increasing in tension).  Demand ∝ 1/T_s, so one multiplicative step lands
-    # close; iterate to convergence.
+    # ── Realisability floor (2026-09-13; crossing limit added 2026-09-20) ────
+    # TWO criteria, and the tighter one binds.  The continuum membrane limit is
+    # the sin law `sin Δα = τ·chord/(n_lines·T_s·r_a·r_b) ≤ 1` (demand), which
+    # only bites at Δα = 90°.  A DISCRETE TRPT rope truss crosses much earlier, at
+    # the geometric limit
+    #     δα* = 2·asin(L_seg / √(2(L_seg² + 2r²)))
+    # (the same limit `objective_evaluator.jl`'s `twist_collapse_check` gates the
+    # ODE window on).  Measured on the campaign seed 2026-09-20: at the honest taut
+    # preload F_top = 1250.7 N the placing twist is Δα = 58.93° against
+    # δα* = 54.01° — ratio 1.0911, i.e. ALREADY CROSSED — while `demand` reads only
+    # 0.8565 < 0.9524 and the old check therefore declared ample headroom.  Any
+    # genome with demand in the 0.81-0.95 band fell into that trap.
+    #
+    # So enforce BOTH by raising F_top, which raises every segment equally and
+    # lowers both metrics (each ∝ 1/T_s).  One multiplicative step lands close;
+    # iterate to convergence.
     if realisability_margin > 1.0
         τ_eq = sys.k_mppt_ref[] * omega_eq^2
         target = 1.0 / realisability_margin
@@ -1179,6 +1517,7 @@ function design_axial_preload(
                 sys, p, F_ax, τ_eq, omega_eq, wind_fn; raise_on_unrealisable=false
             )
             worst = maximum(place.demand)
+            cross = max_segment_cross_ratio(place, sys)
             # The update below (`F_top *= worst·margin`) has its fixed point exactly
             # AT the target — `worst → 1/margin` — so a bare `worst <= target` can
             # never latch: the iterate approaches from above and stalls on the last
@@ -1186,11 +1525,11 @@ function design_axial_preload(
             # campaign seed sat at 0.9523809523809524 against a target of
             # 0.9523809523809523 and never cleared in 12 iterations.  Accept
             # at-or-below the margin to numerical rounding.
-            if worst <= target * (1.0 + 1e-9)
+            if worst <= target * (1.0 + 1e-9) && cross <= target * (1.0 + 1e-9)
                 cleared = true
                 break
             end
-            F_top *= worst * realisability_margin
+            F_top *= max(worst, cross) * realisability_margin
             rebuild!()
             # BOUND (2026-09-13): the floor is a design constraint, not a licence
             # to rescue any genome.  A design only a few percent past the cliff is
@@ -1345,10 +1684,16 @@ function trpt_matched_place(
         # `sys.effective_radii` once expansion rotors are present (2026-09-11:
         # using the bare ring radius here left a 55 % tension error on the
         # 3-rotor case, because the attachments sit at the effective radius).
-        r_a = isempty(sys.expansion_rotors) ? (sys.nodes[gid_a]::RingNode).radius :
-              sys.effective_radii[s]
-        r_b = isempty(sys.expansion_rotors) ? (sys.nodes[gid_b]::RingNode).radius :
-              sys.effective_radii[s + 1]
+        r_a = if isempty(sys.expansion_rotors)
+            (sys.nodes[gid_a]::RingNode).radius
+        else
+            sys.effective_radii[s]
+        end
+        r_b = if isempty(sys.expansion_rotors)
+            (sys.nodes[gid_b]::RingNode).radius
+        else
+            sys.effective_radii[s + 1]
+        end
         chord0 =
             ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
         T_s = F_ax[s] / p.n_lines
@@ -1423,8 +1768,15 @@ function trpt_matched_place(
     end
 
     return (;
-        α, ctrs, demand, τ_carry=τ_carry_v, τ_max, chord=chord_v, T_s=T_v,
-        r_a=r_a_v, r_b=r_b_v,
+        α,
+        ctrs,
+        demand,
+        τ_carry=τ_carry_v,
+        τ_max,
+        chord=chord_v,
+        T_s=T_v,
+        r_a=r_a_v,
+        r_b=r_b_v,
     )
 end
 
@@ -1492,23 +1844,27 @@ end
 # The caller must re-establish the orbital velocity field afterwards, which is why
 # the polish runs immediately BEFORE `set_orbital_velocities!`.
 #
-# CAP EVIDENCE (2026-09-19, campaign seed, n_op = 300 000, dt_dr = 2e-4, measured
-# 0.14 ms/iteration; `scratch/probe_dr_A_convergence.jl`):
+# CAP EVIDENCE (2026-09-19, campaign seed, n_op = 300 000, measured 0.14 ms/iteration;
+# `scratch/probe_dr_A_convergence.jl`):
 #
 #     iter     FULL-handoff acc0      V2 hub axial
 #       10 000   257.6 m/s^2 (26.3 g)     +1.42 N
-#       20 000   293.0 m/s^2 (29.9 g)     -2.65 N   <- DEFAULT
+#       20 000   293.0 m/s^2 (29.9 g)     -2.65 N   <- old default (dt = 2e-4)
 #       40 000   321.1 m/s^2 (32.7 g)
 #       80 000   338.5 m/s^2 (34.5 g)
 #
-# The force residual reaches its ~0.6 N floor by 10 000 iterations and then
-# hovers: the Barnes scheme converges the fictitious dynamics, not the residual,
-# so it does not descend monotonically.  20 000 is kept as the default because it
-# is the round value that also lands the best axial hub balance; raising it buys
-# no smaller residual.  Callers needing a different cost/tolerance trade pass
-# `polish_iters`.
-const OPERATIONAL_POLISH_DT = 2.0e-4
-const OPERATIONAL_POLISH_MAX_ITERS = 20_000
+# RETUNED 2026-09-20.  `dt` is now 5.0e-5 and the iteration count is raised to keep
+# the same 4 s of simulated relaxation.  The bi-linear back line is the reason: at
+# the new `BACK_LINE_T_DESIGN_N = 320 N` the operating equilibrium sits on the hard
+# stop, where the element's slope jumps from `k_soft = 400 N/m` to
+# `k_hard ≈ 50 800 N/m`.  Measured on the campaign seed, the old dt = 2e-4 kicks the
+# fictitious dynamics across that non-smooth boundary and DIVERGES with more
+# iterations (acc_struct 746 -> 5064 m/s^2 and max_force 625 -> 4236 N as iterations
+# rise from 20 000 to 200 000); dt = 5e-5 converges cleanly to 6.7 m/s^2 / 80 N,
+# inside V6's gates (< 10 g, < 200 N).  Callers needing a different cost/tolerance
+# trade still pass `polish_dt` / `polish_iters`.
+const OPERATIONAL_POLISH_DT = 5.0e-5
+const OPERATIONAL_POLISH_MAX_ITERS = 80_000
 
 """
     _polish_node_forces!(F, u_work, du_work, ode_params, p, sys, N)
@@ -1625,7 +1981,7 @@ function _trpt_equilibrium_demand(
     u::Vector{Float64},
     τ_eq::Float64,
     ω_eq::Float64,
-    wind_fn::Union{Nothing,Function},
+    wind_fn::Union{Nothing, Function},
 )
     n_seg = sys.n_ring - 1
     T_meas = zeros(n_seg)
@@ -1635,8 +1991,7 @@ function _trpt_equilibrium_demand(
     end
     T_meas .= max.(T_meas, 1e-9)
     place = trpt_matched_place(
-        sys, p, T_meas .* p.n_lines, τ_eq, ω_eq, wind_fn;
-        raise_on_unrealisable=false,
+        sys, p, T_meas .* p.n_lines, τ_eq, ω_eq, wind_fn; raise_on_unrealisable=false
     )
     return maximum(place.demand)
 end
@@ -1654,7 +2009,7 @@ function _place_trpt_design!(
     sys::KiteTurbineSystem,
     p::SystemParams,
     placement;
-    lift_device::Union{Nothing,LiftDevice}=nothing,
+    lift_device::Union{Nothing, LiftDevice}=nothing,
 )
     N, Nr = sys.n_total, sys.n_ring
     hub_gid = sys.rotor.node_id
@@ -1670,8 +2025,10 @@ function _place_trpt_design!(
         # RESTING radius — see the note in `lift_chain_design`.  The cone does not
         # move because the top rotor is banked (Rod, 2026-09-15).
         bearing_offset = bridle_bearing_offset((sys.nodes[hub_gid]::RingNode).radius)
-        for (gid, off) in ((sys.bearing_id, bearing_offset),
-                           (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN))
+        for (gid, off) in (
+            (sys.bearing_id, bearing_offset),
+            (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN),
+        )
             @views u[(3 * (gid - 1) + 1):(3 * gid)] .= placement.ctrs[Nr] .+ off .* sh
             @views u[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
         end
@@ -1821,11 +2178,7 @@ function settle_to_operational_state(
     # (Rod, 2026-09-19).
     F_ax = let
         if lift_device !== nothing
-            # Cut the six bridles for the design preload FIRST (the cone is
-            # placed, not force-balanced), then prescribe the transmission
-            # preload from the same two-section balance.  2026-09-13.
-            apply_design_bridle_preload!(sys, u0, p, lift_device; omega_eq=ω_eq)
-            F_ax_design = design_axial_preload(sys, p, lift_device, u0; omega_eq=ω_eq, wind_fn=wind_fn)
+            hub_gid = sys.rotor.node_id
             # ── Matched-place twist + axial geometry (2026-09-11) ───────────
             # Solve the twist and the axial gap TOGETHER so each segment carries
             # the intended preload tension at its final twist.  The old restore
@@ -1833,29 +2186,53 @@ function settle_to_operational_state(
             # inflated the tension ~7× and left the state ~7× under-twisted — the
             # wind-up.  See `trpt_matched_place` and
             # docs/plans/2026-09-11-settle-ode-coherence.md.
+            #
+            # ORDER MATTERS (Rod, 2026-09-20).  The sky-anchor 2x2 is
+            # ill-conditioned (the cyan and back lines are near-parallel there),
+            # so the split must be evaluated at the hub the machine actually
+            # occupies.  Measured on the campaign seed: the raw rigid placement
+            # (|hub| 18.80 m) gives 172/390 N, the CONTRACTED placement above
+            # (|hub| 16.97 m) gives 223/364 N, and the settled equilibrium is
+            # 282/284 N.  So place FIRST, then cut the bridles and size the
+            # transmission from `d_design` at the placed hub.
+            F_ax_rigid = design_axial_preload(
+                sys, p, lift_device, u0; omega_eq=ω_eq, wind_fn=wind_fn
+            )
+            placement = trpt_matched_place(sys, p, F_ax_rigid, τ_eq, ω_eq, wind_fn)
+            hub_placed = placement.ctrs[Nr]
+            d_design = apply_design_bridle_preload!(
+                sys, u0, p, lift_device; omega_eq=ω_eq, hub_pos=hub_placed
+            )
+            F_ax_design = design_axial_preload(
+                sys,
+                p,
+                lift_device,
+                u0;
+                omega_eq=ω_eq,
+                wind_fn=wind_fn,
+                hub_pos=hub_placed,
+            )
+            # Re-place at that top tension.  `trpt_matched_place` prescribes the
+            # tension and derives the geometry, so a second pass costs O(Nr) and
+            # hands the polish a state already at its operating equilibrium.
             placement = trpt_matched_place(sys, p, F_ax_design, τ_eq, ω_eq, wind_fn)
-            α_matched, ctrs = placement.α, placement.ctrs
+            # Write the matched placement into the state, then place the LIFT CHAIN
+            # at the same geometry (2026-09-13): the bearing and sky anchor must
+            # sit at the design point, not wherever the short equilibrium
+            # relaxation left them, or the preloaded bridles can never reach their
+            # design tension.
             for k in 1:Nr
                 gid = sys.ring_ids[k]
-                u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[k]
-                u_start[6N + k] = α_matched[k]
+                @views u_start[(3 * (gid - 1) + 1):(3 * gid)] .= placement.ctrs[k]
+                u_start[6N + k] = placement.α[k]
             end
-            # Place the LIFT CHAIN at its design geometry too (2026-09-13).  The
-            # bearing and sky anchor were previously left wherever the short
-            # equilibrium relaxation put them — not the design point — so the
-            # preloaded bridles could never sit at their design tension.  The
-            # two-section balance in `lift_chain_design` is consistent AT this
-            # geometry (each section sums to ~0), so this is the equilibrium, not
-            # an imposed guess.
-            hub_gid = sys.rotor.node_id
-            # RESTING radius — see the note in `lift_chain_design`.  The cone does
-            # not move because the top rotor is banked (Rod, 2026-09-15).
-            r_top = (sys.nodes[hub_gid]::RingNode).radius
-            bearing_offset = bridle_bearing_offset(r_top)
-            for (gid, off) in ((sys.bearing_id, bearing_offset),
-                               (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN))
-                u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[Nr] .+ off .* sd_r
-                u_start[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
+            bearing_design, sky_design = _design_lift_chain_geometry(
+                sys, p, placement.ctrs[Nr]
+            )
+            for (gid, pos) in
+                ((sys.bearing_id, bearing_design), (sys.sky_anchor_id, sky_design))
+                @views u_start[(3 * (gid - 1) + 1):(3 * gid)] .= pos
+                @views u_start[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
             end
             F_ax_design
         else
@@ -1982,7 +2359,8 @@ function settle_to_operational_state(
             ctr_b = u_start[(3 * (gid_b - 1) + 1):(3 * gid_b)]
 
             # Natural segment length derived from sub_segs (supports non-uniform spacing)
-            L_seg_s = ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
+            L_seg_s =
+                ROPE_SUBSEGS * sys.sub_segs[(s - 1) * p.n_lines * ROPE_SUBSEGS + 1].length_0
 
             τ_fn_a =
                 (Δα) -> begin
@@ -2021,7 +2399,9 @@ function settle_to_operational_state(
                 τ_b = 0.0
                 for j in 1:p.n_lines
                     pa_j = attachment_point(ctr_a, na.radius, α_cum, j, p.n_lines, pp1, pp2)
-                    pb_j = attachment_point(ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2)
+                    pb_j = attachment_point(
+                        ctr_b, nb.radius, α_cum + Δα_eq, j, p.n_lines, pp1, pp2
+                    )
                     chord_j = norm(pb_j .- pa_j)
                     chord_j < 1e-9 && continue
                     T_j = EA_rope * max(0.0, (chord_j - L_seg_s) / L_seg_s)
@@ -2046,7 +2426,14 @@ function settle_to_operational_state(
                 vw_mag = norm(vw)
                 er_rnom = (sys.nodes[er_gid]::RingNode).radius
                 τ_exp_b = expansion_rotor_forces(
-                    er, p.rho, vw_mag, ω_eq, rad2deg(p.elevation_angle), er_rnom, 100.0, p.n_lines
+                    er,
+                    p.rho,
+                    vw_mag,
+                    ω_eq,
+                    rad2deg(p.elevation_angle),
+                    er_rnom,
+                    100.0,
+                    p.n_lines,
                 )[3]
                 break
             end
@@ -2119,25 +2506,32 @@ function settle_to_operational_state(
         if lift_device !== nothing && !isempty(F_ax)
             target = 1.0 / TRPT_REALISABILITY_TENSION_MARGIN
             for _ in 1:polish_realisability_max_corrections
-                demand_eq =
-                    _trpt_equilibrium_demand(sys, p, u_start, τ_eq, ω_eq, wind_fn)
+                demand_eq = _trpt_equilibrium_demand(sys, p, u_start, τ_eq, ω_eq, wind_fn)
+                # The discrete geometric crossing limit is the OTHER, tighter
+                # criterion (2026-09-20): a settled machine can read a demand
+                # inside the margin while its lines have already crossed, so both
+                # must gate the correction.  `cross_eq` is computed from the
+                # settled state's own α block and ring geometry.
+                cross_eq = max_segment_cross_ratio(u_start, sys)
                 # A non-finite demand, or one whose correction would exceed the
                 # design-side preload bound, means the equilibrium has a slack or
                 # degenerate segment.  That is NOT the bounded margin shortfall
                 # this closure repairs, and scaling for it diverges the state.
                 # Refuse and leave the polished state alone.
                 isfinite(demand_eq) || break
-                demand_eq <= target * (1.0 + 1e-6) && break
-                scale = demand_eq * TRPT_REALISABILITY_TENSION_MARGIN
+                isfinite(cross_eq) || break
+                worst_eq = max(demand_eq, cross_eq)
+                worst_eq <= target * (1.0 + 1e-6) && break
+                scale = worst_eq * TRPT_REALISABILITY_TENSION_MARGIN
                 scale <= TRPT_REALISABILITY_MAX_PRELOAD_FACTOR || break
                 F_ax = F_ax .+ (F_ax[end] * (scale - 1.0))
+                # `trpt_matched_place` enforces the same two-sided floor, so a
+                # raise that cannot clear crossing within the cap raises HERE
+                # rather than placing a crossed machine (physics-topology.md §6).
                 placement = trpt_matched_place(sys, p, F_ax, τ_eq, ω_eq, wind_fn)
-                _place_trpt_design!(
-                    u_start, sys, p, placement; lift_device=lift_device
-                )
+                _place_trpt_design!(u_start, sys, p, placement; lift_device=lift_device)
                 _polish_operational_equilibrium!(
-                    u_start, sys, p, ode_params_polish; dt=polish_dt,
-                    max_iters=polish_iters
+                    u_start, sys, p, ode_params_polish; dt=polish_dt, max_iters=polish_iters
                 )
                 update_kite_pos!(sys, u_start, lift_device, p, 0.0)
             end

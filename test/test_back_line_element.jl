@@ -30,14 +30,24 @@ const KTD = KiteTurbineDynamics
     EA = 707_000.0               # N, 3 mm Dyneema, the declared 5 kW value
 
     travel = KTD.BACK_LINE_SOFT_TRAVEL_M
-    T_design = KTD.BACK_LINE_E_SUM_N / (1.0 + travel / trimmed)
+    # CALIBRATED 2026-09-20.  `T_design` is the element's ONE calibration constant
+    # (`BACK_LINE_T_DESIGN_N`), set from the back line's share of the sky-anchor
+    # 2x2 balance at the measured operating equilibrium — NOT derived from the
+    # bungee `ΣE_i`, which is a stiffness and not a tension (that derivation gave
+    # 2.27 N and put the hard stop ~6 mm below the operating point).  Measured on
+    # the campaign seed: taut 2x2 = 319.75 N, ODE settled = 313.51 N.
+    T_design = KTD.BACK_LINE_T_DESIGN_N
     k_soft = T_design / travel
 
     @test travel == 0.8
     @test T_design > 0.0
     @test k_soft > 0.0
-    # The soft travel is 8 bungee sections of 10 cm each.
+    @test T_design ≈ 320.0
+    @test k_soft ≈ 400.0                      # 320 N over the 0.80 m of soft travel
+    # The physical bungee stiffness reference is retained, but it is NOT the
+    # design tension: 8 sections of 0.30 m nominal.
     @test KTD.BACK_LINE_E_SUM_N ≈ 8 * 0.30
+    @test T_design > 10 * KTD.BACK_LINE_E_SUM_N   # the old derivation's 2.27 N is wrong
 
     # (1) tension-only across the relaxed travel, and at its far end
     @test KTD.back_line_tension(trimmed - travel, trimmed, payout, EA) == 0.0
@@ -53,7 +63,8 @@ const KTD = KiteTurbineDynamics
     # (2) soft branch is linear over the travel, at both ends and the middle
     for frac in (0.25, 0.5, 0.75)
         d = trimmed - travel + frac * travel
-        @test KTD.back_line_tension(d, trimmed, payout, EA) ≈ k_soft * frac * travel rtol = 1e-12
+        @test KTD.back_line_tension(d, trimmed, payout, EA) ≈ k_soft * frac * travel rtol =
+            1e-12
     end
 
     # (3) continuity at the trimmed length: both branches reach T_design there.
@@ -71,8 +82,11 @@ const KTD = KiteTurbineDynamics
     @test abs(above - below) < 2 * tol
 
     # Beyond the stop the Dyneema holds: one more 80 cm would be enormous.
+    # The multiplier moved from 1000 to 100 with the 2026-09-20 calibration:
+    # T_design went 2.27 N -> 320 N, so 1000x it is 320 kN while the Dyneema at
+    # +0.80 m delivers EA*travel/trimmed = 39.8 kN (125x the new T_design).
     T_far = KTD.back_line_tension(trimmed + travel, trimmed, payout, EA)
-    @test T_far > 1000 * T_design
+    @test T_far > 100 * T_design
     @test isfinite(T_far)
 
     # (4) monotone non-decreasing over a wide sweep

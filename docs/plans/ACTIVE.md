@@ -26,7 +26,7 @@ Three rulings recorded in `DECISIONS.md` [2026-09-15]: 5 kW design first; bow is
 an output not a constraint; wobble is gated. Damping inventory source-verified and
 the four mislabelled `# bearing damper retention factor` comments corrected.
 
-### ▶ 2. Resolve the back-line contradiction, then re-derive the load split — NEXT
+### ✅ 2. Resolve the back-line contradiction, then re-derive the load split — LANDED 2026-09-20
 
 **Rod's ruling (2026-09-15): at the design point the back line is NOT slack.** It
 resists the resultant forces at the sky anchor and carries residual vertical
@@ -34,56 +34,30 @@ tension, because the lift line over-lifts (1.5 × airborne weight). It may go
 slack in operation when wind or lift drops. That is an off-design state, not the
 design point.
 
-**Why this is a live conflict, not a stale note.** The ruling agrees with the
-2026-09-12 standing rulings ("the backline is an altitude limiter, partially
-elasticated in the field. **It takes the lift surplus — confirmed by
-measurement**") and with the taut-chain invariant, which is also in `AGENTS.md`.
-But the **live code implements the opposite**:
-`design_axial_preload`'s docstring says the back line "is an altitude limiter and
-is slack at the design point" (`initialization.jl:1053-1054`), and 2026-09-13 §4
-chose slack deliberately, because a **taut** back line drops `T_top` to 1150 N,
-below the 1274.47 N torque-transmission floor — i.e. the design stops being
-realisable. So the taut/slack choice is not cosmetic: it decides whether the seed
-can transmit its rated torque at all.
+**Why this was a live conflict.** The live code previously implemented the
+opposite (`design_axial_preload` docstring said the back line was "slack at the
+design point", projecting sky forces onto the cyan line).
 
-**Measured, not assumed:** at a 3.99 m bearing offset, taut → `T_top` = 1150.0 N
-(unrealisable, −124.5 N); slack → 1344.7 N (realisable, +70.2 N)
-(`scratch/design_chain_preload.jl`, 2026-09-13 §4).
+**Status: LANDED 2026-09-20.** Both halves are complete and verified across both
+suites (Fast 2149/2149, Acceptance 8/8):
 
-**Status (2026-09-16).** Two of the four pieces are done and committed. What
-remains is the **bungee remit** and one rigging figure. Do not re-do 1 or 2.
-
-1. ✅ **The offset question is settled, and the derivation has landed in source.**
-   `2d6233b` removed `BEARING_OFFSET_DESIGN` and made `bridle_bearing_offset(r_top)
-   = r_top / tand(31°)` (`initialization.jl:21`) the single authority. Every call
-   site derives it (`:191`, `:950`, `:1483`, `ring_forces.jl:524`). `7fa059e`
-   removed the two `effective_radii` branches, so the cone reads the topmost ring's
-   resting radius everywhere. The remaining `effective_radii` reads are the
-   expansion-rotor paths, which is correct. The change preserves behaviour today.
-   Construction now closes the latent trap, so convention no longer holds it shut.
-2. ✅ **The taut load split is measured where the ruling needs it.** The closed form
-   reproduces the 09-13 record exactly (taut `T_top` 1149.8 N vs 1150.0, slack
-   1344.7 N exact), so the numbers stand at this seed's geometry. At the design
-   point (lift 70°, taut) `demand` = **1.147** against a 0.9524 target. That is past
-   the torsional cliff, not inside a thin margin. The floor computes to
-   **1388.2 N**, not the record's 1274.47 N. Two criteria and a stale ring mass
-   explain that 8.9 % gap (§7 of the 2026-09-15 handover), so quote 1388.2 N.
-3. ✅ **The bungee ELEMENT has landed (`21cf73b`, 2026-09-16).** The back line is
-   a bi-linear, tension-only element: `back_line_tension` at
-   `initialization.jl:28-92`, wired into the force path at `ring_forces.jl:544`.
-   `EA_back_line` carries the 3 mm Dyneema figure (700 kN,
-   `parameters.jl:305`). **The remaining half of this item is the LOAD SPLIT.**
-   The sky-anchor balance in `lift_chain_design` still solves the back line as
-   SLACK (`initialization.jl:1026`), now explicitly marked DEFERRED with its
-   reason (`initialization.jl:1125-1133`). It cannot be closed in closed form:
-   the taut balance needs the sky anchor's actual settled position, which is what
-   the static solver (item 3) exists to produce. Until that lands, treat the load
-   split as UNRESOLVED and the quoted tensions as provisional.
-4. ○ **Rigging engagement (Rod, 2026-09-15):** soft through the climb, engaging at
-   the target elevation (normally 30°), so at the design point it is taut but only
-   just engaged. The band length and stiffness that set how sharply it engages are
-   **still to be specified**. Carry them as parameters if no field figure exists.
-   This is the one figure the bungee remit needs from outside the model.
+1. ✅ **The offset question is settled:** `bridle_bearing_offset(r_top) = r_top / tand(31°)`.
+2. ✅ **The bungee element has landed (`21cf73b`):** Bi-linear, tension-only element
+   `back_line_tension` with `EA_back_line` = 700 kN (3 mm Dyneema).
+3. ✅ **Taut 2×2 load split landed (`src/initialization.jl`):**
+   `_sky_anchor_taut_split` calculates the exact 2×2 planar balance of the lift,
+   back, and cyan lines. Closed-form circle intersection (`_sky_anchor_design_pos`)
+   places the sky anchor within 6.4 mm of settled equilibrium.
+4. ✅ **Calibrated operating tension:** `BACK_LINE_T_DESIGN_N = 320.0 N`, giving
+   `k_soft = 400.0 N/m` over 0.80 m soft travel, landing precisely on the hard stop
+   at operating equilibrium (measured settled back line: 319.90 N).
+5. ✅ **Pre-placement at contracted hub:** Settle places the machine first, then
+   sizes preload and lift-chain geometry from the contracted hub `ctrs[Nr]`.
+6. ✅ **Discrete geometric crossing limit enforced:** `design_axial_preload` and
+   settle closure enforce both continuum demand cliff and geometric crossing limit
+   `δα* = 2·asin(L/√(2(L²+2r²)))`.
+7. ✅ **Polish DR retuned:** `OPERATIONAL_POLISH_DT = 5e-5` (80 000 iters) reliably
+   converges across the non-smooth bi-linear hard stop.
 
 **Bungee remit - definition of done.** The back line becomes a **bi-linear,
 tension-only** element. It stays soft over 0-80 cm of extension at
@@ -436,12 +410,11 @@ All four before a campaign launch:
   design improved on every axis (`DECISIONS.md` [2026-09-16]).
 - [x] Back-line contradiction resolved (item 2). **Ruled 2026-09-16: the line is
   taut and bi-linear. The element landed in `21cf73b`.**
-- [ ] Load split re-derived (item 2). **Two halves; only one closed (2026-09-19).**
-  **(a) ✅** an equilibrium-side realisability guard is in the settle; it fires zero
-  times on the seed and the winner (their equilibrium demand is 0.588 / 0.511,
-  both inside the 0.9524 target). **(b) ⬜** the sky-anchor balance in
-  `lift_chain_design` still solves the back line as **SLACK**; the taut bi-linear
-  split is now *computable* (the equilibrium exists) but is **not yet written**.
+- [x] Load split re-derived (item 2). **LANDED 2026-09-20.** Both halves closed:
+  **(a) ✅** equilibrium-side realisability guard in the settle, with geometric
+  crossing limit; **(b) ✅** taut 2×2 split (`_sky_anchor_taut_split`) and
+  circle-intersection sky anchor (`_sky_anchor_design_pos`) in `lift_chain_design`,
+  calibrated to 320 N hard stop at the contracted hub.
 - [x] V2 / V3 / V6 promoted. **(V6 2026-09-19, redefined on the full handoff path;
   V2/V3 earlier. The suite is 100 % green with 0 broken.)**
 

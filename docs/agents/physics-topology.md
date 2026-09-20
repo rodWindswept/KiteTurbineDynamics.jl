@@ -169,6 +169,16 @@ altitude-limiting: the back line is soft through the climb and engages when the
 machine reaches its target elevation (normally 30°). It may go slack in operation
 when wind or lift drops — an off-design transient, not the design point.
 
+**Landed (2026-09-20): taut 2×2 split and geometric crossing limit.**
+`lift_chain_design` solves the exact 2×2 equilibrium (`_sky_anchor_taut_split`)
+at the contracted hub position, placing the sky anchor via closed-form circle
+intersection (`_sky_anchor_design_pos`). The bi-linear element
+(`BACK_LINE_T_DESIGN_N = 320.0 N`, `k_soft = 400.0 N/m`) sits taut at its hard stop
+at operating equilibrium (settled back line carries ~312–320 N). Furthermore,
+realisability preload sizing in `design_axial_preload` enforces both the continuum
+demand cliff (sin Δα ≤ 1) and the tighter **discrete geometric crossing limit**
+(δα* = 2·asin(L/√(2(L²+2r²)))), preventing lines from physically crossing.
+
 **It also has two safety jobs** (Rod, 2026-09-15): it **contains the machine if the
 TRPT breaks** — the anchored back line is what stops the lift line dragging the
 machinery away, or components flying free — and it **carries the machine while

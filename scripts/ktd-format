@@ -20,4 +20,15 @@ if [ ! -f "$FMT_ENV/Project.toml" ]; then
 fi
 
 export KTD_PROJECT="$FMT_ENV"
-exec "$ROOT/scripts/ktd-julia" -e 'using JuliaFormatter; format(".")'
+
+if [ "$#" -gt 0 ]; then
+    exec "$ROOT/scripts/ktd-julia" -e 'using JuliaFormatter; for a in ARGS; ispath(a) && (isfile(a) ? format_file(a) : format(a)); end' "$@"
+else
+    # Default to tracked modified .jl files to avoid whole-repo churn or formatting scratch files
+    mapfile -t TARGETS < <(git -C "$ROOT" diff --name-only HEAD | grep '\.jl$' || true)
+    if [ ${#TARGETS[@]} -eq 0 ]; then
+        echo "ktd-format: no modified .jl files to format"
+        exit 0
+    fi
+    exec "$ROOT/scripts/ktd-julia" -e 'using JuliaFormatter; for a in ARGS; ispath(a) && (isfile(a) ? format_file(a) : format(a)); end' "${TARGETS[@]}"
+fi
