@@ -43,7 +43,7 @@ function check(name::String, cond::Bool)
     cond || push!(failures, name)
 end
 
-function v13_cfg(window_s::Float64, k_mppt::Float64)
+function v13_cfg(window_s::Float64, k_mppt::Float64; tether_diameter::Float64=0.003)
     return KiteTurbineDynamics.ObjectiveConfig(;
         k_mppt=k_mppt,          # K_MPPT_5KW_HONEST (2.24), the campaign operating point
         power_W=PW, v_rated=V_RATED,
@@ -54,6 +54,7 @@ function v13_cfg(window_s::Float64, k_mppt::Float64)
         kickstart_s=0.0,
         rotor_count_mode=true, power_split=0.6,
         blocking_factor=BLOCKING_WIND_FACTOR_5KW,
+        tether_diameter=tether_diameter,
     )
 end
 
@@ -69,7 +70,7 @@ function run_eval(x::Vector{Float64}, L::Float64, window_s::Float64)
         xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))     # rotor count
     end
     return KiteTurbineDynamics.evaluate_windowed(
-        xr, BEAM, p, v13_cfg(window_s, K_MPPT_5KW_HONEST);
+        xr, BEAM, p, v13_cfg(window_s, K_MPPT_5KW_HONEST; tether_diameter=p.tether_diameter);
         start_mode=:cold,
         lift_device=lift_for,
         fitness_fn=(P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),

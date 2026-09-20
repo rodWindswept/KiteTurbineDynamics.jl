@@ -47,8 +47,20 @@ function settled_case(n_lines, rotor_count)
     sys, u0, pc, lift, wf = build_case(n_lines, rotor_count)
     # Settle FIRST: the operating ω is an output of the settle, and the intended
     # preload must be evaluated at the ω the settle actually ran at.
+    #
+    # `operational_polish=false` IS DELIBERATE (2026-09-19).  This file guards the
+    # MATCHED-PLACE stage: `trpt_matched_place` prescribes the tension F_ax and
+    # derives the geometry, so at that placed state the invariant below holds
+    # exactly.  The operational-equilibrium polish is a SUBSEQUENT stage that
+    # intentionally relaxes the positions onto force balance under the full
+    # handoff force field, and the equilibrium tension is NOT the design preload —
+    # measured 2026-09-19 on the campaign seed it sits between 0.96x and 1.32x of
+    # it per segment.  Testing the polish's output against the pre-polish target
+    # would test the wrong stage.  The equilibrium is guarded instead by
+    # `test_settle_validity.jl` (V6) and, once ACTIVE.md item 3's load split is
+    # re-derived, by its realisability margin.  See scratch/probe_dr_equilibrium.jl.
     u = settle_to_operational_state(sys, copy(u0), pc, 60.0;
-        lift_device=lift, wind_fn=wf, n_op=2_000)
+        lift_device=lift, wind_fn=wf, n_op=2_000, operational_polish=false)
     N, Nr = sys.n_total, sys.n_ring
     ω = u[6N + Nr + 1]
     F_ax = design_axial_preload(sys, pc, lift, u0; omega_eq=ω, wind_fn=wf)

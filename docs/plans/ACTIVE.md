@@ -229,37 +229,73 @@ now explicitly DEFERRED. `initialization.jl:1125-1133` — the docstring records
 the deferral instead of asserting slack is correct. So the element half is DONE;
 the balance half is blocked on item 3, which is why item 3 comes next.
 
-### 3. Finish the static equilibrium solver (dynamic relaxation) — ▶ PROTOTYPE DONE
+### 3. Finish the static equilibrium solver (dynamic relaxation) — ✅ LANDED 2026-09-19
 
-**Status 2026-09-19: the prototype is DONE and MET the target.** It is
-`scratch/prototype_static_solver.jl`: Barnes kinetic damping on the conservative
-force path, per-node fictitious mass from local stiffness, positions only.
-Measured on the campaign seed: static `acc0` **284.5 → 71.4 m/s² (29.0 → 7.27 g)**
-against the 10 g bar, hub residual **88.7 → 6.59 N**, bearing 0.17 N, sky 0.10 N,
-max node displacement **0.893 m**, with `omega` and `alpha` asserted untouched.
-It was still falling at the 20 000-iteration cap.
+**Status 2026-09-19: LANDED.** The solver is `_polish_operational_equilibrium!` in
+`src/initialization.jl`, run as the final pass of `settle_to_operational_state`
+(`operational_polish=true` by default, on both the lift and the legacy paths).
+Barnes kinetic damping, per-node fictitious mass from local stiffness, positions
+only; `omega` and `alpha` asserted untouched. Cost **+1.7 %** on a 300 000-step
+settle. V6 is promoted and the fast suite is 100 % green with 0 broken.
 
-**The acceptance metric had to be corrected first, and that was the finding that
-unblocked it.** V6 read `multibody_ode!` on the SETTLED state, whose velocity
-block IS the legitimate ~32 m/s rotation, so **98.4 %** of `acc0` was aero drag on
-correctly-spinning nodes: a 39 N drag force on a 2.25 g rope node read as
-**1780 g**. No equilibrium solver could have removed that. V6 now measures
-`static_acc0` (node translational velocities zeroed, `omega` retained), and the
-assertion still reads `@test_broken acc0 < 10 g` — this is NOT a re-baseline. The
-real defect is **238 N on `RingNode` 11**. See `DECISIONS.md` [2026-09-16] and
-`docs/agents/instrument-trust-log.md` [2026-09-16].
+**THE FORCE PATH IS THE FULL HANDOFF PATH, NOT THE DRAG-FREE ONE — the prototype's
+prescription was superseded and its premise falsified (Rod, 2026-09-19).** The
+prototype relaxed with the node translational velocities zeroed. That meets the
+drag-free metric (284.5 → 71.4 m/s²) but makes the state the ODE actually receives
+**worse**, because applying the orbital velocity at handoff injects the drag as an
+unbalanced shock. Measured, same settled state, both variants converged, 20 000
+iterations (`scratch/probe_dr_variants.jl`):
 
-**REMAINING — the next unit of work:**
+| variant | drag-free acc0 | handoff acc0 | V2 hub axial |
+|---|---|---|---|
+| no polish | 284.5 (29.0 g) | 17 468 (1781 g) | +14.5 N |
+| drag-free DR (the prototype) | 71.4 (7.3 g) | 18 610 (worse) | +162.3 N |
+| **drag-included (landed)** | 17 681 (1802 g) | **293 (29.9 g)** | **−2.65 N** |
 
-1. Port the prototype into `src/initialization.jl` as the final pass of
-   `settle_to_operational_state`.
-2. Promote V6 (`test/test_settle_validity.jl:238`) from `@test_broken` to `@test`.
-3. Re-run BOTH suites. **Expect pinned numbers to move and re-baseline them
-   deliberately**: the settle feeds every evaluation, so every settled-state
-   quantity shifts. The sizing change earlier in this sequence moved
-   `test_trpt_realisability.jl`'s pins the same way, and there the design improved.
-4. Confirm the other half of the definition of done below — that the settle and
-   the ODE agree on the bowed shape. `acc0` alone does not establish it.
+The drag was removable because it was **unbalanced**, not because it was an
+operating-point force already in balance: the [2026-09-16] claim that "no
+equilibrium solver could have removed that" is false. The landed polish re-derives
+the orbital velocity field each iteration and balances the FULL field (gravity,
+rotor thrust/torque, elastic tension **and** steady-state spinning-cable drag),
+removing 98.3 % of the first-frame acceleration and balancing the hub axially to
+under 3 N. Full entry: `DECISIONS.md` [2026-09-19].
+
+V6 now gates on the STRUCTURAL nodes (< 10 g; measured 7.53 m/s², 0.77 g) plus the
+largest unbalanced node FORCE (< 200 N; measured 89.6 N). The raw per-node
+acceleration is reported but not gated — near the floor its argmax is always the
+2.25 g cable node, so a ~0.7 N residual reads as ~300 m/s².
+
+**An equilibrium-side realisability guard is IN (Rod, 2026-09-19).** The settle
+measures the worst-segment demand at the SOLVED equilibrium and, if past `1/1.05`,
+scales the top preload, re-places and re-runs **only the DR**
+(`polish_realisability_max_corrections`, default 2). It fires zero times on both
+the campaign seed (demand 0.588) and the v13 winner (measured **0.511** — the
+≈1.06 that motivated the change was an estimate, and it was wrong).
+
+**B6's apparent failure was a harness bug, now fixed.** The polish looked like it
+destabilised the winner into a twist limit cycle (ratio 0.27 → 1.674), but only
+because `v13_cfg` left `ObjectiveConfig.tether_diameter` at its **unscaled
+0.003 m** default while `gate_design` and every campaign path use the scaled
+**0.003651 m** — B6 and B6b were scoring two different machines, and the 32 %
+thinner line is far softer in torsion. `test/test_evaluator_v13.jl` now passes
+`tether_diameter=p.tether_diameter`, the same alignment as `7014445`; B6 is `:ok`
+(`P_mean` 5.40 kW, `FoS_min` 12.88, `max_ratio` 0.531). `DECISIONS.md`
+[2026-09-19].
+
+**REMAINING:**
+
+1. ✅ Port the prototype into `src/initialization.jl` — done 2026-09-19.
+2. ✅ Promote V6 — done 2026-09-19 (both assertions are plain `@test`).
+3. Re-run BOTH suites. Fast suite green; the **acceptance suite has not yet been
+   re-run** on this change and must be before any merge (it touches `src/`
+   physics).
+4. Item 2's load split below is the remaining physics, and the polish supplies the
+   equilibrium it was blocked on. Measured 2026-09-19: the equilibrium tension is
+   0.96x–1.32x the design preload per segment, and `demand` at the equilibrium
+   tension is **0.588** against the 0.9524 target — so the taut split has real
+   headroom, where the 2026-09-13 closed form said it was 124 N short.
+5. The other half of the definition of done below — that the settle and the ODE
+   agree on the bowed shape. `acc0` alone does not establish it.
 
 The spec that was followed, retained because it is what made it work:
 
@@ -270,9 +306,14 @@ first-frame acceleration still fail, and why the re-seed candidate cannot land
 
 Discipline that makes or breaks it:
 
-- Call the force path with velocities zero, so the rope material damper and the
-  aerodynamic drag vanish and the force field is conservative. Do **not** reuse
-  `multibody_ode!` wholesale.
+- ~~Call the force path with velocities zero, so the rope material damper and the
+  aerodynamic drag vanish and the force field is conservative.~~ **SUPERSEDED
+  2026-09-19** (see the status block above and `DECISIONS.md` [2026-09-19]). The
+  landed polish evaluates the FULL handoff field instead — the orbital velocity
+  field is re-derived each iteration — because a drag-free equilibrium is not the
+  equilibrium the ODE integrates, and relaxing without drag then applying the
+  orbital velocity injects the drag as an unbalanced shock. Do **not** reuse
+  `multibody_ode!` wholesale as an integrator.
 - Scale the fictitious mass per degree of freedom (≈ local stiffness). Degrees of
   freedom span 1e-3 m rope motions to 1 m bow motions; uniform mass will crawl.
 - A global sideways move of the ring stack is very stiff (0.5 m → 204 kN,
@@ -283,8 +324,8 @@ Discipline that makes or breaks it:
 - The 2026-09-13 probe that ran 2 M steps used viscous relaxation. Kinetic
   damping is the specific reason to expect a different outcome — not a guarantee.
 
-**Done when:** `test/test_settle_validity.jl` passes, and the settle and the ODE
-agree on the bowed shape.
+**Done when:** `test/test_settle_validity.jl` passes — ✅ 2026-09-19 — and the
+settle and the ODE agree on the bowed shape, which is **still open**.
 
 ### 4. Explore the 5 kW design space
 
@@ -393,11 +434,16 @@ All four before a campaign launch:
   themselves are unrebased. The one fixture that moved is the FAST test
   `test_trpt_realisability.jl`, re-baselined once for the corrected tube mass; its
   design improved on every axis (`DECISIONS.md` [2026-09-16]).
-- [ ] Back-line contradiction resolved (item 2). **Ruled 2026-09-16: the line is
-  taut and bi-linear. The code change is the bungee remit.**
-- [ ] Load split re-derived (item 2). **Not yet. This needs the taut element in
-  `src/` and the static solver.**
-- [ ] V2 / V3 / V6 promoted.
+- [x] Back-line contradiction resolved (item 2). **Ruled 2026-09-16: the line is
+  taut and bi-linear. The element landed in `21cf73b`.**
+- [ ] Load split re-derived (item 2). **Two halves; only one closed (2026-09-19).**
+  **(a) ✅** an equilibrium-side realisability guard is in the settle; it fires zero
+  times on the seed and the winner (their equilibrium demand is 0.588 / 0.511,
+  both inside the 0.9524 target). **(b) ⬜** the sky-anchor balance in
+  `lift_chain_design` still solves the back line as **SLACK**; the taut bi-linear
+  split is now *computable* (the equilibrium exists) but is **not yet written**.
+- [x] V2 / V3 / V6 promoted. **(V6 2026-09-19, redefined on the full handoff path;
+  V2/V3 earlier. The suite is 100 % green with 0 broken.)**
 
 Plus the wobble gate, evaluated at the design operating point over **≥ 120 s with
 only justified damping active**:

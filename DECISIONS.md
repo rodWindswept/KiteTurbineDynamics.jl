@@ -10,6 +10,119 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-19] The settle's final polish solves the FULL operating equilibrium, not a drag-free one
+
+**Context.** Handover 2026-09-19 §5 wired the Barnes kinetic-damping dynamic
+relaxation (DR) solver from `scratch/prototype_static_solver.jl` into
+`settle_to_operational_state` as its final pass, and promoted V6
+(`acc0_static < 10 g`) to `@test`. The prescribed force path, from `ACTIVE.md`
+item 3 and the [2026-09-16] entry below, was **drag-free**: node translational
+velocities zeroed so the rope material damper and the aerodynamic drag vanish and
+the force field is conservative. It met its stated target: the drag-free residual
+fell 284.5 -> 71.4 m/s^2 (29.0 -> 7.27 g) and the drag-free hub residual fell
+171.1 -> 6.59 N.
+
+**Finding (measured, and it falsifies the premise).** The drag-free polish makes
+the state the ODE actually receives **worse**. Relaxing without drag and then
+applying the orbital velocity field at handoff injects the drag as an unbalanced
+shock. On the same settled state, both variants fully converged at 20 000
+iterations (`scratch/probe_dr_variants.jl`):
+
+| variant | drag-free acc0 | handoff acc0 | V2 hub axial | preload err |
+|---|---|---|---|---|
+| no polish | 284.5 (29.0 g) | 17 468 (1781 g) | +14.5 N | 0.0000 |
+| drag-free DR (the 2026-09-16 plan) | 71.4 (7.3 g) | 18 610 (1897 g) | +162.3 N | 0.3152 |
+| **drag-included DR (decided)** | 17 681 (1802 g) | **293 (29.9 g)** | **-2.65 N** | 0.2326 |
+
+The [2026-09-16] entry ended "NO equilibrium solver can remove that: it is a
+correct operating-point force, not a handoff shock." **That is false.** The drag
+was removable because it was **unbalanced** at the settled state, not because it
+was an operating-point force already in balance. The drag-free metric only looked
+better because it removes the very forces the state must balance: with velocities
+present, `full = static + drag`, so no spinning state can make both small.
+
+**Decided (Rod, 2026-09-19).**
+
+1. **The polish uses the full handoff force path.** Each DR iteration re-derives
+   the rigid-body orbital velocity field for the current positions
+   (`set_orbital_velocities!`) and evaluates `multibody_ode!` on it, so the
+   relaxation balances gravity, rotor thrust/torque, elastic tension **and the
+   steady-state spinning-cable drag**. `alpha` and `omega` are held fixed.
+2. **V6 is redefined on the real handoff** in `test/test_settle_validity.jl`: the
+   **structural** nodes (rings, bearing, sky anchor) must be under 10 g
+   (measured 7.53 m/s^2, 0.77 g), plus a mass-robust gate on the largest
+   unbalanced **force** anywhere (measured 89.6 N, bar 200 N). The raw per-node
+   acceleration is reported but not gated: near the floor its argmax is always the
+   lightest 2.25 g cable node, so a ~0.7 N residual reads as ~300 m/s^2 — the mass
+   artefact the [2026-09-16] entry itself diagnosed.
+3. **The 2026-09-16 metric correction is superseded, not deleted.** Its
+   instrument observation stands (98.4 % of the raw reading was real drag on
+   correctly-spinning nodes); its conclusion that the drag is irremovable does not.
+
+**Why.** The ODE integrates the full force field, so the equilibrium that matters
+is the one where that field balances. A flying TRPT rotor operates in a steady
+dynamic equilibrium in which line tension balances gravity, rotor thrust **and**
+spinning-cable drag simultaneously. The drag-included pass removes 98.3 % of the
+first-frame acceleration and balances the hub axially to under 3 N.
+
+**Consequence.**
+
+- The polish costs **+1.7 %** on a 300 000-step settle (`probe_wired_A.jl`).
+- **V2 now passes on its own terms** (hub +14.5 -> -2.67 N); it no longer needs a
+  restatement. The drag-free DR had broken it (162.3 N against a 50 N gate).
+- `test_settle_preload_consistency.jl` is scoped with `operational_polish=false`:
+  it guards the **matched-place** stage, whose invariant is tension == intended
+  preload at the placed geometry. The equilibrium tension is deliberately not the
+  design preload (0.96x-1.32x per segment), and re-deriving that split is
+  `ACTIVE.md` item 2 / item 3's remaining work, not this guard's job.
+- `ACTIVE.md` item 3's "call the force path with velocities zero" discipline is
+  **superseded** by this entry.
+
+**Follow-on: an equilibrium-side realisability guard — and what it did NOT fix
+(Rod, 2026-09-19).** `design_axial_preload` enforces `demand ≤ 1/1.05` against the
+preload it prescribes; the settle now returns the true equilibrium, whose tension
+is genome-dependent (measured 0.90x–1.32x of the preload). A bounded correction in
+`settle_to_operational_state` (`polish_realisability_max_corrections`, default 2)
+therefore measures the worst-segment demand at the equilibrium tension and, only
+if it is past target, scales the top preload, re-places and re-runs **only the
+DR**. It is bounded by the design-side preload limit and skipped for genomes
+already inside the margin.
+
+**The premise for that correction was wrong, and it does NOT fix B6.** It was
+introduced on an estimate that the v13 campaign winner sat at `demand ≈ 1.06`.
+Measured (`scratch/probe_winner_demand.jl`), the winner's demand at equilibrium is
+**0.511** against a 0.9524 target, so the correction fires zero times and leaves
+the state bit-identical (`corrections=0` and `2` agree exactly). B6's
+`twist_crossed` has a different cause: the polish turns a smooth settle→run into a
+large torsional **limit cycle** in the evaluator's build. Traced through
+`evaluate_windowed`'s own `trace_callback` (`scratch/probe_eval_trace.jl`), the
+twist ratio swings `0.27 → 0.88 → 1.674 → 0.74`, crossing at t = 6 s and t = 14 s,
+with the worst segment migrating across all five. With the polish OFF the same
+window rises smoothly to 0.531 and passes (`status=ok`, P_mean 5.41). So the
+correction is a real guard for genomes whose equilibrium demand genuinely exceeds
+target, but it is **inert for B6**; B6 is a dynamic-stability question, not a
+static margin.
+
+**B6's root cause, found and fixed: an UNSCALED tether in the test harness.**
+`evaluate_windowed` builds with `cfg.tether_diameter`, and `v13_cfg` left it at
+the `ObjectiveConfig` default of **0.003 m** (unscaled), whereas `gate_design` and
+every campaign path use the scaled `p.tether_diameter` = **0.003651 m**. B6 and
+B6b were therefore scoring two different machines. The 32 % smaller line area
+carries far less torsional stiffness, which is exactly what let the polish's
+tension drop turn the settle→run into a limit cycle in B6 and nowhere else.
+`test/test_evaluator_v13.jl` now threads `tether_diameter=p.tether_diameter`
+through `run_eval` into `v13_cfg` — the same alignment Rod landed in `7014445` for
+`test_physics_path_ode.jl`. B6 is `:ok` again (`P_mean` 5.40 kW, `FoS_min` 12.88,
+`max_ratio` 0.531, flat and non-oscillating). The polish, the solver and the
+winner genome are all unchanged.
+
+`TRPT_REALISABILITY_TENSION_MARGIN` is deliberately **not** raised: the margin was
+never the problem in this case.
+
+**Status:** active. The drag-free DR is retired.
+
+---
+
 ## [2026-09-16] `acc0` measured spinning drag, not the handoff jerk: correct the metric before building the static solver
 
 **Context.** `test_settle_validity.jl` V6 is the last `@test_broken`:

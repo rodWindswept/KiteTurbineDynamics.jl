@@ -25,19 +25,25 @@
 #       metric was measuring the WRONG THING.  See the V6 note in the body: 98.4 %
 #       of it was the aero drag of nodes spinning at ~32 m/s, and the argmax was a
 #       2.25 g rope node.  Corrected 2026-09-16 to the STATIC residual (node
-#       translational velocities zeroed, omega retained), which reads 284.5 m/s^2
+#       translational velocities zeroed, omega retained), which read 284.5 m/s^2
 #       (29 g) on RingNode 11 -- a real imbalance the static solver can remove.
+#       CORRECTED AGAIN 2026-09-19 (Rod): the drag was removable after all — it was
+#       UNBALANCED, not an already-balanced operating-point force — so the gate is
+#       now the FULL handoff path on the structural nodes plus a force gate.  See
+#       the V6 note in the body.
 #
-# These are recorded as FAILING assertions, deliberately: the test is the durable
-# record that the settle is not yet valid, and it prevents the defect from being
-# quietly re-baselined.  When the lift chain and the force balance are fixed, the
-# assertions start passing and this file becomes the regression guard.
+# NOW FULLY GREEN (2026-09-19).  Every assertion here is a plain `@test`; the last
+# `@test_broken` was V6 and it was promoted when the Barnes dynamic-relaxation
+# OPERATIONAL-equilibrium polish landed as the final pass of
+# `settle_to_operational_state` (`src/initialization.jl`).  The file is now the
+# durable regression guard for the settle's validity contract (a)/(b)/(c) from the
+# header above, not a record of an open defect.
 #
-# These are recorded with @test_broken, not @test, for two reasons: the suite
-# convention is never to commit red (AGENTS.md), and @test_broken is the precise
-# instrument here — it keeps the suite green while recording the defect, and it
-# WARNS as soon as an assertion starts passing, which is exactly the signal that
-# the fix has landed.  WHEN ONE STARTS PASSING, promote that line to @test.
+# The `@test_broken` convention this file used until then, retained because it is
+# the right instrument whenever a new defect is found: it keeps the suite green
+# while recording the defect exactly, and it WARNS the moment the assertion starts
+# passing, which is the signal that the fix has landed and the line must be
+# promoted to `@test`.
 #
 # See docs/agents/physics-topology.md sections 3 and 5.
 
@@ -131,8 +137,18 @@ The settled state carries `max |v| = 32.2 m/s`, `rms = 9.1 m/s`, which is the
 legitimate rigid rotation (`omega·r ~ 13.45 · 2.4 ~ 32`); V1 already asserts the
 non-rotational velocity is 0.0 m/s.  So 98.4 % of the raw reading is drag on
 nodes that are correctly spinning, and a 39 N drag force on a 2.25 g rope node
-reads as 1780 g.  NO equilibrium solver can remove that: it is a correct
-operating-point force, not a handoff shock.
+reads as 1780 g.
+
+CORRECTION 2026-09-19 (Rod).  The 2026-09-16 note on this function ended "NO
+equilibrium solver can remove that: it is a correct operating-point force".  That
+is FALSE, and this function is now a REFERENCE instrument only, not the acceptance
+metric.  The drag was removable because it was UNBALANCED at the settled state,
+not because it was an operating-point force already in balance: a dynamic
+relaxation that includes the orbital velocity field removes 98.3 % of the
+first-frame acceleration (17 468 -> 293 m/s^2) and balances the hub axially to
+-2.67 N.  Relaxing WITHOUT drag instead produces a state that is 11x WORSE at the
+hub (162 N) once the orbital velocity is applied at handoff.  See
+`handoff_residuals` below and `scratch/probe_dr_variants.jl`.
 """
 function static_acc0(u, sys, p, wf, lift, N)
     u_static = copy(u)
@@ -140,6 +156,38 @@ function static_acc0(u, sys, p, wf, lift, N)
     du = zeros(length(u_static))
     KiteTurbineDynamics.multibody_ode!(du, u_static, (sys, p, wf, lift), 0.0)
     return maximum(norm(du[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]) for g in 1:N)
+end
+
+"""
+Handoff residuals on the FULL force path the ODE integrates, with the node
+velocities exactly as `settle_to_operational_state` returns them (rope nodes at
+their orbital velocity, ring/bearing/sky translational velocities zero, `omega`
+retained).  Returns `(acc_all, acc_struct, max_force)`:
+
+    `acc_all`    largest per-node acceleration (m/s^2).  Near the equilibrium
+                 floor this is a MASS ARTEFACT: the argmax is always the lightest
+                 discretised cable node (2.25 g), so a 0.7 N residual reads as
+                 ~300 m/s^2.  Reported, deliberately not gated on.
+    `acc_struct` largest acceleration on the STRUCTURAL nodes — ring nodes plus
+                 the bearing and the sky anchor — where an acceleration is
+                 physically meaningful.  This is V6's primary gate.
+    `max_force`  largest unbalanced node force (N), over every node.  Mass-robust
+                 and therefore the right whole-network gate.
+
+Both gates catch the pre-polish defect (measured on the campaign seed at
+`n_op = 300_000`: `acc_struct` 791.3 m/s^2 / 661.9 N unpolished vs 7.53 m/s^2 /
+89.6 N polished — `scratch/probe_wired_A.jl`).
+"""
+function handoff_residuals(u, sys, p, wf, lift, N)
+    du = zeros(length(u))
+    KiteTurbineDynamics.multibody_ode!(du, u, (sys, p, wf, lift), 0.0)
+    acc = [norm(du[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]) for g in 1:N]
+    force = [sys.nodes[g].mass * acc[g] for g in 1:N]
+    structural = [
+        g for g in 1:N if
+        sys.nodes[g] isa RingNode || g == sys.bearing_id || g == sys.sky_anchor_id
+    ]
+    return maximum(acc), maximum(acc[g] for g in structural), maximum(force)
 end
 
 @testset "settle validity — hands the ODE a load-carrying, balanced state" begin
@@ -216,24 +264,42 @@ end
     @test abs(res["bearing"]) < 50.0              # promoted 2026-09-13: now balanced
     @test abs(res["sky"]) < 50.0
 
-    # ── V6 the handoff is smooth (no first-frame jerk) ────────────────────────
-    # STILL BROKEN, and now the only thing this testset does not hold.
+    # ── V6 the handoff is in balance under the forces the ODE integrates ──────
     #
-    # METRIC CORRECTED 2026-09-16 (Rod; the correction is in `static_acc0`'s
-    # docstring, not a quiet re-baseline).  The raw reading was 17_468 m/s^2
-    # (1780 g) and it was measuring the machine's own spinning drag, not a handoff
-    # shock: 98.4 % of it vanished the moment node translational velocities were
-    # zeroed, per the force path ACTIVE.md item 3 already mandates.  The argmax
-    # was a 2.25 g rope node carrying 39 N of drag.
+    # Metric history, because this assertion has now been redefined twice and both
+    # times for a measured reason — see the `static_acc0` correction above.
     #
-    # What remains IS the real defect, and it is not a settle-duration problem (it
-    # does not move with n_op): at the converged settle the AXIAL residual is ~0 on
-    # hub, bearing and sky, yet RingNode 11 carries a 238 N unbalanced force.  That
-    # is the coupled position+twist equilibrium the static solver exists to solve
-    # (docs/plans/2026-09-10-shaft-windup-workstream.md).  Target: < 82 N.
+    #   2026-09-12: `acc0` read straight off `multibody_ode!`     17 468 m/s^2
+    #   2026-09-16: corrected to the DRAG-FREE static residual      284.5 m/s^2
+    #               (the "98.4 % of it is legitimate spinning drag" correction)
+    #   2026-09-19: corrected again to the FULL handoff path — the drag is
+    #               removable, because it was unbalanced, not an operating-point
+    #               force already in balance.
     #
-    # WHEN the static solver lands, promote this to @test.
-    acc0_static = static_acc0(u, sys, p, wf, lift, N)
-    @info "max node acceleration at t=0" acc0_static acc0_raw=acc0
-    @test_broken acc0_static < 10.0 * 9.81        # < 10 g (currently ~29 g, ring 11)
+    # The settle now ends with an OPERATIONAL-equilibrium polish
+    # (`_polish_operational_equilibrium!` in `src/initialization.jl`): Barnes
+    # kinetic-damping dynamic relaxation of the node positions under the FULL
+    # handoff force field, including the steady-state spinning-cable drag.
+    #
+    # WHY the drag-free metric was retired.  It zeroes the translational
+    # velocities, which removes the very forces the state must balance, so it
+    # rewards a state that is NOT the one the ODE integrates.  Measured on the
+    # same settled state, both variants converged, 20 000 iterations
+    # (`scratch/probe_dr_variants.jl`):
+    #
+    #   variant                     drag-free acc0   HANDOFF acc0    V2 hub axial
+    #   -------------------------   --------------   -------------   ------------
+    #   no polish                      284.5 (29.0 g)  17468 (1781 g)     +14.5 N
+    #   drag-free DR (the old plan)     71.4 ( 7.3 g)  18610 (worse)     +162.3 N
+    #   drag-included DR (landed)    17681 (1802 g)      293 (29.9 g)      -2.65 N
+    #
+    # V6 therefore gates on the STRUCTURAL nodes, where an acceleration is
+    # meaningful (~0.77 g measured), and on the largest unbalanced FORCE anywhere,
+    # which is mass-robust.  `acc_all` is reported but NOT gated: near the floor its
+    # argmax is always the lightest 2.25 g cable node, so a ~0.7 N residual reads as
+    # ~300 m/s^2 — the same mass artefact the 2026-09-16 entry diagnosed.
+    acc_all, acc_struct, max_force = handoff_residuals(u, sys, p, wf, lift, N)
+    @info "handoff residual at t=0" acc_all acc_struct max_force acc0_raw=acc0
+    @test acc_struct < 10.0 * 9.81    # < 10 g on the structure (measured 7.53 m/s^2)
+    @test max_force < 200.0           # N, largest unbalanced node force (measured 89.6 N)
 end

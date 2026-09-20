@@ -1428,6 +1428,274 @@ function trpt_matched_place(
     )
 end
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Operational-equilibrium polish — Barnes kinetic-damping dynamic relaxation
+# ══════════════════════════════════════════════════════════════════════════════
+# `settle_to_equilibrium` and the operational settle PLACE and RELAX the machine;
+# neither SOLVES for equilibrium.  Measured 2026-09-19 on the campaign seed, the
+# settled state leaves `RingNode` 11 carrying 238 N unbalanced (29.0 g on the
+# drag-free structural path) and a first-frame acceleration of 17 468 m/s^2, and
+# neither falls with more settle steps (`scratch/diag_acc0_velocity.jl`).
+#
+# This final pass relaxes the 3N node POSITIONS onto the OPERATING equilibrium
+# with the Barnes kinetic-damping scheme.  `alpha` and `omega` are HELD fixed;
+# only positions move.
+#
+# THE FORCE PATH IS THE FULL HANDOFF PATH, NOT THE DRAG-FREE ONE (Rod,
+# 2026-09-19).  Each iteration re-derives the rigid-body orbital velocity field
+# for the current positions (`set_orbital_velocities!`) and evaluates
+# `multibody_ode!` on it, so the relaxation balances gravity, rotor thrust and
+# torque, elastic tension AND the steady-state spinning-cable drag the ODE will
+# integrate.  `multibody_ode!` is NOT reused as an integrator.
+#
+# WHY NOT THE DRAG-FREE PATH (the 2026-09-16/19 assumption, now falsified).
+# Relaxing with the translational velocities zeroed finds the equilibrium of a
+# machine that is NOT the one the ODE integrates: adding the orbital field back at
+# handoff injects the drag as an unbalanced shock.  Measured on the same settled
+# state, 20 000 iterations, both variants fully converged
+# (`scratch/probe_dr_variants.jl`):
+#
+#   variant                       drag-free acc0   HANDOFF acc0      V2 hub axial
+#   ---------------------------   --------------   ---------------   ------------
+#   no polish                        284.5 (29.0 g)  17 468 (1781 g)      +14.5 N
+#   drag-free DR (the old plan)       71.4 ( 7.3 g)  18 610 (worse)      +162.3 N
+#   drag-included DR (THIS)        17 681 (1802 g)     293 (29.9 g)       -2.65 N
+#
+# The drag-free variant looked better on the drag-free metric only because that
+# metric removes the very forces the state must balance.  The claim recorded on
+# 2026-09-16 — "NO equilibrium solver can remove that [drag]: it is a correct
+# operating-point force" — is false: the drag was removable because it was
+# UNBALANCED, not because it was an already-balanced operating-point force.  The
+# drag-included pass removes 98.3 % of the first-frame acceleration and balances
+# the hub axially to under 3 N.
+#
+# The residual is a ~0.6 N unbalanced force on the lightest 2.25 g rope node.
+# Read as an acceleration that is 26-35 g, which is the mass artefact the
+# 2026-09-16 entry itself diagnosed — see `test_settle_validity.jl` V6, which
+# gates on the STRUCTURAL nodes and on the force residual, not on the raw
+# per-node acceleration.
+#
+#   * The fictitious mass is scaled PER NODE, `m_f = max(k·dt², m)`, with `k` the
+#     local axial stiffness (Σ EA/L).  Real masses span 2.25e-3 kg (rope node) to
+#     ~4 kg; a uniform fictitious mass would make the stiff rope DoF the
+#     stability limit while the heavy rings crawl.  The `max` is self-stabilising
+#     in both directions: a stiff node integrates at its own limit, a heavy node
+#     at its real mass.
+#   * Kinetic damping: track `KE = ½ Σ m_f v²` and zero ALL velocities whenever
+#     KE passes a local maximum.  That is the Barnes scheme.  The drag and the
+#     rope material damper are dissipative, so they aid it rather than fight it.
+#   * FIXED nodes (the ground ring) carry mass 1e30 kg, so their fictitious mass
+#     is 1e30 and their velocity update is ~0 — they behave as the constraints
+#     they are.  `set_orbital_velocities!` leaves ring velocities untouched; the
+#     ground ring's translational velocity is held at zero explicitly.
+#
+# The caller must re-establish the orbital velocity field afterwards, which is why
+# the polish runs immediately BEFORE `set_orbital_velocities!`.
+#
+# CAP EVIDENCE (2026-09-19, campaign seed, n_op = 300 000, dt_dr = 2e-4, measured
+# 0.14 ms/iteration; `scratch/probe_dr_A_convergence.jl`):
+#
+#     iter     FULL-handoff acc0      V2 hub axial
+#       10 000   257.6 m/s^2 (26.3 g)     +1.42 N
+#       20 000   293.0 m/s^2 (29.9 g)     -2.65 N   <- DEFAULT
+#       40 000   321.1 m/s^2 (32.7 g)
+#       80 000   338.5 m/s^2 (34.5 g)
+#
+# The force residual reaches its ~0.6 N floor by 10 000 iterations and then
+# hovers: the Barnes scheme converges the fictitious dynamics, not the residual,
+# so it does not descend monotonically.  20 000 is kept as the default because it
+# is the round value that also lands the best axial hub balance; raising it buys
+# no smaller residual.  Callers needing a different cost/tolerance trade pass
+# `polish_iters`.
+const OPERATIONAL_POLISH_DT = 2.0e-4
+const OPERATIONAL_POLISH_MAX_ITERS = 20_000
+
+"""
+    _polish_node_forces!(F, u_work, du_work, ode_params, p, sys, N)
+
+Net force on every node on the FULL handoff force path: the rigid-body orbital
+velocity field is re-derived for the current positions
+(`set_orbital_velocities!`) and the ground ring's translational velocity is held
+at zero, then `multibody_ode!` is evaluated.  `omega` is retained, so rotor
+thrust and torque stay in the load case, and the spinning-cable drag and rope
+material damper are included — this is the force field the ODE integrates.
+
+`u_work` and `du_work` are scratch buffers owned by the caller; `u_work`'s
+translational-velocity block is mutated in place.  Fills the length-`3N` vector
+`F`.
+"""
+function _polish_node_forces!(
+    F, u_work, du_work, ode_params, p::SystemParams, sys::KiteTurbineSystem, N::Int
+)
+    set_orbital_velocities!(u_work, sys, p)
+    @views u_work[(3N + 1):(3N + 3)] .= 0.0          # ground ring is fixed
+    fill!(du_work, 0.0)
+    multibody_ode!(du_work, u_work, ode_params, 0.0)
+    for g in 1:N
+        m = sys.nodes[g].mass
+        @views F[(3 * (g - 1) + 1):(3 * g)] .=
+            m .* du_work[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]
+    end
+    return F
+end
+
+"""
+    _polish_fictitious_mass(sys, N, dt) -> Vector{Float64}
+
+Per-node fictitious mass for the dynamic-relaxation step,
+`m_f = max(k·dt², m)`, where `k` is the local axial stiffness (Σ EA/L over the
+node's sub-segments).  See the block comment above for why the scaling is per
+node and why the `max` is self-stabilising.
+"""
+function _polish_fictitious_mass(sys::KiteTurbineSystem, N::Int, dt::Float64)
+    k = zeros(N)
+    for ss in sys.sub_segs
+        L = ss.length_0
+        L > 0.0 || continue
+        kk = ss.EA / L
+        k[ss.end_a.node_id] += kk
+        k[ss.end_b.node_id] += kk
+    end
+    mf = Vector{Float64}(undef, N)
+    for g in 1:N
+        mf[g] = max(k[g] * dt^2, sys.nodes[g].mass)
+    end
+    return mf
+end
+
+"""
+    _polish_operational_equilibrium!(u, sys, p, ode_params; dt, max_iters)
+        -> (; iters, ndamp)
+
+Barnes kinetic-damping dynamic relaxation of the node POSITIONS in `u` (mutates
+`u[1:3N]`), holding `alpha` and `omega` fixed and balancing the FULL handoff force
+field.  See the block comment above for the scheme, the cap evidence and the
+caller's obligation to re-establish the orbital velocity field afterwards.
+
+`ode_params` is the tuple passed to `multibody_ode!` — `(sys, p, wind_fn)` or
+`(sys, p, wind_fn, lift_device)`.  Returns `(; iters, ndamp)` for diagnostics.
+"""
+function _polish_operational_equilibrium!(
+    u::Vector{Float64},
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    ode_params;
+    dt::Float64=OPERATIONAL_POLISH_DT,
+    max_iters::Int=OPERATIONAL_POLISH_MAX_ITERS,
+)
+    N = sys.n_total
+    u_work = copy(u)
+    du_work = zeros(length(u))
+    F = zeros(3N)
+    mf = repeat(_polish_fictitious_mass(sys, N, dt); inner=3)
+    v = zeros(3N)
+    ke_prev = 0.0
+    ndamp = 0
+    for _ in 1:max_iters
+        _polish_node_forces!(F, u_work, du_work, ode_params, p, sys, N)
+        @views v .+= (F ./ mf) .* dt
+        @views u_work[1:(3N)] .+= v .* dt
+        ke = 0.5 * sum(mf .* v .^ 2)
+        if ke < ke_prev
+            v .= 0.0                                # kinetic damping (Barnes)
+            ndamp += 1
+        end
+        ke_prev = ke
+    end
+    @views u[1:(3N)] .= u_work[1:(3N)]
+    return (; iters=max_iters, ndamp=ndamp)
+end
+"""
+    _trpt_equilibrium_demand(sys, p, u, τ_eq, ω_eq, wind_fn) -> Float64
+
+Worst per-segment realisability demand `τ_carry / τ_max` evaluated at the segment
+tensions of the CURRENT state, not at the design preload.
+
+`design_axial_preload` enforces `demand ≤ 1/margin` against the preload it
+PRESCRIBES, but `settle_to_operational_state` now returns the true operating
+equilibrium, whose tension differs — measured 2026-09-19 across genomes, **0.90x
+to 1.32x** of the preload, and genome-dependent.  A preload-side check therefore
+does not bound the operating point.  This uses `trpt_matched_place`'s diagnostic
+with the MEASURED tensions, so the target is the same object the design-side
+iterate uses.
+"""
+function _trpt_equilibrium_demand(
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    u::Vector{Float64},
+    τ_eq::Float64,
+    ω_eq::Float64,
+    wind_fn::Union{Nothing,Function},
+)
+    n_seg = sys.n_ring - 1
+    T_meas = zeros(n_seg)
+    for s in 1:n_seg
+        T_meas[s] =
+            sum(get_segment_tension(u, sys, p, s, j) for j in 1:p.n_lines) / p.n_lines
+    end
+    T_meas .= max.(T_meas, 1e-9)
+    place = trpt_matched_place(
+        sys, p, T_meas .* p.n_lines, τ_eq, ω_eq, wind_fn;
+        raise_on_unrealisable=false,
+    )
+    return maximum(place.demand)
+end
+
+"""
+    _place_trpt_design!(u, sys, p, placement; lift_device=nothing)
+
+Write a `trpt_matched_place` result into the state: ring centres and twist, the
+lift-chain bearing / sky-anchor geometry, and the rope nodes interpolated along
+the new attachment chords.  Shared by the initial design placement and by the
+equilibrium realisability correction, which re-places after scaling the preload.
+"""
+function _place_trpt_design!(
+    u::Vector{Float64},
+    sys::KiteTurbineSystem,
+    p::SystemParams,
+    placement;
+    lift_device::Union{Nothing,LiftDevice}=nothing,
+)
+    N, Nr = sys.n_total, sys.n_ring
+    hub_gid = sys.rotor.node_id
+    stride = 1 + p.n_lines * ROPE_NODES_PER_LINE
+    for k in 1:Nr
+        gid = sys.ring_ids[k]
+        @views u[(3 * (gid - 1) + 1):(3 * gid)] .= placement.ctrs[k]
+        u[6N + k] = placement.α[k]
+    end
+    if lift_device !== nothing
+        β = p.elevation_angle
+        sh = [cos(β), 0.0, sin(β)]
+        # RESTING radius — see the note in `lift_chain_design`.  The cone does not
+        # move because the top rotor is banked (Rod, 2026-09-15).
+        bearing_offset = bridle_bearing_offset((sys.nodes[hub_gid]::RingNode).radius)
+        for (gid, off) in ((sys.bearing_id, bearing_offset),
+                           (sys.sky_anchor_id, bearing_offset + CYAN_L0_DESIGN))
+            @views u[(3 * (gid - 1) + 1):(3 * gid)] .= placement.ctrs[Nr] .+ off .* sh
+            @views u[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
+        end
+    end
+    hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
+    pp1, pp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
+    for s in 1:(Nr - 1)
+        gid_a, gid_b = sys.ring_ids[s], sys.ring_ids[s + 1]
+        na = sys.nodes[gid_a]::RingNode
+        nb = sys.nodes[gid_b]::RingNode
+        ctr_a, ctr_b = placement.ctrs[s], placement.ctrs[s + 1]
+        α_a, α_b = placement.α[s], placement.α[s + 1]
+        for j in 1:p.n_lines
+            pa = attachment_point(ctr_a, na.radius, α_a, j, p.n_lines, pp1, pp2)
+            pb = attachment_point(ctr_b, nb.radius, α_b, j, p.n_lines, pp1, pp2)
+            for m in 1:ROPE_NODES_PER_LINE
+                frac = m / ROPE_SUBSEGS
+                gid = (s - 1) * stride + 2 + (j - 1) * ROPE_NODES_PER_LINE + (m - 1)
+                @views u[(3 * (gid - 1) + 1):(3 * gid)] .= pa .+ frac .* (pb .- pa)
+            end
+        end
+    end
+    return u
+end
 """
     settle_to_operational_state(sys::KiteTurbineSystem, u0::Vector{Float64}, p::SystemParams, ω_rated::Float64)
 
@@ -1436,6 +1704,13 @@ With a lift device the ring geometry is solved by `trpt_matched_place` (twist
 and axial gap together, so the intended preload tension holds at the final
 twist); the legacy torque-chain bisection remains for the no-lift path.
 This logic was shadowed directly from the interactive dashboard.
+
+The final pass is an operational-equilibrium polish
+(`_polish_operational_equilibrium!`, Barnes kinetic damping) which relaxes the
+node positions onto force balance under the FULL handoff force field — gravity,
+rotor thrust/torque, elastic tension and the steady-state spinning-cable drag —
+before the orbital velocity field is set.  Pass `operational_polish=false` to
+reproduce the pre-2026-09-19 behaviour exactly.
 """
 function settle_to_operational_state(
     sys::KiteTurbineSystem,
@@ -1455,6 +1730,24 @@ function settle_to_operational_state(
     # docs/plans/2026-08-13-settle-drag-alignment.md).  Pass `nothing` or
     # `(_...) -> 0.0` to reproduce the pre-change drag-free scan exactly.
     drag_fn::Union{Nothing, Function}=settle_parasitic_drag_power,
+    # Operational-equilibrium polish (2026-09-19).  Relaxes the node positions
+    # onto force balance under the FULL handoff force field as the LAST pass,
+    # before the orbital velocity field is set.  On by default and on BOTH the
+    # lift and the legacy paths: it is a physical equilibrium solve, not a
+    # lift-chain aid.  Set `operational_polish=false` for the pre-2026-09-19
+    # behaviour bit-for-bit; see the cap evidence and the drag-free-vs-full
+    # comparison in the block comment above `_polish_operational_equilibrium!`.
+    operational_polish::Bool=true,
+    polish_iters::Int=OPERATIONAL_POLISH_MAX_ITERS,
+    polish_dt::Float64=OPERATIONAL_POLISH_DT,
+    # Bounded equilibrium realisability corrections (Rod, 2026-09-19).  After
+    # the polish, the worst-segment demand is measured AT THE SOLVED
+    # EQUILIBRIUM; if it is past `1/TRPT_REALISABILITY_TENSION_MARGIN` the top
+    # preload is scaled by `demand·margin` and the state re-placed and
+    # re-polished (DR only — NOT the operational settle).  Demand scales as
+    # 1/T, so one step lands on target.  Genomes already inside the margin
+    # (e.g. the campaign seed) pay nothing.  0 disables the correction.
+    polish_realisability_max_corrections::Int=2,
 )
     # Reset mechanical brake engagement
     sys.brake_engaged[] = false
@@ -1523,13 +1816,16 @@ function settle_to_operational_state(
     # the operational settle below will re-equilibrate them at ω_rated.
     β_r = p.elevation_angle
     sd_r = [cos(β_r), 0.0, sin(β_r)]
-    let
+    # `F_ax` is hoisted out of this `let` because the equilibrium realisability
+    # closure at the end of the function re-scales its top tension and re-places
+    # (Rod, 2026-09-19).
+    F_ax = let
         if lift_device !== nothing
             # Cut the six bridles for the design preload FIRST (the cone is
             # placed, not force-balanced), then prescribe the transmission
             # preload from the same two-section balance.  2026-09-13.
             apply_design_bridle_preload!(sys, u0, p, lift_device; omega_eq=ω_eq)
-            F_ax = design_axial_preload(sys, p, lift_device, u0; omega_eq=ω_eq, wind_fn=wind_fn)
+            F_ax_design = design_axial_preload(sys, p, lift_device, u0; omega_eq=ω_eq, wind_fn=wind_fn)
             # ── Matched-place twist + axial geometry (2026-09-11) ───────────
             # Solve the twist and the axial gap TOGETHER so each segment carries
             # the intended preload tension at its final twist.  The old restore
@@ -1537,7 +1833,7 @@ function settle_to_operational_state(
             # inflated the tension ~7× and left the state ~7× under-twisted — the
             # wind-up.  See `trpt_matched_place` and
             # docs/plans/2026-09-11-settle-ode-coherence.md.
-            placement = trpt_matched_place(sys, p, F_ax, τ_eq, ω_eq, wind_fn)
+            placement = trpt_matched_place(sys, p, F_ax_design, τ_eq, ω_eq, wind_fn)
             α_matched, ctrs = placement.α, placement.ctrs
             for k in 1:Nr
                 gid = sys.ring_ids[k]
@@ -1561,12 +1857,14 @@ function settle_to_operational_state(
                 u_start[(3 * (gid - 1) + 1):(3 * gid)] .= ctrs[Nr] .+ off .* sd_r
                 u_start[(3N + 3 * (gid - 1) + 1):(3N + 3 * gid)] .= 0.0
             end
+            F_ax_design
         else
             for k in 1:Nr
                 gid = sys.ring_ids[k]
                 idx = (3 * (gid - 1) + 1):(3 * gid)
                 u_start[idx] .= u0[idx]
             end
+            Float64[]
         end
     end
 
@@ -1778,6 +2076,70 @@ function settle_to_operational_state(
                 frac = m / ROPE_SUBSEGS
                 gid = (s - 1) * stride + 2 + (j - 1) * ROPE_NODES_PER_LINE + (m - 1)
                 u_start[(3 * (gid - 1) + 1):(3 * gid)] .= pa .+ frac .* (pb .- pa)
+            end
+        end
+    end
+
+    # ── Final pass: operational-equilibrium polish (Barnes kinetic damping) ───
+    # `settle_to_equilibrium` + the operational settle PLACE and RELAX the
+    # machine; neither solves for equilibrium, so the handoff still carried a
+    # 17 468 m/s^2 first-frame acceleration and a 238 N RingNode-11 imbalance.
+    # Relax the positions onto the true OPERATING equilibrium here — under the
+    # full force field the ODE integrates, including the spinning-cable drag —
+    # holding omega and alpha, then re-establish the velocity field below.
+    if operational_polish
+        wind_polish = wind_fn === nothing ? (pos, t) -> zeros(3) : wind_fn
+        ode_params_polish = if lift_device === nothing
+            (sys, p, wind_polish)
+        else
+            (sys, p, wind_polish, lift_device)
+        end
+        _polish_operational_equilibrium!(
+            u_start, sys, p, ode_params_polish; dt=polish_dt, max_iters=polish_iters
+        )
+        # The polish moved the sky anchor, but `sys.kite_pos` was last set by the
+        # operational-settle loop.  Re-project the kite so the lift line is
+        # exactly `line_length` at the handoff (`update_kite_pos!` holds it 100 %
+        # taut by construction).  Without this the first ODE step can see a lift
+        # line that reads slack because the anchor moved toward the kite.  `dt=0`
+        # advances no lag time — the static solve elapses no time, so only the
+        # length projection is wanted, not a rotation of the line.
+        lift_device === nothing || update_kite_pos!(sys, u_start, lift_device, p, 0.0)
+
+        # ── Realisability closure AT THE SOLVED EQUILIBRIUM (Rod, 2026-09-19) ─
+        # `design_axial_preload` enforces demand ≤ 1/margin against the preload it
+        # PRESCRIBES, but the polish returns the true equilibrium, whose segment
+        # tension differs (measured 2026-09-19: 0.90x–1.32x of the preload, by
+        # genome).  A preload-side check therefore does NOT bound the operating
+        # point: the campaign winner sat at demand ≈ 1.06 at equilibrium and
+        # wound through its crossing limit in the ODE window (test_evaluator_v13
+        # B6).  Demand ∝ 1/T, so one measured correction lands on target; it
+        # re-places and re-runs ONLY the DR (~3 s), and is skipped entirely for
+        # genomes already inside the margin.
+        if lift_device !== nothing && !isempty(F_ax)
+            target = 1.0 / TRPT_REALISABILITY_TENSION_MARGIN
+            for _ in 1:polish_realisability_max_corrections
+                demand_eq =
+                    _trpt_equilibrium_demand(sys, p, u_start, τ_eq, ω_eq, wind_fn)
+                # A non-finite demand, or one whose correction would exceed the
+                # design-side preload bound, means the equilibrium has a slack or
+                # degenerate segment.  That is NOT the bounded margin shortfall
+                # this closure repairs, and scaling for it diverges the state.
+                # Refuse and leave the polished state alone.
+                isfinite(demand_eq) || break
+                demand_eq <= target * (1.0 + 1e-6) && break
+                scale = demand_eq * TRPT_REALISABILITY_TENSION_MARGIN
+                scale <= TRPT_REALISABILITY_MAX_PRELOAD_FACTOR || break
+                F_ax = F_ax .+ (F_ax[end] * (scale - 1.0))
+                placement = trpt_matched_place(sys, p, F_ax, τ_eq, ω_eq, wind_fn)
+                _place_trpt_design!(
+                    u_start, sys, p, placement; lift_device=lift_device
+                )
+                _polish_operational_equilibrium!(
+                    u_start, sys, p, ode_params_polish; dt=polish_dt,
+                    max_iters=polish_iters
+                )
+                update_kite_pos!(sys, u_start, lift_device, p, 0.0)
             end
         end
     end
