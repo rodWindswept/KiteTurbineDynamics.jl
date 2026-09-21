@@ -78,6 +78,8 @@ Instrument validation result and advisory finding. Does not block the wobble-gat
 
 **Damping follow-up (2026-09-21).** A re-run at lin_damp = 0.60 softens the load violence: FoS trough 0.68, top-bay max 2.3 kN, worst TRPT dip 1.7 s. The machine still self-excites though. The hub swings 2.8 m peak-to-peak and FoS stays below 2.5 on 57 of 216 samples. Every line still flicks slack. Artificial damping tames the spikes, not the orbit. Both damping levels fail the honest gate on the FoS trough.
 
+**Re-run under the landed lifter boundary (2026-09-21, `1c9f9cb`).** The crosswind symmetry fix and the along-line damping are both active in the run. Top-bay load spikes halve (9.0 to 4.6 kN) and the FoS trough improves (0.28 to 0.40). The top bay holds stable for about 80 s. Beyond 90 s the machine still enters its 3.7 m orbital limit cycle. That motion is intrinsic rotor and shaft windup of this genome, not a lifter boundary fault (`DECISIONS.md` [2026-09-21], `329c8d2`). The desktop full protocol and the laptop 120 s chunk probe (`scratch/verify_canonical_winner_120s.jl`) agree on the trajectory. The winner still fails the honest gate. Its long-horizon behaviour is recorded here so no instance re-derives it.
+
 ---
 
 ## Unanchored Parameters
