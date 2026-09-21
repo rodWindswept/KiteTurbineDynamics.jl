@@ -21,13 +21,12 @@ using LinearAlgebra
     omega_floor::Float64 = 0.0  # rad/s — below this (incl. reversal) τ = 0
 end
 const GENERATOR_LOAD = Ref(GeneratorLoadMode())
-set_generator_load!(m::GeneratorLoadMode) = (GENERATOR_LOAD[] = m; m)
+set_generator_load!(m::GeneratorLoadMode) = (GENERATOR_LOAD[]=m; m)
 
 """Main-rotor swept ANNULUS area π(r_out² − r_in²) (2026-08-20, ring-anchored
 70/30 geometry consistent with the expansion rotors).  blade_hub_radius = 0.0
 is the legacy full disk π·R² — bit-identical for non-annulus builders."""
-main_rotor_swept_area(sys) =
-    π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
+main_rotor_swept_area(sys) = π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
 
 """Linear interpolation of the measured τ(ω) table, flat outside the knots."""
 function _interp_tau(gl::GeneratorLoadMode, omega::Float64)
@@ -209,8 +208,7 @@ function compute_ring_forces!(
         tether_dir = hub_pos .- @view(u[1:3])   # ground is node 1
         tl = norm(tether_dir)
         if tl > 0
-            ;
-            tether_dir ./= tl;
+            tether_dir ./= tl
         end
         forces[hub_gid] .+= thrust_mag .* tether_dir
 
@@ -326,8 +324,9 @@ function compute_ring_forces!(
                 if spoke !== nothing && spoke.enabled
                     R_spoke = r_nom  # spoke extends from ring radius to center
                     omega_ring = abs(omega[ring_ri])
-                    tau_spoke_per = 0.5 * p.rho * spoke.C_D * spoke.d_line *
-                                    omega_ring^2 * R_spoke^4 / 4.0
+                    tau_spoke_per =
+                        0.5 * p.rho * spoke.C_D * spoke.d_line * omega_ring^2 * R_spoke^4 /
+                        4.0
                     tau_spoke_total = p.n_lines * tau_spoke_per
                     torques[ring_ri] -= tau_spoke_total  # braking
                 end
@@ -364,16 +363,17 @@ function compute_ring_forces!(
         shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
         E_dyn = 100e9
         A_spoke = π * spoke.d_line^2 / 4.0
-        for i in 1:(length(sys.ring_ids)-1)  # skip ground ring (PTO)
+        for i in 1:(length(sys.ring_ids) - 1)  # skip ground ring (PTO)
             ring_gid = sys.ring_ids[i]
             ring_gid === nothing && continue
-            ring_pos = @view u[(3*(ring_gid-1)+1):(3*ring_gid)]
+            ring_pos = @view u[(3 * (ring_gid - 1) + 1):(3 * ring_gid)]
             r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
             rad_dir = ring_pos .- r_proj
             r_current = norm(rad_dir)
             if r_current > spoke.epsilon
                 rad_dir ./= r_current
-                k_spoke = p.n_lines * E_dyn * A_spoke / ((sys.nodes[ring_gid]::RingNode).radius)
+                k_spoke =
+                    p.n_lines * E_dyn * A_spoke / ((sys.nodes[ring_gid]::RingNode).radius)
                 F_spoke = k_spoke * r_current
                 forces[ring_gid] .-= F_spoke .* rad_dir
             end
@@ -464,8 +464,9 @@ function compute_ring_forces!(
         # StackedLifterParams is exempt too: it already scales as v², so it fades
         # out smoothly on its own rather than needing a stall cliff.
         PASSIVE_KITE_STALL_SPEED = 2.0
-        is_passive = !(lift_device isa RotaryLifterParams ||
-                       lift_device isa StackedLifterParams)
+        is_passive = !(
+            lift_device isa RotaryLifterParams || lift_device isa StackedLifterParams
+        )
         _, T_lift, elev_lift_deg = lift_force_steady(lift_device, p.rho, v_hmag, p)
         if is_passive && v_hmag < PASSIVE_KITE_STALL_SPEED
             T_lift = 0.0
@@ -491,17 +492,23 @@ function compute_ring_forces!(
             line_to_kite = sys.kite_pos .- sky_anchor_pos
             line_dist = norm(line_to_kite)
 
-            # Tension only if lift line is taut (line_dist ≥ design length).
-            # We use 99% threshold to avoid chattering at the exact design length.
-            lift_line_len = T_lift > 0.0 ? lift_device.line_length : 0.0
+            lift_line_len = T_lift > 0.0 ? lift_line_length(lift_device) : 0.0
             if line_dist > 1e-6
                 tension_dir = line_to_kite ./ line_dist
             else
                 tension_dir = lift_dir
             end
-            # Apply lift force to sky anchor only when lift line carries tension
+
+            # Apply lift force with along-line damping:
+            # Steady-state tension is T_lift (preserves exact settle equilibrium & preload design).
+            # Longitudinal damping -c_lift * v_line dissipates high-frequency tension waves
+            # into Dyneema viscoelasticity and kite apparent-wind damping.
             if line_dist >= lift_line_len * 0.99
-                forces[sky_anchor_gid] .+= T_lift .* tension_dir
+                sa_vel = @view u[(3 * N + 3 * (sky_anchor_gid - 1) + 1):(3 * N + 3 * sky_anchor_gid)]
+                v_line = dot(sa_vel, tension_dir)
+                c_lift = lift_line_damping(lift_device)
+                T_dyn = max(0.0, T_lift - c_lift * v_line)
+                forces[sky_anchor_gid] .+= T_dyn .* tension_dir
             end
             # (If line is slack: sky anchor rises freely; kite will catch up via lag update)
         end
@@ -519,8 +526,11 @@ function compute_ring_forces!(
     # initialization.jl — the offset via `bridle_bearing_offset(r_top)`, never a
     # hardcoded number (2026-09-14, Rod).
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
-    r_top = isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
-            sys.effective_radii[hub_ri]
+    r_top = if isempty(sys.expansion_rotors)
+        (sys.nodes[hub_gid]::RingNode).radius
+    else
+        sys.effective_radii[hub_ri]
+    end
     bearing_offset = bridle_bearing_offset(r_top)
     cyan_L0 = CYAN_L0_DESIGN
 
@@ -678,18 +688,22 @@ corrects one step behind. A hard projection after each step prevents
 accumulated drift without requiring an implicit solver.
 """
 function constrain_spokes!(
-    forces::Vector{Float64}, u::Vector{Float64},
-    sys::KiteTurbineSystem, N::Int, Nr::Int, p::SystemParams
+    forces::Vector{Float64},
+    u::Vector{Float64},
+    sys::KiteTurbineSystem,
+    N::Int,
+    Nr::Int,
+    p::SystemParams,
 )
     shaft = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
-    alpha = @view u[6N+1 : 6N+Nr]
+    alpha = @view u[(6N + 1):(6N + Nr)]
     EA_spoke = 100e9 * π * 0.007^2 / 4.0
     for gid in sys.ring_ids[2:end]
         gid === nothing && continue
         node = sys.nodes[gid]::RingNode
         ring_idx = node.ring_idx
         perp1, perp2 = shaft_perp_basis(shaft)
-        center = @view u[3*(gid-1)+1 : 3*gid]
+        center = @view u[(3 * (gid - 1) + 1):(3 * gid)]
         R_design = node.radius
         α_ring = alpha[ring_idx]
         n_lines = p.n_lines
@@ -706,7 +720,7 @@ function constrain_spokes!(
                 net_force .-= F .* radial_unit  # inward restoring force
             end
         end
-        forces[(3*(gid-1)+1):(3*gid)] .+= net_force
+        forces[(3 * (gid - 1) + 1):(3 * gid)] .+= net_force
     end
     return nothing
 end

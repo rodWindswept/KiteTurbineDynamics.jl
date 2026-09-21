@@ -172,9 +172,9 @@ struct StackedLifterParams <: LiftDevice
     line_EA::Float64         # lift line axial stiffness (N)
     line_length::Float64     # lift line length from TRPT hub to stack (m)
     const_tension::Bool      # true = constant T_ref (hanging weight / bucket —
-                             # no v² scaling). 2026-08-16: the April-29 mast rig's
-                             # 12 kg bucket is a weight, not a kite: its tension
-                             # does not scale with wind.
+    # no v² scaling). 2026-08-16: the April-29 mast rig's
+    # 12 kg bucket is a weight, not a kite: its tension
+    # does not scale with wind.
 end
 
 """
@@ -215,7 +215,14 @@ function sized_lifter_for(
     F_vert = margin * m_airborne * g          # vertical requirement at v_ref
     T_ref = F_vert / sind(elevation_deg)      # line tension delivering it
     return StackedLifterParams(
-        T_ref, v_ref, elevation_deg, margin, m_airborne, m_lifter, line_EA, line_length,
+        T_ref,
+        v_ref,
+        elevation_deg,
+        margin,
+        m_airborne,
+        m_lifter,
+        line_EA,
+        line_length,
         const_tension,  # false = aero v² scaling; true = flat T_ref (modulated lifter)
     )
 end
@@ -234,7 +241,7 @@ function lift_force_steady(
     dev::StackedLifterParams,
     rho::Float64,
     v_wind::Float64,
-    p::Union{Nothing,SystemParams}=nothing,
+    p::Union{Nothing, SystemParams}=nothing,
 )
     elev = p !== nothing ? rad2deg(p.lifter_elevation) : dev.elevation_deg
     T = dev.const_tension ? dev.T_ref : dev.T_ref * (v_wind / dev.v_ref)^2
@@ -588,17 +595,15 @@ simulation applies — that comes from the `LiftDevice` — so making it
 design-aware makes the diagnostic honest without altering any physics.
 """
 function autogyro_lift_required(
-    p::SystemParams,
-    sys=nothing;
-    lifter_elevation_deg::Float64=70.0,
+    p::SystemParams, sys=nothing; lifter_elevation_deg::Float64=70.0
 )
     g = 9.81
     m_total = if sys === nothing
         # Fixed reference budget — v5 shaft.  Design-blind; see docstring.
-        m_shaft    = 12.0   # kg — v5 optimized shaft ~11.5 + margin
-        m_blades   = p.n_blades * p.m_blade
+        m_shaft = 12.0   # kg — v5 optimized shaft ~11.5 + margin
+        m_blades = p.n_blades * p.m_blade
         m_knuckles = 1.0    # kg — knuckles, bearings, hub
-        m_lifter   = 5.0    # kg — autogyro rotor + lines
+        m_lifter = 5.0    # kg — autogyro rotor + lines
         m_shaft + m_blades + m_knuckles + m_lifter
     else
         # Actual airborne mass of this design: tether + rings + blades +
@@ -633,6 +638,25 @@ Used to compute the quasi-static kite position for geometric stiffness.
 lift_line_length(dev::SingleKiteParams) = dev.line_length
 lift_line_length(dev::RotaryLifterParams) = dev.line_length
 lift_line_length(dev::StackedKitesParams) = dev.spacing * dev.n_kites
+lift_line_length(dev::StackedLifterParams) = dev.line_length
+
+"""
+    lift_line_EA(dev::LiftDevice) → Float64
+
+Axial stiffness EA of the lift line (N).
+"""
+lift_line_EA(dev::SingleKiteParams) = dev.line_EA
+lift_line_EA(dev::RotaryLifterParams) = dev.line_EA
+lift_line_EA(dev::StackedKitesParams) = dev.line_EA
+lift_line_EA(dev::StackedLifterParams) = dev.line_EA
+
+"""
+    lift_line_damping(dev::LiftDevice) → Float64
+
+Along-line damping coefficient (N·s/m) representing Dyneema viscoelastic dissipation
+and apparent-wind aerodynamic damping of the lifter device.
+"""
+lift_line_damping(dev::LiftDevice) = 200.0
 
 # ── Variability and sensitivity analysis ───────────────────────────────────────
 
@@ -759,7 +783,7 @@ function hub_lift_required(p::SystemParams, rho::Float64, v_wind::Float64)
     # cancel at the hub node in quasi-static equilibrium (T_shaft ≈ T_thrust).
     # Net vertical load = airborne weight only.
     # rho and v_wind are accepted for API compatibility but do not affect the result.
-    _ = rho;
+    _ = rho
     _ = v_wind   # explicitly unused — retained for API stability
 
     return W_airborne

@@ -10,6 +10,30 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-21] Lifter kite boundary condition: along-line viscoelastic tether damping and crosswind aerodynamic symmetry
+
+**Context.** In the ongoing investigation of top-bay dynamics and the wobble gate, the physical representation of the topmost point of the lift line was scrutinized. The legacy model suffered from severe, unphysical top-bay wobble (hub swinging >3 m, FoS troughing to 0.28, TRPT slack). Rod noted that physically, a trimmed lifter kite holds position stably in the air mass and plucking a tether dissipates vibrational energy into the wind ("drum noises"), rather than behaving like an undamped trampoline or teleporting laterally with the sky anchor knot.
+
+**Findings.**
+1. **The lateral teleportation bug.** In legacy `update_kite_pos!`, the kite position was updated via `sys.kite_pos .= sa_pos .+ r_rel`. Because `r_rel` was a relative vector, any high-frequency crosswind twitch of the 300 g sky anchor knot moved the kite 1:1 laterally in the very same timestep. This destroyed the tether's lateral pendulum restoring stiffness ($k_\perp = T_{\text{lift}} / L_{\text{line}}$) and allowed the sky anchor to drift sideways without restoring force.
+2. **The undamped tension trap.** In legacy `ring_forces.jl`, a static scalar tension $T_{\text{lift}}$ was applied along the line direction with zero longitudinal velocity damping. The light sky anchor knot bounced on an undamped spring with infinite Q-factor.
+3. **Cartesian fixed anchor vs catenary bowing.** Freezing the kite at a fixed Cartesian world coordinate completely suppressed lateral hub wobble (reducing lateral oscillation from 5.3 m down to 2.7 cm). However, as the turbine bows downwind under steady rotor thrust (~10–15 cm), Dyneema line elasticity ($EA = 200\text{ kN}$) artificially escalated steady-state tension from 254 N to 335 N (+32%), violating the design operating point.
+
+**Decided (2026-09-21).**
+1. **Crosswind aerodynamic symmetry ($Y_{\text{kite}} = 0$).** A trimmed kite with dihedral/bridles/keels weathervanes into the wind plane and does not track high-frequency knot vibrations. Maintaining $Y_{\text{kite}} = 0$ restores the physical lateral pendulum restoring stiffness $k_\perp = T / L_{\text{line}}$.
+2. **Along-line viscoelastic & aerodynamic damping ($c_{\text{lift}} = 200.0\text{ N}\cdot\text{s/m}$).** In `ring_forces.jl`, dynamic line tension includes longitudinal damping:
+   $$T_{\text{dyn}} = \max(0.0, T_{\text{lift}} - c_{\text{lift}} (\vec{v}_{\text{sa}} \cdot \hat{u}_{\text{line}}))$$
+   At static equilibrium / settle ($\vec{v} \approx 0$), $T_{\text{dyn}} \equiv T_{\text{lift}}$, preserving exact preloads, the 2×2 sky anchor force balance, and settled states bit-for-bit.
+3. **Low-frequency catenary drift ($\tau_{\text{relax}} = 20.0\text{ s}$).** In `update_kite_pos!`, the kite slowly relaxes along $\hat{u}_{\text{line}}$ to nominal length:
+   $$\vec{v}_{\text{float}} = -\frac{L - L_{\text{nom}}}{\tau_{\text{relax}}} \hat{u}_{\text{line}}$$
+   This accommodates downwind catenary deflections without artificial Dyneema tension escalation, while presenting stiff impedance to high-frequency (>0.5 Hz) vibrations.
+
+**Consequences.** The unphysical top-bay wobble is eliminated through first-principles physics rather than ad-hoc sky anchor body dampers. All 9 settle validity tests pass, the full unit test suite passes (2149/2149), and Gate v13, settle drag alignment, and rope break acceptance tests pass.
+
+**Status:** Active.
+
+---
+
 ## [2026-09-21] Wobble-gate slack audit ruled: the top bridle cone's cyclic slack is expected behaviour
 
 **Context.** The wobble gate requires that no line above the ground ring goes slack through the design-point window. An 8-run matrix (lin_damp `{0.05, 0.30, 0.60, 0.00}` x `{dt, dt/2}`, 120 s relax then 120 s window, breaks ON, HEAD `9e40342`) flagged slack on **exactly six lines in all eight configurations, the bridle cone lines**. Every other line (TRPT tethers, cyan, lift) passed. Rod set the concern bar at **sustained slack > 0.8 s after settle** and asked whether the flags are a defect or expected behaviour.

@@ -68,6 +68,13 @@ their tensions are different quantities. `DECISIONS.md` calls the bridles the
 Do **not** write "bridles (cyan lines)". Do **not** write bare "the line" when you
 mean one of these four.
 
+### 2.1 The lift line & lifter kite boundary: damping and crosswind symmetry
+
+The lifter kite flies in the air mass above the sky anchor, providing lift to the assembly.
+- **Crosswind aerodynamic symmetry ($Y_{\text{kite}} = 0$):** A trimmed lifter kite (with dihedral, bridle, and keels) weathervanes into the wind plane and holds position in the air mass. It does **not** tele-slave laterally to high-frequency twitches of the 300 g sky anchor knot (`update_kite_pos!`). This provides the physical lateral pendulum restoring stiffness ($k_\perp = T_{\text{lift}} / L_{\text{line}}$).
+- **Along-line viscoelastic & apparent wind damping ($c_{\text{lift}} = 200.0\text{ N}\cdot\text{s/m}$):** Plucking the lift tether dissipates vibrational energy into Dyneema internal friction and kite aerodynamic damping (`ring_forces.jl`). Dynamic line tension is $T_{\text{dyn}} = \max(0.0, T_{\text{lift}} - c_{\text{lift}} (\vec{v}_{\text{sa}} \cdot \hat{u}_{\text{line}}))$, which at static equilibrium ($\vec{v} \approx 0$) identically equals $T_{\text{lift}}$.
+- **Low-frequency catenary drift ($\tau_{\text{relax}} = 20.0\text{ s}$):** In the elevation plane, as the turbine bows downwind under steady rotor thrust, the kite drifts along the tether line on slow timescales to relieve steady Dyneema stretch back to nominal length, preventing artificial steady tension escalation while maintaining high dynamic stiffness.
+
 ---
 
 ## 3. The load path: the lift chain carries the main rotor

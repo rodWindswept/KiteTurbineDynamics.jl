@@ -4,28 +4,20 @@ export run_canonical_sim!,
 """
     update_kite_pos!(sys, u, lift_device, p, dt)
 
-Advance `sys.kite_pos` by lagging the relative position vector `r_rel = kite_pos - sa_pos`
-toward the instantaneous equilibrium direction:
+Update `sys.kite_pos` representing the lifter kite in flight above the sky anchor.
 
-    r_eq = lift_line_len · lift_dir(p)
-
-The update uses a first-order lag with time constant `KITE_TAU_S` (3 s):
-
-    r_rel .+= (dt / KITE_TAU_S) .* (r_eq .- r_rel)
-
-To model the continuous aerodynamic lift holding the lift line fully taut under normal payout,
-we project `r_rel` to exactly `lift_device.line_length` every step:
-
-    r_rel .= (r_rel ./ norm(r_rel)) · lift_line_len
-
-The absolute `sys.kite_pos` is then reconstructed as:
-
-    sys.kite_pos .= sa_pos .+ r_rel
-
-**Why a relative lag?**  The physical kite has inertia and the lift line exerts aerodynamic drag
-as it reorients. Using a relative direction lag instead of lagging absolute position ensures that
-the lift line is held 100% taut by construction as the sky anchor ascends, transmitting the kite's
-lift continuously into the TRPT preloads rather than artificially going slack.
+Physics:
+- Directional alignment: In the crosswind direction (Y), a trimmed kite with dihedral/keels/bridle
+  weathervanes into the vertical aerodynamic symmetry plane (Y = 0). It does not tele-slave laterally
+  to high-frequency sky anchor vibrations, naturally producing lateral pendulum restoring stiffness
+  `k_perp = T / L_line` from the tether vector geometry.
+- Low-frequency catenary float: In the elevation plane, as the turbine slowly bows downwind under steady
+  rotor thrust, the kite drifts along the tether line on slow timescales (tau_relax ~ 20 s) to relieve excess
+  line stretch back to nominal operating length, keeping steady line tension at T_ref without artificial
+  tension escalation.
+- Fast flutter / acoustic dissipation: Fast (>0.5 Hz) vibrations of the sky anchor knot see a stationary
+  compliant boundary in the air mass, where along-line viscoelastic damping in ring_forces.jl dissipates vibrational energy.
+- At initialization (dt <= 0.0), snaps `sys.kite_pos` to the equilibrium position along `lift_dir`.
 """
 function update_kite_pos!(
     sys::KiteTurbineSystem,
@@ -39,25 +31,26 @@ function update_kite_pos!(
 
     θ_lift = p.lifter_elevation
     lift_dir = [cos(θ_lift), 0.0, sin(θ_lift)]
+    L_nom = lift_line_length(lift_device)
 
-    # Relative vector from sky anchor to kite
-    r_rel = sys.kite_pos .- sa_pos
-    r_eq = lift_device.line_length .* lift_dir
-
-    # Euler lag update of the relative vector
-    α = min(dt / KITE_TAU_S, 1.0)
-    r_rel .+= α .* (r_eq .- r_rel)
-
-    # Project to exact lift line length to keep the lift line 100% taut
-    d_rel = norm(r_rel)
-    if d_rel > 1e-6
-        r_rel .= (r_rel ./ d_rel) .* lift_device.line_length
-    else
-        r_rel .= lift_device.line_length .* lift_dir
+    if dt <= 0.0
+        sys.kite_pos .= sa_pos .+ L_nom .* lift_dir
+        sys.kite_pos[2] = 0.0
+        return nothing
     end
 
-    # Update absolute kite position
-    sys.kite_pos .= sa_pos .+ r_rel
+    r_line = sys.kite_pos .- sa_pos
+    L_current = norm(r_line)
+    if L_current > 1e-6
+        u_line = r_line ./ L_current
+        TAU_RELAX_S = 20.0
+        v_float = -((L_current - L_nom) / TAU_RELAX_S) .* u_line
+        sys.kite_pos .+= dt .* v_float
+        sys.kite_pos[2] = 0.0   # aerodynamic symmetry plane
+    else
+        sys.kite_pos .= sa_pos .+ L_nom .* lift_dir
+        sys.kite_pos[2] = 0.0
+    end
     return nothing
 end
 
@@ -175,7 +168,8 @@ function run_canonical_sim!(
                     v_idx_start = 3N + 3*(i-1) + 1
                     v_idx_end = 3N + 3*i
                     if v_idx_end <= length(u)
-                        @views u[v_idx_start:v_idx_end] .+= dt .* f_spoke[(3*(i-1)+1):(3*i)] ./ m
+                        @views u[v_idx_start:v_idx_end] .+=
+                            dt .* f_spoke[(3 * (i - 1) + 1):(3 * i)] ./ m
                     end
                 end
             end
@@ -505,7 +499,7 @@ function run_pitch_depower!(
             @views u[(6N + Nr + 1):(6N + 2Nr)] .*= (1.0 - release_frac * 1e-5)
         end
 
-        u[1:3] .= 0.0;
+        u[1:3] .= 0.0
         u[(3N + 1):(3N + 3)] .= 0.0
 
         # Advance dynamic kite position lag (when a lift device is present)
