@@ -64,6 +64,20 @@ Every confirmed instrument fault with its fix commit, so neither instance re-dis
 
 ---
 
+## Cross-Geometry Spot-Check: v13 Winner (2026-09-21)
+
+Instrument validation result and advisory finding. Does not block the wobble-gate exit decision (wobble-gate scope ruling).
+
+**The instrument generalises.** The full wobble protocol ran on the last v13 winner. The machine differs from the seed: single rotor, 3 lines, 6 rings, r_hub 4.32 m. No reader or plumbing fault appeared. Every instrument (FoS, tensions, power, omega) reads coherently. Probes: `scratch/probe_wobble_gate_run_winner.jl`, `scratch/probe_wobble_gate_run_winner_nop30k.jl`, analysis `scratch/analyze_winner_spotcheck.py` (HEAD `9e40342`, re-runs `dcc1f26`, docs-only delta).
+
+**The winner does not settle.** The hub walks out during the relax phase (0.34 m at t = 20 s, 1.8 m by t = 100 s, deep run). The window then shows a sustained violent limit cycle. FoS trough 0.28 against the 2.5 gate (0.15 with the shallow settle). The hub swings 3.7 m peak-to-peak about a 2.7 m offset. Top-bay tension spikes reach 9.0 to 11.8 kN. All 15 TRPT lines flick slack (worst contiguous dip 3.8 s). The bridle cone carries almost nothing (mean 1.3 N deep, 0.0 N shallow). No rope break and no non-finite value.
+
+**Attribution checks.** Not the 2026-09-20 physics era: the canonical re-gate still PASSES at HEAD (P_gen 5.674 kW, omega_gnd 13.63, crossing ratio 0.52). Not the settle depth: the n_op = 30 000 twin shows the same violent window.
+
+**Gate blind spot.** The canonical power gate has no FoS metric and a 30 s window. Its PASS never covered long-horizon stability. Any reuse of this winner needs re-qualification under the current model.
+
+---
+
 ## Unanchored Parameters
 
 Modeling choices that affect results but have no physical calibration. Ranked by sensitivity. Top items need hardware anchors before any external claim.
