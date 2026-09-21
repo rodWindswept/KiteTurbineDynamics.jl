@@ -28,7 +28,7 @@ can assess whether a decision still holds when circumstances change.
    $$\vec{v}_{\text{float}} = -\frac{L - L_{\text{nom}}}{\tau_{\text{relax}}} \hat{u}_{\text{line}}$$
    This accommodates downwind catenary deflections without artificial Dyneema tension escalation, while presenting stiff impedance to high-frequency (>0.5 Hz) vibrations.
 
-**Consequences.** The unphysical top-bay wobble is eliminated through first-principles physics rather than ad-hoc sky anchor body dampers. All 9 settle validity tests pass, the full unit test suite passes (2149/2149), and Gate v13, settle drag alignment, and rope break acceptance tests pass.
+**Consequences.** The unphysical high-frequency top-bay flutter and line chatter are eliminated through first-principles tether viscoelastic damping and crosswind aerodynamic symmetry rather than ad-hoc sky anchor body dampers. On the historical v13 single-rotor winner, top-bay load spikes are halved (9.0 kN → 4.6 kN), FoS trough improves (0.28 → 0.40), and the top bay remains stable for ~80 s. Beyond ~90 s, that specific machine still self-excites into an orbital limit cycle (3.7 m p2p) due to intrinsic rotor/shaft windup dynamics rather than lifter boundary bugs. All 9 settle validity tests pass, the full unit test suite passes (2149/2149), and Gate v13, settle drag alignment, and rope break acceptance tests pass. The new DE campaign runs behind an honest long-horizon gate to screen out such limit cycles.
 
 **Status:** Active.
 
