@@ -76,6 +76,8 @@ Instrument validation result and advisory finding. Does not block the wobble-gat
 
 **Gate blind spot.** The canonical power gate has no FoS metric and a 30 s window. Its PASS never covered long-horizon stability. Any reuse of this winner needs re-qualification under the current model.
 
+**Damping follow-up (2026-09-21).** A re-run at lin_damp = 0.60 softens the load violence: FoS trough 0.68, top-bay max 2.3 kN, worst TRPT dip 1.7 s. The machine still self-excites though. The hub swings 2.8 m peak-to-peak and FoS stays below 2.5 on 57 of 216 samples. Every line still flicks slack. Artificial damping tames the spikes, not the orbit. Both damping levels fail the honest gate on the FoS trough.
+
 ---
 
 ## Unanchored Parameters
