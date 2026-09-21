@@ -5,7 +5,7 @@ lists inside every handover (including the 2026-09-14 handover §12). One item p
 session. If a session's work is not the current item, it is a detour and should
 be named as one.
 
-Last updated: 2026-09-16.
+Last updated: 2026-09-21.
 
 ## Standing rules
 
@@ -301,9 +301,12 @@ Discipline that makes or breaks it:
 **Done when:** `test/test_settle_validity.jl` passes — ✅ 2026-09-19 — and the
 settle and the ODE agree on the bowed shape, which is **still open**.
 
-### 4. Explore the 5 kW design space
+### 4. Explore the 5 kW design space — OPENED 2026-09-21
 
-The model-space analysis. Run behind the exit gate below.
+The model-space analysis. The exit gate below is closed (2026-09-21), so this is
+now the active workstream. The new campaign runs behind an honest gate that
+screens out violent attractors (see the winner spot-check in
+`instrument-trust-log.md`).
 
 ### 5. 1.5 kW Daisy-scale validation
 
@@ -421,8 +424,17 @@ All four before a campaign launch:
 Plus the wobble gate, evaluated at the design operating point over **≥ 120 s with
 only justified damping active**:
 
-- [ ] No line above the ground ring goes slack through the excursion.
-- [ ] FoS ≥ target at the **cycle peak**, not the mean.
+- [x] No line above the ground ring goes slack through the excursion. **(2026-09-21.)**
+  The six bridle-cone lines cycle below 1 N once per revolution and are ruled expected
+  behaviour (`DECISIONS.md` [2026-09-21]). Every other line was clean in all eight
+  matrix runs.
+- [x] FoS ≥ target at the **cycle peak**, not the mean. **(2026-09-21.)** Trough 11.5 to
+  13.1 across the eight-run matrix, against the 2.5 gate.
+
+**Exit gate: CLOSED 2026-09-21.** The wobble gate passed on the re-seeded 5 kW
+campaign design (`9e40342`; lin_damp {0.05, 0.30, 0.60, 0.00} × {dt, dt/2}, 120 s
+post-relax windows, breaks ON). The wind-up peak remains a separate measurement
+(see the window note below).
 
 **Gate window (ruled 2026-09-16): the 120 s starts after a relax, not at cold
 start.** In evaluator terms that means `cfg.relax_s` long enough to discard the
