@@ -10,6 +10,27 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-21] Wobble-gate slack audit ruled: the top bridle cone's cyclic slack is expected behaviour
+
+**Context.** The wobble gate requires that no line above the ground ring goes slack through the design-point window. An 8-run matrix (lin_damp `{0.05, 0.30, 0.60, 0.00}` x `{dt, dt/2}`, 120 s relax then 120 s window, breaks ON, HEAD `9e40342`) flagged slack on **exactly six lines in all eight configurations, the bridle cone lines**. Every other line (TRPT tethers, cyan, lift) passed. Rod set the concern bar at **sustained slack > 0.8 s after settle** and asked whether the flags are a defect or expected behaviour.
+
+**Findings.**
+1. **The cyclic slack is real in the simulation's own force path.** The force path keeps the bridles in the shaft frame (`rope_forces.jl:196`). The tracker reads the tilted-ring basis. The two frames agree within ~10 % on dip duration and duty (frame drift 0.38 mm, vertex offset 0.09 mm).
+2. **The signature is a once-per-revolution re-touch, not sustained slack.** Each of the six lines dips below 1.0 N once per rotor revolution (~257 episodes per 120 s, revolution period 0.467 s). Maximum contiguous dip: **0.22 s** at production damping, **0.29 s** at zero damping. Duty below 1.0 N: **~45 %** of the window (67 % at zero damping). The cone keeps carrying as a set (window minimum ~110 N total at production damping).
+3. **The mechanism matches the known geometry.** The bow (sag) offsets the hub ~1.1 to 1.25 m laterally, and the topmost rotor's lift pressure lifts the rotor. The top cone line unloads cyclically through the turn. Rod ruled this expected on 2026-09-21.
+4. **A probe fault (not a model fault) briefly muddied the verification.** A reader that collected bridle rest lengths BEFORE the settle read the uncut design gap (0.364 mm long) and showed phantom slack. The live readers were always correct, and the corrected probe reproduces them exactly. Recorded in the instrument trust log.
+
+**Decided (2026-09-21).**
+1. **Classified as expected behaviour, not a defect.** The six bridle-cone flags do not block the wobble gate. No catch-all damper, no cone resize, no margin change: the FoS at the cycle peak is **11.5 to 13.1** against the 2.5 gate, so the structural case for a change does not exist.
+2. **The zero-artificial-damping envelope remains the governing design load** (`ACTIVE.md:12`). At `lin_damp = 0.00` the dips lengthen to 0.29 s and the cone can unload fully at moments. Both stay under the 0.8 s concern bar.
+3. **The measurement protocol stands:** slack tracked at ~10 ms resolution against the 1.0 N threshold, with the six-phase-staggered cone, and the back line as context only.
+
+**Consequences.** The slack item of the wobble gate closes with this ruling. The wind-up peak remains a separate measurement. The tracker under-reads bridle tension by ~5 to 10 % versus the force path. This is acceptable at these margins, and it is noted so the 0.8 s bar is never judged near the reader's resolution. Evidence: `scratch/probe_wobble_gate_run.jl` and `.julia_depot/logs/wg_*.log` (matrix), `scratch/probe_bridle_reader_check_fixed.jl`, `scratch/diag_bridle_discrepancy.jl`. Advisory follow-up (2026-09-21): the v13 winner spot-check is running to test the instrument on a different ring count and taper.
+
+**Status:** Active.
+
+---
+
 ## [2026-09-20] Taut back-line load split, circle-intersection sky anchor, and discrete geometric crossing limit in realisability sizing
 
 **Context.** `ACTIVE.md` item 2 remained partially unresolved: while the bi-linear
