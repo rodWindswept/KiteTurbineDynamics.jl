@@ -1,0 +1,66 @@
+island-3 candidate build: genome=scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_3/best_vector.csv
+  n_lines=3 rings=11 n_active=1 r_hub=3.55 m  L=18.8 m
+=== wobble gate run  tag=wg_isl3_remediated  git=57b3f58 ===
+n_total=103 n_ring=11 n_lines=3 rotors=0
+lin_damp=0  dt_factor=1  dt_use=2.32467e-05 s  relax=120.0 s  window=120.0 s
+settle wall = 31.7 s
+handoff residual: acc_struct 17.028 m/s2  max_force 38.557 N
+[relax] t=  20.0 s  hub_lat=0.9532  T_cyan=105.4 T_back=153.6
+[relax] t=  40.0 s  hub_lat=0.9588  T_cyan=93.1 T_back=154.4
+[relax] t=  60.0 s  hub_lat=0.9549  T_cyan=94.8 T_back=154.4
+[relax] t=  80.0 s  hub_lat=0.9516  T_cyan=102.9 T_back=153.7
+[relax] t= 100.0 s  hub_lat=0.9585  T_cyan=95.2 T_back=154.0
+[relax] t= 120.0 s  hub_lat=0.9572  T_cyan=96.5 T_back=154.5
+[relax] t= 120.0 s  hub_lat=0.9572  T_cyan=96.5 T_back=154.5
+relax wall = 254.3 s
+[window] t=   5.0 s
+[window] t=  10.0 s
+[window] t=  15.0 s
+[window] t=  20.0 s
+[window] t=  25.0 s
+[window] t=  30.0 s
+[window] t=  35.0 s
+[window] t=  40.0 s
+[window] t=  45.0 s
+[window] t=  50.0 s
+[window] t=  55.0 s
+[window] t=  60.0 s
+[window] t=  65.0 s
+[window] t=  70.0 s
+[window] t=  75.0 s
+[window] t=  80.0 s
+[window] t=  85.0 s
+[window] t=  90.0 s
+[window] t=  95.0 s
+[window] t= 100.0 s
+[window] t= 105.0 s
+[window] t= 110.0 s
+[window] t= 115.0 s
+[window] t= 120.0 s
+window wall = 263.2 s
+
+=== GATE SUMMARY tag=wg_isl3_remediated ===
+steps: relax 5162013, window 5162013; dt_use 2.32467e-05 s; captured 240; broken=no
+hub_lat    min     0.9515  max     0.9588  p2p     0.0074  mean     0.9553
+bear_lat   min     1.2582  max     1.2625  p2p     0.0043  mean     1.2606
+T_cyan     min    92.3383  max   105.6209  p2p    13.2826  mean    98.6071
+T_back     min   153.5942  max   154.4974  p2p     0.9032  mean   154.0933
+T_bridle   min     0.0000  max   112.4375  p2p   112.4375  mean    47.6365
+T_topbay   min   597.4864  max   603.7473  p2p     6.2609  mean   600.0745
+P_gen_kW   min     5.6226  max     5.6374  p2p     0.0148  mean     5.6296
+omega_gnd  min    13.6389  max    13.6509  p2p     0.0120  mean    13.6445
+FoS (airborne min): trough 12.3348  mean 14.5317  (n=240 nonfinite=0)
+hub_lat p2p first-half 0.0074  second-half 0.0074;  mean 2nd half 0.9553
+
+slack summary (threshold 1.0 N; Δs=0.009996 s):
+  line             min_T_N max_cont_s     tot_s #EPS>=0.1
+  bridle_l1          0.000    0.1000   58.9270      0  ** FAIL **
+  bridle_l2          0.000    0.1000   59.0870      0  ** FAIL **
+  bridle_l3          0.000    0.1000   58.8970      0  ** FAIL **
+  back             153.594    0.0000    0.0000      0  (context)
+SLACK GATE: FAIL
+FOS GATE (>=2.5 at trough): pass (trough 12.3348)
+
+csv: /home/rodbot/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/wg_isl3_remediated.csv
+total wall 550.9 s
+=== done ===

@@ -336,6 +336,50 @@ Commands are the canonical ones from `CLAUDE.md`.
 - `scripts/ktd-julia test/test_settle_validity.jl` , **9/9 PASS** (1 m 22 s).
   Handoff residual at t = 0: `acc_struct` 81.098 m/s², `max_force` 106.270 N.
 - `scripts/ktd-julia test/runtests.jl`, see `.julia_depot/logs/phase3_runtests_2026-09-22.log`.
+- `scripts/ktd-julia test/test_trpt_realisability.jl`, **32/32** after the re-baseline.
+- `scripts/ktd-julia test/test_back_line_element.jl`, **39/39** after the payout fix.
+- `scripts/ktd-julia test/runtests.jl` (second run, all fixes in):
+  **2163/2163 green**, 0 failures, 5 m 09 s.
+
+### 5.1 The three defects are real, but they do NOT rescue island 1
+
+This is the most important result in this document. Both 120 s gates were re-run at
+`lin_damp = 0.00` on the remediated build (`57b3f58`).
+
+**Island 3, the single-rotor control, is clean.** FoS trough **12.3348** against
+12.2739 before. Hub p2p 0.0074 m against 0.0075 m. Bridle dips stay at **0.100 s**
+contiguous and 58.9 s total, and the 0.8 s ruled bar holds. So Fixes 1 to 3 introduce
+**no regression** on a machine with no expansion rotors.
+
+**Island 1 is still FAIL and is worse on the cone.**
+
+| quantity | pre-remediation | remediated (`57b3f58`) |
+|---|---|---|
+| FoS trough | 1.5865 coarse / 1.0446 fine | **1.1269** |
+| hub lateral p2p | 1.2282 m | **2.1037 m** |
+| bearing lateral p2p | 2.3126 m | **2.8898 m** |
+| cone mean tension | 0.0296 N | **0.0000 N** |
+| cone max contiguous slack | 14.93 s | **22.62 s** |
+| cyan max | 1003.3 N | 2034.9 N |
+| back line max | 1800.9 N | 1205.6 N |
+
+`T_bridle` reads min 0, max 0 and mean 0 across the whole window. The cone is dead
+for the entire 120 s.
+
+**What follows.** The four defects are genuine and are now fixed, but they are **not
+the cause of island 1's collapse**. Fix 3 moves the operating point, because the
+preload profile feeds `trpt_matched_place`, which sets the placed geometry and so the
+bridle cut length. On this candidate the move is adverse. The proximate mechanism of
+§2B stands unrefuted: the bow compresses the bearing-to-hub gap, and the bearing
+follows the bow. That mechanism is untouched by Fixes 1 to 3.
+
+**Do not report Phase 1 as having fixed the gate.** The next lever is the back-line
+ground-anchor offset, which is measured but not yet actioned (see §6).
+
+Artifacts, tracked for verification in
+`scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/logs/`:
+`wg_isl1_remediated_ld0.00.log` and `.csv`, `wg_isl3_remediated_ld0.00.log` and `.csv`,
+`early_island_1_post.log` and `.csv`, `early_island_3_post.log` and `.csv`.
 
 Equivalence guard for the single-rotor path: with `expansion_rotors` empty, Fixes 1.2 and
 1.3 never execute (no expansion rotor matches any ring. The thrust loop body never runs)
@@ -363,23 +407,30 @@ because the bearing follows the bow (§2B), which Phase 1 only touches indirectl
 
 Measure, report the numbers, and do not tune to the gate.
 
-Targets to run, in order:
+Targets to run, in order. Items 1 to 3 are **done** and reported in §5.1. The remaining
+work is item 4 and the back-line lever.
 
-1. **Island 1, 10 s fine trace** (`scratch/probe_early_trace.jl` style, 0.05 s cadence).
-   Report `T_bridle` per line, cyan, top bay, hub lateral. The pre-fix baseline is live
-   (47–90 N) at t = 0.1 s and dead from t = 1.1 s.
-2. **Island 3, 10 s fine trace.** Regression check. Baseline: cone 20–52 N, cyan 91–104 N,
-   top bay 600–605 N, hub band 10 mm.
-3. **Island 1, full 120 s wobble gate**, zero artificial damping:
+1. ~~Island 1, 10 s fine trace~~ **DONE.** The cone is live at t = 0.1 s (44.6 / 82.3 /
+   77.8 N) and dead from t = 1.1 s, exactly as before the fixes.
+2. ~~Island 3, 10 s fine trace~~ **DONE.** No regression. Cone 3 to 55 N intermittent,
+   cyan 61 to 98 N, top bay 546 to 611 N, hub band 0.99 to 1.04 m.
+3. ~~Island 1, full 120 s wobble gate~~ **DONE, still FAIL.**
    ```
    scripts/ktd-julia scratch/probe_wobble_gate_run_island3.jl 0.00 1 120 120 wg_isl1_remediated island_1
    ```
-   Baselines to beat (`wg_isl1_ld0.00_dtf1.log`): FoS trough 1.5865, hub p2p 1.2282 m,
-   cone dead 14.93 s contiguous / 119 s total.
-4. **`scripts/ktd-julia test/acceptance_runtests.jl`** (~18 min, parallel) before the work
+   Remediated: FoS trough 1.1269, hub p2p 2.1037 m, cone dead 22.62 s contiguous and
+   0.0000 N mean. This is **worse** than the pre-remediation 1.5865 / 1.2282 m / 14.93 s.
+4. **NEXT, the back-line ground-anchor offset.** This is the measured, untested lever.
+   `back_anchor_fwd_x` is 6.901 m on the 5 kW build, scaled down from the daisy base's
+   11.0 m. At 6.901 m the demanded `T_back` is 365.3 N, above the 320 N stop, so the
+   anchor is forced onto the Dyneema. At 11.0 m the demand falls to 315.8 N and `T_cyan`
+   rises 149.8 to 259.2 N. A settle experiment puts the cone preload at 236 / 329 / 390 N
+   for `fwd_x` 6.901 / 11.0 / 14.0. `parameters.jl` documents this exact failure mode for
+   small offsets. Awaiting Rod's ruling, because it re-baselines every 5 kW design.
+5. **`scripts/ktd-julia test/acceptance_runtests.jl`** (~18 min, parallel) before the work
    is called complete.
 
-Runs 1–3 cost ~5 min each of wall time plus ~15–20 s of settle. The full gate is ~320 s.
+Runs 1 to 3 cost about 5 min each of wall time plus 20 to 30 s of settle.
 
 ---
 

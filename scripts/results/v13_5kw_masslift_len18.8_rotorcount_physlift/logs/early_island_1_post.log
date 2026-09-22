@@ -1,0 +1,23 @@
+=== early trace island_1  (lines=3 rings=10 n_active=3)  T=20 s  dt=1.999e-05 ===
+t=  0.1  bridle=(  44.6   82.3   77.8)  cyan= 176.5  topbay= 623.9  hub_lat=0.0115
+t=  1.1  bridle=(   0.0    0.0    0.0)  cyan= 149.3  topbay= 649.8  hub_lat=1.4887
+t=  2.1  bridle=(   0.0    0.0    0.0)  cyan= 283.6  topbay= 493.7  hub_lat=1.6970
+t=  3.1  bridle=(   0.0    0.0    0.0)  cyan= 250.1  topbay= 614.3  hub_lat=1.3448
+t=  4.1  bridle=(   0.0    0.0    0.0)  cyan= 378.4  topbay= 976.1  hub_lat=1.3983
+t=  5.1  bridle=(   0.0    0.0    0.0)  cyan= 120.6  topbay= 334.8  hub_lat=1.9374
+t=  6.1  bridle=(   0.0    0.0    0.0)  cyan= 572.8  topbay=1000.4  hub_lat=1.3533
+t=  7.1  bridle=(   0.0    0.0    0.0)  cyan= 171.2  topbay= 216.6  hub_lat=2.0124
+t=  8.1  bridle=(   0.0    0.0    0.0)  cyan= 238.4  topbay= 764.5  hub_lat=1.3635
+t=  9.1  bridle=(   0.0    0.0    0.0)  cyan= 590.0  topbay= 393.4  hub_lat=1.6842
+t= 10.1  bridle=(   0.0    0.0    0.0)  cyan=  66.4  topbay= 332.1  hub_lat=1.5741
+t= 11.1  bridle=(   0.0    0.0    0.0)  cyan=1102.9  topbay= 847.7  hub_lat=2.2889
+t= 12.1  bridle=(   0.0    0.0    0.0)  cyan=  53.2  topbay= 995.1  hub_lat=1.4538
+t= 13.1  bridle=(   0.0    0.0    0.0)  cyan= 387.5  topbay=1499.5  hub_lat=1.6970
+t= 14.1  bridle=(   0.0    0.0    0.0)  cyan=  32.2  topbay= 549.8  hub_lat=1.4355
+t= 15.1  bridle=(   0.0    0.0   13.1)  cyan= 196.2  topbay= 535.0  hub_lat=1.2719
+t= 16.1  bridle=(   0.0    0.0    0.0)  cyan=  43.3  topbay=   1.7  hub_lat=1.5278
+t= 17.1  bridle=(   0.0    0.0    0.0)  cyan= 121.3  topbay= 194.6  hub_lat=1.1011
+t= 18.1  bridle=(   0.0    0.0    0.0)  cyan= 107.3  topbay= 730.9  hub_lat=1.7169
+t= 19.1  bridle=(   0.0    0.0    0.0)  cyan= 323.2  topbay= 403.5  hub_lat=1.4942
+ran 20 s in 91.5 s wall; 399 samples; csv=/home/rodbot/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/early_island_1.csv
+=== done ===
