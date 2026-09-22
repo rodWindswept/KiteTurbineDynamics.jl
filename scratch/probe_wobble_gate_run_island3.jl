@@ -25,7 +25,7 @@
 #   - context: hub/bearing lateral trajectory, key tensions, P_gen, omega.
 #
 # Usage:
-#   julia --project=. scratch/probe_wobble_gate_run_island3.jl <lin_damp> <dt_factor> <relax_s> <window_s> <tag> [island_dir]
+#   julia --project=. scratch/probe_wobble_gate_run_island3.jl <lin_damp> <dt_factor> <relax_s> <window_s> <tag> [island_dir] [capture_dt_s]
 #   e.g. ... 0.05 1 120 120 wg_isl3_ld0.05_dtf1 island_3
 #
 # Log:  .julia_depot/logs/<tag>.log   (via shell redirect)
@@ -41,7 +41,7 @@ const DTF = length(ARGS) >= 2 ? parse(Int, ARGS[2]) : 1
 const RELAX_S = length(ARGS) >= 3 ? parse(Float64, ARGS[3]) : 120.0
 const WINDOW_S = length(ARGS) >= 4 ? parse(Float64, ARGS[4]) : 120.0
 const TAG = length(ARGS) >= 5 ? ARGS[5] : "wg_smoke"
-const CAPTURE_DT = 0.5     # s, capture_extended sampling in the window
+const CAPTURE_DT = length(ARGS) >= 7 ? parse(Float64, ARGS[7]) : 0.5  # s, capture sampling in the window
 const SLACK_DT = 0.01      # s, slack tracker sampling
 
 pos(u, gid) = u[(3 * (gid - 1) + 1):(3 * gid)]
