@@ -60,11 +60,13 @@
 - Island 1 loses that mode. The couplings fall to r = 0.05 to 0.07. Omega and cyan show no periodic structure at all.
 - The bridle cone is the suspect. Only 1 % of the window has cone tension above 5 N. The mean cone load is 0.03 N. Island 3 shows 58 % above 5 N and a mean of 46 N.
 - The cone deficit is intrinsic. At ld 0.05 the excursions are small and the machine regains coherence. The cone still drops below 5 N for 73 % of the window. Island 3 sits at 42 %.
-- Reading: island 1's lift cone carries almost no load at its operating point. The load shifts to the cyan and back lines. Those cycle over their full range (0 to 1003 N and 5 to 1801 N). At zero damping the result is chaos.
-- Next: compare the settled cone geometry and tensions across the three machines. The probe is in preparation.
+- The cone starts healthy and dies in the bow. At settle island 1's cone carries 232 N total (66 to 88 N per line, 3 of 3 active). Islands 2 and 3 carry 76 to 80 N. After 60 s of relax all three cones unload, because the bow shortens the bearing-hub gap. Islands 2 and 3 unload by microns and hover at rest length. Island 1 compresses by centimetres: strains -1.7 %, -2.3 %, -12.0 % at 60 s, then -1.2 %, -1.5 %, -7.3 % at 120 s.
+- The bearing is dragged. Island 1's bearing drifts 1.0 m off the hub axis at 60 s and 0.63 m at 120 s. Islands 2 and 3 hold 0.001 to 0.006 m. The stable machines bow under a fixed bearing. Island 1's bearing follows the bow.
+- Reading: the compressing cone cannot push, so it leaves the load path. The load shifts to the cyan and back lines. Those cycle over their full range (0 to 1003 N and 5 to 1801 N). At zero damping the result is chaos.
+- Done: cone-state probe at settle, +60 s and +120 s. `scratch/probe_cone_state_compare.jl`, logs `probe_cone_island_{1,2,3}.log`.
 - Artefacts: fine logs and CSVs `wg_isl{1,3}_ld0.{00,05}_fine` in `.julia_depot/logs/`. Analyser: `scratch/analyze_item4_fine.py`.
 
 ## Open questions
 
-- The bridle preload cut and the settled cone geometry need a cross-machine check. Probe in preparation.
+- Why does island 1's bearing follow the bow? The stable machines hold their bearing on axis. Compare the bearing, cyan and catenary arrangement across the three machines.
 - The honest window is not yet active in the stage-1 evaluator. Stage-1 still runs a 40 s window.

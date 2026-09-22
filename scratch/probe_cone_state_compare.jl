@@ -1,18 +1,15 @@
-# scratch/probe_cone_state_compare.jl
+# scratch/probe_cone_state_compare.jl  (v2 — 2026-09-22)
 #
-# Cross-machine comparison of the SETTLED bridle-cone state for the three
-# Item 4 campaign candidates.  Question: is island 1's dead cone (99 % unloaded
-# in the envelope window, 73 % at ld 0.05) already present at the settled
-# operating point, before any dynamics?
+# Cross-machine comparison of the bridle-cone state for the three Item 4
+# candidates, at TWO states: after settle, and after the 120 s relax walk
+# (ld 0.00).  Question: island 1's cone is loaded at settle (~66-88 N/line).
+# Does it die during the bow walk?
 #
-# For each island: build (same decode as the campaign/re-gate), settle with
-# n_op=300_000 (same as the re-gate), then print:
-#   - handoff residual (acc_struct, max_force)
-#   - hub lateral offset from the design shaft axis; bearing perp offset
-#   - per bridle-cone line: L0, live L, strain, tension
-#   - total cone tension, cyan tension, back-line tension
+# v1 fix: the bridle filter also caught the cyan sub-seg (bearing -> sky
+# anchor); require the far end to be a ring.
 #
-# Usage: julia --project=. scratch/probe_cone_state_compare.jl
+# Usage: julia --project=. scratch/probe_cone_state_compare.jl [island_dir]
+#        (no argument = run all three; one argument = only that island)
 
 using KiteTurbineDynamics, LinearAlgebra, Statistics, Printf
 include(joinpath(@__DIR__, "..", "scripts", "compute_seeds.jl"))
@@ -21,6 +18,7 @@ include(joinpath(@__DIR__, "..", "scripts", "ode_gate_v13.jl"))
 
 const RESDIR = joinpath(@__DIR__, "..", "scripts", "results",
     "v13_5kw_masslift_len18.8_rotorcount_physlift")
+const ONLY = length(ARGS) >= 1 ? ARGS[1] : ""
 
 pos(u, g) = u[(3 * (g - 1) + 1):(3 * g)]
 
@@ -50,13 +48,9 @@ function build_and_settle(island_dir)
     return sys, u, pc, lift, wf, dec
 end
 
-function report(island_dir)
-    sys, u, pc, lift, wf, dec = build_and_settle(island_dir)
+function print_state(tag, sys, u, pc, lift, wf, dec)
     N, Nr = sys.n_total, sys.n_ring
-    @printf("════ %s  (lines=%d rings=%d n_active=%d r_hub=%.2f) ════\n",
-        island_dir, pc.n_lines, Nr, dec.n_active, dec.design.r_hub)
-
-    # handoff residual
+    @printf("──── %s ────\n", tag)
     du = zeros(length(u))
     KiteTurbineDynamics.multibody_ode!(du, u, (sys, pc, wf, lift), 0.0)
     accs = [norm(du[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]) for g in 1:N]
@@ -65,24 +59,25 @@ function report(island_dir)
     @printf("handoff: acc_struct %.2f m/s2  max_force %.2f N\n",
         maximum(accs[g] for g in st), maximum(sys.nodes[g].mass * accs[g] for g in 1:N))
 
-    # hub lateral from design axis; bearing offset
     hub = sys.rotor.node_id
     bear = sys.bearing_id
     s_design = [cos(pc.elevation_angle), 0.0, sin(pc.elevation_angle)]
     hp = pos(u, hub)
     lat = norm(hp .- dot(hp, s_design) .* s_design)
     err = pos(u, bear) .- hp
-    eperp = norm(err .- dot(err, hp ./ norm(hp)) .* (hp ./ norm(hp)))
+    hn = norm(hp)
+    eperp = norm(err .- dot(err, hp ./ hn) .* (hp ./ hn))
     @printf("hub lateral from design axis = %.4f m; bearing perp offset = %.4f m\n",
         lat, eperp)
 
-    # bridle cone lines (single sub-segment each, end_a is the bearing node)
     hub_ri = (sys.nodes[hub]::RingNode).ring_idx
     pp1, pp2 = KiteTurbineDynamics._tilted_ring_basis(u, sys, hub, hub_ri)
     alpha = @view u[(6N + 1):(6N + Nr)]
     total = 0.0
+    n_active_lines = 0
     for ss in sys.sub_segs
         ss.end_a.node_id == sys.bearing_id || continue
+        ss.end_b.is_ring || continue
         j = ss.end_a.line_idx
         ra = pos(u, ss.end_a.node_id)
         node_b = sys.nodes[ss.end_b.node_id]::RingNode
@@ -92,11 +87,10 @@ function report(island_dir)
         L = norm(rb .- ra)
         T = ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
         total += T
+        T > 1.0 && (n_active_lines += 1)
         @printf("  bridle_l%d: L0=%.5f  L=%.5f  strain=%+.5f  T=%8.3f N\n",
             j, ss.length_0, L, (L - ss.length_0) / ss.length_0, T)
     end
-
-    # cyan and back
     cyan = 0.0
     for ss in sys.sub_segs
         na, nb = ss.end_a.node_id, ss.end_b.node_id
@@ -105,12 +99,29 @@ function report(island_dir)
         L = norm(pos(u, nb) .- pos(u, na))
         cyan += ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
     end
-    @printf("  cone total = %.3f N   cyan = %.3f N\n", total, cyan)
-    println()
+    @printf("  cone total = %.3f N (%d/%d lines active)   cyan = %.3f N\n",
+        total, n_active_lines, pc.n_lines, cyan)
     flush(stdout)
 end
 
+function run_island(island_dir)
+    sys, u, pc, lift, wf, dec = build_and_settle(island_dir)
+    @printf("════ %s  (lines=%d rings=%d n_active=%d r_hub=%.2f) ════\n",
+        island_dir, pc.n_lines, sys.n_ring, dec.n_active, dec.design.r_hub)
+    print_state("AFTER SETTLE", sys, u, pc, lift, wf, dec)
+
+    dt = KiteTurbineDynamics.stable_dt_for_system(sys, pc)
+    n60 = round(Int, 60.0 / dt)
+    for k in 1:2
+        KiteTurbineDynamics.run_canonical_sim!(u, sys, pc, wf, n60, dt;
+            lift_device=lift, lin_damp=0.0)
+        print_state(@sprintf("RELAX +%d s (ld 0.00)", 60 * k), sys, u, pc, lift, wf, dec)
+    end
+    println()
+end
+
 for isd in ("island_1", "island_2", "island_3")
-    report(isd)
+    (ONLY == "" || ONLY == isd) || continue
+    run_island(isd)
 end
 println("=== done ===")
