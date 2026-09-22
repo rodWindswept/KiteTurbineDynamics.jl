@@ -83,11 +83,25 @@ short of the operating point — the Dyneema then took 313 N while the bungee sa
 at 2 N, and `k_soft` came out 141x too soft.  `ΣE_i` is retained above as the
 physical bungee stiffness reference; the calibration is `T_design`.
 
-`payout` is excluded from the two distances above because the field trim pays
-line out to set the sky anchor's height (Rod, 2026-09-16).
+`payout` is the winch trim.  Paying line OUT LENGTHENS the physical line, so the
+**hard stop moves outward by `payout`** — the sky anchor may sit `payout` further
+from the ground anchor before the Dyneema engages.  The design placement puts the
+anchor at `trimmed_length`, so at the design point
 
-Self-checking: returns 0 below the travel, is continuous at the trimmed length
-(reaching `T_design` from both sides), and is monotone in `d`.
+    T(trimmed_length) = k_soft · (travel − payout)        for 0 ≤ payout ≤ travel
+
+i.e. payout is the knob that trades design-point tension for remaining compliance.
+`payout = 0` puts the design point ON the stop (320 N, zero travel left);
+`payout = travel/2` leaves half the bungee in reserve.  **Before 2026-09-22 this
+argument was validated and then IGNORED** — a dead knob whose docstring claimed it
+moved the hard stop (`physics-topology.md` §6 silent-default pattern).  Measured on
+the PRE-remediation Item 4 build: island 1 settled exactly ON the stop (0.000 m of
+travel left) and failed the gate, while island 3 settled 0.322 m into the travel
+and passed — a clean discriminator.  After the 2026-09-22 thrust-in-profile fix
+island 1's settled handoff reads `T_back` 313.4 N (soft), so re-measure rather than
+re-quoting these numbers.
+Self-checking: returns 0 below the travel, is continuous at the stop (reaching
+`T_design` from both sides), and is monotone in `d`.
 """
 function back_line_tension(
     d::Float64, trimmed_length::Float64, payout::Float64, EA::Float64
@@ -103,9 +117,12 @@ function back_line_tension(
     travel = BACK_LINE_SOFT_TRAVEL_M
     T_design = BACK_LINE_T_DESIGN_N
     k_soft = T_design / travel
-    d <= trimmed_length - travel && return 0.0                    # bungee relaxed
-    d <= trimmed_length && return k_soft * (d - trimmed_length + travel)  # SOFT
-    return T_design + EA * (d - trimmed_length) / trimmed_length  # HARD: Dyneema
+    # The winch trim moves the HARD STOP outward.  `payout = 0` reproduces the
+    # pre-2026-09-22 law bit-for-bit (stop == trimmed_length).
+    stop = trimmed_length + payout
+    d <= stop - travel && return 0.0                    # bungee relaxed
+    d <= stop && return k_soft * (d - stop + travel)    # SOFT
+    return T_design + EA * (d - stop) / trimmed_length  # HARD: Dyneema
 end
 
 """
@@ -209,6 +226,26 @@ function _build_kite_turbine_system_impl(
             inertia_z += expansion_rotor_inertia(er, ring_radii[s + 1])
         end
         mass_node = (s < n_seg) ? p.m_ring : m_rotor
+        # Expansion-rotor ASSEMBLY mass is TRANSLATIONAL mass and belongs on the
+        # node (2026-09-22, Item 4 multi-rotor remediation).  The rotary inertia
+        # above was added but the physical mass was NOT, so on the island 1
+        # candidate ring 9 carried J = 32.49 kg·m² while still weighing a bare
+        # 1.5702 kg — its lateral sensitivity a = F/m was ~2.7× too high
+        # (`er.mass` 2.613 kg on ring 9, 2.547 kg on ring 8; measured by
+        # `scratch/probe_er_mass_check.jl`, log in
+        # `scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/logs/`).
+        #
+        # Deliberately NOT gated by EXPANSION_PHYSICS[].blade_inertia: the mass
+        # is real whether or not the inertia term is modelled, and
+        # `expansion_airborne_mass` (expansion_analysis.jl:62) already budgets it
+        # unconditionally for lifter sizing — the defect was that the ODE node
+        # weighed less than the budget the lifter was sized against.  `er.mass` is
+        # the ASSEMBLY total, so add it once and never × n_blades
+        # (`test_blade_mass_law.jl` guards that).
+        for er in expansion_rotors
+            (er.ring_idx == s + 1) || continue
+            mass_node += er.mass
+        end
         nodes[gid_ring] = RingNode(
             gid_ring, s+1, mass_node, ring_radii[s + 1], inertia_z, false
         )
@@ -1272,6 +1309,15 @@ function lift_chain_design(
     ω = omega_eq
     λ = abs(ω) * sys.rotor.radius / max(v_hub, 1e-6)
     T_thrust = 0.5 * p.rho * v_hub^2 * main_rotor_swept_area(sys) * ct_at_tsr(λ) * cos(β)^2
+
+    # NOTE (2026-09-22): `T_thrust` is deliberately the MAIN rotor's disc thrust
+    # only, because Section B cuts the TRPT just below the main rotor and the
+    # expansion rotors sit BELOW that cut — they are not in the free body.  Each
+    # expansion rotor's axial thrust enters the preload profile at the segment
+    # immediately below its OWN ring, in `design_axial_preload`.  Do NOT sum them
+    # into `T_thrust` here: that raises EVERY segment, including the top ones, and
+    # over-tensions the column (measured: it broke 14 pinned assertions in
+    # `test/test_trpt_realisability.jl`).
     W_rotor = p.n_blades * p.m_blade * 9.81
 
     # ── Bridle cone: how much of the cyan tension reaches the top ring ────────
@@ -1479,12 +1525,59 @@ function design_axial_preload(
     F_top = max(d.T_top, 20.0)
     g_inc = p.m_ring * 9.81 * sin(β)     # axial component of one ring's weight
     F_ax = zeros(n_seg)
-    # Preload profile: F_top on the top segment, plus the axial ring weight
-    # accumulated going down the shaft.
+
+    # ── Every rotor's thrust enters the segment BELOW its own ring (2026-09-22) ─
+    # The top segment carries the MAIN rotor only — that is exactly what Section B's
+    # `T_top` already is (`d.T_thrust` is main-rotor-only by construction) — and each
+    # expansion rotor's axial thrust enters the accumulation one segment further
+    # down.  Free body of a ring with thrust `F_r` and axial weight `W_r`, the
+    # tension `S_r` in the segment above it and `S_{r-1}` in the one below:
+    #
+    #     S_{r-1} = S_r + F_r − W_r·sinβ
+    #
+    # so ring r's thrust belongs in `F_ax[r − 1]`.  The profile previously added
+    # ONLY the weight term, so expansion thrust was missing from the preload
+    # entirely — the 2026-09-12 fault-ledger entry "Hub axial budget counted only
+    # the thrust of the main rotor. Wrong by 6.6x" — and every segment below an
+    # expansion rotor was under-tensioned relative to the ODE's own force model
+    # (ring_forces.jl:288-305).  For a machine with no expansion rotors the
+    # increments are all zero and the profile is bit-for-bit unchanged.
+    #
+    # Do NOT put this in `lift_chain_design`'s `T_thrust`: that adds the sum to
+    # EVERY segment including the top ones, over-tensioning the column (measured:
+    # 14 pinned assertions in `test/test_trpt_realisability.jl`).
+    #
+    # `T_est` for the expansion split is the main-rotor thrust, exactly as the ODE
+    # computes it (ring_forces.jl:280-286).  There is no `wind_fn` in scope here,
+    # so the gate-canonical freestream `p.v_wind_ref` is used (matching `v_hub` in
+    # `lift_chain_design`), with the same per-rotor `er.wind_factor` wake de-rate.
+    # The radial half is deliberately excluded: it is a rim load whose net
+    # centre-of-mass component is zero (ring_forces.jl:344).
+    #
+    # HUB GUARD: mirrors ring_forces.jl:261.  `expansion_params_from_rotors`
+    # already excludes the top ring (the 2026-08-22 hub exclusion, which
+    # `physics-topology.md` §4 records as SUPERSEDED by replace-not-exclude but
+    # which the code still enforces); this keeps the two paths honest if that
+    # mapping changes.  When replacement semantics land, include the hub here and
+    # drop the cp/ct disc term from Section B — never count both.
+    thrust_at_ring = zeros(n_seg + 1)
+    for er in sys.expansion_rotors
+        er.ring_idx == sys.n_ring && continue
+        ring_gid = sys.ring_ids[er.ring_idx]
+        r_nom = (sys.nodes[ring_gid]::RingNode).radius
+        v_er = p.v_wind_ref * er.wind_factor
+        _, F_axial_er, _, _, _ = expansion_rotor_forces(
+            er, p.rho, v_er, abs(omega_eq), rad2deg(β), r_nom, d.T_thrust, p.n_lines
+        )
+        thrust_at_ring[er.ring_idx] += F_axial_er
+    end
+
+    # Preload profile: Section-B top tension on the top segment, plus the axial
+    # ring weight AND every rotor's thrust accumulated going down the shaft.
     rebuild! = function ()
         F_ax[n_seg] = F_top
         for i in (n_seg - 1):-1:1
-            F_ax[i] = F_ax[i + 1] + g_inc
+            F_ax[i] = F_ax[i + 1] + g_inc + thrust_at_ring[i + 1]
         end
         return nothing
     end

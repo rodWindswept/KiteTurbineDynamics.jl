@@ -103,13 +103,44 @@ const KTD = KiteTurbineDynamics
         KTD.back_line_tension(trimmed + 0.01, trimmed, payout, EA)
 
     # Payout is the winch TRIM (Rod, 2026-09-16): the field pays line out at
-    # launch to set the sky anchor's height.  Tension is a function of the
-    # geometric distance `d` alone, so paying out lowers the tension at a fixed
-    # anchor distance and raises the anchor's reach.
+    # launch to set the sky anchor's height.  Paying line OUT lengthens the
+    # physical line, so the HARD STOP moves outward by `payout` — which lowers the
+    # tension at a fixed anchor distance AND raises the anchor's reach before the
+    # Dyneema bites.
+    #
+    # FIXED 2026-09-22.  The argument used to be validated and then IGNORED: the
+    # block here asserted IDENTICAL tension with and without payout, while the
+    # comment directly above it described the behaviour it was disabling.  Item 4
+    # measured the cost on the PRE-remediation build: island 1 settled exactly ON
+    # the stop (0.000 m of the 0.800 m travel left) and failed the wobble gate,
+    # while island 3 settled 0.322 m INTO the travel and passed.
     p_out = 0.1
     d_fixed = trimmed + 0.2
-    @test KTD.back_line_tension(d_fixed, trimmed, p_out, EA) ≈
-        KTD.back_line_tension(d_fixed, trimmed, 0.0, EA) rtol = 1e-12
+    @test KTD.back_line_tension(d_fixed, trimmed, p_out, EA) <
+        KTD.back_line_tension(d_fixed, trimmed, 0.0, EA)
+    # At the design distance, payout trades design-point tension for remaining
+    # compliance: T(trimmed) = k_soft * (travel - payout).
+    for frac in (0.25, 0.5, 0.75)
+        p = frac * travel
+        @test KTD.back_line_tension(trimmed, trimmed, p, EA) ≈ k_soft * (travel - p) rtol =
+            1e-12
+    end
+    # payout = 0 reproduces the pre-2026-09-22 law exactly, both branches
+    @test KTD.back_line_tension(trimmed - 0.3, trimmed, 0.0, EA) ≈ k_soft * (travel - 0.3) rtol =
+        1e-12
+    @test KTD.back_line_tension(trimmed + 0.05, trimmed, 0.0, EA) ≈
+        T_design + EA * 0.05 / trimmed rtol = 1e-12
+    # The stop really moves: a distance that was HARD is SOFT once line is paid out.
+    d_was_hard = trimmed + 0.05
+    @test KTD.back_line_tension(d_was_hard, trimmed, 0.0, EA) > T_design
+    @test KTD.back_line_tension(d_was_hard, trimmed, 0.2, EA) < T_design
+    # ...and the anchor's reach before the Dyneema bites grows by exactly `payout`.
+    @test KTD.back_line_tension(trimmed + 0.2, trimmed, 0.2, EA) ≈ T_design rtol = 1e-12
+    # Monotone decreasing in payout at fixed distance.
+    @test all(
+        KTD.back_line_tension(d_fixed, trimmed, p, EA) >=
+        KTD.back_line_tension(d_fixed, trimmed, p + 0.05, EA) for p in 0.0:0.05:0.5
+    )
 
     # Bad geometry is loud, not silently zero.
     @test_throws ErrorException KTD.back_line_tension(10.0, 0.0, 0.0, EA)

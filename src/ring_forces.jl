@@ -341,17 +341,35 @@ function compute_ring_forces!(
                 #   does the ring compression transition from compressive to tensile?
                 #   Scaling law TBD. (Rod 2026-07-07)
 
-                # ── F_radial on ring vertices (2026-07-07) ─────────────────
-                # Expansion rotor radial force pushes outward on the ring.
-                # Radial = perpendicular to shaft axis.
-                shaft_dir = [cos(elev_angle), 0.0, sin(elev_angle)]
-                r_proj = dot(ring_pos, shaft_dir) .* shaft_dir
-                rad_dir = ring_pos .- r_proj
-                r_current = norm(rad_dir)
-                if r_current > 1e-6
-                    rad_dir ./= r_current
-                    forces[ring_gid] .+= F_radial .* rad_dir
-                end
+                # ── F_radial is a RIM load, not a centre-of-mass force ─────
+                # REMOVED 2026-09-22 (Item 4 multi-rotor remediation).
+                # N symmetric blades push outward on the ring rim.  The vector
+                # sum over the attachment vertices is identically zero for a
+                # symmetric rotor, so the net force on the ring centre of mass is
+                # zero.  The old block resolved the centre node's LATERAL
+                # DISPLACEMENT from the shaft axis into `rad_dir` and applied
+                # `F_radial .* rad_dir` to `forces[ring_gid]`: an outward push
+                # whose magnitude was constant and whose direction followed the
+                # current displacement.  That destroyed the on-axis equilibrium
+                # and parked the ring at an offset F/k, biasing every machine
+                # that carries an intermediate rotor (only expansion rings ever
+                # executed the block).
+                #
+                # `F_radial` REMAINS a structural load — it spreads the tethers,
+                # and the ring/FoS evaluator prices it there.  It is not a
+                # centre-of-mass force and must not be re-added here.
+                #
+                # OPEN (2026-09-22): the designed radial restraint — the spoke
+                # spring at :376-396 — is inert in every ODE run that produced the
+                # Item 4 verdicts.  The `spoke` argument is plumbed through
+                # (`objective_evaluator.jl:507`) but DEFAULTS to `nothing`, and
+                # neither the campaign runner (`run_v13_5kw_masslift.jl:261`) nor
+                # the wobble gate (`ode_gate_v13.jl`, `probe_wobble_gate_*.jl`)
+                # passes one; `SpokeParams(...)` is constructed only in `scripts/`
+                # diagnostics.  With this block gone the ring therefore has NO
+                # radial restraint in those ODE runs.  Whether the spokes should be
+                # energised is an open question, not a licence to reinstate this
+                # push.  See `docs/agents/instrument-trust-log.md`.
             end
         end
     end

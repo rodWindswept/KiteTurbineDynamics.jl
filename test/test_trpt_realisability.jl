@@ -33,26 +33,42 @@
 # binding segment at Δα ≈ 79.4°, 10.6° from the 90° collapse.  That margin is
 # asserted here as an angle, not as "+N N above a floor".
 #
-# RE-BASELINED 2026-09-20 (third time), for the TAUT back-line load split and the
-# geometric crossing floor.
+# RE-BASELINED 2026-09-22 (fourth time), for the EXPANSION-THRUST profile fix.
+# `design_axial_preload` accumulated only the ring WEIGHT going down the shaft, so
+# the axial thrust of every expansion rotor was missing from the preload profile
+# (the 2026-09-12 fault-ledger entry "Hub axial budget counted only the thrust of
+# the main rotor. Wrong by 6.6x").  Every segment below an expansion rotor was
+# therefore under-tensioned, which INFLATED its twist demand.  The profile now adds
+# each rotor's thrust at the segment immediately below its own ring:
+#
+#     S_{r-1} = S_r + F_r − W_r·sinβ        (axial free body of ring r)
+#
+# so Section B's `T_top` stays MAIN-ROTOR-ONLY (the expansion rotors sit below the
+# Section-B cut) and `F_ax[end]` is unchanged at 1163.72 N.
+#
+# CONSEQUENCE — the fixture is no longer over the cliff.  It read demand 1.1276 /
+# crossing 1.4716 under the omission, and `design_axial_preload` refused it as
+# unrepairable at >1.5x the bare preload.  With the thrust included it reads
+# demand 0.8671 / crossing 0.8959 and the floor REPAIRS it inside the cap.
+# **The 2026-09-16 re-seed away from L/r 2.0 was motivated in part by that
+# refusal, so the citation for it in this file is now superseded and is flagged
+# for Rod rather than silently rewritten.**  See DECISIONS.md [2026-09-22].
 #
 # Section A's fixture (SEED_LR20) is an L/r = 2.0 campaign seed.  Until 2026-09-20
 # `lift_chain_design` projected the whole sky-anchor load onto the cyan line (the
 # back line solved as SLACK), which OVER-predicted T_cyan by 73 % and T_top by
 # 188 N.  With the taut 2x2 (245.5 N cyan / 320.2 N back) the L/r 2.0 machine's
-# top tension drops below the torsional-realisability floor: the unmargined design
-# now sits at demand 1.1276, PAST the cliff, where the old fixture pinned 0.9531.
+# top tension drops below the torsional-realisability floor.
 #
-# The floor itself also gained a second, TIGHTER criterion: the discrete geometric
-# crossing limit δα* = 2·asin(L/√(2(L²+2r²))), which `objective_evaluator.jl` gates
-# the ODE window on.  The continuum sin law only bites at Δα = 90°, so a demand-only
-# check could declare headroom on a machine whose lines had already crossed
-# (campaign seed: demand 0.8565 at crossing ratio 1.0911).  Measured here the L/r
-# 2.0 design needs 1.4716·1.05 = 1.545x the bare preload, past
-# TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5, so it is now REFUSED outright.
+# The floor also gained a second, TIGHTER criterion (2026-09-20): the discrete
+# geometric crossing limit δα* = 2·asin(L/√(2(L²+2r²))), which
+# `objective_evaluator.jl` gates the ODE window on.  The continuum sin law only
+# bites at Δα = 90°, so a demand-only check could declare headroom on a machine
+# whose lines had already crossed (campaign seed: demand 0.8565 at crossing ratio
+# 1.0911).
 #
-# That is precisely why the campaign seed was re-seeded from L/r 2.0 to 1.5 on
-# 2026-09-16.  This fixture stays FROZEN: do not update it when the seed moves.
+# This fixture stays FROZEN: do not update it when the seed moves.  Re-baseline
+# only for a physics correction, and say which one (as above).
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
@@ -98,45 +114,49 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
 
     @test length(r.demand) == sys.n_ring - 1
     @test all(r.demand .>= 0.0)
-    @test maximum(r.demand) > 1.0                  # OVER the cliff at the taut split
+    @test maximum(r.demand) < 1.0                  # UNDER the cliff once thrust is in
     @test argmax(r.demand) == 4                    # same binding segment as before
-    @test r.demand[1] ≈ 1.1121 atol = 5e-3
-    @test r.demand[4] ≈ 1.1276 atol = 5e-3
-    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 90.0 atol = 0.1   # past 90°, clamped
+    @test r.demand[1] ≈ 0.85800 atol = 5e-3
+    @test r.demand[4] ≈ 0.86715 atol = 5e-3
+    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 60.1287 atol = 0.01
     # Demand falls going up the shaft because each rotor injects its own torque:
     # segs 1-6 carry the generator load, seg 7 carries it less the ring-7
     # expansion rotor, seg 8 less that again.
-    @test r.τ_carry[7] ≈ 333.37 atol = 2.0
-    @test r.τ_carry[8] ≈ 244.66 atol = 2.0
-    @test r.demand[7] ≈ 0.2376 atol = 5e-3
-    @test r.demand[8] ≈ 0.1752 atol = 5e-3
-    # Top tension is now BELOW the 1274.47 N floor the 2026-09-11 plan records.
+    @test r.τ_carry[7] ≈ 325.772 atol = 2.0
+    @test r.τ_carry[8] ≈ 230.811 atol = 2.0
+    @test r.demand[7] ≈ 0.20724 atol = 5e-3
+    @test r.demand[8] ≈ 0.16531 atol = 5e-3
+    # Section B's top tension is MAIN-ROTOR-ONLY and so is UNCHANGED by the
+    # 2026-09-22 thrust-in-profile fix: the expansion rotors sit below the cut.
     @test F_ax[end] ≈ 1163.72 atol = 1.0
     @test F_ax[end] < 1274.47
 
-    # ── A2. this L/r 2.0 fixture CANNOT be repaired inside the cap ───────────
-    # TWO criteria gate the floor (2026-09-20): the continuum sin-law demand and
-    # the DISCRETE geometric crossing limit δα*.  The crossing limit is much
-    # tighter — at the CAMPAIGN SEED the crossed state reads demand 0.8565 while
-    # the crossing ratio is already 1.0911 — so the demand-only check declared
-    # headroom on a machine whose lines had crossed.
-    #
-    # Measured here: bare F_top 1163.72 gives demand 1.1276 AND crossing ratio
-    # 1.4716.  Clearing crossing at the 1.05 target needs 1.4716 x 1.05 = 1.545x
-    # the bare preload, above TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5, so
-    # `design_axial_preload` REFUSES rather than escalating ~1.5x to place an
-    # over-cliff machine.  Correct for an L/r 2.0 machine under the taut split.
+    # ── A2. this L/r 2.0 fixture is REPAIRABLE inside the cap ────────────────
+    # Before 2026-09-22 the omitted expansion thrust left the lower segments
+    # under-tensioned, which inflated their demand: the bare design read demand
+    # 1.1276 and crossing 1.4716, needing 1.4716 x 1.05 = 1.545x the bare preload
+    # — past TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5 — so
+    # `design_axial_preload` REFUSED outright.  With the thrust in the profile the
+    # same fixture clears both criteria inside the margin, so the floor repairs it.
     m = KiteTurbineDynamics.TRPT_REALISABILITY_TENSION_MARGIN
     @test m > 1.0
     cross_bare = KiteTurbineDynamics.max_segment_cross_ratio(r, sys)
-    @test maximum(r.demand) > 1.0            # past the sin-law cliff
-    @test cross_bare ≈ 1.4716 atol = 5e-3   # and past the geometric crossing limit
-    @test cross_bare * m > KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
-    # (the raising call comes AFTER the bare measurement above — the exception
-    # would otherwise abort the block before the pins)
-    @test_throws ErrorException design_axial_preload(
-        sys, pc, lift, u0; omega_eq=OMEGA_SEED, wind_fn=wf
+    @test maximum(r.demand) < 1.0            # under the sin-law cliff
+    @test cross_bare ≈ 0.89592 atol = 5e-3   # and under the geometric crossing limit
+    @test cross_bare * m <= 1.0              # so one margin step clears it
+    @test cross_bare * m < KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
+    # The raising call RETURNS now (it used to raise).  Assert the repaired
+    # placement clears BOTH floor criteria, not just the sin law.
+    F_raised = design_axial_preload(sys, pc, lift, u0; omega_eq=OMEGA_SEED, wind_fn=wf)
+    @test F_raised isa AbstractVector
+    @test length(F_raised) == sys.n_ring - 1
+    @test F_raised[end] >= F_ax[end]         # the floor only ever raises tension
+    p_raised = trpt_matched_place(
+        sys, pc, F_raised, sys.k_mppt_ref[] * OMEGA_SEED^2, OMEGA_SEED, wf
     )
+    @test maximum(p_raised.demand) <= (1.0 / m) * (1.0 + 1e-9)
+    @test KiteTurbineDynamics.max_segment_cross_ratio(p_raised, sys) <=
+        (1.0 / m) * (1.0 + 1e-9)
 
     # ── B. the seam still REFUSES an over-cliff design point ────────────────
     for (nl, rc, ω) in ((4, 3.0, OMEGA_4L3R), (6, 1.0, OMEGA_6L1R))
