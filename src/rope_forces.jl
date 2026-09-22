@@ -1,6 +1,39 @@
 using LinearAlgebra
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Ring-attachment basis controls — EXPERIMENT TOGGLES (2026-09-22)
+# ══════════════════════════════════════════════════════════════════════════════
+# Island 1's collapse prompted a test of three candidate artifacts in how a ring's
+# attachment points are placed.  The DEFAULTS below reproduce the existing physics
+# EXACTLY, so nothing changes until a probe (or a later ruling) flips a field.
+#
+# The conflict being tested.  `multibody_ode!` derives a synthetic "tilt" from the
+# BEARING's perpendicular drift off the hub axis, turns it into a tilted ring-plane
+# basis, and passes it to `compute_rope_forces!`.  That ONE basis is then used for
+# every TRPT attachment on EVERY ring.  But a bridle's ring end is forced back to
+# the SHAFT basis (`is_bridle` branch below).  So on the hub ring the three TRPT
+# attachment points and the three bridle attachment points sit on two different
+# circles, out of plane by up to the 30 deg clamp.  A rigid ring cannot do that.
+#
+#   tilt_enabled        = true   use the synthetic tilt for TRPT attachments
+#                                (false routes every ring attachment through the
+#                                shaft basis, i.e. no synthetic tilt at all)
+#   bridles_use_tilt    = false  keep bridles on the shaft basis (current)
+#                                (true gives bridles the same basis as the TRPT
+#                                lines, i.e. ONE ring plane per ring)
+#   bridle_axial_torque = true   apply the bridle's axial moment to the ring
+#                                (false isolates the off-axis bridle wrap torque)
+@kwdef mutable struct RingAttachmentPhysics
+    tilt_enabled::Bool = true
+    bridles_use_tilt::Bool = false
+    bridle_axial_torque::Bool = true
+end
+const RING_ATTACHMENT = Ref{RingAttachmentPhysics}(RingAttachmentPhysics())
+set_ring_attachment!(b::RingAttachmentPhysics) = (RING_ATTACHMENT[] = b; b)
+ring_attachment() = RING_ATTACHMENT[]
+reset_ring_attachment!() = (RING_ATTACHMENT[] = RingAttachmentPhysics(); RING_ATTACHMENT[])
+
+# ══════════════════════════════════════════════════════════════════════════════
 # TRPT-segment classification (2026-08-14): a sub-seg belongs to TRPT segment
 # s (rings s ↔ s+1) when BOTH endpoint gids lie in [ring_ids[s], ring_ids[s+1]].
 # TRPT lines are ring→rope-node→…→ring chains; "both ends are rings" is never
@@ -266,7 +299,9 @@ function compute_rope_forces!(
             ri_a_p = node_a_r.ring_idx
             R_a = isempty(sys.expansion_rotors) ? node_a_r.radius : sys.effective_radii[ri_a_p]
             ctr_a = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
-            pp1_a, pp2_a = is_bridle ? (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
+            pp1_a, pp2_a =
+                (is_bridle && !RING_ATTACHMENT[].bridles_use_tilt) ?
+                (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
             attachment_point!(pa, ctr_a, R_a, alpha[ri_a_p], ss.end_a.line_idx, p.n_lines, pp1_a, pp2_a)
         else
             pa_v = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
@@ -277,7 +312,9 @@ function compute_rope_forces!(
             ri_b_p = node_b_r.ring_idx
             R_b = isempty(sys.expansion_rotors) ? node_b_r.radius : sys.effective_radii[ri_b_p]
             ctr_b = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
-            pp1_b, pp2_b = is_bridle ? (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
+            pp1_b, pp2_b =
+                (is_bridle && !RING_ATTACHMENT[].bridles_use_tilt) ?
+                (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
             attachment_point!(pb, ctr_b, R_b, alpha[ri_b_p], ss.end_b.line_idx, p.n_lines, pp1_b, pp2_b)
         else
             pb_v = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
@@ -336,7 +373,7 @@ function compute_rope_forces!(
             if seg > 0
                 seg_tau_a[seg] += tau_a          # TRPT end — defer for C1 clamp
                 seg_tension[seg] += tension
-            else
+            elseif RING_ATTACHMENT[].bridle_axial_torque
                 torques[ri_a] += tau_a           # non-TRPT ring (bridle) — direct
             end
         else
@@ -355,7 +392,7 @@ function compute_rope_forces!(
                     (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
             if seg > 0
                 seg_tau_b[seg] += tau_b
-            else
+            elseif RING_ATTACHMENT[].bridle_axial_torque
                 torques[ri_b] += tau_b
             end
         else

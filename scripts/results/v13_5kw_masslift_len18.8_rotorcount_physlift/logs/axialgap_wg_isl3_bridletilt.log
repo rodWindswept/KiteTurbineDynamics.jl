@@ -1,0 +1,67 @@
+ring-attachment config: bridletilt -> KiteTurbineDynamics.RingAttachmentPhysics(true, true, true)
+island-3 candidate build: genome=scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_3/best_vector.csv
+  n_lines=3 rings=11 n_active=1 r_hub=3.55 m  L=18.8 m
+=== wobble gate run  tag=wg_isl3_bridletilt  git=92248a4 ===
+n_total=103 n_ring=11 n_lines=3 rotors=0
+lin_damp=0  dt_factor=1  dt_use=2.32467e-05 s  relax=120.0 s  window=120.0 s
+settle wall = 30.7 s
+handoff residual: acc_struct 18.117 m/s2  max_force 41.479 N
+[relax] t=  20.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t=  40.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t=  60.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t=  80.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t= 100.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t= 120.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+[relax] t= 120.0 s  hub_lat=1.0270  T_cyan=143.9 T_back=125.9
+relax wall = 251.8 s
+[window] t=   5.0 s
+[window] t=  10.0 s
+[window] t=  15.0 s
+[window] t=  20.0 s
+[window] t=  25.0 s
+[window] t=  30.0 s
+[window] t=  35.0 s
+[window] t=  40.0 s
+[window] t=  45.0 s
+[window] t=  50.0 s
+[window] t=  55.0 s
+[window] t=  60.0 s
+[window] t=  65.0 s
+[window] t=  70.0 s
+[window] t=  75.0 s
+[window] t=  80.0 s
+[window] t=  85.0 s
+[window] t=  90.0 s
+[window] t=  95.0 s
+[window] t= 100.0 s
+[window] t= 105.0 s
+[window] t= 110.0 s
+[window] t= 115.0 s
+[window] t= 120.0 s
+window wall = 259.8 s
+
+=== GATE SUMMARY tag=wg_isl3_bridletilt ===
+steps: relax 5162013, window 5162013; dt_use 2.32467e-05 s; captured 240; broken=no
+hub_lat    min     1.0270  max     1.0270  p2p     0.0000  mean     1.0270
+bear_lat   min     1.3552  max     1.3552  p2p     0.0000  mean     1.3552
+T_cyan     min   143.8913  max   143.9113  p2p     0.0200  mean   143.9016
+T_back     min   125.9161  max   125.9210  p2p     0.0049  mean   125.9185
+T_bridle   min   158.9202  max   158.9517  p2p     0.0315  mean   158.9364
+T_topbay   min   620.1723  max   620.1863  p2p     0.0141  mean   620.1796
+P_gen_kW   min     5.6654  max     5.6655  p2p     0.0000  mean     5.6654
+omega_gnd  min    13.6734  max    13.6734  p2p     0.0000  mean    13.6734
+FoS (airborne min): trough 13.4466  mean 13.6615  (n=240 nonfinite=0)
+hub_lat p2p first-half 0.0000  second-half 0.0000;  mean 2nd half 1.0270
+
+slack summary (threshold 1.0 N; Δs=0.009996 s):
+  line             min_T_N max_cont_s     tot_s #EPS>=0.1
+  bridle_l1          1.255    0.0000    0.0000      0  ok
+  bridle_l2          1.255    0.0000    0.0000      0  ok
+  bridle_l3          1.255    0.0000    0.0000      0  ok
+  back             125.916    0.0000    0.0000      0  (context)
+SLACK GATE: pass
+FOS GATE (>=2.5 at trough): pass (trough 13.4466)
+
+csv: /home/rodbot/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/wg_isl3_bridletilt.csv
+total wall 543.9 s
+=== done ===

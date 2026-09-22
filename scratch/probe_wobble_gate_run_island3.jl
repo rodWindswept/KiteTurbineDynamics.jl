@@ -240,6 +240,30 @@ const WINNER_CSV = joinpath(@__DIR__, "..", "scripts", "results",
 const WINNER_L = 18.8
 const WINNER_KW = 5.0
 
+# ── Optional 8th arg: ring-attachment experiment config (2026-09-22) ──────────
+# Island 1's collapse traced to how a ring's attachment points are placed.  These
+# configs flip the RING_ATTACHMENT toggles in `src/rope_forces.jl`.  Empty string
+# (the default) leaves the SHIPPED physics untouched, so every earlier gate result
+# is reproducible by omitting the argument.
+const ATTACH_CFG = length(ARGS) >= 8 ? ARGS[8] : ""
+if !isempty(ATTACH_CFG)
+    b = if ATTACH_CFG == "bridletilt"
+        KiteTurbineDynamics.RingAttachmentPhysics(bridles_use_tilt=true)
+    elseif ATTACH_CFG == "notorque"
+        KiteTurbineDynamics.RingAttachmentPhysics(bridle_axial_torque=false)
+    elseif ATTACH_CFG == "bridletilt_notorque"
+        KiteTurbineDynamics.RingAttachmentPhysics(
+            bridles_use_tilt=true, bridle_axial_torque=false
+        )
+    elseif ATTACH_CFG == "notilt"
+        KiteTurbineDynamics.RingAttachmentPhysics(tilt_enabled=false)
+    else
+        error("unknown attach config $ATTACH_CFG")
+    end
+    KiteTurbineDynamics.set_ring_attachment!(b)
+    @printf("ring-attachment config: %s -> %s\n", ATTACH_CFG, b)
+end
+
 function build_winner_case()
     p = params_at_length(params_daisy(), WINNER_L, WINNER_KW)
     bf = BLOCKING_WIND_FACTOR_5KW

@@ -53,6 +53,13 @@ function multibody_ode!(du, u, params, t)
         [1e-12, 1e-12, 1e-12],
     )
     perp1_tilt, perp2_tilt = shaft_perp_basis(tilted_normal)
+    # Experiment toggle (2026-09-22): with the synthetic tilt disabled, every ring
+    # attachment AND every rotational-velocity direction routes through the SHAFT
+    # basis, which removes the tilt coupling entirely.  See RING_ATTACHMENT in
+    # `rope_forces.jl` for why this is under test.
+    if !RING_ATTACHMENT[].tilt_enabled
+        perp1_tilt, perp2_tilt = shaft_perp_basis(shaft_dir)
+    end
 
     # Store tilted normal for dashboard visualization
     hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
