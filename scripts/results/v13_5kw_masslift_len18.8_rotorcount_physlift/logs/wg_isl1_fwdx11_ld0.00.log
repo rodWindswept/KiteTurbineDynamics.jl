@@ -1,0 +1,95 @@
+island-3 candidate build: genome=scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_1/best_vector.csv
+  n_lines=3 rings=10 n_active=3 r_hub=2.61 m  L=18.8 m
+=== wobble gate run  tag=wg_isl1_fwdx11  git=9d181db ===
+n_total=93 n_ring=10 n_lines=3 rotors=2
+lin_damp=0  dt_factor=1  dt_use=1.9994e-05 s  relax=120.0 s  window=120.0 s
+settle wall = 32.2 s
+handoff residual: acc_struct 30.173 m/s2  max_force 77.956 N
+[relax] t=  20.0 s  hub_lat=1.1542  T_cyan=222.4 T_back=282.8
+[relax] t=  40.0 s  hub_lat=1.4481  T_cyan=153.5 T_back=75.2
+[relax] t=  60.0 s  hub_lat=1.7561  T_cyan=91.7 T_back=289.5
+[relax] t=  80.0 s  hub_lat=2.0947  T_cyan=117.5 T_back=164.6
+[relax] t= 100.0 s  hub_lat=1.4926  T_cyan=352.8 T_back=69.9
+[relax] t= 120.0 s  hub_lat=1.2313  T_cyan=260.7 T_back=112.3
+[relax] t= 120.0 s  hub_lat=1.2314  T_cyan=260.6 T_back=112.3
+relax wall = 326.5 s
+[window] t=   5.0 s
+[window] t=  10.0 s
+[window] t=  15.0 s
+[window] t=  20.0 s
+[window] t=  25.0 s
+[window] t=  30.0 s
+[window] t=  35.0 s
+[window] t=  40.0 s
+[window] t=  45.0 s
+[window] t=  50.0 s
+[window] t=  55.0 s
+[window] t=  60.0 s
+[window] t=  65.0 s
+[window] t=  70.0 s
+[window] t=  75.0 s
+[window] t=  80.0 s
+[window] t=  85.0 s
+[window] t=  90.0 s
+[window] t=  95.0 s
+[window] t= 100.0 s
+[window] t= 105.0 s
+[window] t= 110.0 s
+[window] t= 115.0 s
+[window] t= 120.0 s
+window wall = 295.1 s
+
+=== GATE SUMMARY tag=wg_isl1_fwdx11 ===
+steps: relax 6001791, window 6001791; dt_use 1.9994e-05 s; captured 239; broken=no
+hub_lat    min     0.6717  max     2.3809  p2p     1.7092  mean     1.5583
+bear_lat   min     0.0852  max     2.6288  p2p     2.5437  mean     1.7451
+T_cyan     min     0.0000  max  1197.7599  p2p  1197.7599  mean   348.3262
+T_back     min     0.0000  max  1748.9289  p2p  1748.9289  mean   189.2450
+T_bridle   min     0.0000  max   323.2606  p2p   323.2606  mean     3.8700
+T_topbay   min     0.0000  max  1981.1516  p2p  1981.1516  mean   592.5090
+P_gen_kW   min     2.8950  max     9.6350  p2p     6.7400  mean     5.8393
+omega_gnd  min    10.9316  max    16.3211  p2p     5.3895  mean    13.7591
+FoS (airborne min): trough 0.9079  mean 5.0939  (n=239 nonfinite=0)
+hub_lat p2p first-half 1.7092  second-half 1.4370;  mean 2nd half 1.5472
+
+slack summary (threshold 1.0 N; Δs=0.009997 s):
+  line             min_T_N max_cont_s     tot_s #EPS>=0.1
+  trpt_s1_l1         0.000    0.3699   47.0560     76  ** FAIL **
+  trpt_s1_l2         0.000    0.2399   46.6261     92  ** FAIL **
+  trpt_s1_l3         0.000    0.2099   47.3959     76  ** FAIL **
+  trpt_s2_l1         0.000    0.4099   49.8751    100  ** FAIL **
+  trpt_s2_l2         0.000    0.4599   52.1444    107  ** FAIL **
+  trpt_s2_l3         0.000    0.3899   50.8648    103  ** FAIL **
+  trpt_s3_l1         0.000    0.3599   51.7146    117  ** FAIL **
+  trpt_s3_l2         0.000    0.3699   52.4044    108  ** FAIL **
+  trpt_s3_l3         0.000    0.3799   52.9942    125  ** FAIL **
+  trpt_s4_l1         0.000    0.3699   52.6743    115  ** FAIL **
+  trpt_s4_l2         0.000    0.3299   51.5446    123  ** FAIL **
+  trpt_s4_l3         0.000    0.3999   53.8439    118  ** FAIL **
+  trpt_s5_l1         0.000    0.3899   51.3847     94  ** FAIL **
+  trpt_s5_l2         0.000    0.3199   53.5740    116  ** FAIL **
+  trpt_s5_l3         0.000    0.3499   50.9748    103  ** FAIL **
+  trpt_s6_l1         0.000    0.2999   38.4585     36  ** FAIL **
+  trpt_s6_l2         0.000    0.2099   39.0284     35  ** FAIL **
+  trpt_s6_l3         0.000    0.2999   38.3885     31  ** FAIL **
+  trpt_s7_l1         0.000    0.1500   34.1598     11  ** FAIL **
+  trpt_s7_l2         0.000    0.1699   34.8796     13  ** FAIL **
+  trpt_s7_l3         0.000    0.1400   33.6600     11  ** FAIL **
+  trpt_s8_l1         0.000    0.1100   27.4518      1  ** FAIL **
+  trpt_s8_l2         0.000    0.1400   24.8126      1  ** FAIL **
+  trpt_s8_l3         0.000    0.1300   27.4318      1  ** FAIL **
+  trpt_s9_l1         0.000    0.0900   20.6138      0  ** FAIL **
+  trpt_s9_l2         0.000    0.1400   19.7441      1  ** FAIL **
+  trpt_s9_l3         0.000    0.1000   20.1540      0  ** FAIL **
+  bridle_l1          0.000   14.9056  118.7446     39  ** FAIL **
+  bridle_l2          0.000   14.4957  118.8245     40  ** FAIL **
+  bridle_l3          0.000   12.5563  118.9745     38  ** FAIL **
+  cyan               0.000    0.0300    0.6298      0  ok
+  lift               0.000    0.0700    1.0897      0  ** FAIL **
+  back               0.000    0.1999    7.8976     16  (context)
+SLACK GATE: FAIL
+FOS GATE (>=2.5 at trough): FAIL (trough 0.9079)
+
+csv: /home/rodbot/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/wg_isl1_fwdx11.csv
+total wall 655.3 s
+=== done ===

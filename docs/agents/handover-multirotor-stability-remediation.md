@@ -196,9 +196,15 @@ the wobble gate passes one**:
   `enabled=false`.
 
 At `d_line = 7 mm` that spring would be `k ≈ 9×10⁶ N/m`. Without it the ring has **no**
-radial restraint in the ODE. So a few-newton bias acts unopposed. That dead path is itself
-a silent no-op of the kind `physics-topology.md` §6 forbids, and it is now an **OPEN**
-item (`docs/agents/instrument-trust-log.md`).
+radial restraint in the ODE, so a few-newton bias acts unopposed. That dead path is a
+silent no-op of the kind `physics-topology.md` §6 forbids.
+
+**RULED INERT (Rod, 2026-09-22).** That is now the decision, not an oversight. Only the
+ground ring and the back-line anchor touch the ground, so a TRPT column is a free-floating
+tensegrity with no centreline anchor. Energising the spokes would add an artificial
+guide-wire pulling every ring toward the ground station's line of sight. Rings hold radial
+integrity through line tension and inter-bay truss geometry. Do not switch them on as a
+stability crutch.
 
 `F_radial` remains a **structural** load, it spreads the tethers, and the ring/FoS
 evaluator prices it there. It is not a centre-of-mass force.
@@ -286,7 +292,7 @@ All three landed on the laptop, 2026-09-22. `scripts/ktd-format` clean.
 
 | # | File | Change | Evidence |
 |---|---|---|---|
-| 1.1 | `src/ring_forces.jl:344-368` | Removed the `F_radial .* rad_dir` push on `forces[ring_gid]`; replaced with the physics rationale, the "`F_radial` remains a structural load" rule, and the OPEN dead-spoke note | `F_radial` was 2.7–5.3 N; rim load only |
+| 1.1 | `src/ring_forces.jl:344-368` | Removed the `F_radial .* rad_dir` push on `forces[ring_gid]`; replaced with the physics rationale, the "`F_radial` remains a structural load" rule, and the RULED-INERT spoke note | `F_radial` was 2.7–5.3 N; rim load only |
 | 1.2 | `src/initialization.jl:211-230` | `mass_node += er.mass` for every expansion rotor on the ring, unconditional | rings 8/9: 1.5702 → 4.1175 / 4.1836 kg; island 3 unchanged |
 | 1.3 | `src/initialization.jl:1296-1332` | Sum every expansion rotor's `F_axial` into `T_thrust`; `T_est_main` frozen to the main-rotor thrust before accumulating; `p.v_wind_ref` and `er.wind_factor` matching the ODE; hub guard mirroring `ring_forces.jl:261` | island 1 `T_top` +125.3 N; island 3 exactly unchanged |
 
@@ -311,20 +317,24 @@ implementing agent.**
   lever for raising the sky anchor is `backline_payout`
   (`ring_forces.jl:517-522`. `initialization.jl:40-56`).
 
-What Phase 2 should instead deliver is **answers to these questions**, escalated to Rod:
+What Phase 2 should instead deliver is **answers to these questions**, escalated to Rod.
+Questions 2 and the offset lever are now ANSWERED by the 2026-09-22 rulings. Question 1
+remains open.
 
 1. **Why does island 1's bearing follow the bow** while islands 2 and 3 bow under a fixed
-   bearing? This is the collapse's proximate mechanism and no Phase 1 fix addresses it.
-2. **Should the spoke radial restraint be energised in the ODE?** It is designed
-   hardware, currently inert. Energising it changes every ODE run's radial force balance,
-   so it needs a decision and its own re-gate, it is **not** a silent add-on to this
-   remediation.
+   bearing? This is the collapse's proximate mechanism. No fix so far addresses it, so it
+   is **still open, and now the only live question**.
+2. ~~Should the spoke radial restraint be energised in the ODE?~~ **RULED INERT (Rod,
+   2026-09-22).** Only the ground ring and the back-line anchor touch the ground, so a TRPT
+   column is a free-floating tensegrity with no centreline anchor. Energising the spokes
+   would add an artificial guide-wire toward the ground station's line of sight.
 3. **Does island 1 need a design change, or only the model fixes?** The cone's *cyclic*
    slack is already ruled expected (bar: 0.8 s, `DECISIONS.md:37-54`), and its ~0.7 mm
    design-point stretch is a consequence of the recorded 31° cone and
-   `BRIDLE_EA_DESIGN = 500 000 N`. The unresolved part is island 1's **14.93 s**
-   contiguous slack, 19× the bar. If the model fixes do not bring that inside the bar,
-   the next step is a design ruling, not a further code patch.
+   `BRIDLE_EA_DESIGN = 500 000 N`. The unresolved part is island 1's **14.9 s**
+   contiguous slack, ~19× the bar. Two model levers are now exhausted (the
+   thrust/mass/radial corrections, and the back-line offset) and neither clears the gate,
+   so a design change is the likely remaining route.
 
 ---
 
@@ -381,12 +391,75 @@ Artifacts, tracked for verification in
 `wg_isl1_remediated_ld0.00.log` and `.csv`, `wg_isl3_remediated_ld0.00.log` and `.csv`,
 `early_island_1_post.log` and `.csv`, `early_island_3_post.log` and `.csv`.
 
-Equivalence guard for the single-rotor path: with `expansion_rotors` empty, Fixes 1.2 and
-1.3 never execute (no expansion rotor matches any ring. The thrust loop body never runs)
-and Fix 1.1's block was likewise gated on a non-empty `expansion_rotors`. Island 3's node
-masses and `T_thrust` are therefore **identical** to before, which
-`scratch/probe_phase1_thrust_split.jl island_3` and `scratch/probe_er_mass_check.jl island_3`
-confirm.
+### 5.2 The back-line offset ruling (Rod, 2026-09-22): `back_anchor_fwd_x = 11.0 m`
+
+Rod ruled the ground-anchor downwind offset a PLACEMENT constant of **11.0 m**, not a
+machine-scale dimension, and ruled the spoke radial restraint **inert**. That matches
+`physics-topology.md` §1: only the ground ring and the back-line anchor touch the ground,
+so a TRPT column is a free-floating tensegrity. Energising the spokes would add an
+artificial guide-wire pulling every ring toward the ground station's line of sight.
+
+Implemented as `BACK_ANCHOR_FWD_X_M` in `src/parameters.jl`, with `mass_scale` no longer
+multiplying it. The geometric reading confirms the field note: against the axial
+projection the ground anchor was **1.19 m UPWIND** at 6.901 m and is now **2.91 m
+DOWNWIND**. The old law was `11.0 x (L/30)`, which gave `params_daisy` 3.78 m and the
+5 kW / 18.8 m build 6.901 m.
+
+**Island 3 improves on every metric.** This is the clearest evidence the choke was real.
+
+| island 3, `lin_damp = 0.00` | pre-remediation | remediated (6.901) | ruled (11.0) |
+|---|---|---|---|
+| FoS trough | 12.2739 | 12.3348 | **13.4653** |
+| hub lateral p2p | 0.0075 m | 0.0074 m | **0.0047 m** |
+| cone mean tension | 45.7 N | 47.6 N | **104.69 N** |
+| cone max contiguous slack | 0.10 s | 0.10 s | **0.08 s** |
+| cone total slack | 60.0 s | 58.9 s | **25.8 s** |
+| cyan mean | 96.8 N | 98.6 N | **146.3 N** |
+| P_gen mean | 5.6550 kW | 5.6296 kW | **5.6866 kW** |
+
+**Island 1 still FAILS, and its FoS trough is worse.** The choke IS released and it helped
+specific symptoms, but it is not island 1's binding constraint.
+
+| island 1, `lin_damp = 0.00` | pre-remediation | remediated (6.901) | ruled (11.0) |
+|---|---|---|---|
+| FoS trough | 1.5865 | 1.1269 | **0.9079** |
+| hub lateral p2p | 1.2282 m | 2.1037 m | 1.7092 m |
+| bearing lateral p2p | 2.3126 m | 2.8898 m | 2.5437 m |
+| cone mean tension | 0.0296 N | 0.0000 N | **3.8700 N** |
+| cone max contiguous slack | 14.93 s | 22.62 s | **14.91 s** |
+| cyan max | 1003.3 N | 2034.9 N | 1197.8 N |
+| back line mean | 239.5 N | 187.2 N | 189.2 N |
+
+The back line now swings inside its elastic travel (70 to 290 N over the relax) rather
+than sitting pinned on the stop, the cyan peak halves, and the cone is no longer fully
+dead. The 20 s trace shows the same shape as before: cone live at t = 0.1 s at **81.8 /
+111.6 / 117.3 N** (nearly double the pre-remediation handoff), then dead from t = 1.1 s.
+So the extra preload delays nothing. Two levers are now exhausted and neither clears the
+gate.
+
+Artifacts: `wg_isl1_fwdx11_ld0.00.log` and `.csv`, `wg_isl3_fwdx11_ld0.00.log` and `.csv`,
+`early_island_1_fwdx11.log` and `.csv`, `early_island_3_fwdx11.log` and `.csv`.
+
+### 5.3 Acceptance suite
+
+Run once on the remediated build: **7 of 8 PASS**. Only `test_settle_lowk_honest.jl` failed,
+on A2, because the physics fixes raise the sustained power so k = 2.0 now clears the 5 kW
+floor where it used to undershoot. Attribution was measured: with `src/` at `d130632` the
+file is 13/13, and with the fixes it is 12/13 on exactly that assertion. A2 is re-baselined
+to stop pinning a marginal floor verdict, and re-verified **13/13**. No `src/` file changed
+between the 7-of-8 run and that fix, so the other seven results carry over.
+
+### 5.4 Which fixes are no-ops for a single-rotor machine
+
+With `expansion_rotors` empty, Fixes 1.2 and 1.3 never execute (no expansion rotor matches
+any ring, and the thrust loop body never runs), and Fix 1.1's block was likewise gated on a
+non-empty `expansion_rotors`. So a single-rotor machine's node masses and preload profile
+are unchanged by those three, which `scratch/probe_phase1_thrust_split.jl island_3` and
+`scratch/probe_er_mass_check.jl island_3` confirm.
+
+**That equivalence does NOT extend to the offset ruling or to `backline_payout`.** Those are
+global, and island 3 moves with them. Section 5.2 shows it moving, in the favourable
+direction.
 
 ---
 
@@ -420,15 +493,15 @@ work is item 4 and the back-line lever.
    ```
    Remediated: FoS trough 1.1269, hub p2p 2.1037 m, cone dead 22.62 s contiguous and
    0.0000 N mean. This is **worse** than the pre-remediation 1.5865 / 1.2282 m / 14.93 s.
-4. **NEXT, the back-line ground-anchor offset.** This is the measured, untested lever.
-   `back_anchor_fwd_x` is 6.901 m on the 5 kW build, scaled down from the daisy base's
-   11.0 m. At 6.901 m the demanded `T_back` is 365.3 N, above the 320 N stop, so the
-   anchor is forced onto the Dyneema. At 11.0 m the demand falls to 315.8 N and `T_cyan`
-   rises 149.8 to 259.2 N. A settle experiment puts the cone preload at 236 / 329 / 390 N
-   for `fwd_x` 6.901 / 11.0 / 14.0. `parameters.jl` documents this exact failure mode for
-   small offsets. Awaiting Rod's ruling, because it re-baselines every 5 kW design.
+4. ~~NEXT, the back-line ground-anchor offset~~ **DONE, RULED and GATED.** Rod ruled
+   `back_anchor_fwd_x = 11.0 m` as a PLACEMENT constant, and the spoke restraint inert.
+   `BACK_ANCHOR_FWD_X_M = 11.0` now lives in `src/parameters.jl`, and `mass_scale` no
+   longer scales it. The geometric reading matches the field note: against the axial
+   projection the ground anchor was **1.19 m UPWIND** at 6.901 m and is **2.91 m
+   DOWNWIND** at 11.0 m. Results are in section 5.2. **It does not rescue island 1
+   either.**
 5. **`scripts/ktd-julia test/acceptance_runtests.jl`** (~18 min, parallel) before the work
-   is called complete.
+   is called complete. Already run once at 7 of 8, then fixed; see section 5.3.
 
 Runs 1 to 3 cost about 5 min each of wall time plus 20 to 30 s of settle.
 
