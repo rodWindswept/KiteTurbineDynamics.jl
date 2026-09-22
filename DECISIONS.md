@@ -10,6 +10,47 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-22] Item 4 multi-rotor remediation: expansion thrust in the preload profile, blade mass, radial bias, and a live back-line trim
+
+**Context.** The first-pass Item 4 campaign (`docs/agents/item4-campaign-summary.md`) re-gated three islands from the same 5 kW / 18.8 m era (`1c9f9cb`). Islands 2 and 3 (single rotor) passed the FoS gate. Island 1 (3 rotors: main at ring 10 plus expansion rotors at rings 8 and 9) failed at zero artificial damping: FoS trough **1.5865** (fine-cadence twin **1.0446**), hub lateral 1.2282 m p2p, cyan 0→1003 N, back line 5→1801 N, and the bridle cone unloaded for **14.93 s** contiguous. A handover (`docs/agents/handover-multirotor-stability-remediation.md`, Rev 2) proposed five defects; three were confirmed in source and are fixed here.
+
+**Findings.**
+
+1. **The preload profile omitted every expansion rotor's thrust.** `design_axial_preload` accumulated only ring weight down the shaft, so `F_ax` was `Section-B top tension + Σ weight`. The ODE applies each expansion rotor's axial thrust at its own ring (`ring_forces.jl:288-305`), so every segment below an expansion rotor was under-tensioned — and the under-tension INFLATED those segments' twist demand. This is the defect the instrument trust log recorded on 2026-09-12 ("Hub axial budget counted only the thrust of the main rotor") and left as *No code change*.
+
+2. **The expansion-rotor ASSEMBLY mass never reached the ring node.** Rings 8 and 9 read `mass = 1.5702 kg` (bare ring) while carrying `er.mass` 2.547 / 2.613 kg and `I_z` 31.9055 / 32.4947 kg·m². The rotary inertia had been added on 2026-08-25; the translational mass had not, so their lateral `a = F/m` was ~2.6× too high.
+
+3. **`F_radial` was applied to the ring centre of mass**, resolved along the centre's own lateral displacement from the shaft axis. For N symmetric blades the rim-load vector sum is identically zero, so the net centre-of-mass force is zero: the block destroyed the on-axis equilibrium and parked the ring at an offset `F/k`. Only expansion rings executed it. Measured magnitude 2.715 N / 5.310 N — a bias of order newtons, **not** the "runaway negative spring" the handover claimed.
+
+4. **`backline_payout` was a dead knob.** `back_line_tension` took `payout` and used it only in its non-negativity guard, so the winch trim could not move the hard stop despite the docstring asserting it did. A unit test pinned the no-op while the comment above it described the opposite behaviour.
+
+**Two corrections to the record.**
+
+5. **The "expansion rotors are ~85 % of axial thrust / main rotor only 15 %" figure is inflated ~3×.** `scratch/preload_thrust_budget.jl` treats `F_axial` as per-blade and multiplies by `er.n_blades` again, but `expansion_rotor_forces` already returns the `n_blades` total (`expansion_rotor.jl:388`). Measured correctly on island 1: ring 8 +101.3 N, ring 9 +24.0 N, total **+125.3 N of 1537.3 N = 8.2 %**. `physics-topology.md` §5 item 5's rule stands; its magnitude does not.
+
+6. **The 2026-09-21 bridle-cone slack ruling applies, and island 1 is outside it.** Cyclic cone slack is ruled expected behaviour with a **0.8 s** sustained-slack concern bar (`DECISIONS.md` [2026-09-21]). The v13 single-rotor winner dips 0.22 s (production damping) / 0.29 s (zero damping); island 3 dips 0.10 s. Island 1's **14.93 s** is ~19× the bar. So the correct reading of island 1 is not "the cone went slack" but "it stayed slack two orders of magnitude longer than the envelope allows".
+
+**Decided.**
+
+1. **Each rotor's thrust enters the segment immediately below its OWN ring**, per the axial free body `S_{r-1} = S_r + F_r − W_r·sinβ`. **Section B's `T_top` stays MAIN-ROTOR-ONLY**: the expansion rotors sit below the Section-B cut and are not in that free body. Summing them into `T_thrust` instead adds the total to *every* segment including the top ones — measured to over-tension the column, and it turned 14 pinned assertions in `test/test_trpt_realisability.jl` red for the wrong reason.
+
+2. **Blade assembly mass is added unconditionally**, not gated on `EXPANSION_PHYSICS[].blade_inertia`: the mass is real either way, and `expansion_airborne_mass` already budgets it for lifter sizing, so the defect was an ODE node lighter than the lifter was sized against.
+
+3. **`F_radial` is a rim load, never a centre-of-mass force.** The block is removed and the rule recorded in source. The designed radial restraint (the spoke spring, `ring_forces.jl:376-396`) is **left inert and logged OPEN** — the `spoke` argument defaults to `nothing` and neither the campaign runner nor the wobble gate passes one, so energising it would change every ODE run's radial force balance and needs its own re-gate, not a silent add-on.
+
+4. **`backline_payout` is live**: paying line out lengthens the physical line, so the hard stop moves outward by `payout`. `payout = 0` reproduces the previous law bit-for-bit; the tension at the design distance becomes `k_soft·(travel − payout)`, which is the knob that trades design-point tension for remaining compliance.
+
+5. **The back-line ground-anchor offset is NOT changed yet.** Measured levers for the island 1 choke (design-time split, `scratch/probe_backanchor_sweep.jl`): at the current `back_anchor_fwd_x = 6.901 m` (the daisy base's 11.0 m scaled by `mass_scale`'s √(P ratio)) the demanded `T_back` is **365.3 N**, above the 320 N stop, so the anchor is forced onto the Dyneema. At `fwd_x = 11.0 m` the demand falls to **315.8 N** (soft-capable) and `T_cyan` rises 149.8 → **259.2 N** (+73 %). A settle experiment (`scratch/probe_fwdx_experiment.jl`) confirms the bridle preload follows: cone total **236 N → 329 N → 390 N** at `fwd_x` 6.901 / 11.0 / 14.0. `parameters.jl`'s own comment on the 11.0 m value documents this failure mode — *"At 5 m the geometry forced T_cyan < 0 … the sky anchor swung up to ~80° elevation and the cyan transmitted no axial preload onto the bearing → TRPT looked slack"* — which is island 1's signature. **Awaiting Rod's ruling** because it changes the operating point of every 5 kW design and re-baselines the campaign.
+
+**Consequences.**
+- **Superseded premise.** `test_trpt_realisability.jl`'s L/r 2.0 fixture is **no longer over the cliff** once expansion thrust is in the profile: demand 1.1276 → 0.8671, crossing ratio 1.4716 → 0.8959, and `design_axial_preload` now REPAIRS it instead of refusing. The 2026-09-16 re-seed away from L/r 2.0 was motivated in part by that refusal, so its citation is flagged for review rather than silently rewritten.
+- Phase 1 verified: `scripts/ktd-format` clean, `test_settle_validity.jl` 9/9, `test/test_trpt_realisability.jl` 32/32 (re-baselined), `test/test_back_line_element.jl` 39/39, **full suite 2163/2163 green**.
+- A 20 s post-fix fine trace shows island 1's cone still decoupling from t = 1.1 s (Fixes 1–3 do not address the bearing-follows-the-bow mechanism), while island 3 is unchanged. The 120 s gate is re-running to quantify FoS and contiguous slack.
+
+**Status:** Active. Fixes 1–4 landed (`57b3f58`); the ground-anchor offset and the spoke restraint remain open decisions.
+
+---
+
 ## [2026-09-21] Lifter kite boundary condition: along-line viscoelastic tether damping and crosswind aerodynamic symmetry
 
 **Context.** In the ongoing investigation of top-bay dynamics and the wobble gate, the physical representation of the topmost point of the lift line was scrutinized. The legacy model suffered from severe, unphysical top-bay wobble (hub swinging >3 m, FoS troughing to 0.28, TRPT slack). Rod noted that physically, a trimmed lifter kite holds position stably in the air mass and plucking a tether dissipates vibrational energy into the wind ("drum noises"), rather than behaving like an undamped trampoline or teleporting laterally with the sky anchor knot.
