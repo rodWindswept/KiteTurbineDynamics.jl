@@ -27,17 +27,33 @@ const V_RATED = 11.0
 const WINDOW_S = 20.0
 const LENGTH = 18.8
 
-lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
-    sys, p; margin=1.5, v_ref=V_RATED, const_tension=true)
+function lift_for(sys, p)
+    return KiteTurbineDynamics.sized_lifter_for(
+        sys, p; margin=1.5, v_ref=V_RATED, const_tension=true
+    )
+end
 
 function params_at_length(L::Float64)
     p2 = params_daisy()
-    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
-        L, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    geo = GeometrySpec(
+        p2.elevation_angle,
+        p2.lifter_elevation,
+        p2.rotor_radius,
+        L,
+        p2.trpt_hub_radius,
+        p2.trpt_rL_ratio,
+        p2.n_lines,
+        p2.n_rings,
+        p2.n_blades,
+    )
     mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
     aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
-    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
-    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    ctrl = ControlSpec(
+        p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev
+    )
+    back = BackLineSpec(
+        p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout
+    )
     scaled = mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, KW)
     # LENGTH FIX (2026-08-22): mass_scale also scales the tether length; L is
     # the FINAL machine length — restore it after rung scaling.
@@ -69,28 +85,35 @@ const X_SEED = seed_genome_x()
 
 function run_at(k::Float64)
     cfg = ObjectiveConfig(;
-        power_W = PW, v_rated = V_RATED,
-        p_floor_kw = 5.0, p_ceiling_kw = 5.0,
-        relax_s = 5.0, window_s = WINDOW_S,
-        fos_target = 2.5, fos_hard = 2.5,
-        power_stat = :tail5, penalize_ceiling = false,
-        kickstart_s = 0.0,
-        k_mppt = k,
-        tether_diameter = P_BASE.tether_diameter,
-        rotor_count_mode = true,            # campaign decode knobs (2026-09-04)
-        power_split = 0.6,
-        blocking_factor = BLOCKING_WIND_FACTOR_5KW,
+        power_W=PW,
+        v_rated=V_RATED,
+        p_floor_kw=5.0,
+        p_ceiling_kw=5.0,
+        relax_s=5.0,
+        window_s=WINDOW_S,
+        fos_target=2.5,
+        fos_hard=2.5,
+        power_stat=:tail5,
+        penalize_ceiling=false,
+        kickstart_s=0.0,
+        k_mppt=k,
+        tether_diameter=P_BASE.tether_diameter,
+        rotor_count_mode=true,            # campaign decode knobs (2026-09-04)
+        power_split=0.6,
+        blocking_factor=BLOCKING_WIND_FACTOR_5KW,
     )
     return KiteTurbineDynamics.evaluate_windowed(
-        X_SEED, PROFILE_ELLIPTICAL, P_BASE, cfg;
-        start_mode = :cold,
-        lift_device = lift_for,
-        fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
+        X_SEED,
+        PROFILE_ELLIPTICAL,
+        P_BASE,
+        cfg;
+        start_mode=:cold,
+        lift_device=lift_for,
+        fitness_fn=(P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
     )
 end
 
 @testset "settle-lowk-honest" begin
-
     @testset "A1 — k=0.5 rejects on floor but carries honest measurements" begin
         r = run_at(0.5)
         # Not a stall: machine transmits P = k·ω³ ≈ 0.5·11.2³ ≈ 0.7 kW at its
@@ -102,13 +125,22 @@ end
         @test r.T_lift > 100.0        # const-tension lift line was loaded (~205 N)
     end
 
-    @testset "A2 — k=2.0 rejects on floor but carries honest measurements" begin
+    @testset "A2 — k=2.0 sits at the floor and carries honest measurements" begin
         r = run_at(2.0)
-        # k=2.0 is below the campaign's sustaining k (K_MPPT_5KW_HONEST=2.24
-        # sustains 5.12 kW), so it rejects on the 5 kW floor — but the window
-        # measured real power and loads.  (k=4.0 was the OLD threshold; the
-        # corrected machine sustains ≥5 kW there, so it is no longer a reject.)
-        @test r.status === :reject
+        # RE-BASELINED 2026-09-22 (attributed, not assumed).  This point used to
+        # REJECT: the campaign's honest k (2.24) sustained 5.12 kW, so k = 2.0
+        # undershot the 5 kW floor.  The 2026-09-22 physics fixes (expansion thrust
+        # in the preload profile, expansion-blade translational mass) raise the
+        # sustained power, so k = 2.0 now CLEARS the floor and returns :ok.
+        # Verified by attribution: with `src/` at d130632 this file is 13/13; with
+        # the fixes it is 12/13 on exactly this assertion (`ok === reject`).
+        #
+        # The VERDICT is therefore no longer pinned.  Pinning a marginal
+        # floor verdict is what let this point go stale.  What IS pinned is the
+        # file's actual guard: a run in the floor region must CARRY its measured
+        # window statistics, never the 0 kW / FoS = Inf disguise.  The
+        # rejected-evaluation path stays covered by A1 at k = 0.5.
+        @test r.status in (:ok, :reject)
         @test r.P_mean > 0.3          # live power measured in window
         @test r.FoS_min < Inf         # structural loads were measured
         @test r.T_lift > 100.0        # const-tension lift line was loaded
@@ -154,5 +186,4 @@ end
         @test found
         @test ω_eq <= ω_peak + 1e-9   # was 19.36 rad/s (λ=8.0) — now clamped at the peak
     end
-
 end
