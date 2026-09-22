@@ -57,7 +57,9 @@ function bridle_total_tension(u, sys, p, N, Nr)
         na, nb = ss.end_a.node_id, ss.end_b.node_id
         ((na == hub && nb == bear) || (na == bear && nb == hub)) || continue
         ring_end = ss.end_a.is_ring ? ss.end_a : ss.end_b
-        pa = attachment_point(pos(u, hub), R, u[6N + Nr], ring_end.line_idx, p.n_lines, pp1, pp2)
+        pa = attachment_point(
+            pos(u, hub), R, u[6N + Nr], ring_end.line_idx, p.n_lines, pp1, pp2
+        )
         L = norm(pos(u, bear) .- pa)
         total += ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
     end
@@ -83,8 +85,11 @@ end
 function back_tension(u, sys, p)
     hub_gid = sys.rotor.node_id
     hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
-    r_top = isempty(sys.expansion_rotors) ? (sys.nodes[hub_gid]::RingNode).radius :
-            sys.effective_radii[hub_ri]
+    r_top = if isempty(sys.expansion_rotors)
+        (sys.nodes[hub_gid]::RingNode).radius
+    else
+        sys.effective_radii[hub_ri]
+    end
     bearing_offset = KiteTurbineDynamics.bridle_bearing_offset(r_top)
     cyan_L0 = KiteTurbineDynamics.CYAN_L0_DESIGN
     back_ax = p.tether_length * cos(p.elevation_angle) + p.back_anchor_fwd_x
@@ -136,13 +141,17 @@ function make_slack_tracker(sys, p, wf, lift, N, Nr, dt_use)
     end
     append!(names, ["cyan", "lift", "back"])
     n = length(names)
-    cur = zeros(n); maxc = zeros(n); tot = zeros(n); mint = fill(Inf, n)
-    n_eps = zeros(Int, n); lastslack = falses(n)
+    cur = zeros(n)
+    maxc = zeros(n)
+    tot = zeros(n)
+    mint = fill(Inf, n)
+    n_eps = zeros(Int, n)
+    lastslack = falses(n)
     sample_every = max(1, round(Int, SLACK_DT / dt_use))
     Δ = sample_every * dt_use
 
     # Precollect the non-TRPT sub-segments once.
-    bridle_subs = Vector{Tuple{Any,Int}}()
+    bridle_subs = Vector{Tuple{Any, Int}}()
     cyan_subs = Vector{Any}()
     for ss in sys.sub_segs
         na, nb = ss.end_a.node_id, ss.end_b.node_id
@@ -150,7 +159,7 @@ function make_slack_tracker(sys, p, wf, lift, N, Nr, dt_use)
             ring_end = ss.end_a.is_ring ? ss.end_a : ss.end_b
             push!(bridle_subs, (ss, ring_end.line_idx))
         elseif (na == sys.sky_anchor_id && nb == bear_gid) ||
-               (na == bear_gid && nb == sys.sky_anchor_id)
+            (na == bear_gid && nb == sys.sky_anchor_id)
             push!(cyan_subs, ss)
         end
     end
@@ -185,9 +194,12 @@ function make_slack_tracker(sys, p, wf, lift, N, Nr, dt_use)
             L = norm(pos(u, ss.end_b.node_id) .- pos(u, ss.end_a.node_id))
             Tc += ss.EA * max(0.0, (L - ss.length_0) / ss.length_0)
         end
-        k += 1; buf[k] = Tc
-        k += 1; buf[k] = norm(lift_force_applied(u, sys, p, wf, lift))
-        k += 1; buf[k] = back_tension(u, sys, p)
+        k += 1
+        buf[k] = Tc
+        k += 1
+        buf[k] = norm(lift_force_applied(u, sys, p, wf, lift))
+        k += 1
+        buf[k] = back_tension(u, sys, p)
         return buf
     end
 
@@ -235,8 +247,15 @@ end
 # + island_3_best_meta.txt): fitness 22.32 kg, evaluator P 5.29 kW, FoS 15.1,
 # clearance 6.42 m.  Machine: 3 lines, 11 rings, 1 rotor, r_hub 3.55 m.
 const ISLAND_DIR = length(ARGS) >= 6 ? ARGS[6] : "island_3"
-const WINNER_CSV = joinpath(@__DIR__, "..", "scripts", "results",
-    "v13_5kw_masslift_len18.8_rotorcount_physlift", ISLAND_DIR, "best_vector.csv")
+const WINNER_CSV = joinpath(
+    @__DIR__,
+    "..",
+    "scripts",
+    "results",
+    "v13_5kw_masslift_len18.8_rotorcount_physlift",
+    ISLAND_DIR,
+    "best_vector.csv",
+)
 const WINNER_L = 18.8
 const WINNER_KW = 5.0
 
@@ -247,16 +266,20 @@ const WINNER_KW = 5.0
 # is reproducible by omitting the argument.
 const ATTACH_CFG = length(ARGS) >= 8 ? ARGS[8] : ""
 if !isempty(ATTACH_CFG)
-    b = if ATTACH_CFG == "bridletilt"
-        KiteTurbineDynamics.RingAttachmentPhysics(bridles_use_tilt=true)
-    elseif ATTACH_CFG == "notorque"
-        KiteTurbineDynamics.RingAttachmentPhysics(bridle_axial_torque=false)
-    elseif ATTACH_CFG == "bridletilt_notorque"
-        KiteTurbineDynamics.RingAttachmentPhysics(
-            bridles_use_tilt=true, bridle_axial_torque=false
-        )
+    b = if ATTACH_CFG == "notorque"
+        KiteTurbineDynamics.RingAttachmentPhysics(; bridle_axial_torque=false)
+    elseif ATTACH_CFG == "noexp_aero"
+        # PROBE A: both expansion rotors' F_axial and tau_net withheld; mass,
+        # J_rotor and geometry unchanged.
+        KiteTurbineDynamics.RingAttachmentPhysics(; expansion_aero=false)
+    elseif ATTACH_CFG == "ring9only"
+        KiteTurbineDynamics.RingAttachmentPhysics(; expansion_aero_off=[8])
+    elseif ATTACH_CFG == "ring8only"
+        KiteTurbineDynamics.RingAttachmentPhysics(; expansion_aero_off=[9])
+    elseif ATTACH_CFG == "tilt_hub_only"
+        KiteTurbineDynamics.RingAttachmentPhysics(; tilt_scope=:hub)
     elseif ATTACH_CFG == "notilt"
-        KiteTurbineDynamics.RingAttachmentPhysics(tilt_enabled=false)
+        KiteTurbineDynamics.RingAttachmentPhysics(; tilt_enabled=false)
     else
         error("unknown attach config $ATTACH_CFG")
     end
@@ -270,23 +293,55 @@ function build_winner_case()
     xv = [parse(Float64, s) for s in split(strip(read(WINNER_CSV, String)), ",")]
     xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
     xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))
-    dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=WINNER_KW * 1000.0,
-        cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
-        cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=bf)
+    dec = design_from_vector_v10(
+        xv,
+        PROFILE_ELLIPTICAL,
+        p;
+        power_W=WINNER_KW * 1000.0,
+        cylinder_cone=true,
+        rotor_count_mode=true,
+        power_split=0.6,
+        cone_slope_deg=22.0,
+        rotor_spacing_frac=0.8,
+        blocking_factor=bf,
+    )
     cfg = KiteTurbineDynamics.ObjectiveConfig(;
-        power_W=WINNER_KW * 1000.0, v_rated=11.0, p_floor_kw=WINNER_KW,
-        fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
-        rotor_count_mode=true, power_split=0.6, blocking_factor=bf)
+        power_W=WINNER_KW * 1000.0,
+        v_rated=11.0,
+        p_floor_kw=WINNER_KW,
+        fos_target=2.5,
+        fos_hard=2.5,
+        min_wall_m=2e-3,
+        t_over_D=0.055,
+        rotor_count_mode=true,
+        power_split=0.6,
+        blocking_factor=bf,
+    )
     sizing = KiteTurbineDynamics.size_beams_closed_form(dec, p, cfg)
-    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;
-        tether_diameter=p.tether_diameter, base_params=p, min_wall_m=2e-3,
-        beam_sizing=sizing)
+    sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
+        dec,
+        1.0,
+        K_MPPT_5KW_HONEST;
+        tether_diameter=p.tether_diameter,
+        base_params=p,
+        min_wall_m=2e-3,
+        beam_sizing=sizing,
+    )
     sys.k_mppt_ref[] = K_MPPT_5KW_HONEST
     lift = lift_for(sys, pc)
     wf = (r, t) -> [p.v_wind_ref, 0.0, 0.0]   # gate-canonical flat inflow
-    @printf("island-3 candidate build: genome=%s\n", relpath(WINNER_CSV, joinpath(@__DIR__, "..")))
-    @printf("  n_lines=%d rings=%d n_active=%d r_hub=%.2f m  L=%.1f m\n",
-        dec.design.n_lines, dec.n_rings, dec.n_active, dec.design.r_hub, WINNER_L)
+    @printf(
+        "island-3 candidate build: genome=%s\n",
+        relpath(WINNER_CSV, joinpath(@__DIR__, ".."))
+    )
+    @printf(
+        "  n_lines=%d rings=%d n_active=%d r_hub=%.2f m  L=%.1f m\n",
+        dec.design.n_lines,
+        dec.n_rings,
+        dec.n_active,
+        dec.design.r_hub,
+        WINNER_L
+    )
     flush(stdout)
     return sys, u0, pc, lift, wf
 end
@@ -303,10 +358,21 @@ function main()
     dt = KiteTurbineDynamics.stable_dt_for_system(sys, p)
     dt_use = dt / DTF
     @printf("=== wobble gate run  tag=%s  git=%s ===\n", TAG, gh)
-    @printf("n_total=%d n_ring=%d n_lines=%d rotors=%d\n", N, Nr, p.n_lines,
-        length(sys.expansion_rotors))
-    @printf("lin_damp=%.4g  dt_factor=%d  dt_use=%.6g s  relax=%.1f s  window=%.1f s\n",
-        LD, DTF, dt_use, RELAX_S, WINDOW_S)
+    @printf(
+        "n_total=%d n_ring=%d n_lines=%d rotors=%d\n",
+        N,
+        Nr,
+        p.n_lines,
+        length(sys.expansion_rotors)
+    )
+    @printf(
+        "lin_damp=%.4g  dt_factor=%d  dt_use=%.6g s  relax=%.1f s  window=%.1f s\n",
+        LD,
+        DTF,
+        dt_use,
+        RELAX_S,
+        WINDOW_S
+    )
     @assert Nr >= 5   # island-3 machine has 11 rings (seed mesh has 10+); floor kept as sanity
     @assert dt_use > 0
     flush(stdout)
@@ -320,9 +386,15 @@ function main()
     du = zeros(length(u))
     KiteTurbineDynamics.multibody_ode!(du, u, (sys, p, wf, lift), 0.0)
     accs = [norm(du[(3N + 3 * (g - 1) + 1):(3N + 3 * g)]) for g in 1:N]
-    st = [g for g in 1:N if sys.nodes[g] isa RingNode || g == sys.bearing_id || g == sys.sky_anchor_id]
-    @printf("handoff residual: acc_struct %.3f m/s2  max_force %.3f N\n",
-        maximum(accs[g] for g in st), maximum(sys.nodes[g].mass * accs[g] for g in 1:N))
+    st = [
+        g for g in 1:N if
+        sys.nodes[g] isa RingNode || g == sys.bearing_id || g == sys.sky_anchor_id
+    ]
+    @printf(
+        "handoff residual: acc_struct %.3f m/s2  max_force %.3f N\n",
+        maximum(accs[g] for g in st),
+        maximum(sys.nodes[g].mass * accs[g] for g in 1:N)
+    )
     flush(stdout)
 
     # ── relax phase (breaks OFF) ─────────────────────────────────────────
@@ -334,12 +406,19 @@ function main()
         n = min(chunk, nrelax - done)
         run_canonical_sim!(u, sys, p, wf, n, dt_use; lift_device=lift, lin_damp=LD)
         done += n
-        @printf("[relax] t=%6.1f s  hub_lat=%.4f  T_cyan=%.1f T_back=%.1f\n",
+        @printf(
+            "[relax] t=%6.1f s  hub_lat=%.4f  T_cyan=%.1f T_back=%.1f\n",
             done * dt_use,
-            norm(pos(u, sys.rotor.node_id) .- dot(pos(u, sys.rotor.node_id),
-                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]) .*
-                [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]),
-            cyan_tension(u, sys, p), back_tension(u, sys, p))
+            norm(
+                pos(u, sys.rotor.node_id) .-
+                dot(
+                    pos(u, sys.rotor.node_id),
+                    [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)],
+                ) .* [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)],
+            ),
+            cyan_tension(u, sys, p),
+            back_tension(u, sys, p)
+        )
         flush(stdout)
         sys.any_broken[] && (@warn "break during relax"; break)
     end
@@ -352,10 +431,21 @@ function main()
     nwin = round(Int, WINDOW_S / dt_use)
     wchunk = round(Int, 5.0 / dt_use)
     ncap = round(Int, WINDOW_S / CAPTURE_DT) + 1
-    wts = zeros(ncap); hubE1 = zeros(ncap); hubE2 = zeros(ncap)
-    hubL = zeros(ncap); bearE1 = zeros(ncap); bearE2 = zeros(ncap); bearL = zeros(ncap)
-    cy = zeros(ncap); bk = zeros(ncap); br = zeros(ncap); topbay = zeros(ncap)
-    fos = zeros(ncap); wgnd = zeros(ncap); pgen = zeros(ncap); brk = zeros(ncap)
+    wts = zeros(ncap)
+    hubE1 = zeros(ncap)
+    hubE2 = zeros(ncap)
+    hubL = zeros(ncap)
+    bearE1 = zeros(ncap)
+    bearE2 = zeros(ncap)
+    bearL = zeros(ncap)
+    cy = zeros(ncap)
+    bk = zeros(ncap)
+    br = zeros(ncap)
+    topbay = zeros(ncap)
+    fos = zeros(ncap)
+    wgnd = zeros(ncap)
+    pgen = zeros(ncap)
+    brk = zeros(ncap)
 
     shaft = [cos(p.elevation_angle), 0.0, sin(p.elevation_angle)]
     ey = [0.0, 1.0, 0.0]
@@ -380,10 +470,15 @@ function main()
             i = nc[]
             if i <= ncap
                 t_abs = t_base[] + t_
-                hv = pos(u_, hub_gid); bv = pos(u_, bear_gid)
+                hv = pos(u_, hub_gid)
+                bv = pos(u_, bear_gid)
                 wts[i] = t_abs
-                hubE1[i] = p1c(hv); hubE2[i] = p2c(hv); hubL[i] = lat_of(hv)
-                bearE1[i] = p1c(bv); bearE2[i] = p2c(bv); bearL[i] = lat_of(bv)
+                hubE1[i] = p1c(hv)
+                hubE2[i] = p2c(hv)
+                hubL[i] = lat_of(hv)
+                bearE1[i] = p1c(bv)
+                bearE2[i] = p2c(bv)
+                bearL[i] = lat_of(bv)
                 ef = KiteTurbineDynamics.capture_extended(u_, sys, p, t_abs, wf, lift)
                 cy[i] = cyan_tension(u_, sys, p)
                 bk[i] = back_tension(u_, sys, p)
@@ -393,7 +488,8 @@ function main()
                 fos[i] = f
                 wgnd[i] = u_[6N + Nr + gnd_ri]
                 tg, _ = KiteTurbineDynamics.get_generator_torque(
-                    u_, sys, p, t_abs, wf; brake_engaged=sys.brake_engaged[])
+                    u_, sys, p, t_abs, wf; brake_engaged=sys.brake_engaged[]
+                )
                 pgen[i] = tg * wgnd[i] / 1000.0
                 brk[i] = sys.any_broken[] ? 1.0 : 0.0
             end
@@ -407,8 +503,16 @@ function main()
         n = min(wchunk, nwin - done)
         t_base[] = done * dt_use
         run_canonical_sim!(
-            u, sys, p, wf, n, dt_use;
-            lift_device=lift, lin_damp=LD, breaks_enabled=true, callback=cb
+            u,
+            sys,
+            p,
+            wf,
+            n,
+            dt_use;
+            lift_device=lift,
+            lin_damp=LD,
+            breaks_enabled=true,
+            callback=cb,
         )
         done += n
         @printf("[window] t=%6.1f s\n", done * dt_use)
@@ -424,26 +528,56 @@ function main()
     nc_cap >= 2 || error("no window samples captured")
     rng = 1:nc_cap
     @printf("\n=== GATE SUMMARY tag=%s ===\n", TAG)
-    @printf("steps: relax %d, window %d; dt_use %.6g s; captured %d; broken=%s\n",
-        nrelax, nwin, dt_use, nc_cap, sys.any_broken[] ? "YES" : "no")
-    for (name, v) in (("hub_lat", hubL[rng]), ("bear_lat", bearL[rng]),
-        ("T_cyan", cy[rng]), ("T_back", bk[rng]), ("T_bridle", br[rng]),
-        ("T_topbay", topbay[rng]), ("P_gen_kW", pgen[rng]), ("omega_gnd", wgnd[rng]))
-        @printf("%-10s min %10.4f  max %10.4f  p2p %10.4f  mean %10.4f\n",
-            name, minimum(v), maximum(v), maximum(v) - minimum(v), mean(v))
+    @printf(
+        "steps: relax %d, window %d; dt_use %.6g s; captured %d; broken=%s\n",
+        nrelax,
+        nwin,
+        dt_use,
+        nc_cap,
+        sys.any_broken[] ? "YES" : "no"
+    )
+    for (name, v) in (
+        ("hub_lat", hubL[rng]),
+        ("bear_lat", bearL[rng]),
+        ("T_cyan", cy[rng]),
+        ("T_back", bk[rng]),
+        ("T_bridle", br[rng]),
+        ("T_topbay", topbay[rng]),
+        ("P_gen_kW", pgen[rng]),
+        ("omega_gnd", wgnd[rng]),
+    )
+        @printf(
+            "%-10s min %10.4f  max %10.4f  p2p %10.4f  mean %10.4f\n",
+            name,
+            minimum(v),
+            maximum(v),
+            maximum(v) - minimum(v),
+            mean(v)
+        )
     end
     fv = fos[rng]
     ff = filter(isfinite, fv)
     isempty(ff) && error("no finite FoS samples captured")
-    @printf("FoS (airborne min): trough %.4f  mean %.4f  (n=%d nonfinite=%d)\n",
-        minimum(ff), mean(ff), length(ff), length(fv) - length(ff))
+    @printf(
+        "FoS (airborne min): trough %.4f  mean %.4f  (n=%d nonfinite=%d)\n",
+        minimum(ff),
+        mean(ff),
+        length(ff),
+        length(fv) - length(ff)
+    )
     h = div(nc_cap, 2)
-    @printf("hub_lat p2p first-half %.4f  second-half %.4f;  mean 2nd half %.4f\n",
+    @printf(
+        "hub_lat p2p first-half %.4f  second-half %.4f;  mean 2nd half %.4f\n",
         maximum(hubL[1:h]) - minimum(hubL[1:h]),
         maximum(hubL[(h + 1):nc_cap]) - minimum(hubL[(h + 1):nc_cap]),
-        mean(hubL[(h + 1):nc_cap]))
-    @printf("\nslack summary (threshold 1.0 N; Δs=%.4g s):\n", tracker.sample_every * dt_use)
-    @printf("  %-14s %9s %9s %9s %6s\n", "line", "min_T_N", "max_cont_s", "tot_s", "#EPS>=0.1")
+        mean(hubL[(h + 1):nc_cap])
+    )
+    @printf(
+        "\nslack summary (threshold 1.0 N; Δs=%.4g s):\n", tracker.sample_every * dt_use
+    )
+    @printf(
+        "  %-14s %9s %9s %9s %6s\n", "line", "min_T_N", "max_cont_s", "tot_s", "#EPS>=0.1"
+    )
     anyfail = false
     for i in 1:length(tracker.names)
         gated = tracker.names[i] != "back"
@@ -451,23 +585,51 @@ function main()
         show || continue
         fail = gated && (tracker.maxc[i] >= 0.1 || tracker.tot[i] >= 1.0)
         anyfail |= fail
-        @printf("  %-14s %9.3f %9.4f %9.4f %6d  %s\n", tracker.names[i],
-            tracker.mint[i], tracker.maxc[i], tracker.tot[i], tracker.n_eps[i],
-            fail ? "** FAIL **" : (gated ? "ok" : "(context)"))
+        @printf(
+            "  %-14s %9.3f %9.4f %9.4f %6d  %s\n",
+            tracker.names[i],
+            tracker.mint[i],
+            tracker.maxc[i],
+            tracker.tot[i],
+            tracker.n_eps[i],
+            fail ? "** FAIL **" : (gated ? "ok" : "(context)")
+        )
     end
     @printf("SLACK GATE: %s\n", anyfail ? "FAIL" : "pass")
-    @printf("FOS GATE (>=2.5 at trough): %s (trough %.4f)\n",
-        minimum(ff) >= 2.5 ? "pass" : "FAIL", minimum(ff))
+    @printf(
+        "FOS GATE (>=2.5 at trough): %s (trough %.4f)\n",
+        minimum(ff) >= 2.5 ? "pass" : "FAIL",
+        minimum(ff)
+    )
 
     # ── CSV ─────────────────────────────────────────────────────────────
     csv = joinpath(@__DIR__, "..", ".julia_depot", "logs", "$(TAG).csv")
     open(csv, "w") do io
-        println(io, "t,hub_e1,hub_e2,hub_lat,bear_e1,bear_e2,bear_lat,T_cyan,T_back," *
-                    "T_bridle,T_topbay,fos_min,omega_gnd,P_gen_kW,broken")
+        println(
+            io,
+            "t,hub_e1,hub_e2,hub_lat,bear_e1,bear_e2,bear_lat,T_cyan,T_back," *
+            "T_bridle,T_topbay,fos_min,omega_gnd,P_gen_kW,broken",
+        )
         for i in rng
-            @printf(io, "%.4f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.4f,%.4f,%.4f,%.4f,%.4f,%.6f,%.4f,%.0f\n",
-                wts[i], hubE1[i], hubE2[i], hubL[i], bearE1[i], bearE2[i], bearL[i],
-                cy[i], bk[i], br[i], topbay[i], fos[i], wgnd[i], pgen[i], brk[i])
+            @printf(
+                io,
+                "%.4f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.4f,%.4f,%.4f,%.4f,%.4f,%.6f,%.4f,%.0f\n",
+                wts[i],
+                hubE1[i],
+                hubE2[i],
+                hubL[i],
+                bearE1[i],
+                bearE2[i],
+                bearL[i],
+                cy[i],
+                bk[i],
+                br[i],
+                topbay[i],
+                fos[i],
+                wgnd[i],
+                pgen[i],
+                brk[i]
+            )
         end
     end
     @printf("\ncsv: %s\n", csv)

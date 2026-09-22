@@ -302,11 +302,20 @@ function compute_ring_forces!(
                 if tl_ring > 0
                     tether_dir_ring ./= tl_ring
                 end
-                forces[ring_gid] .+= F_axial .* tether_dir_ring
 
-                # Net shaft torque from expansion rotor (τ_net = τ_lift - τ_drag).
-                # Positive = driving (injects power). Negative = braking (parasitic).
-                torques[ring_ri] += tau_net
+                # PROBE A / PROBE B (2026-09-22): the expansion rotor's aero load can
+                # be withheld per ring.  With `expansion_aero_on(er.ring_idx)` false
+                # the ring keeps its MASS, its assembly inertia J_rotor (added to
+                # I_z at build time) and its geometry, so the machine is structurally
+                # identical and only F_axial and tau_net are removed.  That separates
+                # an aerodynamic feedback loop from a structural/geometric one.
+                if expansion_aero_on(er.ring_idx)
+                    forces[ring_gid] .+= F_axial .* tether_dir_ring
+
+                    # Net shaft torque from expansion rotor (τ_net = τ_lift - τ_drag).
+                    # Positive = driving (injects power). Negative = braking (parasitic).
+                    torques[ring_ri] += tau_net
+                end
 
                 # ── Blade inertia (2026-07-18) ──────────────────────────────
                 # Gate 2b: rotary inertia of the expansion-rotor blade annulus

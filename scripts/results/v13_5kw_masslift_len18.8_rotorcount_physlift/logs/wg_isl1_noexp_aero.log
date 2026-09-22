@@ -1,0 +1,6 @@
+ring-attachment config: noexp_aero -> KiteTurbineDynamics.RingAttachmentPhysics(true, :all, true, false, Int64[])
+island-3 candidate build: genome=scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_1/best_vector.csv
+  n_lines=3 rings=10 n_active=3 r_hub=2.61 m  L=18.8 m
+=== wobble gate run  tag=wg_isl1_noexp_aero  git=6a4009c ===
+n_total=93 n_ring=10 n_lines=3 rotors=2
+lin_damp=0  dt_factor=1  dt_use=1.9994e-05 s  relax=120.0 s  window=120.0 s

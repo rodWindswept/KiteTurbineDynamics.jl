@@ -1,37 +1,62 @@
 using LinearAlgebra
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Ring-attachment basis controls — EXPERIMENT TOGGLES (2026-09-22)
+# Ring-attachment physics (2026-09-22)
 # ══════════════════════════════════════════════════════════════════════════════
-# Island 1's collapse prompted a test of three candidate artifacts in how a ring's
-# attachment points are placed.  The DEFAULTS below reproduce the existing physics
-# EXACTLY, so nothing changes until a probe (or a later ruling) flips a field.
+# THE ONE-PLANE RULING (Rod, 2026-09-22).  A rigid ring has ONE plane, so every
+# attachment on a ring must use the same basis.  The previous code forced a
+# bridle's ring end onto the fixed SHAFT plane while the ring's TRPT lines used the
+# synthetic tilted ring plane, giving the hub two circles out of plane by up to the
+# 30 deg clamp.  That exception is PERMANENTLY RETIRED: the basis selection below
+# no longer inspects `is_bridle` at all.  Do not reintroduce a per-family basis.
 #
-# The conflict being tested.  `multibody_ode!` derives a synthetic "tilt" from the
-# BEARING's perpendicular drift off the hub axis, turns it into a tilted ring-plane
-# basis, and passes it to `compute_rope_forces!`.  That ONE basis is then used for
-# every TRPT attachment on EVERY ring.  But a bridle's ring end is forced back to
-# the SHAFT basis (`is_bridle` branch below).  So on the hub ring the three TRPT
-# attachment points and the three bridle attachment points sit on two different
-# circles, out of plane by up to the 30 deg clamp.  A rigid ring cannot do that.
+# Why it mattered, measured on island 1 (`scratch/probe_axial_gap_compare.jl`):
+# joining the planes raised the bridle cone's mean load from 3.87 N to 1382 N and
+# its minimum from 0 to 74 N, halved the axial-gap compression, and made island 3
+# perfectly steady over 120 s (hub and bearing p2p 0.0000 m, a steady 158.9 N cone
+# with zero slack).  It also removed a reader/force-path disagreement:
+# `get_max_rope_tension` always used the tilted basis for ring ends.
 #
-#   tilt_enabled        = true   use the synthetic tilt for TRPT attachments
-#                                (false routes every ring attachment through the
-#                                shaft basis, i.e. no synthetic tilt at all)
-#   bridles_use_tilt    = false  keep bridles on the shaft basis (current)
-#                                (true gives bridles the same basis as the TRPT
-#                                lines, i.e. ONE ring plane per ring)
+# The remaining fields exist for the ongoing expansion-rotor isolation on island 1.
+# They all default to the canonical physics, so a run that sets nothing is the
+# shipped model.
+#
+#   tilt_enabled        = true   use the synthetic tilt for ring attachments
+#                                (false routes every ring through the shaft basis)
+#   tilt_scope          = :all   the tilt applies to EVERY ring in the column
+#                                (:hub applies it to the hub ring only, which is
+#                                what `dynamics.jl` originally intended)
 #   bridle_axial_torque = true   apply the bridle's axial moment to the ring
 #                                (false isolates the off-axis bridle wrap torque)
+#   expansion_aero      = true   apply the expansion rotors' F_axial and tau_net
+#                                (false is PROBE A: ring mass, J_rotor and geometry
+#                                are untouched, so only the aero load is removed)
+#   expansion_aero_off  = Int[]  ring indices whose expansion aero is zeroed
+#                                (PROBE B: rotor-by-rotor isolation)
 @kwdef mutable struct RingAttachmentPhysics
     tilt_enabled::Bool = true
-    bridles_use_tilt::Bool = false
+    tilt_scope::Symbol = :all
     bridle_axial_torque::Bool = true
+    expansion_aero::Bool = true
+    expansion_aero_off::Vector{Int} = Int[]
 end
 const RING_ATTACHMENT = Ref{RingAttachmentPhysics}(RingAttachmentPhysics())
-set_ring_attachment!(b::RingAttachmentPhysics) = (RING_ATTACHMENT[] = b; b)
+set_ring_attachment!(b::RingAttachmentPhysics) = (RING_ATTACHMENT[]=b; b)
 ring_attachment() = RING_ATTACHMENT[]
-reset_ring_attachment!() = (RING_ATTACHMENT[] = RingAttachmentPhysics(); RING_ATTACHMENT[])
+
+"True when the synthetic tilt basis applies to ring `ri` under the current scope."
+function tilt_applies(ri::Int, hub_ri::Int)
+    RING_ATTACHMENT[].tilt_scope === :all && return true
+    return ri == hub_ri
+end
+
+"True when the expansion rotor on ring `ri` should apply F_axial and tau_net."
+function expansion_aero_on(ri::Int)
+    RING_ATTACHMENT[].expansion_aero || return false
+    return !(ri in RING_ATTACHMENT[].expansion_aero_off)
+end
+
+reset_ring_attachment!() = (RING_ATTACHMENT[]=RingAttachmentPhysics(); RING_ATTACHMENT[])
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TRPT-segment classification (2026-08-14): a sub-seg belongs to TRPT segment
@@ -76,19 +101,32 @@ Break DETECTION is done at line level in `compute_rope_forces!` (full
 ring-to-ring path strain vs ROPE_BREAK_STRAIN), not per numerical sub-seg —
 mid-node placement artifacts must not trip the criterion.
 """
-function get_subsegment_tension(ss::RopeSubSegment, diff_pos, current_len, dir, va, vb;
-                                rel_buf=nothing, idx::Int=0, broken=nothing)
+function get_subsegment_tension(
+    ss::RopeSubSegment,
+    diff_pos,
+    current_len,
+    dir,
+    va,
+    vb;
+    rel_buf=nothing,
+    idx::Int=0,
+    broken=nothing,
+)
     if broken !== nothing && idx > 0 && broken[idx]
         return 0.0
     end
     if rel_buf !== nothing
-        @inbounds for k in 1:3; rel_buf[k] = vb[k] - va[k]; end
+        @inbounds for k in 1:3
+            rel_buf[k] = vb[k] - va[k]
+        end
         vel_proj = rel_buf[1]*dir[1] + rel_buf[2]*dir[2] + rel_buf[3]*dir[3]
     else
         rel_vel = vb .- va
         vel_proj = dot(rel_vel, dir)
     end
-    return max(0.0, ss.EA * (current_len - ss.length_0) / ss.length_0 + ss.c_damp * vel_proj)
+    return max(
+        0.0, ss.EA * (current_len - ss.length_0) / ss.length_0 + ss.c_damp * vel_proj
+    )
 end
 
 """
@@ -263,12 +301,23 @@ function compute_rope_forces!(
     local pp1_tilt = perp1_tilt === nothing ? perp1_shaft : perp1_tilt
     local pp2_tilt = perp2_tilt === nothing ? perp2_shaft : perp2_tilt
 
+    # Ring index of the hub, for the `tilt_scope = :hub` experiment (Probe C).
+    hub_ri_c = (sys.nodes[hub_gid]::RingNode).ring_idx
+
     # ── Pre-allocated scratch buffers (reused across sub_segs, zero per-step allocs) ──
-    pa    = zeros(3);  pb    = zeros(3);  diff  = zeros(3)
-    dir_v = zeros(3);  F_vec = zeros(3);  mid   = zeros(3)
-    v_mid = zeros(3);  drag  = zeros(3);  hdrag = zeros(3)
-    r_a   = zeros(3);  r_b   = zeros(3)
-    vrel_buf = zeros(3);  vperp_buf = zeros(3)
+    pa = zeros(3)
+    pb = zeros(3)
+    diff = zeros(3)
+    dir_v = zeros(3)
+    F_vec = zeros(3)
+    mid = zeros(3)
+    v_mid = zeros(3)
+    drag = zeros(3)
+    hdrag = zeros(3)
+    r_a = zeros(3)
+    r_b = zeros(3)
+    vrel_buf = zeros(3)
+    vperp_buf = zeros(3)
     # C1 (2026-08-14): per-segment shaft-torque (both ends) + tension
     # accumulators for the post-loop saturation clamp, and line-path strain
     # accumulators for rope break (segment index = 1..Nr-1).
@@ -297,58 +346,97 @@ function compute_rope_forces!(
         if ss.end_a.is_ring
             node_a_r = sys.nodes[ss.end_a.node_id]::RingNode
             ri_a_p = node_a_r.ring_idx
-            R_a = isempty(sys.expansion_rotors) ? node_a_r.radius : sys.effective_radii[ri_a_p]
+            R_a = if isempty(sys.expansion_rotors)
+                node_a_r.radius
+            else
+                sys.effective_radii[ri_a_p]
+            end
             ctr_a = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
-            pp1_a, pp2_a =
-                (is_bridle && !RING_ATTACHMENT[].bridles_use_tilt) ?
-                (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
-            attachment_point!(pa, ctr_a, R_a, alpha[ri_a_p], ss.end_a.line_idx, p.n_lines, pp1_a, pp2_a)
+            pp1_a, pp2_a = if tilt_applies(ri_a_p, hub_ri_c)
+                (pp1_tilt, pp2_tilt)
+            else
+                (perp1_shaft, perp2_shaft)
+            end
+            attachment_point!(
+                pa, ctr_a, R_a, alpha[ri_a_p], ss.end_a.line_idx, p.n_lines, pp1_a, pp2_a
+            )
         else
             pa_v = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
-            pa[1]=pa_v[1]; pa[2]=pa_v[2]; pa[3]=pa_v[3]
+            pa[1]=pa_v[1]
+            pa[2]=pa_v[2]
+            pa[3]=pa_v[3]
         end
         if ss.end_b.is_ring
             node_b_r = sys.nodes[ss.end_b.node_id]::RingNode
             ri_b_p = node_b_r.ring_idx
-            R_b = isempty(sys.expansion_rotors) ? node_b_r.radius : sys.effective_radii[ri_b_p]
+            R_b = if isempty(sys.expansion_rotors)
+                node_b_r.radius
+            else
+                sys.effective_radii[ri_b_p]
+            end
             ctr_b = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
-            pp1_b, pp2_b =
-                (is_bridle && !RING_ATTACHMENT[].bridles_use_tilt) ?
-                (perp1_shaft, perp2_shaft) : (pp1_tilt, pp2_tilt)
-            attachment_point!(pb, ctr_b, R_b, alpha[ri_b_p], ss.end_b.line_idx, p.n_lines, pp1_b, pp2_b)
+            pp1_b, pp2_b = if tilt_applies(ri_b_p, hub_ri_c)
+                (pp1_tilt, pp2_tilt)
+            else
+                (perp1_shaft, perp2_shaft)
+            end
+            attachment_point!(
+                pb, ctr_b, R_b, alpha[ri_b_p], ss.end_b.line_idx, p.n_lines, pp1_b, pp2_b
+            )
         else
             pb_v = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
-            pb[1]=pb_v[1]; pb[2]=pb_v[2]; pb[3]=pb_v[3]
+            pb[1]=pb_v[1]
+            pb[2]=pb_v[2]
+            pb[3]=pb_v[3]
         end
 
         # ── velocities (views — no allocation) ──
-        va = @view u[(3N + 3*(ss.end_a.node_id-1)+1):(3N + 3*ss.end_a.node_id)]
-        vb = @view u[(3N + 3*(ss.end_b.node_id-1)+1):(3N + 3*ss.end_b.node_id)]
+        va = @view u[(3N + 3 * (ss.end_a.node_id - 1) + 1):(3N + 3 * ss.end_a.node_id)]
+        vb = @view u[(3N + 3 * (ss.end_b.node_id - 1) + 1):(3N + 3 * ss.end_b.node_id)]
 
         # ── geometry (in-place) ──
-        @inbounds for k in 1:3; diff[k] = pb[k] - pa[k]; end
+        @inbounds for k in 1:3
+            diff[k] = pb[k] - pa[k]
+        end
         current_len = sqrt(diff[1]^2 + diff[2]^2 + diff[3]^2)
         current_len < 1e-9 && continue
         inv_len = 1.0 / current_len
-        @inbounds for k in 1:3; dir_v[k] = diff[k] * inv_len; end
+        @inbounds for k in 1:3
+            dir_v[k] = diff[k] * inv_len
+        end
 
         # Break detection only during real operation (breaks_enabled latch set
         # by run_canonical_sim!); the settle's exploratory transients must not
         # break healthy machines.
         brk_flags = sys.breaks_enabled[] ? sys.broken_lines : nothing
-        tension = get_subsegment_tension(ss, diff, current_len, dir_v, va, vb;
-            rel_buf=vrel_buf, idx=si, broken=brk_flags)
-        @inbounds for k in 1:3; F_vec[k] = tension * dir_v[k]; end
+        tension = get_subsegment_tension(
+            ss, diff, current_len, dir_v, va, vb; rel_buf=vrel_buf, idx=si, broken=brk_flags
+        )
+        @inbounds for k in 1:3
+            F_vec[k] = tension * dir_v[k]
+        end
 
         # ── aerodynamic drag (in-place) ──
         @inbounds for k in 1:3
-            mid[k]   = (pa[k] + pb[k]) * 0.5
+            mid[k] = (pa[k] + pb[k]) * 0.5
             v_mid[k] = (va[k] + vb[k]) * 0.5
         end
         v_wind = wind_fn(mid, t)
-        tether_drag_force!(drag, p.rho, TETHER_DRAG_CD, ss.diameter, ss.length_0,
-                           v_wind, v_mid, dir_v, vrel_buf, vperp_buf)
-        @inbounds for k in 1:3; hdrag[k] = 0.5 * drag[k]; end
+        tether_drag_force!(
+            drag,
+            p.rho,
+            TETHER_DRAG_CD,
+            ss.diameter,
+            ss.length_0,
+            v_wind,
+            v_mid,
+            dir_v,
+            vrel_buf,
+            vperp_buf,
+        )
+        @inbounds for k in 1:3
+            hdrag[k] = 0.5 * drag[k]
+        end
 
         # ── accumulate forces to nodes (manual loops — no broadcast allocs) ──
         nid_a = ss.end_a.node_id
@@ -362,14 +450,15 @@ function compute_rope_forces!(
         seg = sys.sub_seg_trpt_seg[si]
         if ss.end_a.is_ring
             ri_a = ri_a_p
-            ctr_a_view = @view u[(3*(nid_a-1)+1):(3*nid_a)]
+            ctr_a_view = @view u[(3 * (nid_a - 1) + 1):(3 * nid_a)]
             @inbounds for k in 1:3
                 r_a[k] = pa[k] - ctr_a_view[k]
                 forces[nid_a][k] += F_vec[k]
             end
-            tau_a = (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
-                    (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
-                    (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
+            tau_a =
+                (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
+                (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
+                (r_a[3]*F_vec[1] - r_a[1]*F_vec[3])*shaft_dir[2]
             if seg > 0
                 seg_tau_a[seg] += tau_a          # TRPT end — defer for C1 clamp
                 seg_tension[seg] += tension
@@ -377,26 +466,31 @@ function compute_rope_forces!(
                 torques[ri_a] += tau_a           # non-TRPT ring (bridle) — direct
             end
         else
-            @inbounds for k in 1:3; forces[nid_a][k] += F_vec[k]; end
+            @inbounds for k in 1:3
+                forces[nid_a][k] += F_vec[k]
+            end
         end
 
         if ss.end_b.is_ring
             ri_b = ri_b_p
-            ctr_b_view = @view u[(3*(nid_b-1)+1):(3*nid_b)]
+            ctr_b_view = @view u[(3 * (nid_b - 1) + 1):(3 * nid_b)]
             @inbounds for k in 1:3
                 r_b[k] = pb[k] - ctr_b_view[k]
                 forces[nid_b][k] -= F_vec[k]
             end
-            tau_b = (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
-                    (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
-                    (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
+            tau_b =
+                (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
+                (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
+                (r_b[3]*(-F_vec[1]) - r_b[1]*(-F_vec[3]))*shaft_dir[2]
             if seg > 0
                 seg_tau_b[seg] += tau_b
             elseif RING_ATTACHMENT[].bridle_axial_torque
                 torques[ri_b] += tau_b
             end
         else
-            @inbounds for k in 1:3; forces[nid_b][k] -= F_vec[k]; end
+            @inbounds for k in 1:3
+                forces[nid_b][k] -= F_vec[k]
+            end
         end
 
         if seg > 0
@@ -412,7 +506,7 @@ function compute_rope_forces!(
                 bridle_restlen[lj] += ss.length_0
             end
         elseif (nid_a == sys.bearing_id && nid_b == sys.sky_anchor_id) ||
-               (nid_a == sys.sky_anchor_id && nid_b == sys.bearing_id)
+            (nid_a == sys.sky_anchor_id && nid_b == sys.bearing_id)
             cyan_pathlen += current_len
             cyan_restlen += ss.length_0
         end
@@ -454,9 +548,9 @@ function compute_rope_forces!(
         ts_b = seg_tau_b[s]
         (ts_a == 0.0 && ts_b == 0.0) && continue
         gid_a = sys.ring_ids[s]
-        gid_b = sys.ring_ids[s+1]
-        pos_a = @view u[(3*(gid_a-1)+1):(3*gid_a)]
-        pos_b = @view u[(3*(gid_b-1)+1):(3*gid_b)]
+        gid_b = sys.ring_ids[s + 1]
+        pos_a = @view u[(3 * (gid_a - 1) + 1):(3 * gid_a)]
+        pos_b = @view u[(3 * (gid_b - 1) + 1):(3 * gid_b)]
         L_s = norm(pos_b - pos_a)
         r_ring_a = (sys.nodes[gid_a]::RingNode).radius
         r_ring_b = (sys.nodes[gid_b]::RingNode).radius
@@ -471,7 +565,7 @@ function compute_rope_forces!(
         # (they are equal-and-opposite up to numerical asymmetry).
         tau_tr = clamp(0.5 * (ts_a - ts_b), -tau_sat, tau_sat)
         torques[s] += tau_tr
-        torques[s+1] -= tau_tr
+        torques[s + 1] -= tau_tr
     end
 
     # Bridle cone and cyan line: the same 3.5% geometric limit. Ultimate breaking
@@ -487,7 +581,8 @@ function compute_rope_forces!(
             rl > 1e-9 || continue
             (bridle_pathlen[lj] - rl) / rl > ROPE_BREAK_STRAIN && (sys.any_broken[] = true)
         end
-        if cyan_restlen > 1e-9 && (cyan_pathlen - cyan_restlen) / cyan_restlen > ROPE_BREAK_STRAIN
+        if cyan_restlen > 1e-9 &&
+            (cyan_pathlen - cyan_restlen) / cyan_restlen > ROPE_BREAK_STRAIN
             sys.any_broken[] = true
         end
     end

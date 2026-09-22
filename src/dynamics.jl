@@ -92,6 +92,15 @@ function multibody_ode!(du, u, params, t)
         R = node.radius
         ri = node.ring_idx
         α_ring = alpha[ri]
+        # PROBE C (2026-09-22): the synthetic tilt was derived for the HUB ring
+        # (`tilted_normal` is stored for `hub_ri`), but one basis is applied to every
+        # ring in the column.  `tilt_scope = :hub` restricts it to the hub ring, and
+        # these intermediate rings then use the shaft frame.
+        rb1, rb2 = if tilt_applies(ri, hub_ri)
+            (perp1_tilt, perp2_tilt)
+        else
+            shaft_perp_basis(shaft_dir)
+        end
         # Design-aware tube outer diameter: the single authority
         # `ring_Do_at` — the R7 solved per-ring section when wired (via
         # build_system_from_v10), else the legacy `Do_top·(r/r_hub)^exp` taper
@@ -108,15 +117,13 @@ function multibody_ode!(du, u, params, t)
         for j in 1:n_lines
             jnext = mod1(j + 1, n_lines)
 
-            pa = attachment_point(ctr_pos, R, α_ring, j, n_lines, perp1_tilt, perp2_tilt)
-            pb = attachment_point(
-                ctr_pos, R, α_ring, jnext, n_lines, perp1_tilt, perp2_tilt
-            )
+            pa = attachment_point(ctr_pos, R, α_ring, j, n_lines, rb1, rb2)
+            pb = attachment_point(ctr_pos, R, α_ring, jnext, n_lines, rb1, rb2)
 
             φ_a = α_ring + (j - 1) * (2π / n_lines)
             φ_b = α_ring + (jnext - 1) * (2π / n_lines)
-            v_rot_a = omega[ri] * R * (-sin(φ_a) .* perp1_tilt .+ cos(φ_a) .* perp2_tilt)
-            v_rot_b = omega[ri] * R * (-sin(φ_b) .* perp1_tilt .+ cos(φ_b) .* perp2_tilt)
+            v_rot_a = omega[ri] * R * (-sin(φ_a) .* rb1 .+ cos(φ_a) .* rb2)
+            v_rot_b = omega[ri] * R * (-sin(φ_b) .* rb1 .+ cos(φ_b) .* rb2)
 
             va = ctr_vel .+ v_rot_a
             vb = ctr_vel .+ v_rot_b
@@ -131,7 +138,8 @@ function multibody_ode!(du, u, params, t)
             v_perp_m = norm(v_perp)
 
             if v_perp_m > 0.01
-                drag_beam = 0.5 * p.rho * TUBE_DRAG_CD * Do_tube * L_beam * v_perp_m .* v_perp
+                drag_beam =
+                    0.5 * p.rho * TUBE_DRAG_CD * Do_tube * L_beam * v_perp_m .* v_perp
                 forces[ring_gid] .+= drag_beam
             end
         end
