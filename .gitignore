@@ -45,6 +45,8 @@ trajectory_analysis/
 # Temporary/monitor CSVs — but NOT campaign results
 *.csv
 !scripts/results/**/*.csv
+# Campaign logs — but NOT stray logs elsewhere
+!scripts/results/**/*.log
 
 # Local python libs (sandbox workaround). Never commit.
 .pylibs/

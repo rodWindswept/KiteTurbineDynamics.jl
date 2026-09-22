@@ -1,0 +1,83 @@
+winner build: genome=scripts/results/v13_5kw_masslift_len18.8_rotorcount/best_vector.csv
+  n_lines=3 rings=6 n_active=1 r_hub=4.32 m  L=18.8 m
+=== wobble gate run  tag=wgw2_winner_physlift  git=1c9f9cb ===
+n_total=53 n_ring=6 n_lines=3 rotors=0
+lin_damp=0.05  dt_factor=1  dt_use=3.0174e-05 s  relax=120.0 s  window=120.0 s
+settle wall = 10.6 s
+handoff residual: acc_struct 18.605 m/s2  max_force 42.213 N
+[relax] t=  20.0 s  hub_lat=0.3387  T_cyan=53.2 T_back=209.8
+[relax] t=  40.0 s  hub_lat=0.6306  T_cyan=61.0 T_back=200.8
+[relax] t=  60.0 s  hub_lat=0.8796  T_cyan=71.6 T_back=189.1
+[relax] t=  80.0 s  hub_lat=1.0615  T_cyan=90.2 T_back=176.5
+[relax] t= 100.0 s  hub_lat=0.7404  T_cyan=39.4 T_back=0.0
+[relax] t= 120.0 s  hub_lat=2.1731  T_cyan=46.4 T_back=38.6
+[relax] t= 120.0 s  hub_lat=2.1736  T_cyan=46.5 T_back=38.4
+relax wall = 102.2 s
+[window] t=   5.0 s
+[window] t=  10.0 s
+[window] t=  15.0 s
+[window] t=  20.0 s
+[window] t=  25.0 s
+[window] t=  30.0 s
+[window] t=  35.0 s
+[window] t=  40.0 s
+[window] t=  45.0 s
+[window] t=  50.0 s
+[window] t=  55.0 s
+[window] t=  60.0 s
+[window] t=  65.0 s
+[window] t=  70.0 s
+[window] t=  75.0 s
+[window] t=  80.0 s
+[window] t=  85.0 s
+[window] t=  90.0 s
+[window] t=  95.0 s
+[window] t= 100.0 s
+[window] t= 105.0 s
+[window] t= 110.0 s
+[window] t= 115.0 s
+[window] t= 120.0 s
+window wall = 110.5 s
+
+=== GATE SUMMARY tag=wgw2_winner_physlift ===
+steps: relax 3976934, window 3976934; dt_use 3.0174e-05 s; captured 216; broken=no
+hub_lat    min     0.4447  max     4.2139  p2p     3.7692  mean     2.3821
+bear_lat   min     0.2690  max     6.1761  p2p     5.9071  mean     3.3617
+T_cyan     min     0.0000  max  1083.6867  p2p  1083.6867  mean   149.5878
+T_back     min     0.0000  max  2835.1151  p2p  2835.1151  mean    96.9046
+T_bridle   min     0.0000  max     0.0000  p2p     0.0000  mean     0.0000
+T_topbay   min     0.0000  max  4627.9626  p2p  4627.9626  mean   719.9758
+P_gen_kW   min     2.0770  max    14.2157  p2p    12.1387  mean     4.8235
+omega_gnd  min     9.7861  max    22.7451  p2p    12.9590  mean    12.7067
+FoS (airborne min): trough 0.3951  mean 5.2678  (n=216 nonfinite=0)
+hub_lat p2p first-half 3.1574  second-half 3.3835;  mean 2nd half 2.5171
+
+slack summary (threshold 1.0 N; Δs=0.009988 s):
+  line             min_T_N max_cont_s     tot_s #EPS>=0.1
+  trpt_s1_l1         0.000    0.5393   23.4808     85  ** FAIL **
+  trpt_s1_l2         0.000    0.5893   29.3136    104  ** FAIL **
+  trpt_s1_l3         0.000    0.4894   26.5670     94  ** FAIL **
+  trpt_s2_l1         0.000    0.3596   18.8366     61  ** FAIL **
+  trpt_s2_l2         0.000    0.3995   20.2049     80  ** FAIL **
+  trpt_s2_l3         0.000    0.3396   17.4184     56  ** FAIL **
+  trpt_s3_l1         0.000    0.4694   20.6643     74  ** FAIL **
+  trpt_s3_l2         0.000    0.3196   19.3460     69  ** FAIL **
+  trpt_s3_l3         0.000    0.4594   17.9577     64  ** FAIL **
+  trpt_s4_l1         0.000    0.5993   25.3485     81  ** FAIL **
+  trpt_s4_l2         0.000    0.4994   24.5795     84  ** FAIL **
+  trpt_s4_l3         0.000    0.6492   25.4983     90  ** FAIL **
+  trpt_s5_l1         0.000    2.9563   79.8308    145  ** FAIL **
+  trpt_s5_l2         0.000    3.2160   77.9632    157  ** FAIL **
+  trpt_s5_l3         0.000    3.2560   77.2141    136  ** FAIL **
+  bridle_l1          0.000   79.7310  119.7812      4  ** FAIL **
+  bridle_l2          0.000  107.9459  119.7712      2  ** FAIL **
+  bridle_l3          0.000   65.6385  119.7912      4  ** FAIL **
+  cyan               0.000    0.1798    4.0650      7  ** FAIL **
+  lift               0.000    0.6192   18.3472     43  ** FAIL **
+  back               0.000    0.9988   63.7708    254  (context)
+SLACK GATE: FAIL
+FOS GATE (>=2.5 at trough): FAIL (trough 0.3951)
+
+csv: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/wgw2_winner_physlift.csv
+total wall 224.3 s
+=== done ===

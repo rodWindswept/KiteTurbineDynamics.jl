@@ -1,0 +1,90 @@
+settle done. dt=2.324675e-05  n_lines(pc)=3  n_seg=10
+════ AFTER SETTLE ════
+hub_lat=0.0000 bear_lat=0.0001 bearing_err_perp=0.0001 m tilt=0.0000 rad (0.00 deg)
+ring10 R=1.4396 ctr=(11.3276,0.0000,6.5376)
+ring11 R=3.5457 ctr=(15.8152,-0.0001,9.1281)
+centre distance = 5.181618 m
+alpha 9/10/11 = 3.9481 4.2452 4.5093
+  line 1: chord=5.6249 m (L0_bay=5.6221)
+  line 2: chord=5.6248 m (L0_bay=5.6221)
+  line 3: chord=5.6247 m (L0_bay=5.6221)
+broken: sum=0 any=false
+  j=1 sub=1 idx=109 L0=1.405523 T=      544.8095 impliedL=1.406254 brk=-
+  j=1 sub=2 idx=110 L0=1.405523 T=      544.8762 impliedL=1.406254 brk=-
+  j=1 sub=3 idx=111 L0=1.405523 T=      544.9428 impliedL=1.406254 brk=-
+  j=1 sub=4 idx=112 L0=1.405523 T=      545.0147 impliedL=1.406254 brk=-
+  j=2 sub=1 idx=113 L0=1.405523 T=      510.2600 impliedL=1.406208 brk=-
+  j=2 sub=2 idx=114 L0=1.405523 T=      510.3275 impliedL=1.406208 brk=-
+  j=2 sub=3 idx=115 L0=1.405523 T=      510.3941 impliedL=1.406208 brk=-
+  j=2 sub=4 idx=116 L0=1.405523 T=      510.4629 impliedL=1.406208 brk=-
+  j=3 sub=1 idx=117 L0=1.405523 T=      512.8681 impliedL=1.406211 brk=-
+  j=3 sub=2 idx=118 L0=1.405523 T=      512.9246 impliedL=1.406211 brk=-
+  j=3 sub=3 idx=119 L0=1.405523 T=      512.9789 impliedL=1.406211 brk=-
+  j=3 sub=4 idx=120 L0=1.405523 T=      513.0382 impliedL=1.406211 brk=-
+════ RELAX +60s (ld 0.05, breaks off) ════
+hub_lat=0.0000 bear_lat=0.0007 bearing_err_perp=0.0007 m tilt=0.0001 rad (0.00 deg)
+ring10 R=1.4396 ctr=(11.5596,0.0011,6.0359)
+ring11 R=3.5457 ctr=(16.1541,0.0015,8.4359)
+centre distance = 5.183639 m
+alpha 9/10/11 = 813.7346 814.0199 814.2778
+  line 1: chord=5.6253 m (L0_bay=5.6221)
+  line 2: chord=5.6253 m (L0_bay=5.6221)
+  line 3: chord=5.6252 m (L0_bay=5.6221)
+broken: sum=0 any=false
+  j=1 sub=1 idx=109 L0=1.405523 T=      621.7668 impliedL=1.406357 brk=-
+  j=1 sub=2 idx=110 L0=1.405523 T=      608.6101 impliedL=1.406340 brk=-
+  j=1 sub=3 idx=111 L0=1.405523 T=      591.7949 impliedL=1.406317 brk=-
+  j=1 sub=4 idx=112 L0=1.405523 T=      577.1413 impliedL=1.406297 brk=-
+  j=2 sub=1 idx=113 L0=1.405523 T=      590.5832 impliedL=1.406315 brk=-
+  j=2 sub=2 idx=114 L0=1.405523 T=      592.6843 impliedL=1.406318 brk=-
+  j=2 sub=3 idx=115 L0=1.405523 T=      593.9733 impliedL=1.406320 brk=-
+  j=2 sub=4 idx=116 L0=1.405523 T=      597.1039 impliedL=1.406324 brk=-
+  j=3 sub=1 idx=117 L0=1.405523 T=      556.1298 impliedL=1.406269 brk=-
+  j=3 sub=2 idx=118 L0=1.405523 T=      567.4142 impliedL=1.406284 brk=-
+  j=3 sub=3 idx=119 L0=1.405523 T=      582.8054 impliedL=1.406305 brk=-
+  j=3 sub=4 idx=120 L0=1.405523 T=      594.5176 impliedL=1.406321 brk=-
+════ RELAX +60s (ld 0.05, breaks off) ════
+hub_lat=0.0000 bear_lat=0.0014 bearing_err_perp=0.0014 m tilt=0.0001 rad (0.01 deg)
+ring10 R=1.4396 ctr=(11.6632,-0.0848,5.8732)
+ring11 R=3.5457 ctr=(16.2936,-0.1179,8.2052)
+centre distance = 5.184600 m
+alpha 9/10/11 = 1633.1071 1633.3882 1633.6424
+  line 1: chord=5.6250 m (L0_bay=5.6221)
+  line 2: chord=5.6256 m (L0_bay=5.6221)
+  line 3: chord=5.6252 m (L0_bay=5.6221)
+broken: sum=0 any=false
+  j=1 sub=1 idx=109 L0=1.405523 T=      563.1244 impliedL=1.406279 brk=-
+  j=1 sub=2 idx=110 L0=1.405523 T=      553.8908 impliedL=1.406266 brk=-
+  j=1 sub=3 idx=111 L0=1.405523 T=      547.6701 impliedL=1.406258 brk=-
+  j=1 sub=4 idx=112 L0=1.405523 T=      543.2801 impliedL=1.406252 brk=-
+  j=2 sub=1 idx=113 L0=1.405523 T=      632.8857 impliedL=1.406372 brk=-
+  j=2 sub=2 idx=114 L0=1.405523 T=      650.6340 impliedL=1.406396 brk=-
+  j=2 sub=3 idx=115 L0=1.405523 T=      664.4073 impliedL=1.406415 brk=-
+  j=2 sub=4 idx=116 L0=1.405523 T=      678.1949 impliedL=1.406433 brk=-
+  j=3 sub=1 idx=117 L0=1.405523 T=      594.2015 impliedL=1.406320 brk=-
+  j=3 sub=2 idx=118 L0=1.405523 T=      588.7764 impliedL=1.406313 brk=-
+  j=3 sub=3 idx=119 L0=1.405523 T=      584.2611 impliedL=1.406307 brk=-
+  j=3 sub=4 idx=120 L0=1.405523 T=      579.0697 impliedL=1.406300 brk=-
+════ WINDOW +30s (breaks on) ════
+hub_lat=0.0000 bear_lat=0.0021 bearing_err_perp=0.0021 m tilt=0.0002 rad (0.01 deg)
+ring10 R=1.4396 ctr=(11.6601,-0.1616,5.8776)
+ring11 R=3.5457 ctr=(16.2892,-0.2262,8.2116)
+centre distance = 5.184612 m
+alpha 9/10/11 = 2043.3633 2043.6446 2043.8988
+  line 1: chord=5.6256 m (L0_bay=5.6221)
+  line 2: chord=5.6251 m (L0_bay=5.6221)
+  line 3: chord=5.6252 m (L0_bay=5.6221)
+broken: sum=0 any=false
+  j=1 sub=1 idx=109 L0=1.405523 T=      623.0441 impliedL=1.406359 brk=-
+  j=1 sub=2 idx=110 L0=1.405523 T=      640.9694 impliedL=1.406383 brk=-
+  j=1 sub=3 idx=111 L0=1.405523 T=      658.7022 impliedL=1.406407 brk=-
+  j=1 sub=4 idx=112 L0=1.405523 T=      680.8635 impliedL=1.406437 brk=-
+  j=2 sub=1 idx=113 L0=1.405523 T=      571.6475 impliedL=1.406290 brk=-
+  j=2 sub=2 idx=114 L0=1.405523 T=      568.1082 impliedL=1.406285 brk=-
+  j=2 sub=3 idx=115 L0=1.405523 T=      566.4914 impliedL=1.406283 brk=-
+  j=2 sub=4 idx=116 L0=1.405523 T=      565.4413 impliedL=1.406282 brk=-
+  j=3 sub=1 idx=117 L0=1.405523 T=      606.9830 impliedL=1.406337 brk=-
+  j=3 sub=2 idx=118 L0=1.405523 T=      596.4270 impliedL=1.406323 brk=-
+  j=3 sub=3 idx=119 L0=1.405523 T=      582.3652 impliedL=1.406304 brk=-
+  j=3 sub=4 idx=120 L0=1.405523 T=      562.9354 impliedL=1.406278 brk=-
+=== done ===

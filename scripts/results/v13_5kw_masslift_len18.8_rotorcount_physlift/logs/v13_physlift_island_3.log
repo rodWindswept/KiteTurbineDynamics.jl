@@ -1,0 +1,86 @@
+════════════════════════════════════════════════════════════
+  V13 Cold-Start DE — 5kW MASS-AWARE LIFT REDO (constant tension)
+  Tether length: 18.8 m (min clearance gate: 1.5 m)
+  Lift: 1.5 × m_airborne × g / sin(70°) per genome, flat (const_tension=true)
+  Era: post-4ce9fd0_daisy-anchored-5kw   git: 1c9f9cbf4eac8f6d7909ab4d6cb5ee62417cb979
+  Window: 40.0 s; power_stat=:tail5; penalize_ceiling=false; fos_target=2.5; fos_hard=2.5
+  10 pop × 3 islands × 30 gen
+  [parallel mode] running island 3 of 3 only
+  Full per-eval telemetry (genome + decoded + T_lift) → /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_3/telemetry.csv
+════════════════════════════════════════════════════════════
+
+  -- Island 3 / 3 ----------------------------
+  [gen 0] seeded best=53.75
+  [Island 3/3 | gen   1] best=53.75  elapsed=2644s
+  [Island 3/3 | gen   2] best=53.75  elapsed=4747s
+  [Island 3/3 | gen   3] best=53.75  elapsed=6199s
+  [Island 3/3 | gen   4] best=53.75  elapsed=7306s
+  [Island 3/3 | gen   5] best=53.75  elapsed=8662s
+  [Island 3/3 | gen   6] best=40.43  elapsed=9566s
+  [Island 3/3 | gen   7] best=25.38  elapsed=11616s
+  [Island 3/3 | gen   8] best=25.09  elapsed=13046s
+  [Island 3/3 | gen   9] best=25.09  elapsed=14413s
+  [Island 3/3 | gen  10] best=25.09  elapsed=15533s
+  [Island 3/3 | gen  11] best=24.98  elapsed=16667s
+  [Island 3/3 | gen  12] best=24.98  elapsed=18368s
+  [Island 3/3 | gen  13] best=24.98  elapsed=19680s
+  [Island 3/3 | gen  14] best=24.98  elapsed=21355s
+  [Island 3/3 | gen  15] best=24.98  elapsed=23258s
+  [Island 3/3 | gen  16] best=24.02  elapsed=24679s
+  [Island 3/3 | gen  17] best=24.02  elapsed=26137s
+  [Island 3/3 | gen  18] best=24.02  elapsed=27685s
+  [Island 3/3 | gen  19] best=24.02  elapsed=29016s
+  [Island 3/3 | gen  20] best=23.46  elapsed=30098s
+  [Island 3/3 | gen  21] best=22.84  elapsed=31184s
+  [Island 3/3 | gen  22] best=22.84  elapsed=32167s
+  [Island 3/3 | gen  23] best=22.84  elapsed=33482s
+  [Island 3/3 | gen  24] best=22.33  elapsed=34639s
+  [Island 3/3 | gen  25] best=22.33  elapsed=35901s
+  [Island 3/3 | gen  26] best=22.33  elapsed=36916s
+  [Island 3/3 | gen  27] best=22.33  elapsed=38088s
+  [Island 3/3 | gen  28] best=22.33  elapsed=39194s
+  [Island 3/3 | gen  29] best=22.32  elapsed=40261s
+  [Island 3/3 | gen  30] best=22.32  elapsed=41319s
+  ** New global best: 22.32 **
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 22 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 198.52 N/line needs sin(Δα) = 76.4666 > 1; the ceiling at that tension is 105.46 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 14 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 52.06 N/line needs sin(Δα) = 42.3151 > 1; the ceiling at that tension is 190.57 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 14 is past the torsional realisability cliff: transmitting τ = 334.09 N·m at T = 83.68 N/line needs sin(Δα) = 2.0474 > 1; the ceiling at that tension is 163.18 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 11 is past the torsional realisability cliff: transmitting τ = 338.72 N·m at T = 221.28 N/line needs sin(Δα) = 1.5405 > 1; the ceiling at that tension is 219.88 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 21 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 854.01 N/line needs sin(Δα) = 15.4423 > 1; the ceiling at that tension is 522.2 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 18 is past the torsional realisability cliff: transmitting τ = 426.94 N·m at T = 500.81 N/line needs sin(Δα) = 1.0512 > 1; the ceiling at that tension is 406.14 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 24 is past the torsional realisability cliff: transmitting τ = 373.48 N·m at T = 682.84 N/line needs sin(Δα) = 1.249 > 1; the ceiling at that tension is 299.01 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 16 of 20 is past the torsional realisability cliff: transmitting τ = 351.97 N·m at T = 160.57 N/line needs sin(Δα) = 1.2933 > 1; the ceiling at that tension is 272.15 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 11 is past the torsional realisability cliff: transmitting τ = 421.28 N·m at T = 159.29 N/line needs sin(Δα) = 1.4093 > 1; the ceiling at that tension is 298.94 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 16 is past the torsional realisability cliff: transmitting τ = 467.85 N·m at T = 558.93 N/line needs sin(Δα) = 1.0959 > 1; the ceiling at that tension is 426.89 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 13 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 614.69 N/line needs sin(Δα) = 21.25 > 1; the ceiling at that tension is 379.48 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 17 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 120.65 N/line needs sin(Δα) = 22.5272 > 1; the ceiling at that tension is 357.97 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 14 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 285.98 N/line needs sin(Δα) = 12.1913 > 1; the ceiling at that tension is 661.45 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/objective_evaluator.jl:636
+  Island 3 complete in 41319.0s — best fitness 22.32
+  Results + telemetry in /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/island_3

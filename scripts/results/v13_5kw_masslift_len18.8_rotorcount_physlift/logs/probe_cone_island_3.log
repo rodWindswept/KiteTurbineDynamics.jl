@@ -1,0 +1,24 @@
+════ island_3  (lines=3 rings=11 n_active=1 r_hub=3.55) ════
+──── AFTER SETTLE ────
+handoff: acc_struct 17.62 m/s2  max_force 39.87 N
+hub lateral from design axis = 0.0024 m; bearing perp offset = 0.0001 m
+  bridle_l1: L0=6.88401  L=6.88435  strain=+0.00005  T=  25.240 N
+  bridle_l2: L0=6.88401  L=6.88438  strain=+0.00005  T=  26.976 N
+  bridle_l3: L0=6.88401  L=6.88438  strain=+0.00005  T=  27.313 N
+  cone total = 79.529 N (3/3 lines active)   cyan = 69.348 N
+──── RELAX +60 s (ld 0.00) ────
+handoff: acc_struct 15.49 m/s2  max_force 41.93 N
+hub lateral from design axis = 1.0347 m; bearing perp offset = 0.0059 m
+  bridle_l1: L0=6.88401  L=6.88395  strain=-0.00001  T=   0.000 N
+  bridle_l2: L0=6.88401  L=6.88391  strain=-0.00001  T=   0.000 N
+  bridle_l3: L0=6.88401  L=6.88208  strain=-0.00028  T=   0.000 N
+  cone total = 0.000 N (0/3 lines active)   cyan = 94.686 N
+──── RELAX +120 s (ld 0.00) ────
+handoff: acc_struct 24.49 m/s2  max_force 11.76 N
+hub lateral from design axis = 1.0302 m; bearing perp offset = 0.0013 m
+  bridle_l1: L0=6.88401  L=6.88423  strain=+0.00003  T=  15.981 N
+  bridle_l2: L0=6.88401  L=6.88402  strain=+0.00000  T=   1.134 N
+  bridle_l3: L0=6.88401  L=6.88451  strain=+0.00007  T=  36.698 N
+  cone total = 53.813 N (3/3 lines active)   cyan = 95.974 N
+
+=== done ===

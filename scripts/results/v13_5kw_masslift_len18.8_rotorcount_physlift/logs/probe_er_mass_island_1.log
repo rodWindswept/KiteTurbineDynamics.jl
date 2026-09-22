@@ -1,0 +1,17 @@
+=== island_1: 2 expansion rotors ===
+ring 9: n_blades=3  r_hub=-0.383 r_tip=0.893 span=1.275 m
+   er.mass = 2.613 kg   blade mass (span law) = 2.613 kg   rotor inertia J = 3.797 kg m2
+ring 8: n_blades=3  r_hub=-0.379 r_tip=0.885 span=1.264 m
+   er.mass = 2.547 kg   blade mass (span law) = 2.547 kg   rotor inertia J = 3.638 kg m2
+── ring nodes ──
+ring  1: mass=1000000000000000019884624838656.0000 kg  inertia_z=5.0803 kg m2  radius=0.741
+ring  2: mass=1.5702 kg  inertia_z=0.8629 kg m2  radius=0.741
+ring  3: mass=1.5702 kg  inertia_z=0.8629 kg m2  radius=0.741
+ring  4: mass=1.5702 kg  inertia_z=0.8629 kg m2  radius=0.741
+ring  5: mass=1.5702 kg  inertia_z=0.8629 kg m2  radius=0.741
+ring  6: mass=1.5702 kg  inertia_z=0.8629 kg m2  radius=0.741
+ring  7: mass=1.5702 kg  inertia_z=2.7157 kg m2  radius=1.315
+ring  8: mass=1.5702 kg  inertia_z=31.9055 kg m2  radius=2.610
+ring  9: mass=1.5702 kg  inertia_z=32.4947 kg m2  radius=2.610
+ring 10: mass=9.4645 kg  inertia_z=149.9613 kg m2  radius=2.610
+=== done ===

@@ -1,0 +1,66 @@
+=== wobble gate run  tag=wgseed_physlift_ld0.05_dtf1  git=1c9f9cb ===
+n_total=231 n_ring=13 n_lines=6 rotors=2
+lin_damp=0.05  dt_factor=1  dt_use=1.77429e-05 s  relax=120.0 s  window=120.0 s
+settle wall = 47.8 s
+handoff residual: acc_struct 88.594 m/s2  max_force 104.532 N
+[relax] t=  20.0 s  hub_lat=0.3972  T_cyan=247.1 T_back=298.9
+[relax] t=  40.0 s  hub_lat=0.7242  T_cyan=268.1 T_back=282.8
+[relax] t=  60.0 s  hub_lat=0.8646  T_cyan=268.4 T_back=270.6
+[relax] t=  80.0 s  hub_lat=0.9822  T_cyan=278.8 T_back=262.3
+[relax] t= 100.0 s  hub_lat=1.0556  T_cyan=284.2 T_back=255.2
+[relax] t= 120.0 s  hub_lat=1.1014  T_cyan=287.7 T_back=250.4
+relax wall = 746.5 s
+[window] t=   5.0 s
+[window] t=  10.0 s
+[window] t=  15.0 s
+[window] t=  20.0 s
+[window] t=  25.0 s
+[window] t=  30.0 s
+[window] t=  35.0 s
+[window] t=  40.0 s
+[window] t=  45.0 s
+[window] t=  50.0 s
+[window] t=  55.0 s
+[window] t=  60.0 s
+[window] t=  65.0 s
+[window] t=  70.0 s
+[window] t=  75.0 s
+[window] t=  80.0 s
+[window] t=  85.0 s
+[window] t=  90.0 s
+[window] t=  95.0 s
+[window] t= 100.0 s
+[window] t= 105.0 s
+[window] t= 110.0 s
+[window] t= 115.0 s
+[window] t= 120.0 s
+window wall = 739.6 s
+
+=== GATE SUMMARY tag=wgseed_physlift_ld0.05_dtf1 ===
+steps: relax 6763269, window 6763269; dt_use 1.77429e-05 s; captured 240; broken=no
+hub_lat    min     1.1022  max     1.1597  p2p     0.0575  mean     1.1451
+bear_lat   min     1.3443  max     1.4140  p2p     0.0697  mean     1.3956
+T_cyan     min   287.6645  max   293.2561  p2p     5.5916  mean   291.5151
+T_back     min   243.9645  max   250.3186  p2p     6.3541  mean   245.6213
+T_bridle   min   100.6010  max   212.2159  p2p   111.6150  mean   165.4838
+T_topbay   min   224.3306  max   226.1847  p2p     1.8541  mean   225.5371
+P_gen_kW   min     5.3873  max     5.4012  p2p     0.0139  mean     5.3959
+omega_gnd  min    13.4459  max    13.4574  p2p     0.0115  mean    13.4530
+FoS (airborne min): trough 12.6374  mean 13.4180  (n=240 nonfinite=0)
+hub_lat p2p first-half 0.0491  second-half 0.0082;  mean 2nd half 1.1568
+
+slack summary (threshold 1.0 N; Δs=0.01001 s):
+  line             min_T_N max_cont_s     tot_s #EPS>=0.1
+  bridle_l1          0.000    0.2202   58.4208    257  ** FAIL **
+  bridle_l2          0.000    0.2202   57.9105    256  ** FAIL **
+  bridle_l3          0.000    0.2202   58.6410    257  ** FAIL **
+  bridle_l4          0.000    0.2202   58.4308    257  ** FAIL **
+  bridle_l5          0.000    0.2202   57.9405    257  ** FAIL **
+  bridle_l6          0.000    0.2202   58.6110    257  ** FAIL **
+  back             243.959    0.0000    0.0000      0  (context)
+SLACK GATE: FAIL
+FOS GATE (>=2.5 at trough): pass (trough 12.6374)
+
+csv: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/../.julia_depot/logs/wgseed_physlift_ld0.05_dtf1.csv
+total wall 1534.7 s
+=== done ===
