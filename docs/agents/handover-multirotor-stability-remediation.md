@@ -40,12 +40,12 @@ Item 4 ("Explore the 5 kW design space with mass-aware lift") re-gated three isl
 at zero artificial damping. Numbers below are quoted from the campaign pack in
 `scripts/results/v13_5kw_masslift_len18.8_rotorcount_physlift/`.
 
-**Island 2 , 22.26 kg (campaign best).** Single rotor, 12 rings, 3 lines, r_hub 3.55 m.
+**Island 2, 22.26 kg (campaign best).** Single rotor, 12 rings, 3 lines, r_hub 3.55 m.
 PASSES the FoS gate at `lin_damp` 0.00 and 0.05 (hub p2p 8.2 mm, FoS trough 6.54,
 P 5.762 kW, ω 13.750 rad/s). The slack tracker flags only the 3 bridle lines, 0.08 s
-dips at ~35 % duty , **inside the ruled envelope** (§0 row 10).
+dips at ~35 % duty, **inside the ruled envelope** (§0 row 10).
 
-**Island 3 , 22.32 kg.** Single rotor, 11 rings, 3 lines, r_hub 3.55 m.
+**Island 3, 22.32 kg.** Single rotor, 11 rings, 3 lines, r_hub 3.55 m.
 PASSES the FoS gate at both settings (hub p2p 7.5 mm, FoS trough 12.27, P 5.655 kW,
 ω 13.665 rad/s). The gate's own slack criterion fires on the 3 bridle lines (0.10 s dips,
 ~50 % duty, 60 s total each) and the gate prints `SLACK GATE: FAIL`, but the
@@ -53,7 +53,7 @@ PASSES the FoS gate at both settings (hub p2p 7.5 mm, FoS trough 12.27, P 5.655 
 therefore a valid control, with the caveat that its cone is intermittently unloaded
 (58 % of the window above 5 N), not continuously taut.
 
-**Island 1 , 33.68 kg. FAILS.** 3 lines, 10 rings, **3 rotors** (main rotor at ring 10
+**Island 1, 33.68 kg. FAILS.** 3 lines, 10 rings, **3 rotors** (main rotor at ring 10
 plus expansion rotors at rings 8 and 9), r_hub 2.61 m. At `lin_damp = 0.00`
 (`wg_isl1_ld0.00_dtf1.log`):
 
@@ -305,7 +305,7 @@ implementing agent.**
 - `physics-topology.md:137-156`, the bridle cone is fixed by ONE design input, its
   half-angle (31°). `bridle_bearing_offset(r_top) = r_top / tan(31°)` is the single
   authority. Padding compliance changes the recorded design.
-- `physics-topology.md:170-178` , **RULED (Rod, 2026-09-15): the back line is TAUT at the
+- `physics-topology.md:170-178`, **RULED (Rod, 2026-09-15): the back line is TAUT at the
   design point and carries residual vertical tension. A deliberate design-point slack
   allowance is REJECTED.** The elastic is what makes it an altitude limiter. The intended
   lever for raising the sky anchor is `backline_payout`
@@ -323,7 +323,7 @@ What Phase 2 should instead deliver is **answers to these questions**, escalated
    slack is already ruled expected (bar: 0.8 s, `DECISIONS.md:37-54`), and its ~0.7 mm
    design-point stretch is a consequence of the recorded 31° cone and
    `BRIDLE_EA_DESIGN = 500 000 N`. The unresolved part is island 1's **14.93 s**
-   contiguous slack , 19× the bar. If the model fixes do not bring that inside the bar,
+   contiguous slack, 19× the bar. If the model fixes do not bring that inside the bar,
    the next step is a design ruling, not a further code patch.
 
 ---
@@ -333,7 +333,7 @@ What Phase 2 should instead deliver is **answers to these questions**, escalated
 Commands are the canonical ones from `CLAUDE.md`.
 
 - `scripts/ktd-format`, clean.
-- `scripts/ktd-julia test/test_settle_validity.jl` , **9/9 PASS** (1 m 22 s).
+- `scripts/ktd-julia test/test_settle_validity.jl`, **9/9 PASS** (1 m 22 s).
   Handoff residual at t = 0: `acc_struct` 81.098 m/s², `max_force` 106.270 N.
 - `scripts/ktd-julia test/runtests.jl`, see `.julia_depot/logs/phase3_runtests_2026-09-22.log`.
 - `scripts/ktd-julia test/test_trpt_realisability.jl`, **32/32** after the re-baseline.
@@ -392,7 +392,7 @@ confirm.
 
 ## 6. Phase 4, open, with honest acceptance criteria
 
-Revision 1's Phase 4 target , "Island 1 bridle cone maintains continuous tension in the
+Revision 1's Phase 4 target, "Island 1 bridle cone maintains continuous tension in the
 120 s dynamic window", is **not** the criterion and Phase 1 cannot be assumed to deliver
 it. Two reasons: the cone's cyclic slack is ruled expected behaviour, and the cone dies
 because the bearing follows the bow (§2B), which Phase 1 only touches indirectly via an
