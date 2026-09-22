@@ -10,6 +10,41 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-22] One ring plane is canonical; the expansion-rotor aero is NOT island 1's instability
+
+**Context.** Rod ruled the one-plane attachment basis canonical and retired the dual-plane exception permanently, then asked for a three-step isolation of the expansion-rotor mechanism behind island 1's 1.54 m limit cycle: Probe A zeroes the rotors' aero load to separate an aerodynamic feedback loop from a structural one, Probe B isolates ring 8 from ring 9, and Probe C restricts the synthetic ring tilt to the hub ring.
+
+**Decided.**
+1. **One ring plane is CANONICAL, and the exception is retired.** The basis selection in `compute_rope_forces!` no longer inspects `is_bridle` at all: every attachment on a ring uses that ring's plane, gated only by `tilt_applies`. The `bridles_use_tilt` field is removed, so the superseded behaviour can no longer be switched on. This also closed a reader/force-path disagreement: `get_max_rope_tension` and the wobble gate's slack tracker always read bridles on the tilted basis while the forces used the shaft basis, so earlier gate bridle-tension readings were taken on a different geometry than the forces used.
+2. **Three isolation toggles added** in `RING_ATTACHMENT`, all defaulting to the canonical physics: `tilt_scope` (`:all` canonical, `:hub` for Probe C), `expansion_aero`, and `expansion_aero_off`.
+
+**Findings, all on island 1 with the canonical basis.**
+
+1. **Probe A: the expansion-rotor AERO is not the driver. It is structural/geometric.**
+
+| island 1, 120 s window | canonical (aero on) | aero OFF |
+|---|---|---|
+| FoS trough | 0.7400 | **1.2949** |
+| hub lateral p2p | 1.5407 m | **1.2294 m** |
+| bearing lateral p2p | 2.1317 m | 1.8763 m |
+| cone min tension | 0.00 N | **0.00 N** |
+| cone mean tension | 1382.1 N | 1018.1 N |
+| cyan max | 1095.9 N | 761.9 N |
+| P_gen mean | 5.7855 kW | 4.9509 kW |
+
+   With both rotors' `F_axial` and `tau_net` withheld, and with ring mass, assembly inertia `J_rotor` and geometry untouched, island 1 still runs a **1.23 m limit cycle** and still loses its cone to zero. The 2 s probe agrees: the gap deficit moves only from −0.0893 to −0.0883 m and the hub peak from 1.513 to 1.432 m. So the aero load changes the **severity** but does not cause the instability. Answer: **NO, it does not settle like island 3.**
+2. **Probe B is therefore not applicable**, since Probe A returned NO. It was run anyway for completeness: `ring9only` and `ring8only` both behave like the canonical default (hub peaks 1.483 and 1.444 m, cone alive at 70.4 and 64.6 N minimum). That is consistent with Probe A: neither rotor's aero matters.
+3. **Probe C: hub-only tilt is WORSE, so the global tilt is not the defect.** Restricting the synthetic tilt to the hub ring and putting rings 1 to Nr−1 back in the shaft frame nearly doubles the gap deficit (−0.1665 against −0.0893 m), raises the hub peak from 1.513 to **2.367 m**, and kills the cone at t = 1.10 s. The hypothesis that the global tilt pumps spurious strain into the lower bays is **refuted**: applying the tilt to every ring is better.
+
+**Consequences.**
+- **Island 1 is structurally marginal before any aerodynamic contribution.** Its FoS trough with the aero off is **1.2949**, against roughly **13.5** for islands 2 and 3. That is a ~10x margin difference on the same load-path fix. The two remaining candidates are the column geometry (island 1 is 10 rings at r_hub 2.61 m, where islands 2 and 3 are 11 and 12 rings at r_hub 3.55 m, so a different taper and stiffness) and the 33.68 kg mass distribution, which is the heaviest of the three and carries concentrated rotor assemblies on rings 8 and 9 plus a 9.46 kg hub.
+- **A coverage gap is recorded.** The one-plane ruling changed every machine's bridle geometry, yet the full unit suite stayed green at 2163/2163 with no test threshold breaking. The suite therefore has weak coverage of bridle attachment geometry. `test_settle_validity.jl` and `test_bearing_alignment.jl` assert bands and floors, not pinned bridle geometry.
+- **Recommended next step.** A per-ring FoS decomposition on islands 1, 2 and 3 at the settled state, to identify which ring carries the low trough and whether the cause is taper, stiffness or the local mass concentration.
+
+**Status:** Active. The one-plane ruling is landed and the unit suite is green. Island 1's mechanism is narrowed to structural/geometric and remains open.
+
+---
+
 ## [2026-09-22] Island 1 diagnosis: the ring's attachment points sit on two planes, and the bridle exception is the defect
 
 **Context.** Island 1 still failed its gate after two model levers (the thrust/preload/mass corrections, then the back-line offset ruling). Rod asked for a targeted four-part diagnosis: axial-gap dynamics, the hub ring's axial force budget, the dual-basis attachment conflict between `rope_forces.jl` and `dynamics.jl`, and isolation of the off-axis bridle wrap torque. His physical objection framed it: the rings should not be able to rise up-shaft faster than the lift kite lifts the sky anchor, so any such travel is a kinematic artifact.
