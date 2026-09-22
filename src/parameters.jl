@@ -175,7 +175,7 @@ struct SystemParams
 
     # Rope structural damping
     zeta::Float64  # Sub-segment damping ratio (dimensionless). Dyneema ≈ 0.01–0.05.
-                   # Prior hardcoded 1.5 (2026-08-12 diagnosed as reverse-torque source).
+    # Prior hardcoded 1.5 (2026-08-12 diagnosed as reverse-torque source).
 end
 
 """
@@ -260,6 +260,35 @@ Aerodynamics (Rotor_TRTP_Sizing_Iteration2.xlsx AeroDyn BEM, NACA4412 profile):
 Ground inertia (Mass Scaling PDF §\"Drivetrain Mass and Inertia Matching\"):
   - I_wheel = 0.019 kg·m², I_gen = 0.040 kg·m² → I_pto = 0.059 kg·m²
 """
+
+# ── Back-line ground-anchor downwind offset — FIELD RULING (Rod, 2026-09-22) ──
+# A PLACEMENT constant in metres, set for the deployed machine.  It is NOT a
+# machine-scale dimension, so `mass_scale` no longer multiplies it.
+#
+# What it does.  The back line is an ALTITUDE LIMITER that must run on its elastic
+# travel, leaving the Dyneema hard stop for the ceiling (`physics-topology.md`
+# §3.2).  The demanded back-line tension comes from the sky-anchor 2x2 balance and
+# falls as the ground anchor moves DOWNWIND, because the line stops being
+# anti-parallel to the lift line and stops acting as a pure tension sink.
+#
+# Measured on the Item 4 island 1 candidate (`scratch/probe_backanchor_sweep.jl`):
+#   fwd_x 6.901 m (the old length-scaled value, 11.0 x 18.8/30) -> demanded
+#     T_back 365.3 N, ABOVE the 320 N stop, so the sky anchor was pinned on the
+#     Dyneema and cyan was starved to 149.8 N.  The cone then unloaded for 22.6 s
+#     contiguous in the 120 s gate.
+#   fwd_x 11.0 m -> demanded T_back 315.8 N, INSIDE the elastic travel, and cyan
+#     rises to 259.2 N (+73 %).  A settle experiment puts the bridle-cone preload
+#     at 236 N / 329 N / 390 N for fwd_x 6.901 / 11.0 / 14.0
+#     (`scratch/probe_fwdx_experiment.jl`).
+#
+# The ZERO-anchor airborne topology is unchanged (`physics-topology.md` §1): this
+# moves one GROUND anchor, and it does not add a centreline restraint.  The spoke
+# radial restraint therefore stays INERT by the same ruling.
+#
+# Supersedes the length-ratio law `11.0 x (L/30)` that gave `params_daisy` 3.78 m
+# and the 5 kW / 18.8 m campaign build 6.901 m.  See DECISIONS.md [2026-09-22].
+const BACK_ANCHOR_FWD_X_M = 11.0
+
 function params_10kw()::SystemParams
     geo = GeometrySpec(
         π / 6,              # elevation_angle = 30° (DRR)
@@ -277,12 +306,12 @@ function params_10kw()::SystemParams
         100e9,              # e_modulus (Pa) — Dyneema ~100 GPa
         0.4,                # m_ring (kg) — ~400 g per ring (DRR §5.2)
         11.0 / 5.0,         # m_blade (kg) — 2.2 kg/blade: 11 kg TOTAL across n_blades=5
-                            #   (one blade per vertex, Gate 1c). Matches the repo invariant
-                            #   m_blade_total = 11 kg (params_v5_10kw: 11/8; objective_v5/
-                            #   ring_spacing/trpt_axial_profiles default 11.0). Was 11/3 —
-                            #   a DRR "3 blades totalling 11 kg" transcription remnant giving
-                            #   18.3 kg airborne — until 2026-07-18; see DECISIONS
-                            #   "m_blade = 11/5 ratified". Re-opens Daisy/Bergey calibration.
+        #   (one blade per vertex, Gate 1c). Matches the repo invariant
+        #   m_blade_total = 11 kg (params_v5_10kw: 11/8; objective_v5/
+        #   ring_spacing/trpt_axial_profiles default 11.0). Was 11/3 —
+        #   a DRR "3 blades totalling 11 kg" transcription remnant giving
+        #   18.3 kg airborne — until 2026-07-18; see DECISIONS
+        #   "m_blade = 11/5 ratified". Re-opens Daisy/Bergey calibration.
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
@@ -304,7 +333,7 @@ function params_10kw()::SystemParams
     back = BackLineSpec(
         700_000.0,          # EA_back_line (N) — 100 GPa × π(0.003)²/4 ≈ 707 kN
         500.0,              # c_back_line (N·s/m)
-        11.0,               # back_anchor_fwd_x (m) — placed downwind so the
+        BACK_ANCHOR_FWD_X_M, # back_anchor_fwd_x (m) — placed downwind so the
         # backline direction at the SKY ANCHOR design position
         # has a small +x component, which lets the three-way
         # knot (lift @80° + backline + cyan) balance with the
@@ -351,16 +380,16 @@ function params_daisy()::SystemParams
         0.002,              # tether_diameter (m) — Daisy 2 mm (measured)
         100e9,              # e_modulus (Pa) — Dyneema ~100 GPa
         0.4,                # m_ring (kg) — superseded by geometry-based
-                            # m_ring_design in the v10 builder; kept for
-                            # non-builder paths
+        # m_ring_design in the v10 builder; kept for
+        # non-builder paths
         0.420,              # m_blade (kg) — MEASURED Daisy blade, restored
-                            # (Rod 2026-08-22): the same 420 g rigid-foam wing
-                            # was used on both the 3-blade and 6-blade rotors;
-                            # the Gate 1c renormalisation (420→210 g so 6
-                            # blades total the 3-blade's 1.26 kg/ring) is
-                            # REVERSED — the built 6-blade rotor carries
-                            # 6 × 0.420 = 2.52 kg/ring.  Per-blade mass scales
-                            # as m_blade · λ³ in the v10 builder (volume law).
+        # (Rod 2026-08-22): the same 420 g rigid-foam wing
+        # was used on both the 3-blade and 6-blade rotors;
+        # the Gate 1c renormalisation (420→210 g so 6
+        # blades total the 3-blade's 1.26 kg/ring) is
+        # REVERSED — the built 6-blade rotor carries
+        # 6 × 0.420 = 2.52 kg/ring.  Per-blade mass scales
+        # as m_blade · λ³ in the v10 builder (volume law).
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
@@ -370,10 +399,10 @@ function params_daisy()::SystemParams
     )
     ctrl = ControlSpec(
         0.3,                # i_pto (kg·m²) — Daisy drivetrain inertia NOT
-                            # measured; small-rig placeholder at April-29
-                            # scale (flag: measure/derive before quoting)
+        # measured; small-rig placeholder at April-29
+        # scale (flag: measure/derive before quoting)
         0.175,              # k_mppt (N·m·s²/rad²) — measured operating point:
-                            # 624 W @ 146 rpm → τ=40.8 N·m, k=τ/ω²=0.175
+        # 624 W @ 146 rpm → τ=40.8 N·m, k=τ/ω²=0.175
         1500.0,             # p_rated_w (W) — Daisy >1.5 kW record
         deg2rad(23.0),      # β_min — RESERVED
         deg2rad(67.0),      # β_max — RESERVED
@@ -388,7 +417,12 @@ function params_daisy()::SystemParams
         # geom_scale = 1.826 and would inflate it to 1.29 MN.
         314_000.0,
         172.0,              # c_back_line (N·s/m) — 500 × (10.31/30) length scale
-        3.78,               # back_anchor_fwd_x (m) — 11.0 × (10.31/30)
+        BACK_ANCHOR_FWD_X_M,  # back_anchor_fwd_x (m) — the FIELD placement, in
+        # metres, for the deployed machine.  It used to be 11.0 x (10.31/30) =
+        # 3.78 here, a length-ratio law that `mass_scale` then multiplied again,
+        # landing the 5 kW / 18.8 m campaign build on 6.901 m and locking its back
+        # line on the 320 N hard stop.  See the constant's comment above and
+        # DECISIONS.md [2026-09-22].
         0.0,                # backline_payout
     )
     return SystemParams(geo, mat, aero, ctrl, back)
@@ -603,7 +637,11 @@ function mass_scale(
     back = BackLineSpec(
         base.EA_back_line * geom_scale,    # stiffness scales with cross-section
         base.c_back_line * geom_scale,    # damping scales with line length
-        base.back_anchor_fwd_x * geom_scale,   # forward offset scales with geometry
+        # The ground-anchor downwind offset is a PLACEMENT, not a dimension:
+        # it does not scale.  FIELD RULING (Rod, 2026-09-22).  Scaling it here
+        # is what pushed the 5 kW / 18.8 m campaign build to 6.901 m and locked
+        # island 1's back line on its hard stop.  See BACK_ANCHOR_FWD_X_M.
+        base.back_anchor_fwd_x,               # forward offset does NOT scale
         base.backline_payout,                  # payout does not scale
     )
     return SystemParams(geo, mat, aero, ctrl, back)
@@ -618,9 +656,9 @@ Use for immutable parameter modification (dashboard scenarios, depower).
 function modified_params(base::SystemParams; kwargs...)
     fnames = fieldnames(SystemParams)
     ftypes = fieldtypes(SystemParams)
-    overrides = Dict{Symbol,Any}(kwargs)
+    overrides = Dict{Symbol, Any}(kwargs)
     vals = ntuple(length(fnames)) do i
-        convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
+        return convert(ftypes[i], get(overrides, fnames[i], getfield(base, fnames[i])))
     end
-    SystemParams(vals...)
+    return SystemParams(vals...)
 end

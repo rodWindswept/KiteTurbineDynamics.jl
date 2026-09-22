@@ -103,7 +103,21 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     # ── A. the seam reproduces the handover's table (margin DISABLED) ────────
     # `realisability_margin=1.0` turns off the preload floor enforcement, so this
     # is the design as the taut split sizes it, with no rescue.
-    sys, u0, pc, lift, wf = build_case(nothing, nothing; genome=SEED_LR20)
+    #
+    # FROZEN GEOMETRY (2026-09-22).  The pinned numbers below are properties of ONE
+    # design point, and that point includes the back-line ground-anchor offset it
+    # was MEASURED at (6.901 m, the then-current length-scaled value).  Rod's field
+    # ruling later made `BACK_ANCHOR_FWD_X_M = 11.0` a global placement constant,
+    # which moves this machine's cyan tension and so its `F_ax[end]` (1163.72 ->
+    # 1278.63 N) and every pinned value with it.  Section A therefore PINS the
+    # measured offset, so it stays an independently measured fixture instead of a
+    # tracker of the current global geometry.  This is the same defect the file's
+    # 2026-09-16 note records for the L/r re-seed: "a test-coupling defect, not a
+    # regression".  The SHIPPED default is still exercised end-to-end by section C,
+    # which builds the real campaign seed with no override, and by section B.
+    FIXTURE_FWD_X = 6.901
+    p_fixture = override_params(params_5kw_188(); back_anchor_fwd_x=FIXTURE_FWD_X)
+    sys, u0, pc, lift, wf = build_case(nothing, nothing; genome=SEED_LR20, p=p_fixture)
     F_ax = design_axial_preload(
         sys, pc, lift, u0; omega_eq=OMEGA_SEED, realisability_margin=1.0
     )

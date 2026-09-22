@@ -359,17 +359,21 @@ function compute_ring_forces!(
                 # and the ring/FoS evaluator prices it there.  It is not a
                 # centre-of-mass force and must not be re-added here.
                 #
-                # OPEN (2026-09-22): the designed radial restraint — the spoke
-                # spring at :376-396 — is inert in every ODE run that produced the
-                # Item 4 verdicts.  The `spoke` argument is plumbed through
+                # RULED INERT (Rod, 2026-09-22): the spoke spring at :376-396 stays
+                # disabled.  The `spoke` argument is plumbed through
                 # (`objective_evaluator.jl:507`) but DEFAULTS to `nothing`, and
                 # neither the campaign runner (`run_v13_5kw_masslift.jl:261`) nor
                 # the wobble gate (`ode_gate_v13.jl`, `probe_wobble_gate_*.jl`)
-                # passes one; `SpokeParams(...)` is constructed only in `scripts/`
-                # diagnostics.  With this block gone the ring therefore has NO
-                # radial restraint in those ODE runs.  Whether the spokes should be
-                # energised is an open question, not a licence to reinstate this
-                # push.  See `docs/agents/instrument-trust-log.md`.
+                # passes one, so the ring carries NO radial restraint in those ODE
+                # runs.  That is now the DECISION, not an oversight: per
+                # `physics-topology.md` §1 only the ground ring and the back-line
+                # anchor touch the ground, and a TRPT column is a free-floating
+                # tensegrity with no centreline anchor.  Energising the spokes would
+                # add an artificial guide-wire pulling every ring toward the ground
+                # station's line of sight.  Rings hold radial integrity through line
+                # tension and inter-bay truss geometry.  Do NOT reinstate this push,
+                # and do not switch the spokes on as a stability crutch.
+                # See `docs/agents/instrument-trust-log.md`.
             end
         end
     end
