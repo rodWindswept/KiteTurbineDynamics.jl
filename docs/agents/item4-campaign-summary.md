@@ -66,6 +66,20 @@
 - Done: cone-state probe at settle, +60 s and +120 s. `scratch/probe_cone_state_compare.jl`, logs `probe_cone_island_{1,2,3}.log`.
 - Artefacts: fine logs and CSVs `wg_isl{1,3}_ld0.{00,05}_fine` in `.julia_depot/logs/`. Analyser: `scratch/analyze_item4_fine.py`.
 
+## Multi-rotor model artifacts (laptop analysis, desktop verification, 2026-09-22)
+
+The laptop analysed island 1's collapse and proposed model defects. The desktop verified each claim against source, with independent traces. Verdicts:
+
+- Instant cone collapse: CONFIRMED. The desktop 0.05 s trace reads the three bridle lines at 47 to 90 N at t = 0.1 s, then 0.0 N from t = 1.1 s onward. The hub reaches 1.41 m lateral within the same second. The island 3 control holds: cone cycles 20 to 52 N, cyan holds 91 to 104 N, top bay holds 600 to 605 N, hub holds a 10 mm band.
+- Knife-edge stretch: CONFIRMED. Bridle L0 = 5.06622 m and live L = 5.06689 m at handoff. The 0.67 mm stretch comes from the preload cut by construction.
+- Settle ignores intermediate rotor thrust: CONFIRMED in source. `initialization.jl:1274` prices `T_thrust` from `main_rotor_swept_area(sys)` only, and that value feeds the bridle preload cut. The ODE does add expansion-rotor axial thrust up-shaft (`ring_forces.jl:288-305`). Preload and force model disagree.
+- F_radial on the ring centre: CONFIRMED as written (`ring_forces.jl:344-355`, gated to expansion rotors). Precision note: the magnitude is constant and the direction follows the current displacement, so it destroys the on-axis equilibrium and parks the ring offset by F/k. It is a spurious outward bias and a geometry defect. It is not a runaway force by itself.
+- Missing translational blade mass: CONFIRMED. Rings 8 and 9 read mass 1.5702 kg, the same as plain rings, while carrying rotor inertia near 32 kg m2. The rotors' own masses are not added. The hub ring, by contrast, carries 9.4645 kg.
+- Topology doc quote: verbatim, `physics-topology.md:104-108`.
+- Open difference: blade masses. The laptop reads 1.39 and 0.68 kg. The desktop build reads 2.61 and 2.55 kg per rotor (span-cubed law). Reconcile.
+
+Consequence: the island 1 FAIL verdict is conditional on these model artifacts. Re-gate island 1 after any fix. Artefacts: `scratch/probe_early_trace.jl`, `scratch/probe_er_mass_check.jl`, logs `probe_early_island_{1,3}.log` and `early_island_1.csv`.
+
 ## Open questions
 
 - Why does island 1's bearing follow the bow? The stable machines hold their bearing on axis. Compare the bearing, cyan and catenary arrangement across the three machines.
