@@ -10,6 +10,27 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-23] BEM multi-rotor sizing failure & Peter Jamieson scaling law remediation (Handover Part 2)
+
+**Context.** In Phase 4, the dynamic whip mode on Island 1 (3-rotor winner) was isolated to an inverted pendulum: 14.6 kg top-end mass (9.46 kg on top rotor alone) atop an 11 mm slender transmission cylinder, buckling Ring 4 at FoS 1.4772. A core physics question was raised by Rod: why would a 3-rotor machine have more blade mass than a single-rotor machine? Under Peter Jamieson's multi-rotor scaling laws, $N$ rotors sharing total power $P$ require the same total swept area ($A_{\text{total}} \approx 17.15\text{ m}^2$ for 5 kW @ 11 m/s), linear span $s \propto 1/\sqrt{N}$, and total blade mass $M_{\text{blades}} \propto 1/\sqrt{N} \approx 58\%$ of single rotor (~1.7 kg vs ~3.0 kg).
+
+**Findings & Root Cause.**
+An audit of `src/objective_v10.jl` and `src/bem.jl` revealed that multi-rotor blades were drastically over-sized due to four compounding defects:
+1. **HAWT Disk vs Ring Annulus Mismatch (`src/objective_v10.jl:355-369`):** `BEM.rotor_radius_for_power(P_i, v_i)` calculates radius for a solid circular disk ($A = \pi R^2$). The code set $\text{span} = 0.75 R_{\text{disk}}$, ignoring that blades attach to a ring of radius $R_{\text{ring}} = 2.61\text{ m}$ (circumference 16.4 m). The true swept area is an annulus: $A_{\text{annulus}} = 2\pi R_{\text{ring}} s + 0.4\pi s^2$. Sizing $5.72\text{ m}^2$ on a 2.61 m ring requires span $s \approx 0.34\text{ m}$ (34 cm). The code set $s = 1.958\text{ m}$, sweeping $36.93\text{ m}^2$ on the top rotor alone and multiplying blade mass by $\approx 187\times$ via $m \propto s^3$.
+2. **Hardcoded `power_split = 0.6` (`scripts/ode_gate_v13.jl:109`):** Forces 60% of total turbine power (3000 W) onto the top rotor and only 20% (1000 W) onto each expansion rotor, defeating equal multi-rotor load sharing.
+3. **The `n_active == 1` Bug in `power_split` (`src/objective_v10.jl:354`):** Line 354 applied `power_split` unconditionally to `i == 1`, sizing Island 3 for only 3 kW ($0.6 \times 5000\text{ W}$), masking the comparison.
+4. **Boundary Layer Shear Reference & Wake Inversion (`src/objective_v10.jl:92-98, 341-351`):** Wind is horizontal, so boundary layer shear increases wind speed with altitude. The code de-rated wind speed at 9.4 m to 7.91 m/s (via unanchored 50 m reference and inverted wake blocking), multiplying blade mass by $4.4\times$ via $v^{-4.5}$.
+
+**Decided.**
+1. Record complete analysis, mathematical derivation, and implementation blueprint in `docs/agents/handover-part2-multirotor-bem-sizing.md` (and mirrored to user desktop).
+2. Phase 5 implementation plan approved:
+   - Implement `annulus_span_for_power(power_W, v_wind, r_ring, n_lines)` in `src/bem.jl` solving the positive root of $0.4\pi s^2 + 2\pi R_{\text{ring}} s - A_{\text{req}} = 0$.
+   - Repair `power_split` in `src/objective_v10.jl` to default to $1/N$ for multi-rotor, and $1.0$ for `n_active == 1`.
+   - Anchor wind shear to turbine operating height and remove inverted wake starvation.
+   - Enforce unit test guards in `test/test_bem.jl` pinning Jamieson multi-rotor scaling ($A_{\text{total}} \approx \text{const}$, $M_{\text{blades}} \propto 1/\sqrt{N}$).
+
+---
+
 ## [2026-09-23] Multi-rotor stability remediation: Phase 4 complete — Island 1 structural bottleneck isolated and resolved
 
 **Context.** Phase 1 resolved the four codebase defects (removed spurious F_radial CM push, restored translation mass on rings 8 and 9, corrected expansion preload thrust, and unchoked backline payout). The 2026-09-22 ruling permanently retired the dual-attachment plane exception in favor of one canonical ring plane. Probe A refuted aerodynamic feedback as the cause of Island 1's limit cycle. Phase 4 executed the structural, geometric, and mass-distribution investigation across Tasks 4.1–4.4.

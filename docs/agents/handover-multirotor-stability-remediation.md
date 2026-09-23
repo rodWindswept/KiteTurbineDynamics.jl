@@ -1,14 +1,16 @@
 # Handover: Multirotor Stability Remediation & Load-Path Fix
 
 **Document:** `docs/agents/handover-multirotor-stability-remediation.md`
-**Revision:** 3 (updated 2026-09-23 on the laptop, incorporating One-Plane ruling, Probes A/B/C isolation, and Phase 4 handover)
+**Revision:** 4 (updated 2026-09-23, incorporating One-Plane ruling, Probes A/B/C isolation, Phase 4 structural bottleneck isolation, and Handover Part 2 link)
 **Original:** Revision 1, 2026-09-22, Antigravity (Supervisory Agent); Revision 2, 2026-09-22, dsh (Laptop Agent)
 **Target:** Implementing Agent & Contributor Team
 **Scope:** Remediation of multi-rotor TRPT instability artifacts in KiteTurbineDynamics.jl
+**Part 2 Handover:** See [`docs/agents/handover-part2-multirotor-bem-sizing.md`](handover-part2-multirotor-bem-sizing.md) for the complete BEM multi-rotor sizing failure analysis, Peter Jamieson scaling law derivation, and Phase 5 implementation blueprint.
 
-> **Revision 3 records the definitive resolution of the lift-chain decoupling via the One-Plane
-> basis ruling, the refutation of aerodynamic feedback (Probes A/B/C), and the actionable
-> structural/geometric roadmap for Phase 4 while Rod is offline/traveling.**
+> **Revision 4 records the definitive resolution of the lift-chain decoupling via the One-Plane
+> basis ruling, the refutation of aerodynamic feedback (Probes A/B/C), the Phase 4 structural
+> bottleneck isolation (Ring 4 Euler buckling driven by inverted pendulum head mass), and the
+> transition to Phase 5 (BEM multi-rotor sizing remediation).**
 > Section 0 lists every correction across revisions.
 
 ---
