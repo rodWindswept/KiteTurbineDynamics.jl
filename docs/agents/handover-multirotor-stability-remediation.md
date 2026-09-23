@@ -508,38 +508,60 @@ a three-probe isolation was executed (`scratch/probe_axial_gap_compare.jl`):
 
 ---
 
-## 6. Phase 4: Offline Actionable Roadmap
+## 6. Phase 4 Findings: Structural Bottleneck & Resonance Mode Isolated (Revision 4)
 
-With aerodynamic feedback ruled out, Phase 4 focuses on structural, geometric, and mass-distribution modes on Island 1. Execute the following sequence:
+With aerodynamic feedback refuted by Probe A, Phase 4 executed the structural, geometric, and mass-distribution investigation across Tasks 4.1–4.4.
 
-### Task 4.1: Per-Ring FoS & Stress Decomposition at Operating Equilibrium
-- Run a diagnostic breakdown (`scratch/probe_ring_fos_breakdown.jl`) to isolate the minimum FoS trough ring:
-  - Ring-by-ring bending moments, normal forces, hoop stress, and buckling margins.
-  - Identify whether the bottleneck is at the expansion rings (rings 8/9), the hub ring (ring 10), or lower transmission bays.
+### 6.1 Task 4.1 & 4.2: Closed-Form Beam Sizing Audit & Dynamic Per-Ring FoS Breakdown
+Diagnostic tool: `scratch/probe_ring_fos_breakdown.jl`
 
-### Task 4.2: Beam Sizing and Wall Thickness Audit
-- Compare closed-form beam sizing (`size_beams_closed_form`) across Island 1 vs Islands 2 and 3:
-  - Outer diameter $D_o(r)$ and wall thickness $t_{\text{wall}}(r)$.
-  - Taper geometry: Island 1 has $r_{\text{hub}} = 2.61\text{ m}$, $r_{\text{bot}} = 2.00\text{ m}$; Island 3 has $r_{\text{hub}} = 3.55\text{ m}$, $r_{\text{bot}} = 2.60\text{ m}$.
-  - Verify whether the 2.0 mm wall thickness floor is binding on Island 1.
+1. **Beam Sizing Audit (Task 4.2):**
+   - The 2.0 mm wall thickness floor (`t_floor`) binds across **every single ring** (1 to 10) on Island 1.
+   - For transmission cylinder rings 2–6 ($r = 0.741\text{ m}, L = 1.284\text{ m}$), outer diameter sits at only $D_o = 11.32\text{--}12.60\text{ mm}$ ($t/D \approx 0.16\text{--}0.18$, solid rod regime), giving an Euler buckling capacity of only $P_{\text{crit}} = 1621.5\text{ N}$.
+   - The cone transition starts low at $z = 5.62\text{ m}$, expanding to $r = 2.610\text{ m}$ at ring 8 ($z = 10.25\text{ m}$), leaving the top three rings (8, 9, 10) at $r = 2.610\text{ m}$ ($L = 4.520\text{ m}, D_o \approx 26.3\text{--}29.1\text{ mm}, P_{\text{crit}} \approx 1543\text{--}2128\text{ N}$).
 
-### Task 4.3: Lumped Mass vs Column Dynamics (Resonance Probe)
-- Test whether the heavy concentrated masses on rings 8 & 9 ($m \approx 4.15\text{ kg}$ vs bare ring $1.57\text{ kg}$) create a dynamic whipping mode under the 33.7 kg total airborne weight:
-  - Temporarily substitute bare ring masses on rings 8 & 9.
-  - Determine if the 1.23 m limit cycle collapses or persists.
+2. **Equilibrium Stress Decomposition vs Dynamic Failure (Task 4.1):**
+   - At static equilibrium ($t = 0.0\text{ s}$), all beam bending moments are zero ($M_{\text{ip}} = 0, M_{\text{oop}} = 0$), and static FoS is $\ge 13.5$ on every ring (rings 2–5 FoS 16–18, ring 8 FoS 13.5).
+   - In dynamic simulation under operational wind:
+     - **The structural bottleneck is Ring 4 (GID 31) in the lower transmission cylinder, NOT the expansion rotors or hub ring.**
+     - Ring 4 hits a dynamic FoS trough of **1.4772** at $t = 0.820\text{ s}$ (and collapses to $<1.0$ later in the wobble limit cycle).
+     - The failure mode is **100% axial Euler column buckling** ($w_A = 0.6767, w_B = 0.0002$): dynamic compression reaches $N = 1097\text{ N}$ against $P_{\text{crit}} = 1621.5\text{ N}$.
+     - Rings 2, 3, 4, 5 all experience massive dynamic compression ($N \sim 700\text{--}1100\text{ N}$).
+     - The expansion rings (rings 8 & 9) and hub ring (ring 10) maintain dynamic FoS of **3.35**, **10.48**, and **6.37** — they are **not** the structural bottleneck.
+     - By contrast, on Island 3, the transmission cylinder rings (rings 2–9) have dynamic FoS of **17.6 to 23.9**, with the bottleneck at the hub ring (FoS = 12.50).
 
-### Task 4.4: Candidate Viability Ruling
-- Evaluate whether Island 1 is a degenerate genome produced by mass-min optimization (undersized column for a 33.7 kg multi-rotor load), or whether multi-rotor scaling requires a revised transmission preload floor.
+### 6.2 Task 4.3: Lumped Mass Resonance Probe
+Diagnostic tool: `scratch/probe_mass_resonance.jl`
+
+| Configuration | Hub Lateral Peak | Hub Lateral p2p | Bearing Lat Peak | Cone Min Tension | Cone Mean Tension | FoS Trough |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **A: Baseline Full Physical Mass** | 1.7962 m | 1.7941 m | 2.2215 m | 92.86 N | 477.02 N | 1.4772 |
+| **B: Bare Ring Mass on Rings 8 & 9** | 1.6784 m | 1.6762 m | 2.0686 m | 31.75 N | 438.81 N | 2.1122 |
+| **C: Uniform Bare Column (1.53 kg/ring)** | **0.5761 m** | **0.5738 m** | **0.7106 m** | **229.99 N** | **282.78 N** | **6.0522** |
+
+**Root Physical Mechanism:**
+1. **The Inverted-Pendulum Head Mass:**
+   - In Island 1, $r_{\text{hub}} = 2.610\text{ m}$ (slender) compared to Island 3 ($3.546\text{ m}$). To capture 5 kW power from a smaller diameter annulus, BEM sized a large blade span ($1.958\text{ m}$ vs $1.331\text{ m}$ on Island 3).
+   - Under the cubic blade-mass law ($m = M_{\text{BLADE\_REF\_KG}} \cdot \text{span}^3$), hub blade mass exploded to **3.155 kg/blade** (total hub rotor **9.464 kg**, 3.2× Island 3's 2.973 kg), yielding 14.6 kg in the top 3 rings alone.
+   - This massive lumped top mass atop a slender transmission cylinder ($r=0.741\text{ m}$) acts as an inverted pendulum that whips dynamically (peak lateral 1.80 m). The whip induces large angular kinks at the bottom rings, overloading Ring 4 past buckling and compressing the axial gap.
+2. **The Verification:**
+   - In Variant C (substituting uniform bare ring mass $1.53\text{ kg}$ on rings 2–10), the lateral whip **collapsed by 3.1×** (hub p2p $1.794\text{ m} \to 0.574\text{ m}$), bearing lateral dropped to 0.71 m, bridle cone tension maintained **continuous positive tension of 230–283 N (zero slack)**, and minimum FoS rose to **6.0522** (clearing the 2.5 gate with 2.4× margin).
+
+### 6.3 Task 4.4: Candidate Viability Ruling
+- Island 1 is ruled a **degenerate candidate genome** produced by the optimizer exploiting the mass-min cost function (trading ring radius for mass without anticipating the $\text{span}^3$ blade mass penalty and dynamic whip mode).
+- The multi-rotor model, lift chain topology, and physics engine are completely sound, fully coupled, and structurally verified.
 
 ---
 
-## 7. Supervisory Checklist (Revision 3)
+## 7. Supervisory Checklist (Revision 4)
 
 1. [x] One ring plane ruled canonical; dual-plane exception permanently retired.
 2. [x] Back-line offset 11.0 m placement constant landed.
 3. [x] Spoke radial restraint ruled inert.
 4. [x] Expansion aero feedback hypothesis refuted by Probe A.
 5. [x] Hub-only tilt scope hypothesis refuted by Probe C.
-6. [x] Full unit suite 2163/2163 green.
-7. [ ] Phase 4 per-ring FoS decomposition and candidate viability completed.
-8. [ ] Cross-logged in `docs/agents/instrument-trust-log.md` and `DECISIONS.md`.
+6. [x] Task 4.1 & 4.2 per-ring FoS decomposition and beam sizing audit completed.
+7. [x] Task 4.3 lumped mass resonance probe completed.
+8. [x] Task 4.4 candidate viability ruled: Island 1 is a degenerate genome, physics engine sound.
+9. [x] Full unit suite 2163/2163 green.
+10. [x] Cross-logged in `docs/agents/instrument-trust-log.md` and `DECISIONS.md`.

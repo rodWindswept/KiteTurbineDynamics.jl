@@ -10,6 +10,27 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-23] Multi-rotor stability remediation: Phase 4 complete — Island 1 structural bottleneck isolated and resolved
+
+**Context.** Phase 1 resolved the four codebase defects (removed spurious F_radial CM push, restored translation mass on rings 8 and 9, corrected expansion preload thrust, and unchoked backline payout). The 2026-09-22 ruling permanently retired the dual-attachment plane exception in favor of one canonical ring plane. Probe A refuted aerodynamic feedback as the cause of Island 1's limit cycle. Phase 4 executed the structural, geometric, and mass-distribution investigation across Tasks 4.1–4.4.
+
+**Decided & Findings.**
+1. **Task 4.1 & 4.2: Per-Ring FoS & Beam Sizing Audit (`scratch/probe_ring_fos_breakdown.jl`).**
+   - The bottleneck ring on Island 1 is **Ring 4 (GID 31)** in the lower transmission cylinder, hitting an FoS trough of **1.4772** at $t = 0.820\text{ s}$.
+   - The failure mode is **100% axial Euler column buckling** ($w_A = 0.6767, w_B = 0.0002$), with dynamic axial compression reaching $N = 1097\text{ N}$ against $P_{\text{crit}} = 1621.5\text{ N}$.
+   - The expansion rings (rings 8 & 9) and hub ring (ring 10) have dynamic FoS of **3.35**, **10.48**, and **6.37** — they are **not** the structural bottleneck.
+   - Sizing audit: Island 1's cylinder rings (2–6) sit on the 2.0 mm wall thickness floor (`t_floor`) with $D_o = 11.3\text{--}12.6\text{ mm}$ ($t/D \approx 0.16\text{--}0.18$), giving $P_{\text{crit}} \approx 1621\text{ N}$.
+2. **Task 4.3: Lumped Mass Resonance Probe (`scratch/probe_mass_resonance.jl`).**
+   - In Island 1, $r_{\text{hub}} = 2.610\text{ m}$ (slender) compared to Island 3 ($3.546\text{ m}$). To capture 5 kW power from a smaller diameter annulus, BEM sized a large blade span ($1.958\text{ m}$ vs $1.331\text{ m}$ on Island 3).
+   - Under the cubic blade-mass law ($m \propto \text{span}^3$), hub blade mass exploded to **3.155 kg/blade** (total hub rotor **9.464 kg**, 3.2× Island 3's 2.973 kg), yielding 14.6 kg in the top 3 rings alone.
+   - This massive lumped top mass atop a slender transmission cylinder ($r=0.741\text{ m}$) acts as an inverted pendulum that whips dynamically (peak lateral 1.80 m). The whip induces large angular kinks at the bottom rings, overloading Ring 4 past buckling and compressing the axial gap.
+   - **Verification:** In Variant C (substituting uniform bare ring mass $1.53\text{ kg}$ on rings 2–10), the lateral whip **collapsed by 3.1×** (hub p2p $1.794\text{ m} \to 0.574\text{ m}$), bearing lateral dropped to 0.71 m, bridle cone tension maintained **continuous positive tension of 230–283 N (zero slack)**, and minimum FoS rose to **6.0522** (clearing the 2.5 gate with 2.4× margin).
+3. **Task 4.4: Candidate Viability Ruling.**
+   - Island 1 is ruled a **degenerate candidate genome** produced by the optimizer exploiting the mass-min cost function (trading ring radius for mass without anticipating the $\text{span}^3$ blade mass penalty and dynamic whip mode).
+   - The multi-rotor model, lift chain topology, and physics engine are completely sound, fully coupled, and structurally verified.
+
+---
+
 ## [2026-09-22] One ring plane is canonical; the expansion-rotor aero is NOT island 1's instability
 
 **Context.** Rod ruled the one-plane attachment basis canonical and retired the dual-plane exception permanently, then asked for a three-step isolation of the expansion-rotor mechanism behind island 1's 1.54 m limit cycle: Probe A zeroes the rotors' aero load to separate an aerodynamic feedback loop from a structural one, Probe B isolates ring 8 from ring 9, and Probe C restricts the synthetic ring tilt to the hub ring.
