@@ -10,24 +10,60 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
-## [2026-09-23] BEM multi-rotor sizing failure & Peter Jamieson scaling law remediation (Handover Part 2)
+## [2026-09-23] BEM multi-rotor sizing: three real defects, but the draft's attribution is wrong (verified and corrected)
 
-**Context.** In Phase 4, the dynamic whip mode on Island 1 (3-rotor winner) was isolated to an inverted pendulum: 14.6 kg top-end mass (9.46 kg on top rotor alone) atop an 11 mm slender transmission cylinder, buckling Ring 4 at FoS 1.4772. A core physics question was raised by Rod: why would a 3-rotor machine have more blade mass than a single-rotor machine? Under Peter Jamieson's multi-rotor scaling laws, $N$ rotors sharing total power $P$ require the same total swept area ($A_{\text{total}} \approx 17.15\text{ m}^2$ for 5 kW @ 11 m/s), linear span $s \propto 1/\sqrt{N}$, and total blade mass $M_{\text{blades}} \propto 1/\sqrt{N} \approx 58\%$ of single rotor (~1.7 kg vs ~3.0 kg).
+**Context.** Phase 4 traced island 1's whip to a heavy top end and asked why a 3-rotor machine carries MORE blade mass than a single rotor. Peter Jamieson's multi-rotor law says a fixed total power needs a fixed total swept area, with span scaling as 1/√N and total blade mass as 1/√N. The Part 2 draft (`docs/agents/handover-part2-multirotor-bem-sizing.md`, commit `ceb6752`) named four defects and attributed roughly 187× of blade-mass inflation to the disc-versus-annulus sizing error. **This entry records the independent re-measurement (probe `scratch/probe_bem_sizing_audit.jl`) and corrects the numbers and the causation.**
 
-**Findings & Root Cause.**
-An audit of `src/objective_v10.jl` and `src/bem.jl` revealed that multi-rotor blades were drastically over-sized due to four compounding defects:
-1. **HAWT Disk vs Ring Annulus Mismatch (`src/objective_v10.jl:355-369`):** `BEM.rotor_radius_for_power(P_i, v_i)` calculates radius for a solid circular disk ($A = \pi R^2$). The code set $\text{span} = 0.75 R_{\text{disk}}$, ignoring that blades attach to a ring of radius $R_{\text{ring}} = 2.61\text{ m}$ (circumference 16.4 m). The true swept area is an annulus: $A_{\text{annulus}} = 2\pi R_{\text{ring}} s + 0.4\pi s^2$. Sizing $5.72\text{ m}^2$ on a 2.61 m ring requires span $s \approx 0.34\text{ m}$ (34 cm). The code set $s = 1.958\text{ m}$, sweeping $36.93\text{ m}^2$ on the top rotor alone and multiplying blade mass by $\approx 187\times$ via $m \propto s^3$.
-2. **Hardcoded `power_split = 0.6` (`scripts/ode_gate_v13.jl:109`):** Forces 60% of total turbine power (3000 W) onto the top rotor and only 20% (1000 W) onto each expansion rotor, defeating equal multi-rotor load sharing.
-3. **The `n_active == 1` Bug in `power_split` (`src/objective_v10.jl:354`):** Line 354 applied `power_split` unconditionally to `i == 1`, sizing Island 3 for only 3 kW ($0.6 \times 5000\text{ W}$), masking the comparison.
-4. **Boundary Layer Shear Reference & Wake Inversion (`src/objective_v10.jl:92-98, 341-351`):** Wind is horizontal, so boundary layer shear increases wind speed with altitude. The code de-rated wind speed at 9.4 m to 7.91 m/s (via unanchored 50 m reference and inverted wake blocking), multiplying blade mass by $4.4\times$ via $v^{-4.5}$.
+**Verified: the code does size from a solid disc.**
+`BEM.rotor_radius_for_power(P, v, n_lines)` returns `sqrt(P / (Cp · 0.5 · ρ · π · v³))`, i.e. the radius of a solid disc. `objective_v10.jl:369` then sets `span = 0.75 · r_rotor_i · blade_scale_i`. The ring radius never enters: the span depends only on `P_i`, `v_i` and the genome's `blade_scale`. Measured island 1:
+
+| rotor | ring | R_ring | P_i | v_i | r_disc | span_code | A_req | A_code | s_annulus |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 (top) | 10 | 2.6096 | 3000 W | 7.9091 | 2.9684 | **1.9584 m** | 27.68 m² | **36.93 m²** | **1.5128 m** |
+| 2 | 9 | 2.6096 | 1000 W | 7.6284 | 1.8092 | 1.2753 m | 10.28 m² | 22.95 m² | 0.5996 m |
+| 3 | 8 | 2.6096 | 1000 W | 7.9959 | 1.6859 | 1.2645 m | 8.93 m² | 22.74 m² | 0.5236 m |
+
+Total blade mass: **14.6253 kg as coded against 4.8148 kg if the span solved the annulus** — a 3.04× error, not 187×.
+
+**Corrected attribution. The 187× figure blended three separate defects.** Fixing them one at a time, on the top rotor:
+
+| cumulative fix | span | mass/blade | factor |
+|---|---|---|---|
+| code as written | 1.9584 m | 3.1548 kg | — |
+| annulus span sizing (A) | 1.5128 m | 1.4541 kg | **2.17×** |
+| equal power share (B) | 0.8787 m | 0.2850 kg | **5.10×** |
+| freestream inflow (D) | 0.3398 m | 0.0165 kg | **17.30×** |
+| all three | 0.3398 m | 0.0165 kg | **191.5×** |
+
+So the annulus error is the SMALLEST of the three, and the inflow error is the largest. The draft called the annulus error "the dominant flaw". It is not.
+
+**Defect A (disc vs annulus): REAL, 2.17× on the top rotor and 3.04× on the total.** The draft's 0.342 m figure is the span for 5.72 m², which already assumes equal power sharing AND full 11 m/s wind. At the code's own operating point the annulus span is 1.5128 m. The 187× compares the code against a fully-fixed machine, so it is a total, not an attribution.
+
+**Defect B (`power_split = 0.6`): REAL, 5.10× on the top rotor.** All three island 1 rotor rings have the SAME radius (2.6096 m), so equal sharing is the Jamieson-optimal split and there is no geometric justification for giving the top rotor 60%. It is a fixed campaign knob, not a genome gene, so the DE never selected it.
+
+**Defect C (`n_active == 1`): REAL, and it affects BOTH single-rotor islands.** `objective_v10.jl:354` reads `P_i = (i == 1) ? power_split * power_W : ...`, which for `n_active == 1` sizes the only rotor at 0.6 · 5000 = **3000 W**. Confirmed on islands 2 and 3. Fixing it raises that rotor to 5000 W, which makes its blades **4.2× heavier** (span 0.8875 → 1.4367 m). That is correct: the single-rotor islands were under-sized, and the annulus oversizing is what let a 3 kW rotor still deliver about 5.6 kW.
+
+**Defect D (inflow): REAL and the largest, but NOT for the reason given.** `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)` computes `v_ref · (z/h_ref)^0.14`. It **accepts `hub_altitude` and never uses it**, so `h_ref` stays at the unanchored 50.0 m default. At the top ring's 9.40 m that scales 11 m/s down to **8.7051 m/s**: a factor 0.7914 on speed, **2.02× on area**, and **17.3× on top-rotor blade mass**. That baseline, not the wake model, is the dominant contributor.
+- **The shear DIRECTION is correct.** Higher rings do get faster shear wind: the top ring reads 8.7051 m/s against the bottom ring's 7.9959 m/s. The draft's framing that the model "penalized the elevated rotor" via shear is wrong.
+- **The wake blocking is what inverts the net profile.** `blocking_factor = 0.75^(1/3) = 0.908560`, defined in `scripts/compute_seeds.jl` (a campaign knob, not `src/`), converts a 75%-of-power wake assumption into a wind factor. Applied to every rotor except the lowest, it makes the top rotor net-SLOWEST at 7.9091 m/s against the bottom's 7.9959. Under a HORIZONTAL wind on a straight shaft inclined at 30°, the higher rings do sit further downwind, so a de-rate for them is directionally defensible. It is **not** the "wind flows up the shaft" error the draft described. It is however unanchored, and it is what flips the profile.
+
+**Refuted: the slender hub did not force a longer blade.** The draft claims island 1's smaller hub (2.610 m against 3.546 m) forced the larger span. The span does not depend on `r_hub` at all. The measured span ratio decomposes exactly:
+`1.9584 / 1.3314 = 1.4709 = 1.1547 (blocking on r_rotor) × 1.2740 (blade_scale gene 0.8797 / 0.6905)`.
+So the entire difference is the wake de-rate plus the genome's blade scale. The hub radius contributes nothing.
+
+**Also corrected: the total, and the target.**
+- Island 1's total blade mass is **14.6253 kg**, not the draft's 11.537 kg.
+- Jamieson's 1/√N is the right law for DISC rotors and the WRONG test for a TRPT. Ring-anchored blades on a large ring get their radius from the ring, so span scales roughly linearly with area and mass scales with area cubed: total mass falls nearer **1/N²**. Measured at a fixed ring radius of 2.6096 m: N=1 costs 1.1616 kg and N=3 costs 0.1483 kg, a ratio of 0.128, close to 1/7.8. Jamieson's 1/√N would predict 0.671 kg. **A TRPT's multi-rotor mass advantage is therefore much stronger than Jamieson's disc law, and the unit guard must not pin 1/√N.**
+
+**Verified as CORRECT (not a defect).** The sizing-to-dynamics hand-off is consistent. `build_system_from_v10` sets `R_main = r_hub + 0.7·span` and `r_in = max(r_hub − 0.3·span, 0)`, and `main_rotor_swept_area = π(R_main² − r_in²)` is exactly the 70/30 annulus the design intends. Only the SPAN is mis-sized.
 
 **Decided.**
-1. Record complete analysis, mathematical derivation, and implementation blueprint in `docs/agents/handover-part2-multirotor-bem-sizing.md` (and mirrored to user desktop).
-2. Phase 5 implementation plan approved:
-   - Implement `annulus_span_for_power(power_W, v_wind, r_ring, n_lines)` in `src/bem.jl` solving the positive root of $0.4\pi s^2 + 2\pi R_{\text{ring}} s - A_{\text{req}} = 0$.
-   - Repair `power_split` in `src/objective_v10.jl` to default to $1/N$ for multi-rotor, and $1.0$ for `n_active == 1`.
-   - Anchor wind shear to turbine operating height and remove inverted wake starvation.
-   - Enforce unit test guards in `test/test_bem.jl` pinning Jamieson multi-rotor scaling ($A_{\text{total}} \approx \text{const}$, $M_{\text{blades}} \propto 1/\sqrt{N}$).
+1. Record the corrected numbers and attribution here and in the Part 2 handover, which carries a verified-correction banner.
+2. Phase 5 fix direction, in measured order of benefit:
+   - Anchor the inflow. Use the turbine's operating altitude as the shear reference and wire the ignored `hub_altitude` argument, or state `v_rated` explicitly as the rotor-height wind. Re-derive the wake de-rate from wake physics rather than a campaign knob.
+   - Default `power_split` to 1/N for multi-rotor and 1.0 for `n_active == 1`.
+   - Solve the span from the annulus: `annulus_span_for_power(P, v, r_ring, n_lines)` as the positive root of `0.4πs² + 2πR_ring·s − A_req = 0`.
+3. Unit guards in the BEM tests must pin **`A_total ≈ const`** and **total blade mass falling at least as fast as 1/√N, measured nearer 1/N²** — not 1/√N as an equality.
 
 ---
 

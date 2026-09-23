@@ -1,0 +1,96 @@
+
+═══════════════ island_1 ═══════════════
+genome n_lines=3 rings=10 r_hub=2.6096 tether=18.80 n_active(rotors)=3
+blocking_factor = 0.908560  (0.75^(1/3))
+genome blade_scale per rotor = 0.8797, 0.9398, 1.0000
+
+ rot  ring   R_ring   P_i[W]  v_i[m/s]    r_disc span_code     A_req    A_code    s_annu
+   1    10   2.6096   3000.0    7.9091    2.9684    1.9584   27.6809   36.9318    1.5128
+   2     9   2.6096   1000.0    7.6284    1.8092    1.2753   10.2835   22.9548    0.5996
+   3     8   2.6096   1000.0    7.9959    1.6859    1.2645    8.9297   22.7423    0.5236
+
+total blade mass: code 14.6253 kg | annulus-sized 4.8148 kg | ratio 3.04x
+
+── top rotor: cumulative fix, span and per-blade mass ──
+Cp(n_lines=3, tsr=4.1) = 0.35764
+code:                    span 1.9584 m  m/blade 3.1548 kg
++ annulus sizing (A):    span 1.5128 m  m/blade 1.4541 kg   (2.17x)
++ equal power share (B): span 0.8787 m  m/blade 0.2850 kg   (5.10x)
++ freestream wind (D):   span 0.3398 m  m/blade 0.0165 kg   (17.30x)
+total code -> fully fixed: 191.5x lighter per blade
+
+── inflow per rotor (shear then blocking) ──
+  rot 1 ring 10  altitude 9.40 m  shear 8.7051 m/s  wind_factor 0.9086  ->  v 7.9091
+  rot 2 ring  9  altitude 7.26 m  shear 8.3962 m/s  wind_factor 0.9086  ->  v 7.6284
+  rot 3 ring  8  altitude 5.12 m  shear 7.9959 m/s  wind_factor 1.0000  ->  v 7.9959
+  h_ref used = 50.0 m (wind_speed_at_ring's default; the hub_altitude
+  argument is IGNORED).  At 9.40 m that scales 11 m/s to 8.7051 m/s
+  = a factor 0.7914 on speed, 2.0177 on area, ~17.3x on blade mass.
+
+── Jamieson check at 5 kW / 11 m/s (Cp=0.3576) ──
+A_total required = 17.15 m²  (single rotor r_disc = 2.336 m)
+  N=1: A_each 17.15 m² -> annulus span 0.9733 m -> total blade mass 1.1616 kg (3 blades each)
+  N=3: A_each 5.72 m² -> annulus span 0.3398 m -> total blade mass 0.1483 kg (3 blades each)
+  Jamieson: total blade mass should fall as 1/sqrt(N), so N=3 -> 0.671 kg
+
+═══════════════ island_2 ═══════════════
+genome n_lines=3 rings=12 r_hub=3.5510 tether=18.80 n_active(rotors)=1
+blocking_factor = 0.908560  (0.75^(1/3))
+genome blade_scale per rotor = 0.7110
+
+ rot  ring   R_ring   P_i[W]  v_i[m/s]    r_disc span_code     A_req    A_code    s_annu
+   1    12   3.5510   3000.0    8.7051    2.5707    1.3709   20.7607   32.9488    0.8862
+
+total blade mass: code 3.2463 kg | annulus-sized 0.8771 kg | ratio 3.70x
+
+── top rotor: cumulative fix, span and per-blade mass ──
+Cp(n_lines=3, tsr=4.1) = 0.35764
+code:                    span 1.3709 m  m/blade 1.0821 kg
++ annulus sizing (A):    span 0.8862 m  m/blade 0.2924 kg   (3.70x)
++ equal power share (B): span 1.4348 m  m/blade 1.2407 kg   (0.24x)
++ freestream wind (D):   span 0.7379 m  m/blade 0.1688 kg   (7.35x)
+total code -> fully fixed: 6.4x lighter per blade
+
+── inflow per rotor (shear then blocking) ──
+  rot 1 ring 12  altitude 9.40 m  shear 8.7051 m/s  wind_factor 1.0000  ->  v 8.7051
+  h_ref used = 50.0 m (wind_speed_at_ring's default; the hub_altitude
+  argument is IGNORED).  At 9.40 m that scales 11 m/s to 8.7051 m/s
+  = a factor 0.7914 on speed, 2.0177 on area, ~7.4x on blade mass.
+
+── Jamieson check at 5 kW / 11 m/s (Cp=0.3576) ──
+A_total required = 17.15 m²  (single rotor r_disc = 2.336 m)
+  N=1: A_each 17.15 m² -> annulus span 0.7379 m -> total blade mass 0.5063 kg (3 blades each)
+  N=3: A_each 5.72 m² -> annulus span 0.2526 m -> total blade mass 0.0609 kg (3 blades each)
+  Jamieson: total blade mass should fall as 1/sqrt(N), so N=3 -> 0.292 kg
+
+═══════════════ island_3 ═══════════════
+genome n_lines=3 rings=11 r_hub=3.5457 tether=18.80 n_active(rotors)=1
+blocking_factor = 0.908560  (0.75^(1/3))
+genome blade_scale per rotor = 0.6905
+
+ rot  ring   R_ring   P_i[W]  v_i[m/s]    r_disc span_code     A_req    A_code    s_annu
+   1    11   3.5457   3000.0    8.7051    2.5707    1.3314   20.7607   31.8879    0.8875
+
+total blade mass: code 2.9735 kg | annulus-sized 0.8807 kg | ratio 3.38x
+
+── top rotor: cumulative fix, span and per-blade mass ──
+Cp(n_lines=3, tsr=4.1) = 0.35764
+code:                    span 1.3314 m  m/blade 0.9912 kg
++ annulus sizing (A):    span 0.8875 m  m/blade 0.2936 kg   (3.38x)
++ equal power share (B): span 1.4367 m  m/blade 1.2455 kg   (0.24x)
++ freestream wind (D):   span 0.7390 m  m/blade 0.1695 kg   (7.35x)
+total code -> fully fixed: 5.8x lighter per blade
+
+── inflow per rotor (shear then blocking) ──
+  rot 1 ring 11  altitude 9.40 m  shear 8.7051 m/s  wind_factor 1.0000  ->  v 8.7051
+  h_ref used = 50.0 m (wind_speed_at_ring's default; the hub_altitude
+  argument is IGNORED).  At 9.40 m that scales 11 m/s to 8.7051 m/s
+  = a factor 0.7914 on speed, 2.0177 on area, ~7.3x on blade mass.
+
+── Jamieson check at 5 kW / 11 m/s (Cp=0.3576) ──
+A_total required = 17.15 m²  (single rotor r_disc = 2.336 m)
+  N=1: A_each 17.15 m² -> annulus span 0.7390 m -> total blade mass 0.5084 kg (3 blades each)
+  N=3: A_each 5.72 m² -> annulus span 0.2530 m -> total blade mass 0.0612 kg (3 blades each)
+  Jamieson: total blade mass should fall as 1/sqrt(N), so N=3 -> 0.294 kg
+
+=== done ===

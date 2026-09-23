@@ -9,6 +9,35 @@
 
 ---
 
+> ## ⚠ VERIFIED CORRECTION (2026-09-23, laptop instance)
+>
+> The four defects below are **all real**, and the fix directions stand. The
+> **magnitudes and the causation do not.** Independently re-measured with
+> `scratch/probe_bem_sizing_audit.jl`; the full corrected record is in
+> `DECISIONS.md` [2026-09-23] "BEM multi-rotor sizing: three real defects, but the
+> draft's attribution is wrong".
+>
+> | claim in this document | verified |
+> |---|---|
+> | disc-vs-annulus error multiplies blade mass by **187×** | **2.17×** on the top rotor, **3.04×** on the total. The 187× is the product of all three sizing defects, not one |
+> | disc-vs-annulus is "the dominant flaw" | it is the **smallest** of the three. Measured cumulative factors: annulus 2.17×, equal power share 5.10×, inflow 17.30× |
+> | the **slender hub forced** the longer blade | **refuted.** `span = 0.75·r_disc·λ` does not reference `r_hub`. The island 1 to island 3 span ratio decomposes exactly: `1.9584/1.3314 = 1.4709 = 1.1547 (wake de-rate) × 1.2740 (blade_scale gene)` |
+> | the shear model "penalized the elevated rotor" | **wrong direction.** Shear is correct: the top ring reads 8.7051 m/s against the bottom ring's 7.9959. What inverts the net profile is the **wake blocking**, which makes the top rotor net-slowest at 7.9091 |
+> | the fix is "anchor shear / remove inverted wake starvation" | the dominant inflow error is the **unanchored `h_ref = 50 m`**: `wind_speed_at_ring` accepts `hub_altitude` and never uses it, scaling 11 m/s to 8.7051 at 9.4 m |
+> | island 1 total blade mass **11.537 kg** | **14.6253 kg** |
+> | the guard should pin **M ∝ 1/√N** (0.671 kg) | **wrong law for a TRPT.** Jamieson's 1/√N is for DISC rotors. Ring-anchored blades get their radius from the ring, so total mass falls nearer **1/N²**. Measured at a fixed 2.6096 m ring: N=1 gives 1.1616 kg, N=3 gives 0.1483 kg, a ratio of 0.128 |
+>
+> Also verified CORRECT, not a defect: the sizing-to-dynamics hand-off.
+> `build_system_from_v10` sets `R_main = r_hub + 0.7·span` and
+> `r_in = max(r_hub − 0.3·span, 0)`, and `main_rotor_swept_area = π(R_main² − r_in²)`
+> is exactly the intended 70/30 annulus. **Only the span is mis-sized.**
+>
+> Also newly measured: **defect 3 (`n_active == 1`) affects BOTH single-rotor
+> islands.** Islands 2 and 3 were sized at 3000 W, and fixing it makes their blades
+> **4.2× heavier** (span 0.8875 → 1.4367 m). That is correct: they were under-sized.
+
+---
+
 ## 1. Executive Summary
 
 This handover documents the discovery, root cause analysis, mathematical derivation, and implementation roadmap for correcting Blade Element Momentum (BEM) rotor sizing across multi-rotor TRPT systems in `KiteTurbineDynamics.jl`.
