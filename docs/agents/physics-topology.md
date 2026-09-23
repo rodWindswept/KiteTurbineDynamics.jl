@@ -155,6 +155,15 @@ were single numbers standing in for this radius-dependent geometry, and both are
 removed.  The single authority in code is
 `bridle_bearing_offset(r_top)` in `src/initialization.jl`.
 
+### 3.1.1 One ring plane: bridle and TRPT attachments share the ring basis (2026-09-22, Rod)
+
+A rigid ring has **ONE plane in 3-space**. Bridle attachment points on the hub ring
+must use the exact same ring orientation basis (`pp1_tilt, pp2_tilt`) as the TRPT
+lines attaching to that ring. The legacy exception forcing bridles into the shaft frame
+(`is_bridle ? shaft : tilt`) was an unphysical kinematic fiction that created an artificial
+out-of-plane warping wrench whenever the ring tilted. It is **permanently retired**
+(`DECISIONS.md` [2026-09-22]).
+
 ### 3.2 The back line is an altitude limiter, not a load path
 
 In the field the backline was partially elasticated (elastic sewn into the dyneema

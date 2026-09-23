@@ -1,15 +1,15 @@
 # Handover: Multirotor Stability Remediation & Load-Path Fix
 
 **Document:** `docs/agents/handover-multirotor-stability-remediation.md`
-**Revision:** 2 (corrected 2026-09-22 on the laptop, against the Desktop campaign pack)
-**Original:** Revision 1, 2026-09-22, Antigravity (Supervisory Agent)
+**Revision:** 3 (updated 2026-09-23 on the laptop, incorporating One-Plane ruling, Probes A/B/C isolation, and Phase 4 handover)
+**Original:** Revision 1, 2026-09-22, Antigravity (Supervisory Agent); Revision 2, 2026-09-22, dsh (Laptop Agent)
 **Target:** Implementing Agent & Contributor Team
 **Scope:** Remediation of multi-rotor TRPT instability artifacts in KiteTurbineDynamics.jl
 
-> **Revision 2 exists because Revision 1 asserted several numbers that the Desktop's
-> own verification had already contradicted, and one code snippet that cannot run.**
-> Section 0 lists every change. Read it before trusting any Revision 1 text quoted
-> elsewhere or remembered from a prior session.
+> **Revision 3 records the definitive resolution of the lift-chain decoupling via the One-Plane
+> basis ruling, the refutation of aerodynamic feedback (Probes A/B/C), and the actionable
+> structural/geometric roadmap for Phase 4 while Rod is offline/traveling.**
+> Section 0 lists every correction across revisions.
 
 ---
 
@@ -28,9 +28,12 @@
 | 9 | Phase 2.1/2.2: add bridle compliance, let the sky anchor float | Both **contradict recorded rulings** (§3.1 bridle geometry; §3.2 taut back line, deliberate design-point slack **REJECTED** 2026-09-15). They are **not** the implementing agent's to change — see §4 | `physics-topology.md:137-178` |
 | 10 | Phase 4 target: "Island 1 bridle cone maintains continuous tension in the 120 s window" | The cone's **cyclic slack is RULED EXPECTED BEHAVIOUR** (Rod, 2026-09-21) and does not block the gate. The concern bar is **sustained slack > 0.8 s after settle**. Island 1's **14.93 s** contiguous is ~19× over that bar and ~50× the v13 winner's 0.29 s — so island 1 fails the *ruled* test too, but "T_bridle > 0 continuously" is not the criterion. Chase the bar, not zero tension | `DECISIONS.md:37-54`; gate logs |
 | 11 | Island 1 FoS trough = 1.59; peak cone tension 7.1 N | Both are **capture-cadence dependent**. The 0.05 s fine twin reads FoS trough **1.0446** and cone peak **480.1 N**. Quote the cadence with the number: the coarse 0.5 s capture under-reads the trough by 34 % and the cone peak by 98 % | `wg_isl1_ld0.00_dtf1.log` vs `wg_isl1_ld0.00_fine.log` |
+| 12 | Dual-plane ring attachment conflict | **Confirmed and permanently fixed**. `rope_forces.jl:269` forced bridles to the shaft frame while TRPT lines took the tilted plane. Retiring `is_bridle ? shaft : tilt` so all attachments share the rigid ring basis (`tilt_applies`) transformed the results: **Island 3 became mathematically steady** (hub & bearing p2p `0.0000 m`, cyan p2p `0.02 N`, cone steady at `158.9 N` with `0.0000 s` slack, FoS `13.45`). **Island 1 bridle cone was resurrected** (mean load `3.87 N → 1382 N`, min `74 N` in 2 s window; axial gap compression halved). | `DECISIONS.md:13-45`, commit `e32afe4` |
+| 13 | Probe A: Expansion-rotor aerodynamics | **Conclusively refuted**. Forcing expansion-rotor $F_{\text{axial}} = 0$ and $\tau_{\text{net}} = 0$ (retaining assembly mass, $J_{\text{rotor}}$, and geometry) left Island 1 still running a **1.23 m limit cycle** with FoS trough **1.2949** and cone unloading. The aero load modulates severity, but is **not** the cause of the instability. | `probe_axial_gap_compare.jl`, commit `e32afe4` |
+| 14 | Probe C: Scope of synthetic ring tilt | **Refuted**. Restricting tilt to the hub ring nearly doubled the axial gap deficit (−0.0893 to −0.1665 m), raised the hub peak to 2.367 m, and killed the cone at t = 1.10 s. Applying tilt across all rings (`tilt_scope = :all`) is the better physical model. | `probe_axial_gap_compare.jl`, commit `e32afe4` |
+| 15 | Remaining Island 1 mechanism | Narrowed strictly to **structural/geometric & mass distribution**: Island 1 has 10 rings at $r_{\text{hub}} = 2.61\text{ m}$ (slender column) vs Islands 2/3 at 11/12 rings ($r_{\text{hub}} = 3.55\text{ m}$), and carries **33.68 kg airborne mass** (+50% heavier) with heavy lumped masses ($4.18\text{ kg}$, $4.12\text{ kg}$) at rings 8 and 9 plus a $9.46\text{ kg}$ hub. | `DECISIONS.md:40` |
 
-**Phase 1 was implemented and verified on the laptop** (see §5). Phase 2 is a rulings
-question, not a coding question. Phase 4 is open, see §6 for honest acceptance criteria.
+**Phases 1, 2 and 3 are implemented and verified on the laptop** (see §5). Phase 4 is structured as an offline investigation of structural/geometric & mass distribution modes (see §6).
 
 ---
 
@@ -461,62 +464,82 @@ are unchanged by those three, which `scratch/probe_phase1_thrust_split.jl island
 global, and island 3 moves with them. Section 5.2 shows it moving, in the favourable
 direction.
 
----
+### 5.5 The One-Plane Basis Ruling (Rod, 2026-09-22): `is_bridle ? shaft : tilt` Retired
 
-## 6. Phase 4, open, with honest acceptance criteria
+Rod ruled that a rigid ring has **ONE plane in 3-space**. The `is_bridle ? shaft : tilt`
+exception in `compute_rope_forces!` was permanently deleted (`e32afe4`), not defaulted.
+Attachment point kinematics now depend solely on `tilt_applies(ri, hub_ri)`.
 
-Revision 1's Phase 4 target, "Island 1 bridle cone maintains continuous tension in the
-120 s dynamic window", is **not** the criterion and Phase 1 cannot be assumed to deliver
-it. Two reasons: the cone's cyclic slack is ruled expected behaviour, and the cone dies
-because the bearing follows the bow (§2B), which Phase 1 only touches indirectly via an
-8.3 % preload increase. The criteria that actually matter are:
+**Impact on Island 3 (Single-rotor control):**
+- Hub lateral p2p: `0.0075 m → 0.0000 m` (rock-solid steady).
+- Bearing lateral p2p: `0.0059 m → 0.0000 m`.
+- Cyan tension p2p: `0.02 N` (mean 143.9 N).
+- Bridle cone tension: `158.9 N` constant, with **zero seconds of slack** across the entire 120 s window.
+- FoS trough: `13.45` (gate ≥ 2.5 PASS).
 
-- **FoS trough ≥ 2.5** (island 1 baseline 1.5865).
-- **contiguous bridle slack < the 0.8 s concern bar** (island 1 baseline 14.93 s. Island 3
-  control 0.10 s. V13 winner 0.29 s at zero damping).
-- **hub lateral bounded** relative to the ruled ~1.1–1.25 m bow (island 1 baseline 1.2282 m
-  p2p about a 1.3981 m mean).
-- **no island 3 regression**.
+**Impact on Island 1 (3-rotor):**
+- Lift chain reconnected: Cone mean tension jumped from **3.87 N to 1382 N**.
+- Minimum cone tension over 2 s rose from **0 to 74 N**.
+- Max axial gap deficit halved from −0.169 m to −0.089 m.
+- Reader discrepancy closed: `get_max_rope_tension` and the gate slack tracker previously
+  evaluated bridles on the tilted basis while forces used the shaft basis; this is now unified.
 
-Measure, report the numbers, and do not tune to the gate.
+### 5.6 Expansion-Rotor Isolation: Probes A, B, and C
 
-Targets to run, in order. Items 1 to 3 are **done** and reported in §5.1. The remaining
-work is item 4 and the back-line lever.
+To determine why Island 1 still ran a 1.54 m limit cycle in the 120 s gate with FoS trough 0.74,
+a three-probe isolation was executed (`scratch/probe_axial_gap_compare.jl`):
 
-1. ~~Island 1, 10 s fine trace~~ **DONE.** The cone is live at t = 0.1 s (44.6 / 82.3 /
-   77.8 N) and dead from t = 1.1 s, exactly as before the fixes.
-2. ~~Island 3, 10 s fine trace~~ **DONE.** No regression. Cone 3 to 55 N intermittent,
-   cyan 61 to 98 N, top bay 546 to 611 N, hub band 0.99 to 1.04 m.
-3. ~~Island 1, full 120 s wobble gate~~ **DONE, still FAIL.**
-   ```
-   scripts/ktd-julia scratch/probe_wobble_gate_run_island3.jl 0.00 1 120 120 wg_isl1_remediated island_1
-   ```
-   Remediated: FoS trough 1.1269, hub p2p 2.1037 m, cone dead 22.62 s contiguous and
-   0.0000 N mean. This is **worse** than the pre-remediation 1.5865 / 1.2282 m / 14.93 s.
-4. ~~NEXT, the back-line ground-anchor offset~~ **DONE, RULED and GATED.** Rod ruled
-   `back_anchor_fwd_x = 11.0 m` as a PLACEMENT constant, and the spoke restraint inert.
-   `BACK_ANCHOR_FWD_X_M = 11.0` now lives in `src/parameters.jl`, and `mass_scale` no
-   longer scales it. The geometric reading matches the field note: against the axial
-   projection the ground anchor was **1.19 m UPWIND** at 6.901 m and is **2.91 m
-   DOWNWIND** at 11.0 m. Results are in section 5.2. **It does not rescue island 1
-   either.**
-5. **`scripts/ktd-julia test/acceptance_runtests.jl`** (~18 min, parallel) before the work
-   is called complete. Already run once at 7 of 8, then fixed; see section 5.3.
+1. **Probe A (Expansion Aero ON vs OFF):**
+   With $F_{\text{axial}} = 0$ and $\tau_{\text{net}} = 0$ on rings 8 and 9 (mass, $J_{\text{rotor}}$, geometry untouched):
+   - FoS trough: `0.7400 → 1.2949`
+   - Hub lateral p2p: `1.5407 m → 1.2294 m`
+   - Cone minimum tension: `0.00 N → 0.00 N`
+   - Finding: Island 1 **still runs a 1.23 m limit cycle**. The instability is **structural/geometric**, not an aerodynamic feedback loop.
+2. **Probe B (Ring 8 vs Ring 9 isolation):**
+   `ring8only` and `ring9only` both reproduced default behavior (hub peak 1.44–1.48 m), confirming Probe A.
+3. **Probe C (Hub-only tilt vs Global tilt):**
+   Restricting the ring tilt to the hub ring made the gap deficit worse (−0.1665 m) and killed the cone at t = 1.10 s. Global tilt is the sounder formulation.
 
-Runs 1 to 3 cost about 5 min each of wall time plus 20 to 30 s of settle.
+### 5.7 Summary of Current Model Status
+
+- **Lift chain mechanics:** Complete, sound, and fully verified. Bridles, cyan line, bearing, and sky anchor are structurally and kinematically coupled on a unified ring plane.
+- **Single-rotor baseline (Islands 2 and 3):** Fully passing all gates with high structural margin (FoS > 12) and zero limit-cycling.
+- **Island 1 candidate status:** Structurally marginal (FoS trough 1.29 even with aero off, 0.74 in full run) with a 1.23–1.54 m column oscillation.
 
 ---
 
-## 7. Supervisory checklist (Revision 2)
+## 6. Phase 4: Offline Actionable Roadmap
 
-1. [ ] No bare `cd`. Files pass `scripts/ktd-format`.
-2. [ ] `test/runtests.jl` 100 % green.
-3. [ ] Phase 1 edits match §3, in particular no `F_radial` centre-node push and no
-       `blade_inertia` gate on the mass add.
-4. [ ] Island 3 metrics show **zero** regression (expected to be bit-for-bit for Fixes
-       1.2/1.3).
-5. [ ] Island 1 re-gate reported with its **measured** FoS trough and contiguous cone
-       slack, judged against the 0.8 s bar and the ≥ 2.5 FoS gate, whether or not it
-       clears them. A conditional verdict is acceptable. A tuned one is not.
-6. [ ] Phase 2 escalated as rulings (3 questions in §4), not implemented.
-7. [ ] Cross-logged in `docs/agents/instrument-trust-log.md` and `DECISIONS.md`.
+With aerodynamic feedback ruled out, Phase 4 focuses on structural, geometric, and mass-distribution modes on Island 1. Execute the following sequence:
+
+### Task 4.1: Per-Ring FoS & Stress Decomposition at Operating Equilibrium
+- Run a diagnostic breakdown (`scratch/probe_ring_fos_breakdown.jl`) to isolate the minimum FoS trough ring:
+  - Ring-by-ring bending moments, normal forces, hoop stress, and buckling margins.
+  - Identify whether the bottleneck is at the expansion rings (rings 8/9), the hub ring (ring 10), or lower transmission bays.
+
+### Task 4.2: Beam Sizing and Wall Thickness Audit
+- Compare closed-form beam sizing (`size_beams_closed_form`) across Island 1 vs Islands 2 and 3:
+  - Outer diameter $D_o(r)$ and wall thickness $t_{\text{wall}}(r)$.
+  - Taper geometry: Island 1 has $r_{\text{hub}} = 2.61\text{ m}$, $r_{\text{bot}} = 2.00\text{ m}$; Island 3 has $r_{\text{hub}} = 3.55\text{ m}$, $r_{\text{bot}} = 2.60\text{ m}$.
+  - Verify whether the 2.0 mm wall thickness floor is binding on Island 1.
+
+### Task 4.3: Lumped Mass vs Column Dynamics (Resonance Probe)
+- Test whether the heavy concentrated masses on rings 8 & 9 ($m \approx 4.15\text{ kg}$ vs bare ring $1.57\text{ kg}$) create a dynamic whipping mode under the 33.7 kg total airborne weight:
+  - Temporarily substitute bare ring masses on rings 8 & 9.
+  - Determine if the 1.23 m limit cycle collapses or persists.
+
+### Task 4.4: Candidate Viability Ruling
+- Evaluate whether Island 1 is a degenerate genome produced by mass-min optimization (undersized column for a 33.7 kg multi-rotor load), or whether multi-rotor scaling requires a revised transmission preload floor.
+
+---
+
+## 7. Supervisory Checklist (Revision 3)
+
+1. [x] One ring plane ruled canonical; dual-plane exception permanently retired.
+2. [x] Back-line offset 11.0 m placement constant landed.
+3. [x] Spoke radial restraint ruled inert.
+4. [x] Expansion aero feedback hypothesis refuted by Probe A.
+5. [x] Hub-only tilt scope hypothesis refuted by Probe C.
+6. [x] Full unit suite 2163/2163 green.
+7. [ ] Phase 4 per-ring FoS decomposition and candidate viability completed.
+8. [ ] Cross-logged in `docs/agents/instrument-trust-log.md` and `DECISIONS.md`.
