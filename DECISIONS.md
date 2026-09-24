@@ -10,6 +10,34 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-24] The eight rulings that lived only in harness records, landed
+
+**Context.** The record audit asked where this project's decisions live. Five canonical records exist: `DECISIONS.md`, `docs/agents/physics-topology.md`, `docs/adr/`, `docs/agents/instrument-trust-log.md`, and `docs/validation/physics-validation-ledger.md`. A harvest of the Antigravity brain transcripts and the dsh session files found **eight rulings that were made in those sessions and reached no canonical record**. Report: `docs/reports/2026-09-24-unlanded-rulings.md`. Rod ruled on 2026-09-24: land all eight, and add the missing detail where an existing entry already covers part of a ruling.
+
+**Decided (Rod, 2026-09-24).**
+
+1. **Rope break is a PER-LINE criterion** (Rod, 2026-09-16). An overloaded line breaks alone, on its own sub-segments. The bridle cone and the cyan line also trigger `any_broken`, because a severed lift chain disqualifies the run. The code behaves this way already: `src/rope_forces.jl:326-343` keeps a separate accumulator per bay and line (`line_pathlen`, `line_restlen`), landed as `ea78651`. Before that fix the tested strain was the bay AVERAGE, so an overloaded line was diluted by its `n_lines − 1` neighbours.
+
+2. **The 5 kW back line is 3 mm Dyneema, `EA = 100 GPa × π(0.003)²/4 ≈ 707 kN`, and the value is pinned AFTER `mass_scale`.** `parameters.jl:638` scales it by `geom_scale` with the comment "stiffness scales with cross-section". Unpinned, the value arrives at 1.29 MN, 1.8× the spec, because the bungee stiffness inherits the same scaling. Rationale: the back line is a specified real line, not a dimension to be scaled. **Defect found while landing this: the code comment names `params_5kw_188` as the pin's home, and that name exists nowhere in `src/`. The only definitions are three duplicate copies in scratch probes.** The rule is recorded; its implementation site is not. See ruling 8.
+
+3. **`get_max_rope_tension` reports a signed spring-plus-damper read, over TRPT sub-segments only.** It is not a load. It does not bound the bridle cone. See the instrument-trust-log row of the same date, which also retires the "damper overstates load 2.6×" claim.
+
+4. **The 0.80 m soft travel of the back line is the physical bungee pack.** The real line is ≈3 mm Dyneema with **8 × 30 cm lengths of 4 mm bungee sewn in series**, each sitting at 40 cm at full tension and contracting 10 cm as tension drops, so 8 × 10 cm = **0.80 m** of soft travel, and the modelled `k_soft = 320/0.80 = 400 N/m` follows from the pack. The `[2026-09-20]` entry records the parameter; this entry records its physical origin, which was missing. Two discrepancies travel with it, neither reconciled: the handover measures `k_soft ≈ 439 N/m` off-design against the code's 400 N/m, and Rod describes about **2 m** of soft take-up below the normal maximum extension against the modelled 0.80 m.
+
+5. **The 3.5 % break strain transfers to the bridle cone, and its "diameter independence" justification is a FALLACY and is retracted.** In external force equilibrium, `T_line ≈ F_ext/n_lines` is set by aerodynamics and mass, so the strain `ε = T/(E·π(d/2)²) ∝ 1/d²` does depend on diameter. The strain value `ROPE_BREAK_STRAIN = 0.035` stands. The reason once given for its transfer to the cone does not stand.
+
+6. **The 5 kW campaign is re-seeded at `L/r = 1.5`, one gene, not a knob sweep** (Rod, 2026-09-16). It is the clean floor fix. `P_end` 5.1465 kW, `FoS` 2.599, chain connected, `04a31bf`. The code already runs this seed. The missing part is the decision itself: the `[2026-09-16]` entries refer to "the re-seeded machine" but none records the choice. Accepted cost: the re-seed moves the pinned realisability fixture.
+
+7. **The bridle-cone tension bar is NOT an absolute floor** (RULED, Rod, 2026-09-24). A flat 50 N requirement is too high for a lightweight, bowed turbine: the topmost bridle may legitimately sit well below it. The cone must be tensile, **to the extent that its tension approximates the force balance demanded by the bearing and by the topmost-rotor attachments.** No 50 N bridle constant exists in `src/` or `test/`. The measured slack gate reads `T < 5.0` N on TRPT sub-segments (`src/rope_forces.jl:190`), and the wobble-gate criterion of `[2026-09-21]` is `T < 1.0` N for `Δt > 0.8 s`, with island 1's cone carrying a window minimum of about 110 N in total. The derived bar is queued in the instrument trust log.
+
+8. **Exactly ONE definition of the campaign-seed cases.** A duplicated harness drifts, and its typo then masquerades as physics. A measured-number test pins a frozen genome (`SEED_LR20`), so the duplicate is not merely untidy.
+
+**Consequences.** Every ruling above now has a named record. Three of them (2, 3, 8) add trust-log or ledger entries for the instrument and stiffness classes. Number 7 creates a queued gate, because the bar it removes must be replaced by a derived one. The four rulings the code already implements need no code change; their value is that a later reader can now see that they were decided.
+
+**Status:** Active.
+
+---
+
 ## [2026-09-24] The back line: structure and condition are two questions. The top-ring exclusion is retired.
 
 **Context.** The record audit asked which statement stands where `physics-topology.md` section 3.2 heads the back line "an altitude limiter, not a load path", while the ruling inside that same section says the back line is TAUT at the design point and carries residual tension. `CONTEXT.md` repeated the first phrase in its diagram and its glossary. A reader could take one statement as a denial of the other. The same audit found the 2026-08-22 top-ring exclusion recorded as current in the topology document and still enforced in the code, six weeks after the 2026-09-12 rule that supersedes it.
