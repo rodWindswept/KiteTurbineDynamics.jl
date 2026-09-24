@@ -134,6 +134,69 @@ function rotor_radius_for_power(
     return sqrt(max(power_W / denom, 1e-8))
 end
 
-export cp_bem, ct_bem, rotor_radius_for_power
+# ══════════════════════════════════════════════════════════
+# Ring annulus blade span for a target power (DECISIONS [2026-08-20])
+# ══════════════════════════════════════════════════════════
+
+"""
+    annulus_area(r_ring::Float64, span::Float64; bank_deg::Float64=0.0, eta_out::Float64=0.7, eta_in::Float64=0.3) -> Float64
+
+Swept annulus area (m²) for a ring of radius `r_ring` and blade span `span`.
+Follows the 70/30 ring-anchored geometry:
+  r_out = r_ring + eta_out · span · cos(bank)
+  r_in  = max(r_ring - eta_in · span · cos(bank), 0.0)
+  A = π(r_out² - r_in²)
+"""
+function annulus_area(
+    r_ring::Float64, span::Float64;
+    bank_deg::Float64=0.0, eta_out::Float64=0.7, eta_in::Float64=0.3,
+)::Float64
+    cos_b = cosd(bank_deg)
+    r_out = r_ring + eta_out * span * cos_b
+    r_in = max(r_ring - eta_in * span * cos_b, 0.0)
+    return π * max(r_out^2 - r_in^2, 0.0)
+end
+
+"""
+    annulus_span_for_power(power_W, v_wind, r_ring, n_lines; tsr=4.1, bank_deg=0.0, eta_out=0.7, eta_in=0.3) -> Float64
+
+Solve the exact blade span `s` (m) for a ring-anchored annulus of radius `r_ring`
+to produce `power_W` at wind speed `v_wind` with `n_lines` lines.
+
+Uses the 70/30 ring-anchored annulus model (DECISIONS [2026-08-20], references/MULTI ROTOR IDEAL MASS by PJ.txt):
+  r_out = r_ring + eta_out · s · cos(bank)
+  r_in  = max(r_ring - eta_in · s · cos(bank), 0.0)
+  A_req = power_W / (Cp · ½ρ · v_wind³)
+
+The positive physical root of the quadratic equation:
+  (eta_out² - eta_in²)·π·s_proj² + 2π·r_ring·s_proj - A_req = 0
+yields the projected span s_proj, and the actual blade span is s = s_proj / cos(bank).
+"""
+function annulus_span_for_power(
+    power_W::Float64, v_wind::Float64, r_ring::Float64, n_lines::Int;
+    tsr::Float64=4.1, bank_deg::Float64=0.0, eta_out::Float64=0.7, eta_in::Float64=0.3,
+)::Float64
+    Cp = cp_bem(n_lines, tsr)
+    denom = Cp * 0.5 * ρ_AIR * v_wind^3
+    A_req = max(power_W / max(denom, 1e-6), 1e-8)
+
+    # Quadratic coefficients for s_proj = s * cos(bank)
+    a = (eta_out^2 - eta_in^2) * π
+    b = 2.0 * π * r_ring * (eta_out + eta_in)
+    c = -A_req
+
+    if abs(a) < 1e-12
+        s_proj = A_req / max(b, 1e-6)
+    else
+        discriminant = max(b^2 - 4.0 * a * c, 0.0)
+        s_proj = (-b + sqrt(discriminant)) / (2.0 * a)
+    end
+
+    cos_bank = max(cosd(bank_deg), 0.1)
+    s = s_proj / cos_bank
+    return max(s, 0.05)  # 5 cm minimum manufacturability span floor
+end
+
+export cp_bem, ct_bem, rotor_radius_for_power, annulus_area, annulus_span_for_power
 
 end  # module BEM
