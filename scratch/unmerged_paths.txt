@@ -1,0 +1,12 @@
+docs/outreach/figures/chart-power-curve.pdf
+docs/outreach/figures/chart-power-curve.png
+docs/outreach/figures/chart-power-curve.tex
+docs/outreach/figures/design-cards.pdf
+docs/outreach/figures/design-cards.png
+docs/outreach/figures/design-cards.tex
+docs/outreach/figures/design-landscape-scatter.pdf
+docs/outreach/figures/design-landscape-scatter.png
+docs/outreach/figures/design-landscape-scatter.tex
+docs/outreach/figures/fig2-fos-vs-power.pdf
+docs/outreach/figures/fig2-fos-vs-power.tex
+docs/outreach/figures/fig2.png
