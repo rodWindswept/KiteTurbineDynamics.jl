@@ -166,6 +166,13 @@ out-of-plane warping wrench whenever the ring tilted. It is **permanently retire
 
 ### 3.2 The back line is an altitude limiter, not a load path
 
+**Two statements hold at once, and they answer different questions (RULED, Rod, 2026-09-24).**
+
+- **Structure.** The back line is a **height limiter**. It sets the distance of the sky hook from the back-line anchor. It carries none of the active lifting or tension-enhancing support of the TRPT elements, so it is **not a load path**.
+- **Condition.** It must stay **taut, within its elastic range**, at the design point. A sustained slack back line is not clean operation. That is why the ruling below rejects a deliberate design-point slack allowance.
+
+Both statements are correct. The heading states the structure role, and the ruling below states the operating condition. Do not read one as a denial of the other.
+
 In the field the backline was partially elasticated (elastic sewn into the dyneema
 at several points): it takes up slack to stay tidy and only tightens hard once
 pulled to the dyneema length. It exists to **restrict the altitude of the sky
@@ -226,11 +233,13 @@ rotor, including the topmost/main rotor. All rotors should support it.**
 the banked-blade expansion model REPLACES the cp/ct disc model at that ring.**
 Never apply both models to the same annulus.
 
-That error was the original defect (2026-08-22), and it caused the hub exclusion.
+That error was the original defect (2026-08-22), and it caused the top-ring exclusion.
 The correct resolution is **replace, not exclude**.
 
-This supersedes the 2026-08-22 hub exclusion, which `CONTEXT.md` still records as
-current and code still enforces. Known consequences to handle when changing it:
+**RULED (Rod, 2026-09-24): the top-ring exclusion is retired everywhere, the code
+included.** Any rotor may be an expansion rotor, the topmost rotor included.
+`CONTEXT.md` records the 2026-09-12 rule as the current one. The code does not yet.
+These sites still enforce the exclusion, and they must change:
 
 - `expansion_params_from_rotors` (`builders_util.jl:90`) silently `continue`s on
   the top ring. That is a **silent no-op**, not an error. The same guard appears
@@ -242,6 +251,14 @@ current and code still enforces. Known consequences to handle when changing it:
 - `expansion_airborne_mass` books the main rotor as `p.n_blades · p.m_blade`
   **plus** the sum of expansion assemblies (`expansion_analysis.jl:59-62`). We
   must not charge a banked top rotor twice.
+
+This is a physics change. It needs its own test and an acceptance run before it
+lands, per `AGENTS.md`. Until then, the exclusion is retired by ruling and
+still present in the code.
+
+**Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**. Do not
+write "hub rotor". The word "hub" stays valid for the ring and the node, and never
+for a rotor.
 
 ### 4.1 Multi-rotor sizing: the span comes from the ring annulus (DERIVED, not validated)
 

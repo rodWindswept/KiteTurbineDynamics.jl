@@ -10,6 +10,26 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-24] The back line: structure and condition are two questions. The top-ring exclusion is retired.
+
+**Context.** The record audit asked which statement stands where `physics-topology.md` section 3.2 heads the back line "an altitude limiter, not a load path", while the ruling inside that same section says the back line is TAUT at the design point and carries residual tension. `CONTEXT.md` repeated the first phrase in its diagram and its glossary. A reader could take one statement as a denial of the other. The same audit found the 2026-08-22 top-ring exclusion recorded as current in the topology document and still enforced in the code, six weeks after the 2026-09-12 rule that supersedes it.
+
+**Decided (Rod, 2026-09-24).**
+
+1. **Both statements about the back line are correct, and they answer different questions.** *Structure:* the back line is a **height limiter**. It sets the distance of the sky hook from the back-line anchor. It carries none of the active lifting or tension-enhancing support of the TRPT elements, so it is **not a load path**. *Condition:* it must stay **taut, within its elastic range, at the design point**, for clean operation of the kite turbine. Tautness is required. Load-path membership is not implied.
+2. **The top-ring exclusion is retired everywhere, the code included.** Any rotor may be an expansion rotor, the topmost rotor included. The code sites that still enforce the exclusion are listed in section 4 of `physics-topology.md`.
+3. **Terminology.** The topmost rotor is the **main rotor**. Do not write "hub rotor". "Hub" stays valid for the ring and the node, never for a rotor.
+
+**Alternatives considered.** Picking one statement about the back line and deleting the other. Rejected: each is true on its own axis, and deleting the condition statement would retire the 2026-09-15 ruling by accident. Keeping the exclusion as a code-only guard. Rejected: the 2026-09-12 ruling already replaced it, and a silent `continue` is the defect class the topology document warns about.
+
+**Why.** An unlabelled pair of true statements reads as a conflict, and a contradiction in the record is a trap for the next reader. The structure/condition split is the same fix the audit applies to the document as a whole.
+
+**Enables and rules out.** Enables a reader to hold both facts at once, and gives the code a defined target. Rules out a deliberate design-point slack allowance on the back line. Rules out excluding the top ring from the expansion-rotor model.
+
+**Still active.** Yes. The code change for the exclusion is owed, and it needs its own test and an acceptance run before it lands. `CONTEXT.md` and `physics-topology.md` carry the two-part statement now.
+
+---
+
 ## [2026-09-23] BEM multi-rotor sizing: three real defects, but the draft's attribution is wrong (verified and corrected)
 
 **Context.** Phase 4 traced island 1's whip to a heavy top end and asked why a 3-rotor machine carries MORE blade mass than a single rotor. Peter Jamieson's multi-rotor law says a fixed total power needs a fixed total swept area, with span scaling as 1/√N and total blade mass as 1/√N. The Part 2 draft (`handovers/handover-2026-09-23-multirotor-bem-sizing.md`, commit `ceb6752`) named four defects and attributed roughly 187× of blade-mass inflation to the disc-versus-annulus sizing error. **This entry records the independent re-measurement (probe `scratch/probe_bem_sizing_audit.jl`) and corrects the numbers and the causation.**
