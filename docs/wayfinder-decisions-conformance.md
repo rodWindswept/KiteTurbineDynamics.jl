@@ -34,7 +34,7 @@ Rod ruled these. They are decisions, so they sit here and not in a ticket.
 
 - [Topology document integrity](wayfinder-tickets/dc1-topology-doc-integrity.md): the back line answers two questions, so both statements stand. Structure: a height limiter, not a load path. Condition: taut, inside its elastic range, at the design point. The 2026-08-22 top-ring exclusion is retired everywhere, the code included. Landed `8479600`.
 - [The eight rulings that lived only in harness records](wayfinder-tickets/dc3-harvest-harness-records.md): all eight landed in `DECISIONS.md`, with three trust-log rows and one queued gate. The harvest's 50 N bridle-cone floor is replaced by ruling. An absolute floor is wrong, and the cone must be tensile only to the extent that its tension approximates the force balance demanded by the bearing and the topmost-rotor attachments. Landed `51d881d`.
-- [Harvest the rulings made outside git](wayfinder-tickets/dc3-harvest-harness-records.md): eight rulings were made outside git and never landed. The item this map ranked first is refuted as stated. The reported maximum tension tracks the elastic maximum at 0.97 times.
+- [Harvest the rulings made outside git](wayfinder-tickets/dc3-harvest-harness-records.md): eight rulings were made outside git and never landed. The item this map ranked first is refuted as stated. The reported maximum tension tracks the elastic maximum at 0.97 times. The report passed its STE prose pass on 2026-09-24, from 4.33 to 0.10 violations per 100 words, and it states its three table-only residuals on the file.
 
 ## Open tickets
 
@@ -50,7 +50,6 @@ Rod ruled these. They are decisions, so they sit here and not in a ticket.
 - Whether `docs/adr/` absorbs the topology laws, or keeps only hard-to-reverse architecture decisions. This waits on ticket dc1.
 - The dead line-number citations across the record. One example is `DECISIONS.md:1806-1822`. The fix is mechanical once the citation convention is ruled.
 - The maximum tension the instrument reports. The damper term is signed and the scan covers TRPT sub-segments only, so the read does not bound the bridle cone. The measured maximum tracks the elastic maximum at 0.97 times, which refutes the 2.6 times claim. The break-on-stretch ratio stays unmeasured. The record home is the trust log plus the ledger, and it is one of the eight harvested rulings.
-- An STE pass on `docs/reports/2026-09-24-unlanded-rulings.md`. It sits at 4.33 violations per 100 words and the commit gate refuses it. The prose, not the research, needs the work.
 - Whether the revocable protobuf stores under `~/.gemini/` hold rulings a text scan cannot reach. They were unread, and that is a live residual risk for the harvest.
 - The BEM sizing defects upstream of every sizing claim. `power_split = 0.6`, the `n_active == 1` branch and the unanchored 50 m shear reference all distort the numbers the record quotes. They may need a rule of their own.
 
