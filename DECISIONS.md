@@ -10,6 +10,25 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-24] Multi-rotor sizing: every rotor takes an equal share of the torque and the power
+
+**Context.** Defect 5 of the document audit was item 5 of the pre-flight checklist, which quoted a thrust split that the trust ledger forbids re-quoting ("309 N of 2044 N", "~15 %"), because a probe triple-counted the per-blade force. The item's rule, "include the thrust of EVERY rotor", survived the retraction. Its illustration did not. Rod ruled the replacement on 2026-09-24.
+
+**Decided (Rod, 2026-09-24).** State the design rule, not the split. In a multi-rotor turbine, **scale each rotor to take an equal share of the torque and the power requirement.** Two corrections follow from the geometry, and they pull in opposite directions:
+
+1. **The lowest rotor** sits closest to the ground, in the slower part of the wind profile, so it needs more swept area for its equal share. It also sits at the foot of the column and carries everything above it. Expect a larger ring, a stiffer ring, and possibly larger blades.
+2. **Every rotor above the lowest** runs downstream of the rotor below it, so it takes a wake de-rate.
+
+**The blocking number, and an open discrepancy.** Rod recalled the topmost rotor's turbulent blocking as **15 %**. The record does not hold that figure. Four sites set **0.75x freestream POWER** for each blocked rotor, which is an inflow multiplier of `0.75^(1/3) ≈ 0.9086` because `P ∝ v³`: `scripts/compute_seeds.jl:36-38` (its declared single source of truth, 2026-08-26), `src/initialization.jl:1014`, `test/test_wind_blocking.jl:17`, and `test/test_mass_model_2026_09.jl:13`. The `[2026-08-27]` ruling 1 adds that the de-rate is NON-CUMULATIVE, and that in a 3-rotor stack the **top two** rotors are blocked, not only the topmost. This entry holds the recalled 15 per cent and the recorded 75 per cent side by side, and it waits on Rod to say which he means. The factor is also **UNANCHORED**: nothing measures it.
+
+**The code's current state.** `objective_v10.jl:313-317` falls back to `1/n_active`, which is the equal share, when `power_split === nothing`. The campaign config sets `power_split = 0.6`, a top-heavy split. The `[2026-09-23]` audit measured that split as one of the three sizing defects, worth 5.10x on the top rotor's blade mass. So the code can express the rule, and the campaign does not use it.
+
+**Enables and rules out.** Enables the document to state a scaling rule that a reader can check against a genome. Rules out quoting a thrust split as evidence for it.
+
+**Status:** Active. The checklist item states the equal-share rule, and the blocking figure waits on Rod.
+
+---
+
 ## [2026-09-24] The eight rulings that lived only in harness records, landed
 
 **Context.** The record audit asked where this project's decisions live. Five canonical records exist: `DECISIONS.md`, `docs/agents/physics-topology.md`, `docs/adr/`, `docs/agents/instrument-trust-log.md`, and `docs/validation/physics-validation-ledger.md`. A harvest of the Antigravity brain transcripts and the dsh session files found **eight rulings that were made in those sessions and reached no canonical record**. Report: `docs/reports/2026-09-24-unlanded-rulings.md`. Rod ruled on 2026-09-24: land all eight, and add the missing detail where an existing entry already covers part of a ruling.

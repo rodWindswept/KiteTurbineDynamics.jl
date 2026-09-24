@@ -37,12 +37,18 @@ The five defects, verified 2026-09-24:
   so the claim that `CONTEXT.md` still holds the exclusion was itself stale, and the
   text goes. A code change remains owed. Section 4 lists the three sites, and the
   change is a physics change that needs its own test and acceptance run.
-- **Defect 5. AWAITING ROD'S WORD.** The brief went out on 2026-09-24 with the
-  measurement that replaced the retracted figures. Island 1 adds 125.3 N to a
-  1537.3 N axial total, so expansion is 8.2 per cent, and the main rotor carries
-  91.8 per cent. The report carries the recommended replacement text. **The direction
-  reverses.** The old figures implied that the expansion rotors dominate, and the
-  measurement says the opposite. The item's rule stands, and its reason changes.
+- **Defect 5 — RULED 2026-09-24, landed.** The item now states the design rule: scale
+  each rotor to take **an equal share of the torque and the power requirement**. Two
+  corrections follow from the geometry, and they pull in opposite directions. The
+  lowest rotor sits in the slower part of the wind profile and carries the column
+  above it, so expect a larger ring, a stiffer ring and possibly larger blades. Every
+  rotor above the lowest takes the co-axial wake de-rate. The retracted split is
+  named in the item and retired there.
+  **One discrepancy stays open.** Rod recalled the topmost rotor's blocking as
+  15 per cent. Four sites in the record set 0.75x freestream power for each blocked
+  rotor, which is an inflow multiplier of 0.9086. The `DECISIONS.md` entry holds both
+  figures and waits on his word. It also records that the de-rate is non-cumulative
+  and that in a 3-rotor stack the top two rotors are blocked, not only the topmost.
 
 ## Landed 2026-09-24
 

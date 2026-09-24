@@ -7,7 +7,7 @@ re-derive the structure *from expectation* instead of from the recorded design.
 The topology below is the design. Do not re-derive it without new measured
 evidence and agreement from Rod.
 
-Last updated: 2026-09-12.
+Last updated: 2026-09-24.
 
 ---
 
@@ -321,9 +321,30 @@ Every item corresponds to a mistake that cost a session.
 4. **Which frame are you measuring an angle in?** Apex, shaft-axis and ring-plane
    angles are complements of each other. State the frame explicitly.
 
-5. **Did you include the thrust of EVERY rotor?** On the seed the main rotor is
-   only ~15 % of the total axial thrust (309 N of 2044 N). The two expansion
-   rotors contribute ~85 %. A single-rotor budget is wrong.
+5. **Did you scale every rotor to its share, and did you include every rotor?**
+   In a multi-rotor turbine, scale each rotor to take an **equal share of the torque
+   and the power requirement** (Rod, 2026-09-24). A single-rotor budget is wrong,
+   in thrust as well as in power. Sum every rotor.
+
+   Two corrections follow from the geometry, and they pull in opposite directions.
+
+   - **The lowest rotor.** It sits closest to the ground, in the slower part of the
+     wind profile, so it needs more swept area for an equal power share. It also
+     sits at the foot of the column and carries everything above it. Expect a
+     larger ring, a stiffer ring, and possibly larger blades.
+   - **Every rotor above the lowest.** Each one runs downstream of the rotor below
+     it, so it takes a wake de-rate. The campaign sets **0.75x freestream power**
+     for each blocked rotor, which is an inflow multiplier of `0.75^(1/3) = 0.9086`
+     because `P` goes as `v³`. Apply the de-rate once per rotor, never twice. The
+     factor is **UNANCHORED**, and it lives in `scripts/compute_seeds.jl`, not in
+     `src/`.
+
+   Net effect on the 5 kW seed: the topmost rotor reads the net-slowest inflow at
+   7.9091 m/s, against the lowest rotor's 7.9959 m/s.
+
+   The figures once quoted here are **retracted**. A probe triple-counted the
+   per-blade force, so "309 N of 2044 N" and "~15 %" are not the model's split.
+   Do not re-quote them.
 
 6. **Sign and dimension check on any closed form.** Substitute units. A formula
    that yields Newtons where torque must act is a bug. Then check it against an
