@@ -5,6 +5,7 @@
 **Map:** `docs/wayfinder-decisions-conformance.md`
 **Reconnaissance input:** `~/.hermes/cache/scratch/antigravity-record-inventory.md` (2026-09-24)
 **STE status:** 4.33 violations per 100 words. This report needs a prose pass before a reader treats it as final. The numbers are sound and the research is complete.
+**Reproduced:** a second run of the same probe on 2026-09-24 returned 1049.3 N reported, 1078.5 N elastic-only, ratio 0.97 times, at `dt = 1.774289904693832e-5`, with `any_broken = false`. The central measurement comes from two runs, not one.
 
 A **ruling** here is a decision about physics, geometry, load path, thresholds, or a
 standing rule the project must follow, not tooling preference, not harness chatter,
