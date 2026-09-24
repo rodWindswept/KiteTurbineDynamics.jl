@@ -1,0 +1,32 @@
+┌ Warning: Replacing docs for `KiteTurbineDynamics.update_kite_pos! :: Tuple{KiteTurbineDynamics.KiteTurbineSystem, Vector{Float64}, KiteTurbineDynamics.LiftDevice, KiteTurbineDynamics.SystemParams, Float64}` in module `KiteTurbineDynamics`
+└ @ Base.Docs docs/Docs.jl:249
+┌ Warning: Replacing docs for `KiteTurbineDynamics.run_canonical_sim! :: Tuple{Vector{Float64}, KiteTurbineDynamics.KiteTurbineSystem, KiteTurbineDynamics.SystemParams, Function, Int64, Float64}` in module `KiteTurbineDynamics`
+└ @ Base.Docs docs/Docs.jl:249
+┌ Warning: Replacing docs for `KiteTurbineDynamics.DepowerResult :: Union{}` in module `KiteTurbineDynamics`
+└ @ Base.Docs docs/Docs.jl:249
+┌ Warning: Replacing docs for `KiteTurbineDynamics.override_params :: Tuple{KiteTurbineDynamics.SystemParams}` in module `KiteTurbineDynamics`
+└ @ Base.Docs docs/Docs.jl:249
+┌ Warning: Replacing docs for `KiteTurbineDynamics.run_pitch_depower! :: Tuple{Vector{Float64}, KiteTurbineDynamics.KiteTurbineSystem, KiteTurbineDynamics.SystemParams, Function, Int64, Float64}` in module `KiteTurbineDynamics`
+└ @ Base.Docs docs/Docs.jl:249
+══════════════════════════════════════════════════════
+Daisy Calibration — Tulloch Config 8, TRPT-4, 11 m/s
+══════════════════════════════════════════════════════
+
+Reference: Tulloch §3.5, rigid wing, experimental peak 1.4 kW at 10-11 m/s
+Target:    P ≈ 1.0–1.4 kW, ω ≈ 220–300 rpm, Cp ≈ 0.20
+Daisy: n_lines=6 n_blades=3 rings=5 blade_scale=1.0
+       ring=1.52m  TRPT-4=10.31m  swept≈10.8m²
+       peak=1760.9130000000005W @ 11.0m/s  λ=4.0  k_mppt=0.073
+       CDt=2.7 (Tulloch calibrated)  Cp_exp≈0.20
+Settling...
+
+═══ RESULTS ═══
+  P        = 1076 W   (Tulloch peak: ~1400 W)
+  ω        = 235 rpm  (expected 220–300 rpm)
+  λ        = 3.39  (expected 3.5–4.5)
+  Cp       = 0.122  (Tulloch experimental: 0.20–0.25)
+  FoS      = 0.0
+  T_max    = 85197 N
+
+✓ Daisy simulation produces real power at Tulloch scale
+  Sim Cp=0.122 vs published Cp=0.20 — factor ~1.6×
