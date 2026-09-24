@@ -30,13 +30,16 @@ Rod ruled these. They are decisions, so they sit here and not in a ticket.
 - **Entry point (Q5).** `CLAUDE.md` now sends the reader to the top of `DECISIONS.md`. The test counts match `AGENTS.md`.
 - **Handovers (Q5).** The two documents of 2026-09-23 now sit in `handovers/` with dated names and an index row each. They had broken both the naming rule and the location rule in `handovers/README.md`.
 
+## Decisions so far
+
+- [Harvest the rulings made outside git](wayfinder-tickets/dc3-harvest-harness-records.md): eight rulings were made outside git and never landed. The item this map ranked first is refuted as stated. The reported maximum tension tracks the elastic maximum at 0.97 times.
+
 ## Open tickets
 
 | Ticket | Type | Blocked by | Question |
 |---|---|---|---|
 | [Topology document integrity](wayfinder-tickets/dc1-topology-doc-integrity.md) | grilling | none | Which rulings stand where the headings contradict the bodies, and what shape does the reference document take? |
-| [Harvest the rulings made outside git](wayfinder-tickets/dc3-harvest-harness-records.md) | research | none | Which decisions were ruled in the AGY brain or the dsh sessions and never reached the repo record? |
-| [Conformance of the record to the code](wayfinder-tickets/dc2-topology-conformance.md) | research | dc1, dc3 | For each ruling: the source line that implements it, the test line that checks it, and one verdict. |
+| [Conformance of the record to the code](wayfinder-tickets/dc2-topology-conformance.md) | research | dc1 | For each ruling: the source line that implements it, the test line that checks it, and one verdict. |
 | [Ratchet design](wayfinder-tickets/dc4-ratchet-design.md) | grilling | dc2 | What makes a decision checkable, and what enforces it? |
 
 ## Not yet specified
@@ -44,7 +47,9 @@ Rod ruled these. They are decisions, so they sit here and not in a ticket.
 - Whether `CONTEXT.md` splits into a glossary and a separate campaign history. It mixes both today, and the skill suite expects a glossary. This waits on the rulings about where decisions officially live.
 - Whether `docs/adr/` absorbs the topology laws, or keeps only hard-to-reverse architecture decisions. This waits on ticket dc1.
 - The dead line-number citations across the record. One example is `DECISIONS.md:1806-1822`. The fix is mechanical once the citation convention is ruled.
-- `get_max_rope_tension` includes the damper viscous term, so the maximum tension it reports overstates the elastic load. Only a code comment records this, at `test/test_rope_break.jl:127-130`. The item needs a probe before it becomes a ticket, because nobody has measured the magnitude.
+- The maximum tension the instrument reports. The damper term is signed and the scan covers TRPT sub-segments only, so the read does not bound the bridle cone. The measured maximum tracks the elastic maximum at 0.97 times, which refutes the 2.6 times claim. The break-on-stretch ratio stays unmeasured. The record home is the trust log plus the ledger, and it is one of the eight harvested rulings.
+- An STE pass on `docs/reports/2026-09-24-unlanded-rulings.md`. It sits at 4.33 violations per 100 words and the commit gate refuses it. The prose, not the research, needs the work.
+- Whether the revocable protobuf stores under `~/.gemini/` hold rulings a text scan cannot reach. They were unread, and that is a live residual risk for the harvest.
 - The BEM sizing defects upstream of every sizing claim. `power_split = 0.6`, the `n_active == 1` branch and the unanchored 50 m shear reference all distort the numbers the record quotes. They may need a rule of their own.
 
 ## Out of scope

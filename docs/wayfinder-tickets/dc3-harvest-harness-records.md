@@ -2,6 +2,16 @@
 
 > Part of [Decisions Conformance Audit](../wayfinder-decisions-conformance.md) · `wayfinder:research` · **frontier**
 
+## Resolution
+
+Harvested 2026-09-24. Eight rulings went unlanded. Report: `docs/reports/2026-09-24-unlanded-rulings.md`.
+
+The first item on the map does not hold as stated. The damper term is signed. The scan covers TRPT sub-segments only. The reported maximum tracks the elastic maximum at 0.97 times. It does not overstate the load.
+
+The real hazard in that path is a step-size fault. At the legacy `dt = 4e-5` the reported maximum inflates to 6.8e6 N. The elastic term tracks that inflation.
+
+Two premises of this ticket were wrong. The transcripts live under `~/.gemini/antigravity-cli/brain/`. The `~/.dsh/sessions/` directory holds 19 files for this repo, not 31. The protobuf stores under `~/.gemini/` stay unread. No schema exists here, and no `sqlite3`.
+
 ## Question
 
 Which decisions were ruled inside agent-harness state and never written to the repo
