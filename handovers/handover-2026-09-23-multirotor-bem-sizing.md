@@ -5,7 +5,7 @@
 **Location:** Stornoway / Distributed Workspace  
 **Status:** Actionable Technical Handover & Implementation Blueprint  
 **Repo:** [KiteTurbineDynamics.jl](file:///home/rodbot/Documents/GitHub/KiteTurbineDynamics.jl)  
-**Parent Document:** [`docs/agents/handover-multirotor-stability-remediation.md`](handover-multirotor-stability-remediation.md) (Revision 4)
+**Parent Document:** [`handovers/handover-2026-09-23-multirotor-stability-remediation.md`](handover-2026-09-23-multirotor-stability-remediation.md) (Revision 4)
 
 ---
 
