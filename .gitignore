@@ -53,3 +53,15 @@ trajectory_analysis/
 
 # Hermes agent workspace (plans, scratch). Never commit.
 .hermes/
+
+# Local debris: generated explorers, editor backups, one-off reminders, agent scratch.
+# Never commit. Regenerate design_explorer.html from its notebook.
+notebooks/design_explorer.html
+notebooks/daisy_calibration backup *.jl
+*.local-bak
+run_gh_ktd_bridge_reminder.ics
+.scratch/
+
+# Ran without a provenance stamp (git hash + physics era + geometry fingerprint).
+# Stamp it before committing, per ROD_NOTES.
+scripts/results/control_maps/power_curve_quick.csv
