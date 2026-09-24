@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # .githooks/pre-commit — habit-hook sensors, fired live at commit time.
-# Version: 0.1.0 | Date: 2026-08-20 | Author: Windswept & Interesting
+# Version: 0.2.0 | Date: 2026-09-24 | Author: Windswept & Interesting
 #
 # Runs the deterministic sensors on staged files and blocks on breach.
 # Sensors: ste (STE-100 prose) and provenance (campaign CSV stamp).
+# Cue: tdd (src change with no test change) — it warns, it does not block.
 # Deliberate bypass: git commit --no-verify
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
@@ -22,6 +23,12 @@ fi
 CSV_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.csv$' || true)
 if [ -n "$CSV_FILES" ]; then
     python3 check-provenance.py $CSV_FILES || FAIL=1
+fi
+
+# 3. TDD cue: a src/ change with no test change. WARN only, never blocks: a pure
+#    refactor or a comment fix legitimately touches src/ alone.
+if [ -n "$STAGED" ]; then
+    python3 check-tdd-evidence.py $STAGED || true
 fi
 
 if [ "$FAIL" = "1" ]; then

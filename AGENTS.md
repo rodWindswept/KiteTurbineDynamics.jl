@@ -23,8 +23,12 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
 ## Working agreement
 
 - **Run the suite.** Run `scripts/ktd-julia test/runtests.jl` before committing
-  (fast unit tests, 50 files, ~2.6 min). Never commit with a red suite. Plain
+  (fast unit tests, 46 files, ~3.5 min). Never commit with a red suite. Plain
   `julia --project=.` does not work in this sandbox — see [`CLAUDE.md`](CLAUDE.md).
+- **Test first.** Write the failing test, watch it fail, then write the code.
+  `scripts/ktd-test-one <name>` runs one test file in seconds. Keep the live test
+  list in [`docs/plans/test_list.md`](docs/plans/test_list.md). Full loop:
+  [`docs/agents/test-first-loop.md`](docs/agents/test-first-loop.md).
 - **Acceptance tests.** The eight slow ODE acceptance tests live in
   `test/acceptance_runtests.jl` (~18 min, parallel). Run them before a merge
   that touches `src/` physics. See DECISIONS.md [2026-08-20].
