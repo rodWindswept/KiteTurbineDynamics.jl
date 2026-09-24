@@ -12,7 +12,7 @@ can assess whether a decision still holds when circumstances change.
 
 ## [2026-09-23] BEM multi-rotor sizing: three real defects, but the draft's attribution is wrong (verified and corrected)
 
-**Context.** Phase 4 traced island 1's whip to a heavy top end and asked why a 3-rotor machine carries MORE blade mass than a single rotor. Peter Jamieson's multi-rotor law says a fixed total power needs a fixed total swept area, with span scaling as 1/√N and total blade mass as 1/√N. The Part 2 draft (`docs/agents/handover-part2-multirotor-bem-sizing.md`, commit `ceb6752`) named four defects and attributed roughly 187× of blade-mass inflation to the disc-versus-annulus sizing error. **This entry records the independent re-measurement (probe `scratch/probe_bem_sizing_audit.jl`) and corrects the numbers and the causation.**
+**Context.** Phase 4 traced island 1's whip to a heavy top end and asked why a 3-rotor machine carries MORE blade mass than a single rotor. Peter Jamieson's multi-rotor law says a fixed total power needs a fixed total swept area, with span scaling as 1/√N and total blade mass as 1/√N. The Part 2 draft (`handovers/handover-2026-09-23-multirotor-bem-sizing.md`, commit `ceb6752`) named four defects and attributed roughly 187× of blade-mass inflation to the disc-versus-annulus sizing error. **This entry records the independent re-measurement (probe `scratch/probe_bem_sizing_audit.jl`) and corrects the numbers and the causation.**
 
 **Verified: the code does size from a solid disc.**
 `BEM.rotor_radius_for_power(P, v, n_lines)` returns `sqrt(P / (Cp · 0.5 · ρ · π · v³))`, i.e. the radius of a solid disc. `objective_v10.jl:369` then sets `span = 0.75 · r_rotor_i · blade_scale_i`. The ring radius never enters: the span depends only on `P_i`, `v_i` and the genome's `blade_scale`. Measured island 1:
@@ -150,7 +150,7 @@ So the entire difference is the wake de-rate plus the genome's blade scale. The 
 
 ## [2026-09-22] Item 4 multi-rotor remediation: expansion thrust in the preload profile, blade mass, radial bias, and a live back-line trim
 
-**Context.** The first-pass Item 4 campaign (`docs/agents/item4-campaign-summary.md`) re-gated three islands from the same 5 kW / 18.8 m era (`1c9f9cb`). Islands 2 and 3 (single rotor) passed the FoS gate. Island 1 (3 rotors: main at ring 10 plus expansion rotors at rings 8 and 9) failed at zero artificial damping: FoS trough **1.5865** (fine-cadence twin **1.0446**), hub lateral 1.2282 m p2p, cyan 0→1003 N, back line 5→1801 N, and the bridle cone unloaded for **14.93 s** contiguous. A handover (`docs/agents/handover-multirotor-stability-remediation.md`, Rev 2) proposed five defects; three were confirmed in source and are fixed here.
+**Context.** The first-pass Item 4 campaign (`docs/agents/item4-campaign-summary.md`) re-gated three islands from the same 5 kW / 18.8 m era (`1c9f9cb`). Islands 2 and 3 (single rotor) passed the FoS gate. Island 1 (3 rotors: main at ring 10 plus expansion rotors at rings 8 and 9) failed at zero artificial damping: FoS trough **1.5865** (fine-cadence twin **1.0446**), hub lateral 1.2282 m p2p, cyan 0→1003 N, back line 5→1801 N, and the bridle cone unloaded for **14.93 s** contiguous. A handover (`handovers/handover-2026-09-23-multirotor-stability-remediation.md`, Rev 2) proposed five defects; three were confirmed in source and are fixed here.
 
 **Findings.**
 
