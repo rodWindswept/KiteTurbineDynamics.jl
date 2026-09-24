@@ -38,6 +38,43 @@
 
 ---
 
+> ## ⚠ PHASE 5 STATUS AT 2026-09-24 (laptop instance, record audit)
+>
+> **Read this panel before you start Task 5.1.** The roadmap in section 6 was
+> written on 2026-09-23. Two of its tasks have moved since, and one would send you
+> the wrong way.
+>
+> | Task | Status at 2026-09-24 | Detail |
+> |---|---|---|
+> | **5.1** `annulus_span_for_power` | **DONE, do not rebuild.** | Landed as `0fb5b04` "feat(bem): annulus span sizing with area-invariance guards". It lives at `src/bem.jl:175` and it is exported at `:200`. The landed signature adds a `bank_deg` parameter that the draft below does not carry: `annulus_span_for_power(power_W, v_wind, r_ring, n_lines; tsr=4.1, bank_deg=0.0, eta_out=0.7, eta_in=0.3)`. Guards: `test/test_bem_unified.jl`. |
+> | **5.2** multi-rotor loop | **OPEN.** Two live faults. | The disc-radius span is still in place: `src/objective_v10.jl:369` reads `span = 0.75 * r_rotor_i * blade_scale_i`, and the comment above it defends the legacy magnitude. The `n_active == 1` bug is still live at `:354`: `P_i = (i == 1) ? power_split * power_W : …`, so a single-rotor island is sized at `0.6 × P` (3000 W of 5000 W). |
+> | **5.3** shear reference | **OPEN.** | `src/objective_v10.jl:349` passes `hub_altitude` into `wind_speed_at_ring`, and the body never reads it, so `h_ref` stays at the unanchored 50.0 m default. Same fault class as `physics-topology.md` section 6. |
+> | **5.4** guards | **OPEN, and the guard as written is WRONG.** | Step 2 asks for a test that "total blade mass satisfies Peter Jamieson scaling (`M_multi < M_single`)". The verified banner at the top of this document refutes that law for a TRPT: Jamieson's `1/√N` is the DISC law, and ring-anchored blades fall nearer **`1/N²`**, measured 0.128 for N=3. Implement the `1/N²` law, or the guard pins the error permanently. |
+> | **5.5** anchor the wake factor | **NEW, not in the roadmap.** | `BLOCKING_WIND_FACTOR_5KW = 0.75^(1/3)` in `scripts/compute_seeds.jl:41` is a **hand wave**: no measurement, no analysis, chosen to convert a 75 per cent-of-power assumption into an inflow factor. It decides which rotor ends up net-slowest, and therefore which rotor is sized largest. Anchor it, or bound it and say so in the provenance. It is now ranked in the trust log's Unanchored Parameters table. |
+>
+> **The specified preference for rotor power (RULED, Rod, 2026-09-24).** In a
+> multi-rotor turbine, **scale each rotor to take an equal share of the torque and
+> the power requirement.** Treat `power_split = 0.6` as a DEPARTURE from that
+> preference, not as the target, and not as a sweep winner to preserve. Recorded in
+> `DECISIONS.md` [2026-09-24] "Multi-rotor sizing" and in the pre-flight checklist
+> item 5 of `docs/agents/physics-topology.md`, which is a mandatory read before
+> rotor-model work. The evaluator's own default carries the opposite claim in a
+> comment, `objective_evaluator.jl:144` "top-heavy wins", and that comment needs
+> correcting with the ruling.
+>
+> **Two reporting defects to fix while you are in these files.**
+> `scripts/run_v13_5kw_masslift.jl:115` writes a provenance line that claims
+> `blocking_factor=1.0` for the 5 kW campaign. The code at `:174` uses
+> `BLOCKING_WIND_FACTOR_5KW`. Every campaign report therefore carries a false
+> statement about its own wake model. The gate agrees with the code
+> (`scripts/ode_gate_v13.jl:94`), so the printed line is the defect.
+>
+> **The measured status of the three sizing faults**, from the verified banner
+> above, unchanged: annulus 2.17×, equal share 5.10×, inflow 17.30×, which compound
+> to 3.04× on island 1's total blade mass.
+
+---
+
 ## 1. Executive Summary
 
 This handover documents the discovery, root cause analysis, mathematical derivation, and implementation roadmap for correcting Blade Element Momentum (BEM) rotor sizing across multi-rotor TRPT systems in `KiteTurbineDynamics.jl`.
