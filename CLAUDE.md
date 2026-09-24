@@ -2,13 +2,15 @@
 
 Welcome to the **KiteTurbineDynamics.jl** workspace. This guide contains key entry points, domain documents, and standard execution commands for developers and agent sessions.
 
-**Before acting on any instruction:** reflect back what you understand the user to be asking — summarise the request, the intent as you read it, and the action you propose to take. Do not proceed on hunches or intuition. Wait for the user to confirm your understanding before executing. We agree on the course of action first, then act. Only deal in facts. If there is something unclear, something you don't understand or know, ASK! If there's something hard to do, something confusing or you're unsure ASK. If there's something which does not make scientific sense, If there's logic lacking, ASK.
+**Before acting on any instruction:** reflect back what you understand the user asks. Summarise the request, the intent as you read it, and the action you propose. Do not proceed on hunches. Wait for the user to confirm your understanding. Agree the course of action first, then act. Deal in facts only.
+
+Ask when something is unclear, when you cannot know it, or when you are unsure. Ask when a task is hard or confusing. Ask when something does not make scientific sense, or when the reasoning has a gap.
 
 ## ── Domain Documentation ──────────────────────────────────────────────
 
 This repository uses a single-context domain documentation layout:
 * **Core Context**: [CONTEXT.md](CONTEXT.md) at the repository root — domain vocabulary, architecture, campaign history, source map.
-* **Design & Optimization Decisions**: [DECISIONS.md](DECISIONS.md) at the repository root — 2,252-line running decision log.
+* **Design & Optimization Decisions**: [DECISIONS.md](DECISIONS.md) at the repository root — running decision log, **newest entries first**.
 * **Changelog**: [CHANGELOG.md](CHANGELOG.md) — user-facing version history.
 * **Architectural Decisions**: [docs/adr/0001-inertia-relief.md](docs/adr/0001-inertia-relief.md)
 * **Agent domain docs**: [docs/agents/domain.md](docs/agents/domain.md)
@@ -18,8 +20,9 @@ This repository uses a single-context domain documentation layout:
 
 In order: [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md)
 (structure, load path, rotor models, pre-flight checklist — **mandatory before any
-geometry, tension or load-path work**) → `CONTEXT.md` → `DECISIONS.md` (last ~200
-lines) → `handovers/` (most recent file) → `docs/plans/` (active plan).
+geometry, tension or load-path work**) → `CONTEXT.md` → `DECISIONS.md` (**newest
+entries are at the TOP** — read the top of the file, never the last lines) →
+`handovers/` (most recent file) → `docs/plans/` (active plan).
 
 ## ── Developer Commands ────────────────────────────────────────────────
 
@@ -30,11 +33,11 @@ read-only and /tmp does not persist. The writable depot therefore lives in
 `.julia_depot/`, and it must sit on top of the system depot in the search path. Plain
 `julia --project=.` fails with `failed to find source of parent package:
 "IntervalArithmetic"`. The wrapper sets the stacked depot, pins `--startup-file=no`, and
-puts the acceptance children's `julia` on `PATH`. It runs the snap's revision-independent
-`/snap/julia/current` binary, because `/snap/bin/julia` is broken here (DBus, exit 46).
-It falls back to `julia` on `PATH`, so CI is unaffected.
+puts the `julia` of the acceptance children on `PATH`. It runs the revision-independent
+`/snap/julia/current` binary of the snap, because `/snap/bin/julia` is broken here (DBus, exit 46).
+It falls back to `julia` on `PATH`, so CI keeps working.
 
-* **Run the fast unit suite** (50 test files, ~2.6 min):
+* **Run the fast unit suite** (46 test files):
   ```bash
   scripts/ktd-julia test/runtests.jl
   ```
@@ -100,11 +103,11 @@ It falls back to `julia` on `PATH`, so CI is unaffected.
 
 ## ── Development Guidelines ────────────────────────────────────────────
 
-1. **Run the test suite before committing.** 50 fast + 8 acceptance files. Never commit with red.
+1. **Run the test suite before committing.** 46 fast + 8 acceptance files (57 in `test/`, 4 archived). Never commit with red. For one file use `scripts/ktd-test-one <name>`. Test-first loop: [`docs/agents/test-first-loop.md`](docs/agents/test-first-loop.md).
 2. **Physics conservatism.** The TRPT rotor model must conform to BEM-coupled v2/v5 formulations. Expansion rotor model uses simplified 2D blade-element. Setting `N_expansion = 0` must produce bit-for-bit identical results to v5 (FR4).
 3. **Always use `run_canonical_sim!()`** for headless simulation — never hand-roll integrators.
 4. **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
-5. **Progressive CSV saves.** Write each scenario's CSV immediately after completion, not all at the end.
+5. **Progressive CSV saves.** Write the CSV of each scenario immediately after completion, not all at the end.
 6. **No cache to clear after src/ edits.** `KiteTurbineDynamics` is `__precompile__(false)`, so every run rebuilds it from source. See the campaign-cache note above.
 
 ## ── Agent Skills (for Hermes Agents) ──────────────────────────────────
@@ -127,7 +130,7 @@ Read by `to-tickets`/`to-issues`, `to-spec`/`to-prd`, `triage`, and `wayfinder`.
 
 **Triage labels.** The five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See [`docs/agents/triage-labels.md`](docs/agents/triage-labels.md).
 
-**Domain docs.** Single-context. `CONTEXT.md` (vocabulary, architecture) and `DECISIONS.md` (running decision log) at the repo root; ADRs in `docs/adr/`. Agent onboarding — repo map, physics rules, quick start — is in [`docs/agents/domain.md`](docs/agents/domain.md). Also see [`docs/agents/instrument-trust-log.md`](docs/agents/instrument-trust-log.md) for sanity bounds and [`docs/agents/genome-glossary.md`](docs/agents/genome-glossary.md) for DE genome terms.
+**Domain docs.** Single-context. `CONTEXT.md` (vocabulary, architecture) and `DECISIONS.md` (running decision log) at the repo root. ADRs live in `docs/adr/`. Agent onboarding — repo map, physics rules, quick start — is in [`docs/agents/domain.md`](docs/agents/domain.md). Also see [`docs/agents/instrument-trust-log.md`](docs/agents/instrument-trust-log.md) for sanity bounds and [`docs/agents/genome-glossary.md`](docs/agents/genome-glossary.md) for DE genome terms.
 
 ## ── Key Files ──────────────────────────────────────────────────────────
 
@@ -141,6 +144,6 @@ Read by `to-tickets`/`to-issues`, `to-spec`/`to-prd`, `triage`, and `wayfinder`.
 | `scripts/interactive_dashboard.jl` | Dashboard launcher |
 | `scripts/hunt_kmppt_bisect.jl` | Bisection k_mppt hunt |
 | `scripts/builders_util.jl` | GUI-free system builders |
-| `DECISIONS.md` | 2,252-line decision log |
+| `DECISIONS.md` | Running decision log, newest entries first |
 | `CONTEXT.md` | Domain vocabulary + architecture |
 | `docs/agents/instrument-trust-log.md` | Fault ledger, sanity bounds, pre-flight checklist |

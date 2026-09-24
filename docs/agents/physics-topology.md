@@ -243,6 +243,44 @@ current and code still enforces. Known consequences to handle when changing it:
   **plus** the sum of expansion assemblies (`expansion_analysis.jl:59-62`). We
   must not charge a banked top rotor twice.
 
+### 4.1 Multi-rotor sizing: the span comes from the ring annulus (DERIVED, not validated)
+
+A ring-anchored blade sweeps an **annulus**, not a disc. On a ring of radius
+`R_ring`, with a blade of span `s` at the 70/30 outboard/inboard split:
+
+    A_annulus = 2π·R_ring·s + 0.4·π·s²
+
+The first term dominates wherever `s ≪ R_ring`. The span is the positive root of
+that quadratic, and `BEM.annulus_span_for_power` is its single implementation. A
+solid-disc radius (`BEM.rotor_radius_for_power`) does not describe a ring-anchored
+blade, and must not size one.
+
+**Where `N` enters.** Power and wind fix the total swept area, whatever `N` is.
+Hold `R_ring`, the wind speed and an equal power share per rotor, and the annulus
+relation divides the span by `N`. The unified blade-mass law
+(`m_per_blade = M_BLADE_REF_KG·(span/span_ref)³`, `src/expansion_rotor.jl:467`,
+plus the knuckle floor) then scales total blade mass as **1/N²**.
+
+That is Peter Jamieson's multi-rotor chain with the annulus area–span relation in
+place of the disc's. His `M ∝ 1/√N` is derived for **disc** rotors, where the area
+grows as the span squared. A ring's area grows as the span to the first power, so
+the exponent changes. Same framework, different geometry.
+
+Two limits on the claim:
+
+1. The annulus area is **quadratic** in `s`, so `1/N²` is the small-span limit,
+   not an identity.
+2. The knuckle floor fights the saving at small spans. It is why the recorded
+   `N = 3` ratio is 0.128 rather than the clean `1/9 = 0.111`.
+
+**Status: DERIVED, not VALIDATED.** No in-model check can validate it: a test that
+sizes by the annulus relation and masses by `span³` reproduces the exponent by
+construction. The optimiser's own island 1 (3 rotors) against island 3 (1 rotor)
+blade masses are **not** evidence. Both were mis-sized (disc span,
+`power_split = 0.6`, the `n_active == 1` branch, the unanchored 50 m shear
+reference), so they compare two differently-wrong sizings. Validation needs an
+external measurement.
+
 ---
 
 ## 5. Pre-flight checklist
