@@ -32,6 +32,8 @@ Rod ruled these. They are decisions, so they sit here and not in a ticket.
 
 ## Decisions so far
 
+- [Topology document integrity](wayfinder-tickets/dc1-topology-doc-integrity.md): the back line answers two questions, so both statements stand. Structure: a height limiter, not a load path. Condition: taut, inside its elastic range, at the design point. The 2026-08-22 top-ring exclusion is retired everywhere, the code included. Landed `8479600`.
+- [The eight rulings that lived only in harness records](wayfinder-tickets/dc3-harvest-harness-records.md): all eight landed in `DECISIONS.md`, with three trust-log rows and one queued gate. The harvest's 50 N bridle-cone floor is replaced by ruling. An absolute floor is wrong, and the cone must be tensile only to the extent that its tension approximates the force balance demanded by the bearing and the topmost-rotor attachments. Landed `51d881d`.
 - [Harvest the rulings made outside git](wayfinder-tickets/dc3-harvest-harness-records.md): eight rulings were made outside git and never landed. The item this map ranked first is refuted as stated. The reported maximum tension tracks the elastic maximum at 0.97 times.
 
 ## Open tickets
