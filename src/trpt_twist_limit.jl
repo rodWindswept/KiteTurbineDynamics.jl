@@ -1,12 +1,14 @@
 # src/trpt_twist_limit.jl — the TRPT over-twist authority (2026-09-25)
 #
-# ONE authority for how far a TRPT segment can twist. Every gate, floor, refusal,
-# controller margin and optimiser capacity reads this function. Four copies of a
-# mis-derived criterion is how the repo lost its footing against the thesis.
+# ONE authority for how far a TRPT segment can twist, and for the torque it can carry
+# at that limit. Every gate, floor, refusal, controller margin and optimiser capacity
+# reads this file. Four copies of a mis-derived criterion is how the repo lost its
+# footing against the thesis.
 #
 # Source: Oliver Tulloch, PhD thesis, University of Strathclyde (2021).
-#   (4.34)/(5.4)  the critical deformation angle δcrit
 #   (4.28)–(4.31) the chord, the ring separation and the transmitted torque
+#   (4.34)/(5.4)  the critical deformation angle δcrit
+#   Fig 5.25      the operating curve and its peak, checked numerically below
 #   §5.3.1        "the torsional deformation must be kept below δcrit"
 #   §3.1.3        for a tether shorter than the ring diameter the lines cannot reach
 #                 the axis, so the limit is material strength and not geometry
@@ -27,7 +29,7 @@ Fields of the result:
 - `has_limit` — `true` when an over-twist limit exists.
 - `dcrit`, `dcrit_deg` — the critical deformation angle δcrit, the twist at which the
   transmitted torque reaches its maximum. NaN when `has_limit` is `false`.
-- `sin_dcrit` — `sin(δcrit)`, for capacity arithmetic. NaN when there is no limit.
+- `sin_dcrit` — `sin(δcrit)`. NaN when there is no limit.
 - `l_ax_dcrit` — the ring separation at the limit, in metres. NaN when there is no limit.
 - `disc` — the discriminant `(l_t² − (r_a+r_b)²)(l_t² − (r_a−r_b)²)`. Its sign splits the
   two cases, and `disc ≥ 0` is exactly `l_t ≥ r_a + r_b`.
@@ -39,7 +41,7 @@ Case A, `disc ≥ 0`, the tether spans at least the sum of the two radii:
     cos δcrit = [ r_a² + r_b² − l_t² + √disc ] / (2·r_a·r_b)          (4.34)
 
 The `+` root is the torque maximum and always lies in [−1, 1] here. The maximum is a
-maximum of the operating curve in `trpt_torque_capacity_axial`, which holds the axial
+maximum of the operating curve of `trpt_torque_capacity_axial`, which holds the axial
 force and lets the rings contract. Past δcrit the deformation runs away and the
 equilibrium is lost, so δcrit is the operating ceiling.
 
@@ -51,8 +53,7 @@ The geometry ends when the rings meet, at
 `2·asin(l_t/2r)`. Past that twist the rings cannot stay apart, so tether break strain and
 ring compression carry the limit, and neither is a twist limit.
 
-See `trpt_torque_capacity_axial` and `trpt_torque_capacity_lines` for the torque a segment
-transmits at its limit. They differ in which quantity the caller holds, not in physics.
+See `trpt_torque_capacity_axial` for the torque the segment can carry at its limit.
 """
 function trpt_twist_limit(r_a::Real, r_b::Real, l_t::Real)
     r_a > 0 || throw(ArgumentError("ring radius r_a must be positive, got $r_a"))
@@ -111,41 +112,50 @@ end
 """
     trpt_torque_capacity_axial(lim, F_axial) -> Float64
 
-The torque a TRPT segment transmits at its over-twist limit, in N·m, when the caller
-holds the **total axial force** the segment carries (`F_axial`, in newtons — the repo's
-cumulative thrust above the segment).
+The most torque a TRPT segment can transmit, in N·m, when its **total axial force** is
+`F_axial` newtons. This is the peak of Tulloch's operating curve (Figs 5.25–5.27).
 
     τ_max = F_axial · r_a · r_b · sin(δcrit) / L_ax(δcrit)      (4.31 at δcrit)
+          = F_axial · ( √(l_t² − (r_a−r_b)²) − √(l_t² − (r_a+r_b)²) ) / 2
 
-The rings contract as the twist grows, so the separation at the limit is the contracted
-one. This is the form of Tulloch's own torque-against-twist curves (Figs 5.25–5.27) and
-it reproduces them: the Fig 5.25 geometry (r = 0.4 m, l_t = 1 m) gives 0.2 N·m per
-newton, so 100 N·m at his 500 N.
+The second line is the first with (4.34) substituted. Use it. The first is 0/0 exactly
+where `l_t = r_a + r_b`, which is the ϕ = 2 boundary and a live design corner: the belt
+of regions a gene can sit in, and the old `target_L/r` seed sat at exactly 2.0. The
+factored form is finite everywhere in Case A and returns `F_axial·√(r_a·r_b)` at the
+boundary, which is the limit of the first form.
+
+Checks against the thesis: Fig 5.25 (r = 0.4 m, l_t = 1 m) returns 0.2 N·m per newton,
+so 100 N·m at his 500 N. The live seed's segment 9 (r = 0.575 m, l_t = 1.60 m) returns
+0.24379 N·m per newton. Both are asserted in the test suite, against a numerical maximum
+of the curve, not against this formula.
+
+A cap at this value never bites below δcrit, because it is the maximum of the curve that
+δcrit belongs to. `trpt_torque_capacity_lines` used to offer the same torque expressed in
+the line tension at the limit, and a caller multiplied it by the tension at a *smaller*
+twist, which caps a ϕ = 2.01 bay at a third of its capacity. The tension basis is gone.
 
 Returns `Inf` when `lim.has_limit` is `false`: a segment with no over-twist limit has no
 torque ceiling, and its real limit is tether break strain.
 """
 function trpt_torque_capacity_axial(lim::NamedTuple, F_axial::Real)
     lim.has_limit || return Inf
-    return F_axial * lim.r_a * lim.r_b * lim.sin_dcrit / lim.l_ax_dcrit
+    # P < 0 in Case B, so this branch is the only one that may evaluate it.
+    P = lim.l_t^2 - (lim.r_a + lim.r_b)^2
+    Q = lim.l_t^2 - (lim.r_a - lim.r_b)^2
+    return F_axial * (sqrt(Q) - sqrt(max(P, 0.0))) / 2
 end
 
 """
-    trpt_torque_capacity_lines(lim, T_lines) -> Float64
+    trpt_axial_force(T_lines, l_t, l_ax) -> Float64
 
-The torque a TRPT segment transmits at its over-twist limit, in N·m, when the caller holds
-the **sum of the line tensions** in the segment (`T_lines`, in newtons — the repo's
-`seg_tension`).
+The axial force a segment carries, in newtons, from the state the ODE actually has:
+the sum of its line tensions `T_lines`, its tether length `l_t`, and its current ring
+separation `l_ax`, all in SI.
 
-    τ_max = T_lines · r_a · r_b · sin(δcrit) / l_t              (4.31 at δcrit)
+    F_axial = T_lines · l_ax / l_t
 
-This is the same torque as `trpt_torque_capacity_axial`, because the two held quantities
-relate by the line inclination: `T_lines = F_axial · l_t / L_ax`. Reach for this one when
-the tension is a state variable, as it is in the ODE.
-
-Returns `Inf` when `lim.has_limit` is `false`.
+This is the line-inclination projection, exact for a straight taut line. Reach for it
+before `trpt_torque_capacity_axial` when the tension is a state variable. Never multiply
+a capacity by a tension from a different twist: that is how the ϕ = 2 corner broke.
 """
-function trpt_torque_capacity_lines(lim::NamedTuple, T_lines::Real)
-    lim.has_limit || return Inf
-    return T_lines * lim.r_a * lim.r_b * lim.sin_dcrit / lim.l_t
-end
+trpt_axial_force(T_lines::Real, l_t::Real, l_ax::Real) = T_lines * l_ax / max(l_t, 1e-9)

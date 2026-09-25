@@ -52,7 +52,7 @@ export params_10kw, params_50kw, params_v5_10kw, params_v5_50kw, params_v5_safe_
 export params_daisy
 export mass_scale
 export cp_at_tsr, ct_at_tsr, tether_drag_force, TETHER_DRAG_CD, TUBE_DRAG_CD
-export trpt_twist_limit, trpt_torque_capacity_axial, trpt_torque_capacity_lines
+export trpt_twist_limit, trpt_torque_capacity_axial, trpt_axial_force
 export ExpansionRotorParams, expansion_rotor_forces, effective_radius, expansion_rotor_inertia
 export EXP_CL_DESIGN, EXP_CD0_DESIGN, EXP_K_INDUCED
 export solve_expansion_induction, expansion_cl, expansion_annulus_area

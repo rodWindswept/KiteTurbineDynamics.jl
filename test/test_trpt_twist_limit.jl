@@ -59,21 +59,68 @@ using KiteTurbineDynamics
         @test lim.disc < 0
         @test isnan(lim.dcrit)
         @test isinf(trpt_torque_capacity_axial(lim, 1000.0))
-        @test isinf(trpt_torque_capacity_lines(lim, 1000.0))
         # the geometry's own end stop is the rings meeting, not a crossing
         @test rad2deg(lim.d_touch) ≈ want_touch_deg atol = 0.05
         # equal radii identity: acos(1 − l_t²/2r²) == 2·asin(l_t/2r)
         @test lim.d_touch ≈ 2 * asin(l_t / (2 * r_a))
     end
 
-    # ── E. capacity is the law evaluated at the limit, in both conventions ────
+    # ── E. capacity is the PEAK. Check it against a numerical maximum ─────────
+    # A test that restates the formula proves nothing. This one sweeps the curve that
+    # δcrit belongs to and takes its maximum, so the closed form has to earn its place.
+    function numeric_peak(r_a, r_b, l_t)
+        best = 0.0
+        for i in 1:359_999
+            d = deg2rad(i * 0.0005)
+            L2 = l_t^2 - r_a^2 - r_b^2 + 2 * r_a * r_b * cos(d)
+            L2 <= 1e-12 && continue
+            v = r_a * r_b * sin(d) / sqrt(L2)
+            v > best && (best = v)
+        end
+        return best
+    end
+
+    # Strictly above the ϕ = 2 boundary, and one unequal-radius case.
+    for (r_a, r_b, l_t) in (
+        (0.575, 0.575, 1.60),
+        (0.400, 0.400, 1.00),
+        (0.575, 0.575, 1.21),      # ϕ = 2.10, the laboratory rig's ratio
+        (0.800, 0.400, 1.30),      # unequal radii
+        (0.400, 0.400, 4.00),      # the 90° asymptote
+    )
+        lim = trpt_twist_limit(r_a, r_b, l_t)
+        @test trpt_torque_capacity_axial(lim, 1.0) ≈ numeric_peak(r_a, r_b, l_t) rtol = 3e-3
+    end
+
+    # ── E2. the ϕ = 2 corner, where the old tension basis collapsed ───────────
+    # At exactly l_t = r_a + r_b the sin/L form is 0/0. The factored form is finite, and
+    # its value is the limit: F_axial·√(r_a·r_b).
+    limb = trpt_twist_limit(0.575, 0.575, 1.15)
+    @test trpt_torque_capacity_axial(limb, 1.0) ≈ sqrt(0.575 * 0.575) rtol = 1e-12
+    @test trpt_torque_capacity_axial(limb, 1000.0) ≈ 1000.0 * 0.575 rtol = 1e-12
+    # a ϕ = 2.01 bay: the removed tension-basis cap cut this to 0.66 of the torque at 60°
+    # twist. A cap at the peak can never sit below the curve that the peak belongs to.
+    let r = 0.575, lt = 2.01 * 0.575
+        lim = trpt_twist_limit(r, r, lt)
+        @test rad2deg(lim.dcrit) ≈ 144.96 atol = 0.05
+        for ddeg in (20.0, 40.0, 60.0, 90.0, 120.0)
+            d = deg2rad(ddeg)
+            Lax = sqrt(lt^2 - 2 * r^2 * (1 - cos(d)))
+            @test trpt_torque_capacity_axial(lim, 1.0) >= r^2 * sin(d) / Lax
+        end
+        # and the tension basis, evaluated at the limit itself, agrees with the peak
+        T_at_limit = lim.l_t / lim.l_ax_dcrit          # per unit axial force
+        @test T_at_limit * r * r * lim.sin_dcrit / lim.l_t ≈
+            trpt_torque_capacity_axial(lim, 1.0) rtol = 1e-12
+    end
+
+    # ── E3. the axial force from a state, and the thesis figures ──────────────
     lim = trpt_twist_limit(0.575, 0.575, 1.60)
     @test trpt_torque_capacity_axial(lim, 1000.0) ≈
-        1000.0 * lim.r_a * lim.r_b * lim.sin_dcrit / lim.l_ax_dcrit
-    @test trpt_torque_capacity_lines(lim, 1000.0) ≈
-        1000.0 * lim.r_a * lim.r_b * lim.sin_dcrit / lim.l_t
+        1000.0 * lim.r_a * lim.r_b * lim.sin_dcrit / lim.l_ax_dcrit rtol = 1e-12
     @test trpt_torque_capacity_axial(lim, 1000.0) ≈ 243.79 atol = 0.05
     @test lim.l_ax_dcrit ≈ 1.3340 atol = 1e-3      # the rings contract from 1.60 m
+    @test trpt_axial_force(1000.0, 1.60, 1.3340) ≈ 833.75 atol = 1.0
     # Tulloch Fig 5.25: 0.2 N·m per newton of axial force, so 100 N·m at his 500 N
     limfig = trpt_twist_limit(0.400, 0.400, 1.000)
     @test trpt_torque_capacity_axial(limfig, 1.0) ≈ 0.2000 atol = 1e-4

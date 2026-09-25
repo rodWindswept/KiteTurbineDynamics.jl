@@ -554,14 +554,22 @@ function compute_rope_forces!(
         gid_b = sys.ring_ids[s + 1]
         r_ring_a = (sys.nodes[gid_a]::RingNode).radius
         r_ring_b = (sys.nodes[gid_b]::RingNode).radius
-        T_lines = max(seg_tension[s], 0.0)
         # l_t is the segment's tether length.  The rest length is the design geometry
         # and the elastic stretch is under 1%, so the extra state read is not worth it.
         # All lines in a segment are equal length by design, so the mean is exact.
         l_t = sum(view(line_restlen, s, :)) / max(p.n_lines, 1)
+        T_lines = max(seg_tension[s], 0.0)
         lim = trpt_twist_limit(r_ring_a, r_ring_b, l_t)
+        pos_a = @view u[(3 * (gid_a - 1) + 1):(3 * gid_a)]
+        pos_b = @view u[(3 * (gid_b - 1) + 1):(3 * gid_b)]
+        L_s = norm(pos_b - pos_a)
         tau_sat = if lim.has_limit
-            trpt_torque_capacity_lines(lim, T_lines)      # (4.31) at δcrit of (4.34)
+            # The peak of Tulloch's operating curve at THIS axial force.  δcrit already
+            # carries the ring contraction, so the cap cannot bite below δcrit.  A cap in
+            # the line-tension basis instead multiplied by the tension at the CURRENT
+            # twist, which cut a ϕ = 2.01 bay to 0.66 of its capacity and to zero at
+            # exactly ϕ = 2.  The tension basis is gone for that reason.
+            trpt_torque_capacity_axial(lim, trpt_axial_force(T_lines, l_t, L_s))
         else
             # HELD (2026-09-25).  A tether shorter than the sum of its ring radii has no
             # Tulloch over-twist limit, so this ceiling has no thesis basis.  Rod has not
@@ -570,15 +578,10 @@ function compute_rope_forces!(
             # then the old fixed-gap cap stays for this class alone, which is conservative
             # because it sits below the true capacity.  Ten of the twelve segments on the
             # live campaign seed are in this class, so this branch is the live one.
-            gid_aa = gid_a
-            gid_bb = gid_b
-            pos_a = @view u[(3 * (gid_aa - 1) + 1):(3 * gid_aa)]
-            pos_b = @view u[(3 * (gid_bb - 1) + 1):(3 * gid_bb)]
-            L_s = norm(pos_b - pos_a)
             r_s = 0.5 * (r_ring_a + r_ring_b)
             dastar = 2 * asin(min(L_s / sqrt(2 * (L_s^2 + 2 * r_s^2)), 1.0))
             chord = sqrt(L_s^2 + 2 * r_s^2 * (1 - cos(dastar)))
-            p.n_lines * (T_lines / max(p.n_lines, 1)) * r_s^2 * sin(dastar) / max(chord, 1e-9)
+            T_lines * r_s^2 * sin(dastar) / max(chord, 1e-9)
         end
         # Action-reaction: the segment transmits ONE torque; ring s sees +τ,
         # ring s+1 sees −τ (Newton's third law on the shaft). The symmetric
