@@ -238,6 +238,48 @@ struct BeamSizing
 end
 
 """
+    _equilibrium_omega_or_fail(ω_solved, mode, n_active, v_rated, p_base, rotors) -> Float64
+
+Return `ω_solved`, or fail LOUDLY when the equilibrium solve produced no usable
+shaft speed.
+
+`ω = 0` is not a fallback.  It removes the torque-helix load from every interior
+ring, so a constant-radius section reads `N_comp = 0` and that ring sizes to the
+manufacturability floor — a machine sized as if it were STOPPED, in silence.
+Measured 2026-09-25: the corrected site inflow and the annulus span made the 5 kW
+campaign seed's solve return `nothing`, and the only symptom in the suite was
+`N_comp_per_ring[2] > 0.0` evaluating `0.0 > 0.0`.
+
+`mode = :raise` (default) states the precondition: the design must reach an
+equilibrium at its rated wind.  `mode = :zero` is an explicit request to size a
+stopped machine, and the caller owns that claim.
+"""
+function _equilibrium_omega_or_fail(
+    ω_solved, mode::Symbol, n_active, v_rated, p_base, rotors
+)
+    usable = ω_solved !== nothing && isfinite(ω_solved) && ω_solved > 0.0
+    usable && return Float64(ω_solved)
+    if mode === :zero
+        return 0.0
+    elseif mode !== :raise
+        error(
+            "size_beams_closed_form: unknown on_missing_omega = :$mode (use :raise or :zero)",
+        )
+    end
+    v_rotor = isempty(rotors) ? v_rated : rotors[1].v_wind
+    error(
+        "size_beams_closed_form: the equilibrium shaft speed did not solve " *
+        "(ω = $(ω_solved)) at n_active = $(n_active), v_rated = $(v_rated) m/s, " *
+        "v_top_rotor = $(round(v_rotor; digits=4)) m/s, k_mppt = $(p_base.k_mppt). " *
+        "A zero shaft speed removes the torque-helix load from EVERY interior ring, " *
+        "so the sizing would describe a STOPPED machine and every constant-radius " *
+        "ring would fall to the manufacturability floor.  Re-seed the design, or " *
+        "pass on_missing_omega = :zero to size it as stopped ON PURPOSE.  " *
+        "See test/test_trpt_realisability.jl.",
+    )
+end
+
+"""
     size_beams_closed_form(dec, p_base, cfg; t_over_D, ends) → BeamSizing
 
 Size every TRPT ring's tube closed-form from the decoder's rotor stack (R7,
@@ -275,6 +317,7 @@ tension) feeds back, so `n_mass_passes` fixed-point passes are run.
 `cfg` is duck-typed (defined later in the include order) and supplies
 `power_W`, `v_rated`, `min_wall_m`, `fos_hard` and `t_over_D`.
 """
+
 function size_beams_closed_form(
     dec,
     p_base,
@@ -295,6 +338,16 @@ function size_beams_closed_form(
     # it BINDS — once the load model was corrected, all seven cylinder rings sat
     # on this floor — so its value needs a measured basis, not a guess.
     min_Do_m::Float64=MIN_RING_DO_M,
+    # What to do when the equilibrium shaft speed does NOT solve (2026-09-25).
+    # `:raise` is the default, because `ω = 0` silently removes the torque-helix
+    # load from EVERY interior ring: a constant-radius section then reads
+    # `N_comp = 0` and every ring sizes to the manufacturability floor.  The
+    # machine is sized as if it were STOPPED, with no message.  Measured
+    # 2026-09-25: the corrected inflow made the campaign seed's solve return
+    # nothing, and the only symptom in the whole suite was one assertion reading
+    # `0.0 > 0.0`.  `:zero` is for a caller that wants a stopped machine ON
+    # PURPOSE, out loud.  `physics-topology.md` §6: raise.
+    on_missing_omega::Symbol=:raise,
 )
     design = dec.design
     rotors = dec.rotors
@@ -312,6 +365,18 @@ function size_beams_closed_form(
     # ── 1. Expansion params EXCLUDING the hub rotor (single authority) ──────
     expansion_params = expansion_params_from_rotors(rotors, n_rings_tot, n_lines)
 
+    # The hub (main) rotor: the rotor on the hub ring.  Found BEFORE the
+    # equilibrium solve, because that solve starts from the hub rotor's REAL
+    # radius.  A disc sized for one rotor's share has no equilibrium at any ω
+    # (measured 2026-09-25) — the scan balances the TOTAL rated power.
+    hub_rotor = nothing
+    for rot in rotors
+        if rot.ring_idx == n_rings_tot
+            hub_rotor = rot
+            break
+        end
+    end
+
     # ── 2. Equilibrium shaft speed (the solve objective_v10 uses) ───────────
     P_per_rotor = n_active > 0 ? cfg.power_W / n_active : cfg.power_W
     v_ref_rotor = isempty(rotors) ? cfg.v_rated : rotors[1].v_wind
@@ -321,17 +386,15 @@ function size_beams_closed_form(
     ω_solved, _ = solve_equilibrium_self_consistent(
         design, expansion_params, p_scaled, n_lines, radii, zs;
         P_per_rotor=P_per_rotor, v_wind=cfg.v_rated, elev_rad=elev_rad,
+        r_hub_init=hub_rotor === nothing ? nothing :
+                   radii[n_rings_tot] + hub_rotor.blade_tip_radius,
+        resize_hub=false,   # the decode FIXES the geometry (see the solve's note)
     )
-    ω_num = (ω_solved === nothing || !isfinite(ω_solved)) ? 0.0 : ω_solved
+    ω_num = _equilibrium_omega_or_fail(
+        ω_solved, on_missing_omega, n_active, cfg.v_rated, p_base, rotors
+    )
 
     # ── 3. Hub (main) rotor thrust from its ACTUAL swept annulus ────────────
-    hub_rotor = nothing
-    for rot in rotors
-        if rot.ring_idx == n_rings_tot
-            hub_rotor = rot
-            break
-        end
-    end
     T_hub = if hub_rotor === nothing
         r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
         peak_hub_thrust(r_ref, elev_rad; v=cfg.v_rated, CT=OPT_CT_RATED)

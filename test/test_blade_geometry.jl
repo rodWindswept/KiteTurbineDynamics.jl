@@ -100,7 +100,7 @@ using KiteTurbineDynamics
 
         dec = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p; power_W=5000.0,
             cylinder_cone=true, rotor_count_mode=true,
-            power_split=0.6, cone_slope_deg=22.0,
+            cone_slope_deg=22.0,
             rotor_spacing_frac=0.8, blocking_factor=1.0)
 
         @test !isempty(dec.rotors)
@@ -112,8 +112,13 @@ using KiteTurbineDynamics
             @test er.blade_tip_radius ≈ 0.7 * span atol=1e-12
             @test er.blade_hub_radius ≈ -0.3 * span atol=1e-12
             @test er.blade_tip_radius ≈ (0.7 / 0.3) * (-er.blade_hub_radius) atol=1e-12
-            # Span magnitude preserved: span = 0.75·r_rotor·blade_scale.
-            @test span ≈ 0.75 * er.r_rotor * er.blade_scale atol=1e-9
+            # The span MAGNITUDE is sized by the annulus solve, and
+            # `test_builders_v10.jl` ("annulus span and the one chord law", T4)
+            # guards it.  This file pins the 70/30 SPLIT.  The retired law
+            # `span = 0.75·r_rotor·blade_scale` is a DISC relation, so assert it
+            # ABSENT as a strict bound: the annulus solve gives the SMALLER
+            # blade at these ring radii.  A regression to the disc law fails.
+            @test span < 0.75 * er.r_rotor * er.blade_scale
         end
     end
 

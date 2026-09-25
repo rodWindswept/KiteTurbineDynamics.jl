@@ -34,7 +34,7 @@ function decode_seed(; rotor_count=3.0, blocking_factor=BF)
     return KiteTurbineDynamics.design_from_vector_v10(
         x, PROFILE_ELLIPTICAL, params_5kw_188(); power_W=5000.0,
         cylinder_cone=true, rotor_count_mode=true,
-        power_split=0.6, cone_slope_deg=22.0,
+        cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=blocking_factor)
 end
 
@@ -106,7 +106,7 @@ end
     dec22 = KiteTurbineDynamics.design_from_vector_v10(
         x, PROFILE_ELLIPTICAL, params_5kw_188(); power_W=5000.0,
         cylinder_cone=true, rotor_count_mode=true,
-        power_split=0.6, cone_slope_deg=22.0,
+        cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=BF)
     @test KiteTurbineDynamics.lowest_rotor_clearance(dec22) <
           KiteTurbineDynamics.lowest_rotor_clearance(dec0)

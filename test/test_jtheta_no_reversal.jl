@@ -46,14 +46,14 @@ p = params_at_length(L)
 x = seed_genome(KW)
 x[6] = 2.0                       # 2 rotors: hub + 1 expansion (the J·θ case)
 dec = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p; power_W=PW, v_rated=V_RATED,
-    cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+    cylinder_cone=true, rotor_count_mode=true,
     cone_slope_deg=22.0, rotor_spacing_frac=0.8,
     blocking_factor=BLOCKING_WIND_FACTOR_5KW)
 check("decode: 2 active rotors", dec.n_active == 2)
 
 cfg = ObjectiveConfig(; power_W=PW, v_rated=V_RATED, p_floor_kw=5.0,
     fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
-    rotor_count_mode=true, power_split=0.6,
+    rotor_count_mode=true,
     blocking_factor=BLOCKING_WIND_FACTOR_5KW)
 sizing = size_beams_closed_form(dec, p, cfg)
 sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;

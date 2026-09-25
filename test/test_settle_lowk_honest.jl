@@ -99,7 +99,6 @@ function run_at(k::Float64)
         k_mppt=k,
         tether_diameter=P_BASE.tether_diameter,
         rotor_count_mode=true,            # campaign decode knobs (2026-09-04)
-        power_split=0.6,
         blocking_factor=BLOCKING_WIND_FACTOR_5KW,
     )
     return KiteTurbineDynamics.evaluate_windowed(

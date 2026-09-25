@@ -215,4 +215,27 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     @test d0.T_thrust == 0.0                       # ct_at_tsr(0.0) == 0.0 exactly
     @test dop.T_thrust > 0.0
     @test d0.T_top < dop.T_top                     # no rotation -> no thrust term
+
+    # ── E. a runaway twist is REFUSED, not returned (2026-09-25) ────────────
+    # An unsatisfiable couple leaves the solve with no admissible twist, and it
+    # used to return one anyway: at L/r 1.2 the placement carried
+    # Δα/δα* = 74 047, about 4e6 degrees of twist, and the caller could not tell
+    # that from a design.  The DIAGNOSTIC path records the ratio so a screen can
+    # see it; the PRODUCTION path refuses.
+    g12 = copy(SEED_LR20)
+    g12[3] = 1.2                                   # the L/r gene
+    sys12, u012, pc12, lift12, wf12 = build_case(nothing, nothing; genome=g12, p=p_fixture)
+    F12 = design_axial_preload(
+        sys12, pc12, lift12, u012; omega_eq=OMEGA_SEED, realisability_margin=1.0
+    )
+    τ12 = sys12.k_mppt_ref[] * OMEGA_SEED^2
+    r12 = trpt_matched_place(
+        sys12, pc12, F12, τ12, OMEGA_SEED, wf12; raise_on_unrealisable=false
+    )
+    @test r12.cross_worst >= 1.0
+    # Both limits are violated at this design point, so this pins the REFUSAL,
+    # not which branch speaks first.
+    @test_throws ErrorException trpt_matched_place(
+        sys12, pc12, F12, τ12, OMEGA_SEED, wf12
+    )
 end

@@ -45,6 +45,7 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 | C5 | Tulloch torsional-collapse criterion δα* | thesis | Daisy scores tors≈0.22 while flying fine — threshold, not physics (gate 13, small-scale) | SUPPORTED / small-scale threshold OPEN |
 | C6 | Dyneema SK99 rope break ε=3.5% | SK99 datasheet | — | SUPPORTED |
 | C7 | Mass exponent P^1.35 (rung scaling) | "Mass Scaling PDF" | underdetermined from one point; field tests measure | SUPPORTED / OPEN |
+| C8 | Blade chord and solidity in the modelled power | `cp_bem(n_lines, tsr)` (`src/bem.jl:61`) takes no chord and no solidity. Solidity enters only as a proxy for blade count, `(5.0/n_lines)^0.7` (`src/bem.jl:75`), and `src/bem.jl:18` flags that exponent as a PLACEHOLDER | The Cp surface cannot price a chord change or a span/chord change at a fixed blade count. A chord law is needed for the record, for the banked expansion-rotor forces, and for the reverse-rotation drag (`src/ring_forces.jl:226`), but the modelled power does not rest on it. Remedy: an AeroDyn BEM sweep over solidity, as well as blade count | OPEN (recorded 2026-09-24, Rod: "needs recording, ready for honest reporting") |
 
 ## D. Open / unanchored (do NOT quote externally)
 

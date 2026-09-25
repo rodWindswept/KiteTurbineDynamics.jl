@@ -10,6 +10,32 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-24] Phase 5 sizing: the wind anchor, the chord law, the de-rate, and the top-ring retirement
+
+**Context.** Phase 5 of the multi-rotor BEM sizing remediation. A probe measured the decoder's per-rotor sizing against the ODE and found three faults. The annulus solve (5.1) landed at `0fb5b04`. The decode loop, the shear reference, the guards and the wake factor stayed open. Plan: `docs/plans/2026-09-24-phase5-multirotor-sizing.md`. Four questions went to Rod, D1 to D4.
+
+**Decided, D1 (Rod, 2026-09-24).** The wind reference is the MEASURED Daisy pair: **10.0 m/s at 4.8 m**, the height of the anemometer on the Daisy mast. It is neither the 10 m meteorological standard nor the rotor hub altitude. The 5 kW system uses that same wind through the same shear model. The exponent is 1/7.
+
+**Measured consequence.** The ODE barely moves. The two anchors coincide to 0.07 per cent: 10 m/s at 4.8 m reads 11.0077 m/s at the 5 kW hub, against 10.9980 m/s today. So the 5 kW rung gains 0.09 per cent in speed and 0.26 per cent in power, and the number 11 in `params_5kw_188` was always the hub translation of the measured 10 m/s. **The defect was never the ODE. It was the decoder**, which references `h_ref = 50 m` and reads 8.6637 m/s at the hub. That is 1.2706 times low in speed and 2.051 times low in power. The decoder default exponent is also `0.14` (`objective_v10.jl:88`) while the ODE uses `1/7 = 0.1429`; T1 makes 1/7 the single value.
+
+**An anchor conflict, recorded not resolved.** Under the measured pair the Daisy rotor centre reads 10.1025 m/s, while `params_daisy` asserts 11.0 m/s at that height. At the recorded system Cp of 0.15 to 0.18 and the recorded annulus of 10.8 to 11.2 m², 10.1025 m/s yields **1023 to 1273 W**. The published rating is **1.5 kW at 10 m/s**. The two do not reconcile. The rating needs about 10.9 m/s at 4.8 m for 1.5 kW at the recorded Cp and area. So either the rated wind was nearer 11 m/s, or the rated power was nearer 1.27 kW, or the rated rotor was larger or cleaner than the record states. Resolving it needs the Tulloch thesis body. The ladder's absolute scale follows this anchor, so a move from 1.5 kW to 1.27 kW moves `geom_scale` by 1.0571.
+
+**Decided, D2 (Rod, 2026-09-24).** Equal share of power across the rotors. **Only a rotor with a rotor physically below it takes the de-rate.** In a 3-rotor set the top two are de-rated and the lowest is not. Rod called the 0.75x de-rate harsh, and accepted it for now. The code already does the de-rate half: `objective_v10.jl:350` reads `wind_factor_i = i < n_active ? blocking_factor : 1.0`, and `test/test_wind_blocking.jl:45` pins `[BF, BF, 1.0]`. Only the default power share changes.
+
+**A conflict with the entry above, recorded.** With equal share AND the accepted de-rate, the **middle** rotor takes the largest span (0.5000 m) and the lowest the smallest (0.4375 m). The lowest-largest expectation holds only with NO de-rate: lowest 0.4375 m, middle 0.3784 m, top 0.3398 m. So the structural half of the equal-share entry survives, because the lowest rotor still carries the whole column and its ring still needs the stiffness. Its blade-size half does not survive. The de-rate is what inverts the order.
+
+**Decided, D3 (Rod, 2026-09-24).** The blade chord is constant along the span, with straight leading and trailing edges. The code already assumes one chord per rotor. The chord versus span law retires with the disc radius, so the record fixes it from the measured Daisy blade: solidity 7.5 per cent, 3 blades, span 1.000 m, annulus 10.8071 m² (config 8) give **0.2702 m at the anchor**, so **c = 0.2702 · span**. That is the only law consistent with the measured mass law of 0.420 kg at span 1.0 m rising as span cubed, because a cube law needs the blade cross-section to shrink with the span.
+
+**A limitation, recorded for honest reporting.** Rod asked whether the BEM can price a solidity change and a span/chord change. It cannot. `cp_bem(n_lines, tsr)` (`src/bem.jl:61`) takes no chord and no solidity argument. Solidity enters only as a proxy for blade count, `(5.0/n_lines)^0.7` (`src/bem.jl:75`), and `src/bem.jl:18` flags that exponent as a PLACEHOLDER. So the modelled power does not change with the chord at any blade count. The chord still sets the banked expansion-rotor forces, the reverse-rotation drag at `src/ring_forces.jl:226`, and the geometry the record reports. Ledger **C8** records the gap, and the remedy is an AeroDyn BEM sweep over solidity (plan task T10). The corrected sizing lands the machine at **2.15 per cent solidity**, and nothing in the present model confirms or refutes that operating point.
+
+**Decided, D4 (Rod, 2026-09-24).** The top-ring exclusion retirement gets its own long work plan and lands AFTER Phase 5. Reason: it is a physics change with its own tests and its own acceptance run, and it touches the same decode path, so landing it here would double the re-baseline. The rule to implement: **when the topmost rotor carries banked blades, the banked model REPLACES the disc model at that ring.** Three silent guards enforce the old exclusion today, `src/builders_util.jl:91`, `:297`, and `src/ring_forces.jl:261`. Plan: `docs/plans/2026-09-24-banked-topmost-rotor.md`.
+
+**Enables and rules out.** Enables one wind profile and one reference for the decoder and the ODE, a single chord law, and a legal banked top rotor. Rules out quoting the Daisy 1.5 kW rating against the measured 10 m/s without the gap stated.
+
+**Status:** Active. D1 to D4 are ruled. The anchor conflict and the solidity blindness are open, and both are recorded.
+
+---
+
 ## [2026-09-24] Multi-rotor sizing: every rotor takes an equal share of the torque and the power
 
 **Context.** Defect 5 of the document audit was item 5 of the pre-flight checklist, which quoted a thrust split that the trust ledger forbids re-quoting ("309 N of 2044 N", "~15 %"), because a probe triple-counted the per-blade force. The item's rule, "include the thrust of EVERY rotor", survived the retraction. Its illustration did not. Rod ruled the replacement on 2026-09-24.

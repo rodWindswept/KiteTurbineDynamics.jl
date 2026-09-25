@@ -81,21 +81,16 @@ function decode_rotor_mask(x_proxy::Float64)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Wind shear model
+# Wind shear — RETIRED as a private profile (T1, D1, 2026-09-24)
 # ══════════════════════════════════════════════════════════════════════════════
-
-"""
-    wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref, shear_exp=0.14)
-
-Power-law wind shear: v(z) = v_ref × (z / h_ref)^α
-"""
-function wind_speed_at_ring(
-    ring_z::Float64, hub_altitude::Float64, v_ref::Float64=11.0,
-    h_ref::Float64=50.0, shear_exp::Float64=0.14,
-)::Float64
-    z = max(ring_z, 1.0)
-    return v_ref * (z / h_ref)^shear_exp
-end
+#
+# `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)`
+# lived here.  It ignored `hub_altitude` and defaulted to a 50 m reference with a
+# 0.14 exponent, so the decoder read 8.6637 m/s at the 5 kW hub where the ODE
+# read 10.9980 m/s.  That is the 2.051x power defect of the 2026-09-23 audit.
+#
+# The decoder now calls `wind_at_altitude(v_rated, p.h_ref, ring_altitude)`, the
+# same function the ODE calls.  One profile, one reference, one exponent.
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Design vector → TRPTDesign + Rotor array
@@ -189,12 +184,11 @@ function design_from_vector_v10(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
     rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
     rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
-    power_split::Union{Nothing,Float64}=nothing,   # top-rotor power fraction; nothing = equal P/n
     blocking_factor::Float64=1.0,   # downstream-rotor inflow de-rating (1.0 = no wake/blocking)
     beam_Do_top::Float64=0.05,
     beam_t_over_D::Float64=0.055,
@@ -210,7 +204,7 @@ function design_from_vector_v10(
         max_ground_radius=max_ground_radius, power_W=power_W, v_rated=v_rated,
         cylinder_cone=cylinder_cone, rotor_count_mode=rotor_count_mode,
         cone_slope_deg=cone_slope_deg, rotor_spacing_frac=rotor_spacing_frac,
-        power_split=power_split, blocking_factor=blocking_factor,
+        blocking_factor=blocking_factor,
     )
 end
 
@@ -220,12 +214,11 @@ function _decode_v10_14(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
     rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
     rotor_spacing_frac::Float64=0.8,   # swept: min rotor spacing = frac · 2·r_rotor (0.8 reference)
-    power_split::Union{Nothing,Float64}=nothing,   # top-rotor power fraction; nothing = equal P/n
     blocking_factor::Float64=1.0,   # downstream-rotor inflow de-rating (1.0 = no wake/blocking)
 )
     # Base v5 design (first 9 vars)
@@ -302,19 +295,20 @@ function _decode_v10_14(
     blade_scale_top = clamp(x[13], 0.1, 2.0)
     blade_scale_bottom = clamp(x[14], 0.1, 2.0)
 
-    # Hub altitude from shaft geometry (rings already computed above)
-    hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
-
-    # Power per rotor (2026-08-25): power_split gives the TOP rotor its fraction,
-    # the rest share (1 − power_split).  The 14-D genome carries NO power_split
-    # gene — the value is a sweep knob (ObjectiveConfig.power_split) threaded
-    # through the `power_split` kwarg.  If unset (nothing), rotor_count_mode falls
-    # back to equal P/n (legacy); the x[15] probe is retained defensively.
-    if power_split === nothing
-        power_split = (rotor_count_mode && length(x) >= 15) ? clamp(x[15], 0.2, 0.8) : 1.0 / max(n_active, 1)
-    else
-        power_split = clamp(power_split, 0.0, 1.0)
-    end
+    # Power per rotor: EQUAL SHARE, the single law (D2, Rod 2026-09-24).
+    #
+    # RETIRED 2026-09-24: the `power_split` top-rotor fraction and its legacy
+    # `x[15]` genome probe.  Rod ruled that every rotor takes an equal share of
+    # the turbine's power requirement, so the law is P_i = power_W / n_active.
+    # A 0.6 top-rotor share was worth 5.10x on island 1's top-rotor blade mass.
+    #
+    # The `x[15]` probe was also a DUPLICATE REPRESENTATION.  Elsewhere in this
+    # repo x[15] is the legacy log10(k_mppt) slot (objective_v11.jl:13), so a
+    # legacy 15-D genome had its k_mppt slot silently reinterpreted as a
+    # top-rotor fraction, clamped to 0.2-0.8.  Retiring the probe closes that.
+    #
+    # The co-axial de-rate is separate and stays: only rotors with another rotor
+    # physically below them take the blocking factor (D2).
 
     # Min rotor spacing check (2026-08-25): the concurrent top rotors sit on
     # adjacent rings (spacing target_Lr·r_hub); reject if that is tighter than
@@ -346,30 +340,39 @@ function _decode_v10_14(
         # de-rate is real (P ∝ v³), not a sizing-only placeholder.
         ring_z = zs[pos]  # pos is now ring index (ground→hub)
         ring_altitude = max(ring_z * sind(30.0), 1.0)
-        v_i = wind_speed_at_ring(ring_altitude, hub_altitude, v_rated)
+        v_i = wind_at_altitude(v_rated, p.h_ref, ring_altitude)
         wind_factor_i = i < n_active ? blocking_factor : 1.0
         v_i *= wind_factor_i
 
         # BEM rotor radius for this rotor at its power share + local wind speed
-        P_i = (i == 1) ? power_split * power_W : (1.0 - power_split) * power_W / max(n_active - 1, 1)
+        P_i = power_W / max(n_active, 1)
         r_rotor_i = BEM.rotor_radius_for_power(P_i, v_i, design.n_lines)
 
         # Ring-anchored 70/30 blade split (2026-08-20, Rod): the blade attaches
         # to the TRPT ring at 70% outboard / 30% inboard of its span, so
         # blade_tip = +0.7·span (OUTBOARD offset) and blade_hub = −0.3·span
         # (INBOARD offset, negative).  The swept annulus is r_out = r_ring +
-        # 0.7·span, r_in = r_ring − 0.3·span, A = π(r_out² − r_in²).
-        # NOTE (2026-08-21): the identity A = 2π·r_ring·span holds ONLY for a
-        # 50/50 split (ring at the annulus midpoint) — for 70/30 it understates
-        # the area (Daisy: π(2.22²−1.22²) = 10.81 m² vs 2π·1.52·1.0 = 9.55 m²),
-        # so the annulus formula π(r_out² − r_in²) is the only correct one.
-        # Span magnitude preserved from the 0.25-hub era (0.75·r_rotor·λ) so the
-        # blade size scale is unchanged; the convention is now consistent with
-        # the expansion rotors (expansion_rotor.jl: expansion_annulus_area).
-        span = 0.75 * r_rotor_i * blade_scale_i
+        # 0.7·span, r_in = r_ring − 0.3·span, A = π(r_out² − r_in²).  The
+        # identity A = 2π·r_ring·span holds ONLY for a 50/50 split (Daisy:
+        # π(2.22²−1.22²) = 10.81 m² against 2π·1.52·1.0 = 9.55 m²), so the
+        # 70/30 area formula is the only correct one.
+        #
+        # SPAN (2026-09-24, T4): solve the annulus of THIS rotor's own ring for
+        # THIS rotor's own power at its own post-blocking wind.  The retired law
+        # `0.75·r_rotor_i` sized a standalone DISC and never read the ring, so
+        # island 1's top rotor came out at 1.9584 m of blade where 0.4494 m was
+        # required.  `blade_scale_i` stays as a declared departure from the
+        # power-required span.
+        r_ring_i = radii[pos]
+        span =
+            BEM.annulus_span_for_power(
+                P_i, v_i, r_ring_i, design.n_lines; bank_deg=bank_i
+            ) * blade_scale_i
         blade_tip = 0.7 * span
         blade_hub = -0.3 * span
-        blade_chord = 0.113 * r_rotor_i * blade_scale_i
+        # CHORD (D3, 2026-09-24): one law, from the measured Daisy blade.  The
+        # ODE's reverse-drag branch calls the same helper.
+        blade_chord = BEM.blade_chord_for_span(span)
 
         push!(rotors, RotorSpecV10(
             pos, bank_i, blade_scale_i, v_i, r_rotor_i, blade_tip, blade_hub, blade_chord,
@@ -465,7 +468,7 @@ function objective_v10(
     beam_profile::BeamProfile,
     p::SystemParams;
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     elev_angle::Float64=π / 6,
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,

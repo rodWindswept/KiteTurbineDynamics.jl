@@ -74,6 +74,11 @@ const ELEV = π / 6
 const V_RATED = 11.0
 const GROUND_OFFSET = 1.0
 const MIN_CLEARANCE = 1.5   # m — hard gate on lowest active rotor tip
+# Decode + objective knobs that the PROVENANCE block must PRINT, so the record
+# cannot name a value the run did not use.  T6 (2026-09-24): the block named
+# `blocking_factor=1.0` while the cfg used 0.9086, the co-axial de-rate.
+const CONE_SLOPE_DEG = 22.0      # TRPT cone half-angle (Tulloch/Jensen reference)
+const ROTOR_SPACING_FRAC = 0.8   # min spacing = 0.8 · 2·r_rotor (Rod)
 const WINDOW_S = 40.0       # HONEST measurement window (2026-08-21 open task): the 20 s
                               # window sampled the settle decay (P_end 5.97 kW vs true equilibrium
                               # k·ω³ ≈ 3.15 kW); tail5 now sits at 35-40 s. relax_s matches.
@@ -108,11 +113,11 @@ open(joinpath(OUT_DIR, "PROVENANCE.md"), "w") do io
     println(io, "- **Physics era:** $(PHYSICS_ERA). Details (2026-08-22): Daisy-anchored base params. r_bottom clamp fix. Lifter mass excluded from tension. Annulus-aligned Betz gates. Span^3 blade-mass law (m = 0.420·(decoded span/1.0)^3) with the 420 g anchor. Hub double-model removed. Honest window relax 10 + window 40. k=2.24.")
     println(io, "- **Launch git HEAD:** $(GIT_HASH)")
     println(io, "- **Run log:** $(RUN_LOG). Runtime claims cite the `Campaign complete in Ns` line from this file.")
-    println(io, "- **Regime:** `lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=11.0, const_tension=true)`. Vertical lift = 1.5 × m_airborne × g. m_airborne = expansion_airborne_mass(sys, p; include_lifter=false) per genome. The lifter mass does NOT drive the tension (Rod 2026-08-21). Line tension = F_vert / sin(70°), FLAT at all wind speeds (modulated lifter, no v² scaling).")
+    println(io, "- **Regime:** `lift_for(sys, p) = sized_lifter_for(sys, p; margin=1.5, v_ref=$(V_RATED), const_tension=true)`. Vertical lift = 1.5 × m_airborne × g. m_airborne = expansion_airborne_mass(sys, p; include_lifter=false) per genome. The lifter mass does NOT drive the tension (Rod 2026-08-21). Line tension = F_vert / sin(70°), FLAT at all wind speeds (modulated lifter, no v² scaling).")
     println(io, "- **Base params:** params_daisy() (measured Tulloch anchor) scaled 1.5 → 5 kW via mass_scale.")
     println(io, "- **Baseline (fixed-rotary regime):** scripts/results/v13_5kw_len$(LENGTH)/ + lift_tension_retrospective.csv (rotary_lifter_default(), wind-dependent tension).")
     println(io, "- **Identical to first campaign:** seeds (seed_genome(5.0)). RNG (Random.seed!(42+island-1)). Tight bounds. DE sizing 10×3×30. Length $(LENGTH) m.")
-    println(io, "- **V13 rotor-geometry knobs (2026-08-25 re-seed):** rotor_count_mode=true (x10 = rotor count {1,2,3}). power_split=0.6 (top rotor fraction). cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=1.0. cylinder_cone=true (three-section TRPT: transmission cylinder + 22° cone + harvest cylinder).")
+    println(io, "- **V13 rotor-geometry knobs (2026-08-25 re-seed):** rotor_count_mode=true (x10 = rotor count {1,2,3}). Power share is EQUAL across rotors (D2, Rod 2026-09-24 — the `power_split` top-rotor knob is retired). cone_slope_deg=$(CONE_SLOPE_DEG), rotor_spacing_frac=$(ROTOR_SPACING_FRAC), blocking_factor=$(round(BLOCKING_WIND_FACTOR_5KW; digits=4)) (co-axial de-rate, 0.75^(1/3) — NOT 1.0). cylinder_cone=true (three-section TRPT: transmission cylinder + 22° cone + harvest cylinder).")
     println(io, "- **ObjectiveConfig:** tail5, penalize_ceiling=false, fos_target=2.5, fos_hard=2.5, kickstart 0.0, k_mppt = K_MPPT_5KW_HONEST (2.24), NOT p.k_mppt (3.55).")
     println(io, "- **Gate alignment:** ode_gate_v13.jl uses lift_for. Regate + ladder inherit via gate_design.")
     println(io, "- **Plan:** docs/plans/2026-08-18-5kw-mass-aware-lift-redo.md")
@@ -168,9 +173,8 @@ cfg = ObjectiveConfig(;
                      # NOT p_base.k_mppt (3.55 — mass_scale'd, unanchored).
     tether_diameter = p_base.tether_diameter,
     rotor_count_mode = true,   # x10 = rotor count {1,2,3} (14-D re-seed, 2026-08-25)
-    power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
-    cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
-    rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
+    cone_slope_deg = CONE_SLOPE_DEG,
+    rotor_spacing_frac = ROTOR_SPACING_FRAC,
     blocking_factor = BLOCKING_WIND_FACTOR_5KW,
     min_wall_m = MIN_WALL_M,   # downstream (upper) rotors: 0.75× power
 )
@@ -248,7 +252,7 @@ function eval_v13(x::Vector{Float64}, island::Int=0, gen::Int=0, idx::Int=0)
     try
         dec = design_from_vector_v10(xr, beam_profile, p_base; power_W=PW,
             cylinder_cone=true, rotor_count_mode=true,
-            power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
+            cone_slope_deg=cfg.cone_slope_deg,
             rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor)
         clearance = lowest_rotor_clearance(dec)
         # ── HARD GATE: ground clearance ────────────────────────────────

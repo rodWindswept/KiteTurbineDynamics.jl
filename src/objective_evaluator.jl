@@ -74,7 +74,10 @@ end
 # Protocol constants (fixed scoring/physics knobs — not swept)
 # ══════════════════════════════════════════════════════════════════════════════
 
-const WIND_MS     = 11.0   # rated wind speed at reference height
+# WIND_MS retired 2026-09-24 (T1, D1).  It hardcoded 11.0 m/s as the rated wind at
+# `p.h_ref`.  The rated wind is the SITE standard now, and every params object
+# carries it re-expressed at its own rotor altitude: `p.v_wind_ref == site_wind(p.h_ref)`.
+# Superseded by `wind_at_altitude(p.v_wind_ref, p.h_ref, z)` (src/wind_profile.jl).
 # Minimum acceptable FoS for the objective scoring gate.  Named FOS_GATE (not
 # FOS_DESIGN) — structural_safety.jl already owns the name FOS_DESIGN = 3.0
 # (the design-point buckling FoS), and the objective's old `const FOS_DESIGN =
@@ -141,7 +144,6 @@ Base.@kwdef struct ObjectiveConfig
     kickstart_s::Float64 = 2.0     # cold-start PTO motor kick duration; 0.0 = off. Legacy ζ=1.5 stall crutch — the kick injects ~115× MPPT torque and winds chains past the collapse limit; v13 uses 0.0
     # V13 rotor-geometry knobs (2026-08-25 — defaults preserve v12/v13 behaviour exactly)
     rotor_count_mode::Bool     = false  # true → x10 is rotor count {1,2,3}, not a bitmask
-    power_split::Float64    = 0.6    # top-rotor power fraction (0.2-0.8; top-heavy wins)
     cone_slope_deg::Float64 = 22.0   # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac::Float64 = 0.8 # min rotor spacing as fraction of 2·r_rotor (Rod: 0.8 diameters)
     blocking_factor::Float64 = 1.0   # wake blocking between co-axial rotors (1.0 = full)
@@ -165,7 +167,7 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                          fos_cap=o.fos_cap, tether_diameter=o.tether_diameter,
                          power_stat=o.power_stat, penalize_ceiling=o.penalize_ceiling,
                          kickstart_s=o.kickstart_s,
-                         rotor_count_mode=o.rotor_count_mode, power_split=o.power_split,
+                         rotor_count_mode=o.rotor_count_mode,
                          cone_slope_deg=o.cone_slope_deg, rotor_spacing_frac=o.rotor_spacing_frac,
                          blocking_factor=o.blocking_factor, min_wall_m=o.min_wall_m,
                          t_over_D=o.t_over_D)
@@ -173,7 +175,7 @@ function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
                            p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
                            w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
                            tether_diameter, power_stat, penalize_ceiling, kickstart_s,
-                           rotor_count_mode, power_split, cone_slope_deg,
+                           rotor_count_mode, cone_slope_deg,
                            rotor_spacing_frac, blocking_factor, min_wall_m, t_over_D)
 end
 
@@ -522,7 +524,7 @@ function evaluate_windowed(
     result = design_from_vector_v10(
         x_canon, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
         cylinder_cone=true, rotor_count_mode=cfg.rotor_count_mode,
-        power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
+        cone_slope_deg=cfg.cone_slope_deg,
         rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor,
         beam_t_over_D=cfg.t_over_D,
     )
@@ -584,7 +586,7 @@ function evaluate_windowed(
     # ── Wind function ────────────────────────────────────────────────────
     function wf(pos, t)
         z = max(pos[3], 1.0)
-        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        return [wind_at_altitude(p.v_wind_ref, p.h_ref, z), 0.0, 0.0]
     end
 
     # ── Start protocol ───────────────────────────────────────────────────

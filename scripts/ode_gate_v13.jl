@@ -102,11 +102,11 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     end
     # 2026-08-26: decode with the SAME knobs as run_v13_5kw_masslift.jl so the
     # gate re-evaluates the machine the campaign actually built — rotor_count_mode
-    # + three-section geometry + power_split + wake blocking.  The legacy default
+    # + three-section geometry + wake blocking.  The legacy default
     # decode (bitmask, full cone, no blocking) gated a DIFFERENT machine.
     dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=KW * 1000.0,
         cylinder_cone=true, rotor_count_mode=true,
-        power_split=0.6, cone_slope_deg=22.0,
+        cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=bf)
 
     # Pre-flight clearance — ABSOLUTE tip radius (ring radius + blade_tip), via
@@ -120,7 +120,7 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     cfg_gate = KiteTurbineDynamics.ObjectiveConfig(;
         power_W=KW * 1000.0, v_rated=11.0, p_floor_kw=KW,
         fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
-        rotor_count_mode=true, power_split=0.6, blocking_factor=bf)
+        rotor_count_mode=true, blocking_factor=bf)
     sizing = KiteTurbineDynamics.size_beams_closed_form(dec, p, cfg_gate)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;
         tether_diameter=p.tether_diameter, base_params=p, min_wall_m=2e-3,

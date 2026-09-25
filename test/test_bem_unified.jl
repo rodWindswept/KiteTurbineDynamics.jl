@@ -89,8 +89,13 @@ const BEM = KiteTurbineDynamics.BEM
         end
     end
 
-    # ── 7. Ring annulus sizing & Peter Jamieson scaling (DECISIONS [2026-08-20]) ──
-    @testset "Ring annulus BEM sizing & Peter Jamieson scaling" begin
+    # ── 7. Ring annulus sizing, and the mass law that is NOT 1/√N ─────────────
+    # `references/MULTI ROTOR IDEAL MASS by PJ.txt` is a DISC reference.  The law
+    # this testset PINS was recorded 2026-09-23: ring-anchored blades fall nearer
+    # 1/N², measured 0.128 on island 1 at N=3.  Jamieson's 1/√N is the disc law
+    # and is the wrong guard for a TRPT, so it appears here as a BOUND, never as
+    # the expected value.
+    @testset "Ring annulus BEM sizing — the recorded law, not 1/√N" begin
         # A. Self-consistency: annulus_area(r, annulus_span_for_power(P, v, r)) matches P/(Cp·½ρ·v³)
         for P in [1000.0, 1666.67, 5000.0, 10000.0]
             for v in [9.0, 11.0, 13.0]
@@ -145,5 +150,148 @@ const BEM = KiteTurbineDynamics.BEM
         @test M_blades_3rotor < M_blades_single
         # Ratio is well below the 1/√3 ≈ 0.577 disc limit
         @test M_blades_3rotor / M_blades_single < 0.577
+
+        # D. Swept-area invariance in N, on ONE ring radius so the geometry does
+        # not confound it.  N rotors at P/N sweep the same TOTAL area as one
+        # rotor at P — exactly, in the linear term.  The 70/30 quadratic term
+        # (π·0.40·s²) makes the multi-rotor total slightly SMALLER, so the
+        # invariance is a limit and the tolerance below carries that term.
+        r_one = 2.61
+        A_one = BEM.annulus_area(r_one, BEM.annulus_span_for_power(P_total, v_wind, r_one, 3))
+        s_1 = BEM.annulus_span_for_power(P_total, v_wind, r_one, 3)
+        for N in (2, 3, 4)
+            s_N = BEM.annulus_span_for_power(P_total / N, v_wind, r_one, 3)
+            A_N_total = N * BEM.annulus_area(r_one, s_N)
+            @test abs(A_N_total - A_one) / A_one < 0.02
+
+            # The MASS law.  M ∝ span³, so N rotors carry N·(s_N/s_1)³ of the
+            # single-rotor blade mass.  The span solves an ANNULUS, not a disc, so
+            # the ratio sits a little ABOVE 1/N² rather than on it.  Measured on
+            # this ring: 0.27690 at N=2, 0.12764 at N=3, 0.07315 at N=4 — that is
+            # +11 %, +15 %, +17 % over 1/N².  The recorded island-1 figure for N=3
+            # was 0.128, which N=3 reproduces here.
+            #
+            # So assert the LAW CHOICE, not a rounded constant: the ratio is
+            # nearer 1/N² than Jamieson's 1/√N, and strictly below the disc bound.
+            ratio = N * (s_N / s_1)^3
+            @test ratio < 1.0 / sqrt(N)
+            @test abs(ratio - 1.0 / N^2) < abs(ratio - 1.0 / sqrt(N))
+        end
+
+        # E. STATIC guard: no decode path may size a span from the DISC radius.
+        # The retired law was `span = 0.75 · r_rotor_i · blade_scale_i`, where
+        # `r_rotor_i = rotor_radius_for_power(...)` returns a stand-alone disc
+        # radius that never reads the ring.  A decode path that reintroduces it
+        # must fail here, at the change, instead of three tasks later.
+        root = dirname(@__DIR__)
+        offenders = String[]
+        for f in ("objective_v10.jl", "builders_util.jl", "expansion_rotor.jl")
+            for (i, ln) in enumerate(eachline(joinpath(root, "src", f)))
+                s = strip(ln)
+                (isempty(s) || startswith(s, "#")) && continue
+                if occursin("span", lowercase(s)) && occursin("rotor_radius_for_power", s)
+                    push!(offenders, "src/$f:$i")
+                end
+            end
+        end
+        @test isempty(offenders)
+        v10 = read(joinpath(root, "src", "objective_v10.jl"), String)
+        @test occursin("annulus_span_for_power", v10)          # the span solve
+        @test occursin("blade_chord_for_span", v10)            # the chord law
+
+        # F. The single-rotor FULL-POWER rule (D2, 2026-09-24).  One rotor takes
+        # the WHOLE power: no 0.6 top-rotor fraction survives.  The retired law
+        # sized the lone rotor at 0.6·P, so the machine made 60 % of its rating
+        # and the boundary layer of the search was wrong.
+        x_one = [0.06, 0.01, 1.0, 1.0, 2.775, 0.575, 2.0, 6.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
+        p_1r = mass_scale(params_daisy(), 1.5, 5.0)
+        dec_1 = design_from_vector_v10(
+            x_one, PROFILE_ELLIPTICAL, p_1r; power_W=P_total,
+            cylinder_cone=true, rotor_count_mode=true,
+            cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=1.0)
+        @test dec_1.n_active == 1
+        rr = dec_1.rotors[1]
+        r_ring_1 = dec_1.radii[rr.ring_idx]
+        span_1 = rr.blade_tip_radius - rr.blade_hub_radius
+        Cp_1 = BEM.cp_bem(dec_1.design.n_lines, 4.1)
+        @test BEM.annulus_area(r_ring_1, span_1; bank_deg=rr.bank_angle_deg) ≈
+              P_total / (Cp_1 * 0.5 * 1.225 * rr.v_wind^3) rtol = 1e-6
+        # And the chord obeys the ONE law, so a lone rotor cannot keep a private
+        # chord basis either.
+        @test rr.blade_chord ≈ 0.2702 * span_1 rtol = 1e-12
+    end
+
+    # ── 8. The site wind standard (D1, Rod 2026-09-24) ───────────────────────
+    @testset "Site wind standard: the measured Daisy pair" begin
+        # The standard is a MEASURED pair, not a machine dimension.  The anchor
+        # site is the Daisy, and the anchor IS the default.
+        @test SITE_ANCHOR === SITE_DAISY
+        @test SITE_DAISY.v_ref_ms == 10.0
+        @test SITE_DAISY.h_ref_m == 4.8
+        @test SITE_DAISY.shear_exp ≈ 1.0 / 7.0
+        @test occursin("Daisy", SITE_DAISY.name)   # named after the measurement
+
+        # The profile reads the pair at the reference height, by definition.
+        @test site_wind(4.8) ≈ 10.0 rtol = 1e-12
+        # A taller rotor reads a faster inflow.  Altitude is the only argument.
+        @test site_wind(9.400) > site_wind(7.261) > site_wind(5.123)
+        # The measured values of D1, at the 5 kW geometry and at the Daisy.
+        @test site_wind(9.400) ≈ 11.0077 atol = 1e-3    # 5 kW hub
+        @test site_wind(5.123) ≈ 10.0936 atol = 1e-3    # 5 kW lowest rotor
+        @test site_wind(5.155) ≈ 10.1025 atol = 1e-3    # Daisy rotor centre
+
+        # ── ONE profile: every params object is the standard re-expressed ──
+        # p.v_wind_ref == site_wind(p.h_ref).  This guard fails for any params
+        # factory that still carries its own reference wind.
+        for p in (
+            params_daisy(),
+            params_10kw(),
+            params_50kw(),
+            params_v5_10kw(),
+            params_v5_50kw(),
+            params_v5_safe_10kw(),
+            params_v6_50kw(),
+        )
+            @test p.v_wind_ref ≈ site_wind(p.h_ref) rtol = 1e-9
+        end
+
+        # mass_scale moves the rotor altitude, so the same standard moves with
+        # it.  The reference is the SITE pair; it is not rescaled.
+        p5 = mass_scale(params_daisy(), 1.5, 5.0)
+        @test p5.h_ref > params_daisy().h_ref
+        @test p5.v_wind_ref ≈ site_wind(p5.h_ref) rtol = 1e-9
+
+        # The ODE wind function and the decoder read the SAME profile.  The ODE
+        # form is wind_at_altitude(p.v_wind_ref, p.h_ref, z); the decoder's
+        # per-ring wind is site_wind(z).  They must agree exactly.
+        for z in (5.123, 7.261, 9.400)
+            @test wind_at_altitude(p5.v_wind_ref, p5.h_ref, z) ≈ site_wind(z) rtol = 1e-12
+        end
+        # Measured consequence for the 5 kW rung: the hub reads 11.0077 m/s,
+        # +0.09 % of the old hub-pinned 11.0 m/s.  The old decoder read 8.6637.
+        @test wind_at_altitude(p5.v_wind_ref, p5.h_ref, 9.400) ≈ 11.0077 atol = 1e-3
+
+        # ── Alternate site specs: one call re-bases a machine ──────────────
+        # The Daisy anchor is the DEFAULT, not the only site.  A site is a
+        # measured pair plus its shear exponent, so validating an ideal system
+        # against a new site wind specification is data, not a code change.
+        # The spec below is synthetic and exists to exercise the mechanism.
+        site_test = WindSiteSpec("test site (synthetic)", 12.0, 10.0, 0.2)
+        @test site_wind(site_test, 10.0) ≈ 12.0 rtol = 1e-12   # pair honoured
+        @test site_wind(site_test, 20.0) ≈ 12.0 * 2.0^0.2 rtol = 1e-12
+
+        p_alt = at_site(p5, site_test)
+        @test p_alt.v_wind_ref ≈ site_wind(site_test, p5.h_ref) rtol = 1e-12
+        @test p_alt.v_wind_ref > p5.v_wind_ref      # 12.0 at 10 m is stronger here
+        @test p_alt.h_ref == p5.h_ref               # the machine is untouched
+        @test p_alt.tether_length == p5.tether_length
+        @test p_alt.k_mppt == p5.k_mppt
+
+        # Re-basing is a COPY, never a mutation, and the two specs stay separate:
+        # the same machine reads a different wind at the same altitude.
+        @test p5.v_wind_ref ≈ site_wind(SITE_ANCHOR, p5.h_ref) rtol = 1e-9
+        @test site_wind(site_test, p5.h_ref) > site_wind(SITE_ANCHOR, p5.h_ref)
+        # A site's own pair is honoured at its own height, whatever that is.
+        @test site_wind(SITE_ANCHOR, SITE_ANCHOR.h_ref_m) ≈ SITE_ANCHOR.v_ref_ms
     end
 end

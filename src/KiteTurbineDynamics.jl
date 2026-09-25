@@ -60,6 +60,7 @@ export EXP_CL_SLOPE, EXP_CL_MAX, EXP_PHI_DESIGN, EXP_THETA_I, EXP_TSR_DESIGN
 export ExpansionStackConfig, build_expansion_stack
 export expansion_airborne_mass, expansion_phi, expansion_radius_summary, expansion_telemetry
 export wind_at_altitude, hub_altitude, steady_wind, wind_ramp, gust_event, turbulent_wind
+export WindSiteSpec, SITE_DAISY, SITE_ANCHOR, site_wind, at_site
 export AbstractNode,
     RingNode, RopeNode, BearingNode, SkyAnchorNode, HubVertexNode, KiteTurbineSystem
 export ROPE_SUBSEGS, ROPE_NODES_PER_LINE   # rope discretisation (2026-09-10)
@@ -157,7 +158,7 @@ export expansion_params_from_rotors
 export objective_feasibility
 export VALID_ROTOR_MASKS, N_VALID_MASKS, decode_rotor_mask
 export RotorSpecV10, VerificationResult, headless_verify, headless_verify_structural
-export wind_speed_at_ring, solve_equilibrium_omega, solve_equilibrium_self_consistent
+export solve_equilibrium_omega, solve_equilibrium_self_consistent
 
 # V10 system builders (src/builders_util.jl)
 export build_v10_tight, build_v10_tight_no_lowest

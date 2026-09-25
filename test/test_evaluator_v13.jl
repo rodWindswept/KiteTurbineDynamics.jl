@@ -52,7 +52,7 @@ function v13_cfg(window_s::Float64, k_mppt::Float64; tether_diameter::Float64=0.
         fos_target=2.5, fos_hard=2.5,        # campaign FoS (was 1.5)
         power_stat=:tail5, penalize_ceiling=false,
         kickstart_s=0.0,
-        rotor_count_mode=true, power_split=0.6,
+        rotor_count_mode=true,
         blocking_factor=BLOCKING_WIND_FACTOR_5KW,
         tether_diameter=tether_diameter,
     )
@@ -135,7 +135,7 @@ check("B4: fitness(7.5) < fitness(3.5)", f_hi < f_lo)
 println("=== B5: unit — twist_collapse_check ===")
 p = params_at_length(params_daisy(), L18, KW)
 dec = design_from_vector_v10(seed_x(), BEAM, p; power_W=PW,
-    cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+    cylinder_cone=true, rotor_count_mode=true,
     cone_slope_deg=22.0, rotor_spacing_frac=0.8,
     blocking_factor=BLOCKING_WIND_FACTOR_5KW)
 sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST; tether_diameter=p.tether_diameter, base_params=p)

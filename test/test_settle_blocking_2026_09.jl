@@ -30,7 +30,7 @@ function build_system(rotor_count::Float64)
     x[4] = Float64(round(Int, clamp(x[4], 3, 16)))   # n_lines (R7 10-D layout)
     x[6] = rotor_count                              # rotor count
     dec = KiteTurbineDynamics.design_from_vector_v10(x, PROFILE_ELLIPTICAL, p;
-        power_W=5000.0, cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+        power_W=5000.0, cylinder_cone=true, rotor_count_mode=true,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
         dec, 1.0, K_MPPT_5KW_HONEST; tether_diameter=p.tether_diameter, base_params=p)

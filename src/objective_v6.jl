@@ -555,11 +555,33 @@ function solve_equilibrium_self_consistent(
     v_wind::Float64=11.0,
     elev_rad::Float64=π / 6,
     max_iter::Int=8,
+    # Initial hub-rotor radius, m.  `nothing` keeps the v6 convention: a disc
+    # sized for the hub's SHARE via `rotor_radius_for_power(P_per_rotor, ...)`.
+    # That convention CANNOT solve on a multi-rotor machine, because the scan
+    # balances the TOTAL rated power of the whole stack against a disc sized for
+    # ONE rotor's share — so the net power never crosses zero and the solve
+    # returns `nothing`.  Measured 2026-09-25 on the corrected 5 kW seed: the
+    # share-sized disc (1.5546 m) finds no equilibrium at any ω, while the
+    # machine's own hub rotor (2.845 m outer, annulus-derived) solves to
+    # ω = 11.28 rad/s at λ = 2.78.  A caller that knows the machine must pass it.
+    r_hub_init::Union{Nothing,Float64}=nothing,
+    # The re-size step below belongs to the v6 machine, where the hub rotor's
+    # SIZE was an output of the solve.  A V13 decode FIXES the rotor geometry,
+    # so the only unknown is ω and there is nothing to re-size.  Worse, the step
+    # is internally inconsistent on a multi-rotor machine: the scan balances the
+    # TOTAL rated power, while the step re-sizes the hub disc for ONE rotor's
+    # SHARE — so the radius walks DOWN until the scan finds no equilibrium.
+    # Measured 2026-09-25 on the corrected 5 kW seed: the first scan solves at
+    # the machine's own radius (ω = 11.28 rad/s, λ = 2.78), the step then asks
+    # for R = 1.957 m — smaller than the machine — and the second scan returns
+    # `nothing`.  A caller with fixed geometry passes `false`.
+    resize_hub::Bool=true,
 )
     rho = p.rho
 
-    # Initial rotor size from static BEM (TSR=4.1)
-    r_hub_rotor = BEM.rotor_radius_for_power(P_per_rotor, v_wind, n_lines)
+    # Initial rotor size: the caller's hub rotor, or the v6 disc convention.
+    r_hub_rotor = r_hub_init === nothing ?
+        BEM.rotor_radius_for_power(P_per_rotor, v_wind, n_lines) : Float64(r_hub_init)
     omega = 4.1 * v_wind / r_hub_rotor
 
     for iter in 1:max_iter
@@ -572,6 +594,11 @@ function solve_equilibrium_self_consistent(
 
         if omega_new === nothing
             return (nothing, NaN)  # air brake
+        end
+
+        # Fixed geometry (V13 decode): ω is the whole answer.
+        if !resize_hub
+            return (omega_new, r_hub_rotor)
         end
 
         # Re-size rotor for this ω: find R s.t. ½ρv³πR²·Cp(ωR/v) = P_per_rotor

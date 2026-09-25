@@ -1860,10 +1860,33 @@ function trpt_matched_place(
         τ_carry = τ_carry > 0.0 ? τ_carry - τ_exp_b : -τ_exp_b
     end
 
+    # ── Line-crossing refusal (2026-09-25) ──────────────────────────────────
+    # An unsatisfiable couple drives the placed twist without bound, and before
+    # this refusal the solve RETURNED it as a design: measured at L/r 1.2 the
+    # crossing ratio read 74 047, about 4e6 degrees of placed twist.  The limit
+    # `Δα/δα* ≥ 1` means adjacent lines have crossed.  It is TIGHTER than the
+    # continuum `sin Δα ≤ 1` limit above, so a design can clear the loop and
+    # still land here.  `physics-topology.md` §6: raise, never return a number
+    # that means nothing.
+    cross_worst = max_segment_cross_ratio((; α, ctrs), sys)
+    if cross_worst >= 1.0 && raise_on_unrealisable
+        error(
+            "TRPT placement crosses its own lines: Δα/δα* = " *
+            "$(round(cross_worst; digits=4)) ≥ 1, where δα* = " *
+            "2·asin(L/√(2(L² + 2r²))) is evaluated from the PLACED ring centres " *
+            "and radii.  The couple demand is past what any twist can deliver at " *
+            "this geometry, so the solve ran the twist away instead of stopping.  " *
+            "Widen the transmission (more lines, larger attachment radius, lower " *
+            "k_mppt) or lower the operating torque.  See " *
+            "test/test_trpt_realisability.jl.",
+        )
+    end
+
     return (;
         α,
         ctrs,
         demand,
+        cross_worst,
         τ_carry=τ_carry_v,
         τ_max,
         chord=chord_v,

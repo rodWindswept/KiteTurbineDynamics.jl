@@ -150,7 +150,7 @@ end
     dec = KiteTurbineDynamics.design_from_vector_v10(
         x, PROFILE_ELLIPTICAL, p; power_W=5000.0,
         cylinder_cone=true, rotor_count_mode=true,
-        power_split=0.6, cone_slope_deg=22.0,
+        cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=1.0)
 
     @test dec.n_active == 3
@@ -161,4 +161,126 @@ end
     sys, u0, _ = KiteTurbineDynamics.build_system_from_v10(
         dec, 1.0, p.k_mppt; tether_diameter=p.tether_diameter)
     @test [er.ring_idx for er in sys.expansion_rotors] == [n - 1, n - 2]
+end
+
+# ── Equal power share per rotor (D2, Rod 2026-09-24) ────────────────────────
+#
+# The `power_split` top-rotor fraction and its legacy `x[15]` probe are RETIRED.
+# Every rotor takes an equal share of the turbine's power requirement; the only
+# per-rotor asymmetry left is the co-axial inflow de-rate and the site shear.
+#
+# The share is observable without new API.  `rotor_radius_for_power` returns
+# R = sqrt(P / (Cp·0.5·ρ·π·v³)), so (R·v^1.5)² is proportional to P with the SAME
+# constant for every rotor of one machine.  Equality of that quantity across the
+# rotors IS equality of the share.  A 0.6 top-rotor share reads ×3 on the top
+# rotor against the others, so this test fails loudly on the retired law.
+@testset "V10 builder — equal power share per rotor (D2)" begin
+    x = [0.06, 0.01, 1.0, 1.0, 2.775, 0.575, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
+    p2 = params_daisy()
+    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        18.8, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    p5 = override_params(mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0); tether_length=18.8)
+
+    decode(bf) = KiteTurbineDynamics.design_from_vector_v10(
+        x, PROFILE_ELLIPTICAL, p5; power_W=5000.0,
+        cylinder_cone=true, rotor_count_mode=true,
+        cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=bf)
+
+    share(rr) = (rr.r_rotor * rr.v_wind^1.5)^2
+    dec = decode(1.0)
+    @test dec.n_active == 3
+    shares = share.(dec.rotors)
+    @test length(shares) == 3
+    for s in shares[2:end]
+        @test s ≈ shares[1] rtol = 1e-12
+    end
+
+    # The de-rate is a SEPARATE law.  It changes the local wind, so the radii
+    # move, but the share does not: a de-rated rotor is sized smaller-and-slower
+    # for the same power, so less wind means a LARGER rotor.
+    dec_b = decode(0.75)
+    shares_b = share.(dec_b.rotors)
+    for s in shares_b[2:end]
+        @test s ≈ shares_b[1] rtol = 1e-12
+    end
+    @test all(r.wind_factor == 0.75 for r in dec_b.rotors[1:2])  # top 2 de-rated
+    @test dec_b.rotors[3].wind_factor == 1.0                     # lowest rotor free
+    @test dec_b.rotors[1].r_rotor > dec.rotors[1].r_rotor
+
+    # RETIREMENT: the legacy 15-D genome's x[15] no longer reaches the share.  It
+    # used to be read as a top-rotor power fraction, clamped to 0.2-0.8, while
+    # x[15] means log10(k_mppt) everywhere else in the repo (objective_v11.jl:13).
+    dec15 = KiteTurbineDynamics.design_from_vector_v10(
+        vcat(x, 0.9), PROFILE_ELLIPTICAL, p5; power_W=5000.0,
+        cylinder_cone=true, rotor_count_mode=true,
+        cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=1.0)
+    @test dec15.n_active == dec.n_active
+    for (a, b) in zip(dec15.rotors, dec.rotors)
+        @test a.r_rotor ≈ b.r_rotor rtol = 1e-12
+        @test a.v_wind ≈ b.v_wind rtol = 1e-12
+        @test a.blade_chord ≈ b.blade_chord rtol = 1e-12
+    end
+end
+
+# ── The annulus span and the one chord law (T4, D3, Rod 2026-09-24) ─────────
+#
+# The span solves the swept annulus of the rotor's OWN ring for its own power at
+# its own post-blocking wind.  The chord comes from ONE helper, shared with the
+# ODE.  Both are pinned against the closed form, so a return to the standalone
+# disc law fails here.  `blade_scale` is 1.0 in this genome and both bank genes
+# are 0, so the area identity needs no extra cos(bank) factor.
+@testset "V10 builder — annulus span and the one chord law (T4)" begin
+    x = [0.06, 0.01, 1.0, 1.0, 2.775, 0.575, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 1.0, 1.0]
+    p2 = params_daisy()
+    geo = GeometrySpec(p2.elevation_angle, p2.lifter_elevation, p2.rotor_radius,
+        18.8, p2.trpt_hub_radius, p2.trpt_rL_ratio, p2.n_lines, p2.n_rings, p2.n_blades)
+    mat = MaterialSpec(p2.tether_diameter, p2.e_modulus, p2.m_ring, p2.m_blade)
+    aero = AeroSpec(p2.rho, p2.v_wind_ref, p2.h_ref, p2.cp)
+    ctrl = ControlSpec(p2.i_pto, p2.k_mppt, p2.p_rated_w, p2.β_min, p2.β_max, p2.β_rate_max, p2.kp_elev)
+    back = BackLineSpec(p2.EA_back_line, p2.c_back_line, p2.back_anchor_fwd_x, p2.backline_payout)
+    p5 = override_params(mass_scale(SystemParams(geo, mat, aero, ctrl, back), 1.5, 5.0); tether_length=18.8)
+
+    POW = 5000.0
+    dec = KiteTurbineDynamics.design_from_vector_v10(
+        x, PROFILE_ELLIPTICAL, p5; power_W=POW,
+        cylinder_cone=true, rotor_count_mode=true,
+        cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=1.0)
+    @test dec.n_active == 3
+
+    Cp = KiteTurbineDynamics.BEM.cp_bem(dec.design.n_lines, 4.1)
+    for rr in dec.rotors
+        r_ring = dec.radii[rr.ring_idx]
+        span = rr.blade_tip_radius - rr.blade_hub_radius
+        # 1. The span solves the annulus for THIS rotor's power at its own wind.
+        A_req = (POW / dec.n_active) / (Cp * 0.5 * 1.225 * rr.v_wind^3)
+        @test KiteTurbineDynamics.BEM.annulus_area(r_ring, span; bank_deg=rr.bank_angle_deg) ≈
+              A_req rtol = 1e-6
+        # 2. The 70/30 anchor: the blade straddles its own ring.  NOTE the
+        # recorded convention — `RotorSpecV10.blade_tip_radius` holds the OFFSET
+        # (0.7·span), NOT an absolute radius, and `blade_hub_radius` is the
+        # NEGATIVE inboard offset.  `lowest_rotor_clearance` adds the ring radius
+        # back, which is why its docstring says "the tip is the ABSOLUTE radius
+        # (r_ring + tip)".  Reading the offset as absolute over-counts clearance
+        # by the ring radius (the 2026-08-24 settle-ω-scan fault class).
+        @test rr.blade_tip_radius ≈ 0.7 * span rtol = 1e-12
+        @test rr.blade_hub_radius ≈ -0.3 * span rtol = 1e-12
+        # 3. One chord law, and the ODE reads the same helper.
+        @test rr.blade_chord ≈ 0.2702 * span rtol = 1e-12
+        @test rr.blade_chord == KiteTurbineDynamics.BEM.blade_chord_for_span(span)
+    end
+
+    # The built system's swept area IS the annulus the decoder sized, so the
+    # sizing-to-dynamics hand-off carries no disc/annulus mismatch.
+    sys, u0, _ = KiteTurbineDynamics.build_system_from_v10(
+        dec, 1.0, p5.k_mppt; tether_diameter=p5.tether_diameter)
+    top = dec.rotors[1]                      # top→bottom order: the topmost rotor
+    top_ring = dec.radii[top.ring_idx]
+    span_top = top.blade_tip_radius - top.blade_hub_radius
+    @test sys.rotor.radius ≈ top_ring + 0.7 * span_top rtol = 1e-9
+    @test KiteTurbineDynamics.main_rotor_swept_area(sys) ≈
+          KiteTurbineDynamics.BEM.annulus_area(top_ring, span_top) rtol = 1e-9
 end

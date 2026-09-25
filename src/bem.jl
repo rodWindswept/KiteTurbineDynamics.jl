@@ -197,6 +197,31 @@ function annulus_span_for_power(
     return max(s, 0.05)  # 5 cm minimum manufacturability span floor
 end
 
+# ── Blade chord (D3, Rod 2026-09-24) ────────────────────────────────────────
+#
+# The chord is CONSTANT along the span and scales with the span.  The constant is
+# the MEASURED Daisy blade: a 0.2702 m chord on a 1.000 m span, which is the
+# recorded 7.5 per cent solidity on the recorded 10.8071 m² annulus.
+#
+# ONE helper.  The decoder sizes blades with it and `src/ring_forces.jl` prices
+# the reverse-drag torque with it, so the two cannot drift.  They did drift: the
+# decoder used `0.113·r_disc` (0.336 m on the 5 kW seed) while the ODE used
+# `0.113·sys.rotor.radius` (0.449 m), two bases for one blade.
+const BLADE_CHORD_OVER_SPAN = 0.2702
+
+"""
+    blade_chord_for_span(span) -> Float64
+
+Blade chord (m) for a blade of linear `span` (m), from the D3 constant-chord law:
+
+    chord = 0.2702 × span
+
+`0.2702` is the measured Daisy chord-to-span ratio.  A chord that varies along
+the span needs a new measured law, not a new call site.
+"""
+blade_chord_for_span(span::Float64) = BLADE_CHORD_OVER_SPAN * span
+
 export cp_bem, ct_bem, rotor_radius_for_power, annulus_area, annulus_span_for_power
+export BLADE_CHORD_OVER_SPAN, blade_chord_for_span
 
 end  # module BEM

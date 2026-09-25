@@ -315,7 +315,7 @@ function params_10kw()::SystemParams
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
-        11.0,               # v_wind_ref (m/s) — rated wind speed at h_ref
+        site_wind(15.0),    # v_wind_ref (m/s) — D1: the SITE standard at the hub
         15.0,               # h_ref (m) — hub altitude (30 × sin(30°) = 15 m)
         0.22,               # cp — AeroDyn BEM (Rotor_TRTP_Sizing_Iteration2.xlsx)
     )
@@ -393,7 +393,7 @@ function params_daisy()::SystemParams
     )
     aero = AeroSpec(
         1.225,              # rho (kg/m³)
-        11.0,               # v_wind_ref (m/s) — rated wind at h_ref
+        site_wind(5.155),   # v_wind_ref (m/s) — D1: the SITE standard at the rotor
         5.155,              # h_ref (m) — hub altitude = 10.31 × sin(30°)
         0.16,               # cp — measured Cp_sys band 0.15–0.18 (thesis)
     )
@@ -522,7 +522,7 @@ function params_v6_50kw()::SystemParams
         0.4 * mass_factor,                       # m_ring (kg)
         11.0 / 8.0 * mass_factor,                # m_blade (kg)
     )
-    aero = AeroSpec(base.rho, base.v_wind_ref, base.h_ref * geom_scale, base.cp)
+    aero = AeroSpec(base.rho, site_wind(base.h_ref * geom_scale), base.h_ref * geom_scale, base.cp)
     ctrl = ControlSpec(
         base.i_pto * mass_factor * geom_scale^2,
         base.k_mppt * (50.0 / 10.0)^2.5,
@@ -621,7 +621,7 @@ function mass_scale(
     )
     aero = AeroSpec(
         base.rho,                             # atmospheric — unchanged
-        base.v_wind_ref,                      # reference wind — unchanged
+        site_wind(base.h_ref * geom_scale),    # D1: the SITE standard at the new altitude
         base.h_ref * geom_scale,
         base.cp,                              # aerodynamic constant — unchanged
     )

@@ -63,7 +63,7 @@ function build_from_genome(x::Vector{Float64}, p::SystemParams)
     xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
     xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
     dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p; power_W=PW,
-        cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+        cylinder_cone=true, rotor_count_mode=true,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8,
         blocking_factor=BLOCKING_WIND_FACTOR_5KW)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;

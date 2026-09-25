@@ -153,7 +153,6 @@ function build_preview(genome::Vector{Float64}, label::String; length_m::Float64
         power_W=PW,
         cylinder_cone=true,
         rotor_count_mode=true,
-        power_split=0.6,
         cone_slope_deg=22.0,
         rotor_spacing_frac=0.8,
         blocking_factor=1.0,

@@ -56,7 +56,7 @@ for f in files
     # and ode_gate_v13.jl gate_design) — the legacy bitmask/full-cone path
     # decoded a different machine.
     result = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p_base; power_W=PW, v_rated=V_RATED,
-        cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
+        cylinder_cone=true, rotor_count_mode=true,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
         result, 1.0, K_MPPT; base_params=p_base)

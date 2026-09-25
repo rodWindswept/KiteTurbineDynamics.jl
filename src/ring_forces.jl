@@ -223,11 +223,11 @@ function compute_ring_forces!(
             tau_aero = P_aero / max(omega_rotor, 0.5)
         else
             CD_reverse = 1.3                           # NACA4412 CD at AoA 40–70°
-            chord_blade = 0.113 * sys.rotor.radius      # m — solidity-calibrated
             R_o = sys.rotor.radius
             R_i = sys.rotor.blade_hub_radius > 0.0 ? sys.rotor.blade_hub_radius : 0.4 * R_o
             R_eff = 0.70 * R_o                          # 70% representative radius
             span = R_o - R_i                           # blade span
+            chord_blade = BEM.blade_chord_for_span(span)  # D3: the one chord law
             ω_abs = abs(omega_rotor)
             v_ax = v_hub_mag * cos(elev_angle)         # axial wind through disc
             v_t_eff = ω_abs * R_eff

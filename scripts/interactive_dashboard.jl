@@ -381,7 +381,7 @@ function build_from_campaign_v13(campaign_dir::String, label::String; L::Float64
 
     dec = design_from_vector_v10(x, PROFILE_ELLIPTICAL, p_base; power_W=KW * 1000.0,
         cylinder_cone=true, rotor_count_mode=true,
-        power_split=0.6, cone_slope_deg=22.0,
+        cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=bf)
 
     sys, u0, p = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, k_mp;

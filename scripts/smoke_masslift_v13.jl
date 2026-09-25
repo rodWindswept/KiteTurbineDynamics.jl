@@ -75,7 +75,7 @@ function main()
         # actually builds (rotor_count_mode + three-section + blocking).
         dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=PW,
             cylinder_cone=true, rotor_count_mode=true,
-            power_split=0.6, cone_slope_deg=22.0,
+            cone_slope_deg=22.0,
             rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
             dec, 1.0, cfg.k_mppt; tether_diameter=cfg.tether_diameter,
