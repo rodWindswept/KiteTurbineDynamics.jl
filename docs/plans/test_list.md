@@ -19,7 +19,22 @@ stays in git history and this file resets for the next item.
 
 ## Current item
 
-_Name the item from `docs/plans/ACTIVE.md`. No rows yet._
+**Correct the TRPT over-twist criterion to Tulloch (4.34).**
+Plan: `docs/plans/2026-09-25-trpt-tulloch-criterion-correction.md`.
+Audit: `docs/validation/2026-09-25-trpt-tulloch-model-crosscheck.md`.
+
+| # | Behaviour under test | Test file | Colour | Evidence |
+|---|---|---|---|---|
+| 1 | δcrit is (4.34). It reproduces Fig 5.25, the 90° asymptote and the 180° boundary. | `test_trpt_twist_limit.jl` | GREEN 2026-09-25 | `scripts/ktd-test-one test_trpt_twist_limit` |
+| 2 | The δcrit angle is the torque maximum of the operating curve. | `test_trpt_twist_limit.jl` | GREEN 2026-09-25 | same run |
+| 3 | A tether shorter than the sum of its ring radii has no limit at all. | `test_trpt_twist_limit.jl` | GREEN 2026-09-25 | same run |
+| 4 | Capacity follows (4.31) at δcrit, in both held-quantity forms. | `test_trpt_twist_limit.jl` | GREEN 2026-09-25 | same run |
+| 5 | The ODE torque ceiling equals the authority on a wound segment. | not written | RED | WP2 owes this test |
+| 6 | An ODE window holds 70-100° twist with no ceiling. | not written | RED | WP3b. This test decides the ϕ < 2 rule |
+
+Found in this cycle: the authority needs a per-segment tether length at every call site.
+The placed state carries it as `chord`. The ODE carries it as `line_restlen`. The
+state-form gate carries neither and must read it from the system.
 
 ## Discovered, not yet written
 
