@@ -512,11 +512,14 @@ function compute_rope_forces!(
         end
     end
 
-    # ── C1: per-segment torque saturation (2026-08-14, Rod) ────────────────
-    # The chain transmits at most its physical crossing-limit torque:
-    # τ_sat = n_lines·T·r²·sin(δα*)/chord, δα* = 2·asin(L/√(2(L²+2r²))),
-    # r = ½(r_a+r_b). Clamped with sign preserved — no reversal past δα*,
-    # so a wound segment can never pump a ring (the freewheel ratchet dies).
+    # ── C1: per-segment torque saturation (2026-08-14, Rod; criterion 2026-09-25)
+    # A segment transmits at most the torque at the peak of Tulloch's operating
+    # curve, τ_max = T_lines·r_a·r_b·sin(δcrit)/l_t, with δcrit from (4.34) and
+    # l_t the segment's tether length.  Clamped with sign preserved — no reversal
+    # past δcrit, so a wound segment can never pump a ring (the freewheel ratchet
+    # dies).  The old form derived the angle from a fixed-gap kinematic and called
+    # it Tulloch's δα*; it understated the angle by 20-45°.  See
+    # docs/plans/2026-09-25-trpt-tulloch-criterion-correction.md.
     for s in 1:(Nr - 1)
         # Rope break at LINE level (2026-08-14, Rod — SK99 3.5%): the full
         # ring-to-ring path strain must not exceed ROPE_BREAK_STRAIN. Path
@@ -549,16 +552,34 @@ function compute_rope_forces!(
         (ts_a == 0.0 && ts_b == 0.0) && continue
         gid_a = sys.ring_ids[s]
         gid_b = sys.ring_ids[s + 1]
-        pos_a = @view u[(3 * (gid_a - 1) + 1):(3 * gid_a)]
-        pos_b = @view u[(3 * (gid_b - 1) + 1):(3 * gid_b)]
-        L_s = norm(pos_b - pos_a)
         r_ring_a = (sys.nodes[gid_a]::RingNode).radius
         r_ring_b = (sys.nodes[gid_b]::RingNode).radius
-        r_s = 0.5 * (r_ring_a + r_ring_b)
-        dastar = 2 * asin(min(L_s / sqrt(2 * (L_s^2 + 2 * r_s^2)), 1.0))
-        chord = sqrt(L_s^2 + 2 * r_s^2 * (1 - cos(dastar)))
-        T_s = seg_tension[s] / max(p.n_lines, 1)
-        tau_sat = p.n_lines * max(T_s, 0.0) * r_s^2 * sin(dastar) / max(chord, 1e-9)
+        T_lines = max(seg_tension[s], 0.0)
+        # l_t is the segment's tether length.  The rest length is the design geometry
+        # and the elastic stretch is under 1%, so the extra state read is not worth it.
+        # All lines in a segment are equal length by design, so the mean is exact.
+        l_t = sum(view(line_restlen, s, :)) / max(p.n_lines, 1)
+        lim = trpt_twist_limit(r_ring_a, r_ring_b, l_t)
+        tau_sat = if lim.has_limit
+            trpt_torque_capacity_lines(lim, T_lines)      # (4.31) at δcrit of (4.34)
+        else
+            # HELD (2026-09-25).  A tether shorter than the sum of its ring radii has no
+            # Tulloch over-twist limit, so this ceiling has no thesis basis.  Rod has not
+            # yet ruled on whether a segment with no crossing limit should keep a
+            # conservative cap, and the answer needs ODE evidence at 70-100° twist.  Until
+            # then the old fixed-gap cap stays for this class alone, which is conservative
+            # because it sits below the true capacity.  Ten of the twelve segments on the
+            # live campaign seed are in this class, so this branch is the live one.
+            gid_aa = gid_a
+            gid_bb = gid_b
+            pos_a = @view u[(3 * (gid_aa - 1) + 1):(3 * gid_aa)]
+            pos_b = @view u[(3 * (gid_bb - 1) + 1):(3 * gid_bb)]
+            L_s = norm(pos_b - pos_a)
+            r_s = 0.5 * (r_ring_a + r_ring_b)
+            dastar = 2 * asin(min(L_s / sqrt(2 * (L_s^2 + 2 * r_s^2)), 1.0))
+            chord = sqrt(L_s^2 + 2 * r_s^2 * (1 - cos(dastar)))
+            p.n_lines * (T_lines / max(p.n_lines, 1)) * r_s^2 * sin(dastar) / max(chord, 1e-9)
+        end
         # Action-reaction: the segment transmits ONE torque; ring s sees +τ,
         # ring s+1 sees −τ (Newton's third law on the shaft). The symmetric
         # average of the two end accumulations is the transmitted value
