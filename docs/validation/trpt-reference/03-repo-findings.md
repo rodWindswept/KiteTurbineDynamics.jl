@@ -214,3 +214,29 @@ physics constant without a ruling.
   the rotor torque. That value is plausible, and it sat below the printed anchor scaled to
   this geometry at 29.4 N·m. That gap is what started the F11 investigation, and it now has
   a rival explanation: the anchor scaling is crude, and the screen may be the outlier.
+- 2026-09-26, second pass. THE FIRST EXPLANATION WAS WRONG, and a probe written to confirm it
+  refuted it instead. The proposal was that the screen over-counts because it does not
+  project the flow onto the component perpendicular to the line, and that the oblique line
+  angle supplies the missing 4.5 times. The settled twist says otherwise: the line slants
+  only 5 to 27 degrees from the axial direction, bay by bay, so its tangential flow is very
+  nearly perpendicular and the projection factor is close to one. It is not 0.22. The
+  screen's perpendicular assumption is therefore almost right, and the projection cannot
+  carry this gap.
+- THE COMPARISON ITSELF WAS INVALID, and that is the larger lesson. The balance test reads
+  `sum(torques)`, and that array holds only the drag moment at the RING ends. A sub-segment
+  whose far end is an interior rope node applies its drag there, and that torque reaches the
+  shaft through the rope path instead. So 63.717 N·m is a partial figure. It must not be
+  compared with the screen's total.
+- With the geometry agreeing, length ratio 1.019 and implied line count 6.11 against 6, and
+  with the slants small, the two models describe the same physics and probably agree. If they
+  do, then the line drag at this operating point is about 3.9 kW against a rotor delivering
+  about 3.9 kW, and the bound fails for BOTH models.
+- That moves the question. The suspect is no longer the projection. It is the operating point
+  and the line itself: 115 m of 3.651 mm line at a tip speed of 32 m/s. Drag power scales with
+  the diameter and with the cube of the speed, so either is worth a factor of three.
+- Next, and it is a measurement rather than an argument: sum the drag power the ODE's own
+  model dissipates, the force times the velocity over every sub-segment, at the settled
+  state. That figure is a total. It is comparable with the screen and with the rotor, and it
+  decides which of three suspects, a wrong diameter, a wrong tip speed, or a wrong
+  coefficient, carries the error.
+- No code change follows from F13 until that number exists.
