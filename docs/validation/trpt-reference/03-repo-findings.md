@@ -297,3 +297,30 @@ physics constant without a ruling.
 - Recommended, for the owner to rule on: make the settle use the ODE expansion model so the
   two agree by construction, pursue item M5 for the polars, and add the field data comparison
   as an acceptance test.
+- 2026-09-26, fifth pass. THE OWNER CHALLENGED MY RING LABELS AND HE WAS RIGHT. I had labelled
+  rings 2 to 12 as expansion rotors, by inference from the torque magnitudes. The build
+  carries two expansion rotors, not eleven.
+- The confirmed roles, read from `sys.expansion_rotors` and checked against
+  `docs/agents/physics-topology.md`:
+  - ring 1, radius 0.5751 m: the ground ring. The generator sits here.
+  - rings 2 to 9, radius 0.5751 m: straight TRPT rings. No rotor.
+  - ring 10, radius 1.1748 m: the transition ring. No rotor.
+  - rings 11 and 12, radius 2.4000 m: the two expansion rotors, banked blades.
+  - ring 13, radius 2.4000 m: the MAIN rotor, on the cp/ct disc model.
+- The mapping function is `expansion_params_from_rotors`, `src/builders_util.jl`. Its docstring
+  excludes the top rotor by design and it records a 2026-08-26 fix where an off-by-one `+1`
+  shifted every expansion rotor one ring toward the hub, landing a rotor on the main rotor's
+  ring.
+- The measured torques stand, because they were read per ring. The corrected totals:
+  - main rotor, ring 13: 3.713 kW, against the settle hub term of 3.994 kW. Ratio 0.930
+  - expansion rotors, rings 11 and 12: 2.010 kW, against the settle's 5.695 kW. Ratio 0.353
+  - rotor total: 5.724 kW, against the settle total of 9.689 kW. Ratio 0.591
+- So the settle over counts the expansion rotor term by 2.8 times, not 2.6. The finding holds
+  and it grows. The main rotor still agrees to 7 percent.
+- The bound still holds. 2.4 kW of drag against 5.724 kW of rotor is 42 percent.
+- STILL UNIDENTIFIED, and not to be guessed. Rings 2 to 9 each carry about plus 2 N.m, and
+  ring 10 carries minus 14.93 N.m. None of those rings has a rotor, so those terms are not
+  rotor power. A term split is owed: run the kernel with the generator gain at zero, with the
+  expansion load withheld through `expansion_aero_on`, and with the tether drag differenced.
+- Lesson. A ring's role is a build input, not a geometric inference. Read
+  `sys.expansion_rotors`, and do not read a torque magnitude as evidence of a rotor.
