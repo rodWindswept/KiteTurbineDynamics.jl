@@ -26,9 +26,13 @@
 #   test_jtheta_no_reversal.jl   (R8)     a 2-rotor seed must not reverse over
 #                                         20 s (the removed spurious J·θ
 #                                         torsional spring, 2026-08-25).
+#   test_trpt_drag_torque_balance.jl (D1-D5) the tether drag torque reaches the
+#                                         ring spin, opposes it, stays below the
+#                                         rotor torque, and sits in the large
+#                                         radius rings (2026-09-26).
 #
-# WHY NOT IN runtests.jl: these eight are ~45 min of the suite when run in
-# sequence. They run here as seven INDEPENDENT subprocesses in PARALLEL
+# WHY NOT IN runtests.jl: these nine are ~45 min of the suite when run in
+# sequence. They run here as nine INDEPENDENT subprocesses in PARALLEL
 # (~18 min wall-clock, bounded by the slowest file, test_evaluator_v13.jl),
 # so the fast unit suite stays fast.
 #
@@ -49,6 +53,7 @@ const ACCEPTANCE_FILES = [
     "test_settle_lowk_honest",
     "test_physics_path_ode",
     "test_jtheta_no_reversal",
+    "test_trpt_drag_torque_balance",
 ]
 
 # Launch each acceptance file as its own julia process. Each file is a

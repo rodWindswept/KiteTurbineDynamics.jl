@@ -59,18 +59,38 @@ fixed. So the measurement and the anchor agree inside the known defect.
 - **The drag torque is real and modest.** It will move the operating point when the fix
   applies it, and the move will be small.
 
+## The promoted test, and the corrected number
+
+The probe had a flaw in its isolation. Both kernel calls carried the wind. So the
+difference held the rotational drag less the wind-only drag. The wind-only term is not
+zero, because twisted tethers meet the wind at an angle.
+
+The promoted test is `test/test_trpt_drag_torque_balance.jl`. It sets the wind to zero in
+the baseline call. The relative flow is then zero, so the baseline drag is zero. The
+elastic tension term depends on positions only, so it still cancels.
+
+| Quantity | Probe, 2026-09-26 | Promoted test, 2026-09-26 |
+|---|---|---|
+| drag torque | −21.903 N·m | **−22.771 N·m** |
+| drag power | −0.295 kW | −0.306 kW |
+| drag over rotor torque | 7.5 % | **7.8 %** |
+
+The two agree inside 4 percent. So the wind holds a small share of the rotational drag at
+this operating point. The test also prints the motion-only drag, and the share that the
+wind contributes. The check stays auditable.
+
 ## Method limits, stated
 
-The probe isolates the drag by calling the rope kernel twice on the same state: once as it
-is, and once with every node translational velocity zeroed. The elastic tension term
-depends on positions only, so it cancels. The rope damping term does not, so a little of
-it rides along in the difference.
+The elastic tension term cancels exactly. It depends on positions only. The rope material
+damping does not cancel. It depends on velocity, so it rides along with the drag in the
+difference. It is small. The drag grows with the square of the speed, and the damping
+grows with the speed.
 
-The still call is not small. It reads 415.8 N·m, which is the transmitted torque of the
-settled state. So the drag torque is the difference between two large numbers, and a few
-percent of noise would be a few N·m. The two checks above say the result is sound. Even
-so, the promoted acceptance test must measure the drag moment directly, per sub-segment at
-the ring attachment radius, and avoid the cancellation.
+The older probe had a baseline of 415.8 N·m. So that figure came from a difference between
+two large quantities. That is a numerical risk. The two figures above agree inside
+4 percent, so the risk did not bite here. The promoted test keeps the same structure, and
+it removes the wind ambiguity. Its two independent checks still hold. They are the scaling
+law and the scaled printed anchor.
 
 ## Next
 

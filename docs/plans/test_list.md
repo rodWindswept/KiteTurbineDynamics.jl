@@ -33,7 +33,7 @@ Audit: `docs/validation/2026-09-25-trpt-tulloch-model-crosscheck.md`.
 | 6 | An ODE window holds 70-100° twist with no ceiling. | not written | RED | WP3b. This test decides the ϕ < 2 rule |
 | 7 | The moment of a force about the shaft axis, against hand cases. | `test_trpt_drag_torque.jl` | GREEN 2026-09-26 | `scripts/ktd-test-one test_trpt_drag_torque` |
 | 8 | The tether drag moment reaches the ring spin. Every intermediate ring gains it, it opposes the rotation, and it grows with the square of the spin rate. | `test_trpt_drag_torque.jl` | GREEN 2026-09-26 | same run |
-| 9 | The drag torque at the operating point, against the shaft torque and the steady-state bound, on the live seed. | `.scratch/trpt_drag_balance.jl`, promotion to `test/acceptance_runtests.jl` owed | measured 2026-09-26 | `scripts/ktd-julia .scratch/trpt_drag_balance.jl` |
+| 9 | The drag torque at the operating point: it reaches the spin, opposes the rotation, stays below the rotor torque, and sits in the large-radius rings. Baseline −22.771 N·m, 7.8 % of the rotor torque, ω 13.452 rad/s. | `test/test_trpt_drag_torque_balance.jl` | GREEN 2026-09-26 | `scripts/ktd-test-one test_trpt_drag_torque_balance`, and in `test/acceptance_runtests.jl` |
 
 Found in this cycle: the authority needs a per-segment tether length at every call site.
 The placed state carries it as `chord`. The ODE carries it as `line_restlen`. The
