@@ -324,3 +324,27 @@ physics constant without a ruling.
   expansion load withheld through `expansion_aero_on`, and with the tether drag differenced.
 - Lesson. A ring's role is a build input, not a geometric inference. Read
   `sys.expansion_rotors`, and do not read a torque magnitude as evidence of a rotor.
+- 2026-09-26, sixth pass, the term split. Measured at the settled state by differencing three
+  things. It corrects two assumptions of mine.
+- THE GENERATOR IS NOT IN THIS ARRAY. Setting the MPPT gain, `sys.k_mppt_ref[]`, to zero
+  changes no ring at all. So the ground ring's plus 415.78 N.m is NOT the generator, as I had
+  stated in the fourth pass. It is the ground ring's reaction to the transmitted torque. The
+  generator is applied on another path.
+- WHAT THE ARRAY ACTUALLY HOLDS:
+  - the aerodynamic torques, which sum to zero across the stack by Newton's third law, and
+  - the tether drag, the only unbalanced term. The whole array sums to minus 22.7713 N.m, which
+    is exactly the ring end drag figure.
+- THE MAIN ROTOR CARRIES THE OPPOSITE SIGN CONVENTION to the drive. Ring 13 measures minus
+  280.48 N.m where the site formula at `ring_forces.jl:216-223`, computed live, gives plus
+  296.92 N.m. That is 5.5 percent agreement, not a contradiction. The difference is the drag
+  plus the live against design elevation angle. The earlier open note, minus 276.0 here against
+  plus 290.663 in the balance test, is therefore resolved: one number in two conventions.
+- THE RING END DRAG SHARE, per ring: ring 1 minus 0.038, rings 2 to 8 about minus 0.08 each,
+  ring 9 minus 0.146, ring 10 minus 1.190, ring 11 minus 7.550, ring 12 minus 8.817, ring 13
+  minus 4.457. Total minus 22.7713 N.m. It concentrates at the three large radii.
+- THE RESIDUAL, not yet fully identified, and printed rather than explained: rings 2 to 9 carry
+  about plus 2 N.m each, ring 9 carries plus 10.78, and ring 10 carries minus 14.93. Those rings
+  host no rotor and hold almost no drag, so those are transmission terms. The shape matches the
+  per-segment transmitted-torque bookkeeping in the post-loop clamp path, `seg_tau_a` and
+  `seg_tau_b` at `src/rope_forces.jl:321-326`, not an aerodynamic term. Naming the exact source
+  needs one more read of that block, so it is not guessed here.
