@@ -1,7 +1,19 @@
 # Proposal: the ring-end drag uses the attachment velocity
 
 **Date:** 2026-09-26
-**Status:** Proposed. Awaiting Rod. No code changed.
+**Status:** PARKED 2026-09-26 on branch `wip/f11-ring-end-velocity-2026-09-26`, commit
+`f3d0362`. The unit-level mechanism works. A test proves three things: the rim term reaches
+the drag, it grows with the square of the spin rate, and the term is not a double count. A
+settled-state probe read every ring-end node at exactly 0.0000 m/s.
+
+The magnitude is open. The settled drag torque moved from 22.771 N·m to 63.717 N·m. That is
+22 percent of the rotor torque. The analysis predicted 29 to 35 N·m. The printed anchor
+scaled to this geometry gives 29.4 N·m. So the measured value sits above both.
+
+A larger problem appeared in the same probe. Finding F13 records it: the screen's tether
+drag power reads 3.866 kW, and the rotor delivers about 3.9 kW. That breaks the bound that
+the drag can never exceed the rotor torque. The screen and the ODE disagree by 4.5 times.
+Settle F13 first, before this fix's magnitude or any campaign.
 **Finding behind it:** F11 of `docs/validation/trpt-reference/03-repo-findings.md`.
 **Place in the order:** after the drag torque fix (Ruling 4, committed `13a676a`), with the
 tether drag coefficient setting (Ruling 3).

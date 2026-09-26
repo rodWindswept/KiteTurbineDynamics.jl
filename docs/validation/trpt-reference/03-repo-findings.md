@@ -186,3 +186,31 @@ physics constant without a ruling.
   that it describes the code below it.
 - Lesson, and it is the second time in this workstream: read the code before you record a
   finding. The first case was our own ring tube estimate, which the ODE corrected.
+
+## F13. The screen's tether drag power breaks the bound, and the ODE does not
+
+- Found on 2026-09-26 while validating F11. The two models of the same loss disagree by
+  4.5 times, and the screen holds the value that cannot be right.
+- Measured at the settled operating point of the live seed, omega 13.452 rad/s, CD 1.0:
+  - `settle_parasitic_drag_power`, tether term isolated with the coefficient setting:
+    **3.866 kW**
+  - the ODE's isolated tether drag torque: **63.717 N·m**, which is 0.857 kW at that spin
+- The rotor delivers about 290 N·m at 13.452 rad/s, which is 3.9 kW. So the screen says the
+  tether drag alone consumes the whole rotor output.
+- That breaks the bound Rod set on 2026-09-26. The drag torque can never exceed the rotor
+  torque, because the drag only comes from the rotation the rotors initiated. A machine in
+  that state could not spin up at all.
+- The same formula sits in the objective's line drag, `src/objective_v6.jl:338`, so the DE
+  may be fitting against the same excess.
+- The history is worth reading. The 2026-08-24 change multiplied the screen's tether drag
+  by six, replacing a line count that was always 1 with `p.n_lines`, and it removed a 0.5
+  curvature factor, which together are a 12 times rise in one commit. If the line count was
+  right, the screen is right and the ODE is six times low. If the ODE is right, the screen
+  carries a large excess.
+- Status: Open, and it outranks F11. Three questions settle it: which term carries the
+  excess, whether the objective carries the same one, and whether the 2026-08-24 change was
+  right.
+- For reference, the pre-F11 ODE value was 22.771 N·m, which is 0.306 kW, or 7.8 percent of
+  the rotor torque. That value is plausible, and it sat below the printed anchor scaled to
+  this geometry at 29.4 N·m. That gap is what started the F11 investigation, and it now has
+  a rival explanation: the anchor scaling is crude, and the screen may be the outlier.
