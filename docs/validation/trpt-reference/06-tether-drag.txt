@@ -1,0 +1,600 @@
+# 06-tether-drag — Fig 5.37-5.40: tether drag torque loss
+# Verbatim from docs/validation/tulloch-thesis-extract.txt, pages 239-246.
+# Not edited. Page numbers are extract page indices, which match the PDF page order.
+
+===== extract page 239 =====
+Chapter 5.     Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+dened in terms of the rotor's tip speed ratio and the ratio between the TRPT and
+
+rotor radii, τ .
+
+                                        λt = λ τ                                     (5.8)
+
+
+
+where
+                                              Rtrpt
+                                       τ=                                            (5.9)
+                                              Rrotor
+                                          2
+Thus, the torque loss is proportional to λ . In terms of reducing tether drag it is there-
+
+fore advantageous to design a rotor that has a lower optimal tip speed ratio.
+
+
+
+
+Equation (5.6) allows the identication of the factors that aect the torque loss, it also
+
+allows for an initial estimation of the TRPT's overall torque loss.     The eciency of
+
+the power transmission between the ying rotor and the ground station can then be
+
+calculated. For example, at an elevation angle of 25
+                                                       ◦ with a uniform wind speed of 8
+
+
+m/s, the three bladed rigid winged rotor used in the Daisy Kite prototype produces a
+
+torque of 45.1Nm, when operating at a tip speed ratio of 4.0. Using TRPT4, which
+
+has a length of 10.3m, the torque loss due to tether drag using (5.6) is 7.4Nm.      The
+
+tether drag for each section is calculated using the tether radius at the mid point of
+
+the section.   Fxmax and σmax are taken to be 37 kN and 3.5 GPa respectively.        The
+
+yield stress is chosen to represent Dyneema SK76 [137] and the maximum axial force
+
+is chosen to correspond to a tether diameter of 1.5mm.       This initial estimate shows
+
+that 17% of the energy captured by the rotor is lost in the TRPT. Therefore, given the
+
+operating conditions stated above the power transmission of TRPT4 is estimated to
+
+have an eciency of 83%, when operating at its optimal tip speed ratio.
+
+
+
+
+Improved Tether Drag
+
+To enhance upon the simple tether drag model the improved tether drag model was
+
+developed, described in Section 4.5.2. The improved model is able to account for vari-
+
+ations in TRPT radius and torsional deformation.       It therefore removes the rst two
+
+assumptions for the simple tether drag model listed previously. Figure 5.37 shows how
+
+
+
+
+                                           212
+===== extract page 240 =====
+Chapter 5.                        Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+the steady state torque loss, relative to the torque loss with no torsional deformation,
+
+varies for two TRPT sections with dierent geometries. The solid line corresponds to
+
+a radius of 0.4m and a tether length of 1m, the dashed line corresponds to a radius of
+
+0.32m and a tether length of 0.52m. The geometry of the TRPT in the dashed line case
+
+matches the geometry towards the ground station end of TRPT4. The elevation angle
+
+is 25 .
+       ◦
+
+
+
+
+It can be seen from Figure 5.37 that as the torsional deformation increases, initially the
+
+torque loss also increases before reaching a peak. There are two key elements that cause
+
+this. Firstly, as the TRPT section deforms torsionally, the tethers will cross inside the
+
+outer radius of the TRPT. This reduces the radius of the tether sections. The smaller
+
+radius results in the tether section seeing a reduced apparent wind speed, the tether
+
+drag force acting at a smaller radius also reduces the torque force generated. Secondly,
+
+as the torsional deformation increases, the angle of attack between the tether and the
+
+apparent wind increases leading to increased aerodynamic force due to tether drag.
+
+This increases the tether drag force component, FD,τ , that acts perpendicular to the
+
+tether  see Figure 4.9 in Section 4.5.2. Figure 5.37 shows a typical response, where the
+
+torque loss increases initially with the increase in torsional deformation before reach-
+
+
+
+                                                            R = 0.4        R = 0.32
+                                                            lt = 1         lt = 0.52
+                           1.3
+
+
+                           1.2
+    Relative Torque Loss
+
+
+
+
+                           1.1
+
+
+                            1
+
+
+                           0.9
+
+
+                           0.8
+                              0      10    20     30        40        50       60      70   80   90   100
+                                                       Torsional Deformation (deg)
+
+Figure 5.37: Eect of TRPT torsional deformation on the torque loss due to tether drag
+
+
+
+
+                                                                 213
+===== extract page 241 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+ing a maximum value, after which it decreases with the increase of deformation angle.
+
+The elevation angle and TRPT geometry determine at what torsional deformation the
+
+maximum torque loss is reached.
+
+
+
+
+With the improved tether drag model the estimate of torque loss and the eciency of
+
+a TRPT can be rened. Using the same input conditions for the torque loss with the
+
+simple tether drag model, the torque loss is calculated with the improved model. To
+
+assess the impact of the torsional deformation, the torque loss is also calculated neglect-
+
+ing any torsional deformation, δ , within the improved model. The results comparing
+
+the models are shown in Table 5.10.
+
+
+
+
+It can be seen from Table 5.10 that the initial gures show the simple tether drag model
+
+has over estimated the torque loss compared to the improved model. It can also be seen
+
+that by neglecting any torsional deformation within the improved model the torque
+
+loss is under estimated, in the case analysed the steady state torsional deformations of
+
+the sections within TRPT4 vary from 33
+                                             ◦ to 46◦ . The sections that have the same
+
+                                                                                 ◦
+geometry as the dashed line in Figure 5.37 have a torsional deformation of 46 . It can
+
+be seen from Figure 5.37 these sections are close to their maximum torque loss. With
+
+a torsional deformation of 46
+                               ◦ the torque loss is greater than when the torsional de-
+
+
+formation is zero. The error caused by neglecting the torsional deformation will vary
+
+depending on the system's operating state and the TRPT geometry.
+
+
+
+
+Calculating the tether drag neglecting any torsional deformation is less computation-
+
+
+
+
+                 Model             Torque Loss (Nm)      TRPT4 Eciency (%)
+
+
+                 Simple                    7.6                     83.2
+
+        Improved (δ neglected)             4.9                     89.2
+
+               Improved                    5.1                     88.6
+
+
+                   Table 5.10: Comparison of the tether drag models
+
+
+
+
+                                           214
+===== extract page 242 =====
+Chapter 5.     Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+ally expensive. When including the torsional deformation the angular position of each
+
+TRPT ring must be found, this requires running a dynamic TRPT model for a spe-
+
+cic input until the steady state is reached, as the torsional deformation is not a priori
+
+known.   The case listed in Table 5.10 shows that the error caused by neglecting the
+
+torsional deformation is small. Figure 5.37 shows that in the example case the error is
+
+likely to be higher than other cases as the majority of the TRPT sections are operating
+
+at torsional deformations that signicantly increase the torque loss. It is therefore con-
+
+cluded that for the initial steady state analysis under a range of operating conditions,
+
+the torsional deformation within the TRPT can be neglected to keep the model simple.
+
+
+
+
+The simple tether drag model has allowed the identication of the key factors that aect
+
+the aerodynamic losses within the TRPT. However, it has been shown to over estimate
+
+the drag within the TRPT. The improved tether drag model has therefore been used
+
+within the springdisc and multispring representations.       It is noted that when used
+
+within the multispring representation the assumption that the tethers do not stretch
+
+is removed, the axial degrees of freedom within the multispring model allow for any
+
+axial force that arises due to tether drag to be considered.
+
+
+
+
+The Impact of tether drag on Daisy Kite Operation
+
+Up to now the tether drag has only been analysed when the rotor is operating at its opti-
+
+mal tip speed ratio. To understand how the tether drag will impact all steady operating
+
+conditions, the full range of possible tip speed ratios are analysed. Figure 5.38 shows
+
+the three bladed rigid rotor Cp vs λ curve when the rotor is combined with TRPT4,
+
+as in the Daisy Kite prototype conguration 8. In these simulations the elevation angle
+
+is set to 25
+               ◦ and the torque loss is calculated using the improved tether drag model
+
+
+neglecting any torsional deformation.
+
+
+
+
+Figure 5.38 shows that the tether drag within the TRPT aects the rotors optimal
+
+operating conditions when it is incorporated into the full system. The rotor in isolation
+
+
+
+
+                                           215
+===== extract page 243 =====
+Chapter 5.          Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+                                         Rotor       Rotor and TRPT{4
+          0.2
+
+
+         0.15
+    Cp
+
+
+
+
+          0.1
+
+
+         0.05
+
+
+           0
+                0          1         2           3          4           5   6         7
+                                                       6
+          Figure 5.38: Eect of tether drag on the performance of rotary AWES
+
+
+
+has a Cpmax value of just over 0.17 which occurs when λ is 4.2. The rotor and TRPT
+
+combined have a Cpmax of just over 0.15 which occurs at a lower tip speed ratio of 4.0.
+
+This represents a decrease of 11.5% in Cpmax due to tether drag within the TRPT. It
+
+can also be seen from Figure 5.38 that the tether drag has more impact at higher tip
+
+speed ratios, conrming the observations made using (5.6) regarding the relationship
+
+between the system's tip speed ratio and the torque loss due to tether drag.        Tether
+
+drag reduces the optimal tip speed ratio of the system compared to the rotor in isolation.
+
+
+
+
+To further analyse the impact of tether drag, the torque loss and corresponding e-
+
+ciency of the TRPT during the 5 cases taken from the experimental data are calculated.
+
+Table 5.11 shows the mean torque loss within the TRPT, the mean tip speed ratio and
+
+the TRPT eciency for each of the experimental cases used previously.           The results
+
+shown are based on the springdisc representation. The TRPT eciency is calculated
+
+based on the mean rotor torque and the mean torque loss.
+
+
+
+
+It can be seen from Table 5.11 that the averaged eciency of the TRPT over a set of
+
+operations is lower than those for an individual operating state shown in Table 5.10.
+
+Of the ve cases the three that used a rigid rotor, cases 1, 2, and 3, all operated at
+
+
+
+
+                                                 216
+===== extract page 244 =====
+Chapter 5.                 Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+
+                                Case       Mean Torque Loss (Nm)         λ      TRPT Eciency (%)
+
+
+                                 1                    5.6                5.6             31.9
+
+                                 2                    4.6                4.8             54.4
+
+                                 3                    1.0                4.8             58.0
+
+                                 4                    2.1                2.9             61.2
+
+                                 5                    1.6                2.9             52.0
+
+
+                                         Table 5.11: Torque loss in the 5 experimental cases
+
+
+
+tip speed ratios above the rotors optimal value of around 4. It is known that operating
+
+at higher tip speed ratios decreases the power output from the rotor and increases the
+
+losses within the TRPT. This is best seen comparing case 1 to cases 2 and 3. The mean
+
+tip speed ratio over the 5minutes window in case 1 is 5.6, in cases 2 and 3 it is 4.8.
+
+The calculated eciency for the higher tip speed ratio is almost half that of the lower
+
+tip speed ratios. This again highlights the impact that the tip speed ratio has on the
+
+tether drag.
+
+
+
+
+Given the high torque losses within the TRPT, the drag on each section within the
+
+TRPT is analysed.                           Figure 5.39 shows the torque loss, relative to the overall torque
+
+loss, imposed on each ring within TRPT4 for the results given in Table 5.10 using the
+
+improved model including torsional deformation.                                Section 1 corresponds to the rotor
+
+
+                                80
+
+
+                                60
+              Torque Loss (%)
+
+
+
+
+                                40
+
+
+                                20
+
+
+                                 0
+                                     0        2       4        6          8         10          12   14
+                                                              TRPT Section
+
+Figure 5.39: Relative torque loss for each section of TRPT4 under optimal operating
+conditions.
+
+
+
+
+                                                                   217
+===== extract page 245 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+and 13 the ground station. It can be seen from Figure 5.39 that the rst section of the
+
+TRPT causes the majority of the overall torque loss. The rst two rings, at two ends of
+
+the rst TRPT section, see 92% of the overall losses. Figure 3.12(c) gives a schematic
+
+of the TRPT4 geometry. The rst TRPT section has a much larger radius compared
+
+to those closer to the ground station.    This again shows the impact that the TRPT
+
+radius has on the eciency and conrms the need to reduce the radius of the TRPT to
+
+improve the power transmission eciency.
+
+
+
+
+Tether Drag Coecient
+
+From the simple tether drag model the tether drag is directly proportional to the tether
+
+drag coecient, CDt .   To further assess the impact of the tether drag on the system
+
+model a sensitivity analysis of the steady state results was conducted. The tether drag
+
+coecient was varied from 0.5 up to 5. Figure 5.40(a) shows the change in the system's
+
+maximum power coecient as the tether drag coecient is altered. It can be seen that
+
+it is close to a linear relationship between the maximum power coecient of the system
+
+and the tether drag coecient. The tether drag coecient is directly proportional to
+
+the tether drag and corresponding torque loss. With a tether drag coecient of 1.2 the
+
+torque loss within TRPT4 operating at the optimal tip speed ratio of 4.0 is 4.9Nm.
+
+When the drag coecient is increased to 2.7 the torque loss within TRPT4, operating
+
+at the optimal tip speed ratio of 3.8, is 9.9Nm.
+
+
+
+
+Figure 5.40(b) shows the RMSE between the simulated steady state Cp vs λ curve and
+
+that of oneminuted averaged experimental data for Daisy Kite prototype congura-
+
+tion 8, the experimental data used is the same as that in Figure 5.2(e) which shows
+
+the comparison with the tether drag coecient set to 1.2. It can be seen from Figure
+
+5.40(b) that the error is lowest when the tether drag coecient is set to 2.7. This is over
+
+double the value of 1.2 used in all other simulations. For the results shown in Figure
+
+5.40(b) the torque loss was calculated using the improved tether drag model neglecting
+
+any torsional deformation within the TRPT. As shown in Table 5.10 neglecting the
+
+
+
+
+                                           218
+===== extract page 246 =====
+Chapter 5.          Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+                                                                 0.09
+         0.17
+
+         0.16                                                    0.08
+
+
+         0.15                                                    0.07
+
+
+
+
+                                                          RMSE
+         0.14                                                    0.06
+ Cpmax
+
+
+
+
+         0.13
+                                                                 0.05
+         0.12
+                                                                 0.04
+         0.11
+                                                                 0.03
+          0.1                                                           0   1        2        3        4   5
+                0   1        2        3        4    5                           Tether Drag Coe/cent
+                        Tether Drag Coe/cent
+                                            (b) Tether drag coecient against the error be-
+(a) Tether drag coecient against the maxi-
+                                            tween the springdisc model and experimental
+mum power coecient
+                                            data
+
+                                 Figure 5.40: Eects of tether drag coecient
+
+
+
+torsional deformation results in a slight underestimate of the torque loss due to tether
+
+drag compared to taking the torsional deformation into account. This would result in
+
+a slightly larger tether drag coecient being required to obtain the same torque loss.
+
+This, however, does not explain the signicant increase in CDt required to minimise the
+
+error to the experimental data.
+
+
+
+
+Given the result shown in Figure 5.40(b) it appears that the models, in general, un-
+
+der estimate the drag within the Daisy Kite system. However, with the experimental
+
+data available it is not possible to determine where within the model the drag is being
+
+underestimated. It may be that the drag on the rotor blades is being underestimated
+
+and therefore the rotor module is overestimating the torque output from the rotor. The
+
+model only takes into account the main lines within the TRPT, in reality there will
+
+be a number of other components that contribute to the torque loss, for example, the
+
+carbon bre rings and the blades/kites bridle lines. In the models it is assumed that
+
+the drag on all other components is negligible compared to the main TRPT lines.
+
+
+
+
+On the rigid rotors each blade has two bridle lines. The rst connects the inner tip of
+
+the blade to the closest main TRPT line, the second joins the closest main line at 0.35m
+
+from the blade tip.              Both lines are therefore connected to the same main TRPT line
+
+
+
+
+                                                        219

@@ -1,0 +1,645 @@
+# 05-trpt-section-physics — Fig 5.25-5.30: torque, delta_crit, force ratio
+# Verbatim from docs/validation/tulloch-thesis-extract.txt, pages 221-229.
+# Not edited. Page numbers are extract page indices, which match the PDF page order.
+
+===== extract page 221 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+TRPT length, due to the reduction in the systems axial stiness.        The multispring
+
+representation is likely to be more suitable for modelling larger systems. It is also noted
+
+that the axial and torsional stiness of a TRPT system is highly dependant on its ge-
+
+ometry. Therefore, the springdisc representation could be suitable for longer TRPT
+
+lengths when the geometry and operating state result in high stiness of the system.
+
+
+
+
+5.3     Analysis of Rotary Airborne Wind Energy System De-
+        sign
+To further understand the characteristics of rotary AWES a steady state analysis of the
+
+Daisy Kite's design has been undertaken and is detailed in this section. The TRPT and
+
+rotor designs are investigated in Sections 5.3.1 and 5.3.2 respectively. Their performance
+
+is analysed to identify any limitations and crucial design drivers. Given the importance
+
+that tether drag has on AWES, as shown in Section 2.1.5, the TRPT's tether drag is
+
+investigated in Section 5.3.3.
+
+
+
+
+5.3.1    Tensile Rotary Power Transmission Design
+
+The main role of a TRPT is to transfer the torque generated at the rotor down to the
+
+ground station.   In Section 4.4, (4.31) is dened, this is used to calculate the static
+
+torque that a TRPT can transmit for a given TRPT geometry and operating condition,
+
+(4.31) is repeated below in (5.2).
+
+
+
+                                                  sin δ
+                      Q = R1 R2 Fx r                                                  (5.2)
+
+                                       lt2 − R12 − R22 + 2R1 R2 cos δ
+
+
+It can be seen from (5.2) that the amount of torsion that a single TRPT section can
+
+transmit is dependant on the TRPT's geometry, the axial force applied to it and the
+
+torsional deformation of the section. Figure 5.25 shows how the torque, Q, varies with
+
+the torsional deformation,   δ , for a set geometry and axial force, for a single TRPT
+
+
+                                           194
+===== extract page 222 =====
+Chapter 5.              Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+                       120
+
+
+                       100
+
+
+         Torque (Nm)   80
+
+
+                       60
+
+
+                       40
+
+
+                       20
+
+                                                                  /crit
+                        0
+                             0   20    40     60     80     100           120   140       160   180
+                                             Torsional Deformation (deg)
+
+Figure 5.25: Amount of torque transmitted against the torsional deformation for a single
+section of the Daisy Kite's TRPT. The two rings of the section both have a radius of
+0.4m, the tether length is 1m and the axial force is 500N.
+
+
+
+section calculated using (5.2). In this case the two rings have the same radius (R1 , R2 )
+
+of 0.4m, the tether length (lt ) is 1m and the axial force, Fx , is set to 500N.
+
+
+
+
+It can be seen from Figure 5.25 that the amount of torque that the TRPT section can
+
+transfer is highly dependant on its torsional deformation and that there is a nonlinear
+
+relationship between the two.               Initially as the torsional deformation is increased the
+
+transmittable torque increases, at a particular torsional deformation, δcrit , a maximum
+
+torque value is reached.              After this point, the ability for torque transmission reduces
+
+as the torsional deformation increases further.               In the case shown in Figure 5.25 the
+
+maximum transmittable torque is 100Nm and δcrit is equal to 104 . (4.34) shows that
+                                                                                      ◦
+
+
+this critical value of torsional deformation is dependent on the TRPT geometry.
+
+
+
+
+Figure 5.25 and (5.2) also show that with zero torsional deformation no torque can be
+
+transferred. In the case of the Daisy Kite's TRPT, it is not possible to transmit torque
+
+if adjacent rings have the same rotational position relative to one another. Some other
+
+TRPT designs are able to transfer torque without any torsional deformation occurring.
+
+As discussed in Section 3.5, if the torsional deformation between adjacent rings exceeds
+
+180
+   ◦ the TRPT tethers will cross and it is no longer possible to transfer torque. Once
+
+
+
+                                                      195
+===== extract page 223 =====
+Chapter 5.                              Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+this occurs the TRPT fails as the torsional deformation will rapidly increase and the
+
+tethers will become excessively twisted.
+
+
+
+
+One more observation from Figure 5.25 is that there are two possible torsional deforma-
+
+tions for each torque value, one larger and one smaller than δcrit . By investigating the
+
+torsional stiness of the TRPT the two torsional deformations for each torque are anal-
+
+ysed in more depth. Figure 5.26 shows how the torsional stiness varies with torsional
+
+deformation, calculated using (4.33) in Section 4.4. The geometry and operational state
+
+used are the same as those in Figure 5.25.
+
+
+
+
+It can be seen from Figure 5.26 that the torsional stiness of a TRPT section decreases
+
+monotonically as the torsional deformation is increased. When the torsional deforma-
+
+tion is equal to δcrit the torsional stiness of the TRPT section is equal to zero. For
+
+larger torsional deformations the torsional stiness becomes negative. Therefore once
+
+the TRPT rotationally deforms beyond δcrit there are no stable equilibrium conditions.
+
+With a positive torsional stiness the TRPT is in equilibrium, where the tether force
+
+and torque oppose each other. A negative torsional stiness shows that the TRPT is
+
+not in equilibrium as the tether forces and torque act in the same direction. When the
+
+deformation is larger than δcrit the ability of the TRPT section to transmit torque col-
+
+
+                                                                 Torsional Sti,ness     Torque
+                                      150                                                                           100
+        Torsional Sti,ness (Nm/rad)
+
+
+
+
+                                      100
+                                                                                                                    50
+                                       50
+                                                                                                                           Torque (Nm)
+
+
+
+
+                                        0                                                                           0
+
+                                       -50
+                                                                                                                    -50
+                                      -100
+
+                                                                                        /crit                       -100
+                                      -150
+                                             0   20   40    60         80         100           120   140   160   180
+                                                           Torsional Deformation (deg)
+
+Figure 5.26: Torsional stiness variation with torsional deformation for a single section
+of the Daisy Kite's TRPT. The two rings of the section both have a radius of 0.4m, the
+tether length is set to 1m and the axial force is set at 500N
+
+
+
+                                                                            196
+===== extract page 224 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+lapses to zero. The rst TRPT failure mode discussed in Section 3.1.3 is that Tethers
+
+cross due to excessive torsional deformation . Figure 5.26 shows that a TRPT section
+
+will fail prior to the tethers crossing. Once the torsional deformation is larger than δcrit
+
+the rotational deformation will increase rapidly causing the tethers to cross and be-
+
+come excessively twisted. As mentioned in Section 3.1.3, although the tethers crossing
+
+is regarded as a failure mode, it is possible to recover the system and resume normal
+
+operation, so long as the tether twisting does not lead to the second or third failure
+
+mode, where the tether or ring components fail respectively.
+
+
+
+
+During the systems operation, the torsional deformation must be kept below δcrit . This
+
+provides a limit on the Daisy Kite's rotational deformation and can be used to ensure
+
+reliable operation. By measuring the tether angle or torsional deformation this could
+
+be used to ensure that the over twist scenario is avoided.      Equally by measuring the
+
+axial tension it is possible to calculate a maximum torque that the TRPT is able to
+
+transmit, allowing limits to be set to avoid the tethers becoming twisted.
+
+
+
+
+Figures 5.25, 5.26 demonstrate that it is possible to calculate operational limits for a
+
+given TRPT geometry. It is worth noting that this analysis can only be used to calculate
+
+the maximum torque when the tether length is larger than the TRPT diameter. If the
+
+tether length is less than the diameter of the TRPT then it is not possible for the TRPT
+
+to over twist to the point at which the tethers cross. In this case the maximum torque
+
+is determined by either the strength of the tethers or the strength of the rings.        As
+
+described in Section 4.4, the limits are calculated based on the following assumptions:
+
+
+  1. The system is massless
+
+
+  2. The system is in static equilibrium
+
+
+  3. The tethers are straight and do not stretch
+
+
+  4. The TRPT rings are rigid
+
+
+  5. The TRPT rings are orthogonal to the axis of rotation and all share a common
+
+      axis of rotation
+
+
+                                            197
+===== extract page 225 =====
+Chapter 5.    Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+TRPT Single Section Geometry Analysis
+
+The static analysis has so far assumed that the geometry of the TRPT is known. It is
+
+more useful to design the dimensions of the TRPT to match the expected loads that it
+
+will experience. To achieve this the relationship between the geometry and the torque
+
+carrying ability of a single TRPT section is analysed. To start with, consider the case
+
+that the two rings of the TRPT have the same radius, R. The torque can be calculated
+
+by
+
+
+
+                                  RFx      sin δ
+                               Q= √ r                                                 (5.3)
+                                    2  lt2
+                                      2R2
+                                           + cos δ − 1
+
+                                                           ∂Q
+The critical deformation angle can be determined by           = 0 which gives
+                                                           ∂δ
+                                                     r
+                                             ϕ2 ϕ
+                             cos δcrit = 1 −   +       ϕ2 − 4                         (5.4)
+                                             2   2
+                                              lt
+                                         ϕ=                                           (5.5)
+                                              R
+
+Again, δcrit is dependent on the TRPT's geometry only. It can be seen from (5.4) that
+
+when the radius of the two rings for a single TRPT section are the same, δcrit is depen-
+
+dent only on ϕ, the ratio of the tether length to the ring's radius. Figure 5.27 shows
+
+the relationship between δcrit and ϕ calculated using (5.4).
+
+
+
+
+Below a ϕ value of 2 it is not geometrically possible for the torsional deformation to
+
+          ◦
+reach 180 . The tethers are therefore not able to cross. In this situation the material
+
+strength of the tethers and rings will dictate the failure point. In the case where ϕ is
+
+less than 2, it is possible for the axial distance between two rings to reduce to zero,
+
+although in practise the rings or tethers will fail prior to this occurring. It can be seen
+
+                                                       ◦
+in Figure 5.27 that the minimum value of δcrit is 90 . It can be stated that if ϕ is less
+
+than 2 or the torsional deformation is lower than 90
+                                                      ◦ the operation is stable, unless the
+
+
+torque and axial forces are larger than the strength of the tethers or rings can withstand.
+
+
+
+
+                                           198
+===== extract page 226 =====
+Chapter 5.                                         Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+                                                  180
+
+
+
+
+           Critical Torsional Deformation (deg)
+                                                  160
+
+
+                                                  140
+
+
+                                                  120
+
+
+                                                  100
+                                                   90
+                                                   80
+                                                        0       1          2        3         4          5                   6     7       8             9     10
+                                                                                 Tether Length to Ring Radius Ratio
+
+Figure 5.27:                                            Critical torsional deformation for dierent tether length to ring radius
+ratios.
+
+
+
+The amount of torque that a TRPT can transmit is directly proportional to the ax-
+
+ial force applied to it. Given this linear relationship between the axial force and the
+
+amount of torque that can be transferred, the ratio between the two is a useful met-
+
+ric when analysing the TRPT design. The force ratio refers to the ratio between the
+                                                                                                                             Q
+tangential force due to torque acting at the ring,                                                                             , and the axial force applied to
+                                                                                                                             R
+the TRPT section,                                                   Fx .   Figure 5.28 shows how this ratio changes with respect to
+
+the torsional deformation, for a single TRPT section.                                                                            For the case shown in Figure
+
+5.28 the radii of the two rings are 0.4m and the tether length 1m. The force ratio is
+
+at a maximum when the torsional de-                                                                                0.5
+
+formation is equal to                                                  δcrit .   The max-
+                                                                                                                   0.4
+
+imum value of the force ratio remains
+                                                                                                     Force Ratio
+
+
+
+
+                                                                                                                   0.3
+constant independent of the magnitudes
+                                                                                                                   0.2
+of the torque and axial force.                                                           For a
+
+                                                                                                                   0.1
+given     TRPT                                              geometry,      limits       can   be
+
+                                                                                                                                                 /crit
+calculated for the maximum force ratio                                                                              0
+                                                                                                                         0        50           100           150    200
+                                                                                                                                 Torsional Deformation (deg)
+that will avoid TRPT failure.                                                           In the
+
+                                                                                                    Figure 5.28:                  Force ratio against torsional
+case shown in Figure 5.28 this value is
+                                                                                                    deformation
+0.5.
+
+
+
+
+                                                                                                   199
+===== extract page 227 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+
+              Figure 5.29: Force ratio against the length to radius ratio.
+
+
+
+The crucial relationships for a TRPT section, with constant ring radius, are the force
+
+ratio and ϕ. The value of δcrit is dependant on ϕ and it determines the maximum force
+
+ratio that can be achieved.   Knowing this maximum force ratio allows the maximum
+
+transferable torque for a given axial tension to be calculated.   Figure 5.29 shows the
+
+relationship between ϕ and the force ratio.
+
+
+
+
+The graph shown in Figure 5.29 acts as a useful tool when designing the Daisy Kite's
+
+TRPT. The shaded region on the graph indicates the TRPT geometries and operating
+
+conditions that are stable. The line along the top of the shaded region represents δcrit
+
+and therefore above this line the ability of the TRPT to transmit torque has collapsed
+
+to zero. If the amount of torque to be transmitted is known, along with the correspond-
+
+ing axial tension, all stable TRPT geometries can be identied.      There are multiple
+
+TRPT geometries for each force ratio that will result in stable operation. In general,
+
+the shorter the TRPT section and the larger the radius i.e. smaller length to radius
+
+ratio, the larger the amount of torque that can be transmitted.
+
+
+
+
+                                          200
+===== extract page 228 =====
+Chapter 5.                      Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+Variable Ring Radius
+
+So far only TRPTs with a constant radius have been analysed. Figure 5.30 shows how
+
+a variable radius TRPT aects the ability of a single section to transfer torque. The
+
+dashed line in Figure 5.30 represents the maximum force ratio a set of rings with dier-
+
+ent radius can achieve, if the tether length allows for a torsional deformation of 180 .
+                                                                                                         ◦
+
+
+The force ratio against the length to radius ratio is depicted by solid lines for several
+
+dierent rings radius ratio, as labelled. Both the length to radius ratio and the force
+
+ratio are dened relative to the smaller one of the two rings. The line that corresponds
+
+to a radius ratio of 1 is identical to Figure 5.29.
+
+
+
+
+It can be seen from Figure 5.30 that as the ratio between the two rings increases so
+
+does the force ratio and therefore the amount of torque that the TRPT section is able
+
+to transmit. It can be stated that the amount of torque a constant radius section can
+
+transmit scales up linearly with its geometry. For example, if the ring radius and tether
+
+length are scaled up by a factor of 2, the force ratio will decrease by a factor of 2 for
+
+a given torque and axial tension. The maximum force ratio remains unchanged. The
+
+maximum amount of torque that can be transmitted, for the same axial tension will
+
+therefore double. It can be seen from Figure 5.30 that if a single ring is scaled up by
+
+a factor of 2, i.e. the radius ratio increases by a factor of 2, the maximum torque that
+
+
+                   3
+                                                                                                8
+                  2.5                                                                   7
+                                                                                6
+                   2                                                    5
+    Force Ratio
+
+
+
+
+                                                          4
+
+                  1.5                            3
+
+                                         2
+                   1
+                            1
+
+                  0.5
+
+                   0
+                        2            3       4        5             6       7       8       9       10
+                                                     Length to Radius Ratio
+
+Figure 5.30: Force ratio against the length to radius ratio for rings with dierent radius.
+Each solid line corresponds to a dierent radius ratio between the two rings.
+
+
+
+
+                                                              201
+===== extract page 229 =====
+Chapter 5.    Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+the section can transmit, for the same axial tension, increases by around 40%.
+
+
+
+
+Figure 5.30 also shows that as the ring radius ratio increases the tether length to ring
+
+radius ratio, at which the maximum force ratio occurs, also increases. As the relative
+
+radius of the rings becomes larger the tether length required to allow a torsional defor-
+
+mation of 180
+               ◦ also increases. Similar to the constant ratio case, the maximum force
+
+
+ratio can only be identied for TRPT geometries that allow a torsional deformation of
+
+180
+      ◦ . In cases where this cannot occur the maximum force ratio is determined by the
+
+
+strength of the tethers or rings.
+
+
+
+
+This section has identied various relationships important to the design of a TRPT.
+
+To design a TRPT based on this analysis it is necessary to know the magnitude of the
+
+forces applied to it in dierent conditions. The output from a rotary AWES rotor and
+
+lift kite, if the system includes one, will dictate the magnitude of these forces.   The
+
+following section investigates the Daisy Kite's rotor design.
+
+
+
+
+5.3.2     Rotor Design
+
+The rotor of a rotary AWES is responsible for extracting the power from the wind, and
+
+it is a crucial component in any rotary system. The design of the Daisy Kite's rotor is
+
+analysed in this section.
+
+
+
+
+System Elevation Angle
+
+AWES rotors share many similarities with HAWT's. A key dierence between HAWTs
+
+and rotary AWES is the misalignment of the rotors axis of rotation and the incoming
+
+wind. The need to y the rotor on the top end of a tether, avoiding ground strikes and
+
+reaching higher altitudes, means that the ying rotor must be tilted into the wind. As
+
+discussed in Section 4.2.1 the tilting of the entire rotor into the wind will impact the
+
+rotor's performance, most crucially the amount of power that can be extracted from the
+
+
+
+
+                                          202

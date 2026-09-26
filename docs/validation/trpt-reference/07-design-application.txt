@@ -1,0 +1,320 @@
+# 07-design-application — Fig 5.41-5.43: applying the map to the Daisy
+# Verbatim from docs/validation/tulloch-thesis-extract.txt, pages 250-253.
+# Not edited. Page numbers are extract page indices, which match the PDF page order.
+
+===== extract page 250 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+Optimised Daisy Kite System Design
+
+To design the TRPT the expected axial force and torque that it will experience must be
+
+calculated. Using the optimised rotor design, operating at its optimal tip speed ratio of
+
+4.3, and an elevation angle of 25
+                                     ◦ the rotors thrust and torque coecients are 0.5 and
+
+
+0.05 respectively.   The thrust and torque coecients are dependant on the tip speed
+
+ratio, their magnitude is proportional to the wind speed squared. The force from the
+
+lift kite, for a given elevation angle, is also proportional to the wind speed squared.
+
+Therefore, the force ratio applied to the top of the TRPT will be constant for all wind
+
+speeds, assuming the tip speed ratio remains unchanged. Although it is desirable that
+
+the system operates at or close to to the optimal tip speed ratio, all possible operating
+
+points must be considered when designing the TRPT geometry. The relationship be-
+
+tween the force ratio applied to the top of the TRPT, with a radius of 1.52m, will vary
+
+with the tip speed ratio. Figure 5.41 shows this relationship.
+
+
+
+
+Figure   5.41 shows   that the   maximum                        0.2
+
+force ratio reached using the optimised
+                                                               0.15
+Daisy Kite rotor and the current single
+                                                 Force Ratio
+
+
+
+
+skin lifter is 0.17, at a tip speed ratio of
+                                                                0.1
+
+2.6. Higher force ratio values correspond
+
+                                                               0.05
+to larger amounts of torque being trans-
+
+mitted relative to the axial force on the
+                                                                 0
+                                                                      0   1     2     3     4    5     6
+TRPT. For a given geometry, larger force                                              6
+
+ratios will result in more torsional defor-     Figure 5.41:                  Force ratio against the tip
+                                                speed ratio for the optimised Daisy Kite ro-
+mation, and the TRPT will be operating
+                                                tor.
+closer to the point of over twist.
+
+
+
+
+It can be seen from Figure 5.41 that the maximum force ratio occurs at a tip speed
+
+ratio of 2.6, less than the rotor's optimal value of 4.3. The TRPT will have maximum
+
+torsional deformation, and will be closest to failure, when the system operates at a tip
+
+speed ratio of 2.6. With a constant TRPT radius of 1.52m, the radius of the rotor's
+
+
+
+                                               223
+===== extract page 251 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+carbon bre ring, the expected maximum force ratio is 0.17.       Figure 5.29 is used to
+
+identify suitable length to radius ratios.
+
+
+
+
+It can be seen from Figure 5.29 that, with a force ratio of 0.17, the length to radius
+
+ratio of the TRPT can be as high as 6 to provide stable operation. This is much bigger
+
+than the sections within the current TRPT prototypes. Although large TRPT sections
+
+are advantageous to reduce the amount of material, the tether drag must be considered.
+
+As shown in Figure 5.39 the sections of the TRPT with the largest radius cause the
+
+majority of the losses within the TRPT. As discussed in Section 5.3.3 the torque loss
+
+                                         3
+within the TRPT is proportional to R . The radius should therefore be minimised to
+
+maximise the TRPT's eciency. The radius of the current TRPTs are decreased slowly
+
+from the rotor towards the ground station to avoid any abrupt changes in diameter.
+
+Given the advantage of reducing the TRPT radius a new TRPT design is proposed.
+
+By reducing the TRPT radius down to a minimum at the rotor the tether drag can be
+
+reduced. In the proposed TRPT design the rst TRPT ring is in the plane of the rotor
+
+and the TRPT has a constant radius along its length.
+
+
+
+
+As the TRPT radius is decreased the force ratio will increase thus requiring a smaller
+
+length to radius ratio. The lower sections of TRPT5, the most recent TRPT proto-
+
+type, have a radius of 0.35m.    If this radius was used a maximum force ratio of 0.72
+
+would be expected, which corresponds to a maximum length to radius ratio of 2.11. The
+
+maximum force ratio identied is based on the system's steady state. During dynamic
+
+operation it is likely that this force ratio will be exceeded. Equally it is not desirable
+
+to operate close to TRPT failure. If a TRPT length to radius ratio of 2.11 were to be
+
+used with a TRPT radius of 0.35m, the TRPT would likely fail during operation. To
+
+account for this the radius must be increased or the section length decreased. Figure
+
+5.42 shows the maximum force ratio for dierent TRPT radii. Figure 5.42 also shows
+
+how the per unit length TRPT eciency varies with TRPT radius. The eciency is
+
+calculated using the simple tether drag model assuming a tether diameter of 1.5mm,
+
+a wind speed of 8 m/s and with the system operating at the rotor's optimal tip speed
+
+
+
+
+                                             224
+===== extract page 252 =====
+Chapter 5.                         Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+                                    3                                                     1
+
+
+                                   2.5
+
+
+
+
+                                                                                                 TRPT unit length E/ciency
+                                                                                          0.98
+
+
+
+
+             Maximum Force Ratio
+                                    2
+                                                                                          0.96
+                                   1.5
+                                                                                          0.94
+                                    1
+
+                                                                                          0.92
+                                   0.5
+
+
+                                    0                                                     0.9
+                                         0   0.2   0.4   0.6    0.8     1   1.2   1.4   1.6
+                                                          TRPT Radius (m)
+
+Figure 5.42: Maximum force ratio and TRPT eciency variation with TRPT radius.
+
+
+
+ratio of 4.3.
+
+
+
+
+Figure 5.42 shows the compromise that must be made when selecting the TRPT radius.
+
+A larger radius results in lower force ratios, allowing for longer TRPT sections or for
+
+the TRPT to operate with lower torsional deformations and further from over twisting.
+
+However, a larger radius also leads to lower TRPT eciencies. In this case a radius of
+
+0.5m is selected as a trade o between the TRPT's torque transmission ability and its
+
+eciency. This results in a force ratio of 0.5 and a per unit length eciency of 99.7%,
+
+a length to radius ratio of 2.5, and section length of 1.25m.
+
+
+
+
+Optimal Elevation Angle and Tether Length
+
+The optimised rotor and new TRPT geometry are used to nd the optimal TRPT
+
+length and elevation angle. A key motivation for AWES is their ability to reach higher
+
+altitudes, compared to HAWT, where stronger and more consistent winds are available.
+
+In order to reach higher altitudes longer tether lengths are required. The tether length
+
+required to reach the desired altitude is dependant upon the system's elevation angle.
+
+Although a larger elevation angle corresponds to a shorter tether, it also results in lower
+
+power capture at the rotor, as shown in Figure 5.31. To nd the optimal elevation angle
+
+and TRPT length for the improved Daisy Kite design detailed above, an actuator disc
+
+
+
+
+                                                                225
+===== extract page 253 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+rotor model is used along with the simple tether drag model.
+
+
+
+
+At an elevation angle of 25
+                              ◦ the optimised
+                                                                       2
+
+rotor design has a maximum Cp value of
+
+
+
+
+                                                  Power Output (kW)
+                                                                      1.5
+0.20 at λ = 4.3. Using these values mul-
+
+tiple TRPT lengths are simulated to nd                                1
+
+the optimal length and corresponding op-
+                                                                      0.5
+erational altitude. The wind shear expo-
+
+nent is taken to be 0.2 with a reference                               0
+                                                                            0          100         200         300   400
+wind speed of 8m/s at an altitude of 10m.                                                    TRPT Length (m)
+
+The TRPT radius is 0.5m and the section          Figure 5.43: Power output for the optimised
+                                                 Daisy Kite rotor for dierent TRPT lengths.
+length is 1.25m. The tethers have a diam-
+
+eter of 1.5mm. Figure 5.43 shows the power output at the bottom of the TRPT for a
+
+range of TRPT lengths given an elevation angle of 25 . The power output reaches a
+                                                                                   ◦
+
+
+maximum of just over 1.4kW when the TRPT length is 126m. This corresponds to the
+
+rotor operating at an altitude of 53m.
+
+
+
+
+The above analysis assumes that the elevation angle and tip speed ratio are constant at
+
+25
+  ◦ and 4.3 respectively. These are varied to nd the optimal values to maximise the
+
+
+power output. As shown in Figure 5.38, due to the TRPT tether drag, the optimal tip
+
+speed of the rotor is not necessarily the optimal tip speed of the system. To account
+
+for this dierence, a look-up table, calculated using the rotor BEM model, of the tip
+
+speed ratio and corresponding power coecient for the optimised rotor is used.                                       The
+
+MATLAB function fminsearch is used to maximise the power output dependent on the
+
+elevation angle, TRPT length and tip speed ratio.
+
+
+
+
+With the optimised rotor and new TRPT geometry an initial guess for the elevation
+
+                                                                       ◦
+angle, tether length and tip speed ratio of 25 , 125m and 4.3 respectively are used.
+
+The results of the multiple parameter optimisation are shown in Table 5.12 along
+
+with the proposed rotor and TRPT geometries.                                    The optimal elevation is relatively
+
+
+
+
+                                                226

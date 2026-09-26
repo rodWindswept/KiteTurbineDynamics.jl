@@ -1,0 +1,142 @@
+# 04-lab-validation — Fig 5.1: the only laboratory validation
+# Verbatim from docs/validation/tulloch-thesis-extract.txt, pages 184-185.
+# Not edited. Page numbers are extract page indices, which match the PDF page order.
+
+===== extract page 184 =====
+Chapter 5.                                    Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+of which six use a single rotor. The mathematical representations focus on single rotor
+
+systems, therefore the data collected from these are used for comparison.                                     The wide
+
+range of system designs over a variety of operating conditions, for which experimental
+
+data has been collected, allows a comprehensive assessment of the models quality. This
+
+provides condence in the simulation results when using the models to analyse the Daisy
+
+Kite design.
+
+
+
+
+5.1.1                                Steady State Representations Compared to Collected Data
+
+TRPT Laboratory Experiments
+
+To assess the accuracy of the static TRPT representation developed in Section 4.4, lab-
+
+oratory experiments on a single TRPT section were conducted. These are described in
+
+the internship student report given in Appendix A. The experimental results collected
+
+are compared to the torsional deformation calculated using (4.32) dened in Section
+
+4.4. The results for the 30kg load case tested during the laboratory experiments are
+
+shown in Figure 5.1.
+
+
+
+
+                                                                     Experiment   Calculated
+
+
+                                     80
+        Torsional Deformaton (deg)
+
+
+
+
+                                     60
+
+
+                                     40
+
+
+                                     20
+
+
+                                      0
+                                          0        10    20     30       40       50           60   70   80    90
+                                                                       Torque (Nm)
+
+Figure 5.1:                                   TRPT laboratory experimental results compared to calculated torsional
+deformation for the 30kg load case.
+
+
+
+
+                                                                          157
+===== extract page 185 =====
+Chapter 5.   Simulations and Analysis of Rotary Airborne Wind Energy Systems
+
+
+
+It can be seen in Figure 5.1 that the dierence between the measured data and the cal-
+
+culated values is small. As highlighted in the report given in Appendix A, the friction
+
+of the pulley's and casters within the laboratory equipment cause the calculated and
+
+experimental data to be more closely matched when larger axial tensions are applied.
+
+The largest axial tension tested is the 30kg load case. The comparison in Figure 5.1
+
+shows that the modelled relationships between torque and torsional deformation are
+
+consistent with experimental results.
+
+
+
+
+Full System
+
+The initial comparison between the developed models and experimental data is based
+
+on the steady state response. It is assumed that there is no torsional deformation within
+
+the TRPT. The springdisc model is used to calculate the power coecient at dierent
+
+tip speed ratios. Figure 5.2 shows the comparison of the calculated and measured Cp
+
+over a range of tip speed ratios, for the six single rotor congurations. The experimental
+
+data shown are averages over one minute. Table 5.1 shows the test dates that data for
+
+each comparison is taken from. The raw test data is processed as described in Section
+
+3.4.1. The congurations with soft wings and rigid wings are discussed separately in
+
+the following.
+
+
+
+
+ Congurations with Soft Wings
+
+Figures 5.2(a), 5.2(b) and 5.2(c) show the results using soft wings and TRPT versions
+
+1, 2 and 3 respectively. The maximum values of Cp obtained in the simulation results
+
+                                                            ◦
+in Figures 5.2(a) and 5.2(b), at an elevation angle of 40 , are 0.02.     The maximum
+
+value of Cp in Figure 5.2(c) at 25
+                                   ◦ is 0.1. It can be seen that the simulation results
+
+
+using TRPT3 (Figure 5.2(c)), show larger Cp values and reach the maximum Cp at a
+
+higher tip speed ratio compared to the simulation results for TRPT1 and 2. This is
+
+due to a lower elevation angle. The experimental results for TRPT1 and 2, shown in
+
+Figures 5.2(a) and 5.2(b), were collected with the Daisy Kite using a lift kite, whereas,
+
+
+
+
+                                           158
