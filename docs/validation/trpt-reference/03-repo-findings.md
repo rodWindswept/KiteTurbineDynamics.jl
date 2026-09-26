@@ -167,3 +167,21 @@ physics constant without a ruling.
   own proposal and its own acceptance test. The drag torque fix of 2026-09-26 does not
   change it. Expect the measured drag torque to sit low against the printed anchor until
   this is fixed.
+
+## F12. The objective models the ring beam drag as cross-flow
+
+- Repo claim: the objective's ring beam drag uses, in its own words, a "Cylindrical
+  crossflow drag model with `Cd = TUBE_DRAG_CD` (1.2)" at the tangential velocity
+  `v_t = ω·rr` (`src/objective_v6.jl`, the P_beam component note).
+- The physics: the beam axis lies on the circumference, and the flow from the spin lies on
+  the circumference. So the beam slides lengthwise along its own axis. Cross-flow is the
+  wrong form. Rod named this on 2026-09-26.
+- The ODE gets it right. `src/dynamics.jl:136-138` takes the velocity part perpendicular to
+  the beam axis, so the spin flow drops out of the force.
+- The size, roughly: at the operating point of the live seed the cross-flow form gives about
+  1050 N·m of ring drag torque, against 10 to 20 N·m for a lengthwise skin friction
+  estimate. A penalty of that size cannot sit inside the power budget of a 5 kW machine.
+- Status: Open, and it needs its own check before Ruling 3 lands. Two questions: is P_beam
+  inside the fitness, or is it reporting only? And what number does the campaign report?
+- This is the third site where the lengthwise correction applies. The first was our own
+  estimate, which was wrong. The second, the ODE, was already right.
