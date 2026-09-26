@@ -58,8 +58,24 @@ Two details make this cheap.
 
 - The kernel already computes the moment arm for each end, at `src/rope_forces.jl:455`.
   The moment arm and the orbital term use the same vector.
-- The kernel already receives the state. The ring spin rate is in it, in the omega block.
-  No signature change is needed.
+- The kernel already receives the state. The ring spin rate is in it, in the omega block,
+  at `u[6N + Nr + ri]`. No signature change is needed.
+
+## 3a. The concrete shape, read from the code on 2026-09-26
+
+1. `va` and `vb` are VIEWS into the state, at `src/rope_forces.jl:394-395`. They hold the
+   ring centre velocity, which the repo holds at zero. They cannot be written to.
+2. Preallocate two 3-vectors beside the existing scratch, `va_eff` and `vb_eff`. Fill each
+   one with `v_centre + omega_ri * cross(shaft_dir, r_end)`.
+3. `r_end` is `p_end - centre`. The code already forms it at lines 455 and 486, but the drag
+   block reads the end velocities at about line 423, BEFORE those moment arms exist. The
+   offset must therefore be formed earlier.
+4. Point the drag's `v_mid` at the two effective vectors instead of at the views.
+5. Leave the moment-arm block alone. It already uses the attachment vector.
+
+The order matters. Form the offsets before the drag block, then reuse them for the moment
+arms, so the two stay consistent by construction. The ground ring has no spin, so its term
+vanishes and the ground attachment cannot be disturbed.
 
 ## 4. The sites
 
