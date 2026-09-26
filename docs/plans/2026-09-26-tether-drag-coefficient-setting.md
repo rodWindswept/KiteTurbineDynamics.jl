@@ -57,7 +57,9 @@ reader that the number hides two absent components.
 | `src/ring_element_analysis.jl:414` | the same analysis, second call |
 
 `TUBE_DRAG_CD` is read in `src/dynamics.jl:142` and in `src/ring_element_analysis.jl:565`.
-The objective also models a ring beam drag in its P_beam component. See finding F12.
+The P_beam component of the objective already models the ring beam drag correctly. It uses
+skin friction from the tangential flow, plus a small axial crossflow term from the wind. Its
+docstring describes a model the repo removed. That is finding F12, a text defect.
 
 ## 4. The mechanism
 
@@ -88,19 +90,19 @@ T4. The named options set the two values, and the reader returns the matching na
 
 ## 6. The default, and the order of work
 
-**Recommendation: keep the default at 1.0 until F11 and F12 are settled.**
+**Recommendation: keep the default at 1.0 until F11 lands.**
 
-The drag terms are wrong in two opposite directions today. F11 makes the tether drag about
-a quarter low at the ring ends. F12 may make the ring beam drag far too high in the
-objective. To tune the coefficient now would fit it to two known errors at once. That is the
-same mistake as calibrating before the torque route was fixed.
+The tether drag term is wrong today. F11 makes it about a quarter low at the ring ends. To
+tune the coefficient now would fit it to a known error. That is the same mistake as
+calibrating before the torque route was fixed.
+
+The ring beam drag is a separate matter, and the objective already models it correctly.
 
 So the sequence is:
 
 1. Set the mechanism and the two named values. Keep the default at 1.0.
 2. Settle F11, which raises the tether drag towards the printed anchor.
-3. Settle F12, which decides the ring beam term.
-4. Move the default to 1.2 in one act, and record a new physics era.
+3. Move the default to 1.2 in one act, and record a new physics era.
 
 ## 7. Reporting the loss at both values
 
@@ -118,8 +120,7 @@ coefficient name, not only the number.
 - A campaign run at a new coefficient is not comparable with an older run. The physics era
   stamp exists for this, and the proposal uses it.
 - The global `Ref` is not thread-safe. State the limit in the docstring.
-- The F12 check may change the objective. Do that before any campaign depends on the new
-  default.
+- The F12 docstring is out of date. Rewrite the text before a reader trusts it.
 
 ## 9. What must not change
 
