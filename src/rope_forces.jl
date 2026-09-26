@@ -339,6 +339,14 @@ function compute_rope_forces!(
     cyan_pathlen = 0.0
     cyan_restlen = 0.0
 
+    # F11 (2026-09-26): the end velocities, with the ring rim motion added.
+    # The repo holds every ring CENTRE velocity at zero, so the state views carry no
+    # rim motion. A sub-segment that ends on a ring sits at the rim, and the rim moves
+    # at omega x r. The drag acts on that flow, so the orbital term is added here.
+    va_eff = zeros(3)
+    vb_eff = zeros(3)
+    r_end = zeros(3)
+
     for (si, ss) in enumerate(sys.sub_segs)
         is_bridle = ss.end_a.node_id == sys.bearing_id
 
@@ -394,6 +402,51 @@ function compute_rope_forces!(
         va = @view u[(3N + 3 * (ss.end_a.node_id - 1) + 1):(3N + 3 * ss.end_a.node_id)]
         vb = @view u[(3N + 3 * (ss.end_b.node_id - 1) + 1):(3N + 3 * ss.end_b.node_id)]
 
+        # F11: add the ring rim motion to the end velocities. The state carries the
+        # ring CENTRE velocity and the repo holds it at zero, so a ring-end
+        # sub-segment would otherwise see no flow from the spin at all. The attachment
+        # point moves at omega x r, with r the offset from the ring centre. Form it
+        # here, before the drag block, so the drag velocity and the moment arm further
+        # down use the same vector.
+        @inbounds for k in 1:3
+            va_eff[k] = va[k]
+            vb_eff[k] = vb[k]
+        end
+        if ss.end_a.is_ring
+            omega_a = u[6N + Nr + ri_a_p]
+            if omega_a != 0.0
+                ctr_av = @view u[(3 * (ss.end_a.node_id - 1) + 1):(3 * ss.end_a.node_id)]
+                @inbounds for k in 1:3
+                    r_end[k] = pa[k] - ctr_av[k]
+                end
+                @inbounds begin
+                    cx = shaft_dir[2] * r_end[3] - shaft_dir[3] * r_end[2]
+                    cy = shaft_dir[3] * r_end[1] - shaft_dir[1] * r_end[3]
+                    cz = shaft_dir[1] * r_end[2] - shaft_dir[2] * r_end[1]
+                    va_eff[1] += omega_a * cx
+                    va_eff[2] += omega_a * cy
+                    va_eff[3] += omega_a * cz
+                end
+            end
+        end
+        if ss.end_b.is_ring
+            omega_b = u[6N + Nr + ri_b_p]
+            if omega_b != 0.0
+                ctr_bv = @view u[(3 * (ss.end_b.node_id - 1) + 1):(3 * ss.end_b.node_id)]
+                @inbounds for k in 1:3
+                    r_end[k] = pb[k] - ctr_bv[k]
+                end
+                @inbounds begin
+                    cx = shaft_dir[2] * r_end[3] - shaft_dir[3] * r_end[2]
+                    cy = shaft_dir[3] * r_end[1] - shaft_dir[1] * r_end[3]
+                    cz = shaft_dir[1] * r_end[2] - shaft_dir[2] * r_end[1]
+                    vb_eff[1] += omega_b * cx
+                    vb_eff[2] += omega_b * cy
+                    vb_eff[3] += omega_b * cz
+                end
+            end
+        end
+
         # ── geometry (in-place) ──
         @inbounds for k in 1:3
             diff[k] = pb[k] - pa[k]
@@ -419,7 +472,7 @@ function compute_rope_forces!(
         # ── aerodynamic drag (in-place) ──
         @inbounds for k in 1:3
             mid[k] = (pa[k] + pb[k]) * 0.5
-            v_mid[k] = (va[k] + vb[k]) * 0.5
+            v_mid[k] = (va_eff[k] + vb_eff[k]) * 0.5
         end
         v_wind = wind_fn(mid, t)
         tether_drag_force!(

@@ -97,4 +97,53 @@ using LinearAlgebra
         # D. A machine at rest in still air has no drag.
         @test maximum(abs.(tau_rest)) < 1e-6
     end
+
+    @testset "F11 the ring-end attachment velocity" begin
+        # F11 of docs/validation/trpt-reference/03-repo-findings.md.
+        # Proposal: docs/plans/2026-09-26-ring-end-drag-velocity.md.
+        #
+        # The repo convention holds every ring CENTRE velocity at zero. The rim still
+        # moves at omega x r, and that is the flow a ring-end sub-segment sits in. This
+        # testset sets only the ring spin rate, and leaves every node velocity at zero,
+        # which is the state the simulation actually hands the kernel.
+        #
+        # Before the fix the kernel reads the centre velocity, so it computes no drag
+        # here at all. After the fix it adds the orbital term and the drag appears.
+        p = params_10kw()
+        sys, u0 = build_kite_turbine_system(p)
+        N, Nr = sys.n_total, sys.n_ring
+        zero_wind = (pos, t) -> [0.0, 0.0, 0.0]
+        alpha0 = zeros(Nr)
+
+        function spin_rates(omega)
+            u = copy(u0)
+            @views u[(6N + Nr + 1):(6N + 2Nr)] .= omega
+            return u
+        end
+
+        function ring_torques_at(omega)
+            f = [zeros(3) for _ in 1:N]
+            tau = zeros(Nr)
+            compute_rope_forces!(f, tau, spin_rates(omega), alpha0, sys, p, zero_wind, 0.0)
+            return tau
+        end
+
+        t_rest = ring_torques_at(0.0)
+        t_slow = ring_torques_at(10.0)
+        t_fast = ring_torques_at(20.0)
+        d_slow = t_slow .- t_rest
+        d_fast = t_fast .- t_rest
+
+        # A. The rim drag opposes the spin.
+        @test sum(d_slow) < 0.0
+
+        # B. Every intermediate ring feels it.
+        for i in 2:(Nr - 1)
+            @test abs(d_slow[i]) > 1e-9
+        end
+
+        # C. It grows with the square of the spin rate. The tolerance is loose because
+        #    the rope damping term rides along in the same difference.
+        @test isapprox(sum(d_fast), 4.0 * sum(d_slow); rtol = 0.25)
+    end
 end
