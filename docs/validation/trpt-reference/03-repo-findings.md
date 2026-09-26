@@ -240,3 +240,26 @@ physics constant without a ruling.
   decides which of three suspects, a wrong diameter, a wrong tip speed, or a wrong
   coefficient, carries the error.
 - No code change follows from F13 until that number exists.
+- 2026-09-26, third pass. The total drag measurement is in, and it clears the drag models.
+  Measured at the same settled state, by summing force times velocity over every node:
+  - total drag power, wind on: 2.404 kW, which is 65 percent of the rotor power
+  - total drag power, calm, rotation only: 2.158 kW, which is 58 percent of the rotor power
+  - the screen's tether term: 3.866 kW, so the screen is 1.6 to 1.8 times the ODE total
+  - the ring-end share of the drag torque: 22.771 N.m. The total drag torque is about
+    160 N.m, so the ring ends carry 13 percent. That confirms the partial-sum correction
+    above and it sets the size of the earlier error.
+- The screen and the ODE therefore agree to within a factor of two, and the parked F11 fix
+  closes that gap, because F11 is the correct treatment of a line that ends on a spinning
+  rim. Neither drag model breaks Rod's bound at 65 percent.
+- THE SUSPECT HAS MOVED TO THE ROTOR. At the same state the settle's own aerodynamic model
+  claims 9.689 kW, while the ODE rotor at the topmost ring delivers about 3.71 kW. That is a
+  factor of 2.6. Remove the drag from the settle's figure and 7.28 kW remains against
+  3.71 kW delivered. About 3.6 kW is then unexplained beyond drag.
+- So the bound appears to fail because the denominator is under-modelled, not because the
+  drag is over-modelled. The diameter and tip-speed suspects recorded above are withdrawn.
+- Open, and it is the owner's question: which rotor power scheme is authoritative, and where
+  is each one calibrated. An audit of both paths is in progress, recorded separately.
+- Also open: the rotor torque reads minus 276.0 N.m here, where the balance test recorded
+  plus 290.663 N.m for the same ring and the same spin. A sign or a term differs between
+  those two derivations. That is unresolved. Treat the magnitude as usable, and treat the
+  sign as open.
