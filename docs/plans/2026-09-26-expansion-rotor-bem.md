@@ -142,6 +142,15 @@ So the radial force has two destinations. The radial tethers take it in tension,
 expansion. The ring takes it in hoop tension, by the small expansion the tethers allow. This
 proposal implements neither. It records them, so the BEM radial output has a destination.
 
+**The owner requirement, recorded 2026-09-26.** The spokes have to enter the model, for two
+reasons. First, the centripetal acceleration of the banked blades brings a stiffness to the rotors,
+and that stiffness improves their steadiness. Second, the spokes stop the rotor ripping apart.
+
+The first reason is the effect rotorcraft engineers call centrifugal stiffening. A spinning blade
+flaps less as the spin rate rises, because the centripetal load resists the deflection. So a banked
+rotor adds stiffness rather than removing it, and the model should show that. The second reason is a
+strength duty on the spokes, which `SpokeParams` already sizes at 19.8 kN.
+
 ## 8. Gate
 
 Proposal, then a ruling by the owner, then the runs, then the table change with an acceptance test.
