@@ -84,10 +84,10 @@ still oppose the rotation, and it must still stay below the rotor torque.
 
 The drag torque rises by roughly a third. The steady spin therefore falls a little more.
 
-**Recommendation: take the R3 band re-baseline once, after this fix, not twice.** The
-`test_rope_break` band records the operating point of the seed. Two physics changes in
-flight will move that point twice. Sequence the work so the record changes once, and stamp
-each change with its own measured value in the test header.
+**The R3 band is already re-baselined for this fix.** On 2026-09-26 the drag torque fix
+moved the seed from 14.09 rad/s to 13.97 rad/s, so the band moved to 12.7 to 15.2. That
+floor covers the predicted shift of this fix, which is a few tenths more. No second change
+is needed. Tighten the band once this fix lands.
 
 ## 7. Risks
 

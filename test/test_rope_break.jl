@@ -2,8 +2,14 @@
 #= test_rope_break.jl — acceptance tests for rope-break physics
 (proposal: docs/plans/2026-08-14-rope-break-fling.md; Rod: SK99, option B —
 break = immediate disqualification, sim stops at the break).
-Re-baselined 2026-09-04 to the corrected 5 kW campaign (daisy params @ 18.8 m,
-campaign decode knobs, mass-aware const-tension lift). Standalone.
+Re-baselined again 2026-09-26, for the drag torque fix of commit 13a676a. That fix lets the
+tether drag moment reach the shaft, and the moment was missing before. The seed therefore
+settles a little lower. Measured: omega_gnd 14.09 rad/s before the fix, 13.97 rad/s after.
+The old floor of 14.0 left only 0.09 rad/s of clearance, so the change tipped it.
+
+The band keeps its 2.5 rad/s width and moves to the new value, 12.7 to 15.2. The floor also
+covers the predicted F11 shift, which is a few tenths more. Tighten it once F11 lands.
+Standalone.
 
 R1: unit — a sub-segment strained past 3.5% returns zero tension and sets
     the broken flag; below the limit it is untouched.
@@ -159,7 +165,7 @@ end
 w_gnd3, broke3 = run_r3()
 println("  ω_gnd @30s = ", round(w_gnd3, digits=2), " rad/s  broken=", broke3)
 check("R3: seed never breaks", !broke3)
-check("R3: seed lands in its known band (ω_gnd re-measured)", 14.0 <= w_gnd3 <= 16.5)
+check("R3: seed lands in its known band (ω_gnd re-measured)", 12.7 <= w_gnd3 <= 15.2)
 
 println()
 if isempty(failures)

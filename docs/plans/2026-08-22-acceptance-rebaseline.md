@@ -55,3 +55,21 @@ exploit.
   physics-era independent.
 - test_evaluator_v13 B4/B5/B7 (unit gates) — structural.
 - test_settle_drag_alignment C/E — monotonicity/sanity, structural.
+
+## 2026-09-26 — the drag torque fix (commit 13a676a)
+
+One file moved, and only in R3. The fix lets the tether drag moment reach the shaft, and
+that moment was missing before. The seed settles a little lower as a result.
+
+| Item | Value |
+|---|---|
+| seed omega_gnd @30 s, before the fix | 14.09 rad/s |
+| seed omega_gnd @30 s, after the fix | 13.97 rad/s |
+| old band | 14.0 to 16.5 rad/s, floor clearance 0.09 rad/s |
+| new band | **12.7 to 15.2 rad/s**, same 2.5 rad/s width |
+
+The floor of the old band carried only 0.09 rad/s of clearance, so it was at its limit
+before this change. The control run proves the cause: the same test passes on the pre-fix
+source. The new floor also covers the predicted F11 shift, which is a few tenths more.
+
+The other eight acceptance files passed unchanged on this change.
