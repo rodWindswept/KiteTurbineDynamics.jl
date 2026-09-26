@@ -152,6 +152,17 @@ against a 364 N·m shaft torque cannot hold. The tether figure is also crude. It
 deformation of the twisted tether. Treat both as discarded. The measured value replaces
 them.
 
+### The measurement, taken 2026-09-26
+
+The probe ran on the live seed at the settled operating point. The tether drag torque is
+**−21.903 N·m**. That is 0.295 kW, and 7.5 percent of the rotor torque of 290.663 N·m, at
+13.452 rad/s. The full record, with provenance and two independent checks, is
+`docs/validation/2026-09-26-trpt-drag-torque-measurement.md`.
+
+The review claim of 3.6 kW is refuted: twelve times too high. Finding F11 predicts the
+measured value sits about 25 percent low, because the ring-end sub-segments run at half
+speed. The same finding predicts 29 to 35 N·m once it is fixed.
+
 ## 6. Risks
 
 - The ring-centre drift mode loses its drag drive. The dynamics will change. Steady state

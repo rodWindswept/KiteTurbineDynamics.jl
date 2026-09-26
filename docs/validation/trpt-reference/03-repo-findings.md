@@ -140,3 +140,30 @@ physics constant without a ruling.
   lines or cutting their length and radius. The repo does not model their drag.
 - Status: Open. Needs a check of `src/rope_forces.jl` for a bridle drag path, then a
   decision. It is a design lever as well as a loss.
+- Answer, 2026-09-26: the bridle lines ARE sub-segments, so they pass through the same
+  drag kernel with their own diameter and length. Their drag force was always computed.
+  What was missing was its moment, which the fix of 2026-09-26 now supplies through the
+  same ring-end path. So the gap is smaller than this finding first said. The design
+  lesson still stands: they work at a large radius, and the source calls the amount
+  significant.
+
+## F11. The ring-end drag uses the ring centre velocity, not the attachment velocity
+
+- Repo claim: the tether drag force uses the mean velocity of the two ends of the
+  sub-segment (`src/rope_forces.jl:419-436`, then `tether_drag_force!`).
+- Site: `src/rope_forces.jl:394-395`. Both velocities come from the node velocity blocks.
+  A ring node holds the ring CENTRE velocity. The ring centre lies on the shaft axis, so
+  in a pure rotation its velocity is zero.
+- The model's own convention, recorded in `test/test_settle_validity.jl:165-169`: "rope
+  nodes at their orbital velocity, ring/bearing/sky translational velocities zero, omega
+  retained".
+- Difference: the attachment point of a tether moves at the orbital speed, omega times the
+  ring radius. The sub-segment that ends on a ring averages its speed with a stationary
+  end, so its drag is low by about a factor of four. The interior sub-segments are correct,
+  because their rope nodes do carry the orbital velocity.
+- The ring tube path gets this right, and adds the rotational term explicitly
+  (`src/dynamics.jl:125-126`). So the pattern was available here as well.
+- Status: Open. This is a separate physics change from the drag torque fix, so it needs its
+  own proposal and its own acceptance test. The drag torque fix of 2026-09-26 does not
+  change it. Expect the measured drag torque to sit low against the printed anchor until
+  this is fixed.

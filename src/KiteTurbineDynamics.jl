@@ -16,6 +16,7 @@ using .SpacerRingDesignModule
 include("geometry.jl")
 include("initialization.jl")
 include("expansion_analysis.jl")
+include("shaft_moment.jl")
 include("rope_forces.jl")
 include("ring_forces.jl")
 include("catenary.jl")
