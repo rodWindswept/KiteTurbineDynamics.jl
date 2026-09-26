@@ -4,6 +4,21 @@
 **Status:** Planned
 **Reference:** Tulloch (2021), PhD thesis, University of Strathclyde, §5.3.3, Table 5.13 (p. 228)
 
+## Corrections, 2026-09-26
+
+Two claims below disagree with the source. The original text stays in place. Read these
+corrections with it.
+
+1. The subject of the benchmark is wrong. Table 5.13 is the Daisy Kite. Its TRPT#4 is
+   10.3 m long and holds 8 sections (printed page 190). The thesis holds no rotor of
+   190 m. The settling times in this plan, 200, 167, 136 and 106 s, match the printed
+   table.
+2. The attribution on line 29 is wrong. The `delta_alpha_star` critical twist is not
+   Tulloch's. The source limit is printed (5.4) with (5.5) on page 198, and it depends on
+   `phi = l_t/R` alone. The repo form is the torque peak of a fixed-gap kinematic. See
+   `docs/validation/trpt-reference/03-repo-findings.md`, finding F1. The torque law and
+   the torsional collapse concept are Tulloch's.
+
 ## Motivation
 
 Oliver Tulloch's PhD thesis is the only peer-reviewed TRPT dynamic analysis with
