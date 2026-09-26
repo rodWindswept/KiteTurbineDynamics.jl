@@ -383,3 +383,39 @@ physics constant without a ruling.
   numbers arrive by the deferred clamp path. The sign varies because the term is a SURPLUS, what
   a ring receives minus what it passes on, not a resistance. Drag cannot change sign; that
   column does not.
+- 2026-09-26, eighth pass. THE SEVENTH PASS IS WRONG AND IS RETRACTED.
+- The seventh pass read the expansion sign from the code comment at `ring_forces.jl:315-316`,
+  "Positive = driving (injects power). Negative = braking (parasitic)", and concluded that the
+  settle and the ODE disagreed about the sign. They do not.
+- That comment does not match the code's own numbers. The MAIN rotor is the machine's power
+  source. It measures minus 280.48 N.m in `torques`, and the balance test records the same
+  physical torque as plus 290.663 N.m for the same ring and spin. So NEGATIVE in `torques` IS the
+  driving torque, and the comment's label is the wrong way round for the shaft convention.
+- The ground ring confirms it. It carries the load and reads plus 415.78 N.m, the opposite sign
+  to the drivers.
+- So both expansion rotors, at minus 74.37 and minus 75.09 N.m, are DRIVING. The settle and the
+  ODE agree on the sign. F13 stands as a magnitude question: the settle's expansion drive of
+  5.695 kW against the ODE's 2.010 kW, a factor of 2.833.
+- The decomposition of that factor stands as measured. The wind term enters as the cube. The
+  settle runs at the freestream, 11.00 and 9.994 m/s, where the ODE's torque implies 6.888 and
+  6.700 m/s. The coefficient partly cancels that, because the settle sits off peak at lambda 3.18
+  and 3.52 with cp 0.224 and 0.251, while the ODE sits at lambda 5.08 and 5.25 with cp 0.308, near
+  the table's peak of 0.3087 at lambda 5.2. The product closes to the measured ratio to three
+  decimals. The 6.700 and 6.888 m/s figures stay artefacts of the backward solve, and they are
+  not the model's input.
+- ACTION FOR THE OWNER: the comment at `ring_forces.jl:315-316` mislabels the sign of `tau_net`.
+  That is a documentation defect in a load path, and it misled this audit for one pass.
+- THE SOURCE DOES COVER THE BANKED ROTOR. `docs/validation/tulloch-hoop-compression-extract.md`
+  holds Tulloch lines 5130 to 5157 verbatim: "The bank angle, and on some rotors tested the
+  anhedral arc, of the wings provide a radial force that acts to expand the ring. The centrifugal
+  forces, on the rotors components as they rotate, provide an additional radial force that also
+  acts to expand the rotor." The same file records the sign structure: the rotor ring is
+  net-expanded and the cone rings net-compressed.
+- AND THE BANK IS IN A REAL BUILD. `docs/V10_TIGHT_DASHBOARD.txt` carries bank_top 32 degrees and
+  bank_bottom 35 degrees, with four rotors reduced to three. The live 5 kW seed carries bank
+  angle 0.00 degrees on both expansion rotors, so it is NOT the banked configuration. Treat the
+  seed's expansion rotors as unbanked until the build says otherwise.
+- THE REGIME HAS A NAME. A rotor that extracts energy while it slows the flow is in the windmill
+  brake state. "Braking" there describes the flow, not the shaft. The literature on high solidity
+  rotors, Bourhis 2023, reports a torque coefficient that falls steeply as solidity rises, which
+  is the behaviour the ODE's expansion model shows.
