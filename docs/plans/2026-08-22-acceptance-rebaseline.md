@@ -73,3 +73,20 @@ before this change. The control run proves the cause: the same test passes on th
 source. The new floor also covers the predicted F11 shift, which is a few tenths more.
 
 The other eight acceptance files passed unchanged on this change.
+
+### Note on the STE gate for this file
+
+The pre-commit gate blocks this file, and it blocked it before this change as well. The
+scores, measured on 2026-09-26:
+
+| Version | Score |
+|---|---|
+| at HEAD before the append | 4.56 violations per 100 words |
+| with the append | 3.77 |
+
+The append lowered the ratio, because clean short sentences dilute a dense file. The commit
+of 2026-09-26 used the documented waiver, and that waiver covers this one legacy file.
+
+Correction, same day: the commit message for 247ba90 states the HEAD score as 3.92. The
+measured value is 4.56. The claim it supports does not change, because the append lowered
+the score either way.
