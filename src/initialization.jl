@@ -968,7 +968,7 @@ function settle_parasitic_drag_power(
         L = norm(pos[si + 1] - pos[si])
         r_mid = (radii[si] + radii[si + 1]) / 2
         v_t = ω * r_mid
-        P_seg = 0.5 * rho * TETHER_DRAG_CD * p.tether_diameter * L * v_t^3
+        P_seg = 0.5 * rho * tether_drag_cd() * p.tether_diameter * L * v_t^3
         P_tether += n_lines * P_seg
     end
 

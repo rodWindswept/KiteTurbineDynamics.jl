@@ -335,6 +335,72 @@ at the Reynolds numbers typical of TRPT tethers (Re ~ 10³–10⁴).
 const TETHER_DRAG_CD = 1.0
 
 """
+    TETHER_DRAG_CD_PHYSICAL
+    TETHER_DRAG_CD_DAISY_LUMPED
+
+The two coefficients with a printed source, from Tulloch (2021) pages 218-219.
+
+`TETHER_DRAG_CD_PHYSICAL = 1.2` is the value the source uses in every simulation of the
+scaled machines, as a coefficient for a cylinder in crossflow.
+
+`TETHER_DRAG_CD_DAISY_LUMPED = 2.7` is the best fit to the Daisy experiment, which the
+source calls "over double the value of 1.2 used in all other simulations". The same page
+states that the models underestimate the drag of the whole Daisy system, and that the
+carbon-fibre rings and the blade bridle lines are absent from the model. So 2.7 is a lumped
+value. It absorbs two components the printed model omits, and it is not a better line
+coefficient.
+
+See docs/plans/2026-09-26-tether-drag-coefficient-setting.md and section 8 of
+docs/validation/trpt-reference/01-tulloch-relations.md.
+"""
+const TETHER_DRAG_CD_PHYSICAL = 1.2
+const TETHER_DRAG_CD_DAISY_LUMPED = 2.7
+
+"""The named tether drag coefficients. Every value has a name, so a report can state which
+one produced a number."""
+const TETHER_DRAG_MODELS = Dict{Symbol,Float64}(
+    :legacy_default => TETHER_DRAG_CD,
+    :physical_line => TETHER_DRAG_CD_PHYSICAL,
+    :daisy_lumped => TETHER_DRAG_CD_DAISY_LUMPED,
+)
+
+"""The live tether drag setting: (coefficient, name). Starts at the legacy default."""
+const TETHER_DRAG_SETTING = Ref{Tuple{Float64,Symbol}}((TETHER_DRAG_CD, :legacy_default))
+
+"""
+    set_tether_drag!(name::Symbol) -> Float64
+
+Set the tether drag coefficient for this process, and return the value.
+
+The name carries the meaning, and that is the point of the mechanism. `:physical_line` is
+1.2, the printed value for a cylinder in crossflow. `:daisy_lumped` is 2.7, the printed
+best fit to Daisy, which absorbs the ring drag and the bridle drag that the printed model
+omits. `:legacy_default` is 1.0, the value every campaign before 2026-09-26 used.
+
+An unknown name RAISES. It never falls back to a value, because a silent fallback would
+stamp a wrong coefficient into a campaign's provenance.
+
+The setting is process-global, which the repo's `RING_ATTACHMENT` and `EXPANSION_PHYSICS`
+switches also are. It is NOT thread-safe: two evaluations at different coefficients cannot
+share a process.
+"""
+function set_tether_drag!(name::Symbol)
+    haskey(TETHER_DRAG_MODELS, name) || error(
+        "unknown tether drag model $(name). Known names: " *
+        join(sort([String(k) for k in keys(TETHER_DRAG_MODELS)]), ", "),
+    )
+    v = TETHER_DRAG_MODELS[name]
+    TETHER_DRAG_SETTING[] = (v, name)
+    return v
+end
+
+"""The live setting as `(coefficient, name)`. Use this in a report or a provenance stamp."""
+tether_drag_model() = TETHER_DRAG_SETTING[]
+
+"""The live tether drag coefficient. Use this at every site that applies the drag."""
+tether_drag_cd() = TETHER_DRAG_SETTING[][1]
+
+"""
     TUBE_DRAG_CD
 
 Drag coefficient for a cylindrical CFRP structural tube (ring strut) in crossflow.
@@ -351,7 +417,7 @@ component parallel to the segment is assumed negligible.
 
 # Arguments
 - `rho`: air density (kg/m³)
-- `cd`: drag coefficient (use TETHER_DRAG_CD for Dyneema)
+- `cd`: drag coefficient (use `tether_drag_cd()` for the live setting, or pass a value)
 - `diameter`: tether diameter (m)
 - `length_0`: unstretched segment length (m)
 - `v_wind`: 3D wind velocity vector at segment midpoint (m/s)

@@ -1,7 +1,10 @@
 # Proposal: the tether drag coefficient becomes a per-case setting
 
 **Date:** 2026-09-26
-**Status:** Proposed. Awaiting Rod. No code changed.
+**Status:** IMPLEMENTED 2026-09-26. Rod approved the sequence on 2026-09-26. The mechanism
+is in `src/aerodynamics.jl`, every read site now uses the live setting, and
+`test/test_trpt_drag_coefficient.jl` covers T1 to T4. Section 6 explains why the default
+stays at 1.0 until F11 lands.
 **Ruling behind it:** Ruling 3 of 2026-09-26. Rod: "Yes, fair play, let's go with that",
 with the values 1.2 for scaled work and 2.7 for Daisy-class work, and the loss reported at
 both.

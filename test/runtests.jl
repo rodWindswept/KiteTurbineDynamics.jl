@@ -57,6 +57,7 @@ using KiteTurbineDynamics
     include("test_trpt_twist_limit.jl")     # 2026-09-25: the over-twist authority, Tulloch (4.34)
     include("test_trpt_reference.jl")       # 2026-09-26: the printed reference values, pages 198-201
     include("test_trpt_drag_torque.jl")     # 2026-09-26: the drag moment must reach the ring spin
+    include("test_trpt_drag_coefficient.jl") # 2026-09-26: the drag coefficient is a per-case setting
     include("test_settle_validity.jl")   # 2026-09-12: taut chain + force balance + smooth handoff
     include("test_fitness_appropriateness_2026_09.jl")
     include("test_system_defaults.jl")

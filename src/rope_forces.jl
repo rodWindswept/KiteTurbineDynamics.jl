@@ -425,7 +425,7 @@ function compute_rope_forces!(
         tether_drag_force!(
             drag,
             p.rho,
-            TETHER_DRAG_CD,
+            tether_drag_cd(),
             ss.diameter,
             ss.length_0,
             v_wind,

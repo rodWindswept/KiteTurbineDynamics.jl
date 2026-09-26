@@ -366,7 +366,7 @@ function extract_vertex_forces(
                 v_node = (va .+ vb) ./ 2.0
                 drag = tether_drag_force(
                     p.rho,
-                    TETHER_DRAG_CD,
+                    tether_drag_cd(),
                     ss.diameter,
                     ss.length_0,
                     v_wind,
@@ -411,7 +411,7 @@ function extract_vertex_forces(
                 v_node = (va .+ vb) ./ 2.0
                 drag = tether_drag_force(
                     p.rho,
-                    TETHER_DRAG_CD,
+                    tether_drag_cd(),
                     ss.diameter,
                     ss.length_0,
                     v_wind,

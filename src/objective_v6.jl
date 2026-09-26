@@ -230,7 +230,10 @@ useful work (radial spreading, thrust).
 
 - **P_tether**: tether line drag.  Each inter-ring tether segment (diameter
   `d_tether`, length L_seg) at midpoint radius r_mid.  Cylindrical crossflow
-  drag with `Cd = TETHER_DRAG_CD` (1.0).
+  drag with `Cd` read from the live setting, `tether_drag_cd()`.  The named
+  settings are `:legacy_default` (1.0), `:physical_line` (1.2) and
+  `:daisy_lumped` (2.7).  See
+  docs/plans/2026-09-26-tether-drag-coefficient-setting.md.
 
 - **P_exp_blades**: expansion blade profile drag.  Parasitic torque from the
   zero-lift and induced drag of each expansion blade annulus at its mean
@@ -332,7 +335,7 @@ function parasitic_drag_power(
         v_t_mid = omega * r_mid
         L_seg = L_segs[si]
         # Raw crossflow power: ½ρ·Cd·d·L·v³
-        P_seg_raw = 0.5 * rho * TETHER_DRAG_CD * d_tether * L_seg * v_t_mid^3
+        P_seg_raw = 0.5 * rho * tether_drag_cd() * d_tether * L_seg * v_t_mid^3
         P_tether_total += n_lines * P_seg_raw * tether_curvature_factor
     end
 
