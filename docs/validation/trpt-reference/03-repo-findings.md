@@ -441,3 +441,12 @@ physics constant without a ruling.
   the first unknown variable in the old primary, `CompSeaSt`. The v5 primary is close to a superset
   of the v15 one, and the driver names each missing field in turn. So the modern primary is
   recoverable by iteration, and the driver supplies each field name instead of a guess.
+- CORRECTION, same day. The error names the DRIVER file, not the primary. `CompSeaSt` is a driver
+  level field in v5, so the old primary may be sound.
+- The iteration, first rounds. Adding `CompSeaSt` after `AnalysisType` cleared that error and moved
+  the stall forward. Renaming the field `TMax` to `tMax` did NOT clear the next one, so "not found"
+  is a positional expectation in the driver field order, not a spelling match.
+- The next step is the field order from the AeroDyn v5.0.0 driver documentation. Trial and error is
+  the wrong instrument for a positional format.
+- Scratch state at the stop: `.scratch/bem_regression/` holds the four NAS files, a NUL stripped
+  primary copy, and the edited driver. All of it is untracked.
