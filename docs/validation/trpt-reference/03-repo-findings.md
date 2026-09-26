@@ -419,3 +419,25 @@ physics constant without a ruling.
   brake state. "Braking" there describes the flow, not the shaft. The literature on high solidity
   rotors, Bourhis 2023, reports a torque coefficient that falls steeply as solidity rises, which
   is the behaviour the ODE's expansion model shows.
+- 2026-09-26, the source's own AeroDyn workflow, found. The owner pointed at the Strathclyde
+  folder on the NAS, `03_Engineering/Academic Uni & Research/Strathclyde/Ollies simulations`.
+- Tulloch drove AeroDyn v15 from MATLAB. `Rotor_SD_v3.m` and `Rotor_MS_homepc.m` both build an
+  `ad_driver.inp` in code, then call the driver. Both take the bank angle as their FIRST argument,
+  named `beta`.
+- WHERE THE BANK GOES. Line 67 of both files writes `ShftTilt = rad2deg(beta)`, and line 68 pins
+  `Precone = 0`. So the source models the bank as a SHAFT TILT, not as a blade curve. That explains
+  the owner's own observation that the blades sit in plane with the disc.
+- THE DOUBLE COUNT RISK. If the source's bank is a shaft tilt, then a table generated at a non-zero
+  bank already contains the skew. Applying a separate bank factor on top would repeat the
+  double-counting defect the aerodyn-bem skill records for elevation.
+- Other facts from the same two files. `NumBlades` is fixed at 3, where the repo's expansion rotors
+  take 6, one per line. `HubRad` is 1.22 for the rigid case and 1.16 for the soft case, so the two
+  transmission stiffness variants carry different hub radii. The driver format is the old
+  `AeroDyn Driver v1.00.x` layout, and the code reads the outputs by position as time, omega,
+  power, thrust, torque and `B1Azimuth`.
+- WHAT IS MISSING. `ad_primary_Daisy.inp` and the blade file it names. The folder holds the MATLAB
+  only, because the code writes the driver and not the primary.
+- THE UNBLOCK. The repo's own `ad_driver3.8.inp` is a v5 format driver, and it parses. It fails on
+  the first unknown variable in the old primary, `CompSeaSt`. The v5 primary is close to a superset
+  of the v15 one, and the driver names each missing field in turn. So the modern primary is
+  recoverable by iteration, and the driver supplies each field name instead of a guess.
