@@ -48,9 +48,10 @@ The `figures/` images have these contents:
 
 ## Status of this edition
 
-Written 2026-09-26. Thirteen reference values are checked. Three repo claims disagree
-with the source. See `03-repo-findings.md`. Two reference values stay OPEN: the two
-tether drag torque losses, which need the drag work package.
+Written 2026-09-26. Eighteen reference values are recorded. Thirteen of them are checked
+by `test/test_trpt_reference.jl`. Five stay OPEN: the two tether drag torque losses, and
+the four settling times. Seven repo claims disagree with the source, in
+`03-repo-findings.md`.
 
 ## How to repeat the figure capture
 

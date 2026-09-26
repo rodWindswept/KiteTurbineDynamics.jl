@@ -140,10 +140,9 @@ The text on printed page 201 gives two more points:
   to radius ratio of 2.11".
 
 Both agree with the closed form in section 4. The closed form gives 0.1716 at `phi = 6`
-and `phi = 2.089` at a force ratio of 0.72.
+and `phi = 2.1089` at a force ratio of 0.72.
 
 ## 6. Our tension-basis capacity limit — the defect of 2026-09-25
-
 An earlier commit capped the torque of a section at
 
     T_live · R^2 · sin(delta_crit) / l_t
@@ -155,3 +154,32 @@ because the true maximum torque at the same axial force carries the extra factor
 
 At `phi` just above 2 the defect is large. At `phi = 2.01`, `delta_crit = 144.96°`. The
 cap bit from 35° of twist.
+
+## 7. The dynamic response benchmark — Table 5.13, printed page 228
+
+The source gives one dynamic benchmark for a whole system. It is the only external
+dynamic check on our model. The subject is the Daisy Kite. Its TRPT#4 is 10.3 m long and
+holds 8 sections. The test runs at a tip speed ratio of 4.0.
+
+The stimulus: hold the steady state, then reduce the generator torque by 1 N·m for 0.5 s.
+The settling time is the time from that step until the ground station rotational speed
+stays inside plus or minus 2 percent of the steady state speed.
+
+| Wind speed (m/s) | Torsional stiffness (N·m) | Settling time (s) |
+|---|---|---|
+| 6 | 35 to 60 | 200 |
+| 8 | 65 to 110 | 167 |
+| 10 | 100 to 170 | 136 |
+| 12 | 145 to 245 | 106 |
+
+The stiffness rises with wind speed and the settling time falls. The source gives the
+cause. The axial force rises with the square of the wind speed, and the torsional
+stiffness is proportional to the axial force.
+
+We have two checks to make. The stiffness check is static and cheap. The settling time
+check needs a window of at least 200 s. That is far longer than the 20 to 30 s window
+used elsewhere in this repo, so the test belongs in `test/acceptance_runtests.jl`.
+
+Note the subject of the table. It is the Daisy Kite with a 10.3 m TRPT, not a large
+rotor. A repo plan of 2026-06-30 gives "a 190 m optimised rotor" for these times. The
+thesis holds no rotor of 190 m.
