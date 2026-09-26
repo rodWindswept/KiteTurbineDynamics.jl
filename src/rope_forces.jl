@@ -455,6 +455,14 @@ function compute_rope_forces!(
                 r_a[k] = pa[k] - ctr_a_view[k]
                 forces[nid_a][k] += F_vec[k]
             end
+            # ── drag moment (2026-09-26) ──────────────────────────────────────
+            # The half of the tether drag lumped at this ring attachment acts at
+            # the ring radius, not at the ring centre. The ring centre lies on the
+            # shaft axis, so a force applied there does no work on the rotation and
+            # the ring spin never felt the drag. Add the moment here. It is
+            # aerodynamic loss, NOT transmitted torque, so it must stay out of
+            # seg_tau_a — the C1 clamp feeds on that accumulator.
+            torques[ri_a] += shaft_moment(r_a, hdrag, shaft_dir)
             tau_a =
                 (r_a[1]*F_vec[2] - r_a[2]*F_vec[1])*shaft_dir[3] +
                 (r_a[2]*F_vec[3] - r_a[3]*F_vec[2])*shaft_dir[1] +
@@ -478,6 +486,8 @@ function compute_rope_forces!(
                 r_b[k] = pb[k] - ctr_b_view[k]
                 forces[nid_b][k] -= F_vec[k]
             end
+            # Drag moment at the lower ring attachment. See the upper end above.
+            torques[ri_b] += shaft_moment(r_b, hdrag, shaft_dir)
             tau_b =
                 (r_b[1]*(-F_vec[2]) - r_b[2]*(-F_vec[1]))*shaft_dir[3] +
                 (r_b[2]*(-F_vec[3]) - r_b[3]*(-F_vec[2]))*shaft_dir[1] +
