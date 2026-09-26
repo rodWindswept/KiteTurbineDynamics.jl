@@ -222,9 +222,11 @@ useful work (radial spreading, thrust).
 
 - **P_beam**: ring beam drag.  Each intermediate ring has `n_lines` beam
   segments of outer dimension `Do(rr)`, chord length `L_beam = 2·rr·sin(π/n)`,
-  tangential velocity `v_t = ω·rr`.  Cylindrical crossflow drag model with
-  `Cd = TUBE_DRAG_CD` (1.2).  Hub ring (carries rotor) and ground ring (fixed)
-  are excluded.
+  tangential velocity `v_t = ω·rr`.  Two terms.  Skin friction from the
+  tangential flow, because the beam slides lengthwise in the spin, as for a
+  cylinder aligned with the flow.  Plus axial crossflow at `v_axial` with
+  `Cd = 0.3` for the elliptical section, because the wind crosses the beam
+  broadside.  Hub ring (carries rotor) and ground ring (fixed) are excluded.
 
 - **P_tether**: tether line drag.  Each inter-ring tether segment (diameter
   `d_tether`, length L_seg) at midpoint radius r_mid.  Cylindrical crossflow
