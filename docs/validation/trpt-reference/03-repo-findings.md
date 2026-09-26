@@ -348,3 +348,38 @@ physics constant without a ruling.
   per-segment transmitted-torque bookkeeping in the post-loop clamp path, `seg_tau_a` and
   `seg_tau_b` at `src/rope_forces.jl:321-326`, not an aerodynamic term. Naming the exact source
   needs one more read of that block, so it is not guessed here.
+- 2026-09-26, seventh pass. F13 CORRECTED. The divergence is a SIGN, not a coefficient.
+- Both paths see the same wind. The settle forms `v_er = v_mag * er.wind_factor`
+  (`initialization.jl:1030`). The ODE forms `v_wind_mag_ring = norm(wind_fn(ring_pos, t)) *
+  er.wind_factor` (`ring_forces.jl:273-277`). Those agree.
+- The settle looks up `cp_at_tsr(lambda_er)` and returns a POSITIVE power: a drive.
+- The ODE calls `expansion_rotor_forces` and returns `tau_net`, which the code itself defines as
+  "Positive = driving (injects power). Negative = braking (parasitic)". Both expansion rotors
+  come out NEGATIVE, minus 74.37 and minus 75.09 N.m. At this solidity the ODE's alpha and
+  induction model BRAKES.
+- The code says so itself. The HUB GUARD comment at `ring_forces.jl:255-260` records that the
+  expansion alpha and induction model "brakes at high solidity" and that this "killed the 5 kW
+  seed". The live seed is that 5 kW case.
+- So the correction: the settle predicts plus 5.695 kW of drive where the ODE predicts minus
+  2.010 kW of braking. That is a sign level disagreement of 7.7 kW in the expansion term, not a
+  2.833 fold coefficient error as the fourth pass stated. The "2.833" is real arithmetic on the
+  two magnitudes, but calling it a coefficient error was wrong.
+- A backward solve of the settle formula against the measured torque implies a wind of 6.7 to
+  6.9 m/s. That number is an artefact, because both paths receive 10 to 11 m/s. It is recorded
+  here so it is not reused.
+- Also confirmed from the build: the live seed's expansion rotors are NOT banked, bank angle
+  0.00 deg on both, and their blade offsets are signed, tip plus 0.759 m and hub minus 0.325 m on
+  ring 12.
+- What is NOT established, and needs a reference rather than plumbing: which model is right at
+  this solidity. The settle's coefficient comes from the AeroDyn v5.0.0 table, the better
+  authority. The ODE's polars are repo-marked CALIBRATED, not VALIDATED. So the recommendation
+  changes. Do NOT make the settle adopt the ODE's expansion model, because that would import a
+  calibrated braking model into the screening path. The open question belongs to the reference
+  library: what does the source say an expansion rotor of this solidity does.
+- 2026-09-26, the residual, CLOSED. It is not drag, and the code branch settles it. At
+  `rope_forces.jl:469-475` a TRPT segment's torque is accumulated for the post-loop clamp,
+  `seg_tau_a[seg] += tau_a  # TRPT end, defer for C1 clamp`, while a non-TRPT ring such as a
+  bridle is applied directly, `torques[ri_a] += tau_a`. Rings 2 to 10 are TRPT rings, so their
+  numbers arrive by the deferred clamp path. The sign varies because the term is a SURPLUS, what
+  a ring receives minus what it passes on, not a resistance. Drag cannot change sign; that
+  column does not.
