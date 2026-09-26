@@ -79,15 +79,64 @@ physics constant without a ruling.
 - Status: Open. Rod ruled: 1.2 for the scaled campaigns, 2.7 for Daisy-class prototypes.
   Report the loss at both. Work package WP2c.
 
-## F7. The drag torque path is unverified
+## F7. The drag torque path is missing — CONFIRMED by code reading, 2026-09-26
 
 - Repo claim: the tether drag enters the model as a force. The code splits the force in
   two and applies each half to the node at one end of the line.
-- Site: `src/rope_forces.jl:437-446`.
+- Site: `src/rope_forces.jl:441-447`. The counterpart for the ring tube is
+  `src/dynamics.jl:140-144`.
 - Source: section 4.5.2 and section 4.6 give the split and the direction. The source does
   not give a torque route.
-- Difference: the split matches. Whether the drag torque arrives at the shaft is untested.
-  The code adds the drag force to node forces only. Nobody has traced how a force on a
-  ring attachment node becomes a torque on the ring.
-- Status: Open. Work package WP2b. The test is an energy balance. In steady wind, the
-  torque the sections apply to the rings must equal the line drag torque.
+- The split matches. The torque does not arrive at the shaft. The chain:
+  - the ring spin acceleration reads the torque accumulator only (`src/dynamics.jl:189`)
+  - a force enters the translational equation only (`src/dynamics.jl:179`)
+  - the drag writes to forces only, at both sites
+  - the same function applies the moment for the tension force
+    (`src/rope_forces.jl:458-466`), so the pattern was available
+  - no drag torque exists anywhere else in the tree
+- Result: the ring centre lies on the shaft axis. A tangential force at the centre does no
+  work on the rotation. So the drag cannot slow the shaft, and its energy leaks into the
+  ring-centre translational mode and into the rope nodes.
+- Status: CONFIRMED. The fix and the test are the proposal of 2026-09-26,
+  `docs/plans/2026-09-26-trpt-drag-torque-fix.md`.
+
+## F8. The ring tube drag is not a significant torque source
+
+- Repo claim: the ring tube drag is a cross-flow drag with coefficient 1.2, applied to the
+  intermediate rings only (`src/dynamics.jl:85-95`).
+- Source: the printed model neglects the ring drag (printed page 219). The source notes
+  only that a ring could be given an aerodynamic profile.
+- The physics: the tube axis lies on the circumference, and the spin flow lies on the
+  circumference. So the tube slides lengthwise through the air, and the spin flow makes no
+  cross-flow drag. The code takes the part of the relative velocity perpendicular to the
+  beam axis (`src/dynamics.jl:136-138`), so it already excludes the spin flow. What
+  remains is the wind cross-flow and the ring translation.
+- Correction to our own record: an estimate of 2026-09-26 put the ring tube drag torque at
+  1051 N·m for the live seed at 13.75 rad/s. That estimate was wrong. It used the full
+  tangential velocity against the frontal area. A hard bound falsifies it: at steady state
+  the total drag torque must stay below the rotor torque, and 1051 N·m against a 364 N·m
+  shaft torque breaks that bound.
+- Status: Closed, no defect. Put the bound in the acceptance test as an assertion.
+
+## F9. The best-fit drag coefficient of 2.7 is a lumped value
+
+- Repo claim: `TETHER_DRAG_CD = 1.0` for the scaled campaigns.
+- Source: the source uses 1.2 in every simulation, and the best fit to the Daisy
+  experiment is 2.7. The source states that the models underestimate the drag of the whole
+  Daisy system, and that the rings and bridle lines are absent from the model.
+- Difference: our 1.0 sits below both printed values.
+- Status: Open. Rod ruled 1.2 for the scaled campaigns and 2.7 for Daisy-class work, and
+  to report the loss at both. The ruling stands. The reason changes: the pair is not two
+  candidate line coefficients, it is one physical value and one lumped calibration.
+
+## F10. The bridle line drag is not in the model
+
+- Repo claim: none. The repo models the bridle lines for geometry and for torque.
+- Source: the bridle lines of the three blades cause 3.7 N·m of torque loss at 25 degrees
+  elevation, 8 m/s and tip speed ratio 4.0. They raise the whole loss from 4.9 to 8.6 N·m
+  (printed page 219). Their mid points sit at 1.3 m and 1.6 m radius, so they work at a
+  larger radius than much of the TRPT.
+- Difference: the source calls the amount significant, and recommends removing the bridle
+  lines or cutting their length and radius. The repo does not model their drag.
+- Status: Open. Needs a check of `src/rope_forces.jl` for a bridle drag path, then a
+  decision. It is a design lever as well as a loss.

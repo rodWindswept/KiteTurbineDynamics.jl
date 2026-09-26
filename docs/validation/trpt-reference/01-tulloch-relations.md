@@ -183,3 +183,53 @@ used elsewhere in this repo, so the test belongs in `test/acceptance_runtests.jl
 Note the subject of the table. It is the Daisy Kite with a 10.3 m TRPT, not a large
 rotor. A repo plan of 2026-06-30 gives "a 190 m optimised rotor" for these times. The
 thesis holds no rotor of 190 m.
+
+## 8. The tether drag model — its scope, printed pages 214 to 219
+
+The source gives one drag model. It is the tether drag. It covers the main TRPT lines
+only. The source states that boundary and the reason for it.
+
+> The model only takes into account the main lines within the TRPT, in reality there will
+> be a number of other components that contribute to the torque loss, for example, the
+> carbon fibre rings and the blades/kites bridle lines. In the models it is assumed that
+> the drag on all other components is negligible compared to the main TRPT lines.
+> printed page 219
+
+So the printed model neglects the ring drag. That agrees with our model, and our ring
+tube term is small for a second and independent reason. The tube axis lies on the
+circumference. The spin flow also lies on the circumference. So the tube slides
+lengthwise through the air, and the flow along the tube axis makes no cross-flow drag.
+The code takes the part of the relative velocity that is perpendicular to the beam axis
+(`src/dynamics.jl:136-138`). That part is near zero for the spin.
+
+### The coefficient
+
+The source varies the tether drag coefficient from 0.5 to 5 (printed page 218). The loss
+is close to linear in the coefficient. The source uses 1.2 for every simulation. The fit
+to the Daisy experiment is best at 2.7, which the source calls "over double the value of
+1.2 used in all other simulations".
+
+The source gives the cause. The models underestimate the drag of the whole Daisy system.
+The source cannot say where. The rotor blade drag may be low, and the rings and bridle
+lines are absent from the model.
+
+This matters for our ruling. The value 2.7 is not a better line drag coefficient. It is a
+lumped value. It absorbs the ring and bridle drag that the model omits. A model that
+includes the rings and the bridles should use a value near 1.2 and add those terms.
+
+### The bridle lines
+
+Each rigid rotor blade carries two bridle lines. Both connect to the same main TRPT line
+below the rotor ring. Each line is 1 m long. Their mid points sit at 1.3 m and 1.6 m
+radius.
+
+At 25 degrees elevation, 8 m/s wind, a tip speed ratio of 4.0, and torsional deformation
+neglected, the three blades' bridle lines cause 3.7 N·m of torque loss. They raise the
+whole loss from 4.9 N·m to 8.6 N·m (printed page 219).
+
+The source draws the design lesson. The radius of a tether section is the key factor in
+that section's share of the loss. Future design should remove the bridle lines, or cut
+their length and their radius.
+
+Our repo models the bridle lines for geometry and for torque. Whether their drag is in
+the model is untested. See finding F10.
