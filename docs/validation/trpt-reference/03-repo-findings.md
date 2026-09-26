@@ -263,3 +263,37 @@ physics constant without a ruling.
   plus 290.663 N.m for the same ring and the same spin. A sign or a term differs between
   those two derivations. That is unresolved. Treat the magnitude as usable, and treat the
   sign as open.
+- 2026-09-26, fourth pass, and the rotor question is answered. The measurement was taken
+  again with the scopes matched, term by term.
+- FIRST, A DURABLE FACT ABOUT THE TORQUE ARRAY. `sum(torques)` is exactly zero at a settled
+  state, because the array is a NET array. It carries the rotor drive, the generator load and
+  the drag together. The ground ring reads plus 415.81 N.m, which is the generator, 2.24
+  times the square of 13.452. The topmost ring reads minus 276.02 N.m, which is the hub
+  rotor. They cancel. So the sum is never a rotor power, and reading it as one produced four
+  phantom discrepancies in this workstream. Measure the terms, not the sum.
+- The per ring split at the settled state, spin 13.452 rad/s:
+  - hub rotor, topmost ring: 3.713 kW, against the settle's hub term of 3.994 kW. Ratio 0.930
+  - expansion rotors, rings 10 to 12: 2.212 kW, against the settle's 5.695 kW. Ratio 0.388
+  - rotor total: 5.925 kW, against the settle's total of 9.689 kW. Ratio 0.611
+  - generator load: 5.594 kW
+- THE VERDICT. Both paths use one authority, the AeroDyn v5.0.0 tables at 0 degrees elevation,
+  reached through `cp_at_tsr`. The hub rotor agrees between the paths to 7 percent, and the
+  residual is the design against live elevation angle. The whole discrepancy is the SETTLE'S
+  EXPANSION ROTOR TERM, which over counts by 2.6 times. It computes a bare annulus power from
+  the table with no induction model and no elevation factor. The ODE solves the momentum
+  balance instead, through `solve_expansion_induction` with the Buhl/Glauert thrust
+  coefficient. The ODE model is the more physical of the two.
+- The remaining weakness is the ODE expansion polars, and the repo states it itself at
+  `src/expansion_rotor.jl:65-69`: textbook values from Abbott and von Doenhoff 1959, marked
+  CALIBRATED not VALIDATED, with an AeroDyn BEM sweep or XFOIL run at Re 2e6 named as the
+  authoritative source. See item M5.
+- THE BOUND HOLDS. Against the full rotor stack, 440.41 N.m of drive against 415.81 N.m of
+  generator load, the total drag of 2.4 kW is 41 percent of the rotor power. The earlier 65
+  percent figure came from measuring against a single ring. Nothing is over the bound.
+- The only measurement backed rotor validation in the repo is the ledger row A4, system Cp
+  band 0.15 to 0.18, model 234 W against measured 223 W plus or minus 79 W at 6.25 m/s. It is
+  a system comparison, so it validates the stack, not the rotor alone. No test gates any rotor
+  power level.
+- Recommended, for the owner to rule on: make the settle use the ODE expansion model so the
+  two agree by construction, pursue item M5 for the polars, and add the field data comparison
+  as an acceptance test.
