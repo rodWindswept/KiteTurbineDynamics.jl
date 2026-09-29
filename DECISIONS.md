@@ -54,7 +54,8 @@ and is read everywhere (`[2026-09-02]`, one source of truth):
 | `src/initialization.jl:1018` | comment quotes `0.75^(1/3)` | update the comment |
 | `src/ring_forces.jl:196,277` and `src/initialization.jl:1019` | read `wind_factor` | no edit; the value they read moves |
 
-**Consequence for the span attribution of `[2026-09-23]`.** That entry decomposes a measured island
+**Consequence for the span attribution of `[2026-09-23] BEM multi-rotor sizing: three real defects,
+but the draft's attribution is wrong`.** That entry decomposes a measured island
 span ratio as `1.1547 (blocking) × 1.2740 (blade_scale)`, where `1.1547` is `(1/0.908560)^1.5` because
 equal-power span scales as `v^(−1.5)`. At `0.85` that blocking term is `1.0847`, and the blade-mass
 term (span cubed) falls from 1.5396 to 1.2761. So that attribution must be re-derived before it is
@@ -70,7 +71,7 @@ predicts. This does not anchor the wake model: ruling 3 sets the value, it does 
 **Enables and rules out.** Enables the blocking figure to leave the open list, and states why the two
 spoke items do not conflict. Rules out reading the blocked-rotor term as a wind ratio of 0.85, rules
 out re-opening the inert-spokes ruling as the reason the spokes are absent from the model, and rules
-out quoting the `[2026-09-23]` span decomposition unchanged.
+out quoting the `[2026-09-23]` BEM-multi-rotor-sizing span decomposition unchanged.
 
 **Status:** Active. Rulings 1, 2 and 4 need no code change. Ruling 3 needs the figure changed at the
 sites above plus a re-baseline of every fixture measured through a multi-rotor settle, because the
