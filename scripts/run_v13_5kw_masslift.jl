@@ -171,8 +171,8 @@ cfg = ObjectiveConfig(;
     power_split = 0.6,      # top-rotor power fraction (top-heavy wins per sweep)
     cone_slope_deg = 22.0,  # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac = 0.8, # min spacing = 0.8 · 2·r_rotor (Rod)
-    blocking_factor = BLOCKING_WIND_FACTOR_5KW,
-    min_wall_m = MIN_WALL_M,   # downstream (upper) rotors: 0.75× power
+    blocking_factor = BLOCKING_WIND_FACTOR_5KW,   # downstream (upper) rotors: 15% power blocked (keep 0.85×)
+    min_wall_m = MIN_WALL_M,
 )
 
 # ── Telemetry CSV — FULL genome + decoded values, flushed per row ────────

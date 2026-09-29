@@ -333,14 +333,16 @@ Every item corresponds to a mistake that cost a session.
      sits at the foot of the column and carries everything above it. Expect a
      larger ring, a stiffer ring, and possibly larger blades.
    - **Every rotor above the lowest.** Each one runs downstream of the rotor below
-     it, so it takes a wake de-rate. The campaign sets **0.75x freestream power**
-     for each blocked rotor, which is an inflow multiplier of `0.75^(1/3) = 0.9086`
-     because `P` goes as `v³`. Apply the de-rate once per rotor, never twice. The
-     factor is **UNANCHORED**, and it lives in `scripts/compute_seeds.jl`, not in
-     `src/`.
+     it, so it takes a wake de-rate. A blocked rotor keeps **0.85x freestream
+     power**. The wake blocks 15 per cent of that power. Rod ruled this value on
+     2026-09-29. It is an inflow multiplier of `0.85^(1/3) = 0.9473` because `P`
+     goes as `v³`. Apply the de-rate once per rotor, never twice. Rod ruled the
+     value. Nobody has measured it. It is design intent, not a model invariant.
+     It lives in `scripts/compute_seeds.jl`, not in `src/`.
 
-   Net effect on the 5 kW seed: the topmost rotor reads the net-slowest inflow at
-   7.9091 m/s, against the lowest rotor's 7.9959 m/s.
+   Net effect on the 5 kW seed: shear alone gives the topmost rotor 8.7051 m/s
+   against the lowest rotor's 7.9959 m/s. The 0.85 de-rate does not invert it.
+   The top rotor still reads the fastest (8.2461 m/s against 7.9959 m/s).
 
    The figures once quoted here are **retracted**. A probe triple-counted the
    per-blade force, so "309 N of 2044 N" and "~15 %" are not the model's split.

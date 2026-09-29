@@ -24,6 +24,7 @@
 #     ENVELOPE of the ODE.  See scratch/diag_helix_calibration.jl.
 
 using Test, KiteTurbineDynamics
+include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
 
 # Daisy 1.5 kW → 5 kW at 18.8 m (mirrors run_v13_5kw_masslift.jl).
 function params_5kw_188()
@@ -46,7 +47,7 @@ function decode_seed(; rotor_count=3.0)
         x, PROFILE_ELLIPTICAL, params_5kw_188(); power_W=5000.0,
         cylinder_cone=true, rotor_count_mode=true,
         power_split=0.6, cone_slope_deg=22.0,
-        rotor_spacing_frac=0.8, blocking_factor=0.75^(1 / 3))
+        rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
 end
 
 function cfg_5kw(; min_wall_m=2e-3, fos_hard=2.5)
