@@ -1,8 +1,8 @@
 # test/test_settle_blocking_2026_09.jl
 #
 # Regression (2026-09-02): the cold-start settle equilibrium scan must apply the
-# per-rotor wake de-rate (downstream rotors at 0.75× power → wind factor
-# 0.75^(1/3)) so a multi-rotor machine starts at its blocked equilibrium instead
+# per-rotor wake de-rate (downstream rotors at 0.85× power → wind factor
+# 0.85^(1/3)) so a multi-rotor machine starts at its blocked equilibrium instead
 # of overshooting and then decaying in the ODE.
 #
 # The scan's power expression is factored into `settle_aero_power(sys, p, w,

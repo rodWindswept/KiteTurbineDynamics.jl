@@ -10,7 +10,7 @@
 
 using Test, KiteTurbineDynamics
 
-const BF = 0.75^(1 / 3)   # 0.75× power wake de-rate ≈ 0.9086
+const BF = 0.85^(1 / 3)   # 0.85× power wake de-rate ≈ 0.9473
 const K_MPPT = 2.24       # K_MPPT_5KW_HONEST (single source lives in scripts/compute_seeds.jl)
 
 # Daisy 1.5 kW → 5 kW at 18.8 m (mirrors run_v13_5kw_masslift.jl).

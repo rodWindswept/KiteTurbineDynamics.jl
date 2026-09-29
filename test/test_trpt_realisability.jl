@@ -69,6 +69,17 @@
 #
 # This fixture stays FROZEN: do not update it when the seed moves.  Re-baseline
 # only for a physics correction, and say which one (as above).
+#
+# RE-BASELINED 2026-09-29 (fifth time), for the blocking-factor ruling.  Rod
+# ruled (DECISIONS [2026-09-29]) that a blocked rotor keeps 85 per cent of
+# freestream POWER, not 75, so `BLOCKING_WIND_FACTOR_5KW` moved from
+# `0.75^(1/3) = 0.9086` to `0.85^(1/3) = 0.9473`.  This fixture's hub rotor is
+# downstream (blocked), so its inflow rose ~4.3 % and the frozen machine's
+# preload profile re-solved: demand[1] 0.85800 -> 0.87192, demand[4] 0.86715 ->
+# 0.88123, twist 60.13 -> 61.79 deg, tau_carry[8] 230.81 -> 238.93, demand[8]
+# 0.16531 -> 0.17843, F_ax[end] 1163.72 -> 1116.10, crossing 0.89592 -> 0.92403.
+# The verdicts (under the cliff, repairable inside the cap, refuses the cliff)
+# are unchanged.
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
@@ -130,19 +141,19 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     @test all(r.demand .>= 0.0)
     @test maximum(r.demand) < 1.0                  # UNDER the cliff once thrust is in
     @test argmax(r.demand) == 4                    # same binding segment as before
-    @test r.demand[1] ≈ 0.85800 atol = 5e-3
-    @test r.demand[4] ≈ 0.86715 atol = 5e-3
-    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 60.1287 atol = 0.01
+    @test r.demand[1] ≈ 0.87192 atol = 5e-3
+    @test r.demand[4] ≈ 0.88123 atol = 5e-3
+    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 61.7917 atol = 0.01
     # Demand falls going up the shaft because each rotor injects its own torque:
     # segs 1-6 carry the generator load, seg 7 carries it less the ring-7
     # expansion rotor, seg 8 less that again.
     @test r.τ_carry[7] ≈ 325.772 atol = 2.0
-    @test r.τ_carry[8] ≈ 230.811 atol = 2.0
+    @test r.τ_carry[8] ≈ 238.928 atol = 2.0
     @test r.demand[7] ≈ 0.20724 atol = 5e-3
-    @test r.demand[8] ≈ 0.16531 atol = 5e-3
+    @test r.demand[8] ≈ 0.17843 atol = 5e-3
     # Section B's top tension is MAIN-ROTOR-ONLY and so is UNCHANGED by the
     # 2026-09-22 thrust-in-profile fix: the expansion rotors sit below the cut.
-    @test F_ax[end] ≈ 1163.72 atol = 1.0
+    @test F_ax[end] ≈ 1116.10 atol = 1.0
     @test F_ax[end] < 1274.47
 
     # ── A2. this L/r 2.0 fixture is REPAIRABLE inside the cap ────────────────
@@ -156,7 +167,7 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     @test m > 1.0
     cross_bare = KiteTurbineDynamics.max_segment_cross_ratio(r, sys)
     @test maximum(r.demand) < 1.0            # under the sin-law cliff
-    @test cross_bare ≈ 0.89592 atol = 5e-3   # and under the geometric crossing limit
+    @test cross_bare ≈ 0.92403 atol = 5e-3   # and under the geometric crossing limit
     @test cross_bare * m <= 1.0              # so one margin step clears it
     @test cross_bare * m < KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
     # The raising call RETURNS now (it used to raise).  Assert the repaired

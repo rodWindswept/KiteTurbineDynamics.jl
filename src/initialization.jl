@@ -1011,7 +1011,7 @@ settle-gap mechanism).
 function settle_aero_power(
     sys::KiteTurbineSystem, p::SystemParams, w::Float64, v_mag::Float64
 )::Float64
-    # Hub rotor — de-rate by the main rotor's wind factor (0.75^(1/3) when it is
+    # Hub rotor — de-rate by the main rotor's wind factor (0.85^(1/3) when it is
     # downstream of a lower rotor, 1.0 otherwise).
     v_hub = v_mag * sys.rotor.wind_factor
     lambda = w * sys.rotor.radius / v_hub

@@ -33,12 +33,13 @@ const RUNGS = [5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0]
 # stale-k=5.39 gate row).
 const K_MPPT_5KW_HONEST = 2.24
 
-# Single source of truth for co-axial wake blocking (2026-08-26, Rod).
-# Downstream (upper) rotors produce 0.75× freestream power; P ∝ v³, so the
-# inflow multiplier is 0.75^(1/3) ≈ 0.9086.  Threaded as the per-rotor
-# wind_factor from the decode into the ODE (src/ring_forces.jl), so the
-# de-rate is real, not a sizing-only placeholder.
-const BLOCKING_WIND_FACTOR_5KW = 0.75^(1 / 3)
+# Single source of truth for co-axial wake blocking (2026-08-26; value ruled
+# 2026-09-29, Rod).  A downstream (upper) rotor is blocked by 15 per cent of
+# POWER — it keeps 0.85× freestream power.  P ∝ v³, so the inflow multiplier is
+# 0.85^(1/3) ≈ 0.9473.  Threaded as the per-rotor wind_factor from the decode
+# into the ODE (src/ring_forces.jl), so the de-rate is real, not a
+# sizing-only placeholder.
+const BLOCKING_WIND_FACTOR_5KW = 0.85^(1 / 3)
 
 function seed_n_lines(kw::Float64)::Float64
     # Daisy: 6 lines at 1.5kW → extrapolate to target scale

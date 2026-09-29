@@ -4,7 +4,7 @@
 # 2026-08-26 (Rod's viewer review): co-axial stacked rotors wake-block each
 # other.  Wind flows UP the shaft (hub is downwind), so the UPPER rotors are
 # downstream and must see a de-rated inflow; the LOWEST rotor sees freestream.
-# 0.75× power → wind factor 0.75^(1/3).  Separately, the lowest-rotor ground
+# 0.85× power → wind factor 0.85^(1/3).  Separately, the lowest-rotor ground
 # clearance must use the ABSOLUTE tip radius (ring radius + blade_tip offset),
 # never the 0.7·span offset alone.
 #
@@ -14,7 +14,7 @@
 using Test, KiteTurbineDynamics
 include(joinpath(dirname(@__DIR__), "src", "builders_util.jl"))
 
-const BF = 0.75^(1 / 3)   # ≈ 0.9086 — 0.75× power under P ∝ v³
+const BF = 0.85^(1 / 3)   # ≈ 0.9473 — 0.85× power under P ∝ v³
 
 # Daisy 1.5 kW → 5 kW at 18.8 m (mirrors run_v13_5kw_masslift.jl).
 function params_5kw_188()
