@@ -10,6 +10,74 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-29] The rings are the rotors; the spokes have a tension duty; and blocking is 15 per cent of power
+
+**Context.** Four rulings given by Rod on 2026-09-29, in the design room, plus one correction of a
+model description that was wrong. Ruling 3 closes the open blocking figure that the `[2026-09-24]`
+multi-rotor sizing entry held for the owner.
+
+**1. The rings are the rotors (Rod, 2026-09-29).** The description "the small in-ring rotors" is
+incorrect, and no such object exists in this machine. Each ring carries its blades and IS a rotor. It
+autorotates in the wind, and it transmits torque and thrust to the lines. This restates the rule that
+`docs/agents/physics-topology.md` §4 already carries: the topmost rotor is the **main rotor**, every
+other bladed ring is a **banked-blade expansion rotor**, and every rotor may be an expansion rotor.
+It also matches `docs/plans/2026-09-26-expansion-rotor-bem.md`: an expansion rotor's blades straddle
+its ring, from 2.102 m to 3.096 m on ring 11 against a ring radius of 2.400 m, so nothing about the
+rotor sits inside the ring. The blocking question is therefore a per-rotor question, which is how the
+`wind_factor` field is already threaded.
+
+**2. The spoke requirement and the inert-spokes ruling are DIFFERENT JOBS, and both stand (Rod,
+2026-09-29).** The `[2026-09-22]` ruling keeps the spoke spring INERT, and its reason is specific: the
+spokes must not act as a radial stability crutch, because energising them would add an artificial
+guide-wire that pulls every ring toward the ground station's line of sight, and a TRPT column is a
+free-floating tensegrity with no centreline anchor. The `[2026-09-26]` requirement gives the spokes
+two other duties. First, the radial lines stiffen the rotor assembly: the blades load them
+centrifugally, they can carry that load only in tension, and the tension comes from the centripetal
+acceleration of the blades. Second, the spokes carry a strength duty, already sized at 19.8 kN. Spin
+stiffness and strength are not the radial crutch. **The 2026-09-22 ruling is unchanged, and the
+spokes still enter the model.**
+
+**3. Blocking is 15 per cent of POWER; a blocked rotor keeps 85 per cent of freestream power (Rod,
+2026-09-29).** Four recorded sites set 0.75 times freestream power, and the `[2026-09-24]` entry held
+that figure against Rod's recalled 15 per cent and waited. The owner rules for the 15 per cent, stated
+as a power ratio of **0.85**. Because `P ∝ v³`, the inflow multiplier becomes `0.85^(1/3) = 0.947268`,
+replacing `0.75^(1/3) = 0.908560`. The de-rate stays NON-CUMULATIVE, and in a three-rotor stack the
+top two rotors are still the blocked ones (`[2026-08-27]` ruling 1). The figure lives in one setting
+and is read everywhere (`[2026-09-02]`, one source of truth):
+
+| Site | Current form | Action |
+|---|---|---|
+| `scripts/compute_seeds.jl:38-41` | `BLOCKING_WIND_FACTOR_5KW = 0.75^(1/3)`, the declared SSOT | change to `0.85^(1/3)` |
+| its consumers (`run_v13_5kw_masslift.jl`, `smoke_masslift_v13.jl`, `sweep_power_split.jl`, `analyze_campaign_winners.jl`, `test_evaluator_v13.jl`) | read the constant | no edit; re-run |
+| `test/test_wind_blocking.jl:17` | local `BF = 0.75^(1/3)` | change |
+| `test/test_mass_model_2026_09.jl:13` | local `BF = 0.75^(1/3)` | change |
+| `src/initialization.jl:1018` | comment quotes `0.75^(1/3)` | update the comment |
+| `src/ring_forces.jl:196,277` and `src/initialization.jl:1019` | read `wind_factor` | no edit; the value they read moves |
+
+**Consequence for the span attribution of `[2026-09-23]`.** That entry decomposes a measured island
+span ratio as `1.1547 (blocking) × 1.2740 (blade_scale)`, where `1.1547` is `(1/0.908560)^1.5` because
+equal-power span scales as `v^(−1.5)`. At `0.85` that blocking term is `1.0847`, and the blade-mass
+term (span cubed) falls from 1.5396 to 1.2761. So that attribution must be re-derived before it is
+quoted again.
+
+**4. Wind shear is the STRONGER effect (Rod, 2026-09-29).** The owner accepts the inversion, and the
+repo's own recorded numbers agree with the ruling. Shear alone gives the top ring 8.7051 m/s against
+the bottom ring's 7.9959 m/s. With the old 0.75 power ratio the net profile inverted: top 7.9091
+against bottom 7.9959. With the ruled 0.85 it does not invert: top **8.2461 m/s** against bottom
+7.9959. The topmost rotor is therefore the fastest again, which is what the accepted shear direction
+predicts. This does not anchor the wake model: ruling 3 sets the value, it does not measure it.
+
+**Enables and rules out.** Enables the blocking figure to leave the open list, and states why the two
+spoke items do not conflict. Rules out reading the blocked-rotor term as a wind ratio of 0.85, rules
+out re-opening the inert-spokes ruling as the reason the spokes are absent from the model, and rules
+out quoting the `[2026-09-23]` span decomposition unchanged.
+
+**Status:** Active. Rulings 1, 2 and 4 need no code change. Ruling 3 needs the figure changed at the
+sites above plus a re-baseline of every fixture measured through a multi-rotor settle, because the
+operating point moves; it takes its own commit, not a re-seed.
+
+---
+
 ## [2026-09-24] Multi-rotor sizing: every rotor takes an equal share of the torque and the power
 
 **Context.** Defect 5 of the document audit was item 5 of the pre-flight checklist, which quoted a thrust split that the trust ledger forbids re-quoting ("309 N of 2044 N", "~15 %"), because a probe triple-counted the per-blade force. The item's rule, "include the thrust of EVERY rotor", survived the retraction. Its illustration did not. Rod ruled the replacement on 2026-09-24.
@@ -25,7 +93,10 @@ can assess whether a decision still holds when circumstances change.
 
 **Enables and rules out.** Enables the document to state a scaling rule that a reader can check against a genome. Rules out quoting a thrust split as evidence for it.
 
-**Status:** Active. The checklist item states the equal-share rule, and the blocking figure waits on Rod.
+**Status:** Active. The checklist item states the equal-share rule. **The blocking figure is ruled**
+(see `[2026-09-29]`): a blocked rotor keeps **85 per cent of freestream power**, a power ratio of
+0.85, so the inflow multiplier is `0.85^(1/3) = 0.947268`. The 15-per-cent-versus-75-per-cent
+discrepancy in this entry is closed.
 
 ---
 
@@ -112,7 +183,7 @@ So the annulus error is the SMALLEST of the three, and the inflow error is the l
 
 **Defect D (inflow): REAL and the largest, but NOT for the reason given.** `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)` computes `v_ref · (z/h_ref)^0.14`. It **accepts `hub_altitude` and never uses it**, so `h_ref` stays at the unanchored 50.0 m default. At the top ring's 9.40 m that scales 11 m/s down to **8.7051 m/s**: a factor 0.7914 on speed, **2.02× on area**, and **17.3× on top-rotor blade mass**. That baseline, not the wake model, is the dominant contributor.
 - **The shear DIRECTION is correct.** Higher rings do get faster shear wind: the top ring reads 8.7051 m/s against the bottom ring's 7.9959 m/s. The draft's framing that the model "penalized the elevated rotor" via shear is wrong.
-- **The wake blocking is what inverts the net profile.** `blocking_factor = 0.75^(1/3) = 0.908560`, defined in `scripts/compute_seeds.jl` (a campaign knob, not `src/`), converts a 75%-of-power wake assumption into a wind factor. Applied to every rotor except the lowest, it makes the top rotor net-SLOWEST at 7.9091 m/s against the bottom's 7.9959. Under a HORIZONTAL wind on a straight shaft inclined at 30°, the higher rings do sit further downwind, so a de-rate for them is directionally defensible. It is **not** the "wind flows up the shaft" error the draft described. It is however unanchored, and it is what flips the profile.
+- **The wake blocking is what inverts the net profile.** `blocking_factor = 0.75^(1/3) = 0.908560`, defined in `scripts/compute_seeds.jl` (a campaign knob, not `src/`), converts a 75%-of-power wake assumption into a wind factor. Applied to every rotor except the lowest, it makes the top rotor net-SLOWEST at 7.9091 m/s against the bottom's 7.9959. Under a HORIZONTAL wind on a straight shaft inclined at 30°, the higher rings do sit further downwind, so a de-rate for them is directionally defensible. It is **not** the "wind flows up the shaft" error the draft described. It is however unanchored, and it is what flips the profile. **SUPERSEDED (2026-09-29):** the owner ruled a power ratio of 0.85, so the inflow factor is `0.85^(1/3) = 0.947268`, the blocking term above becomes 1.0847, and the profile does NOT invert (top 8.2461 m/s against bottom 7.9959). See `[2026-09-29]`.
 
 **Refuted: the slender hub did not force a longer blade.** The draft claims island 1's smaller hub (2.610 m against 3.546 m) forced the larger span. The span does not depend on `r_hub` at all. The measured span ratio decomposes exactly:
 `1.9584 / 1.3314 = 1.4709 = 1.1547 (blocking on r_rotor) × 1.2740 (blade_scale gene 0.8797 / 0.6905)`.
