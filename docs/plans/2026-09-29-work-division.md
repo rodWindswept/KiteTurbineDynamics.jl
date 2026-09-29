@@ -1,0 +1,153 @@
+# Work division — 2026-09-29
+
+**Status:** live dispatch. The lead owns this file. Update it when an item lands or a
+ruling changes the order.
+**Purpose:** one ordered list of the open work, its owner, and the item that blocks it, so
+no two agents measure the same tree.
+
+---
+
+## 1. The measured baseline
+
+Taken on this desktop, 2026-09-29.
+
+| Item | State |
+|---|---|
+| `master` | `fac4c29`, level with `origin/master` |
+| Working tree | DIRTY. 10 files modified (+462 / −190), 12 untracked paths. No commit since `fac4c29` |
+| Parked branch `wip/d1-site-wind-and-refusal-2026-09-25` | 37 files, +657 / −192. **Pushed to origin 2026-09-29** |
+| Parked branch `wip/f11-ring-end-velocity-2026-09-26` | 2 files, +103 / −1. **Pushed to origin 2026-09-29** |
+| Fast suite | **2425 pass / 1 fail / 0 errored / 0 broken**, 10 min 31 s. Run 2026-09-29 by the lead on this tree |
+| The single red | `test/test_wind_blocking.jl:168`, testset `expansion_params_from_rotors propagates wind_factor`. `0.9 ≈ 0.9085602964160698`. One assertion |
+| Acceptance suite | NOT run on this tree |
+
+The parked branches were local to one machine until today. That risk is closed.
+
+## 2. Three sequencing facts that decide the order
+
+1. **No physics measurement is valid on this tree.** The Tulloch plan's WP0 states the rule:
+   no package lands on an uncommitted tree. The tree also holds a record defect — see W1.3.
+2. **The T8 re-seed screen rests on the criterion that is being corrected.** Ten of the
+   seed's twelve segments are in the "no limit" class of Tulloch (4.34). The screen's
+   `crossing` column and its REFUSED verdicts use the retired formula. A re-seed against it
+   is done twice.
+3. **The banked top rotor is double-modelled today.** Verified in the source, not from the
+   record: the string `disc_rotor_active` appears in `docs/agents/physics-topology.md:246-247`
+   and in no line of `src/ring_forces.jl`. The disc branch runs unconditionally.
+
+## 3. Workstreams
+
+Order is dependency order. Each item names its evidence.
+
+### W1 — Land the banked-top-rotor work (critical path, first)
+
+Owner: **software-worker**. Gate: **software-validator**.
+
+1. **B4 — gate the disc branch.** One ownership predicate, called by the routing and by the
+   disc skip. Files: `src/ring_forces.jl`, `src/builders_util.jl`.
+   Test: positive net torque at the design point, and at least 80 per cent of the plain-rotor
+   spin on the same genome.
+2. **Resolve the single red.** `test/test_wind_blocking.jl:168`. Classify first, then act:
+   the input is 0.90 and the assertion reads `BF`. It is most likely one assertion.
+3. **Correct the record.** `docs/agents/physics-topology.md:244-251` claims a guard that does
+   not exist. A record that names a guard the code does not carry is the defect class of
+   section 6 of the same document.
+4. **Defer B5.** The banked sizing law needs the Phase 5 span law, which sits on the parked
+   `wip/d1-` branch. Land that first, then B5.
+5. **Gate, then commit in slices.** Fast suite green, then the eight acceptance files
+   (~18 min). The commit needs both.
+
+Evidence owed: the fast-suite summary line, the acceptance summary line, and the Slices.
+
+### W2 — The Tulloch criterion, remaining packages (critical path, second)
+
+Owner: **software-worker** for the code; **science-validator** for the re-baseline.
+Blocked by W1.
+
+- **WP3** — gate and refusal read `trpt_twist_limit`. A "no limit" segment stops gating.
+- **WP4** — the preload floor enforces the sin law and Case A only. Expected: seed top
+  preload falls, placed twist rises to the sin-law bound, ring mass falls.
+- **WP5** — the controller margin uses `δcrit − |Δα|` for Case A, and ring FoS plus rope
+  strain for Case B. Delete `_δα_star`.
+- **WP6** — the DE capacity becomes `τ_max` of Case A.
+- **WP2d** — the 22° transition cone: apex angle or half-angle. The figure decides, not the
+  sentence. Owner for the reading: **aero-validator**.
+- **WP8** — supersede `DECISIONS.md` [2026-09-20] items 1, 3 and 6; correct
+  `physics-topology.md` section 3.2; re-stamp the physics era on every affected CSV.
+
+WP3 and WP4 go as one batch with the clamp that already landed. The clamp and the gate must
+agree, or the ODE disagrees with its own screen.
+
+Evidence owed: `test_trpt_twist_limit.jl` rows 5 and 6, green; the re-baselined realisability
+fixture with the criterion named in the comment.
+
+### W3 — The T8 re-seed (critical path, third)
+
+Owner: **science-validator**. Blocked by W2, and by a ruling from Rod on the levers.
+
+The screen measured that line count alone cannot clear the crossing cliff. The levers are the
+preload tension, the operating torque through `k_mppt`, the L/r gene, and the lifter margin.
+Two of those are rulings, not measurements. Do not start before the ruling.
+
+### W4 — The AeroDyn v5.0.0 driver field order
+
+Owner: **aero-worker**. Independent of W1 to W3. Highest-leverage blocked item.
+
+The run stalls because the driver format is positional and the field order is unknown. Two
+routes, in order of cost:
+
+1. Read the order from the AeroDyn v5.0.0 driver documentation.
+2. Reuse the driver that produced the current `src/aerodynamics.jl` tables on 2026-06-10.
+   That file exists and it parsed.
+
+Trial and error is the wrong instrument for a positional format.
+
+Unblocks: the settle-induction regression, and the expansion-rotor BEM cases.
+
+### W5 — A BEM evaluation for every expansion rotor
+
+Owner: **aero-worker**. Gate: **aero-validator**. Needs Rod's approval per its own section 8.
+
+`docs/plans/2026-09-26-expansion-rotor-bem.md`. Run the main-rotor regression first: it is
+the only case with a known answer, and it proves the pipeline.
+
+Closes ledger row C8 (the Cp surface cannot price solidity) and supplies one of the two
+candidate causes of the F13 factor.
+
+### W6 — F13, the settle against the dynamics
+
+Owner: **science-validator**. Blocked by nothing, but its polar branch needs W5.
+
+The settle's expansion drive reads 5.695 kW against the dynamics' 2.010 kW, a factor of 2.833.
+The decomposition is measured. The two candidate causes are the polar and the inflow the
+settle reads. Test the inflow branch first: it needs no new table.
+
+### W7 — The claim register
+
+Owner: **software-validator**. Off the critical path. Directly on the "authoritative and
+verified valid" objective.
+
+`docs/plans/2026-09-25-trpt-tulloch-criterion-correction.md` section 8. One table: every
+Tulloch citation in the repo, with `file:line`, the claim, the thesis equation or page, and a
+verdict. The defect this closes is a formula that entered the code with a citation and was
+never checked.
+
+## 4. Decisions for Rod
+
+| # | Decision | Why it blocks |
+|---|---|---|
+| 1 | The T8 levers: which of line count, preload, `k_mppt` and lifter margin may move? | W3 cannot start without it |
+| 2 | Approve the expansion-rotor BEM cases | W5, and one branch of W6 |
+| 3 | The wake de-rate: recalled 15 per cent, or the recorded 0.75× power? | It inverts which rotor takes the largest span |
+| 4 | The Daisy anchor: 1.5 kW at 10 m/s, or 1.27 kW at the recorded Cp and area? | It sets the ladder's absolute scale |
+| 5 | Schedule the spokes requirement recorded 2026-09-26 | It needs a workstream of its own |
+
+## 5. Resource rules
+
+1. **One Julia suite at a time on this machine.** Fast is about 3.5 minutes plus compile;
+   acceptance is about 18 minutes. A second run steals the depot lock and the cores.
+2. **The AeroDyn runs are a separate binary.** They can run beside a Julia suite.
+3. **No physics measurement on a dirty tree.** Name the tree with every number, or wait.
+4. **A validator reads the live repo state first.** `git log --oneline -5`, `git status
+   --short`, `git diff --stat HEAD~1`. That reading is authoritative over any memory.
+5. **F11 stays parked.** Its own plan makes F13 the gate on its magnitude.
