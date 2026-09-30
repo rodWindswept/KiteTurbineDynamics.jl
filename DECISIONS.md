@@ -10,6 +10,57 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-09-30] The top-ring exclusion stands: the banked model brakes the topmost ring when measured
+
+**Context.** The `[2026-09-24]` entry retired the top-ring exclusion and left the code change owed,
+with the requirement that it "needs its own test and an acceptance run before it lands". The change
+was built in the working tree on 2026-09-30 (plan `docs/plans/2026-09-24-banked-topmost-rotor.md`,
+tasks B1 to B4 and B7). It was then measured. It fails.
+
+**Measured.** The acceptance gate `test/test_gate_v13.jl` A1 gates the campaign winner
+`scripts/results/v13_5kw_masslift_len18.8_rotorcount/best_vector.csv`. That winner carries
+`bank_top = 19.95°` and `bank_bottom = 6.69°`, and it is one rotor on ring 6 of 6, the topmost ring.
+
+| configuration | P_gen_final | w_gnd_final |
+|---|---|---|
+| HEAD `1b4d9be`, the disc model owns the ring | 5.46 kW | 13.46 rad/s |
+| the change, hub guard deleted | 3.43 kW | 11.53 rad/s |
+| the change, disc branch also gated off | 0.80 kW | 7.1 rad/s |
+| expectation for a 20° misalignment, `cos^3(19.95) = 0.8306` | 4.54 kW | no run |
+
+Two defects sit in the change, not one. The deleted hub guard alone costs 37 per cent of the power
+while the disc model still runs. Gating the disc branch as well removes the rotor's drive entirely.
+So the removal of the committed guards at `src/builders_util.jl:88-91` and
+`src/ring_forces.jl:255-261` reproduces the 2026-08-22 fault that those guards were written to
+prevent.
+
+The expectation for a 20° bank is a few tens of per cent of power. It comes from Tulloch equation
+(4.1), `P = 0.5 · rho · Vw^3 · A · Cp · cos^3(beta)`. The change costs 86 per cent. The banked model
+does not measure the machine at this ring. It brakes it.
+
+**State 2026-09-30.** The 2026-09-24 ruling stands as intent, and the implementation does not land.
+The change was reverted. `src/` and `test/` are byte-identical to HEAD `1b4d9be`. The acceptance
+suite is green at HEAD, 9 of 9, EXIT=0.
+
+**Alternatives considered.** Landing the change and re-baselining the A1 assertion below 5 kW.
+Rejected: 0.80 kW is a brake, not a machine, and the assertion is the signal. Landing the change and
+fixing the induction brake in the same session. Rejected: the brake is a physics problem, not a code
+problem, and its fix changes the model that every rotor uses.
+
+**Why.** A silent skip is a defect class this record already warns about. A silent brake is worse.
+Both guards were correct, and the measurement says so.
+
+**Enables and rules out.** Enables the campaign winner to keep its 5.46 kW and the acceptance suite
+to stay green. Rules out the banked model at the topmost ring until a banked-rotor model passes the
+AeroDyn precone work (`docs/validation/trpt-reference/09-aerodyn-geometry-knobs.md`).
+
+**Still active.** Yes. The ruling is unlanded by measurement, not by retraction. The open question is
+which model is right for a banked top rotor, and no model is validated today. The owner ruling is
+owed: retract the exclusion retirement, or defer it. Measurements:
+`docs/plans/2026-09-30-top-ring-brake-findings.md`.
+
+---
+
 ## [2026-09-29] The rings are the rotors; the spokes have a tension duty; and blocking is 15 per cent of power
 
 **Context.** Four rulings given by Rod on 2026-09-29, in the design room, plus one correction of a

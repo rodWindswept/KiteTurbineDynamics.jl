@@ -56,17 +56,75 @@ physics constant without a ruling.
   seed.
 - Status: Open. Work package WP3.
 
-## F5. The transition cone angle is unverified
+## F5. The transition cone angle is the APEX angle, and the repo uses it as a half-angle
 
 - Repo claim: `cone_slope_deg = 22.0`, described as the "TRPT cone half-angle
   (Tulloch/Jensen reference)".
-- Sites: `src/objective_evaluator.jl:145`, `src/objective_v10.jl:195`. The code uses the
-  value as a slope at `src/objective_v10.jl:264`.
-- Source: the text says the TRPT "was designed to have a cone angle of 22°". The text does
-  not say whether that is the apex angle or the half-angle.
-- Difference: if the printed angle is the apex angle, then the slope on each side is 11°.
-  The repo cone is then twice as steep as the source.
-- Status: Open. A figure decides this, not a sentence. Work package WP2d.
+- Sites: `src/objective_evaluator.jl:145` (the label and the default), threaded at
+  `src/objective_evaluator.jl:525`. `src/objective_v10.jl:216` and `:257` (defaults). The
+  code uses the value as a slope at `src/objective_v10.jl:295`. The line anchors recorded
+  here on 2026-09-26 were `objective_v10.jl:195` and `:264`; both files have since grown.
+- Source: the text says the TRPT "was designed to have a cone angle of 22°" (printed
+  page 70, PDF page 97). The text does not say whether that is the apex angle or the
+  half-angle. The figure settles it.
+- Difference: the printed angle is the apex angle. Each side slopes 11.0°. The repo cone
+  is 2.08 times as steep as the source, and its cone length is 0.48 of the source's.
+
+**RESOLVED 2026-09-29 (WP2d, aero-validator). Read from Figure 3.10, not from the
+sentence.** Figure 3.10 is the dimensioned drawing of TRPT-1. It gives five ring
+diameters and five axial gaps. The capture is
+`figures/fig3.10-trpt1-cone-geometry-printed-p69.png`; the verbatim passage is
+`08-trpt1-geometry.txt`.
+
+| Ring | Diameter (m) | Axial gap below it (m) | Half-angle (deg) |
+|---|---|---|---|
+| Ground wheel | 0.42 (text) | — | — |
+| 1 | ⌀0.48 | 0.15 | 11.31 |
+| 2 | ⌀0.72 | 0.62 | 10.95 |
+| 3 | ⌀1.08 | 0.90 | 11.31 |
+| 4 | ⌀1.64 | 1.47 | 10.78 |
+| Rotor | ⌀3.04 | 3.60 | 11.00 |
+
+Five independent bays give 10.78 to 11.31 degrees, mean 11.07. End to end, ring 1 to the
+rotor, the half-angle is 10.992 degrees, so the apex angle is **21.984 degrees**. The
+printed 22 is the **apex** angle; the per-side slope is **11.0 degrees**. The spread is
+0.5 degrees, so the reading does not depend on one bay.
+
+**The reading agrees with our own Daisy record.** Figure 3.10's rotor ring is ⌀3.04 m, so
+its radius is 1.52 m. `scripts/compute_seeds.jl:16` records `DAISY = (r_hub=1.52, ...)`.
+Two independent sources give the same rotor radius, so the diameter scale of the figure is
+not in doubt.
+
+**Measured effect on the live 5 kW seed.** Probe `scratch/probe_wp2d_cone.jl`, geometry
+decode only, no ODE. Seed `r_hub` 2.4 m, `r_bottom` 0.5751 m, `tether_length` 18.8 m.
+
+| Quantity | `cone_slope_deg = 22` (today) | `= 11` (the figure) |
+|---|---|---|
+| Cone length | 4.5168 m | 9.3883 m |
+| `taper_start_z` | 7.0832 m | 2.2117 m |
+| Ring count | 13 | 11 |
+| Transition radius at z = 4.70 m | 0.5751 m | 1.0588 m |
+| `lowest_rotor_clearance` | 4.1191 m | 4.1191 m |
+
+The clearance does not move, because both rotors sit on the hub above the transition. Every
+transition ring does move: its radius, its circumference and so its mass, its drag area,
+and the twist each bay carries.
+
+**The fix is not a comment.** The value entering `tan()` must halve. That changes the
+transition-cone geometry, the ring count and the ring mass, so it moves the machine and
+every fixture measured off it. It needs its own commit and its own re-baseline, and it must
+not ride the WP3/WP4 re-seed.
+
+**Second defect in the same claim.** `docs/plans/2026-09-24-phase5-multirotor-sizing.md:400`
+records T6 as built: "The two knobs became consts (`CONE_SLOPE_DEG`, `ROTOR_SPACING_FRAC`)
+that BOTH the cfg and the provenance read." Neither constant appears in any `.jl` file in
+the repo. `grep -rn "CONE_SLOPE_DEG\|ROTOR_SPACING_FRAC" src/ test/ scripts/` returns
+nothing. The two knobs are still literals at `src/objective_evaluator.jl:145` and
+`src/objective_v10.jl:216`, and the drift the record says it closed is still open. Same
+defect class as section 4 of `docs/agents/physics-topology.md`.
+
+- Status: **Resolved** for the angle. Open for the code change, which needs a ruling.
+  Work package WP2d.
 
 ## F6. The tether drag coefficient
 
@@ -450,3 +508,36 @@ physics constant without a ruling.
   the wrong instrument for a positional format.
 - Scratch state at the stop: `.scratch/bem_regression/` holds the four NAS files, a NUL stripped
   primary copy, and the edited driver. All of it is untracked.
+- 2026-09-29, ninth pass. THE INFLOW BRANCH IS TESTED, AND IT DOES NOT CARRY THE FACTOR.
+- Probe: `scratch/probe_f13_inflow_branch.jl`, four assertions, no ODE window and no new table.
+  It reproduces the eighth pass's figures to 0.06 per cent or better, so it is calibrated to this
+  record: hub term 3991.96 W against 3994, expansion 5693.81 W against 5695, settle total
+  9685.77 W against 9689, all at omega 13.452 rad/s.
+- THE SAMPLE POINT. The settle reads the profile ONCE, at the hub node of `u0`
+  (`initialization.jl:2222`), and applies that one wind to every rotor
+  (`initialization.jl:1034`). The ODE reads each ring at its own altitude
+  (`ring_forces.jl:273`). The settle's docstring claims it matches `ring_forces.jl`; it matches the
+  de-rate FACTOR, not the sample point. The fifth pass's claim that "both paths see the same wind"
+  is true of the factor and false of the sample.
+- Measured on the campaign seed, uncropped: hub altitude 9.4024 m, expansion rings 7.6022 m and
+  5.8020 m. Both sit BELOW the hub, so the settle can only over-read them. It does, by 1.0308 and
+  1.0714 in speed. Sampling each ring at its own altitude, as the ODE does, takes the expansion
+  term from 5.6938 kW to 5.1787 kW, a factor of 1.0995.
+- THE SECOND INFLOW DIFFERENCE IS THE AXIAL PROJECTION. The ODE feeds its blade element
+  `v_axial = v * cos(elevation)` (`expansion_rotor.jl:245`). The settle applies NO elevation factor
+  to the expansion term, while its own hub term applies `cos^2.65` (`initialization.jl:1029`
+  against `:1044`). An internal inconsistency, not only a disagreement with the ODE. Projecting the
+  expansion inflow by `cos(30)` as well takes 5.1787 kW to 3.9276 kW, a combined factor of 1.4497.
+  Applying the hub's own `cos^2.65` to the same figure gives 3.5374 kW, a factor of 1.6096.
+- THE VERDICT. The recorded gap is 2.833. The sample point accounts for 5.4 per cent of the excess
+  over one, and the sample point plus the axial projection for 24.5 per cent (33.3 per cent under
+  the hub's own elevation convention). A residual factor of 1.95 to 1.76 remains, and it is the
+  polar and the induction. So the inflow branch does not close F13, and it must not be presented as
+  the fix. The polar branch carries the rest, and it needs the W5 AeroDyn table.
+- Both inflow defects are still defects. Both are one-sided, in the direction of the recorded
+  excess. The fix is small and confined to `settle_aero_power`, but it moves the settle's operating
+  point, and every fixture measured from the settle moves with it, so it needs its own commit and
+  its own re-baseline. Do not fold it into a re-seed.
+- The wake de-rate is untouched by this finding. The probe used the recorded 0.75 times power
+  (inflow 0.908560) and reproduced the record with it, so decision 3 of the work division is not
+  settled by these numbers.

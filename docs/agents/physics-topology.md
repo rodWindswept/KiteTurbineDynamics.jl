@@ -226,8 +226,82 @@ do not treat a taut backline as evidence that it carries the rotor.
 | **expansion rotor** | a banked-blade rotor on a TRPT ring. It generates radial force (spreading the tethers) plus its own axial thrust and torque. |
 | **hub** | avoid this word for the rotor, and say **main rotor** if you mean the topmost rotor. |
 
+**What a banked rotor IS (Rod, 2026-09-30).** A banked rotor is a normal rotor: the
+same blades, the same blade count (`n_blades = n_lines`), the same span and chord law,
+and the same blade-mass law. **One thing differs — its blades sit slightly out of
+plane.**
+
+Name the frames, because three angles act here and they are different things.
+**Elevation** tilts the whole shaft axis away from horizontal, and it is already in the
+model as the elevation angle. **Bank** is the angle of each blade out of the ring plane.
+**Sweep** is the blade's azimuthal set within the ring. Tulloch names anhedral, bank and
+sweep together (thesis extract line 5295). **Banking is not elevation, and it is not a
+shaft tilt.** Elevation tilts the axis the rotor spins about; banking tilts the blade
+against its own ring.
+
+**The mount.** The ring lies in the ring plane, perpendicular to the rotation axis. A
+plain blade lies in that plane, so its tip traces a circle within it and the swept
+surface is a flat annulus. **A banked blade attaches to the ring so that its span runs
+out of the ring plane.** The root stays at the ring. The outer span runs down-shaft,
+toward the ground station, so the outer tip sits below the ring plane. The inner span
+runs up-shaft, toward the lifting kite. **There is no droop** — the blade is straight,
+and the angle lives in the mount.
+
+**The flight path.** The rotor spins about the shaft axis, so every point on a banked
+blade travels a circle parallel to the ring plane. A station at distance `s` outboard of
+the ring travels at radius `r_ring + s·cos(bank)` and at an axial offset of `s·sin(bank)`
+down-shaft. A station at distance `s` inboard travels at radius `r_ring − s·cos(bank)`
+and `s·sin(bank)` up-shaft. The radius falls as the station moves up-shaft and rises as it
+moves down-shaft, so **the whole swept surface is one truncated cone** — a cone frustum
+coaxial with the rotation axis, narrow at the inner tip, wide at the outer tip, with the
+ring circle lying on it. **It is not a flat annulus.**
+
+**What that changes.** The swept surface is still annular, and the code takes its axial
+projection: `r_out = r_ring + tip·cos(bank)` and `r_in = r_ring + hub·cos(bank)`, giving
+`π(r_out² − r_in²)`. That is consistent with the cone. The blade force splits two ways —
+an aerodynamic radial part that pushes the ring outward, and an axial part that drives
+thrust. **A plain rotor (bank 0) has no aerodynamic radial part.** It still experiences
+centripetal acceleration, because its blades spin: that loads the radial spokes in
+tension and stiffens the rotor. That is a separate effect from the bank's aerodynamic
+spreading force, and the two must not be conflated. The bank's radial force is welcome,
+not incidental: it expands the ring, which keeps the ring in tension and keeps many of
+the rotor's load paths tensile. Centrifugal load adds to the same expansion (Tulloch,
+thesis extract line 5132).
+
+**The upper bound** is blade-tip clearance at top-of-circuit during pitch depower:
+`bank ≤ 90° − θ_shaft`. At θ = 65° that gives 25°. The published search band is 0–22°;
+the code clamp is 25° (`src/objective_v10.jl`, genes `bank_top` and `bank_bottom`).
+
+**Which model owns the ring.** Any rotor may carry banked blades, the topmost (main)
+rotor included. Where banked blades are fitted, the banked model REPLACES the flat disc
+(cp/ct) model at that ring. Never both.
+
+**BLOCKED 2026-09-30. The banked model brakes the topmost ring.** The replacement above
+is the intent. The code does not implement it. It was implemented and measured on
+2026-09-30: the campaign winner (bank 19.95°, one rotor on ring 6 of 6) fell from
+5.46 kW at ω 13.46 rad/s to 0.80 kW at ω 7.1 rad/s. The clearance and the twist ratio
+did not change. Deleting only the hub guard cost 37 per cent of the power with the disc
+model still running. The expectation for a 20° misalignment is `cos^3(19.95) = 0.8306`,
+so 4.54 kW. The expansion model brakes at high solidity, and the topmost ring is the
+widest annulus in the machine. The committed code records the same result at
+`src/builders_util.jl:88-91` and `src/ring_forces.jl:255-261`, both dated 2026-08-22.
+The exclusion stands until a banked-rotor model passes the AeroDyn precone work.
+Measurements are in `docs/plans/2026-09-30-top-ring-brake-findings.md`.
+
+**OPEN — which AeroDyn knob carries the bank.** Not settled, and not to be guessed.
+AeroDyn's `ShftTilt` is the elevation; `Precone` is the only knob that cones a blade out
+of the rotor plane; `BlCrvAng` is a blade curved along its span, a different shape.
+Whether `Precone` can represent a ring-anchored banked blade is open, with three
+structural reasons to doubt it. Every knob's meaning, and those three reasons, are
+recorded in `docs/validation/trpt-reference/09-aerodyn-geometry-knobs.md`. **No
+expansion-rotor table is generated until this is ruled.**
+
 **Rule (Rod 2026-09-12): you may configure any rotor as a banked-blade expansion
 rotor, including the topmost/main rotor. All rotors should support it.**
+
+**Status 2026-09-30: the topmost ring is not available.** The rule stands. The
+implementation does not, because the banked model brakes the topmost ring. See the
+BLOCKED note above.
 
 **Model selection (Rod 2026-09-12): when the topmost rotor carries banked blades,
 the banked-blade expansion model REPLACES the cp/ct disc model at that ring.**
@@ -238,23 +312,31 @@ The correct resolution is **replace, not exclude**.
 
 **RULED (Rod, 2026-09-24): the top-ring exclusion is retired everywhere, the code
 included.** Any rotor may be an expansion rotor, the topmost rotor included.
-`CONTEXT.md` records the 2026-09-12 rule as the current one. The code does not yet.
-These sites still enforce the exclusion, and they must change:
+`CONTEXT.md` and `DECISIONS.md` record the 2026-09-12 rule as current. The code exclusion
+was retired on 2026-09-28 per `docs/plans/2026-09-24-banked-topmost-rotor.md`:
 
-- `expansion_params_from_rotors` (`builders_util.jl:90`) silently `continue`s on
-  the top ring. That is a **silent no-op**, not an error. The same guard appears
-  again at `ring_forces.jl:263` (`er.ring_idx == hub_ri && continue`).
-
-- Code hardcodes the main-rotor thrust at `hub_gid` (`ring_forces.jl:215`), so the
-  cp/ct model is not currently per-ring.
-
-- `expansion_airborne_mass` books the main rotor as `p.n_blades · p.m_blade`
-  **plus** the sum of expansion assemblies (`expansion_analysis.jl:59-62`). We
-  must not charge a banked top rotor twice.
-
-This is a physics change. It needs its own test and an acceptance run before it
-lands, per `AGENTS.md`. Until then, the exclusion is retired by ruling and
-still present in the code.
+- `expansion_params_from_rotors` (`builders_util.jl`) now includes the top ring
+  when a banked rotor is decoded on `n_rings`.
+- `ring_forces.jl` skips the legacy disc (cp/ct) thrust and torque when the
+  banked model owns the hub ring (`if !has_top_expansion(sys)`), and computes
+  expansion rotor forces for the top ring.
+- **The ownership question has ONE definition** (`top_ring_expansion`,
+  `src/expansion_rotor.jl`, 2026-09-30). `has_top_expansion(sys)` in
+  `builders_util.jl` is a thin wrapper over it. The two call sites that run before a
+  system exists (`initialization.jl`, `expansion_analysis.jl`) call the authority
+  directly. **Three separate copies of the test formerly lived in three files** — that
+  is how the top ring came to be modelled twice. Do not restate it; call it.
+- **One ring carries ONE rotor model, and a second claim RAISES** (2026-09-30).
+  `expansion_params_from_rotors` records the ring each rotor claims and raises, naming
+  the ring, when two rotors claim one ring, or when a ring index falls outside
+  `1:n_rings`. A silent second claim would count that ring's blade mass, thrust and
+  torque twice. Guarded by `test/test_banked_top_rotor.jl` (B7).
+- `expansion_airborne_mass` (`expansion_analysis.jl`) zeroes the disc blade mass when
+  the banked model owns the top ring (`m_blades = has_top_expansion ? 0.0 : p.n_blades * p.m_blade`);
+  `initialization.jl` zeroes the hub-rotor mass the same way (`m_rotor = has_top_expansion ? 0.0 : p.n_blades * p.m_blade`).
+  `objective_evaluator.jl` carries no guard of its own — it reaches the same account through
+  `expansion_airborne_mass(sys, pc)`.
+- Tested and verified in `test/test_banked_top_rotor.jl`.
 
 **Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**. Do not
 write "hub rotor". The word "hub" stays valid for the ring and the node, and never

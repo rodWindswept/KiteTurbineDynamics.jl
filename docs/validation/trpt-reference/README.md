@@ -23,12 +23,15 @@ O. Tulloch, PhD thesis, University of Strathclyde, 2021, 308 pages.
 | `05-trpt-section-physics.txt` | Verbatim pages 221-229. Torque, delta_crit, force ratio. |
 | `06-tether-drag.txt` | Verbatim pages 239-246. Tether drag and torque loss. |
 | `07-design-application.txt` | Verbatim pages 250-253. The design map in use. |
+| `08-trpt1-geometry.txt` | Verbatim pages 69-70. The TRPT-1 cone angle and the dimensioned figure. |
+| `09-aerodyn-geometry-knobs.md` | Every AeroDyn geometry knob, its meaning, and which one carries our bank angle. Written 2026-09-30. |
 | `figures/` | The printed figures, read from the PDF at 400 dpi. |
 
 The `figures/` images have these contents:
 
 | File | Figure | Printed page |
 |---|---|---|
+| `fig3.10-trpt1-cone-geometry-printed-p69.png` | The TRPT-1 geometry. Diameters and axial gaps. | 69 |
 | `eq5.3-5.4-printed-p198.png` | Equations (5.3) and (5.4) | 198 |
 | `fig5.25-torque-vs-twist-printed-p199.png` | Torque against twist. One section. | 199 |
 | `fig5.27-fig5.28-dcrit-and-force-ratio-printed-p199.png` | delta_crit against phi. Force ratio against twist. | 199 |
@@ -51,15 +54,19 @@ The `figures/` images have these contents:
 Written 2026-09-26. Eighteen reference values are recorded. Thirteen of them are checked
 by `test/test_trpt_reference.jl`. Five stay OPEN: the two tether drag torque losses, and
 the four settling times. Seven repo claims disagree with the source, in
-`03-repo-findings.md`.
+`03-repo-findings.md`. Finding F5 was resolved on 2026-09-29 from Figure 3.10.
 
 ## How to repeat the figure capture
 
+`pdftoppm` crops in pixels of its own render, so no second tool is needed.
+
 ```
 PDF="Tulloch, PhD Thesis Final Submission.pdf"
-pdftoppm -f 222 -l 222 -r 400 -png "$PDF" page222
-python3 -c "from PIL import Image; Image.open('page222-222.png').crop((700,500,3100,1900)).save('fig5.25.png')"
+# Figure 3.10, printed page 69 (PDF page 96), full drawing plus caption:
+pdftoppm -f 96 -l 96 -r 400 -x 0 -y 430 -W 3309 -H 1180 -png "$PDF" fig310
+# Figure 5.25, printed page 199 (PDF page 222), crop taken inside the page:
+pdftoppm -f 222 -l 222 -r 400 -x 700 -y 500 -W 2400 -H 1400 -png "$PDF" fig525
 ```
 
-The crop box is in pixels of the 400 dpi render. A letter page gives 3308 x 4678 pixels
-at that resolution.
+A letter page gives 3308 x 4678 pixels at 400 dpi. Read the result before you save it: a
+crop that loses the caption is not evidence.

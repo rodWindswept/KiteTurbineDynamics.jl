@@ -1,0 +1,135 @@
+TRPT reference — verbatim printed pages 69-70 (PDF pages 96-97).
+
+Source: O. Tulloch, PhD thesis, University of Strathclyde, 2021.
+
+This is the passage that carries the TRPT-1 cone angle. The text layer of the PDF
+drops the ligature characters; they are restored here as plain letters. The figure
+that decides the angle is Figure 3.10, captured at 400 dpi as
+figures/fig3.10-trpt1-cone-geometry-printed-p69.png.
+
+Read with section F5 of 03-repo-findings.md.
+
+--------------------------------------------------------------------------------
+
+--- PDF page 96 (printed page 69) ---
+
+Chapter 3.   Experimental Campaign and Design Improvement on Rotary Airborne
+Wind Energy Systems
+
+
+
+
+Figure 3.10: Diagram of the first TRPT configuration used within the Daisy Kite for
+this work, TRPT1
+
+
+
+tethers, the torque will be transmitted to the opposite end of the tethers. W&I have
+
+previously tested a TRPT that was similar to this simple configuration. Their design
+
+also included a third tether that ran through the middle of each rod. This third central
+
+tether acted as the axis of rotation about which the rods and the outer two tethers
+
+rotated. W&I found this configuration impractical, the straight rods would easily get
+
+caught inside the tethers and the system required large amounts of tension to reliably
+
+transfer torque. W&I have experimented with several TRPT designs. Later iterations
+
+of the Daisy Kite's TRPT all consist of six tethers that are equally spaced around the
+
+circumference of several carbon fibre rings.     Figure 3.10 shows a diagram of the first
+
+TRPT system that has been used within the Daisy Kite for this work.
+
+
+
+
+The rings are made of one or more straight carbon fibre tubes that are bent into shape.
+
+As with the rotor, the rings are encased in a dacron sleeve. The tethers are sewn onto
+
+the dacron sleeve at the six attachment points on each ring.      A central tether runs
+
+through the centre of each ring acting as the axis of rotation of the TRPT. Similar to
+
+the rotor, each ring has six radial tethers. These run from the tether attachment points
+
+on the ring to the central tether.   The radial tethers are joined to each other at the
+
+central tether using a small plastic disc. The disc acts to join the radial tethers and
+
+allows the TPRT to rotate independently of the central tether. As with the rotor, the
+
+radial tethers constrain the rings radial deformation.
+
+
+
+
+                                           69
+
+
+--- PDF page 97 (printed page 70) ---
+
+Chapter 3.   Experimental Campaign and Design Improvement on Rotary Airborne
+Wind Energy Systems
+
+
+
+
+          Figure 3.11: Diagram of a torsionally deformed Daisy Kite TRPT.
+
+
+
+
+The TRPT shown in Figure 3.10 is used for a number of the experiments conducted as
+
+part of this work. It consists of five carbon fibre rings, the top ring is also the Daisy
+
+Kite's rotor. The ground station has a steel wheel with a diameter of 0.42m that the
+
+tethers at the bottom of the TRPT connect on to. The TRPT shown in Figure 3.10 was
+
+                                    ◦
+designed to have a cone angle of 22 . This is to avoid any abrupt changes in the TRPT's
+
+diameter. As torsion is applied to the TRPT, the system deforms. Figure 3.11 shows
+
+an example of this. The Daisy Kite's TRPT must deform rotationally before it is able
+
+to transmit torque. In its initial state the tethers are parallel to the axis of rotation,
+
+and therefore unable to react any torsional force. Once two adjacent rings have dierent
+
+rotational positions relative to one another, the tethers are no longer parallel to the axis
+
+of rotation. The tethers are then able to react against the torsion and transmit torque
+
+along the TRPT.
+
+
+
+
+As the TRPT deforms the outer tethers move inwards towards the axis of rotation. If
+
+the six outer tethers reach the axis of rotation they will cross and the transmittable
+
+torque collapses to zero.   The rings within the TRPT act to resist this compression
+
+force, keeping the outer tethers away from the central axis. When designing the TRPT
+
+it was feared that an abrupt change in the TRPT diameter would increase the com-
+
+pression force beyond the rings ultimate strength, causing the rings to fail. By slowly
+
+decreasing the TRPT diameter from the "ying rotor down to the ground stations wheel,
+
+the compressive forces within the TRPT are kept low.
+
+
+
+
+                                            70
+
