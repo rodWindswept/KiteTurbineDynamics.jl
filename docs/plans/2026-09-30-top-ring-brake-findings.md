@@ -126,9 +126,9 @@ Commands, all on `rodbot-ThinkPad-P1-Gen-3`:
 - `git worktree add --detach ~/Documents/GitHub/ktd-bisect HEAD` makes a clean
   checkout of HEAD next to the main repo, so the `CoaxialAutogyroStacking` path
   dependency resolves.
-- `scripts/ktd-julia .scratch/probe_winner_power.jl` gives rows 1 and 2. The
+- `scripts/ktd-julia scratch/probe_winner_power.jl` gives rows 1 and 2. The
   probe copies the A1 recipe from `test/test_gate_v13.jl:34-45`.
-- `scripts/ktd-julia .scratch/probe_top_ring.jl` gives the rotor and expansion
+- `scripts/ktd-julia scratch/probe_top_ring.jl` gives the rotor and expansion
   rotor fields of section 2. The probe is structural only, with no ODE solve.
 - Row 3 is the A1 output line of the acceptance run on the working tree.
 - Row 2 needs two steps. Apply `git diff HEAD -- src/` to the worktree. Then
