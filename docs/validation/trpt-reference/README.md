@@ -25,6 +25,8 @@ O. Tulloch, PhD thesis, University of Strathclyde, 2021, 308 pages.
 | `07-design-application.txt` | Verbatim pages 250-253. The design map in use. |
 | `08-trpt1-geometry.txt` | Verbatim pages 69-70. The TRPT-1 cone angle and the dimensioned figure. |
 | `09-aerodyn-geometry-knobs.md` | Every AeroDyn geometry knob, its meaning, and which one carries our bank angle. Written 2026-09-30. |
+| `10-precone-sweep.md` | The measured precone (bank) and yaw sweep with the AeroDyn driver. What a banked rotor delivers. Written 2026-09-30. |
+| `10-precone-sweep.csv` | The 84 settled points from that sweep, with a provenance block. |
 | `figures/` | The printed figures, read from the PDF at 400 dpi. |
 
 The `figures/` images have these contents:
@@ -36,6 +38,7 @@ The `figures/` images have these contents:
 | `fig5.25-torque-vs-twist-printed-p199.png` | Torque against twist. One section. | 199 |
 | `fig5.27-fig5.28-dcrit-and-force-ratio-printed-p199.png` | delta_crit against phi. Force ratio against twist. | 199 |
 | `fig5.29-force-ratio-vs-phi-printed-p200.png` | The stability map. Force ratio against phi. | 200 |
+| `precone-sweep-Cp-vs-bank.png` | Not from the thesis. The AeroDyn precone sweep of 2026-09-30. Cp against lambda, and the bank ratio against the cos^3(beta) rule. | 2026-09-30 run |
 
 ## Rules
 

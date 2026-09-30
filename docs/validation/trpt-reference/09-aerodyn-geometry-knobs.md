@@ -188,12 +188,19 @@ expansion rotors take one blade per line (6 at six lines). The count must change
 
 ## 8. Open, for Rod's ruling
 
+**Questions 1 and 2 now have measurements against them. See `10-precone-sweep.md`.**
+
 1. **Does `Precone` reproduce our bank?** The shapes appear to agree; the pivot and the
    sign convention need checking against AeroDyn's own geometry definition. If it does not,
    `BlCrvAng` and `BlCrvAC` are the curved-blade alternatives, and a bespoke model is the
    last resort.
+   **Status 2026-09-30:** the sweep ran. `Precone` at 20 deg retains 0.854 of Cp at the
+   peak. The pivot geometry is still open, but the magnitude is now measured.
 2. **The exponent.** Keep the BEM-derived `cos²·⁶⁵`, or move to Tulloch's actuator-disc
    `cos³`? Either way the choice gets written down, because today it is not.
+   **Answered 2026-09-30 by measurement:** keep `cos²·⁶⁵`. It predicts 0.848 at 20 deg
+   against 0.854 measured, a 0.7 per cent match. `cos³` predicts 0.830, which is 2.8 per
+   cent more pessimistic. The exponent fitted from the sweep is 2.53 at 20 deg.
 3. **The dynamic-stall requirement.** Tulloch states that a BEM code modelling a rotary
    AWES rotor *must* include a dynamic stall model. The current AeroDyn settings run
    `UA_Mod = 3`, which is unsteady aero, but nobody has checked it against his
