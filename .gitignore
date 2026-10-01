@@ -45,6 +45,9 @@ trajectory_analysis/
 # Temporary/monitor CSVs — but NOT campaign results
 *.csv
 !scripts/results/**/*.csv
+# The TRPT reference values are checked source material, not scratch output.
+# They belong in git like the .md files beside them.
+!docs/validation/trpt-reference/*.csv
 # Campaign logs — but NOT stray logs elsewhere
 !scripts/results/**/*.log
 

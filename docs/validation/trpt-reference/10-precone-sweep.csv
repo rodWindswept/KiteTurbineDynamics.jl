@@ -1,12 +1,10 @@
-# AeroDyn precone (bank) and yaw sweep, KiteTurbineDynamics.jl
-# generated 2026-09-30 on rodbot-ThinkPad-P1-Gen-3
-# tool: AeroDyn_driver v5.0.0, sha256 787e23f4871255a76fcbd3f66b7e4fce0a8a1c1d168cad3094adbb0d897cd246
-# rotor: Daisy MVP, 3 blades, R 4.0 m (HubRad 1.0 + span 3.0), chord 0.500 m uniform, twist 0.0 deg, NACA 4412 Re 250k
-# geometry fingerprint: n_blades=3 R=4.0000 span=3.0000 chord=0.5000 twist=0.0 area=50.26548 m2
-# physics: BEMT WakeMod=1, SkewMod=2 Pitt/Peters, AFAeroMod=2 unsteady, UAMod=3, ShftTilt=0, no tower, wind 8.0 m/s
-# budget: 84 cases x 5.0 s at dT=2.314858e-3 s, last timestep taken; worst |dCp| over the final 200 steps = 3.4e-3
-# alignment: rows align on the COMMANDED lambda; AeroDyn RtTSR uses an angle-dependent reference length
-# source drivers: .scratch/bem_regression/precone_sweep/deck/ad_pc*.inp and ad_yw*.inp
+# aerodyn-precone-yaw-sweep  rotor=daisy-mvp  n_blades=3  R_m=4.0  chord_m=0.500  twist_deg=0  wind_ms=8.0  shfttilt_deg=0  lam=2,3,4,5,6,7,8  angles_deg=precone:0,5,10,15,20,25+yaw:0,5,10,15,20,25  cases=84  sim_s=5.0  tool=aerodyn_driver-v5.0.0  git=11eded153009
+# tool sha256 787e23f4871255a76fcbd3f66b7e4fce0a8a1c1d168cad3094adbb0d897cd246
+# geometry fingerprint n_blades=3 R=4.0000 span=3.0000 chord=0.5000 twist=0.0 area=50.26548 m2
+# physics BEMT WakeMod=1, SkewMod=2 Pitt/Peters, AFAeroMod=2 unsteady, UA_Mod=3, no tower
+# budget 84 cases x 5.0 s at dT=2.314858e-3 s, last timestep; worst |dCp| over the final 200 steps = 3.4e-3
+# alignment rows align on the COMMANDED lambda; AeroDyn RtTSR uses an angle-dependent reference length
+# generators scratch/precone_sweep/gen_precone_drivers.py, run_sweep.py, parse_sweep.py, plot_sweep.py
 kind,angle_deg,tsr_set,TSR_meas,Cp,Ct,Pwr_W,RtSpeed_rpm,Yaw_deg,case,n_steps,dCp_200,file
 precone,0,2,2.0000,0.08612,0.23656,1357.5,38.197,0.00,1.00000000E+00,2160,0.00e+00,ad_pc00.1.out
 precone,0,3,3.0000,0.19989,0.42864,3150.9,57.296,0.00,2.00000000E+00,2160,0.00e+00,ad_pc00.2.out

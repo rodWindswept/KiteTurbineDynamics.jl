@@ -110,6 +110,10 @@ measurement retains 0.854. It ignores the bank entirely.
 
 ## 5. What the measurement does not say
 
+- **Blade count.** Measured separately in `11-blade-count-sweep.md`. At matched
+  solidity a six-blade rotor retains 0.876 against the three-blade 0.854, so the
+  derate is close to blade-count independent near the peak. Six blades lose
+  marginally less, not more.
 - **This is the Daisy MVP, not the campaign winner.** R 4.0 m, uniform 0.5 m
   chord, no twist. The absolute Cp of 0.264 is not the winner's Cp. The ratio
   transfers to the bank question more reliably than the absolute value does,

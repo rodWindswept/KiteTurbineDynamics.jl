@@ -37,6 +37,15 @@ The five defects, verified 2026-09-24:
   so the claim that `CONTEXT.md` still holds the exclusion was itself stale, and the
   text goes. A code change remains owed. Section 4 lists the three sites, and the
   change is a physics change that needs its own test and acceptance run.
+  **Status 2026-10-01: the owed code change was built, measured, and REVERTED.**
+  It does not land. Applying the expansion model at the topmost ring took the
+  campaign winner from 5.46 kW to 0.80 kW, reproducing the failure the 2026-08-22
+  guards exist to prevent. The owed acceptance run was the thing that caught it.
+  The model question is now measured: a banked rotor uses the cp/ct disc model times
+  `cos(bank)^2.65`, and the expansion model is banned until its high-solidity brake
+  is fixed. Do not re-attempt this change from the documents alone. See
+  `docs/agents/physics-topology.md` §4.0.1 and
+  `docs/plans/2026-09-30-top-ring-brake-findings.md`.
 - **Defect 5 — RULED 2026-09-24, landed.** The item now states the design rule: scale
   each rotor to take **an equal share of the torque and the power requirement**. Two
   corrections follow from the geometry, and they pull in opposite directions. The

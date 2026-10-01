@@ -27,6 +27,8 @@ O. Tulloch, PhD thesis, University of Strathclyde, 2021, 308 pages.
 | `09-aerodyn-geometry-knobs.md` | Every AeroDyn geometry knob, its meaning, and which one carries our bank angle. Written 2026-09-30. |
 | `10-precone-sweep.md` | The measured precone (bank) and yaw sweep with the AeroDyn driver. What a banked rotor delivers. Written 2026-09-30. |
 | `10-precone-sweep.csv` | The 84 settled points from that sweep, with a provenance block. |
+| `11-blade-count-sweep.md` | Does the bank derate depend on blade count? Two 6-blade variants against the 3-blade baseline. Written 2026-10-01. |
+| `11-blade-count-sweep.csv` | The 84 settled points from that sweep, with a provenance block. |
 | `figures/` | The printed figures, read from the PDF at 400 dpi. |
 
 The `figures/` images have these contents:

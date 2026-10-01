@@ -10,6 +10,71 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-01] A banked rotor uses the disc model times cos^2.65. The expansion model is banned.
+
+**Context.** The `[2026-09-30]` entry recorded that the banked expansion model brakes the
+topmost ring: 5.46 kW fell to 0.80 kW. That left open which model is right. The AeroDyn
+precone sweep answered it. Method, budget and caveats:
+`docs/validation/trpt-reference/10-precone-sweep.md`.
+
+**Measured.** AeroDyn v5.0.0 driver, 84 cases, rotor Daisy MVP (3 blades, R 4.0 m,
+uniform chord 0.500 m, zero twist), `SkewMod=2` so the skewed inflow is modelled,
+`ShftTilt=0` so the bank is isolated. Cp retention at the Cp peak, commanded lambda 4.0:
+
+| Model | Retains at 20° bank |
+|---|---|
+| disc cp/ct, no bank factor | 1.000 |
+| **measured, AeroDyn precone** | **0.854** |
+| disc cp/ct times `cos(bank)^2.65` | 0.848 |
+| `cos^3(beta)`, Tulloch Eq. (4.1) | 0.830 |
+| the banked expansion model | 0.147 |
+
+A second sweep on 2026-10-01 tested the blade count, because the result could have been
+a property of a 3-blade rotor. At matched solidity a 6-blade rotor retains 0.876 against
+the 3-blade 0.854, and a 6-blade rotor at doubled solidity retains 0.841 at its own peak.
+`cos^2.65` sits inside the measured band for all three. Detail:
+`docs/validation/trpt-reference/11-blade-count-sweep.md`.
+
+**Ruled.** The accurate model for a banked rotor, the topmost ring included, is **the
+cp/ct disc model multiplied by `cos(bank)^2.65` for power**.
+
+- The expansion model is **banned at every ring** until its high-solidity brake is fixed.
+  It retains 0.147 where the measurement retains 0.854, a factor of 5.81.
+- The bare disc model is **15 per cent optimistic** at 20° of bank. Do not use it unchanged.
+- `cos^2.65` matches the measurement to 0.7 per cent, and it is the SAME exponent the repo
+  already applies for elevation. No second exponent is introduced. The exponent fitted
+  from the sweep is 2.53, and the three blade-count configurations give 2.13 to 2.78, so
+  2.65 sits inside the band.
+- `cos^3` is 2.8 per cent more pessimistic, so Tulloch's row survives as the conservative
+  alternative.
+- **Bank is not yaw.** At the peak a 20° yaw retains 1.010 and a 20° bank retains 0.854.
+  Yaw redistributes the local angle of attack. Bank cones the blade out of its own plane
+  and loses projected radius. Do not substitute one for the other.
+- **Thrust is unmeasured.** Both sweeps measured Cp only. Do not copy 2.65 onto Ct.
+
+**Not yet applied in code.** The derate would take the campaign winner from 5.46 kW to
+about 4.66 kW, below the 5.0 kW floor asserted by `test/test_gate_v13.jl` A1 and
+`test/test_evaluator_v13.jl` B6c. Applying it re-baselines the 5 kW campaign, so it waits
+on the owner.
+
+**Alternatives considered.** Modelling bank as yaw misalignment, which the record
+previously leaned towards. Rejected by measurement: yaw is nearly free at the peak and
+bank is not. Landing the expansion model and fixing its brake afterwards. Rejected: the
+brake is a physics problem in the induction model, not a local defect.
+
+**Why.** Three models disagreed by a factor of 5.8 and the record carried no measurement.
+It now carries two, and they agree.
+
+**Enables and rules out.** Enables an accurate banked-rotor power estimate from a measured
+rule, and gives the top-ring ruling a number to proceed with. Rules out the expansion model
+at any ring until it is fixed, and rules out the bare disc model for a banked rotor.
+
+**Still active.** Yes. The rule is recorded in `docs/agents/physics-topology.md` §4.0.1,
+`CONTEXT.md` and `AGENTS.md`. Applying it to `src/` awaits the owner's ruling on the 5 kW
+re-baseline.
+
+---
+
 ## [2026-09-30] The top-ring exclusion stands: the banked model brakes the topmost ring when measured
 
 **Context.** The `[2026-09-24]` entry retired the top-ring exclusion and left the code change owed,

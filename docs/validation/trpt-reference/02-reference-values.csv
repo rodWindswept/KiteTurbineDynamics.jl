@@ -1,0 +1,27 @@
+# trpt-reference-values  source=O-Tulloch-PhD-Strathclyde-2021  extract=docs/validation/tulloch-thesis-extract.txt  rows=22  status=MATCH|OPEN  rule=no-physics-claim-in-src-without-a-row-here  git=11eded153009
+# Every row is transcribed from the printed text or a printed figure, and cites the page and the printed sentence in `source`.
+# status MATCH means our code agrees within `tolerance`.  status OPEN means the value is printed and we have not asserted it.
+# `git=` names the tree the transcription was last checked against.
+id,quantity,geometry,printed_value,units,source,our_value,tolerance,status
+R1,delta_crit for one section,"R=0.4 m, l_t=1 m, phi=2.5",104,deg,"printed p199 text: ""the maximum transmittable torque is 100Nm and delta_crit is equal to 104""",104.4775,0.6,MATCH
+R2,maximum torque,"R=0.4 m, l_t=1 m, F_x=500 N, phi=2.5",100,N.m,"printed p199 text and Figure 5.25 (dashed line at 100 N.m)",100.0000,0.05,MATCH
+R3,maximum force ratio,"R=0.4 m, l_t=1 m, phi=2.5",0.5,-,"printed p199 text: ""in the case shown in Figure 5.28 this value is 0.5""",0.5000,0.0001,MATCH
+R4,phi at force ratio 0.17,equal radii,6,-,"printed p201 text: ""with a force ratio of 0.17, the length to radius ratio of the TRPT can be as high as 6""",6.0500,0.10,MATCH
+R5,phi at force ratio 0.72,equal radii,2.11,-,"printed p201 text: ""a maximum force ratio of 0.72 ... corresponds to a maximum length to radius ratio of 2.11""",2.1089,0.030,MATCH
+R6,force ratio at phi=2,equal radii,1.0,-,"Figure 5.29 printed p200: upper boundary of the stable region at the left edge",1.0000,0.020,MATCH
+R7,minimum delta_crit over all phi,equal radii,90,deg,"printed p198 text: ""the minimum value of delta_crit is 90"" and Figure 5.27",90.00 (limit),0.20,MATCH
+R8,delta_crit at phi=2,equal radii,180,deg,"equation (5.4) printed p198 with phi=2",180.00,0.01,MATCH
+R9,phi of the laboratory rig,"two 0.62 m diameter wheels, tethers 0.65 m",2.10,-,"printed p81: ""two 0.62m diameter wheels connected by 6 tethers ... The tethers have a length of 0.65m""",2.0968,0.010,MATCH
+R10,torque loss in TRPT#4 at drag coefficient 1.2,"Daisy prototype, tip speed ratio 4.0",4.9,N.m,"printed p218 text",not computed,-,OPEN
+R11,torque loss in TRPT#4 at drag coefficient 2.7,"Daisy prototype, tip speed ratio 3.8",9.9,N.m,"printed p218 text",not computed,-,OPEN
+R12,peak torque curve shape,phi=2.5,zero at 0 and 180 deg,-,"Figure 5.25 printed p199",zero at both,1e-9,MATCH
+R13,force ratio rises as phi falls,equal radii,monotonic,-,"Figure 5.29 printed p200",monotonic,0,MATCH
+R14,settling time at 6 m/s,"Daisy Kite, TRPT#4 10.3 m, tip speed ratio 4.0, 1 N.m step held 0.5 s",200,s,"Table 5.13 printed p228",not run,-,OPEN
+R15,settling time at 8 m/s,same,167,s,"Table 5.13 printed p228",not run,-,OPEN
+R16,settling time at 10 m/s,same,136,s,"Table 5.13 printed p228",not run,-,OPEN
+R17,settling time at 12 m/s,same,106,s,"Table 5.13 printed p228",not run,-,OPEN
+R18,whole-TRPT torsional stiffness across 6 to 12 m/s,"four printed bands, one per wind speed",35-60 65-110 100-170 145-245,N.m,"Table 5.13 printed p228",not computed,-,OPEN
+R19,best-fit tether drag coefficient for Daisy configuration 8,TRPT#4,2.7,-,"Figure 5.40(b) printed p218; source calls it ""over double the value of 1.2 used in all other simulations""",not computed,-,OPEN
+R20,bridle line torque loss,"three blades, two 1 m lines each, mid radii 1.3 and 1.6 m, 25 deg elevation, 8 m/s, tip speed ratio 4.0",3.7,N.m,"printed p219 text",not computed,-,OPEN
+R21,whole torque loss including the bridle lines,"same conditions as R10",8.6,N.m,"printed p219 text: ""from 4.9Nm to 8.6Nm""",not computed,-,OPEN
+R22,drag model scope,"all printed cases",main TRPT lines only; rings and bridle lines neglected,-,"printed p219 text",rings neglected in our model too; bridles untested (F10),-,OPEN

@@ -308,35 +308,62 @@ the banked-blade expansion model REPLACES the cp/ct disc model at that ring.**
 Never apply both models to the same annulus.
 
 That error was the original defect (2026-08-22), and it caused the top-ring exclusion.
-The correct resolution is **replace, not exclude**.
+The intended resolution is **replace, not exclude**. **But read the measured status
+below before acting on it: on 2026-10-01 the replacement brakes the machine, so
+EXCLUDE is still what the code does, and what it must keep doing until the brake is
+fixed.**
 
-**RULED (Rod, 2026-09-24): the top-ring exclusion is retired everywhere, the code
-included.** Any rotor may be an expansion rotor, the topmost rotor included.
-`CONTEXT.md` and `DECISIONS.md` record the 2026-09-12 rule as current. The code exclusion
-was retired on 2026-09-28 per `docs/plans/2026-09-24-banked-topmost-rotor.md`:
+**RULED (Rod, 2026-09-24): the top-ring exclusion is retired as an INTENT.** Any
+rotor may be an expansion rotor, the topmost rotor included. That ruling stands.
 
-- `expansion_params_from_rotors` (`builders_util.jl`) now includes the top ring
-  when a banked rotor is decoded on `n_rings`.
-- `ring_forces.jl` skips the legacy disc (cp/ct) thrust and torque when the
-  banked model owns the hub ring (`if !has_top_expansion(sys)`), and computes
-  expansion rotor forces for the top ring.
-- **The ownership question has ONE definition** (`top_ring_expansion`,
-  `src/expansion_rotor.jl`, 2026-09-30). `has_top_expansion(sys)` in
-  `builders_util.jl` is a thin wrapper over it. The two call sites that run before a
-  system exists (`initialization.jl`, `expansion_analysis.jl`) call the authority
-  directly. **Three separate copies of the test formerly lived in three files** — that
-  is how the top ring came to be modelled twice. Do not restate it; call it.
-- **One ring carries ONE rotor model, and a second claim RAISES** (2026-09-30).
-  `expansion_params_from_rotors` records the ring each rotor claims and raises, naming
-  the ring, when two rotors claim one ring, or when a ring index falls outside
-  `1:n_rings`. A silent second claim would count that ring's blade mass, thrust and
-  torque twice. Guarded by `test/test_banked_top_rotor.jl` (B7).
-- `expansion_airborne_mass` (`expansion_analysis.jl`) zeroes the disc blade mass when
-  the banked model owns the top ring (`m_blades = has_top_expansion ? 0.0 : p.n_blades * p.m_blade`);
-  `initialization.jl` zeroes the hub-rotor mass the same way (`m_rotor = has_top_expansion ? 0.0 : p.n_blades * p.m_blade`).
-  `objective_evaluator.jl` carries no guard of its own — it reaches the same account through
-  `expansion_airborne_mass(sys, pc)`.
-- Tested and verified in `test/test_banked_top_rotor.jl`.
+**THE CODE DOES NOT IMPLEMENT IT, AND MUST NOT YET.** On 2026-09-30 the
+implementation was built, measured, and reverted. `src/` and `test/` are
+byte-identical to commit `1b4d9be`. Read the current state carefully, because an
+earlier version of this section claimed the change was live:
+
+- `expansion_params_from_rotors` (`builders_util.jl`) **still excludes the top
+  ring**: `rotor.ring_idx == n_rings && continue`, with no message.
+- `ring_forces.jl` **still excludes the hub ring from the expansion loop**:
+  `er.ring_idx == hub_ri && continue`, the HUB GUARD dated 2026-08-22.
+- `top_ring_expansion` and `has_top_expansion` **do not exist in `src/`**. They
+  belonged to the reverted work.
+- `test/test_banked_top_rotor.jl` sits in the working tree but is **unregistered**
+  in `test/runtests.jl`, because every assertion in it encodes the reverted rule.
+
+Both committed guards carry the reason in their own comments: the expansion
+alpha/induction model brakes at high solidity, and applying it at the hub ring
+"killed the 5 kW seed". The 2026-09-30 measurement reproduced that exactly.
+
+### 4.0.1 WHICH MODEL TO USE FOR A BANKED ROTOR — the rule, as measured
+
+**Use the cp/ct disc model WITH the bank derate. Do not use the banked expansion
+model. Do not use the disc model without the derate either.**
+
+| Model | Retention at 20° bank | Status |
+|---|---|---|
+| disc cp/ct, no bank factor | 1.000 | **15 per cent optimistic.** This is what the code does today |
+| disc cp/ct **times `cos(bank)^2.65`** | **0.848** | **USE THIS.** Matches the measurement to 0.7 per cent |
+| the banked expansion model | 0.147 | **BANNED.** It brakes, and it is 5.8 times too low |
+
+The measured retention is 0.854. Source: the AeroDyn precone sweep of 2026-09-30,
+84 cases, rotor Daisy MVP. Method, budget and caveats are in
+`docs/validation/trpt-reference/10-precone-sweep.md`.
+
+- **Power:** multiply the disc Cp by `cos(bank)^2.65`. That is the SAME exponent
+  the repo already applies for elevation. Do not invent a second exponent.
+- **Thrust:** **unmeasured.** The sweep measured Cp only. Do not copy 2.65 onto Ct
+  without measuring it first.
+- **Do not model bank as yaw.** At the Cp peak a 20° yaw retains 1.010, so yaw
+  costs almost nothing, while a 20° bank retains 0.854. The mechanisms differ: yaw
+  redistributes the local angle of attack, bank cones the blade out of its own
+  plane and loses projected radius.
+- **The derate is not constant off the peak.** At commanded lambda 6.0 a 20° bank
+  retains only 0.331, because the whole Cp curve shifts and lowers.
+
+**Do not apply the derate in code without a ruling.** It would take the campaign
+winner from 5.46 kW to about 4.66 kW, below the 5.0 kW floor asserted by
+`test/test_gate_v13.jl` (A1) and `test/test_evaluator_v13.jl` (B6c). That is a
+re-baseline of the 5 kW campaign, not a local edit.
 
 **Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**. Do not
 write "hub rotor". The word "hub" stays valid for the ring and the node, and never
