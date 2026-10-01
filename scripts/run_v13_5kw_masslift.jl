@@ -79,7 +79,7 @@ const WINDOW_S = 40.0       # HONEST measurement window (2026-08-21 open task): 
                               # k·ω³ ≈ 3.15 kW); tail5 now sits at 35-40 s. relax_s matches.
 
 # ── Provenance (Daisy-anchored, mass-aware constant-tension regime) ──────
-const PHYSICS_ERA = "post-4ce9fd0_daisy-anchored-5kw"
+const PHYSICS_ERA = "post-94223eb_bank-derate"
 const GIT_HASH = try
     chomp(read(`git rev-parse HEAD`, String))
 catch
