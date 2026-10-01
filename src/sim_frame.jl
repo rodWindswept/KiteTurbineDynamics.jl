@@ -155,7 +155,8 @@ function capture_frame(
         π *
         (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
         cp_at_tsr(lambda_t) *
-        cos(p.elevation_angle)^2.65
+        cos(p.elevation_angle)^2.65 *
+        cosd(sys.rotor.bank_angle_deg)^2.65   # bank derate, measured 2026-10-01
     tau_aero = P_aero / max(abs(omega_hub), 0.5)
 
     # ── Structural ────────────────────────────────────────────────────────
@@ -166,10 +167,13 @@ function capture_frame(
     # Ring buckling safety — ground ring (index 1) excluded: it is ground-supported
     # and can be arbitrarily strong (doesn't count against airborne mass).
     rea_results = ring_element_analysis(u, collect(alpha_vec), sys, p, t, wind_fn)
-    ring_beam_utils = [any(isnan, [b.utilisation for b in ref.beams]) ?
-                       zeros(length(ref.beams)) :
-                       [b.utilisation for b in ref.beams]
-                       for ref in rea_results]
+    ring_beam_utils = [
+        if any(isnan, [b.utilisation for b in ref.beams])
+            zeros(length(ref.beams))
+        else
+            [b.utilisation for b in ref.beams]
+        end for ref in rea_results
+    ]
     ring_utils = [isnan(ref.max_util) ? 0.0 : ref.max_util for ref in rea_results]
     max_util = isempty(ring_utils) ? 0.0 : maximum(ring_utils)
     fos_ring = max_util > 0.0 ? 1.0 / max_util : Inf
@@ -182,9 +186,9 @@ function capture_frame(
     max_sag_mm = 0.0
     sag_seg = 1
     for s in 1:n_seg
-        gid_a2 = sys.ring_ids[s];
+        gid_a2 = sys.ring_ids[s]
         gid_b2 = sys.ring_ids[s + 1]
-        na2 = sys.nodes[gid_a2]::RingNode;
+        na2 = sys.nodes[gid_a2]::RingNode
         nb2 = sys.nodes[gid_b2]::RingNode
         ctr_a2 = u[(3 * (gid_a2 - 1) + 1):(3 * gid_a2)]
         ctr_b2 = u[(3 * (gid_b2 - 1) + 1):(3 * gid_b2)]
@@ -197,15 +201,14 @@ function capture_frame(
         stride_s = 1 + p.n_lines * ROPE_NODES_PER_LINE
         gid_mid = (s-1)*stride_s + 2 + (cld(ROPE_NODES_PER_LINE, 2) - 1)  # middle rope node, line 1
         pm = u[(3 * (gid_mid - 1) + 1):(3 * gid_mid)]
-        AB = pb_sag .- pa_sag;
+        AB = pb_sag .- pa_sag
         len2 = dot(AB, AB)
         if len2 > 1e-18
             foot = pa_sag .+ (dot(pm .- pa_sag, AB) / len2) .* AB
             sag = norm(pm .- foot) * 1000.0
             if sag > max_sag_mm
-                ;
-                max_sag_mm = sag;
-                sag_seg = s;
+                max_sag_mm = sag
+                sag_seg = s
             end
         end
     end
@@ -363,29 +366,32 @@ function capture_extended(
     p::SystemParams,
     t::Float64,
     wind_fn::Function,
-    lift_device::Union{Nothing,LiftDevice}=nothing;
-    hub_z0::Union{Nothing,Float64}=nothing,
+    lift_device::Union{Nothing, LiftDevice}=nothing;
+    hub_z0::Union{Nothing, Float64}=nothing,
     brake_engaged::Bool=sys.brake_engaged[],
 )
-    base = capture_frame(u, sys, p, t, wind_fn, lift_device;
-                         hub_z0=hub_z0, brake_engaged=brake_engaged)
+    base = capture_frame(
+        u, sys, p, t, wind_fn, lift_device; hub_z0=hub_z0, brake_engaged=brake_engaged
+    )
 
-    N = sys.n_total; Nr = sys.n_ring; n_seg = Nr - 1
+    N = sys.n_total
+    Nr = sys.n_ring
+    n_seg = Nr - 1
     alpha_vec = @view u[(6N + 1):(6N + Nr)]
     omega_gnd = abs(u[6N + Nr + 1])
     hub_gid = sys.rotor.node_id
-    hub_ctr = u[(3*(hub_gid-1)+1):(3*hub_gid)]
+    hub_ctr = u[(3 * (hub_gid - 1) + 1):(3 * hub_gid)]
     hub_ri = (sys.nodes[hub_gid]::RingNode).ring_idx
 
     # ── Per-ring structural ────────────────────────────────────────
     rea = ring_element_analysis(u, collect(alpha_vec), sys, p, t, wind_fn)
-    ring_fos   = Float64[]
+    ring_fos = Float64[]
     ring_Ncomp = Float64[]
     ring_Pcrit = Float64[]
-    ring_util_axial  = Float64[]  # N/N_crit from worst-utilisation beam, per ring
+    ring_util_axial = Float64[]  # N/N_crit from worst-utilisation beam, per ring
     ring_util_bending = Float64[] # √(M_ip²+M_oop²)/M_el from same beam, per ring
     for ref in rea
-        wN  = maximum(b.N for b in ref.beams; init=0.0)
+        wN = maximum(b.N for b in ref.beams; init=0.0)
         wNc = maximum(b.N_crit for b in ref.beams; init=1.0)
         # Pull axial and bending shares from the beam that produced max_util,
         # not independent maxima.  This guarantees wA + wB = max_util so the
@@ -403,7 +409,9 @@ function capture_extended(
             wA = 0.0
             wB = 0.0
         end
-        push!(ring_fos, (isnan(ref.max_util) || ref.max_util <= 0) ? Inf : 1.0 / ref.max_util)
+        push!(
+            ring_fos, (isnan(ref.max_util) || ref.max_util <= 0) ? Inf : 1.0 / ref.max_util
+        )
         push!(ring_Ncomp, wN)
         push!(ring_Pcrit, wNc)
         push!(ring_util_axial, wA)
@@ -411,7 +419,7 @@ function capture_extended(
     end
 
     # ── Per-segment twist ──────────────────────────────────────────
-    segment_twist = [rad2deg(mod(alpha_vec[i+1]-alpha_vec[i]+π, 2π)-π) for i in 1:n_seg]
+    segment_twist = [rad2deg(mod(alpha_vec[i + 1]-alpha_vec[i]+π, 2π)-π) for i in 1:n_seg]
 
     # ── Per-segment tension ────────────────────────────────────────
     perp1, perp2 = _tilted_ring_basis(u, sys, hub_gid, hub_ri)
@@ -462,14 +470,22 @@ function capture_extended(
     rl, ra, rg, ro = String[], Float64[], Float64[], Float64[]
     lambda = clamp(abs(base.omega_hub) * sys.rotor.radius / V_hub, 0.0, 12.0)
     cp = cp_at_tsr(lambda)
-    Pa = 0.5 * p.rho * V_hub^3 * π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
-         cp * cos(p.elevation_angle)^2.65
+    Pa =
+        0.5 *
+        p.rho *
+        V_hub^3 *
+        π *
+        (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
+        cp *
+        cos(p.elevation_angle)^2.65 *
+        cosd(sys.rotor.bank_angle_deg)^2.65
     # Hub "ground" power = the hub rotor's OWN contribution referred to the ground
     # shaft (tau_aero · omega_gnd), NOT base.P_kw. base.P_kw is the TOTAL generator
     # electrical output (it also reacts the expansion-rotor torques); using it here
     # made the hub dial show >100% "efficiency". With this per-rotor definition the
     # hub + expansion dials approximately SUM to base.P_kw (the GEN ELEC kW KPI).
-    push!(rl, "Hub"); push!(ra, Pa/1000)
+    push!(rl, "Hub")
+    push!(ra, Pa/1000)
     push!(rg, max(0.0, abs(base.tau_aero * base.omega_gnd) / 1000))
     push!(ro, abs(base.omega_hub))
 
@@ -478,24 +494,48 @@ function capture_extended(
             ri = er.ring_idx
             ri < 1 || ri > Nr && continue
             rgid = sys.ring_ids[ri]
-            rpos = u[(3*(rgid-1)+1):(3*rgid)]
-            rω   = abs(u[6N+Nr+ri])
+            rpos = u[(3 * (rgid - 1) + 1):(3 * rgid)]
+            rω = abs(u[6N + Nr + ri])
             rnom = (sys.nodes[rgid]::RingNode).radius
-            vw = wind_fn(rpos, t); vm = max(sqrt(vw[1]^2+vw[2]^2), 0.1)
-            T_est = ri > 1 ? sum(get_segment_tension(u, sys, p, ri-1, j) for j in 1:p.n_lines)/p.n_lines : 100.0
+            vw = wind_fn(rpos, t)
+            vm = max(sqrt(vw[1]^2+vw[2]^2), 0.1)
+            T_est = if ri > 1
+                sum(get_segment_tension(u, sys, p, ri-1, j) for j in 1:p.n_lines)/p.n_lines
+            else
+                100.0
+            end
             T_est = max(T_est, 100.0)
             try
-                _, _, tn, _, _ = expansion_rotor_forces(er, p.rho, vm, rω, elev_deg, rnom, T_est, p.n_lines)
-                push!(ra, tn*rω/1000); push!(rg, max(0.0, tn*omega_gnd/1000))
+                _, _, tn, _, _ = expansion_rotor_forces(
+                    er, p.rho, vm, rω, elev_deg, rnom, T_est, p.n_lines
+                )
+                push!(ra, tn*rω/1000)
+                push!(rg, max(0.0, tn*omega_gnd/1000))
             catch e
-                @warn "capture_extended: expansion_rotor_forces failed for R$(ri)" exception=(e, catch_backtrace())
-                push!(ra, NaN); push!(rg, NaN)
+                @warn "capture_extended: expansion_rotor_forces failed for R$(ri)" exception=(
+                    e, catch_backtrace()
+                )
+                push!(ra, NaN)
+                push!(rg, NaN)
             end
-            push!(rl, "R$(ri)"); push!(ro, rω)
+            push!(rl, "R$(ri)")
+            push!(ro, rω)
         end
     end
 
-    return ExtendedSimFrame(base, ring_fos, ring_Ncomp, ring_Pcrit,
-        ring_util_axial, ring_util_bending,
-        segment_twist, segment_tension, segment_torque, rl, ra, rg, ro)
+    return ExtendedSimFrame(
+        base,
+        ring_fos,
+        ring_Ncomp,
+        ring_Pcrit,
+        ring_util_axial,
+        ring_util_bending,
+        segment_twist,
+        segment_tension,
+        segment_torque,
+        rl,
+        ra,
+        rg,
+        ro,
+    )
 end

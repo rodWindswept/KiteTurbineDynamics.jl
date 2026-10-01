@@ -52,10 +52,28 @@ cp/ct disc model multiplied by `cos(bank)^2.65` for power**.
   and loses projected radius. Do not substitute one for the other.
 - **Thrust is unmeasured.** Both sweeps measured Cp only. Do not copy 2.65 onto Ct.
 
-**Not yet applied in code.** The derate would take the campaign winner from 5.46 kW to
-about 4.66 kW, below the 5.0 kW floor asserted by `test/test_gate_v13.jl` A1 and
-`test/test_evaluator_v13.jl` B6c. Applying it re-baselines the 5 kW campaign, so it waits
-on the owner.
+**Applied in `src/` on 2026-10-01, on Rod's ruling, at every site that computes the main
+rotor disc power.** `RotorSpec` carries a `bank_angle_deg` field, the builder threads it
+from the genome's topmost rotor, and four sites multiply their disc power by
+`cosd(bank)^2.65`: `src/ring_forces.jl` (the ODE), `src/initialization.jl`
+(`settle_aero_power`, the cold-start settle scan) and `src/sim_frame.jl` twice (the torque
+balance and the per-rotor power). Guarded by a new testset in `test/test_ring_forces.jl`.
+**The settle and the ODE must carry the same factor.** They disagreed until 2026-10-01,
+which failed `test_settle_drag_alignment` until the other three sites were fixed. The
+completeness check is `grep -rn "2\.65" src/`: every site with the elevation factor needs
+the bank factor beside it.
+
+**Consequence, and it is the correct signal, not a regression.** The campaign winner now
+reads **4.888 kW at omega 12.97**, against 5.461 kW at 13.46 before. The power drop is
+entirely the fall in shaft speed: `4.888 / 5.461 = 0.895`, and `(12.97 / 13.46)^3 = 0.895`.
+That is below the 5.0 kW floor asserted by three acceptance tests, so the acceptance suite
+goes red until a winner is found under the corrected model. The design is not broken. It no
+longer reaches 5 kW once a 20° bank is costed.
+
+**The pre-derate campaign is superseded, not void.** It searched a space in which bank
+was free, so it selected designs that lean on un-banked performance. The re-baseline runs
+the same campaign under the corrected model. See
+`handovers/handover-2026-10-01-bank-derate-and-5kw-rebaseline.md`.
 
 **Alternatives considered.** Modelling bank as yaw misalignment, which the record
 previously leaned towards. Rejected by measurement: yaw is nearly free at the peak and
@@ -69,9 +87,9 @@ It now carries two, and they agree.
 rule, and gives the top-ring ruling a number to proceed with. Rules out the expansion model
 at any ring until it is fixed, and rules out the bare disc model for a banked rotor.
 
-**Still active.** Yes. The rule is recorded in `docs/agents/physics-topology.md` §4.0.1,
-`CONTEXT.md` and `AGENTS.md`. Applying it to `src/` awaits the owner's ruling on the 5 kW
-re-baseline.
+**Still active.** Yes, and now implemented in `src/`. The rule is recorded in
+`docs/agents/physics-topology.md` section 4.0.1, `CONTEXT.md` and `AGENTS.md`. The 5 kW
+campaign re-baseline is owed, and the acceptance suite stays red until it lands.
 
 ---
 

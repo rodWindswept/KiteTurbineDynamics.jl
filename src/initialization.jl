@@ -152,6 +152,9 @@ function _build_kite_turbine_system_impl(
     # (2026-08-20: ring-anchored 70/30 annulus, consistent with expansion rotors).
     main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
     # (1.0 = freestream; <1 = downstream wake de-rate, 2026-08-26).
+    main_rotor_bank_deg::Float64=0.0,     # main (hub) rotor blade bank out of the ring
+    # plane (deg); 0.0 = planar disc.  The disc branch keeps cos(bank)^2.65 of its power
+    # (measured 2026-10-01; see docs/agents/physics-topology.md section 4.0.1).
 )
     n_seg = length(seg_lengths)
     n_ring = n_seg + 1
@@ -299,6 +302,7 @@ function _build_kite_turbine_system_impl(
         m_rotor,
         m_rotor * p.rotor_radius^2,
         main_rotor_wind_factor,
+        main_rotor_bank_deg,
     )
     kite = KiteSpec(ring_ids[end], kite_area, kite_mass, 1.2, 0.1, kite_tether_length)
 
@@ -462,6 +466,7 @@ function build_kite_turbine_system(
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
     main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
+    main_rotor_bank_deg::Float64=0.0,     # main (hub) rotor blade bank (deg); 0.0 = planar
 )
     n_seg = p.n_rings + 1
     r_top = p.trpt_hub_radius
@@ -495,6 +500,7 @@ function build_kite_turbine_system(
         expansion_rotors=expansion_rotors,
         rotor_blade_hub_radius=rotor_blade_hub_radius,
         main_rotor_wind_factor=main_rotor_wind_factor,
+        main_rotor_bank_deg=main_rotor_bank_deg,
     )
 end
 
@@ -524,6 +530,7 @@ function build_kite_turbine_system_v5(
     expansion_rotors::Vector{ExpansionRotorParams}=ExpansionRotorParams[],
     rotor_blade_hub_radius::Float64=0.0,  # main-rotor annulus inner tip (see impl)
     main_rotor_wind_factor::Float64=1.0,  # main (hub) rotor inflow multiplier
+    main_rotor_bank_deg::Float64=0.0,     # main (hub) rotor blade bank (deg); 0.0 = planar
 )
     z_positions, ring_radii_computed, n_rings_computed = ring_spacing_v5(
         p.trpt_hub_radius,
@@ -550,6 +557,7 @@ function build_kite_turbine_system_v5(
         expansion_rotors=expansion_rotors,
         rotor_blade_hub_radius=rotor_blade_hub_radius,
         main_rotor_wind_factor=main_rotor_wind_factor,
+        main_rotor_bank_deg=main_rotor_bank_deg,
     )
 end
 
@@ -1022,7 +1030,11 @@ function settle_aero_power(
         π *
         (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
         cp_at_tsr(lambda) *
-        cos(p.elevation_angle)^2.65
+        cos(p.elevation_angle)^2.65 *
+        # Bank derate, measured 2026-10-01.  This MUST match the ODE disc branch in
+        # ring_forces.jl, or the settle scan and the ODE find different equilibria
+        # (test_settle_drag_alignment).
+        cosd(sys.rotor.bank_angle_deg)^2.65
     # Expansion rotors — each de-rated by its own wind factor (the lowest,
     # upstream rotor keeps 1.0).
     P_exp = 0.0

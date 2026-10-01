@@ -108,6 +108,12 @@ formulation.
 **5. The disc model is mildly optimistic.** It retains 1.000 where the
 measurement retains 0.854. It ignores the bank entirely.
 
+**6. The rule is now in the code.** Applied 2026-10-01 on Rod's ruling.
+`RotorSpec.bank_angle_deg` carries the topmost rotor's bank, and
+`src/ring_forces.jl` multiplies that rotor's disc power by `cosd(bank)^2.65`.
+The campaign winner falls from 5.461 kW to 4.888 kW, below the 5.0 kW acceptance
+floor, so the 5 kW campaign is being re-baselined.
+
 ## 5. What the measurement does not say
 
 - **Blade count.** Measured separately in `11-blade-count-sweep.md`. At matched

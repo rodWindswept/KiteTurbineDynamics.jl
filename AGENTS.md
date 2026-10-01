@@ -36,15 +36,18 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
   BEM-coupled v2/v5 solver formulations described in `DECISIONS.md`.
 - **Banked rotors: disc model plus the bank derate. Never the expansion model.**
   For any rotor carrying banked blades, **the topmost ring included**, use the
-  cp/ct disc model multiplied by `cos(bank)^2.65` for power. **Do not use the
+  cp/ct disc model multiplied by `cos(bank)^2.65` for power. **This is now
+  implemented** — `RotorSpec.bank_angle_deg`, threaded from the genome, applied in
+  `src/ring_forces.jl` and guarded by `test/test_ring_forces.jl`. **Do not use the
   banked-blade expansion model** — it brakes, it is 5.8 times too low, and its own
   committed comment records that it "killed the 5 kW seed". Do not use the bare
   disc model either: it ignores bank and is 15 per cent optimistic at 20°. Do not
   model bank as yaw; a 20° yaw costs almost nothing while a 20° bank costs 15 per
-  cent. Thrust has no measured bank derate. Measured 2026-09-30 — read §4.0.1 of
+  cent. Thrust has no measured bank derate. Read §4.0.1 of
   [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md) before any
-  banked-rotor work, and do not apply the derate in code without a ruling: it
-  drops the campaign winner below the 5 kW acceptance floor.
+  banked-rotor work. **The 5 kW campaign is being re-baselined**: the derate drops
+  the old winner to 4.888 kW, below the 5.0 kW floor the acceptance asserts, so the
+  acceptance suite is red until a winner under the corrected model lands.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
 - **Formatting.** Run `scripts/ktd-format` (JuliaFormatter, config in
   `.JuliaFormatter.toml`, Blue style) before committing so diffs stay focused on

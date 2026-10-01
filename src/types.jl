@@ -88,15 +88,24 @@ struct RotorSpec
     node_id::Int
     radius::Float64          # OUTER tip radius r_out (m) — TSR + tip-speed reference
     blade_hub_radius::Float64  # INNER tip radius r_in of the swept annulus (m, ≥ 0).
-                             # Swept area = π(r_out² − r_in²). 0.0 = legacy full disk.
+    # Swept area = π(r_out² − r_in²). 0.0 = legacy full disk.
     mass::Float64
     inertia_z::Float64
     wind_factor::Float64     # inflow multiplier (1.0 = freestream; <1 = downstream wake)
+    bank_angle_deg::Float64  # blade bank out of the ring plane (deg). 0.0 = planar disc.
+    # The disc branch keeps cos(bank)^2.65 of its power
+    # (measured 2026-10-01; physics-topology.md section 4.0.1).
 end
 
-# Backward-compat: legacy 5-arg construction means freestream (no blocking).
-RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z) =
-    RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z, 1.0)
+# Backward-compat: legacy 5-arg construction means freestream (no blocking), planar.
+function RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z)
+    return RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z, 1.0, 0.0)
+end
+
+# Backward-compat: 6-arg construction means planar (bank 0).
+function RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z, wind_factor)
+    return RotorSpec(node_id, radius, blade_hub_radius, mass, inertia_z, wind_factor, 0.0)
+end
 
 struct KiteSpec
     node_id::Int

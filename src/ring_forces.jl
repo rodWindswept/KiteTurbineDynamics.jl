@@ -219,7 +219,8 @@ function compute_ring_forces!(
                 v_hub_mag^3 *
                 main_rotor_swept_area(sys) *
                 cp_at_tsr(lambda_t) *
-                cos(elev_angle)^2.65  # cos²·⁶⁵ — power elevation factor (from AeroDyn sweep)
+                cos(elev_angle)^2.65 *        # cos²·⁶⁵ — power elevation factor (AeroDyn sweep)
+                cosd(sys.rotor.bank_angle_deg)^2.65  # power bank factor, measured 2026-10-01
             tau_aero = P_aero / max(omega_rotor, 0.5)
         else
             CD_reverse = 1.3                           # NACA4412 CD at AoA 40–70°

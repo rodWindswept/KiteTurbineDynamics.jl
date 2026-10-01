@@ -341,8 +341,8 @@ model. Do not use the disc model without the derate either.**
 
 | Model | Retention at 20° bank | Status |
 |---|---|---|
-| disc cp/ct, no bank factor | 1.000 | **15 per cent optimistic.** This is what the code does today |
-| disc cp/ct **times `cos(bank)^2.65`** | **0.848** | **USE THIS.** Matches the measurement to 0.7 per cent |
+| disc cp/ct, no bank factor | 1.000 | **15 per cent optimistic.** What the code did before 2026-10-01 |
+| disc cp/ct **times `cos(bank)^2.65`** | **0.848** | **IN USE since 2026-10-01.** Matches the measurement to 0.7 per cent |
 | the banked expansion model | 0.147 | **BANNED.** It brakes, and it is 5.8 times too low |
 
 The measured retention is 0.854. Source: the AeroDyn precone sweep of 2026-09-30,
@@ -360,10 +360,28 @@ The measured retention is 0.854. Source: the AeroDyn precone sweep of 2026-09-30
 - **The derate is not constant off the peak.** At commanded lambda 6.0 a 20° bank
   retains only 0.331, because the whole Cp curve shifts and lowers.
 
-**Do not apply the derate in code without a ruling.** It would take the campaign
-winner from 5.46 kW to about 4.66 kW, below the 5.0 kW floor asserted by
-`test/test_gate_v13.jl` (A1) and `test/test_evaluator_v13.jl` (B6c). That is a
-re-baseline of the 5 kW campaign, not a local edit.
+**APPLIED 2026-10-01, on Rod's ruling, at every site that computes the main rotor disc
+power.** `RotorSpec` gained a `bank_angle_deg` field, the builder threads it from the
+genome's topmost rotor, and four sites multiply their disc power by `cosd(bank)^2.65`:
+`src/ring_forces.jl` (the ODE), `src/initialization.jl` (`settle_aero_power`) and
+`src/sim_frame.jl` twice. `test/test_ring_forces.jl` guards the factor. **The settle and the
+ODE must carry the same factor** — they disagreed until the other three sites were fixed,
+which failed `test_settle_drag_alignment`. The completeness check is
+`grep -rn "2\.65" src/`.
+
+**Consequence.** The campaign winner now reads **4.888 kW at omega 12.97**, against
+5.461 kW at 13.46 before. The power drop is entirely the fall in shaft speed:
+`(12.97 / 13.46)^3 = 0.895`. That is below the 5.0 kW floor asserted by
+`test/test_gate_v13.jl` (A1), `test/test_evaluator_v13.jl` (B6c) and
+`test/test_settle_drag_alignment.jl` (D), so the acceptance suite is red on three files
+until the 5 kW campaign is re-baselined under the corrected model. The pre-derate campaign
+is superseded: it searched a space in which bank was free.
+
+**Open question, not decided.** The expansion rotors still apply a LINEAR `cosd(bank)` to
+their disc power (`src/initialization.jl` line 1046 area). The main rotor now uses 2.65.
+If a banked rotor is a banked rotor, the expansion rotors should carry 2.65 as well, and
+they do not. The precone sweep measured the main rotor's solidity only, so applying 2.65 to
+the expansion annuli is an extrapolation. Left alone deliberately pending a ruling.
 
 **Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**. Do not
 write "hub rotor". The word "hub" stays valid for the ring and the node, and never

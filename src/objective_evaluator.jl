@@ -23,7 +23,6 @@
 # 12.0 rejection band are SCORES, produced by the adapter for valid evals;
 # they are never used as transport signals.
 
-
 # ── Helper: minimum airborne ring FoS ──────────────────────────────────
 
 """
@@ -64,8 +63,9 @@ internally — call sparingly (once per ramp chunk, not every ODE step).
 function min_ring_fos(u::Vector{Float64}, sys::KiteTurbineSystem, p::SystemParams)
     # Use a dummy wind function — ring FoS doesn't depend on wind direction
     dummy_wf = (pos, t) -> [0.0, 0.0, 0.0]
-    ef = capture_extended(u, sys, p, 0.0, dummy_wf, nothing;
-        brake_engaged=sys.brake_engaged[])
+    ef = capture_extended(
+        u, sys, p, 0.0, dummy_wf, nothing; brake_engaged=sys.brake_engaged[]
+    )
     fos_min, _ = min_airborne_fos(ef.ring_fos)
     return fos_min
 end
@@ -74,13 +74,13 @@ end
 # Protocol constants (fixed scoring/physics knobs — not swept)
 # ══════════════════════════════════════════════════════════════════════════════
 
-const WIND_MS     = 11.0   # rated wind speed at reference height
+const WIND_MS = 11.0   # rated wind speed at reference height
 # Minimum acceptable FoS for the objective scoring gate.  Named FOS_GATE (not
 # FOS_DESIGN) — structural_safety.jl already owns the name FOS_DESIGN = 3.0
 # (the design-point buckling FoS), and the objective's old `const FOS_DESIGN =
 # 1.5` silently SHADOWED it at load: every runtime lookup (including the
 # dashboard's "FoS_design" label) got 1.5.  Fixed 2026-08-09.
-const FOS_GATE    = 1.5    # minimum acceptable FoS
+const FOS_GATE = 1.5    # minimum acceptable FoS
 # Stationarity soft penalty (F5): the DE must not be rewarded for transient
 # power peaks.  A design whose window power swings wider than 20% of its mean
 # pays λ per unit of excess swing ratio.
@@ -89,7 +89,7 @@ const STATIONARITY_SWING = 0.20   # matches the gate's P_range/P_mean < 0.20
 # MPPT gain clamp ceiling (S2): widened from 1000 so the k-bracket can bracket
 # near the old ceiling — the optimum previously railed at 1000.
 const K_MPPT_MAX = 5000.0
-const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff system)
+const V11_DT = 4e-5   # ODE time step — must match sim fidelity (stiff system)
 
 # Tip-speed sanity ceiling (2026-08-14): anchored to the design point —
 # ideal TSR ≈ 4 at v_rated = 11 m/s ⇒ ~44 m/s design tip speed, so 100 m/s
@@ -100,7 +100,7 @@ const V11_DT      = 4e-5   # ODE time step — must match sim fidelity (stiff sy
 const TIP_SPEED_CEILING_MPS = 100.0
 # Cold-start window timing (the warm-start path takes relax/window from the
 # ObjectiveConfig; the cold path's "discard + window" is the same shape).
-const WINDOW_S  = 60.0   # scoring window after transient
+const WINDOW_S = 60.0   # scoring window after transient
 const DISCARD_S = 30.0   # transient discard before window
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -119,29 +119,29 @@ Replaces the former module-level Refs (`WARM_RELAX_S`, `WARM_WINDOW_S`,
 inside its threaded DE loop.
 """
 Base.@kwdef struct ObjectiveConfig
-    k_mppt::Float64      = 10.0    # generator loading gain τ_gen = k·ω²
-    relax_s::Float64     = 10.0    # relaxation after warm-start init
-    window_s::Float64    = 30.0    # measurement window
-    power_W::Float64     = 50_000.0
-    v_rated::Float64     = 11.0
+    k_mppt::Float64 = 10.0    # generator loading gain τ_gen = k·ω²
+    relax_s::Float64 = 10.0    # relaxation after warm-start init
+    window_s::Float64 = 30.0    # measurement window
+    power_W::Float64 = 50_000.0
+    v_rated::Float64 = 11.0
     # V12 power-window / FoS-target scoring knobs
-    p_floor_kw::Float64  = 25.0    # penalty below
+    p_floor_kw::Float64 = 25.0    # penalty below
     p_ceiling_kw::Float64 = 50.0   # penalty above
-    fos_target::Float64  = 3.0     # ideal factor of safety
-    fos_hard::Float64    = 1.5     # hard rejection below
-    w_floor::Float64     = 4.0     # P < floor: quadratic weight
-    w_ceiling::Float64   = 2.0     # P > ceiling: quadratic weight
+    fos_target::Float64 = 3.0     # ideal factor of safety
+    fos_hard::Float64 = 1.5     # hard rejection below
+    w_floor::Float64 = 4.0     # P < floor: quadratic weight
+    w_ceiling::Float64 = 2.0     # P > ceiling: quadratic weight
     w_fos_below::Float64 = 4.0     # FoS < target: steep quadratic
     w_fos_above::Float64 = 0.02    # FoS > target: gentle linear slope
-    fos_cap::Float64     = 16.0   # FoS above this is excessive mass — hard rejection
+    fos_cap::Float64 = 16.0   # FoS above this is excessive mass — hard rejection
     tether_diameter::Float64 = 0.003  # tether line diameter (m) — physical parameter, not a magic number
     # V13 knobs (2026-08-13 — defaults preserve v12 behaviour exactly)
-    power_stat::Symbol  = :mean    # :mean = v12 full-window mean; :tail5 = last 5 samples (sustained power)
+    power_stat::Symbol = :mean    # :mean = v12 full-window mean; :tail5 = last 5 samples (sustained power)
     penalize_ceiling::Bool = true  # false → above-ceiling power at rated wind is headroom, not a flaw (Betz gate still rejects cheats)
     kickstart_s::Float64 = 2.0     # cold-start PTO motor kick duration; 0.0 = off. Legacy ζ=1.5 stall crutch — the kick injects ~115× MPPT torque and winds chains past the collapse limit; v13 uses 0.0
     # V13 rotor-geometry knobs (2026-08-25 — defaults preserve v12/v13 behaviour exactly)
-    rotor_count_mode::Bool     = false  # true → x10 is rotor count {1,2,3}, not a bitmask
-    power_split::Float64    = 0.6    # top-rotor power fraction (0.2-0.8; top-heavy wins)
+    rotor_count_mode::Bool = false  # true → x10 is rotor count {1,2,3}, not a bitmask
+    power_split::Float64 = 0.6    # top-rotor power fraction (0.2-0.8; top-heavy wins)
     cone_slope_deg::Float64 = 22.0   # TRPT cone half-angle (Tulloch/Jensen reference)
     rotor_spacing_frac::Float64 = 0.8 # min rotor spacing as fraction of 2·r_rotor (Rod: 0.8 diameters)
     blocking_factor::Float64 = 1.0   # wake blocking between co-axial rotors (1.0 = full)
@@ -156,25 +156,61 @@ end
 
 # Copy-with-overrides constructor.  (Base.@kwdef does not generate it;
 # the k-bracket needs it to build one config per k_try.)
-function ObjectiveConfig(o::ObjectiveConfig; k_mppt=o.k_mppt, relax_s=o.relax_s,
-                         window_s=o.window_s, power_W=o.power_W, v_rated=o.v_rated,
-                         p_floor_kw=o.p_floor_kw, p_ceiling_kw=o.p_ceiling_kw,
-                         fos_target=o.fos_target, fos_hard=o.fos_hard,
-                         w_floor=o.w_floor, w_ceiling=o.w_ceiling,
-                         w_fos_below=o.w_fos_below, w_fos_above=o.w_fos_above,
-                         fos_cap=o.fos_cap, tether_diameter=o.tether_diameter,
-                         power_stat=o.power_stat, penalize_ceiling=o.penalize_ceiling,
-                         kickstart_s=o.kickstart_s,
-                         rotor_count_mode=o.rotor_count_mode, power_split=o.power_split,
-                         cone_slope_deg=o.cone_slope_deg, rotor_spacing_frac=o.rotor_spacing_frac,
-                         blocking_factor=o.blocking_factor, min_wall_m=o.min_wall_m,
-                         t_over_D=o.t_over_D)
-    return ObjectiveConfig(k_mppt, relax_s, window_s, power_W, v_rated,
-                           p_floor_kw, p_ceiling_kw, fos_target, fos_hard,
-                           w_floor, w_ceiling, w_fos_below, w_fos_above, fos_cap,
-                           tether_diameter, power_stat, penalize_ceiling, kickstart_s,
-                           rotor_count_mode, power_split, cone_slope_deg,
-                           rotor_spacing_frac, blocking_factor, min_wall_m, t_over_D)
+function ObjectiveConfig(
+    o::ObjectiveConfig;
+    k_mppt=o.k_mppt,
+    relax_s=o.relax_s,
+    window_s=o.window_s,
+    power_W=o.power_W,
+    v_rated=o.v_rated,
+    p_floor_kw=o.p_floor_kw,
+    p_ceiling_kw=o.p_ceiling_kw,
+    fos_target=o.fos_target,
+    fos_hard=o.fos_hard,
+    w_floor=o.w_floor,
+    w_ceiling=o.w_ceiling,
+    w_fos_below=o.w_fos_below,
+    w_fos_above=o.w_fos_above,
+    fos_cap=o.fos_cap,
+    tether_diameter=o.tether_diameter,
+    power_stat=o.power_stat,
+    penalize_ceiling=o.penalize_ceiling,
+    kickstart_s=o.kickstart_s,
+    rotor_count_mode=o.rotor_count_mode,
+    power_split=o.power_split,
+    cone_slope_deg=o.cone_slope_deg,
+    rotor_spacing_frac=o.rotor_spacing_frac,
+    blocking_factor=o.blocking_factor,
+    min_wall_m=o.min_wall_m,
+    t_over_D=o.t_over_D,
+)
+    return ObjectiveConfig(
+        k_mppt,
+        relax_s,
+        window_s,
+        power_W,
+        v_rated,
+        p_floor_kw,
+        p_ceiling_kw,
+        fos_target,
+        fos_hard,
+        w_floor,
+        w_ceiling,
+        w_fos_below,
+        w_fos_above,
+        fos_cap,
+        tether_diameter,
+        power_stat,
+        penalize_ceiling,
+        kickstart_s,
+        rotor_count_mode,
+        power_split,
+        cone_slope_deg,
+        rotor_spacing_frac,
+        blocking_factor,
+        min_wall_m,
+        t_over_D,
+    )
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -207,17 +243,61 @@ struct ObjectiveResult
     line_broken::Bool     # any TRPT line exceeded ROPE_BREAK_STRAIN (2026-08-14)
 end
 
-ObjectiveResult(; status, fitness, P_mean, FoS_min, ω_eq, P_range,
-           drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed,
-           line_broken) =
-    ObjectiveResult(status, fitness, P_mean, FoS_min, ω_eq, P_range,
-               drifted, stationary, util_a, util_b, T_lift, P_end, twist_crossed,
-               line_broken)
+function ObjectiveResult(;
+    status,
+    fitness,
+    P_mean,
+    FoS_min,
+    ω_eq,
+    P_range,
+    drifted,
+    stationary,
+    util_a,
+    util_b,
+    T_lift,
+    P_end,
+    twist_crossed,
+    line_broken,
+)
+    return ObjectiveResult(
+        status,
+        fitness,
+        P_mean,
+        FoS_min,
+        ω_eq,
+        P_range,
+        drifted,
+        stationary,
+        util_a,
+        util_b,
+        T_lift,
+        P_end,
+        twist_crossed,
+        line_broken,
+    )
+end
 
 """Standard rejected evaluation — `ω_eq` carries through when known."""
-rejected_eval(ω_eq::Float64=0.0; line_broken::Bool=false, twist_crossed::Bool=false) =
-    ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0, true, false, -1.0, -1.0, 0.0,
-                    0.0, twist_crossed, line_broken)
+function rejected_eval(
+    ω_eq::Float64=0.0; line_broken::Bool=false, twist_crossed::Bool=false
+)
+    return ObjectiveResult(
+        :reject,
+        Inf,
+        0.0,
+        Inf,
+        ω_eq,
+        0.0,
+        true,
+        false,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        twist_crossed,
+        line_broken,
+    )
+end
 
 """
     rotor_betz_ok(power_kw, swept_area_m2, v_wind_mps) -> Bool
@@ -277,11 +357,13 @@ function tip_speed_sanity_ok(u::AbstractVector, sys::KiteTurbineSystem)
     # 2. Hub rotor tip
     hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
     w_hub = u[6N + Nr + hub_ri]
-    (isfinite(w_hub) && abs(w_hub) * sys.rotor.radius <= TIP_SPEED_CEILING_MPS) || return false
+    (isfinite(w_hub) && abs(w_hub) * sys.rotor.radius <= TIP_SPEED_CEILING_MPS) ||
+        return false
     # 3. Expansion rotor tips
     for er in sys.expansion_rotors
         w = u[6N + Nr + er.ring_idx]
-        (isfinite(w) && abs(w) * er.blade_tip_radius <= TIP_SPEED_CEILING_MPS) || return false
+        (isfinite(w) && abs(w) * er.blade_tip_radius <= TIP_SPEED_CEILING_MPS) ||
+            return false
     end
     return true
 end
@@ -305,10 +387,10 @@ function twist_collapse_check(u::AbstractVector, sys::KiteTurbineSystem)
     worst_seg = 0
     for ri in 1:(Nr - 1)
         r_i = (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
-        r_ip1 = (sys.nodes[sys.ring_ids[ri+1]]::RingNode).radius
+        r_ip1 = (sys.nodes[sys.ring_ids[ri + 1]]::RingNode).radius
         r_seg = max(r_i, r_ip1)
         p_i = u[(3 * (sys.ring_ids[ri] - 1) + 1):(3 * sys.ring_ids[ri])]
-        p_ip1 = u[(3 * (sys.ring_ids[ri+1] - 1) + 1):(3 * sys.ring_ids[ri+1])]
+        p_ip1 = u[(3 * (sys.ring_ids[ri + 1] - 1) + 1):(3 * sys.ring_ids[ri + 1])]
         L_seg = norm(p_ip1 - p_i)
         dastar = 2 * asin(min(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)), 1.0))
         da = abs(u[6N + ri + 1] - u[6N + ri])  # α[i+1] − α[i], raw (α block: 6N+1..6N+Nr)
@@ -326,11 +408,15 @@ end
 # System builder — the protocol's build step (moved from objective_v11.jl)
 # ══════════════════════════════════════════════════════════════════════════════
 
-function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
-                              tether_diameter::Float64=0.003,
-                              base_params::Union{Nothing,SystemParams}=nothing,
-                              min_wall_m::Float64=MIN_TUBE_WALL_M,
-                              beam_sizing::Union{Nothing,BeamSizing}=nothing)
+function build_system_from_v10(
+    result,
+    blade_scale::Float64,
+    k_mppt::Float64;
+    tether_diameter::Float64=0.003,
+    base_params::Union{Nothing, SystemParams}=nothing,
+    min_wall_m::Float64=MIN_TUBE_WALL_M,
+    beam_sizing::Union{Nothing, BeamSizing}=nothing,
+)
     (; design, rotors, n_rings) = result
     taper_start_z = haskey(result, :taper_start_z) ? result.taper_start_z : 0.0
     harvest_length = haskey(result, :harvest_length) ? result.harvest_length : 0.0
@@ -348,8 +434,9 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # authority mapping, see builders_util.jl:expansion_params_from_rotors.
     # Span³ blade-mass law (2026-08-22): assembly = n_lines ·
     # M_BLADE_REF_KG · (decoded span)³ (builder dial 1.0 here).
-    expansion_params = expansion_params_from_rotors(rotors, n_rings, n_lines;
-                                                    blade_scale=blade_scale)
+    expansion_params = expansion_params_from_rotors(
+        rotors, n_rings, n_lines; blade_scale=blade_scale
+    )
 
     # Design-aware ring mass, summed PER RING (2026-09-02, ticket T1).  The old
     # single "average ring" from r_avg = 0.5·(r_hub+r_bottom) under-counted the
@@ -365,12 +452,16 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # law is reproduced exactly (backward compatible).
     ring_radii_dec = result.radii
     t_over_D = beam_sizing === nothing ? design.t_over_D : beam_sizing.t_over_D
-    Do_per_ring = beam_sizing === nothing ?
-        [design.Do_top * (r / design.r_hub)^design.Do_scale_exp for r in ring_radii_dec] :
+    Do_per_ring = if beam_sizing === nothing
+        [design.Do_top * (r / design.r_hub)^design.Do_scale_exp for r in ring_radii_dec]
+    else
         copy(beam_sizing.Do_per_ring)
+    end
     ring_masses = [
         ring_beam_mass(
-            Do_per_ring[i], t_over_D, n_lines,
+            Do_per_ring[i],
+            t_over_D,
+            n_lines,
             2.0 * ring_radii_dec[i] * sin(π / n_lines);
             min_wall_m=min_wall_m,
         ) for i in 2:length(ring_radii_dec)
@@ -383,9 +474,9 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # geometric rule knuckle_mass_at_ring (single source, T1) — no flat 0.015 kg
     # estimate, no blade-only count.
     ring_knuckle_total = sum(
-        n_lines * knuckle_mass_at_ring(
-            Do_per_ring[i], t_over_D, n_lines,
-        ) for i in 2:length(ring_radii_dec); init=0.0
+        n_lines * knuckle_mass_at_ring(Do_per_ring[i], t_over_D, n_lines) for
+        i in 2:length(ring_radii_dec);
+        init=0.0,
     )
 
     # Main (hub) rotor — ring-anchored annulus (2026-08-20): the blade attaches
@@ -411,10 +502,21 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # Main (hub) rotor wake de-rate (2026-08-26): the hub is the most-downwind
     # rotor in a co-axial stack, so it carries the decoder's wind_factor.
     main_rotor_wind_factor = hub_rotor === nothing ? 1.0 : hub_rotor.wind_factor
-    geo = GeometrySpec(p_base.elevation_angle, p_base.lifter_elevation, R_main,
-                       design.tether_length, design.r_hub,
-                       p_base.trpt_rL_ratio,
-                       n_lines, n_rings, n_lines)
+    # Main (hub) rotor bank (2026-10-01): a banked blade keeps cos(bank)^2.65 of
+    # its disc power.  Measured by the AeroDyn precone sweep; the same exponent the
+    # elevation factor already uses.  See docs/agents/physics-topology.md section 4.0.1.
+    main_rotor_bank_deg = hub_rotor === nothing ? 0.0 : hub_rotor.bank_angle_deg
+    geo = GeometrySpec(
+        p_base.elevation_angle,
+        p_base.lifter_elevation,
+        R_main,
+        design.tether_length,
+        design.r_hub,
+        p_base.trpt_rL_ratio,
+        n_lines,
+        n_rings,
+        n_lines,
+    )
     # Main-rotor blade mass: SPAN³ law (2026-08-22 correction) — the blade
     # is priced by its DECODED span, m = M_BLADE_REF_KG·(span/1.0)³, because
     # the decoder sets span = 0.75·r_rotor·λ with r_rotor from the BEM power
@@ -424,14 +526,27 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # and are VOID).  The k_mppt λ²-scaling (objective_evaluator.jl:426) is
     # UNCHANGED — power ∝ swept area ∝ λ² is correct physics; only the mass
     # law changed (mass ∝ volume ∝ span³).
-    span_hub = (hub_rotor === nothing) ? 0.0 :
+    span_hub = if (hub_rotor === nothing)
+        0.0
+    else
         (hub_rotor.blade_tip_radius - hub_rotor.blade_hub_radius) * le
-    mat = MaterialSpec(tether_diameter, p_base.e_modulus, m_ring_rep,
-                       M_BLADE_REF_KG * span_hub^3)
+    end
+    mat = MaterialSpec(
+        tether_diameter, p_base.e_modulus, m_ring_rep, M_BLADE_REF_KG * span_hub^3
+    )
     aero = AeroSpec(p_base.rho, p_base.v_wind_ref, p_base.h_ref, p_base.cp)
-    ctrl = ControlSpec(p_base.i_pto, k_mppt, p_base.p_rated_w,
-                       p_base.β_min, p_base.β_max, p_base.β_rate_max, p_base.kp_elev)
-    back = BackLineSpec(p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1)
+    ctrl = ControlSpec(
+        p_base.i_pto,
+        k_mppt,
+        p_base.p_rated_w,
+        p_base.β_min,
+        p_base.β_max,
+        p_base.β_rate_max,
+        p_base.kp_elev,
+    )
+    back = BackLineSpec(
+        p_base.EA_back_line, p_base.c_back_line, p_base.back_anchor_fwd_x, 0.1
+    )
     pc = SystemParams(geo, mat, aero, ctrl, back)
 
     # v5 builder: ring geometry from ring_spacing_v4 (the DECODED taper),
@@ -440,13 +555,16 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # (x6/x7/x9 dead in the ODE; negative radii for large hubs; DECISIONS
     # [2026-08-24]).
     sys, u0 = build_kite_turbine_system_v5(
-        pc, design.target_Lr, design.r_bottom;
+        pc,
+        design.target_Lr,
+        design.r_bottom;
         density_profile=design.density_profile,
         taper_start_z=taper_start_z,
         harvest_length=harvest_length,
         expansion_rotors=expansion_params,
         rotor_blade_hub_radius=r_in,
         main_rotor_wind_factor=main_rotor_wind_factor,
+        main_rotor_bank_deg=main_rotor_bank_deg,
     )
 
     # Populate ring beam geometry from the genome so ring_element_analysis uses
@@ -457,21 +575,21 @@ function build_system_from_v10(result, blade_scale::Float64, k_mppt::Float64;
     # Do_scale_exp (x4) and r_hub (x5) ride along so analyse_ring's campaign
     # path (design === nothing) reproduces the design path's taper law
     # Do(r) = Do_top·(r/r_hub)^exp exactly (2026-08-07, F4b audit).
-    sys.ring_Do_top[]       = design.Do_top
-    sys.ring_toverD[]       = t_over_D
+    sys.ring_Do_top[] = design.Do_top
+    sys.ring_toverD[] = t_over_D
     sys.ring_aspect_ratio[] = design.beam_aspect
     sys.ring_Do_scale_exp[] = design.Do_scale_exp
-    sys.ring_r_hub[]        = design.r_hub
+    sys.ring_r_hub[] = design.r_hub
     # R7: the solved per-ring section is the single authority the drag model and
     # the FEA read via `ring_Do_at`.  Empty for legacy (taper-law fallback) so
     # un-sized callers keep bit-identical behaviour.
-    sys.ring_Do_per_ring[]  = beam_sizing === nothing ? Float64[] : Do_per_ring
+    sys.ring_Do_per_ring[] = beam_sizing === nothing ? Float64[] : Do_per_ring
 
     # True per-ring ring mass + ring→cable knuckle mass (2026-09-02, T1) — the
     # single source expansion_airborne_mass reads instead of (n_ring−1)·p.m_ring.
-    sys.ring_mass_total[]   = ring_mass_total
+    sys.ring_mass_total[] = ring_mass_total
     sys.ring_knuckle_mass[] = ring_knuckle_total
-    sys.min_wall_m[]        = min_wall_m
+    sys.min_wall_m[] = min_wall_m
 
     return sys, u0, pc
 end
@@ -504,26 +622,37 @@ function evaluate_windowed(
     cfg::ObjectiveConfig;
     start_mode::Symbol=:warm,   # :warm = static pre-solve, :cold = settle+kickstart
     elev_angle::Float64=π / 6,
-    spoke::Union{Nothing,SpokeParams}=nothing,
+    spoke::Union{Nothing, SpokeParams}=nothing,
     lin_damp::Float64=0.05,     # rope-node oscillation retention (artificial; NOT the bearing damper)
     # A LiftDevice is used as-is.  A Function is called as `f(sys, p)` once the
     # system exists, so the device can be sized to this genome's airborne mass —
     # e.g. `(s, pp) -> sized_lifter_for(s, pp; margin=1.5)`.
-    lift_device::Union{Nothing,LiftDevice,Function}=nothing,
+    lift_device::Union{Nothing, LiftDevice, Function}=nothing,
     # Diagnostic tap.  Called every ODE step as trace_callback(u, t, step, ctx)
     # where ctx = (; sys, pc, wf, lift_device).  Scoring is unaffected.
-    trace_callback::Union{Nothing,Function}=nothing,
+    trace_callback::Union{Nothing, Function}=nothing,
     fitness_fn::Function,       # the version seam — required
 )
     # ── Decode genome ────────────────────────────────────────────────────
-    (length(x) in (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)) ||
-        error("evaluate_windowed expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))")
+    (
+        length(x) in
+        (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)
+    ) || error(
+        "evaluate_windowed expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))",
+    )
     x_canon = canonical_v10(x)
     result = design_from_vector_v10(
-        x_canon, beam_profile, p; power_W=cfg.power_W, v_rated=cfg.v_rated,
-        cylinder_cone=true, rotor_count_mode=cfg.rotor_count_mode,
-        power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
-        rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor,
+        x_canon,
+        beam_profile,
+        p;
+        power_W=cfg.power_W,
+        v_rated=cfg.v_rated,
+        cylinder_cone=true,
+        rotor_count_mode=cfg.rotor_count_mode,
+        power_split=cfg.power_split,
+        cone_slope_deg=cfg.cone_slope_deg,
+        rotor_spacing_frac=cfg.rotor_spacing_frac,
+        blocking_factor=cfg.blocking_factor,
         beam_t_over_D=cfg.t_over_D,
     )
     if result.n_active == 0
@@ -555,9 +684,15 @@ function evaluate_windowed(
     # base_params = p — the campaign's rung-scaled base (5 kW campaigns pass
     # their params_at_length base; 50 kW default keeps legacy callers
     # bit-identical).  Fixes the 50 kW blade-mass contamination (2026-08-20).
-    sys, u0, pc = build_system_from_v10(result, 1.0, k_mppt;
-        tether_diameter=cfg.tether_diameter, base_params=p, min_wall_m=cfg.min_wall_m,
-        beam_sizing=sizing)
+    sys, u0, pc = build_system_from_v10(
+        result,
+        1.0,
+        k_mppt;
+        tether_diameter=cfg.tether_diameter,
+        base_params=p,
+        min_wall_m=cfg.min_wall_m,
+        beam_sizing=sizing,
+    )
 
     # Adaptive window time step (2026-08-24, build-geometry audit): the
     # geometric taper (ring_spacing_v4) can shorten ground-end sub-segs below
@@ -616,12 +751,13 @@ function evaluate_windowed(
         u_settled[(6N + Nr + 1):(6N + 2Nr)] .= ω_eq  # ring twist rates
         for ri in 1:Nr
             gid = sys.ring_ids[ri]
-            pos = u_settled[(3*(gid-1)+1):(3*gid)]
+            pos = u_settled[(3 * (gid - 1) + 1):(3 * gid)]
             r = norm(pos)
             if r > 0.01
-                tang = [-pos[2], pos[1], 0.0]; tang ./= norm(tang)
+                tang = [-pos[2], pos[1], 0.0]
+                tang ./= norm(tang)
                 vx_idx = 3N + 3*(gid-1) + 1
-                u_settled[vx_idx:(vx_idx+2)] .= (ω_eq * r) .* tang
+                u_settled[vx_idx:(vx_idx + 2)] .= (ω_eq * r) .* tang
             end
         end
     else
@@ -657,9 +793,16 @@ function evaluate_windowed(
                 sys.k_mppt_ref[] = -60.0  # N·m·s²/rad² — motor torque
                 kick_steps = round(Int, cfg.kickstart_s / dt)
                 run_canonical_sim!(
-                    u_settled, sys, pc, wf, kick_steps, dt;
-                    lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke,
-                    breaks_enabled=true
+                    u_settled,
+                    sys,
+                    pc,
+                    wf,
+                    kick_steps,
+                    dt;
+                    lift_device=lift_dev,
+                    lin_damp=lin_damp,
+                    spoke=spoke,
+                    breaks_enabled=true,
                 )
             end
         catch e
@@ -726,8 +869,11 @@ function evaluate_windowed(
                         # (was full disk π·tip² — ignored the inboard hub cutout)
                         er = sys.expansion_rotors[i - 1]
                         ri = er.ring_idx
-                        r_ring = (1 <= ri <= sys.n_ring) ?
-                            (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
+                        r_ring = if (1 <= ri <= sys.n_ring)
+                            (sys.nodes[sys.ring_ids[ri]]::RingNode).radius
+                        else
+                            0.0
+                        end
                         expansion_annulus_area(er, r_ring)
                     else
                         0.0
@@ -744,8 +890,9 @@ function evaluate_windowed(
             push!(fos_samples, fos_min_frame)
             # Axial and bending shares at worst-FoS ring (A1 fix — always push
             # to keep array lengths aligned with fos_samples)
-            if fos_idx_frame > 0 && fos_idx_frame <= length(ef.ring_util_axial) &&
-               fos_idx_frame <= length(ef.ring_util_bending)
+            if fos_idx_frame > 0 &&
+                fos_idx_frame <= length(ef.ring_util_axial) &&
+                fos_idx_frame <= length(ef.ring_util_bending)
                 push!(util_a_samples, ef.ring_util_axial[fos_idx_frame])
                 push!(util_b_samples, ef.ring_util_bending[fos_idx_frame])
             else
@@ -757,9 +904,17 @@ function evaluate_windowed(
 
     try
         run_canonical_sim!(
-            u_settled, sys, pc, wf, total_n, dt;
-            lift_device=lift_dev, lin_damp=lin_damp, spoke=spoke, callback=window_callback,
-            breaks_enabled=true
+            u_settled,
+            sys,
+            pc,
+            wf,
+            total_n,
+            dt;
+            lift_device=lift_dev,
+            lin_damp=lin_damp,
+            spoke=spoke,
+            callback=window_callback,
+            breaks_enabled=true,
         )
     catch e
         @warn "Window sim failed" exception = e
@@ -790,8 +945,22 @@ function evaluate_windowed(
 
     # V13 torsional collapse — hard rejection, carried in the result flag.
     if twist_flagged[]
-        return ObjectiveResult(:reject, Inf, 0.0, Inf, ω_eq, 0.0,
-                               true, false, -1.0, -1.0, 0.0, 0.0, true, false)
+        return ObjectiveResult(
+            :reject,
+            Inf,
+            0.0,
+            Inf,
+            ω_eq,
+            0.0,
+            true,
+            false,
+            -1.0,
+            -1.0,
+            0.0,
+            0.0,
+            true,
+            false,
+        )
     end
 
     # Hub-side divergence — hard rejection (2026-08-14, v13 18m winner exploit).
@@ -818,12 +987,17 @@ function evaluate_windowed(
     end
 
     P_range = length(P_finite) >= 2 ? maximum(P_finite) - minimum(P_finite) : 0.0
-    drift = length(P_finite) >= 2 ? abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01) : 0.0
+    drift = if length(P_finite) >= 2
+        abs(P_finite[end] - P_finite[1]) / max(mean(P_finite), 0.01)
+    else
+        0.0
+    end
 
     # Axial and bending util at the FoS-min sample (A1 fix).
     # Identity: util_a + util_b = 1/FoS_min for a single beam at a single instant.
-    if fos_idx_min > 0 && fos_idx_min <= length(util_a_samples) &&
-       fos_idx_min <= length(util_b_samples)
+    if fos_idx_min > 0 &&
+        fos_idx_min <= length(util_a_samples) &&
+        fos_idx_min <= length(util_b_samples)
         util_a = util_a_samples[fos_idx_min]
         util_b = util_b_samples[fos_idx_min]
         expected = 1.0 / FoS_min
@@ -852,8 +1026,8 @@ function evaluate_windowed(
     A_total = main_rotor_swept_area(sys)
     for er in sys.expansion_rotors
         ri = er.ring_idx
-        r_ring = (1 <= ri <= sys.n_ring) ?
-            (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
+        r_ring =
+            (1 <= ri <= sys.n_ring) ? (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
         A_total += expansion_annulus_area(er, r_ring)
     end
     Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
@@ -877,18 +1051,19 @@ function evaluate_windowed(
     stationary = false
     if n >= 4
         mid = n ÷ 2
-        P1 = P_finite[1:mid]; P2 = P_finite[mid+1:end]
+        P1 = P_finite[1:mid]
+        P2 = P_finite[(mid + 1):end]
         nf = length(fos_finite)
-        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01 &&
-           nf >= 4
+        if all(isfinite.(P1)) && all(isfinite.(P2)) && mean(P1) > 0.01 && nf >= 4
             mid_f = nf ÷ 2
-            F1 = fos_finite[1:mid_f]; F2 = fos_finite[mid_f+1:end]
+            F1 = fos_finite[1:mid_f]
+            F2 = fos_finite[(mid_f + 1):end]
             # Drift: half-window means must be stable
             dP = abs(mean(P1) - mean(P2)) / mean(P1)
             dF = abs(minimum(F1) - minimum(F2)) / max(mean(F1), 0.01)
             # Amplitude: the design must not oscillate wildly around its mean.
-            FoS_range = length(fos_finite) >= 2 ?
-                maximum(fos_finite) - minimum(fos_finite) : 0.0
+            FoS_range =
+                length(fos_finite) >= 2 ? maximum(fos_finite) - minimum(fos_finite) : 0.0
             P_steady = P_mean > 0.1 ? P_range / P_mean < 0.20 : false
             FoS_steady = FoS_min > 0.01 ? FoS_range / FoS_min < 0.20 : false
             stationary = dP < 0.10 && dF < 0.10 && P_steady && FoS_steady
@@ -910,9 +1085,11 @@ function evaluate_windowed(
     # the sized lifter's T_ref scaled by (v/v_ref)²).  Falls back to the
     # sized device's design-point T_ref when no samples landed.  Computed
     # BEFORE the fitness seam so honest rejects carry it too (2026-08-21).
-    T_lift_mean = isempty(T_lift_samples) ?
-        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0) :
+    T_lift_mean = if isempty(T_lift_samples)
+        (lift_dev isa StackedLifterParams ? lift_dev.T_ref : 0.0)
+    else
         mean(T_lift_samples)
+    end
 
     fitness = fitness_fn(P_score, FoS_min, cfg, m_airborne)
     if !isfinite(fitness)
@@ -923,9 +1100,22 @@ function evaluate_windowed(
         # the measured statistics so telemetry shows WHY the design failed.
         # Status stays :reject and fitness stays Inf — gates and the DE are
         # unchanged; only the recorded numbers become truthful.
-        return ObjectiveResult(:reject, Inf, P_mean, FoS_min, ω_eq, P_range,
-                          drift > 0.20, stationary, util_a, util_b, T_lift_mean,
-                          P_end, twist_flagged[], false)
+        return ObjectiveResult(
+            :reject,
+            Inf,
+            P_mean,
+            FoS_min,
+            ω_eq,
+            P_range,
+            drift > 0.20,
+            stationary,
+            util_a,
+            util_b,
+            T_lift_mean,
+            P_end,
+            twist_flagged[],
+            false,
+        )
     end
     # F5 stationarity soft penalty: excess swing (beyond the gate's 20% of
     # mean) is ADDED to fitness so the DE prefers steady designs.
@@ -945,9 +1135,22 @@ function evaluate_windowed(
     end
     drifted = drift > 0.20  # >20% drift = flagged
 
-    return ObjectiveResult(:ok, fitness, P_mean, FoS_min, ω_eq, P_range,
-                      drifted, stationary, util_a, util_b, T_lift_mean,
-                      P_end, twist_flagged[], false)
+    return ObjectiveResult(
+        :ok,
+        fitness,
+        P_mean,
+        FoS_min,
+        ω_eq,
+        P_range,
+        drifted,
+        stationary,
+        util_a,
+        util_b,
+        T_lift_mean,
+        P_end,
+        twist_flagged[],
+        false,
+    )
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -970,10 +1173,14 @@ function with_k_bracket(
     p::SystemParams;
     power_W::Float64=50000.0,
     v_rated::Float64=11.0,
-    cfg::Union{Nothing,ObjectiveConfig}=nothing,  # base tunables (relax/window/knobs)
+    cfg::Union{Nothing, ObjectiveConfig}=nothing,  # base tunables (relax/window/knobs)
 )
-    (length(x) in (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)) ||
-        error("with_k_bracket expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))")
+    (
+        length(x) in
+        (TRPT_V10_DIM, TRPT_V10_DIM + 1, TRPT_V10_DIM_LEGACY, TRPT_V10_DIM_LEGACY + 1)
+    ) || error(
+        "with_k_bracket expects a $TRPT_V10_DIM-D (or legacy $TRPT_V10_DIM_LEGACY-D) genome, got $(length(x))",
+    )
     x_canon = canonical_v10(x)
     result = design_from_vector_v10(
         x_canon, beam_profile, p; power_W=power_W, v_rated=v_rated
