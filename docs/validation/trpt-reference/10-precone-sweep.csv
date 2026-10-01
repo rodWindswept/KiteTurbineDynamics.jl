@@ -4,7 +4,7 @@
 # physics BEMT WakeMod=1, SkewMod=2 Pitt/Peters, AFAeroMod=2 unsteady, UA_Mod=3, no tower
 # budget 84 cases x 5.0 s at dT=2.314858e-3 s, last timestep; worst |dCp| over the final 200 steps = 3.4e-3
 # alignment rows align on the COMMANDED lambda; AeroDyn RtTSR uses an angle-dependent reference length
-# generators scratch/precone_sweep/gen_precone_drivers.py, run_sweep.py, parse_sweep.py, plot_sweep.py
+# generators scripts/aerodyn_sweep/gen_precone_drivers.py, run_sweep.py, parse_sweep.py, plot_sweep.py
 kind,angle_deg,tsr_set,TSR_meas,Cp,Ct,Pwr_W,RtSpeed_rpm,Yaw_deg,case,n_steps,dCp_200,file
 precone,0,2,2.0000,0.08612,0.23656,1357.5,38.197,0.00,1.00000000E+00,2160,0.00e+00,ad_pc00.1.out
 precone,0,3,3.0000,0.19989,0.42864,3150.9,57.296,0.00,2.00000000E+00,2160,0.00e+00,ad_pc00.2.out

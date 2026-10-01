@@ -2,7 +2,7 @@
 # variants b6c100 = 6 blades at chord 0.500 m (solidity doubled); b6c050 = 6 blades at chord 0.250 m (solidity matches the 3-blade rotor)
 # tool sha256 787e23f4871255a76fcbd3f66b7e4fce0a8a1c1d168cad3094adbb0d897cd246
 # physics BEMT WakeMod=1, SkewMod=2 Pitt/Peters, AFAeroMod=2 unsteady, UA_Mod=3, no tower
-# generators scratch/precone_sweep/gen_bladecount_drivers.py, run_bladecount.py
+# generators scripts/aerodyn_sweep/gen_bladecount_drivers.py, run_bladecount.py
 variant,n_blades,chord_m,angle_deg,tsr_set,TSR_meas,Cp,Ct,Pwr_W,RtSpeed_rpm,case,n_steps,dCp_200,file
 b6c050,6,0.250,0,2,2.0000,0.08787,0.23818,1385.2,38.197,1.00000000E+00,2160,0.00e+00,ad_b6c050_pc00.1.out
 b6c050,6,0.250,0,3,3.0000,0.21597,0.44174,3404.4,57.296,2.00000000E+00,2160,0.00e+00,ad_b6c050_pc00.2.out
