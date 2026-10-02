@@ -334,6 +334,7 @@ for island in island_range
     best_idx = argmin(costs)
     best_cost = costs[best_idx]
     best_x = copy(population[best_idx])
+    best_gen = 0   # generation that FOUND the current best (metas record it as found_gen)
     @printf("  [gen 0] seeded best=%.2f\n", best_cost)
     open(joinpath(OUT_DIR, "island_$(island)_best.csv"), "w") do f
         write(f, join(string.(best_x), ","))
@@ -363,6 +364,7 @@ for island in island_range
                 if cost_trial < best_cost
                     best_cost = cost_trial
                     best_x = copy(trial)
+                    best_gen = iteration
                 end
             end
         end
@@ -374,7 +376,7 @@ for island in island_range
             write(f, join(string.(best_x), ","))
         end
         open(joinpath(OUT_DIR, "island_$(island)_best_meta.txt"), "w") do f
-            println(f, "island=$island gen=$iteration fitness=$best_cost length=$LENGTH")
+            println(f, "island=$island gen=$iteration fitness=$best_cost length=$LENGTH found_gen=$best_gen")
         end
         elapsed = round(time() - island_start, digits=0)
         @printf("  [Island %d/%d | gen %3d] best=%.2f  elapsed=%ds\n", island, n_islands, iteration, best_cost, elapsed)

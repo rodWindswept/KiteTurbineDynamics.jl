@@ -1,1 +1,1 @@
-island=2 gen=30 fitness=29.685201861294022 length=18.8
+island=2 gen=30 fitness=29.685201861294022 length=18.8 found_gen=23

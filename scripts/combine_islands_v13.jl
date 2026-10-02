@@ -49,7 +49,7 @@ let
     best_fitness = Inf
     best_island = 0
     best_vec = nothing
-    rows = Tuple{Int, Int, Float64}[]
+    rows = Tuple{Int, Int, Float64, Int}[]   # (island, gen, fitness, found_gen; -1 = not recorded)
 
     for d in islands
         m = match(r"island_(\d+)$", basename(d))
@@ -66,7 +66,9 @@ let
         fm === nothing && error("unparseable meta for island $n: $line")
         gen = parse(Int, fm.captures[1])
         fit = parse(Float64, fm.captures[2])
-        push!(rows, (n, gen, fit))
+        fg = match(r"found_gen=(\d+)", line)
+        found = fg === nothing ? -1 : parse(Int, fg.captures[1])
+        push!(rows, (n, gen, fit, found))
         if fit < best_fitness
             best_fitness = fit
             best_island = n
@@ -77,9 +79,10 @@ let
     println("=== v13_5kw_masslift_len$(LENGTH) — island combine ===")
     for r in sort(rows; by=x -> x[1])
         @printf(
-            "  island %d: gen=%d  fitness=%.3f%s\n",
+            "  island %d: gen=%d  found_gen=%s  fitness=%.3f%s\n",
             r[1],
             r[2],
+            r[4] >= 0 ? string(r[4]) : "?",
             r[3],
             r[1] == best_island ? "  ← WINNER" : ""
         )
@@ -102,9 +105,9 @@ let
         return println(f, "island=$best_island fitness=$best_fitness length=$LENGTH")
     end
     open(joinpath(BASE, "combined_summary.csv"), "w") do f
-        println(f, "island,gen,fitness")
+        println(f, "island,gen,fitness,found_gen")
         for r in sort(rows; by=x -> x[1])
-            println(f, "$(r[1]),$(r[2]),$(r[3])")
+            println(f, "$(r[1]),$(r[2]),$(r[3]),$(r[4] >= 0 ? string(r[4]) : "")")
         end
     end
 
