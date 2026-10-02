@@ -88,6 +88,12 @@ let
     if best_vec === nothing
         error("no complete island results found in $BASE")
     end
+    # Sentinel guard (2026-10-01): the reject sentinel is 1e9 — run_v13_5kw_masslift.jl
+    # sets `result = 1e9` for any non-:ok eval. A bare argmin over such rows would write a
+    # rejected genome to best_vector.csv and report "success" at fitness 1e9. Refuse instead.
+    if best_fitness >= 1e9
+        error("all islands ended all-reject (best fitness = $(best_fitness)); no realisable winner")
+    end
 
     open(joinpath(BASE, "best_vector.csv"), "w") do f
         return write(f, best_vec)
