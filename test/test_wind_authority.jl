@@ -21,6 +21,20 @@
 
 using Test, KiteTurbineDynamics
 
+# Evaluate an exponent written in source, whatever spelling it uses:
+# `1/7`, `1.0/7.0`, `1//7` (Julia Rational), `0.142857`, `0.14`, `2`.
+# Exact-string matching is blind to all but the first two; this is not.
+function evaluate_exponent(s::AbstractString)::Float64
+    if occursin("//", s)
+        a, b = split(s, "//")
+        return parse(Float64, a) / parse(Float64, b)
+    elseif occursin("/", s)
+        a, b = split(s, "/")
+        return parse(Float64, a) / parse(Float64, b)
+    end
+    return parse(Float64, s)
+end
+
 @testset "one wind authority — the shear exponent comes from the site spec" begin
     D = KiteTurbineDynamics
 
@@ -42,17 +56,30 @@ using Test, KiteTurbineDynamics
     @test D.site_shear(10.0, 20.0) ≈ 2.0^D.SITE_ANCHOR.shear_exp rtol = 1e-12
 
     # ── 3. Source pin: no shipped runtime closure hand-writes the exponent ──
-    #    Counted, not merely present: a file carrying one `site_shear` call
-    #    beside twelve literals would satisfy an `occursin` check.
+    #    Spelling is the trap.  An exact-string negative (`"^(1/7)"`) is blind
+    #    to `^(1/7.0)`, `^(1//7)`, `^(0.142857)` and `^(0.14)` — measured: with
+    #    the exact-string form, two live re-typed closures passed 25/25.  So the
+    #    negative side is two *generic* clauses: the SHAPE (an exponent applied
+    #    to a reference-height ratio — every retired literal had that form) and
+    #    the VALUE (any exponent that evaluates to the anchor exponent or the
+    #    retired 0.14, however it is written).  The positive clause is counted,
+    #    not merely present: a file carrying one `site_shear` call beside twelve
+    #    literals would satisfy an `occursin` check.
     root = dirname(@__DIR__)
     expected = Dict(
         "sim_runner.jl" => 6, "visualization.jl" => 8, "control_map_hunt.jl" => 3
     )
     for (f, n) in expected
-        src = read(joinpath(root, "src", f), String)
-        flat = replace(src, r"\s+" => "")
-        @test !occursin("1.0/7.0", flat)   # retired spelling
-        @test !occursin("^(1/7)", flat)    # retired spelling
+        flat = replace(read(joinpath(root, "src", f), String), r"\s+" => "")
+        # (a) SHAPE — no exponent applied to a reference-height ratio.
+        @test !occursin("h_ref)^", flat)
+        # (b) VALUE — no exponent that evaluates to the anchor exponent or the
+        #     retired 0.14, catching a shear written against any other base.
+        for m in eachmatch(r"\^\(?([0-9][0-9./]*)", flat)
+            e = evaluate_exponent(m.captures[1])
+            @test !(abs(e - 1 / 7) < 5e-3 || abs(e - 0.14) < 5e-3)
+        end
+        # (c) POSITIVE — the authority is called the expected number of times.
         @test count("site_shear(", flat) >= n
     end
 end
