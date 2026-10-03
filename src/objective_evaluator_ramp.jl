@@ -76,7 +76,7 @@ function evaluate_ramp(
 
     function wf(pos, t)
         z = max(pos[3], 1.0)
-        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        return [wind_at_altitude(p.v_wind_ref, p.h_ref, z), 0.0, 0.0]
     end
 
     # ── Warm pre-solve (shared with :warm path) ──────────────────────────

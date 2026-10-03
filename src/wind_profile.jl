@@ -4,6 +4,88 @@
 
 using Random
 
+# ── The site wind standard (D1, Rod 2026-09-24) ────────────────────────────────
+#
+# The rated wind is the MEASURED Daisy pair: 10.0 m/s at 4.8 m, the anemometer
+# height on the Daisy mast.  It is neither the 10 m meteorological standard nor
+# the rotor hub altitude.  The Daisy rating reads ">1.5 kW at 10 m/s", and the
+# anemometer sat on a 4.8 m mast, near the rotor centre.
+#
+# The 5 kW system uses that same wind through this same shear model.  Every
+# machine is sited at ONE profile, so a taller rotor reads a faster inflow, and
+# length is a power axis.
+#
+# `p.v_wind_ref` and `p.h_ref` carry the same profile re-expressed at the
+# machine's own rotor altitude: `p.v_wind_ref == site_wind(p.h_ref)`.  That
+# identity is what lets the ODE, the decoder and the steady estimates read one
+# profile.  `test/test_bem_unified.jl` pins it for every params factory.
+#
+# A SITE is a measured pair plus the shear exponent that carries it to other
+# heights.  The Daisy anchor is the DEFAULT, not the only site: one call re-bases
+# a machine on another site, so validating an ideal system against a new site
+# wind specification is data, not a code change.
+#
+#     p_alt = at_site(p, WindSiteSpec("site name", v, h, alpha))
+#
+# Recorded: `DECISIONS.md` [2026-09-24], `docs/plans/2026-09-24-phase5-multirotor-sizing.md`.
+
+"""
+    WindSiteSpec(name, v_ref_ms, h_ref_m, shear_exp)
+
+A named MEASURED wind site: the reference pair (speed at a height) plus the
+Hellmann shear exponent that carries it to other heights.
+
+Name every spec after its measurement, never after its purpose.  The pair and the
+exponent are both inputs, so neither belongs in a call site as a bare literal.
+"""
+struct WindSiteSpec
+    name::String
+    v_ref_ms::Float64
+    h_ref_m::Float64
+    shear_exp::Float64
+end
+
+# The ANCHOR site: the measured Daisy pair.  ">1.5 kW at 10 m/s", with the
+# anemometer on the 4.8 m mast, near the rotor centre.
+const SITE_DAISY = WindSiteSpec("Tulloch, Daisy (measured)", 10.0, 4.8, 1.0 / 7.0)
+
+# Every params object sits on the anchor site unless a study re-bases it with
+# `at_site`.  The anchor is named here, and only here.
+const SITE_ANCHOR = SITE_DAISY
+
+"""
+    site_wind([site], h) -> Float64
+
+The wind speed at altitude `h` (m above ground) for a named site — the anchor
+site when none is given.
+
+The anchor pair is the MEASURED Daisy rating: 10.0 m/s at 4.8 m.  A machine with
+a 9.4 m hub therefore reads 11.0077 m/s, and a 5.155 m rotor centre reads
+10.1025 m/s.
+
+Returns 0.0 for any non-positive altitude, by `wind_at_altitude`.
+"""
+site_wind(h::Real) = site_wind(SITE_ANCHOR, h)
+function site_wind(site::WindSiteSpec, h::Real)
+    return wind_at_altitude(
+        site.v_ref_ms, site.h_ref_m, Float64(h); hellmann_exponent=site.shear_exp
+    )
+end
+
+"""
+    at_site(p, site) -> SystemParams
+
+Re-base a machine on a named site's wind.
+
+Only the reference wind moves: the geometry, the mass and the control gain stay.
+`p.v_wind_ref` is the wind at the ROTOR and `p.h_ref` is that rotor's altitude,
+so this re-expresses the site standard at the same altitude — it is not a change
+of scale.  The invariant `v_wind_ref == site_wind(site, h_ref)` holds on the
+result, which is what makes a two-site comparison one call per site.
+"""
+at_site(p::SystemParams, site::WindSiteSpec) =
+    override_params(p; v_wind_ref=site_wind(site, p.h_ref))
+
 """
     wind_at_altitude(v_ref, h_ref, h; hellmann_exponent = 1/7) -> Float64
 

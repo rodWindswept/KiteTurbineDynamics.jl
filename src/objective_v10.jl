@@ -81,21 +81,16 @@ function decode_rotor_mask(x_proxy::Float64)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Wind shear model
+# Wind shear — RETIRED as a private profile (T1, D1, 2026-09-24)
 # ══════════════════════════════════════════════════════════════════════════════
-
-"""
-    wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref, shear_exp=0.14)
-
-Power-law wind shear: v(z) = v_ref × (z / h_ref)^α
-"""
-function wind_speed_at_ring(
-    ring_z::Float64, hub_altitude::Float64, v_ref::Float64=11.0,
-    h_ref::Float64=50.0, shear_exp::Float64=0.14,
-)::Float64
-    z = max(ring_z, 1.0)
-    return v_ref * (z / h_ref)^shear_exp
-end
+#
+# `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)`
+# lived here.  It ignored `hub_altitude` and defaulted to a 50 m reference with a
+# 0.14 exponent, so the decoder read 8.6637 m/s at the 5 kW hub where the ODE
+# read 10.9980 m/s.  That is the 2.051x power defect of the 2026-09-23 audit.
+#
+# The decoder now calls `wind_at_altitude(v_rated, p.h_ref, ring_altitude)`, the
+# same function the ODE calls.  One profile, one reference, one exponent.
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Design vector → TRPTDesign + Rotor array
@@ -189,7 +184,7 @@ function design_from_vector_v10(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
     rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
@@ -220,7 +215,7 @@ function _decode_v10_14(
     p::SystemParams;
     max_ground_radius::Float64=OPT_MAX_GROUND_RADIUS,
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     cylinder_cone::Bool=false,   # 2026-08-25: three-section geometry (opt-in, ODE path)
     rotor_count_mode::Bool=false,   # 2026-08-25: x10 = {1,2,3} concurrent top rotors (replaces bitmask)
     cone_slope_deg::Float64=22.0,   # swept: TRPT transition-cone slope (Jensen/Tulloch 22° reference)
@@ -302,8 +297,10 @@ function _decode_v10_14(
     blade_scale_top = clamp(x[13], 0.1, 2.0)
     blade_scale_bottom = clamp(x[14], 0.1, 2.0)
 
-    # Hub altitude from shaft geometry (rings already computed above)
-    hub_altitude = design.tether_length * sind(30.0)  # nominal 30° elevation
+    # Hub altitude from shaft geometry (rings already computed above).
+    # Defect-D (2026-10-03): this local shadowed the exported `hub_altitude`
+    # function; the ring wind is now read via `wind_at_altitude(v_rated, p.h_ref, …)`
+    # which uses `p.h_ref` directly, so the local is gone.
 
     # Power per rotor (2026-08-25): power_split gives the TOP rotor its fraction,
     # the rest share (1 − power_split).  The 14-D genome carries NO power_split
@@ -346,7 +343,7 @@ function _decode_v10_14(
         # de-rate is real (P ∝ v³), not a sizing-only placeholder.
         ring_z = zs[pos]  # pos is now ring index (ground→hub)
         ring_altitude = max(ring_z * sind(30.0), 1.0)
-        v_i = wind_speed_at_ring(ring_altitude, hub_altitude, v_rated)
+        v_i = wind_at_altitude(v_rated, p.h_ref, ring_altitude)
         wind_factor_i = i < n_active ? blocking_factor : 1.0
         v_i *= wind_factor_i
 
@@ -465,7 +462,7 @@ function objective_v10(
     beam_profile::BeamProfile,
     p::SystemParams;
     power_W::Float64=50000.0,
-    v_rated::Float64=11.0,
+    v_rated::Float64=p.v_wind_ref,   # D1: the SITE standard at this machine's hub
     elev_angle::Float64=π / 6,
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,
@@ -506,7 +503,6 @@ function objective_v10(
 
     # ── Build expansion rotor params for structural evaluation ────────────
     # Each active rotor becomes an ExpansionRotorParams for the existing evaluator
-    hub_altitude = design.tether_length * sin(elev_angle)
     expansion_params = ExpansionRotorParams[]
 
     for rotor in rotors

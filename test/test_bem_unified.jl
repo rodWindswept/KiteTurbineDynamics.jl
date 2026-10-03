@@ -146,4 +146,78 @@ const BEM = KiteTurbineDynamics.BEM
         # Ratio is well below the 1/√3 ≈ 0.577 disc limit
         @test M_blades_3rotor / M_blades_single < 0.577
     end
+
+    # ── 8. The site wind standard (D1, Rod 2026-09-24) ───────────────────────
+    @testset "Site wind standard: the measured Daisy pair" begin
+        # The standard is a MEASURED pair, not a machine dimension.  The anchor
+        # site is the Daisy, and the anchor IS the default.
+        @test SITE_ANCHOR === SITE_DAISY
+        @test SITE_DAISY.v_ref_ms == 10.0
+        @test SITE_DAISY.h_ref_m == 4.8
+        @test SITE_DAISY.shear_exp ≈ 1.0 / 7.0
+        @test occursin("Daisy", SITE_DAISY.name)   # named after the measurement
+
+        # The profile reads the pair at the reference height, by definition.
+        @test site_wind(4.8) ≈ 10.0 rtol = 1e-12
+        # A taller rotor reads a faster inflow.  Altitude is the only argument.
+        @test site_wind(9.400) > site_wind(7.261) > site_wind(5.123)
+        # The measured values of D1, at the 5 kW geometry and at the Daisy.
+        @test site_wind(9.400) ≈ 11.0077 atol = 1e-3    # 5 kW hub
+        @test site_wind(5.123) ≈ 10.0936 atol = 1e-3    # 5 kW lowest rotor
+        @test site_wind(5.155) ≈ 10.1025 atol = 1e-3    # Daisy rotor centre
+
+        # ── ONE profile: every params object is the standard re-expressed ──
+        # p.v_wind_ref == site_wind(p.h_ref).  This guard fails for any params
+        # factory that still carries its own reference wind.
+        for p in (
+            params_daisy(),
+            params_10kw(),
+            params_50kw(),
+            params_v5_10kw(),
+            params_v5_50kw(),
+            params_v5_safe_10kw(),
+            params_v6_50kw(),
+        )
+            @test p.v_wind_ref ≈ site_wind(p.h_ref) rtol = 1e-9
+        end
+
+        # mass_scale moves the rotor altitude, so the same standard moves with
+        # it.  The reference is the SITE pair; it is not rescaled.
+        p5 = mass_scale(params_daisy(), 1.5, 5.0)
+        @test p5.h_ref > params_daisy().h_ref
+        @test p5.v_wind_ref ≈ site_wind(p5.h_ref) rtol = 1e-9
+
+        # The ODE wind function and the decoder read the SAME profile.  The ODE
+        # form is wind_at_altitude(p.v_wind_ref, p.h_ref, z); the decoder's
+        # per-ring wind is site_wind(z).  They must agree exactly.
+        for z in (5.123, 7.261, 9.400)
+            @test wind_at_altitude(p5.v_wind_ref, p5.h_ref, z) ≈ site_wind(z) rtol = 1e-12
+        end
+        # Measured consequence for the 5 kW rung: the hub reads 11.0077 m/s,
+        # +0.09 % of the old hub-pinned 11.0 m/s.  The old decoder read 8.6637.
+        @test wind_at_altitude(p5.v_wind_ref, p5.h_ref, 9.400) ≈ 11.0077 atol = 1e-3
+
+        # ── Alternate site specs: one call re-bases a machine ──────────────
+        # The Daisy anchor is the DEFAULT, not the only site.  A site is a
+        # measured pair plus its shear exponent, so validating an ideal system
+        # against a new site wind specification is data, not a code change.
+        # The spec below is synthetic and exists to exercise the mechanism.
+        site_test = WindSiteSpec("test site (synthetic)", 12.0, 10.0, 0.2)
+        @test site_wind(site_test, 10.0) ≈ 12.0 rtol = 1e-12   # pair honoured
+        @test site_wind(site_test, 20.0) ≈ 12.0 * 2.0^0.2 rtol = 1e-12
+
+        p_alt = at_site(p5, site_test)
+        @test p_alt.v_wind_ref ≈ site_wind(site_test, p5.h_ref) rtol = 1e-12
+        @test p_alt.v_wind_ref > p5.v_wind_ref      # 12.0 at 10 m is stronger here
+        @test p_alt.h_ref == p5.h_ref               # the machine is untouched
+        @test p_alt.tether_length == p5.tether_length
+        @test p_alt.k_mppt == p5.k_mppt
+
+        # Re-basing is a COPY, never a mutation, and the two specs stay separate:
+        # the same machine reads a different wind at the same altitude.
+        @test p5.v_wind_ref ≈ site_wind(SITE_ANCHOR, p5.h_ref) rtol = 1e-9
+        @test site_wind(site_test, p5.h_ref) > site_wind(SITE_ANCHOR, p5.h_ref)
+        # A site's own pair is honoured at its own height, whatever that is.
+        @test site_wind(SITE_ANCHOR, SITE_ANCHOR.h_ref_m) ≈ SITE_ANCHOR.v_ref_ms
+    end
 end

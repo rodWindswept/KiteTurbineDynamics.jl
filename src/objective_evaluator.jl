@@ -74,7 +74,10 @@ end
 # Protocol constants (fixed scoring/physics knobs — not swept)
 # ══════════════════════════════════════════════════════════════════════════════
 
-const WIND_MS = 11.0   # rated wind speed at reference height
+# WIND_MS retired 2026-09-24 (T1, D1).  It hardcoded 11.0 m/s as the rated wind at
+# `p.h_ref`.  The rated wind is the SITE standard now, and every params object
+# carries it re-expressed at its own rotor altitude: `p.v_wind_ref == site_wind(p.h_ref)`.
+# Superseded by `wind_at_altitude(p.v_wind_ref, p.h_ref, z)` (src/wind_profile.jl).
 # Minimum acceptable FoS for the objective scoring gate.  Named FOS_GATE (not
 # FOS_DESIGN) — structural_safety.jl already owns the name FOS_DESIGN = 3.0
 # (the design-point buckling FoS), and the objective's old `const FOS_DESIGN =
@@ -719,7 +722,7 @@ function evaluate_windowed(
     # ── Wind function ────────────────────────────────────────────────────
     function wf(pos, t)
         z = max(pos[3], 1.0)
-        return [WIND_MS * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        return [wind_at_altitude(p.v_wind_ref, p.h_ref, z), 0.0, 0.0]
     end
 
     # ── Start protocol ───────────────────────────────────────────────────
