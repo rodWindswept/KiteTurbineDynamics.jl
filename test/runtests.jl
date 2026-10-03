@@ -66,4 +66,5 @@ using KiteTurbineDynamics
     include("test_rope_resolution.jl")
     include("test_winner_decode_invariant.jl")  # 2026-10-02: winner CSV decodes to ONE rotor (Rod)
     include("test_betz_ceiling_projection.jl")  # 2026-10-02: Betz ceiling is wind-normal (Rod/@aero-worker)
+    include("test_wind_authority.jl")  # 2026-10-03: one wind authority — shear exponent comes from the site spec (aero-validator)
 end
