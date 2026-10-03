@@ -179,7 +179,7 @@ cfg = ObjectiveConfig(;
 TELE_CSV = joinpath(OUT_DIR, "telemetry.csv")
 open(TELE_CSV, "w") do io
     println(io, "# v13_5kw_masslift telemetry  length=$(LENGTH)  window=$(WINDOW_S)  min_clearance=$(MIN_CLEARANCE)  lift=mass-aware-const-tension  margin=1.5  era=$(PHYSICS_ERA)  git=$(GIT_HASH)")
-    println(io, "island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,clearance," *
+    println(io, "island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,twist_ratio,clearance," *
         "n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether," *
         join(["x$j" for j in 1:10], ","))
 end
@@ -195,6 +195,7 @@ function log_telemetry(island::Int, gen::Int, idx::Int, x::Vector{Float64},
             r === nothing ? "NaN" : round(r.T_lift, digits=2),
             r === nothing ? "NaN" : round(r.FoS_min, digits=2),
             r === nothing ? "false" : string(r.twist_crossed),
+            r === nothing ? "NaN" : string(r.twist_ratio),
             round(clearance, digits=2),
             dec.design.n_lines, dec.n_rings, dec.n_active,
             round(dec.design.r_hub, digits=3), round(dec.design.r_bottom, digits=3),

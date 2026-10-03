@@ -121,6 +121,17 @@ println("  status=", r3.status, "  twist_crossed=", r3.twist_crossed,
         "  P_mean=", round(r3.P_mean, digits=2), "  P_end=", round(r3.P_end, digits=2))
 check("B3a: seed is :ok with no twist flag", r3.status === :ok && !r3.twist_crossed)
 check("B3b: seed P_end ≥ 5.0 kW", r3.P_end >= 5.0)
+# Re-baselined 2026-10-02 (aero-validator finding — teeth restored): the lower
+# bound MUST be strict.  `0.0 <= r3.twist_ratio` is satisfied by the
+# ObjectiveResult keyword-constructor default, so it stayed green when the field
+# did not exist and would stay green if the field were dropped again and decayed
+# to 0.0 at the struct boundary — the exact failure mode the field exists to
+# close.  The non-circular cross-check is B5c (measured window ratio vs the same
+# genome's settled-state ratio).
+println("  twist_ratio=", round(r3.twist_ratio, digits=5),
+        "  (0.0 here would be the constructor default, not a measurement)")
+check("B3d: twist_ratio is a MEASURED window ratio (non-default) and sub-crossing",
+      0.0 < r3.twist_ratio < 1.0)
 # B3c (seed fitness beats the flywheel) is dropped: the corrected seed is an
 # intentionally "less fit, more safe" STARTING point (Do 0.08), heavier than
 # optimised winners, so a fitness-vs-broken-artifact comparison no longer holds.
@@ -151,6 +162,33 @@ println("  post-settle: crossed=", t0.crossed, " max_ratio=", round(t0.max_ratio
         "   wound: crossed=", t1.crossed, " max_ratio=", round(t1.max_ratio, digits=1))
 check("B5a: post-settle state is not flagged", !t0.crossed && t0.max_ratio < 1.0)
 check("B5b: +π wound segment is flagged", t1.crossed)
+# B5c (2026-10-02, software-validator): flag/ratio coupling on the new field.
+# `twist_collapse_check` sets `crossed = any(da > dastar)` and
+# `max_ratio = max(da/dastar)` over the same segments (:393-408), so for a
+# measured state `crossed ⟺ max_ratio > 1` exactly.  The evaluator samples that
+# same function (:850-851), so a stale/mis-wired Ref breaks this even when the
+# value is non-zero.
+#
+# WITHHELD — settled-state cross-check: I first asserted
+# `0 < r3.twist_ratio ≤ t0.max_ratio` (window max ≤ the same genome's settled
+# ratio) and it FAILED: 0.72814 vs 0.57672.  The cause is not the new field —
+# B5's `sys` is built WITHOUT `beam_sizing` and WITHOUT `min_wall_m`, while the
+# evaluator builds the same genome WITH both (objective_evaluator.jl:684-700),
+# and `beam_sizing === nothing` selects the legacy uniform `design.t_over_D`
+# tube (:459-463).  Measured by `scratch/sv_probe_b5_build.jl`: ring mass
+# 2.715 kg/ring (B5) vs 0.827 kg/ring (evaluator), `ring_mass_total` 32.58 kg vs
+# 9.92 kg, `ring_Do_per_ring` EMPTY vs populated.  A 3.3× ring-mass difference on
+# a ~19 kg machine is not the campaign structure: B5/B7's settled state, and the
+# 20 s window, are two different machines, and twist (torsional stiffness) is
+# exactly the quantity that separates them.  The settled-state cross-check must
+# stay withheld until B5's build is aligned with the evaluator's.  Raising this
+# to @software-worker rather than re-baselining a shared unit state unilaterally.
+println("  r3.twist_ratio=", round(r3.twist_ratio, digits=5),
+        "   B5 settled max_ratio=", round(t0.max_ratio, digits=5),
+        "   (NOT comparable: B5's build differs from the evaluator's — see sv_probe_b5_build.jl)")
+check("B5c: twist_crossed is coupled to the recorded twist_ratio (same sampling loop)",
+      r3.twist_crossed == (r3.twist_ratio > 1.0) &&
+      t1.crossed == (t1.max_ratio > 1.0) && t0.crossed == (t0.max_ratio > 1.0))
 
 println("=== B6: campaign winner under the ALIGNED FoS model ===")
 if isfile(WINNER18V13)

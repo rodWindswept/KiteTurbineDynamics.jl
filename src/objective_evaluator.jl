@@ -243,6 +243,7 @@ struct ObjectiveResult
     T_lift::Float64
     P_end::Float64        # mean of last 5 window samples (sustained power; V13)
     twist_crossed::Bool   # per-segment twist past the geometric crossing limit (V13)
+    twist_ratio::Float64  # window's worst twist/crossing ratio (twist_ratio_max; V13)
     line_broken::Bool     # any TRPT line exceeded ROPE_BREAK_STRAIN (2026-08-14)
 end
 
@@ -260,6 +261,7 @@ function ObjectiveResult(;
     T_lift,
     P_end,
     twist_crossed,
+    twist_ratio=0.0,
     line_broken,
 )
     return ObjectiveResult(
@@ -276,13 +278,15 @@ function ObjectiveResult(;
         T_lift,
         P_end,
         twist_crossed,
+        twist_ratio,
         line_broken,
     )
 end
 
 """Standard rejected evaluation — `ω_eq` carries through when known."""
 function rejected_eval(
-    ω_eq::Float64=0.0; line_broken::Bool=false, twist_crossed::Bool=false
+    ω_eq::Float64=0.0; line_broken::Bool=false, twist_crossed::Bool=false,
+    twist_ratio::Float64=0.0
 )
     return ObjectiveResult(
         :reject,
@@ -298,6 +302,7 @@ function rejected_eval(
         0.0,
         0.0,
         twist_crossed,
+        twist_ratio,
         line_broken,
     )
 end
@@ -1002,6 +1007,7 @@ function evaluate_windowed(
             0.0,
             0.0,
             true,
+            twist_ratio_max[],
             false,
         )
     end
@@ -1149,6 +1155,7 @@ function evaluate_windowed(
             T_lift_mean,
             P_end,
             twist_flagged[],
+            twist_ratio_max[],
             false,
         )
     end
@@ -1184,6 +1191,7 @@ function evaluate_windowed(
         T_lift_mean,
         P_end,
         twist_flagged[],
+        twist_ratio_max[],
         false,
     )
 end
