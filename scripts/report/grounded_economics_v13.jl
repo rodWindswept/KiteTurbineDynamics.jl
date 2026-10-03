@@ -57,16 +57,20 @@ const ETA_GEN = 0.90                  # generator efficiency (assumption, flagge
 const LIFE_YEARS = 20.0               # Economics default
 const DISCOUNT_RATE = 0.07            # Economics default
 
-"""Decode a winner genome exactly as the gate does and build the ODE system.
-Returns (design summary, sys, pc)."""
+"""Decode a winner genome through the gate's single-authority `decode_winner`
+and build the ODE system.  Returns (design summary, sys, pc).
+
+The decode and k_mppt now match the gate (ode_gate_v13.jl) exactly — layout-
+aware rounding + rotor_count_mode + three-section geometry + power_split +
+wake blocking.  NOTE the remaining divergence: this builds via
+`build_system_from_v10` WITHOUT the gate's closed-form beam sizing
+(`size_beams_closed_form`, `min_wall_m=2e-3`), so it is not bit-for-bit the
+gate's machine; flag that rather than paper over it."""
 function winner_build(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
-        p2=params_10kw())
-    p = params_at_length(p2, L, KW)
-    xv = copy(x)
-    xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))     # n_lines — gate rounding
-    xv[10] = clamp(xv[10], 0.0, Float64(N_VALID_MASKS))  # rotor mask — gate clamp
-    dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=KW * 1000.0)
-    sys, u0, pc = KTD.build_system_from_v10(dec, 1.0, p.k_mppt;
+        p2=params_daisy())
+    d = decode_winner(x; L=L, KW=KW, p2=p2)
+    dec, p, k_mp = d.dec, d.p, d.k_mp
+    sys, u0, pc = KTD.build_system_from_v10(dec, 1.0, k_mp;
         tether_diameter=p.tether_diameter, base_params=p)   # rung-scaled base (2026-08-20 fix)
     return (dec=dec, sys=sys, pc=pc, p=p)
 end

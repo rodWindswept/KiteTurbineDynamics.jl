@@ -235,8 +235,12 @@ end
 # build the winner passed its 2026-09-02 re-gate on.  Winner reference numbers
 # (regate_verdict.md): fitness 18.49 kg, evaluator P 5.41 kW, FoS_min 17.19.
 # Different ring count / taper from the campaign seed is the point of the check.
-const WINNER_CSV = joinpath(@__DIR__, "..", "scripts", "results",
-    "v13_5kw_masslift_len18.8_rotorcount", "best_vector.csv")
+# WG_WINNER_CSV (2026-10-02, aero-validator): lets this probe point at either
+# winner without editing the constant.  Default is the PRE-derate `_rotorcount`
+# winner; the bank-derate rebaseline winner is
+#   scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/best_vector.csv
+const WINNER_CSV = get(ENV, "WG_WINNER_CSV", joinpath(@__DIR__, "..", "scripts", "results",
+    "v13_5kw_masslift_len18.8_rotorcount", "best_vector.csv"))
 const WINNER_L = 18.8
 const WINNER_KW = 5.0
 
@@ -244,8 +248,20 @@ function build_winner_case()
     p = params_at_length(params_daisy(), WINNER_L, WINNER_KW)
     bf = BLOCKING_WIND_FACTOR_5KW
     xv = [parse(Float64, s) for s in split(strip(read(WINNER_CSV, String)), ",")]
-    xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
-    xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))
+    # LENGTH-AWARE integer-gene rounding (2026-10-02).  `canonical_v10`
+    # (objective_v10.jl:142-149) branches on genome LENGTH: >=14 is the legacy
+    # 14-D layout (n_lines x[8], rotor x[10]); ==10 is canonical (n_lines x[4],
+    # rotor x[6]).  This file's DEFAULT WINNER_CSV is the 14-FIELD pre-derate
+    # winner, so clamping the canonical pair unconditionally silently writes
+    # legacy x[6] = r_bottom (0.8627 m -> 1.0000 m).  Measured:
+    # scratch/sv_probe_decode_guard.jl.
+    if length(xv) >= 14
+        xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))    # legacy n_lines
+        xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # legacy rotor mask/count
+    else
+        xv[4] = Float64(round(Int, clamp(xv[4], 3, 16)))    # canonical n_lines
+        xv[6] = Float64(round(Int, clamp(xv[6], 1, 3)))     # canonical rotor count
+    end
     dec = design_from_vector_v10(xv, PROFILE_ELLIPTICAL, p; power_W=WINNER_KW * 1000.0,
         cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=bf)
@@ -263,6 +279,10 @@ function build_winner_case()
     @printf("winner build: genome=%s\n", relpath(WINNER_CSV, joinpath(@__DIR__, "..")))
     @printf("  n_lines=%d rings=%d n_active=%d r_hub=%.2f m  L=%.1f m\n",
         dec.design.n_lines, dec.n_rings, dec.n_active, dec.design.r_hub, WINNER_L)
+    # r_bottom is the tell-tale of a stale clamp on a 14-FIELD file (2026-10-02):
+    # the legacy layout's x[6] IS r_bottom, so the canonical pair silently moves it.
+    @printf("  r_bottom=%.4f m  (14-field legacy layout: canonical clamps write x[6] = r_bottom)\n",
+        dec.design.r_bottom)
     flush(stdout)
     return sys, u0, pc, lift, wf
 end

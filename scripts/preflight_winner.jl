@@ -1,6 +1,14 @@
 #!/usr/bin/env julia --project=.
 #= preflight_winner.jl — run the length/clearance/Betz pre-flight on a
-specific genome (default: 5kW campaign winner island_1_best.csv). =#
+specific genome (default: 5kW campaign winner island_1_best.csv).
+
+⚠ DECODE SCOPE (2026-10-02): this decodes the V12-era 14-D BITMASK genome
+(`x[8]`=n_lines, `x[10]`=rotor mask via `N_VALID_MASKS`).  That is correct
+ONLY for v12 bitmask winners.  Do NOT repoint it at a v13 winner — the current
+bank-derate winner is 10-D rotor_count (x[4]=n_lines, x[6]=count, x[7]/x[8]=
+bank_top/bottom); decoding it here would read bank_bottom as n_lines and the
+mask clamp would silently materialise a 2-rotor machine.  For v13 winners use
+ode_gate_v13.jl / decode_winner. =#
 
 using KiteTurbineDynamics, Printf
 include(joinpath(@__DIR__, "compute_seeds.jl"))

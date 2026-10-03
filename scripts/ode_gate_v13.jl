@@ -83,8 +83,22 @@ function twist_report(u, sys, N, Nr)
     return (crossed=crossed, max_ratio=max_ratio, worst_seg=worst_seg, rows=rows)
 end
 
-function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
-        window_s::Float64=30.0, p2=params_daisy())
+"""Single-authority decode of a v13 winner genome → `(dec, p, xv, k_mp, bf)`.
+
+Mirrors the decode at the top of `gate_design` and `eval_v13`
+(run_v13_5kw_masslift.jl) EXACTLY: `params_at_length` on the Daisy anchor,
+layout-aware gene rounding (10-D R7 or 14-D), and the full campaign decode
+knobs — rotor_count_mode + three-section geometry + power_split + cone +
+spacing + wake blocking.
+
+Use this instead of hand-rolling `design_from_vector_v10` on a winner CSV.  A
+local decode that omits `rotor_count_mode=true` falls back to the legacy
+bitmask path and silently rebuilds a DIFFERENT machine: for the single-rotor
+winner (x[6]=1.267→1) it materialises a 2-rotor stack with `bank_bottom`
+live (2026-10-02 validation, docs/validation/2026-10-02-genome-index-and-preload-budget.md §2b).
+"""
+function decode_winner(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
+        p2=params_daisy())
     p = params_at_length(p2, L, KW)
     # 5 kW operating point: single source of truth (compute_seeds.jl,
     # K_MPPT_5KW_HONEST) — honest-window k sweep 2026-08-22.  k=5.39 was the
@@ -94,11 +108,11 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
     bf = KW == 5.0 ? BLOCKING_WIND_FACTOR_5KW : 1.0
     xv = copy(x)
     if length(xv) >= 14
-        xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
-        xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+        xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))     # n_lines
+        xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))    # rotor_count_mode: {1,2,3}
     else
-        xv[4] = Float64(round(Int, clamp(xv[4], 3, 16)))    # R7 10-D layout
-        xv[6] = Float64(round(Int, clamp(xv[6], 1, 3)))
+        xv[4] = Float64(round(Int, clamp(xv[4], 3, 16)))     # n_lines (R7 10-D)
+        xv[6] = Float64(round(Int, clamp(xv[6], 1, 3)))      # rotor_count_mode: {1,2,3}
     end
     # 2026-08-26: decode with the SAME knobs as run_v13_5kw_masslift.jl so the
     # gate re-evaluates the machine the campaign actually built — rotor_count_mode
@@ -108,6 +122,13 @@ function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
         cylinder_cone=true, rotor_count_mode=true,
         power_split=0.6, cone_slope_deg=22.0,
         rotor_spacing_frac=0.8, blocking_factor=bf)
+    return (dec=dec, p=p, xv=xv, k_mp=k_mp, bf=bf)
+end
+
+function gate_design(x::Vector{Float64}; L::Float64, KW::Float64=5.0,
+        window_s::Float64=30.0, p2=params_daisy())
+    d = decode_winner(x; L=L, KW=KW, p2=p2)
+    p, k_mp, bf, xv, dec = d.p, d.k_mp, d.bf, d.xv, d.dec
 
     # Pre-flight clearance — ABSOLUTE tip radius (ring radius + blade_tip), via
     # the single-authority helper (was blade_tip offset alone; 2026-08-26).
