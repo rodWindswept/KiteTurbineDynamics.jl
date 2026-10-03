@@ -90,7 +90,7 @@ function run_capture(
 
     wf(pos, t) = begin
         z = max(pos[3], 1.0)
-        [wind_speed * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        [wind_speed * site_shear(p.h_ref, z), 0.0, 0.0]
     end
 
     u = settle_to_operational_state(sys, copy(u0), p, 9.5;
@@ -150,7 +150,7 @@ function run_verify_timeseries(
     sys.k_mppt_ref[] = k_val
     wf(pos, t) = begin
         z = max(pos[3], 1.0)
-        [wind_speed * (z / p.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        [wind_speed * site_shear(p.h_ref, z), 0.0, 0.0]
     end
     u = settle_to_operational_state(sys, copy(u0), p, 9.5;
         lift_device=lift_device, wind_fn=wf)
@@ -281,7 +281,7 @@ function hunt_k_at_wind(
     sys_st.k_mppt_ref[] = k_best
     wf_st(pos, t) = begin
         z = max(pos[3], 1.0)
-        [wind_speed * (z / p_st.h_ref)^(1.0 / 7.0), 0.0, 0.0]
+        [wind_speed * site_shear(p_st.h_ref, z), 0.0, 0.0]
     end
     u_st = settle_to_operational_state(sys_st, copy(u0_st), p_st, 9.5; wind_fn=wf_st)
     ef_st = capture_extended(u_st, sys_st, p_st, 0.0, wf_st, nothing; brake_engaged=false)

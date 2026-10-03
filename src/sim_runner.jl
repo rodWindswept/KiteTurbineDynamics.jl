@@ -112,35 +112,35 @@ function build_rerun!(
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
             (pos, t) -> begin
-                z = max(pos[3], 1.0); [vref * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [vref * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :ramp_down
             (pos, t) -> begin
                 z = max(pos[3], 1.0)
                 frac = clamp(1.0 - t / t_total, 0.0, 1.0)
-                [vref * frac * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                [vref * frac * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :ramp_up
             (pos, t) -> begin
                 z = max(pos[3], 1.0)
                 frac = clamp(t / t_total, 0.0, 1.0)
-                [vref * frac * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                [vref * frac * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :gust
             (pos, t) -> begin
                 z = max(pos[3], 1.0)
                 gust = 1.0 + 0.3*sin(2π*t/5.0) + 0.15*sin(2π*t/2.3)
-                [vref * gust * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                [vref * gust * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :pitch_depower
             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z/p.h_ref)^(1/7)
+                z = max(pos[3], 1.0); sh = site_shear(p.h_ref, z)
                 [Float64(vref)*sh, 0.0, 0.0]
             end
         else   # :land
             (pos, t) -> begin
                 v = t < 30.0 ? vref*(1.0-t*0.9/30.0) : vref*0.1*max(0.0,1.0-(t-30.0)/10.0)
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         end
     end
