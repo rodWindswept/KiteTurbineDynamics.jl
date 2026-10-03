@@ -15,12 +15,24 @@ Exit 0 = no stale phrases found; 1 = flags. Report-only, never edits.
 
 import json
 import os
+import re
 import sys
 
 HOME = os.path.expanduser("~")
 SKILLS_ROOT = os.path.join(HOME, ".hermes", "skills")
 
 DEFAULT_KTD_REPO = os.path.join(HOME, "Documents", "GitHub", "KiteTurbineDynamics.jl")
+
+
+def phrase_pattern(phrase):
+    """Case- and separator-insensitive matcher for a stale phrase.
+
+    2026-10-03: the plain substring test missed 'Hub rotor' (case) and
+    'hub-rotor' (hyphen) — the same rename class. Spaces inside a phrase
+    match any run of space/hyphen/underscore, and matching ignores case.
+    """
+    tokens = [re.escape(t) for t in phrase.split()]
+    return re.compile(r"[-_\s]+".join(tokens), re.IGNORECASE)
 
 
 def load_stale_phrases(repo):
@@ -109,11 +121,12 @@ def main():
             raw = f.read()
         content = strip_banner_context(raw)
         for phrase, replacement in phrases:
-            if phrase in content:
+            rx = phrase_pattern(phrase)
+            if rx.search(content):
                 # Grab one context line for the semantic pass
                 line_no = None
                 for i, line in enumerate(content.splitlines()):
-                    if phrase in line:
+                    if rx.search(line):
                         line_no = i + 1
                         break
                 flags.append((skill_name, phrase, replacement, line_no))

@@ -383,9 +383,9 @@ If a banked rotor is a banked rotor, the expansion rotors should carry 2.65 as w
 they do not. The precone sweep measured the main rotor's solidity only, so applying 2.65 to
 the expansion annuli is an extrapolation. Left alone deliberately pending a ruling.
 
-**Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**. Do not
-write "hub rotor". The word "hub" stays valid for the ring and the node, and never
-for a rotor.
+**Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**.
+Do not write "hub rotor". The word "hub" stays valid for the ring and the node,
+and never for a rotor.
 
 ### 4.1 Multi-rotor sizing: the span comes from the ring annulus (DERIVED, not validated)
 

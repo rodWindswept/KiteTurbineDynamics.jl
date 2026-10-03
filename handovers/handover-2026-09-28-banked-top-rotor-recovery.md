@@ -1,5 +1,7 @@
 # Handover — 2026-09-28: banked top-rotor recovery (crashed session) and the state it left
 
+> **SUPERSEDED by handover-2026-10-01-bank-derate-and-5kw-rebaseline.md. Top-ring work was reverted after the 2026-09-30 brake measurement. The bank cost now lands as the disc model × cos^2.65.**
+
 **From:** recovery/investigation session (Hermes desktop, 2026-09-28 evening)
 **To:** the next session (the WP2 / T8 / WP3 continuation)
 **State:** all of the crashed session's edits are on disk and re-verified. **Nothing is

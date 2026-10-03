@@ -63,14 +63,17 @@ Replacement: with ζ=0.05 the ODE sustains power at all tested scales
 ## The hub ring hosts ONLY the cp/ct rotor
 Date: 2026-09-12
 Replacement: Any rotor may be a banked-blade expansion rotor, including the main rotor (topmost). Where banked blades are fitted, the expansion model REPLACES the cp/ct disc model at that ring. See docs/agents/physics-topology.md §4
+Note (2026-10-01): DECISIONS.md [2026-10-01] bans the "expansion model REPLACES the disc model" direction. The expansion model keeps 0.147. The measurement keeps 0.854. A banked rotor, the topmost included, uses the cp/ct disc model × cos(bank)^2.65 for power.
 
 ## expansion_params_from_rotors excludes the decoder's hub rotor
 Date: 2026-09-12
 Replacement: expansion_params_from_rotors must be able to map the topmost rotor when it carries banked blades; the 2026-08-22 exclusion is superseded
+Note (2026-10-01): the topmost rotor may carry banked blades. Its power model is the cp/ct disc × cos(bank)^2.65. DECISIONS.md [2026-10-01] bans the expansion model at every ring.
 
 ## Expansion rotors are ADDITIONAL rotors on intermediate rings only
 Date: 2026-09-12
 Replacement: expansion (banked-blade) rotors may be fitted to any ring, including the topmost/main rotor ring
+Note (2026-10-01): banked blades may sit at any ring, the topmost included. Where bank is present, the disc × cos(bank)^2.65 model applies.
 
 ## hub rotor
 Date: 2026-09-12

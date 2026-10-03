@@ -27,9 +27,17 @@ Collaborative workspace for agent-to-agent handoff documents. Each file captures
 | `handover-2026-09-12-session-state-and-preload-rootcause.md` | Sep 12 | **SUPERSEDED** by the above, except §2 (canonical Julia invocation). Session-state triage: all WIP committed. We verified the dead-knob root cause from Claude |
 | `handover-2026-09-11-settle-ode-coherence.md` | Sep 11 | settle↔ODE coherence fixed (matched-place twist+axial solve). We corrected the wind-up root cause: axial preload, not frame softness. Acceptance 5/8: the corrected state does **not** stall. It exposes a **real FoS shortfall** (seed 1.31 to 2.31 vs a 2.5 floor). Do not re-baseline. **§1/§2 superseded 2026-09-12**. §3 to §9 still valid |
 | `handover-2026-09-10-r7-complete.md` | Sep 10 | R7 to R10 + R11 deliverables complete. The (then-misdiagnosed) settle gap blocked the short campaign |
+| `handover-2026-09-10-r7-r10-remit.md` | Sep 10 | R7–R10 remit + R11 (L-genome) study |
 | `handover-2026-09-07-closed-form-beam-sizing.md` | Sep 07 | "shed structure" plan inverted (true FoS ≈ 1.2, under-strength). We proposed a closed-form beam-sizing architecture (REV 2). Orientation/off-by-one fixes landed, and we added `solve_ring_Do`. The load case is the generator load step. We deferred feather |
+| `handover-2026-08-28-rotorcount-campaign-complete.md` | Aug 28 | 5 kW rotorcount campaign complete, all winners gated |
+| `handover-2026-08-27-5kw-reseed.md` | Aug 27 | 5 kW re-seed + blocking + clearance (pre-campaign fixes) |
+| `handover-2026-08-26-recovery-backlog.md` | Aug 26 | crashed-session recovery + resurrected backlog |
+| `handover-2026-08-22-validated-5kw-campaign-launched.md` | Aug 22 | validated 5 kW base, honest evaluator, campaign launched |
+| `handover-2026-08-22-blade-mass-law-and-campaign-status.md` | Aug 22 | blade mass law, campaign status, open physics decision |
 | `handover-2026-08-21-daisy-anchored-5kw-campaign.md` | Aug 21 | Gate aligned to the Daisy anchor. Gate 1c blade mass fixed. Smoke passed at 18.8 |
 | `handover-2026-08-20-model-scaling-daisy-anchor.md` | Aug 20 | 50 kW blade-mass/radius/annulus contamination fixed. Daisy anchor saved. Mass-minimisation objective (FoS 2.5). 5 kW re-run config assembled. Daisy seed stall = the open task |
+| `handover-2026-08-20-tooling-tests-conventions.md` | Aug 20 | tooling, test-suite integrity, physics conventions |
+| `handover-2026-08-16-anchor-session.md` | Aug 16 | anchor + reporting session |
 | `handover-2026-08-12-5kw-baseline.md` | Aug 12 | 5kW baseline: ODE viability confirmed (2.7 kW), static/ramp evaluator false-negatives diagnosed, torsional FoS power-dependence, V12 cold-start campaign config |
 | `handover-2026-08-12-zeta-damping-fix.md` | Aug 12 | ζ=1.5 damping + tension rectifier = reverse torque. ζ promoted to SystemParams (0.05) |
 | `handover-2026-08-11-bem-ode-gap.md` | Aug 11 | BEM/ODE gap investigation. SUPERSEDED by the ζ fix (see above) |
