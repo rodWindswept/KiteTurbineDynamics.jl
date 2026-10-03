@@ -48,7 +48,7 @@ function build_case(n_lines, rotor_count; genome=nothing, p=params_5kw_188())
     dec = KiteTurbineDynamics.design_from_vector_v10(x, PROFILE_ELLIPTICAL, p;
         power_W=5000.0, cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
-    cfg = ObjectiveConfig(; power_W=5000.0, v_rated=11.0, p_floor_kw=5.0, p_ceiling_kw=5.0,
+    cfg = ObjectiveConfig(; power_W=5000.0, v_rated=p.v_wind_ref, p_floor_kw=5.0, p_ceiling_kw=5.0,
         fos_target=2.5, fos_hard=2.5, min_wall_m=2e-3, t_over_D=0.055,
         rotor_count_mode=true, power_split=0.6, blocking_factor=BLOCKING_WIND_FACTOR_5KW,
         k_mppt=K_MPPT_5KW_HONEST)
@@ -56,7 +56,14 @@ function build_case(n_lines, rotor_count; genome=nothing, p=params_5kw_188())
     sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(dec, 1.0, K_MPPT_5KW_HONEST;
         tether_diameter=p.tether_diameter, base_params=p, min_wall_m=2e-3, beam_sizing=sizing)
     sys.k_mppt_ref[] = K_MPPT_5KW_HONEST
-    lift = sized_lifter_for(sys, pc; margin=1.5, v_ref=11.0, const_tension=true)
-    wf = (r, t) -> [11.0 * (max(r[3], 1.0) / p.h_ref)^(1 / 7), 0.0, 0.0]
+    lift = sized_lifter_for(sys, pc; margin=1.5, v_ref=p.v_wind_ref, const_tension=true)
+    # D1 (2026-10-03): the fixture's wind reads the SITE standard, not re-typed
+    # literals.  `p.v_wind_ref` is the site re-expressed at this machine's hub and
+    # `SITE_DAISY.shear_exp` is the exponent — identical to the ODE evaluator's
+    # `wind_at_altitude(p.v_wind_ref, p.h_ref, z)` path.
+    wf = (r, t) -> [
+        wind_at_altitude(p.v_wind_ref, p.h_ref, max(r[3], 1.0); hellmann_exponent=SITE_DAISY.shear_exp),
+        0.0, 0.0,
+    ]
     return sys, u0, pc, lift, wf
 end

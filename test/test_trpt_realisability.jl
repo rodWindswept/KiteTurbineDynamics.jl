@@ -80,6 +80,21 @@
 # 0.16531 -> 0.17843, F_ax[end] 1163.72 -> 1116.10, crossing 0.89592 -> 0.92403.
 # The verdicts (under the cliff, repairable inside the cap, refuses the cliff)
 # are unchanged.
+#
+# RE-BASELINED 2026-10-03 (sixth time), for the D1 site-wind correction.  The
+# decoder sized wind with a leftover 50 m / 0.14 anchor (8.7 m/s) while the ODE
+# read 11.0 m/s at p.h_ref — Defect-D.  D1 retires the anchor and the 0.14
+# exponent: the decoder now reads `wind_at_altitude(v_rated, p.h_ref, z)` with
+# `v_rated = p.v_wind_ref` (11.0077 m/s), and this fixture's own wind closure
+# now reads the SITE standard (`SITE_DAISY.shear_exp`) rather than re-typed
+# 11.0 / 1/7 literals (Rod: derived value, not fixed number).  Sized for the
+# correct, stronger wind the machine comes out smaller and lighter, so the line
+# preload drops ~38 % (F_ax[end] 1116.10 -> 688.87 N).  This fixture pins the
+# operating TORQUE (τ_eq unchanged), so a lower tension on the same torque
+# drives twist up: max demand 0.88123 -> 1.44589, past the sin-law cliff, twist
+# saturating at 90°.  The L/r 2.0 seed is therefore now OVER the cliff and NOT
+# repairable inside the 1.5x cap (needs 1.77x) — the seam and the floor now
+# correctly refuse it, so the verdicts FLIP (see section A2).
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
@@ -139,49 +154,45 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
 
     @test length(r.demand) == sys.n_ring - 1
     @test all(r.demand .>= 0.0)
-    @test maximum(r.demand) < 1.0                  # UNDER the cliff once thrust is in
+    @test maximum(r.demand) > 1.0                  # OVER the cliff once the D1 wind re-sizes it
     @test argmax(r.demand) == 4                    # same binding segment as before
-    @test r.demand[1] ≈ 0.87192 atol = 5e-3
-    @test r.demand[4] ≈ 0.88123 atol = 5e-3
-    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 61.7917 atol = 0.01
+    @test r.demand[1] ≈ 1.4242950527174685 atol = 5e-3
+    @test r.demand[4] ≈ 1.4458890686138377 atol = 5e-3
+    @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 90.0 atol = 0.01   # saturated at the cliff
     # Demand falls going up the shaft because each rotor injects its own torque:
     # segs 1-6 carry the generator load, seg 7 carries it less the ring-7
     # expansion rotor, seg 8 less that again.
-    @test r.τ_carry[7] ≈ 325.772 atol = 2.0
-    @test r.τ_carry[8] ≈ 238.928 atol = 2.0
-    @test r.demand[7] ≈ 0.20724 atol = 5e-3
-    @test r.demand[8] ≈ 0.17843 atol = 5e-3
+    @test r.τ_carry[7] ≈ 349.3683149219637 atol = 2.0
+    @test r.τ_carry[8] ≈ 301.0025289821658 atol = 2.0
+    @test r.demand[7] ≈ 0.3692789349795016 atol = 5e-3
+    @test r.demand[8] ≈ 0.3641668906825423 atol = 5e-3
     # Section B's top tension is MAIN-ROTOR-ONLY and so is UNCHANGED by the
     # 2026-09-22 thrust-in-profile fix: the expansion rotors sit below the cut.
-    @test F_ax[end] ≈ 1116.10 atol = 1.0
+    @test F_ax[end] ≈ 688.8680657727124 atol = 1.0
     @test F_ax[end] < 1274.47
 
-    # ── A2. this L/r 2.0 fixture is REPAIRABLE inside the cap ────────────────
-    # Before 2026-09-22 the omitted expansion thrust left the lower segments
-    # under-tensioned, which inflated their demand: the bare design read demand
-    # 1.1276 and crossing 1.4716, needing 1.4716 x 1.05 = 1.545x the bare preload
-    # — past TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5 — so
-    # `design_axial_preload` REFUSED outright.  With the thrust in the profile the
-    # same fixture clears both criteria inside the margin, so the floor repairs it.
+    # ── A2. this L/r 2.0 fixture is now OVER the cliff, NOT repairable ───────
+    # Pre-D1 (through 2026-09-29) the machine was sized for the weaker 8.7 m/s
+    # decoder wind, so its preload was higher and the fixture was tight-but-
+    # repairable: demand 0.88123, crossing 0.92403, and one margin step cleared
+    # it.  D1 sizes the machine for the correct 11.0 m/s wind, so it is smaller
+    # and lighter, the preload drops ~38 %, and on the same pinned torque the
+    # twist demand runs up past both criteria: crossing 1.6897, and 1.6897 x
+    # 1.05 = 1.774x — past TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5.  The
+    # floor therefore REFUSES it outright, exactly as it refuses the over-cliff
+    # cases in section B.
     m = KiteTurbineDynamics.TRPT_REALISABILITY_TENSION_MARGIN
     @test m > 1.0
     cross_bare = KiteTurbineDynamics.max_segment_cross_ratio(r, sys)
-    @test maximum(r.demand) < 1.0            # under the sin-law cliff
-    @test cross_bare ≈ 0.92403 atol = 5e-3   # and under the geometric crossing limit
-    @test cross_bare * m <= 1.0              # so one margin step clears it
-    @test cross_bare * m < KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
-    # The raising call RETURNS now (it used to raise).  Assert the repaired
-    # placement clears BOTH floor criteria, not just the sin law.
-    F_raised = design_axial_preload(sys, pc, lift, u0; omega_eq=OMEGA_SEED, wind_fn=wf)
-    @test F_raised isa AbstractVector
-    @test length(F_raised) == sys.n_ring - 1
-    @test F_raised[end] >= F_ax[end]         # the floor only ever raises tension
-    p_raised = trpt_matched_place(
-        sys, pc, F_raised, sys.k_mppt_ref[] * OMEGA_SEED^2, OMEGA_SEED, wf
+    @test maximum(r.demand) > 1.0            # past the sin-law cliff
+    @test cross_bare ≈ 1.6897062576552295 atol = 5e-3   # past the geometric crossing limit
+    @test cross_bare * m > 1.0               # one margin step does NOT clear it
+    @test cross_bare * m > KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
+    # The raising call now REFUSES (it used to return).  An over-cliff machine
+    # must raise, never place a wind-up.
+    @test_throws ErrorException design_axial_preload(
+        sys, pc, lift, u0; omega_eq=OMEGA_SEED, wind_fn=wf
     )
-    @test maximum(p_raised.demand) <= (1.0 / m) * (1.0 + 1e-9)
-    @test KiteTurbineDynamics.max_segment_cross_ratio(p_raised, sys) <=
-        (1.0 / m) * (1.0 + 1e-9)
 
     # ── B. the seam still REFUSES an over-cliff design point ────────────────
     for (nl, rc, ω) in ((4, 3.0, OMEGA_4L3R), (6, 1.0, OMEGA_6L1R))
