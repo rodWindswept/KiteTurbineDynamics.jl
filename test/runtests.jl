@@ -58,9 +58,12 @@ using KiteTurbineDynamics
     include("test_trpt_reference.jl")       # 2026-09-26: the printed reference values, pages 198-201
     include("test_trpt_drag_torque.jl")     # 2026-09-26: the drag moment must reach the ring spin
     include("test_trpt_drag_coefficient.jl") # 2026-09-26: the drag coefficient is a per-case setting
+    include("test_tether_drag_length_monotonic.jl") # 2026-10-03: tether drag grows with L at fixed h_ref (aero-worker)
     include("test_settle_validity.jl")   # 2026-09-12: taut chain + force balance + smooth handoff
     include("test_fitness_appropriateness_2026_09.jl")
     include("test_system_defaults.jl")
     include("test_beam_sizing_closed_form.jl")
     include("test_rope_resolution.jl")
+    include("test_winner_decode_invariant.jl")  # 2026-10-02: winner CSV decodes to ONE rotor (Rod)
+    include("test_betz_ceiling_projection.jl")  # 2026-10-02: Betz ceiling is wind-normal (Rod/@aero-worker)
 end
