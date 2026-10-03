@@ -10,6 +10,43 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-03] The site wind standard — one measured profile, one exponent (D1)
+
+**Context.** The decoder sized wind with `wind_speed_at_ring(...; h_ref=50.0, shear_exp=0.14)`,
+a function that ignored its `hub_altitude` argument and left the reference height at an
+unanchored 50 m default. The ODE flew `11.0 m/s at p.h_ref, α=1/7`. One rated wind, two
+anchors: the decoder read 8.7051 m/s at the 5 kW hub while the ODE read 11.0 m/s (2.02× on
+area, 17.3× on top-rotor blade mass). This is the `[2026-09-23]` audit's Defect-D; the
+0.14-exponent figures there are superseded below.
+
+**Ruled (Rod, 2026-09-24; landed 2026-10-03).** The rated wind is the measured Daisy pair:
+10.0 m/s at 4.8 m (the anemometer on the Daisy mast), carried to other heights by the
+one-seventh power law α = 1/7. This is the site standard, not a machine dimension. Every
+params factory reads it re-expressed at its own rotor altitude: `p.v_wind_ref == site_wind(p.h_ref)`.
+A taller rotor therefore reads a faster inflow, and length is a power axis.
+
+**Code.** `src/wind_profile.jl` gains `WindSiteSpec`, `SITE_DAISY` (the anchor), `site_wind`
+and `at_site`. `WIND_MS` and `wind_speed_at_ring` are retired. The ODE and the decoder both
+read `wind_at_altitude(v_rated, p.h_ref, z)` with `v_rated = p.v_wind_ref`. `at_site(p, site)`
+re-bases a machine on another site in one call — validating against a new site wind is data,
+not a code change. `test/test_bem_unified.jl` pins the identity `p.v_wind_ref == site_wind(p.h_ref)`
+across every params factory plus `mass_scale`.
+
+**Consequence — the re-sized machine.** Sized for the correct, stronger wind the machine comes
+out smaller and lighter: the L/r 2.0 realisability fixture's line preload drops ~38 %
+(1116.10 → 688.87 N). That fixture pins torque, so the lower tension drives twist up past the
+cliff (max demand 0.88123 → 1.44589, twist saturating at 90°). The L/r 2.0 campaign seed is
+therefore now over the torsional cliff and not repairable inside the 1.5× cap — the seam and
+the floor correctly refuse it. `test/test_trpt_realisability.jl` is re-baselined (sixth time)
+for this correction; the L/r 1.5 campaign seed (its section C) remains repairable.
+
+**Open.** Three live closures (`src/sim_runner.jl`, `src/visualization.jl`,
+`src/control_map_hunt.jl`) still hardcode the bare `(z/p.h_ref)^(1/7)` literal and never read
+the site spec — they thread the speed but not the exponent. They do not touch the length sweep
+(ODE path) and ride with the sweep's code window, not this landing.
+
+---
+
 ## [2026-10-01] A banked rotor uses the disc model times cos^2.65. The expansion model is banned.
 
 **Context.** The `[2026-09-30]` entry recorded that the banked expansion model brakes the
@@ -316,7 +353,7 @@ So the annulus error is the SMALLEST of the three, and the inflow error is the l
 
 **Defect C (`n_active == 1`): REAL, and it affects BOTH single-rotor islands.** `objective_v10.jl:354` reads `P_i = (i == 1) ? power_split * power_W : ...`, which for `n_active == 1` sizes the only rotor at 0.6 · 5000 = **3000 W**. Confirmed on islands 2 and 3. Fixing it raises that rotor to 5000 W, which makes its blades **4.2× heavier** (span 0.8875 → 1.4367 m). That is correct: the single-rotor islands were under-sized, and the annulus oversizing is what let a 3 kW rotor still deliver about 5.6 kW.
 
-**Defect D (inflow): REAL and the largest, but NOT for the reason given.** `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)` computes `v_ref · (z/h_ref)^0.14`. It **accepts `hub_altitude` and never uses it**, so `h_ref` stays at the unanchored 50.0 m default. At the top ring's 9.40 m that scales 11 m/s down to **8.7051 m/s**: a factor 0.7914 on speed, **2.02× on area**, and **17.3× on top-rotor blade mass**. That baseline, not the wake model, is the dominant contributor.
+**Defect D (inflow): REAL and the largest, but NOT for the reason given.** `wind_speed_at_ring(ring_z, hub_altitude, v_ref, h_ref=50.0, shear_exp=0.14)` computes `v_ref · (z/h_ref)^0.14`. It **accepts `hub_altitude` and never uses it**, so `h_ref` stays at the unanchored 50.0 m default. At the top ring's 9.40 m that scales 11 m/s down to **8.7051 m/s**: a factor 0.7914 on speed, **2.02× on area**, and **17.3× on top-rotor blade mass**. That baseline, not the wake model, is the dominant contributor. **SUPERSEDED (2026-10-03, D1):** the `0.14` exponent and the `50.0 m` anchor named here are retired — `wind_speed_at_ring` is gone and the decoder reads `wind_at_altitude(v_rated, p.h_ref, z)` with `v_rated = p.v_wind_ref` (the site standard, α = 1/7). The 8.7051 m/s / 2.02× / 17.3× figures describe the OLD sizing; see `[2026-10-03]` for the corrected machine.
 - **The shear DIRECTION is correct.** Higher rings do get faster shear wind: the top ring reads 8.7051 m/s against the bottom ring's 7.9959 m/s. The draft's framing that the model "penalized the elevated rotor" via shear is wrong.
 - **The wake blocking is what inverts the net profile.** `blocking_factor = 0.75^(1/3) = 0.908560`, defined in `scripts/compute_seeds.jl` (a campaign knob, not `src/`), converts a 75%-of-power wake assumption into a wind factor. Applied to every rotor except the lowest, it makes the top rotor net-SLOWEST at 7.9091 m/s against the bottom's 7.9959. Under a HORIZONTAL wind on a straight shaft inclined at 30°, the higher rings do sit further downwind, so a de-rate for them is directionally defensible. It is **not** the "wind flows up the shaft" error the draft described. It is however unanchored, and it is what flips the profile. **SUPERSEDED (2026-09-29):** the owner ruled a power ratio of 0.85, so the inflow factor is `0.85^(1/3) = 0.947268`, the blocking term above becomes 1.0847, and the profile does NOT invert (top 8.2461 m/s against bottom 7.9959). See `[2026-09-29]`.
 
