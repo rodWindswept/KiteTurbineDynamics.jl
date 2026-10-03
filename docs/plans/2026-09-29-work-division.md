@@ -151,3 +151,30 @@ never checked.
 4. **A validator reads the live repo state first.** `git log --oneline -5`, `git status
    --short`, `git diff --stat HEAD~1`. That reading is authoritative over any memory.
 5. **F11 stays parked.** Its own plan makes F13 the gate on its magnitude.
+
+---
+
+## 6. Refresh: 2026-10-03 (lead) — repo-fitness items noted
+
+The 2026-10-03 morning repo-fitness analysis names the closing gap. This section
+records its intents and requirements in the live plan, not only in chat and
+`docs/plans/test_list.md`. Where this section disagrees with §3, this section is
+later.
+
+**Intent.** The repo is the instrument for an AWE enthusiast to learn KTD, to
+find the design veins worth exploring, and to see the scaling case. The physics
+is honest, the results carry provenance, and the winner figures exist.
+
+**Requirement.** Close the step from "strong engine" to "clean, green
+checkout": the two red items below plus committing the gate-queue WIP.
+
+| # | Item | State | Next action |
+|---|---|---|---|
+| 1 | Betz wind-normal projection | RED. `test_betz_ceiling_projection.jl` fails at the reconciliation check (`:231`), re-verified 2026-10-03. Test-list rows 2 and 3 are RED. Closes measured gate leniency of 1.9 % (bank) and 17.7 % (with the 30 deg elevation term) on the bank-derate winner. | Retire the inlined area literal at `objective_evaluator.jl:871` and route both ceilings through `betz_wind_normal_area`. |
+| 2 | Acceptance winner repoints | RED. A1 / B6a / B6c / D wait for the derated winner (island 3, 21.698) in `gate_v13`, `evaluator_v13` and `settle_drag`. One cause, no unknowns. | Repoint all three winner paths. Read each check from its own harness, not from the fitness scalar. Detail: `docs/validation/2026-10-01-acceptance-red-inventory.md`. |
+| 3 | Commit the gate-queue WIP | The tree holds the uncommitted gate queue; the main tree is still at `4d1b6c9` while origin moved to `f9f3182` (behind 3). `test/runtests.jl` includes three test files that are still untracked. | Land the queue onto `f9f3182` (not the local pointer) in a clean-worktree pass, per the shared-tree rule. The wiring slice goes atomic with it: `runtests.jl` plus the three test files in one slice, once item 1 turns `test_betz_ceiling_projection.jl` green and the `ode_gate_v13.jl` decode refactor is committed with `test_winner_decode_invariant.jl`. Until the pass lands, the main tree is pre-D1; standing rule 3 (no physics measurement on a dirty tree) applies. |
+| 4 | D1 site-wind landing (the un-park land) | **LANDED 2026-10-03 on origin**: `bank-derate-cos2p65` at `f9f3182` (three commits: D1 slice `6f4cdbe`, dated DECISIONS entry + `:319` supersession `ac781a6`, fixture re-baseline `f9f3182`). Fast suite **2435/2435**, independently verified at the pushed tip (`docs/validation/2026-10-03-d1-landing-green-verification.md`). The re-baseline was a verdict flip: the L/r 2.0 seed is over the cliff, not repairable inside the 1.5x cap; Section C (L/r 1.5, the campaign seed) stays repairable. Power-split retirement, annulus-span sizing and chord law stay parked. | Rod: retire the L/r 2.0 seed, or keep it live? |
+
+**Next gate chain.** Landed 2026-10-03: the merge pass and the fixture re-baseline. The variant sweep (about five lengths, roughly 1 h, under the frozen-anchor ruling) waits on the last two rulings — §5.3 tether diameter and §5.4 discrete-vs-continuous L. The sweep runner must read the site spec (`hellmann_exponent=SITE_DAISY.shear_exp`), never a re-typed literal; aero-validator's exponent guard covers the shipped library paths, and the script tier is deferred cleanup.
+
+**Claims.** software-worker carries items 1 and 2; the item 4 merge pass landed. hermes carries the queue landing and the wiring slice (item 3). software-validator gates items 2 and 3; aero-validator carries the exponent guard. Rod holds the L/r 2.0 call and the §5.3/§5.4 rulings.

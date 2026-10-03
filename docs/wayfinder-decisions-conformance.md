@@ -18,6 +18,7 @@ This shape fixes the repeats. The repeats come from decisions that nobody can ch
 - **The record lives in more than one place.** `DECISIONS.md` holds newest entries first. Rulings also live in `docs/agents/physics-topology.md`, `CONTEXT.md` and `docs/adr/`. Harness state outside git holds a fifth set.
 - **Baseline.** HEAD `aa3d62a` plus the working tree, as of 2026-09-24. Another session works in that tree at the same time.
 - **Restraint on new claims.** A derived result stays DERIVED until an external measurement validates it. No in-model check can promote it.
+- **Live dispatch (linked 2026-10-03).** The ordered open work, its owners and its blockers live in `docs/plans/2026-09-29-work-division.md`. Its §6 refresh (2026-10-03) carries the repo-fitness items and the D1 site-wind landing. This map tracks decisions; the dispatch tracks the work. Open work is visible from both.
 
 ## Rulings of this charting session
 

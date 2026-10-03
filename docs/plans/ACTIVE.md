@@ -7,6 +7,12 @@ be named as one.
 
 Last updated: 2026-09-21.
 
+**Live dispatch (linked 2026-10-03).** The ordered open work, its owners and its
+blockers live in `docs/plans/2026-09-29-work-division.md`. Its §6 refresh
+(2026-10-03) carries the repo-fitness items, the D1 site-wind landing and its
+merge checklist. This file keeps the standing rules and the sequence; the
+dispatch keeps the current order. Read the two together.
+
 ## Standing rules
 
 1. **Every damper in the model must be justified.** No unexplained stabilisers on

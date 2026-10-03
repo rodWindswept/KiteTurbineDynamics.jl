@@ -40,6 +40,27 @@ Found in this cycle: the authority needs a per-segment tether length at every ca
 The placed state carries it as `chord`. The ODE carries it as `line_restlen`. The
 state-form gate carries neither and must read it from the system.
 
+## Current item (2026-10-02): project the Betz ceiling onto the wind-normal plane
+
+Ruling: @aero-worker, 2026-10-02 (bank is not elevation; one cos per projection in
+the ceiling, cos^2.65 kept in the power). Code verified against the working tree by
+@aero-validator; two gate sites, not one (@software-worker found the inlined fifth
+site). Test: `test/test_betz_ceiling_projection.jl`.
+
+| # | Behaviour under test | Test file | Colour | Evidence |
+|---|---|---|---|---|
+| 1 | `main_rotor_bank_projected_area(sys)` is the offset-form projected annulus (`BEM.annulus_area` with the rotor's bank), and the un-fold reproduces the decoder's own `r_hub` to 1e-9. | `test_betz_ceiling_projection.jl` | GREEN 2026-10-02 (§1 geometry) | `scripts/ktd-test-one test_betz_ceiling_projection` — measured r_hub error -4.4e-16 (10-D winner) / 0.0 (14-D winner) |
+| 2 | `betz_wind_normal_area(sys, p)` = (projected main + expansion annuli) · cos(elevation) — ONE cos per projection, never summed into an exponent. | `test_betz_ceiling_projection.jl` | RED 2026-10-02 | same run — `betz_wind_normal_area — UndefVarError: UndefVarError` (testset 7 / testset 4 `@test false`) |
+| 3 | The per-rotor Betz gate charges the projected area: the inlined `π*(sys.rotor.radius^2-sys.rotor.blade_hub_radius^2)` at `objective_evaluator.jl:871` is retired, and both aggregate ceilings route through the contract. | `test_betz_ceiling_projection.jl` | RED 2026-10-02 | same run — testset 6: `!(occursin("π*(sys.rotor.radius^2-sys.rotor.blade_hub_radius^2)", flat))`, `count("betz_wind_normal_area", flat) >= 2` |
+| 4 | `main_rotor_swept_area` stays raw and bank-agnostic — the four call sites (`ring_forces.jl:205/220/285`, `initialization.jl:1323`) are bit-identical before and after. | `test_betz_ceiling_projection.jl` | GREEN 2026-10-02 | same run — testset 5, 2/2 pass on HEAD (the regression pin, not the RED) |
+| 5 | The published A_ZY reconciles: `main_rotor_swept_area · cos(30°)` = 30.1175 m² for the island-3 winner, and the correct ceiling basis is 29.5559 m². | `test_betz_ceiling_projection.jl` | GREEN 2026-10-02 | same run — testset 4, 6/7 pass |
+
+Measured leniency of the current gate (raw annulus vs wind-normal projection):
+bank-derate winner (bank 10.7399°) **1.9 %** from bank alone, **17.7 %** with the
+30° elevation term; pre-derate winner (bank 19.9469°) **6.8 %** / **23.3 %** — the
+"~23 %" quoted in the room is the 20°-bank machine. Neither winner has expansion
+rotors, so both `A_total`s are the main annulus alone.
+
 ## Discovered, not yet written
 
 _Findings from the last cycle that are not rows yet: edge cases, API quirks,
