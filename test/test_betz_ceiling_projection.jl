@@ -200,33 +200,36 @@ end
 end
 
 @testset "4. reconciliation: the code agrees with the published score breakdown" begin
-    # island 3 winner — report/island_3_score_breakdown.txt (Hermes, 2026-10-02):
-    #   r_out 4.7786 / r_in 3.4301, A_axial 34.7767, A_ZY 30.1175
-    # and the campaign winner CSV at the head of the thread.
+    # island 3 winner — report/island_3_score_breakdown.txt (Hermes, 2026-10-02),
+    # re-baselined 2026-10-03 for D1 site-wind sizing: the machine is now sized at
+    # the site wind (p.v_wind_ref = 11.0097 m/s at the 9.41 m hub) where the
+    # pre-D1 decoder read 8.66 m/s, so the blade span shrank (1.3485 -> 0.9484)
+    # while r_hub (3.8347) and bank (10.7399 deg) are unchanged.  Pre-D1 pins
+    # (r_out 4.7786 / r_in 3.4301, A_axial 34.7767, A_ZY 30.1175, A_zn 29.5559)
+    # live in the pre-D1 commit — this testset reconciles the live machine.
     label = "bank-derate winner, bank 10.7399 deg"
     sys = CASES[label].sys
     p = CASES[label].p
-    @test isapprox(sys.rotor.radius, 4.7786452387; rtol=1e-9)
-    @test isapprox(sys.rotor.blade_hub_radius, 3.4301130937; rtol=1e-9)
+    @test isapprox(sys.rotor.radius, 4.498529505264419; rtol=1e-9)
+    @test isapprox(sys.rotor.blade_hub_radius, 3.550162693803707; rtol=1e-9)
     @test isapprox(sys.rotor.bank_angle_deg, 10.7399092234; rtol=1e-9)
-    @test isapprox(raw_annulus(sys), 34.7767221889; rtol=1e-9)
+    @test isapprox(raw_annulus(sys), 23.9801303339087; rtol=1e-9)
     @test isapprox(p.elevation_angle, π / 6; rtol=1e-12)
-    # The published A_ZY = 34.7767 * cos(30 deg) = 30.1175 — reproduced exactly,
-    # which is what makes it the right CROSS-CHECK and the wrong CEILING: it
-    # omits cos(bank).
-    @test isapprox(raw_annulus(sys) * cos(p.elevation_angle), 30.117525; rtol=2e-6)
+    # A_ZY = raw * cos(30 deg) — the ZY projection omits cos(bank), which is what
+    # makes it the right CROSS-CHECK and the wrong CEILING.
+    @test isapprox(raw_annulus(sys) * cos(p.elevation_angle), 20.76740205522675; rtol=2e-6)
     A_zn = contract(
         () -> KiteTurbineDynamics.betz_wind_normal_area(sys, p),
         "betz_wind_normal_area($label)",
     )
     if A_zn !== nothing
-        @test isapprox(A_zn, 29.555903; rtol=2e-6)   # the correct ceiling basis
-        @test A_zn < 30.117525
-        # What the two gates charge, at the campaign's rated wind.  The 1.1x
-        # tripwire drops 18.4935 -> 15.7172 kW; nothing re-baselines, because the
-        # 5.11 kW operating point sits at 32.5 % of the FIXED tripwire.
-        @test isapprox(0.593 * 0.5 * p.rho * raw_annulus(sys) * 11.0^3 / 1000.0, 16.8123; rtol=2e-6)
-        @test isapprox(0.593 * 0.5 * p.rho * A_zn * 11.0^3 / 1000.0, 14.2884; rtol=2e-6)
+        @test isapprox(A_zn, 20.38677925393608; rtol=2e-6)   # the correct ceiling basis
+        @test A_zn < 20.76740205522675
+        # What the two gates charge, at the campaign's rated wind.  cfg.v_rated is
+        # still 11.0 (D1 changed the decoder/ODE wind, not this gate constant), so
+        # the Betz kW pins keep 11.0^3 and only the AREA re-sizes.
+        @test isapprox(0.593 * 0.5 * p.rho * raw_annulus(sys) * 11.0^3 / 1000.0, 11.592854391332306; rtol=2e-6)
+        @test isapprox(0.593 * 0.5 * p.rho * A_zn * 11.0^3 / 1000.0, 9.855699702554213; rtol=2e-6)
     else
         @test false   # the contract name must exist: no silent skip
     end
