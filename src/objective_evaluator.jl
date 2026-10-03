@@ -317,6 +317,46 @@ function rotor_betz_ok(power_kw::Float64, swept_area_m2::Float64, v_wind_mps::Fl
     return power_kw <= 1.1 * betz_kw
 end
 
+"""
+    main_rotor_bank_projected_area(sys) -> Float64
+
+Shaft-normal projected annulus of the main rotor, OFFSET form (Rod 2026-10-02,
+ruling @aero-worker).  Bank coning shrinks the blade OFFSETS from the ring, not
+the ring radius: un-fold `RotorSpec` (radius, blade_hub_radius) back to
+(r_ring, span) — the algebraic inverse of the 70/30 fold in the decoder — and
+return `BEM.annulus_area(r_ring, span; bank_deg=sys.rotor.bank_angle_deg)`.
+
+`main_rotor_swept_area` stays RAW and bank-agnostic (it feeds the hub-thrust
+and disc-power sites that already carry their own bank terms); THIS is the
+projected form the per-rotor Betz gate charges.
+"""
+function main_rotor_bank_projected_area(sys::KiteTurbineSystem)
+    r = sys.rotor
+    span = r.radius - r.blade_hub_radius
+    r_ring = 0.3 * r.radius + 0.7 * r.blade_hub_radius
+    return BEM.annulus_area(r_ring, span; bank_deg=r.bank_angle_deg)
+end
+
+"""
+    betz_wind_normal_area(sys, p) -> Float64
+
+The wind-normal (ZY) projected swept area the aggregate Betz ceiling AND the
+Betz_cp floor charge: the bank-projected main rotor plus every expansion rotor,
+times cos(elevation).  Elevation and bank are TWO independent projections, each
+cos^1 here; the disc power keeps its own cos^2.65, so this must NOT be folded
+into the power formula (stacking over-derates).  Single-rotor winners reduce to
+`main_rotor_bank_projected_area(sys) * cos(p.elevation_angle)`.
+"""
+function betz_wind_normal_area(sys::KiteTurbineSystem, p::SystemParams)
+    A = main_rotor_bank_projected_area(sys)
+    for er in sys.expansion_rotors
+        ri = er.ring_idx
+        r_ring = (1 <= ri <= sys.n_ring) ? (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
+        A += expansion_annulus_area(er, r_ring)
+    end
+    return A * cos(p.elevation_angle)
+end
+
 """Rotors must sweep a valid ANNULUS: inner tip radius ≥ 0 for the main rotor
 and every expansion rotor (the ring-anchored 70/30 split: r_ring ≥ 0.3·span,
 2026-08-20). A negative inner tip means the blade's inboard 30% crosses the
@@ -865,8 +905,8 @@ function evaluate_windowed(
                 n_er = length(sys.expansion_rotors)
                 for (i, pa_kw) in enumerate(ef.rotor_aero_power)
                     A_i = if i == 1
-                        # main rotor: swept ANNULUS (2026-08-20, ring-anchored 70/30)
-                        π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2)
+                        # main rotor: bank-projected ANNULUS (Rod 2026-10-02)
+                        main_rotor_bank_projected_area(sys)
                     elseif i - 1 <= n_er
                         # expansion rotor: same annulus the ODE sweeps
                         # (was full disk π·tip² — ignored the inboard hub cutout)
@@ -1020,19 +1060,11 @@ function evaluate_windowed(
     # this gate with a contradictory area model AND referenced P_range before
     # assignment — a live UndefVarError on the rejection path it existed to
     # serve.  This annulus-area version is the intended physics.)
-    # Total projected swept area — the SAME annulus areas the ODE actually
-    # sweeps (2026-08-21): hub rotor via main_rotor_swept_area, expansion
-    # rotors via expansion_annulus_area.  Was: base-theory p.rotor_radius
-    # for the hub and raw blade-tip OFFSETS for the rotors — neither matched
-    # the decoded ring-anchored geometry, so the Betz ceiling checked a
-    # different machine than the one simulated.
-    A_total = main_rotor_swept_area(sys)
-    for er in sys.expansion_rotors
-        ri = er.ring_idx
-        r_ring =
-            (1 <= ri <= sys.n_ring) ? (sys.nodes[sys.ring_ids[ri]]::RingNode).radius : 0.0
-        A_total += expansion_annulus_area(er, r_ring)
-    end
+    # Total wind-normal (ZY) projected swept area (Rod 2026-10-02): the bank-
+    # projected main rotor plus expansion rotors, times cos(elevation).  The old
+    # basis (main_rotor_swept_area + expansion_annulus_area, no bank, no
+    # elevation) checked a larger area than the wind actually sees.
+    A_total = betz_wind_normal_area(sys, p)
     Betz_ceiling_kW = 0.593 * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
 
     # P_available gate (Betz floor): skip winds where the turbine cannot
