@@ -22,17 +22,23 @@
 using Test, KiteTurbineDynamics
 
 # Evaluate an exponent written in source, whatever spelling it uses:
-# `1/7`, `1.0/7.0`, `1//7` (Julia Rational), `0.142857`, `0.14`, `2`.
-# Exact-string matching is blind to all but the first two; this is not.
+# `1/7`, `1.0/7.0`, `1//7` (Julia Rational), `0.142857`, `0.14`, `((1/7))`, `2`.
+# Exact-string matching is blind to all but the first two; this is not.  It
+# returns NaN for anything it cannot read as a plain numeric exponent, so it
+# reports rather than throws: an apparent exponent that is really a division
+# (`x^2/(2*g)`, captured as `2/`) must not crash the guard.
 function evaluate_exponent(s::AbstractString)::Float64
-    if occursin("//", s)
-        a, b = split(s, "//")
+    t = strip(strip(s, ['(', ')']), ['(', ')'])   # outer parentheses, `^((1/7))`
+    t = rstrip(t, ['/', '.'])                     # trailing punctuation, `2/`
+    occursin(r"^[0-9][0-9./]*$", t) || return NaN
+    if occursin("//", t)
+        a, b = split(t, "//")
         return parse(Float64, a) / parse(Float64, b)
-    elseif occursin("/", s)
-        a, b = split(s, "/")
+    elseif occursin("/", t)
+        a, b = split(t, "/")
         return parse(Float64, a) / parse(Float64, b)
     end
-    return parse(Float64, s)
+    return parse(Float64, t)
 end
 
 @testset "one wind authority — the shear exponent comes from the site spec" begin
@@ -73,9 +79,12 @@ end
         flat = replace(read(joinpath(root, "src", f), String), r"\s+" => "")
         # (a) SHAPE — no exponent applied to a reference-height ratio.
         @test !occursin("h_ref)^", flat)
-        # (b) VALUE — no exponent that evaluates to the anchor exponent or the
-        #     retired 0.14, catching a shear written against any other base.
-        for m in eachmatch(r"\^\(?([0-9][0-9./]*)", flat)
+        # (b) VALUE — the token after every `^` is normalised (outer parentheses
+        #     stripped, trailing punctuation dropped) and evaluated, so the
+        #     spelling carries no weight: `1/7`, `1.0/7.0`, `1//7`, `0.142857`,
+        #     `0.14` and `((1/7))` are one value.  Catches a shear written
+        #     against a base that is not `h_ref`, which (a) alone would miss.
+        for m in eachmatch(r"\^\(*([0-9][0-9./)]*)", flat)
             e = evaluate_exponent(m.captures[1])
             @test !(abs(e - 1 / 7) < 5e-3 || abs(e - 0.14) < 5e-3)
         end
