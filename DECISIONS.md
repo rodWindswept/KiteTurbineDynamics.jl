@@ -10,6 +10,47 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-05] The 5 kW seed folds to the S2 class; the r_hub box re-centres to [0.7, 7.776]
+
+**Context.** Under the post-D1 evaluator the committed 5 kW seed's class floor-rejects
+(re-measured ~3.78 kW), so gen-0 opened on a flat reject cost with no signal. The bank-derate
+island-3 winner (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/best_vector.csv`,
+with its two then-ceiling genes folded up: r_hub 3.8347 → 4.32, blade_scale_top 0.6994 → 1.0) is
+the class measured scoreable under cpfix at a82cafd: P_end 5.3691 kW, FoS 5.41, twist ratio
+0.360, stationary; its n-family runs 5.16–5.37 kW over n = 3–9 (science-validator independent
+repro, 2026-10-05). In the room the same day Rod flagged the box `[0.7, 4.32]` as
+arbitrary-looking set numbers and called for expanding the horizon before the re-run.
+
+**Ruled (Rod + room, 2026-10-05).** The ≤5 kW rung re-bases onto the S2-class fold seed
+(`S2_FOLD_SEED`, `scripts/compute_seeds.jl`); higher rungs keep the Daisy-up scaling. The r_hub
+box re-centres on the standing +80 % spread, `hi = 1.8·s₁` → 7.776 m at s₁ = 4.32 (the old
+4.32 was 1.8·2.4 — never a set number), and the floor STAYS pinned at the absolute 0.7 m,
+DECOUPLED from the seed-relative term: `0.2·s₁` would read 0.864 m and crop only the <0.87 m
+corner (≈1.7 kW class ceiling) at zero measured benefit. Alternatives rejected: keeping
+`[0.7, 4.32]` (kept the arbitrary numbers and blocked the 4.32–7.78 m band) and a
+seed-relative floor (dead-space cost, no benefit).
+
+**Code.** `compute_seeds.jl` gains `S2_FOLD_SEED`, the ≤5 kW fork in `seed_genome`, and the fold
+re-centre in `tight_bounds`; `bounds_audit.jl` is fixed to the canonical 10-D genome (was pre-R7
+14-D and crashed at HEAD). Three fast-suite files move with the seed: the settle-blocking
+explicit-factors reference gains the main-rotor bank derate it was missing (a real test bug,
+invisible while bank_top was 0; the fold banks at 10.74°), the preload first-segment guard is
+re-baselined 30° → 12° (measured 18.093° on the fold seed), and `test_blade_mass_law.jl` pins a
+frozen fixture (a structure test, not a seed test). All six failing items were proven
+fold-caused: the three files pass on the un-folded a82cafd tree.
+
+**Enables / rules out.** Gen-0 starts with an in-box scoreable population; the 4.32–7.78 m band
+is genuinely proposable. Radius stays a coverage axis — do not hunt power in the new band (the
+A4 row closed radius even retuned: 4.90 kW at 4.5 m); the power lever remains blade_scale. This
+supersedes the [2026-09-16] re-seed rationale for the 5 kW rung, and any text quoting
+`[0.95·s, 1.08·s]` caps for `tight_bounds` (the seed-55 aero review §1 caveat; correction sent
+to @aero-validator, 2026-10-05).
+
+**Open.** The operating-λ re-tune (slice 2) still to run; rotor-count diversity beyond the
+winner's single-rotor class is a separate re-seed question.
+
+---
+
 ## [2026-10-03] The site wind standard — one measured profile, one exponent (D1)
 
 **Context.** The decoder sized wind with `wind_speed_at_ring(...; h_ref=50.0, shear_exp=0.14)`,
