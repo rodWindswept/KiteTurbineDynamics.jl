@@ -43,9 +43,15 @@ end
 function ref_power(sys, pc, w, v_mag; hub_factor, exp_factors)
     v_hub = v_mag * hub_factor
     lambda = w * sys.rotor.radius / v_hub
+    # The settle scan applies the bank derate (law 2026-10-01, "the topmost
+    # ring included") to the main rotor too — see settle_aero_power.  This
+    # explicit-factors reference must carry it or the rtol=1e-12 agreement
+    # fails on any banked seed.  Invisible while bank_top was 0 (factor 1);
+    # the S2-fold seed banks at 10.74°.
     P = 0.5 * pc.rho * v_hub^3 *
         π * (sys.rotor.radius^2 - sys.rotor.blade_hub_radius^2) *
-        cp_at_tsr(lambda) * cos(pc.elevation_angle)^2.65
+        cp_at_tsr(lambda) * cos(pc.elevation_angle)^2.65 *
+        cosd(sys.rotor.bank_angle_deg)^2.65
     for (er, f) in zip(sys.expansion_rotors, exp_factors)
         v_er = v_mag * f
         r_nom = (sys.nodes[sys.ring_ids[er.ring_idx]]::KiteTurbineDynamics.RingNode).radius

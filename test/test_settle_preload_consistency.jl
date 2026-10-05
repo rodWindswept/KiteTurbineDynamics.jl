@@ -102,7 +102,12 @@ end
     # Guard against regression to the old ~7x-under-twisted state.  A correct
     # matched-place solve puts the first segment far past the old 6.6° — it
     # carries the full generator torque at the design tension.
-    @test ef.segment_twist_deg[1] > 30.0
+    # RE-BASELINED 2026-10-05 (S2-fold seed): the fold raised r_hub 2.4 → 4.32 m,
+    # and the first-segment twist at matched place falls with the machine's
+    # radius — measured 18.093° on the fold seed (was > 30° pre-fold).  12.0
+    # keeps ~1.8x over the old under-twist bug class and ~1.5x under the
+    # measured value.
+    @test ef.segment_twist_deg[1] > 12.0
 
     # The transmission must shorten under torsion (rings pulled together),
     # not sit at the untwisted design length.
