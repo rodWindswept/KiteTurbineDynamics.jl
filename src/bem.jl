@@ -101,7 +101,7 @@ from the measured fixed-chord blade-count surface (see file header).
 
 - At n_lines = 3: returns `cp_at_tsr(tsr)` exactly — the baseline anchor (the
   pre-ruling "n_lines = 5" anchor was a mislabel and read ×1.21 at n = 3).
-- The surface is λ-shaped with a sign change: at the design point (λ ≈ 4.2)
+- The surface is λ-shaped with a sign change: at the design point (λ = 4.1)
   the fixed-chord ratio is ≈ +8% at n = 4 and ≈ −12% at n = 8, relative to
   n = 3; rows n ≥ 6 go negative at high λ (over-solidity brake) and clamp to 0.
 - Sizing path only: the ODE flies `cp_at_tsr` directly (2026-10-05 ruling).
@@ -142,9 +142,10 @@ speed `v_rated` (m/s) with `n_lines` tether lines.
 
 P = Cp · ½ρ · πr² · v³   →   r = √(P / (Cp · ½ρ · π · v³))
 
-The default TSR = 4.1 corresponds to the AeroDyn Cp peak for the NACA4412
-3-blade baseline.  For design-point optimisation, a different TSR can be
-passed to account for off-peak operation.
+The default TSR = 4.1 is the sizing-path design point.  (Corrected 2026-10-05:
+it is NOT the AeroDyn Cp peak — the committed NACA4412 3-blade table peaks
+at ≈0.309, λ ≈ 5.2, see `aerodynamics.jl`.)  For design-point optimisation,
+a different TSR can be passed to account for off-peak operation.
 """
 function rotor_radius_for_power(
     power_W::Float64, v_rated::Float64, n_lines::Int; tsr::Float64=4.1
