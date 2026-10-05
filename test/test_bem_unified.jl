@@ -1,66 +1,100 @@
-# test/test_bem_unified.jl — Phase 0.1: Unified BEM model validation
+# test/test_bem_unified.jl — Phase 0.1 + the 2026-10-05 cp-authority sizing surface
 #
-# Tests that the new cp_bem(n_lines, tsr) and ct_bem(n_lines, tsr) functions:
-# 1. Match AeroDyn baseline at n_lines=5
-# 2. Scale Cp downwards with increasing blade count (solidity penalty)
-# 3. Scale CT upwards with increasing blade count (more thrust area)
-# 4. Produce self-consistent rotor radius
-# 5. Respect physical bounds (Cp ≤ Betz, CT ≤ 1.0)
+# Tests that cp_bem(n_lines, tsr) and ct_bem(n_lines, tsr):
+# 1. Anchor at the measured baseline: n_lines = 3 ≡ the committed tables exactly
+# 2. Reproduce the measured fixed-chord ratio surface at the design point
+#    (these pins FAIL on the pre-ruling tree — that is the guard)
+# 3. Carry the measured shape: λ-shaped with a sign change; n ≥ 6 clamps at 0
+#    at high λ
+# 4. Treat CT the same way as Cp (measured ratio surface; 1.02 cap kept)
+# 5. Produce self-consistent rotor radius and annulus sizing
+# 6. Respect physical bounds, and the retired placeholder stays retired
+#    (source guard)
+#
+# Surface provenance: docs/validation/2026-10-04-bladecount-n-fit.md and
+# docs/validation/2026-10-05-cp-span-structure-and-resize.md (regen family,
+# 96 points, sha256 b7196fb4…).
 
 using Test
 using KiteTurbineDynamics
 const BEM = KiteTurbineDynamics.BEM
 
-@testset "BEM unification" begin
+@testset "BEM unification (measured sizing surface)" begin
 
-    # ── 1. Baseline match at n_lines=5 ──────────────────────
-    @testset "Match AeroDyn at n_lines=5" begin
+    # ── 1. The measured baseline anchor is n_lines = 3 ──────────────────────
+    @testset "n_lines = 3 ≡ the committed tables (exact)" begin
         for λ in [3.0, 3.5, 4.0, 4.1, 4.5, 5.0]
-            cp_direct = cp_at_tsr(λ)
-            cp_bem5   = BEM.cp_bem(5, λ)
-            if cp_direct > 0.01
-                @test abs(cp_bem5 - cp_direct) / cp_direct < 0.02
-            end
+            @test BEM.cp_bem(3, λ) ≈ cp_at_tsr(λ) rtol = 1e-12
+            @test BEM.ct_bem(3, λ) ≈ ct_at_tsr(λ) rtol = 1e-12
         end
-        for λ in [3.0, 3.5, 4.0, 4.1, 4.5, 5.0]
-            ct_direct = ct_at_tsr(λ)
-            ct_bem5   = BEM.ct_bem(5, λ)
-            if ct_direct > 0.01
-                @test abs(ct_bem5 - ct_direct) / ct_direct < 0.03
-            end
-        end
+        # The pre-ruling tree anchored at n = 5 and read ×1.21 at n = 3.  If any
+        # n-scaling sneaks back into the anchor, the exact identity above fires.
     end
 
-    # ── 2. Cp decreases with blade count ────────────────────
-    @testset "Cp monotonic in n_lines" begin
-        cp3 = BEM.cp_bem(3, 4.1)
-        cp5 = BEM.cp_bem(5, 4.1)
-        cp8 = BEM.cp_bem(8, 4.1)
-        @test cp8 < cp5
-        @test cp3 > cp8
-        @test BEM.cp_bem(3, 4.1) > 0.10
-        @test BEM.cp_bem(8, 4.1) > 0.10
-    end
-
-    # ── 3. CT scales with blade count ───────────────────────
-    @testset "CT scaling" begin
-        @test BEM.ct_bem(5, 4.1) > 0.45
-        ct3 = BEM.ct_bem(3, 4.1)
-        ct5 = BEM.ct_bem(5, 4.1)
-        ct8 = BEM.ct_bem(8, 4.1)
-        @test ct8 > ct5 > ct3
-        for n in [3, 5, 8]
-            for λ in [4.0, 6.0, 8.0]
-                @test BEM.ct_bem(n, λ) <= 1.02  # quasi-steady BEM can exceed 1.0 at high λ
-            end
+    # ── 2. The measured surface, pinned at the design point ─────────────────
+    @testset "design-point pins (guard: fails on the pre-ruling tree)" begin
+        cp41 = cp_at_tsr(4.1)
+        @test cp41 ≈ 0.295535 atol = 1e-6
+        # cp_bem(n, 4.1) = 0.295535 × Rf(n, 4.1), n = 3..9 (regen family).
+        for (n, expected) in (
+            (3, 0.295535),
+            (4, 0.319805),
+            (5, 0.317877),
+            (6, 0.303235),
+            (7, 0.282961),
+            (8, 0.260451),
+            (9, 0.237335),
+        )
+            @test isapprox(BEM.cp_bem(n, 4.1), expected; atol=5e-4)
         end
+        # Ratio form — the published numbers from the 2026-10-05 record:
+        # +8.2 % at n = 4, −11.9 % at n = 8, −19.7 % at n = 9.
+        @test isapprox(BEM.cp_bem(4, 4.1) / cp41, 1.0821; atol=5e-4)
+        @test isapprox(BEM.cp_bem(8, 4.1) / cp41, 0.8813; atol=5e-4)
+        @test isapprox(BEM.cp_bem(9, 4.1) / cp41, 0.8031; atol=5e-4)
+        # (The retired placeholder read ×0.826 / ×0.636 at n = 5 / 8 here, and
+        # ×1.21 at n = 3 — every pin above fails on the pre-ruling tree.)
     end
 
-    # ── 4. Rotor radius self-consistency ────────────────────
+    # ── 3. The measured shape: λ-shaped, with the over-solidity brake ───────
+    @testset "measured shape (not a flat n-penalty)" begin
+        # At the design point, fixed-chord n = 4..5 fully beats n = 3.
+        @test BEM.cp_bem(4, 4.1) > BEM.cp_bem(3, 4.1)
+        @test BEM.cp_bem(5, 4.1) > BEM.cp_bem(3, 4.1)
+        # ...and the high-n branch still falls.
+        @test BEM.cp_bem(5, 4.1) >
+            BEM.cp_bem(6, 4.1) >
+            BEM.cp_bem(7, 4.1) >
+            BEM.cp_bem(8, 4.1) >
+            BEM.cp_bem(9, 4.1)
+        @test BEM.cp_bem(9, 4.1) < BEM.cp_bem(3, 4.1)
+        # The over-solidity brake: rows n ≥ 6 go negative on the raw surface at
+        # high λ (outside the operating window) and clamp to 0 in the consumer.
+        @test BEM.cp_bem(8, 8.0) == 0.0
+        @test BEM.cp_bem(6, 7.6) == 0.0
+    end
+
+    # ── 4. CT: same treatment, cap kept ─────────────────────────────────────
+    @testset "CT treatment (measured surface; 1.02 cap)" begin
+        for (n, expected) in ((4, 0.810213), (5, 0.933122))
+            @test isapprox(BEM.ct_bem(n, 4.1), expected; atol=5e-4)
+        end
+        # The measured ratios exceed the 1.02 cap for n ≥ 6 at the design point
+        # (up to ≈1.87 at n = 9); the cap is kept (flagged open item) and pins
+        # the behaviour here.
+        for n in 6:9
+            @test BEM.ct_bem(n, 4.1) == 1.02
+        end
+        # Unclamped region: still increasing in n.
+        @test BEM.ct_bem(4, 2.0) < BEM.ct_bem(5, 2.0) < BEM.ct_bem(6, 2.0)
+        @test BEM.ct_bem(8, 2.0) <= 1.02
+    end
+
+    # ── 5. Rotor radius self-consistency ────────────────────────────────────
     @testset "Rotor radius self-consistent" begin
         P, v, n = 10_000.0, 11.0, 5
         R = BEM.rotor_radius_for_power(P, v, n; tsr=4.1)
-        Cp  = BEM.cp_bem(n, 4.1)
+        Cp = BEM.cp_bem(n, 4.1)
         P_check = Cp * 0.5 * 1.225 * π * R^2 * v^3
         @test abs(P_check - P) / P < 0.05
         R5 = BEM.rotor_radius_for_power(P, v, 5; tsr=4.1)
@@ -68,18 +102,21 @@ const BEM = KiteTurbineDynamics.BEM
         @test R8 > R5
     end
 
-    # ── 5. Physical bounds ──────────────────────────────────
+    # ── 6. Physical bounds ──────────────────────────────────────────────────
     @testset "Physical bounds" begin
-        for n in [3, 5, 8]
-            @test BEM.cp_bem(n, 4.1) <= 16.0 / 27.0
-            @test BEM.cp_bem(n, 4.1) >= 0.0
-            @test BEM.ct_bem(n, 4.1) >= 0.0
+        for n in [3, 5, 8, 9]
+            for λ in [3.0, 4.1, 6.0]
+                @test BEM.cp_bem(n, λ) <= 16.0 / 27.0
+                @test BEM.cp_bem(n, λ) >= 0.0
+                @test BEM.ct_bem(n, λ) >= 0.0
+                @test BEM.ct_bem(n, λ) <= 1.02
+            end
         end
     end
 
-    # ── 6. TSR sweep sanity ─────────────────────────────────
+    # ── 7. TSR dependence at fixed n ────────────────────────────────────────
     @testset "TSR dependence" begin
-        cp_low  = BEM.cp_bem(5, 2.0)
+        cp_low = BEM.cp_bem(5, 2.0)
         cp_peak = BEM.cp_bem(5, 4.1)
         cp_high = BEM.cp_bem(5, 7.0)
         @test cp_peak > cp_low
@@ -89,7 +126,7 @@ const BEM = KiteTurbineDynamics.BEM
         end
     end
 
-    # ── 7. Ring annulus sizing & Peter Jamieson scaling (DECISIONS [2026-08-20]) ──
+    # ── 8. Ring annulus sizing & Peter Jamieson scaling (DECISIONS [2026-08-20]) ──
     @testset "Ring annulus BEM sizing & Peter Jamieson scaling" begin
         # A. Self-consistency: annulus_area(r, annulus_span_for_power(P, v, r)) matches P/(Cp·½ρ·v³)
         for P in [1000.0, 1666.67, 5000.0, 10000.0]
@@ -147,7 +184,7 @@ const BEM = KiteTurbineDynamics.BEM
         @test M_blades_3rotor / M_blades_single < 0.577
     end
 
-    # ── 8. The site wind standard (D1, Rod 2026-09-24) ───────────────────────
+    # ── 9. The site wind standard (D1, Rod 2026-09-24) ──────────────────────
     @testset "Site wind standard: the measured Daisy pair" begin
         # The standard is a MEASURED pair, not a machine dimension.  The anchor
         # site is the Daisy, and the anchor IS the default.
@@ -219,5 +256,16 @@ const BEM = KiteTurbineDynamics.BEM
         @test site_wind(site_test, p5.h_ref) > site_wind(SITE_ANCHOR, p5.h_ref)
         # A site's own pair is honoured at its own height, whatever that is.
         @test site_wind(SITE_ANCHOR, SITE_ANCHOR.h_ref_m) ≈ SITE_ANCHOR.v_ref_ms
+    end
+
+    # ── 10. Source guard: the placeholder stays retired ─────────────────────
+    @testset "source guard (placeholder retired)" begin
+        src = read(joinpath(@__DIR__, "..", "src", "bem.jl"), String)
+        flat = replace(src, r"\s+" => "")
+        @test !occursin("(5.0/n_lines)^0.7", flat)
+        @test !occursin("sqrt(n_lines/5.0)", flat)
+        @test !occursin("_prandtl", flat)
+        @test count("_ratio_interp", flat) >= 3
+        @test occursin("_RATIO_CP", flat) && occursin("_RATIO_CT", flat)
     end
 end

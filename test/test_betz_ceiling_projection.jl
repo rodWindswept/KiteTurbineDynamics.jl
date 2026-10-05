@@ -207,29 +207,33 @@ end
     # while r_hub (3.8347) and bank (10.7399 deg) are unchanged.  Pre-D1 pins
     # (r_out 4.7786 / r_in 3.4301, A_axial 34.7767, A_ZY 30.1175, A_zn 29.5559)
     # live in the pre-D1 commit — this testset reconciles the live machine.
+    # Re-baselined a second time 2026-10-05 for the MEASURED blade-count sizing
+    # surface (cp-authority ruling): n=3 sizing Cp 0.3576 -> 0.2955, span
+    # 0.9484 -> 1.0433 (+10.0 %), raw annulus 23.980 -> 26.504, A_zn 20.387 ->
+    # 22.531; r_hub and bank unchanged.  Re-derived at the fix commit.
     label = "bank-derate winner, bank 10.7399 deg"
     sys = CASES[label].sys
     p = CASES[label].p
-    @test isapprox(sys.rotor.radius, 4.498529505264419; rtol=1e-9)
-    @test isapprox(sys.rotor.blade_hub_radius, 3.550162693803707; rtol=1e-9)
+    @test isapprox(sys.rotor.radius, 4.564961043405586; rtol=1e-9)
+    @test isapprox(sys.rotor.blade_hub_radius, 3.521692034600350; rtol=1e-9)
     @test isapprox(sys.rotor.bank_angle_deg, 10.7399092234; rtol=1e-9)
-    @test isapprox(raw_annulus(sys), 23.9801303339087; rtol=1e-9)
+    @test isapprox(raw_annulus(sys), 26.504217768378826; rtol=1e-9)
     @test isapprox(p.elevation_angle, π / 6; rtol=1e-12)
     # A_ZY = raw * cos(30 deg) — the ZY projection omits cos(bank), which is what
     # makes it the right CROSS-CHECK and the wrong CEILING.
-    @test isapprox(raw_annulus(sys) * cos(p.elevation_angle), 20.76740205522675; rtol=2e-6)
+    @test isapprox(raw_annulus(sys) * cos(p.elevation_angle), 22.953325894850966; rtol=2e-6)
     A_zn = contract(
         () -> KiteTurbineDynamics.betz_wind_normal_area(sys, p),
         "betz_wind_normal_area($label)",
     )
     if A_zn !== nothing
-        @test isapprox(A_zn, 20.38677925393608; rtol=2e-6)   # the correct ceiling basis
-        @test A_zn < 20.76740205522675
+        @test isapprox(A_zn, 22.530872753381963; rtol=2e-6)   # the correct ceiling basis
+        @test A_zn < 22.953325894850966
         # What the two gates charge, at the campaign's rated wind.  cfg.v_rated is
         # still 11.0 (D1 changed the decoder/ODE wind, not this gate constant), so
         # the Betz kW pins keep 11.0^3 and only the AREA re-sizes.
-        @test isapprox(0.593 * 0.5 * p.rho * raw_annulus(sys) * 11.0^3 / 1000.0, 11.592854391332306; rtol=2e-6)
-        @test isapprox(0.593 * 0.5 * p.rho * A_zn * 11.0^3 / 1000.0, 9.855699702554213; rtol=2e-6)
+        @test isapprox(0.593 * 0.5 * p.rho * raw_annulus(sys) * 11.0^3 / 1000.0, 12.813088714138598; rtol=2e-6)
+        @test isapprox(0.593 * 0.5 * p.rho * A_zn * 11.0^3 / 1000.0, 10.892231339137140; rtol=2e-6)
     else
         @test false   # the contract name must exist: no silent skip
     end
