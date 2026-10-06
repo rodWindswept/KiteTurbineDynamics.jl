@@ -193,9 +193,12 @@ No campaign re-run starts behind Rod's rulings.
 
 ### W8. Land the n_b = 3 hex re-base (Phase 9a sky-anchor gates)
 
-Owner: **software-worker** (code, at a75bd1d). Gate: **software-validator**.
-Blocked by: pushing a75bd1d to origin from the machine that holds it. The desktop
-object store does not contain it (checked 2026-10-06).
+Owner: **software-worker** (code in the CoAx repo, at a75bd1d). Gate:
+**software-validator**.
+Blocked by: nothing. Correction (2026-10-06, software-worker): a75bd1d is a CoAx
+commit and has been live on the CoAx origin all along as `sky-anchor-boundary`,
+also pinned as `sky-anchor-nb3-rebase` (same sha). KTD object-store searches miss it
+because it lives in the CoAx repo. The earlier "must push" blocker is withdrawn.
 
 - New pins: `whirl_stiffness_required(12.6, rpm; n_blades=3)` = 2,073.3 N·m/rad at
   45 rpm, 14,990.5 at 121 rpm. Fail band (58.8, 2,073.3) at 45 rpm, Ω²-scaled
@@ -242,6 +245,9 @@ Owner: **science-worker** (definition). The run itself waits on the rulings belo
 
 ### Repo map for this refresh
 
-- `origin/s2-fold-seed`: the live line (58fdfbe at refresh time; this §7 rides on
-  it). `origin/bank-derate-cos2p65` = a82cafd. `origin/master` = a476ded (merge
-  pending Rod). a75bd1d: sky-anchor re-base tip, NOT on origin.
+- `origin/s2-fold-seed`: the live line (this §7 rides on it).
+  `origin/bank-derate-cos2p65` = a82cafd. `origin/master` = a476ded (merge pending
+  Rod). a75bd1d: sky-anchor re-base tip, live on the CoAx origin as
+  `sky-anchor-boundary` (pinned `sky-anchor-nb3-rebase`). One unpushed local commit
+  ahead of s2-fold-seed: 7e847a6 (software-worker, bem 4.1 wording), a clean
+  fast-forward.

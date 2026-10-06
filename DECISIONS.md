@@ -74,6 +74,15 @@ re-sizes.
 **Open.**
 - a75bd1d (the re-base tip) is not on origin. The machine that holds it must push it
   before further sky-anchor work.
+
+**Correction (2026-10-06, later the same day).** software-worker verified that
+a75bd1d is a CoAx commit (Phase 13) and has been on the CoAx origin all along:
+`sky-anchor-boundary` = a75bd1d72. The same sha is now also pinned as
+`sky-anchor-nb3-rebase`. KTD-repo object searches report the commit absent because
+it lives in the CoAx repo, not because it is missing. Nothing is waiting on a push.
+The re-base code (whirl pins, axial flip, scope catch) lives in
+CoaxialAutogyroStacking.jl, not in KiteTurbineDynamics.jl. This supersedes the
+bullet above.
 - Rod's crossing-limit question: is the crossing limit (a) where the lines touch at
   the centre and torsional resistance collapses, or (b) the cliff point where the
   TRPT stops adding resistance and heads toward that collapse? Some ring/line
