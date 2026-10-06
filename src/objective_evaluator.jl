@@ -362,6 +362,30 @@ function betz_wind_normal_area(sys::KiteTurbineSystem, p::SystemParams)
     return A * cos(p.elevation_angle)
 end
 
+"""
+    betz_cp_floor_kw(sys, p, cfg) -> Float64
+
+The Betz_cp feasibility floor in kW: the screen the evaluator's pre-gate
+applies before any ODE time is spent.  The basis is `betz_wind_normal_area`
+(cos^1 per projection — the 2026-10-02 contract); the charge is the POWER
+path's own: the disc power charges cos^2.65 per projection (cos^1 geometric,
+inside the area, x cos^1.65 skewed-wake/aero — `ring_forces.jl:222-223` and
+the other disc-power sites), so the floor-side extension adds the remaining
+cos^1.65 per projection:
+
+    floor = cp * 1/2 * rho * A_ZY * cos(elevation)^1.65 * cosd(bank)^1.65 * v_rated^3 / 1e3
+
+Floor-side only (2026-10-06): the shared `betz_wind_normal_area` keeps cos^1
+per projection, so the aggregate ceiling and the cos^1 pins of
+`test_betz_ceiling_projection.jl` do not move.  The ramp evaluator keeps its
+retired area model (own card).
+"""
+function betz_cp_floor_kw(sys::KiteTurbineSystem, p::SystemParams, cfg::ObjectiveConfig)
+    A_total = betz_wind_normal_area(sys, p)
+    charge = cos(p.elevation_angle)^1.65 * cosd(sys.rotor.bank_angle_deg)^1.65
+    return p.cp * 0.5 * p.rho * A_total * charge * cfg.v_rated^3 / 1000.0
+end
+
 """Rotors must sweep a valid ANNULUS: inner tip radius ≥ 0 for the main rotor
 and every expansion rotor (the ring-anchored 70/30 split: r_ring ≥ 0.3·span,
 2026-08-20). A negative inner tip means the blade's inboard 30% crosses the
@@ -1076,7 +1100,9 @@ function evaluate_windowed(
     # P_available gate (Betz floor): skip winds where the turbine cannot
     # physically reach P_floor.  Uses rotor Cp (not Betz 0.593) so small/
     # low-Cp rotors are correctly gated.  80% threshold prevents edge cases.
-    Betz_cp_kW = p.cp * 0.5 * p.rho * A_total * cfg.v_rated^3 / 1000.0
+    # 2026-10-06: the screen carries the power path's own charge (cos^1.65 per
+    # projection, floor-side) — see `betz_cp_floor_kw`.
+    Betz_cp_kW = betz_cp_floor_kw(sys, p, cfg)
     if Betz_cp_kW < cfg.p_floor_kw * 0.8
         return rejected_eval(ω_eq)
     end
