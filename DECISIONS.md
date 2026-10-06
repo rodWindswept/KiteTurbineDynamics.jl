@@ -77,7 +77,7 @@ re-sizes.
 
 **Correction (2026-10-06, later the same day).** software-worker verified that
 a75bd1d is a CoAx commit (Phase 13) and has been on the CoAx origin all along:
-`sky-anchor-boundary` = a75bd1d72. The same sha is now also pinned as
+`sky-anchor-boundary` = a75bd1d. The same sha is now also pinned as
 `sky-anchor-nb3-rebase`. KTD-repo object searches report the commit absent because
 it lives in the CoAx repo, not because it is missing. Nothing is waiting on a push.
 The re-base code (whirl pins, axial flip, scope catch) lives in
