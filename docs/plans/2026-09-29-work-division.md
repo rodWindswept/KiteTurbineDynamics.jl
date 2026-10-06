@@ -178,3 +178,70 @@ checkout": the two red items below plus committing the gate-queue WIP.
 **Next gate chain.** Landed 2026-10-03: the merge pass and the fixture re-baseline. The variant sweep (about five lengths, roughly 1 h, under the frozen-anchor ruling) waits on the last two rulings — §5.3 tether diameter and §5.4 discrete-vs-continuous L. The sweep runner must read the site spec (`hellmann_exponent=SITE_DAISY.shear_exp`), never a re-typed literal; aero-validator's exponent guard covers the shipped library paths, and the script tier is deferred cleanup.
 
 **Claims.** software-worker carries items 1 and 2; the item 4 merge pass landed. hermes carries the queue landing and the wiring slice (item 3). software-validator gates items 2 and 3; aero-validator carries the exponent guard. Rod holds the L/r 2.0 call and the §5.3/§5.4 rulings.
+
+---
+
+## 7. Refresh: 2026-10-06 (lead). Whirl-gate re-base and search-space expansion
+
+Where this section disagrees with §3 or §6, this section is later. The decisions
+behind it: `DECISIONS.md` [2026-10-06] (two entries).
+
+**Intent.** Re-pin the sky-anchor whirl gates from the leaked n_b = 2 machine to the
+flown 3-on-6 hex machine (Phase 9a re-base), land it on origin, then expand the 5 kW
+search space across n_b ∈ {3, 5} × n_lines ∈ {3, 5, 6} with relative-value scoring.
+No campaign re-run starts behind Rod's rulings.
+
+### W8. Land the n_b = 3 hex re-base (Phase 9a sky-anchor gates)
+
+Owner: **software-worker** (code, at a75bd1d). Gate: **software-validator**.
+Blocked by: pushing a75bd1d to origin from the machine that holds it. The desktop
+object store does not contain it (checked 2026-10-06).
+
+- New pins: `whirl_stiffness_required(12.6, rpm; n_blades=3)` = 2,073.3 N·m/rad at
+  45 rpm, 14,990.5 at 121 rpm. Fail band (58.8, 2,073.3) at 45 rpm, Ω²-scaled
+  (424.8, 14,990.5) at 121 rpm.
+- `test_sky_anchor.jl:86`: the "free pivot ≈ BPF" identity becomes the sep = 1/3
+  check.
+- Axial: at 121 rpm it is a rail rebuild (free k ≲ 425, stiff ≥ 14,990), not a
+  re-pin.
+- Scope catch in the same landing: replace the n_blades = 2 machine default
+  (`sweep.jl` both sweeps + options table, `gen_comparison_sweep.jl`,
+  `bem_charts_v2.jl`, `compute_radial_loading.jl`, `rotor.jl` docstring,
+  `DIMENSIONS.md`) with n_b ≥ 3.
+- The DECISIONS entry above holds the measured numbers in case a75bd1d is lost.
+
+### W9. k_mom from the backline, n_lines ∈ {3, 6}
+
+Owner: **aero-worker**. Gate: **aero-validator**. Feeds Rod's side-of-band ruling.
+
+- Tilt/whip stiffness ∝ Σ sin²(θᵢ): 0 (n = 2), 3/2 (n = 3), 3 (n = 6). Hex is exactly
+  2× the triangle. Backline k_mom scales with line count, so the side-of-band ruling
+  cannot be decided on n_b = 3 alone.
+- Deliverable: crossing stiffnesses for hex vs triangle. If the floor reaches the
+  machine, the pin belongs there too, not only in the gate.
+- Rod approved the bounds edit raised in the room (2026-10-06). The landing commit
+  names the file.
+
+### W10. The expanded search space (definition, then screen)
+
+Owner: **science-worker** (definition). The run itself waits on the rulings below.
+
+- Sets: n_b ∈ {3, 5}, n_lines ∈ {3, 5, 6}. Every sweep excludes n_b = 2 (Rod).
+- Score relative values across the space, not winners only.
+- Blocked by W8, W9 and the rulings below.
+
+### Decisions for Rod (new since §4)
+
+| # | Decision | Why it blocks |
+|---|---|---|
+| 6 | Crossing-limit definition: centre-touch collapse vs the resistance cliff (Rod asked both readings in the room) | W8's re-pin and W9's crossing stiffnesses are interpretations of it |
+| 7 | Is n_blades coupled to n_lines as a genome parameter? | The W10 genome and bounds |
+| 8 | The re-base ruling: n_b = 3, transmission pinned at hex (the one-ruling recommendation) | W8's pins, W9's target |
+| 9 | The I_t re-derive for the 3-blade BOM | Moves every k_mom pin again |
+| 10 | Master merge green-light: origin/master is at `a476ded`. `bank-derate-cos2p65` (D1 + bank derate) and `s2-fold-seed` (30 ahead) are unmerged | Release-facing work and the campaign runner |
+
+### Repo map for this refresh
+
+- `origin/s2-fold-seed`: the live line (58fdfbe at refresh time; this §7 rides on
+  it). `origin/bank-derate-cos2p65` = a82cafd. `origin/master` = a476ded (merge
+  pending Rod). a75bd1d: sky-anchor re-base tip, NOT on origin.

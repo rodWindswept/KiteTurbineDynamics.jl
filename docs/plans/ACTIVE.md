@@ -5,13 +5,15 @@ lists inside every handover (including the 2026-09-14 handover §12). One item p
 session. If a session's work is not the current item, it is a detour and should
 be named as one.
 
-Last updated: 2026-09-21.
+Last updated: 2026-10-06.
 
-**Live dispatch (linked 2026-10-03).** The ordered open work, its owners and its
-blockers live in `docs/plans/2026-09-29-work-division.md`. Its §6 refresh
-(2026-10-03) carries the repo-fitness items, the D1 site-wind landing and its
-merge checklist. This file keeps the standing rules and the sequence; the
-dispatch keeps the current order. Read the two together.
+**Live dispatch (linked 2026-10-06).** The ordered open work, its owners and its
+blockers live in `docs/plans/2026-09-29-work-division.md`. Its §7 refresh
+(2026-10-06) carries the sky-anchor whirl-gate n_b = 3 hex re-base (W8), the
+backline k_mom derivation (W9) and the expanded search space (W10). Read §7
+first. §6's repo-fitness items stay open behind it. This file keeps the standing
+rules and the sequence. The dispatch keeps the current order. Read the two
+together.
 
 ## Standing rules
 

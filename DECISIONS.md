@@ -10,6 +10,86 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-06] Search-space topology: n_lines ≥ 3 everywhere. n_b = 2 is banned
+
+**Context.** The 2026-10-06 room exposed that the two-blade machine was never a
+proposed topology. It leaked in as the reference machine of the Phase 9a dimensioned
+assembly (`schematics/DIMENSIONS.md` is a 2-blade rotor). It then became the default
+across sweeps, notebooks and docs. A two-node "polygon" is degenerate. The two lines
+are antiparallel (θ = 0, π), so Σ sin²θᵢ = 0 and the pair has zero out-of-plane
+tilt/whip stiffness. Rod's rig test showed exactly this whip, beam to beam. A closed
+polygon with transverse stiffness needs n_lines ≥ 3.
+
+**Ruled (Rod, 2026-10-06).**
+- n_lines ≥ 3 in every KTD case. Every sweep excludes n_blades = 2.
+- The search space includes 3-blade 6-line (the configuration Daisy flew) and
+  5-blade 5-line (a potential sweet spot). 3-blade 3-line stays in, even if wobbly.
+- Sweeps show the relative values of the systems, not only winners.
+
+**Stiffness anchor (room derivation).** Tilt/whip stiffness ∝ Σ sin²(θᵢ): 0 (n = 2),
+3/2 (n = 3 triangle), 3 (n = 6 hex). Hex is exactly 2× the triangle. The stable flown
+reference is Daisy's 3 blades on 6 lines.
+
+**Open.** Whether n_blades is coupled to n_lines as a genome parameter (Rod's
+question). Resolve it against the record before writing the sweep genome and bounds.
+
+---
+
+## [2026-10-06] Sky-anchor whirl gates: the n_b = 2 pins are the leak, not a design
+
+**Context.** The sky-anchor whirl gates pinned their thresholds to the 2-blade budget
+(I_s/I_t = 2, I_t = 12.6). Two room corrections, 2026-10-06:
+1. I_s/I_t = 2 is not a 2-blade result. The perpendicular-axis theorem
+   (I_s = I_x + I_y) needs I_x = I_y, which needs equal azimuthal spacing: n_b ≥ 3.
+   A literal 2-blade rotor is anisotropic (≈ 0 about the blade line, ≈ I_s about the
+   perpendicular axis). At n_b = 3 the ratio is exact.
+2. The required k_mom carries n_blades. The factor [(1 + 0.3)·n_b − 1]² − 1 is 1.56
+   at n_b = 2 but 7.41 at n_b = 3. That is a 4.75× move, not a surviving scaling.
+
+**Measured at n_b = 3, I_t = 12.6 (re-base run at a75bd1d, 2026-10-06).**
+- Whirl: required k_mom 2,073.3 N·m/rad at 45 rpm, 14,990.5 at 121 rpm. Fail band
+  (58.8, 2,073.3) at 45 rpm, Ω²-scaled to (424.8, 14,990.5) at 121 rpm
+  (c = k_mom/I_tΩ²: pass→fail at c = 0.20→0.22, fail→pass at 7.40→7.41). The free
+  pivot's 2/rev root faces the 3/rev BPF: sep = 0.333. That passes the 0.300 rule by
+  one point (at n_b = 2 it failed). `test_sky_anchor.jl:86`'s "free pivot ≈ BPF"
+  identity is the n = 2 premise. At n_b = 3 it becomes the sep = 1/3 check. The old
+  pins (600 at 45 rpm, 3500 at 121 rpm) both fail whirl.
+- Axial flips: bpf(121) moves 4.03 → 6.05 Hz, off the 3.98 Hz soft-EA mode. The 1 MN
+  rope now clears axial (sep 0.342, was 0.013). The 4e5 rope clears too (0.584). At
+  121 rpm the stiff side is a rail rebuild (free k ≲ 425, stiff ≥ 14,990 N·m/rad),
+  not a re-pin.
+
+**Rod's rig test (hex transmission, 3 blades on 6 lines, 2026-10-06).** The hex
+clears the stiff rail with margin at 121 rpm (sep 3.2) and 45 rpm (sep 9.7). It
+clears the stiff side for chains below 450 m at 121 rpm (1,801 m elastic). The
+ceiling at 45 rpm is 3,256 m. The axial gate pins move and read BPF. The slow root
+lands at 21–23 Hz, far from 1P and BPF. The test ranks the hex transmission as the
+stable transmission.
+
+**Proposed re-base (pending Rod's ruling).** n_b = 3 with the transmission pinned at
+hex (Daisy's flown 3-on-6). Evaluate the ~15 kN·m/rad at 121 rpm target on hex. If
+even hex cannot reach it, the floor genuinely reaches the machine and Phase 9a
+re-sizes.
+
+**Open.**
+- a75bd1d (the re-base tip) is not on origin. The machine that holds it must push it
+  before further sky-anchor work.
+- Rod's crossing-limit question: is the crossing limit (a) where the lines touch at
+  the centre and torsional resistance collapses, or (b) the cliff point where the
+  TRPT stops adding resistance and heads toward that collapse? Some ring/line
+  combinations cannot cross (lines too short).
+- Rod wants the crossing-limit calculation and the L/r interpretation triple-checked
+  against Tulloch (PhD), Ziwei's paper and Tallak Tevdere's papers.
+- The I_t re-derive for the 3-blade BOM is open.
+- The machine-default scope catch: n_blades = 2 is also the default in `sweep.jl`
+  (both sweeps and the options table), `gen_comparison_sweep.jl`, `bem_charts_v2.jl`,
+  `compute_radial_loading.jl`, the `rotor.jl` docstring and `DIMENSIONS.md`. The
+  re-base landing replaces each with the n_b ≥ 3 reading.
+- Rod approved the bounds edit raised in the room (2026-10-06). The landing commit
+  names the file.
+
+---
+
 ## [2026-10-05] The 5 kW seed folds to the S2 class; the r_hub box re-centres to [0.7, 7.776]
 
 **Context.** Under the post-D1 evaluator the committed 5 kW seed's class floor-rejects
