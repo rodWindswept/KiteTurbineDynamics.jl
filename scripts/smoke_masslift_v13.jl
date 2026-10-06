@@ -73,13 +73,21 @@ function main()
         # rung-scaled base (base_params=p_base), lifter excluded.  Decode with
         # the SAME knobs as the runner so m_airborne is the machine the campaign
         # actually builds (rotor_count_mode + three-section + blocking).
+        # FIX (2026-10-06, science-validator + aero-worker): two seams made this
+        # rebuild lighter than the evaluator's machine — the decode omitted
+        # v_rated/beam_t_over_D, and the build omitted the R7 closed-form
+        # beam_sizing (legacy taper-law tubes).  Both now mirror
+        # objective_evaluator_ramp.jl exactly.
         dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base; power_W=PW,
+            v_rated=cfg.v_rated,
             cylinder_cone=true, rotor_count_mode=true,
             power_split=0.6, cone_slope_deg=22.0,
-            rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW)
+            rotor_spacing_frac=0.8, blocking_factor=BLOCKING_WIND_FACTOR_5KW,
+            beam_t_over_D=cfg.t_over_D)
         sys, u0, pc = KiteTurbineDynamics.build_system_from_v10(
             dec, 1.0, cfg.k_mppt; tether_diameter=cfg.tether_diameter,
-            base_params=p_base)
+            base_params=p_base, min_wall_m=cfg.min_wall_m,
+            beam_sizing=KiteTurbineDynamics.size_beams_closed_form(dec, p_base, cfg))
         m_airborne = KiteTurbineDynamics.expansion_airborne_mass(sys, pc; include_lifter=false)
         T_exp = 1.5 * m_airborne * 9.81 / sind(70.0)
 
