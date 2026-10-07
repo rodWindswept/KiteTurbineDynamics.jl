@@ -10,6 +10,29 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-07] Branch landing — bank-derate-cos2p65 fast-forwarded onto master
+
+**Context.** All real work since the branch fork rode `bank-derate-cos2p65`,
+which contained all of `origin/master` (master-only: 0 commits).  The desktop's
+local `master` ref had sat at `ceb6752` (2026-09-23) while the branch advanced
+64+ commits — the 2026-10-07 "N behind master" scare was a stale-ref artifact,
+not missing content.  Two canonical lines were confusing every staleness read.
+
+**Decided (Rod, landed 2026-10-07).** Fast-forward `master` onto the branch tip
+and push both refs.  Result: `origin/master` == `origin/bank-derate-cos2p65` ==
+`da93bb3` (load-path clarifications in `physics-topology.md` on top of the
+floor-screen record `d4f543c`).
+
+**Consequences.** master is the canonical line again.  The branch ref is
+retained only until the bot worktrees migrate; no new commits on the branch.
+Code and tests are byte-identical to `d4f543c`, so the 2571/2571 gate receipt
+at those bytes stands — no re-gating.  The merge was a pure fast-forward (no
+merge commit): the branch was a strict superset of master.
+
+**Rules out.** Any future claim that the branch and master carry different
+machines — they carry the same commit.  Staleness reads must state the branch
+identity before counting ahead/behind.
+
 ## [2026-10-07] Projection threading: the fast hub-power chain and the sizing family carry the bank × elevation factor of the ODE
 
 **Context.** The ODE charges disc power `cosd(bank)^2.65 · cos(elev)^2.65`
