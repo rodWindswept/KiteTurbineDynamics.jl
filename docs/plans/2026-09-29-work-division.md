@@ -139,7 +139,7 @@ never checked.
 | 1 | The T8 levers: which of line count, preload, `k_mppt` and lifter margin may move? | W3 cannot start without it |
 | 2 | Approve the expansion-rotor BEM cases | W5, and one branch of W6 |
 | 3 | The wake de-rate: recalled 15 per cent, or the recorded 0.75× power? | It inverts which rotor takes the largest span |
-| 4 | The Daisy anchor: 1.5 kW at 10 m/s, or 1.27 kW at the recorded Cp and area? | It sets the ladder's absolute scale |
+| 4 | The Daisy anchor: 1.5 kW at 10 m/s, or 1.27 kW at the recorded Cp and area? | It sets the ladder's absolute scale. A 1.5→1.27 kW ruling scales every rung by ×1.0868 (+8.7 per cent) on length and ×1.252 on mass. The length law is P^(1/2), `src/parameters.jl:601`. |
 | 5 | Schedule the spokes requirement recorded 2026-09-26 | It needs a workstream of its own |
 
 ## 5. Resource rules
