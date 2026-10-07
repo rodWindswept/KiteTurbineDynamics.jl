@@ -8,10 +8,12 @@ campaign never calls that solver: it scores through the ODE path of
 build, from `EXPANSION_PHYSICS` would leave the static guard green.
 
 This test drives the live cold path twice — DEFAULT physics vs
-`LEGACY_PHYSICS_PRE_2026_07_18` — on the 5 kW campaign seed.  It runs an ODE
-window, so it is acceptance class (see test/acceptance_runtests.jl).  The
-window is trimmed (relax 5 s, measure 5 s) to keep the extra acceptance worker
-cheap; the settle is the dominant cost.
+`LEGACY_PHYSICS_PRE_2026_07_18` — on the 5 kW campaign seed, and since the
+2026-10-07 leg follow-up it drives the same pair again on the frozen pre-fold
+genome.  It runs ODE windows, so it is acceptance class (see
+test/acceptance_runtests.jl).  The window is trimmed (relax 5 s, measure 5 s)
+to keep the extra acceptance worker cheap; the settle is the dominant cost.
+P2 now spends four windows per acceptance pass.
 
 P1: the seed is healthy under DEFAULT physics (status :ok, finite fitness).
 P2: the EXPANSION_PHYSICS toggles reach the live ODE path — GENOME-AWARE as of
@@ -36,6 +38,11 @@ SEED_LR15_FROZEN in test_gate_v13.jl — no hand-typed digits) must read > 0,
 and the fold seed's digits (frozen below at the re-pin — never the live
 seed_genome(5.0), which would red on re-arm day) must read 0.  Both controls
 are static decodes pinning the branch's own contract, key > 0 / key == 0.
+At the tip the live seed takes the no-op arm, so P2 also runs a PRE-FOLD LEG:
+the same branch function on the frozen pre-fold genome, one default/legacy
+pair, so the differ arm executes end to end on every acceptance pass
+(reference: reject 4.292 kW / FoS 12.876 vs ok 8.762 kW / FoS 4.881, twelve
+full-surface diffs — W5 rehearsal, same src).
 
 NOTE: every evaluation lives in a FUNCTION.  A bare top-level `try` block
 soft-scopes its assignments, so `default_result` would stay `nothing` while the
@@ -119,9 +126,9 @@ const CFG = ObjectiveConfig(;
     window_s=5.0,
 )
 
-function run_eval()
+function run_eval(genome)
     return KiteTurbineDynamics.evaluate_windowed(
-        X,
+        genome,
         PROFILE_ELLIPTICAL,
         P,
         CFG;
@@ -131,22 +138,22 @@ function run_eval()
     )
 end
 
-"""Evaluate under the CURRENT physics flags.  Returns (result, threw)."""
-function evaluate_current()
+"""Evaluate a genome under the CURRENT physics flags.  Returns (result, threw)."""
+function evaluate_current(genome)
     try
-        return run_eval(), false
+        return run_eval(genome), false
     catch err
         println("  evaluation threw: ", sprint(showerror, err)[1:min(end, 200)])
         return nothing, true
     end
 end
 
-"""Evaluate under LEGACY physics, restoring the previous flags afterwards."""
-function evaluate_legacy()
+"""Evaluate a genome under LEGACY physics, restoring the previous flags afterwards."""
+function evaluate_legacy(genome)
     prev = expansion_physics()
     try
         set_expansion_physics!(LEGACY_PHYSICS_PRE_2026_07_18)
-        return evaluate_current()
+        return evaluate_current(genome)
     finally
         set_expansion_physics!(prev)   # never leak LEGACY into the process
     end
@@ -230,7 +237,65 @@ const SEED_5KW_FOLD_FROZEN = [
     1.0,                   # blade_scale_bottom
 ]
 
-# Both-controls pin: the branch below goes green on whichever arm the key
+"""The P2 branch — ONE copy, called by the live path and by the pre-fold leg
+(leg follow-up, 2026-10-07).  It decodes the genome's expansion-rotor count and
+asserts the arm's contract: expansion rotors present → LEGACY must CHANGE the
+ODE result; zero expansion rotors → LEGACY must be an explicit no-op across
+the FULL result surface.  `tag` names the caller in every check line, so a red
+names its run."""
+function assert_p2_branch(
+    tag::String, genome, default_result, default_threw, legacy_result, legacy_threw
+)
+    n_expansion = decoded_expansion_rotor_count(genome)
+    println("  [", tag, "] re-arm key: decoded expansion rotors = ", n_expansion)
+    if n_expansion > 0
+        # Pre-fold branch (re-arms with the machine): expansion rotors give the
+        # toggles live consumers, so LEGACY must change the result.
+        differ =
+            legacy_threw || (
+                legacy_result !== nothing &&
+                default_result !== nothing &&
+                (
+                    legacy_result.status !== default_result.status ||
+                    legacy_result.fitness != default_result.fitness ||
+                    # R7 (2026-09-10): under LEGACY physics both paths may reject, so
+                    # status+fitness alone are not discriminating.  The measured window
+                    # statistics are — LEGACY gives P_mean = 0 while DEFAULT sustains.
+                    legacy_result.P_mean != default_result.P_mean ||
+                    legacy_result.FoS_min != default_result.FoS_min
+                )
+            )
+        # Evidence line for the leg: the W5 rehearsal measured twelve moving
+        # fields on the pre-fold machine, so the count stays comparable here.
+        diffs = surface_diffs(default_result, legacy_result)
+        println(
+            "  [",
+            tag,
+            "] full-surface diffs: ",
+            isempty(diffs) ? "none" : string(length(diffs), " fields move"),
+        )
+        check(
+            "P2 [$tag]: LEGACY physics changes the ODE result (toggles reach the live path)",
+            differ,
+        )
+    else
+        # Fold branch: zero expansion rotors — the toggles are provably inert, so
+        # assert the explicit no-op across the FULL result surface instead of
+        # deleting the check.
+        diffs = String[]
+        default_threw && push!(diffs, "default evaluation threw")
+        legacy_threw && push!(diffs, "legacy evaluation threw")
+        append!(diffs, surface_diffs(default_result, legacy_result))
+        isempty(diffs) || println("  [", tag, "] no-op diffs: ", join(diffs, "; "))
+        check(
+            "P2 [$tag]: zero-expansion machine — LEGACY physics is an explicit no-op (every result field identical)",
+            isempty(diffs),
+        )
+    end
+    return nothing
+end
+
+# Both-controls pin: the branch goes green on whichever arm the key
 # picks, so a mis-keyed predicate would pass by guarding nothing.  Assert the
 # predicate itself on two frozen machines — true on the pre-fold genome, false
 # on the frozen fold seed.  Static decodes only (no ODE), so a mis-key reds
@@ -272,7 +337,7 @@ check(
 )
 
 println("=== P1: DEFAULT physics — the seed is healthy on the live ODE path ===")
-default_result, default_threw = evaluate_current()
+default_result, default_threw = evaluate_current(X)
 report("default", default_result)
 check(
     "P1: seed is healthy under DEFAULT physics (status :ok, finite fitness)",
@@ -283,44 +348,25 @@ check(
 )
 
 println("=== P2: LEGACY physics vs the live ODE path (genome-aware re-pin 2026-10-07) ===")
-legacy_result, legacy_threw = evaluate_legacy()
+legacy_result, legacy_threw = evaluate_legacy(X)
 report("legacy ", legacy_result)
+assert_p2_branch("live", X, default_result, default_threw, legacy_result, legacy_threw)
 
-n_expansion = decoded_expansion_rotor_count(X)
-println("  re-arm key: decoded expansion rotors = ", n_expansion)
-
-if n_expansion > 0
-    # Pre-fold branch (re-arms with the machine): expansion rotors give the
-    # toggles live consumers, so LEGACY must change the result.
-    differ =
-        legacy_threw || (
-            legacy_result !== nothing &&
-            default_result !== nothing &&
-            (
-                legacy_result.status !== default_result.status ||
-                legacy_result.fitness != default_result.fitness ||
-                # R7 (2026-09-10): under LEGACY physics both paths may reject, so
-                # status+fitness alone are not discriminating.  The measured window
-                # statistics are — LEGACY gives P_mean = 0 while DEFAULT sustains.
-                legacy_result.P_mean != default_result.P_mean ||
-                legacy_result.FoS_min != default_result.FoS_min
-            )
-        )
-    check("P2: LEGACY physics changes the ODE result (toggles reach the live path)", differ)
-else
-    # Fold branch: zero expansion rotors — the toggles are provably inert, so
-    # assert the explicit no-op across the FULL result surface instead of
-    # deleting the check.
-    diffs = String[]
-    default_threw && push!(diffs, "default evaluation threw")
-    legacy_threw && push!(diffs, "legacy evaluation threw")
-    append!(diffs, surface_diffs(default_result, legacy_result))
-    isempty(diffs) || println("  no-op diffs: ", join(diffs, "; "))
-    check(
-        "P2: zero-expansion machine — LEGACY physics is an explicit no-op (every result field identical)",
-        isempty(diffs),
-    )
-end
+println(
+    "=== P2 leg: the differ arm executes — the frozen pre-fold genome through the same branch (2026-10-07) ===",
+)
+pre_default_result, pre_default_threw = evaluate_current(X_PRE_FOLD)
+report("pre-fold default", pre_default_result)
+pre_legacy_result, pre_legacy_threw = evaluate_legacy(X_PRE_FOLD)
+report("pre-fold legacy ", pre_legacy_result)
+assert_p2_branch(
+    "pre-fold leg",
+    X_PRE_FOLD,
+    pre_default_result,
+    pre_default_threw,
+    pre_legacy_result,
+    pre_legacy_threw,
+)
 
 println()
 if isempty(failures)
