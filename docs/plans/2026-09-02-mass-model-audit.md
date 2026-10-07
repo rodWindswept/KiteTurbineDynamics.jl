@@ -150,8 +150,9 @@ there (0 % change).  It matters at higher k (about 7–8 % lower spin speed).
 and 5.37 kW later (island 3) is **not** caused by this bug.  That difference in
 the two readings is the separate, pre-existing "settle-ODE gap" — the cp-peak
 clamp parks the machine at the power-curve peak, below its true equilibrium,
-and the careful simulation climbs to it (10.673 → 13.504 rad/s on the fold
-seed — direction clause corrected 2026-10-07) regardless of the wake rule.
+and the careful simulation climbs to it (winner: 10.881 → 12.177 rad/s, raw
+probe 5b847ee; fold control: 10.673 → 13.504, 613f3de read — direction clause
+corrected 2026-10-07) regardless of the wake rule.
 It is tracked in `docs/plans/2026-08-22-settle-ode-gap-workstream.md` and
 needs its own fix.
 
