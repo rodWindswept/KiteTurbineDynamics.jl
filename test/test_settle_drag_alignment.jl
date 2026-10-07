@@ -85,6 +85,16 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
         # Pre-change master value was 16.05 for the stale 5kW seed; re-measured
         # on the corrected seed (daisy/18.8).  ω_zero_drag now lands near the
         # settle cp-peak clamp; see A for the gap.
+        # FOLD RE-BASELINE (2026-10-07): the pin moves with the seed — the 5 kW
+        # rung folds to the S2 class (bd5114e) and the zero-drag settle saturates
+        # at the cp-peak clamp, ω = 10.672891015260438 (raw probe
+        # sv_settle_b_raw_probe.log; same value as the fold winner's park).
+        # Pre-fold pin 15.6 dates from fda2fae.  At bd5114e^ (a82cafd) this test
+        # ERRORS on the torsional realisability cliff (τ 542.43 N·m vs the
+        # 493.47 N·m ceiling at 220.21 N/line, sin Δα = 1.0992 —
+        # sv_settle_drag_a82cafd.log), so the six-reds "green on the un-folded
+        # tree" control does not apply to B.  NOTE: the failure line prints
+        # abs(ω - pin), not ω — read the raw probe, not the test output.
         p = params_at_length(18.8)
         sys, u0, pc, dec = build_from_genome(SEED5, p)
         lift = lift_for(sys, pc)
@@ -93,7 +103,7 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
             wind_fn=(r, t) -> [p.v_wind_ref, 0.0, 0.0],
             n_op=20_000, drag_fn=(_...) -> 0.0)
         ω_zero_drag = hub_omega(u, sys)
-        @test abs(ω_zero_drag - 15.6) < 0.5   # re-measured on corrected seed (cp-peak clamp)
+        @test abs(ω_zero_drag - 10.6729) < 0.5   # re-measured on the S2 fold seed (bd5114e)
     end
 
     @testset "E. drag model sanity" begin
