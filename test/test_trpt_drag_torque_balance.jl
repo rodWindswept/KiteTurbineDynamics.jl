@@ -26,6 +26,13 @@ docs/validation/2026-09-26-trpt-drag-torque-measurement.md.
 Finding F11 predicts this baseline sits about 25 percent low, because the ring-end
 sub-segments use the ring centre velocity. The identical drag torque is expected to
 read 29 to 35 N.m once F11 is fixed. The bracket below holds both.
+
+RE-PINNED 2026-10-07 (work-division §7 row 11; fold ruling [2026-10-05] in
+DECISIONS.md — "The 5 kW seed folds to the S2 class").  The fold retired the
+pre-fold machine this guard measured.  The band check is now a FROZEN FIXTURE:
+the pre-fold and fold readings sit side by side at the check, the fold reading
+is the pin, and the fold-decision citation rides with them.  The other four
+conjuncts of this file are unchanged.
 =#
 
 using KiteTurbineDynamics, LinearAlgebra, Printf, Test
@@ -76,7 +83,29 @@ w = omega[1]
 hub_r = (sys.nodes[sys.ring_ids[Nr]]::RingNode).radius
 
 total_drag = sum(tau_drag)
-large_radius = sum(tau_drag[(Nr - 3):(Nr - 1)])     # rings 10, 11, 12
+# RE-PIN 2026-10-07 (work-division §7 row 11; fold ruling [2026-10-05] in
+# DECISIONS.md).  The window below resolves BY Nr: the pre-fold 13-ring machine
+# measured rings [10:12], the fold 9-ring machine measures [6:8].  Pre-fold /
+# fold, side by side (measured; attribution table in
+# docs/validation/2026-10-07-acceptance-repoint-fold-tip.md; probe logs
+# sv_repin_premise_gate_a76c5e9, av_trpt_share_probe_a76c5e9 and
+# sv_repin_solo_test_trpt_drag_torque_balance_a76c5e9 in the shared depot):
+#   pre-fold (3 rotors / 2 expansion / 13 rings): [10:12] held 103.0 %
+#     (f9f3182) and 91.1 % (a82cafd) — both cleared the 60 % bar this check
+#     used to assert.  Radii (rings 10, 11, 12) = 1.1748, 2.4, 2.4 m; dropping
+#     top ring 13 cost 2.6 % (outer band [10:13] ~ 93.7 %).
+#   fold (1 rotor / 0 expansion / 9 rings): [6:8] holds 28.7 % (bd5114e) and
+#     23.7 % (a76c5e9; rings 6-7 ~ 1.9 %, ring 8 21.9 %).  Radii (rings 6, 7,
+#     8) = 0.7969, 0.7969, 1.6085 m.  Top ring 9 (r = 4.32 m) alone carries
+#     73.3 % and rings 8+9 carry 95.1 % — the outward concentration never
+#     moved; only the index window did.  The 23.7 % is a window fact, not an
+#     inboard shift.
+# The fold reading is the pin (below); the pre-fold pair is the reversal target
+# the day the pre-fold machine returns (W5).
+large_radius = sum(tau_drag[(Nr - 3):(Nr - 1)])
+win_share = abs(large_radius) / abs(total_drag)
+top_share = abs(tau_drag[Nr]) / abs(total_drag)
+win_radii = [(sys.nodes[sys.ring_ids[i]]::RingNode).radius for i in (Nr - 3):(Nr - 1)]
 
 @printf("\nTRPT drag torque balance\n")
 @printf("  omega            %8.3f rad/s\n", w)
@@ -85,8 +114,9 @@ large_radius = sum(tau_drag[(Nr - 3):(Nr - 1)])     # rings 10, 11, 12
 @printf("  drag torque      %+9.3f N.m\n", total_drag)
 @printf("  drag power       %+9.3f kW\n", total_drag * w / 1000)
 @printf("  drag / rotor     %8.1f %%\n", 100 * abs(total_drag) / abs(tau_aero))
-@printf("  rings 10-12 hold %8.1f %% of the drag\n",
-    100 * abs(large_radius) / abs(total_drag))
+@printf("  window rings %d-%d hold %5.1f %% of the drag (radii: %s m)\n",
+    Nr - 3, Nr - 1, 100 * win_share, join(round.(win_radii, digits = 4), ", "))
+@printf("  top ring %d holds %5.1f %% (r = %.4f m)\n", Nr, 100 * top_share, hub_r)
 @printf("  motion-only drag %+9.3f N.m (wind out of both calls)\n", sum(tau_drag_nowind))
 @printf("  the wind's share %+9.3f N.m\n", total_drag - sum(tau_drag_nowind))
 
@@ -114,10 +144,15 @@ else
     )
 end
 
-if abs(large_radius) > 0.6 * abs(total_drag)
-    println("PASS  the loss sits in the large-radius rings, as the source says")
+# FROZEN FIXTURE (re-pinned 2026-10-07): the fold reading is the pin; the
+# pre-fold pair (91.1–103.0 % at window [10:12]) is recorded in the re-pin
+# block above as the reversal target for the day the pre-fold machine returns
+# (W5).
+if abs(100 * win_share - 23.7) < 5.0
+    println("PASS  the drag window share matches the frozen fold fixture (23.7 %)")
 else
-    push!(failures, "the drag is not concentrated at large radius: $large_radius")
+    push!(failures,
+        "the drag window share moved off the frozen fold fixture: $(round(100 * win_share, digits = 1)) % (pin 23.7 ± 5)")
 end
 
 if tau_aero > 0.0
