@@ -10,6 +10,56 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-07] Projection threading: the fast hub-power chain and the sizing family carry the bank × elevation factor of the ODE
+
+**Context.** The ODE charges disc power `cosd(bank)^2.65 · cos(elev)^2.65`
+(`ring_forces.jl`, power term, DECISIONS [2026-10-01]).  The fast chain charged
+`P_aero_hub` with f = 1.  A probe read P_slow/P_fast = 1.78 at the S2 fold.
+
+The decoder sized rotors on the full disc.  The rank used the un-derated radius
+for thrust and structure.  Rank, floor and screen priced a machine the ODE never
+flies.
+
+Site census: `scratch/fastcharge_census_software-validator.md`.
+
+**Decided (landed 2026-10-07).**
+
+- One authority: `BEM.projection_factor(bank_deg, elev_rad)` =
+  `cosd(bank)^2.65 · cos(elev)^2.65`, exactly 1.0 at zero angles.
+
+- Eight live sites carry it.  They are the hub charge
+  (`objective_v6.jl:426/:490`), the solver seed and re-size (`:567/:591`),
+  the decode spacing reference and spans (`objective_v10.jl:322/:352`),
+  the rank reference radius (`:524`), and the beams hub-thrust fallback
+  (`trpt_optimization.jl:336`).
+
+- Channels: `rotor_radius_for_power` gains `f` (default 1.0, direct pins stay
+  byte-stable).  Both solvers gain `bank_deg` (default 0.0, elevation-only),
+  and the two live callers pass the bank of the topmost rotor
+  (`objective_v10.jl:541`, `trpt_optimization.jl:321`).
+
+- The trpt expansion stack excludes the hub rotor.  A stack-inferred bank can
+  not reach the hub there, so the explicit argument is the only channel that
+  lands the full factor in both live contexts.
+
+- Closed forms: f(10.74°, 30°) = 0.6518052428788816 (1/√f = 1.238628519015731).
+  Elevation-only 1/√f = 1.209962966766535.  Scripts (12 sites) stay optimistic
+  until re-run.  The dormant v6 objective rides the defaults.
+
+**Verification.** A/B receipts (`scratch/av_probe_thread_ab.jl`, pre-cut
+`7c9f4b9` vs cut): every old pin reproduces pre-cut and every new pin post-cut.
+The span ratios equal the closed forms to 1e-15.  Helper minus closed form =
+0.0e+00.
+
+The cut moved exactly 16 pinned values in two files, nothing else in the suite.
+The two files are `test_betz_ceiling_projection.jl` (third re-baseline) and
+`test_trpt_realisability.jl` (eighth re-baseline).
+
+Both carry the movement receipts in-file.  Fast suite 2571/2571.  Record:
+`docs/validation/2026-10-07-projection-threading-landing.md`.
+
+---
+
 ## [2026-10-07] D4: one generator/brake torque authority — `generator_torque_cap(p)`, tau ∝ P_rated^1.5 anchored at the rig
 
 **Context.** Two scale laws lived side by side: `ring_forces.jl` used the hidden-unit
