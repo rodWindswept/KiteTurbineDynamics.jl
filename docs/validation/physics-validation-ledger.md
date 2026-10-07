@@ -46,7 +46,7 @@ OPEN (no trusted source yet) · SUPERSEDED (wrong, replaced).
 | C6 | Dyneema SK99 rope break ε=3.5% | SK99 datasheet | — | SUPPORTED |
 | C7 | Mass exponent P^1.35 (rung scaling) | "Mass Scaling PDF" | underdetermined from one point; field tests measure | SUPPORTED / OPEN |
 
-## D. Open / unanchored (do NOT quote externally)
+## D. Open / unanchored
 
 | # | Item | Why it matters | Action |
 |---|------|----------------|--------|
