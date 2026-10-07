@@ -10,6 +10,44 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-07] D4: one generator/brake torque authority — `generator_torque_cap(p)`, tau ∝ P_rated^1.5 anchored at the rig
+
+**Context.** Two scale laws lived side by side: `ring_forces.jl` used the hidden-unit
+quadratic `(p_rated_w/10^4)^2` (cap 2500·s, brake 1500·s, damping 10·s/15·s) while the
+depower recorder's readback (`simulation.jl:344`) used the linear `p_rated_w/10^4`.
+They coincide only at 10 kW; at 300 W the quadratic caps at 2.25 N·m against a measured
+generator-load band of 20–24 N·m (~9× under-clamp), and the S2 fold's uncapped demand
+(~695 N·m at k=2.24) sat on the 5 kW clamp (625 N·m). Flagged 2026-08-16; plan §1
+(`docs/plans/2026-08-22-physics-convention-fixes.md`).
+
+**Decided (fix landed 2026-10-07).**
+- Single authority in `ring_forces.jl`: `generator_torque_cap(p) = (22.65/300^1.5)·p_rated_w^1.5`.
+  The exponent follows tau_rated = P_rated/omega_rated with omega_rated ∝ v/R and
+  R ∝ sqrt(P_rated); the constant is calibrated to the April-29 anchor rig — the measured
+  generator-load plateau (Quarq power ÷ controller rpm) of 22.65 N·m at 300 W, inside the
+  measured band [20, 24] N·m.
+- Every generator/brake torque site reads it: the cap, the damping coefficients c_d /
+  c_d_active and the mechanical-brake budget (legacy ratios 10 / 15 / 1500 of the old 2500
+  preserved as fractions of the cap). The hidden-unit `(P/10^4)^2` scale is retired from `src/`.
+- The `simulation.jl` linear readback is deleted; the depower recorder calls
+  `get_generator_torque`, so recorded frames inherit the law, the clamp, elevation scaling,
+  damping and any future cap change in one place.
+- Value map: 300 W: 22.65 N·m (band ✓); 5 kW: 625 → **1541.1 N·m** (releases the S2 fold;
+  the +1–1.5% re-read ≈ 6.87–6.89 kW is @aero-validator's Part B to drop);
+  10 kW: 2500 → 4359.0; 50 kW: 62,500 → 48,735.0.
+
+**Verification.** Re-pinned `test_bearing_alignment` (Test 5 at the 5 kW discriminating power)
+and `test_metric_consistency` (5 kW machine + a "generator torque cap law (D4 acceptance)"
+testset: rig band, 5/10/50 kW values, tau ∝ P^1.5, fold-release clearance, 50 kW margin).
+RED→GREEN record in the landing commit b488262.
+
+**Open.** The pitch-depower campaign CSVs (v5_safe family) predate the reform conventions:
+re-runs at the current tip hit the TRPT realisability gate on the baseline designs
+(settle raises: tau = 1032.28 N·m vs 669.93 N·m ceiling at 475 N/line). Re-baseline awaits
+the room's call on regenerating vs updating the campaign designs under current conventions.
+
+---
+
 ## [2026-10-06] Search-space topology: n_lines ≥ 3 everywhere. n_b = 2 is banned
 
 **Context.** The 2026-10-06 room exposed that the two-blade machine was never a
