@@ -242,6 +242,7 @@ Owner: **science-worker** (definition). The run itself waits on the rulings belo
 | 8 | The re-base ruling: n_b = 3, transmission pinned at hex (the one-ruling recommendation) | W8's pins, W9's target |
 | 9 | The I_t re-derive for the 3-blade BOM | Moves every k_mom pin again |
 | 10 | Master merge green-light: origin/master is at `a476ded`. `bank-derate-cos2p65` (D1 + bank derate) and `s2-fold-seed` (30 ahead) are unmerged | Release-facing work and the campaign runner |
+| 11 | The two fold-retired guards (P2 expansion toggles, drag top-band share): re-pin as frozen fixtures, or keep the pair red? | The residual acceptance pair, 2 of 9 files. Detail in `docs/validation/2026-10-07-acceptance-repoint-fold-tip.md` |
 
 ### Repo map for this refresh
 
