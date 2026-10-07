@@ -1,8 +1,9 @@
 # The two fold-retired guards re-pin as frozen fixtures (2026-10-07)
 
 Author: software-worker. Branch: `sw-fixture-repin`. The branch starts at the
-gate tip `a76c5e9`. Code commit: `eda1978` (the two guard files). The follow-on
-docs commit carries this record.
+gate tip `a76c5e9`. Code commits: `eda1978` (the two guard files), `74ed9c6`
+(the P2 re-arm key both-controls pin). The follow-on docs commits carry this
+record.
 
 ## Why, and by what ruling
 
@@ -38,6 +39,26 @@ the built machine. That count is the re-arm key.
 
 The branch is not a static pin. A future seed with expansion rotors re-arms the
 differ branch by itself. The W5 rehearsal below exercises that path end to end.
+
+The fixture now controls the re-arm key on both sides (2026-10-07 follow-up,
+room agreed before merge). The branch goes green on whichever arm the key
+picks, so a mis-keyed predicate would pass by guarding nothing. One
+genome-argument copy of the key function drives three reads: the branch, the
+positive control, and the negative control.
+
+- Positive: the pre-fold genome, parsed from `SEED_LR15_FROZEN`
+  (`test_gate_v13.jl`, no hand-typed digits, the same parse as the rehearsal)
+  must read `key > 0`.
+- Negative: the fold-seed digits, frozen in the test as `SEED_5KW_FOLD_FROZEN`
+  and copied from `seed_genome(5.0)` at the re-pin with provenance, must read
+  `key == 0`. Never use the live `seed_genome(5.0)`. A future seed that
+  carries expansion rotors reads `> 0` *correctly*, and a live-seed control
+  would then red a working machine on the re-arm day this fixture exists to
+  absorb.
+
+Both arms pin the contract of the branch (`key > 0` / `key == 0`), not exact
+counts. Both are static decodes, with no ODE. The controls close the gap:
+until now, the positive arm of the key lived only in the W5 rehearsal log.
 
 ## Fixture 2: `test/test_trpt_drag_torque_balance.jl`, the window share
 
@@ -79,14 +100,30 @@ inboard shift.
   4.292 kW. LEGACY reads ok at 8.762 kW / FoS 4.88. Twelve result fields differ
   and the differ assertion reads PASS. Log:
   `.julia_depot/logs/sv_repin_w5_rehearsal_eda1978.log`.
-- The seven other acceptance files are untouched by this branch. The nine-file
-  acceptance re-run on the branch sits with software-validator, the agreed gate.
+- The seven other acceptance files are untouched by this branch.
+
+## Evidence at `74ed9c6` (the both-controls delta)
+
+- Static pre-flight at this commit, extended with the controls (include chain,
+  the key on the live seed, the frozen literal parsed back from the test
+  source): `.julia_depot/logs/sw_repin_static_check_74ed9c6.log`. Result:
+  `SW_REPIN_STATIC_OK`. The parsed literal equals `seed_genome(5.0)` at pin
+  time, with max diff 0.0. The key reads `2` on the pre-fold control and `0`
+  on the fold-frozen control.
+- P2 solo: `.julia_depot/logs/sw_repin_solo_test_physics_path_ode_74ed9c6.log`.
+  Result: ALL PASS, exit 0. Both controls passed, the re-arm key read 0, and
+  the no-op check covered every field.
+- The nine-file acceptance re-run passed 9/9 at `a794578`
+  (`.julia_depot/logs/sv_repin_acceptance_a794578.log`). The re-run at this
+  tip, and the mutation check on the controls (a deliberate mis-key must red),
+  sit with software-validator.
 
 ## Reversal recipe for the day W5 revives
 
 Restore P2 to the unconditional differ check. Restore the drag check to the
-`> 60 %` bar. The fixtures themselves record the pre-fold readings. No other
-file needs a change.
+`> 60 %` bar. The fixtures themselves record the pre-fold readings. The
+both-controls pin needs no re-pin, because the placement facts of the frozen
+machines do not move. No other file needs a change.
 
 ## Flagged, not touched (outside the pair)
 
