@@ -17,8 +17,10 @@ include(joinpath(@__DIR__, "compute_seeds.jl"))
 const K_MPPT = K_MPPT_5KW_HONEST   # campaign cfg k_mppt (single source, compute_seeds.jl)
 const LENGTH = 18.8
 
+# REPOINTED 2026-10-07 (work-division §6 item 2): the live campaign output is
+# the bank-derate re-baseline; the rotorcount-era directory is superseded.
 OUT_DIR = length(ARGS) > 0 ? ARGS[1] :
-          joinpath(@__DIR__, "results", "v13_5kw_masslift_len18.8_rotorcount")
+          joinpath(@__DIR__, "results", "v13_5kw_masslift_len18.8_rotorcount_bankderate")
 
 function params_at_length(L::Float64)
     p2 = params_daisy()

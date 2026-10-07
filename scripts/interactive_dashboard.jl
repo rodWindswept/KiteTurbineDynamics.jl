@@ -477,7 +477,7 @@ function main()
             sys, u0, p, label, _ = build_daisy(blade_scale=1.0)
             current_config = "Daisy Proto 1kW"
         elseif current_config == "V13 5kW mass-aware winner"
-            sys, u0, p, label = build_from_campaign_v13("v13_5kw_masslift_len18.8_rotorcount", "V13 5kW mass-aware winner")
+            sys, u0, p, label = build_from_campaign_v13("v13_5kw_masslift_len18.8_rotorcount_bankderate", "V13 5kW mass-aware winner")
         elseif current_config == "V10-Spoke λ0.90 (safest)"
             sys, u0, p, label = build_v10_tight(blade_scale=0.90)
             current_config = label

@@ -6,6 +6,9 @@
 # Re-baselined 2026-09-04 to the corrected 5 kW campaign (daisy params @ 18.8 m,
 # seed_genome(5.0), campaign decode knobs, mass-aware const-tension lift, winner
 # = the corrected campaign's best_vector.csv).
+# Repointed 2026-10-07 (work-division §6 item 2): A and D read the current
+# committed 5 kW design — the S2-class fold seed (seed_genome(5.0)); the 14-D
+# winner CSV is superseded, and the D build gains the 10-D-aware clamp.
 #
 # A. Gap reduction: |ω_settle − ω_final|/ω_settle < 0.30-ish for the 5kW winner
 # B. Bit-identity guard: drag_fn = (_) -> 0.0 reproduces the master settle
@@ -60,8 +63,16 @@ lift_for(sys, p) = KiteTurbineDynamics.sized_lifter_for(
 
 function build_from_genome(x::Vector{Float64}, p::SystemParams)
     xr = copy(x)
-    xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
-    xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    # 10-D-aware clamp (run_eval's shape — the repoint's intended shape).  On a
+    # 10-D genome the legacy 14-D indexes round bank_bottom, not the discrete
+    # genes; the legacy branch stays for the 14-D CSVs.
+    if length(xr) >= 14
+        xr[8] = Float64(round(Int, clamp(xr[8], 3, 16)))
+        xr[10] = Float64(round(Int, clamp(xr[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+    else
+        xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))    # n_lines
+        xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))     # rotor count
+    end
     dec = design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p; power_W=PW,
         cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
         cone_slope_deg=22.0, rotor_spacing_frac=0.8,
@@ -75,9 +86,14 @@ function hub_omega(u, sys)
     return u[6*sys.n_total + 2*sys.n_ring]
 end
 
-# Corrected campaign winner genome (single rotor, r_hub 4.32 m, n_lines 3).
-const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
-    "v13_5kw_masslift_len18.8_rotorcount", "best_vector.csv")
+# ACCEPTANCE REFERENCE, REPOINTED 2026-10-07 (work-division §6 item 2).
+# A and D read the current committed 5 kW design: the S2-class fold seed
+# (seed_genome(5.0) == S2_FOLD_SEED, scripts/compute_seeds.jl; room-approved
+# 2026-10-05).  It replaces the rotorcount-era winner CSV, whose machine read
+# Pf 4.0447 kW on the D line at the fold tip (av_winner_pair_probe_5b847ee.log).
+# Fold pair at the joined tip: w_settle 10.199 → 13.910 rad/s, Pf 6.028 kW
+# (re-fly log aw_fourstick_s2_tip_c657c76.log).
+const X_WINNER = seed_genome(5.0)
 
 @testset "Settle drag alignment — acceptance" begin
 
@@ -122,7 +138,7 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
 
     @testset "A. gap reduction on 5kW winner" begin
         p = params_at_length(18.8)
-        x = [parse(Float64, s) for s in split(strip(read(WINNER_CSV, String)), ",")]
+        x = copy(X_WINNER)
         sys, u0, pc, dec = build_from_genome(x, p)
         lift = lift_for(sys, pc)
         wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]
@@ -140,10 +156,12 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
         # corrected 2026-10-07): the settle parks at the cp-peak clamp, which
         # sits BELOW the true MPPT equilibrium (the scan never goes past the
         # peak, and the true balance lies beyond it), so the ODE window
-        # climbs up to it (winner: 10.881 → 12.177 rad/s, raw probe 5b847ee;
-        # fold control: 10.673 → 13.504, 613f3de read) — the settle-ODE gap
-        # workstream (docs/plans/2026-08-22-settle-ode-gap-workstream.md).
-        # The gap is deliberately LEFT above 0.30 until that workstream lands.
+        # climbs up to it (repointed reference: 10.199 → 13.910 rad/s, re-fly
+        # aw_fourstick_s2_tip_c657c76.log; pre-repoint winner pair 10.881 →
+        # 12.177, raw probe 5b847ee; first fold read 10.673 → 13.504, 613f3de)
+        # — the settle-ODE gap workstream
+        # (docs/plans/2026-08-22-settle-ode-gap-workstream.md).  The gap is
+        # deliberately LEFT above 0.30 until that workstream lands.
         @test gap < 0.80
     end
 
@@ -165,7 +183,7 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
 
     @testset "D. no new stall (20s gate)" begin
         p = params_at_length(18.8)
-        x = [parse(Float64, s) for s in split(strip(read(WINNER_CSV, String)), ",")]
+        x = copy(X_WINNER)
         sys, u0, pc, dec = build_from_genome(x, p)
         lift = lift_for(sys, pc)
         wind_fn(r, t) = [p.v_wind_ref, 0.0, 0.0]

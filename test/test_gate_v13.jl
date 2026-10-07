@@ -6,6 +6,10 @@ campaign: the campaign winner is VALID and must PASS the gate (the OLD
 collapsing v12 winner is no longer the reference).  Standalone (not wired
 into runtests.jl — it runs a 30s ODE window).
 
+Repointed 2026-10-07 (work-division §6 item 2): the reference machine is the
+S2-class fold seed (seed_genome(5.0)) — the current committed 5 kW design; the
+rotorcount-era winner CSV is superseded.
+
 A1: the corrected 5 kW campaign winner PASSES the re-instrumented gate
     (P ≥ 5 kW, no twist crossing, clearance ≥ 1.5 m, tip sanity).
 A2: the healthy winner's twist ratio stays BELOW the geometric crossing limit
@@ -22,15 +26,16 @@ include(joinpath(@__DIR__, "..", "scripts", "ode_gate_v13.jl"))
 const KW = 5.0
 const PW = KW * 1000.0
 const L18 = 18.8
-# Corrected campaign winner (single rotor, r_hub 4.32 m, n_lines 3) — VALID.
-const WINNER_CSV = joinpath(
-    @__DIR__,
-    "..",
-    "scripts",
-    "results",
-    "v13_5kw_masslift_len18.8_rotorcount",
-    "best_vector.csv",
-)
+# ACCEPTANCE REFERENCE, REPOINTED 2026-10-07 (work-division §6 item 2).
+# The machine under test is the current committed 5 kW design: the S2-class
+# fold seed (seed_genome(5.0) == S2_FOLD_SEED, scripts/compute_seeds.jl;
+# room-approved 2026-10-05).  It replaces the rotorcount-era winner CSV this
+# file read before: that machine no longer closes the acceptance sticks at
+# the fold tip (D-line read 4.0447 kW against the 5.0 floor,
+# av_winner_pair_probe_5b847ee.log).  Fold sticks are green at the joined
+# tip — A1 6.107 kW, re-fly log aw_fourstick_s2_tip_c657c76.log; forecast
+# docs/validation/2026-10-06-fourstick-branch-extension.md.
+const X_WINNER = seed_genome(5.0)
 
 failures = String[]
 function check(name::String, cond::Bool)
@@ -38,8 +43,8 @@ function check(name::String, cond::Bool)
     return cond || push!(failures, name)
 end
 
-println("=== A1/A2: gate the corrected campaign winner (healthy) ===")
-x = [parse(Float64, s) for s in split(strip(read(WINNER_CSV, String)), ",")]
+println("=== A1/A2: gate the folded 5 kW design (healthy) ===")
+x = copy(X_WINNER)
 r = gate_design(x; L=L18, KW=KW)
 println(
     "  verdict ok=",
@@ -64,8 +69,16 @@ check(
 println("=== A3: detector must not flag the post-settle state ===")
 p = params_at_length(params_daisy(), L18, KW)
 xv = copy(x)
-xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
-xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+# 10-D-aware clamp (run_eval's shape — the repoint's intended shape).  On a
+# 10-D genome the legacy 14-D indexes round bank_bottom, not the discrete
+# genes.
+if length(xv) >= 14
+    xv[8] = Float64(round(Int, clamp(xv[8], 3, 16)))
+    xv[10] = Float64(round(Int, clamp(xv[10], 1, 3)))   # rotor_count_mode: {1,2,3}
+else
+    xv[4] = Float64(round(Int, clamp(xv[4], 3, 16)))    # n_lines
+    xv[6] = Float64(round(Int, clamp(xv[6], 1, 3)))     # rotor count
+end
 dec = design_from_vector_v10(
     xv,
     PROFILE_ELLIPTICAL,

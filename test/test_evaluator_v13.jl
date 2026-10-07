@@ -9,6 +9,9 @@ Re-baselined 2026-09-10 (R7): the four free beam genes are removed and every
 ring's tube is sized closed-form (`size_beams_closed_form`).  The 2026-09-07
 "under-strength winner" artifact can no longer recur, so B6 now asserts the
 re-sized winner is :ok with FoS ≥ 2.5 while still delivering ≥ 5 kW.
+Repointed 2026-10-07 (work-division §6 item 2): the B6 healthy machine is the
+S2-class fold seed (seed_genome(5.0)) — the current committed 5 kW design; the
+rotorcount-era winner CSV is superseded.
 
 B1: island-1 winner (torsional collapse)  → :reject + twist_crossed=true
 B2: 18m winner (flywheel decay)            → :reject OR (P_end < floor AND worse fitness than seed)
@@ -33,9 +36,11 @@ const L18 = 18.8
 # corrected physics (B1/B2).
 const WINNER1 = joinpath(@__DIR__, "..", "scripts", "results", "v12_5kw_coldstart", "island_1_best.csv")
 const WINNER18 = joinpath(@__DIR__, "..", "scripts", "results", "v12_5kw_len18.0", "best_vector.csv")
-# Healthy machine: the corrected 5 kW campaign winner.
-const WINNER18V13 = joinpath(@__DIR__, "..", "scripts", "results",
-    "v13_5kw_masslift_len18.8_rotorcount", "best_vector.csv")
+# ACCEPTANCE REFERENCE, REPOINTED 2026-10-07 (work-division §6 item 2).
+# The healthy B6 machine is the current committed 5 kW design: the S2-class
+# fold seed (seed_genome(5.0) == S2_FOLD_SEED, scripts/compute_seeds.jl;
+# room-approved 2026-10-05).  It replaces the rotorcount-era winner CSV.
+const X_WINNER13 = seed_genome(5.0)
 
 failures = String[]
 function check(name::String, cond::Bool)
@@ -190,32 +195,28 @@ check("B5c: twist_crossed is coupled to the recorded twist_ratio (same sampling 
       r3.twist_crossed == (r3.twist_ratio > 1.0) &&
       t1.crossed == (t1.max_ratio > 1.0) && t0.crossed == (t0.max_ratio > 1.0))
 
-println("=== B6: campaign winner under the ALIGNED FoS model ===")
-if isfile(WINNER18V13)
-    r6 = run_eval(read_vec(WINNER18V13), L18, 20.0)
-    println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2),
-            "  FoS_min=", round(r6.FoS_min, digits=2),
-            "  fitness=", round(r6.fitness, digits=3))
-    # Re-baselined 2026-09-10 (R7 closed-form sizing): the four free beam genes
-    # are gone, so the under-strength artifact (6.2 mm / FoS ≈ 1.2 transmission
-    # rings) cannot recur — `size_beams_closed_form` re-sizes the winner's rotor
-    # stack to meet the 2.5 floor.  B6 now asserts the R7 invariant: the same
-    # winner genome evaluates :ok with FoS ≥ 2.5 while still delivering ≥ 5 kW.
-    # A regression that reinstated the free beam genes (or an under-sizing load
-    # model) would drop FoS below the floor and fail here.
-    check("B6a: R7 closed-form sizing meets the floor (status :ok, FoS ≥ 2.5)",
-          r6.status === :ok && r6.FoS_min >= 2.5)
-    # The machine still delivers its rated power after the structural re-size.
-    check("B6c: winner still delivers ≥ 5.0 kW", r6.P_mean >= 5.0)
-    g6 = gate_design(read_vec(WINNER18V13); L=L18, KW=KW)
-    hub_ri = (g6.sys.nodes[g6.sys.rotor.node_id]::RingNode).ring_idx
-    w_hub = g6.u[6*g6.N + g6.Nr + hub_ri]
-    hub_tip = abs(w_hub) * g6.sys.rotor.radius
-    println("  hub_tip=", round(hub_tip, digits=1), " m/s")
-    check("B6b: hub tip < 100 m/s (and every ring/rotor)", hub_tip < 100.0 && tip_speed_sanity_ok(g6.u, g6.sys))
-else
-    println("  (campaign winner CSV not present — skipping B6)")
-end
+println("=== B6: the folded 5 kW design under the ALIGNED FoS model ===")
+r6 = run_eval(copy(X_WINNER13), L18, 20.0)
+println("  status=", r6.status, "  P_mean=", round(r6.P_mean, digits=2),
+        "  FoS_min=", round(r6.FoS_min, digits=2),
+        "  fitness=", round(r6.fitness, digits=3))
+# Re-baselined 2026-09-10 (R7 closed-form sizing): the four free beam genes
+# are gone, so the under-strength artifact (6.2 mm / FoS ≈ 1.2 transmission
+# rings) cannot recur — `size_beams_closed_form` re-sizes the winner's rotor
+# stack to meet the 2.5 floor.  B6 now asserts the R7 invariant: the same
+# winner genome evaluates :ok with FoS ≥ 2.5 while still delivering ≥ 5 kW.
+# A regression that reinstated the free beam genes (or an under-sizing load
+# model) would drop FoS below the floor and fail here.
+check("B6a: R7 closed-form sizing meets the floor (status :ok, FoS ≥ 2.5)",
+      r6.status === :ok && r6.FoS_min >= 2.5)
+# The machine still delivers its rated power after the structural re-size.
+check("B6c: winner still delivers ≥ 5.0 kW", r6.P_mean >= 5.0)
+g6 = gate_design(copy(X_WINNER13); L=L18, KW=KW)
+hub_ri = (g6.sys.nodes[g6.sys.rotor.node_id]::RingNode).ring_idx
+w_hub = g6.u[6*g6.N + g6.Nr + hub_ri]
+hub_tip = abs(w_hub) * g6.sys.rotor.radius
+println("  hub_tip=", round(hub_tip, digits=1), " m/s")
+check("B6b: hub tip < 100 m/s (and every ring/rotor)", hub_tip < 100.0 && tip_speed_sanity_ok(g6.u, g6.sys))
 
 println("=== B7: unit — tip_speed_sanity_ok ===")
 hub_ri = (sys.nodes[sys.rotor.node_id]::RingNode).ring_idx
