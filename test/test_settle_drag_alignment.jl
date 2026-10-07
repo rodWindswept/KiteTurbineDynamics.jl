@@ -139,11 +139,11 @@ const WINNER_CSV = joinpath(dirname(@__DIR__), "scripts", "results",
         # TRACKED OPEN ITEM (Rod decision (a), 2026-09-04; direction clause
         # corrected 2026-10-07): the settle parks at the cp-peak clamp, which
         # sits BELOW the true MPPT equilibrium (the scan never goes past the
-        # peak, and on the fold seed the true balance lies beyond it), so the
-        # ODE window climbs up to it (10.673 → 13.504 rad/s, 613f3de read) —
-        # the settle-ODE gap workstream
-        # (docs/plans/2026-08-22-settle-ode-gap-workstream.md).  The gap is
-        # deliberately LEFT above 0.30 until that workstream lands.
+        # peak, and the true balance lies beyond it), so the ODE window
+        # climbs up to it (winner: 10.881 → 12.177 rad/s, raw probe 5b847ee;
+        # fold control: 10.673 → 13.504, 613f3de read) — the settle-ODE gap
+        # workstream (docs/plans/2026-08-22-settle-ode-gap-workstream.md).
+        # The gap is deliberately LEFT above 0.30 until that workstream lands.
         @test gap < 0.80
     end
 
