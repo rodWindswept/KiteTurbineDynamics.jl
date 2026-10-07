@@ -30,7 +30,12 @@ machine, and both sides are recorded here side by side:
     docs/validation/2026-10-07-acceptance-repoint-fold-tip.md).
 The branch is chosen by the DECODED expansion-rotor count, so the check
 re-arms by itself whenever a future seed proposes expansion rotors — never
-deleted, never statically pinned.
+deleted, never statically pinned.  The KEY itself is controlled on both sides
+so a mis-key cannot pass by guarding nothing: the pre-fold genome (parsed from
+SEED_LR15_FROZEN in test_gate_v13.jl — no hand-typed digits) must read > 0,
+and the fold seed's digits (frozen below at the re-pin — never the live
+seed_genome(5.0), which would red on re-arm day) must read 0.  Both controls
+are static decodes pinning the branch's own contract, key > 0 / key == 0.
 
 NOTE: every evaluation lives in a FUNCTION.  A bare top-level `try` block
 soft-scopes its assignments, so `default_result` would stay `nothing` while the
@@ -177,16 +182,94 @@ function surface_diffs(a, b)
     return diffs
 end
 
-"""Count the expansion rotors the campaign decode + build give the seed — the
-P2 re-arm key (re-pin 2026-10-07).  `decode_winner` mirrors the campaign
-evaluator; the build call is the same shape as test_winner_decode_invariant.jl."""
-function decoded_expansion_rotor_count()
+"""Count the expansion rotors the campaign decode + build give a genome — the
+P2 re-arm key (re-pin 2026-10-07; genome-argument since the both-controls pin,
+so ONE copy drives the branch read and both controls).  `decode_winner`
+mirrors the campaign evaluator; the build call is the same shape as
+test_winner_decode_invariant.jl."""
+function decoded_expansion_rotor_count(X)
     d = decode_winner(X; L=L18, KW=KW)
     sys, _u0, _pc = KiteTurbineDynamics.build_system_from_v10(
         d.dec, 1.0, d.k_mp; tether_diameter=d.p.tether_diameter, base_params=d.p
     )
     return length(sys.expansion_rotors)
 end
+
+"""Positive-control genome for the P2 re-arm key: the pre-fold genome, parsed
+from the committed constant `SEED_LR15_FROZEN` in test/test_gate_v13.jl — no
+hand-typed digits (the same parse the W5 rehearsal uses).  It decodes to
+3 rotors / 2 expansion rotors / 13 rings and the key must read > 0."""
+function pre_fold_genome()
+    src = read(joinpath(@__DIR__, "test_gate_v13.jl"), String)
+    m = match(r"const SEED_LR15_FROZEN = \[([^\]]+)\]", src)
+    m === nothing && error("SEED_LR15_FROZEN not found in test/test_gate_v13.jl")
+    X = parse.(Float64, strip.(split(m.captures[1], ",")))
+    length(X) == 10 || error("SEED_LR15_FROZEN must be 10-D")
+    return X
+end
+
+const X_PRE_FOLD = pre_fold_genome()
+
+# Negative-control genome for the P2 re-arm key: the fold seed's digits frozen
+# at the re-pin (2026-10-07).  Source: `seed_genome(5.0)` — byte-identical to
+# S2_FOLD_SEED (scripts/compute_seeds.jl, added in bd5114e).  Frozen ON
+# PURPOSE; do NOT replace with the live seed_genome(5.0): on the day a future
+# seed carries expansion rotors the key reads > 0 on it *correctly*, and a
+# live-seed control would then red a working machine.  The frozen digits
+# cannot move (placement facts), so this arm survives the reversal recipe too.
+const SEED_5KW_FOLD_FROZEN = [
+    4.32,                  # r_hub — pinned to the old box ceiling (the fold point)
+    0.7968682519739593,    # r_bottom
+    2.0999999999999996,    # target_Lr
+    3.0,                   # n_lines
+    0.22525551607801375,   # density_profile
+    1.26727299084247,      # rotor-count gene (decodes to 1 active rotor)
+    10.739909223435728,    # bank_top (°)
+    7.182981922129365,     # bank_bottom (°)
+    1.0,                   # blade_scale_top — pinned to the 1.0 hard cap
+    1.0,                   # blade_scale_bottom
+]
+
+# Both-controls pin: the branch below goes green on whichever arm the key
+# picks, so a mis-keyed predicate would pass by guarding nothing.  Assert the
+# predicate itself on two frozen machines — true on the pre-fold genome, false
+# on the frozen fold seed.  Static decodes only (no ODE), so a mis-key reds
+# early, at the predicate rather than downstream.
+println("=== P2 controls: the re-arm key itself, both frozen machines (static; no ODE) ===")
+k_pre = decoded_expansion_rotor_count(X_PRE_FOLD)
+d_pre = decode_winner(X_PRE_FOLD; L=L18, KW=KW)
+println(
+    "  pre-fold genome (SEED_LR15_FROZEN, parsed):  key = ",
+    k_pre,
+    "   [rotors=",
+    length(d_pre.dec.rotors),
+    ", expansion=",
+    k_pre,
+    ", rings=",
+    d_pre.dec.n_rings,
+    "]",
+)
+check(
+    "P2 control: pre-fold genome reads key > 0 (expansion rotors present — differ arm re-arms)",
+    k_pre > 0,
+)
+k_fold = decoded_expansion_rotor_count(SEED_5KW_FOLD_FROZEN)
+d_fold = decode_winner(SEED_5KW_FOLD_FROZEN; L=L18, KW=KW)
+println(
+    "  fold-seed digits (frozen 2026-10-07):          key = ",
+    k_fold,
+    "   [rotors=",
+    length(d_fold.dec.rotors),
+    ", expansion=",
+    k_fold,
+    ", rings=",
+    d_fold.dec.n_rings,
+    "]",
+)
+check(
+    "P2 control: frozen fold-seed digits read key == 0 (zero expansion rotors — no-op arm)",
+    k_fold == 0,
+)
 
 println("=== P1: DEFAULT physics — the seed is healthy on the live ODE path ===")
 default_result, default_threw = evaluate_current()
@@ -203,7 +286,7 @@ println("=== P2: LEGACY physics vs the live ODE path (genome-aware re-pin 2026-1
 legacy_result, legacy_threw = evaluate_legacy()
 report("legacy ", legacy_result)
 
-n_expansion = decoded_expansion_rotor_count()
+n_expansion = decoded_expansion_rotor_count(X)
 println("  re-arm key: decoded expansion rotors = ", n_expansion)
 
 if n_expansion > 0
