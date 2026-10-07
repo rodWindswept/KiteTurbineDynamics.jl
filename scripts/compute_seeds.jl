@@ -1,6 +1,8 @@
 #!/usr/bin/env julia --project=.
 #=
 compute_seeds.jl — Seeds and tight bounds for graduated DE ladder.
+Seeds: the ≤5 kW rung seeds from the S2-class fold (2026-10-05) — see
+S2_FOLD_SEED; higher rungs keep the Daisy-up scaling.
 Bounds informed by Daisy 1.5kW (n_lines=6, r_hub=1.52m, tether=10.3m)
 and V10 50kW campaign structural proportions.
 
@@ -41,6 +43,33 @@ const K_MPPT_5KW_HONEST = 2.24
 # sizing-only placeholder.
 const BLOCKING_WIND_FACTOR_5KW = 0.85^(1 / 3)
 
+# ── The 5 kW campaign seed — S2-class fold (2026-10-05, room-approved) ────────
+# The bank-derate island-3 winner
+# (scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/best_vector.csv)
+# with two genes pinned to the then-live box ceiling: r_hub 3.8347 → 4.32 and
+# blade_scale_top 0.6994 → 1.0.  This fold is the class measured scoreable
+# under the D1/cpfix evaluator at a82cafd: :ok cold-start full regime,
+# P_end 5.3691 kW, FoS 5.41, twist 0.360, stationary (n = 3); the n-family
+# runs 5.16–5.37 kW over n = 3–9 (science-validator independent repro,
+# 2026-10-05).  It replaces the old Daisy-up seed at ≤5 kW because the old
+# seed's class is floor-rejected under the current evaluator (pre-D1 genome
+# reads ~3.78 kW) — gen-0 otherwise starts on a flat reject cost, no signal.
+# Do not round the raw winner digits: this vector is the measured machine.
+# Refs: docs/validation/2026-10-04-seed55-probe-rejects-and-s2-seed.md;
+# docs/validation/2026-10-04-seed55-aero-review.md; room, 2026-10-05.
+const S2_FOLD_SEED = [
+    4.32,                  # r_hub — pinned to the old box ceiling (the fold point)
+    0.7968682519739593,    # r_bottom
+    2.0999999999999996,    # target_Lr
+    3.0,                   # n_lines
+    0.22525551607801375,   # density_profile
+    1.26727299084247,      # rotor-count gene (decodes to 1 active rotor)
+    10.739909223435728,    # bank_top (°)
+    7.182981922129365,     # bank_bottom (°)
+    1.0,                   # blade_scale_top — pinned to the 1.0 hard cap
+    1.0,                   # blade_scale_bottom
+]
+
 function seed_n_lines(kw::Float64)::Float64
     # Daisy: 6 lines at 1.5kW → extrapolate to target scale
     # Conservative: fewer lines at small scale (less load sharing needed)
@@ -60,7 +89,16 @@ function seed_n_lines(kw::Float64)::Float64
 end
 
 function seed_genome(kw)
-    # Daisy-up scaling (Rod 2026-08-20): anchor on the MEASURED 1.5 kW Daisy
+    # ── ≤5 kW: the S2-class fold seed (2026-10-05, room-approved) ───────────
+    # The 5 kW campaign re-bases onto the measured S2-class fold — see
+    # S2_FOLD_SEED for provenance.  It replaces the Daisy-up seed at this
+    # rung: the old seed's class floor-rejects under the current evaluator.
+    if kw <= 5.0
+        return copy(S2_FOLD_SEED)
+    end
+
+    # ── >5 kW rungs: Daisy-up scaling (Rod 2026-08-20), unchanged ───────────
+    # anchor on the MEASURED 1.5 kW Daisy
     # (config 8: r_hub 1.52 m, r_bottom 0.315 m, tether 10.31 m, 6 lines,
     # 3 blades, solidity 7.5%, NACA 4412, ~12 mm carbon rod ring) — NOT the
     # 50 kW V10 winner.  Scale UP by sqrt(kw/1.5).  blade_scale = 1.0 is the
@@ -103,7 +141,8 @@ function seed_genome(kw)
     g[8] = 0.0                           # bank_bottom
     g[9] = 0.7                           # blade_scale_top: 0.7 clears 5 kW on the 3-rotor stack
     g[10] = 0.7                          # blade_scale_bottom: same as top
-    # RE-SEED PROPOSAL 2026-09-14 — NOT LANDED.  See
+    # RE-SEED PROPOSAL 2026-09-14 — NOT LANDED (superseded 2026-10-05 by the
+    # S2-class fold above).  See
     # handovers/handover-2026-09-14-verified-state-reseed-boundary-and-priority-correction.md
     # section 6, and scratch/spec_seed_candidate.jl / scratch/diag_lift_line_switch.jl.
     #
@@ -138,7 +177,9 @@ function tight_bounds(seed, kw; do_min::Float64=0.03)
     # R7 (2026-09-10): canonical 10-D bounds.  `do_min` is retained for CLI
     # backward compatibility but is now inert (no Do_top gene).
     # Spread: ± fraction around seed for each dimension
-    #   r_hub: wider spread (+80%) — Daisy 1.5kW has 1.52m, our 0.91m seed needs headroom
+    #   r_hub: spread +80% on the hi side (hi = 1.8·s₁) — re-centres with any
+    #     fold (5 kW folds at s₁ = 4.32 → hi = 7.776).  lo is DECOUPLED from
+    #     the seed-relative term — see the override block below.
     #   target_Lr: lo=1.0 (Tulloch: L/r can be as high as 6; minimum ~1.0 for stability)
     #   bank angles: lo=0° (blades exactly in rotor plane)
     #   blade_scale: hi=1.0 (not 2.0) — too many weak-aero stalling turbines at scale>1
@@ -180,8 +221,18 @@ function tight_bounds(seed, kw; do_min::Float64=0.03)
     # Physical minima & overrides
     # r_hub lo=0.7 (Rod 2026-08-14): the DE repeatedly exploited tiny hubs
     # (0.47/0.67m winners diverged the hub ring to ω~1e66-1e86). τ_cap ∝ r_min²;
-    # Daisy 1.5kW had r_hub=1.52m. Seed is 0.914m. hi ≥ 2.2 unchanged.
-    lo[1] = max(lo[1], 0.7); hi[1] = max(hi[1], 2.2)
+    # Daisy 1.5kW had r_hub=1.52m.
+    #
+    # FOLD RE-CENTRE 2026-10-05 — deliberate, numbers stated (Rod + room):
+    #   hi = 1.8·s₁ — the standing +80% spread, re-centred on the fold seed
+    #     (s₁ = 4.32 → 7.776); the horizon expands on the documented law, no
+    #     ad-hoc caps.
+    #   lo stays the absolute floor 0.7 — DECOUPLED from the seed-relative
+    #     term.  On the fold seed the −80% term reads 0.2·4.32 = 0.864;
+    #     raising lo there would crop only the <0.87 m corner (≈1.7 kW class
+    #     ceiling) at no measured benefit.  Full band, zero cost.
+    lo[1] = 0.7                       # pinned absolute floor — the 0.2·s₁ term must not raise it
+    hi[1] = max(1.8 * seed[1], 2.2)   # +80% spread, fold-re-centred
     lo[2] = max(lo[2], 0.1)
 
     for i in 1:10

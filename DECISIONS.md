@@ -10,6 +10,136 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-06] Search-space topology: n_lines ≥ 3 everywhere. n_b = 2 is banned
+
+**Context.** The 2026-10-06 room exposed that the two-blade machine was never a
+proposed topology. It leaked in as the reference machine of the Phase 9a dimensioned
+assembly (`schematics/DIMENSIONS.md` is a 2-blade rotor). It then became the default
+across sweeps, notebooks and docs. A two-node "polygon" is degenerate. The two lines
+are antiparallel (θ = 0, π), so Σ sin²θᵢ = 0 and the pair has zero out-of-plane
+tilt/whip stiffness. Rod's rig test showed exactly this whip, beam to beam. A closed
+polygon with transverse stiffness needs n_lines ≥ 3.
+
+**Ruled (Rod, 2026-10-06).**
+- n_lines ≥ 3 in every KTD case. Every sweep excludes n_blades = 2.
+- The search space includes 3-blade 6-line (the configuration Daisy flew) and
+  5-blade 5-line (a potential sweet spot). 3-blade 3-line stays in, even if wobbly.
+- Sweeps show the relative values of the systems, not only winners.
+
+**Stiffness anchor (room derivation).** Tilt/whip stiffness ∝ Σ sin²(θᵢ): 0 (n = 2),
+3/2 (n = 3 triangle), 3 (n = 6 hex). Hex is exactly 2× the triangle. The stable flown
+reference is Daisy's 3 blades on 6 lines.
+
+**Open.** Whether n_blades is coupled to n_lines as a genome parameter (Rod's
+question). Resolve it against the record before writing the sweep genome and bounds.
+
+---
+
+## [2026-10-06] Sky-anchor whirl gates: the n_b = 2 pins are the leak, not a design
+
+**Context.** The sky-anchor whirl gates pinned their thresholds to the 2-blade budget
+(I_s/I_t = 2, I_t = 12.6). Two room corrections, 2026-10-06:
+1. I_s/I_t = 2 is not a 2-blade result. The perpendicular-axis theorem
+   (I_s = I_x + I_y) needs I_x = I_y, which needs equal azimuthal spacing: n_b ≥ 3.
+   A literal 2-blade rotor is anisotropic (≈ 0 about the blade line, ≈ I_s about the
+   perpendicular axis). At n_b = 3 the ratio is exact.
+2. The required k_mom carries n_blades. The factor [(1 + 0.3)·n_b − 1]² − 1 is 1.56
+   at n_b = 2 but 7.41 at n_b = 3. That is a 4.75× move, not a surviving scaling.
+
+**Measured at n_b = 3, I_t = 12.6 (re-base run at a75bd1d, 2026-10-06).**
+- Whirl: required k_mom 2,073.3 N·m/rad at 45 rpm, 14,990.5 at 121 rpm. Fail band
+  (58.8, 2,073.3) at 45 rpm, Ω²-scaled to (424.8, 14,990.5) at 121 rpm
+  (c = k_mom/I_tΩ²: pass→fail at c = 0.20→0.22, fail→pass at 7.40→7.41). The free
+  pivot's 2/rev root faces the 3/rev BPF: sep = 0.333. That passes the 0.300 rule by
+  one point (at n_b = 2 it failed). `test_sky_anchor.jl:86`'s "free pivot ≈ BPF"
+  identity is the n = 2 premise. At n_b = 3 it becomes the sep = 1/3 check. The old
+  pins (600 at 45 rpm, 3500 at 121 rpm) both fail whirl.
+- Axial flips: bpf(121) moves 4.03 → 6.05 Hz, off the 3.98 Hz soft-EA mode. The 1 MN
+  rope now clears axial (sep 0.342, was 0.013). The 4e5 rope clears too (0.584). At
+  121 rpm the stiff side is a rail rebuild (free k ≲ 425, stiff ≥ 14,990 N·m/rad),
+  not a re-pin.
+
+**Rod's rig test (hex transmission, 3 blades on 6 lines, 2026-10-06).** The hex
+clears the stiff rail with margin at 121 rpm (sep 3.2) and 45 rpm (sep 9.7). It
+clears the stiff side for chains below 450 m at 121 rpm (1,801 m elastic). The
+ceiling at 45 rpm is 3,256 m. The axial gate pins move and read BPF. The slow root
+lands at 21–23 Hz, far from 1P and BPF. The test ranks the hex transmission as the
+stable transmission.
+
+**Proposed re-base (pending Rod's ruling).** n_b = 3 with the transmission pinned at
+hex (Daisy's flown 3-on-6). Evaluate the ~15 kN·m/rad at 121 rpm target on hex. If
+even hex cannot reach it, the floor genuinely reaches the machine and Phase 9a
+re-sizes.
+
+**Open.**
+- a75bd1d (the re-base tip) is not on origin. The machine that holds it must push it
+  before further sky-anchor work.
+
+**Correction (2026-10-06, later the same day).** software-worker verified that
+a75bd1d is a CoAx commit (Phase 13) and has been on the CoAx origin all along:
+`sky-anchor-boundary` = a75bd1d. The same sha is now also pinned as
+`sky-anchor-nb3-rebase`. KTD-repo object searches report the commit absent because
+it lives in the CoAx repo, not because it is missing. Nothing is waiting on a push.
+The re-base code (whirl pins, axial flip, scope catch) lives in
+CoaxialAutogyroStacking.jl, not in KiteTurbineDynamics.jl. This supersedes the
+bullet above.
+- Rod's crossing-limit question: is the crossing limit (a) where the lines touch at
+  the centre and torsional resistance collapses, or (b) the cliff point where the
+  TRPT stops adding resistance and heads toward that collapse? Some ring/line
+  combinations cannot cross (lines too short).
+- Rod wants the crossing-limit calculation and the L/r interpretation triple-checked
+  against Tulloch (PhD), Ziwei's paper and Tallak Tevdere's papers.
+- The I_t re-derive for the 3-blade BOM is open.
+- The machine-default scope catch: n_blades = 2 is also the default in `sweep.jl`
+  (both sweeps and the options table), `gen_comparison_sweep.jl`, `bem_charts_v2.jl`,
+  `compute_radial_loading.jl`, the `rotor.jl` docstring and `DIMENSIONS.md`. The
+  re-base landing replaces each with the n_b ≥ 3 reading.
+- Rod approved the bounds edit raised in the room (2026-10-06). The landing commit
+  names the file.
+
+---
+
+## [2026-10-05] The 5 kW seed folds to the S2 class; the r_hub box re-centres to [0.7, 7.776]
+
+**Context.** Under the post-D1 evaluator the committed 5 kW seed's class floor-rejects
+(re-measured ~3.78 kW), so gen-0 opened on a flat reject cost with no signal. The bank-derate
+island-3 winner (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/best_vector.csv`,
+with its two then-ceiling genes folded up: r_hub 3.8347 → 4.32, blade_scale_top 0.6994 → 1.0) is
+the class measured scoreable under cpfix at a82cafd: P_end 5.3691 kW, FoS 5.41, twist ratio
+0.360, stationary; its n-family runs 5.16–5.37 kW over n = 3–9 (science-validator independent
+repro, 2026-10-05). In the room the same day Rod flagged the box `[0.7, 4.32]` as
+arbitrary-looking set numbers and called for expanding the horizon before the re-run.
+
+**Ruled (Rod + room, 2026-10-05).** The ≤5 kW rung re-bases onto the S2-class fold seed
+(`S2_FOLD_SEED`, `scripts/compute_seeds.jl`); higher rungs keep the Daisy-up scaling. The r_hub
+box re-centres on the standing +80 % spread, `hi = 1.8·s₁` → 7.776 m at s₁ = 4.32 (the old
+4.32 was 1.8·2.4 — never a set number), and the floor STAYS pinned at the absolute 0.7 m,
+DECOUPLED from the seed-relative term: `0.2·s₁` would read 0.864 m and crop only the <0.87 m
+corner (≈1.7 kW class ceiling) at zero measured benefit. Alternatives rejected: keeping
+`[0.7, 4.32]` (kept the arbitrary numbers and blocked the 4.32–7.78 m band) and a
+seed-relative floor (dead-space cost, no benefit).
+
+**Code.** `compute_seeds.jl` gains `S2_FOLD_SEED`, the ≤5 kW fork in `seed_genome`, and the fold
+re-centre in `tight_bounds`; `bounds_audit.jl` is fixed to the canonical 10-D genome (was pre-R7
+14-D and crashed at HEAD). Three fast-suite files move with the seed: the settle-blocking
+explicit-factors reference gains the main-rotor bank derate it was missing (a real test bug,
+invisible while bank_top was 0; the fold banks at 10.74°), the preload first-segment guard is
+re-baselined 30° → 12° (measured 18.093° on the fold seed), and `test_blade_mass_law.jl` pins a
+frozen fixture (a structure test, not a seed test). All six failing items were proven
+fold-caused: the three files pass on the un-folded a82cafd tree.
+
+**Enables / rules out.** Gen-0 starts with an in-box scoreable population; the 4.32–7.78 m band
+is genuinely proposable. Radius stays a coverage axis — do not hunt power in the new band (the
+A4 row closed radius even retuned: 4.90 kW at 4.5 m); the power lever remains blade_scale. This
+supersedes the [2026-09-16] re-seed rationale for the 5 kW rung, and any text quoting
+`[0.95·s, 1.08·s]` caps for `tight_bounds` (the seed-55 aero review §1 caveat; correction sent
+to @aero-validator, 2026-10-05).
+
+**Open.** The operating-λ re-tune (slice 2) still to run; rotor-count diversity beyond the
+winner's single-rotor class is a separate re-seed question.
+
+---
+
 ## [2026-10-03] The site wind standard — one measured profile, one exponent (D1)
 
 **Context.** The decoder sized wind with `wind_speed_at_ring(...; h_ref=50.0, shear_exp=0.14)`,

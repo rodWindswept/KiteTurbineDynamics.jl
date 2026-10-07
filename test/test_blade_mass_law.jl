@@ -13,6 +13,15 @@ using Test
 using KiteTurbineDynamics
 import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
 
+# FROZEN FIXTURE (2026-10-05).  The testsets below exercise the blade-mass and
+# accounting LAWS; their machine only has to hold the structure "hub + 1
+# intermediate expansion rotor".  The campaign seed moved to the S2 fold
+# (r_hub 4.32 m, target_Lr 2.1 → wide ring spacing) where the legacy rotor
+# proxy 0.6 puts the extra position ground-adjacent (the builder drops it), so
+# the structure is frozen at the pre-fold genome + that proxy.  Do NOT track
+# the campaign seed here; move it only if the builder's laws change.
+const BLADE_MASS_FIXTURE = [2.4, 0.5751086853804245, 1.5, 6.0, 0.0, 0.6, 0.0, 0.0, 0.7, 0.7]
+
 @testset "unified blade-mass law (2026-08-22)" begin
 
     @testset "reference anchor" begin
@@ -40,9 +49,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     end
 
     @testset "build_system_from_v10 — main rotor prices the decoded span" begin
-        include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
-        x = seed_genome(5.0)
-        x[6] = 0.6                     # 2 rotors: hub + 1 intermediate expansion (R7 10-D)
+        x = copy(BLADE_MASS_FIXTURE)   # frozen: hub + 1 intermediate expansion (see fixture note)
         x[9] = 0.5; x[10] = 0.5       # blade_scale_top/bottom
         base = params_daisy()
         result = design_from_vector_v10(
@@ -77,9 +84,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     end
 
     @testset "knuckle floor + full airborne accounting" begin
-        include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
-        x = seed_genome(5.0)
-        x[6] = 0.6                     # hub + 1 expansion rotor (R7 10-D)
+        x = copy(BLADE_MASS_FIXTURE)   # frozen: hub + 1 expansion rotor (see fixture note)
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -106,9 +111,7 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     end
 
     @testset "geometry_fingerprint does not double-count blade mass" begin
-        include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
-        x = seed_genome(5.0)
-        x[6] = 0.6                     # hub + 1 expansion rotor (non-vacuous, R7 10-D)
+        x = copy(BLADE_MASS_FIXTURE)   # frozen: hub + 1 expansion rotor (non-vacuous, see fixture note)
         base = params_daisy()
         result = design_from_vector_v10(
             x, PROFILE_ELLIPTICAL, base; power_W=5000.0, v_rated=11.0
@@ -130,7 +133,6 @@ import KiteTurbineDynamics: expansion_blade_mass, geometry_fingerprint
     end
 
     @testset "builder: linear taper never produces negative ring radii (2026-08-24)" begin
-        include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
         # A large-hub genome whose rL_ratio-derived bottom radius was negative
         # (-0.776 m) -> (R/r_hub)^Do_scale_exp threw DomainError in the settle.
         x = [0.0639,0.0615,1.3501,0.5178,4.1696,0.4637,1.1246,14.0,0.6913,13.8991,17.5721,19.7204,0.4989,0.5363]

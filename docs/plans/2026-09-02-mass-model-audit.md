@@ -142,15 +142,18 @@ two agree.  (This fix is now landed — ticket T2.)
 **What it does and does not fix (measured):** applying the rule in the settle
 step makes the two agree, but at our operating point (k_mppt = 2.24) the settle
 already saturates at a deliberate "cp-peak clamp" that parks the spin speed
-*above* the true MPPT point, so the wake rule moves nothing there (0 % change).
-It matters at higher k (about 7–8 % lower spin speed).
+*below* the true MPPT equilibrium (the scan never goes past the power-curve
+peak — direction clause corrected 2026-10-07), so the wake rule moves nothing
+there (0 % change).  It matters at higher k (about 7–8 % lower spin speed).
 
 **Important correction:** the one design that appeared to make 7.45 kW early
-and 5.37 kW later (island 3) is **not** caused by this bug.  That slow wind-down
-is the separate, pre-existing "settle-ODE gap" — the cp-peak clamp starts the
-machine too fast on purpose, and the careful simulation winds down to its true
-equilibrium regardless of the wake rule.  It is tracked in
-`docs/plans/2026-08-22-settle-ode-gap-workstream.md` and needs its own fix.
+and 5.37 kW later (island 3) is **not** caused by this bug.  That difference in
+the two readings is the separate, pre-existing "settle-ODE gap" — the cp-peak
+clamp parks the machine at the power-curve peak, below its true equilibrium,
+and the careful simulation climbs to it (10.673 → 13.504 rad/s on the fold
+seed — direction clause corrected 2026-10-07) regardless of the wake rule.
+It is tracked in `docs/plans/2026-08-22-settle-ode-gap-workstream.md` and
+needs its own fix.
 
 ## 5. The new fitness score — what "good" now means
 
