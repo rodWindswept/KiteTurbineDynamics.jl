@@ -3,6 +3,12 @@
 Author: aero-validator (2026-10-06). Measurement tree: `a82cafd` (2026-10-05). Re-run tree: `613f3de` (2026-10-06).
 Probe: `scratch/av_kretune_cpfix.jl`. CSVs: `scripts/results/av_kretune_cpfix/`. Logs: `.julia_depot/logs/av_kretune_cpfix_613f3de.log` and `.julia_depot/logs/sv_kretune_repro_a82cafd.log`.
 
+**Clamp release (2026-10-07, science-validator).** D4 landed: fix `b488262`, docs `7c9f4b9`. The unified `generator_torque_cap` reads 1541.1 N·m at 5 kW. It supersedes the 625 N·m clamp that this record measures against (DECISIONS [2026-10-07]). The B2 load no longer binds. The released cap clears the recorded product k_eff × ω_gnd² = 624.96 N·m and the uncapped demand ≈ 695 N·m. The 6.7951 kW row stands as the historical pre-gate read, with no new capture.
+
+The floor screen blocks the released-clamp re-read at this tip. The block is a certified non-regression, not a D4 effect. The S2 fold seed reads 3.6757 kW against the 4.0 bar at `objective_evaluator.jl:1106`. The B1 control rejects, and no B row produces a number. The cause is the floor landing `793137a`.
+
+Part A reproduces to the digit, and the flight values reproduce (ω_hub 13.4302, λ 6.6124). Logs: `.julia_depot/logs/av_kretune_cpfix_7c9f4b9.log` and `.julia_depot/logs/sv_cert_floor_match_bank_d24d4ce.log`. A live row needs a room call. The n=9 companion clears the bar at 4.1319. A documented single-probe exception is the other path. The ≈ 6.87–6.89 kW release estimate stays an estimate until then.
+
 ## Verdict
 
 - The S2 fold is not aero-capped at 5.37 kW. At a retuned k_mppt it measures **6.7951 kW**, cold, stationary, and unbroken.
