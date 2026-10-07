@@ -2,8 +2,8 @@
 
 Author: software-worker. Branch: `sw-fixture-repin`. The branch starts at the
 gate tip `a76c5e9`. Code commits: `eda1978` (the two guard files), `74ed9c6`
-(the P2 re-arm key both-controls pin). The follow-on docs commits carry this
-record.
+(the P2 re-arm key both-controls pin), `d01ee70` (the pre-fold leg). The
+follow-on docs commits carry this record.
 
 ## Why, and by what ruling
 
@@ -38,7 +38,13 @@ the built machine. That count is the re-arm key.
   Legacy is coincident at both.
 
 The branch is not a static pin. A future seed with expansion rotors re-arms the
-differ branch by itself. The W5 rehearsal below exercises that path end to end.
+differ branch by itself. At the tip the differ arm ran nowhere: the live seed
+takes the no-op arm, and the controls stop at the key. The test now runs a
+pre-fold leg, which exercises the differ arm end to end: the frozen pre-fold
+genome goes through the same branch function on every acceptance pass. The leg
+adds two ODE windows (one default, one legacy), so the file spends four per
+pass. The W5 rehearsal below measured the same branch on the same machine,
+before the leg existed.
 
 The fixture now controls the re-arm key on both sides (2026-10-07 follow-up,
 room agreed before merge). The branch goes green on whichever arm the key
@@ -113,17 +119,27 @@ inboard shift.
 - P2 solo: `.julia_depot/logs/sw_repin_solo_test_physics_path_ode_74ed9c6.log`.
   Result: ALL PASS, exit 0. Both controls passed, the re-arm key read 0, and
   the no-op check covered every field.
-- The nine-file acceptance re-run passed 9/9 at `a794578`
-  (`.julia_depot/logs/sv_repin_acceptance_a794578.log`). The re-run at this
-  tip, and the mutation check on the controls (a deliberate mis-key must red),
-  sit with software-validator.
+- The nine-file acceptance re-run and the mutation check follow at the leg tip,
+  where a single pass covers the controls and the leg together.
+
+## Evidence at `d01ee70` (the differ-arm leg)
+
+- Static pre-flight at this commit:
+  `.julia_depot/logs/sw_repin_static_check_d01ee70.log`. Result:
+  `SW_REPIN_STATIC_OK`.
+- P2 solo: `.julia_depot/logs/sw_repin_solo_test_physics_path_ode_d01ee70.log`.
+  Result: ALL PASS, exit 0. The leg lands the rehearsal digits: default reject
+  4.292 kW / FoS 12.876, legacy ok 8.762 kW / FoS 4.881, and twelve
+  full-surface diffs. The live no-op arm and both controls stay green.
+- The nine-file acceptance re-run and the mutation check at this tip sit with
+  software-validator.
 
 ## Reversal recipe for the day W5 revives
 
 Restore P2 to the unconditional differ check. Restore the drag check to the
-`> 60 %` bar. The fixtures themselves record the pre-fold readings. The
-both-controls pin needs no re-pin, because the placement facts of the frozen
-machines do not move. No other file needs a change.
+`> 60 %` bar. The fixtures themselves record the pre-fold readings. Remove the
+controls and the pre-fold leg with the genome-aware branch. No other file needs
+a change.
 
 ## Flagged, not touched (outside the pair)
 
