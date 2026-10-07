@@ -132,8 +132,13 @@ Two consequences go to the re-baseline.
    states. This is a Daisy-anchor question for the record, and it is not in the
    critical path of T1 to T5.
 2. The ladder's absolute scale follows the anchor power. A move from 1.5 kW to
-   1.27 kW moves `geom_scale` by 1.0571, so every rung grows 5.7 per cent in
-   length. Measure it at T7, do not assert it now.
+   1.27 kW grows every rung's length by `(1.5/1.27)^(1/2) = 1.0868` (+8.7 per
+   cent; rung mass ×1.252) — the ladder's own law is P^(1/2) on length
+   (`mass_scale`, `src/parameters.jl:601`; AeroDyn-confirmed), not the P^(1/3)
+   form the earlier `1.0571` figure assumed. Corrected 2026-10-07 at the tip
+   `c657c76`: aero-validator's read, software-worker/software-validator
+   receipts; nothing in code read `1.0571`. Measure it at T7, do not assert it
+   now.
 
 Pin the reference to 4.8 m AFTER `mass_scale`, in the same way as the rest of the
 wind block. See T1.
