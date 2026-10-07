@@ -87,6 +87,31 @@ at_site(p::SystemParams, site::WindSiteSpec) =
     override_params(p; v_wind_ref=site_wind(site, p.h_ref))
 
 """
+    site_shear(h_ref, h) -> Float64
+
+The site-standard shear shape: the factor that lifts a reference speed at
+`h_ref` to altitude `h`, read from the ONE site spec (`SITE_ANCHOR.shear_exp`).
+
+This is the single place the runtime shear exponent is written down.  Callers
+supply their own reference speed and altitude:
+
+    v(z) = v_ref * site_shear(h_ref, z)
+
+It retires the ad-hoc `(z / h_ref)^(1/7)` literals that used to sit in the
+runtime wind closures (`sim_runner.jl`, `visualization.jl`,
+`control_map_hunt.jl`).  Those agreed with the anchor site by coincidence and
+would have silently kept flying the anchor exponent after `at_site` re-bases a
+machine on a different site — a second convention for one quantity, which is
+the Defect-D class.  A literal cannot move with the spec; this can.
+
+`test/test_wind_authority.jl` pins both halves: the shape moves with the spec,
+and no runtime wind closure hand-writes the exponent.
+"""
+site_shear(h_ref::Real, h::Real) = wind_at_altitude(
+    1.0, Float64(h_ref), Float64(h); hellmann_exponent=SITE_ANCHOR.shear_exp
+)
+
+"""
     wind_at_altitude(v_ref, h_ref, h; hellmann_exponent = 1/7) -> Float64
 
 Return the wind speed at altitude `h` using the Hellmann (power-law) wind profile:

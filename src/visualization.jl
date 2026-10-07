@@ -672,27 +672,27 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     function _make_wind(vref, scenario, t_total)
         if scenario == :steady
             (pos, t) -> begin
-                z = max(pos[3], 1.0); [vref * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [vref * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :ramp_down
             (pos, t) -> begin
                 v = vref * max(0.0, 1.0 - t / t_total)
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :ramp_up
             (pos, t) -> begin
                 v = vref * min(1.0, t / t_total)
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :gust
             (pos, t) -> begin
                 gust = t < t_total*0.5 ? 1.5*sin(π*t/(t_total*0.5))^2 : 0.0
-                z = max(pos[3], 1.0); [vref*(1+gust)*(z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [vref*(1+gust)*site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :launch
             (pos, t) -> begin
                 v = t < 30.0 ? vref*t/30.0 : vref
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :kite_drop
             # Wind holds for 1.5 s then falls over 5 s to 12 % of rated (done by
@@ -703,20 +703,20 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                        t < hold_t + drop_t ? 1.0 - (t - hold_t) / drop_t * 0.88 :
                        0.12
                 v = vref * frac
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         elseif scenario == :furl
             # Power-spill furl: wind stays at user-selected vref throughout.
             # The power reduction is purely geometric — backline payout lets the
             # rotor rise, increasing β and spilling wind.  No wind ramp needed.
             (pos, t) -> begin
-                z = max(pos[3], 1.0); sh = (z / p.h_ref)^(1/7)
+                z = max(pos[3], 1.0); sh = site_shear(p.h_ref, z)
                 [Float64(vref) * sh, 0.0, 0.0]
             end
         else   # :land
             (pos, t) -> begin
                 v = t < 30.0 ? vref*(1.0-t*0.9/30.0) : vref*0.1*max(0.0,1.0-(t-30.0)/10.0)
-                z = max(pos[3], 1.0); [v * (z/p.h_ref)^(1/7), 0.0, 0.0]
+                z = max(pos[3], 1.0); [v * site_shear(p.h_ref, z), 0.0, 0.0]
             end
         end
     end
