@@ -53,10 +53,14 @@ machine measures [6:8].
 | a76c5e9 | 1 rotor / 0 expansion / 9 rings | [6:8] | 0.7969, 0.7969, 1.6085 | 23.7 % |
 
 The pre-fold pair cleared the 60 % bar the old check asserted. The fold reading
-is now the pin: `23.7 % ± 5` percentage points. The outward concentration never
-moved. The top ring 9 alone carries 73.3 % and rings 8 and 9 carry 95.1 %. The
-pre-fold outer band [10:13] held about 93.7 % (dropping ring 13 cost 2.6 %).
-The 23.7 % is a window fact, not an inboard shift.
+is now the pin: `23.7 % ± 5` percentage points. Two independent probes read
+23.702 % exactly at a76c5e9. The margin covers rerun drift. A material radial
+re-split moves the reading by more.
+
+The outward concentration never moved. The top ring 9 alone carries 73.3 %
+and rings 8 and 9 carry 95.1 %. The pre-fold outer band [10:13] held about
+93.7 % (dropping ring 13 cost 2.6 %). The 23.7 % is a window fact, not an
+inboard shift.
 
 ## Evidence at `eda1978`
 
