@@ -131,16 +131,38 @@ function ct_bem(n_lines::Int, tsr::Float64=4.1)::Float64
 end
 
 # ══════════════════════════════════════════════════════════
+# Projection factor (bank × elevation) — one authority (2026-10-07)
+# ══════════════════════════════════════════════════════════
+
+"""
+    projection_factor(bank_deg::Float64, elev_rad::Float64) -> Float64
+
+Deliverable-fraction projection for a banked main rotor on a tilted shaft:
+
+    f = cosd(bank_deg)^2.65 · cos(elev_rad)^2.65
+
+The factor the ODE charges on disc power (`ring_forces.jl`, the power term),
+exactly 1.0 at zero bank and zero elevation.  The fast hub-power chain and
+the sizing family carry the same factor — see
+docs/validation/2026-10-07-projection-threading-landing.md.
+"""
+projection_factor(bank_deg::Float64, elev_rad::Float64)::Float64 =
+    cosd(bank_deg)^2.65 * cos(elev_rad)^2.65
+
+# ══════════════════════════════════════════════════════════
 # Rotor radius for a target power — parameterised on TSR
 # ══════════════════════════════════════════════════════════
 
 """
-    rotor_radius_for_power(power_W, v_rated, n_lines; tsr=4.1) -> Float64
+    rotor_radius_for_power(power_W, v_rated, n_lines; tsr=4.1, f=1.0) -> Float64
 
-Compute the rotor radius (m) required to produce `power_W` at rated wind
+Compute the rotor radius (m) required to deliver `power_W` at rated wind
 speed `v_rated` (m/s) with `n_lines` tether lines.
 
-P = Cp · ½ρ · πr² · v³   →   r = √(P / (Cp · ½ρ · π · v³))
+P = f · Cp · ½ρ · πr² · v³   →   r = √(P / (f · Cp · ½ρ · π · v³))
+
+`f` is the deliverable-fraction projection (`projection_factor`); the radius
+scales as 1/√f.  Default 1.0 keeps every pre-threading call byte-stable.
 
 The default TSR = 4.1 is the sizing-path design point.  (Corrected 2026-10-05:
 it is NOT the AeroDyn Cp peak — the committed NACA4412 3-blade table peaks
@@ -148,10 +170,11 @@ at ≈0.309, λ ≈ 5.2, see `aerodynamics.jl`.)  For design-point optimisation,
 a different TSR can be passed to account for off-peak operation.
 """
 function rotor_radius_for_power(
-    power_W::Float64, v_rated::Float64, n_lines::Int; tsr::Float64=4.1
+    power_W::Float64, v_rated::Float64, n_lines::Int;
+    tsr::Float64=4.1, f::Float64=1.0,
 )::Float64
     Cp = cp_bem(n_lines, tsr)
-    denom = Cp * 0.5 * ρ_AIR * π * v_rated^3
+    denom = f * Cp * 0.5 * ρ_AIR * π * v_rated^3
     return sqrt(max(power_W / denom, 1e-8))
 end
 
@@ -227,6 +250,6 @@ function annulus_span_for_power(
     return max(s, 0.05)  # 5 cm minimum manufacturability span floor
 end
 
-export cp_bem, ct_bem, rotor_radius_for_power, annulus_area, annulus_span_for_power
+export cp_bem, ct_bem, rotor_radius_for_power, projection_factor, annulus_area, annulus_span_for_power
 
 end  # module BEM

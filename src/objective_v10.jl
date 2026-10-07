@@ -319,7 +319,12 @@ function _decode_v10_14(
     spacing_ok = true
     if rotor_count_mode && n_active > 1
         ring_spacing = design.target_Lr * design.r_hub
-        r_rotor_ref = BEM.rotor_radius_for_power(power_W / n_active, v_rated, design.n_lines)
+        # Projected reference (2026-10-07): the spacing guard compares against
+        # the f-sized rotor, the same convention the rotor spans (:352) use.
+        r_rotor_ref = BEM.rotor_radius_for_power(
+            power_W / n_active, v_rated, design.n_lines;
+            f=BEM.projection_factor(bank_top, p.elevation_angle),
+        )
         spacing_ok = ring_spacing >= rotor_spacing_frac * 2 * r_rotor_ref
     end
 
@@ -349,7 +354,10 @@ function _decode_v10_14(
 
         # BEM rotor radius for this rotor at its power share + local wind speed
         P_i = (i == 1) ? power_split * power_W : (1.0 - power_split) * power_W / max(n_active - 1, 1)
-        r_rotor_i = BEM.rotor_radius_for_power(P_i, v_i, design.n_lines)
+        # Projected size (2026-10-07): the rotor is sized to DELIVER its share
+        # through the same bank × elevation factor the ODE charges.
+        f_i = BEM.projection_factor(bank_i, p.elevation_angle)
+        r_rotor_i = BEM.rotor_radius_for_power(P_i, v_i, design.n_lines; f=f_i)
 
         # Ring-anchored 70/30 blade split (2026-08-20, Rod): the blade attaches
         # to the TRPT ring at 70% outboard / 30% inboard of its span, so
@@ -521,7 +529,12 @@ function objective_v10(
     # ── Size reference rotor for equilibrium solve ──────────────────────
     # Use the first (top) rotor's wind speed as reference
     v_ref_rotor = isempty(rotors) ? v_rated : rotors[1].v_wind
-    r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
+    # Projected reference (2026-10-07): the sized machine the rank charges
+    # thrust and structure against carries the topmost rotor's projection.
+    r_ref = BEM.rotor_radius_for_power(
+        P_per_rotor, v_ref_rotor, n_lines;
+        f=BEM.projection_factor(isempty(rotors) ? 0.0 : rotors[1].bank_angle_deg, elev_angle),
+    )
 
     # ── Effective k_mppt scaled by blade area ──────────────────────────
     # k_mppt ∝ rotor swept area ∝ blade_scale².  A blade_scale=0.5 rotor has ¼

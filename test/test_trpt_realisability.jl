@@ -105,6 +105,20 @@
 # 301.00 -> 308.97, demand[7] 0.36928 -> 0.40414, demand[8] 0.36417 -> 0.40480,
 # F_ax[end] 688.87 -> 636.12, crossing 1.6897 -> 2.2397.  The verdicts (over
 # the cliff, not repairable inside the cap, refuses to place a wind-up) hold.
+#
+# RE-BASELINED 2026-10-07 (eighth time), for the PROJECTION THREADING correction.
+# The fast hub-power chain and the sizing family now carry the same bank x
+# elevation projection the ODE charges (one authority: `BEM.projection_factor`).
+# This fixture's hub rotor is unbanked, so its factor is f = cos(30 deg)^2.65 =
+# 0.6830558 and the sized span scales by 1/sqrt(f) = 1.2099630 (span 1.11801 ->
+# 1.35275) at the unchanged frozen genome.  The pinned operating torque is
+# unchanged, so the re-sized machine re-solves: demand[1] 1.54628 -> 1.18326,
+# demand[4] 1.57125 -> 1.19893, tau_carry[7] 352.41 -> 342.65, tau_carry[8]
+# 308.97 -> 282.44, demand[7] 0.40414 -> 0.30117, demand[8] 0.40480 -> 0.28505,
+# F_ax[end] 636.12 -> 825.82, crossing 2.2397 -> 1.4716.  The verdicts (over
+# the cliff, not repairable inside the cap, refuses to place a wind-up) hold.
+# Receipts: scratch/av_probe_thread_ab.jl in the pre-cut and cut trees — every
+# old pin reproduces pre-cut and every new pin post-cut, both to the digit.
 
 using Test, KiteTurbineDynamics, LinearAlgebra
 include(joinpath(dirname(@__DIR__), "scripts", "compute_seeds.jl"))
@@ -166,19 +180,19 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     @test all(r.demand .>= 0.0)
     @test maximum(r.demand) > 1.0                  # OVER the cliff once the D1 wind re-sizes it
     @test argmax(r.demand) == 4                    # same binding segment as before
-    @test r.demand[1] ≈ 1.5462831958604204 atol = 5e-3
-    @test r.demand[4] ≈ 1.5712494508286716 atol = 5e-3
+    @test r.demand[1] ≈ 1.1832595206717755 atol = 5e-3
+    @test r.demand[4] ≈ 1.198927093550292 atol = 5e-3
     @test rad2deg(asin(min(r.demand[4], 1.0))) ≈ 90.0 atol = 0.01   # saturated at the cliff
     # Demand falls going up the shaft because each rotor injects its own torque:
     # segs 1-6 carry the generator load, seg 7 carries it less the ring-7
     # expansion rotor, seg 8 less that again.
-    @test r.τ_carry[7] ≈ 352.40563995344206 atol = 2.0
-    @test r.τ_carry[8] ≈ 308.97242241697535 atol = 2.0
-    @test r.demand[7] ≈ 0.4041356455734239 atol = 5e-3
-    @test r.demand[8] ≈ 0.4048006637680152 atol = 5e-3
+    @test r.τ_carry[7] ≈ 342.6529571292088 atol = 2.0
+    @test r.τ_carry[8] ≈ 282.4392515219149 atol = 2.0
+    @test r.demand[7] ≈ 0.30117002592342174 atol = 5e-3
+    @test r.demand[8] ≈ 0.2850468194172405 atol = 5e-3
     # Section B's top tension is MAIN-ROTOR-ONLY and so is UNCHANGED by the
     # 2026-09-22 thrust-in-profile fix: the expansion rotors sit below the cut.
-    @test F_ax[end] ≈ 636.1231817421598 atol = 1.0
+    @test F_ax[end] ≈ 825.8186437911247 atol = 1.0
     @test F_ax[end] < 1274.47
 
     # ── A2. this L/r 2.0 fixture is now OVER the cliff, NOT repairable ───────
@@ -187,15 +201,16 @@ const SEED_LR20 = [2.4, 0.5751086854, 2.0, 6.0, 0.0, 3.0, 0.0, 0.0, 0.7, 0.7]
     # repairable: demand 0.88123, crossing 0.92403, and one margin step cleared
     # it.  D1 sizes the machine for the correct 11.0 m/s wind, so it is smaller
     # and lighter, the preload drops ~38 %, and on the same pinned torque the
-    # twist demand runs up past both criteria: crossing 2.2397, and 2.2397 x
-    # 1.05 = 2.352x — past TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5.  The
+    # twist demand runs up past both criteria: crossing 1.4716, and 1.4716 x
+    # 1.05 = 1.545x — past TRPT_REALISABILITY_MAX_PRELOAD_FACTOR = 1.5.  The
     # floor therefore REFUSES it outright, exactly as it refuses the over-cliff
-    # cases in section B.
+    # cases in section B.  (The eighth re-baseline, the projection threading,
+    # re-sized the machine but both criteria stay past — see the header.)
     m = KiteTurbineDynamics.TRPT_REALISABILITY_TENSION_MARGIN
     @test m > 1.0
     cross_bare = KiteTurbineDynamics.max_segment_cross_ratio(r, sys)
     @test maximum(r.demand) > 1.0            # past the sin-law cliff
-    @test cross_bare ≈ 2.2397326085630174 atol = 5e-3   # past the geometric crossing limit
+    @test cross_bare ≈ 1.4715983065831613 atol = 5e-3   # past the geometric crossing limit
     @test cross_bare * m > 1.0               # one margin step does NOT clear it
     @test cross_bare * m > KiteTurbineDynamics.TRPT_REALISABILITY_MAX_PRELOAD_FACTOR
     # The raising call now REFUSES (it used to return).  An over-cliff machine

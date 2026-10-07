@@ -315,12 +315,16 @@ function size_beams_closed_form(
     # ── 2. Equilibrium shaft speed (the solve objective_v10 uses) ───────────
     P_per_rotor = n_active > 0 ? cfg.power_W / n_active : cfg.power_W
     v_ref_rotor = isempty(rotors) ? cfg.v_rated : rotors[1].v_wind
+    # Topmost-rotor bank — the hub charge projection (2026-10-07).  The expansion
+    # stack excludes the hub rotor, so the bank cannot be read from it; rotors[1]
+    # is the topmost rotor, the same authority the ODE charges.
+    bank_ref = isempty(rotors) ? 0.0 : rotors[1].bank_angle_deg
     λ_eff = n_active > 0 ? rotors[1].blade_scale : 1.0
     k_mppt_eff = p_base.k_mppt * λ_eff^2
     p_scaled = override_params(p_base; k_mppt=k_mppt_eff)
     ω_solved, _ = solve_equilibrium_self_consistent(
         design, expansion_params, p_scaled, n_lines, radii, zs;
-        P_per_rotor=P_per_rotor, v_wind=cfg.v_rated, elev_rad=elev_rad,
+        P_per_rotor=P_per_rotor, v_wind=cfg.v_rated, elev_rad=elev_rad, bank_deg=bank_ref,
     )
     ω_num = (ω_solved === nothing || !isfinite(ω_solved)) ? 0.0 : ω_solved
 
@@ -333,7 +337,10 @@ function size_beams_closed_form(
         end
     end
     T_hub = if hub_rotor === nothing
-        r_ref = BEM.rotor_radius_for_power(P_per_rotor, v_ref_rotor, n_lines)
+        r_ref = BEM.rotor_radius_for_power(
+            P_per_rotor, v_ref_rotor, n_lines;
+            f=BEM.projection_factor(bank_ref, elev_rad),
+        )
         peak_hub_thrust(r_ref, elev_rad; v=cfg.v_rated, CT=OPT_CT_RATED)
     else
         v_hub = max(cfg.v_rated * hub_rotor.wind_factor, 0.1)

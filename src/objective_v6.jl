@@ -398,11 +398,17 @@ function solve_equilibrium_omega(
     P_rated::Float64=50000.0,
     v_wind::Float64=11.0,
     elev_rad::Float64=π / 6,
+    bank_deg::Float64=0.0,
     n_scan::Int=30,
 )
     rho = p.rho
     k_mppt = p.k_mppt
     elev_deg = rad2deg(elev_rad)
+
+    # Deliverable-fraction projection (2026-10-07): the hub charge carries the
+    # same bank × elevation factor the ODE charges, so the fast chain derates a
+    # machine it sizes consistently.  Default 0.0 bank → elevation-only.
+    f_proj = BEM.projection_factor(bank_deg, elev_rad)
 
     # Scan range: ω_min = 1 rpm, ω_max = 300 rpm
     ω_min = 1.0 * 2π / 60
@@ -423,7 +429,7 @@ function solve_equilibrium_omega(
         # Hub rotor aero power
         λ = clamp(ω * r_hub_rotor / v_wind, 0.0, 12.0)
         cp = BEM.cp_bem(n_lines, λ)
-        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp
+        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp * f_proj
 
         # Expansion rotor net power (with NaN guard for extreme ω)
         P_exp_net = 0.0
@@ -487,7 +493,7 @@ function solve_equilibrium_omega(
         ω_mid = (ω_lo + ω_hi) / 2.0
         λ = clamp(ω_mid * r_hub_rotor / v_wind, 0.0, 12.0)
         cp = BEM.cp_bem(n_lines, λ)
-        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp
+        P_aero_hub = 0.5 * rho * v_wind^3 * π * r_hub_rotor^2 * cp * f_proj
 
         P_exp_net = 0.0
         for er in stack
@@ -536,7 +542,7 @@ end
 
 """
     solve_equilibrium_self_consistent(design, stack, p, n_lines, radii, zs;
-        P_per_rotor, v_wind, elev_rad, max_iter)
+        P_per_rotor, v_wind, elev_rad, bank_deg, max_iter)
 
 Find the self-consistent equilibrium where the hub rotor is sized for the
 actual operating ω, not the assumed TSR=4.1.
@@ -559,12 +565,18 @@ function solve_equilibrium_self_consistent(
     P_per_rotor::Float64=50000.0,
     v_wind::Float64=11.0,
     elev_rad::Float64=π / 6,
+    bank_deg::Float64=0.0,
     max_iter::Int=8,
 )
     rho = p.rho
 
+    # The same bank × elevation projection the ODE charges and the decode sizes
+    # with — the seed, the re-size and the inner omega solve all carry it or the
+    # fast families split (2026-10-07 threading).
+    f_proj = BEM.projection_factor(bank_deg, elev_rad)
+
     # Initial rotor size from static BEM (TSR=4.1)
-    r_hub_rotor = BEM.rotor_radius_for_power(P_per_rotor, v_wind, n_lines)
+    r_hub_rotor = BEM.rotor_radius_for_power(P_per_rotor, v_wind, n_lines; f=f_proj)
     omega = 4.1 * v_wind / r_hub_rotor
 
     for iter in 1:max_iter
@@ -572,14 +584,14 @@ function solve_equilibrium_self_consistent(
         omega_new = solve_equilibrium_omega(
             design, stack, p, n_lines, radii, zs, r_hub_rotor;
             P_rated=P_per_rotor * (1 + length(stack)),  # total system power
-            v_wind=v_wind, elev_rad=elev_rad,
+            v_wind=v_wind, elev_rad=elev_rad, bank_deg=bank_deg,
         )
 
         if omega_new === nothing
             return (nothing, NaN)  # air brake
         end
 
-        # Re-size rotor for this ω: find R s.t. ½ρv³πR²·Cp(ωR/v) = P_per_rotor
+        # Re-size rotor for this ω: find R s.t. f·½ρv³πR²·Cp(ωR/v) = P_per_rotor
         lambda_target = omega_new * r_hub_rotor / v_wind
         cp_target = BEM.cp_bem(n_lines, lambda_target)
 
@@ -588,7 +600,7 @@ function solve_equilibrium_self_consistent(
             return (nothing, NaN)
         end
 
-        R_new = sqrt(P_per_rotor / (0.5 * rho * v_wind^3 * π * cp_target))
+        R_new = sqrt(P_per_rotor / (f_proj * 0.5 * rho * v_wind^3 * π * cp_target))
 
         # Check convergence
         if abs(omega_new - omega) / max(omega, 0.01) < 0.01 &&
