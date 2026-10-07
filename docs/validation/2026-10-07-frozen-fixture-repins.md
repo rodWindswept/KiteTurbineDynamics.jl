@@ -37,7 +37,7 @@ the built machine. That count is the re-arm key.
   Legacy is coincident at both.
 
 The branch is not a static pin. A future seed with expansion rotors re-arms the
-differ branch by itself.
+differ branch by itself. The W5 rehearsal below exercises that path end to end.
 
 ## Fixture 2: `test/test_trpt_drag_torque_balance.jl`, the window share
 
@@ -72,6 +72,13 @@ inboard shift.
 - Drag solo:
   `.julia_depot/logs/sw_repin_solo_test_trpt_drag_torque_balance_eda1978.log`.
   Result: ALL PASS, exit 0. Window share 23.7 %, top ring 73.3 %.
+- W5 rehearsal of the re-arm branch (science-validator, same tip). The rehearsal
+  parses the pre-fold genome from `SEED_LR15_FROZEN` (`test_gate_v13.jl:143`),
+  with no hand-typed digits. The genome decodes to 3 rotors / 2 expansion /
+  13 rings, and the re-arm key selects the differ branch. DEFAULT rejects at
+  4.292 kW. LEGACY reads ok at 8.762 kW / FoS 4.88. Twelve result fields differ
+  and the differ assertion reads PASS. Log:
+  `.julia_depot/logs/sv_repin_w5_rehearsal_eda1978.log`.
 - The seven other acceptance files are untouched by this branch. The nine-file
   acceptance re-run on the branch sits with software-validator, the agreed gate.
 
