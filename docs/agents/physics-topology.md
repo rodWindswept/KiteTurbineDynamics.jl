@@ -18,18 +18,18 @@ Last updated: 2026-09-24.
 1. the **ground ring** (bottom of the TRPT, free to rotate, and the PTO end), and
 2. the **backline ground anchor**.
 
-**Everything above the ground ring is airborne and free to move.** The sky hook,
-the lift bearing, the main rotor and every intermediate ring all float. The TRPT
-column is **not** a rigid shaft: it is a **tensegrity** structure whose form
+**Everything above the ground ring is airborne and free to move.** The sky hook (Sky-anchor),
+the lift bearing, the main rotor and every intermediate ring are all in the air, only bound to each other. 
+The TRPT column is **not** a rigid shaft: it is a **tensegrity** structure whose form
 follows the tension balance.
 
 The rings holding the lines out against over-rotation is what preserves torque
 transmission.
 
 Because the airborne assembly has no anchor overhead, there is no "ground truth"
-position for it. Its operating position is wherever the tension balance puts it,
-and the tension balance pulls it lower toward the ground station than the
-zero-twist design position.
+position for it. Its operating position is wherever the tension balance puts it.
+The tension balance includes torque , thrust and lift forces which apply torsion to the tensegrity form and this pulls 
+upper parts lower toward the ground station than the zero-twist design position.
 
 ---
 
@@ -47,7 +47,7 @@ zero-twist design position.
         |  sky anchor <-> backline ground anchor
         |  **partially elasticated in the field**: takes up slack, stays in
         |  light tension, and only tightens hard once pulled to the dyneema
-        |  length. Its job is to LIMIT ALTITUDE, not to carry the rotor.
+        |  length. Its job is to LIMIT LIFT BEARING ALTITUDE, not to carry the rotor.
         |
         |  CYAN LINE             (1 line)
         |  sky anchor <-> lift bearing  <-- the TRPT load
@@ -58,6 +58,11 @@ zero-twist design position.
         |  lift bearing <-> main-rotor attachment vertices
         v
    MAIN ROTOR  ......................................... TOPMOST ring of the TRPT
+        |                     n_lines tensile line segments between rotor ring nodes as torsional tensegrity frame to frame sections
+        |  Lines               (n_lines lines, e.g. 6)
+        |  main-rotor attachment vertices <-> line segments <-> next rotor ring or first pire trpt ring
+        v
+        PTO
 ```
 
 Terminology is load-bearing here. **"Bridle" is the bearing→rotor link. The
