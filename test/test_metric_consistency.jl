@@ -4,7 +4,7 @@ using LinearAlgebra
 using Statistics
 
 @testset "metric consistency" begin
-    p = params_10kw()
+    p = override_params(params_10kw(); p_rated_w = 5000.0)   # D4 re-pin (2026-10-07): 5 kW discriminating power
     sys, u0 = build_kite_turbine_system(p)
     ld = rotary_lifter_default()
 
@@ -77,10 +77,44 @@ using Statistics
 
     u_brake = copy(frames[end])
     tau_brake, _ = get_generator_torque(u_brake, sys, p, times[end], wind_fn; brake_engaged=true)
-    power_scale = p.p_rated_w / 10000.0
     omega_gnd_now = u_brake[sys.n_total * 6 + sys.n_ring + 1]
-    expected_brake_torque = 1500.0 * power_scale * tanh(20.0 * omega_gnd_now)
+    # D4 (2026-10-07): the brake budget is 1500/2500 of the single calibrated cap
+    # authority — the old expectation here was the deleted linear form.
+    expected_brake_torque = (1500.0 / 2500.0) * generator_torque_cap(p) * tanh(20.0 * omega_gnd_now)
     @test tau_brake ≈ expected_brake_torque atol=1e-12
+end
+
+@testset "generator torque cap law (D4 acceptance)" begin
+    # Landed 2026-10-07 (D4): one authority replaces the hidden-unit
+    # ((P/10⁴)²) scale at every generator/brake torque site.  tau_rated =
+    # P_rated/omega_rated, omega_rated ∝ v/R with R ∝ sqrt(P_rated)
+    # -> tau ∝ P_rated^1.5; the constant is calibrated to the April-29
+    # anchor rig's measured generator-load plateau: 22.65 N·m at 300 W,
+    # inside the measured band [20, 24] N·m (DECISIONS [2026-08-16]).
+    cap_of(P) = generator_torque_cap(override_params(params_10kw(); p_rated_w = P))
+
+    # (a) anchor-rig band at 300 W
+    @test 20.0 <= cap_of(300.0) <= 24.0
+    @test cap_of(300.0) ≈ 22.65 rtol=1e-12
+
+    # (b) discriminating values at 5 / 10 / 50 kW (old 5 kW forms: 625, 1250)
+    @test cap_of(5000.0) ≈ 1541.137296501083 rtol=1e-9
+    @test cap_of(10000.0) ≈ 4358.994532381675 rtol=1e-9
+    @test cap_of(50000.0) ≈ 48735.04043977666 rtol=1e-9
+
+    # (c) the law is tau ∝ P_rated^1.5 at both ends
+    @test cap_of(5000.0) / cap_of(300.0) ≈ (5000.0 / 300.0)^1.5 rtol=1e-9
+    @test cap_of(50000.0) / cap_of(5000.0) ≈ 10.0^1.5 rtol=1e-9
+
+    # (d) S2 fold release: cap(5 kW) clears the fold's uncapped demand
+    # (~695 N·m at the flown speed — kretune record) with >=50% margin.
+    @test cap_of(5000.0) >= 1.5 * 695.0
+
+    # (e) >=50% margin over the machine's own rated operating tau at 50 kW:
+    # tau_rated = k * omega_r^2, omega_r = (P_rated/k)^(1/3).
+    p50 = params_50kw()
+    tau_rated_50 = p50.k_mppt * cbrt(p50.p_rated_w / p50.k_mppt)^2
+    @test cap_of(p50.p_rated_w) >= 1.5 * tau_rated_50
 end
 
 @testset "signed P_gen — reversal/regeneration must read negative" begin

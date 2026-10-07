@@ -41,6 +41,19 @@ function _interp_tau(gl::GeneratorLoadMode, omega::Float64)
 end
 
 """
+    generator_torque_cap(p) -> Float64
+
+Protection cap on |tau_gen| (N.m), derived from the machine's rated torque.
+tau_rated = P_rated / omega_rated, omega_rated ~ v/R with R ~ sqrt(P_rated),
+so tau ~ P_rated^1.5.  The constant is calibrated to the April-29 anchor rig:
+the measured generator-load plateau (Quarq power / controller rpm) reads
+22.65 N.m at 300 W -- inside the measured band [20, 24] N.m (DECISIONS
+[2026-08-16]).  Single authority for the cap, the damping coefficients and
+the brake budget; replaces the hidden-unit ((P/10^4)^2) scale (D4, 2026-10-07).
+"""
+generator_torque_cap(p::SystemParams) = (22.65 / 300.0^1.5) * p.p_rated_w^1.5
+
+"""
     get_generator_torque(u::AbstractVector, sys::KiteTurbineSystem, p::SystemParams, t::Float64, wind_fn::Function;
                          brake_engaged::Bool) -> (tau_gen::Float64, new_brake_engaged::Bool)
 
@@ -111,8 +124,7 @@ function get_generator_torque(
             if imu_reliable
                 # High-fidelity IMU Mode: Torsional Active Damping
                 tau_mppt = sys.k_mppt_ref[] * max(omega_hub, 0.0)^2
-                power_scale = (p.p_rated_w / 10000.0)^2
-                c_d = 10.0 * power_scale
+                c_d = (10.0 / 2500.0) * generator_torque_cap(p)   # damping, legacy 10/2500 of the cap
                 tau_damp = c_d * (omega_gnd - omega_hub)
                 tau_gen = (tau_mppt + tau_damp) * elev_scale
             else
@@ -138,22 +150,22 @@ function get_generator_torque(
 
     # Apply two-sided Field IMU Active Damping if toggle is active and IMU is reliable
     if imu_reliable && !(ctrl_mode ≈ 1.0)
-        power_scale = (p.p_rated_w / 10000.0)^2
-        c_d_active = 15.0 * power_scale  # robust damping coefficient
+        c_d_active = (15.0 / 2500.0) * generator_torque_cap(p)  # robust damping coefficient, legacy 15/2500 of the cap
         tau_damp_active = c_d_active * (omega_gnd - omega_hub)
         tau_gen += tau_damp_active
     end
 
     # Protect the TRPT rope structure from excessive generator electromagnetic torque.
-    power_scale = (p.p_rated_w / 10000.0)^2
-    tau_max_safe = 2500.0 * power_scale
+    # D4 (2026-10-07): the cap, the damping coefficients and the brake budget all
+    # read the single calibrated authority; the hidden-unit (P/10^4)^2 scale is retired.
+    tau_max_safe = generator_torque_cap(p)
     tau_gen = clamp(tau_gen, -tau_max_safe, tau_max_safe)
 
     # Ground-station mechanical brake — only engaged by explicit command
     # (e.g. pitch-depower sequence), not auto-triggered by rotor speed.
     new_brake_engaged = brake_engaged
     if new_brake_engaged
-        tau_brake_max = 1500.0 * power_scale
+        tau_brake_max = (1500.0 / 2500.0) * generator_torque_cap(p)  # brake budget, legacy 1500/2500 of the cap
         tau_brake = tau_brake_max * tanh(20.0 * omega_gnd)
         tau_gen = tau_brake
     end

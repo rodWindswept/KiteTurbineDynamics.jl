@@ -77,7 +77,7 @@ for f in files
     # Operating point at the rated power the machine must sustain (5 kW floor)
     w5 = (5000.0 / K_MPPT)^(1 / 3)
     tau5 = K_MPPT * w5^2
-    tau_cap = 2500.0 * (pc.p_rated_w / 10000.0)^2
+    tau_cap = generator_torque_cap(pc)
     println("  @ 5 kW (k=$K_MPPT): omega=$(round(w5, digits=2)) rad/s  TSR=$(round(w5 * sys.rotor.radius / V_RATED, digits=2))")
     println("  tau_gen=$(round(tau5, digits=1)) N·m vs tau_max_safe=$(round(tau_cap, digits=1)) N·m → ",
         tau5 > tau_cap ? "CLAMP-BINDING" : "below clamp")

@@ -340,9 +340,6 @@ function run_pitch_depower!(
     geom_scale = p_base.tether_length / 30.0
     max_payout = payout_base * geom_scale
 
-    # Power scale for brake torque — matches ring_forces.jl logic
-    power_scale = p_base.p_rated_w / 10_000.0
-
     T_cyan_min_run = Inf
     twist_max_run = 0.0
     fos_buckling_min_run = Inf
@@ -535,12 +532,10 @@ function run_pitch_depower!(
             omega_hub_now = u[6N + Nr + hub_ri]
             omega_gnd_now = u[6N + Nr + gnd_ri]
 
-            # tau_gen: MPPT law or brake torque if latched
-            tg = if sys.brake_engaged[]
-                1500.0 * power_scale * tanh(20.0 * omega_gnd_now)
-            else
-                p_step.k_mppt * omega_gnd_now^2
-            end
+            # tau_gen: the true applied torque, from the single authority
+            # (D4, 2026-10-07) -- inherits the law, clamp, elevation scaling,
+            # damping and brake budget the integrator applies.
+            tg, _ = get_generator_torque(u, sys, p_step, t, wind_fn; brake_engaged=sys.brake_engaged[])
 
             T_mx = 0.0
             n_sl = 0

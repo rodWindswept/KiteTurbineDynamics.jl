@@ -342,10 +342,14 @@ end
     @info "No premature brake trigger test (PTO slow, rotor fast)" accel_no_premature
     @test abs(accel_no_premature) < 10000.0
 
-    # Test 5: Torque Limiter Enforcement
+    # Test 5: Torque Limiter Enforcement (D4 re-pin, 2026-10-07)
     # Even if p.k_mppt is scaled to an extremely high value (e.g. 10000.0),
-    # generator torque should be capped at tau_max_safe = 2500.0 * power_scale.
-    p_extreme = _modified_params(p_on; k_mppt = 10000.0) # extreme k_mppt
+    # generator torque should be capped at generator_torque_cap(p) — the single
+    # authority replacing the hidden-unit (P/10⁴)² scale.  Re-pinned to the
+    # 5 kW discriminating power: the old forms read 625 / 1250 N·m here; the
+    # calibrated law reads 1541.1 N·m.
+    p5 = override_params(p_on; p_rated_w = 5000.0)       # discriminating power (D4)
+    p_extreme = _modified_params(p5; k_mppt = 10000.0) # extreme k_mppt
     u_extreme = copy(u0)
     u_extreme[6N + Nr + gnd_ri] = 2.0 # fast, no brake
     u_extreme[6N + Nr + hub_ri] = 2.0
@@ -355,8 +359,8 @@ end
     accel_extreme = du_extreme[6N + Nr + gnd_ri]
     
     # The maximum deceleration should be bounded by (tau_max_safe / i_pto) + small damping/inertial margin
-    power_scale = (p_extreme.p_rated_w / 10000.0)^2
-    tau_max_safe = 2500.0 * power_scale
+    tau_max_safe = generator_torque_cap(p_extreme)
+    @test tau_max_safe ≈ 1541.137296501083 rtol=1e-9    # law pin (D4, 5 kW)
     max_accel_safe = (tau_max_safe + 150.0) / p_extreme.i_pto
     @info "Torque limiter test" accel_extreme max_accel_safe
     @test abs(accel_extreme) <= max_accel_safe

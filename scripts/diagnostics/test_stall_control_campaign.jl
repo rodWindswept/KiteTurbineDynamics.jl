@@ -186,8 +186,7 @@ function simulate_stall_case(case_name::String, use_ground_tension_winch::Bool, 
         _, T_lift_val, _ = lift_force_steady(ld, p_run.rho, V_hub_live)
         
         tau_mppt = k_mppt_active * max(omega_hub, 0.0)^2
-        power_scale = (p_run.p_rated_w / 10000.0)^2
-        c_d = 10.0 * power_scale
+        c_d = (10.0 / 2500.0) * generator_torque_cap(p_run)
         tau_damp = c_d * (omega_gnd - omega_hub)
         tau_gen_init = max(0.0, (tau_mppt + tau_damp) * elev_scale)
         

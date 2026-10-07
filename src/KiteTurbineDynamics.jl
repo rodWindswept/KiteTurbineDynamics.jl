@@ -99,6 +99,7 @@ export SimFrame,
     build_rerun!,
     capture_peaks,
     get_generator_torque,
+    generator_torque_cap,
     get_subsegment_tension,
     get_max_rope_tension,
     get_segment_tension
