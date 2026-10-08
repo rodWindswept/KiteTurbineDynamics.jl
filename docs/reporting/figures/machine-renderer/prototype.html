@@ -23,6 +23,12 @@
   .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 10.5px; color: #333; max-width: 560px; }
   .legend .li { display: flex; align-items: center; gap: 5px; }
   .sw { display: inline-block; width: 14px; height: 0; border-top: 3px solid #000; }
+  .swf { display: inline-block; width: 15px; height: 8px; border: 0.8px solid #b32222;
+         border-radius: 1px; background: rgba(179,34,34,0.18); }
+  .views { display: flex; gap: 12px; margin-top: 4px; }
+  .view { flex: 1 1 0; border: 1px solid #e2e2e2; border-radius: 2px; background: #fff; padding: 8px 6px 6px; }
+  .view svg { display: block; width: 100%; height: auto; }
+  .vlabel { font-size: 10px; color: #555; text-align: center; margin-top: 4px; }
   .source { margin-top: 10px; font-size: 10px; color: #666; }
   .caption { margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px; font-size: 11px; color: #333; }
   .caption .ste { color: #555; margin-top: 3px; }
@@ -31,8 +37,10 @@
 <body>
 <div class="wrap">
   <p class="mock-note">Round one composition mock. Schematic placeholder shapes only. No campaign data.
-  R1 review delta: ring taper and topmost rotor corrected — ground ring smallest, machine widens up-shaft
-  to the topmost ring, main-rotor annulus + blades on the topmost ring. Not to scale.</p>
+  R1 review deltas: ring taper and topmost rotor corrected — ground ring smallest, machine widens up-shaft
+  to the topmost ring, main-rotor annulus + blades on the topmost ring. Second pass: the swept annulus
+  draws as a shaded swept region spanning the blade extents, and a plan / side / end view set is added
+  below. Not to scale.</p>
 
   <div class="card">
     <div class="fig-title">⟨finding-oriented title, filled at GENERATE⟩</div>
@@ -54,10 +62,9 @@
           <line x1="89" y1="198" x2="101" y2="198" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
           <!-- cone ring (widen upward) -->
           <line x1="88" y1="181" x2="102" y2="181" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
-          <!-- topmost ring: main rotor — annulus + blades on this ring -->
+          <!-- topmost ring: main rotor — swept annulus (shaded) + blades on this ring -->
+          <rect x="45" y="114.5" width="100" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
           <line x1="61" y1="118" x2="129" y2="118" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="47" y1="118" x2="63" y2="118" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="127" y1="118" x2="143" y2="118" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
           <line x1="63" y1="112" x2="45" y2="130" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
           <line x1="127" y1="112" x2="145" y2="130" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -75,13 +82,11 @@
           <line x1="89" y1="199" x2="101" y2="199" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="88" y1="182" x2="102" y2="182" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="85" y1="163" x2="105" y2="163" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
-          <!-- two rotor rings: main rotor (topmost) + one lower rotor -->
+          <!-- two rotor rings: main rotor (topmost) + one lower rotor — swept annuli (shaded) -->
+          <rect x="43" y="130.5" width="104" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
+          <rect x="41" y="96.5" width="108" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
           <line x1="59" y1="134" x2="131" y2="134" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="57" y1="100" x2="133" y2="100" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="45" y1="134" x2="61" y2="134" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="129" y1="134" x2="145" y2="134" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="43" y1="100" x2="59" y2="100" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="131" y1="100" x2="147" y2="100" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
           <line x1="61" y1="128" x2="43" y2="146" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
           <line x1="129" y1="128" x2="147" y2="146" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
           <line x1="59" y1="94" x2="41" y2="112" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
@@ -101,9 +106,8 @@
           <line x1="89" y1="201" x2="101" y2="201" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="88" y1="186" x2="102" y2="186" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="79" y1="160" x2="111" y2="160" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <rect x="39" y="108.5" width="112" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
           <line x1="55" y1="112" x2="135" y2="112" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="41" y1="112" x2="57" y2="112" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="133" y1="112" x2="149" y2="112" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
           <line x1="57" y1="106" x2="39" y2="124" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
           <line x1="133" y1="106" x2="151" y2="124" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -119,9 +123,8 @@
           <line x1="89" y1="236" x2="101" y2="236" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="89" y1="222" x2="101" y2="222" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
           <line x1="88" y1="208" x2="102" y2="208" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <rect x="43" y="122.5" width="104" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
           <line x1="59" y1="126" x2="131" y2="126" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="45" y1="126" x2="61" y2="126" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="129" y1="126" x2="145" y2="126" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
           <line x1="61" y1="120" x2="43" y2="138" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
           <line x1="129" y1="120" x2="147" y2="138" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -138,7 +141,7 @@
           <span class="li"><span class="sw" style="border-color:#1f8fff"></span>ring, transmission</span>
           <span class="li"><span class="sw" style="border-color:#ff8c00"></span>ring, cone</span>
           <span class="li"><span class="sw" style="border-color:#2e8c57"></span>ring, harvest</span>
-          <span class="li"><span class="sw" style="border-color:#b32222"></span>rotor annulus</span>
+          <span class="li"><span class="swf"></span>swept annulus</span>
           <span class="li"><span class="sw" style="border-color:#3a3a3a; border-top-width:2px"></span>blade</span>
           <span class="li"><span class="sw" style="border-color:#98a0a8"></span>TRPT lines</span>
         </div>
@@ -149,6 +152,53 @@
     <div class="caption">
       <div>⟨plain caption. One sentence for a first-year reader.⟩</div>
       <div class="ste">⟨STE caption. Technical. Every number a register citation.⟩</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="fig-title">View set — proposal from the R1 review note</div>
+    <div class="fig-sub">Placeholder semantics, no data. The strip reads as the shaft-frame elevation, where the
+    swept annulus projects as one bar. The companion readings below are for the room's review.</div>
+    <div class="views">
+      <div class="view">
+        <svg viewBox="0 0 200 150" role="img" aria-label="plan view, shaded swept annulus ring with two blades">
+          <line x1="100" y1="12" x2="100" y2="138" stroke="#c4c4c4" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <path d="M48,75 a52,52 0 1,0 104,0 a52,52 0 1,0 -104,0 M82,75 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0"
+                fill="#b32222" fill-opacity="0.15" stroke="#b32222" stroke-width="0.9" fill-rule="evenodd"/>
+          <line x1="100" y1="57" x2="100" y2="23" stroke="#3a3a3a" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="100" y1="93" x2="100" y2="127" stroke="#3a3a3a" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="100" cy="75" r="1.7" fill="#111"/>
+        </svg>
+        <div class="vlabel">plan — swept annulus face-on, two blades</div>
+      </div>
+      <div class="view">
+        <svg viewBox="0 0 200 150" role="img" aria-label="side elevation, the swept annulus as one bar">
+          <line x1="100" y1="12" x2="100" y2="138" stroke="#c4c4c4" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <path d="M95,136 L95,122 L94,106 L76,62" fill="none" stroke="#98a0a8" stroke-width="1"/>
+          <path d="M105,136 L105,122 L106,106 L124,62" fill="none" stroke="#98a0a8" stroke-width="1"/>
+          <line x1="95" y1="136" x2="105" y2="136" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+          <line x1="95" y1="122" x2="105" y2="122" stroke="#1f8fff" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="94" y1="106" x2="106" y2="106" stroke="#ff8c00" stroke-width="2.2" stroke-linecap="round"/>
+          <rect x="63" y="58.5" width="74" height="7" fill="#b32222" fill-opacity="0.18" stroke="#b32222" stroke-width="0.7"/>
+          <line x1="76" y1="62" x2="124" y2="62" stroke="#2e8c57" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="76" y1="57" x2="64" y2="70" stroke="#3a3a3a" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="124" y1="57" x2="136" y2="70" stroke="#3a3a3a" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="vlabel">side elevation — swept annulus projects as one bar</div>
+      </div>
+      <div class="view">
+        <svg viewBox="0 0 200 150" role="img" aria-label="end elevation, the swept annulus as a flattened ring">
+          <line x1="100" y1="12" x2="100" y2="138" stroke="#c4c4c4" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <path d="M42,66 a58,21 0 1,0 116,0 a58,21 0 1,0 -116,0 M80,66 a20,6.5 0 1,0 40,0 a20,6.5 0 1,0 -40,0"
+                fill="#b32222" fill-opacity="0.15" stroke="#b32222" stroke-width="0.9" fill-rule="evenodd"/>
+          <path d="M95,136 L95,118 L94,98 L88,88" fill="none" stroke="#98a0a8" stroke-width="1"/>
+          <path d="M105,136 L105,118 L106,98 L112,88" fill="none" stroke="#98a0a8" stroke-width="1"/>
+          <line x1="95" y1="136" x2="105" y2="136" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+          <line x1="42" y1="66" x2="46" y2="66" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="154" y1="66" x2="158" y2="66" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="vlabel">end elevation — swept annulus as a flattened ring</div>
+      </div>
     </div>
   </div>
 </div>

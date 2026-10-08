@@ -352,5 +352,10 @@ machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the
 first mock drew the taper inverted and the rotor mid-stack). Engine question
 opened as D7. SPEC input 3 amended: the recorded chain now names `v_rated` and
 `beam_t_over_D` (aero-validator delta, 2026-10-08 — the pack's decode had
-inherited the `p.v_wind_ref` fallback; figures regenerated the same day). R2
-to ⟨append⟩. R3 to ⟨append⟩.*
+inherited the `p.v_wind_ref` fallback; figures regenerated the same day). R1
+review, second pass (Rod, 2026-10-08): the swept annulus draws as a shaded
+region spanning the blade extents, not bar pairs. The mock adds a plan / side /
+end view set. The side elevation reads the annulus as one bar, the end
+elevation as a flattened ring, per the review note. Naming and projection
+semantics stay open at R1, and the element table's annulus row updates when the
+room settles the drawing rule. R2 to ⟨append⟩. R3 to ⟨append⟩.*
