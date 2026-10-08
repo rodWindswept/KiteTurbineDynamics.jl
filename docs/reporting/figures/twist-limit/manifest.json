@@ -1,0 +1,41 @@
+{
+  "capture": {
+    "run_id": "pair-extract-2026-10-08-winner-ops",
+    "s": "1724859",
+    "t": "49.99999483862295"
+  },
+  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit eacf073",
+  "inputs": {
+    "extract": {
+      "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
+      "sha256": "dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203"
+    },
+    "mechanism_references": {
+      "crossing_limit_example_deg": "42.6",
+      "crossing_overshoot_deg": "22,425",
+      "crossing_overshoot_revs": "62",
+      "realisability_floor_deg": "72.25",
+      "status": "cleared to draw 2026-10-08; rows pending"
+    },
+    "register_rows": [
+      "NR-022 \u00b7 NR-023"
+    ]
+  },
+  "outputs": {
+    "label-ledger.txt": "6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28",
+    "twist-limit.pdf": "d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1",
+    "twist-limit.png": "7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501",
+    "twist-limit.svg": "ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472"
+  },
+  "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; mechanism references as recorded",
+  "script": {
+    "path": "docs/reporting/figures/twist-limit/twist-limit.py",
+    "sha256": "af7f46932867cf6fcda7d028ed197cd4e5eb787587fdac15eeb340e06b86ee62"
+  },
+  "slug": "twist-limit",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "python": "3.12.3"
+  }
+}

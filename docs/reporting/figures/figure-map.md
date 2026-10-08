@@ -30,9 +30,9 @@ carries the full roster around them.
 | 2 | §2.1 | System anatomy (the term set, the lift chain) | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms |
 | 3 | §2.2 | Genome decode strip. Gene slots to machine | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need |
 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
-| 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | blocked | The sweep records | The re-derivation first |
-| 6 | §3 | Ring utilisation plate | `ring-utilisation` | R1 | The capture. Winner operating point | Extract, then F-VALUE |
-| 7 | §3 | Twist limit plate | `twist-limit` | R1 | The capture. Winner operating point | Extract, then F-VALUE |
+| 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
+| 6 | §3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
+| 7 | §3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 8 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
 | 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | planned | Track C extract. Best-per-generation genomes | The extract |
 | 10 | §3.5 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
@@ -44,6 +44,7 @@ carries the full roster around them.
 Status key.
 
 - **R1** — spec and mock open.
+- **R2** — the scripted figure generated. The checks run.
 - **planned** — a spec or seed exists.
 - **proposed** — this map is the seed.
 - **candidate** — needs a slot ruling.
@@ -74,9 +75,9 @@ three slots).
   captions. The annotation wording.
 
 - **@figures-images-diagrams:** the capture scripts (plan, side,
-  downwind, from the built state). The pair generation when F-VALUE
-  clears. The strip and family sets when the extracts land. The timeline
-  when Track B reconciles.
+  downwind, from the built state). The pair generation runs. F-VALUE sits
+  at the sign-off commit. The strip and family sets when the extracts
+  land. The timeline when Track B reconciles.
 
 ## 4. Deltas
 
@@ -84,3 +85,9 @@ three slots).
   the steer from Rod (map the whole document). The pair SPECs carry their
   capture rulings. The machine-renderer SPEC carries the trapezoid
   drawing rule and the capture steers.
+
+- **v2 (2026-10-08):** rows 6 and 7 advance to R2. The generators land at
+  `eacf073` — byte-stable on rerun, with in-script value and label
+  self-checks. Row 5 unblocks to proposed — the re-derivation closed as
+  selection, not derivation (NR-015). The twist mechanism values draw
+  pending their rows.
