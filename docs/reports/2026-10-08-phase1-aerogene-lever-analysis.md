@@ -184,8 +184,8 @@ The rotor count cliff rests on 191 evaluated draws, so it records lethality, not
 The recompute script lives at `scratch/aw_p1_aerogenes.py`.
 Its outputs follow:
 
-- `scratch/aw_p1_aerogenes/aerogene_conditioned_table.csv`
-- `scratch/aw_p1_aerogenes/aerogene_effect_size.csv`
+- `scratch/aw_p1_aerogenes/aerogene_conditioned_table.txt`
+- `scratch/aw_p1_aerogenes/aerogene_effect_size.txt`
 - `scratch/aw_p1_aerogenes/aerogene_conditioning.png`
 - `docs/reports/assets/aw_p1_aerogene_conditioning.png` (chart copy)
 
