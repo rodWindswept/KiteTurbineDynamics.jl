@@ -88,7 +88,9 @@ standard), 3 rounds, adapted to the register:
    single-claim charts — a 1000-word spec for a bar chart is overhead, not
    rigor.
 2. **GENERATE** — the chart or render, plus the generating script and the
-   data-commit + row-range source stamp.
+   data-commit + row-range source stamp. Output as vector graphics
+   (PDF/SVG) for LaTeX embedding; machine renders in TikZ where possible
+   (programmatic geometry fidelity).
 3. **CHECK — external, never self-graded.** Two independent checkers:
    (a) the content check — aero/science validators check the numbers and the
    house standards against the register and the generating script;
@@ -165,7 +167,14 @@ now, in parallel.
 ## 8. Channel plan (ruled 2026-10-08)
 
 1. **Repo-hosted report** — the canonical, validator-gated artifact. Every
-   public post links to it and cites register entries only.
+   public post links to it and cites register entries only. **Output
+   format chain (ruled 2026-10-08):** authored in markdown (git-diffable,
+   register-linked, bot-friendly) → pandoc → LaTeX (Windswept house
+   template) → human-readable PDF release. Toolchain verified on the
+   machine: pandoc 3.1.3 + TeX Live 2023 (pdflatex). Figures ship as
+   vector graphics (PDF/SVG); machine renders target TikZ so every drawn
+   dimension comes programmatically from the decoded genome values —
+   geometry fidelity by construction.
 2. **forum.awesystems.info** — the primary community channel. Discourse;
    Rod posts there as a frequent poster, so the voice is first-person and the
    tone is engineering, not marketing. The deliverable is **one report**:
