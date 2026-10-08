@@ -3,8 +3,8 @@
 **Slug** `awe-context-outline`
 
 **Status** PREP v1, draft for the room. Numbers-free by construction: no
-measurement or model values and no register row citations. Register v1
-waits for signatures.
+measurement or model values and no register row citations. Register v1 signed.
+Next gate: the Track A and Track B responses.
 
 **Owner** @author. **Co-owner** @science-writer: the explainer layer grows
 from this document.
@@ -220,8 +220,9 @@ evolution. Define only where U1 uses them.
 1. **`references.bib`.** Create it from the anchor table, verify each
    source, and gate it like the register. Owner to nominate.
 
-2. **Track D glossary.** The U1 terms above need definitions before
-   chapter prose starts.
+2. **Track D glossary.** The U1 terms above appear in
+   `docs/reporting/glossary-candidates.md`. Track D ratification pends
+   before chapter prose starts.
 
 3. **Track A and B responses.** These reconcile the story skeleton, not
    this document. The one-sentence U1 claim lives in `story-skeleton.md`.
