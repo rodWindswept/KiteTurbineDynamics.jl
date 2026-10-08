@@ -307,3 +307,75 @@ Evidence: `scratch/sv_counterread_bankderate.log` and
   `a36b7df` one for one, apart from two new bullet labels.
 
 Verdict: no discrepancy found. The two rows stand as signed.
+
+## Mechanism-pair source rows and ODE rows: NR-021 to NR-026 (2026-10-08, aero-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Rows NR-021 to NR-023 are the source rows of the mechanism pair
+(`ring-utilisation`, `twist-limit`). They carry the declared capture: the
+winner operating point, the final frame of the measurement window. The
+extract sits at `docs/reporting/figures/pair-extract/`. The extract run
+reproduced the recorded cold re-eval at full precision — nine of nine
+fields exact, including power, FoS, lift tension and twist ratio.
+
+Rows NR-024 to NR-026 serve §2.3 and §3.3. They carry the step law, the
+cold-start protocol and the lift margin. They are ready if the final text
+prints those values.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03323714455441065 = 0.033223570205929 + 1.3574348481652112e-5, FoS 30.086820435580936. R3 0.033548608446737266 = 0.03354237801917142 + 6.230427565848155e-6, FoS 29.80749563987516. R4 0.028380221733419368 = 0.028374815022862057 + 5.40671055731162e-6, FoS 35.23580644975869. R5 3.058346201008972e-6 = 0.0 + 3.058346201008972e-6, FoS 326974.1011237028. R6 hub 0.06652238395895148 = 0.06652164721153939 + 7.36747412096439e-7, FoS 15.032534020684876 | — | Extract `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, ring block. Emitted by `capture_extended`; `max_util` re-derived via `ring_element_analysis`; A1 identity checked, residual 0.0 at every ring | signed (aero-validator, 2026-10-08) |
+| NR-022 | Segment twist and over-twist limit at the winner operating point | abs(dalpha): S1 33.94561934829036°, S2 33.811870056223555°, S3 33.67952027817454°, S4 33.54707806507812°, S5 22.821871326820364°. dcrit: S1 to S4 98.85908296054023°, S5 92.64281134151318°. has_limit true on all five | deg | Extract, segment block. Raw reads from the stored alpha block; `trpt_twist_limit` on the rope_forces C1 call pattern (node radii, mean line rest length) | signed (aero-validator, 2026-10-08) |
+| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.791634149159, S2 397.1554424859068, S3 397.45360112890063, S4 397.68800908436924, S5 397.1777954649229. torque_capacity: S1 805.0097155967861, S2 808.6780945063998, S3 812.213802301376, S4 815.650844050359, S5 1069.9324759682652 | N·m | Extract, segment block. Capacity = `trpt_torque_capacity_axial` at `trpt_axial_force` of the same state. One instant for both series | signed (aero-validator, 2026-10-08) |
+| NR-024 | Evaluator step law | dt = min(4e-5 s, 4e-5 s × sqrt(L_min / 0.5 m) / 1.5). Winner derived step 2.8987873697672758e-5 s | s | Source read at `f8114be`: `src/initialization.jl:564-595`. Winner value from the extract log | signed (aero-validator, 2026-10-08) |
+| NR-025 | Cold-start protocol (campaign setting) | Settle `settle_to_operational_state` (n_op 150000 steps, about 6 s simulated; ω_rated_max 60.0 rad/s), then kickstart off (kickstart_s 0.0; the legacy kick is -60.0 N·m·s²/rad², about 115 times the MPPT torque), then one combined relax+window run, 10 s + 40 s, rope breaks enabled across both. Winner run: 1724859 steps | s, steps | `src/objective_evaluator.jl:774, 840-842, 856-892, 978-989`; `src/initialization.jl:2184-2190`; `scripts/run_v13_5kw_masslift.jl:157` | signed (aero-validator, 2026-10-08) |
+| NR-026 | Lifter sizing margin (campaign regime) | margin 1.5 (vertical force at the lift bearing = 1.5 × m_airborne × g); line tension = F_vert / sin(70°), flat at all wind speeds; m_airborne excludes the lifter's own 5 kg (the kite carries itself) | — | `src/lift_kite.jl:197-228`; regime line `scripts/run_v13_5kw_masslift.jl:111` | signed (aero-validator, 2026-10-08) |
+
+Sign-off basis:
+
+- NR-021 to NR-023. One run, one declared capture. The run is
+  `evaluate_windowed :cold` on the island 3 genome of the signed dataset.
+  The capture is the final integration step: s = 1724859,
+  t = 49.99999483862295 s. The log carries the parity certificate: nine
+  of nine recorded fields reproduce at full precision. The two segment
+  series are instant-bound to the same capture. The principal emitted
+  twist equals the raw read on this capture (no saturation).
+
+- NR-021 ring stations for the row order: 0.0, 2.3182841987165674,
+  4.636939712683201, 6.9559610374822345, 9.27534680414777,
+  18.600867750952748 m (R1 to R6, cumulative ring-centre separation).
+
+- NR-024. The law replaces the old line-count heuristic (`n_lines ≥ 8 →
+  1e-5`). The ceiling calibrates to the stiffest sub-segment mode
+  (omega_max about 2e4 rad/s on 0.5 m Dyneema sub-segments;
+  build-geometry audit, 2026-08-24).
+
+- NR-025. The winner step count reads from the same extract log. At the
+  campaign damping (lin_damp 0.05) the settle reaches the productive
+  branch directly, so the kickstart stays off.
+
+- NR-026. The margin closes on signed rows at full precision:
+  1.5 × (25.69846825623688 - 5.0) × 9.81 / sin(70°) =
+  324.1250954336462 N = NR-010. NR-018 minus the flat 5 kg lifter
+  booking is the sizing mass.
+
+Boundaries that travel with these rows:
+
+1. Instant versus window. NR-021 to NR-023 carry one instant. The window
+   minimum FoS (14.971791422208508, NR-009) is another instant; the
+   capture hub ring reads 15.032534020684876. Quote the capture by name
+   with the value.
+
+2. Case A only. All five segments of this capture carry a limit. The
+   no-limit (Case B) class does not occur in the winner capture. A
+   no-limit illustration needs another capture.
+
+3. Capacity basis. `torque_capacity` is the Tulloch authority quantity.
+   The held conservative cap that `rope_forces.jl` applies to Case-B
+   segments is a different quantity and does not substitute.
+
+4. NR-025 records the run as executed. The 2026-09-16 window-only breaks
+   ruling remains an open item (§4.1 of the draft).
+
+Counter-read requested from science-validator.
