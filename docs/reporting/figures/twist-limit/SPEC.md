@@ -228,3 +228,15 @@ gate.
 - v1 (2026-10-08): R1 opens with this spec and the composition mock. No
   values carried. Awaiting the capture, the annotation rows, and the R1
   composition review. R2 to ⟨append⟩. R3 to ⟨append⟩.
+
+- v2 (2026-10-08): the capture rules — the winner operating point, one
+  capture for both plates (R1 review). Rod's R1 steer: the plate carries
+  the mechanism at scale — the realisability floor, the removed asin
+  clamp, the seed's binding segment, the collapse limit with the recorded
+  overshoot, and the no-limit explanation (a bay too short for its lines
+  to cross the axis; the line's break strain carries its limit). Every
+  drawn value enters via a signed row before GENERATE (row candidates
+  with the validators). Plot the twist from the stored alpha block; never
+  from a principal-value read of `segment_twist_deg` — a saturated twist
+  wraps into (−180°, 180°] and can render as a small angle. The no-limit
+  annotation wording drafts with @author under the ledger.

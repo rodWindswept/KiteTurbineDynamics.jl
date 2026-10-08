@@ -236,3 +236,10 @@ drawn interaction.
   in prose at the first mention of the bar, not in the captions (R1
   text-seat reading; caption plan unchanged; the bridge section of
   `captions-draft.md` is the prose seed).
+
+- v3 (2026-10-08): the capture rules — the winner operating point, one
+  capture for both plates (R1 review; the companion figure carries the
+  same ruling). Rod's R1 steer: the dashboard panels (`ring_health!` in
+  the interactive dashboard and `dashboard_v2`) are the capture read; the
+  plate re-renders the same arrays statically in the house shaft frame.
+  The extract slot fills from the analysis room's cut.
