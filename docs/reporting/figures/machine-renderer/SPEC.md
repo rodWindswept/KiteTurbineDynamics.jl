@@ -128,7 +128,7 @@ manifest. The fidelity checks re-measure exactly these values.
 | `ground_ring` | the constructed ground ring | heavy segment, both sides, at the datum | radius |
 | `ring` | each constructed ring | a segment at its shaft distance | count, distance, radius, section class |
 | `line_family` | the TRPT attachments | segments between consecutive rings | count per gap equals n_lines |
-| `rotor_annulus` | each rotor | edge-on bars, inner to outer radius | rotor count, ring index, radii |
+| `rotor_annulus` | each rotor | shaded swept region spanning the blade extents; a trapezoid in the axisymmetric elevation — one truncated cone, the parallel edges at the tip circles of their stations | rotor count, ring index, radii |
 | `blade` | each rotor blade set | one segment per blade, inner end to outer tip | count, span, bank angle |
 | `section_marker` | the section boundaries | dotted horizontals at the transitions | positions |
 | `lift_chain` | the constructed state, hero only | bridles, cyan, backline, kite marker | drawn or absent |
@@ -358,4 +358,18 @@ region spanning the blade extents, not bar pairs. The mock adds a plan / side /
 end view set. The side elevation reads the annulus as one bar, the end
 elevation as a flattened ring, per the review note. Naming and projection
 semantics stay open at R1, and the element table's annulus row updates when the
-room settles the drawing rule. R2 to ⟨append⟩. R3 to ⟨append⟩.*
+room settles the drawing rule.
+
+R1 review, third pass (Rod, 2026-10-08): the swept surface draws as a trapezoid
+in the axisymmetric elevation — one truncated cone, never a rectangle. Rule and
+authority: `docs/agents/physics-topology.md` section 4 (a blade station s
+outboard runs at `r_ring + s·cos(bank)` with axial offset `s·sin(bank)`; the
+swept surface is one truncated cone). The view set reads plan / side /
+downwind. The plan draws the ring as its node polygon, never a smoothed
+circle. The plan / side / downwind reads ship as makie captures of the built
+state (the D7 steer, 2026-10-08), scripted so F-REPRO holds. Any swept-area
+annotation uses `main_rotor_swept_area` (`src/ring_forces.jl`; the axial
+projection of absolute radii) and carries its own register row before it
+prints. The prototype updates in this directory.
+
+R2 to ⟨append⟩. R3 to ⟨append⟩.*
