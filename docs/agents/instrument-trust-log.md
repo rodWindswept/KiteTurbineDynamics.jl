@@ -92,6 +92,20 @@ Full record: `docs/validation/2026-10-08-phase0-bankderate2-audit.md`.
 
 ---
 
+## STE Gate Exemption (2026-10-08)
+
+Ruling (hermes, room-delegated): the pre-commit STE gate skips the historical
+ledgers as a class. `.ste-exempt` lists the three files: this log,
+`docs/validation/physics-validation-ledger.md`, and `DECISIONS.md`. Reason:
+each reads above the 2.0/100w bar in its recorded state. A sweep would
+rewrite history. House convention: amend, never rewrite. The gate still
+covers all other markdown. New entries in the exempt files must still be
+written STE-clean. The two Phase 0 commits that rode `--no-verify`
+(`ca7bbb9`, `8a440e6`) disclosed the bypass. This mechanism supersedes that
+bypass.
+
+---
+
 ## Cross-Geometry Spot-Check: v13 Winner (2026-09-21)
 
 Instrument validation result and advisory finding. Does not block the wobble-gate exit decision (wobble-gate scope ruling).
