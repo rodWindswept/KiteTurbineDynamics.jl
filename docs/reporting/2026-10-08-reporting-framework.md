@@ -78,6 +78,26 @@ Track C: evaluation-fidelity band (rapid vs ODE), lever sensitivity panels,
 PCA thrive/fail regions, scaling laws. Gate: aero-validator +
 science-validator, visual pass by Rod.
 
+**Figure workflow — the three-phase HITL cycle** (diagram-registry
+standard), 3 rounds, adapted to the register:
+1. **SPEC** — the claim, the register citations, axes, data extract, and the
+   dual-caption plan. Room-authored where the physics is theirs: the Track C
+   charting plans are the spec seeds. Spec depth tiers by figure complexity:
+   full spec for interpretive figures (fidelity bands, PCA regions, evolution
+   strips, family renders); a light claim+axes+source spec for routine
+   single-claim charts — a 1000-word spec for a bar chart is overhead, not
+   rigor.
+2. **GENERATE** — the chart or render, plus the generating script and the
+   data-commit + row-range source stamp.
+3. **CHECK — external, never self-graded.** Aero/science validators check
+   the numbers and the house standards; Rod does the visual pass. The spec
+   evolves by deltas between rounds, not by rewrite.
+
+Machine renders carry one extra assertion in the CHECK phase: geometry
+fidelity — every drawn dimension (line count, ring radii, span, bank) must
+equal the decoded genome value. A render that misdraws the machine is a
+reject (the ADR-0005 wrong-geometry class, in pixels).
+
 ### Validators (unchanged roles, new surface)
 science-validator: every factual sentence, every register entry.
 aero-validator: every aerodynamics figure and machine render.
