@@ -1,0 +1,9 @@
+== sv counter-read: guard testset re-run — test/test_ring_forces.jl
+seat: science-validator; date: 2026-10-08; tip: ba5bbd8
+driver: using Test; using KiteTurbineDynamics; @testset verbose = true "direct single-file run: test_ring_forces" begin include("test/test_ring_forces.jl") end
+runner: bash scripts/ktd-julia <driver>  (exit 0)
+
+Test Summary:                            | Pass  Total  Time
+direct single-file run: test_ring_forces |   10     10  2.3s
+  ring forces                            |    5      5  1.9s
+  main-rotor bank derate                 |    5      5  0.3s

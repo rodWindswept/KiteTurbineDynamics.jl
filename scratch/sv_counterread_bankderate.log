@@ -1,0 +1,62 @@
+== sv counter-read: NR-019, NR-020 — committed-records check (science-validator, 2026-10-08)
+date: 2026-10-08 17:10:27Z   tip: ba5bbd8   branch: bank-derate-cos2p65
+
+== push readback
+ba5bbd871119cd9522a6844d0d71516cc71618d5	refs/heads/bank-derate-cos2p65
+
+== src identity: commits touching src/ in e9a2f99..tip (expect 0)
+0
+
+== CSV identity
+38e644a85df1285fcdc2805e5f6ef6bc2167b5d363d36d542fe91102d6674da0  docs/validation/trpt-reference/10-precone-sweep.csv
+57274de10ffcf16db840a3721bd460105b75c52b
+
+== NR-020 ratio recompute from the committed CSV at commanded lambda 4.0
+base Cp(0 deg) = 0.26386
+ratio  5 deg: 0.98416   Cp=0.25968
+ratio 10 deg: 0.95437   Cp=0.25182
+ratio 15 deg: 0.91101   Cp=0.24038
+ratio 20 deg: 0.85424   Cp=0.2254
+ratio 25 deg: 0.78432   Cp=0.20695
+rounded set: [0.984, 0.954, 0.911, 0.854, 0.784]
+cos^2.65 20 deg: 0.84803
+cos^3   20 deg: 0.82977
+20 deg match per cent: 0.73
+20 deg loss per cent: 14.58
+lambda 6.0: 20 deg retention: 0.33082
+
+== NR-019 number-token identity, a36b7df -> 631d719
+number-token multiset diff: {'020': (3, 4), '019': (3, 4)}
+
+== NR-019 completeness grep: 2.65 over src/ at the tip
+src/bem.jl:142:    f = cosd(bank_deg)^2.65 · cos(elev_rad)^2.65
+src/bem.jl:150:    cosd(bank_deg)^2.65 * cos(elev_rad)^2.65
+src/initialization.jl:156:    # plane (deg); 0.0 = planar disc.  The disc branch keeps cos(bank)^2.65 of its power
+src/initialization.jl:1033:        cos(p.elevation_angle)^2.65 *
+src/initialization.jl:1037:        cosd(sys.rotor.bank_angle_deg)^2.65
+src/initialization.jl:1919:#   drag-included DR (THIS)        17 681 (1802 g)     293 (29.9 g)       -2.65 N
+src/initialization.jl:1957:#       20 000   293.0 m/s^2 (29.9 g)     -2.65 N   <- old default (dt = 2e-4)
+src/objective_evaluator.jl:351:cos^1 here; the disc power keeps its own cos^2.65, so this must NOT be folded
+src/objective_evaluator.jl:371:path's own: the disc power charges cos^2.65 per projection (cos^1 geometric,
+src/objective_evaluator.jl:577:    # Main (hub) rotor bank (2026-10-01): a banked blade keeps cos(bank)^2.65 of
+src/ring_forces.jl:50:22.65 N.m at 300 W -- inside the measured band [20, 24] N.m (DECISIONS
+src/ring_forces.jl:54:generator_torque_cap(p::SystemParams) = (22.65 / 300.0^1.5) * p.p_rated_w^1.5
+src/ring_forces.jl:234:                cos(elev_angle)^2.65 *        # cos²·⁶⁵ — power elevation factor (AeroDyn sweep)
+src/ring_forces.jl:235:                cosd(sys.rotor.bank_angle_deg)^2.65  # power bank factor, measured 2026-10-01
+src/sim_frame.jl:158:        cos(p.elevation_angle)^2.65 *
+src/sim_frame.jl:159:        cosd(sys.rotor.bank_angle_deg)^2.65   # bank derate, measured 2026-10-01
+src/sim_frame.jl:480:        cos(p.elevation_angle)^2.65 *
+src/sim_frame.jl:481:        cosd(sys.rotor.bank_angle_deg)^2.65
+src/types.jl:96:    # The disc branch keeps cos(bank)^2.65 of its power
+
+== NR-019 ancestry
+b835ebc: ancestor of tip
+779fa55: ancestor of tip
+94223eb: ancestor of tip
+
+== register status at the tip
+signed status markers: 21
+row lines: 20; unsigned rows: none
+
+== STE gate on the register (working tree content = tip)
+numbers-register.md              words=1938 total= 19 per100w=  0.98 em_dash=12

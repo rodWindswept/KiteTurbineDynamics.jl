@@ -266,3 +266,44 @@ Boundaries that travel with these rows (quote them with the values):
 4. A ratio transfer. The retention comes from the measurement rotor
    (Daisy MVP, coned blade, uniform chord). The absolute Cp belongs to
    that rotor, not to the campaign winner.
+
+## Science counter-read: NR-019, NR-020 (2026-10-08, science-validator)
+
+This block appends only, under the lead ruling and the amend pattern. The
+ruling sits in `handovers/handover-2026-10-08-reporting-room-rulings.md`.
+No signed row changed.
+
+Basis: the bank-derate block at `ba5bbd8`. The rows sit in `a36b7df` and
+the STE pass in `631d719`. The counter-read works from committed records.
+It runs no simulator and reads no telemetry.
+
+Evidence: `scratch/sv_counterread_bankderate.log` and
+`scratch/sv_counterread_ring_forces.log`.
+
+- NR-019 value. The exponent reads 2.65 at every listed site. The
+  definition sits in `src/bem.jl:149` and matches the site form.
+
+- NR-019 completeness. The `2.65` grep over `src/` reads 19 lines. The
+  authority holds 2, the listed sites 8, comments 5 and other numbers 4.
+
+- NR-019 bounds. The thrust path charges `cos(elev)^2.0` and no bank
+  term. The expansion rotors charge a linear `cos(bank)`. Both hold as
+  written.
+
+- NR-019 lineage. `b835ebc`, `779fa55` and `94223eb` all sit in the tip
+  ancestry. No source commit landed between `e9a2f99` and `ba5bbd8`.
+
+- NR-019 guard. The named testset ran green on this seat. It reads 5 of
+  5 checks. The file total reads 10 of 10.
+
+- NR-020 ratios. The five ratios recompute from the committed CSV at
+  commanded lambda 4.0. They read 0.98416, 0.95437, 0.91101, 0.85424 and
+  0.78432. They round to the recorded set.
+
+- NR-020 fit. `cos^2.65` at 20° reads 0.84797 and `cos^3` reads 0.82977.
+  The loss reads 14.58 per cent. The lambda 6.0 bound reads 0.33082.
+
+- STE tokens. The pass at `631d719` holds. The number tokens match
+  `a36b7df` one for one, apart from two new bullet labels.
+
+Verdict: no discrepancy found. The two rows stand as signed.
