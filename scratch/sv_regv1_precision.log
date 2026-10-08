@@ -1,0 +1,21 @@
+=== island 1 (gen 30, ok rows 152) ===
+  P_mean   stored=5.68       reeval=5.6803287423803877  delta=+3.287424e-04  round(2)-match=true
+  P_end    stored=5.68       reeval=5.6837752048965822  delta=+3.775205e-03  round(2)-match=true
+  FoS      stored=9.89       reeval=9.8851762742998908  delta=-4.823726e-03  round(2)-match=true
+  fitness  stored=30.578     reeval=30.577668850503915  delta=-3.311495e-04  round(3)-match=true
+  T_lift   stored=340.31     reeval=340.31356975091165  delta=+3.569751e-03  round(2)-match=true
+  omega_eq=10.018969979144057  status=ok  broken=false
+=== island 2 (gen 30, ok rows 162) ===
+  P_mean   stored=5.91       reeval=5.9121414740905482  delta=+2.141474e-03  round(2)-match=true
+  P_end    stored=5.92       reeval=5.916251084406599  delta=-3.748916e-03  round(2)-match=true
+  FoS      stored=9.53       reeval=9.5328608759436548  delta=+2.860876e-03  round(2)-match=true
+  fitness  stored=30.637     reeval=30.637160044813978  delta=+1.600448e-04  round(3)-match=true
+  T_lift   stored=311.16     reeval=311.15592211348917  delta=-4.077887e-03  round(2)-match=true
+  omega_eq=10.644005241624111  status=ok  broken=false
+=== island 3 (gen 26, ok rows 194) ===
+  P_mean   stored=5.31       reeval=5.3087794439367935  delta=-1.220556e-03  round(2)-match=true
+  P_end    stored=5.31       reeval=5.314113662272673  delta=+4.113662e-03  round(2)-match=true
+  FoS      stored=14.97      reeval=14.971791422208508  delta=+1.791422e-03  round(2)-match=true
+  fitness  stored=27.364     reeval=27.3635412663488  delta=-4.587337e-04  round(3)-match=true
+  T_lift   stored=324.13     reeval=324.12509543364621  delta=-4.904566e-03  round(2)-match=true
+  omega_eq=10.169820334285198  status=ok  broken=false

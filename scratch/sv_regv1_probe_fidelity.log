@@ -1,0 +1,11 @@
+mode | island | P_mean kW | P_end kW | FoS_min | fitness kg | T_lift N | omega_eq | status
+----------------------------------------------------------------------------------------
+warm  |   1     |    0.000 |    0.000 |     Inf |        Inf |     0.0 |    7.727 |    6.0s | twist=0.00 broken=true | reject
+cold  |   1     |    5.680 |    5.684 |   9.885 |     30.578 |   340.3 |   10.019 |   49.1s | twist=0.32 broken=false | ok
+rec  |   1     |    5.680 |    5.680 |   9.890 |     30.578 |   340.3 | ok
+warm  |   2     |    0.000 |    0.000 |     Inf |        Inf |     0.0 |    8.064 |    0.1s | twist=0.00 broken=true | reject
+cold  |   2     |    5.912 |    5.916 |   9.533 |     30.637 |   311.2 |   10.644 |   25.1s | twist=0.31 broken=false | ok
+rec  |   2     |    5.910 |    5.920 |   9.530 |     30.637 |   311.2 | ok
+warm  |   3     |    0.000 |    0.000 |     Inf |        Inf |     0.0 |   14.231 |    0.1s | twist=0.00 broken=true | reject
+cold  |   3     |    5.309 |    5.314 |  14.972 |     27.364 |   324.1 |   10.170 |   37.7s | twist=0.44 broken=false | ok
+rec  |   3     |    5.310 |    5.310 |  14.970 |     27.364 |   324.1 | ok
