@@ -31,14 +31,14 @@ Owner: **software-validator**, second reader **science-validator**.
 **Status (2026-10-08): SIGNED.** Software-validator audited, science-validator
 second read. Landed `8a440e6` on `bankderate2-results`, merged to master
 `31ca00d`. Full record: `docs/validation/2026-10-08-phase0-bankderate2-audit.md`.
-Phase 1 is unblocked.
+Phase 1 can start.
 
-1. Commit and push the results (fire worktree is detached at `a76c5e9`,
-   results untracked). Data must exist on origin before analysis.
+1. Commit and push the results. The fire worktree holds them untracked
+   (HEAD detached at `a76c5e9`). Data must exist on origin before analysis.
 2. Gen-0 / gen-1+ discontinuity check (seed rows vs DE children: the
    instrument-floor pattern). Audit note: `k_chosen` is not a telemetry
-   column, and `P_range` / `stationary` are unrecorded fields. Phase 1 must
-   not cite them from CSV columns.
+   column. The telemetry does not record `P_range` and `stationary`.
+   Phase 1 must not cite them from CSV columns.
 3. Destructure verification (all evaluator fields captured per generation).
 4. Re-evaluate the winner standalone at `a76c5e9`. P_mean/FoS must reproduce
    from the recorded genome. A mismatch voids every row.
@@ -63,8 +63,8 @@ rotor_count, bank_top, bank_bot, blade_scale_top, blade_scale_bottom):
   size, not by winner-only reads.
 - Priority questions:
   1. **rotor_count {1,2,3}**: do expansion-rotor designs (count ≥ 2) ever
-     survive? This settles Rod's expansion-rotor campaign question from the
-     data, not from a guard test.
+     survive? This settles the expansion-rotor campaign question Rod raised,
+     from the data, not from a guard test.
   2. Bank saturation: the winner sits at bank_bot = 22° (the bound). Is bank
      a hard-hitting lever at its ceiling?
   3. n_lines = 3 (the floor bound) on the winner. Is the polygon count a real
@@ -105,11 +105,11 @@ Deliverable: the design-characteristics table. This is the source document for
 Owner: **@author** (narrative), **@figures-images-diagrams** (charts).
 - Figures: genome-landscape maps, lever sensitivity panels, regime table,
   Pareto front. STE-clean captions. Trace every number to telemetry rows.
-- Prose in Rod's first person, AI voice stripped, numbers exact.
+- Prose in first person (Rod as author), AI voice stripped, numbers exact.
 - Release sequencing: nothing public until validators sign Phases 0 to 3.
 
 ## Sequencing
 
-Phase 0 → 1 → 2 → 3 → 4, strictly. Phase 0 must close before any lever claim
-is written anywhere. The plan presents campaign truths. It does not
-reconstruct them.
+Phase 0 → 1 → 2 → 3 → 4, strictly. Phase 0 must close before the team writes
+any lever claim. The plan presents campaign truths. It does not reconstruct
+them.
