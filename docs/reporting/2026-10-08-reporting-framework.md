@@ -89,7 +89,8 @@ Rod: the final visual and narrative pass.
 | U5 | Achievements: Daisy-anchored honesty, honest windows, tension-supplied capacity, the fold, the guards | @author | DECISIONS, trust-log, register |
 | U6 | The failure ledger as story: dead genes, instrument floors, void campaigns | @author + @science-writer | trust-log, archive dirs |
 
-Each unit: numbered figures and prose blocks, registered, gated, released.
+The units are **internal chapters of one report** — they assemble into a
+single document and release once, never as separate posts.
 
 ## 5. Missing pieces this framework adds (beyond the obvious)
 
@@ -119,8 +120,9 @@ Each unit: numbered figures and prose blocks, registered, gated, released.
 ## 7. Sequencing summary
 
 Analysis Phases 0–3 (landscape plan) → register v1 → U2/U3/U4 content →
-U1/U5/U6 narrative → validator gates → Rod's pass → release per channel
-plan (§8). Reporting prep (§6) runs now, in parallel.
+U1/U5/U6 narrative → **assemble the single report** → whole-report validator
+gate → Rod's pass → ONE release per channel (§8). Reporting prep (§6) runs
+now, in parallel.
 
 ## 8. Channel plan (ruled 2026-10-08)
 
@@ -128,11 +130,14 @@ plan (§8). Reporting prep (§6) runs now, in parallel.
    public post links to it and cites register entries only.
 2. **forum.awesystems.info** — the primary community channel. Discourse;
    Rod posts there as a frequent poster, so the voice is first-person and the
-   tone is engineering, not marketing. Relevant categories: System Design,
-   Blade Design, Math & Physics, Engineering, News. One topic per content
-   unit, released as the register signs them.
+   tone is engineering, not marketing. The deliverable is **one report**:
+   all content units assemble into a single document and release once,
+   whole-report sign-off — no per-unit drip. The forum presentation is a
+   single topic carrying the report (follow-up topics only as the community
+   asks). Relevant categories: System Design, Blade Design, Math & Physics,
+   Engineering, News.
 3. **Open Source AWE Sim/Control Signal group** — the practitioners' channel,
-   same releases, tooling-focused framing.
+   the same single report, tooling-focused framing.
 4. **Broader socials** — last, and only after the community channels have
    seen the work.
 
