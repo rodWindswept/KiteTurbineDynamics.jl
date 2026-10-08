@@ -217,43 +217,52 @@ Sign-off basis:
 
 This block appends only, under the amend pattern. No signed row changed.
 
-The rows carry the measured bank derate: the exponent the model applies
-to main-rotor power, and the retention the measurement gives. Sources:
-`docs/validation/trpt-reference/10-precone-sweep.md` (method, tables and
-caveats; the AeroDyn precone sweep of 2026-09-30) and its case data
-`10-precone-sweep.csv` (84 cases; the tool sha256 sits in the file
-header). The rows cover the topmost (main) rotor only. Numbers and sites
+The rows carry the measured bank derate. They give the exponent in use
+for main-rotor power, and the measured retention.
+
+Sources: `docs/validation/trpt-reference/10-precone-sweep.md` (method,
+tables and caveats) and `10-precone-sweep.csv` (84 cases). The sweep ran
+on 2026-09-30. The CSV header carries the tool sha256.
+
+The rows cover the topmost (main) rotor only. Numbers and sites
 re-checked on this seat at `e9a2f99`.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-019 | Bank-derate exponent in use (main-rotor disc power) | 2.65 — power × `cosd(bank)^2.65`, the same exponent the elevation factor uses | — | one authority `BEM.projection_factor` (`src/bem.jl`, landed `b835ebc`, record `779fa55`); application sites `src/ring_forces.jl:234-235`, `src/initialization.jl:1033-1037`, `src/sim_frame.jl:158-159, 480-481` (`94223eb`, Rod ruling 2026-10-01); guard `test/test_ring_forces.jl` "main-rotor bank derate" | signed (aero-validator, 2026-10-08) |
-| NR-020 | Measured bank retention at the Cp peak | 0.854 at 20°; `cos^2.65` predicts 0.848 (a match to 0.7 per cent); `cos^3` predicts 0.830 | — | `10-precone-sweep.md` sections 3 to 5; `10-precone-sweep.csv`, precone rows at commanded lambda 4.0 (Cp 0.22540 vs 0.26386) | signed (aero-validator, 2026-10-08) |
+| NR-019 | Bank-derate exponent in use (main-rotor disc power) | 2.65 (power × `cosd(bank)^2.65`, the same exponent the elevation factor uses) | — | one authority `BEM.projection_factor` (`src/bem.jl`, landed `b835ebc`, record `779fa55`). Application sites `src/ring_forces.jl:234-235`, `src/initialization.jl:1033-1037`, `src/sim_frame.jl:158-159, 480-481` (`94223eb`, Rod ruling 2026-10-01). Guard `test/test_ring_forces.jl` "main-rotor bank derate" | signed (aero-validator, 2026-10-08) |
+| NR-020 | Measured bank retention at the Cp peak | 0.854 at 20°. `cos^2.65` predicts 0.848 (a match to 0.7 per cent). `cos^3` predicts 0.830 | — | `10-precone-sweep.md` sections 3 to 5. The precone rows of `10-precone-sweep.csv` at commanded lambda 4.0 (Cp 0.22540 vs 0.26386) | signed (aero-validator, 2026-10-08) |
 
 Sign-off basis:
 
-- NR-020. Ratios recomputed from the recorded Cp columns at commanded
-  lambda 4.0 (the measured peak): 5° 0.984, 10° 0.954, 15° 0.911,
-  20° 0.854, 25° 0.784. The 20° loss reads 14.6 per cent ("about
-  15 per cent" in the sweep). The fitted exponent band runs 2.5 to
-  3.0; 2.65 sits mid-band.
+- NR-020 ratios. The values recompute from the recorded Cp columns at
+  commanded lambda 4.0, the measured peak. The set reads 0.984, 0.954,
+  0.911, 0.854 and 0.784 at 5°, 10°, 15°, 20° and 25°.
 
-- NR-019. The exponent holds one authority (`projection_factor`) plus
-  the disc-power sites above; the recorded completeness check is
-  `grep -rn "2\.65" src/`. Applied 2026-10-01 on Rod's ruling
+- NR-020 fit. The 20° loss reads 14.6 per cent. The sweep quotes it as
+  about 15 per cent. The fitted exponent band runs 2.5 to 3.0, with
+  2.65 mid-band.
+
+- NR-019. The exponent holds one authority (`projection_factor`).
+  The disc-power sites sit above. The recorded completeness check is
+  `grep -rn "2\.65" src/`.
+
+- NR-019 threading and ruling. The fast hub-power chain and the sizing
+  family carry the same factor since `b835ebc`. Applied 2026-10-01 on
+  a ruling by Rod
   (`handovers/handover-2026-10-01-bank-derate-and-5kw-rebaseline.md`).
-  The fast hub-power chain and the sizing family carry the same factor
-  since `b835ebc`.
 
 Boundaries that travel with these rows (quote them with the values):
 
-1. Power only. Thrust carries no measured derate; never copy the
+1. Power only. Thrust carries no measured derate. Never copy the
    exponent onto Ct.
+
 2. Main rotor only. The expansion rotors still use a linear
-   `cos(bank)`; extending 2.65 to them is an open question for Rod
+   `cos(bank)`. Extending 2.65 to them is an open question for Rod
    (`docs/agents/physics-topology.md`, section 4.0.1).
+
 3. Not constant off the peak. A 20° bank retains 0.331 at commanded
-   lambda 6.0; the campaign design point sits inside the flat region.
+   lambda 6.0. The campaign design point sits inside the flat region.
+
 4. A ratio transfer. The retention comes from the measurement rotor
-   (Daisy MVP, coned blade, uniform chord); the absolute Cp belongs to
+   (Daisy MVP, coned blade, uniform chord). The absolute Cp belongs to
    that rotor, not to the campaign winner.
