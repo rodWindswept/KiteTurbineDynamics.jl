@@ -14,13 +14,15 @@ The dashed line is the fail boundary at the unit value. The readout at the row e
 
 The figure covers every airborne ring. The check does not cover the ground ring, which sits on ground support. The figure includes and marks the hub ring. Capture ⟨run and row range⟩.
 
-## Bridge to the dashboard bar (placement open, room ruling wanted)
+## Bridge to the dashboard bar (prose seed, ruled 2026-10-08)
 
-The spec asks the captions to state this relationship. The caption plan does not carry it. Draft for the prose location, at the first mention of the dashboard bar in the report:
+The relationship states once, in prose at the first dashboard-bar mention. The captions carry no form of it. SPEC v2 carries the delta.
+
+Seed text:
 
 The dashboard shows the axial part of this check as a bar of its own. That bar takes the independent maxima of N and N_crit over the ring beams. The axial share of this figure takes the same beam as the interaction. The two values sit in one quantity class and need not agree.
 
-If the room keeps the contrast in the caption, the last three sentences move there as written. No form claims equality.
+No form claims equality.
 
 ## Checks for the consistency pass
 
@@ -29,3 +31,7 @@ If the room keeps the contrast in the caption, the last three sentences move the
 - Never Euler. The ground ring stays out and the hub ring carries a mark.
 
 - Capture cited. Every value slot resolves at GENERATE. This draft carries no value.
+
+- Capture ruled 2026-10-08: the winner operating point, one capture for both plates. The slot fills from the extract.
+
+**Delta** v2 (2026-10-08): bridge placement ruled to prose at the first dashboard-bar mention (SPEC v2). The bridge section is the prose seed. The captions stay unchanged.
