@@ -55,6 +55,18 @@ three before the reporting group exists:
    drawn as lines/blades/rings at a fixed scale, for design families and the
    evolution strip. The island winner PNGs already exist; the reporting need
    is the family renderer.
+5. **Evaluation fidelity** — the rapid (`:warm` static pre-solve) path vs
+   the ODE (`:cold` settle+kickstart) path. First probe
+   (`scripts/probe_rapid_vs_ode_winners.jl`, 2026-10-08): `:cold` reproduces
+   all three recorded winners exactly (P_mean, P_end, FoS, fitness, T_lift
+   to 3 dp), while `:warm` REJECTS all three (P=0, FoS=Inf) — the rapid
+   tier cannot see the best machines. The pool-sample band chart needs:
+   (a) root cause of which warm reject fires (`sizing.omega_eq` nothing/NaN
+   vs settle NaN), (b) a sample of ok designs across the fitness range run
+   under both modes, (c) chart of accept-set agreement plus the value band
+   where both accept. Note: `start_mode=:warm` is the evaluator DEFAULT —
+   any analysis consumer that does not pass `:cold` is measuring the
+   instrument, not the machine.
 
 Phase 0 is signed (dataset committed), so Track C may use Phase 0 numbers
 now. Anything else waits for its phase gate.
