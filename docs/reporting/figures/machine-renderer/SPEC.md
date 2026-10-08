@@ -332,5 +332,19 @@ No check grades itself. No number appears without its register row.
   the analysis room, recorded in the extract. The renderer draws what it
   receives.
 
-*Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R2
-to ⟨append⟩. R3 to ⟨append⟩.*
+- **D7 (PROPOSED at the R1 review; the room rules). Draw from the built state
+  with CairoMakie as the generation engine.** The exact-model guarantee (D1) is
+  served best by drawing the constructed state itself. The winner-pack path
+  already does this (`scratch/hermes_winner_pack.jl`: as-built elevation from
+  `u0`, decode + build + render, no re-derivation), and it ran end-to-end on
+  the register winners (bankderate2 islands 1-3, 2026-10-08; island 3
+  cross-checks all ok). TikZ emission can stay the release backend, fed from
+  the same geometry manifest, if the room wants LaTeX-native typography; either
+  way F-PARSE re-measures the emitted vector. This delta changes the "TikZ
+  emission is the primary target" reading of D5 only if the room adopts it.
+
+*Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R1
+review (Rod, 2026-10-08): prototype geometry corrected — ground ring smallest,
+machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the
+first mock drew the taper inverted and the rotor mid-stack). Engine question
+opened as D7. R2 to ⟨append⟩. R3 to ⟨append⟩.*
