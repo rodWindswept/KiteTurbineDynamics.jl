@@ -6,15 +6,15 @@ rigor as the science. Same discipline rules, same validator gates, same
 provenance culture.
 
 Parent: `docs/plans/2026-10-08-genome-landscape-analysis.md` (the analysis
-this reporting presents). Reporting *prep* runs in parallel with analysis;
-reporting *content* waits on analysis gates.
+this reporting presents). Reporting *prep* runs in parallel with analysis.
+Reporting *content* waits on analysis gates.
 
 ## 1. Principles (rigor parity)
 
 1. **Reporting consumes only from the Numbers Register** (§3). Writers and
    figure bots never read raw CSVs or re-derive physics — that is the
    instrument-floor class of failure in prose form.
-2. **Recorded > derived; derived states its recipe.** Same rule as the code.
+2. **Recorded > derived. Derived states its recipe.** Same rule as the code.
 3. **Honest failures are content.** The dead geometry genes (2026-08-24), the
    voided campaigns, the k-alignment faults, the stale-gate near-miss — these
    are the story of real engineering, and they are what makes the work
@@ -50,7 +50,7 @@ numbers, status mix) — nothing else until Phase 0 closes.
 
 ### @author — narrative architect
 Owns: story arcs and coherence. The journey of the machine through the
-evolutionary search; where we pushed real boundaries; what we achieved.
+evolutionary search. Where we pushed real boundaries. What we achieved.
 Builds the skeleton every piece hangs on, so the series reads as one story,
 not a pile of results. Writes Rod's first-person voice. Never invents
 numbers — quotes the register. Gates: science-validator for factual claims,
@@ -59,15 +59,15 @@ Rod for voice.
 ### @science-writer — the explainer layer
 Owns: university-level explanations. The analogies and plain-language blocks
 that make the physics teachable: a TRPT is a tensegrity shaft that transmits
-torque by tension; transmission capacity is supplied by tension itself; Betz
-and tip-speed ceilings; mass-power scaling laws. Inputs: the register,
+torque by tension. Transmission capacity is supplied by tension itself. Betz
+and tip-speed ceilings. Mass-power scaling laws. Inputs: the register,
 `docs/agents/physics-topology.md`, the AWE-context outline. Outputs:
 explainer blocks keyed to specific figures. Gate: science-validator.
 
 ### @figures-images-diagrams — chart and machine craft
 Owns: (a) data figures to house standards (ktd-chart-design, diagram-patterns,
-scientific-chart-design; one figure per chart, HITL rounds per the diagram
-registry pattern); (b) **the physical machine renders** — genome decoded into
+scientific-chart-design. One figure per chart, HITL rounds per the diagram
+registry pattern). (b) **the physical machine renders** — genome decoded into
 a drawn turbine (lines, blades, rotor count, ring positions, relative sizes)
 at a fixed scale, for design families and for the evolution strip
 (best-per-generation). Works from the Numbers Register only: every figure
@@ -84,26 +84,26 @@ standard), 3 rounds, adapted to the register:
    dual-caption plan. Room-authored where the physics is theirs: the Track C
    charting plans are the spec seeds. Spec depth tiers by figure complexity:
    full spec for interpretive figures (fidelity bands, PCA regions, evolution
-   strips, family renders); a light claim+axes+source spec for routine
+   strips, family renders). A light claim+axes+source spec for routine
    single-claim charts — a 1000-word spec for a bar chart is overhead, not
    rigor.
 2. **GENERATE** — the chart or render, plus the generating script and the
    data-commit + row-range source stamp. Output as vector graphics
-   (PDF/SVG) for LaTeX embedding; machine renders in TikZ where possible
+   (PDF/SVG) for LaTeX embedding. Machine renders in TikZ where possible
    (programmatic geometry fidelity).
 3. **CHECK — external, never self-graded.** Two independent checkers:
    (a) the content check — aero/science validators check the numbers and the
-   house standards against the register and the generating script;
+   house standards against the register and the generating script.
    (b) the visual check — a separate multimodal image-reader (e.g. Gemini)
    grades the visual-quality checklist below from the image itself. Rod does
    the final visual pass. The spec evolves by deltas between rounds, not by
    rewrite.
 
 **Visual-quality checklist** (mechanical, graded from the image, not from
-the spec): finding-oriented title; no text overlaying diagram parts; no
-elements against the image edge; clean border; clean background; element
-scaling appropriate to the figure; every visual channel explained on-chart;
-caption integrated. **Guardrail:** the image-reader never validates numbers
+the spec): finding-oriented title. No text overlaying diagram parts. No
+elements against the image edge. Clean border. Clean background. Element
+scaling appropriate to the figure. Every visual channel explained on-chart.
+Caption integrated. **Guardrail:** the image-reader never validates numbers
 — pixels cannot prove a value. The validators own the numbers, via the
 register and the generating script.
 
@@ -123,9 +123,9 @@ Rod: the final visual and narrative pass.
 | Unit | Content | Owner | Input (gated by) |
 |---|---|---|---|
 | U1 | The AWE landscape: fly-gen vs ground-gen, soft vs rigid, where the TRPT kite turbine fits | @author + @science-writer | awe-knowledge, physics-topology, register |
-| U2 | The levers: parameter sweeps, grid-search bands, PCA thrive/fail regions, the working parameter lines | @figures + @science-writer | landscape plan Phases 1–2 |
-| U3 | The evolution story: DE generations rendered as *the turbines themselves* (best-per-generation strip, design families, relative sizes) | @figures + @author | convergence + decoded genomes (Phase 3) |
-| U4 | Design implications: mass, force, scaling, torque, power of each design choice | @science-writer + @figures | Phase 3 regime table, scaling laws |
+| U2 | The levers: parameter sweeps, grid-search bands, PCA thrive/fail regions, the working parameter lines | @figures-images-diagrams + @science-writer | landscape plan Phases 1–2 |
+| U3 | The evolution story: DE generations rendered as *the turbines themselves* (best-per-generation strip, design families, relative sizes) | @figures-images-diagrams + @author | convergence + decoded genomes (Phase 3) |
+| U4 | Design implications: mass, force, scaling, torque, power of each design choice | @science-writer + @figures-images-diagrams | Phase 3 regime table, scaling laws |
 | U5 | Achievements: Daisy-anchored honesty, honest windows, tension-supplied capacity, the fold, the guards | @author | DECISIONS, trust-log, register |
 | U6 | The failure ledger as story: dead genes, instrument floors, void campaigns | @author + @science-writer | trust-log, archive dirs |
 
@@ -136,8 +136,8 @@ single document and release once, never as separate posts.
 
 1. **The Numbers Register** — without it, the writers will re-derive physics
    from memory and we will relive the 2026-08-24 record errors at report scale.
-2. **The machine renderer** — we already render winners (island report PNGs);
-   the reporting need is a *family* renderer: any decoded genome drawn at a
+2. **The machine renderer** — we already render winners (island report PNGs).
+   The reporting need is a *family* renderer: any decoded genome drawn at a
    fixed scale, so design families and the evolution strip are comparable.
    The "pictures of turbines, not just PCA plots" requirement is a pipeline
    extension, not a drawing task.
@@ -145,17 +145,17 @@ single document and release once, never as separate posts.
    the literature (awe-knowledge skill), validated, not recalled.
 4. **Dual captions** — accessibility rule enforced from figure one.
 5. **Prose validation** — science-validator reads prose for factual claims
-   exactly like it reads code; stop-slop strips the AI voice.
+   exactly like it reads code. Stop-slop strips the AI voice.
 
 ## 6. What can start today (prep, not content)
 
 1. Register template + first entries after Phase 0 signs.
 2. Distribute the bot briefs in the room (Rod dispatches).
-3. Renderer extension spec (@figures + @software-worker).
+3. Renderer extension spec (@figures-images-diagrams + @software-worker).
 4. AWE-context outline (@author + @science-writer).
-5. **Channel plan (ruled 2026-10-08):** repo-hosted report first; then
-   forum.awesystems.info; then the Open Source AWE Sim/Control Signal group;
-   the broader socials last (§8).
+5. **Channel plan (ruled 2026-10-08):** repo-hosted report first. Then
+   forum.awesystems.info. Then the Open Source AWE Sim/Control Signal group.
+   The broader socials last (§8).
 
 ## 7. Sequencing summary
 
@@ -172,10 +172,10 @@ now, in parallel.
    register-linked, bot-friendly) → pandoc → LaTeX (Windswept house
    template) → human-readable PDF release. Toolchain verified on the
    machine: pandoc 3.1.3 + TeX Live 2023 (pdflatex). Figures ship as
-   vector graphics (PDF/SVG); machine renders target TikZ so every drawn
+   vector graphics (PDF/SVG). Machine renders target TikZ so every drawn
    dimension comes programmatically from the decoded genome values —
    geometry fidelity by construction.
-2. **forum.awesystems.info** — the primary community channel. Discourse;
+2. **forum.awesystems.info** — the primary community channel. Discourse.
    Rod posts there as a frequent poster, so the voice is first-person and the
    tone is engineering, not marketing. The deliverable is **one report**:
    all content units assemble into a single document and release once,
@@ -189,7 +189,7 @@ now, in parallel.
    seen the work.
 
 Rule: a public post may only contain numbers that exist as signed register
-entries; the post links the register row.
+entries. The post links the register row.
 
 ## 9. Room phasing (the 6-bot limit)
 

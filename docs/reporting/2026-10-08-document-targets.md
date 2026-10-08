@@ -25,18 +25,22 @@ Main body target: about 10,000 words, about 20 A4 pages in the assembled PDF,
 | 1 | Title, authors, abstract, keywords | - | 250 | 0 | @author | not started | Write last, from the signed register |
 | 2 | Introduction | U1 | 1,200 | 1 figure | @author + @science-writer | prep (`outline/awe-context-outline.md` v1) | Track A reconciliation, then draft prose |
 | 3 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | not started | Register v1 + physics-topology |
-| 4 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures + @science-writer | not started | Landscape Phases 1 to 2 |
-| 5 | Results: evolution | U3 | 1,200 | 2 figures | @figures + @author | not started | Phase 3 + the machine renderer |
-| 6 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures | not started | Phase 3 regime table |
+| 4 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures-images-diagrams + @science-writer | not started | Landscape Phases 1 to 2 |
+| 5 | Results: evolution | U3 | 1,200 | 2 figures | @figures-images-diagrams + @author | prep (figures/machine-renderer SPEC v1, R1 mock) | Phase 3 + renderer |
+| 6 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures-images-diagrams | not started | Phase 3 regime table |
 | 7 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | not started | Track B + the trust log |
 | 8 | Conclusion: achievements | U5 | 700 | 0 | @author | not started | Signed register |
-| 9 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v2) | Track D ratification |
-| 10 | References | - | 25 entries | 0 | TBD (open item 2) | prep (anchor table, outline section 5) | `references.bib` created, sources verified |
+| 9 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v3) | Track D ratification |
+| 10 | References | - | 25 entries | 0 | @science-writer | prep (seed a7ca235, 15 of 18 verified) | 3 source calls, then sources verified |
 | 11 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | not started | Assembly |
 
 Row sum: about 9,750 words, 9 figures, 3 tables. The headroom (1 to 3
 figures, 1 to 3 tables) sits in the budget for the sections that grow as
 Phases 1 to 3 land.
+
+Row 10 detail: @author seeded references.bib at a7ca235 with 18 entries.
+The verification pass e272e6a checks 15 of 18. Three entries wait for a
+source call.
 
 ## 3. Status vocabulary (fixed set)
 
@@ -91,16 +95,39 @@ The release states:
 7. **Terms.** Writers use glossary terms only. A shortcut term with no entry
    is a release blocker, gated like a number.
 
+8. **Rotor model.** A banked rotor uses the cp/ct disc model with the
+   cos(bank)^2.65 derate on power (physics-topology section 4.0.1).
+   Bank is not yaw.
+   The banked expansion model is banned.
+   The derate does not extend to thrust.
+
+9. **Machine figures.** A machine figure draws the built state only: decode,
+   build, render. No re-derivation. A spec fixes no values. Every slot
+   resolves at GENERATE, bound to the register.
+
 ## 6. Open items for the room
 
 1. **Budget sign-off.** Rod confirms the section budgets in section 2. Until
    then they stay proposals, not rulings.
 
-2. **References owner.** The room nominates the owner who builds
-   `docs/reporting/references.bib` from the anchor table and verifies each
-   source.
+2. **References source calls.** Three entries wait for a source decision:
+   Ranneberg EK_FT_0018, the Jamieson deck, the Hancock deck. The options sit
+   in references-verification.md. They block nothing else.
 
 3. **Subagent dispatch.** When the budgets hold, split the remaining
    production into work items: section drafts, figure specs, `references.bib`,
    the machine renderer. Launch subagents against those items. Each work item
    reads this doc first, so the whole amount of work runs against one plan.
+
+## Deltas
+
+- v2 (2026-10-08): rows 4 to 6 pin the figures seat as
+  @figures-images-diagrams.
+  Row 5 moves to prep (renderer SPEC v1, R1 mock, seed c84f874).
+  Row 9 cites glossary v3.
+  Row 10 gains its owner @science-writer (ruling 3a78490) and its seed
+  status (a7ca235, e272e6a).
+  The references-owner open item closes.
+
+- Ledger rules 8 and 9 join. The framework doc pins the same seat name in
+  four places (section 4 table, section 6 item 3).
