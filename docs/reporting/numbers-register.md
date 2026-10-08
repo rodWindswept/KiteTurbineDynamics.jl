@@ -147,3 +147,43 @@ in `scratch/av_counterread_regv1.log`.
 
 Verdict: no discrepancy found. The seven rows stand as signed. Full
 precision lives in the records cited above.
+
+## Rotor-bank note: NR-011 (2026-10-08, science-validator)
+
+This block appends only, under the lead ruling and the amend pattern. No
+signed row changed.
+
+The NR-011 row quotes bank_bot 22°. That value is a genome gene, not a
+rotor angle.
+
+Slot 8 holds it. The layout names slot 8 bank_bottom.
+
+The decode threads a bank gradient across the active rotors. The top
+rotor takes slot 7, bank_top. The lowest rotor takes slot 8 only when
+two or more rotors are active.
+
+The island 3 machine carries one rotor, on the topmost ring. The gradient
+collapses to its top value there. So the rotor bank reads 7.088°.
+No rotor on this machine carries 22°.
+
+A caption that quotes the main rotor bank uses 7.09°, or 7.088° at three
+decimals. The 22° gene drives no drawn blade and no force on this
+machine.
+
+Reproduction: probe scratch/sv_probe_rotor_banks.jl, log
+scratch/sv_probe_rotor_banks.log, at tip bb619a5.
+
+The probe mirrors the winner-pack chain, discrete-gene rounding then
+`design_from_vector_v10` with the campaign knobs, then
+`build_system_from_v10`.
+
+Island 3 readings: slot 7 = 7.088°, slot 8 = 22°. The decoded rotor bank
+reads 7.088°, at ring 6.
+
+The built rotor bank reads 7.088°. Islands 1 and 2 behave the same way.
+Their single rotors carry their slot 7 values, 2.954° and 10.258°.
+
+All three built machines hold zero expansion rotors.
+
+The register keeps NR-011 as signed. This note supplies the threading
+fact for caption use.
