@@ -1,0 +1,49 @@
+# av_twistbridge_check — twist-bridge content check evidence
+
+Seat: aero-validator. Date: 2026-10-08. State: 5367991 (bank-derate-cos2p65).
+Record read only: reads the committed telemetry CSVs; runs no simulator.
+
+Command: `python3 scratch/av_twistbridge_check.py`
+
+## Code sites for the flag -> detector -> formula chain (state 5367991)
+
+- `scripts/run_v13_5kw_masslift.jl:271-272` — `status = r.twist_crossed ? :reject_twist : :reject`
+- `scripts/run_v13_5kw.jl:170-171` — same classification pattern
+- `src/objective_evaluator.jl:454-477` — `twist_collapse_check`: per segment
+  `dastar = 2*asin(min(L_seg / sqrt(2*(L_seg^2 + 2*r_seg^2)), 1))`, `ri in 1:(Nr-1)`,
+  no `has_limit` gate; `crossed |= da > dastar`
+- `src/objective_evaluator.jl:917-921` — window callback: `tr = twist_collapse_check(uc, sys)`;
+  latches `twist_flagged` on `tr.crossed` (after the relax phase)
+- `src/objective_evaluator.jl:1019-1037` — hard reject return: status `:reject`, `twist_crossed=true`
+- `src/objective_evaluator.jl:287-305` — `rejected_eval`: `twist_crossed` defaults false; every other reject path
+- `src/objective_evaluator.jl:1219` — success return passes `twist_flagged[]` (false on that path)
+- `src/trpt_twist_limit.jl:58-110` — the drawn dcrit authority; separate locus, never reads the flag
+
+## Output (verbatim)
+
+```
+total rows: 930
+status mix: {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}
+NR-002 status mix reproduced: 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist
+
+status x twist_crossed:
+  status=clearance_reject   twist_crossed=false -> 110
+  status=ok                 twist_crossed=false -> 508
+  status=reject             twist_crossed=false -> 301
+  status=reject_twist       twist_crossed=true  -> 11
+
+rows with twist_crossed=true (11):
+  (1, 5, 6, 'reject_twist', 1.1918942240443162)
+  (1, 14, 6, 'reject_twist', 1.0293462162374054)
+  (1, 15, 5, 'reject_twist', 1.0937668197767487)
+  (2, 1, 5, 'reject_twist', 1.3494763893190524)
+  (2, 4, 2, 'reject_twist', 1.7959818208157114)
+  (3, 4, 3, 'reject_twist', 1.2507580902813886)
+  (3, 4, 6, 'reject_twist', 1.1762669161852195)
+  (3, 5, 4, 'reject_twist', 1.208813780306634)
+  (3, 5, 9, 'reject_twist', 1.2399202032182282)
+  (3, 6, 4, 'reject_twist', 1.1227169093104192)
+  (3, 7, 1, 'reject_twist', 10.289998684309362)
+
+PASS: twist_crossed=true appears only on reject_twist rows; all ratios > 1.
+```
