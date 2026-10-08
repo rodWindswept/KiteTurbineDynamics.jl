@@ -2,9 +2,9 @@
 
 **Slug** `machine-renderer`
 
-**Status** SPEC v1, prep draft for Round 1. Register v1 awaits signatures. This
-document therefore carries no data values. Angle brackets below mark a binding
-slot. A slot resolves at GENERATE. It never fixes a value here.
+**Status** SPEC v1, R1 open. The science-validator signed register v1 on
+2026-10-08. This document still carries no data values. Angle brackets below
+mark a binding slot. A slot resolves at GENERATE. It never fixes a value here.
 
 **Owner** @figures-images-diagrams. **Paired for the provenance and reproduction
 gates** @software-worker. **Content check** @aero-validator and
@@ -265,7 +265,8 @@ term.
 ## Rounds
 
 - **R1** this spec plus a schematic layout prototype, in HTML, with placeholder
-  shapes. Composition review needs no register numbers. Deltas log below.
+  shapes. Composition review needs no register numbers. The prototype ships in
+  this directory as `prototype.html`. The room reviews composition next.
 
 - **R2** the first scripted render set walks the checks. Image-reader and
   validators. Deltas.
@@ -277,13 +278,14 @@ term.
 
 | slug | mode | title, draft | status | source | issues |
 |---|---|---|---|---|---|
-| `machine-evolution-strip` | strip | ⟨finding-oriented title at R1⟩ | planned | Track C extract | awaiting extract and register v1 |
+| `machine-evolution-strip` | strip | ⟨finding-oriented title at R1⟩ | planned | Track C extract | awaiting the Track C extract |
 | `machine-family-<name>` | family | ⟨family name at Phase 3⟩ | planned | Track C extract | awaiting families |
-| `machine-winner-hero` | hero | ⟨title at R1⟩ | planned | winner extract | awaiting register v1 |
+| `machine-winner-hero` | hero | ⟨title at R1⟩ | planned | winner extract | awaiting the winner extract |
 
 ## Open inputs. Requests to the rooms.
 
-1. **Register v1 signatures**, the rows every render cites.
+1. **Register v1 signatures**, the rows every render cites. Resolved on
+   2026-10-08. All sixteen rows now carry validator signatures.
 
 2. **Track C extracts**, one provenance-stamped file per figure. The strip list
    needs best-per-generation genomes, identity labels, and the recorded
@@ -330,4 +332,5 @@ No check grades itself. No number appears without its register row.
   the analysis room, recorded in the extract. The renderer draws what it
   receives.
 
-*Delta rounds: R1 to ⟨append⟩. R2 to ⟨append⟩. R3 to ⟨append⟩.*
+*Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R2
+to ⟨append⟩. R3 to ⟨append⟩.*

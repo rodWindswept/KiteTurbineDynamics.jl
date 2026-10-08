@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>machine renderer, round one composition mock</title>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { width: 840px; max-width: 100%; text-align: left; padding: 0.25rem 0 0.75rem; }
+  .mock-note { font-size: 12px; color: var(--muted-foreground, #6b7280); margin: 0 0 8px 2px; }
+  .card { background: #ffffff; color: #1a1a1a; border: 1px solid #d9d9d9; border-radius: 2px;
+          padding: 18px 20px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .fig-title { font-size: 15px; font-weight: 600; margin: 0 0 3px; }
+  .fig-sub { font-size: 11.5px; color: #666; margin: 0 0 12px; }
+  .strip { display: flex; gap: 12px; align-items: stretch; }
+  .panel { flex: 1 1 0; border: 1px solid #e2e2e2; border-radius: 2px; background: #fff; padding: 6px 4px 0; }
+  .panel svg { display: block; width: 100%; height: auto; }
+  .plabel { border-top: 1px solid #e2e2e2; margin-top: 4px; padding: 4px 2px 5px;
+            font-size: 10.5px; color: #555; text-align: center; }
+  .foot { margin-top: 14px; border-top: 1.5px solid #222; padding-top: 9px; }
+  .foot-row { display: flex; gap: 18px; align-items: flex-end; justify-content: space-between; }
+  .scalebar { font-size: 10.5px; color: #333; }
+  .scalebar .bar { height: 7px; border: 1px solid #333; border-top: none; width: 120px; margin-bottom: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 10.5px; color: #333; max-width: 560px; }
+  .legend .li { display: flex; align-items: center; gap: 5px; }
+  .sw { display: inline-block; width: 14px; height: 0; border-top: 3px solid #000; }
+  .source { margin-top: 10px; font-size: 10px; color: #666; }
+  .caption { margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px; font-size: 11px; color: #333; }
+  .caption .ste { color: #555; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="mock-note">Round one composition mock. Schematic placeholder shapes only. No campaign data.</p>
+
+  <div class="card">
+    <div class="fig-title">⟨finding-oriented title, filled at GENERATE⟩</div>
+    <div class="fig-sub">⟨one-line subclaim, register-bound at GENERATE⟩</div>
+
+    <div class="strip">
+
+      <div class="panel">
+        <svg viewBox="0 55 190 205" role="img" aria-label="schematic machine, placeholder">
+          <line x1="95" y1="16" x2="95" y2="250" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+          <path d="M61,248 L65,214 L69,182 L73,152 L76,126 L78,106" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <path d="M129,248 L125,214 L121,182 L117,152 L114,126 L112,106" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <line x1="61" y1="248" x2="129" y2="248" stroke="#111" stroke-width="3.4" stroke-linecap="round"/>
+          <line x1="65" y1="214" x2="125" y2="214" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="69" y1="182" x2="121" y2="182" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="73" y1="152" x2="117" y2="152" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="76" y1="126" x2="114" y2="126" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="78" y1="106" x2="112" y2="106" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="53" y1="152" x2="79" y2="152" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="111" y1="152" x2="137" y2="152" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="75" y1="146" x2="50" y2="168" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="115" y1="146" x2="140" y2="168" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="plabel">⟨generation label⟩</div>
+      </div>
+
+      <div class="panel">
+        <svg viewBox="0 55 190 205" role="img" aria-label="schematic machine, placeholder">
+          <line x1="95" y1="16" x2="95" y2="250" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+          <path d="M59,248 L63,210 L67,176 L71,146 L74,118 L76,94" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <path d="M131,248 L127,210 L123,176 L119,146 L116,118 L114,94" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <line x1="59" y1="248" x2="131" y2="248" stroke="#111" stroke-width="3.4" stroke-linecap="round"/>
+          <line x1="63" y1="210" x2="127" y2="210" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="67" y1="176" x2="123" y2="176" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="71" y1="146" x2="119" y2="146" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="74" y1="118" x2="116" y2="118" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="76" y1="94" x2="114" y2="94" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="43" y1="118" x2="77" y2="118" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="113" y1="118" x2="147" y2="118" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="73" y1="112" x2="40" y2="140" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="117" y1="112" x2="150" y2="140" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="plabel">⟨generation label⟩</div>
+      </div>
+
+      <div class="panel">
+        <svg viewBox="0 55 190 205" role="img" aria-label="schematic machine, placeholder">
+          <line x1="95" y1="16" x2="95" y2="250" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+          <path d="M71,248 L74,212 L76,180 L78,150 L80,124 L81,104" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <path d="M119,248 L116,212 L114,180 L112,150 L110,124 L109,104" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <line x1="71" y1="248" x2="119" y2="248" stroke="#111" stroke-width="3.4" stroke-linecap="round"/>
+          <line x1="74" y1="212" x2="116" y2="212" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="76" y1="180" x2="114" y2="180" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="78" y1="150" x2="112" y2="150" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="80" y1="124" x2="110" y2="124" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="81" y1="104" x2="109" y2="104" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="59" y1="180" x2="83" y2="180" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="107" y1="180" x2="131" y2="180" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="81" y1="175" x2="56" y2="196" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="109" y1="175" x2="134" y2="196" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="plabel">⟨generation label⟩</div>
+      </div>
+
+      <div class="panel">
+        <svg viewBox="0 55 190 205" role="img" aria-label="schematic machine, placeholder">
+          <line x1="95" y1="16" x2="95" y2="250" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+          <path d="M65,248 L70,214 L74,184 L77,158 L79,134 L80,110 L79,90" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <path d="M125,248 L120,214 L116,184 L113,158 L111,134 L110,110 L111,90" fill="none" stroke="#98a0a8" stroke-width="1.1"/>
+          <line x1="65" y1="248" x2="125" y2="248" stroke="#111" stroke-width="3.4" stroke-linecap="round"/>
+          <line x1="70" y1="214" x2="120" y2="214" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="74" y1="184" x2="116" y2="184" stroke="#1f8fff" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="77" y1="158" x2="113" y2="158" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="79" y1="134" x2="111" y2="134" stroke="#ff8c00" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="80" y1="110" x2="110" y2="110" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="79" y1="90" x2="111" y2="90" stroke="#2e8c57" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="55" y1="134" x2="82" y2="134" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="108" y1="134" x2="135" y2="134" stroke="#b32222" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="80" y1="128" x2="52" y2="150" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="110" y1="128" x2="138" y2="150" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="plabel">⟨generation label⟩</div>
+      </div>
+
+    </div>
+
+    <div class="foot">
+      <div class="foot-row">
+        <div class="scalebar"><div class="bar"></div>⟨scale⟩</div>
+        <div class="legend">
+          <span class="li"><span class="sw" style="border-color:#111"></span>ground ring</span>
+          <span class="li"><span class="sw" style="border-color:#1f8fff"></span>ring, transmission</span>
+          <span class="li"><span class="sw" style="border-color:#ff8c00"></span>ring, cone</span>
+          <span class="li"><span class="sw" style="border-color:#2e8c57"></span>ring, harvest</span>
+          <span class="li"><span class="sw" style="border-color:#b32222"></span>rotor annulus</span>
+          <span class="li"><span class="sw" style="border-color:#3a3a3a; border-top-width:2px"></span>blade</span>
+          <span class="li"><span class="sw" style="border-color:#98a0a8"></span>TRPT lines</span>
+        </div>
+      </div>
+      <div class="source">source: ⟨data commit⟩ · ⟨extract⟩ · ⟨register rows⟩ · ⟨script commit⟩</div>
+    </div>
+
+    <div class="caption">
+      <div>⟨plain caption. One sentence for a first-year reader.⟩</div>
+      <div class="ste">⟨STE caption. Technical. Every number a register citation.⟩</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
