@@ -68,9 +68,15 @@ explainer blocks keyed to specific figures. Gate: science-validator.
 Owns: (a) data figures to house standards (ktd-chart-design, diagram-patterns,
 scientific-chart-design; one figure per chart, HITL rounds per the diagram
 registry pattern); (b) **the physical machine renders** — genome decoded into
-a drawn turbine (lines, blades, ring positions, relative sizes), for design
-families and for the evolution strip. Gate: aero-validator + science-validator,
-visual pass by Rod.
+a drawn turbine (lines, blades, rotor count, ring positions, relative sizes)
+at a fixed scale, for design families and for the evolution strip
+(best-per-generation). Works from the Numbers Register only: every figure
+cites its signed register rows, carries a data-commit + row-range source
+stamp, and ships with the generating script. Dual captions on every figure
+(plain English + STE-clean technical). Figure families from consultation
+Track C: evaluation-fidelity band (rapid vs ODE), lever sensitivity panels,
+PCA thrive/fail regions, scaling laws. Gate: aero-validator +
+science-validator, visual pass by Rod.
 
 ### Validators (unchanged roles, new surface)
 science-validator: every factual sentence, every register entry.
