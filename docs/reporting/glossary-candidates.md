@@ -211,7 +211,7 @@ Writers pin each display form once and reuse it.
 
 Name the ring check as the beam-column interaction, not Euler.
 
-**Crossing limit (the twist bridge).** The row above is the proposed display form. The census prose and any caption that draws the limit resolve their slot from it. The slot waits on the bridge ruling. Provenance note: the 2026-09-25 TRPT crosscheck (F1) calls the limit a misattribution. It is not the thesis over-twist limit, and not a crossing limit of any model. The findings sit with the room. The corrections are not applied. This pin follows the record. A re-name would land as a delta, not an edit.
+**Crossing limit (the twist bridge).** The row above is the proposed display form. The census prose and any caption that draws the limit resolve their slot from it. The slot waits on the bridge ruling. The caption drafts write the name as "geometric line-crossing limit". One spelling wins at ratification, and the drafts conform. Provenance note: the 2026-09-25 TRPT crosscheck (F1) calls the limit a misattribution. It is not the thesis over-twist limit, and not a crossing limit of any model. The findings sit with the room. The corrections are not applied. This pin follows the record. A re-name would land as a delta, not an edit.
 
 ## 7. Naming traps (the retire list)
 
