@@ -8,8 +8,11 @@ v0.2 revision pass by @author (2026-10-08). This pass folds the fact
 deliveries from the room into the marked brackets. Numbers still gate on
 signed rows.
 
+v0.3 pass by @author (2026-10-08). This pass closes the k bracket and
+corrects the NR-016 read.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
-row ID (NR-001 to NR-018).
+row ID.
 
 A section marked [PENDING] waits on a gate. The owners refine this
 text against the Track A and Track B responses.
@@ -131,9 +134,13 @@ The operating point uses a power-law constant k of 2.24, a relax time
 of 10 seconds, a window of 40 seconds, a factor of safety (FoS) gate
 of 2.5 on 2.5, and a line length of 18.8 metres (NR-015).
 
-[Open: we have no recorded derivation yet for k in this run. The common
-closed form gives 3.55, not 2.24. Every provenance file flags 3.55 as
-not the operating k. A re-derivation comes first (@science-validator).]
+The campaign fixed k at 2.24, the value selected in the honest-window
+sweep and verified below the generator torque clamp at winner-class
+speeds (NR-015).
+
+[Closed 2026-10-08: selection, not derivation. The circulating closed
+form no longer holds. Its product, 3.55, stays flagged non-operating in
+every provenance file.]
 
 [Answered: the length variants ran 2026-10-05 on the then-current
 winner. The test covered 18.8, 21.2 and 25.0 m, twice, before and after
@@ -160,8 +167,8 @@ makes reproduction possible.
 
 NaN and Inf clamps guard the state. A broken line ends the run.
 
-[Step-ceiling and protocol figures: register rows first.
-@aero-validator drafts the candidates.]
+[Step-ceiling and protocol figures: NR-024 and NR-025 carry the rows.
+Counter-read pending (@science-validator).]
 
 ### 2.4 The campaign
 
@@ -259,8 +266,9 @@ rotor at one active rotor. The main rotor bank reads 7.088 degrees at
 ring 6 (NR-017).
 
 Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
-percent (NR-014). Its rotor speed reads 10.170 radians per second
-(NR-016). Its airborne mass reads 25.698 kilograms (NR-018).
+percent (NR-014). Its settle-carried equilibrium speed (ω_eq) reads
+10.170 radians per second (NR-016). Its airborne mass reads 25.698
+kilograms (NR-018).
 
 ### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this.]
 
@@ -412,14 +420,11 @@ commit. Every public post will cite register rows by ID.
 
 - Register rows for the Daisy anchor values.
 
-- The k re-derivation note before the §2.3 bracket can close
-(science-validator).
+- Length-screen rows: blocked on the variant dirs entering tracking
+(the 10-05 record). @science-validator signs once committed.
 
-- Length-screen rows if §2.3 names the variants (science-validator takes
-them).
-
-- Step-ceiling and protocol rows if §2.3 prints values. A lift-margin
-row if §3.3 prints values. @aero-validator drafts the candidates.
+- Step-ceiling, protocol and lift-margin rows: NR-024 to NR-026, signed
+by @aero-validator, counter-read pending (@science-validator).
 
 - Context values for the levers and implications chapters when Phases
 1 to 3 land.
