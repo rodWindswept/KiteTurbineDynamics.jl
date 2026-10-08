@@ -15,6 +15,11 @@ FAIL=0
 
 # 1. STE linter on staged markdown (blocks at >= 2.0 violations/100w)
 MD_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.(md|markdown)$' || true)
+# STE exemption list (.ste-exempt): historical ledgers, amend-only by
+# convention. New entries in them must still be written STE-clean.
+if [ -f .ste-exempt ]; then
+    MD_FILES=$(printf '%s\n' "$MD_FILES" | grep -vxFf <(grep -vE '^\s*(#|$)' .ste-exempt) || true)
+fi
 if [ -n "$MD_FILES" ]; then
     python3 ste-lint.py --fail-above 2.0 $MD_FILES || FAIL=1
 fi
