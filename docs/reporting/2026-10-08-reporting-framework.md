@@ -208,3 +208,33 @@ The current room has no writer/figure bots and a 6-bot cap. Split by phase:
   as they land.
 - **Handover:** the reporting room boots from a handover doc (skeleton now,
   filled at register v1), not from chat history.
+
+## 10. Scientific structure and citations (ruled 2026-10-08)
+
+The report is a **scientific paper** — standard structure, standard
+elements, not a blog series. Content units map onto the classic skeleton:
+
+| Scientific section | Content |
+|---|---|
+| Title, authors, abstract, keywords | written last, from the signed register |
+| Introduction | U1 — the AWE landscape, where the TRPT kite turbine fits |
+| Methods | the model (TRPT physics, genome, evaluator, honest windows), the campaign (DE islands, gates), the fidelity probes |
+| Results | U2 levers, U3 evolution story, U4 design implications |
+| Discussion | U6 failure ledger with lessons, evaluation fidelity (Track C item 5), Track E boundaries (blade FoS, bridle support/drag, warm-path) |
+| Conclusion | U5 — what was achieved, where boundaries were pushed |
+| Nomenclature | glossary (Track D) |
+| References | `docs/reporting/references.bib` (below) |
+| Data availability | dataset, scripts, provenance commits — all committed and cited |
+| Reproducibility | scripts, configs, seeds, k single-source, the reproduction probes |
+
+Standard elements throughout: SI units, numbered equations, numbered
+figures with dual captions, numbered tables.
+
+**Citation discipline — the analogue of the register.** Every citation must
+have a verified BibTeX entry in `docs/reporting/references.bib` carrying a
+resolvable source (DOI / arXiv / URL). The retrieval layer is the
+`awe-knowledge` skill (installed on all three report-team profiles, verified
+2026-10-08) plus `literature-crosscheck`. A citation without a verified
+entry is a release blocker, gated exactly like a number without a register
+row — a hallucinated citation is a fabricated number in disguise.
+Pandoc renders the bibliography in the PDF via citeproc.
