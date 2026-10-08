@@ -112,12 +112,47 @@ Each unit: numbered figures and prose blocks, registered, gated, released.
 2. Distribute the bot briefs in the room (Rod dispatches).
 3. Renderer extension spec (@figures + @software-worker).
 4. AWE-context outline (@author + @science-writer).
-5. **Channel decision (Rod):** repo-hosted report → Substack/newsletter series
-   → AWES-conference deck → social teasers. Content builds in the repo either
-   way; only the packaging changes.
+5. **Channel plan (ruled 2026-10-08):** repo-hosted report first; then
+   forum.awesystems.info; then the Open Source AWE Sim/Control Signal group;
+   the broader socials last (§8).
 
 ## 7. Sequencing summary
 
 Analysis Phases 0–3 (landscape plan) → register v1 → U2/U3/U4 content →
 U1/U5/U6 narrative → validator gates → Rod's pass → release per channel
-decision. Reporting prep (§6) runs now, in parallel.
+plan (§8). Reporting prep (§6) runs now, in parallel.
+
+## 8. Channel plan (ruled 2026-10-08)
+
+1. **Repo-hosted report** — the canonical, validator-gated artifact. Every
+   public post links to it and cites register entries only.
+2. **forum.awesystems.info** — the primary community channel. Discourse;
+   Rod posts there as a frequent poster, so the voice is first-person and the
+   tone is engineering, not marketing. Relevant categories: System Design,
+   Blade Design, Math & Physics, Engineering, News. One topic per content
+   unit, released as the register signs them.
+3. **Open Source AWE Sim/Control Signal group** — the practitioners' channel,
+   same releases, tooling-focused framing.
+4. **Broader socials** — last, and only after the community channels have
+   seen the work.
+
+Rule: a public post may only contain numbers that exist as signed register
+entries; the post links the register row.
+
+## 9. Room phasing (the 6-bot limit)
+
+The current room has no writer/figure bots and a 6-bot cap. Split by phase:
+
+- **Analysis room (unchanged).** Keeps the landscape plan Phases 0–3 and the
+  campaign work. Writers are not needed here.
+- **Reporting room (new).** Composition: @hermes (lead), @author,
+  @science-writer, @figures-images-diagrams, plus Rod — five seats, one spare
+  for a rotating validator when a dispute needs live adjudication.
+- **The reporting trio works only from:** the Numbers Register, this
+  framework, the handover doc, and signed analysis docs. They never touch
+  simulation context directly — the register is the firewall.
+- **Validators review via repo artifacts** (their existing rooms / Bot
+  Chats), not by residency: sign register entries, figures, and prose blocks
+  as they land.
+- **Handover:** the reporting room boots from a handover doc (skeleton now,
+  filled at register v1), not from chat history.
