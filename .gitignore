@@ -48,6 +48,10 @@ trajectory_analysis/
 # The TRPT reference values are checked source material, not scratch output.
 # They belong in git like the .md files beside them.
 !docs/validation/trpt-reference/*.csv
+# Figure extracts are checked source material, tracked like the .md files
+# beside them.
+!docs/reporting/figures/**/extract-*.csv
+!docs/reporting/figures/**/extract-*.log
 # Campaign logs — but NOT stray logs elsewhere
 !scripts/results/**/*.log
 
