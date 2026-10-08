@@ -59,20 +59,22 @@ function main()
         blocking_factor = BLOCKING_WIND_FACTOR_5KW,
     )
 
-    println("mode | island | P_mean kW | P_end kW | FoS_min | fitness kg | T_lift N | status")
-    println("-------------------------------------------------------------------------------")
+    println("mode | island | P_mean kW | P_end kW | FoS_min | fitness kg | T_lift N | omega_eq | status")
+    println("----------------------------------------------------------------------------------------")
     for island in 1:3
         best, ci = recorded_row(island)
         v = vec(readdlm(joinpath(RESULTS, "island_$island/best_vector.csv"), ',', Float64))
         for mode in (:warm, :cold)
+            t0 = time()
             r = KiteTurbineDynamics.evaluate_windowed(
                 v, PROFILE_ELLIPTICAL, p_base, cfg;
                 start_mode = mode,
                 lift_device = lift_for,
                 fitness_fn = (P, F, c, m) -> KiteTurbineDynamics.appropriate_mass_fitness(P, F, c, m),
             )
-            @printf("%-5s | %3d     | %8.3f | %8.3f | %7.3f | %10.3f | %7.1f | %s\n",
-                mode, island, r.P_mean, r.P_end, r.FoS_min, r.fitness, r.T_lift, r.status)
+            @printf("%-5s | %3d     | %8.3f | %8.3f | %7.3f | %10.3f | %7.1f | %8.3f | %6.1fs | twist=%4.2f broken=%s | %s\n",
+                mode, island, r.P_mean, r.P_end, r.FoS_min, r.fitness, r.T_lift, r.ω_eq,
+                time() - t0, r.twist_ratio, r.line_broken, r.status)
             flush(stdout)
         end
         @printf("rec  | %3d     | %8.3f | %8.3f | %7.3f | %10.3f | %7.1f | ok\n",

@@ -56,17 +56,21 @@ three before the reporting group exists:
    evolution strip. The island winner PNGs already exist; the reporting need
    is the family renderer.
 5. **Evaluation fidelity** — the rapid (`:warm` static pre-solve) path vs
-   the ODE (`:cold` settle+kickstart) path. First probe
-   (`scripts/probe_rapid_vs_ode_winners.jl`, 2026-10-08): `:cold` reproduces
-   all three recorded winners exactly (P_mean, P_end, FoS, fitness, T_lift
-   to 3 dp), while `:warm` REJECTS all three (P=0, FoS=Inf) — the rapid
-   tier cannot see the best machines. The pool-sample band chart needs:
-   (a) root cause of which warm reject fires (`sizing.omega_eq` nothing/NaN
-   vs settle NaN), (b) a sample of ok designs across the fitness range run
-   under both modes, (c) chart of accept-set agreement plus the value band
-   where both accept. Note: `start_mode=:warm` is the evaluator DEFAULT —
-   any analysis consumer that does not pass `:cold` is measuring the
-   instrument, not the machine.
+   the ODE (`:cold` settle+kickstart) path. Probes
+   (`scripts/probe_rapid_vs_ode_winners.jl`,
+   `scripts/probe_warm_reject_cause.jl`, 2026-10-08):
+   `:cold` reproduces all three recorded winners exactly (P_mean, P_end,
+   FoS, fitness, T_lift to 3 dp). `:warm` rejects all three — **root cause
+   found: the rope-break gate** (`broken=true`, near-instant). The warm
+   start's ring-velocity injection produces a transient that over-strains a
+   TRPT line past the 3.5% break limit during the relax run. Prime suspect
+   for the fix: the evaluator runs relax+window as one sim with
+   `breaks_enabled=true`, while the 2026-09-16 ruling (and the gate's own
+   practice) enables rope-breaks on the measurement window only. Remaining
+   work: (a) rule that discrepancy, (b) pool-sample band chart — accept-set
+   agreement plus value band where both accept, (c) note: `start_mode=:warm`
+   is the evaluator DEFAULT — analysis consumers that do not pass `:cold`
+   are measuring the instrument, not the machine.
 
 Phase 0 is signed (dataset committed), so Track C may use Phase 0 numbers
 now. Anything else waits for its phase gate.
@@ -83,6 +87,23 @@ physics-topology — or are introduced **with a definition** at first use.
 - The room's list becomes `docs/reporting/glossary.md` — the writers may only
   use glossary terms. A shortcut-jargon term that lands without a glossary
   entry is a release blocker, gated like a number.
+
+## Track E — Known model boundaries (mandatory honesty statements)
+
+The report must state these boundaries plainly; they are part of the
+valid-science case, not footnotes:
+
+1. **Blade integrity is not checked.** `min_fos_blade_root` is hard `Inf`
+   and the full beam-on-supports blade model is deferred (PRD 0006:147).
+   The report must say the rotor blades are not yet structurally gated in
+   this analysis.
+2. **Flown blades have more bridle support than the model.** The blades as
+   flown on existing rotors carry tether-to-blade bridling that resists
+   thrust and expansion forces more capably than the model's
+   unbridled-blade assumption — and that bridling also introduces drag
+   effects which are not included in the model.
+3. Frame both as boundaries the next model revisions close, not as
+   weaknesses hidden from the reader.
 
 ## Response format
 
