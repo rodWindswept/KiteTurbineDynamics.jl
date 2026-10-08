@@ -23,16 +23,16 @@ Main body target: about 10,000 words, about 20 A4 pages in the assembled PDF,
 | # | Section (scientific structure) | Unit | Words | Figures / tables | Owner | Status | Next gate |
 |---|---|---|---|---|---|---|---|
 | 1 | Title, authors, abstract, keywords | - | 250 | 0 | @author | not started | Write last, from the signed register |
-| 2 | Introduction | U1 | 1,200 | 1 figure | @author + @science-writer | prep (`outline/awe-context-outline.md` v1) | Track A reconciliation, then draft prose |
-| 3 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | not started | Register v1 + physics-topology |
+| 2 | Introduction | U1 | 1,200 | 1 figure | @author + @science-writer | drafting (v0.1 lead pass) | Track A reconciliation, then draft prose |
+| 3 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | drafting (v0.1 lead pass) | Register v1 + physics-topology |
 | 4 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures-images-diagrams + @science-writer | not started | Landscape Phases 1 to 2 |
 | 5 | Results: evolution | U3 | 1,200 | 2 figures | @figures-images-diagrams + @author | prep (figures/machine-renderer SPEC v1, R1 mock) | Phase 3 + renderer |
 | 6 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures-images-diagrams | not started | Phase 3 regime table |
-| 7 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | not started | Track B + the trust log |
-| 8 | Conclusion: achievements | U5 | 700 | 0 | @author | not started | Signed register |
+| 7 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | drafting (v0.1 lead pass) | Track B + the trust log |
+| 8 | Conclusion: achievements | U5 | 700 | 0 | @author | drafting (v0.1 lead pass) | Signed register |
 | 9 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v3) | Track D ratification |
 | 10 | References | - | 25 entries | 0 | @science-writer | prep (seed a7ca235, 15 of 18 verified) | 3 source calls, then sources verified |
-| 11 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | not started | Assembly |
+| 11 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | drafting (v0.1 lead pass) | Assembly |
 
 Row sum: about 9,750 words, 9 figures, 3 tables. The headroom (1 to 3
 figures, 1 to 3 tables) sits in the budget for the sections that grow as
@@ -120,6 +120,11 @@ The release states:
    reads this doc first, so the whole amount of work runs against one plan.
 
 ## Deltas
+
+- v3 (2026-10-08): first-draft pass lands
+  (`docs/reporting/drafts/2026-10-08-report-first-draft.md`, lead pass
+  by @hermes). Rows 2, 3, 7, 8 and 11 move to drafting. Owners refine
+  against the Track A and Track B responses.
 
 - v2 (2026-10-08): rows 4 to 6 pin the figures seat as
   @figures-images-diagrams.
