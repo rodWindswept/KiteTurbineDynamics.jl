@@ -194,3 +194,10 @@ the exact wording.
 ## Deltas
 
 - v1 (2026-10-08): seed from the repo record, per the ask of Rod.
+
+- v2 (2026-10-08): the software-ledger handoff from @hermes is logged for the
+  Track B fold: the two k-alignment faults (2026-08-13, 2026-08-24), the
+  voided campaigns (blade-mass law 2026-08-22; rotorcount doubly void), the
+  dead-gene examples (2026-08-14 taper divergence, 2026-08-26 rotor
+  off-by-one), and the stale-gate near-miss (FoS floor guard, 2026-08-22).
+  The §4.2 entries of the report draft v0.2 carry the same facts.
