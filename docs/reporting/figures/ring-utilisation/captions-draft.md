@@ -24,6 +24,13 @@ The dashboard shows the axial part of this check as a bar of its own. That bar t
 
 No form claims equality.
 
+## Slotting ruling (author, 2026-10-08)
+
+The pair slots in §3.4, the levers chapter, directly beside the census and
+envelope figures — the mechanism close-up behind both. Reading order: census,
+envelope, ring utilisation, twist limit. Ruling shared with the companion
+draft (`twist-limit/captions-draft.md`); figure-map rows 6 and 7 move on it.
+
 ## Checks for the consistency pass
 
 - Ledger strings used, one form each: ring utilisation, axial share, bending share, ring FoS, fail boundary, beam-column interaction.
@@ -35,3 +42,5 @@ No form claims equality.
 - Capture ruled 2026-10-08: the winner operating point, one capture for both plates. The slot fills from the extract.
 
 **Delta** v2 (2026-10-08): bridge placement ruled to prose at the first dashboard-bar mention (SPEC v2). The bridge section is the prose seed. The captions stay unchanged.
+
+**Delta** v3 (2026-10-08): slotting ruled to §3.4 beside the census and envelope figures (author); shared with the companion draft.

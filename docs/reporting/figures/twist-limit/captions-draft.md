@@ -32,6 +32,36 @@ Notes:
 
 - No form claims the two angles equal.
 
+## No-limit annotation wording (drafted with @author, under the ledger)
+
+The plate's no-limit explanation slot carries one pinned wording. Ledger
+strings only; one form, reused in labels, captions and prose alike.
+
+> **no limit** — the segment's tether is shorter than the sum of its end
+> radii. Its lines cannot reach the axis, so no over-twist limit exists.
+> Tether break strain and ring compression carry the limit instead.
+
+Notes:
+
+- This is the answer to the R1 bracket "(why no limit?)": the geometry is the
+  reason — a tether that short cannot bring its lines across the axis, so the
+  torque peak that defines the limit cannot occur.
+- The mock placeholder's "bay" is retired: the ledger term is segment
+  (`S1…S(n-1)`). "the line's break strain" upgrades to the glossary v4 form:
+  tether break strain and ring compression.
+- No value appears in the annotation. Scale and readouts bind at GENERATE from
+  the capture.
+
+## Slotting ruling (author, 2026-10-08)
+
+The pair slots in §3.4, the levers chapter, directly beside the census and the
+envelope figures — the mechanism close-up behind both. Reading order: census
+(which designs die), envelope (where the family twists), ring utilisation,
+twist limit. The crossing-limit bridge sentence lands in the census prose
+(scoped above). The pair waits on the extract only, not on the landscape
+phases; only the slot lives in §3.4. Figure-map rows 6 and 7 move on this
+ruling.
+
 ## Checks for the consistency pass
 
 - Ledger strings used, one form each: transmitted twist, δcrit, no limit, segment torque, torsional capacity.
@@ -47,3 +77,5 @@ Notes:
 **Delta** v2 (2026-10-08): the crossing-limit bridge joins after the R1 content check. The census gates on a different angle than δcrit.
 
 **Delta** v3 (2026-10-08): placement ruled scoped. The pair becomes the census-prose seed. The display-form slot resolves from the glossary v5 row, pending Track D ratification.
+
+**Delta** v4 (2026-10-08): no-limit annotation wording pinned (author seat, under the ledger); slotting ruled to §3.4 beside the census and envelope figures.
