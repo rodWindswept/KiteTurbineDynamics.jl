@@ -2,7 +2,7 @@
 
 **Purpose:** Shared cross-instance truth source for both Hermes instances (laptop + desktop) working on KiteTurbineDynamics.jl.  Durable state lives version-controlled, not in the private memory of either instance.  Read at session start.
 
-**Last updated:** 2026-10-03
+**Last updated:** 2026-10-08
 
 ## Duplicate-Representation Audit
 
@@ -77,6 +77,18 @@ Every confirmed instrument fault with its fix commit, so neither instance re-dis
 | 2026-07-22 | Wrong protocol in anchor batch | k_best → 1000 bound. LHS 0/40 valid. Overnight batch produced garbage | `recampaign_anchors.jl:100` called `warmstart_with_k_bracket` (flawed fast path) instead of full-protocol fallback | Superseded anchors.csv with banner. Batch not yet re-run |
 | 2026-07-22 | Forward Euler blowup on k·ω² MPPT | 1000-1900 kW super-Betz spikes. FoS floor 0.04-0.13 across all k | `simulation.jl:159`. Explicit Euler on positive-feedback `τ=k·ω²` term, no magnitude cap | `d285139`: semi-implicit ground-ring update `ω' = (ω+dt·τ_other/I)/(1+dt·k·ω/I)` |
 | 2026-07-22 | dt-unscaled orbital damping | DT-refinement gets WORSE with smaller dt (DT/4 → 10⁷⁶ kW overflow) | `initialization.jl:539`. `v_orbital + lin_damp * v_osc` applied per-step without dt scaling. Halving dt doubles projections | FIXED: all three per-step velocity dampers dt-scaled via `exp(-rate·dt)`. `orbital_damp_rope_velocities!` (`f71c7a0`), `settle_to_equilibrium` velocity kill, `simulate()` bearing damper (`17cc6f6`). Semi-implicit k·ω² braking also applied (`d285139`). Integrator loop is clean. Residual DT-refinement non-convergence at lin_damp=0.05 comes from damping-rate calibration (see Unanchored Parameters). |
+
+---
+
+## Campaign Dataset Audits
+
+Datasets that feed cross-seat analysis, with a trust verdict. Read the verdict before quoting numbers from a dataset.
+
+| Date | Dataset | Ref | Verdict | Recorded limits |
+|------|---------|-----|---------|-----------------|
+| 2026-10-08 | `v13_5kw_masslift_len18.8_rotorcount_bankderate2` — 930 evals, 3 islands | commit `dd3cc6a`, branch `bankderate2-results` | **PASS — analysis may start.** The winner reproduces exactly from the recorded genome. No gen-0/gen-1 discontinuity. No cross-island anomaly. No non-finite FoS on surviving rows | (1) The run logs cited in PROVENANCE.md were never written — the fire command omitted the tee step. Stdout surrogates carry the timings. (2) Telemetry records 8 of the 15 `ObjectiveResult` fields. The 7 unrecorded: `ω_eq`, `P_range`, `drifted`, `stationary`, `util_a`, `util_b`, `line_broken`. (3) Fitness includes the live twist and stationarity terms of the evaluator. Second read: science-validator (pending) |
+
+Full record: `docs/validation/2026-10-08-phase0-bankderate2-audit.md`.
 
 ---
 
@@ -206,6 +218,7 @@ The truth sits between: the instrument was broken, the design has no measurement
 - [ ] `lin_damp` is dt-scaled ✓ (confirmed post-fix)
 - [ ] `python3 scripts/kwarg_default_audit.py --check`. No undocumented HIGH-danger defaults
 - [ ] Provenance stamp on output CSV: git hash, physics-era, geometry fingerprint, instrument version
+- [ ] Fire command writes the run log with tee or redirect. A `--log` argument alone writes nothing
 
 ---
 
