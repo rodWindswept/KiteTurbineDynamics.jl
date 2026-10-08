@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v4, numbers-free by construction (no measurement values, no
+**Status** PREP v5, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -195,8 +195,9 @@ and @author settle the final symbol list.
 
 ## 6. Structural-limit terms (the mechanism pair)
 
-The twist and ring-utilisation figures introduce these terms. Figure labels
-carry the emitted names. Writers pin each display form once and reuse it.
+The twist and ring-utilisation figures introduce these terms. The crossing
+limit joins for the census prose. Figure labels carry the emitted names.
+Writers pin each display form once and reuse it.
 
 | Term | Draft | Ground | Action |
 |---|---|---|---|
@@ -205,9 +206,12 @@ carry the emitted names. Writers pin each display form once and reuse it.
 | transmitted twist (label `segment_twist_deg`) | The twist a segment carries in a running state. The shaft total is `delta_alpha_deg`. | `src/sim_frame.jl` (`capture_extended`) | supply |
 | segment torque (label `segment_torque`) | The torque a segment transmits in a running state. It comes from the tension and twist of that state. | `src/sim_frame.jl` (`capture_extended`) | supply |
 | torsional capacity (`trpt_torque_capacity_axial`) | The peak torque a segment can transmit at its over-twist limit, for a given axial force. Pair a capacity only with the load of the same state. | `src/trpt_twist_limit.jl` | supply |
+| crossing limit (geometric crossing limit, δα*) | The per-segment limit of the collapse detector. The detector compares the twist of each segment against it. A design with a segment past its limit carries the status `reject_twist`. Every segment carries one, the no-limit segments included. It is not the over-twist limit. No form claims the two angles equal. | `src/objective_evaluator.jl` (`twist_collapse_check`), DECISIONS [2026-09-20], `docs/agents/physics-topology.md`, `docs/validation/model-admissibility.md` | supply |
 | ring check (`max_util`), ring FoS (`fos_ring`) | The worst-beam structural check of a ring. It adds the axial share and the bending share in one beam-column interaction ratio. The unit value is the fail boundary. The factor of safety is its reciprocal. | `src/ring_element_analysis.jl`, `src/sim_frame.jl` | supply |
 
 Name the ring check as the beam-column interaction, not Euler.
+
+**Crossing limit (the twist bridge).** The row above is the proposed display form. The census prose and any caption that draws the limit resolve their slot from it. The slot waits on the bridge ruling. Provenance note: the 2026-09-25 TRPT crosscheck (F1) calls the limit a misattribution. It is not the thesis over-twist limit, and not a crossing limit of any model. The findings sit with the room. The corrections are not applied. This pin follows the record. A re-name would land as a delta, not an edit.
 
 ## 7. Naming traps (the retire list)
 
@@ -261,3 +265,7 @@ defect, like a missing register row.
   over-twist limit family and the ring check, for the mechanism pair. Naming
   traps and Handoff renumber to 7 and 8. Figure labels carry the emitted
   names. No other change.
+
+- **v5 (2026-10-08):** one row joins the structural-limit group: the crossing
+  limit (δα*), the per-segment limit of the collapse detector, for the twist
+  bridge and the census prose, with its provenance note. No other change.
