@@ -4,9 +4,10 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v1, draft for the room. Numbers-free by construction: no
-measurement values and no model constants. Every value slot in a definition
-stays a binding slot, resolved later by Track D and the register.
+**Status** PREP v2, numbers-free by construction (no measurement values, no
+model constants). The validators signed register v1, and section 5 carries
+the constants interface. Every value slot in a definition stays a binding
+slot for Track D.
 
 **Owner** @science-writer (drafting assist). **Track D owns the glossary.**
 The analysis room ratifies, rewrites, or rejects each entry below.
@@ -62,8 +63,8 @@ awe-knowledge wiki before it ships.
 renderer spec asks for caption-safe entries for shaft, ring, rotor, blade,
 bank and swept annulus.
 
-The rows below cover those terms. The section names
-wait on the Phase 3 family labels.
+The rows below cover those terms, including the shaft section names from the
+three-section geometry. Design-family names wait on the Phase 3 labels.
 
 | Term | Draft | Ground | Action |
 |---|---|---|---|
@@ -71,6 +72,7 @@ wait on the Phase 3 family labels.
 | tensegrity | A structure whose form follows its tension balance. The TRPT column is tensegrity, not a rigid shaft. | physics-topology 1 | ratify |
 | shaft | The flying column between the main rotor and the ground station. It is a tensegrity column, not a rigid driveshaft. | physics-topology 1, renderer spec section 7 | supply |
 | ring (TRPT ring) | A polygonal spacer ring of the shaft. The ring beams work in compression inside the polygon. | domain.md, physics-topology 2 | supply |
+| shaft sections (transmission, cone, harvest) | The three sections of the shaft, from the ground up. A transmission cylinder at constant low radius. Then a cone tapers up to the top radius. The harvest section sits at the top, where the rotors are. | `src/ring_spacing.jl` (three-section geometry), winner-pack palette | supply |
 | ground ring | The bottom of the TRPT. It is free to rotate, and it is the PTO end. One of only two parts that touch the ground. | physics-topology 1 | ratify |
 | annulus (swept annulus) | The swept area of a ring-anchored blade. A ring-anchored blade sweeps an annulus, not a disc. | physics-topology 4.1, renderer spec section 7 | ratify |
 | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rotor". | physics-topology 4, CONTEXT.md | ratify |
@@ -164,21 +166,26 @@ Some definitions would carry a model constant in their natural form. The
 report rule says no sentence may contain a number that is not a signed
 register row.
 
-Two lawful routes exist. The choice needs a ruling before Track D writes the
-first entry.
+**Answer recorded** (2026-10-08, register-side, @science-validator, with the
+v1 sign): if a value will appear in prose, a model-constants row is the
+ready format. The validators sign those rows like any other. A purely
+qualitative definition needs no row.
 
-1. Write the definition qualitatively ("scales with a power of the cosine of
-   the bank angle"), and let the Methods equations carry the constants.
-2. Carry the model constants as their own register rows, a model-constants
-   class, and cite them from the definition.
+Two lawful routes follow, and both stay open per constant:
+
+1. Qualitative route. The definition carries no value, and the Methods
+   equations carry the constants. No row applies.
+
+2. Value route. The definition quotes the constant, and the constant gets
+   its own signed row (the constants class).
 
 The constants affected, at least: the bank-derate exponent, the site wind
 shear exponent, the lift margin, the blade-mass exponent, the FoS floors,
 the collapse thresholds, the strain limit of the break gate, and the
 reference coefficients (Cp, Ct) if a definition quotes them.
 
-I request this ruling in the room. Until it lands, Track D drafts
-definitions in the qualitative form.
+Track D picks the route per constant. The default here stays qualitative
+until a constants row exists.
 
 **Notation.** The Nomenclature section carries symbols and units. Candidates
 for it: λ (tip-speed ratio), β (elevation), L/r (ring spacing ratio),
@@ -210,14 +217,22 @@ defect, like a missing register row.
    response goes to `docs/reporting/room-responses/` per the consultation.
 
 2. **Caption terms** for the machine renderer (shaft, ring, rotor, blade,
-   bank, swept annulus): section 2 covers these terms. The section names wait
-   on the Phase 3 family labels.
+   bank, swept annulus, the shaft section names): section 2 covers these
+   terms. The family names wait on the Phase 3 labels.
 
 3. **Literature terms** in section 1 need `references.bib` checks on their
    anchors. The outline carries that open request.
 
-4. **The constants ruling** in section 5 gates the first definitions.
+4. **The constants interface** sits in section 5: a value that reaches
+   prose needs a signed row (the constants class is the ready format). A
+   qualitative definition needs none.
 
 5. This list is a floor, not a ceiling. The room adds whatever the report
    needs. No gate applies to this draft: it carries no numbers and no claims
    beyond the record.
+
+## Deltas
+
+- **v2 (2026-10-08):** register v1 signed. Section 5 records the constants
+  answer. One row joins the machine group: the shaft section names
+  (transmission, cone, harvest) for the renderer captions. No other change.
