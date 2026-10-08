@@ -1,0 +1,40 @@
+ROOT = /home/rod/.hermes/profiles/science-validator/cache/scratch/ktd-sv-bankthread
+── island 1 ──
+  genome slot 7 (bank_top)    = 2.9537878051972051
+  genome slot 8 (bank_bottom) = 11.231510858838188
+  post-round x[4] n_lines=4.0  x[6] count=1.0
+  decode: n_lines=4 rings=6 n_active=1 rotors=1
+  rotor: ring_idx=6 bank=2.9537878051972051 deg  cosd(bank)^2.65=0.996483  blade_scale=1.000000
+  hub rotor (topmost) bank = 2.9537878051972051 deg
+  any rotor at 22.0 deg: false
+  built sys.rotor bank_angle_deg = 2.9537878051972051
+  built sys.rotor radius = 5.712432  blade_hub_radius = 3.974466
+  built expansion rotors = 0
+  built-machine any bank at 22.0: false
+
+── island 2 ──
+  genome slot 7 (bank_top)    = 10.258382296788914
+  genome slot 8 (bank_bottom) = 22
+  post-round x[4] n_lines=3.0  x[6] count=1.0
+  decode: n_lines=3 rings=5 n_active=1 rotors=1
+  rotor: ring_idx=5 bank=10.258382296788914 deg  cosd(bank)^2.65=0.958196  blade_scale=0.963917
+  hub rotor (topmost) bank = 10.258382296788914 deg
+  any rotor at 22.0 deg: false
+  built sys.rotor bank_angle_deg = 10.258382296788914
+  built sys.rotor radius = 5.377005  blade_hub_radius = 3.599845
+  built expansion rotors = 0
+  built-machine any bank at 22.0: false
+
+── island 3 ──
+  genome slot 7 (bank_top)    = 7.0881314603235648
+  genome slot 8 (bank_bottom) = 22
+  post-round x[4] n_lines=3.0  x[6] count=1.0
+  decode: n_lines=3 rings=6 n_active=1 rotors=1
+  rotor: ring_idx=6 bank=7.0881314603235648 deg  cosd(bank)^2.65=0.979875  blade_scale=0.821326
+  hub rotor (topmost) bank = 7.0881314603235648 deg
+  any rotor at 22.0 deg: false
+  built sys.rotor bank_angle_deg = 7.0881314603235648
+  built sys.rotor radius = 5.628174  blade_hub_radius = 4.130752
+  built expansion rotors = 0
+  built-machine any bank at 22.0: false
+

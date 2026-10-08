@@ -1,0 +1,11 @@
+genome (evaluated) = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+P_BASE.v_wind_ref = 11.009694  (decode default)  | cfg.v_rated = 11.0
+(a) pack cfg    : decode n_lines=3 rings=6 n_active=1 r_hub=4.57998 | mass=25.670101 kg
+    (a) rotor ring=6 r_rotor=2.430903 m v_wind=11.007738
+(b) runner cfg  : decode n_lines=3 rings=6 n_active=1 r_hub=4.57998 | mass=25.698468 kg
+    (b) rotor ring=6 r_rotor=2.434117 m v_wind=10.998046
+m_b full = 25.6984682562368789 kg
+delta (b - a) = 0.028367 kg
+audit target  = 25.69846825623688 kg | pack file target = 25.6701 kg
+t_over_D: pack=0.0550 runner=0.0550
+AV_MASS_RECON_DONE

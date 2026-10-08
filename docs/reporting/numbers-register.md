@@ -187,3 +187,28 @@ All three built machines hold zero expansion rotors.
 
 The register keeps NR-011 as signed. This note supplies the threading
 fact for caption use.
+
+## Caption rows: NR-017, NR-018 (2026-10-08, science-validator)
+
+These rows exist for caption binding under F-VALUE. NR-017 binds the hero
+blade tag bank annotation. NR-018 binds the score decomposition mass.
+This block appends only, under the amend pattern. No signed row changed.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-017 | Winner main-rotor bank (island 3) | 7.088° at ring 6. Slot 8 = 22° reaches no rotor at n_active 1 | deg | decode probe d219b6c. Threading src/objective_v10.jl:339 | signed (science-validator, 2026-10-08) |
+| NR-018 | Winner airborne mass (island 3) | 25.69846825623688 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
+
+Sign-off basis:
+
+- NR-017 reproduced on this seat at `1c6f0b2`, log
+  `scratch/sv_probe_rotor_banks_1c6f0b2.log`. Decode and built rotor
+  agree at 7.088131460323565° on the topmost ring, decode ring 6.
+
+- NR-018 reproduced on this seat from the committed probe (added
+  `0c4046b`), log `scratch/sv_mass_recon_1c6f0b2.log`. The reading
+  equals the stored value at full precision (the log prints
+  25.6984682562368789).
+
+- The off-basis counter-value 25.670101 kg documents the old failure
+  mode. The pack rebuild at `9de9222` reads the same value.

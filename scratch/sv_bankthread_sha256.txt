@@ -1,4 +1,5 @@
 sv_bankthread evidence sha256 — 2026-10-08, science-validator
-probe  scratch/sv_probe_rotor_banks.jl    ebeae77e7dde6f713a01336c2ce392878da980b9f1f269aa7e3cb1839caed19c
-log    scratch/sv_probe_rotor_banks.log   e96c32a54c47aac8ab22078de742dbd292cad13956780d0676c754014bdbfed8
-tip    bb619a5 (bank-derate-cos2p65)
+probe  scratch/sv_probe_rotor_banks.jl            ebeae77e7dde6f713a01336c2ce392878da980b9f1f269aa7e3cb1839caed19c
+log    scratch/sv_probe_rotor_banks.log           e96c32a54c47aac8ab22078de742dbd292cad13956780d0676c754014bdbfed8   run tip bb619a5
+reval  scratch/sv_probe_rotor_banks_1c6f0b2.log   e96c32a54c47aac8ab22078de742dbd292cad13956780d0676c754014bdbfed8   run tip 1c6f0b2 (byte-identical re-run)
+reval  scratch/sv_mass_recon_1c6f0b2.log          8599e65d581ee7a6ae40820180eeb86d4aea2a9a63d28a11fd778068b72c53dc   run tip 1c6f0b2
