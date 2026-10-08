@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>twist limit, round one composition mock</title>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { width: 840px; max-width: 100%; text-align: left; padding: 0.25rem 0 0.75rem; }
+  .mock-note { font-size: 12px; color: var(--muted-foreground, #6b7280); margin: 0 0 8px 2px; }
+  .card { background: #ffffff; color: #1a1a1a; border: 1px solid #d9d9d9; border-radius: 2px;
+          padding: 18px 20px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .fig-title { font-size: 15px; font-weight: 600; margin: 0 0 3px; }
+  .fig-sub { font-size: 11.5px; color: #666; margin: 0 0 12px; }
+  .panel { border: 1px solid #e2e2e2; border-radius: 2px; background: #fff; padding: 6px 6px 0; margin-top: 8px; }
+  .panel svg { display: block; width: 100%; height: auto; }
+  .plabel { border-top: 1px solid #e2e2e2; margin-top: 4px; padding: 4px 2px 5px;
+            font-size: 10.5px; color: #555; text-align: center; }
+  .foot { margin-top: 14px; border-top: 1.5px solid #222; padding-top: 9px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 10.5px; color: #333; }
+  .legend .li { display: flex; align-items: center; gap: 5px; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+  .tick { display: inline-block; width: 3px; height: 12px; }
+  .sq { display: inline-block; width: 9px; height: 9px; border: 1.6px solid #b32222; background: #fff; }
+  .dash { display: inline-block; width: 14px; height: 0; border-top: 2px dashed #b32222; }
+  .source { margin-top: 10px; font-size: 10px; color: #666; }
+  .caption { margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px; font-size: 11px; color: #333; }
+  .caption .ste { color: #555; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="mock-note">Round one composition mock. Placeholder shapes only. No capture data.
+  Two panels share one shaft window — twist above, torque below; segment bands S1…S(n-1) from the base,
+  ring ticks R1…RN; one segment carries the "no limit" treatment on both panels. Counts here are
+  composition placeholders, not any design's geometry. R1 questions: is the two-panel shaft profile the
+  right composition; does the no-limit tag read at print size; the label strip contents.</p>
+
+  <div class="card">
+    <div class="fig-title">⟨finding-oriented title, filled at GENERATE⟩</div>
+    <div class="fig-sub">⟨one-line subclaim, register-bound at GENERATE⟩</div>
+
+    <div class="panel">
+      <svg viewBox="0 0 780 208" role="img" aria-label="twist panel, placeholder">
+        <!-- x axis -->
+        <line x1="150" y1="30" x2="742" y2="30" stroke="#333" stroke-width="1.2"/>
+        <polygon points="748,30 740,26 740,34" fill="#333"/>
+        <text x="152" y="19" font-size="10.5" fill="#333">twist angle — degrees · ⟨axis range at GENERATE⟩</text>
+        <line x1="300" y1="30" x2="300" y2="24" stroke="#555" stroke-width="1"/>
+        <line x1="450" y1="30" x2="450" y2="24" stroke="#555" stroke-width="1"/>
+        <line x1="600" y1="30" x2="600" y2="24" stroke="#555" stroke-width="1"/>
+        <!-- shaft rule and rings -->
+        <line x1="96" y1="40" x2="96" y2="186" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="88" y1="186" x2="104" y2="186" stroke="#98a0a8" stroke-width="2"/><text x="84" y="189.5" font-size="9.5" fill="#555" text-anchor="end">R1</text>
+        <line x1="88" y1="158" x2="104" y2="158" stroke="#98a0a8" stroke-width="2"/><text x="84" y="161.5" font-size="9.5" fill="#555" text-anchor="end">R2</text>
+        <line x1="88" y1="130" x2="104" y2="130" stroke="#98a0a8" stroke-width="2"/><text x="84" y="133.5" font-size="9.5" fill="#555" text-anchor="end">R3</text>
+        <line x1="88" y1="102" x2="104" y2="102" stroke="#98a0a8" stroke-width="2"/><text x="84" y="105.5" font-size="9.5" fill="#555" text-anchor="end">R4</text>
+        <line x1="88" y1="74"  x2="104" y2="74"  stroke="#98a0a8" stroke-width="2"/><text x="84" y="77.5"  font-size="9.5" fill="#555" text-anchor="end">R5</text>
+        <line x1="88" y1="46"  x2="104" y2="46"  stroke="#98a0a8" stroke-width="2"/><text x="84" y="49.5"  font-size="9.5" fill="#555" text-anchor="end">R6</text>
+        <text x="112" y="175.5" font-size="10" fill="#555">S1</text>
+        <text x="112" y="147.5" font-size="10" fill="#555">S2</text>
+        <text x="112" y="119.5" font-size="10" fill="#555">S3</text>
+        <text x="112" y="91.5"  font-size="10" fill="#555">S4</text>
+        <text x="112" y="63.5"  font-size="10" fill="#555">S5</text>
+        <!-- transmitted twist (magnitude) vs dcrit limit; S3 = no limit -->
+        <line x1="300" y1="172" x2="610" y2="172" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="300" cy="172" r="4" fill="#1f8fff"/>
+        <line x1="610" y1="163" x2="610" y2="181" stroke="#b32222" stroke-width="2.2"/>
+        <line x1="345" y1="144" x2="650" y2="144" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="345" cy="144" r="4" fill="#1f8fff"/>
+        <line x1="650" y1="135" x2="650" y2="153" stroke="#b32222" stroke-width="2.2"/>
+        <circle cx="385" cy="116" r="4" fill="#1f8fff"/>
+        <text x="400" y="119.5" font-size="10" fill="#b32222" font-style="italic">no limit</text>
+        <line x1="430" y1="88" x2="585" y2="88" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="430" cy="88" r="4" fill="#1f8fff"/>
+        <line x1="585" y1="79" x2="585" y2="97" stroke="#b32222" stroke-width="2.2"/>
+        <line x1="470" y1="60" x2="635" y2="60" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="470" cy="60" r="4" fill="#1f8fff"/>
+        <line x1="635" y1="51" x2="635" y2="69" stroke="#b32222" stroke-width="2.2"/>
+      </svg>
+      <div class="plabel">A — twist: transmitted twist |Δα| against its δcrit over-twist limit · ⟨ranges at GENERATE⟩</div>
+    </div>
+
+    <div class="panel">
+      <svg viewBox="0 0 780 208" role="img" aria-label="torque panel, placeholder">
+        <line x1="150" y1="30" x2="742" y2="30" stroke="#333" stroke-width="1.2"/>
+        <polygon points="748,30 740,26 740,34" fill="#333"/>
+        <text x="152" y="19" font-size="10.5" fill="#333">torque — N·m · ⟨axis range at GENERATE⟩ · one capture instant</text>
+        <line x1="300" y1="30" x2="300" y2="24" stroke="#555" stroke-width="1"/>
+        <line x1="450" y1="30" x2="450" y2="24" stroke="#555" stroke-width="1"/>
+        <line x1="600" y1="30" x2="600" y2="24" stroke="#555" stroke-width="1"/>
+        <line x1="96" y1="40" x2="96" y2="186" stroke="#c4c4c4" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="88" y1="186" x2="104" y2="186" stroke="#98a0a8" stroke-width="2"/><text x="84" y="189.5" font-size="9.5" fill="#555" text-anchor="end">R1</text>
+        <line x1="88" y1="158" x2="104" y2="158" stroke="#98a0a8" stroke-width="2"/><text x="84" y="161.5" font-size="9.5" fill="#555" text-anchor="end">R2</text>
+        <line x1="88" y1="130" x2="104" y2="130" stroke="#98a0a8" stroke-width="2"/><text x="84" y="133.5" font-size="9.5" fill="#555" text-anchor="end">R3</text>
+        <line x1="88" y1="102" x2="104" y2="102" stroke="#98a0a8" stroke-width="2"/><text x="84" y="105.5" font-size="9.5" fill="#555" text-anchor="end">R4</text>
+        <line x1="88" y1="74"  x2="104" y2="74"  stroke="#98a0a8" stroke-width="2"/><text x="84" y="77.5"  font-size="9.5" fill="#555" text-anchor="end">R5</text>
+        <line x1="88" y1="46"  x2="104" y2="46"  stroke="#98a0a8" stroke-width="2"/><text x="84" y="49.5"  font-size="9.5" fill="#555" text-anchor="end">R6</text>
+        <text x="112" y="175.5" font-size="10" fill="#555">S1</text>
+        <text x="112" y="147.5" font-size="10" fill="#555">S2</text>
+        <text x="112" y="119.5" font-size="10" fill="#555">S3</text>
+        <text x="112" y="91.5"  font-size="10" fill="#555">S4</text>
+        <text x="112" y="63.5"  font-size="10" fill="#555">S5</text>
+        <!-- segment torque vs torsional capacity; S3 = no limit -->
+        <line x1="315" y1="172" x2="620" y2="172" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="315" cy="172" r="4" fill="#2e8c57"/>
+        <rect x="616" y="168" width="8" height="8" fill="#fff" stroke="#b32222" stroke-width="1.6"/>
+        <line x1="360" y1="144" x2="665" y2="144" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="360" cy="144" r="4" fill="#2e8c57"/>
+        <rect x="661" y="140" width="8" height="8" fill="#fff" stroke="#b32222" stroke-width="1.6"/>
+        <circle cx="405" cy="116" r="4" fill="#2e8c57"/>
+        <text x="420" y="119.5" font-size="10" fill="#b32222" font-style="italic">no limit</text>
+        <line x1="450" y1="88" x2="590" y2="88" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="450" cy="88" r="4" fill="#2e8c57"/>
+        <rect x="586" y="84" width="8" height="8" fill="#fff" stroke="#b32222" stroke-width="1.6"/>
+        <line x1="495" y1="60" x2="640" y2="60" stroke="#999" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="495" cy="60" r="4" fill="#2e8c57"/>
+        <rect x="636" y="56" width="8" height="8" fill="#fff" stroke="#b32222" stroke-width="1.6"/>
+      </svg>
+      <div class="plabel">B — torque: segment torque against torsional capacity, paired at the same state</div>
+    </div>
+
+    <div class="foot">
+      <div class="legend">
+        <span class="li"><span class="dot" style="background:#1f8fff"></span>transmitted twist (panel A)</span>
+        <span class="li"><span class="dot" style="background:#2e8c57"></span>segment torque (panel B)</span>
+        <span class="li"><span class="tick" style="background:#b32222"></span>δcrit over-twist limit</span>
+        <span class="li"><span class="sq"></span>torsional capacity</span>
+        <span class="li"><span style="font-style:italic;color:#b32222">no limit</span>&nbsp;Case B segment — never divided</span>
+      </div>
+      <div class="source">source: ⟨data commit⟩ · ⟨extract⟩ · ⟨capture run + row range⟩ · ⟨register rows⟩ · ⟨script commit⟩ · ⟨authority commit⟩</div>
+    </div>
+
+    <div class="caption">
+      <div>⟨plain caption. One sentence for a first-year reader: how far each segment's twist runs from the limit.⟩</div>
+      <div class="ste">⟨STE caption. Authority named; capture cited; no-limit rule; instant-bound torque pairing. Every number a register citation.⟩</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
