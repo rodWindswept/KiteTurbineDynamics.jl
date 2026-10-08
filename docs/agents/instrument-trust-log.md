@@ -86,7 +86,7 @@ Datasets that feed cross-seat analysis, with a trust verdict. Read the verdict b
 
 | Date | Dataset | Ref | Verdict | Recorded limits |
 |------|---------|-----|---------|-----------------|
-| 2026-10-08 | `v13_5kw_masslift_len18.8_rotorcount_bankderate2` — 930 evals, 3 islands | commit `dd3cc6a`, branch `bankderate2-results` | **PASS — analysis may start.** The winner reproduces exactly from the recorded genome. No gen-0/gen-1 discontinuity. No cross-island anomaly. No non-finite FoS on surviving rows | (1) The run logs cited in PROVENANCE.md were never written — the fire command omitted the tee step. Stdout surrogates carry the timings. (2) Telemetry records 8 of the 15 `ObjectiveResult` fields. The 7 unrecorded: `ω_eq`, `P_range`, `drifted`, `stationary`, `util_a`, `util_b`, `line_broken`. (3) Fitness includes the live twist and stationarity terms of the evaluator. Second read: science-validator (pending) |
+| 2026-10-08 | `v13_5kw_masslift_len18.8_rotorcount_bankderate2` — 930 evals, 3 islands | commit `dd3cc6a`, branch `bankderate2-results` | **PASS — analysis may start.** The winner reproduces exactly from the recorded genome. No gen-0/gen-1 discontinuity. No cross-island anomaly. No non-finite FoS on surviving rows | (1) The run logs cited in PROVENANCE.md were never written — the fire command omitted the tee step. Stdout surrogates carry the timings. (2) Telemetry records 8 of the 15 `ObjectiveResult` fields. The 7 unrecorded: `ω_eq`, `P_range`, `drifted`, `stationary`, `util_a`, `util_b`, `line_broken`. (3) Fitness includes the live twist and stationarity terms of the evaluator. Second read: science-validator, signed 2026-10-08 (see audit doc) |
 
 Full record: `docs/validation/2026-10-08-phase0-bankderate2-audit.md`.
 

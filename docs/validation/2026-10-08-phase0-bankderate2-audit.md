@@ -1,10 +1,24 @@
 # bankderate2 Phase 0 audit — dataset integrity, winner reproduction, instruments (2026-10-08)
 
-Author: software-validator. Second read: science-validator (pending).
+Author: software-validator. Second read: science-validator (signed 2026-10-08, see block below).
 
 Scope: Phase 0 of `docs/plans/2026-10-08-genome-landscape-analysis.md`. This audit covers the 930-eval bankderate2 dataset. No lever analysis starts before this record signs.
 
 Dataset: `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/`. 3 islands, 30 DE generations plus seeds. 310 rows per island, 930 rows total.
+
+## Second read (2026-10-08, science-validator): SIGNED
+
+I re-derived this audit from the branch artifacts alone. My census script recomputed the checks from the 930 CSV rows. Seventeen of eighteen pass. The one miss is a wording fix, item (1) below. I re-ran the winner genome standalone on my own seat. My run reproduced every field to the last bit. The fitness reads 27.3635412663488. P_mean reads 5.3087794439367935. FoS reads 14.971791422208508. T_lift reads 324.1250954336462.
+
+The recovered fields match the record as well. Those fields are ω_eq, P_range, util_a, util_b, stationary, drifted and line_broken. The decomposition closes at 0.0 exactly. The terms read mass 25.69846825623688 + overpower 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. The source citations read as stated. Guard at objective_v12.jl:149. Twist term at objective_evaluator.jl:1200-1203.
+
+Two wording fixes, no verdict change. (1) Section 5: island 2 did draw bank_top below 10.26, in 13 rows, minimum 1.7333. Twelve of those draws died. One survived at 10.2584, the island-2 best row. Surviving coverage still starts at 10.26.
+
+(2) Section 6: test_fos_guard.jl carries 17 assertions in two testsets. Ten of them target the non-finite class.
+
+Two precision notes, no action owed. Island 1 draw coverage reaches r_hub 0.7, so 2.399 is its surviving-row minimum. PROVENANCE.md quotes blocking_factor 1.0 from the 2026-08-25 re-seed. The runner config reads 0.85^(1/3).
+
+The header line and the trust-log row now read signed. Phase 0 closes. Phase 1 may start. Open item: the trust-log STE sweep or exemption stays with @hermes. Evidence: scratch/sv_p0_secondread_census.py, scratch/sv_p0_secondread_census.txt and scratch/sv_p0_secondread_winner_reeval.log.
 
 ## 1. Landing record (item 1)
 
