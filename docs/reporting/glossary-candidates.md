@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v2, numbers-free by construction (no measurement values, no
+**Status** PREP v3, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -127,6 +127,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | evaluator | The instrument that flies a design and measures it. The windowed evaluator is the single protocol. | CONTEXT.md windowed evaluator row | ratify |
 | rapid path | The fast evaluation protocol. It starts from a static pre-solve. Probes reject the recorded winners through the rope-break gate. | consultation Track C item 5 | room-supplies |
 | ODE path | The full settle-then-window evaluation protocol. It reproduces the recorded winners. | consultation Track C item 5 | room-supplies |
+| ODE | Ordinary differential equation. Spell the acronym out at first use in the report. | Rod ruling 2026-10-08, consultation Track C item 5 | ratify |
 | start mode | The evaluator switch between the two paths. The default is the rapid path. Settle the report-facing names. | register known boundaries, consultation Track C item 5 | room-supplies |
 | settle | The start-up phase that brings the machine to its operating state before measurement. | CONTEXT.md, physics-topology 7 | supply |
 | relax phase | The first part of a run, before the measurement window. The machine relaxes through its start transient. | CONTEXT.md honest window row | supply |
@@ -236,3 +237,6 @@ defect, like a missing register row.
 - **v2 (2026-10-08):** register v1 signed. Section 5 records the constants
   answer. One row joins the machine group: the shaft section names
   (transmission, cone, harvest) for the renderer captions. No other change.
+
+- **v3 (2026-10-08):** one row joins the search-and-evaluation group: ODE,
+  spelled out at first use (Rod ruling). No other change.
