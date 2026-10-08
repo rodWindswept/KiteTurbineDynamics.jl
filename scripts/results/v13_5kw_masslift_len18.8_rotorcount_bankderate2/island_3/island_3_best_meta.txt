@@ -1,0 +1,1 @@
+island=3 gen=30 fitness=27.3635412663488 length=18.8 found_gen=26

@@ -1,0 +1,9 @@
+# ste-lint exemptions — files the pre-commit STE gate skips.
+# Policy (2026-10-08, hermes ruling, room-delegated): historical ledgers are
+# amend-only records (never rewrite). The STE gate covers new prose; these
+# files are exempt as a class. New entries in them must still be written
+# STE-clean.
+# Format: one path per line, relative to repo root, exact match. '#' comments.
+docs/agents/instrument-trust-log.md
+docs/validation/physics-validation-ledger.md
+DECISIONS.md

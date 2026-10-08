@@ -1,0 +1,47 @@
+  island 1: ok=152  P_mean 5.020..6.260 mean 5.7333
+  island 2: ok=162  P_mean 5.050..6.090 mean 5.7260
+  island 3: ok=194  P_mean 5.020..6.320 mean 5.6960
+  cross-island mean spread: P_mean 0.65%  fitness 4.33%
+
+[PASS] C1 rows: 930 total, 310/island, 10 per (island,gen), gens 0..30 — total=930, per-island={1: 310, 2: 310, 3: 310}
+[PASS] C2 status mix {ok:508, reject:301, clearance_reject:110, reject_twist:11}, no other class — {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}
+[PASS] C3 gen0: 30 rows, 3 ok (one per island), seed rows byte-identical across islands — seed: fit=36.109 P_mean=5.85 FoS=13.34 T_lift=415.81
+[PASS] C5 children: 900 rows, 505 ok — children rows=900 ok=505
+[PASS] C6 seed P_mean 5.85 inside child band 5.02-6.32 — child band 5.02..6.32 (n=505)
+[PASS] C7 island ok counts 152/162/194 — {1: 152, 2: 162, 3: 194}
+[PASS] C7b P_mean ranges i1 5.02-6.26, i2 5.05-6.09, i3 5.02-6.32
+[PASS] C8 P_mean overlap 1-2 non-empty — [5.05,6.09]
+[PASS] C8 P_mean overlap 1-3 non-empty — [5.02,6.26]
+[PASS] C8 P_mean overlap 2-3 non-empty — [5.05,6.09]
+[PASS] C9 FoS non-finite: 322 total (inf 212, nan 110) by status {reject:201, clearance_reject:110, reject_twist:11}; none on ok rows — non-finite=322 inf=212 nan=110 ok-finite=508/508
+[PASS] C9b ok FoS finite 3.18-15.32, none zero, none > 1e4 — min=3.18 max=15.32
+[PASS] C10 all 422 non-ok rows carry sentinel fitness 1.0e9; no ok row does — sentinel=422/422 non-ok
+[PASS] C11 winner row island3 gen26 idx9: fit 27.364, P_mean 5.31, T_lift 324.13, FoS 14.97, twist_ratio exact, clearance 5.47, genes = best_vector — gene-prefix-match=True
+[PASS] C11b global_best_meta: full fitness 27.3635412663488, island=3 — island=3 fitness=27.3635412663488 length=18.8
+[FAIL] C12 island 2 never drew bank_top below 10.26 (all rows) — min=1.7
+[PASS] C13 surviving 2-rotor-decoded (x6 rounds to 2) rows: exactly 2, all island 1 — [('1', '7', '7', '2.872', '1.952533'), ('1', '13', '1', '2.399', '1.854575')]
+[PASS] C14 first ok child: i1=6, i2=2, i3=1; first full (10-ok) gen: i1=19, i2=19, i3=16 — {1: (6, 19), 2: (2, 19), 3: (1, 16)}
+
+TOTAL: 17 pass / 1 fail of 18 checks
+SV_SECONDREAD_CENSUS_DONE
+island 1 x7      : ok 0..22 (n=152)  all 0..22 (n=310)
+island 1 bank_top: ok 0..22 (n=152)  all 0..22 (n=310)
+island 2 x7      : ok 10.2584..20.767 (n=162)  all 1.73331..22 (n=310)
+island 2 bank_top: ok 10.3..20.8 (n=162)  all 1.7..22 (n=310)
+island 3 x7      : ok 0..19.7209 (n=194)  all 0..22 (n=310)
+island 3 bank_top: ok 0..19.7 (n=194)  all 0..22 (n=310)
+island2 rows with x7<10.26: n=13 statuses={'reject': 7, 'clearance_reject': 5, 'ok': 1}
+   gen=0 idx=4 x7=1.733308 bank_top=1.7 status=reject fit=1.0e9
+   gen=0 idx=7 x7=2.725048 bank_top=2.7 status=clearance_reject fit=1.0e9
+   gen=0 idx=5 x7=5.548828 bank_top=5.5 status=clearance_reject fit=1.0e9
+   gen=0 idx=2 x7=6.167532 bank_top=6.2 status=reject fit=1.0e9
+   gen=5 idx=1 x7=7.088164 bank_top=7.1 status=reject fit=1.0e9
+   gen=3 idx=8 x7=8.359542 bank_top=8.4 status=clearance_reject fit=1.0e9
+overpower = 0.49333696413175443
+util      = 0.5576509889014662
+twist     = 0.6140850570787014
+sum       = 27.3635412663488
+target    = 27.3635412663488
+diff      = 0.0
+stationarity swing = 0.005398486550565352 -> excess = 0.0 -> penalty 0
+alt: overpower from P_mean = 0.4767237249895768
