@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v3, numbers-free by construction (no measurement values, no
+**Status** PREP v4, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -193,7 +193,23 @@ for it: λ (tip-speed ratio), β (elevation), L/r (ring spacing ratio),
 k_mppt, MTR, FoS, ω (shaft rotation rate), P (power), τ (torque). Track D
 and @author settle the final symbol list.
 
-## 6. Naming traps (the retire list)
+## 6. Structural-limit terms (the mechanism pair)
+
+The twist and ring-utilisation figures introduce these terms. Figure labels
+carry the emitted names. Writers pin each display form once and reuse it.
+
+| Term | Draft | Ground | Action |
+|---|---|---|---|
+| over-twist limit (critical twist angle, δcrit, label `dcrit_deg`) | The twist ceiling of a TRPT segment. The transmitted torque peaks at this angle. Past it the deformation runs away and the equilibrium is lost. | `src/trpt_twist_limit.jl` | supply |
+| no-limit segment | A segment whose tether is shorter than the sum of its end radii. It carries no torsional ceiling. Tether break strain and ring compression carry the limit instead. The figure label reads "no limit". | `src/trpt_twist_limit.jl` case B | supply |
+| transmitted twist (label `segment_twist_deg`) | The twist a segment carries in a running state. The shaft total is `delta_alpha_deg`. | `src/sim_frame.jl` (`capture_extended`) | supply |
+| segment torque (label `segment_torque`) | The torque a segment transmits in a running state. It comes from the tension and twist of that state. | `src/sim_frame.jl` (`capture_extended`) | supply |
+| torsional capacity (`trpt_torque_capacity_axial`) | The peak torque a segment can transmit at its over-twist limit, for a given axial force. Pair a capacity only with the load of the same state. | `src/trpt_twist_limit.jl` | supply |
+| ring check (`max_util`), ring FoS (`fos_ring`) | The worst-beam structural check of a ring. It adds the axial share and the bending share in one beam-column interaction ratio. The unit value is the fail boundary. The factor of safety is its reciprocal. | `src/ring_element_analysis.jl`, `src/sim_frame.jl` | supply |
+
+Name the ring check as the beam-column interaction, not Euler.
+
+## 7. Naming traps (the retire list)
 
 The record supersedes or bans these phrases. A draft that uses one is a
 defect, like a missing register row.
@@ -211,7 +227,7 @@ defect, like a missing register row.
 | "rigid driveshaft" for the TRPT | tensegrity column | physics-topology 1 |
 | "the expansion model replaces the disc model" | the record bans the expansion model at every ring. A banked rotor uses the disc model with the bank derate. | stale-phrases notes, physics-topology 4.0.1 |
 
-## 7. Handoff
+## 8. Handoff
 
 1. **Track D** takes this list, ratifies or rewrites each entry, adds terms
    from Tracks A and B, and lands `docs/reporting/glossary.md`. The room
@@ -240,3 +256,8 @@ defect, like a missing register row.
 
 - **v3 (2026-10-08):** one row joins the search-and-evaluation group: ODE,
   spelled out at first use (Rod ruling). No other change.
+
+- **v4 (2026-10-08):** a structural-limit group joins as section 6: the
+  over-twist limit family and the ring check, for the mechanism pair. Naming
+  traps and Handoff renumber to 7 and 8. Figure labels carry the emitted
+  names. No other change.
