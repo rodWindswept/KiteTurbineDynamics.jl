@@ -89,9 +89,21 @@ standard), 3 rounds, adapted to the register:
    rigor.
 2. **GENERATE** — the chart or render, plus the generating script and the
    data-commit + row-range source stamp.
-3. **CHECK — external, never self-graded.** Aero/science validators check
-   the numbers and the house standards; Rod does the visual pass. The spec
-   evolves by deltas between rounds, not by rewrite.
+3. **CHECK — external, never self-graded.** Two independent checkers:
+   (a) the content check — aero/science validators check the numbers and the
+   house standards against the register and the generating script;
+   (b) the visual check — a separate multimodal image-reader (e.g. Gemini)
+   grades the visual-quality checklist below from the image itself. Rod does
+   the final visual pass. The spec evolves by deltas between rounds, not by
+   rewrite.
+
+**Visual-quality checklist** (mechanical, graded from the image, not from
+the spec): finding-oriented title; no text overlaying diagram parts; no
+elements against the image edge; clean border; clean background; element
+scaling appropriate to the figure; every visual channel explained on-chart;
+caption integrated. **Guardrail:** the image-reader never validates numbers
+— pixels cannot prove a value. The validators own the numbers, via the
+register and the generating script.
 
 Machine renders carry one extra assertion in the CHECK phase: geometry
 fidelity — every drawn dimension (line count, ring radii, span, bank) must
