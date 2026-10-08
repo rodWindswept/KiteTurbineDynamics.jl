@@ -1,0 +1,123 @@
+# Reporting framework — presenting KTD to the AWES community
+
+**Date:** 2026-10-08. **Status:** PLAN. **Audience:** university-level students —
+inspired, not merely informed. **Bar:** the reporting stage carries the same
+rigor as the science. Same discipline rules, same validator gates, same
+provenance culture.
+
+Parent: `docs/plans/2026-10-08-genome-landscape-analysis.md` (the analysis
+this reporting presents). Reporting *prep* runs in parallel with analysis;
+reporting *content* waits on analysis gates.
+
+## 1. Principles (rigor parity)
+
+1. **Reporting consumes only from the Numbers Register** (§3). Writers and
+   figure bots never read raw CSVs or re-derive physics — that is the
+   instrument-floor class of failure in prose form.
+2. **Recorded > derived; derived states its recipe.** Same rule as the code.
+3. **Honest failures are content.** The dead geometry genes (2026-08-24), the
+   voided campaigns, the k-alignment faults, the stale-gate near-miss — these
+   are the story of real engineering, and they are what makes the work
+   credible to students. The report tells them, not hides them.
+4. **Dual captions.** Every figure: one plain-English sentence for a first-year
+   reader, plus the STE-clean technical caption for the record. Accessibility
+   without losing precision.
+5. **Voice.** Rod's first person, AI voice stripped, numbers exact
+   (stop-slop discipline).
+6. **Nothing public before sign-off.** Every figure and every prose block is
+   validator-gated before it leaves the repo.
+
+## 2. The Numbers Register (the load-bearing device)
+
+`docs/reporting/numbers-register.md` — the single source of truth between the
+simulation and the audience.
+
+Each entry: claim · value · units · source (telemetry row range / script /
+gate run / commit) · derivation recipe if derived · validator signature ·
+date signed.
+
+Rules:
+- Writers and figures bots may cite ONLY signed register entries.
+- Unsigned entries do not exist for reporting purposes.
+- A number that changes (re-baseline, new campaign) supersedes by dated row,
+  never by edit.
+- Validators sign entries exactly like they sign code claims.
+
+First entries come from Phase 0 of the landscape plan (campaign stats, winner
+numbers, status mix) — nothing else until Phase 0 closes.
+
+## 3. Bot characters (briefs)
+
+### @author — narrative architect
+Owns: story arcs and coherence. The journey of the machine through the
+evolutionary search; where we pushed real boundaries; what we achieved.
+Builds the skeleton every piece hangs on, so the series reads as one story,
+not a pile of results. Writes Rod's first-person voice. Never invents
+numbers — quotes the register. Gates: science-validator for factual claims,
+Rod for voice.
+
+### @science-writer — the explainer layer
+Owns: university-level explanations. The analogies and plain-language blocks
+that make the physics teachable: a TRPT is a tensegrity shaft that transmits
+torque by tension; transmission capacity is supplied by tension itself; Betz
+and tip-speed ceilings; mass-power scaling laws. Inputs: the register,
+`docs/agents/physics-topology.md`, the AWE-context outline. Outputs:
+explainer blocks keyed to specific figures. Gate: science-validator.
+
+### @figures-images-diagrams — chart and machine craft
+Owns: (a) data figures to house standards (ktd-chart-design, diagram-patterns,
+scientific-chart-design; one figure per chart, HITL rounds per the diagram
+registry pattern); (b) **the physical machine renders** — genome decoded into
+a drawn turbine (lines, blades, ring positions, relative sizes), for design
+families and for the evolution strip. Gate: aero-validator + science-validator,
+visual pass by Rod.
+
+### Validators (unchanged roles, new surface)
+science-validator: every factual sentence, every register entry.
+aero-validator: every aerodynamics figure and machine render.
+software-validator: every artifact's provenance (which commit, which run).
+Rod: the final visual and narrative pass.
+
+## 4. Content units (mapped to Rod's list)
+
+| Unit | Content | Owner | Input (gated by) |
+|---|---|---|---|
+| U1 | The AWE landscape: fly-gen vs ground-gen, soft vs rigid, where the TRPT kite turbine fits | @author + @science-writer | awe-knowledge, physics-topology, register |
+| U2 | The levers: parameter sweeps, grid-search bands, PCA thrive/fail regions, the working parameter lines | @figures + @science-writer | landscape plan Phases 1–2 |
+| U3 | The evolution story: DE generations rendered as *the turbines themselves* (best-per-generation strip, design families, relative sizes) | @figures + @author | convergence + decoded genomes (Phase 3) |
+| U4 | Design implications: mass, force, scaling, torque, power of each design choice | @science-writer + @figures | Phase 3 regime table, scaling laws |
+| U5 | Achievements: Daisy-anchored honesty, honest windows, tension-supplied capacity, the fold, the guards | @author | DECISIONS, trust-log, register |
+| U6 | The failure ledger as story: dead genes, instrument floors, void campaigns | @author + @science-writer | trust-log, archive dirs |
+
+Each unit: numbered figures and prose blocks, registered, gated, released.
+
+## 5. Missing pieces this framework adds (beyond the obvious)
+
+1. **The Numbers Register** — without it, the writers will re-derive physics
+   from memory and we will relive the 2026-08-24 record errors at report scale.
+2. **The machine renderer** — we already render winners (island report PNGs);
+   the reporting need is a *family* renderer: any decoded genome drawn at a
+   fixed scale, so design families and the evolution strip are comparable.
+   The "pictures of turbines, not just PCA plots" requirement is a pipeline
+   extension, not a drawing task.
+3. **The AWE-context layer** — the "where we fit" story must be grounded in
+   the literature (awe-knowledge skill), validated, not recalled.
+4. **Dual captions** — accessibility rule enforced from figure one.
+5. **Prose validation** — science-validator reads prose for factual claims
+   exactly like it reads code; stop-slop strips the AI voice.
+
+## 6. What can start today (prep, not content)
+
+1. Register template + first entries after Phase 0 signs.
+2. Distribute the bot briefs in the room (Rod dispatches).
+3. Renderer extension spec (@figures + @software-worker).
+4. AWE-context outline (@author + @science-writer).
+5. **Channel decision (Rod):** repo-hosted report → Substack/newsletter series
+   → AWES-conference deck → social teasers. Content builds in the repo either
+   way; only the packaging changes.
+
+## 7. Sequencing summary
+
+Analysis Phases 0–3 (landscape plan) → register v1 → U2/U3/U4 content →
+U1/U5/U6 narrative → validator gates → Rod's pass → release per channel
+decision. Reporting prep (§6) runs now, in parallel.
