@@ -98,3 +98,52 @@ The supersede rule applies. Any later change lands as a dated new row.
   drag not included in the model.
 - `start_mode=:warm` is the evaluator default; any consumer that does not
   pass `:cold` measures the instrument, not the machine.
+
+## Aero counter-read: NR-007, NR-008, NR-009, NR-010, NR-011, NR-014, NR-016 (2026-10-08, aero-validator)
+
+This block appends only, under the lead ruling and the amend pattern. The
+ruling sits in `handovers/handover-2026-10-08-reporting-room-rulings.md`.
+No signed row changed.
+
+Basis: section 4 of the Phase 0 audit
+(`docs/validation/2026-10-08-phase0-bankderate2-audit.md`) and the evidence
+records below. The counter-read works from committed records only. It runs
+no simulator and reads no telemetry.
+
+Evidence: `scratch/sv_p0_winner_reeval.txt`,
+`scratch/sv_p0_secondread_winner_reeval.log`,
+`scratch/sv_regv1_probe_fidelity.log` and
+`scratch/sv_p0_secondread_census.txt`. The arithmetic and gate checks sit
+in `scratch/av_counterread_regv1.log`.
+
+- NR-007. The census lists the ok-row power ranges as 5.020 to 6.260,
+  5.050 to 6.090 and 5.020 to 6.320 kW. The union reads 5.02 to 6.32 kW.
+
+- NR-008. The cold re-eval records P_mean 5.3087794439367935 and P_end
+  5.314113662272673 kW. The row rounds these to 5.309 and 5.314 and
+  draws from the re-eval, not the two-decimal telemetry columns.
+
+- NR-009. The cold re-eval records FoS_min 14.971791422208508. The row
+  rounds to 14.972.
+
+- NR-010. The cold re-eval records T_lift 324.1250954336462 N. The row
+  rounds to 324.1 N.
+
+- NR-011 (decode). The re-eval reads n_lines 3, rings 6 and n_active 1,
+  with r_hub 4.580 m and r_bot 0.804 m.
+
+- NR-011 (gene slots). The layout in `src/objective_v10.jl` names slot 8
+  bank_bottom and slots 9 and 10 the blade scales. The genome holds 22.0,
+  0.8213 and 0.2000 there, and the row shows bank_bot 22 degrees and blade
+  scales 0.82 and 0.20.
+
+- NR-014. The cold re-eval records P_range 0.028659374428010587 kW and
+  the row quotes 0.029 kW. The ratio to the mean is 0.54 percent. The row
+  shows 0.5 percent at one decimal place.
+
+- NR-016. The cold re-eval records omega_eq 10.169820334285198 rad/s, and
+  the row quotes 10.170 rad/s. The row takes the ODE path. The rapid path
+  carries reject values only, so no rapid value appears in a row.
+
+Verdict: no discrepancy found. The seven rows stand as signed. Full
+precision lives in the records cited above.

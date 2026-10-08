@@ -1,0 +1,32 @@
+av_counterread_regv1.log — aero-validator counter-read, register v1 rows
+NR-007, NR-008, NR-009, NR-010, NR-011, NR-014, NR-016
+Date: 2026-10-08. Seat: aero-validator (desktop). Tree: bank-derate-cos2p65.
+
+Basis records read (not modified):
+  docs/validation/2026-10-08-phase0-bankderate2-audit.md  (section 4 re-eval; section 5 ranges)
+  scratch/sv_p0_winner_reeval.txt                        (re-eval record, full precision)
+  scratch/sv_p0_secondread_winner_reeval.log             (second read, full precision)
+  scratch/sv_regv1_probe_fidelity.log                    (cold and rapid columns)
+  scratch/sv_p0_secondread_census.txt                    (ok-row ranges; winner row)
+Decode-name authority: src/objective_v10.jl lines 12-28 (canonical 10-DoF layout).
+
+Tier: record read only. No simulator run. No telemetry read.
+
+Arithmetic check (python3, this seat):
+  P_range / P_mean = 0.0053984866 -> 0.5398 percent (row display 0.5 percent)
+  P_mean  3 dp = 5.309     P_end    3 dp = 5.314    FoS_min 3 dp = 14.972
+  T_lift  1 dp = 324.1     P_range  3 dp = 0.029    omega_eq 3 dp = 10.170
+  r_hub   3 dp = 4.580     r_bot    3 dp = 0.804
+  bs_top  2 dp = 0.82      bs_bot   2 dp = 0.20
+  ok-row range union: 5.02 .. 6.32 (min of 5.020/5.050/5.020; max of 6.260/6.090/6.320)
+
+STE gate (python3 ste-lint.py --fail-above 2.0 docs/reporting/numbers-register.md):
+  baseline (HEAD 3a78490): words=819  total=16 per100w=1.95  em_dash=10
+  appended (final)       : words=1153 total=16 per100w=1.39  em_dash=10
+  per-class delta on the append: 0 in every class
+  (long_sentence 6->6, semicolon 2->2, passive_voice 1->1,
+   long_paragraph 7->7, all other classes 0->0).
+  Block check: every appended block counts <=6 sentence-parts.
+
+Verdict: no discrepancy found. All seven rows agree with the cited records
+at the stated precision.
