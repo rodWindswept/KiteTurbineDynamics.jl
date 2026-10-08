@@ -146,8 +146,10 @@ the decomposition stays (@science-writer, Track D).
 `max(N)/max(N_crit)` over the beams of the ring (independent maxima). The
 axial share of the report is the same-beam share that completes the
 interaction. The two sit in one quantity class. They are not guaranteed
-bit-equal. The captions should state the relationship, never an equality of
-the two axial components.
+bit-equal. The relationship states once, in prose at the first dashboard-bar
+mention (R1 placement reading, 2026-10-08; prose seed: the bridge section of
+`captions-draft.md`). The captions carry no form of it, and no form claims
+an equality of the two axial components.
 
 ## Checks. External, never self-graded.
 
@@ -229,3 +231,8 @@ drawn interaction.
 - v1 (2026-10-08): R1 opens with this spec and the composition mock. No
   values carried. Awaiting the capture, the annotation rows, and the R1
   composition review. R2 to ⟨append⟩. R3 to ⟨append⟩.
+
+- v2 (2026-10-08): bridge placement — the dashboard-bar relationship states
+  in prose at the first mention of the bar, not in the captions (R1
+  text-seat reading; caption plan unchanged; the bridge section of
+  `captions-draft.md` is the prose seed).
