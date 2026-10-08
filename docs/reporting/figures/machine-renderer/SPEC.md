@@ -76,8 +76,11 @@ never selects, ranks or interprets.
 3. **The recorded decode and construction chain.** This covers the discrete-gene
    rounding the campaign runner applied, the decode knobs the campaign ran
    (cylinder-cone geometry, rotor-count mode, power split, cone slope, rotor
-   spacing fraction, blocking factor), and the construction knobs (params at
-   the campaign length, beam sizing, the k basis). The manifest names them all.
+   spacing fraction, blocking factor, and the campaign `v_rated` — the evaluator
+   passes it explicitly and a decode that omits it silently rebuilds an
+   off-basis machine, aero-validator delta 2026-10-08), and the construction
+   knobs (params at the campaign length, beam sizing with `beam_t_over_D`
+   named, and the k basis). The manifest names them all.
    The renderer applies exactly the recorded values, and nothing else.
 
 4. **Register binding.** Each set ships a citation list. The list holds the
@@ -347,4 +350,7 @@ No check grades itself. No number appears without its register row.
 review (Rod, 2026-10-08): prototype geometry corrected — ground ring smallest,
 machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the
 first mock drew the taper inverted and the rotor mid-stack). Engine question
-opened as D7. R2 to ⟨append⟩. R3 to ⟨append⟩.*
+opened as D7. SPEC input 3 amended: the recorded chain now names `v_rated` and
+`beam_t_over_D` (aero-validator delta, 2026-10-08 — the pack's decode had
+inherited the `p.v_wind_ref` fallback; figures regenerated the same day). R2
+to ⟨append⟩. R3 to ⟨append⟩.*
