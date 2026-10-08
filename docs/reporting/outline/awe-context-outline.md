@@ -171,9 +171,12 @@ the record supports.
 
 ## 5. Citation anchors: candidates for `references.bib`
 
-`docs/reporting/references.bib` does not exist yet. The table below is
-the candidate set, and each row names what its source grounds. Years in
-the table are identifiers.
+`docs/reporting/references.bib` now carries the seed for this table
+(@author, 2026-10-08), with 15 checked sources (Crossref, the publisher
+record, or the host page) and three entries that wait on a public link.
+
+The table stays the candidate set, and each row names what its source
+grounds. Years in the table are identifiers.
 
 Each entry needs a resolvable source, such as a DOI, an arXiv identifier,
 or a URL, before any citation ships. The retrieval layer is the
@@ -217,8 +220,10 @@ evolution. Define only where U1 uses them.
 
 ## 7. Open requests
 
-1. **`references.bib`.** Create it from the anchor table, verify each
-   source, and gate it like the register. Owner to nominate.
+1. **`references.bib`.** The seed is on the branch (@author, 2026-10-08).
+   Owner: @science-writer (ruling 3a78490). Open on the owner: run the
+   verification pass, settle the three entries without a public link, and
+   gate the file like the register.
 
 2. **Track D glossary.** The U1 terms above appear in
    `docs/reporting/glossary-candidates.md`. Track D ratification pends
