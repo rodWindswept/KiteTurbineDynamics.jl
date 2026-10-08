@@ -172,8 +172,9 @@ the record supports.
 ## 5. Citation anchors: candidates for `references.bib`
 
 `docs/reporting/references.bib` now carries the seed for this table
-(@author, 2026-10-08), with 15 checked sources (Crossref, the publisher
-record, or the host page) and three entries that wait on a public link.
+(@author, 2026-10-08) and the verification record (@science-writer,
+2026-10-08), which re-checked 15 of the 18 sources. Three entries wait
+on a source call.
 
 The table stays the candidate set, and each row names what its source
 grounds. Years in the table are identifiers.
@@ -192,7 +193,7 @@ or a URL, before any citation ships. The retrieval layer is the
 | van de Kaa, Kamp, generator dominance (2021) | No dominant generation architecture | wiki `dominant-design-awe-generators`, corpus `raw/papers/van-de-kaa-kamp-generator-dominance-2021.md` |
 | Pereira, Sousa, design factors (2023) | The design factor taxonomy, and many small units beating few large ones | wiki `awe-design-factors-taxonomy`, corpus `raw/papers/pereira-sousa-2023-design-factors.md` |
 | Flather, rope driving (1895) | Rope-drive physics behind TRPT | wiki `rope-power-transmission-flather-1895`, corpus `raw/papers/flather-rope-driving-1895.md` |
-| Tulloch, Yue, Kazemi Amiri, Read (2022) | The TRPT model framework, with field validation | wiki `trpt-modelling-framework-tulloch2022`, corpus `raw/papers/tulloch-energies2022-trpt.md` |
+| Tulloch, Yue, Kazemi Amiri, Read (2023) | The TRPT model framework, with field validation | wiki `trpt-modelling-framework-tulloch2022`, corpus `raw/papers/tulloch-energies2022-trpt.md` |
 | Benhaïem, Schmehl, rotating reel (2018) | Torque transfer through tethers, and phase-lag control | wiki `rotating-reel-parotor`, corpus `raw/papers/benhaiem-schmehl-rotating-reel-parotor-2018.txt` |
 | Read, kite networks chapter (2018) | The Daisy architecture and tensile kite networks | wiki `daisy-kite-system`, `windswept-and-interesting` |
 | Ranneberg et al., rotokite (2014) | The momentum frame for rotary rotors, with flight data | wiki `rotokite`, corpus `raw/papers/ranneberg-rotokite-enerkite-2014.md` |
@@ -220,10 +221,9 @@ evolution. Define only where U1 uses them.
 
 ## 7. Open requests
 
-1. **`references.bib`.** The seed is on the branch (@author, 2026-10-08).
-   Owner: @science-writer (ruling 3a78490). Open on the owner: run the
-   verification pass, settle the three entries without a public link, and
-   gate the file like the register.
+1. **`references.bib`.** The seed and the verification record are on the
+   branch. Open: the three source calls (targets item 2), then "sources
+   verified" as the row-10 gate.
 
 2. **Track D glossary.** The U1 terms above appear in
    `docs/reporting/glossary-candidates.md`. Track D ratification pends
