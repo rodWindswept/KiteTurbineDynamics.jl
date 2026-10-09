@@ -23,6 +23,9 @@ citations.
 v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
 strip at §3.5 (figure-map row 9).
 
+v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+noun and states the lifter modulation assumption.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -292,11 +295,20 @@ The lift acts throughout operation, not only at spin-up. The team
 sizes the lift line up front.
 
 At the lift bearing, its vertical component carries 1.5 times the
-weight of the machine. The line runs at 70 degrees of elevation
+weight of the machine. The lift line runs at 70 degrees of elevation
 (NR-026). Its tension stays flat as the wind rises, with margin.
 
 The sizing excludes the weight of the lifter. The kite carries itself.
 Its lift tension reads 324.1 newtons (NR-010).
+
+The lifter is a stack of autogyros. The report assumes the stack can
+modulate to meet the lift requirement at all wind speeds.
+A fixed kite cannot: its pull grows as the square of the wind speed.
+Without modulation, each weather band needs its own kite, up to a giant.
+
+The stack sizing is a solved problem. The report applies the force
+the machine needs, and it tests the machine on that basis.
+The report states the presumption as one (2026-08-05).
 
 Its geometry reads three lines, six rings and one active rotor. The
 hub radius is 4.580 metres and the ground radius 0.804 metres
