@@ -24,14 +24,14 @@ Main body target: about 10,000 words, about 20 A4 pages in the assembled PDF,
 |---|---|---|---|---|---|---|---|
 | 1 | Title, authors, abstract, keywords | - | 250 | 0 | @author | not started | Write last, from the signed register |
 | 2 | Introduction | U1 | 1,200 | 1 figure | @author + @science-writer | drafting (v0.1 lead pass) | Track A reconciliation, then draft prose |
-| 3 | Development history: the tool and the method | - | 700 | 0 | @author | prep (seed b6024e9, placement ruled 2026-10-09) | Track A/B reconciliation, then @author first prose pass |
+| 3 | Development history: the tool and the method | - | 700 | 0 | @author | prep (seed v6 c1ad366, placement ruled 2026-10-09) | Track A/B reconciliation, then @author first prose pass |
 | 4 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | drafting (v0.1 lead pass) | Register v1 + physics-topology |
 | 5 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures-images-diagrams + @science-writer | not started | Landscape Phases 1 to 2 |
 | 6 | Results: evolution | U3 | 1,200 | 2 figures | @figures-images-diagrams + @author | prep (figures/machine-renderer SPEC v1, R1 mock) | Phase 3 + renderer |
 | 7 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures-images-diagrams | not started | Phase 3 regime table |
 | 8 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | drafting (v0.1 lead pass) | Track B + the trust log |
 | 9 | Conclusion: achievements | U5 | 700 | 0 | @author | drafting (v0.1 lead pass) | Signed register |
-| 10 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v3) | Track D ratification |
+| 10 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v6) | Track D ratification |
 | 11 | References | - | 25 entries | 0 | @science-writer | prep (seed a7ca235, 15 of 18 verified) | 3 source calls, then sources verified |
 | 12 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | drafting (v0.1 lead pass) | Assembly |
 
@@ -123,6 +123,10 @@ The release states:
    reads this doc first, so the whole amount of work runs against one plan.
 
 ## Deltas
+
+- v5 (2026-10-09): reconcile against origin. Row 10 cites the glossary
+  at v6 (2b9c35f). Row 3 cites the seed at v6 (c1ad366). The next gates
+  stay unchanged.
 
 - v4 (2026-10-09): Rod rules the placement and the budget of the
   development-history chapter: its own short chapter, after the
