@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v6, numbers-free by construction (no measurement values, no
+**Status** PREP v7, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -90,6 +90,8 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | rotor count | The number of ring stations that carry a rotor. The count reads rotor stations, not active blade lines. | genome-glossary rotor mask gene | supply |
 | lift chain | The support path that holds the main rotor. It runs: lifter kite, lift line, sky hook, cyan line, lift bearing, bridles, main rotor. | physics-topology 2 | ratify |
 | lifter kite | The topmost kite. It launches first and gives lift only. It carries no torque and no drive. | physics-topology 2 | ratify |
+| stack of autogyros | The lifter in this report: autogyro rotors stacked on one lift line. The stack takes the place of one large kite. Stack sizing is a solved problem. | `src/lift_kite.jl` (`StackedLifterParams`), handover 2026-08-05 (stationarity audit), `CoaxialAutogyroStacking.jl` | room-supplies |
+| modulation (lift modulation) | Lift modulation: the lifter can meet the lift requirement as the wind changes. The report assumes the stack can do this at all wind speeds. A fixed kite cannot: its pull grows as the square of the wind speed. Without modulation, each weather band needs its own kite. | `src/lift_kite.jl`, DECISIONS [2026-08-19], `run_v13_5kw_masslift.jl` | room-supplies |
 | lift line | One line from the lifter kite to the sky hook. | physics-topology 2 | ratify |
 | sky hook (sky anchor) | The three-way knot between the lift line, the backline and the cyan line. Pick one name for the report. | physics-topology 2, CONTEXT.md | ratify |
 | backline | One line from the sky hook to the backline ground anchor. It limits sky-hook altitude, and it is not a load path. It stays taut at the design point. | physics-topology 3.2 | ratify |
@@ -109,6 +111,14 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | Betz ceiling | The theoretical upper bound on rotor power. No rotor can take more from the wind. | framework section 3, awe-knowledge | supply |
 | tip-speed ceiling | The operating limit on blade tip speed. | framework section 3 | supply |
 | blade-mass law | The rule that blade mass scales as a power of blade span. The reference mass comes from the flown Daisy blade. | CONTEXT.md blade-mass law row | room-supplies |
+
+**Lifter senses (draft note).**
+
+- "Lifter kite" names the device class. "Stack of autogyros" names the implementation the §3.3 lift spec assumes. Track D settles the split.
+
+- "Modulation" matches the record phrase "modulated lifter". "Furl" stays reserved for emergency lift reduction.
+
+- The ring-utilisation figure keeps "stacked bar" wording. The lifter is the stack of autogyros. Keep the two apart.
 
 ## 3. Search and evaluation terms (Methods, U2 to U4)
 
@@ -281,3 +291,10 @@ defect, like a missing register row.
   development-history chapter: screen, qualify (qualification), and envelope
   test. The drafts ground in the chapter seed and the item 4 campaign summary.
   A note keeps the two report senses of "envelope" apart. No other change.
+
+- **v7 (2026-10-09):** two rows join the machine group for the §3.3 lift spec.
+  The "stack of autogyros" row names the assumed lifter: coaxial autogyro rotors on one lift line.
+  The "modulation" row carries the flat-tension assumption and the fixed-kite contrast.
+  Grounds: `src/lift_kite.jl`, the 2026-08-05 presumption and the [2026-08-19] ruling.
+  A senses note keeps the lifter terms and the figure wording apart.
+  No other change.
