@@ -174,22 +174,26 @@ way.
 
 The dynamics run as a coupled multibody model. Every node, line and
 ring carries state. The evaluator holds the whole set as one matrix of
-ordinary differential equations (ODEs) and advances it at a fixed
-step. The scheme is semi-implicit: each step advances the velocities
-before the positions.
+ordinary differential equations (ODEs).
+
+The evaluator advances that matrix at a fixed step. The scheme is
+semi-implicit. Each step advances the velocities before the positions.
 
 The generator brake torque enters implicitly. Read from the last step
-alone, the load law is positive feedback. Take a ground ring that runs
-a little fast: the brake pushes too hard, and the next step
-over-corrects, so the swing grows. The implicit form solves the brake
-with the new speed, so the step stays stable. The evaluator derives
-the step per machine from the shortest shaft sub-segment.
+alone, the load law is positive feedback.
+Take a ground ring that runs a little fast: the brake pushes too hard,
+and the next step over-corrects, so the swing grows.
+
+The implicit form solves the brake with the new speed, so the step
+stays stable. The evaluator derives the step per machine from the
+shortest shaft sub-segment.
 
 The run is deterministic by construction. That determinism is what
-makes reproduction possible. The search carries the same property. The
-campaign runner fixes one random seed per island
-(scripts/run_v13_5kw_masslift.jl), so the same code and configuration
-repeat the search.
+makes reproduction possible.
+
+The search carries the same property. The campaign runner fixes one
+random seed per island (scripts/run_v13_5kw_masslift.jl). The same
+code and configuration then repeat the search.
 
 NaN and Inf clamps guard the state. A broken line ends the run.
 
@@ -278,10 +282,11 @@ In the field the lifter launches first. It lifts the rig into tension.
 The rotor turns after that.
 
 The lift acts throughout operation, not only at spin-up. The team
-sizes the lift line up front. At the lift bearing, its vertical
-component carries 1.5 times the weight of the machine. The line runs
-at 70 degrees of elevation (NR-026). Its tension stays flat as the
-wind rises, with margin.
+sizes the lift line up front.
+
+At the lift bearing, its vertical component carries 1.5 times the
+weight of the machine. The line runs at 70 degrees of elevation
+(NR-026). Its tension stays flat as the wind rises, with margin.
 
 The sizing excludes the weight of the lifter. The kite carries itself.
 Its lift tension reads 324.1 newtons (NR-010).
