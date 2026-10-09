@@ -229,9 +229,11 @@ the exact wording.
 ## Deltas
 
 - v6 (2026-10-09): the pass guard from the room. We corrected the
-  instrument. The winner did not simply turn out wrong. Act 4 shows the
-  correction, then the boundary. Act 3 aligns to "envelope test"
-  (`glossary-candidates.md` v6, `2b9c35f`, pending Track D ratification).
+  instrument. The winner did not simply turn out wrong.
+
+  Act 4 shows the correction, then the boundary. Act 3 aligns to
+  "envelope test" (`glossary-candidates.md` v6, `2b9c35f`, pending
+  Track D ratification).
 
 - v5 (2026-10-09): @author confirms the seed-candidate thread for
   "turbine tests". Open item 2 closes. The probe pair joins the
