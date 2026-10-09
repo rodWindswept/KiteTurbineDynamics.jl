@@ -1,0 +1,268 @@
+{
+    "set": "machine-evolution-strip",
+    "mode": "strip",
+    "slug": "machine-evolution-strip",
+    "script_commit": "52ba1e7",
+    "script": {
+        "path": "docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl",
+        "sha256": "c8eeca450d92bbc5f7f60c8aa91a44e99505956dc196c9957de8f92e079f4e9a"
+    },
+    "toolchain": {
+        "julia": "1.12.5",
+        "cairomakie": "0.15.11",
+        "mutool": "1.23.10",
+        "pdf_date_normalised_to": "1970-01-01T00:00:00+00:00"
+    },
+    "data_commit": "dd3cc6a",
+    "extract": {
+        "path": "docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv",
+        "sha256": "f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad"
+    },
+    "selection": {
+        "rule": "island 3 best-so-far, ok rows, earliest (gen, idx) tie-break; no interpolation",
+        "generations": [
+            0,
+            6,
+            10,
+            18,
+            22,
+            25,
+            26
+        ]
+    },
+    "registers": [
+        "NR-005",
+        "NR-006",
+        "NR-011"
+    ],
+    "knobs": {
+        "power_W": 5000,
+        "v_rated": 11,
+        "tether_length": 18.8,
+        "k_mppt": 2.24,
+        "blocking_factor": 0.9472682371859096,
+        "cylinder_cone": true,
+        "rotor_count_mode": true,
+        "power_split": 0.6,
+        "cone_slope_deg": 22,
+        "rotor_spacing_frac": 0.8,
+        "min_wall_m": 0.002,
+        "t_over_D": 0.055
+    },
+    "scale": {
+        "m_per_px": 0.06023612839406871,
+        "window": {
+            "x": [
+                -6.375278852632207,
+                6.375278852632207
+            ],
+            "y": [
+                -0.7585290242225826,
+                19.721754629760778
+            ]
+        },
+        "panel_px": [
+            212,
+            340
+        ],
+        "scale_bar_m": 5
+    },
+    "panels": [
+        {
+            "label": "i3-g0-i1",
+            "gen": 0,
+            "genome": [
+                4.32,
+                0.796868,
+                2.1,
+                3.0,
+                0.225256,
+                1.267273,
+                10.739909,
+                7.182982,
+                1.0,
+                1.0
+            ],
+            "source_row": 1,
+            "counts": {
+                "rings": 9,
+                "gaps": 8,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 24,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g6-i2",
+            "gen": 6,
+            "genome": [
+                4.725092,
+                1.099481,
+                2.575765,
+                3.0,
+                -0.586694,
+                1.142823,
+                13.604274,
+                17.309929,
+                0.981521,
+                0.377116
+            ],
+            "source_row": 2,
+            "counts": {
+                "rings": 5,
+                "gaps": 4,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 12,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g10-i7",
+            "gen": 10,
+            "genome": [
+                4.357114,
+                0.723093,
+                2.721839,
+                3.0,
+                0.137051,
+                1.123461,
+                6.294154,
+                10.966288,
+                1.0,
+                0.470742
+            ],
+            "source_row": 3,
+            "counts": {
+                "rings": 7,
+                "gaps": 6,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 18,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g18-i4",
+            "gen": 18,
+            "genome": [
+                4.288353,
+                1.195302,
+                2.71541,
+                3.0,
+                -0.400131,
+                1.01408,
+                12.255334,
+                22.0,
+                0.968082,
+                0.366845
+            ],
+            "source_row": 4,
+            "counts": {
+                "rings": 5,
+                "gaps": 4,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 12,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g22-i10",
+            "gen": 22,
+            "genome": [
+                4.370855,
+                1.195302,
+                2.688185,
+                3.0,
+                -0.8,
+                1.047031,
+                6.439151,
+                22.0,
+                0.938559,
+                0.2
+            ],
+            "source_row": 5,
+            "counts": {
+                "rings": 5,
+                "gaps": 4,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 12,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g25-i8",
+            "gen": 25,
+            "genome": [
+                4.449904,
+                1.162738,
+                2.810821,
+                3.0,
+                -0.549805,
+                1.007551,
+                4.662514,
+                22.0,
+                0.853537,
+                0.2
+            ],
+            "source_row": 6,
+            "counts": {
+                "rings": 5,
+                "gaps": 4,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 12,
+                "markers": 2
+            }
+        },
+        {
+            "label": "i3-g26-i9",
+            "gen": 26,
+            "genome": [
+                4.57997905482005,
+                0.8036829846088207,
+                2.720554022272866,
+                3.0,
+                -0.8,
+                1.0370201857788965,
+                7.088131460323565,
+                22.0,
+                0.8213255027884769,
+                0.19999999999999996
+            ],
+            "source_row": 7,
+            "counts": {
+                "rings": 6,
+                "gaps": 5,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 15,
+                "markers": 2
+            }
+        }
+    ],
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl --script-commit 52ba1e7",
+    "outputs": {
+        "machine-evolution-strip.pdf": "3bd06b5c45be9d6c77c577f265c9e05f14acacc8bf5d4a363b3f18cd360808b5",
+        "machine-evolution-strip.svg": "193e9f0dba2a557dfc658599f60c6b6f50042abc3e257e681c6910ef3c2383f1",
+        "checks.log": "bb52ed11c0ad31313e238bfb496a9c9670bf03dbe806cc4d3e1de2110957a511",
+        "machine-evolution-strip.png": "65eaa8a9d5eb0623a5241892af9d8ff38950de8c7aa7fb33193dc67bcb6b1eac"
+    }
+}

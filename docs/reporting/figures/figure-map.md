@@ -34,7 +34,7 @@ carries the full roster around them.
 | 6 | §3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 7 | §3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 8 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
-| 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | planned | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | The panel check, then GENERATE |
+| 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE at the sign-off commit |
 | 10 | §3.5 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
 | 11 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
@@ -104,3 +104,15 @@ three slots).
   diagram ask, row 3 the §2.2 genome visual, row 10 the §3.3 annotated
   winner diagram, the §2.3 variations ask joins the row 11 candidate, and
   row 8 keeps the §3.4 charts ask under its phase gate.
+
+- **v4 (2026-10-09):** row 9 advances to R2. The panel check passed
+  (science-validator): the extract recomputes from the raw telemetry, the
+  amendment set holds, and the parity items re-derive. GENERATE lands the
+  seven-panel strip (script `52ba1e7`, outputs in this commit). The set
+  draws the built state at one fixed scale, 0.0602 m per pixel, with a
+  5 m scale bar. The D7
+  CairoMakie engine runs, and the PDF date normalises so the byte-stable
+  double run holds across all five outputs. The in-script checks all
+  pass, with the NR-011 winner check and the layout viewport receipt in
+  `checks.log`. F-COUNT and F-PARSE stay with the validators. The SVG
+  text layer is glyph paths, not selectable text; open to the room at R2.

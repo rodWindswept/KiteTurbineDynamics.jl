@@ -1,0 +1,27 @@
+machine-evolution-strip — GENERATE run
+script commit: 52ba1e7
+toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
+extract: docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv  sha256 f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad
+panel i3-g0-i1 (gen 0): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 9 (incl ground) · TRPT polylines 24 (3 lines x 8 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g6-i2 (gen 6): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g10-i7 (gen 10): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 7 (incl ground) · TRPT polylines 18 (3 lines x 6 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g18-i4 (gen 18): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g22-i10 (gen 22): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g25-i8 (gen 25): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g26-i9 (gen 26): n_lines true · rings true · n_active true · r_hub true · r_bot true
+  drawn: ring segments 6 (incl ground) · TRPT polylines 15 (3 lines x 5 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+NR-011 winner-panel check (gen 26): n_lines 3 true · rings 6 true · r_hub 4.580 true · r_bot 0.804 true
+window: x ±6.375 m · y -0.759 .. 19.722 m · m_per_px 0.060236 · panel 212 x 340 px · figure 1580 x 596 px · scale bar 5.0 m
+layout viewports: header [0,512 + 1580x84] · labels [0,132 + 1580x40] · footer [0,0 + 1580x132] · panel1 [0,172 + 212x340] · panel7 [1368,172 + 212x340]
+pdf normalisation: clean -d ok · CreationDate replacements 1 · clean -z ok
+outputs sha256:
+  machine-evolution-strip.png  65eaa8a9d5eb0623a5241892af9d8ff38950de8c7aa7fb33193dc67bcb6b1eac
+  machine-evolution-strip.svg  193e9f0dba2a557dfc658599f60c6b6f50042abc3e257e681c6910ef3c2383f1
+  machine-evolution-strip.pdf  3bd06b5c45be9d6c77c577f265c9e05f14acacc8bf5d4a363b3f18cd360808b5
+checks: ALL OK
