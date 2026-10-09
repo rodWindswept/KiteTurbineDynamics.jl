@@ -227,7 +227,7 @@ the exact wording.
   off-by-one), and the stale-gate near-miss (FoS floor guard, 2026-08-22).
   The §4.2 entries of the report draft v0.2 carry the same facts.
 
-- v3 (2026-10-08): the control-law lineage folds into Acts 2 and 3
+- v3 (2026-10-09): the control-law lineage folds into Acts 2 and 3
   (soft-ramp controller, control maps, the max-power hunt decision,
-  the ramp evaluator), per the room pass of 2026-10-08.
+  the ramp evaluator), per the room pass on the control history.
   The sources extend with the control records.
