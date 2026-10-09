@@ -20,6 +20,9 @@ v0.5 pass by @author (2026-10-09). This pass seats the winner-check
 pair at §3.4 (figure-map rows 6 and 7) and closes the plate
 citations.
 
+v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
+strip at §3.5 (figure-map row 9).
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -325,11 +328,11 @@ development-history chapter carries the trade, tagged by era.
 
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
-### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer
-supply this.]
+### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this. The machine evolution strip seats below.]
 
-### 3.6 Design implications [PENDING. Phase 3 and the regime table
-supply this.]
+[Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006 and NR-011.]
+
+### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
 
 ## 4 Discussion
 
