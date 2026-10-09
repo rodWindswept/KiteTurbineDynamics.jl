@@ -16,6 +16,10 @@ set: figure requests mapped to figure-map rows, the builder and
 evaluator split, the load law, the lift spec and the search
 determinism.
 
+v0.5 pass by @author (2026-10-09). This pass seats the winner-check
+pair at §3.4 (figure-map rows 6 and 7) and closes the plate
+citations.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -315,7 +319,11 @@ This run also trades breadth for fidelity: fewer evaluations, each on
 the honest window. It stopped early: a screen, not a survey. The
 development-history chapter carries the trade, tagged by era.
 
-### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this. Figures: figure-map row 8.]
+### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this. Figures: figure-map row 8. The ring and twist plates seat below.]
+
+[Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
+
+[Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
 ### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer
 supply this.]
