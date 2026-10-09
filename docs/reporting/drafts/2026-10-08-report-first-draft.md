@@ -11,6 +11,11 @@ signed rows.
 v0.3 pass by @author (2026-10-08). This pass closes the k bracket and
 corrects the NR-016 read.
 
+v0.4 pass by @author (2026-10-09). This pass folds the margin-note
+set: figure requests mapped to figure-map rows, the builder and
+evaluator split, the load law, the lift spec and the search
+determinism.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -96,9 +101,12 @@ Ranneberg gave the rotary family a momentum frame with flight data.
 
 ## 2 Methods
 
-### 2.1 The machine and its terms
+### 2.1 The machine and its terms 
 
 A line is a tension member, like a tether or a bridle. It never pushes.
+
+[Term-set diagram requested: figure-map row 2 (system anatomy). Gate:
+Track D display forms.]
 
 A ring is a polygon of nodes and tubular beams. A ring with blades works
 as a rotor.
@@ -117,26 +125,36 @@ the Track D glossary.]
 
 ### 2.2 The genome
 
-The genome is the design vector. The decoder reads it and builds the
-machine.
+The genome is the design vector. The decoder reads it. The builder
+builds the machine.
+
+[Genome visual requested: figure-map row 3 (genome decode strip).
+Gate: the room ruling on need.]
 
 The genes set the ring geometry, the polygon count, the rotor count,
 the bank angles and the blade scales. The winner genome names its
 genes in the decode fields (NR-011).
 
-### 2.3 The evaluator
+### 2.3 The evaluator    
 
-The evaluator builds the machine from the genome. It settles the
-machine and measures performance over an honest window. The honest
+The builder builds the machine from the genome. The evaluator settles
+the machine and measures performance over an honest window. The honest
 window waits out the startup transient before it records.
+
+[Design-family visual requested: figure-map row 11 (design family grid).
+Gate: the family names.]
+
+The generator load follows a power law. The commanded torque reads
+τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
+load, and the load sets the speed at which the machine settles.
 
 The operating point uses a power-law constant k of 2.24, a relax time
 of 10 seconds, a window of 40 seconds, a factor of safety (FoS) gate
 of 2.5 on 2.5, and a line length of 18.8 metres (NR-015).
 
-The campaign fixed k at 2.24, the value selected in the honest-window
-sweep and verified below the generator torque clamp at winner-class
-speeds (NR-015).
+The campaign fixed k at 2.24 (NR-015), the value selected in the
+honest-window sweep (2026-08-22). [Clamp margin: no check recorded
+yet. A derived row or a drop ruling awaits the room.]
 
 [Closed 2026-10-08: selection, not derivation. The circulating closed
 form no longer holds. Its product, 3.55, stays flagged non-operating in
@@ -154,20 +172,28 @@ FoS is the design load margin. It is the ratio of what the line can
 carry to what the load demands. The model tests the TRPT beam element FoS for buckling risk the same
 way.
 
-The dynamics run as an ordinary differential equation (ODE) model with
-a fixed step. The scheme is semi-implicit: each step advances the
-velocities before the positions.
+The dynamics run as a coupled multibody model. Every node, line and
+ring carries state. The evaluator holds the whole set as one matrix of
+ordinary differential equations (ODEs) and advances it at a fixed
+step. The scheme is semi-implicit: each step advances the velocities
+before the positions.
 
-The generator brake torque enters implicitly, because its explicit form
-is positive feedback. The evaluator derives the step per machine from
-the shortest shaft sub-segment.
+The generator brake torque enters implicitly. Read from the last step
+alone, the load law is positive feedback. Take a ground ring that runs
+a little fast: the brake pushes too hard, and the next step
+over-corrects, so the swing grows. The implicit form solves the brake
+with the new speed, so the step stays stable. The evaluator derives
+the step per machine from the shortest shaft sub-segment.
 
 The run is deterministic by construction. That determinism is what
-makes reproduction possible.
+makes reproduction possible. The search carries the same property. The
+campaign runner fixes one random seed per island
+(scripts/run_v13_5kw_masslift.jl), so the same code and configuration
+repeat the search.
 
 NaN and Inf clamps guard the state. A broken line ends the run.
 
-[Step-ceiling and protocol figures: NR-024 and NR-025 carry the rows.
+[Step-ceiling and protocol values: NR-024 and NR-025 carry the rows.
 Counter-read pending (@science-validator).]
 
 ### 2.4 The campaign
@@ -228,7 +254,7 @@ kilograms (NR-006).
 
 ### 3.2 Convergence
 
-Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2
+Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2   
 reaches 30.637 kilograms at generation 30 (NR-004). Island 3 reaches
 27.364 kilograms at generation 26 (NR-005).
 
@@ -238,7 +264,8 @@ kilowatts (NR-007).
 ### 3.3 The winner
 
 Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
-its end power 5.314 kilowatts (NR-008). Its factor of safety reads 14.972 (NR-009).
+its end power 5.314 kilowatts (NR-008). Its factor of safety reads
+14.972 (NR-009).
 
 A lifter kite holds the machine aloft. The lifter gives lift only. It
 gives no torque and no drive.
@@ -250,9 +277,11 @@ bearing, and down the bridles to the main rotor.
 In the field the lifter launches first. It lifts the rig into tension.
 The rotor turns after that.
 
-The lift acts throughout operation, not only at spin-up. The lift line
-carries the airborne weight at the lift bearing as a vertical
-component. Its tension stays flat as the wind rises, with margin.
+The lift acts throughout operation, not only at spin-up. The team
+sizes the lift line up front. At the lift bearing, its vertical
+component carries 1.5 times the weight of the machine. The line runs
+at 70 degrees of elevation (NR-026). Its tension stays flat as the
+wind rises, with margin.
 
 The sizing excludes the weight of the lifter. The kite carries itself.
 Its lift tension reads 324.1 newtons (NR-010).
@@ -267,10 +296,21 @@ ring 6 (NR-017).
 
 Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
 percent (NR-014). Its settle-carried equilibrium speed (ω_eq) reads
-10.170 radians per second (NR-016). Its airborne mass reads 25.698
-kilograms (NR-018).
+10.170 radians per second (NR-016). Its airborne mass reads 25.698 kilograms (NR-018).
 
-### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this.]
+[Winner anatomy: figure-map row 10 carries the labelled render, with
+the lift chain and the ring numbers. The PTO station sits outside the
+render scope.]
+
+This result differs from earlier eras for recorded reasons. The bank
+derate, the honest window and the tightened gates moved the search
+space. Numbers across the eras would compare models, not machines.
+
+This run also trades breadth for fidelity: fewer evaluations, each on
+the honest window. It stopped early: a screen, not a survey. The
+development-history chapter carries the trade, tagged by era.
+
+### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this. Figures: figure-map row 8.]
 
 ### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer
 supply this.]
