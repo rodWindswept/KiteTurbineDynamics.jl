@@ -155,3 +155,65 @@ Held, inside their brackets: `1.94` and `5.18` (§4.2 ledger), `21.2` and `25.0`
 (§2.3 length screen), `3.55` (flagged non-operating).
 
 **Next run** at the next draft push.
+
+## Sweep 4: v0.7, 2026-10-09
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `a3d1496`
+(the v0.7 pass), spanning the v0.6 pass at `eb0251d`. The file carries zero diff
+to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `a443e26` (zero diff to the
+tip). Covers NR-001 to NR-026 and the appended blocks: the aero and science
+counter-reads, the rotor-bank note, the caption rows NR-017 and NR-018, the
+bank-derate rows NR-019 and NR-020, and the mechanism-pair and ODE rows NR-021
+to NR-026.
+
+**Results**
+
+- STE gate: words 3166, total 0, `per100w=0.00`, `em_dash=0`, exit 0. The reading in the push note reproduces.
+
+- Retired phrasing: no hit on the solver patterns or the stale-phrase list.
+
+- Value cross-check: every printed value matches its row or side block at the
+  quoted precision. The checked set covers NR-001 to NR-018, the rotor-bank
+  note, the caption rows NR-017 and NR-018, and the NR-026 fold values (`1.5`
+  and `70`).
+
+- The span adds no new value. The v0.5 checks carry forward.
+
+- Arithmetic on stated totals: the status mix sums to 930 (508 + 301 + 110 + 11).
+  Three islands of 310 designs also give 930.
+
+- References counts: the section 7 line reads 15 of 18 verified, 3 pending.
+  `references-verification.md` carries the same counts.
+
+- Span note: this pass covers two pushes, v0.6 and v0.7. No sweep ran since
+  Sweep 3, so the token diff below closes the full span.
+
+- Held tokens: `21.2` and `25.0` inside the §2.3 length-screen bracket. `3.55`
+  inside its flag bracket. `1.94` and `5.18` in the §4.2 ledger prose, gated by
+  the closing note "the other values need rows first".
+
+- Number-token diff, v0.5 to v0.7, per push:
+
+  - v0.5 to v0.6: four arrivals. `3.5` and the two `9` refs are the strip seat.
+    `6` is the version digit. Eight occurrences added, four removed, in the two
+    heading joins. No value token arrived or left.
+
+  - v0.6 to v0.7: two arrivals. `3.3` is the lift-spec seat in the pass note.
+    `7` is the version digit. The `70` of the lift spec persists through the
+    line edit. No value token arrived or left.
+
+  - Net across the span: six arrivals. No value token dropped, arrived or
+    altered. Every arrival is a section reference or a version digit.
+
+  - Push-note check: the v0.7 note reads "+8 numeric tokens, none lost". The
+    recount confirms nothing left. Added: eight at v0.6, three at v0.7.
+    Removed: five. Net: six.
+
+**Finding**
+
+No value discrepancy found. The v0.6 strip seat and the v0.7 lift-spec passage
+verify clean.
+
+**Next run** at the next draft push.
