@@ -35,7 +35,7 @@ carries the full roster around them.
 | 7 | §3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 8 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
 | 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE at the sign-off commit |
-| 10 | §3.5 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
+| 10 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
 | 11 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
 | 13 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
@@ -126,3 +126,12 @@ three slots).
   text-layer item. A TikZ variant only if a web or SVG edition must
   select text. Row 9 stands ready for sign-off. Row 10 next: the
   winner-hero captures (plan, side, downwind), figures seat.
+
+- **v6 (2026-10-09):** row 10 settles to §3.3, The winner. The roster
+  cell had read §3.5 since v1. Delta v3 and the draft §3.3 note both
+  point row 10 at the winner diagram. The cell now matches. Figure
+  order note: the hero seats ahead of the plates in the section walk.
+  The ground-station steer folds onto the hero drawing: one schematic
+  triangle on a ground line marks the station position, and the label
+  stays. The station machinery sits outside the render scope. Probe
+  `6862ea4` carries the glyph.
