@@ -14,7 +14,9 @@ developed.
 
 **Sources** `CHANGELOG.md`, `DECISIONS.md`, the git record,
 `docs/TRPT_Optimisation_Monograph.md`, the handovers, the numbers
-register, and the Phase 0 audit.
+register, the Phase 0 audit, and the control records
+(`docs/plans/2026-06-27-soft-ramp-kmppt-v2.md`,
+`docs/gate1-control-map-rerun.md`, `scripts/results/control_maps/`).
 
 **Discipline** dates state chronology. Values attach at production from
 signed register rows, by row ID. Cross-era values stay era-tagged or
@@ -69,6 +71,20 @@ The tool exists to search forms beyond the reach of hand design.
   and multi start DE with collapse reseeding [CHANGELOG 0.4.0]. v11
   tapers the tether diameters [DECISIONS 2026-06-20].
 
+- The control law matures through June and July.
+  The soft-ramp controller plan of 2026-06-27 sets the direction.
+  The dashboard RampController ramps the k_mppt gain under structural
+  guards to find its sustainable value [CHANGELOG 0.8.0, 0.9.0].
+
+- The control maps arrive next: dynamic k_mppt hunts with
+  pre-sweeps across six wind speeds [CHANGELOG 0.9.0].
+  The two-flank analysis marks one flank unreachable in dynamics.
+  The dP/dk sign check in the RampController watches the power peak.
+
+- 2026-07-05: the map decision lands.
+  The control-map re-run hunts maximum power under unregulated
+  tracking, not the rated point [docs/gate1-control-map-rerun.md].
+
 - Widened bounds return very light winners that dynamics later rejects
   [CHANGELOG 0.6.0, 0.8.0].
 
@@ -77,11 +93,19 @@ The tool exists to search forms beyond the reach of hand design.
   dynamic check [CHANGELOG 0.8.0].
 
 - Lesson: cheap static scoring crowns machines that cannot fly.
+  The control line adds its own: the operating point is a control-law
+  outcome, and the gain belongs to the machine.
 
 ### Act 3: the honesty era, August into September 2026
 
 - The windowed evaluators arrive. The honest window lands first, then
   the rapid and ODE paths in report naming [CHANGELOG 0.11.0].
+
+- The evaluator adopts the controller: the ramp evaluator discovers
+  the sustainable gain during scoring.
+  The dashboard and the evaluator then share one k-selection path.
+  The gain is an output of the evaluation, not a genome gene
+  [DECISIONS 2026-08-11].
 
 - The blade mass law correction lands. A campaign voids
   [DECISIONS 2026-08-22]. The geometry audit finds dead genes
@@ -164,7 +188,8 @@ machinery.
 U3 keeps its own job. It shows the machines of the search generation
 by generation. This chapter shows the tool.
 
-The two do not overlap. No figures sit in this chapter. The evolution
+The two do not overlap. No figures sit in this chapter. The control-law
+figures stay with the figure map, rows 4 and 5. The evolution
 strip stays with U3.
 
 Terms to define first, per Track D: DE, generation, island, genome,
@@ -201,3 +226,8 @@ the exact wording.
   dead-gene examples (2026-08-14 taper divergence, 2026-08-26 rotor
   off-by-one), and the stale-gate near-miss (FoS floor guard, 2026-08-22).
   The §4.2 entries of the report draft v0.2 carry the same facts.
+
+- v3 (2026-10-08): the control-law lineage folds into Acts 2 and 3
+  (soft-ramp controller, control maps, the max-power hunt decision,
+  the ramp evaluator), per the room pass of 2026-10-08.
+  The sources extend with the control records.
