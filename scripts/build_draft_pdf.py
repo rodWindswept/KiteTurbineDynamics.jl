@@ -127,7 +127,7 @@ def parse_caption_sections(path):
         if line.startswith("## Plain caption"):
             current = plain
             continue
-        if line.startswith("## STE technical caption"):
+        if line.startswith("## Technical caption"):
             current = tech
             continue
         if line.startswith("## ") or line.startswith("# "):
