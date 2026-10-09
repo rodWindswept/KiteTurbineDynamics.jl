@@ -34,7 +34,7 @@ carries the full roster around them.
 | 6 | §3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 7 | §3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
 | 8 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
-| 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | planned | Track C extract. Best-per-generation genomes | The extract |
+| 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | planned | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | The panel check, then GENERATE |
 | 10 | §3.5 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
 | 11 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
@@ -91,3 +91,16 @@ three slots).
   self-checks. Row 5 unblocks to proposed — the re-derivation closed as
   selection, not derivation (NR-015). The twist mechanism values draw
   pending their rows.
+
+- **v3 (2026-10-09):** the strip extract lands.
+  `machine-evolution-strip/extract-best-so-far.csv` (`a6d2dc6`, `517e69b`)
+  carries island 3 best-so-far genomes, seven panels, at the
+  aero-validator amendment {0, 6, 10, 18, 22, 25, 26}. Row 9 waits on the
+  science-validator panel check; GENERATE follows. Row 5 opens its value
+  consultation — the k-basis value list went to the science-validator for
+  sign or bounce. The era pin is recorded: the interim `…bankderate` pack
+  sits clean at branch tip, and every draw reads `…_bankderate2/`. The
+  draft margin pass (Rod, 2026-10-09) folds in: row 2 gathers the §2.1
+  diagram ask, row 3 the §2.2 genome visual, row 10 the §3.3 annotated
+  winner diagram, the §2.3 variations ask joins the row 11 candidate, and
+  row 8 keeps the §3.4 charts ask under its phase gate.
