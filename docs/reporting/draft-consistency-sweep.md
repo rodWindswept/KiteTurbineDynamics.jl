@@ -97,3 +97,61 @@ protocol figures". The draft uses "figure" for a diagram elsewhere (§8). If
 the intent is the step-law and protocol values, "values" may read cleaner.
 
 **Next run** at the next draft push.
+
+## Sweep 3: v0.5, 2026-10-09
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `2432a77`
+(the v0.5 pass). The file carries zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `a443e26` (zero diff to the
+tip). Covers NR-001 to NR-026 and the appended blocks: the aero counter-read, the
+rotor-bank note, the caption rows, the bank-derate rows and the mechanism-pair rows.
+
+**Results**
+
+- STE gate: words 3024, total 0, `per100w=0.00`, `em_dash=0`, exit 0.
+
+- Retired phrasing: no hit on the solver patterns or the stale-phrase list. One
+  near-hit reviewed and cleared: "without a rigid driveshaft" (§1) contrasts the
+  shaft with a rigid drive, not a label for the TRPT.
+
+- Value cross-check: every printed value matches its row or side block at the
+  quoted precision. The checked set covers NR-001 to NR-018, the rotor-bank note,
+  the caption rows NR-017 and NR-018, and the NR-026 fold values (`1.5` and the
+  70° line angle).
+
+- Rows NR-019 to NR-025 print no values. The length screen values and the
+  fidelity counters stay inside their brackets.
+
+- Arithmetic on the stated totals: the status mix sums to 930 (508 + 301 + 110 + 11).
+  Three islands of 310 designs also give 930.
+
+- Span note: this pass covers three pushes, v0.4, v0.4a and v0.5. No sweep ran
+  since Sweep 2, so the token diff below closes the full span.
+
+- Number-token diff, v0.3 to v0.5, per push:
+
+  - v0.3 to v0.4: eight arrivals. `1.5` and `70` are the lift-spec fold, both
+    rowed at NR-026. `2`, `3`, `8`, `10` and `11` are figure-map row refs from
+    the margin-ask fold. `4` is the version token of the pass header. No removals.
+
+  - v0.4 to v0.4a: no token change. The split pass moved line breaks only.
+
+  - v0.4a to v0.5: six arrivals. `3.4` and `5` are the pass header. `6` and `7`
+    arrive twice each, at the header and at the two seat markers. No removals.
+
+- No value token dropped or altered across the span. Every arrival accounts to a
+  named edit: a register-cited fold, a figure-map reference or a pass-note token.
+
+**Finding**
+
+No value discrepancy found.
+
+The v0.4 pass applied the sweep-2 carry-note: the §2.3 bracket now reads
+"Step-ceiling and protocol values". The v0.5 seats verify clean: each marker
+names its slug and its source rows.
+
+Held, inside their brackets: `1.94` and `5.18` (§4.2 ledger), `21.2` and `25.0`
+(§2.3 length screen), `3.55` (flagged non-operating).
+
+**Next run** at the next draft push.
