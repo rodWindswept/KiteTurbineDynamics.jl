@@ -12,7 +12,7 @@ NR-021.
 This figure shows how much of the structural check on each ring comes from
 compression and how much from bending.
 
-## STE technical caption
+## Technical caption (undergrad register, STE-clean form)
 
 Each bar stacks the axial share and the bending share of one checked ring.
 The rows run from R2 at the base to RN at the hub. Both shares come from

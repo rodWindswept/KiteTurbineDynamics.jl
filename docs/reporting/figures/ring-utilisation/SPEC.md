@@ -175,7 +175,7 @@ The framework visual checklist applies, graded from the image alone.
 **Caption plan (dual, from the first figure).** Plain sentence: every ring
 meets one strict structural check. This figure shows how much of the check comes from compression and how much comes from bending.
 
-STE technical caption: name the
+Technical caption (undergrad register, STE-clean form): name the
 interaction form (beam-column interaction, with torsion tracked outside the
 formula), the unit line, the ground-ring exclusion, the hub-ring inclusion
 and the capture. No "Euler". @author writes them. Every number they carry is

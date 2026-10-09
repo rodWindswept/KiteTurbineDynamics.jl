@@ -168,7 +168,7 @@ The framework visual checklist applies, graded from the image alone.
 twists as it carries torque. This figure shows how far each segment runs
 from the angle where the twist runs away.
 
-STE technical caption: name the
+Technical caption (undergrad register, STE-clean form): name the
 authority, cite the capture, state the no-limit rule and the instant-bound
 torque pairing. Both captions use the ledger strings only. @author writes
 them. Every number they carry is a register citation.

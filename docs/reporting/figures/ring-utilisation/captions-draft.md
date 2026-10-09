@@ -2,11 +2,11 @@
 
 **Slug** `ring-utilisation`. **Status** DRAFT, R1 review input. Author seat, @author. Keyed to the readout list of `8588b62`. Slots ⟨⟩ resolve at GENERATE. Ledger strings only. The caption plan of `SPEC.md` is the contract.
 
-## Plain caption (one sentence, first-year reader)
+## Plain caption (takeaway — one sentence, jargon-free)
 
 This figure shows how much of the structural check on each ring comes from compression and how much from bending.
 
-## STE technical caption
+## Technical caption (undergrad register, STE-clean form)
 
 Each bar stacks the axial share and the bending share of one checked ring. The rows run from R2 at the base to RN at the hub. Both shares come from the same worst-utilisation beam. The bar top is the ring utilisation, the beam-column interaction itself.
 

@@ -12,7 +12,7 @@ NR-022 and NR-023.
 This figure shows how far each segment runs from the angle where the twist
 runs away.
 
-## STE technical caption
+## Technical caption (undergrad register, STE-clean form)
 
 Panel A draws the transmitted twist of each segment as a magnitude,
 against its over-twist limit δcrit. The limit comes from the committed

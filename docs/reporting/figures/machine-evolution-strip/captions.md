@@ -3,7 +3,7 @@
 **Slug** `machine-evolution-strip`. **Status** GENERATE. **Date** 2026-10-09.
 
 Site: the report at §3.5, the evolution story. Reading order: seed to
-winner, left to right. The wording comes from the figures seat, STE
+winner, left to right. The wording comes from the figures seat, STE-gate
 checked. Values cite NR-005, NR-006 and NR-011. The geometry source is
 the signed extract `strip-extract-2026-10-09-best-so-far`.
 
@@ -13,7 +13,7 @@ This figure shows seven kite-turbine designs from one search run. The
 row starts at the common seed and ends at the winner. Each machine is
 drawn from its built geometry, and all seven share one scale.
 
-## STE technical caption
+## Technical caption (undergrad register, STE-clean form)
 
 Seven panels show the best machine of island 3 at generations 0, 6, 10,
 18, 22, 25 and 26. The labels follow the extract.

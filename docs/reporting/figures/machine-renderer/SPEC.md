@@ -257,9 +257,9 @@ datum.
 
 - The render register row, with the round status updated.
 
-The spec requires dual captions from the first figure. Each figure carries one
-plain-English sentence for a first-year reader, plus the STE-clean technical
-caption for the record.
+The spec requires dual captions from the first figure. Each figure carries a
+takeaway, one jargon-free sentence, plus the technical caption for the record
+(undergrad register, STE-clean form).
 
 Claim wording converges with the room (Track A and B) at GENERATE. Every number
 in either caption is a register citation. Every term is a Track D glossary

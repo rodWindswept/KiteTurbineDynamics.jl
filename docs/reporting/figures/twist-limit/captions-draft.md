@@ -2,11 +2,11 @@
 
 **Slug** `twist-limit`. **Status** DRAFT, R1 review input. Author seat, @author. Keyed to the readout list of `8588b62`. Slots ⟨⟩ resolve at GENERATE. Ledger strings only. The caption plan of `SPEC.md` is the contract.
 
-## Plain caption (one sentence, first-year reader)
+## Plain caption (takeaway — one sentence, jargon-free)
 
 This figure shows how far each segment runs from the angle where the twist runs away.
 
-## STE technical caption
+## Technical caption (undergrad register, STE-clean form)
 
 Panel A draws the transmitted twist of each segment as a magnitude, against its over-twist limit δcrit. The limit comes from the committed authority `trpt_twist_limit`.
 
