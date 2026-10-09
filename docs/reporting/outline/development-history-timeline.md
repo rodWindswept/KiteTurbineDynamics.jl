@@ -9,8 +9,7 @@ developed, and how our solutions for optimising kite turbine forms
 developed.
 
 **Contract** the reporting framework and the story skeleton. Companion:
-`awe-context-outline.md` for U1. Placement stays open until Rod rules
-(section 4).
+`awe-context-outline.md` for U1. Placement ruled 2026-10-09 (section 4).
 
 **Sources** `CHANGELOG.md`, `DECISIONS.md`, the git record,
 `docs/TRPT_Optimisation_Monograph.md`, the handovers, the numbers
@@ -199,12 +198,20 @@ the exact wording.
 
 ## 5. Open items
 
-1. Rod: placement and budget. @hermes: one row in
-   `2026-10-08-document-targets.md` when Rod rules.
+1. Closed 2026-10-09. Rod ruled: its own short chapter, after the
+   Introduction and before Methods, prose only. The row landed in
+   `2026-10-08-document-targets.md` (row 3, owner @author, 700 words,
+   0 figures).
 
 2. Rod: the meaning of "turbine tests" in the note of 2026-10-08. A
    candidate reading: the qualifying envelope checks for the winners
    of this run. No record of them exists yet.
+
+   Rod, 2026-10-09 (room): he likely meant "seed candidate tests".
+   The seed-candidate probes hold a record
+   (`docs/validation/2026-10-04-seed-55kw-probe.md`,
+   `docs/validation/2026-10-04-seed55-probe-rejects-and-s2-seed.md`).
+   @author confirms which thread the chapter tracks.
 
 3. Register rows if the chapter quantifies "short": the generation
    count and the island wall times (the Phase 0 audit holds them).
@@ -217,6 +224,10 @@ the exact wording.
    denominators, so "few" carries its number.
 
 ## Deltas
+
+- v4 (2026-10-09): Rod rules placement and budget. Open item 1 closes;
+  the row lands in `2026-10-08-document-targets.md`. Rod's first
+  reading of "turbine tests" logs under open item 2.
 
 - v1 (2026-10-08): seed from the repo record, per the ask of Rod.
 

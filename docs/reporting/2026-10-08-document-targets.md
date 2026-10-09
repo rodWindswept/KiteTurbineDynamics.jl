@@ -24,21 +24,24 @@ Main body target: about 10,000 words, about 20 A4 pages in the assembled PDF,
 |---|---|---|---|---|---|---|---|
 | 1 | Title, authors, abstract, keywords | - | 250 | 0 | @author | not started | Write last, from the signed register |
 | 2 | Introduction | U1 | 1,200 | 1 figure | @author + @science-writer | drafting (v0.1 lead pass) | Track A reconciliation, then draft prose |
-| 3 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | drafting (v0.1 lead pass) | Register v1 + physics-topology |
-| 4 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures-images-diagrams + @science-writer | not started | Landscape Phases 1 to 2 |
-| 5 | Results: evolution | U3 | 1,200 | 2 figures | @figures-images-diagrams + @author | prep (figures/machine-renderer SPEC v1, R1 mock) | Phase 3 + renderer |
-| 6 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures-images-diagrams | not started | Phase 3 regime table |
-| 7 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | drafting (v0.1 lead pass) | Track B + the trust log |
-| 8 | Conclusion: achievements | U5 | 700 | 0 | @author | drafting (v0.1 lead pass) | Signed register |
-| 9 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v3) | Track D ratification |
-| 10 | References | - | 25 entries | 0 | @science-writer | prep (seed a7ca235, 15 of 18 verified) | 3 source calls, then sources verified |
-| 11 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | drafting (v0.1 lead pass) | Assembly |
+| 3 | Development history: the tool and the method | - | 700 | 0 | @author | prep (seed b6024e9, placement ruled 2026-10-09) | Track A/B reconciliation, then @author first prose pass |
+| 4 | Methods | - | 1,800 | 2 figures + 1 table | @science-writer | drafting (v0.1 lead pass) | Register v1 + physics-topology |
+| 5 | Results: levers | U2 | 1,500 | 4 figures + 1 table | @figures-images-diagrams + @science-writer | not started | Landscape Phases 1 to 2 |
+| 6 | Results: evolution | U3 | 1,200 | 2 figures | @figures-images-diagrams + @author | prep (figures/machine-renderer SPEC v1, R1 mock) | Phase 3 + renderer |
+| 7 | Results: design implications | U4 | 1,000 | 1 table | @science-writer + @figures-images-diagrams | not started | Phase 3 regime table |
+| 8 | Discussion: failure ledger + boundaries | U6 | 1,200 | 0 | @author + @science-writer | drafting (v0.1 lead pass) | Track B + the trust log |
+| 9 | Conclusion: achievements | U5 | 700 | 0 | @author | drafting (v0.1 lead pass) | Signed register |
+| 10 | Nomenclature | - | 500 | 0 | Track D | prep (`glossary-candidates.md` v3) | Track D ratification |
+| 11 | References | - | 25 entries | 0 | @science-writer | prep (seed a7ca235, 15 of 18 verified) | 3 source calls, then sources verified |
+| 12 | Data availability + Reproducibility | - | 400 | 0 | @software-validator | drafting (v0.1 lead pass) | Assembly |
 
-Row sum: about 9,750 words, 9 figures, 3 tables. The headroom (1 to 3
-figures, 1 to 3 tables) sits in the budget for the sections that grow as
-Phases 1 to 3 land.
+Row sum: about 10,450 words, 9 figures, 3 tables. The new row 3 spends
+the 10,000-word target. Rod rules whether its 700 words raise the
+target or come out of the other rows. That ruling is open item 1. The
+figure and table headroom (1 to 3 each) stays with the sections that
+grow. They grow as Phases 1 to 3 land.
 
-Row 10 detail: @author seeded references.bib at a7ca235 with 18 entries.
+Row 11 detail: @author seeded references.bib at a7ca235 with 18 entries.
 The verification pass e272e6a checks 15 of 18. Three entries wait for a
 source call.
 
@@ -120,6 +123,14 @@ The release states:
    reads this doc first, so the whole amount of work runs against one plan.
 
 ## Deltas
+
+- v4 (2026-10-09): Rod rules the placement and the budget of the
+  development-history chapter: its own short chapter, after the
+  Introduction and before Methods, prose only. Row 3 lands (owner
+  @author, 700 words, 0 figures). Rows 4 to 12 renumber. The row sum
+  moves to about 10,450 words against the 10,000-word target. The 700
+  words either raise the target or come out of the other rows; that
+  ruling sits with Rod (open item 1).
 
 - v3 (2026-10-08): first-draft pass lands
   (`docs/reporting/drafts/2026-10-08-report-first-draft.md`, lead pass
