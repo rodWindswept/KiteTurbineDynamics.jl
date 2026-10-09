@@ -26,6 +26,10 @@ strip at §3.5 (figure-map row 9).
 v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
 noun and states the lifter modulation assumption.
 
+v0.8 pass by @author (2026-10-09). This pass folds the closed
+counter-read on the step-ceiling and protocol rows, with the
+amended quote forms.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -208,7 +212,8 @@ code and configuration then repeat the search.
 NaN and Inf clamps guard the state. A broken line ends the run.
 
 [Step-ceiling and protocol values: NR-024 and NR-025 carry the rows.
-Counter-read pending (@science-validator).]
+Counter-read closed and wording amends applied (`570be73`, `f86228a`).
+Future quotes use the amended forms.]
 
 ### 2.4 The campaign
 
@@ -491,8 +496,8 @@ commit. Every public post will cite register rows by ID.
 - Length-screen rows: blocked on the variant dirs entering tracking
 (the 10-05 record). @science-validator signs once committed.
 
-- Step-ceiling, protocol and lift-margin rows: NR-024 to NR-026, signed
-by @aero-validator, counter-read pending (@science-validator).
+- Step-ceiling, protocol and lift-margin rows: landed (NR-024 to NR-026),
+counter-read closed and wording amends applied (`570be73`, `f86228a`).
 
 - Context values for the levers and implications chapters when Phases
 1 to 3 land.
