@@ -5,6 +5,7 @@
     "t": "49.99999483862295"
   },
   "command": "/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit eacf073",
+  "data_commit": "dd3cc6a",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
@@ -25,6 +26,7 @@
     "path": "docs/reporting/figures/ring-utilisation/ring-utilisation.py",
     "sha256": "18e6bfbb3d60fead4423cc256023560a2308b11b6ad46796b26adc0f53116341"
   },
+  "script_commit": "eacf073",
   "slug": "ring-utilisation",
   "toolchain": {
     "matplotlib": "3.10.8",
