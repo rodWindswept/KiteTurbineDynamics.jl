@@ -84,8 +84,10 @@ The release states:
 2. **Numbers.** A number reaches prose only from a signed register row, by
    row ID.
 
-3. **Captions.** Every figure carries the dual caption: one plain-English
-   sentence and the technical caption.
+3. **Captions.** Rod ruling 2026-10-09: every figure carries the dual caption.
+   The first is a takeaway, one jargon-free sentence at first-year engineering
+   level. The second is the technical caption (undergrad register, STE-clean
+   form).
 
 4. **Voice.** First person, no AI voice, numbers exact.
 

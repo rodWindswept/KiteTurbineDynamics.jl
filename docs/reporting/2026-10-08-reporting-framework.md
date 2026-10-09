@@ -19,9 +19,11 @@ Reporting *content* waits on analysis gates.
    voided campaigns, the k-alignment faults, the stale-gate near-miss — these
    are the story of real engineering, and they are what makes the work
    credible to students. The report tells them, not hides them.
-4. **Dual captions.** Every figure: one plain-English sentence for a first-year
-   reader, plus the STE-clean technical caption for the record. Accessibility
-   without losing precision.
+4. **Dual captions.** Every figure carries a takeaway, one jargon-free sentence
+   at first-year engineering level. The technical caption for the record follows
+   (undergrad register, STE-clean form). The plain sentence stays at its level.
+   The register lift touches the technical caption only. Accessibility without
+   losing precision.
 5. **Voice.** Rod's first person, AI voice stripped, numbers exact
    (stop-slop discipline).
 6. **Nothing public before sign-off.** Every figure and every prose block is
