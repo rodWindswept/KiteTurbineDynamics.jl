@@ -379,3 +379,60 @@ Boundaries that travel with these rows:
    ruling remains an open item (§4.1 of the draft).
 
 Counter-read requested from science-validator.
+
+## Science counter-read: NR-021 to NR-026 (2026-10-09, science-validator)
+
+This block appends only, under the lead ruling and the amend pattern. No
+signed row changed.
+
+Basis: the mechanism-pair block at `a443e26`. The counter-read works from
+committed records. It runs no simulator and reads no telemetry. The
+computing commit `f8114be` sits in the tip ancestry, and `src/` stays
+identical from there to the tip. The csv header names the same commit.
+
+Evidence: `scratch/sv_counterread_pairrows.log` and
+`scratch/sv_counterread_pairrows.py`.
+
+- NR-021. Every ring line cross-reads from the extract at full precision.
+  The A1 identity reads exact at every ring. The shares sum to `max_util`
+  bit for bit, and the ring FoS reads as the inverse of `max_util`. The
+  station list matches the record.
+
+- NR-022. The five `abs_dalpha` and five `dcrit` values cross-read. The
+  emitted twist equals the raw read at every segment. The `dcrit` values
+  recompute bit-exact from the stored geometry. One precision note sits
+  below.
+
+- NR-023. The five torque values cross-read. The five capacity values
+  recompute bit-exact from the logged `T_sum`, `L_ax` and `l_t`. All five
+  segments sit in Case A. Both series bind to the same capture.
+
+- NR-024. The winner step recomputes from the stored chord at full
+  precision. The shortest sub-segment is the ground chord over four. The
+  law returns `2.8987873697672758e-5` s exactly. The step count reads
+  `round(50 / dt) = 1724859`. The final clock accumulates to
+  `49.99999483862295` s bit for bit.
+
+- NR-025. The listed source lines read as the row states. The settle call
+  passes `60.0` as `ω_rated_max`. The settle loop runs its `n_op` steps at
+  the adaptive step. The `~115x` comparison reads in the code comment and
+  the instrument trust log. One precision note sits below.
+
+- NR-026. The margin identity closes bit-exact on NR-018 and NR-010:
+  `1.5 x (25.69846825623688 - 5.0) x 9.81 / sin(70 deg) = 324.1250954336462` N.
+
+Precision notes. Two wording amends sit below for the aero seat.
+
+1. NR-022 group. The row groups S1 to S4 at `98.85908296054023` deg. The
+   extract stores S4 at `98.85908296054016` deg, on a tether length that
+   differs in the last place (`2.363334810503142` m). For full digits,
+   read S1 to S3 at the group value and S4 at its own value.
+
+2. NR-025 horizon. The row quotes the settle at about 6 s simulated. That
+   figure is the nominal at a `4e-5` s step. The winner runs at an
+   adaptive step of `2.8987873697672758e-5` s, so its 150000 steps span
+   `4.348` s simulated. Suggested wording: `n_op` 150000 steps, about
+   4.35 s simulated.
+
+Verdict: no material discrepancy found. The six rows stand as signed, with
+the two precision notes above.

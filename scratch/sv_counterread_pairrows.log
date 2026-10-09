@@ -1,0 +1,75 @@
+== science counter-read: NR-021 .. NR-026 (pair-extract) — science-validator, 2026-10-09 ==
+basis: register block a443e26 | computing commit f8114be (csv header)
+HEAD: 6d7e013c381ca53079219de65520a633472134aa
+f8114be ancestor of HEAD: yes
+a09ecf6 (adaptive dt landing) ancestor of HEAD: yes
+src/ diff f8114be..HEAD: (empty)
+plans doc 2026-08-24 build-geometry audit exists: True
+csv sha256: dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203
+log sha256: 7579e84a5724a2a41f9ada08200b0dc59e0a03177ce9193c4978abc1d71474f8
+
+csv computing commit: f8114be60e6c1ff842b90d2267d588ddc40e0098 | equals f8114be full sha: True
+
+-- NR-021 ring block (register cross-read, A1 identity, FoS inverse) --
+R2: cross-read OK | axial+bending = max_util bit-exact: True | 1/max_util = fos bit-exact: True
+R3: cross-read OK | axial+bending = max_util bit-exact: True | 1/max_util = fos bit-exact: True
+R4: cross-read OK | axial+bending = max_util bit-exact: True | 1/max_util = fos bit-exact: True
+R5: cross-read OK | axial+bending = max_util bit-exact: True | 1/max_util = fos bit-exact: True
+R6: cross-read OK | axial+bending = max_util bit-exact: True | 1/max_util = fos bit-exact: True
+stations line carries all six register values: True
+
+-- NR-022 segment twist block --
+S1: abs_dalpha cross OK | has_limit true | emitted twist equals raw read: True
+     dcrit stored 98.85908296054023 | recompute 98.85908296054023 | bit-exact: True | ulp delta: 0
+     register group value 98.85908296054023 vs stored 98.85908296054023: match
+S2: abs_dalpha cross OK | has_limit true | emitted twist equals raw read: True
+     dcrit stored 98.85908296054023 | recompute 98.85908296054023 | bit-exact: True | ulp delta: 0
+     register group value 98.85908296054023 vs stored 98.85908296054023: match
+S3: abs_dalpha cross OK | has_limit true | emitted twist equals raw read: True
+     dcrit stored 98.85908296054023 | recompute 98.85908296054023 | bit-exact: True | ulp delta: 0
+     register group value 98.85908296054023 vs stored 98.85908296054023: match
+S4: abs_dalpha cross OK | has_limit true | emitted twist equals raw read: True
+     dcrit stored 98.85908296054016 | recompute 98.85908296054016 | bit-exact: True | ulp delta: 0
+     NR-022 note: stored S4 dcrit vs the row group value; delta = 7.105427357601002e-14 deg
+S5: abs_dalpha cross OK | has_limit true | emitted twist equals raw read: True
+     dcrit stored 92.64281134151318 | recompute 92.64281134151318 | bit-exact: True | ulp delta: 0
+     register group value 92.64281134151318 vs stored 92.64281134151318: match
+
+-- NR-023 segment torque pair --
+S1: tau cross OK | capacity stored 805.0097155967861 vs recompute 805.0097155967861 bit-exact: True | Case A (P>0): True
+S2: tau cross OK | capacity stored 808.6780945063998 vs recompute 808.6780945063998 bit-exact: True | Case A (P>0): True
+S3: tau cross OK | capacity stored 812.213802301376 vs recompute 812.213802301376 bit-exact: True | Case A (P>0): True
+S4: tau cross OK | capacity stored 815.650844050359 vs recompute 815.650844050359 bit-exact: True | Case A (P>0): True
+S5: tau cross OK | capacity stored 1069.9324759682652 vs recompute 1069.9324759682652 bit-exact: True | Case A (P>0): True
+
+-- NR-024 step law --
+candidate chord 2.3633348105031415 -> Lmin 0.5908337026257854 -> dt 2.8987873697672758e-05 | equals recorded dt: True
+candidate chord 2.363334810503141 -> Lmin 0.5908337026257853 -> dt 2.8987873697672758e-05 | equals recorded dt: True
+candidate chord 2.363334810503142 -> Lmin 0.5908337026257855 -> dt 2.8987873697672765e-05 | equals recorded dt: False
+candidate chord 10.080698355510645 -> Lmin 2.520174588877661 -> dt 4e-05 | equals recorded dt: False
+50/dt = 1724859.1780643146 | round -> 1724859 | recorded total_n 1724859 | match: True
+naive s*dt product: 49.999994838294135 (the runner clock is accumulated, not multiplied)
+accumulated clock after 1724859 steps: 49.99999483862295 | log t 49.99999483862295 | bit-exact: True
+settle horizon: 150000 x dt = 4.348181054650913 s | nominal 150000 x 4e-5 = 6.000000000000001 s
+
+-- NR-025 source-line reads (working tree = f8114be for src/) --
+src/objective_evaluator.jl:774 carries 'dt = stable_dt_for_system(sys, pc)': yes
+src/objective_evaluator.jl:840 carries 'settle_to_operational_state(': yes
+src/objective_evaluator.jl:861 carries '~115': yes
+src/objective_evaluator.jl:865 carries '-60.0': yes
+src/objective_evaluator.jl:892 carries 'total_n = round(Int, total_s / dt)': yes
+src/objective_evaluator.jl:989 carries 'breaks_enabled=true': yes
+src/initialization.jl:2190 carries 'n_op::Int=150_000': yes
+src/initialization.jl:2390 carries 'n_op_use = n_op': yes
+src/initialization.jl:2389 carries 'dt_op = stable_dt_for_system(sys, p)': yes
+scripts/run_v13_5kw_masslift.jl:157 carries 'kickstart_s = 0.0': yes
+scripts/run_v13_5kw_masslift.jl:111 carries 'FLAT at all wind speeds': yes
+src/lift_kite.jl:214 carries 'include_lifter=false': yes
+src/lift_kite.jl:215 carries 'F_vert = margin * m_airborne * g': yes
+src/lift_kite.jl:216 carries 'T_ref = F_vert / sind(elevation_deg)': yes
+
+parity certificate fields: 9 | all EXACT: True
+parity: ALL FIELDS MATCH
+
+-- NR-026 lift margin identity (closes on NR-018 and NR-010) --
+1.5 x (25.69846825623688 - 5.0) x 9.81 / sin(70 deg) = 324.1250954336462 | recorded 324.1250954336462 | bit-exact: True
