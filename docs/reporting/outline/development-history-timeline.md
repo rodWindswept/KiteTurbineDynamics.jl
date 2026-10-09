@@ -17,6 +17,10 @@ register, the Phase 0 audit, and the control records
 (`docs/plans/2026-06-27-soft-ramp-kmppt-v2.md`,
 `docs/gate1-control-map-rerun.md`, `scripts/results/control_maps/`).
 
+The Act 4 fold adds the seed-candidate probes to the sources
+(`docs/validation/2026-10-04-seed-55kw-probe.md`,
+`docs/validation/2026-10-04-seed55-probe-rejects-and-s2-seed.md`).
+
 **Discipline** dates state chronology. Values attach at production from
 signed register rows, by row ID. Cross-era values stay era-tagged or
 out.
@@ -132,7 +136,8 @@ The tool exists to search forms beyond the reach of hand design.
 
 - The correction forces a 5 kW re-baseline [AGENTS.md].
 
-- The seed folds to the S2 class [DECISIONS 2026-10-05].
+- The 2026-10-04 probes test the seed candidates for the next
+  campaign. The seed folds to the S2 class [DECISIONS 2026-10-05].
 
 - 2026-10-08: the current dataset completes. Phase 0 signs the same
   day [Phase 0 audit, instrument trust log].
@@ -203,15 +208,13 @@ the exact wording.
    `2026-10-08-document-targets.md` (row 3, owner @author, 700 words,
    0 figures).
 
-2. Rod: the meaning of "turbine tests" in the note of 2026-10-08. A
-   candidate reading: the qualifying envelope checks for the winners
-   of this run. No record of them exists yet.
+2. Closed 2026-10-09. The meaning of "turbine tests" in the note of
+   2026-10-08. Rod, 2026-10-09 (room): "seed candidate tests".
+   @author confirms the chapter tracks that thread.
 
-   Rod, 2026-10-09 (room): he likely meant "seed candidate tests".
-   The seed-candidate probes hold a record
-   (`docs/validation/2026-10-04-seed-55kw-probe.md`,
-   `docs/validation/2026-10-04-seed55-probe-rejects-and-s2-seed.md`).
-   @author confirms which thread the chapter tracks.
+   The qualifying-envelope reading stays a boundary statement only.
+   These winners have no qualification record yet. The chapter states
+   the screen-versus-qualify line plainly.
 
 3. Register rows if the chapter quantifies "short": the generation
    count and the island wall times (the Phase 0 audit holds them).
@@ -224,6 +227,10 @@ the exact wording.
    denominators, so "few" carries its number.
 
 ## Deltas
+
+- v5 (2026-10-09): @author confirms the seed-candidate thread for
+  "turbine tests". Open item 2 closes. The probe pair joins the
+  sources and the Act 4 fold.
 
 - v4 (2026-10-09): Rod rules placement and budget. Open item 1 closes;
   the row lands in `2026-10-08-document-targets.md`. Rod's first
