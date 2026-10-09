@@ -217,3 +217,47 @@ No value discrepancy found. The v0.6 strip seat and the v0.7 lift-spec passage
 verify clean.
 
 **Next run** at the next draft push.
+
+## Sweep 5: v0.8, 2026-10-09
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `11eb78e`
+(the v0.8 pass). The file carries zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `f86228a` (zero diff to the
+tip). Covers NR-001 to NR-026 and the appended blocks: the aero and science
+counter-reads, the rotor-bank note, the caption rows NR-017 and NR-018, the
+bank-derate rows NR-019 and NR-020, the mechanism-pair and ODE rows NR-021 to
+NR-026, and the wording amends (NR-022, NR-025).
+
+**Results**
+
+- STE gate: words 3199, total 0, `per100w=0.00`, `em_dash=0`, exit 0. The reading in the push note reproduces.
+
+- Retired phrasing: no new hit. The §1 contrast line "without a rigid driveshaft" stays the only near-hit, cleared in Sweep 3 and unchanged here.
+
+- Value cross-check: every printed value matches its row or side block at
+  the quoted precision. The checked set covers NR-001 to NR-018, the
+  rotor-bank note, and the caption rows NR-017 and NR-018. The span adds
+  no new value, so the Sweep 4 set carries forward.
+
+- The two cited commits resolve in the tip ancestry. `570be73` carries the science counter-read. `f86228a` carries the wording amends. The bracket sentence on future quotes matches the rule in the amends block.
+
+- The amended quote forms print no value in this draft. They stand as rules for future prose.
+
+- Arithmetic on stated totals: the status mix sums to 930 (508 + 301 + 110 + 11). Three islands of 310 designs also give 930.
+
+- Held tokens: `21.2` and `25.0` inside the §2.3 length-screen bracket.
+  `3.55` inside its flag bracket. `1.94` and `5.18` in the §4.2 ledger
+  prose, gated by the closing note "the other values need rows first".
+  No held token moved in this span.
+
+- Number-token diff against v0.7 (at `a3d1496`): one arrival, no removals. The arrival is the `8` of the v0.8 pass note, a header artifact. No value token arrived, dropped or altered.
+
+- Push-note check: the v0.8 note reads "delta +33 words (8 insertions, 3 deletions)". The recount holds: the diff stat reads 8 insertions and 3 deletions, and the word count moves 3166 to 3199. The additions-only claim holds for the numeric tokens, with the lone header digit excepted. No figure fold and no new term arrives in the span.
+
+**Finding**
+
+No value discrepancy found. The closed counter-read fold and the open-requests
+update verify clean. No new domain term arrives.
+
+**Next run** at the next draft push.
