@@ -53,7 +53,7 @@ The range form stales at each sign-off. The register stays the authority.
 ## Sweep 2: v0.3, 2026-10-09
 
 **Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `0b0d7f1`
-(the v0.3 pass; zero diff to the branch tip `35dec11`).
+(the v0.3 pass). The file carries zero diff to the branch tip `35dec11`.
 
 **Register** `docs/reporting/numbers-register.md` at `a443e26` (zero diff to the
 tip). Includes the amended blocks: the rotor-bank note, the caption rows NR-017
@@ -68,9 +68,12 @@ ODE rows NR-021 to NR-026.
 
 - Value cross-check: every printed value matches its row or side block at the
   quoted precision. The checked set covers NR-001 to NR-018, the rotor-bank
-  note, and the caption rows NR-017 and NR-018. Both v0.3 edits verify clean:
-  the k bracket close and the NR-016 read. Rows NR-019 to NR-026 print no
-  values in this draft, so nothing from them enters the value check yet.
+  note, and the caption rows NR-017 and NR-018.
+
+- Both v0.3 edits verify clean: the k bracket close and the NR-016 read.
+
+- Rows NR-019 to NR-026 print no values in this draft, so nothing from them
+  enters the value check yet.
 
 - Number-token diff against v0.2 (at `25b9e91`): one arrival, all removals
   accounted.
@@ -78,15 +81,15 @@ ODE rows NR-021 to NR-026.
   - Arrived: `3` (the v0.3 pass note).
 
   - Left: one duplicate `3.55` (the open k bracket collapsed to a single
-    flagged mention); the `§2.3` and `§3.3` cross-references in the
-    open-requests list (three bullets rewritten as status lines).
+    flagged mention). The open-requests bullets that carried the `§2.3` and
+    `§3.3` references became status lines.
 
   - Held, inside their brackets: `1.94` and `5.18` (§4.2 ledger), `21.2` and
     `25.0` (§2.3 length screen), `3.55` (flagged non-operating).
 
 **Finding**
 
-The sweep-1 finding is closed: the v0.3 pass retired the status range; the
+The v0.3 pass closed the sweep-1 finding and retired the status range. The
 header now reads "cited by row ID". No value discrepancy found.
 
 One carry-note for the author seat: the §2.3 bracket reads "Step-ceiling and
