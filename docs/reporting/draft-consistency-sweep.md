@@ -261,3 +261,59 @@ No value discrepancy found. The closed counter-read fold and the open-requests
 update verify clean. No new domain term arrives.
 
 **Next run** at the next draft push.
+
+## Sweep 6: v0.9, 2026-10-09
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `e0abbce`
+(the v0.9 pass). The file carries zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `f86228a` (zero diff to the
+tip). Covers NR-001 to NR-026 and the appended blocks: the aero and science
+counter-reads, the rotor-bank note, the caption rows NR-017 and NR-018, the
+bank-derate rows NR-019 and NR-020, the mechanism-pair and ODE rows NR-021 to
+NR-026, and the wording amends (NR-022, NR-025).
+
+**Results**
+
+- STE gate: words 3263, total 0, `per100w=0.00`, `em_dash=0`, exit 0. The
+  push-note readings reproduce (v0.8 read 3199, the fold sim read 3234).
+
+- Retired phrasing: no new hit. The §1 contrast line "without a rigid
+  driveshaft" stays the only near-hit, cleared in Sweep 3 and unchanged here.
+
+- Value cross-check: the span adds no value token. The lift text and the
+  extension sentence carry none. The pass note contributes only its header
+  digit. The checked set of Sweeps 4 and 5 carries forward.
+
+- The two cited commits resolve in the tip ancestry. `570be73` carries the
+  science counter-read. `f86228a` carries the wording amends. No new commit
+  quote arrives in the span.
+
+- Arithmetic on stated totals: the status mix still sums to 930 (508 + 301 +
+  110 + 11).
+
+- Held tokens: `21.2` and `25.0` inside the §2.3 length-screen bracket.
+  `3.55` inside its flag bracket. `1.94` and `5.18` in the §4.2 ledger
+  prose, gated by the closing note "the other values need rows first".
+  No held token moved in this span.
+
+- Number-token diff against v0.8 (`11eb78e`): two arrivals, no removals.
+  Both are header artifacts: the `9` of the v0.9 pass note and the `2.1`
+  of its §2.1 reference.
+
+- No value token arrived, dropped or altered. The fold-sim to landed diff
+  carries the pass note and the extension sentence, nothing else.
+
+- Push-note check: the v0.9 note quotes the fold readings (words 3199 to
+  3263, sim 3234) and the sim-to-landed diff as the pass note plus the
+  extension line. The recount holds, and the commit stat reads 11 insertions
+  and 4 deletions.
+
+**Finding**
+
+No value discrepancy found. The §2.1 lift lands clean: the handed blocks
+rode untouched, the blessed extension sentence folded at the count block,
+both §2.1 brackets stay open, no figure fold, and no new domain term
+arrives (`vertex` rides the candidates count row).
+
+**Next run** at the next draft push.
