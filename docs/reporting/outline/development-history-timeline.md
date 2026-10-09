@@ -119,7 +119,7 @@ The tool exists to search forms beyond the reach of hand design.
 - The Daisy anchored seed lands [DECISIONS 2026-08-21].
 
 - The masslift campaign runs three islands. The screen accepts a
-  candidate that the envelope check later rejects [item 4 campaign
+  candidate that the envelope test later rejects [item 4 campaign
   summary].
 
 - Lessons: the screen selects, it does not qualify. Every instrument
@@ -227,6 +227,11 @@ the exact wording.
    denominators, so "few" carries its number.
 
 ## Deltas
+
+- v6 (2026-10-09): the pass guard from the room. We corrected the
+  instrument. The winner did not simply turn out wrong. Act 4 shows the
+  correction, then the boundary. Act 3 aligns to "envelope test"
+  (`glossary-candidates.md` v6, `2b9c35f`, pending Track D ratification).
 
 - v5 (2026-10-09): @author confirms the seed-candidate thread for
   "turbine tests". Open item 2 closes. The probe pair joins the
