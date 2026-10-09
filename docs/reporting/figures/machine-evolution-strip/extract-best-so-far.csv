@@ -1,0 +1,18 @@
+# machine-evolution-strip / extract-best-so-far.csv
+# run-id: strip-extract-2026-10-09-best-so-far
+# dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
+# provenance: era=post-95c385d_wind-authority  telemetry git=a76c5e927252118abf2b2ff6bd988395583d5113  data commit dd3cc6a
+# physics era: post-95c385d_wind-authority
+# source: island_3/telemetry.csv (310 rows, gens 0..30, idx 1..10); winner genome from island_3/best_vector.csv
+# selection: best-so-far at selected generation G = minimal recorded fitness among ok rows with gen <= G; ties -> earliest (gen, idx); no interpolation
+# selected: proposed [0, 5, 10, 15, 20, 25, 26]; amended (aero-validator, 2026-10-09) to [0, 6, 10, 18, 22, 25, 26] — see README/log
+# gene slots: x1 r_hub | x2 r_bot | x3 target_Lr | x4 n_lines (clamp 3..16, round) | x5 density_profile | x6 rotor-mask proxy (clamp 1..3, round) | x7 bank_top | x8 bank_bot | x9 blade_scale_top | x10 blade_scale_bottom
+# computing commit: a6d2dc67d775919f41cb386f6a63d3d4c231690b
+panel,selected_gen,label,genome_source,island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,twist_ratio,clearance,n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10
+1,0,i3-g0-i1,telemetry.csv,3,0,1,36.109,ok,5.85,5.86,415.81,13.34,false,0.2974455197503387,5.44,3,9,1,4.32,0.797,10.7,7.2,1.0,1.0,18.8,4.32,0.796868,2.1,3.0,0.225256,1.267273,10.739909,7.182982,1.0,1.0
+2,6,i3-g6-i2,telemetry.csv,3,6,2,32.293,ok,5.42,5.4,395.57,10.6,false,0.24000840754147046,5.07,3,5,1,4.725,1.099,13.6,17.3,0.982,0.377,18.8,4.725092,1.099481,2.575765,3.0,-0.586694,1.142823,13.604274,17.309929,0.981521,0.377116
+3,10,i3-g10-i7,telemetry.csv,3,10,7,31.661,ok,5.89,5.89,320.48,8.51,false,0.40938579798141705,5.46,3,7,1,4.357,0.723,6.3,11.0,1.0,0.471,18.8,4.357114,0.723093,2.721839,3.0,0.137051,1.123461,6.294154,10.966288,1.0,0.470742
+4,18,i3-g18-i4,telemetry.csv,3,18,4,30.929,ok,5.78,5.78,336.75,10.02,false,0.27453942741422066,5.49,3,5,1,4.288,1.195,12.3,22.0,0.968,0.367,18.8,4.288353,1.195302,2.71541,3.0,-0.400131,1.01408,12.255334,22.0,0.968082,0.366845
+5,22,i3-g22-i10,telemetry.csv,3,22,10,29.854,ok,5.76,5.76,322.48,10.15,false,0.28091454588147713,5.52,3,5,1,4.371,1.195,6.4,22.0,0.939,0.2,18.8,4.370855,1.195302,2.688185,3.0,-0.8,1.047031,6.439151,22.0,0.938559,0.2
+6,25,i3-g25-i8,telemetry.csv,3,25,8,28.315,ok,5.51,5.52,332.01,14.79,false,0.31068396020737943,5.57,3,5,1,4.45,1.163,4.7,22.0,0.854,0.2,18.8,4.449904,1.162738,2.810821,3.0,-0.549805,1.007551,4.662514,22.0,0.853537,0.2
+7,26,i3-g26-i9,best_vector.csv,3,26,9,27.364,ok,5.31,5.31,324.13,14.97,false,0.4393474253185575,5.47,3,6,1,4.58,0.804,7.1,22.0,0.821,0.2,18.8,4.57997905482005,0.8036829846088207,2.720554022272866,3.0,-0.8,1.0370201857788965,7.088131460323565,22.0,0.8213255027884769,0.19999999999999996
