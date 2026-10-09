@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v5, numbers-free by construction (no measurement values, no
+**Status** PREP v6, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -133,6 +133,9 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | relax phase | The first part of a run, before the measurement window. The machine relaxes through its start transient. | CONTEXT.md honest window row | supply |
 | measurement window | The part of a run that the scoring reads. | CONTEXT.md | supply |
 | honest window | The settle-avoiding protocol: a relax phase, then a measurement window, scored on the tail. It stops the window sampling the settle decay. | CONTEXT.md honest window row, DECISIONS | room-supplies |
+| screen | The first of the two selection stages of the method. The search screens candidate designs. The evaluator accepts or rejects them. A screen selects. It does not qualify. | development-history seed (Act 3 lesson, theme 3), item 4 campaign summary | room-supplies |
+| qualify (qualification) | The second of the two selection stages. An accepted design qualifies by passing the envelope test. The current dataset winners carry no qualification record yet. | development-history seed (theme 3, "the current dataset, stated honestly") | room-supplies |
+| envelope test (envelope check) | The second-stage qualifying test of an accepted design. The full evaluation protocol runs at two settings, the zero-artificial-damping envelope and the canonical setting. A machine can pass with artificial damping and fail without it. Pick one display form for the report. | item 4 campaign summary (stage-2 re-gate), development-history seed | room-supplies |
 | gate | A hard acceptance check in the evaluator. A design that fails carries the measured statistics, not a guessed verdict. | CONTEXT.md EvalResult row | supply |
 | rope-break gate | The gate that trips when a line passes its strain limit. | consultation Track C item 5 | room-supplies |
 | clearance (blade-tip clearance) | The gap a blade tip keeps from the machine at its top-of-circuit pass. A gate rejects designs that breach it. | physics-topology 4, register status column | supply |
@@ -143,6 +146,10 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | MPPT (maximum power point tracking) | The generator-loading strategy that tracks rated power. | CONTEXT.md | supply |
 | site wind (wind standard) | The measured wind profile every machine reads, re-expressed at its own rotor altitude. | DECISIONS [2026-10-03] | supply |
 | computational evolution | The report-wide phrase for the search method: a design space searched by an evolutionary algorithm. | story skeleton | supply |
+
+**Envelope senses.** "Envelope" carries two jobs in this report: the qualifying
+envelope test above, and the §3.4 figure that shows where the family twists.
+Track D pins the two display forms apart at ratification.
 
 ## 4. Trust and record terms (U5, U6, Methods, Data availability)
 
@@ -269,3 +276,8 @@ defect, like a missing register row.
 - **v5 (2026-10-08):** one row joins the structural-limit group: the crossing
   limit (δα*), the per-segment limit of the collapse detector, for the twist
   bridge and the census prose, with its provenance note. No other change.
+
+- **v6 (2026-10-09):** three rows join the search-and-evaluation group for the
+  development-history chapter: screen, qualify (qualification), and envelope
+  test. The drafts ground in the chapter seed and the item 4 campaign summary.
+  A note keeps the two report senses of "envelope" apart. No other change.
