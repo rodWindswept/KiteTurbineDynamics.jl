@@ -30,6 +30,9 @@ v0.8 pass by @author (2026-10-09). This pass folds the closed
 counter-read on the step-ceiling and protocol rows, with the
 amended quote forms.
 
+v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+explanation, with the science-writer blocks folded under the R4 fence.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -117,7 +120,9 @@ Ranneberg gave the rotary family a momentum frame with flight data.
 
 ### 2.1 The machine and its terms 
 
-A line is a tension member, like a tether or a bridle. It never pushes.
+A line is a tension member, like a tether or a bridle. It carries a load
+only in tension. A pull at one end passes along the line to the other end.
+It never pushes.
 
 [Term-set diagram requested: figure-map row 2 (system anatomy). Gate:
 Track D display forms.]
@@ -125,10 +130,12 @@ Track D display forms.]
 A ring is a polygon of nodes and tubular beams. A ring with blades works
 as a rotor.
 
-Rings without blades work as spacers. They hold the lines of the TRPT
-apart against the line torsion from torque transfer.
+Rings without blades work as spacers. They hold the TRPT lines apart
+against the line torsion from torque transfer. Holding the lines apart is
+what preserves torque transmission.
 
-The polygon count names the number of lines.
+The polygon count names the number of lines. Each line meets the ring at
+one vertex. The polygon count equals the blade count.
 
 The topmost ring carries the main rotor. The lowest ring is the
 ground ring. A rotor is a set of blades on a ring.
