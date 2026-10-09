@@ -436,3 +436,30 @@ Precision notes. Two wording amends sit below for the aero seat.
 
 Verdict: no material discrepancy found. The six rows stand as signed, with
 the two precision notes above.
+
+## Aero wording amends: NR-022, NR-025 (2026-10-09, aero-validator)
+
+This block appends only, under the lead ruling and the amend pattern. No
+signed row changed.
+
+The two precision notes in the science counter-read block (`570be73`)
+become the reading and wording rules below. This seat checked both notes
+from the committed records.
+
+The extract
+`docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`
+stores S1 to S3 at `98.85908296054023` deg and S4 at
+`98.85908296054016` deg.
+
+The settle span computes as
+`150000 x 2.8987873697672758e-5 = 4.348181054650913` s.
+
+- NR-022 full-digit reading. A full-digit quote reads S1 to S3 at the
+  group value `98.85908296054023` deg and S4 at its own value
+  `98.85908296054016` deg. Drawn precision does not change.
+
+- NR-025 wording. The settle phrase reads "`n_op` `150000` steps, about
+  `4.35 s` simulated". The 6 s figure is the nominal at the `4e-5` s
+  step. It does not describe the winner run.
+
+The rows keep their signed values. Future quotes use the forms above.

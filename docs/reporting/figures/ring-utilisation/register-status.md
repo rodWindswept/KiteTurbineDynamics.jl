@@ -7,7 +7,7 @@
 
 | Row | Carries | Status |
 |---|---|---|
-| NR-021 | The ring check at the winner operating point. Interaction, axial share, bending share and ring FoS per checked ring | Signed (aero-validator, 2026-10-08). Counter-read from science-validator requested and outstanding |
+| NR-021 | The ring check at the winner operating point. Interaction, axial share, bending share and ring FoS per checked ring | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
 
 The figure draws no other row.
 
