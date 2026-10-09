@@ -116,3 +116,13 @@ three slots).
   pass, with the NR-011 winner check and the layout viewport receipt in
   `checks.log`. F-COUNT and F-PARSE stay with the validators. The SVG
   text layer is glyph paths, not selectable text; open to the room at R2.
+
+- **v5 (2026-10-09):** row 9: F-COUNT and F-PARSE both PASS
+  (science-validator), measured on the delivered SVG against the manifest
+  pin and a fresh built-state probe, max residual 0.0026 px. The label
+  counter-read closed, no mislabel. Two sub-pixel notes recorded for the
+  next render (square the axes and add a manifest tolerance field). The
+  PDF carries selectable text. The figures seat proposes to close the SVG
+  text-layer item. A TikZ variant only if a web or SVG edition must
+  select text. Row 9 stands ready for sign-off. Row 10 next: the
+  winner-hero captures (plan, side, downwind), figures seat.

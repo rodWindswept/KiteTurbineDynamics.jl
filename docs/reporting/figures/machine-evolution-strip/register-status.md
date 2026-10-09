@@ -19,13 +19,48 @@ Note on labels: the extract labels use the telemetry generation index
 index (gen 1) for the same seed. Flagged for the science-validator
 counter-read.
 
+Closed 2026-10-09 (science-validator): no mislabel. The convergence row i
+is the running best over telemetry gens up to i, so the seed surfaces at
+row 1 and the winner at row 26.
+
 ## Checks at GENERATE
 
 The science-validator panel check recomputed the extract from the raw
 telemetry (2026-10-09). The in-script checks cover all seven panels:
 decode cross-check against the extract display columns, drawn counts,
 and the NR-011 winner check. All pass. `checks.log` holds the full
-record. F-COUNT and F-PARSE stay with the validators.
+record.
+
+## Validator gates
+
+F-COUNT and F-PARSE both PASS (science-validator, 2026-10-09), on
+the delivered SVG that matches the manifest pin (sha256 `193e9f0d…`).
+
+The count agrees panel-by-panel between the SVG, the manifest and a
+fresh built-state probe. The parse re-measured every panel shape.
+Maximum residual 0.0026 px over about 720 point checks, at a declared
+0.05 px tolerance.
+
+Two sub-pixel notes wait for the next deliberate re-render:
+
+1. The axes are not exactly square. x reads 16.6267 px/m, y reads
+   16.6013 px/m, +0.153 per cent. The largest effect is 0.15 px. Make
+   the two scales equal at the next render.
+
+2. The panel width rounds 211.67 to 212 px, which drives the offset.
+   The manifest declares no tolerance field. Add one at the next
+   render.
+
+A re-render now would void the pass for a 0.15 px effect. The five
+GENERATE outputs stay byte-identical to `9aeeed4` until then.
+
+On the text layer, the PDF already carries selectable text, and
+mutool extracts every label and both stamps. Print and PDF editions
+need no change.
+
+Only the SVG has no text layer. The figures seat proposes to close
+the SVG text-layer item. A TikZ variant stays available if a web or
+SVG edition must select text.
 
 ## Reproduce
 
