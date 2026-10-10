@@ -1,0 +1,10 @@
+# run_length_variants.jl — discrete-L variant sweep
+# git=a82cafd  date=2026-10-05T11:25Z  quick=false  window_s=30.0
+# genome=island3
+# wind=wind_at_altitude(v_wind_ref, h_ref, z; hellmann_exponent=SITE_DAISY.shear_exp=0.14285714285714285) — evaluator closure (ode_gate_v13.jl flies flat; flagged)
+# basis=HEAD cp_bem(n_lines,λ) sizing; floor bar p.cp=0.16 untouched (landed a82cafd: measured fixed-chord Rf surface, cp_bem/ct_bem)
+# realisability=bare margin=1.0 preload at built placement; ω=settled ω_gnd; gate_ratio=max(demand,cross)·1.05 vs cap 1.5
+L,verdict,ok,n_lines,rings,n_active,r_hub,clearance_m,dt_s,P_final_kW,P_mean_kW,w_hub,w_gnd,twist_ode_max,crossed_ode,line_broken,tip_ok,T_max_N,fos_tether,fos_ring,tsr,V_hub,dalpha_deg,demand_max,cross_bare,gate_ratio,realisability
+18.8,FAIL(P<5.0),0,3,10,1,3.8347,6.390,2.39e-05,4.2512,4.2332,12.3804,12.3809,0.5707,0,0,1,551.45,6.347,14.448,5.1917,10.8860,311.76,0.6823,0.6244,0.7164,under-bare
+21.2,FAIL(P<5.0),0,3,11,1,3.8347,7.607,2.47e-05,4.3210,4.3055,12.4488,12.4483,0.6103,0,0,1,563.98,6.206,12.363,5.1085,11.0789,381.28,0.7507,0.6922,0.7883,under-bare
+25.0,FAIL(P<5.0),0,3,13,1,3.8347,9.531,2.49e-05,4.4240,4.4122,12.5479,12.5465,0.6319,0,0,1,584.98,5.983,12.210,4.9991,11.3496,486.77,0.7999,0.7526,0.8399,under-bare

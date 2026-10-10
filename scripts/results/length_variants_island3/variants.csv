@@ -1,0 +1,10 @@
+# run_length_variants.jl — discrete-L variant sweep
+# git=f225e95  date=2026-10-05T10:10Z  quick=false  window_s=30.0
+# genome=island3
+# wind=wind_at_altitude(v_wind_ref, h_ref, z; hellmann_exponent=SITE_DAISY.shear_exp=0.14285714285714285) — evaluator closure (ode_gate_v13.jl flies flat; flagged)
+# basis=HEAD cp_bem(n_lines,λ) sizing; floor bar p.cp=0.16 untouched (cp ruling pending)
+# realisability=bare margin=1.0 preload at built placement; ω=settled ω_gnd; gate_ratio=max(demand,cross)·1.05 vs cap 1.5
+L,verdict,ok,n_lines,rings,n_active,r_hub,clearance_m,dt_s,P_final_kW,P_mean_kW,w_hub,w_gnd,twist_ode_max,crossed_ode,line_broken,tip_ok,T_max_N,fos_tether,fos_ring,tsr,V_hub,dalpha_deg,demand_max,cross_bare,gate_ratio,realisability
+18.8,FAIL(P<5.0),0,3,10,1,3.8347,6.452,2.39e-05,3.8103,3.7955,11.9377,11.9372,0.6186,0,0,1,458.69,7.630,9.259,4.9355,10.8808,336.76,0.7353,0.6914,0.7721,under-bare
+21.2,FAIL(P<5.0),0,3,11,1,3.8347,7.668,2.47e-05,3.8766,3.8645,12.0077,12.0061,0.6504,0,0,1,516.36,6.778,13.794,4.8595,11.0740,404.58,0.7947,0.7528,0.8345,under-bare
+25.0,FAIL(P<5.0),0,3,13,1,3.8347,9.590,2.49e-05,3.9834,3.9747,12.1183,12.1153,0.6218,0,0,1,704.16,4.970,8.415,4.7591,11.3546,479.63,0.8032,0.7574,0.8434,under-bare

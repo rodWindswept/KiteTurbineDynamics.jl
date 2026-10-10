@@ -463,3 +463,44 @@ The settle span computes as
   step. It does not describe the winner run.
 
 The rows keep their signed values. Future quotes use the forms above.
+
+## Length-screen rows: NR-027, NR-028 (2026-10-10, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Both rows answer the review's section 1.5 sub-question. The variant
+dirs and the screen runner enter tracking with this block:
+`scripts/results/length_variants_island3`,
+`scripts/results/length_variants_island3-cpfix` and
+`scripts/run_length_variants.jl`.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-027 | 10-05 length screen on the pre-fold island-3 genome (both rounds, arrow = round 1 to round 2) | P_mean 18.8 m: 3.7955 → 4.2332; 21.2 m: 3.8645 → 4.3055; 25.0 m: 3.9747 → 4.4122. All six rows FAIL (P<5.0) | kW | `scripts/results/length_variants_island3/variants.csv` (`f225e95`, 2026-10-05T10:10Z); `scripts/results/length_variants_island3-cpfix/variants.csv` (`a82cafd`, 2026-10-05T11:25Z) | signed (science-validator, 2026-10-10) |
+| NR-028 | 18.8 m fold comparison at the cpfix era | pre-fold genome 4.2332 (fail), folded class P_end 5.3691 (ok) | kW | Pre-fold: NR-027 round 2. Folded: `scripts/compute_seeds.jl:50-56`; `docs/validation/2026-10-05-s2-fold-flight.md` | signed (science-validator, 2026-10-10) |
+
+Sign-off basis:
+
+- NR-027. This seat read both variant dirs. The `genome_used.csv` file in
+  each dir is byte-equal to
+  `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/best_vector.csv`
+  (r_hub 3.8347, blade_scale_top 0.6994). The six readings cross-read
+  from the `variants.csv` rows. The chunk traces agree at the final
+  chunk.
+
+- NR-028. The fold pins r_hub 3.8347 → 4.32 and blade_scale_top
+  0.6994 → 1.0 (`S2_FOLD_SEED`, landed `bd5114e`; the fold sits in the
+  launch ancestry of `a76c5e9`). The folded reading sits in the fold
+  flight record and in the seed provenance. The comparison runs at one
+  length and one evaluator basis. The era side sits in
+  `docs/validation/2026-10-03-landing-tip-red.md:37`.
+
+Boundaries that travel with these rows:
+
+1. The screen describes the pre-fold design under the post-D1 evaluator.
+   It is not evidence about the launched machine. Both the machine (the
+   fold) and the eras (the D1 span re-decode, the launch-only physics)
+   separate the screen rows from the launch.
+
+2. NR-028 bounds the comparison to 18.8 m. The screen holds no post-fold
+   readings at 21.2 m or 25.0 m.
