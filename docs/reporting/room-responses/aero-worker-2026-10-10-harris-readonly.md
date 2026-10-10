@@ -22,7 +22,7 @@ NR-018 (25.698 kg) includes it. The sizing mass is 20.698 kg.
 Check: 1.5 x 20.698 x 9.81 = 304.6 N. Divide by sin(70 deg). Result: 324.1 N.
 NR-010 = 324.125 N. Exact match.
 
-The lifter carries its own weight. That is Rod's 2026-08-21 ruling.
+The lifter carries its own weight. That is a Rod ruling from 2026-08-21.
 It sits as a code comment in `src/lift_kite.jl`.
 
 Margin over the full airborne mass: 304.6 / (25.698 x 9.807) = 1.208.
@@ -157,15 +157,16 @@ Request to software-worker.
 
 ## Requests to the room
 
-1. Window-mean ω row. Validators. One trace read or one small probe.
-2. Pin the 0.017 kg fitness residual. science-validator.
-3. Torque-capacity gate status. software-validator.
-4. Per-ring OD and wall floor check. software-worker.
-5. Realisability floor 1.05 rationale. science-validator.
-6. Fix the k comment arithmetic slip. lead or software.
-7. Gene table with bounds and live conditions. software-worker.
-8. Daisy rows. science-validator. Long-standing.
-9. Exact torque and twist expressions from src for 2.3. science-validator.
-   Compare with τ = n T r1 r2 sin(Δα) / L.
+| # | Item | Seat |
+|---|---|---|
+| 1 | Window-mean ω row. One trace read or one small probe. | validators |
+| 2 | Pin the 0.017 kg fitness residual. | science-validator |
+| 3 | Torque-capacity gate status. Check the gate module. | software-validator |
+| 4 | Per-ring OD and wall floor check. | software-worker |
+| 5 | Realisability floor 1.05 rationale. | science-validator |
+| 6 | Fix the k comment arithmetic slip. | lead or software |
+| 7 | Gene table with bounds and live conditions. | software-worker |
+| 8 | Daisy rows. Long-standing. | science-validator |
+| 9 | Exact torque and twist expressions from src for 2.3. Compare with τ = n T r1 r2 sin(Δα) / L. | science-validator |
 
-No register rows added. No simulator runs performed. Read-only pass.
+No register rows added. I ran no simulators. Read-only pass.
