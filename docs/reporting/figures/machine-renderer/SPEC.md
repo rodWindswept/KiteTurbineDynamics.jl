@@ -346,6 +346,12 @@ No check grades itself. No number appears without its register row.
   way F-PARSE re-measures the emitted vector. This delta changes the "TikZ
   emission is the primary target" reading of D5 only if the room adopts it.
 
+- **D8 (2026-10-11):** the strip carries the search objective under
+  each panel, in kg, under a declared delta. Row NR-036 backs the
+  values (signed 2026-10-11). The geometry claims stand. The strip
+  prints no power value and no airborne mass value. The footer states
+  the shaft frame.
+
 *Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R1
 review (Rod, 2026-10-08): prototype geometry corrected — ground ring smallest,
 machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the

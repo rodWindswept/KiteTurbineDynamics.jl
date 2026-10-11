@@ -37,7 +37,7 @@ carries the full roster around them.
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling. Then F-VALUE at the sign-off commit |
 | 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
-| 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | The 3.5 re-render with NR-036 labels. Then the checks and sign-off |
+| 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE on the re-rendered SVG (`74cfef9`). Then sign-off |
 | 10 | 9 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | The capture script (plan, side, downwind). Then F-REPRO |
 | 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
@@ -163,3 +163,12 @@ three slots).
   lines, one rotor) starts. The spine the author seat protects: rows 2,
   6, 7, 8, 9, 10 and 12. The parking set holds rows 3, 14 and 17. The
   register adds NR-035 and NR-036.
+
+- **v8 (2026-10-11):** row 9 re-renders at `74cfef9` with the 3.5
+  deltas. The layout reads two rows, four panels above and three below,
+  at one shared scale. The label strip carries the search objective,
+  under a declared delta to the geometry-only rule (NR-036). The axes
+  are square. The manifest declares the tolerance field, and the footer
+  states the shaft frame. The checks pass at GENERATE, and the double
+  run stays byte-identical. F-COUNT and F-PARSE now re-run on the new
+  SVG. Sign-off follows. The SVG text-layer item stands open.

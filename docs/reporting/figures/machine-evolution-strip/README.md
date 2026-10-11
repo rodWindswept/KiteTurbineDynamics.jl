@@ -64,4 +64,5 @@ The decode chain rounds before scoring.
 ## Rule
 
 - Values become register rows before any figure draws them.
-- The strip claims geometry only (machine-renderer SPEC). The renderer draws what it receives.
+- The strip claims geometry and the search objective (NR-036; declared
+  delta, 2026-10-11). The renderer draws what it receives.
