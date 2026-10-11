@@ -504,3 +504,46 @@ Boundaries that travel with these rows:
 
 2. NR-028 bounds the comparison to 18.8 m. The screen holds no post-fold
    readings at 21.2 m or 25.0 m.
+
+## Operating-point rows: NR-029 to NR-031 (2026-10-11, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+These rows answer the section 1.1 request (the window-mean ground-ring
+speed as the operating speed) and the section 2.1 table requests (Cp,
+tip-speed ratio, window-mean omega). The aero-validator seat proposed
+them at `b665e6e`. This seat signs them after an independent re-run.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-029 | Winner operating speed, window-mean ground ring | 13.380259861740395 (quote 13.38, 127.772 rpm) | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`), parity against the recorded cold re-eval (NR-012) | signed (science-validator, 2026-10-11) |
+| NR-030 | Winner delivered torque, window-mean basis | 396.76205834512626 (quote 396.76) | N·m | P_mean (NR-008) divided by NR-029. Cross-reads: S1 panel 396.791634149159 (0.0075 % above), S5 hub 397.1777954649229 | signed (science-validator, 2026-10-11) |
+| NR-031 | Winner operating coefficients: tip-speed ratio, rotor Cp, system coefficient | lambda_gnd 5.565968202980965 (quote 5.566, hub value 5.56592352649632 agrees inside 1.1e-4), Cp 0.29437093178017804 (quote 0.2944), system coeff 0.10163090072260127 (quote 0.1016) | - | lambda from NR-029, r_ring 4.57997905482005 m, v_ref 11.01 m/s. Cp at lambda 5.566 from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Coeff from NR-008 divided by 0.5 rho A v^3, A 63.9 m², rho 1.225 | signed (science-validator, 2026-10-11) |
+
+Sign-off basis:
+
+- Re-run. This seat ran `scripts/ktd-julia scripts/probe_window_trace.jl`
+  cold. The four parity fields print |diff| = 0.0 against the recorded
+  re-eval (target `scratch/sv_p0_winner_reeval.txt`, local): fitness,
+  P_mean, P_end and omega_eq. The 52 samples reproduce. Every window
+  statistic reproduces to the digit.
+- Arithmetic. rpm = 13.380259861740395 x 60 / (2 pi) = 127.7721.
+  tau = 5308.7794439367935 / 13.380259861740395 = 396.76205834512626.
+  lambda_gnd = 5.565968202980965. Half rho A v cubed = 52.235879109513746
+  kW. System coefficient 0.10163090072260127. Ceiling (16/27) x that x
+  cos^3(30 deg) = 20.105599243489678 kW.
+- Cross-reads. k w^2 = 401.0302328876505 N·m at the window mean (1.08 %
+  above the delivered read). k w^3 = 5.365759517981763 kW at the hub
+  window mean (1.07 % above NR-008). The bands travel with the rows.
+
+Boundaries that travel with these rows:
+
+1. One trace, one machine, one wind: 11.01 m/s at 9.41 m, cold start,
+   k = 2.24.
+2. The rotor read (Cp 0.2944) and the system coefficient (0.1016) are
+   different coefficients. The draft must not conflate them.
+3. The warm and cold omega(t) plus line-strain request stays with the
+   aero-worker seat.
+4. The offered sentence of the review stands with the measured numbers.
+   The run seeds at 10.17 rad/s (NR-016). The machine reaches 13.38 rad/s
+   by the relax end.
