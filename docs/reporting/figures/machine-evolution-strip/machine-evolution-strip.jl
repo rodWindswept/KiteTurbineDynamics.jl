@@ -4,7 +4,8 @@
 # Generating script for the machine evolution strip (figure map row 9,
 # machine-renderer SPEC, mode: strip). Seven panels: the island 3 best-so-far
 # machine at generations 0, 6, 10, 18, 22, 25 and 26, drawn from the built
-# state at one shared scale.
+# state at one shared scale. Layout: two rows (4 + 3). Each panel carries its
+# search objective (NR-036). Axes are square: both scales read m_per_px.
 #
 # Run:
 #   scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl \
@@ -39,13 +40,18 @@ include(joinpath(ROOT, "scripts", "compute_seeds.jl"))
 const SLUG = "machine-evolution-strip"
 const DATA_COMMIT = "dd3cc6a"
 const EXTRACT_ID = "strip-extract-2026-10-09-best-so-far"
-const REGISTER_ROWS = "NR-005 · NR-006 · NR-011"
+const REGISTER_ROWS = "NR-005 · NR-006 · NR-011 · NR-036"
 const SCALE_BAR_M = 5.0
 const PANEL_H_PX = 340
 const GAP_PX = 16
 const HEADER_PX = 84
-const LABELS_PX = 40
+const LABELS_PX = 54
+const ROW_GAP_PX = 24
 const FOOTER_PX = 132
+
+# NR-036 display forms (signed 2026-10-11). The label strip draws these.
+const OBJ_ROW = Dict(0 => "36.109", 6 => "32.293", 10 => "31.661",
+    18 => "30.929", 22 => "29.854", 25 => "28.315", 26 => "27.364")
 
 const KW = 5.0
 const PW = KW * 1000.0
@@ -70,7 +76,7 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "Island 3 best-so-far: seven machines from the seed to the winner"
-const SUB = "Built geometry at one shared scale · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
+const SUB = "Built geometry at one shared scale · the value under each machine is its search objective, in kg, lower is better · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
 
 tandeg(x) = tan(deg2rad(x))
 
@@ -118,6 +124,7 @@ struct Panel
     gen::Int
     genome::Vector{Float64}
     source_row::Int
+    objective::String
     s::Vector{Float64}
     radii::Vector{Float64}
     sections::Vector{Symbol}
@@ -135,6 +142,8 @@ end
 
 function build_panel(rec::Dict{String,String}, rownum::Int)
     xraw = [parse(Float64, rec["x$j"]) for j in 1:10]
+    gen = parse(Int, rec["selected_gen"])
+    obj = rec["fitness"]
     xesc = round_discrete!(xraw)
     dec = design_from_vector_v10(xesc, PROFILE_ELLIPTICAL, P_BASE; power_W=PW,
         cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
@@ -228,9 +237,10 @@ function build_panel(rec::Dict{String,String}, rownum::Int)
         "n_active" => dec.n_active == parse(Int, rec["n_active"]),
         "r_hub" => isapprox(dec.design.r_hub, parse(Float64, rec["r_hub"]); atol=1e-3),
         "r_bot" => isapprox(dec.design.r_bottom, parse(Float64, rec["r_bot"]); atol=1e-3),
+        "objective" => obj == get(OBJ_ROW, gen, "?"),
     ]
     return Panel(
-        rec["label"], parse(Int, rec["selected_gen"]), xraw, rownum,
+        rec["label"], gen, xraw, rownum, obj,
         svec, radii, sections, ropes2d, quads, blades, markers,
         (rings=length(radii), gaps=sys.n_ring - 1, lines_per_gap=pc.n_lines,
             rotors=length(rotor_specs), blades_per_rotor=n_blades,
@@ -318,7 +328,7 @@ function footer_entries!(ax, fig_w::Int, y::Float64)
             poly!(ax, Rect(x / fig_w, y - 0.05, 16 / fig_w, 0.10);
                 color=(color, 0.18), strokecolor=color, strokewidth=0.8)
         end
-        text!(ax, (x + 21) / fig_w, y; text=label, fontsize=8.5,
+        text!(ax, (x + 21) / fig_w, y; text=label, fontsize=9,
             color=C_INK, align=(:left, :center))
         x += 21 + 5.0 * length(label) + 20
     end
@@ -348,17 +358,21 @@ function main()
     panels = [build_panel(recs[k], k) for k in eachindex(recs)]
 
     # window: one shared data window for the set
-    X = 1.06 * maximum(p.xmax for p in panels)
+    X0 = 1.06 * maximum(p.xmax for p in panels)
     Ytop = maximum(p.ymax for p in panels)
     Ybot = minimum(p.ymin for p in panels)
     padY = 0.04 * (Ytop - Ybot)
     Ylo = Ybot - padY
     Yhi = Ytop + padY
     mpp = (Yhi - Ylo) / PANEL_H_PX          # metres per pixel, the declared scale
-    panel_w = round(Int, 2X / mpp)
+    # square axes: grow the window to the next whole pixel so both scales read mpp
+    panel_w = ceil(Int, 2X0 / mpp)
+    X = panel_w * mpp / 2
     n = length(panels)
-    fig_w = n * panel_w + (n - 1) * GAP_PX
-    fig_h = HEADER_PX + PANEL_H_PX + LABELS_PX + FOOTER_PX
+    n_top = 4
+    n_bot = n - n_top
+    fig_w = n_top * panel_w + (n_top - 1) * GAP_PX
+    fig_h = HEADER_PX + 2 * PANEL_H_PX + 2 * LABELS_PX + ROW_GAP_PX + FOOTER_PX
 
     fig = Figure(size=(fig_w, fig_h), backgroundcolor=RGBf(1, 1, 1))
     gl = GridLayout(fig[1, 1])
@@ -371,30 +385,41 @@ function main()
     text!(hax, 0.006, 0.22; text=SUB, fontsize=9.5, color=C_GREY,
         align=(:left, :center))
 
-    # panels
-    pg = GridLayout(gl[2, 1])
+    # panels: two rows, four on top, the rest below, one shared scale
+    pg1 = GridLayout(gl[2, 1])
+    pg2 = GridLayout(gl[5, 1])
     axs = Axis[]
     for (k, p) in enumerate(panels)
-        ax = Axis(pg[1, k]; limits=((-X, X), (Ylo, Yhi)),
+        pg = k <= n_top ? pg1 : pg2
+        col = k <= n_top ? k : k - n_top
+        ax = Axis(pg[1, col]; limits=((-X, X), (Ylo, Yhi)),
             aspect=DataAspect(), backgroundcolor=RGBf(1, 1, 1))
         push!(axs, ax)
         hidedecorations!(ax); hidespines!(ax)
         draw_panel!(ax, p, X, Ylo, Yhi)
     end
 
-    # label strips
-    lax = Axis(gl[3, 1]; limits=((0, 1), (0, 1)))
-    hidedecorations!(lax); hidespines!(lax)
+    # label strips, one under each panel row
+    labs = Axis[]
+    for r in 1:2
+        lax = Axis(gl[r == 1 ? 3 : 6, 1]; limits=((0, 1), (0, 1)))
+        push!(labs, lax)
+        hidedecorations!(lax); hidespines!(lax)
+    end
     for (k, p) in enumerate(panels)
-        xf = ((k - 1) * (panel_w + GAP_PX) + panel_w / 2) / fig_w
-        text!(lax, xf, 0.74; text="gen $(p.gen)", fontsize=11, color=C_INK,
+        lax = labs[k <= n_top ? 1 : 2]
+        col = k <= n_top ? k : k - n_top
+        xf = ((col - 1) * (panel_w + GAP_PX) + panel_w / 2) / fig_w
+        text!(lax, xf, 0.80; text="gen $(p.gen)", fontsize=13, color=C_INK,
             align=(:center, :center))
-        text!(lax, xf, 0.24; text=p.label, fontsize=8, color=C_GREY,
+        text!(lax, xf, 0.48; text=p.label, fontsize=9, color=C_GREY,
             align=(:center, :center))
+        text!(lax, xf, 0.14; text="objective $(p.objective) kg", fontsize=9.5,
+            color=C_INK, align=(:center, :center))
     end
 
     # footer
-    fax = Axis(gl[4, 1]; limits=((0, 1), (0, 1)))
+    fax = Axis(gl[7, 1]; limits=((0, 1), (0, 1)))
     hidedecorations!(fax); hidespines!(fax)
 
     # fixed sizes and zero gaps — set once every child of the layout exists.
@@ -404,33 +429,46 @@ function main()
     rowsize!(gl, 1, Fixed(HEADER_PX))
     rowsize!(gl, 2, Fixed(PANEL_H_PX))
     rowsize!(gl, 3, Fixed(LABELS_PX))
-    rowsize!(gl, 4, Fixed(FOOTER_PX))
+    rowsize!(gl, 4, Fixed(ROW_GAP_PX))
+    rowsize!(gl, 5, Fixed(PANEL_H_PX))
+    rowsize!(gl, 6, Fixed(LABELS_PX))
+    rowsize!(gl, 7, Fixed(FOOTER_PX))
     colgap!(gl, 0.0)
     rowgap!(gl, 0.0)
-    for k in 1:n
-        colsize!(pg, k, Fixed(panel_w))
+    for k in 1:n_top
+        colsize!(pg1, k, Fixed(panel_w))
     end
-    colgap!(pg, GAP_PX)
-    for k in 1:(n - 1)
-        colgap!(pg, k, GAP_PX)
+    for k in 1:n_bot
+        colsize!(pg2, k, Fixed(panel_w))
+    end
+    colgap!(pg1, GAP_PX)
+    colgap!(pg2, GAP_PX)
+    for k in 1:(n_top - 1)
+        colgap!(pg1, k, GAP_PX)
+    end
+    for k in 1:(n_bot - 1)
+        colgap!(pg2, k, GAP_PX)
     end
 
     # footer content
-    footer_entries!(fax, fig_w, 0.86)
+    footer_entries!(fax, fig_w, 0.90)
     bx = 14.0
     bar_px = SCALE_BAR_M / mpp
-    lines!(fax, [bx / fig_w, (bx + bar_px) / fig_w], [0.52, 0.52];
+    lines!(fax, [bx / fig_w, (bx + bar_px) / fig_w], [0.64, 0.64];
         color=C_INK, linewidth=1.6)
-    lines!(fax, [bx / fig_w, bx / fig_w], [0.46, 0.58]; color=C_INK, linewidth=1.0)
-    lines!(fax, [(bx + bar_px) / fig_w, (bx + bar_px) / fig_w], [0.46, 0.58];
+    lines!(fax, [bx / fig_w, bx / fig_w], [0.575, 0.705]; color=C_INK, linewidth=1.0)
+    lines!(fax, [(bx + bar_px) / fig_w, (bx + bar_px) / fig_w], [0.575, 0.705];
         color=C_INK, linewidth=1.0)
-    text!(fax, (bx + bar_px + 10) / fig_w, 0.52; text="$(Int(SCALE_BAR_M)) m",
-        fontsize=8.5, color=C_INK, align=(:left, :center))
+    text!(fax, (bx + bar_px + 10) / fig_w, 0.64; text="$(Int(SCALE_BAR_M)) m",
+        fontsize=9.5, color=C_INK, align=(:left, :center))
     stamp1 = "source: data commit $DATA_COMMIT · extract $EXTRACT_ID.csv · island 3 best-so-far {0, 6, 10, 18, 22, 25, 26}"
     stamp2 = "rows $REGISTER_ROWS · script commit $script_commit · engine CairoMakie · PDF date normalised to 1970-01-01"
-    text!(fax, 14 / fig_w, 0.24; text=stamp1, fontsize=6.8, color=C_FAINT,
+    stamp3 = "shaft frame: distance along the shaft is vertical · the operating elevation is not drawn"
+    text!(fax, 14 / fig_w, 0.40; text=stamp1, fontsize=8, color=C_FAINT,
         align=(:left, :center))
-    text!(fax, 14 / fig_w, 0.10; text=stamp2, fontsize=6.8, color=C_FAINT,
+    text!(fax, 14 / fig_w, 0.24; text=stamp2, fontsize=8, color=C_FAINT,
+        align=(:left, :center))
+    text!(fax, 14 / fig_w, 0.08; text=stamp3, fontsize=8, color=C_FAINT,
         align=(:left, :center))
 
     # ── outputs ──────────────────────────────────────────────────────────────
@@ -487,7 +525,17 @@ function main()
         X, Ylo, Yhi, mpp, panel_w, PANEL_H_PX, fig_w, fig_h, SCALE_BAR_M))
     vpf(a) = (v = a.scene.viewport[];
         @sprintf("[%d,%d + %dx%d]", v.origin[1], v.origin[2], v.widths[1], v.widths[2]))
-    push!(loglines, "layout viewports: header $(vpf(hax)) · labels $(vpf(lax)) · footer $(vpf(fax)) · panel1 $(vpf(axs[1])) · panel7 $(vpf(axs[end]))")
+    push!(loglines, "layout viewports: header $(vpf(hax)) · labels1 $(vpf(labs[1])) · labels2 $(vpf(labs[2])) · footer $(vpf(fax)) · panel1 $(vpf(axs[1])) · panel7 $(vpf(axs[end]))")
+    v1 = axs[1].scene.viewport[]
+    xpxpm = v1.widths[1] / (2X)
+    ypxpm = v1.widths[2] / (Yhi - Ylo)
+    push!(loglines, @sprintf("axis squareness: x %.9f px/m · y %.9f px/m · delta %.4f ppm",
+        xpxpm, ypxpm, (xpxpm / ypxpm - 1.0) * 1e6))
+    obj_ok = all(panels) do p
+        j = findfirst(c -> first(c) == "objective", p.checks)
+        j !== nothing && last(p.checks[j])
+    end
+    push!(loglines, "objective labels (NR-036): $(length(panels)) drawn · $(obj_ok ? "ALL OK" : "FAIL")")
     push!(loglines, "pdf normalisation: clean -d ok · CreationDate replacements $nrep · clean -z ok")
     push!(loglines, "outputs sha256:")
     for f in ("$SLUG.png", "$SLUG.svg", "$SLUG.pdf")
@@ -510,15 +558,17 @@ function main()
             sha256=bytes2hex(sha256(read(extract_path)))),
         selection=(rule="island 3 best-so-far, ok rows, earliest (gen, idx) tie-break; no interpolation",
             generations=[p.gen for p in panels]),
-        registers=["NR-005", "NR-006", "NR-011"],
+        registers=["NR-005", "NR-006", "NR-011", "NR-036"],
         knobs=(power_W=PW, v_rated=V_RATED, tether_length=LENGTH,
             k_mppt=K_MPPT_5KW_HONEST, blocking_factor=BF, cylinder_cone=true,
             rotor_count_mode=true, power_split=0.6, cone_slope_deg=22.0,
             rotor_spacing_frac=0.8, min_wall_m=2e-3, t_over_D=0.055),
         scale=(m_per_px=mpp, window=(x=[-X, X], y=[Ylo, Yhi]),
-            panel_px=[panel_w, PANEL_H_PX], scale_bar_m=SCALE_BAR_M),
+            panel_px=[panel_w, PANEL_H_PX], scale_bar_m=SCALE_BAR_M,
+            tolerance_px=0.05),
         panels=[(label=p.label, gen=p.gen, genome=p.genome,
-            source_row=p.source_row, counts=p.counts) for p in panels],
+            source_row=p.source_row, objective=p.objective,
+            counts=p.counts) for p in panels],
         command="scripts/ktd-julia docs/reporting/figures/$SLUG/$SLUG.jl --script-commit $script_commit",
         outputs=Dict(
             "$SLUG.png" => bytes2hex(sha256(read(png_path))),
