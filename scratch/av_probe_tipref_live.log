@@ -1,0 +1,25 @@
+tap armed at s=1 t=2.8987873697672758e-5
+eval wall = 43.7 s
+
+== parity ==
+  fitness |diff|=0.0
+  P_mean |diff|=0.0
+  P_end |diff|=0.0
+  ω_eq |diff|=0.0
+
+== live window means (1 Hz, n=40) ==
+hub position mean: x=16.32103569348639 y=0.003078424098353425 z=8.913786811024593  (radial hypot=16.32103598380788)
+hub elevation mean = 28.641356683431155 deg   spread z: 8.764486419188648 .. 9.129240968271171
+            elev spread = 28.111377629562643 .. 29.406626727065532 deg
+inflow wind mean = 10.924446216998861 m/s
+omega_hub mean = 13.380063280317646   tip speed = 75.32387482810498 m/s
+lambda_tip (live mean basis) = 6.894983354936391
+P_kw delivered (1 Hz mean) = 5.3087794439367935 kW
+P_aero hub charge (1 Hz mean) = 5.6595093810122155 kW
+gap delivered vs aero = 0.06197179180445023   (aero is 6.606602153645569 % above delivered)
+fine (every-step) n=1379888  P_kw=5.309772067672553  P_aero=5.65939577066585 kW
+wind_at_altitude(v_ref, h_ref, zbar) = 10.924536016073894
+wind_at_altitude(v_ref, h_ref, 9.4117) = 11.00969423693896
+static hub z if straight 18.8 m shaft from z0=1.0 at given elev: 10.011318842263897
+
+AV_TIPREF_LIVE_DONE

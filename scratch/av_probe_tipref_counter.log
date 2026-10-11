@@ -1,0 +1,73 @@
+== static: decode ==
+r_hub=4.57997905482005  r_bottom=0.8036829846088207  n_active=1
+hub rotor: blade_tip_offset=1.0495813777459144  blade_hub_offset=-0.44982059046253475  blade_scale=0.8213255027884769
+span = blade_tip - blade_hub = 1.4994019682084492
+tip/span = 0.7   hub/span = -0.3
+
+== static: built system ==
+sys.rotor.radius (r_out)   = 5.629560432565964
+sys.rotor.blade_hub_radius = 4.130158464357515
+bank_angle_deg=7.088131460323565  wind_factor=1.0
+check r_hub+tip_offset = 5.629560432565964   |diff| vs r_out = 0.0
+check r_hub+hub_offset = 4.130158464357515   |diff| vs r_in = 0.0
+un-fold r_ring = 0.3*r_out + 0.7*r_in = 4.57997905482005   |diff| vs r_hub = 0.0
+
+== static: areas ==
+A_raw  (main_rotor_swept_area)         = 45.9732554921615
+A_bank (main_rotor_bank_projected_area)= 45.60047944351075
+A_zn   (betz_wind_normal_area)         = 39.491173622830395
+A_zy   (A_raw * cos30, cross-check)    = 39.81400715088433
+A_hub_bot (pi(r_hub^2 - r_bot^2))      = 63.86952678906739
+annulus_area(r_hub, span; bank)        = 45.60047944351075   |diff| vs A_bank = 0.0
+ratios: A_bank/A_raw = 0.9918914585303991   A_zy/A_zn = 1.0081748273965527
+
+== lambda and cp at the window mean (v=11.01) ==
+  tip, hub w: lam=6.841451124645552  cp=0.22578839742146659
+  tip, gnd w: lam=6.8415060395190075  cp=0.22578487792722682
+  ring, hub w: lam=5.56592352649632  cp=0.29437093178017804
+  ring, gnd w: lam=5.565968202980965  cp=0.29436889185188914
+cp_bem(3, lam_tip) = 0.22578839742146659   |diff| vs cp_at_tsr = 0.0
+
+== hub aero power formula at the window mean ==
+projection = cos30^2.65 * cosd(bank)^2.65 = 0.6693092260007764
+  P_aero(tip ref, A_raw) = 5.6793906349701775 kW
+  P_aero(ring ref, A_raw) = 7.404488150199515 kW
+  P_mean recorded (NR-008) = 5.3087794439367935 kW
+
+== Betz ceiling candidates (kW) ==
+  half*rho*A*v3: A_raw=37.58143061282218  A_zn=32.282569190218894  A_zy=32.5464736212662  A_hubbot=52.21096839022808
+  code form 0.593*half(A_zn)              = 19.143563529799803   delivered share = 0.27731406619634263
+  code form (16/27)*half(A_zn)            = 19.130411371981566   delivered share = 0.27750471961685264
+  SV form   (16/27)*half(A_raw)*cos^3(30) = 14.46509938722942   delivered share = 0.3670060814531059
+  A_zy form (16/27)*half(A_zy)            = 19.286799182972562
+  register form (16/27)*half(A_hubbot)*cos^3(30) = 20.096011103166152
+  register arithmetic (A=63.9 rounded)   = 20.10559924348968
+  system coeff on A_raw = 0.1412607066141203   on A_zn = 0.1644472412544312
+
+== live run (cold re-eval + window tap) ==
+tap armed at s=1 t=2.8987873697672758e-5 dt=2.8987873697672758e-5
+eval wall = 43.9 s
+
+== parity vs recorded cold re-eval ==
+  fitness got=27.3635412663488 |diff|=0.0
+  P_mean got=5.3087794439367935 |diff|=0.0
+  P_end got=5.314113662272673 |diff|=0.0
+  ω_eq got=10.169820334285198 |diff|=0.0
+
+== live window means ==
+1 Hz samples n=40
+  P_kw (delivered, tau_gen*w_gnd)      = 5.3087794439367935
+  P_aero (live-elev, ring_forces form) = 5.6595093810122155 kW
+  P_aero (design-elev, frame form)     = 5.463830115845214 kW
+  omega_hub=13.380063280317646  omega_gnd=13.380236109670866
+  v_hub_mag=10.924446216998861  lam_tip=6.8950047048813845
+every-step n=1379888
+  P_kw fine mean   = 5.309772067672553
+  P_aero fine mean = 5.65939577066585 kW
+tail 2 s n=68995
+  P_kw tail mean   = 5.314215997782951
+  P_aero tail mean = 5.663552562037175 kW
+gap 1 - P_del/P_aero (1 Hz)  = 0.06197179180445023
+gap 1 - P_del/P_aero (fine)  = 0.061777567281208756
+
+AV_TIPREF_COUNTER_DONE
