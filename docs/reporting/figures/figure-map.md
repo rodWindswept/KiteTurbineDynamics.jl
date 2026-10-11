@@ -15,6 +15,9 @@ One account of every figure the report needs. Each entry names its
 section, its source, its gate and its status. The budget proposes ten to
 twelve figures (document targets, section 2).
 
+The reading order is fixed at v7 (the seating pass, `e252bca`). Numbers
+land at assembly, in that order. The draft stays unnumbered until then.
+
 This map carries the roster the room works from. A row moves only when
 work lands. The commit names the row.
 
@@ -24,22 +27,31 @@ carries the full roster around them.
 
 ## 2. The roster
 
-| # | Section | Figure | Slug | Status | Source | Next gate |
-|---|---|---|---|---|---|---|
-| 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
-| 2 | §2.1 | System anatomy (the term set, the lift chain) | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms |
-| 3 | §2.2 | Genome decode strip. Gene slots to machine | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need |
-| 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
-| 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
-| 6 | §3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
-| 7 | §3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | F-VALUE at the sign-off commit |
-| 8 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
-| 9 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE at the sign-off commit |
-| 10 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | Extract. Capture script. F-REPRO |
-| 11 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
-| 12 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
-| 13 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
-| 14 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling |
+| # | Order | Section | Figure | Slug | Status | Source | Next gate |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
+| 2 | 2 | §2.1 | System anatomy (the term set, the lift chain) | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms. The winner re-cut |
+| 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need. Park candidate |
+| 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
+| 5 | 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
+| 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
+| 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling. Then F-VALUE at the sign-off commit |
+| 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
+| 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | The 3.5 re-render with NR-036 labels. Then the checks and sign-off |
+| 10 | 9 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | The capture script (plan, side, downwind). Then F-REPRO |
+| 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
+| 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
+| 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
+| 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
+| 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
+| 16 | 8 | §3.2 | Convergence, three islands | ⟨tbd⟩ | proposed | The running-best series. `convergence.csv` | An extract and rows for any printed value |
+| 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
+| 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
+
+The Order column holds the reading sequence (author seat, `e252bca`).
+
+The protected spine (author seat): rows 2, 6, 7, 8, 9, 10 and 12. The
+parking set: rows 3, 14 and 17.
 
 Status key.
 
@@ -135,3 +147,19 @@ three slots).
   triangle on a ground line marks the station position, and the label
   stays. The station machinery sits outside the render scope. Probe
   `6862ea4` carries the glyph.
+
+- **v7 (2026-10-11):** the seating and numbering pass lands (author
+  seat, `e252bca`). The roster gains an Order column. The reading
+  sequence holds 18 items. Numbers land at assembly in that order. The
+  draft stays unnumbered until then. Four Harris asks enter as rows 15
+  to 18. The new rows are the TRPT segment diagram, convergence, the
+  sensitivity tornado and the Daisy validation chart. Rows 6 and 7
+  settle to §3.3 beside the hero. That move waits for the next revision
+  pass. The plate deltas ride the open 1.3 item and the 3.5 kit items.
+  Row 9 unblocks. NR-036 re-verifies the seven strip milestones
+  (`25ff00e`). The label set reads search objective (kg). The strip
+  re-render carries the 3.5 fixes, and sign-off follows. Row 2: the d8
+  source draws the V10 machine. The winner re-cut (six rings, three
+  lines, one rotor) starts. The spine the author seat protects: rows 2,
+  6, 7, 8, 9, 10 and 12. The parking set holds rows 3, 14 and 17. The
+  register adds NR-035 and NR-036.
