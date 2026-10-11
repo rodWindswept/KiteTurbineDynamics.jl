@@ -33,6 +33,11 @@ amended quote forms.
 v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
 explanation, with the science-writer blocks folded under the R4 fence.
 
+v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris
+review resolutions: the lift-margin identity (1.2), the length-screen
+rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack
+framing (3.7).
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -181,13 +186,14 @@ yet. A derived row or a drop ruling awaits the room.]
 form no longer holds. Its product, 3.55, stays flagged non-operating in
 every provenance file.]
 
-[Answered: the length variants ran 2026-10-05 on the then-current
-winner. The test covered 18.8, 21.2 and 25.0 m, twice, before and after
-the cp fix.]
+The length screen ran 2026-10-05 on the pre-fold island-3 winner. It
+covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+fix. All six rows failed the power floor (NR-027).
 
-[Result: all three lengths fail the power floor in that screen. No line
-breaks, no twist crossing, tip clearance OK. Register rows await
-(@science-validator) if §2.3 names the screen.]
+The cause is recorded. The screen measured the pre-fold winner under
+the post-landing decode, whose span shrink took the power below the
+floor. The folded class passes at 18.8 metres (NR-028). The campaign
+searched the folded class, so the launch carries the passing physics.
 
 FoS is the design load margin. It is the ratio of what the line can
 carry to what the load demands. The model tests the TRPT beam element FoS for buckling risk the same
@@ -306,33 +312,43 @@ The rotor turns after that.
 The lift acts throughout operation, not only at spin-up. The team
 sizes the lift line up front.
 
-At the lift bearing, its vertical component carries 1.5 times the
-weight of the machine. The lift line runs at 70 degrees of elevation
-(NR-026). Its tension stays flat as the wind rises, with margin.
+The lifter sizing holds a 1.5 margin on the vertical load at the lift
+bearing. The sizing mass is the airborne mass without the lifter
+itself, 20.70 kilograms. The kite carries its own weight (2026-08-21
+ruling).
 
-The sizing excludes the weight of the lifter. The kite carries itself.
-Its lift tension reads 324.1 newtons (NR-010).
+The vertical load is 1.5 x 20.70 x 9.81 = 304.6 newtons. The lift line
+runs at 70 degrees of elevation (NR-026). The line tension is that
+load over sin 70 degrees: 324.1 newtons (NR-010).
+
+The same tension over the full airborne mass of 25.70 kilograms
+(NR-018) gives a margin of 1.21. The margin holds at all wind speeds
+(NR-026).
 
 The lifter is a stack of autogyros. The report assumes the stack can
 modulate to meet the lift requirement at all wind speeds.
 A fixed kite cannot: its pull grows as the square of the wind speed.
 Without modulation, each weather band needs its own kite, up to a giant.
 
-The stack sizing is a solved problem. The report applies the force
-the machine needs, and it tests the machine on that basis.
-The report states the presumption as one (2026-08-05).
+The report applies the lift force the machine needs and tests the
+machine on that basis. Designing a lifter that delivers that force
+across wind speeds is outside this report. The report states the
+presumption as one (2026-08-05).
 
 Its geometry reads three lines, six rings and one active rotor. The
 hub radius is 4.580 metres and the ground radius 0.804 metres
-(NR-011). Its blade scales read 0.82 and 0.20 (NR-011).
+(NR-011). Its blade scales read 0.82 on the active rotor and 0.20 on
+a rotor that does not exist. The count is one (NR-011).
 
-Its bank gene holds 22 degrees in slot 8, but that gene reaches no
-rotor at one active rotor. The main rotor bank reads 7.088 degrees at
-ring 6 (NR-017).
+The bank gene reads 7.088 degrees at ring 6 (NR-017). A second bank
+slot reads 22 degrees, but it reaches no rotor at a count of one
+(NR-011).
 
 Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
-percent (NR-014). Its settle-carried equilibrium speed (ω_eq) reads
-10.170 radians per second (NR-016). Its airborne mass reads 25.698 kilograms (NR-018).
+percent (NR-014). The settle state starts the machine at 10.170
+radians per second (NR-016). The machine accelerates through the
+relax run. [The window-mean speed row is drafted for the register.]
+Its airborne mass reads 25.698 kilograms (NR-018).
 
 [Winner anatomy: figure-map row 10 carries the labelled render, with
 the lift chain and the ring numbers. The PTO station sits outside the
@@ -500,8 +516,7 @@ commit. Every public post will cite register rows by ID.
 
 - Register rows for the Daisy anchor values.
 
-- Length-screen rows: blocked on the variant dirs entering tracking
-(the 10-05 record). @science-validator signs once committed.
+- Length-screen rows: landed (NR-027, NR-028, signed 2026-10-10).
 
 - Step-ceiling, protocol and lift-margin rows: landed (NR-024 to NR-026),
 counter-read closed and wording amends applied (`570be73`, `f86228a`).
