@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v7, numbers-free by construction (no measurement values, no
+**Status** PREP v8, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -83,7 +83,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | banked blade | A blade whose span runs out of the ring plane. The blade stays straight, and the angle lives in the mount. The swept surface is a cone frustum, not a flat annulus. | physics-topology 4 | supply |
 | blade | One aerodynamic element of a rotor. The blade count equals the polygon line count. | physics-topology 4, renderer spec section 7 | supply |
 | blade scale | A linear scale on blade span. Written out longhand. It is not λ. | genome-glossary terminology note | ratify |
-| tip-speed ratio (TSR, λ) | Blade-tip speed divided by wind speed. The report reserves λ for this meaning alone. | CONTEXT.md TSR row | ratify |
+| tip-speed ratio (TSR, λ) | The speed of the outer blade tips divided by the undisturbed wind speed at the rotor's altitude. The report reserves λ for this meaning alone. | CONTEXT.md TSR row, `src/ring_forces.jl` tip reference | ratify |
 | polygon count | The number of line vertices in a ring. It equals the blade count. | genome-glossary polygon gene | ratify |
 | ring spacing ratio (L/r) | The ratio of ring spacing to ring radius. The shaft layout targets this ratio. | genome-glossary spacing gene, DECISIONS [2026-10-03] | supply |
 | ring geometry | The lever family that sets ring radii and ring spacing. | genome-glossary radius and density genes, U2 | supply |
@@ -298,3 +298,8 @@ defect, like a missing register row.
   Grounds: `src/lift_kite.jl`, the 2026-08-05 presumption and the [2026-08-19] ruling.
   A senses note keeps the lifter terms and the figure wording apart.
   No other change.
+
+- **v8 (2026-10-11):** the tip-speed ratio row tightens to the tip reference
+  the model reads: the speed of the outer blade tip over the undisturbed
+  wind at the rotor's altitude (item 2.1 read). The row keeps its ratify
+  status. No other change.

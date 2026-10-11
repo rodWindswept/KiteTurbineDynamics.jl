@@ -38,6 +38,12 @@ review resolutions: the lift-margin identity (1.2), the length-screen
 rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack
 framing (3.7).
 
+v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+accuracy flags: the lift-margin register chain (sizing mass 20.698
+kilograms, vertical load 304.58 newtons) and the window-mean speed
+citation (NR-029). NR-031-dependent numbers stay held pending the
+basis amendment.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -314,10 +320,10 @@ sizes the lift line up front.
 
 The lifter sizing holds a 1.5 margin on the vertical load at the lift
 bearing. The sizing mass is the airborne mass without the lifter
-itself, 20.70 kilograms. The kite carries its own weight (2026-08-21
+itself, 20.698 kilograms. The kite carries its own weight (2026-08-21
 ruling).
 
-The vertical load is 1.5 x 20.70 x 9.81 = 304.6 newtons. The lift line
+The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
 runs at 70 degrees of elevation (NR-026). The line tension is that
 load over sin 70 degrees: 324.1 newtons (NR-010).
 
@@ -347,8 +353,9 @@ slot reads 22 degrees, but it reaches no rotor at a count of one
 Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
 percent (NR-014). The settle state starts the machine at 10.170
 radians per second (NR-016). The machine accelerates through the
-relax run. [The window-mean speed row is drafted for the register.]
-Its airborne mass reads 25.698 kilograms (NR-018).
+relax run. Its window-mean speed reads 13.38 radians per second,
+127.772 revolutions per minute (NR-029). Its airborne mass reads
+25.698 kilograms (NR-018).
 
 [Winner anatomy: figure-map row 10 carries the labelled render, with
 the lift chain and the ring numbers. The PTO station sits outside the
