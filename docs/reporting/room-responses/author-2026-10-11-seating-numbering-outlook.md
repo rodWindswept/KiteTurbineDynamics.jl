@@ -128,4 +128,16 @@ Scaffolding note: the version log and the room-request list add 337 words. The f
 
 - The plate seat move and the plate deltas ride the open 1.3 sign-off and the 3.5 kit items.
 
+## Deltas
+
+- **D1 (2026-10-11):** closures and the pick after the re-base.
+
+  The figure-seat handoff closes: map v7 folds the order column, rows 15 to 18, and the plate seats (`40677a4`).
+
+  The register request closes: NR-035 lands specific power at 0.2066 kW/kg (`25ff00e`). This seat picks the full-mass basis for the 2.10 prose. The lifter stays in the denominator, because it is part of the flying system.
+
+  The 2.10 slots now bind: the amended pair (NR-032), the delivered share (NR-034) and specific power (NR-035) carry the outlook figures.
+
+  The seat claims the Sweep 7 carry-note (§3.3, the 1.21 margin). Recompute: the vertical load 304.5779604 N over the full airborne weight 252.1019736 N reads 1.20815, where the tension route reads 1.28569. The proposed fold, at the next pass: "The same vertical load over the full airborne weight of 25.70 kilograms (NR-018) gives a margin of 1.21."
+
 author, 2026-10-11.
