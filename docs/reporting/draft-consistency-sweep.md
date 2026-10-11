@@ -396,3 +396,71 @@ the vertical load over the full weight (1.20815). A reader who divides the
 room flags it for a wording pass only if it wants the line tighter.
 
 **Next run** at the next draft push.
+
+## Sweep 8: v0.12, 2026-10-11
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`be27cc7` (the v0.12 pass). The file carries zero diff to the branch tip at
+sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `25ff00e`, zero diff to
+the tip. Covers NR-001 to NR-036: the counter-reads, the rotor-bank note, the
+caption and bank-derate rows, the mechanism pair, the wording amends, the
+length screen, the operating-point rows NR-029 to NR-031 and the re-base and
+derived rows NR-032 to NR-036.
+
+**Results**
+
+- STE gate: words 3482, total 5, `per100w=0.14`, `em_dash=0`, exit 0. The
+  hook lines read `passive_voice x1` and `long_paragraph x4`. The push-note
+  readings reproduce (words 3444 to 3482, total 5 to 5).
+
+- Retired phrasing: no hit. The §1 contrast line "without a rigid
+  driveshaft" stays the only near-hit, cleared in Sweep 3 and unchanged
+  here.
+
+- Value cross-check. The v0.12 pass note carries no value. Its two commit
+  quotes resolve in the tip ancestry: `25ff00e` and `b434ded`.
+
+- The §3.3 wording swap recomputes: the vertical load 304.5779604 N over
+  the full airborne weight 252.1019736 N reads 1.20815, quoted 1.21. The
+  tension chain reads 324.1250954, NR-010 at 324.1. The displayed-operand
+  chain reads 304.58.
+
+- The re-base rows NR-032 to NR-034 print no value in this draft. The
+  derived rows NR-035 and NR-036 also print none. Nothing from them enters
+  the value check yet.
+
+- Held tokens: `3.55` stays flagged non-operating in its bracket. `1.94`
+  and `5.18` in the §4.2 ledger stay gated by "The other values need rows
+  first". The NR-031 hold lifts with this pass, and no printed value waited
+  on it.
+
+- Arithmetic on stated totals: the status mix still sums to 930
+  (508 + 301 + 110 + 11). Three islands of 310 designs also give 930.
+
+- References counts: the §7 line reads fifteen of eighteen verified and
+  three pending. `references-verification.md` carries the same counts.
+
+- Superseded forms: the draft prints no retired value (63.8695, 20.1056,
+  14.4651, 14.46, 0.101631) and no NR-031 quote form (5.566, 0.2944,
+  0.1016). A grep over the draft at the tip reads no hit.
+
+- Number-token diff against v0.11 (`5ef236f`): four arrivals, no removals.
+  All four are pass-note artifacts: `12` and `11` are version digits, `7`
+  the Sweep 7 reference, `3.3` the section reference. No value token
+  arrived, dropped or altered.
+
+- Push-note check: the v0.12 note reads 4 arrivals (`12`, `11`, `7`, `3.3`)
+  and 0 removals, and the recount holds as the net. Five raw added
+  occurrences and one raw removal (`25.70` rides the swapped sentence). The
+  commit stat reads 7 insertions and 1 deletion on the draft file.
+
+**Finding**
+
+No value discrepancy found. The Sweep 7 carry-note closes: the §3.3
+sentence now reads the vertical load over the full airborne weight, and it
+recomputes its own 1.21. The hold lift prints no value, and no
+NR-031-dependent token waits inside the draft.
+
+**Next run** at the next draft push.
