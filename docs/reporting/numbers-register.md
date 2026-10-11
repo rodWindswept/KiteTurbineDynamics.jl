@@ -547,3 +547,112 @@ Boundaries that travel with these rows:
 4. The offered sentence of the review stands with the measured numbers.
    The run seeds at 10.17 rad/s (NR-016). The machine reaches 13.38 rad/s
    by the relax end.
+
+## Operating-point re-base rows: NR-032 to NR-034 (2026-10-11, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+These rows re-base the operating point that NR-029 to NR-031 carry. The
+tip radius carries the speed-ratio term. The wind-normal area carries
+the ceiling. The aero-validator seat counter-read the tip and area basis
+(`av_probe_tipref_counter.jl`, `av_probe_tipref_live.jl`). This seat
+reproduced every value before signing.
+
+Findings:
+
+- The blade tips do not sit at the ring radius. The built main rotor
+  carries r_out 5.629560432565964 m and r_in 4.130158464357515 m. The
+  span reads 1.4994019682084492 m on the 70/30 split. The ring radius
+  4.57997905482005 m is the blade attach point, not the tip.
+
+- The code reads the speed ratio at the tip. `ring_forces.jl` computes
+  lambda_t = omega x r_out / v. The built radius takes the label "TSR /
+  tip-speed reference" (`objective_evaluator.jl`).
+
+- The old coefficient basis carried the wrong area. The value 63.9 m²
+  is pi (r_hub^2 - r_bot^2) = 63.86952678906739 m². No rotor sweeps
+  that surface. The model swept area is 45.9732554921615 m².
+
+- The ruled Betz basis is the wind-normal area. The ceiling applies
+  cos^1 per projection (Rod 2026-10-02). The contract test
+  `test_betz_ceiling_projection.jl` pins the form. The wind-normal
+  area is 39.491173622830395 m².
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-032 | Winner tip-speed ratio and rotor Cp, tip reference | lambda_tip 6.8415060395190075 (quote 6.8415, hub value 6.841451124645552 agrees inside 5.5e-5), Cp 0.22578839742146659 (quote 0.2258) | - | lambda from the NR-029 window trace, r_out 5.629560432565964 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+| NR-033 | Winner swept-area set | A_raw 45.9732554921615 (quote 45.9733), A_bank 45.60047944351075, A_zn 39.491173622830395 (quote 39.4912), A_zy 39.81400715088433 (elevation-only cross-check), A_hub_bot 63.86952678906739 (retired basis) | m² | Built radii through `annulus_area` (`src/bem.jl`). A_zn is the ruled wind-normal basis (`objective_evaluator.jl`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+| NR-034 | Winner Betz ceiling and re-based coefficients | ceiling (16/27) x 0.5 rho A_zn v^3 = 19.130411371981566 kW (quote 19.1304), delivered share 0.27750471961685264 (quote 27.75 %), system coeff 0.1412607066141203 on A_raw and 0.1644472412544312 on A_zn | kW / - / - | v_ref 11.01 m/s, rho 1.225. The code gate charges the rounded 0.593 form: 19.143563529799803 kW. Arithmetic route: `scratch/sv_rebase_arithmetic.py` | signed (science-validator, 2026-10-11) |
+
+Sign-off basis:
+
+- Re-run. The counter probe rebuilt the winner through the evaluator
+  chain. The parity held |diff| = 0.0 on fitness, P_mean, P_end and
+  omega_eq against the recorded cold re-eval. The live tap repeated the
+  hub power charge over the window (1 Hz, n = 40).
+
+- Arithmetic. Every area and coefficient recomputes on an independent
+  route. The chain closes at v = 11.01: 0.5 rho A_zn v^3 =
+  32.282569190218894 kW, ceiling 19.130411371981566 kW, share
+  0.27750471961685264.
+
+- Cross-reads. The campaign score breakdown records A_axial 45.9733 m².
+  The strip extract geometry agrees. The 63.86952678906739 m² value
+  recomputes from r_hub and r_bot.
+
+Boundaries that travel with these rows:
+
+1. One trace, one machine, one wind: 11.01 m/s at 9.41 m, cold start,
+   k = 2.24. The boundary holds for every row in this block.
+
+2. The NR-031 values stand unchanged. Use them under the label ring
+   speed ratio only. Ring speed ratio = the tangential speed of the hub
+   ring over the wind: omega x r_ring / v.
+
+3. NR-034 supersedes the ceiling line in the NR-029 to NR-031 block for
+   use. That block keeps its arithmetic listing.
+
+4. The old system coefficient (0.1016, NR-031) defers to the NR-034 pair
+   for use.
+
+5. Flown-basis edge note: the settled hub carries mean z 8.914 m and
+   elevation 28.64 deg. The site profile reads 10.924 m/s there. The tip
+   ratio reads 6.895 and Cp 0.2224 on that basis. Receipts:
+   `scratch/av_probe_tipref_live.jl`. The note answers the Harris "wind
+   at hub height" line.
+
+6. Discriminator. The hub charge reads 5.6595093810122155 kW against the
+   delivered 5.3087794439367935 kW, 6.6 % above. A ring-referenced
+   reading would need a 28.3 % gap. The tip reference holds on live
+   numbers.
+
+## Derived rows: NR-035 and NR-036 (2026-10-11, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The author seat asked for design-point specific power (Harris item
+2.10). The figures seat asked for the running-best objective at the
+seven strip milestones. Both rows derive from signed rows and the
+certified strip extract.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-035 | Design-point specific power | 0.20657960587391747 (quote 0.2066) | kW/kg | NR-008 (P_mean entry) divided by NR-018. Recipe: 5.3087794439367935 kW / 25.69846825623688 kg. On the mass net of the 5 kg lifter (20.69846825623688 kg) the read is 0.25648175402240925 | signed (science-validator, 2026-10-11) |
+| NR-036 | Island 3 running-best search objective at the seven strip milestones | 36.109 (gen 0), 32.293 (gen 6), 31.661 (gen 10), 30.929 (gen 18), 29.854 (gen 22), 28.315 (gen 25), 27.364 (gen 26) | kg | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). This seat re-checked all seven against `island_3/telemetry.csv`: each is an ok row and the least ok fitness of its window. Figure label: search objective | signed (science-validator, 2026-10-11) |
+
+Sign-off basis:
+
+- Both rows recompute from signed rows and the certified extract. The
+  extract carries its parity certificate. The seven fitness values
+  re-check against the raw telemetry rows.
+
+- The milestone set: the aero-validator amendment [0, 6, 10, 18, 22, 25,
+  26] gives seven distinct machines.
+
+Boundaries that travel with these rows:
+
+1. The search objective is not the mass. Penalty terms travel inside the
+   value. The draft and the strip label it "search objective (kg)".
+
+2. NR-035 uses the full airborne mass (NR-018). The net basis (5 kg
+   lifter excluded) reads 0.2565 kW/kg.

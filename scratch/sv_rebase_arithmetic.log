@@ -1,0 +1,45 @@
+PASS span: got 1.4994019682084492 want 1.4994019682084492
+PASS r_ring unfold: got 4.57997905482005 want 4.57997905482005
+PASS A_raw: got 45.9732554921615 want 45.9732554921615
+PASS A_bank: got 45.60047944351075 want 45.60047944351075
+PASS A_zn: got 39.491173622830395 want 39.491173622830395
+PASS A_zy: got 39.81400715088433 want 39.81400715088433
+PASS A_hub_bot: got 63.86952678906739 want 63.86952678906739
+PASS half rho A_zn v3 kW: got 32.28256919021889 want 32.282569190218894
+PASS half rho A_raw v3 kW: got 37.581430612822174 want 37.58143061282218
+PASS ceiling (16/27): got 19.130411371981562 want 19.130411371981566
+PASS ceiling 0.593: got 19.1435635297998 want 19.143563529799803
+PASS delivered share: got 0.2775047196168527 want 0.27750471961685264
+PASS coeff on A_raw: got 0.14126070661412032 want 0.1412607066141203
+PASS coeff on A_zn: got 0.16444724125443122 want 0.1644472412544312
+PASS lambda_tip gnd: got 6.8415060395190075 want 6.8415060395190075
+PASS lambda_tip hub: got 6.841451124645552 want 6.841451124645552
+PASS cp at hub lambda: got 0.2257883974214666 want 0.22578839742146659
+PASS lambda_ring gnd (NR-031): got 5.565968202980965 want 5.565968202980965
+PASS cp at hub ring lambda (NR-031): got 0.29437093178017804 want 0.29437093178017804
+PASS specific power full mass: got 0.20657960587391747 want 0.20657960587391747
+PASS specific power net mass: got 0.25648175402240925 want 0.25648175402240925
+PASS milestone gen 0 idx 1 quote: got 36.109 want 36.109
+PASS milestone gen 0 is-best-so-far: got 36.109 want 36.109
+      gen  0 idx  1: fitness 36.109 status ok
+PASS milestone gen 6 idx 2 quote: got 32.293 want 32.293
+PASS milestone gen 6 is-best-so-far: got 32.293 want 32.293
+      gen  6 idx  2: fitness 32.293 status ok
+PASS milestone gen 10 idx 7 quote: got 31.661 want 31.661
+PASS milestone gen 10 is-best-so-far: got 31.661 want 31.661
+      gen 10 idx  7: fitness 31.661 status ok
+PASS milestone gen 18 idx 4 quote: got 30.929 want 30.929
+PASS milestone gen 18 is-best-so-far: got 30.929 want 30.929
+      gen 18 idx  4: fitness 30.929 status ok
+PASS milestone gen 22 idx 10 quote: got 29.854 want 29.854
+PASS milestone gen 22 is-best-so-far: got 29.854 want 29.854
+      gen 22 idx 10: fitness 29.854 status ok
+PASS milestone gen 25 idx 8 quote: got 28.315 want 28.315
+PASS milestone gen 25 is-best-so-far: got 28.315 want 28.315
+      gen 25 idx  8: fitness 28.315 status ok
+PASS milestone gen 26 idx 9 quote: got 27.364 want 27.364
+PASS milestone gen 26 is-best-so-far: got 27.364 want 27.364
+      gen 26 idx  9: fitness 27.364 status ok
+
+checks: 35  failed: 0
+ALL CHECKS PASS
