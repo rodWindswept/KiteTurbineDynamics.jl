@@ -317,3 +317,82 @@ both §2.1 brackets stay open, no figure fold, and no new domain term
 arrives (`vertex` rides the candidates count row).
 
 **Next run** at the next draft push.
+
+## Sweep 7: v0.11, 2026-10-11
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at `5ef236f`
+(the v0.11 pass), spanning the v0.10 fold at `2d77c98`. The file carries zero
+diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at the tip (no change since
+`3730bec`, which carries NR-029 to NR-031). Covers NR-001 to NR-031 and the
+appended blocks: the aero and science counter-reads, the rotor-bank note, the
+caption rows NR-017 and NR-018, the bank-derate rows NR-019 and NR-020, the
+mechanism-pair and ODE rows NR-021 to NR-026, the wording amends, the
+length-screen rows NR-027 and NR-028, and the operating-point rows NR-029 to
+NR-031.
+
+**Results**
+
+- STE gate: words 3444, total 5, `per100w=0.15`, `em_dash=0`, exit 0. The
+  hook lines read `passive_voice x1` and `long_paragraph x4`.
+
+- Retired phrasing: no hit.
+
+- Value cross-check, span additions:
+
+  - The lift-margin fold (v0.10, refolded at v0.11): the chain recomputes,
+    1.5 × 20.69846825623688 × 9.81 = 304.5779603905257. The draft quotes
+    304.58 at two decimals (304.578 at three; NR-026 hands the chain). The
+    sizing mass 20.698 reads NR-018 minus the flat 5.0 kg booking. The
+    margin 1.21 recomputes to 1.20815. 25.70 rounds NR-018 at two decimals.
+    324.1 is NR-010.
+
+  - The length screen: 18.8, 21.2 and 25.0 metres and the six-row count
+    cross-read NR-027. The folded class at 18.8 m cross-reads NR-028.
+
+  - The NR-029 citation: 13.38 rad/s and 127.772 rpm are the row's own
+    quote forms; the rpm recomputes 127.77207.
+
+  - The blade-scale and bank reads cross-read NR-011 and NR-017: 0.82,
+    0.20, 7.088, 22 and the counts.
+
+- Held tokens: `3.55` stays flagged non-operating in its bracket. `1.94`
+  and `5.18` in the §4.2 ledger stay gated by "the other values need rows
+  first". The `21.2` and `25.0` held tokens moved: the length screen now
+  prints them under NR-027.
+
+- Arithmetic on stated totals: the status mix still sums to 930
+  (508 + 301 + 110 + 11).
+
+- Number-token diff, v0.9 (`e0abbce`) to v0.11 (`5ef236f`), per push:
+
+  - v0.9 to v0.10: fourteen arrivals, two removals. `1.2`, `1.8`, `3.7`
+    and one `1.5` are the pass-note refs. `1.5`, `70`, `9.81`, two `20.70`,
+    `304.6`, `25.70` and `1.21` are the lift-margin fold, all rowed
+    (NR-026, NR-018, NR-010). `18.8` arrives with the screen text and the
+    fold statement. `10` is the version digit of the pass header. Removals:
+    `2.3` (the closed screen bracket drops its §2.3 ref) and `8` (the slot-8
+    sentence reworded to "a second bank slot").
+
+  - v0.10 to v0.11: nine arrivals, three removals. `13.38` and `127.772`
+    are the NR-029 citation. Two `20.698`, `20.698468` and two `304.58` are
+    the register chain and the sizing mass; two `20.70` and `304.6` leave
+    with them. `11` is the version digit; `3.3` is the pass-note ref.
+
+  - Net: every arrival and removal accounts to a named fold, a register
+    citation or a pass-note token.
+
+**Finding**
+
+No value discrepancy found. The v0.11 fixes verify clean against their rows.
+The pass also carries the glossary candidates at v8 (the TSR row tightening);
+that file sits outside this gate.
+
+One carry-note for the room: the lift-margin sentence reads "The same
+tension over the full airborne mass ... gives a margin of 1.21". The 1.21 is
+the vertical load over the full weight (1.20815). A reader who divides the
+324.1 N tension by the full weight reads 1.29. The item 1.2 text stands; the
+room flags it for a wording pass only if it wants the line tighter.
+
+**Next run** at the next draft push.
