@@ -44,6 +44,12 @@ kilograms, vertical load 304.58 newtons) and the window-mean speed
 citation (NR-029). NR-031-dependent numbers stay held pending the
 basis amendment.
 
+v0.12 pass by @author (2026-10-11).
+This pass lifts the v0.11 operating-point hold.
+The science-validator signed the re-base rows NR-032 to NR-034 (`25ff00e`).
+The counter-read closed (`b434ded`).
+The pass also folds the Sweep 7 carry-note at §3.3.
+
 Status DRAFT. Numbers come only from signed register rows, cited by
 row ID.
 
@@ -327,7 +333,7 @@ The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
 runs at 70 degrees of elevation (NR-026). The line tension is that
 load over sin 70 degrees: 324.1 newtons (NR-010).
 
-The same tension over the full airborne mass of 25.70 kilograms
+The same vertical load over the full airborne weight of 25.70 kilograms
 (NR-018) gives a margin of 1.21. The margin holds at all wind speeds
 (NR-026).
 
