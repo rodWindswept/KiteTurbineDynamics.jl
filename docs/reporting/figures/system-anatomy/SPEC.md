@@ -84,8 +84,8 @@ No other number prints.
 
 - The generator asserts: six rings, fifteen line runs, three blades. The
   radii and the bank angle match NR-011 and NR-017.
-- Compile chain: pdflatex, then pdftoppm at 300 dpi. Zero error lines. See
-  `checks.log`.
+- Compile chain: pdflatex, then pdftoppm at 300 dpi. Zero error lines and
+  zero overfull boxes. See `checks.log`.
 - The visual audit read the full plate and three crops (chain zone, hub ring
   zone, base zone). No text touches a line. Every leader lands on its element.
 
@@ -102,8 +102,9 @@ Two full runs stay byte-identical: generator outputs, PDF and PNG.
 
 ## Open items (round 1)
 
+- Closed: the author label check (`38a15f1`) holds. Its two re-cuts landed
+  in v2 and v3.
 - Track D: the term picks. The plate carries the room forms for now.
-- @author: verify each label against the draft sections 2.1 and 3.3.
 - The β value waits for a signed row.
 - Strip re-render and the planned genome strip and winner anatomy plates
   mount the element library.

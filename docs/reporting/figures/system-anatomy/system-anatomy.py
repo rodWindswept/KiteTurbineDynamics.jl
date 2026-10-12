@@ -134,10 +134,10 @@ LABELS: list = [
          lines=["lift bearing"],
          leaders=[((25.25, 12.70), (23.18, 13.88))]),
     dict(name="bridles", pos=(21.00, 15.60), anchor="east",
-         lines=["bridles (3)"],
+         lines=["bridles (three)"],
          leaders=[((20.95, 15.72), (20.60, 14.15))]),
     dict(name="mainrotor", pos=(15.40, 4.05), anchor="west",
-         lines=["main rotor (R6)", "3 blades, bank 7.088°"],
+         lines=["main rotor (R6)", "three blades, bank 7.088°"],
          leaders=[((15.35, 4.30), (17.30, 7.52))]),
     dict(name="hubring", pos=(11.50, 12.55), anchor="east",
          lines=["R6, the hub ring", "4.580 m"],
@@ -169,9 +169,9 @@ SUB = ("Island-3 winner geometry (NR-011): six rings, three TRPT lines, one acti
        "the primary render scope.")
 
 STAMP1 = ("source: island-3 winner decode, best_vector.csv, data commit dd3cc6a "
-          "- rows NR-011 - NR-017")
-STAMP2 = ("script: scratch/fig1_decode_winner.jl - drawn to the 5 m scale bar "
-          "- dashed outline: outside the primary render scope")
+          "· rows NR-011 · NR-017")
+STAMP2 = ("script: scratch/fig1_decode_winner.jl · drawn to the 5 m scale bar "
+          "· dashed outline: outside the primary render scope")
 
 SCALE_BAR: dict = dict(x0=17.5, x1=22.5, z=-0.5, label="5 m")
 
@@ -205,12 +205,13 @@ L.append("% of the bankderate2 island-3 winner, data commit dd3cc6a). Rows NR-01
 L.append("% Frame: deployment side elevation, shaft at the operating elevation; wind L->R.")
 L.append("% Palette and styles: ../elements/ktd-fig-elements.tex (defined once, reused).")
 L.append("\\documentclass{article}")
-L.append(f"\\usepackage[paperwidth={W_CM+0.6:.2f}cm,paperheight={H_CM+0.6:.2f}cm,margin=0.3cm]{{geometry}}")
+L.append(f"\\usepackage[paperwidth={W_CM+0.6:.2f}cm,paperheight={H_CM+0.6:.2f}cm,margin=0.25cm]{{geometry}}")
 L.append("\\usepackage{tikz}")
 L.append("\\usepackage{xcolor}")
 L.append("\\usepackage{amsmath}")
 L.append("\\usetikzlibrary{calc,arrows.meta}")
 L.append("\\pagestyle{empty}")
+L.append("\\setlength{\\parindent}{0pt}")
 L.append("\\input{../elements/ktd-fig-elements.tex}")
 L.append("\\begin{document}")
 L.append("\\begin{tikzpicture}[x=1cm,y=1cm]")

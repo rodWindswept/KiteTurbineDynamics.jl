@@ -28,10 +28,18 @@ Commands:
     pdftoppm -png -r 300 -singlefile system-anatomy.pdf system-anatomy
 
 Toolchain pin: pdflatex (TeX Live 2023/Debian), poppler pdftoppm. Two full
-runs stay byte-identical. Hashes at this commit:
+runs stay byte-identical (verified at v3). Hashes at v3:
 
-    system-anatomy.tex  7ad28b843566ce5eb3254f80515f97cb
-    prototype.html      413259643024a6f32caa7bd81dd76fe4
-    label-ledger.txt    3a386613d625f07e223c400d996226d2
-    system-anatomy.pdf  533ae2136cc97e9ae706181f09ddd6d8
-    system-anatomy.png  b743d6dd52dabf173f5546b1cbcfd633
+    system-anatomy.tex  32e74655418bb440fab039993f7acacb
+    prototype.html      12d50b0c706c43c0be22e4e03e96cbd9
+    label-ledger.txt    01b6f9b5543f2e9efd7d8f84b693fe39
+    system-anatomy.pdf  0be2467fe569e2af91518d60f7d4c79d
+    system-anatomy.png  04b6b7321b2f9fc78a003f2e5ea52aed
+
+## Re-cuts (same day)
+
+v2: the author label check (`38a15f1`) queued two fixes. The footer row list
+takes the middle-dot form. The counts print as words. v3: the page geometry
+takes a zero paragraph indent and a 0.25 cm margin. The plate now fits the
+text block. The v3 compile reports zero error lines and zero overfull boxes.
+No value binds to either re-cut.
