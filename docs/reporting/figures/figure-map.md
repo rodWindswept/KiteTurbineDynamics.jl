@@ -192,3 +192,11 @@ three slots).
   held-term map (`e0b8a92`, science-writer) sizes the label flip: two
   draft sentences, six glossary rows, the F1 and F2 slots. The row-3
   slot call and the term picks rest with Rod and Track D. No row moves.
+
+- **v12 (2026-10-12):** the figure-caption split lands (full-feedback
+  item 9). Rows 6, 7 and 9 split the plain and technical captions from a
+  new provenance line. Each line carries the audit tokens and resolves
+  to the v0.15 figure-provenance appendix. The report prints the
+  scientific captions, and the exhibit stamps and the appendix carry the
+  provenance. The captures and the renders stay frozen. No roster row
+  moves.

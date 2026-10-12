@@ -1,11 +1,19 @@
 # Captions: ring utilisation
 
 **Slug** `ring-utilisation`. **Status** GENERATE. **Date** 2026-10-08.
+**Caption split** 2026-10-12.
 
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
-from the author draft (v3) unchanged, except the capture slot. Values cite
-NR-021.
+from the author draft (v3) unchanged, except the capture slot and the
+2026-10-12 caption split. Values cite NR-021.
+
+The split (2026-10-12): the plain and technical captions carry the
+scientific text only. The provenance line carries the audit tokens: data
+commit, capture, rows, script commit. It resolves to the
+figure-provenance appendix (draft v0.15). The report prints the
+scientific captions. The plate stamp and the appendix carry the
+provenance.
 
 ## Plain caption
 
@@ -25,11 +33,22 @@ tracks torsion outside the interaction formula.
 
 The figure covers every airborne ring. The check does not cover the ground
 ring, which sits on ground support. The figure includes and marks the hub
-ring. Capture pair-extract-2026-10-08-winner-ops at the final operating
-point (final integration step, s = 1724859, t = 49.99999483862295 s).
+ring. The values come from the campaign winner at its final operating
+point.
+
+## Provenance line
+
+Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
+rows NR-021 · script commit `eacf073` · full record: the figure-provenance
+appendix.
 
 ## Generation note
 
 Resolved at GENERATE by the figures seat. The capture slot alone changed.
 The bridge to the dashboard bar stays in the census prose and carries no
 form here.
+
+Split note (2026-10-12): the capture pair and the capture instant leave
+the caption prose. The instant (s = 1724859, t = 49.99999483862295 s)
+stays on the plate stamp and in NR-025. The text changed only. No render
+moved.
