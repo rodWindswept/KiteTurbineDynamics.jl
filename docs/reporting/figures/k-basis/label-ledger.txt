@@ -1,0 +1,21 @@
+0
+1
+2
+3
+3.49 kW — reject (under the floor)
+4
+5
+6
+7
+8
+9
+One load applies to the whole search (NR-015).
+The k = 2.24 pick: the light end reads under the floor, the heavy end levels off
+The load sweep (2026-08-22) · the seed machine at a range of loads, each over the same measurement window
+k = 2.24 — the campaign load (NR-015)
+load constant k (N·m/(rad/s)²)
+power floor (5.0 kW)
+rows NR-015 · NR-041 · floor rows NR-027 · NR-039 · script commit 83e1f1e
+source: scripts/results/k_sweep_daisy_5kw.csv · blob d17d1377 · run landed adea1a3 (2026-08-22)
+the power levels off (k ≥ 4)
+window mean power (kW)

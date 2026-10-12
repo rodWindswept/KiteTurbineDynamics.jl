@@ -21,8 +21,8 @@ land at assembly, in that order. The draft stays unnumbered until then.
 This map carries the roster the room works from. A row moves only when
 work lands. The commit names the row.
 
-The three open slugs carry their own SPECs in this directory: the
-machine renderer set, `ring-utilisation` and `twist-limit`. This map
+The open slugs carry their own SPECs in this directory: the machine
+renderer set, `ring-utilisation`, `twist-limit` and `k-basis`. This map
 carries the full roster around them.
 
 ## 2. The roster
@@ -33,7 +33,7 @@ carries the full roster around them.
 | 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | `system-anatomy` | R2 | The island-3 winner decode (`scratch/fig1_decode_winner.jl`, data commit `dd3cc6a`). Physics-topology §3 | Seated in the draft (§2.1, v0.22; kit embed-ready). The science half of the content check. The Track D display-form flip rides the author pass |
 | 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
 | 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
-| 5 | 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
+| 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE at the sign-off commit. Then the fold |
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling. Then F-VALUE at the sign-off commit |
 | 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
@@ -239,3 +239,12 @@ three slots).
   exhibit row and its hashes. The kit holds its v3 pins. Pending: the
   science half of the content check, then the Track D display-form flip
   at the author pass. The render stays frozen. Row 2 is the only move.
+
+- **v17 (2026-10-12):** row 5 lands its kit. The generator lands at
+  `83e1f1e`; the outputs and the records land in this commit. The plate
+  draws the ten recorded readings, the floor, the pick and the heavy-end
+  bracket. Two runs stay byte-identical, and the in-script checks and
+  the F-LABEL self-check pass. The floor cite rides the section 2.4 pair
+  (NR-027, NR-039), per the author check. The slug `k-basis` fills, and
+  the row moves to R2. Next: F-VALUE at the sign-off commit, then the
+  fold.

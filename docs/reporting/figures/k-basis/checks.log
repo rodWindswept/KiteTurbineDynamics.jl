@@ -1,0 +1,9 @@
+check: rows: 10  (OK)
+check: k settings (2 dp): [0.5, 1.0, 1.5, 1.94, 2.24, 3.0, 4.0, 5.39, 7.0, 9.0]  (OK)
+check: status column: ['reject', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']  (OK)
+check: P_mean (2 dp): [3.49, 5.45, 6.78, 7.56, 8.0, 8.89, 8.95, 8.95, 8.95, 8.95]  (OK)
+check: k=0.5 P_mean full: 3.485236347784519  (OK)
+check: omega_eq sum (draws nothing): 0.0  (OK)
+check: plateau band (4 dp): (8.9475, 8.9511)  (OK)
+written: k-basis.svg / .pdf / .png, label-ledger.txt (21 strings), manifest.json
+F-LABEL self-check: OK

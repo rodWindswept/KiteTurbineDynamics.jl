@@ -1,0 +1,34 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/k-basis/k-basis.py --script-commit 83e1f1e",
+  "data_commit": "adea1a3",
+  "inputs": {
+    "extract": {
+      "path": "scripts/results/k_sweep_daisy_5kw.csv",
+      "sha256": "95e37fd5afade812c9c7b5af031433a052daf70713bbb686ee3f4d0fc50beb4a"
+    },
+    "register_rows": [
+      "NR-015",
+      "NR-041",
+      "NR-027",
+      "NR-039"
+    ]
+  },
+  "outputs": {
+    "k-basis.pdf": "99552a82310f1851503d65b5eeec5d41da5005c7933c1cffc9db5d7ab2c7e814",
+    "k-basis.png": "10cce26c6acec5440a2a0fd9cc6f5a16ba918b3a3f537c1defe207a582834503",
+    "k-basis.svg": "b7d47bee9103360c8f16f645827b262258ef61505260d77e8353be80f4e1bc02",
+    "label-ledger.txt": "b99421e5cde71216d8bbf3c7f7128c624ba3dbb584a4fa6b42da1f8498eb99b2"
+  },
+  "precision": "P_mean at 2 dp; k settings as listed; floor 5.0 kW",
+  "script": {
+    "path": "docs/reporting/figures/k-basis/k-basis.py",
+    "sha256": "0fb97ff2eaef406915f93fa49e3324b331ba9c7170ee56ec73b02959db9aa5d6"
+  },
+  "script_commit": "83e1f1e",
+  "slug": "k-basis",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "python": "3.12.3"
+  }
+}
