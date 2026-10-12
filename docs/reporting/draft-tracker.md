@@ -80,6 +80,12 @@ the seat notes move to this tracker. The report file carries only
 reader-facing material. No number changed and no number moved. The
 headline numbers stay as signed.
 
+v0.17 pass by @author (2026-10-12).
+This pass drops the §3.3 lift-ratio sentence, per the F6 correction.
+The text read "gives a margin of 1.21" and no longer prints.
+NR-037 keeps the ratio in the Figure 6 build, printed beside its definition and never as a margin.
+The 1.5 sizing basis stands unchanged, and no other draft line moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
