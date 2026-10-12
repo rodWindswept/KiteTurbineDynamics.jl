@@ -17,12 +17,14 @@ no longer prints in the report.
 ## Open delta from the full file
 
 1. §2.3 prints "FoS gate of 2.5 on 2.5". The values are `fos_target`
-   and `fos_hard`. One mechanical pass. Claimed by hermes.
-2. §2.3 prints k as 2.24 with no units. Add N·m/(rad/s)². Claimed by
-   hermes.
+   and `fos_hard`. One mechanical pass. **Closed v0.20 (`7863a88`)**:
+   prints as target and hard floor, both 2.5.
+2. §2.3 prints k as 2.24 with no units. **Closed v0.20 (`7863a88`)**:
+   prose now prints 2.24 N·m/(rad/s)², matching the §2.4 table.
 3. FoS pair: NR-009 carries the window minimum 14.972. The hub capture
-   (NR-021) reads 15.033 at the final step. One line in §3.3 states
-   the difference. Claimed by hermes.
+   (NR-021) reads 15.033 at the final step. **Closed v0.20 (`7863a88`)**:
+   one line in §3.3 states the difference, quoted by name per the
+   register's caption rule.
 4. NR-005 (27.364 kg, island-3 best fitness) against NR-018 (25.698 kg,
    winner airborne mass). §3.2 carries no reconciliation sentence.
    Hermes derives the difference from `island_3/convergence.csv`
