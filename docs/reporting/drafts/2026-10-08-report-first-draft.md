@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.23. Date 2026-10-12.
+Internal engineering report. Draft v0.24. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -20,7 +20,7 @@ transmission (TRPT). The search varies ring geometry, polygon count,
 rotor count, blade bank angles and blade scale.
 
 A differential-evolution campaign evaluated 930 candidate designs under a
-fixed power-law generator load, each on the honest window (NR-001).
+fixed power-law generator load, each on the measurement window (NR-001).
 
 The campaign winner is the best feasible candidate under the modeled
 objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its
@@ -273,14 +273,14 @@ The differential-evolution campaign fixed the configuration below.
 | Power floor | 5.0 kW | NR-027, NR-039 |
 | Structural FoS floor | 2.5 | NR-015 |
 | Relax run | 10 s | NR-015 |
-| Honest window | 40 s | NR-015 |
+| Measurement window | 40 s | NR-015 |
 | Load constant k | 2.24 N·m/(rad/s)² | NR-015 |
 | Line length | 18.8 m | NR-015 |
 
 ### 2.5 Fidelity paths
 
 Two paths score a design. The ODE path builds the machine, settles it,
-and runs the full dynamics over the honest window.
+and runs the full dynamics over the measurement window.
 
 The rapid path pre-solves a static state and starts from it.
 
@@ -333,7 +333,7 @@ Its operating point reads as follows.
 
 | Quantity | Value | Source |
 |---|---|---|
-| Mean power, honest window | 5.309 kW | NR-008 |
+| Mean power, measurement window | 5.309 kW | NR-008 |
 | End-of-window power | 5.314 kW | NR-008 |
 | Minimum factor of safety | 14.972 | NR-009 |
 | Window power swing | 0.029 kW | NR-014 |
@@ -414,11 +414,11 @@ The winner clears each checked gate.
 | Rope break | none on the window | pass on the cold path | NR-012, NR-013 |
 
 This result differs from earlier eras for recorded reasons. The bank
-derate, the honest window and the tightened gates moved the search
+derate, the measurement window and the tightened gates moved the search
 space. Numbers across the eras would compare models, not machines.
 
 This run also trades breadth for fidelity: fewer evaluations, each on
-the honest window. It stopped early: a screen, not a survey. The
+the measurement window. It stopped early: a screen, not a survey. The
 development-history chapter carries the trade, tagged by era.
 
 ### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this section.]
@@ -546,7 +546,7 @@ valid-science case, not footnotes.
 The work runs a differential-evolution search over the design space of a rigid-wing ground-generation rotary kite turbine.
 The machine uses a tensile rotary power transmission.
 The campaign scores each design on the ODE path.
-The honest window stands behind every number.
+The measurement window stands behind every number.
 
 The campaign found the best feasible candidate in 930 evaluations (NR-001).
 The winner survives the full window.

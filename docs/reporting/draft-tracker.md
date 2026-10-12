@@ -124,6 +124,11 @@ The window term reads "measurement window" in section 2.3.
 The remaining instances ride the author sweep, and the sweep event prints as the load sweep (2026-08-22).
 No number changes value, and no figure moves.
 
+v0.24 pass by @author (2026-10-12).
+This pass completes the window-term sweep.
+The remaining seven instances read "measurement window": the abstract and sections 2.4, 2.5, 3.3 and 5.
+No number changes value, and no figure moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
