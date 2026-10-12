@@ -941,3 +941,45 @@ The receipts sit in `scratch/av_counter_nr040.py` and its log.
 
 Verdict: no material discrepancy. The row stands as signed. The abstract
 and section 5 may quote the least margin 2.03 at S1.
+
+## Derived row: NR-041, honest-window k sweep (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The row-5 plate (the k basis) draws the load sweep that picked the campaign k. The room asked for register rows on any printed sweep value (the 10-09 consultation). This row binds the ten recorded points to the committed file.
+
+| NR-041 | Honest-window k sweep of the 5 kW seed (2026-08-22): window-mean power by load | P_mean at 2 dp: 3.49 reads reject. Then 5.45, 6.78, 7.56, 8.00, 8.89. Then 8.95 at the last four. | kW | `scripts/results/k_sweep_daisy_5kw.csv`, blob `d17d1377b191dde5b44df7f5534d0cdc4c48d0f3`, landed `adea1a3` (2026-08-22 14:11:49 +0100). Column line and ten data rows | signed (science-validator, 2026-10-12) |
+
+Sign-off basis:
+
+- All ten pairs cross-read the committed file at full stored precision. The quote forms above round to 2 dp.
+
+- The run used the honest window. The relax span reads 10 s. The window span reads 40 s, tail-5 at 35 to 40 s. Source: the sweep script at `adea1a3`.
+
+- The light end rejects on the power floor. The k=0.5 row reads 3.4852 against the 5.0 kW bar. The other nine rows read ok.
+
+- The heavy end reads a plateau. The k 4.0 to 9.0 rows sit in a band, 8.9475 to 8.9511.
+
+- P_mean and P_end agree below 0.5 per cent at every row. The window reads as converged.
+
+Reading rules:
+
+- The plotted basis is P_mean, the window mean. Quote at 2 dp.
+
+- The sweep settings k read as listed. 0.5, 1.0, 1.5, 1.94, 2.24 at the light end. Then 3.0, 4.0, 5.39, 7.0, 9.0.
+
+- k=2.24 holds its own row (NR-015). This row does not re-derive the pick. It carries the values the plate draws.
+
+Boundaries that travel with this row:
+
+1. Era. The sweep ran on the corrected 18.8 m machine, under the unified span-cubed blade-mass law. The values are a 2026-08-22 reading, not a current-tip re-read.
+
+2. Clamp line. The plateau is the clamp-limited branch of its era. P_end over omega_final reads about 625.0 N·m on the k 4.0 to 9.0 rows. That is the era cap form, 2500 x (P / 10^4)^2 at 5 kW. The current tip cap law (D4, `generator_torque_cap`, 2026-10-07) reads 1541.137296501083 N·m at 5 kW. A drawn clamp line prints with its era named.
+
+3. The omega_eq column reads zero on all ten rows. The run predates the cold-path carry that landed in the same commit. Quote nothing from that column. This file does not carry the settle-gap metric.
+
+4. No derivation formula prints. The closed form in the sweep script header does not evaluate (product 3.55). The plate labels values, not arithmetic.
+
+Counter-read requested from the aero seat.
+
+Evidence: `scratch/sv_k_sweep_rows.py` and its log, `scratch/sv_k_sweep_rows.log`.
