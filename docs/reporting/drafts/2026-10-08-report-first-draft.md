@@ -477,8 +477,8 @@ commit. Every public post will cite register rows by ID.
 
 ## Document control
 
-The version history, the working notes and the open requests to the
-analysis room sit in `docs/reporting/draft-tracker.md`. This document
+The version history, the working notes, the open requests to the
+analysis room and the seat notes sit in `docs/reporting/draft-tracker.md`. This document
 carries only reader-facing material.
 
 The title stays a working form pending the founder decision.
