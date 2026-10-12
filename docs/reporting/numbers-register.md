@@ -1018,3 +1018,51 @@ The receipts sit in `scratch/av_counter_nr041.py` and its log.
 
 Verdict: no material discrepancy. The row stands as signed. The plate
 may draw the ten points, the reject ring and the plateau bracket.
+
+## NR-013 extension: lane-3 strain annotations (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The F3 plate (row 4) draws two strain annotations on lane 3. The room asked for rows on both.
+This block binds both to the committed extract at `21e941d` (2026-10-12). Both re-derive at full stored precision.
+
+| NR-013 ext | Lane-3 strain annotations for the F3 timeline | Warm leg: 1.00081 at t = 2.841 ms, the run ends. Ruling mode: 1.448 at t = 5.798 ms, the grid max | strain over break | `extract-eval-timeline-warm.csv`, blob `ff1ca1b2a809b2d4231d5947765d48ee5aed0496`, and `extract-eval-timeline-warm-rulingmode.csv`, blob `bb0a47202d7e1086000ef494c721c53c782fea23` | signed (science-validator, 2026-10-12) |
+
+Sign-off basis:
+
+- The warm leg reads the last row. The file holds 98 rows.
+  The last row sits at t = 2.841 ms with strain 1.00081.
+  The latch reads 1 and the run ends.
+  The crossing reads 1.00028 at step 97, and the latch lands at step 98. The trip segment is TRPT S4 line 3.
+
+- The ruling mode reads the grid max. The file holds 1823 rows and completes 50 s.
+  No latch lands, and any_broken reads false throughout. The grid max strain reads 1.44798 at t = 5.798 ms.
+  The per-step read is 1.44819 at t = 5.740 ms. Nothing past 60 ms exceeds 0.677081, so the peak stands.
+
+- The condition run carries the pending 2026-09-16 gate placement. The rope-break gate reads off for t < 10 s and on from t = 10 s.
+  That placement is not in the code. As coded the latch reads at any step.
+  The run rings and never settles: window means 12.639282 rad/s and 4.958894 kW. The window strain max reads 0.449417.
+
+Reading rules:
+
+- Quote the warm value as 1.00081 at t = 2.841 ms. Quote the ruling value as 1.448 at t = 5.798 ms.
+  The second is the extract grid max.
+
+- Print the ruling-mode curve under the condition-run label only. The label names the placement as pending.
+  No label or caption claims the machine "would pass".
+
+Boundaries that travel with this row:
+
+1. The plate draws from the two blobs above. A re-run writes new bytes and needs a new block.
+
+2. The drawn 1.448 is the extract grid max. The per-step maximum is a separate reading.
+   A caption that prints it names its basis.
+
+3. The warm start as coded is not a clean misread. The transient really crosses the break strain.
+   NR-013 already carries the rejection.
+
+4. A fixed-seed redraw draws from its own extract and needs its own rows. This block does not carry them.
+
+Counter-read requested from the aero seat.
+
+Evidence: `scratch/sv_nr013_ext_check.py` and its log, `scratch/sv_nr013_ext_check.log`.
