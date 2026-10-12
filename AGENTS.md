@@ -45,9 +45,11 @@ apply to any agent harness (Hermes, Codex, OpenCode, etc.).
   model bank as yaw; a 20° yaw costs almost nothing while a 20° bank costs 15 per
   cent. Thrust has no measured bank derate. Read §4.0.1 of
   [`docs/agents/physics-topology.md`](docs/agents/physics-topology.md) before any
-  banked-rotor work. **The 5 kW campaign is being re-baselined**: the derate drops
-  the old winner to 4.888 kW, below the 5.0 kW floor the acceptance asserts, so the
-  acceptance suite is red until a winner under the corrected model lands.
+  banked-rotor work. **The 5 kW campaign was re-baselined** (bankderate2, launched
+  `a76c5e9`, data `dd3cc6a`, era `post-95c385d_wind-authority`): the derate drops
+  the pre-derate winner to 4.888 kW, below the 5.0 kW floor, and the re-baselined
+  winner (P_mean 5.309, P_end 5.314, FoS_min 14.972) carries the acceptance trio
+  (evaluator/gate/settle-drag) repointed to PASS on 2026-10-07.
 - **Idempotent scripts.** Report-patching scripts must remain fully idempotent.
 - **Formatting.** Run `scripts/ktd-format` (JuliaFormatter, config in
   `.JuliaFormatter.toml`, Blue style) before committing so diffs stay focused on

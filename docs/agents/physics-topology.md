@@ -374,13 +374,16 @@ ODE must carry the same factor** — they disagreed until the other three sites 
 which failed `test_settle_drag_alignment`. The completeness check is
 `grep -rn "2\.65" src/`.
 
-**Consequence.** The campaign winner now reads **4.888 kW at omega 12.97**, against
-5.461 kW at 13.46 before. The power drop is entirely the fall in shaft speed:
-`(12.97 / 13.46)^3 = 0.895`. That is below the 5.0 kW floor asserted by
+**Consequence.** The pre-derate winner re-read under the derate drops to **4.888 kW at
+omega 12.97**, against 5.461 kW at 13.46 before. The power drop is entirely the fall in
+shaft speed: `(12.97 / 13.46)^3 = 0.895`. That is below the 5.0 kW floor asserted by
 `test/test_gate_v13.jl` (A1), `test/test_evaluator_v13.jl` (B6c) and
-`test/test_settle_drag_alignment.jl` (D), so the acceptance suite is red on three files
-until the 5 kW campaign is re-baselined under the corrected model. The pre-derate campaign
-is superseded: it searched a space in which bank was free.
+`test/test_settle_drag_alignment.jl` (D), so the 5 kW campaign was re-baselined under
+the corrected model — the **bankderate2** campaign, launched `a76c5e9`, data `dd3cc6a`,
+era `post-95c385d_wind-authority` — and its winner (P_mean 5.309 / P_end 5.314,
+FoS_min 14.972) carries the acceptance trio (evaluator/gate/settle-drag) repointed to
+PASS on 2026-10-07. The pre-derate campaign is superseded: it searched a space in which
+bank was free.
 
 **Open question, not decided.** The expansion rotors still apply a LINEAR `cosd(bank)` to
 their disc power (`src/initialization.jl` line 1046 area). The main rotor now uses 2.65.
