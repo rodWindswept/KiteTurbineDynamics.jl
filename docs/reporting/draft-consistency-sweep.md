@@ -544,3 +544,150 @@ five cited rows. No held token moved. The v0.13 structural pass carries
 no value token beyond the glossary-flagged class descriptor.
 
 **Next run** at the next draft push.
+
+## Sweep 10: v0.16, 2026-10-12
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`b33451f` (the v0.16 follow-up), spanning the v0.15 pass at `0e10114`,
+the v0.16 split at `472f318` and the tidy at `f0e5070`. The file
+carries zero diff to the branch tip at sweep time.
+
+The room layer of the split sits in `docs/reporting/draft-tracker.md`,
+with Deltas v1 and v2 pre-accounting this span.
+
+**Register** `docs/reporting/numbers-register.md` at `25ff00e` (zero
+diff to the tip, no change since Sweep 9). Covers NR-001 to NR-036 and
+every appended block through the derived rows.
+
+**Results**
+
+- Span note: this pass covers the four pushes since Sweep 9 (v0.15, the
+  v0.16 split, the tidy and the follow-up). The token diff below closes
+  the full span, per push.
+
+- STE gate: words 3230, total 4, `per100w=0.12`, `em_dash=0`, exit 0.
+  The hook lines read `passive_voice x1` and `long_paragraph x3`. Both
+  classes are pre-existing.
+
+- The span readings (words/total): v0.14 3864/5, v0.15 3938/5, v0.16
+  3292/4, tip 3230/4.
+
+- The tracker reads 0.50 per100w at the split and 0.47 at the tip, exit
+  0 both. That reading is context only, outside this gate.
+
+- Retired phrasing: no hit on the solver patterns or the stale-phrase
+  list. The section 1 contrast line "without a rigid driveshaft" stays
+  the only near-hit, cleared in Sweep 3 and unchanged.
+
+- Value cross-check: every printed value matches its row or side block
+  at the quoted precision. The reader-facing set carries forward.
+
+- The checked set spans: NR-001 (930, and the island 310), NR-002
+  (508/301/110/11), NR-003 to NR-006, NR-007, NR-008 (5.309/5.314),
+  NR-009 (14.972), NR-010 (324.1) and NR-011.
+
+- The set continues: NR-014 (0.029), NR-015 (2.24/10/40/2.5/18.8),
+  NR-016 (10.170), NR-017 (7.088 and the 22 slot), NR-018
+  (25.70/25.698), NR-026 (the lift chain), NR-027, NR-028 and NR-029
+  (13.38/127.772).
+
+- Rows NR-012, NR-013, NR-019 to NR-025 and NR-030 to NR-036 print no
+  value in this draft. Their citations, markers and gates carry row IDs
+  only.
+
+- The lift chain recomputes: 1.5 x 20.698468 x 9.81 = 304.58 newtons.
+  The margin recomputes to 1.20815, quoted 1.21. The rpm recomputes
+  127.7721.
+
+- The v0.15 appendix adds no value token. The hashes, commit refs and
+  row IDs fall outside the pattern by construction. Its rows cite signed
+  rows only (NR-021, NR-022, NR-023, NR-005, NR-006, NR-011 and NR-036).
+
+- Arithmetic on stated totals: the status mix sums to 930
+  (508 + 301 + 110 + 11). Three islands of 310 give 930.
+
+- Superseded forms: the draft prints no retired value (63.8695, 20.1056,
+  14.4651, 14.46, 0.101631) and no NR-031 quote form (5.566, 0.2944,
+  0.1016). A grep reads no hit.
+
+- References counts: the section 7 line reads fifteen of eighteen
+  verified, three calls pending (Ranneberg EK_FT_0018, the Jamieson
+  deck and the Hancock deck). `references-verification.md` carries the
+  same counts.
+
+- Cited commits: the draft quotes five (`dd3cc6a`, `a76c5e9`, `31ca00d`,
+  `eacf073` and `74cfef9`). All five resolve in the tip ancestry.
+
+- Moved-unit resolution: every unit the split removed resolves in the
+  tracker. The version history sits at tracker section 1, and the seat
+  notes sit at section 4 with the two trimmed header fragments.
+
+- The open-requests block joins section 3 at the follow-up. The two
+  numbers-gate notes and the three figure markers stay in the report.
+
+- Held tokens: `1.94` and `5.18` stay in the section 4.2 ledger, gated
+  by the kept note "The other values need rows first".
+
+- The `3.55` hold closes on the draft side: the token left with its
+  bracket and stays flagged non-operating in the tracker. The section 5
+  gate carries no numeral.
+
+- Number-token diff, v0.14 (`13973f2`) to the follow-up (`b33451f`), per
+  push:
+
+- v0.14 to v0.15: two arrivals, one removal. Both arrivals are the `15`
+  version digit (the header bump and the pass note). The removal is the
+  `14` header digit the bump retired. The appendix adds no token.
+
+- v0.15 to v0.16 (the split): one arrival, `16`, the header bump.
+  Removals read 40 occurrences, none from a reader-facing print.
+
+- The split removals, version-history side: the note digits v0.1 to
+  v0.15 and the second v0.11 reference, the item refs 1.2, 1.5, 1.8 and
+  3.7, the section refs 2.1, 3.3 three times, 3.4 and 3.5, then 20.698,
+  304.58 and the Sweep 7 ref.
+
+- The split removals, figure side: the figure-map row refs 2, 3, 6, 7,
+  8, 9, 10, 11 (row 8 from the trimmed section 3.4 header), the
+  seat-note numerals 3.55 and 930, and the retired header digit 15.
+
+- The two sets total 40 occurrences. Raw side: 6 added occurrences, 45
+  removed.
+
+- v0.16 to the tidy: no token change.
+
+- Tidy to the follow-up: no arrivals. Two removals, `1` and `3`, the
+  pair in the open-requests bullet "when Phases 1 to 3 land", as the
+  block leaves for the tracker. Raw side: 0 added, 2 removed.
+
+- Net across the span: no value token arrived, dropped or altered. The
+  cumulative diff reads one arrival (`16`) and 41 removals. The two `15`
+  arrivals of the v0.15 header retire within the span.
+
+- Push-note check, split: the note reads "zero value tokens changed,
+  added or moved", with `3.55` named as the only token that left.
+
+- The recount: the reader-facing prints hold, and `3.55` does leave with
+  its bracket. The moved-layer instances leave with their blocks. That
+  account sits above, pre-accounted in Deltas v1.
+
+- Push-note check, the follow-up: the note reads "zero value tokens
+  added, 16 lines removed". The recount holds. The removal set is the
+  "1 to 3" pair the note lists, and the diff stat reads 16 deletions.
+
+**Finding**
+
+No value discrepancy found. The split carries no reader-facing number
+away. The headline set holds (930, 5.309 and 14.972 still print), and
+every moved unit resolves in the tracker.
+
+The readback closes: the open-requests block left the report at the
+follow-up, and the section 3.5 fragment sits at tracker section 4. The
+split note names the `3.55` move. The sweep reads the full moved set
+above.
+
+One carry-note for the author seat: the Document control sentence names
+three moved layers. The tracker carries a fourth, the seat notes. The
+sentence stands, and a skim may read the list as complete.
+
+**Next run** at the next draft push.
