@@ -223,6 +223,27 @@ def register_status(root, register):
     return "status line not found"
 
 
+def register_appendix(root, register, cited):
+    """Render the data appendix: every row the draft cites, from the register."""
+    reg = (root / register).read_text()
+    rows = []
+    for line in reg.splitlines():
+        m = re.match(r"\|\s*NR-(\d+)\s*\|", line)
+        if m and int(m.group(1)) in cited:
+            rows.append((int(m.group(1)), line))
+    rows.sort()
+    if not rows:
+        return ""
+    header = (
+        "## Data register (cited rows)\n\n"
+        "Every number in this draft traces to a signed row in the numbers\n"
+        "register. A missing row here is a release blocker.\n\n"
+        "| Row | Quantity | Value | Units | Source | Status |\n"
+        "|---|---|---|---|---|---|\n"
+    )
+    return header + "\n".join(line for _, line in rows) + "\n"
+
+
 def build_record(root, draft, register, summary, seats, toolchain):
     draft_hash = git_hash(root, draft)
     reg_hash = git_hash(root, register)
@@ -357,6 +378,9 @@ def build_once(root, args, route, summary_out=None):
             return 1
 
     text, seats = resolve_seats(root, text)
+    cited = sorted({int(m) for m in re.findall(r"NR-(\d+)", text)})
+    if cited:
+        text += "\n" + register_appendix(root, args.register, cited)
     toolchain = toolchain_line()
     text += "\n" + build_record(root, args.draft, args.register, summary, seats, toolchain)
 

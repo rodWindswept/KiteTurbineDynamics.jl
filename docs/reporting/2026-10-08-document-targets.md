@@ -82,7 +82,12 @@ The release states:
    The rule binds every acronym in the report, TRPT and MTR included.
 
 2. **Numbers.** A number reaches prose only from a signed register row, by
-   row ID.
+   row ID. Each ID resolves in the data appendix of the assembled document.
+   The working build keeps the NR-xxx IDs inline. The reader build renders
+   them as bracketed numbers [n]. The builder generates the appendix from
+   the register at assembly. Every cited row lists its value, units, source
+   file and commit. A citation whose ID has no appendix row is a release
+   blocker (Rod, 2026-10-12).
 
 3. **Captions.** Rod ruling 2026-10-09: every figure carries the dual caption.
    The first is a takeaway, one jargon-free sentence at first-year engineering
@@ -125,6 +130,10 @@ The release states:
    reads this doc first, so the whole amount of work runs against one plan.
 
 ## Deltas
+
+- v6 (2026-10-12): ledger rule 2 gains the citation standard. Each row ID
+  resolves in a builder-generated data appendix, so the assembled document
+  carries its own citations (Rod, 2026-10-12).
 
 - v5 (2026-10-09): reconcile against origin. Row 10 cites the glossary
   at v6 (2b9c35f). Row 3 cites the seed at v6 (c1ad366). The next gates
