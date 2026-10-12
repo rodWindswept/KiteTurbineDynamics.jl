@@ -811,3 +811,126 @@ side: the ratio no longer prints as a margin, and its home is the
 Figure 6 build, beside its definition.
 
 **Next run** at the next draft push.
+## Sweep 13: v0.24, 2026-10-12
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`9ab7dd4` (v0.24, the window-term sweep), spanning the seven pushes
+from `4330ec5` (v0.18) to `b14f87b` (v0.23). The file carries zero
+diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `c1b6bec` (zero
+diff to the tip).
+Moved since Sweep 12: `819b09f` (NR-039), `166e48e` (NR-040 margins),
+`da1888f` (its counter-read), `025906b` (the NR-041 values), `7b3fc8c`
+(its counter-read) and `c1b6bec` (the NR-013 extension).
+No signed row changed (283 added lines, none removed).
+
+**Results**
+
+- Span note: this pass covers the seven pushes since Sweep 12, v0.18 to
+  v0.24. The token diff below closes the full span, per push.
+
+- STE gate: words 3909, total 6, `per100w=0.15`, `em_dash=0`, exit 0.
+  The hook lines read `passive_voice x1` and `long_paragraph x5`.
+
+- The span readings (words/total): v0.17 3205/4, v0.18 3447/4,
+  v0.19 3651/4, v0.20 3675/5, v0.21 3695/6, v0.22 3717/6,
+  v0.23 3909/6, tip 3909/6.
+
+- Offender delta, `398d4b9` to tip: the v0.18 pass splits three prose
+  blocks out of the set. Its three summary tables enter as structural
+  flags, the accepted class.
+
+- The v0.20 FoS line brings the section 3.3 winner paragraph into the
+  set. The v0.21 reconciliation sentence brings the section 3.2
+  convergence paragraph in. Net total 4 to 6, and no other category
+  moves.
+
+- Retired phrasing: no new hit. The section 1 contrast line "without a
+  rigid driveshaft" stays the only near-hit, cleared in Sweep 3.
+
+- Value cross-check: every arrived value matches its row at the quoted
+  precision. The span arrivals, by push:
+
+- v0.18, the summary tables read NR-001 (930, 310, three islands),
+  NR-008 (5.309/5.314), NR-009 (14.972), NR-010 (324.1), NR-011
+  (4.580/0.804/the three lines/six rings/one active rotor), NR-014
+  (0.029), NR-015 (2.24/10/40/2.5/18.8), NR-016 (10.170), NR-017
+  (7.088), NR-018 (25.698), NR-026 (the 70 line), NR-027 with NR-039
+  (5.0), NR-028 (18.8), NR-029 (13.38) and NR-030 (396.76).
+
+- v0.19: NR-040, twice, at the abstract and the conclusion.
+
+- v0.20: NR-021 (15.033 at the final step). The FoS pair reword nets
+  one `2.5` occurrence out, and the pair still reads NR-015.
+
+- v0.21: NR-018 plus NR-039 against NR-005. 25.698 plus 1.665 reads
+  27.3635, the NR-005 value at 27.364.
+
+- v0.22: the lone arrival is the figure-map row numeral 2, in the seat
+  marker. It is a marker ref, not a value.
+
+- v0.23: 10, 40 and 18.8 each gain one occurrence, all on their
+  existing rows.
+
+- v0.24: term swaps only. No token change beyond the header pair.
+
+- The new register blocks print only where the draft cites them. NR-039
+  prints through the 1.665 quote and NR-040 through 2.03. NR-041 and
+  the NR-013 extension sit in the figure kits.
+
+- Arithmetic on stated totals: the status mix sums to 930
+  (508 + 301 + 110 + 11). Three islands of 310 give 930.
+
+- Superseded forms: no hit on the retired value set (63.8695, 20.1056,
+  14.4651, 14.46, 0.101631) and no NR-031 quote form. A grep reads no
+  hit.
+
+- Cited commits: the draft quotes six, `dd3cc6a`, `a76c5e9`, `31ca00d`,
+  `eacf073`, `74cfef9` and `df8a2b4`. All six resolve in the tip
+  ancestry.
+
+- Number-token diff, v0.17 (`398d4b9`) to v0.24 (`9ab7dd4`), per push.
+  Raw occurrences: added 71, removed 33. The raw side carries the wrap
+  churn, and the identity checks pass per token.
+
+- v0.17 to v0.18: twenty-four value arrivals, the summary-table set
+  above. One header arrival, `18`. One removal, the `17` header digit.
+
+- v0.18 to v0.19: the `19` header digit and the `2.03` pair. One
+  removal, the `18` header digit.
+
+- v0.19 to v0.20: one arrival, `15.033`. One net removal, `2.5`. The
+  title block stayed at v0.19, and the v0.21 pass caught it up.
+
+- v0.20 to v0.21: `1.665`, `25.698` and the `21` header digit. One
+  removal, the `19` header digit.
+
+- v0.21 to v0.22: the `22` header digit and the seat-marker row
+  numeral `2`. One removal, the `21` header digit.
+
+- v0.22 to v0.23: one occurrence each of `10`, `40` and `18.8`, plus
+  the `23` header arrival and the `22` header removal.
+
+- v0.23 to v0.24: the `24` header arrival and the `23` header removal.
+
+- Net across the span: no value left the draft and no value changed.
+  Every arrival maps to a signed row, a marker ref or a header digit.
+
+- Push-note check: the v0.23 note reads three tokens gaining one
+  occurrence each. The recount holds for `10`, `40` and `18.8`. The
+  v0.24 note reads the version token only, and the recount holds.
+
+- Held tokens: no change. `1.94` and `5.18` stay under the section 4.2
+  note "The other values need rows first", and `3.55` stays in the
+  tracker. The section 5 Daisy gate stands.
+
+**Finding**
+
+No value discrepancy found.
+The v0.18 tables land fully cited, and the term sweep of v0.23 and
+v0.24 moves no token. The span adds two prose long_paragraph flags,
+and three structural table flags from the accepted class.
+The draft passes the gate at every push.
+
+**Next run** at the next draft push.
