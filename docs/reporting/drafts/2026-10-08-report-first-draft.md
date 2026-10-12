@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.22. Date 2026-10-12.
+Internal engineering report. Draft v0.23. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -161,9 +161,20 @@ genes in the decode fields (NR-011).
 
 ### 2.3 The evaluator    
 
-The builder builds the machine from the genome. The evaluator settles
-the machine and measures performance over an honest window. The honest
-window waits out the startup transient before it records.
+The builder builds the machine from the genome. The evaluator runs the
+machine and measures its performance. Every evaluation has two phases:
+a relax run and a measurement window.
+
+The run starts from a settle state. That state comes from a simplified
+power balance (NR-025). The relax run takes 10 seconds. It lets the
+startup transient decay, and the machine moves to its operating point.
+
+The measurement window takes 40 seconds. It measures the settled
+machine. The evaluator scores the power over the measurement window
+only (NR-015).
+
+A short window can sample the decay and misstate the power. The team
+sized the window to outlast the decay.
 
 The generator load follows a power law. The commanded torque reads
 τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
@@ -174,11 +185,27 @@ relax time of 10 seconds, a window of 40 seconds, a factor of safety
 (FoS) target and hard floor, both 2.5, and a line length of 18.8
 metres (NR-015).
 
-The campaign fixed k at 2.24 N·m/(rad/s)² (NR-015), the value selected in the
-honest-window sweep (2026-08-22).
+The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+(NR-015). One load applies to the whole search.
 
-The length screen ran 2026-10-05 on the pre-fold island-3 winner. It
-covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+The team selected the value in a load sweep of the seed machine
+(2026-08-22). The sweep ran the seed at a range of loads, each over the
+same measurement window.
+
+At the light end the seed reads under the power floor. At the heavy end
+the power levels off. The selected value sits in the working range
+between them.
+
+The campaign also fixed the shaft length. The search does not vary it:
+every candidate runs at one length, 18.8 metres (NR-015).
+
+The length follows the Daisy anchor. It scales with the machine to this
+size. It sets how high the machine stands above the ground station.
+
+A longer shaft reaches stronger wind. The length screen ran 2026-10-05
+on the pre-fold island-3 winner.
+
+It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
 fix. All six rows failed the power floor (NR-027).
 
 The cause is recorded. The screen measured the pre-fold winner under

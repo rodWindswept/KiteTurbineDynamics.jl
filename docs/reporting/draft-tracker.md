@@ -118,6 +118,12 @@ The builder resolves four seats.
 The Track D display-form flip rides the author pass.
 No quoted value changes.
 
+v0.23 pass by @aero-validator (2026-10-12).
+This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+The window term reads "measurement window" in section 2.3.
+The remaining instances ride the author sweep, and the sweep event prints as the load sweep (2026-08-22).
+No number changes value, and no figure moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
