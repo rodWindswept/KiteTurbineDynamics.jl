@@ -32,6 +32,10 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 
 - ⟨held-term picks for the sky-anchor name and the cyan-line name. Track D.⟩
 
+- ⟨the lifter labels: "the lifter stack" here takes the picked form. F1 and F6 flip together. Track D.⟩
+
+- ⟨the line compound folds to one form ("TRPT lines" recommended). "tension lines" here follows it.⟩
+
 ## Checks for the consistency pass
 
 - Each ledger string appears once and in one form: ring, line, rotor,
