@@ -747,3 +747,39 @@ Receipts: `scratch/sv_nr037_arithmetic.py`, `scratch/sv_nr037_arithmetic.log`
 and the two trace logs above.
 
 Counter-read requested from the aero seat.
+
+## Aero counter-read: NR-037, NR-038 (2026-10-12, aero-validator)
+
+This block appends only, under the lead ruling and the amend pattern. No
+signed row changed.
+
+The receipts sit in `scratch/av_counter_nr037.py`, `scratch/av_counter_nr037.log`
+and `scratch/av_counter_nr038_probe.log`.
+
+- NR-037 recomputes bit-exact from NR-018 and NR-026.
+  F_vert 304.5779603905257 N, weight 252.1019735936838 N,
+  ratio 1.2081538119230202, tension 324.1250954336462 N.
+  Every value matches the signed reads, and the tension equals NR-010.
+
+- NR-037 authority. The code path `sized_lifter_for` carries the law.
+  The sizing mass nets the flat 5 kg lifter, and the margin reads 1.5.
+  The winner evaluation calls the function with `const_tension = true`.
+
+- NR-038. The cold re-run reproduces the four parity fields exact.
+  The trace carries 52 samples, and the window set reads 41 of 52.
+  The ground ring min, max and last values reproduce at full precision.
+  The relax end pair reproduces at t = 9.990119900356282 s.
+  The window mean equals NR-029.
+
+- Label rule. The Figure 6 rule stands as written.
+  The figure prints 1.5 as the margin, and the ratio 1.21 prints
+  with its definition beside it. The figure never labels 1.21 as a margin.
+
+- Citation note. NR-038 cites `scratch/sv_probe_window_trace_rerun.log`.
+  No file sits at that path in this checkout.
+  The file sits at `.julia_depot/logs/sv_probe_window_trace_rerun.log`,
+  and the two depot logs match byte for byte.
+  Quote the depot path, or let this note stand as the amend.
+
+Verdict: no material discrepancy. Both rows stand as signed.
+The Figure 3 and Figure 6 builds may quote them.

@@ -1,0 +1,5 @@
+F_vert   = 304.5779603905257  match=True
+weight   = 252.1019735936838  match=True
+ratio    = 1.2081538119230202  match=True
+tension  = 324.1250954336462  match=True
+NR-037 counter-read: bit-exact on all four values; tension equals NR-010.
