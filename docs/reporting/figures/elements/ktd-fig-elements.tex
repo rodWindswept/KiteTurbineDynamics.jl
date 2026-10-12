@@ -1,0 +1,47 @@
+% ktd-fig-elements.tex — KTD report figure element library (v1, 2026-10-12)
+% Figures seat. Defined once here, reused by the F1 system-anatomy build
+% (and the planned F2 genome strip and F6 winner anatomy builds).
+%
+% Palette (reporting framework, F1 brief): structural rings in blue-grey,
+% TRPT lines in dark cyan, blades in amber, the lift chain in teal.
+% Colour-blind safe by construction: shape, weight and position carry the
+% reading; hue is a secondary channel. Print in greyscale stays readable.
+%
+% Line-weight hierarchy (brief): thick for the primary load path, medium for
+% the structural rings, thin for secondary lines (bridles, leaders, backline).
+%
+% Bound rows for F1 (no other number prints): NR-011 (rings 6, n_lines 3,
+% n_active 1, r_hub 4.580 m, r_bot 0.804 m), NR-017 (bank 7.088 deg).
+% Rule standing: the 22.0 slot value never prints as a rotor angle.
+%
+% Requires: \usepackage{tikz,xcolor,amsmath}
+
+\definecolor{ktdRing}{HTML}{6C7A89}   % structural rings, blue-grey
+\definecolor{ktdTrpt}{HTML}{14606A}   % TRPT (tension) lines, dark cyan
+\definecolor{ktdBlade}{HTML}{CC8A00}  % blades, amber
+\definecolor{ktdChain}{HTML}{0E8C88}  % lift chain, teal
+\definecolor{ktdInk}{HTML}{1A1A1A}    % primary text
+\definecolor{ktdGrey}{HTML}{595959}   % secondary text
+\definecolor{ktdFaint}{HTML}{8C8C8C}  % stamps and furniture
+
+\tikzset{
+  ktd ring/.style={draw=ktdRing, line width=2.2pt, line cap=round},
+  ktd ring heavy/.style={draw=ktdRing, line width=3.2pt, line cap=round},
+  ktd line/.style={draw=ktdTrpt, line width=0.85pt},
+  ktd blade/.style={draw=ktdBlade, line width=2.8pt, line cap=round},
+  ktd chain/.style={draw=ktdChain, line width=1.9pt, line cap=round},
+  ktd chain thin/.style={draw=ktdChain, line width=1.1pt},
+  ktd back/.style={draw=ktdChain, line width=0.8pt, dash pattern=on 3.5pt off 2.5pt},
+  ktd axis/.style={draw=black!40, line width=0.6pt, dash pattern=on 2.6pt off 2.2pt},
+  ktd leader/.style={draw=black!55, line width=0.4pt},
+  ktd dim/.style={draw=black!55, line width=0.5pt},
+  ktd ground/.style={draw=black!70, line width=1.0pt},
+  ktd station/.style={draw=black!55, line width=0.8pt, dash pattern=on 3pt off 2.5pt},
+  ktd lab/.style={font=\footnotesize, text=ktdInk, inner sep=1.2pt, align=left},
+  ktd labb/.style={font=\footnotesize\bfseries, text=ktdInk, inner sep=1.2pt, align=left},
+  ktd lab grey/.style={font=\scriptsize, text=ktdGrey, inner sep=1.2pt, align=left},
+  ktd faint/.style={font=\scriptsize, text=ktdFaint, inner sep=1pt, align=left},
+  ktd title/.style={font=\normalsize\bfseries, text=ktdInk, inner sep=1pt, align=left},
+  ktd sub/.style={font=\footnotesize, text=ktdGrey, inner sep=1pt, align=left},
+  ktd wind/.style={draw=black!60, line width=1.1pt, -{Stealth[length=2.6mm]}},
+}
