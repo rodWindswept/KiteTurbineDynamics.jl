@@ -30,8 +30,8 @@ carries the full roster around them.
 | # | Order | Section | Figure | Slug | Status | Source | Next gate |
 |---|---|---|---|---|---|---|---|
 | 1 | 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
-| 2 | 2 | §2.1 | System anatomy (the term set, the lift chain) | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms. The winner re-cut |
-| 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need. Park candidate |
+| 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms. The re-cut sits in the brief record (`ea19d62`) |
+| 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
 | 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
 | 5 | 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
@@ -185,3 +185,10 @@ three slots).
   (Figure 1 full, Figure 2 partial) lands as
   `2026-10-12-nine-figure-proposals.md`, figures seat. Figures 3 to 9
   wait on a re-share. No roster row moves.
+
+- **v11 (2026-10-12):** the seating pass lands (`ea19d62`, author seat).
+  The registration binds brief Figure 1 to row 2 and brief Figure 2 to
+  row 3. The brief supplies the row-2 winner re-cut (NR-011). The
+  held-term map (`e0b8a92`, science-writer) sizes the label flip: two
+  draft sentences, six glossary rows, the F1 and F2 slots. The row-3
+  slot call and the term picks rest with Rod and Track D. No row moves.
