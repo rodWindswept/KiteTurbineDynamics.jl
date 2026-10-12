@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.16. Date 2026-10-12.
+Internal engineering report. Draft v0.17. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -295,10 +295,6 @@ ruling).
 The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
 runs at 70 degrees of elevation (NR-026). The line tension is that
 load over sin 70 degrees: 324.1 newtons (NR-010).
-
-The same vertical load over the full airborne weight of 25.70 kilograms
-(NR-018) gives a margin of 1.21. The margin holds at all wind speeds
-(NR-026).
 
 The lifter is a stack of autogyros. The report assumes the stack can
 modulate to meet the lift requirement at all wind speeds.
