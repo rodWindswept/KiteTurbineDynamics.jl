@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.13. Date 2026-10-12.
+Internal engineering report. Draft v0.14. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -14,8 +14,33 @@ Nomenclature and references stay incomplete.
 The physics era is `post-95c385d_wind-authority`. The bank derate
 applies throughout.
 
-**Abstract and keywords** [PENDING. Drafts from signed rows NR-001,
-NR-008 and NR-009, with the era label and the winner calibration.]
+**Abstract.** This report presents a search for a 5 kW-class
+ground-generation rotary kite turbine with a tensile rotary power
+transmission (TRPT). The search varies ring geometry, polygon count,
+rotor count, blade bank angles and blade scale.
+
+A differential-evolution campaign evaluated 930 candidate designs under a
+fixed power-law generator load, each on the honest window (NR-001).
+
+The campaign winner is the best feasible candidate under the modeled
+objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its
+minimum factor of safety is 14.972 (NR-009).
+
+All checked TRPT rings and twist segments operate below their failure
+boundaries at the final operating point (NR-021, NR-022). All numbers
+come from the physics era `post-95c385d_wind-authority`, with the bank
+derate applied.
+
+The study is simulation-only. Blade integrity is not yet gated, and
+lifter modulation across wind speeds remains an assumption. The
+rope-break gate placement fix stays open.
+
+The search is a screen, not a survey. The report does not claim a global
+optimum.
+
+**Keywords.** airborne wind energy, kite turbine, ground generation,
+tensile rotary power transmission, differential evolution, multibody
+simulation, design search, factor of safety.
 
 ## 1 Introduction
 
@@ -544,6 +569,11 @@ v0.13 pass by @author (2026-10-12). This pass folds the structural
 review: the title page, the document control section, the draft-status
 box, the literature restructure, the research question and the figure
 provenance seat.
+
+v0.14 pass by @science-writer (2026-10-12). This pass drafts the
+abstract and keywords from signed rows NR-001, NR-008, NR-009, NR-021
+and NR-022, with the era label and the winner calibration. The pass
+closes the abstract bracket.
 
 ## Appendix: Figure provenance
 
