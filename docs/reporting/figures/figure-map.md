@@ -179,3 +179,9 @@ three slots).
   caption set mirrors the settled reader terms (campaign winner, the
   final operating point). The three built kits carry the amended
   captions. The canvas text stands; the renders stay frozen.
+
+- **v10 (2026-10-12):** the nine-proposal figure brief arrives cut at
+  8,000 characters, the desktop room message cap. The recovered part
+  (Figure 1 full, Figure 2 partial) lands as
+  `2026-10-12-nine-figure-proposals.md`, figures seat. Figures 3 to 9
+  wait on a re-share. No roster row moves.

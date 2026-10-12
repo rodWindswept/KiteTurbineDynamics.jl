@@ -1,0 +1,48 @@
+# Nine figure proposals — recovered record (partial)
+
+**Status** PARTIAL. **Date** 2026-10-12. **Seat** figures seat.
+
+Rod posted a nine-figure composition brief in the KTD Report Team room. The post time is 14:00 BST on 2026-10-12 (room entry `2ba0342d`, thread `tmv59fkeg`). The brief ran past the room message cap.
+
+The desktop room cuts each message body to 8,000 characters at entry. The constant is `GROUP_CHAT_HISTORY_LINE_CHARS` (`group-chat.ts:1412`). The append applies it at `group-chat.ts:1736`. The profile ui_meta projection cuts each body again, to 1,200 characters.
+
+## What survived
+
+The first 7,987 characters plus the cut mark: Figure 1 in full and Figure 2 in part. This seat read back four independent copies and compared them. The copies are the turn prompts of figures-images-diagrams, default/hermes, science-validator and aero-validator. Each copy holds exactly 8,000 characters. A direct byte compare of two of them is equal. The cut ends mid-sentence in Figure 2, at "…and a consistent iconography fo… [truncated]".
+
+This seat also checked the seat session stores, the room ledger and the app plugin-storage path. The NAS handover tree, the mail store and the clipboard file carry nothing either. The cut happened at entry. No seat and no store holds figures 3 to 9.
+
+## The recovered text (verbatim)
+
+Delivered part, exactly as received. The cut mark sits at the end.
+
+```text
+I've had suggestions come in on how we can improve our figures @fig-img-diagrams @all   how about we also include the following ...
+Below are nine figure proposals for the report. Each entry is a connected composition brief of roughly 500 words, describing layout, text, data types, relationship to the main text, suggested formats, suggested ranges, subtext, and interpretive comments. The goal is to make the figures do more than decorate the prose: they should let a reader reconstruct the machine, the search, the evaluation logic, the result, and the failure history without reading every internal register note.
+
+---
+
+## Figure 1 — System anatomy and terminology diagram
+
+The first recommended figure is a labelled system-anatomy diagram that establishes the physical vocabulary before the reader encounters the genome, evaluator, or results. The layout should be a clean isometric or slightly oblique side view of the full kite-turbine machine, with the airborne TRPT structure at the centre, the lifter stack above or to one side, and the ground station below or outside the main frame as a dashed boundary. The central machine should show six rings, three tension lines between rings, the active rotor blades on the hub ring, spacer rings without blades, the lift line, the sky anchor, the cyan line, the lift bearing, the bridle set, and the path down to the ground generator or PTO station. Each element should be drawn with a distinct but restrained colour: structural rings in neutral grey or blue-grey, TRPT lines in dark cyan or black, blades in a warm accent such as amber, and the lift chain in a second accent such as teal. The visual hierarchy should make the load path obvious: the reader’s eye should move from lifter to sky anchor, down the lift line, through the bearing and bridle, into the rotor, then along the TRPT rings toward the ground station.
+
+The text on the figure should be minimal but precise. A title such as “Kite turbine anatomy: ground-generation rotary AWES with TRPT” is appropriate. Labels should use short noun phrases rather than full sentences: “lifter stack,” “lift line,” “sky anchor,” “lift bearing,” “bridle,” “main rotor,” “TRPT ring R1–R6,” “tension line,” “ground ring,” and “ground generator / PTO station.” A small inset or side panel can define the three most confusing terms: “ring,” “line,” and “rotor.” The data type is primarily categorical and symbolic, with optional dimensional callouts for the winner geometry: hub radius 4.580 m, ground radius 0.804 m, six rings, three lines, one active rotor. If dimensions are included, they should be secondary to topology so that the figure remains useful even if the winner changes in a later campaign. The relation to the text is direct: this figure supports the Introduction’s explanation of ground-gen versus fly-gen machines and Methods §2.1’s definition of rings, lines, rotors, spacers, bank angle, and blade scale. It should also prepare the reader for the genome decode strip by showing which physical features correspond to design genes.
+
+The suggested format is a vector-first SVG or PDF diagram with a high-resolution PNG fallback for web or presentation use. If the report is rendered through Pandoc, the figure should be embedded as an external SVG where possible, because labels and thin line work will remain crisp in print. A raster fallback should be at least 300 dpi at final page width. The colour palette should be colour-blind safe, using shape and label position rather than hue alone to distinguish components. Line weights should vary by function: thick for primary load path, medium for structural rings, thin for bridle or secondary lines. A scale bar of 5 m is useful if the figure includes physical proportions. Suggested ranges are not numeric axes but visual bounds: keep labels within the page margins, avoid leader-line crossings, and limit callouts to no more than twelve primary labels. If a label must be long, split it into a two-line caption rather than shrinking the type.
+
+The subtext or caption should explain that the diagram is schematic and not to scale unless a scale bar is present. A good caption might read: “Schematic anatomy of the ground-generation rotary kite turbine. The lifter provides lift only; torque is transmitted through the tensioned TRPT rings to the ground station.” This sentence prevents a common misreading: the reader might otherwise assume the lifter also drives the rotor. A second line can state that ring numbering runs from ground to hub or from hub to ground, depending on the convention used in the register, because the report currently references R1 through R6 and S1 through S5. Comments for the figure maker: do not turn this into a full engineering drawing with every bolt, bearing, or tether attachment. The purpose is orientation. If the lifter stack is a stack of autogyros, show it as a simplified multi-rotor silhouette rather than detailed blades. If the PTO station is outside the render scope, show it as a dashed ground block and label it “outside primary render scope” if needed. The figure should make the reader feel that they can name every major component before reaching the results.
+
+---
+
+## Figure 2 — Genome-to-machine decode strip
+
+The second recommended figure is a genome-to-machine decode strip that explains how the search represents a candidate design and how that representation becomes a buildable machine. The layout should be horizontal, divided into three connected zones: left, the genome vector; centre, the decoder rules; right, the built machine summary. The genome zone should show the design vector as a compact sequence of fields or chips, each labelled with a gene name such as “ring geometry,” “polygon count,” “rotor count,” “bank angle,” and “blade scale.” Each chip can display the winner value where known: three lines, six rings, one active rotor, bank 7.088° at ring 6, blade scale 0.82 on the active rotor, and 0.20 in an inactive slot. The centre zone should show arrows from each gene to its physical effect: polygon count maps to line attachments per ring; rotor count maps to active versus spacer rings; bank angle maps to blade orientation about the chord axis at the ring; blade scale maps to blade size; ring geometry maps to radii and spacing. The right zone should contain a small simplified machine icon or miniature render with corresponding features highlighted, so the reader sees that the genome is not an abstract vector but a direct recipe for a physical configuration.
+
+The text on the figure should be explanatory but compact. A title such as “Genome decode: from design vector to built geometry” works well. Each gene chip should carry its unit or type: integer for counts, degrees for bank angle, dimensionless factor for blade scale, metres or relative radii for ring geometry if available. The decoder zone should include one or two short rule statements, for example “rotor count selects active rings” and “inactive slots remain in the vector but instantiate no blades.” This last statement is important because the report mentions a blade scale of 0.20 on a rotor that does not exist; without this visual explanation, that phrase may confuse readers. The data types are mixed: discrete integers for counts, continuous values for angles and scales, and categorical flags for active/inactive rotor status. The figure should make clear which genes were actually decoded in the winner and which were present but inactive. The relation to the text is central: this figure supports Methods §2.2 and Results §3.3, where the winner genome is described. It also helps the reader understand why the search can propose invalid or unbuildable genomes, because the decoder sits between the optimizer and the builder.
+
+The suggested format is a vector diagram with a small table-like legend, again SVG-first with PNG fallback. The figure should use rounded rectangles for gene chips, arrows with clear directionality, and a consistent iconography fo… [truncated]
+```
+
+## Missing and the next step
+
+Figures 2 (tail) to 9: not received. Re-share the remainder under 8,000 characters per post, or as a file. Either form lands verbatim. Figures 1 and 2 can enter registration from this record once the room rules on the nine.
