@@ -207,3 +207,12 @@ three slots).
   script, NR-011 and the appendix row. The appendix output hashes match
   the manifest. The draft §3.5 marker folds NR-036 at v0.18, so the
   carry-note closes. No roster row moves.
+
+- **v14 (2026-10-12):** the review's figure folds land on rows 6 and 7.
+  The ring-utilisation caption gains the R5 display-floor sentences and
+  the capacity-over-demand line, both read from NR-021, answering the
+  review's figure items 2 and 3 for the plate. The twist plate carries
+  the review carry-note: the 2026-08-13 line moves to the
+  failure-ledger appendix at the next render pass. The two plates stand
+  for their counter-read against the folded text. The renders stay
+  frozen. No roster row moves.

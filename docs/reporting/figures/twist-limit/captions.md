@@ -1,7 +1,7 @@
 # Captions: twist limit
 
 **Slug** `twist-limit`. **Status** GENERATE. **Date** 2026-10-08.
-**Caption split** 2026-10-12.
+**Caption split** 2026-10-12. **Review carry** 2026-10-12.
 
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
@@ -53,3 +53,7 @@ Split note (2026-10-12): the capture pair and the capture instant leave
 the caption prose. The instant (s = 1724859, t = 49.99999483862295 s)
 stays on the plate stamp and in NR-025. The text changed only. No render
 moved.
+
+Review carry (2026-10-12): the 2026-08-13 line (22,425° against its 42.6°
+limit, off scale) leaves the plate notes for the failure-ledger appendix
+at the plate's next render pass. It stays on the plate until then.

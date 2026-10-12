@@ -1,7 +1,7 @@
 # Captions: ring utilisation
 
 **Slug** `ring-utilisation`. **Status** GENERATE. **Date** 2026-10-08.
-**Caption split** 2026-10-12.
+**Caption split** 2026-10-12. **Review fold** 2026-10-12.
 
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
@@ -25,16 +25,20 @@ compression and how much from bending.
 Each bar stacks the axial share and the bending share of one checked ring.
 The rows run from R2 at the base to RN at the hub. Both shares come from
 the same worst-utilisation beam. The bar top is the ring utilisation, the
-beam-column interaction itself.
+beam-column interaction itself. Utilisation is demand over capacity.
 
 The dashed line is the fail boundary at the unit value. The readout at the
-row end gives the ring FoS, the reciprocal of the interaction. The model
-tracks torsion outside the interaction formula.
+row end gives the ring FoS: capacity over demand, the reciprocal of the
+interaction. The model tracks torsion outside the interaction formula.
 
 The figure covers every airborne ring. The check does not cover the ground
 ring, which sits on ground support. The figure includes and marks the hub
 ring. The values come from the campaign winner at its final operating
 point.
+
+R5 reads far below the other rows. Its worst checked beam carries no
+axial share, and its bending share sits below the display scale of the
+axis. The readout prints the true value, FoS 326,974 (NR-021).
 
 ## Provenance line
 
@@ -52,3 +56,7 @@ Split note (2026-10-12): the capture pair and the capture instant leave
 the caption prose. The instant (s = 1724859, t = 49.99999483862295 s)
 stays on the plate stamp and in NR-025. The text changed only. No render
 moved.
+
+Review fold (2026-10-12): the R5 display-floor sentences and the
+capacity-over-demand line fold into the technical caption, from NR-021.
+They answer the review's figure items 2 and 3 for this plate.
