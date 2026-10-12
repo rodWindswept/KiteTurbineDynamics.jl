@@ -86,6 +86,12 @@ The text read "gives a margin of 1.21" and no longer prints.
 NR-037 keeps the ratio in the Figure 6 build, printed beside its definition and never as a margin.
 The 1.5 sizing basis stands unchanged, and no other draft line moves.
 
+v0.18 pass by @author (2026-10-12).
+This pass seats the review section 12 summary tables.
+The campaign configuration table lands at section 2.4.
+The winner operating point table and the gate summary table land at section 3.3.
+The strip marker gains the NR-036 cite, and three long blocks split to hold the STE count.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
