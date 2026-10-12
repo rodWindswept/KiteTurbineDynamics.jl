@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.19. Date 2026-10-12.
+Internal engineering report. Draft v0.21. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -286,7 +286,9 @@ kilograms (NR-006).
 
 Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2   
 reaches 30.637 kilograms at generation 30 (NR-004). Island 3 reaches
-27.364 kilograms at generation 26 (NR-005).
+27.364 kilograms at generation 26 (NR-005), the search objective. It reads
+the airborne mass 25.698 kilograms (NR-018) plus 1.665 kilograms of
+objective penalties (NR-039).
 
 The surviving ok designs hold a mean power between 5.02 and 6.32
 kilowatts (NR-007).
