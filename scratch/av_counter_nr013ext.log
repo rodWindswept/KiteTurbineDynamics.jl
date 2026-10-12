@@ -1,0 +1,21 @@
+== av_counter_nr013ext / aero counter-read of the NR-013 extension ==
+[PASS] blob pins (21e941d == HEAD) | warm ff1ca1b2 ruling bb0a4720
+[PASS] manifest pins (fig_f3_draft)
+[PASS] manifest pins (fig_f3_draft_b)
+[PASS] warm: 98 data rows | 98
+[PASS] warm: last row t = 2.841 ms, strain 1.00081, latch 1 | t=0.002841 strain=1.000810120 latch=1
+[PASS] warm: first crossing at step 97, strain 1.00028 | step 97 strain 1.000277041
+[PASS] warm: latch only on the last row
+[PASS] ruling: 1823 data rows | 1823
+[PASS] ruling: completes 50 s | last t = 49.999995
+[PASS] ruling: any_broken false throughout
+[PASS] ruling: grid max 1.44798 at t = 5.798 ms | 1.447982844 at t=0.005798
+[PASS] ruling: past 60 ms nothing exceeds 0.677081 | max = 0.677080915
+[PASS] ruling: window mean omega_gnd = 12.639282 | 12.639281787046345
+[PASS] ruling: window mean P = 4.958894 kW | 4.9588942728812455
+[PASS] ruling: window strain max 0.449417 | 0.449417229
+[PASS] ruling: stamp carries the gate placement (off <10, on >=10) and the condition note
+[PASS] diag log: per-step peak 1.44819 at 5.740 ms
+[PASS] README: trip segment note (S4 line 3)
+
+VERDICT: no material discrepancy; the block stands as signed

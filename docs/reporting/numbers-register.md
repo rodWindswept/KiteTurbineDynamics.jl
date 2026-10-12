@@ -1066,3 +1066,40 @@ Boundaries that travel with this row:
 Counter-read requested from the aero seat.
 
 Evidence: `scratch/sv_nr013_ext_check.py` and its log, `scratch/sv_nr013_ext_check.log`.
+
+## Aero counter-read: NR-013 extension (2026-10-12, aero-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The receipts sit in `scratch/av_counter_nr013ext.py` and its log.
+
+- The pins hold. The two blobs read `ff1ca1b2` and `bb0a4720` at `21e941d`
+  and at HEAD. The F3 draft manifest pair pins the three input hashes.
+  Each hash recomputes from the committed files.
+
+- The warm leg holds. The file carries 98 rows. The last row reads
+  t = 2.841 ms, strain 1.000810120, latch 1.
+
+- The first crossing lands at step 97, at strain 1.000277041. The quote
+  form stands as 1.00081 at t = 2.841 ms.
+
+- The ruling leg holds. The file carries 1823 rows and completes 50 s.
+  `any_broken` reads false at every row.
+
+- The grid max reads 1.447982844 at t = 5.798 ms. The quote form is
+  1.448.
+
+- The per-step peak 1.44819 at 5.740 ms cross-reads to the diag log.
+  Past 60 ms nothing exceeds 0.677080915 (quote 0.677081).
+
+- The condition-run numbers hold. The window means read omega_gnd
+  12.639281787 (quote 12.639282) and P 4.95889427 kW (quote 4.958894).
+
+- The window strain max reads 0.449417229 (quote 0.449417). The stamp
+  carries the gate placement and the condition note.
+
+- The trip-segment note cross-reads. The extract README cites TRPT S4
+  line 3.
+
+Verdict: no material discrepancy. The block stands as signed. The digits
+stay for the F3 plate.
