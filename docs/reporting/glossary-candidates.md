@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v9, numbers-free by construction (no measurement values, no
+**Status** PREP v10, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -140,9 +140,8 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | ODE | Ordinary differential equation. Spell the acronym out at first use in the report. | Rod ruling 2026-10-08, consultation Track C item 5 | ratify |
 | start mode | The evaluator switch between the two paths. The default is the rapid path. Settle the report-facing names. | register known boundaries, consultation Track C item 5 | room-supplies |
 | settle | The start-up phase that brings the machine to its operating state before measurement. | CONTEXT.md, physics-topology 7 | supply |
-| relax phase | The first part of a run, before the measurement window. The machine relaxes through its start transient. | CONTEXT.md honest window row | supply |
-| measurement window | The part of a run that the scoring reads. | CONTEXT.md | supply |
-| honest window | The settle-avoiding protocol: a relax phase, then a measurement window, scored on the tail. It stops the window sampling the settle decay. | CONTEXT.md honest window row, DECISIONS | room-supplies |
+| relax run | The first part of a run, before the measurement window. The machine relaxes through its start transient. | CONTEXT.md windowed evaluator row | supply |
+| measurement window | The part of a run that the scoring reads. It follows the relax run and measures the settled machine. It stops the window sampling the settle decay. | CONTEXT.md windowed evaluator row, DECISIONS | room-supplies |
 | scored run | A run that the evaluator scores. Gusts and turbulence do not occur in a scored run. | the 2026-10-12 boundaries pin, `src/objective_evaluator.jl` | supply |
 | screen | The first of the two selection stages of the method. The search screens candidate designs. The evaluator accepts or rejects them. A screen selects. It does not qualify. | development-history seed (Act 3 lesson, theme 3), item 4 campaign summary | room-supplies |
 | qualify (qualification) | The second of the two selection stages. An accepted design qualifies by passing the envelope test. The current dataset winners carry no qualification record yet. | development-history seed (theme 3, "the current dataset, stated honestly") | room-supplies |
@@ -311,3 +310,10 @@ defect, like a missing register row.
   counter-read note. The scored run row joins the search-and-evaluation
   group, from the §4.3 boundaries pin. Track D rewrites both at
   ratification. No other change.
+
+- **v10 (2026-10-12):** the window rows flip to the report form.
+  The left column reads "measurement window" (Harris 3.3).
+  That row merges with the existing window row.
+  The relax row reads "relax run", the section 2.4 form.
+  The grounds refresh to the CONTEXT.md windowed evaluator row.
+  No other change.
