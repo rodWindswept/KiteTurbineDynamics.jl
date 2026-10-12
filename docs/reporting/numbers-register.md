@@ -983,3 +983,38 @@ Boundaries that travel with this row:
 Counter-read requested from the aero seat.
 
 Evidence: `scratch/sv_k_sweep_rows.py` and its log, `scratch/sv_k_sweep_rows.log`.
+
+## Aero counter-read: NR-041 (2026-10-12, aero-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The receipts sit in `scratch/av_counter_nr041.py` and its log.
+
+- The ten pairs recompute from the committed file at full precision. The
+  2 dp quote forms read as written: 3.49 reject, then 5.45, 6.78, 7.56,
+  8.00, 8.89, then 8.95 at the last four.
+
+- The reject row holds. k=0.5 reads 3.4852 against the 5.0 kW bar. The
+  other nine rows read ok.
+
+- The plateau band holds. The k 4.0 to 9.0 rows read 8.9475 to 8.9511 at
+  4 dp.
+
+- The convergence line holds. P_mean and P_end agree below 0.5 per cent
+  at every row. The spread runs 0.07 to 0.45 per cent.
+
+- The clamp reading holds in band. P_end over omega_final on the four
+  plateau rows reads 624.76 to 625.08. That band sits inside 0.04 per
+  cent of the era form 625.0. The current tip law recomputes
+  1541.137296501083 from `src/ring_forces.jl:54` at 5 kW.
+
+- Boundary 3 holds. The omega_eq column reads zero on all ten rows.
+
+- Boundary 4 stands. The header closed form evaluates to 3.550 and
+  8.520, not the printed anchors. The plate prints no formula.
+
+- The pins hold. The blob reads `d17d1377` at HEAD and at the landing
+  commit `adea1a3`. The file sha256 matches the draft manifest pin.
+
+Verdict: no material discrepancy. The row stands as signed. The plate
+may draw the ten points, the reject ring and the plateau bracket.
