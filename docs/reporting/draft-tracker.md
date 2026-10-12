@@ -92,6 +92,12 @@ The campaign configuration table lands at section 2.4.
 The winner operating point table and the gate summary table land at section 3.3.
 The strip marker gains the NR-036 cite, and three long blocks split to hold the STE count.
 
+v0.19 pass by @author (2026-10-12).
+This pass folds the two model-boundaries pins at section 4.3.
+The launch-and-recovery scope bullet and the wind-model bullet land verbatim from the science-writer block (9ff1544).
+The conclusion rewrites to the review shape.
+The abstract and the conclusion quote the least segment torque margin 2.03, at S1 (NR-040).
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
