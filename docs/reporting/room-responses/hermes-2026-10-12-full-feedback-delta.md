@@ -26,9 +26,10 @@ no longer prints in the report.
    one line in §3.3 states the difference, quoted by name per the
    register's caption rule.
 4. NR-005 (27.364 kg, island-3 best fitness) against NR-018 (25.698 kg,
-   winner airborne mass). §3.2 carries no reconciliation sentence.
-   Hermes derives the difference from `island_3/convergence.csv`
-   against the probe recipe. Science-validator signs the derivation.
+   winner airborne mass). Derivation signed (`819b09f`): the objective
+   reads the airborne mass plus the objective penalties (NR-039).
+   Counter-read closed (`166e48e`). **Closed v0.21 (`11a734a`)**: §3.2
+   folds the reconciliation sentence.
 5. Failure-ledger table. Track B.
 6. Model-boundaries list and the conclusion rewrite. science-writer and
    author.
