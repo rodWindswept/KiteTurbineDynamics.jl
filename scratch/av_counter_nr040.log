@@ -1,0 +1,29 @@
+aero counter-read NR-040 / winner segment torque margins
+source csv: docs/reporting/figures/pair-extract/extract-winner-operating-point.csv
+
+S1 | capacity 805.0097155967861 / demand 396.791634149159
+    = 2.0287970973051634
+    hex 0x1.03af9f8f929cbp+1
+    register 2.0287970973051634 -> BIT-EQUAL   has_limit=true
+S2 | capacity 808.6780945063998 / demand 397.1554424859068
+    = 2.036175280501402
+    hex 0x1.04a1643f56acdp+1
+    register 2.036175280501402 -> BIT-EQUAL   has_limit=true
+S3 | capacity 812.213802301376 / demand 397.45360112890063
+    = 2.0435436991749936
+    hex 0x1.0592d705f3a49p+1
+    register 2.0435436991749936 -> BIT-EQUAL   has_limit=true
+S4 | capacity 815.650844050359 / demand 397.68800908436924
+    = 2.0509817379918016
+    hex 0x1.068691d0af1b9p+1
+    register 2.0509817379918016 -> BIT-EQUAL   has_limit=true
+S5 | capacity 1069.9324759682652 / demand 397.1777954649229
+    = 2.6938375915900292
+    hex 0x1.58cfab924eaa9p+1
+    register 2.6938375915900292 -> BIT-EQUAL   has_limit=true
+
+least ratio: S1 = 2.0287970973051634  (quote 2.03)
+band S1..S4: 2.03 to 2.05
+capture tie (extract log): capture: s = 1724859, t = 49.99999483862295 s  (final integration step of the measurement run)
+
+verdict: no material discrepancy — row stands as signed

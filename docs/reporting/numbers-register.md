@@ -915,3 +915,29 @@ Boundaries that travel with this row:
    capacity basis matches NR-023 boundary 3.
 
 Evidence: `scratch/sv_nr040_torque_margin.py` and its log.
+
+## Aero counter-read: NR-040 (2026-10-12, aero-validator)
+
+This block appends only, under the lead ruling and the amend pattern. No
+signed row changed.
+
+The receipts sit in `scratch/av_counter_nr040.py` and its log.
+
+- NR-040 recomputes bit-exact from the extract segment block. S1
+  2.0287970973051634, S2 2.036175280501402, S3 2.0435436991749936,
+  S4 2.0509817379918016, S5 2.6938375915900292. The five ratios ran
+  from the CSV tokens with own arithmetic, not the receipt chain. The
+  tokens match the NR-023 strings string-for-string. Extract at blob
+  `ac1b8819`.
+
+- Boundary 3 holds on the raw block. `has_limit` reads true on all five
+  segments. The Case-A claim reads exact.
+
+- The capture ties to NR-025. The capture line reads s = 1724859 steps,
+  the row's winner run, at t = 49.99999483862295 s, the final frame.
+
+- Quote forms. 2.03, 2.05 and 2.69 print as written. The S1 to S4 band
+  reads 2.03 to 2.05.
+
+Verdict: no material discrepancy. The row stands as signed. The abstract
+and section 5 may quote the least margin 2.03 at S1.
