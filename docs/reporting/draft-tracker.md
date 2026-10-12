@@ -145,6 +145,9 @@ station sits outside the render scope.]
 §3.4: Figures: figure-map row 8. The ring and twist plates seat below.
 (trimmed from the section header)
 
+§3.5: The machine evolution strip seats below.
+(trimmed from the section header)
+
 §4.2: [Track B will reconcile these entries. The failure-ledger
 timeline (scoped in the figure map) sets these dates end to end. The
 development-history chapter carries them act by act.]
@@ -168,3 +171,12 @@ v1 (2026-10-12): the structural split lands. Sweep 10 note: the moved
 tokens (3.55, the version-history numerals, the open-request numerals,
 the figure-map row references) now live here, not in the draft. The
 report's value tokens are untouched.
+
+v2 (2026-10-12): split follow-up after the science-validator readback.
+
+The open-requests block had stayed in both files. This commit pulls it
+from the report.
+
+The open-request numerals now leave the report and live only under §3.
+The §3.5 header fragment joins its §3.4 twin in §4. Sweep 10 reads both
+changes at this commit.
