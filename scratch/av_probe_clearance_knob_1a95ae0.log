@@ -1,0 +1,14 @@
+genome file = /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/island_3_best.csv
+P_BASE.v_wind_ref = 11.009694236938961  (the omitted-knob decode default)
+
+(a) gate path (v_rated omitted -> 11.009694236938961)
+    ring_idx=6 bank=7.0881314603235648  tip_off=1.0481954195775134  hub_off=-0.44922660839036294
+    absolute tip = 5.6281744743975626   clearance = 5.4681239776600616
+(b) score path (v_rated = 11.0)
+    ring_idx=6 bank=7.0881314603235648  tip_off=1.0495813777459144  hub_off=-0.44982059046253475
+    absolute tip = 5.6295604325659641   clearance = 5.4668473649653162
+
+diff vs extract clearance line 5.46812397766006 :  gate (a) 2.665e-15   score (b) -1.277e-03
+clearance delta (b) - (a) = -1.276613e-03 m  (gate reads HIGHER margin than the score path)
+winner gate margin vs the 1.5 m floor (gate reading) = 3.968124 m
+AV_CLEARANCE_KNOB_DONE
