@@ -200,3 +200,10 @@ three slots).
   scientific captions, and the exhibit stamps and the appendix carry the
   provenance. The captures and the renders stay frozen. No roster row
   moves.
+
+- **v13 (2026-10-12):** the caption split passes counter-read on the
+  strip kit (science-validator). The strip label, scale, winner and
+  provenance lines all check. They match the NR-036 rule, the built
+  script, NR-011 and the appendix row. The appendix output hashes match
+  the manifest. The draft §3.5 marker folds NR-036 at v0.18, so the
+  carry-note closes. No roster row moves.

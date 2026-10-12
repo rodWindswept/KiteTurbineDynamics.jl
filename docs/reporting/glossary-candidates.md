@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v8, numbers-free by construction (no measurement values, no
+**Status** PREP v9, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -143,6 +143,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | relax phase | The first part of a run, before the measurement window. The machine relaxes through its start transient. | CONTEXT.md honest window row | supply |
 | measurement window | The part of a run that the scoring reads. | CONTEXT.md | supply |
 | honest window | The settle-avoiding protocol: a relax phase, then a measurement window, scored on the tail. It stops the window sampling the settle decay. | CONTEXT.md honest window row, DECISIONS | room-supplies |
+| scored run | A run that the evaluator scores. Gusts and turbulence do not occur in a scored run. | the 2026-10-12 boundaries pin, `src/objective_evaluator.jl` | supply |
 | screen | The first of the two selection stages of the method. The search screens candidate designs. The evaluator accepts or rejects them. A screen selects. It does not qualify. | development-history seed (Act 3 lesson, theme 3), item 4 campaign summary | room-supplies |
 | qualify (qualification) | The second of the two selection stages. An accepted design qualifies by passing the envelope test. The current dataset winners carry no qualification record yet. | development-history seed (theme 3, "the current dataset, stated honestly") | room-supplies |
 | envelope test (envelope check) | The second-stage qualifying test of an accepted design. The full evaluation protocol runs at two settings, the zero-artificial-damping envelope and the canonical setting. A machine can pass with artificial damping and fail without it. Pick one display form for the report. | item 4 campaign summary (stage-2 re-gate), development-history seed | room-supplies |
@@ -175,6 +176,7 @@ Track D pins the two display forms apart at ratification.
 | the fold | The rebase of the lowest power rung onto the S2-class fold seed. The ceiling genes fold up, and the bounds recenter. | DECISIONS [2026-10-05] | room-supplies |
 | numbers register | The single source of truth between the simulation and the audience. Only signed rows exist for reporting. | framework section 2, register header | ratify |
 | register row | One claim with value, units, source and a validator signature. | framework section 2 | ratify |
+| register machine | The machine whose build the register rows describe. The figure kits match the drawn machines against it. | register rows, the strip caption kit | supply |
 | supersession | A claim changes by a dated new row, never by edit. The old row stays in the record. | register rules | supply |
 | provenance stamp | The commit and era fingerprint carried on campaign data. | campaign CSVs, provenance sensor | supply |
 
@@ -303,3 +305,9 @@ defect, like a missing register row.
   the model reads: the speed of the outer blade tip over the undisturbed
   wind at the rotor's altitude (item 2.1 read). The row keeps its ratify
   status. No other change.
+
+- **v9 (2026-10-12):** two caption compounds join. The register machine
+  row joins the trust-and-record group, from the strip caption
+  counter-read note. The scored run row joins the search-and-evaluation
+  group, from the §4.3 boundaries pin. Track D rewrites both at
+  ratification. No other change.
