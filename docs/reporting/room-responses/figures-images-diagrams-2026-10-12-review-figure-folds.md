@@ -36,7 +36,10 @@ render pass cannot lose it.
 
 - Item 9 split: landed. The counter-read on the strip kit closed at
   figure-map v13.
-- The two plates: counter-read open, now against the folded text.
+- The two plates: counter-read closed at `9ba8dae` (against `f4bc45e`).
+  The ring kit passes. Its carried token folds. The twist carry-note
+  reads accurate.
+- Item 9: closed. Figure-map v15 cites the read.
 - Numbering (figure item 4 of the review): assembly-time, in the seated
   reading order. The figure-map rows serve as the mapping.
 

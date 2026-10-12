@@ -216,3 +216,17 @@ three slots).
   failure-ledger appendix at the next render pass. The two plates stand
   for their counter-read against the folded text. The renders stay
   frozen. No roster row moves.
+
+- **v15 (2026-10-12):** item 9 closes. The counter-read on the plates
+  lands (science-validator, `9ba8dae`, against `f4bc45e`). The
+  ring-utilisation kit passes: all five FoS readouts recompute as exact
+  reciprocals, and the R5 display-floor sentences read exact from
+  NR-021. The carried token folds: the hub row now reads R6 in the
+  caption text, to match the plate label. The twist carry-note reads
+  accurate, and its caption claims trace. Tracked before sign-off:
+  register rows for the drawn mechanism values (72.25°, the 42.6°
+  limit, 22,425°). They ride with the ledger pass. The floor and
+  binding-limit treatment routes through work item 1.3 (the row-7
+  gate). Row 13 stays proposed: its entry set drafts from the
+  development-history record (science-writer, item 5), and its CSV
+  derives from the ledger appendix. No roster row moves.

@@ -23,7 +23,7 @@ compression and how much from bending.
 ## Technical caption (undergrad register, STE-clean form)
 
 Each bar stacks the axial share and the bending share of one checked ring.
-The rows run from R2 at the base to RN at the hub. Both shares come from
+The rows run from R2 at the base to R6 at the hub. Both shares come from
 the same worst-utilisation beam. The bar top is the ring utilisation, the
 beam-column interaction itself. Utilisation is demand over capacity.
 
@@ -60,3 +60,8 @@ moved.
 Review fold (2026-10-12): the R5 display-floor sentences and the
 capacity-over-demand line fold into the technical caption, from NR-021.
 They answer the review's figure items 2 and 3 for this plate.
+
+Counter-read (2026-10-12, `9ba8dae`): passes. All five FoS readouts
+recompute as exact reciprocals, and the display-floor sentences read
+exact from NR-021. The carried token folds: the hub row now reads R6 in
+the caption text, to match the plate label.

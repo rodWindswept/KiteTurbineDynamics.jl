@@ -57,3 +57,9 @@ moved.
 Review carry (2026-10-12): the 2026-08-13 line (22,425° against its 42.6°
 limit, off scale) leaves the plate notes for the failure-ledger appendix
 at the plate's next render pass. It stays on the plate until then.
+
+Counter-read (2026-10-12, `9ba8dae`): the carry-note reads accurate, and
+the caption claims trace. Tracked before sign-off: register rows for the
+drawn mechanism values (72.25°, the 42.6° limit, 22,425°). They ride
+with the ledger pass. The floor and binding-limit treatment routes
+through work item 1.3 (the row-7 gate).
