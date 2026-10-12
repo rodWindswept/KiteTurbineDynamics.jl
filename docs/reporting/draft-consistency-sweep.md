@@ -691,3 +691,42 @@ three moved layers. The tracker carries a fourth, the seat notes. The
 sentence stands, and a skim may read the list as complete.
 
 **Next run** at the next draft push.
+
+## Sweep 11: v0.16 follow-up 2, 2026-10-12
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`2f83f48` (the document-control fold). The file carries zero diff to
+the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `25ff00e` (zero
+diff to the tip, no change since Sweep 9).
+
+**Results**
+
+- STE gate: words 3233, total 4, `per100w=0.12`, `em_dash=0`, exit 0.
+  The fold adds three words. Every hook reading holds.
+
+- Retired phrasing: no hit. The change sits in Document control only.
+
+- Value cross-check: the change touches no printed value. The token diff
+  below carries the proof.
+
+- Number-token diff against the v0.16 follow-up (`b33451f`): no
+  arrivals, no removals. The diff carries one hunk.
+
+- The change: Document control now names all four moved layers. The
+  seat notes join the version history, the working notes and the open
+  requests.
+
+- Push-note check: the note reads three added words and zero tokens.
+  The recount holds (words 3230 to 3233).
+
+- Held tokens: no change. `1.94` and `5.18` stay under the section 4.2
+  note, and `3.55` stays in the tracker.
+
+**Finding**
+
+No value discrepancy found. The Sweep 10 carry-note closes: the
+Document control list reads exhaustive.
+
+**Next run** at the next draft push.
