@@ -464,3 +464,83 @@ recomputes its own 1.21. The hold lift prints no value, and no
 NR-031-dependent token waits inside the draft.
 
 **Next run** at the next draft push.
+
+## Sweep 9: v0.14, 2026-10-12
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`13973f2` (the v0.14 pass), spanning the v0.13 pass at `62fcd5e`. The
+file carries zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `25ff00e` (zero diff
+to the tip, no change since Sweep 8). Covers NR-001 to NR-036 and every
+appended block through the re-base and derived rows.
+
+**Results**
+
+- STE gate: words 3864, total 5, `per100w=0.13`, `em_dash=0`, exit 0.
+  The hook lines read `passive_voice x1` and `long_paragraph x4`, both
+  pre-existing and unchanged from v0.13. The pass readings reproduce
+  (words 3667 to 3864, total 5 to 5).
+
+- Retired phrasing: no hit.
+
+- Value cross-check, span additions:
+
+  - v0.13: six arrivals, no removals. `13` x2 are version digits. `3.4`
+    and `3.6` are draft-status section refs. `1` and `3` are the phase
+    numerals. `5` is the `5 kW-class` class descriptor (glossary-flagged,
+    no row class). No value token.
+
+  - v0.14 arrivals: five, against one removal. `930` cross-reads NR-001
+    (3 x 310, and the census sums to 930). `5.309` cross-reads NR-008 at
+    the row quote form (full precision 5.3087794439367935). `14.972`
+    cross-reads NR-009 (full precision 14.971791422208508).
+
+  - v0.14 non-value tokens: `14` x2 are version digits (the header bump
+    and the pass note). The removed `13` is the header version digit the
+    bump moved. `5` arrives a second time in the abstract.
+
+  - The abstract cites NR-001, NR-008, NR-009, NR-021 and NR-022, all
+    signed.
+
+  - The safety line prints no value. NR-022 holds `has_limit true` on all
+    five segments, and NR-021 holds the ring checks at the same capture.
+
+- Arithmetic on stated totals: the status mix sums to 930 (508 + 301 +
+  110 + 11). Three islands of 310 designs also give 930.
+
+- References counts: the section 7 line reads fifteen of eighteen
+  verified and three pending. `references-verification.md` carries the
+  same counts.
+
+- Held tokens: `3.55` stays flagged non-operating in its bracket. `1.94`
+  and `5.18` in the section 4.2 ledger stay gated by "The other values
+  need rows first". No held token moved.
+
+- Superseded forms: the draft prints no retired value (63.8695, 20.1056,
+  14.4651, 14.46, 0.101631) and no NR-031 quote form (5.566, 0.2944,
+  0.1016). A grep over the draft at the tip reads no hit.
+
+- Number-token diff against v0.12 (`be27cc7`), per push:
+
+  - v0.12 to v0.13: six arrivals, no removals (the set above).
+
+  - v0.13 to v0.14: five arrivals, one removal (the set above).
+
+  - Net: every arrival and removal accounts to a named edit: a version
+    digit, a section ref, a phase numeral or a register-cited abstract
+    value. No value token dropped or altered.
+
+- Push-note check, v0.13: the note reads 6 arrivals and no removals,
+  words 3482 to 3667, diff 99/69. The recount holds.
+
+- Push-note check, v0.14: the landing reads 5 arrivals and 1 removal,
+  words 3667 to 3864, diff 33/3. The recount holds.
+
+**Finding**
+
+No value discrepancy found. The v0.14 abstract verifies clean against its
+five cited rows. No held token moved. The v0.13 structural pass carries
+no value token beyond the glossary-flagged class descriptor.
+
+**Next run** at the next draft push.
