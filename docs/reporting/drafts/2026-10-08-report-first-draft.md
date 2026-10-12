@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.17. Date 2026-10-12.
+Internal engineering report. Draft v0.18. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -175,8 +175,10 @@ fix. All six rows failed the power floor (NR-027).
 
 The cause is recorded. The screen measured the pre-fold winner under
 the post-landing decode, whose span shrink took the power below the
-floor. The folded class passes at 18.8 metres (NR-028). The campaign
-searched the folded class, so the launch carries the passing physics.
+floor. The folded class passes at 18.8 metres (NR-028).
+
+The campaign searched the folded class, so the launch carries the
+passing physics.
 
 FoS is the design load margin. It is the ratio of what the line can
 carry to what the load demands. The model tests the TRPT beam element FoS for buckling risk the same
@@ -224,6 +226,21 @@ Four statuses result: ok, reject, clearance_reject and reject_twist
 The ok designs pass every gate. The rejects fail a gate. The
 clearance rejects fail the clearance gate. The twist rejects fail the
 twist gate.
+
+The differential-evolution campaign fixed the configuration below.
+
+| Setting | Value | Source |
+|---|---|---|
+| Islands | 3 | NR-001 |
+| Designs per island | 310 | NR-001 |
+| Evaluations, total | 930 | NR-001 |
+| Objective | search objective (airborne mass plus penalties), kg | NR-036, NR-039 |
+| Power floor | 5.0 kW | NR-027, NR-039 |
+| Structural FoS floor | 2.5 | NR-015 |
+| Relax run | 10 s | NR-015 |
+| Honest window | 40 s | NR-015 |
+| Load constant k | 2.24 N·m/(rad/s)² | NR-015 |
+| Line length | 18.8 m | NR-015 |
 
 ### 2.5 Fidelity paths
 
@@ -274,6 +291,27 @@ Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
 its end power 5.314 kilowatts (NR-008). Its factor of safety reads
 14.972 (NR-009).
 
+Its operating point reads as follows.
+
+| Quantity | Value | Source |
+|---|---|---|
+| Mean power, honest window | 5.309 kW | NR-008 |
+| End-of-window power | 5.314 kW | NR-008 |
+| Minimum factor of safety | 14.972 | NR-009 |
+| Window power swing | 0.029 kW | NR-014 |
+| Settle angular speed | 10.170 rad/s | NR-016 |
+| Window-mean speed | 13.38 rad/s | NR-029 |
+| Delivered torque | 396.76 N·m | NR-030 |
+| Airborne mass | 25.698 kg | NR-018 |
+| Hub radius | 4.580 m | NR-011 |
+| Ground radius | 0.804 m | NR-011 |
+| Ring count | 6 | NR-011 |
+| Polygon count | 3 | NR-011 |
+| Active rotors | 1 | NR-011 |
+| Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
+| Lift-line elevation | 70 deg | NR-026 |
+| Lift-line tension | 324.1 N | NR-010 |
+
 A lifter kite holds the machine aloft. The lifter gives lift only. It
 gives no torque and no drive.
 
@@ -308,19 +346,34 @@ presumption as one (2026-08-05).
 
 Its geometry reads three lines, six rings and one active rotor. The
 hub radius is 4.580 metres and the ground radius 0.804 metres
-(NR-011). Its blade scales read 0.82 on the active rotor and 0.20 on
-a rotor that does not exist. The count is one (NR-011).
+(NR-011).
+
+Its blade scales read 0.82 on the active rotor and 0.20 on a rotor
+that does not exist. The count is one (NR-011).
 
 The bank gene reads 7.088 degrees at ring 6 (NR-017). A second bank
 slot reads 22 degrees, but it reaches no rotor at a count of one
 (NR-011).
 
 Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
-percent (NR-014). The settle state starts the machine at 10.170
-radians per second (NR-016). The machine accelerates through the
-relax run. Its window-mean speed reads 13.38 radians per second,
-127.772 revolutions per minute (NR-029). Its airborne mass reads
-25.698 kilograms (NR-018).
+percent (NR-014).
+
+The settle state starts the machine at 10.170 radians per second
+(NR-016). The machine accelerates through the relax run.
+
+Its window-mean speed reads 13.38 radians per second, 127.772
+revolutions per minute (NR-029). Its airborne mass reads 25.698
+kilograms (NR-018).
+
+The winner clears each checked gate.
+
+| Gate | Threshold | Winner outcome | Source |
+|---|---|---|---|
+| Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+| Structural FoS floor | 2.5 | pass, 14.972 minimum | NR-009, NR-015 |
+| Clearance | blade-tip gate | pass | NR-036 |
+| Twist | per-segment limit δcrit | pass, all five segments within limit | NR-022 |
+| Rope break | none on the window | pass on the cold path | NR-012, NR-013 |
 
 This result differs from earlier eras for recorded reasons. The bank
 derate, the honest window and the tightened gates moved the search
@@ -338,7 +391,7 @@ development-history chapter carries the trade, tagged by era.
 
 ### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this section.]
 
-[Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006 and NR-011.]
+[Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006, NR-011 and NR-036.]
 
 ### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
 
