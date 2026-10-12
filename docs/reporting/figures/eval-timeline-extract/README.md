@@ -50,7 +50,7 @@ Samples: every 20 steps for `s <= 2000`, then every 1000 steps.
 
 1. Cold parity against the recorded cold re-eval (NR-012). The difference is `0.0` on four fields: fitness, `P_mean`, `P_end`, `omega_eq`.
 2. `capture_extended` parity: `|dP_kw| = 0.0` at five instants, `t = 15/25/35/45/50`.
-3. Torque law: per-sample `tau/(2.24*w^2)` equals `0.989361702127660`. The minimum and the maximum hold 15 significant digits.
+3. Torque law: per-sample `tau/(2.24*w^2)` is constant at `0.989361702127660` in the run (15 significant digits). The CSV stores 9 decimal places, so a CSV re-derivation brackets the factor at plus or minus `7.5e-11`. The spread is file rounding, not physics.
 
 ## The warm run
 
@@ -73,6 +73,9 @@ The machine completes 50 s with no window latch. It flies at 12.31 to
 the cold point (13.38 rad/s, 5.31 kW).
 
 Label this file as a condition run in any plot.
+
+With the seed corrected to the rigid field, the warm path passes as-coded.
+Ring centres near rest, rope nodes at `omega x rho`. Data: `scratch/av_f3_warm_fixedseed.csv`.
 
 ## Regeneration
 
