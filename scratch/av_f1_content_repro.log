@@ -1,0 +1,29 @@
+== F1 content check - independent reproduction of the system-anatomy plate (aero-validator) ==
+scope: scratch copy of docs/reporting/figures; repo HEAD 17fd036; plate commit a7dd3a3
+date: 2026-10-12T16:42:08Z
+python: Python 3.12.3
+pdflatex: pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)
+pdftoppm: pdftoppm version 24.02.0
+
+== generator ==
+self-checks ok: 6 rings, 15 ropes, 3 blades, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (7659 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (13600 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (30 strings)
+generator exit=0
+
+== pdflatex (SOURCE_DATE_EPOCH=0 FORCE_SOURCE_DATE=1) ==
+pdflatex exit=0
+latex error lines: 0
+overfull boxes: 1
+
+== render (pdftoppm -png -r 300 -singlefile) ==
+pdftoppm exit=0
+
+== md5 checks against the register-status pins ==
+system-anatomy.tex: OK
+prototype.html: OK
+label-ledger.txt: OK
+system-anatomy.pdf: OK
+system-anatomy.png: OK
+ALL FIVE HASHES MATCH

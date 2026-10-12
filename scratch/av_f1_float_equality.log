@@ -1,0 +1,7 @@
+== F1 float equality spot-check (aero-validator, 2026-10-12) ==
+left: decode receipt genome literal; right: register block reading
+hub radius: same_double=True diff=0.0 round3=4.58 printed=4.58
+ground radius: same_double=True diff=0.0 round3=0.804 printed=0.804
+main-rotor bank (deg): same_double=True diff=0.0 round3=7.088 printed=7.088
+active blade scale: same_double=True diff=0.0 round2=0.82 printed=0.82
+ALL EQUALITY CHECKS PASS
