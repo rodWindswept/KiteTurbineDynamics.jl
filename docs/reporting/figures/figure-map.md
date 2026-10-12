@@ -172,3 +172,10 @@ three slots).
   states the shaft frame. The checks pass at GENERATE, and the double
   run stays byte-identical. F-COUNT and F-PARSE now re-run on the new
   SVG. Sign-off follows. The SVG text-layer item stands open.
+
+- **v9 (2026-10-12):** the figure provenance appendix lands (draft
+  v0.15, figures seat). One row per built exhibit: the source extract,
+  the cited rows, the script commit, the era and the output hashes. The
+  caption set mirrors the settled reader terms (campaign winner, the
+  final operating point). The three built kits carry the amended
+  captions. The canvas text stands; the renders stay frozen.

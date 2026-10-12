@@ -22,16 +22,16 @@ A no limit segment carries no torsional ceiling. The figure draws no ratio
 for such a segment. Tether break strain and ring compression carry its
 limit instead.
 
-Panel B pairs segment torque against torsional capacity at one capture
-instant. Pair a capacity only with the load of the same state. Capture
-pair-extract-2026-10-08-winner-ops, final integration step s = 1724859
-(t = 49.99999483862295 s).
+Panel B pairs segment torque against torsional capacity at the final
+operating point. Pair a capacity only with the load of the same state.
+Capture pair-extract-2026-10-08-winner-ops (final integration step,
+s = 1724859, t = 49.99999483862295 s).
 
 ## Generation note
 
 Resolved at GENERATE by the figures seat. The capture slot alone changed.
 
 The ruled capture carries Case A segments only. The no-limit class does
-not occur at the winner. The plate carries the pinned no-limit wording as
+not occur at the campaign winner. The plate carries the pinned no-limit wording as
 a plate note. The crossing-limit bridge stays in the census prose and
 carries no form here.

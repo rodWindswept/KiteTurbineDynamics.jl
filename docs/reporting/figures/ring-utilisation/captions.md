@@ -25,8 +25,8 @@ tracks torsion outside the interaction formula.
 
 The figure covers every airborne ring. The check does not cover the ground
 ring, which sits on ground support. The figure includes and marks the hub
-ring. Capture pair-extract-2026-10-08-winner-ops, final integration step
-s = 1724859 (t = 49.99999483862295 s).
+ring. Capture pair-extract-2026-10-08-winner-ops at the final operating
+point (final integration step, s = 1724859, t = 49.99999483862295 s).
 
 ## Generation note
 

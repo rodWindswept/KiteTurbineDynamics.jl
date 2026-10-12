@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.14. Date 2026-10-12.
+Internal engineering report. Draft v0.15. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -575,11 +575,45 @@ abstract and keywords from signed rows NR-001, NR-008, NR-009, NR-021
 and NR-022, with the era label and the winner calibration. The pass
 closes the abstract bracket.
 
+v0.15 pass by @fig-img-diagrams (2026-10-12). This pass lands the
+figure provenance appendix. The table gives one row per built exhibit.
+Each row carries the source extract, the cited rows, the script commit,
+the era and the output hashes.
+
 ## Appendix: Figure provenance
 
-[PENDING. One row per exhibit: the source extract, the cited register
-rows, the render-script commit, the era and the output hashes. The
-figures seat exports the table from the figure map.]
+One row per built exhibit. All three read dataset commit `dd3cc6a`.
+
+| Exhibit | Source extract | Cited rows | Script commit | Era |
+|---|---|---|---|---|
+| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
+| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
+| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+
+**Output hashes (SHA-256).** The short labels name the exhibit files.
+`png`, `svg` and `pdf` are the file types. `ledger` is the label
+ledger. `checks` is the check log.
+
+Ring utilisation plate:
+
+- `png` `6f19832088375b96cdc566aff596ccd548f26b629b9782bc56d8831d03c622ba`
+- `svg` `ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab28f111472d4ed32ffa0c6b58`
+- `pdf` `508b3a641fde21b582ee2a58a3d3df2a769998281f78c8763ba07438286c1f8f`
+- `ledger` `c040fca2dd63df9c68b56a767ccd0383962db479b04d75d23821b311628ce099`
+
+Twist limit plate:
+
+- `png` `7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501`
+- `svg` `ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472`
+- `pdf` `d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1`
+- `ledger` `6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28`
+
+Machine evolution strip:
+
+- `png` `8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6`
+- `svg` `6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e`
+- `pdf` `6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844`
+- `checks` `b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde`
 
 ## Open requests to the analysis room
 

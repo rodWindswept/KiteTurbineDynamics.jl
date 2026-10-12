@@ -2,8 +2,8 @@
 
 **Slug** `machine-evolution-strip`. **Status** GENERATE (re-render 2026-10-11). **Date** 2026-10-11.
 
-Site: the report at §3.5, the evolution story. Reading order: seed to
-winner, left to right, top row then bottom row. The wording comes from
+Site: the report at §3.5, the evolution story. Reading order: seed to the
+campaign winner, left to right, top row then bottom row. The wording comes from
 the figures seat, STE-gate checked. Values cite NR-005, NR-006, NR-011
 and NR-036. The geometry source is the signed extract
 `strip-extract-2026-10-09-best-so-far`.
@@ -11,7 +11,7 @@ and NR-036. The geometry source is the signed extract
 ## Plain caption
 
 This figure shows seven kite-turbine designs from one search run. The
-row starts at the common seed and ends at the winner. Each machine is
+row starts at the common seed and ends at the campaign winner. Each machine is
 drawn from its built geometry, and all seven share one scale. The
 number under each machine is its search objective, in kilograms. A
 lower number is better.
@@ -35,7 +35,7 @@ One fixed scale holds across the set: 0.0602 m per pixel, canvas 896 by
 four panels above, three below. The machines differ in drawn size only
 where their built size differs.
 
-The winner panel matches the register machine: three lines, six rings,
+The final panel carries the campaign winner. It matches the register machine: three lines, six rings,
 hub radius 4.580 m, ground radius 0.804 m, blade scales 0.82 and 0.20.
 The strip claims geometry and the search objective. It prints no power
 value and no airborne mass value.
