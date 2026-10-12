@@ -119,7 +119,6 @@ Ranneberg gave the rotary family a momentum frame with flight data.
 Tulloch modelled the Daisy TRPT and checked the model against measured
 flight windows. This report extends that line of work.
 
-
 ## 2 Methods
 
 ### 2.1 The machine and its terms 
@@ -127,7 +126,6 @@ flight windows. This report extends that line of work.
 A line is a tension member, like a tether or a bridle. It carries a load
 only in tension. A pull at one end passes along the line to the other end.
 It never pushes.
-
 
 A ring is a polygon of nodes and tubular beams. A ring with blades works
 as a rotor.
@@ -150,7 +148,6 @@ Blade scale sets the blade size. The search treats each of these as a gene.
 The genome is the design vector. The decoder reads it. The builder
 builds the machine.
 
-
 The genes set the ring geometry, the polygon count, the rotor count,
 the bank angles and the blade scales. The winner genome names its
 genes in the decode fields (NR-011).
@@ -160,7 +157,6 @@ genes in the decode fields (NR-011).
 The builder builds the machine from the genome. The evaluator settles
 the machine and measures performance over an honest window. The honest
 window waits out the startup transient before it records.
-
 
 The generator load follows a power law. The commanded torque reads
 τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
@@ -172,7 +168,6 @@ of 2.5 on 2.5, and a line length of 18.8 metres (NR-015).
 
 The campaign fixed k at 2.24 (NR-015), the value selected in the
 honest-window sweep (2026-08-22).
-
 
 The length screen ran 2026-10-05 on the pre-fold island-3 winner. It
 covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
@@ -212,7 +207,6 @@ code and configuration then repeat the search.
 
 NaN and Inf clamps guard the state. A broken line ends the run.
 
-
 ### 2.4 The campaign
 
 The campaign runs a differential evolution (DE). A DE keeps a design
@@ -223,7 +217,6 @@ Three islands run in parallel. An island is an independent population
 with its own drift. Each island evaluates 310 designs.
 
 The campaign evaluates 930 designs in total (NR-001).
-
 
 Four statuses result: ok, reject, clearance_reject and reject_twist
 (NR-002).
@@ -333,7 +326,6 @@ relax run. Its window-mean speed reads 13.38 radians per second,
 127.772 revolutions per minute (NR-029). Its airborne mass reads
 25.698 kilograms (NR-018).
 
-
 This result differs from earlier eras for recorded reasons. The bank
 derate, the honest window and the tightened gates moved the search
 space. Numbers across the eras would compare models, not machines.
@@ -390,7 +382,6 @@ flag, and every recorded winner field reproduces (NR-012).
 ### 4.2 The failure ledger
 
 Candidate entries. Each failure enters with its lesson.
-
 
 - The dead geometry genes. The search proposes genomes that cannot
 build. An off-by-one in the rotor-to-ring map put the middle rotor on
