@@ -1,0 +1,10 @@
+== scratch/sw_bp_baseline.md: words=3447 total=4 per100w=0.12 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+
