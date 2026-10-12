@@ -1,0 +1,26 @@
+-- self-checks against raw artifacts --
+OK    reeval fitness == convergence.csv gen-26 fitness == NR-005
+OK    seam arg P_score == P_end field (tail-5 charge basis)
+OK    seam arg FoS_min == field
+OK    seam arg mass == NR-018 == av_b2 log full-precision print
+OK    twist_ratio (reeval) == telemetry column
+OK    P_range field matches
+-- recomputation (single precision chain, Float64) --
+swing         = 0.005398486550565352  (gate 0.20 -> stationarity charge 0.0)
+over-power    = 0.49333696413175443  0.49333696413175443
+utilisation   = 0.5576509889014662  0.55765098890146625
+twist         = 0.6140850570787014  0.61408505707870142
+stationarity  = 0.0
+mass          = 25.69846825623688
+fitness calc  = 27.3635412663488
+fitness rec   = 27.3635412663488
+diff          = 0.0
+penalty total = 1.665073010111922
+gap (rec - mass) = 1.6650730101119215
+-- cross-read against the Phase 0 audit term strings --
+OK    over-power  audit 0.49333696413175443
+OK    utilisation audit 0.5576509889014662
+OK    twist       audit 0.6140850570787014
+OK    mass        audit 25.69846825623688
+OK    fitness     audit 27.3635412663488
+SV_NR039_DONE  (closure exact, diff = 0.0)

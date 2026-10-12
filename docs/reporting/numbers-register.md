@@ -783,3 +783,70 @@ and `scratch/av_counter_nr038_probe.log`.
 
 Verdict: no material discrepancy. Both rows stand as signed.
 The Figure 3 and Figure 6 builds may quote them.
+
+## Reconciled fitness row: NR-039 (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+This block answers item 4 of the full-feedback delta map
+(`room-responses/hermes-2026-10-12-full-feedback-delta.md`).
+
+Section 3.2 of the draft carries no sentence that ties the island-3
+fitness (NR-005) to the winner airborne mass (NR-018). The two values
+describe one machine. NR-005 is the search objective and NR-018 is the
+physical airborne mass.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+
+Sign-off basis:
+
+- Reproduction. This seat recomputed the chain from the stored fields in
+  the same order as the evaluator.
+
+- Closure. The recomputed fitness reads 0.0 against the recorded fitness.
+  Receipt: `scratch/sv_nr039_fitness_recon.py` and its log.
+
+- Mechanism. The objective reads the true physics mass plus three soft
+  penalties.
+
+- Chain sites. The evaluator lines read 1148, 1149, 1161, 1192 to 1194
+  and 1200 to 1203 at launch `a76c5e9`.
+
+- Seam and weights. The seam body sits at `src/objective_v12.jl` lines
+  145 to 168. The weights sit at lines 114 to 116.
+
+- Over-power charge. The term reads the tail-5 power 5.314113662272673 kW
+  against the 5.0 kW ceiling.
+
+- Utilisation and twist charges. The terms read the window FoS
+  14.971791422208508 against the floor 2.5, and the twist ratio
+  0.4393474253185575 against the crossing limit. The stationarity charge
+  reads zero (window swing 0.54 per cent).
+
+- Cross-read. The Phase 0 audit second read carries the same decomposition
+  (2026-10-08). The term sum reads 1.665073010111922 against the direct gap
+  1.6650730101119215, a rounding gap of 4.4e-16 kg.
+
+Reading rule for section 3.2:
+
+- NR-005 is the search objective, not a mass reading. NR-018 is the
+  physical airborne mass of the same machine.
+
+- The draft may read: Island 3 reaches 27.364 kilograms at generation 26
+  (NR-005), the search objective. It reads the airborne mass 25.698
+  kilograms (NR-018) plus 1.665 kilograms of objective penalties
+  (NR-039).
+
+- The strip label "search objective (kg)" (NR-036) stands.
+
+Boundaries that travel with this row:
+
+1. One machine, one capture: the island-3 winner at its recorded cold
+   re-evaluation.
+
+2. The decomposition binds to the recorded fitness. Other rows decompose
+   on their own fields.
+
+Counter-read requested from the aero seat.
