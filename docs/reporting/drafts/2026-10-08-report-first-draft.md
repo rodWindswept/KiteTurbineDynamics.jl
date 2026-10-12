@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.18. Date 2026-10-12.
+Internal engineering report. Draft v0.19. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -27,7 +27,12 @@ objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its
 minimum factor of safety is 14.972 (NR-009).
 
 All checked TRPT rings and twist segments operate below their failure
-boundaries at the final operating point (NR-021, NR-022). All numbers
+boundaries at the final operating point (NR-021, NR-022).
+
+At the winner operating point, the least segment torque margin is
+2.03, at S1 (NR-040).
+
+All numbers
 come from the physics era `post-95c385d_wind-authority`, with the bank
 derate applied.
 
@@ -490,19 +495,42 @@ valid-science case, not footnotes.
 
 - Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
 
+- The model does not simulate launch or recovery.
+  Each run starts with the machine already aloft at its operating point.
+  The full launch sequence and the recovery are outside this report.
+
+  The lift system must also carry the machine during hoisting, after a TRPT break and in high wind.
+  The record does not quantify those cases.
+
+- The campaign wind is steady and sheared.
+  Its speed rises with altitude on the site wind profile.
+  The profile comes from wind measured at the Daisy machine.
+  Gusts and turbulence do not occur in a scored run.
+  The wind direction stays fixed.
+
 ## 5 Conclusion
 
-The work runs a design search on a kite turbine and reports only what
-the record supports. The honest window stands behind every number.
+The work runs a differential-evolution search over the design space of a rigid-wing ground-generation rotary kite turbine.
+The machine uses a tensile rotary power transmission.
+The campaign scores each design on the ODE path.
+The honest window stands behind every number.
 
-The winner survives the full window. Its power reads 5.309 kilowatts
-and its factor of safety 14.972 (NR-008, NR-009). The search found it
-in 930 evaluations (NR-001).
+The campaign found the best feasible candidate in 930 evaluations (NR-001).
+The winner survives the full window.
+Its power reads 5.309 kilowatts and its factor of safety 14.972 (NR-008, NR-009).
+At the winner operating point, the least segment torque margin is 2.03, at S1 (NR-040).
 
-The Daisy anchor keeps the model honest to a machine I flew and
-measured. The tension-supplied capacity, the fold and the guards
-record the engineering that made the search possible.
+The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation.
+The large structural margins suggest room for further mass reduction.
 
+The Daisy anchor ties the model to a measured flight reference.
+
+The conclusion is conditional on the model.
+Blade integrity is not yet gated.
+Lifter modulation remains an assumption.
+The rapid path awaits its rope-break gate fix (NR-013).
+
+The next steps add blade structural checks, validate lifter modulation and complete the levers and implications sections.
 The boundaries in the discussion name the work that comes next.
 [Daisy values need register rows before the final report quotes
 them.]
