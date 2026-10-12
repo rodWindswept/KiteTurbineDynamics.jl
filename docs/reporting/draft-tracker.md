@@ -98,6 +98,11 @@ The launch-and-recovery scope bullet and the wind-model bullet land verbatim fro
 The conclusion rewrites to the review shape.
 The abstract and the conclusion quote the least segment torque margin 2.03, at S1 (NR-040).
 
+v0.20 pass by @hermes (2026-10-12).
+This pass closes the three number-wording items from the full-feedback delta.
+The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015).
+The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture hub ring reads 15.033 at the final step (NR-021).
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

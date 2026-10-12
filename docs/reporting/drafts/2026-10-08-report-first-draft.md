@@ -167,11 +167,12 @@ The generator load follows a power law. The commanded torque reads
 τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
 load, and the load sets the speed at which the machine settles.
 
-The operating point uses a power-law constant k of 2.24, a relax time
-of 10 seconds, a window of 40 seconds, a factor of safety (FoS) gate
-of 2.5 on 2.5, and a line length of 18.8 metres (NR-015).
+The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a
+relax time of 10 seconds, a window of 40 seconds, a factor of safety
+(FoS) target and hard floor, both 2.5, and a line length of 18.8
+metres (NR-015).
 
-The campaign fixed k at 2.24 (NR-015), the value selected in the
+The campaign fixed k at 2.24 N·m/(rad/s)² (NR-015), the value selected in the
 honest-window sweep (2026-08-22).
 
 The length screen ran 2026-10-05 on the pre-fold island-3 winner. It
@@ -294,7 +295,8 @@ kilowatts (NR-007).
 
 Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
 its end power 5.314 kilowatts (NR-008). Its factor of safety reads
-14.972 (NR-009).
+14.972 (NR-009). That value is the window minimum. The capture hub
+ring reads 15.033 at the final step (NR-021).
 
 Its operating point reads as follows.
 
