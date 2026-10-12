@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.15. Date 2026-10-12.
+Internal engineering report. Draft v0.16. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -119,7 +119,6 @@ Ranneberg gave the rotary family a momentum frame with flight data.
 Tulloch modelled the Daisy TRPT and checked the model against measured
 flight windows. This report extends that line of work.
 
-[Bind every name to references.bib at assembly.]
 
 ## 2 Methods
 
@@ -129,8 +128,6 @@ A line is a tension member, like a tether or a bridle. It carries a load
 only in tension. A pull at one end passes along the line to the other end.
 It never pushes.
 
-[Term-set diagram requested: figure-map row 2 (system anatomy). Gate:
-Track D display forms.]
 
 A ring is a polygon of nodes and tubular beams. A ring with blades works
 as a rotor.
@@ -146,16 +143,13 @@ The topmost ring carries the main rotor. The lowest ring is the
 ground ring. A rotor is a set of blades on a ring.
 
 Bank is the blade angle away from the ring plane about its chord axis at the ring. 
-Blade scale sets the blade size. The search treats each of these as a gene. [Terms await
-the Track D glossary.]
+Blade scale sets the blade size. The search treats each of these as a gene.
 
 ### 2.2 The genome
 
 The genome is the design vector. The decoder reads it. The builder
 builds the machine.
 
-[Genome visual requested: figure-map row 3 (genome decode strip).
-Gate: the room ruling on need.]
 
 The genes set the ring geometry, the polygon count, the rotor count,
 the bank angles and the blade scales. The winner genome names its
@@ -167,8 +161,6 @@ The builder builds the machine from the genome. The evaluator settles
 the machine and measures performance over an honest window. The honest
 window waits out the startup transient before it records.
 
-[Design-family visual requested: figure-map row 11 (design family grid).
-Gate: the family names.]
 
 The generator load follows a power law. The commanded torque reads
 τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
@@ -179,12 +171,8 @@ of 10 seconds, a window of 40 seconds, a factor of safety (FoS) gate
 of 2.5 on 2.5, and a line length of 18.8 metres (NR-015).
 
 The campaign fixed k at 2.24 (NR-015), the value selected in the
-honest-window sweep (2026-08-22). [Clamp margin: no check recorded
-yet. A derived row or a drop ruling awaits the room.]
+honest-window sweep (2026-08-22).
 
-[Closed 2026-10-08: selection, not derivation. The circulating closed
-form no longer holds. Its product, 3.55, stays flagged non-operating in
-every provenance file.]
 
 The length screen ran 2026-10-05 on the pre-fold island-3 winner. It
 covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
@@ -224,9 +212,6 @@ code and configuration then repeat the search.
 
 NaN and Inf clamps guard the state. A broken line ends the run.
 
-[Step-ceiling and protocol values: NR-024 and NR-025 carry the rows.
-Counter-read closed and wording amends applied (`570be73`, `f86228a`).
-Future quotes use the amended forms.]
 
 ### 2.4 The campaign
 
@@ -239,16 +224,13 @@ with its own drift. Each island evaluates 310 designs.
 
 The campaign evaluates 930 designs in total (NR-001).
 
-[Context: 930 is the scale for this campaign. Earlier eras ran larger
-and cheaper campaigns. The development-history chapter states the
-trade, tagged by era.]
 
 Four statuses result: ok, reject, clearance_reject and reject_twist
 (NR-002).
 
 The ok designs pass every gate. The rejects fail a gate. The
 clearance rejects fail the clearance gate. The twist rejects fail the
-twist gate. [Gate names and definitions await Track B and Track D.]
+twist gate.
 
 ### 2.5 Fidelity paths
 
@@ -351,9 +333,6 @@ relax run. Its window-mean speed reads 13.38 radians per second,
 127.772 revolutions per minute (NR-029). Its airborne mass reads
 25.698 kilograms (NR-018).
 
-[Winner anatomy: figure-map row 10 carries the labelled render, with
-the lift chain and the ring numbers. The power take-off (PTO) station
-sits outside the render scope.]
 
 This result differs from earlier eras for recorded reasons. The bank
 derate, the honest window and the tightened gates moved the search
@@ -363,13 +342,13 @@ This run also trades breadth for fidelity: fewer evaluations, each on
 the honest window. It stopped early: a screen, not a survey. The
 development-history chapter carries the trade, tagged by era.
 
-### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this. Figures: figure-map row 8. The ring and twist plates seat below.]
+### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this section.]
 
 [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
 
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
-### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this. The machine evolution strip seats below.]
+### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this section.]
 
 [Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006 and NR-011.]
 
@@ -412,9 +391,6 @@ flag, and every recorded winner field reproduces (NR-012).
 
 Candidate entries. Each failure enters with its lesson.
 
-[Track B will reconcile these entries. The failure-ledger timeline
-(scoped in the figure map) sets these dates end to end. The
-development-history chapter carries them act by act.]
 
 - The dead geometry genes. The search proposes genomes that cannot
 build. An off-by-one in the rotor-to-ring map put the middle rotor on
@@ -485,8 +461,7 @@ in 930 evaluations (NR-001).
 
 The Daisy anchor keeps the model honest to a machine I flew and
 measured. The tension-supplied capacity, the fold and the guards
-record the engineering that made the search possible. [Track D will
-define each term.]
+record the engineering that made the search possible.
 
 The boundaries in the discussion name the work that comes next.
 [Daisy values need register rows before the final report quotes
@@ -511,74 +486,11 @@ commit. Every public post will cite register rows by ID.
 
 ## Document control
 
-**Working notes.** A bracket marks open room work. The owners refine
-this text against the Track A and Track B responses. The title stays a
-working form pending the founder decision.
+The version history, the working notes and the open requests to the
+analysis room sit in `docs/reporting/draft-tracker.md`. This document
+carries only reader-facing material.
 
-**Version history.**
-
-First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
-
-v0.2 revision pass by @author (2026-10-08). This pass folds the fact
-deliveries from the room into the marked brackets. Numbers still gate on
-signed rows.
-
-v0.3 pass by @author (2026-10-08). This pass closes the k bracket and
-corrects the NR-016 read.
-
-v0.4 pass by @author (2026-10-09). This pass folds the margin-note
-set: figure requests mapped to figure-map rows, the builder and
-evaluator split, the load law, the lift spec and the search
-determinism.
-
-v0.5 pass by @author (2026-10-09). This pass seats the winner-check
-pair at §3.4 (figure-map rows 6 and 7) and closes the plate
-citations.
-
-v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
-strip at §3.5 (figure-map row 9).
-
-v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
-noun and states the lifter modulation assumption.
-
-v0.8 pass by @author (2026-10-09). This pass folds the closed
-counter-read on the step-ceiling and protocol rows, with the
-amended quote forms.
-
-v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
-explanation, with the science-writer blocks folded under the R4 fence.
-
-v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris
-review resolutions: the lift-margin identity (1.2), the length-screen
-rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack
-framing (3.7).
-
-v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
-accuracy flags: the lift-margin register chain (sizing mass 20.698
-kilograms, vertical load 304.58 newtons) and the window-mean speed
-citation (NR-029). NR-031-dependent numbers stay held pending the
-basis amendment.
-
-v0.12 pass by @author (2026-10-11).
-This pass lifts the v0.11 operating-point hold.
-The science-validator signed the re-base rows NR-032 to NR-034 (`25ff00e`).
-The counter-read closed (`b434ded`).
-The pass also folds the Sweep 7 carry-note at §3.3.
-
-v0.13 pass by @author (2026-10-12). This pass folds the structural
-review: the title page, the document control section, the draft-status
-box, the literature restructure, the research question and the figure
-provenance seat.
-
-v0.14 pass by @science-writer (2026-10-12). This pass drafts the
-abstract and keywords from signed rows NR-001, NR-008, NR-009, NR-021
-and NR-022, with the era label and the winner calibration. The pass
-closes the abstract bracket.
-
-v0.15 pass by @fig-img-diagrams (2026-10-12). This pass lands the
-figure provenance appendix. The table gives one row per built exhibit.
-Each row carries the source extract, the cited rows, the script commit,
-the era and the output hashes.
+The title stays a working form pending the founder decision.
 
 ## Appendix: Figure provenance
 
