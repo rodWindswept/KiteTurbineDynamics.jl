@@ -22,7 +22,7 @@ The draft carried the facts. The pass adds the reasons.
   machine. The length screen stays, with its motivation stated.
 
 - The window term reads "measurement window" in section 2.3. Count
-  nine down to six. The remaining six ride the author sweep.
+  ten down to seven. The remaining seven ride the author sweep.
 
 ## Receipts
 
