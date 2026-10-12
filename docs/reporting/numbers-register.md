@@ -850,3 +850,68 @@ Boundaries that travel with this row:
    on their own fields.
 
 Counter-read requested from the aero seat.
+
+## NR-039 note: the penalize_ceiling flag (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The aero counter-read (2026-10-12) closed NR-039. It asked for one
+candor clause: a reader may connect the runner flag `penalize_ceiling =
+false` to the fired over-power charge in the NR-039 decomposition. The
+flag does not reach that charge. This seat checked both paths at the tip.
+
+- `penalize_ceiling` governs only the legacy `v12_fitness` window
+  penalty. Source: `src/objective_v12.jl:44` (the ceiling branch).
+  The campaign runner pins the seam `appropriate_mass_fitness`
+  (`scripts/run_v13_5kw_masslift.jl:266`), not that function.
+
+- The fired over-power charge is unconditional. Source:
+  `src/objective_v12.jl:153-154` (the excess and the penalty). The
+  charge fires with the flag false.
+
+The NR-039 decomposition stands unchanged.
+
+## Derived row: NR-040, winner segment torque margins (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The author seat asked for the S1 torque margin. The abstract and
+section 5 will quote the least margin with its failure mode (Harris
+review, item 1.3, 2026-10-10). The row derives from NR-023: capacity
+over demand, one instant, segment by segment.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-040 | Winner segment torque margin | S1 2.0287970973051634, S2 2.036175280501402, S3 2.0435436991749936, S4 2.0509817379918016, S5 2.6938375915900292. S1 governs (quote 2.03). The S1 to S4 band reads 2.03 to 2.05. | — | NR-023 strings, segment by segment: torque_capacity / segment_torque. Recipe: 805.0097155967861 / 396.791634149159 = 2.0287970973051634. Cross-read: `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, segment block, bit for bit | signed (science-validator, 2026-10-12) |
+
+Sign-off basis:
+
+- The five ratios divide the torque capacity by the demand, segment by
+  segment. Each input cross-reads the raw extract, bit for bit. S1 is
+  the least.
+
+- The Harris review (2026-10-10) reads the S1 to S4 band as 2.03 to
+  2.05. This row confirms that band and adds S5 at 2.69.
+
+Reading rule for the abstract and section 5:
+
+- The draft may read: the least segment torque margin is 2.03, at S1
+  (NR-040).
+
+- Name the capture with the value. The capture is the winner operating
+  point, the final integration step (the NR-021 to NR-023 capture).
+
+Boundaries that travel with this row:
+
+1. One instant, one capture. The ratio is capacity over demand at the
+   final integration step. It is not the window minimum.
+
+2. Not a gate result.
+   The 2.5 floor is the structural factor-of-safety gate on ring utilisation.
+   Whether a torque margin sits under that floor is a separate ruling (work division item 1.3).
+   This row carries the ratio only.
+
+3. Case A only. All five segments carry a limit on this capture. The
+   capacity basis matches NR-023 boundary 3.
+
+Evidence: `scratch/sv_nr040_torque_margin.py` and its log.

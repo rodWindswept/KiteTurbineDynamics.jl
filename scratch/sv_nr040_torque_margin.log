@@ -1,0 +1,18 @@
+-- self-checks: NR-023 strings against the raw extract, bit for bit --
+OK    S1 torque 396.791634149159  capacity 805.0097155967861
+OK    S2 torque 397.1554424859068  capacity 808.6780945063998
+OK    S3 torque 397.45360112890063  capacity 812.213802301376
+OK    S4 torque 397.68800908436924  capacity 815.650844050359
+OK    S5 torque 397.1777954649229  capacity 1069.9324759682652
+-- recomputation (Float64, capacity over demand) --
+S1  2.0287970973051634  2.0287970973051634
+S2  2.036175280501402  2.0361752805014022
+S3  2.0435436991749936  2.0435436991749936
+S4  2.0509817379918016  2.0509817379918016
+S5  2.6938375915900292  2.6938375915900292
+least: S1
+S1 recipe: 2.0287970973051634
+quote forms: S1 2.03; band S1 to S4 2.03 to 2.05; S5 2.69
+-- cross-read: Harris review band (2026-10-10) --
+OK    review reads the S1 to S4 band as 2.03 to 2.05
+SV_NR040_DONE  (S1 governs at 2.0287970973051634; band confirmed)
