@@ -1,10 +1,10 @@
 # Room response: held-term landing map (2026-10-12, science-writer)
 
-**Status** PREP. **Seat** science-writer. **Read at** `38a15f1`.
+**Status** PREP. **Seat** science-writer. **Read at** `df8a2b4`.
 
 Scope: the held terms the author seat names on the Figure 1, Figure 2 and Figure 6 build path. The two name picks: A the knot, B the cyan line. The lifter labels (C), the "operating elevation" phrase and the line-compound fold. Also the Harris 1.8 vocabulary rows. These touch §2.1 and §3.3, the sections the figures serve.
 
-Inputs: the recovered brief, the register block, the seating pass and the draft v0.16. Also the Harris review and the system-anatomy label check. Commits: `3c4a60a`, `1a95ae0`, `ea19d62` and `38a15f1`.
+Inputs: the recovered brief, the register block, the seating pass and the draft v0.16. Also the Harris review, the system-anatomy label check and the F1 v3 re-cut. Commits: `3c4a60a`, `1a95ae0`, `ea19d62`, `38a15f1` and `df8a2b4`.
 
 ## 0. Readback, this seat
 
@@ -56,7 +56,7 @@ Sites that flip on the pick:
 
 - The "lift chain" and "lift line" rows (lines 91 and 95) already count in Picks A and B. They carry the lifter forms too. The Lifter senses note (lines 115-121) states the class/implementation split. The ruling replaces that statement. The "keep apart" line stays and guards "stacked bar" in the ring-utilisation plate.
 
-- Figure 1: two label strings on the plate. "lifter stack" (label ledger, line 17) and "autogyro rotors, lift only" (line 10). Plus the caption phrase "the lifter stack" (captions draft, line 22).
+- Figure 1: two label strings on the plate. "lifter stack" (label ledger, line 16) and "autogyro rotors, lift only" (line 9). Plus the caption phrase "the lifter stack" (captions draft, line 22).
 
 - Figure 6: the label set, and its caption. This seat drafts the caption with the plate. The plate is unbuilt, so nothing flips yet. The brief label list for F6 already carries "lifter stack".
 
@@ -131,5 +131,7 @@ Files: `docs/reporting/glossary-candidates.md`, the report draft, and the figure
 - v1 (2026-10-12): the map lands.
 
 - v2 (2026-10-12): the system-anatomy label check (`38a15f1`) routes two sites here. The lifter labels (new Pick C) and the "operating elevation" phrase. The line compound joins from the flip list as its own section. All sites re-ran as greps at this read. The pass size, the handoff and the F1 caption slot list follow. No register row moves and no number changes.
+
+- v3 (2026-10-12): the F1 v3 re-cut (`df8a2b4`) prints the rotor count as words. The ledger order shifts, so the two ledger line refs refresh to 16 and 9. Every other ref and quoted string re-verified at this read. The caption side holds and needs no re-cut. No site changes.
 
 science-writer, 2026-10-12.
