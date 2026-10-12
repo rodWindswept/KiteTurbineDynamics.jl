@@ -1,0 +1,29 @@
+ROOT = /home/rod/Documents/GitHub/ktd-sv-fignums
+file = /home/rod/Documents/GitHub/ktd-sv-fignums/scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/island_3_best.csv
+genome (10-D, raw):
+  x1 r_hub                 = 4.5799790548200496
+  x2 r_bottom              = 0.80368298460882071
+  x3 target_Lr             = 2.7205540222728661
+  x4 n_lines               = 3
+  x5 density_profile       = -0.80000000000000004
+  x6 rotor_count           = 1.0370201857788965
+  x7 bank_top              = 7.0881314603235648
+  x8 bank_bottom           = 22
+  x9 blade_scale_top       = 0.82132550278847694
+  x10 blade_scale_bottom   = 0.19999999999999996
+
+post-round x[4]=3.0  x[6]=1.0  (canonical x[4]=3.0  x[6]=1.0)
+decoded: n_lines=3 rings=6 n_active=1 rotors=1
+decoded r_hub = 4.5799790548200496  (quote 4.580)
+decoded r_bottom = 0.80368298460882071  (quote 0.804)
+rotor: ring_idx=6 bank=7.0881314603235648  blade_scale=0.82132550278847694
+any decoded rotor bank at slot-8 value 22.0: false
+any decoded rotor blade_scale at slot-10 value 0.2: false
+
+built sys.rotor bank_angle_deg = 7.0881314603235648
+built sys.rotor radius = 5.6295604325659641  blade_hub_radius = 4.1301584643575149
+built expansion rotors = 0
+built swept area = 45.973255492161499
+
+check: tip == NR-032 r_out pinned  : true
+check: r_in == NR-032 blade_hub pinned: true

@@ -656,3 +656,46 @@ Boundaries that travel with these rows:
 
 2. NR-035 uses the full airborne mass (NR-018). The net basis (5 kg
    lifter excluded) reads 0.2565 kW/kg.
+
+## Figure-brief number check: NR-011, NR-017 (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The nine figure proposals quote winner values for the anatomy diagram and
+the genome strip. This seat re-read each one at `42f2147` on the bank
+line. Every value holds with no drift.
+
+- Topology. The decode reads n_lines 3, rings 6, n_active 1 and one rotor.
+  R1 sits at the ground datum and R6 is the hub ring. Ring labels run
+  ground to hub.
+
+- Segment labels. S1 to S5 are the five segments between rings. A figure
+  label "S1" names a segment, never a spacer ring.
+
+- Radii. The quotes 4.580 m and 0.804 m match the decode at
+  4.5799790548200496 and 0.8036829846088207.
+
+- Ring radii. The pair-extract segment block carries both values. It reads
+  r_b 4.57997905482005 on S5 and 0.8036829846088207 on S1 to S4.
+
+- Bank. The main rotor bank reads 7.0881314603235648 degrees at ring 6.
+  Slot 8 holds 22.0 and reaches no rotor. A figure caption quotes 7.088
+  degrees. The 22.0 value never appears as a rotor angle.
+
+- Blade scales. The active rotor carries 0.8213255027884769. Slot 10
+  holds 0.2 and reaches no rotor.
+
+- Built radii for scale. The evaluator chain reads tip 5.629560432565964 m
+  and blade inner edge 4.130158464357515 m. Both equal the NR-032 receipts.
+
+- Knob note. The bank probe omits the decode v_rated knob. Its built-radius
+  line reads 5.628174 m. Quote the evaluator chain for art.
+
+- Era. No commit between `bb619a5` and `42f2147` touches `src/`. The
+  readings transfer to the figure baseline.
+
+Reproduction: probes `scratch/sv_probe_fignums.jl`,
+`scratch/sv_probe_winner_areas.jl` and `scratch/sv_probe_rotor_banks.jl`.
+Logs `scratch/sv_probe_fignums_42f2147.log`,
+`scratch/sv_probe_winner_areas_42f2147.log` and
+`scratch/sv_probe_rotor_banks_42f2147.log`, at tip `42f2147`.
