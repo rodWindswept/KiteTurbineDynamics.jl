@@ -730,3 +730,84 @@ No value discrepancy found. The Sweep 10 carry-note closes: the
 Document control list reads exhaustive.
 
 **Next run** at the next draft push.
+
+## Sweep 12: v0.17, 2026-10-12
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`398d4b9` (the F6 correction). The file carries zero diff to the branch
+tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `0193c58` (zero
+diff to the tip).
+Moved since Sweep 11: `1a95ae0` (an NR-011 and NR-017 re-read),
+`83ee92f` (NR-037, NR-038 and the Figure 6 label rule), and the
+counter-read `0193c58`.
+No signed row changed.
+
+**Results**
+
+- Span note: one draft push since Sweep 11 (v0.17). The pass removes
+  the §3.3 lift-ratio sentence. The token diff below closes the span.
+
+- STE gate: words 3205, total 4, `per100w=0.12`, `em_dash=0`, exit 0.
+  The pass removes 28 words (3233 at the follow-up 2). The hook lines
+  read `passive_voice x1` and `long_paragraph x3`, both pre-existing.
+
+- Offender check against the `2f83f48` revision: the probe outputs
+  differ in the header line only. The edit adds no offender line and no
+  count.
+
+- Retired phrasing: no new hit. The section 1 contrast line "without a
+  rigid driveshaft" stays the only near-hit, cleared in Sweep 3 and
+  unchanged.
+
+- Held name: the §3.3 "cyan line" site is the held Pick B form of the
+  held-term map. This pass leaves it in place.
+
+- Value cross-check: the pass removes two value tokens and adds none.
+  The removal set maps to the F6 correction alone. Every other printed
+  value carries forward from the Sweep 10 set, because the pass touches
+  no other line.
+
+- The draft no longer prints `1.21` or `25.70`. The fine form `25.698`
+  still prints at §3.3 with its NR-018 citation.
+
+- The §3.3 chain holds: 1.5 x 20.698468 x 9.81 = 304.58 newtons, and
+  the tension 324.1 newtons (NR-010).
+
+- The ratio 1.21 now lives in the Figure 6 build, beside its
+  definition, under the NR-037 label rule.
+
+- The register re-read `1a95ae0` covers the draft prints of NR-011 and
+  NR-017, and it found no drift. This pass leaves those prints.
+
+- Arithmetic on stated totals: no change from Sweep 10. The status mix
+  still reads 930 as 508 plus 301 plus 110 plus 11.
+
+- Cited commits: the draft quotes five hashes (`dd3cc6a`, `a76c5e9`,
+  `31ca00d`, `eacf073` and `74cfef9`). All five resolve in the tip
+  ancestry.
+
+- Superseded forms: no hit on the retired value set (63.8695, 20.1056,
+  14.4651, 14.46 and 0.101631), and no NR-031 quote form. A grep reads
+  no hit.
+
+- Number-token diff, v0.16 follow-up 2 (`2f83f48`) to v0.17 (`398d4b9`).
+  One arrival, `17`, the header bump. The removals read `16`, the
+  retired header digit, plus `1.21` and `25.70` from the removed
+  sentence. The raw side reads 1 added occurrence and 3 removed.
+
+- Push-note check: the tracker note names the `1.21` removal and reads
+  "no other draft line moves". The recount adds `25.70` from the same
+  sentence and the header digit pair. The diff carries two hunks.
+
+- Held tokens: no change. `1.94` and `5.18` stay under the §4.2 note
+  "The other values need rows first", and `3.55` stays in the tracker.
+
+**Finding**
+
+No value discrepancy found. The F6 correction lands clean on the draft
+side: the ratio no longer prints as a margin, and its home is the
+Figure 6 build, beside its definition.
+
+**Next run** at the next draft push.
