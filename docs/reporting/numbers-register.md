@@ -699,3 +699,51 @@ Reproduction: probes `scratch/sv_probe_fignums.jl`,
 Logs `scratch/sv_probe_fignums_42f2147.log`,
 `scratch/sv_probe_winner_areas_42f2147.log` and
 `scratch/sv_probe_rotor_banks_42f2147.log`, at tip `42f2147`.
+
+## Derived lift-chain and trace-endpoint rows: NR-037, NR-038 (2026-10-12, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The Figure 6 brief quotes a vertical lift margin of 1.21. No signed row
+carried that number. The signed sizing margin reads 1.5 (NR-026). This
+block supplies the derived numbers the inset draws on. It also fixes the
+label rule. The Figure 3 brief quotes a speed lane of 8 to 12 rad/s. That
+range clips the winner trace. NR-038 carries the true endpoints.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-037 | Winner lift-line derived set (island 3): vertical load at the lift bearing, sizing mass, airborne weight, load ratio | F_vert 304.5779603905257 (quote 304.6), sizing mass 20.69846825623688 (quote 20.70), weight 252.1019735936838 (quote 252.1), ratio 1.2081538119230202 (quote 1.21) | N, kg, N, - | Derived on NR-018 and NR-026. Recipe below | signed (science-validator, 2026-10-12) |
+| NR-038 | Winner window trace endpoints (island 3): ground ring at window min, max and last, plus the relax end pair | gnd window min 13.361451740981568, max 13.384909253752044, last 13.384824668402052. Last relax sample, t = 9.990119900356282 s: gnd 13.35927880647099, hub 13.375919394174096 | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`). Logs `scratch/sv_probe_window_trace_rerun.log`, `.julia_depot/logs/av_probe_window_trace.log` | signed (science-validator, 2026-10-12) |
+
+Derivation recipe, NR-037:
+
+- Vertical load. F_vert = 1.5 x (25.69846825623688 - 5.0) x 9.81. The read
+  is 304.5779603905257 N.
+- Airborne weight. W = 25.69846825623688 x 9.81 = 252.1019735936838 N.
+- Load ratio. F_vert / W = 1.2081538119230202. Quote 1.21 at two decimal
+  places.
+- Tension cross-check. F_vert / sin(70 deg) = 324.1250954336462 N. The
+  read equals NR-010.
+
+Label rule for Figure 6:
+
+- The figure prints 1.5 as the margin. NR-026 carries that value.
+- The ratio 1.21 reads as the vertical load over the total airborne
+  weight. State the definition next to the number.
+- Do not label 1.21 as a margin. The two bases differ. The margin 1.5
+  applies to the mass net of the lifter. The ratio takes the full
+  airborne mass as the denominator.
+
+Boundaries that travel with these rows:
+
+1. NR-037 regime: the campaign run. Tension stays flat at all wind speeds
+   (`const_tension`, NR-026). The vertical load holds one value at every
+   wind speed.
+2. NR-038 basis: the NR-029 boundary row. One trace, one machine, one
+   wind: 11.01 m/s at 9.41 m, cold start, k = 2.24. The window reads use
+   the 41 samples from t = 10 s.
+
+Receipts: `scratch/sv_nr037_arithmetic.py`, `scratch/sv_nr037_arithmetic.log`
+and the two trace logs above.
+
+Counter-read requested from the aero seat.
