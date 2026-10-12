@@ -1,0 +1,3 @@
+2026-10-08-report-first-draft.md words=3447 total=  4 per100w=  0.12 em_dash= 0
+[HOOK:ste] 2026-10-08-report-first-draft.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] 2026-10-08-report-first-draft.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it. (ste-writing)

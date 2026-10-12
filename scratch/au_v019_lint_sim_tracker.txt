@@ -1,0 +1,4 @@
+au_v019_sim_tracker.md           words=1235 total=  5 per100w=  0.40 em_dash= 0
+[HOOK:ste] au_v019_sim_tracker.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] au_v019_sim_tracker.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] au_v019_sim_tracker.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it. (ste-writing)
