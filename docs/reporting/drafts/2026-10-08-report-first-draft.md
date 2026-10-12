@@ -1,63 +1,21 @@
 # The kite turbine: a search over its design space
 
-**Working title.**
+Internal engineering report. Draft v0.13. Date 2026-10-12.
 
-First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+Numbers come only from signed register rows, cited by row ID.
 
-v0.2 revision pass by @author (2026-10-08). This pass folds the fact
-deliveries from the room into the marked brackets. Numbers still gate on
-signed rows.
+A section marked [PENDING] waits on a gate.
 
-v0.3 pass by @author (2026-10-08). This pass closes the k bracket and
-corrects the NR-016 read.
+**Draft status.** This is an internal draft.
+Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation.
+Nomenclature and references stay incomplete.
 
-v0.4 pass by @author (2026-10-09). This pass folds the margin-note
-set: figure requests mapped to figure-map rows, the builder and
-evaluator split, the load law, the lift spec and the search
-determinism.
+The physics era is `post-95c385d_wind-authority`. The bank derate
+applies throughout.
 
-v0.5 pass by @author (2026-10-09). This pass seats the winner-check
-pair at §3.4 (figure-map rows 6 and 7) and closes the plate
-citations.
-
-v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
-strip at §3.5 (figure-map row 9).
-
-v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
-noun and states the lifter modulation assumption.
-
-v0.8 pass by @author (2026-10-09). This pass folds the closed
-counter-read on the step-ceiling and protocol rows, with the
-amended quote forms.
-
-v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
-explanation, with the science-writer blocks folded under the R4 fence.
-
-v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris
-review resolutions: the lift-margin identity (1.2), the length-screen
-rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack
-framing (3.7).
-
-v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
-accuracy flags: the lift-margin register chain (sizing mass 20.698
-kilograms, vertical load 304.58 newtons) and the window-mean speed
-citation (NR-029). NR-031-dependent numbers stay held pending the
-basis amendment.
-
-v0.12 pass by @author (2026-10-11).
-This pass lifts the v0.11 operating-point hold.
-The science-validator signed the re-base rows NR-032 to NR-034 (`25ff00e`).
-The counter-read closed (`b434ded`).
-The pass also folds the Sweep 7 carry-note at §3.3.
-
-Status DRAFT. Numbers come only from signed register rows, cited by
-row ID.
-
-A section marked [PENDING] waits on a gate. The owners refine this
-text against the Track A and Track B responses.
-
-**Abstract and keywords** [PENDING. The plan writes them last, from
-the signed register.]
+**Abstract and keywords** [PENDING. Drafts from signed rows NR-001,
+NR-008 and NR-009, with the era label and the winner calibration.]
 
 ## 1 Introduction
 
@@ -74,9 +32,6 @@ carries force, and the ground station converts it.
 The field splits a second way, on the wing. Soft wings use fabric.
 They survive crashes and pack small. Rigid wings use composite
 airframes. They hold efficiency and cost more.
-
-No study has crowned a dominant wing design. Both families stay in
-play.
 
 A third split matters for this report. It is the force transmission of
 ground-gen systems.
@@ -105,32 +60,40 @@ comes from tension itself.
 
 This report presents a search over the design space of that machine.
 The search varies ring geometry, polygon count, rotor count, blade bank
-angles and blade scale. It states what the record supports. It also
-states the failures, each with its lesson.
+angles and blade scale.
+
+The objective is to find the feasible geometries for a 5 kW-class
+machine. The generator load law and the safety gates stay fixed.
+The search asks whether one compact machine can hold the power, mass,
+structural, clearance and twist constraints at once.
+
+The report states what the record supports. It also states the failures,
+each with its lesson.
 
 One frame holds throughout. The machine flies only in simulation. The
 analysis pipeline is the instrument. The report treats the instrument
 with the same distrust it treats the machine.
 
 The field context rests on the literature. Loyd showed that both
-crosswind modes share one theoretical power ceiling. Cherubini mapped
-the ground-gen and fly-gen taxonomy.
+crosswind modes share one theoretical power ceiling.
 
-Diehl set the classification axes. Trevisi built one power model for
-both modes and found the glide-ratio flip.
+Trevisi built one power model for both modes and found the glide-ratio
+flip. Cherubini mapped the ground-gen and fly-gen taxonomy. Diehl set
+the classification axes.
 
-Van der Burg found no dominant wing design. Van de Kaa and Kamp found
-no dominant generation architecture.
+Van der Burg found no dominant wing design. Both wing families stay in
+play. Van de Kaa and Kamp found no dominant generation architecture.
 
 Pereira ranked the design factors and found that many small units
 beat few large ones.
 
 Flather recorded the rope-drive physics that the TRPT descends from.
-Tulloch modelled the Daisy TRPT and checked the model against
-measured flight windows.
-
 Benhaïem and Schmehl analysed the torque path of a rotating reel.
 Ranneberg gave the rotary family a momentum frame with flight data.
+
+Tulloch modelled the Daisy TRPT and checked the model against measured
+flight windows. This report extends that line of work.
+
 [Bind every name to references.bib at assembly.]
 
 ## 2 Methods
@@ -364,8 +327,8 @@ relax run. Its window-mean speed reads 13.38 radians per second,
 25.698 kilograms (NR-018).
 
 [Winner anatomy: figure-map row 10 carries the labelled render, with
-the lift chain and the ring numbers. The PTO station sits outside the
-render scope.]
+the lift chain and the ring numbers. The power take-off (PTO) station
+sits outside the render scope.]
 
 This result differs from earlier eras for recorded reasons. The bank
 derate, the honest window and the tightened gates moved the search
@@ -520,6 +483,73 @@ The launch commit is a76c5e9. The Phase 0 audit sits at master
 
 Every figure will ship with its generating script and its data
 commit. Every public post will cite register rows by ID.
+
+## Document control
+
+**Working notes.** A bracket marks open room work. The owners refine
+this text against the Track A and Track B responses. The title stays a
+working form pending the founder decision.
+
+**Version history.**
+
+First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
+
+v0.2 revision pass by @author (2026-10-08). This pass folds the fact
+deliveries from the room into the marked brackets. Numbers still gate on
+signed rows.
+
+v0.3 pass by @author (2026-10-08). This pass closes the k bracket and
+corrects the NR-016 read.
+
+v0.4 pass by @author (2026-10-09). This pass folds the margin-note
+set: figure requests mapped to figure-map rows, the builder and
+evaluator split, the load law, the lift spec and the search
+determinism.
+
+v0.5 pass by @author (2026-10-09). This pass seats the winner-check
+pair at §3.4 (figure-map rows 6 and 7) and closes the plate
+citations.
+
+v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
+strip at §3.5 (figure-map row 9).
+
+v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+noun and states the lifter modulation assumption.
+
+v0.8 pass by @author (2026-10-09). This pass folds the closed
+counter-read on the step-ceiling and protocol rows, with the
+amended quote forms.
+
+v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+explanation, with the science-writer blocks folded under the R4 fence.
+
+v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris
+review resolutions: the lift-margin identity (1.2), the length-screen
+rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack
+framing (3.7).
+
+v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+accuracy flags: the lift-margin register chain (sizing mass 20.698
+kilograms, vertical load 304.58 newtons) and the window-mean speed
+citation (NR-029). NR-031-dependent numbers stay held pending the
+basis amendment.
+
+v0.12 pass by @author (2026-10-11).
+This pass lifts the v0.11 operating-point hold.
+The science-validator signed the re-base rows NR-032 to NR-034 (`25ff00e`).
+The counter-read closed (`b434ded`).
+The pass also folds the Sweep 7 carry-note at §3.3.
+
+v0.13 pass by @author (2026-10-12). This pass folds the structural
+review: the title page, the document control section, the draft-status
+box, the literature restructure, the research question and the figure
+provenance seat.
+
+## Appendix: Figure provenance
+
+[PENDING. One row per exhibit: the source extract, the cited register
+rows, the render-script commit, the era and the output hashes. The
+figures seat exports the table from the figure map.]
 
 ## Open requests to the analysis room
 
