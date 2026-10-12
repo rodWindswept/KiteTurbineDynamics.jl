@@ -1,0 +1,33 @@
+{
+  "command": "cd docs/reporting/figures/system-anatomy && /usr/bin/python3 system-anatomy.py && SOURCE_DATE_EPOCH=0 FORCE_SOURCE_DATE=1 pdflatex -interaction=nonstopmode system-anatomy.tex && pdftoppm -png -r 300 -singlefile system-anatomy.pdf system-anatomy",
+  "data_commit": "dd3cc6a",
+  "inputs": {
+    "decode_receipt": {
+      "path": "scratch/fig1_decode_winner.jl",
+      "sha256": "1b095accc29180a45e35104d2e82c4051d305bf8fcdac7f04c7db4de942635fe"
+    },
+    "register_rows": [
+      "NR-011",
+      "NR-017"
+    ]
+  },
+  "outputs": {
+    "checks.log": "5100d5497523dcca462092b5a2ad01d9b53f025f755580cd479a7f4049581888",
+    "label-ledger.txt": "53a4204cb70f153d2ddda460e97cc8365a2e4e3b674e705a3f5da02d187bf5e1",
+    "system-anatomy.pdf": "9d507326a541a9e92f15860889b334f29e82add5cec49cbcc617549b07878bb1",
+    "system-anatomy.png": "fe89525d297d1a85be287e4c2f6b0127f18b714d8eab21d65d08f6522c7f4ee5",
+    "system-anatomy.tex": "b6517cd13128c6b95b3293303372cb32397b9cae918aa9fc1a45bedb2b4bda10"
+  },
+  "precision": "radii and bank at three decimals, as registered; counts print as words",
+  "script": {
+    "path": "docs/reporting/figures/system-anatomy/system-anatomy.py",
+    "sha256": "a6991cf47399da42b18071b3dbeae590659986016126e629bb49b651aff5cf45"
+  },
+  "script_commit": "df8a2b4",
+  "slug": "system-anatomy",
+  "toolchain": {
+    "pdflatex": "TeX Live 2023/Debian",
+    "pdftoppm": "poppler (pdftoppm -png -r 300)",
+    "python": "3.12"
+  }
+}

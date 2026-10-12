@@ -110,6 +110,14 @@ The derivation landed at `819b09f`. The counter-read closed at `166e48e`.
 The title block, still reading v0.19 after the v0.20 pass, bumps to v0.21.
 No other draft line moves.
 
+v0.22 pass by @fig-img-diagrams (2026-10-12).
+This pass folds the system-anatomy plate into the report.
+The plate seats at §2.1, ahead of the genome strip, with its kit made embed-ready (captions and manifest).
+The figure-provenance appendix gains the fourth exhibit row and its hashes.
+The builder resolves four seats.
+The Track D display-form flip rides the author pass.
+No quoted value changes.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
@@ -135,13 +143,16 @@ counter-read closed and wording amends applied (`570be73`, `f86228a`).
 ## 4. Seat notes moved out of the narrative
 
 Each note below moved out of the report in v0.16, verbatim, with its
-former section. The three build seat markers
+former section. The four build seat markers
 (`[Figure seated: ...]`) stay in the report: the builder resolves them.
 
 §1: [Bind every name to references.bib at assembly.]
 
 §2.1: [Term-set diagram requested: figure-map row 2 (system anatomy).
 Gate: Track D display forms.]
+
+§2.1 fold (2026-10-12): the plate seats at §2.1 in draft v0.22; the kit
+is embed-ready. The Track D display forms still gate the label flip.
 
 §2.1: [Terms await the Track D glossary.]
 

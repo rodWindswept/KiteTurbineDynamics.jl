@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.21. Date 2026-10-12.
+Internal engineering report. Draft v0.22. Date 2026-10-12.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -147,6 +147,8 @@ ground ring. A rotor is a set of blades on a ring.
 
 Bank is the blade angle away from the ring plane about its chord axis at the ring. 
 Blade scale sets the blade size. The search treats each of these as a gene.
+
+[Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011 and NR-017.]
 
 ### 2.2 The genome
 
@@ -566,13 +568,14 @@ The title stays a working form pending the founder decision.
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. All three read dataset commit `dd3cc6a`.
+One row per built exhibit. All four read dataset commit `dd3cc6a`.
 
 | Exhibit | Source extract | Cited rows | Script commit | Era |
 |---|---|---|---|---|
 | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
 | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
 | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017 | `df8a2b4` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -598,3 +601,10 @@ Machine evolution strip:
 - `svg` `6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e`
 - `pdf` `6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844`
 - `checks` `b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde`
+
+System anatomy plate:
+
+- `png` `fe89525d297d1a85be287e4c2f6b0127f18b714d8eab21d65d08f6522c7f4ee5`
+- `pdf` `9d507326a541a9e92f15860889b334f29e82add5cec49cbcc617549b07878bb1`
+- `ledger` `53a4204cb70f153d2ddda460e97cc8365a2e4e3b674e705a3f5da02d187bf5e1`
+- `checks` `5100d5497523dcca462092b5a2ad01d9b53f025f755580cd479a7f4049581888`

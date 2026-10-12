@@ -30,7 +30,7 @@ carries the full roster around them.
 | # | Order | Section | Figure | Slug | Status | Source | Next gate |
 |---|---|---|---|---|---|---|---|
 | 1 | 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
-| 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | ⟨tbd⟩ | proposed | `d8-system-anatomy.tex`. Physics-topology §3 | Track D display forms. The re-cut sits in the brief record (`ea19d62`) |
+| 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | `system-anatomy` | R2 | The island-3 winner decode (`scratch/fig1_decode_winner.jl`, data commit `dd3cc6a`). Physics-topology §3 | Seated in the draft (§2.1, v0.22; kit embed-ready). The science half of the content check. The Track D display-form flip rides the author pass |
 | 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
 | 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
 | 5 | 5 | §2.3 | The k basis, derived | ⟨tbd⟩ | proposed | The sweep records. The selection basis (NR-015) | The plotted-value rows |
@@ -230,3 +230,12 @@ three slots).
   gate). Row 13 stays proposed: its entry set drafts from the
   development-history record (science-writer, item 5), and its CSV
   derives from the ledger appendix. No roster row moves.
+
+- **v16 (2026-10-12):** row 2 folds into the report. The system-anatomy
+  plate seats at §2.1 (draft v0.22, figures seat) with its kit made
+  embed-ready: `captions.md` (plain caption, technical caption,
+  provenance line) and `manifest.json`. The builder resolves it as the
+  fourth seat, and the figure-provenance appendix gains the fourth
+  exhibit row and its hashes. The kit holds its v3 pins. Pending: the
+  science half of the content check, then the Track D display-form flip
+  at the author pass. The render stays frozen. Row 2 is the only move.
