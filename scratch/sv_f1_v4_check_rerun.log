@@ -1,0 +1,13 @@
+[ledger count 32] PASS got 32
+[ledger carries blade span] PASS
+[ledger carries 1.499 m] PASS
+[tex dimension draw] PASS
+[tex NR-043 in stamp] PASS
+[tex NR-011 stamp] PASS
+[manifest register rows] PASS ['NR-011', 'NR-017', 'NR-043']
+[manifest checks.log] PASS 0e857cbfb288ff71
+[manifest label-ledger.txt] PASS b250c1a187132f68
+[manifest system-anatomy.pdf] PASS 9beffb6bf8463d39
+[manifest system-anatomy.png] PASS f1c322bc20068299
+[manifest system-anatomy.tex] PASS 4ed33eb467427dd8
+RESULT: PASS

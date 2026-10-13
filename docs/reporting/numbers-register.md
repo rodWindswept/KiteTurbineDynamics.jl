@@ -1257,3 +1257,60 @@ Boundaries that travel with this row:
    receipts chain.
 
 2. The span is decode geometry, not a flight measurement.
+
+## Display-form note update: the minimum FoS at 1 dp, the report sites (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The founder call of 2026-10-13 rules the report display: the factor of safety
+prints at 1 dp, and the full precision stays internal (tracker display forms,
+`2ebbd22`). The call covers every report site of the value.
+
+The reading rule below replaces the last sentence of the FoS note above, so
+the sweeps read one basis.
+
+Reading rule:
+
+- Every report display site of the minimum factor of safety (NR-009) reads
+  `15.0` at 1 dp.
+
+- The register row keeps 14.972. The signed value reads `14.971791422208508`.
+
+- The sites that fold: the front summary block, two section 3.3 sites, the
+  gates table, and section 5.
+
+- The capture hub ring reading (15.033, NR-021) is a ring reading at the
+  final step. It is not the machine factor of safety. It keeps its form at
+  the section 3.3 disambiguation line.
+
+## Display-form note: the section 3.3 lift chain (NR-037 on NR-018 and NR-026) (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The founder call rules coarse display for the report. The section 3.3 lift
+chain takes the report forms.
+
+- The sizing mass prints at `20.698` (3 dp, the report mass form). The
+  sentence above the chain reads 20.698 kilograms.
+
+- The vertical load prints at `304.6` (1 dp, the force form). NR-010 reads
+  324.1 N at 1 dp.
+
+- The chain holds as displayed. The rounded operands give 304.571.
+
+- Both the rounded operands and the full value read 304.6 at 1 dp.
+
+- The 6 dp operand served the 2 dp result form alone. The report takes 1 dp
+  for the force.
+
+- The full values stay internal: `20.69846825623688` kg and
+  `304.5779603905257` N. NR-037 keeps its value.
+
+Reading rule:
+
+- The section 3.3 chain reads: 1.5 × 20.698 × 9.81 = 304.6 newtons.
+
+Boundaries:
+
+- The tension line keeps NR-010. The elevation 70 degrees and the margin 1.5
+  keep NR-026.

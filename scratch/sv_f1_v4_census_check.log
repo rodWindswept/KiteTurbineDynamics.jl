@@ -1,0 +1,52 @@
+[drawn: blade span] PASS
+[drawn: 1.499 m] PASS
+[drawn: blade span 1.499 m] PASS
+[drawn: R6, the hub ring] PASS
+[drawn: 4.580 m] PASS
+[drawn: R1, the ground ring] PASS
+[drawn: 0.804 m] PASS
+[drawn: three blades, bank 7.088°] PASS
+[drawn: 5 m] PASS
+[drawn: segments S1 to S5] PASS
+[drawn: three tension lines each] PASS
+[drawn: data commit dd3cc6a · rows NR-011 · NR-017 · NR-043] PASS
+[drawn: drawn to the 5 m scale bar] PASS
+numeric tokens: {'0.804': 1, '011': 2, '017': 1, '043': 1, '1': 3, '1.499': 1, '3': 3, '4.580': 1, '5': 3, '6': 3, '7.088': 1}
+decimal readouts: ['0.804', '1.499', '4.580', '7.088']
+[decimal readouts are the rowed set] PASS ['0.804', '1.499', '4.580', '7.088']
+integer tokens: ['011', '017', '043', '1', '3', '5', '6']
+[integer tokens are labels and the scale] PASS ['011', '017', '043', '1', '3', '5', '6']
+[md5 system-anatomy.tex] PASS 5bf748abc6fd385860f72ce0713cfb1c
+[note lists md5 system-anatomy.tex] PASS
+[md5 prototype.html] PASS 620481ca05882376cdea2c8026a22e6f
+[note lists md5 prototype.html] PASS
+[md5 label-ledger.txt] PASS 9f5e89acc24393d6e6481ce4780ee6e4
+[note lists md5 label-ledger.txt] PASS
+[md5 system-anatomy.pdf] PASS 45a99a610b68c496209120ea6e6cd261
+[note lists md5 system-anatomy.pdf] PASS
+[md5 system-anatomy.png] PASS aae4915c2f32a2f0c6798e68d2d29e03
+[note lists md5 system-anatomy.png] PASS
+[note: | NR-043 | The winner blade span 1.499 m, dr] PASS
+[note: The span prints at three decimals (`1.499 m`] PASS
+[note: It is not a ring radius, and not the tip off] PASS
+[note: The plate draws no other row.] PASS
+[note: Script commit `9cecee3`. No other] PASS
+[note: **Delta** v2 (2026-10-13): the v4 re-cut lan] PASS
+[manifest rows] PASS
+[manifest script commit] PASS
+[manifest sha256 checks.log] PASS 0e857cbfb288ff71
+[manifest sha256 label-ledger.txt] PASS b250c1a187132f68
+[manifest sha256 system-anatomy.pdf] PASS 9beffb6bf8463d39
+[manifest sha256 system-anatomy.png] PASS f1c322bc20068299
+[manifest sha256 system-anatomy.tex] PASS 4ed33eb467427dd8
+[ledger 32 strings] PASS 32
+[ledger carries blade span] PASS
+[ledger carries 1.499 m] PASS
+[tex dim arrow] PASS
+[tex row list] PASS
+[appendix exhibit row] PASS
+[appendix hash png] PASS
+[appendix hash pdf] PASS
+[appendix hash ledger] PASS
+[appendix hash checks] PASS
+RESULT: PASS

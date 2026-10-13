@@ -1,0 +1,8 @@
+numbers-register.md              words=9572 total= 98 per100w=  1.02 em_dash=16
+[HOOK:ste] numbers-register.md: long_sentence(>20w) x25 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] numbers-register.md: semicolon x20 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] numbers-register.md: contraction x4 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] numbers-register.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] numbers-register.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] numbers-register.md: long_paragraph(>6s) x47 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] numbers-register.md: em_dash x16 -> no em dash — use a period or comma. (ste-writing)

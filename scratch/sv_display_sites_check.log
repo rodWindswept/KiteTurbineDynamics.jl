@@ -1,0 +1,30 @@
+beyond-3dp census: [(475, '20.698468')]
+[one token beyond 3 dp] PASS [(475, '20.698468')]
+[it is the chain operand] PASS
+[FoS row-form site 1] PASS
+[FoS row-form site 2] PASS
+[FoS row-form site 3] PASS
+[FoS row-form site 4] PASS
+[FoS row-form site 5] PASS
+[abstract holds 15.0] PASS
+[capture hub read stays] PASS
+[14.972 count] PASS 5
+[full load] PASS 304.5779603905257
+[displayed-operand load] PASS 304.57107
+[both read 304.6 at 1 dp] PASS 304.6 / 304.6
+[2 dp forms disagree] PASS 304.58 vs 304.57
+[mass 3 dp] PASS
+[FoS 1 dp 15.0] PASS
+[FoS stored 3 dp 14.972] PASS
+[hub read 3 dp 15.033] PASS
+[tension 1 dp 324.1] PASS
+[NR-009 row] PASS
+[NR-018 stored] PASS
+[NR-037 mass stored] PASS
+[NR-037 F_vert stored] PASS
+[tracker call] PASS
+[update block title] PASS
+[update supersession] PASS
+[chain block title] PASS
+[chain reading rule] PASS
+RESULT: PASS
