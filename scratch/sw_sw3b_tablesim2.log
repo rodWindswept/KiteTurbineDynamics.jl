@@ -1,0 +1,15 @@
+--- erasim lint rc=0
+sw_sw3b_erasim.md                words=4323 total=  6 per100w=  0.14 em_dash= 0
+[HOOK:ste] sw_sw3b_erasim.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sw3b_erasim.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+--- ledgersim lint rc=0
+sw_ws3a_ledgersim.md             words=4430 total=  6 per100w=  0.14 em_dash= 0
+[HOOK:ste] sw_ws3a_ledgersim.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_ws3a_ledgersim.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+--- erasim delta vs v0.28 draft:
+   > == scratch/sw_sw3b_erasim.md: words=4323 total=6 per100w=0.14 ==
+   >   | | Era | Effect on the search space | Data status |
+--- ledgersim delta vs v0.28 draft:
+   > == scratch/sw_ws3a_ledgersim.md: words=4430 total=6 per100w=0.14 ==
+   >   | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+done

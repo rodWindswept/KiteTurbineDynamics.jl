@@ -1,0 +1,28 @@
+== era: 7 chunks -> STRUCTURAL FLAG +1; over-20 chunks: 0
+  [ 8w] | Era | Effect on the search space | Data status |
+  [ 0w] |---|---|---|
+  [20w] | Before the bank derate | Earlier winners read different bank-angle physics, so they are not directly comparable. | Sup
+  [18w] | The bank-derate basis | The measured bank derate applies to main-rotor disc power throughout (NR-019, NR-020). | Curre
+  [18w] | The cp fix and the folded class | The span shrink and the cp fix moved the screen readings.
+  [17w] The pre-fold rows failed the floor (NR-027). | Recorded: the folded class passes at 18.8 metres (NR-028). |
+  [13w] | The wind-authority era ( ) | One wind authority reads the scored results. | Current physics era. |
+  lint: {'long_paragraph(>6s)': 1}
+== ledger: 16 chunks -> STRUCTURAL FLAG +1; over-20 chunks: 0
+  [ 9w] | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+  [ 0w] |---|---|---|---|---|---|
+  [11w] | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds.
+  [18w] The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot ma
+  [ 8w] The refusal lands at gate time. | Lesson applied. |
+  [13w] | 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub.
+  [18w] Every expansion rotor shifted one ring. | Visual geometry check ( ) | Validate the rotor-to-ring map against the built g
+  [17w] | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics revi
+  [ 7w] Keep the record. | Data voided, record kept. |
+  [15w] | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gai
+  [18w] The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+  [13w] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain.
+  [17w] The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+  [14w] | 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard never reached several scoring paths.
+  [13w] The re-gate screens winners. | Telemetry review | A gate must pin a measured number.
+  [10w] Drift must fail the suite. | Near-miss, no corrupted survivor found. |
+  lint: {'long_paragraph(>6s)': 1}
+done

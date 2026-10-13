@@ -1,0 +1,69 @@
+== sw3b/ws3a table sims 2026-10-13T17:48:39Z ==
+--- erasim lint rc=0
+sw_sw3b_erasim.md                words=4323 total=  6 per100w=  0.14 em_dash= 0
+[HOOK:ste] sw_sw3b_erasim.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sw3b_erasim.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+
+--- erasim offenders:
+== scratch/sw_sw3b_erasim.md: words=4323 total=6 per100w=0.14 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+  | | Era | Effect on the search space | Data status |
+
+
+--- ledgersim lint rc=0
+sw_ws3a_ledgersim.md             words=4414 total= 12 per100w=  0.27 em_dash= 0
+[HOOK:ste] sw_ws3a_ledgersim.md: long_sentence(>20w) x5 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_ws3a_ledgersim.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_ws3a_ledgersim.md: ing_main_verb x1 -> use a simple tense, not "be + -ing" as the main verb. (ste-writing)
+[HOOK:ste] sw_ws3a_ledgersim.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+
+--- ledgersim offenders:
+== scratch/sw_ws3a_ledgersim.md: words=4414 total=12 per100w=0.27 ==
+-- sentences over 20 words --
+  [33w] | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged while the ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make, at gate time. | Lesson applied. |
+  [25w] | 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub. | Visual geometry check ( ) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+  [25w] | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data and keep the record. | Data voided, record kept. |
+  [26w] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+  [34w] | 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard was missing from several scoring paths. | Telemetry review | A gate must pin a measured number, so drift fails the suite. | Near-miss, no corrupted survivor found. |
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+  | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+
+
+done
+
+== offender diffs vs current draft ==
+--- era sim vs v0.28 draft:
+1c1
+< == docs/reporting/drafts/2026-10-08-report-first-draft.md: words=4229 total=5 per100w=0.12 ==
+---
+> == scratch/sw_sw3b_erasim.md: words=4323 total=6 per100w=0.14 ==
+10a11
+>   | | Era | Effect on the search space | Data status |
+--- ledger sim vs v0.28 draft:
+1c1
+< == docs/reporting/drafts/2026-10-08-report-first-draft.md: words=4229 total=5 per100w=0.12 ==
+---
+> == scratch/sw_ws3a_ledgersim.md: words=4414 total=12 per100w=0.27 ==
+2a3,7
+>   [33w] | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged while the ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make, at gate time. | Lesson applied. |
+>   [25w] | 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub. | Visual geometry check ( ) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+>   [25w] | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data and keep the record. | Data voided, record kept. |
+>   [26w] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+>   [34w] | 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard was missing from several scoring paths. | Telemetry review | A gate must pin a measured number, so drift fails the suite. | Near-miss, no corrupted survivor found. |
+10a16
+>   | | Date / event | Class | What happened | Detection | Correction / lesson | Status |

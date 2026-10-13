@@ -1,0 +1,131 @@
+
+== ancestry extra ==
+31ca00d OK
+95c385d OK
+
+== sums ==
+status mix total: 930
+islands total: 930
+floor+margin check: 5.0 + 0.314 = 5.314
+
+== trust log: 08-13 k-alignment row search ==
+64:| 2026-08-24 | **Winner re-gate ran at a stale k_mppt (5.39, not the campaign value 2.24)** | The 5 kW campaign re-run winner was re-gated and reported 'PASSES, P_gen 6.39 kW'. But that verdict came from a run at k=5.39, a DIFFERENT machine than the campaign ran (k=2.24) | `scripts/ode_gate_v13.jl` hardcoded `k_mp = KW == 5.0 ? 5.39 : p.k_mppt` (the superseded 20 s-window sweep value).  The runner + smoke moved to k=2.24 (honest-window sweep) but the gate kept the old value. The same k-alignment fault class as the 2026-08-13 'evaluator tested at k_mppt=10.0' row.  Caught in pre-push review (Hermes) | gate k → 2.24. Winner re-gated at the campaign operating point: PASSES, P_gen 5.18 kW flat (5.09→5.18 over 30 s, ω 13.22 rad/s settled). `026c734` |
+67:| 2026-08-13 | **Evaluator tested 5 kW designs at k_mppt=10.0** | 18m flywheel winner showed P_end 4.18 kW in the evaluator vs 2.26 kW at the gain of the system itself (gate). Window power inflated ~2× | `ObjectiveConfig.k_mppt` default (10.0) is the 50 kW-scale controller gain. The v12 5 kW campaigns never overrode it. ~5× the rated gain of the scaled system (p.k_mppt ≈ 1.94) | v13 cfg sets `k_mppt = p.k_mppt`. Caught by acceptance test B2 |
+72:| 2026-08-12 | **ζ=1.5 rope damping + tension rectifier = DC reverse torque** | EVERY ODE test stalls to ω≈−0.2 rad/s regardless of genome/k_mppt/startup. BEM predicts 22 kW, ODE produces ~0 | `initialization.jl:97` hardcoded zeta=1.5 (~30-150× physical Dyneema). `max(0.0, EA·ε+c_damp·v)` rectifier in `rope_forces.jl:19` clips the damper asymmetrically → non-zero mean force (DC bias) that overwhelms aero torque | ζ promoted to `SystemParams.zeta` default 0.05. `initialization.jl` uses `p.zeta`. See DECISIONS.md [2026-08-12] + `handovers/handover-2026-08-12-zeta-damping-fix.md` |
+
+== trust log: blade-mass void search ==
+31:| 2026-09-23 | **`wind_speed_at_ring` accepts a hub altitude and never uses it, leaving an unanchored 50 m shear reference** | The body computes `v_ref*(z/h_ref)^0.14` without reading `hub_altitude`, yet the caller passes the real hub altitude, so it looks wired. At the 5 kW machine's top ring, 9.40 m, 11 m/s becomes **8.7051 m/s**. That is 0.7914 on speed, 2.02x on required area, and **17.3x on top-rotor blade mass**, the largest single contributor to island 1's oversized blades. The shear DIRECTION is correct: the top ring reads faster than the bottom, 8.7051 against 7.9959. The co-axial wake factor is what makes the top rotor net-slowest at 7.9091 | **Not yet fixed. Recorded as an UNANCHORED parameter, the `physics-topology.md` section 6 silent-default pattern.** The 50.0 m reference is a placeholder, not a measured height. Either use the turbine's operating altitude as the reference, or state `v_rated` explicitly as the rotor-height wind. A dead parameter the caller appears to supply is the worst form, because it reads as connected. Probe: `scratch/probe_bem_sizing_audit.jl` |
+32:| 2026-09-23 | **A total inflation factor was reported as one defect's attribution** | `handovers/handover-2026-09-23-multirotor-bem-sizing.md` attributed a **187x** blade-mass inflation to the disc-versus-annulus span error. That 187x is the product of THREE independent sizing defects. Measured one at a time on island 1's top rotor: annulus span sizing **2.17x**, equal power sharing **5.10x**, inflow **17.30x**. The annulus error, called "the dominant flaw", is the smallest. The same draft's 0.342 m annulus span already assumes equal sharing AND full 11 m/s wind. At the code's own operating point the annulus span is 1.5128 m | **Corrected in `DECISIONS.md` [2026-09-23] and by a verified-correction banner on the Part 2 handover.** Decompose a compound error into its independent factors before naming a dominant cause, and state the operating point a comparison was taken at. Measured island 1 total is 14.6253 kg against 4.8148 kg annulus-sized, a 3.04x error |
+33:| 2026-09-23 | **BEM rotor sizing used a standalone circular disc instead of the ring annulus, oversizing the blade span** | Island 1 (3 rotors) carries **14.6253 kg** of blade mass against island 3's (1 rotor) 2.9735 kg. Its top rotor's span is **1.9584 m**, sweeping 36.93 m2 where 27.68 m2 was required. The top-heavy head then buckles the lower transmission. CORRECTED 2026-09-23: this row previously read 11.54 kg, 380 %, and pinned M proportional to 1/sqrt(N) | `objective_v10.jl` sets `span = 0.75*r_rotor_i*blade_scale_i`, where `BEM.rotor_radius_for_power` returns a SOLID DISC radius, so the ring radius never enters the span. Three further defects compound it: `power_split = 0.6` puts 60 % on the top rotor, the `n_active == 1` branch sizes a single rotor at 0.6*P, and the unanchored 50 m shear reference de-rates the whole machine. CORRECTED: the wake factor does not invert the shear, and the slender hub does not enter the span at all | **OPEN / DOCUMENTED, with corrected attribution.** Blueprint in `handovers/handover-2026-09-23-multirotor-bem-sizing.md`, which now carries a verified-correction banner. Measured cumulative factors on the top rotor: annulus 2.17x, equal share 5.10x, inflow 17.30x. Note Jamieson's 1/sqrt(N) is the DISC law and is the WRONG guard for a TRPT: ring-anchored blades fall nearer 1/N^2, measured 0.128 for N=3. The sizing-to-dynamics hand-off is verified correct |
+34:| 2026-09-23 | **Island 1 structural bottleneck is lower transmission Euler buckling, driven by inverted-pendulum blade mass** | Island 1 hits dynamic FoS trough 1.4772 at t=0.82 s and limit cycles at 1.79 m p2p, while Island 3 passes cleanly at FoS 12.5 | Bottleneck isolated to Ring 4 (GID 31) in lower transmission cylinder: failure is 100% axial column buckling (w_A = 0.6767, P_crit = 1621.5 N). Expansion rings (FoS 3.35, 10.48) and hub (FoS 6.37) are sound. Optimizer shrank r_hub to 2.61 m, blowing blade span to 1.96 m and hub blade mass to 9.46 kg (3.2x Island 3) via m ∝ span³. Top-heavy 14.6 kg head whips slender 12 mm cylinder. | **CLOSED.** Evaluated via `scratch/probe_ring_fos_breakdown.jl` and `scratch/probe_mass_resonance.jl`. Uniform bare mass column collapses lateral limit cycle by 3.1x (0.57 m p2p), cone stays taut at 230–283 N, and FoS trough surges to 6.0522. Island 1 is an unviable, degenerate genome; multi-rotor physics model is verified sound. |
+38:| 2026-09-22 | **Expansion-rotor translational mass never reached the ring node**. | On island 1 rings 8 and 9 read `mass = 1.5702 kg`, the bare ring. They also carried `er.mass` 2.547 and 2.613 kg, and rotary inertia `I_z` 31.9055 and 32.4947 kg m2. Their lateral sensitivity `a = F/m` was about 2.6x too high. The rotary inertia `J_rotor` was added on 2026-08-25. The physical mass was not. | `mass_node += er.mass` in `_build_kite_turbine_system_impl`, always. It is deliberately NOT gated on `EXPANSION_PHYSICS[].blade_inertia`. The mass is real either way, and `expansion_airborne_mass` already budgets it for lifter sizing. So the ODE node weighed less than the lifter was sized against. `er.mass` is the ASSEMBLY total. Add it once, never times `n_blades` (`test_blade_mass_law.jl` guards that). Rings 8 and 9 now read 4.1175 and 4.1836 kg. Island 3 has no expansion rotors and is unchanged bit-for-bit. `57b3f58`. |
+61:| 2026-08-24 | **~~Settle-vs-ODE 94× twist mismatch~~ → RETRACTED 2026-08-25: it was `J·θ`, not a rope-torque gap** | 2-rotor seed settles then reverses to ω<0. A first pass reported the ODE rope torque as 2.36 N·m vs the 221 N·m of the bisection ("94×") | The "2.36 N·m" figure came from `torques[1]` after the generator reaction subtraction (a net residual, ~1% convergence error). The chord model and ODE rope chain actually agree to 5 figures. The real cause is `ring_forces.jl:314`: `torques[ri] -= J_rotor·alpha[ri]` used the twist ANGLE θ as angular acceleration. A spurious torsional spring (J·θ) that braked the machine to reversal. Only fires when expansion rotors exist (why 1-rotor works, 2-rotor dies) | Blade mass is now rotary INERTIA (added to ring `inertia_z` at build, `dω/dt=τ/(I_z+J)`). J·θ term removed. Also fixed: preload used 3D chord as axial gap (over-tensioned 18 to 22×), bisection negative-twist floor |
+
+== 95c385d body ==
+test(wind): pin one wind authority — the shear exponent comes from the site spec
+
+The D1 landing fixed the ODE and decoder paths. Three shipped wind closures
+still hand-wrote `(z / h_ref)^(1/7)`: sim_runner.jl (6), visualization.jl (8),
+control_map_hunt.jl (3). They agree with the anchor site by coincidence, so they
+pass every behaviour test today and would silently keep flying the anchor
+exponent once `at_site` re-bases a machine on a site whose exponent is not 1/7.
+
+- src/wind_profile.jl: add `site_shear(h_ref, h)`, the single place the runtime
+  shear exponent is written down (reads SITE_ANCHOR.shear_exp). Export it.
+- retire all 17 literals to `site_shear(p.h_ref, z)` (and `p_st.h_ref`), which is
+  numerically identical at the anchor.
+- test/test_wind_authority.jl: behaviour pins + a COUNTED source pin, wired into
+  the fast suite. RED-first evidence: with the literals restored, the source pin
+  fails (`count("site_shear(", flat) >= n` -> 0 >= 6) while all 23 behaviour
+  checks still pass — which is exactly why a source assertion is required.
+
+
+== 18.8 forms in draft ==
+234:(FoS) target and hard floor, both 2.5, and a line length of 18.8
+249:every candidate runs at one length, 18.8 metres (NR-015).
+257:It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+262:floor. The folded class passes at 18.8 metres (NR-028).
+331:| Line length | 18.8 m | NR-015 |
+
+== SW3b era-name check ==
+== SW3b era-name check (reporting tree + queue), 2026-10-13T17:46:01Z ==
+
+--- pattern: pre-derate --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/drafts/2026-10-08-report-first-draft.md:543:  Superseded is the milder class, not void. The pre-derate campaign
+  [queue hits:]
+
+--- pattern: pre-bank --- report mentions:
+grep: --include=*.md: No such file or directory
+  [queue hits:]
+
+--- pattern: bank derate --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/drafts/2026-10-08-report-first-draft.md:14:The physics era is `post-95c385d_wind-authority`. The bank derate
+docs/reporting/drafts/2026-10-08-report-first-draft.md:42:derate applied. The bank derate is a calculated depowering of the ring
+docs/reporting/drafts/2026-10-08-report-first-draft.md:544:  stands as era record, because the bank derate moved the search space.
+docs/reporting/2026-10-08-room-consultation.md:32:  dead geometry genes, the measured bank derate, Phase 0 signing?
+docs/reporting/2026-10-08-room-consultation.md:84:  tension-supplied capacity, MTR, bank derate (cos²·⁶⁵), honest window,
+docs/reporting/draft-consistency-sweep.md:1074:- Term check, bank derate, against the queue v12 (`04d2179`): the
+docs/reporting/numbers-register.md:220:The rows carry the measured bank derate. They give the exponent in use
+docs/reporting/numbers-register.md:232:| NR-019 | Bank-derate exponent in use (main-rotor disc power) | 2.65 (power × `cosd(bank)^2.65`, the same exponent the elevation factor uses) | — | one authority `BEM.projection_factor` (`src/bem.jl`, landed `b835ebc`, record `779fa55`). Application sites `src/ring_forces.jl:234-235`, `src/initialization.jl:1033-1037`, `src/sim_frame.jl:158-159, 480-481` (`94223eb`, Rod ruling 2026-10-01). Guard `test/test_ring_forces.jl` "main-rotor bank derate" | signed (aero-validator, 2026-10-08) |
+  [queue hits:]
+107:| bank derate | The power factor applied to a banked rotor. It scales disc power by the cosine of the bank angle. The exponent takes a fixed value. Banked blades cone out of the ring plane. The rotor sweeps less streamtube frontal area. | physics-topology 4.0.1, CONTEXT.md, founder docx return note 6 (`c2e2aee`) | room-supplies |
+252:| "the expansion model replaces the disc model" | the record bans the expansion model at every ring. A banked rotor uses the disc model with the bank derate. | stale-phrases notes, physics-topology 4.0.1 |
+329:  queue. The bank derate row takes the mechanism clause from the note:
+
+--- pattern: cp fix --- report mentions:
+grep: --include=*.md: No such file or directory
+  [queue hits:]
+
+--- pattern: cpfix --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/numbers-register.md:474:`scripts/results/length_variants_island3-cpfix` and
+docs/reporting/numbers-register.md:479:| NR-027 | 10-05 length screen on the pre-fold island-3 genome (both rounds, arrow = round 1 to round 2) | P_mean 18.8 m: 3.7955 → 4.2332; 21.2 m: 3.8645 → 4.3055; 25.0 m: 3.9747 → 4.4122. All six rows FAIL (P<5.0) | kW | `scripts/results/length_variants_island3/variants.csv` (`f225e95`, 2026-10-05T10:10Z); `scripts/results/length_variants_island3-cpfix/variants.csv` (`a82cafd`, 2026-10-05T11:25Z) | signed (science-validator, 2026-10-10) |
+docs/reporting/numbers-register.md:480:| NR-028 | 18.8 m fold comparison at the cpfix era | pre-fold genome 4.2332 (fail), folded class P_end 5.3691 (ok) | kW | Pre-fold: NR-027 round 2. Folded: `scripts/compute_seeds.jl:50-56`; `docs/validation/2026-10-05-s2-fold-flight.md` | signed (science-validator, 2026-10-10) |
+  [queue hits:]
+
+--- pattern: folded class --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/drafts/2026-10-08-report-first-draft.md:262:floor. The folded class passes at 18.8 metres (NR-028).
+docs/reporting/drafts/2026-10-08-report-first-draft.md:264:The campaign searched the folded class, so the launch carries the
+docs/reporting/draft-consistency-sweep.md:352:    cross-read NR-027. The folded class at 18.8 m cross-reads NR-028.
+docs/reporting/numbers-register.md:480:| NR-028 | 18.8 m fold comparison at the cpfix era | pre-fold genome 4.2332 (fail), folded class P_end 5.3691 (ok) | kW | Pre-fold: NR-027 round 2. Folded: `scripts/compute_seeds.jl:50-56`; `docs/validation/2026-10-05-s2-fold-flight.md` | signed (science-validator, 2026-10-10) |
+  [queue hits:]
+
+--- pattern: the fold --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/2026-10-08-reporting-framework.md:131:| U5 | Achievements: Daisy-anchored honesty, honest windows, tension-supplied capacity, the fold, the guards | @author | DECISIONS, trust-log, register |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:262:floor. The folded class passes at 18.8 metres (NR-028).
+docs/reporting/drafts/2026-10-08-report-first-draft.md:264:The campaign searched the folded class, so the launch carries the
+docs/reporting/2026-10-08-room-consultation.md:31:  windows, tension-supplied capacity, the fold, the k-alignment faults, the
+docs/reporting/2026-10-08-room-consultation.md:85:  instrument floor, the fold, expansion rotor vs topmost rotor, L/r, β,
+docs/reporting/draft-consistency-sweep.md:39:- Two standalone "2" tokens left. Both were comment text that the fold replaced with the full answers.
+docs/reporting/draft-consistency-sweep.md:279:  push-note readings reproduce (v0.8 read 3199, the fold sim read 3234).
+docs/reporting/draft-consistency-sweep.md:304:- No value token arrived, dropped or altered. The fold-sim to landed diff
+  [queue hits:]
+176:| the fold | The rebase of the lowest power rung onto the S2-class fold seed. The ceiling genes fold up, and the bounds recenter. | DECISIONS [2026-10-05] | room-supplies |
+
+--- pattern: wind.authority --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/drafts/2026-10-08-report-first-draft.md:14:The physics era is `post-95c385d_wind-authority`. The bank derate
+docs/reporting/drafts/2026-10-08-report-first-draft.md:41:come from the physics era `post-95c385d_wind-authority`, with the bank
+docs/reporting/drafts/2026-10-08-report-first-draft.md:655:| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:656:| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:657:| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:658:| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017 | `df8a2b4` | `post-95c385d_wind-authority` |
+docs/reporting/numbers-register.md:16:`post-95c385d_wind-authority`, data commit `dd3cc6a` on
+docs/reporting/figures/pair-extract/README.md:27:post-95c385d_wind-authority). The path is `evaluate_windowed :cold`, the
+  [queue hits:]
+
+--- pattern: post-95c385d --- report mentions:
+grep: --include=*.md: No such file or directory
+docs/reporting/drafts/2026-10-08-report-first-draft.md:14:The physics era is `post-95c385d_wind-authority`. The bank derate
+docs/reporting/drafts/2026-10-08-report-first-draft.md:41:come from the physics era `post-95c385d_wind-authority`, with the bank
+docs/reporting/drafts/2026-10-08-report-first-draft.md:655:| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:656:| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:657:| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:658:| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017 | `df8a2b4` | `post-95c385d_wind-authority` |
+docs/reporting/numbers-register.md:16:`post-95c385d_wind-authority`, data commit `dd3cc6a` on
+docs/reporting/figures/pair-extract/README.md:27:post-95c385d_wind-authority). The path is `evaluate_windowed :cold`, the
+  [queue hits:]

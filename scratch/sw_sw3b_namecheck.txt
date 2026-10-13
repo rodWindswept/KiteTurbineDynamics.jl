@@ -1,0 +1,8 @@
+SW3b era-name check — reporting tree and the queue (2026-10-13, science-writer)
+
+bank derate: queue row present (v12, machine group); draft abstract + section 4.2.
+the fold: queue row present (trust-and-record group).
+cp fix: draft section 2.3; register NR-027; no queue row -> routed to Track D (v13).
+folded class: draft section 2.3; register NR-028; no queue row -> routed (v13).
+wind authority: draft abstract + provenance appendix; register header; no queue row -> routed (v13).
+pre-derate: draft section 4.2, supersede clause; covered by the era-map row.

@@ -1,0 +1,12 @@
+== scratch/sw_ws3a_ledgersim.md: words=4430 total=6 per100w=0.14 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+  | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+

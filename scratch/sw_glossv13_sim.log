@@ -1,0 +1,13 @@
+--- base lint rc=0
+sw_glossv13_base.md              words=4242 total= 12 per100w=  0.28 em_dash= 1
+[HOOK:ste] sw_glossv13_base.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_glossv13_base.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_glossv13_base.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+--- new lint rc=0
+sw_glossv13_new.md               words=4464 total= 12 per100w=  0.27 em_dash= 1
+[HOOK:ste] sw_glossv13_new.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_glossv13_new.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_glossv13_new.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+--- offender delta base->new:
+   > == scratch/sw_glossv13_new.md: words=4464 total=12 per100w=0.27 ==
+done
