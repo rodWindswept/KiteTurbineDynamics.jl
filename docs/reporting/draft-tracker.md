@@ -148,6 +148,11 @@ Section 2.2 retitles with 2.2.1 The gene and 2.2.2 The evaluator.
 The abstract takes the 1 dp form, 15.0, and the wind basis (NR-009, NR-032).
 The downstream numbering holds pending the founder call, and the block diagram takes its figure-map row 19 pointer.
 
+v0.28 pass by @author (2026-10-13).
+This pass folds the AeroDyn pre-cone gloss at section 2.1.
+The founder return note 10 closes on the aero read (`2db50f9`).
+No value, unit or row moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
@@ -170,8 +175,8 @@ counter-read closed and wording amends applied (`570be73`, `f86228a`).
 - Context values for the levers and implications chapters when Phases
 1 to 3 land.
 
-- The AeroDyn pre-cone equivalence for "bank": awaits the
-@aero-validator read (founder return note 10).
+- The AeroDyn pre-cone equivalence for "bank": landed (founder return
+note 10, aero read `2db50f9`). The gloss folds at draft v0.28.
 
 - The section 2.2 renumber cascade: pending the founder call (@user).
 

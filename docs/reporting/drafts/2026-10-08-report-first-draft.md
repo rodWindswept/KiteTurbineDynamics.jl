@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.27. Date 2026-10-13.
+Internal engineering report. Draft v0.28. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -179,8 +179,10 @@ station power take-off (PTO) ring. The PTO ring anchors the shaft at the
 ground and turns about its central axis.
 
 Bank is the blade angle away from the ring plane about its chord axis at
-the ring. Blade scale sets the blade size. The scale multiplies the
-blade span and chord, and the blade mass follows the span cubed.
+the ring. The equivalent term in AeroDyn is pre-cone.
+
+Blade scale sets the blade size. The scale multiplies the blade span
+and chord, and the blade mass follows the span cubed.
 
 The search treats each of these as a gene. The ring geometry sets the
 hub and ground radii, and the rotor count sets how many rings carry
