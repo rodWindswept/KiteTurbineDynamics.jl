@@ -1,0 +1,26 @@
+== 9ab7dd4 -> 99d09a1 ==
+lines: +21 -21; raw token occurrences: added 11, removed 11
+arrivals: {'25': 1}
+removals: {'24': 1}
+  [ARR 25 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.25. Date 2026-10-13.
+  [REM 24 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.24. Date 2026-10-12.
+
+== 99d09a1 -> d91b93b ==
+lines: +13 -9; raw token occurrences: added 13, removed 13
+arrivals: {'26': 1}
+removals: {'25': 1}
+  [ARR 26 net+1] raw: added-side 2, removed-side 1
+      +1: Internal engineering report. Draft v0.26. Date 2026-10-13.
+      +1: Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [REM 25 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.25. Date 2026-10-13.
+
+== cumulative 9ab7dd4 -> d91b93b ==
+arrivals: {'26': 1}
+removals: {'24': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  24: net -1, raw added 0, raw removed 1
+  OK  26: net +1, raw added 2, raw removed 1

@@ -1,0 +1,12 @@
+== scratch/sw_sweep14_v024.md: words=3909 total=6 per100w=0.15 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2   
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+

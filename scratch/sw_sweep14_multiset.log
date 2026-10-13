@@ -1,0 +1,26 @@
+== 9ab7dd4->99d09a1: +only 1 lines, -only 1 lines
+   +only x1: Internal engineering report. Draft v0.25. Date 2026-10-13.
+   -only x1: Internal engineering report. Draft v0.24. Date 2026-10-12.
+== 99d09a1->d91b93b: +only 13 lines, -only 9 lines
+   +only x1: Internal engineering report. Draft v0.26. Date 2026-10-13.
+   +only x1: The campaign minimizes a kg-equivalent objective score: the airborne mass plus the gate penalties.
+   +only x1: A lower score is better.
+   +only x1: The objective score is not the physical airborne mass.
+   +only x1: 
+   +only x1: | Objective | Airborne mass + penalties, kg-equivalent | NR-036, NR-039 |
+   +only x1: All three islands start from one seed.
+   +only x1: The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+   +only x1: The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+   +only x1: Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004).
+   +only x1: Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+   +only x1: The physical airborne mass of the winner is 25.698 kg (NR-018).
+   +only x1: The objective score adds 1.665 kg-equivalent of penalties (NR-039).
+   -only x1: Internal engineering report. Draft v0.25. Date 2026-10-13.
+   -only x1: | Objective | search objective (airborne mass plus penalties), kg | NR-036, NR-039 |
+   -only x1: All three islands start from one seed. The seed scores 36.109
+   -only x1: kilograms (NR-006).
+   -only x1: Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2   
+   -only x1: reaches 30.637 kilograms at generation 30 (NR-004). Island 3 reaches
+   -only x1: 27.364 kilograms at generation 26 (NR-005), the search objective. It reads
+   -only x1: the airborne mass 25.698 kilograms (NR-018) plus 1.665 kilograms of
+   -only x1: objective penalties (NR-039).

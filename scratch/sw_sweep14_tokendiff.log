@@ -1,0 +1,15 @@
+== 9ab7dd4 -> 99d09a1 ==
+arrivals: {'25': 1}
+removals: {'24': 1}
+  [arr 25] Internal engineering report. Draft v0.25. Date 2026-10-13. | It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+  [rem 24] Internal engineering report. Draft v0.24. Date 2026-10-12. | The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a
+
+== 99d09a1 -> d91b93b ==
+arrivals: {'26': 1}
+removals: {'25': 1}
+  [arr 26] Internal engineering report. Draft v0.26. Date 2026-10-13. | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [rem 25] Internal engineering report. Draft v0.25. Date 2026-10-13. | It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+
+== cumulative 9ab7dd4 -> d91b93b ==
+arrivals: {'26': 1}
+removals: {'24': 1}
