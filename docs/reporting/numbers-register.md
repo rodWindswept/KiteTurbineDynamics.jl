@@ -1139,3 +1139,53 @@ This note signs the display form, so the sweeps read one basis.
   column.
 
 The five replacement sites in the science-writer plan quote this form.
+
+## Derived row: NR-042, winner blade-tip clearance and the gate floor (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The aero seat answered W7 and proposed the row (receipt `docs/reporting/room-responses/aero-validator-2026-10-13-w7-clearance-margin-and-fos-phrase-read.md`). This block signs it under SV5.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-042 | Winner blade-tip clearance and the gate floor | floor `1.5`, winner `5.468` at decode. Margin `+3.968` (`3.65` times, `+264.5` per cent) | m | pair-extract log line 11 (`docs/reporting/figures/pair-extract/extract-winner-operating-point.log`, sha256 `7579e84a5724a2a41f9ada08200b0dc59e0a03177ce9193c4978abc1d71474f8`). Runner `scripts/run_v13_5kw_masslift.jl:76` and `:254-257`. Knob probe `scratch/av_probe_clearance_knob.jl` | signed (science-validator, 2026-10-13) |
+
+Sign-off basis:
+
+- Extract pin. The committed extract log recomputes to sha256 `7579e84a5724a2a41f9ada08200b0dc59e0a03177ce9193c4978abc1d71474f8`. Line 11 reads `clearance = 5.468123977660059 m`.
+
+- Gate sites. The runner sets `MIN_CLEARANCE = 1.5` at `:76`. It marks a reading below that floor `status = :clearance_reject` at `:254-257`. The clearance definition sits at `src/objective_v10.jl:414`. The definition reads the ground clearance at the outer tip of the lowest active rotor. The basis is ground offset 1.0 m and elevation 30 degrees.
+
+- Decode note. The runner decodes each candidate twice. The gate path omits `v_rated` and reads `5.4681239776600616` m. The score path passes `v_rated = 11.0` and reads `5.4668473649653162` m. The pair sits 1.28 mm apart. Both forms round to the stored telemetry `5.47` (island 3, generation 26, index 9). The extract mirrors the gate path to 2.7e-15 m.
+
+- Reproduction. This seat re-ran the knob probe at `a7c4dc2`. The output equals the aero run (`scratch/av_w7_clearance_probe_2026-10-13.log`) and this seat's earlier run at `e0b8a92` line for line. Log: `scratch/sv_w7_knob_rerun_2026-10-13.log`.
+
+- Arithmetic. This seat recomputed every quoted form from the committed bytes. Checker: `scratch/sv_sv5_margins_check.py` and its log. Full digits: margin `3.968123977660059` m, ratio `3.645415985106706`, `264.5415985106706` per cent.
+
+Reading rules:
+
+- Quote the winner as 5.468 m at decode. Quote the margin as +3.968 m (3.65 times, +264.5 per cent).
+
+- The section 3.3 clearance cell reads "pass, 5.468 m, margin +3.968 m". The F3 note takes this row for the "≥ 1.5 m" string.
+
+Boundaries that travel with this row:
+
+1. One machine, one capture: the island-3 winner at its recorded decode.
+
+2. The margin is decode geometry, not a flight measurement.
+
+Counter-read requested from the aero seat.
+
+## Display-form note: the FoS config pair (NR-015) (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The aero W7 receipt asks one register question. NR-015 records "FoS gate 2.5/2.5". That string names the two config fields: `fos_target = 2.5` and `fos_hard = 2.5` (`scripts/run_v13_5kw_masslift.jl:151-155`).
+
+The campaign scorer gates on the floor only. A window minimum below `fos_hard` rejects the design (`src/objective_v12.jl:149`). The utilisation charge reads `fos_hard / FoS_min` (`:165`). The `fos_target` field takes no read in the campaign scorer. The older power scorer switches its soft target window off when target equals hard (`:50-54`).
+
+Reading rule:
+
+- Where a draft site states the FoS requirement as a plain "2.5", it reads the floor, `fos_hard`. The pair form "2.5/2.5" stays valid as the recorded config.
+
+- No value moves. NR-015 stands as signed.

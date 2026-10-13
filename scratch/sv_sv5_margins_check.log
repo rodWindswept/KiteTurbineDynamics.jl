@@ -1,0 +1,41 @@
+== pins ==
+  OK  extract sha256: '7579e84a5724a2a41f9ada08200b0dc59e0a03177ce9193c4978abc1d71474f8' == '7579e84a5724a2a41f9ada08200b0dc59e0a03177ce9193c4978abc1d71474f8'
+  OK  extract sha matches receipt form: '7579e84a...' == '7579e84a...'
+== extract read ==
+  clearance 5.468123977660059  P_end 5.314113662272673  FoS_min 14.971791422208508  segments ['S1', 'S2', 'S3', 'S4', 'S5']
+== runner constants ==
+  MIN_CLEARANCE 1.5  p_floor_kw 5.0  fos_hard 2.5
+  OK  telemetry 3,26,9 clearance: 5.47 == 5.47
+== knob runs ==
+  sv rerun gate/score: [5.468123977660062, 5.466847364965316]
+  av  run  gate/score: [5.468123977660062, 5.466847364965316]
+  OK  sv rerun == av run (both paths): [5.468123977660062, 5.466847364965316] == [5.468123977660062, 5.466847364965316]
+  OK  gate path vs extract: diff 2.665e-15 < 1e-12
+  OK  gate rounds to telemetry: 5.47 == 5.47
+  OK  score rounds to telemetry: 5.47 == 5.47
+  decode paths apart by 1.277e-03 m
+== margins ==
+  OK  clearance margin quote: '3.968' == '3.968'
+  OK  clearance ratio quote: '3.65' == '3.65'
+  OK  clearance percent quote: '264.5' == '264.5'
+  OK  power margin quote: '0.314' == '0.314'
+  OK  power percent quote: '6.28' == '6.28'
+  OK  power ratio quote: '1.06' == '1.06'
+  OK  FoS ratio quote: '5.99' == '5.99'
+  OK  FoS margin quote: '12.472' == '12.472'
+  OK  FoS percent quote: '498.9' == '498.9'
+  segment twist margins: S1 64.913, S2 65.047, S3 65.180, S4 65.312, S5 69.821
+  OK  least twist margin segment: 'S1' == 'S1'
+  OK  S1 twist margin quote: '64.913' == '64.913'
+  OK  S1 twist ratio quote: '2.91' == '2.91'
+  OK  S1 twist percent quote: '65.7' == '65.7'
+  OK  S1 torque ratio quote: '2.03' == '2.03'
+  OK  S1 torque percent quote: '102.9' == '102.9'
+== full digits ==
+  clear margin 3.968123977660059  ratio 3.645415985106706  pct 264.5415985106706
+  power margin 0.314113662272673  pct 6.282273245453459
+  fos ratio 5.988716568883403  margin 12.471791422208508  pct 498.8716568883403
+  twist S1 margin 64.91346361224987  ratio 2.912278074711846
+  torque S1 ratio 2.0287970973051634
+
+SV_SV5_MARGINS_OK
