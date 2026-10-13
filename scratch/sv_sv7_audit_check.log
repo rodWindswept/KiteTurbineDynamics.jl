@@ -1,0 +1,63 @@
+PASS  commit 7183f96 = 2026-08-14  [got 2026-08-14]
+PASS  commit 542e148 = 2026-08-15  [got 2026-08-15]
+PASS  commit 828668d = 2026-08-26  [got 2026-08-26]
+PASS  commit fe8ec77 = 2026-08-26  [got 2026-08-26]
+PASS  commit bdc9ae7 = 2026-08-22  [got 2026-08-22]
+PASS  commit 807efa6 = 2026-08-23  [got 2026-08-23]
+PASS  commit f9f31ec = 2026-08-14  [got 2026-08-14]
+PASS  commit 026c734 = 2026-08-24  [got 2026-08-24]
+PASS  commit 402697b = 2026-08-22  [got 2026-08-22]
+PASS  commit 94223eb = 2026-10-01  [got 2026-10-01]
+PASS  commit b835ebc = 2026-10-07  [got 2026-10-07]
+PASS  commit 95c385d = 2026-10-07  [got 2026-10-07]
+PASS  no commits dated 2026-08-13  [[]]
+PASS  trust log row 08-14
+PASS  trust log row 08-26
+PASS  trust log row 08-13
+PASS  trust log row 08-24
+PASS  trust log row 08-22
+PASS  trust log 1.94
+PASS  trust log 5.18
+PASS  DECISIONS unified law heading
+PASS  DECISIONS corrected heading
+PASS  DECISIONS evaluator v13 heading
+PASS  DECISIONS wind standard heading
+PASS  draft carries: The blade-mass-law correction landed on 2026-08-
+PASS  draft carries: On 2026-08-13 the evaluator ran 5-kilowatt desig
+PASS  draft carries: The scaled system gain sat near 1.94.
+PASS  draft carries: The re-gate at the campaign gain returned 5.18 k
+PASS  draft carries: Telemetry shows no surviving design carried the 
+PASS  draft carries: a gate must pin a measured number, so drift fail
+PASS  draft carries: An off-by-one in the rotor-to-ring map put the m
+PASS  draft carries: An inverted-taper genome diverged within seconds
+PASS  draft carries: void the data, keep the record
+PASS  draft carries: The pre-derate campaign stands as era record
+PASS  draft carries: span shrink
+PASS  NR-019 exponent in use
+PASS  NR-019 exponent value
+PASS  NR-020 measured retention
+PASS  NR-020 fit form
+PASS  NR-027 six rows fail
+PASS  NR-028 folded class
+PASS  register header era
+PASS  glossary cp fix row
+PASS  glossary folded class row
+PASS  glossary wind authority row
+PASS  extract era stamp
+PASS  archive dir present
+PASS  note carries: NR-043
+PASS  note carries: `88277f6`
+PASS  note carries: 1.4994019682084492
+PASS  note carries: `1.499 m`
+PASS  note carries: it is not a ring radius and not the tip offs
+PASS  note carries: No render moves until then
+PASS  note carries: joins at the next build
+PASS  map v22 records NR-043
+PASS  map v22 display form
+PASS  captions plain form
+PASS  captions tech form
+PASS  ee708d7 figures tree = map + note + captions (no plate bytes)  [docs/reporting/figures/figure-map.md;docs/reporting/figures/system-anatomy/captions.md;docs/reporting/figures/system-anatomy/register-status.md]
+PASS  caption checker rerun = committed log
+
+all checks pass
+SV_SV7_DONE
