@@ -1103,3 +1103,39 @@ The receipts sit in `scratch/av_counter_nr013ext.py` and its log.
 
 Verdict: no material discrepancy. The block stands as signed. The digits
 stay for the F3 plate.
+
+## Display-form note: the objective-score unit (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Parts 3 and 4 of the feedback round 2 record rule the term for objective
+values (`docs/reporting/feedback/feedback-on-report2.md`). The science-writer
+plan applies the term at five sites (`docs/plans/2026-10-13-feedback2-science-writer-plan.md`, SW1).
+This note signs the display form, so the sweeps read one basis.
+
+- Objective values display as "kg-equivalent". The rows: NR-003 to
+  NR-006, NR-036 and NR-039. Figure text that prints them takes the same
+  form.
+
+- The defining use reads "kg-equivalent objective score". Value sites
+  read "kg-equivalent".
+
+- Physical mass values keep the unit "kg". NR-018 reads 25.698 kg. The
+  mass term inside NR-039 reads 25.698 kg.
+
+- The penalty terms inside NR-039 read "kg-equivalent". The total reads
+  1.665 kg-equivalent.
+
+- The section 3.2 reading rule keeps its shape. The example reads:
+  Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005), the
+  search objective. It reads the airborne mass 25.698 kg (NR-018) plus
+  1.665 kg-equivalent of objective penalties (NR-039).
+
+- No numeral moves at any site. The signed unit strings stand as
+  recorded. The sweep reads one basis: a fitness value is the airborne
+  mass plus penalties, shown as "kg-equivalent".
+
+- New rows with objective values carry "kg-equivalent" in the unit
+  column.
+
+The five replacement sites in the science-writer plan quote this form.
