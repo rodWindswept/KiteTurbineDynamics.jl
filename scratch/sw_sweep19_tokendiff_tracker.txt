@@ -1,0 +1,8 @@
+== 2ebbd22 -> a90122b ==
+arrivals: {'15.0': 1, '20.698': 1, '30': 2, '304.6': 1}
+removals: none
+  [arr 15.0] The abstract takes the 1 dp form, 15.0, and the wind basis (NR-009, NR-032). | The minimum factor of safety reads 15.0 at all five report sites.
+  [arr 20.698] accuracy flags: the lift-margin register chain (sizing mass 20.698 | The lift chain reads 20.698 and 304.6 newtons.
+  [arr 30] v0.30 pass by @author (2026-10-13). | - Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. Full precision stays internal. The ruling updated the display note, and the report sites fold at draft v0.30. @science-validator holds the note.
+  [arr 304.6] The lift chain reads 20.698 and 304.6 newtons.
+

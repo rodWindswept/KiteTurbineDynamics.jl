@@ -1,0 +1,12 @@
+== eb0e08d -> a90122b ==
+arrivals: {'15.0': 5, '20.698': 1, '30': 1, '304.6': 1}
+removals: {'14.972': 5, '20.698468': 1, '29': 1, '304.58': 1}
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 20.698] itself, 20.698 kilograms. The kite carries its own weight (2026-08-21 | The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line
+  [arr 30] Internal engineering report. Draft v0.30. Date 2026-10-13. | The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+  [arr 304.6] The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line
+  [rem 14.972] Its minimum factor of safety is 14.972 (NR-009). | 14.972 (NR-009). That value is the window minimum. The capture hub
+  [rem 20.698468] The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
+  [rem 29] Internal engineering report. Draft v0.29. Date 2026-10-13.
+  [rem 304.58] The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
+

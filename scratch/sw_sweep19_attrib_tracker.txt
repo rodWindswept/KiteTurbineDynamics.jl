@@ -1,0 +1,14 @@
+== 2ebbd22 -> a90122b ==
+lines: +8 -1; raw token occurrences: added 6, removed 1
+arrivals: {'15.0': 1, '20.698': 1, '30': 2, '304.6': 1}
+removals: none
+  [ARR 15.0 net+1] raw: added-side 1, removed-side 0
+      +1: The minimum factor of safety reads 15.0 at all five report sites.
+  [ARR 20.698 net+1] raw: added-side 1, removed-side 0
+      +1: The lift chain reads 20.698 and 304.6 newtons.
+  [ARR 30 net+2] raw: added-side 2, removed-side 0
+      +1: v0.30 pass by @author (2026-10-13).
+      +1: - Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. 
+  [ARR 304.6 net+1] raw: added-side 1, removed-side 0
+      +1: The lift chain reads 20.698 and 304.6 newtons.
+
