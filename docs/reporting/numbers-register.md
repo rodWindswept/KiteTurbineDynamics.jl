@@ -1189,3 +1189,19 @@ Reading rule:
 - Where a draft site states the FoS requirement as a plain "2.5", it reads the floor, `fos_hard`. The pair form "2.5/2.5" stays valid as the recorded config.
 
 - No value moves. NR-015 stands as signed.
+
+## Display-form note: the minimum FoS at 1 dp (NR-009) (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The founder docx return asks for a 1 dp display at one site: the abstract sentence ("1dp resolution fine here"; return note 3, `scratch/au_draft_docx_notes_extract_2026-10-13.md`). This seat signs the reduced form, so the sweeps read one basis.
+
+- The signed value reads `14.971791422208508` (NR-009). The row form reads 14.972. At 1 dp the value rounds to `15.0`.
+
+- The returned copy carried "14.9". That form truncates the value. It is not the 1 dp rounding. The fold takes 15.0.
+
+- The row keeps 14.972. No value moves.
+
+Reading rule:
+
+- A site that prints the minimum factor of safety at 1 dp reads 15.0. Sites that print it at the row precision keep 14.972.

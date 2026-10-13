@@ -1,0 +1,53 @@
+== drawn numeric tokens and coverage ==
+       0  x3  scale/provenance  | 0 ;; 0 ;; 0
+     0.5  x1  scale/provenance  | 0.5
+     1.0  x1  scale/provenance  | 1.0
+   1.448  x1  covered           | ruling-mode condition run (dashed) — peak 1.448 at t = 5.798 ms
+     1.5  x2  covered           | 1.5 ;; ≥ 1.5 m, read once
+       2  x1  scale/provenance  | 2
+   2.841  x1  covered           | warm as coded: breaks at t = 2.841 ms — run ends
+       3  x1  scale/provenance  | Winner island-3 machine · as-coded cold and warm paths · 100 Hz extract at tree 980de02 · era post-95c385d_wind-authorit
+       4  x1  scale/provenance  | 4
+       5  x1  covered           | 5 kW floor — read on P_end
+   5.309  x1  covered           | window mean P 5.309 kW · P_end 5.314 kW last five (NR-008)
+   5.314  x1  covered           | window mean P 5.309 kW · P_end 5.314 kW last five (NR-008)
+   5.798  x1  covered           | ruling-mode condition run (dashed) — peak 1.448 at t = 5.798 ms
+       6  x1  scale/provenance  | 6
+     008  x2  scale/provenance  | window mean P 5.309 kW · P_end 5.314 kW last five (NR-008) ;; rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-0
+       9  x1  scale/provenance  | 9
+      10  x2  covered           | 10 ;; (t > 10 s)
+   10.17  x1  covered           | 10.17 — start: rotor Cp-peak speed (NR-016)
+      11  x1  scale/provenance  | 11
+      12  x1  scale/provenance  | first 12 ms
+     012  x1  scale/provenance  | rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+      13  x1  scale/provenance  | 13
+     013  x2  scale/provenance  | rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec ;; rows NR-008 · 
+   13.38  x1  covered           | 13.38 — window mean (NR-029)
+      15  x1  scale/provenance  | 15
+     016  x2  scale/provenance  | 10.17 — start: rotor Cp-peak speed (NR-016) ;; rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · N
+      20  x1  scale/provenance  | 20
+     027  x1  scale/provenance  | rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+     029  x2  scale/provenance  | 13.38 — window mean (NR-029) ;; rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script 
+      30  x1  scale/provenance  | 30
+     039  x1  scale/provenance  | rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+      40  x1  scale/provenance  | 40
+      50  x1  scale/provenance  | 50
+     100  x1  scale/provenance  | Winner island-3 machine · as-coded cold and warm paths · 100 Hz extract at tree 980de02 · era post-95c385d_wind-authorit
+  OK  every drawn token is covered or scale/provenance — uncovered: []
+== context assertions ==
+  OK  1.5 in the gate string
+  OK  10 in the t > 10 s placement
+  OK  5 in the kW floor label
+  OK  2.841 in the warm-break line
+  OK  1.448 and 5.798 in the ruling line
+== footer row list (boundary) ==
+  OK  footer drawn
+  footer: rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+  OK  footer carries NR-039
+  OK  footer does not yet carry NR-042 (expected)
+== ledger and note ==
+  OK  ledger line 52 is the gate string — '≥ 1.5 m, read once'
+  OK  note cites NR-042
+  OK  note keeps the closure sentence
+
+SV_F3_CENSUS_OK
