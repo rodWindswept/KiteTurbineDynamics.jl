@@ -129,6 +129,12 @@ This pass completes the window-term sweep.
 The remaining seven instances read "measurement window": the abstract and sections 2.4, 2.5, 3.3 and 5.
 No number changes value, and no figure moves.
 
+v0.25 pass by @author (2026-10-13).
+This pass folds the section 3.3 order proposal (SW2g) from the science-writer plan.
+The outcome sentences move ahead of the machine description.
+The gate block moves ahead of the machine block.
+Only the order changes, and no number moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
