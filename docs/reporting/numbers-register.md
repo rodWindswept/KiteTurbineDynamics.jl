@@ -1314,3 +1314,39 @@ Boundaries:
 
 - The tension line keeps NR-010. The elevation 70 degrees and the margin 1.5
   keep NR-026.
+
+## Derived row: NR-044, the PCA projection summary (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The levers family draws the v13 5 kW screen in gene space (rows 20 and 21, founder ask 2026-10-13). The kit notes carry the recipe and the row want. This block signs the projection summary.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-044 | PCA projection summary (v13 5 kW screen, 930 draws): variance shares, top loadings, bin rule | PC1 22.434667 (quote 22.4), PC2 17.263044 (quote 17.3), pair total 39.697710 (quote 39.7) per cent. Loadings at four decimals, the abs(v) >= 0.2 set: PC1 n_lines -0.5385, rotor_count -0.5222, blade_scale_top +0.5180, target_Lr +0.2517, r_bottom +0.2036. PC2 bank_bottom +0.5621, blade_scale_bottom -0.5605, density_profile -0.5018, bank_top -0.2444. The field bins at 18 x 18 cells over the 1 to 99 percentile rectangle | per cent, -, cells | Recipe: z-score the 930 x 10 matrix of x1..x10 (three island telemetry files, data commit dd3cc6a), one SVD, shares from the squared singular values. Reproduction below | signed (science-validator, 2026-10-13) |
+
+Sign-off basis:
+
+- Reproduction. This seat re-ran the projection in Julia (`LinearAlgebra.svd`, a different instrument than the numpy path in the kits) from the three committed telemetry files. The shares read 22.4346665772 and 17.2630436556. The pair total reads 39.6977102328. Every listed loading matches at four decimals. Checker: `scratch/sv_pca_projection_check.jl` and its log.
+
+- Counts. The matrix reads 930 rows, 310 per island. The status mix reads 508 ok, 301 reject, 110 clearance-reject and 11 reject-twist. The kit checks log carries the same.
+
+- Counter-read. The kit probe (`scratch/fig_pca_probe.py`) and the kit checks log carry the same values at the drawn precision. The F-REPRO log reads `scratch/fig_pca_repro.log`.
+
+Display form, signed:
+
+- The plates and the prose print the shares at one decimal: `22.4` and `17.3`. The pair total prints at the same precision: `39.7` (the reading ask, science-writer 2026-10-13). The row keeps six decimals.
+
+- The loadings print at four decimals from this row, as the abs(v) >= 0.2 set per axis.
+
+Reading rule:
+
+- PC1 carries 22.4 per cent, PC2 carries 17.3 per cent, and the pair carries 39.7 per cent.
+
+Boundaries that travel with this row:
+
+1. The projection reads the raw draw columns x1..x10 as logged. The evaluator rounding of x4 and x6 is not applied. The figure maps the draw space.
+
+2. The bin rule is a display fact: the field bins at 18 x 18 cells over the 1 to 99 percentile rectangle of the full screen.
+
+3. The axis names and the direction reads ride the kit text.

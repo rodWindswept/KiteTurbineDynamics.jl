@@ -1,0 +1,52 @@
+drawn text strings: 73
+== drawn readouts vs the rows (0.1 deg / 0.1 N.m drawn forms) ==
+  OK  S1 dcrit drawn 98.9
+  OK  S1 abs_dalpha drawn 33.9
+  OK  S1 tau drawn 396.8
+  OK  S1 cap drawn 805.0
+  OK  S2 dcrit drawn 98.9
+  OK  S2 abs_dalpha drawn 33.8
+  OK  S2 tau drawn 397.2
+  OK  S2 cap drawn 808.7
+  OK  S3 dcrit drawn 98.9
+  OK  S3 abs_dalpha drawn 33.7
+  OK  S3 tau drawn 397.5
+  OK  S3 cap drawn 812.2
+  OK  S4 dcrit drawn 98.9
+  OK  S4 abs_dalpha drawn 33.5
+  OK  S4 tau drawn 397.7
+  OK  S4 cap drawn 815.7
+  OK  S5 dcrit drawn 92.6
+  OK  S5 abs_dalpha drawn 22.8
+  OK  S5 tau drawn 397.2
+  OK  S5 cap drawn 1069.9
+  drawn dcrit tokens: ['90', '92.6', '98.9']
+  drawn token count: 41
+== register anchors (NR-022, NR-023) ==
+  OK  NR-022 carries 98.8590829605402
+  OK  NR-022 carries 92.6428113415131
+  OK  NR-022 carries 33.9456193482903
+  OK  NR-022 carries 33.8118700562235
+  OK  NR-022 carries 33.6795202781745
+  OK  NR-022 carries 33.5470780650781
+  OK  NR-022 carries 22.8218713268203
+  OK  register carries 396.791634149159
+  OK  register carries 805.009715596786
+  OK  register carries 1069.93247596826
+== mechanism tokens (rows pending — flagged, not actioned) ==
+    72.25  drawn=True  rowed=False  (realisability floor)
+     42.6  drawn=True  rowed=False  (crossing-limit example)
+   22,425  drawn=True  rowed=False  (2026-08-13 overshoot)
+       62  drawn=True  rowed=True  (revolutions)
+     1.05  drawn=True  rowed=False  (geometry factor)
+  OK  72.25 drawn and unrowed
+  OK  42.6 drawn and unrowed
+  OK  22,425 drawn and unrowed
+== ledger equality ==
+ledger strings: 57
+  OK  every drawn string equals a ledger entry — []
+== full numeric census ==
+  OK  every drawn token is rowed, scale, stamp or flagged mechanism — []
+  OK  delta_crit pair present
+
+SV_TWISTLIMIT_CENSUS_OK

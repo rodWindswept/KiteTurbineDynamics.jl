@@ -1,0 +1,21 @@
+S1: r_a=0.8036829846088207 r_b=0.8036829846088207 l_t=2.363334810503142
+    dcrit computed=98.859082960540235 stored=98.859082960540235 exact=true has_limit=true
+[S1 exact Float64 match] PASS 
+S2: r_a=0.8036829846088207 r_b=0.8036829846088207 l_t=2.363334810503142
+    dcrit computed=98.859082960540235 stored=98.859082960540235 exact=true has_limit=true
+[S2 exact Float64 match] PASS 
+S3: r_a=0.8036829846088207 r_b=0.8036829846088207 l_t=2.363334810503141
+    dcrit computed=98.859082960540235 stored=98.859082960540235 exact=true has_limit=true
+[S3 exact Float64 match] PASS 
+S4: r_a=0.8036829846088207 r_b=0.8036829846088207 l_t=2.363334810503142
+    dcrit computed=98.859082960540164 stored=98.859082960540164 exact=true has_limit=true
+[S4 exact Float64 match] PASS 
+S5: r_a=0.8036829846088207 r_b=4.57997905482005 l_t=10.08069835551064
+    dcrit computed=92.64281134151318 stored=92.64281134151318 exact=true has_limit=true
+[S5 exact Float64 match] PASS 
+
+boundary l_t = 2r (phi = 2): dcrit = 180.000000 deg
+[phi = 2 boundary reads 180] PASS 
+long tether l_t = 20r: dcrit = 90.143960 deg
+
+RESULT: PASS

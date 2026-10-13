@@ -1,0 +1,11 @@
+hermes dcrit record check — twist-limit plate, NR-022
+input: docs/reporting/figures/pair-extract/extract-winner-operating-point.csv
+S1: row 98.859082960540  (4.34) 98.859082960540  (5.4) 98.859082960540  drawn 98.9 in ledger
+S2: row 98.859082960540  (4.34) 98.859082960540  (5.4) 98.859082960540  drawn 98.9 in ledger
+S3: row 98.859082960540  (4.34) 98.859082960540  (5.4) 98.859082960540  drawn 98.9 in ledger
+S4: row 98.859082960540  (4.34) 98.859082960540  (5.4) 98.859082960540  drawn 98.9 in ledger
+S5: row 92.642811341513  (4.34) 92.642811341513  drawn 92.6 in ledger
+NR-022 cell carries 98.85908296054023: True | 92.64281134151318: True
+phi=2: dcrit 180.0000 deg
+phi=20: dcrit 90.1440 deg
+PASS
