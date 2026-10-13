@@ -3,3 +3,6 @@ record == sim OK: offender delta header-only; append +92 lines, 0 removed
 == diff stat ==
  docs/reporting/draft-consistency-sweep.md | 92 ++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 92 insertions(+)
+== receipt lint 2026-10-13T21:16:18Z ==
+science-writer-2026-10-13-sweep-19.md words= 275 total=  0 per100w=  0.00 em_dash= 0
+rc=0
