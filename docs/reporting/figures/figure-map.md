@@ -32,8 +32,8 @@ renderer set, `ring-utilisation`, `twist-limit`, `k-basis` and
 | 1 | 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
 | 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | `system-anatomy` | R2 | The island-3 winner decode (`scratch/fig1_decode_winner.jl`, data commit `dd3cc6a`). Physics-topology §3 | Seated in the draft (§2.1, v0.22; kit embed-ready). The science half of the content check. The Track D display-form flip rides the author pass |
 | 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
-| 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | `eval-timeline` | R2 | `eval-timeline-extract` (`21e941d`). `window-trace-extract` (`6175f83`) | F-VALUE at the sign-off commit. Then the fold |
-| 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE at the sign-off commit. Then the fold |
+| 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | `eval-timeline` | R2 | `eval-timeline-extract` (`21e941d`). `window-trace-extract` (`6175f83`) | F-VALUE PASS (`20d06bb`). Rod's visual pass, then the fold |
+| 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE PASS (`20d06bb`). Rod's visual pass, then the fold |
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling. Then F-VALUE at the sign-off commit |
 | 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
@@ -258,3 +258,17 @@ three slots).
   byte-identical across the five outputs, and the in-script checks and
   the F-LABEL self-check pass. The slug `eval-timeline` fills, and the
   row moves to R2. Next: F-VALUE at the sign-off commit, then the fold.
+
+- **v19 (2026-10-13):** the section 2.3 sign-off gates clear. F-VALUE
+  PASS on both plates (aero-validator, `20d06bb`). All fifteen manifest
+  pins recompute, every drawn value equals its signed form, and two
+  fresh runs per kit stay byte-identical. The register seat clears the
+  kit (science-validator, `20d06bb`). The gate-map strings verify true
+  with pins, and one bounce stands: "≥ 1.5 m" is the only unrowed
+  numeral. The clearance row is scheduled (W7 proposes the value, SV5
+  signs). Two section 3.3 table cells go to the author (the clearance
+  cite and the floor-basis cell). The review's two backing clauses land
+  in the eval-timeline register note: the dense re-read rounds to 5.310
+  against the printed row form 5.309, and the Cp-peak phrase takes its
+  own pin line. Rows 4 and 5 move to the fold gate. Rod's visual pass
+  comes first.
