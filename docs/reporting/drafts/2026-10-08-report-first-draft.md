@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.30. Date 2026-10-13.
+Internal engineering report. Draft v0.31. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -202,8 +202,12 @@ collapse.
 The polygon count names the number of lines (n_Lines). A hexagonal
 polygon connects six lines. Each line meets the ring at one vertex.
 
-The polygon count also equals the blade count. A rotor is a set of blades
-on a ring. A pentagonal rotor carries five blades.
+For an active rotor, the polygon count equals the blade count. It also
+equals the number of TRPT line attachments around the ring. A rotor is
+a set of blades on a ring. A pentagonal rotor carries five blades.
+
+Inactive genome slots may hold bank or blade-scale values. They do not
+create physical blades unless the rotor count selects them.
 
 The topmost ring carries the main rotor. The lowest ring is the ground
 station power take-off (PTO) ring. The PTO ring anchors the shaft at the
@@ -392,8 +396,9 @@ master 31ca00d.
 
 The campaign evaluated 930 designs (NR-001). The status mix reads 508
 ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
-All three islands start from one seed.
+Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_masslift.jl).
 
 ### 3.2 Convergence
 
@@ -490,20 +495,24 @@ Its geometry reads three lines, six rings and one active rotor. The
 hub radius is 4.580 metres and the ground radius 0.804 metres
 (NR-011).
 
-Its blade scales read 0.82 on the active rotor and 0.20 on a rotor
-that does not exist. The count is one (NR-011).
+The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+because the rotor count is one (NR-011).
 
-The bank gene reads 7.088 degrees at ring 6 (NR-017). A second bank
-slot reads 22 degrees, but it reaches no rotor at a count of one
-(NR-011).
+The winner genome contains two bank-angle slots. Ring 6 decodes the
+active main-rotor bank angle as 7.088 degrees (NR-017).
+
+A second bank slot reads 22 degrees. It does not decode to a physical
+rotor at a count of one (NR-011).
 
 This result differs from earlier eras for recorded reasons. The bank
 derate, the measurement window and the tightened gates moved the search
 space. Numbers across the eras would compare models, not machines.
 
 This run also trades breadth for fidelity: fewer evaluations, each on
-the measurement window. It stopped early: a screen, not a survey. The
-development-history chapter carries the trade, tagged by era.
+the measurement window. It stopped early: a screen, not a survey.
+This report covers the wind-authority era campaign and the recorded
+corrections that shaped it.
 
 ### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this section.]
 
@@ -624,6 +633,7 @@ valid-science case, not footnotes.
   The profile comes from wind measured at the Daisy machine.
   Gusts and turbulence do not occur in a scored run.
   The wind direction stays fixed.
+  The scored profile is a base case, not a full weather envelope.
 
 ## 5 Conclusion
 

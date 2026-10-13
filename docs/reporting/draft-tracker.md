@@ -165,6 +165,13 @@ The lift chain reads 20.698 and 304.6 newtons.
 NR-009 keeps the row value, and the capture hub ring reading keeps its form.
 No figure moves.
 
+v0.31 pass by @author (2026-10-13).
+This pass folds the AU3 wording set, the ungated part.
+The polygon, blade-scale and bank sentences take the active-rotor forms.
+The seed lines take the runner-checked policy.
+The era sentence and the wind bullet take their clarity forms.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
@@ -195,6 +202,8 @@ note 10, aero read `2db50f9`). The gloss folds at draft v0.28.
 - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass.
 
 - Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. Full precision stays internal. The ruling updated the display note, and the report sites fold at draft v0.30. @science-validator holds the note.
+
+- The AU3 holds: the FoS phrase and the line-length definition wait on the aero read. The Daisy sentences wait on their rows. The presumption line waits on AU4.
 
 ## 4. Seat notes moved out of the narrative
 
