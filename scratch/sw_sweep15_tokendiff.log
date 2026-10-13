@@ -1,0 +1,30 @@
+== d91b93b -> 546fc1f ==
+lines: +99 -52; raw token occurrences: added 14, removed 8
+arrivals: {'1': 1, '11.01': 1, '15.0': 1, '19': 1, '2': 1, '2.2': 2, '27': 1, '9.41': 1}
+removals: {'14.972': 1, '2.3': 1, '26': 1}
+  [ARR 1 net+1] raw: added-side 1, removed-side 0
+      +: #### 2.2.1 The gene
+  [ARR 11.01 net+1] raw: added-side 1, removed-side 0
+      +: site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
+  [ARR 15.0 net+1] raw: added-side 1, removed-side 0
+      +: The minimum factor of safety is 15.0 (NR-009).
+  [ARR 19 net+1] raw: added-side 1, removed-side 0
+      +: [Systems block diagram requested: figure-map row 19 (the simulation
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +: #### 2.2.2 The evaluator
+  [ARR 2.2 net+2] raw: added-side 3, removed-side 1
+      +: ### 2.2 The simulation analysis pipeline instrument and its terms
+      +: #### 2.2.1 The gene
+      -: ### 2.2 The genome
+  [ARR 27 net+1] raw: added-side 1, removed-side 0
+      +: Internal engineering report. Draft v0.27. Date 2026-10-13.
+  [ARR 9.41 net+1] raw: added-side 1, removed-side 0
+      +: site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
+  [REM 14.972 net-1] raw: added-side 0, removed-side 1
+      -: minimum factor of safety is 14.972 (NR-009).
+  [REM 2.3 net-1] raw: added-side 0, removed-side 1
+      -: ### 2.3 The evaluator
+  [REM 26 net-1] raw: added-side 0, removed-side 1
+      -: Internal engineering report. Draft v0.26. Date 2026-10-13.
+== identity check (net == added - removed, raw side >1 only) ==
+  2.2: net +2, raw added 3, raw removed 1

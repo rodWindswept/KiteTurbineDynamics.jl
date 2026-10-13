@@ -1,0 +1,20 @@
+== scratch/sw_sweep15_v026.md: words=3949 total=5 per100w=0.13 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | The cause is recorded. The screen measured the pre-fold winner under
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+== scratch/sw_sweep15_v027.md: words=4222 total=5 per100w=0.12 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | The cause is recorded. The screen measured the pre-fold winner under
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |

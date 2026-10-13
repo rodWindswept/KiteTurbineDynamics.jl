@@ -1,0 +1,137 @@
+== d91b93b->546fc1f: +only 99 lines, -only 52 lines
+   +only x16: 
+   +only x1: ### 2.1 The kite turbine and its terms
+   +only x1: ### 2.2 The simulation analysis pipeline instrument and its terms
+   +only x1: #### 2.2.1 The gene
+   +only x1: #### 2.2.2 The evaluator
+   +only x1: (AWES) are kite-based machines that chase that stronger wind.
+   +only x1: 2.03, at S1, the first of the five segments between the rings (NR-040).
+   +only x1: A differential-evolution campaign evaluated 930 candidate kite turbine
+   +only x1: All numbers are in the repo and
+   +only x1: Bank is the blade angle away from the ring plane about its chord axis at
+   +only x1: Cherubini mapped the ground-gen and fly-gen taxonomy.
+   +only x1: Diehl set the classification axes.
+   +only x1: Fly-gen machines carry the generator and turbine aloft. A conducting
+   +only x1: Internal engineering report. Draft v0.27. Date 2026-10-13.
+   +only x1: Kite turbines exploit multiple, short rigid blades. The blades sit on a
+   +only x1: Lifter kite modulation
+   +only x1: Loyd showed that both crosswind modes share one theoretical power
+   +only x1: Rigid wings use composite airframes. They are more efficient and more
+   +only x1: Rings without blades work as line spacers. They hold the TRPT lines
+   +only x1: Soft wings use fabric. They survive crashes and pack small.
+   +only x1: The TRPT shaft is prone to bending and twisting, especially in low
+   +only x1: The campaign winner is the best feasible candidate kite turbine under the
+   +only x1: The decoder reads it, and the builder builds the machine from it. The
+   +only x1: The field context rests on the literature.
+   +only x1: The field splits a second way, on the wing.
+   +only x1: The generator load law and the
+   +only x1: The margin is torque capacity over the segment torque it carries, and the
+   +only x1: The minimum factor of safety is 15.0 (NR-009).
+   +only x1: The polygon count also equals the blade count. A rotor is a set of blades
+   +only x1: The polygon count names the number of lines (n_Lines). A hexagonal
+   +only x1: The report reads the gate and the winner outcome for each
+   +only x1: The report states what the record supports. It also states several
+   +only x1: The search treats each of these as a gene. The ring geometry sets the
+   +only x1: The search uses differential evolution (DE) to assess kite turbine
+   +only x1: The study is simulation-only. Blade integrity is not yet gated, and the
+   +only x1: The topmost ring carries the main rotor. The lowest ring is the ground
+   +only x1: The wind above tower height is stronger and steadier than the wind
+   +only x1: This report presents a search over the design space of kite turbines.
+   +only x1: Torque passes from ring to ring, over multiple tethers.
+   +only x1: Two families of AWES exist.
+   +only x1: [Systems block diagram requested: figure-map row 19 (the simulation
+   +only x1: analysis pipeline instrument). Gate: the pipeline schema extract.]
+   +only x1: apart against the line torsion from torque transfer. Holding the lines
+   +only x1: apart is what preserves torque transmission and prevents torsional
+   +only x1: at once.
+   +only x1: blade span and chord, and the blade mass follows the span cubed.
+   +only x1: blades.
+   +only x1: can hold the power, mass, structural, clearance and twist constraints
+   +only x1: carries force, and the ground station converts tether motion to
+   +only x1: ceiling.
+   +only x1: classes of failure in developing this system, each with its lesson.
+   +only x1: collapse.
+   +only x1: comes from the tension in the kite lines.
+   +only x1: constraint in the results.
+   +only x1: costly.
+   +only x1: derate applied. The bank derate is a calculated depowering of the ring
+   +only x1: design variants. DE assesses machine genomes. A genome is a design
+   +only x1: designs under one fixed power-law generator load, each on the measurement
+   +only x1: electrical power.
+   +only x1: evaluation then feeds the comparison before DE tries a new gene.
+   +only x1: exploited by traditional wind turbines. Airborne wind energy systems
+   +only x1: flip.
+   +only x1: for steady lift tension across wind speeds remains an assumption. The
+   +only x1: ground and turns about its central axis.
+   +only x1: hub and ground radii, and the rotor count sets how many rings carry
+   +only x1: in the decode fields (NR-011).
+   +only x1: least value governs.
+   +only x1: machine, and then characterise them.
+   +only x1: modeled objective and gates. Its mean power is 5.309 kilowatts at the
+   +only x1: on a ring. A pentagonal rotor carries five blades.
+   +only x1: outer stiffening bridles sit outside the model.
+   +only x1: output, because banked blades sweep less streamtube frontal area.
+   +only x1: polygon connects six lines. Each line meets the ring at one vertex.
+   +only x1: ring and form a wide diameter rotor.
+   +only x1: safety gates stay fixed. The search asks whether one compact machine
+   +only x1: site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
+   +only x1: station power take-off (PTO) ring. The PTO ring anchors the shaft at the
+   +only x1: tension. It is not a rigid driveshaft. Its capacity to transmit torque
+   +only x1: tensioned lines. Rings sit at fixed distances under tether tension.
+   +only x1: tether sends the electrical power to the ground.
+   +only x1: the bank angles and the blade scales. The winner genome names its genes
+   +only x1: the ring. Blade scale sets the blade size. The scale multiplies the
+   +only x1: vector that describes the physical character of one machine.
+   +only x1: window (NR-001).
+   -only x1: ### 2.1 The machine and its terms
+   -only x1: ### 2.2 The genome
+   -only x1: ### 2.3 The evaluator
+   -only x1: 2.03, at S1 (NR-040).
+   -only x1: A differential-evolution campaign evaluated 930 candidate designs under a
+   -only x1: All numbers
+   -only x1: Bank is the blade angle away from the ring plane about its chord axis at the ring.
+   -only x1: Blade scale sets the blade size. The search treats each of these as a gene.
+   -only x1: Fly-gen machines carry the generator aloft. A conducting tether sends
+   -only x1: Internal engineering report. Draft v0.26. Date 2026-10-13.
+   -only x1: Kite turbines exploit short rigid blades. The blades sit on a ring and
+   -only x1: Rings without blades work as spacers. They hold the TRPT lines apart
+   -only x1: The campaign winner is the best feasible candidate under the modeled
+   -only x1: The field context rests on the literature. Loyd showed that both
+   -only x1: The field splits a second way, on the wing. Soft wings use fabric.
+   -only x1: The genome is the design vector. The decoder reads it. The builder
+   -only x1: The polygon count names the number of lines. Each line meets the ring at
+   -only x1: The report states what the record supports. It also states the failures,
+   -only x1: The search asks whether one compact machine can hold the power, mass,
+   -only x1: The shaft bends and twists without a rigid driveshaft. Its capacity to transmit torque
+   -only x1: The study is simulation-only. Blade integrity is not yet gated, and
+   -only x1: The topmost ring carries the main rotor. The lowest ring is the
+   -only x1: The wind above tower height is stronger and steadier than the wind a
+   -only x1: They survive crashes and pack small. Rigid wings use composite
+   -only x1: This report presents a search over the design space of that machine.
+   -only x1: against the line torsion from torque transfer. Holding the lines apart is
+   -only x1: airframes. They hold efficiency and cost more.
+   -only x1: builds the machine.
+   -only x1: carries force, and the ground station converts it.
+   -only x1: comes from tension itself.
+   -only x1: crosswind modes share one theoretical power ceiling.
+   -only x1: derate applied.
+   -only x1: each with its lesson.
+   -only x1: fixed power-law generator load, each on the measurement window (NR-001).
+   -only x1: flip. Cherubini mapped the ground-gen and fly-gen taxonomy. Diehl set
+   -only x1: form a wide diameter rotor.
+   -only x1: genes in the decode fields (NR-011).
+   -only x1: ground ring. A rotor is a set of blades on a ring.
+   -only x1: lifter modulation across wind speeds remains an assumption. The
+   -only x1: machine. The generator load law and the safety gates stay fixed.
+   -only x1: minimum factor of safety is 14.972 (NR-009).
+   -only x1: objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its
+   -only x1: one vertex. The polygon count equals the blade count.
+   -only x1: ring to ring.
+   -only x1: structural, clearance and twist constraints at once.
+   -only x1: tensioned lines. Rings sit apart under tension. Torque passes from
+   -only x1: the bank angles and the blade scales. The winner genome names its
+   -only x1: the classification axes.
+   -only x1: the electrical power to the ground.
+   -only x1: tower mounted wind turbine reaches. Airborne wind energy systems (AWES) are machines that chase that stronger
+   -only x1: what preserves torque transmission.
+   -only x1: wind. Two families of AWES exist.
