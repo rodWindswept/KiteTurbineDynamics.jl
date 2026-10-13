@@ -12,3 +12,6 @@ record == sim OK
 == diff stat ==
  docs/reporting/draft-consistency-sweep.md | 90 +++++++++++++++++++++++++++++++
  1 file changed, 90 insertions(+)
+== receipt lint 2026-10-13T18:24:59Z ==
+science-writer-2026-10-13-sweep-17.md words= 177 total=  0 per100w=  0.00 em_dash= 0
+rc=0
