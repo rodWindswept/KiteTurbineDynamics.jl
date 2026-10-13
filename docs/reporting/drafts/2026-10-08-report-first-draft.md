@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.28. Date 2026-10-13.
+Internal engineering report. Draft v0.29. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -55,6 +55,37 @@ optimum.
 **Keywords.** airborne wind energy, kite turbine, ground generation,
 tensile rotary power transmission, differential evolution, multibody
 simulation, design search, factor of safety.
+
+**Summary for decision.** The project completed a 930-design simulation
+screen of a 5 kW-class ground-generation rotary kite turbine with a
+tensile rotary power transmission (NR-001).
+
+The screen found a feasible candidate under the model and gates.
+The key findings follow.
+
+- The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+
+- Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+
+- The campaign winner is the best feasible candidate under the modeled objective and gates.
+  Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  Its minimum factor of safety is 14.972 (NR-009).
+
+- All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+  The least segment torque margin is 2.03, at S1 (NR-040).
+
+- The seed genome scores 36.109 kg-equivalent (NR-006).
+  Island 3 reaches 27.364 kg-equivalent (NR-005).
+
+- The ODE path reproduces every recorded winner field (NR-012).
+  The rapid path awaits its rope-break gate fix (NR-013).
+
+The report shows that a feasible 5 kW-class candidate exists in the
+searched space under the model and gates.
+
+It does not show flight readiness, a global optimum, or full structural
+safety. Blade integrity, lifter modulation, launch and recovery, and
+atmospheric realism remain open work items.
 
 ## 1 Introduction
 

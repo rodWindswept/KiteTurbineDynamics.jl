@@ -153,6 +153,11 @@ This pass folds the AeroDyn pre-cone gloss at section 2.1.
 The founder return note 10 closes on the aero read (`2db50f9`).
 No value, unit or row moves.
 
+v0.29 pass by @author (2026-10-13).
+This pass folds AU1 from the feedback plan: the summary for decision block lands after the abstract and keywords.
+The block carries the summary, six findings bullets and the limits paragraph.
+The placement stands open to a room bounce.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
