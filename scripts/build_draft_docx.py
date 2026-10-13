@@ -120,6 +120,8 @@ def build_docx(root, args, text, seats, summary):
     docx_path = out_dir / "draft-live.docx"
     cmd = [
         "pandoc",
+        "-f",
+        "markdown-smart",
         str(intermediate),
         "-s",
         "--reference-doc",
