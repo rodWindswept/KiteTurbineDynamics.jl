@@ -1,0 +1,14 @@
+== docs/reporting/draft-tracker.md: words=1954 total=10 per100w=0.51 ==
+-- sentences over 20 words --
+  [36w] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015).
+-- passive constructions --
+  | 026-10-12): the plate seats at §2.1 in draft v0.22; the kit is embed-ready. The Track D display forms still 
+  |  now live here, not in the draft. The report's value tokens are untouched.  v2 (2026-10-12): split follow-up afte
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | **Purpose.** The report file
+  | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  | v0.16 pass by @hermes (2026-10-12). This pass completes the structural
+  | v0.21 pass by @aero-validator (2026-10-12).
+  | v0.22 pass by @fig-img-diagrams (2026-10-12).
+

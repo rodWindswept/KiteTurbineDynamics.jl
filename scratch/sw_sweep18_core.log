@@ -1,0 +1,95 @@
+== sweep 18 core 2026-10-13T20:39:45Z ==
+
+== head ==
+2ebbd22628b70312000dfdff20343091e4d41af6
+
+== span log (all files) ==
+2ebbd22 docs(reporting): the founder calls land — the 2.2 renumber holds (any renumber rides the structure pass), display forms at 1 dp and the nearest millimetre, and the machine/pipeline distinction rides the structure pass; tracker edit, receipt and evidence; STE rc=0 (author seat)
+
+== span log (tracker) ==
+2ebbd22 docs(reporting): the founder calls land — the 2.2 renumber holds (any renumber rides the structure pass), display forms at 1 dp and the nearest millimetre, and the machine/pipeline distinction rides the structure pass; tracker edit, receipt and evidence; STE rc=0 (author seat)
+
+== span log (draft) ==
+(empty = no mover)
+
+== span log (register) ==
+(empty = no mover)
+
+== span log (queue) ==
+(empty = no mover)
+
+== zero-diff checks (empty = zero) ==
+--- draft vs eb0e08d:
+--- register vs 88277f6:
+--- tracker working tree:
+(all empty = zero)
+
+== STE draft tip ==
+2026-10-08-report-first-draft.md words=4441 total=  5 per100w=  0.11 em_dash= 0
+[HOOK:ste] 2026-10-08-report-first-draft.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] 2026-10-08-report-first-draft.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+rc=0
+
+== STE tracker base ==
+sw_sweep18_tracker_base.md       words=1869 total= 10 per100w=  0.54 em_dash= 0
+[HOOK:ste] sw_sweep18_tracker_base.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep18_tracker_base.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep18_tracker_base.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep18_tracker_base.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep18_tracker_base.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+rc=0
+
+== STE tracker tip ==
+draft-tracker.md                 words=1954 total= 10 per100w=  0.51 em_dash= 0
+[HOOK:ste] draft-tracker.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] draft-tracker.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] draft-tracker.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] draft-tracker.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] draft-tracker.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+rc=0
+
+== offender diff tracker base vs tip ==
+1c1
+< == scratch/sw_sweep18_tracker_base.md: words=1869 total=10 per100w=0.54 ==
+---
+> == docs/reporting/draft-tracker.md: words=1954 total=10 per100w=0.51 ==
+(only the header line differs)
+
+== token diff tracker ==
+== f5e8e7d -> 2ebbd22 ==
+arrivals: {'1': 1, '2.2': 1, '2.4': 1, '2.6': 1}
+removals: none
+  [arr 1] ## 1. Version history | First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
+  [arr 2.2] Section 2.2 retitles with 2.2.1 The gene and 2.2.2 The evaluator. | Founder calls (2026-10-13). The 2.2 retitle holds. Any renumber rides the structure pass. The structure pass also keeps the two senses of "machine" apart: the kite turbine, and the simulation analysis pipeline.
+  [arr 2.4] The campaign configuration table lands at section 2.4. | The remaining seven instances read "measurement window": the abstract and sections 2.4, 2.5, 3.3 and 5.
+  [arr 2.6] - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass.
+
+
+== token attrib tracker ==
+== f5e8e7d -> 2ebbd22 ==
+lines: +5 -1; raw token occurrences: added 5, removed 1
+arrivals: {'1': 1, '2.2': 1, '2.4': 1, '2.6': 1}
+removals: none
+  [ARR 1 net+1] raw: added-side 1, removed-side 0
+      +1: - Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. 
+  [ARR 2.2 net+1] raw: added-side 2, removed-side 1
+      +1: Founder calls (2026-10-13). The 2.2 retitle holds. Any renumber rides the structure pass. The structure pass also keeps the two senses of "machine" apart: the k
+      +1: - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass
+  [ARR 2.4 net+1] raw: added-side 1, removed-side 0
+      +1: - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass
+  [ARR 2.6 net+1] raw: added-side 1, removed-side 0
+      +1: - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass
+
+
+== ancestry ==
+2db50f9: ancestor OK
+8fb529e: ancestor OK
+eb0e08d: ancestor OK
+9cecee3: ancestor OK
+88277f6: ancestor OK
+
+== held tokens ==
+222:closed form no longer holds. Its product, 3.55, stays flagged
+265:tokens (3.55, the version-history numerals, the open-request numerals,
+583:  default gain. The scaled system gain sat near 1.94. The window power
+588:  the campaign gain returned 5.18 kilowatts.

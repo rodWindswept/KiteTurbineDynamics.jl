@@ -1,0 +1,10 @@
+== scratch/sw_sweep18_record_base.md: words=8433 total=11 per100w=0.13 ==
+-- sentences over 20 words --
+-- passive constructions --
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | **Register** `docs/reporting/numbers-register.md` at the tip (no change since
+  | - The lift-margin fold (v0.10, refolded at v0.11): the chain recomputes,
+  | - v0.9 to v0.10: fourteen arrivals, two removals. `1.2`, `1.8`, `3.7`
+  | One carry-note for the room: the lift-margin sentence reads "The same
+

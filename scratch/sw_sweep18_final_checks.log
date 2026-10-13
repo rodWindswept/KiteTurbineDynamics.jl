@@ -1,0 +1,5 @@
+== sweep 18 final checks ==
+record == sim OK: offender delta header-only; append +80 lines, 0 removed
+== diff stat ==
+ docs/reporting/draft-consistency-sweep.md | 80 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
