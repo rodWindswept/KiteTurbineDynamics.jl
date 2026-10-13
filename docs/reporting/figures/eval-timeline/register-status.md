@@ -15,15 +15,17 @@
 | NR-027 | The floor numeral, with NR-039, per the section 2.4 table | Signed |
 | NR-029 | The window mean 13.38 rad/s (the taps basis) | Signed |
 | NR-039 | The same floor numeral, as the over-power ceiling | Signed |
+| NR-042 | The clearance gate floor 1.5 m — the "≥ 1.5 m, read once" string. Winner 5.468 m at decode, margin +3.968 m | Signed (science-validator, SV5, `8c278a5`) |
 
 The figure draws no other row. The gate-map rows read the code at
 a89642b: ground clearance at decode, rope break at every step, the
 sampled gates once per second, and the power reads on P_end. The
 register seat verified the strings true as code facts, with pins
-(science-validator, `20d06bb`). One bounce stands: "≥ 1.5 m" is the
-only unrowed numeral. The clearance row is scheduled (W7 proposes the
-value, SV5 signs). The string stands as-is until the row lands, then
-it joins this list.
+(science-validator, `20d06bb`). The bounce has closed: the "≥ 1.5 m"
+string joined this list when NR-042 landed (science-validator, SV5,
+`8c278a5`) — floor 1.5 m, winner 5.468 m at decode, margin +3.968 m.
+No unrowed numeral remains on the plate. The string stands as-is; no
+plate byte moves.
 
 ## Drawn precision
 
@@ -54,6 +56,8 @@ Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 output hashes. Self-check: two consecutive runs stay byte-identical.
 The run log sits at `checks.log`.
 
-**Delta** v2 (2026-10-13): the register seat's two backing clauses
-land, and the "≥ 1.5 m" bounce is recorded. v1: created with the kit
-landing.
+**Delta** v3 (2026-10-13): NR-042 lands (science-validator, SV5,
+`8c278a5`) — the "≥ 1.5 m" string joins the row list, and no unrowed
+numeral remains on the plate. v2 (2026-10-13): the register seat's two
+backing clauses land, and the "≥ 1.5 m" bounce is recorded. v1:
+created with the kit landing.

@@ -272,3 +272,10 @@ three slots).
   against the printed row form 5.309, and the Cp-peak phrase takes its
   own pin line. Rows 4 and 5 move to the fold gate. Rod's visual pass
   comes first.
+
+- **v20 (2026-10-13):** the clearance row lands. NR-042 is signed
+  (science-validator, SV5, `8c278a5`): floor 1.5 m, winner 5.468 m at
+  decode, margin +3.968 m. The eval-timeline register note takes the
+  row for the "≥ 1.5 m" string, and no unrowed numeral remains on the
+  plate. No plate byte moves, so the v19 pins stand. Rows 4 and 5 hold
+  at the fold gate. Rod's visual pass comes first.
