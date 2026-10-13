@@ -1,0 +1,234 @@
+--- delivered: draft-live.docx (2ace4373)
++++ returned: draft-live-rod-comments.docx (e6b743d2)
+@@ -12,17 +12,17 @@
+ 
+ Abstract. This report presents a search for a 5 kW-class ground-generation rotary kite turbine with a tensile rotary power transmission (TRPT). The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale.
+ 
+-A differential-evolution campaign evaluated 930 candidate designs under a fixed power-law generator load, each on the measurement window (NR-001).
++A differential-evolution campaign evaluated 930 candidate Kite Turbine designs using a fixed power-law generator load, each on the measurement window (NR-001). [clarify : was this one fixed power law gen load for the whole set or one for each candidate of the 930 set…??]
+ 
+-The campaign winner is the best feasible candidate under the modeled objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its minimum factor of safety is 14.972 (NR-009).
++The campaign winner is the best feasible candidate Kite Turbine under the modeled objective and quality control gates. Its mean power was 5.309 kilowatts (NR-008) [at wind speed rotor centre height…??]
+ 
+-All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
++All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022). Within a minimum factor of safety is 14.9 [1dp resolution fine here] (NR-009).
+ 
+-At the winner operating point, the least segment torque margin is 2.03, at S1 (NR-040).
++At the winner’s operating point, the least segment torque margin [Introduce term segment torque margin ] is 2.03, at S1 [S1???] (NR-040).
+ 
+-All numbers come from the physics era post-95c385d_wind-authority, with the bank derate applied.
++All numbers are available in the repo and come from the physics era post-95c385d_wind-authority, with the bank derate applied. [bank derate is a calculated depowering of the rings output due to banked blades sweeping less streamtube frontal area]
+ 
+-The study is simulation-only. Blade integrity is not yet gated, and lifter modulation across wind speeds remains an assumption. The rope-break gate placement fix stays open.
++The study is simulation-only. Blade integrity is not yet gated , as outer stiffening bridles have also been neglected, and lifter kite modulation for steady lift tension across wind speeds remains an assumption. The rope-break gate placement fix stays open.
+ 
+ The search is a screen, not a survey. The report does not claim a global optimum.
+ 
+@@ -30,13 +30,19 @@
+ 
+ 1 Introduction
+ 
+-The wind above tower height is stronger and steadier than the wind a tower mounted wind turbine reaches. Airborne wind energy systems (AWES) are machines that chase that stronger wind. Two families of AWES exist.
++The wind above tower height is stronger and steadier than the wind exploited by traditional wind turbines. Airborne wind energy systems (AWES) are kite-based machines used to chase that stronger wind.
+ 
+-Fly-gen machines carry the generator aloft. A conducting tether sends the electrical power to the ground.
++Two families of AWES exist.
+ 
+-Ground-gen machines keep the generator on the ground. The tether carries force, and the ground station converts it.
++Fly-gen machines carry the generator and turbine aloft. A conducting tether sends the electrical power to the ground.
+ 
+-The field splits a second way, on the wing. Soft wings use fabric. They survive crashes and pack small. Rigid wings use composite airframes. They hold efficiency and cost more.
++Ground-gen machines keep the generator on the ground. The tether carries force, and the ground station converts tether motion to electrical power.
++
++The field splits a second way; on the wing.
++
++Soft wings use fabric. They survive crashes and pack small.
++
++Rigid wings use composite airframes. They’re more efficient and more costly.
+ 
+ A third split matters for this report. It is the force transmission of ground-gen systems.
+ 
+@@ -46,49 +52,61 @@
+ 
+ The machine in this report is a kite turbine.
+ 
+-Kite turbines exploit short rigid blades. The blades sit on a ring and form a wide diameter rotor.
++Kite turbines exploit multiple, short rigid blades. The blades sit on a ring and form a wide diameter rotor.
+ 
+ The rotor and further rings tie together as a tensile rotary shaft. The shaft turns the ground generator.
+ 
+-A tensile rotary power transmission (TRPT) is a shaft made of tensioned lines. Rings sit apart under tension. Torque passes from ring to ring.
++A tensile rotary power transmission (TRPT) is a shaft made of tensioned lines. Rings are set at fixed distances, pulled apart by tether tension. Torque passes from ring to ring, over multiple tethers.
+ 
+-The shaft bends and twists without a rigid driveshaft. Its capacity to transmit torque comes from tension itself.
++The TRPT shaft is prone to bending and twisting, especially in low tension. TRPT is not a rigid driveshaft. Its capacity to transmit torque comes from kite line tension.
+ 
+-This report presents a search over the design space of that machine. The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale.
++This report presents a search over the design space of kite turbines. The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale. [was tube OD and thickness also here or did we drop that previously??]
+ 
+-The objective is to find the feasible geometries for a 5 kW-class machine. The generator load law and the safety gates stay fixed. The search asks whether one compact machine can hold the power, mass, structural, clearance and twist constraints at once.
++The objective is to find (and then charachterise) the feasible geometries for a 5 kW-class machine. The generator load law and the safety gates stay fixed. The search asks whether one compact machine can hold the power, mass, structural, clearance and twist constraints at once. [more about these constraints coming up in the report soon I hope]
+ 
+-The report states what the record supports. It also states the failures, each with its lesson.
++The report states what the record supports. It also states several classes of failure we made in developing this system, each with its lesson.
+ 
+ One frame holds throughout. The machine flies only in simulation. The analysis pipeline is the instrument. The report treats the instrument with the same distrust it treats the machine.
+ 
+-The field context rests on the literature. Loyd showed that both crosswind modes share one theoretical power ceiling.
++The field context rests on the literature.
++
++Loyd showed that both crosswind modes share one theoretical power ceiling.
++
++Diehl set the classification axes.
++
++Trevisi built one power model for both modes and found the glide-ratio flip.
+ 
+-Trevisi built one power model for both modes and found the glide-ratio flip. Cherubini mapped the ground-gen and fly-gen taxonomy. Diehl set the classification axes.
++Cherubini mapped the ground-gen and fly-gen taxonomy.
+ 
+-Van der Burg found no dominant wing design. Both wing families stay in play. Van de Kaa and Kamp found no dominant generation architecture.
++Van der Burg found no dominant wing design. Both wing families stay in play. Van de Kaa and [Van de Kamp? Surely … did our knowledge base encoder read the neam wrongly or shorten it from the actual literature] Kamp found no dominant generation architecture.
+ 
+ Pereira ranked the design factors and found that many small units beat few large ones.
+ 
+-Flather recorded the rope-drive physics that the TRPT descends from. Benhaïem and Schmehl analysed the torque path of a rotating reel. Ranneberg gave the rotary family a momentum frame with flight data.
++Flather recorded the rope-drive physics that the TRPT descends from. Benhaïem and Schmehl analysed the torque path of a rotating reel.
++
++Ranneberg gave the rotary family a momentum frame with flight data.
+ 
+ Tulloch modelled the Daisy TRPT and checked the model against measured flight windows. This report extends that line of work.
+ 
+ 2 Methods
+ 
+-2.1 The machine and its terms
++2.1 The kite turbine and its terms
+ 
+ A line is a tension member, like a tether or a bridle. It carries a load only in tension. A pull at one end passes along the line to the other end. It never pushes.
+ 
+ A ring is a polygon of nodes and tubular beams. A ring with blades works as a rotor.
+ 
+-Rings without blades work as spacers. They hold the TRPT lines apart against the line torsion from torque transfer. Holding the lines apart is what preserves torque transmission.
++Rings without blades work as line spacers. They hold the TRPT lines apart against the line torsion from torque transfer. Holding the lines apart is what preserves torque transmission and prevents torsional collapse.
++
++The polygon count names the number of lines (n_Lines). E.g. hexagonal polygons connect with 6 lines. Each line meets the ring at one vertex. The polygon count also equals the blade count. A rotor is a set of blades on a ring. Pentagonal rotors have 5 blades.
++
++The topmost ring is the main rotor. The lowest ring is the ground station Power Take Off (PTO) ring. The PTO ring is effectively anchored to the ground but able to rotate about it’s central axis.
+ 
+-The polygon count names the number of lines. Each line meets the ring at one vertex. The polygon count equals the blade count.
++Bank is the blade angle away from the ring plane about its chord axis at the ring. [the equivalent term in AeroDyn is pre-cone...]
+ 
+-The topmost ring carries the main rotor. The lowest ring is the ground ring. A rotor is a set of blades on a ring.
++Blade scale sets the blade size. [more about this and how it works]
+ 
+-Bank is the blade angle away from the ring plane about its chord axis at the ring. Blade scale sets the blade size. The search treats each of these as a gene.
++The search treats each of these [include and highlight above each gene we are referring to with a description] as a gene.
+ 
+ [system-anatomy]
+ 
+@@ -96,19 +114,23 @@
+ 
+ Figure (roster row 2) · system-anatomy
+ 
+-This figure shows the whole machine and the names of its parts, from the kite stack in the sky to the ground station that takes the power.
++This figure shows the whole machine and the names of its parts, from the lifting autogyro kite stack in the sky to the ground station that takes the power.
+ 
+-  The plate shows the campaign winner in a side view. Six rings run from the ground ring (R1, 0.804 m radius) to the hub ring (R6, 4.580 m radius). Three tension lines span each of the five segments S1 to S5. The main rotor sits on R6 only. Its three blades bank at 7.088°. The lift chain runs from the lifter stack, down the lift line, through the sky anchor and the cyan line, to the lift bearing. Three bridles run from the bearing into the main rotor. The lifter gives lift only. It does not drive the rotor. Torque runs down the TRPT rings to the ground station. The dashed outline marks the ground station: the generator and the power take-off. That outline sits outside the primary render scope. The dashed backline is an altitude limiter, not a load path. The scale bar is 5 m.
++  The plate shows the campaign winner in a side view. Six triangular rings run from the ground ring (R1, 0.804 m radius) to the hub ring (R6, 4.580 m radius). Three tension lines span each of the five segments S1 to S5. The main rotor sits on R6 only. Its three blades bank at 7.088°. [include blade span] The lift chain runs from the lifter stack, down the lift line, through the sky anchor and the cyan line, to the lift bearing. Three bridles run from the bearing into the main rotor. The lifter gives lift only. It does not drive the rotor. Torque runs down the TRPT rings to the ground station. The dashed outline marks the ground station: the generator and the power take-off. That outline sits outside the primary render scope. The dashed backline is an altitude limiter, not a load path. The scale bar is 5 m.
+ 
+ Source: data dd3cc6a · script df8a2b4 · rows NR-011, NR-017
+ 
+-2.2 The genome
++2.2 The Simulation Analysis Pipeline Instrument and it’s terms
+ 
+-The genome is the design vector. The decoder reads it. The builder builds the machine.
++2.2.1 The Gene
++
++We used Differential Evolution (DE) to assess kite turbine design variants. DE assesses machine geneomes. The genome is the design vector which describes the machine physical characteristic. The decoder reads it. The builder builds the machine. [then it is ready to be assessed by and compared by before DE tries a new gene by]
+ 
+ The genes set the ring geometry, the polygon count, the rotor count, the bank angles and the blade scales. The winner genome names its genes in the decode fields (NR-011).
+ 
+-2.3 The evaluator
++[input a systems block diagram here of the Simulation Analysis Pipeline Instrument]
++
++2.2.2 The evaluator
+ 
+ The builder builds the machine from the genome. The evaluator runs the machine and measures its performance. Every evaluation has two phases: a relax run and a measurement window.
+ 
+@@ -383,29 +405,29 @@
+ 
+ -   An inverted-taper genome diverged within seconds, while the ground instruments still read normal power (2026-08-14).
+ 
+-    Lesson: the decoder must refuse what the builder cannot make, at gate time.
++-   Lesson: the decoder must refuse what the builder cannot make, at gate time.
+ 
+ -   The voided campaigns. A later finding can break a model or a geometry. The data from before it then counts no more.
+ 
+ -   The blade-mass-law correction landed on 2026-08-22. It voided the campaign winners. The rotorcount data was doubly void: it predated the FoS fix, and its rotors sat one ring toward the hub.
+ 
+-    Superseded is the milder class, not void. The pre-derate campaign stands as era record, because the bank derate moved the search space.
++-   Superseded is the milder class, not void. The pre-derate campaign stands as era record, because the bank derate moved the search space.
+ 
+-    Lesson: void the data, keep the record.
++-   Lesson: void the data, keep the record.
+ 
+ -   The k-alignment faults. Twice, a check ran at a different generator gain than the machine it scored.
+ 
+ -   On 2026-08-13 the evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. The window power read roughly double. An acceptance test caught it.
+ 
+-    On 2026-08-24 a winner re-gate ran at a stale gain, the superseded 20-second-window value. The pre-push review caught it. The re-gate at the campaign gain returned 5.18 kilowatts.
++-   On 2026-08-24 a winner re-gate ran at a stale gain, the superseded 20-second-window value. The pre-push review caught it. The re-gate at the campaign gain returned 5.18 kilowatts.
+ 
+-    A misaligned gain scores a different machine, and the data voids. Lesson: one constant, one source file. [2.24 holds a register row (NR-015). The other values need rows first.]
++-   A misaligned gain scores a different machine, and the data voids. Lesson: one constant, one source file. [2.24 holds a register row (NR-015). The other values need rows first.]
+ 
+ -   The stale-gate near-miss. The FoS floor gate fell behind the model it guarded.
+ 
+ -   The FoS=Inf exploit fix landed in one scoring path only. The mass-minimum objective and the older fitness functions never received the guard. The campaign ran through them unguarded (2026-08-22).
+ 
+-    Telemetry shows no surviving design carried the infinite value. That is a near-miss, not a corrupted dataset. Lesson: a gate must pin a measured number, so drift fails the suite.
++-   Telemetry shows no surviving design carried the infinite value. That is a near-miss, not a corrupted dataset. Lesson: a gate must pin a measured number, so drift fails the suite.
+ 
+ 4.3 Model boundaries
+ 
+@@ -474,29 +496,41 @@
+ Ring utilisation plate:
+ 
+ -   png 6f19832088375b96cdc566aff596ccd548f26b629b9782bc56d8831d03c622ba
++
+ -   svg ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab28f111472d4ed32ffa0c6b58
++
+ -   pdf 508b3a641fde21b582ee2a58a3d3df2a769998281f78c8763ba07438286c1f8f
++
+ -   ledger c040fca2dd63df9c68b56a767ccd0383962db479b04d75d23821b311628ce099
+ 
+ Twist limit plate:
+ 
+ -   png 7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501
++
+ -   svg ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472
++
+ -   pdf d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1
++
+ -   ledger 6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28
+ 
+ Machine evolution strip:
+ 
+ -   png 8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6
++
+ -   svg 6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e
++
+ -   pdf 6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844
++
+ -   checks b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde
+ 
+ System anatomy plate:
+ 
+ -   png fe89525d297d1a85be287e4c2f6b0127f18b714d8eab21d65d08f6522c7f4ee5
++
+ -   pdf 9d507326a541a9e92f15860889b334f29e82add5cec49cbcc617549b07878bb1
++
+ -   ledger 53a4204cb70f153d2ddda460e97cc8365a2e4e3b674e705a3f5da02d187bf5e1
++
+ -   checks 5100d5497523dcca462092b5a2ad01d9b53f025f755580cd479a7f4049581888
+ 
+ Data register (cited rows)
