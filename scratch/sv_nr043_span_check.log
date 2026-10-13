@@ -1,0 +1,27 @@
+PASS  pin: probe log sha256
+PASS  pin: figures decode log sha256
+PASS  span (built) = R_main - r_in, bit-exact  [calc 1.4994019682084492 vs log 1.4994019682084492]
+PASS  span (tip offset) = R_main - r_hub, bit-exact  [calc 1.0495813777459144 vs log 1.0495813777459144]
+PASS  70/30 split ratios  [eps 0.00e+00 / 0.00e+00]
+PASS  split closes on the span  [eps 0.00e+00 / 0.00e+00]
+PASS  span = 0.75 * r_rotor * blade_scale  [eps 0.00e+00 dec 1.4994019682084492]
+PASS  decode tip/hub offsets  [eps 0.00e+00 / 0.00e+00]
+PASS  line pin objective_v10.jl 374-376  [found at line 374]
+PASS  quote 3 dp  [1.499]
+PASS  round 3 dp
+PASS  2 dp form
+PASS  4 dp form
+PASS  6 dp form
+PASS  receipt carries span token
+PASS  receipt carries r_out
+PASS  receipt carries r_in
+PASS  receipt carries the split phrase
+PASS  register NR-032 block carries span
+PASS  decode log carries 6 dp radii
+PASS  R_main 6 dp
+PASS  r_in 6 dp
+PASS  re-run equals committed log
+PASS  re-run carries the span token
+
+all checks pass
+SV_NR043_DONE

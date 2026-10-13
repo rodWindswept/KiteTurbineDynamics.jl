@@ -1205,3 +1205,55 @@ The founder docx return asks for a 1 dp display at one site: the abstract senten
 Reading rule:
 
 - A site that prints the minimum factor of safety at 1 dp reads 15.0. Sites that print it at the row precision keep 14.972.
+
+## Derived row: NR-043, winner blade span (2026-10-13, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Founder note 13 asks the section 2.1 figure to carry the blade span
+(`scratch/au_draft_docx_notes_extract_2026-10-13.md`, quote "include blade
+span"). The value reads in the NR-032 block findings. This block lifts it to
+its own row and signs the display form. The next render can then draw the
+dimension.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-043 | Winner blade span (island 3, main rotor) | 1.4994019682084492 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 `a7c6e343b4cfba7f790fe0c2c3fd81638c06548c0d98d23407737c9ae0d9b0ab`: R_main 5.629560432565964 minus blade_hub_radius 4.130158464357515. The decode convention `src/objective_v10.jl:374-376`. Figures decode log `scratch/fig1_decode_winner.log`. Counter-read: the aero tip-reference receipt (2026-10-11) | signed (science-validator, 2026-10-13) |
+
+Sign-off basis:
+
+- Reproduction. This seat re-ran `scratch/sv_probe_winner_areas.jl` at HEAD
+  `2db50f9`. The output equals the committed log, line for line. No commit
+  touches `src/` between the probe log landing `25ff00e` and the re-run.
+
+- Arithmetic. The span reads tip radius minus inner edge:
+  `5.629560432565964 - 4.130158464357515 = 1.4994019682084492`. The 0.7 / 0.3
+  ring anchor closes both radii about the hub ring. It reads r_out = r_hub +
+  0.7 span and r_in = r_hub - 0.3 span, at r_hub 4.57997905482005. The decode
+  variable reads 0.75 x r_rotor x blade_scale = 1.4994019682084492, on r_rotor
+  2.4341173109692225 and blade_scale 0.8213255027884769. Checker:
+  `scratch/sv_nr043_span_check.py` and its log. Every quoted form gates.
+
+- Counter-read. The aero seat counter-read the tip pair and this span on
+  2026-10-11
+  (`docs/reporting/room-responses/aero-validator-2026-10-11-tipref-counterread.md`).
+
+Display form, signed:
+
+- The plate prints the dimension at three decimals: `1.499 m`. That matches
+  the drawn radii precision (4.580 m, 0.804 m). The row keeps the full value.
+
+- The dimension reads the built blade span, inner edge to tip. It is not the
+  ring radius, and not the tip offset alone.
+
+Reading rule:
+
+- The system-anatomy plate prints `1.499 m` as the blade-span dimension
+  (NR-043).
+
+Boundaries that travel with this row:
+
+1. One machine, one built state: the island-3 winner decode, the NR-032
+   receipts chain.
+
+2. The span is decode geometry, not a flight measurement.
