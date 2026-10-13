@@ -1,7 +1,7 @@
 # Register status: system anatomy
 
 **Slug** `system-anatomy`. Status note for the figure rows.
-**Date** 2026-10-12.
+**Date** 2026-10-12. Register fold 2026-10-13.
 
 ## Rows cited
 
@@ -11,6 +11,9 @@
 | NR-017 | Main-rotor bank 7.088° at ring 6 | Signed |
 
 The plate draws no other row. The β glyph carries no value.
+
+NR-043 (the winner blade span) joins at the next build: the v4 re-cut
+draws the span dimension and adds NR-043 to the drawn source line.
 
 ## Drawn precision
 
@@ -47,6 +50,13 @@ No value binds to either re-cut.
 ## Pending
 
 Founder note 13 (`c2e2aee`) asks the plate to carry the blade span. The
-span value reads 1.4994019682084492 m (r_out minus r_in) in the NR-032
-block findings. The register form comes first. The next render then
-draws the dimension. No render moves now.
+register form landed (NR-043, science-validator, `88277f6`): the winner
+span is 1.4994019682084492 m (tip radius 5.629560432565964 minus inner
+edge 4.130158464357515). The drawn form is `1.499 m` at three decimals —
+the drawn radii precision. The dimension reads the built blade span,
+inner edge to tip; it is not a ring radius and not the tip offset alone.
+The v4 re-cut draws the dimension and adds NR-043 to the drawn source
+line. No render moves until then.
+
+**Delta** v1 (2026-10-13): NR-043 signed (`88277f6`); the pending item
+updates to the v4 re-cut; the note-9 caption forms land (`captions.md`).

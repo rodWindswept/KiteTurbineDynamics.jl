@@ -1,0 +1,11 @@
+fig-sa caption forms check
+base blob: 88277f6
+capture sha256: eea5563d9bcc844d54c7b88897b5134096b7a6add79c521563415bfccde48d03
+captions sha256: 6a7f8090f66e30d4868882fecaf13ec660826c7c5353e58d9a03435fbcf7f1a8
+return hits: plain 1 tech 1
+blade-span marker on the return: True
+[base->file plain] adds=['autogyro', 'lifting'] removes=[] -> PASS
+[base->file tech] adds=['triangular'] removes=[] -> PASS
+[file->return plain] adds=[] removes=[] -> PASS
+[file->return tech] adds=[] removes=[] -> PASS
+RESULT: PASS

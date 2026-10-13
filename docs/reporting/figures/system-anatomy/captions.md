@@ -1,6 +1,7 @@
 # Captions: system anatomy
 
-**Slug** `system-anatomy`. **Status** GENERATE (re-cut v3). **Date**
+**Slug** `system-anatomy`. **Status** GENERATE (re-cut v3; founder-return
+forms folded 2026-10-13). **Date**
 2026-10-12. **Caption split** 2026-10-12.
 
 Site: the report at §2.1, the machine and its terms. Reading order: the
@@ -22,13 +23,14 @@ the provenance.
 ## Plain caption
 
 This figure shows the whole machine and the names of its parts, from the
-kite stack in the sky to the ground station that takes the power.
+lifting autogyro kite stack in the sky to the ground station that takes
+the power.
 
 ## Technical caption (undergrad register, STE-clean form)
 
-The plate shows the campaign winner in a side view. Six rings run from
-the ground ring (R1, 0.804 m radius) to the hub ring (R6, 4.580 m
-radius).
+The plate shows the campaign winner in a side view. Six triangular rings
+run from the ground ring (R1, 0.804 m radius) to the hub ring (R6,
+4.580 m radius).
 
 Three tension lines span each of the five segments S1 to S5. The main
 rotor sits on R6 only. Its three blades bank at 7.088°.
@@ -70,3 +72,19 @@ term (campaign winner). The plate header carries the island-3 short
 form.
 
 Split note (2026-10-12): the caption text only. No render moved.
+
+## Founder-return note (2026-10-13)
+
+The docx return (`c2e2aee`, note 9) edits the caption text. The forms
+land here, per the author routing (`546fc1f`):
+
+- Plain caption: "from the lifting autogyro kite stack in the sky".
+- Technical caption: "Six triangular rings run from the ground ring".
+
+A word diff of both captions against the returned copy reads exactly
+those insertions and nothing else. Caption text only; no value moves;
+no render moves. The draft picks the forms at its next build.
+
+The blade-span ask from the same note rides the v4 re-cut (NR-043,
+`88277f6`; see `register-status.md`): the dimension draws, and the
+provenance line takes NR-043 with it.
