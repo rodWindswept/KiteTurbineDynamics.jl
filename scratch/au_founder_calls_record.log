@@ -1,0 +1,17 @@
+base tip: f5e8e7d
+base tracker sha256: e86acc858af27a229af97e64e26e6db01734d91dd3f063d61ed6cbf7d72dd4dd
+ok T1 founder calls block (working notes)
+ok T2 cascade ruled and display forms (open requests)
+guard founder block present: ok
+guard old cascade hold gone: ok
+guard ruled line present: ok
+guard machine distinction present: ok
+guard display rule present: ok
+guard display routing present: ok
+candidate tracker sha256: 0cc8b5e8938ec2e1b628e77c61326f2af4bd086580a0b8120fd9a4c47895d1d6
+STE tracker base: rc=0 total=10 per100w=0.54 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5}
+STE tracker candidate: rc=0 total=10 per100w=0.51 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5}
+tracker token delta add: {'1': 1, '2.4': 1, '2.2': 1, '2.6': 1}
+tracker token delta rem: {}
+tracker token check: PASS (declared add {'2.2': 1, '1': 1, '2.4': 1, '2.6': 1} rem {})
+GATES: ste=pass tokens_t=pass

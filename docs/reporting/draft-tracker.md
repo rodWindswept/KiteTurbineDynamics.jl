@@ -164,6 +164,8 @@ A bracket marks open room work. The owners refine
 this text against the Track A and Track B responses. The title stays a
 working form pending the founder decision.
 
+Founder calls (2026-10-13). The 2.2 retitle holds. Any renumber rides the structure pass. The structure pass also keeps the two senses of "machine" apart: the kite turbine, and the simulation analysis pipeline.
+
 ## 3. Open requests to the analysis room
 
 - Bank-derate rows: landed (NR-019, NR-020).
@@ -183,7 +185,9 @@ counter-read closed and wording amends applied (`570be73`, `f86228a`).
 - The AeroDyn pre-cone equivalence for "bank": landed (founder return
 note 10, aero read `2db50f9`). The gloss folds at draft v0.28.
 
-- The section 2.2 renumber cascade: pending the founder call (@user).
+- The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass.
+
+- Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. Full precision stays internal. The display notes sit with @science-validator.
 
 ## 4. Seat notes moved out of the narrative
 
