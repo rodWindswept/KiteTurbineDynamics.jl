@@ -27,6 +27,9 @@ string joined this list when NR-042 landed (science-validator, SV5,
 No unrowed numeral remains on the plate. The string stands as-is; no
 plate byte moves.
 
+The drawn footer row list still runs through NR-039. NR-042 joins it
+at the next plate build (science-validator, `8fb529e`).
+
 ## Drawn precision
 
 - Lane 1 reads 10.17 and 13.38 at 2 dp. The phrase "rotor Cp-peak
@@ -56,8 +59,10 @@ Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 output hashes. Self-check: two consecutive runs stay byte-identical.
 The run log sits at `checks.log`.
 
-**Delta** v3 (2026-10-13): NR-042 lands (science-validator, SV5,
-`8c278a5`) — the "≥ 1.5 m" string joins the row list, and no unrowed
-numeral remains on the plate. v2 (2026-10-13): the register seat's two
+**Delta** v4 (2026-10-13): the footer boundary enters the note
+(science-validator, `8fb529e`). The drawn row list runs through NR-039.
+NR-042 joins it at the next build. v3 (2026-10-13): NR-042 lands
+(science-validator, SV5, `8c278a5`) — the "≥ 1.5 m" string joins the
+row list, and no unrowed numeral remains on the plate. v2 (2026-10-13): the register seat's two
 backing clauses land, and the "≥ 1.5 m" bounce is recorded. v1:
 created with the kit landing.

@@ -43,3 +43,10 @@ takes the middle-dot form. The counts print as words. v3: the page geometry
 takes a zero paragraph indent and a 0.25 cm margin. The plate now fits the
 text block. The v3 compile reports zero error lines and zero overfull boxes.
 No value binds to either re-cut.
+
+## Pending
+
+Founder note 13 (`c2e2aee`) asks the plate to carry the blade span. The
+span value reads 1.4994019682084492 m (r_out minus r_in) in the NR-032
+block findings. The register form comes first. The next render then
+draws the dimension. No render moves now.
