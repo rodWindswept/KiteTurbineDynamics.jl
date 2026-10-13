@@ -135,6 +135,12 @@ The outcome sentences move ahead of the machine description.
 The gate block moves ahead of the machine block.
 Only the order changes, and no number moves.
 
+v0.26 pass by @author (2026-10-13).
+This pass folds the SW1 score-term sites from the science-writer plan.
+The five objective sites read "kg-equivalent", and the physical-mass sites keep "kg".
+The section 2.4 objective definition and table cell land.
+No numeral moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

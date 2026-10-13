@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.25. Date 2026-10-13.
+Internal engineering report. Draft v0.26. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -262,6 +262,10 @@ The ok designs pass every gate. The rejects fail a gate. The
 clearance rejects fail the clearance gate. The twist rejects fail the
 twist gate.
 
+The campaign minimizes a kg-equivalent objective score: the airborne mass plus the gate penalties.
+A lower score is better.
+The objective score is not the physical airborne mass.
+
 The differential-evolution campaign fixed the configuration below.
 
 | Setting | Value | Source |
@@ -269,7 +273,7 @@ The differential-evolution campaign fixed the configuration below.
 | Islands | 3 | NR-001 |
 | Designs per island | 310 | NR-001 |
 | Evaluations, total | 930 | NR-001 |
-| Objective | search objective (airborne mass plus penalties), kg | NR-036, NR-039 |
+| Objective | Airborne mass + penalties, kg-equivalent | NR-036, NR-039 |
 | Power floor | 5.0 kW | NR-027, NR-039 |
 | Structural FoS floor | 2.5 | NR-015 |
 | Relax run | 10 s | NR-015 |
@@ -308,16 +312,16 @@ master 31ca00d.
 
 The campaign evaluated 930 designs (NR-001). The status mix reads 508
 ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
-All three islands start from one seed. The seed scores 36.109
-kilograms (NR-006).
+All three islands start from one seed.
+The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
 
 ### 3.2 Convergence
 
-Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2   
-reaches 30.637 kilograms at generation 30 (NR-004). Island 3 reaches
-27.364 kilograms at generation 26 (NR-005), the search objective. It reads
-the airborne mass 25.698 kilograms (NR-018) plus 1.665 kilograms of
-objective penalties (NR-039).
+The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004).
+Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+The physical airborne mass of the winner is 25.698 kg (NR-018).
+The objective score adds 1.665 kg-equivalent of penalties (NR-039).
 
 The surviving ok designs hold a mean power between 5.02 and 6.32
 kilowatts (NR-007).
