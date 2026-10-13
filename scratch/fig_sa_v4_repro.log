@@ -1,0 +1,46 @@
+fig-sa v4 reproducibility — two full runs (generator + pdflatex + pdftoppm)
+state: system-anatomy.py + ktd-fig-elements.tex @ script commit 9cecee3
+
+== run A ==
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8143 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14342 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (32 strings)
+Output written on system-anatomy.pdf (1 page, 67574 bytes).
+pdftoppm exit ok
+
+run A md5:
+5bf748abc6fd385860f72ce0713cfb1c  system-anatomy.tex
+620481ca05882376cdea2c8026a22e6f  prototype.html
+9f5e89acc24393d6e6481ce4780ee6e4  label-ledger.txt
+45a99a610b68c496209120ea6e6cd261  system-anatomy.pdf
+aae4915c2f32a2f0c6798e68d2d29e03  system-anatomy.png
+
+== run B ==
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8143 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14342 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (32 strings)
+Output written on system-anatomy.pdf (1 page, 67574 bytes).
+pdftoppm exit ok
+
+run B md5:
+5bf748abc6fd385860f72ce0713cfb1c  system-anatomy.tex
+620481ca05882376cdea2c8026a22e6f  prototype.html
+9f5e89acc24393d6e6481ce4780ee6e4  label-ledger.txt
+45a99a610b68c496209120ea6e6cd261  system-anatomy.pdf
+aae4915c2f32a2f0c6798e68d2d29e03  system-anatomy.png
+
+== comparison ==
+run A == run B: byte-identical across all five outputs
+
+== sha256 (for the manifest) ==
+4ed33eb467427dd89f256007d937478b5cede8b4aa3fc94bc3dbc3bf66903a8e  system-anatomy.tex
+12535306e1b6c9ef68c263b31ddbca1c564a049d508bf110fe445d5161d8611b  prototype.html
+b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389  label-ledger.txt
+9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf  system-anatomy.pdf
+f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea  system-anatomy.png
+
+== latex ==
+error lines: 0
+overfull boxes: 0

@@ -1,0 +1,123 @@
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8143 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14342 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (32 strings)
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./system-anatomy.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-22>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/home/rod/texmf/tex/latex/pgf/frontendlayer/tikz.sty
+(/home/rod/texmf/tex/latex/pgf/basiclayer/pgf.sty
+(/home/rod/texmf/tex/latex/pgf/utilities/pgfrcs.sty
+(/home/rod/texmf/tex/generic/utilities/pgfutil-common.tex)
+(/home/rod/texmf/tex/generic/utilities/pgfutil-latex.def)
+(/home/rod/texmf/tex/generic/utilities/pgfrcs.code.tex))
+(/home/rod/texmf/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/home/rod/texmf/tex/latex/pgf/systemlayer/pgfsys.sty
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(/home/rod/texmf/tex/generic/utilities/pgfkeys.code.tex
+(/home/rod/texmf/tex/generic/utilities/pgfkeyslibraryfiltered.code.tex))
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgf.cfg)
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def)))
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex)
+(/home/rod/texmf/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/home/rod/texmf/tex/generic/basiclayer/pgfcore.code.tex
+(/home/rod/texmf/tex/generic/math/pgfmath.code.tex
+(/home/rod/texmf/tex/generic/math/pgfmathutil.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathparser.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.basic.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.trigonometric.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.random.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.comparison.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.base.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.round.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.misc.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfunctions.integerarithmetics.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathcalc.code.tex)
+(/home/rod/texmf/tex/generic/math/pgfmathfloat.code.tex))
+(/home/rod/texmf/tex/generic/math/pgfint.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorepoints.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorepathconstruct.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorepathusage.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorescopes.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoregraphicstate.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoretransformations.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorequick.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoreobjects.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorepathprocessing.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorearrows.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoreshade.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoreimage.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoreexternal.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorelayers.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcoretransparency.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorepatterns.code.tex)
+(/home/rod/texmf/tex/generic/basiclayer/pgfcorerdf.code.tex)))
+(/home/rod/texmf/tex/generic/pgf/modules/pgfmoduleshapes.code.tex)
+(/home/rod/texmf/tex/generic/pgf/modules/pgfmoduleplot.code.tex)
+(/home/rod/texmf/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty)
+(/home/rod/texmf/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty))
+(/home/rod/texmf/tex/latex/pgf/utilities/pgffor.sty
+(/home/rod/texmf/tex/latex/pgf/utilities/pgfkeys.sty
+(/home/rod/texmf/tex/generic/utilities/pgfkeys.code.tex))
+(/home/rod/texmf/tex/latex/pgf/math/pgfmath.sty
+(/home/rod/texmf/tex/generic/math/pgfmath.code.tex))
+(/home/rod/texmf/tex/generic/utilities/pgffor.code.tex))
+(/home/rod/texmf/tex/generic/frontendlayer/tikz/tikz.code.tex
+(/home/rod/texmf/tex/generic/libraries/pgflibraryplothandlers.code.tex)
+(/home/rod/texmf/tex/generic/pgf/modules/pgfmodulematrix.code.tex)
+(/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarytopaths.co
+de.tex))) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/home/rod/texmf/tex/generic/frontendlayer/tikz/libraries/tikzlibrarycalc.code.
+tex) (/home/rod/texmf/tex/generic/libraries/pgflibraryarrows.meta.code.tex)
+(../elements/ktd-fig-elements.tex)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+(./system-anatomy.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty))
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./system-anatomy.aux) )
+ </home/rod/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> 
+</home/rod/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx0800.600pk> <
+/home/rod/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0800.600pk></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr8.pfb>
+Output written on system-anatomy.pdf (1 page, 67574 bytes).
+Transcript written on system-anatomy.log.

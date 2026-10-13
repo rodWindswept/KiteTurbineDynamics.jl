@@ -1,6 +1,6 @@
 # Captions: system anatomy
 
-**Slug** `system-anatomy`. **Status** GENERATE (re-cut v3; founder-return
+**Slug** `system-anatomy`. **Status** GENERATE (re-cut v4; founder-return
 forms folded 2026-10-13). **Date**
 2026-10-12. **Caption split** 2026-10-12.
 
@@ -49,13 +49,13 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 ## Provenance line
 
 Data commit `dd3cc6a` · decode receipt `scratch/fig1_decode_winner.jl` ·
-rows NR-011, NR-017 · script commit `df8a2b4` · full record: the
+rows NR-011, NR-017, NR-043 · script commit `9cecee3` · full record: the
 figure-provenance appendix.
 
 ## Generation note
 
 Resolved at GENERATE by the figures seat. The re-cut v2/v3 lands at
-`df8a2b4`. The generator emits the TeX build, the mock and the label
+`df8a2b4`. The v4 re-cut lands at `9cecee3`. The generator emits the TeX build, the mock and the label
 ledger from one coordinate set. pdflatex and pdftoppm then render the
 plate. Two full runs stay byte-identical.
 
@@ -85,6 +85,6 @@ A word diff of both captions against the returned copy reads exactly
 those insertions and nothing else. Caption text only; no value moves;
 no render moves. The draft picks the forms at its next build.
 
-The blade-span ask from the same note rides the v4 re-cut (NR-043,
+The blade-span ask from the same note landed in the v4 re-cut (NR-043,
 `88277f6`; see `register-status.md`): the dimension draws, and the
-provenance line takes NR-043 with it.
+provenance line carries NR-043.

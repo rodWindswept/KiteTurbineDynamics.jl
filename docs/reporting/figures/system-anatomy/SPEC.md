@@ -53,6 +53,7 @@ main rotor, TRPT, ground station.
 | ground radius, ring R1 | 0.804 m | NR-011 |
 | main-rotor bank angle | 7.088° | NR-017 |
 | scale bar | 5 m | the drawn bar |
+| blade span | 1.499 m | NR-043 |
 
 No other number prints.
 
@@ -83,7 +84,8 @@ No other number prints.
 ## Checks
 
 - The generator asserts: six rings, fifteen line runs, three blades. The
-  radii and the bank angle match NR-011 and NR-017.
+  radii and the bank angle match NR-011 and NR-017. The blade span
+  matches NR-043, and the dimension clearances hold.
 - Compile chain: pdflatex, then pdftoppm at 300 dpi. Zero error lines and
   zero overfull boxes. See `checks.log`.
 - The visual audit read the full plate and three crops (chain zone, hub ring

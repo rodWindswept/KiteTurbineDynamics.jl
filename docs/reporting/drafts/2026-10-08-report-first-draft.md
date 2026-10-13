@@ -188,7 +188,7 @@ The search treats each of these as a gene. The ring geometry sets the
 hub and ground radii, and the rotor count sets how many rings carry
 blades.
 
-[Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011 and NR-017.]
+[Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011, NR-017 and NR-043.]
 
 ### 2.2 The simulation analysis pipeline instrument and its terms
 
@@ -655,7 +655,7 @@ One row per built exhibit. All four read dataset commit `dd3cc6a`.
 | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
 | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
 | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017 | `df8a2b4` | `post-95c385d_wind-authority` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9cecee3` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -684,7 +684,7 @@ Machine evolution strip:
 
 System anatomy plate:
 
-- `png` `fe89525d297d1a85be287e4c2f6b0127f18b714d8eab21d65d08f6522c7f4ee5`
-- `pdf` `9d507326a541a9e92f15860889b334f29e82add5cec49cbcc617549b07878bb1`
-- `ledger` `53a4204cb70f153d2ddda460e97cc8365a2e4e3b674e705a3f5da02d187bf5e1`
-- `checks` `5100d5497523dcca462092b5a2ad01d9b53f025f755580cd479a7f4049581888`
+- `png` `f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea`
+- `pdf` `9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf`
+- `ledger` `b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389`
+- `checks` `0e857cbfb288ff7110aafec99c11211bae1c46e4d3b2a5594d5949f318d9f279`

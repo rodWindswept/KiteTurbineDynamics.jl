@@ -1,10 +1,11 @@
 F1 system-anatomy - checks log (figures seat, 2026-10-12)
 re-cut v3: author label check 38a15f1 (footer separator form, count words) + page-geometry fix (parindent 0, margin 0.25cm)
+re-cut v4: the blade-span dimension (NR-043) joins the plate and the drawn source line (script commit 9cecee3)
 == generator ==
-self-checks ok: 6 rings, 15 ropes, 3 blades, radii and bank on NR-011/NR-017
-wrote system-anatomy.tex (7776 bytes); canvas 23.40 x 18.39 cm
-wrote prototype.html (13608 bytes); svg 884x695 px viewport
-wrote label-ledger.txt (30 strings)
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8143 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14342 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (32 strings)
 generator exit=0
 == pdflatex (reproducible: SOURCE_DATE_EPOCH=0 FORCE_SOURCE_DATE=1) ==
 pdflatex exit=0
@@ -12,9 +13,11 @@ latex error lines: 0
 overfull boxes: 0
 == render ==
 pdftoppm exit=0
-== hashes (re-cut v3) ==
-32e74655418bb440fab039993f7acacb  system-anatomy.tex
-12d50b0c706c43c0be22e4e03e96cbd9  prototype.html
-01b6f9b5543f2e9efd7d8f84b693fe39  label-ledger.txt
-0be2467fe569e2af91518d60f7d4c79d  system-anatomy.pdf
-04b6b7321b2f9fc78a003f2e5ea52aed  system-anatomy.png
+== reproducibility ==
+re-cut v4: two full runs byte-identical across all five outputs
+== hashes (re-cut v4) ==
+5bf748abc6fd385860f72ce0713cfb1c  system-anatomy.tex
+620481ca05882376cdea2c8026a22e6f  prototype.html
+9f5e89acc24393d6e6481ce4780ee6e4  label-ledger.txt
+45a99a610b68c496209120ea6e6cd261  system-anatomy.pdf
+aae4915c2f32a2f0c6798e68d2d29e03  system-anatomy.png
