@@ -1,0 +1,3 @@
+long sentences: 0
+contractions: ["rotor's"] count: 2
+long paragraphs: 10

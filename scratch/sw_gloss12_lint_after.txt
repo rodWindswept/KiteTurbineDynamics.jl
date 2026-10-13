@@ -1,0 +1,8 @@
+== glossary v12 post-edit check ==
+head: c2e2aee2dc3157b87de804e2131cb9b092571677 (working tree edited)
+31d06a41636b591b46bf82e3e8b5bffcd16778f710fb9fae4b1723f9560db0e4  docs/reporting/glossary-candidates.md
+glossary-candidates.md           words=4242 total= 12 per100w=  0.28 em_dash= 1
+[HOOK:ste] glossary-candidates.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] glossary-candidates.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] glossary-candidates.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+ste exit=0

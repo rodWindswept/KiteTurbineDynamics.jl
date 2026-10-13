@@ -1,0 +1,41 @@
+diff --git a/docs/reporting/glossary-candidates.md b/docs/reporting/glossary-candidates.md
+index 0d1c345..524614c 100644
+--- a/docs/reporting/glossary-candidates.md
++++ b/docs/reporting/glossary-candidates.md
+@@ -4,7 +4,7 @@
+ 
+ **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
+ 
+-**Status** PREP v11, numbers-free by construction (no measurement values, no
++**Status** PREP v12, numbers-free by construction (no measurement values, no
+ model constants). The validators signed register v1, and section 5 carries
+ the constants interface. Every value slot in a definition stays a binding
+ slot for Track D.
+@@ -104,7 +104,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
+ | network rotor model | The design view where several rotors share the power equally. | CONTEXT.md | supply |
+ | tension-supplied capacity | The principle that TRPT torque capacity comes from shaft tension. More tension lets the same lines carry more torque. | outline section 3, CONTEXT.md MTR row | room-supplies |
+ | MTR (moment-to-tension ratio) | Moment-to-tension ratio. It ties the moment a shaft section carries to its tension and radius. | CONTEXT.md MTR row | supply |
+-| bank derate | The power factor applied to a banked rotor. It scales disc power by the cosine of the bank angle. The exponent takes a fixed value. | physics-topology 4.0.1, CONTEXT.md | room-supplies |
++| bank derate | The power factor applied to a banked rotor. It scales disc power by the cosine of the bank angle. The exponent takes a fixed value. Banked blades cone out of the ring plane. The rotor sweeps less streamtube frontal area. | physics-topology 4.0.1, CONTEXT.md, founder docx return note 6 (`c2e2aee`) | room-supplies |
+ | torsional collapse | The failure mode where torque demand passes the geometric capacity of the shaft. Rings converge and power transfer fails. | CONTEXT.md | supply |
+ | collapse margin | The distance between the current twist state and the torsional collapse cliff. | CONTEXT.md | supply |
+ | FoS (factor of safety) | The ratio of capacity to load at a structural check. The report states which checks it covers. | CONTEXT.md FoS row | supply |
+@@ -225,6 +225,7 @@ Writers pin each display form once and reuse it.
+ | transmitted twist (label `segment_twist_deg`) | The twist a segment carries in a running state. The shaft total is `delta_alpha_deg`. | `src/sim_frame.jl` (`capture_extended`) | supply |
+ | segment torque (label `segment_torque`) | The torque a segment transmits in a running state. It comes from the tension and twist of that state. | `src/sim_frame.jl` (`capture_extended`) | supply |
+ | torsional capacity (`trpt_torque_capacity_axial`) | The peak torque a segment can transmit at its over-twist limit, for a given axial force. Pair a capacity only with the load of the same state. | `src/trpt_twist_limit.jl` | supply |
++| segment torque margin | The ratio of torque capacity to the segment torque it carries, at the same state. The least value governs. | register NR-040 (NR-023 strings), `src/sim_frame.jl`, `src/trpt_twist_limit.jl` | supply |
+ | crossing limit (geometric crossing limit, δα*) | The per-segment limit of the collapse detector. The detector compares the twist of each segment against it. A design with a segment past its limit carries the status `reject_twist`. Every segment carries one, the no-limit segments included. It is not the over-twist limit. No form claims the two angles equal. | `src/objective_evaluator.jl` (`twist_collapse_check`), DECISIONS [2026-09-20], `docs/agents/physics-topology.md`, `docs/validation/model-admissibility.md` | supply |
+ | ring check (`max_util`), ring FoS (`fos_ring`) | The worst-beam structural check of a ring. It adds the axial share and the bending share in one beam-column interaction ratio. The unit value is the fail boundary. The factor of safety is its reciprocal. | `src/ring_element_analysis.jl`, `src/sim_frame.jl` | supply |
+ 
+@@ -323,3 +324,10 @@ defect, like a missing register row.
+   kg-equivalent, the unit the objective score reads in. The display
+   note (`43fb0bc`) and the section 2.4 objective definition ground it.
+   Mass keeps kg. No other change.
++
++- **v12 (2026-10-13):** two items from the founder docx return join the
++  queue. The bank derate row takes the mechanism clause from the note:
++  banked blades cone out of the ring plane, so the rotor sweeps less
++  streamtube frontal area. A new row joins the structural-limit group:
++  segment torque margin, the capacity over demand ratio per segment
++  (NR-040, from NR-023). No other change.
