@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v12, numbers-free by construction (no measurement values, no
+**Status** PREP v13, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -77,7 +77,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | annulus (swept annulus) | The swept area of a ring-anchored blade. A ring-anchored blade sweeps an annulus, not a disc. | physics-topology 4.1, renderer spec section 7 | ratify |
 | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rotor". | physics-topology 4, CONTEXT.md | ratify |
 | expansion rotor | A banked-blade rotor on a TRPT ring. It adds its own thrust and torque. It is a co-equal generating rotor, never "supplementary". | physics-topology 4, CONTEXT.md | ratify |
-| bank angle (bank) | The angle of a blade out of its ring plane. Bank is not elevation, and it is not yaw. | physics-topology 4 | ratify |
+| bank angle (bank) | The angle of a blade out of its ring plane. Bank is not elevation, and it is not yaw. The equivalent term in AeroDyn is pre-cone. | physics-topology 4, the pre-cone read (`2db50f9`), draft v0.28 | ratify |
 | elevation angle (β) | The tilt of the shaft axis away from horizontal. | physics-topology 4, CONTEXT.md | ratify |
 | sweep | The azimuthal setting of a blade within the ring. Tulloch names anhedral, bank and sweep together. | physics-topology 4 | supply |
 | banked blade | A blade whose span runs out of the ring plane. The blade stays straight, and the angle lives in the mount. The swept surface is a cone frustum, not a flat annulus. | physics-topology 4 | supply |
@@ -119,6 +119,19 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 - "Modulation" matches the record phrase "modulated lifter". "Furl" stays reserved for emergency lift reduction.
 
 - The ring-utilisation figure keeps "stacked bar" wording. The lifter is the stack of autogyros. Keep the two apart.
+
+**Pre-cone cross-term guards (draft note).**
+
+- The AeroDyn pre-cone is the equivalent term for the bank angle.
+  The draft carries the bridge at section 2.1.
+
+- The record keeps two open items outside the bridge: the pivot, and the
+  pre-cone radius convention.
+
+- Entries and prose avoid "identical geometry" forms, and "shaft tilt"
+  is never the bank form, because it carries the elevation. Where
+  prose describes the measurement itself, keep the record phrase: the
+  closest AeroDyn analogue.
 
 ## 3. Search and evaluation terms (Methods, U2 to U4)
 
@@ -174,6 +187,9 @@ Track D pins the two display forms apart at ratification.
 | k-alignment fault | The fault class where a check runs the wrong generator gain. The machine then differs from the one the campaign scored. | trust log [2026-08-13] and [2026-08-24] rows | room-supplies |
 | stale-gate near-miss | The case where a re-gate ran at a stale gain and passed. A pre-push review caught it. | trust log [2026-08-24] row | room-supplies |
 | the fold | The rebase of the lowest power rung onto the S2-class fold seed. The ceiling genes fold up, and the bounds recenter. | DECISIONS [2026-10-05] | room-supplies |
+| cp fix | The Cp-surface correction, landed at `a82cafd`. The length screen ran on both sides of it (NR-027). | register NR-027, `docs/validation/2026-10-05-cp-span-structure-and-resize.md` | supply |
+| folded class | The class of designs the campaign searched after the S2 fold rebase. The folded class clears the power floor at the screened length (NR-028). | register NR-028, `docs/validation/2026-10-05-s2-fold-flight.md`, draft section 2.3 | supply |
+| wind authority | The single wind source the scored results read: the site wind standard. The shear exponent comes from the site spec (`95c385d`). The era label `post-95c385d_wind-authority` names it in the register header and every provenance stamp. | register header, DECISIONS [2026-10-03], provenance stamps | supply |
 | numbers register | The single source of truth between the simulation and the audience. Only signed rows exist for reporting. | framework section 2, register header | ratify |
 | register row | One claim with value, units, source and a validator signature. | framework section 2 | ratify |
 | register machine | The machine whose build the register rows describe. The figure kits match the drawn machines against it. | register rows, the strip caption kit | supply |
@@ -331,3 +347,8 @@ defect, like a missing register row.
   streamtube frontal area. A new row joins the structural-limit group:
   segment torque margin, the capacity over demand ratio per segment
   (NR-040, from NR-023). No other change.
+
+- **v13 (2026-10-13):** three era names join the trust-and-record group,
+  routed by the era-map name check (SW3b): cp fix, folded class and
+  wind authority. The bank angle row takes the AeroDyn pre-cone
+  cross-term, with a guards note. No other change.
