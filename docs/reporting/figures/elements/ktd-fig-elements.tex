@@ -1,4 +1,4 @@
-% ktd-fig-elements.tex — KTD report figure element library (v1, 2026-10-12)
+% ktd-fig-elements.tex — KTD report figure element library (v1.1, 2026-10-13)
 % Figures seat. Defined once here, reused by the F1 system-anatomy build
 % (and the planned F2 genome strip and F6 winner anatomy builds).
 %
@@ -13,6 +13,7 @@
 % Bound rows for F1 (no other number prints): NR-011 (rings 6, n_lines 3,
 % n_active 1, r_hub 4.580 m, r_bot 0.804 m), NR-017 (bank 7.088 deg).
 % Rule standing: the 22.0 slot value never prints as a rotor angle.
+% v1.1: the ktd dim arrow style joins — the F1 v4 blade-span dimension (NR-043).
 %
 % Requires: \usepackage{tikz,xcolor,amsmath}
 
@@ -35,6 +36,8 @@
   ktd axis/.style={draw=black!40, line width=0.6pt, dash pattern=on 2.6pt off 2.2pt},
   ktd leader/.style={draw=black!55, line width=0.4pt},
   ktd dim/.style={draw=black!55, line width=0.5pt},
+  ktd dim arrow/.style={draw=black!55, line width=0.5pt,
+    {Stealth[length=1.6mm,width=1.2mm]}-{Stealth[length=1.6mm,width=1.2mm]}},
   ktd ground/.style={draw=black!70, line width=1.0pt},
   ktd station/.style={draw=black!55, line width=0.8pt, dash pattern=on 3pt off 2.5pt},
   ktd lab/.style={font=\footnotesize, text=ktdInk, inner sep=1.2pt, align=left},
