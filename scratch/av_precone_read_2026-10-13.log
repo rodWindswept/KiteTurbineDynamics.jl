@@ -1,0 +1,24 @@
+av_precone_read — the AeroDyn pre-cone equivalence read (aero seat)
+date 2026-10-13  repo HEAD 17e6b89  branch bank-derate-cos2p65
+
+[PASS] draft: section 2.1 bank sentence present
+[PASS] draft: carries no AeroDyn mention yet
+[PASS] draft: carries no pre-cone mention yet
+[PASS] 09 §4: bank row reads 'angled out of the ring plane, rigid and uniform'
+[PASS] 09 §4: the knob column reads the only knob of this kind
+[PASS] 09 §4: Precone is the banking knob (elevation is ShftTilt)
+[PASS] 09 §4: the old 'bank is a shaft tilt' claim reads corrected
+[PASS] 09 §6: the root-pivot caveat
+[PASS] 09 §8: pivot open, magnitude measured
+[PASS] 10: title reads the precone (bank) sweep
+[PASS] 10 §5: the closest AeroDyn analogue to our bank
+[PASS] 10 §7: radius convention open, not needed for the result
+[PASS] deck: Precone(1) line carries the Blade precone (deg) annotation — 0    Precone(1)     - Blade precone (deg)
+[PASS] deck: ShftTilt(1) line carries the Shaft tilt (deg) annotation — -20    ShftTilt(1)     - Shaft tilt (deg)
+[PASS] deck: sha256 matches the read pin — 93edcf7ecf8fb042f4a79ae08a3a32b3563ddcb0391891d4683ad572e65602de
+[PASS] register: NR-019 row present
+[PASS] register: NR-020 row present, cites the sweep
+[PASS] register: both rows read signed (aero-validator, 2026-10-08)
+[PASS] tracker: the open item reads as stated
+
+checks 19  pass 19  fail 0
