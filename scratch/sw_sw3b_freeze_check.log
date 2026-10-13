@@ -1,0 +1,14 @@
+== final receipt lint 2026-10-13T17:56:18Z ==
+science-writer-2026-10-13-sweep-16-era-map.md words= 404 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+
+== freeze check ==
+freeze check OK: both tables byte-equal, one occurrence each
+
+== offenders ==
+== docs/reporting/room-responses/science-writer-2026-10-13-sweep-16-era-map.md: words=404 total=0 per100w=0.0 ==
+-- sentences over 20 words --
+-- passive constructions --
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+
