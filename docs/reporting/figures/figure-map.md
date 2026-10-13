@@ -49,8 +49,8 @@ full roster around them.
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
-| 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | The counter-read by the seats. The PCA projection row. Then the visual pass by Rod |
-| 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | The counter-read by the seats. The PCA projection row. Then the visual pass by Rod |
+| 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | The counter-read by the seats (F-VALUE opens, NR-044 signed). Then the visual pass by Rod |
+| 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | The counter-read by the seats (F-VALUE opens, NR-044 signed). Then the visual pass by Rod |
 | 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
@@ -323,3 +323,11 @@ three slots).
   row. Row 22 mints proposed: the thrive/fail status view. The slugs
   `pca-landscape` and `pca-atlas` fill, and both rows move to R2. Next:
   the counter-read by the seats, then the visual pass by Rod.
+
+- **v25 (2026-10-13):** NR-044 signs (science-validator, `2ad023c`). The
+  PCA projection summary lands: shares 22.434667 / 17.263044, pair total
+  39.697710, the abs(v) >= 0.2 loading set, the 18 x 18 bin rule over
+  the 1 to 99 percentile rectangle, and the draw-space boundary. The
+  row-want sentences close on both kit notes, both SPECs and both
+  caption drafts. No plate byte moves, so the R2 pins stand. Rows 20
+  and 21 wait on the counter-read and the visual pass by Rod.

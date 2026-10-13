@@ -10,14 +10,17 @@
 | NR-001 | The 930-design screen size | Signed |
 | NR-005 | The common seed value, 36.109 | Signed |
 | NR-006 | The winner value, 27.364 | Signed |
+| NR-044 | The PCA projection summary: shares, loadings and the bin rule | Signed (science-validator, `2ad023c`) |
 
 The figure draws no other signed row. The projection matches
-`pca-landscape` and the row want matches.
+`pca-landscape` and reads NR-044.
 
-## Row wants
+## Row closed
 
-- **PCA projection summary.** PC1 22.434667, PC2 17.263044 per cent.
-  The recipe is the same as `pca-landscape`.
+- **NR-044 — the PCA projection summary.** Signed (science-validator,
+  `2ad023c`). PC1 22.434667, PC2 17.263044 per cent. The landscape kit
+  note carries the full loading set, the bin rule and the draw-space
+  boundary.
 
 ## Drawn precision
 

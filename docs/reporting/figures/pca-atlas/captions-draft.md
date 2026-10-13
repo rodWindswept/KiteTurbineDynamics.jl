@@ -18,19 +18,21 @@ marks match the levers landscape plate. Each panel colours the cell
 mean of that gene over all 930 designs. The star marks the common seed
 (36.109, NR-005). The diamond marks the winner (27.364, NR-006). The
 thin lines trace the island journeys. The colour bars print each gene
-at three significant figures. The variance shares of the projection
-wait on their register row at this cut.
+at three significant figures. The projection reads NR-044: PC1 22.4 per cent, PC2
+17.3 per cent.
 
 ## Provenance line
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006 · row want: PCA projection summary · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `3d36c7a`
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044 · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `3d36c7a`
 
 ## Checks for the consistency pass
 
 - One form per concept. The panels read by gene slot (x1..x10). The
   journey marks read "the common seed" and "the winner".
-- Every value cites a register row. The projection carries the row
-  want.
+- Every value cites a register row. The projection reads NR-044.
 - The panel titles read the genome glossary names.
+
+**Delta** v2 (2026-10-13): NR-044 signs. The row-want sentences now
+cite the row. Caption text only, no render moves.
 
 **Delta** v1 (2026-10-13): created with the kit landing.

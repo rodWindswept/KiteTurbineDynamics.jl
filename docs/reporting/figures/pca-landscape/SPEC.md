@@ -37,8 +37,8 @@ The section 3.4 text carries the reading. The plate carries the shape.
 
 - The projection: a z-score of the 930 x 10 gene matrix, one SVD. PC1
   carries 22.434667 per cent of the variance. PC2 carries 17.263044
-  per cent. The plate prints one decimal, and the shares carry a row
-  want.
+  per cent. The plate prints one decimal. The shares read NR-044
+  (signed 2026-10-13).
 
 ## Inputs. The record contract.
 
@@ -91,7 +91,7 @@ The section 3.4 text carries the reading. The plate carries the shape.
 | 930 designs | NR-001 | subtitle, journey inset | the screen size |
 | start 36.109 | NR-005, NR-006 | map label, journey inset | the common seed |
 | winner 27.364 | NR-006 | map label, journey inset | island 3 |
-| variance shares 22.4 / 17.3 | the projection | the two inset titles | row want: PCA projection summary |
+| variance shares 22.4 / 17.3 | NR-044 | the two inset titles | signed (science-validator, `2ad023c`) |
 | colour bar ticks 30 / 33 / 36 | the colour norm | scale | not readouts |
 | axis ticks | the projection window | scale | not readouts |
 
@@ -113,8 +113,8 @@ The display forms pin here once, for labels, captions and prose alike.
   carries 46 strings.
 
 - **F-VALUE, register equality.** Every drawn value equals its signed
-  row at the stated precision. The variance shares await their row.
-  @aero-validator owns this check, at the sign-off commit.
+  row at the stated precision. The projection row signed as NR-044.
+  @aero-validator owns the counter-read, at the sign-off commit.
 
 ## Caption plan (dual)
 
@@ -139,17 +139,17 @@ The display forms pin here once, for labels, captions and prose alike.
 - **R2** this landing: the scripted figure against the committed
   record walks F-CITE, F-REPRO and F-LABEL. The counter-read by the
   seats and the visual pass by Rod come first. The projection row
-  gates F-VALUE.
+  signed as NR-044, so F-VALUE opens at the counter-read.
 
 - **R3** the final pass. @aero-validator runs F-VALUE at the sign-off
   commit. Rod does the visual pass. Status moves to approved.
 
 ## Open inputs
 
-1. The PCA projection summary row: the variance shares, the loading
-   pattern and the bin rule. The recipe is pinned in the kit note.
+1. The reading-order slot (author seat) and the fold order.
 
-2. The reading-order slot (author seat) and the fold order.
+The projection row closed as NR-044 (signed 2026-10-13). The plate
+prints no other waited value.
 
 ## Non-goals
 
@@ -159,5 +159,7 @@ readouts.
 
 ## Deltas
 
+- v2 (2026-10-13): NR-044 signs (`2ad023c`); the row want closes. No
+  plate byte moves.
 - v1 (2026-10-13): R2 lands with the GENERATE pass. The scratch draft
   carried two vision rounds before the kit.

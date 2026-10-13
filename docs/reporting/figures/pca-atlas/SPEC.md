@@ -26,7 +26,7 @@ of ten is the "smaller genome" reading.
 - The same three island telemetry files as `pca-landscape` (data
   commit `dd3cc6a`, run `a76c5e9`). The same projection, pinned by the
   same checks: z-score, one SVD, PC1 22.434667 per cent, PC2 17.263044
-  per cent.
+  per cent (NR-044).
 
 - The old framework: one shared projection, one panel per variable,
   the same journeys overlaid. `scripts/render_v10_atlas.py`.
@@ -90,8 +90,8 @@ of ten is the "smaller genome" reading.
 - **F-LABEL.** Every vector string equals a ledger entry. The ledger
   carries 37 strings.
 
-- **F-VALUE.** The shared projection carries the row want below.
-  @aero-validator owns this check, at the sign-off commit.
+- **F-VALUE.** The shared projection reads NR-044. @aero-validator owns
+  the counter-read, at the sign-off commit.
 
 ## Caption plan (dual)
 
@@ -113,16 +113,16 @@ of ten is the "smaller genome" reading.
 ## Rounds
 
 - **R2** this landing. The counter-read by the seats and the visual
-  pass by Rod come first. The projection row gates F-VALUE.
+  pass by Rod come first. The projection row signed
+  as NR-044.
 
 - **R3** the final pass at the sign-off commit.
 
 ## Open inputs
 
-1. The PCA projection summary row: shared with `pca-landscape`. The
-   recipe is pinned in the kit note.
+1. The reading-order slot (author seat) and the fold order.
 
-2. The reading-order slot (author seat) and the fold order.
+The projection row closed as NR-044 (signed 2026-10-13).
 
 ## Non-goals
 
@@ -131,4 +131,6 @@ range. No re-derived outcome values.
 
 ## Deltas
 
+- v2 (2026-10-13): NR-044 signs (`2ad023c`); the row want closes. No
+  plate byte moves.
 - v1 (2026-10-13): R2 lands with the GENERATE pass.
