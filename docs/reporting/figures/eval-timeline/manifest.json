@@ -1,0 +1,52 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py --script-commit bb39aec",
+  "data_commit": "dd3cc6a",
+  "inputs": {
+    "extracts": [
+      {
+        "path": "docs/reporting/figures/eval-timeline-extract/extract-eval-timeline-cold.csv",
+        "sha256": "398e230a1d874b08c2461732bf24d4b7a82ac32d19afec1cfd4fc40146420efd"
+      },
+      {
+        "path": "docs/reporting/figures/eval-timeline-extract/extract-eval-timeline-warm.csv",
+        "sha256": "7eb2f44cb476d1dbadd69684826f287ff446a3973590488bb6fe844b97b68e7d"
+      },
+      {
+        "path": "docs/reporting/figures/eval-timeline-extract/extract-eval-timeline-warm-rulingmode.csv",
+        "sha256": "3abcaeba0d1a01e772a7c525c4bc4ba65ef03bf01538c9bf0e442f9aebfaa4ee"
+      },
+      {
+        "path": "docs/reporting/figures/window-trace-extract/extract-winner-window-taps.csv",
+        "sha256": "73132bdcb477d2b890f3940b8e690982e694296a016dee72fd4ea7936dce4e66"
+      }
+    ],
+    "register_rows": [
+      "NR-008",
+      "NR-012",
+      "NR-013",
+      "NR-013 ext",
+      "NR-016",
+      "NR-027",
+      "NR-029",
+      "NR-039"
+    ]
+  },
+  "outputs": {
+    "eval-timeline.pdf": "a04a955e20a5b8e1f5a1ea187fff4e8b37f8e2011cdafe610cb597c902c04d84",
+    "eval-timeline.png": "d4e19e0256f6b2a5214022d9ef7eb777b4bf25c324e5df64d8b42d297b2065bd",
+    "eval-timeline.svg": "2fb460965c96fe734c46d8f05090bf0c85931e2a4420abee20d9a2b17856d2c9",
+    "label-ledger.txt": "cd323cbe8d2af29c0b093a5067c3f0cffccb8443562f93d228c5ba7e75887edd"
+  },
+  "precision": "rates 2 dp; power 3 dp; strain annotations as signed; floor 5.0 kW",
+  "script": {
+    "path": "docs/reporting/figures/eval-timeline/eval-timeline.py",
+    "sha256": "d8f1415e9d22364e0a064a970ac22fe12ea4513275dc2c66146490c892bcb624"
+  },
+  "script_commit": "bb39aec",
+  "slug": "eval-timeline",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "python": "3.12.3"
+  }
+}

@@ -1,0 +1,52 @@
+(last five samples)
+(t > 10 s)
+0
+0.5
+1.0
+1.5
+10
+10.17 — start: rotor Cp-peak speed (NR-016)
+11
+13
+13.38 — window mean (NR-029)
+15
+2
+20
+30
+4
+40
+5 kW floor — read on P_end
+50
+6
+9
+The cold path holds the window; the warm start breaks in milliseconds
+The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing.
+Winner island-3 machine · as-coded cold and warm paths · 100 Hz extract at tree 980de02 · era post-95c385d_wind-authority
+at decode
+break strain — rope-break gate
+cold path (solid line)
+evaluation time (s)
+every step,
+first 12 ms
+generator power (kW)
+ground clearance —
+hub · tip · Betz, read
+measurement window
+once per second
+over-power term —
+peak strain / break strain
+power floor,
+rate ω (rad/s)
+read on P_end
+relax
+relax included
+rope break —
+rope-break gate off during relax (not yet in the code)
+rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+ruling-mode condition run (dashed) — peak 1.448 at t = 5.798 ms
+sampled gates — twist ·
+sources: eval-timeline-extract · window-trace-extract · data commit dd3cc6a · trees 980de02 / 8d01394
+warm as coded: breaks at t = 2.841 ms — run ends
+window mean P 5.309 kW · P_end 5.314 kW last five (NR-008)
+ω gnd (solid) · ω hub (dashed)
+≥ 1.5 m, read once

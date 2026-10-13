@@ -22,8 +22,8 @@ This map carries the roster the room works from. A row moves only when
 work lands. The commit names the row.
 
 The open slugs carry their own SPECs in this directory: the machine
-renderer set, `ring-utilisation`, `twist-limit` and `k-basis`. This map
-carries the full roster around them.
+renderer set, `ring-utilisation`, `twist-limit`, `k-basis` and
+`eval-timeline`. This map carries the full roster around them.
 
 ## 2. The roster
 
@@ -32,7 +32,7 @@ carries the full roster around them.
 | 1 | 1 | §1 | AWE landscape. Where the kite turbine sits | ⟨tbd⟩ | candidate | `awe-context-outline.md`. The literature | Track A reconciliation |
 | 2 | 2 | §2.1 | System anatomy (the term set, the lift chain). Brief F1 | `system-anatomy` | R2 | The island-3 winner decode (`scratch/fig1_decode_winner.jl`, data commit `dd3cc6a`). Physics-topology §3 | Seated in the draft (§2.1, v0.22; kit embed-ready). The science half of the content check. The Track D display-form flip rides the author pass |
 | 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
-| 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | ⟨tbd⟩ | proposed | `run_canonical_sim!`. The 2026-09-16 ruling | Rows for any printed value |
+| 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | `eval-timeline` | R2 | `eval-timeline-extract` (`21e941d`). `window-trace-extract` (`6175f83`) | F-VALUE at the sign-off commit. Then the fold |
 | 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE at the sign-off commit. Then the fold |
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas. Then F-VALUE at the sign-off commit |
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling. Then F-VALUE at the sign-off commit |
@@ -248,3 +248,13 @@ three slots).
   (NR-027, NR-039), per the author check. The slug `k-basis` fills, and
   the row moves to R2. Next: F-VALUE at the sign-off commit, then the
   fold.
+
+- **v18 (2026-10-13):** row 4 lands its kit. The generator lands at
+  `bb39aec`; the outputs and the records land in this commit. The plate
+  draws the winner timeline from the certified extracts, with the gate
+  map below. The lane-3 annotations carry the NR-013 extension forms.
+  The two term picks land: the subtitle drops the colon code forms and
+  the ruling label reads "not yet in the code". Three runs stay
+  byte-identical across the five outputs, and the in-script checks and
+  the F-LABEL self-check pass. The slug `eval-timeline` fills, and the
+  row moves to R2. Next: F-VALUE at the sign-off commit, then the fold.
