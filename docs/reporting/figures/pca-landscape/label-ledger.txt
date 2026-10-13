@@ -1,0 +1,46 @@
++ PC1 ↑
++ PC2 ↑
+-1
+-2
+-3
+-4
+-5
+0
+1
+2
+3
+30
+33
+36
+930 designs · three islands · 31 generations each
+PC1 — 22.4% of variance
+PC1 — blade scale against unit count
+PC2 — 17.3% of variance
+PC2 — second-rotor and clustering settings
+THE THREE JOURNEYS
+V13 campaign — parameter-space landscape
+blank cells carry none
+bright = lower objective
+cell mean of the search
+deeper second-rotor bank (x8), smaller second blades (x10),
+direction reads from the loadings
+each line: the island best-so-far path, one step per generation
+even rings, shallow second bank, larger second blades
+feasible designs only;
+island 1
+island 2
+larger main-rotor blades (x9)
+more TRPT lines (x4)
+more rotors (x6)
+objective (kg)
+one common seed at 36.109 (kg)
+projection: z-scored 10-gene matrix, SVD · variance shares pending their row · script commit 3d36c7a
+rings biased toward the ground (x5)
+source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006
+start 36.109
+the 930-design screen · three DE islands · PC1-PC2 projection of the ten-gene search · colour is the search objective (kg)
+wider spacing (x3), ground ring (x2)
+winner 27.364
+winner: island 3 at 27.364 (kg)
+− PC1 ↓
+− PC2 ↓

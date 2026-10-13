@@ -1,0 +1,12 @@
+check: rows: 930  (OK)
+check: rows per island: [310, 310, 310]  (OK)
+check: status counts: {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}  (OK)
+check: feasible rows: 508  (OK)
+check: PC1 share (2 dp): 22.43  (OK)
+check: PC2 share (2 dp): 17.26  (OK)
+check: seed pc: (0.531, -1.297)  (OK)
+check: winner fit: 27.364  (OK)
+check: winner pc: (0.885, 2.869)  (OK)
+clip window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+written: pca-atlas.svg / .pdf / .png, label-ledger.txt (37 strings), manifest.json
+F-LABEL self-check: OK

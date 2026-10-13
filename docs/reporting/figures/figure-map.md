@@ -22,8 +22,9 @@ This map carries the roster the room works from. A row moves only when
 work lands. The commit names the row.
 
 The open slugs carry their own SPECs in this directory: the machine
-renderer set, `ring-utilisation`, `twist-limit`, `k-basis` and
-`eval-timeline`. This map carries the full roster around them.
+renderer set, `ring-utilisation`, `twist-limit`, `k-basis`,
+`eval-timeline`, `pca-landscape` and `pca-atlas`. This map carries the
+full roster around them.
 
 ## 2. The roster
 
@@ -48,6 +49,9 @@ renderer set, `ring-utilisation`, `twist-limit`, `k-basis` and
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
+| 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | The counter-read by the seats. The PCA projection row. Then the visual pass by Rod |
+| 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | The counter-read by the seats. The PCA projection row. Then the visual pass by Rod |
+| 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -307,3 +311,15 @@ three slots).
   all five outputs. The kit note, the manifest, the caption provenance
   and the draft's exhibit row take the new pins. No other geometry
   moves. Next: the seats' counter-read, then the fold.
+
+- **v24 (2026-10-13):** the PCA levers family mints and lands. Rows 20
+  and 21 take the founder ask of 2026-10-13 (the old campaign PCA
+  charts redone for the v13 5 kW screen). The generators land at
+  `3d36c7a`; the outputs and the records land in this commit. The
+  landscape draws the objective field, the reading insets and the three
+  island journeys. The atlas draws ten gene panels, down from fourteen
+  in the old campaign. Two runs stay byte-identical across all five
+  outputs per kit. The variance shares draw pending the PCA projection
+  row. Row 22 mints proposed: the thrive/fail status view. The slugs
+  `pca-landscape` and `pca-atlas` fill, and both rows move to R2. Next:
+  the counter-read by the seats, then the visual pass by Rod.
