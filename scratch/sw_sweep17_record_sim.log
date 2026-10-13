@@ -1,0 +1,13 @@
+--- base lint rc=0
+sw_sweep17_record_base.md        words=7860 total= 11 per100w=  0.14 em_dash= 0
+[HOOK:ste] sw_sweep17_record_base.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep17_record_base.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep17_record_base.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+--- new lint rc=0
+sw_sweep17_record_new.md         words=8433 total= 11 per100w=  0.13 em_dash= 0
+[HOOK:ste] sw_sweep17_record_new.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep17_record_new.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep17_record_new.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+--- offender delta base->new:
+   > == scratch/sw_sweep17_record_new.md: words=8433 total=11 per100w=0.13 ==
+done

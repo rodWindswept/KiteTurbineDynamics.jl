@@ -1,0 +1,14 @@
+== sweep17 final checks 2026-10-13T18:24:49Z ==
+== lint record ==
+draft-consistency-sweep.md       words=8433 total= 11 per100w=  0.13 em_dash= 0
+[HOOK:ste] draft-consistency-sweep.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] draft-consistency-sweep.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] draft-consistency-sweep.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+rc=0
+
+== byte-equality ==
+record == sim OK
+
+== diff stat ==
+ docs/reporting/draft-consistency-sweep.md | 90 +++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)

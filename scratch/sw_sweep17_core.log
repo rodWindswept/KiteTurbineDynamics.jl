@@ -1,0 +1,234 @@
+== sweep 17 core 2026-10-13T18:22:33Z ==
+== head ==
+60a6cffcc9c9e29404fea9a6558dd13c7868a31c
+
+== span log (draft) ==
+eb0e08d docs(reporting): draft v0.29 — AU1, the front summary block: after the abstract and keywords, the decision summary, six findings bullets and the limits paragraph (parts 1, 12, 17); placement open to a room bounce; token diff declared and asserted (add 29, 930 x2, 5 x2, 508, 422, 5.309, 25.698, 14.972, 2.03, 36.109, 27.364, 3; remove 28); tracker v0.29 entry; author receipt; STE rc=0 (author seat)
+a66b8d2 docs(reporting): the v4 re-cut lands — the F1 system-anatomy plate draws the blade span (NR-043, display 1.499 m; script commit 9cecee3): outputs and records; the drawn source line reads NR-011 · NR-017 · NR-043; manifest, register note, captions, SPEC, map v23, and the draft exhibit row take the pins; two runs byte-identical; receipt and evidence set; STE rc=0 (figures seat)
+
+== zero-diff checks ==
+(draft: empty=zero)
+(register: empty=zero)
+(tracker: empty=zero)
+
+== STE draft tip ==
+2026-10-08-report-first-draft.md words=4441 total=  5 per100w=  0.11 em_dash= 0
+[HOOK:ste] 2026-10-08-report-first-draft.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] 2026-10-08-report-first-draft.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+rc=0
+
+== STE draft v0.28 ==
+sw_sweep16_draft_v028.md         words=4229 total=  5 per100w=  0.12 em_dash= 0
+[HOOK:ste] sw_sweep16_draft_v028.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep16_draft_v028.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+
+== STE draft mid ==
+sw_sweep17_draft_mid.md          words=4231 total=  5 per100w=  0.12 em_dash= 0
+[HOOK:ste] sw_sweep17_draft_mid.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep17_draft_mid.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+
+== STE tracker ==
+draft-tracker.md                 words=1869 total= 10 per100w=  0.54 em_dash= 0
+[HOOK:ste] draft-tracker.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] draft-tracker.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] draft-tracker.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] draft-tracker.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] draft-tracker.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+
+== offender profiles ==
+--- diff v028 vs mid:
+1c1
+< == scratch/sw_sweep16_draft_v028.md: words=4229 total=5 per100w=0.12 ==
+---
+> == scratch/sw_sweep17_draft_mid.md: words=4231 total=5 per100w=0.12 ==
+--- diff mid vs v029:
+1c1
+< == scratch/sw_sweep17_draft_mid.md: words=4231 total=5 per100w=0.12 ==
+---
+> == docs/reporting/drafts/2026-10-08-report-first-draft.md: words=4441 total=5 per100w=0.11 ==
+== token diff per push ==
+== 5d19bde -> a66b8d2 ==
+arrivals: none
+removals: none
+
+== a66b8d2 -> eb0e08d ==
+arrivals: {'14.972': 1, '2.03': 1, '25.698': 1, '27.364': 1, '29': 1, '3': 1, '36.109': 1, '422': 1, '5': 2, '5.309': 1, '508': 1, '930': 2}
+removals: {'28': 1}
+  [arr 14.972] Its minimum factor of safety is 14.972 (NR-009). | 14.972 (NR-009). That value is the window minimum. The capture hub
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 25.698] Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [arr 27.364] Island 3 reaches 27.364 kg-equivalent (NR-005). | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [arr 29] Internal engineering report. Draft v0.29. Date 2026-10-13.
+  [arr 3] Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [arr 36.109] - The seed genome scores 36.109 kg-equivalent (NR-006). | The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+  [arr 422] - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+  [arr 5] **Abstract.** This report presents a search for a 5 kW-class | modeled objective and gates. Its mean power is 5.309 kilowatts at the
+  [arr 5.309] modeled objective and gates. Its mean power is 5.309 kilowatts at the | Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [arr 508] - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002). | The campaign evaluated 930 designs (NR-001). The status mix reads 508
+  [arr 930] A differential-evolution campaign evaluated 930 candidate kite turbine | - The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+  [rem 28] Internal engineering report. Draft v0.28. Date 2026-10-13.
+
+== cumulative 5d19bde -> eb0e08d ==
+arrivals: {'14.972': 1, '2.03': 1, '25.698': 1, '27.364': 1, '29': 1, '3': 1, '36.109': 1, '422': 1, '5': 2, '5.309': 1, '508': 1, '930': 2}
+removals: {'28': 1}
+
+== token attrib ==
+== 5d19bde -> a66b8d2 ==
+lines: +6 -6; raw token occurrences: added 1, removed 1
+arrivals: none
+removals: none
+
+== a66b8d2 -> eb0e08d ==
+lines: +32 -1; raw token occurrences: added 14, removed 1
+arrivals: {'14.972': 1, '2.03': 1, '25.698': 1, '27.364': 1, '29': 1, '3': 1, '36.109': 1, '422': 1, '5': 2, '5.309': 1, '508': 1, '930': 2}
+removals: {'28': 1}
+  [ARR 14.972 net+1] raw: added-side 1, removed-side 0
+      +1:   Its minimum factor of safety is 14.972 (NR-009).
+  [ARR 2.03 net+1] raw: added-side 1, removed-side 0
+      +1:   The least segment torque margin is 2.03, at S1 (NR-040).
+  [ARR 25.698 net+1] raw: added-side 1, removed-side 0
+      +1:   Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [ARR 27.364 net+1] raw: added-side 1, removed-side 0
+      +1:   Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [ARR 29 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.29. Date 2026-10-13.
+  [ARR 3 net+1] raw: added-side 1, removed-side 0
+      +1:   Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [ARR 36.109 net+1] raw: added-side 1, removed-side 0
+      +1: - The seed genome scores 36.109 kg-equivalent (NR-006).
+  [ARR 422 net+1] raw: added-side 1, removed-side 0
+      +1: - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+  [ARR 5 net+2] raw: added-side 2, removed-side 0
+      +1: screen of a 5 kW-class ground-generation rotary kite turbine with a
+      +1: The report shows that a feasible 5 kW-class candidate exists in the
+  [ARR 5.309 net+1] raw: added-side 1, removed-side 0
+      +1:   Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [ARR 508 net+1] raw: added-side 1, removed-side 0
+      +1: - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+  [ARR 930 net+2] raw: added-side 2, removed-side 0
+      +1: - The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+      +1: - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+  [REM 28 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.28. Date 2026-10-13.
+
+== cumulative 5d19bde -> eb0e08d ==
+arrivals: {'14.972': 1, '2.03': 1, '25.698': 1, '27.364': 1, '29': 1, '3': 1, '36.109': 1, '422': 1, '5': 2, '5.309': 1, '508': 1, '930': 2}
+removals: {'28': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  14.972: net +1, raw added 1, raw removed 0
+  OK  2.03: net +1, raw added 1, raw removed 0
+  OK  25.698: net +1, raw added 1, raw removed 0
+  OK  27.364: net +1, raw added 1, raw removed 0
+  OK  28: net -1, raw added 0, raw removed 1
+  OK  29: net +1, raw added 1, raw removed 0
+  OK  3: net +1, raw added 1, raw removed 0
+  OK  36.109: net +1, raw added 1, raw removed 0
+  OK  422: net +1, raw added 1, raw removed 0
+  OK  5: net +2, raw added 2, raw removed 0
+  OK  5.309: net +1, raw added 1, raw removed 0
+  OK  508: net +1, raw added 1, raw removed 0
+  OK  930: net +2, raw added 2, raw removed 0
+== retired phrasing ==
+no hit: adaptive / DifferentialEquations
+== rigid driveshaft ==
+135:tension. It is not a rigid driveshaft. Its capacity to transmit torque
+
+== superseded forms ==
+no hit
+
+== held tokens in draft ==
+583:  default gain. The scaled system gain sat near 1.94. The window power
+588:  the campaign gain returned 5.18 kilowatts.
+== held token in tracker ==
+218:closed form no longer holds. Its product, 3.55, stays flagged
+261:tokens (3.55, the version-history numerals, the open-request numerals,
+
+== cited commits (backticked) ==
+`74cfef9`
+`9cecee3`
+`a76c5e9`
+`dd3cc6a`
+`eacf073`
+== ancestry ==
+74cfef9 OK
+9cecee3 OK
+a76c5e9 OK
+dd3cc6a OK
+eacf073 OK
+
+== 7-hex tokens (unquoted scan) ==
+0e857cbfb288ff7110aafec99c11211bae1c46e4
+1031fa400d9638872d0b4501
+16deac5f113cfc1eb30a2844
+1f78c8763ba07438286c1f8f
+28f111472d4ed32ffa0c6b58
+31ca00d
+4990a083296e7fc6d512f2cf
+4d60488e87e6d0a90246d59e
+508b3a641fde21b582ee2a58a3d3df2a76999828
+5e4da23f469634c58d1f1c28
+6c36b0ff1de3b664dac23f8c754481d7a844e7d2
+6ce4daba18e3972e5284f7a813aff91be723ee98
+6dfbd6eae0285a55475cd8cfe365e92bb9a6137d
+6f19832088375b96cdc566aff596ccd548f26b62
+74cfef9
+7adaf47963a1b2ddd669d472
+7ff5c05cc0caa0890400fec50a9366397a203b89
+88a972136e7eb12ce2c94bde
+8e9d1d40684b984059601f31d5fb2daed8f835f6
+95c385d
+9b9782bc56d8831d03c622ba
+9beffb6bf8463d39a5808164630d04d8c286184a
+9cecee3
+a76c5e9
+b04d75d23821b311628ce099
+b250c1a187132f68c37747b70f3d6081eb89e677
+b8c654ea55b26f97a03c7fc6acd1049300bda5c1
+ba378b12e6eb14b8a05a2389
+bf02fe689a15e1e3297a09ea
+c040fca2dd63df9c68b56a767ccd0383962db479
+d207343460263fde7481c8be1572e797895db488
+d3b2a5594d5949f318d9f279
+dd3cc6a
+eacf073
+ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab
+f1c322bc20068299651bea7978bde254991b4037
+f7828b35d14a09003436d4a1
+f8184a716280f8cd779e1cb6
+feedbac
+ffac9c1eba5386fe79d3c1f5a69afdfadafaba50
+
+== arithmetic ==
+508+422 = 930
+310*3 = 930
+
+== tracker token diff ==
++v0.29 pass by @author (2026-10-13).
++This pass folds AU1 from the feedback plan: the summary for decision block lands after the abstract and keywords.
++The block carries the summary, six findings bullets and the limits paragraph.
++The placement stands open to a room bounce.
+
+== queue in span ==
+724b226 docs(reporting): glossary candidates v13 — three era names join the trust-and-record group (cp fix, folded class, wind authority); the bank angle row takes the AeroDyn pre-cone cross-term; Track D handoff (science-writer); STE rc=0
+== register in span (empty=no move) ==
+== fig push changed-line tokens (raw pairs) ==
+      2 2
+
+== v0.29 push changed-line tokens (raw) ==
+      1 14.972
+      1 2.03
+      1 25.698
+      1 27.364
+      1 28
+      1 29
+      1 3
+      2 5
+      1 5.309
+
+== df8a2b4 in draft (0 = gone) ==
+0
+== ancestry spot checks ==
+31ca00d OK
+95c385d OK
+9cecee3 OK

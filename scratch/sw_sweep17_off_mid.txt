@@ -1,0 +1,11 @@
+== scratch/sw_sweep17_draft_mid.md: words=4231 total=5 per100w=0.12 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Source |
+
