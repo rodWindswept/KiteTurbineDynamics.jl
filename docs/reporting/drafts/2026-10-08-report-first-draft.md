@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.26. Date 2026-10-13.
+Internal engineering report. Draft v0.27. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -19,25 +19,34 @@ ground-generation rotary kite turbine with a tensile rotary power
 transmission (TRPT). The search varies ring geometry, polygon count,
 rotor count, blade bank angles and blade scale.
 
-A differential-evolution campaign evaluated 930 candidate designs under a
-fixed power-law generator load, each on the measurement window (NR-001).
+A differential-evolution campaign evaluated 930 candidate kite turbine
+designs under one fixed power-law generator load, each on the measurement
+window (NR-001).
 
-The campaign winner is the best feasible candidate under the modeled
-objective and gates. Its mean power is 5.309 kilowatts (NR-008) and its
-minimum factor of safety is 14.972 (NR-009).
+The campaign winner is the best feasible candidate kite turbine under the
+modeled objective and gates. Its mean power is 5.309 kilowatts at the
+site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
 
 All checked TRPT rings and twist segments operate below their failure
 boundaries at the final operating point (NR-021, NR-022).
 
+The minimum factor of safety is 15.0 (NR-009).
+
 At the winner operating point, the least segment torque margin is
-2.03, at S1 (NR-040).
+2.03, at S1, the first of the five segments between the rings (NR-040).
+The margin is torque capacity over the segment torque it carries, and the
+least value governs.
 
-All numbers
+All numbers are in the repo and
 come from the physics era `post-95c385d_wind-authority`, with the bank
-derate applied.
+derate applied. The bank derate is a calculated depowering of the ring
+output, because banked blades sweep less streamtube frontal area.
 
-The study is simulation-only. Blade integrity is not yet gated, and
-lifter modulation across wind speeds remains an assumption. The
+The study is simulation-only. Blade integrity is not yet gated, and the
+outer stiffening bridles sit outside the model.
+
+Lifter kite modulation
+for steady lift tension across wind speeds remains an assumption. The
 rope-break gate placement fix stays open.
 
 The search is a screen, not a survey. The report does not claim a global
@@ -49,19 +58,25 @@ simulation, design search, factor of safety.
 
 ## 1 Introduction
 
-The wind above tower height is stronger and steadier than the wind a
-tower mounted wind turbine reaches. Airborne wind energy systems (AWES) are machines that chase that stronger
-wind. Two families of AWES exist.
+The wind above tower height is stronger and steadier than the wind
+exploited by traditional wind turbines. Airborne wind energy systems
+(AWES) are kite-based machines that chase that stronger wind.
 
-Fly-gen machines carry the generator aloft. A conducting tether sends
-the electrical power to the ground.
+Two families of AWES exist.
+
+Fly-gen machines carry the generator and turbine aloft. A conducting
+tether sends the electrical power to the ground.
 
 Ground-gen machines keep the generator on the ground. The tether
-carries force, and the ground station converts it.
+carries force, and the ground station converts tether motion to
+electrical power.
 
-The field splits a second way, on the wing. Soft wings use fabric.
-They survive crashes and pack small. Rigid wings use composite
-airframes. They hold efficiency and cost more.
+The field splits a second way, on the wing.
+
+Soft wings use fabric. They survive crashes and pack small.
+
+Rigid wings use composite airframes. They are more efficient and more
+costly.
 
 A third split matters for this report. It is the force transmission of
 ground-gen systems.
@@ -75,41 +90,53 @@ continuity is where the kite-turbine family sits.
 
 The machine in this report is a kite turbine.
 
-Kite turbines exploit short rigid blades. The blades sit on a ring and
-form a wide diameter rotor.
+Kite turbines exploit multiple, short rigid blades. The blades sit on a
+ring and form a wide diameter rotor.
 
 The rotor and further rings tie together as a tensile rotary shaft.
 The shaft turns the ground generator.
 
 A tensile rotary power transmission (TRPT) is a shaft made of
-tensioned lines. Rings sit apart under tension. Torque passes from
-ring to ring.
+tensioned lines. Rings sit at fixed distances under tether tension.
+Torque passes from ring to ring, over multiple tethers.
 
-The shaft bends and twists without a rigid driveshaft. Its capacity to transmit torque
-comes from tension itself.
+The TRPT shaft is prone to bending and twisting, especially in low
+tension. It is not a rigid driveshaft. Its capacity to transmit torque
+comes from the tension in the kite lines.
 
-This report presents a search over the design space of that machine.
+This report presents a search over the design space of kite turbines.
 The search varies ring geometry, polygon count, rotor count, blade bank
 angles and blade scale.
 
 The objective is to find the feasible geometries for a 5 kW-class
-machine. The generator load law and the safety gates stay fixed.
-The search asks whether one compact machine can hold the power, mass,
-structural, clearance and twist constraints at once.
+machine, and then characterise them.
 
-The report states what the record supports. It also states the failures,
-each with its lesson.
+The generator load law and the
+safety gates stay fixed. The search asks whether one compact machine
+can hold the power, mass, structural, clearance and twist constraints
+at once.
+
+The report reads the gate and the winner outcome for each
+constraint in the results.
+
+The report states what the record supports. It also states several
+classes of failure in developing this system, each with its lesson.
 
 One frame holds throughout. The machine flies only in simulation. The
 analysis pipeline is the instrument. The report treats the instrument
 with the same distrust it treats the machine.
 
-The field context rests on the literature. Loyd showed that both
-crosswind modes share one theoretical power ceiling.
+The field context rests on the literature.
+
+Loyd showed that both crosswind modes share one theoretical power
+ceiling.
+
+Diehl set the classification axes.
 
 Trevisi built one power model for both modes and found the glide-ratio
-flip. Cherubini mapped the ground-gen and fly-gen taxonomy. Diehl set
-the classification axes.
+flip.
+
+Cherubini mapped the ground-gen and fly-gen taxonomy.
 
 Van der Burg found no dominant wing design. Both wing families stay in
 play. Van de Kaa and Kamp found no dominant generation architecture.
@@ -119,6 +146,7 @@ beat few large ones.
 
 Flather recorded the rope-drive physics that the TRPT descends from.
 Benhaïem and Schmehl analysed the torque path of a rotating reel.
+
 Ranneberg gave the rotary family a momentum frame with flight data.
 
 Tulloch modelled the Daisy TRPT and checked the model against measured
@@ -126,7 +154,7 @@ flight windows. This report extends that line of work.
 
 ## 2 Methods
 
-### 2.1 The machine and its terms 
+### 2.1 The kite turbine and its terms
 
 A line is a tension member, like a tether or a bridle. It carries a load
 only in tension. A pull at one end passes along the line to the other end.
@@ -135,31 +163,50 @@ It never pushes.
 A ring is a polygon of nodes and tubular beams. A ring with blades works
 as a rotor.
 
-Rings without blades work as spacers. They hold the TRPT lines apart
-against the line torsion from torque transfer. Holding the lines apart is
-what preserves torque transmission.
+Rings without blades work as line spacers. They hold the TRPT lines
+apart against the line torsion from torque transfer. Holding the lines
+apart is what preserves torque transmission and prevents torsional
+collapse.
 
-The polygon count names the number of lines. Each line meets the ring at
-one vertex. The polygon count equals the blade count.
+The polygon count names the number of lines (n_Lines). A hexagonal
+polygon connects six lines. Each line meets the ring at one vertex.
 
-The topmost ring carries the main rotor. The lowest ring is the
-ground ring. A rotor is a set of blades on a ring.
+The polygon count also equals the blade count. A rotor is a set of blades
+on a ring. A pentagonal rotor carries five blades.
 
-Bank is the blade angle away from the ring plane about its chord axis at the ring. 
-Blade scale sets the blade size. The search treats each of these as a gene.
+The topmost ring carries the main rotor. The lowest ring is the ground
+station power take-off (PTO) ring. The PTO ring anchors the shaft at the
+ground and turns about its central axis.
+
+Bank is the blade angle away from the ring plane about its chord axis at
+the ring. Blade scale sets the blade size. The scale multiplies the
+blade span and chord, and the blade mass follows the span cubed.
+
+The search treats each of these as a gene. The ring geometry sets the
+hub and ground radii, and the rotor count sets how many rings carry
+blades.
 
 [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011 and NR-017.]
 
-### 2.2 The genome
+### 2.2 The simulation analysis pipeline instrument and its terms
 
-The genome is the design vector. The decoder reads it. The builder
-builds the machine.
+#### 2.2.1 The gene
+
+The search uses differential evolution (DE) to assess kite turbine
+design variants. DE assesses machine genomes. A genome is a design
+vector that describes the physical character of one machine.
+
+The decoder reads it, and the builder builds the machine from it. The
+evaluation then feeds the comparison before DE tries a new gene.
 
 The genes set the ring geometry, the polygon count, the rotor count,
-the bank angles and the blade scales. The winner genome names its
-genes in the decode fields (NR-011).
+the bank angles and the blade scales. The winner genome names its genes
+in the decode fields (NR-011).
 
-### 2.3 The evaluator    
+[Systems block diagram requested: figure-map row 19 (the simulation
+analysis pipeline instrument). Gate: the pipeline schema extract.]
+
+#### 2.2.2 The evaluator
 
 The builder builds the machine from the genome. The evaluator runs the
 machine and measures its performance. Every evaluation has two phases:

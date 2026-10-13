@@ -141,6 +141,13 @@ The five objective sites read "kg-equivalent", and the physical-mass sites keep 
 The section 2.4 objective definition and table cell land.
 No numeral moves.
 
+v0.27 pass by @author (2026-10-13).
+This pass folds the founder docx return, the front quarter.
+The returned forms stand, with the house-form adjustments named in the receipt.
+Section 2.2 retitles with 2.2.1 The gene and 2.2.2 The evaluator.
+The abstract takes the 1 dp form, 15.0, and the wind basis (NR-009, NR-032).
+The downstream numbering holds pending the founder call, and the block diagram takes its figure-map row 19 pointer.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
@@ -163,6 +170,11 @@ counter-read closed and wording amends applied (`570be73`, `f86228a`).
 - Context values for the levers and implications chapters when Phases
 1 to 3 land.
 
+- The AeroDyn pre-cone equivalence for "bank": awaits the
+@aero-validator read (founder return note 10).
+
+- The section 2.2 renumber cascade: pending the founder call (@user).
+
 ## 4. Seat notes moved out of the narrative
 
 Each note below moved out of the report in v0.16, verbatim, with its
@@ -181,6 +193,10 @@ is embed-ready. The Track D display forms still gate the label flip.
 
 §2.2: [Genome visual requested: figure-map row 3 (genome decode strip).
 Gate: the room ruling on need.]
+
+§2.2.2: [Systems block diagram requested: figure-map row 19 (the
+simulation analysis pipeline instrument). Gate: the pipeline schema
+extract.]
 
 §2.3: [Design-family visual requested: figure-map row 11 (design family
 grid). Gate: the family names.]
