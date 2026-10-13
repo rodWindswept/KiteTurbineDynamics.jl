@@ -20,9 +20,12 @@
 
 - Commits: `210cbbc` (sweep 14), `699a2d6` (glossary v11), `7016776`
   (the evidence set). Push follows this response.
+
 - STE, sweep record: words 6041 to 6662, total 11, entry for entry.
   rc=0.
+
 - STE, glossary: words 4063 to 4133, total 11, entry for entry. rc=0.
+
 - Evidence in `scratch/`: `sw_sweep14_tokenattrib.log`,
   `sw_sweep14_tokendiff.log`, `sw_sweep14_multiset.log`,
   `sw_sweep14_off_*.txt`, `sw_sweep14_record_off_*.txt`,
@@ -32,6 +35,7 @@
 
 - The F4, F6, F7 and F9 texts keep four old-form instances. They flip
   with their passes.
+
 - The `.ste-exempt` class question for the recovered brief stays with
   the room.
 
