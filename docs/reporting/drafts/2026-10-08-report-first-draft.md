@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.29. Date 2026-10-13.
+Internal engineering report. Draft v0.30. Date 2026-10-13.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -69,7 +69,7 @@ The key findings follow.
 
 - The campaign winner is the best feasible candidate under the modeled objective and gates.
   Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
-  Its minimum factor of safety is 14.972 (NR-009).
+  Its minimum factor of safety is 15.0 (NR-009).
 
 - All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
   The least segment torque margin is 2.03, at S1 (NR-040).
@@ -410,7 +410,7 @@ kilowatts (NR-007).
 
 Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
 its end power 5.314 kilowatts (NR-008). Its factor of safety reads
-14.972 (NR-009). That value is the window minimum. The capture hub
+15.0 (NR-009). That value is the window minimum. The capture hub
 ring reads 15.033 at the final step (NR-021).
 
 Its operating point reads as follows.
@@ -419,7 +419,7 @@ Its operating point reads as follows.
 |---|---|---|
 | Mean power, measurement window | 5.309 kW | NR-008 |
 | End-of-window power | 5.314 kW | NR-008 |
-| Minimum factor of safety | 14.972 | NR-009 |
+| Minimum factor of safety | 15.0 | NR-009 |
 | Window power swing | 0.029 kW | NR-014 |
 | Settle angular speed | 10.170 rad/s | NR-016 |
 | Window-mean speed | 13.38 rad/s | NR-029 |
@@ -449,7 +449,7 @@ The winner clears each checked gate.
 | Gate | Threshold | Winner outcome | Source |
 |---|---|---|---|
 | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
-| Structural FoS floor | 2.5 | pass, 14.972 minimum | NR-009, NR-015 |
+| Structural FoS floor | 2.5 | pass, 15.0 minimum | NR-009, NR-015 |
 | Clearance | blade-tip gate | pass | NR-036 |
 | Twist | per-segment limit δcrit | pass, all five segments within limit | NR-022 |
 | Rope break | none on the window | pass on the cold path | NR-012, NR-013 |
@@ -472,7 +472,7 @@ bearing. The sizing mass is the airborne mass without the lifter
 itself, 20.698 kilograms. The kite carries its own weight (2026-08-21
 ruling).
 
-The vertical load is 1.5 × 20.698468 × 9.81 = 304.58 newtons. The lift line
+The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line
 runs at 70 degrees of elevation (NR-026). The line tension is that
 load over sin 70 degrees: 324.1 newtons (NR-010).
 
@@ -634,7 +634,7 @@ The measurement window stands behind every number.
 
 The campaign found the best feasible candidate in 930 evaluations (NR-001).
 The winner survives the full window.
-Its power reads 5.309 kilowatts and its factor of safety 14.972 (NR-008, NR-009).
+Its power reads 5.309 kilowatts and its factor of safety 15.0 (NR-008, NR-009).
 At the winner operating point, the least segment torque margin is 2.03, at S1 (NR-040).
 
 The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation.

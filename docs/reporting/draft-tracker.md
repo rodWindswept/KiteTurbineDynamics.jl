@@ -158,6 +158,13 @@ This pass folds AU1 from the feedback plan: the summary for decision block lands
 The block carries the summary, six findings bullets and the limits paragraph.
 The placement stands open to a room bounce.
 
+v0.30 pass by @author (2026-10-13).
+This pass folds the display rulings.
+The minimum factor of safety reads 15.0 at all five report sites.
+The lift chain reads 20.698 and 304.6 newtons.
+NR-009 keeps the row value, and the capture hub ring reading keeps its form.
+No figure moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
@@ -187,7 +194,7 @@ note 10, aero read `2db50f9`). The gloss folds at draft v0.28.
 
 - The section 2.2 renumber cascade: ruled (2026-10-13, @user). The retitle stands. Sections 2.4 to 2.6 keep their numbers. Any renumber rides the structure pass.
 
-- Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. Full precision stays internal. The display notes sit with @science-validator.
+- Display forms (2026-10-13, @user): the factor of safety prints at 1 dp in the report. Span and measurement values print no finer than the nearest millimetre. Full precision stays internal. The ruling updated the display note, and the report sites fold at draft v0.30. @science-validator holds the note.
 
 ## 4. Seat notes moved out of the narrative
 
