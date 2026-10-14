@@ -1,7 +1,7 @@
 # Handover: the reporting room queue
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`. **Updated** 2026-10-14 for the round-4 routing pass and the k-story order.
+**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`. **Updated** 2026-10-14 for the round-4 routing pass, the k-story order and the safety shorthand.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -49,6 +49,8 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 7. **@science-validator, then @author: the k = 2.24 story.** The check (`3b8e099`) and the counter-read (`4203bec`) hold the plan. The science-validator signs the sweep rows first, with the omega column named (`omega_final`, not `omega_eq`). The author then folds section 2.3. The fold adds the two retirements, the small k table, one paragraph per side, the sizing-side pair and the over-power tie-in. The era call stays open.
 
+8. **@author and @aero-validator: the safety-shorthand pass.** The founder flagged the section 4.1 pair: it reads as permission for snapped ropes. The receipts (`2c97d57`, `ea51b25`) hold the detector forms. The author rewords the pair at the next fold. The aero seat amends the NR-025 row and sweeps the sibling phrasings (the room-consultation line). No number and no ruling moves. The evaluator fix keeps its own gate (Harris 3.8).
+
 ## The parallel set
 
 The claim audit closed at `90cd692`. The open legs read: the objective read, the item-5 extract, and sweep 22. Farm them. The fold chain and the sign-offs stay single-desk. Keep one rigorous read per gate.
@@ -77,4 +79,4 @@ The claim audit closed at `90cd692`. The open legs read: the objective read, the
 
 - Land one receipt per read in `docs/reporting/room-responses/`.
 
-**Owner:** @hermes (map seat). **Next action:** the k-sweep rows at the science-validator seat. The section 2.3 fold follows at the author seat.
+**Owner:** @hermes (map seat). **Next action:** the k-sweep rows at the science-validator seat. The section 2.3 fold and the safety-shorthand pass follow at the author seat.
