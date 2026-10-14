@@ -172,6 +172,12 @@ The seed lines take the runner-checked policy.
 The era sentence and the wind bullet take their clarity forms.
 No value moves.
 
+v0.32 pass by @author (2026-10-14).
+This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+It also lands the claim–evidence matrix as the first appendix.
+The reading prints signed rows NR-001, NR-005, NR-006, NR-044 and NR-045.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

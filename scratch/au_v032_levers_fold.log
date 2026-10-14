@@ -1,0 +1,42 @@
+base tip: 60ee728
+base draft sha256: d6247f037fdd9dba7bc7dae44f7c32a1578023a9f5fa033f47da8701bac01a54
+base tracker sha256: c96e57f5c7c5c67322fbf9f2f68edf73d8dbce92adda83c3eaac3c0ee8123d37
+block md5: 7bbd964db09d2b33269ce5cb8c334054 (declared 7bbd964db09d2b33269ce5cb8c334054)
+block verified: receipt md5 ok, byte-present in the sim
+matrix table extracted from the audited supply; three cells re-voiced
+ok D1 version pin
+ok D2 section 3.4 fold
+ok D3 appendix matrix
+ok D4 winner-intro split
+ok T1 tracker entry
+guard pin v0.32: ok
+guard bracket retired: ok
+guard heading form: ok
+guard rows 20/21 pointers: ok
+guard block bytes in candidate: ok
+guard matrix appendix heading: ok
+guard matrix before provenance appendix: ok
+guard old markers held: ok
+guard no 14.972 print: ok
+guard split in place: ok
+guard tracker v0.32 entry: ok
+guard tracker history held: ok
+candidate draft sha256: 135bfddb0ecfa19e46f8b9e2c369482a9d086ecaaad34abf60ceda1cff833403
+candidate tracker sha256: d7f5400b6b8f89a0b356d033643e3ef621cb419887f5942170e9496187352396
+STE draft base: rc=0 words=4538 total=5 {'passive_voice': 1, 'long_paragraph(>6s)': 4, '_em_dash_info': 0}
+STE draft candidate: rc=0 words=5124 total=5 {'passive_voice': 1, 'long_paragraph(>6s)': 4, '_em_dash_info': 2}
+STE tracker base: rc=0 words=2094 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 0}
+STE tracker candidate: rc=0 words=2142 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+draft token delta add: {'0.5180': 1, '0.5621': 1, '0006': 1, '11': 1, '110': 1, '147': 1, '15.0': 1, '17.3': 1, '2.03': 1, '20': 1, '21': 1, '22.4': 1, '25.698': 1, '26': 1, '27.364': 2, '3': 1, '3.1': 1, '3.2': 1, '3.3': 3, '3.4': 2, '301': 1, '32': 1, '36.109': 2, '39.7': 1, '4.1': 1, '4.3': 1, '5.309': 1, '5018': 1, '508': 1, '5222': 1, '5385': 1, '5605': 1, '930': 2}
+draft token delta rem: {}
+draft token check: PASS
+tracker token delta add: {'3.4': 1, '20': 1, '21': 1, '32': 1}
+tracker token delta rem: {}
+tracker token check: PASS
+== cited rows in au_v032_draft_candidate.md: 34
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-032, NR-036, NR-039, NR-040, NR-043, NR-044, NR-045
+== every cited row present and signed (45 signed rows total)
+== signed rows not cited by this draft (informational): NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-042
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+citation checker: rc=0
+GATES: ste=pass tokens_d=pass tokens_t=pass citations=pass

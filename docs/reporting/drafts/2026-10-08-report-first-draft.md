@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.31. Date 2026-10-13.
+Internal engineering report. Draft v0.32. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -415,7 +415,9 @@ kilowatts (NR-007).
 
 Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
 its end power 5.314 kilowatts (NR-008). Its factor of safety reads
-15.0 (NR-009). That value is the window minimum. The capture hub
+15.0 (NR-009). That value is the window minimum.
+
+The capture hub
 ring reads 15.033 at the final step (NR-021).
 
 Its operating point reads as follows.
@@ -514,11 +516,55 @@ the measurement window. It stopped early: a screen, not a survey.
 This report covers the wind-authority era campaign and the recorded
 corrections that shaped it.
 
-### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this section.]
+### 3.4 The levers
 
 [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
 
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
+
+[Figure seated: figure-map row 20 (the levers landscape, slug `pca-landscape`). Values cite NR-001, NR-005, NR-006, NR-044 and NR-045.]
+
+[Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
+
+The two plates map the same search in two views.
+They project the 930 designs of the campaign onto the first two
+principal components of the ten-gene search (NR-001).
+Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+39.7 per cent together (NR-044).
+
+The horizontal axis is PC1 — blade scale against unit count.
+Its inset reads larger main-rotor blades, wider ring spacing and a wider ground ring to the right.
+It reads more TRPT lines and more rotors to the left.
+The top loadings read -0.5385 for the TRPT line count, -0.5222
+for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
+
+The vertical axis is PC2 — second-rotor and clustering settings.
+Its inset reads a deeper second-rotor bank, smaller second blades and
+rings biased toward the ground upward.
+It reads even rings, a shallow second bank and larger second blades downward.
+The top loadings read +0.5621 for the second-rotor bank, -0.5605
+for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044).
+
+The colour is the mean search objective in each cell, in kg-equivalent.
+Bright reads lower, and only feasible designs shade the field.
+The low-objective cells gather toward the upper right, where the winner sits.
+
+Three lines trace the island best-so-far paths, one step per generation (NR-045).
+Each island ran 31 generations.
+All three start at the common seed, 36.109 kg-equivalent (NR-006).
+Island 3 reaches the winner value, 27.364, at generation 26 and holds
+it to the end (NR-005).
+Islands 1 and 2 finish lower in the field.
+
+The atlas repeats the projection ten times, once per gene slot.
+Each panel colours the mean value of one gene across the field.
+The star marks the common seed and the diamond marks the winner.
+The atlas lets a reader follow one gene at a time across that ground.
+
+The two plates fix the search frame.
+They show where the search went, how light the designs get and how
+each gene tracks across that ground.
+The gene-level effects wait on the landscape extracts.
 
 ### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this section.]
 
@@ -686,6 +732,21 @@ analysis room and the seat notes sit in `docs/reporting/draft-tracker.md`. This 
 carries only reader-facing material.
 
 The title stays a working form pending the founder decision.
+
+## Appendix: Claims and evidence
+
+The table ties each headline claim of this report to its evidence and its signed register rows.
+
+| Claim | Evidence | Report location | Register rows |
+|---|---|---|---|
+| Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+| Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
+| Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
+| Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+| Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
+| Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
+| Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners at the rope-break gate. | §4.1 | NR-012, NR-013 |
+| Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
 
 ## Appendix: Figure provenance
 
