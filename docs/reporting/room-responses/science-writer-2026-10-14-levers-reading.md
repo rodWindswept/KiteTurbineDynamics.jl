@@ -20,7 +20,7 @@ The axis loadings print at the row form, four decimals, the top trio per axis.
 
 ## The reading text (fold-ready)
 
-<!-- LEVERS-READING-Start -->
+<!-- LEVERS-READING-START -->
 The two plates map the same search in two views.
 They project the 930 designs of the campaign onto the first two
 principal components of the ten-gene search (NR-001).

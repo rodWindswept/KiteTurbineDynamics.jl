@@ -20,7 +20,7 @@ The axis loadings print at the row form, four decimals, the top trio per axis.
 
 ## The reading text (fold-ready)
 
-<!-- LEVERS-READING-Start -->
+<!-- LEVERS-READING-START -->
 %%BLOCK%%
 <!-- LEVERS-READING-END -->
 
