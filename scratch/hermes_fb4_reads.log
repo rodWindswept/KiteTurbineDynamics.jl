@@ -1,0 +1,38 @@
+# hermes_fb4_reads.log — read-only recon for the feedback round 4 routing pass (2026-10-14)
+# git state, message reconciliation checks, kit-fix logs, linter runs
+
+=== date ===
+2026-10-14, 13:50 BST
+=== branch / tip ===
+bank-derate-cos2p65
+a3c2def (draft v0.34) — local == origin after fetch (0 0)
+=== round-4 source record ===
+docs/reporting/feedback/kg-equivalence-message-1791973254345.md (untracked in tree)
+diff -q vs the staged attachment: IDENTICAL
+=== point 5, the strip caption close-out ===
+grep "in kilograms" docs/ -> only feedback copies; no live kit or draft site
+d6d4db9^ captions.md:24 "...is its search objective, in kilograms." (the message quote, exact)
+d6d4db9  captions.md:25/42 "...in kg-equivalent", plus the form note (drawn label keeps its (kg) form; render holds)
+=== "gate penalties" sites ===
+live: docs/reporting/drafts/2026-10-08-report-first-draft.md:349 and docs/reporting/glossary-candidates.md:150
+historical (left): the feedback copies (exempt class); docs/plans/2026-10-13-feedback2-science-writer-plan.md:93
+=== draft checks at a3c2def ===
+abstract l.17; keywords l.55; summary for decision l.59+
+k units l.267/272/365 (2.24 N·m/(rad/s)²)
+PENDING marker: only section 6 Nomenclature (l.782)
+status counts l.397-398 (508/301/110/11)
+=== register / kit state ===
+register 6255268 (NR-045 latest); NR-039 notes: weights at src/objective_v12.jl:114-116, seam 145-168
+glossary-candidates.md == attachment v14 (diff -q IDENTICAL)
+pca captions read kg-equivalent (captions.md:28/52)
+=== generation notes triage ===
+"docs/reporting/figures/SUggested generation methods.md" -> docs/reporting/figures/figure-generation-notes.md
+bytes identical (19,775); tracked name lands with this batch
+=== linter runs (ste-lint.py --fail-above 2.0) ===
+hermes-2026-10-14-feedback4-routing.md         0.00/100w, 0 flags
+2026-10-14-feedback4-routing-plain-english.md  0.00/100w, 0 flags
+handover-...-reporting-room-queue.md (update)  0.00/100w, 0 flags
+figure-generation-notes.md                     2.42/100w -> exempt class (relayed record, verbatim)
+source message                                 2.64/100w -> exempt class (relayed record, verbatim)
+=== commit ===
+rides the round-4 routing batch
