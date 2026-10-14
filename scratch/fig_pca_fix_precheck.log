@@ -1,0 +1,35 @@
+== precheck run: pca-landscape (script-commit precheck)
+check: rows: 930  (OK)
+check: rows per island: [310, 310, 310]  (OK)
+check: status counts: {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}  (OK)
+check: feasible rows: 508  (OK)
+check: generation indices per island: [31, 31, 31]  (OK)
+check: PC1 share (2 dp): 22.43  (OK)
+check: PC2 share (2 dp): 17.26  (OK)
+check: PC1 share (1 dp drawn): 22.4  (OK)
+check: PC2 share (1 dp drawn): 17.3  (OK)
+check: seed fit: 36.109  (OK)
+check: seed pc: (0.531, -1.297)  (OK)
+check: winner fit: 27.364  (OK)
+check: winner island: 3  (OK)
+check: winner pc: (0.885, 2.869)  (OK)
+check: PC1 top loadings: ['n_lines', 'rotor_count', 'blade_scale_top']  (OK)
+check: PC2 top loadings: ['bank_bottom', 'blade_scale_bottom', 'density_profile']  (OK)
+check: PC1 share covers top three: True  (OK)
+clip window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+colour norm: vmin 28.548  vmax 37.514
+written: pca-landscape.svg / .pdf / .png, label-ledger.txt (46 strings), manifest.json
+F-LABEL self-check: OK
+== precheck run: pca-atlas
+check: rows: 930  (OK)
+check: rows per island: [310, 310, 310]  (OK)
+check: status counts: {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}  (OK)
+check: feasible rows: 508  (OK)
+check: PC1 share (2 dp): 22.43  (OK)
+check: PC2 share (2 dp): 17.26  (OK)
+check: seed pc: (0.531, -1.297)  (OK)
+check: winner fit: 27.364  (OK)
+check: winner pc: (0.885, 2.869)  (OK)
+clip window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+written: pca-atlas.svg / .pdf / .png, label-ledger.txt (37 strings), manifest.json
+F-LABEL self-check: OK

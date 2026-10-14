@@ -21,7 +21,7 @@ provenance.
 This figure shows seven kite-turbine designs from one search run. The
 row starts at the common seed and ends at the campaign winner. Each machine is
 drawn from its built geometry, and all seven share one scale. The
-number under each machine is its search objective, in kilograms. A
+number under each machine is its search objective, in kg-equivalent. A
 lower number is better.
 
 ## Technical caption (undergrad register, STE-clean form)
@@ -34,7 +34,7 @@ ring segments in their section colours, the TRPT lines between rings,
 the blade segments, and the swept annulus of the main rotor as one
 truncated cone.
 
-The value under each machine is the search objective in kilograms.
+The value under each machine is the search objective in kg-equivalent.
 The drawings use the shaft frame. Distance along the shaft is
 vertical, and the operating elevation is not drawn.
 
@@ -68,3 +68,7 @@ Split note (2026-10-12): the NR-036 citation and the extract reference
 leave the caption prose. The canvas and pixel values leave the caption.
 Register-status and the manifest carry them. The text changed only. No
 render moved.
+
+Form note (2026-10-14): both caption tiers read kg-equivalent for the
+objective (round-3 feedback routing). The drawn label keeps its (kg)
+form. The strip render holds.

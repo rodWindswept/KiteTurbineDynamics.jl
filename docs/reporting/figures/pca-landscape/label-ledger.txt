@@ -34,9 +34,9 @@ more TRPT lines (x4)
 more rotors (x6)
 objective (kg)
 one common seed at 36.109 (kg)
-projection: z-scored 10-gene matrix, SVD · variance shares pending their row · script commit 3d36c7a
+projection: z-scored 10-gene matrix, SVD · variance shares NR-044 · script commit e23f226
 rings biased toward the ground (x5)
-source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006
+source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044, NR-045
 start 36.109
 the 930-design screen · three DE islands · PC1-PC2 projection of the ten-gene search · colour is the search objective (kg)
 wider spacing (x3), ground ring (x2)

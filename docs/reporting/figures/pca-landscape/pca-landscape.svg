@@ -697,10 +697,10 @@ z
    <text style="font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="37.296" transform="rotate(-0 46.7712 37.296)">the 930-design screen · three DE islands · PC1-PC2 projection of the ten-gene search · colour is the search objective (kg)</text>
   </g>
   <g id="text_49">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="485.9136" transform="rotate(-0 46.7712 485.9136)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="485.9136" transform="rotate(-0 46.7712 485.9136)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044, NR-045</text>
   </g>
   <g id="text_50">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="506.16" transform="rotate(-0 46.7712 506.16)">projection: z-scored 10-gene matrix, SVD · variance shares pending their row · script commit 3d36c7a</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="506.16" transform="rotate(-0 46.7712 506.16)">projection: z-scored 10-gene matrix, SVD · variance shares NR-044 · script commit e23f226</text>
   </g>
  </g>
  <defs>

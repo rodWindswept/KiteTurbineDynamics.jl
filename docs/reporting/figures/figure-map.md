@@ -49,8 +49,8 @@ full roster around them.
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
-| 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | The counter-read by the seats (F-VALUE opens, NR-044 signed). Then the visual pass by Rod |
-| 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | The counter-read by the seats (F-VALUE opens, NR-044 signed). Then the visual pass by Rod |
+| 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | F-VALUE counter-read at `331f60d` holds the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). A fresh read rides the new pins. Then the visual pass by Rod |
+| 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | F-VALUE counter-read at `331f60d` holds the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). A fresh read rides the new pins. Then the visual pass by Rod |
 | 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
@@ -331,3 +331,13 @@ three slots).
   row-want sentences close on both kit notes, both SPECs and both
   caption drafts. No plate byte moves, so the R2 pins stand. Rows 20
   and 21 wait on the counter-read and the visual pass by Rod.
+
+- **v26 (2026-10-14):** the levers fix pass lands. The NR-005 and NR-006
+  cites take the register mapping on both kits, ten lines across six
+  files. The drawn row lists take NR-044 on both stamps and NR-045 on
+  the landscape. The landscape projection stamp takes its signed form.
+  The caption text takes the kg-equivalent form on the landscape and
+  the strip. Script commit `e23f226`, with both kits re-rendered and
+  two runs byte-identical across all five outputs each. The F-VALUE
+  counter-read at `331f60d` had routed the fix. Next: a fresh
+  counter-read, then the fold and the visual pass by Rod.

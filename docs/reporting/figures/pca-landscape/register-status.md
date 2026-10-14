@@ -1,16 +1,17 @@
 # Register status: the levers landscape
 
 **Slug** `pca-landscape`. Status note for the figure rows.
-**Date** 2026-10-13.
+**Date** 2026-10-13. Cite fix and re-cut 2026-10-14.
 
 ## Rows cited
 
 | Row | Carries | Status |
 |---|---|---|
 | NR-001 | The 930-design screen size | Signed |
-| NR-005 | The common seed value, 36.109 | Signed |
-| NR-006 | The winner value, 27.364 | Signed |
+| NR-005 | The winner value, 27.364 | Signed |
+| NR-006 | The common seed value, 36.109 | Signed |
 | NR-044 | The PCA projection summary: shares, loadings and the bin rule | Signed (science-validator, `2ad023c`) |
+| NR-045 | The island generation counts: 31 generations per island, 10 rows each | Signed (science-validator, `6255268`) |
 
 The figure draws no other signed row.
 
@@ -34,11 +35,16 @@ Top loadings per axis (four decimals, under the abs(v) >= 0.2 rule):
   target_Lr +0.2517, r_bottom +0.2036.
 - PC2: bank_bottom +0.5621, blade_scale_bottom -0.5605, density_profile
   -0.5018, bank_top -0.2444.
+- **NR-045 — the island generation counts.** Signed by the science
+  validator at `6255268` (2026-10-14). 31 generations per island
+  (indices 0 to 30) and 10 rows per generation. 310 rows per island
+  and 930 in total (NR-001). The journey inset count keeps.
 
 ## Drawn precision
 
 - The journey values read 36.109 and 27.364. The rows hold the same.
 - The screen size reads 930 (NR-001).
+- The journey inset reads 31 generations each (NR-045).
 - The variance shares read 22.4 and 17.3 per cent (NR-044).
 - The colour bar ticks read 30, 33 and 36. They are scale, not
   readouts.
@@ -48,9 +54,17 @@ Top loadings per axis (four decimals, under the abs(v) >= 0.2 rule):
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit 3d36c7a`
+`/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit e23f226`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the inputs and the output
 hashes. Self-check: two consecutive runs stay byte-identical. The run
 log sits at `checks.log`.
+
+Hashes at v3 (the cite fix and stamp re-cut, 2026-10-14):
+
+    pca-landscape.svg  04d77ecf48171685aed7dee872b1fab4
+    pca-landscape.pdf  90ff939cce21563fe8016da7633e864e
+    pca-landscape.png  bc06737e003e4caa63dbd42a4f845fec
+    label-ledger.txt   fdb90d3b97edffc536d903ac9024ca65
+    manifest.json      53c18f0f3e852d64a3e4ddcdceaf5719

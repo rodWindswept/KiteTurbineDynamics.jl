@@ -1,15 +1,14 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/pca-atlas/pca-atlas.py --script-commit 3d36c7a",
+  "command": "/usr/bin/python3 docs/reporting/figures/pca-atlas/pca-atlas.py --script-commit e23f226",
   "data_commit": "dd3cc6a",
   "inputs": {
     "register_rows": [
       "NR-001",
       "NR-005",
-      "NR-006"
+      "NR-006",
+      "NR-044"
     ],
-    "row_wants": [
-      "PCA projection summary (variance shares)"
-    ],
+    "row_wants": [],
     "telemetry": [
       {
         "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1/telemetry.csv",
@@ -26,17 +25,17 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "bdaee0eacbacfbc706e24a88d954da00a0056686c53fd076379dc99bcc80bd3e",
-    "pca-atlas.pdf": "34ec4f461418a4f07a2068e8f7bdf4fe5ea366c7f6744c72bbe33ced2fd6fb46",
-    "pca-atlas.png": "0496d5e5f8f52bc2e3b3a68092a068b73640bd01e0edff5dec05c5ccea8a2d1f",
-    "pca-atlas.svg": "0de0ac0b0b29c90c9c88e5cd9c979a36d808eff6b74f119c2b66cf7d05a00ea5"
+    "label-ledger.txt": "d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76",
+    "pca-atlas.pdf": "aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8",
+    "pca-atlas.png": "1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8",
+    "pca-atlas.svg": "28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c"
   },
   "precision": "gene values at 3 significant figures on the colour bars; panel scales as drawn",
   "script": {
     "path": "docs/reporting/figures/pca-atlas/pca-atlas.py",
-    "sha256": "72e27259d7232c6e4e2e890357e0addaff03cdd8554ae8e40169d9fca3343ba7"
+    "sha256": "2a45872a89874c13c563366a3e2484cd1d93ebd1f4e8ba3eec73f727351b1101"
   },
-  "script_commit": "3d36c7a",
+  "script_commit": "e23f226",
   "slug": "pca-atlas",
   "toolchain": {
     "matplotlib": "3.10.8",

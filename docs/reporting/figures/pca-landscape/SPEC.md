@@ -59,7 +59,7 @@ The section 3.4 text carries the reading. The plate carries the shape.
   carries PC2. The window is the 1 to 99 percentile rectangle of the
   full screen.
 
-- Colour is the cell mean of the search objective in kilograms. The
+- Colour is the cell mean of the search objective in kg-equivalent. The
   field bins at 18 by 18 cells. Bright reads lower. The colour bar
   carries three scale ticks and no readout.
 
@@ -89,8 +89,9 @@ The section 3.4 text carries the reading. The plate carries the shape.
 | Figure string | Source | Where used | Note |
 |---|---|---|---|
 | 930 designs | NR-001 | subtitle, journey inset | the screen size |
-| start 36.109 | NR-005, NR-006 | map label, journey inset | the common seed |
-| winner 27.364 | NR-006 | map label, journey inset | island 3 |
+| 31 generations each | NR-045 | journey inset | signed (science-validator, `6255268`) |
+| start 36.109 | NR-006 | map label, journey inset | the common seed |
+| winner 27.364 | NR-005 | map label, journey inset | island 3 |
 | variance shares 22.4 / 17.3 | NR-044 | the two inset titles | signed (science-validator, `2ad023c`) |
 | colour bar ticks 30 / 33 / 36 | the colour norm | scale | not readouts |
 | axis ticks | the projection window | scale | not readouts |
@@ -139,7 +140,8 @@ The display forms pin here once, for labels, captions and prose alike.
 - **R2** this landing: the scripted figure against the committed
   record walks F-CITE, F-REPRO and F-LABEL. The counter-read by the
   seats and the visual pass by Rod come first. The projection row
-  signed as NR-044, so F-VALUE opens at the counter-read.
+  signed as NR-044. The counter-read at `331f60d` holds the drawn
+  values. A fresh read rides the re-cut pins.
 
 - **R3** the final pass. @aero-validator runs F-VALUE at the sign-off
   commit. Rod does the visual pass. Status moves to approved.
@@ -148,7 +150,8 @@ The display forms pin here once, for labels, captions and prose alike.
 
 1. The reading-order slot (author seat) and the fold order.
 
-The projection row closed as NR-044 (signed 2026-10-13). The plate
+The projection row closed as NR-044 (signed 2026-10-13). The
+generation count closed as NR-045 (signed 2026-10-14). The plate
 prints no other waited value.
 
 ## Non-goals
@@ -159,6 +162,11 @@ readouts.
 
 ## Deltas
 
+- v3 (2026-10-14): the cite fix and the stamp re-cut. The readout list
+  takes the register mapping for NR-005 and NR-006. It cites NR-045 for
+  the generation count. The drawn row list takes NR-044 and NR-045.
+  The projection stamp takes its signed form. The caption text takes
+  the kg-equivalent form. New pins at script commit `e23f226`.
 - v2 (2026-10-13): NR-044 signs (`2ad023c`); the row want closes. No
   plate byte moves.
 - v1 (2026-10-13): R2 lands with the GENERATE pass. The scratch draft

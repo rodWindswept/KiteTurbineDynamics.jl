@@ -74,8 +74,8 @@ of ten is the "smaller genome" reading.
 | Figure string | Source | Where used | Note |
 |---|---|---|---|
 | 930 designs | NR-001 | projection note | the screen size |
-| start 36.109 | NR-005, NR-006 | the journey marks | positional |
-| winner 27.364 | NR-006 | the journey marks | positional |
+| start 36.109 | NR-006 | the journey marks | positional |
+| winner 27.364 | NR-005 | the journey marks | positional |
 | the ten panel titles | the genome glossary | labels | gene names |
 | colour bar ticks | each gene | scale | not readouts |
 
@@ -113,8 +113,9 @@ of ten is the "smaller genome" reading.
 ## Rounds
 
 - **R2** this landing. The counter-read by the seats and the visual
-  pass by Rod come first. The projection row signed
-  as NR-044.
+  pass by Rod come first. The projection row signed as NR-044. The
+  counter-read at `331f60d` holds the drawn values. A fresh read
+  rides the re-cut pins.
 
 - **R3** the final pass at the sign-off commit.
 
@@ -131,6 +132,9 @@ range. No re-derived outcome values.
 
 ## Deltas
 
+- v3 (2026-10-14): the cite fix and the stamp re-cut. The readout list
+  takes the register mapping for NR-005 and NR-006. The drawn row list
+  takes NR-044. New pins at script commit `e23f226`.
 - v2 (2026-10-13): NR-044 signs (`2ad023c`); the row want closes. No
   plate byte moves.
 - v1 (2026-10-13): R2 lands with the GENERATE pass.

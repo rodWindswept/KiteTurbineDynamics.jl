@@ -1,0 +1,79 @@
+check: pca-landscape manifest script_commit: OK 
+check: pca-landscape manifest row_wants empty: OK 
+check: pca-landscape rerun rc: OK rc=0
+check: pca-landscape pca-landscape.svg byte-identity: OK 94d518bb13c604d4
+check: pca-landscape pca-landscape.pdf byte-identity: OK 712e918b0b6ac733
+check: pca-landscape pca-landscape.png byte-identity: OK 4b1bd3453a6aa20d
+check: pca-landscape label-ledger.txt byte-identity: OK 91282957dd23b9a9
+check: pca-landscape manifest.json byte-identity: OK c65c0c74ad88b90a
+check: pca-landscape F-LABEL set equality: OK 46/46
+check: landscape stamp rows: OK 
+check: landscape stamp2 signed: OK 
+check: pca-landscape no pending form: OK 
+check: pca-landscape note md5 pca-landscape.svg: OK 04d77ecf48171685aed7dee872b1fab4
+check: pca-landscape note md5 pca-landscape.pdf: OK 90ff939cce21563fe8016da7633e864e
+check: pca-landscape note md5 pca-landscape.png: OK bc06737e003e4caa63dbd42a4f845fec
+check: pca-landscape note md5 label-ledger.txt: OK fdb90d3b97edffc536d903ac9024ca65
+check: pca-landscape note md5 manifest.json: OK 53c18f0f3e852d64a3e4ddcdceaf5719
+check: pca-landscape/SPEC.md no 3d36c7a: OK 
+check: pca-landscape/SPEC.md no kilogram: OK 
+check: pca-landscape/register-status.md no 3d36c7a: OK 
+check: pca-landscape/register-status.md no kilogram: OK 
+check: pca-landscape/captions-draft.md no 3d36c7a: OK 
+check: pca-landscape/captions-draft.md no kilogram: OK 
+pins pca-landscape:
+  sha256 pca-landscape.svg: 94d518bb13c604d4949f9c1011845050d150c4122a357449a8e185f506ae48dc
+  sha256 pca-landscape.pdf: 712e918b0b6ac73335ef2355113f59a2f3c6f63a421407ee122c98cfa6a2ecd7
+  sha256 pca-landscape.png: 4b1bd3453a6aa20d9b9b0af75eb989212b16df8986c752766edd625ae13d9892
+  sha256 label-ledger.txt: 91282957dd23b9a9919756e9db578404497e1f0a58d11c4824a7550ad5a91c5e
+  sha256 manifest.json: c65c0c74ad88b90a97dfddfd6a4fcf797b632a39c3a83323cf31d1c6f81a97c7
+check: pca-atlas manifest script_commit: OK 
+check: pca-atlas manifest row_wants empty: OK 
+check: pca-atlas rerun rc: OK rc=0
+check: pca-atlas pca-atlas.svg byte-identity: OK 28c032cf27c7412c
+check: pca-atlas pca-atlas.pdf byte-identity: OK aede4d29da694a23
+check: pca-atlas pca-atlas.png byte-identity: OK 1e46b70ae65f5557
+check: pca-atlas label-ledger.txt byte-identity: OK d3a2bcb1208db0bf
+check: pca-atlas manifest.json byte-identity: OK b0cade09551bb7fd
+check: pca-atlas F-LABEL set equality: OK 37/37
+check: atlas stamp rows: OK 
+check: pca-atlas no pending form: OK 
+check: pca-atlas note md5 pca-atlas.svg: OK 96b333c6362655f810961b15eaa67f69
+check: pca-atlas note md5 pca-atlas.pdf: OK 433d3e5578a53b5e1dfa4a0962b6f0a6
+check: pca-atlas note md5 pca-atlas.png: OK f1ffbdddba814b64cd5110eea5b466fb
+check: pca-atlas note md5 label-ledger.txt: OK 0372772afe15ceb12acd548e73e5895d
+check: pca-atlas note md5 manifest.json: OK f3fc89912216b3f79c294c6fb089dc30
+check: pca-atlas/SPEC.md no 3d36c7a: OK 
+check: pca-atlas/SPEC.md no kilogram: OK 
+check: pca-atlas/register-status.md no 3d36c7a: OK 
+check: pca-atlas/register-status.md no kilogram: OK 
+check: pca-atlas/captions-draft.md no 3d36c7a: OK 
+check: pca-atlas/captions-draft.md no kilogram: OK 
+pins pca-atlas:
+  sha256 pca-atlas.svg: 28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c
+  sha256 pca-atlas.pdf: aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8
+  sha256 pca-atlas.png: 1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8
+  sha256 label-ledger.txt: d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76
+  sha256 manifest.json: b0cade09551bb7fd74321cac33a24845733bbb2801893b7efc315a79db56e369
+check: landscape RS winner map: OK 
+check: landscape RS seed map: OK 
+check: landscape RS NR-045 row: OK 
+check: landscape RS no inverse: OK 
+check: landscape RS no inverse 2: OK 
+check: landscape SPEC cite: OK 
+check: landscape SPEC cite: OK 
+check: landscape SPEC NR-045 row: OK 
+check: atlas RS winner map: OK 
+check: atlas RS seed map: OK 
+check: atlas RS no inverse: OK 
+check: atlas SPEC cite: OK 
+check: landscape caption seed map: OK 
+check: landscape caption kg: OK 
+check: landscape prov NR-045: OK 
+check: atlas caption seed map: OK 
+check: map cell: OK 
+check: map delta v26: OK 
+check: strip kg count 2: OK 2
+check: strip no kilograms: OK 
+check: strip form note: OK 
+== summary: all OK

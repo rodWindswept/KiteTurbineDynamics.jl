@@ -2242,10 +2242,10 @@ z
    <text style="font-size: 8.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="52.488" y="48.1536" transform="rotate(-0 52.488 48.1536)">the same PC1-PC2 projection, coloured once per gene · PC1 → horizontal, PC2 ↑ vertical · star = common seed, diamond = winner · thin lines = island journeys</text>
   </g>
   <g id="text_43">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="52.488" y="522.576" transform="rotate(-0 52.488 522.576)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="52.488" y="522.576" transform="rotate(-0 52.488 522.576)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044</text>
   </g>
   <g id="text_44">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="52.488" y="538.4448" transform="rotate(-0 52.488 538.4448)">projection: z-scored 10-gene matrix, SVD · gene values over all 930 designs · script commit 3d36c7a</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="52.488" y="538.4448" transform="rotate(-0 52.488 538.4448)">projection: z-scored 10-gene matrix, SVD · gene values over all 930 designs · script commit e23f226</text>
   </g>
  </g>
  <defs>
