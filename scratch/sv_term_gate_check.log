@@ -1,0 +1,112 @@
+sv_term_gate_check — read at HEAD 9d96a4b | origin 9d96a4b
+-- live sites --
+OK    live: docs/reporting/drafts/2026-10-08-report-first-draft.md: new form present
+OK    live: docs/reporting/drafts/2026-10-08-report-first-draft.md: old form zero
+     new-form lines: [349, 357, 359]
+       L349: The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+       L357: The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
+       L359: The score adds three soft constraint penalties to the airborne mass (NR-046):
+OK    live: docs/reporting/drafts/2026-10-08-report-first-draft.md L349 carries no value numeral
+OK    live: docs/reporting/drafts/2026-10-08-report-first-draft.md L357 carries no value numeral
+OK    live: docs/reporting/drafts/2026-10-08-report-first-draft.md L359 carries no value numeral
+OK    live: docs/reporting/draft-tracker.md: new form present
+OK    live: docs/reporting/draft-tracker.md: old form zero
+     new-form lines: [201, 202]
+       L201: The block states the scoring chain, the three soft constraint penalty forms and the reject placement from NR-046.
+       L202: The objective sentence renames to soft constraint penalties, with the glossary row.
+OK    live: docs/reporting/draft-tracker.md L201 carries no value numeral
+OK    live: docs/reporting/draft-tracker.md L202 carries no value numeral
+OK    live: docs/reporting/glossary-candidates.md: new form present
+OK    live: docs/reporting/glossary-candidates.md: old form zero
+     new-form lines: [150, 365]
+       L150: | kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equiv
+       L365: form, "soft constraint penalties". The rename lands with the draft
+OK    live: docs/reporting/glossary-candidates.md L150 carries no value numeral
+OK    live: docs/reporting/glossary-candidates.md L365 carries no value numeral
+OK    pin: 2026-10-08-report-first-draft.md | the airborne mass plus the soft constraint penalties.
+OK    pin: 2026-10-08-report-first-draft.md | three soft constraint penalties to the airborne mass
+OK    pin: draft-tracker.md | the three soft constraint penalty forms
+OK    pin: glossary-candidates.md | the airborne mass plus the soft constraint penalties, read a
+-- old-form census (tracked files) --
+  [records-evidence] docs/plans/2026-10-13-feedback2-science-writer-plan.md: 1
+  [records-evidence] docs/reporting/2026-10-14-feedback4-routing-plain-english.md: 1
+  [exempt-verbatim] docs/reporting/feedback/Feedback-message-1791925681590.md: 1
+  [exempt-verbatim] docs/reporting/feedback/feedback-on-report2.md: 1
+  [exempt-verbatim] docs/reporting/feedback/kg-equivalence-message-1791973254345.md: 5
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-14-nr046-counterread.md: 1
+  [records-evidence] handovers/handover-2026-10-14-reporting-room-queue.md: 1
+  [records-evidence] scratch/au_v036_objective_block.py: 5
+  [records-evidence] scratch/av_nr046_counterread.log: 1
+  [records-evidence] scratch/av_nr046_counterread.py: 2
+  [records-evidence] scratch/hermes_fb4_reads.log: 1
+  [records-evidence] scratch/sw_gc14_base.md: 1
+  [records-evidence] scratch/sw_gc14_new.md: 1
+  [records-evidence] scratch/sw_gloss14_new.md: 1
+  [records-evidence] scratch/sw_glossv13_base.md: 1
+  [records-evidence] scratch/sw_glossv13_new.md: 1
+  [records-evidence] scratch/sw_levers_fold_sim.md: 1
+  [records-evidence] scratch/sw_sw3b_erasim.md: 1
+  [records-evidence] scratch/sw_sweep14_multiset.log: 1
+  [records-evidence] scratch/sw_sweep15_v026.md: 1
+  [records-evidence] scratch/sw_sweep15_v027.md: 1
+  [records-evidence] scratch/sw_sweep16_draft_v027.md: 1
+  [records-evidence] scratch/sw_sweep16_draft_v028.md: 1
+  [records-evidence] scratch/sw_sweep17_draft_mid.md: 1
+  [records-evidence] scratch/sw_sweep17_draft_v029.md: 1
+  [records-evidence] scratch/sw_sweep19_draft_v029.md: 1
+  [records-evidence] scratch/sw_sweep19_draft_v030.md: 1
+  [records-evidence] scratch/sw_sweep20_draft_v030.md: 1
+  [records-evidence] scratch/sw_sweep20_draft_v031.md: 1
+  [records-evidence] scratch/sw_sweep21_draft_v031.md: 1
+  [records-evidence] scratch/sw_sweep21_draft_v032.md: 1
+  [records-evidence] scratch/sw_sweep21_draft_v033.md: 1
+  [records-evidence] scratch/sw_sweep22_core.log: 9
+  [records-evidence] scratch/sw_sweep22_core.sh: 2
+  [records-evidence] scratch/sw_sweep22_draft_v033.md: 1
+  [records-evidence] scratch/sw_sweep22_draft_v034.md: 1
+  [records-evidence] scratch/sw_sweep22_draft_v035.md: 1
+  [records-evidence] scratch/sw_sweep22_gloss_v035.md: 1
+  [records-evidence] scratch/sw_ws3a_ledgersim.md: 1
+  total: 57 occurrences across 39 files; classes: {'records-evidence': 36, 'exempt-verbatim': 3}
+OK    old form: zero live-surface files
+OK    old form: every residue classified
+-- old-form census (untracked working set) --
+  [working-snapshot] scratch/au_docx_v027_base.md: 1
+  [working-snapshot] scratch/au_docx_v027_candidate.md: 1
+  [working-snapshot] scratch/au_fb2_v026_term.py: 1
+  [working-snapshot] scratch/au_v028_draft_base.md: 1
+  [working-snapshot] scratch/au_v028_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v029_draft_base.md: 1
+  [working-snapshot] scratch/au_v029_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v030_draft_base.md: 1
+  [working-snapshot] scratch/au_v030_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v031_draft_base.md: 1
+  [working-snapshot] scratch/au_v031_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v032_draft_base.md: 1
+  [working-snapshot] scratch/au_v032_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v033_draft_base.md: 1
+  [working-snapshot] scratch/au_v033_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v034_draft_base.md: 1
+  [working-snapshot] scratch/au_v034_draft_candidate.md: 1
+  [working-snapshot] scratch/au_v036_draft_base.md: 1
+  [working-snapshot] scratch/au_v036_gloss_base.md: 1
+  [working-snapshot] scratch/fig_repin_base_draft.md: 1
+  [working-snapshot] scratch/sw_fb2_plan.md: 1
+  [working-snapshot] scratch/sw_sweep14_v026.md: 1
+  untracked total: 22 occurrences across 22 files
+OK    old form (untracked): every residue a working snapshot
+-- delivered copy --
+  draft-live.docx: new=3 old=0
+OK    delivered copy: new form reads
+OK    delivered copy: old form zero
+  draft-assembled-docx.md: new=3 old=0
+OK    build input: new form reads, old form zero
+-- register integrity --
+  register diff 4a86e6f..HEAD: +40/-0
+OK    register: append-only since 4a86e6f (zero removals)
+OK    register: carries 'NR-046'
+OK    register: carries '27.3635412663488 (NR-039)'
+OK    register: carries 'stamps the search cost `1e9`'
+  register last block header: Aero counter-read: NR-046 (2026-10-14, aero-validator)
+OK    register: last block is the NR-046 counter-read append
+SV_TERMGATE_DONE  (one form on the live surfaces; old form zero there; every residue classified across the tracked tree and the working set; copy clean; register append-only)
