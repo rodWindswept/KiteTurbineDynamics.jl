@@ -1,0 +1,2 @@
+7bbd964db09d2b33269ce5cb8c334054  scratch/sw_levers_reading_block.md
+9e1f673fba06cc4aed4fb8b80c368149  scratch/sw_levers_fold_sim.md

@@ -1,0 +1,3 @@
+science-writer-2026-10-14-levers-reading.md words= 713 total=  1 per100w=  0.14 em_dash= 2
+[HOOK:ste] science-writer-2026-10-14-levers-reading.md: banned_word x1 -> short common word — start/use/help/make sure/show. (ste-writing)
+[HOOK:ste] science-writer-2026-10-14-levers-reading.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)

@@ -1,0 +1,4 @@
+sw_levers_fold_sim.md            words=4882 total=  5 per100w=  0.10 em_dash= 2
+[HOOK:ste] sw_levers_fold_sim.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_levers_fold_sim.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_levers_fold_sim.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
