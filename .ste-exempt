@@ -7,3 +7,9 @@
 docs/agents/instrument-trust-log.md
 docs/validation/physics-validation-ledger.md
 DECISIONS.md
+
+# Extension (2026-10-14, hermes seat, room may flip): verbatim external
+# records (relayed reviews and feedback) join the exempt class. They are
+# amend-only by nature and never rewritten. New team material in them
+# must still be STE-clean.
+docs/reporting/feedback/Feedback-message-1791925681590.md
