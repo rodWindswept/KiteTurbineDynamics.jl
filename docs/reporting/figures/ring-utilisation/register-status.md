@@ -8,8 +8,10 @@
 | Row | Carries | Status |
 |---|---|---|
 | NR-021 | The ring check at the winner operating point. Interaction, axial share, bending share and ring FoS per checked ring | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
+| NR-015 | The operating point config: FoS gate 2.5/2.5 (a plain 2.5 reads the floor), with the capture settings | Signed (science-validator, 2026-10-08) |
 
-The figure draws no other row.
+The figure draws no other row. The caption cites NR-015 for the
+campaign gate sentence.
 
 ## Drawn precision
 
@@ -27,3 +29,6 @@ Command:
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
 hashes. Self-check: two consecutive runs stay byte-identical.
+
+**Delta** v1 (2026-10-14): the round-3 caption leads land. The caption
+cites NR-015 for the gate sentence. No render moves.

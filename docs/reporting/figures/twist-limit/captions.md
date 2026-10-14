@@ -6,7 +6,8 @@
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
 from the author draft (v4) unchanged, except the capture slot and the
-2026-10-12 caption split. Values cite NR-022 and NR-023.
+2026-10-12 caption split and the 2026-10-14 leads. Values cite
+NR-022, NR-023 and NR-040.
 
 The split (2026-10-12): the plain and technical captions carry the
 scientific text only. The provenance line carries the audit tokens: data
@@ -17,10 +18,14 @@ provenance.
 
 ## Plain caption
 
-This figure shows how far each segment runs from the angle where the twist
-runs away.
+All five segments stay inside their over-twist limits at the winner's
+final operating point, and the smallest torque margin sits at S1.
 
 ## Technical caption (undergrad register, STE-clean form)
+
+All five TRPT segments remain inside their over-twist limits at the
+winner's final operating point. S1 carries the least segment torque
+margin, 2.03 (NR-040).
 
 Panel A draws the transmitted twist of each segment as a magnitude,
 against its over-twist limit δcrit. The limit comes from the committed
@@ -63,3 +68,7 @@ the caption claims trace. Tracked before sign-off: register rows for the
 drawn mechanism values (72.25°, the 42.6° limit, 22,425°). They ride
 with the ledger pass. The floor and binding-limit treatment routes
 through work item 1.3 (the row-7 gate).
+
+Caption lead (2026-10-14): the round-3 leads land in both tiers. The
+technical tier adds the least segment torque margin (NR-040). Text
+only, no render moves.

@@ -9,6 +9,7 @@
 |---|---|---|
 | NR-022 | The segment twist and the over-twist limit at the winner operating point | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
 | NR-023 | The segment torque pair at the winner operating point, capacity basis Tulloch | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
+| NR-040 | The winner segment torque margins: S1 2.0288 (quote 2.03) governs, S5 2.6938 | Signed (science-validator, 2026-10-12) |
 
 ## Mechanism items drawn, rows pending
 
@@ -36,3 +37,6 @@ Command:
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
 hashes. Self-check: two consecutive runs stay byte-identical.
+
+**Delta** v1 (2026-10-14): the round-3 caption leads land. The caption
+cites NR-040 for the least torque margin. No render moves.

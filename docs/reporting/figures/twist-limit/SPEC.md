@@ -165,13 +165,14 @@ The display forms pin here once. A caption or label that paraphrases one
 The framework visual checklist applies, graded from the image alone.
 
 **Caption plan (dual, from the first figure).** Plain sentence: the shaft
-twists as it carries torque. This figure shows how far each segment runs
-from the angle where the twist runs away.
+twists as it carries torque. All five segments stay inside their
+over-twist limits at the winner's final operating point.
 
 Technical caption (undergrad register, STE-clean form): name the
 authority, cite the capture, state the no-limit rule and the instant-bound
-torque pairing. Both captions use the ledger strings only. @author writes
-them. Every number they carry is a register citation.
+torque pairing. Lead with the least torque margin (NR-040). Both captions
+use the ledger strings only. @author writes them. Every number they carry
+is a register citation.
 
 ## Emitted artifacts at GENERATE
 
@@ -240,3 +241,7 @@ gate.
   from a principal-value read of `segment_twist_deg` — a saturated twist
   wraps into (−180°, 180°] and can render as a small angle. The no-limit
   annotation wording drafts with @author under the ledger.
+
+- v3 (2026-10-14): the round-3 caption leads land in the kit text. Both
+  tiers open with the limit result. The technical tier adds the least
+  torque margin (NR-040). No render moves.

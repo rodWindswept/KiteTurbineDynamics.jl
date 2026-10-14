@@ -173,12 +173,14 @@ an equality of the two axial components.
 The framework visual checklist applies, graded from the image alone.
 
 **Caption plan (dual, from the first figure).** Plain sentence: every ring
-meets one strict structural check. This figure shows how much of the check comes from compression and how much comes from bending.
+meets one strict structural check. The hub ring R6 governs, and every
+other airborne ring holds a much larger margin.
 
 Technical caption (undergrad register, STE-clean form): name the
 interaction form (beam-column interaction, with torsion tracked outside the
 formula), the unit line, the ground-ring exclusion, the hub-ring inclusion
-and the capture. No "Euler". @author writes them. Every number they carry is
+and the capture. Lead with the hub result (NR-021). State the gate line
+(NR-015). No "Euler". @author writes them. Every number they carry is
 a register citation.
 
 ## Emitted artifacts at GENERATE
@@ -243,3 +245,7 @@ drawn interaction.
   the interactive dashboard and `dashboard_v2`) are the capture read; the
   plate re-renders the same arrays statically in the house shaft frame.
   The extract slot fills from the analysis room's cut.
+
+- v4 (2026-10-14): the round-3 caption leads land in the kit text. Both
+  tiers open with the governing ring. The technical tier adds the hub
+  result (NR-021) and the gate line (NR-015). No render moves.

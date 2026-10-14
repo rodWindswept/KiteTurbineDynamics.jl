@@ -1,0 +1,37 @@
+check: map cells closure x2: OK
+check: map no fresh-read cell: OK
+check: map delta v27: OK
+check: map delta v28: OK
+check: map v28 queue note: OK
+check: landscape rounds closure: OK
+check: landscape no fresh read: OK
+check: landscape R3 trimmed: OK
+check: atlas rounds closure: OK
+check: atlas no fresh read: OK
+check: ring plain lead: OK
+check: ring tech lead: OK
+check: ring gate line: OK
+check: ring old plain gone: OK
+check: ring cites line: OK
+check: ring lead note: OK
+check: twist plain lead: OK
+check: twist tech lead: OK
+check: twist old plain gone: OK
+check: twist cites line: OK
+check: twist lead note: OK
+check: strip plain lead: OK
+check: strip tech lead: OK
+check: strip old first line gone: OK
+check: strip lead note: OK
+check: ring rs NR-015 row: OK
+check: ring rs caption line: OK
+check: ring rs delta: OK
+check: twist rs NR-040 row: OK
+check: twist rs delta: OK
+check: ring SPEC plan: OK
+check: ring SPEC tech note: OK
+check: ring SPEC delta v4: OK
+check: twist SPEC plan: OK
+check: twist SPEC tech note: OK
+check: twist SPEC delta v3: OK
+== summary: all OK

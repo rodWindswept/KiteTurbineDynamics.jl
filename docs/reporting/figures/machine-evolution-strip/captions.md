@@ -18,13 +18,18 @@ provenance.
 
 ## Plain caption
 
-This figure shows seven kite-turbine designs from one search run. The
-row starts at the common seed and ends at the campaign winner. Each machine is
+Island 3's best-so-far objective falls as the built geometry converges
+to the register winner. The row starts at the common seed and ends at
+the campaign winner. Each machine is
 drawn from its built geometry, and all seven share one scale. The
 number under each machine is its search objective, in kg-equivalent. A
 lower number is better.
 
 ## Technical caption (undergrad register, STE-clean form)
+
+Island 3's best-so-far objective falls from 36.109 to 27.364
+kg-equivalent. The built geometry converges to the register winner
+(NR-006, NR-005).
 
 Seven panels show the best machine of island 3 at generations 0, 6, 10,
 18, 22, 25 and 26. The labels match the recorded generations.
@@ -72,3 +77,7 @@ render moved.
 Form note (2026-10-14): both caption tiers read kg-equivalent for the
 objective (round-3 feedback routing). The drawn label keeps its (kg)
 form. The strip render holds.
+
+Caption lead (2026-10-14): the takeaway opens both tiers. The lead
+prints the objective range from the signed rows (NR-006, NR-005).
+Text only, no render moves.

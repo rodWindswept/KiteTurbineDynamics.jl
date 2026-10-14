@@ -114,10 +114,11 @@ of ten is the "smaller genome" reading.
 
 - **R2** this landing. The counter-read by the seats and the visual
   pass by Rod come first. The projection row signed as NR-044. The
-  counter-read at `331f60d` holds the drawn values. A fresh read
-  rides the re-cut pins.
+  counter-read at `331f60d` held the drawn values. The re-census at
+  `7329191` closes F-VALUE on the fix commit (`d6d4db9`).
 
-- **R3** the final pass at the sign-off commit.
+- **R3** the final pass. Rod does the visual pass. Status moves to
+  approved.
 
 ## Open inputs
 

@@ -140,11 +140,12 @@ The display forms pin here once, for labels, captions and prose alike.
 - **R2** this landing: the scripted figure against the committed
   record walks F-CITE, F-REPRO and F-LABEL. The counter-read by the
   seats and the visual pass by Rod come first. The projection row
-  signed as NR-044. The counter-read at `331f60d` holds the drawn
-  values. A fresh read rides the re-cut pins.
+  signed as NR-044. The counter-read at `331f60d` held the drawn values
+  and routed the cite fix. The re-census at `7329191` closes F-VALUE on
+  the fix commit (`d6d4db9`).
 
-- **R3** the final pass. @aero-validator runs F-VALUE at the sign-off
-  commit. Rod does the visual pass. Status moves to approved.
+- **R3** the final pass. Rod does the visual pass. Status moves to
+  approved.
 
 ## Open inputs
 
