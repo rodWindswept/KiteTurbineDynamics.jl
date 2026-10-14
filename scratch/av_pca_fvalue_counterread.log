@@ -1,0 +1,134 @@
+========================================================================
+F-VALUE counter-read - levers family (rows 20, 21) - aero-validator
+========================================================================
+
+[tip] branch bank-derate-cos2p65  HEAD c434fa444c8c  origin/bank-derate-cos2p65 c434fa444c8c
+  ok     HEAD == origin (read at the landed tip, pre-sign-off)
+
+[pins] worktree bytes vs HEAD bytes; outputs and inputs vs the manifests
+  ok     pca-landscape: 10 worktree files byte-equal to HEAD
+  ok     pca-landscape: 4 outputs match the manifest pins
+  ok     pca-landscape: script sha256 matches the manifest pin
+  ok     pca-landscape: 3 telemetry inputs match the manifest pins
+  ok     pca-atlas: 10 worktree files byte-equal to HEAD
+  ok     pca-atlas: 4 outputs match the manifest pins
+  ok     pca-atlas: script sha256 matches the manifest pin
+  ok     pca-atlas: 3 telemetry inputs match the manifest pins
+
+[census] SVG text layer vs the label ledger; scale numerals vs their tick sources
+  pca-landscape: ledger 46 strings; svg 50 text nodes (46 unique; 16 scale-name nodes)
+  ok     pca-landscape: ledger set-equal to the svg text layer (both directions)
+    repeated nodes (legit where axes overlap): ['-1', '-2', '0', '1']
+  pca-atlas: ledger 37 strings; svg 44 text nodes (37 unique; 30 scale-name nodes)
+  ok     pca-atlas: ledger set-equal to the svg text layer (both directions)
+    repeated nodes (legit where axes overlap): ['0', '1', '11', '22']
+  ok     landscape: 16 scale-name nodes == x ticks [-5..1] + y ticks [-2..3] + colour [30,33,36]
+  ok     landscape: ledger carries exactly those 12 unique scale values
+  ok     atlas: 30 scale-name nodes == the recomputed lo/mid/hi colour labels at .3g
+  ok     atlas: ledger carries exactly the unique colour-label set
+  ok     checks.log: 9 shared pins agree across the two kits
+
+[values] every drawn readout vs its signed row at drawn precision
+  ok     landscape draws 'start 36.109' (36.109) -> NR-006
+  ok     landscape draws 'one common seed at 36.109 (kg)' (36.109) -> NR-006
+  ok     landscape draws 'winner 27.364' (27.364) -> NR-005
+  ok     landscape draws 'winner: island 3 at 27.364 (kg)' (27.364) -> NR-005
+  ok     landscape draws '22.4% of variance' (22.4) -> NR-044
+  ok     landscape draws '17.3% of variance' (17.3) -> NR-044
+  ok     landscape draws 930 (subtitle and inset) -> NR-001
+  ok     atlas draws 930 (all 930 designs) -> NR-001
+  ok     atlas prints no share, seed or winner numeral (positional marks only)
+  ok     22.4 is the 1-dp form of NR-044 PC1 22.434667 (22.4); 17.3 likewise (17.3)
+
+[cites] NR-005 / NR-006 mapping on every surface vs the register
+  register: docs/reporting/numbers-register.md:31: | NR-005 | Island 3 best fitness | 27.364 (found gen 26) | kg | island_3/convergence.csv | signe
+  register: docs/reporting/numbers-register.md:32: | NR-006 | All-island start point | 36.109 (gen 1, common seed) | kg | convergence.csv | signed 
+  DEFECT docs/reporting/figures/pca-landscape/SPEC.md:92: 36.109 cites NR-005,NR-006 - register reads NR-006
+         fix: line 92: | start 36.109 | NR-006 | map label, journey inset | the common seed |
+  DEFECT docs/reporting/figures/pca-landscape/SPEC.md:93: 27.364 cites NR-006 - register reads NR-005
+         fix: line 93: | winner 27.364 | NR-005 | map label, journey inset | island 3 |
+  DEFECT docs/reporting/figures/pca-landscape/register-status.md:11: NR-005 row reads 36.109 - register reads 27.364
+         fix: line 11: | NR-005 | The winner value, 27.364 | Signed |
+  DEFECT docs/reporting/figures/pca-landscape/register-status.md:12: NR-006 row reads 27.364 - register reads 36.109
+         fix: line 12: | NR-006 | The common seed value, 36.109 | Signed |
+  DEFECT docs/reporting/figures/pca-landscape/captions-draft.md:20: 36.109 cites NR-005 - register reads NR-006
+         fix: line 20: starts at 36.109 (NR-006). The winner ends at 27.364 (NR-005). The
+  DEFECT docs/reporting/figures/pca-landscape/captions-draft.md:20: 27.364 cites NR-006 - register reads NR-005
+         fix: line 20: starts at 36.109 (NR-006). The winner ends at 27.364 (NR-005). The
+  info   docs/reporting/figures/pca-landscape/captions-draft.md:29: other occurrence: data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_
+  DEFECT docs/reporting/figures/pca-atlas/SPEC.md:77: 36.109 cites NR-005,NR-006 - register reads NR-006
+         fix: line 77: | start 36.109 | NR-006 | the journey marks | positional |
+  DEFECT docs/reporting/figures/pca-atlas/SPEC.md:78: 27.364 cites NR-006 - register reads NR-005
+         fix: line 78: | winner 27.364 | NR-005 | the journey marks | positional |
+  DEFECT docs/reporting/figures/pca-atlas/register-status.md:11: NR-005 row reads 36.109 - register reads 27.364
+         fix: line 11: | NR-005 | The winner value, 27.364 | Signed |
+  DEFECT docs/reporting/figures/pca-atlas/register-status.md:12: NR-006 row reads 27.364 - register reads 36.109
+         fix: line 12: | NR-006 | The common seed value, 36.109 | Signed |
+  DEFECT docs/reporting/figures/pca-atlas/captions-draft.md:19: 36.109 cites NR-005 - register reads NR-006
+         fix: line 19: (36.109, NR-006). The diamond marks the winner (27.364, NR-005). The
+  DEFECT docs/reporting/figures/pca-atlas/captions-draft.md:19: 27.364 cites NR-006 - register reads NR-005
+         fix: line 19: (36.109, NR-006). The diamond marks the winner (27.364, NR-005). The
+  info   docs/reporting/figures/pca-atlas/captions-draft.md:26: other occurrence: data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_
+  info   docs/reporting/figures/machine-evolution-strip/register-status.md:11: NR-005 row is descriptive (no numeral)
+  info   docs/reporting/figures/machine-evolution-strip/register-status.md:12: NR-006 row is descriptive (no numeral)
+  info   docs/reporting/figures/machine-evolution-strip/register-status.md:21: other occurrence: (gens 0 to 30, per the extract README). NR-006 prints the convergence.csv
+  ok     docs/reporting/drafts/2026-10-08-report-first-draft.md:77: 36.109 -> NR-006
+  ok     docs/reporting/drafts/2026-10-08-report-first-draft.md:78: 27.364 -> NR-005
+  info   docs/reporting/drafts/2026-10-08-report-first-draft.md:400: other occurrence: The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006
+  info   docs/reporting/drafts/2026-10-08-report-first-draft.md:407: other occurrence: Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  info   docs/reporting/drafts/2026-10-08-report-first-draft.md:525: other occurrence: [Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Valu
+  info   docs/reporting/drafts/2026-10-08-report-first-draft.md:698: other occurrence: | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-
+
+[stamps] drawn source and projection stamps
+  pca-landscape projection stamp: projection: z-scored 10-gene matrix, SVD · variance shares pending their row · script commit 3d36c7a
+  DEFECT pca-landscape: projection stamp still reads 'pending their row' - NR-044 signed at 2ad023c and the kit's own 'Row closed' block contradicts it
+         fix: generator stamp2: 'variance shares pending their row' -> 'variance shares from NR-044' (wording call, figures seat); re-render required
+  pca-landscape source stamp: source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006
+  DEFECT pca-landscape: source stamp omits NR-044 (the plate draws NR-044's quotes; the caption provenance lists the four-row set)
+         fix: generator ROWS: 'NR-001, NR-005, NR-006' -> 'NR-001, NR-005, NR-006, NR-044'; manifest register_rows likewise; re-render required
+  pca-atlas projection stamp: projection: z-scored 10-gene matrix, SVD · gene values over all 930 designs · script commit 3d36c7a
+  pca-atlas source stamp: source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006
+  DEFECT pca-atlas: source stamp omits NR-044 (the shared projection is NR-044 and the Rows-cited block lists the row; the caption provenance lists the four-row set)
+         fix: generator ROWS: 'NR-001, NR-005, NR-006' -> 'NR-001, NR-005, NR-006, NR-044'; manifest register_rows likewise; re-render required
+
+[recompute] projection, fits, coords and counts from the raw columns (numpy, ddof=1 as the kits)
+  rows 930; per island {1: 310, 2: 310, 3: 310}; gens 0..30
+  ok     each island-generation holds 10 draws (93 generation slots)
+  ok     status counts {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11} == NR-002
+  shares: PC1 22.434667  PC2 17.263044  pair 39.697710
+  ok     shares reproduce NR-044 (22.434667 / 17.263044 / 39.697710)
+  ok     PC1 loadings reproduce NR-044 at 4 dp (signs direct)
+    PC1 abs(v)>=0.2 set: n_lines -0.5385, rotor_count -0.5222, blade_scale_top +0.5180, target_Lr +0.2517, r_bottom +0.2036
+  ok     PC2 loadings reproduce NR-044 at 4 dp (signs direct)
+    PC2 abs(v)>=0.2 set: bank_bottom +0.5621, blade_scale_bottom -0.5605, density_profile -0.5018, bank_top -0.2444
+  gen-0 rows: 30; idx-1 rows: fitness [36.109]
+  ok     common seed, gen 0 idx 1, fitness 36.109 ok on every island (NR-006)
+    other gen-0 draws by status: {'reject': 17, 'clearance_reject': 10} (sentinel fitness 1e9 on rejects)
+  island 3 best ok: gen 26 idx 9, fitness 27.364
+  ok     winner fitness 27.364 on island 3 (NR-005)
+  island bests: {1: 30.578, 2: 30.637, 3: 27.364} (register 30.578 / 30.637 / 27.364)
+  seed pc (0.531, -1.297) vs kit pin (0.531, -1.297)
+  winner pc (0.885, 2.869) vs kit pin (0.885, 2.869)
+  ok     seed and winner projection coordinates reproduce the kit pins at 3 dp
+  QUERY  landscape subtitle prints '31 generations each' ('930 designs · three islands · 31 generations each'): no row carries the generation count; derives from 310 rows per island at 10 draws per generation; disposition wanted (a row, or the count drops)
+
+========================================================================
+SUMMARY: 36 ok, 15 DEFECT, 1 QUERY, 0 FAIL
+  DEFECT: docs/reporting/figures/pca-landscape/SPEC.md:92: 36.109 cites NR-005,NR-006 - register reads NR-006
+  DEFECT: docs/reporting/figures/pca-landscape/SPEC.md:93: 27.364 cites NR-006 - register reads NR-005
+  DEFECT: docs/reporting/figures/pca-landscape/register-status.md:11: NR-005 row reads 36.109 - register reads 27.364
+  DEFECT: docs/reporting/figures/pca-landscape/register-status.md:12: NR-006 row reads 27.364 - register reads 36.109
+  DEFECT: docs/reporting/figures/pca-landscape/captions-draft.md:20: 36.109 cites NR-005 - register reads NR-006
+  DEFECT: docs/reporting/figures/pca-landscape/captions-draft.md:20: 27.364 cites NR-006 - register reads NR-005
+  DEFECT: docs/reporting/figures/pca-atlas/SPEC.md:77: 36.109 cites NR-005,NR-006 - register reads NR-006
+  DEFECT: docs/reporting/figures/pca-atlas/SPEC.md:78: 27.364 cites NR-006 - register reads NR-005
+  DEFECT: docs/reporting/figures/pca-atlas/register-status.md:11: NR-005 row reads 36.109 - register reads 27.364
+  DEFECT: docs/reporting/figures/pca-atlas/register-status.md:12: NR-006 row reads 27.364 - register reads 36.109
+  DEFECT: docs/reporting/figures/pca-atlas/captions-draft.md:19: 36.109 cites NR-005 - register reads NR-006
+  DEFECT: docs/reporting/figures/pca-atlas/captions-draft.md:19: 27.364 cites NR-006 - register reads NR-005
+  DEFECT: pca-landscape: projection stamp still reads 'pending their row' - NR-044 signed at 2ad023c and the kit's own 'Row closed' block contradicts it
+  DEFECT: pca-landscape: source stamp omits NR-044 (the plate draws NR-044's quotes; the caption provenance lists the four-row set)
+  DEFECT: pca-atlas: source stamp omits NR-044 (the shared projection is NR-044 and the Rows-cited block lists the row; the caption provenance lists the four-row set)
+  QUERY:  landscape subtitle prints '31 generations each' ('930 designs · three islands · 31 generations each'): no row carries the generation count; derives from 310 rows per island at 10 draws per generation; disposition wanted (a row, or the count drops)
+read at tip c434fa444c8c5d8f959feb2e734fc672fbbb9109
+========================================================================
