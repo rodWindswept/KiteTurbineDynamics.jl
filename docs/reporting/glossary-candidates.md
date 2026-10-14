@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v13, numbers-free by construction (no measurement values, no
+**Status** PREP v14, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -170,6 +170,9 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | MPPT (maximum power point tracking) | The generator-loading strategy that tracks rated power. | CONTEXT.md | supply |
 | site wind (wind standard) | The measured wind profile every machine reads, re-expressed at its own rotor altitude. | DECISIONS [2026-10-03] | supply |
 | computational evolution | The report-wide phrase for the search method: a design space searched by an evolutionary algorithm. | story skeleton | supply |
+| principal component (PC1, PC2) | A new axis built from the search genes. The leading components carry the most spread in the search. | register NR-044, the kit stamps | supply |
+| loading | The weight of one gene on one projection axis. The sign gives the direction, and the size gives the strength. | register NR-044, the kit notes | supply |
+| variance share | The part of the spread in the search that one axis carries. | register NR-044 | supply |
 
 **Envelope senses.** "Envelope" carries two jobs in this report: the qualifying
 envelope test above, and the §3.4 figure that shows where the family twists.
@@ -352,3 +355,8 @@ defect, like a missing register row.
   routed by the era-map name check (SW3b): cp fix, folded class and
   wind authority. The bank angle row takes the AeroDyn pre-cone
   cross-term, with a guards note. No other change.
+
+- **v14 (2026-10-14):** three projection rows join the
+  search-and-evaluation group: principal component, loading and
+  variance share, from the levers reading.
+  Track D rewrites the three at ratification. No other change.
