@@ -1,0 +1,12 @@
+# v0.41 hero copy counter-read — origin readback (aero-validator, 2026-10-14)
+# push range 0f46aa7..54a539e
+
+HEAD:                    54a539e7971ff8df2f68fb148ef44cbb27082106
+origin/bank-derate-cos2p65: 54a539e7971ff8df2f68fb148ef44cbb27082106
+local == origin: yes
+
+worktree hash-object == origin blob:
+docs/reporting/room-responses/aero-validator-2026-10-14-v041-hero-counterread.md  8925ecdf2dab0a4d9b0d6d0df01441d89b1dee76  OK
+handovers/handover-2026-10-14-reporting-room-aero-validator.md  72eeaf9ff66b00a3a334dde7ed2bdcb5663db3d4  OK
+scratch/av_v041_hero_counterread.py  d027401a0dceb865c2b218620a41b420b480a301  OK
+scratch/av_v041_hero_counterread.log  18fbb749aecd036cb0f60a923a5fd0fd04bc3d64  OK

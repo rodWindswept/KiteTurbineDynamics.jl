@@ -1,4 +1,4 @@
-[0] hero copy counter-read   tip 0f46aa7   origin 0f46aa7   record e8159b0   copy md5 7192f4a9dd4694b63c73cf49944a5844
+[0] hero copy counter-read   tip 54a539e   origin 54a539e   record e8159b0   copy md5 7192f4a9dd4694b63c73cf49944a5844
 [0] identity and freshness
   ok   copy md5 reads the declared value
   ok   copy byte-identical to its archived build
