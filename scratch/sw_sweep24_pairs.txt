@@ -1,0 +1,7 @@
+== 68092dc -> ed3d202 raw added 1 raw removed 1
+
+freeze block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+freeze block md5 (stripped): 6d953ec10d2aa3ac66fd5d825fe16f6f
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054

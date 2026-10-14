@@ -1,0 +1,20 @@
+== draft off v037 vs v038 ==
+1c1
+< == scratch/sw_sweep24_draft_v037.md: words=5884 total=6 per100w=0.1 ==
+---
+> == scratch/sw_sweep24_draft_v038.md: words=5918 total=6 per100w=0.1 ==
+== tracker off v037 vs v038 ==
+1c1
+< == scratch/sw_sweep24_tracker_v037.md: words=2401 total=10 per100w=0.42 ==
+---
+> == scratch/sw_sweep24_tracker_v038.md: words=2438 total=10 per100w=0.41 ==
+== safety guards ==
+enabl count: 0
+breaks-only count: 0
+== grep await v038 ==
+81:  The rapid path awaits its rope-break gate fix (NR-013).
+790:The rapid path awaits its rope-break gate fix (NR-013).
+== grep carry ==
+11:Sections 3.4 to 3.6 carry their text.
+== soft constraint count ==
+3
