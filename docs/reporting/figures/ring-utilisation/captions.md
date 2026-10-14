@@ -27,10 +27,13 @@ margin.
 The hub ring R6 governs the structural check at FoS 15.033. All
 other airborne rings hold much larger margins (NR-021).
 
-Each bar stacks the axial share and the bending share of one checked ring.
-The rows run from R2 at the base to R6 at the hub. Both shares come from
-the same worst-utilisation beam. The bar top is the ring utilisation, the
-beam-column interaction itself. Utilisation is demand over capacity.
+Each bar shows one checked ring. The bar end reads the ring utilisation:
+the beam-column interaction on the worst beam, the axial share N/N_crit
+plus the bending share √(M_ip²+M_oop²)/M_el.
+
+The rows run from R2 at the base to R6 at the hub. Utilisation is demand
+over capacity. The axis is logarithmic across six decades to the unit
+value, so the margin of every ring reads at its own scale.
 
 The dashed line is the fail boundary at the unit value, the physical
 interaction limit at FoS 1. The campaign structural gate is stricter, at
@@ -43,14 +46,17 @@ ring, which sits on ground support. The figure includes and marks the hub
 ring. The values come from the campaign winner at its final operating
 point.
 
-R5 reads far below the other rows. Its worst checked beam carries no
-axial share, and its bending share sits below the display scale of the
-axis. The readout prints the true value, FoS 326,974 (NR-021).
+R5 reads far below the other rows. It carries bending alone. Its worst
+checked beam holds no axial share. The readout prints the true value, FoS
+326,974 (NR-021).
+
+For every other checked ring, the bending share sits below 0.05 per cent
+of the ring utilisation.
 
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-021 · script commit `eacf073` · full record: the figure-provenance
+rows NR-021 · script commit `671ab96` · full record: the figure-provenance
 appendix.
 
 ## Generation note
@@ -77,3 +83,10 @@ Caption lead (2026-10-14): the round-3 leads land in both tiers. The
 plain tier opens with the governing ring. The technical tier adds the
 hub result (NR-021) and the campaign gate line (NR-015). Text only, no
 render moves.
+
+Render delta (2026-10-14): the 3.5 deltas land. The axis is logarithmic.
+One bar shows each ring. The corrected interaction form (N/N_crit +
+√(M_ip²+M_oop²)/M_el) reads in the legend and the caption.
+
+The bending-share sentence replaces the display-floor sentences.
+Render moved. No drawn value moves.

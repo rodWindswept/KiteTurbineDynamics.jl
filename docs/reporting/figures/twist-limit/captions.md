@@ -28,8 +28,9 @@ winner's final operating point. S1 carries the least segment torque
 margin, 2.03 (NR-040).
 
 Panel A draws the transmitted twist of each segment as a magnitude,
-against its over-twist limit δcrit. The limit comes from the committed
-authority `trpt_twist_limit`.
+against its limits: the over-twist limit δcrit and the realisability
+floor. δcrit comes from the committed authority `trpt_twist_limit`. The
+floor follows sin Δα ≤ 1/1.05.
 
 A no limit segment carries no torsional ceiling. The figure draws no ratio
 for such a segment. Tether break strain and ring compression carry its
@@ -42,7 +43,7 @@ of the same state.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-022, NR-023 · script commit `eacf073` · full record: the
+rows NR-022, NR-023 · script commit `671ab96` · full record: the
 figure-provenance appendix.
 
 ## Generation note
@@ -61,14 +62,22 @@ moved.
 
 Review carry (2026-10-12): the 2026-08-13 line (22,425° against its 42.6°
 limit, off scale) leaves the plate notes for the failure-ledger appendix
-at the plate's next render pass. It stays on the plate until then.
+at the plate's next render pass.
 
 Counter-read (2026-10-12, `9ba8dae`): the carry-note reads accurate, and
 the caption claims trace. Tracked before sign-off: register rows for the
-drawn mechanism values (72.25°, the 42.6° limit, 22,425°). They ride
-with the ledger pass. The floor and binding-limit treatment routes
-through work item 1.3 (the row-7 gate).
+drawn mechanism values (72.25°. The 42.6° limit and the 22,425° overshoot
+retire with the v2 render). The floor row rides with the ledger pass.
+The floor and binding-limit treatment routes through work item 1.3 (the
+row-7 gate). It executed at the 3.5 render deltas.
 
 Caption lead (2026-10-14): the round-3 leads land in both tiers. The
 technical tier adds the least segment torque margin (NR-040). Text
 only, no render moves.
+
+Render delta (2026-10-14): the 3.5 deltas land. The 2026-08-13 and
+read-cap lines leave the plate notes for the failure ledger. The δcrit
+labels re-space clear of the tick column.
+
+The title, subtitle and panel-A label measure against the binding limit,
+the realisability floor. Render moved. No drawn value moves.

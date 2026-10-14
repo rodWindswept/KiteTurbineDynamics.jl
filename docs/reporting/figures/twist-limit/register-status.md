@@ -13,11 +13,13 @@
 
 ## Mechanism items drawn, rows pending
 
-- Realisability floor 72.25° (from sin Δα ≤ 1/1.05).
-- Crossing-limit example 42.6°, with the 2026-08-13 overshoot 22,425°
-  (62 revolutions), off scale.
-- Read cap history: the former 90° asin clamp no longer caps the read.
+- Realisability floor 72.25° (from sin Δα ≤ 1/1.05). It is the binding
+  limit of the three (Harris 1.3; software-validator, item 13).
 - No-limit wording, pinned by the author draft (v4). It carries no value.
+
+The 2026-08-13 overshoot line (22,425°) and the read-cap line left the
+plate at the v2 render (2026-10-14); the failure ledger carries that
+history.
 
 The science seat cleared the value items to draw on 2026-10-08. They need
 register rows before sign-off, or F-CITE fails. The seed binding segment
@@ -32,7 +34,7 @@ Angles at 0.1°. Torque at 0.1 N·m. Drawn values: |Δα| 33.9, 33.8, 33.7,
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit eacf073`
+`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 671ab96`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
@@ -40,3 +42,7 @@ hashes. Self-check: two consecutive runs stay byte-identical.
 
 **Delta** v1 (2026-10-14): the round-3 caption leads land. The caption
 cites NR-040 for the least torque margin. No render moves.
+
+**Delta** v2 (2026-10-14): the 3.5 render deltas. The two changelog
+notes leave; the δcrit labels re-space; the title and labels measure
+against the binding limit. Script commit `671ab96`.

@@ -97,13 +97,13 @@ evidence. It carries its label and no numbers.
   the base and `RN` (hub) at the top.
 
 - The horizontal axis is utilisation. The unit line is the fail boundary.
-  The figure labels it "fail boundary". ⟨The axis window resolves at
-  GENERATE.⟩
+  The figure labels it "fail boundary". The axis is logarithmic, six
+  decades from 10⁻⁶ to the unit value (v5).
 
-- Per ring, one stacked bar: the axial share and the bending share. The top
-  of the bar is the ring interaction. The ring FoS readout at the row
-  end reads the emitted `ring_fos`. The model takes the reciprocal, not the
-  figure.
+- Per ring, one bar: the ring utilisation, the beam-column interaction.
+  The axial/bending stack retired at v5; the bending share reports in the
+  caption. The ring FoS readout at the row end reads the emitted
+  `ring_fos`. The model takes the reciprocal, not the figure.
 
 - The ground ring appears as a marked base row with no bar: "ground ring —
   not checked (ground-supported)".
@@ -120,7 +120,7 @@ evidence. It carries its label and no numbers.
 | tag | drawn from | drawing rule | asserted |
 |---|---|---|---|
 | `ring_row` | extract | one row per checked ring, R2 at the base, hub at the top | count |
-| `share_stack` | `ring_util_axial`, `ring_util_bending` | stacked bar per row | values |
+| `util_bar` | `max_util` per ring | one utilisation bar per row; the stack retired at v5 | values |
 | `unit_line` | — | the fail boundary at the unit value | presence |
 | `fos_readout` | `ring_fos` | row-end readout | values |
 | `ground_note` | — | the excluded base row, marked | presence |
@@ -132,8 +132,8 @@ evidence. It carries its label and no numbers.
 | Figure string | Emitted name | Where used | Note |
 |---|---|---|---|
 | ring utilisation | `max_util`, per ring (run level: `ring_max_util`) | bar top, caption | the beam-column interaction (term of record: "ring check") |
-| axial share | `ring_util_axial` | stack, legend, caption | `N/N_crit` on the worst-utilisation beam |
-| bending share | `ring_util_bending` | stack, legend, caption | `√(M_ip²+M_oop²)/M_el` on the same beam |
+| axial share | `ring_util_axial` | caption | `N/N_crit` on the worst-utilisation beam |
+| bending share | `ring_util_bending` | caption; the legend carries the combined form | `√(M_ip²+M_oop²)/M_el` on the same beam |
 | ring FoS | the `ring_fos` vector per ring, or the `fos_ring` scalar for the worst ring | readout | `1 / max_util`, from the emitted array. `Inf` renders ∞ |
 | fail boundary | the unit value of the interaction | line label | the caption pins the form: "beam-column interaction", never "Euler" |
 | `R2…RN` | record ring index | row labels | ground ring excluded, hub ring included and marked |
@@ -249,3 +249,8 @@ drawn interaction.
 - v4 (2026-10-14): the round-3 caption leads land in the kit text. Both
   tiers open with the governing ring. The technical tier adds the hub
   result (NR-021) and the gate line (NR-015). No render moves.
+
+- v5 (2026-10-14): the 3.5 render deltas. The axis goes logarithmic (10⁻⁶
+  to the unit value), the stack retires to one utilisation bar, and the
+  corrected interaction form N/N_crit + √(M_ip²+M_oop²)/M_el reads in the
+  legend and the caption. Script commit `671ab96`.

@@ -245,3 +245,9 @@ gate.
 - v3 (2026-10-14): the round-3 caption leads land in the kit text. Both
   tiers open with the limit result. The technical tier adds the least
   torque margin (NR-040). No render moves.
+
+- v4 (2026-10-14): the 3.5 render deltas. The two changelog notes leave
+  the plate (the failure ledger carries the history). The δcrit labels
+  re-space clear of the tick column. The title, subtitle and panel-A
+  label measure against the binding limit, the realisability floor (work
+  item 1.3). Script commit `671ab96`.

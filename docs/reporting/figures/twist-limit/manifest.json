@@ -4,36 +4,31 @@
     "s": "1724859",
     "t": "49.99999483862295"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit eacf073",
-  "data_commit": "dd3cc6a",
+  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 671ab96",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
       "sha256": "dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203"
     },
     "mechanism_references": {
-      "crossing_limit_example_deg": "42.6",
-      "crossing_overshoot_deg": "22,425",
-      "crossing_overshoot_revs": "62",
       "realisability_floor_deg": "72.25",
-      "status": "cleared to draw 2026-10-08; rows pending"
+      "status": "cleared to draw 2026-10-08; floor row pending. The two changelog lines left the plate notes 2026-10-14 (failure ledger)."
     },
     "register_rows": [
       "NR-022 \u00b7 NR-023"
     ]
   },
   "outputs": {
-    "label-ledger.txt": "6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28",
-    "twist-limit.pdf": "d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1",
-    "twist-limit.png": "7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501",
-    "twist-limit.svg": "ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472"
+    "label-ledger.txt": "2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9",
+    "twist-limit.pdf": "49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2",
+    "twist-limit.png": "00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248",
+    "twist-limit.svg": "45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f"
   },
-  "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; mechanism references as recorded",
+  "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; mechanism reference as recorded",
   "script": {
     "path": "docs/reporting/figures/twist-limit/twist-limit.py",
-    "sha256": "af7f46932867cf6fcda7d028ed197cd4e5eb787587fdac15eeb340e06b86ee62"
+    "sha256": "75d82de74fc81a8ad1bf6859e6a83778b458b78aae2cf71b4ce0b40aa5f0714c"
   },
-  "script_commit": "eacf073",
   "slug": "twist-limit",
   "toolchain": {
     "matplotlib": "3.10.8",

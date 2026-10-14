@@ -1,0 +1,73 @@
+[1] the three-way render identity
+  ok   ring-utilisation: ring-utilisation.svg identical (md5 baf79184058e6665)
+  ok   ring-utilisation: ring-utilisation.pdf identical (md5 af89302b60142850)
+  ok   ring-utilisation: ring-utilisation.png identical (md5 286f3f07eea69289)
+  ok   ring-utilisation: label-ledger.txt identical (md5 28105e2c4b8e8fde)
+  ok   ring-utilisation: manifest.json identical (md5 dfb23d9a4a10f394)
+  ok   twist-limit: twist-limit.svg identical (md5 9f517b47df0bf3c0)
+  ok   twist-limit: twist-limit.pdf identical (md5 6e7277db411f033a)
+  ok   twist-limit: twist-limit.png identical (md5 03d9bd913f821295)
+  ok   twist-limit: label-ledger.txt identical (md5 2432b978b87b989d)
+  ok   twist-limit: manifest.json identical (md5 e56f7121279a2c0d)
+[2] the stamps carry the script commit
+  ok   ring-utilisation: stamp in the SVG
+  ok   ring-utilisation: stamp in the ledger
+  ok   twist-limit: stamp in the SVG
+  ok   twist-limit: stamp in the ledger
+[3a] ring: the new forms read; the retired forms are gone
+  ok   ring: present 'utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el, worst beam)'
+  ok   ring: present 'utilisation — beam-column interaction, log scale'
+  ok   ring: present '10⁻⁶'
+  ok   ring: present '10⁻¹'
+  ok   ring: present 'FoS 15.033'
+  ok   ring: present 'FoS 30.087'
+  ok   ring: present 'FoS 29.807'
+  ok   ring: present 'FoS 35.236'
+  ok   ring: present 'FoS 326,974'
+  ok   ring: present 'fail boundary'
+  ok   ring: retired 'axial share'
+  ok   ring: retired 'bending share'
+  ok   ring: retired 'stack'
+[3b] twist: the new forms read; the retired forms are gone
+  ok   twist: present 'Every segment of the winner runs well inside its binding lim'
+  ok   twist: present 'Transmitted twist against its binding limit, the realisabili'
+  ok   twist: present 'A — twist: transmitted twist |Δα| against its binding limit'
+  ok   twist: present 'realisability floor 72.25°'
+  ok   twist: present "no limit — the segment's tether is shorter than the sum of i"
+  ok   twist: present '92.6'
+  ok   twist: present '98.9'
+  ok   twist: present '33.5'
+  ok   twist: present '33.9'
+  ok   twist: present '22.8'
+  ok   twist: retired '22,425'
+  ok   twist: retired '62 revolutions'
+  ok   twist: retired 'asin'
+  ok   twist: retired 'off scale'
+  ok   twist: retired '42.6'
+[4] the drawn values stand (spot set)
+  ok   twist: drawn 396.8
+  ok   twist: drawn 397.2
+  ok   twist: drawn 397.5
+  ok   twist: drawn 397.7
+  ok   twist: drawn 805.0
+  ok   twist: drawn 808.7
+  ok   twist: drawn 812.2
+  ok   twist: drawn 815.7
+  ok   twist: drawn 1069.9
+[5] the manifest pins recompute
+  ok   ring-utilisation: script sha256
+  ok   ring-utilisation: command carries 671ab96
+  ok   ring-utilisation: extract sha256
+  ok   ring-utilisation: output pin label-ledger.txt
+  ok   ring-utilisation: output pin ring-utilisation.pdf
+  ok   ring-utilisation: output pin ring-utilisation.png
+  ok   ring-utilisation: output pin ring-utilisation.svg
+  ok   twist-limit: script sha256
+  ok   twist-limit: command carries 671ab96
+  ok   twist-limit: extract sha256
+  ok   twist-limit: output pin label-ledger.txt
+  ok   twist-limit: output pin twist-limit.pdf
+  ok   twist-limit: output pin twist-limit.png
+  ok   twist-limit: output pin twist-limit.svg
+
+checks: 65  ok: 65  fail: 0

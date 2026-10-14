@@ -24,7 +24,7 @@ values only.
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit eacf073`
+`/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit 671ab96`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
@@ -32,3 +32,7 @@ hashes. Self-check: two consecutive runs stay byte-identical.
 
 **Delta** v1 (2026-10-14): the round-3 caption leads land. The caption
 cites NR-015 for the gate sentence. No render moves.
+
+**Delta** v2 (2026-10-14): the 3.5 render deltas. The log axis, the
+single-bar form and the caption updates land. The readouts stand at the
+drawn precision. Script commit `671ab96`.

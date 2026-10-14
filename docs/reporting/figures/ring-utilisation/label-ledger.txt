@@ -1,9 +1,10 @@
-0.0
-0.2
-0.4
-0.6
-0.8
-1.0
+1
+10⁻²
+10⁻³
+10⁻¹
+10⁻⁴
+10⁻⁵
+10⁻⁶
 Beam-column interaction per checked ring · island-3 winner operating point
 Every checked ring sits far below its fail boundary
 FoS 15.033
@@ -18,11 +19,10 @@ R3
 R4
 R5
 R6 (hub)
-axial share (N/N_crit, worst beam)
-bending share (√(M²)/M_el, same beam)
 fail boundary
 fail boundary — interaction at the unit value
 readout: ring FoS = 1 / ring utilisation
-s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit eacf073 · authority commit f8114be
+s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit 671ab96 · authority commit f8114be
 source: data commit dd3cc6a · extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops
-utilisation — beam-column interaction
+utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el, worst beam)
+utilisation — beam-column interaction, log scale
