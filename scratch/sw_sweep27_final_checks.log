@@ -1,0 +1,23 @@
+sweep 27 final checks (2026-10-14, sw_ prefix)
+
+freeze check (levers reading):
+  block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+  receipt region == block: True
+  draft region == block: True
+
+pins check (delivered bytes):
+  28 of 28 appendix cells recompute (seven exhibits; the hero set 4 of 4)
+  hero png 4e8fc9d2, svg 819bafe5, pdf a9d5516d, checks 52fe83a8
+
+copy probe (delivered docx, v0.41):
+  media entries 7; head line 'Draft v0.41' x1; 'v0.40' x0
+  hero reads via the caption slug (x2) and the seats line (x1); appendix
+  title x2; 'All seven read dataset commit' x1; no seat marker text
+  shape lines read x1 each; k rows read; retirements read; tips read
+  detector pair reads (soft ws); safety set reads
+  guards: NR-009 value 14.972 x1 (register appendix); standalone 14.97
+  x0; 3.816 x0; rounded 27.363 x0; unresolved x0
+  md5 7192f4a9dd4694b63c73cf49944a5844 == stamp: True
+
+record sim (base vs new):
+  base total=11 per100w=0.08; new total=11 per100w=0.07; offender diff header-only; block-list diff empty

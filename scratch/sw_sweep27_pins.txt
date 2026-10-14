@@ -1,0 +1,29 @@
+  Ring utilisation plate [png]: MATCH f49aaaa1 vs cell f49aaaa1
+  Ring utilisation plate [svg]: MATCH 41a55786 vs cell 41a55786
+  Ring utilisation plate [pdf]: MATCH fc4974d6 vs cell fc4974d6
+  Ring utilisation plate [ledger]: MATCH 3b4bc8c1 vs cell 3b4bc8c1
+  Twist limit plate [png]: MATCH 00cd857a vs cell 00cd857a
+  Twist limit plate [svg]: MATCH 45104b96 vs cell 45104b96
+  Twist limit plate [pdf]: MATCH 49c473a8 vs cell 49c473a8
+  Twist limit plate [ledger]: MATCH 2225062a vs cell 2225062a
+  Machine evolution strip [png]: MATCH 8e9d1d40 vs cell 8e9d1d40
+  Machine evolution strip [svg]: MATCH 6c36b0ff vs cell 6c36b0ff
+  Machine evolution strip [pdf]: MATCH 6ce4daba vs cell 6ce4daba
+  Machine evolution strip [checks]: MATCH b8c654ea vs cell b8c654ea
+  System anatomy plate [png]: MATCH f1c322bc vs cell f1c322bc
+  System anatomy plate [pdf]: MATCH 9beffb6b vs cell 9beffb6b
+  System anatomy plate [ledger]: MATCH b250c1a1 vs cell b250c1a1
+  System anatomy plate [checks]: MATCH 0e857cbf vs cell 0e857cbf
+  Levers landscape [png]: MATCH 4b1bd345 vs cell 4b1bd345
+  Levers landscape [svg]: MATCH 94d518bb vs cell 94d518bb
+  Levers landscape [pdf]: MATCH 712e918b vs cell 712e918b
+  Levers landscape [ledger]: MATCH 91282957 vs cell 91282957
+  Parameter atlas [png]: MATCH 1e46b70a vs cell 1e46b70a
+  Parameter atlas [svg]: MATCH 28c032cf vs cell 28c032cf
+  Parameter atlas [pdf]: MATCH aede4d29 vs cell aede4d29
+  Parameter atlas [ledger]: MATCH d3a2bcb1 vs cell d3a2bcb1
+  Machine winner hero [png]: MATCH 4e8fc9d2 vs cell 4e8fc9d2
+  Machine winner hero [svg]: MATCH 819bafe5 vs cell 819bafe5
+  Machine winner hero [pdf]: MATCH a9d5516d vs cell a9d5516d
+  Machine winner hero [checks]: MATCH 52fe83a8 vs cell 52fe83a8
+pins recomputed: 28, match: 28, mismatch: 0

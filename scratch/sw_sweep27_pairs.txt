@@ -1,0 +1,13 @@
+== 0e7d396 -> e8159b0 raw added 2 raw removed 1
+  one-sided 10: added-side 1, removed-side 0
+    + [Figure seated: figure-map row 10 (machine winner hero, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+  one-sided 40: added-side 0, removed-side 1
+    - Internal engineering report. Draft v0.40. Date 2026-10-14.
+  one-sided 41: added-side 1, removed-side 0
+    + Internal engineering report. Draft v0.41. Date 2026-10-14.
+
+freeze block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+freeze block md5 (stripped): 6d953ec10d2aa3ac66fd5d825fe16f6f
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054

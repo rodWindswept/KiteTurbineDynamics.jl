@@ -1,0 +1,39 @@
+media entries: 7
+  head line 'Draft v0.41': 1
+  older marks 'Draft v0.40': 0
+  'v0.40' anywhere: 0
+  'v0.41' anywhere: 1
+  hero 'machine winner hero': 0
+  hero slug 'machine-winner-hero': 3
+  hero marker 'Figure seated' (soft ws): 0
+  appendix 'All seven read dataset commit': 1
+  shape 'the gust cases': 1
+  shape 'one island of the campaign': 1
+  shape 'longer or broader run': 1
+  shape 'do not prove an optimal gene set': 1
+  table row '3.49': 1
+  table row '19.14': 2
+  table row '51.8': 2
+  table row '14.42': 2
+  table row '24.3': 3
+  retirement '3.55': 1
+  retirement '5.39': 1
+  sizing '1278': 2
+  sizing '87.9' / '78.8': 4
+  tips 'about 73 m/s': 1
+  tips 'about 85 m/s': 1
+  '100 m/s ceiling': 1
+  '14.97' class: 1
+  '14.972': 1
+  '3.816': 0
+  '27.363' standalone: 0
+  'unresolved' (ignore case): 0
+  old pair 'enables rope breaks': 0
+  detector 'limits break detection' (soft ws): 1
+  detector 'arms the rope-break check' (soft ws): 1
+  safety 'never allows breaks': 1
+  safety 'always rejects the design': 1
+  safety 'broken rope': 1
+md5 live: 7192f4a9dd4694b63c73cf49944a5844
+md5 stamp: 7192f4a9dd4694b63c73cf49944a5844
+live == stamp: True

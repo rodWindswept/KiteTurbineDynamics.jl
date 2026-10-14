@@ -1,0 +1,7 @@
+== 0e7d396 -> e8159b0 ==
+arrivals: {'10': 1, '41': 1}
+removals: {'40': 1}
+  [arr 10] power balance (NR-025). The relax run takes 10 seconds. It lets the | relax time of 10 seconds, a window of 40 seconds, a factor of safety
+  [arr 41] Internal engineering report. Draft v0.41. Date 2026-10-14. | 11.01 m/s at 9.41 m (NR-008, NR-032).
+  [rem 40] Internal engineering report. Draft v0.40. Date 2026-10-14. | The measurement window takes 40 seconds. It measures the settled
+
