@@ -229,7 +229,7 @@ do not treat a taut backline as evidence that it carries the rotor.
 |---|---|
 | **main rotor** | the topmost rotor, historically called the "hub rotor" (`RotorSpec`, `sys.rotor`). |
 | **expansion rotor** | a banked-blade rotor on a TRPT ring. It generates radial force (spreading the tethers) plus its own axial thrust and torque. |
-| **hub** | avoid this word for the rotor, and say **main rotor** if you mean the topmost rotor. |
+| **hub** | a retired name. Say **main rotor** if you mean the topmost rotor, and **topmost ring** if you mean the ring at the top. The codes and the records hold their spelling. |
 
 **What a banked rotor IS (Rod, 2026-09-30).** A banked rotor is a normal rotor: the
 same blades, the same blade count (`n_blades = n_lines`), the same span and chord law,
@@ -391,9 +391,10 @@ If a banked rotor is a banked rotor, the expansion rotors should carry 2.65 as w
 they do not. The precone sweep measured the main rotor's solidity only, so applying 2.65 to
 the expansion annuli is an extrapolation. Left alone deliberately pending a ruling.
 
-**Terminology (Rod, 2026-09-24):** the topmost rotor is the **main rotor**.
-Do not write "hub rotor". The word "hub" stays valid for the ring and the node,
-and never for a rotor.
+**Terminology (Rod, 2026-09-24, amended 2026-10-14):** the topmost rotor is the **main rotor**.
+Do not write "hub rotor". The word "hub" does not name the ring either.
+The part reads **topmost ring**, or **topmost rotor ring** in full (Rod, 2026-10-14).
+The code identifiers (`r_hub`) and the recorded pages hold their spelling.
 
 ### 4.1 Multi-rotor sizing: the span comes from the ring annulus (DERIVED, not validated)
 

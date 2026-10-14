@@ -1761,3 +1761,65 @@ Boundaries that travel with this row:
    cent. The signed rows follow the evaluator convention.
 2. The base is a decoder convention, not a measured part. The blade mass
    law stays the published span cubed law.
+
+## Derived row: NR-051, the corner-grid picks (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Founder comment 14 (id 13) asks four machine renders. Each render shows a
+typical machine for one corner of the PC1-PC2 field. The corner grid mints
+at row 23 of section 3.4. This block signs the four picks, the rule and
+the display forms.
+
+The picks replicate the certified projection (NR-044). Every anchor
+re-verifies before a pick prints. This seat re-ran the projection in Julia,
+a different instrument than the numpy path of the kit.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-051 | The corner-grid picks (v13 5 kW screen): four machines, one per PC1-PC2 window corner, at the least feasible distance | The picks stand in the blocks below | kg-equivalent, PC units | `scratch/fig_cg_picks.py` and its log. The island telemetry files (data commit `dd3cc6a`, run `a76c5e9`). Projection per NR-044. Checker `scratch/sv_r6_count_nr051_check.jl` and its log | signed (science-validator, 2026-10-14) |
+
+The picks, one per corner of the [1,99] percentile window:
+
+| Corner | Design | PC1, PC2 | Objective (kg-equivalent) |
+|---|---|---|---|
+| low PC1 / low PC2 | `i1-g13-i1` | -1.454423, -1.238178 | 60.646 |
+| low PC1 / high PC2 | `i1-g7-i7` | -2.088227, 0.152353 | 58.864 |
+
+| Corner | Design | PC1, PC2 | Objective (kg-equivalent) |
+|---|---|---|---|
+| high PC1 / low PC2 | `i2-g21-i4` | 1.132051, -1.488592 | 33.704 |
+| high PC1 / high PC2 | `i3-g26-i8` | 1.679755, 3.050611 | 33.812 |
+
+Sign-off basis:
+
+- Reproduction. This seat re-ran the projection in Julia from the three
+  committed telemetry files. The shares read 22.4346665772 and
+  17.2630436556. The pair total reads 39.6977102328. Every NR-044 anchor
+  gates: the shares, the seed point, the winner point and both fits.
+- The rule. For each corner, the pick is the feasible design of least
+  distance in PC1-PC2 space. The checker re-derives all four picks from
+  the raw files.
+- The composition. The two low-PC1 picks are many-line, two-rotor
+  machines: 7 and 8 lines, rotor count 2. The two high-PC1 picks are
+  one-rotor machines: 3 lines each. The decoder rounds the rotor-count
+  gene to an integer count (`src/objective_v10.jl:235`).
+
+Display form, signed:
+
+- The plate prints the objective at 3 dp: `60.646`, `58.864`, `33.704`
+  and `33.812`. The strip sets the precedent at 3 dp.
+- The identity prints as the island-gen-idx tag, for example `i1-g13-i1`.
+- No value prints before this row. The family-mode build opens on this
+  sign.
+
+Boundaries that travel with this row:
+
+1. The projection reads the raw draw columns x1..x10, per NR-044
+   boundary 1.
+2. The picks are typical machines, not optima. All four objectives sit
+   above the winner value (NR-005).
+3. The cross-check note. The mint records a diagonal-extreme cross-check
+   at three picks of four. The independent re-read agrees on three
+   corners over the whole feasible set and differs at the high-PC1 /
+   low-PC2 corner. The row does not rest on that check.

@@ -1,0 +1,83 @@
+== 1. the count glance ==
+rows: 930  per island: 310/310/310
+statuses: clearance_reject=110 ok=508 reject=301 reject_twist=11
+check: rows 930: OK  got 930
+check: per island 310: OK  [310, 310, 310]
+check: status mix: OK  ["clearance_reject" => 110, "ok" => 508, "reject" => 301, "reject_twist" => 11]
+check: feasible rows 508: OK  got 508
+
+== 2. the projection (NR-044 anchors first) ==
+PC1 share = 22.4346665772 -> 22.434667
+PC2 share = 17.2630436556 -> 17.263044
+pair total = 39.6977102328 -> 39.697710
+check: PC1 share x1e6: OK  22.4346665772
+check: PC2 share x1e6: OK  17.2630436556
+check: pair total x1e6: OK  39.6977102328
+seed: i1-g0-1  pc (0.531265, -1.297011)  fit 36.109000
+winner: i3-g26-9  pc (0.885206, 2.869385)  fit 27.364000  island 3
+check: seed pc 3dp: OK  
+check: winner pc 3dp: OK  
+check: seed fit 3dp: OK  
+check: winner fit 3dp: OK  
+check: winner island 3: OK  
+window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+check: window pc1 3dp: OK  
+check: window pc2 3dp: OK  
+
+== 3. the four picks ==
+
+low PC1 / low PC2 corner (-5.133, -2.178):
+  pick: i1-g13-i1  pc (-1.454423, -1.238178)  fit 60.646000  dist 3.796523
+check: pick tag low PC1 / low PC2: OK  i1-g13-i1
+check: pick pc low PC1 / low PC2: OK  
+check: pick fit 6dp low PC1 / low PC2: OK  
+check: pick display 3dp low PC1 / low PC2: OK  
+  context: nearest-all reads status reject (dist 1.425); the pick stays feasible
+  genes: n_lines 7  rotor_count 1.854575 -> 2  bank_top 10.7399  bank_bottom 3.6127  blade_scale_top 0.9853
+
+low PC1 / high PC2 corner (-5.133, 3.125):
+  pick: i1-g7-i7  pc (-2.088227, 0.152353)  fit 58.864000  dist 4.254840
+check: pick tag low PC1 / high PC2: OK  i1-g7-i7
+check: pick pc low PC1 / high PC2: OK  
+check: pick fit 6dp low PC1 / high PC2: OK  
+check: pick display 3dp low PC1 / high PC2: OK  
+  context: nearest-all reads status clearance_reject (dist 0.371); the pick stays feasible
+  genes: n_lines 8  rotor_count 1.952533 -> 2  bank_top 2.5077  bank_bottom 7.1269  blade_scale_top 0.9806
+
+high PC1 / low PC2 corner (1.671, -2.178):
+  pick: i2-g21-i4  pc (1.132051, -1.488592)  fit 33.704000  dist 0.874883
+check: pick tag high PC1 / low PC2: OK  i2-g21-i4
+check: pick pc high PC1 / low PC2: OK  
+check: pick fit 6dp high PC1 / low PC2: OK  
+check: pick display 3dp high PC1 / low PC2: OK  
+  context: nearest-all reads status reject (dist 0.697); the pick stays feasible
+  genes: n_lines 3  rotor_count 1.000000 -> 1  bank_top 15.2845  bank_bottom 5.5349  blade_scale_top 1.0000
+
+high PC1 / high PC2 corner (1.671, 3.125):
+  pick: i3-g26-i8  pc (1.679755, 3.050611)  fit 33.812000  dist 0.074376
+check: pick tag high PC1 / high PC2: OK  i3-g26-i8
+check: pick pc high PC1 / high PC2: OK  
+check: pick fit 6dp high PC1 / high PC2: OK  
+check: pick display 3dp high PC1 / high PC2: OK  
+  context: nearest-all reads status ok (dist 0.074); the pick stays feasible
+  genes: n_lines 3  rotor_count 1.007551 -> 1  bank_top 0.0035  bank_bottom 22.0000  blade_scale_top 0.9658
+check: low picks many-line (7, 8): OK  low n_lines [7, 8]
+check: low picks two-rotor: OK  low rotor count [2, 2]
+check: high picks one-rotor lines (3, 3): OK  high n_lines [3, 3]
+check: high picks one-rotor: OK  high rotor count [1, 1]
+check: winner n_lines reads 3: OK  
+check: winner rotor count reads 1: OK  
+check: winner blade scale top ~0.821: OK  0.821326
+check: winner blade scale bottom ~0.20: OK  0.200000
+
+== 4. the diagonal-extreme secondary read ==
+diag (low PC1 / low PC2, window): i1-g13-i1  pc (-1.454, -1.238)  fit 60.646  agree=yes
+diag (low PC1 / low PC2, all-feasible): i1-g13-i1  pc (-1.454, -1.238)  fit 60.646  agree=yes
+diag (low PC1 / high PC2, window): i1-g7-i7  pc (-2.088, 0.152)  fit 58.864  agree=yes
+diag (low PC1 / high PC2, all-feasible): i1-g7-i7  pc (-2.088, 0.152)  fit 58.864  agree=yes
+diag (high PC1 / low PC2, window): i1-g27-i1  pc (0.592, -2.032)  fit 31.955  agree=no
+diag (high PC1 / low PC2, all-feasible): i1-g17-i2  pc (0.593, -2.366)  fit 35.666  agree=no
+diag (high PC1 / high PC2, window): i3-g25-i7  pc (1.424, 3.118)  fit 29.395  agree=no
+diag (high PC1 / high PC2, all-feasible): i3-g26-i8  pc (1.680, 3.051)  fit 33.812  agree=yes
+
+CHECKER: 38 checks, 0 fail

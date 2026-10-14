@@ -1,0 +1,57 @@
+== 1. the draft sites ==
+draft hub lines: [225, 319, 490, 505, 571, 612, 689, 786, 794, 807]
+  L225: hub and ground radii, and the rotor count sets how many rings carry
+  L319: The hub-segment helix force reads about 1278 N/vertex (NR-048).
+  L490: The capture hub
+  L505: | Hub radius | 4.580 m | NR-011 |
+  L571: hub radius is 4.580 metres and the ground radius 0.804 metres
+  L612: The hub ring R6 governs the structural check at the winner operating point (NR-021).
+  L689: The hub radius is 4.580 m and the ground radius is 0.804 m.
+  L786: | 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub. Every expa
+  L794: the hub (2026-08-26).
+  L807: the FoS fix, and its rotors sat one ring toward the hub.
+check: draft carries exactly 10 hub sites: OK  got 10
+check: draft hub line set: OK  [225, 319, 490, 505, 571, 612, 689, 786, 794, 807]
+check: draft already carries the short name: OK  
+
+== 2. the tracker and the candidates ==
+tracker lines: [104, 165]
+candidates lines: [78, 262]
+check: tracker carries 2 hub sites: OK  got 2
+check: candidates carry 2 hub sites: OK  got 2
+
+== 3. the five plates, drawn text (pending re-cut targets) ==
+check: drawn string present: system-anatomy label: OK  'R6, the hub ring'
+check: drawn string present: ring-utilisation row: OK  'R6 (hub)'
+check: drawn string present: twist-limit row: OK  'R6 (hub)'
+check: drawn string present: twist-limit subtitle: OK  'ground to hub'
+check: drawn string present: eval-timeline rate: OK  'ω hub'
+check: drawn string present: eval-timeline gates: OK  'hub · tip · Betz'
+check: drawn string present: winner-hero leader: OK  'hub ring R6'
+
+== 4. the three caption kits ==
+  system-anatomy: 4 md files carry hub, 8 sites
+check: kit carries hub: system-anatomy: OK  
+  ring-utilisation: 4 md files carry hub, 19 sites
+check: kit carries hub: ring-utilisation: OK  
+  machine-evolution-strip: 1 md files carry hub, 1 sites
+check: kit carries hub: machine-evolution-strip: OK  
+
+== 5. the exemption set (code names hold) ==
+check: code name present in tree: r_hub: OK  520 sites
+check: code name present in tree: hub_radius: OK  208 sites
+check: code name present in tree: blade_hub_radius: OK  119 sites
+check: code name present in tree: trpt_hub_radius: OK  83 sites
+check: code name present in tree: omega_hub: OK  203 sites
+check: code name present in tree: hub_ri: OK  114 sites
+
+== 6. the extract columns hold ==
+check: extract/atlas carries: hub (pair-extract): OK  
+check: extract/atlas carries: omega_hub (window-trace-extract): OK  
+check: extract/atlas carries: r_hub (pca-atlas): OK  
+
+== 7. the held records ==
+register hub lines: 31
+check: register text holds its spelling: OK  31 sites
+
+CHECKER: 25 checks, 0 fail
