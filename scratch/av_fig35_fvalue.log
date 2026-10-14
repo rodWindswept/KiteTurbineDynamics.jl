@@ -1,0 +1,173 @@
+[0] context   tip 25eb0eb   kit pin e4ff3c1   script 671ab96
+[1] manifest pins recompute
+  ok     ring-utilisation: script sha256
+  ok     ring-utilisation: extract sha256
+  ok     ring-utilisation: output pin label-ledger.txt
+  ok     ring-utilisation: output pin ring-utilisation.pdf
+  ok     ring-utilisation: output pin ring-utilisation.png
+  ok     ring-utilisation: output pin ring-utilisation.svg
+  ok     ring-utilisation: command cite 671ab96
+  ok     twist-limit: script sha256
+  ok     twist-limit: extract sha256
+  ok     twist-limit: output pin label-ledger.txt
+  ok     twist-limit: output pin twist-limit.pdf
+  ok     twist-limit: output pin twist-limit.png
+  ok     twist-limit: output pin twist-limit.svg
+  ok     twist-limit: command cite 671ab96
+[2] stamps resolve
+  ok     authority commit f8114be is an ancestor of HEAD
+  ok     script commit 671ab96 is an ancestor of HEAD
+  ok     no kit path moves in e4ff3c1..HEAD
+  ok     blob identity pin == HEAD == origin across all 10 kit files
+  ok     CSV computing commit f8114be
+  ok     CSV data commit dd3cc6a
+  ok     CSV capture id
+  ok     capture stamp token 1724859 in register
+  ok     capture stamp token 49.99999483862295 in register
+  ok     ring-utilisation: stamp in ledger (script commit 671ab96)
+  ok     ring-utilisation: stamp in SVG (script commit 671ab96)
+  ok     ring-utilisation: stamp in ledger (authority commit f8114be)
+  ok     ring-utilisation: stamp in SVG (authority commit f8114be)
+  ok     twist-limit: stamp in ledger (script commit 671ab96)
+  ok     twist-limit: stamp in SVG (script commit 671ab96)
+  ok     twist-limit: stamp in ledger (authority commit f8114be)
+  ok     twist-limit: stamp in SVG (authority commit f8114be)
+[3a] F-VALUE ring plate: recompute from the committed extract
+  ok     R2: axial + bending = max_util (residual 0)
+  ok     R2: ring_fos = 1 / max_util (ulp 0)
+  ok     R2: extract tokens string-equal to NR-021 chunk
+  ok     R2: drawn readout FoS 30.087
+  ok     R3: axial + bending = max_util (residual 0)
+  ok     R3: ring_fos = 1 / max_util (ulp 0)
+  ok     R3: extract tokens string-equal to NR-021 chunk
+  ok     R3: drawn readout FoS 29.807
+  ok     R4: axial + bending = max_util (residual 0)
+  ok     R4: ring_fos = 1 / max_util (ulp 0)
+  ok     R4: extract tokens string-equal to NR-021 chunk
+  ok     R4: drawn readout FoS 35.236
+  ok     R5: axial + bending = max_util (residual 0)
+  ok     R5: ring_fos = 1 / max_util (ulp 0)
+  ok     R5: extract tokens string-equal to NR-021 chunk
+  ok     R5: drawn readout FoS 326,974
+  ok     R6: axial + bending = max_util (residual 0)
+  ok     R6: ring_fos = 1 / max_util (ulp 0)
+  ok     R6: extract tokens string-equal to NR-021 chunk
+  ok     R6: drawn readout FoS 15.033
+  ok     ring readout set reads 15.033 / 29.807 / 30.087 / 35.236 / 326,974
+[3b] F-VALUE twist plate: recompute from the committed extract
+  ok     S1 abs_dalpha: string-equal to register
+  ok     S1 segment torque: string-equal to register
+  ok     S1 capacity: string-equal to register
+  ok     S1 dcrit (group): string-equal to register
+  ok     S2 abs_dalpha: string-equal to register
+  ok     S2 segment torque: string-equal to register
+  ok     S2 capacity: string-equal to register
+  ok     S2 dcrit (group): string-equal to register
+  ok     S3 abs_dalpha: string-equal to register
+  ok     S3 segment torque: string-equal to register
+  ok     S3 capacity: string-equal to register
+  ok     S3 dcrit (group): string-equal to register
+  ok     S4 abs_dalpha: string-equal to register
+  ok     S4 segment torque: string-equal to register
+  ok     S4 capacity: string-equal to register
+  ok     S4 dcrit (own value, 2026-10-09 amend): string-equal to register
+  ok     S5 abs_dalpha: string-equal to register
+  ok     S5 segment torque: string-equal to register
+  ok     S5 capacity: string-equal to register
+  ok     S5 dcrit: string-equal to register
+  ok     twist drawn value set present in ledger (16 forms)
+  ok     S1 margin recomputes 2.0287970973051634 (repr-equal)
+  ok     S2 margin recomputes 2.036175280501402 (repr-equal)
+  ok     S3 margin recomputes 2.0435436991749936 (repr-equal)
+  ok     S4 margin recomputes 2.0509817379918016 (repr-equal)
+  ok     S5 margin recomputes 2.6938375915900292 (repr-equal)
+  ok     S1 carries the least margin (2.03)
+[3c] the floor arithmetic
+  ok     asin(1/1.05) = 72.247210 deg, drawn form 72.25
+  ok     floor label present in ledger
+  ok     DECISIONS.md carries the 1/1.05 basis and the 72.25 deg floor
+[4] F-LABEL re-walk (independent extraction)
+  ok     ring-utilisation: SVG text set == ledger set both ways (28 strings, missing 0, extra 0)
+  ok     twist-limit: SVG text set == ledger set both ways (55 strings, missing 0, extra 0)
+[5] numeric census over both ledgers
+  ok     ring-utilisation: every ledger string classifies (28 strings, 0 unclassified)
+  ok     twist-limit: every ledger string classifies (55 strings, 0 unclassified)
+[6] cite surfaces: presence and direction
+  ok     cite surface carries '326,974'
+  ok     cite surface carries '326974.1011237028'
+  ok     cite surface carries '15.033'
+  ok     cite surface carries '15.032534020684876'
+  ok     cite surface carries 'FoS 15.033'
+  ok     cite surface carries '326,974 (NR-021)'
+  ok     cite surface carries 'FoS 2.5 or above (NR-015)'
+  ok     cite surface carries '2.03 (NR-040)'
+  ok     cite surface carries 'sin Δα ≤ 1/1.05'
+  ok     cite surface carries 'trpt_twist_limit'
+  ok     cite surface carries '2.0288'
+  ok     cite surface carries '2.6938'
+  ok     ring caption bound: max bending share on the other rings 0.0408 per cent < 0.05
+[7] F-REPRO: two fresh out-of-tree runs per kit
+  ok     ring-utilisation: run 1 == run 2 across 5 outputs
+  ok     ring-utilisation: fresh runs == committed bytes (manifest included)
+  ok     twist-limit: run 1 == run 2 across 5 outputs
+  ok     twist-limit: fresh runs == committed bytes (manifest included)
+[8] 'no drawn value moves' (v1 against v2)
+  ok     ring-utilisation: drawn sets identical v1 == v2 (5 forms, 0 moved)
+  ok     twist-limit: drawn sets identical v1 == v2 (16 forms, 0 moved)
+[9] the draft figure-provenance appendix
+  ok     appendix carries 4 exhibit rows (4 found)
+  DEFECT ring-utilisation: appendix png hash stale
+  DEFECT ring-utilisation: appendix svg hash stale
+  DEFECT ring-utilisation: appendix pdf hash stale
+  DEFECT ring-utilisation: appendix ledger hash stale
+  DEFECT twist-limit: appendix png hash stale
+  DEFECT twist-limit: appendix svg hash stale
+  DEFECT twist-limit: appendix pdf hash stale
+  DEFECT twist-limit: appendix ledger hash stale
+  DEFECT Ring utilisation plate: exhibit row script commit stale (eacf073 -> 671ab96)
+  DEFECT Twist limit plate: exhibit row script commit stale (eacf073 -> 671ab96)
+      computed fix lines (verbatim):
+        - - `png` `6f19832088375b96cdc566aff596ccd548f26b629b9782bc56d8831d03c622ba`
+        + - `png` `f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837`
+        - - `svg` `ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab28f111472d4ed32ffa0c6b58`
+        + - `svg` `41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0`
+        - - `pdf` `508b3a641fde21b582ee2a58a3d3df2a769998281f78c8763ba07438286c1f8f`
+        + - `pdf` `fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75`
+        - - `ledger` `c040fca2dd63df9c68b56a767ccd0383962db479b04d75d23821b311628ce099`
+        + - `ledger` `3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff`
+        - - `png` `7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501`
+        + - `png` `00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248`
+        - - `svg` `ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472`
+        + - `svg` `45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f`
+        - - `pdf` `d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1`
+        + - `pdf` `49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2`
+        - - `ledger` `6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28`
+        + - `ledger` `2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9`
+        - | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `eacf073` | `post-95c385d_wind-authority` |
+        + | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `671ab96` | `post-95c385d_wind-authority` |
+        - | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `eacf073` | `post-95c385d_wind-authority` |
+        + | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `671ab96` | `post-95c385d_wind-authority` |
+      the review copy (draft-live.docx)
+  ok     docx prints ring png v1 hash
+  ok     docx prints ring svg v1 hash
+  ok     docx prints twist png v1 hash
+  ok     docx prints twist svg v1 hash
+  ok     docx does not print ring png v2 hash (stale block stands)
+  ok     docx does not print twist svg v2 hash (stale block stands)
+  ok     docx embeds delivered ring png bytes
+  ok     docx embeds delivered twist png bytes
+  ok     docx embeds delivered strip png bytes
+  ok     docx embeds delivered anatomy png bytes
+      docx md5 8324be7a204fbce3f3c6c38babcd62dc
+  ok     machine-evolution-strip: appendix png row current
+  ok     machine-evolution-strip: appendix svg row current
+  ok     machine-evolution-strip: appendix pdf row current
+  ok     machine-evolution-strip: appendix checks row current
+  ok     system-anatomy: appendix png row current
+  ok     system-anatomy: appendix pdf row current
+  ok     system-anatomy: appendix ledger row current
+  ok     system-anatomy: appendix checks row current
+  ok     appendix carries no levers row (the copy embeds both levers plates)
+  QUERY  rows 20 and 21 have no figure-provenance row; the copy embeds six plates against four rows
+
+checks: 136  ok: 125  defect: 10  query: 1  fail: 0
