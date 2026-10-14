@@ -2,15 +2,15 @@
 
 **Status** LANDED. **Seat** author. **Read at** `96adbf8` (branch `bank-derate-cos2p65`, local == origin).
 
-**Scope** This pass runs queue item 7's author leg, with the gate lifted by the k-sweep rows sign (`07e2eb9`). It folds the story check (`3b8e099`) and the counter-read into the operating-point block. The values read NR-047 and NR-048. The tie-in rides NR-046. The era call stays open.
+**Scope** This pass runs the queue item 7 author leg. The k-sweep rows sign (`07e2eb9`) lifted the gate. It folds the story check (`3b8e099`) and the counter-read into the operating-point block. The values read NR-047 and NR-048. The tie-in rides NR-046. The era call stays open.
 
 ## What lands
 
 - The two retirements. "Two earlier anchors retired. 3.55 was a mass-scaled value with no anchor. 5.39 was the 3-blade anchor chosen on the broken machine. That load forces about 9 kW from the seed (NR-047)."
 
-- The sweep table, six rows at the NR-047 display forms, split into two three-row blocks to hold the STE paragraph count. Reading rules held: P_mean at 2 dp, omega_final at 2 dp, FoS_min at 1 dp. The k 0.5 row prints reject and its power. The plateau rows stay with NR-041.
+- The sweep table lands, six rows at the NR-047 display forms. It splits into two three-row blocks to hold the STE paragraph count. Reading rules held: P_mean at 2 dp, omega_final at 2 dp, FoS_min at 1 dp. The k 0.5 row prints reject and its power. The plateau rows stay with NR-041.
 
-- One paragraph per side. Light: the k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling, the hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103). The selected k 2.24 settles at omega 15.3, tip about 73 m/s. Heavy: FoS falls from 36.4 at k 2.24 to 24.3 at k 3.0, and the over-power tie-in rides NR-046, 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling.
+- One paragraph per side. On the light side the k 1.0 row settles at omega 17.6, tip about 85 m/s. It sits near the 100 m/s ceiling, the hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103). The selected k 2.24 settles at omega 15.3, tip about 73 m/s. On the heavy side FoS falls from 36.4 at k 2.24 to 24.3 at k 3.0. The over-power tie-in rides NR-046, at 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling.
 
 - The sizing-side pair, at the NR-048 record forms. "Twice the nominal load" carries the load step. The hub-segment helix force reads about 1278 N/vertex. The refusal: the rotor spins up to 87.9° of twist against the 78.8° collapse limit. No value multiplies out.
 
@@ -18,7 +18,7 @@
 
 ## Guards held
 
-- No value moves. Every new print reads a signed row: NR-047 for the table, the tips and the retirements; NR-048 for the sizing pair; NR-046 for the tie-in.
+- No value moves. Every new print reads a signed row. NR-047 covers the table, the tips and the retirements. NR-048 covers the sizing pair, and NR-046 the tie-in.
 
 - The display guards hold: 14.97, 14.972, 3.816 and the rounded 27.363 stay absent. The safety forms (the detector pair, the safety set) hold. The classified line, the six seated markers, the two number-gate brackets, the objective block and the rename hold.
 
