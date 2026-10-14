@@ -26,7 +26,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The branch tip reads `f030fe6`.
 
-- Draft v0.40 at `0e7d396`. Sections 3.4 to 3.6 carry the decision shape. Section 2.3 carries the k = 2.24 story. It holds the sweep table, the two retirements, one paragraph per side and the sizing pair. The objective block and the rename read at section 2.4. The appendix carries the delivered pins (`ef36c6c`). Section 4.1 reads the detector forms.
+- Draft v0.40 at `0e7d396`. Sections 3.4 to 3.6 carry the decision shape. Section 2.3 carries the k = 2.24 story. It holds the sweep table, the two retirements, one paragraph per side and the sizing pair. The objective block and the rename read at section 2.4. The appendix carries the delivered pins (`ef36c6c`), and section 4.1 reads the detector forms.
 
 - The era call stays open, as routed. No ruling moves.
 
@@ -42,7 +42,9 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - STE: the draft reads 6,281 words, total held at 6. The tracker reads 2,542 words, total held at 10.
 
-- Landings above the seat pages since the first write: this page (`13df740`), the claim audit (`90cd692`) and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). The later span takes the appendix re-pin (`ef36c6c`), the objective block (`57c77cf`) and the consistency sweep (`7dd91a9`). It adds the term gate (`cadf83d`) and the review-copy last mile (`d9d4fc4`). The span takes the rows 6 and 7 records (`9ae8097`), the safety pass (`ed3d202`) and sweeps 22 to 24. It closes with the k-sweep display-row sign (`07e2eb9`), the item-5 extract (`96adbf8`), the k-story fold (`12a5753`) and sweep 25 (`bbc214e`). The span then takes the item-8 aero leg (`8d3b61d`), the item-5 counter-read (`d0679d3`) and the figures seat page (`7fc0717`). It adds the v0.40 decision shape (`ad56692`) and sweep 26 (`a359061`). It ends with the v0.40 counter-read (`3ac48af`) and the v0.40 glance (`f030fe6`).
+- Landings above the seat pages since the first write: this page (`13df740`), the claim audit (`90cd692`) and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). The later span takes the appendix re-pin (`ef36c6c`), the objective block (`57c77cf`) and the consistency sweep (`7dd91a9`). It adds the term gate (`cadf83d`) and the review-copy last mile (`d9d4fc4`). The span takes the rows 6 and 7 records (`9ae8097`), the safety pass (`ed3d202`) and sweeps 22 to 24. It closes with the k-sweep display-row sign (`07e2eb9`), the item-5 extract (`96adbf8`), the k-story fold (`12a5753`) and sweep 25 (`bbc214e`).
+
+- The span then takes the item-8 aero leg (`8d3b61d`), the item-5 counter-read (`d0679d3`) and the figures seat page (`7fc0717`). It adds the v0.40 decision shape (`ad56692`) and sweep 26 (`a359061`). It ends with the v0.40 counter-read (`3ac48af`) and the v0.40 glance (`f030fe6`).
 
 ## Open queue, in fold order
 
