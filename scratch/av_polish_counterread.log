@@ -1,0 +1,99 @@
+[0] draft pin 6220660c65a16d8de4c2f2b1ee1ea84b (agrees)
+[1] pair one, section 3.4 margins: form recompute
+  ok   3.4: 15.0 recomputes as 15.0 (NR-009)
+  ok   3.4: 15.0 prints
+  ok   3.4: 15.0 cites NR-009 on its line
+  ok   3.4: 15.033 recomputes as 15.033 (NR-021)
+  ok   3.4: 15.033 prints
+  ok   3.4: 15.033 cites NR-021 on its line
+  ok   3.4: 29.8 recomputes as 29.8 (NR-021)
+  ok   3.4: 29.8 prints
+  ok   3.4: 29.8 cites NR-021 on its line
+  ok   3.4: 35.2 recomputes as 35.2 (NR-021)
+  ok   3.4: 35.2 prints
+  ok   3.4: 35.2 cites NR-021 on its line
+  ok   3.4: 33.5 recomputes as 33.5 (NR-022)
+  ok   3.4: 33.5 prints
+  ok   3.4: 33.5 cites NR-022 on its line
+  ok   3.4: 33.9 recomputes as 33.9 (NR-022)
+  ok   3.4: 33.9 prints
+  ok   3.4: 33.9 cites NR-022 on its line
+  ok   3.4: 98.9 recomputes as 98.9 (NR-022)
+  ok   3.4: 98.9 prints
+  ok   3.4: 98.9 cites NR-022 on its line
+  ok   3.4: 92.6 recomputes as 92.6 (NR-022)
+  ok   3.4: 92.6 prints
+  ok   3.4: 92.6 cites NR-022 on its line
+  ok   3.4: 22.8 recomputes as 22.8 (NR-022)
+  ok   3.4: 22.8 prints
+  ok   3.4: 22.8 cites NR-022 on its line
+  ok   3.4: 2.03 recomputes as 2.03 (NR-040)
+  ok   3.4: 2.03 prints
+  ok   3.4: 2.03 cites NR-040 on its line
+  ok   3.4: 2.69 recomputes as 2.69 (NR-040)
+  ok   3.4: 2.69 prints
+  ok   3.4: 2.69 cites NR-040 on its line
+[2] pair one, section 3.5: form recompute
+  ok   register carries 36.109 for NR-036
+  ok   3.5: 36.109 prints
+  ok   register carries 32.293 for NR-036
+  ok   3.5: 32.293 prints
+  ok   register carries 28.315 for NR-036
+  ok   3.5: 28.315 prints
+  ok   register carries 27.364 for NR-005
+  ok   3.5: 27.364 prints
+  ok   register carries 25.698 for NR-018
+  ok   3.5: 25.698 prints
+  ok   register carries 1.665 for NR-039
+  ok   3.5: 1.665 prints
+  ok   register carries 4.580 for NR-011
+  ok   3.5: 4.580 prints
+  ok   register carries 0.804 for NR-011
+  ok   3.5: 0.804 prints
+  ok   register carries 0.82 for NR-011
+  ok   3.5: 0.82 prints
+  ok   register carries 0.20 for NR-011
+  ok   3.5: 0.20 prints
+  ok   3.5: drop 28.315 - 27.364 = 0.951 (prints 0.951)
+  ok   3.5: cite NR-036 present
+  ok   3.5: cite NR-005 present
+  ok   3.5: cite NR-018 present
+  ok   3.5: cite NR-039 present
+  ok   3.5: cite NR-011 present
+  ok   3.5: cite NR-017 present
+[3] pair two, section 3.6 and section 5
+  ok   section: 5.309 prints (NR-008)
+  ok   section: 25.698 prints (NR-018)
+  ok   section: 15.0 prints (NR-009)
+  ok   section: 2.03 prints (NR-040)
+  ok   section: 110 prints (NR-002)
+  ok   section: 930 prints (NR-001)
+  ok   section: 5.309 prints (NR-008)
+  ok   section: 25.698 prints (NR-018)
+  ok   section: 15.0 prints (NR-009)
+  ok   section: 2.03 prints (NR-040)
+  ok   3.6: cite NR-002 present
+  ok   3.6: cite NR-008 present
+  ok   3.6: cite NR-009 present
+  ok   3.6: cite NR-011 present
+  ok   3.6: cite NR-013 present
+  ok   3.6: cite NR-017 present
+  ok   3.6: cite NR-018 present
+  ok   3.6: cite NR-040 present
+  ok   5: cite NR-001 present
+  ok   5: cite NR-008 present
+  ok   5: cite NR-009 present
+  ok   5: cite NR-013 present
+  ok   5: cite NR-015 present
+  ok   5: cite NR-018 present
+  ok   5: cite NR-021 present
+  ok   5: cite NR-022 present
+  ok   5: cite NR-040 present
+[4] forbidden forms
+  ok   draft does not print 14.972
+  ok   draft does not print 3.816
+  ok   draft does not print 27.363
+[5] numeric census, four regions
+  ok   census: every token classifies (0 leftovers)
+
+checks: 91  ok: 91  fail: 0
