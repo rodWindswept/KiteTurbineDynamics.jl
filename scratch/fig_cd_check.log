@@ -1,0 +1,39 @@
+fig_cd_check: 37 pass, 0 fail
+
+PASS  ring-utilisation: plain tier non-empty   [len=67]
+PASS  ring-utilisation: tech tier non-empty   [len=1329]
+PASS  ring-utilisation: new plain present
+PASS  ring-utilisation: old plain absent
+PASS  ring-utilisation: old claim absent from plain tier
+PASS  ring-utilisation: tech lead intact
+PASS  ring-utilisation: provenance section does not parse as a tier
+PASS  twist-limit: plain tier non-empty   [len=68]
+PASS  twist-limit: tech tier non-empty   [len=722]
+PASS  twist-limit: new plain present
+PASS  twist-limit: old plain absent
+PASS  twist-limit: old claim absent from plain tier
+PASS  twist-limit: tech lead intact
+PASS  twist-limit: provenance section does not parse as a tier
+PASS  machine-evolution-strip: plain tier non-empty   [len=100]
+PASS  machine-evolution-strip: tech tier non-empty   [len=1170]
+PASS  machine-evolution-strip: new plain present
+PASS  machine-evolution-strip: old plain absent
+PASS  machine-evolution-strip: old claim absent from plain tier
+PASS  machine-evolution-strip: tech lead intact
+PASS  machine-evolution-strip: provenance section does not parse as a tier
+PASS  ring SPEC: new plan present
+PASS  ring SPEC: old plan absent
+PASS  ring SPEC: delta v7 present
+PASS  twist SPEC: new plan present
+PASS  twist SPEC: old plan absent
+PASS  twist SPEC: delta v6 present
+PASS  ring-utilisation note: delta v3 present
+PASS  twist-limit note: delta v3 present
+PASS  map: v34 present
+PASS  map: v33 intact
+PASS  ring-utilisation: takeaway note present
+PASS  ring-utilisation: old plain fully retired from file
+PASS  twist-limit: takeaway note present
+PASS  twist-limit: old plain fully retired from file
+PASS  machine-evolution-strip: takeaway note present
+PASS  machine-evolution-strip: old plain fully retired from file
