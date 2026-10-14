@@ -1,0 +1,174 @@
+[0] shape counter-read   tip a359061   record 0e7d396   copy md5 835de8d8dc92e209d23cba39e7c11549
+[A] the moved blobs pin
+  ok   draft blob reads 0e7d396 == HEAD == origin
+  ok   tracker blob reads 0e7d396 == HEAD == origin
+  ok   register blob reads a7d09eb == HEAD == origin
+[B] the six shape lines
+  ok   draft carries once: The next steps add the blade checks and the gust cas
+  ok   line 598 sits inside ### 3.4 The levers (575-644)
+  ok   digits read zero in: The next steps add the blade checks and 
+  ok   draft carries once: The trace reads one island of the campaign.
+  ok   line 664 sits inside ### 3.5 The evolution story (644-668)
+  ok   digits read zero in: The trace reads one island of the campai
+  ok   draft carries once: It does not prove a global optimum.
+  ok   line 665 sits inside ### 3.5 The evolution story (644-668)
+  ok   digits read zero in: It does not prove a global optimum.
+  ok   draft carries once: A longer or broader run would extend the search.
+  ok   line 666 sits inside ### 3.5 The evolution story (644-668)
+  ok   digits read zero in: A longer or broader run would extend the
+  ok   draft carries once: The implications hold under the modeled objective an
+  ok   line 688 sits inside ### 3.6 Design implications (668-707)
+  ok   digits read zero in: The implications hold under the modeled 
+  ok   draft carries once: They do not prove an optimal gene set.
+  ok   line 689 sits inside ### 3.6 Design implications (668-707)
+  ok   digits read zero in: They do not prove an optimal gene set.
+  ok   the block file md5 reads 7bbd964d
+  ok   the frozen levers block reads carried once in the draft
+  ok   the draft-carried block bytes equal the file bytes
+[C] the diff census v0.39 to v0.40
+  ok   added lines read the pin and the six shape lines (8 lines)
+  ok   removed lines read the old pin alone (1)
+  ok   sections 4 onward hold byte-identical against v0.39
+[D] the receipt re-reads against the draft
+  ok   the receipt reads LANDED
+  ok   the receipt names: The next steps add the blade checks and the 
+  ok   the receipt names: The trace reads one island of the campaign.
+  ok   the receipt names: It does not prove a global optimum.
+  ok   the receipt names: A longer or broader run would extend the sea
+  ok   the receipt declares the pin-alone token diff
+  ok   the receipt carries the section 4 coverage note
+[E] the v0.40 copy read
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   build record names draft 0e7d396
+  ok   build record: six seats resolved
+  ok   build record: checker exit 0
+  ok   build stamp 16:43:52Z
+  ok   build record refs the register at a7d09eb
+  ok   build record: 37 cited of 48 signed
+  ok   build record uncited list reads 11 (11)
+  ok   copy head line reads Draft v0.40
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads: The next steps add the blade checks and the 
+  ok   copy reads: The trace reads one island of the campaign.
+  ok   copy reads: It does not prove a global optimum.
+  ok   copy reads: A longer or broader run would extend the sea
+  ok   copy reads: The implications hold under the modeled obje
+  ok   copy reads: They do not prove an optimal gene set.
+  ok   copy reads: about 73 m/s
+  ok   copy reads: about 9 kW
+  ok   copy reads: about 1278 N/vertex
+  ok   copy reads: 87.9
+  ok   copy reads: 5 kg-equivalent
+  ok   copy reads: It never allows breaks.
+  ok   copy reads: arms the rope-break check
+  ok   copy build block refs a7d09eb
+  ok   copy carries the classified status line
+  ok   appendix carries six blocks (6)
+  ok   ring-utilisation: ledger pinned == file == HEAD blob == origin
+  ok   ring-utilisation: pdf pinned == file == HEAD blob == origin
+  ok   ring-utilisation: png pinned == file == HEAD blob == origin
+  ok   ring-utilisation: svg pinned == file == HEAD blob == origin
+  ok   twist-limit: ledger pinned == file == HEAD blob == origin
+  ok   twist-limit: pdf pinned == file == HEAD blob == origin
+  ok   twist-limit: png pinned == file == HEAD blob == origin
+  ok   twist-limit: svg pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: checks pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: pdf pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: png pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: svg pinned == file == HEAD blob == origin
+  ok   system-anatomy: checks pinned == file == HEAD blob == origin
+  ok   system-anatomy: ledger pinned == file == HEAD blob == origin
+  ok   system-anatomy: pdf pinned == file == HEAD blob == origin
+  ok   system-anatomy: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: ledger pinned == file == HEAD blob == origin
+  ok   pca-landscape: pdf pinned == file == HEAD blob == origin
+  ok   pca-landscape: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: svg pinned == file == HEAD blob == origin
+  ok   pca-atlas: ledger pinned == file == HEAD blob == origin
+  ok   pca-atlas: pdf pinned == file == HEAD blob == origin
+  ok   pca-atlas: png pinned == file == HEAD blob == origin
+  ok   pca-atlas: svg pinned == file == HEAD blob == origin
+  ok   24 pinned values walked (24)
+  ok   ring-utilisation: ledger byte-stable from e4ff3c1
+  ok   ring-utilisation: pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: png byte-stable from e4ff3c1
+  ok   ring-utilisation: svg byte-stable from e4ff3c1
+  ok   twist-limit: ledger byte-stable from e4ff3c1
+  ok   twist-limit: pdf byte-stable from e4ff3c1
+  ok   twist-limit: png byte-stable from e4ff3c1
+  ok   twist-limit: svg byte-stable from e4ff3c1
+  ok   pca-landscape: ledger byte-stable from d6d4db9
+  ok   pca-landscape: pdf byte-stable from d6d4db9
+  ok   pca-landscape: png byte-stable from d6d4db9
+  ok   pca-landscape: svg byte-stable from d6d4db9
+  ok   pca-atlas: ledger byte-stable from d6d4db9
+  ok   pca-atlas: pdf byte-stable from d6d4db9
+  ok   pca-atlas: png byte-stable from d6d4db9
+  ok   pca-atlas: svg byte-stable from d6d4db9
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   copy embeds the delivered bytes on all six exhibits (6)
+  ok   guarded 3.816 reads zero
+  ok   guarded rounded 27.363 reads zero
+  ok   full-precision closure prints (NR-039 row and section 2.4)
+  ok   display form 27.364 prints (11)
+  ok   14.97-class prints once, inside the register appendix (1 hits)
+  ok   signed full precision reads internal
+  ok   display form 15.0 prints at its sites (13)
+  ok   ring reading 15.033 keeps its form (3)
+  ok   NR-009 ruled form 14.972 prints once (1)
+  ok   no unresolved notice
+  ok   register additions since d2bf63d read append-only (54	0	docs/reporting/numbers-register.md)
+  ok   register reads 48 rows, 11 uncited (48/11)
+  ok   cited set reads 37 (37)
+  ok   appendix set == cited set (37 ids)
+  ok   uncited NR-019 stays out
+  ok   uncited NR-020 stays out
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   uncited NR-042 stays out
+  ok   appendix intro sentence prints
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-003 value
+  ok   register appendix: NR-002 status mix
+  ok   register appendix: NR-046 units cell
+  ok   register appendix: NR-046 formula cell
+[F] state anchors
+  ok   tracker carries the v0.40 pass
+  ok   tracker carries the v0.39 pass
+  ok   map carries delta v31
+
+checks: 164  ok: 164  fail: 0
+AV_V040_SHAPE_DONE
