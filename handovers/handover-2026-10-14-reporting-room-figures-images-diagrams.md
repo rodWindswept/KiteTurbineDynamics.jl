@@ -27,7 +27,7 @@ re-walk.
 
 ## Closed, last (evidence index)
 
-- The round-6 hub-name retirement lands (2026-10-14). The five plates re-cut and the three caption kits take the top forms. The NR-042 footer join folds. Script `1af63fc`. The landing reads `45ed95a`. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-round6-hub-retirement-recut.md`. Evidence `scratch/fig_r6_edit.py`, `fig_r6_driver.py`, `fig_r6_pins.py`, `fig_r6_records.py`, `fig_r6_fix1.py` and `fig_r6_check.py` plus the run logs and the md5 tables.
+- The round-6 hub-name retirement lands (2026-10-14). The five plates re-cut and the three caption kits take the top forms. The NR-042 footer join folds. Script `1af63fc`, landing `45ed95a`. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-round6-hub-retirement-recut.md`. Evidence: `scratch/fig_r6_edit.py`, `fig_r6_driver.py`, `fig_r6_pins.py`, `fig_r6_records.py`, `fig_r6_fix1.py` and `fig_r6_check.py`, with the run logs and the md5 tables.
 
 - The v0.41 hero counter-read closes clean at the aero seat (2026-10-14).
   226 checks, 0 fail (`0cbb9b8`). The kit hashes, the four appendix cells

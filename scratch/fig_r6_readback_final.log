@@ -1,0 +1,14 @@
+fig-r6 final readback — 2026-10-14T23:13:18Z
+
+== the seat-page touch-up (six-sentence bullet)
+handover lint after touch-up: see above
+
+== C readback (dce4d93 at origin)
+handover at origin carries the round-6 closure: 2
+readback log at origin, tail:
+docs/reporting/figures/system-anatomy/system-anatomy.png
+docs/reporting/figures/system-anatomy/system-anatomy.py
+docs/reporting/figures/system-anatomy/system-anatomy.tex
+
+== landing range
+1af63fc..45ed95a (A..B), C dce4d93, this log D
