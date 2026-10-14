@@ -11,7 +11,7 @@ import sys
 repo = pathlib.Path.home() / "Documents/GitHub/KiteTurbineDynamics.jl"
 block = (repo / "scratch/sw_levers_reading_block.md").read_text().strip("\n")
 receipt = (repo / "docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md").read_text()
-B, E = "<!-- LEVERS-READING-BEGIN -->", "<!-- LEVERS-READING-END -->"
+B, E = "<!-- LEVERS-READING-START -->", "<!-- LEVERS-READING-END -->"
 assert receipt.count(B) == 1 and receipt.count(E) == 1, "marker count"
 seg = receipt.split(B, 1)[1].split(E, 1)[0].strip("\n")
 sim = (repo / "scratch/sw_levers_fold_sim.md").read_text()
