@@ -360,3 +360,10 @@ three slots).
   corrected interaction form; the twist plate's changelog notes out, the
   label re-space, and the binding-limit title. No drawn value moves.
   Next at both: F-VALUE at the sign-off commit.
+
+- **v30 (2026-10-14):** the figure-provenance appendix takes the delivered
+  Harris-3.5 plate pins (ten substitutions). The levers rows 20 and 21 join
+  with their output hashes. All twenty-four pinned values recompute from the
+  committed bytes. No drawn value and no kit byte moves. The aero re-census
+  at the fix commit verifies. The rows 6 and 7 closure records on a later
+  delta.

@@ -1,0 +1,117 @@
+check: eight retired hashes absent: OK
+check: old script commit absent: OK
+check: plate script cells x2 read 671ab96: OK
+check: count sentence reads six: OK
+check: head reads v0.35: OK
+check: landscape row reads: OK
+check: atlas row reads: OK
+check: tracker v0.35 entry: OK
+check: map delta v30: OK
+check: handover next action refreshed: OK
+check: handover closed entry: OK
+check: appendix carries six hash blocks: OK
+check: block name known: Ring utilisation plate: OK
+check: block Ring utilisation plate carries four pins: OK
+check: ring-utilisation/ring-utilisation.png file==pinned: OK
+check: ring-utilisation/ring-utilisation.png gitHEAD==pinned: OK
+check: ring-utilisation/ring-utilisation.svg file==pinned: OK
+check: ring-utilisation/ring-utilisation.svg gitHEAD==pinned: OK
+check: ring-utilisation/ring-utilisation.pdf file==pinned: OK
+check: ring-utilisation/ring-utilisation.pdf gitHEAD==pinned: OK
+check: ring-utilisation/label-ledger.txt file==pinned: OK
+check: ring-utilisation/label-ledger.txt gitHEAD==pinned: OK
+check: block name known: Twist limit plate: OK
+check: block Twist limit plate carries four pins: OK
+check: twist-limit/twist-limit.png file==pinned: OK
+check: twist-limit/twist-limit.png gitHEAD==pinned: OK
+check: twist-limit/twist-limit.svg file==pinned: OK
+check: twist-limit/twist-limit.svg gitHEAD==pinned: OK
+check: twist-limit/twist-limit.pdf file==pinned: OK
+check: twist-limit/twist-limit.pdf gitHEAD==pinned: OK
+check: twist-limit/label-ledger.txt file==pinned: OK
+check: twist-limit/label-ledger.txt gitHEAD==pinned: OK
+check: block name known: Machine evolution strip: OK
+check: block Machine evolution strip carries four pins: OK
+check: machine-evolution-strip/machine-evolution-strip.png file==pinned: OK
+check: machine-evolution-strip/machine-evolution-strip.png gitHEAD==pinned: OK
+check: machine-evolution-strip/machine-evolution-strip.svg file==pinned: OK
+check: machine-evolution-strip/machine-evolution-strip.svg gitHEAD==pinned: OK
+check: machine-evolution-strip/machine-evolution-strip.pdf file==pinned: OK
+check: machine-evolution-strip/machine-evolution-strip.pdf gitHEAD==pinned: OK
+check: machine-evolution-strip/checks.log file==pinned: OK
+check: machine-evolution-strip/checks.log gitHEAD==pinned: OK
+check: block name known: System anatomy plate: OK
+check: block System anatomy plate carries four pins: OK
+check: system-anatomy/system-anatomy.png file==pinned: OK
+check: system-anatomy/system-anatomy.png gitHEAD==pinned: OK
+check: system-anatomy/system-anatomy.pdf file==pinned: OK
+check: system-anatomy/system-anatomy.pdf gitHEAD==pinned: OK
+check: system-anatomy/label-ledger.txt file==pinned: OK
+check: system-anatomy/label-ledger.txt gitHEAD==pinned: OK
+check: system-anatomy/checks.log file==pinned: OK
+check: system-anatomy/checks.log gitHEAD==pinned: OK
+check: block name known: Levers landscape: OK
+check: block Levers landscape carries four pins: OK
+check: pca-landscape/pca-landscape.png file==pinned: OK
+check: pca-landscape/pca-landscape.png gitHEAD==pinned: OK
+check: pca-landscape/pca-landscape.svg file==pinned: OK
+check: pca-landscape/pca-landscape.svg gitHEAD==pinned: OK
+check: pca-landscape/pca-landscape.pdf file==pinned: OK
+check: pca-landscape/pca-landscape.pdf gitHEAD==pinned: OK
+check: pca-landscape/label-ledger.txt file==pinned: OK
+check: pca-landscape/label-ledger.txt gitHEAD==pinned: OK
+check: block name known: Parameter atlas: OK
+check: block Parameter atlas carries four pins: OK
+check: pca-atlas/pca-atlas.png file==pinned: OK
+check: pca-atlas/pca-atlas.png gitHEAD==pinned: OK
+check: pca-atlas/pca-atlas.svg file==pinned: OK
+check: pca-atlas/pca-atlas.svg gitHEAD==pinned: OK
+check: pca-atlas/pca-atlas.pdf file==pinned: OK
+check: pca-atlas/pca-atlas.pdf gitHEAD==pinned: OK
+check: pca-atlas/label-ledger.txt file==pinned: OK
+check: pca-atlas/label-ledger.txt gitHEAD==pinned: OK
+check: 24 values walked: OK
+== token diff docs/reporting/drafts/2026-10-08-report-first-draft.md: +34 tokens, -11 tokens
+   +1x 00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248 [hash64]
+   +1x 1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8 [hash64]
+   +1x 2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9 [hash64]
+   +1x 28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c [hash64]
+   +1x 3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff [hash64]
+   +1x 41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0 [hash64]
+   +1x 45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f [hash64]
+   +1x 49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2 [hash64]
+   +1x 4b1bd3453a6aa20d9b9b0af75eb989212b16df8986c752766edd625ae13d9892 [hash64]
+   +2x 671ab96 [commit7]
+   +1x 712e918b0b6ac73335ef2355113f59a2f3c6f63a421407ee122c98cfa6a2ecd7 [hash64]
+   +1x 91282957dd23b9a9919756e9db578404497e1f0a58d11c4824a7550ad5a91c5e [hash64]
+   +1x 94d518bb13c604d4949f9c1011845050d150c4122a357449a8e185f506ae48dc [hash64]
+   +2x NR-001 [other]
+   +2x NR-005 [other]
+   +2x NR-006 [other]
+   +2x NR-044 [other]
+   +1x NR-045 [other]
+   +1x aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8 [hash64]
+   +1x d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76 [hash64]
+   +2x e23f226 [commit7]
+   +1x f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837 [hash64]
+   +1x fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75 [hash64]
+   +2x post-95c385d_wind-authority [other]
+   +2x scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv [other]
+   +1x v0.35 [version]
+   -1x 508b3a641fde21b582ee2a58a3d3df2a769998281f78c8763ba07438286c1f8f [hash64]
+   -1x 6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28 [hash64]
+   -1x 6f19832088375b96cdc566aff596ccd548f26b629b9782bc56d8831d03c622ba [hash64]
+   -1x 7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501 [hash64]
+   -1x c040fca2dd63df9c68b56a767ccd0383962db479b04d75d23821b311628ce099 [hash64]
+   -1x d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1 [hash64]
+   -2x eacf073 [commit7]
+   -1x ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab28f111472d4ed32ffa0c6b58 [hash64]
+   -1x ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472 [hash64]
+   -1x v0.34 [version]
+== token diff docs/reporting/draft-tracker.md: +5 tokens, -0 tokens
+   +1x 20 [other]
+   +1x 2026-10-14 [other]
+   +1x 21 [other]
+   +1x Harris-3.5 [other]
+   +1x v0.35 [version]
+== summary: all OK

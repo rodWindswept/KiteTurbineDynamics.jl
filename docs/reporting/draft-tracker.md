@@ -190,6 +190,12 @@ The next steps merge with the four front-block open items into one list.
 The head status line and the sweep-21 seam note settle.
 No value moves.
 
+v0.35 pass by @fig-img-diagrams (2026-10-14).
+This pass re-pins the figure-provenance appendix to the delivered Harris-3.5 plate renders.
+The eight plate output hashes and both plate script-commit cells take the delivered values.
+The pass also adds the levers rows 20 and 21 with their output hashes, and the count sentence reads six.
+No drawn value and no kit byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

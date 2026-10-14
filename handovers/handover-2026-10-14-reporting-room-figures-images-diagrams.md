@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch tip `0ea9da4` on `bank-derate-cos2p65`.
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the appendix re-pin pass (2026-10-14).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,15 +19,11 @@ re-walk.
 
 ## Open items
 
-1. **The Harris-3.5 render deltas.** The two plates take the review deltas.
-   Ring: the utilisation axis treatment (a log axis or an inset for the 0.03
-   to 0.07 slivers) and the moment label (√(M_y² + M_z²) in place of √(M²)).
-   Twist: the legend changelog lines out, the S1 to S4 δcrit label overlap, and
-   the title and margin against the binding limit.
-
-   Then F-VALUE at the sign-off commit. The review item sits in
-   `docs/reporting/feedback/2026-10-10-harris-review.md` section 3.5. The map
-   rows 6 and 7 carry the gate line.
+1. **The Harris-3.5 thread.** The render deltas and the appendix re-pin
+   landed, and the F-VALUE counter-read passed with zero fail. The open part
+   is the aero re-census at the fix commit and the map closure on rows 6 and 7.
+   The review item sits in
+   `docs/reporting/feedback/2026-10-10-harris-review.md` section 3.5.
 
 2. **The item-5 lever-statistics extract.** Objective versus gene, gate
    failures by gene, and penalty contributions across ok designs. The ask
@@ -42,6 +38,15 @@ re-walk.
    calls for the headline form there.
 
 ## Closed, last (evidence index)
+
+- The appendix re-pin and the levers rows 20/21 join the figure-provenance
+  appendix: the re-pin pass (2026-10-14). Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-appendix-repin.md`.
+  Evidence `scratch/fig_repin_edit.py`, `scratch/fig_repin_check.py` plus `.log`.
+
+- The Harris-3.5 render deltas: `e4ff3c1` (script `671ab96`). Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-harris35-render-deltas.md`.
+  Evidence `scratch/fig_35_check.py` plus `.log` (65 checks, 0 fail).
 
 - The levers caption seating headers take the seated form: `0ea9da4`. Receipt
   `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-seating-headers.md`.
@@ -107,4 +112,4 @@ re-walk.
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
 **Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** open the
-Harris-3.5 render deltas on map rows 6 and 7.
+item-5 lever-statistics extract. Fold the map closure when the aero re-census lands.
