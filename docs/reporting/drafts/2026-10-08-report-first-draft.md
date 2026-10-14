@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.38. Date 2026-10-14.
+Internal engineering report. Draft v0.39. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -276,6 +276,46 @@ same measurement window.
 At the light end the seed reads under the power floor. At the heavy end
 the power levels off. The selected value sits in the working range
 between them.
+
+Two earlier anchors retired.
+3.55 was a mass-scaled value with no anchor.
+5.39 was the 3-blade anchor chosen on the broken machine.
+That load forces about 9 kW from the seed (NR-047).
+
+The sweep rows read as follows (NR-047).
+
+Rows k 0.5 to 1.5:
+
+| k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
+|---|---|---|---|---|
+| 0.5 | reject | 3.49 | 19.14 | 51.8 |
+| 1.0 | ok | 5.45 | 17.64 | 47.8 |
+| 1.5 | ok | 6.78 | 16.59 | 42.8 |
+
+Rows k 1.94 to 3.0:
+
+| k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
+|---|---|---|---|---|
+| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+| 2.24 | ok | 8.00 | 15.34 | 36.4 |
+| 3.0 | ok | 8.89 | 14.42 | 24.3 |
+
+At the light end the seed spins up.
+The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
+The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+
+At the heavy end the load raises the torque and the line tension, so FoS falls.
+The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+The heavy end also carries a score cost.
+The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046).
+
+The load choice also has a structural side.
+The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
+The hub-segment helix force reads about 1278 N/vertex (NR-048).
+The low-wind lull is benign under the load law.
+The record refuses k easing as the high-wind substitute.
+The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
 
 The campaign also fixed the shaft length. The search does not vary it:
 every candidate runs at one length, 18.8 metres (NR-015).

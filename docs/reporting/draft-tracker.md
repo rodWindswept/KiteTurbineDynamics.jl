@@ -213,6 +213,12 @@ This pass folds the rope-break readings into the discussion section.
 The two shorthand forms take their safety-first replacements, and the sentence set states that breaks are never permitted.
 No value moves.
 
+v0.39 pass by @author (2026-10-14).
+This pass folds the k = 2.24 story at section 2.3.
+The two retirements, the sweep table and one paragraph per side land, with the sizing-side pair and the over-power tie-in.
+The values read NR-047 and NR-048, and the tie-in rides NR-046.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
