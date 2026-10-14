@@ -1,0 +1,11 @@
+== 5821a8f -> 12a5753 ==
+lines: +6 -0; raw token occurrences: added 3, removed 0
+arrivals: {'2.24': 1, '2.3': 1, '39': 1}
+removals: none
+  [ARR 2.24 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the k = 2.24 story at section 2.3.
+  [ARR 2.3 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the k = 2.24 story at section 2.3.
+  [ARR 39 net+1] raw: added-side 1, removed-side 0
+      +1: v0.39 pass by @author (2026-10-14).
+

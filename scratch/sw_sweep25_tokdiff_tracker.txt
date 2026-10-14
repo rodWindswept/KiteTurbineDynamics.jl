@@ -1,0 +1,7 @@
+== 5821a8f -> 12a5753 ==
+arrivals: {'2.24': 1, '2.3': 1, '39': 1}
+removals: none
+  [arr 2.24] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass folds the k = 2.24 story at section 2.3.
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 39] v0.39 pass by @author (2026-10-14).
+

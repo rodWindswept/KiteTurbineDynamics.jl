@@ -1,0 +1,95 @@
+== 5821a8f -> 12a5753 ==
+lines: +41 -1; raw token occurrences: added 49, removed 1
+arrivals: {'0.5': 2, '1.0': 2, '1.5': 2, '1.94': 2, '100': 1, '103': 1, '1278': 1, '14.42': 1, '15.3': 1, '15.34': 1, '15.80': 1, '16.59': 1, '17.6': 1, '17.64': 1, '19.14': 1, '2.24': 3, '24.3': 2, '3.0': 3, '3.49': 1, '3.55': 1, '36.4': 2, '39': 1, '40.1': 1, '42.8': 1, '47.8': 1, '5': 1, '5.0': 1, '5.39': 1, '5.45': 1, '51.8': 1, '6.78': 1, '7.56': 1, '73': 1, '78.8': 1, '8.00': 1, '8.89': 1, '85': 1, '87.9': 1, '9': 1}
+removals: {'38': 1}
+  [ARR 0.5 net+2] raw: added-side 2, removed-side 0
+      +1: Rows k 0.5 to 1.5:
+      +1: | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [ARR 1.0 net+2] raw: added-side 2, removed-side 0
+      +1: | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+      +1: The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [ARR 1.5 net+2] raw: added-side 2, removed-side 0
+      +1: Rows k 0.5 to 1.5:
+      +1: | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [ARR 1.94 net+2] raw: added-side 2, removed-side 0
+      +1: Rows k 1.94 to 3.0:
+      +1: | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [ARR 100 net+1] raw: added-side 1, removed-side 0
+      +1: The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [ARR 103 net+1] raw: added-side 1, removed-side 0
+      +1: The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
+  [ARR 1278 net+1] raw: added-side 1, removed-side 0
+      +1: The hub-segment helix force reads about 1278 N/vertex (NR-048).
+  [ARR 14.42 net+1] raw: added-side 1, removed-side 0
+      +1: | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [ARR 15.3 net+1] raw: added-side 1, removed-side 0
+      +1: The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+  [ARR 15.34 net+1] raw: added-side 1, removed-side 0
+      +1: | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [ARR 15.80 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [ARR 16.59 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [ARR 17.6 net+1] raw: added-side 1, removed-side 0
+      +1: The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [ARR 17.64 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [ARR 19.14 net+1] raw: added-side 1, removed-side 0
+      +1: | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [ARR 2.24 net+3] raw: added-side 3, removed-side 0
+      +1: | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+      +1: The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+      +1: The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [ARR 24.3 net+2] raw: added-side 2, removed-side 0
+      +1: | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+      +1: The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [ARR 3.0 net+3] raw: added-side 3, removed-side 0
+      +1: Rows k 1.94 to 3.0:
+      +1: | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+      +1: The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [ARR 3.49 net+1] raw: added-side 1, removed-side 0
+      +1: | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [ARR 3.55 net+1] raw: added-side 1, removed-side 0
+      +1: 3.55 was a mass-scaled value with no anchor.
+  [ARR 36.4 net+2] raw: added-side 2, removed-side 0
+      +1: | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+      +1: The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [ARR 39 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.39. Date 2026-10-14.
+  [ARR 40.1 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [ARR 42.8 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [ARR 47.8 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [ARR 5 net+1] raw: added-side 1, removed-side 0
+      +1: The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046).
+  [ARR 5.0 net+1] raw: added-side 1, removed-side 0
+      +1: The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046).
+  [ARR 5.39 net+1] raw: added-side 1, removed-side 0
+      +1: 5.39 was the 3-blade anchor chosen on the broken machine.
+  [ARR 5.45 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [ARR 51.8 net+1] raw: added-side 1, removed-side 0
+      +1: | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [ARR 6.78 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [ARR 7.56 net+1] raw: added-side 1, removed-side 0
+      +1: | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [ARR 73 net+1] raw: added-side 1, removed-side 0
+      +1: The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+  [ARR 78.8 net+1] raw: added-side 1, removed-side 0
+      +1: The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+  [ARR 8.00 net+1] raw: added-side 1, removed-side 0
+      +1: | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [ARR 8.89 net+1] raw: added-side 1, removed-side 0
+      +1: | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [ARR 85 net+1] raw: added-side 1, removed-side 0
+      +1: The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [ARR 87.9 net+1] raw: added-side 1, removed-side 0
+      +1: The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+  [ARR 9 net+1] raw: added-side 1, removed-side 0
+      +1: That load forces about 9 kW from the seed (NR-047).
+  [REM 38 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.38. Date 2026-10-14.
+
