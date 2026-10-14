@@ -6,7 +6,8 @@
 
 One draft mover since Sweep 23: `ed3d202` (v0.38), the safety-shorthand
 pass.
-The register holds; no movement reads in the span.
+The register holds.
+No movement reads in the span.
 No signed row changed, and no candidates or glossary movement reads in
 the span.
 
