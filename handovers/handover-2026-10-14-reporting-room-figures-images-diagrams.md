@@ -21,30 +21,32 @@ re-walk.
 
 1. **The visual pass by Rod.** Rows 4 to 7 (the eval-timeline, k-basis,
    ring-utilisation and twist-limit plates) stand at F-VALUE pass or closure.
-   The visual pass is the standing final step; the folds follow.
+   The visual pass is the standing final step. The folds follow.
 
 ## Closed, last (evidence index)
 
 - The ring lead flag closes as held (2026-10-14): the lead keeps the capture
-  form 15.033 (NR-021). It matches the drawn plate readout, and the body
-  disambiguation line carries the 15.0 / 15.033 pair. The display boundary
-  and the fold guard hold this form. It re-opens in one line if the room
-  calls for the headline form 15.0 (NR-009).
+  form 15.033 (NR-021).
+  It matches the drawn plate readout and the body disambiguation line.
+  The display boundary and the fold guard hold this form.
+  The lead re-opens in one line if the room calls for the headline form 15.0
+  (NR-009).
 
-- The item-5 counter-read closes at the science-validator seat: no
-  discrepancy found (`d0679d3`; 173 checks, 0 fail). Every table quantity
-  reproduces from the raw telemetry, and the NR-039 cross-check holds. The
-  Phase-1 gate of the landscape plan passes at that read. Receipt
-  `docs/reporting/room-responses/science-validator-2026-10-14-item5-counterread.md`.
+- The item-5 counter-read closes at the science-validator seat:
+  no discrepancy found (173 checks, 0 fail, `d0679d3`). Every table quantity
+  reproduces from the raw telemetry, and the NR-039 cross-check holds.
+  The Phase-1 gate of the landscape plan passes at that read.
+  Receipt `docs/reporting/room-responses/science-validator-2026-10-14-item5-counterread.md`.
 
 - The v0.39 review copy reads clean at the aero item-8 leg (`a7d09eb`):
   the twenty-four figure pins recompute to HEAD and origin, and the six
-  exhibits embed the delivered bytes; md5 `f1ceae4d2278361756ba6c9b631f310d`.
+  exhibits embed the delivered bytes. The copy md5 reads
+  `f1ceae4d2278361756ba6c9b631f310d`.
 
 - The item-5 lever-statistics extract lands: the kit at
   `docs/reporting/figures/lever-statistics-extract/` (builder `51ffc0d`,
-  tables `6c51f5c9`). Receipt
-  `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-item5-lever-statistics-extract.md`.
+  tables `6c51f5c9`).
+  Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-item5-lever-statistics-extract.md`.
   Evidence `scratch/fig_lever_check.py`, `scratch/fig_lever_check.log` and
   `scratch/fig_lever_build.log`.
 
@@ -126,4 +128,4 @@ re-walk.
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
 **Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** hold for
-Rod's visual pass on rows 4 to 7; then the folds.
+the visual pass by Rod on rows 4 to 7, then the folds.
