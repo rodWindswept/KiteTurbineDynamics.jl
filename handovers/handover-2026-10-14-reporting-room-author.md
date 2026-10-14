@@ -33,7 +33,8 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 6. **The k = 2.24 story fold (section 2.3).** Gated on the science-validator sweep rows (queue item 7).
-   The fold adds the two retirements, the small k table, one paragraph per side, the sizing-side pair and the over-power tie-in.
+   The fold adds the two retirements, the small k table and one paragraph per side.
+   It also adds the sizing-side pair and the over-power tie-in.
 
 ## Closed, last (evidence index)
 
