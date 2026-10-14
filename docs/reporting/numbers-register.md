@@ -1350,3 +1350,29 @@ Boundaries that travel with this row:
 2. The bin rule is a display fact: the field bins at 18 x 18 cells over the 1 to 99 percentile rectangle of the full screen.
 
 3. The axis names and the direction reads ride the kit text.
+
+## Derived row: NR-045, the island generation counts (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The landscape plate prints `31 generations each` in its subtitle. No row carried the count. The figures-seat query asked for a row or a drop. This block signs the counts.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-045 | Island generation counts (v13 5 kW screen) | 31 generations per island (gen index 0 to 30), 10 rows per generation (idx 0 to 9), 310 rows per island, 930 in total | generations / rows | island_*/telemetry.csv, `gen` and `idx` columns, data commit dd3cc6a | signed (science-validator, 2026-10-14) |
+
+Sign-off basis:
+
+- Census. This seat re-read the three committed telemetry files. Each island carries 310 data rows. The `gen` column reads 0 to 30, so 31 values. Each generation carries exactly 10 rows, idx 0 to 9. The totals add to 930 (NR-001).
+
+- Anchors. The gen-0 (seed batch) best reads 36.109, the NR-006 quote form. The global best 27.364 sits at gen 26, the NR-005 quote form. The convergence files carry both at full precision: 36.10892711736875 and 27.3635412663488.
+
+- The recorded step reads 28.315 to 27.364 from gen 25 to gen 26. The drop reads 0.951 (the NR-036 form). The best holds at 27.364 through gen 30.
+
+- Checker: `scratch/sv_generations_check.py` and its log.
+
+Reading rules:
+
+- Generation 0 is the initial population (the seed batch). Generations 1 to 30 are the evolution steps.
+
+- The convergence files carry 30 read rows, iterations 1 to 30. The telemetry carries 31 generation indices, 0 to 30. The NR-006 precision note reconciles the two forms.

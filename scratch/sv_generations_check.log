@@ -1,0 +1,10 @@
+island 1: rows=310, gens 0..30 (31 values), rows per gen=[10], idx per gen=[10]
+island 2: rows=310, gens 0..30 (31 values), rows per gen=[10], idx per gen=[10]
+island 3: rows=310, gens 0..30 (31 values), rows per gen=[10], idx per gen=[10]
+TOTAL rows=930
+convergence island 3: first 36.10892711736875 (iter 1), last 27.3635412663488 (iter 30)
+anchor NR-006: gen-0 best = 36.109 (stored)
+anchor NR-005: global best = 27.364 (stored) at gen 26
+island 3 best-so-far, gens 24..30: 24:29.854, 25:28.315, 26:27.364, 27:27.364, 28:27.364, 29:27.364, 30:27.364
+step gen-25 -> gen-26: 28.315 -> 27.364  (delta 0.9510000000000005)
+RESULT: PASS (all checks)
