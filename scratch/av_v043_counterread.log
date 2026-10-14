@@ -1,0 +1,305 @@
+[0] v0.43 counter-read   tip e104f30   origin e104f30   record e5541e9   copy md5 3374a638aa89e61e9957193dffc1536d
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   build record names draft e5541e9
+  ok   build record: seven seats
+  ok   build record: checker exit 0
+  ok   docx build stamp 20:08:39Z
+  ok   build record refs register 94aa219
+  ok   build record: 40 cited of 50 signed
+  ok   build record uncited list reads 10 ids (10)
+  ok   draft blob reads e5541e9 == HEAD == origin
+  ok   tracker blob reads e5541e9 == HEAD == origin
+  ok   register blob reads 94aa219 == HEAD == origin
+  ok   build inputs carry zero diff from e5541e9 to the tip ('')
+  ok   register additions since a7d09eb read append-only (142	0	docs/reporting/numbers-register.md)
+  ok   the 94aa219 block reads 110/0 (110	0	docs/reporting/numbers-register.md)
+  ok   the read tip reads the same as origin
+[1] the fold census (v0.41 to v0.43): two movers, nothing else
+  ok   the draft and tracker move at exactly two commits (['e5541e9', '38c77f8'])
+  ok   added lines read the frozen set, line for line (33)
+  ok   removed lines read the frozen set, line for line (13)
+  ok   tracker takes the two entries alone (14 added, 0 removed)
+  ok   sections 4 to the end hold byte-identical against v0.41
+  ok   the draft at the pin reads the draft at the tip
+[2] the v0.43 forms on the draft
+  ok   draft reads once: base clause
+  ok   draft reads once: base source line
+  ok   draft reads once: cone sentence one
+  ok   draft reads once: cone sentence two
+  ok   draft reads once: cold-path line
+  ok   draft reads once: scale context
+  ok   draft reads once: scale line
+  ok   draft reads once: swing reading
+  ok   draft reads once: lifter line one
+  ok   draft reads once: lifter line two
+  ok   draft reads once: launch line one
+  ok   draft reads once: launch line two
+  ok   draft reads once: slot one name
+  ok   draft reads once: slot two name
+  ok   draft reads once: bank slot name
+  ok   draft reads once: bank slot close
+  ok   draft reads once: strip cone line
+  ok   draft reads once: strip lead line
+  ok   draft reads once: names map
+  ok   draft reads once: pin line
+  ok   draft count 22 degrees sites reads 3 (3)
+  ok   draft count shaft transition cone reads 2 (2)
+  ok   draft count bank_bottom reads 1 (1)
+  ok   draft count 0.75 reads 1 (1)
+  ok   draft count 0.113 reads 1 (1)
+  ok   draft count Tulloch reads 1 (1)
+  ok   draft count Jensen reads 0 (0)
+  ok   draft count Tulloch and Jensen reads 0 (0)
+  ok   no Tulloch within 200 chars of a 22 site
+  ok   no Tulloch within 200 chars of a 22 site
+  ok   no Tulloch within 200 chars of a 22 site
+  ok   the standing Tulloch mention sits in section 1
+  ok   draft zero: old gate cell (0)
+  ok   draft zero: old bank sentence (0)
+  ok   draft zero: old slot label 1 (0)
+  ok   draft zero: old slot label 2 (0)
+  ok   draft zero: old giant line (0)
+  ok   draft zero: old pin (0)
+  ok   draft zero: old pin 42 (0)
+  ok   gate row 1 reads once
+  ok   gate row 2 reads once
+  ok   gate row 3 reads once
+  ok   gate row 4 reads once
+  ok   gate row 5 reads once
+  ok   gate row 6 reads once
+[3] markers, freeze block, appendix pins, byte-stable anchors
+  ok   draft carries seven seated markers (7)
+  ok   marker reads once: [Figure seated: figure-map row 2 (system anatomy plate, sl
+  ok   marker reads once: [Figure seated: figure-map row 10 (machine winner hero, sl
+  ok   marker reads once: [Figure seated: figure-map row 6 (ring utilisation plate, 
+  ok   marker reads once: [Figure seated: figure-map row 7 (twist limit plate, slug 
+  ok   marker reads once: [Figure seated: figure-map row 20 (the levers landscape, s
+  ok   marker reads once: [Figure seated: figure-map row 21 (the parameter atlas, sl
+  ok   marker reads once: [Figure seated: figure-map row 9 (machine evolution strip,
+  ok   the hero marker sits inside section 3.3
+  ok   the freeze block file md5 reads 7bbd964d
+  ok   the frozen levers block reads carried once in the draft
+  ok   the draft-carried block bytes equal the file bytes
+  -- appendix pins --
+  ok   appendix carries seven blocks (7)
+  ok   ring-utilisation: ledger pinned == committed == HEAD == origin
+  ok   ring-utilisation: pdf pinned == committed == HEAD == origin
+  ok   ring-utilisation: png pinned == committed == HEAD == origin
+  ok   ring-utilisation: svg pinned == committed == HEAD == origin
+  ok   twist-limit: ledger pinned == committed == HEAD == origin
+  ok   twist-limit: pdf pinned == committed == HEAD == origin
+  ok   twist-limit: png pinned == committed == HEAD == origin
+  ok   twist-limit: svg pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: checks pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: pdf pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: png pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: svg pinned == committed == HEAD == origin
+  ok   system-anatomy: checks pinned == committed == HEAD == origin
+  ok   system-anatomy: ledger pinned == committed == HEAD == origin
+  ok   system-anatomy: pdf pinned == committed == HEAD == origin
+  ok   system-anatomy: png pinned == committed == HEAD == origin
+  ok   pca-landscape: ledger pinned == committed == HEAD == origin
+  ok   pca-landscape: pdf pinned == committed == HEAD == origin
+  ok   pca-landscape: png pinned == committed == HEAD == origin
+  ok   pca-landscape: svg pinned == committed == HEAD == origin
+  ok   pca-atlas: ledger pinned == committed == HEAD == origin
+  ok   pca-atlas: pdf pinned == committed == HEAD == origin
+  ok   pca-atlas: png pinned == committed == HEAD == origin
+  ok   pca-atlas: svg pinned == committed == HEAD == origin
+  ok   machine-winner-hero: checks pinned == committed == HEAD == origin
+  ok   machine-winner-hero: pdf pinned == committed == HEAD == origin
+  ok   machine-winner-hero: png pinned == committed == HEAD == origin
+  ok   machine-winner-hero: svg pinned == committed == HEAD == origin
+  ok   28 pinned values walked (28)
+  ok   ring-utilisation: ring-utilisation.png byte-stable from e4ff3c1
+  ok   ring-utilisation: ring-utilisation.svg byte-stable from e4ff3c1
+  ok   ring-utilisation: ring-utilisation.pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: label-ledger.txt byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.png byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.svg byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.pdf byte-stable from e4ff3c1
+  ok   twist-limit: label-ledger.txt byte-stable from e4ff3c1
+  ok   pca-landscape: pca-landscape.png byte-stable from d6d4db9
+  ok   pca-landscape: pca-landscape.svg byte-stable from d6d4db9
+  ok   pca-landscape: pca-landscape.pdf byte-stable from d6d4db9
+  ok   pca-landscape: label-ledger.txt byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.png byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.svg byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.pdf byte-stable from d6d4db9
+  ok   pca-atlas: label-ledger.txt byte-stable from d6d4db9
+  ok   machine-winner-hero: machine-winner-hero.png byte-stable from e8159b0
+  ok   machine-winner-hero: machine-winner-hero.svg byte-stable from e8159b0
+  ok   machine-winner-hero: machine-winner-hero.pdf byte-stable from e8159b0
+  ok   machine-winner-hero: checks.log byte-stable from e8159b0
+[4] the copy: pins, frames, rounds-five forms, takeaways, guards
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-winner-hero.pdf pin
+  ok   copy prints the machine-winner-hero.png pin
+  ok   copy prints the machine-winner-hero.svg pin
+  ok   frame reads once: system-anatomy Figure (roster row 2) · system-anatomy
+  ok   frame reads once: machine-winner-hero Figure (roster row 10) · machine-win
+  ok   frame reads once: ring-utilisation Figure (roster row 6) · ring-utilisatio
+  ok   frame reads once: twist-limit Figure (roster row 7) · twist-limit
+  ok   frame reads once: pca-landscape Figure (roster row 20) · pca-landscape
+  ok   frame reads once: pca-atlas Figure (roster row 21) · pca-atlas
+  ok   frame reads once: machine-evolution-strip Figure (roster row 9) · machine-
+  ok   seven figure frames read (7)
+  ok   raw markers read zero in the copy
+  ok   copy reads: base clause
+  ok   copy reads: base source line
+  ok   copy reads: cone sentence one
+  ok   copy reads: cone sentence two
+  ok   copy reads: cold-path line
+  ok   copy reads: scale context
+  ok   copy reads: swing reading
+  ok   copy reads: lifter line
+  ok   copy reads: launch line
+  ok   copy reads: slot one name
+  ok   copy reads: slot two name
+  ok   copy reads: bank slot name
+  ok   copy reads: strip cone line
+  ok   copy reads: strip lead line
+  ok   copy reads: gate row power
+  ok   copy reads: gate row FoS
+  ok   copy reads: gate row clearance
+  ok   copy reads: gate row twist
+  ok   copy reads: gate row capacity
+  ok   copy reads: gate row rope
+  ok   copy reads: ring takeaway
+  ok   copy reads: twist takeaway
+  ok   copy reads: strip takeaway
+  ok   copy count 22 degrees sites reads 3 (3)
+  ok   copy count shaft transition cone reads 3 (3)
+  ok   copy count 0.75 reads 2 (2)
+  ok   copy count Tulloch reads 1 (1)
+  ok   copy count Jensen reads 0 (0)
+  ok   copy count lower-number key reads 0 (0)
+  ok   14.97-class prints once, inside the register appendix (1)
+  ok   signed full precision reads internal
+  ok   copy display form 15.0 reads 14 (14)
+  ok   copy display form 15.033 reads 3 (3)
+  ok   copy display form 14.972 reads 1 (1)
+  ok   copy display form 27.3635412663488 reads 2 (2)
+  ok   copy display form 27.364 reads 11 (11)
+  ok   guarded rounded 27.363 reads zero
+  ok   guarded 3.816 reads zero
+  ok   no unresolved notice
+  ok   copy head line reads Draft v0.43
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads zero 'v0.40' marks
+  ok   copy reads zero 'v0.41' marks
+  ok   copy reads zero 'v0.42' marks
+  ok   copy count sentence reads 'All seven' once
+  ok   copy embeds the delivered bytes on all seven exhibits (7)
+  ok   the hero frame sits inside section 3.3 in the copy
+  ok   register reads 50 rows (50)
+  ok   cited set reads 40 (40)
+  ok   appendix set == cited set (40 ids)
+  ok   uncited NR-019 stays out
+  ok   uncited NR-020 stays out
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   appendix intro sentence prints
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-043 span
+  ok   register appendix: NR-050 r_rotor
+  ok   register appendix: NR-049 cone value
+  ok   register appendix: NR-011 bank form
+[5] the caption kits and the map delta
+  ok   ring kit carries the takeaway once
+  ok   twist kit carries the takeaway once
+  ok   strip kit carries the takeaway once
+  ok   ring kit records the takeaway pass
+  ok   ring kit keeps the technical tier
+  ok   twist kit records the takeaway pass
+  ok   twist kit keeps the technical tier
+  ok   strip kit records the takeaway pass
+  ok   strip kit keeps the technical tier
+  ok   ring kit reads zero of the old claim
+  ok   twist kit reads zero of the old claim
+  ok   strip kit reads zero of the old claim
+  ok   ring-utilisation captions blob reads HEAD == origin
+  ok   twist-limit captions blob reads HEAD == origin
+  ok   machine-evolution-strip captions blob reads HEAD == origin
+  ok   map carries delta v34
+      map v34 line: - **v34 (2026-10-14):** the round-5 caption dedupe lands (routing
+[6] the two signed rows counter-read
+  ok   NR-049 row present
+  ok   NR-050 row present
+  ok   register: NR-049 value form
+  ok   register: NR-049 census
+  ok   register: NR-049 taper
+  ok   register: NR-049 taper value
+  ok   register: NR-049 cone value
+  ok   register: NR-049 hub station
+  ok   register: NR-049 bridle boundary
+  ok   register: NR-049 F5 boundary
+  ok   register: NR-049 F5 slope
+  ok   register: NR-049 lead boundary
+  ok   register: NR-049 display form
+  ok   register: NR-049 bank alias
+  ok   register: NR-050 r_rotor
+  ok   register: NR-050 base span
+  ok   register: NR-050 chord
+  ok   register: NR-050 blade mass
+  ok   register: NR-050 assembly mass
+  ok   register: NR-050 decode convention
+  ok   register: NR-050 runner boundary
+  ok   register: NR-050 0.13 per cent
+  ok   arithmetic: 0.75 x r reads the base span
+  ok   arithmetic: base span x scale reads the span
+  ok   arithmetic: 0.113 x r reads the base chord
+  ok   arithmetic: base chord x scale reads the chord
+  ok   arithmetic: span cubed law reads the blade mass
+  ok   arithmetic: the three-blade assembly reads three of them
+  ok   arithmetic: taper + cone reads the 18.8 m tether (18.799999999999997)
+  ok   arithmetic: cone x tan 22 reads the display radius step (3.7763)
+[7] state anchors
+  ok   tracker carries the v0.42 entry
+  ok   tracker carries the v0.43 entry
+  ok   sweep 29 receipt routes the v0.43 counter-read
+  ok   science-validator receipt routes the row counter-read
+  ok   figures receipt lands the caption dedupe
+  ok   author receipt lands the v0.43 fold
+  ok   sweep 29 receipt names the copy md5 stem
+      routing parenthetical flip: STILL OPEN at the queue
+  ok   final: tip == origin
+
+checks: 289  ok: 289  fail: 0
+AV_V043_DONE
+rc=0
