@@ -1,0 +1,100 @@
+[0] counter-read   tip 4203bec   launch a76c5e9   row commit 4a86e6f
+[A] the source sites, re-read at the launch commit
+  ok   pin at launch line 114: W_OVERPOWER_KG_PER_KW2 = 5.0
+  ok   pin at launch line 115: W_TWIST_KG
+  ok   pin at launch line 116: W_UTILISATION_KG
+  ok   pin at launch line 149: FoS_min < cfg.fos_hard
+  ok   pin at launch line 150: P_mean < cfg.p_floor_kw
+  ok   pin at launch line 153: excess_kw = max(P_mean - cfg.p_ceiling_kw, 0
+  ok   pin at launch line 154: W_OVERPOWER_KG_PER_KW2 * excess_kw^2
+  ok   pin at launch line 161: penalty_twist = W_TWIST_KG * (r / margin)^2
+  ok   pin at launch line 165: W_UTILISATION_KG * (cfg.fos_hard / FoS_min)^
+  ok   pin at launch line 167: return mass + penalty_overpower + penalty_tw
+  ok   pin at launch line 90: STATIONARITY_LAMBDA = 10.0
+  ok   pin at launch line 91: STATIONARITY_SWING = 0.20
+  ok   pin at launch line 1148: P_score = cfg.power_stat === :tail5 ? P_end 
+  ok   pin at launch line 1161: fitness_fn(P_score, FoS_min, cfg, m_airborne
+  ok   pin at launch line 1192: swing = P_mean > 0.1 ? P_range / P_mean : 0.
+  ok   pin at launch line 1193: max(0.0, swing - STATIONARITY_SWING)
+  ok   pin at launch line 1194: fitness = fitness + STATIONARITY_LAMBDA * ex
+  ok   pin at launch line 1200: if twist_ratio_max[] > 0.0
+  ok   pin at launch line 1201: tr = min(twist_ratio_max[], 1.0)
+  ok   pin at launch line 1202: fitness = fitness + W_TWIST_KG * (tr / max(1
+  ok   pin at launch line 76: MIN_CLEARANCE = 1.5
+  ok   pin at launch line 153: p_floor_kw = 5.0, p_ceiling_kw = 5.0
+  ok   pin at launch line 155: fos_target = 2.5, fos_hard = 2.5
+  ok   pin at launch line 156: power_stat = :tail5
+  ok   pin at launch line 256: if clearance < MIN_CLEARANCE
+  ok   pin at launch line 257: status = :clearance_reject
+  ok   pin at launch line 266: appropriate_mass_fitness(P, F, c, m)
+  ok   pin at launch line 272: r.twist_crossed ? :reject_twist : :reject
+  ok   pin at launch line 281: if status !== :ok
+  ok   pin at launch line 282: result = 1e9
+[B] blob identity launch == HEAD == origin
+  ok   objective_v12.jl: da9c5554 == launch == HEAD == origin
+  ok   objective_evaluator.jl: 52669d40 == launch == HEAD == origin
+  ok   run_v13_5kw_masslift.jl: bf5c5e36 == launch == HEAD == origin
+  ok   launch sits in the tip ancestry
+[C] the winner closure, own arithmetic from raw tokens
+    raw tokens: P_end 5.314113662272673  P_range 0.028659374428010587  twist_ratio 0.4393474253185575  fitness 27.3635412663488
+  ok   register carries the NR-018 mass token
+  ok   register carries the NR-009 FoS token
+  ok   register carries the tail-5 basis token
+  ok   register carries the P_range token
+  ok   register carries the twist ratio token
+  ok   register carries the fitness token
+  ok   mass == NR-018
+  ok   FoS_min == NR-009
+  ok   P_score == P_end (tail-5)
+  ok   P_end field
+  ok   twist ratio field
+  ok   fitness record
+  ok   telemetry winner row found (1)
+  ok   telemetry twist_ratio column == reeval token (0.4393474253185575)
+  ok   convergence gen-26 fitness == record
+  ok   over-power charge: 0.49333696413175443 (want 0.49333696413175443)
+  ok   utilisation charge: 0.5576509889014662 (want 0.5576509889014662)
+  ok   twist charge: 0.6140850570787014 (want 0.6140850570787014)
+  ok   closure sum: 27.3635412663488 (want 27.3635412663488)
+  ok   stationarity charge reads zero (swing 0.005398)
+  ok   term sum 1.665073010111922
+  ok   direct gap 1.6650730101119215
+  ok   seam gap 4.440892098500626e-16
+  ok   NR-039 carries the three penalty strings
+[D] the reject census over the raw telemetry
+  ok   row totals read 930 (930)
+  ok   status mix 508/301/110/11 ({'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11})
+  ok   422 stamped, no crossover (0 bad rows)
+  ok   least ok score 27.364 (27.364)
+[E] the register row and its landing
+  ok   NR-046 row present
+  ok   row carries 'f = mass + 5.0 * max(P_score - 5.0, 0)^2'
+  ok   row carries '20.0 * (2.5 / FoS_min)^2'
+  ok   row carries '1.0 * (r / (1 - r))^2'
+  ok   row carries 'r = min(twist_ratio, 1)'
+  ok   row carries '10.0 * max(0, swing - 0.20)'
+  ok   row carries 'swing = P_range / P_mean'
+  ok   row carries '422 of 930'
+  ok   row carries 'kg-equivalent'
+  ok   row carries '`1e9` stamp is a search cost'
+  ok   row carries 'src/objective_v12.jl:114-116'
+  ok   row carries ':145-168'
+  ok   row carries 'run_v13_5kw_masslift.jl:153-156, 256-257, 26'
+  ok   row signed 2026-10-14
+  ok   register landing append-only (+48 / -0)
+[F] the printed section 2.4 block (v0.36)
+  ok   block carries '`f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * ('
+  ok   block carries '`r = min(twist_ratio, 1)`'
+  ok   block carries '`10.0 * max(0, swing - 0.20)`'
+  ok   block carries 'soft constraint penalties'
+  ok   block carries '`1e9`'
+  ok   block carries 'kg-equivalent'
+  ok   block carries '(NR-046)'
+  ok   old form 'gate penalties' absent from the draft
+  ok   the 14.97 example does not print
+  ok   block cites NR-046 at 8 sites
+  ok   prose census clean (0 leftovers)
+  ok   config table tokens ['001', '015', '027', '036', '039', '10', '18.8', '2.24', '2.5', '3', '310', '40', '5.0', '930']
+
+checks: 89  ok: 89  fail: 0
+AV_NR046_DONE

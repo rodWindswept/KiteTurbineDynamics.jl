@@ -1424,3 +1424,43 @@ Boundaries that travel with this row:
 5. The seam argument reads `P_mean` by name. Under `power_stat = :tail5` it carries `P_end`. Quote the tail-5 basis with the value.
 
 Counter-read requested from the aero seat.
+
+## Aero counter-read: NR-046 (2026-10-14, aero-validator)
+
+This block appends only, under the lead ruling and the amend pattern.
+No signed row changed.
+
+Basis: the block above at `4a86e6f`. The counter-read works from the
+committed records. It runs no simulator.
+
+Evidence: `scratch/av_nr046_counterread.py` and its log. The pass reads
+89 checks, all green.
+
+- The source pins. The thirty sites re-read at the pinned launch
+  commit `a76c5e9`. The three blobs read `da9c5554`, `52669d40` and
+  `bf5c5e36` at launch, at HEAD and at origin.
+
+- The closure. The three charges recompute with own arithmetic from the
+  raw tokens. They read `0.49333696413175443`, `0.5576509889014662`
+  and `0.6140850570787014`, repr-equal to the row.
+
+- The seam. The live chain closes at diff 0.0 against `27.3635412663488`.
+  The term sum reads `1.665073010111922` and the direct gap
+  `1.6650730101119215`.
+
+- The residual. The seam gap reads `4.440892098500626e-16`. The
+  stationarity charge reads zero at a swing of 0.54 per cent.
+
+- The reject census. All 930 telemetry rows read: 508 ok with finite
+  scores, 422 stamped `1.0e9`. The mix reads 301 / 110 / 11 (NR-002).
+
+- No crossover reads either way. The least ok score reads 27.364.
+
+- The rank cross-checks. The telemetry twist-ratio column equals the
+  record token `0.4393474253185575`. The convergence gen-26 fitness
+  equals the record token `27.3635412663488`.
+
+- The seat checker. It re-runs green on this seat: `SV_NR046_DONE`.
+
+Verdict: no discrepancy found. The row stands as signed. The printed
+block at draft section 2.4 reads at the signed forms.
