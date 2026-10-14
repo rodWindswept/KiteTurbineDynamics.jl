@@ -1,0 +1,45 @@
+== dcf8213 -> a3c2def ==
+arrivals: {'110': 1, '15.0': 1, '2': 1, '2.03': 1, '25.698': 2, '34': 1, '4': 1, '5': 1, '5.309': 1, '6': 1, '7': 1}
+removals: {'3': 1, '33': 1}
+  [arr 110] ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | The status mix reads 110 clearance_reject designs (NR-002).
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 25.698] Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [arr 34] Internal engineering report. Draft v0.34. Date 2026-10-14.
+  [arr 4] Sections 3.4 to 3.6 carry their text. | ### 2.4 The campaign
+  [arr 5] **Abstract.** This report presents a search for a 5 kW-class | modeled objective and gates. Its mean power is 5.309 kilowatts at the
+  [arr 5.309] modeled objective and gates. Its mean power is 5.309 kilowatts at the | Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [arr 6] Sections 3.4 to 3.6 carry their text. | ### 2.6 Reproducibility
+  [arr 7] | Main-rotor bank, ring 6 | 7.088 deg | NR-017 | | active main-rotor bank angle as 7.088 degrees (NR-017).
+  [rem 3] Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [rem 33] Internal engineering report. Draft v0.33. Date 2026-10-14. | S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+
+== a3c2def -> ef36c6c ==
+arrivals: {'1': 2, '2': 2, '3': 2, '35': 1}
+removals: {'34': 1}
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 3] Sections 3.4 to 3.6 carry their text. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [arr 35] Internal engineering report. Draft v0.35. Date 2026-10-14. | R2 to R4 read 29.8 to 35.2 (NR-021).
+  [rem 34] Internal engineering report. Draft v0.34. Date 2026-10-14.
+
+== ef36c6c -> 57c77cf ==
+arrivals: {'0': 2, '0.20': 1, '1': 2, '1.0': 2, '10.0': 1, '2': 3, '2.5': 2, '20': 1, '20.0': 1, '36': 1, '5.0': 3}
+removals: {'35': 1}
+  [arr 0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 0.20] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 1.0] One kilogram of airborne mass adds 1.0 to the score (NR-046). | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`.
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 20] `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` | with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`.
+  [arr 20.0] `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 36] Internal engineering report. Draft v0.36. Date 2026-10-14. | - The seed genome scores 36.109 kg-equivalent (NR-006).
+  [arr 5.0] `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` | The over-power charge reads P_score, the end power, against the 5.0 kW ceiling (NR-046).
+  [rem 35] Internal engineering report. Draft v0.35. Date 2026-10-14. | R2 to R4 read 29.8 to 35.2 (NR-021).
+
+== cumulative dcf8213 -> 57c77cf ==
+arrivals: {'0': 2, '0.20': 1, '1': 4, '1.0': 2, '10.0': 1, '110': 1, '15.0': 1, '2': 6, '2.03': 1, '2.5': 2, '20': 1, '20.0': 1, '25.698': 2, '3': 1, '36': 1, '4': 1, '5': 1, '5.0': 3, '5.309': 1, '6': 1, '7': 1}
+removals: {'33': 1}

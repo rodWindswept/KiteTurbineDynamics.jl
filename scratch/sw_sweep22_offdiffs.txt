@@ -1,0 +1,42 @@
+== draft off v033 vs v034 ==
+1c1
+< == scratch/sw_sweep22_draft_v033.md: words=5461 total=5 per100w=0.09 ==
+---
+> == scratch/sw_sweep22_draft_v034.md: words=5721 total=5 per100w=0.09 ==
+== draft off v034 vs v035 ==
+1c1
+< == scratch/sw_sweep22_draft_v034.md: words=5721 total=5 per100w=0.09 ==
+---
+> == scratch/sw_sweep22_draft_v035.md: words=5738 total=6 per100w=0.1 ==
+10a11
+>   | | Exhibit | Source extract | Cited rows | Script commit | Era |
+== draft off v035 vs v036 ==
+1c1
+< == scratch/sw_sweep22_draft_v035.md: words=5738 total=6 per100w=0.1 ==
+---
+> == scratch/sw_sweep22_draft_v036.md: words=5902 total=6 per100w=0.1 ==
+== tracker off v033 vs v034 ==
+1c1
+< == scratch/sw_sweep22_tracker_v033.md: words=2193 total=10 per100w=0.46 ==
+---
+> == scratch/sw_sweep22_tracker_v034.md: words=2239 total=10 per100w=0.45 ==
+== tracker off v034 vs v035 ==
+1c1
+< == scratch/sw_sweep22_tracker_v034.md: words=2239 total=10 per100w=0.45 ==
+---
+> == scratch/sw_sweep22_tracker_v035.md: words=2300 total=10 per100w=0.43 ==
+== tracker off v035 vs v036 ==
+1c1
+< == scratch/sw_sweep22_tracker_v035.md: words=2300 total=10 per100w=0.43 ==
+---
+> == scratch/sw_sweep22_tracker_v036.md: words=2350 total=10 per100w=0.43 ==
+== gloss off v035 vs v036 ==
+1c1
+< == scratch/sw_sweep22_gloss_v035.md: words=4565 total=12 per100w=0.26 ==
+---
+> == scratch/sw_sweep22_gloss_v036.md: words=4598 total=12 per100w=0.26 ==
+== grep await v036 ==
+81:  The rapid path awaits its rope-break gate fix (NR-013).
+792:The rapid path awaits its rope-break gate fix (NR-013).
+== soft constraint count ==
+3

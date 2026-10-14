@@ -1,0 +1,5 @@
+== ef36c6c -> 57c77cf ==
+arrivals: {'2.4': 1}
+removals: none
+  [arr 2.4] | kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply | | The relax row reads "relax run", the section 2.4 form.
+

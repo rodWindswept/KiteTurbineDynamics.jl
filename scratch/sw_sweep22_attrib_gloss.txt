@@ -1,0 +1,8 @@
+== ef36c6c -> 57c77cf ==
+lines: +7 -2; raw token occurrences: added 2, removed 1
+arrivals: {'2.4': 1}
+removals: none
+  [ARR 2.4 net+1] raw: added-side 2, removed-side 1
+      +1: | kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equiv
+      +1:   section 2.4 sentence, so the term gate reads one form. No other
+

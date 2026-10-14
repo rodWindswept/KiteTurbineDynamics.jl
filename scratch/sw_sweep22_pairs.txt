@@ -1,0 +1,23 @@
+== dcf8213 -> a3c2def raw added 21 raw removed 11
+  net-out pair 1:
+    - Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation.
+    + 1. Fix the rapid-path rope-break gate before using the rapid path for screening (NR-013).
+  net-out pair 3.4:
+    - Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation.
+    + Sections 3.4 to 3.6 carry their text.
+  net-out pair 3.6:
+    - Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation.
+    - ### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
+    + Sections 3.4 to 3.6 carry their text.
+    + ### 3.6 Design implications
+  net-out pair 930:
+    - The campaign found the best feasible candidate in 930 evaluations (NR-001).
+    + The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001).
+== a3c2def -> ef36c6c raw added 7 raw removed 1
+== ef36c6c -> 57c77cf raw added 19 raw removed 1
+
+freeze block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+freeze block md5 (stripped): 6d953ec10d2aa3ac66fd5d825fe16f6f
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054

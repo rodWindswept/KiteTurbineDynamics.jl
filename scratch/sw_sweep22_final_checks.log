@@ -1,0 +1,18 @@
+sweep 22 final checks (2026-10-14, sw_ prefix)
+
+freeze check (levers reading):
+  block bytes: 2016
+  receipt region == block: True
+  sim contains block once: True
+  rc=0
+
+draft region == block (draft at 57c77cf): True
+block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+
+pins check (delivered bytes):
+  ring PNG f49aaaa1 == appendix cell: True
+  twist PNG 00cd857a == appendix cell: True
+  review copy md5 275a7047fa0c0e55cb874ecddc060366 == v0.36 receipt: True
+
+record sim (base vs new):
+  base total=11 per100w=0.10; new total=11 per100w=0.09; offender diff header-only; block-list diff empty
