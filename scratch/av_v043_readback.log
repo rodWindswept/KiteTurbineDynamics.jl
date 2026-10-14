@@ -1,0 +1,12 @@
+=== av v0.43 counter-read readback, 2026-10-14T20:28:12Z ===
+local HEAD:  28b53c0e6378bb01947561444ff853781685c75e
+origin tip:  28b53c0e6378bb01947561444ff853781685c75e
+MATCH  docs/reporting/room-responses/aero-validator-2026-10-14-v043-counterread.md
+    local  7e2b645f41e02f8d0ae7098fe3fac61f9e04b2d2173a0b86adf062b48f19e082
+    origin 7e2b645f41e02f8d0ae7098fe3fac61f9e04b2d2173a0b86adf062b48f19e082
+MATCH  scratch/av_v043_counterread.py
+    local  14b4da01b5c025d7264ac2228fc280f64ce63ae9802b18f16ab19b8db1eb3a13
+    origin 14b4da01b5c025d7264ac2228fc280f64ce63ae9802b18f16ab19b8db1eb3a13
+MATCH  scratch/av_v043_counterread.log
+    local  940501e4d3e7b14a01a6d8e21895aadf0d54270bbc0b1c3a0c0a1bf03617bc9a
+    origin 940501e4d3e7b14a01a6d8e21895aadf0d54270bbc0b1c3a0c0a1bf03617bc9a
