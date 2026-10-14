@@ -1,0 +1,17 @@
+diff --git a/docs/reporting/draft-tracker.md b/docs/reporting/draft-tracker.md
+index 6b14b9b..f26fa4a 100644
+--- a/docs/reporting/draft-tracker.md
++++ b/docs/reporting/draft-tracker.md
+@@ -202,6 +202,12 @@ The block states the scoring chain, the three soft constraint penalty forms and
+ The objective sentence renames to soft constraint penalties, with the glossary row.
+ No value moves.
+ 
++v0.37 pass by @author (2026-10-14).
++This pass runs the consistency sweep (PL9).
++The summary line takes the classified fail counts (NR-002), and the unit forms read kW, rad/s, rpm and ground-generation.
++The phrase forms tighten, and the section 2.2.2 build request retires from the body.
++No value moves.
++
+ ## 2. Working notes
+ 
+ A bracket marks open room work. The owners refine

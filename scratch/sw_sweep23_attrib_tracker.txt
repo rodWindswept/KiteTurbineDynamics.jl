@@ -1,0 +1,11 @@
+== a3ca2f6 -> 7dd91a9 ==
+lines: +6 -0; raw token occurrences: added 3, removed 0
+arrivals: {'2': 1, '2.2': 1, '37': 1}
+removals: none
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +1: The phrase forms tighten, and the section 2.2.2 build request retires from the body.
+  [ARR 2.2 net+1] raw: added-side 1, removed-side 0
+      +1: The phrase forms tighten, and the section 2.2.2 build request retires from the body.
+  [ARR 37 net+1] raw: added-side 1, removed-side 0
+      +1: v0.37 pass by @author (2026-10-14).
+

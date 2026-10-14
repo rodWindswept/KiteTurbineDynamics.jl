@@ -1,0 +1,21 @@
+== a3ca2f6 -> 7dd91a9 ==
+lines: +25 -31; raw token occurrences: added 31, removed 27
+arrivals: {'11': 1, '110': 1, '301': 1, '37': 1, '5': 1, '50': 1}
+removals: {'19': 1, '36': 1}
+  [ARR 11 net+1] raw: added-side 1, removed-side 0
+      +1: - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [ARR 110 net+1] raw: added-side 1, removed-side 0
+      +1: - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [ARR 301 net+1] raw: added-side 1, removed-side 0
+      +1: - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [ARR 37 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.37. Date 2026-10-14.
+  [ARR 5 net+1] raw: added-side 1, removed-side 0
+      +1:   On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+  [ARR 50 net+1] raw: added-side 1, removed-side 0
+      +1:   On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+  [REM 19 net-1] raw: removed-side 1, added-side 0
+      -1: [Systems block diagram requested: figure-map row 19 (the simulation
+  [REM 36 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.36. Date 2026-10-14.
+

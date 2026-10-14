@@ -1,0 +1,19 @@
+sweep 23 final checks (2026-10-14, sw_ prefix)
+
+freeze check (levers reading):
+  block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+  receipt region == block: True
+  draft region == block: True
+
+pins check (delivered bytes):
+  ring PNG f49aaaa1 == appendix cell: True
+  twist PNG 00cd857a == appendix cell: True
+
+copy probe (delivered docx, founder read):
+  media entries 6; head line 'Draft v0.37' x1; old form x0; new form x3
+  guards: 14.97 x1 (NR-009 row); 3.816 x0; 27.363 standalone x0;
+  27.364 standalone x11; unresolved x0
+  md5 94619634bd1374abc8327050cf13874d == declared: True
+
+record sim (base vs new):
+  base total=11 per100w=0.09; new total=11 per100w=0.09; offender diff header-only; block-list diff empty

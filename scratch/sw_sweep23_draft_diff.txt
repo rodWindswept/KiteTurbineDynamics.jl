@@ -1,0 +1,149 @@
+diff --git a/docs/reporting/drafts/2026-10-08-report-first-draft.md b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+index ba00624..fcebeaa 100644
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1,6 +1,6 @@
+ # The kite turbine: a search over its design space
+ 
+-Internal engineering report. Draft v0.36. Date 2026-10-14.
++Internal engineering report. Draft v0.37. Date 2026-10-14.
+ 
+ Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+ Numbers come only from signed register rows, cited by row ID.
+@@ -19,13 +19,13 @@ ground-generation rotary kite turbine with a tensile rotary power
+ transmission (TRPT). The search varies ring geometry, polygon count,
+ rotor count, blade bank angles and blade scale.
+ 
+-A differential-evolution campaign evaluated 930 candidate kite turbine
+-designs under one fixed power-law generator load, each on the measurement
+-window (NR-001).
++A differential-evolution campaign evaluated 930 candidate designs under
++one fixed power-law generator load, each on the measurement window
++(NR-001).
+ 
+-The campaign winner is the best feasible candidate kite turbine under the
+-modeled objective and gates. Its mean power is 5.309 kilowatts at the
+-site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
++The campaign winner is the best feasible candidate under the modeled
++objective and gates. Its mean power is 5.309 kW at the site wind,
++11.01 m/s at 9.41 m (NR-008, NR-032).
+ 
+ All checked TRPT rings and twist segments operate below their failure
+ boundaries at the final operating point (NR-021, NR-022).
+@@ -52,7 +52,7 @@ rope-break gate placement fix stays open.
+ The search is a screen, not a survey. The report does not claim a global
+ optimum.
+ 
+-**Keywords.** airborne wind energy, kite turbine, ground generation,
++**Keywords.** airborne wind energy, kite turbine, ground-generation,
+ tensile rotary power transmission, differential evolution, multibody
+ simulation, design search, factor of safety.
+ 
+@@ -65,10 +65,10 @@ The key findings follow.
+ 
+ - The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+ 
+-- Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
++- Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+ 
+ - The campaign winner is the best feasible candidate under the modeled objective and gates.
+-  Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
++  Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+   Its minimum factor of safety is 15.0 (NR-009).
+ 
+ - All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+@@ -240,9 +240,6 @@ The genes set the ring geometry, the polygon count, the rotor count,
+ the bank angles and the blade scales. The winner genome names its genes
+ in the decode fields (NR-011).
+ 
+-[Systems block diagram requested: figure-map row 19 (the simulation
+-analysis pipeline instrument). Gate: the pipeline schema extract.]
+-
+ #### 2.2.2 The evaluator
+ 
+ The builder builds the machine from the genome. The evaluator runs the
+@@ -342,9 +339,8 @@ The campaign evaluates 930 designs in total (NR-001).
+ Four statuses result: ok, reject, clearance_reject and reject_twist
+ (NR-002).
+ 
+-The ok designs pass every gate. The rejects fail a gate. The
+-clearance rejects fail the clearance gate. The twist rejects fail the
+-twist gate.
++The ok designs pass every gate. The rejects fail a gate.
++Clearance rejects fail the clearance gate. Twist rejects fail the twist gate.
+ 
+ The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+ A lower score is better.
+@@ -431,13 +427,13 @@ Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+ The physical airborne mass of the winner is 25.698 kg (NR-018).
+ The objective score adds 1.665 kg-equivalent of penalties (NR-039).
+ 
+-The surviving ok designs hold a mean power between 5.02 and 6.32
+-kilowatts (NR-007).
++The surviving ok designs hold a mean power between 5.02 and 6.32 kW
++(NR-007).
+ 
+ ### 3.3 The winner
+ 
+-Island 3 carries the winner. Its mean power reads 5.309 kilowatts and
+-its end power 5.314 kilowatts (NR-008). Its factor of safety reads
++Island 3 carries the winner. Its mean power reads 5.309 kW and
++its end power 5.314 kW (NR-008). Its factor of safety reads
+ 15.0 (NR-009). That value is the window minimum.
+ 
+ The capture hub
+@@ -464,15 +460,13 @@ Its operating point reads as follows.
+ | Lift-line elevation | 70 deg | NR-026 |
+ | Lift-line tension | 324.1 N | NR-010 |
+ 
+-Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a
+-percent (NR-014).
++Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
+ 
+-The settle state starts the machine at 10.170 radians per second
+-(NR-016). The machine accelerates through the relax run.
++The settle state starts the machine at 10.170 rad/s (NR-016).
++The machine accelerates through the relax run.
+ 
+-Its window-mean speed reads 13.38 radians per second, 127.772
+-revolutions per minute (NR-029). Its airborne mass reads 25.698
+-kilograms (NR-018).
++Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
++Its airborne mass reads 25.698 kilograms (NR-018).
+ 
+ The winner clears each checked gate.
+ 
+@@ -633,7 +627,7 @@ The strip prints no power value and no airborne mass value.
+ The record supports four implications.
+ 
+ First, the searched TRPT family contains a compact feasible candidate under the modeled objective and gates.
+-The winner produces 5.309 kilowatts of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
++The winner produces 5.309 kW of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
+ 
+ Second, the winner holds large structural and twist margins at the final operating point.
+ The window-minimum factor of safety is 15.0 (NR-009).
+@@ -726,13 +720,13 @@ geometry. The data from before it then counts no more.
+ - The k-alignment faults. Twice, a check ran at a different generator
+ gain than the machine it scored.
+ 
+-  On 2026-08-13 the evaluator ran 5-kilowatt designs at the 50-kilowatt
++  On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+   default gain. The scaled system gain sat near 1.94. The window power
+   read roughly double. An acceptance test caught it.
+ 
+   On 2026-08-24 a winner re-gate ran at a stale gain, the superseded
+   20-second-window value. The pre-push review caught it. The re-gate at
+-  the campaign gain returned 5.18 kilowatts.
++  the campaign gain returned 5.18 kW.
+ 
+   A misaligned gain scores a different machine, and the data voids.
+   Lesson: one constant, one source file.
+@@ -780,7 +774,7 @@ The campaign scored each design on the ODE path over the measurement window (NR-
+ One fixed power-law generator load and one fixed gate set held for every design (NR-015).
+ 
+ The search found a feasible candidate in the searched space.
+-Its mean power is 5.309 kilowatts and its airborne mass is 25.698 kilograms (NR-008, NR-018).
++Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+ Its window-minimum factor of safety is 15.0 (NR-009).
+ All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+ The least segment torque margin is 2.03, at S1 (NR-040).

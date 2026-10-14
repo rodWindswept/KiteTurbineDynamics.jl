@@ -1,0 +1,12 @@
+== a3ca2f6 -> 7dd91a9 ==
+arrivals: {'11': 1, '110': 1, '301': 1, '37': 1, '5': 1, '50': 1}
+removals: {'19': 1, '36': 1}
+  [arr 11] 11.01 m/s at 9.41 m (NR-008, NR-032). | - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 110] - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 301] - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 37] Internal engineering report. Draft v0.37. Date 2026-10-14.
+  [arr 5] **Abstract.** This report presents a search for a 5 kW-class | objective and gates. Its mean power is 5.309 kW at the site wind,
+  [arr 50] On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+  [rem 19] [Systems block diagram requested: figure-map row 19 (the simulation
+  [rem 36] Internal engineering report. Draft v0.36. Date 2026-10-14. | - The seed genome scores 36.109 kg-equivalent (NR-006).
+
