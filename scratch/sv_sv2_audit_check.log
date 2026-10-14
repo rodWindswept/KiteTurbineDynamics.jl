@@ -1,0 +1,60 @@
+PASS matrix carries 8 claim rows  [rows=8]
+PASS row 1 cites ['NR-001', 'NR-002']  [got ['NR-001', 'NR-002']]
+PASS row 2 cites ['NR-008']  [got ['NR-008']]
+PASS row 3 cites ['NR-018']  [got ['NR-018']]
+PASS row 4 cites ['NR-009', 'NR-021']  [got ['NR-009', 'NR-021']]
+PASS row 5 cites ['NR-022', 'NR-040']  [got ['NR-022', 'NR-040']]
+PASS row 6 cites ['NR-003', 'NR-004', 'NR-005', 'NR-006']  [got ['NR-003', 'NR-004', 'NR-005', 'NR-006']]
+PASS row 7 cites ['NR-012', 'NR-013']  [got ['NR-012', 'NR-013']]
+PASS row 8 cites the PRD cite  [got []]
+PASS 14 distinct cited rows  [14]
+PASS NR-001: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-002: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-003: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-004: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-005: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-006: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-008: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-009: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-012: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-013: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-018: row present and signed  [signed (science-validator, 2026-10-08)]
+PASS NR-021: row present and signed  [signed (aero-validator, 2026-10-08)]
+PASS NR-022: row present and signed  [signed (aero-validator, 2026-10-08)]
+PASS NR-040: row present and signed  [signed (science-validator, 2026-10-12)]
+PASS NR-001 carries 930
+PASS NR-002 carries the classified mix
+PASS NR-008 carries 5.309
+PASS NR-018 carries 25.69846825623688
+PASS NR-009 carries 14.972 (internal)
+PASS display rule: every site reads 15.0 at 1 dp
+PASS NR-021 ring FoS all above the boundary  [min=15.032534020684876]
+PASS NR-022 carries has_limit true on all five
+PASS NR-040 carries the S1 margin and the quote form
+PASS NR-005 carries 27.364
+PASS NR-006 carries 36.109
+PASS NR-003 carries 30.578
+PASS NR-004 carries 30.637
+PASS NR-012 carries the cold reproduction
+PASS NR-013 carries the warm rejection
+PASS status recount equals the classified mix  [{'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}]
+PASS row total 930  [930]
+PASS seed reads 36.109 at 3 dp  [36.109]
+PASS island bests read 30.578 / 30.637 / 27.364  [30.578 30.637 27.364]
+PASS block prints 15.0, not 14.972
+PASS block prints kg-equivalent
+PASS block prints the classified counts
+PASS block prints the key values
+PASS location 3.1 resolves
+PASS location 3.2 resolves
+PASS location 3.3 resolves
+PASS location 3.4 resolves
+PASS location 4.1 resolves
+PASS location 4.3 resolves
+PASS PRD 0006:147 reads the blade-root FoS formula  [FoS_blade_root = σ_yield_cfrp / σ_bending]
+PASS register Track E carries the PRD cite
+PASS src defers the model (comment) and keeps Inf
+PASS lifter modulation supported (draft §3.3, §5; NR-026)
+PASS draft §5 reads 'Lifter modulation remains an assumption'
+PASS NR-026 carries the flat-regime assumption
+RESULT: 59 checks pass, 0 fail
