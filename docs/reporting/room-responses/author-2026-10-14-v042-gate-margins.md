@@ -22,7 +22,7 @@
 
 ## Guards held
 
-- The token diff asserts exact sets. Draft add: `42`, `0.314`, `6.28`, `12.5`, `500.0`, `6.00`, `5.468`, `3.968`, `264.5`, `3.65`, `64.913`, `65.7`, `2.91`, `2.03` twice, `102.9`, `15.0` and `2.5`. Draft remove: `41` and `5.309`. Tracker add: `42` and `3.3`.
+- The token diff asserts exact sets. Draft add: `42`, `5.314`, `0.314`, `6.28`, `12.5`, `500.0`, `6.00`, `5.468`, `3.968`, `264.5`, `3.65`, `64.913`, `65.7`, `2.91`, `2.03` twice, `102.9`, `15.0` and `2.5`. Draft remove: `41` and `5.309`. Tracker add: `42` and `3.3`.
 
 - Sections 4 and 5 hold byte-identical against the base. The frozen levers block re-checks carried once (raw md5 `7bbd964d...`).
 
