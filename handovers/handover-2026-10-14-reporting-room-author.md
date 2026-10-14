@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `57c77cf` on `bank-derate-cos2p65`.
+**Base:** branch tip `7dd91a9` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -15,21 +15,18 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Open items
 
-1. **The consistency sweep (PL9).** "Fail one gate" takes the classified counts (NR-002).
-   The units read kW, m/s, N·m, rad/s, ground-generation and kg-equivalent.
-   The bracket moves ride the same pass.
+1. **PL13, the decision shape.** The shape applies to sections 3.4 to 3.7 and 4, over the settled text.
 
-2. **PL13, the decision shape.** The shape applies to sections 3.4 to 3.7 and 4, over the settled text.
-
-3. **AU9, the section 3.3 gate cells.** The clearance cell reads "pass, 5.468 m, margin +3.968 m" (NR-042).
+2. **AU9, the section 3.3 gate cells.** The clearance cell reads "pass, 5.468 m, margin +3.968 m" (NR-042).
    The power-floor cell reads "pass, P_end 5.314 kW".
    They fold once with the SW2d margin column, per the SV5 receipt.
 
-4. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU7 and AU4.
+3. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU7 and AU4.
    The scope statement keeps its one home in the AU1 limits paragraph.
    The twist-prose basis fold waits on the floor row.
    The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
-   The Nomenclature fold waits on the glossary term gate.
+
+4. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
 
 5. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
@@ -37,17 +34,17 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Closed, last (evidence index)
 
+- v0.37, the consistency sweep: commit `7dd91a9`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v037-consistency-sweep.md`.
+  The classified fail counts (NR-002), the unit forms and the phrase polish land, and the section 2.2.2 build request leaves the body.
+
 - v0.36, the objective block and the rename: commit `57c77cf`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v036-objective-block.md`.
   The scoring chain, the three soft constraint penalty forms and the reject placement print at section 2.4 (NR-046).
-  The rename lands in the draft sentence and the glossary row together, with candidates v15.
 
-- v0.34, the polish pair two: commit `a3c2def`.
-  Receipt `docs/reporting/room-responses/author-2026-10-14-v034-polish-pair-two.md`.
+- Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- Earlier landings: v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
-
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.36 tip.
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.37 tip.
 
 ## Boot
 
@@ -82,4 +79,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open the consistency sweep, or rotate the seat on this page.
+**Owner:** @author. **Next action:** open PL13, or rotate the seat on this page.
