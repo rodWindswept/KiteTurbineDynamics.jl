@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.32. Date 2026-10-14.
+Internal engineering report. Draft v0.33. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -522,6 +522,24 @@ corrections that shaped it.
 
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
+The hub ring R6 governs the structural check at the winner operating point (NR-021).
+The window-minimum factor of safety is 15.0 (NR-009).
+At the final step, R6 reads 15.033 (NR-021).
+R2 to R4 read 29.8 to 35.2 (NR-021).
+R5 carries almost no load in the checked beam (NR-021).
+
+The ground ring sits on ground support and stays outside the ring check.
+All five TRPT segments remain inside their over-twist limits at the winner operating point (NR-022).
+S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+The least segment torque margin is 2.03, at S1 (NR-040).
+
+S5 carries the largest segment torque margin, 2.69 (NR-040).
+The winner is not close to ring buckling, over-twist or segment torque saturation at this operating point.
+The margins are conditional.
+They cover the checked TRPT rings and segments only.
+They do not yet include blade integrity or lifter loads across wind bands.
+
 [Figure seated: figure-map row 20 (the levers landscape, slug `pca-landscape`). Values cite NR-001, NR-005, NR-006, NR-044 and NR-045.]
 
 [Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
@@ -566,9 +584,26 @@ They show where the search went, how light the designs get and how
 each gene tracks across that ground.
 The gene-level effects wait on the landscape extracts.
 
-### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this section.]
+### 3.5 The evolution story
 
 [Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006, NR-011 and NR-036.]
+
+The machine evolution strip traces the search on island 3 from the common seed to the campaign winner (NR-036).
+The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+
+The winner value is the search objective, not a mass reading.
+The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+
+The final panel matches the register winner.
+The panel reads three lines and six rings (NR-011).
+The hub radius is 4.580 m and the ground radius is 0.804 m.
+The blade scales read 0.82 and 0.20 (NR-011).
+The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
+
+The strip shows built geometry and the search objective only.
+The strip prints no power value and no airborne mass value.
 
 ### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
 

@@ -178,6 +178,12 @@ It also lands the claim–evidence matrix as the first appendix.
 The reading prints signed rows NR-001, NR-005, NR-006, NR-044 and NR-045.
 No value moves.
 
+v0.33 pass by @author (2026-10-14).
+This pass completes the winner margins text at section 3.4 and the evolution story at section 3.5.
+The margin text prints signed rows NR-009, NR-021, NR-022 and NR-040.
+The evolution story prints signed rows NR-036, NR-005, NR-018, NR-039 and NR-011.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
