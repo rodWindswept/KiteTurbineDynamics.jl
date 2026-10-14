@@ -1,0 +1,14 @@
+PASS  A1  blade base factors at the signed form
+PASS  A2  base calculation named (NR-050)
+PASS  B1  cone fold at 2.1 at the signed form
+PASS  B2  every-machine fold at 3.5
+PASS  B3  campaign lead
+PASS  C1  three 22-degree sites
+PASS  C2  cone sites named
+PASS  C3  bank site named
+PASS  C4  Tulloch guard
+PASS  C5  citations read
+PASS  C6  bank bound cite
+PASS  C7  NR-049 cited at both folds
+
+SV_V043_CLAUSE_GLANCE: 12 checks, 0 fail
