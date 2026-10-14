@@ -1,0 +1,238 @@
+[0] hero copy counter-read   tip 0f46aa7   origin 0f46aa7   record e8159b0   copy md5 7192f4a9dd4694b63c73cf49944a5844
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   build record names draft e8159b0
+  ok   build record: seven seats
+  ok   build record: checker exit 0
+  ok   docx build stamp 18:01:59Z
+  ok   build record refs register a7d09eb
+  ok   build record: 37 cited of 48 signed
+  ok   build record uncited list reads 11 ids (11)
+  ok   draft blob reads e8159b0 == HEAD == origin
+  ok   tracker blob reads e8159b0 == HEAD == origin
+  ok   register blob reads a7d09eb == HEAD == origin
+  ok   build inputs carry zero diff from e8159b0 to the tip ('')
+  ok   register additions since d2bf63d read append-only (54	0	docs/reporting/numbers-register.md)
+  ok   the read tip reads the same as origin
+[1] the v0.41 fold census (v0.40 to v0.41)
+  ok   added lines read the pin, marker, appendix row and hashes (12 lines)
+  ok   removed lines read the old pin and the old count sentence (2)
+  ok   draft pin line reads v0.41 once
+  ok   old pin reads zero in the draft
+  ok   count sentence reads 'All seven' once
+  ok   old count sentence reads zero in the draft
+  ok   sections 4 and 5 hold byte-identical against v0.40
+  ok   tracker takes the fold entry alone (7 added, 0 removed)
+[2] the seven seated markers
+  ok   draft carries seven seated markers (7)
+  ok   marker reads once: [Figure seated: figure-map row 2 (system anatomy plate, sl
+  ok   marker reads once: [Figure seated: figure-map row 10 (machine winner hero, sl
+  ok   marker reads once: [Figure seated: figure-map row 6 (ring utilisation plate, 
+  ok   marker reads once: [Figure seated: figure-map row 7 (twist limit plate, slug 
+  ok   marker reads once: [Figure seated: figure-map row 20 (the levers landscape, s
+  ok   marker reads once: [Figure seated: figure-map row 21 (the parameter atlas, sl
+  ok   marker reads once: [Figure seated: figure-map row 9 (machine evolution strip,
+  ok   the hero marker sits inside §3.3 (474)
+[3] the appendix pins recompute: pin == committed file == HEAD == origin
+  ok   appendix carries seven blocks (7)
+  ok   ring-utilisation: ledger pinned == committed == HEAD == origin
+  ok   ring-utilisation: pdf pinned == committed == HEAD == origin
+  ok   ring-utilisation: png pinned == committed == HEAD == origin
+  ok   ring-utilisation: svg pinned == committed == HEAD == origin
+  ok   twist-limit: ledger pinned == committed == HEAD == origin
+  ok   twist-limit: pdf pinned == committed == HEAD == origin
+  ok   twist-limit: png pinned == committed == HEAD == origin
+  ok   twist-limit: svg pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: checks pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: pdf pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: png pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: svg pinned == committed == HEAD == origin
+  ok   system-anatomy: checks pinned == committed == HEAD == origin
+  ok   system-anatomy: ledger pinned == committed == HEAD == origin
+  ok   system-anatomy: pdf pinned == committed == HEAD == origin
+  ok   system-anatomy: png pinned == committed == HEAD == origin
+  ok   pca-landscape: ledger pinned == committed == HEAD == origin
+  ok   pca-landscape: pdf pinned == committed == HEAD == origin
+  ok   pca-landscape: png pinned == committed == HEAD == origin
+  ok   pca-landscape: svg pinned == committed == HEAD == origin
+  ok   pca-atlas: ledger pinned == committed == HEAD == origin
+  ok   pca-atlas: pdf pinned == committed == HEAD == origin
+  ok   pca-atlas: png pinned == committed == HEAD == origin
+  ok   pca-atlas: svg pinned == committed == HEAD == origin
+  ok   machine-winner-hero: checks pinned == committed == HEAD == origin
+  ok   machine-winner-hero: pdf pinned == committed == HEAD == origin
+  ok   machine-winner-hero: png pinned == committed == HEAD == origin
+  ok   machine-winner-hero: svg pinned == committed == HEAD == origin
+  ok   28 pinned values walked (28)
+  ok   ring-utilisation: ledger byte-stable from e4ff3c1
+  ok   ring-utilisation: pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: png byte-stable from e4ff3c1
+  ok   ring-utilisation: svg byte-stable from e4ff3c1
+  ok   twist-limit: ledger byte-stable from e4ff3c1
+  ok   twist-limit: pdf byte-stable from e4ff3c1
+  ok   twist-limit: png byte-stable from e4ff3c1
+  ok   twist-limit: svg byte-stable from e4ff3c1
+  ok   pca-landscape: ledger byte-stable from d6d4db9
+  ok   pca-landscape: pdf byte-stable from d6d4db9
+  ok   pca-landscape: png byte-stable from d6d4db9
+  ok   pca-landscape: svg byte-stable from d6d4db9
+  ok   pca-atlas: ledger byte-stable from d6d4db9
+  ok   pca-atlas: pdf byte-stable from d6d4db9
+  ok   pca-atlas: png byte-stable from d6d4db9
+  ok   pca-atlas: svg byte-stable from d6d4db9
+  ok   machine-winner-hero: checks byte-stable from e8159b0
+  ok   machine-winner-hero: pdf byte-stable from e8159b0
+  ok   machine-winner-hero: png byte-stable from e8159b0
+  ok   machine-winner-hero: svg byte-stable from e8159b0
+[4] the copy prints the pins, resolves the frames, embeds the bytes
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-winner-hero.pdf pin
+  ok   copy prints the machine-winner-hero.png pin
+  ok   copy prints the machine-winner-hero.svg pin
+  ok   frame reads once: system-anatomy Figure (roster row 2) · system-anatomy
+  ok   frame reads once: machine-winner-hero Figure (roster row 10) · machine-win
+  ok   frame reads once: ring-utilisation Figure (roster row 6) · ring-utilisatio
+  ok   frame reads once: twist-limit Figure (roster row 7) · twist-limit
+  ok   frame reads once: pca-landscape Figure (roster row 20) · pca-landscape
+  ok   frame reads once: pca-atlas Figure (roster row 21) · pca-atlas
+  ok   frame reads once: machine-evolution-strip Figure (roster row 9) · machine-
+  ok   seven figure frames read (7)
+  ok   raw markers read zero in the copy
+  ok   copy reads: The campaign winner, drawn three ways: down the shaft, f
+  ok   copy reads: The machine stands at its settled operating point.
+  ok   copy reads: All three views share one scale, so the drawn size reads
+  ok   copy reads: The island-3 winner at its final operating step.
+  ok   copy reads: The machine reads six rings, three lines and one active 
+  ok   copy reads: span 1.499 m and a bank of 7.088 degrees (NR-043, NR-017
+  ok   copy reads: The downwind view looks along the wind, so the shaft rea
+  ok   copy reads: A 5 m scale bar sits in the footer.
+  ok   copy reads: Source: pair-extract-2026-10-08-winner-ops · data dd3cc6
+  ok   the hero frame sits inside section 3.3 in the copy
+  ok   copy embeds the delivered bytes on all seven exhibits (7)
+  ok   the hero png bytes embed in the copy
+  ok   copy count sentence reads 'All seven' once
+  ok   copy slug reads at its two frame sites and the build seats line (3)
+  ok   copy build block reads seven seats
+  ok   copy build block reads the docx stamp
+  ok   copy build block refs register a7d09eb
+[5] the guards
+  ok   guarded 3.816 reads zero
+  ok   guarded rounded 27.363 reads zero
+  ok   full-precision closure prints (NR-039 row and section 2.4)
+  ok   display form 27.364 prints (11)
+  ok   14.97-class prints once, inside the register appendix (1 hits)
+  ok   signed full precision reads internal
+  ok   display form 15.0 prints at its sites (13)
+  ok   ring reading 15.033 keeps its form (3)
+  ok   NR-009 ruled form 14.972 prints once (1)
+  ok   no unresolved notice
+  ok   copy head line reads Draft v0.41
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads zero 'v0.40' marks
+  ok   the block file md5 reads 7bbd964d
+  ok   the frozen levers block reads carried once in the draft
+  ok   the draft-carried block bytes equal the file bytes
+[6] the register appendix and the hero data ties
+  ok   register reads 48 rows, 11 uncited (48/11)
+  ok   cited set reads 37 (37)
+  ok   appendix set == cited set (37 ids)
+  ok   uncited NR-019 stays out
+  ok   uncited NR-020 stays out
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   uncited NR-042 stays out
+  ok   appendix intro sentence prints
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-003 value
+  ok   register appendix: NR-002 status mix
+  ok   register appendix: NR-046 units cell
+  ok   register appendix: NR-046 formula cell
+  ok   register appendix: NR-021 hub FoS
+  ok   register appendix: NR-021 R2 interaction
+  ok   register appendix: NR-043 span
+  ok   register appendix: NR-017 bank
+  ok   register appendix: NR-022 S1 twist
+  ok   capture sha reads the manifest value
+  ok   capture blob reads HEAD == origin
+  ok   genome extract sha reads the manifest value
+  ok   genome extract blob reads HEAD == origin
+  ok   generator script sha reads the manifest value
+  ok   generator blob reads HEAD == origin
+  ok   manifest script commit reads c438398
+  ok   manifest pins the capture sha
+  ok   manifest pins the two extract shas
+  ok   manifest state row reads i3-g26-i9
+  ok   manifest k_mppt reads 2.24
+  ok   machine-winner-hero.png: file == manifest == appendix == 4e8fc9d267a7
+  ok   machine-winner-hero.svg: file == manifest == appendix == 819bafe52679
+  ok   machine-winner-hero.pdf: file == manifest == appendix == a9d5516d7ec7
+  ok   checks.log: file == manifest == appendix == 52fe83a8c54e
+  ok   manifest stations read the capture ring block (6)
+  ok   manifest twists read the capture segment block (5)
+  ok   checks log stations read the capture values
+  ok   checks log twists read the capture values
+  ok   checks log closes ALL OK
+  ok   checks log reads 15 state checks, all true
+  ok   checks log reads the -g PDF chain
+  ok   register-status drawn stations read the capture
+  ok   register-status drawn twists read the capture
+  ok   register-status records the spin-sense convention
+  ok   kit readme records no ODE runs
+  ok   SPEC carries delta D9
+  ok   SPEC records the untwisted-shaft reading
+  ok   SPEC records the built-decode source
+  ok   NR-021 row carries the hub FoS
+  ok   NR-021 row reads signed
+  ok   NR-022 row carries the S1 twist
+  ok   NR-022 row reads signed
+  ok   NR-021 station note reads the capture order
+[7] state anchors
+  ok   tracker carries the v0.41 fold entry
+  ok   tracker keeps the v0.40 entry
+  ok   map carries delta v32
+  ok   map row 10 reads the capture set
+  ok   map row 10 reads seated in the draft
+  ok   map row 10 reads the F-REPRO state
+  ok   figures receipt routes the copy read to this seat
+  ok   figures receipt names the counter-read
+  ok   sweep 27 routes the hero counter-read
+  ok   evidence at HEAD == origin: fig_hero_state_probe.jl
+  ok   evidence at HEAD == origin: fig_cairo_date_probe.jl
+  ok   evidence at HEAD == origin: fig_hero_records_build.py
+
+checks: 226  ok: 226  fail: 0
+AV_V041_HERO_DONE
