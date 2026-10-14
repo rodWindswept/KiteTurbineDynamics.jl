@@ -30,3 +30,10 @@ docs/reporting/feedback/feedback-on-report2.md
 # of historical handover records. Rows take status flags; rows are never
 # rewritten. New rows must still be written STE-clean.
 handovers/README.md
+
+# Extension (2026-10-14, aero-validator seat, room may flip): the room
+# consultation brief joins the exempt class. It is a relayed dated record
+# (the founder's questions and the room's answers), amend-only as received.
+# The item-8 aero pass takes one wording line to the detector form; that
+# line is STE-clean. New team edits must still be STE-clean.
+docs/reporting/2026-10-08-room-consultation.md

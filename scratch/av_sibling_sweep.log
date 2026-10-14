@@ -1,0 +1,54 @@
+av_sibling_sweep — base tip 9166686 | HEAD 9166686
+  ok   base tip 9166686 is an ancestor of HEAD
+[A] the family census on the named surfaces (base tip)
+    docs/reporting/drafts/2026-10-08-report-first-draft.md:727: The fix removes false rejections. It never allows breaks.
+    docs/reporting/draft-tracker.md:213: The two shorthand forms take their safety-first replacements, and the sentence set states that break
+    docs/reporting/numbers-register.md:332: | NR-025 | Cold-start protocol (campaign setting) | Settle `settle_to_operational_state` (n_op 15000
+    docs/reporting/numbers-register.md:949: The row-5 plate (the k basis) draws the load sweep that picked the campaign k. The room asked for re
+    docs/reporting/2026-10-08-room-consultation.md:1: # Room consultation — report components, story elements, figure resources
+    docs/reporting/2026-10-08-room-consultation.md:69: practice) enables rope-breaks on the measurement window only. Remaining
+    docs/reporting/2026-10-08-room-consultation.md:117: - Timebox: answer before register v1 signs — this consultation is the report
+    docs/reporting/2026-10-08-reporting-framework.md:87: (plain English + STE-clean technical). Figure families from consultation
+    handovers/handover-2026-10-08-reporting-room-boot.md:19: 3. `docs/reporting/2026-10-08-room-consultation.md` — what the analysis room
+    handovers/handover-2026-10-14-reporting-room-queue.md:46: 1. **@aero-validator: the item-8 aero leg.** The NR-025 register row takes the amend. The sibling-ph
+  ok   draft family hits read the one negation line (1)
+  ok   the draft's one permission-family verb reads as a negation
+  ok   tracker family hit reads the negation only
+[B] the strict tree-wide rope-permission census (base tip)
+    strict hits: 12 across 6 files
+    docs/reporting/2026-10-08-room-consultation.md:69
+    docs/reporting/numbers-register.md:332
+    docs/reporting/room-responses/aero-validator-2026-10-14-rope-break-reading.md:4
+    docs/reporting/room-responses/aero-validator-2026-10-14-rope-break-reading.md:38
+    docs/reporting/room-responses/aero-validator-2026-10-14-rope-break-reading.md:45
+    docs/reporting/room-responses/aero-worker-2026-10-14-rope-break-safety-read.md:1
+    docs/reporting/room-responses/aero-worker-2026-10-14-rope-break-safety-read.md:4
+    docs/reporting/room-responses/aero-worker-2026-10-14-rope-break-safety-read.md:5
+    docs/reporting/room-responses/aero-worker-2026-10-14-rope-break-safety-read.md:36
+    docs/reporting/room-responses/author-2026-10-14-v038-safety-shorthand.md:11
+    scratch/au_draft_docx_annotated_capture_2026-10-13.md:412
+    scratch/au_draft_docx_annotated_capture_2026-10-13.md:603
+  ok   live strict hits read exactly the two targets ([('docs/reporting/2026-10-08-room-consultation.md', 69), ('docs/reporting/numbers-register.md', 332)])
+  ok   'allows breaks' outside records reads the draft negation only ([('docs/reporting/drafts/2026-10-08-report-first-draft.md', 727)])
+[C] the two fixes
+  ok   NR-025 amend carries the detector form
+  ok   NR-025 amend block lands
+  ok   the amend declares the reading and the no-move
+  ok   the signed NR-025 row reads byte-identical to the base
+  ok   room-consultation old form reads zero
+  ok   room-consultation detector form reads
+  ok   consultation edit reads one line in, one line out (['1\t1\tdocs/reporting/2026-10-08-room-consultation.md'])
+  ok   register edit reads additions only (['54\t0\tdocs/reporting/numbers-register.md'])
+[D] the current tree re-reads
+  ok   current docs/reporting/drafts/2026-10-08-report-first-draft.md reads zero strict hits ([])
+  ok   current docs/reporting/draft-tracker.md reads zero strict hits ([])
+  ok   current register keeps the row and the amend quote only (2 strict hits)
+  ok   current docs/reporting/2026-10-08-room-consultation.md reads zero strict hits ([])
+  ok   current docs/reporting/2026-10-08-reporting-framework.md reads zero strict hits ([])
+  ok   current handovers/handover-2026-10-08-reporting-room-boot.md reads zero strict hits ([])
+  ok   current handovers/handover-2026-10-14-reporting-room-queue.md reads zero strict hits ([])
+  ok   current consultation reads zero permission reading
+  ok   the detector form reads once in the amend bullet
+
+checks: 23  ok: 23  fail: 0
+AV_SIBLING_SWEEP_DONE

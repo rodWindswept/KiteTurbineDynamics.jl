@@ -1,0 +1,91 @@
+av_nr047_nr048_counterread — read at HEAD 9166686 | origin 9166686
+[A] the sweep file and the sites
+  ok   worktree CSV hashes to d17d1377 (d17d1377b191)
+  ok   CSV blob at adea1a3 == d17d1377
+  ok   CSV blob at HEAD == d17d1377
+  ok   CSV blob at origin/bank-derate-cos2p65 == d17d1377
+  ok   sweep script carries the load list
+  ok   sweep script names omega_final
+  ok   sweep header anchor reads: 0.175·(5/1.5)^2.5 = 2.24
+  ok   sweep header anchor reads: 0.42·(5/1.5)^2.5
+  ok   sweep header anchor reads: mass_scale) = 1.94
+  ok   runner comment reads: 2.24 sustains 8.0 kW (P_end, converged windo
+  ok   runner comment reads: (tip 73 m/s), FoS 36.
+  ok   runner comment reads: k=1.0 sustains 5.45 kW but at
+  ok   runner comment reads: ω 17.6 (tip 85 m/s, near the 100 m/s ceiling
+  ok   runner comment reads: 5.39 (3-blade anchor) was chosen on the BROK
+  ok   runner comment reads: forces ~9 kW from the 60 m² seed
+  ok   runner comment reads: NOT p_base.k_mppt (3.55 — mass_scale'd, unan
+  ok   TIP_SPEED_CEILING_MPS = 100.0 at src/objective_evaluator.jl:103
+  ok   compute_seeds pins the single-source k at 2.24
+  ok   runner consumes the single source
+[B] the six triples recompute from the raw CSV
+  ok   csv carries ten data rows (10)
+  ok   omega_eq reads 0.0 on all ten rows
+  ok   k 0.5: recompute rounds to reject 3.49 19.14 51.8 (got reject 3.49 19.14 51.8)
+  ok   draft table reads '| 0.5 | reject | 3.49 | 19.14 | 51.8 |'
+  ok   register NR-047 table reads '| 0.5 | reject | 3.49 | 19.14 | 51.8 |'
+  ok   k 1.0: recompute rounds to ok 5.45 17.64 47.8 (got ok 5.45 17.64 47.8)
+  ok   draft table reads '| 1.0 | ok | 5.45 | 17.64 | 47.8 |'
+  ok   register NR-047 table reads '| 1.0 | ok | 5.45 | 17.64 | 47.8 |'
+  ok   k 1.5: recompute rounds to ok 6.78 16.59 42.8 (got ok 6.78 16.59 42.8)
+  ok   draft table reads '| 1.5 | ok | 6.78 | 16.59 | 42.8 |'
+  ok   register NR-047 table reads '| 1.5 | ok | 6.78 | 16.59 | 42.8 |'
+  ok   k 1.94: recompute rounds to ok 7.56 15.80 40.1 (got ok 7.56 15.80 40.1)
+  ok   draft table reads '| 1.94 | ok | 7.56 | 15.80 | 40.1 |'
+  ok   register NR-047 table reads '| 1.94 | ok | 7.56 | 15.80 | 40.1 |'
+  ok   k 2.24: recompute rounds to ok 8.00 15.34 36.4 (got ok 8.00 15.34 36.4)
+  ok   draft table reads '| 2.24 | ok | 8.00 | 15.34 | 36.4 |'
+  ok   register NR-047 table reads '| 2.24 | ok | 8.00 | 15.34 | 36.4 |'
+  ok   k 3.0: recompute rounds to ok 8.89 14.42 24.3 (got ok 8.89 14.42 24.3)
+  ok   draft table reads '| 3.0 | ok | 8.89 | 14.42 | 24.3 |'
+  ok   register NR-047 table reads '| 3.0 | ok | 8.89 | 14.42 | 24.3 |'
+  ok   k 0.5 reads under the 5.0 kW bar
+  ok   k 5.39 P_end rounds to 8.97 (the '~9 kW' cross-read)
+  ok   k 1.0 full-precision triple reads as recorded
+  ok   k 2.24 full-precision triple reads as recorded
+[C] the companion forms and the sizing tokens
+  ok   draft reads: 3.55 was a mass-scaled value with no anchor....
+  ok   draft reads: 5.39 was the 3-blade anchor chosen on the broken...
+  ok   draft reads: That load forces about 9 kW from the seed (NR-04...
+  ok   draft reads: The k 1.0 row settles at omega 17.6, tip about 8...
+  ok   draft reads: The selected k 2.24 settles at omega 15.3, tip a...
+  ok   draft reads: The FoS_min column reads 36.4 at k 2.24, down to...
+  ok   draft reads: The objective charges 5 kg-equivalent per excess...
+  ok   draft reads: The beam sizes on a bounded generator load step,...
+  ok   draft reads: The hub-segment helix force reads about 1278 N/v...
+  ok   draft reads: The low-wind lull is benign under the load law....
+  ok   draft reads: The record refuses k easing as the high-wind sub...
+  ok   draft reads: The rotor spins up to 87.9° of twist against the...
+  ok   DECISIONS [2026-09-06] carries the sizing token
+  ok   DECISIONS carries the k-easing refusal
+  ok   plan section 7.1 restates the sizing pair
+  ok   plan scenario list carries the k-ease line
+  ok   the scenario sweep script is committed
+[D] the register blocks as written
+  ok   register carries the NR-047 block
+  ok   register carries the NR-048 block
+  ok   both blocks request the aero counter-read
+  ok   the aero counter-read block lands
+  ok   the verdict line reads
+  ok   the NR-025 wording amend lands
+  ok   the amend carries the detector form
+[E] the draft fold pin and the guards
+  ok   draft blob at 12a5753 == 12a5753
+  ok   draft blob at HEAD == 12a5753
+  ok   draft blob at origin/bank-derate-cos2p65 == 12a5753
+  ok   the fold introduces the table at NR-047
+  ok   the draft names omega_final
+  ok   draft reads zero 'enabl'
+  ok   draft reads zero 'breaks only'
+  ok   the safety set states the negation
+  ok   the detector form reads in the draft
+  ok   guarded 3.816 absent
+  ok   guarded rounded 27.363 absent
+[F] the seat checker re-runs
+  ok   checker exit 0
+  ok   checker token SV_NR047_DONE
+  ok   checker reads 46 checks
+
+checks: 81  ok: 81  fail: 0
+AV_NR047_COUNTERREAD_DONE

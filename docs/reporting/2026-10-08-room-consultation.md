@@ -66,7 +66,7 @@ three before the reporting group exists:
    TRPT line past the 3.5% break limit during the relax run. Prime suspect
    for the fix: the evaluator runs relax+window as one sim with
    `breaks_enabled=true`, while the 2026-09-16 ruling (and the gate's own
-   practice) enables rope-breaks on the measurement window only. Remaining
+   practice) limits break detection to the measurement window only. Remaining
    work: (a) rule that discrepancy, (b) pool-sample band chart — accept-set
    agreement plus value band where both accept, (c) note: `start_mode=:warm`
    is the evaluator DEFAULT — analysis consumers that do not pass `:cold`
