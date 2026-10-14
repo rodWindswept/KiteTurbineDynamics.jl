@@ -5,18 +5,20 @@
 ## Sweep 22: v0.36 verifies (three movers)
 
 Three draft movers since Sweep 21: `a3c2def` (v0.34, the polish pair
-two), `ef36c6c` (v0.35, the appendix re-pin) and `57c77cf` (v0.36, the
-objective block and the rename). The register takes one append-only
-sign at `4a86e6f` (NR-046). No signed row changed. The queue takes
-candidates v15 at `57c77cf`, noted and not gated.
+two), `ef36c6c` (v0.35, the appendix re-pin) and `57c77cf` (v0.36), the
+objective block and the rename.
+The register takes one append-only sign at `4a86e6f` (NR-046).
+No signed row changed.
+The queue takes candidates v15 at `57c77cf`, noted and not gated.
 
 - Target `57c77cf`, zero diff to the branch tip at sweep time.
   The record section sits at `docs/reporting/draft-consistency-sweep.md`.
 
-- Token diff, draft: mover one arrives 11 forms, 12 occurrences, raw
-  21/11. Mover two adds 7 occurrences against one removal. Mover three
-  arrives 11 forms, 19 occurrences, one pin removal. All three push
-  notes recount, token for token.
+- Token diff, draft: mover one arrives 11 forms, 12 occurrences,
+  raw 21/11.
+  Mover two adds 7 occurrences against one removal.
+  Mover three arrives 11 forms, 19 occurrences, one pin removal.
+  All three push notes recount, token for token.
 
 - STE: draft 5461 to 5902 words, total 5 to 6, the one structural
   table flag at v0.35. The tracker reads 2193 to 2350 words, total 10.
