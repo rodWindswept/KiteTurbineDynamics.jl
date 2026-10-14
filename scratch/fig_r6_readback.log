@@ -1,0 +1,30 @@
+fig-r6 landing readback — 2026-10-14T23:12:03Z
+range: 1af63fc..45ed95a (A..B)
+HEAD vs upstream: 0	0
+
+== delivered artifacts, origin bytes vs worktree md5
+OK  docs/reporting/figures/system-anatomy/manifest.json  af163c42c5b561535bf627b578485bc5
+OK  docs/reporting/figures/ring-utilisation/ring-utilisation.svg  80f1250cff7e107987c6fbd9f6c56c46
+OK  docs/reporting/figures/twist-limit/twist-limit.pdf  6dde1e952151e32e5884207f6948cbb7
+OK  docs/reporting/figures/eval-timeline/eval-timeline.png  e19d92d003d00c8b0ee154369f979e42
+OK  docs/reporting/figures/machine-winner-hero/machine-winner-hero.svg  6a87bf21040fae43e8a51d479b2760ac
+
+== origin spot reads
+9:R6, the topmost ring
+1
+1
+**Status** LANDED. **Seat** figures-images-diagrams. **Read at** `1af63fc` (script commit). The outputs and the records ride this commit.
+
+== origin file set (sa kit)
+docs/reporting/figures/system-anatomy/SPEC.md
+docs/reporting/figures/system-anatomy/captions-draft.md
+docs/reporting/figures/system-anatomy/captions.md
+docs/reporting/figures/system-anatomy/checks.log
+docs/reporting/figures/system-anatomy/label-ledger.txt
+docs/reporting/figures/system-anatomy/manifest.json
+docs/reporting/figures/system-anatomy/prototype.html
+docs/reporting/figures/system-anatomy/register-status.md
+docs/reporting/figures/system-anatomy/system-anatomy.pdf
+docs/reporting/figures/system-anatomy/system-anatomy.png
+docs/reporting/figures/system-anatomy/system-anatomy.py
+docs/reporting/figures/system-anatomy/system-anatomy.tex

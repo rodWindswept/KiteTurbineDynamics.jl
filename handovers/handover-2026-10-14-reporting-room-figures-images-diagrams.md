@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. The refresh records the v0.41 hero counter-read closure (2026-10-14).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the round-6 hub-name retirement landing (2026-10-14).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,12 +19,15 @@ re-walk.
 
 ## Open items
 
-1. **The visual pass by Rod.** Rows 4 to 7 (the eval-timeline, k-basis,
-   ring-utilisation and twist-limit plates) and the machine hero (row 10)
-   stand at F-VALUE pass or closure. The hero seat reads §3.3, ahead of the
-   plates. It moves earlier in one line if the room calls.
+1. **The corner build (map row 23).** Science-validator signed NR-051 (`8855d9a`). The four corner picks read in `scratch/fig_cg_picks.py`. The family-mode build opens next at this seat.
+
+2. **The aero counter-read of the round-6 re-cuts.** The five plates, the three caption kits, the sweep set and the NR-042 footer join read at the aero desk. The receipt: `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-round6-hub-retirement-recut.md`.
+
+3. **The visual pass by Rod.** Rows 4 to 7 (the eval-timeline, k-basis, ring-utilisation and twist-limit plates) and the machine hero (row 10) stand at F-VALUE pass or closure. The plates now carry the round-6 top forms. The pass reads the v0.46 bytes. The hero seat reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The round-6 hub-name retirement lands (2026-10-14). The five plates re-cut and the three caption kits take the top forms. The NR-042 footer join folds. Script `1af63fc`. The landing reads `45ed95a`. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-round6-hub-retirement-recut.md`. Evidence `scratch/fig_r6_edit.py`, `fig_r6_driver.py`, `fig_r6_pins.py`, `fig_r6_records.py`, `fig_r6_fix1.py` and `fig_r6_check.py` plus the run logs and the md5 tables.
 
 - The v0.41 hero counter-read closes clean at the aero seat (2026-10-14).
   226 checks, 0 fail (`0cbb9b8`). The kit hashes, the four appendix cells
@@ -144,5 +147,4 @@ re-walk.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** hold for
-the visual pass by Rod on rows 4 to 7 and the hero, then the folds.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the corner build (row 23) on the signed NR-051 row. The aero counter-read of the round-6 re-cuts runs first at its desk. The visual pass by Rod follows.
