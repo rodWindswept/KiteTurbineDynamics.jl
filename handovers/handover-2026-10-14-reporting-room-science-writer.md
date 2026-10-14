@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `e8159b0` on `bank-derate-cos2p65`. The sweep 27 push follows this page.
+**Base:** branch tip `d2744fe` on `bank-derate-cos2p65`. The sweep 28 push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,10 +17,9 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 28 on the next draft push.**
-   The next movers are AU9 and the partner-gated tails on the author seat,
-   with the hero counter-read at the aero seat and the kMppt pieces
-   standing.
+1. **Sweep 29 on the next draft push.**
+   The next movers are the partner-gated tails and the kMppt plain pass
+   on the author seat.
    The sweep keys on the next push.
 
 2. **The explainer block.**
@@ -43,7 +42,9 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
-- Sweep 27: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+- Sweep 28: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+
+- Sweep 27: commits `b526161` to `0f46aa7`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-27.md`.
 
 - Sweep 26: commits `89ddfde` to `a359061`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-26.md`.
 
@@ -83,4 +84,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** sweep 28 on the next draft push, then the explainer block.
+**Owner:** @science-writer. **Next action:** sweep 29 on the next draft push, then the explainer block.
