@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the appendix re-pin pass (2026-10-14).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the item-5 extract pass (2026-10-14).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,18 +19,23 @@ re-walk.
 
 ## Open items
 
-1. **The item-5 lever-statistics extract.** Objective versus gene, gate
-   failures by gene, and penalty contributions across ok designs. The ask
-   sits in feedback item 5
-   (`docs/reporting/feedback/Feedback-message-1791925681590.md`).
-
-   The extract is file-disjoint from the draft chain, so it can fan out.
-
-2. **The ring lead flag.** The ring caption lead prints the capture form 15.033
+1. **The ring lead flag.** The ring caption lead prints the capture form 15.033
    (NR-021), not the report headline 15.0 (NR-009). One line flips it if the room
    calls for the headline form there.
 
+2. **The item-5 counter-read.** The extract kit landed at `6c51f5c9`
+   (builder `51ffc0d`). The counter-read stands with the
+   science-validator seat. No drawn value and no pin moves, so no F-VALUE
+   leg runs.
+
 ## Closed, last (evidence index)
+
+- The item-5 lever-statistics extract lands: the kit at
+  `docs/reporting/figures/lever-statistics-extract/` (builder `51ffc0d`,
+  tables `6c51f5c9`). Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-item5-lever-statistics-extract.md`.
+  Evidence `scratch/fig_lever_check.py`, `scratch/fig_lever_check.log` and
+  `scratch/fig_lever_build.log`.
 
 - The Harris-3.5 thread closes on rows 6 and 7: the re-census (`c30b2ca`)
   clears the fix at `ef36c6c` (85 checks, 0 fail) and the closure records at
@@ -109,5 +114,5 @@ re-walk.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** open the
-item-5 lever-statistics extract.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** hold for
+the item-5 counter-read. The ring lead flag stands.
