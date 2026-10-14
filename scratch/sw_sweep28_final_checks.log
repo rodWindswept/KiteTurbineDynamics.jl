@@ -19,3 +19,4 @@ copy probe (delivered docx, v0.42):
 
 record sim (base vs new):
   base total=11 per100w=0.07; new total=11 per100w=0.07; offender diff header-only; block-list diff empty
+receipt gate: science-writer-2026-10-14-sweep-28.md words= 282 total=  0 per100w=  0.00 em_dash= 0 (rc=0)
