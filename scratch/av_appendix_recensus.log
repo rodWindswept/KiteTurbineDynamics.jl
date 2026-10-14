@@ -1,0 +1,94 @@
+[0] re-census   tip 4203bec   fix ef36c6c   kits e4ff3c1   draft md5 ac9c757df29c4d62516b8bb723005d0e
+[1] the re-pinned values recompute file == HEAD blob == pinned
+  ok   appendix carries six blocks (6 found)
+  ok   ring-utilisation: ledger pinned == file == HEAD blob == origin
+  ok   ring-utilisation: pdf pinned == file == HEAD blob == origin
+  ok   ring-utilisation: png pinned == file == HEAD blob == origin
+  ok   ring-utilisation: svg pinned == file == HEAD blob == origin
+  ok   twist-limit: ledger pinned == file == HEAD blob == origin
+  ok   twist-limit: pdf pinned == file == HEAD blob == origin
+  ok   twist-limit: png pinned == file == HEAD blob == origin
+  ok   twist-limit: svg pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: checks pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: pdf pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: png pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: svg pinned == file == HEAD blob == origin
+  ok   system-anatomy: checks pinned == file == HEAD blob == origin
+  ok   system-anatomy: ledger pinned == file == HEAD blob == origin
+  ok   system-anatomy: pdf pinned == file == HEAD blob == origin
+  ok   system-anatomy: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: ledger pinned == file == HEAD blob == origin
+  ok   pca-landscape: pdf pinned == file == HEAD blob == origin
+  ok   pca-landscape: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: svg pinned == file == HEAD blob == origin
+  ok   pca-atlas: ledger pinned == file == HEAD blob == origin
+  ok   pca-atlas: pdf pinned == file == HEAD blob == origin
+  ok   pca-atlas: png pinned == file == HEAD blob == origin
+  ok   pca-atlas: svg pinned == file == HEAD blob == origin
+  ok   24 pinned values walked (24)
+  ok   ring-utilisation: ledger byte-stable from e4ff3c1
+  ok   ring-utilisation: pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: png byte-stable from e4ff3c1
+  ok   ring-utilisation: svg byte-stable from e4ff3c1
+  ok   twist-limit: ledger byte-stable from e4ff3c1
+  ok   twist-limit: pdf byte-stable from e4ff3c1
+  ok   twist-limit: png byte-stable from e4ff3c1
+  ok   twist-limit: svg byte-stable from e4ff3c1
+  ok   pca-landscape: ledger byte-stable from d6d4db9
+  ok   pca-landscape: pdf byte-stable from d6d4db9
+  ok   pca-landscape: png byte-stable from d6d4db9
+  ok   pca-landscape: svg byte-stable from d6d4db9
+  ok   pca-atlas: ledger byte-stable from d6d4db9
+  ok   pca-atlas: pdf byte-stable from d6d4db9
+  ok   pca-atlas: png byte-stable from d6d4db9
+  ok   pca-atlas: svg byte-stable from d6d4db9
+[2] retired tokens gone; the count sentence reads six
+  ok   draft free of ring png v1
+  ok   draft free of ring svg v1
+  ok   draft free of ring pdf v1
+  ok   draft free of ring ledger v1
+  ok   draft free of twist png v1
+  ok   draft free of twist svg v1
+  ok   draft free of twist pdf v1
+  ok   draft free of twist ledger v1
+  ok   draft free of old plate script commit
+  ok   draft free of old version mark
+  ok   count sentence reads 'All six read dataset commit dd3cc6a'
+  ok   old 'All four' sentence gone
+  ok   version mark reads v0.36
+  ok   exhibit row Ring utilisation plate carries `671ab96`
+  ok   exhibit row Twist limit plate carries `671ab96`
+  ok   exhibit row Levers landscape carries `e23f226`
+  ok   exhibit row Parameter atlas carries `e23f226`
+  ok   exhibit row Machine evolution strip carries `74cfef9`
+  ok   exhibit row System anatomy plate carries `9cecee3`
+[3] the appendix region reads byte-stable from the fix commit
+  ok   appendix region: fix commit == HEAD (byte-identical)
+[4] the review copy
+  ok   copy md5 275a7047fa0c0e55cb874ecddc060366
+  ok   copy prints ring png v2
+  ok   copy prints twist png v2
+  ok   copy prints landscape png
+  ok   copy prints atlas png
+  ok   copy free of ring png v1
+  ok   copy free of twist png v1
+  ok   copy free of ring svg v1
+  ok   copy count sentence reads six
+  ok   copy embeds delivered ring bytes
+  ok   copy embeds delivered twist bytes
+  ok   copy embeds delivered strip bytes
+  ok   copy embeds delivered anatomy bytes
+  ok   copy embeds delivered landscape bytes
+  ok   copy embeds delivered atlas bytes
+[5] the levers rows: source, cited rows, era
+  ok   Levers landscape: cited rows NR-001, NR-005, NR-006, NR-044, NR-045
+  ok   Levers landscape: telemetry source named
+  ok   Levers landscape: era named
+  ok   Parameter atlas: cited rows NR-001, NR-005, NR-006, NR-044
+  ok   Parameter atlas: telemetry source named
+  ok   Parameter atlas: era named
+  ok   map delta v30 records the pass
+  ok   tracker carries the v0.35 entry
+
+checks: 85  ok: 85  fail: 0
+AV_REPIN_RECENSUS_DONE
