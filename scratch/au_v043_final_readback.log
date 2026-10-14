@@ -1,0 +1,31 @@
+v0.43 pass final readback — the round-5 wording set (author seat), 2026-10-14
+generated 2026-10-14T20:10:24Z
+
+git rev-parse HEAD:        a20755150dc47d4676710820b64c29c32724226f
+git rev-parse origin/bank-derate-cos2p65: a20755150dc47d4676710820b64c29c32724226f
+git ls-remote origin:      a20755150dc47d4676710820b64c29c32724226f	refs/heads/bank-derate-cos2p65
+local == origin: True
+
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md
+     disk   sha256 b742dac0e9f117c51614d6e3a65634ee40f6eed045bf8121735f813200f9cd30
+     origin sha256 b742dac0e9f117c51614d6e3a65634ee40f6eed045bf8121735f813200f9cd30
+OK  docs/reporting/draft-tracker.md
+     disk   sha256 f6a9f553c865e35ba2452d9cbf894fe6f2f07219f4c7ea03cb89b36bd0c6bf35
+     origin sha256 f6a9f553c865e35ba2452d9cbf894fe6f2f07219f4c7ea03cb89b36bd0c6bf35
+OK  scratch/au_v043_round5_wording.py
+     disk   sha256 0403a9b81740888e2dbef84508b27209e8e0ad7b03638d314da53c3ff0edfd7f
+     origin sha256 0403a9b81740888e2dbef84508b27209e8e0ad7b03638d314da53c3ff0edfd7f
+OK  scratch/au_v043_round5_wording.log
+     disk   sha256 a548603ef3036a321200e1a49e0e2cb878a7bfacdfd95941c72e44d1384b9926
+     origin sha256 a548603ef3036a321200e1a49e0e2cb878a7bfacdfd95941c72e44d1384b9926
+OK  docs/reporting/room-responses/author-2026-10-14-v042-gate-margins.md
+     disk   sha256 2698d9c53045c3c606ebbd26f2dffea77578809da949411518a71814e4981a11
+     origin sha256 2698d9c53045c3c606ebbd26f2dffea77578809da949411518a71814e4981a11
+OK  docs/reporting/room-responses/author-2026-10-14-v043-round5-wording.md
+     disk   sha256 da7176ed777f4bb08f3bf439d9d206c10f1124e4d53f1fec2b98397816467176
+     origin sha256 da7176ed777f4bb08f3bf439d9d206c10f1124e4d53f1fec2b98397816467176
+OK  handovers/handover-2026-10-14-reporting-room-author.md
+     disk   sha256 d3fa092ebadc09f9f725f83e6c7e55348e21b9a9185b74fe4be1b2f40a4e4135
+     origin sha256 d3fa092ebadc09f9f725f83e6c7e55348e21b9a9185b74fe4be1b2f40a4e4135
+
+VERDICT: GREEN — local == origin, all seven carried blobs byte-identical at origin
