@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `9d96a4b` on `bank-derate-cos2p65`.
+**Base:** branch tip `8d8901a` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the k-sweep display-rows sign (NR-047, NR-048).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,7 +30,12 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Closed, last (evidence index)
 
-- The term gate on the round-4 rename clears in this push. Receipt
+- The k-sweep display rows sign: NR-047 (six loads, one row per k, the omega
+  column named `omega_final`) and NR-048 (the sizing-side pair). Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-14-k-sweep-rows-sign.md`.
+  Checker `scratch/sv_nr047_k_sweep_rows_check.py`, 46 checks, 0 fail.
+
+- The term gate on the round-4 rename cleared at `bb1709d`. Receipt
   `docs/reporting/room-responses/science-validator-2026-10-14-term-gate-soft-constraint-penalties.md`.
 
 - NR-046, the objective seam, signed at `4a86e6f`. The aero counter-read closes it at `9d96a4b`.
