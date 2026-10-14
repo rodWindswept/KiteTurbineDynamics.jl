@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `a7d09eb` on `bank-derate-cos2p65`.
+**Base:** branch tip `b0d7f70` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -21,7 +21,7 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 2. **New families.** A new figure family or claim block in the next round opens a fresh F-VALUE read.
 
-3. **The next values mover.** The author seat holds PL13 and the Nomenclature fold. A values mover in either section opens a counter-read leg at this seat.
+3. **The next values mover.** The author seat holds AU9 and the partner-gated tails. The Nomenclature fold sits with the lead and the science-writer seats. A values mover in either opens a counter-read leg at this seat.
 
 Each leg runs three tests.
 
@@ -34,6 +34,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The v0.40 shape counter-read: `b0d7f70`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v040-shape-counterread.md`. Evidence `scratch/av_v040_shape_counterread.py` plus log.
 
 - Item-8 aero leg (the counter-reads, the NR-025 amend, the sibling sweep and the v0.39 copy read): `a7d09eb`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-item8-aero-leg.md`. Evidence `scratch/av_nr047_nr048_counterread.py`, `scratch/av_sibling_sweep.py`, `scratch/av_v039_copy_read.py` plus logs.
 
