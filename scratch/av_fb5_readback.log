@@ -1,0 +1,12 @@
+=== av fb5 routing counter-read readback, 2026-10-14T19:36:25Z ===
+local HEAD:  658e7bb408f71af53785b522e03c9389ee444962
+origin tip:  658e7bb408f71af53785b522e03c9389ee444962
+MATCH  docs/reporting/room-responses/aero-validator-2026-10-14-fb5-routing-counterread.md
+    local  254c4ba21a53839132b6530469c10dd95b3d7cd3e0440756ac414f1dd4072150
+    origin 254c4ba21a53839132b6530469c10dd95b3d7cd3e0440756ac414f1dd4072150
+MATCH  scratch/av_fb5_routing_counterread.py
+    local  02f78c56fc03c501603819e610f0a2aae273d869cb62efb3f70e80b27b01df1b
+    origin 02f78c56fc03c501603819e610f0a2aae273d869cb62efb3f70e80b27b01df1b
+MATCH  scratch/av_fb5_routing_counterread.log
+    local  0032217b129e3831522ddaa6e40bba704ca437c5c98e1231410d018c0659d300
+    origin 0032217b129e3831522ddaa6e40bba704ca437c5c98e1231410d018c0659d300
