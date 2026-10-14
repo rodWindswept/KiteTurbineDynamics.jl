@@ -60,7 +60,7 @@ No signed row changed.
 
 - Arithmetic: no value moves, and the standing sums hold (NR-002, NR-001).
 
-- Shape census: the four shape lines read at their sites in sections
+- Shape census: the six shape lines read at their sites in sections
   3.4 to 3.6.
   Sections 4 and 5 hold byte-identical against the base.
 

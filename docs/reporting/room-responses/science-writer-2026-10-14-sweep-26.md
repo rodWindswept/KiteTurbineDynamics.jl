@@ -22,7 +22,7 @@ the span.
   to 2542 words, total 10. The offender delta reads header-only, entry
   for entry.
 
-- The four shape lines read at their sites, and sections 4 and 5 hold
+- The six shape lines read at their sites, and sections 4 and 5 hold
   byte-identical. The display guards and the safety forms hold.
 
 - The frozen block re-checks byte-identical in the draft at `0e7d396`
