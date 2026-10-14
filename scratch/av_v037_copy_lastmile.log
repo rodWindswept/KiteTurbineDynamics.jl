@@ -1,0 +1,150 @@
+[0] last mile   tip e4e108b   record 7dd91a9   copy md5 94619634bd1374abc8327050cf13874d
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   build record names draft 7dd91a9
+  ok   build record: six seats resolved
+  ok   build record: checker exit 0
+  ok   build stamp 14:15:28Z
+  ok   draft blob reads 7dd91a9 == HEAD == origin (fcebeaa7a)
+  ok   register blob reads 9d96a4b == HEAD == origin (2c8281725)
+[1] the v0.37 content set in the copy
+  ok   copy head line reads Draft v0.37
+  ok   copy reads zero 'v0.34' marks
+  ok   copy reads zero 'v0.35' marks
+  ok   copy reads zero 'v0.36' marks
+  ok   copy carries the classified status line
+  ok   copy count sentence reads six
+  ok   copy reads the kW form (34)
+  ok   copy reads the per cent form (11)
+  ok   copy reads the rad/s form (10)
+  ok   copy reads the rpm form (2)
+  ok   copy reads the ground-generation keyword (4)
+  ok   copy reads zero spelled 'kilowatts'
+  ok   copy reads zero the retired phrase
+  ok   copy reads zero the old penalty term
+  ok   copy reads zero bare 'percent'
+[2] the appendix pins recompute: pin == file == HEAD blob == origin
+  ok   appendix carries six blocks (6 found)
+  ok   ring-utilisation: ledger pinned == file == HEAD blob == origin
+  ok   ring-utilisation: pdf pinned == file == HEAD blob == origin
+  ok   ring-utilisation: png pinned == file == HEAD blob == origin
+  ok   ring-utilisation: svg pinned == file == HEAD blob == origin
+  ok   twist-limit: ledger pinned == file == HEAD blob == origin
+  ok   twist-limit: pdf pinned == file == HEAD blob == origin
+  ok   twist-limit: png pinned == file == HEAD blob == origin
+  ok   twist-limit: svg pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: checks pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: pdf pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: png pinned == file == HEAD blob == origin
+  ok   machine-evolution-strip: svg pinned == file == HEAD blob == origin
+  ok   system-anatomy: checks pinned == file == HEAD blob == origin
+  ok   system-anatomy: ledger pinned == file == HEAD blob == origin
+  ok   system-anatomy: pdf pinned == file == HEAD blob == origin
+  ok   system-anatomy: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: ledger pinned == file == HEAD blob == origin
+  ok   pca-landscape: pdf pinned == file == HEAD blob == origin
+  ok   pca-landscape: png pinned == file == HEAD blob == origin
+  ok   pca-landscape: svg pinned == file == HEAD blob == origin
+  ok   pca-atlas: ledger pinned == file == HEAD blob == origin
+  ok   pca-atlas: pdf pinned == file == HEAD blob == origin
+  ok   pca-atlas: png pinned == file == HEAD blob == origin
+  ok   pca-atlas: svg pinned == file == HEAD blob == origin
+  ok   24 pinned values walked (24)
+  ok   ring-utilisation: ledger byte-stable from e4ff3c1
+  ok   ring-utilisation: pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: png byte-stable from e4ff3c1
+  ok   ring-utilisation: svg byte-stable from e4ff3c1
+  ok   twist-limit: ledger byte-stable from e4ff3c1
+  ok   twist-limit: pdf byte-stable from e4ff3c1
+  ok   twist-limit: png byte-stable from e4ff3c1
+  ok   twist-limit: svg byte-stable from e4ff3c1
+  ok   pca-landscape: ledger byte-stable from d6d4db9
+  ok   pca-landscape: pdf byte-stable from d6d4db9
+  ok   pca-landscape: png byte-stable from d6d4db9
+  ok   pca-landscape: svg byte-stable from d6d4db9
+  ok   pca-atlas: ledger byte-stable from d6d4db9
+  ok   pca-atlas: pdf byte-stable from d6d4db9
+  ok   pca-atlas: png byte-stable from d6d4db9
+  ok   pca-atlas: svg byte-stable from d6d4db9
+[3] the copy prints the pins and embeds the delivered bytes
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   draft free of ring png v1
+  ok   copy free of ring png v1
+  ok   draft free of ring svg v1
+  ok   copy free of ring svg v1
+  ok   draft free of ring pdf v1
+  ok   copy free of ring pdf v1
+  ok   draft free of ring ledger v1
+  ok   copy free of ring ledger v1
+  ok   draft free of twist png v1
+  ok   copy free of twist png v1
+  ok   draft free of twist svg v1
+  ok   copy free of twist svg v1
+  ok   draft free of twist pdf v1
+  ok   copy free of twist pdf v1
+  ok   draft free of twist ledger v1
+  ok   copy free of twist ledger v1
+  ok   copy embeds the delivered bytes on all six exhibits (6)
+[4] the guards
+  ok   guarded 3.816 reads zero
+  ok   guarded rounded 27.363 reads zero
+  ok   full-precision closure prints (NR-039 row and section 2.4)
+  ok   display form 27.364 prints (11)
+  ok   14.97-class prints once, inside the register appendix (1 hits, [45365])
+  ok   signed full precision reads internal
+  ok   display form 15.0 prints at its sites (13)
+  ok   ring reading 15.033 keeps its form (3)
+  ok   no unresolved notice
+[5] the register appendix
+  ok   register reads 46 rows, 11 uncited (46/11)
+  ok   cited set reads 35 (35)
+  ok   appendix set == cited set (35 ids)
+  ok   uncited NR-019 stays out
+  ok   uncited NR-020 stays out
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   uncited NR-042 stays out
+  ok   appendix intro sentence prints
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-003 value
+  ok   register appendix: NR-002 status mix
+  ok   register appendix: NR-046 units cell
+  ok   register appendix: NR-046 formula cell
+[6] state anchors
+  ok   tracker carries the v0.37 pass
+  ok   map carries delta v31
+  ok   map carries delta v30
+
+checks: 139  ok: 139  fail: 0
+AV_V037_LASTMILE_DONE
