@@ -76,4 +76,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** hold for the next values mover; the item-5 extract is the standing watch.
+**Owner:** @aero-validator. **Next action:** hold for the next values mover. The item-5 extract is the standing watch.
