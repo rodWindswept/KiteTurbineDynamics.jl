@@ -27,8 +27,8 @@ string joined this list when NR-042 landed (science-validator, SV5,
 No unrowed numeral remains on the plate. The string stands as-is; no
 plate byte moves.
 
-The drawn footer row list still runs through NR-039. NR-042 joins it
-at the next plate build (science-validator, `8fb529e`).
+The drawn footer row list takes NR-042 at the round-6 build
+(science-validator, `8fb529e`). NR-042 is signed (`8c278a5`).
 
 ## Drawn precision
 
@@ -66,3 +66,7 @@ NR-042 joins it at the next build. v3 (2026-10-13): NR-042 lands
 row list, and no unrowed numeral remains on the plate. v2 (2026-10-13): the register seat's two
 backing clauses land, and the "≥ 1.5 m" bounce is recorded. v1:
 created with the kit landing.
+**Delta** v5 (2026-10-14): the hub-name retirement (round-6 comment
+1). The lane-1 label reads "ω top" and the gate row reads "top ·
+tip · Betz". The drawn footer row list takes NR-042 at this build.
+No drawn value moves.

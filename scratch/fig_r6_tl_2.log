@@ -1,0 +1,20 @@
+fig-r6 driver — kit tl · label 2 · script-commit 1af63fc
+outdir: docs/reporting/figures/twist-limit
+== generator ==
+written: twist-limit.svg / .pdf / .png, label-ledger.txt (55 strings), manifest.json
+F-LABEL self-check: OK
+generator exit=0
+
+run 2 md5:
+bf77b9de4f5674836b167fa246b15c2d  twist-limit.svg
+6dde1e952151e32e5884207f6948cbb7  twist-limit.pdf
+70809ef6571729b316596086b00167ae  twist-limit.png
+c9e1371943574816436e9cd65c45b4fc  label-ledger.txt
+570773a970c036ebc24724976189de73  manifest.json
+
+sha256 (for the pins):
+cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28  twist-limit.svg
+5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5  twist-limit.pdf
+14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069  twist-limit.png
+7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae  label-ledger.txt
+d6a5b2bf8b29ccffab7d4ef63642b8e23d04ab44bc6f83d444ccb71ebed1d872  manifest.json

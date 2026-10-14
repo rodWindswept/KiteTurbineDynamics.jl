@@ -165,7 +165,7 @@ L 432.479214 119.332991
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.408" y="150.125341" transform="rotate(-0 99.408 150.125341)">R5</text>
    </g>
    <g id="text_6">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.408" y="92.955641" transform="rotate(-0 99.408 92.955641)">R6 (hub)</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.408" y="92.955641" transform="rotate(-0 99.408 92.955641)">R6 (top)</text>
    </g>
    <g id="text_7">
     <text style="font-size: 7.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="123.234" y="199.743411" transform="rotate(-0 123.234 199.743411)">S1</text>
@@ -575,7 +575,7 @@ L 474.72215 283.492991
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.269628" y="314.285341" transform="rotate(-0 99.269628 314.285341)">R5</text>
    </g>
    <g id="text_36">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.269628" y="257.115641" transform="rotate(-0 99.269628 257.115641)">R6 (hub)</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #555555" x="99.269628" y="257.115641" transform="rotate(-0 99.269628 257.115641)">R6 (top)</text>
    </g>
    <g id="text_37">
     <text style="font-size: 7.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="122.93131" y="363.903411" transform="rotate(-0 122.93131 363.903411)">S1</text>
@@ -930,14 +930,14 @@ L 0 -4.5
     <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="15.3216" y="514.848314" transform="rotate(-0 15.3216 514.848314)">source: data commit dd3cc6a · extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops</text>
    </g>
    <g id="text_69">
-    <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="15.3216" y="529.075514" transform="rotate(-0 15.3216 529.075514)">s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · script commit 671ab96 · authority commit f8114be</text>
+    <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="15.3216" y="529.075514" transform="rotate(-0 15.3216 529.075514)">s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · script commit 1af63fc · authority commit f8114be</text>
    </g>
   </g>
   <g id="text_70">
    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="6.5664" y="15.3216" transform="rotate(-0 6.5664 15.3216)">Every segment of the winner runs well inside its binding limit</text>
   </g>
   <g id="text_71">
-   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="31.1904" transform="rotate(-0 6.5664 31.1904)">Transmitted twist against its binding limit, the realisability floor · shaft profile S1–S5, ground to hub · island-3 winner operating point</text>
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="31.1904" transform="rotate(-0 6.5664 31.1904)">Transmitted twist against its binding limit, the realisability floor · shaft profile S1–S5, ground to top · island-3 winner operating point</text>
   </g>
  </g>
  <defs>

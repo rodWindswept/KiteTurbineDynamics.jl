@@ -1,0 +1,20 @@
+fig-r6 driver — kit tl · label pre · script-commit precheck
+outdir: scratch/fig_r6_pre_tl
+== generator ==
+written: twist-limit.svg / .pdf / .png, label-ledger.txt (55 strings), manifest.json
+F-LABEL self-check: OK
+generator exit=0
+
+run pre md5:
+c81ea54926a45d45ce188575925e3024  twist-limit.svg
+dccdfff6fc9597ef066cd72276fb3637  twist-limit.pdf
+b8496f12bf71c3908cd28c62e8bb9687  twist-limit.png
+e18e31b1addda6e9da7641d996bc46bd  label-ledger.txt
+f1ff64ff41db257eb0e67b604fe8b2ca  manifest.json
+
+sha256 (for the pins):
+fa7bd5910dac25f12bce16d59b9a3ac413423cec9d4f6e0dbdbabfe30799aa75  twist-limit.svg
+e0eba20a43e80006dedd3d1506baed21d0d4928594714bfdb80a6b3a09a7a1d8  twist-limit.pdf
+e6865f878a841c80ec6f5d19e3b072b79bf6d238446b34d4f9e668a1eba12899  twist-limit.png
+237364ab6e0e360d2ffcff709b936d26477164315a6541139ededb175fd9334b  label-ledger.txt
+d2a4d37205b2521c619bed5807444ef68da671e4988d7d32572221c3d515191b  manifest.json

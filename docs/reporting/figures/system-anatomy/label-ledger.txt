@@ -6,7 +6,7 @@ Island-3 winner geometry (NR-011): six rings, three TRPT lines, one active rotor
 Kite turbine anatomy: the ground-generation rotary machine
 R1, the ground ring
 R5, the cone ring
-R6, the hub ring
+R6, the topmost ring
 altitude limiter, not a load path
 autogyro rotors, lift only
 backline

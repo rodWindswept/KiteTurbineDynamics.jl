@@ -1,5 +1,5 @@
 machine-winner-hero — GENERATE run
-script commit: c438398
+script commit: 1af63fc
 toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
 genome extract: docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv  sha256 f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad
 capture: docs/reporting/figures/pair-extract/extract-winner-operating-point.csv  sha256 dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203
@@ -10,7 +10,7 @@ alphas R1..R6 deg: 0.000000, 33.945619, 67.757489, 101.437010, 134.984088, 157.8
 radii R1..R6: 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 4.5799790548200496
 rotor: r_in 4.1301584643575149 · r_out 5.6295604325659641 · span 1.4994019682084492 · bank 7.0881314603 deg · blades 3
 axial offsets: din 0.055933 m · dout 0.130511 m · elevation 28.64 deg
-drawn hub altitude: 8.9155 m (register settled-basis note reads mean z 8.914 m, elevation 28.64 deg)
+drawn topmost-ring altitude: 8.9155 m (register settled-basis note reads mean z 8.914 m, elevation 28.64 deg)
 sections R1..R6: transmission, transmission, transmission, transmission, cone, harvest
 counts: ring polygons 6 · TRPT polylines 15 (3 lines x 5 gaps) · blades 3 · annulus views 3 · glyph 1
 window: x side [-6.2, 9.4] · plan/downwind [-6.2, 6.2] · y side/downwind [-2.0, 20.0] · y plan [-11.0, 11.0] m · m_per_px 30.000000 · panels 468/372/372 x 660 px · figure 1248 x 958 px · scale bar 5.0 m
@@ -20,7 +20,7 @@ panel plan: x 30.000000000 px/m · y 30.000000000 px/m · delta 0.0000 ppm
 panel down: x 30.000000000 px/m · y 30.000000000 px/m · delta 0.0000 ppm
 pdf normalisation: clean -dg ok · CreationDate replacements 1 · clean -zg ok
 outputs sha256:
-  machine-winner-hero.png  4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5
-  machine-winner-hero.svg  819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171
-  machine-winner-hero.pdf  a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e
+  machine-winner-hero.png  fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6
+  machine-winner-hero.svg  0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993
+  machine-winner-hero.pdf  1689506ae8bf99a824a5c8f0b542309a933485830879514c4a6ac6bd0fd580ce
 checks: ALL OK

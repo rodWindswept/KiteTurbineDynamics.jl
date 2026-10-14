@@ -1,0 +1,82 @@
+check: F-REPRO sa: run1 == run2: OK  
+check: F-REPRO ru: run1 == run2: OK  
+check: F-REPRO tl: run1 == run2: OK  
+check: F-REPRO et: run1 == run2: OK  
+check: F-REPRO hero: run1 == run2 == run3: OK  
+check: F-LABEL self-check ok (ru): OK  
+check: F-LABEL self-check ok (tl): OK  
+check: F-LABEL self-check ok (et): OK  
+check: sa ledger: R6, the topmost ring: OK  
+check: sa ledger: no hub: OK  
+check: sa pdf text: R6, the topmost ring: OK  
+check: sa pdf text: no hub: OK  
+check: sa checks.log: re-cut v6 line: OK  
+check: sa checks.log: v6 hashes block: OK  
+check: sa checks.log: v6 reproducibility line: OK  
+check: sa manifest script_commit: OK  
+check: sa manifest outputs recompute: OK  
+check: sa captions provenance token: OK  
+check: sa register-status: v6 hashes: OK  
+check: sa register-status: v6 delta: OK  
+check: ru ledger: R6 (top): OK  
+check: ru svg: R6 (top), no hub: OK  
+check: ru captions: governs full name: OK  
+check: ru captions: top row line: OK  
+check: ru captions provenance token: OK  
+check: ru register-status: command: OK  
+check: ru register-status: delta v4: OK  
+check: ru SPEC: v8 delta: OK  
+check: ru SPEC: no retired forms: OK  
+check: tl ledger: R6 (top) + ground to top: OK  
+check: tl svg: ground to top, no hub: OK  
+check: tl register-status: command + delta: OK  
+check: tl SPEC: v7 delta: OK  
+check: tl SPEC: no retired forms: OK  
+check: tl captions provenance token: OK  
+check: et ledger: ω top + gates + NR-042: OK  
+check: et svg: ω top, no hub: OK  
+check: et SPEC: v2 delta + top rate: OK  
+check: et register-status: v5 delta + footer join: OK  
+check: et manifest: NR-042 in register_rows: OK  
+check: hero .jl: topmost ring R6 drawn string: OK  
+check: hero checks.log: topmost-ring altitude: OK  
+check: hero manifest script_commit: OK  
+check: hero manifest outputs recompute: OK  
+check: hero register-status: header + command + re-cut: OK  
+check: hero register-status: topmost ring radii row: OK  
+check: sa py: retired label string absent: OK  
+check: ru py: retired label string absent: OK  
+check: tl py: retired strings absent: OK  
+check: et py: retired strings absent: OK  
+check: strip captions: topmost ring radius: OK  
+check: strip register-status: delta: OK  
+check: draft title v0.46: OK  
+check: draft: four script cells at A: OK  got 4
+check: draft: all 16 new output hashes present: OK  []
+check: draft: count sentence holds: OK  
+check: tracker: v0.46 entry: OK  
+check: map: v37 delta: OK  
+check: map: row 2 round-6 next gate: OK  
+check: map: row 23 opens family build: OK  
+check: no retired forms in kit text surfaces: OK  
+check: STE docs/reporting/figures/system-anatomy/captions-draft.md: OK  [HOOK:ste] captions-draft.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it.
+check: STE docs/reporting/figures/system-anatomy/captions.md: OK  [HOOK:ste] captions.md: long_paragraph(>6s) x2 -> one topic per paragraph, max six sentences — split it. (ste-
+check: STE docs/reporting/figures/system-anatomy/SPEC.md: OK  [HOOK:ste] SPEC.md: long_paragraph(>6s) x8 -> one topic per paragraph, max six sentences — split it. (ste-writ
+check: STE docs/reporting/figures/system-anatomy/register-status.md: OK  [HOOK:ste] register-status.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it
+check: STE docs/reporting/figures/ring-utilisation/captions.md: OK  [HOOK:ste] captions.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-
+check: STE docs/reporting/figures/ring-utilisation/captions-draft.md: OK  [HOOK:ste] captions-draft.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/figures/ring-utilisation/SPEC.md: OK  [HOOK:ste] SPEC.md: em_dash x10 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/figures/ring-utilisation/register-status.md: OK  [HOOK:ste] register-status.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it
+check: STE docs/reporting/figures/twist-limit/captions.md: OK  [HOOK:ste] captions.md: long_paragraph(>6s) x6 -> one topic per paragraph, max six sentences — split it. (ste-
+check: STE docs/reporting/figures/twist-limit/SPEC.md: OK  [HOOK:ste] SPEC.md: em_dash x8 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/figures/twist-limit/register-status.md: OK  [HOOK:ste] register-status.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it
+check: STE docs/reporting/figures/eval-timeline/SPEC.md: OK  [HOOK:ste] SPEC.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/figures/eval-timeline/register-status.md: OK  [HOOK:ste] register-status.md: em_dash x3 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/figures/machine-winner-hero/register-status.md: OK  [HOOK:ste] register-status.md: long_paragraph(>6s) x6 -> one topic per paragraph, max six sentences — split it
+check: STE docs/reporting/figures/machine-evolution-strip/captions.md: OK  [HOOK:ste] captions.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-
+check: STE docs/reporting/figures/machine-evolution-strip/register-status.md: OK  [HOOK:ste] register-status.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it
+check: STE docs/reporting/figures/figure-map.md: OK  [HOOK:ste] figure-map.md: em_dash x11 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/draft-tracker.md: OK  [HOOK:ste] draft-tracker.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+check: STE docs/reporting/drafts/2026-10-08-report-first-draft.md: OK  [HOOK:ste] 2026-10-08-report-first-draft.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+
+CHECKER: 80 checks, 0 fail

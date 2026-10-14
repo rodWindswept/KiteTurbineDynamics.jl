@@ -1,0 +1,21 @@
+fig-r6 driver — kit hero · label pre · script-commit precheck
+outdir: docs/reporting/figures/machine-winner-hero
+== generator ==
+state checks: n_lines true · rings true · n_active true · r_hub true · r_bot true · capture_rows true · radii_capture_eq_built true · sections_order true · one_rotor true · blades_3 true · span_NR043 true · bank_NR017 true · stations_monotone true · twist_count true · twist_sum_lt_pi true
+radii R1..R5 0.8036829846088207 · R6 4.5799790548200496
+wrote machine-winner-hero.png, machine-winner-hero.svg, machine-winner-hero.pdf, manifest.json, checks.log to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/docs/reporting/figures/machine-winner-hero
+generator exit=0
+
+run pre md5:
+11eb37370b3ad88c7998686a3d4fac4b  machine-winner-hero.png
+35811eff89ceef6c0a3399aa135ba841  machine-winner-hero.svg
+dbf394369a6e013fa84f8433282faef4  machine-winner-hero.pdf
+9fa9eafa102d26d36ee14b7f9899e04b  checks.log
+cbd611157f0918ffbc9287b94ea2fe65  manifest.json
+
+sha256 (for the pins):
+fadf0d07b2836e0b1721521cbf95925680ab482517a5fe3e46e2fb1cda2a498a  machine-winner-hero.png
+0f616902b7705c5c646bb885b9dffb192d3a3e6e18b278d0f0517ced17482b32  machine-winner-hero.svg
+a40ae198840ab0b4781f6e29e4c929b4b53afa4bf25adc67c3aec02fb1a53177  machine-winner-hero.pdf
+e7f2cdfa64b2a95628f6b5b58941e71bc9d1119191dd786733a89988627cb9e4  checks.log
+75c56301dde1613a55bc2a4ffe72ad7555c8cafca6d573e94bee5d8a0afa10c3  manifest.json

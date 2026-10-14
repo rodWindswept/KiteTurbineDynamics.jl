@@ -34,7 +34,7 @@ Angles at 0.1°. Torque at 0.1 N·m. Drawn values: |Δα| 33.9, 33.8, 33.7,
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 671ab96`
+`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 1af63fc`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
@@ -50,3 +50,6 @@ against the binding limit. Script commit `671ab96`.
 **Delta** v3 (2026-10-14): the round-5 caption dedupe. The plain tier
 reads one takeaway sentence, and the tiers no longer repeat one claim.
 No render moves.
+**Delta** v4 (2026-10-14): the hub-name retirement (round-6 comment 1).
+The top ring label reads "R6 (top)" and the subtitle reads "ground to
+top". Script commit `1af63fc`. No drawn value moves.

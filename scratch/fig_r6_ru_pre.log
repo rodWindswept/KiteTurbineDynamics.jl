@@ -1,0 +1,20 @@
+fig-r6 driver — kit ru · label pre · script-commit precheck
+outdir: scratch/fig_r6_pre_ru
+== generator ==
+written: ring-utilisation.svg / .pdf / .png, label-ledger.txt (28 strings), manifest.json
+F-LABEL self-check: OK
+generator exit=0
+
+run pre md5:
+5ea731333773614e0e4f3691e23b20b5  ring-utilisation.svg
+90a6212296a1d8845413101500aa6b1d  ring-utilisation.pdf
+fecbbd47f1689476799e5c8f12879519  ring-utilisation.png
+5e8ff89b4ec61e2f397ead759fc23769  label-ledger.txt
+d8e1d879bfa7bbbab8aa25c3b98789ac  manifest.json
+
+sha256 (for the pins):
+0a0ec84baf767578f668529221d0de8911aaac2f314e9a48ce45ef14e4b10838  ring-utilisation.svg
+0d05b455fed7e8d9c938e461e583a8ea9876cdda3696a9fadf127beeb866329e  ring-utilisation.pdf
+944516b4e88ed75dad10ab45fa3bd2a5690891e7560fd358c3909d95eefc6052  ring-utilisation.png
+1a70c1b2c160405b785b6710bc0e7b17c33f2621a99a1a1981305dc506df59ca  label-ledger.txt
+727d0d999372a8639e86cf7c29d779a3d734d4e78d87442a386603b9e78132b3  manifest.json

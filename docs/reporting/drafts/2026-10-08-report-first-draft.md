@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.45. Date 2026-10-14.
+Internal engineering report. Draft v0.46. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -936,13 +936,13 @@ One row per built exhibit. All seven read dataset commit `dd3cc6a`.
 
 | Exhibit | Source extract | Cited rows | Script commit | Era |
 |---|---|---|---|---|
-| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `671ab96` | `post-95c385d_wind-authority` |
-| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `671ab96` | `post-95c385d_wind-authority` |
+| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` | `post-95c385d_wind-authority` |
+| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` | `post-95c385d_wind-authority` |
 | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `d243b37` | `post-95c385d_wind-authority` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
-| Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `c438398` | `post-95c385d_wind-authority` |
+| Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -950,17 +950,17 @@ ledger. `checks` is the check log.
 
 Ring utilisation plate:
 
-- `png` `f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837`
-- `svg` `41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0`
-- `pdf` `fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75`
-- `ledger` `3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff`
+- `png` `bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3`
+- `svg` `ce3dee1282941a71819c4a23125a141b84f6fca4611803f8b8a0d8590b33fab6`
+- `pdf` `3548ecd3552940c48e1727756c6b8f40d2bd148b3f98874fbe1c87d0a3f71611`
+- `ledger` `8cd86f6954590122ee44dca167c24a65df272a85adf9a2726df8ae1d7b437f9d`
 
 Twist limit plate:
 
-- `png` `00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248`
-- `svg` `45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f`
-- `pdf` `49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2`
-- `ledger` `2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9`
+- `png` `14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069`
+- `svg` `cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28`
+- `pdf` `5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5`
+- `ledger` `7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae`
 
 Machine evolution strip:
 
@@ -971,10 +971,10 @@ Machine evolution strip:
 
 System anatomy plate:
 
-- `png` `b78eb5cbe8f77074f04f9264e409f3de7f5aa97096a4f4f824c3bdf8271ecc9a`
-- `pdf` `b8fd60364168d70200f2f7122f7f9a957ea1590aa84c6197a19c79e811c444b6`
-- `ledger` `3adec59c7bd19b232584de4e6cb703b44d4e48bb820c68f1ed78f5086971dc8d`
-- `checks` `5255033809928282a348d525b6a7553df3ba64b267fcabb1499ecfaa75331810`
+- `png` `2b23851250839e9596e8e5076177a53c5c09103a16a7e246ab4e031a44730372`
+- `pdf` `85a2e369028268c2ade69f1743f5a3e11ca87b5b6fb1a1b8c1f728816bd519d6`
+- `ledger` `931dfb71aef8168329fa632bfa21d16a514b8036354fa013090cf2948301f7ae`
+- `checks` `ffea5637775ccbadbb12d37074eb86055d3e51ef579add03870873b04a47888b`
 
 Levers landscape:
 
@@ -992,7 +992,7 @@ Parameter atlas:
 
 Machine winner hero:
 
-- `png` `4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5`
-- `svg` `819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171`
-- `pdf` `a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e`
-- `checks` `52fe83a8c54ec93f5372b2fb15c8c77af90b44c3f1e6eb5a8732efffebf59924`
+- `png` `fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6`
+- `svg` `0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993`
+- `pdf` `1689506ae8bf99a824a5c8f0b542309a933485830879514c4a6ac6bd0fd580ce`
+- `checks` `31cda877e9131e6f34270ffe8bdb62bd50225d9cc34653ed221a899eae81e962`

@@ -68,7 +68,7 @@ so a crossing between samples goes unseen.
 - The phase strip carries the relax span and the measurement window
   span. The seated labels read "relax" and "measurement window".
 
-- Lane 1 carries the ground rate and the hub rate, with the two
+- Lane 1 carries the ground rate and the top rate, with the two
   reference lines.
 
 - Lane 2 carries the generator power, with the floor line and the two
@@ -180,3 +180,8 @@ the taps this pass.
   carried the round-1 reads. The two term picks land: the subtitle
   drops the colon code forms, and the ruling label takes "not yet in
   the code". No drawn value changed at the landing.
+
+- v2 (2026-10-14): the hub-name retirement sweep (round-6 comment 1).
+  The lane-1 label reads "ω top" and the gate row reads "top · tip ·
+  Betz". The drawn rows list takes NR-042 (its recorded next-build
+  item). No drawn value moves.

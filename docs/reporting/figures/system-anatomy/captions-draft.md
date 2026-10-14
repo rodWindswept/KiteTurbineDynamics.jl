@@ -15,7 +15,7 @@ kite stack in the sky to the ground station that takes the power.
 ## Technical caption (undergrad register, STE-clean form)
 
 The plate shows the island-3 winner machine in a side view. Six rings run
-from the ground ring (R1, 0.804 m radius) to the hub ring (R6, 4.580 m
+from the ground ring (R1, 0.804 m radius) to the topmost ring (R6, 4.580 m
 radius). Three tension lines span each of the five segments S1 to S5. The
 main rotor sits on R6 only. Its three blades bank at 7.088°.
 
@@ -40,8 +40,8 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 
 - Each ledger string appears once and in one form: ring, line, rotor,
   segment, TRPT, lifter, lift line, sky anchor, cyan line, lift bearing,
-  bridle, main rotor, ground ring, hub ring, ground station, backline.
-- Labels run ground to hub.
+  bridle, main rotor, ground ring, topmost ring, ground station, backline.
+- Labels run ground to top.
 - Every number carries a row: NR-011 (geometry), NR-017 (bank angle).
 - One sentence guards the lifter misreading. The lifter flies the machine.
   It never drives the rotor.

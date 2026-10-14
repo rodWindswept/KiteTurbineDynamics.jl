@@ -1,13 +1,13 @@
 # Register status: machine winner hero
 
 **Slug** `machine-winner-hero`. Status note for the figure row.
-**Date** 2026-10-14. **Script commit** `c438398`. First GENERATE `c438398`.
+**Date** 2026-10-14. **Script commit** `1af63fc`. First GENERATE `c438398`.
 
 ## Rows cited
 
 | Row | Carries | Status |
 |---|---|---|
-| NR-011 | Winner geometry: six rings, three lines, one rotor, hub and ground radii | Signed (science-validator, 2026-10-08) |
+| NR-011 | Winner geometry: six rings, three lines, one rotor, topmost ring and ground radii | Signed (science-validator, 2026-10-08) |
 | NR-017 | Main-rotor bank, 7.088 deg at ring 6 | Signed (science-validator, 2026-10-08) |
 | NR-021 | Ring stations at the winner operating point | Signed (aero-validator, 2026-10-08) |
 | NR-022 | Per-segment twist at the winner operating point | Signed (aero-validator, 2026-10-08) |
@@ -61,7 +61,7 @@ twist reads recompute at origin. The visual pass by Rod follows.
 ## Reproduce
 
 Command:
-`scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl --script-commit c438398`
+`scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl --script-commit 1af63fc`
 
 Toolchain pin: julia 1.12.5, CairoMakie 0.15.11, mutool 1.23.10. The
 PDF carries a normalised creation date (1970-01-01). The clean passes
@@ -70,3 +70,8 @@ pins both extracts and the output hashes.
 
 Self-check: three consecutive runs stay byte-identical across all five
 outputs. Verified 2026-10-14 at `c438398`.
+
+**Re-cut** v2 (2026-10-14): the hub-name retirement (round-6 comment 1).
+The drawn leader reads "topmost ring R6". The log line reads "drawn
+topmost-ring altitude". Three fresh runs at the v2 script commit stay
+byte-identical across all five outputs. No value moves.

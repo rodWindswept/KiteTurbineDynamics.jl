@@ -23,14 +23,14 @@ Every airborne ring passes its structural check with a wide margin.
 
 ## Technical caption (undergrad register, STE-clean form)
 
-The hub ring R6 governs the structural check at FoS 15.033. All
+The topmost rotor ring R6 governs the structural check at FoS 15.033. All
 other airborne rings hold much larger margins (NR-021).
 
 Each bar shows one checked ring. The bar end reads the ring utilisation:
 the beam-column interaction on the worst beam, the axial share N/N_crit
 plus the bending share √(M_ip²+M_oop²)/M_el.
 
-The rows run from R2 at the base to R6 at the hub. Utilisation is demand
+The rows run from R2 at the base to R6 at the top. Utilisation is demand
 over capacity. The axis is logarithmic across six decades to the unit
 value, so the margin of every ring reads at its own scale.
 
@@ -41,7 +41,7 @@ capacity over demand, the reciprocal of the interaction. The model tracks
 torsion outside the interaction formula.
 
 The figure covers every airborne ring. The check does not cover the ground
-ring, which sits on ground support. The figure includes and marks the hub
+ring, which sits on ground support. The figure includes and marks the topmost
 ring. The values come from the campaign winner at its final operating
 point.
 
@@ -55,7 +55,7 @@ of the ring utilisation.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-021 · script commit `671ab96` · full record: the figure-provenance
+rows NR-021 · script commit `1af63fc` · full record: the figure-provenance
 appendix.
 
 ## Generation note
@@ -75,12 +75,12 @@ They answer the review's figure items 2 and 3 for this plate.
 
 Counter-read (2026-10-12, `9ba8dae`): passes. All five FoS readouts
 recompute as exact reciprocals, and the display-floor sentences read
-exact from NR-021. The carried token folds: the hub row now reads R6 in
+exact from NR-021. The carried token folds: the top row now reads R6 in
 the caption text, to match the plate label.
 
 Caption lead (2026-10-14): the round-3 leads land in both tiers. The
 plain tier opens with the governing ring. The technical tier adds the
-hub result (NR-021) and the campaign gate line (NR-015). Text only, no
+topmost ring result (NR-021) and the campaign gate line (NR-015). Text only, no
 render moves.
 
 Render delta (2026-10-14): the 3.5 deltas land. The axis is logarithmic.
@@ -93,3 +93,9 @@ Render moved. No drawn value moves.
 Takeaway (2026-10-14): the plain tier reads one takeaway sentence
 (the round-5 caption dedupe). The tier no longer repeats the
 technical claim. Text only, no render moves.
+
+Retirement note (2026-10-14): the hub-name retirement (round-6
+comment 1). The governs sentence takes the full name, and the
+direction, marks, carried-token and lead lines take the top forms.
+Text only. No render value moves. The plate re-renders at the round-6
+script commit.

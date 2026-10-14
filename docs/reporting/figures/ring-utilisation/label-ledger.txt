@@ -18,11 +18,11 @@ R2
 R3
 R4
 R5
-R6 (hub)
+R6 (top)
 fail boundary
 fail boundary — interaction at the unit value
 readout: ring FoS = 1 / ring utilisation
-s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit 671ab96 · authority commit f8114be
+s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit 1af63fc · authority commit f8114be
 source: data commit dd3cc6a · extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops
 utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el, worst beam)
 utilisation — beam-column interaction, log scale

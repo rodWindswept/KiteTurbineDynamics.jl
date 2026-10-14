@@ -16,7 +16,7 @@ campaign gate sentence.
 ## Drawn precision
 
 FoS readouts at 0.001, nearest integer above 1e4. The R5 readout reads
-326,974, against the row value 326974.1011237028. The hub readout reads
+326,974, against the row value 326974.1011237028. The topmost ring readout reads
 15.033, against the row value 15.032534020684876. NR-009 carries the
 window minimum (14.972) at another instant. The figure draws the capture
 values only.
@@ -24,7 +24,7 @@ values only.
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit 671ab96`
+`/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit 1af63fc`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
@@ -40,3 +40,6 @@ drawn precision. Script commit `671ab96`.
 **Delta** v3 (2026-10-14): the round-5 caption dedupe. The plain tier
 reads one takeaway sentence, and the tiers no longer repeat one claim.
 No render moves.
+**Delta** v4 (2026-10-14): the hub-name retirement (round-6 comment 1).
+The top ring label reads "R6 (top)"; the caption and record phrases
+take the top forms. Script commit `1af63fc`. No drawn value moves.

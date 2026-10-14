@@ -57,7 +57,7 @@ evidence. It carries its label and no numbers.
   fix). So the stacked bar is the interaction itself, not an approximation.
 
 - The ring check covers all airborne rings. The ground ring stays out
-  (ground-supported, not counted against airborne mass). The hub ring stays
+  (ground-supported, not counted against airborne mass). The topmost ring stays
   in. It is the hidden weakest ring, and covering it dates to R7, 2026-09-10.
 
 - The dashboard `ring_health!` panel is the visual ancestor (axial share
@@ -79,7 +79,7 @@ evidence. It carries its label and no numbers.
      zero.
 
    - Identity: ring ids `R2…RN` (record ring index: ring 1 is the ground
-     ring, not checked), with the hub ring marked.
+     ring, not checked), with the topmost ring marked.
 
 3. **Register binding.** Every number in the title, in a readout and in both
    captions cites a signed row. The values of the capture enter the register
@@ -94,7 +94,7 @@ evidence. It carries its label and no numbers.
 
 - The pair shares one shaft frame. The ground datum sits at the base. One
   vertical window holds the rows. The rows are the checked rings, `R2` at
-  the base and `RN` (hub) at the top.
+  the base and `RN` (top) at the top.
 
 - The horizontal axis is utilisation. The unit line is the fail boundary.
   The figure labels it "fail boundary". The axis is logarithmic, six
@@ -119,7 +119,7 @@ evidence. It carries its label and no numbers.
 
 | tag | drawn from | drawing rule | asserted |
 |---|---|---|---|
-| `ring_row` | extract | one row per checked ring, R2 at the base, hub at the top | count |
+| `ring_row` | extract | one row per checked ring, R2 at the base, topmost ring at the top | count |
 | `util_bar` | `max_util` per ring | one utilisation bar per row; the stack retired at v5 | values |
 | `unit_line` | — | the fail boundary at the unit value | presence |
 | `fos_readout` | `ring_fos` | row-end readout | values |
@@ -136,7 +136,7 @@ evidence. It carries its label and no numbers.
 | bending share | `ring_util_bending` | caption; the legend carries the combined form | `√(M_ip²+M_oop²)/M_el` on the same beam |
 | ring FoS | the `ring_fos` vector per ring, or the `fos_ring` scalar for the worst ring | readout | `1 / max_util`, from the emitted array. `Inf` renders ∞ |
 | fail boundary | the unit value of the interaction | line label | the caption pins the form: "beam-column interaction", never "Euler" |
-| `R2…RN` | record ring index | row labels | ground ring excluded, hub ring included and marked |
+| `R2…RN` | record ring index | row labels | ground ring excluded, topmost ring included and marked |
 
 The display forms pin here once. Two strings are new to the report: "axial
 share" and "bending share". They are candidates for glossary section 6 if
@@ -174,13 +174,13 @@ The framework visual checklist applies, graded from the image alone.
 
 **Caption plan (dual, from the first figure).** Plain sentence: every ring
 meets one strict structural check. The tier reads one takeaway: every
-airborne ring passes its structural check with a wide margin. The hub
+airborne ring passes its structural check with a wide margin. The topmost ring
 read and the cites live in the technical tier.
 
 Technical caption (undergrad register, STE-clean form): name the
 interaction form (beam-column interaction, with torsion tracked outside the
-formula), the unit line, the ground-ring exclusion, the hub-ring inclusion
-and the capture. Lead with the hub result (NR-021). State the gate line
+formula), the unit line, the ground-ring exclusion, the topmost-ring inclusion
+and the capture. Lead with the topmost ring result (NR-021). State the gate line
 (NR-015). No "Euler". @author writes them. Every number they carry is
 a register citation.
 
@@ -219,7 +219,7 @@ a register citation.
    explanatory asset. TikZ either way. Never numbers. The R1 review decides.
 
 4. **Ring label pin.** Shared with the companion figure. One convention
-   report-wide. Record indexing proposed: ring 1 ground … ring N hub.
+   report-wide. Record indexing proposed: ring 1 ground … ring N top.
 
 5. **Glossary.** The display forms of the ledger follow glossary section 6.
    The two new strings ("axial share", "bending share") need the ruling of
@@ -251,7 +251,7 @@ drawn interaction.
   The extract slot fills from the analysis room's cut.
 
 - v4 (2026-10-14): the round-3 caption leads land in the kit text. Both
-  tiers open with the governing ring. The technical tier adds the hub
+  tiers open with the governing ring. The technical tier adds the topmost ring
   result (NR-021) and the gate line (NR-015). No render moves.
 
 - v5 (2026-10-14): the 3.5 render deltas. The axis goes logarithmic (10⁻⁶
@@ -266,3 +266,7 @@ drawn interaction.
 - v7 (2026-10-14): the plain tier reads one takeaway sentence (the
   round-5 caption dedupe). The tier no longer repeats the technical
   claim. The caption plan updates with it. No render moves.
+- v8 (2026-10-14): the hub-name retirement sweep (round-6 comment 1).
+  The governs sentence takes the full name, the direction line takes
+  "R6 at the top", and the record phrases take the top forms. Script
+  commit `1af63fc`. No render value moves.

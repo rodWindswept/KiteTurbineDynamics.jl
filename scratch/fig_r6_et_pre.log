@@ -1,0 +1,33 @@
+fig-r6 driver — kit et · label pre · script-commit precheck
+outdir: scratch/fig_r6_pre_et
+== generator ==
+check: cold rows: 5000  (OK)
+check: warm rows: 98  (OK)
+check: ruling rows: 1823  (OK)
+check: taps rows: 52  (OK)
+check: taps phases (relax / window): 11  (OK)
+check: taps phases (window): 41  (OK)
+check: taps window mean omega (NR-029): 13.380259861740395  (OK)
+check: cold window mean P (100 Hz): 5.309770249764809  (OK)
+check: cold latch count: 0  (OK)
+check: warm end t (s): 0.002841  (OK)
+check: warm end strain: 1.00081012  (OK)
+check: ruling grid max: 1.447982844  (OK)
+check: ruling latch count: 0  (OK)
+written: eval-timeline.svg / .pdf / .png, label-ledger.txt (52 strings), manifest.json
+F-LABEL self-check: OK
+generator exit=0
+
+run pre md5:
+fa0fb33d99e4405ffdc27326a57b1b83  eval-timeline.svg
+aaa68e9502aed5bccd425d8da20829d3  eval-timeline.pdf
+96ac8a9669c5d17d45ce66105f840a44  eval-timeline.png
+a759324f76c09c411a00b5e3b3cfe9a1  label-ledger.txt
+ccc15f669ce23154585074cbb76054c4  manifest.json
+
+sha256 (for the pins):
+4f2a2b80bbe8a0cd0a82c8c4fb1c2092a1e5b0c5bf3ebf777665cd6d1d3df873  eval-timeline.svg
+393cd071060cd5769679b94bf78f4b7dea5015f075ad9c9feecf653090f4d9dc  eval-timeline.pdf
+3d7b895a0b24ac929c1b4c2000d7b876061f614a07e031158518d0616b9719e7  eval-timeline.png
+4758ae143987eb24f2429314f6a2b41467d86c3eae9b30cdf450c7f24a29e855  label-ledger.txt
+9c5380841d224832ec75031e2aba3d8b9295ade5b2192d3ae7d6b7d29a6bdf38  manifest.json

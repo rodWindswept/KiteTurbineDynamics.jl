@@ -45,7 +45,7 @@ The set reads in two rows: four panels above, three below. The machines
 differ in drawn size only where their built size differs.
 
 The final panel carries the campaign winner. It matches the register machine: three lines, six rings,
-hub radius 4.580 m, ground radius 0.804 m, blade scales 0.82 and 0.20.
+topmost ring radius 4.580 m, ground radius 0.804 m, blade scales 0.82 and 0.20.
 The strip claims geometry and the search objective. It prints no power
 value and no airborne mass value.
 
@@ -82,3 +82,7 @@ Text only, no render moves.
 Takeaway (2026-10-14): the plain tier reads one takeaway sentence
 (the round-5 caption dedupe). The tier no longer repeats the
 technical claim. Text only, no render moves.
+
+Retirement note (2026-10-14): the hub-name retirement (round-6
+comment 1). The final-panel line reads "topmost ring radius
+4.580 m". Text only, no render moves.

@@ -43,7 +43,7 @@ of the same state.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-022, NR-023 · script commit `671ab96` · full record: the
+rows NR-022, NR-023 · script commit `1af63fc` · full record: the
 figure-provenance appendix.
 
 ## Generation note
@@ -85,3 +85,8 @@ the realisability floor. Render moved. No drawn value moves.
 Takeaway (2026-10-14): the plain tier reads one takeaway sentence
 (the round-5 caption dedupe). The tier no longer repeats the
 technical claim. Text only, no render moves.
+
+Retirement note (2026-10-14): the hub-name retirement (round-6
+comment 1). The top ring label reads "R6 (top)" and the subtitle
+reads "ground to top". Text only. No value moves. The plate
+re-renders at the round-6 script commit.

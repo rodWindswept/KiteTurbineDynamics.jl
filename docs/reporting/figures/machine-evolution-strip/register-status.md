@@ -79,3 +79,7 @@ the output hashes.
 Self-check: two consecutive runs stay byte-identical across all five
 outputs (png, svg, pdf, manifest, checks.log). Verified 2026-10-11 at
 `74cfef9`.
+
+**Delta** (2026-10-14): the hub-name retirement (round-6 comment 1).
+The final-panel caption line reads "topmost ring radius 4.580 m".
+Text only, no render moves; the strip pins stand.

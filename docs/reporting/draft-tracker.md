@@ -259,6 +259,12 @@ The failure-ledger table lands with the narrative after it.
 The two tables add the accepted table class.
 No value moves.
 
+v0.46 pass by @fig-img-diagrams (2026-10-14).
+This pass re-pins the figure-provenance appendix to the delivered round-6 re-cuts.
+Four exhibit script-commit cells and sixteen output-hash cells take the delivered values.
+The five plates and the three caption kits take the top forms (round-6 comment 1).
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

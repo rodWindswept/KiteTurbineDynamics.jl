@@ -49,7 +49,7 @@ main rotor, TRPT, ground station.
 | rings | six | NR-011 |
 | TRPT lines | three | NR-011 |
 | active rotor | one | NR-011 |
-| hub radius, ring R6 | 4.580 m | NR-011 |
+| topmost ring radius, ring R6 | 4.580 m | NR-011 |
 | ground radius, ring R1 | 0.804 m | NR-011 |
 | main-rotor bank angle | 7.088° | NR-017 |
 | scale bar | 5 m | the drawn bar |
@@ -75,7 +75,7 @@ No other number prints.
 - The side view projects each ring to one segment. Ring R1 is the ground
   ring. Ring R6 carries the main rotor. The five segments between the rings
   are S1 to S5. Segments never read as spacer rings.
-- Labels run ground to hub. Thirteen labels. The cone ring (R5) label is
+- Labels run ground to top. Thirteen labels. The cone ring (R5) label is
   the round-5 founder addition beyond the twelve-label brief cap. The
   inset defines the three load-bearing words: ring, line, rotor.
 - The dashed box is the ground station. The dashed outline sits outside the
@@ -90,7 +90,7 @@ No other number prints.
   clearance holds.
 - Compile chain: pdflatex, then pdftoppm at 300 dpi. Zero error lines and
   zero overfull boxes. See `checks.log`.
-- The visual audit read the full plate and three crops (chain zone, hub ring
+- The visual audit read the full plate and three crops (chain zone, topmost ring
   zone, base zone). No text touches a line. Every leader lands on its element.
 
 ## Regenerate
@@ -108,6 +108,8 @@ Two full runs stay byte-identical: generator outputs, PDF and PNG.
 
 - Closed: the author label check (`38a15f1`) holds. Its two re-cuts landed
   in v2 and v3.
+- Closed: the hub-name retirement (round-6, 2026-10-14). The R6 label
+  reads "R6, the topmost ring". No value moves.
 - Track D: the term picks. The plate carries the room forms for now.
 - The β value waits for a signed row.
 - Strip re-render and the planned genome strip and winner anatomy plates

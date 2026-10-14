@@ -38,9 +38,9 @@ The figure is evidence-grade throughout.
 ## What already exists. Extend, do not rebuild.
 
 - The dashboard strip is the visual ancestor. `torque_chain!` draws the
-  transmitted torque per segment (ground → hub, labels `S1..Sn`).
+  transmitted torque per segment (ground → top, labels `S1..Sn`).
   `twist_view!` draws the cumulative twist per segment (cyan ground → orange
-  hub). The report figure re-renders this material as a static,
+  top). The report figure re-renders this material as a static,
   register-cited plate in the house shaft frame. It invents no physics.
 
 - `capture_extended` (`src/sim_frame.jl`) emits the running arrays.
@@ -82,7 +82,7 @@ The figure is evidence-grade throughout.
      instant, and the source stamp carries the one shared row range.
 
    - Identity: segment ids `S1…S(n-1)`. Ring ids `R1…RN` (record ring index:
-     ring 1 is the ground ring, ring N the hub ring).
+     ring 1 is the ground ring, ring N the topmost ring).
 
 3. **Register binding.** Every number in the title, in a readout and in both
    captions cites a signed row. The values of the capture enter the register
@@ -119,7 +119,7 @@ The figure is evidence-grade throughout.
 
 | tag | drawn from | drawing rule | asserted |
 |---|---|---|---|
-| `segment_band` | extract | one band per segment, S1 at the base, ground → hub | count |
+| `segment_band` | extract | one band per segment, S1 at the base, ground → top | count |
 | `ring_tick` | extract | ring positions on the shaft margin, R1…RN | positions, count |
 | `twist_mark` | `segment_twist_deg` | magnitude mark, one per segment | value |
 | `limit_mark` | `dcrit_deg` | limit mark per segment where `has_limit` | value |
@@ -137,7 +137,7 @@ The figure is evidence-grade throughout.
 | segment torque | `segment_torque` | panel B marks, legend, caption | from the tension and twist of the state itself |
 | torsional capacity | `trpt_torque_capacity_axial` | panel B marks, legend, caption | paired at the axial load of the same state |
 | `S1…S(n-1)` | record segment order | margin labels | ground end first |
-| `R1…RN` | record ring index | margin ticks | ring 1 ground, ring N hub |
+| `R1…RN` | record ring index | margin ticks | ring 1 ground, ring N top |
 
 The display forms pin here once. A caption or label that paraphrases one
 ("critical angle", "limit angle") is a defect. The consistency pass of
@@ -207,7 +207,7 @@ is a register citation.
 2. **Annotation rows.** The register rows the title and any readouts cite.
 
 3. **Ring and segment label pin.** The figure uses record indexing (ring 1
-   ground … ring N hub, segments ground → hub). Note one drift: the
+   ground … ring N top, segments ground → top). Note one drift: the
    dashboard ring bars start their label set at the first checked ring,
    while the rotor labels use record indices. The room pins ONE convention.
    The dashboard harmonises by delta if wanted.
@@ -263,3 +263,7 @@ gate.
 - v6 (2026-10-14): the plain tier reads one takeaway sentence (the
   round-5 caption dedupe). The tier no longer repeats the technical
   claim. The caption plan updates with it. No render moves.
+- v7 (2026-10-14): the hub-name retirement sweep (round-6 comment 1).
+  The plate labels take the top forms ("R6 (top)", "ground to top"),
+  and the record phrases take "top". Script
+  commit `1af63fc`. No drawn value moves.

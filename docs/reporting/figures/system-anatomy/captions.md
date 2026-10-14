@@ -29,7 +29,7 @@ the power.
 ## Technical caption (undergrad register, STE-clean form)
 
 The plate shows the campaign winner in a side view. Six triangular rings
-run from the ground ring (R1, 0.804 m radius) to the hub ring (R6,
+run from the ground ring (R1, 0.804 m radius) to the topmost ring (R6,
 4.580 m radius).
 
 Three tension lines span each of the five segments S1 to S5. The main
@@ -49,7 +49,7 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 ## Provenance line
 
 Data commit `dd3cc6a` · decode receipt `scratch/fig1_decode_winner.jl` ·
-rows NR-011, NR-017, NR-043 · script commit `9cecee3` · full record: the
+rows NR-011, NR-017, NR-043 · script commit `1af63fc` · full record: the
 figure-provenance appendix.
 
 ## Generation note
@@ -92,3 +92,8 @@ provenance line carries NR-043.
 
 Cone-ring note (2026-10-14): the v5 re-cut names R5 as the cone ring
 (round-5 comment 3). The plate text changes; the captions do not move.
+
+Retirement note (2026-10-14): the hub-name retirement (round-6
+comment 1). The R6 label reads "R6, the topmost ring". No value
+moves. The plate re-renders. The provenance token takes the round-6
+script commit.

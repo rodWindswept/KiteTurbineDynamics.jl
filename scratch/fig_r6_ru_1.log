@@ -1,0 +1,20 @@
+fig-r6 driver — kit ru · label 1 · script-commit 1af63fc
+outdir: docs/reporting/figures/ring-utilisation
+== generator ==
+written: ring-utilisation.svg / .pdf / .png, label-ledger.txt (28 strings), manifest.json
+F-LABEL self-check: OK
+generator exit=0
+
+run 1 md5:
+80f1250cff7e107987c6fbd9f6c56c46  ring-utilisation.svg
+19e9d74d6525f440a19b307d217d0a3d  ring-utilisation.pdf
+6968b514f8a7411b30986215e66de7f0  ring-utilisation.png
+3951430fc9c367fda0a2242854840149  label-ledger.txt
+1ee0e63ae0e1dd1ba79c6b38e225a69c  manifest.json
+
+sha256 (for the pins):
+ce3dee1282941a71819c4a23125a141b84f6fca4611803f8b8a0d8590b33fab6  ring-utilisation.svg
+3548ecd3552940c48e1727756c6b8f40d2bd148b3f98874fbe1c87d0a3f71611  ring-utilisation.pdf
+bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3  ring-utilisation.png
+8cd86f6954590122ee44dca167c24a65df272a85adf9a2726df8ae1d7b437f9d  label-ledger.txt
+7e73bbd75ea7ee5e8500942da4aa355c2a27687af48a319f6abd2cb3d2d3aae3  manifest.json

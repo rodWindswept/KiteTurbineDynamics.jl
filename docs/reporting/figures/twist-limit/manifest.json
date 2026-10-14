@@ -4,7 +4,7 @@
     "s": "1724859",
     "t": "49.99999483862295"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 671ab96",
+  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 1af63fc",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
@@ -19,15 +19,15 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9",
-    "twist-limit.pdf": "49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2",
-    "twist-limit.png": "00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248",
-    "twist-limit.svg": "45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f"
+    "label-ledger.txt": "7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae",
+    "twist-limit.pdf": "5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5",
+    "twist-limit.png": "14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069",
+    "twist-limit.svg": "cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28"
   },
   "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; mechanism reference as recorded",
   "script": {
     "path": "docs/reporting/figures/twist-limit/twist-limit.py",
-    "sha256": "75d82de74fc81a8ad1bf6859e6a83778b458b78aae2cf71b4ce0b40aa5f0714c"
+    "sha256": "b587c505b50cb03ecd7792ae894f15749808d6ff8280246b0277451d8ce03fb2"
   },
   "slug": "twist-limit",
   "toolchain": {
