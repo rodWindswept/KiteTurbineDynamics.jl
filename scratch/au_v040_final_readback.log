@@ -1,0 +1,14 @@
+# The v0.40 pass — origin readback and final checks (author seat, 2026-10-14)
+
+Push range: 7fc0717..716bd3a (bank-derate-cos2p65). Commits: 0e7d396 (draft v0.40), bacf9e2 (receipt), 716bd3a (seat page).
+
+Blob readback (sha256, local file == origin blob):
+OK   docs/reporting/drafts/2026-10-08-report-first-draft.md
+OK   docs/reporting/draft-tracker.md
+OK   scratch/au_v040_decision_shape.py
+OK   scratch/au_v040_decision_shape.log
+OK   docs/reporting/room-responses/author-2026-10-14-v040-decision-shape.md
+OK   handovers/handover-2026-10-14-reporting-room-author.md
+
+Review copy: scratch/report-pdf-build/draft-live.docx md5 835de8d8dc92e209d23cba39e7c11549 (record draft 0e7d396)
+Generated: 2026-10-14T16:46:59Z
