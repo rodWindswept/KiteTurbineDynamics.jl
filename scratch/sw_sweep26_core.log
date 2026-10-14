@@ -1,0 +1,287 @@
+== 0. preflight ==
+ad56692
+-- working tree status, gated files (empty means clean)
+-- tip readback
+ad56692 chore(scratch): the v0.40 pass final log — the origin readback reads green across the six blobs and the copy md5 re-checks (au_v040 prefix)
+0	0
+== 1. span enumeration ==
+-- all commits, 7d46148..HEAD
+ad56692 chore(scratch): the v0.40 pass final log — the origin readback reads green across the six blobs and the copy md5 re-checks (au_v040 prefix)
+716bd3a docs(handovers): the author seat page refreshes on the v0.40 push — PL13 closes, AU9 heads the open queue, and the copy state updates; STE rc=0 at 0.00/100w (author seat)
+bacf9e2 docs(reporting): room response — draft v0.40, the decision shape (PL13) lands (author seat); the receipt carries the shape coverage, the guards and the review-copy read; STE rc=0 at 0.00/100w
+0e7d396 docs(reporting): draft v0.40 — the decision shape folds across the later sections (PL13, author seat): the margin block takes its next-action line (the blade checks and the gust cases), the evolution story takes its limit and next-read lines (one island of the campaign, no global-optimum claim, a longer or broader run would extend the search), and the implications take their condition and limit (under the modeled objective and gates, not an optimal gene set); the discussion re-reads with the shape standing; tracker entry; declared token diff (draft add 40, remove 39; tracker add 40); the frozen levers block and sections 4 and 5 hold byte-identical; review copy rebuild rides; STE rc=0 (author seat)
+7fc0717 docs(handovers): the figures seat page takes its lint-clean normalise — the four semicolons take periods or commas, the possessive reads plain, and the three long paragraphs re-wrap (hook flags to zero); STE rc=0 at 0.00/100w (figures seat)
+e04e072 docs(handovers): the figures seat page takes the item-5 counter-read closure and the ring-lead hold — the counter-read closes clean at `d0679d3` (173 checks, 0 fail; no F-VALUE leg runs) and the ring lead closes held at the capture form 15.033 (NR-021), re-openable in one line; the open item now reads the visual pass on rows 4 to 7; STE rc=0 (figures seat)
+d0679d3 docs(reporting): the item-5 counter-read — the seven tables, the recipes and the NR-039 cross-check reproduce from the raw telemetry (173 checks, 0 fail; all 508 penalty rows exact by repr; the seat checker re-runs green at 23; the builder re-runs byte-identical; decoder note: x4 27 / x6 780 fractionality); evidence script + logs; no register move; STE rc=0 at 0.00/100w (science-validator)
+8d3b61d chore(scratch): the item-8 aero leg final logs — the three checks re-run at the pushed tip d740955 (81/23/163, 0 fail) and the origin readback reads green (av_ prefix)
+d740955 docs(reporting): the item-8 aero leg receipt and seat page — the counter-reads (81 checks), the NR-025 amend and sibling sweep (23 checks) and the v0.39 copy read (163 checks) record; the seat page refreshes to a7d09eb; STE rc=0 at 0.00/100w (aero-validator)
+a7d09eb docs(reporting): the item-8 aero leg lands — the NR-047/NR-048 counter-read (81 checks, 0 fail; the six triples recompute from the sweep CSV at full precision; the seat checker re-runs SV_NR047_DONE at 46 checks) and the NR-025 wording amend (append-only; the row keeps its signed text; future quotes read "the rope-break check armed across both") enter the register; the sibling-phrasing sweep clears the room-consultation line to the detector form (one line, wording only, with an .ste-exempt row for the relayed record — room may flip); evidence scripts + logs; STE rc=0 at 1.03/100w (aero-validator)
+9166686 docs(handovers): the queue page takes the v0.39 span — state to v0.39 (`12a5753`) at tip `bbc214e`; the closed span records the k-sweep display-row sign, the item-5 extract, the k-story fold and sweep 25 (the era call stays open); the open order re-reads (the item-8 aero leg heads; the item-5 counter-read joins at the science-validator seat); the seat-page commits refresh; STE rc=0 at 0.00/100w (hermes)
+bbc214e chore(scratch): the sweep 25 final-check log takes the receipt-gate lines (sw_ prefix)
+f057fe2 docs(reporting): room response — sweep 25 lands (science-writer); STE rc=0
+52bba7b docs(handovers): the science-writer seat page takes its lint-clean normalise — the one possessive expands to plain wording; STE rc=0 at 0.00/100w (science-writer)
+1f8da6f docs(reporting): the science-writer seat handover refresh — sweep 25 closed; the explainer block and the references gate next; STE rc=0 (science-writer)
+e5317ee docs(reporting): sweep 25 — the v0.39 span verifies (one mover): the declared set recounts token for token (39 forms, 49 occurrences, raw 49/1); the register takes the two-row sign (101/0); the display guards and the frozen block hold; the offender delta header-only; STE rc=0 (science-writer)
+ff159d7 chore(scratch): land the sweep 25 evidence set (sw_ prefix)
+-- draft movers
+0e7d396 docs(reporting): draft v0.40 — the decision shape folds across the later sections (PL13, author seat): the margin block takes its next-action line (the blade checks and the gust cases), the evolution story takes its limit and next-read lines (one island of the campaign, no global-optimum claim, a longer or broader run would extend the search), and the implications take their condition and limit (under the modeled objective and gates, not an optimal gene set); the discussion re-reads with the shape standing; tracker entry; declared token diff (draft add 40, remove 39; tracker add 40); the frozen levers block and sections 4 and 5 hold byte-identical; review copy rebuild rides; STE rc=0 (author seat)
+-- tracker movers
+0e7d396 docs(reporting): draft v0.40 — the decision shape folds across the later sections (PL13, author seat): the margin block takes its next-action line (the blade checks and the gust cases), the evolution story takes its limit and next-read lines (one island of the campaign, no global-optimum claim, a longer or broader run would extend the search), and the implications take their condition and limit (under the modeled objective and gates, not an optimal gene set); the discussion re-reads with the shape standing; tracker entry; declared token diff (draft add 40, remove 39; tracker add 40); the frozen levers block and sections 4 and 5 hold byte-identical; review copy rebuild rides; STE rc=0 (author seat)
+-- candidates movers
+-- register movers, d2bf63d..HEAD
+a7d09eb docs(reporting): the item-8 aero leg lands — the NR-047/NR-048 counter-read (81 checks, 0 fail; the six triples recompute from the sweep CSV at full precision; the seat checker re-runs SV_NR047_DONE at 46 checks) and the NR-025 wording amend (append-only; the row keeps its signed text; future quotes read "the rope-break check armed across both") enter the register; the sibling-phrasing sweep clears the room-consultation line to the detector form (one line, wording only, with an .ste-exempt row for the relayed record — room may flip); evidence scripts + logs; STE rc=0 at 1.03/100w (aero-validator)
+-- numstat, register d2bf63d..HEAD (append-only check)
+54	0	docs/reporting/numbers-register.md
+62 scratch/sw_sweep26_reg_append.txt
+-- numstat, consultation and .ste-exempt, 7d46148..HEAD
+7	0	.ste-exempt
+1	1	docs/reporting/2026-10-08-room-consultation.md
+-- numstat, gated files, 7d46148..HEAD
+6	0	docs/reporting/draft-tracker.md
+8	1	docs/reporting/drafts/2026-10-08-report-first-draft.md
+54	0	docs/reporting/numbers-register.md
+-- zero-diff readback: draft/tracker/candidates 0e7d396 vs HEAD
+-- zero-diff readback: register a7d09eb vs HEAD
+-- zero-diff readback: build inputs 0e7d396 vs HEAD (draft, register, figures, scripts, checker)
+-- zero-diff readback: all files 0e7d396 vs HEAD
+docs/reporting/room-responses/author-2026-10-14-v040-decision-shape.md
+handovers/handover-2026-10-14-reporting-room-author.md
+scratch/au_v040_final_readback.log
+-- ancestry of movers
+0e7d396 OK
+a7d09eb OK
+== 2. extracts ==
+  947 scratch/sw_sweep26_draft_v040.md
+  345 scratch/sw_sweep26_tracker_v040.md
+ 1292 total
+== 2b. full draft diff, 12a5753 -> 0e7d396 ==
+40 scratch/sw_sweep26_draft_diff.txt
+== 2c. sections 4-5 region byte check ==
+sections 4-5 region byte-equal: True
+== 3. token tools: draft ==
+== 12a5753 -> 0e7d396 ==
+arrivals: {'40': 1}
+removals: {'39': 1}
+  [arr 40] Internal engineering report. Draft v0.40. Date 2026-10-14. | The measurement window takes 40 seconds. It measures the settled
+  [rem 39] Internal engineering report. Draft v0.39. Date 2026-10-14. | 5.39 was the 3-blade anchor chosen on the broken machine.
+
+== 12a5753 -> 0e7d396 ==
+lines: +8 -1; raw token occurrences: added 1, removed 1
+arrivals: {'40': 1}
+removals: {'39': 1}
+  [ARR 40 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.40. Date 2026-10-14.
+  [REM 39 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.39. Date 2026-10-14.
+
+== 12a5753 -> 0e7d396 ==
+raw token occurrences: added 1, removed 1
+
+== 3b. token tools: tracker ==
+== 12a5753 -> 0e7d396 ==
+arrivals: {'40': 1}
+removals: none
+  [arr 40] v0.40 pass by @author (2026-10-14).
+
+== 12a5753 -> 0e7d396 ==
+lines: +6 -0; raw token occurrences: added 1, removed 0
+arrivals: {'40': 1}
+removals: none
+  [ARR 40 net+1] raw: added-side 1, removed-side 0
+      +1: v0.40 pass by @author (2026-10-14).
+
+== 4. STE gates ==
+-- sw_sweep26_draft_v039
+sw_sweep26_draft_v039.md         words=6229 total=  6 per100w=  0.10 em_dash= 2
+[HOOK:ste] sw_sweep26_draft_v039.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep26_draft_v039.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep26_draft_v039.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep26_draft_v039_off.txt
+-- sw_sweep26_draft_v040
+sw_sweep26_draft_v040.md         words=6281 total=  6 per100w=  0.10 em_dash= 2
+[HOOK:ste] sw_sweep26_draft_v040.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep26_draft_v040.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep26_draft_v040.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep26_draft_v040_off.txt
+-- sw_sweep26_tracker_v039
+sw_sweep26_tracker_v039.md       words=2490 total= 10 per100w=  0.40 em_dash= 1
+[HOOK:ste] sw_sweep26_tracker_v039.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v039.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v039.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v039.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v039.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v039.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep26_tracker_v039_off.txt
+-- sw_sweep26_tracker_v040
+sw_sweep26_tracker_v040.md       words=2542 total= 10 per100w=  0.39 em_dash= 1
+[HOOK:ste] sw_sweep26_tracker_v040.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v040.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v040.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v040.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v040.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep26_tracker_v040.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep26_tracker_v040_off.txt
+== 5. greps (v040) ==
+-- retired phrasing
+no hit
+-- superseded values
+no hit
+-- display guard: rounded 27.363 standalone (expect none)
+no hit
+-- safety guards: enabl / breaks only (expect none)
+enabl: no hit
+breaks-only: no hit
+-- safety set and detector forms
+734:The fix removes false rejections. It never allows breaks.
+735:A rope break in the measurement window always rejects the design.
+736:No design passes with a broken rope at its operating point.
+-- safety veto forms (old) expect none
+no hit
+-- detector and safety forms, wrap-tolerant flat check
+  1x The evaluator arms the rope-break check across the relax and the window
+  1x The ruling limits break detection to the measurement window
+  1x The evaluator runs the rope-break gate across the relax run as well as the window
+  1x It never allows breaks
+  1x always rejects the design
+  1x No design passes with a broken rope at its operating point
+-- k-story rows and cites
+283:That load forces about 9 kW from the seed (NR-047).
+285:The sweep rows read as follows (NR-047).
+306:The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+309:The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+314:The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
+315:The hub-segment helix force reads about 1278 N/vertex (NR-048).
+318:The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+-- the number-gate brackets
+784:  [2.24 holds a register row (NR-015). The other values need rows
+847:[Daisy values need register rows before the final report quotes
+-- held tokens 1.94 / 5.18 sites
+295:Rows k 1.94 to 3.0:
+299:| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+775:  default gain. The scaled system gain sat near 1.94. The window power
+780:  the campaign gain returned 5.18 kW.
+-- held token 3.55 in tracker
+291:closed form no longer holds. Its product, 3.55, stays flagged
+334:tokens (3.55, the version-history numerals, the open-request numerals,
+-- shape lines present (v0.40 additions)
+599:The next steps add the blade checks and the gust cases.
+665:The trace reads one island of the campaign.
+667:A longer or broader run would extend the search.
+690:They do not prove an optimal gene set.
+-- classified counts line
+68:- Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+-- seated markers count
+6
+-- near-hits
+46:outer stiffening bridles sit outside the model.
+135:tension. It is not a rigid driveshaft. Its capacity to transmit torque
+190:A line is a tension member, like a tether or a bridle. It carries a load
+525:anchor, the three-way knot. Then it runs down the cyan line to the lift
+526:bearing, and down the bridles to the main rotor.
+805:- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+-- rename census: old form
+no hit
+-- rename census: new form
+scratch/sw_sweep26_draft_v040.md:385:The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+scratch/sw_sweep26_draft_v040.md:393:The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
+scratch/sw_sweep26_draft_v040.md:395:The score adds three soft constraint penalties to the airborne mass (NR-046):
+docs/reporting/glossary-candidates.md:150:| kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply |
+docs/reporting/glossary-candidates.md:365:  form, "soft constraint penalties". The rename lands with the draft
+-- pending markers
+8:A section marked [PENDING] waits on a gate.
+850:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+-- head block
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.40. Date 2026-10-14.
+
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+Numbers come only from signed register rows, cited by row ID.
+
+A section marked [PENDING] waits on a gate.
+
+**Draft status.** This is an internal draft.
+Sections 3.4 to 3.6 carry their text.
+Nomenclature and references stay incomplete.
+
+The physics era is `post-95c385d_wind-authority`. The bank derate
+applies throughout.
+
+-- Daisy sites
+183:Tulloch modelled the Daisy TRPT and checked the model against measured
+323:The length follows the Daisy anchor. It scales with the machine to this
+816:  The profile comes from wind measured at the Daisy machine.
+839:The Daisy anchor ties the model to a measured flight reference.
+847:[Daisy values need register rows before the final report quotes
+-- cited commits resolve
+dd3cc6a OK
+a76c5e9 OK
+31ca00d OK
+74cfef9 OK
+9cecee3 OK
+95c385d OK
+671ab96 OK
+e23f226 OK
+adea1a3 OK
+-- hex refs in draft v040
+57 scratch/sw_sweep26_hexrefs.txt
+-- naming-trap near-hits
+no hit
+== 6. register anchors ==
+-- NR-001
+27:| NR-001 | Campaign size | 930 (3 islands × 310) | evals | island_*/telemetry.csv | signed (science-validator, 2026-10-08) |
+48:- **NR-001 to NR-011, NR-014, NR-016:** transcription checked against the
+1366:- Census. This seat re-read the three committed telemetry files. Each island carries 310 data rows. The `gen` column reads 0 to 30, so 31 values. Each generation carries exactly 10 rows, idx 0 to 9. The totals add to 930 (NR-001).
+-- NR-002
+28:| NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
+1400:- Reject census. All 930 telemetry rows read: 508 ok with finite scores, 422 stamped `1.0e9`. The mix reads 301 reject / 110 clearance_reject / 11 reject_twist (NR-002). No ok row carries the stamp. No non-ok row carries a score.
+1455:  scores, 422 stamped `1.0e9`. The mix reads 301 / 110 / 11 (NR-002).
+-- NR-009
+35:| NR-009 | Winner FoS (island 3) | 14.972 | — | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+102:## Aero counter-read: NR-007, NR-008, NR-009, NR-010, NR-011, NR-014, NR-016 (2026-10-08, aero-validator)
+126:- NR-009. The cold re-eval records FoS_min 14.971791422208508. The row
+-- NR-015
+41:| NR-015 | Operating point | k 2.24, relax 10 s + window 40 s, FoS gate 2.5/2.5, length 18.8 m | — | runner provenance | signed (science-validator, 2026-10-08) |
+66:- **NR-015:** checked against the runner config
+971:- k=2.24 holds its own row (NR-015). This row does not re-derive the pick. It carries the values the plate draws.
+-- NR-025
+332:| NR-025 | Cold-start protocol (campaign setting) | Settle `settle_to_operational_state` (n_op 150000 steps, about 6 s simulated; ω_rated_max 60.0 rad/s), then kickstart off (kickstart_s 0.0; the legacy kick is -60.0 N·m·s²/rad², about 115 times the MPPT torque), then one combined relax+window run, 10 s + 40 s, rope breaks enabled across both. Winner run: 1724859 steps | s, steps | `src/objective_evaluator.jl:774, 840-842, 856-892, 978-989`; `src/initialization.jl:2184-2190`; `scripts/run_v13_5kw_masslift.jl:157` | signed (aero-validator, 2026-10-08) |
+354:- NR-025. The winner step count reads from the same extract log. At the
+378:4. NR-025 records the run as executed. The 2026-09-16 window-only breaks
+-- NR-039
+787:## Reconciled fitness row: NR-039 (2026-10-12, science-validator)
+801:| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+840:  (NR-039).
+-- NR-046
+1380:## Source row: NR-046, the objective seam forms, the weights, the thresholds and the reject placement (2026-10-14, science-validator)
+1388:| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)` with `swing = P_range / P_mean`. `P_score` reads the tail-5 power (P_end). Winner closure: 25.69846825623688 + 0.49333696413175443 + 0.5576509889014662 + 0.6140850570787014 = 27.3635412663488 (NR-039). Rejects carry no score: the evaluator returns `Inf` and the runner stamps the search cost `1e9` on every non-ok design (422 of 930 rows) | kg-equivalent: 5.0 per kW², 1.0 per twist-ratio², 20.0 per FoS-ratio², 10.0 per swing fraction. Mass reads kg. The `1e9` stamp is a search cost, not an objective unit | Source read at `7b8c101`, the tip at read time. Byte-stable from launch `a76c5e9`. Sites: `src/objective_v12.jl:114-116` (weights), `:145-168` (seam body). `src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`. `scripts/run_v13_5kw_masslift.jl:153-156, 256-257, 266, 272, 281-283`. Census over island_*/telemetry.csv. Checker: `scratch/sv_nr046_objective_seam_check.py` and its log | signed (science-validator, 2026-10-14) |
+1428:## Aero counter-read: NR-046 (2026-10-14, aero-validator)
+-- NR-047
+1468:## Derived row: NR-047, the k-sweep display rows for section 2.3 (2026-10-14, science-validator)
+1476:| NR-047 | The k-sweep display rows for section 2.3: six loads of the honest-window sweep, one row per k | P_mean at 2 dp: k 0.5 reads reject. Then 5.45, 6.78, 7.56, 8.00, 8.89. omega_final at 2 dp: 19.14, 17.64, 16.59, 15.80, 15.34, 14.42. FoS_min at 1 dp: 51.8, 47.8, 42.8, 40.1, 36.4, 24.3 | kW, rad/s, - | `scripts/results/k_sweep_daisy_5kw.csv`, blob `d17d1377b191dde5b44df7f5534d0cdc4c48d0f3`, landed `adea1a3` (2026-08-22). Column line and ten data rows. The six rows read at `omega_final` | signed (science-validator, 2026-10-14) |
+1555:- The pair prints in the sizing paragraph only. The k table and the tip text read NR-047.
+-- NR-048
+1529:## Derived row: NR-048, the sizing-side pair for the k = 2.24 story (2026-10-14, science-validator)
+1537:| NR-048 | The sizing-side pair for the k = 2.24 story: the load-step sizing case and the k-easing refusal | Sizing load case = a bounded generator load step (nominal `k_mppt × 2`), measured `F_helix ≈ 1278 N/vertex` on the hub segment. The lull is benign under MPPT. k easing refused as the high-wind substitute: the rotor spins up to twist 87.9° against the 78.8° collapse limit | N/vertex, degrees | `DECISIONS.md` [2026-09-06] entry; `docs/plans/2026-09-06-closed-form-beam-sizing.md` section 7.1 and the scenario list; evidence script `scratch/scenario_sweep.jl` | signed (science-validator, 2026-10-14) |
+1569:## Aero counter-read: NR-047, NR-048 (2026-10-14, aero-validator)
+== 7. review copy readback ==
+835de8d8dc92e209d23cba39e7c11549  scratch/report-pdf-build/draft-live.docx
+835de8d8dc92e209d23cba39e7c11549  scratch/report-pdf-build/draft-0e7d396-20261014-164352.docx
+## Build record (builder output)
+
+This block is builder output. It sits outside the report proper and does
+not pass the STE gate.
+
+Draft: `0e7d396` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+
+Register: `v1 ROWS SIGNED (2026-10-08, science-validator). See the sign-off` — file at `a7d09eb`
+
+Citation check: 37 cited, every one signed (48 signed rows total), uncited: NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-042 — checker exit 0
+
+Seats resolved: 6 of 6 — `system-anatomy`, `ring-utilisation`, `twist-limit`, `pca-landscape`, `pca-atlas`, `machine-evolution-strip`
+
+Embed route: SVG vector-first, PNG fallback; kits embedded as shipped,
+== 8. plate pins ==
+f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837  docs/reporting/figures/ring-utilisation/ring-utilisation.png
+00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248  docs/reporting/figures/twist-limit/twist-limit.png
+== done ==

@@ -1,0 +1,9 @@
+== 12a5753 -> 0e7d396 ==
+lines: +8 -1; raw token occurrences: added 1, removed 1
+arrivals: {'40': 1}
+removals: {'39': 1}
+  [ARR 40 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.40. Date 2026-10-14.
+  [REM 39 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.39. Date 2026-10-14.
+

@@ -1,0 +1,6 @@
+== 12a5753 -> 0e7d396 ==
+arrivals: {'40': 1}
+removals: {'39': 1}
+  [arr 40] Internal engineering report. Draft v0.40. Date 2026-10-14. | The measurement window takes 40 seconds. It measures the settled
+  [rem 39] Internal engineering report. Draft v0.39. Date 2026-10-14. | 5.39 was the 3-blade anchor chosen on the broken machine.
+

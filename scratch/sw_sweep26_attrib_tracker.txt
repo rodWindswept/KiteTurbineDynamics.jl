@@ -1,0 +1,7 @@
+== 12a5753 -> 0e7d396 ==
+lines: +6 -0; raw token occurrences: added 1, removed 0
+arrivals: {'40': 1}
+removals: none
+  [ARR 40 net+1] raw: added-side 1, removed-side 0
+      +1: v0.40 pass by @author (2026-10-14).
+

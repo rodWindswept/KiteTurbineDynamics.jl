@@ -1,0 +1,62 @@
+diff --git a/docs/reporting/numbers-register.md b/docs/reporting/numbers-register.md
+index f123c7f..8189afd 100644
+--- a/docs/reporting/numbers-register.md
++++ b/docs/reporting/numbers-register.md
+@@ -1565,3 +1565,57 @@ Boundaries that travel with this row:
+ Counter-read requested from the aero seat.
+ 
+ Evidence: `scratch/sv_nr047_k_sweep_rows_check.py` and its log.
++
++## Aero counter-read: NR-047, NR-048 (2026-10-14, aero-validator)
++
++This block appends only, under the lead ruling and the amend pattern.
++No signed row changed.
++
++Basis: the NR-047 and NR-048 blocks above at `07e2eb9`. The counter-read
++works from the committed records. It runs no simulator.
++
++Evidence: `scratch/av_nr047_nr048_counterread.py` and its log. The pass
++reads 81 checks, all green. The seat checker re-runs green:
++`SV_NR047_DONE`, 46 checks.
++
++- The sweep-file pin. The file reads blob `d17d1377` at the landing
++  commit `adea1a3`, at HEAD and at origin.
++
++- The six triples. Each triple recomputes at full precision from the raw
++  CSV and rounds to the printed forms under the reading rules. Two spot
++  reads: k 1.0 reads 5.450868423585806 / 17.635572770055294 /
++  47.800187200992305. k 2.24 reads 7.997584762516935 /
++  15.343704281699525 / 36.41539771790948.
++
++- The reject row. k 0.5 reads 3.4852 kW against the 5.0 kW bar and
++  carries reject. The other nine rows read ok.
++
++- The companion forms. The tip pair reads as the runner comment records.
++  The pairs read omega 15.3 with tip about 73 m/s, and omega 17.6 with
++  tip about 85 m/s. The 100 m/s ceiling reads at
++  `src/objective_evaluator.jl:103`. The two retirements read as stated.
++
++- The sizing pair. The tokens re-read at the two record files. The fold
++  prints them at the record forms.
++
++- The fold in the draft. The table, the two side paragraphs and the
++  sizing pair read at the signed forms (v0.39, `12a5753`).
++
++Verdict: no discrepancy found. Both rows stand as signed. The printed
++block at draft section 2.3 reads at the signed forms.
++
++## Aero wording amends: NR-025 (2026-10-14, aero-validator)
++
++This block appends only, under the lead ruling and the amend pattern.
++No signed row changed.
++
++The row phrase "rope breaks enabled across both" reads as permission.
++The phrase describes gate placement. The run applies the rope-break
++check across both phases. A break always disqualifies. The winner run
++reads no break (NR-012, NR-013). The section 4.1 pair rewords to the
++detector forms at the same pass (`ed3d202`).
++
++- NR-025 wording. The protocol phrase reads "the rope-break check
++  armed across both". Future quotes use the detector form.
++
++The row keeps its signed values. No number and no ruling moves.

@@ -1,0 +1,11 @@
+== offender diffs, sweep 26 ==
+-- draft
+1c1
+< == scratch/sw_sweep26_draft_v039.md: words=6229 total=6 per100w=0.1 ==
+---
+> == scratch/sw_sweep26_draft_v040.md: words=6281 total=6 per100w=0.1 ==
+-- tracker
+1c1
+< == scratch/sw_sweep26_tracker_v039.md: words=2490 total=10 per100w=0.4 ==
+---
+> == scratch/sw_sweep26_tracker_v040.md: words=2542 total=10 per100w=0.39 ==

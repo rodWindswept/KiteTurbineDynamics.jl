@@ -1,0 +1,40 @@
+diff --git a/docs/reporting/drafts/2026-10-08-report-first-draft.md b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+index 84d0caf..f8cc41d 100644
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1,6 +1,6 @@
+ # The kite turbine: a search over its design space
+ 
+-Internal engineering report. Draft v0.39. Date 2026-10-14.
++Internal engineering report. Draft v0.40. Date 2026-10-14.
+ 
+ Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+ Numbers come only from signed register rows, cited by row ID.
+@@ -596,6 +596,7 @@ The winner is not close to ring buckling, over-twist or segment torque saturatio
+ The margins are conditional.
+ They cover the checked TRPT rings and segments only.
+ They do not yet include blade integrity or lifter loads across wind bands.
++The next steps add the blade checks and the gust cases.
+ 
+ [Figure seated: figure-map row 20 (the levers landscape, slug `pca-landscape`). Values cite NR-001, NR-005, NR-006, NR-044 and NR-045.]
+ 
+@@ -661,6 +662,9 @@ The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017
+ 
+ The strip shows built geometry and the search objective only.
+ The strip prints no power value and no airborne mass value.
++The trace reads one island of the campaign.
++It does not prove a global optimum.
++A longer or broader run would extend the search.
+ 
+ ### 3.6 Design implications
+ 
+@@ -682,6 +686,9 @@ Future searches can steer away from low-clearance geometry with a clearance map
+ Fourth, part of the winner genome stays inactive at one active rotor (NR-011, NR-017).
+ Conditional genes can improve the search efficiency without changing the machine problem.
+ 
++The implications hold under the modeled objective and gates.
++They do not prove an optimal gene set.
++
+ Recommended next steps:
+ 
+ 1. Fix the rapid-path rope-break gate before using the rapid path for screening (NR-013).
