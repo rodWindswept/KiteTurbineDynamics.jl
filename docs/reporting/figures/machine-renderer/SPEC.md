@@ -352,6 +352,23 @@ No check grades itself. No number appears without its register row.
   prints no power value and no airborne mass value. The footer states
   the shaft frame.
 
+- **D9 (2026-10-14):** the hero draws the recorded final operating pose —
+  the built geometry with the captured wind-up — not the plain built state.
+  The ring stations and the per-segment twist read from the signed
+  pair-extract capture (the NR-021 and NR-022 basis, the final integration
+  step). The built decode (no ODE) supplies the section classes and the
+  rotor spec. Reason: the plain built state reads an untwisted shaft (probe
+  `scratch/fig_hero_state_probe.jl`: every ring azimuth state reads 0.000
+  deg), so the settled twisted form the founder asked for on 2026-10-14
+  comes from the capture. The capture stores magnitudes only; the drawn
+  winding sense is the declared spin-sense convention, recorded in the
+  manifest. The hero carries the ground-station glyph and a register-bound
+  annotation block. The lift-chain overlay and the section markers stay
+  absent, declared. The emitted set follows the strip's D7 landing: svg,
+  pdf, png, manifest, checks, with the PDF date normalised. The clean
+  passes take -g: the orphan stream-length values were the one wobbling
+  byte class (2026-10-14).
+
 *Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R1
 review (Rod, 2026-10-08): prototype geometry corrected — ground ring smallest,
 machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the
@@ -378,4 +395,4 @@ annotation uses `main_rotor_swept_area` (`src/ring_forces.jl`; the axial
 projection of absolute radii) and carries its own register row before it
 prints. The prototype updates in this directory.
 
-R2 to ⟨append⟩. R3 to ⟨append⟩.*
+R2 opened 2026-10-14: the hero capture set renders at `c438398` (generator `599d0fb` plus the -g normalise fix); the in-script checks pass, and the seats' counter-read and the visual pass follow. R3 to ⟨append⟩.*

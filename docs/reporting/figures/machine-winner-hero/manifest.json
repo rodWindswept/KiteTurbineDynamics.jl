@@ -1,0 +1,141 @@
+{
+    "set": "machine-winner-hero",
+    "mode": "hero",
+    "slug": "machine-winner-hero",
+    "script_commit": "c438398",
+    "script": {
+        "path": "docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl",
+        "sha256": "5f41287f67cb35f2244b000dbbb967ccf841dfa1de865178c8255557d18370a3"
+    },
+    "toolchain": {
+        "julia": "1.12.5",
+        "cairomakie": "0.15.11",
+        "mutool": "1.23.10",
+        "pdf_date_normalised_to": "1970-01-01T00:00:00+00:00"
+    },
+    "data_commit": "dd3cc6a",
+    "capture": {
+        "run_id": "pair-extract-2026-10-08-winner-ops",
+        "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
+        "sha256": "dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203"
+    },
+    "extracts": [
+        {
+            "purpose": "genome",
+            "path": "docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv",
+            "sha256": "f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad"
+        },
+        {
+            "purpose": "capture",
+            "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
+            "sha256": "dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203"
+        }
+    ],
+    "state": {
+        "pose": "recorded final operating step (capture)",
+        "row": "i3-g26-i9",
+        "gen": 26,
+        "stations_m": [
+            0,
+            2.3182841987165674,
+            4.636939712683201,
+            6.9559610374822345,
+            9.27534680414777,
+            18.600867750952748
+        ],
+        "twists_deg": [
+            33.94561934829036,
+            33.811870056223555,
+            33.67952027817454,
+            33.54707806507812,
+            22.821871326820364
+        ],
+        "winding": "declared spin-sense convention: azimuths accumulate the recorded |dalpha| from R1 upward (capture stores magnitudes only)",
+        "elevation_deg": 28.64,
+        "hub_altitude_drawn_m": 8.915483132210829,
+        "note": "the plain built state reads an untwisted shaft; the settled form comes from the capture (SPEC delta D9)"
+    },
+    "registers": [
+        "NR-011",
+        "NR-017",
+        "NR-021",
+        "NR-022",
+        "NR-043"
+    ],
+    "knobs": {
+        "power_W": 5000,
+        "v_rated": 11,
+        "tether_length": 18.8,
+        "k_mppt": 2.24,
+        "blocking_factor": 0.9472682371859096,
+        "cylinder_cone": true,
+        "rotor_count_mode": true,
+        "power_split": 0.6,
+        "cone_slope_deg": 22,
+        "rotor_spacing_frac": 0.8,
+        "min_wall_m": 0.002,
+        "t_over_D": 0.055
+    },
+    "scale": {
+        "m_per_px": 30,
+        "window": {
+            "shared_y": [
+                -2,
+                20
+            ],
+            "side_x": [
+                -6.2,
+                9.4
+            ],
+            "plan_x": [
+                -6.2,
+                6.2
+            ],
+            "downwind_x": [
+                -6.2,
+                6.2
+            ]
+        },
+        "panels_px": {
+            "side": [
+                468,
+                660
+            ],
+            "plan": [
+                372,
+                660
+            ],
+            "downwind": [
+                372,
+                660
+            ]
+        },
+        "scale_bar_m": 5,
+        "tolerance_px": 0.05
+    },
+    "rotor": {
+        "r_in_m": 4.130158464357515,
+        "r_out_m": 5.629560432565964,
+        "bank_deg": 7.088131460323565,
+        "blades": 3,
+        "din_m": 0.05593349503933193,
+        "dout_m": 0.13051148842510785
+    },
+    "counts": {
+        "rings": 6,
+        "gaps": 5,
+        "lines_per_gap": 3,
+        "ropes": 15,
+        "rotor": 1,
+        "blades": 3,
+        "annulus": 1,
+        "glyph": 1
+    },
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl --script-commit c438398",
+    "outputs": {
+        "machine-winner-hero.pdf": "a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e",
+        "checks.log": "52fe83a8c54ec93f5372b2fb15c8c77af90b44c3f1e6eb5a8732efffebf59924",
+        "machine-winner-hero.png": "4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5",
+        "machine-winner-hero.svg": "819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171"
+    }
+}

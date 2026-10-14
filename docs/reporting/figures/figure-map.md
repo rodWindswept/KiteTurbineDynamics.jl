@@ -39,7 +39,7 @@ full roster around them.
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling landed (script `671ab96`; the notes out, the label re-space, the binding-limit title). The re-census at `c30b2ca` closes F-VALUE on the fix commit (`ef36c6c`) with zero defects. Next: the visual pass by Rod |
 | 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
 | 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE on the re-rendered SVG (`74cfef9`). Then sign-off |
-| 10 | 9 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | The capture script (plan, side, downwind). Then F-REPRO |
+| 10 | 9 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | R2 | The winner genome. Makie captures of the recorded final operating pose (the pair-extract capture) | Seated in the draft (§3.3). Three-way F-REPRO green (`c438398`). Next: F-COUNT/F-PARSE and the seats' counter-read, then the visual pass by Rod |
 | 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
 | 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
@@ -373,3 +373,14 @@ three slots).
   zero defects (85 checks). The re-pin, the levers rows and the review
   copy all verify on the fixed bytes. The map cells and both kit rounds
   lines take the closure. Next at both: the visual pass by Rod.
+
+- **v32 (2026-10-14):** row 10 lands its capture set. The hero draws the
+  recorded final operating pose: the ring stations and the per-segment
+  twist read from the signed pair-extract capture, and the built decode
+  supplies the section classes and the rotor spec. No ODE. The drawn
+  state records as SPEC delta D9, because the plain built state reads an
+  untwisted shaft. Script `c438398`; the outputs and the records ride
+  this commit. The three-way F-REPRO walk caught one wobbling orphan
+  byte in the PDF chain, and the mutool passes now take -g. All five
+  outputs read byte-identical across three fresh runs. The seat: draft
+  §3.3, ahead of the plates. The row moves to R2.

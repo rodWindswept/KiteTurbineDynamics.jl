@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the item-5 counter-read close (2026-10-14, tip `d0679d3`).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. The refresh rides the machine-hero landing (2026-10-14).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -20,10 +20,22 @@ re-walk.
 ## Open items
 
 1. **The visual pass by Rod.** Rows 4 to 7 (the eval-timeline, k-basis,
-   ring-utilisation and twist-limit plates) stand at F-VALUE pass or closure.
-   The visual pass is the standing final step. The folds follow.
+   ring-utilisation and twist-limit plates) and the machine hero (row 10)
+   stand at F-VALUE pass or closure. The hero seat reads §3.3, ahead of the
+   plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The machine winner hero lands (2026-10-14). The plan, side and downwind
+  capture set draws the winner at its recorded operating pose (SPEC delta D9).
+  Three-way F-REPRO green at `c438398`. The mutool passes now take -g, after
+  the F-REPRO walk caught a wobbling orphan byte in the PDF chain.
+
+- The hero kit: `docs/reporting/figures/machine-winner-hero/`. The fold
+  lands at §3.3 with the appendix row. Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-machine-winner-hero.md`.
+  Evidence `scratch/fig_hero_state_probe.jl`, `scratch/fig_cairo_date_probe.jl`
+  and the kit `checks.log`.
 
 - The ring lead flag closes as held (2026-10-14): the lead keeps the capture
   form 15.033 (NR-021).
@@ -128,4 +140,4 @@ re-walk.
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
 **Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** hold for
-the visual pass by Rod on rows 4 to 7, then the folds.
+the visual pass by Rod on rows 4 to 7 and the hero, then the folds.

@@ -225,6 +225,13 @@ The margin block takes its next-action line, and the evolution story takes its l
 The implications take their condition and limit, and the discussion re-reads with the shape standing.
 No value moves.
 
+v0.41 fold pass by @figures-images-diagrams (2026-10-14).
+This pass seats the machine winner hero in the draft at §3.3, ahead of the plates (figure-map row 10).
+The hero draws the recorded final operating pose (SPEC delta D9).
+The exhibit joins the figure-provenance appendix with its output hashes.
+The lift-chain overlay and the R2 to R5 number set stay open for the visual pass.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
