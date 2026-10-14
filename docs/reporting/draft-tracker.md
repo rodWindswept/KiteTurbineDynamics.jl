@@ -219,6 +219,12 @@ The two retirements, the sweep table and one paragraph per side land, with the s
 The values read NR-047 and NR-048, and the tie-in rides NR-046.
 No value moves.
 
+v0.40 pass by @author (2026-10-14).
+This pass folds the decision shape (PL13) across the later sections.
+The margin block takes its next-action line, and the evolution story takes its limit and next-read lines.
+The implications take their condition and limit, and the discussion re-reads with the shape standing.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
