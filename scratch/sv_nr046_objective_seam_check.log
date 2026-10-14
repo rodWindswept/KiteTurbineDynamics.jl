@@ -1,0 +1,69 @@
+sv_nr046_objective_seam_check — read at HEAD 7b8c101 | origin 7b8c101
+-- source pins --
+OK    objective_v12.jl:114
+OK    objective_v12.jl:115
+OK    objective_v12.jl:116
+OK    objective_v12.jl:149
+OK    objective_v12.jl:150
+OK    objective_v12.jl:153
+OK    objective_v12.jl:154
+OK    objective_v12.jl:161
+OK    objective_v12.jl:165
+OK    objective_v12.jl:167
+OK    objective_evaluator.jl:90
+OK    objective_evaluator.jl:91
+OK    objective_evaluator.jl:1148
+OK    objective_evaluator.jl:1161
+OK    objective_evaluator.jl:1192
+OK    objective_evaluator.jl:1193
+OK    objective_evaluator.jl:1194
+OK    objective_evaluator.jl:1200
+OK    objective_evaluator.jl:1201
+OK    objective_evaluator.jl:1202
+OK    run_v13_5kw_masslift.jl:76
+OK    run_v13_5kw_masslift.jl:153
+OK    run_v13_5kw_masslift.jl:155
+OK    run_v13_5kw_masslift.jl:156
+OK    run_v13_5kw_masslift.jl:256
+OK    run_v13_5kw_masslift.jl:257
+OK    run_v13_5kw_masslift.jl:266
+OK    run_v13_5kw_masslift.jl:272
+OK    run_v13_5kw_masslift.jl:281
+OK    run_v13_5kw_masslift.jl:282
+-- blob identity --
+OK    blob identity launch == HEAD == origin: src/objective_v12.jl
+OK    blob identity launch == HEAD == origin: src/objective_evaluator.jl
+OK    blob identity launch == HEAD == origin: scripts/run_v13_5kw_masslift.jl
+OK    a76c5e9 is an ancestor of HEAD
+-- winner closure on the source forms --
+OK    reeval fitness == convergence gen-26 == NR-005
+OK    seam arg P_score == P_end field (tail-5 basis)
+OK    seam arg FoS_min == field
+OK    seam arg mass == NR-018 == mass log print
+OK    twist_ratio reeval == telemetry column
+OK    P_range field matches
+over-power   =  5.0 * (P_score - 5.0)^2       = 0.49333696413175443   (P_score 5.314113662272673, excess 0.314113662272673)
+utilisation  = 20.0 * (2.5 / FoS_min)^2       = 0.5576509889014662
+twist        =  1.0 * (r / (1 - r))^2         = 0.6140850570787014   (r 0.4393474253185575)
+stationarity = 10.0 * max(0, swing - 0.20)    = 0.0   (swing 0.005398486550565352)
+closure      = 27.3635412663488   recorded = 27.3635412663488   diff = 0.0
+OK    closure diff == 0.0
+OK    Phase 0 audit string equals: mass
+OK    Phase 0 audit string equals: overpower
+OK    Phase 0 audit string equals: utilisation
+OK    Phase 0 audit string equals: twist
+term sum     = 1.665073010111922
+direct gap   = 1.6650730101119215
+seam (sum - gap) = 4.440892098500626e-16
+OK    term sum equals 1.665073010111922
+OK    direct gap equals 1.6650730101119215 (the NR-039 total)
+OK    term sum minus direct gap sits inside 1e-15 (the recorded 4.4e-16 seam)
+OK    register NR-039 carries the three penalty strings
+-- reject census (three telemetry files) --
+ok rows: 508 | non-ok rows: 422 | stamp '1.0e9': 422 | least ok score: 27.364
+status mix: {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}
+OK    row totals read 930
+OK    status mix reads 508 / 301 / 110 / 11 (NR-002)
+OK    every non-ok row carries the 1.0e9 stamp; no ok row does
+OK    least ok score is the island-3 winner 27.364
+SV_NR046_DONE  (source pinned; blob identity launch == HEAD == origin; closure exact; reject census clean)

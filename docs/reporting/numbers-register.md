@@ -1376,3 +1376,51 @@ Reading rules:
 - Generation 0 is the initial population (the seed batch). Generations 1 to 30 are the evolution steps.
 
 - The convergence files carry 30 read rows, iterations 1 to 30. The telemetry carries 31 generation indices, 0 to 30. The NR-006 precision note reconciles the two forms.
+
+## Source row: NR-046, the objective seam forms, the weights, the thresholds and the reject placement (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The feedback round 4 asks how the campaign builds the score and how rejected designs sit against it. This block reads the source and signs the forms. The three files read byte-identical at launch `a76c5e9`, at HEAD `7b8c101` and at origin. Their blobs read `da9c5554` (`objective_v12.jl`), `52669d40` (`objective_evaluator.jl`) and `bf5c5e36` (`run_v13_5kw_masslift.jl`). The line numbers below read at HEAD.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)` with `swing = P_range / P_mean`. `P_score` reads the tail-5 power (P_end). Winner closure: 25.69846825623688 + 0.49333696413175443 + 0.5576509889014662 + 0.6140850570787014 = 27.3635412663488 (NR-039). Rejects carry no score: the evaluator returns `Inf` and the runner stamps the search cost `1e9` on every non-ok design (422 of 930 rows) | kg-equivalent: 5.0 per kW², 1.0 per twist-ratio², 20.0 per FoS-ratio², 10.0 per swing fraction. Mass reads kg. The `1e9` stamp is a search cost, not an objective unit | Source read at `7b8c101`, the tip at read time. Byte-stable from launch `a76c5e9`. Sites: `src/objective_v12.jl:114-116` (weights), `:145-168` (seam body). `src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`. `scripts/run_v13_5kw_masslift.jl:153-156, 256-257, 266, 272, 281-283`. Census over island_*/telemetry.csv. Checker: `scratch/sv_nr046_objective_seam_check.py` and its log | signed (science-validator, 2026-10-14) |
+
+Sign-off basis:
+
+- Source pins. Thirty line-numbered pins assert across the three files. The weights read 5.0 / 1.0 / 20.0 at `objective_v12.jl:114-116`. The gates and the forms read at `:149-167`. The stationarity constants read at `objective_evaluator.jl:90-91`. The window chain reads at `:1148-1203`. The campaign config and the reject stamp read at `run_v13_5kw_masslift.jl:153-283`.
+
+- Blob identity. The three blobs read identical at launch `a76c5e9`, at HEAD and at origin. The launch sits in the tip ancestry.
+
+- Closure. The forms recompute the recorded terms at full precision. The diff reads 0.0 against `island_3/convergence.csv` gen 26 and `scratch/sv_p0_winner_reeval.txt`. Every term equals its Phase 0 audit string.
+
+- Term sum. The term sum reads 1.665073010111922. The direct gap reads 1.6650730101119215. The seam gap reads 4.440892098500626e-16, the NR-039 record.
+
+- Reject census. All 930 telemetry rows read: 508 ok with finite scores, 422 stamped `1.0e9`. The mix reads 301 reject / 110 clearance_reject / 11 reject_twist (NR-002). No ok row carries the stamp. No non-ok row carries a score.
+
+- Twist ratio basis. The ratio reads `abs(dalpha) / dastar` per segment, worst over the window. The limit reads `dastar = 2 * asin(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)))` with `r_seg = max(r_i, r_i+1)`. Source `twist_collapse_check` at `objective_evaluator.jl:443-477`. The cap and the margin floor read at `:1201-1202`.
+
+Reading rules:
+
+- One kg of airborne mass adds 1.0 to the score. The charges read kg-equivalent too (display note, `43fb0bc`).
+
+- The over-power charge reads the score power. Under this campaign that reads the tail-5 (end) power (`power_stat = :tail5`, `objective_evaluator.jl:1148`).
+
+- Rejected designs hold no objective score. The search ranks no reject above an ok design. The search cannot trade power or safety against mass.
+
+- The winner reads 27.364 kg-equivalent (NR-005) = 25.698 kg (NR-018) + 1.665 kg-equivalent (NR-039).
+
+Boundaries that travel with this row:
+
+1. One campaign config: floor and ceiling 5.0 kW, `fos_hard` 2.5, tail-5 power, k 2.24, 18.8 m. A config move changes the thresholds and needs a new read.
+
+2. The `1e9` stamp is a runner fact, not a physics fact. It is not an objective unit.
+
+3. The stationarity add-on joins every objective at the evaluator level. It reads zero inside the 20 per cent swing gate. The winner reads 0.54 per cent.
+
+4. The twist term carries two sites with one form: the seam keyword (default 0.0, for tests) and the evaluator add-on (live). The recorded winner charge comes from the live add-on.
+
+5. The seam argument reads `P_mean` by name. Under `power_stat = :tail5` it carries `P_end`. Quote the tail-5 basis with the value.
+
+Counter-read requested from the aero seat.
