@@ -26,9 +26,13 @@
 #
 # F-REPRO: PNG and SVG are byte-stable as written. Cairo stamps the PDF with a
 # wall-clock CreationDate, so the pipeline normalises it:
-#   cairo -> `mutool clean -d` -> byte-exact same-length date replace ->
-#   `mutool clean -z`. Toolchain: julia 1.12.5, CairoMakie 0.15.11,
-#   mutool 1.23.10.
+#   cairo -> `mutool clean -dg` -> byte-exact same-length date replace ->
+#   `mutool clean -zg`. The -g pass garbage-collects cairo's unreferenced
+#   stream-length objects (cairo writes `/Length N 0 R`; the clean inlines the
+#   lengths and orphans the values, and one such value wobbled by one byte
+#   between fresh runs — three-way F-REPRO probe, 2026-10-14). With the
+#   orphans collected the PDF is byte-stable. Toolchain: julia 1.12.5,
+#   CairoMakie 0.15.11, mutool 1.23.10.
 
 using KiteTurbineDynamics, Printf, LinearAlgebra
 const KTD = KiteTurbineDynamics
@@ -631,9 +635,9 @@ function main()
     clean_pdf = joinpath(outdir, ".$SLUG.tmp.clean.pdf")
     norm_pdf = joinpath(outdir, ".$SLUG.tmp.norm.pdf")
     save(tmp_pdf, fig)
-    run(pipeline(`$mutool clean -d $tmp_pdf $clean_pdf`; stdout=devnull))
+    run(pipeline(`$mutool clean -dg $tmp_pdf $clean_pdf`; stdout=devnull))
     nrep = normalise_pdf_date!(clean_pdf)
-    run(pipeline(`$mutool clean -z $clean_pdf $norm_pdf`; stdout=devnull))
+    run(pipeline(`$mutool clean -zg $clean_pdf $norm_pdf`; stdout=devnull))
     mv(norm_pdf, pdf_path; force=true)
     rm(tmp_pdf; force=true); rm(clean_pdf; force=true)
 
@@ -675,7 +679,7 @@ function main()
         push!(loglines, @sprintf("panel %s: x %.9f px/m · y %.9f px/m · delta %.4f ppm",
             nm, xpxpm, ypxpm, (xpxpm / ypxpm - 1.0) * 1e6))
     end
-    push!(loglines, "pdf normalisation: clean -d ok · CreationDate replacements $nrep · clean -z ok")
+    push!(loglines, "pdf normalisation: clean -dg ok · CreationDate replacements $nrep · clean -zg ok")
     push!(loglines, "outputs sha256:")
     for f in ("$SLUG.png", "$SLUG.svg", "$SLUG.pdf")
         push!(loglines, "  $f  $(bytes2hex(sha256(read(joinpath(outdir, f)))))")
