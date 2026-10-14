@@ -1,0 +1,782 @@
+# hermes_fb3_reads.log — read-only recon for the feedback round 3 routing pass (2026-10-14)
+# git state, draft/tracker/register greps, fig-kit greps, gate scores
+
+=== date ===
+2026-10-14 10:18:43 BST
+=== branch ===
+bank-derate-cos2p65
+=== status ===
+## bank-derate-cos2p65...origin/bank-derate-cos2p65
+?? docs/plans/2026-10-07-state-fed-regen-cap-proposal.md
+?? docs/reporting/feedback-on-report.md
+?? docs/reporting/feedback/Feedback-message-1791925681590.md
+?? docs/reporting/feedback/feedback-on-report.md
+?? docs/reporting/feedback/feedback-on-report2.md
+?? "docs/reporting/figures/SUggested generation methods.md"
+?? scratch/au_2p1_candidate.md
+?? scratch/au_2p1_fold_build.py
+?? scratch/au_2p1_fold_check.py
+?? scratch/au_docx_v027_base.md
+?? scratch/au_docx_v027_candidate.md
+?? scratch/au_fb2_v025_order.py
+?? scratch/au_fb2_v026_citation_base.txt
+?? scratch/au_fb2_v026_head_draft.md
+?? scratch/au_fb2_v026_probe.txt
+?? scratch/au_fb2_v026_term.py
+?? scratch/au_founder_calls_tracker_base.md
+?? scratch/au_founder_calls_tracker_candidate.md
+?? scratch/au_language_audit_v021.md
+?? scratch/au_v012_candidate_A_sentence_lines.md
+?? scratch/au_v012_candidate_B_packed.md
+?? scratch/au_v012_chosen_variant.txt
+?? scratch/au_v012_draft_HEAD.md
+?? scratch/au_v012_draft_candidate.md
+?? scratch/au_v012_oldforms_check.py
+?? scratch/au_v012_prep.py
+?? scratch/au_v016u2_p12-12.png
+?? scratch/au_v016u2_p13-13.png
+?? scratch/au_v016u2_pagediff.py
+?? scratch/au_v016u2_pdf_prev.txt
+?? scratch/au_v016u2_pre_report.md
+?? scratch/au_v016u_base_report.md
+?? scratch/au_v016u_bracketcheck.py
+?? scratch/au_v016u_flowread_carry.md
+?? scratch/au_v016u_glyphscan.py
+?? scratch/au_v016u_p10-10.png
+?? scratch/au_v016u_p13-13.png
+?? scratch/au_v016u_p3-03.png
+?? scratch/au_v016u_p6-06.png
+=== fetch ===
+=== ahead behind ===
+0	0
+=== log top ===
+76655cb docs(reporting): draft v0.31 — the AU3 wording set folds (ungated part): the polygon, blade-scale, bank, era, seed and wind forms; the seed policy is runner-checked; token diff declared and asserted; tracker v0.31 entry; STE rc=0 (author seat)
+ecdf369 docs(plans): feedback round 3 (the polish round) — the author seat plan: the Results split, the completable sections, the consistency sweep and the bracket moves; part map and proposed order (author seat)
+08e1d95 fig(reporting): NR-044 folds — the PCA projection summary closes on both levers kits, the caption drafts and the figure map (rows 20-21 gates, delta v25); no plate byte moves; receipt (figures seat)
+2ad023c docs(reporting): NR-044 signs the PCA projection summary (shares 22.434667 / 17.263044 / 39.697710; loadings; bin rule; the pair total per the reading ask) and the δcrit close-out lands (record / plate / code; exact-bit reproduction; nothing moves); register 1.00 → 1.01/100w, additions only; STE rc=0 (science-validator)
+4ce4b91 chore(scratch): the sweep 19 final-check log takes the receipt-gate line (sw_ prefix)
+7b861f5 docs(reporting): room response — sweep 19 lands (science-writer); STE rc=0
+c629073 docs(reporting): sweep 19 — the v0.30 display folds verify (one draft mover): five FoS sites and the chain take their ruled forms; every token accounts, raw 12/12; the register moved append-only (57/0); offender delta zero; STE rc=0 (science-writer)
+2dbb471 chore(scratch): land the sweep 19 evidence set (sw_ prefix)
+a90122b docs(reporting): draft v0.30 — the display rulings fold: the minimum factor of safety reads 15.0 at all five report sites, the section 3.3 lift chain reads 20.698 and 304.6; tracker v0.30 entry; token diff declared and asserted; STE rc=0 (author seat)
+e501c03 fig(reporting): the PCA levers first cut lands — pca-landscape and pca-atlas outputs at 3d36c7a (two runs byte-identical across all ten outputs), kit notes, caption drafts and the projection row want; figure-map rows 20-22 and delta v24; receipt (figures seat)
+3d36c7a fig(reporting): the PCA levers generators land — pca-landscape (the mass landscape with reading insets and three island journeys) and pca-atlas (one panel per gene, ten slots) over the v13 5 kW screen (930 designs, islands 1-3, data commit dd3cc6a)
+d7f8871 docs(reporting): display rulings land — the FoS report sites fold to 15.0 and the section 3.3 lift chain takes report forms (20.698 / 304.6); the F1 v4 census read holds; register 1.02 → 1.00/100w, additions only; STE rc=0 (science-validator)
+=== feedback file track ===
+--- status:
+?? docs/reporting/feedback/Feedback-message-1791925681590.md
+?? docs/reporting/feedback/feedback-on-report.md
+?? docs/reporting/feedback/feedback-on-report2.md
+=== room-responses top ===
+author-2026-10-13-v031-au3-wording-set.md
+figures-images-diagrams-2026-10-13-nr044-closure.md
+science-validator-2026-10-13-nr044-signed-and-dcrit-closeout.md
+science-writer-2026-10-13-sweep-19.md
+author-2026-10-13-v030-display-folds.md
+figures-images-diagrams-2026-10-13-pca-levers-first-cut.md
+science-validator-2026-10-13-display-rulings-and-f1-v4-read.md
+science-writer-2026-10-13-sweep-18.md
+author-2026-10-13-founder-calls-recorded.md
+science-writer-2026-10-13-sweep-17.md
+author-2026-10-13-v029-au1-front-summary.md
+figures-images-diagrams-2026-10-13-v4-blade-span-recut.md
+=== plans top ===
+2026-10-13-feedback3-author-plan.md
+2026-10-13-feedback2-author-plan.md
+2026-10-13-feedback2-science-validator-plan.md
+2026-10-13-feedback2-science-writer-plan.md
+2026-10-13-feedback2-aero-validator-plan.md
+2026-10-07-state-fed-regen-cap-proposal.md
+2026-10-08-genome-landscape-analysis.md
+2026-09-29-work-division.md
+=== doc files search ===
+docs/plans/fix_xvector_rerun_sweeps.md
+docs/agents/exploit-register.md
+docs/agents/issue-tracker.md
+docs/reports/field-test-proposal-draft.md
+docs/reports/2026-09-08-docs-vs-tests-register.md
+docs/validation/2026-04-19-report-validation.md
+docs/outreach/report-v2/structure.md
+docs/outreach/strathclyde_followup_draft.md
+docs/validation/trpt-reference/11-blade-count-sweep.md
+docs/reporting/figures/system-anatomy/register-status.md
+docs/reporting/figures/system-anatomy/captions-draft.md
+docs/validation/trpt-reference/figures/precone-sweep-Cp-vs-bank.png
+docs/validation/trpt-reference/figures/blade-count-sweep-derate.png
+docs/validation/trpt-reference/11-blade-count-sweep.csv
+docs/validation/trpt-reference/10-precone-sweep.md
+docs/validation/trpt-reference/10-precone-sweep.csv
+docs/reporting/draft-tracker.md
+docs/reporting/numbers-register.md
+docs/reporting/draft-consistency-sweep.md
+docs/reporting/drafts/2026-10-08-report-first-draft.md
+docs/reporting/figures/machine-evolution-strip/register-status.md
+docs/reporting/figures/pca-atlas/register-status.md
+docs/reporting/figures/pca-atlas/captions-draft.md
+docs/reporting/figures/ring-utilisation/captions-draft.md
+docs/reporting/figures/ring-utilisation/register-status.md
+docs/reporting/figures/twist-limit/captions-draft.md
+docs/reporting/figures/twist-limit/register-status.md
+docs/reporting/figures/eval-timeline/register-status.md
+docs/reporting/figures/eval-timeline/captions-draft.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-19.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-18.md
+docs/reporting/room-responses/science-writer-2026-10-12-sweep-13-window-flip.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-15-gloss-reads.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-16-era-map.md
+docs/reporting/figures/pca-landscape/register-status.md
+docs/reporting/figures/pca-landscape/captions-draft.md
+docs/reporting/figures/k-basis/captions-draft.md
+docs/reporting/figures/k-basis/register-status.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-14-glossary-11.md
+docs/reporting/room-responses/author-2026-10-12-v024-window-sweep.md
+=== figures dir ===
+2026-10-12-nine-figure-proposals.md
+elements
+eval-timeline
+eval-timeline-extract
+figure-map.md
+k-basis
+machine-evolution-strip
+machine-renderer
+pair-extract
+pca-atlas
+pca-landscape
+ring-utilisation
+SUggested generation methods.md
+system-anatomy
+twist-limit
+window-trace-extract
+=== root ls ===
+AGENTS.md
+archive
+CHANGELOG.md
+charts
+check-provenance.py
+check-tdd-evidence.py
+CITATION.cff
+CLAUDE.md
+CONTEXT.md
+CONTRIBUTING.md
+DECISIONS.md
+docs
+figures
+handovers
+LICENSE
+Manifest.toml
+notebooks
+PROJECT_ROOM.md
+Project.toml
+__pycache__
+README.md
+references
+REPRODUCIBILITY.md
+reviews
+scratch
+scripts
+src
+ste-lint.py
+test
+TODO_ADVANCED_VISUALS.md
+TRPT_Results
+v6_campaign_network_50kw_20260615_1219.log.gz
+=== ste exempt / hooks ===
+# ste-lint exemptions — files the pre-commit STE gate skips.
+# Policy (2026-10-08, hermes ruling, room-delegated): historical ledgers are
+# amend-only records (never rewrite). The STE gate covers new prose; these
+# files are exempt as a class. New entries in them must still be written
+# STE-clean.
+# Format: one path per line, relative to repo root, exact match. '#' comments.
+docs/agents/instrument-trust-log.md
+docs/validation/physics-validation-ledger.md
+DECISIONS.md
+--- hooks:
+--- scripts:
+=== greps ===
+-- fail one gate:
+docs/reporting/drafts/2026-10-08-report-first-draft.md:68:- Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+docs/reporting/feedback/Feedback-message-1791925681590.md:438:Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+docs/reporting/feedback/Feedback-message-1791925681590.md:706:15. Replace “fail one gate” with “classified as failures.”
+-- 14.972:
+docs/reporting/feedback/2026-10-10-harris-review.md:83:The abstract-to-be and the conclusion quote FoS 14.972 (NR-009). The twist figure, already in the draft, shows smaller margins:
+docs/reporting/feedback/2026-10-10-harris-review.md:106:- **Definition of NR-009.** Say whether NR-009 is the minimum over the 40 s window and over all members. NR-009 is 14.972, while R6 at the final step (NR-021) is 15.033. That suggests NR-009 is a window minimum and NR-021 a final-step value. Say so.
+docs/reporting/feedback/feedback-on-report2.md:31:> - The campaign winner is a feasible 5 kW-class candidate: mean power 5.309 kW, airborne mass 25.698 kg, minimum modeled FoS 14.972 (NR-008, NR-018, NR-009).  
+docs/reporting/feedback/feedback-on-report2.md:51:| Structural margin | Minimum FoS 14.972; ring utilization below failure boundary | §3.3, §3.4 | NR-009, NR-021 |
+docs/reporting/feedback/feedback-on-report2.md:342:| Minimum factor of safety | 14.972 | NR-009 |
+docs/reporting/feedback/feedback-on-report2.md:369:| Structural FoS | FoS ≥ 2.5 | 14.972 minimum | Large margin; about 6× floor | NR-009, NR-015 |
+docs/reporting/feedback/feedback-on-report2.md:385:> Its factor of safety reads 14.972 (NR-009). That value is the window minimum. The capture hub ring reads 15.033 at the final step (NR-021).
+docs/reporting/feedback/feedback-on-report2.md:387:This is good, but the reader may wonder: if the ring FoS values in the figure are 15.033 or higher, where does 14.972 come from?
+docs/reporting/feedback/feedback-on-report2.md:391:> The minimum window FoS of 14.972 (NR-009) is the global minimum over the checked structural elements and time steps used by the gate. The ring-utilization plate reports ring-specific beam-column FoS values at the final capture step; the hub ring reads 15.033 (NR-021). The slight difference reflects the distinction between the global gated minimum and the final-step ring readout.
+docs/reporting/feedback/feedback-on-report2.md:1128:> The Kite Turbine Dynamics project has completed a 930-design simulation screen of a 5 kW-class ground-generation rotary kite turbine using a tensile rotary power transmission. The campaign found a feasible candidate with mean power 5.309 kW, airborne mass 25.698 kg, minimum modeled structural FoS 14.972, and least segment torque margin 2.03 at S1. All checked TRPT rings and twist segments remain below their failure boundaries at the final operating point under the current model.
+docs/reporting/feedback/Feedback-message-1791925681590.md:125:R6. The window-minimum factor of safety is 14.972 (NR-009). At the final step,
+docs/reporting/feedback/Feedback-message-1791925681590.md:196:point. The window-minimum FoS is 14.972 (NR-009), and the least segment torque
+docs/reporting/feedback/Feedback-message-1791925681590.md:325:safety is 14.972 (NR-008, NR-018, NR-009). All checked TRPT rings and twist
+docs/reporting/feedback/Feedback-message-1791925681590.md:455:- `14.972`
+docs/reporting/feedback/Feedback-message-1791925681590.md:462:The window-minimum factor of safety is 14.972, quoted as 15.0 where rounded
+docs/reporting/feedback/feedback-on-report.md:511:| Minimum FoS | 14.972 | – | NR-009 |
+docs/reporting/feedback/feedback-on-report.md:874:   > The best feasible candidate produced 5.309 kW mean power with a minimum structural FoS of 14.972 under the modeled assumptions.
+docs/reporting/feedback/feedback-on-report.md:1001:| Winner FoS 14.972 vs figure hub FoS 15.033 | Different values for similar quantity | Explain whether one is global minimum and the other ring-specific |
+docs/reporting/feedback/feedback-on-report.md:1087:| Minimum FoS | 14.972 | – | NR-009 |
+docs/reporting/feedback/feedback-on-report.md:1103:| Minimum FoS | 2.5 | 14.972 | pass |
+-- kilograms:
+docs/reporting/feedback/feedback-on-report2.md:69:> Island 3 reaches 27.364 kilograms at generation 26 (NR-005), the search objective. It reads the airborne mass 25.698 kilograms (NR-018) plus 1.665 kilograms of objective penalties (NR-039).
+docs/reporting/feedback/feedback-on-report2.md:71:This is much better, but the phrase “kilograms” is still dangerous. The 27.364 value is not purely physical mass; it is a **kg-equivalent objective score**.
+docs/reporting/feedback/feedback-on-report2.md:320:> Island 1 reaches 30.578 kilograms at generation 30 (NR-003). Island 2 reaches 30.637 kilograms at generation 30 (NR-004). Island 3 reaches 27.364 kilograms at generation 26 (NR-005), the search objective.
+docs/reporting/feedback/feedback-on-report2.md:960:> All three islands start from one seed. The seed scores 36.109 kilograms (NR-006).
+docs/reporting/feedback/Feedback-message-1791925681590.md:495:- Use **kg-equivalent** when referring to the objective, not kilograms, because penalties are included.
+docs/reporting/feedback/Feedback-message-1791925681590.md:500:The number under each machine is its search objective, in kilograms.
+docs/reporting/feedback/Feedback-message-1791925681590.md:707:16. Use **kg-equivalent** for objective values, not kilograms.
+docs/reporting/feedback/feedback-on-report.md:460:> Island 3 reaches 27.364 kilograms at generation 26 (NR-005).
+docs/reporting/feedback/feedback-on-report.md:464:> Its airborne mass reads 25.698 kilograms (NR-018).
+docs/reporting/figures/machine-evolution-strip/captions.md:24:number under each machine is its search objective, in kilograms. A
+docs/reporting/figures/machine-evolution-strip/captions.md:37:The value under each machine is the search objective in kilograms.
+docs/reporting/numbers-register.md:837:- The draft may read: Island 3 reaches 27.364 kilograms at generation 26
+docs/reporting/numbers-register.md:839:  kilograms (NR-018) plus 1.665 kilograms of objective penalties
+docs/reporting/numbers-register.md:1294:  sentence above the chain reads 20.698 kilograms.
+docs/reporting/draft-tracker.md:52:kilograms, vertical load 304.58 newtons) and the window-mean speed
+docs/reporting/feedback-on-report.md:391:Island 3 reaches 27.364 kilograms at generation 26 (NR-005).
+docs/reporting/feedback-on-report.md:395:Its airborne mass reads 25.698 kilograms (NR-018).
+docs/reporting/figures/pca-landscape/SPEC.md:62:- Colour is the cell mean of the search objective in kilograms. The
+docs/reporting/figures/pca-landscape/captions-draft.md:18:objective in kilograms. Bright reads lower. Three lines trace the
+docs/reporting/drafts/2026-10-08-report-first-draft.md:71:  Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+-- Track D:
+docs/plans/2026-10-13-feedback2-science-writer-plan.md:193:- Check: grep the reporting tree for each era name before the fold. A name with no glossary row goes to Track D.
+docs/plans/2026-10-13-feedback2-author-plan.md:104:- Part 11.3: the era map placement call sits here. Proposed: beside the section 3.3 era note. The era names take the register header forms. A name with no glossary row routes to Track D.
+docs/plans/2026-10-13-feedback3-author-plan.md:61:The starter glossary overlaps Track D. The term forms are the science-writer and validator gate. Section 6's pending note updates when Track D ratifies, and the fold is mine.
+docs/plans/2026-10-13-feedback3-author-plan.md:107:5. PL6, PL8, PL11 and PL12: with their AU7, AU4 and Track D partners.
+docs/reporting/2026-10-08-reporting-framework.md:227:| Nomenclature | glossary (Track D) |
+docs/reporting/drafts/2026-10-08-report-first-draft.md:665:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+docs/reporting/draft-tracker.md:118:The Track D display-form flip rides the author pass.
+docs/reporting/draft-tracker.md:217:Gate: Track D display forms.]
+docs/reporting/draft-tracker.md:220:is embed-ready. The Track D display forms still gate the label flip.
+docs/reporting/draft-tracker.md:222:§2.1: [Terms await the Track D glossary.]
+=== tip vs origin ===
+76655cb5fb356d98c40f479a850bfa21b3d949e0
+76655cb5fb356d98c40f479a850bfa21b3d949e0
+=== ls-files feedback dir ===
+docs/reporting/feedback/2026-10-10-harris-review.md
+-- harris tracked?
+docs/reporting/feedback/2026-10-10-harris-review.md
+=== log feedback dir ===
+66ec6a6 docs(reporting): external review record — Harris bot feedback on draft e0abbce; verbatim external text, STE-gate exempt like builder output (relay; room triages relevance)
+=== refs to feedback3 in tracked tree ===
+docs/plans/2026-10-13-feedback3-author-plan.md
+=== hooks path ===
+.githooks
+-- hooks:
+total 72
+drwxr-xr-x 2 rod rod 4096 Apr  1  2026 .
+drwxr-xr-x 9 rod rod 4096 Oct 14 10:18 ..
+-rwxr-xr-x 1 rod rod  478 Apr  1  2026 applypatch-msg.sample
+-rwxr-xr-x 1 rod rod  896 Apr  1  2026 commit-msg.sample
+-rwxr-xr-x 1 rod rod 4726 Apr  1  2026 fsmonitor-watchman.sample
+-rwxr-xr-x 1 rod rod  189 Apr  1  2026 post-update.sample
+-rwxr-xr-x 1 rod rod  424 Apr  1  2026 pre-applypatch.sample
+-rwxr-xr-x 1 rod rod 1649 Apr  1  2026 pre-commit.sample
+-rwxr-xr-x 1 rod rod  416 Apr  1  2026 pre-merge-commit.sample
+-rwxr-xr-x 1 rod rod 1492 Apr  1  2026 prepare-commit-msg.sample
+-rwxr-xr-x 1 rod rod 1374 Apr  1  2026 pre-push.sample
+-rwxr-xr-x 1 rod rod 4898 Apr  1  2026 pre-rebase.sample
+-rwxr-xr-x 1 rod rod  544 Apr  1  2026 pre-receive.sample
+-rwxr-xr-x 1 rod rod 2783 Apr  1  2026 push-to-checkout.sample
+-- pre-commit cfg:
+.githooks:
+pre-commit
+pre-push
+=== ste-lint head ===
+# ste-lint.py — ASD-STE100 linter with habit-hook fix-guidance.
+# Version: 0.2.0 | Date: 2026-08-20 | Author: Windswept & Interesting
+#
+# Fuses the cue (violation) with the routine (fix-guidance): each violation
+# prints a [HOOK:ste] line telling the agent HOW to fix it, not just that it
+# failed. --fail-above N exits 1 when any file breaches N violations/100w, so
+# a pre-commit hook can block on it.
+import re, sys, json, glob, os
+
+MARKETING = ["seamless","seamlessly","robust","powerful","cutting-edge","effortless","effortlessly",
+    "world-class","next-generation","revolutionary","blazing","lightning-fast","elegant","delightful",
+    "turnkey","best-in-class","state-of-the-art","game-changing","first-class","battle-tested",
+    "enterprise-grade","supercharge","unlock","unleash","empower","empowers"]
+BANNED = ["begin","begins","commence","commences","initiate","initiates","originate",
+    "utilize","utilizes","utilizing","leverage","leverages","leveraging","facilitate","facilitates",
+    "ensure","ensures","ensuring","prior to","subsequent to","obtain","obtains","acquire","acquires",
+    "demonstrate","demonstrates","additionally","furthermore","moreover","comprehensive","comprehensively",
+    "utilization","aforementioned","henceforth","therein","whilst","amongst","numerous","myriad","plethora",
+    "in order to","a variety of","in the event that","due to the fact that","it is important to note"]
+PHRASAL = ["spin up","spin down","reach out","dive into","dives into","diving into","kick off","kicks off",
+    "roll out","rolls out","tear down","ramp up","circle back","drill down","spun up","reaching out"]
+MODAL_HEDGE = ["it is important to note","it should be noted","it is worth noting","please note that",
+    "as mentioned","as noted above"]
+BE = r"(?:am|is|are|was|were|be|been|being)"
+PP_IRREG = r"(?:done|made|sent|read|built|kept|held|set|put|run|written|shown|given|taken|found|got|gotten|seen|known|thrown|drawn)"
+
+GUIDANCE = {
+    "long_sentence(>20w)": "split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)",
+    "semicolon": "replace ';' with a period — write two sentences. (ste-writing)",
+    "contraction": "expand — \"don't\" -> \"do not\". (ste-writing)",
+    "passive_voice": "active voice — \"<actor> <verb> <object>\", not \"<object> is <verb>ed\". (ste-writing)",
+    "ing_main_verb": "use a simple tense, not \"be + -ing\" as the main verb. (ste-writing)",
+    "nominalization": "use the verb — \"analyze\", not \"perform an analysis\". (ste-writing)",
+    "phrasal_verb": "one plain verb — \"start\", not \"spin up\"; \"examine\", not \"dive into\". (ste-writing)",
+    "banned_word": "short common word — start/use/help/make sure/show. (ste-writing)",
+    "marketing_adjective": "drop it — \"works\", not \"seamless\"; \"fast\", not \"blazing\". (ste-writing)",
+    "modal_hedge": "state the finding directly — cut \"it is important to note\". (ste-writing)",
+    "long_paragraph(>6s)": "one topic per paragraph, max six sentences — split it. (ste-writing)",
+}
+EM_DASH_GUIDANCE = "no em dash — use a period or comma. (ste-writing)"
+
+def strip_code(t):
+    t = re.sub(r"```.*?```", " ", t, flags=re.S)
+    t = re.sub(r"`[^`]*`", " ", t)
+    return t
+
+def sentences(text):
+    out = []
+    for line in text.split("\n"):
+        s = line.strip()
+        if not s: continue
+        s = re.sub(r"^\s*#{1,6}\s*", "", s)
+        s = re.sub(r"^\s*(?:[-*+]|\d+[.)])\s+", "", s)
+        if not s: continue
+        parts = re.split(r"(?<=[.!?:])\s+(?=[A-Z0-9\"'\-])", s)
+        for p in parts:
+            p = p.strip()
+            if p: out.append(p)
+    return out
+
+def wc(s):
+    return len([w for w in re.findall(r"[A-Za-z0-9][A-Za-z0-9'\-/]*", s)])
+
+def count_ci(text, phrases):
+    n = 0; hits = []
+    low = text.lower()
+    for ph in phrases:
+        for m in re.finditer(r"(?<![a-z])" + re.escape(ph) + r"(?![a-z])", low):
+            n += 1; hits.append(ph)
+    return n, hits
+=== drafts dir ===
+2026-10-08-report-first-draft.md
+=== draft headers ===
+1:# The kite turbine: a search over its design space
+90:## 1 Introduction
+186:## 2 Methods
+188:### 2.1 The kite turbine and its terms
+228:### 2.2 The simulation analysis pipeline instrument and its terms
+230:#### 2.2.1 The gene
+246:#### 2.2.2 The evaluator
+331:### 2.4 The campaign
+368:### 2.5 Fidelity paths
+383:### 2.6 Reproducibility
+393:## 3 Results
+395:### 3.1 The search at scale
+403:### 3.2 Convergence
+414:### 3.3 The winner
+517:### 3.4 The levers [PENDING. Landscape Phases 1 to 2 supply this section.]
+523:### 3.5 The evolution story [PENDING. Phase 3 and the machine renderer supply this section.]
+527:### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
+529:## 4 Discussion
+531:### 4.1 Evaluation fidelity
+562:### 4.2 The failure ledger
+615:### 4.3 Model boundaries
+638:## 5 Conclusion
+665:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+667:## 7 References
+673:## 8 Data availability and reproducibility
+682:## Document control
+690:## Appendix: Figure provenance
+=== draft checks ===
+3:Internal engineering report. Draft v0.31. Date 2026-10-13.
+68:- Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+669:Seeded in references.bib. Fifteen of eighteen sources verified. Three
+=== draft wc ===
+4708 docs/reporting/drafts/2026-10-08-report-first-draft.md
+=== register NR-002 ===
+28:| NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
+=== register 301/clearance ===
+28:| NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
+330:| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.791634149159, S2 397.1554424859068, S3 397.45360112890063, S4 397.68800908436924, S5 397.1777954649229. torque_capacity: S1 805.0097155967861, S2 808.6780945063998, S3 812.213802301376, S4 815.650844050359, S5 1069.9324759682652 | N·m | Extract, segment block. Capacity = `trpt_torque_capacity_axial` at `trpt_axial_force` of the same state. One instant for both series | signed (aero-validator, 2026-10-08) |
+564:  carries r_out 5.629560432565964 m and r_in 4.130158464357515 m. The
+689:  and blade inner edge 4.130158464357515 m. Both equal the NR-032 receipts.
+801:| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+829:  (2026-10-08). The term sum reads 1.665073010111922 against the direct gap
+830:  1.6650730101119215, a rounding gap of 4.4e-16 kg.
+1157:- Gate sites. The runner sets `MIN_CLEARANCE = 1.5` at `:76`. It marks a reading below that floor `status = :clearance_reject` at `:254-257`. The clearance definition sits at `src/objective_v10.jl:414`. The definition reads the ground clearance at the outer tip of the lowest active rotor. The basis is ground offset 1.0 m and elevation 30 degrees.
+1221:| NR-043 | Winner blade span (island 3, main rotor) | 1.4994019682084492 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 `a7c6e343b4cfba7f790fe0c2c3fd81638c06548c0d98d23407737c9ae0d9b0ab`: R_main 5.629560432565964 minus blade_hub_radius 4.130158464357515. The decode convention `src/objective_v10.jl:374-376`. Figures decode log `scratch/fig1_decode_winner.log`. Counter-read: the aero tip-reference receipt (2026-10-11) | signed (science-validator, 2026-10-13) |
+1230:  `5.629560432565964 - 4.130158464357515 = 1.4994019682084492`. The 0.7 / 0.3
+1332:- Counts. The matrix reads 930 rows, 310 per island. The status mix reads 508 ok, 301 reject, 110 clearance-reject and 11 reject-twist. The kit checks log carries the same.
+=== register NR-007/036/039 ===
+33:| NR-007 | P_mean range, ok rows | 5.02–6.32 | kW | telemetry, ok only | signed (science-validator, 2026-10-08) |
+102:## Aero counter-read: NR-007, NR-008, NR-009, NR-010, NR-011, NR-014, NR-016 (2026-10-08, aero-validator)
+119:- NR-007. The census lists the ok-row power ranges as 5.020 to 6.260,
+629:## Derived rows: NR-035 and NR-036 (2026-10-11, science-validator)
+641:| NR-036 | Island 3 running-best search objective at the seven strip milestones | 36.109 (gen 0), 32.293 (gen 6), 31.661 (gen 10), 30.929 (gen 18), 29.854 (gen 22), 28.315 (gen 25), 27.364 (gen 26) | kg | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). This seat re-checked all seven against `island_3/telemetry.csv`: each is an ok row and the least ok fitness of its window. Figure label: search objective | signed (science-validator, 2026-10-11) |
+787:## Reconciled fitness row: NR-039 (2026-10-12, science-validator)
+801:| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+840:  (NR-039).
+842:- The strip label "search objective (kg)" (NR-036) stands.
+854:## NR-039 note: the penalize_ceiling flag (2026-10-12, science-validator)
+858:The aero counter-read (2026-10-12) closed NR-039. It asked for one
+860:false` to the fired over-power charge in the NR-039 decomposition. The
+=== fig kg forms ===
+docs/reporting/figures/pca-landscape/SPEC.md:62:- Colour is the cell mean of the search objective in kilograms. The
+docs/reporting/figures/pca-landscape/captions-draft.md:18:objective in kilograms. Bright reads lower. Three lines trace the
+docs/reporting/figures/machine-evolution-strip/captions.md:24:number under each machine is its search objective, in kilograms. A
+docs/reporting/figures/machine-evolution-strip/captions.md:37:The value under each machine is the search objective in kilograms.
+=== strip dir ===
+captions.md
+checks.log
+extract-best-so-far.csv
+extract-best-so-far.log
+machine-evolution-strip.jl
+machine-evolution-strip.pdf
+machine-evolution-strip.png
+machine-evolution-strip.svg
+manifest.json
+README.md
+register-status.md
+=== ste-lint part 2 ===
+    return n, hits
+
+def lint(text):
+    raw = text
+    text = strip_code(text)
+    sents = sentences(text)
+    words = sum(wc(s) for s in sents) or 1
+    v = {}
+    longs = [(wc(s), s) for s in sents if wc(s) > 20]
+    v["long_sentence(>20w)"] = len(longs)
+    v["semicolon"] = text.count(";")
+    v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|s|m)\b", text))
+    v["passive_voice"] = len(re.findall(rf"\b{BE}\s+(?:\w+ed|{PP_IRREG})\b", text, re.I))
+    v["ing_main_verb"] = len(re.findall(rf"\b{BE}\s+\w+ing\b", text, re.I))
+    v["nominalization"] = len(re.findall(r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|provide(?:s|d)?|carry out|carries out|make use of|makes use of)\b", text, re.I)) + len(re.findall(r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.I))
+    v["phrasal_verb"], _ = count_ci(text, PHRASAL)
+    v["banned_word"], bh = count_ci(text, BANNED)
+    v["marketing_adjective"], mh = count_ci(text, MARKETING)
+    v["modal_hedge"], _ = count_ci(text, MODAL_HEDGE)
+    paras = [p for p in re.split(r"\n\s*\n", raw) if p.strip()]
+    v["long_paragraph(>6s)"] = sum(1 for p in paras if len(sentences(strip_code(p))) > 6)
+    em = raw.count("—") + raw.count("–")
+    total = sum(v.values())
+    per100 = {k: round(x*100.0/words, 2) for k, x in v.items()}
+    return {
+        "words": words, "sentences": len(sents),
+        "violations": v, "total": total,
+        "total_per100w": round(total*100.0/words, 2),
+        "em_dash(slop-marker)": em,
+        "longest_sentence_words": (max(longs)[0] if longs else max((wc(s) for s in sents), default=0)),
+        "sample_marketing": list(dict.fromkeys(mh))[:6],
+        "sample_banned": list(dict.fromkeys(bh))[:6],
+    }
+
+def emit_guidance(base, r):
+    for k, n in r["violations"].items():
+        if n > 0:
+            print(f"[HOOK:ste] {base}: {k} x{n} -> {GUIDANCE.get(k, 'see ste-writing')}")
+    if r["em_dash(slop-marker)"] > 0:
+        print(f"[HOOK:ste] {base}: em_dash x{r['em_dash(slop-marker)']} -> {EM_DASH_GUIDANCE}")
+
+if __name__ == "__main__":
+    fail_above = None
+    argv = list(sys.argv[1:])
+    if "--fail-above" in argv:
+        i = argv.index("--fail-above")
+        fail_above = float(argv[i+1]); del argv[i:i+2]
+    files = argv or []
+    if not files:
+        print(json.dumps(lint(sys.stdin.read()), indent=2)); sys.exit(0)
+    exp = []
+    for f in files: exp += sorted(glob.glob(f)) if any(c in f for c in "*?[") else [f]
+    breach = False
+    for f in exp:
+        with open(f) as fh: r = lint(fh.read())
+        base = os.path.basename(f)
+        print(f"{base:32} words={r['words']:4d} total={r['total']:3d} per100w={r['total_per100w']:6.2f} em_dash={r['em_dash(slop-marker)']:2d}")
+        emit_guidance(base, r)
+        if fail_above is not None and r["total_per100w"] >= fail_above:
+            breach = True
+    sys.exit(1 if breach else 0)
+=== ste-lint tail ===
+
+def lint(text):
+    raw = text
+    text = strip_code(text)
+    sents = sentences(text)
+    words = sum(wc(s) for s in sents) or 1
+    v = {}
+    longs = [(wc(s), s) for s in sents if wc(s) > 20]
+    v["long_sentence(>20w)"] = len(longs)
+    v["semicolon"] = text.count(";")
+    v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|s|m)\b", text))
+    v["passive_voice"] = len(re.findall(rf"\b{BE}\s+(?:\w+ed|{PP_IRREG})\b", text, re.I))
+    v["ing_main_verb"] = len(re.findall(rf"\b{BE}\s+\w+ing\b", text, re.I))
+    v["nominalization"] = len(re.findall(r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|provide(?:s|d)?|carry out|carries out|make use of|makes use of)\b", text, re.I)) + len(re.findall(r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.I))
+    v["phrasal_verb"], _ = count_ci(text, PHRASAL)
+    v["banned_word"], bh = count_ci(text, BANNED)
+    v["marketing_adjective"], mh = count_ci(text, MARKETING)
+    v["modal_hedge"], _ = count_ci(text, MODAL_HEDGE)
+    paras = [p for p in re.split(r"\n\s*\n", raw) if p.strip()]
+    v["long_paragraph(>6s)"] = sum(1 for p in paras if len(sentences(strip_code(p))) > 6)
+    em = raw.count("—") + raw.count("–")
+    total = sum(v.values())
+    per100 = {k: round(x*100.0/words, 2) for k, x in v.items()}
+    return {
+        "words": words, "sentences": len(sents),
+        "violations": v, "total": total,
+        "total_per100w": round(total*100.0/words, 2),
+        "em_dash(slop-marker)": em,
+        "longest_sentence_words": (max(longs)[0] if longs else max((wc(s) for s in sents), default=0)),
+        "sample_marketing": list(dict.fromkeys(mh))[:6],
+        "sample_banned": list(dict.fromkeys(bh))[:6],
+    }
+
+def emit_guidance(base, r):
+    for k, n in r["violations"].items():
+        if n > 0:
+            print(f"[HOOK:ste] {base}: {k} x{n} -> {GUIDANCE.get(k, 'see ste-writing')}")
+    if r["em_dash(slop-marker)"] > 0:
+        print(f"[HOOK:ste] {base}: em_dash x{r['em_dash(slop-marker)']} -> {EM_DASH_GUIDANCE}")
+
+if __name__ == "__main__":
+    fail_above = None
+    argv = list(sys.argv[1:])
+    if "--fail-above" in argv:
+        i = argv.index("--fail-above")
+        fail_above = float(argv[i+1]); del argv[i:i+2]
+    files = argv or []
+    if not files:
+        print(json.dumps(lint(sys.stdin.read()), indent=2)); sys.exit(0)
+    exp = []
+    for f in files: exp += sorted(glob.glob(f)) if any(c in f for c in "*?[") else [f]
+    breach = False
+    for f in exp:
+        with open(f) as fh: r = lint(fh.read())
+        base = os.path.basename(f)
+        print(f"{base:32} words={r['words']:4d} total={r['total']:3d} per100w={r['total_per100w']:6.2f} em_dash={r['em_dash(slop-marker)']:2d}")
+        emit_guidance(base, r)
+        if fail_above is not None and r["total_per100w"] >= fail_above:
+            breach = True
+    sys.exit(1 if breach else 0)
+=== pre-commit hook ===
+#!/usr/bin/env bash
+# .githooks/pre-commit — habit-hook sensors, fired live at commit time.
+# Version: 0.2.0 | Date: 2026-09-24 | Author: Windswept & Interesting
+#
+# Runs the deterministic sensors on staged files and blocks on breach.
+# Sensors: ste (STE-100 prose) and provenance (campaign CSV stamp).
+# Cue: tdd (src change with no test change) — it warns, it does not block.
+# Deliberate bypass: git commit --no-verify
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+FAIL=0
+
+# 1. STE linter on staged markdown (blocks at >= 2.0 violations/100w)
+MD_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.(md|markdown)$' || true)
+# STE exemption list (.ste-exempt): historical ledgers, amend-only by
+# convention. New entries in them must still be written STE-clean.
+if [ -f .ste-exempt ]; then
+    MD_FILES=$(printf '%s\n' "$MD_FILES" | grep -vxFf <(grep -vE '^\s*(#|$)' .ste-exempt) || true)
+fi
+if [ -n "$MD_FILES" ]; then
+    python3 ste-lint.py --fail-above 2.0 $MD_FILES || FAIL=1
+fi
+
+# 2. Provenance on staged campaign CSVs
+CSV_FILES=$(printf '%s\n' "$STAGED" | grep -E '\.csv$' || true)
+if [ -n "$CSV_FILES" ]; then
+    python3 check-provenance.py $CSV_FILES || FAIL=1
+fi
+
+# 3. TDD cue: a src/ change with no test change. WARN only, never blocks: a pure
+#    refactor or a comment fix legitimately touches src/ alone.
+if [ -n "$STAGED" ]; then
+    python3 check-tdd-evidence.py $STAGED || true
+fi
+
+if [ "$FAIL" = "1" ]; then
+    echo ""
+    echo "Habit-hook sensors fired. Fix the [HOOK:...] items above, then re-commit."
+    echo "Deliberate bypass: git commit --no-verify"
+    exit 1
+fi
+exit 0
+=== pre-push hook ===
+#!/usr/bin/env bash
+# .githooks/pre-push — warn when a push touches the slow acceptance paths.
+# Version: 0.1.0 | Date: 2026-08-20 | Author: Windswept & Interesting
+#
+# The acceptance suite (test/acceptance_runtests.jl) is ~5-8 min and runs in
+# CI only when the paths below change. This hook WARNS (does not block) so a
+# physics change is not pushed without the acceptance suite having run.
+# CI (.github/workflows/acceptance.yml) is the authoritative gate.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)"
+if [ -z "$REMOTE" ]; then
+    exit 0
+fi
+
+CHANGED="$(git diff --name-only "$REMOTE"...HEAD 2>/dev/null || true)"
+
+# Keep this list in sync with .github/workflows/acceptance.yml.
+MATCH="$(printf '%s\n' "$CHANGED" | grep -E '^(src/|scripts/ode_gate_v13\.jl|scripts/compute_seeds\.jl|test/acceptance_runtests\.jl|test/test_(evaluator_v13|gate_v13|rope_break|rotor_power_realism|settle_drag_alignment)\.jl)$' || true)"
+
+if [ -n "$MATCH" ]; then
+    echo ""
+    echo "WARNING: this push touches acceptance-path files (src/ physics or the acceptance tests)."
+    echo "Run the acceptance suite:"
+    echo "    julia --project=. test/acceptance_runtests.jl"
+    echo "CI will also run it (see .github/workflows/acceptance.yml)."
+    echo ""
+fi
+exit 0
+=== harris record head ===
+# Report draft v0.9: feedback for the forum version
+
+**Source:** Claude, for Rod, 2026-10-10 (Rod fed the downloaded draft PDF to a bot while in Harris). Relayed to the room by @hermes, 2026-10-10.
+
+- **Draft:** `e0abbce` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+- **Build:** 2026-10-10T17:43Z, register v1 at `f86228a`
+- **Reviewer:** Claude, for Rod, 2026-10-10
+- **Target reader:** a third-year undergraduate engineer. This reader knows statics, beam buckling, rigid-body dynamics, ODE integration, actuator-disc and Betz, and basic optimisation. This reader does not know TRPT, KiteTurbineDynamics.jl, or the team's internal vocabulary.
+
+## Verdict
+
+The draft is a well-traced internal record. Every number traces to a signed row. The failure ledger (§4.2) and the fidelity section (§4.1) are more candid than most reports. Keep both.
+
+It is not yet a year-3 explanation. There are three gaps.
+
+1. **Numbers in the draft contradict each other.** A careful reader can combine values the draft already prints and find conflicts in speed and power, lift margin, and governing margin. Section 1 below lists them.
+2. **Most of the brief is still missing.** The brief asks for the work, the software, the results, and the intent and potential. The draft covers the results at one operating point only.
+   - It does not name the software.
+   - It does not state the wind speed.
+   - It does not show the validation.
+   - It has no outlook section.
+3. **The reader text still carries working scaffolding.** That includes the version log, brackets, row IDs, track names and commit hashes. The STE prose also removes the "because" from every explanation.
+
+**Do not post until section 1 is closed.** Sections 2 and 3 describe the rewrite.
+
+---
+
+## 1. Fix before posting: numbers that do not reconcile
+
+All arithmetic below uses only values printed in the draft.
+=== 66ec6a6 stat ===
+commit 66ec6a6994bcf6c143798f1f49b1a23ff6360a20
+Author: Roderick Read <rod@windswept.energy>
+Date:   Sat Oct 10 19:37:39 2026 +0100
+
+    docs(reporting): external review record — Harris bot feedback on draft e0abbce; verbatim external text, STE-gate exempt like builder output (relay; room triages relevance)
+
+ .../reporting/2026-10-10-external-review-harris.md | 474 +++++++++++++++++++++
+ .../reporting/feedback/2026-10-10-harris-review.md | 466 ++++++++++++++++++++
+ 2 files changed, 940 insertions(+)
+=== ste-exempt history ===
+482e1f7 chore(hooks): STE gate exemption for historical ledgers (.ste-exempt)
+=== glossary files ===
+docs/agents/genome-glossary.md
+docs/reporting/glossary-candidates.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-15-gloss-reads.md
+docs/reporting/room-responses/author-2026-10-13-v028-precone-gloss.md
+docs/reporting/room-responses/science-writer-2026-10-13-glossary-12-note-entries.md
+docs/reporting/room-responses/science-writer-2026-10-13-sweep-14-glossary-11.md
+=== twist values in register ===
+329:| NR-022 | Segment twist and over-twist limit at the winner operating point | abs(dalpha): S1 33.94561934829036°, S2 33.811870056223555°, S3 33.67952027817454°, S4 33.54707806507812°, S5 22.821871326820364°. dcrit: S1 to S4 98.85908296054023°, S5 92.64281134151318°. has_limit true on all five | deg | Extract, segment block. Raw reads from the stored alpha block; `trpt_twist_limit` on the rope_forces C1 call pattern (node radii, mean line rest length) | signed (aero-validator, 2026-10-08) |
+=== NR-032 ===
+551:## Operating-point re-base rows: NR-032 to NR-034 (2026-10-11, science-validator)
+583:| NR-032 | Winner tip-speed ratio and rotor Cp, tip reference | lambda_tip 6.8415060395190075 (quote 6.8415, hub value 6.841451124645552 agrees inside 5.5e-5), Cp 0.22578839742146659 (quote 0.2258) | - | lambda from the NR-029 window trace, r_out 5.629560432565964 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+689:  and blade inner edge 4.130158464357515 m. Both equal the NR-032 receipts.
+1215:span"). The value reads in the NR-032 block findings. This block lifts it to
+=== test-lint feedback3 source ===
+[HOOK:ste] Feedback-message-1791925681590.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: passive_voice x10 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: ing_main_verb x5 -> use a simple tense, not "be + -ing" as the main verb. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: long_paragraph(>6s) x14 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: em_dash x10 -> no em dash — use a period or comma. (ste-writing)
+rc=0
+=== glossary candidates head ===
+# Glossary candidates — Track D handoff
+
+**Slug** `glossary-candidates`
+
+**Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
+
+**Status** PREP v13, numbers-free by construction (no measurement values, no
+model constants). The validators signed register v1, and section 5 carries
+the constants interface. Every value slot in a definition stays a binding
+slot for Track D.
+
+**Owner** @science-writer (drafting assist). **Track D owns the glossary.**
+The analysis room ratifies, rewrites, or rejects each entry below.
+
+The ratified list lands at `docs/reporting/glossary.md`. The writers may only
+use glossary terms, and a shortcut term with no entry is a release blocker,
+gated like a number.
+
+**Contract** the room consultation (Track D), the boot handover, the
+AWE-context outline (section 6), and the machine-renderer spec (section 7
+caption terms).
+
+**Grounding** the repo record only: `docs/agents/physics-topology.md`,
+`CONTEXT.md`, `docs/agents/genome-glossary.md`, `docs/agents/domain.md`,
+`docs/agents/instrument-trust-log.md`, `docs/agents/stale-phrases.md`, and
+`DECISIONS.md`.
+
+The landscape terms come from the outline and its literature anchors.
+Nothing here comes from recall.
+
+**How to read the tables.** *Term* names the candidate. *Draft* is a candidate
+definition for the room to ratify or rewrite. *Ground* names the repo source
+that carries the meaning.
+
+*Action* says what Track D does. **Ratify** means the record already supports
+the draft. **Supply** means the room writes the authoritative definition.
+**Verify** means check the draft against the awe-knowledge wiki.
+**Room-supplies** means the term is central to the analysis story and needs
+the exact reading from the analysis room.
+
+## 1. Landscape terms (U1, literature-grounded)
+
+The outline owns this ground. Track D verifies each draft against the
+awe-knowledge wiki before it ships.
+
+--
+5143 docs/reporting/glossary-candidates.md
+=== fetch ===
+0	0
+=== lint: feedback3 source ===
+Feedback-message-1791925681590.md words=2197 total= 54 per100w=  2.46 em_dash=10
+[HOOK:ste] Feedback-message-1791925681590.md: long_sentence(>20w) x12 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: semicolon x11 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: passive_voice x10 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: ing_main_verb x5 -> use a simple tense, not "be + -ing" as the main verb. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: long_paragraph(>6s) x14 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] Feedback-message-1791925681590.md: em_dash x10 -> no em dash — use a period or comma. (ste-writing)
+rc=1
+=== lint: harris record ===
+2026-10-10-harris-review.md      words=4130 total= 81 per100w=  1.96 em_dash=26
+[HOOK:ste] 2026-10-10-harris-review.md: long_sentence(>20w) x22 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: semicolon x9 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: contraction x14 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: passive_voice x14 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: ing_main_verb x3 -> use a simple tense, not "be + -ing" as the main verb. (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: nominalization x2 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: phrasal_verb x1 -> one plain verb — "start", not "spin up"; "examine", not "dive into". (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: long_paragraph(>6s) x16 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] 2026-10-10-harris-review.md: em_dash x26 -> no em dash — use a period or comma. (ste-writing)
+rc=0
+=== exemption language search ===
+docs/agents/instrument-trust-log.md:95:## STE Gate Exemption (2026-10-08)
+docs/agents/instrument-trust-log.md:98:ledgers as a class. `.ste-exempt` lists the three files: this log,
+docs/agents/instrument-trust-log.md:102:covers all other markdown. New entries in the exempt files must still be
+.githooks/pre-commit:18:# STE exemption list (.ste-exempt): historical ledgers, amend-only by
+.githooks/pre-commit:20:if [ -f .ste-exempt ]; then
+.githooks/pre-commit:21:    MD_FILES=$(printf '%s\n' "$MD_FILES" | grep -vxFf <(grep -vE '^\s*(#|$)' .ste-exempt) || true)
