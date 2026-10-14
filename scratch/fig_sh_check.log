@@ -1,0 +1,43 @@
+[1] the seated head reads; the draft head is gone
+  ok   pca-landscape: present '# Captions: the levers landscape'
+  ok   pca-landscape: present '**Status** GENERATE. **Date** 2026-10-13.'
+  ok   pca-landscape: present '**Cite fix and re-cut** 2026-10-14.'
+  ok   pca-landscape: present 'The split: the plain and technical captions carry the scientif'
+  ok   pca-landscape: present '**Delta** v4 (2026-10-14): the seating header refines'
+  ok   pca-landscape: retired 'Captions draft:'
+  ok   pca-landscape: retired '**Status** DRAFT'
+  ok   pca-landscape: retired 'Review input for the author'
+  ok   pca-landscape: retired 'Ledger strings only'
+  ok   pca-landscape: NR-045 reads in the file
+  ok   pca-atlas: present '# Captions: the parameter atlas'
+  ok   pca-atlas: present '**Status** GENERATE. **Date** 2026-10-13.'
+  ok   pca-atlas: present '**Cite fix and re-cut** 2026-10-14.'
+  ok   pca-atlas: present 'The split: the plain and technical captions carry the scientif'
+  ok   pca-atlas: present '**Delta** v4 (2026-10-14): the seating header refines'
+  ok   pca-atlas: retired 'Captions draft:'
+  ok   pca-atlas: retired '**Status** DRAFT'
+  ok   pca-atlas: retired 'Review input for the author'
+  ok   pca-atlas: retired 'Ledger strings only'
+[2] the build parse is byte-identical
+  ok   pca-landscape: plain caption byte-identical (md5 8983e84fd783635c3bd4bc8cf4d34f14)
+  ok   pca-landscape: tech caption byte-identical (md5 701f6fedd6c48437b86785caaa23c023)
+  ok   pca-atlas: plain caption byte-identical (md5 8487791ea4d6cc1d46694d619210f7f7)
+  ok   pca-atlas: tech caption byte-identical (md5 04324208fc9d0dcc92ae241486aee5db)
+[3] the v3 hash blocks recompute
+  ok   pca-landscape: the v3 block lists the five files
+  ok   pca-landscape: v3 md5 label-ledger.txt
+  ok   pca-landscape: v3 md5 manifest.json
+  ok   pca-landscape: v3 md5 pca-landscape.pdf
+  ok   pca-landscape: v3 md5 pca-landscape.png
+  ok   pca-landscape: v3 md5 pca-landscape.svg
+  ok   pca-atlas: the v3 block lists the five files
+  ok   pca-atlas: v3 md5 label-ledger.txt
+  ok   pca-atlas: v3 md5 manifest.json
+  ok   pca-atlas: v3 md5 pca-atlas.pdf
+  ok   pca-atlas: v3 md5 pca-atlas.png
+  ok   pca-atlas: v3 md5 pca-atlas.svg
+[4] no 'pending' byte in either caption file
+  ok   pca-landscape: no pending byte
+  ok   pca-atlas: no pending byte
+
+checks: 37  ok: 37  fail: 0
