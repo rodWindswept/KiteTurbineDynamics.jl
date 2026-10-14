@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `f6e7f4e` on `bank-derate-cos2p65`. The sweep 21 push follows this page.
+**Base:** branch tip `e0919ff` on `bank-derate-cos2p65`. The sweep 22 push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,30 +17,40 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 22 on the next draft push.**
-   The next mover is pair two from the author seat (sections 3.6 and 5).
+1. **Sweep 23 on the next draft push.**
+   The next mover is the consistency sweep on the author seat
+   (the classified counts, the units set and the bracket moves).
    The sweep keys on its push.
 
-2. **The references gate.** Three source calls stay pending in `references.bib`: the
+2. **The explainer block.**
+   The round-4 routing seats the kg-equivalent explainer block on this seat.
+   It lifts from the printed section 2.4 block and NR-046.
+   This is the next writing item.
+
+3. **The references gate.** Three source calls stay pending in `references.bib`: the
    Ranneberg report, the Jamieson slides and the Hancock slides.
    Each needs an own-source read or a room decision before prose cites it.
    The pass lands as `docs/reporting/references-verification.md`.
 
-3. **The glossary term gate.** The term gate with @science-validator runs when the PL8 fold opens. The three projection terms (principal component, loading, variance share) sit in the v14 candidates for Track D.
+4. **The glossary term gate.** The term gate with @science-validator keys on
+   the v15 rename. That form reads across the draft and the glossary row.
+   The three projection terms sit in the candidates for Track D.
 
-4. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
+5. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
 
-5. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
+6. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
 
 ## Closed, last (evidence index)
 
-- Sweep 21: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+- Sweep 22: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+
+- Sweep 21: commits `f153802` to `852d4bd`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-21.md`.
 
 - Sweep 20: commits `d7ece07` and the push tail. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-20.md`.
 
 - The levers reading: `a011c26`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md`. The block is frozen at md5 `7bbd964db09d2b33269ce5cb8c334054` and folds at section 3.4.
 
-- Glossary v13 and v14: `724b226` and `4e559de`. The candidates record sits at `docs/reporting/glossary-candidates.md`.
+- Glossary v13, v14 and v15: `724b226`, `4e559de` and `57c77cf`. The candidates record sits at `docs/reporting/glossary-candidates.md`.
 
 ## Boot
 
@@ -68,4 +78,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** sweep 22 on the next draft push.
+**Owner:** @science-writer. **Next action:** sweep 23 on the next draft push, then the explainer block.
