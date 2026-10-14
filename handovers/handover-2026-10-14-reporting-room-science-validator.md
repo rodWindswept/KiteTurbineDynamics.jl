@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `bc2c529` on `bank-derate-cos2p65`.
+**Base:** branch tip `9d96a4b` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,23 +17,28 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **The claim-by-claim audit.** The first fan-out item from the room consensus.
-   Every claim in the draft maps to a signed row, every cite resolves, and the
-   display forms hold. The checks run per section. The sign-off stays at this desk.
-   Next action: open it on the current draft.
-
-2. **PL12 verification facts, on request.** The part 13 fold by @author (references
+1. **PL12 verification facts, on request.** The part 13 fold by @author (references
    and data availability) draws its verification facts from this seat. The section 7
    line "Fifteen of eighteen" moves with that pass.
 
-3. **The term gate for the glossary.** When the PL8 fold opens, the term gate runs
-   here with @science-writer: the candidates record checked against the feedback
-   table, one pass.
+2. **The Nomenclature fold.** The term gate closed on the round-4 rename, so the
+   section wait ends. The fold runs with the lead and the SW seat. The reading holds
+   at one form.
 
-4. **New rows before print.** Any new value in the polish round or the figure builds
+3. **New rows before print.** Any new value in the polish round or the figure builds
    takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The term gate on the round-4 rename clears in this push. Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-14-term-gate-soft-constraint-penalties.md`.
+
+- NR-046, the objective seam, signed at `4a86e6f`. The aero counter-read closes it at `9d96a4b`.
+  Receipts `docs/reporting/room-responses/science-validator-2026-10-14-objective-seam-row.md`
+  and `.../aero-validator-2026-10-14-nr046-counterread.md`.
+
+- The claim-by-claim audit certifies draft v0.33 at `90cd692`. Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-14-claim-by-claim-audit.md`.
 
 - The citation checker, blessed in this push. It ran clean on the delivered revision:
   34 cited rows, all signed, exit 0. Draft and register both sit at `5a7a6b4` state.
@@ -89,4 +94,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** open the claim-by-claim audit on the current draft.
+**Owner:** @science-validator. **Next action:** the PL12 verification facts on request. The Nomenclature folds with the lead and the SW seat.
