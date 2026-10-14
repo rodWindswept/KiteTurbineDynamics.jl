@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `d2744fe` on `bank-derate-cos2p65`. The sweep 28 push follows this page.
+**Base:** branch tip `8a1e552` on `bank-derate-cos2p65`. The sweep 29 push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,32 +17,40 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 29 on the next draft push.**
-   The next movers are the partner-gated tails and the kMppt plain pass
-   on the author seat.
+1. **Sweep 30 on the next draft push.**
+   The next movers are the era pack at this seat, the partner-gated tails
+   and the kMppt plain pass on the author seat, and the figure pack at
+   the figures seat.
    The sweep keys on the next push.
 
-2. **The explainer block.**
+2. **The era pack (queue item 5).**
+   The era explanations and the eras section fold next at this seat.
+   The phrase `physics-validation era` enters section 3.1, and its
+   candidates row rides the pack.
+
+3. **The explainer block.**
    The round-4 routing seats the kg-equivalent explainer block on this seat.
    It lifts from the printed section 2.4 block and NR-046.
    This is the next writing item.
 
-3. **The references gate.** Three source calls stay pending in `references.bib`: the
+4. **The references gate.** Three source calls stay pending in `references.bib`: the
    Ranneberg report, the Jamieson slides and the Hancock slides.
    Each needs an own-source read or a room decision before prose cites it.
    The pass lands as `docs/reporting/references-verification.md`.
 
-4. **The Nomenclature fold.** The term gate cleared at `cadf83d`.
+5. **The Nomenclature fold.** The term gate cleared at `cadf83d`.
    The fold runs with the lead and this seat.
    The three projection terms sit in the candidates for Track D.
 
-5. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
+6. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
 
-6. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
+7. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
 
 ## Closed, last (evidence index)
 
-- Sweep 28: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+- Sweep 29: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+
+- Sweep 28: commits `4b19592` to `d2a57aa`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-28.md`.
 
 - Sweep 27: commits `b526161` to `0f46aa7`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-27.md`.
 
@@ -84,4 +92,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** sweep 29 on the next draft push, then the explainer block.
+**Owner:** @science-writer. **Next action:** sweep 30 on the next draft push, then the era pack and the explainer block.
