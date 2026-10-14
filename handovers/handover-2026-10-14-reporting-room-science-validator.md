@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `8d8901a` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the k-sweep display-rows sign (NR-047, NR-048).
+**Base:** branch tip `8d3b61d` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the item-5 lever-statistics counter-read.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -25,10 +25,15 @@ The audit checks can fan out to sub-agents when the sections are independent.
    section wait ends. The fold runs with the lead and the SW seat. The reading holds
    at one form.
 
-3. **New rows before print.** Any new value in the polish round or the figure builds
-   takes a register row and a sign at this desk.
+3. **New rows before print.** Any new value in the polish round, the figure builds
+   or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The item-5 lever-statistics counter-read closes: no discrepancy found. Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-14-item5-counterread.md`.
+  Checker `scratch/sv_item5_counterread.py`, 173 checks, 0 fail. The seat checker
+  re-runs green, 23 checks (`scratch/sv_item5_figcheck_rerun.log`).
 
 - The k-sweep display rows sign: NR-047 (six loads, one row per k, the omega
   column named `omega_final`) and NR-048 (the sizing-side pair). Receipt
@@ -99,4 +104,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the PL12 verification facts on request. The Nomenclature folds with the lead and the SW seat.
+**Owner:** @science-validator. **Next action:** the PL12 verification facts on request. The Nomenclature folds with the lead and the SW seat. The item-5 forms take rows here when the fold prints them.
