@@ -19,7 +19,7 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 1. **Sweep 26 on the next draft push.**
    The next movers are PL13 and the Nomenclature fold on the author seat,
-   with the aero seat's counter-read of the v0.39 push and the NR-025 amend standing.
+   with the counter-read at the aero seat and the NR-025 amend standing.
    The sweep keys on the next push.
 
 2. **The explainer block.**
