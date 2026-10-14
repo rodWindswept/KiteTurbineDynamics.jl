@@ -1,0 +1,43 @@
+# hermes_fb5_reads.log — read-only recon for the feedback round 5 routing pass (2026-10-14)
+# source: the founder copy return (draft-live-rods-comments.docx), 17 comments
+
+=== date ===
+2026-10-14, evening BST
+=== branch / tip ===
+bank-derate-cos2p65
+c039aa6 — local == origin after fetch
+=== source ===
+/home/rod/.hermes/attachments/draft-live-rods-comments.docx
+md5 9ec167ded47cb21c44d69078d2a27d41
+parts: word/comments.xml (11,959 B); word/document.xml (356,646 B); 6 media PNG
+no commentsExtended part and no people part (flat comments, no replies, no done state)
+comments: 17 (ids 0..16; author 'Unknown Author'; dates 2026-10-14T12:14:04Z..13:08:19Z)
+build record inside the copy: Draft 5a7a6b4 (v0.32); Register 6255268; 34 cited / 45 signed; 6 seats; Built 2026-10-14T10:56:23Z
+=== extraction ===
+walker: ElementTree in document order; commentRangeStart/End + commentReference by w:id; paragraph text by w:t join
+outputs: scratch/hermes_fb5_comments.txt (dump); ~/.hermes/cache/scratch/fb5_comments.json (json)
+=== reconciliation at draft v0.42 (38c77f8) ===
+"Blade scale sets the blade size" -> line 219, unchanged
+"rotor count sets how many rings carry blades" -> line 224, unchanged
+"register header pins their commits" -> line 439, unchanged
+"930" -> sections 3.1 / 2.4, unchanged
+"window swing reads" -> line 505; display forms now kW (his copy read kilowatts)
+"Slot 1" -> line 560, unchanged
+"A second bank slot reads 22 degrees" -> line 567, unchanged
+"not machines" -> line 572, unchanged
+ring-utilisation / twist-limit caption pairs -> the repeat claim still reads live (review copy build 1bec1726)
+"Each machine is drawn from its built geometry" -> strip caption, unchanged
+era sentence at section 3.3 -> unchanged; the era map text (sweep 16) still unfolded in the tree
+=== source checks ===
+cone half-angle: src/objective_evaluator.jl:148 (22.0, Tulloch/Jensen reference); runner 115 and 172 (cylinder_cone=true, cone_slope_deg=22.0); F1 notes fixed 22 deg half-angle, by construction (980de02)
+bank box: scripts/bounds_audit.jl — bank box [0, 22]; register NR-011 rotor-bank note — slot 8 bank_bottom 22 deg, no rotor carries it
+blade base: src/objective_v10.jl:374-377 (span 0.75 * r_rotor * scale; chord 0.113 * r_rotor * scale); runner 108 mass law 0.420 * (span/1.0)^3
+cold path: scripts/run_v13_5kw_masslift.jl:262-264 (start_mode = :cold)
+strip legend: carries "ring, cone" (vision read, machine-evolution-strip.png)
+anatomy plate: no cone label (vision read, system-anatomy.png)
+=== linter runs (ste-lint.py --fail-above 2.0) ===
+hermes-2026-10-14-feedback5-routing.md         0.00/100w, 0 flags
+2026-10-14-feedback5-routing-plain-english.md  0.00/100w, 0 flags
+handover-...-reporting-room-queue.md (update)  0.00/100w, 0 flags
+=== commit ===
+rides the round-5 routing batch

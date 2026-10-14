@@ -1,0 +1,189 @@
+==============================================================================
+COMMENT id=0 by Unknown Author 2026-10-14T12:14:04Z
+--- body ---
+Multiplies these sizes against what original number / size calculation?
+--- anchor: paras 69..69 ---
+Blade scale sets the blade size. The scale multiplies the blade span and chord, and the blade mass follows the span cubed.
+--- context ---
+68 | Bank is the blade angle away from the ring plane about its chord axis at the ring. The equivalent term in AeroDyn is pre-cone.
+69 | Blade scale sets the blade size. The scale multiplies the blade span and chord, and the blade mass follows the span cubed.
+70 | The search treats each of these as a gene. The ring geometry sets the hub and ground radii, and the rotor count sets how many rings carry blades.
+71 | 
+==============================================================================
+COMMENT id=1 by Unknown Author 2026-10-14T12:34:45Z
+--- body ---
+Is our rotor ring to first TRPT (ring cone angle) a set single value? Seems a shame to have missed this and needs clearly stated if so… Next DE Campaign note needed
+--- anchor: paras 70..70 ---
+many rings carry blades.
+--- context ---
+69 | Blade scale sets the blade size. The scale multiplies the blade span and chord, and the blade mass follows the span cubed.
+70 | The search treats each of these as a gene. The ring geometry sets the hub and ground radii, and the rotor count sets how many rings carry blades.
+71 | 
+72 | system-anatomy
+==============================================================================
+COMMENT id=2 by Unknown Author 2026-10-14T12:37:36Z
+--- body ---
+Cone ring is shown as a component part later in this report but not on this diagram
+--- anchor: paras 74..74 ---
+This figure shows the whole machine and the names of its parts
+--- context ---
+73 | Figure (roster row 2) · system-anatomy
+74 | This figure shows the whole machine and the names of its parts, from the lifting autogyro kite stack in the sky to the ground station that takes the power.
+75 | The plate shows the campaign winner in a side view. Six triangular rings run from the ground ring (R1, 0.804 m radius) to the hub ring (R6, 4.580 m radius). Three tension lines span each of the five segments S1 to S5. The main rotor sits on R6 only. Its three blades bank at 7.088°. The lift chain runs from the lifter stack, down the lift line, through the sky anchor and the cyan line, to the lift 
+76 | Source: data dd3cc6a · script 9cecee3 · rows NR-011, NR-017, NR-043
+==============================================================================
+COMMENT id=3 by Unknown Author 2026-10-14T12:41:14Z
+--- body ---
+Didn’t we have an issue with the warm fast solver this time rejecting too many designs with line snaps or transients ? If so we need to say if we used warm or cold…
+--- anchor: paras 152..152 ---
+register header pins their commits.
+--- context ---
+151 | The report names map to the code. The ODE path is :cold. The rapid path is :warm.
+152 | The probes that compare the paths sit in scripts/probe_rapid_vs_ode_winners.jl and scripts/probe_warm_reject_cause.jl. The register header pins their commits.
+153 | 2.6 Reproducibility
+154 | Every dataset carries a provenance stamp. The stamp names the commit, the physics era and the geometry fingerprint. The report names the commits in the register header.
+==============================================================================
+COMMENT id=4 by Unknown Author 2026-10-14T12:42:49Z
+--- body ---
+Only 930 designs. Previous DE campaigns at Windswept have been larger. This report was written after running the first DE Campaign after a long physics validation campaign. We expect to run larger and more varied campaigns on  a wider genome soon.
+--- anchor: paras 158..158 ---
+930 designs
+--- context ---
+157 | 3.1 The search at scale
+158 | The campaign evaluated 930 designs (NR-001). The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). Each island starts its population from the same seed genome. The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006). The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_
+159 | 3.2 Convergence
+160 | The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003). Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004). Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005). The physical airborne mass of the winner is 25.698 kg (NR-018). The objective score adds 1.665 kg-equivalent of penalties (NR-039).
+==============================================================================
+COMMENT id=5 by Unknown Author 2026-10-14T12:45:58Z
+--- body ---
+Meaning that it was operating very smoothly throughout the evaluation period.
+--- anchor: paras 217..217 ---
+window swing reads 0.029 kilowatts
+--- context ---
+216 | NR-010
+217 | Its window swing reads 0.029 kilowatts on 5.309 kilowatts, half a percent (NR-014).
+218 | The settle state starts the machine at 10.170 radians per second (NR-016). The machine accelerates through the relax run.
+219 | Its window-mean speed reads 13.38 radians per second, 127.772 revolutions per minute (NR-029). Its airborne mass reads 25.698 kilograms (NR-018).
+==============================================================================
+COMMENT id=6 by Unknown Author 2026-10-14T12:48:46Z
+--- body ---
+Would have needed it’s own single line kite, up to giant sizes which would be too hard to handle. 
+We have assumed that staged launch of coaxial autogyro lifters is possible and easier.
+--- point comment, refs at paras [251] ---
+250 | The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line runs at 70 degrees of elevation (NR-026). The line tension is that load over sin 70 degrees: 324.1 newtons (NR-010).
+251 | The lifter is a stack of autogyros. The report assumes the stack can modulate to meet the lift requirement at all wind speeds. A fixed kite cannot: its pull grows as the square of the wind speed. Without modulation, each weather band needs its own kite, up to a giant.
+252 | The report applies the lift force the machine needs and tests the machine on that basis. Designing a lifter that delivers that force across wind speeds is outside this report. The report states the presumption as one (2026-08-05).
+253 | Its geometry reads three lines, six rings and one active rotor. The hub radius is 4.580 metres and the ground radius 0.804 metres (NR-011).
+==============================================================================
+COMMENT id=7 by Unknown Author 2026-10-14T12:51:08Z
+--- body ---
+Name the genome in slot 1 (n_rotors?) and slot 2
+--- anchor: paras 254..254 ---
+Slot 1
+--- context ---
+253 | Its geometry reads three lines, six rings and one active rotor. The hub radius is 4.580 metres and the ground radius 0.804 metres (NR-011).
+254 | The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive because the rotor count is one (NR-011).
+255 | The winner genome contains two bank-angle slots. Ring 6 decodes the active main-rotor bank angle as 7.088 degrees (NR-017).
+256 | A second bank slot reads 22 degrees. It does not decode to a physical rotor at a count of one (NR-011).
+==============================================================================
+COMMENT id=8 by Unknown Author 2026-10-14T12:52:52Z
+--- body ---
+Wait, a second bank slot? Is this the rotor to TRPT cone angle? And is it fixed at 22 deg?
+--- anchor: paras 256..256 ---
+A second bank slot reads 22 degrees. 
+--- context ---
+255 | The winner genome contains two bank-angle slots. Ring 6 decodes the active main-rotor bank angle as 7.088 degrees (NR-017).
+256 | A second bank slot reads 22 degrees. It does not decode to a physical rotor at a count of one (NR-011).
+257 | This result differs from earlier eras for recorded reasons. The bank derate, the measurement window and the tightened gates moved the search space. Numbers across the eras would compare models, not machines.
+258 | This run also trades breadth for fidelity: fewer evaluations, each on the measurement window. It stopped early: a screen, not a survey. This report covers the wind-authority era campaign and the recorded corrections that shaped it.
+==============================================================================
+COMMENT id=9 by Unknown Author 2026-10-14T12:54:54Z
+--- body ---
+Somewhere , probably near here there should be an explanation of “bank  derate” , the  reasons for the measurement window and tightened gates
+--- anchor: paras 257..257 ---
+not machines
+--- context ---
+256 | A second bank slot reads 22 degrees. It does not decode to a physical rotor at a count of one (NR-011).
+257 | This result differs from earlier eras for recorded reasons. The bank derate, the measurement window and the tightened gates moved the search space. Numbers across the eras would compare models, not machines.
+258 | This run also trades breadth for fidelity: fewer evaluations, each on the measurement window. It stopped early: a screen, not a survey. This report covers the wind-authority era campaign and the recorded corrections that shaped it.
+259 | 3.4 The levers
+==============================================================================
+COMMENT id=10 by Unknown Author 2026-10-14T12:56:50Z
+--- body ---
+Do we have a section on the eras and how they have chronologically evolved?
+--- anchor: paras 258..258 ---
+era
+--- context ---
+257 | This result differs from earlier eras for recorded reasons. The bank derate, the measurement window and the tightened gates moved the search space. Numbers across the eras would compare models, not machines.
+258 | This run also trades breadth for fidelity: fewer evaluations, each on the measurement window. It stopped early: a screen, not a survey. This report covers the wind-authority era campaign and the recorded corrections that shaped it.
+259 | 3.4 The levers
+260 | 
+==============================================================================
+COMMENT id=11 by Unknown Author 2026-10-14T12:58:01Z
+--- body ---
+Unneccesary repetition … Is this a common theme in figure comments? Should figure comments / descriptions have a slightly different typeface to distinguish them...
+--- anchor: paras 263..264 ---
+The hub ring R6 governs the structural check at the winner's final operating point, and every other airborne ring holds a much larger margin.The hub ring R6 governs the structural check at FoS 15.033. All other airborne rings hold much larger margins (NR-021).
+--- context ---
+262 | Figure (roster row 6) · ring-utilisation
+263 | The hub ring R6 governs the structural check at the winner's final operating point, and every other airborne ring holds a much larger margin.
+264 | The hub ring R6 governs the structural check at FoS 15.033. All other airborne rings hold much larger margins (NR-021). Each bar stacks the axial share and the bending share of one checked ring. The rows run from R2 at the base to R6 at the hub. Both shares come from the same worst-utilisation beam. The bar top is the ring utilisation, the beam-column interaction itself. Utilisation is demand over
+265 | Source: pair-extract-2026-10-08-winner-ops · data dd3cc6a · script eacf073 · rows NR-021
+==============================================================================
+COMMENT id=12 by Unknown Author 2026-10-14T12:59:56Z
+--- body ---
+Yes, repeated again...
+--- anchor: paras 269..270 ---
+All five segments stay inside their over-twist limits at the winner's final operating point, and the smallest torque margin sits at S1.All five TRPT segments remain inside their over-twist limits at the winner's final operating point. 
+--- context ---
+268 | Figure (roster row 7) · twist-limit
+269 | All five segments stay inside their over-twist limits at the winner's final operating point, and the smallest torque margin sits at S1.
+270 | All five TRPT segments remain inside their over-twist limits at the winner's final operating point. S1 carries the least segment torque margin, 2.03 (NR-040). Panel A draws the transmitted twist of each segment as a magnitude, against its over-twist limit δcrit. The limit comes from the committed authority trpt_twist_limit. A no limit segment carries no torsional ceiling. The figure draws no ratio
+271 | Source: pair-extract-2026-10-08-winner-ops · data dd3cc6a · script eacf073 · rows NR-022 · NR-023
+==============================================================================
+COMMENT id=13 by Unknown Author 2026-10-14T13:04:20Z
+--- body ---
+It would really help novice readers if we produced a machine render typical of a machine near each of the 4 corners of this PC1 PC2 grid … A grid of 4 Kite Turbines representing 1 each of high pc1, low pc2
+high pc1, high pc2
+low pc1, low pc2
+low pc1, high pc2
+--- anchor: paras 273..273 ---
+landscape
+--- context ---
+272 | 
+273 | pca-landscape
+274 | Figure (roster row 20) · pca-landscape
+275 | One seed, three islands: this figure maps the search journeys in gene space and shows where the light machines live.
+==============================================================================
+COMMENT id=14 by Unknown Author 2026-10-14T13:01:09Z
+--- body ---
+All of this text should probably be inside the image caption
+--- anchor: paras 274..276 ---
+Figure (roster row 20) · pca-landscapeOne seed, three islands: this figure maps the search journeys in gene space and shows where the light machines live.The figure projects the 930-design screen of the v13 5 kW campaign on its first two principal components (NR-001). The axes come from a z-scored matrix of the ten genes. Colour is the cell mean of the search objective in kg-equivalent. Bright reads lower. Three lines trace the island best-so-far paths, one step per generation. The common seed starts at 36.109 (NR-006). The winner ends at 27.364 (NR-005). The PC1 inset reads larger main-rotor blades, wider ring spacing and a wider ground ring to the right, and more TRPT lines and more rotors to the left. The PC2 inset reads a deeper second-rotor bank, smaller second blades and rings biased toward the ground upward. The variance shares read PC1 22.4 per cent and PC2 17.3 per cent (NR-044).
+--- context ---
+273 | pca-landscape
+274 | Figure (roster row 20) · pca-landscape
+275 | One seed, three islands: this figure maps the search journeys in gene space and shows where the light machines live.
+276 | The figure projects the 930-design screen of the v13 5 kW campaign on its first two principal components (NR-001). The axes come from a z-scored matrix of the ten genes. Colour is the cell mean of the search objective in kg-equivalent. Bright reads lower. Three lines trace the island best-so-far paths, one step per generation. The common seed starts at 36.109 (NR-006). The winner ends at 27.364 (N
+==============================================================================
+COMMENT id=15 by Unknown Author 2026-10-14T13:08:19Z
+--- body ---
+To be inside caption
+--- anchor: paras 280..282 ---
+Figure (roster row 21) · pca-atlasOne map of the search space, coloured ten times: each panel shows where one design gene runs high or low across the search.The figure repeats one PC1-PC2 projection of the 930-design screen ten times, once per gene slot (NR-001). The projection and the journey marks match the levers landscape plate. Each panel colours the cell mean of that gene over all 930 designs. The star marks the common seed (36.109, NR-006). The diamond marks the winner (27.364, NR-005). The thin lines trace the island journeys. The colour bars print each gene at three significant figures. The projection reads NR-044: PC1 22.4 per cent, PC2 17.3 per cent.
+--- context ---
+279 | pca-atlas
+280 | Figure (roster row 21) · pca-atlas
+281 | One map of the search space, coloured ten times: each panel shows where one design gene runs high or low across the search.
+282 | The figure repeats one PC1-PC2 projection of the 930-design screen ten times, once per gene slot (NR-001). The projection and the journey marks match the levers landscape plate. Each panel colours the cell mean of that gene over all 930 designs. The star marks the common seed (36.109, NR-006). The diamond marks the winner (27.364, NR-005). The thin lines trace the island journeys. The colour bars 
+==============================================================================
+COMMENT id=16 by Unknown Author 2026-10-14T12:28:30Z
+--- body ---
+Is our campaign geometry always consistent in the cone angle ? e.g. from lowest rotor to first pure TRPT ring down … If so that seems a shame to not explore that potential design space, we should note this in the report and  and we would do well to attempt a further campaign with this possibility.
+--- anchor: paras 295..295 ---
+Each machine is drawn from its built geometry, 
+--- context ---
+294 | Figure (roster row 9) · machine-evolution-strip
+295 | Island 3's best-so-far objective falls as the built geometry converges to the register winner. The row starts at the common seed and ends at the campaign winner. Each machine is drawn from its built geometry, and all seven share one scale. The number under each machine is its search objective, in kg-equivalent. A lower number is better.
+296 | Island 3's best-so-far objective falls from 36.109 to 27.364 kg-equivalent. The built geometry converges to the register winner (NR-006, NR-005). Seven panels show the best machine of island 3 at generations 0, 6, 10, 18, 22, 25 and 26. The labels match the recorded generations. Each panel draws the built state of that genome. The drawing shows the ring segments in their section colours, the TRPT 
+297 | Source: data dd3cc6a · script 74cfef9 · rows NR-005, NR-006, NR-011, NR-036
