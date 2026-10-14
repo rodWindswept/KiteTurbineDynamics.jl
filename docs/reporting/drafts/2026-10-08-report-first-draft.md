@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.37. Date 2026-10-14.
+Internal engineering report. Draft v0.38. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -673,16 +673,20 @@ The evaluator runs the rope-break gate across the relax run as well as
 the window. The injected transient over-strain trips the gate at once.
 
 The team has solved this pattern twice on record. On 2026-08-14 the
-rule was: breaks only during real operation. The settle transients
+rule was: the check judges only real operation. The settle transients
 must not break healthy machines.
 
 On 2026-09-16 the ruling was: breaks on the measurement window only,
 with break detection off during the relax. The fix here is the same
 pattern applied to the evaluator.
 
-Until it lands, the discrepancy stands. The evaluator enables rope
-breaks across the relax and the window. The ruling enables them on the
-window only.
+Until it lands, the discrepancy stands. The evaluator arms the
+rope-break check across the relax and the window. The ruling limits
+break detection to the measurement window.
+
+The fix removes false rejections. It never allows breaks.
+A rope break in the measurement window always rejects the design.
+No design passes with a broken rope at its operating point.
 
 The lesson stands. The rapid path is the evaluator default. Any
 consumer that does not pass the cold flag measures the instrument, not

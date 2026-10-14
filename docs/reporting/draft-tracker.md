@@ -208,6 +208,11 @@ The summary line takes the classified fail counts (NR-002), and the unit forms r
 The phrase forms tighten, and the section 2.2.2 build request retires from the body.
 No value moves.
 
+v0.38 pass by @author (2026-10-14).
+This pass folds the rope-break readings into the discussion section.
+The two shorthand forms take their safety-first replacements, and the sentence set states that breaks are never permitted.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
