@@ -1,0 +1,12 @@
+== scratch/sw_sweep28_draft_v042.md: words=6388 total=6 per100w=0.09 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Setting | Value | Source |
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Margin | Source |
+  | | Claim | Evidence | Report location | Register rows |
+  | | Exhibit | Source extract | Cited rows | Script commit | Era |
+

@@ -1,0 +1,34 @@
+diff --git a/docs/reporting/drafts/2026-10-08-report-first-draft.md b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+index e3977bc..c8fa95c 100644
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1,6 +1,6 @@
+ # The kite turbine: a search over its design space
+ 
+-Internal engineering report. Draft v0.41. Date 2026-10-14.
++Internal engineering report. Draft v0.42. Date 2026-10-14.
+ 
+ Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+ Numbers come only from signed register rows, cited by row ID.
+@@ -512,13 +512,14 @@ Its airborne mass reads 25.698 kilograms (NR-018).
+ 
+ The winner clears each checked gate.
+ 
+-| Gate | Threshold | Winner outcome | Source |
+-|---|---|---|---|
+-| Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+-| Structural FoS floor | 2.5 | pass, 15.0 minimum | NR-009, NR-015 |
+-| Clearance | blade-tip gate | pass | NR-036 |
+-| Twist | per-segment limit δcrit | pass, all five segments within limit | NR-022 |
+-| Rope break | none on the window | pass on the cold path | NR-012, NR-013 |
++| Gate | Threshold | Winner outcome | Margin | Source |
++|---|---|---|---|---|
++| Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
++| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
++| Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
++| Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
++| Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
++| Rope break | none on the window | pass on the cold path | the warm path rejects healthy winners | NR-012, NR-013 |
+ 
+ A lifter kite holds the machine aloft. The lifter gives lift only. It
+ gives no torque and no drive.

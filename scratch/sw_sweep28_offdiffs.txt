@@ -1,0 +1,12 @@
+1c1
+< == scratch/sw_sweep28_draft_v041.md: words=6309 total=6 per100w=0.1 ==
+---
+> == scratch/sw_sweep28_draft_v042.md: words=6388 total=6 per100w=0.09 ==
+9c9
+<   | | Gate | Threshold | Winner outcome | Source |
+---
+>   | | Gate | Threshold | Winner outcome | Margin | Source |
+1c1
+< == scratch/sw_sweep28_tracker_v041.md: words=2609 total=10 per100w=0.38 ==
+---
+> == scratch/sw_sweep28_tracker_v042.md: words=2660 total=10 per100w=0.38 ==

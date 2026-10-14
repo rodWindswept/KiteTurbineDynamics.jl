@@ -1,0 +1,6 @@
+== e8159b0 -> 38c77f8 ==
+arrivals: {'3.3': 1, '42': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 42] v0.42 pass by @author (2026-10-14).
+

@@ -1,0 +1,8 @@
+== e8159b0 -> 38c77f8 ==
+raw token occurrences: added 22, removed 5
+  net-out pair 5.0:
+    - | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  kept pair 15.0: net +1; raw removed-side 1, added-side 2
+  kept pair 2.5: net +1; raw removed-side 1, added-side 2
+

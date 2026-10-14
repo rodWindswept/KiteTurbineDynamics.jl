@@ -1,0 +1,24 @@
+== e8159b0 -> 38c77f8 ==
+arrivals: {'0.314': 1, '102.9': 1, '12.5': 1, '15.0': 1, '2.03': 2, '2.5': 1, '2.91': 1, '264.5': 1, '3.65': 1, '3.968': 1, '42': 1, '5.314': 1, '5.468': 1, '500.0': 1, '6.00': 1, '6.28': 1, '64.913': 1, '65.7': 1}
+removals: {'41': 1, '5.309': 1}
+  [arr 0.314] | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [arr 102.9] | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  [arr 12.5] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 2.91] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [arr 264.5] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 3.65] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 3.968] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 42] Internal engineering report. Draft v0.42. Date 2026-10-14. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 5.314] its end power 5.314 kW (NR-008). Its factor of safety reads | | End-of-window power | 5.314 kW | NR-008 |
+  [arr 5.468] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 500.0] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 6.00] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 6.28] | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [arr 64.913] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [arr 65.7] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [rem 41] Internal engineering report. Draft v0.41. Date 2026-10-14. | 11.01 m/s at 9.41 m (NR-008, NR-032).
+  [rem 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+

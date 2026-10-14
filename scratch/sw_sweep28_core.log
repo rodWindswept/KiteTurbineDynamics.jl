@@ -1,0 +1,361 @@
+== 0. preflight ==
+d2744fe
+-- working tree status, gated files (empty means clean)
+-- tip readback
+d2744fe docs(reporting): room response — hero image landed (v0.41 §3.3), waiting inventory, currency sweep actioned (b86b750)
+2	0
+== 1. span enumeration ==
+-- all commits, e8159b0..HEAD
+d2744fe docs(reporting): room response — hero image landed (v0.41 §3.3), waiting inventory, currency sweep actioned (b86b750)
+b86b750 docs: action the 2026-10-14 doc-currency sweep — README handover rows x7, trust-log NR-013 warm-path false-reject row + stamp, checker learns the docs-only DECISIONS exemption
+467ffc1 chore(scratch): the v0.42 pass final readback — the origin readback reads green across the fold, the receipt and the handover (au_v042 prefix)
+bfb8f55 docs(handovers): the author seat page takes the v0.42 closure — AU9 closed; the partner-gated tails and the kMppt plain pass next; base to 38c77f8; STE rc=0 at 0.00/100w
+dff427f docs(reporting): room response — v0.42, the gate-margin column folds at section 3.3 (AU9) (author seat); STE rc=0 at 0.00/100w
+38c77f8 docs(reporting): draft v0.42 — the gate-margin column folds at section 3.3 with the two corrected cells (AU9, author seat): the gate table gains the margin column, the power-floor cell reads pass, P_end 5.314 kW, and the clearance cell reads pass, 5.468 m, margin +3.968 m (NR-042); the FoS row takes its display forms (NR-009 on NR-015), and the torsional capacity and rope-break margin cells land (the SW2d supply, one writer); tracker entry; declared token diff (draft add 42 and the margin set, remove 41 and 5.309; tracker add 42 and 3.3); the frozen levers block and sections 4 and 5 hold byte-identical; STE rc=0 (author seat)
+60f5a32 docs(reporting): the figures seat takes the hero counter-read closure — the seat page, the map cell and delta v33, and the kit note take the clean v0.41 read (226 checks, 0 fail, 0cbb9b8); no figure byte moves; STE rc=0 (figures seat)
+2510886 docs(reporting): the gate-margin column display forms sign (science-validator) — the FoS row pins to `15.0` on `2.5` with margin `+12.5` / `+500.0 per cent` / `6.00 times`; the internal forms stay internal; the note lands before the AU9 fold; checker green (14 checks); STE rc=0
+0cbb9b8 chore(scratch): the v0.41 hero copy counter-read final logs — the check re-runs at the pushed tip e3446db/54a539e and the origin readback reads green (av_ prefix)
+54a539e docs(reporting): the v0.41 hero copy counter-read receipt and seat page — the machine winner hero fold, the seven seated markers, the 28 appendix pins and the copy walk record at e3446db; the seat page refreshes; STE rc=0 at 0.00/100w (aero-validator)
+e3446db docs(reporting): the v0.41 hero copy counter-read — the machine winner hero fold and the copy walk record clean: the v0.41 census adds the pin, the marker, the appendix row and its four hashes, and it removes the old pin and the old count sentence; sections 4 and 5 hold byte-identical; the seven seated markers read and the hero marker sits inside 3.3; all 28 appendix pins recompute from the committed bytes and the copy prints them; the copy resolves seven frames, embeds the delivered render bytes and reads clean at md5 7192f4a9 (226 checks, 0 fail); evidence script + log; STE rc=0 (aero-validator)
+0f46aa7 chore(scratch): the sweep 27 final-check log takes the receipt-gate line (sw_ prefix)
+cba1255 docs(reporting): room response — sweep 27 lands (science-writer); STE rc=0
+8a12aad docs(handovers): the science-writer seat handover refresh — sweep 27 closed; the sweep 28 movers and the explainer block next; STE rc=0 (science-writer)
+d862908 docs(reporting): sweep 27 — the v0.41 span verifies (one mover): the declared set recounts token for token (2 forms, 2 occurrences, raw 2/1; the pin and the marker row); the register holds; the hero markers read and sections 4-5 hold; the display guards and the frozen block hold; the pins recompute (28 of 28); the copy rebuilds current at v0.41; the offender delta header-only; STE rc=0 (science-writer)
+b526161 chore(scratch): land the sweep 27 evidence set (sw_ prefix)
+-- count
+16
+-- draft movers
+38c77f8 docs(reporting): draft v0.42 — the gate-margin column folds at section 3.3 with the two corrected cells (AU9, author seat): the gate table gains the margin column, the power-floor cell reads pass, P_end 5.314 kW, and the clearance cell reads pass, 5.468 m, margin +3.968 m (NR-042); the FoS row takes its display forms (NR-009 on NR-015), and the torsional capacity and rope-break margin cells land (the SW2d supply, one writer); tracker entry; declared token diff (draft add 42 and the margin set, remove 41 and 5.309; tracker add 42 and 3.3); the frozen levers block and sections 4 and 5 hold byte-identical; STE rc=0 (author seat)
+-- tracker movers
+38c77f8 docs(reporting): draft v0.42 — the gate-margin column folds at section 3.3 with the two corrected cells (AU9, author seat): the gate table gains the margin column, the power-floor cell reads pass, P_end 5.314 kW, and the clearance cell reads pass, 5.468 m, margin +3.968 m (NR-042); the FoS row takes its display forms (NR-009 on NR-015), and the torsional capacity and rope-break margin cells land (the SW2d supply, one writer); tracker entry; declared token diff (draft add 42 and the margin set, remove 41 and 5.309; tracker add 42 and 3.3); the frozen levers block and sections 4 and 5 hold byte-identical; STE rc=0 (author seat)
+-- candidates movers
+-- register movers, a7d09eb..HEAD
+2510886 docs(reporting): the gate-margin column display forms sign (science-validator) — the FoS row pins to `15.0` on `2.5` with margin `+12.5` / `+500.0 per cent` / `6.00 times`; the internal forms stay internal; the note lands before the AU9 fold; checker green (14 checks); STE rc=0
+-- numstat, register a7d09eb..HEAD (append-only check)
+32	0	docs/reporting/numbers-register.md
+-- numstat, gated files, e8159b0..HEAD
+7	0	docs/reporting/draft-tracker.md
+9	8	docs/reporting/drafts/2026-10-08-report-first-draft.md
+32	0	docs/reporting/numbers-register.md
+-- zero-diff readback: draft/tracker 38c77f8 vs HEAD
+-- zero-diff readback: register 2510886 vs HEAD
+-- zero-diff readback: build inputs 38c77f8 vs HEAD (draft, register, figures, scripts, checker)
+ scripts/doc_currency_check.py | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+-- zero-diff readback: all files 467ffc1 vs HEAD
+docs/agents/instrument-trust-log.md
+docs/reporting/room-responses/aero-worker-2026-10-14-hero-inventory-currency.md
+handovers/README.md
+scripts/doc_currency_check.py
+-- ancestry of movers
+38c77f8 OK
+e8159b0 OK
+2510886 OK
+467ffc1 OK
+0f46aa7 OK
+== 2. extracts ==
+   957 scratch/sw_sweep28_draft_v041.md
+   958 scratch/sw_sweep28_draft_v042.md
+   352 scratch/sw_sweep28_tracker_v041.md
+   359 scratch/sw_sweep28_tracker_v042.md
+  2626 total
+== 2b. full draft diff, e8159b0 -> 38c77f8 ==
+34 scratch/sw_sweep28_draft_diff.txt
+-- added non-blank lines (three-stage form)
+9
+-- tracker diff
+18 scratch/sw_sweep28_tracker_diff.txt
+== 2c. sections 4-5 region byte check ==
+sections 4-5 region byte-equal: True
+== 3. token tools: draft ==
+== e8159b0 -> 38c77f8 ==
+arrivals: {'0.314': 1, '102.9': 1, '12.5': 1, '15.0': 1, '2.03': 2, '2.5': 1, '2.91': 1, '264.5': 1, '3.65': 1, '3.968': 1, '42': 1, '5.314': 1, '5.468': 1, '500.0': 1, '6.00': 1, '6.28': 1, '64.913': 1, '65.7': 1}
+removals: {'41': 1, '5.309': 1}
+  [arr 0.314] | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [arr 102.9] | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  [arr 12.5] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 2.91] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [arr 264.5] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 3.65] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 3.968] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 42] Internal engineering report. Draft v0.42. Date 2026-10-14. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 5.314] its end power 5.314 kW (NR-008). Its factor of safety reads | | End-of-window power | 5.314 kW | NR-008 |
+  [arr 5.468] | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [arr 500.0] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 6.00] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [arr 6.28] | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [arr 64.913] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [arr 65.7] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [rem 41] Internal engineering report. Draft v0.41. Date 2026-10-14. | 11.01 m/s at 9.41 m (NR-008, NR-032).
+  [rem 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+
+== e8159b0 -> 38c77f8 ==
+lines: +9 -8; raw token occurrences: added 22, removed 5
+arrivals: {'0.314': 1, '102.9': 1, '12.5': 1, '15.0': 1, '2.03': 2, '2.5': 1, '2.91': 1, '264.5': 1, '3.65': 1, '3.968': 1, '42': 1, '5.314': 1, '5.468': 1, '500.0': 1, '6.00': 1, '6.28': 1, '64.913': 1, '65.7': 1}
+removals: {'41': 1, '5.309': 1}
+  [ARR 0.314 net+1] raw: added-side 1, removed-side 0
+      +1: | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [ARR 102.9 net+1] raw: added-side 1, removed-side 0
+      +1: | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  [ARR 12.5 net+1] raw: added-side 1, removed-side 0
+      +1: | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [ARR 15.0 net+1] raw: added-side 2, removed-side 1
+      +2: | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [ARR 2.03 net+2] raw: added-side 2, removed-side 0
+      +2: | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  [ARR 2.5 net+1] raw: added-side 2, removed-side 1
+      +2: | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [ARR 2.91 net+1] raw: added-side 1, removed-side 0
+      +1: | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [ARR 264.5 net+1] raw: added-side 1, removed-side 0
+      +1: | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [ARR 3.65 net+1] raw: added-side 1, removed-side 0
+      +1: | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [ARR 3.968 net+1] raw: added-side 1, removed-side 0
+      +1: | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [ARR 42 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.42. Date 2026-10-14.
+  [ARR 5.314 net+1] raw: added-side 1, removed-side 0
+      +1: | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [ARR 5.468 net+1] raw: added-side 1, removed-side 0
+      +1: | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [ARR 500.0 net+1] raw: added-side 1, removed-side 0
+      +1: | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [ARR 6.00 net+1] raw: added-side 1, removed-side 0
+      +1: | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [ARR 6.28 net+1] raw: added-side 1, removed-side 0
+      +1: | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  [ARR 64.913 net+1] raw: added-side 1, removed-side 0
+      +1: | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [ARR 65.7 net+1] raw: added-side 1, removed-side 0
+      +1: | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [REM 41 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.41. Date 2026-10-14.
+  [REM 5.309 net-1] raw: removed-side 1, added-side 0
+      -1: | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+
+== e8159b0 -> 38c77f8 ==
+raw token occurrences: added 22, removed 5
+  net-out pair 5.0:
+    - | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  kept pair 15.0: net +1; raw removed-side 1, added-side 2
+  kept pair 2.5: net +1; raw removed-side 1, added-side 2
+
+== 3b. token tools: tracker ==
+== e8159b0 -> 38c77f8 ==
+arrivals: {'3.3': 1, '42': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 42] v0.42 pass by @author (2026-10-14).
+
+== e8159b0 -> 38c77f8 ==
+lines: +7 -0; raw token occurrences: added 2, removed 0
+arrivals: {'3.3': 1, '42': 1}
+removals: none
+  [ARR 3.3 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the gate-margin column at section 3.3 (AU9).
+  [ARR 42 net+1] raw: added-side 1, removed-side 0
+      +1: v0.42 pass by @author (2026-10-14).
+
+== 4. STE gates ==
+-- sw_sweep28_draft_v041
+sw_sweep28_draft_v041.md         words=6309 total=  6 per100w=  0.10 em_dash= 2
+[HOOK:ste] sw_sweep28_draft_v041.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep28_draft_v041.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep28_draft_v041.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep28_draft_v041_off.txt
+-- sw_sweep28_draft_v042
+sw_sweep28_draft_v042.md         words=6388 total=  6 per100w=  0.09 em_dash= 2
+[HOOK:ste] sw_sweep28_draft_v042.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep28_draft_v042.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep28_draft_v042.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep28_draft_v042_off.txt
+-- sw_sweep28_tracker_v041
+sw_sweep28_tracker_v041.md       words=2609 total= 10 per100w=  0.38 em_dash= 1
+[HOOK:ste] sw_sweep28_tracker_v041.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v041.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v041.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v041.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v041.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v041.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep28_tracker_v041_off.txt
+-- sw_sweep28_tracker_v042
+sw_sweep28_tracker_v042.md       words=2660 total= 10 per100w=  0.38 em_dash= 1
+[HOOK:ste] sw_sweep28_tracker_v042.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v042.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v042.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v042.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v042.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep28_tracker_v042.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep28_tracker_v042_off.txt
+== 5. greps (v042) ==
+-- retired phrasing
+no hit
+-- stale-phrases sample
+no hit
+-- superseded values and internal forms (expect zero)
+no hit
+no internal form hit
+-- display guard: rounded 27.363 standalone (expect none)
+no hit
+-- safety guards: enabl / breaks only (expect none)
+enabl: no hit
+breaks-only: no hit
+-- safety set and detector forms
+737:The fix removes false rejections. It never allows breaks.
+738:A rope break in the measurement window always rejects the design.
+739:No design passes with a broken rope at its operating point.
+-- the margin rows
+420:| Power floor | 5.0 kW | NR-027, NR-039 |
+517:| Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+518:| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+519:| Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+520:| Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+521:| Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+522:| Rope break | none on the window | pass on the cold path | the warm path rejects healthy winners | NR-012, NR-013 |
+-- FoS outcome cell
+518:| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+-- glossary term sites
+521:| Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+246:| torsional capacity (`trpt_torque_capacity_axial`) | The peak torque a segment can transmit at its over-twist limit, for a given axial force. Pair a capacity only with the load of the same state. | `src/trpt_twist_limit.jl` | supply |
+-- shape lines present (held)
+602:The next steps add the blade checks and the gust cases.
+668:The trace reads one island of the campaign.
+670:A longer or broader run would extend the search.
+693:They do not prove an optimal gene set.
+-- classified counts line
+68:- Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+-- seated markers count
+7
+-- number-gate brackets
+787:  [2.24 holds a register row (NR-015). The other values need rows
+850:[Daisy values need register rows before the final report quotes
+-- held tokens 1.94 / 5.18 sites
+295:Rows k 1.94 to 3.0:
+299:| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+778:  default gain. The scaled system gain sat near 1.94. The window power
+783:  the campaign gain returned 5.18 kW.
+-- held token 3.55 in tracker
+305:closed form no longer holds. Its product, 3.55, stays flagged
+348:tokens (3.55, the version-history numerals, the open-request numerals,
+-- near-hits
+46:outer stiffening bridles sit outside the model.
+135:tension. It is not a rigid driveshaft. Its capacity to transmit torque
+190:A line is a tension member, like a tether or a bridle. It carries a load
+528:anchor, the three-way knot. Then it runs down the cyan line to the lift
+529:bearing, and down the bridles to the main rotor.
+808:- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+-- naming-trap near-hits
+no hit
+-- rename census: old form
+no hit
+-- rename census: new form
+scratch/sw_sweep28_draft_v042.md:385:The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+scratch/sw_sweep28_draft_v042.md:393:The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
+scratch/sw_sweep28_draft_v042.md:395:The score adds three soft constraint penalties to the airborne mass (NR-046):
+docs/reporting/glossary-candidates.md:150:| kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply |
+docs/reporting/glossary-candidates.md:365:  form, "soft constraint penalties". The rename lands with the draft
+-- pending markers
+8:A section marked [PENDING] waits on a gate.
+853:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+-- head block
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.42. Date 2026-10-14.
+
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+Numbers come only from signed register rows, cited by row ID.
+
+A section marked [PENDING] waits on a gate.
+
+**Draft status.** This is an internal draft.
+Sections 3.4 to 3.6 carry their text.
+Nomenclature and references stay incomplete.
+
+The physics era is `post-95c385d_wind-authority`. The bank derate
+applies throughout.
+
+-- figure-map delta v33 line
+388:- **v33 (2026-10-14):** the hero counter-read closes clean at the aero
+-- cited commits resolve
+dd3cc6a OK
+a76c5e9 OK
+31ca00d OK
+74cfef9 OK
+9cecee3 OK
+95c385d OK
+671ab96 OK
+e23f226 OK
+adea1a3 OK
+c438398 OK
+-- hex refs in draft v042
+66 scratch/sw_sweep28_hexrefs.txt
+== 5b. phrase census (flat) ==
+1x pass, P_end 5.314 kW
+0x margin +0.314 kW
+1x +6.28 per cent
+1x 15.0 on 2.5
+1x margin +12.5
+1x +500.0 per cent
+1x 6.00 times
+1x pass, 5.468 m, margin +3.968 m
+1x +264.5 per cent, 3.65 times
+1x +64.913 deg / +65.7 per cent, 2.91 times
+1x least margin 2.03 at S1
+1x +102.9 per cent above unity
+1x the warm path rejects healthy winners
+1x Torsional capacity
+0x torsional capacity
+1x It never allows breaks
+== 5c. arithmetic spot checks ==
+power: 5.314-5.0 = 0.314 ; pct = 6.28
+clearance: 5.468-1.5 = 3.968 ; pct = 264.5 ; times = 3.65
+fos: 15.0-2.5 = 12.5 ; pct = 500.0 ; times = 6.0
+twist: margin = 64.913 ; pct = 65.7 ; times = 2.91
+== 6. register anchors ==
+-- NR-008
+34:| NR-008 | Winner P_mean (island 3) | 5.309 / P_end 5.314 | kW | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+-- NR-009
+35:| NR-009 | Winner FoS (island 3) | 14.972 | — | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+-- NR-013
+39:| NR-013 | Rapid-path result on winners | :warm rejects all three winners — rope-break gate (broken=true), transient line over-strain during relax | — | probe_rapid_vs_ode_winners.jl + probe_warm_reject_cause.jl | signed (science-val
+-- NR-015
+41:| NR-015 | Operating point | k 2.24, relax 10 s + window 40 s, FoS gate 2.5/2.5, length 18.8 m | — | runner provenance | signed (science-validator, 2026-10-08) |
+-- NR-022
+329:| NR-022 | Segment twist and over-twist limit at the winner operating point | abs(dalpha): S1 33.94561934829036°, S2 33.811870056223555°, S3 33.67952027817454°, S4 33.54707806507812°, S5 22.821871326820364°. dcrit: S1 to S4 98.8590
+-- NR-040
+885:| NR-040 | Winner segment torque margin | S1 2.0287970973051634, S2 2.036175280501402, S3 2.0435436991749936, S4 2.0509817379918016, S5 2.6938375915900292. S1 governs (quote 2.03). The S1 to S4 band reads 2.03 to 2.05. | — | NR-023 st
+-- NR-042
+1151:| NR-042 | Winner blade-tip clearance and the gate floor | floor `1.5`, winner `5.468` at decode. Margin `+3.968` (`3.65` times, `+264.5` per cent) | m | pair-extract log line 11 (`docs/reporting/figures/pair-extract/extract-winner-ope
+-- NR-046
+1388:| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationa
+-- the display-form note block
+1623:## Display-form note: the gate-margin column figures (NR-009 on NR-015) (2026-10-14, science-validator)
+== 7. review copy readback ==
+1bec17262fa4a97686a0158d2f2c31d1  scratch/report-pdf-build/draft-live.docx
+1bec17262fa4a97686a0158d2f2c31d1  scratch/report-pdf-build/draft-38c77f8-20261014-184207.docx
+## Build record (builder output)
+
+This block is builder output. It sits outside the report proper and does
+not pass the STE gate.
+
+Draft: `38c77f8` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+
+Register: `v1 ROWS SIGNED (2026-10-08, science-validator). See the sign-off` — file at `2510886`
+
+Citation check: 38 cited, every one signed (48 signed rows total), uncited: NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041 — checker exit 0
+
+Seats resolved: 7 of 7 — `system-anatomy`, `machine-winner-hero`, `ring-utilisation`, `twist-limit`, `pca-landscape`, `pca-atlas`, `machine-evolution-strip`
+
+Embed route: SVG vector-first, PNG fallback; kits embedded as shipped,
+-rw-rw-r--  1 rod rod      76 Oct 14 17:50 .~lock.draft-live.docx#
+== 8. plate pins (hero set, sha256) ==
+4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5  docs/reporting/figures/machine-winner-hero/machine-winner-hero.png
+819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171  docs/reporting/figures/machine-winner-hero/machine-winner-hero.svg
+a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e  docs/reporting/figures/machine-winner-hero/machine-winner-hero.pdf
+52fe83a8c54ec93f5372b2fb15c8c77af90b44c3f1e6eb5a8732efffebf59924  docs/reporting/figures/machine-winner-hero/checks.log
+== done ==

@@ -1,0 +1,48 @@
+== e8159b0 -> 38c77f8 raw added 22 raw removed 5
+  net-out pair 5.0:
+    - | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  kept pair 15.0: net +1; raw removed-side 1, added-side 2
+  kept pair 2.5: net +1; raw removed-side 1, added-side 2
+  one-sided 0.314: added-side 1, removed-side 0
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  one-sided 102.9: added-side 1, removed-side 0
+    + | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  one-sided 12.5: added-side 1, removed-side 0
+    + | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  one-sided 2.03: added-side 2, removed-side 0
+    + | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+  one-sided 2.91: added-side 1, removed-side 0
+    + | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  one-sided 264.5: added-side 1, removed-side 0
+    + | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  one-sided 3.65: added-side 1, removed-side 0
+    + | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  one-sided 3.968: added-side 1, removed-side 0
+    + | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  one-sided 41: added-side 0, removed-side 1
+    - Internal engineering report. Draft v0.41. Date 2026-10-14.
+  one-sided 42: added-side 1, removed-side 0
+    + Internal engineering report. Draft v0.42. Date 2026-10-14.
+  one-sided 5.309: added-side 0, removed-side 1
+    - | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+  one-sided 5.314: added-side 1, removed-side 0
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  one-sided 5.468: added-side 1, removed-side 0
+    + | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  one-sided 500.0: added-side 1, removed-side 0
+    + | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  one-sided 6.00: added-side 1, removed-side 0
+    + | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  one-sided 6.28: added-side 1, removed-side 0
+    + | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+  one-sided 64.913: added-side 1, removed-side 0
+    + | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  one-sided 65.7: added-side 1, removed-side 0
+    + | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+
+freeze block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+freeze block md5 (stripped): 6d953ec10d2aa3ac66fd5d825fe16f6f
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054
