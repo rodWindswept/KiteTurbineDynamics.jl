@@ -52,6 +52,7 @@ full roster around them.
 | 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | F-VALUE counter-read at `331f60d` held the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). The re-census at `7329191` closes F-VALUE on the fix commit (`d6d4db9`) with zero defects. Next: the section 3.4 fold and the pointers, then the visual pass by Rod |
 | 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | F-VALUE counter-read at `331f60d` held the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). The re-census at `7329191` closes F-VALUE on the fix commit (`d6d4db9`) with zero defects. Next: the section 3.4 fold and the pointers, then the visual pass by Rod |
 | 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
+| 23 | ⟨tbd⟩ | §3.4 | The corner machines. Four renders, one per corner of the PC1-PC2 field | `machine-corner-grid` | planned | The founder ask (2026-10-14, routing comment 14). The pca projection (NR-044). Picks recorded at `scratch/fig_cg_picks.py` (data commit `dd3cc6a`, run `a76c5e9`) | The objective rows (science-validator), then the family-mode build |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -404,3 +405,12 @@ three slots).
   number prints. Script `d243b37`; the outputs and records ride this
   commit. Two full runs byte-identical across all five outputs. Next:
   the aero counter-read of the re-cut.
+
+- **v36 (2026-10-14):** the corner grid mints and its picks record (row
+  23). The founder ask (comment 14, id 13) asks four machine renders,
+  one typical of each corner of the PC1-PC2 field. The picks replicate
+  the certified projection with every NR-044 anchor re-verified, and
+  take the nearest feasible design to each [1,99] window corner:
+  `i1-g13-i1`, `i1-g7-i7`, `i2-g21-i4` and `i3-g26-i8`. The plate
+  values route to the science-validator first, then the family-mode
+  build.

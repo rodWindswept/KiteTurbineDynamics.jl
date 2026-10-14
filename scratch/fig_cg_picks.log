@@ -1,0 +1,60 @@
+anchor: rows: 930  (OK)
+anchor: feasible rows: 508  (OK)
+anchor: PC1 share x1e6: 224347  (OK)
+anchor: PC2 share x1e6: 172630  (OK)
+anchor: seed pc1 3dp: 0.531  (OK)
+anchor: seed pc2 3dp: -1.297  (OK)
+anchor: winner pc1 3dp: 0.885  (OK)
+anchor: winner pc2 3dp: 2.869  (OK)
+anchor: seed fit: 36.109  (OK)
+anchor: winner fit: 27.364  (OK)
+anchor: winner island: 3  (OK)
+window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+
+== low PC1 / low PC2 target (-5.133, -2.178) ==
+  1. i1-g13-i1  dist 3.797  pc (-1.454, -1.238)  fit 60.646000  status ok
+  2. i1-g7-i7  dist 3.834  pc (-2.088, 0.152)  fit 58.864000  status ok
+  3. i1-g8-i10  dist 4.111  pc (-1.407, -0.440)  fit 56.028000  status ok
+  4. i3-g1-i9  dist 4.243  pc (-1.128, -0.776)  fit 41.707000  status ok
+  5. i2-g8-i8  dist 4.386  pc (-0.857, -1.202)  fit 45.897000  status ok
+
+== low PC1 / high PC2 target (-5.133, 3.125) ==
+  1. i1-g7-i7  dist 4.255  pc (-2.088, 0.152)  fit 58.864000  status ok
+  2. i3-g3-i7  dist 4.931  pc (-0.584, 1.222)  fit 44.570000  status ok
+  3. i1-g11-i1  dist 4.951  pc (-0.552, 1.246)  fit 42.090000  status ok
+  4. i3-g10-i1  dist 4.987  pc (-0.446, 1.420)  fit 43.071000  status ok
+  5. i1-g8-i10  dist 5.157  pc (-1.407, -0.440)  fit 56.028000  status ok
+
+== high PC1 / low PC2 target (1.671, -2.178) ==
+  1. i2-g21-i4  dist 0.875  pc (1.132, -1.489)  fit 33.704000  status ok
+  2. i3-g21-i8  dist 0.991  pc (0.957, -1.491)  fit 34.361000  status ok
+  3. i2-g24-i8  dist 0.996  pc (0.839, -1.631)  fit 33.809000  status ok
+  4. i2-g8-i7  dist 1.042  pc (0.992, -1.387)  fit 35.475000  status ok
+  5. i1-g18-i10  dist 1.060  pc (0.919, -1.431)  fit 34.981000  status ok
+
+== high PC1 / high PC2 target (1.671, 3.125) ==
+  1. i3-g26-i8  dist 0.074  pc (1.680, 3.051)  fit 33.812000  status ok
+  2. i3-g30-i1  dist 0.191  pc (1.481, 3.136)  fit 30.214000  status ok
+  3. i3-g28-i6  dist 0.196  pc (1.500, 3.220)  fit 29.767000  status ok
+  4. i3-g26-i4  dist 0.205  pc (1.468, 3.152)  fit 29.927000  status ok
+  5. i3-g28-i4  dist 0.210  pc (1.471, 3.187)  fit 28.935000  status ok
+
+== picks (recorded) ==
+low PC1 / low PC2: i1-g13-i1  island 1 gen 13 idx 1
+   pc (-1.454423, -1.238178)  dist 3.796523  fit 60.646000
+   x1=2.39944 x2=1.1953 x3=2.1 x4=7 x5=0.03504 x6=1.85458 x7=10.7399 x8=3.61269 x9=0.985266 x10=1
+low PC1 / high PC2: i1-g7-i7  island 1 gen 7 idx 7
+   pc (-2.088227, 0.152353)  dist 4.254840  fit 58.864000
+   x1=2.87247 x2=1.1953 x3=1.3099 x4=8 x5=-0.416824 x6=1.95253 x7=2.50771 x8=7.12685 x9=0.980572 x10=0.759349
+high PC1 / low PC2: i2-g21-i4  island 2 gen 21 idx 4
+   pc (1.132051, -1.488592)  dist 0.874883  fit 33.704000
+   x1=4.5161 x2=1.1953 x3=2.20513 x4=3 x5=0.233211 x6=1 x7=15.2845 x8=5.53487 x9=1 x10=0.973156
+high PC1 / high PC2: i3-g26-i8  island 3 gen 26 idx 8
+   pc (1.679755, 3.050611)  dist 0.074376  fit 33.812000
+   x1=4.31355 x2=1.1953 x3=2.57158 x4=3 x5=-0.8 x6=1.00755 x7=0.00353 x8=22 x9=0.965775 x10=0.2
+
+== context: nearest including rejected ==
+low PC1 / low PC2: nearest-all reject dist 1.425 | nearest-ok dist 3.797
+low PC1 / high PC2: nearest-all clearance_reject dist 0.371 | nearest-ok dist 4.255
+high PC1 / low PC2: nearest-all reject dist 0.697 | nearest-ok dist 0.875
+high PC1 / high PC2: nearest-all ok dist 0.074 | nearest-ok dist 0.074
