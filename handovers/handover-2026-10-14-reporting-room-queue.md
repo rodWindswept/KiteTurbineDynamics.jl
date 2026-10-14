@@ -1,7 +1,7 @@
 # Handover: the reporting room queue
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`. **Updated** 2026-10-14 for the round-4 routing pass, the k-story order and the safety shorthand.
+**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`. **Updated** 2026-10-14 for the v0.38 span, the term gate and the item-8 author leg.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -9,51 +9,51 @@ This page is the consolidated queue index for the reporting room. It holds the r
 
 Six pages hold the rotation insurance. Each seat page carries the open items, the evidence index, the boot steps and the working rules.
 
-- `handovers/handover-2026-10-14-reporting-room-aero-validator.md`: commit `bc2c529`.
+- `handovers/handover-2026-10-14-reporting-room-aero-validator.md`: commit `68092dc`.
 
-- `handovers/handover-2026-10-14-reporting-room-science-validator.md`: commit `21b821b`.
+- `handovers/handover-2026-10-14-reporting-room-science-validator.md`: commit `bb1709d`.
 
-- `handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md`: commit `efc44f3`.
+- `handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md`: commit `9ae8097`.
 
-- `handovers/handover-2026-10-14-reporting-room-author.md`: commit `f6e7f4e`.
+- `handovers/handover-2026-10-14-reporting-room-author.md`: commit `5821a8f`.
 
-- `handovers/handover-2026-10-14-reporting-room-science-writer.md`: commit `3c5651b`.
+- `handovers/handover-2026-10-14-reporting-room-science-writer.md`: commit `9ac4d9d`.
 
 - This page: the room queue.
 
-## State (updated for the round-4 routing pass)
+## State (updated for the v0.38 span)
 
-- Draft v0.34 at `a3c2def`. Sections 3.6 and 5 carry their text. The polish batch closed. The head status line reads current.
+- Draft v0.38 at `ed3d202`. The objective block and the rename read at section 2.4. The appendix carries the delivered pins (`ef36c6c`). Section 4.1 reads the detector forms.
 
-- The register holds at `6255268`. The candidates record moved to v14 at `4e559de`, noted and not gated.
+- The register holds append-only at `9d96a4b`. NR-046 signed at `4a86e6f`. Totals hold at 111.
 
-- The review copy `scratch/report-pdf-build/draft-live.docx` carries the v0.34 build. md5 `8324be7a204fbce3f3c6c38babcd62dc`.
+- The candidates record reads v15 at `57c77cf`, status PREP v15, noted and not gated.
 
-- STE: the draft reads 5,721 words, total held at 5. The tracker reads 2,239 words, total held at 10.
+- The review copy `scratch/report-pdf-build/draft-live.docx` carries the v0.38 build. md5 `9f9ef1adb753bea5f8d544dc3e13bd96`.
 
-- Landings above the seat pages since the first write: this page (`13df740`), the claim-by-claim audit (`90cd692`), and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). Draft v0.34 sits at `a3c2def`, and this pass lands on top.
+- STE: the draft reads 5,918 words, total held at 6. The tracker reads 2,438 words, total held at 10.
+
+- Landings above the seat pages since the first write: this page (`13df740`), the claim audit (`90cd692`) and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). The later span takes the appendix re-pin (`ef36c6c`), the objective block (`57c77cf`) and the consistency sweep (`7dd91a9`). It adds the term gate (`cadf83d`) and the review-copy last mile (`d9d4fc4`). The span closes with the rows 6 and 7 records (`9ae8097`), the safety pass (`ed3d202`) and sweeps 22 to 24.
 
 ## Open queue, in fold order
 
-1. **@science-validator: the objective-score read.** The head. The read covers the objective seam (`src/objective_v12.jl`) and the chain sites in the NR-039 notes. One new row carries the three penalty forms, with thresholds, weights and units. It also states how the search treats rejected designs. The PL12 facts stay on call.
+1. **@aero-validator: the item-8 aero leg.** The NR-025 register row takes the amend. The sibling-phrasing sweep reads the current tip. The draft holds at `ed3d202`, and the sweep reaches the wider permission forms, the room-consultation line included. The v0.38 build takes its counter-read at md5 `9f9ef1adb753bea5f8d544dc3e13bd96`. No number and no ruling moves.
 
-2. **@science-writer: sweep 22, then the block and the rename.** The sweep keys on `a3c2def`. The explainer block drafts from the new row. The rename reads "gate penalties" to "soft constraint penalties", in the glossary row and the draft together. The references gate holds three pending source calls.
+2. **@author: PL13, the decision shape.** Sections 3.4 to 3.7 and 4, over the settled text. Then the AU9 gate cells and the partner-gated tails follow at the same seat.
 
-3. **@author: the fold, then the sweep.** The objective block and the rename fold at section 2.4. The text seats inside the current number. The numbering hold stands. The consistency sweep runs over the folded state.
+3. **@hermes (lead) and @science-writer: the Nomenclature fold.** The term gate cleared at `cadf83d`. The fold closes the last pending section. The three projection terms sit in the candidates for Track D.
 
-4. **@aero-validator: the counter-read stack.** Pair one, the `dcf8213` sections. Pair two, the implications and the conclusion. The Harris-3.5 F-VALUE read on rows 6 and 7. The new row takes its counter-read when it signs.
+4. **@science-validator, then @author: the k = 2.24 story.** The check (`3b8e099`) and the counter-read (`4203bec`) hold the plan. The science-validator signs the sweep rows first, with the omega column named (`omega_final`, not `omega_eq`). The author then folds section 2.3. The fold adds the two retirements and the small k table. It also adds one paragraph per side, the sizing-side pair and the over-power tie-in. The era call stays open.
 
-5. **@fig-img-diagrams: the item-5 extract.** Then the standing flags. The ring lead prints the capture form 15.033. The headline form 15.0 is one line away if the room calls it. The generation notes take a tracked name in this pass. No caption item sits open: the strip captions closed at `d6d4db9`, and the drawn-label split stands recorded.
+5. **@fig-img-diagrams: the item-5 lever-statistics extract.** Objective versus gene, gate failures by gene, penalty contributions across ok designs. A drawn value or a pin move takes the aero F-VALUE read. Then the standing flags: the ring lead prints the capture form 15.033. The headline form 15.0 is one line away if the room calls it. The k-basis plate (row 5) and rows 6 and 7 wait on the visual pass by Rod.
 
-6. **@hermes: the map.** Delta maps, route notes and receipts stay at this seat. The round-4 routing and this refresh land here. Keep this page current as items close.
+6. **@science-writer: the explainer block and the references gate.** The block lifts from the printed section 2.4 block and NR-046. The references gate holds three pending source calls (Ranneberg, Jamieson, Hancock). Sweep 25 keys on the next push.
 
-7. **@science-validator, then @author: the k = 2.24 story.** The check (`3b8e099`) and the counter-read (`4203bec`) hold the plan. The science-validator signs the sweep rows first, with the omega column named (`omega_final`, not `omega_eq`). The author then folds section 2.3. The fold adds the two retirements, the small k table, one paragraph per side, the sizing-side pair and the over-power tie-in. The era call stays open.
-
-8. **@author and @aero-validator: the safety-shorthand pass.** The founder flagged the section 4.1 pair: it reads as permission for snapped ropes. The receipts (`2c97d57`, `ea51b25`) hold the detector forms. The author rewords the pair at the next fold. The aero seat amends the NR-025 row and sweeps the sibling phrasings (the room-consultation line). No number and no ruling moves. The evaluator fix keeps its own gate (Harris 3.8).
+7. **@hermes: the map.** Delta maps, route notes and receipts stay at this seat. Keep this page current as items close.
 
 ## The parallel set
 
-The claim audit closed at `90cd692`. The open legs read: the objective read, the item-5 extract, and sweep 22. Farm them. The fold chain and the sign-offs stay single-desk. Keep one rigorous read per gate.
+The claim audit closed at `90cd692`. The open legs read: the item-5 extract and the explainer block. Farm them. The fold chain and the sign-offs stay single-desk. Keep one rigorous read per gate.
 
 ## Boot
 
@@ -79,4 +79,4 @@ The claim audit closed at `90cd692`. The open legs read: the objective read, the
 
 - Land one receipt per read in `docs/reporting/room-responses/`.
 
-**Owner:** @hermes (map seat). **Next action:** the k-sweep rows at the science-validator seat. The section 2.3 fold and the safety-shorthand pass follow at the author seat.
+**Owner:** @hermes (map seat). **Next action:** the item-8 aero leg at the aero-validator seat. Then PL13, the Nomenclature fold and the k-story fold.
