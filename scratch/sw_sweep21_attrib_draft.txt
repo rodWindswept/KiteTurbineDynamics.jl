@@ -1,0 +1,198 @@
+== 76655cb -> 5a7a6b4 ==
+lines: +64 -3; raw token occurrences: added 44, removed 5
+arrivals: {'0.5180': 1, '0.5621': 1, '0006': 1, '11': 1, '110': 1, '147': 1, '15.0': 1, '17.3': 1, '2.03': 1, '20': 1, '21': 1, '22.4': 1, '25.698': 1, '26': 1, '27.364': 2, '3': 1, '3.1': 1, '3.2': 1, '3.3': 3, '3.4': 2, '301': 1, '32': 1, '36.109': 2, '39.7': 1, '4.1': 1, '4.3': 1, '5.309': 1, '5018': 1, '508': 1, '5222': 1, '5385': 1, '5605': 1, '930': 2}
+removals: none
+  [ARR 0.5180 net+1] raw: added-side 1, removed-side 0
+      +1: for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
+  [ARR 0.5621 net+1] raw: added-side 1, removed-side 0
+      +1: The top loadings read +0.5621 for the second-rotor bank, -0.5605
+  [ARR 0006 net+1] raw: added-side 1, removed-side 0
+      +1: | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are n
+  [ARR 11 net+1] raw: added-side 1, removed-side 0
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [ARR 110 net+1] raw: added-side 1, removed-side 0
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [ARR 147 net+1] raw: added-side 1, removed-side 0
+      +1: | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are n
+  [ARR 15.0 net+1] raw: added-side 2, removed-side 1
+      +1: 15.0 (NR-009). That value is the window minimum.
+      +1: | Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+  [ARR 17.3 net+1] raw: added-side 1, removed-side 0
+      +1: Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+  [ARR 2.03 net+1] raw: added-side 1, removed-side 0
+      +1: | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
+  [ARR 20 net+1] raw: added-side 1, removed-side 0
+      +1: [Figure seated: figure-map row 20 (the levers landscape, slug `pca-landscape`). Values cite NR-001, NR-005, NR-006, NR-044 and NR-045.]
+  [ARR 21 net+1] raw: added-side 1, removed-side 0
+      +1: [Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
+  [ARR 22.4 net+1] raw: added-side 1, removed-side 0
+      +1: Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+  [ARR 25.698 net+1] raw: added-side 1, removed-side 0
+      +1: | Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
+  [ARR 26 net+1] raw: added-side 1, removed-side 0
+      +1: Island 3 reaches the winner value, 27.364, at generation 26 and holds
+  [ARR 27.364 net+2] raw: added-side 2, removed-side 0
+      +1: Island 3 reaches the winner value, 27.364, at generation 26 and holds
+      +1: | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR
+  [ARR 3 net+1] raw: added-side 1, removed-side 0
+      +1: Island 3 reaches the winner value, 27.364, at generation 26 and holds
+  [ARR 3.1 net+1] raw: added-side 1, removed-side 0
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [ARR 3.2 net+1] raw: added-side 1, removed-side 0
+      +1: | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR
+  [ARR 3.3 net+3] raw: added-side 3, removed-side 0
+      +1: | Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
+      +1: | Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
+      +1: | Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+  [ARR 3.4 net+2] raw: added-side 3, removed-side 1
+      +1: ### 3.4 The levers
+      +1: | Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+      +1: | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
+  [ARR 301 net+1] raw: added-side 1, removed-side 0
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [ARR 32 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.32. Date 2026-10-14.
+  [ARR 36.109 net+2] raw: added-side 2, removed-side 0
+      +1: All three start at the common seed, 36.109 kg-equivalent (NR-006).
+      +1: | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR
+  [ARR 39.7 net+1] raw: added-side 1, removed-side 0
+      +1: 39.7 per cent together (NR-044).
+  [ARR 4.1 net+1] raw: added-side 1, removed-side 0
+      +1: | Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners at the rope-break gate. | §4.1 | NR-012, N
+  [ARR 4.3 net+1] raw: added-side 1, removed-side 0
+      +1: | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are n
+  [ARR 5.309 net+1] raw: added-side 1, removed-side 0
+      +1: | Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
+  [ARR 5018 net+1] raw: added-side 1, removed-side 0
+      +1: for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044).
+  [ARR 508 net+1] raw: added-side 1, removed-side 0
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [ARR 5222 net+1] raw: added-side 1, removed-side 0
+      +1: The top loadings read -0.5385 for the TRPT line count, -0.5222
+  [ARR 5385 net+1] raw: added-side 1, removed-side 0
+      +1: The top loadings read -0.5385 for the TRPT line count, -0.5222
+  [ARR 5605 net+1] raw: added-side 1, removed-side 0
+      +1: The top loadings read +0.5621 for the second-rotor bank, -0.5605
+  [ARR 930 net+2] raw: added-side 2, removed-side 0
+      +1: They project the 930 designs of the campaign onto the first two
+      +1: | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+
+== 5a7a6b4 -> dcf8213 ==
+lines: +37 -2; raw token occurrences: added 31, removed 3
+arrivals: {'0': 2, '0.20': 1, '0.804': 1, '0.82': 1, '0.951': 1, '1.665': 1, '15.0': 1, '15.033': 1, '2.03': 1, '2.69': 1, '22.8': 1, '25.698': 1, '26': 1, '27.364': 2, '28.315': 1, '29.8': 1, '32.293': 1, '33': 1, '33.5': 1, '33.9': 1, '35.2': 1, '36.109': 2, '4.580': 1, '6': 1, '92.6': 1, '98.9': 1}
+removals: {'32': 1}
+  [ARR 0 net+2] raw: added-side 2, removed-side 0
+      +1: The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+      +1: The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+  [ARR 0.20 net+1] raw: added-side 1, removed-side 0
+      +1: The blade scales read 0.82 and 0.20 (NR-011).
+  [ARR 0.804 net+1] raw: added-side 1, removed-side 0
+      +1: The hub radius is 4.580 m and the ground radius is 0.804 m.
+  [ARR 0.82 net+1] raw: added-side 1, removed-side 0
+      +1: The blade scales read 0.82 and 0.20 (NR-011).
+  [ARR 0.951 net+1] raw: added-side 1, removed-side 0
+      +1: The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+  [ARR 1.665 net+1] raw: added-side 1, removed-side 0
+      +1: The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+  [ARR 15.0 net+1] raw: added-side 1, removed-side 0
+      +1: The window-minimum factor of safety is 15.0 (NR-009).
+  [ARR 15.033 net+1] raw: added-side 1, removed-side 0
+      +1: At the final step, R6 reads 15.033 (NR-021).
+  [ARR 2.03 net+1] raw: added-side 1, removed-side 0
+      +1: The least segment torque margin is 2.03, at S1 (NR-040).
+  [ARR 2.69 net+1] raw: added-side 1, removed-side 0
+      +1: S5 carries the largest segment torque margin, 2.69 (NR-040).
+  [ARR 22.8 net+1] raw: added-side 1, removed-side 0
+      +1: S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+  [ARR 25.698 net+1] raw: added-side 1, removed-side 0
+      +1: The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+  [ARR 26 net+1] raw: added-side 1, removed-side 0
+      +1: The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+  [ARR 27.364 net+2] raw: added-side 2, removed-side 0
+      +1: The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+      +1: The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+  [ARR 28.315 net+1] raw: added-side 1, removed-side 0
+      +1: The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+  [ARR 29.8 net+1] raw: added-side 1, removed-side 0
+      +1: R2 to R4 read 29.8 to 35.2 (NR-021).
+  [ARR 32.293 net+1] raw: added-side 1, removed-side 0
+      +1: The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+  [ARR 33 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.33. Date 2026-10-14.
+  [ARR 33.5 net+1] raw: added-side 1, removed-side 0
+      +1: S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [ARR 33.9 net+1] raw: added-side 1, removed-side 0
+      +1: S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [ARR 35.2 net+1] raw: added-side 1, removed-side 0
+      +1: R2 to R4 read 29.8 to 35.2 (NR-021).
+  [ARR 36.109 net+2] raw: added-side 2, removed-side 0
+      +1: The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+      +1: The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+  [ARR 4.580 net+1] raw: added-side 1, removed-side 0
+      +1: The hub radius is 4.580 m and the ground radius is 0.804 m.
+  [ARR 6 net+1] raw: added-side 1, removed-side 0
+      +1: The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+  [ARR 92.6 net+1] raw: added-side 1, removed-side 0
+      +1: S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+  [ARR 98.9 net+1] raw: added-side 1, removed-side 0
+      +1: S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [REM 32 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.32. Date 2026-10-14.
+
+== cumulative 76655cb -> dcf8213 ==
+arrivals: {'0': 2, '0.20': 1, '0.5180': 1, '0.5621': 1, '0.804': 1, '0.82': 1, '0.951': 1, '0006': 1, '1.665': 1, '11': 1, '110': 1, '147': 1, '15.0': 2, '15.033': 1, '17.3': 1, '2.03': 2, '2.69': 1, '20': 1, '21': 1, '22.4': 1, '22.8': 1, '25.698': 2, '26': 2, '27.364': 4, '28.315': 1, '29.8': 1, '3': 1, '3.1': 1, '3.2': 1, '3.3': 3, '3.4': 2, '301': 1, '32.293': 1, '33': 1, '33.5': 1, '33.9': 1, '35.2': 1, '36.109': 4, '39.7': 1, '4.1': 1, '4.3': 1, '4.580': 1, '5.309': 1, '5018': 1, '508': 1, '5222': 1, '5385': 1, '5605': 1, '6': 1, '92.6': 1, '930': 2, '98.9': 1}
+removals: none
+
+== identity check (net == added - removed over the span) ==
+  OK  0: net +2, raw added 2, raw removed 0
+  OK  0.20: net +1, raw added 1, raw removed 0
+  OK  0.5180: net +1, raw added 1, raw removed 0
+  OK  0.5621: net +1, raw added 1, raw removed 0
+  OK  0.804: net +1, raw added 1, raw removed 0
+  OK  0.82: net +1, raw added 1, raw removed 0
+  OK  0.951: net +1, raw added 1, raw removed 0
+  OK  0006: net +1, raw added 1, raw removed 0
+  OK  1.665: net +1, raw added 1, raw removed 0
+  OK  11: net +1, raw added 1, raw removed 0
+  OK  110: net +1, raw added 1, raw removed 0
+  OK  147: net +1, raw added 1, raw removed 0
+  OK  15.0: net +2, raw added 3, raw removed 1
+  OK  15.033: net +1, raw added 1, raw removed 0
+  OK  17.3: net +1, raw added 1, raw removed 0
+  OK  2.03: net +2, raw added 2, raw removed 0
+  OK  2.69: net +1, raw added 1, raw removed 0
+  OK  20: net +1, raw added 1, raw removed 0
+  OK  21: net +1, raw added 1, raw removed 0
+  OK  22.4: net +1, raw added 1, raw removed 0
+  OK  22.8: net +1, raw added 1, raw removed 0
+  OK  25.698: net +2, raw added 2, raw removed 0
+  OK  26: net +2, raw added 2, raw removed 0
+  OK  27.364: net +4, raw added 4, raw removed 0
+  OK  28.315: net +1, raw added 1, raw removed 0
+  OK  29.8: net +1, raw added 1, raw removed 0
+  OK  3: net +1, raw added 2, raw removed 1
+  OK  3.1: net +1, raw added 1, raw removed 0
+  OK  3.2: net +1, raw added 1, raw removed 0
+  OK  3.3: net +3, raw added 3, raw removed 0
+  OK  3.4: net +2, raw added 3, raw removed 1
+  OK  301: net +1, raw added 1, raw removed 0
+  OK  32.293: net +1, raw added 1, raw removed 0
+  OK  33: net +1, raw added 1, raw removed 0
+  OK  33.5: net +1, raw added 1, raw removed 0
+  OK  33.9: net +1, raw added 1, raw removed 0
+  OK  35.2: net +1, raw added 1, raw removed 0
+  OK  36.109: net +4, raw added 4, raw removed 0
+  OK  39.7: net +1, raw added 1, raw removed 0
+  OK  4.1: net +1, raw added 1, raw removed 0
+  OK  4.3: net +1, raw added 1, raw removed 0
+  OK  4.580: net +1, raw added 1, raw removed 0
+  OK  5.309: net +1, raw added 1, raw removed 0
+  OK  5018: net +1, raw added 1, raw removed 0
+  OK  508: net +1, raw added 1, raw removed 0
+  OK  5222: net +1, raw added 1, raw removed 0
+  OK  5385: net +1, raw added 1, raw removed 0
+  OK  5605: net +1, raw added 1, raw removed 0
+  OK  6: net +1, raw added 1, raw removed 0
+  OK  92.6: net +1, raw added 1, raw removed 0
+  OK  930: net +2, raw added 2, raw removed 0
+  OK  98.9: net +1, raw added 1, raw removed 0

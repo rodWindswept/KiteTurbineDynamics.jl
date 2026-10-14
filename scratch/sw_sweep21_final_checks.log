@@ -1,0 +1,13 @@
+sweep 21 final checks (2026-10-14, sw_ prefix)
+
+freeze check (levers reading):
+  block bytes: 2016
+  receipt region == block: True
+  sim contains block once: True
+  rc=0
+
+draft region == block (draft at dcf8213): True
+block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+
+record sim (base vs new):
+  base total=11 per100w=0.11; new total=11 per100w=0.10; offender diff header-only; chunks diff empty

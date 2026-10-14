@@ -1,0 +1,35 @@
+== 76655cb -> 5a7a6b4 ==
+lines: +6 -0; raw token occurrences: added 4, removed 0
+arrivals: {'20': 1, '21': 1, '3.4': 1, '32': 1}
+removals: none
+  [ARR 20 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [ARR 21 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [ARR 3.4 net+1] raw: added-side 1, removed-side 0
+      +1: This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [ARR 32 net+1] raw: added-side 1, removed-side 0
+      +1: v0.32 pass by @author (2026-10-14).
+
+== 5a7a6b4 -> dcf8213 ==
+lines: +6 -0; raw token occurrences: added 3, removed 0
+arrivals: {'3.4': 1, '3.5': 1, '33': 1}
+removals: none
+  [ARR 3.4 net+1] raw: added-side 1, removed-side 0
+      +1: This pass completes the winner margins text at section 3.4 and the evolution story at section 3.5.
+  [ARR 3.5 net+1] raw: added-side 1, removed-side 0
+      +1: This pass completes the winner margins text at section 3.4 and the evolution story at section 3.5.
+  [ARR 33 net+1] raw: added-side 1, removed-side 0
+      +1: v0.33 pass by @author (2026-10-14).
+
+== cumulative 76655cb -> dcf8213 ==
+arrivals: {'20': 1, '21': 1, '3.4': 2, '3.5': 1, '32': 1, '33': 1}
+removals: none
+
+== identity check (net == added - removed over the span) ==
+  OK  20: net +1, raw added 1, raw removed 0
+  OK  21: net +1, raw added 1, raw removed 0
+  OK  3.4: net +2, raw added 2, raw removed 0
+  OK  3.5: net +1, raw added 1, raw removed 0
+  OK  32: net +1, raw added 1, raw removed 0
+  OK  33: net +1, raw added 1, raw removed 0

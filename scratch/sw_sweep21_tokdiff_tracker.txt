@@ -1,0 +1,18 @@
+== 76655cb -> 5a7a6b4 ==
+arrivals: {'20': 1, '21': 1, '3.4': 1, '32': 1}
+removals: none
+  [arr 20] accuracy flags: the lift-margin register chain (sizing mass 20.698 | v0.20 pass by @hermes (2026-10-12).
+  [arr 21] The text read "gives a margin of 1.21" and no longer prints. | v0.21 pass by @aero-validator (2026-10-12).
+  [arr 3.4] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [arr 32] v0.32 pass by @author (2026-10-14).
+
+== 5a7a6b4 -> dcf8213 ==
+arrivals: {'3.4': 1, '3.5': 1, '33': 1}
+removals: none
+  [arr 3.4] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [arr 3.5] strip at §3.5 (figure-map row 9). | This pass completes the winner margins text at section 3.4 and the evolution story at section 3.5.
+  [arr 33] v0.33 pass by @author (2026-10-14).
+
+== cumulative 76655cb -> dcf8213 ==
+arrivals: {'20': 1, '21': 1, '3.4': 2, '3.5': 1, '32': 1, '33': 1}
+removals: none

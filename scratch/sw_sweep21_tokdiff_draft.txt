@@ -1,0 +1,71 @@
+== 76655cb -> 5a7a6b4 ==
+arrivals: {'0.5180': 1, '0.5621': 1, '0006': 1, '11': 1, '110': 1, '147': 1, '15.0': 1, '17.3': 1, '2.03': 1, '20': 1, '21': 1, '22.4': 1, '25.698': 1, '26': 1, '27.364': 2, '3': 1, '3.1': 1, '3.2': 1, '3.3': 3, '3.4': 2, '301': 1, '32': 1, '36.109': 2, '39.7': 1, '4.1': 1, '4.3': 1, '5.309': 1, '5018': 1, '508': 1, '5222': 1, '5385': 1, '5605': 1, '930': 2}
+removals: none
+  [arr 0.5180] for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
+  [arr 0.5621] The top loadings read +0.5621 for the second-rotor bank, -0.5605
+  [arr 0006] - The model does not check blade integrity. The blade root factor of safety sits at infinity in the model. The team deferred the full beam-on-supports blade model (PRD 0006:147). The rotor blades are not yet structurally gated in this analysis. | | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
+  [arr 11] site wind, 11.01 m/s at 9.41 m (NR-008, NR-032). | ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 110] ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [arr 147] - The model does not check blade integrity. The blade root factor of safety sits at infinity in the model. The team deferred the full beam-on-supports blade model (PRD 0006:147). The rotor blades are not yet structurally gated in this analysis. | | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 17.3] Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 20] itself, 20.698 kilograms. The kite carries its own weight (2026-08-21 | The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line
+  [arr 21] It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp | [Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
+  [arr 22.4] Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+  [arr 25.698] Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [arr 26] Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005). | Island 3 reaches the winner value, 27.364, at generation 26 and holds
+  [arr 27.364] Island 3 reaches 27.364 kg-equivalent (NR-005). | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [arr 3] Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [arr 3.1] ### 3.1 The search at scale | | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [arr 3.2] ### 3.2 Convergence | | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
+  [arr 3.3] ### 3.3 The winner | | Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
+  [arr 3.4] Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. | ### 3.4 The levers
+  [arr 301] ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+  [arr 32] Internal engineering report. Draft v0.32. Date 2026-10-14. | The surviving ok designs hold a mean power between 5.02 and 6.32
+  [arr 36.109] - The seed genome scores 36.109 kg-equivalent (NR-006). | The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+  [arr 39.7] 39.7 per cent together (NR-044).
+  [arr 4.1] ### 4.1 Evaluation fidelity | | Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners at the rope-break gate. | §4.1 | NR-012, NR-013 |
+  [arr 4.3] ### 4.3 Model boundaries | | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
+  [arr 5.309] modeled objective and gates. Its mean power is 5.309 kilowatts at the | Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [arr 5018] for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044).
+  [arr 508] - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002). | The campaign evaluated 930 designs (NR-001). The status mix reads 508
+  [arr 5222] The top loadings read -0.5385 for the TRPT line count, -0.5222
+  [arr 5385] The top loadings read -0.5385 for the TRPT line count, -0.5222
+  [arr 5605] The top loadings read +0.5621 for the second-rotor bank, -0.5605
+  [arr 930] A differential-evolution campaign evaluated 930 candidate kite turbine | - The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+
+== 5a7a6b4 -> dcf8213 ==
+arrivals: {'0': 2, '0.20': 1, '0.804': 1, '0.82': 1, '0.951': 1, '1.665': 1, '15.0': 1, '15.033': 1, '2.03': 1, '2.69': 1, '22.8': 1, '25.698': 1, '26': 1, '27.364': 2, '28.315': 1, '29.8': 1, '32.293': 1, '33': 1, '33.5': 1, '33.9': 1, '35.2': 1, '36.109': 2, '4.580': 1, '6': 1, '92.6': 1, '98.9': 1}
+removals: {'32': 1}
+  [arr 0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 0.20] decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive | The blade scales read 0.82 and 0.20 (NR-011).
+  [arr 0.804] | Ground radius | 0.804 m | NR-011 | | hub radius is 4.580 metres and the ground radius 0.804 metres
+  [arr 0.82] The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and | The blade scales read 0.82 and 0.20 (NR-011).
+  [arr 0.951] The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+  [arr 1.665] The objective score adds 1.665 kg-equivalent of penalties (NR-039). | The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+  [arr 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [arr 15.033] ring reads 15.033 at the final step (NR-021). | At the final step, R6 reads 15.033 (NR-021).
+  [arr 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.69] S5 carries the largest segment torque margin, 2.69 (NR-040).
+  [arr 22.8] S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+  [arr 25.698] Its mean power is 5.309 kilowatts and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [arr 26] Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005). | Island 3 reaches the winner value, 27.364, at generation 26 and holds
+  [arr 27.364] Island 3 reaches 27.364 kg-equivalent (NR-005). | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [arr 28.315] The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+  [arr 29.8] R2 to R4 read 29.8 to 35.2 (NR-021).
+  [arr 32.293] The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+  [arr 33] Internal engineering report. Draft v0.33. Date 2026-10-14. | S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [arr 33.5] S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [arr 33.9] S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [arr 35.2] R2 to R4 read 29.8 to 35.2 (NR-021).
+  [arr 36.109] - The seed genome scores 36.109 kg-equivalent (NR-006). | The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+  [arr 4.580] | Hub radius | 4.580 m | NR-011 | | hub radius is 4.580 metres and the ground radius 0.804 metres
+  [arr 6] Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. | ### 2.6 Reproducibility
+  [arr 92.6] S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+  [arr 98.9] S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+  [rem 32] Internal engineering report. Draft v0.32. Date 2026-10-14. | The surviving ok designs hold a mean power between 5.02 and 6.32
+
+== cumulative 76655cb -> dcf8213 ==
+arrivals: {'0': 2, '0.20': 1, '0.5180': 1, '0.5621': 1, '0.804': 1, '0.82': 1, '0.951': 1, '0006': 1, '1.665': 1, '11': 1, '110': 1, '147': 1, '15.0': 2, '15.033': 1, '17.3': 1, '2.03': 2, '2.69': 1, '20': 1, '21': 1, '22.4': 1, '22.8': 1, '25.698': 2, '26': 2, '27.364': 4, '28.315': 1, '29.8': 1, '3': 1, '3.1': 1, '3.2': 1, '3.3': 3, '3.4': 2, '301': 1, '32.293': 1, '33': 1, '33.5': 1, '33.9': 1, '35.2': 1, '36.109': 4, '39.7': 1, '4.1': 1, '4.3': 1, '4.580': 1, '5.309': 1, '5018': 1, '508': 1, '5222': 1, '5385': 1, '5605': 1, '6': 1, '92.6': 1, '930': 2, '98.9': 1}
+removals: none
