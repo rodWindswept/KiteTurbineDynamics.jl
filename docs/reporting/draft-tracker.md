@@ -184,6 +184,12 @@ The margin text prints signed rows NR-009, NR-021, NR-022 and NR-040.
 The evolution story prints signed rows NR-036, NR-005, NR-018, NR-039 and NR-011.
 No value moves.
 
+v0.34 pass by @author (2026-10-14).
+This pass completes the design implications at section 3.6 and rewrites the conclusion.
+The next steps merge with the four front-block open items into one list.
+The head status line and the sweep-21 seam note settle.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

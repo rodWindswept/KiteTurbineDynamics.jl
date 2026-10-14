@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.33. Date 2026-10-14.
+Internal engineering report. Draft v0.34. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -8,7 +8,7 @@ Numbers come only from signed register rows, cited by row ID.
 A section marked [PENDING] waits on a gate.
 
 **Draft status.** This is an internal draft.
-Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation.
+Sections 3.4 to 3.6 carry their text.
 Nomenclature and references stay incomplete.
 
 The physics era is `post-95c385d_wind-authority`. The bank derate
@@ -605,7 +605,41 @@ The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017
 The strip shows built geometry and the search objective only.
 The strip prints no power value and no airborne mass value.
 
-### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
+### 3.6 Design implications
+
+The record supports four implications.
+
+First, the searched TRPT family contains a compact feasible candidate under the modeled objective and gates.
+The winner produces 5.309 kilowatts of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
+
+Second, the winner holds large structural and twist margins at the final operating point.
+The window-minimum factor of safety is 15.0 (NR-009).
+The least segment torque margin is 2.03, at S1 (NR-040).
+The margins suggest room for further mass reduction.
+Any reduction waits on blade integrity and lifter validation.
+
+Third, future searches should treat clearance as a design constraint in its own right.
+The status mix reads 110 clearance_reject designs (NR-002).
+Future searches can steer away from low-clearance geometry with a clearance map or a shaped penalty.
+
+Fourth, part of the winner genome stays inactive at one active rotor (NR-011, NR-017).
+Conditional genes can improve the search efficiency without changing the machine problem.
+
+Recommended next steps:
+
+1. Fix the rapid-path rope-break gate before using the rapid path for screening (NR-013).
+
+2. Add blade root factor-of-safety checks to the structural gate set.
+
+3. Validate lifter modulation across the wind bands.
+
+4. Extend the wind cases beyond the steady sheared profile.
+
+5. Extend the model to the launch and recovery sequence.
+
+6. Extract the lever statistics from the campaign telemetry.
+
+7. Re-run a short campaign with conditional genes and a clearance-aware decoder.
 
 ## 4 Discussion
 
@@ -718,28 +752,30 @@ valid-science case, not footnotes.
 
 ## 5 Conclusion
 
-The work runs a differential-evolution search over the design space of a rigid-wing ground-generation rotary kite turbine.
-The machine uses a tensile rotary power transmission.
-The campaign scores each design on the ODE path.
-The measurement window stands behind every number.
+The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001).
+The campaign scored each design on the ODE path over the measurement window (NR-015).
+One fixed power-law generator load and one fixed gate set held for every design (NR-015).
 
-The campaign found the best feasible candidate in 930 evaluations (NR-001).
-The winner survives the full window.
-Its power reads 5.309 kilowatts and its factor of safety 15.0 (NR-008, NR-009).
-At the winner operating point, the least segment torque margin is 2.03, at S1 (NR-040).
+The search found a feasible candidate in the searched space.
+Its mean power is 5.309 kilowatts and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+Its window-minimum factor of safety is 15.0 (NR-009).
+All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+The least segment torque margin is 2.03, at S1 (NR-040).
 
 The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation.
-The large structural margins suggest room for further mass reduction.
+That result holds under the modeled load and wind.
+It does not show flight readiness, a global optimum, or full structural safety.
+Blade integrity is not yet gated, and lifter modulation remains an assumption.
+The rapid path awaits its rope-break gate fix (NR-013).
 
 The Daisy anchor ties the model to a measured flight reference.
 
-The conclusion is conditional on the model.
-Blade integrity is not yet gated.
-Lifter modulation remains an assumption.
-The rapid path awaits its rope-break gate fix (NR-013).
+The next work closes the model gaps.
+Add blade structural checks and validate lifter modulation.
+Extend the model to the launch and recovery sequence.
+Extend the wind cases beyond the steady sheared profile.
+The large structural margins suggest room for mass reduction, once those checks hold.
 
-The next steps add blade structural checks, validate lifter modulation and complete the levers and implications sections.
-The boundaries in the discussion name the work that comes next.
 [Daisy values need register rows before the final report quotes
 them.]
 

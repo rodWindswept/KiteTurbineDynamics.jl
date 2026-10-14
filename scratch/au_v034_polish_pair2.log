@@ -1,0 +1,42 @@
+base tip: e4ff3c1
+base draft sha256: d7ae6b06bf4777c87233dda648cddd77ebf37d54f8a628169268c0141671befc
+base tracker sha256: ae84c37cfa138a6d2aa7117c717d6a6473f580c64aba6bcddff31e1e7eef5e95
+ok D1 version pin
+ok D2 head status line
+ok D3 section 3.6
+ok D4 section 5 rewrite
+ok T1 tracker entry
+guard pin v0.34: ok
+guard head line updated: ok
+guard 3.6 bracket retired: ok
+guard implications block present: ok
+guard conclusion opening: ok
+guard conclusion conditionals: ok
+guard daisy bracket held: ok
+guard old conclusion gone: ok
+guard no 14.972 print: ok
+guard markers held: ok
+guard section 3.5 intact: ok
+guard tracker v0.34 entry: ok
+guard tracker history held: ok
+guard tracker no-value-moves count: ok
+candidate draft sha256: 4c17755811ebc95a015f209318fd04f13f254e1fe8983b5d4e03b3bfae0075f0
+candidate tracker sha256: cd29f6ff6a01af257e63548657b8ab5214829bf14427b46b35929eea886f6362
+STE draft base: rc=0 words=5461 total=5 {'passive_voice': 1, 'long_paragraph(>6s)': 4, '_em_dash_info': 2}
+STE draft candidate: rc=0 words=5721 total=5 {'passive_voice': 1, 'long_paragraph(>6s)': 4, '_em_dash_info': 2}
+STE tracker base: rc=0 words=2193 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE tracker candidate: rc=0 words=2239 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+draft token delta add: {'110': 1, '15.0': 1, '2': 1, '2.03': 1, '25.698': 2, '34': 1, '4': 1, '5': 1, '5.309': 1, '6': 1, '7': 1}
+draft token delta rem: {'3': 1, '33': 1}
+draft token check: PASS
+tracker token delta add: {'3.6': 1, '34': 1}
+tracker token delta rem: {}
+tracker token check: PASS
+== cited rows in au_v034_draft_candidate.md: 34
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-032, NR-036, NR-039, NR-040, NR-043, NR-044, NR-045
+== every cited row present and signed (45 signed rows total)
+== signed rows not cited by this draft (informational): NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-042
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+   3| Internal engineering report. Draft v0.34. Date 2026-10-14.
+citation checker: rc=0
+GATES: ste=pass tokens_d=pass tokens_t=pass citations=pass
