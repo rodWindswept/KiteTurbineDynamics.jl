@@ -1,0 +1,38 @@
+sw_sweep20_draft_v030.md         words=4441 total=  5 per100w=  0.11 em_dash= 0
+[HOOK:ste] sw_sweep20_draft_v030.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep20_draft_v030.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_draft_v031.md         words=4538 total=  5 per100w=  0.11 em_dash= 0
+[HOOK:ste] sw_sweep20_draft_v031.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep20_draft_v031.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_tracker_v030.md       words=2019 total= 10 per100w=  0.50 em_dash= 0
+[HOOK:ste] sw_sweep20_tracker_v030.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v030.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v030.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v030.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v030.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_tracker_v031.md       words=2094 total= 10 per100w=  0.48 em_dash= 0
+[HOOK:ste] sw_sweep20_tracker_v031.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v031.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v031.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v031.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep20_tracker_v031.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_record_base.md        words=9390 total= 11 per100w=  0.12 em_dash= 0
+[HOOK:ste] sw_sweep20_record_base.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep20_record_base.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep20_record_base.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_record_new.md         words=9797 total= 12 per100w=  0.12 em_dash= 0
+[HOOK:ste] sw_sweep20_record_new.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep20_record_new.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep20_record_new.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep20_record_new.md         words=9796 total= 11 per100w=  0.11 em_dash= 0
+[HOOK:ste] sw_sweep20_record_new.md: semicolon x6 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep20_record_new.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep20_record_new.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_gc14_base.md                  words=4464 total= 12 per100w=  0.27 em_dash= 1
+[HOOK:ste] sw_gc14_base.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_gc14_base.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_gc14_base.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+sw_gc14_new.md                   words=4565 total= 12 per100w=  0.26 em_dash= 1
+[HOOK:ste] sw_gc14_new.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_gc14_new.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_gc14_new.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)

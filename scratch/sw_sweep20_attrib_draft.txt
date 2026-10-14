@@ -1,0 +1,13 @@
+== a90122b -> 76655cb ==
+lines: +21 -11; raw token occurrences: added 8, removed 6
+arrivals: {'1': 1, '2': 1, '31': 1}
+removals: {'30': 1}
+  [ARR 1 net+1] raw: added-side 1, removed-side 0
+      +1: The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +1: decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+  [ARR 31 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.31. Date 2026-10-13.
+  [REM 30 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.30. Date 2026-10-13.
+
