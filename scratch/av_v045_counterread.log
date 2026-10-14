@@ -1,0 +1,335 @@
+[0] v0.45 counter-read   tip 8855d9a   origin 8855d9a   record 34e3f81   copy md5 c88d19015e5d755f347f30d0e456634d
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   build record names draft 34e3f81
+  ok   build record: seven seats
+  ok   build record: checker exit 0
+  ok   docx build stamp 20:41:06Z
+  ok   build record refs register 94aa219
+  ok   build record: 42 cited of 50 signed
+  ok   build record uncited list reads the 8 ids
+  ok   draft blob reads 34e3f81 == HEAD == origin
+  ok   tracker blob reads 34e3f81 == HEAD == origin
+  ok   the build-record register ref 94aa219 reads the register at 34e3f81
+  ok   copy inputs carry zero diff from 34e3f81 to the tip ('')
+  ok   the register is among the post-build moves
+  ok   the physics-topology amend is among the post-build moves
+  ok   the register reads a strict prefix-extend (append-only, strongest form)
+  ok   register additions since 94aa219 read 62/0 (62	0	docs/reporting/numbers-register.md)
+  ok   the append reads 3092 bytes
+  ok   NR-051 row present
+  ok   register at the build ref reads 50 ids (50)
+  ok   register at HEAD reads 51 ids (51)
+  ok   the appended id reads NR-051 alone
+  ok   the read tip reads the same as origin
+[1] the census (v0.43 to v0.45): two movers, frozen diffs, tokens
+  ok   the draft and tracker move at exactly two commits (['34e3f81', '2f79aae'])
+  ok   A draft: added lines read the frozen set, line for line (6)
+  ok   A draft: removed lines read the frozen set (6)
+  ok   B draft: added lines read the frozen set, line for line (22)
+  ok   B draft: removed lines read the frozen set (1)
+  ok   A tracker: added lines read the frozen set, line for line (6)
+  ok   A tracker: removed lines read the frozen set (0)
+  ok   B tracker: added lines read the frozen set, line for line (7)
+  ok   B tracker: removed lines read the frozen set (0)
+  ok   A draft numstat reads 6/6 (['6', '6'])
+  ok   B draft numstat reads 22/1 (['22', '1'])
+  ok   A draft: token delta reads add {'44': 1} / rem {'43': 1}
+  ok   B draft: token delta reads add {'1.94': 1, '18.8': 1, '2': 1, '2.2': 1, '2.4': 1, '45': 1, '5.18': 1} / rem {'44': 1}
+  ok   A tracker: token delta reads add {'2': 1, '3': 1, '44': 1} / rem {}
+  ok   B tracker: token delta reads add {'3.3': 1, '4.2': 1, '45': 1} / rem {}
+  ok   the draft at the pin reads the draft at the tip
+[2] the v0.44 re-pin and the v5 re-cut re-key
+  ok   draft head line reads Draft v0.45 once
+  ok   old draft head lines read zero
+  ok   draft reads d243b37 once (the cell)
+  ok   draft zero: old v4 form 9cecee3
+  ok   draft zero: old v4 form f1c322bc
+  ok   draft zero: old v4 form 9beffb6b
+  ok   draft zero: old v4 form b250c1a1
+  ok   draft zero: old v4 form 0e857cbf
+  ok   draft reads the delivered png hash once
+  ok   draft reads the delivered pdf hash once
+  ok   draft reads the delivered ledger hash once
+  ok   draft reads the delivered checks hash once
+  ok   label ledger reads 34 strings (34)
+  ok   ledger reads the cone-ring label once
+  ok   ledger reads the strip line once
+  ok   ledger delta reads the two lines alone (2 add, 0 rem)
+  ok   PDF text layer reads the cone-ring label once
+  ok   PDF text layer reads the strip line once
+  ok   the two run records read identical
+  ok   delivered system-anatomy.tex md5 reads its run record
+  ok   run record carries system-anatomy.tex
+  ok   delivered prototype.html md5 reads its run record
+  ok   run record carries prototype.html
+  ok   delivered label-ledger.txt md5 reads its run record
+  ok   run record carries label-ledger.txt
+  ok   delivered system-anatomy.pdf md5 reads its run record
+  ok   run record carries system-anatomy.pdf
+  ok   delivered system-anatomy.png md5 reads its run record
+  ok   run record carries system-anatomy.png
+  ok   manifest script_commit reads d243b37
+  ok   manifest output png pins the delivered bytes
+  ok   manifest output pdf pins the delivered bytes
+  ok   manifest output ledger pins the delivered bytes
+  ok   manifest output checks pins the delivered bytes
+  ok   manifest output tex pins the delivered bytes
+  ok   the generator file reads the manifest script sha
+  ok   checks log reads the cone-ring leader clear
+  ok   checks log reads the self-check line
+  ok   SPEC reads Thirteen labels
+  ok   SPEC reads the leader clearance line
+  ok   map carries deltas v35 and v36
+  ok   map row 2 cell reads the v5 pin
+  note captions kit provenance section still carries 9cecee3 (v4); manifest/draft/copy carry d243b37 -- form note for the figures seat
+[3] the v0.45 folds: byte-frozen tables
+  ok   era supply chunk reads 681 bytes / d268d253 (681)
+  ok   ledger supply chunk reads 1569 bytes / f2e9df23 (1569)
+  ok   draft carries the era table bytes once
+  ok   draft carries the ledger table bytes once
+  ok   the era table precedes the ledger table
+  ok   both tables ride their blank-line closers as folded
+  ok   draft count pointer line one reads 1 (1)
+  ok   draft count pointer line two reads 1 (1)
+  ok   draft count era row 1 reads 1 (1)
+  ok   draft count era row 2 reads 1 (1)
+  ok   draft count era row 3 reads 1 (1)
+  ok   draft count era row 4 reads 1 (1)
+  ok   draft count ledger entry 1 reads 1 (1)
+  ok   draft count ledger entry 6 reads 1 (1)
+  ok   draft count NR-019/NR-020 pair reads 2 (2)
+  ok   draft count NR-027 reads 1 (1)
+  ok   draft count NR-028 reads 2 (2)
+  ok   draft count NR-028 era narrative reads 1 (1)
+  ok   the NR-028 phrase count grows by exactly one at B (narrative -> narrative + table)
+[4] holds: markers, freeze block, guards, STE
+  ok   draft carries seven seated markers (7)
+  ok   marker reads once: [Figure seated: figure-map row 2 (system anatomy plate, sl
+  ok   marker reads once: [Figure seated: figure-map row 10 (machine winner hero, sl
+  ok   marker reads once: [Figure seated: figure-map row 6 (ring utilisation plate, 
+  ok   marker reads once: [Figure seated: figure-map row 7 (twist limit plate, slug 
+  ok   marker reads once: [Figure seated: figure-map row 20 (the levers landscape, s
+  ok   marker reads once: [Figure seated: figure-map row 21 (the parameter atlas, sl
+  ok   marker reads once: [Figure seated: figure-map row 9 (machine evolution strip,
+  ok   the hero marker sits inside section 3.3
+  ok   the freeze block file md5 reads 7bbd964d
+  ok   the frozen levers block reads carried once
+  ok   the draft-carried block bytes equal the file bytes
+  ok   draft count 22 degrees sites reads 3 (3)
+  ok   draft count shaft transition cone reads 2 (2)
+  ok   draft count bank_bottom reads 1 (1)
+  ok   draft count 0.75 reads 1 (1)
+  ok   draft count 0.113 reads 1 (1)
+  ok   draft count Tulloch reads 1 (1)
+  ok   draft count Jensen reads 0 (0)
+  ok   draft zero: old slot label (0)
+  ok   draft zero: old pin 41 (0)
+  ok   draft zero: old pin 42 (0)
+  ok   draft zero: old pin 43 (0)
+  ok   draft zero: old pin 44 (0)
+  ok   STE reads rc=0 on the draft and tracker
+  ok   STE draft recount reads 6876 / 8 (('6876', '8'))
+  ok   STE tracker recount reads 2817 / 11 (('2817', '11'))
+  ok   the working tree draft and tracker read HEAD clean
+[5] the copy: pins, frames, stamps, register appendix, guards
+  ok   appendix carries seven blocks (7)
+  ok   ring-utilisation: ledger pinned == committed == HEAD == origin
+  ok   ring-utilisation: pdf pinned == committed == HEAD == origin
+  ok   ring-utilisation: png pinned == committed == HEAD == origin
+  ok   ring-utilisation: svg pinned == committed == HEAD == origin
+  ok   twist-limit: ledger pinned == committed == HEAD == origin
+  ok   twist-limit: pdf pinned == committed == HEAD == origin
+  ok   twist-limit: png pinned == committed == HEAD == origin
+  ok   twist-limit: svg pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: checks pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: pdf pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: png pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: svg pinned == committed == HEAD == origin
+  ok   system-anatomy: checks pinned == committed == HEAD == origin
+  ok   system-anatomy: ledger pinned == committed == HEAD == origin
+  ok   system-anatomy: pdf pinned == committed == HEAD == origin
+  ok   system-anatomy: png pinned == committed == HEAD == origin
+  ok   pca-landscape: ledger pinned == committed == HEAD == origin
+  ok   pca-landscape: pdf pinned == committed == HEAD == origin
+  ok   pca-landscape: png pinned == committed == HEAD == origin
+  ok   pca-landscape: svg pinned == committed == HEAD == origin
+  ok   pca-atlas: ledger pinned == committed == HEAD == origin
+  ok   pca-atlas: pdf pinned == committed == HEAD == origin
+  ok   pca-atlas: png pinned == committed == HEAD == origin
+  ok   pca-atlas: svg pinned == committed == HEAD == origin
+  ok   machine-winner-hero: checks pinned == committed == HEAD == origin
+  ok   machine-winner-hero: pdf pinned == committed == HEAD == origin
+  ok   machine-winner-hero: png pinned == committed == HEAD == origin
+  ok   machine-winner-hero: svg pinned == committed == HEAD == origin
+  ok   28 pinned values walked (28)
+  ok   system-anatomy png pin reads the delivered v5 value
+  ok   system-anatomy pdf pin reads the delivered v5 value
+  ok   system-anatomy ledger pin reads the delivered v5 value
+  ok   system-anatomy checks pin reads the delivered v5 value
+  ok   system-anatomy: system-anatomy.png byte-stable from 2f79aae
+  ok   system-anatomy: system-anatomy.pdf byte-stable from 2f79aae
+  ok   system-anatomy: label-ledger.txt byte-stable from 2f79aae
+  ok   system-anatomy: checks.log byte-stable from 2f79aae
+  ok   ring-utilisation: ring-utilisation.png byte-stable from e4ff3c1
+  ok   ring-utilisation: ring-utilisation.svg byte-stable from e4ff3c1
+  ok   ring-utilisation: ring-utilisation.pdf byte-stable from e4ff3c1
+  ok   ring-utilisation: label-ledger.txt byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.png byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.svg byte-stable from e4ff3c1
+  ok   twist-limit: twist-limit.pdf byte-stable from e4ff3c1
+  ok   twist-limit: label-ledger.txt byte-stable from e4ff3c1
+  ok   pca-landscape: pca-landscape.png byte-stable from d6d4db9
+  ok   pca-landscape: pca-landscape.svg byte-stable from d6d4db9
+  ok   pca-landscape: pca-landscape.pdf byte-stable from d6d4db9
+  ok   pca-landscape: label-ledger.txt byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.png byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.svg byte-stable from d6d4db9
+  ok   pca-atlas: pca-atlas.pdf byte-stable from d6d4db9
+  ok   pca-atlas: label-ledger.txt byte-stable from d6d4db9
+  ok   machine-winner-hero: machine-winner-hero.png byte-stable from e8159b0
+  ok   machine-winner-hero: machine-winner-hero.svg byte-stable from e8159b0
+  ok   machine-winner-hero: machine-winner-hero.pdf byte-stable from e8159b0
+  ok   machine-winner-hero: checks.log byte-stable from e8159b0
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-winner-hero.pdf pin
+  ok   copy prints the machine-winner-hero.png pin
+  ok   copy prints the machine-winner-hero.svg pin
+  ok   frame reads once: system-anatomy Figure (roster row 2) · system-anatomy
+  ok   frame reads once: machine-winner-hero Figure (roster row 10) · machine-win
+  ok   frame reads once: ring-utilisation Figure (roster row 6) · ring-utilisatio
+  ok   frame reads once: twist-limit Figure (roster row 7) · twist-limit
+  ok   frame reads once: pca-landscape Figure (roster row 20) · pca-landscape
+  ok   frame reads once: pca-atlas Figure (roster row 21) · pca-atlas
+  ok   frame reads once: machine-evolution-strip Figure (roster row 9) · machine-
+  ok   seven figure frames read (7)
+  ok   raw markers read zero in the copy
+  ok   copy head line reads Draft v0.45
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads zero 'v0.40' marks
+  ok   copy reads zero 'v0.41' marks
+  ok   copy reads zero 'v0.42' marks
+  ok   copy reads zero 'v0.43' marks
+  ok   copy reads zero 'v0.44' marks
+  ok   copy reads zero v4 script marks
+  ok   copy reads d243b37 twice (figure stamp + appendix cell) (2)
+  ok   copy stamp == manifest stamp (ring-utilisation)
+  ok   copy stamp == manifest stamp (twist-limit)
+  ok   copy stamp == manifest stamp (machine-evolution-strip)
+  ok   copy stamp == manifest stamp (system-anatomy)
+  ok   copy stamp == manifest stamp (pca-landscape)
+  ok   copy stamp == manifest stamp (pca-atlas)
+  ok   copy stamp == manifest stamp (machine-winner-hero)
+  ok   seven stamps read (7)
+  ok   the ring/twist sha-fallback stamps read identical across the two copies
+  note ring/twist stamps print the sha-fallback form (old manifests, no commit keys) -- pre-existing, flagged
+  ok   copy reads: pointer line one
+  ok   copy reads: pointer line two
+  ok   copy reads: era row 1
+  ok   copy reads: era row 2
+  ok   copy reads: era row 3a
+  ok   copy reads: era row 3b
+  ok   copy reads: era row 4a
+  ok   copy reads: era row 4b
+  ok   copy reads: ledger lead
+  ok   copy reads: ledger entry 1
+  ok   copy reads: ledger entry 2
+  ok   copy reads: ledger entry 3
+  ok   copy reads: ledger entry 4
+  ok   copy reads: ledger entry 5
+  ok   copy reads: ledger entry 6
+  ok   copy reads: ledger close 3
+  ok   copy reads: ledger close 5
+  ok   copy reads: ledger close 6
+  ok   copy reads: spelled form
+  ok   copy reads: round-5 base clause
+  ok   copy reads: round-5 cone
+  ok   copy reads: round-5 cold path
+  ok   copy reads: round-5 slot
+  ok   copy reads: gate row power
+  ok   copy reads: gate row FoS
+  ok   copy reads: gate row rope
+  ok   copy count 22 degrees sites reads 3 (3)
+  ok   copy count shaft transition cone reads 3 (3)
+  ok   copy count 0.75 reads 2 (2)
+  ok   copy count Tulloch reads 1 (1)
+  ok   copy count Jensen reads 0 (0)
+  ok   copy count lower-number key reads 0 (0)
+  ok   cited set reads 42 (42)
+  ok   copy register appendix == cited set (42 ids)
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   NR-019 and NR-020 enter the appendix set
+  ok   14.97-class prints once, inside the register appendix (1)
+  ok   copy display form full-precision 14.971... reads 0 (0)
+  ok   copy display form guarded 3.816 reads 0 (0)
+  ok   copy display form 15.0 reads 14 (14)
+  ok   copy display form 15.033 reads 3 (3)
+  ok   copy display form 14.972 reads 1 (1)
+  ok   copy display form 27.3635412663488 reads 2 (2)
+  ok   copy display form 27.364 reads 11 (11)
+  ok   guarded rounded 27.363 reads zero
+  ok   no unresolved notice
+  ok   copy count sentence reads 'All seven' once
+  ok   the hero frame sits inside section 3.3 in the copy
+  ok   copy embeds the delivered bytes on all seven exhibits (7)
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-043 span
+  ok   register appendix: NR-050 r_rotor
+  ok   register appendix: NR-049 cone value
+  ok   register appendix: NR-011 bank form
+[6] state anchors
+  ok   register status reads the v5 block
+  ok   register status reads the v5 script commit
+  ok   figures receipt routes the re-key
+  ok   author receipt names the ledger supply md5
+  ok   science-validator receipt signs NR-051
+  ok   corner mint receipt reads the picks
+  ok   the fb5 flip reads closed with its dated delta
+  ok   queue lists the v0.45 walk open
+  ok   physics-topology reads the retirement form
+  ok   NR-051 carries pick value 60.646
+  ok   NR-051 carries pick value 58.864
+  ok   NR-051 carries pick value 33.704
+  ok   NR-051 carries pick value 33.812
+  ok   register carries the NR-051 heading
+  ok   tracker carries the v0.44 entry
+  ok   tracker carries the v0.45 entry
+  ok   final: tip == origin
+
+checks: 322  ok: 322  fail: 0
+AV_V045_DONE

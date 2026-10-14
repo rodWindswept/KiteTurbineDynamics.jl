@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `e3446db` on `bank-derate-cos2p65`.
+**Base:** branch tip `8855d9a` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,11 +17,11 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here.
+1. **The round-6 counter-reads.** They cover the hub-name fold, the section-5 count and winner pair, and the section-3.4 heading. They also cover the five plate re-cuts and the three caption kits, with their re-pins. These follow the folds and the re-cuts. The rebuilt copy closes the set. The queue holds the order.
 
-2. **New families.** A new figure family or claim block in the next round opens a fresh F-VALUE read.
+2. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here.
 
-3. **The next values mover.** The author seat holds AU9 and the partner-gated tails. The Nomenclature fold sits with the lead and the science-writer seats. A values mover in either opens a counter-read leg at this seat.
+3. **Form notes.** The v0.45 walk opened two form notes. They cover the system-anatomy captions provenance token and the ring/twist stamp schema form. Both read as form only. No value moves.
 
 Each leg runs three tests.
 
@@ -34,6 +34,10 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The v0.45 copy walk: read at `8855d9a`. It covers the v0.44 figure re-pin, the AU7 folds and the v5 re-cut re-key. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v045-counterread.md`. Evidence `scratch/av_v045_counterread.py` plus log.
+
+- The v0.43 copy counter-read: read at `e104f30`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v043-counterread.md`. Evidence `scratch/av_v043_counterread.py` plus log.
 
 - The v0.41 hero copy counter-read: `e3446db`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v041-hero-counterread.md`. Evidence `scratch/av_v041_hero_counterread.py` plus log.
 
@@ -82,4 +86,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** hold for the next values mover. AU9 at the author seat heads the next push. A seat move on the hero re-keys the copy read.
+**Owner:** @aero-validator. **Next action:** the round-6 counter-reads, on the folds and the re-cuts. The queue holds the order. The rebuilt copy closes the set.
