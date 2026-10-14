@@ -1,0 +1,38 @@
+OK    telemetry rows read 930
+OK    status mix reads 508 / 301 / 110 / 11
+OK    two ok designs decode rotor_count 2
+OK    their fitness reads 58.864 and 60.646
+OK    failure-rates n_lines: total 930 and ok 508
+OK    failure-rates rotor_count: total 930 and ok 508
+OK    failure-rates n_active: total 930 and ok 508
+OK    objective table reads 10 genes and rank permutation
+OK    bins sum 508 for r_hub
+OK    bins sum 508 for r_bottom
+OK    bins sum 508 for target_Lr
+OK    bins sum 508 for n_lines
+OK    bins sum 508 for density_profile
+OK    bins sum 508 for rotor_count
+OK    bins sum 508 for bank_top
+OK    bins sum 508 for bank_bottom
+OK    bins sum 508 for blade_scale_top
+OK    bins sum 508 for blade_scale_bottom
+OK    penalty table reads 508 rows
+OK    remainder, total and share recompute on every row
+OK    winner row present once
+OK    winner charges recompute from the recorded columns
+OK    double run byte-identical across the seven tables and checks.log
+rerun dir: /home/rod/.hermes/profiles/figures-images-diagrams/cache/scratch/fig_lever_rerun_gxfbrhpk
+-- kit outputs (sha256) --
+01eccd666b531a6c5cf70f73f9842b4ab2d90c562a79009b473fe2fc9365612f extract-objective-vs-gene.csv
+e2715cf4d95b9c65933c0523e34e5d878680e0446be13cf319307cccc395aee9 extract-objective-by-gene-bins.csv
+cbfb975631f4d69a7b09e26005d0aa739208c9ca01b23cb659d014f8ae088ba6 extract-gate-failures-by-gene.csv
+d0cb2b3c8666176a8e94c627acce471f616d4974d5bfd5967fc2bf68cf636f9d extract-failure-discrimination.csv
+00b7e66a1e119844b34046e448384a76c6b7442a68032a20ba594d09df6913d9 extract-failure-rates-by-value.csv
+93d0411b7588483b7b8f97f98f0e089a0de33158ef69b49989ecdf9a0cc9ef78 extract-penalty-contributions.csv
+007f9ceaef179096d03d5c69959400cc81c2b703856b7c85e994f96425d64dba extract-penalty-summary.csv
+2dcb91db7c7456b4994d61ed2547af92cd960bde75e495877e049414d4a90182 checks.log
+-- telemetry inputs (sha256) --
+6f359c33f174d5dc98b1252e29fdba6eac8dbae15dd71d46ef8bbed6acc9bd2f telemetry.csv
+54172ce5a64b22903a2428f870b499f13da53c6b065600d8a01edfd882b29827 telemetry.csv
+34d40e8ea960a1e04c83df58df9e24047cfcf7eb3deff3278807f1147b8d60b0 telemetry.csv
+FIG_LEVER_CHECK_DONE

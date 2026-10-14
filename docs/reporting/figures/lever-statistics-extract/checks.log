@@ -1,0 +1,24 @@
+OK    header pins island 1
+OK    header pins island 2
+OK    header pins island 3
+OK    row totals read 930
+OK    island counts read 310 each
+OK    status mix reads 508 / 301 / 110 / 11 (NR-002)
+OK    ok set reads 508 finite scores
+OK    ok P_end at or above the 5.0 kW floor
+OK    ok FoS at or above the 2.5 hard floor
+OK    ok twist_ratio inside [0, 1)
+OK    decoded n_lines equals the n_lines column on all rows
+OK    winner row unique (island 3, gen 26, idx 9)
+OK    winner fitness string reads 27.364
+OK    winner over-power recompute inside the CSV rounding bound
+OK    winner utilisation recompute inside the CSV rounding bound
+OK    winner twist recompute at full precision (twist_ratio printed full)
+OK    register carries the NR-039 penalty strings
+OK    P_end and FoS record at two decimals or fewer
+note  winner charges from CSV columns: over-power 0.48049999999999876 (record 0.49333696413175443), utilisation 0.5577844622667735 (record 0.5576509889014662), twist 0.6140850570787014 (record 0.6140850570787014)
+note  worst-case single-row charge rounding bounds over ok rows: over-power 0.13299999999999734, utilisation 0.0777429106001825
+note  decoded rotor_count among ok: {1: 506, 2: 2}; rotor_count >= 2 ok rows: 2; decoded rotor_count x n_active cross-tab (all rows): {(1, 1): 739, (2, 2): 157, (3, 2): 10, (3, 3): 24}
+note  ok fitness range 27.364 to 60.646; P_end min 5.0; FoS min 3.18; twist_ratio max 0.7421662474493615
+checks: 18 ok / 0 fail
+FIG_LEVER_EXTRACT_DONE
