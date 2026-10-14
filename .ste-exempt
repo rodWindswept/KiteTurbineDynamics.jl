@@ -18,3 +18,9 @@ docs/reporting/feedback/Feedback-message-1791925681590.md
 # relayed round 1 and round 2 feedback records join the class.
 docs/reporting/feedback/feedback-on-report.md
 docs/reporting/feedback/feedback-on-report2.md
+
+# Extension (2026-10-14, hermes seat, room may flip): the handover registry
+# (handovers/README.md) joins the exempt class. It is an amend-only index
+# of historical handover records. Rows take status flags; rows are never
+# rewritten. New rows must still be written STE-clean.
+handovers/README.md
