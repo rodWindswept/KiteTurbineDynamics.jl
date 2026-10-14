@@ -15,6 +15,9 @@
 #   NR-011  rings 6, n_lines 3, n_active 1, r_hub 4.580 m, r_bot 0.804 m
 #   NR-017  main-rotor bank 7.088 deg at ring 6
 #   NR-043  winner blade span 1.499 m at three decimals (v4 re-cut)
+# v5 re-cut (2026-10-14): the cone ring (R5) label joins (round-5
+# founder comment 3). The leader carries clearance self-checks. No
+# new number.
 # Standing rule: the 22.0 slot value never prints as a rotor angle.
 # Held-term picks pending (Track D): the knot name and the cyan-line name
 # print here in the register/room form ("sky anchor", "cyan line"); the
@@ -164,6 +167,9 @@ LABELS: list = [
     dict(name="segments", pos=(4.50, 1.55), anchor="west",
          lines=["segments S1 to S5", "three tension lines each"],
          leaders=[((4.55, 1.95), (3.22, 2.53))]),
+    dict(name="conering", pos=(10.30, 3.15), anchor="west",
+         lines=["R5, the cone ring", "the shaft cone starts here"],
+         leaders=[((10.25, 3.30), (8.72, 4.80))]),
     dict(name="groundring", pos=(-3.45, 2.75), anchor="west",
          lines=["R1, the ground ring", "0.804 m"],
          leaders=[((-1.35, 2.90), (-0.48, 1.68))]),
@@ -211,7 +217,25 @@ assert not _seg_hits(SPAN_LDR_A, SPAN_LDR_B, _B0, _B1)        # leader clears th
 assert not _seg_hits(SPAN_LDR_A, SPAN_LDR_B, DIM_T0, DIM_T2)  # leader clears the extensions
 assert not _seg_hits(SPAN_LDR_A, SPAN_LDR_B, DIM_I0, DIM_I2)
 assert not _seg_hits(DIM_I, DIM_T, _B0, _B1)                  # dimension clears the blade
-print("self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, radii and bank on NR-011/NR-017")
+
+# v5: the cone-ring leader clears the drawn ink
+CONE_LDR = ((10.25, 3.30), (8.72, 4.80))
+_ink_v5 = list(ROPE_SEGS)
+_ink_v5 += [(P(RINGS[i][0], -RINGS[i][1]), P(RINGS[i][0], RINGS[i][1])) for i in range(6)]
+_ink_v5 += [(DIM_I0, DIM_I2), (DIM_T0, DIM_T2), (DIM_I, DIM_T), (SPAN_LDR_A, SPAN_LDR_B),
+            ((15.35, 4.30), (17.30, 7.52)), ((4.55, 1.95), (3.22, 2.53)),
+            ((-1.35, 2.90), (-0.48, 1.68)), ((-0.95, -0.32), (0.10, 0.10))]
+_ink_v5 += [(SKY, BACK_ANCHOR), ((GROUND_X[0], GROUND_Z), (GROUND_X[1], GROUND_Z)),
+            ((STATION[0], STATION[1]), (STATION[2], STATION[1])),
+            ((STATION[2], STATION[1]), (STATION[2], STATION[3])),
+            ((STATION[2], STATION[3]), (STATION[0], STATION[3])),
+            ((STATION[0], STATION[3]), (STATION[0], STATION[1]))]
+_ink_v5 += [(BEARING, SKY)] + BRIDLES
+_ink_v5 += [(SKY, (KITE_CENTRES[-1][0] + 1.2 * LIFTDIR[0], KITE_CENTRES[-1][1] + 1.2 * LIFTDIR[1]))]
+_ink_v5 += [((wx, wz), (wx + 2.7, wz)) for (wx, wz) in WINDS]
+for _seg in _ink_v5:
+    assert not _seg_hits(CONE_LDR[0], CONE_LDR[1], _seg[0], _seg[1]), f"cone-ring leader crosses {_seg}"
+print("self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017")
 
 # ================= TikZ emission =================
 def texify(s):
