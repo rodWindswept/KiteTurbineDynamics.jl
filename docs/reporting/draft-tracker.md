@@ -232,6 +232,13 @@ The exhibit joins the figure-provenance appendix with its output hashes.
 The lift-chain overlay and the R2 to R5 number set stay open for the visual pass.
 No value moves.
 
+v0.42 pass by @author (2026-10-14).
+This pass folds the gate-margin column at section 3.3 (AU9).
+The gate table gains the margin column and the torsional capacity row.
+The power-floor and clearance cells take their corrected forms.
+The factor of safety row takes its display forms.
+No signed value changes.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
