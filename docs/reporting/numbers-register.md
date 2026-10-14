@@ -1464,3 +1464,104 @@ Evidence: `scratch/av_nr046_counterread.py` and its log. The pass reads
 
 Verdict: no discrepancy found. The row stands as signed. The printed
 block at draft section 2.4 reads at the signed forms.
+
+## Derived row: NR-047, the k-sweep display rows for section 2.3 (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The k = 2.24 story folds at section 2.3. The fold prints a small table of the load sweep, one row per load. This row binds the six display rows to the committed sweep file. The omega column is named. The settled speed reads in `omega_final`. The `omega_eq` column reads 0.0 on all ten rows (the cold path). A quote from that column prints zero.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-047 | The k-sweep display rows for section 2.3: six loads of the honest-window sweep, one row per k | P_mean at 2 dp: k 0.5 reads reject. Then 5.45, 6.78, 7.56, 8.00, 8.89. omega_final at 2 dp: 19.14, 17.64, 16.59, 15.80, 15.34, 14.42. FoS_min at 1 dp: 51.8, 47.8, 42.8, 40.1, 36.4, 24.3 | kW, rad/s, - | `scripts/results/k_sweep_daisy_5kw.csv`, blob `d17d1377b191dde5b44df7f5534d0cdc4c48d0f3`, landed `adea1a3` (2026-08-22). Column line and ten data rows. The six rows read at `omega_final` | signed (science-validator, 2026-10-14) |
+
+The six display rows, one row per k:
+
+| k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
+|---|---|---|---|---|
+| 0.5 | reject | 3.49 | 19.14 | 51.8 |
+| 1.0 | ok | 5.45 | 17.64 | 47.8 |
+| 1.5 | ok | 6.78 | 16.59 | 42.8 |
+| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+| 2.24 | ok | 8.00 | 15.34 | 36.4 |
+| 3.0 | ok | 8.89 | 14.42 | 24.3 |
+
+Sign-off basis:
+
+- Recompute. All six triples cross-read the committed file at full precision. The quote forms round from the stored digits. Three examples: k 1.0 reads P_mean 5.450868423585806, omega_final 17.635572770055294, FoS_min 47.800187200992305. k 2.24 reads 7.997584762516935, 15.343704281699525, 36.41539771790948. k 0.5 reads 3.485236347784519 against the 5.0 kW bar, and the row reads reject.
+
+- Blob identity. The sweep file reads `d17d1377` at the landing commit `adea1a3`, at HEAD and at origin.
+
+- The column naming. The column line carries `omega_final`. The sweep script header names it: "omega_final = ground-ring omega at window end" (`scripts/sweep_k_mppt_5kw.jl:112`). Quote the speed from `omega_final` alone.
+
+- The reject row. k 0.5 reads 3.4852 against the 5.0 kW bar. The other nine rows read ok.
+
+- The plateau rows. k 4.0 to 9.0 ride the NR-041 band and the k >= 4 bracket. No new read.
+
+- Tip forms. The runner comment records two pairings (`scripts/run_v13_5kw_masslift.jl:161-168`): k 2.24 at omega 15.3, tip about 73 m/s, FoS 36. And k 1.0 at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling. The ceiling is the hard gate `TIP_SPEED_CEILING_MPS = 100.0` at `src/objective_evaluator.jl:103`. It applies to every ring rim and rotor tip (`:427` to `:437`).
+
+- The retirements. Two anchors retire, per the same comment. 3.55, the mass-scale value (`p_base.k_mppt`), unanchored. And 5.39, the 3-blade anchor chosen on the broken machine. The 5.39 claim reads "~9 kW from the seed". The CSV k 5.39 row reads P_end 8.97 kW at 2 dp.
+
+- The bases inside the comment. "8.0 kW" reads P_end, and the comment says so. "5.45 kW" reads P_mean. The table prints P_mean at 2 dp and names P_end where it means it.
+
+Reading rules:
+
+- Quote forms: P_mean at 2 dp, omega_final at 2 dp, FoS_min at 1 dp.
+
+- The tip line prints as "about 73 m/s" and "about 85 m/s", each with its omega pairing at the comment's precision (15.3, 17.6). No exact per-row tip prints from this row. A full tip column takes a fresh derivation.
+
+- The reject row prints reject and its power. Its FoS prints as context only.
+
+- The k = 1.94 row reads the sweep header's theory anchor, not a Daisy anchor.
+
+Boundaries that travel with this row:
+
+1. Era. As NR-041: the sweep ran on the corrected 18.8 m machine on 2026-08-22, under the span-cubed blade-mass law. The values are era readings and not a current-tip re-read.
+
+2. Tips. The record carries the two approximate pairings only. The 100 m/s ceiling is the gate the light end approaches.
+
+3. The six rows are the fold's display set. The plateau set (4.0 to 9.0) stays with NR-041.
+
+Counter-read requested from the aero seat.
+
+Evidence: `scratch/sv_nr047_k_sweep_rows_check.py` and its log.
+
+## Derived row: NR-048, the sizing-side pair for the k = 2.24 story (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The section 2.3 fold prints a sizing-side pair beside its two-side safety text. The pair reads in the structural record, not the sweep file. This row binds its tokens to the record files.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-048 | The sizing-side pair for the k = 2.24 story: the load-step sizing case and the k-easing refusal | Sizing load case = a bounded generator load step (nominal `k_mppt × 2`), measured `F_helix ≈ 1278 N/vertex` on the hub segment. The lull is benign under MPPT. k easing refused as the high-wind substitute: the rotor spins up to twist 87.9° against the 78.8° collapse limit | N/vertex, degrees | `DECISIONS.md` [2026-09-06] entry; `docs/plans/2026-09-06-closed-form-beam-sizing.md` section 7.1 and the scenario list; evidence script `scratch/scenario_sweep.jl` | signed (science-validator, 2026-10-14) |
+
+Sign-off basis:
+
+- Token read. The tokens re-read verbatim at the two record files. The DECISIONS entry reads: "Sizing load case = a bounded generator load step (nominal `k_mppt × 2`), measured `F_helix ≈ 1278 N/vertex` on the hub segment". And: "Easing `k_mppt` is the wrong substitute (rotor spins up to twist 87.9° > 78.8°)". The plan section 7.1 restates the sizing pair. The plan scenario list carries the k-ease line: "25 m/s spins the rotor up to twist 87.9° (> 78.8° collapse)".
+
+- Basis of record. The measurement is the first-cut scenario sweep of 2026-09-06. The script is committed (`scratch/scenario_sweep.jl`). The run's console record is not in the tree. This row signs the record forms. A re-derivation is a new read.
+
+- The entry's own qualifiers. The load-step magnitude detail (an instant step against a soft ramp) pends `RampController`. The tokens do not move with that detail.
+
+Reading rules:
+
+- Print the tokens at the record forms: "× 2" or "twice the nominal load", "1278 N/vertex" with its about marker, "87.9°" and "78.8°".
+
+- Do not multiply out and print 4.48 as a new value. "Twice nominal" carries it.
+
+- The lull claim carries no number. It reads "benign".
+
+- The pair prints in the sizing paragraph only. The k table and the tip text read NR-047.
+
+Boundaries that travel with this row:
+
+1. First-cut sweep. The sweep header lists the feather and lifter-drop cases as TODO. The high-wind structural case stays un-modelled until a feather factor lands.
+
+2. Era. The 78.8° limit is the era machine's hub-segment collapse limit. A machine move re-reads it.
+
+3. The wider scenario set (the gust row and the load-step x3 row) is not signed by this row. A fold that reaches for it takes a new read.
+
+Counter-read requested from the aero seat.
+
+Evidence: `scratch/sv_nr047_k_sweep_rows_check.py` and its log.

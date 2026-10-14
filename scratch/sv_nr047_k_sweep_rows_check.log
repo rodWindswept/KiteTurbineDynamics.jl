@@ -1,0 +1,53 @@
+sv_nr047_k_sweep_rows_check — read at HEAD 8d8901a | origin 8d8901a
+-- A. the sweep file identity --
+OK    blob hash-object == d17d1377 (the NR-041 pin)
+OK    blob at the landing commit adea1a3 == d17d1377
+OK    blob at HEAD == d17d1377
+OK    blob at origin == d17d1377
+-- B. the six display rows recompute from the raw CSV --
+OK    column line reads k,status,P_mean,P_end,omega_eq,omega_final,FoS_min,T_lift,wall_s
+OK    ten data rows
+OK    omega_eq reads 0.0 on all ten rows (the column-name caution)
+OK    k 0.5: status reject, P_mean 3.49, omega_final 19.14, FoS 51.8 recompute
+OK    k 1: status ok, P_mean 5.45, omega_final 17.64, FoS 47.8 recompute
+OK    k 1.5: status ok, P_mean 6.78, omega_final 16.59, FoS 42.8 recompute
+OK    k 1.94: status ok, P_mean 7.56, omega_final 15.80, FoS 40.1 recompute
+OK    k 2.24: status ok, P_mean 8.00, omega_final 15.34, FoS 36.4 recompute
+OK    k 3: status ok, P_mean 8.89, omega_final 14.42, FoS 24.3 recompute
+OK    k 0.5 sits under the 5.0 kW floor (reject)
+OK    the other nine rows read ok
+OK    plateau band k 4.0 to 9.0 reads 8.9475 to 8.9511 (NR-041)
+OK    the k=5.39 row P_end reads 8.97 at 2 dp (the '~9 kW' claim)
+-- C. the pin sites --
+OK    sweep header: 6-blade anchor line
+OK    sweep header: 3-blade anchor line
+OK    sweep header: theory anchor line
+OK    sweep K_SWEEP list carries the ten loads
+OK    sweep header names the omega column
+OK    runner comment: k=2.24 pairing
+OK    runner comment: k=1.0 pairing
+OK    runner comment: the 5.39 retirement
+OK    runner comment: the ~9 kW claim
+OK    runner comment: the 3.55 retirement
+OK    compute_seeds pins the single-source k
+OK    ceiling const reads 100.0 at :103
+OK    ceiling applied to ring rims
+OK    ceiling applied to the hub rotor tip
+OK    ceiling applied to expansion rotor tips
+-- D. the sizing-pair tokens --
+OK    DECISIONS: the ruling heading
+OK    DECISIONS: the load-step sizing token
+OK    DECISIONS: the k-easing refusal token
+OK    plan: section 7.1 restates the sizing pair
+OK    plan: the scenario list carries the k-ease line
+OK    plan: the load-step x2 row
+OK    plan: names the evidence script
+OK    the scenario sweep script is committed
+-- E. the register blocks as written --
+OK    register carries the NR-047 block
+OK    register carries the NR-048 block
+OK    the display table reads one row per k
+OK    the omega column is named in the NR-047 block
+OK    the NR-047 id row is signed
+OK    the NR-048 id row is signed
+SV_NR047_DONE  (46 checks: sweep pinned at adea1a3 == HEAD == origin; six display rows recompute; pin sites read; sizing pair pinned; register blocks read)
