@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `dcf8213` on `bank-derate-cos2p65`.
+**Base:** branch tip `57c77cf` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -15,47 +15,39 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Open items
 
-1. **The polish batch, pair two.** Fold the design implications at section 3.6
-   and the conclusion at section 5.
-
-   The six next steps from the feedback merge with the four open items in the front
-   block. One list, not two.
-   Display forms apply: 15.0, kg-equivalent and the classified counts.
-
-2. **AU9, the section 3.3 gate cells.** The clearance cell reads "pass, 5.468 m, margin +3.968 m" (NR-042).
-   The power-floor cell reads "pass, P_end 5.314 kW".
-   They fold once with the SW2d margin column, per the SV5 receipt.
-
-3. **The consistency sweep.** "Fail one gate" takes the classified counts (NR-002): 301 reject, 110 clearance_reject, 11 reject_twist.
+1. **The consistency sweep (PL9).** "Fail one gate" takes the classified counts (NR-002).
    The units read kW, m/s, N·m, rad/s, ground-generation and kg-equivalent.
    The bracket moves ride the same pass.
 
-4. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
+2. **PL13, the decision shape.** The shape applies to sections 3.4 to 3.7 and 4, over the settled text.
+
+3. **AU9, the section 3.3 gate cells.** The clearance cell reads "pass, 5.468 m, margin +3.968 m" (NR-042).
+   The power-floor cell reads "pass, P_end 5.314 kW".
+   They fold once with the SW2d margin column, per the SV5 receipt.
+
+4. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU7 and AU4.
+   The scope statement keeps its one home in the AU1 limits paragraph.
+   The twist-prose basis fold waits on the floor row.
+   The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
+   The Nomenclature fold waits on the glossary term gate.
+
+5. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-5. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU7 and AU4.
-   The scope statement keeps its one home in the AU1 limits paragraph.
-   The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
-   The decision shape folds over sections 3.4 to 3.7 and 4 at PL13.
-
 ## Closed, last (evidence index)
 
-The latest landings at this seat:
+- v0.36, the objective block and the rename: commit `57c77cf`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v036-objective-block.md`.
+  The scoring chain, the three soft constraint penalty forms and the reject placement print at section 2.4 (NR-046).
+  The rename lands in the draft sentence and the glossary row together, with candidates v15.
 
-- v0.33, the polish pair one: the winner margins text at section 3.4 and the
-  evolution story at section 3.5. Commit `dcf8213`. Receipt
-  `docs/reporting/room-responses/author-2026-10-14-v033-polish-pair-one.md`.
+- v0.34, the polish pair two: commit `a3c2def`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v034-polish-pair-two.md`.
 
-- v0.32, the levers fold and the claim-evidence matrix: commit `5a7a6b4`.
-  The levers reading sits at section 3.4. The matrix is the first appendix.
-  Receipt `docs/reporting/room-responses/author-2026-10-14-v032-levers-fold-and-matrix.md`.
+- Earlier landings: v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The relayed feedback records fold under the verbatim-record class (`.ste-exempt`).
-  The degraded twin stays out for the cleanup pass.
-
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.33 tip.
-  Six seats resolve.
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.36 tip.
 
 ## Boot
 
@@ -90,4 +82,4 @@ The latest landings at this seat:
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open the polish pair two on the next push, or rotate the seat on this page.
+**Owner:** @author. **Next action:** open the consistency sweep, or rotate the seat on this page.
