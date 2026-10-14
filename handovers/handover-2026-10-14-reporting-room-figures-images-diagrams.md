@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the item-5 extract pass (2026-10-14).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed at the item-5 counter-read close (2026-10-14, tip `d0679d3`).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,16 +19,27 @@ re-walk.
 
 ## Open items
 
-1. **The ring lead flag.** The ring caption lead prints the capture form 15.033
-   (NR-021), not the report headline 15.0 (NR-009). One line flips it if the room
-   calls for the headline form there.
-
-2. **The item-5 counter-read.** The extract kit landed at `6c51f5c9`
-   (builder `51ffc0d`). The counter-read stands with the
-   science-validator seat. No drawn value and no pin moves, so no F-VALUE
-   leg runs.
+1. **The visual pass by Rod.** Rows 4 to 7 (the eval-timeline, k-basis,
+   ring-utilisation and twist-limit plates) stand at F-VALUE pass or closure.
+   The visual pass is the standing final step; the folds follow.
 
 ## Closed, last (evidence index)
+
+- The ring lead flag closes as held (2026-10-14): the lead keeps the capture
+  form 15.033 (NR-021). It matches the drawn plate readout, and the body
+  disambiguation line carries the 15.0 / 15.033 pair. The display boundary
+  and the fold guard hold this form. It re-opens in one line if the room
+  calls for the headline form 15.0 (NR-009).
+
+- The item-5 counter-read closes at the science-validator seat: no
+  discrepancy found (`d0679d3`; 173 checks, 0 fail). Every table quantity
+  reproduces from the raw telemetry, and the NR-039 cross-check holds. The
+  Phase-1 gate of the landscape plan passes at that read. Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-14-item5-counterread.md`.
+
+- The v0.39 review copy reads clean at the aero item-8 leg (`a7d09eb`):
+  the twenty-four figure pins recompute to HEAD and origin, and the six
+  exhibits embed the delivered bytes; md5 `f1ceae4d2278361756ba6c9b631f310d`.
 
 - The item-5 lever-statistics extract lands: the kit at
   `docs/reporting/figures/lever-statistics-extract/` (builder `51ffc0d`,
@@ -115,4 +126,4 @@ re-walk.
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
 **Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** hold for
-the item-5 counter-read. The ring lead flag stands.
+Rod's visual pass on rows 4 to 7; then the folds.
