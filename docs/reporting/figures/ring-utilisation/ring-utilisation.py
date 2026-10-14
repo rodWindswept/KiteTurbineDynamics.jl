@@ -6,6 +6,12 @@ Plate: docs/reporting/figures/ring-utilisation/SPEC.md (GENERATE stage, R2).
 Draws the beam-column interaction of every checked ring against the fail
 boundary, from the ruled capture (winner operating point).
 
+v5 (the 3.5 render deltas, 2026-10-14): the axis is logarithmic from 10^-6
+to the unit value, so the full margin of every ring reads at its own
+scale.  One utilisation bar per ring (the axial/bending stack retired);
+the corrected interaction form N/N_crit + sqrt(M_ip^2 + M_oop^2)/M_el
+carries in the legend and the caption.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py \
       --script-commit <hex>
@@ -55,21 +61,26 @@ GREY = "#555555"
 FAINT = "#777777"
 MUTED = "#98a0a8"
 SHAFT = "#c4c4c4"
-CYAN = "#1f8fff"  # axial share
-ORANGE = "#ff8c00"  # bending share
+CYAN = "#1f8fff"  # utilisation
 RED = "#b32222"  # fail boundary
 
 TITLE = "Every checked ring sits far below its fail boundary"
 SUB = "Beam-column interaction per checked ring · island-3 winner operating point"
-AXLABEL = "utilisation — beam-column interaction"
+AXLABEL = "utilisation — beam-column interaction, log scale"
 GROUND = "R1 — ground ring · not checked (ground-supported)"
 BOUNDARY = "fail boundary"
 LEGEND = [
-    ("swatch", CYAN, "axial share (N/N_crit, worst beam)"),
-    ("swatch", ORANGE, "bending share (√(M²)/M_el, same beam)"),
+    ("swatch", CYAN, "utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el, worst beam)"),
     ("dash", RED, "fail boundary — interaction at the unit value"),
     ("text", None, "readout: ring FoS = 1 / ring utilisation"),
 ]
+
+# log window: bar origin at 10^-6; the window pads left for the label
+# column and right for the boundary label (v5)
+LOG_LEFT = 10 ** -7.65
+LOG_RIGHT = 10 ** 0.665
+DECADES = [10 ** d for d in (-6, -5, -4, -3, -2, -1, 0)]
+DECADE_LABELS = ["10⁻⁶", "10⁻⁵", "10⁻⁴", "10⁻³", "10⁻²", "10⁻¹", "1"]
 
 LEDGER: list[str] = []
 
@@ -134,46 +145,50 @@ def main() -> int:
 
     ax = fig.add_axes([0.145, 0.245, 0.825, 0.60])
     ax.set_axis_off()
-    ax.set_xlim(-0.34, 1.115)
+    ax.set_xscale("log")
+    ax.set_xlim(LOG_LEFT, LOG_RIGHT)
     ax.set_ylim(-1.8, 22.2)
 
-    # top axis strip (manual, spans bar origin to right edge)
-    ax.plot([0.0, 1.10], [19.5, 19.5], color=LINE, lw=1.1, solid_capstyle="butt")
-    for t in (0.0, 0.2, 0.4, 0.6, 0.8, 1.0):
+    # top axis strip (manual, spans bar origin to the window edge)
+    ax.plot([DECADES[0], LOG_RIGHT], [19.5, 19.5], color=LINE, lw=1.1,
+            solid_capstyle="butt")
+    for t, lbl in zip(DECADES, DECADE_LABELS):
         ax.plot([t, t], [19.5, 19.72], color=LINE, lw=0.8)
-        lbl = f"{t:.1f}" if t < 1.0 else "1.0"
         txt(ax, t, 19.78, lbl, ha="center", va="bottom", size=7.5, color=LINE)
-    txt(ax, 0.0, 20.75, AXLABEL, ha="left", va="bottom", size=8.5, color=INK)
+    txt(ax, DECADES[0], 20.75, AXLABEL, ha="left", va="bottom", size=8.5,
+        color=INK)
 
-    # shaft column and ring ticks
+    # shaft column and ring ticks (axes-fraction furniture)
     ymin_r, ymax_r = 0.0, max(stations.values())
-    ax.plot([-0.255, -0.255], [ymin_r - 0.25, ymax_r + 0.25], color=SHAFT,
-            lw=0.9, ls=(0, (3, 3)))
+    ax.plot([0.058, 0.058], [ymin_r - 0.25, ymax_r + 0.25],
+            transform=ax.get_yaxis_transform(), color=SHAFT, lw=0.9,
+            ls=(0, (3, 3)))
     for rid, y in stations.items():
-        ax.plot([-0.285, -0.225], [y, y], color=MUTED, lw=1.6)
+        ax.plot([0.046, 0.074], [y, y], transform=ax.get_yaxis_transform(),
+                color=MUTED, lw=1.6)
         label = "R6 (hub)" if rid == "R6" else rid
-        txt(ax, -0.302, y, label, ha="right", va="center", size=8, color=GREY)
+        txt(ax, 0.040, y, label, ha="right", va="center", size=8, color=GREY,
+            transform=ax.get_yaxis_transform())
 
     # fail boundary line and label
     ax.plot([1.0, 1.0], [-0.5, 19.4], color=RED, lw=1.8, ls=(0, (5, 4)))
     txt(ax, 1.0, -0.62, BOUNDARY, ha="center", va="top", size=7.5,
         color=RED, style="italic")
 
-    # stacked bars and FoS readouts
+    # utilisation bars and FoS readouts (log axis, bar origin at 10^-6)
     bh = 1.15
     for r in rings:
         y = float(r["station_m"])
-        ua = float(r["util_axial"])
-        ub = float(r["util_bending"])
-        ax.add_patch(Rectangle((0.0, y - bh / 2), ua, bh, facecolor=CYAN,
+        total = float(r["max_util"])
+        ax.add_patch(Rectangle((DECADES[0], y - bh / 2),
+                               total - DECADES[0], bh, facecolor=CYAN,
                                edgecolor="none", alpha=0.95, zorder=3))
-        ax.add_patch(Rectangle((ua, y - bh / 2), ub, bh, facecolor=ORANGE,
-                               edgecolor=ORANGE, lw=0.6, alpha=0.35, zorder=3))
-        txt(ax, ua + ub + 0.016, y, f"FoS {fmt_fos(float(r['ring_fos']))}",
+        txt(ax, total * 1.6, y, f"FoS {fmt_fos(float(r['ring_fos']))}",
             ha="left", va="center", size=8, color=INK)
 
     # ground-ring note
-    txt(ax, 0.0, -0.62, GROUND, ha="left", va="top", size=7.5, color=FAINT)
+    txt(ax, DECADES[0], -0.62, GROUND, ha="left", va="top", size=7.5,
+        color=FAINT)
 
     # ------------------------------------------------------------ foot
     foot = fig.add_axes([0.0, 0.0, 1.0, 0.225])
@@ -189,7 +204,7 @@ def main() -> int:
             foot.plot([x, x + 0.022], [0.843, 0.843], color=color, lw=1.8,
                       ls=(0, (4, 3)))
 
-    pos = [0.028, 0.315, 0.63, 0.028]
+    pos = [0.028, 0.46, 0.028]
     for i, (kind, color, s) in enumerate(LEGEND):
         x = pos[i]
         if kind != "text":

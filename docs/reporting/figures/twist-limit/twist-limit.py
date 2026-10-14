@@ -8,6 +8,12 @@ over-twist limit δcrit.  Panel B pairs segment torque with torsional
 capacity at the same capture instant.  Both panels share the shaft frame
 of the companion plate (ring-utilisation).
 
+v4 (the 3.5 render deltas, 2026-10-14): the two changelog lines (the
+2026-08-13 overshoot and the removed asin clamp) left the plate notes for
+the failure ledger.  The δcrit labels re-space clear of the tick column.
+The title, subtitle and panel-A label measure against the binding limit,
+the realisability floor (work item 1.3).
+
 Run:
   /usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py \
       --script-commit <hex>
@@ -18,9 +24,9 @@ PNG metadata fixed, no timestamps anywhere.
 
 Mechanism references (cleared to draw by science-validator, 2026-10-08;
 register rows pending — see register-status.md):
-  realisability floor 72.25°, crossing-limit example 42.6° with the
-  2026-08-13 overshoot (22,425°, 62 revolutions), removed 90° asin read
-  clamp.  The seed binding segment (79.4°) is HELD, not drawn.
+  the realisability floor 72.25°; the crossing-limit note (no value
+  form); the no-limit explanation.  The seed binding segment (79.4°) is
+  HELD, not drawn.
 
 Outputs (in this directory): twist-limit.svg / .pdf / .png,
 label-ledger.txt, manifest.json.
@@ -55,11 +61,8 @@ DATA_COMMIT = "dd3cc6a"
 AUTHORITY_COMMIT = "f8114be"  # computing commit of the extract (CSV header)
 ROWS = "NR-022 · NR-023"
 
-# mechanism references (values as recorded by the science seat, 2026-10-08)
+# mechanism reference (value as recorded by the science seat, 2026-10-08)
 FLOOR_DEG = "72.25"
-X_LIMIT_DEG = "42.6"
-X_REACHED = "22,425"
-X_REVS = "62"
 
 INK = "#1a1a1a"
 LINE = "#333333"
@@ -72,11 +75,12 @@ GREEN = "#2e8c57"  # segment torque
 RED = "#b32222"  # over-twist limit / capacity
 FLOOR = "#8a94a6"  # realisability floor
 
-TITLE = "Every segment of the winner runs far below its over-twist limit"
-SUB = ("Transmitted twist against δcrit · shaft profile S1–S5, ground to "
-       "hub · island-3 winner operating point")
-PANEL_A = ("A — twist: transmitted twist |Δα| against its δcrit over-twist "
-           "limit")
+TITLE = "Every segment of the winner runs well inside its binding limit"
+SUB = ("Transmitted twist against its binding limit, the realisability "
+       "floor · shaft profile S1–S5, ground to hub · island-3 winner "
+       "operating point")
+PANEL_A = ("A — twist: transmitted twist |Δα| against its binding limit, "
+           "the realisability floor")
 PANEL_B = ("B — torque: segment torque against torsional capacity, paired "
            "at the same state")
 AX_A = "twist angle — degrees"
@@ -93,9 +97,6 @@ NOTES = [
      f"{FLOOR_DEG}°."),
     ("crossing limit δα* — every segment gates on its own collapse-detector "
      "limit. That limit is not the over-twist limit."),
-    (f"The 2026-08-13 winner ran to {X_REACHED}° ({X_REVS} revolutions) "
-     f"against its {X_LIMIT_DEG}° limit — off scale."),
-    ("read cap — the former 90° asin clamp is removed. Reads are uncapped."),
     ("no limit — the segment's tether is shorter than the sum of its end "
      "radii. Its lines cannot reach the axis,"),
     ("so no over-twist limit exists. Tether break strain and ring "
@@ -218,7 +219,7 @@ def main() -> int:
             size=7, color=INK,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
-        txt(axa, lim, yc + 0.5, f"{lim:.1f}", ha="center", va="bottom",
+        txt(axa, lim + 2.2, yc, f"{lim:.1f}", ha="left", va="center",
             size=7, color=RED,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
@@ -269,7 +270,7 @@ def main() -> int:
         foot.text(x + 0.022, 0.93, keep(s), ha="left", va="center", size=7.5,
                   color=INK)
 
-    ny = [0.84, 0.74, 0.64, 0.54, 0.44, 0.34]
+    ny = [0.84, 0.72, 0.60, 0.48]
     for y, s in zip(ny, NOTES):
         foot.text(0.028, y, keep(s), ha="left", va="center", size=7,
                   color=GREY)
@@ -339,10 +340,9 @@ def main() -> int:
             "register_rows": [ROWS],
             "mechanism_references": {
                 "realisability_floor_deg": FLOOR_DEG,
-                "crossing_limit_example_deg": X_LIMIT_DEG,
-                "crossing_overshoot_deg": X_REACHED,
-                "crossing_overshoot_revs": X_REVS,
-                "status": "cleared to draw 2026-10-08; rows pending",
+                "status": "cleared to draw 2026-10-08; floor row pending. "
+                          "The two changelog lines left the plate notes "
+                          "2026-10-14 (failure ledger).",
             },
         },
         "capture": CAPTURE,
@@ -350,7 +350,7 @@ def main() -> int:
                     f"docs/reporting/figures/{SLUG}/{SLUG}.py "
                     f"--script-commit {args.script_commit}"),
         "precision": "angles 0.1 deg drawn; torque 0.1 N·m drawn; "
-                     "mechanism references as recorded",
+                     "mechanism reference as recorded",
         "outputs": {
             f"{SLUG}.svg": sha256(svg),
             f"{SLUG}.pdf": sha256(pdf),
