@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.44. Date 2026-10-14.
+Internal engineering report. Draft v0.45. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -586,6 +586,18 @@ This result differs from earlier eras for recorded reasons. The bank
 derate, the measurement window and the tightened gates moved the search
 space. Numbers across the eras would compare models, not machines.
 
+The three movers carry their records. The bank derate is a
+calculated depowering of the main-rotor disc (NR-019, NR-020).
+The window basis sits at section 2.2.2, and the gate set at
+section 2.4.
+
+| Era | Effect on the search space | Data status |
+|---|---|---|
+| Before the bank derate | Earlier winners read different bank-angle physics, so they are not directly comparable. | Superseded as era record. |
+| The bank-derate basis | The measured bank derate applies to main-rotor disc power throughout (NR-019, NR-020). | Current campaign basis. |
+| The cp fix and the folded class | The span shrink and the cp fix moved the screen readings. The pre-fold rows failed the floor (NR-027). | Recorded: the folded class passes at 18.8 metres (NR-028). |
+| The wind-authority era (`post-95c385d_wind-authority`) | One wind authority reads the scored results. | Current physics era. |
+
 This run also trades breadth for fidelity: fewer evaluations, each on
 the measurement window. It stopped early: a screen, not a survey.
 This report covers the wind-authority era campaign and the recorded
@@ -767,6 +779,15 @@ flag, and every recorded winner field reproduces (NR-012).
 ### 4.2 The failure ledger
 
 Candidate entries. Each failure enters with its lesson.
+
+| Date / event | Class | What happened | Detection | Correction / lesson | Status |
+|---|---|---|---|---|---|
+| 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
+| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+| 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
+| 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+| 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+| 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard never reached several scoring paths. The re-gate screens winners. | Telemetry review | A gate must pin a measured number. Drift must fail the suite. | Near-miss, no corrupted survivor found. |
 
 - The dead geometry genes. The search proposes genomes that cannot
 build. An off-by-one in the rotor-to-ring map put the middle rotor on

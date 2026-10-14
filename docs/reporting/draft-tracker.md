@@ -252,6 +252,13 @@ The plate script-commit cell and its four output-hash cells take the delivered v
 The re-cut adds the cone-ring label (figure-map row 2; round-5 comment 3).
 No value moves.
 
+v0.45 pass by @author (2026-10-14).
+This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2.
+The era map takes the short pointer block and the four-row table.
+The failure-ledger table lands with the narrative after it.
+The two tables add the accepted table class.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
