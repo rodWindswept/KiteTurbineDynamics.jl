@@ -1,0 +1,22 @@
+v0.45 pass final readback — AU7: the era map and the failure-ledger table (author seat), 2026-10-14
+generated 2026-10-14T20:43:01Z
+
+git rev-parse HEAD:        bdab9841d8a3ae9efd6492f463cb8a32e43c1829
+git rev-parse origin/bank-derate-cos2p65: bdab9841d8a3ae9efd6492f463cb8a32e43c1829
+git ls-remote origin:      bdab9841d8a3ae9efd6492f463cb8a32e43c1829	refs/heads/bank-derate-cos2p65
+local == origin: True
+
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md
+     origin sha256 2763f6c2ace5237277d616dd904bc2655cbbe65e279fdf20bf33b69ea5580b24
+OK  docs/reporting/draft-tracker.md
+     origin sha256 6b9a401789e4cbe98999ef1a50088e9cfa041089fde42c4c670e13146daa49e3
+OK  scratch/au_v045_au7_discussion.py
+     origin sha256 b29c1a19fac10a17134d0021514e8db6d34aaccf4f49c836f8fbe93fa0cd777e
+OK  scratch/au_v045_au7_discussion.log
+     origin sha256 3f53cd571566b72844e0978f8193b7c91771587e56058824f6372fe7dcc1a901
+OK  docs/reporting/room-responses/author-2026-10-14-v045-au7-discussion.md
+     origin sha256 f65521cf064bbbfc23b857d3cd4896a916fd839015d3a529e384ec2ac80e1007
+OK  handovers/handover-2026-10-14-reporting-room-author.md
+     origin sha256 1b564fa87b9ea17022fc0b716dc7476a4d96c3288c11aacb5ca695af47e2437e
+
+VERDICT: GREEN — local == origin, all six carried blobs byte-identical at origin
