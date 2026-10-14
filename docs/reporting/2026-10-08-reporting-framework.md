@@ -28,6 +28,15 @@ Reporting *content* waits on analysis gates.
    (stop-slop discipline).
 6. **Nothing public before sign-off.** Every figure and every prose block is
    validator-gated before it leaves the repo.
+7. **Plain English for people.** Anything Rod reads — room updates,
+   summaries, questions — is self-contained plain English: no internal
+   shorthand (plan codes, "routes onto work in flight", "both keep"), no
+   unexplained codes. Shorthand is reserved for internal routing notes, and
+   **neither register may leak into report prose** — the report is read by
+   the AWES community and university students, where that language would be
+   fatal. Standing pattern: every feedback round's routing note ships with a
+   plain-English companion at
+   `docs/reporting/<date>-feedback<N>-routing-plain-english.md`.
 
 ## 2. The Numbers Register (the load-bearing device)
 
