@@ -1,0 +1,6 @@
+# lever-statistics-extract | dataset scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | run a76c5e9 | era post-95c385d_wind-authority | generator docs/reporting/figures/lever-statistics-extract/build-extract.py | script commit 51ffc0d8db9aea3beef01f15a2feb9e83ae195a4 | recipe: per-channel statistics over the 508 ok rows; n_fired counts charge > 0; n_dominant counts rows where the channel is the largest of the three charges
+channel,n_rows,n_fired,min,median,p75,max,sum,share_pct,n_dominant
+overpower,508,507,0.0,2.8125,3.8719999999999994,8.8445,1462.3155,69.31035445645696,453
+utilisation,508,508,0.5325893557117439,0.7190348366625491,1.1289485071875522,12.36106166686444,506.35770549669286,24.000177834218423,46
+twist,508,508,0.021844440553301314,0.15785393920112695,0.2720571803049153,8.285578951684622,141.13493423612957,6.689467709324618,9
+total,508,508,0.6826540185069051,3.9569181460503557,5.116077328944827,15.142832103888628,2109.8081397328224,100.0,-

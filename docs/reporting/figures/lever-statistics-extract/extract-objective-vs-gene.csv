@@ -1,0 +1,12 @@
+# lever-statistics-extract | dataset scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | run a76c5e9 | era post-95c385d_wind-authority | generator docs/reporting/figures/lever-statistics-extract/build-extract.py | script commit 51ffc0d8db9aea3beef01f15a2feb9e83ae195a4 | recipe: spearman(fitness, gene) over the 508 ok rows; integer genes take the decoder value; delta_med reads median(top bin) - median(bottom bin)
+gene,slot,kind,n,spearman_rho,rho_rank,bottom_bin,top_bin,delta_med_kg
+r_hub,x1,continuous,508,0.07362148692587671,8,q1,q5,1.0705000000000027
+r_bottom,x2,continuous,508,-0.2764305113416945,4,q1,q5,-1.8009999999999948
+target_Lr,x3,continuous,508,-0.5831671826081221,1,q1,q5,-3.892000000000003
+n_lines,x4,integer,508,-0.02866247651688192,10,3,9,22.54
+density_profile,x5,continuous,508,0.06621353566326886,9,q1,q5,-0.2119999999999962
+rotor_count,x6,integer,508,0.10846466050227908,7,1,2,26.592
+bank_top,x7,continuous,508,0.12521252364855276,6,q1,q5,0.6685000000000016
+bank_bottom,x8,continuous,508,-0.40327110617994494,3,q1,q5,-2.896000000000001
+blade_scale_top,x9,continuous,508,0.5042414913444673,2,q1,q3,2.7590000000000003
+blade_scale_bottom,x10,continuous,508,0.1655827155058035,5,q1,q4,1.3560000000000016
