@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `e0919ff` on `bank-derate-cos2p65`. The sweep 22 push follows this page.
+**Base:** branch tip `68092dc` on `bank-derate-cos2p65`. The sweep 23 push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,10 +17,10 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 23 on the next draft push.**
-   The next mover is the consistency sweep on the author seat
-   (the classified counts, the units set and the bracket moves).
-   The sweep keys on its push.
+1. **Sweep 24 on the next draft push.**
+   The next movers are PL13 and the Nomenclature fold on the author seat,
+   and the k-story section 2.3 fold once the science-validator signs its rows.
+   The sweep keys on the next push.
 
 2. **The explainer block.**
    The round-4 routing seats the kg-equivalent explainer block on this seat.
@@ -32,8 +32,8 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
    Each needs an own-source read or a room decision before prose cites it.
    The pass lands as `docs/reporting/references-verification.md`.
 
-4. **The glossary term gate.** The term gate with @science-validator keys on
-   the v15 rename. That form reads across the draft and the glossary row.
+4. **The Nomenclature fold.** The term gate cleared at `cadf83d`.
+   The fold runs with the lead and this seat.
    The three projection terms sit in the candidates for Track D.
 
 5. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
@@ -42,7 +42,9 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
-- Sweep 22: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+- Sweep 23: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+
+- Sweep 22: commits `cf6c27f` to `a3ca2f6`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-22.md`.
 
 - Sweep 21: commits `f153802` to `852d4bd`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-21.md`.
 
@@ -78,4 +80,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** sweep 23 on the next draft push, then the explainer block.
+**Owner:** @science-writer. **Next action:** sweep 24 on the next draft push, then the explainer block.
