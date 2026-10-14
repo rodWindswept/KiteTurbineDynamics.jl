@@ -89,10 +89,15 @@ caption text holds until the citation fix lands.
 
 ## Housekeeping
 
-- **Master fast-forward overdue:** `origin/master` sits at `894fc11`
-  (Oct 8) while the branch carries all report work (tip `331f60d`). One
-  command from the landing worktree: `git pull --rebase --ff-only origin
-  bank-derate-cos2p65 && git push origin master`.
+- **Master fast-forward completed 2026-10-14:** `origin/master` now carries
+  the full report line (the landing worktree was removed; no worktree holds
+  master, so no seat needs to fast-forward locally).
 - Room norm (framework §1): user-facing posts are plain English; internal
   shorthand stays in routing notes; neither register leaks into report
   prose.
+
+## Amendments (later tips, 2026-10-14)
+
+- **NR-045 signed** (`6255268`): the island generation counts now hold a
+  register row (31 generations per island, gen 0 to 30, 10 rows each, 930
+  total). The "31 generations each" subtitle query closes to the row side.
