@@ -1,0 +1,37 @@
+=== av feedback-5 routing counter-read, 2026-10-14 ===
+[PASS] tip: local == origin :: d1e9bf1 == d1e9bf1
+[PASS] return copy: attachment bytes == repo archive :: 9ec167ded47cb21c44d69078d2a27d41
+[PASS] census: 17 comments, ids 0..16 :: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+      authors: ['Unknown Author']
+      dates: 2026-10-14T12:14:04Z to 2026-10-14T13:08:19Z
+[PASS] census: every comment anchors, document order 0..16 :: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+[PASS] draft anchor reads: id0 blade scale
+[PASS] draft anchor reads: id1 ring gene
+[PASS] draft anchor reads: id3 probes
+[PASS] draft anchor reads: id4 930 designs
+[PASS] draft anchor reads: id5 swing line
+[PASS] draft anchor reads: id6 lifter
+[PASS] draft anchor reads: id7 blade-scale slots
+[PASS] draft anchor reads: id8 second bank slot
+[PASS] draft anchor reads: id9 eras
+[PASS] draft anchor reads: id10 breadth
+[PASS] draft anchor reads: id11 ring caption thread
+[PASS] kit anchor reads: id2 anatomy caption
+[PASS] kit anchor reads: id16 strip caption
+[PASS] return copy swing site: 'kilowatts'
+[PASS] draft swing site: kW forms
+[PASS] return copy gate cell: P_mean 5.309
+[PASS] draft gate cell: P_end 5.314 with margin
+[PASS] guard: no number within 60 chars of any cone site :: 1 sites, 0 numeric
+[PASS] guard: one '22 degrees' site (the bank slot) :: 1 sites
+      runner lines 262-264:
+      |                 KiteTurbineDynamics.evaluate_windowed(
+      |                     xr, beam_profile, p_base, cfg;
+      |                     start_mode = :cold,
+[PASS] pin: runner 262-264 carries start_mode = :cold
+[PASS] pin: cfg holds cone_slope_deg = 22.0
+[PASS] pin: decode takes the cone from cfg, not the genome
+[PASS] NR-008: mean 5.309 / P_end 5.314
+[PASS] NR-014: swing reads the mean
+=== checks: 28 pass, 0 fail ===
+rc=0
