@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `e5541e9` on `bank-derate-cos2p65`.
+**Base:** branch tip `34e3f81` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -23,8 +23,8 @@ The parallel work is the audits and the extracts the other seats run.
 2. **The kMppt plain pass (founder ask).** The structural-side sentence at section 2.3 takes a plainer form.
    The era-fit flag gates any cite. The row-5 plate draws the sweep and waits on the visual pass.
 
-3. **The era pack (queue item 5).** The era map fold lands with the science-writer seat.
-   The development-history chapter push rides the same slot.
+3. **The era pack, the remainder.** The era map folded at `34e3f81` (AU7).
+   The development-history chapter push reads next. Track A/B reconciliation goes first.
 
 4. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
 
@@ -35,6 +35,12 @@ The parallel work is the audits and the extracts the other seats run.
 6. **The basics-of-TRPT refresher (founder ask, scope call).** Logged in the queue. Not gated.
 
 ## Closed, last (evidence index)
+
+- v0.45, AU7: the era map and the failure-ledger table: commit `34e3f81`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v045-au7-discussion.md`.
+  The era map lands beside the era note, with the short pointer block.
+  The failure-ledger table lands at section 4.2, the narrative after it.
+  The two tables carry the accepted table class.
 
 - v0.43, the round-5 wording set: commit `e5541e9`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v043-round5-wording.md`.
@@ -76,7 +82,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.43 build (record draft `e5541e9`, md5 `3374a638aa89e61e9957193dffc1536d`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.45 build (record draft `34e3f81`, md5 `c88d19015e5d755f347f30d0e456634d`).
 
 ## Boot
 
@@ -111,4 +117,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** hold the partner-gated tails until AU4 and AU7 land. The kMppt plain pass follows. The era pack keys on its slot with @science-writer.
+**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The tails wait on AU4. AU7 closed at `34e3f81`.
