@@ -1,4 +1,4 @@
-av_sibling_sweep — base tip 9166686 | HEAD 9166686
+av_sibling_sweep — base tip 9166686 | HEAD d740955
   ok   base tip 9166686 is an ancestor of HEAD
 [A] the family census on the named surfaces (base tip)
     docs/reporting/drafts/2026-10-08-report-first-draft.md:727: The fix removes false rejections. It never allows breaks.

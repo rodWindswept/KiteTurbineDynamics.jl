@@ -1,4 +1,4 @@
-[0] copy read   tip 9166686   record 12a5753   copy md5 f1ceae4d2278361756ba6c9b631f310d
+[0] copy read   tip d740955   record 12a5753   copy md5 f1ceae4d2278361756ba6c9b631f310d
 [0] identity and freshness
   ok   copy md5 reads the declared value
   ok   copy byte-identical to its archived build

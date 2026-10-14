@@ -1,0 +1,19 @@
+# item-8 aero leg — origin readback (aero-validator, 2026-10-14)
+# push range 9166686..d740955
+
+HEAD:                    d740955780db2102d8f30d190cd490e067f4b607
+origin/bank-derate-cos2p65: d740955780db2102d8f30d190cd490e067f4b607
+local == origin: yes
+
+worktree hash-object == origin blob:
+.ste-exempt  61c6bb85385622bab7ef961f88fbc6e1af34ec84  OK
+docs/reporting/numbers-register.md  8189afdce82c51717afbb5416e60bb24ed8d5706  OK
+docs/reporting/2026-10-08-room-consultation.md  690db7423f6d982a9c029abc5f8452d2624a9bc0  OK
+docs/reporting/room-responses/aero-validator-2026-10-14-item8-aero-leg.md  867d11ff84bae0e5fba34bfbf66b4cfe54df837a  OK
+handovers/handover-2026-10-14-reporting-room-aero-validator.md  9f486b00b7db75c59fc92e3de0ecd787a8d2be7c  OK
+scratch/av_nr047_nr048_counterread.py  c701aae56d3b559fa520f6b81774fa6e40cc3e88  OK
+scratch/av_nr047_nr048_counterread.log  f1ad7da538e9e69ebf2a91c10cb440fc81246987  OK
+scratch/av_sibling_sweep.py  515e857c19eb681eeea05832125a3204014db613  OK
+scratch/av_sibling_sweep.log  cb17ca0858fdd02825e526940d78874be9918527  OK
+scratch/av_v039_copy_read.py  115281a06c1d047c82adec29304cd253a6369b18  OK
+scratch/av_v039_copy_read.log  869a3e741df31b2ff7709d35231962a8b78a0b05  OK
