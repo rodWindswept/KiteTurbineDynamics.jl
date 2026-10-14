@@ -14,6 +14,9 @@
 # all ring azimuth states 0.000 deg), so the settled twisted form the founder
 # asks for comes from the capture, not a fresh settle run. No ODE runs here.
 #
+# v2 re-cut (2026-10-14): the hub-name retirement (round-6 founder
+# comment 1). The drawn leader reads "topmost ring R6". No value moves.
+#
 # Run:
 #   scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl \
 #       --script-commit <hex>
@@ -396,7 +399,7 @@ function annotate_side!(ax, h::Hero)
     tgt = (h.radii[6], h.stations[6])
     lines!(ax, [tgt[1] + gap, tgt[1] + 1.6], [tgt[2] + 0.10, tgt[2] + 0.55];
         color=C_GREY, linewidth=lw)
-    text!(ax, tgt[1] + 1.75, tgt[2] + 0.62; text="hub ring R6",
+    text!(ax, tgt[1] + 1.75, tgt[2] + 0.62; text="topmost ring R6",
         fontsize=10.5, color=C_INK, align=(:left, :center))
     # TRPT shaft: leader to the right cone line, mid-height
     a, b = rope_chord(h, 5, 3)
@@ -663,7 +666,7 @@ function main()
         h.r_in, h.r_out, h.r_out - h.r_in, h.bank_deg, h.n_blades))
     push!(loglines, @sprintf("axial offsets: din %.6f m · dout %.6f m · elevation %.2f deg", h.din, h.dout, ELEV_DEG))
     hubz = h.stations[6] * sin(deg2rad(ELEV_DEG))
-    push!(loglines, @sprintf("drawn hub altitude: %.4f m (register settled-basis note reads mean z 8.914 m, elevation 28.64 deg)", hubz))
+    push!(loglines, @sprintf("drawn topmost-ring altitude: %.4f m (register settled-basis note reads mean z 8.914 m, elevation 28.64 deg)", hubz))
     push!(loglines, "sections R1..R6: " * join(string.(h.sections), ", "))
     push!(loglines, "counts: ring polygons $(h.counts.rings) · TRPT polylines $(h.counts.ropes) ($(h.counts.lines_per_gap) lines x $(h.counts.gaps) gaps) · blades $(h.counts.blades) · annulus views 3 · glyph $(h.counts.glyph)")
     push!(loglines, @sprintf("window: x side [%.1f, %.1f] · plan/downwind [%.1f, %.1f] · y side/downwind [%.1f, %.1f] · y plan [%.1f, %.1f] m · m_per_px %.6f · panels %d/%d/%d x %d px · figure %d x %d px · scale bar %.1f m",

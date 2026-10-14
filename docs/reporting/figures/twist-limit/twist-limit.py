@@ -14,6 +14,10 @@ the failure ledger.  The δcrit labels re-space clear of the tick column.
 The title, subtitle and panel-A label measure against the binding limit,
 the realisability floor (work item 1.3).
 
+v5 (the round-6 hub-name retirement, 2026-10-14): the top ring label
+reads "R6 (top)" and the subtitle reads "ground to top". No drawn
+value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py \
       --script-commit <hex>
@@ -77,7 +81,7 @@ FLOOR = "#8a94a6"  # realisability floor
 
 TITLE = "Every segment of the winner runs well inside its binding limit"
 SUB = ("Transmitted twist against its binding limit, the realisability "
-       "floor · shaft profile S1–S5, ground to hub · island-3 winner "
+       "floor · shaft profile S1–S5, ground to top · island-3 winner "
        "operating point")
 PANEL_A = ("A — twist: transmitted twist |Δα| against its binding limit, "
            "the realisability floor")
@@ -174,7 +178,7 @@ def main() -> int:
                 ls=(0, (3, 3)))
         for i, y in enumerate(stations):
             ax.plot([xmin * 0.62, xmin * 0.50], [y, y], color=MUTED, lw=1.4)
-            label = "R6 (hub)" if i == 5 else f"R{i + 1}"
+            label = "R6 (top)" if i == 5 else f"R{i + 1}"
             txt(ax, xmin * 0.68, y, label, ha="right", va="center", size=8,
                 color=GREY)
         # segment separators + labels

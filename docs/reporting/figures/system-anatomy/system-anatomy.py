@@ -18,6 +18,9 @@
 # v5 re-cut (2026-10-14): the cone ring (R5) label joins (round-5
 # founder comment 3). The leader carries clearance self-checks. No
 # new number.
+# v6 re-cut (2026-10-14): the hub-name retirement (round-6 founder
+# comment 1). The R6 label reads "R6, the topmost ring". No new
+# number.
 # Standing rule: the 22.0 slot value never prints as a rotor angle.
 # Held-term picks pending (Track D): the knot name and the cyan-line name
 # print here in the register/room form ("sky anchor", "cyan line"); the
@@ -162,7 +165,7 @@ LABELS: list = [
          lines=["blade span", SPAN_LABEL],
          leaders=[(SPAN_LDR_A, SPAN_LDR_B)]),
     dict(name="hubring", pos=(11.50, 12.55), anchor="east",
-         lines=["R6, the hub ring", "4.580 m"],
+         lines=["R6, the topmost ring", "4.580 m"],
          leaders=[((11.62, 12.70), (14.62, 13.17))]),
     dict(name="segments", pos=(4.50, 1.55), anchor="west",
          lines=["segments S1 to S5", "three tension lines each"],

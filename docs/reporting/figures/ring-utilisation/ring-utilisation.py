@@ -12,6 +12,9 @@ scale.  One utilisation bar per ring (the axial/bending stack retired);
 the corrected interaction form N/N_crit + sqrt(M_ip^2 + M_oop^2)/M_el
 carries in the legend and the caption.
 
+v6 (the round-6 hub-name retirement, 2026-10-14): the top ring label
+reads "R6 (top)". No drawn value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py \
       --script-commit <hex>
@@ -166,7 +169,7 @@ def main() -> int:
     for rid, y in stations.items():
         ax.plot([0.046, 0.074], [y, y], transform=ax.get_yaxis_transform(),
                 color=MUTED, lw=1.6)
-        label = "R6 (hub)" if rid == "R6" else rid
+        label = "R6 (top)" if rid == "R6" else rid
         txt(ax, 0.040, y, label, ha="right", va="center", size=8, color=GREY,
             transform=ax.get_yaxis_transform())
 

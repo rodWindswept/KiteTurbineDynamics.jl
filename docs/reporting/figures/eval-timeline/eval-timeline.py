@@ -18,6 +18,11 @@ The two lane-3 strain annotations ride the NR-013 extension (signed
 t = 5.798 ms, the extract grid max.  The ruling-mode curve prints under
 the condition-run label only.  No label claims the machine "would pass".
 
+v2 (the round-6 hub-name retirement, 2026-10-14): the lane-1 label
+reads "ω top" and the gate row reads "top · tip · Betz". The
+drawn rows list takes NR-042 (its recorded next-build item). No
+drawn value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py \
       --script-commit <hex>
@@ -54,7 +59,7 @@ SLUG = "eval-timeline"
 
 DATA_COMMIT = "dd3cc6a"
 ROWS = ("NR-008 \u00b7 NR-012 \u00b7 NR-013 \u00b7 NR-013 ext \u00b7 NR-016 "
-        "\u00b7 NR-027 \u00b7 NR-029 \u00b7 NR-039")
+        "\u00b7 NR-027 \u00b7 NR-029 \u00b7 NR-039 \u00b7 NR-042")
 
 INK = "#1a1a1a"
 LINE = "#333333"
@@ -194,7 +199,7 @@ def main() -> int:
              ha="right", va="bottom", size=7, color=GREY)
     ax1.text(49.6, 13.02, keep("13.38 \u2014 window mean (NR-029)"),
              ha="right", va="top", size=7, color=GREY)
-    ax1.text(0.6, 14.55, keep("\u03c9 gnd (solid) \u00b7 \u03c9 hub (dashed)"),
+    ax1.text(0.6, 14.55, keep("\u03c9 gnd (solid) \u00b7 \u03c9 top (dashed)"),
              ha="left", va="top", size=7, color=GREY)
     ax1.set_xticks([])
 
@@ -274,7 +279,7 @@ def main() -> int:
     ax4.plot([0, 50], [3.375, 3.375], color=RED, lw=0.7)
     ax4.plot([0, 50], [4.225, 4.225], color=RED, lw=0.7)
 
-    row_text(2.7, ["sampled gates \u2014 twist \u00b7", "hub \u00b7 tip \u00b7 Betz, read",
+    row_text(2.7, ["sampled gates \u2014 twist \u00b7", "top \u00b7 tip \u00b7 Betz, read",
                    "once per second", "(t > 10 s)"])
     ax4.plot([10, 50], [2.7, 2.7], color=GREY, lw=1.0, zorder=2)
     for k in range(11, 51):
@@ -345,7 +350,7 @@ def main() -> int:
                  "sha256": sha256(TAPS_DIR / "extract-winner-window-taps.csv")},
             ],
             "register_rows": ["NR-008", "NR-012", "NR-013", "NR-013 ext",
-                              "NR-016", "NR-027", "NR-029", "NR-039"],
+                              "NR-016", "NR-027", "NR-029", "NR-039", "NR-042"],
         },
         "data_commit": DATA_COMMIT,
         "script_commit": args.script_commit,
