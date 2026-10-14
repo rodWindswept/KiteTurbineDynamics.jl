@@ -1,7 +1,10 @@
 sweep 20 + levers reading final checks (2026-10-14, sw_ prefix)
 
 freeze check (levers reading):
-  rc=1
+  block bytes: 2016
+  receipt region == block: True
+  sim contains block once: True
+  rc=0
 
 receipt gate: science-writer-2026-10-14-levers-reading.md words= 713 total=  0 per100w=  0.00 em_dash= 2 (rc=0)
 receipt gate: science-writer-2026-10-14-sweep-20.md words= 249 total=  1 per100w=  0.40 em_dash= 0 (rc=0)
