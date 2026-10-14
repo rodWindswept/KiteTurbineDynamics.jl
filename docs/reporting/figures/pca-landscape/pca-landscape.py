@@ -52,8 +52,8 @@ ISLANDS = (1, 2, 3)
 DATA_COMMIT = "dd3cc6a"
 RUN = "a76c5e9"
 ERA = "post-95c385d_wind-authority"
-ROWS = "NR-001, NR-005, NR-006"
-ROW_WANTS = ["PCA projection summary (variance shares)"]
+ROWS = "NR-001, NR-005, NR-006, NR-044, NR-045"
+ROW_WANTS = []
 BINS = 18
 
 INK = "#1a1a1a"
@@ -171,8 +171,12 @@ def main() -> int:
          {"ok": 508, "reject": 301, "clearance_reject": 110,
           "reject_twist": 11}),
         ("feasible rows", int(feas.sum()), 508),
+        ("generation indices per island",
+         [len(np.unique(gen[isl_a == i])) for i in ISLANDS], [31, 31, 31]),
         ("PC1 share (2 dp)", round(float(var[0]) * 100, 2), 22.43),
         ("PC2 share (2 dp)", round(float(var[1]) * 100, 2), 17.26),
+        ("PC1 share (1 dp drawn)", f"{var[0]*100:.1f}", "22.4"),
+        ("PC2 share (1 dp drawn)", f"{var[1]*100:.1f}", "17.3"),
         ("seed fit", float(fit[seed_i]), 36.109),
         ("seed pc", (round(float(pc1[seed_i]), 3), round(float(pc2[seed_i]), 3)),
          (0.531, -1.297)),
@@ -361,7 +365,7 @@ def main() -> int:
     stamp1 = (f"source: island telemetry · data commit {DATA_COMMIT} · "
               f"run {RUN} · era {ERA} · rows {ROWS}")
     stamp2 = ("projection: z-scored 10-gene matrix, SVD · variance shares "
-              f"pending their row · script commit {args.script_commit}")
+              f"NR-044 · script commit {args.script_commit}")
     fig.text(0.058, 0.088, keep(stamp1), size=6.5, color=FAINT)
     fig.text(0.058, 0.050, keep(stamp2), size=6.5, color=FAINT)
 
@@ -412,7 +416,8 @@ def main() -> int:
                           f"rotorcount_bankderate2/island_{i}/telemetry.csv"),
                  "sha256": sha256(RD / f"island_{i}" / "telemetry.csv")}
                 for i in ISLANDS],
-            "register_rows": ["NR-001", "NR-005", "NR-006"],
+            "register_rows": ["NR-001", "NR-005", "NR-006", "NR-044",
+                              "NR-045"],
             "row_wants": ROW_WANTS,
         },
         "data_commit": DATA_COMMIT,

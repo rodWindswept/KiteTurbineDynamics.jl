@@ -51,8 +51,8 @@ ISLANDS = (1, 2, 3)
 DATA_COMMIT = "dd3cc6a"
 RUN = "a76c5e9"
 ERA = "post-95c385d_wind-authority"
-ROWS = "NR-001, NR-005, NR-006"
-ROW_WANTS = ["PCA projection summary (variance shares)"]
+ROWS = "NR-001, NR-005, NR-006, NR-044"
+ROW_WANTS = []
 BINS = 18
 
 INK = "#1a1a1a"
@@ -298,7 +298,7 @@ def main() -> int:
                           f"rotorcount_bankderate2/island_{i}/telemetry.csv"),
                  "sha256": sha256(RD / f"island_{i}" / "telemetry.csv")}
                 for i in ISLANDS],
-            "register_rows": ["NR-001", "NR-005", "NR-006"],
+            "register_rows": ["NR-001", "NR-005", "NR-006", "NR-044"],
             "row_wants": ROW_WANTS,
         },
         "data_commit": DATA_COMMIT,
