@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `7dd91a9` on `bank-derate-cos2p65`.
+**Base:** branch tip `ed3d202` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,7 +32,15 @@ The parallel work is the audits and the extracts the other seats run.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
+6. **The k = 2.24 story fold (section 2.3).** Gated on the science-validator sweep rows (queue item 7).
+   The fold adds the two retirements, the small k table, one paragraph per side, the sizing-side pair and the over-power tie-in.
+
 ## Closed, last (evidence index)
+
+- v0.38, the safety-shorthand pass: commit `ed3d202`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v038-safety-shorthand.md`.
+  The section 4.1 pair rewords to the detector forms, and the safety set states that breaks are never permitted.
+  The queue item 8 author leg closes.
 
 - v0.37, the consistency sweep: commit `7dd91a9`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v037-consistency-sweep.md`.
@@ -45,7 +53,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.37 tip.
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.38 tip (md5 `9f9ef1adb753bea5f8d544dc3e13bd96`).
 
 ## Boot
 
@@ -80,4 +88,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open PL13, or rotate the seat on this page.
+**Owner:** @author. **Next action:** open PL13. The k-story fold follows the science-validator sign-off.
