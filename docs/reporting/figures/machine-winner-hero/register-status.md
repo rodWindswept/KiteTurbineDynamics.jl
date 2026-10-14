@@ -54,8 +54,9 @@ orphan-length wobble in the PDF chain, and the mutool passes now take
 
 ## Validator gates
 
-F-COUNT, F-PARSE and F-VALUE walk at the seats. The aero-validator
-counter-read and the visual pass by Rod follow.
+The v0.41 counter-read closes clean at the aero seat (226 checks, 0 fail,
+`0cbb9b8`). The kit hashes, the four appendix cells and the station and
+twist reads recompute at origin. The visual pass by Rod follows.
 
 ## Reproduce
 

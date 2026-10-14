@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. The refresh rides the machine-hero landing (2026-10-14).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. The refresh records the v0.41 hero counter-read closure (2026-10-14).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -25,6 +25,11 @@ re-walk.
    plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The v0.41 hero counter-read closes clean at the aero seat (2026-10-14).
+  226 checks, 0 fail (`0cbb9b8`). The kit hashes, the four appendix cells
+  and the station and twist reads all recompute at origin. No figure byte
+  moves.
 
 - The machine winner hero lands (2026-10-14). The plan, side and downwind
   capture set draws the winner at its recorded operating pose (SPEC delta D9).
