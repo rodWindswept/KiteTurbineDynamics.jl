@@ -11,3 +11,5 @@ block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
 
 record sim (base vs new):
   base total=11 per100w=0.11; new total=11 per100w=0.10; offender diff header-only; chunks diff empty
+
+receipt gate: science-writer-2026-10-14-sweep-21.md words= 297 total=  0 per100w=  0.00 em_dash= 0 (rc=0)
