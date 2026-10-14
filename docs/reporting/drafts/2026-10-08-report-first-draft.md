@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.42. Date 2026-10-14.
+Internal engineering report. Draft v0.43. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -218,10 +218,14 @@ the ring. The equivalent term in AeroDyn is pre-cone.
 
 Blade scale sets the blade size. The scale multiplies the blade span
 and chord, and the blade mass follows the span cubed.
+The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+The power sizing sets the radius for the rotor at its local wind speed (NR-050).
 
 The search treats each of these as a gene. The ring geometry sets the
 hub and ground radii, and the rotor count sets how many rings carry
 blades.
+The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+It is not a search gene (NR-049).
 
 [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011, NR-017 and NR-043.]
 
@@ -439,6 +443,8 @@ scripts/probe_rapid_vs_ode_winners.jl and
 scripts/probe_warm_reject_cause.jl. The register header pins their
 commits.
 
+The campaign scored every design on the cold path (NR-012).
+
 ### 2.6 Reproducibility
 
 Every dataset carries a provenance stamp. The stamp names the
@@ -458,6 +464,9 @@ ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
 Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
 The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_masslift.jl).
+
+This campaign is the first screen after the physics-validation era.
+Larger and wider campaigns sit ahead.
 
 ### 3.2 Convergence
 
@@ -503,6 +512,7 @@ Its operating point reads as follows.
 | Lift-line tension | 324.1 N | NR-010 |
 
 Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
+The machine held a steady operating point through the measurement window.
 
 The settle state starts the machine at 10.170 rad/s (NR-016).
 The machine accelerates through the relax run.
@@ -546,26 +556,31 @@ load over sin 70 degrees: 324.1 newtons (NR-010).
 The lifter is a stack of autogyros. The report assumes the stack can
 modulate to meet the lift requirement at all wind speeds.
 A fixed kite cannot: its pull grows as the square of the wind speed.
-Without modulation, each weather band needs its own kite, up to a giant.
+Without modulation, each weather band would need its own single kite.
+That kite would reach giant sizes and be too hard to handle.
 
 The report applies the lift force the machine needs and tests the
 machine on that basis. Designing a lifter that delivers that force
 across wind speeds is outside this report. The report states the
 presumption as one (2026-08-05).
 
+The report also assumes a staged launch of the stack.
+A staged launch is easier to handle than one giant kite.
+
 Its geometry reads three lines, six rings and one active rotor. The
 hub radius is 4.580 metres and the ground radius 0.804 metres
 (NR-011).
 
-The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
-decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+The winner genome contains two blade-scale slots.
+The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
 because the rotor count is one (NR-011).
 
 The winner genome contains two bank-angle slots. Ring 6 decodes the
 active main-rotor bank angle as 7.088 degrees (NR-017).
 
-A second bank slot reads 22 degrees. It does not decode to a physical
-rotor at a count of one (NR-011).
+The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+It does not decode to a physical rotor at a rotor count of one (NR-011, NR-017).
 
 This result differs from earlier eras for recorded reasons. The bank
 derate, the measurement window and the tightened gates moved the search
@@ -662,6 +677,10 @@ The panel reads three lines and six rings (NR-011).
 The hub radius is 4.580 m and the ground radius is 0.804 m.
 The blade scales read 0.82 and 0.20 (NR-011).
 The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
+
+The shaft transition cone holds one fixed angle, 22 degrees,
+in every machine of the campaign (NR-049).
+A later campaign can vary it.
 
 The strip shows built geometry and the search objective only.
 The strip prints no power value and no airborne mass value.
