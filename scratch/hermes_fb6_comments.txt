@@ -1,0 +1,35 @@
+==============================================================================
+COMMENT id=0 by Unknown Author 2026-10-14T15:50:41Z
+--- body ---
+We banned calling it hub ring… There is no “hub” as such. The system is not fixed to an axle anywhere. This is the topmost rotor ring
+--- anchor: paras 268..268 ---
+--- heading: The kite turbine: a search over its design space > 3 Results > 3.4 The levers of Performance ---
+hub
+--- context ---
+267 | Figure (roster row 6) · ring-utilisation
+268 | The hub ring R6 governs the structural check at the winner's final operating point, and every other airborne ring holds a much larger margin.
+269 | The hub ring R6 governs the structural check at FoS 15.033. All other airborne rings hold much larger margins (NR-021). Each bar shows one checked ring. The bar end reads the ring utilisation: the beam-column interaction on the worst beam, the axial share N/N_crit plus the bending share √(M_ip²+M_oop²)/M_el. The rows run from R2 at the base to R6 at the hub. Utilisation is demand over capacity. Th
+
+==============================================================================
+COMMENT id=1 by Unknown Author 2026-10-14T15:56:33Z
+--- body ---
+How many?
+--- anchor: paras 359..359 ---
+--- heading: The kite turbine: a search over its design space > 5 Conclusion ---
+a feasible candidate
+--- context ---
+358 | The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001). The campaign scored each design on the ODE path over the measurement window (NR-015). One fixed power-law generator load and one fixed gate set held for every design (NR-015).
+359 | The search found a feasible candidate in the searched space. Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018). Its window-minimum factor of safety is 15.0 (NR-009). All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022). The least segment torque margin is 2.03, at S1 (NR-040).
+360 | The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation. That result holds under the modeled load and wind. It does not show flight readiness, a global optimum, or full structural safety. Blade integrity is not yet gated, and lifter modulation remains an assumption. The rapid path awaits its rope-break gate fix (NR-013).
+
+==============================================================================
+COMMENT id=2 by Unknown Author 2026-10-14T15:56:53Z
+--- body ---
+The best performing one had a mean power of
+--- anchor: paras 359..359 ---
+--- heading: The kite turbine: a search over its design space > 5 Conclusion ---
+Its
+--- context ---
+358 | The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001). The campaign scored each design on the ODE path over the measurement window (NR-015). One fixed power-law generator load and one fixed gate set held for every design (NR-015).
+359 | The search found a feasible candidate in the searched space. Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018). Its window-minimum factor of safety is 15.0 (NR-009). All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022). The least segment torque margin is 2.03, at S1 (NR-040).
+360 | The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation. That result holds under the modeled load and wind. It does not show flight readiness, a global optimum, or full structural safety. Blade integrity is not yet gated, and lifter modulation remains an assumption. The rapid path awaits its rope-break gate fix (NR-013).

@@ -32,7 +32,7 @@
 
 - **Comment 1 (id 0), section 2.1, the blade scale.** Ask: the scale multiplies which base size. Status: one read away. The decode sets the base blade from the rotor radius the power sizing needs (`src/objective_v10.jl`). The read signs the form. One clause then folds into the section 2.1 sentence. @science-validator, then @author.
 
-- **Comment 2 (id 1), section 2.1, the cone angle.** Ask: is the rotor-ring to first-TRPT angle one fixed value? Yes. The campaign keeps one fixed cone half-angle, 22 degrees, by construction (Tulloch and Jensen reference). It is not a search gene, and the read signs the form before the fold. A next-campaign note logs the unexplored space, at @science-validator first and @author on the fold.
+- **Comment 2 (id 1), section 2.1, the cone angle.** Ask: is the rotor-ring to first-TRPT angle one fixed value? Yes. The campaign keeps one fixed cone half-angle, 22 degrees, by construction. It is not a search gene, and the read signs the form before the fold. A next-campaign note logs the unexplored space, at @science-validator first and @author on the fold.
 
 - **Comment 3 (id 2), section 2.1.** The anatomy plate. The cone ring reads as a named part later in the report, and the strip legend carries it. The anatomy plate does not draw it, and the F1 brief already lists the cone. The route runs at @fig-img-diagrams: add the cone ring, re-pin the kit, then hand the counter-read.
 
@@ -117,3 +117,7 @@
 - The queue page takes the new order in this batch.
 
 - The plain-English companion ships with this pass.
+
+## Deltas
+
+- v2 (2026-10-14): the comment 2 parenthetical flips per the round-5 source read. The source attribution does not print as the basis of the 22. The fixed value prints, and the campaign lead logs.

@@ -1,0 +1,46 @@
+# hermes_fb6_reads.log — read-only recon for the feedback round 6 routing pass (2026-10-14)
+# source: the second founder copy return (draft-live.docx), 3 comments + 1 heading edit
+# filed as docs/reporting/feedback/2026-10-14-founder-docx-return-2.docx
+
+=== date ===
+2026-10-14, evening BST
+
+=== branch / tip ===
+bank-derate-cos2p65
+6ea00d4 — local == origin after fetch
+
+=== source ===
+/home/rod/.hermes/attachments/draft-live.docx
+md5 50ac9628b7e91c8db95fc2900c7f0813
+filed copy md5 matches the attachment (byte-identical)
+parts: word/comments.xml; no commentsExtended and no people part (flat comments)
+no tracked changes (w:ins 0, w:del 0); one silent edit: the section 3.4 heading
+comments: 3 (ids 0..2; author "Unknown Author"; dates 2026-10-14T15:50:41Z..15:56:53Z)
+build record inside the copy: draft 7dd91a9; built 2026-10-14T14:15:28Z
+
+=== extraction ===
+script: ktd-report-room skill, scripts/extract_docx_comments.py (stdlib ElementTree walk; commentRangeStart/End + commentReference by w:id)
+output: scratch/hermes_fb6_comments.txt (dump, 3,877 B)
+re-run on the filed copy: byte-identical (REEXTRACT_SAME)
+
+=== anchor re-check at draft v0.45 (34e3f81; tip 6ea00d4) ===
+id 0 "hub ring": the anchored caption sentence (copy para 268) retired at the round-5 caption dedupe (c177213). The word reads live at ten draft sites: 225 (2.1), 319 (2.2.2), 490 / 505 / 571 (3.3), 612 (3.4), 689 (3.5), 786 / 794 / 807 (4.2).
+  figure kits: caption files at ring-utilisation, system-anatomy, machine-evolution-strip; drawn text at system-anatomy (tex), ring-utilisation (svg), twist-limit (svg), eval-timeline (svg), machine-winner-hero (jl label "hub ring R6").
+  holds: the code identifiers (r_hub, hub_radius, hub_altitude_drawn_m), the extract columns, the pca-atlas gene label (proposed exemption), the register text, receipts and dated pages.
+id 1 "a feasible candidate": "The search found a feasible candidate in the searched space." reads live at section 5 (line 870). The count: 508 of 930 pass every gate (NR-002).
+id 2 "Its": "Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018)." reads live at section 5 (line 871).
+heading edit: the copy reads "3.4 The levers of Performance"; the build and the draft read "3.4 The levers".
+
+=== checks ===
+comment census: draft-live-rod-comments.docx (older copy, no comments part); draft-live-rods-comments.docx (17 comments = the first return); the filed copy (3 comments = the second return)
+filed copy vs archived v0.37 build (scratch/report-pdf-build/draft-7dd91a9-20261014-141528.docx): 700 vs 700 non-empty paragraphs, one diff block (the heading)
+md5s: filed copy 50ac9628b7e91c8db95fc2900c7f0813; first return 9ec167ded47cb21c44d69078d2a27d41
+
+=== linter runs (ste-lint.py --fail-above 2.0) ===
+hermes-2026-10-14-feedback6-routing.md: 0.00/100w, rc=0
+2026-10-14-feedback6-routing-plain-english.md: 0.00/100w, rc=0
+hermes-2026-10-14-feedback5-routing.md (F5 flip): 0.00/100w, rc=0
+handover-2026-10-14-reporting-room-queue.md (update): 0.00/100w, rc=0
+
+=== commit ===
+rides the round-6 routing batch; the fb5 parenthetical flip (dated v2 delta) and the queue refresh ride with it.
