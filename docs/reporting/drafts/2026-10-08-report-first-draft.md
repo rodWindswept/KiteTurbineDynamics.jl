@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.35. Date 2026-10-14.
+Internal engineering report. Draft v0.36. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -346,9 +346,32 @@ The ok designs pass every gate. The rejects fail a gate. The
 clearance rejects fail the clearance gate. The twist rejects fail the
 twist gate.
 
-The campaign minimizes a kg-equivalent objective score: the airborne mass plus the gate penalties.
+The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
 A lower score is better.
 The objective score is not the physical airborne mass.
+
+One kilogram of airborne mass adds 1.0 to the score (NR-046).
+The penalty charges read in kg-equivalent.
+
+The score builds along one chain.
+The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
+
+The score adds three soft constraint penalties to the airborne mass (NR-046):
+`f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`.
+
+The over-power charge reads P_score, the end power, against the 5.0 kW ceiling (NR-046).
+The utilisation charge reads the window-minimum factor of safety against the 2.5 floor (NR-046).
+The twist charge reads the worst segment twist ratio against the crossing limit (NR-046).
+The stationarity add-on reads the window swing against 20 per cent (NR-046).
+
+Every charge is continuous. None is step-like (NR-046).
+
+Rejected designs carry no score.
+The evaluator carries Inf for a rejected design.
+The runner stamps the search cost `1e9` on every non-ok design (NR-046).
+No reject ranks above an ok design.
+The search cannot trade power or safety against mass.
 
 The differential-evolution campaign fixed the configuration below.
 

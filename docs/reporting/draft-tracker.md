@@ -196,6 +196,12 @@ The eight plate output hashes and both plate script-commit cells take the delive
 The pass also adds the levers rows 20 and 21 with their output hashes, and the count sentence reads six.
 No drawn value and no kit byte moves.
 
+v0.36 pass by @author (2026-10-14).
+This pass folds the round-4 objective block at section 2.4.
+The block states the scoring chain, the three soft constraint penalty forms and the reject placement from NR-046.
+The objective sentence renames to soft constraint penalties, with the glossary row.
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

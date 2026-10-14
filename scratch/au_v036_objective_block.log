@@ -1,0 +1,58 @@
+base tip: ef36c6c
+base draft sha256: abbb57773ed8ed95e068fcb84910039e7e6c6b94cb80d0bf35b7832d9fdfeb76
+base tracker sha256: cb46dd9589fd4b2b8f2afd51e6a4c186c1320cd00796b9ef0b8331cda89beec6
+base gloss sha256: 695be6cedb7de41f34cb615b2886a1f62f5c9802039484ecce57abf33ad403fe
+ok D1 version pin
+ok D2 section 2.4 rename
+ok D3 objective block
+ok T1 tracker entry
+ok G1 glossary status
+ok G2 glossary rename
+ok G3 glossary delta
+guard pin v0.36: ok
+guard rename in draft: ok
+guard block unit line: ok
+guard block chain: ok
+guard block form: ok
+guard block charges: ok
+guard block rejects: ok
+guard no 14.97 print: ok
+guard no 14.972 print: ok
+guard no 3.816 print: ok
+guard config table held: ok
+guard section 2.5 intact: ok
+guard markers held: ok
+guard glossary rename: ok
+guard glossary v15: ok
+guard glossary rows held: ok
+guard tracker v0.36 entry: ok
+guard tracker history held: ok
+guard tracker no-change line: ok
+candidate draft sha256: be93a94a66a6c748a1cb5f3406ec0d6e27e69156aa9efedbae95a6492908a24a
+candidate tracker sha256: dcf8c1a1a4e896af2fbbc99bb626eabe6b9d46da90d5129176e36ffa72f64496
+candidate gloss sha256: e5f641e12f5dab27fb7b6bcb2b948879e292f27a7b167987e1494f1f015a90a2
+STE draft base: rc=0 words=5738 total=6 {'passive_voice': 1, 'long_paragraph(>6s)': 5, '_em_dash_info': 2}
+STE draft candidate: rc=0 words=5902 total=6 {'passive_voice': 1, 'long_paragraph(>6s)': 5, '_em_dash_info': 2}
+STE tracker base: rc=0 words=2300 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE tracker candidate: rc=0 words=2350 total=10 {'long_sentence(>20w)': 1, 'semicolon': 1, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE gloss base: rc=0 words=4565 total=12 {'contraction': 2, 'long_paragraph(>6s)': 10, '_em_dash_info': 1}
+STE gloss candidate: rc=0 words=4598 total=12 {'contraction': 2, 'long_paragraph(>6s)': 10, '_em_dash_info': 1}
+draft token delta add: {'0': 2, '0.20': 1, '1': 2, '1.0': 2, '10.0': 1, '2': 3, '2.5': 2, '20': 1, '20.0': 1, '36': 1, '5.0': 3}
+draft token delta rem: {'35': 1}
+draft token check: PASS
+tracker token delta add: {'2.4': 1, '36': 1}
+tracker token delta rem: {}
+tracker token check: PASS
+gloss token delta add: {'2.4': 1}
+gloss token delta rem: {}
+gloss token check: PASS
+== cited rows in au_v036_draft_candidate.md: 35
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-032, NR-036, NR-039, NR-040, NR-043, NR-044, NR-045, NR-046
+== every cited row present and signed (46 signed rows total)
+== signed rows not cited by this draft (informational): NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-042
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+   3| Internal engineering report. Draft v0.36. Date 2026-10-14.
+   5| Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+  11| Sections 3.4 to 3.6 carry their text.
+citation checker: rc=0
+GATES: ste=pass tokens_d=pass tokens_t=pass tokens_g=pass citations=pass

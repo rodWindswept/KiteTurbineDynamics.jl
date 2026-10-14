@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v14, numbers-free by construction (no measurement values, no
+**Status** PREP v15, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -147,7 +147,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | Daisy | The flown rigid-rotor kite turbine built by Windswept. The model anchors its site wind and its blade-mass reference to the flown machine. | DECISIONS [2026-10-03], CONTEXT.md | ratify |
 | convergence | The record of best-fitness progress by generation. | campaign outputs | supply |
 | fitness | The score the search minimizes for each design. Methods states its exact composition. | objective docs, register source column | supply |
-| kg-equivalent | The unit the objective score reads in: the airborne mass plus the gate penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply |
+| kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply |
 | evaluator | The instrument that flies a design and measures it. The windowed evaluator is the single protocol. | CONTEXT.md windowed evaluator row | ratify |
 | rapid path | The fast evaluation protocol. It starts from a static pre-solve. Probes reject the recorded winners through the rope-break gate. | consultation Track C item 5 | room-supplies |
 | ODE path | The full settle-then-window evaluation protocol. It reproduces the recorded winners. | consultation Track C item 5 | room-supplies |
@@ -360,3 +360,8 @@ defect, like a missing register row.
   search-and-evaluation group: principal component, loading and
   variance share, from the levers reading.
   Track D rewrites the three at ratification. No other change.
+
+- **v15 (2026-10-14):** the kg-equivalent row takes the renamed
+  form, "soft constraint penalties". The rename lands with the draft
+  section 2.4 sentence, so the term gate reads one form. No other
+  change.
