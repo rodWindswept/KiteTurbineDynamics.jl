@@ -1619,3 +1619,35 @@ detector forms at the same pass (`ed3d202`).
   armed across both". Future quotes use the detector form.
 
 The row keeps its signed values. No number and no ruling moves.
+
+## Display-form note: the gate-margin column figures (NR-009 on NR-015) (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The AU9 fold brings the SW2d margin column into the section 3.3 gate table.
+The gate table is an enumerated site of the minimum factor of safety.
+The report reads `15.0` at 1 dp there.
+The full precision stays internal (tracker display forms, `2ebbd22`).
+The display note update above holds the same rule.
+
+The FoS row of the column reads from the printed operands, `15.0` over `2.5`.
+The row holds as displayed (the lift chain precedent above).
+The SV5 supply keeps `14.972 vs 2.5` as the computation basis.
+The basis notation does not print in the column.
+
+- The margin reads `+12.5`.
+- The per cent reads `+500.0 per cent`.
+- The ratio reads `6.00 times`.
+
+The internal forms stay in the SV5 basis and its receipt.
+They read margin `+12.472`, `+498.9 per cent` and `5.99 times`, from
+`14.971791422208508` over 2.5. They do not print.
+
+Reading rules:
+
+- The gate-margin column's FoS row prints `15.0` on `2.5`, with margin
+  `+12.5`, per cent `+500.0` and ratio `6.00 times`.
+- The FoS outcome cell keeps `pass, 15.0 minimum`.
+- No other figure in the column moves under this note.
+
+Checker: `scratch/sv_gate_margin_display_check.py` and its log.

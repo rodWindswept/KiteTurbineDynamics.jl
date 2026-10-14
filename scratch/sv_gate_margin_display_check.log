@@ -1,0 +1,17 @@
+[ok] NR-009 signed value reads in the register
+[ok] the floor 2.5 reads in the register
+[ok] internal margin reads +12.472 at 3 dp — 12.472
+[ok] internal per cent reads +498.9 at 1 dp — 498.9
+[ok] internal ratio reads 5.99 at 2 dp — 5.99
+[ok] report margin reads +12.5 at 1 dp — 12.5
+[ok] report per cent reads +500.0 at 1 dp — 500.0
+[ok] report ratio reads 6.00 at 2 dp — 6.00
+[ok] NR-009 rounds to 15.0 at 1 dp — 15.0
+[ok] the display-form note reads in the register
+[ok] the note's FoS row forms read in the register
+[ok] the note's per cent reads in the register
+[ok] the note's ratio reads in the register
+[ok] the internal forms stay flagged internal
+
+14 checks, 0 fail
+SV GATE-MARGIN DISPLAY NOTE: ALL OK
