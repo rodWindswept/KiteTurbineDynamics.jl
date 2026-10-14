@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `38c77f8` on `bank-derate-cos2p65`.
+**Base:** branch tip `e5541e9` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -23,15 +23,25 @@ The parallel work is the audits and the extracts the other seats run.
 2. **The kMppt plain pass (founder ask).** The structural-side sentence at section 2.3 takes a plainer form.
    The era-fit flag gates any cite. The row-5 plate draws the sweep and waits on the visual pass.
 
-3. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
+3. **The era pack (queue item 5).** The era map fold lands with the science-writer seat.
+   The development-history chapter push rides the same slot.
 
-4. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
+4. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
+
+5. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-5. **The basics-of-TRPT refresher (founder ask, scope call).** Logged in the queue. Not gated.
+6. **The basics-of-TRPT refresher (founder ask, scope call).** Logged in the queue. Not gated.
 
 ## Closed, last (evidence index)
+
+- v0.43, the round-5 wording set: commit `e5541e9`.
+  Receipt `docs/reporting/room-responses/author-2026-10-14-v043-round5-wording.md`.
+  The blade-scale base, the cone statement and the slot names land.
+  The cold-path line, the swing reading and the lifter rationale land.
+  The staged launch and the campaign-scale context land.
+  The AU9 receipt normalises at `b7f09ed`.
 
 - v0.42, the gate-margin column (AU9): commit `38c77f8`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v042-gate-margins.md`.
@@ -66,7 +76,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.42 build (record draft `38c77f8`, md5 `1bec17262fa4a97686a0158d2f2c31d1`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.43 build (record draft `e5541e9`, md5 `3374a638aa89e61e9957193dffc1536d`).
 
 ## Boot
 
@@ -101,4 +111,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** hold the partner-gated tails until AU4 and AU7 land. The kMppt plain pass follows.
+**Owner:** @author. **Next action:** hold the partner-gated tails until AU4 and AU7 land. The kMppt plain pass follows. The era pack keys on its slot with @science-writer.
