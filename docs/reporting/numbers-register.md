@@ -1651,3 +1651,113 @@ Reading rules:
 - No other figure in the column moves under this note.
 
 Checker: `scratch/sv_gate_margin_display_check.py` and its log.
+
+## Derived row: NR-049, the shaft transition cone angle, one fixed value (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Founder comments 2 and 17 ask whether the rotor-ring to first-TRPT angle is
+one fixed value. It is. This block signs the fact, the basis and the display
+form.
+
+The campaign holds one cone half-angle, `cone_slope_deg = 22.0`. The runner
+cfg carries the literal (`scripts/run_v13_5kw_masslift.jl:172`). The decode
+reads the value through one kwarg (`src/objective_v10.jl:207`). The
+transition cone length computes as `(r_hub - r_bottom) /
+tan(deg2rad(cone_slope_deg))` at `src/objective_v10.jl:259`. The value is a
+configuration constant. It is not a genome gene. No sweep script varies it.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-049 | The shaft transition cone angle, one fixed half-angle across the campaign | `cone_slope_deg` 22.0 | degrees | `scripts/run_v13_5kw_masslift.jl:172`, `src/objective_v10.jl:207` and `:259`, `src/objective_evaluator.jl:148`. Census: 41 `cone_slope_deg` sites across `src/`, `scripts/`, `test/` and the figure scripts, each a literal 22 or a cfg plumb. Probe `scratch/sv_fb5_source_reads_probe.jl` | signed (science-validator, 2026-10-14) |
+
+Sign-off basis:
+
+- The census. Checker `scratch/sv_fb5_source_reads_check.py` walks every
+  `.jl` file outside `scratch/`. Every `cone_slope_deg` line reads 22 or
+  plumbs the cfg value. The checker finds no variation site. The seed file
+  carries no cone gene, and the canonical layout carries none.
+- The decode geometry. The probe reads the winner's cone. `taper_start_z`
+  reads `9.453339242013` m. The cone length reads `9.346660757987` m. The
+  hub ring sits in the harvest section at `s = 18.826179`. The cone runs
+  from the transmission cylinder to the harvest section.
+
+Display form, signed:
+
+- The report site reads `22 degrees` with its own name, the shaft transition
+  cone. The qualifier keeps it apart from the other named angles. See the
+  boundaries below. The number does not carry the phrase `Tulloch/Jensen
+  reference` as its basis (boundary 3).
+
+Boundaries that travel with this row:
+
+1. Two 22-degree facts stay apart. One is the second bank slot at its search
+   box top (`bank_bot`, NR-011). One is this cone angle.
+2. Three named angles share the machine: the bank slot 22 degrees
+   (`bank_bot`), the shaft transition cone half-angle 22 degrees (this row),
+   and the bridle cone half-angle 31 degrees from the shaft axis
+   (`docs/agents/physics-topology.md` section 3.1).
+3. The reading record. `docs/validation/trpt-reference/03-repo-findings.md`
+   F5 resolves the source reading: the printed 22 degrees in the Tulloch
+   reference is the apex angle, and its per-side slope reads 11.0 degrees.
+   The live tree applies 22 as the per-side slope. The cone runs steeper
+   than the source machine. The aligning code change stays open (work
+   package WP2d, awaiting a ruling). The report prints the fixed-value fact
+   alone.
+4. The unexplored space. Founder comments 2 and 16 log the cone angle as a
+   campaign lead. The angle was never a search gene. A later campaign can
+   vary it.
+
+## Derived row: NR-050, the blade-scale base (2026-10-14, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+Founder comment 1 asks what number or size the blade scale multiplies. It
+multiplies the blade span and chord the decoder sets from the rotor radius
+the power sizing needs. This block signs the base and the two factors.
+
+The chain reads from the decode at `src/objective_v10.jl:355-377`:
+
+- The sized radius. `r_rotor_i = BEM.rotor_radius_for_power(P_i, v_i,
+  design.n_lines; f=f_i)`. The power share reads `P_i = power_split *
+  power_W` for the top rotor. The factor `f_i` reads the bank and elevation
+  projection.
+- The sizing law. `P = f · Cp · ½ρ · πr² · v³` at `src/bem.jl:162`. The
+  radius solves at the rotor's local wind speed, with the co-axial blocking
+  factor where it applies.
+- The base blade. The base span reads `0.75 * r_rotor_i`. The base chord
+  reads `0.113 * r_rotor_i`. Blade scale multiplies both. The mass law
+  follows the span cubed, at `0.420` kg per blade at a span of 1.0 m
+  (`M_BLADE_REF_KG`, `src/parameters.jl:18`).
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.4341173109692225`, base span `1.8255879832269168`, span `1.4994019682084492` (NR-043), chord `0.22590989654340632` | m | `src/objective_v10.jl:355-377`, `src/bem.jl:156-179`, probe `scratch/sv_fb5_source_reads_probe.jl` and its log | signed (science-validator, 2026-10-14) |
+
+Sign-off basis:
+
+- The decode chain. The probe runs the evaluated decode on the island-3
+  winner. It passes `v_rated = 11.0`, the cfg value the evaluator threads
+  (`src/objective_evaluator.jl:721`). It reproduces the NR-043 pair to the
+  last digit. Both factor checks read true.
+- The arithmetic. The scale `0.8213255027884769` takes the base span
+  `1.8255879832269168` to `1.4994019682084492` and the base chord
+  `0.27505525613952214` to `0.22590989654340632`. Checker
+  `scratch/sv_fb5_source_reads_check.py`, every quoted form gates.
+- The mass follow-on. The span cubed law gives `1.4158052557245482` kg per
+  blade and `4.247415767173645` kg for the three-blade assembly.
+
+Display form, signed:
+
+- The section 2.1 clause names the base calculation. It prints the two
+  factors as `0.75` and `0.113`. A worked example can print `1.826 m` and
+  `0.226 m`. The span keeps its signed form, `1.499 m` (NR-043).
+
+Boundaries that travel with this row:
+
+1. The decode convention. The evaluated decode passes `v_rated` at the cfg
+   value, 11.0. The standalone clearance decode in the runner omits it, so
+   it reads `p.v_wind_ref`, `11.009694...`. The radii differ by 0.13 per
+   cent. The signed rows follow the evaluator convention.
+2. The base is a decoder convention, not a measured part. The blade mass
+   law stays the published span cubed law.

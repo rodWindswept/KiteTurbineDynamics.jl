@@ -1,0 +1,16 @@
+  Activating project at `~/Documents/GitHub/KiteTurbineDynamics.jl`
+# p.v_wind_ref=11.009694236939 (the evaluator decode passes v_rated=11.0)
+# winner genome raw (10-D): 4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0370201857788965, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996
+# n_lines=3 n_rings=6 n_active=1
+# r_hub=4.579979054820 r_bottom=0.803682984609 tether=18.800000
+# taper_start_z=9.453339242013 harvest_length=0.000000000000
+# cone_length (r_hub-r_bottom)/tan(22 deg) = 9.346660757987
+# rotor ring=6 bank=7.088131460324 blade_scale=0.821325502788
+#   v_wind=10.998045583086 r_rotor=2.434117310969 wind_factor=1.000000
+#   blade_tip=1.049581377746 blade_hub=-0.449820590463 blade_chord=0.225909896543
+#   base_span=0.75*r=1.825587983227 span=tip-hub=1.499401968208 base_chord=0.113*r=0.275055256140
+#   check span == 0.75*r*scale:     true
+#   check chord == 0.113*r*scale:   true
+#   mass_per_blade = 0.420*span^3 = 1.415805255725 kg; assembly(3) = 4.247415767174 kg
+# counterfactual (no v_rated, runner clearance-call convention): r_rotor=2.430903091623 v_wind=11.007738097609 span=1.497422027968
+# HEAD: cd779ddf98001f8b672a1ec9920349a8a4be75ef

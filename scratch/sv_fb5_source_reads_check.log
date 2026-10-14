@@ -1,0 +1,45 @@
+PASS  A1  span base = 0.75 * r_rotor_i * blade_scale_i
+PASS  A2  chord base = 0.113 * r_rotor_i * blade_scale_i
+PASS  A3  r_rotor_i from the power sizing
+PASS  A4  power share line
+PASS  A5  bem sizing formula doc line
+PASS  A6  rotor_radius_for_power def
+PASS  A7  projection factor def
+PASS  A8  mass law ref = 0.420 kg at span_ref 1.0
+PASS  B1  span reproduces NR-043
+PASS  B2  span quote 1.499
+PASS  B3  base span 0.75 x r
+PASS  B4  chord quote 0.226
+      base_span=1.8255879832269168  span=1.4994019682084492
+      base_chord=0.27505525613952214  chord=0.22590989654340632
+      mass/blade=1.4158052557245482  assembly(3)=4.247415767173645
+PASS  B5  NR-043 span in register
+PASS  B6  NR-043 r_rotor in register
+PASS  B7  NR-043 blade_scale in register
+      cone_slope_deg sites (src/scripts/test/figures): 41
+PASS  C1  every site reads 22 or the cfg plumb
+PASS  C2  no site varies the value
+PASS  C3  runner cfg constant
+PASS  C4  cone length from the value
+PASS  C5  no cone gene in the seed file
+PASS  C6  no cone gene in the canonical layout
+PASS  C7  literal 22.0 sites hold across the tree
+PASS  D1  F5 headline
+PASS  D2  F5 per-side reading
+PASS  D3  F5 status line
+PASS  D4  bridle cone 31 in physics-topology
+PASS  D5  NR-011 bank slot 22
+PASS  D6  draft bank-slot sentence
+PASS  E1  runner cold pin
+PASS  E2  draft cold line
+PASS  E3  evaluator passes cfg.v_rated
+PASS  E4  runner clearance call omits v_rated
+PASS  F1  blade-scale sentence
+PASS  F2  gene sentence anchor
+PASS  G1  probe r_rotor (v_rated=11.0)
+PASS  G2  probe span
+PASS  G3  probe span check true
+PASS  G4  probe chord check true
+PASS  G5  probe stamp
+
+SV_FB5_READS_CHECK: 39 checks, 0 fail
