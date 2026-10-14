@@ -1,0 +1,197 @@
+draft   : docs/reporting/drafts/2026-10-08-report-first-draft.md md5 9351e15d1a8ee044d6b7733fb3c228f2
+register: docs/reporting/numbers-register.md md5 51a02af846546495abbb0feb1cd4c615
+
+== cited rows: 34; all signed: True
+
+== units: 295; digit-bearing: 169
+== cited units: 99; no-cite units: 4 + exempt 66
+== value tokens on cited units: 158; matched: 151; unmatched: 7
+
+== UNMATCHED TOKENS (review list) ==
+L26-28 | cites NR-008,NR-032 | tokens 9.41
+   The campaign winner is the best feasible candidate kite turbine under the modeled objective and gates. Its mean power is 5.309 kilowatts at the site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
+L68-68 | cites NR-002 | tokens 930,422
+   - Of the 930, 508 designs pass every gate and 422 fail one gate (NR-002).
+L482-484 | cites NR-010,NR-026 | tokens 20.698,9.81,304.6
+   The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line runs at 70 degrees of elevation (NR-026). The line tension is that load over sin 70 degrees: 324.1 newtons (NR-010).
+L591-594 | cites NR-036 | tokens 0.951
+   The machine evolution strip traces the search on island 3 from the common seed to the campaign winner (NR-036). The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036). The largest recorded drop falls bet
+
+== NO-CITE UNITS WITH REMAINING TOKENS (review list) ==
+L337-338 | OTHER | tokens 310
+   Three islands run in parallel. An island is an independent population with its own drift. Each island evaluates 310 designs.
+L477-480 | date,token-remains | tokens 1.5,20.698
+   The lifter sizing holds a 1.5 margin on the vertical load at the lift bearing. The sizing mass is the airborne mass without the lifter itself, 20.698 kilograms. The kite carries its own weight (2026-08-21 ruling).
+L672-674 | date,class-label,token-remains | tokens 1.94
+   On 2026-08-13 the evaluator ran 5-kilowatt designs at the 50-kilowatt   default gain. The scaled system gain sat near 1.94. The window power   read roughly double. An acceptance test caught it.
+L676-678 | date,token-remains | tokens 20,5.18
+   On 2026-08-24 a winner re-gate ran at a stale gain, the superseded   20-second-window value. The pre-push review caught it. The re-gate at   the campaign gain returned 5.18 kilowatts.
+
+== NO-CITE UNITS, EXEMPT CLASSES (listing) ==
+L3-3 | date | Internal engineering report. Draft v0.33. Date 2026-10-14.
+L5-6 | exempt-stripped | Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`. Numbers come only from signed register rows, cited by row ID.
+L10-12 | ref | **Draft status.** This is an internal draft. Sections 3.4 to 3.6 await the Phase 1 to 3 interpretation. Nomenclature and references stay incomplete.
+L14-15 | exempt-stripped | The physics era is `post-95c385d_wind-authority`. The bank derate applies throughout.
+L17-20 | class-label | **Abstract.** This report presents a search for a 5 kW-class ground-generation rotary kite turbine with a tensile rotary power transmission (TRPT). The search varies ring geometry,
+L40-43 | exempt-stripped | All numbers are in the repo and come from the physics era `post-95c385d_wind-authority`, with the bank derate applied. The bank derate is a calculated depowering of the ring output
+L83-84 | class-label | The report shows that a feasible 5 kW-class candidate exists in the searched space under the model and gates.
+L90-90 | heading | ## 1 Introduction
+L142-143 | class-label | The objective is to find the feasible geometries for a 5 kW-class machine, and then characterise them.
+L186-186 | heading | ## 2 Methods
+L188-188 | heading | ### 2.1 The kite turbine and its terms
+L228-228 | heading | ### 2.2 The simulation analysis pipeline instrument and its terms
+L230-230 | heading | #### 2.2.1 The gene
+L243-244 | placeholder,ref | [Systems block diagram requested: figure-map row 19 (the simulation analysis pipeline instrument). Gate: the pipeline schema extract.]
+L246-246 | heading | #### 2.2.2 The evaluator
+L275-277 | date | The team selected the value in a load sweep of the seed machine (2026-08-22). The sweep ran the seed at a range of loads, each over the same measurement window.
+L289-290 | date | A longer shaft reaches stronger wind. The length screen ran 2026-10-05 on the pre-fold island-3 winner.
+L325-327 | path | The search carries the same property. The campaign runner fixes one random seed per island (scripts/run_v13_5kw_masslift.jl). The same code and configuration then repeat the search
+L331-331 | heading | ### 2.4 The campaign
+L368-368 | heading | ### 2.5 Fidelity paths
+L383-383 | heading | ### 2.6 Reproducibility
+L389-391 | pin | The dataset sits at data commit dd3cc6a on the bankderate2-results branch. The launch commit is a76c5e9. The Phase 0 audit sits at master 31ca00d.
+L393-393 | heading | ## 3 Results
+L395-395 | heading | ### 3.1 The search at scale
+L403-403 | heading | ### 3.2 Convergence
+L414-414 | heading | ### 3.3 The winner
+L491-494 | date | The report applies the lift force the machine needs and tests the machine on that basis. Designing a lifter that delivers that force across wind speeds is outside this report. The 
+L519-519 | heading | ### 3.4 The levers
+L587-587 | heading | ### 3.5 The evolution story
+L608-608 | heading,placeholder | ### 3.6 Design implications [PENDING. Phase 3 and the regime table supply this.]
+L610-610 | heading | ## 4 Discussion
+L612-612 | heading | ### 4.1 Evaluation fidelity
+L624-626 | date | The team has solved this pattern twice on record. On 2026-08-14 the rule was: breaks only during real operation. The settle transients must not break healthy machines.
+L628-630 | date | On 2026-09-16 the ruling was: breaks on the measurement window only, with break detection off during the relax. The fix here is the same pattern applied to the evaluator.
+L643-643 | heading | ### 4.2 The failure ledger
+L647-649 | date | - The dead geometry genes. The search proposes genomes that cannot build. An off-by-one in the rotor-to-ring map put the middle rotor on the hub (2026-08-26).
+L651-652 | date | An inverted-taper genome diverged within seconds, while the ground   instruments still read normal power (2026-08-14).
+L660-662 | date | The blade-mass-law correction landed on 2026-08-22. It voided the   campaign winners. The rotorcount data was doubly void: it predated   the FoS fix, and its rotors sat one ring to
+L688-690 | date | The FoS=Inf exploit fix landed in one scoring path only. The   mass-minimum objective and the older fitness functions never received   the guard. The campaign ran through them ungu
+L696-696 | heading | ### 4.3 Model boundaries
+L701-701 | exempt-stripped | - The model does not check blade integrity. The blade root factor of safety sits at infinity in the model. The team deferred the full beam-on-supports blade model (PRD 0006:147). T
+L719-719 | heading | ## 5 Conclusion
+L746-746 | heading,placeholder | ## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+L748-748 | heading | ## 7 References
+L750-752 | exempt-stripped | Seeded in references.bib. Fifteen of eighteen sources verified. Three source calls pending: Ranneberg EK_FT_0018, the Jamieson deck and the Hancock deck.
+L754-754 | heading | ## 8 Data availability and reproducibility
+L756-758 | pin | The dataset commits to the repo at dd3cc6a on bankderate2-results. The launch commit is a76c5e9. The Phase 0 audit sits at master 31ca00d. The fidelity probes sit on the bank-derat
+L784-784 | ref | | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 
+L788-788 | exempt-stripped | One row per built exhibit. All four read dataset commit `dd3cc6a`.
+L797-799 | exempt-stripped | **Output hashes (SHA-256).** The short labels name the exhibit files. `png`, `svg` and `pdf` are the file types. `ledger` is the label ledger. `checks` is the check log.
+L803-803 | exempt-stripped | - `png` `6f19832088375b96cdc566aff596ccd548f26b629b9782bc56d8831d03c622ba`
+L804-804 | exempt-stripped | - `svg` `ec0f4b96f3fa9b646183e1f7004a0e5d8ce0f9ab28f111472d4ed32ffa0c6b58`
+L805-805 | exempt-stripped | - `pdf` `508b3a641fde21b582ee2a58a3d3df2a769998281f78c8763ba07438286c1f8f`
+L806-806 | exempt-stripped | - `ledger` `c040fca2dd63df9c68b56a767ccd0383962db479b04d75d23821b311628ce099`
+L810-810 | exempt-stripped | - `png` `7ff5c05cc0caa0890400fec50a9366397a203b891031fa400d9638872d0b4501`
+L811-811 | exempt-stripped | - `svg` `ffac9c1eba5386fe79d3c1f5a69afdfadafaba507adaf47963a1b2ddd669d472`
+L812-812 | exempt-stripped | - `pdf` `d207343460263fde7481c8be1572e797895db488f7828b35d14a09003436d4a1`
+L813-813 | exempt-stripped | - `ledger` `6dfbd6eae0285a55475cd8cfe365e92bb9a6137d5e4da23f469634c58d1f1c28`
+L817-817 | exempt-stripped | - `png` `8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6`
+L818-818 | exempt-stripped | - `svg` `6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e`
+L819-819 | exempt-stripped | - `pdf` `6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844`
+L820-820 | exempt-stripped | - `checks` `b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde`
+L824-824 | exempt-stripped | - `png` `f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea`
+L825-825 | exempt-stripped | - `pdf` `9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf`
+L826-826 | exempt-stripped | - `ledger` `b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389`
+L827-827 | exempt-stripped | - `checks` `0e857cbfb288ff7110aafec99c11211bae1c46e4d3b2a5594d5949f318d9f279`
+
+== AUDIT TRAIL (all cited units) ==
+L22-24 | NR-001 | 1 tok | ok
+L26-28 | NR-008,NR-032 | 3 tok | UNMATCHED:9.41
+L30-31 | NR-021,NR-022 | 0 tok | ok
+L33-33 | NR-009 | 1 tok | ok
+L35-38 | NR-040 | 1 tok | ok
+L59-61 | NR-001 | 1 tok | ok
+L66-66 | NR-001 | 1 tok | ok
+L68-68 | NR-002 | 3 tok | UNMATCHED:930,422
+L70-72 | NR-008,NR-009,NR-018 | 3 tok | ok
+L74-75 | NR-021,NR-022,NR-040 | 1 tok | ok
+L77-78 | NR-005,NR-006 | 2 tok | ok
+L80-81 | NR-012,NR-013 | 0 tok | ok
+L226-226 | NR-011,NR-017,NR-043 | 0 tok | ok
+L239-241 | NR-011 | 0 tok | ok
+L252-254 | NR-025 | 1 tok | ok
+L256-258 | NR-015 | 1 tok | ok
+L267-270 | NR-015 | 5 tok | ok
+L272-273 | NR-015 | 1 tok | ok
+L283-284 | NR-015 | 1 tok | ok
+L292-293 | NR-027 | 3 tok | ok
+L295-297 | NR-028 | 1 tok | ok
+L340-340 | NR-001 | 1 tok | ok
+L342-343 | NR-002 | 0 tok | ok
+L357-357 | NR-001 | 1 tok | ok
+L358-358 | NR-001 | 1 tok | ok
+L359-359 | NR-001 | 1 tok | ok
+L360-360 | NR-036,NR-039 | 0 tok | ok
+L361-361 | NR-027,NR-039 | 1 tok | ok
+L362-362 | NR-015 | 1 tok | ok
+L363-363 | NR-015 | 1 tok | ok
+L364-364 | NR-015 | 1 tok | ok
+L365-365 | NR-015 | 1 tok | ok
+L366-366 | NR-015 | 1 tok | ok
+L397-401 | NR-001,NR-002,NR-006 | 6 tok | ok
+L405-409 | NR-003,NR-004,NR-005,NR-018,NR-039 | 8 tok | ok
+L411-412 | NR-007 | 2 tok | ok
+L416-418 | NR-008,NR-009 | 3 tok | ok
+L420-421 | NR-021 | 1 tok | ok
+L427-427 | NR-008 | 1 tok | ok
+L428-428 | NR-008 | 1 tok | ok
+L429-429 | NR-009 | 1 tok | ok
+L430-430 | NR-014 | 1 tok | ok
+L431-431 | NR-016 | 1 tok | ok
+L432-432 | NR-029 | 1 tok | ok
+L433-433 | NR-030 | 1 tok | ok
+L434-434 | NR-018 | 1 tok | ok
+L435-435 | NR-011 | 1 tok | ok
+L436-436 | NR-011 | 1 tok | ok
+L437-437 | NR-011 | 1 tok | ok
+L438-438 | NR-011 | 1 tok | ok
+L439-439 | NR-011 | 1 tok | ok
+L440-440 | NR-017 | 2 tok | ok
+L441-441 | NR-026 | 1 tok | ok
+L442-442 | NR-010 | 1 tok | ok
+L444-445 | NR-014 | 2 tok | ok
+L447-448 | NR-016 | 1 tok | ok
+L450-452 | NR-018,NR-029 | 3 tok | ok
+L458-458 | NR-008,NR-027,NR-039 | 2 tok | ok
+L459-459 | NR-009,NR-015 | 2 tok | ok
+L460-460 | NR-036 | 0 tok | ok
+L461-461 | NR-022 | 0 tok | ok
+L462-462 | NR-012,NR-013 | 0 tok | ok
+L482-484 | NR-010,NR-026 | 7 tok | UNMATCHED:20.698,9.81,304.6
+L496-498 | NR-011 | 2 tok | ok
+L500-502 | NR-011 | 2 tok | ok
+L504-505 | NR-017 | 2 tok | ok
+L507-508 | NR-011 | 1 tok | ok
+L521-521 | NR-021 | 0 tok | ok
+L523-523 | NR-022,NR-023 | 0 tok | ok
+L525-529 | NR-009,NR-021 | 4 tok | ok
+L531-535 | NR-022,NR-040 | 6 tok | ok
+L537-541 | NR-040 | 1 tok | ok
+L543-543 | NR-001,NR-005,NR-006,NR-044,NR-045 | 0 tok | ok
+L545-545 | NR-001,NR-005,NR-006,NR-044 | 0 tok | ok
+L547-551 | NR-001,NR-044 | 4 tok | ok
+L553-557 | NR-044 | 3 tok | ok
+L559-564 | NR-044 | 3 tok | ok
+L570-575 | NR-005,NR-006,NR-045 | 4 tok | ok
+L589-589 | NR-005,NR-006,NR-011,NR-036 | 0 tok | ok
+L591-594 | NR-036 | 11 tok | UNMATCHED:0.951
+L596-597 | NR-018,NR-039 | 2 tok | ok
+L599-603 | NR-011,NR-017 | 4 tok | ok
+L614-615 | NR-012 | 0 tok | ok
+L617-618 | NR-013 | 0 tok | ok
+L640-641 | NR-012 | 0 tok | ok
+L680-683 | NR-015 | 0 tok | ok
+L726-729 | NR-001,NR-008,NR-009,NR-040 | 4 tok | ok
+L736-739 | NR-013 | 0 tok | ok
+L777-777 | NR-001,NR-002 | 5 tok | ok
+L778-778 | NR-008 | 1 tok | ok
+L779-779 | NR-018 | 1 tok | ok
+L780-780 | NR-009,NR-021 | 1 tok | ok
+L781-781 | NR-022,NR-040 | 1 tok | ok
+L782-782 | NR-003,NR-004,NR-005,NR-006 | 2 tok | ok
+L783-783 | NR-012,NR-013 | 0 tok | ok
+L792-792 | NR-021 | 0 tok | ok
+L793-793 | NR-022,NR-023 | 0 tok | ok
+L794-794 | NR-005,NR-006,NR-011,NR-036 | 0 tok | ok
+L795-795 | NR-011,NR-017,NR-043 | 0 tok | ok
