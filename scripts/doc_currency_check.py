@@ -18,6 +18,7 @@ Exit code 0 = all checks pass; 1 = issues found. Report-only, never edits.
 import json
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime
 
@@ -79,10 +80,18 @@ def check_decisions_freshness():
         return
     newest_entry = max(datetime.strptime(e, "%Y-%m-%d") for e in entries)
     if newest_entry < newest_date:
-        ISSUES.append(
-            f"DECISIONS.md newest entry {newest_entry.date()} older than newest "
-            f"handover {newest_name} ({newest_date.date()}) — physics changes may lack entries"
-        )
+        # Docs-only weeks owe no DECISIONS entry. Flag the gap only when a
+        # src/ or test/ commit landed after the newest DECISIONS entry
+        # (the physics-change signal this check exists for).
+        physics_since = subprocess.run(
+            ["git", "-C", REPO, "log", "--format=%h", "--since",
+             newest_entry.strftime("%Y-%m-%d"), "--", "src/", "test/"],
+            capture_output=True, text=True, check=True).stdout.strip()
+        if physics_since:
+            ISSUES.append(
+                f"DECISIONS.md newest entry {newest_entry.date()} older than newest "
+                f"handover {newest_name} ({newest_date.date()}) — physics changes may lack entries"
+            )
 
 
 # ── Check 3: instrument-trust-log.md freshness ────────────────────────────
