@@ -1,7 +1,7 @@
 # Register status: system anatomy
 
 **Slug** `system-anatomy`. Status note for the figure rows.
-**Date** 2026-10-12. Register fold and v4 re-cut 2026-10-13.
+**Date** 2026-10-12. Register fold and v4 re-cut 2026-10-13; v5 re-cut 2026-10-14.
 
 ## Rows cited
 
@@ -33,13 +33,13 @@ Commands:
     pdftoppm -png -r 300 -singlefile system-anatomy.pdf system-anatomy
 
 Toolchain pin: pdflatex (TeX Live 2023/Debian), poppler pdftoppm. Two full
-runs stay byte-identical (verified at v4). Hashes at v4:
+runs stay byte-identical (verified at v5). Hashes at v5:
 
-    system-anatomy.tex  5bf748abc6fd385860f72ce0713cfb1c
-    prototype.html      620481ca05882376cdea2c8026a22e6f
-    label-ledger.txt    9f5e89acc24393d6e6481ce4780ee6e4
-    system-anatomy.pdf  45a99a610b68c496209120ea6e6cd261
-    system-anatomy.png  aae4915c2f32a2f0c6798e68d2d29e03
+    system-anatomy.tex  8a6d82b74dde69965e224d2ce3293ccf
+    prototype.html      8225ea742dd25566e8c79c41ae57bfdf
+    label-ledger.txt    9832c94065d2d817303c40ec19ccb350
+    system-anatomy.pdf  77701b4024b957af21e54ca06ecdbebc
+    system-anatomy.png  9be129933420343205aa8f2592905b51
 
 ## Re-cuts
 
@@ -54,6 +54,12 @@ blade, with gapped extension lines and the label leader. The drawn source
 line reads NR-011 · NR-017 · NR-043. Script commit `9cecee3`. No other
 geometry moves.
 
+v5 (2026-10-14): the cone ring (R5) label joins the plate (round-5
+founder comment 3). The named part reads "R5, the cone ring" and "the
+shaft cone starts here", with its leader and in-script clearance
+asserts. Script commit `d243b37`. No other geometry moves. No new
+number prints.
+
 ## Pending
 
 The Track D label picks (the knot name, the cyan-line name) ride a later
@@ -65,3 +71,6 @@ updates to the v4 re-cut; the note-9 caption forms land (`captions.md`).
 **Delta** v2 (2026-10-13): the v4 re-cut lands. The blade-span dimension
 draws (NR-043, the drawn form `1.499 m`), and the drawn source line
 carries NR-011 · NR-017 · NR-043. Script commit `9cecee3`.
+**Delta** v3 (2026-10-14): the v5 re-cut lands. The cone ring (R5) label
+draws with its leader and clearance asserts. The label set reads
+thirteen. Script commit `d243b37`.

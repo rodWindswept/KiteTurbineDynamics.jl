@@ -5,6 +5,7 @@
 Island-3 winner geometry (NR-011): six rings, three TRPT lines, one active rotor. The shaft is drawn at the operating elevation. The dashed outline sits outside the primary render scope.
 Kite turbine anatomy: the ground-generation rotary machine
 R1, the ground ring
+R5, the cone ring
 R6, the hub ring
 altitude limiter, not a load path
 autogyro rotors, lift only
@@ -25,6 +26,7 @@ script: scratch/fig1_decode_winner.jl · drawn to the 5 m scale bar · dashed ou
 segments S1 to S5
 sky anchor
 source: island-3 winner decode, best_vector.csv, data commit dd3cc6a · rows NR-011 · NR-017 · NR-043
+the shaft cone starts here
 the three-way knot
 three blades, bank 7.088°
 three tension lines each

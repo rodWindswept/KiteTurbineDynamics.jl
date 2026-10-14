@@ -246,6 +246,12 @@ The cold-path line, the swing reading and the lifter rationale land.
 The campaign-scale context and the cone lead line land.
 No value moves.
 
+v0.44 pass by @fig-img-diagrams (2026-10-14).
+This pass re-pins the figure-provenance appendix to the delivered v5 system-anatomy re-cut.
+The plate script-commit cell and its four output-hash cells take the delivered values.
+The re-cut adds the cone-ring label (figure-map row 2; round-5 comment 3).
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

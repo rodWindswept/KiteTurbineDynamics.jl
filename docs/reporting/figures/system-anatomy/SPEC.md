@@ -75,8 +75,9 @@ No other number prints.
 - The side view projects each ring to one segment. Ring R1 is the ground
   ring. Ring R6 carries the main rotor. The five segments between the rings
   are S1 to S5. Segments never read as spacer rings.
-- Labels run ground to hub. Twelve labels, at the cap. The inset defines the
-  three load-bearing words: ring, line, rotor.
+- Labels run ground to hub. Thirteen labels. The cone ring (R5) label is
+  the round-5 founder addition beyond the twelve-label brief cap. The
+  inset defines the three load-bearing words: ring, line, rotor.
 - The dashed box is the ground station. The dashed outline sits outside the
   primary render scope. The backline draws dashed. It is an altitude
   limiter, not a load path.
@@ -85,7 +86,8 @@ No other number prints.
 
 - The generator asserts: six rings, fifteen line runs, three blades. The
   radii and the bank angle match NR-011 and NR-017. The blade span
-  matches NR-043, and the dimension clearances hold.
+  matches NR-043, the dimension clearances hold, and the cone-ring leader
+  clearance holds.
 - Compile chain: pdflatex, then pdftoppm at 300 dpi. Zero error lines and
   zero overfull boxes. See `checks.log`.
 - The visual audit read the full plate and three crops (chain zone, hub ring

@@ -1,6 +1,6 @@
 # Captions: system anatomy
 
-**Slug** `system-anatomy`. **Status** GENERATE (re-cut v4; founder-return
+**Slug** `system-anatomy`. **Status** GENERATE (re-cut v5; founder-return
 forms folded 2026-10-13). **Date**
 2026-10-12. **Caption split** 2026-10-12.
 
@@ -55,7 +55,8 @@ figure-provenance appendix.
 ## Generation note
 
 Resolved at GENERATE by the figures seat. The re-cut v2/v3 lands at
-`df8a2b4`. The v4 re-cut lands at `9cecee3`. The generator emits the TeX build, the mock and the label
+`df8a2b4`. The v4 re-cut lands at `9cecee3`. The v5 re-cut lands at
+`d243b37`. The generator emits the TeX build, the mock and the label
 ledger from one coordinate set. pdflatex and pdftoppm then render the
 plate. Two full runs stay byte-identical.
 
@@ -88,3 +89,6 @@ no render moves. The draft picks the forms at its next build.
 The blade-span ask from the same note landed in the v4 re-cut (NR-043,
 `88277f6`; see `register-status.md`): the dimension draws, and the
 provenance line carries NR-043.
+
+Cone-ring note (2026-10-14): the v5 re-cut names R5 as the cone ring
+(round-5 comment 3). The plate text changes; the captions do not move.

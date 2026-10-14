@@ -13,18 +13,18 @@
     ]
   },
   "outputs": {
-    "checks.log": "0e857cbfb288ff7110aafec99c11211bae1c46e4d3b2a5594d5949f318d9f279",
-    "label-ledger.txt": "b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389",
-    "system-anatomy.pdf": "9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf",
-    "system-anatomy.png": "f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea",
-    "system-anatomy.tex": "4ed33eb467427dd89f256007d937478b5cede8b4aa3fc94bc3dbc3bf66903a8e"
+    "checks.log": "5255033809928282a348d525b6a7553df3ba64b267fcabb1499ecfaa75331810",
+    "label-ledger.txt": "3adec59c7bd19b232584de4e6cb703b44d4e48bb820c68f1ed78f5086971dc8d",
+    "system-anatomy.pdf": "b8fd60364168d70200f2f7122f7f9a957ea1590aa84c6197a19c79e811c444b6",
+    "system-anatomy.png": "b78eb5cbe8f77074f04f9264e409f3de7f5aa97096a4f4f824c3bdf8271ecc9a",
+    "system-anatomy.tex": "ef61699cf7003365d9f0e0ca7bbc604e5ba729d20f2d3aa968d0cb45b25063f4"
   },
   "precision": "radii, bank and span at three decimals, as registered; counts print as words",
   "script": {
     "path": "docs/reporting/figures/system-anatomy/system-anatomy.py",
-    "sha256": "0b19e2b135047732664d012881b357057716bc8f7edc0b52d5faafd2b6b02da9"
+    "sha256": "ba9ae1d34106d9e5e2a790b49554c516136694dfb179e2221577c2b210bbaad3"
   },
-  "script_commit": "9cecee3",
+  "script_commit": "d243b37",
   "slug": "system-anatomy",
   "toolchain": {
     "pdflatex": "TeX Live 2023/Debian",

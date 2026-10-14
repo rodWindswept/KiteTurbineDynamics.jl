@@ -1,0 +1,62 @@
+fig-sa v5 reproducibility — two full runs (generator + pdflatex + pdftoppm)
+state: system-anatomy.py @ script commit d243b37
+
+== run 1 ==
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8303 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14745 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (34 strings)
+generator exit=0
+
+== pdflatex (reproducible: SOURCE_DATE_EPOCH=0 FORCE_SOURCE_DATE=1) ==
+pdflatex exit=0
+latex error lines: 0
+overfull boxes: 0
+
+== render ==
+pdftoppm exit ok
+
+
+run 1 md5:
+8a6d82b74dde69965e224d2ce3293ccf  system-anatomy.tex
+8225ea742dd25566e8c79c41ae57bfdf  prototype.html
+9832c94065d2d817303c40ec19ccb350  label-ledger.txt
+77701b4024b957af21e54ca06ecdbebc  system-anatomy.pdf
+9be129933420343205aa8f2592905b51  system-anatomy.png
+
+== run 2 ==
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8303 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14745 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (34 strings)
+generator exit=0
+
+== pdflatex (reproducible: SOURCE_DATE_EPOCH=0 FORCE_SOURCE_DATE=1) ==
+pdflatex exit=0
+latex error lines: 0
+overfull boxes: 0
+
+== render ==
+pdftoppm exit ok
+
+
+run 2 md5:
+8a6d82b74dde69965e224d2ce3293ccf  system-anatomy.tex
+8225ea742dd25566e8c79c41ae57bfdf  prototype.html
+9832c94065d2d817303c40ec19ccb350  label-ledger.txt
+77701b4024b957af21e54ca06ecdbebc  system-anatomy.pdf
+9be129933420343205aa8f2592905b51  system-anatomy.png
+
+== comparison ==
+run 1 == run 2: byte-identical across all five outputs
+
+== sha256 (for the manifest) ==
+ef61699cf7003365d9f0e0ca7bbc604e5ba729d20f2d3aa968d0cb45b25063f4  system-anatomy.tex
+f4bce02b5a48b0f98335052dc070c4a3e2ea7469ab76e546f1a8240556f98ead  prototype.html
+3adec59c7bd19b232584de4e6cb703b44d4e48bb820c68f1ed78f5086971dc8d  label-ledger.txt
+b8fd60364168d70200f2f7122f7f9a957ea1590aa84c6197a19c79e811c444b6  system-anatomy.pdf
+b78eb5cbe8f77074f04f9264e409f3de7f5aa97096a4f4f824c3bdf8271ecc9a  system-anatomy.png
+
+== latex ==
+error lines: 0
+overfull boxes: 0

@@ -1,0 +1,33 @@
+fig_sa_v5_check: 31 pass, 0 fail
+
+PASS  ledger count 34   [got 34]
+PASS  ledger carries 'R5, the cone ring'
+PASS  ledger carries 'the shaft cone starts here'
+PASS  pdf text layer carries the cone-ring label
+PASS  tex carries the label node
+PASS  tex stamp unchanged
+PASS  manifest register rows unchanged   [['NR-011', 'NR-017', 'NR-043']]
+PASS  manifest script commit d243b37
+PASS  manifest checks.log   [5255033809928282]
+PASS  manifest label-ledger.txt   [3adec59c7bd19b23]
+PASS  manifest system-anatomy.pdf   [b8fd60364168d702]
+PASS  manifest system-anatomy.png   [b78eb5cbe8f77074]
+PASS  manifest system-anatomy.tex   [ef61699cf7003365]
+PASS  register note: v5 re-cut block
+PASS  register note: delta v3
+PASS  register note: v5 hash block
+PASS  captions: re-cut v5 status
+PASS  captions: v5 re-cut line
+PASS  captions: cone-ring note
+PASS  spec: thirteen labels
+PASS  spec: cone-ring leader clearance
+PASS  map: row 2 v5 cell
+PASS  map: delta v35
+PASS  map: delta v34 intact
+PASS  master: draft v0.44
+PASS  master: appendix script commit
+PASS  master: appendix png hash
+PASS  master: appendix pdf hash
+PASS  master: appendix ledger hash
+PASS  master: appendix checks hash
+PASS  tracker: v0.44 entry
