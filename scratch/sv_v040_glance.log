@@ -1,0 +1,315 @@
+== sv v0.40 glance, read at 3ac48af7caf37eadc7c59561252c80ff8d84920a ==
+
+== draft unchanged from the v0.40 record 0e7d396 to HEAD (diff bytes, want 0):
+0
+== tree status for draft and register:
+(empty = clean)
+
+== citation checker ==
+== cited rows in 2026-10-08-report-first-draft.md: 37
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-032, NR-036, NR-039, NR-040, NR-043, NR-044, NR-045, NR-046, NR-047, NR-048
+== every cited row present and signed (48 signed rows total)
+== signed rows not cited by this draft (informational): NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-042
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+   3| Internal engineering report. Draft v0.40. Date 2026-10-14.
+   5| Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+  11| Sections 3.4 to 3.6 carry their text.
+  14| The physics era is `post-95c385d_wind-authority`. The bank derate
+  17| **Abstract.** This report presents a search for a 5 kW-class
+  22| A differential-evolution campaign evaluated 930 candidate designs under
+  24| (NR-001).
+  27| objective and gates. Its mean power is 5.309 kW at the site wind,
+  28| 11.01 m/s at 9.41 m (NR-008, NR-032).
+  31| boundaries at the final operating point (NR-021, NR-022).
+  33| The minimum factor of safety is 15.0 (NR-009).
+  36| 2.03, at S1, the first of the five segments between the rings (NR-040).
+  41| come from the physics era `post-95c385d_wind-authority`, with the bank
+  59| **Summary for decision.** The project completed a 930-design simulation
+  60| screen of a 5 kW-class ground-generation rotary kite turbine with a
+  61| tensile rotary power transmission (NR-001).
+  66| - The differential-evolution campaign evaluated 930 candidate designs (NR-001).
+  68| - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  71|   Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  72|   Its minimum factor of safety is 15.0 (NR-009).
+  74| - All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+  75|   The least segment torque margin is 2.03, at S1 (NR-040).
+  77| - The seed genome scores 36.109 kg-equivalent (NR-006).
+  78|   Island 3 reaches 27.364 kg-equivalent (NR-005).
+  80| - The ODE path reproduces every recorded winner field (NR-012).
+  81|   The rapid path awaits its rope-break gate fix (NR-013).
+  83| The report shows that a feasible 5 kW-class candidate exists in the
+  90| ## 1 Introduction
+ 142| The objective is to find the feasible geometries for a 5 kW-class
+ 186| ## 2 Methods
+ 188| ### 2.1 The kite turbine and its terms
+ 226| [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011, NR-017 and NR-043.]
+ 228| ### 2.2 The simulation analysis pipeline instrument and its terms
+ 230| #### 2.2.1 The gene
+ 241| in the decode fields (NR-011).
+ 243| #### 2.2.2 The evaluator
+ 250| power balance (NR-025). The relax run takes 10 seconds. It lets the
+ 253| The measurement window takes 40 seconds. It measures the settled
+ 255| only (NR-015).
+ 264| The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a
+ 265| relax time of 10 seconds, a window of 40 seconds, a factor of safety
+ 266| (FoS) target and hard floor, both 2.5, and a line length of 18.8
+ 267| metres (NR-015).
+ 269| The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+ 270| (NR-015). One load applies to the whole search.
+ 273| (2026-08-22). The sweep ran the seed at a range of loads, each over the
+ 281| 3.55 was a mass-scaled value with no anchor.
+ 282| 5.39 was the 3-blade anchor chosen on the broken machine.
+ 283| That load forces about 9 kW from the seed (NR-047).
+ 285| The sweep rows read as follows (NR-047).
+ 287| Rows k 0.5 to 1.5:
+ 291| | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+ 292| | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+ 293| | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+ 295| Rows k 1.94 to 3.0:
+ 299| | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+ 300| | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+ 301| | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+ 304| The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+ 305| The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
+ 306| The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+ 309| The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+ 311| The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046).
+ 314| The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
+ 315| The hub-segment helix force reads about 1278 N/vertex (NR-048).
+ 318| The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+ 321| every candidate runs at one length, 18.8 metres (NR-015).
+ 326| A longer shaft reaches stronger wind. The length screen ran 2026-10-05
+ 327| on the pre-fold island-3 winner.
+ 329| It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+ 330| fix. All six rows failed the power floor (NR-027).
+ 334| floor. The folded class passes at 18.8 metres (NR-028).
+ 363| random seed per island (scripts/run_v13_5kw_masslift.jl). The same
+ 368| ### 2.4 The campaign
+ 375| with its own drift. Each island evaluates 310 designs.
+ 377| The campaign evaluates 930 designs in total (NR-001).
+ 380| (NR-002).
+ 389| One kilogram of airborne mass adds 1.0 to the score (NR-046).
+ 395| The score adds three soft constraint penalties to the airborne mass (NR-046):
+ 396| `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+ 397| with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`.
+ 399| The over-power charge reads P_score, the end power, against the 5.0 kW ceiling (NR-046).
+ 400| The utilisation charge reads the window-minimum factor of safety against the 2.5 floor (NR-046).
+ 401| The twist charge reads the worst segment twist ratio against the crossing limit (NR-046).
+ 402| The stationarity add-on reads the window swing against 20 per cent (NR-046).
+ 404| Every charge is continuous. None is step-like (NR-046).
+ 408| The runner stamps the search cost `1e9` on every non-ok design (NR-046).
+ 416| | Islands | 3 | NR-001 |
+ 417| | Designs per island | 310 | NR-001 |
+ 418| | Evaluations, total | 930 | NR-001 |
+ 419| | Objective | Airborne mass + penalties, kg-equivalent | NR-036, NR-039 |
+ 420| | Power floor | 5.0 kW | NR-027, NR-039 |
+ 421| | Structural FoS floor | 2.5 | NR-015 |
+ 422| | Relax run | 10 s | NR-015 |
+ 423| | Measurement window | 40 s | NR-015 |
+ 424| | Load constant k | 2.24 N·m/(rad/s)² | NR-015 |
+ 425| | Line length | 18.8 m | NR-015 |
+ 427| ### 2.5 Fidelity paths
+ 442| ### 2.6 Reproducibility
+ 448| The dataset sits at data commit dd3cc6a on the bankderate2-results
+ 449| branch. The launch commit is a76c5e9. The Phase 0 audit sits at
+ 450| master 31ca00d.
+ 452| ## 3 Results
+ 454| ### 3.1 The search at scale
+ 456| The campaign evaluated 930 designs (NR-001). The status mix reads 508
+ 457| ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+ 459| The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
+ 460| The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_masslift.jl).
+ 462| ### 3.2 Convergence
+ 464| The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+ 465| Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004).
+ 466| Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+ 467| The physical airborne mass of the winner is 25.698 kg (NR-018).
+ 468| The objective score adds 1.665 kg-equivalent of penalties (NR-039).
+ 470| The surviving ok designs hold a mean power between 5.02 and 6.32 kW
+ 471| (NR-007).
+ 473| ### 3.3 The winner
+ 475| Island 3 carries the winner. Its mean power reads 5.309 kW and
+ 476| its end power 5.314 kW (NR-008). Its factor of safety reads
+ 477| 15.0 (NR-009). That value is the window minimum.
+ 480| ring reads 15.033 at the final step (NR-021).
+ 486| | Mean power, measurement window | 5.309 kW | NR-008 |
+ 487| | End-of-window power | 5.314 kW | NR-008 |
+ 488| | Minimum factor of safety | 15.0 | NR-009 |
+ 489| | Window power swing | 0.029 kW | NR-014 |
+ 490| | Settle angular speed | 10.170 rad/s | NR-016 |
+ 491| | Window-mean speed | 13.38 rad/s | NR-029 |
+ 492| | Delivered torque | 396.76 N·m | NR-030 |
+ 493| | Airborne mass | 25.698 kg | NR-018 |
+ 494| | Hub radius | 4.580 m | NR-011 |
+ 495| | Ground radius | 0.804 m | NR-011 |
+ 496| | Ring count | 6 | NR-011 |
+ 497| | Polygon count | 3 | NR-011 |
+ 498| | Active rotors | 1 | NR-011 |
+ 499| | Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
+ 500| | Lift-line elevation | 70 deg | NR-026 |
+ 501| | Lift-line tension | 324.1 N | NR-010 |
+ 503| Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
+ 505| The settle state starts the machine at 10.170 rad/s (NR-016).
+ 508| Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
+ 509| Its airborne mass reads 25.698 kilograms (NR-018).
+ 515| | Power floor | 5.0 kW | pass, P_mean 5.309 kW | NR-008, NR-027, NR-039 |
+ 516| | Structural FoS floor | 2.5 | pass, 15.0 minimum | NR-009, NR-015 |
+ 517| | Clearance | blade-tip gate | pass | NR-036 |
+ 518| | Twist | per-segment limit δcrit | pass, all five segments within limit | NR-022 |
+ 519| | Rope break | none on the window | pass on the cold path | NR-012, NR-013 |
+ 534| The lifter sizing holds a 1.5 margin on the vertical load at the lift
+ 536| itself, 20.698 kilograms. The kite carries its own weight (2026-08-21
+ 539| The vertical load is 1.5 × 20.698 × 9.81 = 304.6 newtons. The lift line
+ 540| runs at 70 degrees of elevation (NR-026). The line tension is that
+ 541| load over sin 70 degrees: 324.1 newtons (NR-010).
+ 551| presumption as one (2026-08-05).
+ 554| hub radius is 4.580 metres and the ground radius 0.804 metres
+ 555| (NR-011).
+ 557| The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+ 558| decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+ 559| because the rotor count is one (NR-011).
+ 561| The winner genome contains two bank-angle slots. Ring 6 decodes the
+ 562| active main-rotor bank angle as 7.088 degrees (NR-017).
+ 564| A second bank slot reads 22 degrees. It does not decode to a physical
+ 565| rotor at a count of one (NR-011).
+ 576| ### 3.4 The levers
+ 578| [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
+ 580| [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
+ 582| The hub ring R6 governs the structural check at the winner operating point (NR-021).
+ 583| The window-minimum factor of safety is 15.0 (NR-009).
+ 584| At the final step, R6 reads 15.033 (NR-021).
+ 585| R2 to R4 read 29.8 to 35.2 (NR-021).
+ 586| R5 carries almost no load in the checked beam (NR-021).
+ 589| All five TRPT segments remain inside their over-twist limits at the winner operating point (NR-022).
+ 590| S1 to S4 transmit 33.5 to 33.9 degrees against a 98.9 degree limit (NR-022).
+ 591| S5 transmits 22.8 degrees against its 92.6 degree limit (NR-022).
+ 592| The least segment torque margin is 2.03, at S1 (NR-040).
+ 594| S5 carries the largest segment torque margin, 2.69 (NR-040).
+ 601| [Figure seated: figure-map row 20 (the levers landscape, slug `pca-landscape`). Values cite NR-001, NR-005, NR-006, NR-044 and NR-045.]
+ 603| [Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
+ 606| They project the 930 designs of the campaign onto the first two
+ 607| principal components of the ten-gene search (NR-001).
+ 608| Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+ 609| 39.7 per cent together (NR-044).
+ 611| The horizontal axis is PC1 — blade scale against unit count.
+ 614| The top loadings read -0.5385 for the TRPT line count, -0.5222
+ 615| for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
+ 617| The vertical axis is PC2 — second-rotor and clustering settings.
+ 621| The top loadings read +0.5621 for the second-rotor bank, -0.5605
+ 622| for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044).
+ 628| Three lines trace the island best-so-far paths, one step per generation (NR-045).
+ 629| Each island ran 31 generations.
+ 630| All three start at the common seed, 36.109 kg-equivalent (NR-006).
+ 631| Island 3 reaches the winner value, 27.364, at generation 26 and holds
+ 632| it to the end (NR-005).
+ 633| Islands 1 and 2 finish lower in the field.
+ 645| ### 3.5 The evolution story
+ 647| [Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006, NR-011 and NR-036.]
+ 649| The machine evolution strip traces the search on island 3 from the common seed to the campaign winner (NR-036).
+ 650| The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
+ 651| The largest recorded drop falls between generations 0 and 6, from 36.109 to 32.293 (NR-036).
+ 652| The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
+ 655| The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+ 658| The panel reads three lines and six rings (NR-011).
+ 659| The hub radius is 4.580 m and the ground radius is 0.804 m.
+ 660| The blade scales read 0.82 and 0.20 (NR-011).
+ 661| The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
+ 669| ### 3.6 Design implications
+ 674| The winner produces 5.309 kW of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
+ 677| The window-minimum factor of safety is 15.0 (NR-009).
+ 678| The least segment torque margin is 2.03, at S1 (NR-040).
+ 683| The status mix reads 110 clearance_reject designs (NR-002).
+ 686| Fourth, part of the winner genome stays inactive at one active rotor (NR-011, NR-017).
+ 694| 1. Fix the rapid-path rope-break gate before using the rapid path for screening (NR-013).
+ 696| 2. Add blade root factor-of-safety checks to the structural gate set.
+ 698| 3. Validate lifter modulation across the wind bands.
+ 700| 4. Extend the wind cases beyond the steady sheared profile.
+ 702| 5. Extend the model to the launch and recovery sequence.
+ 704| 6. Extract the lever statistics from the campaign telemetry.
+ 706| 7. Re-run a short campaign with conditional genes and a clearance-aware decoder.
+ 708| ## 4 Discussion
+ 710| ### 4.1 Evaluation fidelity
+ 713| the record stores. Island 3 agrees at full precision (NR-012).
+ 716| (NR-013). The cause is gate placement, not the machine.
+ 722| The team has solved this pattern twice on record. On 2026-08-14 the
+ 726| On 2026-09-16 the ruling was: breaks on the measurement window only,
+ 743| flag, and every recorded winner field reproduces (NR-012).
+ 745| ### 4.2 The failure ledger
+ 751| the hub (2026-08-26).
+ 754|   instruments still read normal power (2026-08-14).
+ 762|   The blade-mass-law correction landed on 2026-08-22. It voided the
+ 774|   On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+ 775|   default gain. The scaled system gain sat near 1.94. The window power
+ 778|   On 2026-08-24 a winner re-gate ran at a stale gain, the superseded
+ 779|   20-second-window value. The pre-push review caught it. The re-gate at
+ 780|   the campaign gain returned 5.18 kW.
+ 784|   [2.24 holds a register row (NR-015). The other values need rows
+ 792|   the guard. The campaign ran through them unguarded (2026-08-22).
+ 798| ### 4.3 Model boundaries
+ 803| - The model does not check blade integrity. The blade root factor of safety sits at infinity in the model. The team deferred the full beam-on-supports blade model (PRD 0006:147). The rotor blades are not yet structurally gated in this analysis.
+ 821| ## 5 Conclusion
+ 823| The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001).
+ 824| The campaign scored each design on the ODE path over the measurement window (NR-015).
+ 825| One fixed power-law generator load and one fixed gate set held for every design (NR-015).
+ 828| Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+ 829| Its window-minimum factor of safety is 15.0 (NR-009).
+ 830| All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+ 831| The least segment torque margin is 2.03, at S1 (NR-040).
+ 837| The rapid path awaits its rope-break gate fix (NR-013).
+ 850| ## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+ 852| ## 7 References
+ 855| source calls pending: Ranneberg EK_FT_0018, the Jamieson deck and the
+ 858| ## 8 Data availability and reproducibility
+ 860| The dataset commits to the repo at dd3cc6a on bankderate2-results.
+ 861| The launch commit is a76c5e9. The Phase 0 audit sits at master
+ 862| 31ca00d. The fidelity probes sit on the bank-derate-cos2p65 branch.
+ 881| | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
+ 882| | Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
+ 883| | Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
+ 884| | Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+ 885| | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
+ 886| | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
+ 887| | Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners at the rope-break gate. | §4.1 | NR-012, NR-013 |
+ 888| | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
+ 892| One row per built exhibit. All six read dataset commit `dd3cc6a`.
+ 896| | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `671ab96` | `post-95c385d_wind-authority` |
+ 897| | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `671ab96` | `post-95c385d_wind-authority` |
+ 898| | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+ 899| | System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9cecee3` | `post-95c385d_wind-authority` |
+ 900| | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
+ 901| | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
+ 903| **Output hashes (SHA-256).** The short labels name the exhibit files.
+ 909| - `png` `f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837`
+ 910| - `svg` `41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0`
+ 911| - `pdf` `fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75`
+ 912| - `ledger` `3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff`
+ 916| - `png` `00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248`
+ 917| - `svg` `45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f`
+ 918| - `pdf` `49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2`
+ 919| - `ledger` `2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9`
+ 923| - `png` `8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6`
+ 924| - `svg` `6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e`
+ 925| - `pdf` `6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844`
+ 926| - `checks` `b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde`
+ 930| - `png` `f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea`
+ 931| - `pdf` `9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf`
+ 932| - `ledger` `b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389`
+ 933| - `checks` `0e857cbfb288ff7110aafec99c11211bae1c46e4d3b2a5594d5949f318d9f279`
+ 937| - `png` `4b1bd3453a6aa20d9b9b0af75eb989212b16df8986c752766edd625ae13d9892`
+ 938| - `svg` `94d518bb13c604d4949f9c1011845050d150c4122a357449a8e185f506ae48dc`
+ 939| - `pdf` `712e918b0b6ac73335ef2355113f59a2f3c6f63a421407ee122c98cfa6a2ecd7`
+ 940| - `ledger` `91282957dd23b9a9919756e9db578404497e1f0a58d11c4824a7550ad5a91c5e`
+ 944| - `png` `1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8`
+ 945| - `svg` `28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c`
+ 946| - `pdf` `aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8`
+ 947| - `ledger` `d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76`
+checker rc=0
+
+== display guard census (draft body) ==
+14.97 : 0
+14.972 : 0
+3.816 : 0
+27.363 : 0
+
+== guard note: the same census on the register reads ==
+14.97 in register: 9
