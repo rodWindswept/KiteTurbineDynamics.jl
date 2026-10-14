@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `d9d4fc4` on `bank-derate-cos2p65`.
+**Base:** branch tip `a7d09eb` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -34,6 +34,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- Item-8 aero leg (the counter-reads, the NR-025 amend, the sibling sweep and the v0.39 copy read): `a7d09eb`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-item8-aero-leg.md`. Evidence `scratch/av_nr047_nr048_counterread.py`, `scratch/av_sibling_sweep.py`, `scratch/av_v039_copy_read.py` plus logs.
 
 - Review copy last mile, v0.37: `d9d4fc4`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-review-copy-last-mile.md`. Evidence `scratch/av_v037_copy_lastmile.py` plus `.log`.
 
