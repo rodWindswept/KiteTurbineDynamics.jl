@@ -45,4 +45,23 @@ the selected value sits in the working range between them.
    kW squared above the 5.0 floor, so heavy k also costs fitness)
    belongs in the same block.
 
+## Addendum, same day (Rod, in-channel)
+
+Rod read the lead reply and asked for the plate: "surely this plate /
+figure and others to explain the kmppt hunt should also be in the
+report". State as of now:
+
+- NR-041 is signed (science-validator 2026-10-12) with the aero
+  counter-read. The sweep rows carry register provenance.
+- Figure-map row 5 already covers this plate: §2.3, slug `k-basis`,
+  source `scripts/results/k_sweep_daisy_5kw.csv` (blob d17d1377, run
+  adea1a3), rows NR-041 and NR-015. Status: F-VALUE PASS (20d06bb).
+  It waits on Rod's visual pass, then the fold.
+- The aero-validator counter-read of this check landed today
+  (docs/reporting/room-responses/aero-validator-2026-10-14-kmppt-story-counter-read.md).
+  It adds a structural sizing finding and two fold details.
+
+So the plate Rod wants is already in the figure pipeline. The room
+should tell him that plainly and queue his visual pass.
+
 Relayed only. Nothing edited in the draft or the register.
