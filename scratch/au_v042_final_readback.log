@@ -1,0 +1,20 @@
+au_v042 gate-margins fold — final readback (author seat, 2026-10-14)
+
+fold tip:   38c77f8 (60f5a32..38c77f8, four carried blobs)
+receipt:    dff427f
+handover:   bfb8f55
+origin tip: bfb8f552617719f52d050c1293ab4ebf9a3463a0 == local HEAD (local == origin)
+
+carried blobs, sha256 local == origin (git show origin/bank-derate-cos2p65:<path> | sha256sum):
+  docs/reporting/drafts/2026-10-08-report-first-draft.md  f4bdd2f9a3a1e146ef7d73ca37ffc5abe588980cd611180bafc751ee24339f94
+  docs/reporting/draft-tracker.md                         be5c2d37ee0c106bd0919af1686125bfaa85bf08e6fb5b41b5ca9b146f819a1d
+  scratch/au_v042_gate_margins.py                         6b2bae6f498ab591ae286d57b777dcfe2ee4377c6afbca4ca488bac87cee38cf
+  scratch/au_v042_gate_margins.log                        5ec1ea50bfca3f09ba5da1bb5289307d224a4a72841f969b20d51c4cd9083f56
+  docs/reporting/room-responses/author-2026-10-14-v042-gate-margins.md  d4361b2e5b6c7d512090de58c2636235a31ff7550870dff9cb81a6f04d9a7945
+  handovers/handover-2026-10-14-reporting-room-author.md  04d3d99150f570b8bba793c52f16fc4c653efd14ec79572c82962f122e5adbb2
+
+review copy: scratch/report-pdf-build/draft-live.docx
+  md5 1bec17262fa4a97686a0158d2f2c31d1 == stamp draft-38c77f8-20261014-184207.docx
+  record draft 38c77f8, seven seats resolved, 38 cited all signed, built 2026-10-14T18:42:07Z
+
+STE: draft 6388 words total 6; tracker 2660 words total 10; receipt and handover 0.00/100w.
