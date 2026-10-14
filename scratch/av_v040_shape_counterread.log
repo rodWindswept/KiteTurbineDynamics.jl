@@ -1,4 +1,4 @@
-[0] shape counter-read   tip a359061   record 0e7d396   copy md5 835de8d8dc92e209d23cba39e7c11549
+[0] shape counter-read   tip 84dbfd6   record 0e7d396   copy md5 835de8d8dc92e209d23cba39e7c11549
 [A] the moved blobs pin
   ok   draft blob reads 0e7d396 == HEAD == origin
   ok   tracker blob reads 0e7d396 == HEAD == origin

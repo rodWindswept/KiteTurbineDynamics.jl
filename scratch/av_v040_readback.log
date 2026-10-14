@@ -1,0 +1,12 @@
+# v0.40 shape counter-read — origin readback (aero-validator, 2026-10-14)
+# push range a359061..84dbfd6
+
+HEAD:                    84dbfd677943334d106ad4cd37370593a4baac94
+origin/bank-derate-cos2p65: 84dbfd677943334d106ad4cd37370593a4baac94
+local == origin: yes
+
+worktree hash-object == origin blob:
+docs/reporting/room-responses/aero-validator-2026-10-14-v040-shape-counterread.md  a851a17a2d20565cb7fe1eb9531260a5916a6396  OK
+handovers/handover-2026-10-14-reporting-room-aero-validator.md  fc526b6779cf0be671dcd67cd61c4e4187747b2d  OK
+scratch/av_v040_shape_counterread.py  f275037fd4607a3b7ed288393c76de136afd7a90  OK
+scratch/av_v040_shape_counterread.log  67abc99ff4ca59c7771375faf8eea2181108374e  OK
