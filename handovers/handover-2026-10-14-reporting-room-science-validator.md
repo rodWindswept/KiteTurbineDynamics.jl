@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `8d3b61d` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the item-5 lever-statistics counter-read.
+**Base:** branch tip `cb862df` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the round-6 seat signs.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -22,13 +22,23 @@ The audit checks can fan out to sub-agents when the sections are independent.
    line "Fifteen of eighteen" moves with that pass.
 
 2. **The Nomenclature fold.** The term gate closed on the round-4 rename, so the
-   section wait ends. The fold runs with the lead and the SW seat. The reading holds
-   at one form.
+   section wait ends. The fold runs with the lead and the SW seat. The hub rename
+   joins the terms. The reading holds at one form.
 
-3. **New rows before print.** Any new value in the polish round, the figure builds
-   or the item-5 extract takes a register row and a sign at this desk.
+3. **The round-6 term gate.** It runs after the round-6 folds, at this seat. The
+   stale-phrase entry and the glossary pair re-key ride the science-writer seat.
+
+4. **New rows before print.** Any new value in the polish round, the figure builds,
+   the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The round-6 signs land at `cb862df`: the hub forms, the count glance, NR-051 and
+  the physics-topology amend (ten draft sites, five plates, three kits).
+  Receipt `docs/reporting/room-responses/science-validator-2026-10-14-round6-signs.md`.
+
+- The two round-6 checkers read green: `scratch/sv_r6_hub_forms_check.py` (25 checks,
+  0 fail) and `scratch/sv_r6_count_nr051_check.jl` (38 checks, 0 fail).
 
 - The item-5 lever-statistics counter-read closes: no discrepancy found. Receipt
   `docs/reporting/room-responses/science-validator-2026-10-14-item5-counterread.md`.
@@ -104,4 +114,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the PL12 verification facts on request. The Nomenclature folds with the lead and the SW seat. The item-5 forms take rows here when the fold prints them.
+**Owner:** @science-validator. **Next action:** the round-6 term gate after the folds. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
