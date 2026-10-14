@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `b0d7f70` on `bank-derate-cos2p65`.
+**Base:** branch tip `e3446db` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,7 +17,7 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room.
+1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here.
 
 2. **New families.** A new figure family or claim block in the next round opens a fresh F-VALUE read.
 
@@ -34,6 +34,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The v0.41 hero copy counter-read: `e3446db`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v041-hero-counterread.md`. Evidence `scratch/av_v041_hero_counterread.py` plus log.
 
 - The v0.40 shape counter-read: `b0d7f70`. Receipt `docs/reporting/room-responses/aero-validator-2026-10-14-v040-shape-counterread.md`. Evidence `scratch/av_v040_shape_counterread.py` plus log.
 
@@ -80,4 +82,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** hold for the next values mover. The item-5 extract is the standing watch.
+**Owner:** @aero-validator. **Next action:** hold for the next values mover. AU9 at the author seat heads the next push. A seat move on the hero re-keys the copy read.
