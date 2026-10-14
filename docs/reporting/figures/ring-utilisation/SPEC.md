@@ -199,6 +199,9 @@ a register citation.
 - **R2** the scripted figure against the real capture walks F-CITE, F-REPRO
   and F-LABEL. The image-reader and the validators take their pass. Deltas
   land.
+  The counter-read at `a3f4ae3` held the drawn values and routed the
+  appendix re-pin. The re-census at `c30b2ca` closes F-VALUE on the fix
+  commit (`ef36c6c`) with zero defects.
 
 - **R3** the final pass. Rod does the visual pass. Status moves to approved.
 
@@ -254,3 +257,7 @@ drawn interaction.
   to the unit value), the stack retires to one utilisation bar, and the
   corrected interaction form N/N_crit + √(M_ip²+M_oop²)/M_el reads in the
   legend and the caption. Script commit `671ab96`.
+
+- v6 (2026-10-14): the F-VALUE closure. The re-census at `c30b2ca` closes
+  F-VALUE on the fix commit (`ef36c6c`), zero defects (85 checks). The R2
+  rounds line takes the closure. No render moves.

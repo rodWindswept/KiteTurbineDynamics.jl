@@ -35,8 +35,8 @@ full roster around them.
 | 3 | 3 | §2.2 | Genome decode strip. Gene slots to machine. Brief F2 | ⟨tbd⟩ | candidate | The decode fields. NR-011 | Room ruling on need (the brief supplies the evidence, `ea19d62`). Park candidate |
 | 4 | 4 | §2.3 | Evaluator protocol. Cold and warm paths. Relax and window | `eval-timeline` | R2 | `eval-timeline-extract` (`21e941d`). `window-trace-extract` (`6175f83`) | F-VALUE PASS (`20d06bb`). Rod's visual pass, then the fold |
 | 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE PASS (`20d06bb`). Rod's visual pass, then the fold |
-| 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas landed (script `671ab96`; the log axis, the single-bar form, the corrected interaction form). Next: F-VALUE at the sign-off commit |
-| 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling landed (script `671ab96`; the notes out, the label re-space, the binding-limit title). Next: F-VALUE at the sign-off commit |
+| 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas landed (script `671ab96`; the log axis, the single-bar form, the corrected interaction form). The re-census at `c30b2ca` closes F-VALUE on the fix commit (`ef36c6c`) with zero defects. Next: the visual pass by Rod |
+| 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling landed (script `671ab96`; the notes out, the label re-space, the binding-limit title). The re-census at `c30b2ca` closes F-VALUE on the fix commit (`ef36c6c`) with zero defects. Next: the visual pass by Rod |
 | 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
 | 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE on the re-rendered SVG (`74cfef9`). Then sign-off |
 | 10 | 9 | §3.3 | Machine hero and the plan, side, downwind capture set | `machine-winner-hero` | planned | The winner genome. Makie captures of the built state | The capture script (plan, side, downwind). Then F-REPRO |
@@ -367,3 +367,9 @@ three slots).
   committed bytes. No drawn value and no kit byte moves. The aero re-census
   at the fix commit verifies. The rows 6 and 7 closure records on a later
   delta.
+
+- **v31 (2026-10-14):** rows 6 and 7 take the F-VALUE closure. The
+  re-census lands at `c30b2ca` and closes on the fix commit (`ef36c6c`),
+  zero defects (85 checks). The re-pin, the levers rows and the review
+  copy all verify on the fixed bytes. The map cells and both kit rounds
+  lines take the closure. Next at both: the visual pass by Rod.

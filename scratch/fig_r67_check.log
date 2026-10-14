@@ -1,0 +1,52 @@
+check: map closure in row 6 cell: OK
+check: map closure in row 7 cell: OK
+check: stale cell form gone: OK
+check: map delta v31: OK
+check: ring rounds closure: OK
+check: twist rounds closure: OK
+check: ring counter-read history: OK
+check: twist counter-read history: OK
+check: ring delta v6: OK
+check: twist delta v5: OK
+check: handover closed entry: OK
+check: handover open item 1 renumbered: OK
+check: handover open item 2 renumbered: OK
+check: old open item numbering gone: OK
+check: handover next action refreshed: OK
+== token diff docs/reporting/figures/figure-map.md: +11, -0
+   +1x 2026-10-14
+   +1x 6
+   +1x 7
+   +1x 85
+   +3x c30b2ca
+   +3x ef36c6c
+   +1x v31
+== token diff docs/reporting/figures/ring-utilisation/SPEC.md: +9, -0
+   +1x 2026-10-14
+   +1x 85
+   +1x R2
+   +1x a3f4ae3
+   +2x c30b2ca
+   +2x ef36c6c
+   +1x v6
+== token diff docs/reporting/figures/twist-limit/SPEC.md: +9, -0
+   +1x 2026-10-14
+   +1x 85
+   +1x R2
+   +1x a3f4ae3
+   +2x c30b2ca
+   +2x ef36c6c
+   +1x v5
+== token diff handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: +8, -3
+   +1x 0
+   +1x 85
+   +1x c30b2ca
+   +1x docs/reporting/room-responses/figures-images-diagrams-2026-10-14-rows67-closure.md
+   +1x ef36c6c
+   +1x scratch/fig_r67_check.py
+   +1x scratch/fig_r67_edit.py
+   +1x v31
+   -1x 3
+   -1x 3.5
+   -1x docs/reporting/feedback/2026-10-10-harris-review.md
+== summary: all OK

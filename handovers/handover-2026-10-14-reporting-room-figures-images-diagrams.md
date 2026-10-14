@@ -19,25 +19,23 @@ re-walk.
 
 ## Open items
 
-1. **The Harris-3.5 thread.** The render deltas and the appendix re-pin
-   landed, and the F-VALUE counter-read passed with zero fail. The open part
-   is the aero re-census at the fix commit and the map closure on rows 6 and 7.
-   The review item sits in
-   `docs/reporting/feedback/2026-10-10-harris-review.md` section 3.5.
-
-2. **The item-5 lever-statistics extract.** Objective versus gene, gate
+1. **The item-5 lever-statistics extract.** Objective versus gene, gate
    failures by gene, and penalty contributions across ok designs. The ask
    sits in feedback item 5
    (`docs/reporting/feedback/Feedback-message-1791925681590.md`).
 
-   The extract is file-disjoint from the draft chain, so it can fan out. It
-   lands behind the Harris deltas.
+   The extract is file-disjoint from the draft chain, so it can fan out.
 
-3. **The ring lead flag.** The ring caption lead prints the capture form 15.033
+2. **The ring lead flag.** The ring caption lead prints the capture form 15.033
    (NR-021), not the report headline 15.0 (NR-009). One line flips it if the room
    calls for the headline form there.
 
 ## Closed, last (evidence index)
+
+- The Harris-3.5 thread closes on rows 6 and 7: the re-census (`c30b2ca`)
+  clears the fix at `ef36c6c` (85 checks, 0 fail) and the closure records at
+  map v31. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-14-rows67-closure.md`.
+  Evidence `scratch/fig_r67_edit.py`, `scratch/fig_r67_check.py` plus `.log`.
 
 - The appendix re-pin and the levers rows 20/21 join the figure-provenance
   appendix: the re-pin pass (2026-10-14). Receipt
@@ -112,4 +110,4 @@ re-walk.
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
 **Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** open the
-item-5 lever-statistics extract. Fold the map closure when the aero re-census lands.
+item-5 lever-statistics extract.
