@@ -1,0 +1,22 @@
+sweep 29 final checks (2026-10-14, sw_ prefix)
+
+freeze check (levers reading):
+  block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+  receipt region == block: True
+  draft region == block: True
+
+pins check (delivered bytes):
+  28 of 28 appendix cells recompute (seven exhibits)
+
+copy probe (delivered docx, v0.43):
+  media entries 7; head line 'Draft v0.43' x1; 'v0.42' x0; 'v0.41' x0
+  the fold forms read at their cells (base clause x1; '22 degrees' x3;
+  slot names x2 each; the cold-path line x1; staged launch x2)
+  caption takeaways read x1 each; the retired reading key reads x0
+  guards: NR-009 value 14.972 x1 (register appendix); standalone 14.97
+  x0; +12.472 x0; +498.9 x0; 5.99 x0; 3.816 x0; rounded 27.363 x0;
+  unresolved x0
+  md5 3374a638aa89e61e9957193dffc1536d == stamp: True
+
+record sim (base vs new):
+  base total=11 per100w=0.07; new total=11 per100w=0.07; offender diff header-only; block-list diff empty

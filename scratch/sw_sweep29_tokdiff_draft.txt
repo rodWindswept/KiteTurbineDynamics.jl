@@ -1,0 +1,11 @@
+== 38c77f8 -> e5541e9 ==
+arrivals: {'0.113': 1, '0.75': 1, '22': 2, '43': 1}
+removals: {'1': 1, '2': 1, '42': 1}
+  [arr 0.113] The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [arr 0.75] The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [arr 22] The shaft transition cone holds one fixed angle, 22 degrees, by construction. | The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+  [arr 43] Internal engineering report. Draft v0.43. Date 2026-10-14.
+  [rem 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [rem 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 42] Internal engineering report. Draft v0.42. Date 2026-10-14. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+

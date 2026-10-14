@@ -1,0 +1,54 @@
+media entries: 7
+  head line 'Draft v0.43': 1
+  older 'Draft v0.42': 0
+  'v0.42' anywhere: 0
+  'v0.43' anywhere: 1
+  'v0.41' anywhere: 0
+  base 'reads 0.75 of the rotor radius' (soft ws): 1
+  '0.113': 2
+  '22 degrees' (soft ws): 3
+  'blade_scale_top': 2
+  'blade_scale_bottom': 2
+  'bank_bottom': 2
+  'physics-validation era' (soft ws): 1
+  'scored every design on the cold path' (soft ws): 1
+  'staged launch' (soft ws): 2
+  'first screen after' (soft ws): 1
+  old 'Slot 1': 0
+  old 'Slot 2': 0
+  ring takeaway 'structural check with a wide margin' (soft ws): 1
+  twist takeaway 'twist and torque checks along its whole length' (soft ws): 1
+  strip takeaway 'improves the machine at every recorded step' (soft ws): 1
+  retired 'A lower number is better' (soft ws): 0
+  power cell 'pass, P_end 5.314 kW' (soft ws): 1
+  'margin +0.314 kW' (soft ws): 0
+  '15.0 on 2.5' (soft ws): 1
+  'pass, 15.0 minimum' (soft ws): 1
+  'the warm path rejects healthy winners': 1
+  'Torsional capacity': 1
+  hero slug 'machine-winner-hero': 3
+  appendix 'All seven read dataset commit': 1
+  shape 'the gust cases': 1
+  shape 'one island of the campaign': 1
+  shape 'do not prove an optimal gene set': 1
+  table row '3.49': 1
+  table row '19.14': 2
+  retirement '3.55': 1
+  sizing '1278': 2
+  '100 m/s ceiling': 1
+  '3.816': 0
+  '27.363' standalone: 0
+  'unresolved' (ignore case): 0
+  '14.972': 1
+  internal '+12.472': 0
+  internal '+498.9': 0
+  internal '5.99 times': 0
+  old pair 'enables rope breaks': 0
+  detector 'limits break detection' (soft ws): 1
+  detector 'arms the rope-break check' (soft ws): 1
+  safety 'never allows breaks': 1
+  safety 'always rejects the design': 1
+  safety 'broken rope': 1
+md5 live: 3374a638aa89e61e9957193dffc1536d
+md5 stamp: 3374a638aa89e61e9957193dffc1536d
+live == stamp: True

@@ -1,0 +1,10 @@
+== 38c77f8 -> e5541e9 ==
+raw token occurrences: added 8, removed 6
+  net-out pair 0.20:
+    - decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+    + The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
+  net-out pair 0.82:
+    - The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+    + The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+  kept pair 22: net +2; raw removed-side 1, added-side 3
+

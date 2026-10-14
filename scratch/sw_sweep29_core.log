@@ -1,0 +1,365 @@
+== 0. preflight ==
+8a1e552
+-- working tree status, gated files (empty means clean)
+-- tip readback
+8a1e552 chore(scratch): the v0.43 pass final readback — the origin readback reads green across the fold, the receipt and the handover (au_v043 prefix)
+0	0
+== 1. span enumeration ==
+-- all commits, d2744fe..HEAD
+8a1e552 chore(scratch): the v0.43 pass final readback — the origin readback reads green across the fold, the receipt and the handover (au_v043 prefix)
+a207551 docs(handovers): the author seat page takes the v0.43 closure — the round-5 wording set lands; the era pack joins the open items; base to e5541e9; STE rc=0 at 0.00/100w
+a44bbe1 docs(reporting): room response — v0.43, the round-5 wording set (author seat); STE rc=0 at 0.00/100w
+b7f09ed docs(reporting): the v0.42 receipt add list takes the end-power form 5.314 (author seat): the sweep 28 normalise; no gate moves
+e5541e9 docs(reporting): draft v0.43 — the round-5 wording set folds (author seat): the blade-scale block takes the base clause (NR-050), the shaft transition cone reads one fixed 22 degrees at sections 2.1 and 3.5 (NR-049), the cold-path line lands at section 2.5 (NR-012), the campaign-scale context lands at section 3.1, and the winner text takes the swing reading, the lifter rationale with the staged launch, the decode slot names and the bank-slot split; tracker entry; declared token diff (draft add 43, 0.75, 0.113 and 22 twice, remove 42, 1 and 2; tracker add 43); the frozen levers block and sections 4 to the end hold byte-identical; STE rc=0 (author seat)
+c177213 chore(scratch): the caption dedupe evidence set — the edit script, the 37-check script and its log (figures seat)
+12f4b59 docs(reporting): the round-5 caption dedupe lands — each plain tier (rows 6, 7 and 9) reads one takeaway sentence and the two tiers no longer repeat one claim; the SPEC caption plans, register notes and the map (delta v34) take the pass; receipt and check evidence ride; STE rc=0 (figures seat)
+94aa219 docs(reporting): the feedback round 5 source reads sign — NR-049 (the shaft/TRPT transition cone, one fixed 22 degrees, not a search gene; census 41 sites clean) and NR-050 (the blade-scale base: 0.75 and 0.113 of the sized rotor radius; the winner chain reproduces NR-043 to the last digit); receipt + probe and checker evidence (39 checks, 0 fail); STE rc=0 (science-validator)
+cd779dd chore(scratch): the fb5 routing counter-read readback log — the receipt and both evidence blobs byte-verified at origin; local == origin (aero-validator)
+658e7bb docs(reporting): the feedback round 5 routing counter-read closes clean — 28 checks, 0 fail; the copy bytes (attachment == archive, 17 comments ids 0-16, all anchored in order), the draft and kit anchor sample, the two kW forms as distinct record quantities, the cold-path pin at runner 262-264 and the cone guard (no number near any cone site; one 22-degree site) all read; one display shift only (kilowatts to kW); receipt + scratch evidence; STE rc=0 (aero-validator)
+d1e9bf1 docs(reporting): the feedback round 5 routing lands — the founder copy return (17 comments) routes to two source reads, the wording set, the figure pack and the era pack; the caption dedupe reads rows 6, 7 and 9 (text only); the copy joins under docs/reporting/feedback/ with the comment extract and the reads log; the queue page takes the new order; STE rc=0 at 0.00/100w (hermes)
+c039aa6 docs(reporting): room response — what remains in report development (6 seat items in flight, 6 founder calls, 4 standing gates)
+28b00e3 docs(handovers): the queue page takes the v0.42 span — state to v0.42 (38c77f8) at tip d2a57aa; the closed span records the room status page, the hero chain and its PDF normalise, sweep 27, the v0.41 hero counter-read, the display-form note, the row-10 closure, AU9, the currency set and sweep 28; the hero draw note (SPEC delta D9) and the send gate read in; the open order re-reads (the tails and the kMppt plain pass head; the hero seat call sits with the founder); STE rc=0 at 0.00/100w (hermes)
+d2a57aa chore(scratch): the sweep 28 final-check log takes the receipt-gate line (sw_ prefix)
+389aa82 docs(reporting): room response — sweep 28 lands (science-writer); STE rc=0
+754edd4 docs(handovers): the science-writer seat handover refresh — sweep 28 closed; the sweep 29 movers and the explainer block next; STE rc=0 (science-writer)
+741af84 docs(reporting): sweep 28 — the v0.42 span verifies (one mover): the declared set recounts at the checker (18 forms, 19 occurrences, raw 22/5; the pin and the margin set); the register takes the display-form note (32/0); the six margin rows read and the guards hold; the pins recompute (28 of 28); the copy rebuilds current at v0.42; one receipt prose item reads noted; STE rc=0 (science-writer)
+4b19592 chore(scratch): land the sweep 28 evidence set (sw_ prefix)
+-- count
+18
+-- draft movers
+e5541e9 docs(reporting): draft v0.43 — the round-5 wording set folds (author seat): the blade-scale block takes the base clause (NR-050), the shaft transition cone reads one fixed 22 degrees at sections 2.1 and 3.5 (NR-049), the cold-path line lands at section 2.5 (NR-012), the campaign-scale context lands at section 3.1, and the winner text takes the swing reading, the lifter rationale with the staged launch, the decode slot names and the bank-slot split; tracker entry; declared token diff (draft add 43, 0.75, 0.113 and 22 twice, remove 42, 1 and 2; tracker add 43); the frozen levers block and sections 4 to the end hold byte-identical; STE rc=0 (author seat)
+-- tracker movers
+e5541e9 docs(reporting): draft v0.43 — the round-5 wording set folds (author seat): the blade-scale block takes the base clause (NR-050), the shaft transition cone reads one fixed 22 degrees at sections 2.1 and 3.5 (NR-049), the cold-path line lands at section 2.5 (NR-012), the campaign-scale context lands at section 3.1, and the winner text takes the swing reading, the lifter rationale with the staged launch, the decode slot names and the bank-slot split; tracker entry; declared token diff (draft add 43, 0.75, 0.113 and 22 twice, remove 42, 1 and 2; tracker add 43); the frozen levers block and sections 4 to the end hold byte-identical; STE rc=0 (author seat)
+-- candidates movers
+-- register movers, 2510886..HEAD
+94aa219 docs(reporting): the feedback round 5 source reads sign — NR-049 (the shaft/TRPT transition cone, one fixed 22 degrees, not a search gene; census 41 sites clean) and NR-050 (the blade-scale base: 0.75 and 0.113 of the sized rotor radius; the winner chain reproduces NR-043 to the last digit); receipt + probe and checker evidence (39 checks, 0 fail); STE rc=0 (science-validator)
+-- numstat, register 2510886..HEAD (append-only check)
+110	0	docs/reporting/numbers-register.md
+-- numstat, gated files, d2744fe..HEAD
+7	0	docs/reporting/draft-tracker.md
+25	6	docs/reporting/drafts/2026-10-08-report-first-draft.md
+110	0	docs/reporting/numbers-register.md
+-- zero-diff readback: draft/tracker e5541e9 vs HEAD
+-- zero-diff readback: register 94aa219 vs HEAD
+-- zero-diff readback: build inputs e5541e9 vs HEAD
+-- zero-diff readback: all files 8a1e552 vs HEAD
+-- ancestry of movers
+e5541e9 OK
+94aa219 OK
+12f4b59 OK
+c177213 OK
+d2a57aa OK
+d2744fe OK
+8a1e552 OK
+== 2. extracts ==
+   958 scratch/sw_sweep29_draft_v042.md
+   977 scratch/sw_sweep29_draft_v043.md
+   359 scratch/sw_sweep29_tracker_v042.md
+   366 scratch/sw_sweep29_tracker_v043.md
+  2660 total
+== 2b. full draft diff, 38c77f8 -> e5541e9 ==
+102 scratch/sw_sweep29_draft_diff.txt
+-- added non-blank lines (three-stage form)
+21
+-- tracker diff
+18 scratch/sw_sweep29_tracker_diff.txt
+== 2c. sections 4 to the end byte check ==
+sections 4 to end byte-equal: True
+== 3. token tools: draft ==
+== 38c77f8 -> e5541e9 ==
+arrivals: {'0.113': 1, '0.75': 1, '22': 2, '43': 1}
+removals: {'1': 1, '2': 1, '42': 1}
+  [arr 0.113] The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [arr 0.75] The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [arr 22] The shaft transition cone holds one fixed angle, 22 degrees, by construction. | The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+  [arr 43] Internal engineering report. Draft v0.43. Date 2026-10-14.
+  [rem 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [rem 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 42] Internal engineering report. Draft v0.42. Date 2026-10-14. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+
+== 38c77f8 -> e5541e9 ==
+lines: +25 -6; raw token occurrences: added 8, removed 6
+arrivals: {'0.113': 1, '0.75': 1, '22': 2, '43': 1}
+removals: {'1': 1, '2': 1, '42': 1}
+  [ARR 0.113 net+1] raw: added-side 1, removed-side 0
+      +1: The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [ARR 0.75 net+1] raw: added-side 1, removed-side 0
+      +1: The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  [ARR 22 net+2] raw: added-side 3, removed-side 1
+      +1: The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+      +1: The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+      +1: The shaft transition cone holds one fixed angle, 22 degrees,
+  [ARR 43 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.43. Date 2026-10-14.
+  [REM 1 net-1] raw: removed-side 1, added-side 0
+      -1: The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+  [REM 2 net-1] raw: removed-side 1, added-side 0
+      -1: decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+  [REM 42 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.42. Date 2026-10-14.
+
+== 38c77f8 -> e5541e9 ==
+raw token occurrences: added 8, removed 6
+  net-out pair 0.20:
+    - decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+    + The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
+  net-out pair 0.82:
+    - The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+    + The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+  kept pair 22: net +2; raw removed-side 1, added-side 3
+
+== 3b. token tools: tracker ==
+== 38c77f8 -> e5541e9 ==
+arrivals: {'43': 1}
+removals: none
+  [arr 43] v0.43 pass by @author (2026-10-14).
+
+== 38c77f8 -> e5541e9 ==
+lines: +7 -0; raw token occurrences: added 1, removed 0
+arrivals: {'43': 1}
+removals: none
+  [ARR 43 net+1] raw: added-side 1, removed-side 0
+      +1: v0.43 pass by @author (2026-10-14).
+
+== 4. STE gates ==
+-- sw_sweep29_draft_v042
+sw_sweep29_draft_v042.md         words=6388 total=  6 per100w=  0.09 em_dash= 2
+[HOOK:ste] sw_sweep29_draft_v042.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep29_draft_v042.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep29_draft_v042.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep29_draft_v042_off.txt
+-- sw_sweep29_draft_v043
+sw_sweep29_draft_v043.md         words=6545 total=  6 per100w=  0.09 em_dash= 2
+[HOOK:ste] sw_sweep29_draft_v043.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep29_draft_v043.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep29_draft_v043.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+12 scratch/sw_sweep29_draft_v043_off.txt
+-- sw_sweep29_tracker_v042
+sw_sweep29_tracker_v042.md       words=2660 total= 10 per100w=  0.38 em_dash= 1
+[HOOK:ste] sw_sweep29_tracker_v042.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v042.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v042.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v042.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v042.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v042.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep29_tracker_v042_off.txt
+-- sw_sweep29_tracker_v043
+sw_sweep29_tracker_v043.md       words=2714 total= 10 per100w=  0.37 em_dash= 1
+[HOOK:ste] sw_sweep29_tracker_v043.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v043.md: semicolon x1 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v043.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v043.md: passive_voice x2 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v043.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep29_tracker_v043.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+14 scratch/sw_sweep29_tracker_v043_off.txt
+-- offdiffs
+8 scratch/sw_sweep29_offdiffs.txt
+== 5. greps (v043) ==
+-- retired phrasing
+no hit
+-- stale-phrases sample
+no hit
+-- superseded values and internal forms (expect zero)
+no hit
+no internal form hit
+-- display guard: rounded 27.363 standalone (expect none)
+no hit
+-- safety guards: enabl / breaks only (expect none)
+enabl: no hit
+breaks-only: no hit
+-- safety set and detector forms
+756:The fix removes false rejections. It never allows breaks.
+757:A rope break in the measurement window always rejects the design.
+758:No design passes with a broken rope at its operating point.
+-- the margin rows (hold)
+424:| Power floor | 5.0 kW | NR-027, NR-039 |
+527:| Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
+528:| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+529:| Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+530:| Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+531:| Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+532:| Rope break | none on the window | pass on the cold path | the warm path rejects healthy winners | NR-012, NR-013 |
+-- FoS outcome cell
+528:| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+-- cone census: 22 degrees sites
+227:The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+582:The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+681:The shaft transition cone holds one fixed angle, 22 degrees,
+-- bare-22 context dump
+--- occurrence 1
+metry sets the hub and ground radii, and the rotor count sets how many rings carry blades. The shaft transition cone holds one fixed angle, 22 degrees, by construction. It is not a search gene (NR-049).  [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`)
+--- occurrence 2
+ candidate design (NR-015). One load applies to the whole search.  The team selected the value in a load sweep of the seed machine (2026-08-22). The sweep ran the seed at a range of loads, each over the same measurement window.  At the light end the seed reads under the power floor
+--- occurrence 3
+angle slots. Ring 6 decodes the active main-rotor bank angle as 7.088 degrees (NR-017).  The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box. It does not decode to a physical rotor at a rotor count of one (NR-011, NR-017).  This result differs
+--- occurrence 4
+-011). The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).  The shaft transition cone holds one fixed angle, 22 degrees, in every machine of the campaign (NR-049). A later campaign can vary it.  The strip shows built geometry and the search objective 
+--- occurrence 5
+. The   mass-minimum objective and the older fitness functions never received   the guard. The campaign ran through them unguarded (2026-08-22).    Telemetry shows no surviving design carried the infinite value. That   is a near-miss, not a corrupted dataset. Lesson: a gate must pi
+--- occurrence 6
+6fd20188d892cfcd42e3163ab8fb56bbea1eee837` - `svg` `41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0` - `pdf` `fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75` - `ledger` `3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff`  Twist limi
+bare-22 count: 6
+-- Tulloch/Jensen guard (expect no hit)
+183:Tulloch modelled the Daisy TRPT and checked the model against measured
+-- slot names
+575:The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+576:The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
+582:The second bank slot holds `bank_bottom`. It reads 22 degrees at the top of its search box.
+-- cold-path line and the standing :cold sentence
+446:The campaign scored every design on the cold path (NR-012).
+-- physics-validation era phrase: draft and candidates
+468:This campaign is the first screen after the physics-validation era.
+candidates: no entry
+-- shaft transition cone census
+227:The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+681:The shaft transition cone holds one fixed angle, 22 degrees,
+-- glossary term sites
+531:| Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
+246:| torsional capacity (`trpt_torque_capacity_axial`) | The peak torque a segment can transmit at its over-twist limit, for a given axial force. Pair a capacity only with the load of the same state. | `src/trpt_twist_limit.jl` | supply |
+-- shape lines present (held)
+617:The next steps add the blade checks and the gust cases.
+687:The trace reads one island of the campaign.
+689:A longer or broader run would extend the search.
+712:They do not prove an optimal gene set.
+-- classified counts line
+68:- Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+-- seated markers count
+7
+-- number-gate brackets
+806:  [2.24 holds a register row (NR-015). The other values need rows
+869:[Daisy values need register rows before the final report quotes
+-- held tokens 1.94 / 5.18 sites
+299:Rows k 1.94 to 3.0:
+303:| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+797:  default gain. The scaled system gain sat near 1.94. The window power
+802:  the campaign gain returned 5.18 kW.
+-- held token 3.55 in tracker
+312:closed form no longer holds. Its product, 3.55, stays flagged
+355:tokens (3.55, the version-history numerals, the open-request numerals,
+-- near-hits
+46:outer stiffening bridles sit outside the model.
+135:tension. It is not a rigid driveshaft. Its capacity to transmit torque
+190:A line is a tension member, like a tether or a bridle. It carries a load
+538:anchor, the three-way knot. Then it runs down the cyan line to the lift
+539:bearing, and down the bridles to the main rotor.
+827:- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+-- naming-trap near-hits
+no hit
+-- rename census: old form
+no hit
+-- rename census: new form
+scratch/sw_sweep29_draft_v043.md:389:The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+scratch/sw_sweep29_draft_v043.md:397:The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
+scratch/sw_sweep29_draft_v043.md:399:The score adds three soft constraint penalties to the airborne mass (NR-046):
+docs/reporting/glossary-candidates.md:150:| kg-equivalent | The unit the objective score reads in: the airborne mass plus the soft constraint penalties, read as a mass. Objective values display kg-equivalent. Physical mass keeps kg. | register display note (`43fb0bc`), section 2.4 objective definition | supply |
+docs/reporting/glossary-candidates.md:365:  form, "soft constraint penalties". The rename lands with the draft
+-- pending markers
+8:A section marked [PENDING] waits on a gate.
+872:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+-- head block
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.43. Date 2026-10-14.
+
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+Numbers come only from signed register rows, cited by row ID.
+
+A section marked [PENDING] waits on a gate.
+
+**Draft status.** This is an internal draft.
+Sections 3.4 to 3.6 carry their text.
+Nomenclature and references stay incomplete.
+
+The physics era is `post-95c385d_wind-authority`. The bank derate
+applies throughout.
+
+-- figure-map delta v34 line
+393:- **v34 (2026-10-14):** the round-5 caption dedupe lands (routing
+-- cited commits resolve
+dd3cc6a OK
+a76c5e9 OK
+31ca00d OK
+74cfef9 OK
+9cecee3 OK
+95c385d OK
+671ab96 OK
+e23f226 OK
+adea1a3 OK
+c438398 OK
+-- hex refs in draft v043
+66 scratch/sw_sweep29_hexrefs.txt
+-- hex ref diff vs v042 inventory (expect empty)
+== 5b. phrase census (flat) ==
+1x The base span reads 0.75 of the rotor radius
+1x the base chord reads 0.113 of it
+1x The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+1x in every machine of the campaign
+1x It is not a search gene
+1x A later campaign can vary it.
+1x The campaign scored every design on the cold path
+1x This campaign is the first screen after the physics-validation era.
+1x Larger and wider campaigns sit ahead.
+1x The machine held a steady operating point through the measurement window.
+1x each weather band would need its own single kite
+1x That kite would reach giant sizes and be too hard to handle.
+1x The report also assumes a staged launch of the stack.
+1x A staged launch is easier to handle than one giant kite.
+1x The main-rotor slot
+1x The second-rotor slot
+1x The second bank slot holds
+1x at the top of its search box
+3x 22 degrees
+1x blade_scale_top
+1x blade_scale_bottom
+1x bank_bottom
+1x physics-validation era
+2x shaft transition cone
+1x pass, P_end 5.314 kW
+1x 15.0 on 2.5
+1x pass, 15.0 minimum
+1x the warm path rejects healthy winners
+1x It never allows breaks
+1x Torsional capacity
+== 6. register anchors ==
+-- NR-011
+37:| NR-011 | Winner geometry (island 3) | n_lines 3, rings 6, n_active 1, r_hub 4.580 m, r_bot 0.804 m, bank_bot 22°, blade scales 0.82/0.20 | — | decode of best_vector.csv | signed (science-validator, 2026-10-08) |
+-- NR-012
+38:| NR-012 | Cold-path reproduction | :cold re-eval matches recorded P_mean, P_end, FoS, fitness, T_lift to 3 dp on all three winners | — | probe_rapid_vs_ode_winners.jl | signed (science-validator, 2026-10-08) |
+-- NR-017
+199:| NR-017 | Winner main-rotor bank (island 3) | 7.088° at ring 6. Slot 8 = 22° reaches no rotor at n_active 1 | deg | decode probe d219b6c. Threading src/objective_v10.jl:339 | signed (science-validator, 2026-10-08) |
+-- NR-043
+1221:| NR-043 | Winner blade span (island 3, main rotor) | 1.4994019682084492 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 `a7c6e343b4cfba7f790fe0c2c3fd81638c06548c0d98d23407737c9ae0d9b0ab`: R_mai
+-- NR-046
+1388:| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationa
+-- NR-047
+1476:| NR-047 | The k-sweep display rows for section 2.3: six loads of the honest-window sweep, one row per k | P_mean at 2 dp: k 0.5 reads reject. Then 5.45, 6.78, 7.56, 8.00, 8.89. omega_final at 2 dp: 19.14, 17.64, 16.59, 15.80, 15.34, 1
+-- NR-049 row
+1672:| NR-049 | The shaft transition cone angle, one fixed half-angle across the campaign | `cone_slope_deg` 22.0 | degrees | `scripts/run_v13_5kw_masslift.jl:172`, `src/objective_v10.jl:207` and `:259`, `src/objective_evaluator.jl:148`. Census: 41 `cone_slope_deg` sites across `src/`, `scripts/`, `test/` and the figure scripts, each a literal 22 or a cfg plumb. Probe `scratch/sv_fb5_source_reads_
+-- NR-050 row
+1735:| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.4341173109692225`, base span `1.8255879832269168`, span `1.4994019682084492` (NR-043), chord `0.22590989654340632` | m | `src/objective_v10.jl:355-377`, `src/bem.jl:156-179`, probe `scratch/sv_fb5_source_reads_probe.jl` and its log | signed (science
+== 7. review copy readback ==
+3374a638aa89e61e9957193dffc1536d  scratch/report-pdf-build/draft-live.docx
+3374a638aa89e61e9957193dffc1536d  scratch/report-pdf-build/draft-e5541e9-20261014-200839.docx
+## Build record (builder output)
+
+This block is builder output. It sits outside the report proper and does
+not pass the STE gate.
+
+Draft: `e5541e9` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+
+Register: `v1 ROWS SIGNED (2026-10-08, science-validator). See the sign-off` — file at `94aa219`
+
+Citation check: 40 cited, every one signed (50 signed rows total), uncited: NR-019, NR-020, NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041 — checker exit 0
+
+Seats resolved: 7 of 7 — `system-anatomy`, `machine-winner-hero`, `ring-utilisation`, `twist-limit`, `pca-landscape`, `pca-atlas`, `machine-evolution-strip`
+
+Embed route: SVG vector-first, PNG fallback; kits embedded as shipped,
+nothing re-rendered
+
+-rw-rw-r--  1 rod rod      76 Oct 14 17:50 .~lock.draft-live.docx#
+== 8. plate pins (hero set, sha256) ==
+4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5  docs/reporting/figures/machine-winner-hero/machine-winner-hero.png
+819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171  docs/reporting/figures/machine-winner-hero/machine-winner-hero.svg
+a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e  docs/reporting/figures/machine-winner-hero/machine-winner-hero.pdf
+52fe83a8c54ec93f5372b2fb15c8c77af90b44c3f1e6eb5a8732efffebf59924  docs/reporting/figures/machine-winner-hero/checks.log
+== done ==

@@ -1,0 +1,26 @@
+== 38c77f8 -> e5541e9 raw added 8 raw removed 6
+  net-out pair 0.20:
+    - decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+    + The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
+  net-out pair 0.82:
+    - The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+    + The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+  kept pair 22: net +2; raw removed-side 1, added-side 3
+  one-sided 0.113: added-side 1, removed-side 0
+    + The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  one-sided 0.75: added-side 1, removed-side 0
+    + The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
+  one-sided 1: added-side 0, removed-side 1
+    - The winner genome contains two blade-scale slots. Slot 1 reads 0.82 and
+  one-sided 2: added-side 0, removed-side 1
+    - decodes to the single active rotor. Slot 2 reads 0.20 and stays inactive
+  one-sided 42: added-side 0, removed-side 1
+    - Internal engineering report. Draft v0.42. Date 2026-10-14.
+  one-sided 43: added-side 1, removed-side 0
+    + Internal engineering report. Draft v0.43. Date 2026-10-14.
+
+freeze block md5 (file as written): 7bbd964db09d2b33269ce5cb8c334054
+freeze block md5 (stripped): 6d953ec10d2aa3ac66fd5d825fe16f6f
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054

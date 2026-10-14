@@ -1,0 +1,7 @@
+== 38c77f8 -> e5541e9 ==
+lines: +7 -0; raw token occurrences: added 1, removed 0
+arrivals: {'43': 1}
+removals: none
+  [ARR 43 net+1] raw: added-side 1, removed-side 0
+      +1: v0.43 pass by @author (2026-10-14).
+

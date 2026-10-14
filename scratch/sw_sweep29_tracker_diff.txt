@@ -1,0 +1,18 @@
+diff --git a/docs/reporting/draft-tracker.md b/docs/reporting/draft-tracker.md
+index ed3801b..e343f17 100644
+--- a/docs/reporting/draft-tracker.md
++++ b/docs/reporting/draft-tracker.md
+@@ -239,6 +239,13 @@ The power-floor and clearance cells take their corrected forms.
+ The factor of safety row takes its display forms.
+ No signed value changes.
+ 
++v0.43 pass by @author (2026-10-14).
++This pass folds the round-5 wording set, keyed on the NR-049 and NR-050 reads.
++The blade-scale base, the cone statement and the slot names land.
++The cold-path line, the swing reading and the lifter rationale land.
++The campaign-scale context and the cone lead line land.
++No value moves.
++
+ ## 2. Working notes
+ 
+ A bracket marks open room work. The owners refine

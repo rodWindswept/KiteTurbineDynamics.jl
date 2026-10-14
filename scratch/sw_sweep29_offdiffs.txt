@@ -1,0 +1,8 @@
+1c1
+< == scratch/sw_sweep29_draft_v042.md: words=6388 total=6 per100w=0.09 ==
+---
+> == scratch/sw_sweep29_draft_v043.md: words=6545 total=6 per100w=0.09 ==
+1c1
+< == scratch/sw_sweep29_tracker_v042.md: words=2660 total=10 per100w=0.38 ==
+---
+> == scratch/sw_sweep29_tracker_v043.md: words=2714 total=10 per100w=0.37 ==

@@ -1,0 +1,30 @@
+== Tulloch guard ==
+Tulloch lines: [183]
+  183: Tulloch modelled the Daisy TRPT and checked the model against measured
+compound 'Tulloch and Jensen' or 'Tulloch/Jensen': 0
+'Jensen' count: 0
+cone statement lines: [227, 681]
+min line distance, Tulloch to a cone statement: 44
+
+== the two 22-degree facts apart ==
+  ... rotor count sets how many rings carry blades. The shaft transition cone holds one fixed angle, 22 degrees
+     cone name in window: True
+     bank naming in window: False
+  ... otor bank angle as 7.088 degrees (NR-017).  The second bank slot holds `bank_bottom`. It reads 22 degrees
+     cone name in window: False
+     bank naming in window: True
+  ... ts at a rotor count of one (NR-011, NR-017).  The shaft transition cone holds one fixed angle, 22 degrees
+     cone name in window: True
+     bank naming in window: False
+
+== sanctioned near-hits (cyan line, bridles, driveshaft negation) ==
+  135: tension. It is not a rigid driveshaft. Its capacity to transmit torque
+  538: anchor, the three-way knot. Then it runs down the cyan line to the lift
+  46: outer stiffening bridles sit outside the model.
+  539: bearing, and down the bridles to the main rotor.
+
+== base-factor re-derivation (NR-050 digits) ==
+0.75 * r       = 1.8255879832269168 (recorded base span 1.8255879832269168)
+0.113 * r      = 0.27505525613952214
+span * scale   = 1.4994019682084492 (recorded span 1.4994019682084492, NR-043)
+chord * scale  = 0.22590989654340632 (quoted chord 0.22590989654340632)
