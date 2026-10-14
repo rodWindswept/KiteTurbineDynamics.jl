@@ -36,7 +36,8 @@ The parallel work is the audits and the extracts the other seats run.
 
 - v0.37, the consistency sweep: commit `7dd91a9`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v037-consistency-sweep.md`.
-  The classified fail counts (NR-002), the unit forms and the phrase polish land, and the section 2.2.2 build request leaves the body.
+  The classified fail counts (NR-002), the unit forms and the phrase polish land.
+  The section 2.2.2 build request leaves the body.
 
 - v0.36, the objective block and the rename: commit `57c77cf`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v036-objective-block.md`.
