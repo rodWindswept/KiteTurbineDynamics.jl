@@ -36,3 +36,7 @@ cites NR-015 for the gate sentence. No render moves.
 **Delta** v2 (2026-10-14): the 3.5 render deltas. The log axis, the
 single-bar form and the caption updates land. The readouts stand at the
 drawn precision. Script commit `671ab96`.
+
+**Delta** v3 (2026-10-14): the round-5 caption dedupe. The plain tier
+reads one takeaway sentence, and the tiers no longer repeat one claim.
+No render moves.

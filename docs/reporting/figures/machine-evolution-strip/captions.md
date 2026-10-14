@@ -5,7 +5,8 @@
 
 Site: the report at §3.5, the evolution story. Reading order: seed to the
 campaign winner, left to right, top row then bottom row. The wording comes from
-the figures seat, STE-gate checked, with the 2026-10-12 caption split. Values cite
+the figures seat, STE-gate checked, with the 2026-10-12 caption split
+and the 2026-10-14 takeaway rewrite. Values cite
 NR-005, NR-006, NR-011 and NR-036. The geometry source is the signed extract
 `strip-extract-2026-10-09-best-so-far`.
 
@@ -18,12 +19,8 @@ provenance.
 
 ## Plain caption
 
-Island 3's best-so-far objective falls as the built geometry converges
-to the register winner. The row starts at the common seed and ends at
-the campaign winner. Each machine is
-drawn from its built geometry, and all seven share one scale. The
-number under each machine is its search objective, in kg-equivalent. A
-lower number is better.
+The search improves the machine at every recorded step, from the
+common seed to the campaign winner.
 
 ## Technical caption (undergrad register, STE-clean form)
 
@@ -81,3 +78,7 @@ form. The strip render holds.
 Caption lead (2026-10-14): the takeaway opens both tiers. The lead
 prints the objective range from the signed rows (NR-006, NR-005).
 Text only, no render moves.
+
+Takeaway (2026-10-14): the plain tier reads one takeaway sentence
+(the round-5 caption dedupe). The tier no longer repeats the
+technical claim. Text only, no render moves.

@@ -389,3 +389,10 @@ three slots).
   seat (`0cbb9b8`, 226 checks). The kit hashes, the four appendix cells
   and the station and twist reads recompute at origin. No figure byte
   moves. Row 10's next gate reads the visual pass by Rod.
+
+- **v34 (2026-10-14):** the round-5 caption dedupe lands (routing
+  comments 12 and 13, swept by the caption audit to rows 6, 7 and 9).
+  Each plain tier reads one takeaway sentence and the two tiers no
+  longer repeat one claim. Kit text only, no render moves: the three
+  caption files, the two SPEC caption plans and the two register notes.
+  The visual pass by Rod stays the next gate at all three.

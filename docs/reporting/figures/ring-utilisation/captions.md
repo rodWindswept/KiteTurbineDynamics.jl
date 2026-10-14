@@ -5,8 +5,9 @@
 
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
-from the author draft (v3) unchanged, except the capture slot and the
-2026-10-12 caption split and the 2026-10-14 leads. Values cite
+from the author draft (v3) unchanged, except the capture slot, the
+2026-10-12 caption split, the 2026-10-14 leads and the 2026-10-14
+takeaway rewrite. Values cite
 NR-021 and NR-015.
 
 The split (2026-10-12): the plain and technical captions carry the
@@ -18,9 +19,7 @@ provenance.
 
 ## Plain caption
 
-The hub ring R6 governs the structural check at the winner's final
-operating point, and every other airborne ring holds a much larger
-margin.
+Every airborne ring passes its structural check with a wide margin.
 
 ## Technical caption (undergrad register, STE-clean form)
 
@@ -90,3 +89,7 @@ One bar shows each ring. The corrected interaction form (N/N_crit +
 
 The bending-share sentence replaces the display-floor sentences.
 Render moved. No drawn value moves.
+
+Takeaway (2026-10-14): the plain tier reads one takeaway sentence
+(the round-5 caption dedupe). The tier no longer repeats the
+technical claim. Text only, no render moves.

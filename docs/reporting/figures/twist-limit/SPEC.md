@@ -165,8 +165,9 @@ The display forms pin here once. A caption or label that paraphrases one
 The framework visual checklist applies, graded from the image alone.
 
 **Caption plan (dual, from the first figure).** Plain sentence: the shaft
-twists as it carries torque. All five segments stay inside their
-over-twist limits at the winner's final operating point.
+twists as it carries torque. The tier reads one takeaway: the shaft
+passes its twist and torque checks along its whole length. The segment
+ranks and the cites live in the technical tier (NR-022, NR-040).
 
 Technical caption (undergrad register, STE-clean form): name the
 authority, cite the capture, state the no-limit rule and the instant-bound
@@ -258,3 +259,7 @@ gate.
 - v5 (2026-10-14): the F-VALUE closure. The re-census at `c30b2ca` closes
   F-VALUE on the fix commit (`ef36c6c`), zero defects (85 checks). The R2
   rounds line takes the closure. No render moves.
+
+- v6 (2026-10-14): the plain tier reads one takeaway sentence (the
+  round-5 caption dedupe). The tier no longer repeats the technical
+  claim. The caption plan updates with it. No render moves.

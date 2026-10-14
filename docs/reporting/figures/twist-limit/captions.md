@@ -5,8 +5,9 @@
 
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
-from the author draft (v4) unchanged, except the capture slot and the
-2026-10-12 caption split and the 2026-10-14 leads. Values cite
+from the author draft (v4) unchanged, except the capture slot, the
+2026-10-12 caption split, the 2026-10-14 leads and the 2026-10-14
+takeaway rewrite. Values cite
 NR-022, NR-023 and NR-040.
 
 The split (2026-10-12): the plain and technical captions carry the
@@ -18,8 +19,7 @@ provenance.
 
 ## Plain caption
 
-All five segments stay inside their over-twist limits at the winner's
-final operating point, and the smallest torque margin sits at S1.
+The shaft passes its twist and torque checks along its whole length.
 
 ## Technical caption (undergrad register, STE-clean form)
 
@@ -81,3 +81,7 @@ labels re-space clear of the tick column.
 
 The title, subtitle and panel-A label measure against the binding limit,
 the realisability floor. Render moved. No drawn value moves.
+
+Takeaway (2026-10-14): the plain tier reads one takeaway sentence
+(the round-5 caption dedupe). The tier no longer repeats the
+technical claim. Text only, no render moves.

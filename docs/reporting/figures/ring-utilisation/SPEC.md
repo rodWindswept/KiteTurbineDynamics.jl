@@ -173,8 +173,9 @@ an equality of the two axial components.
 The framework visual checklist applies, graded from the image alone.
 
 **Caption plan (dual, from the first figure).** Plain sentence: every ring
-meets one strict structural check. The hub ring R6 governs, and every
-other airborne ring holds a much larger margin.
+meets one strict structural check. The tier reads one takeaway: every
+airborne ring passes its structural check with a wide margin. The hub
+read and the cites live in the technical tier.
 
 Technical caption (undergrad register, STE-clean form): name the
 interaction form (beam-column interaction, with torsion tracked outside the
@@ -261,3 +262,7 @@ drawn interaction.
 - v6 (2026-10-14): the F-VALUE closure. The re-census at `c30b2ca` closes
   F-VALUE on the fix commit (`ef36c6c`), zero defects (85 checks). The R2
   rounds line takes the closure. No render moves.
+
+- v7 (2026-10-14): the plain tier reads one takeaway sentence (the
+  round-5 caption dedupe). The tier no longer repeats the technical
+  claim. The caption plan updates with it. No render moves.

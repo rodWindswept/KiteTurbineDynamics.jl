@@ -46,3 +46,7 @@ cites NR-040 for the least torque margin. No render moves.
 **Delta** v2 (2026-10-14): the 3.5 render deltas. The two changelog
 notes leave; the δcrit labels re-space; the title and labels measure
 against the binding limit. Script commit `671ab96`.
+
+**Delta** v3 (2026-10-14): the round-5 caption dedupe. The plain tier
+reads one takeaway sentence, and the tiers no longer repeat one claim.
+No render moves.
