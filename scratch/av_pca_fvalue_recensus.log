@@ -1,0 +1,114 @@
+========================================================================
+F-VALUE re-census - levers family (rows 20, 21) after the fix - aero-validator
+========================================================================
+
+[tip] branch bank-derate-cos2p65  HEAD 5f9dc9f7555d  origin 5f9dc9f7555d
+
+[range] kit last-change commit: d6d4db940672
+  ok   both kit trees last moved at d6d4db940672
+  ok   no kit path moves in the range fix..HEAD
+  range d6d4db94..5f9dc9f7 holds 11 commits
+  ok   blob identity fix == HEAD == origin across all 20 kit files
+
+[pins] worktree == HEAD; manifests; the v3 hash blocks recompute
+  ok   pca-landscape: 10 worktree files byte-equal to HEAD
+  ok   pca-landscape: 4 outputs match the manifest pins
+  ok   pca-landscape: script sha256 matches the manifest pin
+  ok   pca-landscape: 3 telemetry inputs match the manifest pins
+  ok   pca-landscape: manifest register_rows == NR-001,NR-005,NR-006,NR-044,NR-045
+  ok   pca-landscape: manifest row_wants empty
+  ok   pca-landscape: manifest script_commit e23f226 (command agrees)
+  ok   pca-landscape: v3 hash block lists the five files
+  ok   pca-landscape: v3 hash block recomputes from the committed bytes
+  ok   pca-atlas: 10 worktree files byte-equal to HEAD
+  ok   pca-atlas: 4 outputs match the manifest pins
+  ok   pca-atlas: script sha256 matches the manifest pin
+  ok   pca-atlas: 3 telemetry inputs match the manifest pins
+  ok   pca-atlas: manifest register_rows == NR-001,NR-005,NR-006,NR-044
+  ok   pca-atlas: manifest row_wants empty
+  ok   pca-atlas: manifest script_commit e23f226 (command agrees)
+  ok   pca-atlas: v3 hash block lists the five files
+  ok   pca-atlas: v3 hash block recomputes from the committed bytes
+
+[census] ledger vs SVG; scale nodes; no 'pending' byte
+  pca-landscape: ledger 46 strings; svg 50 nodes; 16 scale nodes
+  ok   pca-landscape: ledger set-equal to the svg text layer
+  ok   pca-landscape: no 'pending' byte in any of the 10 delivered files
+  pca-atlas: ledger 37 strings; svg 44 nodes; 30 scale nodes
+  ok   pca-atlas: ledger set-equal to the svg text layer
+  ok   pca-atlas: no 'pending' byte in any of the 10 delivered files
+  ok   landscape: 16 scale nodes == x ticks + y ticks + colour ticks
+  ok   landscape: 12 unique scale values
+  ok   atlas: 30 scale nodes == the recomputed colour labels at .3g
+  ok   checks.log: 9 shared pins agree across the two kits
+
+[values] the drawn readouts vs their signed rows
+  ok   landscape draws 'start 36.109' -> NR-006
+  ok   landscape draws 'one common seed at 36.109 (kg)' -> NR-006
+  ok   landscape draws 'winner 27.364' -> NR-005
+  ok   landscape draws 'winner: island 3 at 27.364 (kg)' -> NR-005
+  ok   landscape draws '22.4% of variance' -> NR-044
+  ok   landscape draws '17.3% of variance' -> NR-044
+  ok   landscape draws '930 designs' -> NR-001
+  ok   landscape draws '31 generations each' -> NR-045
+  ok   atlas draws 930 (all 930 designs) -> NR-001
+  ok   atlas prints no share, seed or winner numeral
+
+[cites] the NR-005 / NR-006 mapping reads the register on every surface
+  ok   docs/reporting/figures/pca-landscape/SPEC.md:93: 36.109 -> NR-006
+  ok   docs/reporting/figures/pca-landscape/SPEC.md:94: 27.364 -> NR-005
+  ok   docs/reporting/figures/pca-landscape/register-status.md:11: NR-005 row reads 27.364
+  ok   docs/reporting/figures/pca-landscape/register-status.md:12: NR-006 row reads 36.109
+  ok   docs/reporting/figures/pca-landscape/captions-draft.md:20: 36.109 -> NR-006
+  ok   docs/reporting/figures/pca-landscape/captions-draft.md:20: 27.364 -> NR-005
+  ok   docs/reporting/figures/pca-atlas/SPEC.md:77: 36.109 -> NR-006
+  ok   docs/reporting/figures/pca-atlas/SPEC.md:78: 27.364 -> NR-005
+  ok   docs/reporting/figures/pca-atlas/register-status.md:11: NR-005 row reads 27.364
+  ok   docs/reporting/figures/pca-atlas/register-status.md:12: NR-006 row reads 36.109
+  ok   docs/reporting/figures/pca-atlas/captions-draft.md:19: 36.109 -> NR-006
+  ok   docs/reporting/figures/pca-atlas/captions-draft.md:19: 27.364 -> NR-005
+  note docs/reporting/figures/machine-evolution-strip/register-status.md:11: NR-005 row is descriptive (no numeral)
+  note docs/reporting/figures/machine-evolution-strip/register-status.md:12: NR-006 row is descriptive (no numeral)
+  ok   docs/reporting/drafts/2026-10-08-report-first-draft.md:77: 36.109 -> NR-006
+  ok   docs/reporting/drafts/2026-10-08-report-first-draft.md:78: 27.364 -> NR-005
+  ok   zero cite defects across the ten lines and every surface
+  ok   landscape cites NR-045 on all four surfaces ['SPEC.md', 'captions-draft.md', 'label-ledger.txt', 'register-status.md']
+  ok   atlas carries no NR-045 cite (0 md mentions, none drawn)
+
+[stamps] the recut stamps
+  pca-landscape projection: projection: z-scored 10-gene matrix, SVD · variance shares NR-044 · script commit e23f226
+  ok   landscape projection stamp reads its signed form
+  pca-landscape source: source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044, NR-045
+  ok   landscape source stamp cites NR-044 and NR-045
+  pca-atlas projection: projection: z-scored 10-gene matrix, SVD · gene values over all 930 designs · script commit e23f226
+  pca-atlas source: source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044
+  ok   atlas source stamp cites NR-044 only
+  ok   pca-landscape: stamp script commit == manifest script_commit (e23f226)
+  ok   pca-atlas: stamp script commit == manifest script_commit (e23f226)
+
+[recompute] projection, fits, coords, counts, and the NR-045 anchors
+  ok   31 generation indices per island, 10 draws each, 930 rows (NR-001, NR-045)
+  ok   status counts {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11} == NR-002
+  shares: PC1 22.434667  PC2 17.263044  pair 39.697710
+  ok   shares reproduce NR-044
+  ok   PC1 loadings reproduce NR-044 at 4 dp
+  ok   PC2 loadings reproduce NR-044 at 4 dp
+  ok   common seed 36.109 ok on every island (NR-006)
+  ok   NR-045 anchors hold: winner from gen 26, held to gen 30, closing step 0.951
+  ok   seed and winner coordinates reproduce the kit pins
+
+[runchecks] the three new in-script checks and the run log
+  ok   generation-count check present in the generator
+  ok   drawn-share checks present in the generator
+  ok   checks.log: generation indices per island: [31, 31, 31] (OK)
+  ok   checks.log: PC1 share (1 dp drawn): 22.4 (OK)
+  ok   checks.log: PC2 share (1 dp drawn): 17.3 (OK)
+
+========================================================================
+SUMMARY: 74 ok, 2 notes, 0 FAIL
+  note: docs/reporting/figures/machine-evolution-strip/register-status.md:11: NR-005 row is descriptive (no numeral)
+  note: docs/reporting/figures/machine-evolution-strip/register-status.md:12: NR-006 row is descriptive (no numeral)
+re-census read at tip 5f9dc9f7555d5f960d6ea9936ba02455d15ee18b
+kit bytes pinned at d6d4db9406726c0a49ab16f05b9d6234b34c9244
+VERDICT: CLEAN
+========================================================================
