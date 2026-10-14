@@ -1,7 +1,8 @@
 # Handover: the reporting room queue
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`. **Updated** 2026-10-14 for the v0.40 span, the item-8 and item-5 closes, the counter-reads and the consultation-record flip call.
+**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
+**Updated** 2026-10-14 for the v0.40 span, the item-8 and item-5 closes, the counter-reads and the consultation-record flip call.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -25,11 +26,11 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The branch tip reads `f030fe6`.
 
-- Draft v0.40 at `0e7d396`. Sections 3.4 to 3.6 carry the decision shape. Section 2.3 carries the k = 2.24 story, with the sweep table, the two retirements, one paragraph per side and the sizing pair. The objective block and the rename read at section 2.4. The appendix carries the delivered pins (`ef36c6c`). Section 4.1 reads the detector forms.
+- Draft v0.40 at `0e7d396`. Sections 3.4 to 3.6 carry the decision shape. Section 2.3 carries the k = 2.24 story. It holds the sweep table, the two retirements, one paragraph per side and the sizing pair. The objective block and the rename read at section 2.4. The appendix carries the delivered pins (`ef36c6c`). Section 4.1 reads the detector forms.
 
 - The era call stays open, as routed. No ruling moves.
 
-- The register holds append-only at `d2bf63d`. The item-8 append lands two blocks at `a7d09eb` (54 lines added, none removed; no signed row changed). NR-046 signed at `4a86e6f`. NR-047 and NR-048 signed at `07e2eb9`.
+- The register holds append-only at `d2bf63d`. The item-8 append lands two blocks at `a7d09eb` (54 lines added, none removed. No signed row changed). NR-046 signed at `4a86e6f`. NR-047 and NR-048 signed at `07e2eb9`.
 
 - The room-consultation record joins the exempt class (`a7d09eb`). The flip call reads kept.
 
@@ -41,7 +42,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - STE: the draft reads 6,281 words, total held at 6. The tracker reads 2,542 words, total held at 10.
 
-- Landings above the seat pages since the first write: this page (`13df740`), the claim audit (`90cd692`) and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). The later span takes the appendix re-pin (`ef36c6c`), the objective block (`57c77cf`) and the consistency sweep (`7dd91a9`). It adds the term gate (`cadf83d`) and the review-copy last mile (`d9d4fc4`). The span takes the rows 6 and 7 records (`9ae8097`), the safety pass (`ed3d202`) and sweeps 22 to 24. It closes with the k-sweep display-row sign (`07e2eb9`), the item-5 extract (`96adbf8`), the k-story fold (`12a5753`) and sweep 25 (`bbc214e`). The span then takes the item-8 aero leg (`8d3b61d`), the item-5 counter-read (`d0679d3`), the figures seat page (`7fc0717`), the v0.40 decision shape (`ad56692`), sweep 26 (`a359061`), the v0.40 counter-read (`3ac48af`) and the v0.40 glance (`f030fe6`).
+- Landings above the seat pages since the first write: this page (`13df740`), the claim audit (`90cd692`) and the Harris-3.5 deltas (`671ab96`, `e4ff3c1`). The later span takes the appendix re-pin (`ef36c6c`), the objective block (`57c77cf`) and the consistency sweep (`7dd91a9`). It adds the term gate (`cadf83d`) and the review-copy last mile (`d9d4fc4`). The span takes the rows 6 and 7 records (`9ae8097`), the safety pass (`ed3d202`) and sweeps 22 to 24. It closes with the k-sweep display-row sign (`07e2eb9`), the item-5 extract (`96adbf8`), the k-story fold (`12a5753`) and sweep 25 (`bbc214e`). The span then takes the item-8 aero leg (`8d3b61d`), the item-5 counter-read (`d0679d3`) and the figures seat page (`7fc0717`). It adds the v0.40 decision shape (`ad56692`) and sweep 26 (`a359061`). It ends with the v0.40 counter-read (`3ac48af`) and the v0.40 glance (`f030fe6`).
 
 ## Open queue, in fold order
 
@@ -49,7 +50,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 2. **@author: AU9 and the partner-gated tails.** PL13 closed at `ad56692`. The AU9 gate cells and the tails follow at this seat.
 
-3. **@author and @fig-img-diagrams: the kMppt ask (founder).** The records read 3.55 and 5.39 as retired k_mppt values. The open pieces: a plainer pass on the structural-side sentence, and the kMppt-space graphic from the earlier exploration. The earlier MPPT x twist sweeps hold that study; the era-fit flag gates any cite. The row-5 plate draws this campaign's sweep and waits on Rod's visual pass.
+3. **@author and @fig-img-diagrams: the kMppt ask (founder).** The records read 3.55 and 5.39 as retired k_mppt values. The open pieces: a plainer pass on the structural-side sentence, and the kMppt-space graphic from the earlier exploration. The earlier MPPT x twist sweeps hold that study. The era-fit flag gates any cite. The row-5 plate draws the sweep of this campaign and waits on the visual pass by Rod.
 
 4. **@hermes (lead) and @science-writer: the Nomenclature fold.** The term gate cleared at `cadf83d`. The fold closes the last pending section. The three projection terms sit in the candidates for Track D.
 
@@ -57,7 +58,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 6. **@science-validator: PL12 on request and the item-5 forms.** The item-5 counter-read closed at `d0679d3`, no discrepancy found. The printed forms of the fold take rows at this seat first. The PL12 verification facts stand on request.
 
-7. **@fig-img-diagrams: the visual pass on rows 4 to 7, then the folds.** The ring lead flag closed-held at the capture form 15.033 (NR-021). The k-basis plate and the Harris-3.5 pair wait on the same pass.
+7. **@fig-img-diagrams: the visual pass on rows 4 to 7.** Then the folds. The ring lead flag closed-held at the capture form 15.033 (NR-021). The k-basis plate and the Harris-3.5 pair wait on the same pass.
 
 8. **@hermes: the map.** Delta maps, route notes and receipts stay at this seat. Keep this page current as items close.
 
