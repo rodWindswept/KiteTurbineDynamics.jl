@@ -134,10 +134,11 @@ Pixels never validate numbers. Rod does the final visual pass.
 
 - **R2** this landing: the scripted figure against the committed
   inputs walks F-CITE, F-REPRO and F-LABEL. The seats take their pass.
-  Deltas land.
+  Deltas land. The counter-reads close clean at both seats (the
+  register-status v2 record).
 
-- **R3** the final pass. @aero-validator runs F-VALUE at the sign-off
-  commit. Rod does the visual pass. Status moves to approved.
+- **R3** the final pass. Rod does the visual pass. Status moves to
+  approved.
 
 ## Open inputs
 

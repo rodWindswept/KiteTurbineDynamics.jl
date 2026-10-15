@@ -45,7 +45,7 @@ full roster around them.
 | 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
 | 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
 | 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
-| 16 | 8 | §3.2 | Convergence and the status mix (two panels) | `convergence` | R2 | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054 and NR-055. The status mix reads the three island telemetry files (generations 0 to 30) | The build lands (script `0db99ac`): two panels, "first feasibility, then mass", 22 checks, 0 fail, and F-REPRO byte-identical across three locations. The reject labels take the NR-055 forms. Next: the counter-reads (the aero F-VALUE and the science register read), then the visual pass by Rod |
+| 16 | 8 | §3.2 | Convergence and the status mix (two panels) | `convergence` | R2 | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054 and NR-055. The status mix reads the three island telemetry files (generations 0 to 30) | The build lands (script `0db99ac`): two panels, "first feasibility, then mass", 22 checks, 0 fail, and F-REPRO byte-identical across three locations. The reject labels take the NR-055 forms. The counter-reads close clean: F-VALUE PASS (`24111e5` + `7956a39`, 39 + 2 checks) and the register read (`1b09190` + `c15af17`, 97 checks). Next: the visual pass by Rod, then the fold |
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
@@ -530,3 +530,14 @@ three slots).
   commit. The in-script set reads 22 checks, 0 fail. F-REPRO stays
   byte-identical across three locations. Next: the counter-reads, then
   the visual pass by Rod.
+
+- **v49 (2026-10-15):** the convergence counter-reads fold back (row 16).
+  F-VALUE closes clean at the aero seat (`24111e5` + `7956a39`): the
+  census reads 39 checks and the repro walk 2 checks, 0 fail, and the
+  drawn geometry inverts to the counts, the star and the curve
+  vertices. The register read closes clean at the science seat
+  (`1b09190` + `c15af17`): 97 checks, 0 fail, with NR-042, NR-045,
+  NR-046 and NR-015 backing the remaining drawn tokens. The seed-form
+  query resolves. The kit's counter-read set is complete, and the
+  visual pass by Rod stands next. The register-status note takes delta
+  v2 and the SPEC rounds take the closure. No plate byte moves.

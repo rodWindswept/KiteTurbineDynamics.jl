@@ -57,9 +57,12 @@ F-LABEL: the self-check passes. The ledger carries every drawn string
 
 ## Validator gates
 
-The counter-reads open at the seats: F-VALUE at the aero seat, the
-register read at the science seat. A fresh F-VALUE runs at the
-sign-off commit. Any render or pin move needs a new pass.
+The counter-reads closed clean (2026-10-15). F-VALUE ran at the aero
+seat (`24111e5` + `7956a39`): a census of 39 checks and 2 repro
+checks, 0 fail. The register read ran at the science seat (`1b09190`
++ `c15af17`): 97 checks, 0 fail. The kit's counter-read set is
+complete. The visual pass by Rod stands next. Any render or pin move
+needs a new pass.
 
 ## Reproduce
 
@@ -74,3 +77,9 @@ The run log sits at `checks.log`.
 **Delta** v1 (2026-10-15): created with the kit landing. The build
 carries the recorded merge of map row 16 (v47) and the NR-055 label
 set.
+
+**Delta** v2 (2026-10-15): the counter-reads close clean. The aero
+F-VALUE census reads 39 checks and 2 repro checks, 0 fail. The
+register read reads 97 checks, 0 fail. The seed-form query resolves
+and the plate prints no generation tag. The kit's counter-read set is
+complete, and the visual pass by Rod stands next.

@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat and the convergence build (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat, the convergence build and its counter-read closures (2026-10-15).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -26,9 +26,9 @@ Next: the visual pass by Rod, then the fold. The winner plate reads §3.3, ahead
 2. **The convergence two-panel build (row 16).** The build lands at
 map v48: the generator (`0db99ac`) and the kit
 `docs/reporting/figures/convergence/`. The in-script set reads 22
-checks, 0 fail, and F-REPRO holds across three locations. Next: the
-counter-reads (the aero F-VALUE and the science register read), then
-the visual pass by Rod.
+checks, 0 fail, and F-REPRO holds across three locations. The
+counter-reads close clean (the aero F-VALUE and the register read).
+Next: the visual pass by Rod.
 
 
 ## Closed, last (evidence index)
@@ -183,4 +183,4 @@ the visual pass by Rod.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate and rows 4 to 7). The convergence figure joins after its counter-reads.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate, rows 4 to 7 and the convergence figure).
