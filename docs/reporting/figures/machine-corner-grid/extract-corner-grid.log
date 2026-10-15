@@ -1,0 +1,52 @@
+machine-corner-grid / extract-corner-grid
+generated: 2026-10-15T13:42:41.437
+run-id: corner-grid-extract-2026-10-15-picks
+dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
+physics era: post-95c385d_wind-authority
+script commit: b02ecdfda677021a86f996ec4ab11023236b1fd5
+worktree: dirty (other seats' files present; this mint reads only committed data)
+inputs:
+  island_1/telemetry.csv sha256 6f359c33f174d5dc98b1252e29fdba6eac8dbae15dd71d46ef8bbed6acc9bd2f
+  island_2/telemetry.csv sha256 54172ce5a64b22903a2428f870b499f13da53c6b065600d8a01edfd882b29827
+  island_3/telemetry.csv sha256 34d40e8ea960a1e04c83df58df9e24047cfcf7eb3deff3278807f1147b8d60b0
+
+ANCHORS (NR-044, re-verified before any row writes)
+  rows: 930  (OK)
+  feasible rows: 508  (OK)
+  PC1 share x1e6: 224347  (OK)
+  PC2 share x1e6: 172630  (OK)
+  seed pc1 3dp: 0.531  (OK)
+  seed pc2 3dp: -1.297  (OK)
+  winner pc1 3dp: 0.885  (OK)
+  winner pc2 3dp: 2.869  (OK)
+  seed fit: 36.109  (OK)
+  winner fit: 27.364  (OK)
+  winner island: 3  (OK)
+  shares 10dp basis: 22.4346665772/17.2630436556  (OK)
+window: pc1 [-5.133, 1.671]  pc2 [-2.178, 3.125]
+
+PICKS (the signed set, NR-051)
+  low PC1 / low PC2: i1-g13-i1  pc (-1.454423, -1.238178)  dist 3.796523  fit 60.646000
+  low PC1 / high PC2: i1-g7-i7  pc (-2.088227, 0.152353)  dist 4.254840  fit 58.864000
+  high PC1 / low PC2: i2-g21-i4  pc (1.132051, -1.488592)  dist 0.874883  fit 33.704000
+  high PC1 / high PC2: i3-g26-i8  pc (1.679755, 3.050611)  dist 0.074376  fit 33.812000
+
+CERTIFICATE
+  [1] NR-044 anchors: 12 of 12 gate passed
+  [2] the picks equal the signed set (NR-051): PASS
+  [3] the tokens byte-read from the source rows, 128 fields: PASS
+  [4] the objective forms read the NR-051 display set (60.646 / 58.864 / 33.704 / 33.812): PASS
+  [5] feasibility and the objective bound above the winner: PASS
+  [6] the pc columns re-read as written: PASS
+
+BOUNDARIES (travel with this extract)
+  - the projection reads the raw draw columns x1..x10 (NR-044 boundary 1)
+  - the picks are typical machines, not optima (NR-051 boundary 2)
+  - the recorded diagonal cross-check note holds (NR-051 boundary 3)
+
+RENDER-SET USE
+  - the family-grid mode of the machine-renderer SPEC (corner variant):
+    four panels, one per corner, one fixed scale at GENERATE
+
+OUTPUTS
+  extract-corner-grid.csv sha256 03abd0c660e0ad22db89f767a7b033c18db82f67dde69593c31cbb3a3919a4d5

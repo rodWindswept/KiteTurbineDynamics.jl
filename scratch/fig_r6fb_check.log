@@ -1,0 +1,31 @@
+  OK   map: the closure phrase reads 5 times
+  OK   map: no row still reads the aero counter-read next-gate
+  OK   map: row 23 records the extract mint
+  OK   map: delta v38 present
+  OK   map: delta v37 still present
+  OK   map: v38 holds the five-row closure sentence
+  OK   map: v38 records the form-note hold
+  OK   map: v38 records the corner open
+  OK   et note: form note present
+  OK   et note: no-drawn-text line
+  OK   hero note: form note present
+  OK   hero note: no-drawn-text line
+  OK   et hold site reads
+  OK   hero hold site 1 reads
+  OK   hero hold site 2 reads
+  OK   hero hold site 3 reads
+  OK   hero hold site 4 reads
+  OK   the five hold sites count exactly
+  OK   seat: header refresh line
+  OK   seat: corner item reads the pinned extract
+  OK   seat: visual pass item
+  OK   seat: closure in the closed index
+  OK   seat: corner open in the closed index
+  OK   seat: next action line
+  OK   receipt exists
+  OK   extract exists
+  OK   receipt carries the closure commit
+  OK   receipt carries the extract name
+  OK   extract carries four data rows
+
+checks: 29, fail: 0

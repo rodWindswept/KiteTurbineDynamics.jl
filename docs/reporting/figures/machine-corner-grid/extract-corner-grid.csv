@@ -1,0 +1,14 @@
+# machine-corner-grid / extract-corner-grid.csv
+# run-id: corner-grid-extract-2026-10-15-picks
+# dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
+# provenance: era=post-95c385d_wind-authority  telemetry git=a76c5e927252118abf2b2ff6bd988395583d5113
+# source: the island telemetry rows named by the tag column; picks per NR-051; projection per NR-044
+# selection: for each [1,99] percentile window corner of the certified PC1-PC2 projection, the feasible (ok) design of least Euclidean distance; one pick per corner; no interpolation
+# display: the objective prints at 3 dp (NR-051); the identity prints as the island-gen-idx tag
+# gene slots: x1 r_hub | x2 r_bot | x3 target_Lr | x4 n_lines | x5 density_profile | x6 rotor-mask proxy | x7 bank_top | x8 bank_bot | x9 blade_scale_top | x10 blade_scale_bottom
+# computing commit: b02ecdfda677021a86f996ec4ab11023236b1fd5
+corner,tag,island,gen,idx,fitness,status,P_mean,P_end,T_lift,FoS,twist_crossed,twist_ratio,clearance,n_lines,rings,n_active,r_hub,r_bot,bank_top,bank_bot,blade_scale_top,blade_scale_bottom,tether,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,pc1,pc2
+low PC1 / low PC2,i1-g13-i1,1,13,1,60.646,ok,6.01,6.07,727.06,6.22,false,0.3278418284972728,4.79,7,7,2,2.399,1.195,10.7,3.6,0.985,1.0,18.8,2.399439,1.195302,2.1,7.0,0.03504,1.854575,10.739909,3.612695,0.985266,1.0,-1.454422719460881,-1.2381783660964074
+low PC1 / high PC2,i1-g7-i7,1,7,7,58.864,ok,5.33,5.36,793.41,7.07,false,0.19968888742726157,5.22,8,11,2,2.872,1.195,2.5,7.1,0.981,0.759,18.8,2.872468,1.195302,1.3099,8.0,-0.416824,1.952533,2.507705,7.126852,0.980572,0.759349,-2.088226639859835,0.15235262029499194
+high PC1 / low PC2,i2-g21-i4,2,21,4,33.704,ok,5.59,5.59,401.26,9.83,false,0.18280723242156358,5.21,3,6,1,4.516,1.195,15.3,5.5,1.0,0.973,18.8,4.5161,1.195302,2.205128,3.0,0.233211,1.0,15.28452,5.534872,1.0,0.973156,1.1320505630841722,-1.4885916539902184
+high PC1 / high PC2,i3-g26-i8,3,26,8,33.812,ok,5.9,5.9,375.46,13.54,false,0.22674937106443144,5.61,3,6,1,4.314,1.195,0.0,22.0,0.966,0.2,18.8,4.313549,1.195302,2.571577,3.0,-0.8,1.007551,0.00353,22.0,0.965775,0.2,1.6797549581527265,3.050611156709037

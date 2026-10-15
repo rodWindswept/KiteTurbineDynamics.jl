@@ -1,0 +1,59 @@
+PROJECTION (re-derived)
+  OK   rows 930
+  OK   feasible 508
+  OK   PC1 share x1e6 224347
+  OK   PC2 share x1e6 172630
+  OK   seed pc 3dp (0.531, -1.297)
+  OK   winner pc 3dp (0.885, 2.869)
+  OK   seed fit 36.109
+  OK   winner fit 27.364
+  OK   winner island 3
+  OK   shares 10dp basis
+PICKS (re-derived vs the signed set)
+  OK   low PC1 / low PC2 -> i1-g13-i1
+  OK   low PC1 / high PC2 -> i1-g7-i7
+  OK   high PC1 / low PC2 -> i2-g21-i4
+  OK   high PC1 / high PC2 -> i3-g26-i8
+EXTRACT
+  OK   the extract file exists
+  OK   four data rows
+  OK   corner order reads the NR-051 order
+  OK   tags read the signed set
+  OK   tags distinct
+  OK   i1-g13-i1: source row unique
+  OK   i1-g13-i1: 32 fields byte-equal to the source row
+  OK   i1-g13-i1: pc 6dp reads NR-051 (-1.454423, -1.238178)
+  OK   i1-g13-i1: fitness token reads NR-051
+  OK   i1-g13-i1: fitness rounds as its own 3dp token
+  OK   i1-g13-i1: feasible and above the winner
+  OK   i1-g13-i1: pc columns equal the live re-derivation
+  OK   i1-g7-i7: source row unique
+  OK   i1-g7-i7: 32 fields byte-equal to the source row
+  OK   i1-g7-i7: pc 6dp reads NR-051 (-2.088227, 0.152353)
+  OK   i1-g7-i7: fitness token reads NR-051
+  OK   i1-g7-i7: fitness rounds as its own 3dp token
+  OK   i1-g7-i7: feasible and above the winner
+  OK   i1-g7-i7: pc columns equal the live re-derivation
+  OK   i2-g21-i4: source row unique
+  OK   i2-g21-i4: 32 fields byte-equal to the source row
+  OK   i2-g21-i4: pc 6dp reads NR-051 (1.132051, -1.488592)
+  OK   i2-g21-i4: fitness token reads NR-051
+  OK   i2-g21-i4: fitness rounds as its own 3dp token
+  OK   i2-g21-i4: feasible and above the winner
+  OK   i2-g21-i4: pc columns equal the live re-derivation
+  OK   i3-g26-i8: source row unique
+  OK   i3-g26-i8: 32 fields byte-equal to the source row
+  OK   i3-g26-i8: pc 6dp reads NR-051 (1.679755, 3.050611)
+  OK   i3-g26-i8: fitness token reads NR-051
+  OK   i3-g26-i8: fitness rounds as its own 3dp token
+  OK   i3-g26-i8: feasible and above the winner
+  OK   i3-g26-i8: pc columns equal the live re-derivation
+  OK   header: run-id
+  OK   header: dataset line
+  OK   header: computing commit full hash
+  OK   header: gene slots line
+  OK   the log records the extract sha256
+  OK   the log records the certificate
+  OK   the log records all four tags
+
+checks: 54, fail: 0
