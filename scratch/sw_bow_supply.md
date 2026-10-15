@@ -41,10 +41,18 @@ probe gives one.
   The probe at the aero seat supplies the winner read.
   The register row signs that read, and the report sentence cites the row.
 
+- **The stations.** The record reads the bow at three named stations.
+  The profile max is the per-ring perpendicular offset from the design axis.
+  The hub offset is the perpendicular offset of the hub itself.
+  The founder form is the midpoint ring belly drop from the common axis.
+  Every number carries its value, its station and its state.
+
 - **The founder line.** The founder reads a midpoint ring belly drop of 1.5 m
   from the common axis as highly concerning.
   That figure is the rigid-tilt estimate, and the ruling bars it as a result.
-  The probe read meets the founder line, not the row.
+  A read meets the founder line at the same station and the same state.
+  A comparison across stations waits for a mapping clause, and the read states
+  the map.
 
 - **Depth.** Later revisions of the report go deeper on the bow.
 
@@ -69,6 +77,11 @@ probe gives one.
 
 - `docs/plans/ACTIVE.md` carries the open item this row closes for the winner:
   the settle and the ODE agree on the bowed shape.
+
+- `scratch/diag_bow_shape.jl` prints the per-ring `r_perp` table and a
+  max-bow line beside the hub offset, so the founder station costs no extra read.
+  The station naming in section 4 comes from the science-validator read of
+  2026-10-15.
 
 ## 6. Evidence set
 
