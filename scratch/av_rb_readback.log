@@ -1,0 +1,40 @@
+av_rb readback — the rope-break gate placement fix (final)
+local 2026-10-15T17:31:35Z
+
+local  HEAD: 3d4ff66f0c946720ea99f038a039d2bc0b4012a3
+origin head: 3d4ff66f0c946720ea99f038a039d2bc0b4012a3
+local == origin: YES
+
+carried blobs (local hash == origin blob):
+  ok  docs/reporting/room-responses/aero-validator-2026-10-15-rope-break-gate-placement.md
+  ok  handovers/handover-2026-10-14-reporting-room-aero-validator.md
+  ok  src/types.jl
+  ok  src/initialization.jl
+  ok  src/simulation.jl
+  ok  src/rope_forces.jl
+  ok  src/objective_evaluator.jl
+  ok  test/test_rope_break.jl
+  ok  scratch/av_rb_placement_check.jl
+  ok  scratch/av_rb_placement_check.log
+  ok  scratch/av_rb_placement_island3.csv
+  ok  scratch/av_rb_warm_extract.jl
+  ok  scratch/av_rb_warm_extract.log
+  ok  scratch/av_rb_warm_extract/island_1_warm_10ms.csv
+  ok  scratch/av_rb_warm_extract/island_2_warm_10ms.csv
+  ok  scratch/av_rb_warm_extract/island_3_warm_10ms.csv
+  ok  scratch/av_rb_ab_check.jl
+  ok  scratch/av_rb_ab_check.log
+  ok  scratch/av_rb_compare.py
+  ok  scratch/av_rb_compare.log
+  ok  scratch/av_rb_stock_probe.log
+  ok  scratch/av_rb_test_rope_break.log
+  ok  scratch/av_rb_suite.log
+  ok  scratch/av_rb_timeprobe.jl
+  ok  scratch/av_rb_genome_check.jl
+
+carried blobs: 25 checked, 0 bad
+
+commits (84ac158..HEAD):
+3d4ff66 docs(handovers): the aero seat page takes the rope-break placement fix — the closed index gains the fix (code seat, 317d9cd) and the next action moves to the register fold (aero seat)
+317d9cd docs(reporting): room response — the rope-break gate placement fix lands (aero-validator): the evaluator arms break detection at the relax boundary (2026-09-16 ruling); acceptance reads the control latch at the recorded step, cold parity on all three winners, the fixed path reproducing the condition CSV at 0.000e+00; warm re-runs complete on all three islands with the fresh extract; R4 + suite green (aero seat)
+2bf76a3 fix(objective): the rope-break gate is armed at the relax boundary — detection on the measurement window only (2026-09-16 ruling)
