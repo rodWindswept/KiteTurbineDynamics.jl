@@ -61,7 +61,7 @@ takes the NR-051 row at `cb862df`, append-only.
 - The scan-entry call for the retired ring name sits with the room, per
   the round-6 legs receipt.
 
-- One bypass is declared: the two stale-phrases extract revs join the
+- One bypass stands: the two stale-phrases extract revs join the
   evidence with `--no-verify` (quoted record text at 3.40 and 3.28).
   A room call, not a rule change. The class question rides this receipt.
 
