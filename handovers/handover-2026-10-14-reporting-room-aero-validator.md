@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `317d9cd` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands, `2bf76a3` + `317d9cd`; all carried blobs byte-verified at origin).
+**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +32,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The placement label re-cut counter-read read at `feaaa82`. The vector census reads two drawn strings (the label and the footer script-commit stamp refresh), one box, zero values. The manifest pins recompute. F-REPRO holds at four locations. The register join verifies (the three extract blobs vs NR-013 ext2). The figures checker re-runs at this seat at 63 checks, 0 fail. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-eval-timeline-recut-counterread.md`. Evidence `scratch/av_et_pl_*`.
 
 - The rope-break gate placement fix (the aero code seat): read at `317d9cd`. The evaluator arms break detection at the relax boundary (2026-09-16 ruling). The placement check reads 5 checks, 0 fail; the fixed path reproduces the condition CSV at 0.000e+00; cold parity holds on all three winners; the warm extract stands for the register. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-rope-break-gate-placement.md`. Evidence `scratch/av_rb_*`.
 
@@ -98,4 +100,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the register fold for the warm extract sits with @science-validator. The section 4.1 rewrite and the eval-timeline label fold behind the fix. The next copy counter-read keys on the next draft fold. The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
+**Owner:** @aero-validator. **Next action:** the section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
