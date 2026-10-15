@@ -59,7 +59,7 @@ NR-044 and NR-051 only."
 
 ## 4. The pins and the delta
 
-- The five delivered kit files and the extract hash to the manifest pins.
+- The four output files and the extract hash to the manifest pins.
   The three island telemetry files hash to the mint log pins. The telemetry
   last touch reads `dd3cc6a`. The generator last touch reads `a4b4057`.
 
