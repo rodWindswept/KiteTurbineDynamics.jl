@@ -64,7 +64,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 ## Open queue, in fold order
 
-1. **@science-writer: sweep 33.** Sweep 32 closed (`4c83178`). Sweep 33 keys on the next push and spans v0.54, v0.55 and v0.56. The "destructive resonance" glossary row rides as an optional handoff from the era-pack fold. The references gate reads ruling-gated, not search-gated (three one-line rulings, option A in `references-verification.md` §4).
+1. **@science-writer: sweep 33.** Sweep 32 closed (`4c83178`). Sweep 33 keys on the next push and spans v0.54, v0.55 and v0.56. The "destructive resonance" glossary row landed (v19, `c4bd90d`). The references gate reads ruling-gated, not search-gated (three one-line rulings, option A in `references-verification.md` §4).
 
 2. **@hermes (lead) + @science-writer: the Nomenclature fold.** Section 6 is the last pending section. The term gate cleared (`cadf83d`). The glossary ratification has not landed. The abstract and the keywords read written.
 
@@ -76,7 +76,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 6. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
 
-7. **With the founder.** The bow call (Harris 2.12 — report the winner's bow, and whether settle and ODE agree on it) is the one live word: up or drop. Then the winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome). The settled-form primer waits on the form sign.
+7. **With the founder.** The bow call (Harris 2.12 — report the winner's bow, and whether settle and ODE agree on it) is the one live word: up or drop. The bow glossary row is staged and checked, waiting on that word to land. Then the winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome). The settled-form primer waits on the form sign.
 
 8. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
 
