@@ -1,0 +1,19 @@
+# av_item21_environment_probe.log — the item-2.1 environment reads (shear law, hub wind pair, settled basis)
+# stamp: 2026-10-15T20:52:49Z (aero-validator seat)
+# base: 94f338c (branch bank-derate-cos2p65)
+av_item21_environment_probe — the item-2.1 environment reads
+generated: 2026-10-15T20:52:56.092  seat: aero-validator
+library: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/KiteTurbineDynamics.jl
+base: 94f338c (branch bank-derate-cos2p65)
+
+SITE_ANCHOR = WindSiteSpec("Tulloch, Daisy (measured)", 10.0, 4.8, 0.14285714285714285)
+shear_exp   = 0.14285714285714285  (1/7 = 0.14285714285714285)
+
+site_wind(4.8000) = 10.000000
+site_wind(9.4000) = 11.007738
+site_wind(9.4117) = 11.009694
+site_wind(8.9140) = 10.924573
+site_shear(9.4117, 9.4117) = 1.000000000000
+site_shear(9.4117, 4.8)    = 0.908290428006
+
+all checks pass
