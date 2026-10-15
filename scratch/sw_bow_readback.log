@@ -1,0 +1,26 @@
+readback  2026-10-15T22:31:32Z
+local HEAD 8f11e7d700e32a630adbfbf390f0167cacbee730
+origin     8f11e7d700e32a630adbfbf390f0167cacbee730
+range      6b6a0e1..8f11e7d
+
+ok    docs/reporting/glossary-candidates.md
+ok    docs/reporting/room-responses/science-writer-2026-10-15-bow-row-landing.md
+ok    scratch/sw_bptr_supply.md
+ok    scratch/sw_bow_supply.md
+ok    scratch/sw_bow_fold.py
+ok    scratch/sw_bow_fold.log
+ok    scratch/sw_bow_check.py
+ok    scratch/sw_bow_check.log
+ok    scratch/sw_bow_ste_variants.py
+ok    scratch/sw_bow_ste_variants.log
+ok    scratch/sw_bow_off_base.txt
+ok    scratch/sw_bow_off_new.txt
+ok    scratch/sw_bow_base.md
+ok    scratch/sw_bow_new.md
+
+14 of 14 carried blobs byte-verified at origin, 0 mismatch
+
+commits in the range:
+8f11e7d docs(reporting): the bow-row-landing receipt (science-writer seat): docs/reporting/room-responses/science-writer-2026-10-15-bow-row-landing.md records the bow row landing at v20 — base c0d82058355ce53118d675ed30162b43 at HEAD 6b6a0e1, result 8a4bcbf75a42a8ee6a87e3e097bc9d6d, fold scratch/sw_bow_fold.py 37 checks 0 fail, checker scratch/sw_bow_check.py 39 checks 0 fail, row census 141 to 143 and line count 400 to 409, the aero desk read folded into the third sentence and the guard row, the ground cell moved off docs/agents/physics-topology.md onto the 2026-09-15 ruling and the 2026-09-12 handover sections 2 and 5, and the stations rule for the bow value (value plus station plus state, the founder line met same-station and same-state) — STE rc=0 at 0.00/100w on the receipt; no draft byte moves and the register takes no change
+84b19c7 docs(reporting): the bow supply takes the stations note and the receipt (science-writer seat): the founder line is met same-station and same-state, and every bow number carries its value, its station and its state (the profile max, the hub offset, and the founder form of the midpoint ring belly drop), from the science-validator read of 2026-10-15, with scratch/diag_bow_shape.jl named as the instrument that prints the per-ring table and the max-bow line so the founder station costs no extra read; the receipt docs/reporting/room-responses/science-writer-2026-10-15-bow-row-landing.md records the landing at 0d10323 (base c0d82058355ce53118d675ed30162b43 at HEAD 6b6a0e1, result 8a4bcbf75a42a8ee6a87e3e097bc9d6d, fold 37 checks 0 fail, checker 39 checks 0 fail, STE rc=0 at 0.15/100w on the receipt and 0.00/100w on the supply); no draft byte moves and the register takes no change
+0d10323 docs(reporting): the bow row lands at the science-writer seat (science-writer seat): the founder word is "up" (2026-10-15), so the row staged at v19 lands at v20 — section 2 takes the bow row after the destructive-resonance row and section 7 takes its guard row as the last row of the retire table, the status line moves to PREP v20, and one v20 delta bullet records the landing (row census 141 to 143, line count 400 to 409, a line-level diff proving the only changes are the status replace and three inserts); the third sentence takes the aero desk's ruling-consistent form ("the stack does not translate sideways: the bow is a rearrangement in which the lines reorient at near-constant length", DECISIONS.md [2026-09-15] ruling 2) and the guard row mirrors it (sideways move, or a stack translation, retires to the line rearrangement at near-constant length); the ground cell drops docs/agents/physics-topology.md, which carries no bow entry, and cites the 2026-09-15 ruling plus the 2026-09-12 handover sections 2 and 5; the row is numbers-free, so the winner read stays a binding slot for the register; base pin c0d82058355ce53118d675ed30162b43 at HEAD 6b6a0e1, candidate 8a4bcbf75a42a8ee6a87e3e097bc9d6d; fold scratch/sw_bow_fold.py reads 37 checks 0 fail, checker scratch/sw_bow_check.py reads 39 checks 0 fail (row census 143, line count 409, the register untouched, no draft byte moves); STE rc=0 at 0.29/100w on the glossary with the offender set unchanged (15 before, 15 after) and 0.00/100w on the new supply; the v19 supply keeps its text and takes a dated superseded pointer
