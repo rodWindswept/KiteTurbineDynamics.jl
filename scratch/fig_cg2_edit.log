@@ -1,0 +1,11 @@
+phase 1 ok: all pairs match exactly once
+STE docs/reporting/figures/figure-map.md: rc=0 fig_cg2_map_candidate.md         words=5064 total= 96 per100w=  1.90 em_dash=11
+STE docs/reporting/figures/machine-corner-grid/README.md: rc=0 fig_cg2_readme_candidate.md      words= 250 total=  3 per100w=  1.20 em_dash= 0
+STE docs/reporting/figures/machine-corner-grid/register-status.md: rc=0 fig_cg2_rstatus_candidate.md     words= 448 total=  6 per100w=  1.34 em_dash= 0
+STE handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: rc=0 fig_cg2_seatpage_candidate.md    words=1208 total= 16 per100w=  1.32 em_dash= 0
+diff docs/reporting/figures/figure-map.md: +8 -1 (new-file lines changed: [55, 474, 475, 476, 477, 478, 479, 480])
+diff docs/reporting/figures/machine-corner-grid/README.md: +4 -0 (new-file lines changed: [39, 40, 41, 42])
+diff docs/reporting/figures/machine-corner-grid/register-status.md: +5 -0 (new-file lines changed: [70, 71, 72, 73, 74])
+diff handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: +4 -2 (new-file lines changed: [4, 22, 25, 26])
+facts written: scratch/fig_cg2_facts.json
+dry run: no files written (use --write)

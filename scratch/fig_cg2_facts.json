@@ -1,0 +1,50 @@
+{
+  "base_commit": "ed95cf1",
+  "files": {
+    "docs/reporting/figures/figure-map.md": {
+      "add": 8,
+      "rem": 1,
+      "add_lines": [
+        55,
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480
+      ]
+    },
+    "docs/reporting/figures/machine-corner-grid/README.md": {
+      "add": 4,
+      "rem": 0,
+      "add_lines": [
+        39,
+        40,
+        41,
+        42
+      ]
+    },
+    "docs/reporting/figures/machine-corner-grid/register-status.md": {
+      "add": 5,
+      "rem": 0,
+      "add_lines": [
+        70,
+        71,
+        72,
+        73,
+        74
+      ]
+    },
+    "handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md": {
+      "add": 4,
+      "rem": 2,
+      "add_lines": [
+        4,
+        22,
+        25,
+        26
+      ]
+    }
+  }
+}

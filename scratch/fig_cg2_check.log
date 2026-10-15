@@ -1,0 +1,33 @@
+ok   map: row 23 takes the register read closure
+ok   map: row 23 takes the copy closure
+ok   map: the old next-tail reads zero
+ok   map: delta v43
+ok   map: delta v42 holds
+ok   map: delta v41 holds
+ok   map: the closure commits read twice each
+ok   README: the register read line
+ok   README: the copy closure line
+ok   README: the closure closer
+ok   README: the fold paragraph holds
+ok   README: the pins sentence holds
+ok   register: delta v4
+ok   register: the copy closure
+ok   register: delta v3 holds
+ok   register: delta v2 holds
+ok   register: the sign cite holds
+ok   seat page: the refresh line
+ok   seat page: the open item takes the closure
+ok   seat page: the closed entry
+ok   seat page: the old open form reads zero
+ok   seat page: the fold entry holds
+ok   facts: map +8 -1
+ok   facts: map changed lines
+ok   facts: README +4 -0
+ok   facts: register +5 -0
+ok   facts: seat page +4 -2
+ok   STE rc=0 docs/reporting/figures/figure-map.md
+ok   STE rc=0 docs/reporting/figures/machine-corner-grid/README.md
+ok   STE rc=0 docs/reporting/figures/machine-corner-grid/register-status.md
+ok   STE rc=0 handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md
+
+31 checks, 0 fail

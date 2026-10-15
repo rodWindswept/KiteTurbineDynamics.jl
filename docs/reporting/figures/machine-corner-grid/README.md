@@ -36,6 +36,10 @@ The visual pass by Rod reads clean (2026-10-15). The fold lands
 (draft v0.51, §3.4): the seat marker joins the field pair, and the
 figure-provenance appendix takes the eighth exhibit row and its hashes.
 
+The register read closes clean (`7e68f0e`, 107 checks): the drawn set reads
+NR-051 to the signed digits. The v0.51 copy counter-read closes clean
+(`ed95cf1`, 304 checks). The train is closed at this seat.
+
 ## Delivered files
 
 - `machine-corner-grid.png` / `.svg` / `.pdf` carry the plate.

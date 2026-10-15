@@ -67,3 +67,8 @@ sign commit `cb862df`. No drawn value moves.
 lands (draft v0.51): the seat marker joins the field pair at §3.4, and
 the figure-provenance appendix takes the eighth exhibit row and its
 hashes. No drawn value moves.
+
+**Delta** v4 (2026-10-15): the register read closes clean (`7e68f0e`,
+107 checks): the drawn set reads NR-051 to the signed digits, and the
+seat marker cites NR-044 and NR-051 only. The v0.51 copy counter-read
+closes clean (`ed95cf1`, 304 checks). No drawn value moves.
