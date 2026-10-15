@@ -1,0 +1,353 @@
+== 0. preflight ==
+ffc63a7
+-- working tree status, gated files (foreign entries only)
+-- tip readback
+ffc63a7 chore(scratch): the lifting-bridles legs readback — every carried blob byte-verified at origin; local == origin (science-writer)
+0	0
+== 1. span enumeration ==
+-- all commits, 4ded913..HEAD (count first)
+24
+-- draft movers
+8169e36 docs(reporting): draft v0.49 — the lifting-bridles caption and the winner-form re-keys land (author seat): the two system-anatomy caption files take the caption form ('Three lifting bridles run from the bearing into the main rotor.'); the draft load-path sentence takes it ('bearing, and down the lifting bridles to the main rotor.'); the three winner-exhibit sites take the winner form (the section 3.3 marker, the appendix exhibit row and the caption lead) and the slug holds as the internal identifier; the pin refreshes to v0.49, dated 2026-10-15; tracker entry; declared token diff (draft add 49, remove 48; tracker add 49; captions and captions-draft hold); changed-line census exact (draft 3, 484, 539, 946, 994; captions 39; captions-draft 23); hero census 4 to 1 (the slug); STE rc=0 (author seat)
+6f19eee docs(reporting): the lifting-bridles relabel lands — the F1 chain label reads 'lifting bridles (three)' (script commit 9241b23): the generator re-run carries the TeX, the prototype and the ledger; three full runs byte-identical across all five outputs; the corner-grid cite findings close (both cites take cb862df) and the counter-reads fold back (857f2c1, 153 checks); the map row 10 title takes the winner form; manifest, register note, captions token, SPEC, map v40, the draft appendix pins (v0.48) and the tracker take the pins; receipt and evidence set; STE under the gate (figures seat)
+-- tracker movers
+8169e36 docs(reporting): draft v0.49 — the lifting-bridles caption and the winner-form re-keys land (author seat): the two system-anatomy caption files take the caption form ('Three lifting bridles run from the bearing into the main rotor.'); the draft load-path sentence takes it ('bearing, and down the lifting bridles to the main rotor.'); the three winner-exhibit sites take the winner form (the section 3.3 marker, the appendix exhibit row and the caption lead) and the slug holds as the internal identifier; the pin refreshes to v0.49, dated 2026-10-15; tracker entry; declared token diff (draft add 49, remove 48; tracker add 49; captions and captions-draft hold); changed-line census exact (draft 3, 484, 539, 946, 994; captions 39; captions-draft 23); hero census 4 to 1 (the slug); STE rc=0 (author seat)
+6f19eee docs(reporting): the lifting-bridles relabel lands — the F1 chain label reads 'lifting bridles (three)' (script commit 9241b23): the generator re-run carries the TeX, the prototype and the ledger; three full runs byte-identical across all five outputs; the corner-grid cite findings close (both cites take cb862df) and the counter-reads fold back (857f2c1, 153 checks); the map row 10 title takes the winner form; manifest, register note, captions token, SPEC, map v40, the draft appendix pins (v0.48) and the tracker take the pins; receipt and evidence set; STE under the gate (figures seat)
+-- candidates movers
+97eefdc docs(reporting): the lifting-bridles term set lands at the science-writer seat — the candidates take v17: the term row (lifting bridles (gold lifting bridles)), the chain list, the cyan-line guard (the founder read: never a lifting bridle), the lift-bearing cone reference and the retire row take the founder form; eight inserts and the old form zero outside the ban quote; the status reads PREP v17 with the v17 delta. The figure notes take the two routed sites (13, the floor list; 30, the distinction); the deferred style line at 23 is enumerated in the receipt. The fold runs assertion-guarded (all hunks closed; scratch/sw_br_fold.py); the checker reads 28 checks, 0 fail; the collateral probe: gold bridles reads 3 doc flags and 0 skill hits, bare bridles reads 20 and 4, so the retirement rides the dated note and the scan-entry call stays with the room. STE rc=0 (candidates 0.25, offender set entry-for-entry; the notes edits add no offender line). The stale-phrases file lands in the next commit (legacy STE class). (science-writer)
+-- stale-phrases movers
+b32bbb2 docs(agents): the stale-phrases list re-forms the lifting-bridles sites — the replacement texts take the founder form (the member and the bearing_offset 3D length) and the dated note records the retirement under the carrying entry; the scan entry: the gold bridles probe reads three doc flags (physics-topology two, CONTEXT one) and the bare form reads twenty plus four skill hits, so no bare entry lands (the hub precedent). STE note: whole-file legacy class, 3.28 -> 3.21 per100w; committed with --no-verify for that legacy class and its quoted-record extract set (a room call, not a rule change; matching the 50e0300 precedent); doc currency reads its one standing item, skill currency reads clean, both at the baseline; the class question rides the legs receipt. (science-writer)
+-- register movers and numstat (append-only check)
+-- numstat, gated files, d0ed902..8169e36 (draft) and 4ded913..HEAD (tracker)
+10	10	docs/reporting/drafts/2026-10-08-report-first-draft.md
+12	0	docs/reporting/draft-tracker.md
+-- zero-diff readback: draft 8169e36 vs HEAD
+-- zero-diff readback: register cb862df vs HEAD
+-- ancestry of span revs
+4ded913 OK
+d0ed902 OK
+6f19eee OK
+8169e36 OK
+cb862df OK
+97eefdc OK
+b32bbb2 OK
+382727c OK
+ffc63a7 OK
+== 2. extracts ==
+   999 scratch/sw_sweep31_draft_v047.md
+   999 scratch/sw_sweep31_draft_v048.md
+   999 scratch/sw_sweep31_draft_v049.md
+   392 scratch/sw_sweep31_tracker_base.md
+   404 scratch/sw_sweep31_tracker_tip.md
+   374 scratch/sw_sweep31_candidates_base.md
+   380 scratch/sw_sweep31_candidates_tip.md
+    89 scratch/sw_sweep31_sp_base.md
+    90 scratch/sw_sweep31_sp_tip.md
+  4726 total
+== 2b. span diffs ==
+67 scratch/sw_sweep31_draft_diff.txt
+-- added non-blank lines; removed non-blank lines
+10
+10
+-- per-mover added non-blank lines
+6
+5
+23 scratch/sw_sweep31_tracker_diff.txt
+== 3. token tools: draft (three revs) ==
+== d0ed902 -> 6f19eee ==
+arrivals: {'48': 1}
+removals: {'47': 1}
+  [arr 48] Internal engineering report. Draft v0.48. Date 2026-10-14.
+  [rem 47] Internal engineering report. Draft v0.47. Date 2026-10-14. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+
+== 6f19eee -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'48': 1}
+  [arr 49] Internal engineering report. Draft v0.49. Date 2026-10-15. | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [rem 48] Internal engineering report. Draft v0.48. Date 2026-10-14.
+
+== cumulative d0ed902 -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'47': 1}
+== d0ed902 -> 6f19eee ==
+lines: +6 -6; raw token occurrences: added 1, removed 1
+arrivals: {'48': 1}
+removals: {'47': 1}
+  [ARR 48 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.48. Date 2026-10-14.
+  [REM 47 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.47. Date 2026-10-14.
+
+== 6f19eee -> 8169e36 ==
+lines: +5 -5; raw token occurrences: added 2, removed 2
+arrivals: {'49': 1}
+removals: {'48': 1}
+  [ARR 49 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.49. Date 2026-10-15.
+  [REM 48 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.48. Date 2026-10-14.
+
+== cumulative d0ed902 -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'47': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  47: net -1, raw added 0, raw removed 1
+  OK  49: net +1, raw added 1, raw removed 0
+== d0ed902 -> 6f19eee ==
+raw token occurrences: added 1, removed 1
+
+== 6f19eee -> 8169e36 ==
+raw token occurrences: added 2, removed 2
+  net-out pair 10:
+    - [Figure seated: figure-map row 10 (machine winner hero, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+    + [Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+
+== 3b. token tools: tracker ==
+== 4ded913 -> 6f19eee ==
+arrivals: {'2': 1, '48': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 48] v0.48 pass by @fig-img-diagrams (2026-10-15).
+
+== 6f19eee -> 8169e36 ==
+arrivals: {'49': 1}
+removals: none
+  [arr 49] v0.49 pass by @author (2026-10-15).
+
+== cumulative 4ded913 -> 8169e36 ==
+arrivals: {'2': 1, '48': 1, '49': 1}
+removals: none
+== 4ded913 -> 6f19eee ==
+lines: +6 -0; raw token occurrences: added 2, removed 0
+arrivals: {'2': 1, '48': 1}
+removals: none
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +1: The re-cut takes the chain label "lifting bridles (three)" (figure-map row 2; the founder note of 2026-10-15).
+  [ARR 48 net+1] raw: added-side 1, removed-side 0
+      +1: v0.48 pass by @fig-img-diagrams (2026-10-15).
+
+== 6f19eee -> 8169e36 ==
+lines: +6 -0; raw token occurrences: added 1, removed 0
+arrivals: {'49': 1}
+removals: none
+  [ARR 49 net+1] raw: added-side 1, removed-side 0
+      +1: v0.49 pass by @author (2026-10-15).
+
+== cumulative 4ded913 -> 8169e36 ==
+arrivals: {'2': 1, '48': 1, '49': 1}
+removals: none
+
+== identity check (net == added - removed over the span) ==
+  OK  2: net +1, raw added 1, raw removed 0
+  OK  48: net +1, raw added 1, raw removed 0
+  OK  49: net +1, raw added 1, raw removed 0
+== 4. STE gates and offenders ==
+-- sw_sweep31_draft_v047
+sw_sweep31_draft_v047.md         words=6889 total=  8 per100w=  0.12 em_dash= 2
+[HOOK:ste] sw_sweep31_draft_v047.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep31_draft_v047.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+14
+-- sw_sweep31_draft_v049
+sw_sweep31_draft_v049.md         words=6887 total=  8 per100w=  0.12 em_dash= 2
+[HOOK:ste] sw_sweep31_draft_v049.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep31_draft_v049.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+14
+-- sw_sweep31_tracker_base
+sw_sweep31_tracker_base.md       words=2927 total= 11 per100w=  0.38 em_dash= 1
+[HOOK:ste] sw_sweep31_tracker_base.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep31_tracker_base.md: semicolon x2 -> replace ';' with a period — write two sentences. (ste-writing)
+14
+-- sw_sweep31_tracker_tip
+sw_sweep31_tracker_tip.md        words=3033 total= 12 per100w=  0.40 em_dash= 1
+[HOOK:ste] sw_sweep31_tracker_tip.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep31_tracker_tip.md: semicolon x3 -> replace ';' with a period — write two sentences. (ste-writing)
+14
+-- sw_sweep31_candidates_base
+sw_sweep31_candidates_base.md    words=4687 total= 12 per100w=  0.26 em_dash= 1
+[HOOK:ste] sw_sweep31_candidates_base.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep31_candidates_base.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+16
+-- sw_sweep31_candidates_tip
+sw_sweep31_candidates_tip.md     words=4733 total= 12 per100w=  0.25 em_dash= 1
+[HOOK:ste] sw_sweep31_candidates_tip.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep31_candidates_tip.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+16
+-- sw_sweep31_sp_base
+sw_sweep31_sp_base.md            words= 610 total= 20 per100w=  3.28 em_dash= 5
+[HOOK:ste] sw_sweep31_sp_base.md: long_sentence(>20w) x2 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep31_sp_base.md: semicolon x8 -> replace ';' with a period — write two sentences. (ste-writing)
+15
+-- sw_sweep31_sp_tip
+sw_sweep31_sp_tip.md             words= 623 total= 20 per100w=  3.21 em_dash= 5
+[HOOK:ste] sw_sweep31_sp_tip.md: long_sentence(>20w) x2 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep31_sp_tip.md: semicolon x8 -> replace ';' with a period — write two sentences. (ste-writing)
+15
+-- offdiffs (draft, tracker, candidates, sp)
+20 scratch/sw_sweep31_offdiffs.txt
+== 5. greps (v049) ==
+-- retired word hub (expect zero)
+0
+hub: zero
+-- hero census (expect the slug only)
+484:[Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+-- winner-form census
+946:| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+994:Machine winner:
+3
+-- lifting-bridles census
+539:bearing, and down the lifting bridles to the main rotor.
+-- bridle hold senses (expect 46, 190, 848)
+46:outer stiffening bridles sit outside the model.
+190:A line is a tension member, like a tether or a bridle. It carries a load
+539:bearing, and down the lifting bridles to the main rotor.
+848:- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+-- topmost census (lines)
+212:The topmost ring carries the main rotor. The lowest ring is the ground
+225:topmost-ring and ground radii, and the rotor count sets how many rings carry
+490:The capture topmost ring
+505:| Topmost ring radius | 4.580 m | NR-011 |
+571:topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+612:The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
+689:The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
+786:| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+794:the topmost ring (2026-08-26).
+-- the count sentence, winner pair, title
+870:The search found 508 feasible candidates in the searched space (NR-002).
+871:The best performing one had a mean power of 5.309 kW.
+71:  Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+521:Its airborne mass reads 25.698 kilograms (NR-018).
+708:The winner produces 5.309 kW of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
+872:Its airborne mass is 25.698 kilograms (NR-008, NR-018).
+606:### 3.4 The levers of Performance
+-- display guard forms and superseded reads
+guards: no loose hit
+-- brackets and seated markers
+827:  [2.24 holds a register row (NR-015). The other values need rows
+891:[Daisy values need register rows before the final report quotes
+7
+-- held tokens
+299:Rows k 1.94 to 3.0:
+303:| 1.94 | ok | 7.56 | 15.80 | 40.1 |
+788:| 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+789:| 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+818:  default gain. The scaled system gain sat near 1.94. The window power
+823:  the campaign gain returned 5.18 kW.
+350:closed form no longer holds. Its product, 3.55, stays flagged
+393:tokens (3.55, the version-history numerals, the open-request numerals,
+-- head status and stubs
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.49. Date 2026-10-15.
+
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+Numbers come only from signed register rows, cited by row ID.
+
+A section marked [PENDING] waits on a gate.
+
+**Draft status.** This is an internal draft.
+8:A section marked [PENDING] waits on a gate.
+894:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+-- naming-trap near-hits (expect zero live)
+near-hits: none
+-- cited commits resolve
+dd3cc6a OK
+a76c5e9 OK
+31ca00d OK
+74cfef9 OK
+9cecee3 OK
+671ab96 OK
+e23f226 OK
+c438398 OK
+1af63fc OK
+d243b37 OK
+9241b23 OK
+-- hex refs in draft v049
+65
+== 5b. phrase census (flat) ==
+1x down the lifting bridles
+2x Machine winner
+1x machine winner
+1x machine-winner-hero
+1x The search found 508 feasible candidates in the searched space (NR-002).
+1x The best performing one had a mean power of 5.309 kW.
+1x Its airborne mass is 25.698 kilograms (NR-008, NR-018).
+1x The levers of Performance
+6x topmost ring
+1x topmost rotor ring
+1x the topmost-ring and ground radii
+1x The capture topmost ring
+1x The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
+3x 22 degrees
+2x shaft transition cone
+1x physics-validation era
+1x pass, P_end 5.314 kW
+1x 15.0 on 2.5
+1x pass, 15.0 minimum
+1x the warm path rejects healthy winners
+1x It never allows breaks
+1x Torsional capacity
+== 6. register anchors ==
+-- NR-002
+28:| NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
+-- NR-008
+34:| NR-008 | Winner P_mean (island 3) | 5.309 / P_end 5.314 | kW | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+-- NR-018
+200:| NR-018 | Winner airborne mass (island 3) | 25.69846825623688 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
+-- NR-021
+328:| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03323714455441065 = 0.033223570205929 + 1.3574348481652112e-5, FoS 30.086820435580936. R3 0.033548608446737266 = 0.03354237801917142 + 6.230
+-- NR-046
+1388:| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * 
+-- NR-048
+1537:| NR-048 | The sizing-side pair for the k = 2.24 story: the load-step sizing case and the k-easing refusal | Sizing load case = a bounded generator load step (nominal `k_mppt × 2`), measured `F_helix ≈ 1278 N/vertex` on the hub segment. The lull is ben
+-- NR-051
+1780:| NR-051 | The corner-grid picks (v13 5 kW screen): four machines, one per PC1-PC2 window corner, at the least feasible distance | The picks stand in the blocks below | kg-equivalent, PC units | `scratch/fig_cg_picks.py` and its log. The island telemetry 
+== 7. review copy readback ==
+24f98df65d7274233bfea9cc9e736937  scratch/report-pdf-build/draft-live.docx
+## Build record (builder output)
+
+This block is builder output. It sits outside the report proper and does
+not pass the STE gate.
+
+Draft: `8169e36` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+
+Register: `v1 ROWS SIGNED (2026-10-08, science-validator). See the sign-off` — file at `cb862df`
+
+Citation check: 42 cited, every one signed (51 signed rows total), uncited: NR-024, NR-031, NR-033, NR-034, NR-035, NR-037, NR-038, NR-041, NR-051 — checker exit 0
+
+Seats resolved: 7 of 7 — `system-anatomy`, `machine-winner-hero`, `ring-utilisation`, `twist-limit`, `pca-landscape`, `pca-atlas`, `machine-evolution-strip`
+
+Embed route: SVG vector-first, PNG fallback; kits embedded as shipped,
+nothing re-rendered
+
+Toolchain: pandoc 3.1.3 → DOCX (A4 reference doc, LibreOffice review copy)
+
+-- copy inputs diff, 8169e36..HEAD (draft + register; expect empty)
+-- figures diffs since stamp (records and the unseated corner kit)
+1
+== 8. plate pins (seated kits, sha256) ==
+ce3dee1282941a71819c4a23125a141b84f6fca4611803f8b8a0d8590b33fab6  docs/reporting/figures/ring-utilisation/ring-utilisation.svg
+bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3  docs/reporting/figures/ring-utilisation/ring-utilisation.png
+cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28  docs/reporting/figures/twist-limit/twist-limit.svg
+14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069  docs/reporting/figures/twist-limit/twist-limit.png
+30dc05bcfaf391afccd485af3fa733c1eb69210b205c69ca75e846819220ce45  docs/reporting/figures/eval-timeline/eval-timeline.svg
+024c391728e06dc500b0a9be52912c031f2fc9945d55d09243cc5a7377953400  docs/reporting/figures/eval-timeline/eval-timeline.png
+6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e  docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.svg
+8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6  docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.png
+0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993  docs/reporting/figures/machine-winner-hero/machine-winner-hero.svg
+fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6  docs/reporting/figures/machine-winner-hero/machine-winner-hero.png
+c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c  docs/reporting/figures/system-anatomy/system-anatomy.pdf
+696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66  docs/reporting/figures/system-anatomy/system-anatomy.png
+== 9. freeze check (levers-reading block) ==
+block md5 (as written): 7bbd964db09d2b33269ce5cb8c334054
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054
+== 10. pins check (appendix cells) ==
+  Parameter atlas [png]: MATCH 1e46b70a vs cell 1e46b70a
+  Parameter atlas [svg]: MATCH 28c032cf vs cell 28c032cf
+  Parameter atlas [pdf]: MATCH aede4d29 vs cell aede4d29
+  Parameter atlas [ledger]: MATCH d3a2bcb1 vs cell d3a2bcb1
+  UNKNOWN exhibit heading: 'Machine winner' — add its EX row
+pins recomputed: 24, match: 24, mismatch: 0
+== done ==

@@ -1,0 +1,25 @@
+== d0ed902 -> 6f19eee ==
+lines: +6 -6; raw token occurrences: added 1, removed 1
+arrivals: {'48': 1}
+removals: {'47': 1}
+  [ARR 48 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.48. Date 2026-10-14.
+  [REM 47 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.47. Date 2026-10-14.
+
+== 6f19eee -> 8169e36 ==
+lines: +5 -5; raw token occurrences: added 2, removed 2
+arrivals: {'49': 1}
+removals: {'48': 1}
+  [ARR 49 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.49. Date 2026-10-15.
+  [REM 48 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.48. Date 2026-10-14.
+
+== cumulative d0ed902 -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'47': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  47: net -1, raw added 0, raw removed 1
+  OK  49: net +1, raw added 1, raw removed 0

@@ -1,0 +1,24 @@
+== 4ded913 -> 6f19eee ==
+lines: +6 -0; raw token occurrences: added 2, removed 0
+arrivals: {'2': 1, '48': 1}
+removals: none
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +1: The re-cut takes the chain label "lifting bridles (three)" (figure-map row 2; the founder note of 2026-10-15).
+  [ARR 48 net+1] raw: added-side 1, removed-side 0
+      +1: v0.48 pass by @fig-img-diagrams (2026-10-15).
+
+== 6f19eee -> 8169e36 ==
+lines: +6 -0; raw token occurrences: added 1, removed 0
+arrivals: {'49': 1}
+removals: none
+  [ARR 49 net+1] raw: added-side 1, removed-side 0
+      +1: v0.49 pass by @author (2026-10-15).
+
+== cumulative 4ded913 -> 8169e36 ==
+arrivals: {'2': 1, '48': 1, '49': 1}
+removals: none
+
+== identity check (net == added - removed over the span) ==
+  OK  2: net +1, raw added 1, raw removed 0
+  OK  48: net +1, raw added 1, raw removed 0
+  OK  49: net +1, raw added 1, raw removed 0

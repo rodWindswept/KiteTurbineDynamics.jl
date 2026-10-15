@@ -1,0 +1,9 @@
+== sweep 31 final checks — science-writer, 2026-10-15 ==
+1. section alone, --fail-above 0.01: rc=0, 0.00/100w (words 897)
+2. record sim, --fail-above 2.0: rc=0, 0.06/100w
+3. block-list diff after the summary header: empty
+4. offender delta: header-only
+5. apply: cmp against the sim: equal
+6. record post-apply, --fail-above 2.0: rc=0, 0.06/100w
+7. seat page, --fail-above 2.0: (appended with the close)
+8. receipt, --fail-above 2.0: (appended with the close)

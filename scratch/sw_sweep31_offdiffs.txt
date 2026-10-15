@@ -1,0 +1,20 @@
+1c1
+< == scratch/sw_sweep31_draft_v047.md: words=6889 total=8 per100w=0.12 ==
+---
+> == scratch/sw_sweep31_draft_v049.md: words=6887 total=8 per100w=0.12 ==
+1c1
+< == scratch/sw_sweep31_tracker_base.md: words=2927 total=11 per100w=0.38 ==
+---
+> == scratch/sw_sweep31_tracker_tip.md: words=3033 total=12 per100w=0.4 ==
+1c1
+< == scratch/sw_sweep31_candidates_base.md: words=4687 total=12 per100w=0.26 ==
+---
+> == scratch/sw_sweep31_candidates_tip.md: words=4733 total=12 per100w=0.25 ==
+1c1
+< == scratch/sw_sweep31_sp_base.md: words=610 total=20 per100w=3.28 ==
+---
+> == scratch/sw_sweep31_sp_tip.md: words=623 total=20 per100w=3.21 ==
+4c4
+<   [27w] Replacement: bridles and the cyan line are different lines: bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line).
+---
+>   [29w] Replacement: lifting bridles and the cyan line are different lines: lifting bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line).

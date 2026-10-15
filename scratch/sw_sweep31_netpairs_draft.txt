@@ -1,0 +1,9 @@
+== d0ed902 -> 6f19eee ==
+raw token occurrences: added 1, removed 1
+
+== 6f19eee -> 8169e36 ==
+raw token occurrences: added 2, removed 2
+  net-out pair 10:
+    - [Figure seated: figure-map row 10 (machine winner hero, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+    + [Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+

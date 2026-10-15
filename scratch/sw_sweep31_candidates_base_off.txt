@@ -1,0 +1,16 @@
+== scratch/sw_sweep31_candidates_base.md: words=4687 total=12 per100w=0.26 ==
+-- sentences over 20 words --
+-- passive constructions --
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | **Crossing limit (the twist bridge).** The row above is the proposed display form. The cen
+  | | Do not write | Write | Ground |
+  | - **v4 (2026-10-08):** a structural-limit group joins as section 6: the
+  | - **v9 (2026-10-12):** two caption compounds join. The register machine
+  | - **v12 (2026-10-13):** two items from the founder docx return join the
+

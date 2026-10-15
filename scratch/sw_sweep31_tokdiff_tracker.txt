@@ -1,0 +1,14 @@
+== 4ded913 -> 6f19eee ==
+arrivals: {'2': 1, '48': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 48] v0.48 pass by @fig-img-diagrams (2026-10-15).
+
+== 6f19eee -> 8169e36 ==
+arrivals: {'49': 1}
+removals: none
+  [arr 49] v0.49 pass by @author (2026-10-15).
+
+== cumulative 4ded913 -> 8169e36 ==
+arrivals: {'2': 1, '48': 1, '49': 1}
+removals: none

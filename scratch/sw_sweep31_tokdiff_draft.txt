@@ -1,0 +1,15 @@
+== d0ed902 -> 6f19eee ==
+arrivals: {'48': 1}
+removals: {'47': 1}
+  [arr 48] Internal engineering report. Draft v0.48. Date 2026-10-14.
+  [rem 47] Internal engineering report. Draft v0.47. Date 2026-10-14. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+
+== 6f19eee -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'48': 1}
+  [arr 49] Internal engineering report. Draft v0.49. Date 2026-10-15. | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [rem 48] Internal engineering report. Draft v0.48. Date 2026-10-14.
+
+== cumulative d0ed902 -> 8169e36 ==
+arrivals: {'49': 1}
+removals: {'47': 1}
