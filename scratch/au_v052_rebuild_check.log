@@ -1,0 +1,52 @@
+PASS record: draft b6cd166
+PASS record: register at cb862df
+PASS record: 8 of 8 seats
+PASS record: 43 cited, every one signed (51 total), checker exit 0
+PASS record: built 2026-10-15T16:31:15Z
+PASS md5 parity live == archived build  [3c386dc289f70d6d26f65c7df06fb993]
+PASS md5 reads 3c386dc289f70d6d26f65c7df06fb993
+PASS media entries == 8 (eight seats)  [8]
+PASS docx probe 'v0.52' == 1  [got 1]
+PASS docx probe 'v0.51' == 0  [got 0]
+PASS docx probe 'v0.50' == 0  [got 0]
+PASS docx probe 'At the top of the shaft the rotor turns in the wind.' == 1  [got 1]
+PASS docx probe 'The whole shaft turns with the rotor.' == 1  [got 1]
+PASS docx probe 'The shaft passes the torque from ring to ring.' == 1  [got 1]
+PASS docx probe 'The lowest ring turns the generator at the ground stati' == 1  [got 1]
+PASS docx probe 'The shaft works only under tension.' == 1  [got 1]
+PASS docx probe 'Tension gives the shaft its capacity to transmit torque' == 1  [got 1]
+PASS docx probe 'With low tension the shaft bends and twists.' == 1  [got 1]
+PASS docx probe 'A slack shaft cannot carry the load.' == 1  [got 1]
+PASS docx probe 'Under the generator load the machine settles onto one o' == 1  [got 1]
+PASS docx probe 'In the settled state the shaft runs twisted along its l' == 1  [got 1]
+PASS docx probe 'Three lifting bridles' == 1  [got 1]
+PASS docx probe 'Three bridles' == 0  [got 0]
+PASS docx probe 'down the lifting bridles' == 1  [got 1]
+PASS docx probe 'Machine winner hero' == 0  [got 0]
+PASS docx probe 'Machine winner' == 2  [got 2]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'topmost rotor ring' == 2  [got 2]
+PASS docx probe 'topmost ring radius' == 3  [got 3]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx text layer: 'machine-winner-hero' == 3  [3]
+PASS docx text layer: 'hero' == 3, every hit sits in the slug  [3]
+PASS docx text layer: word 'hub' == 5 (register-appendix holds)  [5]
+PASS draft: pin reads v0.52
+PASS draft: v0.51 reads 0
+PASS draft: block present once
+PASS draft: block digit-free
+PASS draft: NR-049 sentence held
+PASS draft: system-anatomy marker held once
+PASS tracker: v0.52 entry present
+PASS tracker: v0.51 entry held
+PASS assembled: 'v0.52' reads 1  [1]
+PASS assembled: 'v0.51' reads 0
+PASS assembled: block first sentence reads 1
+PASS assembled: block closing sentence reads 1
+PASS assembled: 8 figure roster blocks  [8]
+PASS assembled: 'unresolved' reads 0
+
+50 checks, 0 fail
