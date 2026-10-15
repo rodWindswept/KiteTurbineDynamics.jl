@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.53. Date 2026-10-15.
+Internal engineering report. Draft v0.54. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -522,6 +522,9 @@ Its operating point reads as follows.
 | Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
 | Lift-line elevation | 70 deg | NR-026 |
 | Lift-line tension | 324.1 N | NR-010 |
+| Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+| Ring speed ratio | 5.566 | NR-031 |
+| Tip-speed ratio | 6.8415 | NR-032 |
 
 Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
 The machine held a steady operating point through the measurement window.
@@ -531,6 +534,17 @@ The machine accelerates through the relax run.
 
 Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
 Its airborne mass reads 25.698 kilograms (NR-018).
+
+The swept area reads 45.9733 square metres raw and 39.4912 square
+metres on the wind-normal basis (NR-033). The air density reads
+1.225 kilograms per cubic metre (NR-034).
+
+The rotor Cp reads from the AeroDyn v5.0.0 blade element momentum
+(BEM) table: 0.2944 at the ring speed ratio, and 0.2258 at the
+tip-speed ratio (NR-031, NR-032).
+
+The Betz ceiling reads 19.1304 kW, and the winner delivers 27.75 per
+cent of it (NR-034).
 
 The winner clears each checked gate.
 
@@ -542,6 +556,15 @@ The winner clears each checked gate.
 | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
 | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
 | Rope break | none on the window | pass on the cold path | the warm path rejects healthy winners | NR-012, NR-013 |
+
+The gate set reads per class. The structural members and the lines
+hold a factor of safety of 2.5 or higher (NR-015).
+
+Torsion keeps its own criteria. The collapse factor of safety reads
+1.5 or higher, and the twist stays within the crossing limit (NR-052).
+
+The realisability floor reads 72.25 degrees (NR-053). As run, the
+2.5 gate does not cover torsion (NR-052).
 
 A lifter kite holds the machine aloft. The lifter gives lift only. It
 gives no torque and no drive.

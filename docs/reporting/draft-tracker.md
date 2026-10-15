@@ -307,6 +307,12 @@ The evaluator arms the rope-break check at the relax boundary, and detection run
 The corrected history cites NR-013 ext2.
 No value moves, and no figure byte moves.
 
+v0.54 pass by @author (2026-10-15).
+This pass completes the winner operating point at section 3.3 and prints the torsion clause.
+The operating table takes the reference wind speed, the ring speed ratio and the tip-speed ratio. The paragraph takes the swept-area set, the air density, the rotor Cp and the Betz check (NR-031 to NR-034).
+The gate set prints per class, with the torsion criteria and the realisability floor (NR-052, NR-053).
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
