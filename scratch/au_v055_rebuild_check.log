@@ -1,0 +1,72 @@
+PASS record: draft 2e930a8
+PASS record: register at a51e9d9
+PASS record: 8 of 8 seats
+PASS record: 52 cited, every one signed (58 total), checker exit 0
+PASS record: built 2026-10-15T21:27:15Z
+PASS md5 parity live == archived build  [4c4384146bbba1d56938814e60741d18]
+PASS md5 reads 4c4384146bbba1d56938814e60741d18
+PASS media entries == 8 (eight seats)  [8]
+PASS docx probe 'v0.55' == 1  [got 1]
+PASS docx probe 'v0.54' == 0  [got 0]
+PASS docx probe 'v0.52' == 0  [got 0]
+PASS docx probe 'The reject class splits three ways' == 1  [got 1]
+PASS docx probe 'The 301 rejects split three ways' == 1  [got 1]
+PASS docx probe '96 ran below the 5 kW power floor.' == 2  [got 2]
+PASS docx probe 'Four ran at or above 5 kW with a factor of safety below' == 2  [got 2]
+PASS docx probe 'The cause is not logged for the remaining 201.' == 2  [got 2]
+PASS docx probe 'Hellmann' == 2  [got 2]
+PASS docx probe 'Shaft elevation' == 1  [got 1]
+PASS docx probe 'hub at 9.4000' == 1  [got 1]
+PASS docx probe 'The reported trace runs steady wind' == 1  [got 1]
+PASS docx probe 'steady-wind response, not a stability property' == 2  [got 2]
+PASS docx probe 'NR-055' == 3  [got 3]
+PASS docx probe 'NR-056' == 2  [got 2]
+PASS docx probe 'NR-057' == 2  [got 2]
+PASS docx probe 'NR-058' == 2  [got 2]
+PASS docx probe '1/7' == 2  [got 2]
+PASS docx probe '10.0 m/s at 4.8 m' == 2  [got 2]
+PASS docx probe '30 deg' == 2  [got 2]
+PASS docx probe '9.4000' == 2  [got 2]
+PASS docx probe 'Reference wind speed' == 1  [got 1]
+PASS docx probe 'Ring speed ratio' == 1  [got 1]
+PASS docx probe 'Tip-speed ratio' == 1  [got 1]
+PASS docx probe 'The search found 508 feasible candidates in the searche' == 1  [got 1]
+PASS docx probe 'The best performing one had a mean power of 5.309 kW.' == 1  [got 1]
+PASS docx probe 'The fix has landed.' == 1  [got 1]
+PASS docx probe 'It never allows breaks.' == 1  [got 1]
+PASS docx probe 'does not cover torsion' == 1  [got 1]
+PASS docx probe 'The swept area reads' == 1  [got 1]
+PASS docx probe 'Torsion keeps its own criteria' == 1  [got 1]
+PASS docx probe 'The realisability floor reads 72.25 degrees (NR-053)' == 1  [got 1]
+PASS docx probe '2.5 gate does not cover torsion (NR-052)' == 1  [got 1]
+PASS docx probe 'The rapid path awaits its rope-break gate fix' == 0  [got 0]
+PASS docx probe 'The rapid path rejects all three winners' == 0  [got 0]
+PASS docx probe 'stays open' == 0  [got 0]
+PASS docx probe '11.01 m/s at 9.41 m' == 2  [got 2]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx probe '22 degrees' == 3  [got 3]
+PASS docx probe 'NR-049' == 3  [got 3]
+PASS docx probe 'NR-050' == 2  [got 2]
+PASS docx text layer 'The reject class splits three ways (NR-0' == 1  [got 1]
+PASS docx text layer 'The 301 rejects split three ways (NR-055' == 1  [got 1]
+PASS docx text layer 'The reported trace runs steady wind' == 1  [got 1]
+PASS docx text layer 'Hellmann power law, exponent 1/7' == 2  [got 2]
+PASS docx text layer 'least segment torque margin is 2.03' == 6  [got 6]
+PASS draft: pin reads v0.55
+PASS draft: v0.54 reads 0
+PASS draft: line count 1059  [1059]
+PASS draft: NR- count 250  [250]
+PASS draft: NR-013 ext2 reads 5
+PASS draft: fix-landed reads once
+PASS draft: placed-fix sentence reads 2
+PASS draft: split opens read once each
+PASS draft: subgroup lines read twice each
+PASS draft: new rows read once each
+PASS draft: swing note reads once
+PASS draft: cites read 2/1/1/1
+PASS tracker: v0.55 entry present
+PASS tracker: v0.54 history held
+
+69/69 checks passed
+ALL PASS
