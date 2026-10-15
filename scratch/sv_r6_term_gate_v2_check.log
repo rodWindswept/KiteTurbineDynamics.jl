@@ -1,0 +1,330 @@
+sv_r6_term_gate_v2_check — read at HEAD e6122a2 | origin e6122a2
+check: tip: read at the closure tip e6122a2: OK  e6122a2
+
+== A. the draft and the note ==
+check: draft: old form zero (raw and word): OK  
+check: draft: reads v0.47: OK  
+check: draft: topmost at the nine pinned lines: OK  [212, 225, 490, 505, 571, 612, 689, 786, 794]
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost ring carries the main rotor.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'topmost-ring and ground radii': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The top-segment helix force reads about 1278 N/vertex (NR-048).': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The capture topmost ring': OK  
+check: pin[2026-10-08-report-first-draft.md]: '| Topmost ring radius | 4.580 m | NR-011 |': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost rotor ring R6 governs the structural check at the winner ope': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost ring radius is 4.580 m and the ground radius is 0.804 m.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The middle rotor landed on the topmost ring.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'one ring toward the top': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The search found 508 feasible candidates in the searched space (NR-002).': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The best performing one had a mean power of 5.309 kW.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'Its airborne mass is 25.698 kilograms (NR-008, NR-018).': OK  
+check: pin[2026-10-08-report-first-draft.md]: '### 3.4 The levers of Performance': OK  
+check: pin[physics-topology.md]: 'Do not write "hub rotor". The word "hub" does not name the ring either.': OK  
+check: pin[physics-topology.md]: 'The part reads **topmost ring**, or **topmost rotor ring** in full (Rod,': OK  
+check: note: old form confined to the enumerated set: OK  [165, 202, 230, 232, 265, 288, 331, 332, 339, 395, 523, 543]
+check: draft and note: no change since d0ed902: OK  
+
+== B. the plates and the kits ==
+check: art[system-anatomy/system-anatomy.tex]: old form zero: OK  
+check: art[ring-utilisation/ring-utilisation.svg]: old form zero: OK  
+check: art[twist-limit/twist-limit.svg]: old form zero: OK  
+check: art[eval-timeline/eval-timeline.svg]: old form zero: OK  
+check: art[machine-winner-hero/machine-winner-hero.svg]: old form zero: OK  
+check: art[machine-evolution-strip/machine-evolution-strip.svg]: old form zero: OK  
+check: art: the delivered art files read (count): OK  6
+check: pin[system-anatomy.tex]: 'R6, the topmost ring': OK  
+check: pin[captions.md]: 'The topmost rotor ring R6 governs the structural check at FoS 15.033.': OK  
+check: pin[twist-limit.svg]: 'ground to top': OK  
+check: pin[eval-timeline.svg]: 'ω top': OK  
+check: pin[machine-winner-hero.jl]: 'topmost ring R6': OK  
+check: pin[captions.md]: 'topmost ring radius 4.580 m': OK  
+check: kits: every residue line enumerated: OK  []
+check: kits: the five form notes hold: OK  5
+check: pin[figure-map.md]: 'The five generator comment form notes hold': OK  
+check: pin[figure-map.md]: 'v38 (2026-10-15)': OK  
+check: pin[register-status.md]: '**Form note** (2026-10-15): one script comment at the head holds': OK  
+check: pin[register-status.md]: '**Form note** (2026-10-15): four script comments hold the old ring': OK  
+
+== C. the writer's legs ==
+check: tracker: old form zero (raw and word): OK  
+check: pin[draft-tracker.md]: 'the capture topmost ring reads 15.033 at the final step (NR-021).': OK  
+check: pin[draft-tracker.md]: 'the capture topmost ring reading keeps its form.': OK  
+check: candidates: old form at the ban-quote set only: OK  [77, 79, 263, 370]
+check: pin[glossary-candidates.md]: 'Never write "hub rotor" or "hub ring".': OK  
+check: pin[glossary-candidates.md]: '"hub rotor", or "hub" for a rotor or the ring': OK  
+check: pin[glossary-candidates.md]: '| topmost ring | The ring at the top of the TRPT.': OK  
+check: pin[glossary-candidates.md]: 'the hub-name retirement re-keys the ring pair': OK  
+check: stale-phrases: old form at the ban entry only: OK  [78, 80]
+check: pin[stale-phrases.md]: '## The topmost ring hosts ONLY the cp/ct rotor': OK  
+check: pin[stale-phrases.md]: "the decoder's topmost rotor": OK  
+check: pin[stale-phrases.md]: 'is not a rotor term, and it does not name the ring': OK  
+check: pin[stale-phrases.md]: 'Note (2026-10-14): the part reads "topmost ring", or "topmost rotor ring': OK  
+      [ban-quote] | topmost ring | The ring at the top of the TRPT. It carries the main rotor. The full name is "topmost r
+      [ban-quote] | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "h
+      [ban-quote] | "hub rotor", or "hub" for a rotor or the ring | main rotor, topmost ring | stale-phrases, physics-topo
+      [ban-quote] - **v16 (2026-10-15):** the hub-name retirement re-keys the ring pair.
+      [ban-quote] ## hub rotor
+      [ban-quote] Replacement: main rotor (the topmost rotor). "Hub" is not a rotor term, and it does not name the ring — 
+
+== D. the corner extract ==
+check: corner extract: i1-g13-i1 re-reads: OK  
+check: corner extract: i1-g7-i7 re-reads: OK  
+check: corner extract: i2-g21-i4 re-reads: OK  
+check: corner extract: i3-g26-i8 re-reads: OK  
+check: corner extract: 60.646 re-reads: OK  
+check: corner extract: 58.864 re-reads: OK  
+check: corner extract: 33.704 re-reads: OK  
+check: corner extract: 33.812 re-reads: OK  
+check: corner extract: old form absent: OK  
+
+== E. the delivered copy ==
+check: copy: md5 reads the delivered build: OK  1115a2019872ad10929941d4baeb67a6
+check: copy: retired word reads 5: OK  5
+check: copy: every retired-word line is a register row: OK  [1091, 1099, 1100, 1110]
+check: copy: the rows read NR-021, NR-030, NR-032, NR-048: OK  ['NR-021', 'NR-030', 'NR-032', 'NR-048']
+check: copy: five occurrences across the four rows: OK  5
+check: copy: 508 feasible reads once: OK  
+check: copy: reads v0.47: OK  
+check: copy: topmost reads 13 (body and captions): OK  13
+check: copy: the held build reconciles (20 case-insens / 19 case-sens): OK  ci=20 cs=19
+      the one difference is the winner-table 'Hub' (capitalised): the founder-copy count
+
+== F. the tracked-tree census ==
+  total: 3944 matching lines across 849 files
+    code-vocabulary: 409 files, 2093 lines
+    exempt-verbatim: 8 files, 185 lines
+    extract-records: 5 files, 13 lines
+    kit-records: 20 files, 25 lines
+    live-checked: 2 files, 16 lines
+    map-ledger: 1 files, 8 lines
+    pending-leg: 1 files, 2 lines
+    received-brief: 1 files, 6 lines
+    records-evidence: 401 files, 1575 lines
+    register: 1 files, 21 lines
+check: census: zero unclassified files: OK  []
+
+== G. the working set ==
+  [records] docs/plans/2026-10-07-state-fed-regen-cap-proposal.md: 1
+  [records] docs/reporting/feedback-on-report.md: 4
+  [working-snapshot] scratch/au_2p1_candidate.md: 3
+  [working-snapshot] scratch/au_docx_v027_base.md: 5
+  [working-snapshot] scratch/au_docx_v027_candidate.md: 6
+  [working-snapshot] scratch/au_fb2_v026_citation_base.txt: 4
+  [working-snapshot] scratch/au_fb2_v026_head_draft.md: 5
+  [working-snapshot] scratch/au_founder_calls_tracker_base.md: 1
+  [working-snapshot] scratch/au_founder_calls_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v012_candidate_A_sentence_lines.md: 3
+  [working-snapshot] scratch/au_v012_candidate_B_packed.md: 3
+  [working-snapshot] scratch/au_v012_draft_HEAD.md: 3
+  [working-snapshot] scratch/au_v012_draft_candidate.md: 3
+  [working-snapshot] scratch/au_v016u2_p12-12.png: 1
+  [working-snapshot] scratch/au_v016u2_pdf_prev.txt: 10
+  [working-snapshot] scratch/au_v016u2_pre_report.md: 3
+  [working-snapshot] scratch/au_v016u_base_report.md: 3
+  [working-snapshot] scratch/au_v016u_pdf.txt: 10
+  [working-snapshot] scratch/au_v016u_tip_report.md: 3
+  [working-snapshot] scratch/au_v028_draft_base.md: 6
+  [working-snapshot] scratch/au_v028_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v028_tracker_base.md: 1
+  [working-snapshot] scratch/au_v028_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v029_draft_base.md: 6
+  [working-snapshot] scratch/au_v029_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v029_tracker_base.md: 1
+  [working-snapshot] scratch/au_v029_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v030_draft_base.md: 6
+  [working-snapshot] scratch/au_v030_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v030_tracker_base.md: 1
+  [working-snapshot] scratch/au_v030_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v031_draft_base.md: 6
+  [working-snapshot] scratch/au_v031_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v031_tracker_base.md: 2
+  [working-snapshot] scratch/au_v031_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v032_draft_base.md: 6
+  [working-snapshot] scratch/au_v032_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v032_tracker_base.md: 2
+  [working-snapshot] scratch/au_v032_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v033_draft_base.md: 6
+  [working-snapshot] scratch/au_v033_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v033_tracker_base.md: 2
+  [working-snapshot] scratch/au_v033_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v034_draft_base.md: 8
+  [working-snapshot] scratch/au_v034_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v034_tracker_base.md: 2
+  [working-snapshot] scratch/au_v034_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v036_draft_base.md: 8
+  [working-snapshot] scratch/au_v036_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v036_gloss_base.md: 3
+  [working-snapshot] scratch/au_v036_gloss_candidate.md: 3
+  [working-snapshot] scratch/au_v036_tracker_base.md: 2
+  [working-snapshot] scratch/au_v036_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v037_draft_base.md: 8
+  [working-snapshot] scratch/au_v037_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v037_tracker_base.md: 2
+  [working-snapshot] scratch/au_v037_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v038_draft_base.md: 8
+  [working-snapshot] scratch/au_v038_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v038_tracker_base.md: 2
+  [working-snapshot] scratch/au_v038_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v039_draft_base.md: 8
+  [working-snapshot] scratch/au_v039_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v039_tracker_base.md: 2
+  [working-snapshot] scratch/au_v039_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v040_draft_base.md: 9
+  [working-snapshot] scratch/au_v040_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v040_tracker_base.md: 2
+  [working-snapshot] scratch/au_v040_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v042_draft_base.md: 9
+  [working-snapshot] scratch/au_v042_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v042_tracker_base.md: 2
+  [working-snapshot] scratch/au_v042_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v043_draft_base.md: 9
+  [working-snapshot] scratch/au_v043_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v043_tracker_base.md: 2
+  [working-snapshot] scratch/au_v043_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v045_draft_base.md: 9
+  [working-snapshot] scratch/au_v045_draft_candidate.md: 10
+  [working-snapshot] scratch/au_v045_tracker_base.md: 2
+  [working-snapshot] scratch/au_v045_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v047_draft_base.md: 10
+  [working-snapshot] scratch/au_v047_probe_tracker.md: 2
+  [working-snapshot] scratch/au_v047_tracker_base.md: 2
+  [working-snapshot] scratch/au_v047_tracker_candidate.md: 2
+  [working-snapshot] scratch/av_aeroleg/author-2026-10-14-v039-k-story-fold.md: 1
+  [working-snapshot] scratch/av_aeroleg/draft-tip.md: 9
+  [working-snapshot] scratch/av_aeroleg/draft-tracker.md: 2
+  [working-snapshot] scratch/av_aeroleg/numbers-register.md: 21
+  [working-snapshot] scratch/av_aeroleg/science-validator-2026-10-14-k-sweep-rows-sign.md: 1
+  [working-snapshot] scratch/av_candidate_nr037_counter.md: 16
+  [working-snapshot] scratch/av_docx_pagecheck_2026-10-13/my-render.pdf: 2
+  [working-snapshot] scratch/av_fig35_run1_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/av_fig35_run1_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/av_fig35_run1_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/av_fig35_run1_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/av_fig35_run2_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/av_fig35_run2_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/av_fig35_run2_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/av_fig35_run2_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/av_probe_fastcharge_basis.jl: 7
+  [working-snapshot] scratch/av_probe_fastcharge_solve_trace.jl: 1
+  [working-snapshot] scratch/av_probe_window_trace.jl: 6
+  [working-snapshot] scratch/av_v023_draft_before.md: 5
+  [working-snapshot] scratch/av_v023_tracker_before.md: 1
+  [working-snapshot] scratch/av_v043_draftdiff.txt: 3
+  [working-snapshot] scratch/aw_rhub_sweep_cpfix.jl: 1
+  [working-snapshot] scratch/fastcharge_census_software-validator.md: 4
+  [working-snapshot] scratch/fb6_probe/comments.xml: 2
+  [working-snapshot] scratch/fb6_probe/word/comments.xml: 2
+  [working-snapshot] scratch/fb6_probe/word/document.xml: 18
+  [working-snapshot] scratch/fig_35_A_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_A_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_A_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_A_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_35_B_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_B_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_B_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_B_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_35_run1_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_run1_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_run1_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_run1_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_et_precheck/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_precheck/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_et_repro1/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_repro1/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_et_repro2/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_repro2/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_draft/eval-timeline-draft.svg: 2
+  [working-snapshot] scratch/fig_f3_draft/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_draft_b/eval-timeline-draft.svg: 2
+  [working-snapshot] scratch/fig_f3_draft_b/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_eval_timeline_draft.py: 3
+  [working-snapshot] scratch/fig_f3_recv_check.py: 2
+  [working-snapshot] scratch/fig_pca_fix_repro_pca-atlas/pca-atlas.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r2.clean.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r2.g.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r3.clean.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r3.g.pdf: 1
+  [working-snapshot] scratch/fig_r67_base_map.md: 1
+  [working-snapshot] scratch/fig_r67_base_ring_spec.md: 10
+  [working-snapshot] scratch/fig_r67_base_twist_spec.md: 7
+  [working-snapshot] scratch/fig_repin_base_draft.md: 8
+  [working-snapshot] scratch/fig_repin_base_map.md: 1
+  [working-snapshot] scratch/fig_repin_base_tracker.md: 2
+  [working-snapshot] scratch/hermes_fb6_fix.py: 5
+  [working-snapshot] scratch/hermes_fb6_fix2.py: 2
+  [working-snapshot] scratch/hermes_fb6_fix3.py: 2
+  [working-snapshot] scratch/hermes_winner_pack.jl.bak_20261002: 11
+  [working-snapshot] scratch/report-pdf-build/docx-fig-12.jpg: 1
+  [working-snapshot] scratch/report-pdf-build/docx-render/draft-live.pdf: 2
+  [working-snapshot] scratch/report-pdf-build/draft-11a734a-20261012-215412.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-38c77f8-20261014-185619.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-8d01394-20261012-215449.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-99d09a1-20261013-114520.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-assembled-docx.md: 5
+  [working-snapshot] scratch/report-pdf-build/draft-assembled.md: 20
+  [working-snapshot] scratch/report-pdf-build/draft-e8159b0-20261014-180135.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-live.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-live.txt: 15
+  [working-snapshot] scratch/report-pdf-build/draft.html: 20
+  [working-snapshot] scratch/report-pdf-build/pg-11.txt: 2
+  [working-snapshot] scratch/report-pdf-build/pg-12.txt: 1
+  [working-snapshot] scratch/report-pdf-build/pg-6.txt: 1
+  [working-snapshot] scratch/report-pdf-build/pg-8.txt: 3
+  [working-snapshot] scratch/report-pdf-build/pg-9.txt: 3
+  [working-snapshot] scratch/sv_2p1_baseline_v08.md: 3
+  [working-snapshot] scratch/sv_2p1_fold_rerun.md: 3
+  [working-snapshot] scratch/sv_caption_reread/new-layout.txt: 10
+  [working-snapshot] scratch/sv_caption_reread/new-raw.txt: 10
+  [working-snapshot] scratch/sv_caption_reread/pre-raw.txt: 7
+  [working-snapshot] scratch/sv_draft_annotated_capture_2026-10-09.md: 3
+  [working-snapshot] scratch/sv_f3_flag_precision.md: 1
+  [working-snapshot] scratch/sv_fa_v4_pdftext.txt: 1
+  [working-snapshot] scratch/sv_probe_seed55_why_reject.jl: 1
+  [working-snapshot] scratch/sv_r6_term_gate_v2_check.py: 20
+  [working-snapshot] scratch/sv_rebase_readback.md: 13
+  [working-snapshot] scratch/sv_smoke_masscheck2.jl: 1
+  [working-snapshot] scratch/sw_2p1_sim_folded.md: 3
+  [working-snapshot] scratch/sw_bp_baseline.md: 4
+  [working-snapshot] scratch/sw_brief13_base.md: 8
+  [working-snapshot] scratch/sw_brief13_off_base.txt: 8
+  [working-snapshot] scratch/sw_brief13_off_new.txt: 8
+  [working-snapshot] scratch/sw_gloss13_base.md: 3
+  [working-snapshot] scratch/sw_gloss13_new.md: 3
+  [working-snapshot] scratch/sw_oldbrief_probe.md: 4
+  [working-snapshot] scratch/sw_r6leg_receipt_sim.md: 11
+  [working-snapshot] scratch/sw_sweep10_v014_report.md: 3
+  [working-snapshot] scratch/sw_sweep10_v015_report.md: 3
+  [working-snapshot] scratch/sw_sweep10_v016_report.md: 3
+  [working-snapshot] scratch/sw_sweep11_v016u2_report.md: 3
+  [working-snapshot] scratch/sw_sweep12_v016fu2.md: 3
+  [working-snapshot] scratch/sw_sweep13_draft_11a734a.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_4330ec5.md: 4
+  [working-snapshot] scratch/sw_sweep13_draft_7863a88.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_8d01394.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_b14f87b.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_base_v017.md: 3
+  [working-snapshot] scratch/sw_sweep13_draft_dc28369.md: 4
+  [working-snapshot] scratch/sw_sweep14_tracker_43fb0bc.md: 1
+  [working-snapshot] scratch/sw_sweep14_tracker_99d09a1.md: 1
+  [working-snapshot] scratch/sw_sweep14_tracker_d91b93b.md: 1
+  [working-snapshot] scratch/sw_sweep14_v024.md: 5
+  [working-snapshot] scratch/sw_sweep14_v025.md: 5
+  [working-snapshot] scratch/sw_sweep14_v026.md: 5
+  [working-snapshot] scratch/sw_sweep15_runout.txt: 1
+  [working-snapshot] scratch/sw_v014_rehearsal.md: 3
+  [working-snapshot] scratch/sw_v09_landed.md: 3
+  [records] scripts/results/archive_void_20260825_rotorcount/island_1/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260825_rotorcount/island_2/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260825_rotorcount/island_3/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_1/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_2/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_3/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/regate_verdict.md: 1
+check: working set: every residue classified: OK  []
+
+== H. the register ==
+check: register: old form holds (21 lines / 22 sites): OK  21 lines
+check: register: unchanged since cb862df: OK  no diff
+check: register: carries NR-051: OK  
+
+CHECKER: 76 checks, 0 fail
+SV_R6_TERMGATE_V2_DONE  (the gate re-reads on the closed set: legs closed, the hold recorded, the copy at the appendix holds only)
