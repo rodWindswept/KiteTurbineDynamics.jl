@@ -1,0 +1,14 @@
+av-v047 copy counter-read readback — 2026-10-15 (aero-validator)
+
+commit: 84a9b1f docs(reporting): the v0.47 copy counter-read and the leg folds close clean — 246 checks, 0 fail
+range: eb93928..84a9b1f
+local == origin at 84a9b1f (fetch readback).
+
+blob readback (local == origin/bank-derate-cos2p65):
+  OK docs/reporting/room-responses/aero-validator-2026-10-15-v047-copy-counterread.md
+  OK handovers/handover-2026-10-14-reporting-room-aero-validator.md
+  OK scratch/av_v047_copyread.py
+  OK scratch/av_v047_copyread.log
+
+STE at the commit: receipt 0.00/100w (904 words), seat page 0.00/100w (664 words); pre-commit hook green.
+The pass read committed bytes and the delivered copy only; the copy files were not modified.
