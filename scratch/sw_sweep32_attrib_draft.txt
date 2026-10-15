@@ -1,0 +1,37 @@
+== 171f3ea^ -> 171f3ea ==
+lines: +4 -4; raw token occurrences: added 1, removed 1
+arrivals: {'50': 1}
+removals: {'49': 1}
+  [ARR 50 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.50. Date 2026-10-15.
+  [REM 49 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.49. Date 2026-10-15.
+
+== 171f3ea -> 1061878 ==
+lines: +12 -2; raw token occurrences: added 2, removed 1
+arrivals: {'23': 1, '51': 1}
+removals: {'50': 1}
+  [ARR 23 net+1] raw: added-side 1, removed-side 0
+      +1: [Figure seated: figure-map row 23 (the corner machines, slug `machine-corner-grid`). Values cite NR-044 and NR-051.]
+  [ARR 51 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.51. Date 2026-10-15.
+  [REM 50 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.50. Date 2026-10-15.
+
+== 1061878 -> b6cd166 ==
+lines: +14 -1; raw token occurrences: added 1, removed 1
+arrivals: {'52': 1}
+removals: {'51': 1}
+  [ARR 52 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.52. Date 2026-10-15.
+  [REM 51 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.51. Date 2026-10-15.
+
+== cumulative 171f3ea^ -> b6cd166 ==
+arrivals: {'23': 1, '52': 1}
+removals: {'49': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  23: net +1, raw added 1, raw removed 0
+  OK  49: net -1, raw added 0, raw removed 1
+  OK  52: net +1, raw added 1, raw removed 0

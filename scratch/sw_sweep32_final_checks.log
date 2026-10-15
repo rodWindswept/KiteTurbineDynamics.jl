@@ -1,0 +1,21 @@
+== sweep 32 final checks — science-writer, 2026-10-15 ==
+-- 1. record, --fail-above 2.0
+draft-consistency-sweep.md       words=19592 total= 16 per100w=  0.08 em_dash= 0
+rc=0
+-- 2. room response, --fail-above 2.0
+science-writer-2026-10-15-sweep-32.md words= 691 total= 11 per100w=  1.59 em_dash= 0
+rc=0
+-- 3. offender sets, entry-for-entry (expect header-only: 12 diff lines)
+12
+-- 4. pins check, v052 extract, post-fix
+pins recomputed: 32, match: 32, mismatch: 0
+-- 5. pins check, live draft file, post-fix
+pins recomputed: 32, match: 32, mismatch: 0
+-- 6. freeze check (levers block)
+block md5 (as written): 7bbd964db09d2b33269ce5cb8c334054
+receipt region == block: True
+draft region == block: True
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054
+-- 7. review copy identity
+3c386dc289f70d6d26f65c7df06fb993  scratch/report-pdf-build/draft-live.docx
+3c386dc289f70d6d26f65c7df06fb993  scratch/report-pdf-build/draft-b6cd166-20261015-163115.docx

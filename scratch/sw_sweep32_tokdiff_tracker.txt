@@ -1,0 +1,20 @@
+== ffc63a7 -> 171f3ea ==
+arrivals: {'50': 1}
+removals: none
+  [arr 50] v0.50 pass by @author (2026-10-15).
+
+== 171f3ea -> 1061878 ==
+arrivals: {'3.4': 1, '51': 1}
+removals: none
+  [arr 3.4] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [arr 51] v0.51 pass by @fig-img-diagrams (2026-10-15).
+
+== 1061878 -> b6cd166 ==
+arrivals: {'2.1': 1, '52': 1}
+removals: none
+  [arr 2.1] v0.9 pass by @author (2026-10-09). This pass lifts the §2.1 | The plate seats at §2.1, ahead of the genome strip, with its kit made embed-ready (captions and manifest).
+  [arr 52] v0.52 pass by @author (2026-10-15).
+
+== cumulative ffc63a7 -> b6cd166 ==
+arrivals: {'2.1': 1, '3.4': 1, '50': 1, '51': 1, '52': 1}
+removals: none

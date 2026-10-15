@@ -3057,3 +3057,160 @@ The founder forms read at their sites, and the hold senses read.
 The offender sets hold, and the frozen block and the pins re-check.
 
 **Next run** at the next draft push.
+
+## Sweep 32: v0.52, 2026-10-15
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`b6cd166` (v0.52, the basics-of-TRPT refresher), spanning three movers from
+`ffc63a7` (the Sweep 31 span end): `171f3ea` (v0.50, the kMppt plain pass),
+`1061878` (v0.51, the corner-machines fold) and `b6cd166`. The file carries
+zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `cb862df`, zero diff to the tip.
+No movement since Sweep 31.
+The register holds by the sign.
+
+**Results**
+
+- Span note: this pass closes the three draft movers since Sweep 31.
+  The span `ffc63a7..1b01453` carries 44 commits.
+  The candidates file and the stale-phrases list carry no mover in the span.
+  The figures tree carries the eval-timeline placement label re-cut
+  (`a269636`, `f5c2d59`).
+  No seated plate byte moves.
+
+- Span landings: the relabel fold-back (`e5e147c`, `ef93b84`), the v0.50
+  set (`171f3ea` to `a196183`), the corner-machines fold and its reads
+  (`1061878` to `228adcd`), the v0.52 set (`b6cd166` to `ec24f4a`), the
+  rope-break placement fix (`2bf76a3`, `317d9cd`) and the eval-timeline
+  re-cut (`a269636`, `f5c2d59`).
+
+- Bracket count: the body carries the two number-gate brackets and the
+  eight seated markers.
+
+- STE gate, draft: words 6887 to 7002 across the three movers (6887, 6890,
+  6912, 7002), total 8 to 8, `per100w` 0.12 to 0.11.
+  `em_dash=2` throughout, the guidance-only pair inside the frozen axis names.
+  The hook lines hold at `passive_voice x1` and `long_paragraph x7`.
+
+- STE gate, tracker: words 3033 to 3177, total 12 to 12, `per100w`
+  0.40 to 0.38.
+
+- STE gates, candidates and stale-phrases: the candidates read 4733 words
+  at 0.25, flat.
+  The stale-phrases list reads 623 words at 3.21, whole-file legacy.
+
+- Offender delta: the four sets hold, entry for entry.
+  The headers move by construction only.
+  The v0.52 block adds no long_paragraph line, and every offender count
+  holds across the three movers.
+
+- Token diff, draft (`171f3ea^` to `b6cd166`), per mover.
+  The v0.50 pair reads arrival `50` and removal `49`.
+  The v0.51 pair reads arrivals `23` and `51` against removal `50`.
+  The v0.52 pair reads arrival `52` and removal `51`.
+  Cumulative: `23` and `52` in, `49` out.
+
+- Identity check: every span token reads net == added minus removed.
+
+- Token diff, tracker: arrivals `50`; `3.4` and `51`; `2.1` and `52`.
+  No removal net.
+
+- Changed-line census, per mover: v0.50 reads lines 3, 318 and 320 to 321.
+  v0.51 reads line 3, a two-line insert at 635, a replace at 936 to 938,
+  a one-line insert at 949 and a seven-line insert at 1003.
+  v0.52 reads line 3 and a thirteen-line insert at 230.
+
+- Value cross-check: the span adds no value token.
+  The lone arrival is the marker numeral `23`.
+  The checked set carries forward: NR-001, NR-002, NR-005, NR-006, NR-008,
+  NR-009, NR-011, NR-018, NR-021, NR-040, NR-045, NR-048, NR-049 and NR-051.
+  Every printed value reads its row or side block at the quoted precision.
+
+- The v0.50 fold holds its values on the changed lines: `1278 N/vertex`,
+  `87.9`, `78.8` and all three NR-048 cites.
+  The two rewritten sentences carry no value token.
+
+- The v0.52 block reads ten sentences, once each, digit-free and cite-free,
+  between the term-set close (NR-049) and the system-anatomy seat marker.
+  The block sits at lines 230 to 242.
+
+- Arithmetic: the counts hold at 508 plus 301 plus 110 plus 11 reading 930,
+  and 508 plus 422 reading 930 (NR-002, NR-001).
+  The lift chain prints 304.6 at one decimal, and the margin recomputes
+  1.20815, quoted 1.21.
+
+- Rename census: the retired word reads zero.
+  The founder forms read: `lifting bridles` once at section 3.3,
+  `Machine winner` twice, `machine winner` once at the marker, and
+  `hero` once in the slug.
+
+- Hold senses: the bridle sites read at lines 46, 190 and 863, the
+  Sweep 31 set of 46, 190 and 848 plus the fifteen lines the span inserts.
+
+- Top-form census: `topmost ring` reads six times and `topmost rotor ring`
+  once.
+
+- Display guards: no loose hit on `14.97`, `3.816` or `27.363`.
+
+- Seat markers: eight, each citing its signed rows.
+  The corner marker cites NR-044 and NR-051 only.
+
+- Head status: the head reads "Draft v0.52".
+  One `[PENDING]` stub stands, the Nomenclature section.
+  The References section carries its text, and the three source calls
+  read pending, in step with `references-verification.md` (15 of 18, 3 open).
+
+- Held tokens: `1.94` and `5.18` hold at the section 4.2 sites and the
+  failure table, and `3.55` stays flagged in the tracker.
+  The section 5 Daisy gate stands.
+
+- Cited commits: the twelve named commits resolve in the tip ancestry,
+  and the hex inventory reads 74 entries (was 65 at Sweep 31).
+
+- Freeze re-check: the levers block re-reads byte-identical in the draft
+  at `b6cd166`. The draft region and the receipt region carry the same
+  bytes. The block md5 reads `7bbd964db09d2b33269ce5cb8c334054`.
+
+- Pins note: all thirty-two appendix cells recompute on the delivered
+  bytes. No mismatch reads.
+  The corner-machines row takes its EX entry in `pins-check.py` at this
+  seat; before the entry the tool walked 28 cells and read the corner
+  heading unknown.
+
+- Plate pins: the seated kits re-hash. The ring-utilisation svg reads
+  `ce3dee12…`, the twist-limit svg `cc3edf9c…`, the strip svg `6c36b0ff…`,
+  the winner svg `0101b58f…` and the corner svg `b2e4055d…`.
+  The system-anatomy pair holds (pdf `c55bd7a8…`, png `696be723…`).
+  The eval-timeline svg moves to `373c2db3…` with the label re-cut.
+
+- Review copy: the copy holds at its `b6cd166` build. The live md5 reads
+  `3c386dc2…` against its archive `draft-b6cd166-20261015-163115.docx`,
+  byte-identical, and the draft and register inputs carry zero diff to the
+  tip. The record reads 43 cited of 51 signed and eight seats.
+
+- Copy census: the eight media entries hash-match the delivered PNGs, the
+  corner plate included.
+  The founder forms read in the copy, and the ten block sentences read
+  once each.
+  The older version marks read zero.
+
+- Eval-timeline note: the re-cut moves nine files, the kit and the map row.
+  The plate carries no seat and its slug reads nowhere in the draft, so the
+  re-cut touches no draft byte and no copy embed.
+
+- Cascade note: the references leg is ruling-gated (three one-line rulings,
+  option A), and the nomenclature leg waits on the Track D ratification.
+  The era pack stays open at this seat.
+
+**Finding**
+
+No value discrepancy found.
+The span folds the three movers: the kMppt plain pass, the corner-machines
+fold and the basics-of-TRPT refresher.
+The register holds, and every token accounts.
+The founder forms read at their sites, and the hold senses read.
+The offender sets hold, and the frozen block and the pins re-check.
+One tool gap closed: the pins check takes the corner exhibit row.
+
+**Next run** at the next draft push.

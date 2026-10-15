@@ -1,0 +1,22 @@
+== 171f3ea^ -> 171f3ea ==
+arrivals: {'50': 1}
+removals: {'49': 1}
+  [arr 50] Internal engineering report. Draft v0.50. Date 2026-10-15. | On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+  [rem 49] Internal engineering report. Draft v0.49. Date 2026-10-15. | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+
+== 171f3ea -> 1061878 ==
+arrivals: {'23': 1, '51': 1}
+removals: {'50': 1}
+  [arr 23] [Figure seated: figure-map row 23 (the corner machines, slug `machine-corner-grid`). Values cite NR-044 and NR-051.]
+  [arr 51] Internal engineering report. Draft v0.51. Date 2026-10-15. | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [rem 50] Internal engineering report. Draft v0.50. Date 2026-10-15. | On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
+
+== 1061878 -> b6cd166 ==
+arrivals: {'52': 1}
+removals: {'51': 1}
+  [arr 52] Internal engineering report. Draft v0.52. Date 2026-10-15.
+  [rem 51] Internal engineering report. Draft v0.51. Date 2026-10-15. | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+
+== cumulative 171f3ea^ -> b6cd166 ==
+arrivals: {'23': 1, '52': 1}
+removals: {'49': 1}

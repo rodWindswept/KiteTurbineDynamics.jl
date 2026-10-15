@@ -1,0 +1,24 @@
+1c1
+< == scratch/sw_sweep32_draft_v049.md: words=6887 total=8 per100w=0.12 ==
+---
+> == scratch/sw_sweep32_draft_v050.md: words=6890 total=8 per100w=0.12 ==
+1c1
+< == scratch/sw_sweep32_draft_v050.md: words=6890 total=8 per100w=0.12 ==
+---
+> == scratch/sw_sweep32_draft_v051.md: words=6912 total=8 per100w=0.12 ==
+1c1
+< == scratch/sw_sweep32_draft_v051.md: words=6912 total=8 per100w=0.12 ==
+---
+> == scratch/sw_sweep32_draft_v052.md: words=7002 total=8 per100w=0.11 ==
+1c1
+< == scratch/sw_sweep32_tracker_base.md: words=3033 total=12 per100w=0.4 ==
+---
+> == scratch/sw_sweep32_tracker_tip.md: words=3177 total=12 per100w=0.38 ==
+1c1
+< == scratch/sw_sweep32_candidates_base.md: words=4733 total=12 per100w=0.25 ==
+---
+> == scratch/sw_sweep32_candidates_tip.md: words=4733 total=12 per100w=0.25 ==
+1c1
+< == scratch/sw_sweep32_sp_base.md: words=623 total=20 per100w=3.21 ==
+---
+> == scratch/sw_sweep32_sp_tip.md: words=623 total=20 per100w=3.21 ==
