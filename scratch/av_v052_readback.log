@@ -1,0 +1,13 @@
+v0.52 basics-of-TRPT copy counter-read — landing readback (aero-validator)
+commit 9865c55; push 98f7aa5..9865c55
+fetch: 9865c55
+local == origin: YES
+
+blob readback (HEAD: vs origin/bank-derate-cos2p65: vs worktree):
+OK  docs/reporting/room-responses/aero-validator-2026-10-15-v052-copy-counterread.md  f1a9082f66d00304003008c080254e13bb056874
+OK  handovers/handover-2026-10-14-reporting-room-aero-validator.md  432269171f9ed7666878a8206d040eb025a7dd73
+OK  scratch/av_v052_copyread.py  4b1a1e77085f16bcd425d5e231a972a9e6868f68
+OK  scratch/av_v052_copyread.log  a95e7ceeed4b900a3d495eb27530cc8542464279
+OK  scratch/av_v052_rebuild_rerun.log  93b3e22d0fc2ab1c80887cba870db6bf043d7bcf
+
+delivered copy (untracked) md5 re-read: 3c386dc289f70d6d26f65c7df06fb993
