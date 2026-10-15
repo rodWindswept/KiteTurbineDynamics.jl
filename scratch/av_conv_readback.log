@@ -1,0 +1,10 @@
+# av_conv_readback.log — the convergence series extract readback
+# stamp: 2026-10-15T20:03:40Z (aero-validator seat)
+# base: 9d04658 | main commit: 9dd453d (branch bank-derate-cos2p65)
+# local == origin: 9dd453d1aab50dc0bac322cd5ea69582ab0dcda2 == 9dd453d1aab50dc0bac322cd5ea69582ab0dcda2
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/room-responses/aero-validator-2026-10-15-convergence-series-extract.md | 6ba27441619ee0599074713cfd9a0c1176e5d05c | 6ba27441619ee0599074713cfd9a0c1176e5d05c | 6d7d829b587cac07044ce707cc3b1721b9b3682a43ea5fef2bde43d67e9fbc79
+scratch/av_conv_series.py | b8c52694946fa4eb32cfaef9c35355967d5b75ef | b8c52694946fa4eb32cfaef9c35355967d5b75ef | c30deda16a9527a450ebc8cf1c7938d31d785c773294faa4218371b037e9e869
+scratch/av_conv_series.csv | 9666b1ad1b0f9e4fbef799b10ab1763addb00a55 | 9666b1ad1b0f9e4fbef799b10ab1763addb00a55 | d817689b38889753a08c15f7455d8e074c6fcbb93c773e2ebf654ce2bd601d72
+scratch/av_conv_series.log | 98103246c30262d290f7f1323c744f89fc98e864 | 98103246c30262d290f7f1323c744f89fc98e864 | fc9785753d8fa0dcc7d9dc608923b616a7a128c8fce5ea9d02c94e6bf1921a05
+# verdict: all four carried blobs byte-verified at origin
