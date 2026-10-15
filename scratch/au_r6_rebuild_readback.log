@@ -1,0 +1,9 @@
+# Round-6 rebuild landing — origin readback (author seat, 2026-10-15)
+# Branch bank-derate-cos2p65. Method: sha256sum working file vs git show origin:<path> | sha256sum.
+
+OK   docs/reporting/room-responses/author-2026-10-15-v047-round6-fold-and-rebuild.md  sha256 8ec7366669f658c3ca2971e2b2eacbde9538d5db1c103354f7a8e942c20b0fdb
+OK   scratch/au_v047_rebuild_check.py  sha256 b92bf1010a275a7d2ae5a5a89e723577ba0efae7f71d074a961781fde1314ac2
+OK   scratch/au_v047_rebuild_check.log  sha256 3391448776b966fb03006753bbdcc703eec67115c4040e356544d857c01e4bb0
+OK   handovers/handover-2026-10-14-reporting-room-author.md  sha256 4cb2c111cb83561101c59f81bb86d5d94fb3df05641225f44b4f6eb3ce18389d
+
+# HEAD 96c9363 == origin 96c9363. The readback log itself verifies with the next push.
