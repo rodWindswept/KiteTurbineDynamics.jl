@@ -1,0 +1,20 @@
+# Readback: the v0.52 basics-of-TRPT pass (author seat, 2026-10-15)
+
+Commits (bank-derate-cos2p65):
+  b6cd166  the fold (draft v0.52, the operation block)
+  d93472f  the receipt set (receipt, rebuild check, check log)
+  73251ce  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+c9a06dec57c6917b1ce106820262d521  docs/reporting/drafts/2026-10-08-report-first-draft.md
+cb129e03cd4e035b94bee158a2f7c06b  docs/reporting/draft-tracker.md
+c99d0d3205d725a1c26c2694684f13f4  scratch/au_v052_trpt_basics_fold.py
+61f9f19e6fb7048c15ca60bb3b3e400b  scratch/au_v052_trpt_basics_fold.log
+8b604e5dfe401759b2c81db4ba918645  docs/reporting/room-responses/author-2026-10-15-v052-trpt-basics.md
+c28d6d74e41e8300a200a69eee4833cd  scratch/au_v052_rebuild_check.py
+0a49587cb98a102392591d62fbe81718  scratch/au_v052_rebuild_check.log
+b125c6c0df366179f39421a2c9bda070  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == 73251ce093af09178f11fba573dd09cb5b7c6cf6 at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 3c386dc289f70d6d26f65c7df06fb993) stays untracked and is not carried.
+This log rides the next commit.
