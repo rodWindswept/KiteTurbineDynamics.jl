@@ -1,0 +1,87 @@
+ok  001 py: the label line reads the founder form
+ok  002 py: no bare label line
+ok  003 py: the v7 header note reads
+ok  004 tex: the node carries the founder form
+ok  005 tex: no bare form
+ok  006 prototype: the text node carries the founder form
+ok  007 prototype: no bare form
+ok  008 ledger: the string reads once in the founder form
+ok  009 ledger: no bare form
+ok  010 ledger: still 34 strings
+ok  011 manifest: script_commit
+ok  012 manifest: script sha
+ok  013 manifest: tex sha
+ok  014 manifest: ledger sha
+ok  015 manifest: pdf sha
+ok  016 manifest: png sha
+ok  017 manifest: checks sha
+ok  018 manifest: data commit held
+ok  019 checks.log: sha256 at source
+ok  020 checks.log: the v7 re-cut line
+ok  021 checks.log: the chain label reads the founder form
+ok  022 checks.log: the script commit named
+ok  023 checks.log: the three-location line
+ok  024 checks.log: zero error lines
+ok  025 checks.log: zero overfull boxes
+ok  026 checks.log: md5 row system-anatomy.tex
+ok  027 checks.log: md5 row prototype.html
+ok  028 checks.log: md5 row label-ledger.txt
+ok  029 checks.log: md5 row system-anatomy.pdf
+ok  030 checks.log: md5 row system-anatomy.png
+ok  031 disk sha256 system-anatomy.tex
+ok  032 disk sha256 label-ledger.txt
+ok  033 disk sha256 system-anatomy.pdf
+ok  034 disk sha256 system-anatomy.png
+ok  035 disk sha256 system-anatomy.py
+ok  036 disk md5 system-anatomy.tex
+ok  037 disk md5 prototype.html
+ok  038 disk md5 label-ledger.txt
+ok  039 disk md5 system-anatomy.pdf
+ok  040 disk md5 system-anatomy.png
+ok  041 register note: the v7 date line
+ok  042 register note: the v7 re-cut block
+ok  043 register note: delta v5
+ok  044 register note: the script commit named twice
+ok  045 register note: the md5 table (tex)
+ok  046 captions: the provenance token
+ok  047 captions: the relabel note
+ok  048 captions: the caption text holds (author pass)
+ok  049 SPEC: the load-path form
+ok  050 SPEC: the live item
+ok  051 map: row 2 takes the relabel
+ok  052 map: row 10 title takes the winner form
+ok  053 map: no Machine hero title
+ok  054 map: row 10 winner-form line
+ok  055 map: row 23 cite takes the sign commit
+ok  056 map: the retired cite token reads zero
+ok  057 map: row 23 closure
+ok  058 map: delta v40 opens
+ok  059 map: delta v40 closes the file
+ok  060 draft: the v0.48 header
+ok  061 draft: the SA row takes the script commit
+ok  062 draft: the png cell
+ok  063 draft: the pdf cell
+ok  064 draft: the ledger cell
+ok  065 draft: the checks cell
+ok  066 draft: the marker holds (author pass)
+ok  067 draft: the appendix exhibit name holds (author pass)
+ok  068 tracker: the v0.48 entry
+ok  069 tracker: the entry text
+ok  070 corner note: the cite takes the sign commit
+ok  071 corner note: the retired cite token reads zero
+ok  072 corner note: delta v2
+ok  073 corner README: the closure reads
+ok  074 corner README: the cite line
+ok  075 seat page: the relabel item
+ok  076 seat page: the winner-form item
+ok  077 seat page: the receipt reference
+ok  078 F-REPRO: run1 reads five md5 rows
+ok  079 F-REPRO: run2 reads five md5 rows
+ok  080 F-REPRO: inplace reads five md5 rows
+ok  081 F-REPRO: run1 == run2
+ok  082 F-REPRO: run1 == inplace
+ok  083 F-REPRO: the set equals the delivered md5s
+ok  084 facts: script commit
+ok  085 facts: checks sha
+
+85 checks, 0 fail

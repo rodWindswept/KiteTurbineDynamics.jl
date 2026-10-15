@@ -49,7 +49,7 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 ## Provenance line
 
 Data commit `dd3cc6a` · decode receipt `scratch/fig1_decode_winner.jl` ·
-rows NR-011, NR-017, NR-043 · script commit `1af63fc` · full record: the
+rows NR-011, NR-017, NR-043 · script commit `9241b23` · full record: the
 figure-provenance appendix.
 
 ## Generation note
@@ -97,3 +97,8 @@ Retirement note (2026-10-14): the hub-name retirement (round-6
 comment 1). The R6 label reads "R6, the topmost ring". No value
 moves. The plate re-renders. The provenance token takes the round-6
 script commit.
+
+Relabel note (2026-10-15): the lifting-bridles relabel (the founder
+note). The plate re-renders with the chain label "lifting bridles
+(three)". The caption text re-keys at the author pass. No value
+moves.

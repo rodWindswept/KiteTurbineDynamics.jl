@@ -28,9 +28,9 @@ design to its [1,99] window corner (NR-051).
 
 The generator lands (`a4b4057`). Four panels, one per corner, at one
 shared scale. All in-script checks pass, and the three-location
-F-REPRO walk reads byte-identical across all five outputs. Next: the
-counter-reads (aero F-CITE and F-VALUE, the science register read),
-then the visual pass by Rod.
+F-REPRO walk reads byte-identical across all five outputs. The counter-reads
+close clean (`857f2c1`, 153 checks). The NR-051 cite takes the sign
+commit `cb862df`. Next: the visual pass by Rod.
 
 ## Delivered files
 

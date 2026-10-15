@@ -8,7 +8,7 @@
 | Row | Carries | Status |
 |---|---|---|
 | NR-044 | The certified PCA projection: shares, window and rule basis | Signed (science-validator, `2ad023c`) |
-| NR-051 | The corner-grid picks: four machines, one per [1,99] window corner; tags, pc values and objectives at 3 dp | Signed (science-validator, `8855d9a`) |
+| NR-051 | The corner-grid picks: four machines, one per [1,99] window corner; tags, pc values and objectives at 3 dp | Signed (science-validator, `cb862df`) |
 
 The figure draws no other row. The geometry comes from the extract
 rows byte-exact (`corner-grid-extract-2026-10-15-picks`), and the
@@ -56,3 +56,9 @@ outputs. Verified 2026-10-15 at `a4b4057`.
 
 **Delta** v1 (2026-10-15): created with the kit landing (family mode,
 corner variant; SPEC delta D10). No drawn value moves after this cut.
+
+**Delta** v2 (2026-10-15): the counter-reads close clean (`857f2c1`,
+153 checks). The picks and the objectives recompute from the raw draw
+columns. The extract binds at all 128 fields. The drawn text reads
+clean. Two fresh runs stay byte-identical. The NR-051 cite takes the
+sign commit `cb862df`. No drawn value moves.

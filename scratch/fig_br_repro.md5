@@ -1,0 +1,8 @@
+# fig_br_repro.md5 — lifting-bridles re-cut v7: three-location byte-identity table
+# run1 = scratch/sa_br_repro/run1; run2 = scratch/sa_br_repro/run2; inplace = the kit dir
+# run1 == run2 == inplace across all five outputs; the delivered bytes are the inplace column
+e8f08e653010c820262587e30dd9d42b  system-anatomy.tex
+58d4e491c3a61af39bb7f655f55e4114  prototype.html
+b359914881c9d9936ff7fc8dd7c2611d  label-ledger.txt
+e00521fe239ec244139898f77178af17  system-anatomy.pdf
+19c0caf5e32bd5728323c30ff98124a0  system-anatomy.png

@@ -26,7 +26,7 @@ firewall).
 
 The reader meets the machine before the genome, the search and the result.
 This plate sets the vocabulary: ring, line, rotor, segment. It shows the
-load path: lifter, lift line, sky anchor, cyan line, lift bearing, bridles,
+load path: lifter, lift line, sky anchor, cyan line, lift bearing, lifting bridles,
 main rotor, TRPT, ground station.
 
 ## Sources. Reuse, do not rebuild.
@@ -110,6 +110,9 @@ Two full runs stay byte-identical: generator outputs, PDF and PNG.
   in v2 and v3.
 - Closed: the hub-name retirement (round-6, 2026-10-14). The R6 label
   reads "R6, the topmost ring". No value moves.
+- The lifting-bridles relabel (2026-10-15): the chain label reads
+  "lifting bridles (three)" (the v7 re-cut). The caption text re-keys
+  at the author pass.
 - Track D: the term picks. The plate carries the room forms for now.
 - The β value waits for a signed row.
 - Strip re-render and the planned genome strip and winner anatomy plates

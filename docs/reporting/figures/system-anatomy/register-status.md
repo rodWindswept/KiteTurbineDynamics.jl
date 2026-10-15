@@ -1,7 +1,7 @@
 # Register status: system anatomy
 
 **Slug** `system-anatomy`. Status note for the figure rows.
-**Date** 2026-10-12. Register fold and v4 re-cut 2026-10-13; v5 re-cut 2026-10-14; v6 re-cut 2026-10-14.
+**Date** 2026-10-12. Register fold and v4 re-cut 2026-10-13. v5 re-cut 2026-10-14. v6 re-cut 2026-10-14. v7 re-cut 2026-10-15.
 
 ## Rows cited
 
@@ -33,13 +33,13 @@ Commands:
     pdftoppm -png -r 300 -singlefile system-anatomy.pdf system-anatomy
 
 Toolchain pin: pdflatex (TeX Live 2023/Debian), poppler pdftoppm. Two full
-runs stay byte-identical (verified at v6). Hashes at v6:
+runs stay byte-identical (verified at v7). Hashes at v7:
 
-    system-anatomy.tex  7c5543ed335708bd8d570bc94919d8bf
-    prototype.html      e775bc42a985f0457ae0e8f6d172920d
-    label-ledger.txt    ae02f27f3ef73814df8b802c70b816ea
-    system-anatomy.pdf  14fa8757b3b45d5b99f995f6e90eaa81
-    system-anatomy.png  9e25520837da6931776e48c45e7fd62c
+    system-anatomy.tex  e8f08e653010c820262587e30dd9d42b
+    prototype.html      58d4e491c3a61af39bb7f655f55e4114
+    label-ledger.txt    b359914881c9d9936ff7fc8dd7c2611d
+    system-anatomy.pdf  e00521fe239ec244139898f77178af17
+    system-anatomy.png  19c0caf5e32bd5728323c30ff98124a0
 
 ## Re-cuts
 
@@ -63,6 +63,10 @@ number prints.
 v6 (2026-10-14): the hub-name retirement (round-6 comment 1). The R6
 label reads "R6, the topmost ring". Script commit `1af63fc`. No new number. No other geometry moves.
 
+v7 (2026-10-15): the lifting-bridles relabel (the founder note of
+2026-10-15). The chain label reads "lifting bridles (three)". Script
+commit `9241b23`. No new number. No other geometry moves.
+
 ## Pending
 
 The Track D label picks (the knot name, the cyan-line name) ride a later
@@ -79,3 +83,6 @@ draws with its leader and clearance asserts. The label set reads
 thirteen. Script commit `d243b37`.
 **Delta** v4 (2026-10-14): the v6 re-cut lands. The R6 label takes the top
 form (round-6 comment 1). Script commit `1af63fc`. No value moves.
+**Delta** v5 (2026-10-15): the v7 re-cut lands. The chain label takes
+the founder form. Script commit `9241b23`. The caption sentence re-keys
+at the author pass. No value moves.

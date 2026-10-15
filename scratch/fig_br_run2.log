@@ -1,0 +1,18 @@
+=== run2: generator ===
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8315 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14757 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (34 strings)
+generator exit=0
+=== run2: pdflatex ===
+pdflatex exit=0
+latex error lines: 0
+overfull boxes: 0
+=== run2: render ===
+pdftoppm exit=0
+=== run2: md5 ===
+e8f08e653010c820262587e30dd9d42b  system-anatomy.tex
+58d4e491c3a61af39bb7f655f55e4114  prototype.html
+b359914881c9d9936ff7fc8dd7c2611d  label-ledger.txt
+e00521fe239ec244139898f77178af17  system-anatomy.pdf
+19c0caf5e32bd5728323c30ff98124a0  system-anatomy.png

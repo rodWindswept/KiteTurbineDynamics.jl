@@ -11,12 +11,12 @@ altitude limiter, not a load path
 autogyro rotors, lift only
 backline
 blade span
-bridles (three)
 cyan line
 ground station: generator and PTO
 lift bearing
 lift line
 lifter stack
+lifting bridles (three)
 line — one tensioned line of the TRPT. Three span each segment.
 main rotor (R6)
 ring · line · rotor

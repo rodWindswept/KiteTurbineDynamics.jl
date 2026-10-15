@@ -1,0 +1,29 @@
+{
+  "script_commit": "9241b23",
+  "md5": {
+    "tex": "e8f08e653010c820262587e30dd9d42b",
+    "html": "58d4e491c3a61af39bb7f655f55e4114",
+    "ledger": "b359914881c9d9936ff7fc8dd7c2611d",
+    "pdf": "e00521fe239ec244139898f77178af17",
+    "png": "19c0caf5e32bd5728323c30ff98124a0"
+  },
+  "sha256": {
+    "tex": "e7697c986d605f6ff50e2c628812a84e9eb2e5514a6170a7de89b2f707f1060c",
+    "ledger": "bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912",
+    "pdf": "c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c",
+    "png": "696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66",
+    "script": "b3f11a395da3067dff970a4cebf827e917eac8dc6b88bbb295ab8bdea75b1735"
+  },
+  "checks_log_sha256": "99e81f32e1dbc3882a9a63400dac0a4410b3be618d29365b6633886a3aeec31a",
+  "sites": {
+    "map": "docs/reporting/figures/figure-map.md",
+    "draft": "docs/reporting/drafts/2026-10-08-report-first-draft.md",
+    "seat": "handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md",
+    "register_status": "docs/reporting/figures/system-anatomy/register-status.md",
+    "captions": "docs/reporting/figures/system-anatomy/captions.md",
+    "spec": "docs/reporting/figures/system-anatomy/SPEC.md",
+    "corner_rs": "docs/reporting/figures/machine-corner-grid/register-status.md",
+    "corner_readme": "docs/reporting/figures/machine-corner-grid/README.md",
+    "tracker": "docs/reporting/draft-tracker.md"
+  }
+}

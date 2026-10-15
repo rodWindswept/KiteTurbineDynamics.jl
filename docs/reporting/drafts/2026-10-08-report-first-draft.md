@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.47. Date 2026-10-14.
+Internal engineering report. Draft v0.48. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -940,7 +940,7 @@ One row per built exhibit. All seven read dataset commit `dd3cc6a`.
 | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` | `post-95c385d_wind-authority` |
 | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` | `post-95c385d_wind-authority` |
 | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` | `post-95c385d_wind-authority` |
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
 | Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
@@ -972,10 +972,10 @@ Machine evolution strip:
 
 System anatomy plate:
 
-- `png` `2b23851250839e9596e8e5076177a53c5c09103a16a7e246ab4e031a44730372`
-- `pdf` `85a2e369028268c2ade69f1743f5a3e11ca87b5b6fb1a1b8c1f728816bd519d6`
-- `ledger` `931dfb71aef8168329fa632bfa21d16a514b8036354fa013090cf2948301f7ae`
-- `checks` `ffea5637775ccbadbb12d37074eb86055d3e51ef579add03870873b04a47888b`
+- `png` `696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66`
+- `pdf` `c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c`
+- `ledger` `bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912`
+- `checks` `99e81f32e1dbc3882a9a63400dac0a4410b3be618d29365b6633886a3aeec31a`
 
 Levers landscape:
 

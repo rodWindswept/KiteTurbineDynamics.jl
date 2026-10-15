@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the round-6 counter-read fold-back and the corner-grid opening (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the lifting-bridles relabel, the corner counter-read closure and the cite fixes (2026-10-15).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,11 +19,15 @@ re-walk.
 
 ## Open items
 
-1. **The corner build (map row 23).** The generator lands (`a4b4057`): four panels, all checks pass, the three-location F-REPRO walk holds. The counter-reads queue next (aero F-CITE and F-VALUE, the science register read).
+1. **The lifting-bridles relabel (map row 2).** The chain label lands (script `9241b23`): the F1 plate reads "lifting bridles (three)". The caption text, the copy embed and the appendix exhibit name re-key at the author pass. The aero counter-read of the re-cut queues; the visual pass by Rod follows.
 
-2. **The visual pass by Rod.** The five re-cut rows (2, 4, 6, 7 and 10) and the k-basis plate (row 5) read the visual pass as their next gate (map v38). The plates carry the round-6 top forms. The hero seat reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
+2. **The winner-form re-keys (row 10).** The map title takes the winner form; the appendix exhibit name re-keys at the author pass. The aero counter-read queues.
+
+3. **The visual pass by Rod.** The corner grid, the winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38, v39, v40). The plates carry the round-6 top forms. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The lifting-bridles relabel lands (2026-10-15): the F1 chain label reads "lifting bridles (three)" (script `9241b23`); three full runs byte-identical across all five outputs; the corner-grid cite findings close (`8855d9a` to `cb862df`) and the counter-reads fold back (`857f2c1`, 153 checks). Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-lifting-bridles-relabel.md`. Evidence `scratch/fig_br_*` (run logs, md5 tables, the check set).
 
 - The corner grid builds (2026-10-15): the generator lands at `a4b4057` (family mode, corner variant; SPEC delta D10). Four panels from the NR-051 picks, all checks pass, and the three-location F-REPRO walk reads byte-identical. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-grid-generator.md`. Evidence `scratch/fig_cg_repro.md5` and the run logs.
 
@@ -151,4 +155,4 @@ re-walk.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the corner-grid counter-reads (row 23) on the delivered bytes. The visual pass by Rod follows.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the aero counter-read of the F1 relabel and the winner-form re-keys (row 10). The visual pass by Rod follows.

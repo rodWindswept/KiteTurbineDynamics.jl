@@ -272,6 +272,12 @@ The conclusion prints the count 508 of 930 (NR-002), and the winner sentence tak
 Section 3.4 retitles to The levers of Performance.
 No signed value changes.
 
+v0.48 pass by @fig-img-diagrams (2026-10-15).
+This pass re-pins the figure-provenance appendix to the delivered lifting-bridles system-anatomy re-cut.
+The plate script-commit cell and its four output-hash cells take the delivered values.
+The re-cut takes the chain label "lifting bridles (three)" (figure-map row 2; the founder note of 2026-10-15).
+No value moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
