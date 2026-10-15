@@ -1,0 +1,64 @@
+PASS record: draft 89ed222
+PASS record: register at fab730a
+PASS record: 8 of 8 seats
+PASS record: 43 cited, every one signed (51 total), checker exit 0
+PASS record: built 2026-10-15T18:18:01Z
+PASS md5 parity live == archived build  [e1eaef4358f7bff7e8da8b8b73a5cf3b]
+PASS md5 reads e1eaef4358f7bff7e8da8b8b73a5cf3b
+PASS media entries == 8 (eight seats)  [8]
+PASS docx probe 'v0.53' == 1  [got 1]
+PASS docx probe 'v0.52' == 0  [got 0]
+PASS docx probe 'v0.51' == 0  [got 0]
+PASS docx probe 'v0.50' == 0  [got 0]
+PASS docx probe 'The rapid path takes the rope-break gate placement fix ' == 2  [got 2]
+PASS docx probe 'Use the rapid path for screening under its fixed rope-b' == 1  [got 1]
+PASS docx probe 'The placement fix has landed.' == 1  [got 1]
+PASS docx probe 'The rapid path once rejected all three winners at the r' == 2  [got 2]
+PASS docx probe 'The fix has landed.' == 1  [got 1]
+PASS docx probe 'rope-break check at the relax boundary (NR-013 ext2). D' == 1  [got 1]
+PASS docx probe 'on the measurement window only.' == 1  [got 1]
+PASS docx probe 'The rapid path awaits its rope-break gate fix' == 0  [got 0]
+PASS docx probe 'stays open' == 0  [got 0]
+PASS docx probe 'Fix the rapid-path rope-break gate' == 0  [got 0]
+PASS docx probe 'The rapid path rejects all three winners' == 0  [got 0]
+PASS docx probe 'NR-013 ext2' == 5  [got 5]
+PASS docx probe '(NR-013 ext2)' == 4  [got 4]
+PASS docx probe 'It never allows breaks.' == 1  [got 1]
+PASS docx probe 'Every healthy winner reads reject on the default path.' == 1  [got 1]
+PASS docx probe 'Three lifting bridles' == 1  [got 1]
+PASS docx probe 'Three bridles' == 0  [got 0]
+PASS docx probe 'down the lifting bridles' == 1  [got 1]
+PASS docx probe 'Machine winner hero' == 0  [got 0]
+PASS docx probe 'Machine winner' == 2  [got 2]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'topmost rotor ring' == 2  [got 2]
+PASS docx probe 'topmost ring radius' == 3  [got 3]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx text layer: 'machine-winner-hero' == 3  [3]
+PASS docx text layer: 'hero' == 3, every hit sits in the slug  [3]
+PASS docx text layer: word 'hub' == 5 (register-appendix holds)  [5]
+PASS draft: pin reads v0.53
+PASS draft: v0.52 reads 0
+PASS draft: line count 1021  [1021]
+PASS draft: fix-landed reads once
+PASS draft: placed-fix sentence reads 2
+PASS draft: awaits sentence reads 0
+PASS draft: stays-open reads 0
+PASS draft: NR-013 ext2 reads 5
+PASS draft: NR-049 sentence held
+PASS draft: system-anatomy marker held once
+PASS tracker: v0.53 entry present
+PASS tracker: v0.52 entry held
+PASS assembled: 'v0.53' reads 1  [1]
+PASS assembled: 'v0.52' reads 0
+PASS assembled: placed-fix sentence reads 2
+PASS assembled: fix-landed sentence reads 1
+PASS assembled: 'awaits' reads 0
+PASS assembled: 'stays open' reads 0
+PASS assembled: 8 figure roster blocks  [8]
+PASS assembled: 'unresolved' reads 0
+
+62 checks, 0 fail
