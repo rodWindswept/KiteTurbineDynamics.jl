@@ -1,0 +1,13 @@
+readback: the placement label re-cut counter-read fold-back (figures seat)
+local == origin at 553d07e (553d07ec3f2a0612ebeb1aae3d447a6c830bd9d8)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-placement-label-recut.md  5760c33ce0a0019204791e0de1a0aad7dd24b3f5
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-recut-closure-foldback.md  929c84f7408a2d4f72ee3900ad56742972af5cc0
+OK   docs/reporting/figures/figure-map.md  a7e308ad78a5e6d03940ce3a99ff8f336f2efa51
+OK   docs/reporting/figures/eval-timeline/register-status.md  2ac6e112f33291ca75ba5651c55902ff2bd9e35a
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  e0d4742907e4c0b9c16b430d931de86465ff0e35
+OK   scratch/fig_et_pl_fb_edit.py  a40bd3d480197e7546b506fb70a68bc0493b929f
+OK   scratch/fig_et_pl_fb_check.py  a9be90ca67d9251b231851f52f1e4d8977d5c7f5
+OK   scratch/fig_et_pl_fb_check.log  c4455ddee8424cdc68165fcbf51c888d04ca63f8
+OK   scratch/fig_et_pl_check.py  cf46fa72aaa8ceb4f04aa9fb5296c7935ec3a007
+carried blobs verified: 9 of 9; failures: 0
