@@ -1823,3 +1823,70 @@ Boundaries that travel with this row:
    at three picks of four. The independent re-read agrees on three
    corners over the whole feasible set and differs at the high-PC1 /
    low-PC2 corner. The row does not rest on that check.
+
+## NR-013 extension: post-fix warm runs, the three winners (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The rope-break gate placement fix lands (`2bf76a3`, receipt `317d9cd`).
+Break detection arms at the relax boundary (10 s). The measurement window
+runs fully armed. This block records the post-fix warm state and binds it
+to the fresh extract.
+
+| NR-013 ext2 | Post-fix warm runs, the three winners | Island 1: P_mean 5.719 kW, P_end 3.381 kW, FoS_min 0.154, ω_eq 7.727 rad/s, twist 0.544. Island 2: 5.803, 7.563, 0.439, 8.064, 0.541. Island 3: 5.115, 5.070, 0.593, 14.231, 0.965. All three read status reject, line_broken false, no latch through 50 s | kW, rad/s | `scratch/av_rb_warm_extract/island_1_warm_10ms.csv`, blob `770d937743948763e56715e5baade154fe179941`, `island_2_warm_10ms.csv`, blob `05fb874b0aa0c756570935e1e50039305ebaac39`, `island_3_warm_10ms.csv`, blob `3b39f063c286a58d865bc3c7234cf625ee31244d`, and the log `scratch/av_rb_warm_extract.log` | signed (science-validator, 2026-10-15) |
+
+Sign-off basis:
+
+- The census. The three traces hold 4,999, 4,992 and 5,000 rows.
+  Each run reaches about 50 s. The latch column reads zero at every row.
+  Before the fix all three read broken=true (NR-013).
+
+- The placement. The arm time reads `breaks_arm_s = cfg.relax_s` = 10.0 s.
+  The control case still trips at step 98, t = 2.841 ms, 1.00081.
+  The fixed path clears the full run. The placement check reads 5 checks,
+  0 fail (`scratch/av_rb_placement_check.log`).
+
+- The window means. The trace reconstructs the recorded P_mean within the
+  ringing reconstruction bound. The observed residuals read at or below
+  0.023 kW. P_end is a 5-sample statistic. Its observed residuals read at
+  or below 0.203 kW. The exact forms stand as evaluator outputs
+  (1 s grid, `src/objective_evaluator.jl:912, 1018`).
+
+- The settle rate. The recorded ω_eq reproduces at the trace start on all
+  three islands. The first-row values read 7.7258, 8.0632 and 14.2283
+  against 7.727, 8.064 and 14.231.
+
+- FoS_min and twist read from the committed extract log lines. The trace
+  does not carry them.
+
+- The closure. The 2026-10-12 note "That placement is not in the code"
+  retires. The placement sits in the code. The condition curve reproduces
+  as a real code run (`317d9cd`).
+
+Reading rules:
+
+- Quote the warm rows as honest-gate rejections (the FoS gate), never as
+  rope-break rejections.
+
+- The 1.00081 trip reading stays the control case.
+
+- The condition-run label reads "rope-break gate off during relax"
+  (landed `f5c2d59`). No label claims a pass.
+
+Boundaries that travel with this row:
+
+1. The blobs above hold the trace bytes. A re-run writes new bytes and
+   needs a new block.
+
+2. The recorded P_mean and P_end stand as evaluator statistics.
+   A trace-only recomputation reads the reconstruction bounds above.
+
+## NR-025 quote form, post-fix (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The placement fix lands (`2bf76a3`). Break detection arms at the relax
+boundary (10 s). The measurement window runs fully armed. The 2026-10-14
+quote form ("the rope-break check armed across both") describes the
+as-run campaign. Future quotes of the fixed evaluator read "the rope-break check armed at the window".
+The row keeps its signed text, byte-identical to the base.

@@ -1,0 +1,70 @@
+PASS i1: header status reads reject
+PASS i1: header line_broken reads false
+PASS i1: row count 4999 == log count 4999
+PASS i1: run reaches about 50 s (t_last=49.991259)
+PASS i1: trace starts at t<0.001
+PASS i1: latch census zero
+PASS i1: omega_eq at trace start (gnd 7.7258 / hub 7.7267 / hdr 7.7266)
+PASS i1: P_mean recon within bound (-0.0015 vs bound 0.2390)
+PASS i1: P_end recon within bound (+0.0206 vs bound 0.4432)
+PASS i1: extract log line parses
+PASS i1: log P_mean 5.719 == header 3dp 5.719
+PASS i1: log P_end 3.381 == header 3dp 3.381
+PASS i1: log omega_eq 7.727 == header 3dp 7.727
+PASS i1: log FoS/twist forms 0.154/0.544
+PASS i1: stock probe warm row parses (reject/broken=false)
+PASS i1: probe P_mean 5.719 == header 3dp 5.719
+PASS i1: probe P_end 3.381 == header 3dp 3.381
+PASS i1: blob bind 770d9377 == pinned 770d9377
+PASS i2: header status reads reject
+PASS i2: header line_broken reads false
+PASS i2: row count 4992 == log count 4992
+PASS i2: run reaches about 50 s (t_last=49.997164)
+PASS i2: trace starts at t<0.001
+PASS i2: latch census zero
+PASS i2: omega_eq at trace start (gnd 8.0632 / hub 8.0645 / hdr 8.0643)
+PASS i2: P_mean recon within bound (+0.0227 vs bound 0.0890)
+PASS i2: P_end recon within bound (-0.2026 vs bound 0.3849)
+PASS i2: extract log line parses
+PASS i2: log P_mean 5.803 == header 3dp 5.803
+PASS i2: log P_end 7.563 == header 3dp 7.563
+PASS i2: log omega_eq 8.064 == header 3dp 8.064
+PASS i2: log FoS/twist forms 0.439/0.541
+PASS i2: stock probe warm row parses (reject/broken=false)
+PASS i2: probe P_mean 5.803 == header 3dp 5.803
+PASS i2: probe P_end 7.563 == header 3dp 7.563
+PASS i2: blob bind 05fb874b == pinned 05fb874b
+PASS i3: header status reads reject
+PASS i3: header line_broken reads false
+PASS i3: row count 5000 == log count 5000
+PASS i3: run reaches about 50 s (t_last=49.994110)
+PASS i3: trace starts at t<0.001
+PASS i3: latch census zero
+PASS i3: omega_eq at trace start (gnd 14.2283 / hub 14.2309 / hdr 14.2309)
+PASS i3: P_mean recon within bound (-0.0181 vs bound 0.1623)
+PASS i3: P_end recon within bound (-0.0732 vs bound 0.1317)
+PASS i3: extract log line parses
+PASS i3: log P_mean 5.115 == header 3dp 5.115
+PASS i3: log P_end 5.07 == header 3dp 5.07
+PASS i3: log omega_eq 14.231 == header 3dp 14.231
+PASS i3: log FoS/twist forms 0.593/0.965
+PASS i3: stock probe warm row parses (reject/broken=false)
+PASS i3: probe P_mean 5.115 == header 3dp 5.115
+PASS i3: probe P_end 5.07 == header 3dp 5.07
+PASS i3: blob bind 3b39f063 == pinned 3b39f063
+PASS register carries the NR-013 ext2 row
+PASS register carries the post-fix warm block title
+PASS register carries the NR-025 post-fix quote form
+PASS register carries the arm-time form
+
+SUMMARY
+  island 1: P_mean recon 5.717361 vs header 5.718868 (delta -0.0015, bound 0.2390)
+           P_end  recon 3.401881 vs header 3.381314 (delta +0.0206, bound 0.4432)
+           omega_eq first-row gnd 7.7258 hub 7.7267 vs header 7.7266
+  island 2: P_mean recon 5.825330 vs header 5.802639 (delta +0.0227, bound 0.0890)
+           P_end  recon 7.360817 vs header 7.563402 (delta -0.2026, bound 0.3849)
+           omega_eq first-row gnd 8.0632 hub 8.0645 vs header 8.0643
+  island 3: P_mean recon 5.096711 vs header 5.114791 (delta -0.0181, bound 0.1623)
+           P_end  recon 4.996887 vs header 5.070078 (delta -0.0732, bound 0.1317)
+           omega_eq first-row gnd 14.2283 hub 14.2309 vs header 14.2309
+checks: 58 | failures: 0
