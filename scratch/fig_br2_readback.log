@@ -1,0 +1,16 @@
+figures seat — the relabel closures fold-back — readback (figures-images-diagrams)
+commits: 95e147c (the fold-back)
+push: 79da87c..95e147c
+fetch: 95e147c
+local == origin: YES
+
+blob readback (HEAD: vs origin/bank-derate-cos2p65:):
+OK  docs/reporting/figures/figure-map.md  e5dc2fb91d4d4b454c3cfbd9b194ed18b675e72b
+OK  docs/reporting/figures/system-anatomy/SPEC.md  2d7d7892401d91323ab5eb18b81b6215f6692fa3
+OK  docs/reporting/figures/system-anatomy/captions.md  90399d54c9d7b1a78ab8f92b9708f134ac0e3707
+OK  docs/reporting/figures/system-anatomy/register-status.md  b60aab6bd61036856a7c51bf1bf4723625d9198f
+OK  handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  4ae1cff91a25e4b157ff555b23474d63a3d91fe7
+OK  docs/reporting/room-responses/figures-images-diagrams-2026-10-15-relabel-closures-foldback.md  efc5219aeb185c8ea80b279760345fc0a9b78763
+OK  scratch/fig_br2_check.log  e30a728eb2d9418d20e5f12567400c6ed0884cd8
+OK  scratch/fig_br2_check.py  a277f6f18812d9fbf23dac1d1c56e268657e7fd2
+OK  scratch/fig_br2_docs_edit.py  5d8ba9bf11709c56eeecc6c7ed45ac752c382bcc
