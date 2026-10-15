@@ -1,0 +1,25 @@
+readback: the convergence two-panel build (figures seat)
+local == origin at 2361771 (23617719a44fb790ef43f2cc275d803e6fe09072)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/convergence/SPEC.md  79cad01b7028c4260eab8a49f75b4c3d1dc031dc
+OK   docs/reporting/figures/convergence/captions-draft.md  159c2303be494ec4e1cb23e83064452e653c7e9c
+OK   docs/reporting/figures/convergence/checks.log  bc24d90faf2f5d86d3549e5b2cb11e6288ac78a9
+OK   docs/reporting/figures/convergence/convergence.pdf  91b42dac98f9be763e71100873ede802f9a42890
+OK   docs/reporting/figures/convergence/convergence.png  cafc0bee1af810f5241701f115d6a5fd00b51065
+OK   docs/reporting/figures/convergence/convergence.py  4981abee97de26d5c6e5403de00ae22a8495f716
+OK   docs/reporting/figures/convergence/convergence.svg  22991b4ac2a49a8ad38d0feded37633200a421a1
+OK   docs/reporting/figures/convergence/label-ledger.txt  5b837be8b3787da71b6e657d853f2e6a6d792f47
+OK   docs/reporting/figures/convergence/manifest.json  4ecf119aa1735a8c13f46a9924afbade1389a44a
+OK   docs/reporting/figures/convergence/register-status.md  a6e17ff8189fb5d983ca98910a7c2d550ef4abea
+OK   docs/reporting/figures/figure-map.md  f5527a1641954a87420f16aabd8d61f1131d52c5
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-convergence-build.md  1f4e923209f3f8814e363ee06ddfddc7e0283b1b
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  645bdc9e77758e76240feba2be2b31b8608e3367
+OK   scratch/fig_cvp_check.log  6dfc3499011ae6305a2a9f6039469b2f4edfcd43
+OK   scratch/fig_cvp_check.py  b62eec03eeccd95dc0f2c0c548300c0e544ca060
+OK   scratch/fig_cvp_driver.py  1a2abed85bc2c86bac055a33baaf1b1362b41894
+OK   scratch/fig_cvp_edit.py  d044694ffa59f4ecafcf0d5f6b842b876f90e99f
+OK   scratch/fig_cvp_repro.md5  48977bdfdfbf97ed2e3c58f58036cb46d6c92e9e
+OK   scratch/fig_cvp_run1.log  bc24d90faf2f5d86d3549e5b2cb11e6288ac78a9
+OK   scratch/fig_cvp_run2.log  bc24d90faf2f5d86d3549e5b2cb11e6288ac78a9
+OK   scratch/fig_cvp_run3.log  bc24d90faf2f5d86d3549e5b2cb11e6288ac78a9
+carried blobs verified: 21 of 21; failures: 0
