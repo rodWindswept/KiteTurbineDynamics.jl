@@ -1,0 +1,49 @@
+PASS record: draft 171f3ea
+PASS record: register at cb862df
+PASS record: 7 of 7 seats
+PASS record: 42 cited, every one signed (51 total), checker exit 0
+PASS md5 parity live == archived build  [ae15d9918ea216dcd6f0ada6073d0ec0]
+PASS md5 reads ae15d9918ea216dcd6f0ada6073d0ec0
+PASS media entries == 7  [7]
+PASS docx probe 'v0.50' == 1  [got 1]
+PASS docx probe 'v0.49' == 0  [got 0]
+PASS docx probe 'v0.48' == 0  [got 0]
+PASS docx probe 'The team sizes the beam for a bounded generator load st' == 1  [got 1]
+PASS docx probe 'The beam sizes on a bounded generator load step' == 0  [got 0]
+PASS docx probe 'A low-wind lull is harmless under the load law.' == 1  [got 1]
+PASS docx probe 'benign under the load law' == 0  [got 0]
+PASS docx probe 'The team refuses to ease k as the high-wind substitute.' == 1  [got 1]
+PASS docx probe 'The record refuses k easing' == 0  [got 0]
+PASS docx probe 'The top-segment helix force reads about 1278 N/vertex (' == 1  [got 1]
+PASS docx probe 'The rotor spins up to 87.9° of twist against the 78.8° ' == 1  [got 1]
+PASS docx probe 'Three lifting bridles' == 1  [got 1]
+PASS docx probe 'Three bridles' == 0  [got 0]
+PASS docx probe 'down the lifting bridles' == 1  [got 1]
+PASS docx probe 'Machine winner hero' == 0  [got 0]
+PASS docx probe 'Machine winner' == 2  [got 2]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'topmost rotor ring' == 2  [got 2]
+PASS docx probe 'topmost ring radius' == 3  [got 3]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx text layer: 'machine-winner-hero' == 3  [3]
+PASS docx text layer: 'hero' == 3, every hit sits in the slug  [3]
+PASS docx text layer: word 'hub' == 5 (register-appendix holds)  [5]
+PASS draft: pin reads v0.50
+PASS draft: no era cite (mppt reads 0)
+PASS draft: old beam sentence reads 0
+PASS draft: old lull sentence reads 0
+PASS draft: old refusal reads 0
+PASS assembled: 'Machine winner hero' reads 0
+PASS assembled: 'Machine winner' reads 2
+PASS assembled: 'hero' == 5, every hit sits in the slug  [5]
+PASS assembled: new beam sentence reads 1
+PASS assembled: new lull sentence reads 1
+PASS assembled: new refusal reads 1
+PASS assembled: word 'hub' occurrences == 5  [5]
+PASS assembled: every 'hub' occurrence sits in an appendix register row
+PASS assembled: 'hub segment' held only in the NR-048 row
+
+47 checks, 0 fail
