@@ -1,0 +1,20 @@
+readback: the back-pointer term row (science-writer seat)
+HEAD    c4bd90d4438ffdcbdf7ae92e278dd6333887e28f
+origin/bank-derate-cos2p65  c4bd90d4438ffdcbdf7ae92e278dd6333887e28f
+local == origin: True
+
+equal  docs/reporting/glossary-candidates.md  c1af8e11998745ed
+equal  docs/reporting/room-responses/science-writer-2026-10-15-backpointer-term-row.md  5699757fff73c5da
+equal  scratch/sw_bptr_base.md  08fb2e36fade17ad
+equal  scratch/sw_bptr_new.md  c1af8e11998745ed
+equal  scratch/sw_bptr_supply.md  a279217561bca87b
+equal  scratch/sw_bptr_fold.py  45007e776c879b4b
+equal  scratch/sw_bptr_fold.log  ce9bba721cda9de6
+equal  scratch/sw_bptr_check.py  8ca1075196106039
+equal  scratch/sw_bptr_check.log  9353225e6acd02a9
+equal  scratch/sw_bptr_ste_probe.py  fbb92a15c203ead8
+equal  scratch/sw_bptr_off_base.txt  74c933099041dbe8
+equal  scratch/sw_bptr_off_new.txt  164eff389f4256ca
+
+files carried: 12; equal: 12
+all carried blobs byte-verified at origin
