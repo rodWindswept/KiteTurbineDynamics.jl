@@ -1,0 +1,19 @@
+figures seat — the corner-grid read closures fold-back — readback (figures-images-diagrams)
+commits: 6d65de8 (the fold-back)
+push: ed95cf1..6d65de8
+fetch: 6d65de8
+local == origin: YES
+
+blob readback (byte-verify: origin blob vs working file; HEAD: == origin:):
+OK  docs/reporting/figures/figure-map.md  f76090adb28516abdc096b28459e1afc96e6c681
+OK  docs/reporting/figures/machine-corner-grid/README.md  4c03206bda1e904e3fd6d2acc41ef93e82d094d2
+OK  docs/reporting/figures/machine-corner-grid/register-status.md  75e60573f9af9a77dcf450cc2fe355653d08b8fd
+OK  handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  698c9565e4639ca0e810689e30c92b8e9db984ab
+OK  docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-grid-closures-foldback.md  dcfd36f1ea636141b3290d8e06ef873df5108c2c
+OK  scratch/fig_cg2_docs_edit.py  278c4371082ad33fc535acb4271ef7fa0b40415c
+OK  scratch/fig_cg2_check.py  7c6a36dde2a684be27be1425b431cf4ce8bfb276
+OK  scratch/fig_cg2_facts.json  af8cb3ea897a6a28d1e87cd48fcbf69bf0befd20
+OK  scratch/fig_cg2_edit.log  8525bf386e758db9adf3c347d259cf528c1fc167
+OK  scratch/fig_cg2_check.log  2655f9f6314f4c5ec71469bec7695ab0af1c110c
+
+10 carried blobs, 0 mismatch
