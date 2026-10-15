@@ -284,6 +284,11 @@ The two system-anatomy caption files and the draft lift-path sentence take the l
 The figure marker, the appendix exhibit row and the caption lead take the winner form.
 No value moves, and no figure byte moves.
 
+v0.50 pass by @author (2026-10-15).
+This pass gives the structural side of the load story a plainer form.
+The beam-sizing sentence, the lull sentence and the refusal sentence take plainer forms.
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

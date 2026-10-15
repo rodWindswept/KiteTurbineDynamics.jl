@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.49. Date 2026-10-15.
+Internal engineering report. Draft v0.50. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -315,10 +315,10 @@ The heavy end also carries a score cost.
 The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046).
 
 The load choice also has a structural side.
-The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
+The team sizes the beam for a bounded generator load step: twice the nominal load (NR-048).
 The top-segment helix force reads about 1278 N/vertex (NR-048).
-The low-wind lull is benign under the load law.
-The record refuses k easing as the high-wind substitute.
+A low-wind lull is harmless under the load law.
+The team refuses to ease k as the high-wind substitute.
 The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
 
 The campaign also fixed the shaft length. The search does not vary it:
