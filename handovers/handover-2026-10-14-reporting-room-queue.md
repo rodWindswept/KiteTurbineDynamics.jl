@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
 **Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
-**Updated** 2026-10-15 for the closure train through v0.52, the references ruling-gate and the visual-pass set correction. Draft v0.52. The review copy reads md5 `3c386dc2…`.
+**Updated** 2026-10-15 for the second closure train through v0.56 — the rope-break placement fix, the operating-point and torsion fold, the reject split and item-2.1 environment set, the convergence row-16 build and its counter-reads, and the era pack. Draft v0.56. The review copy reads md5 `5ecee42e…`.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -60,27 +60,27 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The 2026-10-15 closure train lands the four founder asks. The lifting-bridles relabel and term gate close. The hero-image retirement closes. The figure-editability note closes. The corner-machines fold (v0.51) lands, and its register read and copy counter-read close. The kMppt plain pass (v0.50) and the basics-of-TRPT refresher (v0.52) land. Sweep 31 closes. Draft v0.52 at `b6cd166`. The review copy reads md5 `3c386dc2…`.
 
+- The second closure train lands through v0.56. The rope-break placement fix closes — code `2bf76a3` (gate armed at the relax boundary), aero `317d9cd`, register `fab730a` (NR-013 ext2), the placement label re-cut (`f5c2d59`) with its counter-read (`1bfb09e`) and the fidelity-band merge (row 12 into row 4, `f4b2840`) — then the fixed-defect fold v0.53 lands (`89ed222`, copy `e1eaef43`). The operating-point and torsion fold v0.54 lands (`d453530`, register `2142d43` signing NR-052/NR-053/NR-054 and the NR-031/032 BEM basis amend, copy `72ef99be`). The item-2.1 environment reads land (aero `c08f3bd`) and sign NR-056 to NR-058, and the 301 reject split signs NR-055 (science `a51e9d9`). The reject-split and environment fold v0.55 lands (`2e930a8`, copy `4c438414`). The convergence two-panel builds (`2361771`, row 16, "first feasibility, then mass") and its counter-reads close — F-VALUE (`24111e5`) and the register read with the NR-006 seed-form answer (`1b09190`), fold-back `2877071`. The era pack lands (science-writer `1c65d27`, the era call ruled) and folds v0.56 (`c9f0560`, copy `5ecee42e`). Sweep 32 closes (`4c83178`). Draft v0.56 at `c9f0560`. Register `1b09190`. Review copy md5 `5ecee42e…`.
+
 ## Open queue, in fold order
 
-1. **@science-writer: the era pack and sweep 32.** Sweeps 30 and 31 closed. The era pack opens: the development-history chapter push. Then the section 4.2 dates reconcile across Track A and Track B. Sweep 32 keys on the next push. The references gate reads ruling-gated, not search-gated (three one-line rulings, option A in `references-verification.md` §4).
+1. **@science-writer: sweep 33.** Sweep 32 closed (`4c83178`). Sweep 33 keys on the next push and spans v0.54, v0.55 and v0.56. The "destructive resonance" glossary row rides as an optional handoff from the era-pack fold. The references gate reads ruling-gated, not search-gated (three one-line rulings, option A in `references-verification.md` §4).
 
 2. **@hermes (lead) + @science-writer: the Nomenclature fold.** Section 6 is the last pending section. The term gate cleared (`cadf83d`). The glossary ratification has not landed. The abstract and the keywords read written.
 
-3. **@author: the partner-gated tails.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4.
+3. **@author: the partner-gated tails (AU4) and the software story.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4. The software story reads next at this seat. The section 3.2 fold waits only on the visual pass.
 
-4. **The rope-break gate placement fix (NR-013, Harris 3.8).** The code still runs the gate across relax and window. A code fix lands before the printed number stands.
+4. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12. The PL12 references ruling facts read landed (`84ac158`).
 
-5. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate and rows 4 to 7 wait on Rod. The two parked winner-plate items ride the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
+5. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate wait on Rod's eye. The section 3.2 fold and the R3 SPEC round wait the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
 
-6. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12.
+6. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
 
-7. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
+7. **With the founder.** The bow call (Harris 2.12 — report the winner's bow, and whether settle and ODE agree on it) is the one live word: up or drop. Then the winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome). The settled-form primer waits on the form sign.
 
-8. **With the founder.** The winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome). The settled-form primer waits on the form sign.
+8. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
 
-9. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
-
-10. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
+9. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
 
 ## The parallel set
 
@@ -112,4 +112,4 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 - Write anything Rod reads in plain English. Keep the shorthand for internal notes.
 
-**Owner:** @hermes (map seat). **Next action:** the era pack and sweep 32 at the science-writer seat. The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The rope-break gate placement fix (NR-013) lands before the printed number stands. The visual pass by Rod covers the F1 plate, the winner plate and rows 4 to 7. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** sweep 33 at the science-writer seat (keys on the next push). The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The software story reads next at the author seat. The bow call (Harris 2.12) waits the founder's word — up or drop. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
