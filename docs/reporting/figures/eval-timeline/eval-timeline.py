@@ -7,7 +7,7 @@ Draws the measurement-window evaluation timeline for the island-3 winner
 from the committed extracts (docs/reporting/figures/eval-timeline-extract/,
 tree 980de02; docs/reporting/figures/window-trace-extract/, tree 8d01394):
 
-  lane 1  angular rate, ground ring and hub ring (cold extract)
+  lane 1  angular rate, ground ring and top ring (cold extract)
   lane 2  generator power, with the window mean and P_end marks
   lane 3  peak line strain / break strain: cold, warm as coded, ruling-mode
           condition run; inset over the first 12 ms
@@ -22,6 +22,10 @@ v2 (the round-6 hub-name retirement, 2026-10-14): the lane-1 label
 reads "ω top" and the gate row reads "top · tip · Betz". The
 drawn rows list takes NR-042 (its recorded next-build item). No
 drawn value moves.
+
+v3 (the placement landed, 2026-10-15): the lane-3 label takes the
+landed form "rope-break gate off during relax". The head comment sweeps
+to the top form. No drawn value moves.
 
 Run:
   /usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py \
@@ -235,7 +239,7 @@ def main() -> int:
              ha="left", va="top", size=7, color=RED)
     ax3.text(49.6, 0.80, keep("ruling-mode condition run (dashed) \u2014 peak 1.448 at t = 5.798 ms"),
              ha="right", va="bottom", size=7, color=STEEL, bbox=wbox)
-    ax3.text(49.6, 0.66, keep("rope-break gate off during relax (not yet in the code)"),
+    ax3.text(49.6, 0.66, keep("rope-break gate off during relax"),
              ha="right", va="bottom", size=7, color=STEEL, bbox=wbox)
     ax3.text(49.6, 0.08, keep("cold path (solid line)"),
              ha="right", va="bottom", size=7, color=INK, bbox=wbox)
