@@ -1,0 +1,15 @@
+av-r6 counter-read readback — 2026-10-15 (aero-validator)
+
+commit: 3038656 docs(reporting): the round-6 counter-reads close clean — 136 checks, 0 fail
+range: 9b414f3..3038656
+local == origin at 3038656 (fetch readback).
+
+blob readback (local == origin/bank-derate-cos2p65):
+  OK docs/reporting/room-responses/aero-validator-2026-10-15-round6-counterread.md
+  OK handovers/handover-2026-10-14-reporting-room-aero-validator.md
+  OK scratch/av_r6_counterread.py
+  OK scratch/av_r6_counterread.log
+  OK scratch/av_r6_repro.log
+
+STE at the commit: receipt 0.00/100w, seat page 0.00/100w; pre-commit hook green.
+The repro worktree was removed after the runs; the shared tree carries no nested checkout.
