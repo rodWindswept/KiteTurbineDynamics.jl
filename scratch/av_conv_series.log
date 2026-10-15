@@ -1,0 +1,124 @@
+av_conv_series — island running-best series extract (Harris 3.5 #4)
+generated: 2026-10-15T20:00:55Z  seat: aero-validator
+dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2
+rule: best-so-far at gen G = minimal recorded fitness among ok rows, gen <= G;
+      ties -> earliest (gen, idx); no interpolation, no reconstruction
+
+island 1: rows=310 ok=152 sha256=6f359c33f174d5dc98b1252e29fdba6eac8dbae15dd71d46ef8bbed6acc9bd2f
+  # v13_5kw_masslift telemetry  length=18.8  window=40.0  min_clearance=1.5  lift=mass-aware-const-tension  margin=1.5  era=post-95c385d_wind-authority  git=a76c5e927252118abf2b2ff6bd988395583d5113
+  gen  0: best=36.109         from (gen 0, idx 1)
+  gen  1: best=36.109         from (gen 0, idx 1)
+  gen  2: best=36.109         from (gen 0, idx 1)
+  gen  3: best=36.109         from (gen 0, idx 1)
+  gen  4: best=36.109         from (gen 0, idx 1)
+  gen  5: best=36.109         from (gen 0, idx 1)
+  gen  6: best=36.109         from (gen 0, idx 1)
+  gen  7: best=36.109         from (gen 0, idx 1)
+  gen  8: best=33.684         from (gen 8, idx 4)
+  gen  9: best=33.684         from (gen 8, idx 4)
+  gen 10: best=33.684         from (gen 8, idx 4)
+  gen 11: best=33.684         from (gen 8, idx 4)
+  gen 12: best=33.684         from (gen 8, idx 4)
+  gen 13: best=33.684         from (gen 8, idx 4)
+  gen 14: best=33.684         from (gen 8, idx 4)
+  gen 15: best=32.967         from (gen 15, idx 4)
+  gen 16: best=32.637         from (gen 16, idx 9)
+  gen 17: best=32.637         from (gen 16, idx 9)
+  gen 18: best=32.637         from (gen 16, idx 9)
+  gen 19: best=32.637         from (gen 16, idx 9)
+  gen 20: best=32.637         from (gen 16, idx 9)
+  gen 21: best=31.892         from (gen 21, idx 4)
+  gen 22: best=31.879         from (gen 22, idx 10)
+  gen 23: best=31.879         from (gen 22, idx 10)
+  gen 24: best=31.879         from (gen 22, idx 10)
+  gen 25: best=31.735         from (gen 25, idx 2)
+  gen 26: best=31.735         from (gen 25, idx 2)
+  gen 27: best=31.294         from (gen 27, idx 7)
+  gen 28: best=31.294         from (gen 27, idx 7)
+  gen 29: best=31.018         from (gen 29, idx 1)
+  gen 30: best=30.578         from (gen 30, idx 2)
+
+island 2: rows=310 ok=162 sha256=54172ce5a64b22903a2428f870b499f13da53c6b065600d8a01edfd882b29827
+  # v13_5kw_masslift telemetry  length=18.8  window=40.0  min_clearance=1.5  lift=mass-aware-const-tension  margin=1.5  era=post-95c385d_wind-authority  git=a76c5e927252118abf2b2ff6bd988395583d5113
+  gen  0: best=36.109         from (gen 0, idx 1)
+  gen  1: best=36.109         from (gen 0, idx 1)
+  gen  2: best=32.836         from (gen 2, idx 7)
+  gen  3: best=32.836         from (gen 2, idx 7)
+  gen  4: best=32.836         from (gen 2, idx 7)
+  gen  5: best=32.836         from (gen 2, idx 7)
+  gen  6: best=32.836         from (gen 2, idx 7)
+  gen  7: best=32.836         from (gen 2, idx 7)
+  gen  8: best=32.836         from (gen 2, idx 7)
+  gen  9: best=32.836         from (gen 2, idx 7)
+  gen 10: best=32.836         from (gen 2, idx 7)
+  gen 11: best=32.836         from (gen 2, idx 7)
+  gen 12: best=32.836         from (gen 2, idx 7)
+  gen 13: best=32.836         from (gen 2, idx 7)
+  gen 14: best=32.836         from (gen 2, idx 7)
+  gen 15: best=32.736         from (gen 15, idx 7)
+  gen 16: best=32.736         from (gen 15, idx 7)
+  gen 17: best=32.736         from (gen 15, idx 7)
+  gen 18: best=32.736         from (gen 15, idx 7)
+  gen 19: best=32.736         from (gen 15, idx 7)
+  gen 20: best=32.605         from (gen 20, idx 2)
+  gen 21: best=32.514         from (gen 21, idx 7)
+  gen 22: best=32.514         from (gen 21, idx 7)
+  gen 23: best=32.158         from (gen 23, idx 2)
+  gen 24: best=31.854         from (gen 24, idx 5)
+  gen 25: best=31.854         from (gen 24, idx 5)
+  gen 26: best=31.584         from (gen 26, idx 6)
+  gen 27: best=31.584         from (gen 26, idx 6)
+  gen 28: best=31.267         from (gen 28, idx 1)
+  gen 29: best=31.085         from (gen 29, idx 3)
+  gen 30: best=30.637         from (gen 30, idx 7)
+
+island 3: rows=310 ok=194 sha256=34d40e8ea960a1e04c83df58df9e24047cfcf7eb3deff3278807f1147b8d60b0
+  # v13_5kw_masslift telemetry  length=18.8  window=40.0  min_clearance=1.5  lift=mass-aware-const-tension  margin=1.5  era=post-95c385d_wind-authority  git=a76c5e927252118abf2b2ff6bd988395583d5113
+  gen  0: best=36.109         from (gen 0, idx 1)
+  gen  1: best=36.109         from (gen 0, idx 1)
+  gen  2: best=36.109         from (gen 0, idx 1)
+  gen  3: best=36.109         from (gen 0, idx 1)
+  gen  4: best=36.109         from (gen 0, idx 1)
+  gen  5: best=36.109         from (gen 0, idx 1)
+  gen  6: best=32.293         from (gen 6, idx 2)
+  gen  7: best=32.293         from (gen 6, idx 2)
+  gen  8: best=32.293         from (gen 6, idx 2)
+  gen  9: best=32.293         from (gen 6, idx 2)
+  gen 10: best=31.661         from (gen 10, idx 7)
+  gen 11: best=31.661         from (gen 10, idx 7)
+  gen 12: best=31.661         from (gen 10, idx 7)
+  gen 13: best=31.661         from (gen 10, idx 7)
+  gen 14: best=31.661         from (gen 10, idx 7)
+  gen 15: best=31.661         from (gen 10, idx 7)
+  gen 16: best=31.661         from (gen 10, idx 7)
+  gen 17: best=31.661         from (gen 10, idx 7)
+  gen 18: best=30.929         from (gen 18, idx 4)
+  gen 19: best=30.929         from (gen 18, idx 4)
+  gen 20: best=30.929         from (gen 18, idx 4)
+  gen 21: best=30.929         from (gen 18, idx 4)
+  gen 22: best=29.854         from (gen 22, idx 10)
+  gen 23: best=29.854         from (gen 22, idx 10)
+  gen 24: best=29.854         from (gen 22, idx 10)
+  gen 25: best=28.315         from (gen 25, idx 8)
+  gen 26: best=27.364         from (gen 26, idx 9)
+  gen 27: best=27.364         from (gen 26, idx 9)
+  gen 28: best=27.364         from (gen 26, idx 9)
+  gen 29: best=27.364         from (gen 26, idx 9)
+  gen 30: best=27.364         from (gen 26, idx 9)
+
+PARITY — island 3 milestones vs NR-036 [0, 6, 10, 18, 22, 25, 26] -> [36.109, 32.293, 31.661, 30.929, 29.854, 28.315, 27.364]
+  gen  0: want 36.109  got 36.109  PASS
+  gen  6: want 32.293  got 32.293  PASS
+  gen 10: want 31.661  got 31.661  PASS
+  gen 18: want 30.929  got 30.929  PASS
+  gen 22: want 29.854  got 29.854  PASS
+  gen 25: want 28.315  got 28.315  PASS
+  gen 26: want 27.364  got 27.364  PASS
+  island 3 telemetry sha256 matches strip-extract input: PASS
+  island 3 ok count matches strip extract (194): PASS (got 194)
+
+final best-so-far (gen 30): island 1 = 30.578, island 2 = 30.637, island 3 = 27.364
+island 1 vs 3: +11.7%   island 2 vs 3: +12.0%
+
+wrote scratch/av_conv_series.csv (93 data rows)
+OVERALL: ALL PASS
