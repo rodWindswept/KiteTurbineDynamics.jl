@@ -1,0 +1,11 @@
+readback: the convergence two-panel seat (figures seat)
+local == origin at 3c31859 (3c318597c986379e37aee6b673e089f3d8c33c57)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/figure-map.md  45ba5d6972be8e0509933f69089e5f397c159b6b
+OK   docs/reporting/figures/figure-generation-notes.md  5d9416777b2c0bde06a7812c0fe44aa2d1054e26
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  6f03dfc80bea3c8e911f5e47a8f072d821a39875
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-convergence-two-panel-seat.md  2a391ad1171f24727d3156e3144affcfc2ec7128
+OK   scratch/fig_cv_edit.py  27fb0fa28174dedf245edbaba5d87ad299550628
+OK   scratch/fig_cv_check.py  7505a9447dfaba5ab1ef578ae953159d7389a53f
+OK   scratch/fig_cv_check.log  cd8817e235b3c3f4f38ac2c11c10e3869ce29fd9
+carried blobs verified: 7 of 7; failures: 0
