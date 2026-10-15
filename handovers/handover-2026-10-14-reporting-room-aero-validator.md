@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `98f7aa5` on `bank-derate-cos2p65`.
+**Base:** branch tip `317d9cd` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands, `2bf76a3` + `317d9cd`; all carried blobs byte-verified at origin).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +32,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The rope-break gate placement fix (the aero code seat): read at `317d9cd`. The evaluator arms break detection at the relax boundary (2026-09-16 ruling). The placement check reads 5 checks, 0 fail; the fixed path reproduces the condition CSV at 0.000e+00; cold parity holds on all three winners; the warm extract stands for the register. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-rope-break-gate-placement.md`. Evidence `scratch/av_rb_*`.
 
 - The v0.52 basics-of-TRPT copy counter-read read at `98f7aa5`. The copy (md5 `3c386dc2`) reads its record, its 32 pins, its eight embeds and its 43-row appendix. The ten block sentences read digit-free and cite-free at the term-set junction. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-v052-copy-counterread.md`. Evidence `scratch/av_v052_copyread.py` plus log.
 
@@ -96,4 +98,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the next copy counter-read when the next draft fold lands. The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
+**Owner:** @aero-validator. **Next action:** the register fold for the warm extract sits with @science-validator. The section 4.1 rewrite and the eval-timeline label fold behind the fix. The next copy counter-read keys on the next draft fold. The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
