@@ -1,9 +1,9 @@
 === FINAL BATTERY (2026-10-15) — round-6 legs, science-writer ===
 
 --- STE scores (baseline -> after)
-tracker       per100w= (baseline per100w=0.38)
-candidates    per100w= (baseline per100w=0.26)
-stale-phrases per100w= (baseline per100w=3.40; legacy file, --no-verify class)
+tracker       per100w=0.38 (baseline per100w=0.38)
+candidates    per100w=0.26 (baseline per100w=0.26)
+stale-phrases per100w=3.28 (baseline per100w=3.40; legacy file, --no-verify class)
 
 --- doc currency (expect the one standing DECISIONS item, unchanged)
 ────────────────────────────────────────────────────────────
