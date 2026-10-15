@@ -1,0 +1,39 @@
+PASS record: draft 8169e36
+PASS record: register at cb862df
+PASS record: 7 of 7 seats
+PASS record: 42 cited, every one signed (51 total), checker exit 0
+PASS md5 parity live == archived build  [24f98df65d7274233bfea9cc9e736937]
+PASS md5 reads 24f98df65d7274233bfea9cc9e736937
+PASS media entries == 7  [7]
+PASS docx probe 'v0.49' == 1  [got 1]
+PASS docx probe 'v0.48' == 0  [got 0]
+PASS docx probe 'v0.47' == 0  [got 0]
+PASS docx probe 'Three lifting bridles' == 1  [got 1]
+PASS docx probe 'Three bridles' == 0  [got 0]
+PASS docx probe 'down the lifting bridles' == 1  [got 1]
+PASS docx probe 'down the bridles' == 0  [got 0]
+PASS docx probe 'Machine winner hero' == 0  [got 0]
+PASS docx probe 'Machine winner' == 2  [got 2]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'topmost rotor ring' == 2  [got 2]
+PASS docx probe 'topmost ring radius' == 3  [got 3]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx text layer: 'machine-winner-hero' == 3  [3]
+PASS docx text layer: 'hero' == 3, every hit sits in the slug  [3]
+PASS docx text layer: word 'hub' == 5 (register-appendix holds)  [5]
+PASS draft: raw 'hero' == 1, in the slug  [1]
+PASS draft: 'down the bridles' reads 0
+PASS draft: 'lifting bridles' reads 1
+PASS assembled: 'Machine winner hero' reads 0
+PASS assembled: 'Machine winner' reads 2
+PASS assembled: 'Three lifting bridles' reads 1
+PASS assembled: 'Three bridles' reads 0
+PASS assembled: 'hero' == 5, every hit sits in the slug  [5]
+PASS assembled: word 'hub' occurrences == 5  [5]
+PASS assembled: every 'hub' occurrence sits in an appendix register row
+PASS assembled: 'hub segment' held only in the NR-048 row
+
+37 checks, 0 fail
