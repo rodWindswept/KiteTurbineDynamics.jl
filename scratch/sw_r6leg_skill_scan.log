@@ -1,0 +1,16 @@
+=== 'hub ring': 26 skill hit(s)
+   /home/rod/.hermes/skills/engineering/simulation-instrument-faults/SKILL.md:257: yet the independent gate showed the hub ring ω at 3.5×10⁶⁶ — a numerically
+   /home/rod/.hermes/skills/engineering/simulation-instrument-faults/SKILL.md:258: diverged hub ring. Ground-side metrics looked PERFECT: ω_gnd 16.41 rad/s,
+   /home/rod/.hermes/skills/engineering/simulation-instrument-faults/SKILL.md:267: r_bottom 0.82 m; r_hub lo bound 0.2) → tiny hub-ring inertia + hub-only
+   /home/rod/.hermes/skills/engineering/simulation-instrument-faults/SKILL.md:268: rotor freewheeling under MPPT → positive feedback diverges the hub ring
+   /home/rod/.hermes/skills/engineering/simulation-instrument-faults/SKILL.md:445: | hub ring only | 994.6168 | 791.9249 | 0.79621 (damper-contaminated) |
+   /home/rod/.hermes/skills/engineering/ktd-campaign-dev/SKILL.md:393: scored −6.66 with ω_hub = 3.5×10⁶⁶ (numerically diverged hub ring,
+   /home/rod/.hermes/skills/engineering/ktd-campaign-dev/SKILL.md:495: taper) and the hub ring numerically diverged (ω_hub ≈ 3.5×10⁶⁶) while
+   /home/rod/.hermes/skills/windswept/ktd-crash-patterns/SKILL.md:94: **Symptom:** Hub ring mass ≈ 386 kg but intermediate TRPT rings = 1.0e30 kg. Campaign FoS absurdly high (37-85
+   /home/rod/.hermes/skills/windswept/ktd-test-and-investigation/SKILL.md:679: the hub ring position after `build_kite_turbine_system`.
+   /home/rod/.hermes/skills/windswept/ktd-test-and-investigation/SKILL.md:745: at hub ring only). Expansion rotor rings get zero blade mass. Fix: add
+   /home/rod/.hermes/skills/windswept/ktd-test-and-investigation/SKILL.md:1063: the printed claim against ring numbering (mask position 1 = hub ring = intermediate
+   /home/rod/.hermes/skills/.archive/ktd-crash-patterns/SKILL.md:94: **Symptom:** Hub ring mass ≈ 386 kg but intermediate TRPT rings = 1.0e30 kg. Campaign FoS absurdly high (37-85
+=== '"hub ring"': 0 skill hit(s)
+=== 'hub rotor': 1 skill hit(s)
+   /home/rod/.hermes/profiles/science-writer/skills/windswept/ktd-reporting/SKILL.md:35: Naming traps, do not write: "hub rotor" (write main rotor), "λ" for the blade-scale gene (λ is tip-speed ratio

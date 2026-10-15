@@ -1,0 +1,24 @@
+=== FINAL BATTERY (2026-10-15) — round-6 legs, science-writer ===
+
+--- STE scores (baseline -> after)
+tracker       per100w= (baseline per100w=0.38)
+candidates    per100w= (baseline per100w=0.26)
+stale-phrases per100w= (baseline per100w=3.40; legacy file, --no-verify class)
+
+--- doc currency (expect the one standing DECISIONS item, unchanged)
+────────────────────────────────────────────────────────────
+⚠️  1 issue(s):
+  1. DECISIONS.md newest entry 2026-10-07 older than newest handover handover-2026-10-14-reporting-room-science-writer.md (2026-10-14) — physics changes may lack entries
+
+--- skill currency ktd-only (expect clean, unchanged)
+────────────────────────────────────────────────────────────
+✅ No skills contain stale phrases (outside SUPERSEDED banners)
+
+--- pins (21 checks)
+
+21 checks, 0 fail
+
+--- offender/chunks deltas
+candidates offender diff: EMPTY (only the accepted table-block fragment metric 99 -> 103)
+stale-phrases offender diff: two like-for-like heading swaps, no count change; score 3.40 -> 3.28
+tracker offender set: unchanged (same lines, renamed)

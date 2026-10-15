@@ -1,0 +1,15 @@
+[docs/reporting/draft-tracker.md] count=1 expect=1 :: 'the capture hub ring reads 15.033 at the final step'
+[docs/reporting/draft-tracker.md] count=1 expect=1 :: 'the capture hub ring reading keeps its form'
+WRITTEN: docs/reporting/draft-tracker.md
+[docs/reporting/glossary-candidates.md] count=1 expect=1 :: 'Never write "hub rotor".'
+[docs/reporting/glossary-candidates.md] count=1 expect=1 :: '| ground ring | The bottom of the TRPT. It is free to rotate, and it is '
+[docs/reporting/glossary-candidates.md] count=0 expect=1 :: '| "hub rotor", or "hub" for a rotor | main rotor, topmost rotor | stale-'
+ABORT: docs/reporting/glossary-candidates.md — count 0 != 1
+[docs/reporting/glossary-candidates.md] count=1 expect=1 :: '**Status** PREP v15, numbers-free by construction'
+[docs/reporting/glossary-candidates.md] count=1 expect=1 :: 'The rename lands with the draft\n  section 2.4 sentence, so the term gate'
+SKIPPED (abort): docs/reporting/glossary-candidates.md
+[docs/agents/stale-phrases.md] count=1 expect=1 :: '## The hub ring hosts ONLY the cp/ct rotor'
+[docs/agents/stale-phrases.md] count=1 expect=1 :: "## expansion_params_from_rotors excludes the decoder's hub rotor"
+[docs/agents/stale-phrases.md] count=1 expect=1 :: 'Replacement: main rotor (the topmost rotor). "Hub" is not a rotor term —'
+SKIPPED (abort): docs/agents/stale-phrases.md
+RESULT: ABORTED — nothing partially written where aborted

@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v15, numbers-free by construction (no measurement values, no
+**Status** PREP v16, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -74,8 +74,9 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | ring (TRPT ring) | A polygonal spacer ring of the shaft. The ring beams work in compression inside the polygon. | domain.md, physics-topology 2 | supply |
 | shaft sections (transmission, cone, harvest) | The three sections of the shaft, from the ground up. A transmission cylinder at constant low radius. Then a cone tapers up to the top radius. The harvest section sits at the top, where the rotors are. | `src/ring_spacing.jl` (three-section geometry), winner-pack palette | supply |
 | ground ring | The bottom of the TRPT. It is free to rotate, and it is the PTO end. One of only two parts that touch the ground. | physics-topology 1 | ratify |
+| topmost ring | The ring at the top of the TRPT. It carries the main rotor. The full name is "topmost rotor ring". The name "hub ring" retires (Rod, 2026-10-14). | physics-topology 4, CONTEXT.md | ratify |
 | annulus (swept annulus) | The swept area of a ring-anchored blade. A ring-anchored blade sweeps an annulus, not a disc. | physics-topology 4.1, renderer spec section 7 | ratify |
-| main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rotor". | physics-topology 4, CONTEXT.md | ratify |
+| main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rotor" or "hub ring". | physics-topology 4, CONTEXT.md | ratify |
 | expansion rotor | A banked-blade rotor on a TRPT ring. It adds its own thrust and torque. It is a co-equal generating rotor, never "supplementary". | physics-topology 4, CONTEXT.md | ratify |
 | bank angle (bank) | The angle of a blade out of its ring plane. Bank is not elevation, and it is not yaw. The equivalent term in AeroDyn is pre-cone. | physics-topology 4, the pre-cone read (`2db50f9`), draft v0.28 | ratify |
 | elevation angle (β) | The tilt of the shaft axis away from horizontal. | physics-topology 4, CONTEXT.md | ratify |
@@ -259,7 +260,7 @@ defect, like a missing register row.
 
 | Do not write | Write | Ground |
 |---|---|---|
-| "hub rotor", or "hub" for a rotor | main rotor, topmost rotor | stale-phrases, physics-topology 4 |
+| "hub rotor", or "hub" for a rotor or the ring | main rotor, topmost ring | stale-phrases, physics-topology 4 |
 | "bridles (cyan lines)" | name each line: bridles, cyan line | stale-phrases, physics-topology 2 |
 | bare "the line" | name the line | physics-topology 2 |
 | "λ" for the blade-scale gene | blade scale, written longhand | genome-glossary |
@@ -365,3 +366,9 @@ defect, like a missing register row.
   form, "soft constraint penalties". The rename lands with the draft
   section 2.4 sentence, so the term gate reads one form. No other
   change.
+
+- **v16 (2026-10-15):** the hub-name retirement re-keys the ring pair.
+  The topmost ring row joins the machine group beside the ground ring.
+  The main-rotor guard and the retire list take the ring name.
+  The rename lands with the round-6 fold, so the term gate reads one form.
+  No other change.

@@ -1,0 +1,23 @@
+check: tracker: capture ring reads the short name: OK  
+check: tracker: the v0.30 note reads the short name: OK  
+check: tracker: old form zero: OK  raw=0
+check: candidates: guard extended: OK  
+check: candidates: rotor guard substring holds: OK  
+check: candidates: retire list extended: OK  
+check: candidates: retire pin substring holds: OK  
+check: candidates: pair re-key row present: OK  
+check: candidates: pair sits beside ground ring: OK  
+check: candidates: status v16: OK  
+check: candidates: v16 delta lands: OK  
+check: candidates: old guard form gone: OK  
+check: sp: claim 1 re-formed: OK  
+check: sp: claim 2 re-formed: OK  
+check: sp: old claim headings gone: OK  
+check: sp: replacement extended: OK  
+check: sp: ring note present: OK  
+check: sp: hub-rotor entry heading holds (the rotor ban): OK  
+check: counts: tracker hub lines = 0: OK  
+check: counts: stale-phrases hub lines = 2 (the ban entry): OK  
+check: counts: candidates hub lines = 4 record lines: OK  got 4
+
+21 checks, 0 fail

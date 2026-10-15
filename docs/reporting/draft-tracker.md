@@ -101,7 +101,7 @@ The abstract and the conclusion quote the least segment torque margin 2.03, at S
 v0.20 pass by @hermes (2026-10-12).
 This pass closes the three number-wording items from the full-feedback delta.
 The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015).
-The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture hub ring reads 15.033 at the final step (NR-021).
+The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture topmost ring reads 15.033 at the final step (NR-021).
 
 v0.21 pass by @aero-validator (2026-10-12).
 This pass folds the §3.2 mass reconciliation sentence.
@@ -162,7 +162,7 @@ v0.30 pass by @author (2026-10-13).
 This pass folds the display rulings.
 The minimum factor of safety reads 15.0 at all five report sites.
 The lift chain reads 20.698 and 304.6 newtons.
-NR-009 keeps the row value, and the capture hub ring reading keeps its form.
+NR-009 keeps the row value, and the capture topmost ring reading keeps its form.
 No figure moves.
 
 v0.31 pass by @author (2026-10-13).

@@ -1,0 +1,9 @@
+=== phrase: 'hub ring' -> 4 flag(s)
+   FLAG docs/agents/instrument-trust-log.md:67: | 2026-08-14 | **Hub-ring numerical divergence passed all ground-side metrics** | 18m v13 winner (fi
+   FLAG docs/agents/physics-topology.md:165: A rigid ring has **ONE plane in 3-space**. Bridle attachment points on the hub ring
+   FLAG docs/agents/physics-topology.md:331: - `ring_forces.jl` **still excludes the hub ring from the expansion loop**:
+   FLAG docs/agents/physics-topology.md:339: alpha/induction model brakes at high solidity, and applying it at the hub ring
+=== phrase: '"hub ring"' -> 0 flag(s)
+=== phrase: 'hub rotor' -> 0 flag(s)
+=== phrase: 'The topmost ring hosts ONLY the cp/ct rotor' -> 0 flag(s)
+=== phrase: "expansion_params_from_rotors excludes the decoder's topmost rotor" -> 0 flag(s)
