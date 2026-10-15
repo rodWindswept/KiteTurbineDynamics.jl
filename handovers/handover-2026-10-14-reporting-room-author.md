@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `304027c` on `bank-derate-cos2p65`.
+**Base:** branch tip `f4f1bcd` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -35,6 +35,19 @@ The parallel work is the audits and the extracts the other seats run.
 6. **The basics-of-TRPT refresher (founder ask).** Activated. The scope call sits at this seat.
 
 ## Closed, last (evidence index)
+
+- The v0.49 re-keys (2026-10-15): the caption files, the load-path sentence and the winner-form sites.
+  Fold `8169e36`, 8 anchors and 37 guards closed, tokens add 49 and remove 48.
+  Review copy rebuilds (record `8169e36`, live md5 `24f98df6…`, byte-identical to `draft-8169e36-20261015-144342.docx`).
+  Check `scratch/au_v049_rebuild_check.py`, 37 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v049-rekeys.md`.
+
+- v0.49, the re-key fold: commit `8169e36`.
+  The two system-anatomy caption files take the caption form.
+  The draft load-path sentence takes it, and the three winner-exhibit sites take the winner form.
+
+- v0.48, the appendix pins (figures seat): commit `6f19eee`.
+  The system-anatomy script-commit cell and its four output-hash cells take the re-cut pins.
 
 - The round-6 rebuild (2026-10-15): the review copy rebuilds from v0.47.
   Record `d0ed902`, seven seats, 42 cited all signed, 51 signed rows.
@@ -95,7 +108,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.47 build (record draft `d0ed902`, md5 `1115a2019872ad10929941d4baeb67a6`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.49 build (record draft `8169e36`, md5 `24f98df65d7274233bfea9cc9e736937`).
 
 ## Boot
 
@@ -130,4 +143,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The round-6 rebuild closed at this seat, and the copy counter-read keys at the aero seat. The tails wait on AU4.
+**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The v0.49 re-keys closed at this seat. The re-key bytes and the rebuilt copy key the aero counter-reads. The tails wait on AU4.
