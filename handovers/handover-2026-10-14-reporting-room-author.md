@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `59fffaa` on `bank-derate-cos2p65`.
+**Base:** branch tip `d93472f` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -29,9 +29,16 @@ The parallel work is the audits and the extracts the other seats run.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-5. **The basics-of-TRPT refresher (founder ask).** Activated. The scope call sits at this seat.
-
 ## Closed, last (evidence index)
+
+- The v0.52 basics-of-TRPT refresher (2026-10-15): the operation block recovers the working chain.
+  Fold `b6cd166`, 3 anchors and 25 guards closed.
+  Review copy rebuilds (record `b6cd166`, live md5 `3c386dc2…`, byte-identical to `draft-b6cd166-20261015-163115.docx`).
+  Check `scratch/au_v052_rebuild_check.py`, 50 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v052-trpt-basics.md`.
+
+- v0.52, the refresher fold: commit `b6cd166`.
+  The block lands at section 2.1, ahead of the system-anatomy figure.
 
 - The v0.50 kMppt plain pass (2026-10-15): the structural side of the load story takes plainer sentences.
   Fold `171f3ea`, 5 anchors and 26 guards closed, tokens add 50 and remove 49.
@@ -114,7 +121,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.50 build (record draft `171f3ea`, md5 `ae15d9918ea216dcd6f0ada6073d0ec0`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.52 build (record draft `b6cd166`, md5 `3c386dc289f70d6d26f65c7df06fb993`).
 
 ## Boot
 
@@ -149,4 +156,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them) and the basics-of-TRPT refresher scope call. The kMppt plain pass closed at `171f3ea`, and the review copy reads the v0.50 build.
+**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them). The basics-of-TRPT refresher closed at `b6cd166`, and the review copy reads the v0.52 build.
