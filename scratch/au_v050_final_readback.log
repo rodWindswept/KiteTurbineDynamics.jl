@@ -1,0 +1,13 @@
+# v0.50 kMppt plain-pass landing — origin readback (author seat, 2026-10-15)
+# Branch bank-derate-cos2p65. Method: sha256sum working file vs git show origin:<path> | sha256sum.
+
+OK   docs/reporting/drafts/2026-10-08-report-first-draft.md  sha256 24b6be1608f789ae2883a42fd45c560837732ba110e2d7edd3d4894c40b7b311
+OK   docs/reporting/draft-tracker.md  sha256 da4ccdf717f5ed8d58cce158243b339ad2dcdf72154b4bd051d0a36cd3ec2032
+OK   scratch/au_v050_kmppt_plain_fold.py  sha256 f24bde928b5a4414599fdc2e05d3dd6702420f648f7b63baa3dfb01ca873d88f
+OK   scratch/au_v050_kmppt_plain_fold.log  sha256 3b7cadd44cb7b037191c3ac96ce3612f0e1b4f5bf04a65fe7a4d32b9cd224408
+OK   docs/reporting/room-responses/author-2026-10-15-v050-kmppt-plain.md  sha256 493b7159d89af017585a1ab21b9b4cd4202b18293e7b21c08a032eb1ac3d638e
+OK   scratch/au_v050_rebuild_check.py  sha256 3c500a71e9cbb112186a5b1b8d88d00a3f325235c5b29a4817888635c9c5716f
+OK   scratch/au_v050_rebuild_check.log  sha256 b7c0428950970e0b36f4b5a448fa00e2f42e952e131e762083572828d9fccf72
+OK   handovers/handover-2026-10-14-reporting-room-author.md  sha256 106f61a107d5eb0c5713321675beb4f70f8cb5c7a891897183ce74d767c0f997
+
+# HEAD 38dfeab == origin 38dfeab. The readback log itself verifies with the next push.
