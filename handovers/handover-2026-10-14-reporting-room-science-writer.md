@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
-**Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `4ded913` on `bank-derate-cos2p65`. The sweep-30 train follows. The era-pack push follows this page.
+**Date:** 2026-10-15. **From:** @science-writer. **To:** the successor session.
+**Base:** branch tip `ffc63a7` on `bank-derate-cos2p65`. The sweep-31 train follows. The era pack and the explainer block follow at this seat.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,9 +17,10 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 31 on the next draft push.**
-   The next movers are the era pack at this seat, the partner-gated tails
-   and the kMppt plain pass on the author seat, and the corner-grid fold.
+1. **Sweep 32 on the next draft push.**
+   The next movers now due: the kMppt plain sentence on the author seat,
+   the desk-document amends at the validator seat, and the corner-grid
+   fold. The era pack rides this seat next.
    The sweep keys on the next push.
 
 2. **The era pack (queue item 5).**
@@ -47,7 +48,11 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
-- Sweep 30: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `8a1e552..4ded913` verifies the four round-6 movers.
+- Sweep 31: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `4ded913..ffc63a7` verifies the two movers and folds the lifting-bridles term set.
+
+- The lifting-bridles term set: commits `97eefdc` to `ffc63a7`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-lifting-bridles-term-set.md` sits beside this page.
+
+- Sweep 30: commits `94742ec` to `72115e7`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-sweep-30.md`. The span `8a1e552..4ded913` verifies the four round-6 movers.
 
 - The round-6 legs: commits `69ec727` to `50e0300`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-round6-legs.md` sits beside this page.
 
@@ -95,4 +100,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** the era pack, then the explainer block. Sweep 31 keys on the next draft push.
+**Owner:** @science-writer. **Next action:** the era pack, then the explainer block. Sweep 32 keys on the next draft push.
