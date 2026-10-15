@@ -1,0 +1,31 @@
+== commit 97eefdc ==
+OK   docs/reporting/figures/figure-generation-notes.md
+OK   docs/reporting/glossary-candidates.md
+OK   scratch/sw_br_base_md5.txt
+OK   scratch/sw_br_cand_base.md
+OK   scratch/sw_br_cand_off_base.txt
+OK   scratch/sw_br_cand_off_tip.txt
+OK   scratch/sw_br_check.log
+OK   scratch/sw_br_check.py
+OK   scratch/sw_br_doccurrency.log
+OK   scratch/sw_br_fold.log
+OK   scratch/sw_br_fold.py
+OK   scratch/sw_br_probe_bare.log
+OK   scratch/sw_br_probe_gold.log
+OK   scratch/sw_br_skillcurrency.log
+== commit b32bbb2 ==
+OK   docs/agents/stale-phrases.md
+OK   scratch/sw_br_notes_base.md
+OK   scratch/sw_br_notes_off_base.txt
+OK   scratch/sw_br_notes_off_tip.txt
+OK   scratch/sw_br_notes_offdiff.txt
+OK   scratch/sw_br_sp_base.md
+OK   scratch/sw_br_sp_off_base.txt
+OK   scratch/sw_br_sp_off_tip.txt
+OK   scratch/sw_br_sp_offdiff.txt
+OK   scratch/sw_br_sp_tip.md
+== commit 382727c ==
+OK   docs/reporting/room-responses/science-writer-2026-10-15-lifting-bridles-term-set.md
+-- 25 blobs checked, fail=0
+-- local tip: 382727c7492d3a4b6e626b81906bbe4af15279a0
+-- origin:    382727c7492d3a4b6e626b81906bbe4af15279a0
