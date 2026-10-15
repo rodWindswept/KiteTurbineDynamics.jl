@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.51. Date 2026-10-15.
+Internal engineering report. Draft v0.52. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -226,6 +226,19 @@ topmost-ring and ground radii, and the rotor count sets how many rings carry
 blades.
 The shaft transition cone holds one fixed angle, 22 degrees, by construction.
 It is not a search gene (NR-049).
+
+At the top of the shaft the rotor turns in the wind.
+The whole shaft turns with the rotor.
+The shaft passes the torque from ring to ring.
+The lowest ring turns the generator at the ground station.
+
+The shaft works only under tension.
+Tension gives the shaft its capacity to transmit torque.
+With low tension the shaft bends and twists.
+A slack shaft cannot carry the load.
+
+Under the generator load the machine settles onto one operating point.
+In the settled state the shaft runs twisted along its length.
 
 [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011, NR-017 and NR-043.]
 

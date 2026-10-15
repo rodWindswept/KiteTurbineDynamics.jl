@@ -296,6 +296,11 @@ The figure-provenance appendix gains the eighth exhibit row and its hashes.
 The kit takes its state line and its register delta v3 (the visual pass by Rod reads clean).
 No value moves, and no figure byte moves.
 
+v0.52 pass by @author (2026-10-15).
+This pass lands the basics-of-TRPT refresher at section 2.1.
+The operation block states how the machine carries torque to the ground.
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
