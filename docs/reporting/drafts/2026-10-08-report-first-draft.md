@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.48. Date 2026-10-14.
+Internal engineering report. Draft v0.49. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -481,7 +481,7 @@ The surviving ok designs hold a mean power between 5.02 and 6.32 kW
 
 ### 3.3 The winner
 
-[Figure seated: figure-map row 10 (machine winner hero, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+[Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
 
 Island 3 carries the winner. Its mean power reads 5.309 kW and
 its end power 5.314 kW (NR-008). Its factor of safety reads
@@ -536,7 +536,7 @@ gives no torque and no drive.
 
 Its load path runs from the lifter kite down the lift line to the sky
 anchor, the three-way knot. Then it runs down the cyan line to the lift
-bearing, and down the bridles to the main rotor.
+bearing, and down the lifting bridles to the main rotor.
 
 In the field the lifter launches first. It lifts the rig into tension.
 The rotor turns after that.
@@ -943,7 +943,7 @@ One row per built exhibit. All seven read dataset commit `dd3cc6a`.
 | System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` | `post-95c385d_wind-authority` |
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
-| Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -991,7 +991,7 @@ Parameter atlas:
 - `pdf` `aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8`
 - `ledger` `d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76`
 
-Machine winner hero:
+Machine winner:
 
 - `png` `fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6`
 - `svg` `0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993`

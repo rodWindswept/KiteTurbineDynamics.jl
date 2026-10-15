@@ -20,7 +20,7 @@ radius). Three tension lines span each of the five segments S1 to S5. The
 main rotor sits on R6 only. Its three blades bank at 7.088°.
 
 The lift chain runs from the lifter stack, down the lift line, through the
-sky anchor and the cyan line, to the lift bearing. Three bridles run from
+sky anchor and the cyan line, to the lift bearing. Three lifting bridles run from
 the bearing into the main rotor. The lifter provides lift only. It does not
 drive the rotor. Torque runs down the TRPT rings to the ground station.
 

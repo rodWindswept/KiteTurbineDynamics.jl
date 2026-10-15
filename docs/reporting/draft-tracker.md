@@ -278,6 +278,12 @@ The plate script-commit cell and its four output-hash cells take the delivered v
 The re-cut takes the chain label "lifting bridles (three)" (figure-map row 2; the founder note of 2026-10-15).
 No value moves.
 
+v0.49 pass by @author (2026-10-15).
+This pass re-keys the two founder term notes at the copy surfaces.
+The two system-anatomy caption files and the draft lift-path sentence take the lifting-bridles form.
+The figure marker, the appendix exhibit row and the caption lead take the winner form.
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
