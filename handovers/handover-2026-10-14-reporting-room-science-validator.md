@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `5ebbc3c` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the lifting-bridles term gate closure.
+**Base:** branch tip `9f6a724` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +30,12 @@ The audit checks can fan out to sub-agents when the sections are independent.
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The corner-grid register read closes at `a196183` (the fold `1061878`, base `fc3a602`). The receipt set lands at `9f6a724`.
+
+- The drawn set reads NR-051 to the signed digits. The four objectives, the tags and the corner names each read once, in the signed order. The numeral census reads clean, and the source chain binds (telemetry, extract, register, mint log). The seat marker cites NR-044 and NR-051 only. The fold delta reads exact (12 added lines, 2 removed).
+
+- Receipt `docs/reporting/room-responses/science-validator-2026-10-15-corner-grid-register-read.md`. Checker `scratch/sv_cg_register_read_check.py`, 107 checks, 0 fail. The log sits beside it. The figures seat checker re-runs green at this seat (54 checks).
 
 - The lifting-bridles term gate re-reads clean at `459eee2` (content `f80cbcf`, the domain amend `5ebbc3c`). The drawn set, the copy v0.49, the term set and the two closure flips read. The two reader-name amends land at the desk docs. The census classifies 428 bridle files and 166 hero files, zero unclassified.
 
@@ -124,4 +130,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the lifting-bridles gate reads clear end to end. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the corner-grid register read closes. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
