@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut and the fidelity band merge (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge and the convergence seat (2026-10-15).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -22,6 +22,13 @@ re-walk.
 1. **The visual pass by Rod.** The winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The corner grid's pass reads clean, its fold lands and its reads close (draft v0.51, map v42 and v43). The plates carry the round-6 top forms and the relabel. Row 4 carries
 the placement re-cut: the counter-read closes (`8e33253`, 35 checks).
 Next: the visual pass by Rod, then the fold. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
+
+2. **The convergence two-panel seat (row 16).** The seat lands at map
+v47: panel 1, the status mix; panel 2, the running-best curves, from
+the aero extract (`9dd453d`) and NR-054. The build reads next at this
+seat: the SPEC, then the generator. The reject labels wait on the 301
+print-or-park call.
+
 
 ## Closed, last (evidence index)
 

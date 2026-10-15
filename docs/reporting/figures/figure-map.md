@@ -45,7 +45,7 @@ full roster around them.
 | 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
 | 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
 | 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
-| 16 | 8 | §3.2 | Convergence, three islands | ⟨tbd⟩ | proposed | The running-best series. `convergence.csv` | An extract and rows for any printed value |
+| 16 | 8 | §3.2 | Convergence and the status mix (two panels) | ⟨tbd⟩ | planned | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054. The status mix reads the three island telemetry files (generations 0 to 30) | Seated (v47) as the recorded merge, "first feasibility, then mass": panel 1, the pooled status mix. Panel 2, the three running-best curves. The series extract lands (`9dd453d`), and NR-054 signs (science-validator, `441b9c7`). Next: the SPEC then the generator at the figures seat. The reject labels ride the 301 print-or-park call. |
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
@@ -509,3 +509,13 @@ three slots).
   figure-generation notes take the merge option as taken. The
   eval-timeline register note takes delta v8. The slot frees, and the
   spine protection releases with the merge. No plate byte moves.
+
+- **v47 (2026-10-15):** the convergence two-panel seat lands (row 16).
+  The series extract from the aero seat (`9dd453d`) and NR-054
+  (science-validator, `441b9c7`) close the row's gate (an extract and
+  rows for any printed value). The row takes the recorded merge: the
+  F4(b) status mix and the convergence series become one two-panel
+  figure, "first feasibility, then mass". It moves to `planned`. The
+  figure-generation notes take the seating note. Next: the SPEC then
+  the generator at this seat. The reject labels ride the 301
+  print-or-park call. No plate byte moves.

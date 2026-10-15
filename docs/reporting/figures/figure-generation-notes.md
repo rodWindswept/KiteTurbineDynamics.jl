@@ -169,6 +169,8 @@ Rows needed: the island 1 and 2 running-best series, 31 values each (extend NR-0
 
 Merge. F4 panel (b) and F5 make one two-panel figure: "first feasibility, then mass". This saves a slot.
 
+Seated at map v47 (2026-10-15): row 16 takes the two-panel form. NR-054 signs the series. The extract lands at `9dd453d`.
+
 F6 — Winner hero (row 10)
 
 How to generate. Write the hero capture script for the machine renderer (docs/reporting/figures/machine-renderer/SPEC.md, hero mode). The renderer draws decode plus build, with no ODE. So the drawing shows the design elevation of 30°. The flown values (elevation 28.64°, hub altitude 8.91 m; NR-032 to NR-034 boundary 5) go in the table.

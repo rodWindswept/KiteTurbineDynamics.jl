@@ -1,0 +1,32 @@
+check: map: v47 head: True  (OK)
+check: map: v46 holds: True  (OK)
+check: map: row seat cell: True  (OK)
+check: map: row seated tail: True  (OK)
+check: map: row old gone: False  (OK)
+check: map: proposed count: 6  (OK)
+check: map: planned count: 2  (OK)
+check: notes: seated: True  (OK)
+check: notes: merge holds: True  (OK)
+check: seat: header: True  (OK)
+check: seat: item 2: True  (OK)
+check: seat: build next: True  (OK)
+check: seat: item 1 holds: True  (OK)
+check: fb: exists: True  (OK)
+check: fb: cites: True  (OK)
+check: fb: count sentence: True  (OK)
+check: fb: seat rationale: True  (OK)
+check: fb: no plate byte: True  (OK)
+check: ste: figures-images-diagrams-2026-10-15-convergence-two-panel-seat.md rc: 0  (OK)
+  ste figures-images-diagrams-2026-10-15-convergence-two-panel-seat.md: [HOOK:ste] figures-images-diagrams-2026-10-15-convergence-two-panel-seat.md: long_paragraph(>6s) x3 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+check: ste: figure-map.md rc: 0  (OK)
+  ste figure-map.md: [HOOK:ste] figure-map.md: em_dash x12 -> no em dash — use a period or comma. (ste-writing)
+check: ste: notes no new flag (exempt class): 86  (OK)
+  ste figure-generation-notes.md: figure-generation-notes.md       words=3587 total= 86 per100w=  2.40 em_dash=50  [exempt class, pre-existing]
+check: ste: handover-2026-10-14-reporting-room-figures-images-diagrams.md rc: 0  (OK)
+  ste handover-2026-10-14-reporting-room-figures-images-diagrams.md: [HOOK:ste] handover-2026-10-14-reporting-room-figures-images-diagrams.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+check: standing set rc: 0  (OK)
+check: standing set total: True  (OK)
+  standing: ALL PASS
+
+TOTAL: 24 checks, 0 fail
+ALL PASS
