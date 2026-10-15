@@ -1,0 +1,51 @@
+# sv_301_split_check.log — the 301-reject split re-read (science-validator seat)
+# stamp: 2026-10-15T21:02:53Z
+# base: 0e18e08 (branch bank-derate-cos2p65)
+
+sv_301_split_check — the 301-reject split re-read (science-validator seat)
+
+  [PASS] island 1: sha256 matches the NR-054 header  (6f359c33f174d5dc)
+  [PASS] island 1: data rows = 310  (got 310)
+  [PASS] island 1: ok = 152  (got 152)
+  [PASS] island 1: reject = 108  (got 108)
+  [PASS] island 1: clearance_reject = 47  (got 47)
+  [PASS] island 1: reject_twist = 3  (got 3)
+
+  [PASS] island 2: sha256 matches the NR-054 header  (54172ce5a64b2290)
+  [PASS] island 2: data rows = 310  (got 310)
+  [PASS] island 2: ok = 162  (got 162)
+  [PASS] island 2: reject = 111  (got 111)
+  [PASS] island 2: clearance_reject = 35  (got 35)
+  [PASS] island 2: reject_twist = 2  (got 2)
+
+  [PASS] island 3: sha256 matches the NR-054 header  (34d40e8ea960a1e0)
+  [PASS] island 3: data rows = 310  (got 310)
+  [PASS] island 3: ok = 194  (got 194)
+  [PASS] island 3: reject = 82  (got 82)
+  [PASS] island 3: clearance_reject = 28  (got 28)
+  [PASS] island 3: reject_twist = 6  (got 6)
+
+Pooled status mix (930 rows across the three islands):
+  [PASS] pooled ok = 508  (got 508)
+  [PASS] pooled reject = 301  (got 301)
+  [PASS] pooled clearance_reject = 110  (got 110)
+  [PASS] pooled reject_twist = 11  (got 11)
+  [PASS] pooled total = 930  (got 930)
+
+Reject split (301 rows):
+  [PASS] subgroup A: ran, power below the 5 kW floor = 96  (got 96)
+  [PASS] subgroup B: ran, power >= 5 kW, FoS below 2.5 = 4  (got 4)
+  [PASS] subgroup C: fields zeroed, cause not logged = 201  (got 201)
+  [PASS] no reject falls outside the three subgroups  (got 0)
+  A: P range 1.90 to 4.98 kW; 34 of 96 also read FoS below 2.5
+  [PASS] A: 34 of the 96 also read FoS below 2.5  (got 34)
+  B: P range 5.15 to 5.72 kW; the four rows:
+     island 1, gen 6, idx 7: P 5.47 kW, FoS 2.27
+     island 3, gen 5, idx 8: P 5.15 kW, FoS 1.61
+     island 3, gen 14, idx 8: P 5.72 kW, FoS 1.25
+     island 3, gen 22, idx 2: P 5.68 kW, FoS 0.42
+  finite-FoS census across the 301 rejects: 100 finite (0.02 to 15.30), 201 Inf (axis: the Phase 0 audit section 6 split)
+  [PASS] finite-FoS census = 100 finite, 201 Inf
+
+RESULT: ALL CHECKS PASS
+rc=0

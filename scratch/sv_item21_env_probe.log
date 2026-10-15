@@ -1,0 +1,21 @@
+# sv_item21_env_probe.log — the item-2.1 environment values, independent library read (science-validator seat)
+# stamp: 2026-10-15T21:03:15Z
+# base: 0e18e08 (branch bank-derate-cos2p65)
+
+sv_item21_env_probe — independent read of the item-2.1 values
+generated: 2026-10-15T21:03:21.892  seat: science-validator
+library: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/KiteTurbineDynamics.jl
+
+SITE_ANCHOR: name=Tulloch, Daisy (measured) v_ref=10.0 h_ref=4.8 shear_exp=0.14285714285714285
+anchor is the Daisy spec: true
+
+site_wind( 4.8000) = 10.000000  want 10.000000  [PASS]  law read [PASS]
+site_wind( 9.4000) = 11.007738  want 11.007738  [PASS]  law read [PASS]
+site_wind( 9.4117) = 11.009694  want 11.009694  [PASS]  law read [PASS]
+site_wind( 8.9140) = 10.924573  want 10.924573  [PASS]  law read [PASS]
+
+site_shear(9.4117, 9.4117) = 1.000000000000
+site_shear(9.4117, 4.8)    = 0.908290428006
+
+ALL CHECKS PASS
+rc=0

@@ -1,0 +1,51 @@
+# sv_item21_env_check.log — the item-2.1 environment rows, source and arithmetic reads (science-validator seat)
+# stamp: 2026-10-15T21:02:54Z
+# base: 0e18e08 (branch bank-derate-cos2p65)
+
+sv_item21_env_check — the item-2.1 environment rows, source and arithmetic reads
+
+A. src/wind_profile.jl — the law, the anchor and the constructor:
+  [PASS] L50 SITE_DAISY carries the measured pair and 1/7  (line 50)
+  [PASS] L54 SITE_ANCHOR = SITE_DAISY
+  [PASS] L110-112 site_shear carries the anchor exponent
+  [PASS] L130-137 wind_at_altitude: V(h) = v_ref * (h / h_ref)^alpha
+  [PASS] L164 steady_wind returns a constant
+
+B. src/parameters.jl — the angle, model convention, no scaling:
+  [PASS] L294 factory reads 30 deg (DRR)
+  [PASS] L369 daisy reads 30 deg (model convention)
+  [PASS] L606 angles do not scale
+
+C. src/objective_evaluator.jl — the steady-wind closure:
+  [PASS] L792-795 wf reads altitude only
+  [PASS] no time term in the closure
+
+D. scripts/run_v13_5kw_masslift.jl — the campaign pins:
+  [PASS] L73 ELEV = pi/6
+  [PASS] fos_hard = 2.5 on the campaign record
+  [PASS] runner maps :reject (twist -> reject_twist)
+
+E. Arithmetic (the four altitudes, the hub, the swing):
+  [PASS] site_wind(4.8) = 10.000000  (got 10.000000)
+  [PASS] site_wind(9.4) = 11.007738  (got 11.007738)
+  [PASS] site_wind(9.412) = 11.009694  (got 11.009694)
+  [PASS] site_wind(8.914) = 10.924573  (got 10.924573)
+  [PASS] 1/7 = 0.14285714285714285
+  [PASS] hub 18.8 * sin(30 deg) = 9.4000 m
+  [PASS] rung gap 9.4117 - 9.4000 = 0.0117 m
+  [PASS] site_shear(9.4117, 4.8) = 0.908290428006
+  [PASS] swing 0.029 / 5.309 = 0.5462 per cent
+
+F. The register notes:
+  [PASS] boundary note 5: settled hub mean z 8.914 m  (line 618)
+  [PASS] boundary note 5: elevation 28.64 deg  (line 619)
+  [PASS] boundary note 5: site profile reads 10.924 m/s
+  [PASS] the swing reads 0.54 per cent  (line 826)
+
+G. The pinned tests:
+  [PASS] test_bem_unified: site_wind(9.400) = 11.0077  (line 202)
+  [PASS] test_betz_ceiling_projection: 11.0097 pinned (near L205)  (line 205)
+  [PASS] test_wind_authority: L49-54 shape pins
+
+RESULT: ALL CHECKS PASS
+rc=0

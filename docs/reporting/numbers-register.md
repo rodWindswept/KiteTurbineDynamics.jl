@@ -1994,3 +1994,86 @@ Reading rules:
 
 - The figure prints from these bytes. A re-extract writes new bytes and
   needs a new block.
+
+## Derived row: NR-055, the reject split at the status mix (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The founder ruled "Print" on the 301-reject breakdown (room, 2026-10-15).
+Panel one of the progress figure takes the three subgroups. This seat
+re-derived the split from the three campaign telemetry files.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-055 | The reject class of the status mix, split three ways for print | The plain `reject` class reads 301. Subgroup A, ran with power below the 5 kW floor: 96. Subgroup B, ran at or above 5 kW with FoS below 2.5: 4. Subgroup C, fields zeroed and the cause not logged: 201 | designs | Read of the three campaign telemetry files, `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`. Subgroup rule and counts: `docs/reporting/figures/figure-generation-notes.md:135-147`. Checker `scratch/sv_301_split_check.py` and its log | signed (science-validator, 2026-10-15) |
+
+Sign-off basis:
+
+- The counts. This seat re-read all 930 rows. Subgroup A covers 96 rows
+  with P_mean below 5.0 kW (range 1.90 to 4.98). 34 of the 96 also read
+  FoS below 2.5, so the split reads the power floor first. Subgroup B
+  covers four rows: island 1 gen 6 idx 7 (P 5.47, FoS 2.27), island 3
+  gen 5 idx 8 (5.15, 1.61), island 3 gen 14 idx 8 (5.72, 1.25), island 3
+  gen 22 idx 2 (5.68, 0.42). Subgroup C covers 201 rows with P_mean 0,
+  FoS Inf and T_lift 0. No reject falls outside the three subgroups.
+
+- The status mix. ok 508, reject 301, clearance_reject 110, reject_twist
+  11. The per-island rows read 152/162/194, 108/111/82, 47/35/28 and
+  3/2/6. The three telemetry sha256 values match the NR-054 header.
+
+- The cross-read. The Phase 0 audit carries the same 100/201 split on the
+  FoS census: 100 finite readings (0.02 to 15.30) against 201 Inf
+  (`docs/validation/2026-10-08-phase0-bankderate2-audit.md`, section 6).
+
+Reading rules:
+
+- Print the three subgroups in words. Label subgroup C "cause not
+  logged". Print no status codes and no Track names.
+
+- The reason-code work for the 201 stays a separate item (section 7.1 of
+  the improvement plan). It does not ride this ruling.
+
+## Derived rows: the item-2.1 environment reads, NR-056 to NR-058 (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The v0.54 scope note (author seat) left three section 3.3 environment
+items outside the signed set. The aero seat read them and routed them for
+sign. This seat re-read each item at the tree tip and through the shipped
+library.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-056 | The shear law and its exponent | Hellmann power law, exponent 1/7 (0.14285714285714285). One authority: the measured Daisy pair, 10.0 m/s at 4.8 m. Reads: 11.0097 m/s at 9.4117 m (the table pair reads 11.01 at 9.41), 11.0077 m/s at the 9.400 m design hub, 10.9246 m/s at the settled hub 8.914 m | -, m/s, m | `src/wind_profile.jl:50,54` (SITE_DAISY, SITE_ANCHOR), `:110-112` (site_shear), `:130-137` (wind_at_altitude). Guard `test/test_wind_authority.jl`. Landing record `docs/validation/2026-10-03-d1-wind-landing-verification.md` | signed (science-validator, 2026-10-15) |
+| NR-057 | The shaft-elevation angle and the hub altitude | 30.0 degrees (pi/6), the model convention. Angles do not scale. The design hub reads 18.8 * sin 30 deg = 9.4000 m. The rung reference reads 9.4117 m (gap 0.0117 m, immaterial). The flown settled read: mean elevation 28.64 deg at mean z 8.914 m | deg, m | `src/parameters.jl:294,369,606`. Campaign runner `scripts/run_v13_5kw_masslift.jl:73` (ELEV = pi/6). Register boundary note 5 (`docs/reporting/numbers-register.md:618-622`) | signed (science-validator, 2026-10-15) |
+| NR-058 | The steady-wind basis of the reported trace | The evaluator wind closure reads altitude only, so the reported trace runs steady wind. The steady_wind constructor returns a constant. Ramp, gust and turbulence tools exist and none is engaged. The NR-014 window swing (0.029 kW on 5.309 kW, 0.5 per cent) is a steady-wind response, not a stability property. The register reads 0.54 per cent on the same quotient | -, kW | `src/objective_evaluator.jl:792-795`. `src/wind_profile.jl:160-164`. Harris review `docs/reporting/feedback/2026-10-10-harris-review.md:184`. Register `:826` | signed (science-validator, 2026-10-15) |
+
+Sign-off basis:
+
+- The source lines at the tip. Every line reference in the three source
+  cells reads as written. Checker `scratch/sv_item21_env_check.py` and
+  its log.
+
+- The library read. Probe `scratch/sv_item21_env_probe.jl` and its log.
+  site_wind reads 10.000000, 11.007738, 11.009694 and 10.924573 at the
+  four altitudes. site_shear(9.4117, 9.4117) reads 1.0 and
+  site_shear(9.4117, 4.8) reads 0.908290428006.
+
+- The arithmetic. 10 * (h / 4.8)^(1/7) reproduces every wind read.
+  18.8 * sin(30 deg) = 9.4000 m. The swing 0.029 / 5.309 = 0.5462 per
+  cent (quotes 0.5 and 0.54).
+
+- The pinned tests. `test/test_bem_unified.jl:202` reads 11.0077,
+  `test/test_betz_ceiling_projection.jl:205` reads 11.0097, and
+  `test/test_wind_authority.jl:49-54` pins the shape.
+
+Reading rules:
+
+- Quote the exponent as 1/7 or 0.1429. The table pair prints 11.01 at
+  9.41.
+
+- The hub altitude quotes 9.4000 m, the design basis. The flown basis
+  reads z 8.914 m and 28.64 deg (boundary note 5).
+
+- The swing sentence states the steady-wind basis. It is not a stability
+  property. The turbulence line reads the same way.
