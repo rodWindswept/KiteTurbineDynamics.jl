@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `066e1a8` on `bank-derate-cos2p65`.
+**Base:** branch tip `f7539ba` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +30,17 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 ## Closed, last (evidence index)
+
+- The v0.55 split and environment pass (2026-10-15): the reject split prints and the item-2.1 environment set closes.
+  Fold `2e930a8`, 6 anchors and 40 guards closed.
+  Review copy rebuilds (record `2e930a8`, live md5 `4c438414…`, byte-identical to `draft-2e930a8-20261015-212715.docx`).
+  Check `scratch/au_v055_rebuild_check.py`, 69 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v055-split-and-env.md`.
+
+- v0.55, the split and environment fold: commit `2e930a8`.
+  Sections 3.1 and 5 print the three-way reject split (NR-055).
+  Section 3.3 prints the shear law and the shaft elevation rows (NR-056, NR-057).
+  The swing sentence prints its steady-wind basis note (NR-058).
 
 - The v0.54 operating-point and torsion pass (2026-10-15): the winner operating point completes and the torsion clause folds.
   Fold `d453530`, 5 anchors and 36 guards closed.
@@ -140,7 +151,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.54 build (record draft `d453530`, md5 `72ef99bee03bc301433c3d533a1abc54`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.55 build (record draft `2e930a8`, md5 `4c4384146bbba1d56938814e60741d18`).
 
 ## Boot
 
@@ -175,4 +186,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them). The fixed-defect fold closed at `89ed222`, and the review copy reads the v0.53 build.
+**Owner:** @author. **Next action:** the section 2.3 derivation block, AU4 and the software story. The v0.55 pass closed the reject split and the item-2.1 environment set. The section 3.2 fold waits on the counter-reads and the visual pass. The partner-gated tails still wait on the AU4 read.
