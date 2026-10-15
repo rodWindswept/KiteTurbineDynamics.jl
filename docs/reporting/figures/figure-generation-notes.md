@@ -20,7 +20,7 @@ Rings as triangles. With n_lines = 3, each ring is a three-sided frame of CFRP t
 
 Numbering runs ground to hub: R1 at the ground datum, R6 the hub, S1–S5 the segments between (register block, 1a95ae0). d8 numbers from the hub ("hub rotor (ring 1)"), so flip it.
 
-Separate the line classes by style as well as colour: TRPT lines, bridles (gold, as the dashboard), lift-chain lines, back line.
+Separate the line classes by style as well as colour: TRPT lines, lifting bridles (gold, as the dashboard), lift-chain lines, back line.
 
 Cleared for print (build dump at 980de02, science-validator): cylinder 9.4533 m, cone lines 10.0807 m, slope 22.000° by construction. Any lettered length uses the decode set. The pair-extract capture set is a final-state read at t = 50 s, not design.
 

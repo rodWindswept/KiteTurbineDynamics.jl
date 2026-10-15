@@ -1,0 +1,128 @@
+sv_br_term_gate_check — read at HEAD 459eee256 | basis 459eee2
+check: A0: the read builds on the closure tip 459eee2: OK  
+
+== A. the closure basis and the working set ==
+check: A1: the watched files are tree-clean (no peer mid-write): OK  []
+check: A2: the four gate edits read as working-tree modifications: OK  4
+
+== B. the drawn set (F1 kit) and its pins ==
+check: B1: py label dict reads the founder form: OK  
+check: B2: py keeps the internal label id: OK  
+check: B3: py old drawn label zero: OK  
+check: B4: py header carries the v7 note: OK  
+check: B5: tex drawn string: OK  
+check: B6: prototype drawn string: OK  
+check: B7: ledger row + count: OK  
+check: B8: ledger old form zero: OK  
+check: B9: kit-wide old drawn label zero: OK  []
+check: B10: captions.md reads the caption form: OK  
+check: B11: captions.md old caption zero: OK  
+check: B12: captions.md relabel note: OK  
+check: B13: captions.md bad lines zero: OK  
+check: B14: captions-draft caption form: OK  
+check: B15: captions-draft L23/L43 allowlist: OK  
+check: B16: captions-draft ledger list flipped: OK  
+check: B17: SPEC load-path form: OK  
+check: B18: SPEC relabel note: OK  
+check: B19: SPEC bad lines zero: OK  
+check: B20: manifest script commit: OK  
+check: B21: manifest sha256[checks.log] recomputes: OK  
+check: B21: manifest sha256[ledger] recomputes: OK  
+check: B21: manifest sha256[pdf] recomputes: OK  
+check: B21: manifest sha256[png] recomputes: OK  
+check: B21: manifest sha256[tex] recomputes: OK  
+check: B22: manifest script sha256 recomputes: OK  
+check: B23: checks.log v7 block: OK  
+check: B24: checks.log md5[tex] recomputes: OK  
+check: B24: checks.log md5[prototype] recomputes: OK  
+check: B24: checks.log md5[ledger] recomputes: OK  
+check: B24: checks.log md5[pdf] recomputes: OK  
+check: B24: checks.log md5[png] recomputes: OK  
+check: B25: register-status v7 + delta v5: OK  
+check: B26: register-status reads 9241b23: OK  
+
+== C. the draft v0.49 ==
+check: C1: draft pin v0.49: OK  
+check: C2: draft lift-path sentence: OK  
+check: C3: draft winner marker: OK  
+check: C4: draft appendix exhibit row: OK  
+check: C5: draft caption lead: OK  
+check: C6: draft holds stand: OK  
+check: C7: draft bad lines == the three holds: OK  [46, 190]
+check: C8: draft old caption/sentence zero: OK  
+check: C9: draft hero forms zero: OK  
+check: C10: draft hero reads one line (the slug): OK  [484]
+check: C11: draft SA appendix script cell: OK  
+check: C12: draft SA hash cell [png] == delivered bytes: OK  
+check: C12: draft SA hash cell [pdf] == delivered bytes: OK  
+check: C12: draft SA hash cell [ledger] == delivered bytes: OK  
+check: C12: draft SA hash cell [checks] == delivered bytes: OK  
+
+== D. the delivered copy (v0.49) ==
+check: D1: copy md5: OK  24f98df65d7274233bfea9cc9e736937
+check: D2: copy v0.49 once: OK  
+check: D3: copy caption form once: OK  
+check: D4: copy lift-path form once: OK  
+check: D5: copy reads the member twice: OK  
+check: D6: copy winner form twice: OK  
+check: D7: copy old forms zero: OK  
+check: D8: copy hero == 3, all windows hold the slug: OK  3
+check: D9: copy hold senses stand: OK  
+check: D10: assembled md hero lines are the slug lines: OK  [494, 496, 1125]
+check: D11: assembled md winner-form lines in the appendix: OK  
+
+== E. the writer's term set ==
+check: E1: candidates term row: OK  
+check: E2: candidates chain row: OK  
+check: E3: candidates cyan guard: OK  
+check: E4: candidates cone row: OK  
+check: E5: candidates conflated row: OK  
+check: E6: candidates v17 delta: OK  
+check: E7: candidates bad lines == the ban quote: OK  [264]
+check: E8: stale-phrases heading holds as the ban form: OK  
+check: E9: stale-phrases replacement form: OK  
+check: E10: stale-phrases dated note: OK  
+check: E11: stale-phrases bad lines == the ban heading: OK  [83]
+check: E12: notes L13/L23/L30 forms: OK  
+check: E13: notes bad lines zero: OK  
+check: E14: tracker v0.49 entry + term lines: OK  
+check: E15: tracker bad lines zero: OK  []
+
+== F. the desk docs, the flips and the scope calls ==
+check: F1: physics-topology amend reads: OK  
+check: F2: physics-topology amend close: OK  
+check: F3: physics-topology definitions hold: OK  
+check: F4: physics-topology hub amend holds: OK  
+check: F5: physics-topology bare reads = held spelling (pre + 1 amend line): OK  30 vs pre 29
+check: F6: domain amend reads: OK  
+check: F7: domain item 8 + item 13 hold: OK  
+check: F8: domain bare reads = held spelling (pre + 0): OK  8 vs pre 8
+check: F9: CONTEXT hold — the four lines unchanged: OK  [37, 58, 62, 184]
+check: F10: CONTEXT hold — pins read: OK  
+check: F11: register cone row reads as signed record: OK  
+check: F12: register head holds at cb862df: OK  
+check: F13: register append-only since cb862df: OK  
+
+== G. the corner cites and the map ==
+check: G1: corner register L11 signs at cb862df: OK  
+check: G2: corner register old cite zero: OK  
+check: G3: map row 23 cite + closure: OK  
+check: G4: map old cite zero: OK  
+check: G5: map row 10 title reads the winner form: OK  
+check: G6: map v40 + winner-form note: OK  
+check: G7: map bad lines zero: OK  
+check: G8: the old cite survives only in records: OK  []
+
+== H. the tracked-tree census ==
+  census[bridle] basis: HEAD 459eee256
+check: H-bridle: every hit file is classified: OK  428 files; unk=[]
+  census[bridle]: 428 files — live 21, records 84, code/scratch 323
+  census[hero] basis: HEAD 459eee256
+check: H-hero: every hit file is classified: OK  166 files; unk=[]
+  census[hero]: 166 files — live 12, records 27, code/scratch 127
+check: H3: map hero lines are the recorded set: OK  [42, 79, 146, 151, 152, 163, 378, 389, 423, 427, 458]
+check: H4: live hero files read no figure-label form: OK  
+check: H5: renderer SPEC keeps the engine mode: OK  
+check: H6: winner kit keeps its slug: OK  
+
+SV_BR_TERM_GATE: 105/105 checks pass

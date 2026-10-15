@@ -73,6 +73,10 @@ their tensions are different quantities. `DECISIONS.md` calls the bridles the
 Do **not** write "bridles (cyan lines)". Do **not** write bare "the line" when you
 mean one of these four.
 
+**Reader name (Rod, 2026-10-15):** the report reads **lifting bridles** for the
+bearing-to-rotor member. The `DECISIONS.md` pages keep the **gold bridles**
+alias. The code identifiers and the recorded pages hold their spelling.
+
 ### 2.1 The lift line & lifter kite boundary: damping and crosswind symmetry
 
 The lifter kite flies in the air mass above the sky anchor, providing lift to the assembly.

@@ -40,7 +40,7 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 
 - Each ledger string appears once and in one form: ring, line, rotor,
   segment, TRPT, lifter, lift line, sky anchor, cyan line, lift bearing,
-  bridle, main rotor, ground ring, topmost ring, ground station, backline.
+  lifting bridles, main rotor, ground ring, topmost ring, ground station, backline.
 - Labels run ground to top.
 - Every number carries a row: NR-011 (geometry), NR-017 (bank angle).
 - One sentence guards the lifter misreading. The lifter flies the machine.
