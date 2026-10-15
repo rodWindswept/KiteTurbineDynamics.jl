@@ -19,11 +19,13 @@ re-walk.
 
 ## Open items
 
-1. **The corner build (map row 23).** Science-validator signed NR-051 (`8855d9a`). The extract pins at `docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv` (four genomes byte-exact). The generator build runs next at this seat.
+1. **The corner build (map row 23).** The generator lands (`a4b4057`): four panels, all checks pass, the three-location F-REPRO walk holds. The counter-reads queue next (aero F-CITE and F-VALUE, the science register read).
 
 2. **The visual pass by Rod.** The five re-cut rows (2, 4, 6, 7 and 10) and the k-basis plate (row 5) read the visual pass as their next gate (map v38). The plates carry the round-6 top forms. The hero seat reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The corner grid builds (2026-10-15): the generator lands at `a4b4057` (family mode, corner variant; SPEC delta D10). Four panels from the NR-051 picks, all checks pass, and the three-location F-REPRO walk reads byte-identical. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-grid-generator.md`. Evidence `scratch/fig_cg_repro.md5` and the run logs.
 
 - The round-6 counter-read closes clean at the aero desk (2026-10-15): 136 checks, 0 fail, `9b414f3..0739ee7`. The five re-cut rows fold back (map v38) and read the visual pass next. The five generator comment form notes hold for the next build of the two kits. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-round6-counterread-foldback-and-corner-open.md`.
 
@@ -149,4 +151,4 @@ re-walk.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the corner-grid generator build (row 23) on the pinned extract. The round-6 rebuild and the visual pass by Rod follow.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the corner-grid counter-reads (row 23) on the delivered bytes. The visual pass by Rod follows.
