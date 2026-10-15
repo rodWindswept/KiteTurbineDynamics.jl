@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.52. Date 2026-10-15.
+Internal engineering report. Draft v0.53. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -46,8 +46,7 @@ The study is simulation-only. Blade integrity is not yet gated, and the
 outer stiffening bridles sit outside the model.
 
 Lifter kite modulation
-for steady lift tension across wind speeds remains an assumption. The
-rope-break gate placement fix stays open.
+for steady lift tension across wind speeds remains an assumption.
 
 The search is a screen, not a survey. The report does not claim a global
 optimum.
@@ -78,7 +77,7 @@ The key findings follow.
   Island 3 reaches 27.364 kg-equivalent (NR-005).
 
 - The ODE path reproduces every recorded winner field (NR-012).
-  The rapid path awaits its rope-break gate fix (NR-013).
+  The rapid path takes the rope-break gate placement fix (NR-013 ext2).
 
 The report shows that a feasible 5 kW-class candidate exists in the
 searched space under the model and gates.
@@ -740,7 +739,7 @@ They do not prove an optimal gene set.
 
 Recommended next steps:
 
-1. Fix the rapid-path rope-break gate before using the rapid path for screening (NR-013).
+1. Use the rapid path for screening under its fixed rope-break gate (NR-013 ext2).
 
 2. Add blade root factor-of-safety checks to the structural gate set.
 
@@ -761,12 +760,12 @@ Recommended next steps:
 The ODE path reproduces every recorded winner field at the precision
 the record stores. Island 3 agrees at full precision (NR-012).
 
-The rapid path rejects all three winners at the rope-break gate
-(NR-013). The cause is gate placement, not the machine.
+The rapid path once rejected all three winners at the rope-break gate
+(NR-013). The cause was gate placement, not the machine.
 
 The rapid start injects ring velocities from the static pre-solve.
-The evaluator runs the rope-break gate across the relax run as well as
-the window. The injected transient over-strain trips the gate at once.
+The evaluator ran the rope-break gate across the relax run as well as
+the window. The injected transient over-strain tripped the gate at once.
 
 The team has solved this pattern twice on record. On 2026-08-14 the
 rule was: the check judges only real operation. The settle transients
@@ -776,9 +775,9 @@ On 2026-09-16 the ruling was: breaks on the measurement window only,
 with break detection off during the relax. The fix here is the same
 pattern applied to the evaluator.
 
-Until it lands, the discrepancy stands. The evaluator arms the
-rope-break check across the relax and the window. The ruling limits
-break detection to the measurement window.
+The fix has landed. The evaluator arms the
+rope-break check at the relax boundary (NR-013 ext2). Detection runs
+on the measurement window only.
 
 The fix removes false rejections. It never allows breaks.
 A rope break in the measurement window always rejects the design.
@@ -893,7 +892,7 @@ The result shows that a compact TRPT machine can satisfy the power, clearance, t
 That result holds under the modeled load and wind.
 It does not show flight readiness, a global optimum, or full structural safety.
 Blade integrity is not yet gated, and lifter modulation remains an assumption.
-The rapid path awaits its rope-break gate fix (NR-013).
+The rapid path takes the rope-break gate placement fix (NR-013 ext2).
 
 The Daisy anchor ties the model to a measured flight reference.
 
@@ -943,7 +942,7 @@ The table ties each headline claim of this report to its evidence and its signed
 | Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
 | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
 | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
-| Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners at the rope-break gate. | §4.1 | NR-012, NR-013 |
+| Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path once rejected all three winners at the rope-break gate. The placement fix has landed. | §4.1 | NR-012, NR-013 ext2 |
 | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
 
 ## Appendix: Figure provenance

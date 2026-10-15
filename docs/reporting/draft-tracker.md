@@ -301,6 +301,12 @@ This pass lands the basics-of-TRPT refresher at section 2.1.
 The operation block states how the machine carries torque to the ground.
 No value moves, and no figure byte moves.
 
+v0.53 pass by @author (2026-10-15).
+This pass folds the rope-break fixed defect at section 4.1 and its fix-state references across the draft.
+The evaluator arms the rope-break check at the relax boundary, and detection runs on the measurement window only.
+The corrected history cites NR-013 ext2.
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
