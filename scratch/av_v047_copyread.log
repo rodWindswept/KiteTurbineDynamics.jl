@@ -1,0 +1,325 @@
+[0] v0.47 copy counter-read   tip eb93928   origin eb93928   record d0ed902   copy md5 1115a2019872ad10929941d4baeb67a6
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   copy and archive carry one size
+  ok   build record names draft d0ed902
+  ok   build record refs register cb862df
+  ok   build record: 42 cited of 51 signed
+  ok   build record uncited list reads the 9 ids
+  ok   build record: checker exit 0
+  ok   build record: seven seats
+  ok   docx build stamp 12:47:52Z
+  ok   build record embed route
+  ok   draft blob reads d0ed902 == HEAD == origin
+  ok   no draft move since the record
+  ok   register ref cb862df == HEAD == origin
+  ok   register unchanged since cb862df
+  ok   the 28 embedded bytes hold since d0ed902 ()
+  ok   tracker among post-build moves (the legs)
+  ok   register not among post-build moves
+  post-build moves since d0ed902: 53 paths
+    docs/agents/stale-phrases.md
+    docs/reporting/draft-tracker.md
+    docs/reporting/figures/eval-timeline/register-status.md
+    docs/reporting/figures/figure-map.md
+    docs/reporting/figures/machine-corner-grid/README.md
+    docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv
+    docs/reporting/figures/machine-corner-grid/extract-corner-grid.log
+    docs/reporting/figures/machine-winner-hero/register-status.md
+    docs/reporting/glossary-candidates.md
+    docs/reporting/room-responses/aero-validator-2026-10-15-round6-counterread.md
+    docs/reporting/room-responses/author-2026-10-15-v047-round6-fold-and-rebuild.md
+    docs/reporting/room-responses/figures-images-diagrams-2026-10-15-round6-counterread-foldback-and-corner-open.md
+    docs/reporting/room-responses/science-validator-2026-10-15-round6-term-gate-reread.md
+    docs/reporting/room-responses/science-validator-2026-10-15-round6-term-gate.md
+    docs/reporting/room-responses/science-writer-2026-10-15-round6-legs.md
+    handovers/handover-2026-10-14-reporting-room-aero-validator.md
+    handovers/handover-2026-10-14-reporting-room-author.md
+    handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md
+    handovers/handover-2026-10-14-reporting-room-science-validator.md
+    handovers/handover-2026-10-14-reporting-room-science-writer.md
+    scratch/au_r6_rebuild_readback.log
+    scratch/au_v047_rebuild_check.log
+    scratch/au_v047_rebuild_check.py
+    scratch/av_r6_counterread.log
+    scratch/av_r6_counterread.py
+    scratch/av_r6_readback.log
+    scratch/av_r6_repro.log
+    scratch/fig_cg_extract.py
+    scratch/fig_cg_extract_check.log
+    scratch/fig_cg_extract_check.py
+    scratch/fig_cg_extract_run.log
+    scratch/fig_r6fb_check.log
+    scratch/fig_r6fb_check.py
+    scratch/fig_r6fb_edit.py
+    scratch/fig_r6fb_readback.log
+    scratch/sv_r6_term_gate_check.log
+    scratch/sv_r6_term_gate_check.py
+    scratch/sv_r6_term_gate_v2_check.log
+    scratch/sv_r6_term_gate_v2_check.py
+    scratch/sw_r6leg_apply.log
+    scratch/sw_r6leg_apply.py
+    scratch/sw_r6leg_apply2.log
+    scratch/sw_r6leg_apply2.py
+    scratch/sw_r6leg_checks.log
+    scratch/sw_r6leg_live_state.log
+    scratch/sw_r6leg_live_state.py
+    scratch/sw_r6leg_pins.log
+    scratch/sw_r6leg_pins.py
+    scratch/sw_r6leg_readback.log
+    scratch/sw_r6leg_scan_probe.log
+    scratch/sw_r6leg_scan_probe.py
+    scratch/sw_r6leg_skill_scan.log
+    scratch/sw_r6leg_skill_scan.py
+  ok   the read tip reads the same as origin
+[1] the copy input census (v0.45 read state -> record)
+  ok   draft movers read [45ed95a, d0ed902] (['d0ed902', '45ed95a'])
+  ok   tracker movers read the three (['69ec727', 'd0ed902', '45ed95a'])
+  ok   v0.46 re-pin: token delta reads add {'46': 1} / rem {'45': 1}
+  ok   v0.47 fold: token delta reads add {'47': 1, '508': 1} / rem {'46': 1}
+  ok   net copy-input delta reads add {'47': 1, '508': 1} / rem {'45': 1}
+  ok   the draft at the record reads the draft at the tip
+[2] the round-6 fold surfaces in the built copy
+  ok   copy head line reads Draft v0.47 once
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads zero 'v0.40' marks
+  ok   copy reads zero 'v0.41' marks
+  ok   copy reads zero 'v0.42' marks
+  ok   copy reads zero 'v0.43' marks
+  ok   copy reads zero 'v0.44' marks
+  ok   copy reads zero 'v0.45' marks
+  ok   copy reads zero 'v0.46' marks
+  ok   copy count topmost ring reads 9 (9)
+  ok   copy count topmost rotor ring reads 2 (2)
+  ok   copy count the table-row form (capital) reads 1 (1)
+  ok   copy count topmost ring radius reads 3 (3)
+  ok   copy count topmost-ring (hyphen) reads 1 (1)
+  ok   copy count (?i)topmost reads 13 (13)
+  ok   copy reads the count sentence once
+  ok   copy reads the founder winner sentence once
+  ok   copy reads the founder mass sentence once
+  ok   copy reads 'mean power of 5.309' once
+  ok   copy reads '25.698 kilograms' four times (4)
+  ok   copy reads The levers of Performance once
+    kg-ctx: objective and gates. Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018). Its minimum
+    kg-ctx: peed reads 13.38 rad/s, 127.772 rpm (NR-029). Its airborne mass reads 25.698 kilograms (NR-018). The winner clears e
+    kg-ctx: . The winner produces 5.309 kW of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018). Second, the
+    kg-ctx: est performing one had a mean power of 5.309 kW. Its airborne mass is 25.698 kilograms (NR-008, NR-018). Its window-
+  ok   copy reads: 2.1 radii
+  ok   copy reads: 2.2.2 load
+  ok   copy reads: 3.3 capture
+  ok   copy reads: 3.3 radius prose
+  ok   copy reads: 3.4 line
+  ok   copy reads: 3.5 radius
+  ok   copy reads: 4.2 table
+  ok   copy reads: 4.2 narrative
+  ok   copy reads: 4.2 tail
+  ok   copy reads: pointer line one
+  ok   copy reads: pointer line two
+  ok   copy reads: era row 1
+  ok   copy reads: era row 2
+  ok   copy reads: era row 3a
+  ok   copy reads: era row 3b
+  ok   copy reads: ledger lead
+  ok   copy reads: ledger entry 1
+  ok   copy reads: ledger entry 2
+  ok   copy reads: ledger entry 3
+  ok   copy reads: ledger entry 4
+  ok   copy reads: ledger entry 5
+  ok   copy reads: ledger entry 6
+  ok   copy reads: ledger close 3
+  ok   copy reads: ledger close 5
+  ok   copy reads: ledger close 6
+  ok   copy reads: spelled form
+  ok   copy reads: round-5 base clause
+  ok   copy reads: round-5 cone
+  ok   copy reads: round-5 cold path
+  ok   copy reads: round-5 slot
+  ok   copy reads: gate row power
+  ok   copy reads: gate row FoS
+  ok   copy reads: gate row rope
+  ok   copy count 22 degrees sites reads 3 (3)
+  ok   copy count shaft transition cone reads 3 (3)
+  ok   copy count 0.75 reads 2 (2)
+  ok   copy count Tulloch reads 1 (1)
+  ok   copy count Jensen reads 0 (0)
+  ok   copy count lower-number key reads 0 (0)
+[3] the appendix pins, the stamps and the seven embeds
+  ok   ring-utilisation: ledger pinned == committed == HEAD == origin
+  ok   ring-utilisation: pdf pinned == committed == HEAD == origin
+  ok   ring-utilisation: png pinned == committed == HEAD == origin
+  ok   ring-utilisation: svg pinned == committed == HEAD == origin
+  ok   twist-limit: ledger pinned == committed == HEAD == origin
+  ok   twist-limit: pdf pinned == committed == HEAD == origin
+  ok   twist-limit: png pinned == committed == HEAD == origin
+  ok   twist-limit: svg pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: checks pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: pdf pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: png pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: svg pinned == committed == HEAD == origin
+  ok   system-anatomy: checks pinned == committed == HEAD == origin
+  ok   system-anatomy: ledger pinned == committed == HEAD == origin
+  ok   system-anatomy: pdf pinned == committed == HEAD == origin
+  ok   system-anatomy: png pinned == committed == HEAD == origin
+  ok   pca-landscape: ledger pinned == committed == HEAD == origin
+  ok   pca-landscape: pdf pinned == committed == HEAD == origin
+  ok   pca-landscape: png pinned == committed == HEAD == origin
+  ok   pca-landscape: svg pinned == committed == HEAD == origin
+  ok   pca-atlas: ledger pinned == committed == HEAD == origin
+  ok   pca-atlas: pdf pinned == committed == HEAD == origin
+  ok   pca-atlas: png pinned == committed == HEAD == origin
+  ok   pca-atlas: svg pinned == committed == HEAD == origin
+  ok   machine-winner-hero: checks pinned == committed == HEAD == origin
+  ok   machine-winner-hero: pdf pinned == committed == HEAD == origin
+  ok   machine-winner-hero: png pinned == committed == HEAD == origin
+  ok   machine-winner-hero: svg pinned == committed == HEAD == origin
+  ok   28 pinned values walked (28)
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the ring-utilisation.pdf pin
+  ok   copy prints the ring-utilisation.png pin
+  ok   copy prints the ring-utilisation.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the twist-limit.pdf pin
+  ok   copy prints the twist-limit.png pin
+  ok   copy prints the twist-limit.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-evolution-strip.pdf pin
+  ok   copy prints the machine-evolution-strip.png pin
+  ok   copy prints the machine-evolution-strip.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the system-anatomy.pdf pin
+  ok   copy prints the system-anatomy.png pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-landscape.pdf pin
+  ok   copy prints the pca-landscape.png pin
+  ok   copy prints the pca-landscape.svg pin
+  ok   copy prints the label-ledger.txt pin
+  ok   copy prints the pca-atlas.pdf pin
+  ok   copy prints the pca-atlas.png pin
+  ok   copy prints the pca-atlas.svg pin
+  ok   copy prints the checks.log pin
+  ok   copy prints the machine-winner-hero.pdf pin
+  ok   copy prints the machine-winner-hero.png pin
+  ok   copy prints the machine-winner-hero.svg pin
+  ok   four appendix script cells read 1af63fc (4)
+  ok   copy token census 0b8948d: 1 == expected 1
+  ok   copy token census 1af63fc: 6 == expected 6
+  ok   copy token census 74cfef9: 2 == expected 2
+  ok   copy token census b587c50: 1 == expected 1
+  ok   copy token census e23f226: 4 == expected 4
+  ok   copy reads zero d243b37 marks
+  ok   copy reads zero 9cecee3 marks
+  ok   copy stamp == manifest stamp (ring-utilisation)
+  ok   copy stamp == manifest stamp (twist-limit)
+  ok   copy stamp == manifest stamp (machine-evolution-strip)
+  ok   copy stamp == manifest stamp (system-anatomy)
+  ok   copy stamp == manifest stamp (pca-landscape)
+  ok   copy stamp == manifest stamp (pca-atlas)
+  ok   copy stamp == manifest stamp (machine-winner-hero)
+  ok   seven stamps read (7)
+  ok   the held v0.45 copy carries the old sha-fallback forms
+  ok   the new copy carries the manifest-derived fallback forms (script 0b8948d / b587c50)
+  note ring/twist stamps print the sha-fallback form (old manifests, no commit keys); the prefix moved with the re-cut script sha -- pre-existing schema, flagged
+  ok   frame reads once: system-anatomy Figure (roster row 2) · system-anatomy
+  ok   frame reads once: machine-winner-hero Figure (roster row 10) · machine-win
+  ok   frame reads once: ring-utilisation Figure (roster row 6) · ring-utilisatio
+  ok   frame reads once: twist-limit Figure (roster row 7) · twist-limit
+  ok   frame reads once: pca-landscape Figure (roster row 20) · pca-landscape
+  ok   frame reads once: pca-atlas Figure (roster row 21) · pca-atlas
+  ok   frame reads once: machine-evolution-strip Figure (roster row 9) · machine-
+  ok   seven figure frames read (7)
+  ok   raw markers read zero in the copy
+  ok   the hero frame sits inside section 3.3 in the copy
+  ok   copy embeds the delivered bytes on all seven exhibits (7)
+[4] the register appendix and the retired-word holds
+  ok   appendix markers read
+  ok   register at HEAD reads 51 ids (51)
+  ok   cited set reads 42 (42)
+  ok   copy register appendix == cited set (42 ids)
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   uncited NR-051 stays out
+  ok   NR-019 and NR-020 enter the appendix set
+  ok   14.97-class prints once, inside the register appendix (1)
+  ok   copy display form full-precision 14.971... reads 0 (0)
+  ok   copy display form guarded 3.816 reads 0 (0)
+  ok   copy display form 15.0 reads 14 (14)
+  ok   copy display form 15.033 reads 3 (3)
+  ok   copy display form 14.972 reads 1 (1)
+  ok   copy display form 27.3635412663488 reads 2 (2)
+  ok   copy display form 27.364 reads 11 (11)
+  ok   guarded rounded 27.363 reads zero
+  ok   no unresolved notice
+  ok   copy count sentence reads 'All seven' once
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-043 span
+  ok   register appendix: NR-050 r_rotor
+  ok   register appendix: NR-049 cone value
+  ok   register appendix: NR-011 bank form
+  ok   the retired word reads 5 as a word (5)
+  ok   the word reads zero outside the register appendix (0)
+  ok   the two identifier holds read (2)
+  ok   capitalised Hub reads zero (0)
+    hub-word: ...e-6 = 0.0 + 3.058346201008972e-6, FoS 326974.1011237028. R6 hub 0.06652238395895148 = 0.06652164721153939 + 7.3674741209...
+    hub-word: ...Cross-reads: S1 panel 396.791634149159 (0.0075 % above), S5 hub 397.1777954649229 signed (science-validator, 2026-10-11)...
+    hub-word: ... tip reference lambda_tip 6.8415060395190075 (quote 6.8415, hub value 6.841451124645552 agrees inside 5.5e-5), Cp 0.2257...
+    hub-word: ...race, r_out 5.629560432565964 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface ( src/aerod...
+    hub-word: ...minal k_mppt × 2 ), measured F_helix ≈ 1278 N/vertex on the hub segment. The lull is benign under MPPT. k easing refused...
+  ok   every register hub-quote reads in the copy (0 bad)
+  ok   NR-051 stays out of the appendix
+[5] the science-writer leg folds
+  ok   tracker moves once in the leg train (['69ec727'])
+  ok   candidates move once in the leg train (['69ec727'])
+  ok   stale-phrases moves once in the leg train (['50e0300'])
+  ok   tracker added set reads the two short-form lines (2)
+  ok   tracker removed set reads the two old-form lines (2)
+  ok   tracker at HEAD reads the leg commit blob
+  ok   tracker reads the retired word zero, raw and as a word
+  ok   candidates added set reads the declared 10 lines (10)
+  ok   candidates removed set reads the declared 3 lines (3)
+  ok   stale-phrases added set reads the declared 4 lines (4)
+  ok   stale-phrases removed set reads the declared 3 lines (3)
+  ok   candidates carry the old form on four ban-quote lines (4)
+    cand hub-line: | topmost ring | The ring at the top of the TRPT. It carries the main rotor. The full name is "topmost rotor r
+    cand hub-line: | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rot
+    cand hub-line: | "hub rotor", or "hub" for a rotor or the ring | main rotor, topmost ring | stale-phrases, physics-topology 4
+    cand hub-line: - **v16 (2026-10-15):** the hub-name retirement re-keys the ring pair.
+  ok   stale-phrases carries the ban entry and its replacement (2)
+  ok   the ban entry and the dated note read
+  ok   STE stale-phrases before: words/total (588, 20) ((588, 20), 3.40)
+  ok   STE stale-phrases after: words/total (610, 20) ((610, 20), 3.28)
+  ok   STE tracker at the leg: words/total (2927, 11) ((2927, 11), 0.38)
+  ok   STE candidates at the leg: words/total (4687, 12) ((4687, 12), 0.26)
+  ok   stale-phrases at HEAD recounts 610 / 20 (('610', '20', '3.28'))
+  ok   stale-phrases at HEAD still reads over the gate (the disclosed legacy class)
+  ok   stale-phrases is not in .ste-exempt (the bypass is disclosed, not an exemption)
+  ok   the stale-phrases commit message discloses the --no-verify and the legacy class
+[6] state anchors
+  ok   author receipt names the copy md5
+  ok   science-validator receipt names the copy
+  ok   science-writer receipt names the tracker site
+  ok   figures receipt names the counter-read close
+  ok   tracker carries the v0.47 entry
+  ok   tracker carries the v0.46 entry
+  ok   NR-051 carries pick value 60.646
+  ok   NR-051 carries pick value 58.864
+  ok   NR-051 carries pick value 33.704
+  ok   NR-051 carries pick value 33.812
+  ok   map carries deltas v37 and v38
+  ok   map rows read the counter-read close
+  ok   the corner extract reads its declared sha256 (the F-CITE read queues on the generator)
+  ok   final: tip == origin
+
+checks: 246  ok: 246  fail: 0
+AV_V047_DONE

@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `9b414f3` on `bank-derate-cos2p65`.
+**Base:** branch tip `eb93928` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,7 +17,7 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **The rebuilt review copy.** The round-6 counter-reads close at this seat. The round-6 rebuild follows at the author seat, then the copy read re-keys here. The queue holds the order.
+1. **The corner F-CITE read.** It opens when the corner-grid generator lands at the figures seat. The extract pins at `03abd0c6`. The read keys on the delivered generator bytes.
 
 2. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here.
 
@@ -34,6 +34,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The v0.47 copy counter-read and the leg folds: read at `eb93928`. The rebuilt copy (md5 `1115a201`) reads its record, its 28 pins, its seven embeds and its five register holds. The science-writer leg folds read their exact diff sets. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-v047-copy-counterread.md`. Evidence `scratch/av_v047_copyread.py` plus log.
 
 - The round-6 counter-reads: read at `9b414f3`. The read covers the hub-name fold, the count and winner pair, and the heading. It also covers the five plate re-cuts, the three caption kits, the NR-042 footer and the re-pins. The five generators re-ran twice, out of tree, byte-identical to the delivered bytes. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-round6-counterread.md`. Evidence `scratch/av_r6_counterread.py` plus logs.
 
@@ -88,4 +90,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the rebuilt-copy read, on the round-6 rebuild from the author seat.
+**Owner:** @aero-validator. **Next action:** the corner F-CITE read, on the corner-grid generator landing from the figures seat.
