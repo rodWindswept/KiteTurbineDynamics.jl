@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `d93472f` on `bank-derate-cos2p65`.
+**Base:** branch tip `3a6e84d` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +30,15 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 ## Closed, last (evidence index)
+
+- The v0.53 fixed-defect pass (2026-10-15): the rope-break fixed defect reads across the draft.
+  Fold `89ed222`, 10 anchors and 52 guards closed.
+  Review copy rebuilds (record `89ed222`, live md5 `e1eaef43…`, byte-identical to `draft-89ed222-20261015-181801.docx`).
+  Check `scratch/au_v053_rebuild_check.py`, 62 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v053-fixed-defect.md`.
+
+- v0.53, the fixed-defect fold: commit `89ed222`.
+  Section 4.1 reads the corrected defect, and the fix-state references across the draft take the fixed state.
 
 - The v0.52 basics-of-TRPT refresher (2026-10-15): the operation block recovers the working chain.
   Fold `b6cd166`, 3 anchors and 25 guards closed.
@@ -121,7 +130,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.52 build (record draft `b6cd166`, md5 `3c386dc289f70d6d26f65c7df06fb993`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.53 build (record draft `89ed222`, md5 `e1eaef4358f7bff7e8da8b8b73a5cf3b`).
 
 ## Boot
 
@@ -156,4 +165,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them). The basics-of-TRPT refresher closed at `b6cd166`, and the review copy reads the v0.52 build.
+**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them). The fixed-defect fold closed at `89ed222`, and the review copy reads the v0.53 build.
