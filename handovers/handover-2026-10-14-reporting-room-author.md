@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `f7539ba` on `bank-derate-cos2p65`.
+**Base:** branch tip `c98ca68` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -20,8 +20,8 @@ The parallel work is the audits and the extracts the other seats run.
    The twist-prose basis fold waits on the floor row.
    The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
 
-2. **The era pack, the remainder.** The era map folded at `34e3f81` (AU7).
-   The development-history chapter push reads next. Track A/B reconciliation goes first.
+2. **The era pack, the remainder.** The pack blocks fold at `c9f0560`, and the era map at `34e3f81` (AU7).
+   The development-history chapter push reads next.
 
 3. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
 
@@ -30,6 +30,16 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 ## Closed, last (evidence index)
+
+- The v0.56 era-pack pass (2026-10-15): the era phrase, the ledger dates and the back-pointer fold.
+  Fold `c9f0560`, 5 anchors and 39 guards closed.
+  Review copy rebuilds (record `c9f0560`, live md5 `5ecee42e…`, byte-identical to `draft-c9f0560-20261015-215702.docx`).
+  Check `scratch/au_v056_rebuild_check.py`, 52 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v056-era-pack.md`.
+
+- v0.56, the era-pack fold: commit `c9f0560`.
+  Section 3.1 prints the wind-authority era phrase.
+  Section 4.2 reads in date order, and the back-pointer lands at the load block.
 
 - The v0.55 split and environment pass (2026-10-15): the reject split prints and the item-2.1 environment set closes.
   Fold `2e930a8`, 6 anchors and 40 guards closed.
@@ -151,7 +161,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.55 build (record draft `2e930a8`, md5 `4c4384146bbba1d56938814e60741d18`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.56 build (record draft `c9f0560`, md5 `5ecee42e6dcf1f16c6eaec3e2a2bd87a`).
 
 ## Boot
 
@@ -186,4 +196,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the section 2.3 derivation block, AU4 and the software story. The v0.55 pass closed the reject split and the item-2.1 environment set. The section 3.2 fold waits on the counter-reads and the visual pass. The partner-gated tails still wait on the AU4 read.
+**Owner:** @author. **Next action:** AU4, the section 2.3 derivation block and the software story. The v0.56 pass folded the era pack. The section 3.2 fold waits on the visual pass alone. The partner-gated tails still wait on the AU4 read.
