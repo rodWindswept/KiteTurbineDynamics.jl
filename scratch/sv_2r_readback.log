@@ -1,0 +1,9 @@
+readback: the torsion rows, the floor row and the convergence series (science-validator, 2026-10-15)
+tip 2142d43dcdd04f422da6916e013dfacc910dbad7
+
+OK  docs/reporting/numbers-register.md  1bd88b85f148320fa366ba63cb35b893dce65cddc94ea97fa1612d66f730bdec  origin-blob d7bf2470f9554e0016f10fcfb0dc97cc3ccb44fa
+OK  docs/reporting/room-responses/science-validator-2026-10-15-torsion-rows-floor-and-series.md  c10d89142d72799cc4d1150d0f076abcf0910b2ff2631700535a1d9397e1ff06  origin-blob 569bd0841a898ef58b98f952140900aeb51a23dd
+OK  scratch/sv_criteria_check.py  9409f2ce968e7b576cdd34d70a005d33e4e70b7a049de9eb93255b65b59558de  origin-blob 4305f85cd742bc22b4341641bc6e88e9ffef325f
+OK  scratch/sv_criteria_check.log  4ac3c7ff386db8c45dc10e0e92e2272ae3e9c8d6b30b16f7f9d713259c4629d1  origin-blob 71c6edf3d3695e25c10851c30331dafd5685c9c8
+OK  scratch/sv_conv_series_check.py  2c24fc8f30c7e83a97e322076c6a15da7a57ed6192df9c9027db936f132fc6e7  origin-blob 0a9792c9d2990084cbeb7cd290ca5c02ee7328d3
+OK  scratch/sv_conv_series_check.log  fe4dfc42c9be19f296773a23bc2e65c34226673f74513cba8c759bccb22ce680  origin-blob b54109f80049603839a6e3807f7f49f70c27a5c4
