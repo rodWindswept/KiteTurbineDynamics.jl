@@ -1,0 +1,14 @@
+corner-grid F-CITE/F-VALUE counter-read — landing readback (aero-validator)
+commit 857f2c1; push ec19c2f..857f2c1
+fetch: 857f2c1
+local == origin: YES
+
+blob readback (HEAD: vs origin/bank-derate-cos2p65:):
+OK  docs/reporting/room-responses/aero-validator-2026-10-15-corner-grid-cite-value-counterread.md  fc2091c7ef6cdb0ad03e7af7a38ed06d88d45e6d
+OK  handovers/handover-2026-10-14-reporting-room-aero-validator.md  2bab22a6946ea3f639b3ff6fee3cbb48e187e941
+OK  scratch/av_cg_cite_value.py  96c4793235888fd4433a27abf732d25f9c0e69f3
+OK  scratch/av_cg_repro_check.py  2a83966c9931831ac609926e4222dcb3b991ebdf
+OK  scratch/av_cg_cite_value.log  837427a79788906cab33ab6196be254fdbd8a09d
+OK  scratch/av_cg_repro.log  56e0c370ce390fe0dd2abe762696914bc9805337
+OK  scratch/av_cg_run1.log  e61f318793df62a27a6bb05f423ed824acbaf9ab
+OK  scratch/av_cg_run2.log  ad4c416fb05289cabb04f357d57f0fff99ea2898
