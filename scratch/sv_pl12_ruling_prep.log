@@ -1,0 +1,47 @@
+# PL12 references ruling — ruling-prep facts read (science-validator, 2026-10-15)
+# Repo: KiteTurbineDynamics.jl, branch bank-derate-cos2p65, tip 35ef086 (local == origin at read time)
+# Corpus root at read: /home/rod/wiki-awe/raw/papers
+
+== sha256sum ==
+46119bf36ceeb0f59f888e0e01b63e855f678d74fc6f4aaa8c8119701f46c8fd  ranneberg-rotokite-enerkite-2014.md
+9bc2729edf9d42fb0d3cfccc91e0649b9604f1c49937750f6f7f4061e3a15628  jamieson-multi-rotor-concept-2024.md
+ed55b1f62de882784fe74fefb4975a53f4c0bafaeeb7df295e36d51dae29fa00  hancock-lm-windpower-mrs-blade-lens-2024.md
+
+== sizes ==
+ 2972 ranneberg-rotokite-enerkite-2014.md
+ 5161 jamieson-multi-rotor-concept-2024.md
+ 5733 hancock-lm-windpower-mrs-blade-lens-2024.md
+13866 total
+
+== identity reads (headers) ==
+-- ranneberg-rotokite-enerkite-2014.md
+---
+source_url: file:///run/media/rodbot/KITES/investigation/ROTOKITE%20project%20wind-full.pdf
+ingested: 2026-06-05
+sha256: 8544ab2b17f25c6a22e5fa8c0a4ccdaa1d27c35f28f85ea4d9b5cfe5a0763c87
+---
+
+
+-- jamieson-multi-rotor-concept-2024.md
+---
+source_url: file:///run/media/rodbot/KITES/investigation/multirotor2024/2.1%20Peter%20Jamieson.%20Strathclyde.%20Multi%20rotor%20concept%20-%20Histpry%20Status%20and%20Vision.pdf
+ingested: 2026-06-04
+sha256: e3bda7f4a8c1d290f5e6b73284019c5a6f72d3e4b8c9a1d2f0e5b6a7c8d9e0f1
+---
+
+
+-- hancock-lm-windpower-mrs-blade-lens-2024.md
+---
+source_url: null
+ingested: 2026-06-07
+sha256: off
+---
+
+
+== count-line sites ==
+913:Seeded in references.bib. Fifteen of eighteen sources verified. Three
+-- tracker:
+(no second site)
+
+== base ==
+35ef086909a9e5b18b757fe5cd5fc7c586c3aadb
