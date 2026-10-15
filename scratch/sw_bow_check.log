@@ -1,0 +1,41 @@
+ok    live md5 pins to the folded candidate
+ok    base revision md5 pins
+ok    base revision carries no bow row
+ok    base revision carries no bow guard row
+ok    bow row present exactly once
+ok    guard row present exactly once
+ok    bow row sits directly under the destructive-resonance row
+ok    guard row sits directly under the era retire row
+ok    guard row is the last row of section 7
+ok    status line reads PREP v20
+ok    the v19 status line is gone from the file
+ok    v18 delta bullet still present
+ok    v19 delta bullet still present
+ok    v20 delta bullet present exactly once
+ok    v20 delta bullet reads six lines
+ok    the v19 delta block is byte-held against the base
+ok    v20 delta records the landing
+ok    no base line is lost
+ok    the only changed base line is the status line
+ok    row census reads 143
+ok    line count reads 409
+ok    bow row cites the 2026-09-15 ruling 2
+ok    bow row does not cite physics-topology
+ok    bow row does not cite the register
+ok    bow row is numbers-free
+ok    guard row is numbers-free
+ok    bow row keeps the ruling's operative word
+ok    bow row drops the old compression
+ok    guard row bars the stack translation
+ok    no new row prints the nominalization
+ok    DECISIONS.md exists
+ok    the 2026-09-12 bow handover exists
+ok    the ruling carries the bow ruling
+ok    the ruling bars the 1.5 m print
+ok    the handover carries the near-constant-length rearrangement
+ok    the handover carries the perpendicular-weight cause
+ok    exactly the two owned files changed
+ok    no draft byte moves
+ok    the numbers register is untouched
+
+39 checks, 0 fail

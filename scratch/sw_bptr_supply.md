@@ -40,6 +40,10 @@ records the move. No past entry changes.
 
 ## 3. STAGED, NOT LANDED: the bow row
 
+**Superseded 2026-10-15.** The founder ruled "up", and the row landed at v20.
+`scratch/sw_bow_supply.md` carries the landed text. This section records the v19
+staged text as it then read.
+
 The founder word on the bow call decides this row. This seat holds the text
 ready. No bow row lands until that word arrives.
 

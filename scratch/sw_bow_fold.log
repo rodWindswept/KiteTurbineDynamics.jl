@@ -1,0 +1,40 @@
+ok    base md5 pins
+ok    base carries no bow row
+ok    worktree file == base (no drift since the pin)
+ok    base status line reads PREP v19
+ok    status token v20 is absent at base
+ok    destructive-resonance anchor is unique
+ok    era retire-row anchor is unique
+ok    v19 delta tail is unique
+ok    base carries no bow guard row
+ok    base row census reads 141
+ok    base line count reads 400
+ok    status token moved once
+ok    bow row inserted once
+ok    bow row sits under the destructive-resonance row
+ok    guard row inserted once
+ok    guard row sits under the era retire row
+ok    v20 delta appended once
+ok    v19 delta tail byte-held
+ok    no base row lost
+ok    exactly the two new rows added
+ok    row census reads 143
+ok    line count reads 409
+ok    no line is deleted
+ok    exactly one replace, the status token
+ok    every inserted line is a specced new line
+ok    three insert sites
+ok    file ends with exactly one newline
+ok    bow row cells are numbers-free
+ok    guard row cells are numbers-free
+ok    bow row keeps 'not translate sideways'
+ok    bow row drops the old 'stack moves little' compression
+ok    guard row bars the stack-translation reading
+ok    guard row keeps the reorient form
+ok    no new row prints the 'translation of' nominalization
+ok    bow row cites the 2026-09-15 ruling
+ok    bow row drops the physics-topology ground (no bow entry there)
+ok    bow row carries the settle/run agreement rule
+
+37 checks, 0 fail
+candidate: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/sw_bow_new.md  md5 8a4bcbf75a42a8ee6a87e3e097bc9d6d

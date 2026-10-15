@@ -1,0 +1,19 @@
+== scratch/sw_bow_new.md: words=5244 total=15 per100w=0.29 ==
+-- sentences over 20 words --
+  [21w] | shear law (Hellmann power law) | The law that carries the site wind from its measured pair up to the rotor altitude.
+-- passive constructions --
+  | itude only. Ramp, gust and turbulence tools exist, and none is engaged. The window swing is a steady-wind resp
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | | Term | Draft | Ground | Action |
+  | **Crossing limit (the twist bridge).** The row above is the proposed display form. The cen
+  | | Do not write | Write | Ground |
+  | - **v4 (2026-10-08):** a structural-limit group joins as section 6: the
+  | - **v9 (2026-10-12):** two caption compounds join. The register machine
+  | - **v12 (2026-10-13):** two items from the founder docx return join the
+  | - **v18 (2026-10-15):** the era pack lands at the science-writer seat.
+
