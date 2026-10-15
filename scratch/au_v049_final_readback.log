@@ -1,0 +1,15 @@
+# v0.49 re-key landing — origin readback (author seat, 2026-10-15)
+# Branch bank-derate-cos2p65. Method: sha256sum working file vs git show origin:<path> | sha256sum.
+
+OK   docs/reporting/drafts/2026-10-08-report-first-draft.md  sha256 1f9caf11c7ef29f4e2331a91728e7566066077cd078e47c3a2995ff2943c1a6b
+OK   docs/reporting/draft-tracker.md  sha256 12084ea0cd78b9a8e3d91f8aab4235cf39728d4ddfc874cd52b5a1d846c343f8
+OK   docs/reporting/figures/system-anatomy/captions.md  sha256 33bc5aa69f7a3108a4d10cb0a57452beb2d82289598e64ded23240248b39b385
+OK   docs/reporting/figures/system-anatomy/captions-draft.md  sha256 ebdb41761993cf1dfcf4cda35f207cdb41a7fce6fe2a0e4ed0308b7c36d41654
+OK   scratch/au_v049_rekeys_fold.py  sha256 7e3dbea05ffee3cb58a5c13fc6338904d49f13b6364e195f4ea41975d3b4d29b
+OK   scratch/au_v049_rekeys_fold.log  sha256 a0ceeb79dbfabc62357809bbc76cf6cfd4d34e957379a4421090d75c760ce112
+OK   docs/reporting/room-responses/author-2026-10-15-v049-rekeys.md  sha256 34dd0e84db17002507c1fcd3518bf4f3866f7398e4024121cedbb57560aaf7c3
+OK   scratch/au_v049_rebuild_check.py  sha256 acd97a328a8d0523094d43d4e031ddce180734f3d178a41799ca28c997c8869b
+OK   scratch/au_v049_rebuild_check.log  sha256 2eb385038147572cb65654e439a42775f700afbc41a756d8151d246d44caa2ee
+OK   handovers/handover-2026-10-14-reporting-room-author.md  sha256 4cd2508e7eced5c659412c80323fa5bc7b0a9f9ed126d4ff96cd15acbfc4ce2f
+
+# HEAD 34c488b == origin 34c488b. The readback log itself verifies with the next push.
