@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `8a1e552` on `bank-derate-cos2p65`. The sweep 29 push follows this page.
+**Base:** branch tip `2a0d096` on `bank-derate-cos2p65`. The round-6 leg train follows (`69ec727` to `50e0300`). The sweep 30 push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -47,6 +47,8 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 7. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
 
 ## Closed, last (evidence index)
+
+- The round-6 legs: commits `69ec727` to `50e0300`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-round6-legs.md` sits beside this page.
 
 - Sweep 29: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
 
