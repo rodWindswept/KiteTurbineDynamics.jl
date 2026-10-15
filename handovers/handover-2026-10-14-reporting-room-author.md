@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `f4f1bcd` on `bank-derate-cos2p65`.
+**Base:** branch tip `59fffaa` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -20,21 +20,27 @@ The parallel work is the audits and the extracts the other seats run.
    The twist-prose basis fold waits on the floor row.
    The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
 
-2. **The kMppt plain pass (founder ask).** The structural-side sentence at section 2.3 takes a plainer form.
-   The era-fit flag gates any cite. The row-5 plate draws the sweep and waits on the visual pass.
-
-3. **The era pack, the remainder.** The era map folded at `34e3f81` (AU7).
+2. **The era pack, the remainder.** The era map folded at `34e3f81` (AU7).
    The development-history chapter push reads next. Track A/B reconciliation goes first.
 
-4. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
+3. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
 
-5. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
+4. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-6. **The basics-of-TRPT refresher (founder ask).** Activated. The scope call sits at this seat.
+5. **The basics-of-TRPT refresher (founder ask).** Activated. The scope call sits at this seat.
 
 ## Closed, last (evidence index)
+
+- The v0.50 kMppt plain pass (2026-10-15): the structural side of the load story takes plainer sentences.
+  Fold `171f3ea`, 5 anchors and 26 guards closed, tokens add 50 and remove 49.
+  Review copy rebuilds (record `171f3ea`, live md5 `ae15d991…`, byte-identical to `draft-171f3ea-20261015-154001.docx`).
+  Check `scratch/au_v050_rebuild_check.py`, 47 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v050-kmppt-plain.md`.
+
+- v0.50, the plain-pass fold: commit `171f3ea`.
+  The beam-sizing sentence names its actor. The lull sentence takes the plain word. The refusal names the team.
 
 - The v0.49 re-keys (2026-10-15): the caption files, the load-path sentence and the winner-form sites.
   Fold `8169e36`, 8 anchors and 37 guards closed, tokens add 49 and remove 48.
@@ -108,7 +114,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.49 build (record draft `8169e36`, md5 `24f98df65d7274233bfea9cc9e736937`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.50 build (record draft `171f3ea`, md5 `ae15d9918ea216dcd6f0ada6073d0ec0`).
 
 ## Boot
 
@@ -143,4 +149,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The v0.49 re-keys closed at this seat. The re-key bytes and the rebuilt copy key the aero counter-reads. The tails wait on AU4.
+**Owner:** @author. **Next action:** the partner-gated tails (the AU4 read gates them) and the basics-of-TRPT refresher scope call. The kMppt plain pass closed at `171f3ea`, and the review copy reads the v0.50 build.
