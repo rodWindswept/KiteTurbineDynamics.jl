@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
 **Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
-**Updated** 2026-10-15 for the round-6 closures, the corner build, the sweep-30 close, the founder asks and the doc-watch status.
+**Updated** 2026-10-15 for the closure train through v0.52. Draft v0.52. The review copy reads md5 `3c386dc2…`.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -58,35 +58,29 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The newest span opens with the aero-worker carry note (`c039aa6`). It takes the round-5 routing (`d1e9bf1`) and its counter-read (`658e7bb`, `cd779dd`). The span adds the source reads (`94aa219`), the caption dedupe (`12f4b59`, `c177213`) and the v0.43 wording set (`8a1e552`). Sweep 29 (`e104f30`) and the v0.43 counter-reads (`7ac4cf2`, `68aa1a2`) join it. It closes with the v0.44 cone-ring re-cut (`2f79aae`), the corner mint (`18a905a`) and the v0.45 folds (`34e3f81` to `6ea00d4`). The round-6 routing closes the span. The round-6 closures then land. The rebuild and the copy read (`2a0d096`, `c35a0cf`). The leg folds and the term re-read (`e6122a2`, `eb93928`). The corner build and sweep 30 (`4ded913`, `72115e7`). The map seat adds its carry: the founder-asks and doc-watch page and the MCP tooling pilot page.
 
+- The 2026-10-15 closure train lands the four founder asks. The lifting-bridles relabel and term gate close. The hero-image retirement closes. The figure-editability note closes. The corner-machines fold (v0.51) lands, and its register read and copy counter-read close. The kMppt plain pass (v0.50) and the basics-of-TRPT refresher (v0.52) land. Sweep 31 closes. Draft v0.52 at `b6cd166`. The review copy reads md5 `3c386dc2…`.
+
 ## Open queue, in fold order
 
-1. **@science-validator: the round-6 rulings, closed.** The sign (`cb862df`) and the term gate landed. The legs re-read clean (`eb93928`). The scan-entry call stands parked: no bare entry, and a live-scoped catcher rides only if the room asks.
+1. **@science-writer: the era pack and sweep 32.** Sweeps 30 and 31 closed. The era pack opens: the development-history chapter push. Then the section 4.2 dates reconcile across Track A and Track B. Sweep 32 keys on the next push. The references gate holds three pending source calls (Ranneberg, the Jamieson deck, the Hancock deck).
 
-2. **@author: the round-6 fold, closed.** The fold (`d0ed902`) and the rebuild (`2a0d096`) landed. The copy counter-read closed (`c35a0cf`). The kMppt plain sentence opens next at this seat. The partner-gated tails wait on AU4.
+2. **@hermes (lead) + @science-writer: the Nomenclature fold.** Section 6 is the last pending section. The term gate cleared (`cadf83d`). The glossary ratification has not landed. The abstract and the keywords read written.
 
-3. **@fig-img-diagrams: the round-6 plate text, closed.** The five re-cuts (`1af63fc`) and the fold-back (map v38) landed. The five generator form notes hold for the next builds.
+3. **@author: the partner-gated tails.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4.
 
-4. **@aero-validator: the copy counter-reads, closed.** The v0.47 copy counter-read closed (`c35a0cf`, 246 checks).
+4. **The rope-break gate placement fix (NR-013, Harris 3.8).** The code still runs the gate across relax and window. A code fix lands before the printed number stands.
 
-5. **@science-writer: sweep 30, closed (`72115e7`). The era pack opens.** The term legs closed (`e6122a2`) and re-read clean (`eb93928`). The chapter push and the explainer block follow. The references gate holds three pending source calls (Ranneberg, Jamieson, Hancock).
+5. **@fig-img-diagrams + Rod: the visual pass.** The corner grid, the winner plate and rows 4 to 7 wait on Rod. The two parked winner-plate items ride the same pass.
 
-6. **@fig-img-diagrams: the corner build and the visual pass.** The generator landed (`a4b4057`, map v39). The aero counter-reads and the science register read open. The visual pass (the corner grid, the winner plate and rows 4 to 7) waits on Rod. The two parked winner-plate items ride the same pass.
+6. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12.
 
-7. **@hermes: the copy presentation check.** The figure text takes its caption form in the review copy, distinct from body text. The typeface question from the round reads here.
+7. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
 
-8. **@hermes (lead) and @science-writer: the Nomenclature fold.** The term gate cleared at `cadf83d`. The hub rename joins the terms. The fold closes the last pending section. The three projection terms sit in the candidates for Track D.
+8. **With the founder.** The winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome). The settled-form primer waits on the form sign.
 
-9. **@science-validator: the item-5 forms and PL12.** The item-5 counter-read closed at `d0679d3`, no discrepancy found. The printed forms of the fold take rows at this seat first. The PL12 verification facts stand on request.
+9. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
 
-10. **@hermes: the map.** Delta maps, route notes and receipts stay at this seat. The fb5 parenthetical flip closes in this pass. Keep this page current as items close.
-
-11. **Founder asks, logged.** The settled-form primer joins: a basic view of the machine in its settled twisted form. The cast comes from the notebook or dashboard render. The form sign reads first at @science-validator, then the mint at @fig-img-diagrams. The basics-of-TRPT refresher reads as activated (scope call at @author).
-
-12. **Still with the founder.** The winner-plate seat call stays open: section 3.3 now, and the one-line move earlier is ready. The root README refresh waits on the founder. The campaign leads stay logged: explore the cone angle, and widen the genome.
-
-13. **@hermes: the doc watch.** The sweep re-flags the decisions date item on the Oct-7 same-day commits. The receipt carries the repro and the closes. The root front page reads outside the watch scope.
-
-14. **New founder asks (2026-10-15).** (a) The system-anatomy label takes "lifting bridles" (drawn string, caption, ledger, notes). The figures seat re-cuts, the science-writer sweeps the term set, and the science-validator gates. (b) "Hero image" retires as a figure label on reader-facing surfaces. The kit slug stands. No figure moves. The publishing hero (the founder's dashboard grab) stays founder-owned and joins the report only if he hands it over. (c) The figure-editability note records: the plates are generator scripts (Python, Julia). The system plate's TeX is generator output, never hand-edited. The outputs carry byte pins. Changes fold through the desks. The desk can export one editable copy on request.
+10. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
 
 ## The parallel set
 
@@ -118,4 +112,4 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 - Write anything Rod reads in plain English. Keep the shorthand for internal notes.
 
-**Owner:** @hermes (map seat). **Next action:** the corner counter-reads (aero) and the visual pass by Rod. The bridle relabel and its term set ride the next figures pass. Sweep 31 keys on the next push. The era pack opens at the science-writer seat. The kMppt plain sentence opens at the author seat. The partner-gated tails wait on AU4. The settled-form primer waits on the form sign. The winner-plate seat call and the root README stay with the founder.
+**Owner:** @hermes (map seat). **Next action:** the era pack and sweep 32 at the science-writer seat. The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The rope-break gate placement fix (NR-013) lands before the printed number stands. The visual pass by Rod covers the corner grid, the winner plate and rows 4 to 7. The standing gates land after the content closes.
