@@ -105,8 +105,8 @@ WATCH = [
 ]
 dirty = [p for p in git("status", "--porcelain", "--", *WATCH).splitlines() if p.strip()]
 chk("A1: the watched files are tree-clean (no peer mid-write)", dirty == [], str(dirty[:4]))
-edited_dirty = [p for p in git("status", "--porcelain", "--", *sorted(EDITED)).splitlines() if p.strip()]
-chk("A2: the four gate edits read as working-tree modifications", len(edited_dirty) == 4, f"{len(edited_dirty)}")
+diff_files = sorted(p for p in EDITED if rd(p) != git("show", f"{BASIS}:{p}"))
+chk("A2: the four gate edits read as landed content (they differ from the basis)", diff_files == sorted(EDITED), f"{len(diff_files)} of {len(EDITED)}")
 
 # ── B. the drawn set and its pins ────────────────────────────────────────
 print("\n== B. the drawn set (F1 kit) and its pins ==")

@@ -1,9 +1,9 @@
-sv_br_term_gate_check — read at HEAD 459eee256 | basis 459eee2
+sv_br_term_gate_check — read at HEAD 5ebbc3caa | basis 459eee2
 check: A0: the read builds on the closure tip 459eee2: OK  
 
 == A. the closure basis and the working set ==
 check: A1: the watched files are tree-clean (no peer mid-write): OK  []
-check: A2: the four gate edits read as working-tree modifications: OK  4
+check: A2: the four gate edits read as landed content (they differ from the basis): OK  4 of 4
 
 == B. the drawn set (F1 kit) and its pins ==
 check: B1: py label dict reads the founder form: OK  
@@ -114,12 +114,12 @@ check: G7: map bad lines zero: OK
 check: G8: the old cite survives only in records: OK  []
 
 == H. the tracked-tree census ==
-  census[bridle] basis: HEAD 459eee256
-check: H-bridle: every hit file is classified: OK  428 files; unk=[]
-  census[bridle]: 428 files — live 21, records 84, code/scratch 323
-  census[hero] basis: HEAD 459eee256
-check: H-hero: every hit file is classified: OK  166 files; unk=[]
-  census[hero]: 166 files — live 12, records 27, code/scratch 127
+  census[bridle] basis: HEAD 5ebbc3caa
+check: H-bridle: every hit file is classified: OK  432 files; unk=[]
+  census[bridle]: 432 files — live 21, records 85, code/scratch 326
+  census[hero] basis: HEAD 5ebbc3caa
+check: H-hero: every hit file is classified: OK  169 files; unk=[]
+  census[hero]: 169 files — live 12, records 28, code/scratch 129
 check: H3: map hero lines are the recorded set: OK  [42, 79, 146, 151, 152, 163, 378, 389, 423, 427, 458]
 check: H4: live hero files read no figure-label form: OK  
 check: H5: renderer SPEC keeps the engine mode: OK  

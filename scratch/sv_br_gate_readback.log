@@ -1,0 +1,19 @@
+== sv br term gate readback ==
+2026-10-15T15:20:30Z
+f003858ffc55febb868b4b8b739b1829eb2cbf3a	refs/heads/bank-derate-cos2p65
+local HEAD: f003858ffc55febb868b4b8b739b1829eb2cbf3a
+origin tip: f003858ffc55febb868b4b8b739b1829eb2cbf3a
+== per-blob (local == origin) ==
+OK docs/reporting/figures/figure-generation-notes.md 18838c06799b6f9439f7a7e3e2f87da96dc52524
+OK docs/reporting/figures/system-anatomy/captions-draft.md 1abc1334707eb149351e235bd9a686653b757d0f
+OK docs/agents/physics-topology.md 24e7911bde904f67dda71fea15b5c72b12267ea0
+OK scratch/sv_br_gate_edits.py 823c51aa7a00bc720d89c0d3706a8bcad34a7421
+OK scratch/sv_br_term_gate_check.py 0c1907fdb119f19460cc4109b37e8880e4fb3a63
+OK scratch/sv_br_term_gate_check.log 8ee4028791af9f4a8092afbd520b8fef94dbe55b
+OK docs/reporting/room-responses/science-validator-2026-10-15-lifting-bridles-term-gate.md 412b29bc129387a15c7e6585c5d2e9ef1f67441d
+OK docs/agents/domain.md 854a0ec75a605a49b39f9d81084f71a68afb26dd
+OK handovers/handover-2026-10-14-reporting-room-science-validator.md 1bf6a77596d77f09bd15b99400694f2e4fd69909
+== post-push checker ==
+check: H6: winner kit keeps its slug: OK  
+
+SV_BR_TERM_GATE: 105/105 checks pass
