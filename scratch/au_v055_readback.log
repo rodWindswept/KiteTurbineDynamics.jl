@@ -1,0 +1,21 @@
+# Readback: the v0.55 split and environment pass (author seat, 2026-10-15)
+
+Commits (bank-derate-cos2p65):
+  2e930a8  the fold (draft v0.55, the reject split and the item-2.1 environment set)
+  f7539ba  the receipt set (receipt, rebuild check, check log)
+  5dff39a  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+ebee36da4c3aada420ced7b934867ebc  docs/reporting/drafts/2026-10-08-report-first-draft.md
+d31b03c73713cac63dbdb03e3bdbda3a  docs/reporting/draft-tracker.md
+c4fc0f2a46a49da5cc780e9c066779ca  scratch/au_v055_split_and_env_fold.py
+88fe125340af451cad73286136e99758  scratch/au_v055_split_and_env_fold.log
+3a0d58f039dbb820928dfb7d346cb815  docs/reporting/room-responses/author-2026-10-15-v055-split-and-env.md
+3bd2732f330c02b8cdffe4305d56f196  scratch/au_v055_rebuild_check.py
+5a3f0406700bd43fd5f44c6528e305bd  scratch/au_v055_rebuild_check.log
+c7ee04fc4d0ee802c37553cf6e4f86ac  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == 5dff39abec611a026f027e1a7f26e1b8aca4ff58 at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 4c4384146bbba1d56938814e60741d18) stays untracked and is not carried.
+Note: the 2e930a8 message cites 5 anchors; the fold script holds 6 anchors (the five draft edits and the tracker entry) and 40 guards. The figure corrects here, and the fold bytes hold.
+This log rides the next commit.
