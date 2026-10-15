@@ -79,11 +79,17 @@ function run_canonical_sim!(
     # that do not test breaking leave it off, so a frame-zero velocity transient
     # cannot abort them.
     breaks_enabled::Bool=false,
+    # Arm time for break detection (seconds of THIS call).  Detection latches
+    # only at t >= breaks_arm_s.  The windowed evaluator passes its relax
+    # duration, so detection runs on the measurement window only (2026-09-16
+    # ruling); the default 0.0 keeps every other caller armed from the start.
+    breaks_arm_s::Float64=0.0,
 )
     N = sys.n_total
     Nr = sys.n_ring
     # Break detection is gated on the caller's protocol, not forced.
     sys.breaks_enabled[] = breaks_enabled
+    sys.breaks_arm_s[] = breaks_arm_s
     du = zeros(Float64, length(u))
     t = 0.0
     ode_params = if lift_device === nothing

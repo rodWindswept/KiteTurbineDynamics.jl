@@ -987,6 +987,11 @@ function evaluate_windowed(
             spoke=spoke,
             callback=window_callback,
             breaks_enabled=true,
+            # 2026-09-16 ruling (Rod): break detection on the measurement
+            # window only.  Arm at the relax boundary, so the warm-seed
+            # transient cannot false-reject a healthy machine (NR-013)
+            # while the window keeps full protection.
+            breaks_arm_s=cfg.relax_s,
         )
     catch e
         @warn "Window sim failed" exception = e

@@ -534,9 +534,12 @@ function compute_rope_forces!(
         # Rope break at LINE level (2026-08-14, Rod — SK99 3.5%): the full
         # ring-to-ring path strain must not exceed ROPE_BREAK_STRAIN. Path
         # level (not per numerical sub-seg) so mid-node placement artifacts
-        # cannot trip it. Detection only during real operation. Runs BEFORE
-        # the torque-clamp continue so zero-torque segments still break.
-        if sys.breaks_enabled[]
+        # cannot trip it. Detection only during real operation, and armed
+        # only at t >= sys.breaks_arm_s (2026-09-16 ruling: detection on the
+        # measurement window only; the windowed evaluator arms at the relax
+        # boundary). Runs BEFORE the torque-clamp continue so zero-torque
+        # segments still break.
+        if sys.breaks_enabled[] && t >= sys.breaks_arm_s[]
             for lj in 1:p.n_lines
                 rl = line_restlen[s, lj]
                 rl > 1e-9 || continue
@@ -608,8 +611,9 @@ function compute_rope_forces!(
     # same strain as a transmission line. Healthy margins are large (cyan ~350 N
     # on ~500 kN EA is ~0.07% strain), so this trips only on a real lift-chain
     # overload or detachment. Each is a single sub-segment per line, so the
-    # accumulated path length IS that line's length.
-    if sys.breaks_enabled[]
+    # accumulated path length IS that line's length. Same arm rule as the TRPT
+    # block above (2026-09-16 window-only placement).
+    if sys.breaks_enabled[] && t >= sys.breaks_arm_s[]
         for lj in 1:p.n_lines
             rl = bridle_restlen[lj]
             rl > 1e-9 || continue

@@ -210,6 +210,14 @@ struct KiteTurbineSystem
     # momentarily while searching the equilibrium (would break healthy
     # machines before their eval even starts).
     breaks_enabled::Ref{Bool}
+    # Break detection is ARMED only at/after this simulated time (seconds,
+    # measured within the current run_canonical_sim! call).  The 2026-09-16
+    # ruling (Rod) scopes break detection to the measurement window.  The
+    # windowed evaluator arms at the relax boundary, so the relax transient
+    # cannot false-reject a healthy machine (NR-013), while the window keeps
+    # full protection.  Default 0.0 = armed from the first step, so every
+    # other caller keeps its established semantics.
+    breaks_arm_s::Ref{Float64}
     # Static mapping sub-seg index → TRPT segment index (1..n_ring-1; 0 for
     # non-TRPT chain sub-segs like bridle/cyan). Precomputed at build because
     # the per-sub-seg scan would be O(n) per step in the hot loop. TRPT lines

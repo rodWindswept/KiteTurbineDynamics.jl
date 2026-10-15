@@ -11,6 +11,10 @@ The band keeps its 2.5 rad/s width and moves to the new value, 12.7 to 15.2. The
 covers the predicted F11 shift, which is a few tenths more. Tighten it once F11 lands.
 Standalone.
 
+R4 added 2026-10-15: the window-only gate placement (2026-09-16 ruling) — detection
+arms at `breaks_arm_s`; below it no latch, at/after it the latch fires, default 0.0
+keeps the as-coded semantics.
+
 R1: unit — a sub-segment strained past 3.5% returns zero tension and sets
     the broken flag; below the limit it is untouched.
 R2: end-to-end — the pre-fix 18m winner (regression artifact) must NOT reach
@@ -18,6 +22,8 @@ R2: end-to-end — the pre-fix 18m winner (regression artifact) must NOT reach
     bounded) or |ω| stays ≤ 1e3.
 R3: non-regression — the healthy seed runs 30 s without a break and lands
     in its known operating band (ω_gnd, re-measured on the corrected seed).
+R4: placement — the break latch honors `breaks_arm_s` (armed at 0.0 = fires;
+    ahead of t = suppressed), the placement the windowed evaluator uses.
 =#
 
 using KiteTurbineDynamics, Printf, LinearAlgebra
@@ -166,6 +172,31 @@ w_gnd3, broke3 = run_r3()
 println("  ω_gnd @30s = ", round(w_gnd3, digits=2), " rad/s  broken=", broke3)
 check("R3: seed never breaks", !broke3)
 check("R3: seed lands in its known band (ω_gnd re-measured)", 12.7 <= w_gnd3 <= 15.2)
+
+println("=== R4: gate placement — detection armed only at t >= breaks_arm_s (2026-09-16) ===")
+function run_r4(arm::Float64, nsteps::Int)
+    sys4, u04, pc4, p4 = build_from(seed_genome(5.0), 18.8)
+    lift = rotary_lifter_default()
+    wind_fn4(r, t) = [p4.v_wind_ref, 0.0, 0.0]
+    sys4.k_mppt_ref[] = K_MPPT_5KW_HONEST
+    u4 = settle_to_operational_state(sys4, copy(u04), pc4, 60.0; lift_device=lift, wind_fn=wind_fn4, n_op=30_000)
+    # Stretch the top TRPT line past the 3.5% break threshold (R1's displacement).
+    gid_hub4 = sys4.ring_ids[sys4.n_ring]
+    L_seg4 = pc4.tether_length / (sys4.n_ring - 1)
+    u4[(3*(gid_hub4-1)+1):(3*gid_hub4)] .+= 0.20 * L_seg4 .* [cos(p4.elevation_angle), 0.0, sin(p4.elevation_angle)]
+    dt4 = KiteTurbineDynamics.stable_dt_for_system(sys4, pc4)
+    run_canonical_sim!(u4, sys4, pc4, wind_fn4, nsteps, dt4; lift_device=lift, lin_damp=0.05,
+        breaks_enabled=true, breaks_arm_s=arm)
+    return sys4.any_broken[]
+end
+b_r4_armed = run_r4(0.0, 1)        # armed from t=0 — the as-coded default
+b_r4_armed_tiny = run_r4(1e-9, 2)  # armed once t crosses a near-zero arm time
+b_r4_below_arm = run_r4(5.0, 1)    # arm ahead of t — detection OFF
+println("  arm=0.0 → broken=", b_r4_armed, "   arm=1e-9 → broken=", b_r4_armed_tiny,
+    "   arm=5.0 → broken=", b_r4_below_arm)
+check("R4a: stretched line breaks with the default arm (0.0) — as-coded semantics hold", b_r4_armed)
+check("R4b: detection fires once t crosses a near-zero arm time", b_r4_armed_tiny)
+check("R4c: no latch below the arm time (relax-phase suppression)", !b_r4_below_arm)
 
 println()
 if isempty(failures)

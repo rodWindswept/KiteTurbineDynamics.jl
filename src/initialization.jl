@@ -410,6 +410,7 @@ function _build_kite_turbine_system_impl(
         falses(length(sub_segs)),    # broken_lines — rope break flags per sub-seg (2026-08-14)
         Ref(false),                  # any_broken — dirty latch for run_canonical_sim! early exit
         Ref(false),                  # breaks_enabled — set true only by run_canonical_sim! (real operation)
+        Ref(0.0),                    # breaks_arm_s — detection armed at t >= this (2026-09-16 window-only ruling; 0.0 = from the start)
         trpt_seg_map(sub_segs, ring_ids),  # sub_seg_trpt_seg — precomputed TRPT-segment mapping
     )
 
