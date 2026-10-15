@@ -1890,3 +1890,107 @@ boundary (10 s). The measurement window runs fully armed. The 2026-10-14
 quote form ("the rope-break check armed across both") describes the
 as-run campaign. Future quotes of the fixed evaluator read "the rope-break check armed at the window".
 The row keeps its signed text, byte-identical to the base.
+
+## NR-031 and NR-032 source-cell amend (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The two source cells read "the measured n = 3 surface". The basis is a
+computation, not a measurement. The Cp values come from the AeroDyn
+v5.0.0 quasi-steady BEM table (NACA4412, 3 blades, R = 4.0 m, 0 degree
+elevation) at `src/aerodynamics.jl:93` (the `BEM_CP` table). The function
+`cp_at_tsr` (`:263`) interpolates it. The blade-count ratio surface is a
+separate, measured surface. At n = 3 it returns the baseline unchanged
+(`src/bem.jl:16-25, 102, 109-111`). The values stand byte-identical.
+Anchor `a82cafd` stays the signing anchor.
+
+Reading rules:
+
+- Future quotes of the Cp basis read "the AeroDyn v5.0.0 BEM table".
+
+- The "measured" wording stays tied to the blade-count ratio surface only.
+
+## Derived rows: the torsion criteria and the realisability floor, NR-052 and NR-053 (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The writing queue keys the torsion sentence (Harris review item 1.3) and
+the floor sentence (item 2.3) on these two rows.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-052 | The torsion criteria as implemented, and the 2.5 boundary | Criterion 1: the geometric crossing check is the campaign's twist gate (form in NR-053). Criterion 2: the torsional-stability FoS hard constraint reads 1.5, on the design-verification path. Winner: least segment torque margin 2.03 at S1 (NR-040), 1.35 times the 1.5 floor. Worst crossing ratio 0.4393474253185575, margin 2.28 | deg, - | Constant `src/trpt_optimization.jl:39` (`OPT_TORSION_FOS_REQUIRED = 1.5`), per segment `:872-882`, feasibility and message `:1100-1123`. Crossing detector `src/objective_evaluator.jl:454, 913-920`, hard reject `:1024`. Policy boundary per `software-validator-2026-10-11-item13-torsion-gate.md`. Winner cell: `island_3/telemetry.csv`, gen 26, idx 9 | signed (science-validator, 2026-10-15) |
+| NR-053 | The realisability floor and its 1.05 margin | sin(dalpha) <= 1/1.05 = 0.9523809523809523 (quote 0.9524). The continuum floor angle reads 72.24720983805331 deg (quote 72.25). The discrete crossing limit reads dastar = 2*asin(L_seg / sqrt(2*(L_seg^2 + 2*r_seg^2))), r_seg = max(r_i, r_{i+1}). Winner cross-reads: S1 twist 33.94561934829036 deg, margin 2.13 to the floor and 2.91 to dcrit (NR-022) | deg, - | Constant `src/initialization.jl:1691` (`TRPT_REALISABILITY_TENSION_MARGIN = 1.05`), basis `:1663-1691`. Crossing form `src/objective_evaluator.jl:444-462` and `src/initialization.jl:1414-1456`. Ruling DECISIONS [2026-09-20] | signed (science-validator, 2026-10-15) |
+
+Sign-off basis:
+
+- The constants at the tree tip. `trpt_optimization.jl:39` carries
+  `OPT_TORSION_FOS_REQUIRED = 1.5`. `initialization.jl:1691` carries
+  `TRPT_REALISABILITY_TENSION_MARGIN = 1.05`.
+
+- The arithmetic. 1 / 1.05 = 0.9523809523809523. The arc sine gives
+  72.24720983805331 deg. 2.0287970973051634 / 1.5 = 1.3525313982034424
+  (quote 1.35). 72.24720983805331 / 33.94561934829036 = 2.1283220405195515
+  (quote 2.13). 1 / 0.4393474253185575 = 2.2761030163655342 (quote 2.28).
+  98.85908296054023 / 33.94561934829036 = 2.912278074711846 (quote 2.91).
+  Checker `scratch/sv_criteria_check.py` and its log.
+
+- The winner cell. The worst crossing ratio 0.4393474253185575 reads once
+  in the campaign telemetry: island 3, gen 26, idx 9, status ok,
+  twist_crossed false. That is the winner row.
+
+- The 1.05 basis. It is a design constraint, not a fit. The docstring
+  census reads measured seed shortfalls up to sin(dalpha) = 1.0366. The
+  margin clears every measured shortfall. It lifts the campaign seed's
+  binding segment from sin 0.983 to at or below 0.952
+  (`src/initialization.jl:1663-1691`).
+
+- The 2.5 boundary. The 2.5 gate reads the structural FoS metric
+  (`fos_hard = 2.5`, `scripts/run_v13_5kw_masslift.jl:155`; hard gate
+  `src/objective_v12.jl:35`). As run, no code and no row enforces 2.5 on
+  torsion. Extending the gate to torsion is open at the founder
+  (recorded at the software seat, 2026-10-11).
+
+Reading rules:
+
+- The torsion sentence reads: the collapse factor of safety >= 1.5, the
+  twist within the crossing limit, and the 2.5 gate does not cover torsion
+  today.
+
+- The floor quotes as 72.25 deg. The enforced gate is the crossing check.
+  The floor is the design constraint behind the preload.
+
+- The receipt records the floor as the binding limit of the twist margins
+  (software seat, 2026-10-11).
+
+## Derived row: NR-054, the convergence series (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The convergence figure (Harris review, item 3.5.4) needs the island 1 and
+2 running-best series. The aero seat extracted them. This seat recomputed
+them from the campaign telemetry.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-054 | Island running-best series, generations 0 to 30 | Islands 1 and 2 read 31 values each. Island 3 carries the full curve. Finals: 30.578 (island 1, gen 30), 30.637 (island 2, gen 30), 27.364 (island 3, gen 26). All three start at the common seed 36.109. The finals read +11.7 and +12.0 per cent against island 3 | kg-equivalent | `scratch/av_conv_series.csv` (93 rows, blob `9666b1ad`), script `scratch/av_conv_series.py` (blob `b8c52694`), log `scratch/av_conv_series.log` (blob `98103246`), committed at `9dd453d`. Rule: best-so-far at generation G = least recorded ok fitness with gen <= G, ties take the earliest. Telemetry hashes travel in the file header | signed (science-validator, 2026-10-15) |
+
+Sign-off basis:
+
+- Reproduction. This seat recomputed all 93 rows from the three telemetry
+  files. The picked row, its source generation and its index equal the
+  extract at every generation. Checker `scratch/sv_conv_series_check.py`.
+
+- The parity set. The telemetry sha256 values match the file header. The
+  ok counts read 152, 162 and 194. They sum to 508 (NR-002). The island 3
+  milestones reproduce NR-036 at seven of seven generations. The finals
+  read the NR-003, NR-004 and NR-005 forms. The stock-probe log carries
+  the same 30.578 and 30.637 values.
+
+Reading rules:
+
+- Quote the series as the search objective (kg-equivalent). Never quote it
+  as mass (NR-036 boundary 1).
+
+- The figure prints from these bytes. A re-extract writes new bytes and
+  needs a new block.

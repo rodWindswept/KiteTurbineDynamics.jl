@@ -1,0 +1,20 @@
+PASS trpt_optimization.jl:39 reads the 1.5 constant (const OPT_TORSION_FOS_REQUIRED = 1.5 # Tulloch torsional stability FOS (hard constraint))
+PASS initialization.jl:1691 reads the 1.05 constant (const TRPT_REALISABILITY_TENSION_MARGIN = 1.05)
+     1/1.05 = 0.9523809523809523
+     floor angle = 72.24720983805331 deg (quote 72.25 / 72.247)
+PASS 1/1.05 reads 0.9523809523809523
+PASS the continuum floor reads 72.24720983805331 deg
+     2.0287970973051634 / 1.5 = 1.3525313982034424 (quote 1.35)
+PASS the least capacity ratio reads 1.35 times the 1.5 floor
+     twist / floor = 2.1283220405195515 (quote 2.13)
+     1 / crossing ratio = 2.2761030163655342 (quote 2.28)
+     twist / dcrit = 2.912278074711846 (quote 2.91)
+PASS the S1 twist reads 2.13 times margin to the floor
+PASS the worst crossing ratio reads 2.28 times margin to the crossing gate
+PASS the S1 twist reads 2.91 times margin to dcrit
+     crossing-ratio hits: [(3, '26', '9', 'ok', '0.4393474253185575')]
+     island 3 winner row: (3, '26', '9', '27.364', '0.4393474253185575', 'false')
+PASS the worst crossing ratio 0.4393474253185575 reads in the telemetry cells
+PASS the winning row carries the worst crossing ratio and twist_crossed false
+
+SV_CRITERIA_CHECK PASS

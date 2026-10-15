@@ -1,0 +1,22 @@
+PASS av series rows read 93 (read 93)
+PASS island 1 telemetry sha256 matches the header (6f359c33f174...)
+     island 1: rows 310, ok 152
+PASS island 2 telemetry sha256 matches the header (54172ce5a64b...)
+     island 2: rows 310, ok 162
+PASS island 3 telemetry sha256 matches the header (34d40e8ea960...)
+     island 3: rows 310, ok 194
+PASS ok counts sum to 508 (NR-002)
+PASS all 93 recomputed rows equal the av series (mismatches 0)
+     finals: {1: '30.578', 2: '30.637', 3: '27.364'}
+PASS island 1 final reads 30.578 (NR-003 form)
+PASS island 2 final reads 30.637 (NR-004 form)
+PASS island 3 reads 27.364 from gen 26 (NR-005 form)
+PASS island 3 milestones reproduce NR-036 7 of 7 (['36.109', '32.293', '31.661', '30.929', '29.854', '28.315', '27.364'])
+PASS island 1 starts at the common seed 36.109 (NR-006 form)
+PASS island 2 starts at the common seed 36.109 (NR-006 form)
+PASS island 3 starts at the common seed 36.109 (NR-006 form)
+     island 1 final is +11.75 per cent vs island 3; island 2 +11.96 per cent
+PASS the finals read +11.7 and +12.0 per cent (Harris line)
+PASS the stock-probe log carries the same 30.578 and 30.637 values
+
+SV_CONV_SERIES_CHECK PASS
