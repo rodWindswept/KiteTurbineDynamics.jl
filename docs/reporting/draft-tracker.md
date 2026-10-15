@@ -320,6 +320,12 @@ The operating table takes the shear law and the shaft elevation rows (NR-056, NR
 The swing sentence takes its steady-wind basis note (NR-058).
 No value moves, and no figure byte moves.
 
+v0.56 pass by @author (2026-10-15).
+This pass folds the era pack: the era phrase, the ledger dates and the back-pointer.
+Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+The back-pointer lands at section 2.2.2, per the ruling.
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

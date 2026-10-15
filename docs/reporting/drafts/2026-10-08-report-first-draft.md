@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.55. Date 2026-10-15.
+Internal engineering report. Draft v0.56. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -298,6 +298,10 @@ Two earlier anchors retired.
 5.39 was the 3-blade anchor chosen on the broken machine.
 That load forces about 9 kW from the seed (NR-047).
 
+An earlier round of this study swept the generator gain k on earlier machines.
+At the top of that sweep the TRPT shaft entered a destructive resonance.
+That round shares no number with this campaign, because the machine and the model differ.
+
 The sweep rows read as follows (NR-047).
 
 Rows k 0.5 to 1.5:
@@ -483,7 +487,7 @@ Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
 The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_masslift.jl).
 
-This campaign is the first screen after the physics-validation era.
+This campaign is the first search campaign of the wind-authority era.
 Larger and wider campaigns sit ahead.
 
 ### 3.2 Convergence
@@ -828,12 +832,12 @@ Candidate entries. Each failure enters with its lesson.
 
 | Date / event | Class | What happened | Detection | Correction / lesson | Status |
 |---|---|---|---|---|---|
-| 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
-| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
-| 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
 | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
-| 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+| 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
+| 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
 | 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard never reached several scoring paths. The re-gate screens winners. | Telemetry review | A gate must pin a measured number. Drift must fail the suite. | Near-miss, no corrupted survivor found. |
+| 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
+| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
 
 - The dead geometry genes. The search proposes genomes that cannot
 build. An off-by-one in the rotor-to-ring map put the middle rotor on
