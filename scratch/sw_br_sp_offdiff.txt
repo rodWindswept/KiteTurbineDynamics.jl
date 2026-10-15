@@ -1,0 +1,8 @@
+1c1
+< == scratch/sw_br_sp_base.md: words=610 total=20 per100w=3.28 ==
+---
+> == docs/agents/stale-phrases.md: words=623 total=20 per100w=3.21 ==
+4c4
+<   [27w] Replacement: bridles and the cyan line are different lines: bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line).
+---
+>   [29w] Replacement: lifting bridles and the cyan line are different lines: lifting bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line).

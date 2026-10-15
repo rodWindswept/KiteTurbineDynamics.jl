@@ -1,0 +1,50 @@
+== docs/reporting/figures/figure-generation-notes.md: words=3551 total=86 per100w=2.42 ==
+-- sentences over 20 words --
+  [26w] The blades straddle the ring: inner edge 4.130 m, tip 5.630 m (0.3 of the 1.50 m span inside, 0.7 outside).
+  [28w] R1 at the ground datum, R6 the hub, S1–S5 the segments between (register block, 1a95ae0). d8 numbers from the hub ("hub rotor (ring 1)"), so flip it.
+  [22w] Cleared for print (build dump at 980de02, science-validator): cylinder 9.4533 m, cone lines 10.0807 m, slope 22.000° by construction.
+  [27w] Below the knot the line is the cyan/bearing line. physics-topology.md §3 makes the distinction load-bearing: lifting bridle = bearing to rotor; cyan line = sky anchor to bearing.
+  [28w] "Bank angle maps to blade orientation about the chord axis": bank is the blade's coning angle out of the ring plane (Harris 1.8, held at Track D).
+  [40w] With cylinder_cone=true the cone resolves to one segment, and the cylinder branch returns uniform spacing, so the density bias cannot act. x5 in {−0.8, 0, +0.8} left the build unchanged (max|Δzs| = max|Δradii| = 0.0).
+  [21w] Columns: t, ω_gnd, ω_hub, P_gen, τ_gen, peak line strain / 0.035 (ROPE_BREAK_STRAIN, rope_forces.jl:89), any_broken.
+  [24w] Rope break (strain > 0.035)	every step, 0–50 s, relax included	rope_forces.jl:556, 616, 620; checked at objective_evaluator.jl:999-1000
+  [22w] Power floor (5 kW) and the over-power term	P_end, the mean of the last five samples	objective_evaluator.jl:1016, 1148
+  [32w] The 1.1 % gap is the build payout derate: the builder writes backline_payout 0.1 m (objective_evaluator.jl:619-621), factor 1 − 0.1/9.4 = 0.9893617021276596, exact against the run.
+  [53w] The ruling-mode condition run peaks at 1.448, the extract grid max at t = 5.798 ms (per-step read 1.44819 at t = 5.740 ms), then rings without settling (window 8.6 to 23.4 rad/s and 1.4 to 28.4 kW; window means 12.64 rad/s and 4.96 kW).
+  [37w] Panel (a), the search set-up: three islands, NP = 10, generations 0–30, rand/1/bin, F 0.5–0.8 and CR 0.7–0.9 redrawn per vector, RNG seeds 42–44, one common seed design, no migration.
+  [24w] The 201 come from the early rejected_eval() returns in objective_evaluator.jl (settle failure, rope break, hub divergence, Betz, rotor spacing, non-finite score).
+  [26w] The Cp curve source is the AeroDyn v5.0.0 BEM table, a computation (aerodynamics.jl:93; bem.jl:109-110 returns it unchanged at n = 3).
+  [22w] The tubes are sized to Euler FoS 3.25 = fos_hard 2.5 × SIZING_FOS_MARGIN 1.3 (trpt_optimization.jl:199).
+  [29w] R6 is sized at the worse of the rated load and the parked peak-wind case (T_peak, ω = 0); R2–R5 at the rated helix envelope (size_beams_closed_form).
+  [21w] Reference lines at 1.5 (the torsion floor, trpt_optimization.jl:39) and 2.5 (the gate on lines and rings).
+  [21w] The current plate title, "Every segment of the winner runs far below its over-twist limit" (twist-limit.py:75), goes with it.
+  [21w] Blocked by: decision 1 (which line is the criterion), decision 3 (the hub-ring load case, its wind speed and parked CT).
+  [23w] The strip is built and re-rendered at 74cfef9: two rows (4 + 3) at one scale, square axes, a shaft-frame stamp, and NR-036 labels.
+  [32w] "Avoid printing mass in the panels" conflicts with the room's declared delta (v8): each panel carries its search objective (NR-036), because without it the strip shows seven similar machines and no story.
+-- passive constructions --
+  | ad at one rotor  Add the bounds column from 9f29df1 once it is signed. Under the table, state three decode ru
+  | n Δα ≤ 1/1.05). Sizing-case utilisation per ring. The tubes are sized to Euler FoS 3.25 = fos_hard 2.5 × SIZI
+  |  2.5 × SIZING_FOS_MARGIN 1.3 (trpt_optimization.jl:199). R6 is sized at the worse of the rated load and the 
+  | to torsion. The plate must show both lines until decision 1 is made. The twist axis set against δcrit (0–10
+  | tion strip (row 9)  How to generate. Nothing new. The strip is built and re-rendered at 74cfef9: two rows (4
+-- nominalizations --
+  | evidence of
+  | elevation of
+-- paragraphs over six sentence-lines --
+  | Lifter: an autogyro-stack silhouette, labelled "lifter (lift only, no torque)".
+  | "Cyan line" is a dashboard colour, not a name. Hold the label until Track D picks. The 10 
+  | Slot	Gene	Meaning	Winner	Live at the winner?
+  | "Six rings", "polygon count" and "ring geometry" are not genes. Ring count is a decoder ou
+  | Lane	Quantity	Axis	Marks
+  | The speed axis of 8–12 rad/s cuts off the operating speed. Use 9–15.
+  | Lane 2 check: closed (aero-validator, tree 980de02). The logged P_gen is τ_gen·ω_gnd/1000,
+  | Lane 3 data, from the certified extract: cold strain runs 0.021 to 0.032 of break. The war
+  | How to generate. Read telemetry, not convergence.csv. That file holds iterations 1–30 and 
+  | x axis: generation, 0–30.
+  | The y label is "search objective (kg)", not mass (NR-036 boundary 1).
+  | Quantity	Value	Row
+  | "Settle speed 10.170 rad/s" as an operating value becomes 13.38 rad/s.
+  | δα* per segment. This is the twist-crossing limit from twist_collapse_check, the campaign'
+  | "All checked elements below their relevant limits, none near" hides the governing case. S1
+  | date
+

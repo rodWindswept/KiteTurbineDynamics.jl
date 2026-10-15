@@ -82,8 +82,9 @@ Note (2026-10-14): the part reads "topmost ring", or "topmost rotor ring" in ful
 
 ## bridles (cyan lines)
 Date: 2026-09-12
-Replacement: bridles and the cyan line are different lines: bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line). See docs/agents/physics-topology.md §2
+Replacement: lifting bridles and the cyan line are different lines: lifting bridles = lift bearing to main-rotor vertices (n_lines lines); cyan line = sky hook to lift bearing (1 line). See docs/agents/physics-topology.md §2
+Note (2026-10-15): the lift-chain member reads "lifting bridles" (Rod, 2026-10-15).
 
 ## bearing_offset = 6.0 is the bearing design position
 Date: 2026-09-12
-Replacement: 6.0 is a PLACEHOLDER from other tested systems; the bearing's axial design point was never chosen. Measured correct geometry ~3.99 m axial / ~4.66 m 3D bridle
+Replacement: 6.0 is a PLACEHOLDER from other tested systems; the bearing's axial design point was never chosen. Measured correct geometry ~3.99 m axial / ~4.66 m 3D lifting bridle

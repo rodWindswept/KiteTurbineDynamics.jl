@@ -1,0 +1,8 @@
+1c1
+< == scratch/sw_br_notes_base.md: words=3549 total=86 per100w=2.42 ==
+---
+> == docs/reporting/figures/figure-generation-notes.md: words=3551 total=86 per100w=2.42 ==
+6c6
+<   [26w] Below the knot the line is the cyan/bearing line. physics-topology.md §3 makes the distinction load-bearing: bridle = bearing to rotor; cyan line = sky anchor to bearing.
+---
+>   [27w] Below the knot the line is the cyan/bearing line. physics-topology.md §3 makes the distinction load-bearing: lifting bridle = bearing to rotor; cyan line = sky anchor to bearing.
