@@ -1,0 +1,27 @@
+sw_sweep30_final_checks.log — science-writer, 2026-10-15
+span 8a1e552..4ded913 (four draft movers: 2f79aae, 34e3f81, 45ed95a, d0ed902)
+
+record sim (base vs new):
+  section alone: sw_sweep30_section.md words=926 total=0 per100w=0.00 em_dash=0
+  record sim: sw_sweep30_section.new.md words=17698 total=11 per100w=0.06
+  block-list diff: empty; offender delta: header-only
+  applied: cmp against the sim: equal
+
+STE readings:
+  draft v043 6545w total 6 0.09 -> draft v047 6889w total 8 0.12
+  tracker 2714w total 10 0.37 -> 2927w total 11 0.38
+  candidates 4598w total 12 0.26 -> 4687w total 12 0.26
+  stale-phrases 588w total 20 3.40 -> 610w total 20 3.28 (legacy)
+
+offender line counts (base -> tip):
+  draft 12 -> 14 (the two table block heads, accepted class)
+  tracker 14 -> 14; candidates 16 -> 16; stale-phrases 15 -> 15
+
+review copy:
+  md5 1115a2019872ad10929941d4baeb67a6 == stamp d0ed902 (build 2026-10-15T12:47:52Z)
+  copy census: topmost ring x9; topmost rotor ring x2; 508 feasible candidates x1;
+  The best performing one x1; 25.698 kilograms x4; levers of Performance x1
+  retired word: 5 as a word; Hub capital x0; r_hub x1; blade_hub_radius x1
+
+freeze: block md5 7bbd964db09d2b33269ce5cb8c334054; receipt region == block: True; draft region == block: True
+pins: 28 recomputed, 28 match, 0 mismatch

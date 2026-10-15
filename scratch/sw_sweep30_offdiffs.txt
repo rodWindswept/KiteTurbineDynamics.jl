@@ -1,0 +1,25 @@
+1c1
+< == scratch/sw_sweep30_draft_v043.md: words=6545 total=6 per100w=0.09 ==
+---
+> == scratch/sw_sweep30_draft_v047.md: words=6889 total=8 per100w=0.12 ==
+9a10,11
+>   | | Era | Effect on the search space | Data status |
+>   | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+1c1
+< == scratch/sw_sweep30_tracker_v043.md: words=2714 total=10 per100w=0.37 ==
+---
+> == scratch/sw_sweep30_tracker_tip.md: words=2927 total=11 per100w=0.38 ==
+1c1
+< == scratch/sw_sweep30_candidates_base.md: words=4598 total=12 per100w=0.26 ==
+---
+> == scratch/sw_sweep30_candidates_tip.md: words=4687 total=12 per100w=0.26 ==
+1c1
+< == scratch/sw_sweep30_sp_base.md: words=588 total=20 per100w=3.4 ==
+---
+> == scratch/sw_sweep30_sp_tip.md: words=610 total=20 per100w=3.28 ==
+13,14c13,14
+<   | ## The hub ring hosts ONLY the cp/ct rotor
+<   | ## expansion_params_from_rotors excludes the decoder's hub rotor
+---
+>   | ## The topmost ring hosts ONLY the cp/ct rotor
+>   | ## expansion_params_from_rotors excludes the decoder's topmost rotor

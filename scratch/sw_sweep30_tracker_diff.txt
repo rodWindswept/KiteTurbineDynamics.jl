@@ -1,0 +1,55 @@
+diff --git a/docs/reporting/draft-tracker.md b/docs/reporting/draft-tracker.md
+index e343f17..06dbe4d 100644
+--- a/docs/reporting/draft-tracker.md
++++ b/docs/reporting/draft-tracker.md
+@@ -101,7 +101,7 @@ The abstract and the conclusion quote the least segment torque margin 2.03, at S
+ v0.20 pass by @hermes (2026-10-12).
+ This pass closes the three number-wording items from the full-feedback delta.
+ The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015).
+-The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture hub ring reads 15.033 at the final step (NR-021).
++The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture topmost ring reads 15.033 at the final step (NR-021).
+ 
+ v0.21 pass by @aero-validator (2026-10-12).
+ This pass folds the §3.2 mass reconciliation sentence.
+@@ -162,7 +162,7 @@ v0.30 pass by @author (2026-10-13).
+ This pass folds the display rulings.
+ The minimum factor of safety reads 15.0 at all five report sites.
+ The lift chain reads 20.698 and 304.6 newtons.
+-NR-009 keeps the row value, and the capture hub ring reading keeps its form.
++NR-009 keeps the row value, and the capture topmost ring reading keeps its form.
+ No figure moves.
+ 
+ v0.31 pass by @author (2026-10-13).
+@@ -246,6 +246,32 @@ The cold-path line, the swing reading and the lifter rationale land.
+ The campaign-scale context and the cone lead line land.
+ No value moves.
+ 
++v0.44 pass by @fig-img-diagrams (2026-10-14).
++This pass re-pins the figure-provenance appendix to the delivered v5 system-anatomy re-cut.
++The plate script-commit cell and its four output-hash cells take the delivered values.
++The re-cut adds the cone-ring label (figure-map row 2; round-5 comment 3).
++No value moves.
++
++v0.45 pass by @author (2026-10-14).
++This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2.
++The era map takes the short pointer block and the four-row table.
++The failure-ledger table lands with the narrative after it.
++The two tables add the accepted table class.
++No value moves.
++
++v0.46 pass by @fig-img-diagrams (2026-10-14).
++This pass re-pins the figure-provenance appendix to the delivered round-6 re-cuts.
++Four exhibit script-commit cells and sixteen output-hash cells take the delivered values.
++The five plates and the three caption kits take the top forms (round-6 comment 1).
++No value moves.
++
++v0.47 pass by @author (2026-10-14).
++This pass folds the round-6 rulings, keyed on the science sign.
++The topmost-ring rename lands at the ten draft sites (topmost ring, topmost rotor ring and top).
++The conclusion prints the count 508 of 930 (NR-002), and the winner sentence takes the founder form.
++Section 3.4 retitles to The levers of Performance.
++No signed value changes.
++
+ ## 2. Working notes
+ 
+ A bracket marks open room work. The owners refine

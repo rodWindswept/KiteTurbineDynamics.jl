@@ -1,0 +1,64 @@
+== e5541e9 -> 2f79aae ==
+lines: +6 -6; raw token occurrences: added 1, removed 1
+arrivals: {'44': 1}
+removals: {'43': 1}
+  [ARR 44 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.44. Date 2026-10-14.
+  [REM 43 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.43. Date 2026-10-14.
+
+== 2f79aae -> 34e3f81 ==
+lines: +22 -1; raw token occurrences: added 7, removed 1
+arrivals: {'1.94': 1, '18.8': 1, '2': 1, '2.2': 1, '2.4': 1, '45': 1, '5.18': 1}
+removals: {'44': 1}
+  [ARR 1.94 net+1] raw: added-side 1, removed-side 0
+      +1: | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94.
+  [ARR 18.8 net+1] raw: added-side 1, removed-side 0
+      +1: | The cp fix and the folded class | The span shrink and the cp fix moved the screen readings. The pre-fold rows failed the floor (NR-027). | Recorded: the folde
+  [ARR 2 net+1] raw: added-side 1, removed-side 0
+      +1: The window basis sits at section 2.2.2, and the gate set at
+  [ARR 2.2 net+1] raw: added-side 1, removed-side 0
+      +1: The window basis sits at section 2.2.2, and the gate set at
+  [ARR 2.4 net+1] raw: added-side 1, removed-side 0
+      +1: section 2.4.
+  [ARR 45 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.45. Date 2026-10-14.
+  [ARR 5.18 net+1] raw: added-side 1, removed-side 0
+      +1: | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the
+  [REM 44 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.44. Date 2026-10-14.
+
+== 34e3f81 -> 45ed95a ==
+lines: +21 -21; raw token occurrences: added 1, removed 1
+arrivals: {'46': 1}
+removals: {'45': 1}
+  [ARR 46 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.46. Date 2026-10-14.
+  [REM 45 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.45. Date 2026-10-14.
+
+== 45ed95a -> d0ed902 ==
+lines: +16 -15; raw token occurrences: added 12, removed 11
+arrivals: {'47': 1, '508': 1}
+removals: {'46': 1}
+  [ARR 47 net+1] raw: added-side 1, removed-side 0
+      +1: Internal engineering report. Draft v0.47. Date 2026-10-14.
+  [ARR 508 net+1] raw: added-side 1, removed-side 0
+      +1: The search found 508 feasible candidates in the searched space (NR-002).
+  [REM 46 net-1] raw: removed-side 1, added-side 0
+      -1: Internal engineering report. Draft v0.46. Date 2026-10-14.
+
+== cumulative e5541e9 -> d0ed902 ==
+arrivals: {'1.94': 1, '18.8': 1, '2': 1, '2.2': 1, '2.4': 1, '47': 1, '5.18': 1, '508': 1}
+removals: {'43': 1}
+
+== identity check (net == added - removed over the span) ==
+  OK  1.94: net +1, raw added 1, raw removed 0
+  OK  18.8: net +1, raw added 1, raw removed 0
+  OK  2: net +1, raw added 1, raw removed 0
+  OK  2.2: net +1, raw added 1, raw removed 0
+  OK  2.4: net +1, raw added 1, raw removed 0
+  OK  43: net -1, raw added 0, raw removed 1
+  OK  47: net +1, raw added 1, raw removed 0
+  OK  5.18: net +1, raw added 1, raw removed 0
+  OK  508: net +1, raw added 1, raw removed 0

@@ -1,0 +1,39 @@
+== e5541e9 -> 2f79aae ==
+raw token occurrences: added 1, removed 1
+
+== 2f79aae -> 34e3f81 ==
+raw token occurrences: added 7, removed 1
+
+== 34e3f81 -> 45ed95a ==
+raw token occurrences: added 1, removed 1
+
+== 45ed95a -> d0ed902 ==
+raw token occurrences: added 12, removed 11
+  net-out pair 0.804:
+    - hub radius is 4.580 metres and the ground radius 0.804 metres
+    - The hub radius is 4.580 m and the ground radius is 0.804 m.
+    + topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+    + The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
+  net-out pair 1278:
+    - The hub-segment helix force reads about 1278 N/vertex (NR-048).
+    + The top-segment helix force reads about 1278 N/vertex (NR-048).
+  net-out pair 15.033:
+    - ring reads 15.033 at the final step (NR-021).
+    + reads 15.033 at the final step (NR-021).
+  net-out pair 25.698:
+    - Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+    + Its airborne mass is 25.698 kilograms (NR-008, NR-018).
+  net-out pair 3.4:
+    - ### 3.4 The levers
+    + ### 3.4 The levers of Performance
+  net-out pair 4.580:
+    - | Hub radius | 4.580 m | NR-011 |
+    - hub radius is 4.580 metres and the ground radius 0.804 metres
+    - The hub radius is 4.580 m and the ground radius is 0.804 m.
+    + | Topmost ring radius | 4.580 m | NR-011 |
+    + topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+    + The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
+  net-out pair 5.309:
+    - Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+    + The best performing one had a mean power of 5.309 kW.
+

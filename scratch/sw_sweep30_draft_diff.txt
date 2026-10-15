@@ -1,0 +1,213 @@
+diff --git a/docs/reporting/drafts/2026-10-08-report-first-draft.md b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+index 38b8189..403535d 100644
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1,6 +1,6 @@
+ # The kite turbine: a search over its design space
+ 
+-Internal engineering report. Draft v0.43. Date 2026-10-14.
++Internal engineering report. Draft v0.47. Date 2026-10-14.
+ 
+ Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+ Numbers come only from signed register rows, cited by row ID.
+@@ -222,7 +222,7 @@ The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of
+ The power sizing sets the radius for the rotor at its local wind speed (NR-050).
+ 
+ The search treats each of these as a gene. The ring geometry sets the
+-hub and ground radii, and the rotor count sets how many rings carry
++topmost-ring and ground radii, and the rotor count sets how many rings carry
+ blades.
+ The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+ It is not a search gene (NR-049).
+@@ -316,7 +316,7 @@ The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW cei
+ 
+ The load choice also has a structural side.
+ The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
+-The hub-segment helix force reads about 1278 N/vertex (NR-048).
++The top-segment helix force reads about 1278 N/vertex (NR-048).
+ The low-wind lull is benign under the load law.
+ The record refuses k easing as the high-wind substitute.
+ The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+@@ -487,8 +487,8 @@ Island 3 carries the winner. Its mean power reads 5.309 kW and
+ its end power 5.314 kW (NR-008). Its factor of safety reads
+ 15.0 (NR-009). That value is the window minimum.
+ 
+-The capture hub
+-ring reads 15.033 at the final step (NR-021).
++The capture topmost ring
++reads 15.033 at the final step (NR-021).
+ 
+ Its operating point reads as follows.
+ 
+@@ -502,7 +502,7 @@ Its operating point reads as follows.
+ | Window-mean speed | 13.38 rad/s | NR-029 |
+ | Delivered torque | 396.76 N·m | NR-030 |
+ | Airborne mass | 25.698 kg | NR-018 |
+-| Hub radius | 4.580 m | NR-011 |
++| Topmost ring radius | 4.580 m | NR-011 |
+ | Ground radius | 0.804 m | NR-011 |
+ | Ring count | 6 | NR-011 |
+ | Polygon count | 3 | NR-011 |
+@@ -568,7 +568,7 @@ The report also assumes a staged launch of the stack.
+ A staged launch is easier to handle than one giant kite.
+ 
+ Its geometry reads three lines, six rings and one active rotor. The
+-hub radius is 4.580 metres and the ground radius 0.804 metres
++topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+ (NR-011).
+ 
+ The winner genome contains two blade-scale slots.
+@@ -586,18 +586,30 @@ This result differs from earlier eras for recorded reasons. The bank
+ derate, the measurement window and the tightened gates moved the search
+ space. Numbers across the eras would compare models, not machines.
+ 
++The three movers carry their records. The bank derate is a
++calculated depowering of the main-rotor disc (NR-019, NR-020).
++The window basis sits at section 2.2.2, and the gate set at
++section 2.4.
++
++| Era | Effect on the search space | Data status |
++|---|---|---|
++| Before the bank derate | Earlier winners read different bank-angle physics, so they are not directly comparable. | Superseded as era record. |
++| The bank-derate basis | The measured bank derate applies to main-rotor disc power throughout (NR-019, NR-020). | Current campaign basis. |
++| The cp fix and the folded class | The span shrink and the cp fix moved the screen readings. The pre-fold rows failed the floor (NR-027). | Recorded: the folded class passes at 18.8 metres (NR-028). |
++| The wind-authority era (`post-95c385d_wind-authority`) | One wind authority reads the scored results. | Current physics era. |
++
+ This run also trades breadth for fidelity: fewer evaluations, each on
+ the measurement window. It stopped early: a screen, not a survey.
+ This report covers the wind-authority era campaign and the recorded
+ corrections that shaped it.
+ 
+-### 3.4 The levers
++### 3.4 The levers of Performance
+ 
+ [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
+ 
+ [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
+ 
+-The hub ring R6 governs the structural check at the winner operating point (NR-021).
++The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
+ The window-minimum factor of safety is 15.0 (NR-009).
+ At the final step, R6 reads 15.033 (NR-021).
+ R2 to R4 read 29.8 to 35.2 (NR-021).
+@@ -674,7 +686,7 @@ The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of pena
+ 
+ The final panel matches the register winner.
+ The panel reads three lines and six rings (NR-011).
+-The hub radius is 4.580 m and the ground radius is 0.804 m.
++The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
+ The blade scales read 0.82 and 0.20 (NR-011).
+ The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
+ 
+@@ -768,9 +780,18 @@ flag, and every recorded winner field reproduces (NR-012).
+ 
+ Candidate entries. Each failure enters with its lesson.
+ 
++| Date / event | Class | What happened | Detection | Correction / lesson | Status |
++|---|---|---|---|---|---|
++| 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
++| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
++| 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
++| 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
++| 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
++| 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard never reached several scoring paths. The re-gate screens winners. | Telemetry review | A gate must pin a measured number. Drift must fail the suite. | Near-miss, no corrupted survivor found. |
++
+ - The dead geometry genes. The search proposes genomes that cannot
+ build. An off-by-one in the rotor-to-ring map put the middle rotor on
+-the hub (2026-08-26).
++the topmost ring (2026-08-26).
+ 
+   An inverted-taper genome diverged within seconds, while the ground
+   instruments still read normal power (2026-08-14).
+@@ -783,7 +804,7 @@ geometry. The data from before it then counts no more.
+ 
+   The blade-mass-law correction landed on 2026-08-22. It voided the
+   campaign winners. The rotorcount data was doubly void: it predated
+-  the FoS fix, and its rotors sat one ring toward the hub.
++  the FoS fix, and its rotors sat one ring toward the top.
+ 
+   Superseded is the milder class, not void. The pre-derate campaign
+   stands as era record, because the bank derate moved the search space.
+@@ -846,8 +867,9 @@ The report screened 930 rigid-wing ground-generation rotary kite turbine designs
+ The campaign scored each design on the ODE path over the measurement window (NR-015).
+ One fixed power-law generator load and one fixed gate set held for every design (NR-015).
+ 
+-The search found a feasible candidate in the searched space.
+-Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
++The search found 508 feasible candidates in the searched space (NR-002).
++The best performing one had a mean power of 5.309 kW.
++Its airborne mass is 25.698 kilograms (NR-008, NR-018).
+ Its window-minimum factor of safety is 15.0 (NR-009).
+ All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
+ The least segment torque margin is 2.03, at S1 (NR-040).
+@@ -915,13 +937,13 @@ One row per built exhibit. All seven read dataset commit `dd3cc6a`.
+ 
+ | Exhibit | Source extract | Cited rows | Script commit | Era |
+ |---|---|---|---|---|
+-| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `671ab96` | `post-95c385d_wind-authority` |
+-| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `671ab96` | `post-95c385d_wind-authority` |
++| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` | `post-95c385d_wind-authority` |
++| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` | `post-95c385d_wind-authority` |
+ | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
+-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9cecee3` | `post-95c385d_wind-authority` |
++| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+ | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
+ | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
+-| Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `c438398` | `post-95c385d_wind-authority` |
++| Machine winner hero | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+ 
+ **Output hashes (SHA-256).** The short labels name the exhibit files.
+ `png`, `svg` and `pdf` are the file types. `ledger` is the label
+@@ -929,17 +951,17 @@ ledger. `checks` is the check log.
+ 
+ Ring utilisation plate:
+ 
+-- `png` `f49aaaa1bda8d1699c6db556fd20188d892cfcd42e3163ab8fb56bbea1eee837`
+-- `svg` `41a557862e0f3a1eb1b40ecb2224089014fff7c26ee8d7c6d64bdd1b3bf670c0`
+-- `pdf` `fc4974d6e462b22ca3a45aaae009001bdf46c8d0245862227255ca3e42d69c75`
+-- `ledger` `3b4bc8c1c9b0c5d474a1acabe6c2b7684058234414d96870e41b015e04b4a5ff`
++- `png` `bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3`
++- `svg` `ce3dee1282941a71819c4a23125a141b84f6fca4611803f8b8a0d8590b33fab6`
++- `pdf` `3548ecd3552940c48e1727756c6b8f40d2bd148b3f98874fbe1c87d0a3f71611`
++- `ledger` `8cd86f6954590122ee44dca167c24a65df272a85adf9a2726df8ae1d7b437f9d`
+ 
+ Twist limit plate:
+ 
+-- `png` `00cd857a5769be853142a4e35cc701d283cb17e66c2e20f40e562177813f6248`
+-- `svg` `45104b967009ef52c54f2ca4f4877f30c204daf64544161d907dc5dc41e59f5f`
+-- `pdf` `49c473a8ff2dac0cc15fed7b17bece2a10ecaae6d4ab157e801754cf6b40dfa2`
+-- `ledger` `2225062a0146f62ac1c0a18add36f38d26df73682f56f4fd5cdac6a0a691c8e9`
++- `png` `14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069`
++- `svg` `cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28`
++- `pdf` `5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5`
++- `ledger` `7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae`
+ 
+ Machine evolution strip:
+ 
+@@ -950,10 +972,10 @@ Machine evolution strip:
+ 
+ System anatomy plate:
+ 
+-- `png` `f1c322bc20068299651bea7978bde254991b4037bf02fe689a15e1e3297a09ea`
+-- `pdf` `9beffb6bf8463d39a5808164630d04d8c286184a4990a083296e7fc6d512f2cf`
+-- `ledger` `b250c1a187132f68c37747b70f3d6081eb89e677ba378b12e6eb14b8a05a2389`
+-- `checks` `0e857cbfb288ff7110aafec99c11211bae1c46e4d3b2a5594d5949f318d9f279`
++- `png` `2b23851250839e9596e8e5076177a53c5c09103a16a7e246ab4e031a44730372`
++- `pdf` `85a2e369028268c2ade69f1743f5a3e11ca87b5b6fb1a1b8c1f728816bd519d6`
++- `ledger` `931dfb71aef8168329fa632bfa21d16a514b8036354fa013090cf2948301f7ae`
++- `checks` `ffea5637775ccbadbb12d37074eb86055d3e51ef579add03870873b04a47888b`
+ 
+ Levers landscape:
+ 
+@@ -971,7 +993,7 @@ Parameter atlas:
+ 
+ Machine winner hero:
+ 
+-- `png` `4e8fc9d267a7e776857b8805be34da1189fddd65117fdf7278f36bd2cd4e6af5`
+-- `svg` `819bafe52679b0fa23ac8c225e3156444b3dcee3ff4fa1ddf4c9065f846c5171`
+-- `pdf` `a9d5516d7ec7bd71bbcd8edee6f425b619736277c229c5bc9ff4aae3f3e8fb2e`
+-- `checks` `52fe83a8c54ec93f5372b2fb15c8c77af90b44c3f1e6eb5a8732efffebf59924`
++- `png` `fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6`
++- `svg` `0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993`
++- `pdf` `1689506ae8bf99a824a5c8f0b542309a933485830879514c4a6ac6bd0fd580ce`
++- `checks` `31cda877e9131e6f34270ffe8bdb62bd50225d9cc34653ed221a899eae81e962`

@@ -1,0 +1,34 @@
+== e5541e9 -> 2f79aae ==
+arrivals: {'44': 1}
+removals: {'43': 1}
+  [arr 44] Internal engineering report. Draft v0.44. Date 2026-10-14.
+  [rem 43] Internal engineering report. Draft v0.43. Date 2026-10-14.
+
+== 2f79aae -> 34e3f81 ==
+arrivals: {'1.94': 1, '18.8': 1, '2': 1, '2.2': 1, '2.4': 1, '45': 1, '5.18': 1}
+removals: {'44': 1}
+  [arr 1.94] Rows k 1.94 to 3.0: | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [arr 18.8] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | every candidate runs at one length, 18.8 metres (NR-015).
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.2] ### 2.2 The simulation analysis pipeline instrument and its terms | #### 2.2.1 The gene
+  [arr 2.4] ### 2.4 The campaign | section 2.4.
+  [arr 45] Internal engineering report. Draft v0.45. Date 2026-10-14. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [arr 5.18] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. | | the campaign gain returned 5.18 kW.
+  [rem 44] Internal engineering report. Draft v0.44. Date 2026-10-14.
+
+== 34e3f81 -> 45ed95a ==
+arrivals: {'46': 1}
+removals: {'45': 1}
+  [arr 46] Internal engineering report. Draft v0.46. Date 2026-10-14.
+  [rem 45] Internal engineering report. Draft v0.45. Date 2026-10-14. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+
+== 45ed95a -> d0ed902 ==
+arrivals: {'47': 1, '508': 1}
+removals: {'46': 1}
+  [arr 47] Internal engineering report. Draft v0.47. Date 2026-10-14. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [arr 508] - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | The campaign evaluated 930 designs (NR-001). The status mix reads 508
+  [rem 46] Internal engineering report. Draft v0.46. Date 2026-10-14.
+
+== cumulative e5541e9 -> d0ed902 ==
+arrivals: {'1.94': 1, '18.8': 1, '2': 1, '2.2': 1, '2.4': 1, '47': 1, '5.18': 1, '508': 1}
+removals: {'43': 1}
