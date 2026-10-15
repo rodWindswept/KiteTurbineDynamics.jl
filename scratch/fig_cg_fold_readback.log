@@ -1,0 +1,25 @@
+figures seat — the corner-machines fold — readback (figures-images-diagrams)
+commits: 1061878 (the fold), c2e4190 (the receipt set)
+push: fc3a602..c2e4190
+fetch: c2e4190
+local == origin: YES
+
+blob readback (byte-verify: origin blob vs working file; HEAD: == origin:):
+OK  docs/reporting/draft-tracker.md  08d766ce4eb5171b4016787a2bc112f627f01f00
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md  eb2b679267fc0c3865393e69197517cfafa528ed
+OK  docs/reporting/figures/figure-map.md  2ea30ecd32b539253b79702dff2b2a827dd44ce9
+OK  docs/reporting/figures/machine-corner-grid/README.md  96557c920ed32b2f0bfc642a2071d66815d786c2
+OK  docs/reporting/figures/machine-corner-grid/register-status.md  b75e25f5973574f2eff97cc7be8e671bf5144da8
+OK  handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  7ec226a3cebc0550abdeac0e6dc749296a46784e
+OK  scratch/fig_cg_fold_check.log  3a220aaa6ae3cbf4bba1a605b8a45379b6deb553
+OK  scratch/fig_cg_fold_check.py  13d408fa76bdaaaa5e292f3fe13ab2e10da0c9bc
+OK  scratch/fig_cg_fold_citation.log  3c636c9d6ee1e133f19aeb51a4d42e8e3bec6ee6
+OK  scratch/fig_cg_fold_edit.log  cf0d9efa7f648e39b18aaa05dc71113fa5d14916
+OK  scratch/fig_cg_fold_edit.py  52a658ff88625739363ed0d57eb2f95b7f8000e3
+OK  scratch/fig_cg_fold_facts.json  62ee3227c9f16ddb385af1d7bf81211f5264106e
+OK  docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-machines-fold.md  752dfb2fa4a820e1e78192c77d58d08729a33966
+OK  scratch/fig_cg_fold_build.log  57354fb405aaf48df317b3d0ab4133ad0c03abb3
+OK  scratch/fig_cg_fold_rebuild_check.log  4c540955db719641a0cbfd6082e86a241c4ded16
+OK  scratch/fig_cg_fold_rebuild_check.py  b390349e31cb1c519a23181f7a9381b704995152
+
+16 carried blobs, 0 mismatch
