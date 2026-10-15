@@ -1,0 +1,225 @@
+{
+ "summary": {
+  "total": 18,
+  "matched": 12,
+  "mismatch": 2,
+  "ambiguous": 0,
+  "not_found": 4,
+  "not_checked": 0,
+  "errored": 0,
+  "retracted": 0
+ },
+ "format": "bibtex",
+ "entries": [
+  {
+   "n": 1,
+   "key": "loyd1980crosswind",
+   "status": "ok",
+   "verdict": "mismatch",
+   "confidence": "low",
+   "id": "10.2514/3.48021",
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "title",
+     "claimed": "Crosswind kite power",
+     "resolved": "Crosswind kite power (for large-scale wind power production)",
+     "similarity": 0.8705882352941177
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "key": "cherubini2015airborne",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1016/j.rser.2015.07.053",
+   "retracted": false
+  },
+  {
+   "n": 3,
+   "key": "diehl2013airborne",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1007/978-3-642-39965-7_1",
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "container",
+     "claimed": "Airborne Wind Energy",
+     "resolved": "Green Energy and Technology",
+     "similarity": 0.5694681861348528
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "key": "trevisi2020unified",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1016/j.renene.2020.07.129",
+   "retracted": false
+  },
+  {
+   "n": 5,
+   "key": "vanderburg2022dominant",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.3390/en15197291",
+   "retracted": false
+  },
+  {
+   "n": 6,
+   "key": "vandekaa2021exploring",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1016/j.jclepro.2021.128918",
+   "retracted": false
+  },
+  {
+   "n": 7,
+   "key": "pereira2023review",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "medium",
+   "id": "10.3390/en16010351",
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "year",
+     "claimed": 2023,
+     "resolved": 2022,
+     "similarity": 0
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "key": "flather1895rope",
+   "status": "ok",
+   "verdict": "mismatch",
+   "confidence": "low",
+   "id": null,
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "year",
+     "claimed": 1895,
+     "resolved": 2008,
+     "similarity": 0
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "key": "tulloch2023tensile",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.3390/en16062610",
+   "retracted": false
+  },
+  {
+   "n": 10,
+   "key": "benhaiem2018rotating",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1007/978-981-10-1947-0_22",
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "container",
+     "claimed": "Airborne Wind Energy: Advances in Technology Development and Research",
+     "resolved": "Green Energy and Technology",
+     "similarity": 0.6599770962516059
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "key": "read2018kitenetworks",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.1007/978-981-10-1947-0_21",
+   "retracted": false,
+   "mismatches": [
+    {
+     "field": "container",
+     "claimed": "Airborne Wind Energy: Advances in Technology Development and Research",
+     "resolved": "Green Energy and Technology",
+     "similarity": 0.6599770962516059
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "key": "ranneberg2014rotokite",
+   "status": "ok",
+   "verdict": "not_found",
+   "confidence": "high",
+   "id": null,
+   "retracted": false
+  },
+  {
+   "n": 13,
+   "key": "joshi2025system",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.5194/wes-10-695-2025",
+   "retracted": false
+  },
+  {
+   "n": 14,
+   "key": "aull2020design",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.3390/automation1010001",
+   "retracted": false
+  },
+  {
+   "n": 15,
+   "key": "joshi2023value",
+   "status": "ok",
+   "verdict": "matched",
+   "confidence": "high",
+   "id": "10.3390/en16042075",
+   "retracted": false
+  },
+  {
+   "n": 16,
+   "key": "weber2021challenges",
+   "status": "ok",
+   "verdict": "not_found",
+   "confidence": "high",
+   "id": null,
+   "retracted": false
+  },
+  {
+   "n": 17,
+   "key": "jamieson2024multirotor",
+   "status": "ok",
+   "verdict": "not_found",
+   "confidence": "high",
+   "id": null,
+   "retracted": false
+  },
+  {
+   "n": 18,
+   "key": "hancock2024bladelens",
+   "status": "ok",
+   "verdict": "not_found",
+   "confidence": "high",
+   "id": null,
+   "retracted": false
+  }
+ ]
+}

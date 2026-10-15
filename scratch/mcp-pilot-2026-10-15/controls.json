@@ -1,0 +1,79 @@
+{
+ "controls": [
+  {
+   "tool": "verifyCitation",
+   "ms": 1336,
+   "verdict": "ambiguous",
+   "confidence": "high"
+  },
+  {
+   "tool": "verifyCitation",
+   "ms": 831,
+   "verdict": "mismatch",
+   "confidence": "high"
+  },
+  {
+   "tool": "checkRetraction",
+   "ms": 434,
+   "result": {
+    "isRetracted": true,
+    "hasCorrections": true,
+    "title": "RETRACTED: Ileal-lymphoid-nodular hyperplasia, non-specific colitis, and pervasive developmental disorder in children"
+   },
+   "doi": "10.1016/S0140-6736(97)11096-0"
+  },
+  {
+   "tool": "checkRetraction",
+   "ms": 819,
+   "result": {
+    "isRetracted": false,
+    "hasCorrections": false,
+    "title": "Crosswind kite power (for large-scale wind power production)"
+   },
+   "doi": "10.2514/3.48021"
+  },
+  {
+   "tool": "checkOpenAccess",
+   "ms": 376,
+   "result": {
+    "isOa": true,
+    "oaStatus": "gold",
+    "title": "A Tensile Rotary Airborne Wind Energy System\u2014Modelling, Analysis and Improved Design"
+   },
+   "doi": "10.3390/en16062610"
+  },
+  {
+   "tool": "checkOpenAccess",
+   "ms": 358,
+   "result": {
+    "isOa": true,
+    "oaStatus": "gold",
+    "title": "System design and scaling trends in airborne wind energy demonstrated for a ground-generation concept"
+   },
+   "doi": "10.5194/wes-10-695-2025"
+  },
+  {
+   "tool": "checkOpenAccess",
+   "ms": 407,
+   "result": {
+    "isOa": false,
+    "oaStatus": "closed",
+    "title": "Crosswind kite power (for large-scale wind power production)"
+   },
+   "doi": "10.2514/3.48021"
+  },
+  {
+   "tool": "resolveIdentifier",
+   "ms": 1147
+  },
+  {
+   "tool": "exportCitation",
+   "ms": 252
+  },
+  {
+   "tool": "exportCitation (retry)",
+   "ms": 411,
+   "note": "format=bib ok"
+  }
+ ]
+}

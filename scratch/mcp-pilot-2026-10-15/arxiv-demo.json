@@ -1,0 +1,98 @@
+{
+ "searches": [
+  {
+   "query": "\"airborne wind energy\"",
+   "total_results": 38,
+   "returned": 5,
+   "sample": [
+    {
+     "id": "2605.05502",
+     "title": "A Computationally Tractable Path-Planning Method for Airborne Wind Energy Systems",
+     "published": "2026-05-06T22:56:53Z"
+    },
+    {
+     "id": "2412.13961",
+     "title": "Harvesting energy from turbulent winds with Reinforcement Learning",
+     "published": "2024-12-18T15:40:40Z"
+    },
+    {
+     "id": "2407.14258",
+     "title": "Optimal Path Planning of Airborne Wind Energy Systems with a Flexible Tether",
+     "published": "2024-07-19T12:36:49Z"
+    }
+   ]
+  },
+  {
+   "query": "tensile rotary power transmission",
+   "total_results": 293689,
+   "returned": 5,
+   "sample": [
+    {
+     "id": "2509.12687",
+     "title": "On Bi-rotary Maps of Negative Prime Power Euler Characteristic",
+     "published": "2025-09-16T05:21:28Z"
+    },
+    {
+     "id": "2410.22107",
+     "title": "In-situ Transmission Kikuchi Diffraction Tensile Testing",
+     "published": "2024-10-29T15:07:12Z"
+    },
+    {
+     "id": "2503.07321",
+     "title": "A Decapod Robot with Rotary Bellows-Enclosed Soft Transmissions",
+     "published": "2025-03-10T13:38:20Z"
+    }
+   ]
+  },
+  {
+   "query": "kite power",
+   "total_results": 249974,
+   "returned": 5,
+   "sample": [
+    {
+     "id": "1910.03807",
+     "title": "Power Limit of Crosswind Kites",
+     "published": "2019-10-09T06:39:04Z"
+    },
+    {
+     "id": "2111.04115",
+     "title": "A survey of two analytical wake models for crosswind kite power systems",
+     "published": "2021-11-07T15:59:41Z"
+    },
+    {
+     "id": "1406.6218",
+     "title": "Dynamic Model of a Pumping Kite Power System",
+     "published": "2014-06-24T12:44:39Z"
+    }
+   ]
+  },
+  {
+   "query": "\"kite turbine\"",
+   "total_results": 0,
+   "returned": 0,
+   "sample": []
+  }
+ ],
+ "download": {
+  "status": "success",
+  "paper_id": "2605.05502",
+  "source": "html",
+  "content_length": 58077,
+  "returned_chars": 3000,
+  "is_truncated": true
+ },
+ "latex_sections": {
+  "status": "success",
+  "paper_id": "2605.05502",
+  "main_file": "main.tex",
+  "total_sections": 15
+ },
+ "bibtex_export": {
+  "status": "success",
+  "count": {
+   "requested": 1,
+   "succeeded": 1,
+   "failed": 0
+  }
+ }
+}

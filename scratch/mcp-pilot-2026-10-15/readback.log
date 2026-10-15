@@ -1,0 +1,28 @@
+MCP tooling pilot — readback
+2026-10-15, laptop (hermes, main session). Branch bank-derate-cos2p65, read at d0ed902.
+
+Servers wired this run (default profile, ~/.hermes/config.yaml):
+  scholar-sidekick  HTTP   https://scholar-sidekick.com/api/mcp   (anonymous free tier; 7 tools)
+  arxiv             stdio  uv tool run arxiv-mcp-server --storage-path /home/rod/.hermes/cache/arxiv-papers
+                          (19 tools; arxiv-mcp-server 0.8.2)
+
+Commands:
+  hermes mcp add scholar-sidekick --url https://scholar-sidekick.com/api/mcp
+  hermes mcp add arxiv --command uv --args tool run arxiv-mcp-server --storage-path /home/rod/.hermes/cache/arxiv-papers
+  hermes mcp test scholar-sidekick   -> connected (2113 ms), 7 tools discovered
+  hermes mcp test arxiv              -> connected (629 ms), 19 tools discovered
+  in-session calls: resolveIdentifier (Tulloch) ok; search_papers ok
+
+Checks (mcp_probe.py, same endpoints):
+  controls.json       fabricated control caught (mismatch, high); Wakefield retraction flagged;
+                      Loyd clean and closed access; Tulloch + Joshi gold open access
+  audit-verdicts.json 18 entries (one call, ~3.5 s): 12 matched; 2 low-confidence known notes
+                      (Loyd title, Flather scan year); 1 URL-only unresolved (Weber);
+                      3 not_found (pending, by design)
+  arxiv-demo.json     search + full-text fetch + LaTeX sections + BibTeX export
+  audit-full.json     full structured audit output (if present)
+
+Notes:
+  - The audit needs format=bibtex; auto-detect fails on the commented seed file.
+  - exportCitation format value is 'bib' (not 'bibtex').
+  - Raw live outputs also sit in ~/.hermes/cache/scratch/mcp-pilot/ (cache may be pruned).
