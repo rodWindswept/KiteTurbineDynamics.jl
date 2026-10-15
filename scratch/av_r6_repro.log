@@ -1,0 +1,97 @@
+repro start · tip 9b414f3 · worktree /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_r6/wt
+worktree add rc=0 Preparing worktree (detached HEAD 9b414f3)
+Updating files:  80% (4447/5507)
+Updating files:  81% (4461/5507)
+Updating files:  82% (4516/5507)
+Updating files:  83% (4571/5507)
+Updating files:  84% (4626/5507)
+Updating files:  85% (4681/5507)
+Updating files:  86% (4737/5507)
+Updating files:  87% (4792/5507)
+Updating files:  88% (4847/5507)
+Updating files:  89% (4902/5507)
+Updating files:  90% (4957/5507)
+Updating files:  91% (5012/5507)
+Updating files:  92% (5067/5507)
+Updating files:  93% (5122/5507)
+Updating files:  94% (5177/5507)
+Updating files:  95% (5232/5507)
+Updating files:  96% (5287/5507)
+Updating files:  97% (5342/5507)
+Updating files:  98% (5397/5507)
+Updating files:  99% (5452/5507)
+Updating files: 100% (5507/5507)
+Updating files: 100% (5507/5507), done.
+ru run1: rc=0
+written: ring-utilisation.svg / .pdf / .png, label-ledger.txt (28 strings), manifest.json
+F-LABEL self-check: OK
+ru run2: rc=0
+written: ring-utilisation.svg / .pdf / .png, label-ledger.txt (28 strings), manifest.json
+F-LABEL self-check: OK
+F-REPRO ru: OK
+tl run1: rc=0
+written: twist-limit.svg / .pdf / .png, label-ledger.txt (55 strings), manifest.json
+F-LABEL self-check: OK
+tl run2: rc=0
+written: twist-limit.svg / .pdf / .png, label-ledger.txt (55 strings), manifest.json
+F-LABEL self-check: OK
+F-REPRO tl: OK
+et run1: rc=0
+check: cold rows: 5000  (OK)
+check: warm rows: 98  (OK)
+check: ruling rows: 1823  (OK)
+check: taps rows: 52  (OK)
+check: taps phases (relax / window): 11  (OK)
+check: taps phases (window): 41  (OK)
+check: taps window mean omega (NR-029): 13.380259861740395  (OK)
+check: cold window mean P (100 Hz): 5.309770249764809  (OK)
+check: cold latch count: 0  (OK)
+check: warm end t (s): 0.002841  (OK)
+check: warm end strain: 1.00081012  (OK)
+check: ruling grid max: 1.447982844  (OK)
+check: ruling latch count: 0  (OK)
+written: eval-timeline.svg / .pdf / .png, label-ledger.txt (52 strings), manifest.json
+F-LABEL self-check: OK
+et run2: rc=0
+check: cold rows: 5000  (OK)
+check: warm rows: 98  (OK)
+check: ruling rows: 1823  (OK)
+check: taps rows: 52  (OK)
+check: taps phases (relax / window): 11  (OK)
+check: taps phases (window): 41  (OK)
+check: taps window mean omega (NR-029): 13.380259861740395  (OK)
+check: cold window mean P (100 Hz): 5.309770249764809  (OK)
+check: cold latch count: 0  (OK)
+check: warm end t (s): 0.002841  (OK)
+check: warm end strain: 1.00081012  (OK)
+check: ruling grid max: 1.447982844  (OK)
+check: ruling latch count: 0  (OK)
+written: eval-timeline.svg / .pdf / .png, label-ledger.txt (52 strings), manifest.json
+F-LABEL self-check: OK
+F-REPRO et: OK
+sa run1 gen: rc=0
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8307 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14749 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (34 strings)
+sa run1 pdflatex: rc=0
+sa run1 pdftoppm: rc=0
+sa run2 gen: rc=0
+self-checks ok: 6 rings, 15 ropes, 3 blades, span 1.499 m on NR-043, dimension clearances hold, cone-ring leader clear, radii and bank on NR-011/NR-017
+wrote system-anatomy.tex (8307 bytes); canvas 23.40 x 18.39 cm
+wrote prototype.html (14749 bytes); svg 884x695 px viewport
+wrote label-ledger.txt (34 strings)
+sa run2 pdflatex: rc=0
+sa run2 pdftoppm: rc=0
+F-REPRO sa: OK
+hero run1: rc=0
+state checks: n_lines true · rings true · n_active true · r_hub true · r_bot true · capture_rows true · radii_capture_eq_built true · sections_order true · one_rotor true · blades_3 true · span_NR043 true · bank_NR017 true · stations_monotone true · twist_count true · twist_sum_lt_pi true
+radii R1..R5 0.8036829846088207 · R6 4.5799790548200496
+wrote machine-winner-hero.png, machine-winner-hero.svg, machine-winner-hero.pdf, manifest.json, checks.log to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_r6/wt/docs/reporting/figures/machine-winner-hero
+hero run2: rc=0
+state checks: n_lines true · rings true · n_active true · r_hub true · r_bot true · capture_rows true · radii_capture_eq_built true · sections_order true · one_rotor true · blades_3 true · span_NR043 true · bank_NR017 true · stations_monotone true · twist_count true · twist_sum_lt_pi true
+radii R1..R5 0.8036829846088207 · R6 4.5799790548200496
+wrote machine-winner-hero.png, machine-winner-hero.svg, machine-winner-hero.pdf, manifest.json, checks.log to /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_r6/wt/docs/reporting/figures/machine-winner-hero
+F-REPRO hero: OK
+
+REPRO CHECKER: 5 checks, 0 fail

@@ -1,0 +1,181 @@
+== 1. blob pins ==
+check: head == origin: OK  9b414f3
+check: all pin paths: tip == origin: OK  
+check: draft: fold blob == tip blob: OK  
+check: tracker: fold blob == tip blob: OK  
+check: sa script pinned at script commit: OK  system-anatomy.py
+check: ru script pinned at script commit: OK  ring-utilisation.py
+check: tl script pinned at script commit: OK  twist-limit.py
+check: et script pinned at script commit: OK  eval-timeline.py
+check: hero script pinned at script commit: OK  machine-winner-hero.jl
+check: figures tree frozen since the landing: OK  []
+check: draft movers since landing == [d0ed902]: OK  ['d0ed902']
+== 2. the fold census (draft) ==
+check: cand reads the tip: OK  
+check: draft added set == declared (16 lines): OK  got 16 lines
+check: draft removed set == declared (15 lines): OK  got 15 lines
+draft token delta add {'47': 1, '508': 1} rem {'46': 1}
+check: draft token delta == declared {47,508} / {46}: OK  
+check: hub census 10 -> 0: OK  10 -> 0
+check: topmost census 1 -> 9: OK  1 -> 9
+check: signed site once + in section: topmost-ring and ground radii: OK  
+check: site sits in ### 2.1: topmost-ring and ground radii: OK  ### 2.1 The kite turbine and its terms
+check: signed site once + in section: The top-segment helix force reads about : OK  
+check: site sits in #### 2.2.2: The top-segment helix force reads : OK  #### 2.2.2 The evaluator
+check: signed site once + in section: The capture topmost ring: OK  
+check: site sits in ### 3.3: The capture topmost ring: OK  ### 3.3 The winner
+check: signed site once + in section: | Topmost ring radius | 4.580 m | NR-011: OK  
+check: site sits in ### 3.3: | Topmost ring radius | 4.580 m | : OK  ### 3.3 The winner
+check: signed site once + in section: topmost ring radius is 4.580 metres and : OK  
+check: site sits in ### 3.3: topmost ring radius is 4.580 metre: OK  ### 3.3 The winner
+check: signed site once + in section: The topmost rotor ring R6 governs the st: OK  
+check: site sits in ### 3.4: The topmost rotor ring R6 governs : OK  ### 3.4 The levers of Performance
+check: signed site once + in section: The topmost ring radius is 4.580 m and t: OK  
+check: site sits in ### 3.5: The topmost ring radius is 4.580 m: OK  ### 3.5 The evolution story
+check: signed site once + in section: landed on the topmost ring.: OK  
+check: site sits in ### 4.2: landed on the topmost ring.: OK  ### 4.2 The failure ledger
+check: signed site once + in section: the topmost ring (2026-08-26).: OK  
+check: site sits in ### 4.2: the topmost ring (2026-08-26).: OK  ### 4.2 The failure ledger
+check: signed site once + in section: one ring toward the top.: OK  
+check: site sits in ### 4.2: one ring toward the top.: OK  ### 4.2 The failure ledger
+check: count sentence once: OK  
+check: winner sentence once: OK  
+check: mass sentence once: OK  
+check: retitle lands once: OK  
+check: count prints alone (no reject split in 5): OK  
+check: classified line holds: OK  
+check: byte-held region 1-2.1: OK  
+check: byte-held region 2.4-3.3: OK  
+check: byte-held region 3.6-4.2: OK  
+check: byte-held region 4.3-5: OK  
+check: byte-held 6 to end: OK  
+check: frozen block: declared size/md5 read from the author log: OK  
+check: frozen block: recompute == declared (chars) + md5: OK  chars 2016 bytes 2020 md5 6d953ec10d2aa3ac66fd5d825fe16f6f
+check: frozen block held once in cand: OK  
+check: frozen block held once in base: OK  
+check: seven seated markers hold: OK  7
+check: value counter holds: 4.580: OK  
+check: value counter holds: 15.033: OK  
+check: value counter holds: 5.309: OK  
+check: value counter holds: 25.698: OK  
+check: value counter holds: 0.804: OK  
+check: value counter holds: 930: OK  
+check: 508 grows by exactly one: OK  
+check: (NR-002) grows by exactly one: OK  
+== 3. tracker ==
+check: tracker added set == declared (7 lines): OK  got 7
+check: tracker removed set empty: OK  
+tracker token delta add {'3.4': 1, '47': 1, '508': 1, '930': 1} rem {}
+check: tracker token delta == declared: OK  
+check: tracker hub sites untouched (2): OK  2 == 2
+== 4. register ==
+check: NR-002 row reads the mix: OK  | NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` colu
+check: mix sums to 930: OK  
+== 5. the plates ==
+check: sa manifest pins recompute: OK  
+check: sa manifest script_commit: OK  1af63fc
+check: ru manifest pins recompute: OK  
+check: ru manifest command pins the script commit: OK  /usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-comm
+note: ru manifest carries no script_commit key; the commit pins via the command string
+check: tl manifest pins recompute: OK  
+check: tl manifest command pins the script commit: OK  /usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 1af63fc
+note: tl manifest carries no script_commit key; the commit pins via the command string
+check: et manifest pins recompute: OK  
+check: et manifest script_commit: OK  1af63fc
+check: hero manifest pins recompute: OK  
+check: hero manifest script_commit: OK  1af63fc
+check: sa tex: R6, the topmost ring: OK  
+check: sa tex: no hub: OK  
+check: sa pdf text: R6, the topmost ring: OK  
+check: sa pdf text: no hub: OK  
+check: sa ledger: R6, the topmost ring: OK  
+check: sa ledger: no retired form: OK  []
+check: ru svg: R6 (top): OK  
+check: ru svg: no retired form: OK  []
+check: ru ledger: R6 (top): OK  
+check: tl svg: R6 (top): OK  
+check: tl svg: ground to top: OK  
+check: tl svg: no retired form: OK  []
+check: tl ledger: R6 (top): OK  
+check: tl ledger: ground to top: OK  
+check: et svg: ω top: OK  
+check: et svg: top · tip · Betz: OK  
+check: et svg: no retired form: OK  []
+check: et ledger: ω top: OK  
+check: et ledger: top · tip · Betz: OK  
+sa ledger: numeric multiset equal=True; old-only lines=1 new-only lines=1
+check: sa ledger numbers unmoved: OK  
+  old-only: R6, the hub ring
+  new-only: R6, the topmost ring
+ru ledger: numeric multiset equal=True; old-only lines=2 new-only lines=2
+check: ru ledger numbers unmoved: OK  
+  old-only: R6 (hub)
+  old-only: s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit 671ab96 · authority commit f8114be
+  new-only: R6 (top)
+  new-only: s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · script commit 1af63fc · authority commit f8114be
+tl ledger: numeric multiset equal=True; old-only lines=3 new-only lines=3
+check: tl ledger numbers unmoved: OK  
+  old-only: R6 (hub)
+  old-only: Transmitted twist against its binding limit, the realisability floor · shaft profile S1–S5, ground to hub · island-3 win
+  old-only: s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · script commit 671ab96 · authority commit f8114be
+  new-only: R6 (top)
+  new-only: Transmitted twist against its binding limit, the realisability floor · shaft profile S1–S5, ground to top · island-3 win
+  new-only: s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · script commit 1af63fc · authority commit f8114be
+et ledger: numeric multiset equal=True; old-only lines=3 new-only lines=3
+check: et ledger numbers unmoved: OK  
+  old-only: hub · tip · Betz, read
+  old-only: rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · script commit bb39aec
+  old-only: ω gnd (solid) · ω hub (dashed)
+  new-only: rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit 1af63fc
+  new-only: top · tip · Betz, read
+  new-only: ω gnd (solid) · ω top (dashed)
+check: et svg carries NR-042: OK  
+check: et ledger carries NR-042: OK  
+check: et register-status: footer join + v5: OK  
+check: et SPEC: v2 delta: OK  
+check: et manifest register_rows carry NR-042: OK  
+check: hero jl: topmost ring R6 drawn string: OK  
+check: hero checks: drawn topmost-ring altitude: OK  
+check: hero register-status: script commit + command + re-cut: OK  
+check: hero register-status: NR-011 row: OK  
+check: strip captions: topmost ring radius 4.580 m: OK  
+check: strip register-status: delta: OK  
+check: tl SPEC: v7 delta + top forms: OK  
+tl SPEC sweep: 6 removed lines / 10 added lines; hub occurrences in removed = 7
+check: tl SPEC sweep: 6 edited lines / 7 replaced occurrences: OK  
+check: ru prototype: 4 sites: OK  
+== 6. appendix cells ==
+check: appendix count sentence: OK  
+check: all 28 appendix hash cells recompute: OK  
+check: four script cells read 1af63fc: OK  4
+== 7. map ==
+check: v37 delta reads: OK  
+check: map read sits: Next: the aero counter-read of the round-6 r: OK  
+check: map read sits: Next: the aero counter-read of the re-cut, t: OK  
+check: map read sits: Next: the aero counter-read of the re-cut. T: OK  
+check: row 9: sign-off: OK  
+check: row 23: family build opens: OK  
+check: map carries the re-cut script (>=5): OK  6
+== 8. kit-tree census ==
+  formnote docs/reporting/figures/eval-timeline/eval-timeline.py:10: lane 1  angular rate, ground ring and hub ring (cold extract)
+  formnote docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:208: # the declared spin-sense convention: the hub leads the ground ring, so the
+  formnote docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:371: # swept annulus: flattened ellipses about the hub centre
+  formnote docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:398: # hub ring R6: leader to the ring bar right end, from a right-side text
+  formnote docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:492: # the hub, so it takes its own centred y window (the same 22 m extent).
+check: delivered art carries no retired form: OK  
+kit census: 51 text files; record lines 15; form notes 5
+check: form notes == the five enumerated lines: OK  ['docs/reporting/figures/eval-timeline/eval-timeline.py:10', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:208', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:371', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:398', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:492']
+check: form-note loci: OK  ['docs/reporting/figures/eval-timeline/eval-timeline.py:10', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:208', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:371', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:398', 'docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl:492']
+== 9. open legs ==
+check: tracker legs still read (2): OK  
+candidates: 2 hit lines
+  candidates: | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rot
+  candidates: | "hub rotor", or "hub" for a rotor | main rotor, topmost rotor | stale-phrases, physics-topology 4 |
+stale-phrases: 4 hit lines
+check: stale-phrases leg reads (4): OK  4
+== 10. copy boundary ==
+check: copy unchanged since the v0.45 walk: OK  c88d19015e5d755f347f30d0e456634d
+== 11. STE ==
+check: STE rc=0 across the 19 touched files: OK  
+
+CHECKER: 131 checks, 0 fail
