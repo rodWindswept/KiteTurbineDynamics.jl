@@ -1,0 +1,81 @@
+{
+  "base_commit": "fc3a602",
+  "files": {
+    "docs/reporting/drafts/2026-10-08-report-first-draft.md": {
+      "add": 12,
+      "rem": 2,
+      "add_lines": [
+        3,
+        635,
+        636,
+        938,
+        949,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007,
+        1008,
+        1009
+      ]
+    },
+    "docs/reporting/draft-tracker.md": {
+      "add": 7,
+      "rem": 0,
+      "add_lines": [
+        292,
+        293,
+        294,
+        295,
+        296,
+        297,
+        298
+      ]
+    },
+    "docs/reporting/figures/figure-map.md": {
+      "add": 7,
+      "rem": 1,
+      "add_lines": [
+        55,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473
+      ]
+    },
+    "docs/reporting/figures/machine-corner-grid/README.md": {
+      "add": 5,
+      "rem": 1,
+      "add_lines": [
+        33,
+        34,
+        35,
+        36,
+        37
+      ]
+    },
+    "docs/reporting/figures/machine-corner-grid/register-status.md": {
+      "add": 5,
+      "rem": 0,
+      "add_lines": [
+        65,
+        66,
+        67,
+        68,
+        69
+      ]
+    },
+    "handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md": {
+      "add": 4,
+      "rem": 2,
+      "add_lines": [
+        4,
+        22,
+        25,
+        26
+      ]
+    }
+  }
+}

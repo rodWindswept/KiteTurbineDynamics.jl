@@ -62,3 +62,8 @@ corner variant; SPEC delta D10). No drawn value moves after this cut.
 columns. The extract binds at all 128 fields. The drawn text reads
 clean. Two fresh runs stay byte-identical. The NR-051 cite takes the
 sign commit `cb862df`. No drawn value moves.
+
+**Delta** v3 (2026-10-15): the visual pass by Rod reads clean. The fold
+lands (draft v0.51): the seat marker joins the field pair at §3.4, and
+the figure-provenance appendix takes the eighth exhibit row and its
+hashes. No drawn value moves.

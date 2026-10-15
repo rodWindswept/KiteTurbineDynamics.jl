@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the relabel closures (the author fold at v0.49, the term gate, the counter-reads), the corner counter-read closure and the cite fixes (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-machines fold (the visual pass reads clean at draft v0.51), the relabel closures, the term gate, the counter-reads and the cite fixes (2026-10-15).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -19,9 +19,11 @@ re-walk.
 
 ## Open items
 
-1. **The visual pass by Rod.** The corner grid, the winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The plates carry the round-6 top forms and the relabel. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
+1. **The visual pass by Rod.** The winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The corner grid's pass reads clean and its fold lands (draft v0.51, map v42). The plates carry the round-6 top forms and the relabel. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The corner machines fold into the report (2026-10-15): the seat marker joins the field pair at §3.4, and the figure-provenance appendix takes the eighth exhibit row and its hashes (draft v0.51). The visual pass by Rod reads clean. The review copy rebuilds with the eighth embed. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-machines-fold.md`. Evidence `scratch/fig_cg_fold_edit.py`, `scratch/fig_cg_fold_check.py` plus logs.
 
 - The relabel closures fold back (2026-10-15): the caption text and the copy take the forms (author v0.49, `8169e36`); the term gate closes (`08b8523`, 105 checks); the aero counter-reads close (`79da87c`, 273 checks); the kit SPEC closes its caption leg. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-relabel-closures-foldback.md`. Evidence `scratch/fig_br2_check.py` plus the log.
 

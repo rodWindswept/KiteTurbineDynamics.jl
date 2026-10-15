@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.50. Date 2026-10-15.
+Internal engineering report. Draft v0.51. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -632,6 +632,8 @@ The next steps add the blade checks and the gust cases.
 
 [Figure seated: figure-map row 21 (the parameter atlas, slug `pca-atlas`). Values cite NR-001, NR-005, NR-006 and NR-044.]
 
+[Figure seated: figure-map row 23 (the corner machines, slug `machine-corner-grid`). Values cite NR-044 and NR-051.]
+
 The two plates map the same search in two views.
 They project the 930 designs of the campaign onto the first two
 principal components of the ten-gene search (NR-001).
@@ -933,7 +935,7 @@ The table ties each headline claim of this report to its evidence and its signed
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. All seven read dataset commit `dd3cc6a`.
+One row per built exhibit. All eight read dataset commit `dd3cc6a`.
 
 | Exhibit | Source extract | Cited rows | Script commit | Era |
 |---|---|---|---|---|
@@ -944,6 +946,7 @@ One row per built exhibit. All seven read dataset commit `dd3cc6a`.
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
+| The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `a4b4057` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -997,3 +1000,10 @@ Machine winner:
 - `svg` `0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993`
 - `pdf` `1689506ae8bf99a824a5c8f0b542309a933485830879514c4a6ac6bd0fd580ce`
 - `checks` `31cda877e9131e6f34270ffe8bdb62bd50225d9cc34653ed221a899eae81e962`
+
+The corner machines:
+
+- `png` `517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568`
+- `svg` `b2e4055d39b7ff72d1e10ea11f59d3bbc8af145ef8a30dc83b7016530b4de0b2`
+- `pdf` `298a0f8e4e674dc8e13b64715ee0dfd383e7671d9f3c262a376abe7d5b5114c6`
+- `checks` `e6bcfca931d36089dd2a8d6e9c8414fb49230c0d2110717176cf1e0ae385ffbe`

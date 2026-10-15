@@ -30,7 +30,11 @@ The generator lands (`a4b4057`). Four panels, one per corner, at one
 shared scale. All in-script checks pass, and the three-location
 F-REPRO walk reads byte-identical across all five outputs. The counter-reads
 close clean (`857f2c1`, 153 checks). The NR-051 cite takes the sign
-commit `cb862df`. Next: the visual pass by Rod.
+commit `cb862df`.
+
+The visual pass by Rod reads clean (2026-10-15). The fold lands
+(draft v0.51, §3.4): the seat marker joins the field pair, and the
+figure-provenance appendix takes the eighth exhibit row and its hashes.
 
 ## Delivered files
 

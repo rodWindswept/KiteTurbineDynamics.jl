@@ -1,0 +1,26 @@
+phase 1 ok: all pairs match exactly once
+block md5 (candidate): 7bbd964db09d2b33269ce5cb8c334054 (declared 7bbd964db09d2b33269ce5cb8c334054)
+seats: 8
+    ('2', 'system anatomy plate', 'system-anatomy')
+    ('10', 'machine winner', 'machine-winner-hero')
+    ('6', 'ring utilisation plate', 'ring-utilisation')
+    ('7', 'twist limit plate', 'twist-limit')
+    ('20', 'the levers landscape', 'pca-landscape')
+    ('21', 'the parameter atlas', 'pca-atlas')
+    ('23', 'the corner machines', 'machine-corner-grid')
+    ('9', 'machine evolution strip', 'machine-evolution-strip')
+manifest pins: 4 of 4 match disk and the appendix cells
+STE docs/reporting/drafts/2026-10-08-report-first-draft.md: rc=0 fig_cg_fold_draft_candidate.md   words=6912 total=  8 per100w=  0.12 em_dash= 2
+STE docs/reporting/draft-tracker.md: rc=0 fig_cg_fold_tracker_candidate.md words=3141 total= 12 per100w=  0.38 em_dash= 1
+STE docs/reporting/figures/figure-map.md: rc=0 fig_cg_fold_map_candidate.md     words=4987 total= 94 per100w=  1.88 em_dash=11
+STE docs/reporting/figures/machine-corner-grid/README.md: rc=0 fig_cg_fold_readme_candidate.md  words= 218 total=  2 per100w=  0.92 em_dash= 0
+STE docs/reporting/figures/machine-corner-grid/register-status.md: rc=0 fig_cg_fold_rstatus_candidate.md words= 407 total=  6 per100w=  1.47 em_dash= 0
+STE handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: rc=0 fig_cg_fold_seatpage_candidate.md words=1162 total= 14 per100w=  1.20 em_dash= 0
+diff docs/reporting/drafts/2026-10-08-report-first-draft.md: +12 -2 (new-file lines changed: [3, 635, 636, 938, 949, 1003, 1004, 1005, 1006, 1007, 1008, 1009]
+diff docs/reporting/draft-tracker.md: +7 -0 (new-file lines changed: [292, 293, 294, 295, 296, 297, 298]
+diff docs/reporting/figures/figure-map.md: +7 -1 (new-file lines changed: [55, 468, 469, 470, 471, 472, 473]
+diff docs/reporting/figures/machine-corner-grid/README.md: +5 -1 (new-file lines changed: [33, 34, 35, 36, 37]
+diff docs/reporting/figures/machine-corner-grid/register-status.md: +5 -0 (new-file lines changed: [65, 66, 67, 68, 69]
+diff handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: +4 -2 (new-file lines changed: [4, 22, 25, 26]
+facts written: scratch/fig_cg_fold_facts.json
+dry run: no files written (use --write)

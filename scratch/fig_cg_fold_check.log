@@ -1,0 +1,66 @@
+ok   draft: pin reads v0.51
+ok   draft: v0.50 reads zero
+ok   draft: v0.49 reads zero
+ok   draft: marker 23 exact, once
+ok   draft: marker 23 sits after marker 21
+ok   draft: marker 23 sits ahead of the frozen block
+ok   draft: eight seats resolve
+ok   draft: seat order
+ok   draft: the marker cites exactly NR-044 and NR-051
+ok   draft: frozen block md5 holds
+ok   appendix: all eight read dd3cc6a
+ok   appendix: all seven reads zero
+ok   appendix: the corner row
+ok   appendix: eight era cells
+ok   appendix: hash line png
+ok   manifest: output hash machine-corner-grid.png
+ok   disk: sha256 machine-corner-grid.png
+ok   appendix: hash line svg
+ok   manifest: output hash machine-corner-grid.svg
+ok   disk: sha256 machine-corner-grid.svg
+ok   appendix: hash line pdf
+ok   manifest: output hash machine-corner-grid.pdf
+ok   disk: sha256 machine-corner-grid.pdf
+ok   appendix: hash line checks
+ok   manifest: output hash checks.log
+ok   disk: sha256 checks.log
+ok   appendix: old row holds | Ring utilisation plate |
+ok   appendix: old row holds | Twist limit plate |
+ok   appendix: old row holds | Machine evolution strip |
+ok   appendix: old row holds | System anatomy plate |
+ok   appendix: old row holds | Levers landscape |
+ok   appendix: old row holds | Parameter atlas |
+ok   appendix: old row holds | Machine winner |
+ok   appendix: the block header
+ok   tracker: v0.51 entry
+ok   tracker: the fold sentence
+ok   tracker: the seat-call sentence
+ok   tracker: the appendix sentence
+ok   tracker: v0.50 entry holds
+ok   tracker: working notes hold
+ok   map: row 23 takes the fold
+ok   map: row 23's old tail reads zero
+ok   map: delta v42
+ok   map: delta v41 holds
+ok   README: the visual-pass line
+ok   README: the old next-line reads zero
+ok   register: delta v3
+ok   register: the sign cite holds
+ok   register: delta v2 holds
+ok   seat page: the refresh line
+ok   seat page: open item takes the clear
+ok   seat page: the closed entry
+ok   seat page: the old open form reads zero
+ok   facts: draft +12 -2
+ok   facts: draft changed lines
+ok   facts: tracker +7 -0
+ok   facts: map +7 -1
+ok   facts: seat page +4 -2
+ok   STE rc=0 docs/reporting/drafts/2026-10-08-report-first-draft.md
+ok   STE rc=0 docs/reporting/draft-tracker.md
+ok   STE rc=0 docs/reporting/figures/figure-map.md
+ok   STE rc=0 docs/reporting/figures/machine-corner-grid/README.md
+ok   STE rc=0 docs/reporting/figures/machine-corner-grid/register-status.md
+ok   STE rc=0 handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md
+
+64 checks, 0 fail

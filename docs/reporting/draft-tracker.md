@@ -289,6 +289,13 @@ This pass gives the structural side of the load story a plainer form.
 The beam-sizing sentence, the lull sentence and the refusal sentence take plainer forms.
 No value moves, and no figure byte moves.
 
+v0.51 pass by @fig-img-diagrams (2026-10-15).
+This pass folds the corner machines into the report.
+The plate seats at §3.4 beside the field pair, ahead of the levers reading block.
+The figure-provenance appendix gains the eighth exhibit row and its hashes.
+The kit takes its state line and its register delta v3 (the visual pass by Rod reads clean).
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
