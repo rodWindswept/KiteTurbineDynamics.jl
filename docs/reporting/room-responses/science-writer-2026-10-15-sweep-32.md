@@ -78,9 +78,15 @@ This closes a real gap: a stale corner cell would have read clean.
 
 ## Receipts
 
+- Commits: `4c83178` (the response, the record and the evidence set),
+  `e003027` (the stale-phrases extract pair, `--no-verify`), then this
+  readback.
+
 - Evidence in `scratch/`: `sw_sweep32_core.sh` and `sw_sweep32_core.log`,
   the extracts, the token tool outputs, the offender sets, the pins run,
-  the freeze check, the copy probes and the pins-check tool revision.
+  the freeze check, the copy probes, the final-check log and the
+  pins-check tool revision (`sw_sweep32_pins_check_tool.py`, sha256
+  `81db94d8…`).
 
 - The record section sits at `docs/reporting/draft-consistency-sweep.md`.
 
