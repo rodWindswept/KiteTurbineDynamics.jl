@@ -1,0 +1,7 @@
+readback: the post-fix warm register fold (science-validator, 2026-10-15)
+tip fab730a8a0da972b4a35c17b050cfdaceb0b036c
+
+OK  docs/reporting/numbers-register.md  1cea325e4f79f74d95e0fb3ab7b6d58d864b7f78cfd99a4d228f7e8b4833fd52
+OK  docs/reporting/room-responses/science-validator-2026-10-15-postfix-warm-register-fold.md  d8e2a192f199792b2bebc1db9df2aaffb2adbeb8e2df62b6c5fc6da95cc05f62
+OK  scratch/sv_rb_postfix_check.py  4ab14c7d586a65aeee52f3fe5ce67c882e4fc122354e2cbab9583482fda5bee8
+OK  scratch/sv_rb_postfix_check.log  bc19aa74cf3b8a246600c4dd8c46d1c884a253c6f2772a98a3f97d172636a7c1
