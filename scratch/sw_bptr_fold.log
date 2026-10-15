@@ -1,0 +1,22 @@
+ok    base md5 pins
+ok    worktree file == base (no drift since the pin)
+ok    base carries no destructive-resonance row
+ok    base status line reads PREP v17
+ok    collapse-margin anchor is unique
+ok    base delta tail is unique
+ok    base row census reads 140
+ok    base line count reads 392
+ok    status token moved once
+ok    row inserted after the collapse-margin anchor
+ok    anchor and row are adjacent
+ok    v19 delta appended once
+ok    v18 delta text byte-held
+ok    no base row lost
+ok    exactly one row added
+ok    row census reads 141
+ok    line count reads 400
+ok    new row definition cell is numbers-free
+ok    row sits between the collapse-margin and FoS rows
+
+19 checks, 0 fail
+candidate: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/sw_bptr_new.md  md5 c0d82058355ce53118d675ed30162b43

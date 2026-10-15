@@ -1,0 +1,6 @@
+FILE                  words=4943 total= 15 per100w=  0.30 em_dash= 1
+[HOOK:ste] FILE: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] FILE: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] FILE: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] FILE: long_paragraph(>6s) x11 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] FILE: em_dash x1 -> no em dash — use a period or comma. (ste-writing)

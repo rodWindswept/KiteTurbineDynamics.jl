@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v17, numbers-free by construction (no measurement values, no
+**Status** PREP v19, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -108,6 +108,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | bank derate | The power factor applied to a banked rotor. It scales disc power by the cosine of the bank angle. The exponent takes a fixed value. Banked blades cone out of the ring plane. The rotor sweeps less streamtube frontal area. | physics-topology 4.0.1, CONTEXT.md, founder docx return note 6 (`c2e2aee`) | room-supplies |
 | torsional collapse | The failure mode where torque demand passes the geometric capacity of the shaft. Rings converge and power transfer fails. | CONTEXT.md | supply |
 | collapse margin | The distance between the current twist state and the torsional collapse cliff. | CONTEXT.md | supply |
+| destructive resonance | The shaft failure mode of an earlier gain sweep. The twist ripple grows and does not settle. The shaft snaps between states, and the power falls to zero in intervals. The report names the term for that earlier round only. That round and this campaign share no number. | `docs/NOTES_MPPT_TWIST.md` section 3, the 2026-09-25 Tulloch plan section 9 | supply |
 | FoS (factor of safety) | The ratio of capacity to load at a structural check. The report states which checks it covers. | CONTEXT.md FoS row | supply |
 | Betz ceiling | The theoretical upper bound on rotor power. No rotor can take more from the wind. | framework section 3, awe-knowledge | supply |
 | tip-speed ceiling | The operating limit on blade tip speed. | framework section 3 | supply |
@@ -389,4 +390,11 @@ defect, like a missing register row.
   The section 3 rows take the shear law and steady wind, from the author
   seat (NR-056, NR-058).
   The section 2 elevation-angle row takes the campaign form (NR-057).
+  No other change.
+
+- **v19 (2026-10-15):** the back-pointer term lands at the science-writer seat.
+  Section 2 takes the destructive-resonance row, from the v0.56 load-block back-pointer (`docs/NOTES_MPPT_TWIST.md` section 3, `docs/plans/2026-09-25-trpt-tulloch-criterion-correction.md` section 9).
+  The row carries no value, so the gain figure stays a binding slot for Track D.
+  The status line takes v19, from a header that the v18 pass left at v17.
+  The bow row does not land and waits on a ruling from the founder.
   No other change.

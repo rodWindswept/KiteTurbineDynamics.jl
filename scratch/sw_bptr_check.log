@@ -1,0 +1,29 @@
+ok    live file == the pinned candidate by md5
+ok    candidate md5 reads c0d82058355ce53118d675ed30162b43
+ok    pinned base == the committed blob at HEAD
+ok    status line reads PREP v19 once
+ok    no PREP v17 token survives
+ok    the row carries the term once
+ok    row census reads 141
+ok    line count reads 400
+ok    every base row survives byte-held
+ok    exactly one row is new, and it is the supplied row
+ok    row census grew by exactly one
+ok    the definition cell is numbers-free
+ok    the row sits between the collapse-margin and FoS rows
+ok    the v18 delta entry is byte-identical
+ok    the v19 delta entry lands once
+ok    the v19 entry names the row, the value gate and the bow hold
+ok    the live draft prints the term once
+ok    the live draft prints no bow
+ok    the ground carries the term in its failure-mode section
+ok    the plan exists and carries section 9
+ok    the row cites both grounds
+ok    STE rc=0 at or below the gate
+ok    STE total is unchanged by the fold
+ok    no other tracked file is modified
+ok    the bow ruling carries the output-not-constraint form
+ok    the bow ruling bars the September figure as a result
+ok    no bow row has landed
+
+27 checks, 0 fail
