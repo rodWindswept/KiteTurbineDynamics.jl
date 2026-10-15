@@ -75,3 +75,6 @@ outputs. Verified 2026-10-14 at `c438398`.
 The drawn leader reads "topmost ring R6". The log line reads "drawn
 topmost-ring altitude". Three fresh runs at the v2 script commit stay
 byte-identical across all five outputs. No value moves.
+
+**Form note** (2026-10-15): four script comments hold the old ring
+name until the next re-render sweep. No drawn text is affected.

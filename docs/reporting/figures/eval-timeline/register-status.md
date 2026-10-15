@@ -70,3 +70,7 @@ created with the kit landing.
 1). The lane-1 label reads "ω top" and the gate row reads "top ·
 tip · Betz". The drawn footer row list takes NR-042 at this build.
 No drawn value moves.
+
+**Form note** (2026-10-15): one script comment at the head holds
+the old ring name until the next re-render sweep. No drawn text is
+affected.
