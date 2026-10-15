@@ -1,0 +1,8 @@
+corner-grid F-REPRO counter-check — delivered + two fresh runs (script commit a4b4057)
+machine-corner-grid.png        delivered=517a77bf032bec1c run1=517a77bf032bec1c run2=517a77bf032bec1c  OK
+machine-corner-grid.svg        delivered=b2e4055d39b7ff72 run1=b2e4055d39b7ff72 run2=b2e4055d39b7ff72  OK
+machine-corner-grid.pdf        delivered=298a0f8e4e674dc8 run1=298a0f8e4e674dc8 run2=298a0f8e4e674dc8  OK
+manifest.json                  delivered=506704e44829a241 run1=506704e44829a241 run2=506704e44829a241  OK
+checks.log                     delivered=e6bcfca931d36089 run1=e6bcfca931d36089 run2=e6bcfca931d36089  OK
+RESULT: all five outputs byte-identical across the delivered set and the two counter-runs
+checks: 5, fail: 0

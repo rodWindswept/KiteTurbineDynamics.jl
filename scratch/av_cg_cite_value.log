@@ -1,0 +1,167 @@
+== av corner-grid counter-read: F-CITE + F-VALUE ==
+HEAD ec19c2f  branch bank-derate-cos2p65
+
+-- A. delivered bytes and pins --
+  OK   extract sha == manifest == 03abd0c6…
+  OK   script sha == manifest script pin
+  OK   output pin machine-corner-grid.png == manifest
+  OK   output pin machine-corner-grid.svg == manifest
+  OK   output pin machine-corner-grid.pdf == manifest
+  OK   output pin checks.log == manifest
+  OK   checks.log carries the extract sha line
+  OK   checks.log output block == delivered hashes
+  OK   checks.log: ALL OK
+  OK   checks.log: corner order OK
+  OK   checks.log: objective labels 4 drawn ALL OK
+  OK   checks.log: -dg/-zg normalise, 1 replacement
+  OK   checks.log script commit a4b4057
+  OK   checks.log toolchain line
+  OK   PNG dims 2616 x 1848 == 3 x (872 x 616)
+  OK   SVG root 872 x 616
+  OK   SVG carries glyph paths, no text layer (0 <text) — the recorded R2 state
+  OK   PDF CreationDate normalised to 1970-01-01, single date token
+  OK   manifest: family mode, corner variant
+  OK   manifest: script commit a4b4057
+  OK   manifest: registers [NR-044, NR-051]
+  OK   manifest: data commit dd3cc6a
+  OK   manifest: toolchain pins
+  OK   knobs: K_MPPT_5KW_HONEST = 2.24 in compute_seeds.jl
+  OK   knobs: BLOCKING_WIND_FACTOR_5KW = 0.85^(1/3) in compute_seeds.jl
+  OK   knobs: power_W 5000, v_rated 11, tether 18.8, split 0.6, cone 22 deg, spacing 0.8
+  OK   scale: m_per_px == (Yhi-Ylo)/340
+  OK   scale: X == 206*mpp/2
+  OK   scale: figure 872x616 == 4*206+3*16 x 84+340+60+132
+  OK   scale bar 5 m
+
+-- B. extract vs the raw telemetry rows (128 fields) --
+  OK   raw rows 930, 310 per island
+  OK   status mix 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist
+  OK   telemetry files last touched at dd3cc6a
+  OK   extract: 4 rows
+  OK   extract: all 32 fields x 4 rows byte-equal to the source rows
+  OK   extract header: run-id / dataset / computing commit
+  OK   extract: r_hub/r_bot = round(x1/x2, 3)
+  OK   extract: n_lines = integer(x4)
+  OK   manifest: genome vector byte-equal to the extract (all 40 cells)
+  OK   manifest: picks in signed order
+  OK   manifest: corners in signed order
+
+-- C. the projection and the picks, recomputed from the raw draw columns --
+  OK   feasible rows 508
+  OK   NR-044: PC1 share 22.4346665772
+  OK   NR-044: PC2 share 17.2630436556
+  OK   NR-044: pair total 39.6977102328
+  OK   NR-044: seed point 0.531, -1.297, fit 36.109
+  OK   NR-044: winner point 0.885, 2.869, fit 27.364, island 3
+  OK   window [1,99]: pc1 -5.133 .. 1.671, pc2 -2.178 .. 3.125
+  OK   pick low PC1 / low PC2: i1-g13-i1 at dist 3.796523
+  OK   pick i1-g13-i1: fit 60.646000 at 6 dp == extract token
+  OK   pick i1-g13-i1: pc 6 dp == extract full precision
+  OK   pick i1-g13-i1: feasible and above the winner
+  OK   pick low PC1 / high PC2: i1-g7-i7 at dist 4.254840
+  OK   pick i1-g7-i7: fit 58.864000 at 6 dp == extract token
+  OK   pick i1-g7-i7: pc 6 dp == extract full precision
+  OK   pick i1-g7-i7: feasible and above the winner
+  OK   pick high PC1 / low PC2: i2-g21-i4 at dist 0.874883
+  OK   pick i2-g21-i4: fit 33.704000 at 6 dp == extract token
+  OK   pick i2-g21-i4: pc 6 dp == extract full precision
+  OK   pick i2-g21-i4: feasible and above the winner
+  OK   pick high PC1 / high PC2: i3-g26-i8 at dist 0.074376
+  OK   pick i3-g26-i8: fit 33.812000 at 6 dp == extract token
+  OK   pick i3-g26-i8: pc 6 dp == extract full precision
+  OK   pick i3-g26-i8: feasible and above the winner
+  OK   composition: two-rotor low-PC1 picks, one-rotor high-PC1 picks
+
+-- D. the drawn-text census (PDF text layer) --
+  OK   title reads exactly once
+  OK   subtitle reads exactly once
+  OK   drawn: 'The corner machines: one typical design from each corner'
+  OK   drawn: 'Built geometry at one shared scale · the value under eac'
+  OK   drawn: 'source: data commit dd3cc6a · extract corner-grid-extrac'
+  OK   drawn: 'rows NR-044 · NR-051 · script commit a4b4057 · engine Ca'
+  OK   drawn: 'shaft frame: distance along the shaft is vertical · the '
+  OK   drawn: 'ground ring'
+  OK   drawn: 'ring, transmission'
+  OK   drawn: 'ring, cone'
+  OK   drawn: 'ring, harvest'
+  OK   drawn: 'swept annulus — trapezoid'
+  OK   drawn: 'blade'
+  OK   drawn: 'TRPT lines'
+  OK   stamps 1-2-3 once each
+  OK   scale bar '5 m' once
+  OK   strip corner 'low PC1 / low PC2' once
+  OK   strip tag 'i1-g13-i1' once
+  OK   strip objective '60.646' once (as 'objective 60.646 kg')
+  OK   strip corner 'low PC1 / high PC2' once
+  OK   strip tag 'i1-g7-i7' once
+  OK   strip objective '58.864' once (as 'objective 58.864 kg')
+  OK   strip corner 'high PC1 / low PC2' once
+  OK   strip tag 'i2-g21-i4' once
+  OK   strip objective '33.704' once (as 'objective 33.704 kg')
+  OK   strip corner 'high PC1 / high PC2' once
+  OK   strip tag 'i3-g26-i8' once
+  OK   strip objective '33.812' once (as 'objective 33.812 kg')
+  OK   strips read left-to-right in the NR-051 order
+  OK   retired word 'hub' reads zero in the drawn text
+  OK   no stray value 4.580 in drawn text
+  OK   no stray value 15.033 in drawn text
+  OK   no stray value 27.364 in drawn text
+  OK   no stray value 22.4 in drawn text
+  OK   no stray value 17.3 in drawn text
+  OK   no stray value 36.109 in drawn text
+  OK   no stray value 5.309 in drawn text
+  OK   no unexpected digit tokens in drawn text
+
+-- E. the register, the sign trail and every cite --
+  OK   NR-051 table: four rows parse
+  OK   NR-051 row i1-g13-i1: corner/pc 6dp/objective 3dp == extract
+  OK   NR-051 row i1-g7-i7: corner/pc 6dp/objective 3dp == extract
+  OK   NR-051 row i2-g21-i4: corner/pc 6dp/objective 3dp == extract
+  OK   NR-051 row i3-g26-i8: corner/pc 6dp/objective 3dp == extract
+  OK   NR-044 block: shares strings
+  OK   NR-044 block: status mix string
+  OK   NR-051 sign: register appended at cb862df (git -S)
+  OK   NR-051 sign: science-validator seat page names cb862df
+  OK   NR-051 sign: sweep 30 audits the append at cb862df
+  OK   commit dd3cc6a resolves
+  OK   commit a76c5e9 resolves
+  OK   commit 92ca9f5 resolves
+  OK   commit b02ecdf resolves
+  OK   commit a4b4057 resolves
+  OK   commit 2ad023c resolves
+  OK   commit cb862df resolves
+  OK   NR-051 register-status row present with a sign reference
+  OK   sweep 30 receipt exists
+  OK   receipt cites the extract id
+  OK   captions provenance line cites dd3cc6a / NR-044 / NR-051 / a4b4057
+  OK   captions: all four objectives above NR-005 winner (33.704 > 27.364)
+
+-- F. checks.log vs manifest arithmetic --
+  OK   checks.log: 4 panel lines
+  OK   i1-g13-i1: all six decode checks true
+  OK   i1-g13-i1: drawn counts arithmetic (polylines == lines x gaps, blades == lines x rotors)
+  OK   i1-g13-i1: manifest counts match
+  OK   i1-g7-i7: all six decode checks true
+  OK   i1-g7-i7: drawn counts arithmetic (polylines == lines x gaps, blades == lines x rotors)
+  OK   i1-g7-i7: manifest counts match
+  OK   i2-g21-i4: all six decode checks true
+  OK   i2-g21-i4: drawn counts arithmetic (polylines == lines x gaps, blades == lines x rotors)
+  OK   i2-g21-i4: manifest counts match
+  OK   i3-g26-i8: all six decode checks true
+  OK   i3-g26-i8: drawn counts arithmetic (polylines == lines x gaps, blades == lines x rotors)
+  OK   i3-g26-i8: manifest counts match
+  OK   checks.log window line recomputes
+  OK   checks.log squareness line recomputes
+  OK   checks.log viewport line == layout arithmetic
+  OK   figures-seat repro table: machine-corner-grid.png inplace md5 == delivered
+  OK   figures-seat repro table: machine-corner-grid.svg inplace md5 == delivered
+  OK   figures-seat repro table: machine-corner-grid.pdf inplace md5 == delivered
+  OK   figures-seat repro table: manifest.json inplace md5 == delivered
+  OK   figures-seat repro table: checks.log inplace md5 == delivered
+  OK   figures-seat repro table: RESULT line
+  OK   extract checker log: 54 checks, 0 fail
+
+== checks: 148, fail: 0 ==
+findings: 2
+FINDING: cite-precision: machine-corner-grid/register-status.md L11 cites NR-051 signed at `8855d9a`; the sign commit is `cb862df` (seat page + sweep 30) — fix to `cb862df`
+FINDING: cite-precision: figure-map.md row 23 (L55) cites NR-051 signed at `8855d9a`; the sign commit is `cb862df` — fix to `cb862df`
