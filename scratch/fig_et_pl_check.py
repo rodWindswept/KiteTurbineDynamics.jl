@@ -105,12 +105,12 @@ mp = (ROOT / "docs" / "reporting" / "figures" / "figure-map.md").read_text(encod
 mpn = norm(mp)
 check("map: delta v44", "**v44 (2026-10-15):** the placement label re-cut lands (row 4)." in mpn, True)
 check("map: row cell", "The placement label re-cut lands (script `a269636`)" in mpn, True)
-check("map: row tail", "Next: the aero counter-read of the re-cut, then the visual pass by Rod, then the fold" in mpn, True)
+check("map: row tail", "The counter-read closes clean (`8e33253`, 35 checks). The census reads two drawn strings, the label and the stamp refresh. Next: the visual pass by Rod, then the fold" in mpn, True)
 check("map: v43 holds", "**v43 (2026-10-15):**" in mpn, True)
 
 seat = norm((ROOT / "handovers" / "handover-2026-10-14-reporting-room-figures-images-diagrams.md").read_text(encoding="utf-8"))
 check("seat: closed index", "The placement label re-cut (2026-10-15): the lane-3 label takes the landed form" in seat, True)
-check("seat: open item note", "Row 4 carries the placement re-cut: the aero counter-read opens, then the visual pass." in seat, True)
+check("seat: open item note", "Row 4 carries the placement re-cut: the counter-read closes (`8e33253`, 35 checks)." in seat, True)
 
 rc = (ROOT / "docs" / "reporting" / "room-responses" /
       "figures-images-diagrams-2026-10-15-eval-timeline-placement-label-recut.md")

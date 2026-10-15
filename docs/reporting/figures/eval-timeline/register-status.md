@@ -81,5 +81,10 @@ the landed form (the 2026-09-16 placement, `2bf76a3`, aero-validator).
 The held head comment sweeps to the top form, and the pins refresh at this
 re-cut (script `a269636`). No drawn value moves.
 
+**Delta** v7 (2026-10-15): the re-cut counter-read closes (aero-validator,
+`1bfb09e`, readback `8e33253`, 35 checks). The census reads two drawn
+strings, the label and the stamp refresh. No value moves. The pins and
+the four-location F-REPRO verify.
+
 **Form note** (2026-10-15): swept at the v6 re-cut. The head comment
 reads "ground ring and top ring". No drawn text is affected.

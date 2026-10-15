@@ -20,14 +20,18 @@ re-walk.
 ## Open items
 
 1. **The visual pass by Rod.** The winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The corner grid's pass reads clean, its fold lands and its reads close (draft v0.51, map v42 and v43). The plates carry the round-6 top forms and the relabel. Row 4 carries
-the placement re-cut: the aero counter-read opens, then the visual pass. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
+the placement re-cut: the counter-read closes (`8e33253`, 35 checks).
+Next: the visual pass by Rod, then the fold. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
 
 - The placement label re-cut (2026-10-15): the lane-3 label takes the
   landed form (the rope-break placement fix lands at `2bf76a3`, script
   `a269636`). The gate-map band and the foot line hold as the a89642b
-  record. Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-placement-label-recut.md`.
+  record. The counter-read closes (`8e33253`, 35 checks). Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-placement-label-recut.md`,
+  fold-back
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-recut-closure-foldback.md`.
   Evidence `scratch/fig_et_pl_*` plus logs.
 
 - The corner-grid reads fold back (2026-10-15): the register read closes (`7e68f0e`, 107 checks) and the v0.51 copy counter-read closes (`ed95cf1`, 304 checks; the corner plate the eighth embed). Receipt `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-grid-closures-foldback.md`. Evidence `scratch/fig_cg2_check.py` plus the log.
@@ -164,4 +168,4 @@ the placement re-cut: the aero counter-read opens, then the visual pass. The win
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the corner grid, the winner plate, the F1 plate and rows 4 to 7).
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate and rows 4 to 7).
