@@ -1,0 +1,45 @@
+  OK   map: row 23 reads R2
+  OK   map: row 23 source names the extract
+  OK   map: row 23 records the build landing
+  OK   map: delta v39 present
+  OK   map: delta v38 still present
+  OK   map: v39 reads the byte-identical trio
+  OK   spec: D10 present
+  OK   spec: D10 reads the family mode
+  OK   spec: D10 reads the -dg/-zg normalise
+  OK   readme: the landing reads
+  OK   readme: the delivered files section
+  OK   captions: plain tier
+  OK   captions: technical tier
+  OK   captions: provenance line
+  OK   captions: script commit a4b4057
+  OK   captions: objective forms
+  OK   register: NR-044 cited
+  OK   register: NR-051 cited
+  OK   register: script commit
+  OK   register: the three-location walk
+  OK   kit: machine-corner-grid.png exists
+  OK   kit: machine-corner-grid.svg exists
+  OK   kit: machine-corner-grid.pdf exists
+  OK   kit: manifest.json exists
+  OK   kit: checks.log exists
+  OK   manifest: family mode, corner variant
+  OK   manifest: registers NR-044 + NR-051
+  OK   manifest: picks in the signed order
+  OK   manifest: script commit a4b4057
+  OK   manifest: four outputs pinned
+  OK   checks: ALL OK
+  OK   checks: corner order OK
+  OK   checks: -dg normalise
+  OK   extract: byte-unchanged (03abd0c6…)
+  OK   repro: all-equal result
+  OK   repro: stamped a4b4057
+  OK   seat: item 1 reads the landing
+  OK   seat: closed index gains the build
+  OK   seat: next action reads the counter-reads
+  OK   receipt exists
+  OK   receipt: carries the script commit
+  OK   receipt: carries the repro line
+  OK   receipt: carries the F-CITE handoff
+
+checks: 43, fail: 0

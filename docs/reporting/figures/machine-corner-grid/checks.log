@@ -1,0 +1,27 @@
+machine-corner-grid — GENERATE run
+script commit: a4b4057
+toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
+extract: docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv  sha256 03abd0c660e0ad22db89f767a7b033c18db82f67dde69593c31cbb3a3919a4d5
+panel i1-g13-i1 [low PC1 / low PC2] (gen 13): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+  drawn: ring segments 7 (incl ground) · TRPT polylines 42 (7 lines x 6 gaps) · rotor quads 2 · blade segments 14 (7/rotor) · section markers 2
+panel i1-g7-i7 [low PC1 / high PC2] (gen 7): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+  drawn: ring segments 11 (incl ground) · TRPT polylines 80 (8 lines x 10 gaps) · rotor quads 2 · blade segments 16 (8/rotor) · section markers 2
+panel i2-g21-i4 [high PC1 / low PC2] (gen 21): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+  drawn: ring segments 6 (incl ground) · TRPT polylines 15 (3 lines x 5 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+panel i3-g26-i8 [high PC1 / high PC2] (gen 26): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+  drawn: ring segments 6 (incl ground) · TRPT polylines 15 (3 lines x 5 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
+corner order (NR-051): OK — the four signed picks in the signed order
+  low PC1 / low PC2: i1-g13-i1 · objective 60.646 kg
+  low PC1 / high PC2: i1-g7-i7 · objective 58.864 kg
+  high PC1 / low PC2: i2-g21-i4 · objective 33.704 kg
+  high PC1 / high PC2: i3-g26-i8 · objective 33.812 kg
+window: x ±6.211 m · y -0.759 .. 19.742 m · m_per_px 0.060299 · panel 206 x 340 px · figure 872 x 616 px · scale bar 5.0 m
+layout viewports: header [0,532 + 872x84] · labels [0,132 + 872x60] · footer [0,0 + 872x132] · panel1 [0,192 + 206x340] · panel4 [666,192 + 206x340]
+axis squareness: x 16.583913600 px/m · y 16.583913600 px/m · delta 0.0000 ppm
+objective labels (NR-051): 4 drawn · ALL OK
+pdf normalisation: clean -dg ok · CreationDate replacements 1 · clean -zg ok
+outputs sha256:
+  machine-corner-grid.png  517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568
+  machine-corner-grid.svg  b2e4055d39b7ff72d1e10ea11f59d3bbc8af145ef8a30dc83b7016530b4de0b2
+  machine-corner-grid.pdf  298a0f8e4e674dc8e13b64715ee0dfd383e7671d9f3c262a376abe7d5b5114c6
+checks: ALL OK

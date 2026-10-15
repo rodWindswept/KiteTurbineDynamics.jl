@@ -1,0 +1,7 @@
+# corner-grid F-REPRO table - script commit a4b4057 - 3 locations x 5 outputs
+machine-corner-grid.png  inplace=9801aa12499948d940a7991160188742  b1=9801aa12499948d940a7991160188742  b2=9801aa12499948d940a7991160188742  OK
+machine-corner-grid.svg  inplace=69d2773228499b4f52ae20d6674424dd  b1=69d2773228499b4f52ae20d6674424dd  b2=69d2773228499b4f52ae20d6674424dd  OK
+machine-corner-grid.pdf  inplace=67982842babd5082d8013e9f41df0053  b1=67982842babd5082d8013e9f41df0053  b2=67982842babd5082d8013e9f41df0053  OK
+manifest.json  inplace=839cada6884a2bc24841e9fc9a889f09  b1=839cada6884a2bc24841e9fc9a889f09  b2=839cada6884a2bc24841e9fc9a889f09  OK
+checks.log  inplace=27d45dd403d024eee25cff09a0113c2e  b1=27d45dd403d024eee25cff09a0113c2e  b2=27d45dd403d024eee25cff09a0113c2e  OK
+RESULT: all five outputs byte-identical across the three locations

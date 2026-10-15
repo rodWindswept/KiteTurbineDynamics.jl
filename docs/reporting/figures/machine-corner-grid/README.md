@@ -26,7 +26,14 @@ design to its [1,99] window corner (NR-051).
 
 ## State
 
-The extract pins (2026-10-15). The generator build runs next at the
-figures seat. The build follows the family-grid mode of the
-machine-renderer SPEC: four panels, one fixed scale, one label strip
-per panel, and the footer band.
+The generator lands (`a4b4057`). Four panels, one per corner, at one
+shared scale. All in-script checks pass, and the three-location
+F-REPRO walk reads byte-identical across all five outputs. Next: the
+counter-reads (aero F-CITE and F-VALUE, the science register read),
+then the visual pass by Rod.
+
+## Delivered files
+
+- `machine-corner-grid.png` / `.svg` / `.pdf` carry the plate.
+- `manifest.json` pins the extract, the knobs and the output hashes.
+- `checks.log` holds the GENERATE record.

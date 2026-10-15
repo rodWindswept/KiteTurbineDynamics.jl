@@ -52,7 +52,7 @@ full roster around them.
 | 20 | ⟨tbd⟩ | §3.4 | The levers landscape. The objective field with the reading insets and the three island journeys | `pca-landscape` | R2 | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The old campaign landscape framework | F-VALUE counter-read at `331f60d` held the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). The re-census at `7329191` closes F-VALUE on the fix commit (`d6d4db9`) with zero defects. Next: the section 3.4 fold and the pointers, then the visual pass by Rod |
 | 21 | ⟨tbd⟩ | §3.4 | The parameter atlas. One panel per gene, ten slots | `pca-atlas` | R2 | The same telemetry. The old campaign atlas framework | F-VALUE counter-read at `331f60d` held the drawn values. The cite fix and the stamp re-cut landed (script commit `e23f226`). The re-census at `7329191` closes F-VALUE on the fix commit (`d6d4db9`) with zero defects. Next: the section 3.4 fold and the pointers, then the visual pass by Rod |
 | 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
-| 23 | ⟨tbd⟩ | §3.4 | The corner machines. Four renders, one per corner of the PC1-PC2 field | `machine-corner-grid` | planned | The founder ask (2026-10-14, routing comment 14). The pca projection (NR-044). Picks recorded at `scratch/fig_cg_picks.py` (data commit `dd3cc6a`, run `a76c5e9`) | The objective row (NR-051) is signed (science-validator, `8855d9a`). The family-mode build opens: the extract mints (four genomes byte-exact, NR-051-gated; `extract-corner-grid.csv`). The generator build runs next |
+| 23 | ⟨tbd⟩ | §3.4 | The corner machines. Four renders, one per corner of the PC1-PC2 field | `machine-corner-grid` | R2 | The founder ask (2026-10-14, routing comment 14). The pca projection (NR-044). Picks recorded at `scratch/fig_cg_picks.py` (data commit `dd3cc6a`, run `a76c5e9`). The extract `corner-grid-extract-2026-10-15-picks` (`92ca9f5`) | The objective row (NR-051) is signed (science-validator, `8855d9a`). The build lands (`a4b4057`): four panels, all in-script checks pass, and the three-location F-REPRO walk reads byte-identical across all five outputs. Next: the aero counter-reads and the science register read, then the visual pass by Rod |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -437,3 +437,13 @@ three slots).
   reproduce walk. The corner grid opens (row 23): the extract mints
   with the four genomes byte-exact and every NR-044 anchor gated.
   The generator build runs next.
+
+- **v39 (2026-10-15):** the corner grid builds (row 23). The family
+  mode, corner variant, lands under SPEC delta D10. Four panels in
+  the signed NR-051 order at one shared scale. The label strips
+  carry the corner, the tag and the objective at its 3 dp form.
+  Script `a4b4057`, and the outputs and the records ride this
+  commit. All in-script checks pass. The kit rendered in place
+  plus twice into scratch reads byte-identical across all five
+  outputs. Next: the aero counter-reads and the science register
+  read, then the visual pass by Rod.

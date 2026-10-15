@@ -369,6 +369,16 @@ No check grades itself. No number appears without its register row.
   passes take -g: the orphan stream-length values were the one wobbling
   byte class (2026-10-14).
 
+- **D10 (2026-10-15):** the corner grid runs the family mode with
+  the NR-051 picks as its exemplar list (figure map row 23, the
+  founder ask of 2026-10-14). Four panels in the signed corner
+  order, one shared scale and window. Each label strip carries the
+  corner name, the identity tag and the search objective at its
+  signed 3 dp form. The layout reads left to right. The grid
+  claims geometry and typicality: the picks are typical machines,
+  not optima. The kit takes the emitted set of the strip and the
+  -dg/-zg PDF normalise (script `a4b4057`).
+
 *Delta rounds: R1 opened 2026-10-08 with spec v1 and the layout prototype. R1
 review (Rod, 2026-10-08): prototype geometry corrected — ground ring smallest,
 machine widens up-shaft, main-rotor annulus and blades on the topmost ring (the

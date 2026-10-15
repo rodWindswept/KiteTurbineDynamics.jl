@@ -1,0 +1,215 @@
+{
+    "set": "machine-corner-grid",
+    "mode": "family",
+    "variant": "corner-grid",
+    "slug": "machine-corner-grid",
+    "script_commit": "a4b4057",
+    "script": {
+        "path": "docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl",
+        "sha256": "9fd0164495faf09692cb8837884e963fcbed2a04ab80b182ee0e662e935e4106"
+    },
+    "toolchain": {
+        "julia": "1.12.5",
+        "cairomakie": "0.15.11",
+        "mutool": "1.23.10",
+        "pdf_date_normalised_to": "1970-01-01T00:00:00+00:00"
+    },
+    "data_commit": "dd3cc6a",
+    "extract": {
+        "path": "docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv",
+        "sha256": "03abd0c660e0ad22db89f767a7b033c18db82f67dde69593c31cbb3a3919a4d5"
+    },
+    "selection": {
+        "rule": "for each [1,99] percentile window corner of the certified PC1-PC2 projection (NR-044), the feasible (ok) design of least Euclidean distance; one pick per corner; no interpolation",
+        "corners": [
+            "low PC1 / low PC2",
+            "low PC1 / high PC2",
+            "high PC1 / low PC2",
+            "high PC1 / high PC2"
+        ],
+        "picks": [
+            "i1-g13-i1",
+            "i1-g7-i7",
+            "i2-g21-i4",
+            "i3-g26-i8"
+        ]
+    },
+    "registers": [
+        "NR-044",
+        "NR-051"
+    ],
+    "knobs": {
+        "power_W": 5000,
+        "v_rated": 11,
+        "tether_length": 18.8,
+        "k_mppt": 2.24,
+        "blocking_factor": 0.9472682371859096,
+        "cylinder_cone": true,
+        "rotor_count_mode": true,
+        "power_split": 0.6,
+        "cone_slope_deg": 22,
+        "rotor_spacing_frac": 0.8,
+        "min_wall_m": 0.002,
+        "t_over_D": 0.055
+    },
+    "scale": {
+        "m_per_px": 0.060299397605278617,
+        "window": {
+            "x": [
+                -6.210837953343698,
+                6.210837953343698
+            ],
+            "y": [
+                -0.7593257476232939,
+                19.742469438171437
+            ]
+        },
+        "panel_px": [
+            206,
+            340
+        ],
+        "scale_bar_m": 5,
+        "tolerance_px": 0.05
+    },
+    "panels": [
+        {
+            "corner": "low PC1 / low PC2",
+            "tag": "i1-g13-i1",
+            "gen": 13,
+            "genome": [
+                2.399439,
+                1.195302,
+                2.1,
+                7.0,
+                0.03504,
+                1.854575,
+                10.739909,
+                3.612695,
+                0.985266,
+                1.0
+            ],
+            "source_row": 1,
+            "objective": "60.646",
+            "pc": [
+                -1.454422719460881,
+                -1.2381783660964074
+            ],
+            "counts": {
+                "rings": 7,
+                "gaps": 6,
+                "lines_per_gap": 7,
+                "rotors": 2,
+                "blades_per_rotor": 7,
+                "blade_segments": 14,
+                "polylines": 42,
+                "markers": 2
+            }
+        },
+        {
+            "corner": "low PC1 / high PC2",
+            "tag": "i1-g7-i7",
+            "gen": 7,
+            "genome": [
+                2.872468,
+                1.195302,
+                1.3099,
+                8.0,
+                -0.416824,
+                1.952533,
+                2.507705,
+                7.126852,
+                0.980572,
+                0.759349
+            ],
+            "source_row": 2,
+            "objective": "58.864",
+            "pc": [
+                -2.088226639859835,
+                0.15235262029499194
+            ],
+            "counts": {
+                "rings": 11,
+                "gaps": 10,
+                "lines_per_gap": 8,
+                "rotors": 2,
+                "blades_per_rotor": 8,
+                "blade_segments": 16,
+                "polylines": 80,
+                "markers": 2
+            }
+        },
+        {
+            "corner": "high PC1 / low PC2",
+            "tag": "i2-g21-i4",
+            "gen": 21,
+            "genome": [
+                4.5161,
+                1.195302,
+                2.205128,
+                3.0,
+                0.233211,
+                1.0,
+                15.28452,
+                5.534872,
+                1.0,
+                0.973156
+            ],
+            "source_row": 3,
+            "objective": "33.704",
+            "pc": [
+                1.1320505630841722,
+                -1.4885916539902184
+            ],
+            "counts": {
+                "rings": 6,
+                "gaps": 5,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 15,
+                "markers": 2
+            }
+        },
+        {
+            "corner": "high PC1 / high PC2",
+            "tag": "i3-g26-i8",
+            "gen": 26,
+            "genome": [
+                4.313549,
+                1.195302,
+                2.571577,
+                3.0,
+                -0.8,
+                1.007551,
+                0.00353,
+                22.0,
+                0.965775,
+                0.2
+            ],
+            "source_row": 4,
+            "objective": "33.812",
+            "pc": [
+                1.6797549581527265,
+                3.050611156709037
+            ],
+            "counts": {
+                "rings": 6,
+                "gaps": 5,
+                "lines_per_gap": 3,
+                "rotors": 1,
+                "blades_per_rotor": 3,
+                "blade_segments": 3,
+                "polylines": 15,
+                "markers": 2
+            }
+        }
+    ],
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl --script-commit a4b4057",
+    "outputs": {
+        "machine-corner-grid.pdf": "298a0f8e4e674dc8e13b64715ee0dfd383e7671d9f3c262a376abe7d5b5114c6",
+        "checks.log": "e6bcfca931d36089dd2a8d6e9c8414fb49230c0d2110717176cf1e0ae385ffbe",
+        "machine-corner-grid.png": "517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568",
+        "machine-corner-grid.svg": "b2e4055d39b7ff72d1e10ea11f59d3bbc8af145ef8a30dc83b7016530b4de0b2"
+    }
+}
