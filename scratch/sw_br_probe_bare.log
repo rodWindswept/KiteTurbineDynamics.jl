@@ -1,0 +1,28 @@
+== phrase: 'bridles'
+   DOC FLAG docs/agents/domain.md:85: 1 line), bridles (lift bearing ↔ main-rotor vertices, n_lines lines). The
+   DOC FLAG docs/agents/domain.md:86: bridles are the load path that lets the lift chain carry the main rotor.
+   DOC FLAG docs/agents/domain.md:90: vertically at the lift bearing throughout operation. If the bridles read
+   DOC FLAG docs/agents/domain.md:98: (small angle between bridles) ⇒ more axis-aligned ⇒ less radial ring
+   DOC FLAG docs/agents/instrument-trust-log.md:37: | 2026-09-22 | Off-axis bridle wrap torque is a second independent driver | rope_forces.jl:359 proje
+   DOC FLAG docs/agents/instrument-trust-log.md:53: | 2026-09-12 | Lift chain disconnected. Bridles slack. Lift never reaches the rotor | The 6 bridles 
+   DOC FLAG docs/agents/physics-topology.md:70: their tensions are different quantities. DECISIONS.md calls the bridles the
+   DOC FLAG docs/agents/physics-topology.md:71: gold bridles. The dashboard draws them gold (dashboard_v2.jl:288).
+   DOC FLAG docs/agents/physics-topology.md:95: ->  bridles    ->  MAIN ROTOR (topmost ring)
+   DOC FLAG docs/agents/physics-topology.md:100: 1. the lift chain, arriving through the taut bridles, and
+   DOC FLAG docs/agents/physics-topology.md:109: Sessions have missed this consequence repeatedly: if the bridles are slack, the
+   DOC FLAG docs/agents/physics-topology.md:111: not a benign state. See DECISIONS.md:1806-1822 ("12/13 bridles slack, tension
+   DOC FLAG docs/agents/physics-topology.md:112: chain broken") and :2108-2120 ("the gold bridles go completely slack (Tension =
+   DOC FLAG docs/agents/physics-topology.md:123: The bridles are all the same fixed length. We fix that length once before
+   DOC FLAG docs/agents/physics-topology.md:167: lines attaching to that ring. The legacy exception forcing bridles into the shaft frame
+   DOC FLAG docs/agents/physics-topology.md:447: 2. Is every line above the ground ring taut? Check cyan, bridles and backline
+   DOC FLAG docs/agents/physics-topology.md:448: tensions at the operating point. Zero tension on the bridles means the lift
+   DOC FLAG CONTEXT.md:58: - Lift chain: lift kite → lift line → sky hook → cyan line → lift bearing → bridles → main rotor. Th
+   DOC FLAG CONTEXT.md:62: Critical failure mode — slack lift chain: if the bridles go slack the lift chain is structurally dec
+   DOC FLAG CONTEXT.md:184: | Bridles ("gold bridles") | n_lines lines, lift bearing ↔ main-rotor attachment vertices. All the s
+   SKILL HIT engineering/makie-static-figures/SKILL.md
+   SKILL HIT windswept/windswept-knowledge/SKILL.md
+   SKILL HIT windswept/ktd-structural-checks/SKILL.md
+   SKILL HIT .archive/ktd-rig-topology/SKILL.md
+   totals: doc flags 20, skill hits 4
+
+zero flags on both sides = the phrase can land bare; any flag = note-form and a room call.

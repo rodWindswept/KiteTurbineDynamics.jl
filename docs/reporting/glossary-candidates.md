@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v16, numbers-free by construction (no measurement values, no
+**Status** PREP v17, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -89,16 +89,16 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | ring spacing ratio (L/r) | The ratio of ring spacing to ring radius. The shaft layout targets this ratio. | genome-glossary spacing gene, DECISIONS [2026-10-03] | supply |
 | ring geometry | The lever family that sets ring radii and ring spacing. | genome-glossary radius and density genes, U2 | supply |
 | rotor count | The number of ring stations that carry a rotor. The count reads rotor stations, not active blade lines. | genome-glossary rotor mask gene | supply |
-| lift chain | The support path that holds the main rotor. It runs: lifter kite, lift line, sky hook, cyan line, lift bearing, bridles, main rotor. | physics-topology 2 | ratify |
+| lift chain | The support path that holds the main rotor. It runs: lifter kite, lift line, sky hook, cyan line, lift bearing, lifting bridles, main rotor. | physics-topology 2 | ratify |
 | lifter kite | The topmost kite. It launches first and gives lift only. It carries no torque and no drive. | physics-topology 2 | ratify |
 | stack of autogyros | The lifter in this report: autogyro rotors stacked on one lift line. The stack takes the place of one large kite. Stack sizing is a solved problem. | `src/lift_kite.jl` (`StackedLifterParams`), handover 2026-08-05 (stationarity audit), `CoaxialAutogyroStacking.jl` | room-supplies |
 | modulation (lift modulation) | Lift modulation: the lifter can meet the lift requirement as the wind changes. The report assumes the stack can do this at all wind speeds. A fixed kite cannot: its pull grows as the square of the wind speed. Without modulation, each weather band needs its own kite. | `src/lift_kite.jl`, DECISIONS [2026-08-19], `run_v13_5kw_masslift.jl` | room-supplies |
 | lift line | One line from the lifter kite to the sky hook. | physics-topology 2 | ratify |
 | sky hook (sky anchor) | The three-way knot between the lift line, the backline and the cyan line. Pick one name for the report. | physics-topology 2, CONTEXT.md | ratify |
 | backline | One line from the sky hook to the backline ground anchor. It limits sky-hook altitude, and it is not a load path. It stays taut at the design point. | physics-topology 3.2 | ratify |
-| cyan line | One line from the sky hook to the lift bearing. It carries the TRPT load. It is never a bridle. | physics-topology 2 | ratify |
-| bridles (gold bridles) | The lines from the lift bearing to the main-rotor vertices. They are the load path of the lift chain. | physics-topology 2 | ratify |
-| lift bearing | The swivel that rides the shaft axis. It sits at the apex of the bridle cone. | physics-topology 2 and 3.1 | ratify |
+| cyan line | One line from the sky hook to the lift bearing. It carries the TRPT load. It is never a lifting bridle. | physics-topology 2 | ratify |
+| lifting bridles (gold lifting bridles) | The lines from the lift bearing to the main-rotor vertices. They are the load path of the lift chain. | physics-topology 2 | ratify |
+| lift bearing | The swivel that rides the shaft axis. It sits at the apex of the lifting-bridle cone. | physics-topology 2 and 3.1 | ratify |
 | ground station | The ground end of the machine: generator and power take-off. It reels no line. | outline section 3, CONTEXT.md | ratify |
 | PTO (power take-off) | The part that converts shaft rotation into electricity. | CONTEXT.md | supply |
 | autogyro thrust | The lift the spinning rotor makes by itself. It shares the support of the main rotor with the lift chain. | physics-topology 3 | supply |
@@ -261,7 +261,7 @@ defect, like a missing register row.
 | Do not write | Write | Ground |
 |---|---|---|
 | "hub rotor", or "hub" for a rotor or the ring | main rotor, topmost ring | stale-phrases, physics-topology 4 |
-| "bridles (cyan lines)" | name each line: bridles, cyan line | stale-phrases, physics-topology 2 |
+| "bridles (cyan lines)" | name each line: lifting bridles, cyan line | stale-phrases, physics-topology 2 |
 | bare "the line" | name the line | physics-topology 2 |
 | "λ" for the blade-scale gene | blade scale, written longhand | genome-glossary |
 | "λ³" for blade mass | the blade-mass law in blade span | CONTEXT.md blade-mass law row |
@@ -371,4 +371,10 @@ defect, like a missing register row.
   The topmost ring row joins the machine group beside the ground ring.
   The main-rotor guard and the retire list take the ring name.
   The rename lands with the round-6 fold, so the term gate reads one form.
+  No other change.
+
+- **v17 (2026-10-15):** the lifting-bridles rename re-keys the lift-chain rows.
+  The term row, the chain list and the cyan-line guard take the founder form.
+  The lift-bearing row follows at the cone reference.
+  The rename lands with the lifting-bridles relabel.
   No other change.

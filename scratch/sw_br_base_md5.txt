@@ -1,0 +1,3 @@
+c115c4a5ff018babe86006dfa40d647c  docs/reporting/glossary-candidates.md
+265f7246105fa0ae8c7bca7655c30667  docs/reporting/figures/figure-generation-notes.md
+5d5e5c61d041f9a19b48a5d24cdfd375  docs/agents/stale-phrases.md

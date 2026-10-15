@@ -10,7 +10,7 @@ Sky anchor: the 300 g three-way knot, with all three legs:
 lift line, up to the lifter;
 back line, down to the back-line ground anchor, drawn taut (2026-09-15 ruling). Its job is to limit lift-bearing altitude (physics-topology.md §3). The brief omits it.
 the line to the lift bearing (name held at Track D).
-Lift bearing, then three bridles (one per TRPT line) to the R6 vertices.
+Lift bearing, then three lifting bridles (one per TRPT line) to the R6 vertices.
 R6, the hub ring, radius 4.580 m, carrying the main rotor. The blades straddle the ring: inner edge 4.130 m, tip 5.630 m (0.3 of the 1.50 m span inside, 0.7 outside).
 S5, the cone: fixed 22° half-angle, 10.08 m lines, R5 to R6.
 S1–S4, the cylinder: radius 0.804 m, 2.363 m lines, rings R1–R5.
@@ -27,7 +27,7 @@ Cleared for print (build dump at 980de02, science-validator): cylinder 9.4533 m,
 Corrections to the brief:
 
 "Cyan line" is a dashboard colour, not a name. Hold the label until Track D picks. The 10 October review asks for "bearing line".
-The brief's eye path runs "down the lift line" from the knot. Below the knot the line is the cyan/bearing line. physics-topology.md §3 makes the distinction load-bearing: bridle = bearing to rotor; cyan line = sky anchor to bearing.
+The brief's eye path runs "down the lift line" from the knot. Below the knot the line is the cyan/bearing line. physics-topology.md §3 makes the distinction load-bearing: lifting bridle = bearing to rotor; cyan line = sky anchor to bearing.
 The brief caps labels at twelve. The floor list holds sixteen terms. Split them across the two panels and an inset. Do not drop the back line to fit.
 
 Blocked by: Track D (the knot name, the bearing-line name). Decision 2: F1 marks the point where the 1.5 × weight check sits, with a dot and the label "lift check point". The code applies it at the lift bearing (NR-026). Your requirement puts it at the sky hook.

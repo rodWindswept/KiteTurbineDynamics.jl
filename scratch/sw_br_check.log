@@ -1,0 +1,29 @@
+PASS 01 candidates: status reads PREP v17
+PASS 02 candidates: the chain list takes the new form
+PASS 03 candidates: the cyan-line guard names the member
+PASS 04 candidates: the term row takes the new form
+PASS 05 candidates: the cone reference follows
+PASS 06 candidates: the retire row takes the new form
+PASS 07 candidates: the v17 delta head reads
+PASS 08 candidates: the old form reads once (the ban quote)
+PASS 09 candidates: the one old form is the ban quote
+PASS 10 candidates: the ban quote holds
+PASS 11 candidates: eight lifting inserts, net
+PASS 12 candidates: the v17 delta closes the file
+PASS 13 notes: the floor list takes the new form
+PASS 14 notes: the distinction takes the new form
+PASS 15 notes: the old form reads once (the deferred style line)
+PASS 16 notes: the deferred line is the style class, enumerated
+PASS 17 notes: line 13 reads the new form
+PASS 18 notes: line 30 reads the new form
+PASS 19 stale-phrases: the replacement takes the new form
+PASS 20 stale-phrases: the dated note reads
+PASS 21 stale-phrases: the bearing_offset replacement follows
+PASS 22 stale-phrases: the old form reads once (the heading)
+PASS 23 stale-phrases: the one old form is the heading
+PASS 24 probe: gold bridles reads 3 doc flags, 0 skill hits
+PASS 25 probe: bare bridles reads 20 doc flags, 4 skill hits
+PASS 26 candidates: md5 reads the folded value
+PASS 27 notes: md5 reads the folded value
+PASS 28 stale-phrases: md5 reads the folded value
+-- 28 checks, 0 fail
