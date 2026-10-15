@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `08b8523` on `bank-derate-cos2p65`.
+**Base:** branch tip `7e68f0e` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +32,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The corner-machines fold and the v0.51 copy counter-read read at `7e68f0e`. The copy (md5 `74aa4c02`) reads its record, its 32 pins, its eight embeds and its 43-row appendix. The eighth embed is the corner plate (`517a77bf`). The draft folds v0.50 and v0.51 read their exact sets, with no value moves. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-v051-copy-counterread.md`. Evidence `scratch/av_v051_copyread.py` plus log.
 
 - The lifting-bridles relabel and the v0.49 copy counter-reads read at `08b8523`. The SA relabel bytes read pin for pin, and the chain re-runs byte-identical at five locations. The draft folds v0.48 and v0.49 read their exact sets, and the corner cites close at `cb862df`. The rebuilt copy (md5 `24f98df6`) reads its record, its 28 pins, its seven embeds and its holds, with no value moves. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-bridles-relabel-and-v049-copy-counterread.md`. Evidence `scratch/av_br_relabel_read.py` and `scratch/av_v049_copyread.py` plus logs.
 
@@ -92,4 +94,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the next copy counter-read when the corner grid or the kMppt sentence folds into the report. The standing figure watches hold until then.
+**Owner:** @aero-validator. **Next action:** the next copy counter-read when the next draft fold lands. The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
