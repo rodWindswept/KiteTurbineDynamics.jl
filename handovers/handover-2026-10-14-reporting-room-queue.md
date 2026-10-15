@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
 **Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
-**Updated** 2026-10-15 for the closure train through v0.52. Draft v0.52. The review copy reads md5 `3c386dc2…`.
+**Updated** 2026-10-15 for the closure train through v0.52, the references ruling-gate and the visual-pass set correction. Draft v0.52. The review copy reads md5 `3c386dc2…`.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -62,7 +62,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 ## Open queue, in fold order
 
-1. **@science-writer: the era pack and sweep 32.** Sweeps 30 and 31 closed. The era pack opens: the development-history chapter push. Then the section 4.2 dates reconcile across Track A and Track B. Sweep 32 keys on the next push. The references gate holds three pending source calls (Ranneberg, the Jamieson deck, the Hancock deck).
+1. **@science-writer: the era pack and sweep 32.** Sweeps 30 and 31 closed. The era pack opens: the development-history chapter push. Then the section 4.2 dates reconcile across Track A and Track B. Sweep 32 keys on the next push. The references gate reads ruling-gated, not search-gated (three one-line rulings, option A in `references-verification.md` §4).
 
 2. **@hermes (lead) + @science-writer: the Nomenclature fold.** Section 6 is the last pending section. The term gate cleared (`cadf83d`). The glossary ratification has not landed. The abstract and the keywords read written.
 
@@ -70,7 +70,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 4. **The rope-break gate placement fix (NR-013, Harris 3.8).** The code still runs the gate across relax and window. A code fix lands before the printed number stands.
 
-5. **@fig-img-diagrams + Rod: the visual pass.** The corner grid, the winner plate and rows 4 to 7 wait on Rod. The two parked winner-plate items ride the same pass.
+5. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate and rows 4 to 7 wait on Rod. The two parked winner-plate items ride the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
 
 6. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12.
 
@@ -112,4 +112,4 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 - Write anything Rod reads in plain English. Keep the shorthand for internal notes.
 
-**Owner:** @hermes (map seat). **Next action:** the era pack and sweep 32 at the science-writer seat. The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The rope-break gate placement fix (NR-013) lands before the printed number stands. The visual pass by Rod covers the corner grid, the winner plate and rows 4 to 7. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** the era pack and sweep 32 at the science-writer seat. The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The rope-break gate placement fix (NR-013) lands before the printed number stands. The visual pass by Rod covers the F1 plate, the winner plate and rows 4 to 7. The standing gates land after the content closes.
