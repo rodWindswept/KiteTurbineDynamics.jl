@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `8be6be9` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the round-6 closure re-read.
+**Base:** branch tip `5ebbc3c` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the lifting-bridles term gate closure.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -21,14 +21,19 @@ The audit checks can fan out to sub-agents when the sections are independent.
    and data availability) draws its verification facts from this seat. The section 7
    line "Fifteen of eighteen" moves with that pass.
 
-2. **The Nomenclature fold.** The fold runs with the lead and the SW seat. The hub
-   rename now reads in the terms set (the candidates v16 and the stale-phrases list).
+2. **The Nomenclature fold.** The fold runs with the lead and the SW seat. The
+   lifting-bridles rename now reads through the candidates, the notes, the
+   stale-phrases list, the plate kit, the desk amends and the copy v0.49.
    The reading holds at one form.
 
 3. **New rows before print.** Any new value in the polish round, the figure builds,
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The lifting-bridles term gate re-reads clean at `459eee2` (content `f80cbcf`, the domain amend `5ebbc3c`). The drawn set, the copy v0.49, the term set and the two closure flips read. The two reader-name amends land at the desk docs. The census classifies 428 bridle files and 166 hero files, zero unclassified.
+
+- Receipt `docs/reporting/room-responses/science-validator-2026-10-15-lifting-bridles-term-gate.md`. Checker `scratch/sv_br_term_gate_check.py`, 105 checks, 0 fail. The log sits beside it. The aero counter-reads on the relabel and the re-keys stand at the aero desk.
 
 - The round-6 term gate re-reads clean at `e6122a2` (`8be6be9`). The naming legs close. The five form notes hold. The delivered copy reads v0.47 with the retired word at 5, every one a register-appendix hold.
 
@@ -119,4 +124,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the round-6 gate reads clear end to end. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the lifting-bridles gate reads clear end to end. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
