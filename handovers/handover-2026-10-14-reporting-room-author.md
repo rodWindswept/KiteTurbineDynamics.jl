@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `34e3f81` on `bank-derate-cos2p65`.
+**Base:** branch tip `304027c` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -15,7 +15,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Open items
 
-1. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU7 and AU4.
+1. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU4.
    The scope statement keeps its one home in the AU1 limits paragraph.
    The twist-prose basis fold waits on the floor row.
    The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
@@ -32,9 +32,22 @@ The parallel work is the audits and the extracts the other seats run.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-6. **The basics-of-TRPT refresher (founder ask, scope call).** Logged in the queue. Not gated.
+6. **The basics-of-TRPT refresher (founder ask).** Activated. The scope call sits at this seat.
 
 ## Closed, last (evidence index)
+
+- The round-6 rebuild (2026-10-15): the review copy rebuilds from v0.47.
+  Record `d0ed902`, seven seats, 42 cited all signed, 51 signed rows.
+  Live md5 `1115a201…`, byte-identical to `draft-d0ed902-20261015-124752.docx`.
+  Check `scratch/au_v047_rebuild_check.py`, 19 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v047-round6-fold-and-rebuild.md`.
+
+- v0.47, the round-6 fold: commit `d0ed902`.
+  The ten hub-name sites take the signed top forms. The count prints 508 of 930 (NR-002).
+  The winner pair takes the founder form, and section 3.4 retitles to `The levers of Performance`.
+
+- v0.46, the appendix pins (figures seat): commit `45ed95a`.
+  The four script-commit cells and sixteen output-hash cells take the re-cut pins.
 
 - v0.45, AU7: the era map and the failure-ledger table: commit `34e3f81`.
   Receipt `docs/reporting/room-responses/author-2026-10-14-v045-au7-discussion.md`.
@@ -82,7 +95,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.45 build (record draft `34e3f81`, md5 `c88d19015e5d755f347f30d0e456634d`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.47 build (record draft `d0ed902`, md5 `1115a2019872ad10929941d4baeb67a6`).
 
 ## Boot
 
@@ -117,4 +130,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The tails wait on AU4. AU7 closed at `34e3f81`.
+**Owner:** @author. **Next action:** open the kMppt plain pass (the era call gates its cite). The round-6 rebuild closed at this seat, and the copy counter-read keys at the aero seat. The tails wait on AU4.
