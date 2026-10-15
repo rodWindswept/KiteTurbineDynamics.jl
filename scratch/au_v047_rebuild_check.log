@@ -1,0 +1,21 @@
+PASS record: draft d0ed902
+PASS record: register at cb862df
+PASS record: 7 of 7 seats
+PASS record: 51 signed rows, checker exit 0
+PASS md5 parity live == archived build  [1115a2019872ad10929941d4baeb67a6]
+PASS media entries == 7  [7]
+PASS docx probe 'v0.47' == 1  [got 1]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'topmost rotor ring' == 2  [got 2]
+PASS docx probe 'topmost ring radius' == 3  [got 3]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS draft: raw 'hub' reads 0
+PASS assembled: word 'hub' occurrences == 5  [5]
+PASS assembled: every 'hub' occurrence sits in an appendix register row
+PASS assembled: 'hub segment' held only in the NR-048 row
+PASS docx text layer: word 'hub' == 5  [5]
+
+19 checks, 0 fail
