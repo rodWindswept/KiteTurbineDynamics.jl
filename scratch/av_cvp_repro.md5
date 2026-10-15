@@ -1,0 +1,9 @@
+# av_cvp_repro.md5 — the F-REPRO counter-read, two fresh runs vs the committed set
+# script commit 0db99ac
+# file | committed | run1 | run2
+convergence.svg | 548102e9bdaf32866b52fd4ebb1da8b5 | 548102e9bdaf32866b52fd4ebb1da8b5 | 548102e9bdaf32866b52fd4ebb1da8b5
+convergence.pdf | 30e9b1487ae084a08850f934627c11fd | 30e9b1487ae084a08850f934627c11fd | 30e9b1487ae084a08850f934627c11fd
+convergence.png | 27d10ab8b6fd2e57af2e4a4d9664c372 | 27d10ab8b6fd2e57af2e4a4d9664c372 | 27d10ab8b6fd2e57af2e4a4d9664c372
+label-ledger.txt | eeed92b3f544c6ff2c29719995408b6f | eeed92b3f544c6ff2c29719995408b6f | eeed92b3f544c6ff2c29719995408b6f
+manifest.json | 54275ed84115cf80f28b1c2e06414cc5 | 54275ed84115cf80f28b1c2e06414cc5 | 54275ed84115cf80f28b1c2e06414cc5
+# verdict: 5 of 5 byte-identical across the three locations

@@ -1,0 +1,6 @@
+# av_cvp_repro.log — the F-REPRO counter-read for the convergence kit (two fresh runs vs the committed set)
+# stamp: 2026-10-15T21:42:14Z (aero-validator seat)
+# read at tip: 1c65d27; kit bytes pinned at 2361771; script commit 0db99ac
+check: R1 F-REPRO byte identity: 5 of 5  (OK)
+check: R2 run stdout == committed checks.log: OK
+# table written: scratch/av_cvp_repro.md5
