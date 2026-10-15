@@ -1,0 +1,68 @@
+PASS record: draft d453530
+PASS record: register at 2142d43
+PASS record: 8 of 8 seats
+PASS record: 48 cited, every one signed (54 total), checker exit 0
+PASS record: built 2026-10-15T20:25:20Z
+PASS md5 parity live == archived build  [72ef99bee03bc301433c3d533a1abc54]
+PASS md5 reads 72ef99bee03bc301433c3d533a1abc54
+PASS media entries == 8 (eight seats)  [8]
+PASS docx probe 'v0.54' == 1  [got 1]
+PASS docx probe 'v0.53' == 0  [got 0]
+PASS docx probe 'v0.52' == 0  [got 0]
+PASS docx probe 'Reference wind speed' == 1  [got 1]
+PASS docx probe 'Ring speed ratio' == 1  [got 1]
+PASS docx probe 'Tip-speed ratio' == 1  [got 1]
+PASS docx probe '5.566' == 3  [got 3]
+PASS docx probe '6.8415' == 3  [got 3]
+PASS docx probe '45.9733' == 2  [got 2]
+PASS docx probe '39.4912' == 2  [got 2]
+PASS docx probe '1.225' == 3  [got 3]
+PASS docx probe '19.1304' == 3  [got 3]
+PASS docx probe '27.75' == 2  [got 2]
+PASS docx probe '72.25' == 2  [got 2]
+PASS docx probe '0.2944' == 2  [got 2]
+PASS docx probe '0.2258' == 2  [got 2]
+PASS docx probe 'AeroDyn v5.0.0' == 1  [got 1]
+PASS docx probe 'The swept area reads 45.9733 square metres raw and 39.4' == 1  [got 1]
+PASS docx probe 'The rotor Cp reads' == 1  [got 1]
+PASS docx probe 'The Betz ceiling reads 19.1304 kW' == 1  [got 1]
+PASS docx probe 'Torsion keeps its own criteria' == 1  [got 1]
+PASS docx probe 'The realisability floor reads 72.25 degrees (NR-053)' == 1  [got 1]
+PASS docx probe '2.5 gate does not cover torsion (NR-052)' == 1  [got 1]
+PASS docx probe 'The structural members and the lines' == 1  [got 1]
+PASS docx probe 'The gate set reads per class' == 1  [got 1]
+PASS docx probe 'hold a factor of safety of 2.5 or higher' == 1  [got 1]
+PASS docx probe 'NR-052' == 3  [got 3]
+PASS docx probe 'NR-053' == 3  [got 3]
+PASS docx probe 'NR-031' == 3  [got 3]
+PASS docx probe 'NR-033' == 2  [got 2]
+PASS docx probe 'NR-034' == 3  [got 3]
+PASS docx probe 'The fix has landed.' == 1  [got 1]
+PASS docx probe 'It never allows breaks.' == 1  [got 1]
+PASS docx probe '508 feasible candidates' == 1  [got 1]
+PASS docx probe 'mean power of 5.309' == 1  [got 1]
+PASS docx probe '25.698 kilograms' == 4  [got 4]
+PASS docx probe 'topmost ring' == 9  [got 9]
+PASS docx probe 'levers of Performance' == 1  [got 1]
+PASS docx probe 'The rapid path awaits its rope-break gate fix' == 0  [got 0]
+PASS docx probe 'The rapid path rejects all three winners' == 0  [got 0]
+PASS docx probe 'stays open' == 0  [got 0]
+PASS docx probe '11.01 m/s at 9.41 m' == 2  [got 2]
+PASS docx text layer 'Reference wind speed' == 1  [got 1]
+PASS docx text layer 'does not cover torsion' == 1  [got 1]
+PASS docx text layer 'Betz ceiling' == 2  [got 2]
+PASS docx text layer 'The swept area reads' == 1  [got 1]
+PASS draft: pin reads v0.54
+PASS draft: v0.53 reads 0
+PASS draft: line count 1044  [1044]
+PASS draft: fix-landed reads once
+PASS draft: NR-013 ext2 reads 5
+PASS draft: placed-fix sentence reads 2
+PASS draft: NR-049 sentence held
+PASS draft: new rows read once each
+PASS draft: torsion block reads once
+PASS tracker: v0.54 entry present
+PASS tracker: v0.53 history held
+
+65/65 checks passed
+ALL PASS
