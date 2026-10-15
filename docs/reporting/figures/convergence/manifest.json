@@ -1,0 +1,52 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/convergence/convergence.py --script-commit 0db99ac",
+  "data_commit": "dd3cc6a",
+  "inputs": {
+    "extracts": [
+      {
+        "path": "scratch/av_conv_series.csv",
+        "sha256": "d817689b38889753a08c15f7455d8e074c6fcbb93c773e2ebf654ce2bd601d72"
+      },
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1/telemetry.csv",
+        "sha256": "6f359c33f174d5dc98b1252e29fdba6eac8dbae15dd71d46ef8bbed6acc9bd2f"
+      },
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_2/telemetry.csv",
+        "sha256": "54172ce5a64b22903a2428f870b499f13da53c6b065600d8a01edfd882b29827"
+      },
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/telemetry.csv",
+        "sha256": "34d40e8ea960a1e04c83df58df9e24047cfcf7eb3deff3278807f1147b8d60b0"
+      }
+    ],
+    "register_rows": [
+      "NR-002",
+      "NR-003",
+      "NR-004",
+      "NR-005",
+      "NR-006",
+      "NR-036",
+      "NR-054",
+      "NR-055"
+    ]
+  },
+  "outputs": {
+    "convergence.pdf": "dd48591696f8266d5b91714617f3cc7bd6667c2e91451df31575adfa107778b4",
+    "convergence.png": "4418bfc3e95c61efbde4151f54fe757f71172a2b6b34874ea927be2a8831eb37",
+    "convergence.svg": "4ccd25b1b62e7e31d35c3ab1ec2128a7a293807e43b518178c0a3ebcea882c6d",
+    "label-ledger.txt": "e2390ca2f8c009cfc27b7bf031b530640b55c7a049b9546705566753d37bda86"
+  },
+  "precision": "counts are integers; the objective prints 3 dp; seed and winner as signed (36.109, 27.364)",
+  "script": {
+    "path": "docs/reporting/figures/convergence/convergence.py",
+    "sha256": "ee842168e1e5d0244d9309959d49de82a0f65df6fb2422bf6b3ee75513784c9d"
+  },
+  "script_commit": "0db99ac",
+  "slug": "convergence",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "python": "3.12.3"
+  }
+}

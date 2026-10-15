@@ -1,0 +1,34 @@
+0
+10
+15
+20
+25
+26
+28
+30
+32
+34
+36
+5
+First feasibility, then mass
+designs
+feasible (508)
+generation
+island 1
+island 2
+island 3
+islands 1 and 2 improve to their last generation · the budget stops the search
+rejected: FoS below 2.5 (4)
+rejected: cause not logged (201)
+rejected: power below the 5 kW floor (96)
+rejected: rotor below 1.5 m clearance (110)
+rejected: twist past the crossing limit (11)
+rows NR-002 · NR-003 · NR-004 · NR-005 · NR-006 · NR-036 · NR-054 · NR-055 · script commit 0db99ac
+search objective (kg)
+sources: the campaign telemetry, islands 1 to 3 · the convergence series extract · data commit dd3cc6a · run a76c5e9
+the campaign across generations 0 to 30 · era post-95c385d_wind-authority
+the campaign winner · 27.364
+the common seed · 36.109
+the outcome mix of each generation · pooled over the three islands
+the reject split reads the power floor first
+the running-best search objective of each island

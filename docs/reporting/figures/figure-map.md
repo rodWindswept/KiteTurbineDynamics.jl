@@ -45,7 +45,7 @@ full roster around them.
 | 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
 | 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
 | 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
-| 16 | 8 | §3.2 | Convergence and the status mix (two panels) | ⟨tbd⟩ | planned | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054. The status mix reads the three island telemetry files (generations 0 to 30) | Seated (v47) as the recorded merge, "first feasibility, then mass": panel 1, the pooled status mix. Panel 2, the three running-best curves. The series extract lands (`9dd453d`), and NR-054 signs (science-validator, `441b9c7`). Next: the SPEC then the generator at the figures seat. The reject labels ride the 301 print-or-park call. |
+| 16 | 8 | §3.2 | Convergence and the status mix (two panels) | `convergence` | R2 | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054 and NR-055. The status mix reads the three island telemetry files (generations 0 to 30) | The build lands (script `0db99ac`): two panels, "first feasibility, then mass", 22 checks, 0 fail, and F-REPRO byte-identical across three locations. The reject labels take the NR-055 forms. Next: the counter-reads (the aero F-VALUE and the science register read), then the visual pass by Rod |
 | 17 | 13 | §3.4 | Sensitivity tornado | ⟨tbd⟩ | proposed | Gene perturbations, plus or minus 10 per cent, on the ODE path. Harris 3.5 | The phase gates. Folds into row 8 if the cut bites. Park candidate |
 | 18 | 18 | open | Daisy validation chart | ⟨tbd⟩ | proposed | The Daisy April-29 anchor. The August calibration. Harris 2.8 | The 2.8 rows. The placement ruling |
 | 19 | ⟨tbd⟩ | §2.2.2 or §2.3 (cascade open) | Systems block diagram. The simulation analysis pipeline instrument | ⟨tbd⟩ | proposed | The founder return, note 15 (`c2e2aee`). The pipeline code (`src/`, the runner) | The pipeline schema extract. The reading-order slot (author seat) |
@@ -519,3 +519,14 @@ three slots).
   figure-generation notes take the seating note. Next: the SPEC then
   the generator at this seat. The reject labels ride the 301
   print-or-park call. No plate byte moves.
+
+- **v48 (2026-10-15):** the convergence two-panel build lands (row 16).
+  The generator (`0db99ac`) draws the merged two-panel figure "first
+  feasibility, then mass". Panel 1 carries the pooled status mix with
+  the NR-055 reject split. Panel 2 carries the three island
+  running-best curves from the aero extract. The label set applies the
+  301 print ruling and the NR-055 forms. The row moves to R2 and the
+  slug `convergence` fills. The outputs and the records ride this
+  commit. The in-script set reads 22 checks, 0 fail. F-REPRO stays
+  byte-identical across three locations. Next: the counter-reads, then
+  the visual pass by Rod.
