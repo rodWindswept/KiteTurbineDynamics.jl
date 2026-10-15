@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `3a6e84d` on `bank-derate-cos2p65`.
+**Base:** branch tip `066e1a8` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +30,16 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 ## Closed, last (evidence index)
+
+- The v0.54 operating-point and torsion pass (2026-10-15): the winner operating point completes and the torsion clause folds.
+  Fold `d453530`, 5 anchors and 36 guards closed.
+  Review copy rebuilds (record `d453530`, live md5 `72ef99be…`, byte-identical to `draft-d453530-20261015-202520.docx`).
+  Check `scratch/au_v054_rebuild_check.py`, 65 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-15-v054-opoint-torsion.md`.
+
+- v0.54, the operating-point and torsion fold: commit `d453530`.
+  Section 3.3 prints the wind, the ratios, the swept-area set, the air density, the rotor Cp and the Betz check (NR-031 to NR-034).
+  The gate block prints per class, with the torsion criteria and the realisability floor (NR-052, NR-053).
 
 - The v0.53 fixed-defect pass (2026-10-15): the rope-break fixed defect reads across the draft.
   Fold `89ed222`, 10 anchors and 52 guards closed.
@@ -130,7 +140,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.53 build (record draft `89ed222`, md5 `e1eaef4358f7bff7e8da8b8b73a5cf3b`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.54 build (record draft `d453530`, md5 `72ef99bee03bc301433c3d533a1abc54`).
 
 ## Boot
 
