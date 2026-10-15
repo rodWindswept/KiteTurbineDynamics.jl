@@ -1,0 +1,14 @@
+# sv_301_item21_readback.log — the 301 split and the item-2.1 environment rows readback
+# stamp: 2026-10-15T21:04:59Z (science-validator seat)
+# base: 0e18e08 | main commit: a51e9d978501c0864e56d4bbe405ffea33c63ee0 (branch bank-derate-cos2p65)
+# local == origin: a51e9d978501c0864e56d4bbe405ffea33c63ee0 == a51e9d978501c0864e56d4bbe405ffea33c63ee0
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/numbers-register.md | b46a17ab816f8360bb8f9f071a5a58527270007a | b46a17ab816f8360bb8f9f071a5a58527270007a | 3e373838d4eaaebc23cbb073641a02f612174391e427fed8a6e0c6a1c1ed10a3
+docs/reporting/room-responses/science-validator-2026-10-15-301-split-and-item21-rows.md | 97ab4a375daa4d15e348ac425d0eb7ecfc8db346 | 97ab4a375daa4d15e348ac425d0eb7ecfc8db346 | 4827cd04e3169846fd21efcfbd29ce4df09af57e5fd556870beed8a59ee0e2f8
+scratch/sv_301_split_check.py | ae360163d91193ce0e1157390c7b33ac9fe006a2 | ae360163d91193ce0e1157390c7b33ac9fe006a2 | c3ae17f533736ecc22833f1d6d519375a80f0657b634550e2312e7a35d4bfd4e
+scratch/sv_301_split_check.log | cf636a4a762073ac37fff955a5cc58f929bf613f | cf636a4a762073ac37fff955a5cc58f929bf613f | 364acfac0ce17f685b8013acf704fe31dfabf13b56adf5031e7dcee6488bb620
+scratch/sv_item21_env_probe.jl | 3721dfa959c57c91749154d04f116a0599bf925c | 3721dfa959c57c91749154d04f116a0599bf925c | 08b76e3f689a81d1bf9db9e29d6ebba7830b0e06b5c74d5612bdd8402137d6b7
+scratch/sv_item21_env_probe.log | 1440a2b8c08df59131bca7213bc1d10705bf6f2e | 1440a2b8c08df59131bca7213bc1d10705bf6f2e | db3d69c3f1917b47a673e208d272e4532d82ebfee7bb67b36c8c77d416f38c7c
+scratch/sv_item21_env_check.py | c93672f9716c6265a28481b03cf82511a19a7c98 | c93672f9716c6265a28481b03cf82511a19a7c98 | 19db7005d4bb89843f069bcf96adb2e07653a32a1989922c95d2e62d74f6c996
+scratch/sv_item21_env_check.log | bb6d3cc61c3a5e2dba6de72246773e0954448f8f | bb6d3cc61c3a5e2dba6de72246773e0954448f8f | 21048b1eccedba69b4d06e1ba477c64559fb35cb4e8ece652343fdc5fb232878
+# verdict: all eight carried blobs byte-verified at origin
