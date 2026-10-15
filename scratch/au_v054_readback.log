@@ -1,0 +1,21 @@
+# Readback: the v0.54 operating-point and torsion pass (author seat, 2026-10-15)
+
+Commits (bank-derate-cos2p65):
+  d453530  the fold (draft v0.54, the operating-point set and the torsion clause)
+  066e1a8  the receipt set (receipt, rebuild check, check log)
+  bfe5610  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+f747e3debab1185d1b8df2fead325e68  docs/reporting/drafts/2026-10-08-report-first-draft.md
+a7b9b784f252478e1579be2d315f047f  docs/reporting/draft-tracker.md
+4f026ae34aab63bba726e555bb3c09d7  scratch/au_v054_33_opoint_and_torsion_fold.py
+83b3a37b6dad30211d9715926dd196ce  scratch/au_v054_33_opoint_and_torsion_fold.log
+8420b8d859666224cad4a8dfed72c95d  docs/reporting/room-responses/author-2026-10-15-v054-opoint-torsion.md
+6ae3947c2f424687ccb949972872abd2  scratch/au_v054_rebuild_check.py
+a30ad0a23361ce1a5c75408638be65c4  scratch/au_v054_rebuild_check.log
+3994e53687b1c244c633c2f8977effc3  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == bfe56105c1b0cfce6e4a3270cb4ecea9b58f8280 at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 72ef99bee03bc301433c3d533a1abc54) stays untracked and is not carried.
+Note: the bfe5610 message cites the seat-page STE figure as 1.31/100w; the seat page reads 0.08/100w. The figure corrects here, and the page bytes hold.
+This log rides the next commit.
