@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `cb862df` on `bank-derate-cos2p65`. **Updated** 2026-10-14 for the round-6 seat signs.
+**Base:** branch tip `d0ed902` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the round-6 term gate.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -25,13 +25,21 @@ The audit checks can fan out to sub-agents when the sections are independent.
    section wait ends. The fold runs with the lead and the SW seat. The hub rename
    joins the terms. The reading holds at one form.
 
-3. **The round-6 term gate.** It runs after the round-6 folds, at this seat. The
-   stale-phrase entry and the glossary pair re-key ride the science-writer seat.
+3. **The round-6 naming leg, open at the science-writer seat.** The tracker (2 sites:
+   L104 and L165), the candidates (2 sites: L78 and L262) and the stale-phrases list
+   (4 sites: L63, L68, L78 and L80) take the new forms there. The round-6 term gate
+   re-reads after the leg lands.
 
 4. **New rows before print.** Any new value in the polish round, the figure builds,
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The round-6 term gate clears at `d0ed902`: the fold reads the ten signed forms, the
+  note amend and the six delivered art files clean; the census classifies 3,723 lines
+  across 826 files; the open legs are enumerated. Receipt
+  `docs/reporting/room-responses/science-validator-2026-10-15-round6-term-gate.md`.
+  Checker `scratch/sv_r6_term_gate_check.py`, 58 checks, 0 fail; log beside it.
 
 - The round-6 signs land at `cb862df`: the hub forms, the count glance, NR-051 and
   the physics-topology amend (ten draft sites, five plates, three kits).
@@ -114,4 +122,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the round-6 term gate after the folds. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the round-6 term gate reads clear; the naming leg and the copy rebuild take its re-read. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.

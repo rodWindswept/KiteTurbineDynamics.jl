@@ -1,0 +1,752 @@
+sv_r6_term_gate_check — read at HEAD d0ed902 | origin 4388fc5
+
+== A. the draft ==
+check: draft: old form zero (raw substring): OK  raw=0
+check: draft: old form zero (word): OK  
+check: draft: reads v0.47: OK  
+check: draft: topmost at the nine pinned lines: OK  [212, 225, 490, 505, 571, 612, 689, 786, 794]
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost ring carries the main rotor.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'topmost-ring and ground radii': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The top-segment helix force reads about 1278 N/vertex (NR-048).': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The capture topmost ring': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'reads 15.033 at the final step (NR-021).': OK  
+check: pin[2026-10-08-report-first-draft.md]: '| Topmost ring radius | 4.580 m | NR-011 |': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'topmost ring radius is 4.580 metres and the ground radius 0.804 metres': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost rotor ring R6 governs the structural check at the winner ope': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The topmost ring radius is 4.580 m and the ground radius is 0.804 m.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The middle rotor landed on the topmost ring.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'the topmost ring (2026-08-26)': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'one ring toward the top': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The search found 508 feasible candidates in the searched space (NR-002).': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'The best performing one had a mean power of 5.309 kW.': OK  
+check: pin[2026-10-08-report-first-draft.md]: 'Its airborne mass is 25.698 kilograms (NR-008, NR-018).': OK  
+check: pin[2026-10-08-report-first-draft.md]: '### 3.4 The levers of Performance': OK  
+check: draft: the conclusion block carries no reject split: OK  
+check: draft: the fold added no reject-split text: OK  16 added lines
+
+== B. the note (physics-topology) ==
+check: pin[physics-topology.md]: 'Do not write "hub rotor". The word "hub" does not name the ring either.': OK  
+check: pin[physics-topology.md]: 'The part reads **topmost ring**, or **topmost rotor ring** in full (Rod,': OK  
+check: pin[physics-topology.md]: 'The code identifiers (`r_hub`) and the recorded pages hold their spellin': OK  
+check: pin[physics-topology.md]: '| **hub** | a retired name. Say **main rotor** if you mean the topmost r': OK  
+check: note: old form confined to the enumerated set: OK  [165, 202, 230, 232, 265, 288, 331, 332, 339, 395, 523, 543]
+      [165] A rigid ring has **ONE plane in 3-space**. Bridle attachment points on the hub ring
+      [202] at the contracted hub position, placing the sky anchor via closed-form circle
+      [230] | **main rotor** | the topmost rotor, historically called the "hub rotor" (`RotorSpec`, `sys.rotor`)
+      [232] | **hub** | a retired name. Say **main rotor** if you mean the topmost rotor, and **topmost ring** i
+      [265] projection: `r_out = r_ring + tip·cos(bank)` and `r_in = r_ring + hub·cos(bank)`, giving
+      [288] did not change. Deleting only the hub guard cost 37 per cent of the power with the disc
+      [331] - `ring_forces.jl` **still excludes the hub ring from the expansion loop**:
+      [332] `er.ring_idx == hub_ri && continue`, the HUB GUARD dated 2026-08-22.
+      [339] alpha/induction model brakes at high solidity, and applying it at the hub ring
+      [395] Do not write "hub rotor". The word "hub" does not name the ring either.
+      [523] - **The hub axial residual is a whole-machine diagnostic.** If the lift chain has
+      [543] table (sky anchor → cyan → bearing → bridles → hub). It carries a SUPERSEDED
+
+== C. the plates and the kits ==
+check: art[system-anatomy/system-anatomy.tex]: old form zero: OK  0 hits
+check: art[ring-utilisation/ring-utilisation.svg]: old form zero: OK  0 hits
+check: art[twist-limit/twist-limit.svg]: old form zero: OK  0 hits
+check: art[eval-timeline/eval-timeline.svg]: old form zero: OK  0 hits
+check: art[machine-winner-hero/machine-winner-hero.svg]: old form zero: OK  0 hits
+check: art[machine-evolution-strip/machine-evolution-strip.svg]: old form zero: OK  0 hits
+check: art: the delivered art files read (count): OK  6
+check: pin[system-anatomy.tex]: 'R6, the topmost ring': OK  
+check: pin[label-ledger.txt]: 'R6, the topmost ring': OK  
+check: pin[ring-utilisation.svg]: 'R6 (top)': OK  
+check: pin[captions.md]: 'The topmost rotor ring R6 governs the structural check at FoS 15.033.': OK  
+check: pin[twist-limit.svg]: 'ground to top': OK  
+check: pin[captions.md]: '"R6 (top)"': OK  
+check: pin[eval-timeline.svg]: 'ω top': OK  
+check: pin[eval-timeline.svg]: 'top · tip · Betz': OK  
+check: pin[machine-winner-hero.jl]: 'topmost ring R6': OK  
+check: pin[machine-winner-hero.jl]: 'drawn topmost-ring altitude': OK  
+check: pin[captions.md]: 'topmost ring radius 4.580 m': OK  
+check: kits: every residue line enumerated: OK  []
+      kit residue: 20 record lines, 5 form-note lines (listed in the receipt)
+
+== D. the tracker, the candidates and the stale-phrases list ==
+check: pin[draft-tracker.md]: 'v0.47 pass by @author': OK  
+check: pin[draft-tracker.md]: 'The topmost-ring rename lands at the ten draft sites': OK  
+check: pin[glossary-candidates.md]: 'Never write "hub rotor"': OK  
+check: pin[glossary-candidates.md]: '"hub rotor", or "hub" for a rotor': OK  
+check: tracker: pending leg enumerated (2 sites): OK  [104, 165]
+check: candidates: pending leg enumerated (2 sites): OK  [78, 262]
+check: stale-phrases: pending leg enumerated (4 sites): OK  [63, 68, 78, 80]
+      [pending] The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture hub ring 
+      [pending] NR-009 keeps the row value, and the capture hub ring reading keeps its form.
+      [pending] | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "h
+      [pending] | "hub rotor", or "hub" for a rotor | main rotor, topmost rotor | stale-phrases, physics-topology 4 |
+      [pending] ## The hub ring hosts ONLY the cp/ct rotor
+      [pending] ## expansion_params_from_rotors excludes the decoder's hub rotor
+      [pending] ## hub rotor
+      [pending] Replacement: main rotor (the topmost rotor). "Hub" is not a rotor term — see docs/agents/physics-topolog
+      [glossary note] docs/agents/genome-glossary.md hub lines: [43, 44, 58, 59] (rule blockquote + gene rows; not in the routed set)
+
+== E. the tracked-tree census ==
+  total: 3723 matching lines across 826 files
+    code-vocabulary: 399 files, 1973 lines
+    exempt-verbatim: 8 files, 185 lines
+    extract-records: 5 files, 13 lines
+    kit-records: 20 files, 25 lines
+    live-checked: 3 files, 16 lines
+    map-ledger: 1 files, 8 lines
+    pending-leg: 1 files, 4 lines
+    received-brief: 1 files, 6 lines
+    records-evidence: 387 files, 1472 lines
+    register: 1 files, 21 lines
+  [records-evidence] .hermes/handover-2026-05-09.md: 6
+  [records-evidence] .hermes/handover-2026-05-11.md: 1
+  [records-evidence] .hermes/handover-2026-05-12.md: 1
+  [records-evidence] .hermes/handover-2026-06-14.md: 5
+  [records-evidence] .hermes/plans/2026-06-17-conference-report.md: 4
+  [records-evidence] .superpowers/brainstorm/122493-1779181596/content/deep-analysis.html: 7
+  [records-evidence] .superpowers/brainstorm/122493-1779181596/content/evidence-map.html: 2
+  [records-evidence] .video/diagrams/README.md: 1
+  [records-evidence] CHANGELOG.md: 5
+  [records-evidence] CONTEXT.md: 10
+  [exempt-verbatim] DECISIONS.md: 140
+  [records-evidence] README.md: 3
+  [records-evidence] REPRODUCIBILITY.md: 1
+  [records-evidence] TODO_ADVANCED_VISUALS.md: 2
+  [records-evidence] docs/NOTES_LIFT_KITE.md: 44
+  [records-evidence] docs/NOTES_MPPT_TWIST.md: 3
+  [records-evidence] docs/RECAP.md: 5
+  [records-evidence] docs/TRPT_AWE_Forum_Report_v4.md: 1
+  [records-evidence] docs/TRPT_Optimisation_Monograph.md: 9
+  [records-evidence] docs/adr/0004-settle-kmppt-bug-and-integrity-findings.md: 3
+  [records-evidence] docs/adr/0005-objective-evaluator-consolidation.md: 1
+  [records-evidence] docs/agents/domain.md: 5
+  [records-evidence] docs/agents/exploit-register.md: 3
+  [records-evidence] docs/agents/genome-glossary.md: 4
+  [exempt-verbatim] docs/agents/instrument-trust-log.md: 15
+  [records-evidence] docs/agents/item4-campaign-summary.md: 12
+  [pending-leg] docs/agents/stale-phrases.md: 4
+  [records-evidence] docs/audit-2026-08-20-standards-debt.md: 3
+  [records-evidence] docs/audit-literature-crosscheck.md: 5
+  [records-evidence] docs/awes-forum-diagrams/d8-system-anatomy.tex: 15
+  [records-evidence] docs/case-notes/NOTES_MPPT_TWIST.txt: 1
+  [records-evidence] docs/community/ktd-community-report.md: 2
+  [records-evidence] docs/community/ktd-community-report.tex: 3
+  [records-evidence] docs/dashboard-spec.md: 6
+  [records-evidence] docs/dashboard-v2-issues.md: 1
+  [records-evidence] docs/gate1-control-map-rerun.md: 2
+  [records-evidence] docs/handovers/handover-2026-08-09-v2.md: 2
+  [records-evidence] docs/handovers/handover-2026-08-09.md: 1
+  [records-evidence] docs/infographic-prompt-ktd.txt: 1
+  [records-evidence] docs/outreach/2026-09-21-awes-forum-initiation-guidance.md: 3
+  [records-evidence] docs/outreach/brief-someawe-labs.md: 1
+  [records-evidence] docs/outreach/figures/archive/chart-mass-origin.tex: 1
+  [records-evidence] docs/outreach/gate1-control-map-rerun.md: 2
+  [records-evidence] docs/outreach/ktd-technical-report.tex: 2
+  [records-evidence] docs/outreach/report-figures/f3-ladder-heatmap/review-1.md: 1
+  [records-evidence] docs/outreach/report-figures/f6-coherence/prose.md: 2
+  [records-evidence] docs/outreach/report-figures/f6-coherence/review-1.md: 2
+  [records-evidence] docs/outreach/report-figures/f6-coherence/spec.md: 3
+  [records-evidence] docs/outreach/report-figures/f9-april29-anchor/prose.md: 1
+  [records-evidence] docs/outreach/report-v2/structure.md: 3
+  [records-evidence] docs/outreach/technical-report.md: 4
+  [records-evidence] docs/paper-expansion-rotors-plan.md: 1
+  [records-evidence] docs/phase_j_results.md: 4
+  [records-evidence] docs/phase_n_pitch_depower_diagnostics.md: 2
+  [records-evidence] docs/phase_o_v4_pitch_depower_report.md: 3
+  [records-evidence] docs/pitch_depower_campaign_v1_review.md: 2
+  [records-evidence] docs/pitch_depower_developer_report.md: 3
+  [records-evidence] docs/pitch_depower_v2_prd.md: 1
+  [records-evidence] docs/plans/2026-03-16-kite-turbine-dynamics-design.md: 7
+  [records-evidence] docs/plans/2026-03-16-kite-turbine-dynamics-implementation.md: 22
+  [records-evidence] docs/plans/2026-04-01-session-notes-pending-work.md: 4
+  [records-evidence] docs/plans/2026-05-07-stacked-rotors-dished-annulus.md: 7
+  [records-evidence] docs/plans/2026-05-08-multi-segment-lift-backline.md: 16
+  [records-evidence] docs/plans/2026-05-09-free-rotor-dynamics.md: 29
+  [records-evidence] docs/plans/2026-05-11-lift-line-as-spring.md: 4
+  [records-evidence] docs/plans/2026-05-12-disc-tilt-redesign.md: 17
+  [records-evidence] docs/plans/2026-05-12-sky-anchor-node.md: 2
+  [records-evidence] docs/plans/2026-05-12-team-direction.md: 1
+  [records-evidence] docs/plans/2026-05-22-dynamic-tilted-basis-ground-forces.md: 1
+  [records-evidence] docs/plans/2026-06-01-single-source-of-truth-metrics.md: 1
+  [records-evidence] docs/plans/2026-06-19-v9-dynamic-equilibrium-objective.md: 2
+  [records-evidence] docs/plans/2026-06-20-v10-full-dynamic-constraints.md: 5
+  [records-evidence] docs/plans/2026-06-20-v11-tapered-tethers.md: 3
+  [records-evidence] docs/plans/2026-06-21-rotor-position-clamp-tension-gate.md: 8
+  [records-evidence] docs/plans/2026-06-27-soft-ramp-kmppt-v2.md: 1
+  [records-evidence] docs/plans/2026-06-30-control-first-campaign.md: 2
+  [records-evidence] docs/plans/2026-08-13-gate-reinstrument-twist.md: 4
+  [records-evidence] docs/plans/2026-08-13-settle-drag-alignment.md: 2
+  [records-evidence] docs/plans/2026-08-14-rope-break-fling.md: 1
+  [records-evidence] docs/plans/2026-08-14-rotor-power-realism-status.md: 2
+  [records-evidence] docs/plans/2026-08-14-rotor-power-realism.md: 1
+  [records-evidence] docs/plans/2026-08-20-science-track-acceptance-fixes.md: 9
+  [records-evidence] docs/plans/2026-08-21-daisy-anchored-5kw-seed-fixes.md: 1
+  [records-evidence] docs/plans/2026-08-22-acceptance-rebaseline.md: 2
+  [records-evidence] docs/plans/2026-08-22-blade-mass-volume-law.md: 1
+  [records-evidence] docs/plans/2026-08-22-model-comparison-campaigns.md: 1
+  [records-evidence] docs/plans/2026-08-22-physics-convention-fixes.md: 2
+  [records-evidence] docs/plans/2026-08-22-settle-ode-gap-workstream.md: 3
+  [records-evidence] docs/plans/2026-08-24-build-geometry-audit.md: 2
+  [records-evidence] docs/plans/2026-08-25-three-section-trpt-geometry.md: 1
+  [records-evidence] docs/plans/2026-09-02-future-work-and-reporting.md: 1
+  [records-evidence] docs/plans/2026-09-02-mass-model-audit.md: 1
+  [records-evidence] docs/plans/2026-09-06-closed-form-beam-sizing.md: 16
+  [records-evidence] docs/plans/2026-09-10-axial-length-wind-reference-study.md: 11
+  [records-evidence] docs/plans/2026-09-10-shaft-windup-workstream.md: 5
+  [records-evidence] docs/plans/2026-09-11-settle-ode-coherence.md: 16
+  [records-evidence] docs/plans/2026-09-11-tethers-jl-assessment.md: 6
+  [records-evidence] docs/plans/2026-09-24-banked-topmost-rotor.md: 4
+  [records-evidence] docs/plans/2026-09-24-phase5-multirotor-sizing.md: 14
+  [records-evidence] docs/plans/2026-09-26-expansion-rotor-bem.md: 2
+  [records-evidence] docs/plans/2026-09-30-top-ring-brake-findings.md: 6
+  [records-evidence] docs/plans/2026-10-03-axial-length-decode-builder.md: 2
+  [records-evidence] docs/plans/2026-10-03-axial-length-mass-preload.md: 7
+  [records-evidence] docs/plans/2026-10-03-axial-length-shear-clearance.md: 16
+  [records-evidence] docs/plans/2026-10-08-genome-landscape-analysis.md: 1
+  [records-evidence] docs/plans/2026-10-13-feedback2-aero-validator-plan.md: 1
+  [records-evidence] docs/plans/2026-10-13-feedback2-science-validator-plan.md: 2
+  [records-evidence] docs/plans/2026-10-13-feedback3-author-plan.md: 1
+  [records-evidence] docs/plans/ACTIVE.md: 7
+  [records-evidence] docs/plans/fix_xvector_rerun_sweeps.md: 5
+  [records-evidence] docs/plans/induction_fix_proposal.md: 1
+  [records-evidence] docs/plans/pre_gates_scoping.md: 1
+  [records-evidence] docs/plans/retrospective-2026-08-17.md: 4
+  [records-evidence] docs/plans/retrospective-2026-08-26-crashed-session.md: 1
+  [records-evidence] docs/prd/0006-blade-geometry-audit.md: 4
+  [records-evidence] docs/prd/0007-gate3-spec.md: 1
+  [records-evidence] docs/reporting/2026-10-14-feedback6-routing-plain-english.md: 2
+  [records-evidence] docs/reporting/2026-10-14-room-status-plain-english.md: 1
+  [records-evidence] docs/reporting/draft-consistency-sweep.md: 1
+  [records-evidence] docs/reporting/feedback/2026-10-10-harris-review.md: 2
+  [exempt-verbatim] docs/reporting/feedback/Feedback-message-1791925681590.md: 3
+  [exempt-verbatim] docs/reporting/feedback/feedback-on-report.md: 4
+  [exempt-verbatim] docs/reporting/feedback/feedback-on-report2.md: 8
+  [received-brief] docs/reporting/figures/2026-10-12-nine-figure-proposals.md: 6
+  [extract-records] docs/reporting/figures/eval-timeline-extract/README.md: 2
+  [kit-records] docs/reporting/figures/eval-timeline/SPEC.md: 1
+  [kit-records] docs/reporting/figures/eval-timeline/eval-timeline.py: 2
+  [kit-records] docs/reporting/figures/eval-timeline/register-status.md: 1
+  [exempt-verbatim] docs/reporting/figures/figure-generation-notes.md: 8
+  [map-ledger] docs/reporting/figures/figure-map.md: 8
+  [kit-records] docs/reporting/figures/machine-evolution-strip/captions.md: 1
+  [kit-records] docs/reporting/figures/machine-evolution-strip/register-status.md: 1
+  [kit-records] docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl: 5
+  [kit-records] docs/reporting/figures/machine-winner-hero/register-status.md: 1
+  [extract-records] docs/reporting/figures/pair-extract/README.md: 1
+  [extract-records] docs/reporting/figures/pair-extract/extract-winner-operating-point.log: 2
+  [kit-records] docs/reporting/figures/ring-utilisation/SPEC.md: 1
+  [kit-records] docs/reporting/figures/ring-utilisation/captions.md: 1
+  [kit-records] docs/reporting/figures/ring-utilisation/register-status.md: 1
+  [kit-records] docs/reporting/figures/ring-utilisation/ring-utilisation.py: 1
+  [kit-records] docs/reporting/figures/system-anatomy/SPEC.md: 1
+  [kit-records] docs/reporting/figures/system-anatomy/captions.md: 1
+  [kit-records] docs/reporting/figures/system-anatomy/checks.log: 1
+  [kit-records] docs/reporting/figures/system-anatomy/register-status.md: 1
+  [kit-records] docs/reporting/figures/system-anatomy/system-anatomy.py: 1
+  [kit-records] docs/reporting/figures/twist-limit/SPEC.md: 1
+  [kit-records] docs/reporting/figures/twist-limit/captions.md: 1
+  [kit-records] docs/reporting/figures/twist-limit/register-status.md: 1
+  [kit-records] docs/reporting/figures/twist-limit/twist-limit.py: 1
+  [extract-records] docs/reporting/figures/window-trace-extract/README.md: 2
+  [extract-records] docs/reporting/figures/window-trace-extract/extract-winner-window-taps.log: 6
+  [register] docs/reporting/numbers-register.md: 21
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-10-item14-ring-floor-check.md: 2
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-11-item11-trace-read.md: 3
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-11-tipref-counterread.md: 4
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-14-kmppt-story-counter-read.md: 1
+  [records-evidence] docs/reporting/room-responses/aero-validator-2026-10-14-v043-counterread.md: 1
+  [records-evidence] docs/reporting/room-responses/author-2026-10-12-nine-figure-seating-pass.md: 2
+  [records-evidence] docs/reporting/room-responses/author-2026-10-12-system-anatomy-label-check.md: 3
+  [records-evidence] docs/reporting/room-responses/author-2026-10-13-v030-display-folds.md: 1
+  [records-evidence] docs/reporting/room-responses/author-2026-10-14-v033-polish-pair-one.md: 3
+  [records-evidence] docs/reporting/room-responses/author-2026-10-14-v039-k-story-fold.md: 1
+  [records-evidence] docs/reporting/room-responses/figures-images-diagrams-2026-10-14-caption-leads-and-closure.md: 1
+  [records-evidence] docs/reporting/room-responses/figures-images-diagrams-2026-10-14-round6-hub-retirement-recut.md: 2
+  [records-evidence] docs/reporting/room-responses/hermes-2026-10-12-full-feedback-delta.md: 1
+  [records-evidence] docs/reporting/room-responses/hermes-2026-10-14-feedback6-routing.md: 10
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-13-display-rulings-and-f1-v4-read.md: 1
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-13-nr043-blade-span-signed.md: 1
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-14-claim-by-claim-audit.md: 1
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-14-fb5-source-reads.md: 1
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-14-k-sweep-rows-sign.md: 1
+  [records-evidence] docs/reporting/room-responses/science-validator-2026-10-14-round6-signs.md: 24
+  [records-evidence] docs/reporting/room-responses/science-writer-2026-10-12-held-term-landing.md: 1
+  [records-evidence] docs/reporting/room-responses/science-writer-2026-10-13-sweep-16-era-map.md: 1
+  [records-evidence] docs/reports/2026-06-30-control-map-findings.md: 1
+  [records-evidence] docs/reports/2026-09-08-docs-vs-tests-register.md: 6
+  [records-evidence] docs/reports/2026-09-08-test-appropriateness-audit.md: 5
+  [records-evidence] docs/reports/2026-09-08-test-suite-inventory.md: 9
+  [records-evidence] docs/reports/2026-09-24-tdd-application-audit.md: 1
+  [records-evidence] docs/reports/2026-09-24-unlanded-rulings.md: 1
+  [records-evidence] docs/reports/grounded-economics-v13.md: 3
+  [records-evidence] docs/reports/knowledge-pipeline-sprint.md: 1
+  [records-evidence] docs/reports/pitch_depower_developer_report.md: 3
+  [records-evidence] docs/reports/v10-tight-analysis.md: 5
+  [records-evidence] docs/rig-topology.md: 8
+  [records-evidence] docs/superpowers/plans/2026-05-19-ring-element-analysis.md: 2
+  [records-evidence] docs/v6-campaign-analysis-20260615.md: 1
+  [records-evidence] docs/validation/2026-04-19-report-validation.md: 10
+  [records-evidence] docs/validation/2026-07-04-trpt-counter-analysis.md: 1
+  [records-evidence] docs/validation/2026-09-26-trpt-drag-torque-measurement.md: 1
+  [records-evidence] docs/validation/2026-10-02-genome-index-and-preload-budget.md: 4
+  [records-evidence] docs/validation/2026-10-03-d1-wind-landing-verification.md: 2
+  [records-evidence] docs/validation/2026-10-03-landing-tip-red.md: 1
+  [records-evidence] docs/validation/2026-10-04-bladecount-n-fit.md: 1
+  [records-evidence] docs/validation/2026-10-04-seed-55kw-probe.md: 3
+  [records-evidence] docs/validation/2026-10-04-seed55-aero-review.md: 2
+  [records-evidence] docs/validation/2026-10-06-acceptance-fourstick-s2-forecast.md: 1
+  [records-evidence] docs/validation/2026-10-07-projection-threading-landing.md: 5
+  [records-evidence] docs/validation/model-admissibility.md: 2
+  [exempt-verbatim] docs/validation/physics-validation-ledger.md: 4
+  [records-evidence] docs/validation/trpt-reference/03-repo-findings.md: 16
+  [records-evidence] docs/validation/trpt-reference/09-aerodyn-geometry-knobs.md: 3
+  [records-evidence] docs/validation/tulloch-thesis-extract.txt: 16
+  [records-evidence] docs/validation/wacker-thesis-extract.txt: 5
+  [exempt-verbatim] handovers/README.md: 3
+  [records-evidence] handovers/handover-2026-05-09.md: 6
+  [records-evidence] handovers/handover-2026-05-10.md: 1
+  [records-evidence] handovers/handover-2026-05-11.md: 1
+  [records-evidence] handovers/handover-2026-05-12.md: 1
+  [records-evidence] handovers/handover-2026-05-18.md: 4
+  [records-evidence] handovers/handover-2026-05-25-pitch-depower-campaign.md: 1
+  [records-evidence] handovers/handover-2026-05-26.md: 3
+  [records-evidence] handovers/handover-2026-05-28-pitch-depower-session.md: 13
+  [records-evidence] handovers/handover-2026-05-28-pitch-depower.md: 13
+  [records-evidence] handovers/handover-2026-06-14.md: 5
+  [records-evidence] handovers/handover-2026-06-30-dashboard.md: 4
+  [records-evidence] handovers/handover-2026-07-06-prd0006.md: 2
+  [records-evidence] handovers/handover-2026-07-14-audit.md: 1
+  [records-evidence] handovers/handover-2026-07-23-feasibility-first-stornoway.md: 1
+  [records-evidence] handovers/handover-2026-07-25-pre-relaunch-blockers.md: 1
+  [records-evidence] handovers/handover-2026-08-06-lift-margin-expansion-drag.md: 1
+  [records-evidence] handovers/handover-2026-08-09-evaluator-consolidation.md: 1
+  [records-evidence] handovers/handover-2026-08-11-bem-ode-gap.md: 1
+  [records-evidence] handovers/handover-2026-08-11-dt-stability-and-parallelism.md: 1
+  [records-evidence] handovers/handover-2026-08-12-5kw-baseline.md: 1
+  [records-evidence] handovers/handover-2026-08-16-anchor-session.md: 2
+  [records-evidence] handovers/handover-2026-08-20-model-scaling-daisy-anchor.md: 1
+  [records-evidence] handovers/handover-2026-08-20-tooling-tests-conventions.md: 1
+  [records-evidence] handovers/handover-2026-08-21-daisy-anchored-5kw-campaign.md: 1
+  [records-evidence] handovers/handover-2026-08-22-validated-5kw-campaign-launched.md: 9
+  [records-evidence] handovers/handover-2026-08-27-5kw-reseed.md: 2
+  [records-evidence] handovers/handover-2026-08-28-rotorcount-campaign-complete.md: 1
+  [records-evidence] handovers/handover-2026-09-07-closed-form-beam-sizing.md: 8
+  [records-evidence] handovers/handover-2026-09-10-r7-complete.md: 8
+  [records-evidence] handovers/handover-2026-09-10-r7-r10-remit.md: 3
+  [records-evidence] handovers/handover-2026-09-11-settle-ode-coherence.md: 5
+  [records-evidence] handovers/handover-2026-09-12-session-state-and-preload-rootcause.md: 2
+  [records-evidence] handovers/handover-2026-09-12-settle-rebuild-bow-and-static-solver.md: 16
+  [records-evidence] handovers/handover-2026-09-13-lift-chain-and-realisability.md: 4
+  [records-evidence] handovers/handover-2026-09-14-verified-state-reseed-boundary-and-priority-correction.md: 2
+  [records-evidence] handovers/handover-2026-09-16-per-line-break-detection-dt-and-reseed.md: 1
+  [records-evidence] handovers/handover-2026-09-19-acceptance-8-of-8-and-static-solver.md: 1
+  [records-evidence] handovers/handover-2026-09-20-operational-equilibrium-and-taut-backline-split.md: 2
+  [records-evidence] handovers/handover-2026-09-23-multirotor-bem-sizing.md: 7
+  [records-evidence] handovers/handover-2026-09-23-multirotor-stability-remediation.md: 36
+  [records-evidence] handovers/handover-2026-09-28-banked-top-rotor-recovery.md: 3
+  [records-evidence] handovers/handover-2026-10-14-reporting-room-aero-validator.md: 1
+  [records-evidence] handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md: 3
+  [records-evidence] handovers/handover-2026-10-14-reporting-room-queue.md: 3
+  [records-evidence] handovers/handover-2026-10-14-reporting-room-science-validator.md: 2
+  [records-evidence] references/objective-family-architecture.md: 4
+  [records-evidence] references/rotor-sizing-problem.md: 5
+  [records-evidence] references/v9_0-campaign-10kw-analysis.md: 5
+  [records-evidence] references/v9_0-campaign-analysis.md: 1
+  [records-evidence] references/v9_0-dashboard-verification.md: 1
+  [records-evidence] reviews/2026-09-15-six-week-review.md: 3
+  [records-evidence] scratch/archive/README.md: 1
+  [records-evidence] scratch/au_docx_v027_fold.log: 4
+  [records-evidence] scratch/au_draft_docx_annotated_capture_2026-10-13.md: 10
+  [records-evidence] scratch/au_draft_docx_notes_capture_2026-10-13.patch: 3
+  [records-evidence] scratch/au_v019_head_draft.md: 4
+  [records-evidence] scratch/au_v019_sim.md: 4
+  [records-evidence] scratch/au_v028_precone_fold.log: 4
+  [records-evidence] scratch/au_v029_au1_front.log: 4
+  [records-evidence] scratch/au_v030_display_folds.log: 4
+  [records-evidence] scratch/au_v031_au3_wording.log: 4
+  [records-evidence] scratch/au_v033_polish_pair1.log: 1
+  [records-evidence] scratch/au_v047_round6_fold.log: 3
+  [records-evidence] scratch/av_counter_nr038_probe.log: 6
+  [records-evidence] scratch/av_f1_float_equality.log: 1
+  [records-evidence] scratch/av_nr047_nr048_counterread.log: 1
+  [records-evidence] scratch/av_probe_tipref_counter.log: 5
+  [records-evidence] scratch/av_probe_tipref_live.log: 4
+  [records-evidence] scratch/av_v041_hero_counterread.log: 2
+  [records-evidence] scratch/av_v043_counterread.log: 1
+  [records-evidence] scratch/fig1_decode_winner.log: 1
+  [records-evidence] scratch/fig_r6_check.log: 5
+  [records-evidence] scratch/hermes_fb3_reads.log: 4
+  [records-evidence] scratch/hermes_fb5_comments.txt: 8
+  [records-evidence] scratch/hermes_fb6_comments.txt: 4
+  [records-evidence] scratch/hermes_fb6_reads.log: 2
+  [records-evidence] scratch/sv_check_draft_citations_v032_bless.log: 3
+  [records-evidence] scratch/sv_claim_audit.log: 1
+  [records-evidence] scratch/sv_counterread_bankderate.log: 1
+  [records-evidence] scratch/sv_counterread_plates_f4bc45e.log: 1
+  [records-evidence] scratch/sv_display_sites_check.log: 2
+  [records-evidence] scratch/sv_f1_v4_census_check.log: 1
+  [records-evidence] scratch/sv_fb5_source_reads_probe.log: 1
+  [records-evidence] scratch/sv_nr043_span_check.log: 1
+  [records-evidence] scratch/sv_nr043_span_rerun_2026-10-13.log: 1
+  [records-evidence] scratch/sv_nr047_k_sweep_rows_check.log: 1
+  [records-evidence] scratch/sv_probe_rotor_banks.log: 3
+  [records-evidence] scratch/sv_probe_rotor_banks_1c6f0b2.log: 3
+  [records-evidence] scratch/sv_probe_rotor_banks_42f2147.log: 3
+  [records-evidence] scratch/sv_probe_winner_areas.log: 1
+  [records-evidence] scratch/sv_probe_winner_areas_42f2147.log: 1
+  [records-evidence] scratch/sv_r6_hub_forms_check.log: 30
+  [records-evidence] scratch/sv_rebase_arithmetic.log: 3
+  [records-evidence] scratch/sv_v040_glance.log: 6
+  [records-evidence] scratch/sw_bp_sim.md: 4
+  [records-evidence] scratch/sw_gc14_base.md: 2
+  [records-evidence] scratch/sw_gc14_new.md: 2
+  [records-evidence] scratch/sw_gloss14_base.md: 2
+  [records-evidence] scratch/sw_gloss14_new.md: 2
+  [records-evidence] scratch/sw_glossv13_base.md: 2
+  [records-evidence] scratch/sw_glossv13_new.md: 2
+  [records-evidence] scratch/sw_levers_fold_sim.md: 6
+  [records-evidence] scratch/sw_sw3b_erasim.md: 6
+  [records-evidence] scratch/sw_sw3b_tablesim.log: 2
+  [records-evidence] scratch/sw_sweep15_draftdiff.txt: 1
+  [records-evidence] scratch/sw_sweep15_multiset.log: 1
+  [records-evidence] scratch/sw_sweep15_tracker_v026.md: 1
+  [records-evidence] scratch/sw_sweep15_v026.md: 5
+  [records-evidence] scratch/sw_sweep15_v027.md: 6
+  [records-evidence] scratch/sw_sweep16_core.log: 3
+  [records-evidence] scratch/sw_sweep16_draft_v027.md: 6
+  [records-evidence] scratch/sw_sweep16_draft_v028.md: 6
+  [records-evidence] scratch/sw_sweep16_tracker_v027.md: 1
+  [records-evidence] scratch/sw_sweep17_core.log: 1
+  [records-evidence] scratch/sw_sweep17_draft_mid.md: 6
+  [records-evidence] scratch/sw_sweep17_draft_v029.md: 6
+  [records-evidence] scratch/sw_sweep18_tracker_base.md: 1
+  [records-evidence] scratch/sw_sweep18_tracker_tip.md: 1
+  [records-evidence] scratch/sw_sweep19_attrib_draft.txt: 2
+  [records-evidence] scratch/sw_sweep19_core.log: 8
+  [records-evidence] scratch/sw_sweep19_core.sh: 1
+  [records-evidence] scratch/sw_sweep19_draft_v029.md: 6
+  [records-evidence] scratch/sw_sweep19_draft_v030.md: 6
+  [records-evidence] scratch/sw_sweep19_record_new.md: 1
+  [records-evidence] scratch/sw_sweep19_section.md: 1
+  [records-evidence] scratch/sw_sweep19_tokendiff_draft.txt: 1
+  [records-evidence] scratch/sw_sweep19_tracker_base.md: 1
+  [records-evidence] scratch/sw_sweep19_tracker_tip.md: 2
+  [records-evidence] scratch/sw_sweep20_draft_v030.md: 6
+  [records-evidence] scratch/sw_sweep20_draft_v031.md: 6
+  [records-evidence] scratch/sw_sweep20_record_base.md: 1
+  [records-evidence] scratch/sw_sweep20_record_new.md: 1
+  [records-evidence] scratch/sw_sweep20_tracker_v030.md: 2
+  [records-evidence] scratch/sw_sweep20_tracker_v031.md: 2
+  [records-evidence] scratch/sw_sweep21_attrib_draft.txt: 2
+  [records-evidence] scratch/sw_sweep21_core.log: 7
+  [records-evidence] scratch/sw_sweep21_draft_v031.md: 6
+  [records-evidence] scratch/sw_sweep21_draft_v032.md: 6
+  [records-evidence] scratch/sw_sweep21_draft_v033.md: 8
+  [records-evidence] scratch/sw_sweep21_record_base.md: 1
+  [records-evidence] scratch/sw_sweep21_record_new.md: 1
+  [records-evidence] scratch/sw_sweep21_tokdiff_draft.txt: 2
+  [records-evidence] scratch/sw_sweep21_tracker_v031.md: 2
+  [records-evidence] scratch/sw_sweep21_tracker_v032.md: 2
+  [records-evidence] scratch/sw_sweep21_tracker_v033.md: 2
+  [records-evidence] scratch/sw_sweep22_core.sh: 1
+  [records-evidence] scratch/sw_sweep22_draft_v033.md: 8
+  [records-evidence] scratch/sw_sweep22_draft_v034.md: 8
+  [records-evidence] scratch/sw_sweep22_draft_v035.md: 8
+  [records-evidence] scratch/sw_sweep22_draft_v036.md: 8
+  [records-evidence] scratch/sw_sweep22_gloss_v035.md: 2
+  [records-evidence] scratch/sw_sweep22_gloss_v036.md: 2
+  [records-evidence] scratch/sw_sweep22_record_base.md: 1
+  [records-evidence] scratch/sw_sweep22_record_new.md: 1
+  [records-evidence] scratch/sw_sweep22_tracker_v033.md: 2
+  [records-evidence] scratch/sw_sweep22_tracker_v034.md: 2
+  [records-evidence] scratch/sw_sweep22_tracker_v035.md: 2
+  [records-evidence] scratch/sw_sweep22_tracker_v036.md: 2
+  [records-evidence] scratch/sw_sweep23_core.sh: 1
+  [records-evidence] scratch/sw_sweep23_draft_diff.txt: 1
+  [records-evidence] scratch/sw_sweep23_draft_v036.md: 8
+  [records-evidence] scratch/sw_sweep23_draft_v037.md: 8
+  [records-evidence] scratch/sw_sweep23_record_base.md: 1
+  [records-evidence] scratch/sw_sweep23_record_new.md: 1
+  [records-evidence] scratch/sw_sweep23_tracker_v036.md: 2
+  [records-evidence] scratch/sw_sweep23_tracker_v037.md: 2
+  [records-evidence] scratch/sw_sweep24_core.sh: 1
+  [records-evidence] scratch/sw_sweep24_draft_v037.md: 8
+  [records-evidence] scratch/sw_sweep24_draft_v038.md: 8
+  [records-evidence] scratch/sw_sweep24_record_base.md: 1
+  [records-evidence] scratch/sw_sweep24_record_new.md: 1
+  [records-evidence] scratch/sw_sweep24_tracker_v037.md: 2
+  [records-evidence] scratch/sw_sweep24_tracker_v038.md: 2
+  [records-evidence] scratch/sw_sweep25_attrib_draft.txt: 1
+  [records-evidence] scratch/sw_sweep25_core.log: 4
+  [records-evidence] scratch/sw_sweep25_core.sh: 1
+  [records-evidence] scratch/sw_sweep25_draft_diff.txt: 1
+  [records-evidence] scratch/sw_sweep25_draft_v038.md: 8
+  [records-evidence] scratch/sw_sweep25_draft_v039.md: 9
+  [records-evidence] scratch/sw_sweep25_record_base.md: 1
+  [records-evidence] scratch/sw_sweep25_record_new.md: 1
+  [records-evidence] scratch/sw_sweep25_tokdiff_draft.txt: 1
+  [records-evidence] scratch/sw_sweep25_tracker_v038.md: 2
+  [records-evidence] scratch/sw_sweep25_tracker_v039.md: 2
+  [records-evidence] scratch/sw_sweep26_core.log: 2
+  [records-evidence] scratch/sw_sweep26_core.sh: 1
+  [records-evidence] scratch/sw_sweep26_draft_v039.md: 9
+  [records-evidence] scratch/sw_sweep26_draft_v040.md: 9
+  [records-evidence] scratch/sw_sweep26_section.base.md: 1
+  [records-evidence] scratch/sw_sweep26_section.new.md: 1
+  [records-evidence] scratch/sw_sweep26_tracker_v039.md: 2
+  [records-evidence] scratch/sw_sweep26_tracker_v040.md: 2
+  [records-evidence] scratch/sw_sweep27_core.log: 1
+  [records-evidence] scratch/sw_sweep27_core.sh: 1
+  [records-evidence] scratch/sw_sweep27_draft_v040.md: 9
+  [records-evidence] scratch/sw_sweep27_draft_v041.md: 9
+  [records-evidence] scratch/sw_sweep27_section.base.md: 1
+  [records-evidence] scratch/sw_sweep27_section.new.md: 1
+  [records-evidence] scratch/sw_sweep27_tracker_v040.md: 2
+  [records-evidence] scratch/sw_sweep27_tracker_v041.md: 2
+  [records-evidence] scratch/sw_sweep28_core.sh: 1
+  [records-evidence] scratch/sw_sweep28_draft_v041.md: 9
+  [records-evidence] scratch/sw_sweep28_draft_v042.md: 9
+  [records-evidence] scratch/sw_sweep28_section.base.md: 1
+  [records-evidence] scratch/sw_sweep28_section.new.md: 1
+  [records-evidence] scratch/sw_sweep28_tracker_v041.md: 2
+  [records-evidence] scratch/sw_sweep28_tracker_v042.md: 2
+  [records-evidence] scratch/sw_sweep29_core.log: 1
+  [records-evidence] scratch/sw_sweep29_core.sh: 1
+  [records-evidence] scratch/sw_sweep29_draft_diff.txt: 3
+  [records-evidence] scratch/sw_sweep29_draft_v042.md: 9
+  [records-evidence] scratch/sw_sweep29_draft_v043.md: 9
+  [records-evidence] scratch/sw_sweep29_section.base.md: 1
+  [records-evidence] scratch/sw_sweep29_section.new.md: 1
+  [records-evidence] scratch/sw_sweep29_tracker_v042.md: 2
+  [records-evidence] scratch/sw_sweep29_tracker_v043.md: 2
+  [records-evidence] scratch/sw_tbl_work.log: 1
+  [records-evidence] scratch/sw_ws3a_ledger_table.md: 1
+  [records-evidence] scratch/sw_ws3a_ledgersim.md: 7
+check: census: zero unclassified files: OK  []
+
+== F. the working set ==
+  [records] docs/plans/2026-10-07-state-fed-regen-cap-proposal.md: 1
+  [records] docs/reporting/feedback-on-report.md: 4
+  [working-snapshot] scratch/au_2p1_candidate.md: 3
+  [working-snapshot] scratch/au_docx_v027_base.md: 5
+  [working-snapshot] scratch/au_docx_v027_candidate.md: 6
+  [working-snapshot] scratch/au_fb2_v026_citation_base.txt: 4
+  [working-snapshot] scratch/au_fb2_v026_head_draft.md: 5
+  [working-snapshot] scratch/au_founder_calls_tracker_base.md: 1
+  [working-snapshot] scratch/au_founder_calls_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v012_candidate_A_sentence_lines.md: 3
+  [working-snapshot] scratch/au_v012_candidate_B_packed.md: 3
+  [working-snapshot] scratch/au_v012_draft_HEAD.md: 3
+  [working-snapshot] scratch/au_v012_draft_candidate.md: 3
+  [working-snapshot] scratch/au_v016u2_p12-12.png: 1
+  [working-snapshot] scratch/au_v016u2_pdf_prev.txt: 10
+  [working-snapshot] scratch/au_v016u2_pre_report.md: 3
+  [working-snapshot] scratch/au_v016u_base_report.md: 3
+  [working-snapshot] scratch/au_v016u_pdf.txt: 10
+  [working-snapshot] scratch/au_v016u_tip_report.md: 3
+  [working-snapshot] scratch/au_v028_draft_base.md: 6
+  [working-snapshot] scratch/au_v028_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v028_tracker_base.md: 1
+  [working-snapshot] scratch/au_v028_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v029_draft_base.md: 6
+  [working-snapshot] scratch/au_v029_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v029_tracker_base.md: 1
+  [working-snapshot] scratch/au_v029_tracker_candidate.md: 1
+  [working-snapshot] scratch/au_v030_draft_base.md: 6
+  [working-snapshot] scratch/au_v030_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v030_tracker_base.md: 1
+  [working-snapshot] scratch/au_v030_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v031_draft_base.md: 6
+  [working-snapshot] scratch/au_v031_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v031_tracker_base.md: 2
+  [working-snapshot] scratch/au_v031_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v032_draft_base.md: 6
+  [working-snapshot] scratch/au_v032_draft_candidate.md: 6
+  [working-snapshot] scratch/au_v032_tracker_base.md: 2
+  [working-snapshot] scratch/au_v032_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v033_draft_base.md: 6
+  [working-snapshot] scratch/au_v033_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v033_tracker_base.md: 2
+  [working-snapshot] scratch/au_v033_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v034_draft_base.md: 8
+  [working-snapshot] scratch/au_v034_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v034_tracker_base.md: 2
+  [working-snapshot] scratch/au_v034_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v036_draft_base.md: 8
+  [working-snapshot] scratch/au_v036_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v036_gloss_base.md: 3
+  [working-snapshot] scratch/au_v036_gloss_candidate.md: 3
+  [working-snapshot] scratch/au_v036_tracker_base.md: 2
+  [working-snapshot] scratch/au_v036_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v037_draft_base.md: 8
+  [working-snapshot] scratch/au_v037_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v037_tracker_base.md: 2
+  [working-snapshot] scratch/au_v037_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v038_draft_base.md: 8
+  [working-snapshot] scratch/au_v038_draft_candidate.md: 8
+  [working-snapshot] scratch/au_v038_tracker_base.md: 2
+  [working-snapshot] scratch/au_v038_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v039_draft_base.md: 8
+  [working-snapshot] scratch/au_v039_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v039_tracker_base.md: 2
+  [working-snapshot] scratch/au_v039_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v040_draft_base.md: 9
+  [working-snapshot] scratch/au_v040_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v040_tracker_base.md: 2
+  [working-snapshot] scratch/au_v040_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v042_draft_base.md: 9
+  [working-snapshot] scratch/au_v042_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v042_tracker_base.md: 2
+  [working-snapshot] scratch/au_v042_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v043_draft_base.md: 9
+  [working-snapshot] scratch/au_v043_draft_candidate.md: 9
+  [working-snapshot] scratch/au_v043_tracker_base.md: 2
+  [working-snapshot] scratch/au_v043_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v045_draft_base.md: 9
+  [working-snapshot] scratch/au_v045_draft_candidate.md: 10
+  [working-snapshot] scratch/au_v045_tracker_base.md: 2
+  [working-snapshot] scratch/au_v045_tracker_candidate.md: 2
+  [working-snapshot] scratch/au_v047_draft_base.md: 10
+  [working-snapshot] scratch/au_v047_probe_tracker.md: 2
+  [working-snapshot] scratch/au_v047_tracker_base.md: 2
+  [working-snapshot] scratch/au_v047_tracker_candidate.md: 2
+  [working-snapshot] scratch/av_aeroleg/author-2026-10-14-v039-k-story-fold.md: 1
+  [working-snapshot] scratch/av_aeroleg/draft-tip.md: 9
+  [working-snapshot] scratch/av_aeroleg/draft-tracker.md: 2
+  [working-snapshot] scratch/av_aeroleg/numbers-register.md: 21
+  [working-snapshot] scratch/av_aeroleg/science-validator-2026-10-14-k-sweep-rows-sign.md: 1
+  [working-snapshot] scratch/av_candidate_nr037_counter.md: 16
+  [working-snapshot] scratch/av_docx_pagecheck_2026-10-13/my-render.pdf: 2
+  [working-snapshot] scratch/av_fig35_run1_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/av_fig35_run1_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/av_fig35_run1_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/av_fig35_run1_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/av_fig35_run2_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/av_fig35_run2_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/av_fig35_run2_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/av_fig35_run2_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/av_probe_fastcharge_basis.jl: 7
+  [working-snapshot] scratch/av_probe_fastcharge_solve_trace.jl: 1
+  [working-snapshot] scratch/av_probe_window_trace.jl: 6
+  [working-snapshot] scratch/av_v023_draft_before.md: 5
+  [working-snapshot] scratch/av_v023_tracker_before.md: 1
+  [working-snapshot] scratch/av_v043_draftdiff.txt: 3
+  [working-snapshot] scratch/aw_rhub_sweep_cpfix.jl: 1
+  [working-snapshot] scratch/fastcharge_census_software-validator.md: 4
+  [working-snapshot] scratch/fb6_probe/comments.xml: 2
+  [working-snapshot] scratch/fb6_probe/word/comments.xml: 2
+  [working-snapshot] scratch/fb6_probe/word/document.xml: 18
+  [working-snapshot] scratch/fig_35_A_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_A_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_A_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_A_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_35_B_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_B_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_B_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_B_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_35_run1_ring/label-ledger.txt: 1
+  [working-snapshot] scratch/fig_35_run1_ring/ring-utilisation.svg: 1
+  [working-snapshot] scratch/fig_35_run1_twist/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_35_run1_twist/twist-limit.svg: 3
+  [working-snapshot] scratch/fig_et_precheck/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_precheck/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_et_repro1/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_repro1/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_et_repro2/eval-timeline.svg: 2
+  [working-snapshot] scratch/fig_et_repro2/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_draft/eval-timeline-draft.svg: 2
+  [working-snapshot] scratch/fig_f3_draft/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_draft_b/eval-timeline-draft.svg: 2
+  [working-snapshot] scratch/fig_f3_draft_b/label-ledger.txt: 2
+  [working-snapshot] scratch/fig_f3_eval_timeline_draft.py: 3
+  [working-snapshot] scratch/fig_f3_recv_check.py: 2
+  [working-snapshot] scratch/fig_pca_fix_repro_pca-atlas/pca-atlas.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r2.clean.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r2.g.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r3.clean.pdf: 1
+  [working-snapshot] scratch/fig_pdfdiag/r3.g.pdf: 1
+  [working-snapshot] scratch/fig_r67_base_map.md: 1
+  [working-snapshot] scratch/fig_r67_base_ring_spec.md: 10
+  [working-snapshot] scratch/fig_r67_base_twist_spec.md: 7
+  [working-snapshot] scratch/fig_repin_base_draft.md: 8
+  [working-snapshot] scratch/fig_repin_base_map.md: 1
+  [working-snapshot] scratch/fig_repin_base_tracker.md: 2
+  [working-snapshot] scratch/hermes_fb6_fix.py: 5
+  [working-snapshot] scratch/hermes_fb6_fix2.py: 2
+  [working-snapshot] scratch/hermes_fb6_fix3.py: 2
+  [working-snapshot] scratch/hermes_winner_pack.jl.bak_20261002: 11
+  [working-snapshot] scratch/report-pdf-build/docx-fig-12.jpg: 1
+  [working-snapshot] scratch/report-pdf-build/docx-render/draft-live.pdf: 2
+  [working-snapshot] scratch/report-pdf-build/draft-11a734a-20261012-215412.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-38c77f8-20261014-185619.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-8d01394-20261012-215449.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-99d09a1-20261013-114520.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-assembled-docx.md: 20
+  [working-snapshot] scratch/report-pdf-build/draft-assembled.md: 20
+  [working-snapshot] scratch/report-pdf-build/draft-e8159b0-20261014-180135.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-live.pdf: 1
+  [working-snapshot] scratch/report-pdf-build/draft-live.txt: 15
+  [working-snapshot] scratch/report-pdf-build/draft.html: 20
+  [working-snapshot] scratch/report-pdf-build/pg-11.txt: 2
+  [working-snapshot] scratch/report-pdf-build/pg-12.txt: 1
+  [working-snapshot] scratch/report-pdf-build/pg-6.txt: 1
+  [working-snapshot] scratch/report-pdf-build/pg-8.txt: 3
+  [working-snapshot] scratch/report-pdf-build/pg-9.txt: 3
+  [working-snapshot] scratch/sv_2p1_baseline_v08.md: 3
+  [working-snapshot] scratch/sv_2p1_fold_rerun.md: 3
+  [working-snapshot] scratch/sv_caption_reread/new-layout.txt: 10
+  [working-snapshot] scratch/sv_caption_reread/new-raw.txt: 10
+  [working-snapshot] scratch/sv_caption_reread/pre-raw.txt: 7
+  [working-snapshot] scratch/sv_draft_annotated_capture_2026-10-09.md: 3
+  [working-snapshot] scratch/sv_f3_flag_precision.md: 1
+  [working-snapshot] scratch/sv_fa_v4_pdftext.txt: 1
+  [working-snapshot] scratch/sv_probe_seed55_why_reject.jl: 1
+  [working-snapshot] scratch/sv_r6_term_gate_check.py: 18
+  [working-snapshot] scratch/sv_rebase_readback.md: 13
+  [working-snapshot] scratch/sv_smoke_masscheck2.jl: 1
+  [working-snapshot] scratch/sw_2p1_sim_folded.md: 3
+  [working-snapshot] scratch/sw_bp_baseline.md: 4
+  [working-snapshot] scratch/sw_brief13_base.md: 8
+  [working-snapshot] scratch/sw_brief13_off_base.txt: 8
+  [working-snapshot] scratch/sw_brief13_off_new.txt: 8
+  [working-snapshot] scratch/sw_gloss13_base.md: 3
+  [working-snapshot] scratch/sw_gloss13_new.md: 3
+  [working-snapshot] scratch/sw_oldbrief_probe.md: 4
+  [working-snapshot] scratch/sw_sweep10_v014_report.md: 3
+  [working-snapshot] scratch/sw_sweep10_v015_report.md: 3
+  [working-snapshot] scratch/sw_sweep10_v016_report.md: 3
+  [working-snapshot] scratch/sw_sweep11_v016u2_report.md: 3
+  [working-snapshot] scratch/sw_sweep12_v016fu2.md: 3
+  [working-snapshot] scratch/sw_sweep13_draft_11a734a.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_4330ec5.md: 4
+  [working-snapshot] scratch/sw_sweep13_draft_7863a88.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_8d01394.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_b14f87b.md: 5
+  [working-snapshot] scratch/sw_sweep13_draft_base_v017.md: 3
+  [working-snapshot] scratch/sw_sweep13_draft_dc28369.md: 4
+  [working-snapshot] scratch/sw_sweep14_tracker_43fb0bc.md: 1
+  [working-snapshot] scratch/sw_sweep14_tracker_99d09a1.md: 1
+  [working-snapshot] scratch/sw_sweep14_tracker_d91b93b.md: 1
+  [working-snapshot] scratch/sw_sweep14_v024.md: 5
+  [working-snapshot] scratch/sw_sweep14_v025.md: 5
+  [working-snapshot] scratch/sw_sweep14_v026.md: 5
+  [working-snapshot] scratch/sw_sweep15_runout.txt: 1
+  [working-snapshot] scratch/sw_v014_rehearsal.md: 3
+  [working-snapshot] scratch/sw_v09_landed.md: 3
+  [records] scripts/results/archive_void_20260825_rotorcount/island_1/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260825_rotorcount/island_2/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260825_rotorcount/island_3/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_1/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_2/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/island_3/PROVENANCE.md: 1
+  [records] scripts/results/archive_void_20260828_rotorcount_massmodel/regate_verdict.md: 1
+check: working set: every residue classified: OK  []
+
+== G. the register ==
+check: register: old form holds its spelling (21 lines / 22 sites): OK  21 lines / 22 occurrences
+check: register: append-only since cb862df (zero removals): OK  no diff
+check: register: carries NR-051: OK  
+
+== H. the delivered copy ==
+  draft-live.docx: md5 c88d19015e5d755f347f30d0e456634d; old form 20; 'topmost ring' 1
+  (the round-6 rebuild follows the folds; this read keys it)
+
+CHECKER: 58 checks, 0 fail
+SV_R6_TERMGATE_DONE  (the fold reads the signed forms; old form zero on the live surfaces; residue classified; legs enumerated)
