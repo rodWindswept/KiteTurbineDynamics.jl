@@ -1,0 +1,9 @@
+# av_item21_readback.log — the item-2.1 environment reads readback
+# stamp: 2026-10-15T20:54:43Z (aero-validator seat)
+# base: 94f338c | main commit: c08f3bd (branch bank-derate-cos2p65)
+# local == origin: c08f3bd896ea02ac96a283da6e91e7866f810664 == c08f3bd896ea02ac96a283da6e91e7866f810664
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/room-responses/aero-validator-2026-10-15-item21-environment-reads.md | 3d4137bb316123489649fd3fd0a511ca2b783f42 | 3d4137bb316123489649fd3fd0a511ca2b783f42 | a74ee2bea5b21f1513af4a7074dcb869e9d402a797c60e9e0f6308fe18a2ca7f
+scratch/av_item21_environment_probe.jl | d20bd8b654400dbc92321f983682d4ec3d93fead | d20bd8b654400dbc92321f983682d4ec3d93fead | 5d2fc7a67f73919507a94c02631aaf7f54d428034e46085a1f7d549ab0866c38
+scratch/av_item21_environment_probe.log | ebbb352bd1ce07010c3975a0a9e1d0930d176be6 | ebbb352bd1ce07010c3975a0a9e1d0930d176be6 | deb054b8f0550bb9a5afec80de5cf4f3380cf2082025f380a3f554188f624e6e
+# verdict: all three carried blobs byte-verified at origin
