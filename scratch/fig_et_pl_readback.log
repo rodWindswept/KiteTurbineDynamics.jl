@@ -1,0 +1,24 @@
+readback: the placement label re-cut (figures seat)
+local == origin at f5c2d59 (f5c2d59126f2d3e1b5a4ef9413a9373ac8f11337)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/eval-timeline/eval-timeline.svg  f843df7c508ebfd30d070b8103a1235c5765c0e0
+OK   docs/reporting/figures/eval-timeline/eval-timeline.pdf  9561ad64db0789e2d7b0b2b0ba55f3fd91fb043f
+OK   docs/reporting/figures/eval-timeline/eval-timeline.png  671df9f63720fd58914639d1df1228c36bc9adb9
+OK   docs/reporting/figures/eval-timeline/label-ledger.txt  09fd66521c6f7020878f4356cf17800ed6d341a3
+OK   docs/reporting/figures/eval-timeline/manifest.json  01be496c3ec19a94457b517563df7a65720a6efb
+OK   docs/reporting/figures/eval-timeline/register-status.md  701c02cf4affa45f6f83a52891f397ee65cf571d
+OK   docs/reporting/figures/eval-timeline/SPEC.md  e7ab996448f1b218d4cd71ac92d14e234cde571e
+OK   docs/reporting/figures/figure-map.md  fffa41f1317ab211542ae45c358e0fb31b15ec7e
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-eval-timeline-placement-label-recut.md  3392d39da71c0e39adc9236801b229c032180208
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  03248e1e44f333af44cf81f2dc129ae37df579f1
+OK   scratch/fig_et_pl_edit.py  ef8e57683865d945e4a557fd6c327338af3c8b9c
+OK   scratch/fig_et_pl_driver.py  4dce171dd97bc56dcf8f21f6fc1217e94d43895d
+OK   scratch/fig_et_pl_docs_edit.py  f83e0c11ea6eda5a92d61fd15c94163bbf20f46b
+OK   scratch/fig_et_pl_check.py  fc675e9c58851603e639b83220b6f0883b33071f
+OK   scratch/fig_et_pl_repro.md5  29c69b961d89f0947e5c2fd369fd0461921971be
+OK   scratch/fig_et_pl_run1.log  f99d396c7cec8b2a688ca7bf3b69e3333b869fc9
+OK   scratch/fig_et_pl_run2.log  f99d396c7cec8b2a688ca7bf3b69e3333b869fc9
+OK   scratch/fig_et_pl_run3.log  f99d396c7cec8b2a688ca7bf3b69e3333b869fc9
+OK   scratch/fig_et_pl_precheck.log  f99d396c7cec8b2a688ca7bf3b69e3333b869fc9
+OK   scratch/fig_et_pl_check.log  82aadf3d708065f33e8913308c4cc71e4f40d45a
+carried blobs verified: 20 of 20; failures: 0
