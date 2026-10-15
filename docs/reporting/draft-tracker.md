@@ -265,6 +265,13 @@ Four exhibit script-commit cells and sixteen output-hash cells take the delivere
 The five plates and the three caption kits take the top forms (round-6 comment 1).
 No value moves.
 
+v0.47 pass by @author (2026-10-14).
+This pass folds the round-6 rulings, keyed on the science sign.
+The topmost-ring rename lands at the ten draft sites (topmost ring, topmost rotor ring and top).
+The conclusion prints the count 508 of 930 (NR-002), and the winner sentence takes the founder form.
+Section 3.4 retitles to The levers of Performance.
+No signed value changes.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.46. Date 2026-10-14.
+Internal engineering report. Draft v0.47. Date 2026-10-14.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -222,7 +222,7 @@ The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of 
 The power sizing sets the radius for the rotor at its local wind speed (NR-050).
 
 The search treats each of these as a gene. The ring geometry sets the
-hub and ground radii, and the rotor count sets how many rings carry
+topmost-ring and ground radii, and the rotor count sets how many rings carry
 blades.
 The shaft transition cone holds one fixed angle, 22 degrees, by construction.
 It is not a search gene (NR-049).
@@ -316,7 +316,7 @@ The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW cei
 
 The load choice also has a structural side.
 The beam sizes on a bounded generator load step, twice the nominal load (NR-048).
-The hub-segment helix force reads about 1278 N/vertex (NR-048).
+The top-segment helix force reads about 1278 N/vertex (NR-048).
 The low-wind lull is benign under the load law.
 The record refuses k easing as the high-wind substitute.
 The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
@@ -487,8 +487,8 @@ Island 3 carries the winner. Its mean power reads 5.309 kW and
 its end power 5.314 kW (NR-008). Its factor of safety reads
 15.0 (NR-009). That value is the window minimum.
 
-The capture hub
-ring reads 15.033 at the final step (NR-021).
+The capture topmost ring
+reads 15.033 at the final step (NR-021).
 
 Its operating point reads as follows.
 
@@ -502,7 +502,7 @@ Its operating point reads as follows.
 | Window-mean speed | 13.38 rad/s | NR-029 |
 | Delivered torque | 396.76 N·m | NR-030 |
 | Airborne mass | 25.698 kg | NR-018 |
-| Hub radius | 4.580 m | NR-011 |
+| Topmost ring radius | 4.580 m | NR-011 |
 | Ground radius | 0.804 m | NR-011 |
 | Ring count | 6 | NR-011 |
 | Polygon count | 3 | NR-011 |
@@ -568,7 +568,7 @@ The report also assumes a staged launch of the stack.
 A staged launch is easier to handle than one giant kite.
 
 Its geometry reads three lines, six rings and one active rotor. The
-hub radius is 4.580 metres and the ground radius 0.804 metres
+topmost ring radius is 4.580 metres and the ground radius 0.804 metres
 (NR-011).
 
 The winner genome contains two blade-scale slots.
@@ -603,13 +603,13 @@ the measurement window. It stopped early: a screen, not a survey.
 This report covers the wind-authority era campaign and the recorded
 corrections that shaped it.
 
-### 3.4 The levers
+### 3.4 The levers of Performance
 
 [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
 
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
-The hub ring R6 governs the structural check at the winner operating point (NR-021).
+The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
 The window-minimum factor of safety is 15.0 (NR-009).
 At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
@@ -686,7 +686,7 @@ The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of pena
 
 The final panel matches the register winner.
 The panel reads three lines and six rings (NR-011).
-The hub radius is 4.580 m and the ground radius is 0.804 m.
+The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
 The blade scales read 0.82 and 0.20 (NR-011).
 The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
 
@@ -783,7 +783,7 @@ Candidate entries. Each failure enters with its lesson.
 | Date / event | Class | What happened | Detection | Correction / lesson | Status |
 |---|---|---|---|---|---|
 | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
-| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the hub. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
 | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
 | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
 | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. |
@@ -791,7 +791,7 @@ Candidate entries. Each failure enters with its lesson.
 
 - The dead geometry genes. The search proposes genomes that cannot
 build. An off-by-one in the rotor-to-ring map put the middle rotor on
-the hub (2026-08-26).
+the topmost ring (2026-08-26).
 
   An inverted-taper genome diverged within seconds, while the ground
   instruments still read normal power (2026-08-14).
@@ -804,7 +804,7 @@ geometry. The data from before it then counts no more.
 
   The blade-mass-law correction landed on 2026-08-22. It voided the
   campaign winners. The rotorcount data was doubly void: it predated
-  the FoS fix, and its rotors sat one ring toward the hub.
+  the FoS fix, and its rotors sat one ring toward the top.
 
   Superseded is the milder class, not void. The pre-derate campaign
   stands as era record, because the bank derate moved the search space.
@@ -867,8 +867,9 @@ The report screened 930 rigid-wing ground-generation rotary kite turbine designs
 The campaign scored each design on the ODE path over the measurement window (NR-015).
 One fixed power-law generator load and one fixed gate set held for every design (NR-015).
 
-The search found a feasible candidate in the searched space.
-Its mean power is 5.309 kW and its airborne mass is 25.698 kilograms (NR-008, NR-018).
+The search found 508 feasible candidates in the searched space (NR-002).
+The best performing one had a mean power of 5.309 kW.
+Its airborne mass is 25.698 kilograms (NR-008, NR-018).
 Its window-minimum factor of safety is 15.0 (NR-009).
 All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
 The least segment torque margin is 2.03, at S1 (NR-040).
