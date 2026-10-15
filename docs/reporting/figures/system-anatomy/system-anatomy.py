@@ -21,6 +21,9 @@
 # v6 re-cut (2026-10-14): the hub-name retirement (round-6 founder
 # comment 1). The R6 label reads "R6, the topmost ring". No new
 # number.
+# v7 re-cut (2026-10-15): the lifting-bridles relabel (the founder note
+# of 2026-10-15). The chain label reads "lifting bridles (three)". No
+# new number.
 # Standing rule: the 22.0 slot value never prints as a rotor angle.
 # Held-term picks pending (Track D): the knot name and the cyan-line name
 # print here in the register/room form ("sky anchor", "cyan line"); the
@@ -156,7 +159,7 @@ LABELS: list = [
          lines=["lift bearing"],
          leaders=[((25.25, 12.70), (23.18, 13.88))]),
     dict(name="bridles", pos=(21.00, 15.60), anchor="east",
-         lines=["bridles (three)"],
+         lines=["lifting bridles (three)"],
          leaders=[((20.95, 15.72), (20.60, 14.15))]),
     dict(name="mainrotor", pos=(15.40, 4.05), anchor="west",
          lines=["main rotor (R6)", "three blades, bank 7.088°"],
