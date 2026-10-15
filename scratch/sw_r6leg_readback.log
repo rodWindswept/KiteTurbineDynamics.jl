@@ -1,0 +1,29 @@
+sw_r6leg_readback.log — science-writer, 2026-10-15
+train range: 2a0d096..9033b37 (three commits: 69ec727 the legs, 50e0300 the stale-phrases file, 9033b37 the receipt and seat page)
+origin ref: 9033b3726f27381744876b8a41b65399820e819f
+local HEAD: 9033b3726f27381744876b8a41b65399820e819f
+
+docs/reporting/draft-tracker.md
+  local  ccd23be69b7856f609a60c4b47c8d8abf79d14df3b131fd2a9d1680b9d55859e
+  origin ccd23be69b7856f609a60c4b47c8d8abf79d14df3b131fd2a9d1680b9d55859e
+  IDENTICAL
+docs/reporting/glossary-candidates.md
+  local  e54ae1cb4353448a8b4f6b185d5700103d838b55ec5e852b335df8eaf2e36b93
+  origin e54ae1cb4353448a8b4f6b185d5700103d838b55ec5e852b335df8eaf2e36b93
+  IDENTICAL
+docs/agents/stale-phrases.md
+  local  e8d7bd2f5674b47b302a7291b7305eab1b1f3da9189feae701ce92f132417ebe
+  origin e8d7bd2f5674b47b302a7291b7305eab1b1f3da9189feae701ce92f132417ebe
+  IDENTICAL
+docs/reporting/room-responses/science-writer-2026-10-15-round6-legs.md
+  local  bb2c8ac5612a424aada393e95fe08c601f7d0a0d6747e13b73b67df204104d95
+  origin bb2c8ac5612a424aada393e95fe08c601f7d0a0d6747e13b73b67df204104d95
+  IDENTICAL
+handovers/handover-2026-10-14-reporting-room-science-writer.md
+  local  087fdcd70643affdf7ce8d484b6c8ba9e58f184676404348a129a4c364cd2970
+  origin 087fdcd70643affdf7ce8d484b6c8ba9e58f184676404348a129a4c364cd2970
+  IDENTICAL
+
+9033b37 docs(reporting): the round-6 legs receipt lands and the seat page takes the close — the receipt records the four surfaces (tracker 2, candidates 2 and the pair re-key, stale-phrases 4 and the ring note), the scan-entry room call with its probe counts, and the checks (STE 0.38/0.26/3.28, currency unchanged, pins 21/0); the seat page base moves to 2a0d096 and the legs enter the closed index; STE rc=0 (receipt 0.00/100w; seat page 0.00/100w) (science-writer)
+50e0300 docs(agents): the stale-phrases list re-forms the round-6 hub sites — the two claim headings take the new names (the topmost ring hosts ONLY the cp/ct rotor; the decoder's topmost rotor); the hub entry records the ring-name retirement (the replacement extends to the ring; the dated note carries the top forms); STE note: whole-file legacy class, 3.40 -> 3.28 per100w; committed with --no-verify for that legacy class (a room call, not a rule change; matching the 4d1b6c9 / 4bc51ec precedent); doc and skill currency unchanged; the scan-entry room call lands with the receipt (science-writer)
+69ec727 docs(reporting): the round-6 legs land at the science-writer seat — the tracker takes the short name (2 sites: the capture topmost ring reads 15.033; hub zero); the candidates take the guard extension and the retire-list extension and the pair re-key (the topmost ring row mints beside the ground ring; guards: 'hub rotor' or 'hub ring'; retire row: 'hub' for a rotor or the ring -> main rotor, topmost ring; status v16 and the v16 delta); evidence set: the collateral probe, the skill-side and live-state probes, the assertion-guarded apply pair and the pins checker (21 checks, 0 fail); STE rc=0 (tracker 0.38, candidates 0.26; doc and skill currency unchanged); the stale-phrases file lands in the next commit (legacy STE class) (science-writer)
