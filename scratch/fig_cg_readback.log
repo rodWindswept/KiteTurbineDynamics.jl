@@ -1,0 +1,32 @@
+figures seat readback: the corner-grid build train
+date: 2026-10-15T14:37:47+01:00
+commits:
+a596e93 docs(handovers): the figures seat page takes the corner-grid build — the generator landing enters the closed index; the counter-reads read as the open gate (figures seat)
+f0c086d docs(reporting): the corner grid builds at the figures seat — the generator lands (family mode, corner variant): four panels from the NR-051 picks at one shared scale, all in-script checks pass, and the kit renders byte-identical across three locations (a4b4057); SPEC delta D10, map R2 and delta v39, the kit captions and register note, the receipt; landing check 43/0; STE under the bar (figures seat)
+a4b4057 docs(reporting): the corner-grid generator lands — family mode, corner variant; four panels from the NR-051 picks at one shared scale, decode + build + render with the recorded campaign knobs and v_rated threaded; -dg/-zg PDF normalise (figures seat)
+
+OK   docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl
+OK   docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv
+OK   docs/reporting/figures/machine-corner-grid/extract-corner-grid.log
+OK   docs/reporting/figures/machine-corner-grid/README.md
+OK   docs/reporting/figures/machine-corner-grid/captions.md
+OK   docs/reporting/figures/machine-corner-grid/register-status.md
+OK   docs/reporting/figures/machine-corner-grid/machine-corner-grid.png
+OK   docs/reporting/figures/machine-corner-grid/machine-corner-grid.svg
+OK   docs/reporting/figures/machine-corner-grid/machine-corner-grid.pdf
+OK   docs/reporting/figures/machine-corner-grid/manifest.json
+OK   docs/reporting/figures/machine-corner-grid/checks.log
+OK   docs/reporting/figures/machine-renderer/SPEC.md
+OK   docs/reporting/figures/figure-map.md
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-corner-grid-generator.md
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md
+OK   scratch/fig_cg_landing_edit.py
+OK   scratch/fig_cg_landing_check.py
+OK   scratch/fig_cg_repro.md5
+OK   scratch/fig_cg_precheck.log
+OK   scratch/fig_cg_run_inplace.log
+OK   scratch/fig_cg_run_b1.log
+OK   scratch/fig_cg_run_b2.log
+OK   scratch/fig_cg_landing_check.log
+
+RESULT: all blobs byte-verified at origin
