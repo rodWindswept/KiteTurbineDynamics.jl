@@ -79,7 +79,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | main rotor | The topmost rotor. Everything below it is the transmission for its torque. Never write "hub rotor" or "hub ring". | physics-topology 4, CONTEXT.md | ratify |
 | expansion rotor | A banked-blade rotor on a TRPT ring. It adds its own thrust and torque. It is a co-equal generating rotor, never "supplementary". | physics-topology 4, CONTEXT.md | ratify |
 | bank angle (bank) | The angle of a blade out of its ring plane. Bank is not elevation, and it is not yaw. The equivalent term in AeroDyn is pre-cone. | physics-topology 4, the pre-cone read (`2db50f9`), draft v0.28 | ratify |
-| elevation angle (β) | The tilt of the shaft axis away from horizontal. | physics-topology 4, CONTEXT.md | ratify |
+| elevation angle (β) | The tilt of the shaft axis away from horizontal. The campaign fixes it at 30 degrees, the model convention. The design hub then reads 9.4000 m. | physics-topology 4, CONTEXT.md, register NR-057, campaign runner | ratify |
 | sweep | The azimuthal setting of a blade within the ring. Tulloch names anhedral, bank and sweep together. | physics-topology 4 | supply |
 | banked blade | A blade whose span runs out of the ring plane. The blade stays straight, and the angle lives in the mount. The swept surface is a cone frustum, not a flat annulus. | physics-topology 4 | supply |
 | blade | One aerodynamic element of a rotor. The blade count equals the polygon line count. | physics-topology 4, renderer spec section 7 | supply |
@@ -170,6 +170,8 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | k_mppt (k) | The generator gain. Generator torque scales with the square of shaft speed, times k. | CONTEXT.md k_mppt row | ratify |
 | MPPT (maximum power point tracking) | The generator-loading strategy that tracks rated power. | CONTEXT.md | supply |
 | site wind (wind standard) | The measured wind profile every machine reads, re-expressed at its own rotor altitude. | DECISIONS [2026-10-03] | supply |
+| shear law (Hellmann power law) | The law that carries the site wind from its measured pair up to the rotor altitude. The exponent reads 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m. It codes the 11.01 m/s reference at 9.41 m. | register NR-056, `src/wind_profile.jl`, `docs/validation/2026-10-03-d1-wind-landing-verification.md` | supply |
+| steady wind | The wind basis of the reported trace. The wind reads altitude only. Ramp, gust and turbulence tools exist, and none is engaged. The window swing is a steady-wind response, not a stability property. | register NR-058, `src/objective_evaluator.jl`, `src/wind_profile.jl` | supply |
 | computational evolution | The report-wide phrase for the search method: a design space searched by an evolutionary algorithm. | story skeleton | supply |
 | principal component (PC1, PC2) | A new axis built from the search genes. The leading components carry the most spread in the search. | register NR-044, the kit stamps | supply |
 | loading | The weight of one gene on one projection axis. The sign gives the direction, and the size gives the strength. | register NR-044, the kit notes | supply |
@@ -270,6 +272,7 @@ defect, like a missing register row.
 | "bank" as "yaw", or as "elevation" | bank, yaw and elevation are three concepts | physics-topology 4 |
 | "rigid driveshaft" for the TRPT | tensegrity column | physics-topology 1 |
 | "the expansion model replaces the disc model" | the record bans the expansion model at every ring. A banked rotor uses the disc model with the bank derate. | stale-phrases notes, physics-topology 4.0.1 |
+| "physics-validation era" | the wind-authority era, or the era label `post-95c385d_wind-authority`. A physics-validation ledger is a record, not an era. | register header, the provenance stamps, CONTEXT.md:255 |
 
 ## 8. Handoff
 
@@ -377,4 +380,13 @@ defect, like a missing register row.
   The term row, the chain list and the cyan-line guard take the founder form.
   The lift-bearing row follows at the cone reference.
   The rename lands with the lifting-bridles relabel.
+  No other change.
+
+- **v18 (2026-10-15):** the era pack lands at the science-writer seat.
+  One retire row joins section 7: `physics-validation era` retires for the
+  wind-authority era, because the era labels in the provenance stamps name
+  no such era and a physics-validation ledger is a record, not an era.
+  The section 3 rows take the shear law and steady wind, from the author
+  seat (NR-056, NR-058).
+  The section 2 elevation-angle row takes the campaign form (NR-057).
   No other change.

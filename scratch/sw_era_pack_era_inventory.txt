@@ -1,0 +1,22 @@
+era-label inventory (sw era pack, 2026-10-15)
+
+A. provenance stamps under scripts/results/ (5 distinct)
+   post-428f491_mass-aware-const-tension_ON      3 stamp(s), e.g. scripts/results/v13_5kw_masslift_len18.0/PROVENANCE.md
+   post-4ce9fd0_daisy-anchored-5kw               16 stamp(s), e.g. scripts/results/archive_void_20260822_lambda3_exploit/PROVENANCE.md
+   post-807efa6_span3-honest-window              1 stamp(s), e.g. scripts/results/v13_5kw_masslift_len18.8/PROVENANCE.md
+   post-94223eb_bank-derate                      3 stamp(s), e.g. scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate/island_1/PROVENANCE.md
+   post-95c385d_wind-authority                   3 stamp(s), e.g. scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1/PROVENANCE.md
+
+B. era labels named in the docs tree (10 distinct)
+   post-95c385d_wind-authority                             169 file(s)
+   post-4ce9fd0_daisy-anchored-5kw                         17 file(s)
+   post-428f491_mass-aware-const-tension_ON                6 file(s)
+   post-95c385d_wind-authority.                            4 file(s)
+   post-4894787_f4b-taper-reconcile_nrings1_decayck        3 file(s)
+   post-4ce9fd0_daisy-anchored-5kw.                        3 file(s)
+   post-94223eb_bank-derate.                               3 file(s)
+   post-807efa6_span3-honest-window                        2 file(s)
+   post-94223eb_bank-derate                                2 file(s)
+   post-4894787_f4b-taper-reconcile                        1 file(s)
+
+C. labels matching 'physics-validation': stamps 0, docs 0
