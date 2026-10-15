@@ -104,7 +104,7 @@ Lane 3 data, from the certified extract: cold strain runs 0.021 to 0.032 of brea
 
 Draft render: scratch/fig_f3_draft/ (figures seat), generator scratch/fig_f3_eval_timeline_draft.py.
 
-Merge option. Lane 3 (warm against cold strain) is the core evidence of row 12, the fidelity band chart. F3 can carry row 12 and free a slot.
+Merge option. Lane 3 (warm against cold strain) is the core evidence of row 12, the fidelity band chart. F3 can carry row 12 and free a slot. Taken at the figures seat (2026-10-15, map v46): row 12 closes merged. No standalone plate builds.
 
 F4 — Campaign architecture and status mix (new row)
 

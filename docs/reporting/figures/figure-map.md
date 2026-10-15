@@ -41,7 +41,7 @@ full roster around them.
 | 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE on the re-rendered SVG (`74cfef9`). The round-6 hub-name retirement lands in the caption text ("topmost ring radius", no render move). Then sign-off |
 | 10 | 9 | §3.3 | Machine winner and the plan, side, downwind capture set | `machine-winner-hero` | R2 | The winner genome. Makie captures of the recorded final operating pose (the pair-extract capture) | Seated in the draft (§3.3). The v0.41 counter-read closes clean (`0cbb9b8`, 226 checks). The round-6 hub-name re-cut lands (script `1af63fc`). The leader reads "topmost ring R6". The round-6 counter-read closes clean (`3038656`, 136 checks). The title takes the winner form (the founder note 2026-10-15): "hero" stops as a figure label. The winner-form sites take the forms in the draft (v0.49). The aero counter-read closes clean (`79da87c`). Next: the visual pass by Rod |
 | 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
-| 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | scoped | The fidelity probes. NR-012, NR-013 | Probe extracts and rows |
+| 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | merged | The fidelity probes. NR-012, NR-013 | Merged into row 4, lane 3 (v46). Lane 3 carries the warm-vs-cold strain evidence, the core evidence of this row. The fix retired the warm false-reject premise (NR-013 ext2). No standalone plate builds. The slot frees. |
 | 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
 | 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
 | 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
@@ -56,8 +56,9 @@ full roster around them.
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
-The protected spine (author seat): rows 2, 6, 7, 8, 9, 10 and 12. The
-parking set: rows 3, 14 and 17.
+The protected spine (author seat): rows 2, 6, 7, 8, 9 and 10. Row 12
+left the spine at the merge into row 4 (v46). The parking set: rows 3,
+14 and 17.
 
 Status key.
 
@@ -68,6 +69,7 @@ Status key.
 - **candidate** — needs a slot ruling.
 - **waiting** — waits on a phase gate.
 - **blocked** — waits on a recorded re-derivation.
+- **merged** — the content folds into another row. The slot frees.
 
 Candidate rows count against the figure headroom of the budget (one to
 three slots).
@@ -82,7 +84,7 @@ three slots).
 
 - **The validators:** register rows for the twist mechanism values and
   for any printed protocol value. The swept area value joins if an
-  annotation carries one. The fidelity band joins too. No number prints
+  annotation carries one. The fidelity band joins too (row 12 merged into row 4, v46). No number prints
   without its row.
 
 - **Track D:** the display forms and the anatomy terms.
@@ -497,3 +499,13 @@ three slots).
   at 63 checks, 0 fail. The re-cut receipt takes the corrected count.
   The gate-map band holds as the campaign as-run read, closed-held with
   the one-line re-open. Next: the visual pass by Rod, then the fold.
+
+- **v46 (2026-10-15):** the fidelity band chart folds into row 4 at the
+  figures seat (row 12 closes merged). The science-validator's feedback
+  audit routes the row: its premise moved when the rope-break fix
+  landed. No warm false-reject remains to band, and the post-fix warm
+  runs read honest rejects (NR-013 ext2). Lane 3 carries the
+  warm-vs-cold strain evidence, the core evidence of the row. The
+  figure-generation notes take the merge option as taken. The
+  eval-timeline register note takes delta v8. The slot frees, and the
+  spine protection releases with the merge. No plate byte moves.

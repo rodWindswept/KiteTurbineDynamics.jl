@@ -86,5 +86,11 @@ re-cut (script `a269636`). No drawn value moves.
 strings, the label and the stamp refresh. No value moves. The pins and
 the four-location F-REPRO verify.
 
+**Delta** v8 (2026-10-15): row 12, the fidelity band chart, folds into
+this plate (map v46, figures seat). Lane 3 carries the warm-vs-cold
+strain evidence, and NR-012 and NR-013 bind it. The fix retired the
+warm false-reject premise (NR-013 ext2). No standalone plate builds.
+No drawn row changes.
+
 **Form note** (2026-10-15): swept at the v6 re-cut. The head comment
 reads "ground ring and top ring". No drawn text is affected.

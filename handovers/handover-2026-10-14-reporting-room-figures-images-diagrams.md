@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes and the placement label re-cut (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut and the fidelity band merge (2026-10-15).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -24,6 +24,13 @@ the placement re-cut: the counter-read closes (`8e33253`, 35 checks).
 Next: the visual pass by Rod, then the fold. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
 ## Closed, last (evidence index)
+
+- The fidelity band merge call (2026-10-15): row 12 (the fidelity band
+  chart) folds into row 4 at map v46. Lane 3 carries the warm-vs-cold
+  strain evidence, and the fix retired the warm false-reject premise.
+  The slot frees. Receipt
+  `docs/reporting/room-responses/figures-images-diagrams-2026-10-15-fidelity-band-merge.md`.
+  Evidence `scratch/fig_fbm_*` plus logs.
 
 - The placement label re-cut (2026-10-15): the lane-3 label takes the
   landed form (the rope-break placement fix lands at `2bf76a3`, script
