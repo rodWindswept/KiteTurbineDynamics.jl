@@ -1,0 +1,12 @@
+readback: the fidelity band merge call (figures seat)
+local == origin at f4b2840 (f4b284052936593047862a8378e6facdf4843b55)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/figure-map.md  5e9f430254595fab8e6a97f4854e98426588dbf2
+OK   docs/reporting/figures/figure-generation-notes.md  8cd2a4862845bfbf6d608954ab5971c7e0cee2a6
+OK   docs/reporting/figures/eval-timeline/register-status.md  ea7b8fdb46c3b4f973d4ca5ebd0c3a7bdc2ec9f6
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  4317934fd01feb56aa1034c0d3a89d6a74a54f83
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-fidelity-band-merge.md  caef7bf725463b28b96429468081b26e8947e716
+OK   scratch/fig_fbm_edit.py  e7ff1d492e399cab3ae21d5fde8cf7e90bebbdcd
+OK   scratch/fig_fbm_check.py  6de8e2a8b5054898c6528293981c3d3591ee57a3
+OK   scratch/fig_fbm_check.log  726d73bc901491fade9270acf8f3d1b8ae53ec84
+carried blobs verified: 8 of 8; failures: 0
