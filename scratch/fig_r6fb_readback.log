@@ -1,0 +1,25 @@
+figures seat readback: the round-6 fold-back and the corner-open train
+date: 2026-10-15T13:44:57+01:00
+commits:
+137b462 docs(handovers): the figures seat page takes the round-6 fold-back and the corner-grid opening — the closed index gains the counter-read close and the extract mint; the visual pass reads as the open gate; the corner generator build reads next (figures seat)
+92ca9f5 docs(reporting): the corner grid opens at the figures seat — the extract mints (extract-corner-grid.csv, four genomes byte-exact, NR-051-gated; 12/12 NR-044 anchors; 128 fields re-read); the kit README, the pass receipt and the fold-back checker land; checks 29 + 54, 0 fail; STE under the bar (figures seat)
+b02ecdf docs(reporting): the corner-grid extract generator and its checker land — four picks per NR-051, every NR-044 anchor gated, the genome tokens byte-exact from the telemetry rows; the render extract for the machine-corner-grid build (figure map row 23) (figures seat)
+4987e28 docs(reporting): the round-6 counter-read folds back at the figures seat — the five re-cut rows (2, 4, 6, 7 and 10) take the closure (3038656, 136 checks) and read the visual pass by Rod next; map delta v38; the five generator comment form notes hold for the next build of the two kits (comments never print; a sweep would move the two manifest script-sha pins); edit script scratch/fig_r6fb_edit.py (figures seat)
+
+OK   docs/reporting/figures/figure-map.md  74bff746ce1a6388e029e588e9841127266d54f6899bb2197c6bb61316821168
+OK   docs/reporting/figures/eval-timeline/register-status.md  42c9d5fd5ad61d1a5b2bee5443843cb3527aa550268b3580357c7919a9d79b26
+OK   docs/reporting/figures/machine-winner-hero/register-status.md  b2568e7860577d6d98a042be5ad5a2f8c01df2bf742732c57124cfce5500b940
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  a953c14cde0ba3b963918b795728f898c2e83c27c1ec229f80aa42c4836d3a0e
+OK   scratch/fig_r6fb_edit.py  a889bce827558d3884b7adbd5a51d1653298fd278014aed72936bccde983cbb8
+OK   scratch/fig_cg_extract.py  291aada496b28f37a39e1a77c456b1812242489dd18a267e7f1ff682531dcaf3
+OK   scratch/fig_cg_extract_check.py  9d76e09738a5482a4df371379c8128c09a530c051398b2acbad1e739a27a7e3d
+OK   scratch/fig_r6fb_check.py  ae717ff6d477b857101ab108a2d0423d9561169313614fec562be03455ec7c93
+OK   docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv  03abd0c660e0ad22db89f767a7b033c18db82f67dde69593c31cbb3a3919a4d5
+OK   docs/reporting/figures/machine-corner-grid/extract-corner-grid.log  031b500bbda45b8dd0204a73cfeb021143ee7a5a33f0d991a9e9f9e26fb483d3
+OK   docs/reporting/figures/machine-corner-grid/README.md  11789d2a78e0690fed408f44192ce46d19ef824af43531231810d4822214e61a
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-round6-counterread-foldback-and-corner-open.md  0ec36a72830008acab3248913722a92bf3adf1878c404cb75f7a263ae8eb8146
+OK   scratch/fig_r6fb_check.log  9b5f0a479eba002acd96738c520c3f9e9e93180d828b29ddfb93f672efe23fac
+OK   scratch/fig_cg_extract_run.log  f8a1290bb98bb15b7c877a71f510df9e1addf8b9d3b6e77ad8435e1b6e373bb0
+OK   scratch/fig_cg_extract_check.log  f2976854027f4d87f18f01c6b5f0700785eaa73e5f60d518795e77c033aa5815
+
+RESULT: all blobs byte-verified at origin
