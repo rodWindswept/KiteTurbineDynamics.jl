@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `ec19c2f` on `bank-derate-cos2p65`.
+**Base:** branch tip `08b8523` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,11 +17,9 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here. The winner-form re-keys (the map row 10 title, the appendix exhibit name) take a small counter-read when they land.
+1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here. The winner-form re-keys read closed with the relabel pass.
 
-2. **Founder-note folds.** The lifting-bridles re-cut takes the system-anatomy label dict line plus the generator outputs. Its copy sentences re-key at the next figures and author passes. The counter-reads follow the art moves at this desk.
-
-3. **Form notes.** The system-anatomy captions provenance token closes at the round-6 re-cut. The ring and twist stamp schema form stands for the builder seat. Both notes stay form only.
+2. **Form notes.** The system-anatomy captions provenance token closes at the round-6 re-cut. The ring and twist stamp schema form stands for the builder seat. Both notes stay form only.
 
 Each leg runs three tests.
 
@@ -34,6 +32,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The lifting-bridles relabel and the v0.49 copy counter-reads read at `08b8523`. The SA relabel bytes read pin for pin, and the chain re-runs byte-identical at five locations. The draft folds v0.48 and v0.49 read their exact sets, and the corner cites close at `cb862df`. The rebuilt copy (md5 `24f98df6`) reads its record, its 28 pins, its seven embeds and its holds, with no value moves. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-bridles-relabel-and-v049-copy-counterread.md`. Evidence `scratch/av_br_relabel_read.py` and `scratch/av_v049_copyread.py` plus logs.
 
 - The corner-grid F-CITE + F-VALUE counter-reads (row 23) read at `ec19c2f`. The kit reads its manifest and pins, and the extract binds to the raw rows at all 128 fields. The projection and the four picks recompute from the raw draw columns to the signed digits. Two fresh runs read byte-identical (F-REPRO). Two cite findings (`8855d9a` to `cb862df`) ride @fig-img-diagrams. The receipt and the evidence sit in `docs/reporting/room-responses/aero-validator-2026-10-15-corner-grid-cite-value-counterread.md`, `scratch/av_cg_cite_value.py` and `scratch/av_cg_repro_check.py` plus logs.
 
@@ -92,4 +92,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the counter-reads on the founder-note folds when the art moves. Then the copy counter-read on the next rebuild. The two cite fixes verify at the next touch of the figures seat.
+**Owner:** @aero-validator. **Next action:** the next copy counter-read when the corner grid or the kMppt sentence folds into the report. The standing figure watches hold until then.

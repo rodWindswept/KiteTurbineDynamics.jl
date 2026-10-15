@@ -1,0 +1,86 @@
+[0] lifting-bridles relabel counter-read   tip 08b8523   origin 08b8523
+  ok   tip == origin
+[1] the SA kit bytes
+  ok   manifest script sha == delivered .py
+  ok   pin checks.log == delivered == manifest
+  ok   pin label-ledger.txt == delivered == manifest
+  ok   pin system-anatomy.pdf == delivered == manifest
+  ok   pin system-anatomy.png == delivered == manifest
+  ok   pin system-anatomy.tex == delivered == manifest
+  ok   manifest commits read 9241b23 / dd3cc6a
+  ok   manifest rows read NR-011/017/043
+  ok   checks log carries the v7 block
+  ok   checks log: three-run identity line
+  ok   checks log md5 row system-anatomy.tex
+  ok   checks log md5 row prototype.html
+  ok   checks log md5 row label-ledger.txt
+  ok   checks log md5 row system-anatomy.pdf
+  ok   checks log md5 row system-anatomy.png
+  ok   LaTeX log: zero error lines
+  ok   LaTeX log: zero overfull boxes
+  ok   tex: new label reads, bare old form zero
+  ok   prototype: new label reads, bare old form zero
+  ok   ledger: new label reads, bare old form zero
+  ok   label ledger reads its 34 strings
+  ok   generator carries the v7 note
+  ok   kit-wide: no bare 'bridles (three)' outside the relabel lines ([])
+  ok   SPEC carries the load-path form and the relabel item
+  ok   the captions carry the provenance token 9241b23
+  ok   SA register note carries delta v5
+[2] the F-REPRO counter-walk
+  ok   delivered md5s read the table
+  ok   figures repro table pins == delivered
+  ok   my run 1: all five outputs byte-identical to the delivered set
+  ok   my run 2: all five outputs byte-identical to the delivered set
+  ok   figures-seat run 1: all five outputs byte-identical
+  ok   figures-seat run 2: all five outputs byte-identical
+  ok   one md5 value per output across every location
+[3] the draft v0.48 and v0.49
+  ok   draft movers since d0ed902 read [6f19eee, 8169e36] (['8169e36', '6f19eee'])
+  ok   the v0.49 fold touches four content files + its evidence (['docs/reporting/draft-tracker.md', 'docs/reporting/drafts/2026-10-08-report-first-draft.md', 'docs/reporting/figures/system-anatomy/captions-draft.md', 'docs/reporting/figures/system-anatomy/captions.md'], ['scratch/au_v049_rekeys_fold.log', 'scratch/au_v049_rekeys_fold.py'])
+  ok   v0.48 pins: token delta reads add {'48': 1} / rem {'47': 1}
+  ok   v0.49 re-keys: token delta reads add {'49': 1} / rem {'48': 1}
+  ok   cumulative delta reads add {'49': 1} / rem {'47': 1}
+  ok   v0.49 changed-line census reads [3, 484, 539, 946, 994], 1-for-1 ([(3, 1), (484, 1), (539, 1), (946, 1), (994, 1)])
+  ok   draft line 3 reads its form
+  ok   draft line 484 reads its form
+  ok   draft line 539 reads its form
+  ok   draft line 946 reads its form
+  ok   draft line 994 reads its form
+  ok   draft hero census reads 1, in the slug (1)
+  ok   draft reads zero 'Machine winner hero'
+  ok   draft reads zero old label forms
+  ok   SA block pin png reads the delivered sha
+  ok   SA block pin pdf reads the delivered sha
+  ok   SA block pin ledger reads the delivered sha
+  ok   SA block pin checks reads the delivered sha
+  ok   every old SA pin reads zero at HEAD
+  ok   SA appendix row carries the new script cell
+  ok   the 1af63fc script cells read 3 (3)
+  ok   tracker: v0.49 entry, additions only
+  ok   tracker carries the v0.48 and v0.49 entries
+  ok   captions-draft.md L23: caption form reads
+  ok   captions-draft.md: old form zero
+  ok   captions.md L39: caption form reads
+  ok   captions.md: old form zero
+[4] the corner cite closes and the winner form
+  ok   corner register L11 takes cb862df
+  ok   corner register carries delta v2
+  ok   corner README state line
+  ok   map row 23 takes cb862df
+  ok   map row 23 records the counter-read close
+  ok   map row 23 records the finding close
+  ok   map row 10 takes the winner title
+  ok   old map title reads zero
+  ok   map deltas v39/v40 and the relabel record
+  ok   8855d9a reads zero across the live figure tree
+[5] the ride-alongs
+  ok   notes L13 reads the lifting form
+  ok   notes L23 style line (the closure flip)
+  ok   notes L30 distinction line
+  ok   captions-draft checklist line (the closure flip)
+  ok   physics-topology section 2 amend
+  ok   domain item 8 amend
+
+checks: 77  ok: 77  fail: 0
+AV_BR_DONE
