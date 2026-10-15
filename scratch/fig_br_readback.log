@@ -1,0 +1,33 @@
+figures seat — the lifting-bridles relabel landing — readback (figures-images-diagrams)
+commits: 9241b23 (the script re-cut), 6f19eee (the landing)
+push: 5fd44b7..6f19eee
+fetch: 6f19eee
+local == origin: YES
+
+blob readback (HEAD: vs origin/bank-derate-cos2p65:):
+OK  docs/reporting/figures/system-anatomy/system-anatomy.py  afa4949ed5143942b33af068098a5e7c9ff95ef9
+OK  docs/reporting/draft-tracker.md  1c5176926fcca87fac30a7ecf1f368878eaa019c
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md  73287019bad2508acd15bd8df7fa043db8f4b110
+OK  docs/reporting/figures/figure-map.md  2b3d329c161f2f82e6b32ff992437409ec2476f6
+OK  docs/reporting/figures/machine-corner-grid/README.md  640e696f44faad83b17e76fc31791ae590b6f444
+OK  docs/reporting/figures/machine-corner-grid/register-status.md  ac71b559d4eee15b748d9fc9ab9633997fafdc81
+OK  docs/reporting/figures/system-anatomy/SPEC.md  a8891b1b7dc178e17985291579bbde2d5a17eaae
+OK  docs/reporting/figures/system-anatomy/captions.md  c2cb09a1b7ab256909849db124a67da01ea99762
+OK  docs/reporting/figures/system-anatomy/checks.log  b6dbaa5f0df2b94e755203febff08ea9434bb2ab
+OK  docs/reporting/figures/system-anatomy/label-ledger.txt  eebefbfeb3f5e09379804ff54ee5292bac326e46
+OK  docs/reporting/figures/system-anatomy/manifest.json  2ab6a88ad76bc1abbb9955e26c99605879266b8d
+OK  docs/reporting/figures/system-anatomy/prototype.html  6653d3c6262c72300395dd182b0fb0af9f1569ed
+OK  docs/reporting/figures/system-anatomy/register-status.md  b422ee751927c863b156e0d10f914fa3362f3a4a
+OK  docs/reporting/figures/system-anatomy/system-anatomy.pdf  53e442d22ec7a5abad1c6623d62f2fe33e59ccfd
+OK  docs/reporting/figures/system-anatomy/system-anatomy.png  76db5e79897b80d58131e8df6de2c5e3663ccc9b
+OK  docs/reporting/figures/system-anatomy/system-anatomy.tex  44e2dfbdae780b4a472346fa7e8a9ada75e9f63f
+OK  handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  ea834a89dc9d6d223638ec3044cdaea9c304c472
+OK  docs/reporting/room-responses/figures-images-diagrams-2026-10-15-lifting-bridles-relabel.md  79c379bcceb473aaef2672296ea480fa3743fa69
+OK  scratch/fig_br_check.log  386a84357f4a5448e6825cb4947f6ff66f1cce31
+OK  scratch/fig_br_check.py  9b037bc5cc12d64924e60c3ced26c71ed5c31ab9
+OK  scratch/fig_br_docs_edit.py  75ca693827c20182ccba0a79de2e8886842ff664
+OK  scratch/fig_br_facts.json  c71e744b7b229bcd3a4e1eec881b45cc4b4004dd
+OK  scratch/fig_br_repro.md5  cb4ccac0371b4aee9a2ae12bff431e04f8de53a5
+OK  scratch/fig_br_run1.log  b3c962e57c4aeee17307925142d052e35c5fc482
+OK  scratch/fig_br_run2.log  2bd016bf42b320b66658ecb8d2096e4818ddb6e3
+OK  scratch/fig_br_run_inplace.log  2c7c48c04a18535bcbbdc4fc7c8a49c4f42b9702
