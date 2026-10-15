@@ -84,5 +84,5 @@ thirteen. Script commit `d243b37`.
 **Delta** v4 (2026-10-14): the v6 re-cut lands. The R6 label takes the top
 form (round-6 comment 1). Script commit `1af63fc`. No value moves.
 **Delta** v5 (2026-10-15): the v7 re-cut lands. The chain label takes
-the founder form. Script commit `9241b23`. The caption sentence re-keys
-at the author pass. No value moves.
+the founder form. Script commit `9241b23`. The caption sentence re-keyed
+at the author pass (v0.49). No value moves.

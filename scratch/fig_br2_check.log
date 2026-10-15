@@ -1,0 +1,36 @@
+ok  001 map: row 2 takes the v0.49 forms and the counter-read close
+ok  002 map: row 2 stale next-line gone
+ok  003 map: row 10 takes the winner-form close
+ok  004 map: row 10 stale next-line gone
+ok  005 map: delta v41 opens
+ok  006 map: delta v41 closes the file
+ok  007 map: the counter-read close cites read three times
+ok  008 map: the historical delta next-lines read (rows updated)
+ok  009 SPEC: the closed item reads
+ok  010 SPEC: the closure text
+ok  011 SPEC: the old live item gone
+ok  012 captions: the note reads the closed form
+ok  013 captions: the forward phrase gone
+ok  014 register note: the delta reads the closed form
+ok  015 seat page: the refresh line
+ok  016 seat page: one open item
+ok  017 seat page: the closed bullet
+ok  018 seat page: the footer
+ok  019 pin holds: system-anatomy.tex
+ok  020 pin holds: label-ledger.txt
+ok  021 pin holds: system-anatomy.pdf
+ok  022 pin holds: system-anatomy.png
+ok  023 pin holds: system-anatomy.py
+ok  024 pin holds: checks.log
+ok  025 manifest: script_commit holds
+ok  026 manifest: checks sha holds
+ok  027 draft: v0.49 header
+ok  028 draft: the load-path sentence reads
+ok  029 draft: Machine winner reads twice
+ok  030 draft: the marker takes the winner form
+ok  031 kit captions: the caption form reads
+ok  032 captions-draft: the caption form reads
+ok  033 captions-draft: the ledger-string line reads
+ok  034 figure notes: the style line reads
+
+34 checks, 0 fail

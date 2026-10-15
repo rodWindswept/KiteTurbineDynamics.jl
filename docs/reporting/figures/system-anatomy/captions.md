@@ -100,5 +100,5 @@ script commit.
 
 Relabel note (2026-10-15): the lifting-bridles relabel (the founder
 note). The plate re-renders with the chain label "lifting bridles
-(three)". The caption text re-keys at the author pass. No value
-moves.
+(three)". The caption text re-keyed at the author pass (v0.49). No
+value moves.

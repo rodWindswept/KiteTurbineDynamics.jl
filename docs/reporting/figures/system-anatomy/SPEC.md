@@ -110,9 +110,9 @@ Two full runs stay byte-identical: generator outputs, PDF and PNG.
   in v2 and v3.
 - Closed: the hub-name retirement (round-6, 2026-10-14). The R6 label
   reads "R6, the topmost ring". No value moves.
-- The lifting-bridles relabel (2026-10-15): the chain label reads
-  "lifting bridles (three)" (the v7 re-cut). The caption text re-keys
-  at the author pass.
+- Closed: the lifting-bridles relabel (v7 re-cut, 2026-10-15). The
+  chain label reads "lifting bridles (three)". The caption text and the
+  copy take the forms (author v0.49). No value moves.
 - Track D: the term picks. The plate carries the room forms for now.
 - The β value waits for a signed row.
 - Strip re-render and the planned genome strip and winner anatomy plates
