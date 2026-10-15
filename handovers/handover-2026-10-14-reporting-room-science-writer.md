@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `2a0d096` on `bank-derate-cos2p65`. The round-6 leg train follows (`69ec727` to `50e0300`). The sweep 30 push follows this page.
+**Base:** branch tip `4ded913` on `bank-derate-cos2p65`. The sweep-30 train follows. The era-pack push follows this page.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,10 +17,9 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 30 on the next draft push.**
+1. **Sweep 31 on the next draft push.**
    The next movers are the era pack at this seat, the partner-gated tails
-   and the kMppt plain pass on the author seat, and the figure pack at
-   the figures seat.
+   and the kMppt plain pass on the author seat, and the corner-grid fold.
    The sweep keys on the next push.
 
 2. **The era pack (queue item 5).**
@@ -48,9 +47,11 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
+- Sweep 30: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `8a1e552..4ded913` verifies the four round-6 movers.
+
 - The round-6 legs: commits `69ec727` to `50e0300`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-round6-legs.md` sits beside this page.
 
-- Sweep 29: the record section sits in `docs/reporting/draft-consistency-sweep.md`, and the receipt lands in `docs/reporting/room-responses/` beside this page.
+- Sweep 29: commits `cde8089` to `e104f30`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-29.md`.
 
 - Sweep 28: commits `4b19592` to `d2a57aa`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-28.md`.
 
@@ -94,4 +95,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** sweep 30 on the next draft push, then the era pack and the explainer block.
+**Owner:** @science-writer. **Next action:** the era pack, then the explainer block. Sweep 31 keys on the next draft push.
