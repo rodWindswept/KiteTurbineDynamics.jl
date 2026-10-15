@@ -86,6 +86,8 @@ These caused a full session of wrong diagnoses. Full detail:
    bridles are the load path that lets the lift chain carry the main rotor.
    **Never write "bridles (cyan lines)"** — they are different links with
    different tensions.
+   **Reader name (Rod, 2026-10-15):** the report reads *lifting bridles*. The
+   code and the recorded pages hold their spelling.
 9. **The lift chain must be TAUT.** The lifter applies **1.5 × airborne weight**
    vertically at the lift bearing *throughout operation*. If the bridles read
    0.0 N the lift chain is structurally decoupled from the rotor — a **named
