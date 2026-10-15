@@ -1,0 +1,43 @@
+# Readback: the founder asks, the doc watch and the map-seat carry (hermes, 2026-10-15)
+# Part 1 re-derives the doc-watch page's figures at landing time. The first pass
+# did not write its readback before the session break. Part 2 records the landing.
+
+## Part 1 -- the doc-watch re-run
+
+File dates (git log -1 --format='%h %ad' --date=short, run 2026-10-15):
+handovers/README.md                                  b86b750 2026-10-14
+docs/agents/instrument-trust-log.md                  b86b750 2026-10-14
+AGENTS.md                                            a0f479e 2026-10-12
+DECISIONS.md                                         d3a785e 2026-10-07
+CONTEXT.md                                           94223eb 2026-10-01
+CLAUDE.md                                            6de4170 2026-09-24
+README.md                                            6f73d47 2026-08-22
+CHANGELOG.md                                         6f73d47 2026-08-22
+REPRODUCIBILITY.md                                   85494e8 2026-08-16
+PROJECT_ROOM.md                                      cce274e 2026-07-14
+
+All ten match the table on the page.
+
+Scheduled checks (hermes cron list, run 2026-10-15):
+  doc-currency-sweep     every 360m  enabled  last run 2026-10-15 14:17  status ok
+  skills-currency-sweep  every 360m  enabled  last run 2026-10-15 13:54  status ok
+
+The page carried its 08:00 read. Both jobs read healthy at landing. No record edits.
+
+System crontab:
+no crontab for rod
+
+## Part 2 -- the landing readback
+
+Commits (bank-derate-cos2p65):
+  c2fb1fc  the founder-asks page
+  8064e25  the MCP pilot page and its evidence set
+  09af02e  the queue page
+
+md5 (local == origin, every blob byte-verified at origin):
+f8a2f4602b64e157145b7c075dbaf6c4  handovers/handover-2026-10-14-reporting-room-queue.md
+2dba46264282cc05a3e7c06a64111e12  docs/reporting/room-responses/hermes-2026-10-15-founder-asks-and-doc-watch.md
+be04fa298db736190dee42a91d634674  docs/reporting/room-responses/hermes-2026-10-15-mcp-tooling-pilot.md
+
+HEAD == origin/bank-derate-cos2p65 == 09af02ec5a52131daac79a7820b522f76d34bca9 at the write of this log.
+This log rides the next commit.
