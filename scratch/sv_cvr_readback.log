@@ -1,0 +1,10 @@
+# sv_cvr_readback.log — the convergence register read readback
+# stamp: 2026-10-15T21:50:40Z (science-validator seat)
+# base: 7956a39 | main commit: 1b09190aa45c9ad59635541f9c8e4de4deac6faf (branch bank-derate-cos2p65)
+# local == origin: 1b09190aa45c9ad59635541f9c8e4de4deac6faf == 1b09190aa45c9ad59635541f9c8e4de4deac6faf
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/numbers-register.md | dfac53e4b44c49d5042ade8929c02dd169f88e5b | dfac53e4b44c49d5042ade8929c02dd169f88e5b | 46ebc422ee636753e06aaf3c10191d781d15a48f13266ebb893cc9900f72e9c0
+docs/reporting/room-responses/science-validator-2026-10-15-convergence-register-read.md | 29ab28562f3d0bf5779b8644597917c55b4b1033 | 29ab28562f3d0bf5779b8644597917c55b4b1033 | e9fb66779e8bc85eda1e2774995ec8ab2704fbd4188d6358dae583dbb68f79b3
+scratch/sv_cvr_read_check.py | 23cbc32dc1dab1cc02d660dc2408ee675f328063 | 23cbc32dc1dab1cc02d660dc2408ee675f328063 | ae43b76d124677f38a3d069c818c7ede12c28a95716411d9641aa645a79a8dcc
+scratch/sv_cvr_read_check.log | c9f91ec881c13bfe1c058373e9629f27ddcb85a8 | c9f91ec881c13bfe1c058373e9629f27ddcb85a8 | 70ad86fdf534c5a6cb3987c0037528e113fd661e1dd130e4994998d2a417f367
+# verdict: all four carried blobs byte-verified at origin
