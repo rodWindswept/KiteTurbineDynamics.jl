@@ -1,0 +1,20 @@
+# Readback: the v0.53 fixed-defect pass (author seat, 2026-10-15)
+
+Commits (bank-derate-cos2p65):
+  89ed222  the fold (draft v0.53, the fixed-defect set)
+  3a6e84d  the receipt set (receipt, rebuild check, check log)
+  aefd0f6  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+6c68110006370e397569a592fa309ee4  docs/reporting/drafts/2026-10-08-report-first-draft.md
+14d07cb0b92fcb0370f8db706f9af674  docs/reporting/draft-tracker.md
+02ddbc3a0c4220805c8ac1fed53e876f  scratch/au_v053_41_fixed_defect_fold.py
+d65aeb4e6bb148b2871c8b12064833a0  scratch/au_v053_41_fixed_defect_fold.log
+ef71d1380bc444c245a9978e2442c9ef  docs/reporting/room-responses/author-2026-10-15-v053-fixed-defect.md
+4d1a97f0ff9433dd997fb5484cdeb9c2  scratch/au_v053_rebuild_check.py
+19e5d29c98ee6129a1b516d904275652  scratch/au_v053_rebuild_check.log
+8873de22dfe136f19b3ae7a26e06ea95  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == aefd0f671c5f3ec750dc269aef3a1be18941bf27 at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 e1eaef4358f7bff7e8da8b8b73a5cf3b) stays untracked and is not carried.
+This log rides the next commit.
