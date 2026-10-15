@@ -1,0 +1,21 @@
+# Readback: the v0.56 era-pack pass (author seat, 2026-10-15)
+
+Commits (bank-derate-cos2p65):
+  c9f0560  the fold (draft v0.56, the era pack: the era phrase, the ledger dates and the back-pointer)
+  c98ca68  the receipt set (receipt, rebuild check, check log)
+  fa9ab24  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+5a7e293452ae5787ea15409edae9f5a6  docs/reporting/drafts/2026-10-08-report-first-draft.md
+cc48aad6966dfa5b2f92a1ff36fe1caa  docs/reporting/draft-tracker.md
+05a28c3fe440f3ae7d3149bd8ce88de7  scratch/au_v056_era_pack_fold.py
+c4db95c62d315f529e25c7115db206f3  scratch/au_v056_era_pack_fold.log
+51a74926dec02410b7b4204cc3cf0102  docs/reporting/room-responses/author-2026-10-15-v056-era-pack.md
+cc8d0f01beb744dcc4b323b149efa684  scratch/au_v056_rebuild_check.py
+38110aa7d4b4fc4a1cfdccc00755371b  scratch/au_v056_rebuild_check.log
+f58491f3beb5a8bf1d1261e5bd3bce02  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == fa9ab245f43997a3c88a398e91c1508d99f66ceb at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 5ecee42e6dcf1f16c6eaec3e2a2bd87a) stays untracked and is not carried.
+Note: the fa9ab24 message cites the seat-page STE figure as 0.08/100w; the page reads 0.07/100w (one hit on 1,346 words). The figure corrects here, and the page bytes hold.
+This log rides the next commit.
