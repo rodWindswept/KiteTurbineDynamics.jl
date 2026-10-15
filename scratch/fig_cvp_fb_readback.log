@@ -1,0 +1,12 @@
+readback: the convergence counter-read fold-back (figures seat)
+local == origin at 2877071 (2877071585ede54ff27fec49a5e3db4c59d44b7d)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/convergence/SPEC.md  402bb212db49db2cc203a801d7bac2e350e5aae0
+OK   docs/reporting/figures/convergence/register-status.md  c602c7469591f834938f844e9230ce815565d7a9
+OK   docs/reporting/figures/figure-map.md  e52c74d0dc8633349e36c1b534499e952f619599
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-15-convergence-closure-foldback.md  6184aa61e4a2d5261b7c036e7b5bd1d44004a50d
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  8f610c72d52f80f4f67810d8cd8389300e7d5f45
+OK   scratch/fig_cvp_fb_check.log  e57d2b73b9599d2802fd451a300275b920fa52ef
+OK   scratch/fig_cvp_fb_check.py  46e7df7e9ef120526ccdc1183a7227ee0bd369a6
+OK   scratch/fig_cvp_fb_edit.py  847f3dee93c6560cb8984e088d4781b1a0280cf5
+carried blobs verified: 8 of 8; failures: 0
