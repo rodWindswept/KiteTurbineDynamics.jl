@@ -1,0 +1,40 @@
+PASS record: draft 1061878
+PASS record: register at cb862df
+PASS record: 8 of 8 seats
+PASS record: the seat list carries machine-corner-grid
+PASS record: 43 cited, every one signed (51 total), checker exit 0
+PASS md5 parity live == archived build  [74aa4c02cdb80ecf310982fee361b15b]
+PASS md5 reads 74aa4c02cdb80ecf310982fee361b15b
+PASS media entries == 8  [8]
+PASS kit png on disk == pinned system-anatomy
+PASS kit png on disk == pinned machine-winner-hero
+PASS kit png on disk == pinned ring-utilisation
+PASS kit png on disk == pinned twist-limit
+PASS kit png on disk == pinned pca-landscape
+PASS kit png on disk == pinned pca-atlas
+PASS kit png on disk == pinned machine-corner-grid
+PASS kit png on disk == pinned machine-evolution-strip
+PASS every kit png embeds (delivered bytes)
+PASS probe x1 == x1: v0.51
+PASS probe x0 == x0: v0.50
+PASS probe x0 == x0: v0.49
+PASS probe x1 == x1: Figure (roster row 23)
+PASS probe x1 == x1: The four corner designs show how widely the machine changes acro
+PASS probe x1 == x1: Four panels show the nearest feasible design to each corner
+PASS probe x1 == x1: 60.646
+PASS probe x1 == x1: 58.864
+PASS probe x1 == x1: 33.704
+PASS probe x1 == x1: 33.812
+PASS probe x1 == x1: corner-grid-extract-2026-10-15-picks
+PASS probe x1 == x1: All eight read dataset commit
+PASS probe x0 == x0: All seven read dataset commit
+PASS probe x1 == x1: The corner-grid picks (v13 5 kW screen): four machines, one per 
+PASS probe x1 == x1: data dd3cc6a · script a4b4057 · rows NR-044, NR-051
+PASS probe x1 == x1: 517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568
+PASS probe x1 == x1: Three lifting bridles
+PASS probe x0 == x0: Three bridles
+PASS probe x1 == x1: down the lifting bridles
+PASS probe x2 == x2: Machine winner
+PASS probe x0 == x0: hero image
+
+38 checks, 0 fail
