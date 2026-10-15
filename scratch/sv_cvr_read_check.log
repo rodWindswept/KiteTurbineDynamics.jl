@@ -1,0 +1,117 @@
+# sv_cvr_read_check.log — the convergence register read, the seed-form answer and the v0.55 fold read (science-validator seat)
+# stamp: 2026-10-15T21:49:44Z
+# base: 7956a39 (branch bank-derate-cos2p65)
+
+A. The register rows (the tip read):
+  OK   NR-002 carries a signed status
+  OK   NR-003 carries a signed status
+  OK   NR-004 carries a signed status
+  OK   NR-005 carries a signed status
+  OK   NR-006 carries a signed status
+  OK   NR-036 carries a signed status
+  OK   NR-054 carries a signed status
+  OK   NR-055 carries a signed status
+  OK   NR-042 carries a signed status
+  OK   NR-045 carries a signed status
+  OK   NR-015 carries a signed status
+  OK   NR-046 carries a signed status
+  OK   NR-014 carries a signed status
+
+B. The kit note and the drawn set:
+  OK   kit note: '| NR-002 | The status mix 508 / 301 / 110 / 11. The legend counts '
+  OK   kit note: '| NR-003 | Island 1 final 30.578. The caption tier | Signed |'
+  OK   kit note: '| NR-004 | Island 2 final 30.637. The caption tier | Signed |'
+  OK   kit note: '| NR-005 | The campaign winner 27.364 at generation 26. The star a'
+  OK   kit note: '| NR-006 | The common seed 36.109. The seed label | Signed |'
+  OK   kit note: '| NR-036 | The search-objective label form, and the milestones. Th'
+  OK   kit note: '| NR-054 | The three running-best series. Panel 2 | Signed (scienc'
+  OK   kit note: '| NR-055 | The reject split 96 / 4 / 201, and the label rules. The'
+  OK   kit note: 'The figure draws no other row.'
+  OK   kit note: 'The seed prints 36.109 at 3 dp (NR-006).'
+  OK   kit note: 'The winner prints 27.364 at 3 dp (NR-005).'
+  OK   kit note: 'The subgroup-C label reads'
+  OK   kit note: 'The split reads the power floor first: 34 of the 96 also read FoS '
+  OK   kit note: 'The foot note states the read order.'
+  OK   kit note: 'cause not logged' carries NR-055
+  OK   ledger: 34 drawn strings
+  OK   ledger holds 'feasible (508)'
+  OK   ledger holds 'rejected: rotor below 1.5 m clearance (110)'
+  OK   ledger holds 'rejected: twist past the crossing limit (11)'
+  OK   ledger holds 'rejected: power below the 5 kW floor (96)'
+  OK   ledger holds 'rejected: FoS below 2.5 (4)'
+  OK   ledger holds 'rejected: cause not logged (201)'
+  OK   ledger holds 'the common seed · 36.109'
+  OK   ledger holds 'the campaign winner · 27.364'
+  OK   ledger holds 'search objective (kg)'
+  OK   ledger holds 'the reject split reads the power floor first'
+  OK   ledger holds 'the campaign across generations 0 to 30 · era post-95c385d_wind-'
+  OK   ledger holds 'rows NR-002 · NR-003 · NR-004 · NR-005 · NR-006 · NR-036 · NR-05'
+  OK   ledger holds 'the running-best search objective of each island'
+  OK   ledger holds 'the outcome mix of each generation · pooled over the three islan'
+  OK   ledger holds 'islands 1 and 2 improve to their last generation · the budget st'
+  OK   ledger holds 'First feasibility, then mass'
+  OK   ledger counts sum to 930
+  OK   no status codes and no Track names print
+  OK   caption tier: '36.109 kg-equivalent (NR-006)'
+  OK   caption tier: '27.364 kg-equivalent at generation 26 (NR-005)'
+  OK   caption tier: 'to 30.578 and 30.637 (NR-003, NR-004)'
+  OK   caption tier: 'The search objective is not a mass reading (NR-036).'
+  OK   caption tier: 'Values cite NR-002, NR-003, NR-004, NR-005, NR-006, NR-036, NR-0'
+  OK   cite set: the kit note lists the eight
+  OK   cite set: the captions list the eight
+  OK   cite set: the ledger rows string lists the eight
+  OK   cite set: the manifest lists the eight
+  OK   md5 convergence.svg
+  OK   md5 convergence.pdf
+  OK   md5 convergence.png
+  OK   md5 label-ledger.txt
+  OK   md5 manifest.json
+  OK   manifest: extract sha256
+  OK   manifest: island 1 telemetry sha256
+  OK   manifest: island 2 telemetry sha256
+  OK   manifest: island 3 telemetry sha256
+  OK   manifest: script sha256
+  OK   pdf layer holds 'feasible (508)'
+  OK   pdf layer holds '36.109'
+  OK   pdf layer holds '27.364'
+  OK   pdf layer holds 'rejected: cause not logged (201)'
+  OK   pdf layer holds 'search objective (kg)'
+  OK   pdf layer holds 'the reject split reads the power floor first'
+
+C. The split recompute (the NR-055 basis):
+  OK   mix 508/301/110/11
+  OK   split 96/4/201
+  OK   floor-first overlap 34 of 96
+  OK   convergence files: 30 rows, iterations 1 to 30 (no gen-0 row)
+
+D. The NR-006 seed-form alignment:
+    island 1: gen-0 cum 36.109 src (0,1) | gen 29 31.018 | gen 30 30.578
+    island 2: gen-0 cum 36.109 src (0,1) | gen 29 31.085 | gen 30 30.637
+    island 3: gen-0 cum 36.109 src (0,1) | gen 29 27.364 | gen 30 27.364
+  OK   iteration k = running-best at generation k, 90 of 90
+  OK   max deviation 0.0
+  OK   islands 1 and 2 move at generation 30 (pins k to k)
+  OK   island 3 final reads NR-005 full precision
+  OK   convergence first read rounds to the NR-006 form 36.109
+
+E. The v0.55 fold read:
+  OK   draft pin reads v0.55 once
+  OK   no v0.53/v0.54 mark reads
+  OK   section 3.1 block reads once
+  OK   section 5 opener reads once
+  OK   the split lines read twice each
+  OK   shear-law row reads
+  OK   shaft-elevation row reads
+  OK   swing basis note reads
+  OK   citation checker rc=0
+  OK   citation checker reads 52 cited
+  OK   citation checker: every cited row signed (58 total)
+  OK   draft fold: 16 added lines, 1 removed line
+  OK   draft fold: the added set reads exactly the declared fold
+  OK   draft fold: the removed line reads the v0.54 pin
+  OK   tracker fold: 7 added lines, none removed
+  OK   tracker fold: the v0.55 entry reads
+
+RESULT: 97 checks, 0 fail
+SV_CVR_READ_DONE
+rc=0

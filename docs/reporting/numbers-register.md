@@ -2077,3 +2077,34 @@ Reading rules:
 
 - The swing sentence states the steady-wind basis. It is not a stability
   property. The turbulence line reads the same way.
+
+## The seed generation forms, NR-006 with NR-045 (2026-10-15, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The aero F-VALUE read raises one record query: the NR-006 parenthetical
+reads "gen 1, common seed", the strip rule records the pick at (gen 0,
+idx 1), and the convergence plate prints no generation beside the seed.
+The values agree.
+
+Resolution, after a re-read of the three convergence files against the
+three telemetry files:
+
+- The convergence file carries 30 rows, iterations 1 to 30, and no gen-0
+  row. Iteration k equals the running-best search objective at generation
+  k on all three islands. The read is 90 of 90 at the stored precision
+  (3 dp), with maximum deviation 0.0. Checker `scratch/sv_cvr_read_check.py`.
+
+- NR-006 "gen 1" names the convergence file's first read, which carries
+  the common seed's value. The seed batch's own generation index reads 0
+  in the telemetry column (NR-045: "Generation 0 is the initial
+  population (the seed batch)").
+
+Reading rules:
+
+- Text that tags the seed with a generation reads "generation 0"
+  (NR-045). The convergence form "iteration 1" stays in convergence-file
+  references.
+
+- The convergence plate prints the seed with no generation (NR-006 quote
+  form). The drawn form stands.
