@@ -1,0 +1,329 @@
+[0] v0.52 copy counter-read   tip 98f7aa5   origin 98f7aa5   record b6cd166   copy md5 3c386dc289f70d6d26f65c7df06fb993
+[0] identity and freshness
+  ok   copy md5 reads the declared value
+  ok   copy byte-identical to its archived build
+  ok   copy and archive carry one size
+  ok   build record names draft b6cd166
+  ok   build record refs register cb862df
+  ok   build record: 43 cited of 51 signed
+  ok   build record uncited list reads the 8 ids
+  ok   build record: checker exit 0
+  ok   build record: eight seats
+  ok   build record stamp 16:31:15Z
+  ok   build record embed route
+  ok   build record: nothing re-rendered
+  ok   copy block names draft b6cd166 once
+  ok   copy block refs register cb862df once
+  ok   copy block: 43 cited of 51 signed once
+  ok   copy block uncited list reads the 8 ids once
+  ok   copy block: checker exit 0 once
+  ok   copy block: eight seats once
+  ok   copy block seat list reads the eight slugs once
+  ok   copy block stamp reads 16:31:15Z once
+  ok   copy reads zero 16:31:14Z forms
+  ok   stamp pair reads record 2026-10-15T16:31:15Z / block 2026-10-15T16:31:15Z (no split this build)
+  note stamp pair: record file 2026-10-15T16:31:15Z, copy block 2026-10-15T16:31:15Z
+  ok   draft blob reads b6cd166 == HEAD == origin
+  ok   no draft move since the record
+  ok   register ref cb862df == HEAD == origin
+  ok   register unchanged since cb862df
+  ok   tracker holds since the record
+  ok   the 32 embedded bytes hold since the record
+  ok   the whole figure tree holds since the record
+  ok   post-build moves read the declared 6 paths (6 seen)
+  ok   tracker not among post-build moves
+  ok   register and draft not among post-build moves
+  ok   the read tip reads the same as origin
+[1] the copy input census (last read -> v0.52)
+  ok   last-read base resolves
+  ok   7 commits land since the last copy read (7)
+  ok   draft movers read [b6cd166] (['b6cd166'])
+  ok   tracker movers read [b6cd166] (['b6cd166'])
+  ok   register movers read none ([])
+  ok   draft v0.52 fold: token delta reads add {'52': 1} / rem {'51': 1}
+  ok   tracker v0.52 fold: token delta reads add {'2.1': 1, '52': 1} / rem {}
+  ok   v0.52 draft changed-line census reads [3, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242] / [3]
+  ok   v0.52 numstats read +5/-0 and +14/-1 (['5\t0\tdocs/reporting/draft-tracker.md', '14\t1\tdocs/reporting/drafts/2026-10-08-report-first-draft.md'])
+  ok   v0.52 diff removes the v0.51 pin line
+  ok   v0.52 diff adds the v0.52 pin line
+  ok   v0.52 diff adds the block opening
+  ok   v0.52 diff adds the block close
+  ok   draft new junction reads
+  ok   draft old junction reads zero
+  ok   v0.52 commit touches its declared 4 files (4 seen)
+  ok   v0.52 fold touches no figure-tree path
+[2] the fold surfaces in the built copy
+  ok   copy head line reads Draft v0.52 once
+  ok   copy reads zero 'v0.37' marks
+  ok   copy reads zero 'v0.38' marks
+  ok   copy reads zero 'v0.39' marks
+  ok   copy reads zero 'v0.40' marks
+  ok   copy reads zero 'v0.41' marks
+  ok   copy reads zero 'v0.42' marks
+  ok   copy reads zero 'v0.43' marks
+  ok   copy reads zero 'v0.44' marks
+  ok   copy reads zero 'v0.45' marks
+  ok   copy reads zero 'v0.46' marks
+  ok   copy reads zero 'v0.47' marks
+  ok   copy reads zero 'v0.48' marks
+  ok   copy reads zero 'v0.49' marks
+  ok   copy reads zero 'v0.50' marks
+  ok   copy reads zero 'v0.51' marks
+  ok   copy reads block sentence 1 once
+  ok   copy reads block sentence 2 once
+  ok   copy reads block sentence 3 once
+  ok   copy reads block sentence 4 once
+  ok   copy reads block sentence 5 once
+  ok   copy reads block sentence 6 once
+  ok   copy reads block sentence 7 once
+  ok   copy reads block sentence 8 once
+  ok   copy reads block sentence 9 once
+  ok   copy reads block sentence 10 once
+  ok   the block region carries no digit
+  ok   the block region carries no cite
+  ok   the ten sentences sit contiguous in the block region
+  ok   the block sits between the term set and the system-anatomy frame
+  ok   copy new junction reads once
+  ok   copy old junction reads zero
+  ok   raw seat markers read zero in the copy
+  ok   copy reads the F1 caption form once
+  ok   copy reads zero old label forms
+  ok   copy reads the load-path sentence once
+  ok   copy reads the plainer beam once
+  ok   copy reads the plainer lull once
+  ok   copy reads the plainer refusal once
+  ok   copy reads zero old kMppt form 'The beam sizes on'
+  ok   copy reads zero old kMppt form 'benign under the load law'
+  ok   copy reads zero old kMppt form 'refuses k easing'
+  ok   copy reads: corner plain caption
+  ok   copy reads: corner technical lead
+  ok   copy reads: corner picks
+  ok   copy reads: corner objectives
+  ok   copy reads: corner typical
+  ok   copy reads: corner above winner
+  ok   copy reads: corner appendix row
+  ok   copy reads: corner register row
+  ok   copy reads: appendix count word
+  ok   copy reads the four 3 dp objectives once each
+  ok   copy reads the corner extract name once
+  ok   copy reads 'All eight' once
+  ok   copy reads zero 'All seven' forms
+  ok   copy reads a4b4057 twice (2)
+  ok   copy reads the corner slug three times (3)
+  ok   copy reads the corner exhibit name twice (row and block head)
+  ok   copy reads the two-plates sentence once
+  ok   copy carries the corner png pin once
+  ok   copy count topmost ring reads 9 (9)
+  ok   copy count topmost rotor ring reads 2 (2)
+  ok   copy count the table-row form (capital) reads 1 (1)
+  ok   copy count topmost ring radius reads 3 (3)
+  ok   copy count topmost-ring (hyphen) reads 1 (1)
+  ok   copy count (?i)topmost reads 13 (13)
+  ok   copy reads the count sentence once
+  ok   copy reads the founder winner sentence once
+  ok   copy reads the founder mass sentence once
+  ok   copy reads '25.698 kilograms' four times (4)
+  ok   copy reads The levers of Performance once
+  ok   copy reads: 2.1 radii
+  ok   copy reads: 2.2.2 load
+  ok   copy reads: 3.3 capture
+  ok   copy reads: 3.3 radius prose
+  ok   copy reads: 3.4 line
+  ok   copy reads: 3.5 radius
+  ok   copy reads: 4.2 table
+  ok   copy reads: 4.2 narrative
+  ok   copy reads: 4.2 tail
+  ok   copy reads: pointer line one
+  ok   copy reads: pointer line two
+  ok   copy reads: era row 1
+  ok   copy reads: era row 2
+  ok   copy reads: era row 3a
+  ok   copy reads: era row 3b
+  ok   copy reads: ledger lead
+  ok   copy reads: ledger entry 1
+  ok   copy reads: ledger entry 2
+  ok   copy reads: ledger entry 3
+  ok   copy reads: ledger entry 4
+  ok   copy reads: ledger entry 5
+  ok   copy reads: ledger entry 6
+  ok   copy reads: ledger close 3
+  ok   copy reads: ledger close 5
+  ok   copy reads: ledger close 6
+  ok   copy reads: spelled form
+  ok   copy reads: round-5 base clause
+  ok   copy reads: round-5 cone
+  ok   copy reads: round-5 cold path
+  ok   copy reads: round-5 slot
+  ok   copy reads: gate row power
+  ok   copy reads: gate row FoS
+  ok   copy reads: gate row rope
+  ok   copy count 22 degrees sites reads 3 (3)
+  ok   copy count shaft transition cone reads 3 (3)
+  ok   copy count 0.75 reads 2 (2)
+  ok   copy count Tulloch reads 1 (1)
+  ok   copy count Jensen reads 0 (0)
+  ok   copy count lower-number key reads 0 (0)
+  ok   copy reads 'Machine winner' twice (2)
+  ok   copy carries no lowercase marker form
+  ok   copy reads zero 'Machine winner hero'
+  ok   copy reads the winner slug three times (3)
+  ok   copy 'hero' reads three times, all in the slug
+  ok   the winner frame sits inside section 3.3 in the copy
+  ok   the corner frame sits with the field pair, ahead of the two-plates block in section 3.4
+  ok   no unresolved notice
+[3] the appendix pins, the stamps, the embeds and the token census
+  ok   ring-utilisation: png pinned == committed == HEAD == origin
+  ok   ring-utilisation: svg pinned == committed == HEAD == origin
+  ok   ring-utilisation: pdf pinned == committed == HEAD == origin
+  ok   ring-utilisation: ledger pinned == committed == HEAD == origin
+  ok   twist-limit: png pinned == committed == HEAD == origin
+  ok   twist-limit: svg pinned == committed == HEAD == origin
+  ok   twist-limit: pdf pinned == committed == HEAD == origin
+  ok   twist-limit: ledger pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: png pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: svg pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: pdf pinned == committed == HEAD == origin
+  ok   machine-evolution-strip: checks pinned == committed == HEAD == origin
+  ok   system-anatomy: png pinned == committed == HEAD == origin
+  ok   system-anatomy: pdf pinned == committed == HEAD == origin
+  ok   system-anatomy: ledger pinned == committed == HEAD == origin
+  ok   system-anatomy: checks pinned == committed == HEAD == origin
+  ok   pca-landscape: png pinned == committed == HEAD == origin
+  ok   pca-landscape: svg pinned == committed == HEAD == origin
+  ok   pca-landscape: pdf pinned == committed == HEAD == origin
+  ok   pca-landscape: ledger pinned == committed == HEAD == origin
+  ok   pca-atlas: png pinned == committed == HEAD == origin
+  ok   pca-atlas: svg pinned == committed == HEAD == origin
+  ok   pca-atlas: pdf pinned == committed == HEAD == origin
+  ok   pca-atlas: ledger pinned == committed == HEAD == origin
+  ok   machine-winner-hero: png pinned == committed == HEAD == origin
+  ok   machine-winner-hero: svg pinned == committed == HEAD == origin
+  ok   machine-winner-hero: pdf pinned == committed == HEAD == origin
+  ok   machine-winner-hero: checks pinned == committed == HEAD == origin
+  ok   machine-corner-grid: png pinned == committed == HEAD == origin
+  ok   machine-corner-grid: svg pinned == committed == HEAD == origin
+  ok   machine-corner-grid: pdf pinned == committed == HEAD == origin
+  ok   machine-corner-grid: checks pinned == committed == HEAD == origin
+  ok   32 pinned values walked (32)
+  ok   appendix script cells: 1af63fc reads 3 (3)
+  ok   appendix script cells: 9241b23 reads 1 (1)
+  ok   appendix script cells: 74cfef9 x1, e23f226 x2
+  ok   appendix script cells: a4b4057 reads 1 (1)
+  ok   draft appendix counts eight exhibits
+  ok   draft appendix carries eight era cells
+  ok   draft appendix corner row reads exact
+  ok   draft appendix corner block header reads
+  ok   draft appendix corner hash line png reads
+  ok   draft appendix corner hash line svg reads
+  ok   draft appendix corner hash line pdf reads
+  ok   draft appendix corner hash line checks reads
+  ok   draft marker reads at line 648 (648)
+  ok   draft carries one row-23 marker
+  ok   the marker cites exactly NR-044 and NR-051
+  ok   draft row-2 marker reads once
+  ok   row-23 marker sits after row 21
+  ok   draft frozen levers block md5 holds
+  ok   draft seat census reads eight in order
+  ok   copy token census 0b8948d: 1 == expected 1
+  ok   copy token census 1af63fc: 4 == expected 4
+  ok   copy token census 74cfef9: 2 == expected 2
+  ok   copy token census 9241b23: 2 == expected 2
+  ok   copy token census a4b4057: 2 == expected 2
+  ok   copy token census b587c50: 1 == expected 1
+  ok   copy token census e23f226: 4 == expected 4
+  ok   token census reads a4b4057 x2, 1af63fc x4, 9241b23 x2 ({'1af63fc': 4, '0b8948d': 1, 'b587c50': 1, '74cfef9': 2, '9241b23': 2, 'e23f226': 4, 'a4b4057': 2})
+  ok   copy reads zero d243b37/9cecee3 marks
+  ok   eight stamps match their manifests (8)
+  ok   eight stamps read (8)
+  ok   copy reads the corner stamp once
+  ok   frame reads once: system-anatomy Figure (roster row 2) · system-anatomy
+  ok   frame reads once: machine-winner-hero Figure (roster row 10) · machine-win
+  ok   frame reads once: ring-utilisation Figure (roster row 6) · ring-utilisatio
+  ok   frame reads once: twist-limit Figure (roster row 7) · twist-limit
+  ok   frame reads once: pca-landscape Figure (roster row 20) · pca-landscape
+  ok   frame reads once: pca-atlas Figure (roster row 21) · pca-atlas
+  ok   frame reads once: machine-corner-grid Figure (roster row 23) · machine-cor
+  ok   frame reads once: machine-evolution-strip Figure (roster row 9) · machine-
+  ok   eight figure frames read (8)
+  ok   eight media entries read (8)
+  ok   copy embeds the delivered bytes on all eight exhibits
+  ok   the corner plate embeds at the delivered bytes
+[4] the register appendix and the retired-word holds
+  ok   appendix markers read
+  ok   register at HEAD reads 51 ids (51)
+  note register reads 52 row lines for 51 ids
+  ok   cited set reads 43 (43)
+  ok   copy register appendix == cited set (43 ids)
+  ok   uncited NR-024 stays out
+  ok   uncited NR-031 stays out
+  ok   uncited NR-033 stays out
+  ok   uncited NR-034 stays out
+  ok   uncited NR-035 stays out
+  ok   uncited NR-037 stays out
+  ok   uncited NR-038 stays out
+  ok   uncited NR-041 stays out
+  ok   NR-051 enters the appendix set
+  ok   NR-019 and NR-020 enter the appendix set
+  ok   14.97-class prints once, inside the register appendix (1)
+  ok   copy display form full-precision 14.971... reads 0 (0)
+  ok   copy display form guarded 3.816 reads 0 (0)
+  ok   copy display form 15.0 reads 14 (14)
+  ok   copy display form 15.033 reads 3 (3)
+  ok   copy display form 14.972 reads 1 (1)
+  ok   copy display form 27.3635412663488 reads 2 (2)
+  ok   copy display form 27.364 reads 11 (11)
+  ok   guarded rounded 27.363 reads zero
+  ok   register appendix: NR-009 row form
+  ok   register appendix: NR-005 value
+  ok   register appendix: NR-043 span
+  ok   register appendix: NR-050 r_rotor
+  ok   register appendix: NR-049 cone value
+  ok   register appendix: NR-011 bank form
+  ok   the retired word reads 5 as a word (5)
+  ok   the word reads zero outside the register appendix (0)
+  ok   the two identifier holds read (2)
+  ok   capitalised Hub reads zero (0)
+  ok   every register hub-quote reads in the copy (0 bad)
+[5] the delta chain and the state anchors
+  ok   the v0.51 archive reads its declared md5
+  ok   the v0.51 build reads its version mark
+  ok   the v0.51 build reads zero block sentence: At the top of the shaft the rotor turns in t
+  ok   the v0.51 build reads zero block sentence: The whole shaft turns with the rotor.
+  ok   the v0.51 build reads zero block sentence: The shaft passes the torque from ring to rin
+  ok   the v0.51 build reads zero block sentence: The lowest ring turns the generator at the g
+  ok   the v0.51 build reads zero block sentence: The shaft works only under tension.
+  ok   the v0.51 build reads zero block sentence: Tension gives the shaft its capacity to tran
+  ok   the v0.51 build reads zero block sentence: With low tension the shaft bends and twists.
+  ok   the v0.51 build reads zero block sentence: A slack shaft cannot carry the load.
+  ok   the v0.51 build reads zero block sentence: Under the generator load the machine settles
+  ok   the v0.51 build reads zero block sentence: In the settled state the shaft runs twisted 
+  ok   the v0.51 build reads the old junction once
+  ok   the v0.51 build holds the corner row
+  ok   the v0.51 build holds the relabel and winner forms
+  ok   the v0.50 archive still reads its declared md5
+  ok   author v0.52 receipt names the copy md5
+  ok   author v0.52 receipt names the archive
+  ok   author rebuild check log names the copy md5
+  ok   figures fold-back receipt names the v0.51 copy read closure
+  ok   figures fold-back receipt names the 304-check count
+  ok   queue page names the copy
+  ok   queue page names the record
+  ok   tracker carries the v0.52 entry
+  ok   tracker holds the v0.51 entry
+  ok   map carries delta v43
+  ok   final: tip == origin
+[6] the build-dir archive census (stamp pairs and classification)
+  ok   today's archives read the declared 6 (6 seen)
+  ok   the intermediate archive reads its observed md5
+  ok   the intermediate archive record cell reads 171f3ea
+  ok   no off-seat record names the intermediate archive (0 off-seat)
+  note the intermediate archive reads in 3 record(s), all at this seat; classified harmless
+  ok   stamp pair draft-d0ed902-20261015-124752.docx: name 12:47:52 == block 12:47:52
+  ok   stamp pair draft-8169e36-20261015-144342.docx: name 14:43:42 == block 14:43:42
+  ok   stamp pair draft-171f3ea-20261015-154001.docx: name 15:40:01 == block 15:40:01
+  ok   stamp pair draft-171f3ea-20261015-154954.docx: name 15:49:54 == block 15:49:54
+  ok   stamp pair draft-1061878-20261015-155027.docx: name 15:50:27 vs block 15:50:26 (the one-second split)
+  ok   stamp pair draft-b6cd166-20261015-163115.docx: name 16:31:15 == block 16:31:15
+
+checks: 315  ok: 315  fail: 0
+AV_V052_DONE
