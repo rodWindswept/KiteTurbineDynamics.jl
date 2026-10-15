@@ -1,0 +1,82 @@
+base tip: 6a58e9c
+base draft sha256: b28a94b67ee7af451f0a92d2232d7c3f843bda0f689caba73baa34164713fdb7
+base tracker sha256: d56e89ec49c56c2b1e8b503eef0725fb09fd5f0b7088cefddf356c09e0594fe6
+ok D1 version pin
+ok D2 section 3.1 split
+ok D3 section 5 split
+ok D4 environment rows
+ok D5 swing basis note
+ok T1 tracker entry
+candidate draft sha256: acd0a43f040230cd6ee1ffd5d6c09c34432a78308cf072797e2b0ccb95849db6
+candidate tracker sha256: 67c242cb6e8267e97e07621bd4e3074642951b7e998496093d920edb8558fbb6
+line count: base 1044 -> candidate 1059
+draft opcodes: [('equal', 0, 2, 0, 2), ('replace', 2, 3, 2, 3), ('equal', 3, 475, 3, 475), ('insert', 475, 475, 475, 481), ('equal', 475, 525, 481, 531), ('insert', 525, 525, 531, 533), ('equal', 525, 529, 533, 537), ('insert', 529, 529, 537, 538), ('equal', 529, 907, 538, 916), ('insert', 907, 907, 916, 922), ('equal', 907, 1044, 922, 1059)]
+draft token delta add: {'1': 1, '10.0': 1, '2.5': 2, '201': 2, '30': 1, '301': 1, '4.8': 1, '5': 4, '55': 1, '7': 1, '9.4000': 1, '96': 2}
+draft token delta rem: {'54': 1}
+tracker token delta add: {'1': 1, '3.1': 1, '5': 1, '55': 1}
+tracker token delta rem: {}
+cite count: base 245 -> candidate 250
+STE draft base: rc=0 words=7171 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE draft candidate: rc=0 words=7298 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE tracker base: rc=0 words=3314 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE tracker candidate: rc=0 words=3378 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+guard pin: v0.55 dated 2026-10-15: ok
+guard reconstruction: candidate == base plus declared edits: ok
+guard reverse: base == candidate minus declared edits: ok
+guard D2 lands once, old gone: ok
+guard D3 lands once, old gone: ok
+guard D4 lands once, old gone: ok
+guard D5 lands once, old gone: ok
+guard line count exact: ok
+guard opcodes exact: ok
+guard new form count: 3.1 open reads once: ok
+guard new form count: 5 open reads once: ok
+guard new form count: subgroup A reads twice: ok
+guard new form count: subgroup B reads twice: ok
+guard new form count: subgroup C reads twice: ok
+guard new form count: shear-law row reads once: ok
+guard new form count: shaft row reads once: ok
+guard new form count: swing note reads once: ok
+guard cite: NR-055 reads 2: ok
+guard cite: NR-056 reads 1: ok
+guard cite: NR-057 reads 1: ok
+guard cite: NR-058 reads 1: ok
+guard old pin form gone: ok
+guard value holds: 22 degrees: ok
+guard value holds: 25.698: ok
+guard value holds: NR-049: ok
+guard value holds: NR-050: ok
+guard value holds: least segment margin: ok
+guard hold: study-is-simulation-only: ok
+guard hold: never-allows-breaks close: ok
+guard hold: gate table torsional row: ok
+guard region: 1 to the 3.1 heading unchanged: ok
+guard region: 3.2 to 3.3 heading unchanged: ok
+guard region: 3.4 to 5 unchanged: ok
+guard region: 6 to Document control unchanged: ok
+guard region: Document control to claims appendix unchanged: ok
+guard region: claims appendix unchanged: ok
+guard region: figure provenance unchanged: ok
+guard tracker v0.55 entry: ok
+guard tracker history held: ok
+guard tracker reconstruction exact: ok
+candidate draft sha256: acd0a43f040230cd6ee1ffd5d6c09c34432a78308cf072797e2b0ccb95849db6
+candidate tracker sha256: 67c242cb6e8267e97e07621bd4e3074642951b7e998496093d920edb8558fbb6
+STE draft base: rc=0 words=7171 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE draft candidate: rc=0 words=7298 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE tracker base: rc=0 words=3314 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE tracker candidate: rc=0 words=3378 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+draft token delta add: {'1': 1, '10.0': 1, '2.5': 2, '201': 2, '30': 1, '301': 1, '4.8': 1, '5': 4, '55': 1, '7': 1, '9.4000': 1, '96': 2}
+draft token delta rem: {'54': 1}
+draft token check: PASS
+tracker token delta add: {'1': 1, '3.1': 1, '5': 1, '55': 1}
+tracker token delta rem: {}
+tracker token check: PASS
+== cited rows in au_v055_split_draft_candidate.md: 52
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-019, NR-020, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-031, NR-032, NR-033, NR-034, NR-036, NR-039, NR-040, NR-042, NR-043, NR-044, NR-045, NR-046, NR-047, NR-048, NR-049, NR-050, NR-051, NR-052, NR-053, NR-055, NR-056, NR-057, NR-058
+== every cited row present and signed (58 signed rows total)
+== signed rows not cited by this draft (informational): NR-024, NR-035, NR-037, NR-038, NR-041, NR-054
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+   3| Internal engineering report. Draft v0.55. Date 2026-10-15.
+citation checker: rc=0
+GATES: ste=pass tokens=pass citations=pass

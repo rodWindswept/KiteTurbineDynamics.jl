@@ -313,6 +313,13 @@ The operating table takes the reference wind speed, the ring speed ratio and the
 The gate set prints per class, with the torsion criteria and the realisability floor (NR-052, NR-053).
 No value moves, and no figure byte moves.
 
+v0.55 pass by @author (2026-10-15).
+This pass prints the reject split and closes the item-2.1 environment set.
+The status mix takes the three-way split at sections 3.1 and 5 (NR-055).
+The operating table takes the shear law and the shaft elevation rows (NR-056, NR-057).
+The swing sentence takes its steady-wind basis note (NR-058).
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

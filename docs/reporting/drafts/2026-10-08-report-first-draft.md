@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.54. Date 2026-10-15.
+Internal engineering report. Draft v0.55. Date 2026-10-15.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -473,6 +473,12 @@ master 31ca00d.
 
 The campaign evaluated 930 designs (NR-001). The status mix reads 508
 ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+
+The reject class splits three ways (NR-055).
+96 ran below the 5 kW power floor.
+Four ran at or above 5 kW with a factor of safety below 2.5.
+The cause is not logged for the remaining 201.
+
 Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
 The other members of each population draw at random under a fixed seed per island (scripts/run_v13_5kw_masslift.jl).
@@ -523,10 +529,13 @@ Its operating point reads as follows.
 | Lift-line elevation | 70 deg | NR-026 |
 | Lift-line tension | 324.1 N | NR-010 |
 | Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+| Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+| Shaft elevation | 30 deg, hub at 9.4000 m | NR-057 |
 | Ring speed ratio | 5.566 | NR-031 |
 | Tip-speed ratio | 6.8415 | NR-032 |
 
 Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
+The reported trace runs steady wind, so the swing reads as a steady-wind response, not a stability property (NR-058).
 The machine held a steady operating point through the measurement window.
 
 The settle state starts the machine at 10.170 rad/s (NR-016).
@@ -905,6 +914,12 @@ The campaign scored each design on the ODE path over the measurement window (NR-
 One fixed power-law generator load and one fixed gate set held for every design (NR-015).
 
 The search found 508 feasible candidates in the searched space (NR-002).
+
+The 301 rejects split three ways (NR-055).
+96 ran below the 5 kW power floor.
+Four ran at or above 5 kW with a factor of safety below 2.5.
+The cause is not logged for the remaining 201.
+
 The best performing one had a mean power of 5.309 kW.
 Its airborne mass is 25.698 kilograms (NR-008, NR-018).
 Its window-minimum factor of safety is 15.0 (NR-009).
