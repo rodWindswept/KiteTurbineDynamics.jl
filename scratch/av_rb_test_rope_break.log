@@ -1,0 +1,21 @@
+┌ Info: R2: historical genome REFUSED by the settle (unrealisable)
+└   exception = TRPT segment 1 of 10 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 142.96 N/line needs sin(Δα) = 36.3633 > 1; the ceiling at that tension is 221.76 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+=== R1: line-level break criterion (healthy vs 5% line stretch) ===
+  healthy step → broken=false   +5% line stretch step → broken=true
+  ✅ R1a: healthy operation does not break lines
+  ✅ R1b: a line stretched past 3.5% breaks (SK99)
+=== R2: end-to-end — pre-fix 18m winner bounded or broken (regression) ===
+  refused=true  max|ω|=0.0  max tension=0.0 N  broken=false
+  ✅ R2: no balloon fixed point — refused, bounded |ω| or broken
+  ✅ R2: tension stays bounded (≤ 2e5 N; elastic break ≈ 44 kN)
+=== R3: non-regression — seed stays healthy ===
+  ω_gnd @30s = 13.87 rad/s  broken=false
+  ✅ R3: seed never breaks
+  ✅ R3: seed lands in its known band (ω_gnd re-measured)
+=== R4: gate placement — detection armed only at t >= breaks_arm_s (2026-09-16) ===
+  arm=0.0 → broken=true   arm=1e-9 → broken=true   arm=5.0 → broken=false
+  ✅ R4a: stretched line breaks with the default arm (0.0) — as-coded semantics hold
+  ✅ R4b: detection fires once t crosses a near-zero arm time
+  ✅ R4c: no latch below the arm time (relax-phase suppression)
+
+ALL ACCEPTANCE TESTS PASS

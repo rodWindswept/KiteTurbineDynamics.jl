@@ -1,0 +1,23 @@
+av_rb_placement_check.jl | HEAD 84ac1583da3435cf1396cb0cc9ef891b8d6e6686
+dt = 0.00002899 | total_n = 1724859 | arm boundary step t>=10 s at s = 344972
+
+########## PART 1 — control: default arm (0.0), as-coded latch ##########
+trip: step 98  t=0.002841 s  trpt/break=1.00081 (S4 L3)  peak/break=1.00081
+  ✅ control (arm 0.0) latches at the recorded trip step 98
+  ✅ control trip time matches the recorded 2.84 ms (tol 0.05 ms)
+
+########## PART 2 — fixed: arm at the relax boundary (10.0 s) ##########
+full run wall = 35.8 s | rows = 1823 | crossed arm boundary = true
+  ✅ no rope-break latch through the whole 50 s run (false rejection gone)
+early peak (s<=2000) strain/break = 1.44819 at t=0.005740 s
+window max strain/break = 0.44942 at t=29.277752 s
+  ✅ relax transient peak above the break limit is present (suppression is real)
+window means (t>=10): omega_gnd=12.639282  omega_hub=12.660011  P=4.958894 kW
+tail (t>=45): omega_gnd=12.305794  P=4.496536 kW
+
+########## PART 3 — live after arming: arm 1e-6 s ##########
+armed-from-almost-start latch step = 98
+  ✅ with arm 1e-6 the latch fires at the same trip step (detection live when armed)
+
+########## SUMMARY ##########
+checks: 5 | failures: 0

@@ -1,0 +1,16 @@
+av_rb_warm_extract.jl | HEAD 84ac1583da3435cf1396cb0cc9ef891b8d6e6686
+mode=warm | breaks_arm_s=10.0 (relax boundary) | tree 84ac1583
+TARGET | status | broken | P_mean kW | P_end kW | FoS_min | fitness | omega_eq | twist | T_lift N | wall s
+island 1 | reject | false |    5.719 |    3.381 |   0.154 |      Inf |    7.727 | 0.544 |   340.3 |   56.2
+  csv: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_rb_warm_extract/island_1_warm_10ms.csv (4999 rows)
+island 2 | reject | false |    5.803 |    7.563 |   0.439 |      Inf |    8.064 | 0.541 |   311.2 |   22.0
+  csv: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_rb_warm_extract/island_2_warm_10ms.csv (4992 rows)
+island 3 | reject | false |    5.115 |    5.070 |   0.593 |      Inf |   14.231 | 0.965 |   324.1 |   33.9
+  csv: /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_rb_warm_extract/island_3_warm_10ms.csv (5000 rows)
+
+SUMMARY (warm, post-fix):
+  island 1 | reject | false |    5.719 |    3.381 |   0.154 |      Inf |    7.727 | 0.544 |   340.3 |   56.2
+  island 2 | reject | false |    5.803 |    7.563 |   0.439 |      Inf |    8.064 | 0.541 |   311.2 |   22.0
+  island 3 | reject | false |    5.115 |    5.070 |   0.593 |      Inf |   14.231 | 0.965 |   324.1 |   33.9
+
+Pre-fix reference (NR-013): :warm rejects all three winners — rope-break gate (broken=true), transient line over-strain during relax.

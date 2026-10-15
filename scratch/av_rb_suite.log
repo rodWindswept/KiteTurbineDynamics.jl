@@ -1,0 +1,125 @@
+WARNING: import of KiteTurbineDynamics.geometry_fingerprint into Main conflicts with an existing identifier; ignored.
+┌ Info: bearing alignment
+│   hub_pos = 3-element Vector{Float64}: …
+│   bearing_pos = 3-element Vector{Float64}: …
+│   shaft_dir = 3-element Vector{Float64}: …
+└   bearing_perp = 0.0007675242519358773
+┌ Info: bridle lengths
+│   count = 5
+│   lengths =
+│    5-element Vector{Float64}:
+│     3.883031220997866
+│     3.882914997724535
+│     ⋮
+└     3.8834950469363467
+┌ Info: bridle length spread
+│   L_min = 3.882914997724535
+│   L_max = 3.883665478619692
+│   L_mean = 3.8832827517460586
+│   spread = 0.0007504808951570574
+└   spread_pct = 0.00019325940013500566
+┌ Info: bridle strain at frame 0
+│   strain =
+│    5-element Vector{Float64}:
+│     0.000546365488994834
+│     0.0005164180672260117
+│     ⋮
+│     0.0006658802007119926
+└   max_abs = 0.0007097955832134717
+┌ Info: bearing net force at frame 0
+│   F_bearing =
+│    3-element Vector{Float64}:
+│     1.1588560430982398
+│     ⋮
+│   F_horiz = 1.1588584744493737
+└   weight_N = 2.943
+┌ Info: Sagged bridle data (sorted by Z height, lowest first):
+│   bridle_data =
+│    5-element Vector{Any}:
+│     (line_idx = 4, attach_z = 13.055253191208601, tension = 6220.819759610254)
+│     (line_idx = 5, attach_z = 13.802678556571157, tension = 4833.903019626605)
+│     (line_idx = 3, attach_z = 14.627430335053354, tension = 3299.0697471999124)
+│     (line_idx = 1, attach_z = 15.83678998026378, tension = 1039.985947883332)
+└     (line_idx = 2, attach_z = 16.346514611647702, tension = 84.76643565572222)
+┌ Info: Lowest bridle tension under sag
+│   line_idx = 4
+│   z = 13.055253191208601
+└   T = 6220.819759610254
+┌ Info: Highest bridle tension under sag
+│   line_idx = 2
+│   z = 16.346514611647702
+└   T = 84.76643565572222
+┌ Info: Field IMU damping torque test
+│   accel_off = -14.558627650587228
+└   accel_on = -17.697103713902035
+┌ Info: Ground station mechanical brake test
+└   accel_no_brake = -0.46586276505472873
+┌ Info: Ground station explicit brake test
+└   accel_braked = -104.97173111095613
+┌ Info: Ground station mechanical brake safety interlock test
+│   accel_lock_off = -3.183451060232228
+└   accel_lock_on = -0.044974996917423196
+┌ Info: No premature brake trigger test (PTO slow, rotor fast)
+└   accel_no_premature = 4.241851329917479
+┌ Info: Torque limiter test
+│   accel_extreme = -3.183451060232228
+└   max_accel_safe = 67.64549186004331
+┌ Warning: Ring frame: load imbalance 95.1% — inertial forces may be significant
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/src/ring_element_analysis.jl:208
+┌ Info: lift chain
+│   applied_lift = 416.7279741581702
+│   lift_ref = 416.7279741581701
+│   T_cyan = 179.89243036575786
+│   bridle = 208.44197731095232
+└   lift_requirement = 391.5962021914932
+┌ Info: axial residuals (N)
+│   hub = 1.3584643102571263
+│   bearing = 0.05561206225140869
+└   sky = -1.1844217779631412
+┌ Info: handoff residual at t=0
+│   acc_all = 25.951099479579174
+│   acc_struct = 13.31382623106836
+│   max_force = 80.34574251494493
+└   acc0_raw = 25.951099479579174
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings blade×0.69 (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 3
+V10 13-gon 9 rings r_bot×1.3 (2 expansion rotors): n_lines=13 n_rotors=2 rings=9 r_hub=2.889 r_bot=2.6
+
+✓ All blade geometry assertions passed — 70/30 split verified.
+
+✓ unified blade-mass law tests complete
+  testing Sequence 1 (Stall -> Lift)...
+  testing Sequence 2 (Lift || Stall)...
+  testing Sequence 3 (Lift -> Stall)...
+  smoke: settling...
+  smoke: simulating 0.040003004106003014s...
+  smoke: capturing SimFrames...
+  smoke: dashboard data layer OK (2 frames)
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 3
+V10 13-gon 9 rings r_bot×1.3 (2 expansion rotors): n_lines=13 n_rotors=2 rings=9 r_hub=2.889 r_bot=2.6
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings blade×0.85 (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+V10 13-gon 10 rings (4 expansion rotors): n_lines=13 n_rotors=4 rings=10 r_hub=2.889 r_bot=2.0
+Dropped ground-adjacent expansion rotor at ring 1
+V10 13-gon 10 rings (3 expansion rotors): n_lines=13 n_rotors=3 rings=10 r_hub=2.889 r_bot=2.0
+
+✓ expansion induction acceptance tests complete
+
+✓ Gate 2b acceptance tests complete
+
+✓ fos-guard acceptance tests complete (expect RED until the guard lands)
+
+✓ airborne-FoS off-by-one regression tests complete
+
+✓ rope-resolution guard complete
+Test Summary:       | Pass  Total     Time
+KiteTurbineDynamics | 2606   2606  2m56.9s

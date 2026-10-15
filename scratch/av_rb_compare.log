@@ -1,0 +1,5 @@
+1) placement vs condition: 1823 rows | max|dt|=0.000e+00 max|dwg|=0.000e+00 max|dwh|=0.000e+00 max|dP|=0.000e+00
+   fixed-path window means: wg=12.639281787 wh=12.660010798 P=4.958894273 kW
+2) island 1: rows=4999 any_broken=0 | tail wg=12.798494 P=5.123674 kW
+2) island 2: rows=4992 any_broken=0 | tail wg=13.571625 P=5.679798 kW
+2) island 3: rows=5000 any_broken=0 | tail wg=12.310043 P=4.501120 kW
