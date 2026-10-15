@@ -1,0 +1,184 @@
+== sv_cg_register_read — the corner-grid drawn-set register read, run 2026-10-15T15:59:24Z ==
+
+== cross-line: the figures seat checker re-runs ==
+PROJECTION (re-derived)
+  OK   rows 930
+  OK   feasible 508
+  OK   PC1 share x1e6 224347
+  OK   PC2 share x1e6 172630
+  OK   seed pc 3dp (0.531, -1.297)
+  OK   winner pc 3dp (0.885, 2.869)
+  OK   seed fit 36.109
+  OK   winner fit 27.364
+  OK   winner island 3
+  OK   shares 10dp basis
+PICKS (re-derived vs the signed set)
+  OK   low PC1 / low PC2 -> i1-g13-i1
+  OK   low PC1 / high PC2 -> i1-g7-i7
+  OK   high PC1 / low PC2 -> i2-g21-i4
+  OK   high PC1 / high PC2 -> i3-g26-i8
+EXTRACT
+  OK   the extract file exists
+  OK   four data rows
+  OK   corner order reads the NR-051 order
+  OK   tags read the signed set
+  OK   tags distinct
+  OK   i1-g13-i1: source row unique
+  OK   i1-g13-i1: 32 fields byte-equal to the source row
+  OK   i1-g13-i1: pc 6dp reads NR-051 (-1.454423, -1.238178)
+  OK   i1-g13-i1: fitness token reads NR-051
+  OK   i1-g13-i1: fitness rounds as its own 3dp token
+  OK   i1-g13-i1: feasible and above the winner
+  OK   i1-g13-i1: pc columns equal the live re-derivation
+  OK   i1-g7-i7: source row unique
+  OK   i1-g7-i7: 32 fields byte-equal to the source row
+  OK   i1-g7-i7: pc 6dp reads NR-051 (-2.088227, 0.152353)
+  OK   i1-g7-i7: fitness token reads NR-051
+  OK   i1-g7-i7: fitness rounds as its own 3dp token
+  OK   i1-g7-i7: feasible and above the winner
+  OK   i1-g7-i7: pc columns equal the live re-derivation
+  OK   i2-g21-i4: source row unique
+  OK   i2-g21-i4: 32 fields byte-equal to the source row
+  OK   i2-g21-i4: pc 6dp reads NR-051 (1.132051, -1.488592)
+  OK   i2-g21-i4: fitness token reads NR-051
+  OK   i2-g21-i4: fitness rounds as its own 3dp token
+  OK   i2-g21-i4: feasible and above the winner
+  OK   i2-g21-i4: pc columns equal the live re-derivation
+  OK   i3-g26-i8: source row unique
+  OK   i3-g26-i8: 32 fields byte-equal to the source row
+  OK   i3-g26-i8: pc 6dp reads NR-051 (1.679755, 3.050611)
+  OK   i3-g26-i8: fitness token reads NR-051
+  OK   i3-g26-i8: fitness rounds as its own 3dp token
+  OK   i3-g26-i8: feasible and above the winner
+  OK   i3-g26-i8: pc columns equal the live re-derivation
+  OK   header: run-id
+  OK   header: dataset line
+  OK   header: computing commit full hash
+  OK   header: gene slots line
+  OK   the log records the extract sha256
+  OK   the log records the certificate
+  OK   the log records all four tags
+
+checks: 54, fail: 0
+rc=0
+
+== this seat: the register read ==
+sv_cg_register_read_check — the corner-grid drawn-set register read
+repo /home/rod/Documents/GitHub/KiteTurbineDynamics.jl  tip a196183  base fc3a602
+
+A. pins
+  OK   A1 the read tip a196183 resolves as a commit
+  OK   A2 the script commit a4b4057 resolves
+  OK   A2 the data commit dd3cc6a resolves
+  OK   A2 the mint commit b02ecdf resolves
+  OK   A3 the fold span reads the three commits
+  OK   A4 the working tree 2026-10-08-report-first-draft.md equals the read tip
+  OK   A4 the working tree extract-corner-grid.csv equals the read tip
+  OK   A4 the working tree manifest.json equals the read tip
+  OK   A4 the working tree checks.log equals the read tip
+  OK   A4 the working tree machine-corner-grid.pdf equals the read tip
+  OK   A4 the working tree machine-corner-grid.png equals the read tip
+  OK   A4 the working tree machine-corner-grid.svg equals the read tip
+  OK   A5 the generator last touch reads the script pin a4b4057
+  OK   A6 island_1 telemetry last touch reads dd3cc6a
+  OK   A6 island_2 telemetry last touch reads dd3cc6a
+  OK   A6 island_3 telemetry last touch reads dd3cc6a
+  OK   A7 the png sha256 equals the manifest pin
+  OK   A7 the svg sha256 equals the manifest pin
+  OK   A7 the pdf sha256 equals the manifest pin
+  OK   A7 the checks sha256 equals the manifest pin
+  OK   A8 the extract sha256 equals the manifest pin
+  OK   A9 island_1 telemetry sha256 equals the mint log pin
+  OK   A10 island_1 telemetry hash recorded in the mint log
+  OK   A9 island_2 telemetry sha256 equals the mint log pin
+  OK   A10 island_2 telemetry hash recorded in the mint log
+  OK   A9 island_3 telemetry sha256 equals the mint log pin
+  OK   A10 island_3 telemetry hash recorded in the mint log
+  OK   A11 the manifest slug reads machine-corner-grid
+  OK   A12 the manifest script commit reads a4b4057
+  OK   A13 the manifest data commit reads dd3cc6a
+  OK   A14 the manifest registers read NR-044 and NR-051
+B. the seat marker
+  OK   B1 the row-23 seat marker reads its exact form, once
+  OK   B2 the marker cites NR-044 and NR-051 only
+  OK   B3 no second row-23 seat marker reads in the draft
+  OK   B4 the seat census reads eight
+  OK   B5 the marker sits with the field pair, ahead of the levers block and the strip
+  OK   B6 NR-044 reads signed at the register
+  OK   B6 NR-051 reads signed at the register
+  OK   B7 the kit register cites NR-044 and NR-051 only
+  OK   B8 the appendix row cites NR-044, NR-051 at the script pin a4b4057
+  OK   B9 the plate names NR-044 and NR-051 only
+  OK   B10 figure-map row 23 carries the slug and the title
+C. the drawn set (the delivered PDF text layer)
+  OK   C1 the title reads once
+  OK   C2 the subtitle reads its forms
+  OK   C3.1 corner name reads once: low PC1 / low PC2
+  OK   C4.1 tag reads once: i1-g13-i1
+  OK   C5.1 objective reads once: objective 60.646 kg
+  OK   C3.2 corner name reads once: low PC1 / high PC2
+  OK   C4.2 tag reads once: i1-g7-i7
+  OK   C5.2 objective reads once: objective 58.864 kg
+  OK   C3.3 corner name reads once: high PC1 / low PC2
+  OK   C4.3 tag reads once: i2-g21-i4
+  OK   C5.3 objective reads once: objective 33.704 kg
+  OK   C3.4 corner name reads once: high PC1 / high PC2
+  OK   C4.4 tag reads once: i3-g26-i8
+  OK   C5.4 objective reads once: objective 33.812 kg
+  OK   C6 the corner order reads the signed order
+  OK   C7 the tag order reads the signed order
+  OK   C8 the objective order reads the signed order
+  OK   C9 the objective strip word reads four times
+  OK   C10.1 the tag sits above its objective (i1-g13-i1)
+  OK   C11.1 the nearest tag to objective 60.646 reads i1-g13-i1
+  OK   C12.1 the tag-objective x offset stays small (i1-g13-i1)
+  OK   C10.2 the tag sits above its objective (i1-g7-i7)
+  OK   C11.2 the nearest tag to objective 58.864 reads i1-g7-i7
+  OK   C12.2 the tag-objective x offset stays small (i1-g7-i7)
+  OK   C10.3 the tag sits above its objective (i2-g21-i4)
+  OK   C11.3 the nearest tag to objective 33.704 reads i2-g21-i4
+  OK   C12.3 the tag-objective x offset stays small (i2-g21-i4)
+  OK   C10.4 the tag sits above its objective (i3-g26-i8)
+  OK   C11.4 the nearest tag to objective 33.812 reads i3-g26-i8
+  OK   C12.4 the tag-objective x offset stays small (i3-g26-i8)
+  OK   C13 the objective x positions read left to right in the signed order
+  OK   C14 the decimal tokens read the four objectives, once each
+  OK   C15 the scale bar token reads once
+  OK   C16 every digit-bearing token answers to the signed set
+  OK   C17 the source stamp reads
+  OK   C17 the rows stamp reads
+  OK   C17 the frame stamp reads
+  OK   C18 the legend reads its seven entries
+D. the source chain
+  OK   D1.1 telemetry i1-g13-i1: status ok, fitness 60.646
+  OK   D1.2 telemetry i1-g7-i7: status ok, fitness 58.864
+  OK   D1.3 telemetry i2-g21-i4: status ok, fitness 33.704
+  OK   D1.4 telemetry i3-g26-i8: status ok, fitness 33.812
+  OK   D2 the extract carries four rows
+  OK   D3.1 extract row i1-g13-i1: tag, fitness and pc rounding
+  OK   D3.2 extract row i1-g7-i7: tag, fitness and pc rounding
+  OK   D3.3 extract row i2-g21-i4: tag, fitness and pc rounding
+  OK   D3.4 extract row i3-g26-i8: tag, fitness and pc rounding
+  OK   D4 the register tables read four pick rows
+  OK   D5.1 register pick row i1-g13-i1 reads the signed values
+  OK   D5.2 register pick row i1-g7-i7 reads the signed values
+  OK   D5.3 register pick row i2-g21-i4 reads the signed values
+  OK   D5.4 register pick row i3-g26-i8 reads the signed values
+  OK   D6 the register display-form sentence signs the four printed forms
+  OK   D7 the display sentence reads the four forms in the signed order
+  OK   D8 the mint log reads the picks equal the signed set
+  OK   D9 the mint log reads the objective display-set PASS
+  OK   D10 the mint log reads the 128-field token bind
+  OK   D11 the checks log reads the corner order OK line
+  OK   D12 the checks log reads the four objective labels drawn
+E. the fold delta and the appendix cells
+  OK   E1 the fold delta adds read the twelve declared lines
+  OK   E2 the fold delta removes read the two declared lines
+  OK   E3 the appendix png cell equals the delivered bytes
+  OK   E3 the appendix svg cell equals the delivered bytes
+  OK   E3 the appendix pdf cell equals the delivered bytes
+  OK   E3 the appendix checks cell equals the delivered bytes
+
+checks: 107, fail: 0
+SV_CG_REGISTER_READ_DONE
+rc=0
