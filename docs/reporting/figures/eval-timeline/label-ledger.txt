@@ -40,8 +40,8 @@ read on P_end
 relax
 relax included
 rope break —
-rope-break gate off during relax (not yet in the code)
-rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit 1af63fc
+rope-break gate off during relax
+rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit a269636
 ruling-mode condition run (dashed) — peak 1.448 at t = 5.798 ms
 sampled gates — twist ·
 sources: eval-timeline-extract · window-trace-extract · data commit dd3cc6a · trees 980de02 / 8d01394

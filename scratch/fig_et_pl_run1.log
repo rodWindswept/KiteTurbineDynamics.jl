@@ -1,0 +1,15 @@
+check: cold rows: 5000  (OK)
+check: warm rows: 98  (OK)
+check: ruling rows: 1823  (OK)
+check: taps rows: 52  (OK)
+check: taps phases (relax / window): 11  (OK)
+check: taps phases (window): 41  (OK)
+check: taps window mean omega (NR-029): 13.380259861740395  (OK)
+check: cold window mean P (100 Hz): 5.309770249764809  (OK)
+check: cold latch count: 0  (OK)
+check: warm end t (s): 0.002841  (OK)
+check: warm end strain: 1.00081012  (OK)
+check: ruling grid max: 1.447982844  (OK)
+check: ruling latch count: 0  (OK)
+written: eval-timeline.svg / .pdf / .png, label-ledger.txt (52 strings), manifest.json
+F-LABEL self-check: OK

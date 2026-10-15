@@ -55,8 +55,8 @@ so a crossing between samples goes unseen.
 - No idealised traces draw. Every curve comes from the committed rows.
 
 - The ruling-mode curve prints under the condition-run label only. The
-  label names the placement as not yet in the code. No label claims the
-  machine would pass.
+  label names the placement, landed in the code at `2bf76a3`. No label
+  claims the machine would pass.
 
 - The quote forms read as signed: 1.00081 at t = 2.841 ms, and 1.448 at
   t = 5.798 ms, the extract grid max.
@@ -157,9 +157,9 @@ Pixels never validate numbers. Rod does the final visual pass.
 
 ## Open inputs
 
-1. **Decision 5:** the window-only rope-break placement call sits with
-   @user. That ruling changes what lane 3 draws. The labels hold the
-   "not yet in the code" form until then.
+1. **Closed:** the window-only rope-break placement call. The placement
+   landed in the code at `2bf76a3` (aero-validator). The lane-3 label takes
+   the landed form. The gate-map band holds as the a89642b record.
 
 2. **Fixed-seed redraw:** a redraw draws from its own extract and needs
    fresh rows before anything prints from it (@science-validator).
@@ -185,3 +185,7 @@ the taps this pass.
   The lane-1 label reads "ω top" and the gate row reads "top · tip ·
   Betz". The drawn rows list takes NR-042 (its recorded next-build
   item). No drawn value moves.
+
+- v3 (2026-10-15): the placement lands (`2bf76a3`). The lane-3 label
+  reads "rope-break gate off during relax". The head comment sweeps to the
+  top form. No drawn value moves.

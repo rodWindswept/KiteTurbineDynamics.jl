@@ -3052,19 +3052,19 @@ z
    </g>
    <g id="text_24">
     <g id="patch_15">
-     <path d="M 338.68286 386.63856 
+     <path d="M 412.678329 386.63856 
 L 524.65536 386.63856 
 Q 525.91536 386.63856 525.91536 385.37856 
 L 525.91536 378.603872 
 Q 525.91536 377.343872 524.65536 377.343872 
-L 338.68286 377.343872 
-Q 337.42286 377.343872 337.42286 378.603872 
-L 337.42286 385.37856 
-Q 337.42286 386.63856 338.68286 386.63856 
+L 412.678329 377.343872 
+Q 411.418329 377.343872 411.418329 378.603872 
+L 411.418329 385.37856 
+Q 411.418329 386.63856 412.678329 386.63856 
 z
 " style="fill: #ffffff"/>
     </g>
-    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #3d6b8e" x="524.65536" y="383.922779" transform="rotate(-0 524.65536 383.922779)">rope-break gate off during relax (not yet in the code)</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #3d6b8e" x="524.65536" y="383.922779" transform="rotate(-0 524.65536 383.922779)">rope-break gate off during relax</text>
    </g>
    <g id="text_25">
     <g id="patch_16">
@@ -3768,7 +3768,7 @@ L 245.1456 402.6672
    <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="625.968" transform="rotate(-0 6.5664 625.968)">sources: eval-timeline-extract · window-trace-extract · data commit dd3cc6a · trees 980de02 / 8d01394</text>
   </g>
   <g id="text_54">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="639.576" transform="rotate(-0 6.5664 639.576)">rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit 1af63fc</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="639.576" transform="rotate(-0 6.5664 639.576)">rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit a269636</text>
   </g>
  </g>
  <defs>

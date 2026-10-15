@@ -30,6 +30,11 @@ plate byte moves.
 The drawn footer row list takes NR-042 at the round-6 build
 (science-validator, `8fb529e`). NR-042 is signed (`8c278a5`).
 
+The lane-3 label takes the landed form at this re-cut: it reads
+"rope-break gate off during relax". The 2026-09-16 placement landed in
+the code at `2bf76a3` (aero-validator). The gate-map band and the foot
+line hold as the a89642b record.
+
 ## Drawn precision
 
 - Lane 1 reads 10.17 and 13.38 at 2 dp. The phrase "rotor Cp-peak
@@ -71,6 +76,10 @@ created with the kit landing.
 tip · Betz". The drawn footer row list takes NR-042 at this build.
 No drawn value moves.
 
-**Form note** (2026-10-15): one script comment at the head holds
-the old ring name until the next re-render sweep. No drawn text is
-affected.
+**Delta** v6 (2026-10-15): the placement lands. The lane-3 label takes
+the landed form (the 2026-09-16 placement, `2bf76a3`, aero-validator).
+The held head comment sweeps to the top form, and the pins refresh at this
+re-cut (script `a269636`). No drawn value moves.
+
+**Form note** (2026-10-15): swept at the v6 re-cut. The head comment
+reads "ground ring and top ring". No drawn text is affected.
