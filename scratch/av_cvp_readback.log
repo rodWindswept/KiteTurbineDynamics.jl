@@ -1,0 +1,11 @@
+# av_cvp_readback.log — the F-VALUE counter-read readback
+# stamp: 2026-10-15T21:43:28Z (aero-validator seat)
+# base: 1c65d27 | main commit: 24111e5 (branch bank-derate-cos2p65)
+# local == origin: 24111e59a5f249a17d69f1e10e56779cc3b79567 == 24111e59a5f249a17d69f1e10e56779cc3b79567
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/room-responses/aero-validator-2026-10-15-convergence-fvalue.md | c535a9b27718fb43d0ea142457d438d60be9a117 | c535a9b27718fb43d0ea142457d438d60be9a117 | fb717f24cee8c246c74d852565177df97650e5db376d21e19ad171fdb340d722
+scratch/av_cvp_fvalue.py | cb1bbd188a39b8061b682a6fd2fda78f450ff001 | cb1bbd188a39b8061b682a6fd2fda78f450ff001 | 0ec6c188b947ffab44f25048b3b63407d6f4c8d37b7e95321db11f2e46e714d5
+scratch/av_cvp_fvalue.log | a22daf04848d1dbe0c14c290f3f56c1527307a19 | a22daf04848d1dbe0c14c290f3f56c1527307a19 | 77aec35f1bad2ae5df52f218c0891c5da5a054d8dfc253dd5b2fd044a59a68cd
+scratch/av_cvp_repro.log | 3ec1074869470cddec46fe188e26ba7a99a0102b | 3ec1074869470cddec46fe188e26ba7a99a0102b | c7e6fa7b53e581c1812424334ef5c867f919947130f69389e0fc98db5db23594
+scratch/av_cvp_repro.md5 | 6410e4bd1f53916c381d6474467244c34210f06f | 6410e4bd1f53916c381d6474467244c34210f06f | c17caa82ffa66444c8abb3c848d39e65f2bf78651724e53acb49eb1914f824f5
+# verdict: all five carried blobs byte-verified at origin
