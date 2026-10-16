@@ -1,7 +1,9 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `9f6a724` on `bank-derate-cos2p65`. **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
+**Base:** branch tip `7aaf2ea` on `bank-derate-cos2p65`.
+**Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
+**Updated** 2026-10-16 for the bow row NR-059 sign and the 2026-10-15 row set.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +32,16 @@ The audit checks can fan out to sub-agents when the sections are independent.
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The bow row (NR-059) signs at `7aaf2ea`. The aero winner-bow read at `c6d2885` reproduces at `650fa49`. The re-run matches the committed log line for line, apart from the git header and the four wall-time lines. The logs compare across 127 lines.
+
+- Receipt `docs/reporting/room-responses/science-validator-2026-10-16-bow-register-sign.md`. Checker `scratch/sv_bow_sign_check.py` reads 41 checks, 0 fail. Counter-read requested from the aero seat.
+
+- The 2026-10-15 row set joins the index. The torsion rows and the convergence series land at `2142d43` (NR-052 to NR-054), receipt `docs/reporting/room-responses/science-validator-2026-10-15-torsion-rows-floor-and-series.md`.
+
+- The reject split and the environment reads land at `a51e9d9` (NR-055 to NR-058), receipt `docs/reporting/room-responses/science-validator-2026-10-15-301-split-and-item21-rows.md`. The convergence read with the NR-006 answer and the v0.55 fold read land at `1b09190`, receipt `docs/reporting/room-responses/science-validator-2026-10-15-convergence-register-read.md`.
+
+- The post-fix warm fold lands at `fab730a` (NR-013 ext2), receipt `docs/reporting/room-responses/science-validator-2026-10-15-postfix-warm-register-fold.md`. The PL12 ruling facts land at `84ac158`, receipt `docs/reporting/room-responses/science-validator-2026-10-15-pl12-ruling-facts.md`.
 
 - The corner-grid register read closes at `a196183` (the fold `1061878`, base `fc3a602`). The receipt set lands at `9f6a724`.
 
@@ -130,4 +142,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the corner-grid register read closes. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the bow row (NR-059) signs, and the counter-read waits at the aero seat. The section 3.3 sentence then folds at the author seat. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
