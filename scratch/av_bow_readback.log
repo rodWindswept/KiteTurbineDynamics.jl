@@ -1,0 +1,12 @@
+local  HEAD = c6d28850c77f532a1713b8b095528a3364fd1c4d
+origin HEAD = c6d28850c77f532a1713b8b095528a3364fd1c4d
+LOCAL == ORIGIN
+OK   docs/reporting/room-responses/aero-validator-2026-10-16-winner-bow-probe.md  d27f19cc735be3af8bbcb4092a3f637d1d901638a7ad8a10cf0cdf033f0db2d4
+OK   scratch/av_bow_read_supply.md  6f99feb46ef99fdae6fba42e0ba7b153878775a5ff8990ea781ede7a740b40e0
+OK   scratch/av_bow_probe.jl  24a1601718dcb2d8536872ca975b6a823fed640e72686486c434fdc6216c73a4
+OK   scratch/av_bow_probe.log  eacc0ce3acbcdeb66b6dd9db975b177ceb401a2929bee2c40fd258e22f2bf987
+OK   scratch/av_bow_probe_run1_buggy.log  7d493a5e28a19474bc54b109ddae7ecb801965c0888537a15d9f112056ffb9c1
+OK   scratch/av_bow_probe_dbg.log  5ee363a5a28f55a75c818745d4a29e01f9ca1969e146e3fbd6ca361cb3053dc7
+OK   scratch/av_bow_probe_interrupted_2026-10-15-sig15.log  f6ded799170a50c9a9b773004cdb6b76be236dea20aaaf6ef25d3209045f094b
+OK   scratch/av_bow_ste_lint.log  c0098ebce75dff74c7c244542db8d56fe2277bf5ad93c74088b51bc2b6dbca29
+ALL 8 CARRIED BLOBS BYTE-VERIFIED AT ORIGIN
