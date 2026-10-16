@@ -2160,3 +2160,26 @@ Reading rules:
 Counter-read requested from the aero seat.
 
 Evidence: `scratch/sv_bow_sign_check.py` and its log, `scratch/sv_bow_probe_recheck.log`.
+
+## Bow direction scope amend: NR-059 (2026-10-16, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The direction bullet of the NR-059 block carries the sideways bound with no scope. The bound came from the extension series alone. The counter-read at the aero seat (receipt `docs/reporting/room-responses/aero-validator-2026-10-16-nr059-counterread.md`) measured the scored window and the relax phase. It re-ran the same path with the sideways read appended. Its anchors hold, and the window-end speed matches the committed read to 8.882e-15. This block records the true scope.
+
+- The relax sampled peak reads 0.23586 at t=2 s. The window decays from 0.03740 (hub) and 0.03734 (mid) at t=11 s.
+
+- The hub reads under 0.003 from t=37 s, and the midpoint from t=38 s. The extension peak reads 0.00217, and the t=200 read is 0.0002.
+
+- The early motion is the known ~10 s lateral mode (the 2026-09-12 handover section 9). It rings out.
+
+Reading rules:
+
+- The sideways bound reads "over the extension series and from t=38 s onward".
+
+- The scope correction reads in the register only. The draft carries no direction bound, so no report byte moves.
+
+- No row value moves. The row carries magnitudes and the disagreement verdict. The direction bullet is basis text.
+
+Evidence: `scratch/sv_nr059_scope_check.py` and its log, plus the counter-read set `scratch/av_nr059_window_yshare.jl` and its log.
+

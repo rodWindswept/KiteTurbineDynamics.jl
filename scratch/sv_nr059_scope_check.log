@@ -1,0 +1,24 @@
+PASS  sentinel WINDOW_YSHARE_DONE present
+PASS  bench gates read true
+PASS  protocol gates read true
+PASS  omega_end matches the committed read to 8.882e-15
+PASS  ANCHORS_OK = true
+PASS  window ring6 series: reproduces byte for byte
+PASS  window ring5 series: reproduces byte for byte
+PASS  relax sampled peak reads 0.23586 at t=2 s
+PASS  window series carry 40 samples each
+PASS  window reads 0.0374 (hub) and 0.03734 (mid) at t=11 s
+PASS  hub reads under 0.003 for every sample from t=37 s onward
+PASS  hub reads not under 0.003 at t=36 s (the crossing)
+PASS  midpoint reads under 0.003 for every sample from t=38 s onward
+PASS  midpoint reads not under 0.003 at t=37 s (the crossing)
+  crossing: hub first <0.003 at t=37 s (0.00299); mid first <0.003 at t=38 s (0.00261)
+PASS  instrument summary: hub 0.03740 / mid 0.03734 over n=40
+PASS  extension series carries 29 rows
+PASS  extension peak reads 0.00217
+PASS  t=200 sideways read is 0.0002
+PASS  the whole-run bound reads false (the amend's scope is the true one)
+
+19 checks, 0 fail
+ALL_CHECKS_PASS
+CHECK_RC=0
