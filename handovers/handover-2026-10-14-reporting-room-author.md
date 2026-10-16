@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `759c038` on `bank-derate-cos2p65`.
+**Base:** branch tip `f8342d1` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -28,6 +28,8 @@ The parallel work is the audits and the extracts the other seats run.
 4. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
+
+5. **The value-track close.** The close supply hands to the science-writer prose pass (`scratch/au_v058_close_supply.md`). The fold waits on that pass. The ladder plate folds into the close after its read closes (counter-reads: aero, science). The caption pass lands (`docs/reporting/figures/scaling-ladder/captions.md`).
 
 ## Closed, last (evidence index)
 
@@ -206,4 +208,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** AU4, the section 2.3 derivation block and the software story. The v0.57 pass folded the winner bow read. The section 3.2 fold waits on the visual pass alone. The partner-gated tails still wait on the AU4 read.
+**Owner:** @author. **Next action:** the v0.58 close fold waits on the science-writer prose pass (supply `scratch/au_v058_close_supply.md`). Then the review-copy rebuild and the receipt. The ladder plate folds after its read closes. The section 3.2 fold waits on the visual pass. AU4 and the partner-gated tails hold.
