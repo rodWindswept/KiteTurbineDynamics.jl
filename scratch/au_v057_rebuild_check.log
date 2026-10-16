@@ -1,0 +1,46 @@
+PASS record: draft c825a01
+PASS record: register at 7aaf2ea
+PASS record: 8 of 8 seats
+PASS record: 53 cited, every one signed (59 total), checker exit 0
+PASS record: built 2026-10-16T13:26:38Z
+PASS md5 parity live == archived build  [3b92d088cf2bab1fca739c2bd5082ab5]
+PASS md5 reads 3b92d088cf2bab1fca739c2bd5082ab5
+PASS media entries == 8 (eight seats)  [8]
+PASS docx text layer: block line reads once 'The shaft axis bows off its design line, sag'  [got 1]
+PASS docx text layer: block line reads once 'At the midpoint ring the bow reads 0.002 m a'  [got 1]
+PASS docx text layer: block line reads once '0.105 to 0.310 m through the measurement win'  [got 1]
+PASS docx text layer: block line reads once 'The maximum sits at the hub and reads 0.209 '  [got 1]
+PASS docx text layer: block line reads once 'An extension run past the window ends at 0.4'  [got 1]
+PASS docx text layer: block line reads once 'and 0.833 m at the hub (NR-059).'  [got 1]
+PASS docx text layer: block line reads once 'Every state at the midpoint ring reads below'  [got 1]
+PASS docx text layer: block line reads once 'The settle hands off a straight stack while '  [got 1]
+PASS docx text layer: block line reads once 'The two do not agree on the bowed shape.'  [got 1]
+PASS docx text layer: block line reads once 'The disagreement reads as an instrument find'  [got 1]
+PASS docx text layer 'Draft v0.57' == 1  [got 1]
+PASS docx text layer 'Draft v0.56' == 0  [got 0]
+PASS docx text layer 'Date 2026-10-16' == 1  [got 1]
+PASS docx text layer 'Date 2026-10-15' == 0  [got 0]
+PASS docx text layer 'NR-059' == 6  [got 6]
+PASS docx text layer 'NR-016' == 3  [got 3]
+PASS docx text layer '10.170' == 3  [got 3]
+PASS docx text layer '13.38' == 4  [got 4]
+PASS docx text layer 'instrument finding' == 1  [got 1]
+PASS docx text layer 'stack does not translate' == 0  [got 0]
+PASS docx text layer 'physical-validation' == 0  [got 0]
+PASS docx text layer: block sits after the settle paragraph and ahead of the speed line  [23052 < 23098 < 23724]
+PASS docx text layer: block reads in order  [[23211, 23330, 23416, 23512, 23553]]
+PASS draft: pin reads v0.57
+PASS draft: v0.56 reads 0
+PASS draft: line count 1076  [1076]
+PASS draft: block lines read once
+PASS draft: NR-059 reads 5  [5]
+PASS draft: NR- count 255  [255]
+PASS draft: bow reads 4  [4]
+PASS draft: 1.5 m line reads once
+PASS draft: settle anchor reads once
+PASS tracker: v0.57 entry present
+PASS tracker: v0.56 history held
+PASS tracker: entry rows read once
+
+43/43 checks passed
+ALL PASS
