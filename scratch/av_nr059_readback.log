@@ -1,0 +1,14 @@
+local  HEAD = 271182b1bb3cba565cf2b00cd4ca8a1683aff026
+origin HEAD = 271182b1bb3cba565cf2b00cd4ca8a1683aff026
+LOCAL == ORIGIN
+OK   docs/reporting/room-responses/aero-validator-2026-10-16-nr059-counterread.md  7bec14753fc80b25544e3567ebb3b07e9f5815ea7d7af32ba7a457ea5a8d70e8
+OK   scratch/av_nr059_counterread.py  2204a8ecdc62dcc76609016a36457331b34d46dbb45b0f3447c9463a9b6a936f
+OK   scratch/av_nr059_counterread.log  0c3558364dd90d4ae7eaa8e5a2477819c86e3e4878497b300af45e3f68dc6e09
+OK   scratch/av_nr059_window_yshare.jl  8a336b8387a068d8774520197aea2368e489cd7633a4946c261a2323d5ae60e2
+OK   scratch/av_nr059_window_yshare.log  fbc97b6ef88740c19d8d63cdadf3bbc943205097b62abeb5f373f763a3077978
+OK   scratch/av_nr059_window_yshare_run1_refused.log  39c98e7de33321d5487c771c51f3907e66de4ad81c0a9575d9b1058616cdf2eb
+OK   scratch/av_nr059_svcheck_rerun.log  fd19e016864cdb2c4d6bb4cf5b56578771265d7b74731a6fc2acc9e48e99e653
+OK   scratch/av_nr059_reglint.log  49bac93c83da59605ed869e3b311321e808ad37fad02a7cad8d1925dc5ab4fb6
+OK   scratch/av_nr059_ste_lint.log  360a874f25a95c7dc2cac9a44fe1d378f94e7a1f94aed8543bc11868957ad2e8
+OK   scratch/av_bow_read_supply.md  0cebb9872693f5bfca6b04a6c0b9d6854d8da56be218cebd78876ba2e6c46ec6
+ALL 10 CARRIED BLOBS BYTE-VERIFIED AT ORIGIN
