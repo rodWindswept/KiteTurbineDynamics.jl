@@ -34,7 +34,7 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Closed, last (evidence index)
 
-- The value-claims ledger counter-read closes at `ba1a66f`, read at `f38d19a`. Every `measured` row, every row touching a signed row, and every binding surface re-check by a second route. The measured census reads one HOLD row and zero printable. The rung set matches `const RUNGS` digit for digit. Every pointer resolves. One class-line proposal rides for the aero seat. Receipt `docs/reporting/room-responses/science-validator-2026-10-16-value-ledger-counterread.md`. Checker `scratch/sv_vcl_counterread_check.py` reads 34 checks, 0 fail.
+- The value-claims ledger counter-read closes at `ba1a66f`, read at `f38d19a`. The measured census reads one HOLD row and zero printable. The rung set matches `const RUNGS` digit for digit, and every pointer resolves. One class-line proposal rides for the aero seat. Receipt `docs/reporting/room-responses/science-validator-2026-10-16-value-ledger-counterread.md`. Checker `scratch/sv_vcl_counterread_check.py`, 34 checks, 0 fail.
 
 - The bow row (NR-059) signs at `7aaf2ea`. The aero winner-bow read at `c6d2885` reproduces at `650fa49`. The re-run matches the committed log line for line, apart from the git header and the four wall-time lines. The logs compare across 127 lines.
 
