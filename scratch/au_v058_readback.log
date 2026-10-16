@@ -1,0 +1,11 @@
+# Readback: the value-track handoff (author seat, 2026-10-16)
+# Base pin: f8342d1 (local == origin at the supply).
+# C1 9f448b8  docs(reporting): the scaling-ladder caption pass lands at the author seat.
+# C2 f2a8773  chore(scratch): the v0.58 close supply.
+# local == origin at f2a8773 at the readback.
+# All carried blobs byte-verified at origin (md5, worktree versus origin; git show origin/bank-derate-cos2p65:path):
+docs/reporting/figures/scaling-ladder/captions.md   d4a19f627a93f85b101041f8ccefa40a  = origin
+scratch/au_v058_close_supply.md                     9f9cd83b60a100a418b9c4fc448e0347  = origin
+scratch/au_v058_close_sim.py                        e2e48a535b6c320e97f000a0b1922866  = origin
+scratch/au_v058_close_ste.log                       dc687baa9600742e1393d1041c45756a  = origin
+# The candidate (scratch/au_v058_close_draft_candidate.md) stays untracked; rebuild it with the sim script.
