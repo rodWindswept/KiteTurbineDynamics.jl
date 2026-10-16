@@ -1,0 +1,48 @@
+# value-claims ledger seed check — 2026-10-16T14:41:35+00:00
+OK   ledger file exists
+OK   receipt file exists
+OK   register file exists
+OK   seeds script exists
+OK   no unknown backticked tokens
+OK   every pointer token resolves
+OK   pointer token count >= 15
+OK   pointer paths cover the docs tree
+OK   pointer paths cover scripts
+OK   pointer paths cover src
+OK   commit pointer present
+OK   branch pointer present
+OK   element rows carry only the three classes
+OK   element row count >= 18
+OK   class present: capability
+OK   class present: measured
+OK   class present: target
+OK   rung row present: 5 kW
+OK   rung row present: 7 kW
+OK   rung row present: 10 kW
+OK   rung row present: 15 kW
+OK   rung row present: 25 kW
+OK   rung row present: 35 kW
+OK   rung row present: 50 kW
+OK   exactly one solid ink row
+OK   the solid row is the 5 kW rung
+OK   ledger rung set matches const RUNGS
+OK   hold set carries >= 3 rows
+OK   hold row: the economics pair
+OK   hold row: the v13 readings
+OK   hold row: the April kit
+OK   flagged set carries >= 5 items
+OK   flag present: first commercial product
+OK   flag present: network-of-network
+OK   flag present: Offshore
+OK   flag present: gigatonne
+OK   flag present: yield line
+OK   plain label present >= 6 times
+OK   enforcement region named
+OK   register cited in notes
+OK   ste-lint rc=0 on the ledger
+OK   ste-lint under the gate on the ledger
+OK   ste-lint rc=0 on the receipt
+OK   ste-lint under the gate on the receipt
+ledger sha256 3160aed87f5e52b3890dbed836c6119dc4b4eb37ed1792c7945794577de3e24e
+
+44 checks, 0 fail

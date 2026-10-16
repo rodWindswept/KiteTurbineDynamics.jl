@@ -1,0 +1,4 @@
+value-claims-ledger.md           words=1017 total=  5 per100w=  0.49 em_dash=10
+[HOOK:ste] value-claims-ledger.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] value-claims-ledger.md: em_dash x10 -> no em dash — use a period or comma. (ste-writing)
+aero-validator-2026-10-16-value-claims-ledger.md words= 467 total=  0 per100w=  0.00 em_dash= 0
