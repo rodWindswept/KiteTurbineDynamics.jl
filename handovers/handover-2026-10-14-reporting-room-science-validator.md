@@ -1,9 +1,9 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `7aaf2ea` on `bank-derate-cos2p65`.
+**Base:** branch tip `5b2cfd9` on `bank-derate-cos2p65`.
 **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
-**Updated** 2026-10-16 for the bow row NR-059 sign and the 2026-10-15 row set.
+**Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -35,7 +35,7 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 - The bow row (NR-059) signs at `7aaf2ea`. The aero winner-bow read at `c6d2885` reproduces at `650fa49`. The re-run matches the committed log line for line, apart from the git header and the four wall-time lines. The logs compare across 127 lines.
 
-- Receipt `docs/reporting/room-responses/science-validator-2026-10-16-bow-register-sign.md`. Checker `scratch/sv_bow_sign_check.py` reads 41 checks, 0 fail. Counter-read requested from the aero seat.
+- Receipt `docs/reporting/room-responses/science-validator-2026-10-16-bow-register-sign.md`. Checker `scratch/sv_bow_sign_check.py` reads 41 checks, 0 fail. Counter-read closed at the aero seat (`271182b`) with one scope amend landed here (`5b2cfd9`). The sideways bound reads over the extension series and from t=38 s onward. Amend receipt `docs/reporting/room-responses/science-validator-2026-10-16-nr059-scope-amend.md`.
 
 - The 2026-10-15 row set joins the index. The torsion rows and the convergence series land at `2142d43` (NR-052 to NR-054), receipt `docs/reporting/room-responses/science-validator-2026-10-15-torsion-rows-floor-and-series.md`.
 
