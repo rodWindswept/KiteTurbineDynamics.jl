@@ -1,0 +1,20 @@
+# Readback: the v0.57 winner-bow-read pass (author seat, 2026-10-16)
+
+Commits (bank-derate-cos2p65):
+  c825a01  the fold (draft v0.57, the winner bow read: NR-059 at section 3.3)
+  759c038  the receipt set (receipt, rebuild check, check log)
+  28f17af  the seat page
+
+md5 (local == origin, every blob byte-verified at origin by sha256 readback):
+43ffc00e40b121010d882cf4726d6d5b  docs/reporting/drafts/2026-10-08-report-first-draft.md
+be8ef390b5b3be34b4d9d258e15e92c7  docs/reporting/draft-tracker.md
+f595c34c5f1534b269f546fc6d55f37d  scratch/au_v057_bow_read_fold.py
+e62b7e947f5ff354aff8a8f0da39ffe5  scratch/au_v057_bow_read_fold.log
+bf41854d97b33d1b4ea0e3e700a3ee1b  docs/reporting/room-responses/author-2026-10-16-v057-bow-read.md
+f40157960641514a9b3c404af636dddd  scratch/au_v057_rebuild_check.py
+f487010d747958d1c8e9292f434a29b5  scratch/au_v057_rebuild_check.log
+0ff32e613a1602aaa0f9caf9363916f4  handovers/handover-2026-10-14-reporting-room-author.md
+
+HEAD == origin/bank-derate-cos2p65 == 28f17af2b3dc760f645dff40d58512c3443ad38e at the write of this log.
+The review copy (scratch/report-pdf-build/draft-live.docx, md5 3b92d088cf2bab1fca739c2bd5082ab5) stays untracked and is not carried.
+This log rides the next commit.
