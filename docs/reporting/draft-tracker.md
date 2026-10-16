@@ -326,6 +326,11 @@ Section 3.1 takes the era label the record carries. Section 4.2 takes date order
 The back-pointer lands at section 2.2.2, per the ruling.
 No value moves, and no figure byte moves.
 
+v0.57 pass by @author (2026-10-16).
+This pass folds the winner bow read.
+The bow block lands at section 3.3, after the settle-state read (NR-059).
+No value moves, and no figure byte moves.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

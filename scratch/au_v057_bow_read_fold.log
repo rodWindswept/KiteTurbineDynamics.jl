@@ -1,0 +1,70 @@
+base tip: e639bb2
+base draft sha256: 8d8be3b9191327672f85e1ecc84374d7aec3fd652f2cce852cc1c5e5285192dd
+base tracker sha256: 731525f856c89519e2393bc229b0663d3d96764cb6fab061df27ae65229a9010
+ok D1 version pin
+ok D2 bow block insert
+ok T1 tracker entry
+candidate draft sha256: 31d0dadae66ff794842d5da111a201f878c6cca3be812aae3a20bcc004cdd380
+candidate tracker sha256: b00ee69421dc5ea5b31b2dc7d799550f88ffc4440e4042e82929a749e070ae18
+line count draft: base 1063 -> candidate 1076
+line count tracker: base 446 -> candidate 451
+draft opcodes: [('equal', 0, 2, 0, 2), ('replace', 2, 3, 2, 3), ('equal', 3, 547, 3, 547), ('insert', 547, 547, 547, 560), ('equal', 547, 1063, 560, 1076)]
+tracker opcodes: [('equal', 0, 328, 0, 328), ('insert', 328, 328, 328, 333), ('equal', 328, 446, 333, 451)]
+draft token delta add: {'0.002': 1, '0.105': 1, '0.209': 1, '0.310': 1, '0.422': 1, '0.613': 1, '0.833': 1, '1.5': 1, '57': 1}
+draft token delta rem: {'56': 1}
+tracker token delta add: {'3.3': 1, '57': 1}
+tracker token delta rem: {}
+cite count: base 250 -> candidate 255
+NR-059 count: base 0 -> candidate 5
+bow substring count: base 0 -> candidate 4
+v0.56 count: base 1 -> candidate 0
+v0.57 count: base 0 -> candidate 1
+1.5 count: base 5 -> candidate 6
+tracker v0.57 count: base 0 -> candidate 1
+guard pin: v0.57 dated 2026-10-16: ok
+guard reconstruction: candidate == base plus declared edits: ok
+guard reverse: base == candidate minus declared edits: ok
+guard D2 lands once, old gone: ok
+guard line count draft exact +13: ok
+guard line count tracker exact +5: ok
+guard opcodes exact: ok
+guard tracker opcodes exact: ok
+guard block: three paragraphs read once: ok
+guard block: every line reads once: ok
+guard block: fragment counts within six: ok
+guard block: founded on the anchor lines: ok
+guard block: row display forms carried: ok
+guard block: station and state names carried: ok
+guard block: the finding reads: ok
+guard hold: NR-016 count: ok
+guard hold: NR- count grows by five: ok
+guard hold: NR-059 reads five: ok
+guard hold: 10.170 held: ok
+guard hold: 13.38 held: ok
+guard region: abstract to 2.2 unchanged: ok
+guard region: 2.2 to 3.3 unchanged: ok
+guard region: 3.3 head to settle para unchanged: ok
+guard region: window-mean speed to 4 unchanged: ok
+guard region: 4 to 6 unchanged: ok
+guard region: 6 to Document control unchanged: ok
+guard region: Document control to claims unchanged: ok
+guard region: claims appendix unchanged: ok
+guard region: figure provenance to end unchanged: ok
+guard tracker v0.57 entry: ok
+guard tracker history held: ok
+guard tracker reconstruction exact: ok
+guard tracker entry lines read once: ok
+STE draft base: rc=0 words=7341 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE draft candidate: rc=0 words=7465 total=8 {'passive_voice': 1, 'long_paragraph(>6s)': 7, '_em_dash_info': 2}
+STE tracker base: rc=0 words=3434 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+STE tracker candidate: rc=0 words=3468 total=12 {'long_sentence(>20w)': 1, 'semicolon': 3, 'contraction': 1, 'passive_voice': 2, 'long_paragraph(>6s)': 5, '_em_dash_info': 1}
+draft token check: PASS
+tracker token check: PASS
+== cited rows in au_v057_bow_draft_candidate.md: 53
+   NR-001, NR-002, NR-003, NR-004, NR-005, NR-006, NR-007, NR-008, NR-009, NR-010, NR-011, NR-012, NR-013, NR-014, NR-015, NR-016, NR-017, NR-018, NR-019, NR-020, NR-021, NR-022, NR-023, NR-025, NR-026, NR-027, NR-028, NR-029, NR-030, NR-031, NR-032, NR-033, NR-034, NR-036, NR-039, NR-040, NR-042, NR-043, NR-044, NR-045, NR-046, NR-047, NR-048, NR-049, NR-050, NR-051, NR-052, NR-053, NR-055, NR-056, NR-057, NR-058, NR-059
+== every cited row present and signed (59 signed rows total)
+== signed rows not cited by this draft (informational): NR-024, NR-035, NR-037, NR-038, NR-041, NR-054
+== digit-bearing lines (eyeball pass — every value should carry its row ID):
+   3| Internal engineering report. Draft v0.57. Date 2026-10-16.
+citation checker: rc=0
+GATES: ste=pass tokens=pass citations=pass

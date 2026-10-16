@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.56. Date 2026-10-15.
+Internal engineering report. Draft v0.57. Date 2026-10-16.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -544,6 +544,19 @@ The machine held a steady operating point through the measurement window.
 
 The settle state starts the machine at 10.170 rad/s (NR-016).
 The machine accelerates through the relax run.
+
+The shaft axis bows off its design line, sagging straight down under gravity.
+At the midpoint ring the bow reads 0.002 m at settle, and
+0.105 to 0.310 m through the measurement window (NR-059).
+The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-059).
+
+An extension run past the window ends at 0.422 m at the midpoint
+and 0.833 m at the hub (NR-059).
+Every state at the midpoint ring reads below the 1.5 m line (NR-059).
+
+The settle hands off a straight stack while the run bows it.
+The two do not agree on the bowed shape.
+The disagreement reads as an instrument finding, not a design question (NR-059).
 
 Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
 Its airborne mass reads 25.698 kilograms (NR-018).
