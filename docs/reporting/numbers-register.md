@@ -2108,3 +2108,55 @@ Reading rules:
 
 - The convergence plate prints the seed with no generation (NR-006 quote
   form). The drawn form stands.
+
+## Derived row: NR-059, the winner bow read (2026-10-16, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The founder word "up" (2026-10-15) sent the winner bow probe at the aero seat.
+The read landed at `c6d2885` with the proposed row, receipt `docs/reporting/room-responses/aero-validator-2026-10-16-winner-bow-probe.md`.
+This seat reproduced the read at the tree tip and signs the row.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-059 | Winner bow (island 3) | midpoint ring settle 0.002 m, window 0.105 to 0.310 m. Hub max settle 0.002 m, window 0.209 to 0.613 m. Extension end midpoint 0.422 m, hub 0.833 m. Settle and run do not agree on the bowed shape | m | probe `scratch/av_bow_probe.jl` (sha256 `24a1601718dcb2d8536872ca975b6a823fed640e72686486c434fdc6216c73a4`), its log `scratch/av_bow_probe.log` (sha256 `eacc0ce3acbcdeb66b6dd9db975b177ceb401a2929bee2c40fd258e22f2bf987`), both first landed at `c6d2885`. Re-run `scratch/sv_bow_probe_recheck.log`. Checker `scratch/sv_bow_sign_check.py` and its log | signed (science-validator, 2026-10-16) |
+
+Sign-off basis:
+
+- The reproduction. This seat re-ran the committed probe in a detached worktree at `650fa49`. The two logs match line for line. Only the git header and the four wall-time lines differ.
+
+- The bench gates. Both gate lines read true, so the run reproduces the NR-016 readings at this tip. The settle speed reads 10.169820334285198 rad/s.
+
+- The pins. The probe and log sha256 values equal the supply pins. Both blobs first landed at `c6d2885` and read byte-identical at `650fa49`.
+
+- The founder station (midpoint ring, ring 5). Settle 0.00160 m. Window 0.10531 to 0.31005 m, mean 0.22288 m. Extension end 0.42202 m.
+
+- The max station (hub, ring 6). Settle 0.00241 m. Window 0.20862 to 0.61302 m, mean 0.44098 m. Extension end 0.83331 m, raw 0.833774 m.
+
+- The direction. The shape leans straight down, down fraction 0.9999 at settle and 1.0000 at t=200 s. The sideways share stays under 0.003.
+
+- The mapping clause. The max sits at the hub. The midpoint ring reads about half the hub value. The ratio reads 0.5058 at t=50 s and 0.5064 at t=195 s.
+
+- The September check. The settle hands off a straight stack and the run bows it. The largest deviation reads 0.43857 m at ring 6. Per `DECISIONS.md` [2026-09-15] ruling 2 this reads as an instrument finding, not a design question.
+
+- The founder line. The founder measures bow as the midpoint ring belly drop from the common axis. Every midpoint state reads below 0.5 m against the 1.5 m bar.
+
+- The precision basis. The row quotes 3 decimals from the 5-decimal log forms. The checker asserts every quoted form.
+
+- The source cell. The cell takes the two evidence pins and the landing commit at the sign. No value changed.
+
+Reading rules:
+
+- Every bow number quotes with its station and its state.
+
+- The founder station reads the midpoint ring (ring 5). The max station reads the hub (ring 6).
+
+- The settle and run disagreement reads as an instrument finding. It never reads as a design verdict.
+
+- The barred September estimate prints no result. The 1.5 m line is a comparison bar only.
+
+- The glossary entry (v20) carries no value. The value reads from this row.
+
+Counter-read requested from the aero seat.
+
+Evidence: `scratch/sv_bow_sign_check.py` and its log, `scratch/sv_bow_probe_recheck.log`.
