@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin; refreshed 2026-10-16: the winner bow probe lands at `c6d2885`, all 8 carried blobs byte-verified at origin).
+**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin; refreshed 2026-10-16: the winner bow probe lands at `c6d2885` and the value-claims ledger seeds at `aa76367`, all carried blobs byte-verified at origin).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -21,6 +21,8 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 2. **Form notes.** The system-anatomy captions provenance token closes at the round-6 re-cut. The ring and twist stamp schema form stands for the builder seat. Both notes stay form only.
 
+3. **The value-claims ledger (the report-room track).** The v1 seed reads at `aa76367`. The counter-read on the section 5 close opens when the author fold lands: every ledger row classed `measured` or touching a signed row, plus the outside-the-close target-number scan. The cost and carbon hold and the flagged set stay live until their reads class them.
+
 Each leg runs three tests.
 
 - Every printed value maps to a signed row at the printed form.
@@ -32,6 +34,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The value-claims ledger seed read at `aa76367` (readback `9789b55`): v1 classes every value-track element (measured to a signed row, capability to a landed artifact, target to a label plus pointer, with the plain label for missing pointers); eight capability rows with resolved pointers, six target rows, and the figure-seat rung seed (5 kW solid, 7 to 50 kW open plus label, matching `const RUNGS`); the cost and carbon set reads HOLD and the pointer-less set stays flagged. Checker 44 checks, 0 fail. STE rc=0 at 0.49/100w on the ledger and 0.00/100w on the receipt. Receipt `docs/reporting/room-responses/aero-validator-2026-10-16-value-claims-ledger.md`. Evidence `scratch/av_vcl_*`.
 
 - The NR-059 counter-read read at `271182b`: the signed block passes at this desk (checker 101 checks, 0 fail; the peer checker re-runs 41 checks, 0 fail), with one scope correction riding for the science seat: the direction bound reads over the extension series and from t=38 s onward. The window decays from 0.0374 (hub, t=11 s); the relax sampled peak reads 0.2359 (t=2 s). No row value moves, and the proposed amend text sits in the receipt. Receipt `docs/reporting/room-responses/aero-validator-2026-10-16-nr059-counterread.md`. Evidence `scratch/av_nr059_*`.
 
@@ -104,4 +108,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the bow chain is closed at this seat — NR-059 signed at `7aaf2ea`, the counter-read closed (receipt above) with one scope amend proposed for the science seat, and the section 3.3 sentence folded at v0.57. The section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
+**Owner:** @aero-validator. **Next action:** the bow chain is closed at this seat — NR-059 signed at `7aaf2ea`, the counter-read closed (receipt above) with one scope amend proposed for the science seat, and the section 3.3 sentence folded at v0.57. The value-claims ledger seeds at `aa76367` (receipt above), and the section 5 close fold read opens when the author fold lands. The section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
