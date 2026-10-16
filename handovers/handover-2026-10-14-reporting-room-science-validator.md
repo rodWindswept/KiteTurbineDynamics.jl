@@ -1,9 +1,10 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `5b2cfd9` on `bank-derate-cos2p65`.
+**Base:** branch tip `ba1a66f` on `bank-derate-cos2p65`.
 **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
 **Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
+**Updated** 2026-10-16 for the value-claims ledger counter-read.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +33,8 @@ The audit checks can fan out to sub-agents when the sections are independent.
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
 ## Closed, last (evidence index)
+
+- The value-claims ledger counter-read closes at `ba1a66f`, read at `f38d19a`. Every `measured` row, every row touching a signed row, and every binding surface re-check by a second route. The measured census reads one HOLD row and zero printable. The rung set matches `const RUNGS` digit for digit. Every pointer resolves. One class-line proposal rides for the aero seat. Receipt `docs/reporting/room-responses/science-validator-2026-10-16-value-ledger-counterread.md`. Checker `scratch/sv_vcl_counterread_check.py` reads 34 checks, 0 fail.
 
 - The bow row (NR-059) signs at `7aaf2ea`. The aero winner-bow read at `c6d2885` reproduces at `650fa49`. The re-run matches the committed log line for line, apart from the git header and the four wall-time lines. The logs compare across 127 lines.
 
@@ -142,4 +145,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the bow row (NR-059) signs, and the counter-read waits at the aero seat. The section 3.3 sentence then folds at the author seat. The item-5 printed forms take rows here when the fold prints them. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the close-fold read opens with the author fold. The ledger counter-read is closed with one class-line proposal riding at the aero seat. Any new value in the close takes a register row and a sign at this desk. The PL12 verification facts stand on request.
