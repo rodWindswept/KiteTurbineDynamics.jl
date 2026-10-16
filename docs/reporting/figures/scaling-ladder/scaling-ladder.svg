@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="547.2pt" height="352.8pt" viewBox="0 0 547.2 352.8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>1970-01-01T00:00:00</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 352.8 
+L 547.2 352.8 
+L 547.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="patch_2">
+   <path d="M 328.32 185.22 
+L 534.6144 185.22 
+L 534.6144 58.212 
+L 328.32 58.212 
+z
+" style="fill: #ffffff; stroke: #c9ced3; stroke-width: 0.7; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_3">
+   <path d="M 335.9808 84.1428 
+L 345.8304 84.1428 
+L 345.8304 74.6172 
+L 335.9808 74.6172 
+z
+" style="fill: #1a1a1a; stroke: #1a1a1a; stroke-width: 0.7; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_4">
+   <path d="M 335.9808 128.9484 
+L 345.8304 128.9484 
+L 345.8304 119.4228 
+L 335.9808 119.4228 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="line2d_1">
+   <path d="M 95.76 317.52 
+L 95.76 57.1536 
+" style="fill: none; stroke: #333333; stroke-width: 1.3; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_2">
+   <path d="M 183.312 317.52 
+L 183.312 57.1536 
+" style="fill: none; stroke: #333333; stroke-width: 1.3; stroke-linecap: round"/>
+  </g>
+  <g id="patch_5">
+   <path d="M 91.3824 305.8776 
+L 187.6896 305.8776 
+L 187.6896 297.4104 
+L 91.3824 297.4104 
+z
+" style="fill: #1a1a1a; stroke: #1a1a1a; stroke-width: 0.8; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_6">
+   <path d="M 91.3824 267.7752 
+L 187.6896 267.7752 
+L 187.6896 259.308 
+L 91.3824 259.308 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_7">
+   <path d="M 91.3824 229.6728 
+L 187.6896 229.6728 
+L 187.6896 221.2056 
+L 91.3824 221.2056 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_8">
+   <path d="M 91.3824 191.5704 
+L 187.6896 191.5704 
+L 187.6896 183.1032 
+L 91.3824 183.1032 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_9">
+   <path d="M 91.3824 153.468 
+L 187.6896 153.468 
+L 187.6896 145.0008 
+L 91.3824 145.0008 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_10">
+   <path d="M 91.3824 115.3656 
+L 187.6896 115.3656 
+L 187.6896 106.8984 
+L 91.3824 106.8984 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_11">
+   <path d="M 91.3824 77.2632 
+L 187.6896 77.2632 
+L 187.6896 68.796 
+L 91.3824 68.796 
+z
+" style="fill: #ffffff; stroke: #555555; stroke-linejoin: miter"/>
+  </g>
+  <g id="text_1">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="6.5664" y="16.9344" transform="rotate(-0 6.5664 16.9344)">The scaling ladder</text>
+  </g>
+  <g id="text_2">
+   <text style="font-size: 7.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="31.0464" transform="rotate(-0 6.5664 31.0464)">the rungs above the validated machine are programme targets, not results</text>
+  </g>
+  <g id="text_3">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="303.8515" transform="rotate(-0 199.728 303.8515)">5 kW</text>
+  </g>
+  <g id="text_4">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="303.8515" transform="rotate(-0 232.56 303.8515)">the validated rung</text>
+  </g>
+  <g id="text_5">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="265.7491" transform="rotate(-0 199.728 265.7491)">7 kW</text>
+  </g>
+  <g id="text_6">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="265.7491" transform="rotate(-0 232.56 265.7491)">programme target</text>
+  </g>
+  <g id="text_7">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="227.6467" transform="rotate(-0 199.728 227.6467)">10 kW</text>
+  </g>
+  <g id="text_8">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="227.6467" transform="rotate(-0 232.56 227.6467)">programme target</text>
+  </g>
+  <g id="text_9">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="189.5443" transform="rotate(-0 199.728 189.5443)">15 kW</text>
+  </g>
+  <g id="text_10">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="189.5443" transform="rotate(-0 232.56 189.5443)">programme target</text>
+  </g>
+  <g id="text_11">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="151.4419" transform="rotate(-0 199.728 151.4419)">25 kW</text>
+  </g>
+  <g id="text_12">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="151.4419" transform="rotate(-0 232.56 151.4419)">programme target</text>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="113.3395" transform="rotate(-0 199.728 113.3395)">35 kW</text>
+  </g>
+  <g id="text_14">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="113.3395" transform="rotate(-0 232.56 113.3395)">programme target</text>
+  </g>
+  <g id="text_15">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="199.728" y="75.2371" transform="rotate(-0 199.728 75.2371)">50 kW</text>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="232.56" y="75.2371" transform="rotate(-0 232.56 75.2371)">programme target</text>
+  </g>
+  <g id="text_17">
+   <text style="font-size: 7.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="350.208" y="81.36675" transform="rotate(-0 350.208 81.36675)">filled — the validated rung: landed</text>
+  </g>
+  <g id="text_18">
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="350.208" y="96.426775" transform="rotate(-0 350.208 96.426775)">the campaign dataset and the register back it</text>
+  </g>
+  <g id="text_19">
+   <text style="font-size: 7.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="350.208" y="126.17235" transform="rotate(-0 350.208 126.17235)">open — programme targets: forward-looking</text>
+  </g>
+  <g id="text_20">
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="350.208" y="141.232375" transform="rotate(-0 350.208 141.232375)">the plain label: programme target — no repo artifact</text>
+  </g>
+  <g id="text_21">
+   <text style="font-style: italic; font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="335.9808" y="164.081594" transform="rotate(-0 335.9808 164.081594)">Rungs sit at equal spacing. The plate is not a value scale.</text>
+  </g>
+  <g id="text_22">
+   <text style="font-style: italic; font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="335.9808" y="177.135194" transform="rotate(-0 335.9808 177.135194)">No screen value prints.</text>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="335.16" transform="rotate(-0 6.5664 335.16)">source: the value-claims ledger, section 4 (v1 seed commit aa76367) · the code set: scripts/compute_seeds.jl, const RUNGS</text>
+  </g>
+  <g id="text_24">
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="342.216" transform="rotate(-0 6.5664 342.216)">no register row binds this plate · every drawn element resolves to the value-claims ledger · script commit 4ebc385</text>
+  </g>
+ </g>
+</svg>

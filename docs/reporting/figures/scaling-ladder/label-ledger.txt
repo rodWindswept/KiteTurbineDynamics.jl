@@ -1,0 +1,19 @@
+10 kW
+15 kW
+25 kW
+35 kW
+5 kW
+50 kW
+7 kW
+No screen value prints.
+Rungs sit at equal spacing. The plate is not a value scale.
+The scaling ladder
+filled — the validated rung: landed
+no register row binds this plate · every drawn element resolves to the value-claims ledger · script commit 4ebc385
+open — programme targets: forward-looking
+programme target
+source: the value-claims ledger, section 4 (v1 seed commit aa76367) · the code set: scripts/compute_seeds.jl, const RUNGS
+the campaign dataset and the register back it
+the plain label: programme target — no repo artifact
+the rungs above the validated machine are programme targets, not results
+the validated rung

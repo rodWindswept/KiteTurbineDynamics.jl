@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat, the convergence build and its counter-read closures (2026-10-15).
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat, the convergence build and its counter-read closures (2026-10-15), and the scaling-ladder stage (2026-10-16).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -29,6 +29,12 @@ map v48: the generator (`0db99ac`) and the kit
 checks, 0 fail, and F-REPRO holds across three locations. The
 counter-reads close clean (the aero F-VALUE and the register read).
 Next: the visual pass by Rod.
+
+3. **The scaling-ladder stage (the close candidate).** The kit lands at
+`docs/reporting/figures/scaling-ladder/` (generator `4ebc385`; map row
+24, delta v50). The in-script set reads 14 checks, 0 fail, and F-REPRO
+holds across three locations. Next: the counter-reads, then the visual
+pass by Rod, then the fold.
 
 
 ## Closed, last (evidence index)
@@ -183,4 +189,4 @@ Next: the visual pass by Rod.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate, rows 4 to 7 and the convergence figure).
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate, rows 4 to 7 and the convergence figure). The scaling-ladder stage reads its counter-reads next.

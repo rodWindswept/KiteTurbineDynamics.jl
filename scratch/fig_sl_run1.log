@@ -1,0 +1,16 @@
+check: the rung set (const RUNGS): [5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0]  (OK)
+check: the ledger rung rows: 7  (OK)
+check: ledger values == the code set: [5, 7, 10, 15, 25, 35, 50]  (OK)
+check: ledger classes: ['capability', 'target', 'target', 'target', 'target', 'target', 'target']  (OK)
+check: ledger ink classes: ['solid', 'open plus label', 'open plus label', 'open plus label', 'open plus label', 'open plus label', 'open plus label']  (OK)
+check: plain label on every target row: True  (OK)
+check: the prose set line matches the table: [5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0]  (OK)
+check: drawn rung labels (integer kW forms): ['5 kW', '7 kW', '10 kW', '15 kW', '25 kW', '35 kW', '50 kW']  (OK)
+check: no other kW form in the drawn set: [5, 7, 10, 15, 25, 35, 50]  (OK)
+check: no register-row token drawn: True  (OK)
+check: no held-set token drawn (cost, carbon): True  (OK)
+check: no proof-claim token drawn: True  (OK)
+check: blob check: the ledger matches HEAD: True  (OK)
+check: blob check: compute_seeds matches HEAD: True  (OK)
+written: scaling-ladder.svg / .pdf / .png, label-ledger.txt (19 strings), manifest.json
+F-LABEL self-check: OK
