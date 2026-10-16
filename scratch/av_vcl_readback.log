@@ -1,0 +1,9 @@
+local  HEAD = aa7636761a79eba41db0dd7090c0345818e87ade
+origin HEAD = aa7636761a79eba41db0dd7090c0345818e87ade
+LOCAL == ORIGIN
+OK   docs/reporting/value-claims-ledger.md  3160aed87f5e52b3890dbed836c6119dc4b4eb37ed1792c7945794577de3e24e
+OK   docs/reporting/room-responses/aero-validator-2026-10-16-value-claims-ledger.md  632a8747a2ef44c52c38e79225bb8d1743614cf250a3ac8eb0e5df81b3d3aac9
+OK   scratch/av_vcl_check.py  8590c94585ee7e37099e6eaec0a11067674625bf3d0e34bb02daa3b0791d8591
+OK   scratch/av_vcl_check.log  a1293ebfd9658762e6556158d776fa58f08dd3c972f568cc6ce2db620d5eda22
+OK   scratch/av_vcl_ste_lint.log  0e0d195cf237a082b3821de1bafed5610e9869065a8c3ae281bff4c1e1a33b29
+ALL 5 CARRIED BLOBS BYTE-VERIFIED AT ORIGIN
