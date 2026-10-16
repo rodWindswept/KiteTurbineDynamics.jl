@@ -1,0 +1,34 @@
+PASS  base reads from git  | HEAD
+PASS  base md5 pins  | 8a4bcbf75a42a8ee6a87e3e097bc9d6d
+PASS  base line count 409  | 409
+PASS  status v20 present exactly once  | 1
+PASS  bow row present exactly once  | 1
+PASS  bow row carries no digit
+PASS  guard row present exactly once  | 1
+PASS  v20 bullet present
+PASS  file ends at the delta block
+PASS  one status replace
+PASS  one bow-row replace
+PASS  guard row byte-held
+PASS  v20 bullet byte-held
+PASS  v21 bullet appended once at the tail
+PASS  v21 bullet is its own paragraph
+PASS  3 changed hunks only  | [('replace', 6, 7, 6, 7), ('replace', 111, 112, 111, 112), ('insert', 409, 409, 409, 414)]
+PASS  hunk kinds replace/replace/insert
+PASS  status hunk one line to one
+PASS  bow hunk one line to one
+PASS  insert sits at EOF  | 409/409
+PASS  all unchanged lines byte-held in order
+PASS  row lines unchanged  | 137 -> 137
+PASS  line count 409 -> 414  | 409 -> 414
+PASS  row cells 4 on the bow row  | 5
+PASS  no new em dash, no semicolon
+PASS  no digit in the definition cell
+PASS  ground cell byte-held
+PASS  STE category counts unchanged  | base 15 -> new 15
+PASS  STE total unchanged  | 15 -> 15
+PASS  STE per100w under 2.0  | 0.28
+PASS  v21 bullet paragraph holds 6 sentences or fewer  | 5
+PASS  candidate written to the tree
+
+32 checks, 0 fail

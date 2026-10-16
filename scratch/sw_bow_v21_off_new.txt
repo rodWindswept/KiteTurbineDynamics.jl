@@ -1,0 +1,5 @@
+long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+long_paragraph(>6s) x11 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+em_dash x1 -> no em dash — use a period or comma. (ste-writing)

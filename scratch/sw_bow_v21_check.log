@@ -1,0 +1,30 @@
+PASS  live md5 matches the receipt  | 20ce48c214cc8b8213a14a92b2fef78b
+PASS  base rev reads  | 8ffb803
+PASS  numstat one file, 7 added 2 removed  | 7	2	docs/reporting/glossary-candidates.md
+PASS  exactly one bow row  | 1
+PASS  row keeps the no-translation form
+PASS  row now names gravity and the direction
+PASS  row now carries the instrument-finding clause
+PASS  row still states the rule
+PASS  row holds no value
+PASS  row grounds unchanged
+PASS  row action still supply
+PASS  guard row byte-held and present
+PASS  status line moves to v21
+PASS  one v21 delta bullet
+PASS  v21 bullet is the last bullet in the file
+PASS  bow row is the first row line after the destructive-resonance row
+PASS  row census by the row-line method holds
+PASS  line count 409 -> 414  | 409 -> 414
+PASS  ste-lint rc=0 with no --fail-above  | 0
+PASS  STE total 15 both sides  | 15 -> 15
+PASS  STE per100w under 2.0  | 0.28
+PASS  offender set identical both sides  | 5 vs 5
+PASS  draft prints the gravity direction
+PASS  draft prints the disagreement as an instrument finding
+PASS  draft cites NR-059 for the bow read
+PASS  register NR-059 signed
+PASS  register keeps the founder station rule
+PASS  glossary entry carries no value per the register rule
+
+28 checks, 0 fail

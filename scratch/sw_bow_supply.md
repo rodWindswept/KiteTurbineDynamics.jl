@@ -90,3 +90,36 @@ probe gives one.
 - `scratch/sw_bow_ste_variants.py` and `.log`: the wording variants, each linted.
 - `scratch/sw_bow_off_base.txt` and `scratch/sw_bow_off_new.txt`: the offender sets.
 - `scratch/sw_bow_base.md` and `scratch/sw_bow_new.md`: the pinned base and candidate.
+
+## 7. The v21 delta (2026-10-16), the row meets the closed chain
+
+The bow chain closed after the v20 landing. The printed report now carries two
+facts that the v20 row did not.
+
+- The draft (v0.57, `c825a01`) prints the direction.
+  The shaft axis sags straight down under gravity.
+- The draft prints the settle and run disagreement as an instrument finding.
+
+- The signed register row (NR-059) reads the direction as well.
+  The down fraction reads 0.9999 at settle and 1.0000 at t = 200 s.
+- The founder word of 2026-10-16 names the cause. Bow is a gravity effect.
+  The sag tends downward, like a line between two posts.
+
+The v21 row adds two clauses to the definition cell.
+
+- "Gravity pulls the sag straight down."
+- "A disagreement on the bowed shape reads as an instrument finding, not a design question."
+
+The rule sentence stays, and the row now reads beside the printed finding.
+The row stays numbers-free, so NR-059 carries the value.
+The ground cell and the guard row hold byte for byte.
+The status line moves to `PREP v21`, and one delta bullet records the change.
+
+**Pins.** Base md5 `8a4bcbf75a42a8ee6a87e3e097bc9d6d` at `8ffb803`.
+Result md5 `20ce48c214cc8b8213a14a92b2fef78b`. Line count 409 to 414.
+Row lines 137 to 137. STE total 15 to 15.
+
+**Evidence.** `scratch/sw_bow_v21_fold.py` and its log read 32 checks, 0 fail.
+`scratch/sw_bow_v21_check.py` and its log read 28 checks, 0 fail.
+`scratch/sw_bow_v21_off_base.txt` and `scratch/sw_bow_v21_off_new.txt` hold the
+offender sets. Those two sets are identical.

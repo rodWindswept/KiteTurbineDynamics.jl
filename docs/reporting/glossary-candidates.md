@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v20, numbers-free by construction (no measurement values, no
+**Status** PREP v21, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -109,7 +109,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | torsional collapse | The failure mode where torque demand passes the geometric capacity of the shaft. Rings converge and power transfer fails. | CONTEXT.md | supply |
 | collapse margin | The distance between the current twist state and the torsional collapse cliff. | CONTEXT.md | supply |
 | destructive resonance | The shaft failure mode of an earlier gain sweep. The twist ripple grows and does not settle. The shaft snaps between states, and the power falls to zero in intervals. The report names the term for that earlier round only. That round and this campaign share no number. | `docs/NOTES_MPPT_TWIST.md` section 3, the 2026-09-25 Tulloch plan section 9 | supply |
-| bow | The lateral sag of the column axis off the design line, in the tilted plane. The perpendicular part of the hub weight causes it. The stack does not translate sideways: the bow is a rearrangement in which the lines reorient at near-constant length. The report holds it as an output, not a constraint. The settle calculation and the run must agree on it. | `DECISIONS.md` [2026-09-15] ruling 2, 2026-09-12 handover sections 2 and 5 | supply |
+| bow | The lateral sag of the column axis off the design line, in the tilted plane. The perpendicular part of the hub weight causes it. Gravity pulls the sag straight down. The stack does not translate sideways: the bow is a rearrangement in which the lines reorient at near-constant length. The report holds it as an output, not a constraint. A disagreement on the bowed shape reads as an instrument finding, not a design question. The settle calculation and the run must agree on it. | `DECISIONS.md` [2026-09-15] ruling 2, 2026-09-12 handover sections 2 and 5 | supply |
 | FoS (factor of safety) | The ratio of capacity to load at a structural check. The report states which checks it covers. | CONTEXT.md FoS row | supply |
 | Betz ceiling | The theoretical upper bound on rotor power. No rotor can take more from the wind. | framework section 3, awe-knowledge | supply |
 | tip-speed ceiling | The operating limit on blade tip speed. | framework section 3 | supply |
@@ -407,3 +407,8 @@ defect, like a missing register row.
   The ground reads `DECISIONS.md` ruling 2 of 2026-09-15 and the 2026-09-12 handover, sections 2 and 5.
   The row carries no value, so the winner read stays a binding slot for the register.
   No other change.
+
+- **v21 (2026-10-16):** the bow row meets the closed chain at the science-writer seat.
+  The row takes the founder gravity form of 2026-10-16: gravity pulls the sag straight down.
+  It takes the instrument-finding clause too, so the rule reads beside the printed disagreement (2026-09-15 ruling 2).
+  The row stays numbers-free, so the winner read stays a binding slot for the register (NR-059). No other change.
