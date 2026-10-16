@@ -1,0 +1,16 @@
+2026-10-08-report-first-draft.md words=7465 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] 2026-10-08-report-first-draft.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] 2026-10-08-report-first-draft.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] 2026-10-08-report-first-draft.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+au_v058_close_draft_candidate.md words=7596 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] au_v058_close_draft_candidate.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] au_v058_close_draft_candidate.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] au_v058_close_draft_candidate.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)
+captions.md                      words= 336 total=  4 per100w=  1.19 em_dash= 1
+[HOOK:ste] captions.md: long_paragraph(>6s) x4 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] captions.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+au_v058_close_supply.md          words= 986 total=  1 per100w=  0.10 em_dash= 0
+[HOOK:ste] au_v058_close_supply.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+handover-2026-10-14-reporting-room-author.md words=1448 total=  4 per100w=  0.28 em_dash= 0
+[HOOK:ste] handover-2026-10-14-reporting-room-author.md: long_sentence(>20w) x2 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] handover-2026-10-14-reporting-room-author.md: semicolon x2 -> replace ';' with a period — write two sentences. (ste-writing)
