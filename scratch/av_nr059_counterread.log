@@ -1,0 +1,112 @@
+PASS  settle table reads six rings
+PASS  midpoint ring 5 settle perp reads 0.00160
+PASS  hub ring 6 settle perp reads 0.00241
+PASS  ring 5 is nearest to the axial midpoint
+PASS  window table ring 5: settle .00160 mean .22288 min .10531 max .31005
+PASS  window table ring 6: settle .00241 mean .44098 min .20862 max .61302
+PASS  window hub line min/mean/max
+PASS  window mid-span line min/mean/max
+PASS  extension table reads 29 rows
+PASS  ext t=195: hub 0.83331 mid 0.42202
+PASS  terminal line: hub .83331, increment +.00053, mid .42202
+PASS  raw hub read at t=200 = 0.833774
+PASS  largest deviation 0.43857 m at ring 6
+PASS  deviation recomputes: |0.00241 - 0.44098| -> 0.43857
+PASS  direction: settle down_frac .9999, t=200 down_frac 1.0000
+PASS  extension series carries 29 y-shares
+PASS  extension sideways share max reads 0.00217
+  extension max |y share| = 0.00217 over 29 samples
+PASS  bench gates all true
+PASS  protocol gates all true
+PASS  integrity line true
+PASS  settle omega reads the recorded value
+PASS  any_broken false in both runs
+PASS  window 40 / extension 29 samples
+PASS  max-bow ring is the hub in all 40 samples
+PASS  mid/hub ratio reads 0.5058 at t=50 s
+PASS  mid/hub ratio reads 0.5064 at t=195 s
+PASS  founder line met: midpoint below 0.5 m in every state
+PASS  every row quote form re-derives at 3 decimals from the 5-decimal log form
+PASS  block string 1 reads verbatim
+PASS  block string 2 reads verbatim
+PASS  block string 3 reads verbatim
+PASS  block string 4 reads verbatim
+PASS  block string 5 reads verbatim
+PASS  block string 6 reads verbatim
+PASS  block string 7 reads verbatim
+PASS  block string 8 reads verbatim
+PASS  block string 9 reads verbatim
+PASS  block string 10 reads verbatim
+PASS  block string 11 reads verbatim
+PASS  block string 12 reads verbatim
+PASS  block string 13 reads verbatim
+PASS  block string 14 reads verbatim
+PASS  block string 15 reads verbatim
+PASS  block string 16 reads verbatim
+PASS  block string 17 reads verbatim
+PASS  block string 18 reads verbatim
+PASS  block string 19 reads verbatim
+PASS  block string 20 reads verbatim
+  re-run section start at line 1 (0 prefix lines before it)
+PASS  re-run probe section reads 127 lines
+PASS  masked line-for-line equality over the whole probe section
+PASS  raw diffs sit only on the git header and the four wall-time lines
+  raw differing lines: [1, 7, 27, 45, 75]  (127 of 127 identical after masking)
+PASS  line 1 is the git header
+PASS  line 7 carries a wall time
+PASS  line 27 carries a wall time
+PASS  line 45 carries a wall time
+PASS  line 75 carries a wall time
+PASS  footer: worktree HEAD = 650fa49...
+PASS  footer: src drift 4e9c6bd..HEAD = 0
+PASS  footer: PROBE_RC=0
+PASS  footer: probe sha pin present
+PASS  row lines census reads +1
+PASS  distinct identifier census reads +1
+PASS  the new identifier is NR-059
+PASS  signed-validator cells read +1
+PASS  register diff reads 52 added / 0 removed
+PASS  no line removed or modified (append-only)
+PASS  base register reads a strict prefix of the tip register
+PASS  register byte-held from 7aaf2ea to the tip
+PASS  probe sha256 equals the pin
+PASS  committed log sha256 equals the pin
+PASS  probe first-landing = c6d2885
+PASS  log first-landing = c6d2885
+PASS  row value cell equals the aero proposal text
+PASS  supply proposal value cell reads the same text
+PASS  row value cell carries exactly the eight quoted forms
+PASS  row unit cell reads m
+PASS  row status cell reads signed (science-validator, 2026-10-16)
+PASS  source cell carries the probe pin
+PASS  source cell carries the log pin
+PASS  source cell names the landing commit
+PASS  source cell names the re-run log and the checker
+PASS  draft cites NR-059 five times
+PASS  draft carries 0.002 m
+PASS  draft carries 0.105
+PASS  draft carries 0.310
+PASS  draft carries 0.209
+PASS  draft carries 0.613
+PASS  draft carries 0.422
+PASS  draft carries 0.833
+PASS  draft carries the 1.5 m line
+PASS  instrument self-check passed (exact anchors)
+PASS  instrument sentinel
+PASS  instrument omega_end matches the committed value exactly
+PASS  window hub y-series reads 40 samples
+PASS  window mid y-series reads 40 samples
+PASS  window |y| max hub reads 0.03740
+PASS  window |y| max mid reads 0.03734
+PASS  hub reads under 0.003 from t=37 s
+PASS  mid reads under 0.003 from t=38 s
+PASS  relax sampled peak |y| reads 0.23586
+PASS  run-1 refusal log kept (self-check refused the first form)
+  window max |y share|: hub 0.03740 (t=11 s); mid 0.03734 (t=11 s)
+  hub reads under 0.003 from t=37 s; mid from t=38 s
+  relax sampled peak |y| = 0.23586 (t=2 s); extension max 0.00217; t=200 reads 0.0002
+  SCOPE FINDING: the unqualified bound does not hold over the window (max 0.0374).
+  The bound holds over the extension series and from t=38 s onward.
+
+101 checks, 0 fail
+ALL_CHECKS_PASS

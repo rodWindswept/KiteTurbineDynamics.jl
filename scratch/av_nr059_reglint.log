@@ -1,0 +1,62 @@
+=== register STE: base at 650fa49 ===
+av_reg_base_650fa49.md           words=16726 total=177 per100w=  1.06 em_dash=16
+[HOOK:ste] av_reg_base_650fa49.md: long_sentence(>20w) x49 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: semicolon x23 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: contraction x18 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: passive_voice x4 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: nominalization x2 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: long_paragraph(>6s) x81 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] av_reg_base_650fa49.md: em_dash x16 -> no em dash — use a period or comma. (ste-writing)
+BASE_RC=0
+=== register STE: tip ===
+numbers-register.md              words=17249 total=178 per100w=  1.03 em_dash=16
+[HOOK:ste] numbers-register.md: long_sentence(>20w) x49 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] numbers-register.md: semicolon x23 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] numbers-register.md: contraction x18 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] numbers-register.md: passive_voice x4 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] numbers-register.md: nominalization x2 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] numbers-register.md: long_paragraph(>6s) x82 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] numbers-register.md: em_dash x16 -> no em dash — use a period or comma. (ste-writing)
+TIP_RC=0
+=== .ste-exempt ===
+-rw-rw-r-- 1 rod rod 2091 Oct 14 18:13 .ste-exempt
+# ste-lint exemptions — files the pre-commit STE gate skips.
+# Policy (2026-10-08, hermes ruling, room-delegated): historical ledgers are
+# amend-only records (never rewrite). The STE gate covers new prose; these
+# files are exempt as a class. New entries in them must still be written
+# STE-clean.
+# Format: one path per line, relative to repo root, exact match. '#' comments.
+docs/agents/instrument-trust-log.md
+docs/validation/physics-validation-ledger.md
+DECISIONS.md
+
+# Extension (2026-10-14, hermes seat, room may flip): verbatim external
+# records (relayed reviews and feedback) join the exempt class. They are
+# amend-only by nature and never rewritten. New team material in them
+# must still be STE-clean.
+docs/reporting/feedback/Feedback-message-1791925681590.md
+docs/reporting/feedback/kg-equivalence-message-1791973254345.md
+
+# Extension (2026-10-14, hermes seat, room may flip): the figure-generation
+# notes arrive as a relayed working brief on the figure rows. The file is
+# amend-only as received. New team edits must still be STE-clean.
+docs/reporting/figures/figure-generation-notes.md
+
+# Folded 2026-10-14 (author seat, under the routing pass fold decision): the
+# relayed round 1 and round 2 feedback records join the class.
+docs/reporting/feedback/feedback-on-report.md
+docs/reporting/feedback/feedback-on-report2.md
+
+# Extension (2026-10-14, hermes seat, room may flip): the handover registry
+# (handovers/README.md) joins the exempt class. It is an amend-only index
+# of historical handover records. Rows take status flags; rows are never
+# rewritten. New rows must still be written STE-clean.
+handovers/README.md
+
+# Extension (2026-10-14, aero-validator seat, room may flip): the room
+# consultation brief joins the exempt class. It is a relayed dated record
+# (the founder's questions and the room's answers), amend-only as received.
+# The item-8 aero pass takes one wording line to the detector form; that
+# line is STE-clean. New team edits must still be STE-clean.
+# Flip call kept (hermes, map seat, 2026-10-14).
+docs/reporting/2026-10-08-room-consultation.md

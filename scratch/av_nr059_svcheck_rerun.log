@@ -1,0 +1,47 @@
+PASS  committed log carries the sentinel
+PASS  re-run log carries the sentinel
+PASS  re-run section start found
+PASS  committed log reads 127 lines
+PASS  re-run probe section matches the committed length
+PASS  masked line-for-line equality over the whole probe section
+PASS  raw diffs sit only on the git header and the four wall-time lines
+  raw differing lines: [1, 7, 27, 45, 75]
+  lines compared: 127; identical after masking: 127
+PASS  settle profile max = 0.00241 at ring 6
+PASS  settle hub (ring 6) 0.00241 / mid-span (ring 5, s_axial 9.376) 0.00160
+PASS  window table ring 5: settle .00160 mean .22288 min .10531 max .31005
+PASS  window table ring 6: settle .00241 mean .44098 min .20862 max .61302
+PASS  window hub line min/mean/max
+PASS  window mid-span line min/mean/max
+PASS  window profile max envelope (max at t=50 s)
+PASS  ext table t=195: hub 0.83331 mid 0.42202
+PASS  terminal line: hub .83331, increment +.00053, mid .42202
+PASS  raw hub read at t=200 = 0.833774
+PASS  largest deviation 0.43857 m at ring 6
+PASS  deviation recomputes: |0.00241 - 0.44098| -> 0.43857
+PASS  direction: settle down_frac .9999, t=200 down_frac 1.0000
+PASS  extension series carries 29 rows
+PASS  sideways share under 0.003 over the extension series
+  extension max |y share| = 0.00217 over 29 samples
+PASS  bench gates all true (fitness 27.3635412663488)
+PASS  protocol gates all true
+PASS  integrity line true
+PASS  settle omega reads the recorded value
+PASS  any_broken false in both runs
+PASS  window samples 40 / extension samples 29
+PASS  max-bow ring is the hub in all 40 samples
+PASS  window sample times read 40 entries
+PASS  mid-span ring is ring 5 (nearest to the axial midpoint)
+PASS  mid/hub ratio reads 0.5058 at t=50 s
+PASS  mid/hub ratio reads 0.5064 at t=195 s
+PASS  founder line met: midpoint below 0.5 m in every state
+PASS  every row quote form re-derives at 3 decimals from the 5-decimal log form
+PASS  probe sha256 equals the supply pin
+PASS  committed log sha256 equals the supply pin
+PASS  footer: worktree HEAD = 650fa49…
+PASS  footer: src drift 4e9c6bd..HEAD = 0
+PASS  footer: PROBE_RC=0
+PASS  footer: probe sha256 line present
+
+41 checks, 0 fail
+ALL_CHECKS_PASS

@@ -41,6 +41,8 @@ ring  s_axial   settle   win_min  win_mean  win_max   ext t=195
 
 - **Direction.** The offset runs straight down in the perpendicular plane. The down fraction reads 0.9999 at settle and 1.0000 at t=200 s. The sideways fraction stays under 0.003. No sideways drift appears.
 
+  *Superseded 2026-10-16 (counter-read).* The 0.003 bound reads over the extension series alone. The window series decays from 0.0374 (hub, t=11 s). It reads under 0.003 from t=38 s onward. The relax sampled peak reads 0.2359 at t=2 s. See `scratch/av_nr059_window_yshare.log` and the counter-read receipt.
+
 - **Mapping clause.** The max station sits at the hub. The midpoint ring reads about half the hub value. The ratio reads 0.5058 at t=50 s and 0.5064 at t=195 s.
 
 ## 3. The extension run
