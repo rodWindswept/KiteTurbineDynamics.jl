@@ -1,0 +1,25 @@
+readback: the scaling-ladder kit (figures seat)
+local == origin at 3dcc67d (3dcc67d4b1ea59f1c2c1cf8e103b22cb37f23b34)
+blob loop: rev-parse HEAD == rev-parse origin, plus byte cmp against origin
+OK   docs/reporting/figures/scaling-ladder/SPEC.md  7539ad5aaacccf175c5abd18eca4b3c428dc1fb2
+OK   docs/reporting/figures/scaling-ladder/scaling-ladder.py  a75ebb42acbb70fa4b2737e97ffe33deb44837df
+OK   docs/reporting/figures/scaling-ladder/captions-draft.md  cd421d2b7089d47d564b1644b64052d682483d4c
+OK   docs/reporting/figures/scaling-ladder/checks.log  3fe0c1fbbb1e4ac9c8e6d583a9996d492055902b
+OK   docs/reporting/figures/scaling-ladder/label-ledger.txt  3ac9b4018c1b2626b15cc8eaf9f816d12fae20d3
+OK   docs/reporting/figures/scaling-ladder/manifest.json  c9e7c8f7f5a6f790514ab9843c2a2aeccd493821
+OK   docs/reporting/figures/scaling-ladder/register-status.md  c99452001803de03f6a15033f694053910b131ed
+OK   docs/reporting/figures/scaling-ladder/scaling-ladder.pdf  8eaf735a1b02913f66adb9922c8a68a738d4be8f
+OK   docs/reporting/figures/scaling-ladder/scaling-ladder.png  789b4b4aefaef6e090d2d2f99b6879d4052c260f
+OK   docs/reporting/figures/scaling-ladder/scaling-ladder.svg  10d4463fdf570900eb95ecf89166e3b9df9698dc
+OK   docs/reporting/figures/figure-map.md  4440c92480e5c9ece5b824337bb425154be64991
+OK   docs/reporting/room-responses/figures-images-diagrams-2026-10-16-scaling-ladder-build.md  0c819352e3dde683ac4379e7a63c00541cd62054
+OK   handovers/handover-2026-10-14-reporting-room-figures-images-diagrams.md  ba86910e4ffa47f441729b727dc57430d4f4bdf7
+OK   scratch/fig_sl_check.log  8e114571a4a3c28112cc7d7315b877ef47314875
+OK   scratch/fig_sl_check.py  6985d082e128e29b467e274a6c6302666861a55c
+OK   scratch/fig_sl_driver.py  773573c694346b4d8079b54ac1ef98ba54dd0e09
+OK   scratch/fig_sl_edit.py  223d60014012966aa7e1821dc729f1129e4c533d
+OK   scratch/fig_sl_repro.md5  e1f00690be0064b1fbb24dc104b8a49b0059f9e8
+OK   scratch/fig_sl_run1.log  3fe0c1fbbb1e4ac9c8e6d583a9996d492055902b
+OK   scratch/fig_sl_run2.log  3fe0c1fbbb1e4ac9c8e6d583a9996d492055902b
+OK   scratch/fig_sl_run3.log  3fe0c1fbbb1e4ac9c8e6d583a9996d492055902b
+carried blobs verified: 21 of 21; failures: 0
