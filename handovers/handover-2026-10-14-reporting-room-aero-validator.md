@@ -1,7 +1,7 @@
 # Handover: the aero-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin).
+**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin; refreshed 2026-10-16: the winner bow probe lands at `c6d2885`, all 8 carried blobs byte-verified at origin).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +32,8 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The winner bow probe read at `c6d2885`: the winner bow reads at the founder station (midpoint ring 0.10531 to 0.31005 m through the window, 0.42202 m at the extension end; hub max 0.61302 m and 0.83331 m), and the September check reads: the settle and the run do not agree on the bowed shape, an instrument finding per the 2026-09-15 ruling. Receipt `docs/reporting/room-responses/aero-validator-2026-10-16-winner-bow-probe.md`. Evidence `scratch/av_bow_probe.jl` + `.log` plus the three iteration logs. The proposed NR-059 waits at the science seat; the section 3.3 sentence then folds at the author seat.
 
 - The placement label re-cut counter-read read at `feaaa82`. The vector census reads two drawn strings (the label and the footer script-commit stamp refresh), one box, zero values. The manifest pins recompute. F-REPRO holds at four locations. The register join verifies (the three extract blobs vs NR-013 ext2). The figures checker re-runs at this seat at 63 checks, 0 fail. Receipt `docs/reporting/room-responses/aero-validator-2026-10-15-eval-timeline-recut-counterread.md`. Evidence `scratch/av_et_pl_*`.
 
@@ -100,4 +102,4 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
+**Owner:** @aero-validator. **Next action:** the winner bow probe landed (receipt above): the proposed NR-059 waits at the science seat, and the section 3.3 sentence then folds at the author seat. The section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
