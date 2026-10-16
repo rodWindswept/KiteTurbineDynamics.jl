@@ -1,0 +1,63 @@
+
+[516283] signal 15: Terminated
+in expression starting at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_bow_probe.jl:387
+unknown function (ip: 0x75e92f498e4f) at /lib/x86_64-linux-gnu/libc.so.6
+pthread_cond_wait at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+uv_cond_wait at /workspace/srcdir/libuv/src/unix/thread.c:822
+ijl_task_get_next at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/scheduler.c:523
+poptask at ./task.jl:1216
+wait at ./task.jl:1228
+#wait#398 at ./condition.jl:141
+_trywait at ./asyncevent.jl:163
+profile_printing_listener at ./Base.jl:332
+#start_profile_listener##0 at ./Base.jl:352
+jfptr_YY.start_profile_listenerYY.YY.0_6779.1 at /snap/julia/165/lib/julia/sys.so (unknown line)
+jl_apply at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/julia.h:2391 [inlined]
+start_task at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/task.c:1252
+unknown function (ip: (nil)) at (unknown file)
+_setindex! at ./array.jl:991 [inlined]
+setindex! at ./array.jl:986 [inlined]
+setindex! at ./subarray.jl:398 [inlined]
+macro expansion at ./broadcast.jl:995 [inlined]
+macro expansion at ./simdloop.jl:77 [inlined]
+copyto! at ./broadcast.jl:994 [inlined]
+copyto! at ./broadcast.jl:947 [inlined]
+materialize! at ./broadcast.jl:905 [inlined]
+materialize! at ./broadcast.jl:902
+unknown function (ip: 0x75e919c92261) at (unknown file)
+_polish_node_forces! at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/initialization.jl:1998
+#_polish_operational_equilibrium!#43 at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/initialization.jl:2057
+_polish_operational_equilibrium! at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/initialization.jl:2040 [inlined]
+#settle_to_operational_state#46 at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/initialization.jl:2590
+settle_to_operational_state at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/src/initialization.jl:2178 [inlined]
+main at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_bow_probe.jl:155
+unknown function (ip: 0x75e91314ffef) at (unknown file)
+jl_apply at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/julia.h:2391 [inlined]
+do_call at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/interpreter.c:123
+eval_value at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/interpreter.c:243
+eval_stmt_value at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/interpreter.c:194 [inlined]
+eval_body at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/interpreter.c:707
+jl_interpret_toplevel_thunk at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/interpreter.c:898
+jl_toplevel_eval_flex at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/toplevel.c:1035
+jl_toplevel_eval_flex at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/toplevel.c:975
+ijl_toplevel_eval at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/toplevel.c:1047
+ijl_toplevel_eval_in at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/toplevel.c:1092
+eval at ./boot.jl:489
+include_string at ./loading.jl:2870
+_include at ./loading.jl:2930
+include at ./Base.jl:306
+exec_options at ./client.jl:317
+_start at ./client.jl:550
+jfptr__start_74358.1 at /snap/julia/165/lib/julia/sys.so (unknown line)
+jl_apply at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/julia.h:2391 [inlined]
+true_main at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/jlapi.c:971
+jl_repl_entrypoint at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/src/jlapi.c:1139
+main at /cache/build/builder-amdci5-3/julialang/julia-release-1-dot-12/cli/loader_exe.c:58
+unknown function (ip: 0x75e92f42a1c9) at /lib/x86_64-linux-gnu/libc.so.6
+__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+unknown function (ip: 0x4010b8) at /workspace/srcdir/glibc-2.17/csu/../sysdeps/x86_64/start.S
+unknown function (ip: (nil)) at (unknown file)
+Allocations: 3168314947 (Pool: 3168313118; Big: 1829); GC: 1181
+XIO:  fatal IO error 0 (Success) on X server ":1"
+      after 109 requests (109 known processed) with 0 events remaining.
+EXIT=1

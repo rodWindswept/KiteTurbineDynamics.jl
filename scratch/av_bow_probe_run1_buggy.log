@@ -1,0 +1,71 @@
+=== av_bow_probe.jl   git=4e9c6bd ===
+  genome raw       = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0370201857788965, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+  genome evaluated = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+  K_MPPT_5KW_HONEST = 2.24   v_wind_ref = 11.00969423693896   elevation = 29.999999999999996 deg
+
+── phase 1: evaluate_windowed (cold) — the re-eval bench at this tip ──
+  eval wall = 43.3 s
+  status = ok
+  fitness = 27.3635412663488
+  P_mean = 5.3087794439367935
+  FoS_min = 14.971791422208508
+  ω_eq = 10.169820334285198
+  P_range = 0.028659374428010587
+  drifted = false
+  stationary = true
+  util_a = 0.06679174086635262
+  util_b = 5.334714158942919e-7
+  T_lift = 324.1250954336462
+  P_end = 5.314113662272673
+  twist_crossed = false
+  twist_ratio = 0.4393474253185575
+  line_broken = false
+  bench gates vs recorded: fitness true (27.3635412663488)  omega_eq true  P_end true  twist true  FoS true
+
+── phase 2: instrumented pass (manual cold path + geometry tap) ──
+  machine: n_lines=6 n_ring=6 n_total=53 n_active=1  m_air=25.6985 kg  dt=2.898787e-05 s
+  settle wall = 4.6 s   omega_settle = 10.169820334285198   (recorded 10.169820334285198)
+  design axis sd = [0.866025 0.000000 0.500000] ; downward in perp plane gpd = [0.500000 0.000000 -0.866025]
+  r_ring radii: [0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 4.57997905482005]
+
+── SETTLE-STATE bow profile (perpendicular offset from the design axis) ──
+  ring    s_axial   r_perp_m  down_frac     y_frac  ang_to_down
+     1     0.0000    0.00000     0.0000    +0.0000         0.00
+     2     2.3445    0.00132     1.0000    +0.0013         0.07
+     3     4.6887    0.00168     1.0000    +0.0013         0.07
+     4     7.0326    0.00171     1.0000    +0.0051         0.29
+     5     9.3762    0.00160     0.9996    +0.0274         1.57
+     6    18.7138    0.00241     0.9999    -0.0164         0.94   <- MAIN ROTOR
+  SETTLE profile max = 0.00241 m at ring 6 (s_axial 18.714)
+  SETTLE hub perp (ring 6) = 0.00241 m ; mid-span ring 5 (s_axial 9.376) perp = 0.00160 m
+  SETTLE direction at max ring: down_frac 0.9999  y_frac -0.0164
+
+── phase 3: measurement window (relax 10.0 s + window 40.0 s) ──
+  window wall = 35.3 s   samples = 40   any_broken = false
+  manual bench: P_end 5.3141136622727  twist 0.4393474253186  FoS 14.9717914222085  omega_end 13.3848247171139
+  protocol gates vs phase 1: settle-omega true  P_end true  twist true  FoS true
+
+── WINDOW bow profile: per-ring statistics over the 40 samples ──
+  ring     settle   win_mean    win_min    win_max  settle-mean
+     1    0.00000    0.00000    0.00000    0.00000     +0.00000
+     2    0.07895    0.05705    0.02755    0.07895     +0.02189
+     3    0.15692    0.11318    0.05422    0.15692     +0.04374
+     4    0.23395    0.16843    0.08010    0.23395     +0.06551
+     5    0.31005    0.22288    0.10531    0.31005     +0.08718
+     6    0.61302    0.44098    0.20862    0.61302     +0.17204   <- MAIN ROTOR
+  SETTLE-vs-WINDOW shape: max |settle - window_mean| = 0.17204 m at ring 6
+  window profile max: min 0.20862 m, mean 0.44098 m, max 0.61302 m (at t=50 s)
+  max-bow ring across samples: Dict(6 => 40)
+  window hub perp (ring 6): min 0.20862  mean 0.44098  max 0.61302 m
+  window mid-span ring 5 perp: min 0.10531  mean 0.22288  max 0.31005 m
+  SEPTEMBER CHECK (settle vs run agree on the bowed shape): max per-ring deviation 0.17204 m; max-bow ring settle=6 window=[6]  -> AGREE
+
+── BOW READ (value / station / state) ──
+  profile max : 0.61302 m at ring 6 — state: settle
+                0.44098 m mean / 0.20862–0.61302 m over window (ring 6)
+  hub perp    : 0.61302 m (ring 6) — state: settle ; window 0.20862–0.61302 m
+  mid-span    : 0.31005 m (ring 5) — state: settle ; window 0.10531–0.31005 m
+  direction   : at the settle max ring, down_frac 1.0000, y_frac -0.0001 (1.0 = straight down)
+
+AV_BOW_PROBE_DONE
+EXIT=0

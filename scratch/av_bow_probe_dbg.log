@@ -1,0 +1,87 @@
+=== av_bow_probe.jl   git=4e9c6bd ===
+  genome raw       = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0370201857788965, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+  genome evaluated = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+  K_MPPT_5KW_HONEST = 2.24   v_wind_ref = 11.00969423693896   elevation = 29.999999999999996 deg
+
+── phase 1: evaluate_windowed (cold) — the re-eval bench at this tip ──
+  eval wall = 45.0 s
+  status = ok
+  fitness = 27.3635412663488
+  P_mean = 5.3087794439367935
+  FoS_min = 14.971791422208508
+  ω_eq = 10.169820334285198
+  P_range = 0.028659374428010587
+  drifted = false
+  stationary = true
+  util_a = 0.06679174086635262
+  util_b = 5.334714158942919e-7
+  T_lift = 324.1250954336462
+  P_end = 5.314113662272673
+  twist_crossed = false
+  twist_ratio = 0.4393474253185575
+  line_broken = false
+  bench gates vs recorded: fitness true (27.3635412663488)  omega_eq true  P_end true  twist true  FoS true
+
+── phase 2: instrumented pass (manual cold path + geometry tap) ──
+  machine: n_lines=6 n_ring=6 n_total=53 n_active=1  m_air=25.6985 kg  dt=2.898787e-05 s
+  settle wall = 4.5 s   omega_settle = 10.169820334285198   (recorded 10.169820334285198)
+  design axis sd = [0.866025 0.000000 0.500000] ; downward in perp plane gpd = [0.500000 0.000000 -0.866025]
+  r_ring radii: [0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 0.8036829846088207, 4.57997905482005]
+D1 perps@settle = [0.0, 0.001323084974227284, 0.0016776975678737924, 0.0017130363046320646, 0.001603138850152246, 0.002405489984677698]  objid = 10560314270349158952
+D1 hub@settle = [16.207815089858315, -3.940799311987965e-5, 9.354809157288688]  |hub| = 18.713784  perp_inline = 0.002405
+
+── SETTLE-STATE bow profile (perpendicular offset from the design axis) ──
+  ring    s_axial   r_perp_m  down_frac     y_frac  ang_to_down
+     1     0.0000    0.00000     0.0000    +0.0000         0.00
+     2     2.3445    0.00132     1.0000    +0.0013         0.07
+     3     4.6887    0.00168     1.0000    +0.0013         0.07
+     4     7.0326    0.00171     1.0000    +0.0051         0.29
+     5     9.3762    0.00160     0.9996    +0.0274         1.57
+     6    18.7138    0.00241     0.9999    -0.0164         0.94   <- MAIN ROTOR
+  SETTLE profile max = 0.00241 m at ring 6 (s_axial 18.714)
+  SETTLE hub perp (ring 6) = 0.00241 m ; mid-span ring 5 (s_axial 9.376) perp = 0.00160 m
+  SETTLE direction at max ring: down_frac 0.9999  y_frac -0.0164
+
+── phase 3: measurement window (relax 10.0 s + window 40.0 s) ──
+D4 t=11.0 hub perp_inline = 0.208615
+D4 t=50.0 hub perp_inline = 0.613022
+  window wall = 35.1 s   samples = 40   any_broken = false
+  manual bench: P_end 5.3141136622727  twist 0.4393474253186  FoS 14.9717914222085  omega_end 13.3848247171139
+  protocol gates vs phase 1: settle-omega true  P_end true  twist true  FoS true
+D2 perps@pre-window-table = [0.0, 0.07894865195798881, 0.15692257996835196, 0.23394839578684617, 0.3100539976893696, 0.6130217325244144]  objid = 18217710854407220565
+D6 hub@run-end = [16.406582380491226, -8.688398819286674e-5, 8.764486419188648]  perp_inline = 0.613023
+D4b relax-phase hub perp (t, value):
+     t=0.0  0.002406
+     t=2.0  0.05323
+     t=4.0  0.08976
+     t=6.0  0.12541
+     t=8.0  0.159754
+     t=10.0  0.19272
+
+── WINDOW bow profile: per-ring statistics over the 40 samples ──
+  ring     settle   win_mean    win_min    win_max  settle-mean
+     1    0.00000    0.00000    0.00000    0.00000     +0.00000
+     2    0.07895    0.05705    0.02755    0.07895     +0.02189
+     3    0.15692    0.11318    0.05422    0.15692     +0.04374
+     4    0.23395    0.16843    0.08010    0.23395     +0.06551
+     5    0.31005    0.22288    0.10531    0.31005     +0.08718
+     6    0.61302    0.44098    0.20862    0.61302     +0.17204   <- MAIN ROTOR
+  SETTLE-vs-WINDOW shape: max |settle - window_mean| = 0.17204 m at ring 6
+  window profile max: min 0.20862 m, mean 0.44098 m, max 0.61302 m (at t=50 s)
+  max-bow ring across samples: Dict(6 => 40)
+D5 ring6 series: [0.20862, 0.22417, 0.23941, 0.25428, 0.26892, 0.2832, 0.29715, 0.31081, 0.32409, 0.33713, 0.34987, 0.36231, 0.37452, 0.38639, 0.398, 0.40934, 0.42039, 0.43125, 0.4418, 0.45212, 0.46222, 0.47201, 0.48163, 0.49099, 0.50012, 0.50907, 0.51774, 0.52625, 0.53452, 0.54258, 0.55049, 0.55815, 0.56565, 0.57296, 0.58004, 0.58702, 0.59376, 0.60035, 0.6068, 0.61302]
+D5 ring5 series: [0.10531, 0.11317, 0.12086, 0.12838, 0.13578, 0.143, 0.15005, 0.15695, 0.16367, 0.17027, 0.17672, 0.18301, 0.18919, 0.1952, 0.20107, 0.20682, 0.21241, 0.21791, 0.22325, 0.22848, 0.23359, 0.23855, 0.24343, 0.24817, 0.2528, 0.25733, 0.26173, 0.26604, 0.27024, 0.27432, 0.27833, 0.28221, 0.28602, 0.28973, 0.29332, 0.29686, 0.30028, 0.30362, 0.30689, 0.31005]
+D7 perps@end = [0.0, 0.07894865195798881, 0.15692257996835196, 0.23394839578684617, 0.3100539976893696, 0.6130217325244144]  objid = 18217710854407220565
+  window hub perp (ring 6): min 0.20862  mean 0.44098  max 0.61302 m
+  window mid-span ring 5 perp: min 0.10531  mean 0.22288  max 0.31005 m
+  SEPTEMBER CHECK (settle vs run agree on the bowed shape): max per-ring deviation 0.17204 m; max-bow ring settle=6 window=[6]  -> AGREE
+
+── BOW READ (value / station / state) ──
+  profile max : 0.61302 m at ring 6 — state: settle
+                0.44098 m mean / 0.20862–0.61302 m over window (ring 6)
+  hub perp    : 0.61302 m (ring 6) — state: settle ; window 0.20862–0.61302 m
+  mid-span    : 0.31005 m (ring 5) — state: settle ; window 0.10531–0.31005 m
+  direction   : at the settle max ring, down_frac 1.0000, y_frac -0.0001 (1.0 = straight down)
+
+AV_BOW_PROBE_DONE
+EXIT=0
