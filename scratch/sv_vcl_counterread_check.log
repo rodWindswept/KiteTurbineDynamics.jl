@@ -1,0 +1,35 @@
+PASS ledger header: slug 
+PASS ledger header: status LIVE 
+PASS ledger header: owner aero 
+PASS class vocabulary is exactly the three 
+PASS two-state sibling rule stated 
+PASS measured binding names value+station+state 
+PASS fig ink analogue recorded 
+PASS exactly one measured data row 
+PASS the measured row reads HOLD 
+PASS the measured row names the fresh-read gate 
+PASS the measured row's pointer is not the register 
+PASS the measured row's pointer names grounded-economics 
+PASS zero register row-ID tokens in the ledger 
+PASS code rung set found in compute_seeds.jl 
+PASS code rung set is 5,7,10,15,25,35,50 
+PASS ledger rung rows match the code set in order 
+PASS 5 kW rung is capability / solid 
+PASS six upper rungs are target / open plus label 
+PASS NR-008 signed in the register 
+PASS NR-059 signed in the register 
+PASS validated-rung dataset directory exists 
+PASS retrospective carries the UNPROVEN reading 
+PASS held economics doc carries the contamination banner 
+PASS DECISIONS carries the three date brackets used 
+PASS founder-directive ladder phrasing recorded 
+PASS three hold rows 
+PASS no hold row names the register as its surface 
+PASS six flagged items 
+PASS plain label count matches the ledger's own use (10 sites: definition + 3 target rows + 6 rung rows) 
+PASS yield line reads no-print 
+PASS every backticked pointer resolves 
+PASS ledger sha256 matches the seed pin 
+PASS ste-lint rc=0 on the ledger 
+PASS ste-lint reads 0.49/100w 
+checks: 34, fail: 0
