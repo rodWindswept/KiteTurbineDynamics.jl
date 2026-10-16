@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `c98ca68` on `bank-derate-cos2p65`.
+**Base:** branch tip `759c038` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -30,6 +30,16 @@ The parallel work is the audits and the extracts the other seats run.
    Name the delta from the copy the founder holds.
 
 ## Closed, last (evidence index)
+
+- The v0.57 winner-bow-read pass (2026-10-16): the NR-059 read folds at section 3.3.
+  Fold `c825a01`, 3 anchors and 33 guards closed.
+  Review copy rebuilds (record `c825a01`, live md5 `3b92d088…`, byte-identical to `draft-c825a01-20261016-132638.docx`).
+  Check `scratch/au_v057_rebuild_check.py`, 43 checks, 0 fail.
+  Receipt `docs/reporting/room-responses/author-2026-10-16-v057-bow-read.md`.
+
+- v0.57, the bow-read fold: commit `c825a01`.
+  Section 3.3 prints the winner bow read (NR-059), after the settle-state paragraph.
+  The settle/run disagreement reads as an instrument finding.
 
 - The v0.56 era-pack pass (2026-10-15): the era phrase, the ledger dates and the back-pointer fold.
   Fold `c9f0560`, 5 anchors and 39 guards closed.
@@ -161,7 +171,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.56 build (record draft `c9f0560`, md5 `5ecee42e6dcf1f16c6eaec3e2a2bd87a`).
+- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.57 build (record draft `c825a01`, md5 `3b92d088cf2bab1fca739c2bd5082ab5`).
 
 ## Boot
 
@@ -196,4 +206,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** AU4, the section 2.3 derivation block and the software story. The v0.56 pass folded the era pack. The section 3.2 fold waits on the visual pass alone. The partner-gated tails still wait on the AU4 read.
+**Owner:** @author. **Next action:** AU4, the section 2.3 derivation block and the software story. The v0.57 pass folded the winner bow read. The section 3.2 fold waits on the visual pass alone. The partner-gated tails still wait on the AU4 read.
