@@ -325,6 +325,18 @@ The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
 The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
 The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
 
+The power is measured, not computed from a mean speed. The load law reads
+tau equals k times omega squared, and drawn power equals k times omega cubed.
+The evaluator samples the electrical power at one hertz inside the window. At
+each sample it reads the generator torque times the ground-ring speed. The
+window mean of those samples is P_mean. The window-mean ground-ring speed is a
+separate average (NR-029). The delivered-torque basis (NR-030) is P_mean
+divided by NR-029, a derived ratio, not the instantaneous k times omega
+squared. The two differ slightly: P_mean 5.309 kW against k times the cube of
+NR-029, 5.366 kW, a 1.07 per cent gap. The exact source of the gap is open. It
+may come from a slow speed trend across the window, from ground-ring drag, or
+from how the instantaneous power is averaged.
+
 At the heavy end the load raises the torque and the line tension, so FoS falls.
 The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
 The heavy end also carries a score cost.
