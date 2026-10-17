@@ -845,7 +845,7 @@ Candidate entries. Each failure enters with its lesson.
 
 | Date / event | Class | What happened | Detection | Correction / lesson | Status |
 |---|---|---|---|---|---|
-| 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at the 50-kilowatt default gain. The scaled system gain sat near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+| 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at k_mppt 10.0, the 50-kilowatt default gain. That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
 | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
 | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
 | 2026-08-22 FoS=Inf guard gap | Gate near-miss | The guard never reached several scoring paths. The re-gate screens winners. | Telemetry review | A gate must pin a measured number. Drift must fail the suite. | Near-miss, no corrupted survivor found. |
@@ -877,9 +877,10 @@ geometry. The data from before it then counts no more.
 - The k-alignment faults. Twice, a check ran at a different generator
 gain than the machine it scored.
 
-  On 2026-08-13 the evaluator ran 5 kW designs at the 50 kW
-  default gain. The scaled system gain sat near 1.94. The window power
-  read roughly double. An acceptance test caught it.
+  On 2026-08-13 the evaluator ran 5 kW designs at k_mppt 10.0, the
+  50 kW default gain. That gain is about five times the scaled system's
+  own gain, near 1.94. The window power read roughly double. An
+  acceptance test caught it.
 
   On 2026-08-24 a winner re-gate ran at a stale gain, the superseded
   20-second-window value. The pre-push review caught it. The re-gate at
