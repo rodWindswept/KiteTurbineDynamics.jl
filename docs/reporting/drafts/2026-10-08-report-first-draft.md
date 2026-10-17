@@ -30,7 +30,7 @@ objective and gates. Its mean power is 5.309 kW at the site wind,
 All checked TRPT rings and twist segments operate below their failure
 boundaries at the final operating point (NR-021, NR-022).
 
-The minimum factor of safety is 15.0 (NR-009).
+The minimum factor of safety is 14.972 (NR-009).
 
 At the winner operating point, the least segment torque margin is
 2.03, at S1, the first of the five segments between the rings (NR-040).
@@ -68,7 +68,7 @@ The key findings follow.
 
 - The campaign winner is the best feasible candidate under the modeled objective and gates.
   Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
-  Its minimum factor of safety is 15.0 (NR-009).
+  Its minimum factor of safety is 14.972 (NR-009).
 
 - All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
   The least segment torque margin is 2.03, at S1 (NR-040).
@@ -507,7 +507,7 @@ The surviving ok designs hold a mean power between 5.02 and 6.32 kW
 
 Island 3 carries the winner. Its mean power reads 5.309 kW and
 its end power 5.314 kW (NR-008). Its factor of safety reads
-15.0 (NR-009). That value is the window minimum.
+14.972 (NR-009). That value is the window minimum.
 
 The capture topmost ring
 reads 15.033 at the final step (NR-021).
@@ -518,7 +518,7 @@ Its operating point reads as follows.
 |---|---|---|
 | Mean power, measurement window | 5.309 kW | NR-008 |
 | End-of-window power | 5.314 kW | NR-008 |
-| Minimum factor of safety | 15.0 | NR-009 |
+| Minimum factor of safety | 14.972 | NR-009 |
 | Window power swing | 0.029 kW | NR-014 |
 | Settle angular speed | 10.170 rad/s | NR-016 |
 | Window-mean speed | 13.38 rad/s | NR-029 |
@@ -577,7 +577,7 @@ The winner clears each checked gate.
 | Gate | Threshold | Winner outcome | Margin | Source |
 |---|---|---|---|---|
 | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
-| Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+| Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
 | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
 | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
 | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
@@ -671,7 +671,7 @@ corrections that shaped it.
 [Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
 
 The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
-The window-minimum factor of safety is 15.0 (NR-009).
+The window-minimum factor of safety is 14.972 (NR-009).
 At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
 R5 carries almost no load in the checked beam (NR-021).
@@ -771,7 +771,7 @@ First, the searched TRPT family contains a compact feasible candidate under the 
 The winner produces 5.309 kW of mean power with an airborne mass of 25.698 kilograms (NR-008, NR-018).
 
 Second, the winner holds large structural and twist margins at the final operating point.
-The window-minimum factor of safety is 15.0 (NR-009).
+The window-minimum factor of safety is 14.972 (NR-009).
 The least segment torque margin is 2.03, at S1 (NR-040).
 The margins suggest room for further mass reduction.
 Any reduction waits on blade integrity and lifter validation.
@@ -939,7 +939,7 @@ The cause is not logged for the remaining 201.
 
 The best performing one had a mean power of 5.309 kW.
 Its airborne mass is 25.698 kilograms (NR-008, NR-018).
-Its window-minimum factor of safety is 15.0 (NR-009).
+Its window-minimum factor of safety is 14.972 (NR-009).
 All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
 The least segment torque margin is 2.03, at S1 (NR-040).
 
@@ -994,7 +994,7 @@ The table ties each headline claim of this report to its evidence and its signed
 | Campaign scale and status mix | 930 designs. The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist. | §3.1 | NR-001, NR-002 |
 | Winner power | Mean power 5.309 kW over the measurement window. | §3.3 | NR-008 |
 | Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
-| Structural margin | Window-minimum factor of safety 15.0. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
+| Structural margin | Window-minimum factor of safety 14.972. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
 | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
 | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
 | Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path once rejected all three winners at the rope-break gate. The placement fix has landed. | §4.1 | NR-012, NR-013 ext2 |
