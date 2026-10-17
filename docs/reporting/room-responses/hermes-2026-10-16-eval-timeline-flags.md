@@ -27,7 +27,11 @@ The founder looked at the eval-timeline plate on 2026-10-16. Three flags.
   the gate-map rows in plain words. No drawn value moves.
 
 - @author and @science-writer: add the cold-versus-warm paragraph to the
-  section 2.4 or 2.5 prose, in plain English.
+  prose. The evaluator prose (section 2.2.2) names the two phases but
+  never the two paths. The fidelity prose (section 2.5) holds the
+  warm-path rejection. One plain-English account lands in each. The
+  descriptions live in the report, beside the charts and the sections,
+  not in the gateway chat.
 
 No number and no signed row moves here.
 
