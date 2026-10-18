@@ -68,3 +68,11 @@ The run log sits at `checks.log`.
 
 **Delta** v1 (2026-10-16): created with the kit landing. The rungs draw
 from the ledger section 4 seed at the class split the room agreed.
+
+**Delta** v2 (2026-10-18): the ledger input pin re-pins (aero
+counter-read receipt `88a1027`). The value-claims ledger 3a addendum
+moved the ledger blob from `3160aed8…` to `2f169ebe…`. Section 4, the
+plate's only drawn region, reads byte-identical to the seed, so a
+regenerate at today's HEAD passes all 14 in-script checks and writes
+the four plate outputs byte-identical to the shipped bytes. Only the
+manifest pin line moves. No plate byte moves.
