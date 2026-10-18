@@ -67,8 +67,8 @@ figcaption { text-align: left; font-size: 9pt; color: #222; margin-top: 0.4em; l
 """
 
 SEAT_RE = re.compile(
-    r"^\[Figure seated:\s*(?:figure-map row\s+(?P<row>\d+))?.*?slug `(?P<slug>[a-z0-9_-]+)`.*\]\s*$",
-    re.MULTILINE,
+    r"\[Figure seated:\s*(?:figure-map row\s+(?P<row>\d+))?.*?slug `(?P<slug>[a-z0-9_-]+)`.*?\]",
+    re.DOTALL,
 )
 
 MISSING_KIT_MESSAGE = (
