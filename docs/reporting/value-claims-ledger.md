@@ -40,6 +40,22 @@ The mapping comes from @science-validator (2026-10-16). The visual analogue come
 | Offshore deployment | `target` | `programme target — no repo artifact`. See section 6 |
 | The mission target | `target` | Phase G of `docs/plans/2026-07-06-strategy-gate2-to-value-maps.md`: the displaced-cost metric. The offset figure stays in section 6 |
 
+## 3a. Direction additions (2026-10-18, aero-validator)
+
+The room asked for four forward directions on 2026-10-18. These rows class them. This dated line stands because the ledger changes by commit.
+
+1. Further parameter tweaking. Class `capability`. The ten-gene search and the gate set already move the geometry and loading genes. Pointer `scripts/run_v13_5kw_masslift.jl` and `src/objective_evaluator.jl`. No number attaches.
+
+2. Finding better parameter regimes over wider ranges. Class `target`. `programme target — no repo artifact`. No signed result.
+
+3. Flying higher and longer shafts. Class `target`. The signed length screen holds rows NR-027 and NR-028 in `docs/reporting/numbers-register.md`. All three longer rows failed the power floor on the pre-fold genome. The axial-length study probes L from 18.8 to 60 m: `docs/plans/2026-10-03-axial-length-shear-clearance.md`. That 60 m figure is a plan probe, not a signed row.
+
+4. Multi-rotor and the expansion class. Class `capability`. The expansion rotor model lands with tests. Pointers `src/expansion_rotor.jl`, `test/test_expansion_rotor.jl`, `test/test_expansion_induction.jl` and `test/test_expansion_analysis.jl`. The validated machine is single-rotor. No signed multi-rotor result exists.
+
+5. The scale where multi-rotor and the expansion class win. Class `target`. `programme target — no repo artifact`. No number prints.
+
+6. Boundary correction. The signed length sweep runs 18.8 to 25.0 m. The 18.8 to 60 m range sits in the plan probe only. A close sentence names the signed range or the plan pointer, never both as one sweep.
+
 ## 4. The rungs, element by element (the figure-seat seed)
 
 The code set reads 5.0, 7.0, 10.0, 15.0, 25.0, 35.0, 50.0 kW. One row per rung.
