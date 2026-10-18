@@ -2227,3 +2227,35 @@ Counter-read requested from the aero seat.
 
 Evidence: scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl and its log, scratch/sv_r5_axial_sign_check.py and its log.
 
+## NR-060 amend: identity bullet names the wrong launch basis (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The NR-060 identity bullet reads "Blob equality launch equals HEAD equals origin for src/ring_element_analysis.jl, src/sim_frame.jl, scripts/compute_seeds.jl and the winner CSV."
+
+The winner CSV does not exist at the launch commit `a76c5e9`. It first lands at the data commit `dd3cc6a`. The counter-read at the aero seat caught the over-reach.
+
+Corrected reading: blob equality launch equals HEAD equals origin holds for the three source files only. The winner CSV reads HEAD equals origin, and it first lands at the data commit `dd3cc6a`.
+
+The signed values stand byte-identical. The sign anchor stays.
+
+Reading rule: future quotes of the NR-060 basis read the corrected line. The old bullet wording retires.
+
+Evidence: the aero counter-read receipt, and the strengthened checker re-run at this seat.
+
+## NR-020 note: the Cp pair names its banks (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The NR-020 source cell reads "The precone rows of `10-precone-sweep.csv` at commanded lambda 4.0 (Cp 0.22540 vs 0.26386)".
+
+The pair names no bank. The review triage item T4-15 asks which Cp belongs to which angle.
+
+Verified against the committed CSV at the source. Line 11 reads precone 0 at commanded lambda 4 with Cp 0.26386. Line 39 reads precone 20 at commanded lambda 4 with Cp 0.22540.
+
+So 0.22540 reads the 20-degree bank and 0.26386 reads the 0-degree bank.
+
+Reading rule: future quotes of the NR-020 Cp pair carry the bank names. The signed values stand byte-identical.
+
+Boundary: the measured TSR on the 20-degree row reads 3.7588. The row cites the commanded lambda. This note carries no new value.
+

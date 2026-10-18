@@ -39,6 +39,18 @@ LINE_PINS = [
      "    :fitness => 27.3635412663488,"),
 ]
 
+PARITY_VALUES = {
+    "fitness": "27.3635412663488",
+    "P_mean": "5.3087794439367935",
+    "P_end": "5.314113662272673",
+    "FoS_min": "14.971791422208508",
+    "util_a": "0.06679174086635262",
+    "util_b": "5.334714158942919e-7",
+    "T_lift": "324.1250954336462",
+    "twist_ratio": "0.4393474253185575",
+    "ω_eq": "10.169820334285198",
+}
+
 # Full-precision R5 values recorded at both seats (display forms in parentheses)
 R5_NMIN = -157.62246416260894      # (-157.622 N)
 R5_NMAX = -142.7923499969138       # (-142.792 N)
@@ -92,12 +104,14 @@ def main():
         check(len(lines) >= ln and lines[ln - 1] == sub,
               f"line pin {p}:{ln} exact substring")
 
-    # C. probe log: parity, ring census, R5 values, closure
+    # C. probe log: parity (per-field full line), ring census, R5 values, closure
     log = LOG.read_text()
     check("parity: BIT-EXACT ON ALL NINE FIELDS" in log, "log parity bit-exact")
     for f in PARITY_FIELDS:
-        check(f"{f:<12} " in log or f"  {f} " in log, f"log parity field {f}")
-        check(f"|diff|=0.0 EXACT" in log, f"log parity exact for {f}")
+        v = PARITY_VALUES[f]
+        check(f"  {f:<12} got=" in log, f"log parity field {f}")
+        line = f"  {f:<12} got={v} expected={v} |diff|=0.0 EXACT"
+        check(line in log, f"log parity line exact for {f}")
     ring_lines = [l for l in log.splitlines() if l.startswith("R") and " N_min=" in l]
     check(len(ring_lines) == 5, f"log rings census == 5 ({len(ring_lines)})")
     r5 = [l for l in ring_lines if l.startswith("R5 |")][0]
@@ -144,6 +158,14 @@ def main():
     check("parity bit-exact on nine recorded cold re-eval fields" in reg,
           "register parity basis")
     check("Compression positive" in reg, "register sign convention")
+    check("## NR-060 amend: identity bullet names the wrong launch basis "
+          "(2026-10-18, science-validator)" in reg, "register NR-060 amend heading")
+    check("The winner CSV reads HEAD equals origin, and it first lands at the "
+          "data commit `dd3cc6a`." in reg, "register NR-060 amend corrected line")
+    check("## NR-020 note: the Cp pair names its banks (2026-10-18, science-validator)"
+          in reg, "register NR-020 note heading")
+    check("0.22540 reads the 20-degree bank and 0.26386 reads the 0-degree bank"
+          in reg, "register NR-020 bank mapping")
 
     print(f"SV_R5_AXIAL_CHECK_DONE ({checks} checks, 0 fail)")
 

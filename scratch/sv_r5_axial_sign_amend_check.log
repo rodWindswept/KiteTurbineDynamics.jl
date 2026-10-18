@@ -1,0 +1,77 @@
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/sim_frame.jl
+ok: blob launch==HEAD src/sim_frame.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/sim_frame.jl
+ok: blob launch==HEAD src/sim_frame.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/compute_seeds.jl
+ok: blob launch==HEAD scripts/compute_seeds.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/extract_pair_capture.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/best_vector.csv
+ok: line pin src/ring_element_analysis.jl:20 exact substring
+ok: line pin src/ring_element_analysis.jl:239 exact substring
+ok: line pin src/ring_element_analysis.jl:272 exact substring
+ok: line pin src/ring_element_analysis.jl:636 exact substring
+ok: line pin src/sim_frame.jl:391 exact substring
+ok: line pin src/sim_frame.jl:406 exact substring
+ok: line pin scripts/compute_seeds.jl:36 exact substring
+ok: line pin scripts/extract_pair_capture.jl:52 exact substring
+ok: log parity bit-exact
+ok: log parity field fitness
+ok: log parity line exact for fitness
+ok: log parity field P_mean
+ok: log parity line exact for P_mean
+ok: log parity field P_end
+ok: log parity line exact for P_end
+ok: log parity field FoS_min
+ok: log parity line exact for FoS_min
+ok: log parity field util_a
+ok: log parity line exact for util_a
+ok: log parity field util_b
+ok: log parity line exact for util_b
+ok: log parity field T_lift
+ok: log parity line exact for T_lift
+ok: log parity field twist_ratio
+ok: log parity line exact for twist_ratio
+ok: log parity field ω_eq
+ok: log parity line exact for ω_eq
+ok: log rings census == 5 (5)
+ok: log R5 N_min full precision
+ok: log R5 N_max full precision
+ok: log R5 beams == 3
+ok: log R5 share min full precision
+ok: log R5 share max full precision
+ok: log per-beam census == 3 (3)
+ok: log all three R5 beams negative (tension)
+ok: log N_crit shared across beams (R5 beam 1 | N=-157.62246416260894 | N_cr)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 1 | N=-157.62246416260894 | N_cr)
+ok: log N_crit shared across beams (R5 beam 2 | N=-142.7923499969138 | N_cri)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 2 | N=-142.7923499969138 | N_cri)
+ok: log N_crit shared across beams (R5 beam 3 | N=-148.87563768789266 | N_cr)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 3 | N=-148.87563768789266 | N_cr)
+ok: log done token
+ok: receipt proposed range present
+ok: receipt proposed share range present
+ok: receipt proposed status present
+ok: register NR-060 heading
+ok: register amend lead
+ok: register full-precision N values
+ok: register display form N
+ok: register full-precision shares
+ok: register display form shares
+ok: register three beams incl. middle beam
+ok: register signed status
+ok: register counter-read line
+ok: register parity basis
+ok: register sign convention
+ok: register NR-060 amend heading
+ok: register NR-060 amend corrected line
+ok: register NR-020 note heading
+ok: register NR-020 bank mapping
+SV_R5_AXIAL_CHECK_DONE (76 checks, 0 fail)
