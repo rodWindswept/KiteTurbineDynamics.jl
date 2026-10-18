@@ -1,0 +1,23 @@
+  [PASS] probe pin holds 
+  [PASS] log pin holds 
+  [PASS] window series lengths hub=40 mid=40
+  [PASS] extension series parsed rows=29
+  [PASS] relax phase parsed samples=6
+  [PASS] draft digit mid settle 0.002 log->0.002 want 0.002
+  [PASS] draft digit mid window 0.105 log->0.105 want 0.105
+  [PASS] draft digit mid window 0.310 log->0.310 want 0.310
+  [PASS] draft digit hub window 0.209 log->0.209 want 0.209
+  [PASS] draft digit hub window 0.613 log->0.613 want 0.613
+  [PASS] draft digit mid extension 0.422 log->0.422 want 0.422
+  [PASS] draft digit hub extension 0.833 log->0.833 want 0.833
+  [PASS] every hub state below 1.5 m max=0.833774 margin=0.666226 n=77
+  [PASS] every midpoint state below 1.5 m max=0.422020 margin=1.077980 n=70
+  [PASS] draft sentence scope (midpoint ring) holds the printed sentence covers the midpoint ring only
+  [PASS] extension omega steady spread=0.00120 rad/s = 0.0090% of 13.3852
+  [PASS] window power swing (NR-014 scale) 0.02866 kW on 5.30878 kW = 0.540%
+  [PASS] extension bow increments strictly decreasing first=0.02539 last=0.00053 m per 5 s
+
+  [derived, unsigned] last-10 ratio mean=0.8643; geometric tail ~0.0034 m; asymptote ~0.8371 m; margin to 1.5 m ~0.6629 m
+
+AV_B21_BOUND_CHECK: 18/18 checks pass
+CHECK_RC=0
