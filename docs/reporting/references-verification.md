@@ -45,32 +45,32 @@ Result: 15 of 18 entries verified. Three entries hold no public source yet. They
 
 4. **Read (2018) title.** The printed chapter reads "Kite Networks for Harvesting Wind Energy". The page-one preview carries the space. The Springer HTML page and the Crossref record render "HarvestingWind", with no space. Ruling: the citation follows the printed form. The entry carries that form now, and the note keeps the quirk.
 
-## 4. The three entries without a public source
+## 4. The three entries without a public source — settled 2026-10-17 (founder)
 
-### 4.1 `ranneberg2014rotokite`
+### 4.1 `ranneberg2014rotokite` — DROPPED
 
-- The room holds the full copy in the corpus: `raw/papers/ranneberg-rotokite-enerkite-2014.md`. The searches on 2026-10-08 found no public copy of report EK_FT_0018.
+Founder ruling 2026-10-17: EnerKíte is a pumping/yo-yo company. The
+"rotary momentum frame" attribution in the draft does not hold, and the
+report has no solid use for the citation. The `.bib` entry and the §1
+prose line were both removed.
 
-- A public trail exists. A WindTime project deck shows the study summary table (windtime.it, live on 2026-10-08). The table carries the five authors, Dok.Nr. EK_FT_0018, and the date 26.06.2014. AWESystems forum thread 334 carries the same table.
+### 4.2 `jamieson` — UPGRADED to a peer-reviewed source
 
-- Option A: cite the report as unpublished, with a provenance note.
-- Option B: cite the public reproduction beside the report.
-- Option C: drop the anchor.
+Founder ruling 2026-10-17: keep, prefer the original published work. A
+public, peer-reviewed source was located: Jamieson, P. and Branney, M.
+(2012), "Multi-rotors; a solution to 20 MW and beyond?", Energy Procedia
+24:52-59, DOI 10.1016/j.egypro.2012.06.086 (135 citations, ScienceDirect).
+The 2024 Glasgow deck entry was replaced by `jamieson2012multirotor`.
 
-- The gate holds this entry until the room settles one.
+### 4.3 `hancock2024bladelens` — KEPT on the weaker standard
 
-### 4.2 `jamieson2024multirotor` and `hancock2024bladelens`
-
-- The event stands: Multi Rotor 2024, Glasgow, 12-13 June 2024. Organiser posts confirm the dates and the place. The series runs with HAW Hamburg and the University of Strathclyde, with support from Renewable Dynamics.
-
-- The 2025 edition of the series publishes its talks on the HAW reposit. No public programme or slide link for the 2024 Glasgow edition appeared on 2026-10-08. The room holds the two decks in the corpus.
-
-- Option A: name the seminar in each entry, and record "slides held, no public archive" in the note.
-- Option B: hold both entries and cite nothing.
-- Option C: a room member supplies a programme or slide source.
-
-- The gate holds both entries until the room settles one.
+Founder ruling 2026-10-17: keep with a weaker standard. No published
+equivalent was located (Hancock is a career blade engineer at LM Wind
+Power). The entry now records "slides held, no public archive" in the
+note, and the `.bib` comment marks the weaker standard.
 
 ## 5. Gate statement
 
-The 15 checked entries pass the references gate. The three entries above stay uncitable until a source lands (header rule, `references.bib`). With those three settled, every entry carries a resolvable source.
+The 16 checked entries pass the references gate. The Hancock entry stands
+on the weaker standard with an explicit no-public-archive note. Ranneberg
+is dropped.

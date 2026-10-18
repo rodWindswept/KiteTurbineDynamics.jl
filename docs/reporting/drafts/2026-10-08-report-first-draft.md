@@ -177,8 +177,6 @@ beat few large ones.
 Flather recorded the rope-drive physics that the TRPT descends from.
 Benhaïem and Schmehl analysed the torque path of a rotating reel.
 
-Ranneberg gave the rotary family a momentum frame with flight data.
-
 Tulloch modelled the Daisy TRPT and checked the model against measured
 flight windows. This report extends that line of work.
 
@@ -984,9 +982,9 @@ them.]
 
 ## 7 References
 
-Seeded in references.bib. Fifteen of eighteen sources verified. Three
-source calls pending: Ranneberg EK_FT_0018, the Jamieson deck and the
-Hancock deck.
+Seeded in references.bib. Seventeen sources. Sixteen carry verified
+sources; the Hancock deck stands on the weaker standard (slides held, no
+public archive). The Ranneberg entry was dropped.
 
 ## 8 Data availability and reproducibility
 
