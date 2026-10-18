@@ -6,9 +6,9 @@
 Site: the report at §3.4, beside the census and envelope figures. Reading
 order: census, envelope, ring utilisation, twist limit. The wording comes
 from the author draft (v3) unchanged, except the capture slot, the
-2026-10-12 caption split, the 2026-10-14 leads and the 2026-10-14
-takeaway rewrite. Values cite
-NR-021 and NR-015.
+2026-10-12 caption split, the 2026-10-14 leads, the 2026-10-14
+takeaway rewrite and the 2026-10-18 re-cut. Values cite
+NR-021, NR-015 and NR-060.
 
 The split (2026-10-12): the plain and technical captions carry the
 scientific text only. The provenance line carries the audit tokens: data
@@ -31,24 +31,25 @@ the beam-column interaction on the worst beam, the axial share N/N_crit
 plus the bending share √(M_ip²+M_oop²)/M_el.
 
 The rows run from R2 at the base to R6 at the top. Utilisation is demand
-over capacity. The axis is logarithmic across six decades to the unit
-value, so the margin of every ring reads at its own scale.
+over capacity. The axis is linear from zero to the unit value. The margin
+of every ring reads as a direct fraction of capacity.
 
-The dashed line is the fail boundary at the unit value, the physical
-interaction limit at FoS 1. The campaign structural gate is stricter, at
-FoS 2.5 or above (NR-015). The readout at the row end gives the ring FoS:
-capacity over demand, the reciprocal of the interaction. The model tracks
-torsion outside the interaction formula.
+The red dashed line is the fail boundary at the unit value, the physical
+interaction limit at FoS 1. The purple line is the campaign structural
+gate. It draws at utilisation 0.40, the reciprocal of FoS 2.5 (NR-015).
+The readout at the row end gives the ring FoS: capacity over demand, the
+reciprocal of the interaction. The model tracks torsion outside the
+interaction formula.
 
 The figure covers every airborne ring. The check does not cover the ground
 ring, which sits on ground support. The figure includes and marks the topmost
 ring. The values come from the campaign winner at its final operating
 point.
 
-R5 reads far below the other rows. It carries net axial tension from the
-cone flare (NR-060). The check scores compression only, so the axial share
-enters the interaction as zero. The readout prints the true value, FoS
-326,974 (NR-021).
+R5 reads far below the other rows, so it draws a tension badge instead of
+a bar. It carries net axial tension from the cone flare (NR-060). The check
+scores compression only, so the axial share enters the interaction as zero.
+The badge readout prints the true value, FoS 326,974 (NR-021).
 
 For every other checked ring, the bending share sits below 0.05 per cent
 of the ring utilisation.
@@ -56,8 +57,8 @@ of the ring utilisation.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-021 · script commit `1af63fc` · full record: the figure-provenance
-appendix.
+rows NR-021, NR-015, NR-060 · script commit `e3d664c` · full record: the
+figure-provenance appendix.
 
 ## Generation note
 
@@ -100,3 +101,7 @@ comment 1). The governs sentence takes the full name, and the
 direction, marks, carried-token and lead lines take the top forms.
 Text only. No render value moves. The plate re-renders at the round-6
 script commit.
+
+Feedbackbot re-cut (2026-10-18): the axis reads linear, the campaign
+gate draws at 0.40 with the NR-015 cite, and R5 reads a tension badge.
+The caption text and the render move together at the new script commit.

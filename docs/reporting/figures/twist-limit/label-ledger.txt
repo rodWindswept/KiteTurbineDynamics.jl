@@ -26,7 +26,7 @@
 92.6
 98.9
 A — twist: transmitted twist |Δα| against its binding limit, the realisability floor
-B — torque: segment torque against torsional capacity, paired at the same state
+B — torque: segment torque against torsional capacity, with the FoS 1.5 gate
 Every segment of the winner runs well inside its binding limit
 R1
 R2
@@ -40,15 +40,12 @@ S3
 S4
 S5
 Transmitted twist against its binding limit, the realisability floor · shaft profile S1–S5, ground to top · island-3 winner operating point
-crossing limit δα* — every segment gates on its own collapse-detector limit. That limit is not the over-twist limit.
-no limit — the segment's tether is shorter than the sum of its end radii. Its lines cannot reach the axis,
 realisability floor 72.25°
-realisability floor — sin Δα ≤ 1/1.05 holds the geometry only to 72.25°.
-s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · script commit 1af63fc · authority commit f8114be
+s = 1724859 (t = 49.99999483862295 s) · rows NR-022 · NR-023 · NR-040 · NR-052 · NR-053 · script commit e3d664c · authority commit f8114be
 segment torque (panel B)
-so no over-twist limit exists. Tether break strain and ring compression carry the limit instead.
 source: data commit dd3cc6a · extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops
 torque — N·m
+torsional FoS gate — torque bound at capacity / 1.5 (NR-052)
 torsional capacity
 transmitted twist (panel A)
 twist angle — degrees

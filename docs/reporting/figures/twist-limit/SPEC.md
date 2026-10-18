@@ -109,7 +109,9 @@ The figure is evidence-grade throughout.
 
 - **Panel B, torque.** The horizontal axis is torque, in N·m. Each segment
   draws a paired mark of `segment_torque` against `torque_capacity`, one
-  capture instant for both. Case-B segments carry no capacity mark (no
+  capture instant for both. Each segment draws a hollow triangle at
+  `torque_capacity / 1.5`, the torsional FoS gate (NR-052, v8).
+  Case-B segments carry no capacity mark (no
   limit).
 
 - Ranges: every axis window ⟨resolves at GENERATE⟩ from the capture. This
@@ -125,6 +127,7 @@ The figure is evidence-grade throughout.
 | `limit_mark` | `dcrit_deg` | limit mark per segment where `has_limit` | value |
 | `nolimit_tag` | `has_limit = false` | the string "no limit", tag and legend | presence |
 | `torque_pair` | `segment_torque`, `torque_capacity` | paired marks, one instant | values, pairing |
+| `fos_gate` | `torque_capacity / 1.5` per segment | hollow triangle at the FoS 1.5 bound (NR-052, v8) | presence |
 | `source_stamp` | — | data commit · extract · run + row range · register rows · script commit · authority commit | presence |
 
 ### Readout list. One-to-one with the emitted names.
@@ -267,3 +270,8 @@ gate.
   The plate labels take the top forms ("R6 (top)", "ground to top"),
   and the record phrases take "top". Script
   commit `1af63fc`. No drawn value moves.
+
+- v8 (2026-10-18): the FEEDBACKBOT1 re-cut. Panel B draws the torsional
+  FoS gate triangles at capacity / 1.5 (NR-052). The four method notes
+  leave the canvas for the technical caption, and the figure height
+  drops to 6.9 in. Script commit `e3d664c`. No drawn value moves.

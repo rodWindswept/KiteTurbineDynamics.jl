@@ -525,3 +525,11 @@ v3 (2026-10-18): the FEEDBACKBOT1 display pass closes both
 number-gate brackets (§5 records the closure). The draft drops the
 two brackets, the duplicate bounds, the figure-era column and the
 appendix hash block. The output pins now cite the figure kits once.
+
+v4 (2026-10-18): the FEEDBACKBOT1 figure re-cuts land on the pair
+plates. Ring utilisation draws a linear axis with the campaign
+structural gate at utilisation 0.40 (NR-015) and a tension badge
+for R5. Twist limit draws the torsional FoS 1.5 gate marks on
+panel B (NR-052) and moves its four method notes to the technical
+caption. The appendix pins and the seat markers for rows 6 and 7
+move to the new script commits.

@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.61. Date 2026-10-18.
+Internal engineering report. Draft v0.62. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -748,9 +748,9 @@ corrections that shaped it.
 
 ### 3.4 The levers of performance
 
-[Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
+[Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021, NR-015 and NR-060.]
 
-[Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022 and NR-023.]
+[Figure seated: figure-map row 7 (twist limit plate, slug `twist-limit`). Values cite NR-022, NR-023, NR-040, NR-052 and NR-053.]
 
 The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
 The window-minimum factor of safety is 14.972 (NR-009).
@@ -1153,8 +1153,8 @@ so the era sits here once instead of in a table column.
 
 | Exhibit | Source extract | Cited rows | Script commit |
 |--------|----------------------|--------|------|
-| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` |
-| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` |
+| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021, NR-015, NR-060 | `e3d664c` |
+| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023, NR-040, NR-052, NR-053 | `e3d664c` |
 | Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` |
 | System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` |
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` |

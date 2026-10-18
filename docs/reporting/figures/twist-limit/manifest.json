@@ -4,7 +4,7 @@
     "s": "1724859",
     "t": "49.99999483862295"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 1af63fc",
+  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit e3d664c",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
@@ -12,22 +12,22 @@
     },
     "mechanism_references": {
       "realisability_floor_deg": "72.25",
-      "status": "cleared to draw 2026-10-08; floor row pending. The two changelog lines left the plate notes 2026-10-14 (failure ledger)."
+      "status": "floor row signed NR-053 (science-validator, 2026-10-15). The four method notes moved to the technical caption at the FEEDBACKBOT1 re-cut."
     },
     "register_rows": [
-      "NR-022 \u00b7 NR-023"
+      "NR-022 \u00b7 NR-023 \u00b7 NR-040 \u00b7 NR-052 \u00b7 NR-053"
     ]
   },
   "outputs": {
-    "label-ledger.txt": "7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae",
-    "twist-limit.pdf": "5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5",
-    "twist-limit.png": "14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069",
-    "twist-limit.svg": "cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28"
+    "label-ledger.txt": "af1a8d0c56a9324d4efac7defcde28a7be43793ecb27c7d3a77f2352bc903961",
+    "twist-limit.pdf": "200ddd20f03cdd1d74e67021c9725c729d44d186977d00fd88d11a221b6ff1d7",
+    "twist-limit.png": "f293b873e4f8fbe24e7757ca9eaead402ed311fa4869087efd7d205a2cac338b",
+    "twist-limit.svg": "e58287fe1cdf89e5805bcb2dfba944bbba169c1c975e993fa66207fecf82b967"
   },
-  "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; mechanism reference as recorded",
+  "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; the panel-B gate mark at capacity / 1.5 from the signed constant (NR-052); mechanism reference as recorded",
   "script": {
     "path": "docs/reporting/figures/twist-limit/twist-limit.py",
-    "sha256": "b587c505b50cb03ecd7792ae894f15749808d6ff8280246b0277451d8ce03fb2"
+    "sha256": "58f0022b67ae12adf4134cee9150a007e1e8304d462d4f7f92854df77e81bed1"
   },
   "slug": "twist-limit",
   "toolchain": {

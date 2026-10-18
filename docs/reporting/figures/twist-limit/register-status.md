@@ -10,20 +10,12 @@
 | NR-022 | The segment twist and the over-twist limit at the winner operating point | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
 | NR-023 | The segment torque pair at the winner operating point, capacity basis Tulloch | Signed (aero-validator, 2026-10-08). Counter-read closed (science-validator, 2026-10-09) |
 | NR-040 | The winner segment torque margins: S1 2.0288 (quote 2.03) governs, S5 2.6938 | Signed (science-validator, 2026-10-12) |
+| NR-052 | The torsional-stability FoS hard constraint 1.5. The panel-B gate marks draw it | Signed (science-validator, 2026-10-15) |
+| NR-053 | The realisability floor 72.25° and the crossing limit δα*. The panel-A floor line and the caption cite it | Signed (science-validator, 2026-10-15) |
 
-## Mechanism items drawn, rows pending
-
-- Realisability floor 72.25° (from sin Δα ≤ 1/1.05). It is the binding
-  limit of the three (Harris 1.3; software-validator, item 13).
-- No-limit wording, pinned by the author draft (v4). It carries no value.
-
-The 2026-08-13 overshoot line (22,425°) and the read-cap line left the
-plate at the v2 render (2026-10-14); the failure ledger carries that
-history.
-
-The science seat cleared the value items to draw on 2026-10-08. They need
-register rows before sign-off, or F-CITE fails. The seed binding segment
-(79.4°) stays out of the plate pending the probe.
+The floor row signed after the 3.5 render, so the drawn floor line gains
+its cite at this re-cut. The four method notes left the canvas for the
+technical caption at this re-cut. The no-limit wording carries no value.
 
 ## Drawn precision
 
@@ -31,10 +23,14 @@ Angles at 0.1°. Torque at 0.1 N·m. Drawn values: |Δα| 33.9, 33.8, 33.7,
 33.5, 22.8. δcrit 98.9 (S1 to S4) and 92.6 (S5). Torque 396.8, 397.2,
 397.5, 397.7, 397.2. Capacity 805.0, 808.7, 812.2, 815.7, 1069.9.
 
+The panel-B gate marks draw at capacity / 1.5 (NR-052): 536.7, 539.1,
+541.5, 543.8, 713.3. The positions derive in-plate from the signed
+constant. No numeral draws at the marks.
+
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit 1af63fc`
+`/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit e3d664c`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the input extract and the output
@@ -53,3 +49,9 @@ No render moves.
 **Delta** v4 (2026-10-14): the hub-name retirement (round-6 comment 1).
 The top ring label reads "R6 (top)" and the subtitle reads "ground to
 top". Script commit `1af63fc`. No drawn value moves.
+
+**Delta** v5 (2026-10-18): the FEEDBACKBOT1 re-cut. Panel B draws the
+FoS 1.5 gate marks (NR-052), the four method notes leave the canvas for
+the technical caption, and the cited-row set gains NR-052 and NR-053.
+Script commit `e3d664c`. No drawn value moves. The F-VALUE re-check keys on
+the new render.

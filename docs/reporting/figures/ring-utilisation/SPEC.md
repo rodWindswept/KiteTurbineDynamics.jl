@@ -97,8 +97,9 @@ evidence. It carries its label and no numbers.
   the base and `RN` (top) at the top.
 
 - The horizontal axis is utilisation. The unit line is the fail boundary.
-  The figure labels it "fail boundary". The axis is logarithmic, six
-  decades from 10⁻⁶ to the unit value (v5).
+  The figure labels it "fail boundary". The axis is linear from zero to
+  the unit value (v7). The campaign structural gate draws at utilisation
+  0.40, the reciprocal of FoS 2.5 (NR-015).
 
 - Per ring, one bar: the ring utilisation, the beam-column interaction.
   The axial/bending stack retired at v5; the bending share reports in the
@@ -120,8 +121,10 @@ evidence. It carries its label and no numbers.
 | tag | drawn from | drawing rule | asserted |
 |---|---|---|---|
 | `ring_row` | extract | one row per checked ring, R2 at the base, topmost ring at the top | count |
-| `util_bar` | `max_util` per ring | one utilisation bar per row; the stack retired at v5 | values |
+| `util_bar` | `max_util` per ring | one utilisation bar per row; the stack retired at v5; the tension ring draws a badge instead | values |
 | `unit_line` | — | the fail boundary at the unit value | presence |
+| `gate_line` | the signed gate constant (NR-015) | the campaign structural gate at FoS 2.5, utilisation 0.40 | presence |
+| `tension_badge` | `max_util` ≈ 0 on the tension ring | a hollow diamond with a combined readout instead of a bar (v7) | presence |
 | `fos_readout` | `ring_fos` | row-end readout | values |
 | `ground_note` | — | the excluded base row, marked | presence |
 | `schematic` | — | explanatory, no data | label only |
@@ -270,3 +273,8 @@ drawn interaction.
   The governs sentence takes the full name, the direction line takes
   "R6 at the top", and the record phrases take the top forms. Script
   commit `1af63fc`. No render value moves.
+
+- v9 (2026-10-18): the FEEDBACKBOT1 re-cut. The axis reads linear, the
+  campaign gate draws at utilisation 0.40 (NR-015), and R5 draws a
+  tension badge instead of a bar. Script commit `e3d664c`. No ring value
+  moves.

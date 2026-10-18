@@ -1,0 +1,12 @@
+ring-utilisation/label-ledger.txt  1d0468ecec90fb25c84652f32b6092bb
+ring-utilisation/manifest.json  0f3344691823f164f98378a5e169c91e
+ring-utilisation/ring-utilisation.pdf  be6b200ac9351b9bb1809617bf358327
+ring-utilisation/ring-utilisation.png  a711b0186464af0557fd6362b4b5968c
+ring-utilisation/ring-utilisation.svg  283e9c9b7e06ffbacfd12e4bbd367408
+twist-limit/label-ledger.txt  ad265abf8a863e7ae6936fd26253b5c0
+twist-limit/manifest.json  d20748a7e80597056d5f41e27ed3faf2
+twist-limit/twist-limit.pdf  98ad3567ad548f9035b2afb5d5df3a5b
+twist-limit/twist-limit.png  5628453d330dd02fa92c696e5968dbc9
+twist-limit/twist-limit.svg  957432c3eeaffb13e011a969d58907d3
+locations: kit / scratch/f10_run1 / scratch/f10_run2 · script-commit e3d664c
+all-equal: True
