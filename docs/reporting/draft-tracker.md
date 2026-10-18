@@ -484,14 +484,16 @@ development-history chapter carries them act by act.]
 
 ## 5. Notes kept in the report
 
-Two brackets stay in the report. They state numbers gates for the
-reader, not room work.
+Two brackets stayed in the report as numbers gates. Both gates now
+pass, so the brackets left the report on the FEEDBACKBOT1 display
+pass (author, 2026-10-18).
 
-§4.2: [2.24 holds a register row (NR-015). The other values need rows
-first.]
+§4.2: the k-sweep bracket. The sweep rows sign as NR-047 and the
+2.24 value as NR-015, so the gate read closed. The section 2.3 table
+now cites NR-047 directly.
 
-§5: [Daisy values need register rows before the final report quotes
-them.]
+§5: the Daisy bracket. The close quotes no Daisy value, so the guard
+had no work left. The bracket left the report with no number added.
 
 ## Deltas
 
@@ -508,3 +510,8 @@ from the report.
 The open-request numerals now leave the report and live only under §3.
 The §3.5 header fragment joins its §3.4 twin in §4. Sweep 10 reads both
 changes at this commit.
+
+v3 (2026-10-18): the FEEDBACKBOT1 display pass closes both
+number-gate brackets (§5 records the closure). The draft drops the
+two brackets, the duplicate bounds, the figure-era column and the
+appendix hash block. The output pins now cite the figure kits once.

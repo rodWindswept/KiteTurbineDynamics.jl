@@ -265,9 +265,9 @@ meaning and its search bounds.
 | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
 | x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
 | x3 | common length-to-radius target L/r | 1.0 to 2.94 |
-| x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+| x4 | polygon side count n_lines | 3 to 9 |
 | x5 | ring density bias | -0.8 to 0.8 |
-| x6 | rotor count (1, 2 or 3) | 1 to 3 |
+| x6 | rotor count | 1 to 3 |
 | x7 | bank at the topmost rotor | 0 to 22 deg |
 | x8 | bank at the lowest rotor | 0 to 22 deg |
 | x9 | blade scale at the topmost rotor | 0.2 to 1.0 |
@@ -335,18 +335,11 @@ That round shares no number with this campaign, because the machine and the mode
 
 The sweep rows read as follows (NR-047).
 
-Rows k 0.5 to 1.5:
-
 | k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
 |---|---|---|---|---|
 | 0.5 | reject | 3.49 | 19.14 | 51.8 |
 | 1.0 | ok | 5.45 | 17.64 | 47.8 |
 | 1.5 | ok | 6.78 | 16.59 | 42.8 |
-
-Rows k 1.94 to 3.0:
-
-| k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
-|---|---|---|---|---|
 | 1.94 | ok | 7.56 | 15.80 | 40.1 |
 | 2.24 | ok | 8.00 | 15.34 | 36.4 |
 | 3.0 | ok | 8.89 | 14.42 | 24.3 |
@@ -509,7 +502,7 @@ The search cannot trade power or safety against mass.
 The differential-evolution campaign fixed the configuration below.
 
 | Setting | Value | Source |
-|---|---|---|
+|------------|------------------|-----|
 | Islands | 3 | NR-001 |
 | Designs per island | 310 | NR-001 |
 | Evaluations, total | 930 | NR-001 |
@@ -600,7 +593,7 @@ reads 15.033 at the final step (NR-021).
 Its operating point reads as follows.
 
 | Quantity | Value | Source |
-|---|---|---|
+|--------------|--------------------|------|
 | Mean power, measurement window | 5.309 kW | NR-008 |
 | End-of-window power | 5.314 kW | NR-008 |
 | Minimum factor of safety | 14.972 | NR-009 |
@@ -664,7 +657,7 @@ cent of it (NR-034).
 The winner clears each checked gate.
 
 | Gate | Threshold | Winner outcome | Margin | Source |
-|---|---|---|---|---|
+|-------|------|-------------------|-------------------|--------|
 | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
 | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
 | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
@@ -956,7 +949,7 @@ flag, and every recorded winner field reproduces (NR-012).
 Candidate entries. Each failure enters with its lesson.
 
 | Date / event | Class | What happened | Detection | Correction / lesson | Status |
-|---|---|---|---|---|---|
+|--------|-------|------------------|-------|------------|--------|
 | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at k_mppt 10.0, the 50-kilowatt default gain. That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
 | 2026-08-14 inverted-taper divergence | Geometry/decoder failure | An invalid genome diverged within seconds. The ground instruments still read normal power. | Divergence review | The decoder must refuse what the builder cannot make. The refusal lands at gate time. | Lesson applied. |
 | 2026-08-22 blade-mass-law correction | Model correction | The correction voided prior campaign winners. | Physics review | Void the affected data. Keep the record. | Data voided, record kept. |
@@ -1000,8 +993,6 @@ gain than the machine it scored.
 
   A misaligned gain scores a different machine, and the data voids.
   Lesson: one constant, one source file.
-  [2.24 holds a register row (NR-015). The other values need rows
-  first.]
 
 - The stale-gate near-miss. The FoS floor gate fell behind the model it
 guarded.
@@ -1070,9 +1061,6 @@ The Daisy anchor ties the model to a measured flight reference.
 
 The next work closes the model gaps.
 The recommended next steps sit in section 3.6.
-
-[Daisy values need register rows before the final report quotes
-them.]
 
 **Where this goes.** This close is forward-looking. It states what the
 instrument does, the programme targets, and what the signed record
@@ -1160,89 +1148,29 @@ The table ties each headline claim of this report to its evidence and its signed
 One row per built exhibit. Eight read dataset commit `dd3cc6a`. The
 ladder reads the code rung set.
 
-| Exhibit | Source extract | Cited rows | Script commit | Era |
-|---|---|---|---|---|
-| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` | `post-95c385d_wind-authority` |
-| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` | `post-95c385d_wind-authority` |
-| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` | `post-95c385d_wind-authority` |
-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` | `post-95c385d_wind-authority` |
-| Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` | `post-95c385d_wind-authority` |
-| Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
-| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
-| The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `a4b4057` | `post-95c385d_wind-authority` |
-| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `4ebc385` | `post-95c385d_wind-authority` |
+All nine read the current physics era, `post-95c385d_wind-authority`,
+so the era sits here once instead of in a table column.
 
-**Output hashes (SHA-256).** The short labels name the exhibit files.
-`png`, `svg` and `pdf` are the file types. `ledger` is the label
-ledger. `checks` is the check log.
+| Exhibit | Source extract | Cited rows | Script commit |
+|--------|----------------------|--------|------|
+| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021 | `1af63fc` |
+| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023 | `1af63fc` |
+| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `74cfef9` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` |
+| Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `e23f226` |
+| Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` |
+| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` |
+| The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `a4b4057` |
+| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `4ebc385` |
 
-An exhibit lists a file type only where its route produces one. The
-system anatomy plate renders from TeX to PDF to PNG, so it carries no
-`svg`. An exhibit lists `ledger`, `checks`, or both, as its kit carries
-them.
+**Output pins.**
 
-Ring utilisation plate:
+Each figure kit under `docs/reporting/figures/<slug>/` carries the
+canonical pins for its exhibit.
 
-- `png` `bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3`
-- `svg` `ce3dee1282941a71819c4a23125a141b84f6fca4611803f8b8a0d8590b33fab6`
-- `pdf` `3548ecd3552940c48e1727756c6b8f40d2bd148b3f98874fbe1c87d0a3f71611`
-- `ledger` `8cd86f6954590122ee44dca167c24a65df272a85adf9a2726df8ae1d7b437f9d`
+The kit `manifest.json` holds the rendered-output pins (`png`, `svg`,
+`pdf`, `ledger`). The check-log pin reads as the sha256 of the kit
+`checks.log`.
 
-Twist limit plate:
-
-- `png` `14f6b8b286d1f8e53a85e4a9072c936267eff530dbc44c0f385e8e05dce68069`
-- `svg` `cc3edf9cb255d7687f1c81ee5be3ad69167a0f7d8323266dcc5e8662f46dca28`
-- `pdf` `5618f35b01ef4cb4831099ba2bf5fab12a169c337e5687ca22d7f49d6fe071e5`
-- `ledger` `7b40b2f6edcc2efcfac9f645ee417b299042a9375b4cfce923a4da56c26d10ae`
-
-Machine evolution strip:
-
-- `png` `f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a`
-- `svg` `8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2`
-- `pdf` `1a5ae79cbc60da3b91d6a3be97bff34a028d20f38dd56ced6fc04531e74d4609`
-- `checks` `24f27944e9ef0b875d05cc0746970eece163d233d3c05d5f6025d6345035526d`
-
-System anatomy plate:
-
-- `png` `696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66`
-- `pdf` `c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c`
-- `ledger` `bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912`
-- `checks` `99e81f32e1dbc3882a9a63400dac0a4410b3be618d29365b6633886a3aeec31a`
-
-Levers landscape:
-
-- `png` `295315950f82d737c06132100ec88f667a0899d6103d0ede778c09ab4f2213b8`
-- `svg` `1d4433856620ace8b29bb0f187075343962df572123641ce987b514796cece66`
-- `pdf` `79c145ed9a88c577b48796414815a33547c113bfa4ca734e256ae37fabbaf9a8`
-- `ledger` `5fb0426068bcbc2893b510c2273a1aad5096c1b4f35f30b64fce7fdfc145e748`
-- `checks` `ada49fef362d5929215b0172236cff0f898cbb326097385818d4d204eeb05c4f`
-
-Parameter atlas:
-
-- `png` `41a55c9fce27d2aeece91c32a6907ec59b6e252f4276f9ff1899cc8b88f953ac`
-- `svg` `5cdcd2e25439a04b4f313c40474cd899c3975e75f68959c670b285ba0a856910`
-- `pdf` `122c4e5c510b52f7b47c0380eae27ff16c884079fc50975397ffb50f53967cc3`
-- `ledger` `ab4bb0ecf4cc6cdd5ed1e0fc0f2ad06331191935cc36a62a07844719de4c03e9`
-- `checks` `f9a220f1f434376afe750955d1c2b5ff6e75b0fed45dbbb71c141d69e55688c5`
-
-Machine winner:
-
-- `png` `ad26e7cb5d7fc6b92b96dc97bd38c7ed9f9b1d3e6166a8e5780b118ae0d2c767`
-- `svg` `27746f7202e1629eba5a2cc233ba023acb66c793a4c54f93e70100a3fa1e17bb`
-- `pdf` `1cd98dafefed42155dab1a6e621f62b0fe1b06205700b71a4e3dcd9b2a24cb72`
-- `checks` `2118d2bb6117a27a011b0524b2407951d206550ddc82386aeffb5a7c9cc3e86a`
-
-The corner machines:
-
-- `png` `bbc9a744f27a95bc61781db38d8389a573f09b83c36a795a00e5362086d11cf7`
-- `svg` `526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4`
-- `pdf` `0c1c31e14a39e0b0a463dee56d42688619e600faf8e06a4341469c81ba7fabad`
-- `checks` `8e0a042363ea5dcd1a1644c4583f01386c4601f67bf90e5d984ce4514c48b1d9`
-
-Scaling ladder:
-
-- `png` `4511bd75e8ef32ff781a060358e08d800ea1d41720274fcbab9fb0a3910ae6aa`
-- `svg` `004cea6ad73291f95fa80664bc26ad213b3bd1ed91bf7432c184e51b22cdf299`
-- `pdf` `33aed0602e9d5e9edc24a9fb221240da5754c1826e3941c6f4b59f5ab7a4a936`
-- `ledger` `aa1401a7b83d78701d534f5b5cc2f31240606db88c63078e28e5fe93720d3036`
-- `checks` `2c7952a613d425adece7ffaa9605fc768825a500705e40ec88865ef21791d263`
+This appendix cites the kits once instead of reprinting the
+64-character hashes.
