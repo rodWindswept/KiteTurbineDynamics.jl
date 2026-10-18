@@ -325,12 +325,30 @@ prints those values.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03323714455441065 = 0.033223570205929 + 1.3574348481652112e-5, FoS 30.086820435580936. R3 0.033548608446737266 = 0.03354237801917142 + 6.230427565848155e-6, FoS 29.80749563987516. R4 0.028380221733419368 = 0.028374815022862057 + 5.40671055731162e-6, FoS 35.23580644975869. R5 3.058346201008972e-6 = 0.0 + 3.058346201008972e-6, FoS 326974.1011237028. R6 hub 0.06652238395895148 = 0.06652164721153939 + 7.36747412096439e-7, FoS 15.032534020684876 | — | Extract `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, ring block. Emitted by `capture_extended`; `max_util` re-derived via `ring_element_analysis`; A1 identity checked, residual 0.0 at every ring | signed (aero-validator, 2026-10-08) |
-| NR-022 | Segment twist and over-twist limit at the winner operating point | abs(dalpha): S1 33.94561934829036°, S2 33.811870056223555°, S3 33.67952027817454°, S4 33.54707806507812°, S5 22.821871326820364°. dcrit: S1 to S4 98.85908296054023°, S5 92.64281134151318°. has_limit true on all five | deg | Extract, segment block. Raw reads from the stored alpha block; `trpt_twist_limit` on the rope_forces C1 call pattern (node radii, mean line rest length) | signed (aero-validator, 2026-10-08) |
-| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.791634149159, S2 397.1554424859068, S3 397.45360112890063, S4 397.68800908436924, S5 397.1777954649229. torque_capacity: S1 805.0097155967861, S2 808.6780945063998, S3 812.213802301376, S4 815.650844050359, S5 1069.9324759682652 | N·m | Extract, segment block. Capacity = `trpt_torque_capacity_axial` at `trpt_axial_force` of the same state. One instant for both series | signed (aero-validator, 2026-10-08) |
-| NR-024 | Evaluator step law | dt = min(4e-5 s, 4e-5 s × sqrt(L_min / 0.5 m) / 1.5). Winner derived step 2.8987873697672758e-5 s | s | Source read at `f8114be`: `src/initialization.jl:564-595`. Winner value from the extract log | signed (aero-validator, 2026-10-08) |
+| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03324, FoS 30.087. R3 0.03355, FoS 29.807. R4 0.02838, FoS 35.236. R5 3.058e-6, FoS 326974. R6 hub 0.06652, FoS 15.033 | — | Extract `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, ring block. Emitted by `capture_extended`; `max_util` re-derived via `ring_element_analysis`; A1 identity checked, residual 0.0 at every ring | signed (aero-validator, 2026-10-08) |
+| NR-022 | Segment twist and over-twist limit at the winner operating point | \|Δα\|: S1 33.95°, S2 33.81°, S3 33.68°, S4 33.55°, S5 22.82°. δ_crit: S1 to S4 98.86°, S5 92.64°. has_limit true on all five | deg | Extract, segment block. Raw reads from the stored alpha block; `trpt_twist_limit` on the rope_forces C1 call pattern (node radii, mean line rest length) | signed (aero-validator, 2026-10-08) |
+| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.8, S2 397.2, S3 397.5, S4 397.7, S5 397.2. torque_capacity: S1 805.0, S2 808.7, S3 812.2, S4 815.7, S5 1069.9 | N·m | Extract, segment block. Capacity = `trpt_torque_capacity_axial` at `trpt_axial_force` of the same state. One instant for both series | signed (aero-validator, 2026-10-08) |
+| NR-024 | Evaluator step law | dt = min(4e-5 s, 4e-5 s × sqrt(L_min / 0.5 m) / 1.5). Winner derived step 2.899e-5 s | s | Source read at `f8114be`: `src/initialization.jl:564-595`. Winner value from the extract log | signed (aero-validator, 2026-10-08) |
 | NR-025 | Cold-start protocol (campaign setting) | Settle `settle_to_operational_state` (n_op 150000 steps, about 6 s simulated; ω_rated_max 60.0 rad/s), then kickstart off (kickstart_s 0.0; the legacy kick is -60.0 N·m·s²/rad², about 115 times the MPPT torque), then one combined relax+window run, 10 s + 40 s, rope breaks enabled across both. Winner run: 1724859 steps | s, steps | `src/objective_evaluator.jl:774, 840-842, 856-892, 978-989`; `src/initialization.jl:2184-2190`; `scripts/run_v13_5kw_masslift.jl:157` | signed (aero-validator, 2026-10-08) |
 | NR-026 | Lifter sizing margin (campaign regime) | margin 1.5 (vertical force at the lift bearing = 1.5 × m_airborne × g); line tension = F_vert / sin(70°), flat at all wind speeds; m_airborne excludes the lifter's own 5 kg (the kite carries itself) | — | `src/lift_kite.jl:197-228`; regime line `scripts/run_v13_5kw_masslift.jl:111` | signed (aero-validator, 2026-10-08) |
+
+## Display amend 2026-10-18 (aero-validator)
+
+The reader-facing register prints each reading at four significant
+digits. A reading that a shipped plate already labels keeps the
+shipped label form. The ring FoS values, the S5 capacity and the
+torque pair print the plate forms.
+
+The manifest file `docs/reporting/register-manifest.md` carries the
+full-precision readings. It also carries the axial and bending shares
+of NR-021.
+
+The NR-022 notation moves from `abs(dalpha)` to |Δα| and from
+`dcrit` to `δ_crit`.
+
+No value changes. Each row keeps its 2026-10-08 sign-off basis. The
+2026-10-18 feedback in `docs/reporting/feedback-on-report.md` prompts
+this change.
 
 Sign-off basis:
 
