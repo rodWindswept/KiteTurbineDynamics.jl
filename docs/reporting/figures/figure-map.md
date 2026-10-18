@@ -54,6 +54,9 @@ full roster around them.
 | 22 | ⟨tbd⟩ | §3.4 | The thrive/fail view. Status regions over the same projection | ⟨tbd⟩ | proposed | The founder ask (2026-10-13). The status and outcome columns | A slot ruling, then the build |
 | 23 | ⟨tbd⟩ | §3.4 | The corner machines. Four renders, one per corner of the PC1-PC2 field | `machine-corner-grid` | R2 | The founder ask (2026-10-14, routing comment 14). The pca projection (NR-044). Picks recorded at `scratch/fig_cg_picks.py` (data commit `dd3cc6a`, run `a76c5e9`). The extract `corner-grid-extract-2026-10-15-picks` (`92ca9f5`) | The objective row (NR-051) is signed (science-validator, `cb862df`). The build lands (`a4b4057`): four panels, all in-script checks pass, and the three-location F-REPRO walk reads byte-identical across all five outputs. The counter-reads close clean (`857f2c1`, 153 checks): the picks and the objectives recompute from the raw draw columns; the extract binds at all 128 fields; the drawn text reads clean; two fresh runs byte-identical. Two cite findings close: both cites take the sign commit. The visual pass by Rod reads clean (2026-10-15). The fold lands (§3.4, draft v0.51): the seat marker joins the field pair, and the figure-provenance appendix takes the eighth exhibit row and its hashes. The register read closes clean (`7e68f0e`, 107 checks): the drawn set reads NR-051 to the signed digits. The v0.51 copy counter-read closes clean (`ed95cf1`, 304 checks). The train is closed at this seat |
 | 24 | ⟨tbd⟩ | §5 | The scaling ladder. The validated rung and the programme targets above it | `scaling-ladder` | R2 | The value-claims ledger section 4 (the rung seed, `aa76367`). `scripts/compute_seeds.jl` const RUNGS | The kit lands (script `4ebc385`): seven rungs at equal spacing, the validated rung solid, the six programme targets open plus label, no value axis. The in-script set reads 14 checks, 0 fail. F-REPRO reads byte-identical across three locations. Counter-reads closed (aero and science, `3dcc67d`). Seated in the draft (§5, v0.60). The ninth provenance seat and the hash block ride the author fold. Next: the visual pass by Rod |
+| 25 | ⟨tbd⟩ | §3.4 | The parallel coordinates. Active genes and outputs, one line per design, status ink | ⟨tbd⟩ | proposed | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The FEEDBACKBOT1 review (visual exhibits, item 1) | The value list and the SPEC. The slot ruling (author seat) |
+| 26 | ⟨tbd⟩ | §3.3 or §4.1 | The window traces. Power, speed, tension and shaft bow across settle, relax, window and extension | ⟨tbd⟩ | proposed | `window-trace-extract` (`6175f83`). The NR-059 extension capture. The FEEDBACKBOT1 review (campaign results, item 3) | The per-trace value list (science-validator). The slot ruling (author seat) |
+| 27 | ⟨tbd⟩ | §2.1 or §2.2 | The genome geometry schematic. r_hub, r_rotor, r_bottom, segment length, polygon count, bank and the 22 degree transition cone | ⟨tbd⟩ | proposed | The decode fields, NR-011 and NR-043. The FEEDBACKBOT1 review (methodology, item 3) | The SPEC. The row-15 reconcile at the slot ruling |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -552,3 +555,10 @@ three slots).
   The in-script set reads 14 checks, 0 fail. F-REPRO stays byte-identical
   across three locations. Next: the counter-reads, then the visual pass
   by Rod, then the fold.
+
+- **v51 (2026-10-18):** the FEEDBACKBOT1 figure routing lands
+  (`docs/reporting/feedback/2026-10-18-feedbackbot1-figure-routing.md`).
+  Three mints join the roster as rows 25 to 27 (parallel coordinates,
+  window traces, genome geometry schematic). Rows 1, 5, 16, 17 and 19
+  take review notes. The re-cut batches queue at this seat. No plate
+  byte moves.
