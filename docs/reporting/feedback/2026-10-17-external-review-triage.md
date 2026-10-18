@@ -29,9 +29,9 @@ Priority tiers:
 | T2-1 | Power-speed closure off ~1.07%: P_mean 5.309 kW vs k·ω³ 5.366 kW. τ 396.76 vs k·ω² 401.03. State how P_mean and τ are averaged. | DONE (`580d33b`) |
 | T2-2 | Twist-gate margin quoted at loosest limit 2.91× (δcrit) while figure shows realisability floor 2.13× and crossing gate 2.28×. Standardise %-margin formula across the p.9 table. | DONE (`e67a407`) |
 | T2-3 | Blade-scale 0.82 vs true 0.8213255 (NR-050/NR-043/NR-011). Built span 1.4994 not 1.4970. Record unrounded float. | DONE (`e67a407`) |
-| T2-4 | Provenance commit strings differ: §3.4 inline (dd5a9dd/0b8948d/b587c50) vs appendix (dd3cc6a/1af63fc). Reconcile. | OPEN |
-| T2-5 | Objective score rounding: 25.698 + 1.665 = 27.363 not 27.364. Add a rounding note. | OPEN |
-| T2-6 | NR-006 says "gen 1" but 0-indexed convention (gen 0) used elsewhere. Standardise to gen 0. | OPEN |
+| T2-4 | Provenance commit strings differ: §3.4 inline (dd5a9dd/0b8948d/b587c50) vs appendix (dd3cc6a/1af63fc). Reconcile. | DONE: already reconciled in the draft (appendix reads dd3cc6a/1af63fc) |
+| T2-5 | Objective score rounding: 25.698 + 1.665 = 27.363 not 27.364. Add a rounding note. | DONE (this pass) |
+| T2-6 | NR-006 says "gen 1" but 0-indexed convention (gen 0) used elsewhere. Standardise to gen 0. | DONE: register seed-generation block (2026-10-15) already resolves it |
 
 ## T3: documentation
 

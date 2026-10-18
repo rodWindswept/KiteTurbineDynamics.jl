@@ -771,6 +771,9 @@ The final recorded step reads 28.315 to 27.364, a drop of 0.951 (NR-036).
 
 The winner value is the search objective, not a mass reading.
 The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of penalties (NR-018, NR-039).
+The sum at three decimals reads 27.363, not the 27.364 the register quotes.
+The full-precision values add to 27.36354, which rounds to 27.364.
+The independent three-decimal rounding of mass and penalty is the 0.001 gap.
 
 The final panel matches the register winner.
 The panel reads three lines and six rings (NR-011).
