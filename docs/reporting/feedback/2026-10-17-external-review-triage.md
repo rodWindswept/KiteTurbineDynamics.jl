@@ -37,15 +37,15 @@ Priority tiers:
 
 | ID | Item | Status |
 |---|---|---|
-| T3-1 | 10-gene vector never enumerated with bounds and decode equations (§2.1, §2.2.1). Add a parameter table. | OPEN |
+| T3-1 | 10-gene vector never enumerated with bounds and decode equations (§2.1, §2.2.1). Add a parameter table. | DONE (`f7de920`) |
 | T3-2 | r_rotor power-sizing formula vs r_hub never defined (§2.1). State the formula and the offset. | DONE (`e67a407`) |
-| T3-3 | Objective penalty seam: P_score, swing, twist_ratio, r=1 singularity, clearance 1.5 m threshold not defined in §2.4. | OPEN |
-| T3-4 | DE hyperparameters missing: N_pop=10, 31 gens, mutation scheme, F, CR, island isolation. | OPEN |
-| T3-5 | "pre-fold winner", "folded class", "cp fix", "span shrink" undefined (§2.2.2). | OPEN |
-| T3-6 | R5 zero axial share is physically tension, not "no load" (§3.4). Explain the cone-flare tension. | OPEN |
-| T3-7 | PCA PC2 dominated by inactive genes (bank_bottom, blade_scale_bottom) when rotor_count equals 1. Add caveat. | OPEN |
+| T3-3 | Objective penalty seam: P_score, swing, twist_ratio, r=1 singularity, clearance 1.5 m threshold not defined in §2.4. | DONE (`f7de920`) |
+| T3-4 | DE hyperparameters missing: N_pop=10, 31 gens, mutation scheme, F, CR, island isolation. | DONE (`f7de920`) |
+| T3-5 | "pre-fold winner", "folded class", "cp fix", "span shrink" undefined (§2.2.2). | DONE (`f7de920`) |
+| T3-6 | R5 zero axial share is physically tension, not "no load" (§3.4). Explain the cone-flare tension. | DONE (`f7de920`) |
+| T3-7 | PCA PC2 dominated by inactive genes (bank_bottom, blade_scale_bottom) when rotor_count equals 1. Add caveat. | DONE (`f7de920`) |
 | T3-8 | Shaft bow does not converge (0.209 to 0.613 to 0.833 m). State whether it asymptotes and at what duration. | DONE (`bd628af`) |
-| T3-9 | P_mean vs k·ω³ ~1.07% offset unexplained (overlaps T2-1). Also note fixed-k couples radius search with TSR. | OPEN |
+| T3-9 | P_mean vs k·ω³ ~1.07% offset unexplained (overlaps T2-1). Also note fixed-k couples radius search with TSR. | DONE (`f7de920`) |
 
 ## T4: minor or formatting
 
