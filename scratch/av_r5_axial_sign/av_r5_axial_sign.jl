@@ -202,6 +202,12 @@ function main()
         say("R", kk + 1, " | N_min=", minimum(Ns), " N_max=", maximum(Ns),
             " | N/Ncrit_min=", minimum(sh), " N/Ncrit_max=", maximum(sh),
             " | beams=", length(Ns))
+        if kk + 1 == 5
+            for (j, b) in enumerate(ref.beams)
+                say("R5 beam ", j, " | N=", b.N, " N_crit=", b.N_crit,
+                    " N/Ncrit=", b.N / b.N_crit)
+            end
+        end
     end
     @assert length(rea) == Nr - 1 == length(ef.ring_fos)
     say("k_mppt_ref at capture = ", sys.k_mppt_ref[])
