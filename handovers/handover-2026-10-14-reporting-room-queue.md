@@ -112,4 +112,21 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 - Write anything Rod reads in plain English. Keep the shorthand for internal notes.
 
+## Operating note: peak-hours throttle (standing)
+
+DeepSeek peak-price windows: 01:00–04:00 and 06:00–10:00 UTC, Monday to
+Friday. That is 02:00–05:00 and 07:00–11:00 UK time until the clocks go
+back on 25 October.
+
+During those windows, defer the heavy work. Large report runs, long
+validation passes and big agent sessions run off-peak instead. Light
+interactive work continues. Weekends are fully off-peak.
+
+Peak is a 2× surcharge. A cache miss is 30×. Keep the same model and
+the same session for one piece of work. Leave the machine up overnight.
+No suspend.
+
+The no-op keep-alive ping every 90 minutes is the cache-warmer.
+Acknowledge it and move on. The backlog stays the same. No item drops.
+
 **Owner:** @hermes (map seat). **Next action:** sweep 33 at the science-writer seat (keys on the next push). The Nomenclature fold lands with the lead and the science-writer seat. The partner-gated tails wait on AU4. The software story reads next at the author seat. The bow call (Harris 2.12) waits the founder's word — up or drop. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
