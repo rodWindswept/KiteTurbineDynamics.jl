@@ -1,10 +1,10 @@
-pin v0.61 -> v0.62; tracker entry v4
+pin v0.62 -> v0.63; tracker entry v5
 round-trip: candidate minus declared edits equals HEAD base (all three surfaces)
 draft: lines 1176 -> 1209 (delta 33)
-draft: tokens removed ['61']
-draft: tokens added   ['0.00053', '0.009', '0.0254', '1.5', '1.5', '100.0', '2.434', '200', '5.0', '62']
+draft: tokens removed ['62']
+draft: tokens added   ['0.00053', '0.009', '0.0254', '1.5', '1.5', '100.0', '2.434', '200', '5.0', '63']
 draft: opcodes ['equal', 'replace', 'equal', 'insert', 'equal', 'insert', 'equal', 'insert', 'equal', 'replace', 'equal', 'delete', 'equal', 'insert', 'equal', 'insert', 'equal', 'insert', 'equal', 'insert', 'equal', 'replace', 'equal', 'replace', 'equal', 'replace', 'equal', 'replace', 'equal', 'insert', 'equal', 'replace', 'equal', 'insert', 'equal', 'replace', 'equal']
-tracker: lines 527 -> 535 (delta 8)
+tracker: lines 535 -> 543 (delta 8)
 tracker: tokens removed []
 tracker: tokens added   ['2', '3.3']
 tracker: opcodes ['equal', 'insert']
@@ -15,11 +15,11 @@ routing: opcodes ['equal', 'replace', 'equal', 'replace', 'equal', 'replace', 'e
 token census: declared sets match on all three surfaces
 ste draft: base total=34 per100w=0.38 em_dash=0 cats=[('contraction', '2'), ('long_paragraph(>6s)', '25'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '5')]
 ste draft: cand total=34 per100w=0.37 em_dash=0 cats=[('contraction', '2'), ('long_paragraph(>6s)', '25'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '5')]
-ste tracker: base total=23 per100w=0.55 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '10'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
-ste tracker: cand total=23 per100w=0.54 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '10'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
+ste tracker: base total=24 per100w=0.56 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '11'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
+ste tracker: cand total=24 per100w=0.55 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '11'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
 ste routing: base total=7 per100w=1.32 em_dash=0 cats=[('long_paragraph(>6s)', '7')]
 ste routing: cand total=7 per100w=1.32 em_dash=0 cats=[('long_paragraph(>6s)', '7')]
 ste: total and per-category hold on all three surfaces
-citation gate: exit 0, 55 cited, every one signed
+citation gate: exit 0, 56 cited, every one signed
 pandoc: candidate parses clean
 dry run complete: candidates and gate log in scratch; nothing committed

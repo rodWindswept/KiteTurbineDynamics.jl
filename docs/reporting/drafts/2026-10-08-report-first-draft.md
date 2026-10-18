@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.62. Date 2026-10-18.
+Internal engineering report. Draft v0.63. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -221,6 +221,12 @@ That radius is not the ring radius. The ring radius `r_hub` is a separate
 structural gene. The blade radius `r_rotor` is the aerodynamic size the
 blade spans from.
 
+The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+P reads the rotor power share and v the local wind speed at the ring.
+Cp reads the blade-element table coefficient at the sizing tip-speed ratio.
+f reads the bank-and-elevation projection factor.
+The winner decode reads r_rotor 2.434 m (NR-050).
+
 The search treats each of these as a gene. The ring geometry sets the
 topmost-ring and ground radii, and the rotor count sets how many rings carry
 blades.
@@ -278,6 +284,12 @@ between one and three. Inactive slots may hold values with no physical
 effect. The winner carries one active rotor, so x8 and x10 stay unused
 (NR-011).
 
+The decoder also rounds x4, the polygon side count, to an integer (NR-011).
+The ring count builds separately.
+A spacing pass lays the intermediate rings along the shaft from the length-to-radius target and the density profile.
+The builder then adds the ground ring and the hub ring at the ends.
+The winner reads six rings (NR-011).
+
 #### 2.2.2 The evaluator
 
 The builder builds the machine from the genome. The evaluator runs the
@@ -294,6 +306,13 @@ only (NR-015).
 
 A short window can sample the decay and misstate the power. The team
 sized the window to outlast the decay.
+
+The evaluator names two scoring quantities.
+P_score reads the tail-5 power, the mean of the last five seconds of the window (NR-046, NR-041).
+The draft prints it as the end power.
+
+The twist ratio reads the absolute segment twist divided by the crossing limit, the worst segment over the window (NR-046).
+The crossing limit reads `δα* = 2 asin(L_seg / sqrt(2 (L_seg^2 + 2 r_seg^2)))` with r_seg the larger of the two ring radii at the segment (NR-053).
 
 ### 2.3 The operating point and load selection
 
@@ -508,7 +527,12 @@ The differential-evolution campaign fixed the configuration below.
 | Evaluations, total | 930 | NR-001 |
 | Objective | Airborne mass + penalties, kg-equivalent | NR-036, NR-039 |
 | Power floor | 5.0 kW | NR-027, NR-039 |
+| Power ceiling | 5.0 kW | NR-046 |
 | Structural FoS floor | 2.5 | NR-015 |
+| Clearance floor | 1.5 m | NR-042 |
+| Tip-speed ceiling | 100.0 m/s | NR-047 |
+| Torsional FoS floor | 1.5 | NR-052 |
+| Twist gate | geometric crossing check | NR-052, NR-053 |
 | Relax run | 10 s | NR-015 |
 | Measurement window | 40 s | NR-015 |
 | Load constant k | 2.24 N·m/(rad/s)² | NR-015 |
@@ -620,6 +644,14 @@ Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
 The reported trace runs steady wind, so the swing reads as a steady-wind response, not a stability property (NR-058).
 The machine held a steady operating point through the measurement window.
 
+Steady and drifting describe two observables on two timescales.
+The power settles: the window swing reads half a per cent of the mean (NR-014).
+The extension speed spread reads 0.009 per cent (NR-059).
+
+The bow creeps slowly: each five-second step reads smaller than the last (NR-059).
+At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).
+So the machine holds its operating point while the shaft still creeps toward its bowed shape.
+
 The settle state starts the machine at 10.170 rad/s (NR-016).
 The machine accelerates through the relax run.
 
@@ -630,7 +662,8 @@ The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-05
 
 An extension run past the window ends at 0.422 m at the midpoint
 and 0.833 m at the hub (NR-059).
-Every state at the midpoint ring reads below the 1.5 m line (NR-059).
+Every measured state at the midpoint ring and the hub reads below the 1.5 m comparison bar (NR-059).
+The record ends at 200 seconds, so the report claims no bound past the measured span (NR-059).
 
 The settle hands off a straight stack while the run bows it.
 The two do not agree on the bowed shape.

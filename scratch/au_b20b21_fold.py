@@ -90,7 +90,7 @@ E3_ANCHOR = (
     "(NR-011)."
 )
 E3_INSERT = (
-    "The decoder also rounds x4, the polygon side count, to an integer (NR-044).\n"
+    "The decoder also rounds x4, the polygon side count, to an integer (NR-011).\n"
     "The ring count builds separately.\n"
     "A spacing pass lays the intermediate rings along the shaft from the length-to-radius target and the density profile.\n"
     "The builder then adds the ground ring and the hub ring at the ends.\n"
@@ -104,7 +104,7 @@ E4_ANCHOR = (
 )
 E4_INSERT = (
     "The evaluator names two scoring quantities.\n"
-    "P_score reads the tail-5 power, the mean of the last five seconds of the window (NR-046).\n"
+    "P_score reads the tail-5 power, the mean of the last five seconds of the window (NR-046, NR-041).\n"
     "The draft prints it as the end power.\n"
     "\n"
     "The twist ratio reads the absolute segment twist divided by the crossing limit, the worst segment over the window (NR-046).\n"
@@ -132,7 +132,7 @@ E6_INSERT = (
     "The extension speed spread reads 0.009 per cent (NR-059).\n"
     "\n"
     "The bow creeps slowly: each five-second step reads smaller than the last (NR-059).\n"
-    "The extension steps fall from 0.0254 m to 0.00053 m (NR-059).\n"
+    "At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).\n"
     "So the machine holds its operating point while the shaft still creeps toward its bowed shape."
 )
 
@@ -324,9 +324,9 @@ def main():
 
     cite = citation_gate(CAND_DRAFT)
     assert cite.returncode == 0, "citation checker rc != 0"
-    assert "cited rows in" in cite.stdout and ": 55" in cite.stdout, "cited count moved"
+    assert "cited rows in" in cite.stdout and ": 56" in cite.stdout, "cited count moved"
     assert "every cited row present and signed" in cite.stdout, "sign-off state moved"
-    log("citation gate: exit 0, 55 cited, every one signed")
+    log("citation gate: exit 0, 56 cited, every one signed")
 
     pan = subprocess.run(["pandoc", "-f", "markdown", "-t", "json", CAND_DRAFT], capture_output=True, text=True)
     assert pan.returncode == 0, f"pandoc parse failed: {pan.stderr[:400]}"
@@ -351,7 +351,7 @@ def main():
         "docs(reporting): the B-20 and B-21 prose pass lands - section 2 gains the "
         f"explicit decoder and gate math and section 3.3 states the steady-and-drifting "
         f"pair with the bow bound on both stations; the draft ticks to v0.{new_minor}; "
-        f"STE rc=0 at {lt[1]}/100w; citation checker exit 0 (55 cited, every one signed)"
+        f"STE rc=0 at {lt[1]}/100w; citation checker exit 0 (56 cited, every one signed)"
     )
     git("commit", "-m", msg)
     git("fetch")

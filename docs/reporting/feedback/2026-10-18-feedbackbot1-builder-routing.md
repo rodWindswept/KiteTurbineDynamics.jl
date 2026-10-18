@@ -53,8 +53,8 @@ Two substantive notes in the review had no seat. They route here.
 
 | ID | Item | Disposition |
 |---|---|---|
-| B-20 | Section 2 omits the decoder and gate math | OTHER-SEAT |
-| B-21 | Section 3.3 steady-state claim versus the shaft-bow drift | OTHER-SEAT |
+| B-20 | Section 2 omits the decoder and gate math | LANDED (author) |
+| B-21 | Section 3.3 steady-state claim versus the shaft-bow drift | LANDED (author) |
 
 B-20 covers the r_rotor sizing formula, the ring-count decode, the
 twist-ratio and P_score definitions, and the full hard-gate list. The

@@ -533,3 +533,11 @@ for R5. Twist limit draws the torsional FoS 1.5 gate marks on
 panel B (NR-052) and moves its four method notes to the technical
 caption. The appendix pins and the seat markers for rows 6 and 7
 move to the new script commits.
+
+v5 (2026-10-18): the B-20 and B-21 prose pass lands.
+Section 2 gains the decoder and gate math.
+The write covers the r_rotor sizing form, the ring-count decode, and the P_score and twist-ratio definitions.
+The full hard-gate list joins the campaign config table.
+
+Section 3.3 states the steady-and-drifting pair as two observables on two timescales.
+It extends the bow bound to both stations, with the 200-second scope line.
