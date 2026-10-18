@@ -1,0 +1,14 @@
+checks: 44, 0 fail
+strip milestone power (P_mean, P_end, kW):
+  gen  0: 5.85, 5.86
+  gen  6: 5.42, 5.4
+  gen 10: 5.89, 5.89
+  gen 18: 5.78, 5.78
+  gen 22: 5.76, 5.76
+  gen 25: 5.51, 5.52
+  gen 26: 5.31, 5.31
+corner pick objective and power (objective, P_mean, P_end):
+  i1-g13-i1: 60.646, 6.01, 6.07
+  i1-g7-i7: 58.864, 5.33, 5.36
+  i2-g21-i4: 33.704, 5.59, 5.59
+  i3-g26-i8: 33.812, 5.9, 5.9

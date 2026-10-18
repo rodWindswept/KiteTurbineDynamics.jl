@@ -2382,3 +2382,63 @@ No value changes. Each row keeps its sign-off basis. The
 2026-10-18 feedback in `docs/reporting/feedback-on-report.md`
 prompts this change.
 
+## Source row: NR-062, the strip milestone power at the seven best-so-far steps (2026-10-18, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-062 | Window power at the seven strip milestones (the NR-036 steps) | The seven pairs sit in the block below | kW | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). Parity against `island_3/telemetry.csv` bit for bit on all seven rows | signed (science-validator, 2026-10-18) |
+
+| Milestone | P_mean, P_end (kW) |
+|---|---|
+| gen 0 | 5.85, 5.86 |
+| gen 6 | 5.42, 5.4 |
+| gen 10 | 5.89, 5.89 |
+| gen 18 | 5.78, 5.78 |
+
+| Milestone | P_mean, P_end (kW) |
+|---|---|
+| gen 22 | 5.76, 5.76 |
+| gen 25 | 5.51, 5.52 |
+| gen 26 | 5.31, 5.31 |
+
+Sign-off basis:
+
+- The read is a direct extract read. This seat re-reads the seven rows against the island 3 telemetry at data commit `dd3cc6a`.
+
+- The milestone order and identities read from NR-036. The fitness digits agree digit for digit at all seven steps.
+
+- The display forms print the extract digits verbatim. The strip kit certifies those digits.
+
+Boundaries:
+
+- The rows are window statistics of the recorded island 3 run. They are not a new capture.
+
+- The gen 6 P_end prints 5.4 as recorded. That reads as two significant digits, not a rounding defect.
+
+## Source row: NR-063, the corner pick power (2026-10-18, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-063 | Window power at the four corner picks (the NR-051 identities) | The four pairs sit in the block below | kW | `docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv` (certified). Parity against the island telemetry bit for bit on all four rows | signed (science-validator, 2026-10-18) |
+
+| Pick | P_mean, P_end (kW) |
+|---|---|
+| i1-g13-i1 | 6.01, 6.07 |
+| i1-g7-i7 | 5.33, 5.36 |
+| i2-g21-i4 | 5.59, 5.59 |
+| i3-g26-i8 | 5.9, 5.9 |
+
+Sign-off basis:
+
+- The read is a direct extract read. This seat re-reads the four rows against the island telemetry at data commit `dd3cc6a`.
+
+- The pick identities and the objectives read from NR-051. The objective digits agree at 3 dp on all four picks.
+
+- The telemetry carries no standalone airborne-mass column. The per-pick mass metric reads the NR-051 objective in kg-equivalent. A true mass decomposition per pick would take a new derivation.
+
+Boundaries:
+
+- The rows are window statistics of the recorded runs. They are not a new capture.
+
+- No mass decomposition rides this row.
+
