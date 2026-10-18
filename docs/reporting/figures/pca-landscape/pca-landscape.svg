@@ -553,7 +553,7 @@ z
     <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="457.743459" y="71.274144" transform="rotate(-0 457.743459 71.274144)">cell mean of the search</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="457.743459" y="91.278431" transform="rotate(-0 457.743459 91.278431)">objective (kg)</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="457.743459" y="91.278431" transform="rotate(-0 457.743459 91.278431)">objective (kg-equivalent)</text>
    </g>
    <g id="text_22">
     <text style="font-size: 7.4px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="457.743459" y="236.309514" transform="rotate(-0 457.743459 236.309514)">bright = lower objective</text>
@@ -632,75 +632,78 @@ z
     <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="644.350576" y="68.773608" transform="rotate(-0 644.350576 68.773608)">PC1 — 22.4% of variance</text>
    </g>
    <g id="text_29">
-    <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #20558a" x="644.350576" y="116.28379" transform="rotate(-0 644.350576 116.28379)">+ PC1 ↑</text>
+    <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #20558a" x="644.350576" y="96.279503" transform="rotate(-0 644.350576 96.279503)">+ PC1 ↑</text>
    </g>
    <g id="text_30">
-    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="142.539417" transform="rotate(-0 644.350576 142.539417)">larger main-rotor blades (x9)</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="122.53513" transform="rotate(-0 644.350576 122.53513)">larger main-rotor blades (x9)</text>
    </g>
    <g id="text_31">
-    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="155.042097" transform="rotate(-0 644.350576 155.042097)">wider spacing (x3), ground ring (x2)</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="148.790757" transform="rotate(-0 644.350576 148.790757)">wider spacing (x3),</text>
    </g>
    <g id="text_32">
-    <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #a34a12" x="644.350576" y="193.800403" transform="rotate(-0 644.350576 193.800403)">− PC1 ↓</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="652.021439" y="175.046384" transform="rotate(-0 652.021439 175.046384)">ground ring (x2)</text>
    </g>
    <g id="text_33">
-    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="220.05603" transform="rotate(-0 644.350576 220.05603)">more TRPT lines (x4)</text>
+    <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #a34a12" x="644.350576" y="201.302011" transform="rotate(-0 644.350576 201.302011)">− PC1 ↓</text>
    </g>
    <g id="text_34">
-    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="232.55871" transform="rotate(-0 644.350576 232.55871)">more rotors (x6)</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="227.557638" transform="rotate(-0 644.350576 227.557638)">more TRPT lines (x4)</text>
    </g>
    <g id="text_35">
-    <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="644.350576" y="286.320232" transform="rotate(-0 644.350576 286.320232)">direction reads from the loadings</text>
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="644.350576" y="253.813265" transform="rotate(-0 644.350576 253.813265)">more rotors (x6)</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="644.350576" y="291.321304" transform="rotate(-0 644.350576 291.321304)">direction reads from the loadings</text>
    </g>
   </g>
   <g id="axes_5">
-   <g id="text_36">
+   <g id="text_37">
     <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="46.7712" y="380.777976" transform="rotate(-0 46.7712 380.777976)">THE THREE JOURNEYS</text>
    </g>
-   <g id="text_37">
+   <g id="text_38">
     <text style="font-size: 7.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="398.656808" transform="rotate(-0 46.7712 398.656808)">930 designs · three islands · 31 generations each</text>
    </g>
-   <g id="text_38">
-    <text style="font-size: 7.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="414.910291" transform="rotate(-0 46.7712 414.910291)">one common seed at 36.109 (kg)</text>
-   </g>
    <g id="text_39">
-    <text style="font-size: 7.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="431.163775" transform="rotate(-0 46.7712 431.163775)">winner: island 3 at 27.364 (kg)</text>
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="414.910291" transform="rotate(-0 46.7712 414.910291)">one common seed at 36.109 (kg-equivalent)</text>
    </g>
    <g id="text_40">
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="431.163775" transform="rotate(-0 46.7712 431.163775)">winner: island 3 at 27.364 (kg-equivalent)</text>
+   </g>
+   <g id="text_41">
     <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="449.042607" transform="rotate(-0 46.7712 449.042607)">each line: the island best-so-far path, one step per generation</text>
    </g>
   </g>
   <g id="axes_6">
-   <g id="text_41">
+   <g id="text_42">
     <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="457.743459" y="379.965302" transform="rotate(-0 457.743459 379.965302)">PC2 — 17.3% of variance</text>
    </g>
-   <g id="text_42">
+   <g id="text_43">
     <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #20558a" x="457.743459" y="401.907505" transform="rotate(-0 457.743459 401.907505)">+ PC2 ↑</text>
    </g>
-   <g id="text_43">
+   <g id="text_44">
     <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="500.133514" y="401.907505" transform="rotate(-0 500.133514 401.907505)">deeper second-rotor bank (x8), smaller second blades (x10),</text>
    </g>
-   <g id="text_44">
+   <g id="text_45">
     <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="500.133514" y="414.910291" transform="rotate(-0 500.133514 414.910291)">rings biased toward the ground (x5)</text>
    </g>
-   <g id="text_45">
+   <g id="text_46">
     <text style="font-weight: 700; font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #a34a12" x="457.743459" y="434.414472" transform="rotate(-0 457.743459 434.414472)">− PC2 ↓</text>
    </g>
-   <g id="text_46">
+   <g id="text_47">
     <text style="font-size: 7.6px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="500.133514" y="434.414472" transform="rotate(-0 500.133514 434.414472)">even rings, shallow second bank, larger second blades</text>
    </g>
   </g>
-  <g id="text_47">
+  <g id="text_48">
    <text style="font-weight: 700; font-size: 12.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="46.7712" y="18.648" transform="rotate(-0 46.7712 18.648)">V13 campaign — parameter-space landscape</text>
   </g>
-  <g id="text_48">
-   <text style="font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="37.296" transform="rotate(-0 46.7712 37.296)">the 930-design screen · three DE islands · PC1-PC2 projection of the ten-gene search · colour is the search objective (kg)</text>
-  </g>
   <g id="text_49">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="485.9136" transform="rotate(-0 46.7712 485.9136)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044, NR-045</text>
+   <text style="font-size: 8.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="46.7712" y="37.296" transform="rotate(-0 46.7712 37.296)">the 930-design screen · three DE islands · PC1-PC2 projection of the ten-gene search · colour is the search objective (kg-equivalent)</text>
   </g>
   <g id="text_50">
-   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="506.16" transform="rotate(-0 46.7712 506.16)">projection: z-scored 10-gene matrix, SVD · variance shares NR-044 · script commit e23f226</text>
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="485.9136" transform="rotate(-0 46.7712 485.9136)">source: island telemetry · data commit dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-005, NR-006, NR-044, NR-045</text>
+  </g>
+  <g id="text_51">
+   <text style="font-size: 6.5px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="46.7712" y="506.16" transform="rotate(-0 46.7712 506.16)">projection: z-scored 10-gene matrix, SVD · variance shares NR-044 · script commit d0e410d</text>
   </g>
  </g>
  <defs>

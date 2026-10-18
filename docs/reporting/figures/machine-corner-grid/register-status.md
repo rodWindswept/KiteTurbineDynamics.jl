@@ -22,7 +22,7 @@ two-rotor / one-rotor) travels with NR-051.
 |---|---|---|
 | Corner names | `low PC1 / low PC2`, `low PC1 / high PC2`, `high PC1 / low PC2`, `high PC1 / high PC2` | NR-051 table |
 | Identity tags | `i1-g13-i1`, `i1-g7-i7`, `i2-g21-i4`, `i3-g26-i8` | NR-051 |
-| Objectives | `60.646`, `58.864`, `33.704`, `33.812` kg at 3 dp | NR-051 display forms |
+| Objectives | `60.646`, `58.864`, `33.704`, `33.812` kg-equivalent at 3 dp | NR-051 display forms |
 | Scale bar | 5 m | production value, manifest |
 
 The drawn numerals: the four objectives, the scale bar and the stamps.
@@ -72,3 +72,9 @@ hashes. No drawn value moves.
 107 checks): the drawn set reads NR-051 to the signed digits, and the
 seat marker cites NR-044 and NR-051 only. The v0.51 copy counter-read
 closes clean (`ed95cf1`, 304 checks). No drawn value moves.
+
+**Delta** v5 (2026-10-18): T4-8. The drawn objective label read `kg`. The
+subtitle and the label now read `kg-equivalent`, the unit the prose uses
+for the penalised score. The digits are unchanged and still cite NR-051.
+Three runs stay byte-identical across all five outputs. Script commit
+`d0e410d`. No drawn value moves.

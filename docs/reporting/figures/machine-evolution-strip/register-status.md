@@ -31,7 +31,7 @@ row 1 and the winner at row 26.
 - Layout: two rows, four panels above and three below. One shared scale
   and one window hold across all seven panels.
 - Objective labels: the label strip carries the search objective under
-  each panel, in kg. The values cite NR-036. This is a declared delta to
+  each panel, in kg-equivalent. The values cite NR-036. This is a declared delta to
   the geometry-only rule. The strip prints no power value and no
   airborne mass value.
 - Square axes: both scales read 16.601332567 px/m. The delta reads
@@ -83,3 +83,9 @@ outputs (png, svg, pdf, manifest, checks.log). Verified 2026-10-11 at
 **Delta** (2026-10-14): the hub-name retirement (round-6 comment 1).
 The final-panel caption line reads "topmost ring radius 4.580 m".
 Text only, no render moves; the strip pins stand.
+
+**Delta** v3 (2026-10-18): T4-8. The drawn label under each machine read
+`kg`. The subtitle and the label now read `kg-equivalent`. The caption
+already read kg-equivalent, so the drawn form now follows the text. Three
+runs stay byte-identical across all five outputs. Script commit `d0e410d`.
+No drawn value moves.

@@ -78,3 +78,10 @@ byte-identical across all five outputs. No value moves.
 
 **Form note** (2026-10-15): four script comments hold the old ring
 name until the next re-render sweep. No drawn text is affected.
+
+**Delta** v3 (2026-10-18): T4-9. The four callouts and the legend were too
+small at page size. The callouts read 13 pt, the legend 11.5 pt and the
+scale label 11.5 pt. The R6 anchor moves left and its leader shortens, so
+the label stays inside the clip box at the larger size. Three runs stay
+byte-identical across all five outputs. Script commit `d0e410d`. No drawn
+value moves.

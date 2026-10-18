@@ -61,10 +61,19 @@ Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 hashes. Self-check: two consecutive runs stay byte-identical. The run
 log sits at `checks.log`.
 
-Hashes at v3 (the cite fix and stamp re-cut, 2026-10-14):
+Hashes at v4 (the wrapped loading line and kg-equivalent labels, 2026-10-18):
 
-    pca-landscape.svg  04d77ecf48171685aed7dee872b1fab4
-    pca-landscape.pdf  90ff939cce21563fe8016da7633e864e
-    pca-landscape.png  bc06737e003e4caa63dbd42a4f845fec
-    label-ledger.txt   fdb90d3b97edffc536d903ac9024ca65
-    manifest.json      53c18f0f3e852d64a3e4ddcdceaf5719
+    pca-landscape.svg  e923bf490c4a16f62950b5958b4dd856
+    pca-landscape.pdf  26a4f692cbd5fbac6ba0f05245ebc4ed
+    pca-landscape.png  c3c0ea626dca2e676eea311fa8304c46
+    label-ledger.txt   460d60a6f0b60c38d0701099b30c46f6
+    manifest.json      7e1ba75bd79dcfc06c3c8c59fa35ecd6
+
+**Delta** v4 (2026-10-18): T4-6 and T4-8. T4-6: the PC1 panel line `wider
+spacing (x3), ground ring (x2)` ran past the axes and lost its closing
+parenthesis at the page margin. The panel now draws one row per line, with
+the continuation indented, so the text stays inside the box. T4-8: the
+legend, the subtitle and the two journey values read the search objective
+in `kg`. They now read `kg-equivalent`, the unit the prose uses. Three runs
+stay byte-identical across all five outputs. Script commit `d0e410d`. No
+drawn value moves.

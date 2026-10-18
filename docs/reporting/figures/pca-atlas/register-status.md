@@ -39,10 +39,18 @@ The manifest pins the inputs and the output hashes. Two runs stay
 byte-identical. The run log sits at `checks.log`. The toolchain pin is
 CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4 (`/usr/bin/python3`).
 
-Hashes at v3 (the cite fix and stamp re-cut, 2026-10-14):
+Hashes at v4 (three significant figures on the gene bars, 2026-10-18):
 
-    pca-atlas.svg      96b333c6362655f810961b15eaa67f69
-    pca-atlas.pdf      433d3e5578a53b5e1dfa4a0962b6f0a6
-    pca-atlas.png      f1ffbdddba814b64cd5110eea5b466fb
-    label-ledger.txt   0372772afe15ceb12acd548e73e5895d
-    manifest.json      f3fc89912216b3f79c294c6fb089dc30
+    pca-atlas.svg      7ce307f7f34d94cc103f72eca8517508
+    pca-atlas.pdf      75007041122f0707c4ee51757e26b054
+    pca-atlas.png      f999bf2404f8ad59701f54be80e62c02
+    label-ledger.txt   10162700e9754ba4d70c4b0bb10bd90a
+    manifest.json      8784bbe5f75a52262b91ecc3829fb0b6
+
+**Delta** v4 (2026-10-18): T4-7. The gene colour bars printed with `:.3g`,
+which drops trailing zeros. A tick read `1` or `1.5` against a prose claim
+of three significant figures. `sig3()` keeps the zeros: `1.00`, `1.50`,
+`2.00`, `10.0`, `16.0`, `22.0`, `0.500`, `0.660`, `0.820`. The tick labels
+are ledger strings, so `label-ledger.txt` moves with them. Three runs stay
+byte-identical across all five outputs. Script commit `d0e410d`. No signed
+value moves.

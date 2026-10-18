@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/pca-atlas/pca-atlas.py --script-commit e23f226",
+  "command": "/usr/bin/python3 docs/reporting/figures/pca-atlas/pca-atlas.py --script-commit d0e410d",
   "data_commit": "dd3cc6a",
   "inputs": {
     "register_rows": [
@@ -25,17 +25,17 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76",
-    "pca-atlas.pdf": "aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8",
-    "pca-atlas.png": "1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8",
-    "pca-atlas.svg": "28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c"
+    "label-ledger.txt": "ab4bb0ecf4cc6cdd5ed1e0fc0f2ad06331191935cc36a62a07844719de4c03e9",
+    "pca-atlas.pdf": "122c4e5c510b52f7b47c0380eae27ff16c884079fc50975397ffb50f53967cc3",
+    "pca-atlas.png": "41a55c9fce27d2aeece91c32a6907ec59b6e252f4276f9ff1899cc8b88f953ac",
+    "pca-atlas.svg": "5cdcd2e25439a04b4f313c40474cd899c3975e75f68959c670b285ba0a856910"
   },
   "precision": "gene values at 3 significant figures on the colour bars; panel scales as drawn",
   "script": {
     "path": "docs/reporting/figures/pca-atlas/pca-atlas.py",
-    "sha256": "2a45872a89874c13c563366a3e2484cd1d93ebd1f4e8ba3eec73f727351b1101"
+    "sha256": "c9d97477f07b1e9c5f4e0145832ccf7759a177f62d155fd4b72bfd08f7951376"
   },
-  "script_commit": "e23f226",
+  "script_commit": "d0e410d",
   "slug": "pca-atlas",
   "toolchain": {
     "matplotlib": "3.10.8",

@@ -2,10 +2,10 @@
     "set": "machine-evolution-strip",
     "mode": "strip",
     "slug": "machine-evolution-strip",
-    "script_commit": "74cfef9",
+    "script_commit": "d0e410d",
     "script": {
         "path": "docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl",
-        "sha256": "f277fb7b06b51229b239ef870ca43be363181f233d4a8864fa59f3c726ca0a90"
+        "sha256": "6577244d7ca7fa41d7f0340257184e2b17c50000bec160b9bb18bf2e8ef51856"
     },
     "toolchain": {
         "julia": "1.12.5",
@@ -267,11 +267,11 @@
             }
         }
     ],
-    "command": "scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl --script-commit 74cfef9",
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl --script-commit d0e410d",
     "outputs": {
-        "machine-evolution-strip.pdf": "6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844",
-        "machine-evolution-strip.svg": "6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e",
-        "checks.log": "b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde",
-        "machine-evolution-strip.png": "8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6"
+        "machine-evolution-strip.pdf": "1a5ae79cbc60da3b91d6a3be97bff34a028d20f38dd56ced6fc04531e74d4609",
+        "machine-evolution-strip.svg": "8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2",
+        "checks.log": "24f27944e9ef0b875d05cc0746970eece163d233d3c05d5f6025d6345035526d",
+        "machine-evolution-strip.png": "f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a"
     }
 }

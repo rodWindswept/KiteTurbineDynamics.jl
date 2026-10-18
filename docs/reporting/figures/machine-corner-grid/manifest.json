@@ -3,10 +3,10 @@
     "mode": "family",
     "variant": "corner-grid",
     "slug": "machine-corner-grid",
-    "script_commit": "a4b4057",
+    "script_commit": "d0e410d",
     "script": {
         "path": "docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl",
-        "sha256": "9fd0164495faf09692cb8837884e963fcbed2a04ab80b182ee0e662e935e4106"
+        "sha256": "8dd63f2e6be993a52288815222898beda4e2fda2f1c36d715bfe53833e988488"
     },
     "toolchain": {
         "julia": "1.12.5",
@@ -205,11 +205,11 @@
             }
         }
     ],
-    "command": "scripts/ktd-julia docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl --script-commit a4b4057",
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-corner-grid/machine-corner-grid.jl --script-commit d0e410d",
     "outputs": {
-        "machine-corner-grid.pdf": "298a0f8e4e674dc8e13b64715ee0dfd383e7671d9f3c262a376abe7d5b5114c6",
-        "checks.log": "e6bcfca931d36089dd2a8d6e9c8414fb49230c0d2110717176cf1e0ae385ffbe",
-        "machine-corner-grid.png": "517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568",
-        "machine-corner-grid.svg": "b2e4055d39b7ff72d1e10ea11f59d3bbc8af145ef8a30dc83b7016530b4de0b2"
+        "machine-corner-grid.pdf": "0c1c31e14a39e0b0a463dee56d42688619e600faf8e06a4341469c81ba7fabad",
+        "checks.log": "8e0a042363ea5dcd1a1644c4583f01386c4601f67bf90e5d984ce4514c48b1d9",
+        "machine-corner-grid.png": "bbc9a744f27a95bc61781db38d8389a573f09b83c36a795a00e5362086d11cf7",
+        "machine-corner-grid.svg": "526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4"
     }
 }
