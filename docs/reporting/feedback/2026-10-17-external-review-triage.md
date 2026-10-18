@@ -26,9 +26,9 @@ Priority tiers:
 
 | ID | Item | Status |
 |---|---|---|
-| T2-1 | Power-speed closure off ~1.07%: P_mean 5.309 kW vs k·ω³ 5.366 kW. τ 396.76 vs k·ω² 401.03. State how P_mean and τ are averaged. | OPEN |
-| T2-2 | Twist-gate margin quoted at loosest limit 2.91× (δcrit) while figure shows realisability floor 2.13× and crossing gate 2.28×. Standardise %-margin formula across the p.9 table. | OPEN |
-| T2-3 | Blade-scale 0.82 vs true 0.8213255 (NR-050/NR-043/NR-011). Built span 1.4994 not 1.4970. Record unrounded float. | OPEN |
+| T2-1 | Power-speed closure off ~1.07%: P_mean 5.309 kW vs k·ω³ 5.366 kW. τ 396.76 vs k·ω² 401.03. State how P_mean and τ are averaged. | DONE (`580d33b`) |
+| T2-2 | Twist-gate margin quoted at loosest limit 2.91× (δcrit) while figure shows realisability floor 2.13× and crossing gate 2.28×. Standardise %-margin formula across the p.9 table. | DONE (`e67a407`) |
+| T2-3 | Blade-scale 0.82 vs true 0.8213255 (NR-050/NR-043/NR-011). Built span 1.4994 not 1.4970. Record unrounded float. | DONE (`e67a407`) |
 | T2-4 | Provenance commit strings differ: §3.4 inline (dd5a9dd/0b8948d/b587c50) vs appendix (dd3cc6a/1af63fc). Reconcile. | OPEN |
 | T2-5 | Objective score rounding: 25.698 + 1.665 = 27.363 not 27.364. Add a rounding note. | OPEN |
 | T2-6 | NR-006 says "gen 1" but 0-indexed convention (gen 0) used elsewhere. Standardise to gen 0. | OPEN |
@@ -38,13 +38,13 @@ Priority tiers:
 | ID | Item | Status |
 |---|---|---|
 | T3-1 | 10-gene vector never enumerated with bounds and decode equations (§2.1, §2.2.1). Add a parameter table. | OPEN |
-| T3-2 | r_rotor power-sizing formula vs r_hub never defined (§2.1). State the formula and the offset. | OPEN |
+| T3-2 | r_rotor power-sizing formula vs r_hub never defined (§2.1). State the formula and the offset. | DONE (`e67a407`) |
 | T3-3 | Objective penalty seam: P_score, swing, twist_ratio, r=1 singularity, clearance 1.5 m threshold not defined in §2.4. | OPEN |
 | T3-4 | DE hyperparameters missing: N_pop=10, 31 gens, mutation scheme, F, CR, island isolation. | OPEN |
 | T3-5 | "pre-fold winner", "folded class", "cp fix", "span shrink" undefined (§2.2.2). | OPEN |
 | T3-6 | R5 zero axial share is physically tension, not "no load" (§3.4). Explain the cone-flare tension. | OPEN |
 | T3-7 | PCA PC2 dominated by inactive genes (bank_bottom, blade_scale_bottom) when rotor_count equals 1. Add caveat. | OPEN |
-| T3-8 | Shaft bow does not converge (0.209 to 0.613 to 0.833 m). State whether it asymptotes and at what duration. | OPEN |
+| T3-8 | Shaft bow does not converge (0.209 to 0.613 to 0.833 m). State whether it asymptotes and at what duration. | DONE (`bd628af`) |
 | T3-9 | P_mean vs k·ω³ ~1.07% offset unexplained (overlaps T2-1). Also note fixed-k couples radius search with TSR. | OPEN |
 
 ## T4: minor or formatting
