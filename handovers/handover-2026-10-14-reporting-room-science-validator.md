@@ -1,13 +1,14 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `33dfe32` on `bank-derate-cos2p65`.
+**Base:** branch tip `bfb2896` on `bank-derate-cos2p65`.
 **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
 **Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
 **Updated** 2026-10-16 for the value-claims ledger counter-read.
 **Updated** 2026-10-18 for the NR-060 sign, the counter-read amend, the NR-020 bank note and the T5 close-out rows.
 **Updated** 2026-10-18 for the NR-046 re-pin and the NR-061 six-class split sign.
 **Updated** 2026-10-18 for the register display round (19 rows print at four significant digits).
+**Updated** 2026-10-18 for the NR-062 and NR-063 signs (the fig Batch B metric lists).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -38,6 +39,8 @@ The audit checks can fan out to sub-agents when the sections are independent.
 4. **T5 close-out rows.** T5-1 unsigned failure-ledger numbers and T5-2 Daisy anchor values take register rows and signs at this desk before the release close-out.
 
 ## Closed, last (evidence index)
+
+- The NR-062 and NR-063 signs land at `bfb2896`. The fig Batch B metric cards get their values. The strip milestones print P_mean and P_end at 5.85/5.86 down to 5.31/5.31. The corner picks print P_mean and P_end at 6.01/6.07, 5.33/5.36, 5.59/5.59 and 5.9/5.9. The objectives cross-check NR-036 and NR-051 digit for digit. The telemetry parity reads bit for bit. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-fig-metric-lists-sign.md`. Checker `scratch/sv_fig_metric_lists_check.py`, 44 checks, 0 fail.
 
 - The register display round lands at `33dfe32`. The 19 science rows with long decimals print at four significant digits. The fitness rows print the unit kg-equivalent. The NR-053 dastar form moves to δα*. Full precision and the NR-043 sha256 move to `docs/reporting/register-manifest.md`. Evidence `scratch/sv_register_display_2026-10-18.log`. The aero half landed at `d498ab9`. The register appendix Status-column collapse sits with the builder seat. All 61 rows read signed at this desk's count.
 
@@ -160,4 +163,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the NR-061 counter-read waits on the aero seat. The draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the NR-061 counter-read closed at the aero seat (`97d15c9`). The draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The fig Batch B metric cards are unblocked. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
