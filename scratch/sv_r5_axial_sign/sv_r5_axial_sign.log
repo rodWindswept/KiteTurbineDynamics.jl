@@ -1,0 +1,38 @@
+sv_r5_axial_sign / signed axial force per ring (science-validator seat)
+generated: 2026-10-18T12:51:44.477
+dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
+physics era: post-95c385d_wind-authority
+computing commit: b0972c0616fe7156e530e34af8bc19134d199c0a
+genome (raw)       = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0370201857788965, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+genome (evaluated) = [4.57997905482005, 0.8036829846088207, 2.720554022272866, 3.0, -0.8, 1.0, 7.088131460323565, 22.0, 0.8213255027884769, 0.19999999999999996]
+decoded: n_lines=3 rings=6 n_active=1 r_hub=4.57997905482005 r_bot=0.8036829846088207
+clearance = 5.468123977660059 m
+tap first call: s=1 t=2.8987873697672758e-5 | dt=2.8987873697672758e-5 total_n=1724859
+eval wall = 42.5 s
+
+== parity certificate vs recorded cold re-eval (scratch/sv_p0_winner_reeval.txt) ==
+  fitness      got=27.3635412663488 expected=27.3635412663488 |diff|=0.0 EXACT
+  P_mean       got=5.3087794439367935 expected=5.3087794439367935 |diff|=0.0 EXACT
+  P_end        got=5.314113662272673 expected=5.314113662272673 |diff|=0.0 EXACT
+  FoS_min      got=14.971791422208508 expected=14.971791422208508 |diff|=0.0 EXACT
+  util_a       got=0.06679174086635262 expected=0.06679174086635262 |diff|=0.0 EXACT
+  util_b       got=5.334714158942919e-7 expected=5.334714158942919e-7 |diff|=0.0 EXACT
+  T_lift       got=324.1250954336462 expected=324.1250954336462 |diff|=0.0 EXACT
+  twist_ratio  got=0.4393474253185575 expected=0.4393474253185575 |diff|=0.0 EXACT
+  ω_eq         got=10.169820334285198 expected=10.169820334285198 |diff|=0.0 EXACT
+parity: BIT-EXACT ON ALL NINE FIELDS
+capture: s = 1724859, t = 49.99999483862295 s  (final integration step of the measurement run)
+
+== signed axial force per ring (compression +ve; ring_element_analysis.jl line 20) ==
+R2 | N_min=22.35760062105649 N_max=82.39294817129583 | N/Ncrit_min=0.009015326315615073 N/Ncrit_max=0.033223570205929 | beams=3
+R3 | N_min=41.34276294957561 N_max=83.18357709739479 | N/Ncrit_min=0.016670773626241305 N/Ncrit_max=0.03354237801917142 | beams=3
+R4 | N_min=43.317261460565575 N_max=70.36825509895282 | N/Ncrit_min=0.017466956932669357 N/Ncrit_max=0.028374815022862057 | beams=3
+R5 | N_min=-157.62246416260894 N_max=-142.7923499969138 | N/Ncrit_min=-0.09240481892804314 N/Ncrit_max=-0.08371079157957116 | beams=3
+R6 | N_min=211.69268890881239 N_max=244.9646727077092 | N/Ncrit_min=0.05748643758790856 N/Ncrit_max=0.06652164721153939 | beams=3
+
+== R5 per-beam signed values (full precision) ==
+R5 beam 1 | N=-157.62246416260894 | N_crit=1705.7818627982122 | N/Ncrit=-0.09240481892804314
+R5 beam 2 | N=-142.7923499969138 | N_crit=1705.7818627982122 | N/Ncrit=-0.08371079157957116
+R5 beam 3 | N=-148.87563768789266 | N_crit=1705.7818627982122 | N/Ncrit=-0.08727706685992834
+k_mppt_ref at capture = 2.24
+SV_R5_AXIAL_DONE

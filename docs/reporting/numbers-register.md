@@ -2183,3 +2183,47 @@ Reading rules:
 
 Evidence: `scratch/sv_nr059_scope_check.py` and its log, plus the counter-read set `scratch/av_nr059_window_yshare.jl` and its log.
 
+## Source row: NR-060, R5 signed axial force at the winner capture (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-060 | R5 signed axial force at the winner capture | -157.62246416260894 to -142.7923499969138 (tension), three beams, N/Ncrit -0.09240481892804314 to -0.08371079157957116 | N | Own re-run at the science seat, scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl, same evaluator chain as scripts/extract_pair_capture.jl, parity bit-exact on nine recorded cold re-eval fields | signed (science-validator, 2026-10-18) |
+
+Reading rules:
+
+- The display form reads -157.622 to -142.792 (tension) at 3 dp. The share display form reads -0.0924 to -0.0837 at 4 dp.
+
+- Full precision. Beam 1 reads -157.62246416260894. Beam 2 reads -142.7923499969138. Beam 3 reads -148.87563768789266.
+
+- Full precision shares. Beam 1 reads -0.09240481892804314. Beam 2 reads -0.08371079157957116. Beam 3 reads -0.08727706685992834.
+
+- N_crit reads 1705.7818627982122 on all three beams. The closure reads N over N_crit, bit-exact on every beam.
+
+- Sign convention. Compression positive (src/ring_element_analysis.jl lines 20, 239 and 272). A negative N reads tension.
+
+- The ring check clips tension. It scores the worst-utilisation beam with max(N, 0) over N_crit (src/sim_frame.jl line 406). The axial share in NR-021 reads 0.0 on R5 for that reason.
+
+Sign-off basis:
+
+- Pins. Exact line pins at src/ring_element_analysis.jl lines 20, 239, 272 and 636, src/sim_frame.jl lines 391 and 406, scripts/compute_seeds.jl line 36, scripts/extract_pair_capture.jl line 52.
+
+- Identity. Blob equality launch equals HEAD equals origin for src/ring_element_analysis.jl, src/sim_frame.jl, scripts/compute_seeds.jl and the winner CSV. The extract script reads HEAD equals origin. It post-dates the launch.
+
+- Closure. The run parity reads bit-exact on all nine recorded cold re-eval fields. Fitness 27.3635412663488. P_mean 5.3087794439367935. P_end 5.314113662272673. FoS_min 14.971791422208508. util_a 0.06679174086635262. util_b 5.334714158942919e-7. T_lift 324.1250954336462. twist_ratio 0.4393474253185575. ω_eq 10.169820334285198.
+
+- Census. Three beams on every ring, R2 to R6. All three R5 beams read negative N.
+
+Boundaries:
+
+- One capture instant. The final integration step of the measurement run, s equals 1724859 at t equals 49.99999483862295 s. This is not a window statistic.
+
+- The other rings read compression in the same capture. R2 to R4 and the hub R6 all hold positive N minima. This row signs the R5 values only.
+
+- The 2.5 to 2.8 times comparison in the aero receipt is prose over this row and NR-021. It is not a signed value of its own.
+
+Counter-read requested from the aero seat.
+
+Evidence: scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl and its log, scratch/sv_r5_axial_sign_check.py and its log.
+
