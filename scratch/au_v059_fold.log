@@ -1,0 +1,40 @@
+# Author fold v0.59 — the close
+
+Base md5 `5fa159ce93eab1791effe314d3360566`
+
+T3-3   matches=1
+SEAM   matches=1
+CLOSE  matches=1
+VER    matches=1
+
+lines 1186 to 1207, words 8916 to 9051
+hunks 4, added 27, removed 6
+output md5 `a6e7bd32a1e7f57307dc65e6cd422754`
+
+## Declared token diff
+
+gained: 0.59. x1, 10, x1, 15, x1, 25, x1, 3.6. x1, 35 x1, 50 x1, 7, x1
+lost:   0.58. x1
+
+## Outside-the-close scan
+
+hits outside: none
+hits inside: programme target x2
+
+## Section 5 shape
+
+section 5 slice words=448
+  para words=3    sentences=1
+  para words=46   sentences=3
+  para words=11   sentences=1
+  para words=67   sentences=5
+  para words=56   sentences=5
+  para words=64   sentences=5
+  para words=11   sentences=1
+  para words=15   sentences=2
+  para words=11   sentences=1
+  para words=25   sentences=3
+  para words=35   sentences=3
+  para words=36   sentences=3
+  para words=42   sentences=4
+  para words=26   sentences=2

@@ -331,6 +331,49 @@ This pass folds the winner bow read.
 The bow block lands at section 3.3, after the settle-state read (NR-059).
 No value moves, and no figure byte moves.
 
+v0.58 pass by @author (2026-10-18).
+This pass closes the external review's prose half and the appendix half.
+The T3 follow-ons land: the R5 sentence reads net axial tension and cites
+NR-060 (T3-6 a and b), the gene noun reads radius and operating tip-speed
+ratio (T3-9 d), and the twist charge names the denominator floor (T3-3 e).
+The T4 text items land: the 2.3 heading (T4-1), the n_lines name (T4-3),
+the draft-status note (T4-4), the 3.4 sentence case (T4-11), the
+rotor-count form (T4-12) and NR-036 in the claims appendix (T4-13).
+The figure-provenance appendix takes its own hash block back from the
+plate set: the header states the file-type rule, `system-anatomy`
+declares its TeX to PDF to PNG route, and every exhibit lists its own
+`ledger` and `checks` lines (T4-14).
+Five plates re-cut at `f696930`, so their png, svg and pdf hashes move.
+No signed value moves. STE reads 32 in, 32 out, no category gained.
+
+The close supply sits at `scratch/au_v058_close_supply.md`, authored
+against the v0.57 base under the label "v0.58". This pass took that
+number, so the close folds next as **v0.59**. The supply's text and map
+are unchanged.
+
+v0.59 pass by @author (2026-10-18).
+This pass folds the close, under the science-writer prose pass.
+The seam takes option (b): the section 5 restatement of the section 3.6
+next steps cuts, and one pointer sentence stands in its place.
+The labelled block "Where this goes" lands after the Daisy bracket.
+It carries three movements: the label, the instrument, and the targets.
+The prose pass takes four fixes. The label reads "No sentence in it
+cites a register row", because `line` is a defined term in section 2.1.
+The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+matches the plate rung for rung. The word `yet` leaves the label. The
+Daisy sentence drops `first`, which asserts an order the row does not
+carry. Two verbs read plainer: `follows` and `stay in the record`.
+
+The section 5 body runs five paragraphs, none longer than four
+sentences. No cost or carbon token prints. The outside-the-close scan
+returns no target ink, and `programme target` appears twice, both inside
+the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+per 100 words. The close is the only surface that gained it.
+
+Also in this pass: the twist sentence reads "reaches the crossing limit",
+at the aero seat's line. The gate is strict, so a segment at the limit
+has not crossed it.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

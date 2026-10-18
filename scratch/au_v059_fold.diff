@@ -1,0 +1,47 @@
+--- v0.58
++++ v0.59
+@@ -2,3 +2,3 @@
+ 
+-Internal engineering report. Draft v0.58. Date 2026-10-18.
++Internal engineering report. Draft v0.59. Date 2026-10-18.
+ 
+@@ -491,3 +491,4 @@
+ (NR-046). The twist charge clamps r to one. At r equal to one the
+-segment has crossed, so the ratio r over (1 minus r) would divide by
++segment reaches the crossing limit, so the ratio r over (1 minus r)
++would divide by
+ zero. The code floors the denominator at 1e-6
+@@ -1057,6 +1058,3 @@
+ The next work closes the model gaps.
+-Add blade structural checks and validate lifter modulation.
+-Extend the model to the launch and recovery sequence.
+-Extend the wind cases beyond the steady sheared profile.
+-The large structural margins suggest room for mass reduction, once those checks hold.
++The recommended next steps sit in section 3.6.
+ 
+@@ -1064,2 +1062,25 @@
+ them.]
++
++**Where this goes.** This close is forward-looking. It states what the
++instrument does, then the programme targets. No sentence in it cites a
++register row.
++
++The instrument sizes and scores kite-turbine designs. Its physics model
++follows the published TRPT lineage, and the cross-check names the
++matches and the mismatches. Each dataset carries its era, its commits
++and its geometry fingerprint.
++
++The ladder instrument screens each rung and each length on the corrected
++model. The register, the test suite and the seat checks hold every
++number. Findings, corrections and retractions stay in the record with
++their lessons.
++
++The validated rung is the machine this report covers. The programme
++targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
++above it is a programme target, not a result. No repo artifact backs the
++rungs.
++
++The programme takes one validation step at the Daisy scale. The mission
++target is a displaced-cost metric, set out in phase G of the programme
++strategy.
+ 

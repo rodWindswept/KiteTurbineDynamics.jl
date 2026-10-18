@@ -1,0 +1,7 @@
+au_v058_fold_out.md              words=8581 total= 33 per100w=  0.38 em_dash= 2
+[HOOK:ste] au_v058_fold_out.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] au_v058_fold_out.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] au_v058_fold_out.md: passive_voice x5 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] au_v058_fold_out.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] au_v058_fold_out.md: long_paragraph(>6s) x24 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] au_v058_fold_out.md: em_dash x2 -> no em dash — use a period or comma. (ste-writing)

@@ -1,0 +1,27 @@
+# Author fold v0.58 — T3/T4 prose and appendix
+
+Base `docs/reporting/drafts/2026-10-08-report-first-draft.md`
+base md5 `92db7689dd4c4170f1228bb084e41bfe`
+
+VER     matches=1
+T4-1    matches=1
+T3-9    matches=1
+T3-3    matches=1
+T3-6    matches=1
+T4-3    matches=1
+T4-4    matches=1
+T4-11   matches=1
+T4-12   matches=1
+T4-13   matches=1
+T4-14   matches=1
+
+old lines 1175, new lines 1186, words 8831 to 8916
+diff hunks 16, added 42, removed 31
+
+output md5 `5fa159ce93eab1791effe314d3360566`
+
+## Declared token diff
+
+gained: 0.58. x1, 1 x1, 1207 x1, 18. x1, 1e-6 x1, 2.3 x1, 5 x1, NR-036 x1, NR-060 x1, n_lines x1
+lost:   0.57. x1, 16. x1, 3.4 x1, 3.6 x1, n_Lines x1
+

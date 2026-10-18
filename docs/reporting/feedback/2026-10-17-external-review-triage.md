@@ -51,21 +51,21 @@ Priority tiers:
 
 | ID | Item | Status |
 |---|---|---|
-| T4-1 | Missing section heading 2.3 (jumps 2.2.2 to 2.4). cross-ref on p.10. | OPEN |
+| T4-1 | Missing section heading 2.3 (jumps 2.2.2 to 2.4). cross-ref on p.10. | DONE (`v0.58` fold): the heading sits before the load law. Numbering runs 2.1 to 2.6. NR-047's section 2.3 reference now resolves |
 | T4-2 | system-anatomy inline placeholder on p.4 vs end-of-doc figure. Number the captions. | OPEN |
-| T4-3 | n_Lines vs n_lines capitalization (§2.1). | OPEN |
-| T4-4 | Draft-status note says "3.4 to 3.6 carry text" but 1 to 5 all populated now. | OPEN |
+| T4-3 | n_Lines vs n_lines capitalization (§2.1). | DONE (`v0.58` fold): reads `n_lines`, matching NR-011, NR-044 and the atlas plate |
+| T4-4 | Draft-status note says "3.4 to 3.6 carry text" but 1 to 5 all populated now. | DONE (`v0.58` fold): reads "Sections 1 to 5 carry their text" |
 | T4-5 | Ranneberg attribution verify (EK_FT_0018): pending source call. | DONE (`55a1a57`): dropped |
 | T4-6 | pca-landscape top panel "ground ring (x2)" clipped. | OPEN |
 | T4-7 | pca-atlas colour bars print 1 or 2 sig figs, prose claims 3. | OPEN |
 | T4-8 | kg vs kg-equivalent labels on pca-landscape, machine-corner-grid, machine-evolution-strip. | OPEN |
 | T4-9 | machine-winner-hero top-panel callout font too small. | OPEN |
-| T4-10 | Duplicate caption blocks and repeated body paragraphs (sections 3.3 to 3.5). | OPEN |
-| T4-11 | "3.4 The levers of Performance" to sentence case "performance". | OPEN |
-| T4-12 | "rotorcount" to "rotor-count" (§4.2). | OPEN |
-| T4-13 | Double period "reject_twist.." and add NR-036 to Claims appendix. | OPEN |
-| T4-14 | System anatomy plate missing svg hash line. ledger vs checks naming. | OPEN |
-| T4-15 | NR-020 note 0.22540=20° bank, 0.26386=0° bank. | OPEN |
+| T4-10 | Duplicate caption blocks and repeated body paragraphs (sections 3.3 to 3.5). | OPEN. Needs the built doc. The duplicate sits in the rendered caption blocks. Author pen, next pass |
+| T4-11 | "3.4 The levers of Performance" to sentence case "performance". | DONE (`v0.58` fold) |
+| T4-12 | "rotorcount" to "rotor-count" (§4.2). | DONE (`v0.58` fold): prose only. The dataset path `..._rotorcount_bankderate2` keeps its spelling |
+| T4-13 | Double period "reject_twist.." and add NR-036 to Claims appendix. | DONE (`v0.58` fold): NR-036 added; the double period does not exist at source, so it comes from the build. Note for the build pass |
+| T4-14 | System anatomy plate missing svg hash line. ledger vs checks naming. | DONE draft side (`v0.58` fold): the header states the file-type rule. TeX to PDF to PNG carries no `svg`. Every exhibit lists its own `ledger` and `checks` lines. No plate byte moves |
+| T4-15 | NR-020 note 0.22540=20° bank, 0.26386=0° bank. | DONE (`3a6ddde`): the bank note lands in the register with the reading rule |
 
 ## T5: release blockers (already in draft)
 

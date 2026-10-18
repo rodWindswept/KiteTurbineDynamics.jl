@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.57. Date 2026-10-16.
+Internal engineering report. Draft v0.59. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -8,7 +8,7 @@ Numbers come only from signed register rows, cited by row ID.
 A section marked [PENDING] waits on a gate.
 
 **Draft status.** This is an internal draft.
-Sections 3.4 to 3.6 carry their text.
+Sections 1 to 5 carry their text.
 Nomenclature and references stay incomplete.
 
 The physics era is `post-95c385d_wind-authority`. The bank derate
@@ -196,7 +196,7 @@ apart against the line torsion from torque transfer. Holding the lines
 apart is what preserves torque transmission and prevents torsional
 collapse.
 
-The polygon count names the number of lines (n_Lines). A hexagonal
+The polygon count names the number of lines (n_lines). A hexagonal
 polygon connects six lines. Each line meets the ring at one vertex.
 
 For an active rotor, the polygon count equals the blade count. It also
@@ -295,6 +295,8 @@ only (NR-015).
 A short window can sample the decay and misstate the power. The team
 sized the window to outlast the decay.
 
+### 2.3 The operating point and load selection
+
 The generator load follows a power law. The commanded torque reads
 τ = k·ω², so the drawn power reads P = k·ω³. The constant k sets the
 load, and the load sets the speed at which the machine settles.
@@ -309,8 +311,8 @@ The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
 
 A fixed k couples the radius search to the tip-speed ratio. The load
 sets the settle speed, and the radius sets the tip speed for a given
-speed. So the two genes are not independent: changing the radius with
-k held fixed moves the operating tip-speed ratio. The search explored
+speed. So the radius gene and the operating tip-speed ratio are not
+independent: changing the radius with k held fixed moves that ratio. The search explored
 radius under that coupling. The load law kept the same form for every
 candidate, but the speed and radius moved together.
 
@@ -487,9 +489,12 @@ The stationarity add-on reads the window swing against 20 per cent (NR-046).
 
 The swing reads P_range over P_mean, the window power range over its mean
 (NR-046). The twist charge clamps r to one. At r equal to one the
-segment has crossed, so the ratio r over (1 minus r) would divide by
-zero. The clamp keeps the charge finite and continuous up to the crossing
-point (NR-046).
+segment reaches the crossing limit, so the ratio r over (1 minus r)
+would divide by
+zero. The code floors the denominator at 1e-6
+(src/objective_evaluator.jl:1207). The ratio reads one million at the
+limit and stays finite. The twist gate flags a segment that passes its
+limit, so a design at the limit exactly reaches the floor (NR-046).
 
 Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
 of ground clearance fails the clearance gate. A segment past its
@@ -748,7 +753,7 @@ the measurement window. It stopped early: a screen, not a survey.
 This report covers the wind-authority era campaign and the recorded
 corrections that shaped it.
 
-### 3.4 The levers of Performance
+### 3.4 The levers of performance
 
 [Figure seated: figure-map row 6 (ring utilisation plate, slug `ring-utilisation`). Values cite NR-021.]
 
@@ -758,7 +763,7 @@ The topmost rotor ring R6 governs the structural check at the winner operating p
 The window-minimum factor of safety is 14.972 (NR-009).
 At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
-R5 carries pure axial tension, not no load. Its interaction share reads
+R5 carries net axial tension, not no load (NR-060). Its axial share reads
 zero and its utilisation reads tiny, so the factor of safety reads far
 above the others (NR-021).
 
@@ -961,7 +966,7 @@ the topmost ring (2026-08-26).
 geometry. The data from before it then counts no more.
 
   The blade-mass-law correction landed on 2026-08-22. It voided the
-  campaign winners. The rotorcount data was doubly void: it predated
+  campaign winners. The rotor-count data was doubly void: it predated
   the FoS fix, and its rotors sat one ring toward the top.
 
   Superseded is the milder class, not void. The pre-derate campaign
@@ -1051,13 +1056,33 @@ The rapid path takes the rope-break gate placement fix (NR-013 ext2).
 The Daisy anchor ties the model to a measured flight reference.
 
 The next work closes the model gaps.
-Add blade structural checks and validate lifter modulation.
-Extend the model to the launch and recovery sequence.
-Extend the wind cases beyond the steady sheared profile.
-The large structural margins suggest room for mass reduction, once those checks hold.
+The recommended next steps sit in section 3.6.
 
 [Daisy values need register rows before the final report quotes
 them.]
+
+**Where this goes.** This close is forward-looking. It states what the
+instrument does, then the programme targets. No sentence in it cites a
+register row.
+
+The instrument sizes and scores kite-turbine designs. Its physics model
+follows the published TRPT lineage, and the cross-check names the
+matches and the mismatches. Each dataset carries its era, its commits
+and its geometry fingerprint.
+
+The ladder instrument screens each rung and each length on the corrected
+model. The register, the test suite and the seat checks hold every
+number. Findings, corrections and retractions stay in the record with
+their lessons.
+
+The validated rung is the machine this report covers. The programme
+targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
+above it is a programme target, not a result. No repo artifact backs the
+rungs.
+
+The programme takes one validation step at the Daisy scale. The mission
+target is a displaced-cost metric, set out in phase G of the programme
+strategy.
 
 ## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
 
@@ -1095,7 +1120,7 @@ The table ties each headline claim of this report to its evidence and its signed
 | Winner mass | Airborne mass 25.698 kg. | §3.3 | NR-018 |
 | Structural margin | Window-minimum factor of safety 14.972. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
 | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
-| Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006 |
+| Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006, NR-036 |
 | Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path once rejected all three winners at the rope-break gate. The placement fix has landed. | §4.1 | NR-012, NR-013 ext2 |
 | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
 
@@ -1118,6 +1143,11 @@ One row per built exhibit. All eight read dataset commit `dd3cc6a`.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
 ledger. `checks` is the check log.
 
+An exhibit lists a file type only where its route produces one. The
+system anatomy plate renders from TeX to PDF to PNG, so it carries no
+`svg`. An exhibit lists `ledger`, `checks`, or both, as its kit carries
+them.
+
 Ring utilisation plate:
 
 - `png` `bfc744008aafe755679b7f45e543147654a654b002f5c4a70d0ea871bab94ef3`
@@ -1134,10 +1164,10 @@ Twist limit plate:
 
 Machine evolution strip:
 
-- `png` `8e9d1d40684b984059601f31d5fb2daed8f835f6f8184a716280f8cd779e1cb6`
-- `svg` `6c36b0ff1de3b664dac23f8c754481d7a844e7d24d60488e87e6d0a90246d59e`
-- `pdf` `6ce4daba18e3972e5284f7a813aff91be723ee9816deac5f113cfc1eb30a2844`
-- `checks` `b8c654ea55b26f97a03c7fc6acd1049300bda5c188a972136e7eb12ce2c94bde`
+- `png` `f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a`
+- `svg` `8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2`
+- `pdf` `1a5ae79cbc60da3b91d6a3be97bff34a028d20f38dd56ced6fc04531e74d4609`
+- `checks` `24f27944e9ef0b875d05cc0746970eece163d233d3c05d5f6025d6345035526d`
 
 System anatomy plate:
 
@@ -1148,28 +1178,30 @@ System anatomy plate:
 
 Levers landscape:
 
-- `png` `4b1bd3453a6aa20d9b9b0af75eb989212b16df8986c752766edd625ae13d9892`
-- `svg` `94d518bb13c604d4949f9c1011845050d150c4122a357449a8e185f506ae48dc`
-- `pdf` `712e918b0b6ac73335ef2355113f59a2f3c6f63a421407ee122c98cfa6a2ecd7`
-- `ledger` `91282957dd23b9a9919756e9db578404497e1f0a58d11c4824a7550ad5a91c5e`
+- `png` `295315950f82d737c06132100ec88f667a0899d6103d0ede778c09ab4f2213b8`
+- `svg` `1d4433856620ace8b29bb0f187075343962df572123641ce987b514796cece66`
+- `pdf` `79c145ed9a88c577b48796414815a33547c113bfa4ca734e256ae37fabbaf9a8`
+- `ledger` `5fb0426068bcbc2893b510c2273a1aad5096c1b4f35f30b64fce7fdfc145e748`
+- `checks` `ada49fef362d5929215b0172236cff0f898cbb326097385818d4d204eeb05c4f`
 
 Parameter atlas:
 
-- `png` `1e46b70ae65f5557d23bb1a78ab7a75fdc2550a712ac9b2652d31562c67096e8`
-- `svg` `28c032cf27c7412c9e76e0d756967143b7201c1ec4b6fe819498f40fe2021b9c`
-- `pdf` `aede4d29da694a23e9af14c0ccb72f1932bf09a23b61adcf2095391c69a375b8`
-- `ledger` `d3a2bcb1208db0bf0a4e5eb061620d9e73e99e776dc091dd26c067a2324d6f76`
+- `png` `41a55c9fce27d2aeece91c32a6907ec59b6e252f4276f9ff1899cc8b88f953ac`
+- `svg` `5cdcd2e25439a04b4f313c40474cd899c3975e75f68959c670b285ba0a856910`
+- `pdf` `122c4e5c510b52f7b47c0380eae27ff16c884079fc50975397ffb50f53967cc3`
+- `ledger` `ab4bb0ecf4cc6cdd5ed1e0fc0f2ad06331191935cc36a62a07844719de4c03e9`
+- `checks` `f9a220f1f434376afe750955d1c2b5ff6e75b0fed45dbbb71c141d69e55688c5`
 
 Machine winner:
 
-- `png` `fae022131b198ac7f523d83521c4723b619ae3c70f7edb83acb3f222835d82e6`
-- `svg` `0101b58fcfb9b8fe95cc7fedf6e80f944742e02048ff7ec2f9e444df1c45b993`
-- `pdf` `1689506ae8bf99a824a5c8f0b542309a933485830879514c4a6ac6bd0fd580ce`
-- `checks` `31cda877e9131e6f34270ffe8bdb62bd50225d9cc34653ed221a899eae81e962`
+- `png` `ad26e7cb5d7fc6b92b96dc97bd38c7ed9f9b1d3e6166a8e5780b118ae0d2c767`
+- `svg` `27746f7202e1629eba5a2cc233ba023acb66c793a4c54f93e70100a3fa1e17bb`
+- `pdf` `1cd98dafefed42155dab1a6e621f62b0fe1b06205700b71a4e3dcd9b2a24cb72`
+- `checks` `2118d2bb6117a27a011b0524b2407951d206550ddc82386aeffb5a7c9cc3e86a`
 
 The corner machines:
 
-- `png` `517a77bf032bec1c0cde4eea7db93fdbc47470c65c9d76e6c4e58249436a2568`
-- `svg` `b2e4055d39b7ff72d1e10ea11f59d3bbc8af145ef8a30dc83b7016530b4de0b2`
-- `pdf` `298a0f8e4e674dc8e13b64715ee0dfd383e7671d9f3c262a376abe7d5b5114c6`
-- `checks` `e6bcfca931d36089dd2a8d6e9c8414fb49230c0d2110717176cf1e0ae385ffbe`
+- `png` `bbc9a744f27a95bc61781db38d8389a573f09b83c36a795a00e5362086d11cf7`
+- `svg` `526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4`
+- `pdf` `0c1c31e14a39e0b0a463dee56d42688619e600faf8e06a4341469c81ba7fabad`
+- `checks` `8e0a042363ea5dcd1a1644c4583f01386c4601f67bf90e5d984ce4514c48b1d9`
