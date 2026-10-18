@@ -30,7 +30,7 @@ The plate does not change. Section 4, the only drawn region, is byte-identical t
 
 The next regenerate would trip the committed-blob guard. The figure seat re-pins the manifest to the current ledger blob.
 
-Amend 2026-10-18, after `3588284`: the regenerate at the current HEAD passes all in-script checks, both blob checks included. What went stale was the kit's recorded input pin in the manifest, not the in-script guard. The figure seat states the mechanism by execution. This receipt adopts that reading.
+Amend 2026-10-18, after `3588284`: the regenerate at the current HEAD passes all in-script checks, both blob checks included. What went stale was the recorded input pin of the kit in the manifest, not the in-script guard. The figure seat states the mechanism by execution. This receipt adopts that reading.
 
 ## 3. The docx embed verifies
 
