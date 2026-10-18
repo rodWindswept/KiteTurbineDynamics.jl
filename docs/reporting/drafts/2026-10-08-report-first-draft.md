@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.59. Date 2026-10-18.
+Internal engineering report. Draft v0.60. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -1075,7 +1075,8 @@ The recommended next steps sit in section 3.6.
 them.]
 
 **Where this goes.** This close is forward-looking. It states what the
-instrument does, then the programme targets. No sentence in it cites a
+instrument does, the programme targets, and what the signed record
+shows. No sentence in it cites a
 register row.
 
 The instrument sizes and scores kite-turbine designs. Its physics model
@@ -1088,10 +1089,27 @@ model. The register, the test suite and the seat checks hold every
 number. Findings, corrections and retractions stay in the record with
 their lessons.
 
+The search already moves ten genes, so the same pipeline can probe wider
+parameter regimes. The expansion rotor model ships with tests, so the
+pipeline can study multi-rotor and expansion-class machines.
+
 The validated rung is the machine this report covers. The programme
 targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
 above it is a programme target, not a result. No repo artifact backs the
 rungs.
+
+[Figure seated: figure-map row 24 (scaling ladder, slug `scaling-ladder`).
+The rung set reads from the value-claims ledger section 4. No register
+row binds the plate.]
+
+Wider parameter regimes, flying higher on longer shafts, and the scale
+where multi-rotor machines win are programme targets too. The
+axial-length study runs to 60 m as a plan probe. That figure is not a
+signed row.
+
+The signed length screen varied length alone on one pre-fold genome.
+Every screened row read below the power floor. The folded class passed
+at the base length. The record sits in section 2.3.
 
 The programme takes one validation step at the Daisy scale. The mission
 target is a displaced-cost metric, set out in phase G of the programme
@@ -1139,7 +1157,8 @@ The table ties each headline claim of this report to its evidence and its signed
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. All eight read dataset commit `dd3cc6a`.
+One row per built exhibit. Eight read dataset commit `dd3cc6a`. The
+ladder reads the code rung set.
 
 | Exhibit | Source extract | Cited rows | Script commit | Era |
 |---|---|---|---|---|
@@ -1151,6 +1170,7 @@ One row per built exhibit. All eight read dataset commit `dd3cc6a`.
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `e23f226` | `post-95c385d_wind-authority` |
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` | `post-95c385d_wind-authority` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `a4b4057` | `post-95c385d_wind-authority` |
+| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `4ebc385` | `post-95c385d_wind-authority` |
 
 **Output hashes (SHA-256).** The short labels name the exhibit files.
 `png`, `svg` and `pdf` are the file types. `ledger` is the label
@@ -1218,3 +1238,11 @@ The corner machines:
 - `svg` `526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4`
 - `pdf` `0c1c31e14a39e0b0a463dee56d42688619e600faf8e06a4341469c81ba7fabad`
 - `checks` `8e0a042363ea5dcd1a1644c4583f01386c4601f67bf90e5d984ce4514c48b1d9`
+
+Scaling ladder:
+
+- `png` `4511bd75e8ef32ff781a060358e08d800ea1d41720274fcbab9fb0a3910ae6aa`
+- `svg` `004cea6ad73291f95fa80664bc26ad213b3bd1ed91bf7432c184e51b22cdf299`
+- `pdf` `33aed0602e9d5e9edc24a9fb221240da5754c1826e3941c6f4b59f5ab7a4a936`
+- `ledger` `aa1401a7b83d78701d534f5b5cc2f31240606db88c63078e28e5fe93720d3036`
+- `checks` `2c7952a613d425adece7ffaa9605fc768825a500705e40ec88865ef21791d263`

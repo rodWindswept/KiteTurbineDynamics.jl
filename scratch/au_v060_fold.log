@@ -1,0 +1,37 @@
+# Author fold v0.60 — directions + ladder embed
+
+Base md5 `d7252c84a0708161bd25c521942c8fb4`
+
+VER      matches=1
+LABEL    matches=1
+CAP      matches=1
+TARGETS  matches=1
+PROV     matches=1
+PROVROW  matches=1
+HASHES   matches=1
+
+lines 1220 to 1248, words 9157 to 9330
+hunks 7, added 31, removed 3
+output md5 `a4a695c83a0b9c30d180f156a111c01f`
+
+## Declared token diff
+
+gained: 0.60. x1, 2.3. x1, 24 x1, 385 x2, 4 x1, 4. x1, 4e x1, 60 x1, 95 x1
+lost:   0.59. x1
+
+## Outside-the-close scan
+
+hits outside: none
+hits inside: programme target x3
+
+## Close paragraph census
+
+  para words=30  sentences=3
+  para words=35  sentences=3
+  para words=36  sentences=3
+  para words=31  sentences=2
+  para words=42  sentences=4
+  para words=25  sentences=3
+  para words=37  sentences=3
+  para words=33  sentences=4
+  para words=26  sentences=2

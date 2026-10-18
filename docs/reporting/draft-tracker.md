@@ -374,6 +374,22 @@ Also in this pass: the twist sentence reads "reaches the crossing limit",
 at the aero seat's line. The gate is strict, so a segment at the limit
 has not crossed it.
 
+v0.60 pass by @author (2026-10-18).
+This pass folds the four direction paragraphs and the ladder embed.
+The science-writer catches land: the record paragraph reads "every
+screened row" (six rows, two rounds, all below the floor), and "the
+pipeline" replaces "the room". The taste fixes land: "ships with tests"
+and "the axial-length study". The label gains its third movement, "and
+what the signed record shows", so the record paragraph sits inside the
+fence the label names. The base-length noun prints blessed by the aero
+seat.
+The scaling-ladder plate seats beside the close at roster row 24. The
+provenance appendix takes the ninth seat and the plate's own hash block.
+No register row binds the plate, and the appendix says so.
+STE reads 33 in, 33 out, no category gained, em dash held at zero. The
+declared token diff: 24 (the roster row), 60 (the plan probe), 4ebc385
+(the script commit), 2.3 (the section pointer), 0.59 to 0.60.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
