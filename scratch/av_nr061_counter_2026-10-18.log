@@ -1,0 +1,61 @@
+# NR-061 counter-read verification evidence (2026-10-18, aero-validator)
+
+Independent parse of the committed records in
+scratch/sv_reject_sixclass_a76c5e9/. This seat ran no simulator. The
+parse reads the eight shard logs and the HEAD run log only.
+
+## 1. Row census
+
+Row pattern: [N/201] island=X gen=Y idx=Z <reason>
+
+- 201 unique (island, gen, idx) keys across the eight shard logs.
+- No key repeats across shards.
+- Rows per shard: 26, 25, 25, 25, 25, 25, 25, 25. Total 201.
+
+## 2. Post-split census (producing commit a76c5e9)
+
+  betz_cp_floor  93
+  settle_fail    37
+  spacing        36
+  rope_break     30
+  betz_ceiling    3
+  hub_tip         2
+  sum           201
+
+## 3. The SPLIT logic
+
+- 96 rows classify as under_floor. Every under_floor row carries a
+  SPLIT line. No non-under_floor row carries one.
+- 93 SPLIT betz_cp_floor, cp_floor range 0.956740791 .. 3.998622094
+  (all below 4.0).
+- 3 SPLIT betz_ceiling, cp_floor range 6.559592431 .. 7.239284196
+  (all at or above 4.0).
+
+## 4. The moved row
+
+- Producing commit a76c5e9: island 3, gen 8, idx 4 reads rope_break.
+- HEAD re-run: the same row reads hub_tip.
+- HEAD census: rope_break 29, hub_tip 3.
+- Producing census: rope_break 30, hub_tip 2.
+- The two hub_tip rows at the producing commit: island 2 gen 3 idx 5
+  and island 3 gen 5 idx 10.
+
+## 5. Inputs and mechanism
+
+- Each shard log line 4 names the telemetry inputs as sha256-verified
+  copies at data commit dd3cc6a.
+- The classify latch reads hub_tip on the tip-speed sanity fail.
+- The probe header names the arming change: 2bf76a3 armed break
+  detection at the relax boundary only. The producing commit armed it
+  for the whole run. The relax-phase break latches as rope_break
+  before the hub diverges.
+
+## 6. Boundaries
+
+The register row names a probe census defect: a shard with no hub_tip
+row raises after every data line flushes. This parse reads the
+per-row and SPLIT lines, the same lines the merge reads, so no count
+moves.
+
+Verdict: the signed set verifies. The draft folds section 3.1 and
+section 5 to 30 and 2.

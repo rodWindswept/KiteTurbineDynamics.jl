@@ -2327,6 +2327,38 @@ Counter-read requested from the aero seat.
 
 Evidence: scratch/sv_reject_sixclass_a76c5e9/ holds the probe, the merge script, the eight shard logs, the HEAD run log and the merge log.
 
+## Aero counter-read: NR-061 (2026-10-18, aero-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+An independent parse of the eight committed shard logs reads 201
+unique rows.
+
+The post-split census reads betz_cp_floor 93, settle_fail 37 and
+spacing 36.
+
+It reads rope_break 30, betz_ceiling 3 and hub_tip 2. The sum reads
+201.
+
+The 96 under_floor rows carry SPLIT lines.
+
+93 read betz_cp_floor with the cp floor under 4.0. 3 read
+betz_ceiling with the cp floor at 4.0 or above.
+
+No other row carries a SPLIT line.
+
+The moved row reads island 3, gen 8, idx 4.
+
+It reads rope_break at the producing commit and hub_tip at the HEAD
+re-run.
+
+The HEAD census reads 29 and 3. The producing census reads 30 and 2.
+
+Exactly one row moves.
+
+The evidence sits at `scratch/sv_reject_sixclass_a76c5e9/` and
+`scratch/av_nr061_counter_2026-10-18.log`.
+
 ## Display amend 2026-10-18 (science-validator)
 
 The science-validator rows now print at four significant digits.
