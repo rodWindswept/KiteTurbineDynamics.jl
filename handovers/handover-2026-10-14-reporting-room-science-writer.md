@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
-**Date:** 2026-10-15. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `ffc63a7` on `bank-derate-cos2p65`. The sweep-31 train follows. The era pack and the explainer block follow at this seat.
+**Date:** 2026-10-18. **From:** @science-writer. **To:** the successor session.
+**Base:** branch tip `11b4cd6` on `bank-derate-cos2p65`. The sweep-33 train follows. The explainer block and the references gate follow at this seat.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,18 +17,14 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 32 on the next draft push.**
-   The next movers now due: the kMppt plain sentence on the author seat,
-   the desk-document amends at the validator seat, and the corner-grid
-   fold. The era pack rides this seat next.
+1. **Sweep 34 on the next draft push.**
+   The next movers now due: the author one-token swap, "the seat
+   checks" to "the pipeline", at draft line 1024 and the ledger line
+   29, then the hermes rebuild and the author rebuild verification.
+   A-13 and A-20 to A-22 stay gated as routed.
    The sweep keys on the next push.
 
-2. **The era pack (queue item 5).**
-   The era explanations and the eras section fold next at this seat.
-   The phrase `physics-validation era` enters section 3.1, and its
-   candidates row rides the pack.
-
-3. **The explainer block.**
+2. **The explainer block.**
    The round-4 routing seats the kg-equivalent explainer block on this seat.
    It lifts from the printed section 2.4 block and NR-046.
    This is the next writing item.
@@ -48,7 +44,13 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
-- Sweep 31: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `4ded913..ffc63a7` verifies the two movers and folds the lifting-bridles term set.
+- Sweep 33: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `1b01453..de18442` verifies the A-10 to A-19 prose pass and folds the levers re-freeze.
+
+- The levers re-freeze: the block, the receipt region and the md5 record refresh at `0d9001e4c19c78cc239cc22f8ac6dba7`. The break commits `f7de920` and `646cddf` record beside the new md5. The pre-break md5 `7bbd964db09d2b33269ce5cb8c334054` stays as the record.
+
+- Sweep 32: commits `4c83178` to `fc57814`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-sweep-32.md`. The span `ffc63a7..1b01453` verifies the three movers.
+
+- Sweep 31: commits `45ed846` to `459eee2`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-sweep-31.md`. The span `4ded913..ffc63a7` verifies the two movers and folds the lifting-bridles term set.
 
 - The lifting-bridles term set: commits `97eefdc` to `ffc63a7`. Receipt `docs/reporting/room-responses/science-writer-2026-10-15-lifting-bridles-term-set.md` sits beside this page.
 
@@ -70,7 +72,7 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Sweep 23: commits `80685c3` to `9553780`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-sweep-23.md`.
 
-- The levers reading: `a011c26`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md`. The block is frozen at md5 `7bbd964db09d2b33269ce5cb8c334054` and folds at section 3.4.
+- The levers reading: `a011c26`. Receipt `docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md`. The block froze at md5 `7bbd964db09d2b33269ce5cb8c334054` and re-froze at `0d9001e4c19c78cc239cc22f8ac6dba7` on 2026-10-18.
 
 - Glossary v13, v14 and v15: `724b226`, `4e559de` and `57c77cf`. The candidates record sits at `docs/reporting/glossary-candidates.md`.
 
@@ -100,4 +102,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** the era pack, then the explainer block. Sweep 32 keys on the next draft push.
+**Owner:** @science-writer. **Next action:** the explainer block, then the references gate. Sweep 34 keys on the next draft push.
