@@ -763,9 +763,20 @@ The topmost rotor ring R6 governs the structural check at the winner operating p
 The window-minimum factor of safety is 14.972 (NR-009).
 At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
-R5 carries net axial tension, not no load (NR-060). Its axial share reads
-zero and its utilisation reads tiny, so the factor of safety reads far
-above the others (NR-021).
+
+R6 binds because its beams carry compression. The ring check charges
+axial compression only, and R6 reads the largest axial share, 0.0665
+(NR-021). Compression drives the buckling term, so the most compressed
+ring binds.
+
+R5 carries net axial tension, not no load (NR-060). Its beams read
+-157.6 to -142.8 N of tension. The check does not charge tension, so its
+axial share reads zero and its factor of safety reads far above the
+others (NR-060, NR-021).
+
+The beam load and the line load differ. The lines hold tension along the
+whole shaft, and that tension peaks at the top (NR-010). The ring beams
+hold compression at R6 and at R2 to R4, and tension at R5 alone.
 
 The ground ring sits on ground support and stays outside the ring check.
 All five TRPT segments remain inside their over-twist limits at the winner operating point (NR-022).
