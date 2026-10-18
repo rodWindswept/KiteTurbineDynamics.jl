@@ -48,14 +48,14 @@ Status keys: LANDED, OPEN, GATED, CALL, OTHER-SEAT.
 | A-31 | inline source strings against plate footers (fig F-24) | OTHER-SEAT | kit manifests are the ground truth |
 | A-32 | register appendix: Status column collapse, Source width, thematic grouping, the uncited-rows note | OTHER-SEAT | builder and register seats |
 | A-33 | `scaling-ladder`: inline roadmap or scaling-law chart (fig F-22) | CALL | founder call pending. The seated plate holds |
-| A-34 | six-class fold: §3.1 and §5 read 29, 3, 3 against the signed 30, 3, 2 | GATED | signed row in the register. The @science-writer consistency pass is the second input. The pre-named fold route stands |
+| A-34 | six-class fold: §3.1 and §5 move to the signed 30 and 2 (NR-061) | LANDED | both inputs plus the aero counter-read. The draft reads v0.61 |
 
 ## Working order
 
 1. The display pass lands first (this commit).
 2. The prose pass runs with @science-writer: A-10 to A-19 together.
 3. A-20 to A-22 unblock as their gates land.
-4. A-34 folds when both inputs exist. Nothing above it blocks it.
+4. A-34 landed beside the display pass. Nothing above it blocks it.
 
 ## In plain English
 
@@ -65,4 +65,4 @@ group the short sentences, de-duplicate the front matter, move the
 internal history out of Methods, and calibrate the claim language.
 The pending sections and the references unblock as their own gates
 land. One call still needs the founder: what the scaling ladder
-becomes.
+becomes. The six-class fold landed on the signed row.

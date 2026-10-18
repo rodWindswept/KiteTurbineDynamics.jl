@@ -1,0 +1,22 @@
+3c3
+< Internal engineering report. Draft v0.60. Date 2026-10-18.
+---
+> Internal engineering report. Draft v0.61. Date 2026-10-18.
+556c556
+< A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+---
+> A re-run probe now names those 201 (NR-061). They split
+559,560c559,560
+< realisability cliff. 36 refuse on rotor spacing. 29 break a line. Three
+< cross the Betz ceiling. Three diverge at the hub tip speed. Only the last
+---
+> realisability cliff. 36 refuse on rotor spacing. 30 break a line. Three
+> cross the Betz ceiling. Two diverge at the hub tip speed. Only the last
+1043c1043
+< probe (receipt 2026-10-17) names them. 93 rotors fall below the power
+---
+> probe (NR-061) names them. 93 rotors fall below the power
+1045c1045
+< 29 break a line. Three cross the Betz ceiling. Three diverge at the hub
+---
+> 30 break a line. Three cross the Betz ceiling. Two diverge at the hub

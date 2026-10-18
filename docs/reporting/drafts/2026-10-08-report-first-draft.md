@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.60. Date 2026-10-18.
+Internal engineering report. Draft v0.61. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 Numbers come only from signed register rows, cited by row ID.
@@ -553,11 +553,11 @@ The reject class splits three ways (NR-055).
 Four ran at or above 5 kW with a factor of safety below 2.5.
 The remaining 201 carried no logged cause at campaign time.
 
-A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+A re-run probe now names those 201 (NR-061). They split
 six ways. 93 rotors cannot reach 80 per cent of the power floor on their
 swept area and power coefficient. 37 settle at the torsional
-realisability cliff. 36 refuse on rotor spacing. 29 break a line. Three
-cross the Betz ceiling. Three diverge at the hub tip speed. Only the last
+realisability cliff. 36 refuse on rotor spacing. 30 break a line. Three
+cross the Betz ceiling. Two diverge at the hub tip speed. Only the last
 class is a numerical divergence. The others are geometry or design
 refusals that the telemetry left blank.
 
@@ -1040,9 +1040,9 @@ The 301 rejects split three ways (NR-055).
 96 ran below the 5 kW power floor.
 Four ran at or above 5 kW with a factor of safety below 2.5.
 The remaining 201 carried no logged cause at campaign time. The re-run
-probe (receipt 2026-10-17) names them. 93 rotors fall below the power
+probe (NR-061) names them. 93 rotors fall below the power
 floor. 37 settle at the realisability cliff. 36 refuse on rotor spacing.
-29 break a line. Three cross the Betz ceiling. Three diverge at the hub
+30 break a line. Three cross the Betz ceiling. Two diverge at the hub
 tip speed.
 
 The best performing one had a mean power of 5.309 kW.

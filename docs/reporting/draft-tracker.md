@@ -390,6 +390,16 @@ STE reads 33 in, 33 out, no category gained, em dash held at zero. The
 declared token diff: 24 (the roster row), 60 (the plan probe), 4ebc385
 (the script commit), 2.3 (the section pointer), 0.59 to 0.60.
 
+v0.61 pass by @author (2026-10-18).
+This pass folds the six-class row (NR-061). The digit moves read
+29 to 30 rope breaks and three to two hub divergences, in section 3.1
+and in section 5. The two receipt pointers move to (NR-061). The
+version ticks to v0.61.
+The fold rode the science-writer consistency pass and the aero
+counter-read. STE reads 34 in, 34 out. The citation checker reads 55
+cited, every one signed. Declared token diff: two 30s arrive, two 29s
+leave, net zero.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
