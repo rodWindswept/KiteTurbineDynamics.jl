@@ -257,6 +257,27 @@ The genes set the ring geometry, the polygon count, the rotor count,
 the bank angles and the blade scales. The winner genome names its genes
 in the decode fields (NR-011).
 
+The genome carries ten slots, x1 to x10. The table lists each slot, its
+meaning and its search bounds.
+
+| Slot | Meaning | Bounds |
+|---|---|---|
+| x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+| x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
+| x3 | common length-to-radius target L/r | 1.0 to 2.94 |
+| x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+| x5 | ring density bias | -0.8 to 0.8 |
+| x6 | rotor count (1, 2 or 3) | 1 to 3 |
+| x7 | bank at the topmost rotor | 0 to 22 deg |
+| x8 | bank at the lowest rotor | 0 to 22 deg |
+| x9 | blade scale at the topmost rotor | 0.2 to 1.0 |
+| x10 | blade scale at the lowest rotor | 0.2 to 1.0 |
+
+The decoder reads x6 as a rotor count. It rounds the gene to an integer
+between one and three. Inactive slots may hold values with no physical
+effect. The winner carries one active rotor, so x8 and x10 stay unused
+(NR-011).
+
 #### 2.2.2 The evaluator
 
 The builder builds the machine from the genome. The evaluator runs the
@@ -285,6 +306,13 @@ metres (NR-015).
 
 The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
 (NR-015). One load applies to the whole search.
+
+A fixed k couples the radius search to the tip-speed ratio. The load
+sets the settle speed, and the radius sets the tip speed for a given
+speed. So the two genes are not independent: changing the radius with
+k held fixed moves the operating tip-speed ratio. The search explored
+radius under that coupling. The load law kept the same form for every
+candidate, but the speed and radius moved together.
 
 The team selected the value in a load sweep of the seed machine
 (2026-08-22). The sweep ran the seed at a range of loads, each over the
@@ -359,6 +387,17 @@ size. It sets how high the machine stands above the ground station.
 A longer shaft reaches stronger wind. The length screen ran 2026-10-05
 on the pre-fold island-3 winner.
 
+Two terms name the two states of that design. The pre-fold winner is the
+island-3 genome as it then stood, r_hub 3.8347 m and blade_scale_top
+0.6994. The fold is the 2026-10-05 re-centering that pinned r_hub to
+4.32 m and blade_scale_top to 1.0 (the S2-fold seed). The folded class
+is the set of designs after that re-centering.
+
+Two further terms name the two code changes in play. The cp fix is the
+2026-10-05 power-coefficient correction (era a82cafd). The span shrink
+is the D1 re-decode that reduced the blade span, which cut the pre-fold
+power below the floor.
+
 It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
 fix. All six rows failed the power floor (NR-027).
 
@@ -407,6 +446,18 @@ scores each design and culls the failures.
 Three islands run in parallel. An island is an independent population
 with its own drift. Each island evaluates 310 designs.
 
+The DE holds ten members per island, three islands, and thirty
+generations. The seed is the first member of each population. The other
+nine members draw at random inside the bounds. Each island starts from
+its own random seed (42 plus the island number minus one), so the three
+islands drift apart. No member moves between islands.
+
+Each new member forms by a standard DE rule. The mutation takes the
+difference of two members, scales it by a factor F, and adds it to a
+third. F draws at random in 0.5 to 0.8 per trial. The crossover rate CR
+draws in 0.7 to 0.9 per trial, and one gene always crosses. The trial
+replaces the parent only if its score is not worse.
+
 The campaign evaluates 930 designs in total (NR-001).
 
 Four statuses result: ok, reject, clearance_reject and reject_twist
@@ -434,9 +485,17 @@ The utilisation charge reads the window-minimum factor of safety against the 2.5
 The twist charge reads the worst segment twist ratio against the crossing limit (NR-046).
 The stationarity add-on reads the window swing against 20 per cent (NR-046).
 
-Every charge is continuous. None is step-like (NR-046).
+The swing reads P_range over P_mean, the window power range over its mean
+(NR-046). The twist charge clamps r to one. At r equal to one the
+segment has crossed, so the ratio r over (1 minus r) would divide by
+zero. The clamp keeps the charge finite and continuous up to the crossing
+point (NR-046).
 
-Rejected designs carry no score.
+Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+of ground clearance fails the clearance gate. A segment past its
+crossing limit fails the twist gate. These reject the design outright,
+and a rejected design carries no score (NR-046).
+
 The evaluator carries Inf for a rejected design.
 The runner stamps the search cost `1e9` on every non-ok design (NR-046).
 No reject ranks above an ok design.
@@ -699,7 +758,9 @@ The topmost rotor ring R6 governs the structural check at the winner operating p
 The window-minimum factor of safety is 14.972 (NR-009).
 At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
-R5 carries almost no load in the checked beam (NR-021).
+R5 carries pure axial tension, not no load. Its interaction share reads
+zero and its utilisation reads tiny, so the factor of safety reads far
+above the others (NR-021).
 
 The ground ring sits on ground support and stays outside the ring check.
 All five TRPT segments remain inside their over-twist limits at the winner operating point (NR-022).
@@ -738,6 +799,12 @@ rings biased toward the ground upward.
 It reads even rings, a shallow second bank and larger second blades downward.
 The top loadings read +0.5621 for the second-rotor bank, -0.5605
 for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044).
+
+The second-rotor bank and blade-scale slots are inactive at a rotor count
+of one (NR-011, NR-017). The winner carries one rotor, so those two slots
+hold no physical blade. PC2 therefore reads mostly unused genes for the
+winner and for every one-rotor design in the field. The axis is a real
+search axis, but it measures inactive slots on the winner.
 
 The colour is the mean search objective in each cell, in kg-equivalent.
 Bright reads lower, and only feasible designs shade the field.
@@ -997,7 +1064,7 @@ them.]
 ## 7 References
 
 Seeded in references.bib. Seventeen sources. Sixteen carry verified
-sources; the Hancock deck stands on the weaker standard (slides held, no
+sources. The Hancock deck stands on the weaker standard (slides held, no
 public archive). The Ranneberg entry was dropped.
 
 ## 8 Data availability and reproducibility
