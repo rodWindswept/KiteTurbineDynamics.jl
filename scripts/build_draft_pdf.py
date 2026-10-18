@@ -64,6 +64,16 @@ figcaption { text-align: left; font-size: 9pt; color: #222; margin-top: 0.4em; l
 .stamp { display: block; font-size: 7.5pt; color: #444; font-family: "DejaVu Sans Mono", monospace; margin-top: 0.3em; }
 .plain, .tech { display: block; }
 .build-record { font-size: 9pt; color: #444; }
+/* Compact table typography: validation/register tables print small and
+   tight. Shrink the face, pull the cell padding in, give every cell a hair
+   border and shade the header, and never split a row across a page break. */
+table { border-collapse: collapse; width: 100%; margin: 0.6em 0;
+        font-size: 8pt; font-family: "DejaVu Sans", "Liberation Sans", sans-serif;
+        line-height: 1.25; }
+th, td { border: 0.5pt solid #bbb; padding: 1.5pt 4pt; text-align: left;
+         vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; }
+th { background: #eee; font-weight: bold; }
+tr { break-inside: avoid; page-break-inside: avoid; }
 """
 
 SEAT_RE = re.compile(

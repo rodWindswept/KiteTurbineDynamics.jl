@@ -25,6 +25,7 @@ Outputs are untracked scratch.
 import argparse
 import html
 import json
+import re
 import sys
 import zipfile
 from datetime import datetime, timezone
@@ -104,11 +105,64 @@ def a4_reference_doc(out_dir):
     )
     doc = doc.replace(b"<w:sectPr />", a4_sectpr)
     data["word/document.xml"] = doc
+    data["word/styles.xml"] = compact_table_style(data["word/styles.xml"])
     with zipfile.ZipFile(ref, "w", zipfile.ZIP_DEFLATED) as zout:
         for n in names:
             zout.writestr(n, data[n])
     default.unlink()
     return ref
+
+
+# Compact table style: the default pandoc "Table" style carries no borders
+# and no size, so register/validation tables render as bare, full-size text.
+# Re-skin it with hair borders, tight cell margins, and an 8 pt whole-table
+# run size so the review copy reads as a table, not a wall of pipe text.
+TABLE_STYLE_RE = re.compile(
+    r'<w:style w:type="table"[^>]*>.*?</w:style>', re.DOTALL
+)
+
+TABLE_STYLE_COMPACT = (
+    '<w:style w:type="table" w:default="1" w:styleId="Table">'
+    '<w:name w:val="Table" />'
+    '<w:basedOn w:val="TableNormal" />'
+    '<w:semiHidden /><w:unhideWhenUsed /><w:qFormat />'
+    '<w:tblPr>'
+    '<w:tblInd w:w="0" w:type="dxa" />'
+    '<w:tblBorders>'
+    '<w:top w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '<w:left w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '<w:right w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="999999" />'
+    '</w:tblBorders>'
+    '<w:tblCellMar>'
+    '<w:top w:w="20" w:type="dxa" />'
+    '<w:left w:w="80" w:type="dxa" />'
+    '<w:bottom w:w="20" w:type="dxa" />'
+    '<w:right w:w="80" w:type="dxa" />'
+    '</w:tblCellMar>'
+    '</w:tblPr>'
+    '<w:tblStylePr w:type="wholeTable">'
+    '<w:rPr><w:sz w:val="16" /><w:szCs w:val="16" /></w:rPr>'
+    '</w:tblStylePr>'
+    '<w:tblStylePr w:type="firstRow">'
+    '<w:rPr><w:b /><w:sz w:val="16" /><w:szCs w:val="16" /></w:rPr>'
+    '<w:tblPr><w:jc w:val="left" /><w:tblInd w:w="0" w:type="dxa" /></w:tblPr>'
+    '<w:trPr><w:jc w:val="left" /></w:trPr>'
+    '<w:tcPr><w:vAlign w:val="bottom" />'
+    '<w:shd w:val="clear" w:color="auto" w:fill="EEEEEE" /></w:tcPr>'
+    '</w:tblStylePr>'
+    '</w:style>'
+)
+
+
+def compact_table_style(styles_xml: bytes) -> bytes:
+    """Replace the default table style with a bordered, 8 pt compact one."""
+    text = styles_xml.decode("utf-8")
+    if not TABLE_STYLE_RE.search(text):
+        return styles_xml  # no table style to skin; leave untouched
+    return TABLE_STYLE_RE.sub(TABLE_STYLE_COMPACT, text).encode("utf-8")
 
 
 def build_docx(root, args, text, seats, summary):
