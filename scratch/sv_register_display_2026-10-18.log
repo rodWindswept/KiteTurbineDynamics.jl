@@ -1,0 +1,56 @@
+# Register display round 2026-10-18 — verification evidence (science-validator)
+
+Scope: the science-validator rows print at four significant digits.
+The fitness rows NR-003 to NR-006, NR-036 and NR-039 print the unit
+kg-equivalent. The NR-053 notation moves from dastar to δα*. Full
+precision and the NR-043 probe sha256 move to
+docs/reporting/register-manifest.md. No value changed.
+
+Rows: NR-018, NR-029, NR-030, NR-031, NR-032, NR-033, NR-034,
+NR-035, NR-037, NR-038, NR-039, NR-040, NR-043, NR-046, NR-050,
+NR-052, NR-053, NR-056, NR-060 (rounds). NR-003, NR-004, NR-005,
+NR-006, NR-036, NR-039 (units). The NR-046 basis block adopts the
+|Δα| / δα* form.
+
+Checks run at HEAD (pre-commit, working tree only):
+
+1. STE gate.
+   numbers-register.md: words 18954, total 188 -> 188,
+   per100w 0.99, em_dash 16 -> 16. Zero added violations.
+   register-manifest.md: words 349, total 0, per100w 0.00.
+
+2. Citation checker.
+   scratch/sv_check_draft_citations.py
+   docs/reporting/drafts/2026-10-08-report-first-draft.md
+   docs/reporting/numbers-register.md -> exit 0. 54 cited,
+   every cited row signed.
+
+3. Builder row extraction.
+   scripts/build_draft_pdf.py register_appendix against the draft
+   cited set renders 55 rows. All 21 cited science rows present.
+   The rounded forms carry through the rendered appendix:
+   25.70, kg-equivalent, δα*, 0.4393, -157.6, 19.14 kW,
+   805.0 / 396.8.
+
+4. Pandoc parse.
+   A probe doc holding the five symbol-heavy edited rows (NR-037,
+   NR-043, NR-046, NR-053, NR-056) renders 6 table rows with
+   pandoc. Exit 0, empty stderr.
+
+5. Plate-form parity.
+   The rounded forms match the shipped label ledgers:
+   72.25 (twist-limit), 1.499 (system-anatomy), 13.38
+   (eval-timeline).
+
+6. Manifest verbatim.
+   register-manifest.md carries the pre-round strings byte for
+   byte: 25.69846825623688, 13.380259861740395, 0.4393474253185575,
+   1.4994019682084492, a7c6e343 (NR-043 sha256),
+   19.130411371981566, 0.14285714285714285, 2.0287970973051634,
+   5.3087794439367935, 72.24720983805331.
+
+7. Residual scan.
+   No 13+ decimal string remains in any of the 19 target rows.
+
+Apply script: scratch/sv_register_display_apply.py, every
+replacement count-asserted at exactly one occurrence.

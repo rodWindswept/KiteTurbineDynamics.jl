@@ -26,10 +26,10 @@ Both sit on `bank-derate-cos2p65`.
 |---|---|---|---|---|---|
 | NR-001 | Campaign size | 930 (3 islands × 310) | evals | island_*/telemetry.csv | signed (science-validator, 2026-10-08) |
 | NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
-| NR-003 | Island 1 best fitness | 30.578 (found gen 30) | kg | island_1/convergence.csv | signed (science-validator, 2026-10-08) |
-| NR-004 | Island 2 best fitness | 30.637 (found gen 30) | kg | island_2/convergence.csv | signed (science-validator, 2026-10-08) |
-| NR-005 | Island 3 best fitness | 27.364 (found gen 26) | kg | island_3/convergence.csv | signed (science-validator, 2026-10-08) |
-| NR-006 | All-island start point | 36.109 (gen 1, common seed) | kg | convergence.csv | signed (science-validator, 2026-10-08) |
+| NR-003 | Island 1 best fitness | 30.578 (found gen 30) | kg-equivalent | island_1/convergence.csv | signed (science-validator, 2026-10-08) |
+| NR-004 | Island 2 best fitness | 30.637 (found gen 30) | kg-equivalent | island_2/convergence.csv | signed (science-validator, 2026-10-08) |
+| NR-005 | Island 3 best fitness | 27.364 (found gen 26) | kg-equivalent | island_3/convergence.csv | signed (science-validator, 2026-10-08) |
+| NR-006 | All-island start point | 36.109 (gen 1, common seed) | kg-equivalent | convergence.csv | signed (science-validator, 2026-10-08) |
 | NR-007 | P_mean range, ok rows | 5.02–6.32 | kW | telemetry, ok only | signed (science-validator, 2026-10-08) |
 | NR-008 | Winner P_mean (island 3) | 5.309 / P_end 5.314 | kW | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
 | NR-009 | Winner FoS (island 3) | 14.972 | — | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
@@ -197,7 +197,7 @@ This block appends only, under the amend pattern. No signed row changed.
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
 | NR-017 | Winner main-rotor bank (island 3) | 7.088° at ring 6. Slot 8 = 22° reaches no rotor at n_active 1 | deg | decode probe d219b6c. Threading src/objective_v10.jl:339 | signed (science-validator, 2026-10-08) |
-| NR-018 | Winner airborne mass (island 3) | 25.69846825623688 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
+| NR-018 | Winner airborne mass (island 3) | 25.70 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
 
 Sign-off basis:
 
@@ -534,9 +534,9 @@ them at `b665e6e`. This seat signs them after an independent re-run.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-029 | Winner operating speed, window-mean ground ring | 13.380259861740395 (quote 13.38, 127.772 rpm) | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`), parity against the recorded cold re-eval (NR-012) | signed (science-validator, 2026-10-11) |
-| NR-030 | Winner delivered torque, window-mean basis | 396.76205834512626 (quote 396.76) | N·m | P_mean (NR-008) divided by NR-029. Cross-reads: S1 panel 396.791634149159 (0.0075 % above), S5 hub 397.1777954649229 | signed (science-validator, 2026-10-11) |
-| NR-031 | Winner operating coefficients: tip-speed ratio, rotor Cp, system coefficient | lambda_gnd 5.565968202980965 (quote 5.566, hub value 5.56592352649632 agrees inside 1.1e-4), Cp 0.29437093178017804 (quote 0.2944), system coeff 0.10163090072260127 (quote 0.1016) | - | lambda from NR-029, r_ring 4.57997905482005 m, v_ref 11.01 m/s. Cp at lambda 5.566 from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Coeff from NR-008 divided by 0.5 rho A v^3, A 63.9 m², rho 1.225 | signed (science-validator, 2026-10-11) |
+| NR-029 | Winner operating speed, window-mean ground ring | 13.38 (quote 13.38, 127.772 rpm) | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`), parity against the recorded cold re-eval (NR-012) | signed (science-validator, 2026-10-11) |
+| NR-030 | Winner delivered torque, window-mean basis | 396.8 (quote 396.76) | N·m | P_mean (NR-008) divided by NR-029. Cross-reads: S1 panel 396.8 (0.0075 % above), S5 hub 397.2 | signed (science-validator, 2026-10-11) |
+| NR-031 | Winner operating coefficients: tip-speed ratio, rotor Cp, system coefficient | lambda_gnd 5.566 (quote 5.566, hub value 5.566 agrees inside 1.1e-4), Cp 0.2944 (quote 0.2944), system coeff 0.1016 (quote 0.1016) | - | lambda from NR-029, r_ring 4.580 m, v_ref 11.01 m/s. Cp at lambda 5.566 from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Coeff from NR-008 divided by 0.5 rho A v^3, A 63.9 m², rho 1.225 | signed (science-validator, 2026-10-11) |
 
 Sign-off basis:
 
@@ -598,9 +598,9 @@ Findings:
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-032 | Winner tip-speed ratio and rotor Cp, tip reference | lambda_tip 6.8415060395190075 (quote 6.8415, hub value 6.841451124645552 agrees inside 5.5e-5), Cp 0.22578839742146659 (quote 0.2258) | - | lambda from the NR-029 window trace, r_out 5.629560432565964 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
-| NR-033 | Winner swept-area set | A_raw 45.9732554921615 (quote 45.9733), A_bank 45.60047944351075, A_zn 39.491173622830395 (quote 39.4912), A_zy 39.81400715088433 (elevation-only cross-check), A_hub_bot 63.86952678906739 (retired basis) | m² | Built radii through `annulus_area` (`src/bem.jl`). A_zn is the ruled wind-normal basis (`objective_evaluator.jl`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
-| NR-034 | Winner Betz ceiling and re-based coefficients | ceiling (16/27) x 0.5 rho A_zn v^3 = 19.130411371981566 kW (quote 19.1304), delivered share 0.27750471961685264 (quote 27.75 %), system coeff 0.1412607066141203 on A_raw and 0.1644472412544312 on A_zn | kW / - / - | v_ref 11.01 m/s, rho 1.225. The code gate charges the rounded 0.593 form: 19.143563529799803 kW. Arithmetic route: `scratch/sv_rebase_arithmetic.py` | signed (science-validator, 2026-10-11) |
+| NR-032 | Winner tip-speed ratio and rotor Cp, tip reference | lambda_tip 6.842 (quote 6.8415, hub value 6.841 agrees inside 5.5e-5), Cp 0.2258 (quote 0.2258) | - | lambda from the NR-029 window trace, r_out 5.630 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+| NR-033 | Winner swept-area set | A_raw 45.97 (quote 45.9733), A_bank 45.60, A_zn 39.49 (quote 39.4912), A_zy 39.81 (elevation-only cross-check), A_hub_bot 63.87 (retired basis) | m² | Built radii through `annulus_area` (`src/bem.jl`). A_zn is the ruled wind-normal basis (`objective_evaluator.jl`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+| NR-034 | Winner Betz ceiling and re-based coefficients | ceiling (16/27) x 0.5 rho A_zn v^3 = 19.13 kW (quote 19.1304), delivered share 0.2775 (quote 27.75 %), system coeff 0.1413 on A_raw and 0.1644 on A_zn | kW / - / - | v_ref 11.01 m/s, rho 1.225. The code gate charges the rounded 0.593 form: 19.14 kW. Arithmetic route: `scratch/sv_rebase_arithmetic.py` | signed (science-validator, 2026-10-11) |
 
 Sign-off basis:
 
@@ -655,8 +655,8 @@ certified strip extract.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-035 | Design-point specific power | 0.20657960587391747 (quote 0.2066) | kW/kg | NR-008 (P_mean entry) divided by NR-018. Recipe: 5.3087794439367935 kW / 25.69846825623688 kg. On the mass net of the 5 kg lifter (20.69846825623688 kg) the read is 0.25648175402240925 | signed (science-validator, 2026-10-11) |
-| NR-036 | Island 3 running-best search objective at the seven strip milestones | 36.109 (gen 0), 32.293 (gen 6), 31.661 (gen 10), 30.929 (gen 18), 29.854 (gen 22), 28.315 (gen 25), 27.364 (gen 26) | kg | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). This seat re-checked all seven against `island_3/telemetry.csv`: each is an ok row and the least ok fitness of its window. Figure label: search objective | signed (science-validator, 2026-10-11) |
+| NR-035 | Design-point specific power | 0.2066 (quote 0.2066) | kW/kg | NR-008 (P_mean entry) divided by NR-018. Recipe: 5.309 kW / 25.70 kg. On the mass net of the 5 kg lifter (20.70 kg) the read is 0.2565 | signed (science-validator, 2026-10-11) |
+| NR-036 | Island 3 running-best search objective at the seven strip milestones | 36.109 (gen 0), 32.293 (gen 6), 31.661 (gen 10), 30.929 (gen 18), 29.854 (gen 22), 28.315 (gen 25), 27.364 (gen 26) | kg-equivalent | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). This seat re-checked all seven against `island_3/telemetry.csv`: each is an ok row and the least ok fitness of its window. Figure label: search objective | signed (science-validator, 2026-10-11) |
 
 Sign-off basis:
 
@@ -730,8 +730,8 @@ range clips the winner trace. NR-038 carries the true endpoints.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-037 | Winner lift-line derived set (island 3): vertical load at the lift bearing, sizing mass, airborne weight, load ratio | F_vert 304.5779603905257 (quote 304.6), sizing mass 20.69846825623688 (quote 20.70), weight 252.1019735936838 (quote 252.1), ratio 1.2081538119230202 (quote 1.21) | N, kg, N, - | Derived on NR-018 and NR-026. Recipe below | signed (science-validator, 2026-10-12) |
-| NR-038 | Winner window trace endpoints (island 3): ground ring at window min, max and last, plus the relax end pair | gnd window min 13.361451740981568, max 13.384909253752044, last 13.384824668402052. Last relax sample, t = 9.990119900356282 s: gnd 13.35927880647099, hub 13.375919394174096 | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`). Logs `scratch/sv_probe_window_trace_rerun.log`, `.julia_depot/logs/av_probe_window_trace.log` | signed (science-validator, 2026-10-12) |
+| NR-037 | Winner lift-line derived set (island 3): vertical load at the lift bearing, sizing mass, airborne weight, load ratio | F_vert 304.6 (quote 304.6), sizing mass 20.70 (quote 20.70), weight 252.1 (quote 252.1), ratio 1.208 (quote 1.21) | N, kg, N, - | Derived on NR-018 and NR-026. Recipe below | signed (science-validator, 2026-10-12) |
+| NR-038 | Winner window trace endpoints (island 3): ground ring at window min, max and last, plus the relax end pair | gnd window min 13.36, max 13.38, last 13.38. Last relax sample, t = 9.990 s: gnd 13.36, hub 13.38 | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`). Logs `scratch/sv_probe_window_trace_rerun.log`, `.julia_depot/logs/av_probe_window_trace.log` | signed (science-validator, 2026-10-12) |
 
 Derivation recipe, NR-037:
 
@@ -816,7 +816,7 @@ physical airborne mass.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.36 = mass 25.70 + over-power 0.4933 + utilisation 0.5577 + twist 0.6141. Penalty total 1.665 (quote 1.665) | kg-equivalent | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
 
 Sign-off basis:
 
@@ -900,7 +900,7 @@ over demand, one instant, segment by segment.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-040 | Winner segment torque margin | S1 2.0287970973051634, S2 2.036175280501402, S3 2.0435436991749936, S4 2.0509817379918016, S5 2.6938375915900292. S1 governs (quote 2.03). The S1 to S4 band reads 2.03 to 2.05. | — | NR-023 strings, segment by segment: torque_capacity / segment_torque. Recipe: 805.0097155967861 / 396.791634149159 = 2.0287970973051634. Cross-read: `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, segment block, bit for bit | signed (science-validator, 2026-10-12) |
+| NR-040 | Winner segment torque margin | S1 2.029, S2 2.036, S3 2.044, S4 2.051, S5 2.694. S1 governs (quote 2.03). The S1 to S4 band reads 2.029 to 2.051. | — | NR-023 strings, segment by segment: torque_capacity / segment_torque. Recipe: 805.0 / 396.8 = 2.029. Cross-read: `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, segment block, bit for bit | signed (science-validator, 2026-10-12) |
 
 Sign-off basis:
 
@@ -1236,7 +1236,7 @@ dimension.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-043 | Winner blade span (island 3, main rotor) | 1.4994019682084492 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 `a7c6e343b4cfba7f790fe0c2c3fd81638c06548c0d98d23407737c9ae0d9b0ab`: R_main 5.629560432565964 minus blade_hub_radius 4.130158464357515. The decode convention `src/objective_v10.jl:374-376`. Figures decode log `scratch/fig1_decode_winner.log`. Counter-read: the aero tip-reference receipt (2026-10-11) | signed (science-validator, 2026-10-13) |
+| NR-043 | Winner blade span (island 3, main rotor) | 1.499 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 in the manifest. R_main 5.630 minus blade_hub_radius 4.130. The decode convention `src/objective_v10.jl:374-376`. Figures decode log `scratch/fig1_decode_winner.log`. Counter-read: the aero tip-reference receipt (2026-10-11) | signed (science-validator, 2026-10-13) |
 
 Sign-off basis:
 
@@ -1403,7 +1403,7 @@ The feedback round 4 asks how the campaign builds the score and how rejected des
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)` with `swing = P_range / P_mean`. `P_score` reads the tail-5 power (P_end). Winner closure: 25.69846825623688 + 0.49333696413175443 + 0.5576509889014662 + 0.6140850570787014 = 27.3635412663488 (NR-039). Rejects carry no score: the evaluator returns `Inf` and the runner stamps the search cost `1e9` on every non-ok design (422 of 930 rows) | kg-equivalent: 5.0 per kW², 1.0 per twist-ratio², 20.0 per FoS-ratio², 10.0 per swing fraction. Mass reads kg. The `1e9` stamp is a search cost, not an objective unit | Source read at `7b8c101`, the tip at read time. Byte-stable from launch `a76c5e9`. Sites: `src/objective_v12.jl:114-116` (weights), `:145-168` (seam body). `src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`. `scripts/run_v13_5kw_masslift.jl:153-156, 256-257, 266, 272, 281-283`. Census over island_*/telemetry.csv. Checker: `scratch/sv_nr046_objective_seam_check.py` and its log | signed (science-validator, 2026-10-14) |
+| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)` with `swing = P_range / P_mean`. `P_score` reads the tail-5 power (P_end). Winner closure: 25.70 + 0.4933 + 0.5577 + 0.6141 = 27.36 (NR-039). Rejects carry no score: the evaluator returns `Inf` and the runner stamps the search cost `1e9` on every non-ok design (422 of 930 rows) | kg-equivalent: 5.0 per kW², 1.0 per twist-ratio², 20.0 per FoS-ratio², 10.0 per swing fraction. Mass reads kg. The `1e9` stamp is a search cost, not an objective unit | Source read at `7b8c101`, the tip at read time. Byte-stable from launch `a76c5e9`. Sites: `src/objective_v12.jl:114-116` (weights), `:145-168` (seam body). `src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`. `scripts/run_v13_5kw_masslift.jl:153-156, 256-257, 266, 272, 281-283`. Census over island_*/telemetry.csv. Checker: `scratch/sv_nr046_objective_seam_check.py` and its log | signed (science-validator, 2026-10-14) |
 
 Sign-off basis:
 
@@ -1417,7 +1417,7 @@ Sign-off basis:
 
 - Reject census. All 930 telemetry rows read: 508 ok with finite scores, 422 stamped `1.0e9`. The mix reads 301 reject / 110 clearance_reject / 11 reject_twist (NR-002). No ok row carries the stamp. No non-ok row carries a score.
 
-- Twist ratio basis. The ratio reads `abs(dalpha) / dastar` per segment, worst over the window. The limit reads `dastar = 2 * asin(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)))` with `r_seg = max(r_i, r_i+1)`. Source `twist_collapse_check` at `objective_evaluator.jl:443-477`. The cap and the margin floor read at `:1201-1202`.
+- Twist ratio basis. The ratio reads `|Δα| / δα*` per segment, worst over the window. The limit reads `δα* = 2 * asin(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)))` with `r_seg = max(r_i, r_i+1)`. Source `twist_collapse_check` at `objective_evaluator.jl:443-477`. The cap and the margin floor read at `:1201-1202`.
 
 Reading rules:
 
@@ -1750,7 +1750,7 @@ The chain reads from the decode at `src/objective_v10.jl:355-377`:
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.4341173109692225`, base span `1.8255879832269168`, span `1.4994019682084492` (NR-043), chord `0.22590989654340632` | m | `src/objective_v10.jl:355-377`, `src/bem.jl:156-179`, probe `scratch/sv_fb5_source_reads_probe.jl` and its log | signed (science-validator, 2026-10-14) |
+| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.434`, base span `1.826`, span `1.499` (NR-043), chord `0.2259` | m | `src/objective_v10.jl:355-377`, `src/bem.jl:156-179`, probe `scratch/sv_fb5_source_reads_probe.jl` and its log | signed (science-validator, 2026-10-14) |
 
 Sign-off basis:
 
@@ -1937,8 +1937,8 @@ the floor sentence (item 2.3) on these two rows.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-052 | The torsion criteria as implemented, and the 2.5 boundary | Criterion 1: the geometric crossing check is the campaign's twist gate (form in NR-053). Criterion 2: the torsional-stability FoS hard constraint reads 1.5, on the design-verification path. Winner: least segment torque margin 2.03 at S1 (NR-040), 1.35 times the 1.5 floor. Worst crossing ratio 0.4393474253185575, margin 2.28 | deg, - | Constant `src/trpt_optimization.jl:39` (`OPT_TORSION_FOS_REQUIRED = 1.5`), per segment `:872-882`, feasibility and message `:1100-1123`. Crossing detector `src/objective_evaluator.jl:454, 913-920`, hard reject `:1024`. Policy boundary per `software-validator-2026-10-11-item13-torsion-gate.md`. Winner cell: `island_3/telemetry.csv`, gen 26, idx 9 | signed (science-validator, 2026-10-15) |
-| NR-053 | The realisability floor and its 1.05 margin | sin(dalpha) <= 1/1.05 = 0.9523809523809523 (quote 0.9524). The continuum floor angle reads 72.24720983805331 deg (quote 72.25). The discrete crossing limit reads dastar = 2*asin(L_seg / sqrt(2*(L_seg^2 + 2*r_seg^2))), r_seg = max(r_i, r_{i+1}). Winner cross-reads: S1 twist 33.94561934829036 deg, margin 2.13 to the floor and 2.91 to dcrit (NR-022) | deg, - | Constant `src/initialization.jl:1691` (`TRPT_REALISABILITY_TENSION_MARGIN = 1.05`), basis `:1663-1691`. Crossing form `src/objective_evaluator.jl:444-462` and `src/initialization.jl:1414-1456`. Ruling DECISIONS [2026-09-20] | signed (science-validator, 2026-10-15) |
+| NR-052 | The torsion criteria as implemented, and the 2.5 boundary | Criterion 1: the geometric crossing check is the campaign's twist gate (form in NR-053). Criterion 2: the torsional-stability FoS hard constraint reads 1.5, on the design-verification path. Winner: least segment torque margin 2.03 at S1 (NR-040), 1.35 times the 1.5 floor. Worst crossing ratio 0.4393, margin 2.28 | deg, - | Constant `src/trpt_optimization.jl:39` (`OPT_TORSION_FOS_REQUIRED = 1.5`), per segment `:872-882`, feasibility and message `:1100-1123`. Crossing detector `src/objective_evaluator.jl:454, 913-920`, hard reject `:1024`. Policy boundary per `software-validator-2026-10-11-item13-torsion-gate.md`. Winner cell: `island_3/telemetry.csv`, gen 26, idx 9 | signed (science-validator, 2026-10-15) |
+| NR-053 | The realisability floor and its 1.05 margin | sin(Δα) <= 1/1.05 = 0.9524 (quote 0.9524). The continuum floor angle reads 72.25 deg (quote 72.25). The discrete crossing limit reads δα* = 2*asin(L_seg / sqrt(2*(L_seg^2 + 2*r_seg^2))), r_seg = max(r_i, r_{i+1}). Winner cross-reads: S1 twist 33.95 deg, margin 2.13 to the floor and 2.91 to δ_crit (NR-022) | deg, - | Constant `src/initialization.jl:1691` (`TRPT_REALISABILITY_TENSION_MARGIN = 1.05`), basis `:1663-1691`. Crossing form `src/objective_evaluator.jl:444-462` and `src/initialization.jl:1414-1456`. Ruling DECISIONS [2026-09-20] | signed (science-validator, 2026-10-15) |
 
 Sign-off basis:
 
@@ -2062,7 +2062,7 @@ library.
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-056 | The shear law and its exponent | Hellmann power law, exponent 1/7 (0.14285714285714285). One authority: the measured Daisy pair, 10.0 m/s at 4.8 m. Reads: 11.0097 m/s at 9.4117 m (the table pair reads 11.01 at 9.41), 11.0077 m/s at the 9.400 m design hub, 10.9246 m/s at the settled hub 8.914 m | -, m/s, m | `src/wind_profile.jl:50,54` (SITE_DAISY, SITE_ANCHOR), `:110-112` (site_shear), `:130-137` (wind_at_altitude). Guard `test/test_wind_authority.jl`. Landing record `docs/validation/2026-10-03-d1-wind-landing-verification.md` | signed (science-validator, 2026-10-15) |
+| NR-056 | The shear law and its exponent | Hellmann power law, exponent 1/7 (0.1429). One authority: the measured Daisy pair, 10.0 m/s at 4.8 m. Reads: 11.01 m/s at 9.412 m (the table pair reads 11.01 at 9.41), 11.01 m/s at the 9.400 m design hub, 10.92 m/s at the settled hub 8.914 m | -, m/s, m | `src/wind_profile.jl:50,54` (SITE_DAISY, SITE_ANCHOR), `:110-112` (site_shear), `:130-137` (wind_at_altitude). Guard `test/test_wind_authority.jl`. Landing record `docs/validation/2026-10-03-d1-wind-landing-verification.md` | signed (science-validator, 2026-10-15) |
 | NR-057 | The shaft-elevation angle and the hub altitude | 30.0 degrees (pi/6), the model convention. Angles do not scale. The design hub reads 18.8 * sin 30 deg = 9.4000 m. The rung reference reads 9.4117 m (gap 0.0117 m, immaterial). The flown settled read: mean elevation 28.64 deg at mean z 8.914 m | deg, m | `src/parameters.jl:294,369,606`. Campaign runner `scripts/run_v13_5kw_masslift.jl:73` (ELEV = pi/6). Register boundary note 5 (`docs/reporting/numbers-register.md:618-622`) | signed (science-validator, 2026-10-15) |
 | NR-058 | The steady-wind basis of the reported trace | The evaluator wind closure reads altitude only, so the reported trace runs steady wind. The steady_wind constructor returns a constant. Ramp, gust and turbulence tools exist and none is engaged. The NR-014 window swing (0.029 kW on 5.309 kW, 0.5 per cent) is a steady-wind response, not a stability property. The register reads 0.54 per cent on the same quotient | -, kW | `src/objective_evaluator.jl:792-795`. `src/wind_profile.jl:160-164`. Harris review `docs/reporting/feedback/2026-10-10-harris-review.md:184`. Register `:826` | signed (science-validator, 2026-10-15) |
 
@@ -2207,7 +2207,7 @@ This block appends only, under the amend pattern. No signed row changed.
 
 | Row | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-060 | R5 signed axial force at the winner capture | -157.62246416260894 to -142.7923499969138 (tension), three beams, N/Ncrit -0.09240481892804314 to -0.08371079157957116 | N | Own re-run at the science seat, scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl, same evaluator chain as scripts/extract_pair_capture.jl, parity bit-exact on nine recorded cold re-eval fields | signed (science-validator, 2026-10-18) |
+| NR-060 | R5 signed axial force at the winner capture | -157.6 to -142.8 (tension), three beams, N/Ncrit -0.09240 to -0.08371 | N | Own re-run at the science seat, scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl, same evaluator chain as scripts/extract_pair_capture.jl, parity bit-exact on nine recorded cold re-eval fields | signed (science-validator, 2026-10-18) |
 
 Reading rules:
 
@@ -2326,4 +2326,27 @@ Boundaries:
 Counter-read requested from the aero seat.
 
 Evidence: scratch/sv_reject_sixclass_a76c5e9/ holds the probe, the merge script, the eight shard logs, the HEAD run log and the merge log.
+
+## Display amend 2026-10-18 (science-validator)
+
+The science-validator rows now print at four significant digits.
+A reading that a shipped plate already labels keeps the shipped
+label form. The span (NR-043), the operating speed (NR-029) and
+the realisability floor angle (NR-053) read the plate forms.
+
+The manifest file `docs/reporting/register-manifest.md` carries
+the full-precision readings. It also carries the NR-043 probe
+sha256 and the long source strings.
+
+The fitness rows NR-003 to NR-006, NR-036 and NR-039 now print
+the unit `kg-equivalent`. A fitness score folds power and safety
+penalties into mass units at the seam weights of NR-046. Real
+masses keep `kg`.
+
+The NR-053 notation moves from `dastar` to `δα*`. The NR-046
+basis block adopts the same form.
+
+No value changes. Each row keeps its sign-off basis. The
+2026-10-18 feedback in `docs/reporting/feedback-on-report.md`
+prompts this change.
 
