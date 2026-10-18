@@ -15,6 +15,12 @@ carries in the legend and the caption.
 v6 (the round-6 hub-name retirement, 2026-10-14): the top ring label
 reads "R6 (top)". No drawn value moves.
 
+v7 (FEEDBACKBOT1 re-cut, 2026-10-18): the axis is linear from zero to
+the unit value, the campaign structural gate (FoS 2.5, utilisation 0.40)
+draws at its reciprocal position, and R5 draws a tension badge instead
+of a compression bar.  Micro-typography floor 8 pt on scientific text.
+No ring value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py \
       --script-commit <hex>
@@ -56,7 +62,7 @@ CAPTURE = {
 }  # per pair-extract README and the NR-021..NR-023 sign-off basis
 DATA_COMMIT = "dd3cc6a"
 AUTHORITY_COMMIT = "f8114be"  # computing commit of the extract (CSV header)
-ROWS = "NR-021"
+ROWS = "NR-021 · NR-015 · NR-060"
 
 INK = "#1a1a1a"
 LINE = "#333333"
@@ -66,24 +72,47 @@ MUTED = "#98a0a8"
 SHAFT = "#c4c4c4"
 CYAN = "#1f8fff"  # utilisation
 RED = "#b32222"  # fail boundary
+GATE = "#7a4fbf"  # campaign structural gate (FoS 2.5)
+
+GATE_FOS = 2.5  # the campaign structural gate, NR-015 (a plain 2.5)
+GATE_UTIL = 1.0 / GATE_FOS  # utilisation at the gate: 0.40
 
 TITLE = "Every checked ring sits far below its fail boundary"
 SUB = "Beam-column interaction per checked ring · island-3 winner operating point"
-AXLABEL = "utilisation — beam-column interaction, log scale"
+AXLABEL = "utilisation — beam-column interaction"
 GROUND = "R1 — ground ring · not checked (ground-supported)"
 BOUNDARY = "fail boundary"
-LEGEND = [
-    ("swatch", CYAN, "utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el, worst beam)"),
-    ("dash", RED, "fail boundary — interaction at the unit value"),
-    ("text", None, "readout: ring FoS = 1 / ring utilisation"),
+GATE_LABEL = "campaign structural gate — FoS 2.5"
+BADGE_LABEL = "net tension — compression share not scored"
+LEGEND_ROWS = [
+    (0.843, [
+        ("swatch", CYAN, "utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el)"),
+        ("dash", GATE, "campaign structural gate — FoS 2.5, "
+                       "utilisation 0.40 (NR-015)"),
+    ]),
+    (0.705, [
+        ("dash", RED, "fail boundary — interaction at the unit value"),
+        ("diamond", INK, BADGE_LABEL),
+    ]),
 ]
+LEGEND_TEXT = "readout: ring FoS = 1 / ring utilisation"
+LEGEND_X = [0.028, 0.46]
 
-# log window: bar origin at 10^-6; the window pads left for the label
-# column and right for the boundary label (v5)
-LOG_LEFT = 10 ** -7.65
-LOG_RIGHT = 10 ** 0.665
-DECADES = [10 ** d for d in (-6, -5, -4, -3, -2, -1, 0)]
-DECADE_LABELS = ["10⁻⁶", "10⁻⁵", "10⁻⁴", "10⁻³", "10⁻²", "10⁻¹", "1"]
+# linear window: bar origin at zero, the unit line is the fail boundary;
+# the window pads right for the boundary label (v7)
+LIN_LEFT = 0.0
+LIN_RIGHT = 1.0
+WINDOW_RIGHT = 1.24
+TICKS = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+TICK_LABELS = ["0", "0.2", "0.4", "0.6", "0.8", "1"]
+
+# the R5 badge: R5 carries net axial tension, the compression check is
+# not scored, and its utilisation bar would be invisible on a linear axis
+TENSION_RING = "R5"
+BADGE_X = 0.030  # marker, left of the shaft column
+# readout minimum: right of the dashed shaft column (0.072) and its tick
+# marks (to 0.092), so no readout text crosses the shaft furniture
+MIN_READOUT_X = 0.095
 
 LEDGER: list[str] = []
 
@@ -148,17 +177,16 @@ def main() -> int:
 
     ax = fig.add_axes([0.145, 0.245, 0.825, 0.60])
     ax.set_axis_off()
-    ax.set_xscale("log")
-    ax.set_xlim(LOG_LEFT, LOG_RIGHT)
+    ax.set_xlim(LIN_LEFT, WINDOW_RIGHT)
     ax.set_ylim(-1.8, 22.2)
 
-    # top axis strip (manual, spans bar origin to the window edge)
-    ax.plot([DECADES[0], LOG_RIGHT], [19.5, 19.5], color=LINE, lw=1.1,
+    # top axis strip (manual, spans bar origin to the unit line)
+    ax.plot([LIN_LEFT, LIN_RIGHT], [19.5, 19.5], color=LINE, lw=1.1,
             solid_capstyle="butt")
-    for t, lbl in zip(DECADES, DECADE_LABELS):
+    for t, lbl in zip(TICKS, TICK_LABELS):
         ax.plot([t, t], [19.5, 19.72], color=LINE, lw=0.8)
-        txt(ax, t, 19.78, lbl, ha="center", va="bottom", size=7.5, color=LINE)
-    txt(ax, DECADES[0], 20.75, AXLABEL, ha="left", va="bottom", size=8.5,
+        txt(ax, t, 19.78, lbl, ha="center", va="bottom", size=8, color=LINE)
+    txt(ax, LIN_LEFT, 20.75, AXLABEL, ha="left", va="bottom", size=8.5,
         color=INK)
 
     # shaft column and ring ticks (axes-fraction furniture)
@@ -170,27 +198,44 @@ def main() -> int:
         ax.plot([0.046, 0.074], [y, y], transform=ax.get_yaxis_transform(),
                 color=MUTED, lw=1.6)
         label = "R6 (top)" if rid == "R6" else rid
-        txt(ax, 0.040, y, label, ha="right", va="center", size=8, color=GREY,
+        txt(ax, -0.035, y, label, ha="right", va="center", size=8, color=GREY,
             transform=ax.get_yaxis_transform())
+
+    # campaign structural gate (FoS 2.5, utilisation 0.40) — NR-015;
+    # the label sits under the axis strip, right of the gate line, clear
+    # of the R6 bar band and of the R6 readout
+    ax.plot([GATE_UTIL, GATE_UTIL], [-0.5, 19.4], color=GATE, lw=1.5,
+            ls=(0, (4, 3)))
+    txt(ax, GATE_UTIL + 0.04, 18.55, GATE_LABEL, ha="left", va="center",
+        size=8, color=GATE, style="italic")
 
     # fail boundary line and label
     ax.plot([1.0, 1.0], [-0.5, 19.4], color=RED, lw=1.8, ls=(0, (5, 4)))
-    txt(ax, 1.0, -0.62, BOUNDARY, ha="center", va="top", size=7.5,
+    txt(ax, 1.0, -0.62, BOUNDARY, ha="center", va="top", size=8,
         color=RED, style="italic")
 
-    # utilisation bars and FoS readouts (log axis, bar origin at 10^-6)
+    # utilisation bars and FoS readouts (linear axis, bar origin at zero)
     bh = 1.15
     for r in rings:
         y = float(r["station_m"])
         total = float(r["max_util"])
-        ax.add_patch(Rectangle((DECADES[0], y - bh / 2),
-                               total - DECADES[0], bh, facecolor=CYAN,
+        if r["id"] == TENSION_RING:
+            # net tension: no compression bar; a hollow diamond badge
+            ax.plot([BADGE_X], [y], marker="D", ms=6.0, mfc="white",
+                    mec=INK, mew=1.2, zorder=4)
+            txt(ax, MIN_READOUT_X, y,
+                f"net tension — FoS {fmt_fos(float(r['ring_fos']))}",
+                ha="left", va="center", size=8, color=INK)
+            continue
+        ax.add_patch(Rectangle((LIN_LEFT, y - bh / 2),
+                               total - LIN_LEFT, bh, facecolor=CYAN,
                                edgecolor="none", alpha=0.95, zorder=3))
-        txt(ax, total * 1.6, y, f"FoS {fmt_fos(float(r['ring_fos']))}",
+        rx = max(total * 1.6, MIN_READOUT_X)
+        txt(ax, rx, y, f"FoS {fmt_fos(float(r['ring_fos']))}",
             ha="left", va="center", size=8, color=INK)
 
     # ground-ring note
-    txt(ax, DECADES[0], -0.62, GROUND, ha="left", va="top", size=7.5,
+    txt(ax, LIN_LEFT, -0.62, GROUND, ha="left", va="top", size=8,
         color=FAINT)
 
     # ------------------------------------------------------------ foot
@@ -199,24 +244,25 @@ def main() -> int:
     foot.set_xlim(0, 1)
     foot.set_ylim(0, 1)
 
-    def swatch(x, color, kind="swatch"):
+    def swatch(x, y, color, kind="swatch"):
         if kind == "swatch":
-            foot.add_patch(Rectangle((x, 0.80), 0.016, 0.085, facecolor=color,
-                                     edgecolor=color, lw=0.6, alpha=0.7))
+            foot.add_patch(Rectangle((x, y - 0.042), 0.016, 0.085,
+                                     facecolor=color, edgecolor=color,
+                                     lw=0.6, alpha=0.7))
+        elif kind == "diamond":
+            foot.plot([x], [y], marker="D", ms=5.5, mfc="white", mec=INK,
+                      mew=1.2)
         else:
-            foot.plot([x, x + 0.022], [0.843, 0.843], color=color, lw=1.8,
+            foot.plot([x, x + 0.022], [y, y], color=color, lw=1.8,
                       ls=(0, (4, 3)))
 
-    pos = [0.028, 0.46, 0.028]
-    for i, (kind, color, s) in enumerate(LEGEND):
-        x = pos[i]
-        if kind != "text":
-            swatch(x, color, kind)
-            foot.text(x + 0.026, 0.843, keep(s), ha="left", va="center",
-                      size=7.5, color=INK)
-        else:
-            foot.text(x, 0.62, keep(s), ha="left", va="center", size=7.5,
-                      color=INK)
+    for y, entries in LEGEND_ROWS:
+        for (kind, color, s), x in zip(entries, LEGEND_X):
+            swatch(x, y, color, kind)
+            foot.text(x + 0.026, y, keep(s), ha="left", va="center",
+                      size=8, color=INK)
+    foot.text(0.028, 0.55, keep(LEGEND_TEXT), ha="left", va="center",
+              size=8, color=INK)
 
     stamp1 = (f"source: data commit {DATA_COMMIT} · extract "
               f"extract-winner-operating-point.csv · capture {CAPTURE['run_id']}")
@@ -289,7 +335,8 @@ def main() -> int:
         "command": ("/usr/bin/python3 "
                     f"docs/reporting/figures/{SLUG}/{SLUG}.py "
                     f"--script-commit {args.script_commit}"),
-        "precision": "FoS readouts at 0.001, nearest integer above 1e4",
+        "precision": ("FoS readouts at 0.001, nearest integer above 1e4; "
+                      "the campaign gate draws at 1 / 2.5 = 0.40 (NR-015)"),
         "outputs": {
             f"{SLUG}.svg": sha256(svg),
             f"{SLUG}.pdf": sha256(pdf),

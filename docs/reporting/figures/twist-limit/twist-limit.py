@@ -18,6 +18,12 @@ v5 (the round-6 hub-name retirement, 2026-10-14): the top ring label
 reads "R6 (top)" and the subtitle reads "ground to top". No drawn
 value moves.
 
+v6 (FEEDBACKBOT1 re-cut, 2026-10-18): panel B draws the torsional FoS
+gate mark at capacity / 1.5 per segment (NR-052).  The four method
+notes leave the canvas for the technical caption, the foot shrinks and
+the figure height drops to 6.9 in.  Micro-typography floor 8 pt on
+scientific text.  No drawn value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py \
       --script-commit <hex>
@@ -27,7 +33,7 @@ numpy 2.4.4.  F-REPRO: svg.hashsalt set, SVG dc:date normalised, PDF and
 PNG metadata fixed, no timestamps anywhere.
 
 Mechanism references (cleared to draw by science-validator, 2026-10-08;
-register rows pending — see register-status.md):
+the floor row signed NR-053, 2026-10-15 — see register-status.md):
   the realisability floor 72.25°; the crossing-limit note (no value
   form); the no-limit explanation.  The seed binding segment (79.4°) is
   HELD, not drawn.
@@ -63,10 +69,12 @@ CAPTURE = {
 }  # per pair-extract README and the NR-021..NR-023 sign-off basis
 DATA_COMMIT = "dd3cc6a"
 AUTHORITY_COMMIT = "f8114be"  # computing commit of the extract (CSV header)
-ROWS = "NR-022 · NR-023"
+ROWS = "NR-022 · NR-023 · NR-040 · NR-052 · NR-053"
 
-# mechanism reference (value as recorded by the science seat, 2026-10-08)
+# mechanism reference (value as recorded by the science seat, 2026-10-08;
+# signed row NR-053, 2026-10-15)
 FLOOR_DEG = "72.25"
+GATE_FOS = 1.5  # torsional-stability FoS hard constraint, NR-052
 
 INK = "#1a1a1a"
 LINE = "#333333"
@@ -76,7 +84,7 @@ MUTED = "#98a0a8"
 SEP = "#e2e2e2"
 CYAN = "#1f8fff"  # transmitted twist
 GREEN = "#2e8c57"  # segment torque
-RED = "#b32222"  # over-twist limit / capacity
+RED = "#b32222"  # over-twist limit / capacity / FoS gate
 FLOOR = "#8a94a6"  # realisability floor
 
 TITLE = "Every segment of the winner runs well inside its binding limit"
@@ -85,27 +93,25 @@ SUB = ("Transmitted twist against its binding limit, the realisability "
        "operating point")
 PANEL_A = ("A — twist: transmitted twist |Δα| against its binding limit, "
            "the realisability floor")
-PANEL_B = ("B — torque: segment torque against torsional capacity, paired "
-           "at the same state")
+PANEL_B = ("B — torque: segment torque against torsional capacity, "
+           "with the FoS 1.5 gate")
 AX_A = "twist angle — degrees"
 AX_B = "torque — N·m"
 FLOOR_LABEL = f"realisability floor {FLOOR_DEG}°"
-LEGEND = [
-    ("dot", CYAN, "transmitted twist (panel A)"),
-    ("dot", GREEN, "segment torque (panel B)"),
-    ("tick", RED, "δcrit over-twist limit"),
-    ("square", RED, "torsional capacity"),
+LEGEND_ROWS = [
+    (0.80, [
+        ("dot", CYAN, "transmitted twist (panel A)"),
+        ("dot", GREEN, "segment torque (panel B)"),
+        ("tick", RED, "δcrit over-twist limit"),
+    ]),
+    (0.65, [
+        ("square", RED, "torsional capacity"),
+        ("tri", RED, "torsional FoS gate — torque bound at "
+                     "capacity / 1.5 (NR-052)"),
+    ]),
 ]
-NOTES = [
-    ("realisability floor — sin Δα ≤ 1/1.05 holds the geometry only to "
-     f"{FLOOR_DEG}°."),
-    ("crossing limit δα* — every segment gates on its own collapse-detector "
-     "limit. That limit is not the over-twist limit."),
-    ("no limit — the segment's tether is shorter than the sum of its end "
-     "radii. Its lines cannot reach the axis,"),
-    ("so no over-twist limit exists. Tether break strain and ring "
-     "compression carry the limit instead."),
-]
+LEGEND_X_ROW1 = [0.028, 0.36, 0.66]
+LEGEND_X_ROW2 = [0.028, 0.36]
 
 LEDGER: list[str] = []
 
@@ -158,12 +164,12 @@ def main() -> int:
         }
     )
 
-    fig = plt.figure(figsize=(7.6, 7.6))
-    fig.text(0.012, 0.972, keep(TITLE), size=11, weight="bold", color=INK)
-    fig.text(0.012, 0.943, keep(SUB), size=8, color=GREY)
+    fig = plt.figure(figsize=(7.6, 6.9))
+    fig.text(0.012, 0.968, keep(TITLE), size=11, weight="bold", color=INK)
+    fig.text(0.012, 0.936, keep(SUB), size=8, color=GREY)
 
-    DEF_A = [0.145, 0.60, 0.825, 0.27]
-    DEF_B = [0.145, 0.30, 0.825, 0.27]
+    DEF_A = [0.145, 0.635, 0.825, 0.297]
+    DEF_B = [0.145, 0.338, 0.825, 0.297]
     YLIM = (-2.3, 21.8)
     Y_AXIS = 19.0  # axis strip height per panel
 
@@ -187,14 +193,14 @@ def main() -> int:
                     zorder=1)
         for i, yc in enumerate(centers):
             txt(ax, xmin * 0.30, yc, f"S{i + 1}", ha="left", va="center",
-                size=7.5, color=GREY)
+                size=8, color=GREY)
         # top axis strip
         ax.plot([0.0, xmax * 0.99], [Y_AXIS, Y_AXIS], color=LINE, lw=1.1,
                 solid_capstyle="butt")
         for t in ticks:
             ax.plot([t, t], [Y_AXIS, Y_AXIS + 0.22], color=LINE, lw=0.8)
             txt(ax, t, Y_AXIS + 0.28, tickfmt(t), ha="center", va="bottom",
-                size=7, color=LINE)
+                size=8, color=LINE)
         txt(ax, 0.0, Y_AXIS + 1.35, axlabel, ha="left", va="bottom",
             size=8, color=INK)
         return ax
@@ -205,9 +211,9 @@ def main() -> int:
                      lambda t: f"{t:g}", AX_B)
 
     # ------------------------------------------------------------ panel A
-    axa.plot([72.25, 72.25], [-0.6, 18.35], color=FLOOR, lw=1.3,
+    axa.plot([72.25, 72.25], [-0.6, 16.6], color=FLOOR, lw=1.3,
              ls=(0, (4, 3)), zorder=1.5)
-    txt(axa, 72.25, 18.45, FLOOR_LABEL, ha="center", va="top", size=7.5,
+    txt(axa, 72.25, 18.45, FLOOR_LABEL, ha="center", va="top", size=8,
         color=FLOOR)
 
     for seg, yc in zip(segs, centers):
@@ -220,11 +226,11 @@ def main() -> int:
         axa.plot([lim, lim], [yc - 0.6, yc + 0.6], color=RED, lw=2.2,
                  zorder=4)
         txt(axa, mag, yc + 0.5, f"{mag:.1f}", ha="center", va="bottom",
-            size=7, color=INK,
+            size=8, color=INK,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
         txt(axa, lim + 2.2, yc, f"{lim:.1f}", ha="left", va="center",
-            size=7, color=RED,
+            size=8, color=RED,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
 
@@ -232,24 +238,28 @@ def main() -> int:
     for seg, yc in zip(segs, centers):
         tq = float(seg["segment_torque_Nm"])
         cap = float(seg["torque_capacity_Nm"])
+        gate = cap / GATE_FOS
         axb.plot([tq, cap], [yc, yc], color="#999999", lw=1.0,
                  ls=(0, (2, 3)), zorder=2)
         axb.plot([tq], [yc], marker="o", ms=5.5, mfc=GREEN, mec=GREEN,
                  zorder=4)
         axb.plot([cap], [yc], marker="s", ms=5.5, mfc="white", mec=RED,
                  mew=1.4, zorder=4)
+        # the torsional FoS gate mark: torque bound at capacity / 1.5
+        axb.plot([gate], [yc], marker="v", ms=6.5, mfc="white", mec=RED,
+                 mew=1.4, zorder=5)
         txt(axb, tq, yc + 0.5, f"{tq:.1f}", ha="center", va="bottom",
-            size=7, color=INK,
+            size=8, color=INK,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
         txt(axb, cap, yc + 0.5, f"{cap:.1f}", ha="center", va="bottom",
-            size=7, color=RED,
+            size=8, color=RED,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                       alpha=1.0))
 
     # panel labels (bottom of each panel)
-    txt(axa, 0.0, -0.65, PANEL_A, ha="left", va="top", size=7.5, color=GREY)
-    txt(axb, 0.0, -0.65, PANEL_B, ha="left", va="top", size=7.5, color=GREY)
+    txt(axa, 0.0, -0.65, PANEL_A, ha="left", va="top", size=8, color=GREY)
+    txt(axb, 0.0, -0.65, PANEL_B, ha="left", va="top", size=8, color=GREY)
 
     # ------------------------------------------------------------ foot
     foot = fig.add_axes([0.0, 0.0, 1.0, 0.26])
@@ -257,27 +267,27 @@ def main() -> int:
     foot.set_xlim(0, 1)
     foot.set_ylim(0, 1)
 
-    def marker(x, color, kind):
+    def marker(x, y, color, kind):
         if kind == "dot":
-            foot.plot([x], [0.93], marker="o", ms=5.5, mfc=color, mec=color)
+            foot.plot([x], [y], marker="o", ms=5.5, mfc=color, mec=color)
         elif kind == "tick":
-            foot.plot([x + 0.002], [0.93], marker="|", ms=9, color=color,
+            foot.plot([x + 0.002], [y], marker="|", ms=9, color=color,
                       mew=2.2)
+        elif kind == "tri":
+            foot.plot([x + 0.004], [y], marker="v", ms=6, mfc="white",
+                      mec=color, mew=1.4)
         else:
-            foot.plot([x + 0.004], [0.93], marker="s", ms=5.5, mfc="white",
+            foot.plot([x + 0.004], [y], marker="s", ms=5.5, mfc="white",
                       mec=color, mew=1.4)
 
-    lpos = [0.028, 0.26, 0.475, 0.675]
-    for i, (kind, color, s) in enumerate(LEGEND):
-        x = lpos[i]
-        marker(x, color, kind)
-        foot.text(x + 0.022, 0.93, keep(s), ha="left", va="center", size=7.5,
-                  color=INK)
-
-    ny = [0.84, 0.72, 0.60, 0.48]
-    for y, s in zip(ny, NOTES):
-        foot.text(0.028, y, keep(s), ha="left", va="center", size=7,
-                  color=GREY)
+    for (kind, color, s), x in zip(LEGEND_ROWS[0][1], LEGEND_X_ROW1):
+        marker(x, LEGEND_ROWS[0][0], color, kind)
+        foot.text(x + 0.022, LEGEND_ROWS[0][0], keep(s), ha="left",
+                  va="center", size=8, color=INK)
+    for (kind, color, s), x in zip(LEGEND_ROWS[1][1], LEGEND_X_ROW2):
+        marker(x, LEGEND_ROWS[1][0], color, kind)
+        foot.text(x + 0.022, LEGEND_ROWS[1][0], keep(s), ha="left",
+                  va="center", size=8, color=INK)
 
     stamp1 = (f"source: data commit {DATA_COMMIT} · extract "
               f"extract-winner-operating-point.csv · capture "
@@ -285,9 +295,9 @@ def main() -> int:
     stamp2 = (f"s = {CAPTURE['s']} (t = {CAPTURE['t']} s) · rows {ROWS} · "
               f"script commit {args.script_commit} · authority commit "
               f"{AUTHORITY_COMMIT}")
-    foot.text(0.028, 0.24, keep(stamp1), ha="left", va="center", size=6.5,
+    foot.text(0.028, 0.42, keep(stamp1), ha="left", va="center", size=6.5,
               color=FAINT)
-    foot.text(0.028, 0.14, keep(stamp2), ha="left", va="center", size=6.5,
+    foot.text(0.028, 0.24, keep(stamp2), ha="left", va="center", size=6.5,
               color=FAINT)
 
     # ------------------------------------------------------------ save
@@ -344,17 +354,20 @@ def main() -> int:
             "register_rows": [ROWS],
             "mechanism_references": {
                 "realisability_floor_deg": FLOOR_DEG,
-                "status": "cleared to draw 2026-10-08; floor row pending. "
-                          "The two changelog lines left the plate notes "
-                          "2026-10-14 (failure ledger).",
+                "status": "floor row signed NR-053 (science-validator, "
+                          "2026-10-15). The four method notes moved to "
+                          "the technical caption at the FEEDBACKBOT1 "
+                          "re-cut.",
             },
         },
         "capture": CAPTURE,
         "command": ("/usr/bin/python3 "
                     f"docs/reporting/figures/{SLUG}/{SLUG}.py "
                     f"--script-commit {args.script_commit}"),
-        "precision": "angles 0.1 deg drawn; torque 0.1 N·m drawn; "
-                     "mechanism reference as recorded",
+        "precision": ("angles 0.1 deg drawn; torque 0.1 N·m drawn; "
+                      "the panel-B gate mark at capacity / 1.5 from the "
+                      "signed constant (NR-052); mechanism reference as "
+                      "recorded"),
         "outputs": {
             f"{SLUG}.svg": sha256(svg),
             f"{SLUG}.pdf": sha256(pdf),
