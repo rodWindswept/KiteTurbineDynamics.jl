@@ -36,6 +36,10 @@ LOG = "scratch/au_b20b21_fold.log"
 LAND = "--land" in sys.argv
 log_lines = []
 
+UPSTREAM = subprocess.check_output(
+    ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], text=True
+).strip()
+
 
 def log(msg):
     print(msg)
@@ -267,8 +271,8 @@ def main():
             d = git("diff", "HEAD", "--", p)
             assert not d, f"tree dirty for {p}: another seat holds the pen"
         git("fetch")
-        behind = git("log", "--oneline", "HEAD..origin/master")
-        assert not behind.strip(), f"origin ahead, rebase first: {behind[:400]}"
+        behind = git("log", "--oneline", f"HEAD..{UPSTREAM}")
+        assert not behind.strip(), f"upstream ahead, rebase first: {behind[:400]}"
 
     base_draft = show_head(DRAFT)
     base_tracker = show_head(TRACKER)
@@ -353,9 +357,9 @@ def main():
     git("fetch")
     git("push")
     tip = git("rev-parse", "HEAD").strip()
-    origin = git("rev-parse", "origin/master").strip()
-    assert tip == origin, "local != origin after push"
-    log(f"landed: {tip}")
+    origin = git("rev-parse", UPSTREAM).strip()
+    assert tip == origin, f"local != {UPSTREAM} after push"
+    log(f"landed: {tip} ({UPSTREAM})")
 
 
 if __name__ == "__main__":
