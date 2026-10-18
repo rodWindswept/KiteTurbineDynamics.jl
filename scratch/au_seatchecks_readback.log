@@ -1,0 +1,13 @@
+a9dc348 docs(reporting): the house-vocabulary swap lands - the draft ladder-embed sentence and the value-claims-ledger row read the pipeline; the draft ticks to v0.65; STE rc=0 at 0.22/100w; citation checker exit 0 (56 cited, every one signed) (author)
+abc12f0 docs(reporting): the house-vocabulary swap receipt and the author seat-page refresh - the receipt carries the two-site fold, the gates (56 cited, every one signed; STE draft 20, tracker 24, ledger 5 held) and the figure re-stamp handoff (ledger 64073d0f); the seat page closes the pass and points the next action at the rebuild verification; STE rc=0 (receipt 0.00, seat page 0.06) (author)
+--- blob parity HEAD vs origin ---
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md
+OK  docs/reporting/draft-tracker.md
+OK  docs/reporting/value-claims-ledger.md
+OK  docs/reporting/room-responses/author-2026-10-18-house-vocab-swap.md
+OK  handovers/handover-2026-10-14-reporting-room-author.md
+OK  scratch/au_seatchecks_fold.py
+OK  scratch/au_seatchecks_fold.log
+--- local vs origin ---
+abc12f02df9fdfefda2fc844cc844d3e4b4954bb
+abc12f02df9fdfefda2fc844cc844d3e4b4954bb
