@@ -71,7 +71,7 @@ GENES = ["r_hub", "r_bottom", "target_Lr", "n_lines", "density_profile",
 
 TITLE = "V13 campaign — parameter-space landscape"
 SUB = ("the 930-design screen · three DE islands · PC1-PC2 projection of the "
-       "ten-gene search · colour is the search objective (kg)")
+       "ten-gene search · colour is the search objective (kg-equivalent)")
 
 LEDGER: list[str] = []
 
@@ -305,7 +305,8 @@ def main() -> int:
     # ------------------------------------------------------------ colorbar
     ax_legend.set_axis_off()
     txt(ax_legend, 0.0, 0.96, "cell mean of the search", size=7.6, color=INK)
-    txt(ax_legend, 0.0, 0.88, "objective (kg)", size=7.6, color=INK)
+    txt(ax_legend, 0.0, 0.88, "objective (kg-equivalent)", size=7.6,
+        color=INK)
     cax = ax_legend.inset_axes([0.34, 0.40, 0.14, 0.42])
     cbar = fig.colorbar(im, cax=cax)
     cbar.set_ticks([30, 33, 36])
@@ -320,19 +321,20 @@ def main() -> int:
     ax_pc1.set_axis_off()
     txt(ax_pc1, 0.0, 0.97, f"PC1 — {shares[0]}% of variance", size=9,
         weight="bold", color=INK)
-    pc1_lines = [
-        ("+ PC1 ↑", BLUE_D, "larger main-rotor blades (x9)"),
-        ("", GREY, "wider spacing (x3), ground ring (x2)"),
-        ("− PC1 ↓", ORANGE_D, "more TRPT lines (x4)"),
-        ("", GREY, "more rotors (x6)"),
+    # One row per line. The long loading line wraps so no row runs past the
+    # panel edge and clips at the page margin (T4-6).
+    pc1_rows = [
+        ("+ PC1 ↑", BLUE_D, 8.2, "bold", 0.86, 0.0),
+        ("larger main-rotor blades (x9)", GREY, 7.6, "normal", 0.755, 0.0),
+        ("wider spacing (x3),", GREY, 7.6, "normal", 0.650, 0.0),
+        ("ground ring (x2)", GREY, 7.6, "normal", 0.545, 0.055),
+        ("− PC1 ↓", ORANGE_D, 8.2, "bold", 0.440, 0.0),
+        ("more TRPT lines (x4)", GREY, 7.6, "normal", 0.335, 0.0),
+        ("more rotors (x6)", GREY, 7.6, "normal", 0.230, 0.0),
     ]
-    for k, (mark, col, s) in enumerate(pc1_lines):
-        y = 0.78 - k * 0.155
-        if mark:
-            txt(ax_pc1, 0.0, y, mark, size=8.2, weight="bold", color=col)
-            y -= 0.105
-        txt(ax_pc1, 0.0, y, s, size=7.6, color=GREY)
-    txt(ax_pc1, 0.0, 0.10, "direction reads from the loadings", size=6.5,
+    for s, col, size, weight, y, x in pc1_rows:
+        txt(ax_pc1, x, y, s, size=size, weight=weight, color=col)
+    txt(ax_pc1, 0.0, 0.08, "direction reads from the loadings", size=6.5,
         color=FAINT)
 
     # ------------------------------------------------------------ PC2 inset
@@ -354,10 +356,10 @@ def main() -> int:
         color=INK)
     txt(ax_journey, 0.0, 0.70, "930 designs · three islands · 31 generations "
         "each", size=7.8, color=GREY)
-    txt(ax_journey, 0.0, 0.50, "one common seed at 36.109 (kg)", size=7.8,
-        color=GREY)
-    txt(ax_journey, 0.0, 0.30, "winner: island 3 at 27.364 (kg)", size=7.8,
-        color=GREY)
+    txt(ax_journey, 0.0, 0.50, "one common seed at 36.109 (kg-equivalent)",
+        size=7.8, color=GREY)
+    txt(ax_journey, 0.0, 0.30, "winner: island 3 at 27.364 (kg-equivalent)",
+        size=7.8, color=GREY)
     txt(ax_journey, 0.0, 0.08, "each line: the island best-so-far path, one "
         "step per generation", size=6.5, color=FAINT)
 

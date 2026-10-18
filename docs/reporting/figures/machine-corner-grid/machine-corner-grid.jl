@@ -83,7 +83,7 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "The corner machines: one typical design from each corner of the PC1-PC2 field"
-const SUB = "Built geometry at one shared scale · the value under each machine is its search objective in kg, lower is better · one pick per window corner, the nearest feasible design (NR-051)"
+const SUB = "Built geometry at one shared scale · the value under each machine is its search objective in kg-equivalent, lower is better · one pick per window corner, the nearest feasible design (NR-051)"
 
 tandeg(x) = tan(deg2rad(x))
 
@@ -416,7 +416,7 @@ function main()
             align=(:center, :center))
         text!(lax, xf, 0.50; text=p.tag, fontsize=9.5, color=C_GREY,
             align=(:center, :center))
-        text!(lax, xf, 0.16; text="objective $(p.objective) kg", fontsize=9.5,
+        text!(lax, xf, 0.16; text="objective $(p.objective) kg-equivalent", fontsize=9.5,
             color=C_INK, align=(:center, :center))
     end
 

@@ -88,6 +88,14 @@ def keep(s: str) -> str:
     return s
 
 
+def sig3(v: float) -> str:
+    """Three significant figures with trailing zeros kept (T4-7)."""
+    if v == 0:
+        return "0.00"
+    e = int(np.floor(np.log10(abs(v))))
+    return f"{v:.{max(0, 2 - e)}f}"
+
+
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -240,7 +248,7 @@ def main() -> int:
         mid = (lo + hi) / 2
         ticks = [lo, mid, hi]
         cbar.set_ticks(ticks)
-        cbar.ax.set_xticklabels([keep(f"{v:.3g}") for v in ticks])
+        cbar.ax.set_xticklabels([keep(sig3(v)) for v in ticks])
         cbar.ax.tick_params(labelsize=5.5, length=1.5, pad=1.5, color=LINE)
         cbar.outline.set_edgecolor("#cccccc")
 

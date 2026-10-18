@@ -76,7 +76,7 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "Island 3 best-so-far: seven machines from the seed to the winner"
-const SUB = "Built geometry at one shared scale · the value under each machine is its search objective, in kg, lower is better · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
+const SUB = "Built geometry at one shared scale · the value under each machine is its search objective, in kg-equivalent, lower is better · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
 
 tandeg(x) = tan(deg2rad(x))
 
@@ -414,7 +414,7 @@ function main()
             align=(:center, :center))
         text!(lax, xf, 0.48; text=p.label, fontsize=9, color=C_GREY,
             align=(:center, :center))
-        text!(lax, xf, 0.14; text="objective $(p.objective) kg", fontsize=9.5,
+        text!(lax, xf, 0.14; text="objective $(p.objective) kg-equivalent", fontsize=9.5,
             color=C_INK, align=(:center, :center))
     end
 

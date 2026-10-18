@@ -397,10 +397,10 @@ function annotate_side!(ax, h::Hero)
     gap = 0.14
     # hub ring R6: leader to the ring bar right end, from a right-side text
     tgt = (h.radii[6], h.stations[6])
-    lines!(ax, [tgt[1] + gap, tgt[1] + 1.6], [tgt[2] + 0.10, tgt[2] + 0.55];
+    lines!(ax, [tgt[1] + gap, tgt[1] + 0.66], [tgt[2] + 0.10, tgt[2] + 0.55];
         color=C_GREY, linewidth=lw)
-    text!(ax, tgt[1] + 1.75, tgt[2] + 0.62; text="topmost ring R6",
-        fontsize=10.5, color=C_INK, align=(:left, :center))
+    text!(ax, tgt[1] + 0.80, tgt[2] + 0.62; text="topmost ring R6",
+        fontsize=13, color=C_INK, align=(:left, :center))
     # TRPT shaft: leader to the right cone line, mid-height
     a, b = rope_chord(h, 5, 3)
     pa = proj_side(h, a); pb = proj_side(h, b)
@@ -408,14 +408,14 @@ function annotate_side!(ax, h::Hero)
     lines!(ax, [mid[1] + 0.28, mid[1] + 1.5], [mid[2] + 0.08, mid[2] + 0.66];
         color=C_GREY, linewidth=lw)
     text!(ax, mid[1] + 1.65, mid[2] + 0.72; text="TRPT shaft",
-        fontsize=10.5, color=C_INK, align=(:left, :center))
+        fontsize=13, color=C_INK, align=(:left, :center))
     # ground ring R1: leader from the left side
     lines!(ax, [-h.radii[1] - 1.9, -h.radii[1] - gap], [0.55, 0.10];
         color=C_GREY, linewidth=lw)
     text!(ax, -h.radii[1] - 2.05, 0.62; text="ground ring R1",
-        fontsize=10.5, color=C_INK, align=(:right, :center))
+        fontsize=13, color=C_INK, align=(:right, :center))
     # ground-station glyph label
-    text!(ax, 1.25, -0.88; text="ground station", fontsize=10.5, color=C_INK,
+    text!(ax, 1.25, -0.88; text="ground station", fontsize=13, color=C_INK,
         align=(:left, :center))
     return ax
 end
@@ -577,7 +577,7 @@ function main()
     x = 14.0
     ytop = 0.92
     for (kind, color, label) in entries
-        wneed = 21 + 4.6 * length(label) + 18
+        wneed = 21 + 5.9 * length(label) + 18
         if x + wneed > fig_w - 14.0
             x = 14.0
             ytop -= 0.30
@@ -594,7 +594,7 @@ function main()
             poly!(fax, tri; color=RGBf(1, 1, 1), strokecolor=color,
                 strokewidth=1.2)
         end
-        text!(fax, (x + 21) / fig_w, ytop; text=label, fontsize=9,
+        text!(fax, (x + 21) / fig_w, ytop; text=label, fontsize=11.5,
             color=C_INK, align=(:left, :center))
         x += wneed
     end
@@ -608,7 +608,7 @@ function main()
     lines!(fax, [(bx + bar_px) / fig_w, (bx + bar_px) / fig_w], [0.44, 0.56];
         color=C_INK, linewidth=1.0)
     text!(fax, (bx + bar_px + 10) / fig_w, 0.50; text="$(Int(SCALE_BAR_M)) m",
-        fontsize=9.5, color=C_INK, align=(:left, :center))
+        fontsize=11.5, color=C_INK, align=(:left, :center))
 
     stamp1 = "source: data commit $DATA_COMMIT · genome extract $GENOME_EXTRACT_ID (row $(h.label)) · capture $CAPTURE_ID (ring stations NR-021, per-segment twist NR-022)"
     stamp2 = "rows $REGISTER_ROWS · script commit $script_commit · engine CairoMakie · PDF date normalised to 1970-01-01"
