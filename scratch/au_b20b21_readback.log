@@ -1,0 +1,12 @@
+fd68e39 docs(reporting): the B-20/B-21 receipt and the author seat-page refresh — the receipt carries the fold content, the three pen-flag closures, the gates (56 cited, every one signed; STE draft 34 tracker 24 routing 7 held) and the handoffs; the seat page closes the pass and hands the pen to the prose pass; STE rc=0 (receipt 0.18, seat page 0.07)
+3290876 docs(reporting): the B-20 and B-21 prose pass lands - section 2 gains the explicit decoder and gate math and section 3.3 states the steady-and-drifting pair with the bow bound on both stations; the draft ticks to v0.63; STE rc=0 at 0.37/100w; citation checker exit 0 (56 cited, every one signed)
+--- blob parity HEAD vs origin ---
+OK  docs/reporting/drafts/2026-10-08-report-first-draft.md
+OK  docs/reporting/draft-tracker.md
+OK  docs/reporting/feedback/2026-10-18-feedbackbot1-builder-routing.md
+OK  docs/reporting/room-responses/author-2026-10-18-b20b21-fold.md
+OK  handovers/handover-2026-10-14-reporting-room-author.md
+OK  scratch/au_b20b21_fold.py
+--- local vs origin ---
+fd68e39f3421b736cc0232c7dbf1bb164648270b
+fd68e39f3421b736cc0232c7dbf1bb164648270b
