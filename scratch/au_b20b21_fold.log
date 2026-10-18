@@ -22,4 +22,4 @@ ste routing: cand total=7 per100w=1.32 em_dash=0 cats=[('long_paragraph(>6s)', '
 ste: total and per-category hold on all three surfaces
 citation gate: exit 0, 56 cited, every one signed
 pandoc: candidate parses clean
-dry run complete: candidates and gate log in scratch; nothing committed
+landed: 3290876c74d31e5ec791e119857d8b2c53e6bfe9 (origin/bank-derate-cos2p65)

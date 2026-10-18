@@ -33,6 +33,16 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Closed, last (evidence index)
 
+- The v0.63 B-20 and B-21 prose pass (2026-10-18).
+  The decoder and gate math lands at section 2, and the steady-and-drifting pair lands at section 3.3.
+  Fold `3290876`, two-state script `scratch/au_b20b21_fold.py`.
+  Citation checker exit 0 (56 cited, every one signed). STE totals hold (draft 34, tracker 24, routing 7).
+  Receipt `docs/reporting/room-responses/author-2026-10-18-b20b21-fold.md`.
+
+- v0.63, the B-20 and B-21 fold: commit `3290876`.
+  Section 2 prints the r_rotor sizing form, the decode, the score definitions and the full gate list.
+  Section 3.3 prints the two-timescale pair and the two-station bound with the 200-second scope.
+
 - The v0.57 winner-bow-read pass (2026-10-16): the NR-059 read folds at section 3.3.
   Fold `c825a01`, 3 anchors and 33 guards closed.
   Review copy rebuilds (record `c825a01`, live md5 `3b92d088…`, byte-identical to `draft-c825a01-20261016-132638.docx`).
@@ -173,7 +183,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy at `scratch/report-pdf-build/draft-live.docx` reads the v0.57 build (record draft `c825a01`, md5 `3b92d088cf2bab1fca739c2bd5082ab5`).
+- The review copy rebuilds after each draft-moving pass. The v0.63 rebuild carries this fold, the rounded register and the figure re-cuts.
 
 ## Boot
 
@@ -208,4 +218,6 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the v0.58 close fold waits on the science-writer prose pass (supply `scratch/au_v058_close_supply.md`). Then the review-copy rebuild and the receipt. The ladder plate folds after its read closes. The section 3.2 fold waits on the visual pass. AU4 and the partner-gated tails hold.
+**Owner:** @author. **Next action:** the FEEDBACKBOT1 prose pass (A-10 to A-19) runs with @science-writer from v0.63.
+One file, one writer. Then the review-copy rebuild verification.
+The value-track close and the partner-gated tails hold.
