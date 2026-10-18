@@ -74,7 +74,20 @@ search finds first. Panel 2 shows what it then reduces.
 - `rejected: twist past the crossing limit (11)`
 - `rejected: power below the 5 kW floor (96)`
 - `rejected: FoS below 2.5 (4)`
-- `rejected: cause not logged (201)`
+- `rejected: cause now logged (201, six classes)`
+
+The `cause not logged (201)` band resolves to six classes from the
+re-run probe (hermes receipt 2026-10-17): 93 rotors that cannot reach
+80 per cent of the power floor on swept area and power coefficient, 37
+realisability-cliff settle failures, 36 rotor-spacing refusals, 29 line
+breaks, three Betz-ceiling violations, and three hub tip-speed
+divergences. The single band may print `cause now logged (201)` with the
+six-way split in the caption, or print six thin bands. The figures seat
+picks the form. The counts carry one caveat: the re-run sat at HEAD
+`b65e9c8`, one rope-break arming change (`2bf76a3`) ahead of the
+producing commit `a76c5e9`. The rope_break count (29) may shift a few
+rows if re-derived at the producing commit. Do not sign the six counts
+into a register row until that re-run lands.
 
 The three subgroup labels carry the NR-055 reading rules. The plate
 prints no status codes and no Track names. A wording bounce lands here

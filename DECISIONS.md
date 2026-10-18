@@ -10,6 +10,35 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-15] Rope-break detection arms at the relax boundary: the measurement window only
+
+**Context.** The windowed evaluator ran the rope-break gate across the
+combined relax plus window run. On the warm path the 10-second relax
+transient, seeded from the static pre-solve, over-strained a line and
+false-rejected every healthy winner (NR-013, Harris 3.8). The break
+check judges only real operation, and a settle transient is not
+operation.
+
+**Decided (Rod ruling 2026-09-16, landed 2026-10-15 as `2bf76a3`).**
+Break detection carries an arm time. `sys.breaks_arm_s` holds it, and
+`run_canonical_sim!` accepts `breaks_arm_s` (default 0.0, so every other
+caller keeps the as-coded behaviour). The windowed evaluator arms at
+`cfg.relax_s`. A rope break inside the measurement window still
+disqualifies the design.
+
+**Consequences.** The warm path completes the full window with no false
+latch. The control (default arm) still latches at the recorded trip. The
+fixed path reproduces the committed condition CSV bit-for-bit. The cold
+rows are identical to the pre-fix baseline, so NR-012 holds. The fast
+suite reads 2606/2606 with the new placement test R4.
+
+**Rules out.** A break during the relax phase is not detected. The
+10-second relax is an initialization transient, not scored operation.
+If a design over-strains a line only during relax and then recovers,
+the check does not catch it. That is accepted: the check protects the
+measured window, and the relax transient must not break healthy
+machines.
+
 ## [2026-10-07] Branch landing — bank-derate-cos2p65 fast-forwarded onto master
 
 **Context.** All real work since the branch fork rode `bank-derate-cos2p65`,
