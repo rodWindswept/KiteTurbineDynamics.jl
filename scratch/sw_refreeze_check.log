@@ -1,0 +1,6 @@
+PASS  receipt region == block (new)
+PASS  tip draft region == block (new)
+PASS  sim carries the pre-break block once (history)
+block md5 (file-as-written, new): 0d9001e4c19c78cc239cc22f8ac6dba7
+pre-break md5 (file-as-written):   7bbd964db09d2b33269ce5cb8c334054
+sim md5 (unchanged):               9e1f673fba06cc4aed4fb8b80c368149
