@@ -1,0 +1,91 @@
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 19 is past the torsional realisability cliff: transmitting τ = 273.74 N·m at T = 150.77 N/line needs sin(Δα) = 1.0258 > 1; the ceiling at that tension is 266.85 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 8 is past the torsional realisability cliff: transmitting τ = 312.95 N·m at T = 122.54 N/line needs sin(Δα) = 2.8604 > 1; the ceiling at that tension is 109.41 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 12 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 991.7 N/line needs sin(Δα) = 3.265 > 1; the ceiling at that tension is 2469.8 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 11 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 532.27 N/line needs sin(Δα) = 5.8535 > 1; the ceiling at that tension is 1377.64 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 18 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 156.57 N/line needs sin(Δα) = 53.4096 > 1; the ceiling at that tension is 150.98 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+┌ Warning: Settle failed for genome
+│   exception = TRPT segment 1 of 13 is past the torsional realisability cliff: transmitting τ = 8064.0 N·m at T = 280.0 N/line needs sin(Δα) = 28.3406 > 1; the ceiling at that tension is 284.54 N·m.  The design point is unrealisable — widen the transmission (more lines, larger attachment radius, lower k_mppt) or lower the operating torque.  See test/test_trpt_realisability.jl.
+└ @ KiteTurbineDynamics ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/src/objective_evaluator.jl:844
+ERROR: LoadError: KeyError: key :hub_tip not found
+Stacktrace:
+ [1] getindex(h::Dict{Symbol, Int64}, key::Symbol)
+   @ Base ./dict.jl:477
+ [2] main()
+   @ Main ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/scratch/sv_reject_sixclass_a76c5e9.jl:296
+ [3] top-level scope
+   @ ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/scratch/sv_reject_sixclass_a76c5e9.jl:322
+ [4] include(mod::Module, _path::String)
+   @ Base ./Base.jl:306
+ [5] exec_options(opts::Base.JLOptions)
+   @ Base ./client.jl:317
+ [6] _start()
+   @ Base ./client.jl:550
+in expression starting at /home/rod/Documents/GitHub/KiteTurbineDynamics.jl/scratch/wt_reject_a76c5e9/scratch/sv_reject_sixclass_a76c5e9.jl:322
+sv_reject_sixclass_a76c5e9 — six-class 201-reject re-derivation at the producing commit
+generated: 2026-10-18T14:42:58.196
+code basis: src/ at commit a76c5e9 (producing commit, 2026-10-07)
+input data: telemetry.csv island 1..3, data commit dd3cc6a, sha256-verified copies
+FoS=Inf reject rows loaded: 201
+classifying: 26 rows (SHARD=1/8 LIMIT=0)
+  [  1/26] island=1 gen=0 idx=2  spacing
+  [  2/26] island=1 gen=1 idx=5  spacing
+  [  3/26] island=1 gen=2 idx=6  spacing
+  [  4/26] island=1 gen=3 idx=10  settle_fail
+  [  5/26] island=1 gen=5 idx=4  settle_fail
+  [  6/26] island=1 gen=7 idx=8  spacing
+  [  7/26] island=1 gen=9 idx=5  spacing
+  [  8/26] island=1 gen=11 idx=8  spacing
+  [  9/26] island=1 gen=14 idx=5  settle_fail
+  [ 10/26] island=1 gen=17 idx=5  settle_fail
+  [ 11/26] island=2 gen=0 idx=3  under_floor
+  [ 12/26] island=2 gen=2 idx=4  spacing
+  [ 13/26] island=2 gen=3 idx=7  settle_fail
+  [ 14/26] island=2 gen=4 idx=9  settle_fail
+  [ 15/26] island=2 gen=5 idx=10  under_floor
+  [ 16/26] island=2 gen=7 idx=8  under_floor
+  [ 17/26] island=2 gen=10 idx=5  under_floor
+  [ 18/26] island=2 gen=12 idx=7  under_floor
+  [ 19/26] island=2 gen=13 idx=9  under_floor
+  [ 20/26] island=2 gen=17 idx=8  under_floor
+  [ 21/26] island=3 gen=1 idx=2  under_floor
+  [ 22/26] island=3 gen=5 idx=2  rope_break
+  [ 23/26] island=3 gen=7 idx=4  under_floor
+  [ 24/26] island=3 gen=10 idx=3  rope_break
+  [ 25/26] island=3 gen=14 idx=5  under_floor
+  [ 26/26] island=3 gen=30 idx=7  under_floor
+classification wall: 2271.3 s
+
+== raw latch census (pre-split) ==
+  under_floor      11
+  spacing          7
+  settle_fail      6
+  rope_break       2
+
+under_floor rows: 11
+== static cp-floor split (betz_cp_floor_kw < 0.8 * p_floor) ==
+SPLIT island=2 gen=0 idx=3 class=betz_cp_floor cp_floor=1.103593169
+SPLIT island=2 gen=5 idx=10 class=betz_cp_floor cp_floor=2.054130816
+SPLIT island=2 gen=7 idx=8 class=betz_cp_floor cp_floor=0.956740791
+SPLIT island=2 gen=10 idx=5 class=betz_cp_floor cp_floor=2.039914732
+SPLIT island=2 gen=12 idx=7 class=betz_cp_floor cp_floor=3.837735072
+SPLIT island=2 gen=13 idx=9 class=betz_cp_floor cp_floor=2.082134697
+SPLIT island=2 gen=17 idx=8 class=betz_cp_floor cp_floor=3.600170935
+SPLIT island=3 gen=1 idx=2 class=betz_cp_floor cp_floor=2.238149926
+SPLIT island=3 gen=7 idx=4 class=betz_cp_floor cp_floor=3.564598145
+SPLIT island=3 gen=14 idx=5 class=betz_cp_floor cp_floor=3.751879796
+SPLIT island=3 gen=30 idx=7 class=betz_cp_floor cp_floor=3.886551288
+betz_cp_floor: 11 | betz_ceiling: 0 | split errors: 0
+threshold (0.8 * floor): 4.0 kW
+cp_floor range (betz_cp_floor class): 0.957 .. 3.887 kW
+
+== six-class census (this shard) ==

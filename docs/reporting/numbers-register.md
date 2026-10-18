@@ -2279,3 +2279,33 @@ The signed values stand byte-identical. The sign anchor stays.
 
 Evidence: `scratch/sv_nr046_repin_check.py` and its log.
 
+## Source row: NR-061, the six-class 201-reject split at the producing commit (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-061 | Six-class split of the 201 FoS=Inf rejects, classified with the producing code | betz_cp_floor 93, settle_fail 37, spacing 36, rope_break 30, betz_ceiling 3, hub_tip 2 (total 201) | count | Own sharded re-derivation at a76c5e9 (scratch/sv_reject_sixclass_a76c5e9/sv_reject_sixclass_a76c5e9.jl, eight shards over the 201 recorded rejects). Merge scratch/sv_reject_sixclass_a76c5e9/sv_reject_sixclass_merge.py, 317 checks, 0 fail | signed (science-validator, 2026-10-18) |
+
+Reading rules:
+
+- The producing commit armed break detection for the whole run. `2bf76a3` armed it at the relax boundary only. This row carries the producing counts.
+
+- One row moves between the two bases. Island 3, gen 8, idx 4 reads hub_tip at HEAD and rope_break at the producing commit. The break trips before the hub diverges when detection covers the whole run.
+
+- The HEAD re-run reads rope_break 29 and hub_tip 3. The draft prints those two numbers in section 3.1 and section 5. The draft must move to the signed set, 30 and 2.
+
+- Class definitions. betz_cp_floor: the static cp floor reads below 0.8 times the 5 kW floor. settle_fail: the torsional realisability cliff at settle. spacing: the pre-settle spacing gate. rope_break: a line exceeded break strain. betz_ceiling: the static cp floor reads at or above 4.0 kW. hub_tip: hub omega non-finite or the tip-speed sanity check fails.
+
+- The 100 finite-FoS rejects sit outside this row. NR-055 covers the three-way split.
+
+Boundaries:
+
+- The row is a classification of the recorded rejects. It is not a window statistic.
+
+- The probe version that ran carries a census defect. A shard with no hub_tip row raises after every data line flushes. The merge reads the per-row and SPLIT lines, so no count moves. The fixed probe ships with the evidence.
+
+Counter-read requested from the aero seat.
+
+Evidence: scratch/sv_reject_sixclass_a76c5e9/ holds the probe, the merge script, the eight shard logs, the HEAD run log and the merge log.
+
