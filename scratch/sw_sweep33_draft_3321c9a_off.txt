@@ -1,0 +1,37 @@
+== scratch/sw_sweep33_draft_3321c9a.md: words=8711 total=33 per100w=0.38 ==
+-- sentences over 20 words --
+  [24w] That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+-- passive constructions --
+  | ettles at omega 15.3, tip about 73 m/s (NR-047).  The power is measured, not computed from a mean speed. The lo
+  |  from ground-ring drag, or from how the instantaneous power is averaged.  At the heavy end the load raises the 
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+  |   , reads 0.8213 and decodes to the single active rotor. It is quoted 0.82. The second-rotor slot,  , reads 0
+  | ndard (slides held, no public archive). The Ranneberg entry was dropped.  ## 8 Data availability and reproducib
+-- nominalizations --
+  | difference of
+-- paragraphs over six sentence-lines --
+  | Blade scale sets the blade size. The scale multiplies the blade span
+  | | Slot | Meaning | Bounds |
+  | The decoder reads x6 as a rotor count. It rounds the gene to an integer
+  | A fixed k couples the radius search to the tip-speed ratio. The load
+  | The power is measured, not computed from a mean speed. The load law reads
+  | Two terms name the two states of that design. The pre-fold winner is the
+  | The DE holds ten members per island, three islands, and thirty
+  | Each new member forms by a standard DE rule. The mutation takes the
+  | The swing reads P_range over P_mean, the window power range over its mean
+  | Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+  | | Setting | Value | Source |
+  | A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Margin | Source |
+  | | Era | Effect on the search space | Data status |
+  | The topmost rotor ring R6 governs the structural check at the winner operating point (NR-0
+  | The second-rotor bank and blade-scale slots are inactive at a rotor count
+  | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+  | On 2026-08-13 the evaluator ran 5 kW designs at k_mppt 10.0, the
+  | The 301 rejects split three ways (NR-055).
+  | The validated rung is the machine this report covers. The programme
+  | Seeded in references.bib. Seventeen sources. Sixteen carry verified
+  | | Claim | Evidence | Report location | Register rows |
+  | | Exhibit | Source extract | Cited rows | Script commit | Era |
+

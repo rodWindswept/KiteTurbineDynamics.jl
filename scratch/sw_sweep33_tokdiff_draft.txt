@@ -1,0 +1,228 @@
+== 1b01453 -> 89ed222 ==
+arrivals: {'53': 1}
+removals: {'52': 1}
+  [arr 53] Internal engineering report. Draft v0.53. Date 2026-10-15.
+  [rem 52] Internal engineering report. Draft v0.52. Date 2026-10-15.
+
+== 89ed222 -> d453530 ==
+arrivals: {'0.0': 1, '0.2258': 1, '0.2944': 1, '1.225': 1, '1.5': 1, '11.01': 1, '19.1304': 1, '2.5': 2, '27.75': 1, '39.4912': 1, '45.9733': 1, '5.566': 1, '54': 1, '6.8415': 1, '72.25': 1, '9.41': 1}
+removals: {'53': 1}
+  [arr 0.0] The rotor Cp reads from the AeroDyn v5.0.0 blade element momentum
+  [arr 0.2258] (BEM) table: 0.2944 at the ring speed ratio, and 0.2258 at the
+  [arr 0.2944] (BEM) table: 0.2944 at the ring speed ratio, and 0.2258 at the
+  [arr 1.225] 1.225 kilograms per cubic metre (NR-034).
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 11.01] 11.01 m/s at 9.41 m (NR-008, NR-032). | | Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+  [arr 19.1304] The Betz ceiling reads 19.1304 kW, and the winner delivers 27.75 per
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 27.75] The Betz ceiling reads 19.1304 kW, and the winner delivers 27.75 per
+  [arr 39.4912] The swept area reads 45.9733 square metres raw and 39.4912 square
+  [arr 45.9733] The swept area reads 45.9733 square metres raw and 39.4912 square
+  [arr 5.566] | Ring speed ratio | 5.566 | NR-031 |
+  [arr 54] Internal engineering report. Draft v0.54. Date 2026-10-15.
+  [arr 6.8415] | Tip-speed ratio | 6.8415 | NR-032 |
+  [arr 72.25] The realisability floor reads 72.25 degrees (NR-053). As run, the
+  [arr 9.41] 11.01 m/s at 9.41 m (NR-008, NR-032). | | Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+  [rem 53] Internal engineering report. Draft v0.53. Date 2026-10-15.
+
+== d453530 -> 2e930a8 ==
+arrivals: {'1': 1, '10.0': 1, '2.5': 2, '201': 2, '30': 1, '301': 1, '4.8': 1, '5': 4, '55': 1, '7': 1, '9.4000': 1, '96': 2}
+removals: {'54': 1}
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 201] The cause is not logged for the remaining 201. | The cause is not logged for the remaining 201.
+  [arr 30] The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003). | Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004).
+  [arr 301] - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 4.8] | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 5] **Abstract.** This report presents a search for a 5 kW-class | objective and gates. Its mean power is 5.309 kW at the site wind,
+  [arr 55] Internal engineering report. Draft v0.55. Date 2026-10-15. | 3.55 was a mass-scaled value with no anchor.
+  [arr 7] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
+  [arr 9.4000] | Shaft elevation | 30 deg, hub at 9.4000 m | NR-057 |
+  [arr 96] 96 ran below the 5 kW power floor. | 96 ran below the 5 kW power floor.
+  [rem 54] Internal engineering report. Draft v0.54. Date 2026-10-15.
+
+== 2e930a8 -> c9f0560 ==
+arrivals: {'56': 1}
+removals: {'55': 1}
+  [arr 56] Internal engineering report. Draft v0.56. Date 2026-10-15. | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 55] Internal engineering report. Draft v0.55. Date 2026-10-15. | 3.55 was a mass-scaled value with no anchor.
+
+== c9f0560 -> c825a01 ==
+arrivals: {'0.002': 1, '0.105': 1, '0.209': 1, '0.310': 1, '0.422': 1, '0.613': 1, '0.833': 1, '1.5': 1, '57': 1}
+removals: {'56': 1}
+  [arr 0.002] At the midpoint ring the bow reads 0.002 m at settle, and
+  [arr 0.105] 0.105 to 0.310 m through the measurement window (NR-059).
+  [arr 0.209] The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-059).
+  [arr 0.310] 0.105 to 0.310 m through the measurement window (NR-059).
+  [arr 0.422] An extension run past the window ends at 0.422 m at the midpoint
+  [arr 0.613] The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-059).
+  [arr 0.833] and 0.833 m at the hub (NR-059).
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 57] Internal engineering report. Draft v0.57. Date 2026-10-16.
+  [rem 56] Internal engineering report. Draft v0.56. Date 2026-10-15. | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+
+== c825a01 -> f7de920 ==
+arrivals: {'0': 2, '0.001': 1, '0.2': 2, '0.398': 1, '0.4393': 1, '0.5': 1, '0.6994': 1, '0.7': 1, '0.700': 1, '0.8': 2, '0.8213': 1, '0.9': 1, '1': 3, '1.0': 4, '1.07': 1, '1.195': 1, '1.5': 1, '10.0': 2, '12.472': 1, '14.972': 10, '2': 1, '2.13': 1, '2.28': 1, '2.94': 1, '201': 1, '22': 2, '27.363': 1, '27.36354': 1, '27.364': 2, '29': 2, '3': 4, '3.8347': 1, '33.946': 1, '36': 2, '37': 2, '4.32': 1, '42': 1, '498.9': 1, '5.309': 1, '5.366': 1, '5.99': 1, '7.776': 1, '72.25': 1, '8': 1, '80': 1, '9': 2, '93': 2, '98.859': 1}
+removals: {'12.5': 1, '15.0': 10, '500.0': 1, '6.00': 1, '64.913': 1, '65.7': 1}
+  [arr 0] The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it. | | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 0.001] The independent three-decimal rounding of mass and penalty is the 0.001 gap.
+  [arr 0.2] | x9 | blade scale at the topmost rotor | 0.2 to 1.0 | | | x10 | blade scale at the lowest rotor | 0.2 to 1.0 |
+  [arr 0.398] | x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
+  [arr 0.4393] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 0.5] Rows k 0.5 to 1.5: | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [arr 0.6994] 0.6994. The fold is the 2026-10-05 re-centering that pinned r_hub to
+  [arr 0.7] draws in 0.7 to 0.9 per trial, and one gene always crosses. The trial
+  [arr 0.700] | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 0.8] | x5 | ring density bias | -0.8 to 0.8 | | third. F draws at random in 0.5 to 0.8 per trial. The crossover rate CR
+  [arr 0.8213] The main-rotor slot, `blade_scale_top`, reads 0.8213 and decodes to the single active rotor. It is quoted 0.82.
+  [arr 0.9] draws in 0.7 to 0.9 per trial, and one gene always crosses. The trial
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 1.0] | x3 | common length-to-radius target L/r | 1.0 to 2.94 | | | x9 | blade scale at the topmost rotor | 0.2 to 1.0 |
+  [arr 1.07] NR-029, 5.366 kW, a 1.07 per cent gap. The exact source of the gap is open. It
+  [arr 1.195] | x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 12.472] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 14.972] The minimum factor of safety is 14.972 (NR-009). | Its minimum factor of safety is 14.972 (NR-009).
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.13] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 2.28] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 2.94] | x3 | common length-to-radius target L/r | 1.0 to 2.94 |
+  [arr 201] The remaining 201 carried no logged cause at campaign time. | A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+  [arr 22] The shaft transition cone holds one fixed angle, 22 degrees, by construction. | | x7 | bank at the topmost rotor | 0 to 22 deg |
+  [arr 27.363] The sum at three decimals reads 27.363, not the 27.364 the register quotes.
+  [arr 27.36354] The full-precision values add to 27.36354, which rounds to 27.364.
+  [arr 27.364] Island 3 reaches 27.364 kg-equivalent (NR-005). | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [arr 29] torsional realisability cliff, 36 rotor-spacing refusals, 29 line breaks, | R2 to R4 read 29.8 to 35.2 (NR-021).
+  [arr 3] Sections 3.4 to 3.6 carry their text. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [arr 3.8347] island-3 genome as it then stood, r_hub 3.8347 m and blade_scale_top
+  [arr 33.946] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 36] - The seed genome scores 36.109 kg-equivalent (NR-006). | | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [arr 37] their swept area and power coefficient, 37 settle failures at the | probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
+  [arr 4.32] 4.32 m and blade_scale_top to 1.0 (the S2-fold seed). The folded class
+  [arr 42] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [arr 498.9] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [arr 5.366] NR-029, 5.366 kW, a 1.07 per cent gap. The exact source of the gap is open. It
+  [arr 5.99] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 7.776] | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 72.25] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 | | The realisability floor reads 72.25 degrees (NR-053). As run, the
+  [arr 8] | x5 | ring density bias | -0.8 to 0.8 | | (FoS) target and hard floor, both 2.5, and a line length of 18.8
+  [arr 80] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | six ways: 93 rotors that cannot reach 80 per cent of the power floor on
+  [arr 9] 11.01 m/s at 9.41 m (NR-008, NR-032). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+  [arr 93] six ways: 93 rotors that cannot reach 80 per cent of the power floor on | probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
+  [arr 98.859] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [rem 12.5] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [rem 500.0] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 6.00] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 64.913] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [rem 65.7] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+
+== f7de920 -> 3321c9a ==
+arrivals: {'1': 1, '10': 1, '1207': 1, '15': 1, '2.3': 1, '25': 1, '35': 1, '5': 1, '50': 1, '59': 1, '7': 1}
+removals: {'3.4': 1, '57': 1}
+  [arr 1] Sections 1 to 5 carry their text. | ## 1 Introduction
+  [arr 10] power balance (NR-025). The relax run takes 10 seconds. It lets the | relax time of 10 seconds, a window of 40 seconds, a factor of safety
+  [arr 1207] (src/objective_evaluator.jl:1207). The ratio reads one million at the
+  [arr 15] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [arr 2.3] ### 2.3 The operating point and load selection
+  [arr 25] Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018). | It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+  [arr 35] R2 to R4 read 29.8 to 35.2 (NR-021). | targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
+  [arr 5] Sections 1 to 5 carry their text. | **Abstract.** This report presents a search for a 5 kW-class
+  [arr 50] 50 kW default gain. That gain is about five times the scaled system's | targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
+  [arr 59] Internal engineering report. Draft v0.59. Date 2026-10-18. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 7] | x1 | hub ring radius r_hub | 0.700 to 7.776 m | | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 3.4] Sections 3.4 to 3.6 carry their text. | ### 3.4 The levers of Performance
+  [rem 57] Internal engineering report. Draft v0.57. Date 2026-10-16.
+
+== 3321c9a -> 646cddf ==
+arrivals: {'0.0665': 1, '324.1': 1, '5018': 1, '6': 1, '8': 1}
+removals: none
+  [arr 0.0665] 0.0665 (NR-021). Compression drives the buckling term, so the most
+  [arr 324.1] | Lift-line tension | 324.1 N | NR-010 | | load over sin 70 degrees: 324.1 newtons (NR-010).
+  [arr 5018] for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044). | gene also loads it, at -0.5018 (NR-044).
+  [arr 6] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [arr 8] | x5 | ring density bias | -0.8 to 0.8 | | (FoS) target and hard floor, both 2.5, and a line length of 18.8
+
+== 646cddf -> ef07533 ==
+arrivals: {'2.3': 1, '24': 1, '4': 2, '60': 2}
+removals: {'59': 1}
+  [arr 2.3] ### 2.3 The operating point and load selection | at the base length. The record sits in section 2.3.
+  [arr 24] The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a | The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+  [arr 4] | 2.24 | ok | 8.00 | 15.34 | 36.4 | | The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [arr 60] Internal engineering report. Draft v0.60. Date 2026-10-18. | axial-length study runs to 60 m as a plan probe. That figure is not a
+  [rem 59] Internal engineering report. Draft v0.59. Date 2026-10-18. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+
+== ef07533 -> ff60775 ==
+arrivals: {'30': 2, '61': 1}
+removals: {'0.5': 1, '1': 1, '1.5': 1, '1.94': 1, '2': 1, '2.24': 1, '29': 2, '3': 2, '3.0': 1, '60': 1, '9': 1}
+  [arr 30] realisability cliff. 36 refuse on rotor spacing. 30 break a line. Three | The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+  [arr 61] Internal engineering report. Draft v0.61. Date 2026-10-18.
+  [rem 0.5] Rows k 0.5 to 1.5: | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [rem 1] Sections 1 to 5 carry their text. | ## 1 Introduction
+  [rem 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [rem 1.94] Rows k 1.94 to 3.0: | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 2.24] The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a | The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+  [rem 29] realisability cliff. 36 refuse on rotor spacing. 29 break a line. Three | R2 to R4 read 29.8 to 35.2 (NR-021).
+  [rem 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+  [rem 3.0] Rows k 1.94 to 3.0: | | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [rem 60] Internal engineering report. Draft v0.60. Date 2026-10-18. | axial-length study runs to 60 m as a plan probe. That figure is not a
+  [rem 9] 11.01 m/s at 9.41 m (NR-008, NR-032). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+
+== ff60775 -> e7f68a9 ==
+arrivals: {'62': 1}
+removals: {'61': 1}
+  [arr 62] Internal engineering report. Draft v0.62. Date 2026-10-18.
+  [rem 61] Internal engineering report. Draft v0.61. Date 2026-10-18.
+
+== e7f68a9 -> 3290876 ==
+arrivals: {'0.00053': 1, '0.009': 1, '0.0254': 1, '0.5': 1, '1.5': 2, '100.0': 1, '2': 5, '2.434': 1, '200': 1, '3': 1, '5.0': 1, '63': 1}
+removals: {'62': 1}
+  [arr 0.00053] At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).
+  [arr 0.009] The extension speed spread reads 0.009 per cent (NR-059).
+  [arr 0.0254] At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).
+  [arr 0.5] The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050). | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [arr 1.5] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+  [arr 100.0] | Tip-speed ceiling | 100.0 m/s | NR-047 |
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.434] The winner decode reads r_rotor 2.434 m (NR-050).
+  [arr 200] The record ends at 200 seconds, so the report claims no bound past the measured span (NR-059).
+  [arr 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [arr 5.0] The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046). | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 63] Internal engineering report. Draft v0.63. Date 2026-10-18.
+  [rem 62] Internal engineering report. Draft v0.62. Date 2026-10-18.
+
+== 3290876 -> de18442 ==
+arrivals: {'0': 1, '3.3': 1, '30': 1, '31': 1, '310': 1, '508': 1, '64': 1, '80': 1, '930': 1}
+removals: {'0.804': 1, '1.94': 1, '10.0': 1, '103': 1, '1207': 1, '127.772': 1, '13.38': 1, '14.972': 2, '2.03': 2, '25.698': 3, '3': 1, '4.580': 1, '5.18': 1, '5.309': 1, '63': 1}
+  [arr 0] The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it. | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [arr 3.3] The length screen history sits in section 3.3 with the era record. | ### 3.3 The winner
+  [arr 30] 30, ten rows per generation, 310 evaluations per island (NR-045). | 30 break a line.
+  [arr 31] Each island runs 31 generations in total, generation indices 0 to | Each island ran 31 generations.
+  [arr 310] Each island evaluates 310 designs. | 30, ten rows per generation, 310 evaluations per island (NR-045).
+  [arr 508] | Feasible candidates | 508 of 930 | NR-002 | | Of the 930, 508 designs pass every gate.
+  [arr 64] Internal engineering report. Draft v0.64. Date 2026-10-18. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [arr 80] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | 93 rotors cannot reach 80 per cent of the power floor on their swept area and power coefficient.
+  [arr 930] A differential-evolution campaign evaluated 930 candidate designs under one fixed power-law generator load, each scored on the measurement window (NR-001). | | Designs evaluated | 930 | NR-001 |
+  [rem 0.804] | Ground radius | 0.804 m | NR-011 | | topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+  [rem 1.94] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at k_mppt 10.0, the 50-kilowatt default gain. That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+  [rem 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [rem 103] The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
+  [rem 1207] (src/objective_evaluator.jl:1207). The ratio reads one million at the
+  [rem 127.772] Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
+  [rem 13.38] | Window-mean speed | 13.38 rad/s | NR-029 | | Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
+  [rem 14.972] The minimum factor of safety is 14.972 (NR-009). | Its minimum factor of safety is 14.972 (NR-009).
+  [rem 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 25.698] Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [rem 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [rem 4.580] | Topmost ring radius | 4.580 m | NR-011 | | topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+  [rem 5.18] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. | | the campaign gain returned 5.18 kW.
+  [rem 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [rem 63] Internal engineering report. Draft v0.63. Date 2026-10-18.
+
+== cumulative 1b01453 -> de18442 ==
+arrivals: {'0': 3, '0.0': 1, '0.00053': 1, '0.001': 1, '0.002': 1, '0.009': 1, '0.0254': 1, '0.0665': 1, '0.105': 1, '0.2': 2, '0.209': 1, '0.2258': 1, '0.2944': 1, '0.310': 1, '0.398': 1, '0.422': 1, '0.4393': 1, '0.5': 1, '0.613': 1, '0.6994': 1, '0.7': 1, '0.700': 1, '0.8': 2, '0.8213': 1, '0.833': 1, '0.9': 1, '1': 4, '1.0': 4, '1.07': 1, '1.195': 1, '1.225': 1, '1.5': 4, '10': 1, '10.0': 2, '100.0': 1, '11.01': 1, '12.472': 1, '14.972': 8, '15': 1, '19.1304': 1, '2': 5, '2.13': 1, '2.28': 1, '2.3': 2, '2.434': 1, '2.5': 4, '2.94': 1, '200': 1, '201': 3, '22': 2, '24': 1, '25': 1, '27.363': 1, '27.36354': 1, '27.364': 2, '27.75': 1, '3': 2, '3.3': 1, '3.8347': 1, '30': 4, '301': 1, '31': 1, '310': 1, '324.1': 1, '33.946': 1, '35': 1, '36': 2, '37': 2, '39.4912': 1, '4': 2, '4.32': 1, '4.8': 1, '42': 1, '45.9733': 1, '498.9': 1, '5': 5, '5.0': 1, '5.366': 1, '5.566': 1, '5.99': 1, '50': 1, '5018': 1, '508': 1, '6': 1, '6.8415': 1, '60': 1, '64': 1, '7': 2, '7.776': 1, '72.25': 2, '8': 2, '80': 2, '9': 1, '9.4000': 1, '9.41': 1, '93': 2, '930': 1, '96': 2, '98.859': 1}
+removals: {'0.804': 1, '1.94': 2, '103': 1, '12.5': 1, '127.772': 1, '13.38': 1, '15.0': 10, '2.03': 2, '2.24': 1, '25.698': 3, '3.0': 1, '3.4': 1, '4.580': 1, '5.18': 1, '500.0': 1, '52': 1, '6.00': 1, '64.913': 1, '65.7': 1}

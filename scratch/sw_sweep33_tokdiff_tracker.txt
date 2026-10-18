@@ -1,0 +1,117 @@
+== 1b01453 -> 89ed222 ==
+arrivals: {'4.1': 1, '53': 1}
+removals: none
+  [arr 4.1] This pass folds the rope-break fixed defect at section 4.1 and its fix-state references across the draft.
+  [arr 53] v0.53 pass by @author (2026-10-15).
+
+== 89ed222 -> d453530 ==
+arrivals: {'3.3': 1, '54': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 54] v0.54 pass by @author (2026-10-15).
+
+== d453530 -> 2e930a8 ==
+arrivals: {'1': 1, '3.1': 1, '5': 1, '55': 1}
+removals: none
+  [arr 1] ## 1. Version history | First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055).
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 55] v0.55 pass by @author (2026-10-15). | closed form no longer holds. Its product, 3.55, stays flagged
+
+== 2e930a8 -> c9f0560 ==
+arrivals: {'2': 1, '2.2': 1, '3.1': 1, '4.2': 1, '56': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 2.2] Section 2.2 retitles with 2.2.1 The gene and 2.2.2 The evaluator. | The phrase forms tighten, and the section 2.2.2 build request retires from the body.
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055). | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 4.2] This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2. | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 56] v0.56 pass by @author (2026-10-15).
+
+== c9f0560 -> c825a01 ==
+arrivals: {'3.3': 1, '57': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 57] v0.57 pass by @author (2026-10-16).
+
+== c825a01 -> f7de920 ==
+arrivals: none
+removals: none
+
+== f7de920 -> 3321c9a ==
+arrivals: {'0.38': 1, '10': 1, '100': 1, '15': 1, '2.1': 1, '2.3': 1, '25': 1, '3.4': 1, '3.6': 1, '32': 3, '33': 1, '35': 1, '5': 2, '50': 1, '57': 1, '58': 2, '59': 2, '7': 1}
+removals: none
+  [arr 0.38] the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 10] v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris | The founder return note 10 closes on the aero read (`2db50f9`).
+  [arr 100] per 100 words. The close is the only surface that gained it.
+  [arr 15] v0.15 pass by @fig-img-diagrams (2026-10-12). This pass lands the | The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture topmost ring reads 15.033 at the final step (NR-021).
+  [arr 2.1] v0.9 pass by @author (2026-10-09). This pass lifts the §2.1 | The plate seats at §2.1, ahead of the genome strip, with its kit made embed-ready (captions and manifest).
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 25] v0.25 pass by @author (2026-10-13). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 3.4] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [arr 3.6] This pass completes the design implications at section 3.6 and rewrites the conclusion. | The seam takes option (b): the section 5 restatement of the section 3.6
+  [arr 32] v0.32 pass by @author (2026-10-14). | No signed value moves. STE reads 32 in, 32 out, no category gained.
+  [arr 33] v0.33 pass by @author (2026-10-14). | the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 35] v0.35 pass by @fig-img-diagrams (2026-10-14). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 50] v0.50 pass by @author (2026-10-15). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 57] v0.57 pass by @author (2026-10-16). | against the v0.57 base under the label "v0.58". This pass took that
+  [arr 58] kilograms, vertical load 304.58 newtons) and the window-mean speed | v0.58 pass by @author (2026-10-18).
+  [arr 59] number, so the close folds next as **v0.59**. The supply's text and map | v0.59 pass by @author (2026-10-18).
+  [arr 7] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+
+== 3321c9a -> 646cddf ==
+arrivals: none
+removals: none
+
+== 646cddf -> ef07533 ==
+arrivals: {'0.59': 1, '0.60': 1, '2.3': 1, '24': 2, '33': 2, '60': 2}
+removals: none
+  [arr 0.59] (the script commit), 2.3 (the section pointer), 0.59 to 0.60.
+  [arr 0.60] (the script commit), 2.3 (the section pointer), 0.59 to 0.60.
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 24] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | v0.24 pass by @author (2026-10-12).
+  [arr 33] v0.33 pass by @author (2026-10-14). | the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 60] v0.60 pass by @author (2026-10-18). | declared token diff: 24 (the roster row), 60 (the plan probe), 4ebc385
+
+== ef07533 -> ff60775 ==
+arrivals: {'2.3': 1, '29': 1, '3.1': 1, '30': 1, '34': 2, '5': 2, '55': 1, '61': 2}
+removals: none
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 29] v0.29 pass by @author (2026-10-13). | 29 to 30 rope breaks and three to two hub divergences, in section 3.1
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055). | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 30] v0.30 pass by @author (2026-10-13). | 29 to 30 rope breaks and three to two hub divergences, in section 3.1
+  [arr 34] v0.34 pass by @author (2026-10-14). | counter-read. STE reads 34 in, 34 out. The citation checker reads 55
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 55] v0.55 pass by @author (2026-10-15). | counter-read. STE reads 34 in, 34 out. The citation checker reads 55
+  [arr 61] v0.61 pass by @author (2026-10-18). | version ticks to v0.61.
+
+== ff60775 -> e7f68a9 ==
+arrivals: {'0.40': 1, '1.5': 1, '6': 1, '7': 1}
+removals: none
+  [arr 0.40] structural gate at utilisation 0.40 (NR-015) and a tension badge
+  [arr 1.5] rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack | The 1.5 sizing basis stands unchanged, and no other draft line moves.
+  [arr 6] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
+  [arr 7] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+
+== e7f68a9 -> 3290876 ==
+arrivals: {'2': 1, '3.3': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+
+== 3290876 -> de18442 ==
+arrivals: {'2': 1, '2.3': 1, '268': 1, '295': 1, '3': 1, '3.3': 4, '3.6': 1, '4.2': 2, '5': 4}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 268] The close census moves from 295 to 268 words.
+  [arr 295] The close census moves from 295 to 268 words.
+  [arr 3] v0.3 pass by @author (2026-10-08). This pass closes the k bracket and | pair at §3.4 (figure-map rows 6 and 7) and closes the plate
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 3.6] This pass completes the design implications at section 3.6 and rewrites the conclusion. | The seam takes option (b): the section 5 restatement of the section 3.6
+  [arr 4.2] This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2. | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+
+== cumulative 1b01453 -> de18442 ==
+arrivals: {'0.38': 1, '0.40': 1, '0.59': 1, '0.60': 1, '1': 1, '1.5': 1, '10': 1, '100': 1, '15': 1, '2': 3, '2.1': 1, '2.2': 1, '2.3': 4, '24': 2, '25': 1, '268': 1, '29': 1, '295': 1, '3': 1, '3.1': 3, '3.3': 7, '3.4': 1, '3.6': 2, '30': 1, '32': 3, '33': 3, '34': 2, '35': 1, '4.1': 1, '4.2': 3, '5': 9, '50': 1, '53': 1, '54': 1, '55': 2, '56': 1, '57': 2, '58': 2, '59': 2, '6': 1, '60': 2, '61': 2, '7': 2}
+removals: none

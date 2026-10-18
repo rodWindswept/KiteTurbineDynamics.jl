@@ -1,0 +1,31 @@
+== sweep 33 final checks — science-writer, 2026-10-18 ==
+-- 1. record, --fail-above 2.0
+draft-consistency-sweep.md       words=21115 total= 16 per100w=  0.08 em_dash= 0
+rc=0
+-- 2. section alone, --fail-above 0.01
+sw_sweep33_section.md            words=1523 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+-- 3. record sim, --fail-above 2.0
+sw_sweep33_section.new.md        words=21115 total= 16 per100w=  0.08 em_dash= 0
+rc=0
+-- 4. block-list diff and offender delta (sim vs base)
+block-list diff: empty
+offender delta: header-only
+-- 5. re-freeze check, v2
+PASS  receipt region == block (new)
+PASS  tip draft region == block (new)
+PASS  sim carries the pre-break block once (history)
+block md5 (file-as-written, new): 0d9001e4c19c78cc239cc22f8ac6dba7
+pre-break md5 (file-as-written):   7bbd964db09d2b33269ce5cb8c334054
+sim md5 (unchanged):               9e1f673fba06cc4aed4fb8b80c368149
+rc=0
+-- 6. draft, register and figures zero-diff de18442..HEAD
+rc=0
+-- 7. levers receipt lint, post re-freeze
+science-writer-2026-10-14-levers-reading.md words= 885 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+-- 8. handover lint
+handover-2026-10-14-reporting-room-science-writer.md words= 646 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+-- 9. receipt gate (the sweep-33 receipt lint)
+stubbed, lands with the closing commit

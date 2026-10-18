@@ -1,0 +1,173 @@
+-- pair 1b01453..89ed222
+1c1
+< == scratch/sw_sweep33_draft_1b01453.md: words=7002 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_89ed222.md: words=7003 total=8 per100w=0.11 ==
+-- pair 89ed222..d453530
+1c1
+< == scratch/sw_sweep33_draft_89ed222.md: words=7003 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_d453530.md: words=7171 total=8 per100w=0.11 ==
+-- pair d453530..2e930a8
+1c1
+< == scratch/sw_sweep33_draft_d453530.md: words=7171 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_2e930a8.md: words=7298 total=8 per100w=0.11 ==
+-- pair 2e930a8..c9f0560
+1c1
+< == scratch/sw_sweep33_draft_2e930a8.md: words=7298 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_c9f0560.md: words=7341 total=8 per100w=0.11 ==
+-- pair c9f0560..c825a01
+1c1
+< == scratch/sw_sweep33_draft_c9f0560.md: words=7341 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_c825a01.md: words=7465 total=8 per100w=0.11 ==
+-- pair c825a01..f7de920
+1c1
+< == scratch/sw_sweep33_draft_c825a01.md: words=7465 total=8 per100w=0.11 ==
+---
+> == scratch/sw_sweep33_draft_f7de920.md: words=8498 total=32 per100w=0.38 ==
+2a3
+>   [24w] That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+3a5,6
+>   | ettles at omega 15.3, tip about 73 m/s (NR-047).  The power is measured, not computed from a mean speed. The lo
+>   |  from ground-ring drag, or from how the instantaneous power is averaged.  At the heavy end the load raises the 
+4a8,9
+>   |   , reads 0.8213 and decodes to the single active rotor. It is quoted 0.82. The second-rotor slot,  , reads 0
+>   | ndard (slides held, no public archive). The Ranneberg entry was dropped.  ## 8 Data availability and reproducib
+5a11
+>   | difference of
+6a13,22
+>   | Blade scale sets the blade size. The scale multiplies the blade span
+>   | | Slot | Meaning | Bounds |
+>   | The decoder reads x6 as a rotor count. It rounds the gene to an integer
+>   | A fixed k couples the radius search to the tip-speed ratio. The load
+>   | The power is measured, not computed from a mean speed. The load law reads
+>   | Two terms name the two states of that design. The pre-fold winner is the
+>   | The DE holds ten members per island, three islands, and thirty
+>   | Each new member forms by a standard DE rule. The mutation takes the
+>   | The swing reads P_range over P_mean, the window power range over its mean
+>   | Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+7a24
+>   | A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+10a28,29
+>   | The topmost rotor ring R6 governs the structural check at the winner operating point (NR-0
+>   | The second-rotor bank and blade-scale slots are inactive at a rotor count
+11a31,33
+>   | On 2026-08-13 the evaluator ran 5 kW designs at k_mppt 10.0, the
+>   | The 301 rejects split three ways (NR-055).
+>   | Seeded in references.bib. Seventeen sources. Sixteen carry verified
+-- pair f7de920..3321c9a
+1c1
+< == scratch/sw_sweep33_draft_f7de920.md: words=8498 total=32 per100w=0.38 ==
+---
+> == scratch/sw_sweep33_draft_3321c9a.md: words=8711 total=33 per100w=0.38 ==
+32a33
+>   | The validated rung is the machine this report covers. The programme
+-- pair 3321c9a..646cddf
+1c1
+< == scratch/sw_sweep33_draft_3321c9a.md: words=8711 total=33 per100w=0.38 ==
+---
+> == scratch/sw_sweep33_draft_646cddf.md: words=8824 total=33 per100w=0.37 ==
+28c28
+<   | The topmost rotor ring R6 governs the structural check at the winner operating point (NR-0
+---
+>   | R6 binds because its beams carry compression. The ring check charges
+-- pair 646cddf..ef07533
+1c1
+< == scratch/sw_sweep33_draft_646cddf.md: words=8824 total=33 per100w=0.37 ==
+---
+> == scratch/sw_sweep33_draft_ef07533.md: words=8972 total=33 per100w=0.37 ==
+-- pair ef07533..ff60775
+1c1
+< == scratch/sw_sweep33_draft_ef07533.md: words=8972 total=33 per100w=0.37 ==
+---
+> == scratch/sw_sweep33_draft_ff60775.md: words=8891 total=34 per100w=0.38 ==
+16a17
+>   | | k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
+24c25
+<   | A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+---
+>   | A re-run probe now names those 201 (NR-061). They split
+36c37
+<   | | Exhibit | Source extract | Cited rows | Script commit | Era |
+---
+>   | | Exhibit | Source extract | Cited rows | Script commit |
+-- pair ff60775..e7f68a9
+1c1
+< == scratch/sw_sweep33_draft_ff60775.md: words=8891 total=34 per100w=0.38 ==
+---
+> == scratch/sw_sweep33_draft_e7f68a9.md: words=8902 total=34 per100w=0.38 ==
+-- pair e7f68a9..3290876
+1c1
+< == scratch/sw_sweep33_draft_e7f68a9.md: words=8902 total=34 per100w=0.38 ==
+---
+> == scratch/sw_sweep33_draft_3290876.md: words=9210 total=34 per100w=0.37 ==
+-- pair 3290876..de18442
+1c1
+< == scratch/sw_sweep33_draft_3290876.md: words=9210 total=34 per100w=0.37 ==
+---
+> == scratch/sw_sweep33_draft_de18442.md: words=9057 total=20 per100w=0.22 ==
+5c5
+<   | ettles at omega 15.3, tip about 73 m/s (NR-047).  The power is measured, not computed from a mean speed. The lo
+---
+>   | ettles at omega 15.3, tip about 73 m/s (NR-047).  The power is measured, not computed from a mean speed. The ev
+7d6
+<   | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+8a8
+>   | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+13c13
+<   | Blade scale sets the blade size. The scale multiplies the blade span
+---
+>   | | Decision metric | Value | Rows |
+15,16d14
+<   | The decoder reads x6 as a rotor count. It rounds the gene to an integer
+<   | A fixed k couples the radius search to the tip-speed ratio. The load
+18,23d15
+<   | The power is measured, not computed from a mean speed. The load law reads
+<   | Two terms name the two states of that design. The pre-fold winner is the
+<   | The DE holds ten members per island, three islands, and thirty
+<   | Each new member forms by a standard DE rule. The mutation takes the
+<   | The swing reads P_range over P_mean, the window power range over its mean
+<   | Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+25d16
+<   | A re-run probe now names those 201 (NR-061). They split
+29,30d19
+<   | R6 binds because its beams carry compression. The ring check charges
+<   | The second-rotor bank and blade-scale slots are inactive at a rotor count
+32,33d20
+<   | On 2026-08-13 the evaluator ran 5 kW designs at k_mppt 10.0, the
+<   | The 301 rejects split three ways (NR-055).
+-- tracker
+1c1
+< == scratch/sw_sweep33_tracker_base.md: words=3177 total=12 per100w=0.38 ==
+---
+> == scratch/sw_sweep33_tracker_tip.md: words=4554 total=24 per100w=0.53 ==
+4a5
+>   | he close folds next as **v0.59**. The supply's text and map are unchanged.  v0.59 pass by @author (2026-10-18). T
+7a9
+>   | restatement of
+13a16,21
+>   | v0.58 pass by @author (2026-10-18).
+>   | v0.59 pass by @author (2026-10-18).
+>   | The section 5 body runs five paragraphs, none longer than four
+>   | v0.60 pass by @author (2026-10-18).
+>   | v0.61 pass by @author (2026-10-18).
+>   | v4 (2026-10-18): the FEEDBACKBOT1 figure re-cuts land on the pair
+-- candidates
+1c1
+< == scratch/sw_sweep33_candidates_base.md: words=4733 total=12 per100w=0.25 ==
+---
+> == scratch/sw_sweep33_candidates_tip.md: words=5329 total=15 per100w=0.28 ==
+2a3
+>   [21w] | shear law (Hellmann power law) | The law that carries the site wind from its measured pair up to the rotor altitude.
+3a5
+>   | itude only. Ramp, gust and turbulence tools exist, and none is engaged. The window swing is a steady-wind resp
+15a18
+>   | - **v18 (2026-10-15):** the era pack lands at the science-writer seat.
+-- stale-phrases
+1c1
+< == scratch/sw_sweep33_sp_base.md: words=623 total=20 per100w=3.21 ==
+---
+> == scratch/sw_sweep33_sp_tip.md: words=623 total=20 per100w=3.21 ==

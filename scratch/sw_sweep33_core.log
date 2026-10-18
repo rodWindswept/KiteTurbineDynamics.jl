@@ -1,0 +1,1043 @@
+== 0. preflight ==
+de18442
+de18442 docs(reporting): the A-10 to A-19 prose pass lands - the single-sentence paragraphs group into topic paragraphs, the abstract and the summary split roles (narrative plus a decision scorecard), the front-matter provenance consolidates, the section 2.3 history leaves Methods for sections 3.3 and 4.2, the winner repetitions consolidate on the section 3.3 table, the close sheds its meta sentences (295 to 268 words) and the minor fixes land; the routing flips A-10 to A-19 to LANDED with A-13 and A-20 to A-22 still gated; the draft ticks to v0.64; STE rc=0 at 0.22/100w draft and 0.53/100w tracker, routing held at 11 flags; citation checker exit 0 on the byte-identical candidate (56 cited, every one signed, uncited set unchanged) (science-writer)
+0	0
+== 1. span enumeration ==
+165
+-- draft movers (all)
+de18442 docs(reporting): the A-10 to A-19 prose pass lands - the single-sentence paragraphs group into topic paragraphs, the abstract and the summary split roles (narrative plus a decision scorecard), the front-matter provenance consolidates, the section 2.3 history leaves Methods for sections 3.3 and 4.2, the winner repetitions consolidate on the section 3.3 table, the close sheds its meta sentences (295 to 268 words) and the minor fixes land; the routing flips A-10 to A-19 to LANDED with A-13 and A-20 to A-22 still gated; the draft ticks to v0.64; STE rc=0 at 0.22/100w draft and 0.53/100w tracker, routing held at 11 flags; citation checker exit 0 on the byte-identical candidate (56 cited, every one signed, uncited set unchanged) (science-writer)
+3290876 docs(reporting): the B-20 and B-21 prose pass lands - section 2 gains the explicit decoder and gate math and section 3.3 states the steady-and-drifting pair with the bow bound on both stations; the draft ticks to v0.63; STE rc=0 at 0.37/100w; citation checker exit 0 (56 cited, every one signed)
+e7f68a9 fig(reporting): the FEEDBACKBOT1 pair re-cuts land — ring utilisation draws a linear axis with the campaign structural gate at 0.40 and a tension badge for R5; twist limit draws the panel-B FoS 1.5 gate marks and moves the four method notes to the caption; outputs, captions, register notes, SPECs, map rows, the v0.62 draft pins and the receipt ride this commit; F-REPRO all-equal across three locations at the script commit (figures-images-diagrams)
+ff60775 docs(reporting): six-class fold — sections 3.1 and 5 read 30 rope breaks and two hub divergences with both pointers on NR-061; the version ticks to v0.61; citation gate reads 55 cited, every one signed (author)
+5916357 docs(reporting): FEEDBACKBOT1 display pass — k-sweep merges to one table, the genome bounds deduplicate, column widths widen the overflow columns, the all-same era column drops, the appendix hash block cites the kit manifests once, and both number-gate brackets close (author)
+ef07533 docs(reporting): author fold v0.60 — the four direction paragraphs and the scaling-ladder embed (author)
+646cddf fix(report): apply validator round-1 fixes — DE/rand/1 not 'from the best'; fixed-k 'stay coupled' not 'moved together'; PC2 caveat names the active density gene; 201-reject six-class split into short sentences; drop the NR-010 'peaks at the top' overreach; R6 'compressive axial load not tension'; em dashes to colons (hermes)
+d360d47 fix(report): state the truth of the ring-beam loads — R6 (topmost/hub) carries compression and binds the check (0.0665 axial share, NR-021); R5 carries the tension (-157.6 to -142.8 N, NR-060); distinguish beam compression from line tension which peaks at the top (NR-010) (hermes)
+3321c9a docs(reporting): author fold v0.59 — the labelled close, the section 5 seam, T3-3 wording; v0.58 T4 prose and appendix in the same fold (author)
+f7de920 fix(report): T3 batch — 10-gene table with bounds (T3-1), DE hyperparameters (T3-4), pre-fold/folded/cp-fix/span-shrink definitions (T3-5), R5 axial-tension not no-load (T3-6), PCA inactive-gene caveat (T3-7), penalty-seam swing + r=1 singularity + 1.5m gate (T3-3), fixed-k/TSR coupling (T3-9) (hermes)
+1dc0786 fix(report): T2-5 objective rounding note (25.698 + 1.665 = 27.363 at 3 dp, full-precision 27.36354 rounds to 27.364); triage marks T2-4/T2-5/T2-6 done (hermes)
+3001768 docs(reporting): fill the 201-unlogged-reject blind spot with the six-class re-run probe breakdown in both §3.1 and §3.4; only hub_tip is a numerical divergence (hermes)
+55a1a57 docs(reporting): founder rulings on references — drop Ranneberg (yo-yo company, wrong attribution), upgrade Jamieson to Jamieson & Branney 2012 (DOI 10.1016/j.egypro.2012.06.086), keep Hancock on the weaker slides-held standard; draft §1 and §7 and the verification record updated (hermes)
+bd628af fix(report): bow-cause wording — drop the settled 'under gravity' overclaim (2026-10-16 correction finally lands in the draft) and name the open gravity/drag split; no number moves, NR-059 stands (hermes)
+e67a407 fix(report): T2-2 twist margin reports all three limits; T2-3 blade-scale 0.8213 (quote 0.82) in draft + NR-011; T3-2 distinguish r_rotor from r_hub; triage statuses updated (hermes)
+580d33b fix(report): T2-1 — document the power-measurement convention (P_mean is the 1 Hz window mean of tau_gen x omega_gnd; NR-030 is a derived ratio), and mark the 1.07% gap to k·omega³ as open, not settled (hermes)
+85e4d08 fix(report): T1-2 — correct the k-alignment fault: the 50 kW default was k_mppt 10.0 (about 5x the scaled system's own gain 1.94), not 'gain 1.94'; matches the trust log. Unsigned historical values route to T5-1 (hermes)
+c97a7fd fix(report): T1-1 — align FoS to the signed register value 14.972 (NR-009), not the wrong 15.0; fix derived gate margins (+12.472 / +498.9 per cent / 5.99 times) and the claims table (hermes)
+c825a01 docs(reporting): draft v0.57 — the winner bow read folds at the author seat (author seat): the NR-059 read lands at section 3.3 after the settle-state paragraph — the bow through the run (midpoint ring settle 0.002 m, window 0.105 to 0.310 m; hub max 0.209 to 0.613 m; extension end 0.422 m midpoint, 0.833 m hub), every state at the midpoint ring below the 1.5 m line, and the settle/run disagreement printed as an instrument finding, not a design question; the pin refreshes to v0.57 dated 2026-10-16; tracker entry; declared token diff (draft remove 56 add 57, 0.002, 0.105, 0.209, 0.310, 0.422, 0.613, 0.833, 1.5; tracker add 3.3 and 57); changed-line opcodes exact; every held form and cite count held (cites 250 to 255; NR-059 newly cited; 53 cited rows of 59 signed); STE rc=0 at 0.11/100w draft and 0.35/100w tracker; 3 anchors and 33 guards, all closed (author seat)
+c9f0560 docs(reporting): draft v0.56 — the era pack folds at the author seat (author seat): section 3.1 takes the era the record carries — "This campaign is the first search campaign of the wind-authority era." replaces the physics-validation phrase (no digit moves, no row needed, the era call as ruled); the section 4.2 failure-ledger table takes date order (2026-08-13, 08-14, 08-22, 08-22, 08-24, 08-26; header and rule held, all 30 body cells held as sets, the same-day pair on its tie); the back-pointer lands after the load anchor "That load forces about 9 kW from the seed (NR-047)." (three sentences, no digit, no cite); the pin refreshes to v0.56; tracker entry; the blocks pulled from the supply and the receipt and asserted byte-identical across the two, folded onto the supply-pinned draft md5; declared token diff (draft remove 55 add 56; tracker add 2, 2.2, 3.1, 4.2, 56); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.35/100w tracker; 5 anchors and 39 guards, all closed (author seat)
+2e930a8 docs(reporting): draft v0.55 — the reject split prints and the item-2.1 environment set closes at the author seat (author seat): the status mix takes the three-way split at sections 3.1 and 5 (96 ran below the 5 kW power floor; 4 at or above 5 kW with a factor of safety below 2.5; 201 with the cause not logged — NR-055, under the founder's print ruling); the section 3.3 operating table takes the shear law and the shaft elevation rows (NR-056, NR-057), and the swing sentence takes its steady-wind basis note (NR-058); the pin refreshes to v0.55; tracker entry; declared token diff (draft remove 54 add 55, 96 x2, 201 x2, 301, 5 x4, 2.5 x2, 1, 7, 10.0, 4.8, 30, 9.4000; tracker add 1, 3.1, 5, 55); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.36/100w tracker; 5 anchors and 40 guards, all closed (author seat)
+d453530 docs(reporting): draft v0.54 — the operating point completes and the torsion clause folds at the author seat (author seat): section 3.3 takes the reference wind speed, the ring speed ratio and the tip-speed ratio as table rows, and the swept-area set, the air density, the rotor Cp on the AeroDyn v5.0.0 BEM basis and the Betz check as paragraphs (NR-031 to NR-034, the amended source cells carried); the gate block takes the per-class sentence, the torsion criteria and the realisability floor (NR-052, NR-053); the pin refreshes to v0.54; tracker entry; declared token diff (draft remove 53 add 54; tracker add 54 and 3.3); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.36/100w tracker; 5 anchors and 36 guards, all closed (author seat)
+89ed222 docs(reporting): draft v0.53 — the rope-break fixed defect lands at the author seat (author seat): section 4.1 takes the fixed-defect form — the reject pair reads its corrected history, the mechanism block its as-run form, and the standing state closes to the landed close — and the five fix-state references across the draft take the fixed state — the abstract limitation retires, and the summary bullet, the next-steps item, the conclusion and the claims-appendix row read the placed fix; the corrected history cites NR-013 ext2; the pin refreshes to v0.53; tracker entry; declared token diff (draft remove 52 add 53; tracker add 53 and 4.1); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.37/100w tracker; 10 anchors and 52 guards, all closed (author seat)
+-- draft movers before v0.53 (expect none)
+89ed222 docs(reporting): draft v0.53 — the rope-break fixed defect lands at the author seat (author seat): section 4.1 takes the fixed-defect form — the reject pair reads its corrected history, the mechanism block its as-run form, and the standing state closes to the landed close — and the five fix-state references across the draft take the fixed state — the abstract limitation retires, and the summary bullet, the next-steps item, the conclusion and the claims-appendix row read the placed fix; the corrected history cites NR-013 ext2; the pin refreshes to v0.53; tracker entry; declared token diff (draft remove 52 add 53; tracker add 53 and 4.1); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.37/100w tracker; 10 anchors and 52 guards, all closed (author seat)
+-- tracker movers
+de18442 docs(reporting): the A-10 to A-19 prose pass lands - the single-sentence paragraphs group into topic paragraphs, the abstract and the summary split roles (narrative plus a decision scorecard), the front-matter provenance consolidates, the section 2.3 history leaves Methods for sections 3.3 and 4.2, the winner repetitions consolidate on the section 3.3 table, the close sheds its meta sentences (295 to 268 words) and the minor fixes land; the routing flips A-10 to A-19 to LANDED with A-13 and A-20 to A-22 still gated; the draft ticks to v0.64; STE rc=0 at 0.22/100w draft and 0.53/100w tracker, routing held at 11 flags; citation checker exit 0 on the byte-identical candidate (56 cited, every one signed, uncited set unchanged) (science-writer)
+3290876 docs(reporting): the B-20 and B-21 prose pass lands - section 2 gains the explicit decoder and gate math and section 3.3 states the steady-and-drifting pair with the bow bound on both stations; the draft ticks to v0.63; STE rc=0 at 0.37/100w; citation checker exit 0 (56 cited, every one signed)
+e7f68a9 fig(reporting): the FEEDBACKBOT1 pair re-cuts land — ring utilisation draws a linear axis with the campaign structural gate at 0.40 and a tension badge for R5; twist limit draws the panel-B FoS 1.5 gate marks and moves the four method notes to the caption; outputs, captions, register notes, SPECs, map rows, the v0.62 draft pins and the receipt ride this commit; F-REPRO all-equal across three locations at the script commit (figures-images-diagrams)
+ff60775 docs(reporting): six-class fold — sections 3.1 and 5 read 30 rope breaks and two hub divergences with both pointers on NR-061; the version ticks to v0.61; citation gate reads 55 cited, every one signed (author)
+5916357 docs(reporting): FEEDBACKBOT1 display pass — k-sweep merges to one table, the genome bounds deduplicate, column widths widen the overflow columns, the all-same era column drops, the appendix hash block cites the kit manifests once, and both number-gate brackets close (author)
+ef07533 docs(reporting): author fold v0.60 — the four direction paragraphs and the scaling-ladder embed (author)
+3321c9a docs(reporting): author fold v0.59 — the labelled close, the section 5 seam, T3-3 wording; v0.58 T4 prose and appendix in the same fold (author)
+c825a01 docs(reporting): draft v0.57 — the winner bow read folds at the author seat (author seat): the NR-059 read lands at section 3.3 after the settle-state paragraph — the bow through the run (midpoint ring settle 0.002 m, window 0.105 to 0.310 m; hub max 0.209 to 0.613 m; extension end 0.422 m midpoint, 0.833 m hub), every state at the midpoint ring below the 1.5 m line, and the settle/run disagreement printed as an instrument finding, not a design question; the pin refreshes to v0.57 dated 2026-10-16; tracker entry; declared token diff (draft remove 56 add 57, 0.002, 0.105, 0.209, 0.310, 0.422, 0.613, 0.833, 1.5; tracker add 3.3 and 57); changed-line opcodes exact; every held form and cite count held (cites 250 to 255; NR-059 newly cited; 53 cited rows of 59 signed); STE rc=0 at 0.11/100w draft and 0.35/100w tracker; 3 anchors and 33 guards, all closed (author seat)
+c9f0560 docs(reporting): draft v0.56 — the era pack folds at the author seat (author seat): section 3.1 takes the era the record carries — "This campaign is the first search campaign of the wind-authority era." replaces the physics-validation phrase (no digit moves, no row needed, the era call as ruled); the section 4.2 failure-ledger table takes date order (2026-08-13, 08-14, 08-22, 08-22, 08-24, 08-26; header and rule held, all 30 body cells held as sets, the same-day pair on its tie); the back-pointer lands after the load anchor "That load forces about 9 kW from the seed (NR-047)." (three sentences, no digit, no cite); the pin refreshes to v0.56; tracker entry; the blocks pulled from the supply and the receipt and asserted byte-identical across the two, folded onto the supply-pinned draft md5; declared token diff (draft remove 55 add 56; tracker add 2, 2.2, 3.1, 4.2, 56); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.35/100w tracker; 5 anchors and 39 guards, all closed (author seat)
+2e930a8 docs(reporting): draft v0.55 — the reject split prints and the item-2.1 environment set closes at the author seat (author seat): the status mix takes the three-way split at sections 3.1 and 5 (96 ran below the 5 kW power floor; 4 at or above 5 kW with a factor of safety below 2.5; 201 with the cause not logged — NR-055, under the founder's print ruling); the section 3.3 operating table takes the shear law and the shaft elevation rows (NR-056, NR-057), and the swing sentence takes its steady-wind basis note (NR-058); the pin refreshes to v0.55; tracker entry; declared token diff (draft remove 54 add 55, 96 x2, 201 x2, 301, 5 x4, 2.5 x2, 1, 7, 10.0, 4.8, 30, 9.4000; tracker add 1, 3.1, 5, 55); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.36/100w tracker; 5 anchors and 40 guards, all closed (author seat)
+d453530 docs(reporting): draft v0.54 — the operating point completes and the torsion clause folds at the author seat (author seat): section 3.3 takes the reference wind speed, the ring speed ratio and the tip-speed ratio as table rows, and the swept-area set, the air density, the rotor Cp on the AeroDyn v5.0.0 BEM basis and the Betz check as paragraphs (NR-031 to NR-034, the amended source cells carried); the gate block takes the per-class sentence, the torsion criteria and the realisability floor (NR-052, NR-053); the pin refreshes to v0.54; tracker entry; declared token diff (draft remove 53 add 54; tracker add 54 and 3.3); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.36/100w tracker; 5 anchors and 36 guards, all closed (author seat)
+89ed222 docs(reporting): draft v0.53 — the rope-break fixed defect lands at the author seat (author seat): section 4.1 takes the fixed-defect form — the reject pair reads its corrected history, the mechanism block its as-run form, and the standing state closes to the landed close — and the five fix-state references across the draft take the fixed state — the abstract limitation retires, and the summary bullet, the next-steps item, the conclusion and the claims-appendix row read the placed fix; the corrected history cites NR-013 ext2; the pin refreshes to v0.53; tracker entry; declared token diff (draft remove 52 add 53; tracker add 53 and 4.1); changed-line opcodes exact; every value form and cite count held; STE rc=0 at 0.11/100w draft and 0.37/100w tracker; 10 anchors and 52 guards, all closed (author seat)
+-- candidates movers
+ca1b0d1 docs(reporting): the bow row meets the closed chain at the science-writer seat (science-writer seat): the candidates take v21 — the bow definition cell adds the founder gravity form (gravity pulls the sag straight down) and the instrument-finding clause (a disagreement on the bowed shape reads as an instrument finding, not a design question), so the row now backs the two facts the printed draft carries at section 3.3 (v0.57, c825a01: "sagging straight down under gravity"; the settle and run disagreement printed as an instrument finding, NR-059); the ground cell, the guard row, the action and the numbers-free form hold, with no digit in the definition cell; the status line moves PREP v20 to v21 with one v21 delta bullet at the tail; base pin 8a4bcbf75a42a8ee6a87e3e097bc9d6d at 8ffb803, candidate 20ce48c214cc8b8213a14a92b2fef78b, line count 409 to 414, row lines 137 to 137, and a line-level diff proves two replaces and one tail insert; fold scratch/sw_bow_v21_fold.py reads 32 checks 0 fail with the STE gate asserted in-fold (every category count held, total 15, per100w 0.28); checker scratch/sw_bow_v21_check.py reads 28 checks 0 fail by second routes (ste-lint as a subprocess, the draft text, the signed NR-059, git numstat 7 added 2 removed); the offender sets are identical; no draft byte moves and the register takes no change (science-writer seat)
+0d10323 docs(reporting): the bow row lands at the science-writer seat (science-writer seat): the founder word is "up" (2026-10-15), so the row staged at v19 lands at v20 — section 2 takes the bow row after the destructive-resonance row and section 7 takes its guard row as the last row of the retire table, the status line moves to PREP v20, and one v20 delta bullet records the landing (row census 141 to 143, line count 400 to 409, a line-level diff proving the only changes are the status replace and three inserts); the third sentence takes the aero desk's ruling-consistent form ("the stack does not translate sideways: the bow is a rearrangement in which the lines reorient at near-constant length", DECISIONS.md [2026-09-15] ruling 2) and the guard row mirrors it (sideways move, or a stack translation, retires to the line rearrangement at near-constant length); the ground cell drops docs/agents/physics-topology.md, which carries no bow entry, and cites the 2026-09-15 ruling plus the 2026-09-12 handover sections 2 and 5; the row is numbers-free, so the winner read stays a binding slot for the register; base pin c0d82058355ce53118d675ed30162b43 at HEAD 6b6a0e1, candidate 8a4bcbf75a42a8ee6a87e3e097bc9d6d; fold scratch/sw_bow_fold.py reads 37 checks 0 fail, checker scratch/sw_bow_check.py reads 39 checks 0 fail (row census 143, line count 409, the register untouched, no draft byte moves); STE rc=0 at 0.29/100w on the glossary with the offender set unchanged (15 before, 15 after) and 0.00/100w on the new supply; the v19 supply keeps its text and takes a dated superseded pointer
+c4bd90d docs(reporting): the back-pointer term row lands at the science-writer seat (science-writer seat): the v0.56 draft prints "destructive resonance" once (the load-block back-pointer at section 2.2.2) and "bow" zero times, and the glossary candidates carried no entry for the term — so the candidates take v19: section 2 takes the destructive-resonance row (the shaft failure mode of an earlier gain sweep; the twist ripple grows, the shaft snaps between states, and the power falls to zero in intervals; the report names the term for that earlier round only, and the two rounds share no number), grounded in docs/NOTES_MPPT_TWIST.md section 3 and the 2026-09-25 Tulloch plan section 9, values-free so the gain figure stays a binding slot for Track D (the glossary contract holds a short term with no entry as a release blocker, as the item-2.1 pass did); the status line takes v19 (the header stood at PREP v17 through the v18 pass — the miss is recorded in the delta and no history entry changes, the v18 entry reads byte-identical); the bow row does NOT land — it waits on the founder word, and the staged text plus its section 7 guard sit in the supply; base pin d452554f3b87875845b3cedb6d1b62b1 at HEAD b9a52e2, candidate c0d82058355ce53118d675ed30162b43; fold scratch/sw_bptr_fold.py reads 19 checks 0 fail, checker scratch/sw_bptr_check.py reads 27 checks 0 fail (row census 141, line count 400, one tracked file touched, register untouched), STE rc=0 at 0.00/100w receipt, 0.00/100w supply and 0.30/100w glossary with the offender set unchanged (15 before, 15 after); no draft byte moves
+1c65d27 docs(reporting): the era pack lands at the science-writer seat (science-writer seat): the era call is ruled and the pack lands — section 3.1 takes the era label the record carries (the wind-authority era) because the provenance stamps name no physics-validation era (inventory: five stamp labels plus the docs label, zero matches) and a physics-validation ledger is a record, not an era; the section 4.2 failure-ledger table takes date order (six rows 08-13 to 08-26, every body cell byte-held, the two 08-22 rows on their same-day tie, the class-grouped prose untouched — the table was this seat's sweep-16 supply); the section 2.3 back-pointer sentence lands under Rod's ruling (three sentences, no value token, grounded in NOTES_MPPT_TWIST and the 2026-09-25 plan section 9, with the digit form routed to a new row if the room wants it printed); glossary v18 takes one retire row (physics-validation era), the shear-law and steady-wind rows (NR-056, NR-058) and the elevation-row campaign form (NR-057); supply at scratch/sw_era_pack_supply.md; checker 20 checks, 0 fail; STE rc=0 at 1.29/100w receipt and 0.30/100w glossary; the draft takes no edit at this seat
+-- stale-phrases movers
+-- register movers
+3407925 docs(reporting): B-20 confirmation closes with two flags for the author pen, and the NR-059 cited-form amend records the extension spread and the hub step forms (science-validator)
+bfb2896 docs(reporting): sign NR-062 and NR-063 — strip milestone power and corner pick power for the fig metric cards (science-validator)
+97d15c9 docs(reporting): NR-061 aero counter-read — the six-class split verifies from the committed shard logs
+33dfe32 docs(reporting): register display round — science-validator rows print at 4 significant digits, fitness units read kg-equivalent, NR-053 notation moves to δα* (science-validator)
+d498ab9 docs(reporting): register display round — NR-021/022/023/024 print at 4 significant digits, plate-labelled forms stay
+df2d27d docs(reporting): sign NR-061 — six-class 201-reject split re-derived at the producing commit a76c5e9 (93/37/36/30/3/2); one row moves vs HEAD (island3 gen8 idx4: hub_tip -> rope_break, the arming change); draft §3.1/§5 must move 29/3 -> 30/2 (science-validator)
+0d9a375 docs(reporting): NR-046 amend — evaluator line pins re-pin past 2bf76a3 (+5 shift: 1153, 1166, 1197-1199, 1205-1208, blob 5c626ff5); draft's :1207 cite holds (science-validator)
+3a6ddde docs(reporting): NR-060 amend (winner-CSV launch identity corrected) and NR-020 bank note (T4-15) land; checker parity loop strengthened to per-field lines, 76 checks 0 fail (science-validator)
+c3ef25b docs(reporting): sign NR-060 — R5 signed axial force at the winner capture (-157.622 to -142.792 N, tension, three beams); own re-run, parity bit-exact, carrying the 17 held commits to origin (science-validator)
+e67a407 fix(report): T2-2 twist margin reports all three limits; T2-3 blade-scale 0.8213 (quote 0.82) in draft + NR-011; T3-2 distinguish r_rotor from r_hub; triage statuses updated (hermes)
+5b2cfd9 docs(reporting): the NR-059 direction scope amend lands at the science-validator seat: the aero counter-read (271182b) hands one scope correction — the signed block's direction bullet carries the sideways bound with no scope; the bound reads over the extension series and from t=38 s onward, not over the whole run (relax sampled peak 0.23586 at t=2 s; window 0.03740 hub / 0.03734 mid at t=11 s, decaying; hub under 0.003 from t=37 s, midpoint from t=38 s; extension peak 0.00217; t=200 read 0.0002; the early motion is the known ~10 s lateral mode); no row value moves and no signed row changed; the register reads a pure addition (23 added, 0 removed; STE totals hold at 178, 1.03 to 1.02 per100w; identifiers 59, signed cells 62); checker scratch/sv_nr059_scope_check.py reads 19 checks 0 fail; receipt docs/reporting/room-responses/science-validator-2026-10-16-nr059-scope-amend.md; the aero-proposed amend text lands at this pen (science-validator seat)
+7aaf2ea docs(reporting): the winner bow read signs at the science-validator seat (NR-059): the aero read at c6d2885 reproduces at 650fa49 — the re-run matches the committed log line for line (127 lines; the raw diffs read exactly the git header and the four wall-time lines, lines 1/7/27/45/75); the bench gates read true; the pins byte-verify (probe sha256 24a16017…, log eacc0ce3…); NR-059 signs at value + station + state (midpoint ring settle 0.00160 m, window 0.10531 to 0.31005 m, extension end 0.42202 m; hub settle 0.00241 m, window 0.20862 to 0.61302 m, extension end 0.83331 m raw 0.833774 m; straight down, sideways under 0.003; mapping ratio 0.5058/0.5064; the 0.43857 m deviation read as an instrument finding per DECISIONS [2026-09-15] ruling 2); the row quotes 3 decimals from the 5-decimal log forms; receipt docs/reporting/room-responses/science-validator-2026-10-16-bow-register-sign.md; checker scratch/sv_bow_sign_check.py 41 checks 0 fail plus its log; re-run log scratch/sv_bow_probe_recheck.log; numbered rows 58 to 59, no signed row changed; STE rc=0 (register 1.06 to 1.03, receipt 0.00/100w) (science-validator seat)
+1b09190 docs(reporting): the convergence register read, the NR-006 seed-form answer and the v0.55 fold read land at the science-validator seat: the row-16 kit clears its register gate (the eight cited rows read signed; the drawn set answers to them — counts NR-002/NR-055, seed NR-006, winner NR-005, caption finals NR-003/NR-004, label form NR-036, series NR-054, with NR-042/NR-045/NR-046/NR-015 backing the remaining label tokens; the kit note claims hold with the 34-of-96 recomputed; the cite sets agree across the four surfaces; the five output md5s and the manifest sha256s recompute; the PDF text layer holds the key strings); the aero NR-006 query resolves with the seed-form block appended (iteration k = running-best at generation k, 90 of 90 at the stored precision, max deviation 0.0; the seed home reads (gen 0, idx 1)); the v0.55 fold reads clean (the folded lines exact; citation gate rc=0 at 52 cited, all signed, 58 total; the diff sets exact, 16/1 draft and 7/0 tracker); checker 97 checks, 0 fail; STE rc=0 (register 1.06, receipt 0.69) (science-validator seat)
+a51e9d9 docs(reporting): the 301 reject split and the item-2.1 environment rows land at the science-validator seat: NR-055 signs the three-way split for print (96 ran below the 5 kW floor; 4 ran at or above 5 kW with FoS below 2.5; 201 carry zeroed fields, cause not logged), re-read from the three bankderate2 telemetry files with the per-island counts and the NR-054 sha256s held; NR-056 to NR-058 sign the aero item-2.1 reads (the Hellmann shear law at 1/7 on the measured Daisy pair carried to the 11.01 m/s table pair; the 30 deg shaft-elevation convention with the 9.4000 m design hub and the 28.64 deg settled read; the steady-wind basis of the reported trace); independent library probe, source checker and telemetry checker carried with logs; STE rc=0 (register 1.05, receipt 1.73) (science-validator seat)
+2142d43 docs(reporting): the torsion rows, the floor row and the convergence series land at the science-validator seat: NR-052 and NR-053 sign the torsion criteria (the crossing check is the campaign's twist gate, the torsional-stability FoS hard constraint reads 1.5, the winner reads 2.03/1.35 and 0.4393/2.28) and the realisability floor (sin <= 1/1.05 = 0.9524, floor angle 72.247 deg, cross-reads 2.13 and 2.91); NR-054 signs the convergence series (93 rows recomputed from the telemetry, parity set clean); the NR-031/032 source cells take the AeroDyn v5.0.0 BEM basis amend; receipt, checkers and logs ride; STE rc=0 (register 1.06, receipt 1.63)
+fab730a docs(reporting): room response — the post-fix warm register fold (science-validator): NR-013 ext2 records the post-fix warm runs of the three winners (no latch through 50 s, honest-gate rejects, the three extract blobs bound) and the NR-025 quote form takes the armed-at-window reading; checker 58 checks, 0 fail; STE rc=0 (register 1.03, receipt 0.46/100w)
+-- register numstat cb862df..HEAD (append-only check)
+689	26	docs/reporting/numbers-register.md
+-- register removed lines (display-amend read)
+-| NR-003 | Island 1 best fitness | 30.578 (found gen 30) | kg | island_1/convergence.csv | signed (science-validator, 2026-10-08) |
+-| NR-004 | Island 2 best fitness | 30.637 (found gen 30) | kg | island_2/convergence.csv | signed (science-validator, 2026-10-08) |
+-| NR-005 | Island 3 best fitness | 27.364 (found gen 26) | kg | island_3/convergence.csv | signed (science-validator, 2026-10-08) |
+-| NR-006 | All-island start point | 36.109 (gen 1, common seed) | kg | convergence.csv | signed (science-validator, 2026-10-08) |
+-| NR-011 | Winner geometry (island 3) | n_lines 3, rings 6, n_active 1, r_hub 4.580 m, r_bot 0.804 m, bank_bot 22°, blade scales 0.82/0.20 | — | decode of best_vector.csv | signed (science-validator, 2026-10-08) |
+-| NR-018 | Winner airborne mass (island 3) | 25.69846825623688 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
+-| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03323714455441065 = 0.033223570205929 + 1.3574348481652112e-5, FoS 30.086820435580936. R3 0.033548608446737266 = 0.03354237801917142 + 6.230427565848155e-6, FoS 29.80749563987516. R4 0.028380221733419368 = 0.028374815022862057 + 5.40671055731162e-6, FoS 35.23580644975869. R5 3.058346201008972e-6 = 0.0 + 3.058346201008972e-6, FoS 326974.1011237028. R6 hub 0.06652238395895148 = 0.06652164721153939 + 7.36747412096439e-7, FoS 15.032534020684876 | — | Extract `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, ring block. Emitted by `capture_extended`; `max_util` re-derived via `ring_element_analysis`; A1 identity checked, residual 0.0 at every ring | signed (aero-validator, 2026-10-08) |
+-| NR-022 | Segment twist and over-twist limit at the winner operating point | abs(dalpha): S1 33.94561934829036°, S2 33.811870056223555°, S3 33.67952027817454°, S4 33.54707806507812°, S5 22.821871326820364°. dcrit: S1 to S4 98.85908296054023°, S5 92.64281134151318°. has_limit true on all five | deg | Extract, segment block. Raw reads from the stored alpha block; `trpt_twist_limit` on the rope_forces C1 call pattern (node radii, mean line rest length) | signed (aero-validator, 2026-10-08) |
+-| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.791634149159, S2 397.1554424859068, S3 397.45360112890063, S4 397.68800908436924, S5 397.1777954649229. torque_capacity: S1 805.0097155967861, S2 808.6780945063998, S3 812.213802301376, S4 815.650844050359, S5 1069.9324759682652 | N·m | Extract, segment block. Capacity = `trpt_torque_capacity_axial` at `trpt_axial_force` of the same state. One instant for both series | signed (aero-validator, 2026-10-08) |
+-| NR-024 | Evaluator step law | dt = min(4e-5 s, 4e-5 s × sqrt(L_min / 0.5 m) / 1.5). Winner derived step 2.8987873697672758e-5 s | s | Source read at `f8114be`: `src/initialization.jl:564-595`. Winner value from the extract log | signed (aero-validator, 2026-10-08) |
+-| NR-029 | Winner operating speed, window-mean ground ring | 13.380259861740395 (quote 13.38, 127.772 rpm) | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`), parity against the recorded cold re-eval (NR-012) | signed (science-validator, 2026-10-11) |
+-| NR-030 | Winner delivered torque, window-mean basis | 396.76205834512626 (quote 396.76) | N·m | P_mean (NR-008) divided by NR-029. Cross-reads: S1 panel 396.791634149159 (0.0075 % above), S5 hub 397.1777954649229 | signed (science-validator, 2026-10-11) |
+-| NR-031 | Winner operating coefficients: tip-speed ratio, rotor Cp, system coefficient | lambda_gnd 5.565968202980965 (quote 5.566, hub value 5.56592352649632 agrees inside 1.1e-4), Cp 0.29437093178017804 (quote 0.2944), system coeff 0.10163090072260127 (quote 0.1016) | - | lambda from NR-029, r_ring 4.57997905482005 m, v_ref 11.01 m/s. Cp at lambda 5.566 from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Coeff from NR-008 divided by 0.5 rho A v^3, A 63.9 m², rho 1.225 | signed (science-validator, 2026-10-11) |
+-| NR-032 | Winner tip-speed ratio and rotor Cp, tip reference | lambda_tip 6.8415060395190075 (quote 6.8415, hub value 6.841451124645552 agrees inside 5.5e-5), Cp 0.22578839742146659 (quote 0.2258) | - | lambda from the NR-029 window trace, r_out 5.629560432565964 m, v_ref 11.01 m/s. Cp at the hub-basis lambda from the measured n = 3 surface (`src/aerodynamics.jl:263`, anchor `a82cafd`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+-| NR-033 | Winner swept-area set | A_raw 45.9732554921615 (quote 45.9733), A_bank 45.60047944351075, A_zn 39.491173622830395 (quote 39.4912), A_zy 39.81400715088433 (elevation-only cross-check), A_hub_bot 63.86952678906739 (retired basis) | m² | Built radii through `annulus_area` (`src/bem.jl`). A_zn is the ruled wind-normal basis (`objective_evaluator.jl`). Receipts: `scratch/sv_probe_winner_areas.jl`, `scratch/av_probe_tipref_counter.jl` | signed (science-validator, 2026-10-11) |
+-| NR-034 | Winner Betz ceiling and re-based coefficients | ceiling (16/27) x 0.5 rho A_zn v^3 = 19.130411371981566 kW (quote 19.1304), delivered share 0.27750471961685264 (quote 27.75 %), system coeff 0.1412607066141203 on A_raw and 0.1644472412544312 on A_zn | kW / - / - | v_ref 11.01 m/s, rho 1.225. The code gate charges the rounded 0.593 form: 19.143563529799803 kW. Arithmetic route: `scratch/sv_rebase_arithmetic.py` | signed (science-validator, 2026-10-11) |
+-| NR-035 | Design-point specific power | 0.20657960587391747 (quote 0.2066) | kW/kg | NR-008 (P_mean entry) divided by NR-018. Recipe: 5.3087794439367935 kW / 25.69846825623688 kg. On the mass net of the 5 kg lifter (20.69846825623688 kg) the read is 0.25648175402240925 | signed (science-validator, 2026-10-11) |
+-| NR-036 | Island 3 running-best search objective at the seven strip milestones | 36.109 (gen 0), 32.293 (gen 6), 31.661 (gen 10), 30.929 (gen 18), 29.854 (gen 22), 28.315 (gen 25), 27.364 (gen 26) | kg | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (certified 2026-10-09). This seat re-checked all seven against `island_3/telemetry.csv`: each is an ok row and the least ok fitness of its window. Figure label: search objective | signed (science-validator, 2026-10-11) |
+-| NR-037 | Winner lift-line derived set (island 3): vertical load at the lift bearing, sizing mass, airborne weight, load ratio | F_vert 304.5779603905257 (quote 304.6), sizing mass 20.69846825623688 (quote 20.70), weight 252.1019735936838 (quote 252.1), ratio 1.2081538119230202 (quote 1.21) | N, kg, N, - | Derived on NR-018 and NR-026. Recipe below | signed (science-validator, 2026-10-12) |
+-| NR-038 | Winner window trace endpoints (island 3): ground ring at window min, max and last, plus the relax end pair | gnd window min 13.361451740981568, max 13.384909253752044, last 13.384824668402052. Last relax sample, t = 9.990119900356282 s: gnd 13.35927880647099, hub 13.375919394174096 | rad/s | `scripts/probe_window_trace.jl` (`b665e6e`). Logs `scratch/sv_probe_window_trace_rerun.log`, `.julia_depot/logs/av_probe_window_trace.log` | signed (science-validator, 2026-10-12) |
+-| NR-039 | Island-3 fitness decomposition, NR-005 against NR-018 | fitness 27.3635412663488 = mass 25.69846825623688 + over-power 0.49333696413175443 + utilisation 0.5576509889014662 + twist 0.6140850570787014. Penalty total 1.6650730101119215 (quote 1.665) | kg | `island_3/convergence.csv` gen-26 row + `scratch/sv_p0_winner_reeval.txt` + evaluator chain at launch `a76c5e9` | signed (science-validator, 2026-10-12) |
+-| NR-040 | Winner segment torque margin | S1 2.0287970973051634, S2 2.036175280501402, S3 2.0435436991749936, S4 2.0509817379918016, S5 2.6938375915900292. S1 governs (quote 2.03). The S1 to S4 band reads 2.03 to 2.05. | — | NR-023 strings, segment by segment: torque_capacity / segment_torque. Recipe: 805.0097155967861 / 396.791634149159 = 2.0287970973051634. Cross-read: `docs/reporting/figures/pair-extract/extract-winner-operating-point.csv`, segment block, bit for bit | signed (science-validator, 2026-10-12) |
+-| NR-043 | Winner blade span (island 3, main rotor) | 1.4994019682084492 (quote 1.499) | m | `scratch/sv_probe_winner_areas.log`, the `span (built)` line, sha256 `a7c6e343b4cfba7f790fe0c2c3fd81638c06548c0d98d23407737c9ae0d9b0ab`: R_main 5.629560432565964 minus blade_hub_radius 4.130158464357515. The decode convention `src/objective_v10.jl:374-376`. Figures decode log `scratch/fig1_decode_winner.log`. Counter-read: the aero tip-reference receipt (2026-10-11) | signed (science-validator, 2026-10-13) |
+-| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)` with `swing = P_range / P_mean`. `P_score` reads the tail-5 power (P_end). Winner closure: 25.69846825623688 + 0.49333696413175443 + 0.5576509889014662 + 0.6140850570787014 = 27.3635412663488 (NR-039). Rejects carry no score: the evaluator returns `Inf` and the runner stamps the search cost `1e9` on every non-ok design (422 of 930 rows) | kg-equivalent: 5.0 per kW², 1.0 per twist-ratio², 20.0 per FoS-ratio², 10.0 per swing fraction. Mass reads kg. The `1e9` stamp is a search cost, not an objective unit | Source read at `7b8c101`, the tip at read time. Byte-stable from launch `a76c5e9`. Sites: `src/objective_v12.jl:114-116` (weights), `:145-168` (seam body). `src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`. `scripts/run_v13_5kw_masslift.jl:153-156, 256-257, 266, 272, 281-283`. Census over island_*/telemetry.csv. Checker: `scratch/sv_nr046_objective_seam_check.py` and its log | signed (science-validator, 2026-10-14) |
+-- Twist ratio basis. The ratio reads `abs(dalpha) / dastar` per segment, worst over the window. The limit reads `dastar = 2 * asin(L_seg / sqrt(2 * (L_seg^2 + 2 * r_seg^2)))` with `r_seg = max(r_i, r_i+1)`. Source `twist_collapse_check` at `objective_evaluator.jl:443-477`. The cap and the margin floor read at `:1201-1202`.
+-| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.4341173109692225`, base span `1.8255879832269168`, span `1.4994019682084492` (NR-043), chord `0.22590989654340632` | m | `src/objective_v10.jl:355-377`, `src/bem.jl:156-179`, probe `scratch/sv_fb5_source_reads_probe.jl` and its log | signed (science-validator, 2026-10-14) |
+== 1b. version tick verification ==
+-- head at 5916357
+Internal engineering report. Draft v0.60. Date 2026-10-18.
+-- head at e7f68a9
+Internal engineering report. Draft v0.62. Date 2026-10-18.
+-- head at 3290876
+Internal engineering report. Draft v0.63. Date 2026-10-18.
+-- head at de18442
+Internal engineering report. Draft v0.64. Date 2026-10-18.
+== 2. extracts ==
+ 17782 total
+== 2b. per-pair numstats and changed lines (draft) ==
+-- pair 1b01453..89ed222
+13	14	docs/reporting/drafts/2026-10-08-report-first-draft.md
+13
+14
+@@ -3 +3 @@
+@@ -49,2 +49 @@ Lifter kite modulation
+@@ -81 +80 @@ The key findings follow.
+@@ -743 +742 @@ Recommended next steps:
+@@ -764,2 +763,2 @@ the record stores. Island 3 agrees at full precision (NR-012).
+@@ -768,2 +767,2 @@ The rapid start injects ring velocities from the static pre-solve.
+@@ -779,3 +778,3 @@ pattern applied to the evaluator.
+@@ -896 +895 @@ Blade integrity is not yet gated, and lifter modulation remains an assumption.
+@@ -946 +945 @@ The table ties each headline claim of this report to its evidence and its signed
+-- pair 89ed222..d453530
+24	1	docs/reporting/drafts/2026-10-08-report-first-draft.md
+18
+1
+@@ -3 +3 @@
+@@ -524,0 +525,3 @@ Its operating point reads as follows.
+@@ -534,0 +538,11 @@ Its airborne mass reads 25.698 kilograms (NR-018).
+@@ -545,0 +560,9 @@ The winner clears each checked gate.
+-- pair d453530..2e930a8
+16	1	docs/reporting/drafts/2026-10-08-report-first-draft.md
+12
+1
+@@ -3 +3 @@
+@@ -475,0 +476,6 @@ ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+@@ -525,0 +532,2 @@ Its operating point reads as follows.
+@@ -529,0 +538 @@ Its window swing reads 0.029 kW on 5.309 kW, half a per cent (NR-014).
+@@ -907,0 +917,6 @@ The search found 508 feasible candidates in the searched space (NR-002).
+-- pair 2e930a8..c9f0560
+9	5	docs/reporting/drafts/2026-10-08-report-first-draft.md
+8
+5
+@@ -3 +3 @@
+@@ -300,0 +301,4 @@ That load forces about 9 kW from the seed (NR-047).
+@@ -486 +490 @@ The other members of each population draw at random under a fixed seed per islan
+@@ -830,0 +835 @@ Candidate entries. Each failure enters with its lesson.
+@@ -832 +836,0 @@ Candidate entries. Each failure enters with its lesson.
+@@ -834,2 +837,0 @@ Candidate entries. Each failure enters with its lesson.
+@@ -836,0 +839,2 @@ Candidate entries. Each failure enters with its lesson.
+-- pair c9f0560..c825a01
+14	1	docs/reporting/drafts/2026-10-08-report-first-draft.md
+11
+1
+@@ -3 +3 @@
+@@ -547,0 +548,13 @@ The machine accelerates through the relax run.
+-- pair c825a01..f7de920
+127	28	docs/reporting/drafts/2026-10-08-report-first-draft.md
+114
+27
+@@ -33 +33 @@ boundaries at the final operating point (NR-021, NR-022).
+@@ -71 +71 @@ The key findings follow.
+@@ -180,2 +179,0 @@ Benhaïem and Schmehl analysed the torque path of a rotating reel.
+@@ -220,2 +218,5 @@ and chord, and the blade mass follows the span cubed.
+@@ -258,0 +260,21 @@ in the decode fields (NR-011).
+@@ -287,0 +310,7 @@ The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+@@ -327,0 +357,12 @@ The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+@@ -348,0 +390,11 @@ on the pre-fold island-3 winner.
+@@ -396,0 +449,12 @@ with its own drift. Each island evaluates 310 designs.
+@@ -424 +488,10 @@ The stationarity add-on reads the window swing against 20 per cent (NR-046).
+@@ -426 +498,0 @@ Every charge is continuous. None is step-like (NR-046).
+@@ -484 +556,9 @@ Four ran at or above 5 kW with a factor of safety below 2.5.
+@@ -510 +590 @@ its end power 5.314 kW (NR-008). Its factor of safety reads
+@@ -521 +601 @@ Its operating point reads as follows.
+@@ -548 +628 @@ The machine accelerates through the relax run.
+@@ -560,0 +641,4 @@ The disagreement reads as an instrument finding, not a design question (NR-059).
+@@ -580 +664 @@ The winner clears each checked gate.
+@@ -582 +666 @@ The winner clears each checked gate.
+@@ -636 +720 @@ The winner genome contains two blade-scale slots.
+@@ -674 +758 @@ The topmost rotor ring R6 governs the structural check at the winner operating p
+@@ -677 +761,3 @@ R2 to R4 read 29.8 to 35.2 (NR-021).
+@@ -716,0 +803,6 @@ for the second-rotor blade scale and -0.5018 for the ring density profile (NR-04
+@@ -748,0 +841,3 @@ The objective reads the airborne mass 25.698 kg plus 1.665 kg-equivalent of pena
+@@ -774 +869 @@ Second, the winner holds large structural and twist margins at the final operati
+@@ -848 +943 @@ Candidate entries. Each failure enters with its lesson.
+@@ -880,3 +975,4 @@ gain than the machine it scored.
+@@ -938 +1034,4 @@ Four ran at or above 5 kW with a factor of safety below 2.5.
+@@ -942 +1041 @@ Its airborne mass is 25.698 kilograms (NR-008, NR-018).
+@@ -967,3 +1066,3 @@ them.]
+@@ -997 +1096 @@ The table ties each headline claim of this report to its evidence and its signed
+-- pair f7de920..3321c9a
+68	36	docs/reporting/drafts/2026-10-08-report-first-draft.md
+61
+36
+@@ -3 +3 @@
+@@ -11 +11 @@ A section marked [PENDING] waits on a gate.
+@@ -199 +199 @@ collapse.
+@@ -297,0 +298,2 @@ sized the window to outlast the decay.
+@@ -312,2 +314,2 @@ sets the settle speed, and the radius sets the tip speed for a given
+@@ -490,3 +492,6 @@ The swing reads P_range over P_mean, the window power range over its mean
+@@ -751 +756 @@ corrections that shaped it.
+@@ -761 +766 @@ R2 to R4 read 29.8 to 35.2 (NR-021).
+@@ -964 +969 @@ geometry. The data from before it then counts no more.
+@@ -1054,4 +1059 @@ The next work closes the model gaps.
+@@ -1061,0 +1064,23 @@ them.]
+@@ -1098 +1123 @@ The table ties each headline claim of this report to its evidence and its signed
+@@ -1120,0 +1146,5 @@ ledger. `checks` is the check log.
+@@ -1137,4 +1167,4 @@ Machine evolution strip:
+@@ -1151,4 +1181,5 @@ Levers landscape:
+@@ -1158,4 +1189,5 @@ Parameter atlas:
+@@ -1165,4 +1197,4 @@ Machine winner:
+@@ -1172,4 +1204,4 @@ The corner machines:
+-- pair 3321c9a..646cddf
+36	23	docs/reporting/drafts/2026-10-08-report-first-draft.md
+33
+23
+@@ -313,5 +313,5 @@ A fixed k couples the radius search to the tip-speed ratio. The load
+@@ -445,2 +445,2 @@ The campaign runs a differential evolution (DE). A DE keeps a design
+@@ -564,6 +564,6 @@ A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+@@ -766,3 +766,14 @@ R2 to R4 read 29.8 to 35.2 (NR-021).
+@@ -795 +806 @@ Those axes hold 22.4 and 17.3 per cent of the variance in the search,
+@@ -801 +812 @@ for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
+@@ -811,2 +822,3 @@ hold no physical blade. PC2 therefore reads mostly unused genes for the
+@@ -1040,3 +1052,4 @@ The remaining 201 carried no logged cause at campaign time. The re-run
+-- pair 646cddf..ef07533
+31	3	docs/reporting/drafts/2026-10-08-report-first-draft.md
+25
+3
+@@ -3 +3 @@
+@@ -1078 +1078,2 @@ them.]
+@@ -1090,0 +1092,4 @@ their lessons.
+@@ -1095,0 +1101,13 @@ rungs.
+@@ -1142 +1160,2 @@ The table ties each headline claim of this report to its evidence and its signed
+@@ -1153,0 +1173 @@ One row per built exhibit. All eight read dataset commit `dd3cc6a`.
+@@ -1220,0 +1241,8 @@ The corner machines:
+-- pair ef07533..ff60775
+38	110	docs/reporting/drafts/2026-10-08-report-first-draft.md
+33
+86
+@@ -3 +3 @@
+@@ -268 +268 @@ meaning and its search bounds.
+@@ -270 +270 @@ meaning and its search bounds.
+@@ -338,2 +337,0 @@ The sweep rows read as follows (NR-047).
+@@ -345,5 +342,0 @@ Rows k 0.5 to 1.5:
+@@ -512 +505 @@ The differential-evolution campaign fixed the configuration below.
+@@ -563 +556 @@ The remaining 201 carried no logged cause at campaign time.
+@@ -566,2 +559,2 @@ swept area and power coefficient. 37 settle at the torsional
+@@ -603 +596 @@ Its operating point reads as follows.
+@@ -667 +660 @@ The winner clears each checked gate.
+@@ -959 +952 @@ Candidate entries. Each failure enters with its lesson.
+@@ -1003,2 +995,0 @@ gain than the machine it scored.
+@@ -1052 +1043 @@ The remaining 201 carried no logged cause at campaign time. The re-run
+@@ -1054 +1045 @@ floor. 37 settle at the realisability cliff. 36 refuse on rotor spacing.
+@@ -1074,3 +1064,0 @@ The recommended next steps sit in section 3.6.
+@@ -1163,86 +1151,26 @@ ladder reads the code rung set.
+-- pair ff60775..e7f68a9
+5	5	docs/reporting/drafts/2026-10-08-report-first-draft.md
+5
+5
+@@ -3 +3 @@
+@@ -751 +751 @@ corrections that shaped it.
+@@ -753 +753 @@ corrections that shaped it.
+@@ -1156,2 +1156,2 @@ so the era sits here once instead of in a table column.
+-- pair e7f68a9..3290876
+35	2	docs/reporting/drafts/2026-10-08-report-first-draft.md
+29
+2
+@@ -3 +3 @@
+@@ -223,0 +224,6 @@ blade spans from.
+@@ -280,0 +287,6 @@ effect. The winner carries one active rotor, so x8 and x10 stay unused
+@@ -297,0 +310,7 @@ sized the window to outlast the decay.
+@@ -510,0 +530 @@ The differential-evolution campaign fixed the configuration below.
+@@ -511,0 +532,4 @@ The differential-evolution campaign fixed the configuration below.
+@@ -622,0 +647,8 @@ The machine held a steady operating point through the measurement window.
+@@ -633 +665,2 @@ and 0.833 m at the hub (NR-059).
+-- pair 3290876..de18442
+448	532	docs/reporting/drafts/2026-10-08-report-first-draft.md
+413
+432
+@@ -3 +3 @@
+@@ -5,0 +6 @@ Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+@@ -8,2 +8,0 @@ Numbers come only from signed register rows, cited by row ID.
+@@ -13,3 +12 @@ Nomenclature and references stay incomplete.
+@@ -19,13 +16,3 @@ ground-generation rotary kite turbine with a tensile rotary power
+@@ -32,0 +20,3 @@ boundaries at the final operating point (NR-021, NR-022).
+@@ -36,8 +26,3 @@ At the winner operating point, the least segment torque margin is
+@@ -45,8 +30,6 @@ output, because banked blades sweep less streamtube frontal area.
+@@ -61 +43,0 @@ tensile rotary power transmission (NR-001).
+@@ -63,3 +45 @@ The screen found a feasible candidate under the model and gates.
+@@ -67,11 +47,9 @@ The key findings follow.
+@@ -79,2 +57,2 @@ The key findings follow.
+@@ -82,2 +60,3 @@ The key findings follow.
+@@ -85,3 +64,3 @@ searched space under the model and gates.
+@@ -91,3 +70,2 @@ atmospheric realism remain open work items.
+@@ -96,7 +74,4 @@ Two families of AWES exist.
+@@ -104,0 +80,4 @@ The field splits a second way, on the wing.
+@@ -106,7 +85,4 @@ The field splits a second way, on the wing.
+@@ -114,6 +90,3 @@ ground-gen systems.
+@@ -122,4 +95,2 @@ The machine in this report is a kite turbine.
+@@ -129,2 +100,2 @@ The shaft turns the ground generator.
+@@ -132,4 +103,3 @@ Torque passes from ring to ring, over multiple tethers.
+@@ -138,20 +108,12 @@ This report presents a search over the design space of kite turbines.
+@@ -160,4 +122 @@ The field context rests on the literature.
+@@ -165,4 +124 @@ Diehl set the classification axes.
+@@ -169,0 +126 @@ Cherubini mapped the ground-gen and fly-gen taxonomy.
+@@ -171,5 +128,3 @@ Cherubini mapped the ground-gen and fly-gen taxonomy.
+@@ -179,3 +134,3 @@ Benhaïem and Schmehl analysed the torque path of a rotating reel.
+@@ -187,2 +142,3 @@ flight windows. This report extends that line of work.
+@@ -191,7 +147,5 @@ It never pushes.
+@@ -199,2 +153,3 @@ collapse.
+@@ -202,3 +157,4 @@ polygon connects six lines. Each line meets the ring at one vertex.
+@@ -206,2 +162,5 @@ a set of blades on a ring. A pentagonal rotor carries five blades.
+@@ -209,3 +168,2 @@ create physical blades unless the rotor count selects them.
+@@ -213,5 +171,2 @@ ground and turns about its central axis.
+@@ -220,3 +174,0 @@ The power sizing sets that radius for the rotor at its local wind speed (NR-050)
+@@ -223,0 +176,3 @@ blade spans from.
+@@ -224,0 +180 @@ The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho p
+@@ -230,3 +186,2 @@ The winner decode reads r_rotor 2.434 m (NR-050).
+@@ -255,3 +210,4 @@ In the settled state the shaft runs twisted along its length.
+@@ -259,2 +215,3 @@ vector that describes the physical character of one machine.
+@@ -262,6 +219,2 @@ evaluation then feeds the comparison before DE tries a new gene.
+@@ -282,5 +235,4 @@ meaning and its search bounds.
+@@ -287,0 +240 @@ The decoder also rounds x4, the polygon side count, to an integer (NR-011).
+@@ -295,7 +248,4 @@ The winner reads six rings (NR-011).
+@@ -303,3 +253,4 @@ startup transient decay, and the machine moves to its operating point.
+@@ -307,2 +258,4 @@ only (NR-015).
+@@ -313 +265,0 @@ The draft prints it as the end power.
+@@ -319,3 +271,3 @@ The crossing limit reads `δα* = 2 asin(L_seg / sqrt(2 (L_seg^2 + 2 r_seg^2)))`
+@@ -326,0 +279,2 @@ metres (NR-015).
+@@ -328,9 +282,4 @@ metres (NR-015).
+@@ -338,3 +287,4 @@ the same form for every candidate, and the speed and radius stay coupled.
+@@ -342,12 +292,3 @@ same measurement window.
+@@ -368 +309 @@ The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+@@ -371,11 +312,14 @@ The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
+@@ -395,58 +339,34 @@ The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048)
+@@ -456,19 +376,24 @@ NaN and Inf clamps guard the state. A broken line ends the run.
+@@ -477,5 +402,5 @@ The campaign evaluates 930 designs in total (NR-001).
+@@ -486 +410,0 @@ The objective score is not the physical airborne mass.
+@@ -492 +415,0 @@ The chain runs genome, decoder, builder, evaluator, window statistics, gate stat
+@@ -502,8 +425,4 @@ The stationarity add-on reads the window swing against 20 per cent (NR-046).
+@@ -511,4 +430,9 @@ limit, so a design at the limit exactly reaches the floor (NR-046).
+@@ -543,3 +467,2 @@ The differential-evolution campaign fixed the configuration below.
+@@ -548,8 +471,3 @@ The rapid path pre-solves a static state and starts from it.
+@@ -557,0 +476,3 @@ The campaign scored every design on the cold path (NR-012).
+@@ -560,3 +481,4 @@ The campaign scored every design on the cold path (NR-012).
+@@ -564,3 +486,3 @@ names the commits in the register header.
+@@ -572,3 +494,2 @@ master 31ca00d.
+@@ -580,7 +501,11 @@ The remaining 201 carried no logged cause at campaign time.
+@@ -590,2 +515 @@ The recorded common seed genome scores 36.109 kg-equivalent under the campaign o
+@@ -602,3 +526 @@ The objective score adds 1.665 kg-equivalent of penalties (NR-039).
+@@ -610,6 +532,5 @@ The surviving ok designs hold a mean power between 5.02 and 6.32 kW
+@@ -646 +566,0 @@ The machine held a steady operating point through the measurement window.
+@@ -654 +573,0 @@ So the machine holds its operating point while the shaft still creeps toward its
+@@ -659,2 +578,2 @@ The shaft axis bows off its design line, sagging straight down.
+@@ -672,3 +591,4 @@ The disagreement reads as an instrument finding, not a design question (NR-059).
+@@ -676,6 +596,2 @@ does not by itself attribute the split between them.
+@@ -684,5 +600,4 @@ The rotor Cp reads from the AeroDyn v5.0.0 blade element momentum
+@@ -697 +612 @@ The winner clears each checked gate.
+@@ -701,17 +616,15 @@ The winner clears each checked gate.
+@@ -718,0 +632 @@ The rotor turns after that.
+@@ -720,7 +634,4 @@ The rotor turns after that.
+@@ -728,3 +639,3 @@ ruling).
+@@ -732,2 +643,2 @@ load over sin 70 degrees: 324.1 newtons (NR-010).
+@@ -738,5 +649,3 @@ That kite would reach giant sizes and be too hard to handle.
+@@ -746,4 +654,0 @@ A staged launch is easier to handle than one giant kite.
+@@ -751,8 +656,8 @@ The winner genome contains two blade-scale slots.
+@@ -761,3 +666,3 @@ It does not decode to a physical rotor at a rotor count of one (NR-011, NR-017).
+@@ -765,4 +670,3 @@ space. Numbers across the eras would compare models, not machines.
+@@ -777,4 +681,23 @@ section 2.4.
+@@ -793,4 +716,4 @@ R2 to R4 read 29.8 to 35.2 (NR-021).
+@@ -798,8 +721,5 @@ compressed ring binds.
+@@ -806,0 +727,3 @@ and tension at R5 alone.
+@@ -807,0 +731 @@ The ground ring sits on ground support and stays outside the ring check.
+@@ -812 +735,0 @@ The least segment torque margin is 2.03, at S1 (NR-040).
+@@ -813,0 +737 @@ S5 carries the largest segment torque margin, 2.69 (NR-040).
+@@ -827,4 +751,3 @@ The two plates map the same search in two views.
+@@ -836 +759,2 @@ The top loadings read -0.5385 for the TRPT line count, -0.5222
+@@ -839,2 +763 @@ The vertical axis is PC2: second-rotor and clustering settings.
+@@ -843 +766,2 @@ The top loadings read +0.5621 for the second-rotor bank, -0.5605
+@@ -845,6 +769,5 @@ for the second-rotor blade scale and -0.5018 for the ring density profile (NR-04
+@@ -859,2 +782 @@ All three start at the common seed, 36.109 kg-equivalent (NR-006).
+@@ -869,2 +791 @@ The two plates fix the search frame.
+@@ -894,2 +815 @@ The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017
+@@ -907 +826,0 @@ The record supports four implications.
+@@ -909,2 +827,0 @@ First, the searched TRPT family contains a compact feasible candidate under the
+@@ -912,2 +828,0 @@ Second, the winner holds large structural and twist margins at the final operati
+@@ -923 +837,0 @@ Conditional genes can improve the search efficiency without changing the machine
+@@ -947,5 +861,4 @@ Recommended next steps:
+@@ -954,16 +867,16 @@ The rapid start injects ring velocities from the static pre-solve.
+@@ -973,6 +886,5 @@ No design passes with a broken rope at its operating point.
+@@ -1018,8 +930,3 @@ gain than the machine it scored.
+@@ -1029,0 +937,10 @@ gain than the machine it scored.
+@@ -1071 +987,0 @@ The search found 508 feasible candidates in the searched space (NR-002).
+@@ -1075,9 +991,13 @@ Four ran at or above 5 kW with a factor of safety below 2.5.
+@@ -1085 +1004,0 @@ All checked TRPT rings and twist segments operate below their failure boundaries
+@@ -1094 +1012,0 @@ The Daisy anchor ties the model to a measured flight reference.
+@@ -1098,4 +1016 @@ The recommended next steps sit in section 3.6.
+@@ -1150,2 +1065,4 @@ The dataset commits to the repo at dd3cc6a on bankderate2-results.
+@@ -1153,2 +1070,2 @@ The launch commit is a76c5e9. The Phase 0 audit sits at master
+@@ -1159,4 +1076,3 @@ The version history, the working notes, the open requests to the
+-- tracker numstat span
+151	6	docs/reporting/draft-tracker.md
+== 3. token tools: draft ==
+== 1b01453 -> 89ed222 ==
+arrivals: {'53': 1}
+removals: {'52': 1}
+  [arr 53] Internal engineering report. Draft v0.53. Date 2026-10-15.
+  [rem 52] Internal engineering report. Draft v0.52. Date 2026-10-15.
+
+== 89ed222 -> d453530 ==
+arrivals: {'0.0': 1, '0.2258': 1, '0.2944': 1, '1.225': 1, '1.5': 1, '11.01': 1, '19.1304': 1, '2.5': 2, '27.75': 1, '39.4912': 1, '45.9733': 1, '5.566': 1, '54': 1, '6.8415': 1, '72.25': 1, '9.41': 1}
+removals: {'53': 1}
+  [arr 0.0] The rotor Cp reads from the AeroDyn v5.0.0 blade element momentum
+  [arr 0.2258] (BEM) table: 0.2944 at the ring speed ratio, and 0.2258 at the
+  [arr 0.2944] (BEM) table: 0.2944 at the ring speed ratio, and 0.2258 at the
+  [arr 1.225] 1.225 kilograms per cubic metre (NR-034).
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 11.01] 11.01 m/s at 9.41 m (NR-008, NR-032). | | Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+  [arr 19.1304] The Betz ceiling reads 19.1304 kW, and the winner delivers 27.75 per
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 27.75] The Betz ceiling reads 19.1304 kW, and the winner delivers 27.75 per
+  [arr 39.4912] The swept area reads 45.9733 square metres raw and 39.4912 square
+  [arr 45.9733] The swept area reads 45.9733 square metres raw and 39.4912 square
+  [arr 5.566] | Ring speed ratio | 5.566 | NR-031 |
+  [arr 54] Internal engineering report. Draft v0.54. Date 2026-10-15.
+  [arr 6.8415] | Tip-speed ratio | 6.8415 | NR-032 |
+  [arr 72.25] The realisability floor reads 72.25 degrees (NR-053). As run, the
+  [arr 9.41] 11.01 m/s at 9.41 m (NR-008, NR-032). | | Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+  [rem 53] Internal engineering report. Draft v0.53. Date 2026-10-15.
+
+== d453530 -> 2e930a8 ==
+arrivals: {'1': 1, '10.0': 1, '2.5': 2, '201': 2, '30': 1, '301': 1, '4.8': 1, '5': 4, '55': 1, '7': 1, '9.4000': 1, '96': 2}
+removals: {'54': 1}
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 2.5] (FoS) target and hard floor, both 2.5, and a line length of 18.8 | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 201] The cause is not logged for the remaining 201. | The cause is not logged for the remaining 201.
+  [arr 30] The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003). | Island 2 reaches 30.637 kg-equivalent at generation 30 (NR-004).
+  [arr 301] - Of the 930, 508 designs pass every gate. The other 422 designs read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002). | ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+  [arr 4.8] | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 5] **Abstract.** This report presents a search for a 5 kW-class | objective and gates. Its mean power is 5.309 kW at the site wind,
+  [arr 55] Internal engineering report. Draft v0.55. Date 2026-10-15. | 3.55 was a mass-scaled value with no anchor.
+  [arr 7] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
+  [arr 9.4000] | Shaft elevation | 30 deg, hub at 9.4000 m | NR-057 |
+  [arr 96] 96 ran below the 5 kW power floor. | 96 ran below the 5 kW power floor.
+  [rem 54] Internal engineering report. Draft v0.54. Date 2026-10-15.
+
+== 2e930a8 -> c9f0560 ==
+arrivals: {'56': 1}
+removals: {'55': 1}
+  [arr 56] Internal engineering report. Draft v0.56. Date 2026-10-15. | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 55] Internal engineering report. Draft v0.55. Date 2026-10-15. | 3.55 was a mass-scaled value with no anchor.
+
+== c9f0560 -> c825a01 ==
+arrivals: {'0.002': 1, '0.105': 1, '0.209': 1, '0.310': 1, '0.422': 1, '0.613': 1, '0.833': 1, '1.5': 1, '57': 1}
+removals: {'56': 1}
+  [arr 0.002] At the midpoint ring the bow reads 0.002 m at settle, and
+  [arr 0.105] 0.105 to 0.310 m through the measurement window (NR-059).
+  [arr 0.209] The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-059).
+  [arr 0.310] 0.105 to 0.310 m through the measurement window (NR-059).
+  [arr 0.422] An extension run past the window ends at 0.422 m at the midpoint
+  [arr 0.613] The maximum sits at the hub and reads 0.209 to 0.613 m through the window (NR-059).
+  [arr 0.833] and 0.833 m at the hub (NR-059).
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 57] Internal engineering report. Draft v0.57. Date 2026-10-16.
+  [rem 56] Internal engineering report. Draft v0.56. Date 2026-10-15. | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+
+== c825a01 -> f7de920 ==
+arrivals: {'0': 2, '0.001': 1, '0.2': 2, '0.398': 1, '0.4393': 1, '0.5': 1, '0.6994': 1, '0.7': 1, '0.700': 1, '0.8': 2, '0.8213': 1, '0.9': 1, '1': 3, '1.0': 4, '1.07': 1, '1.195': 1, '1.5': 1, '10.0': 2, '12.472': 1, '14.972': 10, '2': 1, '2.13': 1, '2.28': 1, '2.94': 1, '201': 1, '22': 2, '27.363': 1, '27.36354': 1, '27.364': 2, '29': 2, '3': 4, '3.8347': 1, '33.946': 1, '36': 2, '37': 2, '4.32': 1, '42': 1, '498.9': 1, '5.309': 1, '5.366': 1, '5.99': 1, '7.776': 1, '72.25': 1, '8': 1, '80': 1, '9': 2, '93': 2, '98.859': 1}
+removals: {'12.5': 1, '15.0': 10, '500.0': 1, '6.00': 1, '64.913': 1, '65.7': 1}
+  [arr 0] The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it. | | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 0.001] The independent three-decimal rounding of mass and penalty is the 0.001 gap.
+  [arr 0.2] | x9 | blade scale at the topmost rotor | 0.2 to 1.0 | | | x10 | blade scale at the lowest rotor | 0.2 to 1.0 |
+  [arr 0.398] | x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
+  [arr 0.4393] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 0.5] Rows k 0.5 to 1.5: | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [arr 0.6994] 0.6994. The fold is the 2026-10-05 re-centering that pinned r_hub to
+  [arr 0.7] draws in 0.7 to 0.9 per trial, and one gene always crosses. The trial
+  [arr 0.700] | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 0.8] | x5 | ring density bias | -0.8 to 0.8 | | third. F draws at random in 0.5 to 0.8 per trial. The crossover rate CR
+  [arr 0.8213] The main-rotor slot, `blade_scale_top`, reads 0.8213 and decodes to the single active rotor. It is quoted 0.82.
+  [arr 0.9] draws in 0.7 to 0.9 per trial, and one gene always crosses. The trial
+  [arr 1] ## 1 Introduction | ### 2.1 The kite turbine and its terms
+  [arr 1.0] | x3 | common length-to-radius target L/r | 1.0 to 2.94 | | | x9 | blade scale at the topmost rotor | 0.2 to 1.0 |
+  [arr 1.07] NR-029, 5.366 kW, a 1.07 per cent gap. The exact source of the gap is open. It
+  [arr 1.195] | x2 | ground ring radius r_bottom | 0.398 to 1.195 m |
+  [arr 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [arr 12.472] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 14.972] The minimum factor of safety is 14.972 (NR-009). | Its minimum factor of safety is 14.972 (NR-009).
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.13] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 2.28] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 2.94] | x3 | common length-to-radius target L/r | 1.0 to 2.94 |
+  [arr 201] The remaining 201 carried no logged cause at campaign time. | A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+  [arr 22] The shaft transition cone holds one fixed angle, 22 degrees, by construction. | | x7 | bank at the topmost rotor | 0 to 22 deg |
+  [arr 27.363] The sum at three decimals reads 27.363, not the 27.364 the register quotes.
+  [arr 27.36354] The full-precision values add to 27.36354, which rounds to 27.364.
+  [arr 27.364] Island 3 reaches 27.364 kg-equivalent (NR-005). | Island 3 reaches 27.364 kg-equivalent at generation 26 (NR-005).
+  [arr 29] torsional realisability cliff, 36 rotor-spacing refusals, 29 line breaks, | R2 to R4 read 29.8 to 35.2 (NR-021).
+  [arr 3] Sections 3.4 to 3.6 carry their text. | Island 3 reaches 27.364 kg-equivalent (NR-005).
+  [arr 3.8347] island-3 genome as it then stood, r_hub 3.8347 m and blade_scale_top
+  [arr 33.946] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [arr 36] - The seed genome scores 36.109 kg-equivalent (NR-006). | | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [arr 37] their swept area and power coefficient, 37 settle failures at the | probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
+  [arr 4.32] 4.32 m and blade_scale_top to 1.0 (the S2-fold seed). The folded class
+  [arr 42] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [arr 498.9] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [arr 5.366] NR-029, 5.366 kW, a 1.07 per cent gap. The exact source of the gap is open. It
+  [arr 5.99] | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
+  [arr 7.776] | x1 | hub ring radius r_hub | 0.700 to 7.776 m |
+  [arr 72.25] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 | | The realisability floor reads 72.25 degrees (NR-053). As run, the
+  [arr 8] | x5 | ring density bias | -0.8 to 0.8 | | (FoS) target and hard floor, both 2.5, and a line length of 18.8
+  [arr 80] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | six ways: 93 rotors that cannot reach 80 per cent of the power floor on
+  [arr 9] 11.01 m/s at 9.41 m (NR-008, NR-032). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+  [arr 93] six ways: 93 rotors that cannot reach 80 per cent of the power floor on | probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
+  [arr 98.859] | Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
+  [rem 12.5] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 15.0] The minimum factor of safety is 15.0 (NR-009). | Its minimum factor of safety is 15.0 (NR-009).
+  [rem 500.0] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 6.00] | Structural FoS floor | 2.5 | pass, 15.0 minimum. 15.0 on 2.5, margin +12.5 / +500.0 per cent, 6.00 times | NR-009, NR-015 |
+  [rem 64.913] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+  [rem 65.7] | Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+
+== f7de920 -> 3321c9a ==
+arrivals: {'1': 1, '10': 1, '1207': 1, '15': 1, '2.3': 1, '25': 1, '35': 1, '5': 1, '50': 1, '59': 1, '7': 1}
+removals: {'3.4': 1, '57': 1}
+  [arr 1] Sections 1 to 5 carry their text. | ## 1 Introduction
+  [arr 10] power balance (NR-025). The relax run takes 10 seconds. It lets the | relax time of 10 seconds, a window of 40 seconds, a factor of safety
+  [arr 1207] (src/objective_evaluator.jl:1207). The ratio reads one million at the
+  [arr 15] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | 2.24 | ok | 8.00 | 15.34 | 36.4 |
+  [arr 2.3] ### 2.3 The operating point and load selection
+  [arr 25] Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018). | It covered 18.8, 21.2 and 25.0 metres, twice, before and after the cp
+  [arr 35] R2 to R4 read 29.8 to 35.2 (NR-021). | targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
+  [arr 5] Sections 1 to 5 carry their text. | **Abstract.** This report presents a search for a 5 kW-class
+  [arr 50] 50 kW default gain. That gain is about five times the scaled system's | targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
+  [arr 59] Internal engineering report. Draft v0.59. Date 2026-10-18. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [arr 7] | x1 | hub ring radius r_hub | 0.700 to 7.776 m | | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 3.4] Sections 3.4 to 3.6 carry their text. | ### 3.4 The levers of Performance
+  [rem 57] Internal engineering report. Draft v0.57. Date 2026-10-16.
+
+== 3321c9a -> 646cddf ==
+arrivals: {'0.0665': 1, '324.1': 1, '5018': 1, '6': 1, '8': 1}
+removals: none
+  [arr 0.0665] 0.0665 (NR-021). Compression drives the buckling term, so the most
+  [arr 324.1] | Lift-line tension | 324.1 N | NR-010 | | load over sin 70 degrees: 324.1 newtons (NR-010).
+  [arr 5018] for the second-rotor blade scale and -0.5018 for the ring density profile (NR-044). | gene also loads it, at -0.5018 (NR-044).
+  [arr 6] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | The k 1.0 row settles at omega 17.6, tip about 85 m/s, near the 100 m/s ceiling.
+  [arr 8] | x5 | ring density bias | -0.8 to 0.8 | | (FoS) target and hard floor, both 2.5, and a line length of 18.8
+
+== 646cddf -> ef07533 ==
+arrivals: {'2.3': 1, '24': 1, '4': 2, '60': 2}
+removals: {'59': 1}
+  [arr 2.3] ### 2.3 The operating point and load selection | at the base length. The record sits in section 2.3.
+  [arr 24] The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a | The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+  [arr 4] | 2.24 | ok | 8.00 | 15.34 | 36.4 | | The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
+  [arr 60] Internal engineering report. Draft v0.60. Date 2026-10-18. | axial-length study runs to 60 m as a plan probe. That figure is not a
+  [rem 59] Internal engineering report. Draft v0.59. Date 2026-10-18. | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+
+== ef07533 -> ff60775 ==
+arrivals: {'30': 2, '61': 1}
+removals: {'0.5': 1, '1': 1, '1.5': 1, '1.94': 1, '2': 1, '2.24': 1, '29': 2, '3': 2, '3.0': 1, '60': 1, '9': 1}
+  [arr 30] realisability cliff. 36 refuse on rotor spacing. 30 break a line. Three | The best recorded objective score on island 1 is 30.578 kg-equivalent at generation 30 (NR-003).
+  [arr 61] Internal engineering report. Draft v0.61. Date 2026-10-18.
+  [rem 0.5] Rows k 0.5 to 1.5: | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [rem 1] Sections 1 to 5 carry their text. | ## 1 Introduction
+  [rem 1.5] Rows k 0.5 to 1.5: | | 1.5 | ok | 6.78 | 16.59 | 42.8 |
+  [rem 1.94] Rows k 1.94 to 3.0: | | 1.94 | ok | 7.56 | 15.80 | 40.1 |
+  [rem 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 2.24] The operating point uses a power-law constant k of 2.24 N·m/(rad/s)², a | The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
+  [rem 29] realisability cliff. 36 refuse on rotor spacing. 29 break a line. Three | R2 to R4 read 29.8 to 35.2 (NR-021).
+  [rem 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+  [rem 3.0] Rows k 1.94 to 3.0: | | 3.0 | ok | 8.89 | 14.42 | 24.3 |
+  [rem 60] Internal engineering report. Draft v0.60. Date 2026-10-18. | axial-length study runs to 60 m as a plan probe. That figure is not a
+  [rem 9] 11.01 m/s at 9.41 m (NR-008, NR-032). | | x4 | polygon sides n_lines (3 to 9) | 3 to 9 |
+
+== ff60775 -> e7f68a9 ==
+arrivals: {'62': 1}
+removals: {'61': 1}
+  [arr 62] Internal engineering report. Draft v0.62. Date 2026-10-18.
+  [rem 61] Internal engineering report. Draft v0.61. Date 2026-10-18.
+
+== e7f68a9 -> 3290876 ==
+arrivals: {'0.00053': 1, '0.009': 1, '0.0254': 1, '0.5': 1, '1.5': 2, '100.0': 1, '2': 5, '2.434': 1, '200': 1, '3': 1, '5.0': 1, '63': 1}
+removals: {'62': 1}
+  [arr 0.00053] At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).
+  [arr 0.009] The extension speed spread reads 0.009 per cent (NR-059).
+  [arr 0.0254] At the hub the extension steps fall from 0.0254 m to 0.00053 m (NR-059).
+  [arr 0.5] The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050). | | 0.5 | reject | 3.49 | 19.14 | 51.8 |
+  [arr 1.5] | 1.5 | ok | 6.78 | 16.59 | 42.8 | | Two hard gates sit outside the soft penalties. A rotor tip below 1.5 m
+  [arr 100.0] | Tip-speed ceiling | 100.0 m/s | NR-047 |
+  [arr 2] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [arr 2.434] The winner decode reads r_rotor 2.434 m (NR-050).
+  [arr 200] The record ends at 200 seconds, so the report claims no bound past the measured span (NR-059).
+  [arr 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [arr 5.0] The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW ceiling (NR-046). | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
+  [arr 63] Internal engineering report. Draft v0.63. Date 2026-10-18.
+  [rem 62] Internal engineering report. Draft v0.62. Date 2026-10-18.
+
+== 3290876 -> de18442 ==
+arrivals: {'0': 1, '3.3': 1, '30': 1, '31': 1, '310': 1, '508': 1, '64': 1, '80': 1, '930': 1}
+removals: {'0.804': 1, '1.94': 1, '10.0': 1, '103': 1, '1207': 1, '127.772': 1, '13.38': 1, '14.972': 2, '2.03': 2, '25.698': 3, '3': 1, '4.580': 1, '5.18': 1, '5.309': 1, '63': 1}
+  [arr 0] The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it. | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [arr 3.3] The length screen history sits in section 3.3 with the era record. | ### 3.3 The winner
+  [arr 30] 30, ten rows per generation, 310 evaluations per island (NR-045). | 30 break a line.
+  [arr 31] Each island runs 31 generations in total, generation indices 0 to | Each island ran 31 generations.
+  [arr 310] Each island evaluates 310 designs. | 30, ten rows per generation, 310 evaluations per island (NR-045).
+  [arr 508] | Feasible candidates | 508 of 930 | NR-002 | | Of the 930, 508 designs pass every gate.
+  [arr 64] Internal engineering report. Draft v0.64. Date 2026-10-18. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+  [arr 80] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | 93 rotors cannot reach 80 per cent of the power floor on their swept area and power coefficient.
+  [arr 930] A differential-evolution campaign evaluated 930 candidate designs under one fixed power-law generator load, each scored on the measurement window (NR-001). | | Designs evaluated | 930 | NR-001 |
+  [rem 0.804] | Ground radius | 0.804 m | NR-011 | | topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+  [rem 1.94] | 1.94 | ok | 7.56 | 15.80 | 40.1 | | | 2026-08-13 k-alignment fault | Gain misalignment | The evaluator ran 5-kilowatt designs at k_mppt 10.0, the 50-kilowatt default gain. That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+  [rem 10.0] with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`. | | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
+  [rem 103] The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS, src/objective_evaluator.jl:103).
+  [rem 1207] (src/objective_evaluator.jl:1207). The ratio reads one million at the
+  [rem 127.772] Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
+  [rem 13.38] | Window-mean speed | 13.38 rad/s | NR-029 | | Its window-mean speed reads 13.38 rad/s, 127.772 rpm (NR-029).
+  [rem 14.972] The minimum factor of safety is 14.972 (NR-009). | Its minimum factor of safety is 14.972 (NR-009).
+  [rem 2.03] 2.03, at S1, the first of the five segments between the rings (NR-040). | The least segment torque margin is 2.03, at S1 (NR-040).
+  [rem 25.698] Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018). | The physical airborne mass of the winner is 25.698 kg (NR-018).
+  [rem 3] Island 3 reaches 27.364 kg-equivalent (NR-005). | The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+  [rem 4.580] | Topmost ring radius | 4.580 m | NR-011 | | topmost ring radius is 4.580 metres and the ground radius 0.804 metres
+  [rem 5.18] | 2026-08-24 stale-gain re-gate | Stale configuration | The winner re-gate ran at a superseded gain. The check caught it. | Pre-push review | The re-gate at the campaign gain returned 5.18 kilowatts. | Corrected. | | the campaign gain returned 5.18 kW.
+  [rem 5.309] objective and gates. Its mean power is 5.309 kW at the site wind, | Its mean power is 5.309 kW and its airborne mass 25.698 kilograms (NR-008, NR-018).
+  [rem 63] Internal engineering report. Draft v0.63. Date 2026-10-18.
+
+== cumulative 1b01453 -> de18442 ==
+arrivals: {'0': 3, '0.0': 1, '0.00053': 1, '0.001': 1, '0.002': 1, '0.009': 1, '0.0254': 1, '0.0665': 1, '0.105': 1, '0.2': 2, '0.209': 1, '0.2258': 1, '0.2944': 1, '0.310': 1, '0.398': 1, '0.422': 1, '0.4393': 1, '0.5': 1, '0.613': 1, '0.6994': 1, '0.7': 1, '0.700': 1, '0.8': 2, '0.8213': 1, '0.833': 1, '0.9': 1, '1': 4, '1.0': 4, '1.07': 1, '1.195': 1, '1.225': 1, '1.5': 4, '10': 1, '10.0': 2, '100.0': 1, '11.01': 1, '12.472': 1, '14.972': 8, '15': 1, '19.1304': 1, '2': 5, '2.13': 1, '2.28': 1, '2.3': 2, '2.434': 1, '2.5': 4, '2.94': 1, '200': 1, '201': 3, '22': 2, '24': 1, '25': 1, '27.363': 1, '27.36354': 1, '27.364': 2, '27.75': 1, '3': 2, '3.3': 1, '3.8347': 1, '30': 4, '301': 1, '31': 1, '310': 1, '324.1': 1, '33.946': 1, '35': 1, '36': 2, '37': 2, '39.4912': 1, '4': 2, '4.32': 1, '4.8': 1, '42': 1, '45.9733': 1, '498.9': 1, '5': 5, '5.0': 1, '5.366': 1, '5.566': 1, '5.99': 1, '50': 1, '5018': 1, '508': 1, '6': 1, '6.8415': 1, '60': 1, '64': 1, '7': 2, '7.776': 1, '72.25': 2, '8': 2, '80': 2, '9': 1, '9.4000': 1, '9.41': 1, '93': 2, '930': 1, '96': 2, '98.859': 1}
+removals: {'0.804': 1, '1.94': 2, '103': 1, '12.5': 1, '127.772': 1, '13.38': 1, '15.0': 10, '2.03': 2, '2.24': 1, '25.698': 3, '3.0': 1, '3.4': 1, '4.580': 1, '5.18': 1, '500.0': 1, '52': 1, '6.00': 1, '64.913': 1, '65.7': 1}
+== 3b. token tools: tracker ==
+== 1b01453 -> 89ed222 ==
+arrivals: {'4.1': 1, '53': 1}
+removals: none
+  [arr 4.1] This pass folds the rope-break fixed defect at section 4.1 and its fix-state references across the draft.
+  [arr 53] v0.53 pass by @author (2026-10-15).
+
+== 89ed222 -> d453530 ==
+arrivals: {'3.3': 1, '54': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 54] v0.54 pass by @author (2026-10-15).
+
+== d453530 -> 2e930a8 ==
+arrivals: {'1': 1, '3.1': 1, '5': 1, '55': 1}
+removals: none
+  [arr 1] ## 1. Version history | First draft v0.1. Date 2026-10-08. Lead pass by @hermes.
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055).
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 55] v0.55 pass by @author (2026-10-15). | closed form no longer holds. Its product, 3.55, stays flagged
+
+== 2e930a8 -> c9f0560 ==
+arrivals: {'2': 1, '2.2': 1, '3.1': 1, '4.2': 1, '56': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 2.2] Section 2.2 retitles with 2.2.1 The gene and 2.2.2 The evaluator. | The phrase forms tighten, and the section 2.2.2 build request retires from the body.
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055). | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 4.2] This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2. | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 56] v0.56 pass by @author (2026-10-15).
+
+== c9f0560 -> c825a01 ==
+arrivals: {'3.3': 1, '57': 1}
+removals: none
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 57] v0.57 pass by @author (2026-10-16).
+
+== c825a01 -> f7de920 ==
+arrivals: none
+removals: none
+
+== f7de920 -> 3321c9a ==
+arrivals: {'0.38': 1, '10': 1, '100': 1, '15': 1, '2.1': 1, '2.3': 1, '25': 1, '3.4': 1, '3.6': 1, '32': 3, '33': 1, '35': 1, '5': 2, '50': 1, '57': 1, '58': 2, '59': 2, '7': 1}
+removals: none
+  [arr 0.38] the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 10] v0.10 fold pass by @hermes (2026-10-11). This pass folds the Harris | The founder return note 10 closes on the aero read (`2db50f9`).
+  [arr 100] per 100 words. The close is the only surface that gained it.
+  [arr 15] v0.15 pass by @fig-img-diagrams (2026-10-12). This pass lands the | The section 3.3 winner paragraph gains one line: NR-009 is the window minimum, and the capture topmost ring reads 15.033 at the final step (NR-021).
+  [arr 2.1] v0.9 pass by @author (2026-10-09). This pass lifts the §2.1 | The plate seats at §2.1, ahead of the genome strip, with its kit made embed-ready (captions and manifest).
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 25] v0.25 pass by @author (2026-10-13). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 3.4] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | This pass folds the levers reading at section 3.4, with the rows 20 and 21 pointers.
+  [arr 3.6] This pass completes the design implications at section 3.6 and rewrites the conclusion. | The seam takes option (b): the section 5 restatement of the section 3.6
+  [arr 32] v0.32 pass by @author (2026-10-14). | No signed value moves. STE reads 32 in, 32 out, no category gained.
+  [arr 33] v0.33 pass by @author (2026-10-14). | the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 35] v0.35 pass by @fig-img-diagrams (2026-10-14). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 50] v0.50 pass by @author (2026-10-15). | The ladder lists the code set, 7, 10, 15, 25, 35 and 50 kW, so the prose
+  [arr 57] v0.57 pass by @author (2026-10-16). | against the v0.57 base under the label "v0.58". This pass took that
+  [arr 58] kilograms, vertical load 304.58 newtons) and the window-mean speed | v0.58 pass by @author (2026-10-18).
+  [arr 59] number, so the close folds next as **v0.59**. The supply's text and map | v0.59 pass by @author (2026-10-18).
+  [arr 7] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+
+== 3321c9a -> 646cddf ==
+arrivals: none
+removals: none
+
+== 646cddf -> ef07533 ==
+arrivals: {'0.59': 1, '0.60': 1, '2.3': 1, '24': 2, '33': 2, '60': 2}
+removals: none
+  [arr 0.59] (the script commit), 2.3 (the section pointer), 0.59 to 0.60.
+  [arr 0.60] (the script commit), 2.3 (the section pointer), 0.59 to 0.60.
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 24] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | v0.24 pass by @author (2026-10-12).
+  [arr 33] v0.33 pass by @author (2026-10-14). | the close. One long-paragraph hit joins the document, 32 to 33 at 0.38
+  [arr 60] v0.60 pass by @author (2026-10-18). | declared token diff: 24 (the roster row), 60 (the plan probe), 4ebc385
+
+== ef07533 -> ff60775 ==
+arrivals: {'2.3': 1, '29': 1, '3.1': 1, '30': 1, '34': 2, '5': 2, '55': 1, '61': 2}
+removals: none
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 29] v0.29 pass by @author (2026-10-13). | 29 to 30 rope breaks and three to two hub divergences, in section 3.1
+  [arr 3.1] The status mix takes the three-way split at sections 3.1 and 5 (NR-055). | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 30] v0.30 pass by @author (2026-10-13). | 29 to 30 rope breaks and three to two hub divergences, in section 3.1
+  [arr 34] v0.34 pass by @author (2026-10-14). | counter-read. STE reads 34 in, 34 out. The citation checker reads 55
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+  [arr 55] v0.55 pass by @author (2026-10-15). | counter-read. STE reads 34 in, 34 out. The citation checker reads 55
+  [arr 61] v0.61 pass by @author (2026-10-18). | version ticks to v0.61.
+
+== ff60775 -> e7f68a9 ==
+arrivals: {'0.40': 1, '1.5': 1, '6': 1, '7': 1}
+removals: none
+  [arr 0.40] structural gate at utilisation 0.40 (NR-015) and a tension badge
+  [arr 1.5] rows (1.5), the bank and blade-scale reads (1.8) and the lifter-stack | The 1.5 sizing basis stands unchanged, and no other draft line moves.
+  [arr 6] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.6 pass by @author (2026-10-09). This pass seats the machine evolution
+  [arr 7] pair at §3.4 (figure-map rows 6 and 7) and closes the plate | v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec
+
+== e7f68a9 -> 3290876 ==
+arrivals: {'2': 1, '3.3': 1}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+
+== 3290876 -> de18442 ==
+arrivals: {'2': 1, '2.3': 1, '268': 1, '295': 1, '3': 1, '3.3': 4, '3.6': 1, '4.2': 2, '5': 4}
+removals: none
+  [arr 2] v0.2 revision pass by @author (2026-10-08). This pass folds the fact | v0.9 pass by @author (2026-10-09). This pass lifts the §2.1
+  [arr 2.3] The section 2.3 operating point prints k with its units, 2.24 N·m/(rad/s)², and the FoS gate prints as a target and hard floor, both 2.5 (fos_target and fos_hard, NR-015). | This pass expands the section 2.3 explanations for the reader. The pass covers the evaluation protocol, the load constant and its sweep, and the length.
+  [arr 268] The close census moves from 295 to 268 words.
+  [arr 295] The close census moves from 295 to 268 words.
+  [arr 3] v0.3 pass by @author (2026-10-08). This pass closes the k bracket and | pair at §3.4 (figure-map rows 6 and 7) and closes the plate
+  [arr 3.3] v0.7 pass by @author (2026-10-09). This pass pins the §3.3 lift-spec | v0.11 pass by @science-writer (2026-10-11). This pass folds the §3.3
+  [arr 3.6] This pass completes the design implications at section 3.6 and rewrites the conclusion. | The seam takes option (b): the section 5 restatement of the section 3.6
+  [arr 4.2] This pass folds AU7: the era map at section 3.3 and the failure-ledger table at section 4.2. | Section 3.1 takes the era label the record carries. Section 4.2 takes date order.
+  [arr 5] v0.5 pass by @author (2026-10-09). This pass seats the winner-check | strip at §3.5 (figure-map row 9).
+
+== cumulative 1b01453 -> de18442 ==
+arrivals: {'0.38': 1, '0.40': 1, '0.59': 1, '0.60': 1, '1': 1, '1.5': 1, '10': 1, '100': 1, '15': 1, '2': 3, '2.1': 1, '2.2': 1, '2.3': 4, '24': 2, '25': 1, '268': 1, '29': 1, '295': 1, '3': 1, '3.1': 3, '3.3': 7, '3.4': 1, '3.6': 2, '30': 1, '32': 3, '33': 3, '34': 2, '35': 1, '4.1': 1, '4.2': 3, '5': 9, '50': 1, '53': 1, '54': 1, '55': 2, '56': 1, '57': 2, '58': 2, '59': 2, '6': 1, '60': 2, '61': 2, '7': 2}
+removals: none
+== 4. STE gates and offenders ==
+-- sw_sweep33_draft_1b01453
+sw_sweep33_draft_1b01453.md      words=7002 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_1b01453.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_1b01453.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_89ed222
+sw_sweep33_draft_89ed222.md      words=7003 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_89ed222.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_89ed222.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_d453530
+sw_sweep33_draft_d453530.md      words=7171 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_d453530.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_d453530.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_2e930a8
+sw_sweep33_draft_2e930a8.md      words=7298 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_2e930a8.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_2e930a8.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_c9f0560
+sw_sweep33_draft_c9f0560.md      words=7341 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_c9f0560.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_c9f0560.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_c825a01
+sw_sweep33_draft_c825a01.md      words=7465 total=  8 per100w=  0.11 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_c825a01.md: passive_voice x1 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep33_draft_c825a01.md: long_paragraph(>6s) x7 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_draft_f7de920
+sw_sweep33_draft_f7de920.md      words=8498 total= 32 per100w=  0.38 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_f7de920.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_f7de920.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_3321c9a
+sw_sweep33_draft_3321c9a.md      words=8711 total= 33 per100w=  0.38 em_dash= 2
+[HOOK:ste] sw_sweep33_draft_3321c9a.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_3321c9a.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_646cddf
+sw_sweep33_draft_646cddf.md      words=8824 total= 33 per100w=  0.37 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_646cddf.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_646cddf.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_ef07533
+sw_sweep33_draft_ef07533.md      words=8972 total= 33 per100w=  0.37 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_ef07533.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_ef07533.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_ff60775
+sw_sweep33_draft_ff60775.md      words=8891 total= 34 per100w=  0.38 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_ff60775.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_ff60775.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_e7f68a9
+sw_sweep33_draft_e7f68a9.md      words=8902 total= 34 per100w=  0.38 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_e7f68a9.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_e7f68a9.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_3290876
+sw_sweep33_draft_3290876.md      words=9210 total= 34 per100w=  0.37 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_3290876.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_3290876.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_draft_de18442
+sw_sweep33_draft_de18442.md      words=9057 total= 20 per100w=  0.22 em_dash= 0
+[HOOK:ste] sw_sweep33_draft_de18442.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_draft_de18442.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_tracker_base
+sw_sweep33_tracker_base.md       words=3177 total= 12 per100w=  0.38 em_dash= 1
+[HOOK:ste] sw_sweep33_tracker_base.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_tracker_base.md: semicolon x3 -> replace ';' with a period — write two sentences. (ste-writing)
+-- sw_sweep33_tracker_tip
+sw_sweep33_tracker_tip.md        words=4554 total= 24 per100w=  0.53 em_dash= 1
+[HOOK:ste] sw_sweep33_tracker_tip.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_tracker_tip.md: semicolon x3 -> replace ';' with a period — write two sentences. (ste-writing)
+-- sw_sweep33_candidates_base
+sw_sweep33_candidates_base.md    words=4733 total= 12 per100w=  0.25 em_dash= 1
+[HOOK:ste] sw_sweep33_candidates_base.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep33_candidates_base.md: long_paragraph(>6s) x10 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+-- sw_sweep33_candidates_tip
+sw_sweep33_candidates_tip.md     words=5329 total= 15 per100w=  0.28 em_dash= 1
+[HOOK:ste] sw_sweep33_candidates_tip.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_candidates_tip.md: contraction x2 -> expand — "don't" -> "do not". (ste-writing)
+-- sw_sweep33_sp_base
+sw_sweep33_sp_base.md            words= 623 total= 20 per100w=  3.21 em_dash= 5
+[HOOK:ste] sw_sweep33_sp_base.md: long_sentence(>20w) x2 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_sp_base.md: semicolon x8 -> replace ';' with a period — write two sentences. (ste-writing)
+-- sw_sweep33_sp_tip
+sw_sweep33_sp_tip.md             words= 623 total= 20 per100w=  3.21 em_dash= 5
+[HOOK:ste] sw_sweep33_sp_tip.md: long_sentence(>20w) x2 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep33_sp_tip.md: semicolon x8 -> replace ';' with a period — write two sentences. (ste-writing)
+-- offdiffs
+173 scratch/sw_sweep33_offdiffs.txt
+== 5. greps (tip, de18442) ==
+-- retired phrasing stems
+adaptive: zero
+DifferentialEquations: zero
+-- naming traps
+104:It is not a rigid driveshaft.
+-- house vocabulary
+1024:model. The register, the test suite and the seat checks hold every
+-- winner calibration
+6
+35:The report does not claim a global optimum.
+65:It does not show flight readiness, a global optimum, or full structural safety.
+524:The physical airborne mass of the winner is 25.698 kg (NR-018).
+738:The winner is not close to ring buckling, over-twist or segment torque saturation at this operating point.
+821:It does not prove a global optimum.
+1008:It does not show flight readiness, a global optimum, or full structural safety.
+-- viable census
+viable: zero
+-- bridle census
+32:Blade integrity is not yet gated, and the outer stiffening bridles sit outside the model.
+142:A line is a tension member, like a tether or a bridle.
+627:Then it runs down the cyan line to the lift bearing, and down the lifting bridles to the main rotor.
+965:- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+-- topmost census
+164:The topmost ring carries the main rotor.
+187:The ring geometry sets the topmost-ring and ground radii, and the rotor count sets how many rings carry blades.
+230:| x7 | bank at the topmost rotor | 0 to 22 deg |
+232:| x9 | blade scale at the topmost rotor | 0.2 to 1.0 |
+536:The capture topmost ring reads a factor of safety of 15.033 at the final step (NR-021).
+550:| Topmost ring radius | 4.580 m | NR-011 |
+711:The topmost rotor ring R6 governs the structural check at the winner operating point (NR-021).
+811:The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
+903:| 2026-08-26 rotor-to-ring off-by-one | Decoder mapping error | The middle rotor landed on the topmost ring. Every expansion rotor shifted one ring. | Visual geometry check (`preview_genome_geometry.jl`) | Validate the rotor-to-ring map against the built geometry. | Corrected. |
+907:the topmost ring (2026-08-26).
+-- founder forms
+530:[Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
+627:Then it runs down the cyan line to the lift bearing, and down the lifting bridles to the main rotor.
+1111:| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `1af63fc` |
+-- display guards
+guards: no loose hit
+-- held tokens
+1.94/5.18: zero
+tracker 3.55: no hit
+-- head status and stubs
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.64. Date 2026-10-18.
+
+Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
+The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
+12:A section marked [PENDING] waits on a gate.
+1054:## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+-- brackets and seated markers
+brackets: none
+9
+-- the v0.52 block sentences (ten, expect once each)
+1x At the top of the shaft the rotor turns in the wind.
+0x The blades sweep a ring in the air.
+0x The shaft carries that torque down to the ground.
+0x The tension holds the shaft true.
+1x The lowest ring turns the generator at the ground station.
+1x The team sizes the beam for a bounded generator load step: twice the nominal load (NR-048).
+1x A low-wind lull is harmless under the load law.
+1x The team refuses to ease k as the high-wind substitute.
+-- span new forms (A-10 to A-19 declared set)
+6x campaign winner
+0x The abstract reads as a narrative
+0x decision scorecard
+1x The screen covered
+1x thirty evolution steps
+1x the cube of the window-mean ground-ring speed
+1x a factor of safety of 15.033
+1x during the relax run
+2x 80 per cent
+0x the close re-censused
+-- scorecard tokens
+18:A differential-evolution campaign evaluated 930 candidate designs under one fixed power-law generator load, each scored on the measurement window (NR-001).
+41:**Summary for decision.** The project completed a 930-design simulation
+49:| Designs evaluated | 930 | NR-001 |
+50:| Feasible candidates | 508 of 930 | NR-002 |
+57:Of the 930, 508 designs pass every gate.
+400:The campaign evaluates 930 designs in total (NR-001).
+451:| Evaluations, total | 930 | NR-001 |
+494:The campaign evaluated 930 designs (NR-001).
+495:The status mix reads 508 ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
+751:They project the 930 designs of the campaign onto the first two principal components of the ten-gene search (NR-001).
+983:The report screened 930 rigid-wing ground-generation rotary kite turbine designs with a tensile rotary power transmission (NR-001).
+987:The search found 508 feasible candidates in the searched space (NR-002).
+-- NR-045 generation counts
+388:Each island runs 31 generations in total, generation indices 0 to
+780:Each island ran 31 generations.
+-- hex refs in tip draft
+13
+1111:1af63fc
+487:31ca00d
+1113:4ebc385
+1107:74cfef9
+1108:9241b23
+6:95c385d
+1112:a4b4057
+5:a76c5e9
+695:a82cafd
+5:dd3cc6a
+1109:e23f226
+1105:e3d664c
+360:feedbac
+== 6. register anchors ==
+-- NR-002
+28:| NR-002 | Status mix | 508 ok / 301 reject / 110 clearance_reject / 11 reject_twist | designs | telemetry `status` column | signed (science-validator, 2026-10-08) |
+-- NR-008
+34:| NR-008 | Winner P_mean (island 3) | 5.309 / P_end 5.314 | kW | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+-- NR-009
+35:| NR-009 | Winner FoS (island 3) | 14.972 | — | island_3 telemetry / re-eval (§4, Phase 0 audit) | signed (science-validator, 2026-10-08) |
+-- NR-011
+37:| NR-011 | Winner geometry (island 3) | n_lines 3, rings 6, n_active 1, r_hub 4.580 m, r_bot 0.804 m, bank_bot 22°, blade scales 0.821326/0.20 (quote 0.82/0.20) | — | decode of best_vector.csv |
+-- NR-015
+41:| NR-015 | Operating point | k 2.24, relax 10 s + window 40 s, FoS gate 2.5/2.5, length 18.8 m | — | runner provenance | signed (science-validator, 2026-10-08) |
+-- NR-018
+222:| NR-018 | Winner airborne mass (island 3) | 25.70 | kg | audit §4 + probe 0c4046b | signed (science-validator, 2026-10-08) |
+-- NR-021
+350:| NR-021 | Ring check at the winner operating point (island 3): interaction, shares and FoS per checked ring | R2 0.03324, FoS 30.087. R3 0.03355, FoS 29.807. R4 0.02838, FoS 35.236. R5 3.058e-6, 
+-- NR-022
+351:| NR-022 | Segment twist and over-twist limit at the winner operating point | \|Δα\|: S1 33.95°, S2 33.81°, S3 33.68°, S4 33.55°, S5 22.82°. δ_crit: S1 to S4 98.86°, S5 92.64°. has_limit
+-- NR-023
+352:| NR-023 | Segment torque pair at the winner operating point | segment_torque: S1 396.8, S2 397.2, S3 397.5, S4 397.7, S5 397.2. torque_capacity: S1 805.0, S2 808.7, S3 812.2, S4 815.7, S5 1069.9 
+-- NR-040
+925:| NR-040 | Winner segment torque margin | S1 2.029, S2 2.036, S3 2.044, S4 2.051, S5 2.694. S1 governs (quote 2.03). The S1 to S4 band reads 2.029 to 2.051. | — | NR-023 strings, segment by segm
+-- NR-042
+1191:| NR-042 | Winner blade-tip clearance and the gate floor | floor `1.5`, winner `5.468` at decode. Margin `+3.968` (`3.65` times, `+264.5` per cent) | m | pair-extract log line 11 (`docs/reporting
+-- NR-044
+1366:| NR-044 | PCA projection summary (v13 5 kW screen, 930 draws): variance shares, top loadings, bin rule | PC1 22.434667 (quote 22.4), PC2 17.263044 (quote 17.3), pair total 39.697710 (quote 39.7)
+-- NR-045
+1402:| NR-045 | Island generation counts (v13 5 kW screen) | 31 generations per island (gen index 0 to 30), 10 rows per generation (idx 0 to 9), 310 rows per island, 930 in total | generations / rows 
+-- NR-046
+1428:| NR-046 | The objective seam forms, the weights, the thresholds and the reject placement | `f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2` with `r =
+-- NR-047
+1516:| NR-047 | The k-sweep display rows for section 2.3: six loads of the honest-window sweep, one row per k | P_mean at 2 dp: k 0.5 reads reject. Then 5.45, 6.78, 7.56, 8.00, 8.89. omega_final at 2 
+-- NR-048
+1577:| NR-048 | The sizing-side pair for the k = 2.24 story: the load-step sizing case and the k-easing refusal | Sizing load case = a bounded generator load step (nominal `k_mppt × 2`), measured `F_
+-- NR-050
+1775:| NR-050 | The blade-scale base: the sized rotor radius, the base span at 0.75 of it, the base chord at 0.113 of it | Winner decode: `r_rotor` `2.434`, base span `1.826`, span `1.499` (NR-043), c
+-- NR-052
+1962:| NR-052 | The torsion criteria as implemented, and the 2.5 boundary | Criterion 1: the geometric crossing check is the campaign's twist gate (form in NR-053). Criterion 2: the torsional-stabilit
+-- NR-053
+1963:| NR-053 | The realisability floor and its 1.05 margin | sin(Δα) <= 1/1.05 = 0.9524 (quote 0.9524). The continuum floor angle reads 72.25 deg (quote 72.25). The discrete crossing limit reads δ
+-- NR-056
+2087:| NR-056 | The shear law and its exponent | Hellmann power law, exponent 1/7 (0.1429). One authority: the measured Daisy pair, 10.0 m/s at 4.8 m. Reads: 11.01 m/s at 9.412 m (the table pair reads
+-- NR-059
+2162:| NR-059 | Winner bow (island 3) | midpoint ring settle 0.002 m, window 0.105 to 0.310 m. Hub max settle 0.002 m, window 0.209 to 0.613 m. Extension end midpoint 0.422 m, hub 0.833 m. Settle and 
+-- NR-060
+2254:| NR-060 | R5 signed axial force at the winner capture | -157.6 to -142.8 (tension), three beams, N/Ncrit -0.09240 to -0.08371 | N | Own re-run at the science seat, scratch/sv_r5_axial_sign/sv_r5
+-- NR-061
+2350:| NR-061 | Six-class split of the 201 FoS=Inf rejects, classified with the producing code | betz_cp_floor 93, settle_fail 37, spacing 36, rope_break 30, betz_ceiling 3, hub_tip 2 (total 201) | co
+-- NR-062
+2433:| NR-062 | Window power at the seven strip milestones (the NR-036 steps) | The seven pairs sit in the block below | kW | `docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv` (
+-- NR-063
+2466:| NR-063 | Window power at the four corner picks (the NR-051 identities) | The four pairs sit in the block below | kW | `docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv` (certi
+== 7. review copy readback ==
+53847cd86831d57ba6cabb049b5cb3f1  scratch/report-pdf-build/draft-live.docx
+## Build record (builder output)
+
+This block is builder output. It sits outside the report proper and does
+not pass the STE gate.
+
+Draft: `ef07533` (`docs/reporting/drafts/2026-10-08-report-first-draft.md`)
+
+Register: `v1 ROWS SIGNED (2026-10-08, science-validator). See the sign-off` — file at `df2d27d`
+
+Citation check: 54 cited, every one signed (61 signed rows total), uncited: NR-024, NR-035, NR-037, NR-038, NR-041, NR-054, NR-061 — checker exit 0
+
+Seats resolved: 9 of 9 — `system-anatomy`, `machine-winner-hero`, `ring-utilisation`, `twist-limit`, `pca-landscape`, `pca-atlas`, `machine-corner-grid`, `machine-evolution-strip`, `scaling-ladder`
+-- copy inputs diff, b6cd166..HEAD (draft + register)
+docs/reporting/drafts/2026-10-08-report-first-draft.md
+docs/reporting/numbers-register.md
+== 8. plate pins (seated kits, sha256) ==
+384034291c531b560a11e416cabe1fd09c11a3764f0801ccd9b0bb2e381b6842  docs/reporting/figures/ring-utilisation/ring-utilisation.svg
+dd096b883686ceb20a148633bda27cb1461fb84895a8387503aba0ce14203aea  docs/reporting/figures/ring-utilisation/ring-utilisation.png
+e58287fe1cdf89e5805bcb2dfba944bbba169c1c975e993fa66207fecf82b967  docs/reporting/figures/twist-limit/twist-limit.svg
+f293b873e4f8fbe24e7757ca9eaead402ed311fa4869087efd7d205a2cac338b  docs/reporting/figures/twist-limit/twist-limit.png
+373c2db3827700baaab4a99cb6c2642a6a682fceb217691fa38fd3c77ba1b8c4  docs/reporting/figures/eval-timeline/eval-timeline.svg
+7a1297ce4655b0dd7c7302797d9e8e74cf97c9bf0eb07f28173da4c82e67d11f  docs/reporting/figures/eval-timeline/eval-timeline.png
+8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2  docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.svg
+f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a  docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.png
+27746f7202e1629eba5a2cc233ba023acb66c793a4c54f93e70100a3fa1e17bb  docs/reporting/figures/machine-winner-hero/machine-winner-hero.svg
+ad26e7cb5d7fc6b92b96dc97bd38c7ed9f9b1d3e6166a8e5780b118ae0d2c767  docs/reporting/figures/machine-winner-hero/machine-winner-hero.png
+526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4  docs/reporting/figures/machine-corner-grid/machine-corner-grid.svg
+bbc9a744f27a95bc61781db38d8389a573f09b83c36a795a00e5362086d11cf7  docs/reporting/figures/machine-corner-grid/machine-corner-grid.png
+c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c  docs/reporting/figures/system-anatomy/system-anatomy.pdf
+696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66  docs/reporting/figures/system-anatomy/system-anatomy.png
+== 9. freeze check (levers-reading block) ==
+block md5 (as written): 7bbd964db09d2b33269ce5cb8c334054
+receipt region == block: True
+draft region == block: False
+declared block md5: 7bbd964db09d2b33269ce5cb8c334054
+== 10. pins check (appendix cells) ==
+pins-check: no output-hashes block in the draft file
+== 11. cited-commit ancestry ==
+      1 feedbac FAIL
+      1 e3d664c OK
+      1 e23f226 OK
+      1 dd3cc6a OK
+      1 a82cafd OK
+      1 a76c5e9 OK
+      1 a4b4057 OK
+      1 95c385d OK
+      1 9241b23 OK
+      1 74cfef9 OK
+      1 4ebc385 OK
+      1 31ca00d OK
+      1 1af63fc OK
+== done ==
