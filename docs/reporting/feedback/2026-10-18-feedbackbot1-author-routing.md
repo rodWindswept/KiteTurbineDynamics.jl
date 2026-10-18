@@ -21,16 +21,16 @@ Status keys: LANDED, OPEN, GATED, CALL, OTHER-SEAT.
 
 | ID | Item | Disposition | Gate |
 |---|---|---|---|
-| A-10 | staccato cadence: group the single-sentence paragraphs into topic paragraphs, front matter to §2.6 | OPEN | prose pass |
-| A-11 | abstract and summary near-verbatim: split the roles, scorecard the decision metrics | OPEN | prose pass |
-| A-12 | front-matter clutter: provenance box, muted NR tags | OPEN | prose pass |
+| A-10 | staccato cadence: group the single-sentence paragraphs into topic paragraphs, front matter to §2.6 | LANDED (science-writer) | prose pass |
+| A-11 | abstract and summary near-verbatim: split the roles, scorecard the decision metrics | LANDED (science-writer) | prose pass |
+| A-12 | front-matter clutter: provenance box, muted NR tags | LANDED (science-writer) | prose pass. The muted-NR styling and the box rendering ride the builder rebuild |
 | A-13 | literature review: two paragraphs, citation keys and years, the gap statement | OPEN | gated on the §7 bibliography build |
-| A-14 | jargon moves: §2.3 history notes to §3.3, §4.2 or an appendix. Winner results leave Methods | OPEN | prose pass |
-| A-15 | repeated winner metrics: one authoritative table in §3.3, cite it after | OPEN | prose pass |
-| A-16 | failure-ledger prose duplication: table plus thematic takeaway | OPEN | prose pass |
-| A-17 | claim calibration: "winner" and "viable" language across §1 to §5 | OPEN | prose pass |
-| A-18 | §5 close: the self-reference sentence and the Daisy first-use | OPEN | prose pass. The 295-word census holds until the pass runs |
-| A-19 | minor wording fixes: the two missing nouns, the ext2 note, the pick shorthand, the operand read, the file paths, the symbol formatting, the generation count | OPEN | prose pass |
+| A-14 | jargon moves: §2.3 history notes to §3.3, §4.2 or an appendix. Winner results leave Methods | LANDED (science-writer) | prose pass |
+| A-15 | repeated winner metrics: one authoritative table in §3.3, cite it after | LANDED (science-writer) | prose pass |
+| A-16 | failure-ledger prose duplication: table plus thematic takeaway | LANDED (science-writer) | prose pass |
+| A-17 | claim calibration: "winner" and "viable" language across §1 to §5 | LANDED (science-writer) | prose pass |
+| A-18 | §5 close: the self-reference sentence and the Daisy first-use | LANDED (science-writer) | prose pass. The close re-censused at 268 words |
+| A-19 | minor wording fixes: the two missing nouns, the ext2 note, the pick shorthand, the operand read, the file paths, the symbol formatting, the generation count | LANDED (science-writer) | prose pass |
 
 ## C. Placeholders (open, shared)
 

@@ -541,3 +541,26 @@ The full hard-gate list joins the campaign config table.
 
 Section 3.3 states the steady-and-drifting pair as two observables on two timescales.
 It extends the bow bound to both stations, with the 200-second scope line.
+
+v6 (2026-10-18): the FEEDBACKBOT1 prose pass lands (science-writer).
+
+The draft groups the single-sentence paragraphs into topic paragraphs.
+The grouping runs from the front matter through section 2, then sections 3 to 5 and the discussion.
+The abstract and the summary split roles.
+The abstract reads as a narrative.
+The summary reads as a decision scorecard table, with the open work items below it.
+
+The front matter consolidates the provenance lines into one block.
+The section 2.3 history notes move to section 3.3 and section 4.2.
+The length screen and the fold terms land at section 3.3.
+The retired load anchors and the resonance round land at section 4.2.
+The winner repetitions leave sections 3.6 and 5, and the section 3.3 table carries the values once.
+
+The close drops its self-referential meta lines.
+The close census moves from 295 to 268 words.
+The winner calibration lands at sections 3.3 and 5.
+
+The minor fixes land.
+The fixes cover the two missing nouns, the ext2 definition, the operand read and the file paths.
+The fixes also cover the symbol formatting, the generation count and the section 5 power-floor qualifier.
+A-13 and A-20 to A-22 stay gated.
