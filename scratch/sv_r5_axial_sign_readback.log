@@ -1,0 +1,90 @@
+# sv_r5_axial_sign packet readback — science-validator seat
+# stamp: 2026-10-18
+# base: b0972c0 | main commit: c3ef25b971f3a82d650dfb510883e9340ab73403 (branch bank-derate-cos2p65)
+# local == origin: c3ef25b971f3a82d650dfb510883e9340ab73403 == c3ef25b971f3a82d650dfb510883e9340ab73403
+# carried blobs — path | blob (HEAD) | blob (origin) | worktree sha256
+docs/reporting/numbers-register.md | 6eb50fb00c9b65e9bbf69485b653a51d9f07cd7a | 6eb50fb00c9b65e9bbf69485b653a51d9f07cd7a | f141e4213c15246f4624274e3a5d7b7ac0e54366ae8c9bcf7e3cf7a25fd2e50c
+docs/reporting/room-responses/science-validator-2026-10-18-nr060-r5-axial-sign.md | 6b31536e2e24a8b86de39d70a50a40605b28723f | 6b31536e2e24a8b86de39d70a50a40605b28723f | 5bdad2242aedccd539cd3d45a018265466ba8305518a26146e6dbaac8200c6a4
+scratch/sv_r5_axial_sign/sv_r5_axial_sign.jl | 4e6fd94fabd6563bbe5eff987ea31200a3287172 | 4e6fd94fabd6563bbe5eff987ea31200a3287172 | 4ceb9dd020cd783ede6f46ff5e8fe8861d836d6f9e5bcf86cd2ccae0d78874d4
+scratch/sv_r5_axial_sign/sv_r5_axial_sign.log | e3606a4bdef7b266a5b6519efffd4088e78a5b93 | e3606a4bdef7b266a5b6519efffd4088e78a5b93 | 2a9f3c4f5d60a7ad63b619a011809084daa076b2d198ceb5e5d2056406c6a870
+scratch/sv_r5_axial_sign_check.log | 368f27736a35e66a3e3c554aa38c6e3ec3b2312a | 368f27736a35e66a3e3c554aa38c6e3ec3b2312a | 429692ef84f10433c833c62c4defe0cdc0bc67e2e52c7708df1454720fbfd2e6
+scratch/sv_r5_axial_sign_check.py | b76b3c6861db56842e611338d056e2eed1e9b4ec | b76b3c6861db56842e611338d056e2eed1e9b4ec | 104a85d46df697e101e6a412c3bb2ac389e08ad8db4c26411df4cbad5e22c99f
+# append-only: docs/reporting/numbers-register.md reads 44 additions 0 deletions vs b0972c0
+# register STE: rc=0 at 1.02/100w, totals 178 -> 183, additions only
+# receipt STE: rc=0 at 0.00/100w
+# verdict: every carried blob byte-verified at origin; local == origin
+#
+# post-push checker re-run at the new tip (captured output):
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/ring_element_analysis.jl
+ok: blob launch==HEAD src/ring_element_analysis.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/sim_frame.jl
+ok: blob launch==HEAD src/sim_frame.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 src/sim_frame.jl
+ok: blob launch==HEAD src/sim_frame.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/compute_seeds.jl
+ok: blob launch==HEAD scripts/compute_seeds.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/extract_pair_capture.jl
+ok: blob HEAD==origin/bank-derate-cos2p65 scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/best_vector.csv
+ok: line pin src/ring_element_analysis.jl:20 exact substring
+ok: line pin src/ring_element_analysis.jl:239 exact substring
+ok: line pin src/ring_element_analysis.jl:272 exact substring
+ok: line pin src/ring_element_analysis.jl:636 exact substring
+ok: line pin src/sim_frame.jl:391 exact substring
+ok: line pin src/sim_frame.jl:406 exact substring
+ok: line pin scripts/compute_seeds.jl:36 exact substring
+ok: line pin scripts/extract_pair_capture.jl:52 exact substring
+ok: log parity bit-exact
+ok: log parity field fitness
+ok: log parity exact for fitness
+ok: log parity field P_mean
+ok: log parity exact for P_mean
+ok: log parity field P_end
+ok: log parity exact for P_end
+ok: log parity field FoS_min
+ok: log parity exact for FoS_min
+ok: log parity field util_a
+ok: log parity exact for util_a
+ok: log parity field util_b
+ok: log parity exact for util_b
+ok: log parity field T_lift
+ok: log parity exact for T_lift
+ok: log parity field twist_ratio
+ok: log parity exact for twist_ratio
+ok: log parity field ω_eq
+ok: log parity exact for ω_eq
+ok: log rings census == 5 (5)
+ok: log R5 N_min full precision
+ok: log R5 N_max full precision
+ok: log R5 beams == 3
+ok: log R5 share min full precision
+ok: log R5 share max full precision
+ok: log per-beam census == 3 (3)
+ok: log all three R5 beams negative (tension)
+ok: log N_crit shared across beams (R5 beam 1 | N=-157.62246416260894 | N_cr)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 1 | N=-157.62246416260894 | N_cr)
+ok: log N_crit shared across beams (R5 beam 2 | N=-142.7923499969138 | N_cri)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 2 | N=-142.7923499969138 | N_cri)
+ok: log N_crit shared across beams (R5 beam 3 | N=-148.87563768789266 | N_cr)
+ok: log closure N/Ncrit == N/N_crit bit-exact (R5 beam 3 | N=-148.87563768789266 | N_cr)
+ok: log done token
+ok: receipt proposed range present
+ok: receipt proposed share range present
+ok: receipt proposed status present
+ok: register NR-060 heading
+ok: register amend lead
+ok: register full-precision N values
+ok: register display form N
+ok: register full-precision shares
+ok: register display form shares
+ok: register three beams incl. middle beam
+ok: register signed status
+ok: register counter-read line
+ok: register parity basis
+ok: register sign convention
+SV_R5_AXIAL_CHECK_DONE (72 checks, 0 fail)
