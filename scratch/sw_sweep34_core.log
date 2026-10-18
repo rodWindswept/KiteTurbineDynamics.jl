@@ -1,0 +1,133 @@
+== 1. preflight ==
+7e60f37 chore(scratch): the house-vocabulary swap readback - the chain since 79e75df, seven-blob parity at HEAD vs origin all green, local == origin at abc12f0 (author)
+## bank-derate-cos2p65...origin/bank-derate-cos2p65
+ M scratch/au_seatchecks_fold.log
+?? docs/plans/2026-10-07-state-fed-regen-cap-proposal.md
+0	0
+== 2. span enumeration ==
+7e60f37 chore(scratch): the house-vocabulary swap readback - the chain since 79e75df, seven-blob parity at HEAD vs origin all green, local == origin at abc12f0 (author)
+abc12f0 docs(reporting): the house-vocabulary swap receipt and the author seat-page refresh - the receipt carries the two-site fold, the gates (56 cited, every one signed; STE draft 20, tracker 24, ledger 5 held) and the figure re-stamp handoff (ledger 64073d0f); the seat page closes the pass and points the next action at the rebuild verification; STE rc=0 (receipt 0.00, seat page 0.06) (author)
+a9dc348 docs(reporting): the house-vocabulary swap lands - the draft ladder-embed sentence and the value-claims-ledger row read the pipeline; the draft ticks to v0.65; STE rc=0 at 0.22/100w; citation checker exit 0 (56 cited, every one signed) (author)
+79e75df chore(scratch): the sweep 33 final-check log takes the receipt-gate line and the closing gate readings (sw_ prefix) (science-writer)
+d64a5ef docs(reporting): room response - sweep 33, the v0.64 span (science-writer): the twenty-three draft movers verify (one above the earlier room count, corrected here), the sixteen register landings re-read by row ID with the rows at 63 signed, the token span 174 added and 57 removed net 117 with every removal mapped, the offender sets hold entry for entry, the levers re-freeze lands at 0d9001e4 with the break commits recorded, the house-vocabulary swap routes to the author and the review copy waits on the rebuild; the no-verify extract class question rides this receipt; STE rc=0 at 0.00/100w (science-writer)
+b68126c docs(handovers): the science-writer seat page takes the sweep 33 closure - the span 1b01453..de18442 verifies the A-10 to A-19 prose pass and folds the levers re-freeze (0d9001e4, break commits f7de920 and 646cddf); sweep 32 and sweep 31 upgrade with their commit ranges and receipts; the open queue leads with sweep 34 after the author one-token swap; base to 11b4cd6; STE rc=0 at 0.00/100w (science-writer)
+c421f89 docs(reporting): sweep 33 - the v0.64 span verifies (the A-10 to A-19 prose pass): the span 1b01453..de18442 carries 165 commits, 22 draft movers, 16 register movers (689/26, display-amend re-reads only, 63 signed) and four candidates movers; the token span reads 174 added and 57 removed net 117 with the identity check held and every removal mapped; the offender sets hold entry for entry and the five tick pairs read header-only; the levers block break records at f7de920 and 646cddf and the re-freeze lands in this train; the house-vocabulary swap routes to the draft owner and the review copy reads stale at its v0.60 build, rebuild gated on v0.64; STE rc=0 (section 0.00, record 0.08) (science-writer)
+8840881 chore(scratch): the stale-phrases extract pair joins the sweep 33 evidence set - the base and tip revs of the legacy file (623w 3.21 each, no mover in the span); committed with --no-verify for the quoted-record class (a room call, not a rule change; the class question rides the sweep 33 receipt) (science-writer)
+9f37993 chore(scratch): land the sweep 33 evidence set (sw_ prefix) - the core run and its log, the mover extracts and offender sets, the token tool outputs, the offdiffs, the hex inventory, the section builder and the graded sims, and the final-checks log with the receipt gate stubbed; the stale-phrases extract pair rides its own no-verify commit (quoted-record class, over gate at 3.21) (science-writer)
+c27b677 docs(reporting): the levers reading re-freezes at the science-writer seat - the room call lands as a re-freeze on the graded bytes: the block file, the receipt region and the md5 record refresh to the current draft region (md5 0d9001e4c19c78cc239cc22f8ac6dba7, file-as-written), and the break commits f7de920 and 646cddf record beside the new md5; the grade holds from the science-validator counter-read - wrap-only plus two colon swaps plus the T3-7 caveat, the signed value set unchanged, the pre-break md5 7bbd964db09d2b33269ce5cb8c334054 stays as the record; the freeze check v2 passes all three reads and the receipt lints 0.00/100w (science-writer)
+11b4cd6 docs(reporting): the A-10 to A-19 counter-read closes at science-validator - the NR-045 generation counts (31 generations, indices 0 to 30, ten rows, 310 per island) and the NR-029 operand rewrite (the cube of the window-mean ground-ring speed) both read true against the signed rows at the v0.64 tip; the frozen levers-block grade lands for the re-freeze call: the delta is wrap-only plus two colon swaps plus the landed T3-7 caveat, no numeric token moved, the tail survives, recommendation re-freeze with the two break commits recorded; receipt only, no register/draft/figure byte moves (science-validator)
+c80a443 docs(reporting): F-VALUE re-check of the FEEDBACKBOT1 re-cut plates - ring utilisation v7 and twist limit v6 verify end to end (76/76): all twelve manifest pins recompute, the SVG text sets equal the ledgers, the drawn forms equal the signed rows, the two gate derivations hold (0.40 from the NR-015 FoS 2.5, capacity/1.5 marks from NR-052) and both F-REPRO counter-runs reproduce the committed bytes; receipt and scratch evidence (aero-validator)
+-- draft movers
+a9dc348 docs(reporting): the house-vocabulary swap lands - the draft ladder-embed sentence and the value-claims-ledger row read the pipeline; the draft ticks to v0.65; STE rc=0 at 0.22/100w; citation checker exit 0 (56 cited, every one signed) (author)
+-- tracker movers
+a9dc348 docs(reporting): the house-vocabulary swap lands - the draft ladder-embed sentence and the value-claims-ledger row read the pipeline; the draft ticks to v0.65; STE rc=0 at 0.22/100w; citation checker exit 0 (56 cited, every one signed) (author)
+-- ledger movers
+a9dc348 docs(reporting): the house-vocabulary swap lands - the draft ladder-embed sentence and the value-claims-ledger row read the pipeline; the draft ticks to v0.65; STE rc=0 at 0.22/100w; citation checker exit 0 (56 cited, every one signed) (author)
+-- register movers (expect none)
+-- candidates movers (expect none)
+-- stale-phrases movers (expect none)
+-- register numstat (expect empty)
+== 3. extracts ==
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.64. Date 2026-10-18.
+# The kite turbine: a search over its design space
+
+Internal engineering report. Draft v0.65. Date 2026-10-18.
+== 4. token tools ==
+== de18442 -> 7e60f37 ==
+arrivals: {'65': 1}
+removals: {'64': 1}
+  [arr 65] Internal engineering report. Draft v0.65. Date 2026-10-18. | | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
+  [rem 64] Internal engineering report. Draft v0.64. Date 2026-10-18. | | 1.0 | ok | 5.45 | 17.64 | 47.8 |
+
+== de18442 -> 7e60f37 ==
+arrivals: {'65': 1}
+removals: none
+  [arr 65] The draft ticks to v0.65.
+
+== de18442 -> 7e60f37 ==
+arrivals: none
+removals: none
+
+== 5. STE gates ==
+sw_sweep34_draft_base.md         words=9057 total= 20 per100w=  0.22 em_dash= 0
+[HOOK:ste] sw_sweep34_draft_base.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep34_draft_base.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_base.md: passive_voice x5 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_base.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_base.md: long_paragraph(>6s) x12 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep34_draft_tip.md          words=9056 total= 20 per100w=  0.22 em_dash= 0
+[HOOK:ste] sw_sweep34_draft_tip.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep34_draft_tip.md: contraction x1 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_tip.md: passive_voice x5 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_tip.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] sw_sweep34_draft_tip.md: long_paragraph(>6s) x12 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+sw_sweep34_tracker_base.md       words=4554 total= 24 per100w=  0.53 em_dash= 1
+[HOOK:ste] sw_sweep34_tracker_base.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: semicolon x3 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: contraction x5 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: passive_voice x3 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: long_paragraph(>6s) x11 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_base.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+sw_sweep34_tracker_tip.md        words=4579 total= 24 per100w=  0.52 em_dash= 1
+[HOOK:ste] sw_sweep34_tracker_tip.md: long_sentence(>20w) x1 -> split — max 20 words (instruction) / 25 (descriptive). Two short sentences beat one long. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: semicolon x3 -> replace ';' with a period — write two sentences. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: contraction x5 -> expand — "don't" -> "do not". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: passive_voice x3 -> active voice — "<actor> <verb> <object>", not "<object> is <verb>ed". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: nominalization x1 -> use the verb — "analyze", not "perform an analysis". (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: long_paragraph(>6s) x11 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep34_tracker_tip.md: em_dash x1 -> no em dash — use a period or comma. (ste-writing)
+sw_sweep34_ledger_base.md        words=1210 total=  5 per100w=  0.41 em_dash=12
+[HOOK:ste] sw_sweep34_ledger_base.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep34_ledger_base.md: em_dash x12 -> no em dash — use a period or comma. (ste-writing)
+sw_sweep34_ledger_tip.md         words=1209 total=  5 per100w=  0.41 em_dash=12
+[HOOK:ste] sw_sweep34_ledger_tip.md: long_paragraph(>6s) x5 -> one topic per paragraph, max six sentences — split it. (ste-writing)
+[HOOK:ste] sw_sweep34_ledger_tip.md: em_dash x12 -> no em dash — use a period or comma. (ste-writing)
+== 6. offender sets ==
+offdiffs:
+1c1
+< == scratch/sw_sweep34_draft_base.md: words=9057 total=20 per100w=0.22 ==
+---
+> == scratch/sw_sweep34_draft_tip.md: words=9056 total=20 per100w=0.22 ==
+1c1
+< == scratch/sw_sweep34_tracker_base.md: words=4554 total=24 per100w=0.53 ==
+---
+> == scratch/sw_sweep34_tracker_tip.md: words=4579 total=24 per100w=0.52 ==
+1c1
+< == scratch/sw_sweep34_ledger_base.md: words=1210 total=5 per100w=0.41 ==
+---
+> == scratch/sw_sweep34_ledger_tip.md: words=1209 total=5 per100w=0.41 ==
+== 7. greps and censuses ==
+-- seat checks, draft tip (expect zero)
+ZERO
+-- seat checks, ledger tip (expect zero)
+ZERO
+-- the pipeline, draft tip
+1024:model. The register, the test suite and the pipeline hold every
+-- the pipeline, ledger tip
+29:| The gates: the register, the test suite, and the pipeline that hold every number | `capability` | `docs/reporting/numbers-register.md`, `test/` |
+-- adaptive / DifferentialEquations, draft tip
+ZERO
+== 8. freeze check (re-frozen block, new md5) ==
+block md5 (as written): 0d9001e4c19c78cc239cc22f8ac6dba7
+declared (re-freeze):   0d9001e4c19c78cc239cc22f8ac6dba7
+draft region == block (strip basis): True
+== 9. review copy ==
+53847cd86831d57ba6cabb049b5cb3f1  scratch/report-pdf-build/draft-live.docx
+== 10. cited-commit ancestry ==
+      1 feedbac FAIL
+      1 e3d664c OK
+      1 e23f226 OK
+      1 dd3cc6a OK
+      1 a82cafd OK
+      1 a76c5e9 OK
+      1 a4b4057 OK
+      1 95c385d OK
+      1 9241b23 OK
+      1 74cfef9 OK
+      1 4ebc385 OK
+      1 31ca00d OK
+      1 1af63fc OK
+== done ==

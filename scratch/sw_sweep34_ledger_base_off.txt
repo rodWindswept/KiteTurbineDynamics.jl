@@ -1,0 +1,11 @@
+== scratch/sw_sweep34_ledger_base.md: words=1210 total=5 per100w=0.41 ==
+-- sentences over 20 words --
+-- passive constructions --
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | | Class | Binding surface | Rule |
+  | | Element | Class | Pointer |
+  | | Element | Class | Pointer or label |
+  | | Rung | Class | Pointer or label | Ink |
+  | | Item | Class | Status | Why held |
+

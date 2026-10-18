@@ -1,0 +1,4 @@
+1c1
+< == scratch/sw_sweep34_tracker_base.md: words=4554 total=24 per100w=0.53 ==
+---
+> == scratch/sw_sweep34_tracker_tip.md: words=4579 total=24 per100w=0.52 ==

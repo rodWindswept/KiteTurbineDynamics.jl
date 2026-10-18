@@ -1,0 +1,32 @@
+== sweep 34 final checks — science-writer, 2026-10-18 ==
+-- 1. record, --fail-above 2.0
+draft-consistency-sweep.md       words=21530 total= 16 per100w=  0.07 em_dash= 0
+rc=0
+-- 2. section alone, --fail-above 0.01
+sw_sweep34_section.md            words= 416 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+-- 3. record sim, --fail-above 2.0
+sw_sweep34_section.new.md        words=21530 total= 16 per100w=  0.07 em_dash= 0
+rc=0
+-- 4. block-list diff and offender delta (sim vs base)
+block-list diff: empty
+offender delta: header-only
+-- 5. freeze check (re-frozen block)
+block md5 (as written): 0d9001e4c19c78cc239cc22f8ac6dba7
+declared: 0d9001e4c19c78cc239cc22f8ac6dba7
+draft region == block (strip basis): True
+rc=0
+-- 6. prose-form census (whitespace-normalized)
+draft base: 1x seat checks, 1x the pipeline
+draft tip: 0x seat checks, 2x the pipeline
+ledger base: 1x seat checks, 0x the pipeline
+ledger tip: 0x seat checks, 1x the pipeline
+-- 7. register numstat empty de18442..7e60f37
+rc=0
+-- 8. review copy
+53847cd86831d57ba6cabb049b5cb3f1  scratch/report-pdf-build/draft-live.docx
+-- 9. handover lint
+handover-2026-10-14-reporting-room-science-writer.md words= 644 total=  0 per100w=  0.00 em_dash= 0
+rc=0
+-- 10. receipt gate (the sweep-34 receipt lint)
+stubbed, lands with the closing commit

@@ -1,0 +1,25 @@
+== scratch/sw_sweep34_draft_tip.md: words=9056 total=20 per100w=0.22 ==
+-- sentences over 20 words --
+  [24w] That gain is about five times the scaled system's own gain, near 1.94. | Acceptance test | One constant, one source file. | Caught and corrected. |
+-- passive constructions --
+  | ettles at omega 15.3, tip about 73 m/s (NR-047).  The power is measured, not computed from a mean speed. The ev
+  |  from ground-ring drag, or from how the instantaneous power is averaged.  At the heavy end the load raises the 
+  |   , reads 0.8213 and decodes to the single active rotor. It is quoted 0.82. The second-rotor slot,  , reads 0
+  | x. All six rows failed the power floor (NR-027).  The cause is recorded. The screen measured the pre-fold winne
+  | ndard (slides held, no public archive). The Ranneberg entry was dropped.  ## 8 Data availability and reproducib
+-- nominalizations --
+  | difference of
+-- paragraphs over six sentence-lines --
+  | | Decision metric | Value | Rows |
+  | | Slot | Meaning | Bounds |
+  | | k | status | P_mean (kW) | omega_final (rad/s) | FoS_min |
+  | | Setting | Value | Source |
+  | | Quantity | Value | Source |
+  | | Gate | Threshold | Winner outcome | Margin | Source |
+  | | Era | Effect on the search space | Data status |
+  | | Date / event | Class | What happened | Detection | Correction / lesson | Status |
+  | The validated rung is the machine this report covers. The programme
+  | Seeded in references.bib. Seventeen sources. Sixteen carry verified
+  | | Claim | Evidence | Report location | Register rows |
+  | | Exhibit | Source extract | Cited rows | Script commit |
+
