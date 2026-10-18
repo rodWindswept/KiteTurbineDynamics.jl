@@ -3,7 +3,7 @@
 draft-consistency-sweep.md       words=21530 total= 16 per100w=  0.07 em_dash= 0
 rc=0
 -- 2. section alone, --fail-above 0.01
-sw_sweep34_section.md            words= 416 total=  0 per100w=  0.00 em_dash= 0
+sw_sweep34_section.md            words= 415 total=  0 per100w=  0.00 em_dash= 0
 rc=0
 -- 3. record sim, --fail-above 2.0
 sw_sweep34_section.new.md        words=21530 total= 16 per100w=  0.07 em_dash= 0
@@ -29,4 +29,4 @@ rc=0
 handover-2026-10-14-reporting-room-science-writer.md words= 644 total=  0 per100w=  0.00 em_dash= 0
 rc=0
 -- 10. receipt gate (the sweep-34 receipt lint)
-stubbed, lands with the closing commit
+receipt gate: science-writer-2026-10-18-sweep-34.md words= 296 total=  0 per100w=  0.00 em_dash= 0 (rc=0)
