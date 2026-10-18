@@ -6,6 +6,7 @@
 **Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
 **Updated** 2026-10-16 for the value-claims ledger counter-read.
 **Updated** 2026-10-18 for the NR-060 sign, the counter-read amend, the NR-020 bank note and the T5 close-out rows.
+**Updated** 2026-10-18 for the NR-046 re-pin and the NR-061 six-class split sign.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -36,6 +37,10 @@ The audit checks can fan out to sub-agents when the sections are independent.
 4. **T5 close-out rows.** T5-1 unsigned failure-ledger numbers and T5-2 Daisy anchor values take register rows and signs at this desk before the release close-out.
 
 ## Closed, last (evidence index)
+
+- NR-061 signs at `df2d27d`. The six-class split re-derives at the producing commit a76c5e9. The counts read betz_cp_floor 93, settle_fail 37, spacing 36, rope_break 30, betz_ceiling 3, hub_tip 2. One row moves against the HEAD re-run. Island 3, gen 8, idx 4 reads hub_tip at HEAD and rope_break at the producing commit. The draft sections 3.1 and 5 must move from 29 and 3 to 30 and 2. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-nr061-six-class-split.md`. Merge `scratch/sv_reject_sixclass_a76c5e9/sv_reject_sixclass_merge.py`, 317 checks, 0 fail. Counter-read open at the aero seat.
+
+- The NR-046 amend lands at `0d9a375`. The evaluator pins re-pin past `2bf76a3`. The shift reads plus five. The corrected set reads `src/objective_evaluator.jl:90-91, 1153, 1166, 1197-1199, 1205-1208` at blob `5c626ff5`. Checker `scratch/sv_nr046_repin_check.py`, 23 checks, 0 fail.
 
 - NR-060 signs at `c3ef25b`. The row carries the R5 signed axial force at the winner capture, -157.622 to -142.792 N, three beams in tension. The sign is an own re-run, parity bit-exact on nine cold re-eval fields. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-nr060-r5-axial-sign.md`. Checker `scratch/sv_r5_axial_sign_check.py`. The push carried 17 held commits to origin.
 
@@ -152,4 +157,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the T5-1 and T5-2 rows sign at this desk before the release close-out. The close-fold read opens with the author fold. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the NR-061 counter-read waits on the aero seat. The draft fold for sections 3.1 and 5 waits on the author and hermes. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
