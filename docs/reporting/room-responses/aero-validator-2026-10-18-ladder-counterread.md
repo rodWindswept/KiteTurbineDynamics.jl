@@ -30,6 +30,8 @@ The plate does not change. Section 4, the only drawn region, is byte-identical t
 
 The next regenerate would trip the committed-blob guard. The figure seat re-pins the manifest to the current ledger blob.
 
+Amend 2026-10-18, after `3588284`: the regenerate at today's HEAD passes all in-script checks, both blob checks included. What went stale was the kit's recorded input pin in the manifest, not the in-script guard. The figure seat states the mechanism by execution. This receipt adopts that reading.
+
 ## 3. The docx embed verifies
 
 The built `draft-live.docx` carries nine PNGs. The ninth reads md5 `98009500…`, byte-identical to the pinned `scaling-ladder.png`. The other eight match their pins.
