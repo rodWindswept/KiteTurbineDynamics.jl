@@ -24,3 +24,12 @@ e8f08e653010c820262587e30dd9d42b  system-anatomy.tex
 b359914881c9d9936ff7fc8dd7c2611d  label-ledger.txt
 e00521fe239ec244139898f77178af17  system-anatomy.pdf
 19c0caf5e32bd5728323c30ff98124a0  system-anatomy.png
+
+== pin correction (2026-10-18) ==
+the 'hashes (re-cut v7)' block above does not match the committed v7 outputs; this block matches the shipped bytes pinned in the manifest and the draft appendix
+== hashes (committed v7 outputs, 2026-10-18) ==
+e7697c986d605f6ff50e2c628812a84e9eb2e5514a6170a7de89b2f707f1060c  system-anatomy.tex
+3e903a1470fd77ebcd15e90557f35e8a0747318ee3f1bc84888a9c9fe56ebd7d  prototype.html
+bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912  label-ledger.txt
+c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c  system-anatomy.pdf
+696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66  system-anatomy.png

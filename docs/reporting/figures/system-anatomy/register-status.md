@@ -35,11 +35,11 @@ Commands:
 Toolchain pin: pdflatex (TeX Live 2023/Debian), poppler pdftoppm. Two full
 runs stay byte-identical (verified at v7). Hashes at v7:
 
-    system-anatomy.tex  e8f08e653010c820262587e30dd9d42b
-    prototype.html      58d4e491c3a61af39bb7f655f55e4114
-    label-ledger.txt    b359914881c9d9936ff7fc8dd7c2611d
-    system-anatomy.pdf  e00521fe239ec244139898f77178af17
-    system-anatomy.png  19c0caf5e32bd5728323c30ff98124a0
+    system-anatomy.tex  e7697c986d605f6ff50e2c628812a84e9eb2e5514a6170a7de89b2f707f1060c
+    prototype.html      3e903a1470fd77ebcd15e90557f35e8a0747318ee3f1bc84888a9c9fe56ebd7d
+    label-ledger.txt    bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912
+    system-anatomy.pdf  c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c
+    system-anatomy.png  696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66
 
 ## Re-cuts
 
@@ -86,3 +86,7 @@ form (round-6 comment 1). Script commit `1af63fc`. No value moves.
 **Delta** v5 (2026-10-15): the v7 re-cut lands. The chain label takes
 the founder form. Script commit `9241b23`. The caption sentence re-keyed
 at the author pass (v0.49). No value moves.
+**Delta** v6 (2026-10-18): pin correction. The v7 hash block above did
+not match the committed v7 outputs, so the five hashes now match the
+shipped bytes as pinned in the manifest and the draft appendix. No
+re-cut. No value moves.

@@ -54,7 +54,7 @@ Top loadings per axis (four decimals, under the abs(v) >= 0.2 rule):
 ## Reproduce
 
 Command:
-`/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit e23f226`
+`/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit d0e410d`
 
 Toolchain pin: CPython 3.12.3, matplotlib 3.10.8, numpy 2.4.4
 (`/usr/bin/python3`). The manifest pins the inputs and the output
@@ -63,11 +63,11 @@ log sits at `checks.log`.
 
 Hashes at v4 (the wrapped loading line and kg-equivalent labels, 2026-10-18):
 
-    pca-landscape.svg  e923bf490c4a16f62950b5958b4dd856
-    pca-landscape.pdf  26a4f692cbd5fbac6ba0f05245ebc4ed
-    pca-landscape.png  c3c0ea626dca2e676eea311fa8304c46
-    label-ledger.txt   460d60a6f0b60c38d0701099b30c46f6
-    manifest.json      7e1ba75bd79dcfc06c3c8c59fa35ecd6
+    pca-landscape.svg  1d4433856620ace8b29bb0f187075343962df572123641ce987b514796cece66
+    pca-landscape.pdf  79c145ed9a88c577b48796414815a33547c113bfa4ca734e256ae37fabbaf9a8
+    pca-landscape.png  295315950f82d737c06132100ec88f667a0899d6103d0ede778c09ab4f2213b8
+    label-ledger.txt   5fb0426068bcbc2893b510c2273a1aad5096c1b4f35f30b64fce7fdfc145e748
+    manifest.json      dfe994e2be7899cbead4866b2896eec5c82cff7f6f2be413290fa732652f945b
 
 **Delta** v4 (2026-10-18): T4-6 and T4-8. T4-6: the PC1 panel line `wider
 spacing (x3), ground ring (x2)` ran past the axes and lost its closing
@@ -77,3 +77,8 @@ legend, the subtitle and the two journey values read the search objective
 in `kg`. They now read `kg-equivalent`, the unit the prose uses. Three runs
 stay byte-identical across all five outputs. Script commit `d0e410d`. No
 drawn value moves.
+
+**Delta** v5 (2026-10-18): pin correction. The v4 hash block above
+carried the pre-T4 values while the T4 outputs landed, so the five
+hashes now match the committed bytes. The reproduce command reads the
+T4 script commit `d0e410d`. No re-cut. No value moves.
