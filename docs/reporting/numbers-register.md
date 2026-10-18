@@ -2259,3 +2259,23 @@ Reading rule: future quotes of the NR-020 Cp pair carry the bank names. The sign
 
 Boundary: the measured TSR on the 20-degree row reads 3.7588. The row cites the commanded lambda. This note carries no new value.
 
+## NR-046 amend: evaluator line pins re-pin past 2bf76a3 (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The NR-046 source cell pins "`src/objective_evaluator.jl:90-91, 1148, 1161, 1192-1194, 1200-1203`" and reads "Byte-stable from launch `a76c5e9`".
+
+The rope-break arming commit `2bf76a3` added five lines to that file. The `breaks_arm_s` argument and its comment sit at the window-sim call site. Every later line shifted by five.
+
+Verified at HEAD. The old pins read the new numbers. P_score now reads `:1153`. The fitness seam call now reads `:1166`. The swing block now reads `:1197-1199`. The twist clamp and the `1e-6` floor now read `:1205-1208`, with the floor at `:1207`.
+
+The old blob `52669d40` equals the launch blob for this file only. The HEAD blob reads `5c626ff5`.
+
+Reading rule: future quotes of the NR-046 evaluator sites read `src/objective_evaluator.jl:90-91, 1153, 1166, 1197-1199, 1205-1208` at blob `5c626ff5`. The byte-stability claim holds for the other pinned files. It does not hold for this file.
+
+The draft cites `:1207` for the floor. That cite is correct at HEAD. No draft change.
+
+The signed values stand byte-identical. The sign anchor stays.
+
+Evidence: `scratch/sv_nr046_repin_check.py` and its log.
+

@@ -1,0 +1,24 @@
+ok: HEAD blob reads 5c626ff5
+ok: launch blob reads 52669d40 (the old pin)
+ok: the sign-time blob equaled the launch blob
+ok: line pin src/objective_evaluator.jl:90 exact substring
+ok: line pin src/objective_evaluator.jl:91 exact substring
+ok: line pin src/objective_evaluator.jl:1153 exact substring
+ok: line pin src/objective_evaluator.jl:1166 exact substring
+ok: line pin src/objective_evaluator.jl:1197 exact substring
+ok: line pin src/objective_evaluator.jl:1198 exact substring
+ok: line pin src/objective_evaluator.jl:1199 exact substring
+ok: line pin src/objective_evaluator.jl:1205 exact substring
+ok: line pin src/objective_evaluator.jl:1206 exact substring
+ok: line pin src/objective_evaluator.jl:1207 exact substring
+ok: line pin src/objective_evaluator.jl:1208 exact substring
+ok: unmoved since sign: src/objective_v12.jl
+ok: unmoved since sign: scripts/run_v13_5kw_masslift.jl
+ok: register amend heading
+ok: register amend lead
+ok: register quotes the old pin
+ok: register corrected pin
+ok: register corrected blob
+ok: register draft-holds line
+ok: register values-stand line
+SV_NR046_REPIN_CHECK_DONE (23 checks, 0 fail)
