@@ -19,8 +19,8 @@ Priority tiers:
 
 | ID | Item | Status |
 |---|---|---|
-| T1-1 | FoS quoted 15.0 everywhere. register NR-009 says 14.972. Penalty closes only on 14.972. Derived margins on p.9 wrong. | OPEN |
-| T1-2 | §4.2 "k-alignment fault" says 50 kW gain 1.94 equals double power. §2.2.2 shows 1.94 is lighter than 2.24, double-power anchor was 5.39/3.55. Numbers unsigned. | OPEN |
+| T1-1 | FoS quoted 15.0 everywhere; register NR-009 says 14.972. Penalty closes only on 14.972. Derived margins on p.9 wrong. | DONE (`c97a7fd`) |
+| T1-2 | §4.2 "k-alignment fault" says 50 kW gain 1.94 equals double power; §2.2.2 shows 1.94 is lighter than 2.24, double-power anchor was 5.39/3.55. Numbers unsigned. | DONE (`85e4d08`); unsigned numbers route to T5-1 |
 
 ## T2: numerical or consistency
 

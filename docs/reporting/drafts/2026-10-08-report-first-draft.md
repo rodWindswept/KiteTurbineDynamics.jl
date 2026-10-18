@@ -217,8 +217,11 @@ the ring. The equivalent term in AeroDyn is pre-cone.
 
 Blade scale sets the blade size. The scale multiplies the blade span
 and chord, and the blade mass follows the span cubed.
-The base span reads 0.75 of the rotor radius, and the base chord reads 0.113 of it.
-The power sizing sets the radius for the rotor at its local wind speed (NR-050).
+The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it.
+The power sizing sets that radius for the rotor at its local wind speed (NR-050).
+That radius is not the ring radius. The ring radius `r_hub` is a separate
+structural gene. The blade radius `r_rotor` is the aerodynamic size the
+blade spans from.
 
 The search treats each of these as a gene. The ring geometry sets the
 topmost-ring and ground radii, and the rotor count sets how many rings carry
@@ -591,7 +594,7 @@ The winner clears each checked gate.
 | Power floor | 5.0 kW | pass, P_end 5.314 kW. Margin +0.314 kW / +6.28 per cent | NR-008, NR-027, NR-039 |
 | Structural FoS floor | 2.5 | pass, 14.972 minimum. 14.972 on 2.5, margin +12.472 / +498.9 per cent, 5.99 times | NR-009, NR-015 |
 | Clearance | blade-tip gate | pass, 5.468 m, margin +3.968 m | +264.5 per cent, 3.65 times | NR-042 |
-| Twist | per-segment limit δcrit | pass, all five segments within limit | Least margin at S1. It reads +64.913 deg / +65.7 per cent, 2.91 times | NR-022 |
+| Twist | per-segment limits | pass, all five segments within limit | S1 binds: 33.946 deg against the 72.25 deg realisability floor, 2.13 times (NR-053). Against 98.859 deg δcrit, 2.91 times (NR-022). Crossing ratio 0.4393, 2.28 times (NR-052) | NR-022, NR-052, NR-053 |
 | Torsional capacity | capacity/demand | least margin 2.03 at S1 | +102.9 per cent above unity, 2.03 times | NR-040 |
 | Rope break | none on the window | pass on the cold path | the warm path rejects healthy winners | NR-012, NR-013 |
 
@@ -645,7 +648,7 @@ topmost ring radius is 4.580 metres and the ground radius 0.804 metres
 (NR-011).
 
 The winner genome contains two blade-scale slots.
-The main-rotor slot, `blade_scale_top`, reads 0.82 and decodes to the single active rotor.
+The main-rotor slot, `blade_scale_top`, reads 0.8213 and decodes to the single active rotor. It is quoted 0.82.
 The second-rotor slot, `blade_scale_bottom`, reads 0.20 and stays inactive
 because the rotor count is one (NR-011).
 
