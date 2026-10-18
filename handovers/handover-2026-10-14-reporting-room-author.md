@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `f8342d1` on `bank-derate-cos2p65`.
+**Base:** branch tip `79e75df` on `bank-derate-cos2p65`.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -32,6 +32,12 @@ The parallel work is the audits and the extracts the other seats run.
 5. **The value-track close.** The close supply hands to the science-writer prose pass (`scratch/au_v058_close_supply.md`). The fold waits on that pass. The ladder plate folds into the close after its read closes (counter-reads: aero, science). The caption pass lands (`docs/reporting/figures/scaling-ladder/captions.md`).
 
 ## Closed, last (evidence index)
+
+- The house-vocabulary swap pass (2026-10-18).
+  Draft line 1024 and the value-claims-ledger row 29 take the pipeline.
+  Fold `a9dc348`, two-state script `scratch/au_seatchecks_fold.py`.
+  Citation checker exit 0 (56 cited, every one signed). STE totals hold on all three surfaces.
+  Receipt `docs/reporting/room-responses/author-2026-10-18-house-vocab-swap.md`.
 
 - The v0.63 B-20 and B-21 prose pass (2026-10-18).
   The decoder and gate math lands at section 2, and the steady-and-drifting pair lands at section 3.3.
@@ -183,7 +189,7 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Earlier landings: v0.34 `a3c2def`, v0.33 `dcf8213`, v0.32 `5a7a6b4`. The receipts sit beside this page.
 
-- The review copy rebuilds after each draft-moving pass. The v0.63 rebuild carries this fold, the rounded register and the figure re-cuts.
+- The review copy rebuilds after each draft-moving pass. The v0.65 rebuild rides the lead seat and carries this fold, the re-frozen levers block and the figure re-cuts.
 
 ## Boot
 
@@ -218,6 +224,5 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the FEEDBACKBOT1 prose pass (A-10 to A-19) runs with @science-writer from v0.63.
-One file, one writer. Then the review-copy rebuild verification.
+**Owner:** @author. **Next action:** the rebuild verification once the lead lands the v0.65 rebuild.
 The value-track close and the partner-gated tails hold.
