@@ -55,7 +55,7 @@ Priority tiers:
 | T4-2 | system-anatomy inline placeholder on p.4 vs end-of-doc figure. Number the captions. | OPEN |
 | T4-3 | n_Lines vs n_lines capitalization (§2.1). | OPEN |
 | T4-4 | Draft-status note says "3.4 to 3.6 carry text" but 1 to 5 all populated now. | OPEN |
-| T4-5 | Ranneberg attribution verify (EK_FT_0018): pending source call. | OPEN |
+| T4-5 | Ranneberg attribution verify (EK_FT_0018): pending source call. | DONE (`55a1a57`): dropped |
 | T4-6 | pca-landscape top panel "ground ring (x2)" clipped. | OPEN |
 | T4-7 | pca-atlas colour bars print 1 or 2 sig figs, prose claims 3. | OPEN |
 | T4-8 | kg vs kg-equivalent labels on pca-landscape, machine-corner-grid, machine-evolution-strip. | OPEN |
@@ -74,7 +74,7 @@ Priority tiers:
 | T5-1 | Unsigned failure-ledger numbers (1.94, 50 kW, 5.18 kW, 20-second-window). | OPEN |
 | T5-2 | Unsigned Daisy anchor values (§5). | OPEN |
 | T5-3 | Nomenclature pending (§6). | OPEN |
-| T5-4 | Unverified references and missing bibliography (§7). | OPEN |
+| T5-4 | Unverified references and missing bibliography (§7). | DONE (`55a1a57`): Ranneberg dropped, Jamieson upgraded to Jamieson & Branney 2012, Hancock weaker standard |
 | T5-5 | §8 branch vs commit pinning for fidelity probes. | OPEN |
 
 ---
