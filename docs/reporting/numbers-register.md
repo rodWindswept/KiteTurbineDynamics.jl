@@ -188,6 +188,28 @@ All three built machines hold zero expansion rotors.
 The register keeps NR-011 as signed. This note supplies the threading
 fact for caption use.
 
+## Polygon-count rounding note: NR-011 (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The B-20 candidate the author wrote states that the decoder rounds x4, the polygon side count, to an integer. The source carries that rounding at `design_from_vector_v4`, `src/ring_spacing.jl:475`.
+
+- The rounding. The line reads `n_lines = clamp(Int(round(x[8])), 3, 16)`.
+
+- The layouts. The 14-D layout names x[8] n_lines. The canonical 10-D layout names the same gene x[4].
+
+- The winner. The island-3 decode reads n_lines 3. The value sits inside the clamp and reads as an integer.
+
+- The ring count builds separately. The spacing pass lays the intermediate rings from the length-to-radius target and the density profile. The builder adds the ground ring and the hub ring at the ends. The winner reads six rings, which NR-011 already carries. This note binds the rounding only.
+
+Reading rules:
+
+- The polygon count reads as an integer gene, clamped 3 to 16 at the decode.
+
+- The rounded polygon count does not set the ring count. The spacing pass sets the ring count.
+
+Evidence: source read at the tree tip, `src/ring_spacing.jl:466-483` and `:256-274`, plus the canonical layout comment at `src/objective_v10.jl:19-20`.
+
 ## Caption rows: NR-017, NR-018 (2026-10-08, science-validator)
 
 These rows exist for caption binding under F-VALUE. NR-017 binds the hero
@@ -2200,6 +2222,28 @@ Reading rules:
 - No row value moves. The row carries magnitudes and the disagreement verdict. The direction bullet is basis text.
 
 Evidence: `scratch/sv_nr059_scope_check.py` and its log, plus the counter-read set `scratch/av_nr059_window_yshare.jl` and its log.
+
+## Cited-form amend: NR-059 (2026-10-18, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The B-20/B-21 candidate the author wrote quotes two forms from this row that the claim cell does not print. The B-21 counter-read at the aero seat verified them at the tip. Receipt `docs/reporting/room-responses/aero-validator-2026-10-18-b21-bow-bound.md`, commit `be063e0`, checker `scratch/av_b21_bow_bound_check.py` and its log, 18 of 18 checks pass. This block records the forms in the row.
+
+- The extension speed spread. The extension run spans t = 50 s to 200 s with samples every 5 s, 29 logged. Its omega spread reads 0.00120 rad/s. The basis reads the 13.3852 rad/s first sample. That reads 0.0090 per cent. The draft quotes 0.009 per cent.
+
+- The extension steps. Over the same series the hub (ring 6, the max station) bow increments per 5 s fall strictly. The first reads 0.02539 m. The last reads 0.00053 m. The draft quotes 0.0254 m to 0.00053 m.
+
+- The station. The step forms read at the hub, the max station, not the midpoint ring. The midpoint series carries no step quote.
+
+Reading rules:
+
+- The spread form reads over the extension run only. The window power swing form (half a per cent, the NR-014 basis) stays outside this row.
+
+- The step forms read at the hub over the extension series, per 5 s.
+
+- The unsigned geometric tail stays outside the row. No asymptote form enters the register or the draft.
+
+Evidence: `scratch/av_b21_bow_bound_check.log`, the probe log pins already carried in the row.
 
 ## Source row: NR-060, R5 signed axial force at the winner capture (2026-10-18, science-validator)
 
