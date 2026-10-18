@@ -310,11 +310,11 @@ The campaign fixed k at 2.24 N·m/(rad/s)² for every candidate design
 (NR-015). One load applies to the whole search.
 
 A fixed k couples the radius search to the tip-speed ratio. The load
-sets the settle speed, and the radius sets the tip speed for a given
-speed. So the radius gene and the operating tip-speed ratio are not
-independent: changing the radius with k held fixed moves that ratio. The search explored
-radius under that coupling. The load law kept the same form for every
-candidate, but the speed and radius moved together.
+curve fixes the torque-speed relation, and the radius sets the tip speed
+for a given speed. So the radius gene and the operating tip-speed ratio
+are not independent. Changing the radius with k held fixed moves that
+ratio. The search explored radius under that coupling. The load law kept
+the same form for every candidate, and the speed and radius stay coupled.
 
 The team selected the value in a load sweep of the seed machine
 (2026-08-22). The sweep ran the seed at a range of loads, each over the
@@ -442,8 +442,8 @@ NaN and Inf clamps guard the state. A broken line ends the run.
 ### 2.4 The campaign
 
 The campaign runs a differential evolution (DE). A DE keeps a design
-population. Each generation breeds new designs from the best. A gate
-scores each design and culls the failures.
+population. Each generation breeds new designs from random members of
+the population. A gate scores each design and culls the failures.
 
 Three islands run in parallel. An island is an independent population
 with its own drift. Each island evaluates 310 designs.
@@ -561,12 +561,12 @@ Four ran at or above 5 kW with a factor of safety below 2.5.
 The remaining 201 carried no logged cause at campaign time.
 
 A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
-six ways: 93 rotors that cannot reach 80 per cent of the power floor on
-their swept area and power coefficient, 37 settle failures at the
-torsional realisability cliff, 36 rotor-spacing refusals, 29 line breaks,
-three aggregate Betz-ceiling violations, and three hub tip-speed
-divergences. Only the last class is a numerical divergence. The others
-are geometry or design refusals that the telemetry left blank.
+six ways. 93 rotors cannot reach 80 per cent of the power floor on their
+swept area and power coefficient. 37 settle at the torsional
+realisability cliff. 36 refuse on rotor spacing. 29 break a line. Three
+cross the Betz ceiling. Three diverge at the hub tip speed. Only the last
+class is a numerical divergence. The others are geometry or design
+refusals that the telemetry left blank.
 
 Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
@@ -765,18 +765,18 @@ At the final step, R6 reads 15.033 (NR-021).
 R2 to R4 read 29.8 to 35.2 (NR-021).
 
 R6 binds because its beams carry compression. The ring check charges
-axial compression only, and R6 reads the largest axial share, 0.0665
-(NR-021). Compression drives the buckling term, so the most compressed
-ring binds.
+compressive axial load, not tension. R6 reads the largest axial share,
+0.0665 (NR-021). Compression drives the buckling term, so the most
+compressed ring binds.
 
 R5 carries net axial tension, not no load (NR-060). Its beams read
 -157.6 to -142.8 N of tension. The check does not charge tension, so its
 axial share reads zero and its factor of safety reads far above the
 others (NR-060, NR-021).
 
-The beam load and the line load differ. The lines hold tension along the
-whole shaft, and that tension peaks at the top (NR-010). The ring beams
-hold compression at R6 and at R2 to R4, and tension at R5 alone.
+The beam load and the line load differ. The lift line carries 324.1 N of
+tension (NR-010). The ring beams hold compression at R6 and at R2 to R4,
+and tension at R5 alone.
 
 The ground ring sits on ground support and stays outside the ring check.
 All five TRPT segments remain inside their over-twist limits at the winner operating point (NR-022).
@@ -803,13 +803,13 @@ principal components of the ten-gene search (NR-001).
 Those axes hold 22.4 and 17.3 per cent of the variance in the search,
 39.7 per cent together (NR-044).
 
-The horizontal axis is PC1 — blade scale against unit count.
+The horizontal axis is PC1: blade scale against unit count.
 Its inset reads larger main-rotor blades, wider ring spacing and a wider ground ring to the right.
 It reads more TRPT lines and more rotors to the left.
 The top loadings read -0.5385 for the TRPT line count, -0.5222
 for the rotor count and +0.5180 for the main-rotor blade scale (NR-044).
 
-The vertical axis is PC2 — second-rotor and clustering settings.
+The vertical axis is PC2: second-rotor and clustering settings.
 Its inset reads a deeper second-rotor bank, smaller second blades and
 rings biased toward the ground upward.
 It reads even rings, a shallow second bank and larger second blades downward.
@@ -819,8 +819,9 @@ for the second-rotor blade scale and -0.5018 for the ring density profile (NR-04
 The second-rotor bank and blade-scale slots are inactive at a rotor count
 of one (NR-011, NR-017). The winner carries one rotor, so those two slots
 hold no physical blade. PC2 therefore reads mostly unused genes for the
-winner and for every one-rotor design in the field. The axis is a real
-search axis, but it measures inactive slots on the winner.
+winner and for every one-rotor design in the field. The axis is real,
+but the inactive second-rotor slots dominate it. The active ring-density
+gene also loads it, at -0.5018 (NR-044).
 
 The colour is the mean search objective in each cell, in kg-equivalent.
 Bright reads lower, and only feasible designs shade the field.
@@ -1048,9 +1049,10 @@ The 301 rejects split three ways (NR-055).
 96 ran below the 5 kW power floor.
 Four ran at or above 5 kW with a factor of safety below 2.5.
 The remaining 201 carried no logged cause at campaign time. The re-run
-probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
-realisability-cliff settle failures, 36 rotor-spacing refusals, 29 line
-breaks, three Betz-ceiling violations, and three hub tip-speed divergences.
+probe (receipt 2026-10-17) names them. 93 rotors fall below the power
+floor. 37 settle at the realisability cliff. 36 refuse on rotor spacing.
+29 break a line. Three cross the Betz ceiling. Three diverge at the hub
+tip speed.
 
 The best performing one had a mean power of 5.309 kW.
 Its airborne mass is 25.698 kilograms (NR-008, NR-018).
