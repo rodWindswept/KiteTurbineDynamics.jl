@@ -45,8 +45,9 @@ ring, which sits on ground support. The figure includes and marks the topmost
 ring. The values come from the campaign winner at its final operating
 point.
 
-R5 reads far below the other rows. It carries bending alone. Its worst
-checked beam holds no axial share. The readout prints the true value, FoS
+R5 reads far below the other rows. It carries net axial tension from the
+cone flare (NR-060). The check scores compression only, so the axial share
+enters the interaction as zero. The readout prints the true value, FoS
 326,974 (NR-021).
 
 For every other checked ring, the bending share sits below 0.05 per cent
