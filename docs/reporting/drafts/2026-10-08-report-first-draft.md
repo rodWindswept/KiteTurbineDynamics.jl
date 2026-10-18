@@ -494,7 +494,15 @@ ok, 301 reject, 110 clearance_reject and 11 reject_twist (NR-002).
 The reject class splits three ways (NR-055).
 96 ran below the 5 kW power floor.
 Four ran at or above 5 kW with a factor of safety below 2.5.
-The cause is not logged for the remaining 201.
+The remaining 201 carried no logged cause at campaign time.
+
+A re-run probe now names those 201 (hermes receipt 2026-10-17). They split
+six ways: 93 rotors that cannot reach 80 per cent of the power floor on
+their swept area and power coefficient, 37 settle failures at the
+torsional realisability cliff, 36 rotor-spacing refusals, 29 line breaks,
+three aggregate Betz-ceiling violations, and three hub tip-speed
+divergences. Only the last class is a numerical divergence. The others
+are geometry or design refusals that the telemetry left blank.
 
 Each island starts its population from the same seed genome.
 The recorded common seed genome scores 36.109 kg-equivalent under the campaign objective (NR-006).
@@ -953,7 +961,10 @@ The search found 508 feasible candidates in the searched space (NR-002).
 The 301 rejects split three ways (NR-055).
 96 ran below the 5 kW power floor.
 Four ran at or above 5 kW with a factor of safety below 2.5.
-The cause is not logged for the remaining 201.
+The remaining 201 carried no logged cause at campaign time. The re-run
+probe (receipt 2026-10-17) names them: 93 power-floor rotors, 37
+realisability-cliff settle failures, 36 rotor-spacing refusals, 29 line
+breaks, three Betz-ceiling violations, and three hub tip-speed divergences.
 
 The best performing one had a mean power of 5.309 kW.
 Its airborne mass is 25.698 kilograms (NR-008, NR-018).
