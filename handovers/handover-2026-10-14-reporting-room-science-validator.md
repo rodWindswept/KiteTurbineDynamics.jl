@@ -5,7 +5,7 @@
 **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
 **Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
 **Updated** 2026-10-16 for the value-claims ledger counter-read.
-**Updated** 2026-10-18 for the NR-060 R5 signed axial force sign and the T5 close-out rows.
+**Updated** 2026-10-18 for the NR-060 sign, the counter-read amend, the NR-020 bank note and the T5 close-out rows.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -37,7 +37,9 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Closed, last (evidence index)
 
-- NR-060 signs at `c3ef25b`. The row carries the R5 signed axial force at the winner capture, -157.622 to -142.792 N, three beams in tension. The sign is an own re-run, parity bit-exact on nine cold re-eval fields. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-nr060-r5-axial-sign.md`. Checker `scratch/sv_r5_axial_sign_check.py`, 72 checks, 0 fail. The push carried 17 held commits to origin. Counter-read open at the aero seat.
+- NR-060 signs at `c3ef25b`. The row carries the R5 signed axial force at the winner capture, -157.622 to -142.792 N, three beams in tension. The sign is an own re-run, parity bit-exact on nine cold re-eval fields. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-nr060-r5-axial-sign.md`. Checker `scratch/sv_r5_axial_sign_check.py`. The push carried 17 held commits to origin.
+
+- The NR-060 counter-read closes at `b90e64c` with two text defects. The amend and the strengthened checker land at `3a6ddde`. The checker now reads 76 checks, 0 fail, with the parity loop asserting each field line. The NR-020 bank note lands in the same packet and closes T4-15. Receipt `docs/reporting/room-responses/science-validator-2026-10-18-nr060-amend-nr020-bank-note.md`.
 
 - The value-claims ledger counter-read closes at `ba1a66f`, read at `f38d19a`. The measured census reads one HOLD row and zero printable. The rung set matches `const RUNGS` digit for digit, and every pointer resolves. One class-line proposal rides for the aero seat. Receipt `docs/reporting/room-responses/science-validator-2026-10-16-value-ledger-counterread.md`. Checker `scratch/sv_vcl_counterread_check.py`, 34 checks, 0 fail.
 
@@ -150,4 +152,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the NR-060 counter-read waits on the aero seat. The T5-1 and T5-2 rows sign at this desk before the release close-out. The close-fold read opens with the author fold. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the T5-1 and T5-2 rows sign at this desk before the release close-out. The close-fold read opens with the author fold. The PL12 verification facts stand on request.
