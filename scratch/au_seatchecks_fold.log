@@ -1,0 +1,24 @@
+pin v0.64 -> v0.65; tracker entry v7
+round-trip: candidate minus declared edits equals HEAD base (all three surfaces)
+draft: lines 1125 -> 1125 (delta 0)
+draft: tokens removed ['64']
+draft: tokens added   ['65']
+draft: opcodes ['equal', 'replace', 'equal', 'replace', 'equal']
+tracker: lines 566 -> 572 (delta 6)
+tracker: tokens removed []
+tracker: tokens added   ['65']
+tracker: opcodes ['equal', 'insert']
+ledger: lines 114 -> 114 (delta 0)
+ledger: tokens removed []
+ledger: tokens added   []
+ledger: opcodes ['equal', 'replace', 'equal']
+token census: declared sets match on all three surfaces
+ste draft: base total=20 per100w=0.22 em_dash=0 cats=[('contraction', '1'), ('long_paragraph(>6s)', '12'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '5')]
+ste draft: cand total=20 per100w=0.22 em_dash=0 cats=[('contraction', '1'), ('long_paragraph(>6s)', '12'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '5')]
+ste tracker: base total=24 per100w=0.53 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '11'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
+ste tracker: cand total=24 per100w=0.52 em_dash=1 cats=[('contraction', '5'), ('em_dash', '1'), ('long_paragraph(>6s)', '11'), ('long_sentence(>20w)', '1'), ('nominalization', '1'), ('passive_voice', '3'), ('semicolon', '3')]
+ste ledger: base total=5 per100w=0.41 em_dash=12 cats=[('em_dash', '12'), ('long_paragraph(>6s)', '5')]
+ste ledger: cand total=5 per100w=0.41 em_dash=12 cats=[('em_dash', '12'), ('long_paragraph(>6s)', '5')]
+ste: total and per-category hold on all three surfaces
+citation gate: exit 0, 56 cited, every one signed
+pandoc: candidate parses clean

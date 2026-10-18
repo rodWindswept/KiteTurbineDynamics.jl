@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.64. Date 2026-10-18.
+Internal engineering report. Draft v0.65. Date 2026-10-18.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1021,7 +1021,7 @@ matches and the mismatches. Each dataset carries its era, its commits
 and its geometry fingerprint.
 
 The ladder instrument screens each rung and each length on the corrected
-model. The register, the test suite and the seat checks hold every
+model. The register, the test suite and the pipeline hold every
 number. Findings, corrections and retractions stay in the record with
 their lessons.
 

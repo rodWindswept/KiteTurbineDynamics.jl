@@ -26,7 +26,7 @@ The mapping comes from @science-validator (2026-10-16). The visual analogue come
 | Provenance-stamped datasets: era stamp, launch commit, data commit | `capability` | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/`, `dd3cc6a` on `bankderate2-results` |
 | The measured anchor from the Daisy prototype: blade mass, the rated wind pair, the April-29 rig read | `capability` | `DECISIONS.md` [2026-08-21], `DECISIONS.md` [2026-09-24], `handovers/handover-2026-08-20-model-scaling-daisy-anchor.md` |
 | The graduated-ladder instrument: it screens each rung and each length on the corrected model | `capability` | `scripts/ode_ladder_v13.jl`, `scripts/results/ladder_v13.csv`, `docs/plans/retrospective-2026-08-17.md` |
-| The gates: the register, the test suite, and the seat checks that hold every number | `capability` | `docs/reporting/numbers-register.md`, `test/` |
+| The gates: the register, the test suite, and the pipeline that hold every number | `capability` | `docs/reporting/numbers-register.md`, `test/` |
 | The trust practice: findings, corrections, and retractions land in the record with their lessons | `capability` | `docs/agents/instrument-trust-log.md`, `docs/validation/physics-validation-ledger.md`, `reviews/2026-09-15-six-week-review.md` |
 
 ## 3. Target elements (the "where this goes" movement)

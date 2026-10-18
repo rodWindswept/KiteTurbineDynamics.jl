@@ -564,3 +564,9 @@ The minor fixes land.
 The fixes cover the two missing nouns, the ext2 definition, the operand read and the file paths.
 The fixes also cover the symbol formatting, the generation count and the section 5 power-floor qualifier.
 A-13 and A-20 to A-22 stay gated.
+
+v7 (2026-10-18): the house-vocabulary swap lands (author).
+
+The ladder-embed sentence reads the pipeline.
+The value-claims-ledger row mirrors the sentence.
+The draft ticks to v0.65.
