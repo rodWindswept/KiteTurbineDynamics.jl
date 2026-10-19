@@ -2,19 +2,20 @@
 
 **Slug** `value-claims-ledger`. **Status** LIVE, v1 seed (2026-10-16). **Owner** @aero-validator. **Readers** the report-team room and Rod.
 
-The register rule holds every report number to a signed row. The room added one sibling rule on 2026-10-16. A forward-looking claim prints with a label and a pointer, and it never sits in a scored cell. Together the two rules leave two states for a number. It prints under a signed row ID, or it prints as visibly forward-looking. No third state exists.
+The register rule holds every report number to a signed row. The room added one sibling rule on 2026-10-16. A forward-looking claim prints with a label and a pointer, and it never sits in a scored cell. Together the two rules leave two states for a reading. It prints under a signed row ID, or it prints as visibly forward-looking. A premise is neither state: it is not a reading, it prints nowhere in the report, and it stands in this ledger as **chosen and not read**.
 
 This ledger states the class of each element of the value track. It serves the section 5 close ("Where this goes") and any later value text. The rule of use comes from the author seat: anything this ledger does not class does not print.
 
-## 1. The three classes
+## 1. The four classes
 
 | Class | Binding surface | Rule |
 |---|---|---|
 | `measured` | a signed register row, by ID | The number prints in signed form only: value, station, state. A claim that cannot hold that form points at the row. |
 | `capability` | a landed artifact | What the instrument does. No number attaches. The sentence points at the artifact. |
 | `target` | a label and a pointer | A programme goal. It prints under the forward-looking label and no value in a scored cell. The plain label reads `programme target — no repo artifact`. |
+| `assumption` | a dated ledger row carrying the value | A chosen premise. No admissible citation exists, so none prints. The value stands in this ledger and not in the report today. Where a figure prints it, the label reads `study assumption — chosen, not read, flat across the curve`. |
 
-The mapping comes from @science-validator (2026-10-16). The visual analogue comes from @fig-img-diagrams. Solid ink stands for landed artifacts and signed values. Open ink plus the label stands for targets, and no target mark sits on a value axis. This desk checks every pointer at HEAD. See `scratch/av_vcl_check.py`.
+The mapping comes from @science-validator (2026-10-16). The visual analogue comes from @fig-img-diagrams. Solid ink stands for landed artifacts and signed values. Open ink plus the label stands for targets, and no target mark sits on a value axis. A premise carries no mark: its label prints as one text block for the whole curve, never on an axis. This desk checks every pointer at HEAD. See `scratch/av_vcl_check.py`.
 
 ## 2. Capability elements (the "what the instrument does" movement)
 
@@ -38,6 +39,16 @@ The section 6 extension text prints one capability claim about the CoAx model. T
 | The v1 CoAx stack model carries collective pitch only. Azimuth-dependent (cyclic) pitch is not modelled | `capability` | The CoAx repo at `coax@2e1b1e1:src/bem.jl`: one scalar pitch term (line 133), and the RPM solved at zero net aerodynamic torque (line 194) |
 
 The pointer names a sibling repo at a pinned commit. `scratch/av_vcl_check.py` resolves the coax@sha:path form against ../CoaxialAutogyroStacking.jl.
+
+## 2b. Premise addition (2026-10-19, aero-validator)
+
+Section 6.2 takes one capacity factor for a crossover curve the section cannot yet draw. That number is a premise, not a reading. This row classes it.
+
+| Element | Class | Pointer |
+|---|---|---|
+| The capacity factor for the section 6.2 crossover curve: 0.30, chosen and not read, and held flat from the 10 kW rung to the 500 kW study point | `assumption` | No admissible citation. The value stands in this ledger. The contrast sits at `src/economics.jl` line 227, the solver default of 0.30, and at lines 409 to 410, where the tree runs the same class at 0.30 at 10 kW and 0.35 at 50 kW. The flat curve overrides that slope, so the pair is a counter-reading, not the source |
+
+This row carries a value with no admissible citation. That is the class: a premise has no citation, and the code it agrees with is evidence about the code.
 
 ## 3. Target elements (the "where this goes" movement)
 
@@ -116,7 +127,7 @@ These elements print nothing until a pointer lands. A fold needs a room call on 
 
 ## 7. Notes on use
 
-- The enforcement region is the close (draft section 5). @author holds the in-fold check: no target-class ink outside it.
+- The enforcement region is the close (draft section 5) and the section 6.2 method text, which names this ledger's rule of use. @author holds the in-fold check: no target-class ink outside it.
 - A repeat of a signed number holds value, station, state, or it points at its row. The signed set resolves in `docs/reporting/numbers-register.md`.
 
 - @science-validator counter-reads every row classed `measured` and every row that touches a signed row.

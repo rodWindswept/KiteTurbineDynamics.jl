@@ -5,7 +5,7 @@ Second routes, not re-reads:
   1. Pointers: every backticked pointer token resolves (tracked path via git
      ls-files, commit object via git cat-file, branch ref via git rev-parse).
   2. The rung set in the ledger matches `const RUNGS` in scripts/compute_seeds.jl.
-  3. The class vocabulary: only the three agreed class names class elements.
+  3. The class vocabulary: only the four agreed class names class elements.
   4. The required rows and flags exist (hold set, flagged set, rungs, ink).
   5. STE: ste-lint.py runs as a subprocess on the ledger and the receipt.
 
@@ -25,13 +25,15 @@ RECEIPT = ROOT / "docs" / "reporting" / "room-responses" / "aero-validator-2026-
 REGISTER = ROOT / "docs" / "reporting" / "numbers-register.md"
 SEEDS = ROOT / "scripts" / "compute_seeds.jl"
 
-CLASSES = {"measured", "capability", "target"}
+CLASSES = {"measured", "capability", "target", "assumption"}
 SKIP_TOKENS = {
     "value-claims-ledger",
     "measured",
     "capability",
     "target",
+    "assumption",
     "programme target — no repo artifact",
+    "study assumption — chosen, not read, flat across the curve",
     "HOLD",
 }
 LABEL = "programme target — no repo artifact"
@@ -128,7 +130,17 @@ def main():
         for c in cells:
             if c in CLASSES:
                 class_cells.append(c)
-    check("element rows carry only the three classes", all(c in CLASSES for c in class_cells))
+    unclassed = []
+    for line in section2.splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 3 or cells[0] == "Element" or not cells[0].strip("-"):
+            continue
+        cls = cells[1].strip("`")
+        if cls not in CLASSES:
+            unclassed.append(f"{cls} [{line.strip()[:48]}]")
+    check("element rows carry only the four classes", not unclassed, "; ".join(unclassed))
     check("element row count >= 18", len(class_cells) >= 18, str(len(class_cells)))
     check("CoAx model row present", "coax@2e1b1e1:src/bem.jl" in text)
     for cls in sorted(CLASSES):

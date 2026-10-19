@@ -1,10 +1,93 @@
 # Handover: the aero-validator seat, KTD reporting room
 
-**Date:** 2026-10-14. **From:** @aero-validator. **To:** the successor session.
-**Base:** branch tip `feaaa82` on `bank-derate-cos2p65` (refreshed 2026-10-15: the rope-break gate placement fix lands at `2bf76a3`/`317d9cd`; the placement label re-cut counter-read closes at this tip; all carried blobs byte-verified at origin; refreshed 2026-10-16: the winner bow probe lands at `c6d2885` and the value-claims ledger seeds at `aa76367`, all carried blobs byte-verified at origin).
+**Date:** 2026-10-19. **From:** @aero-validator. **To:** the successor session.
+**Base:** branch tip `60a6f24` on `bank-derate-cos2p65` (read 2026-10-19). The draft on disk reads `daab5102`, byte-verified this session.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
+
+## The live hold: section 6.1 phase 2
+
+The hold sits at the top of the open queue. The base is the post-join draft `daab5102` (1291 lines, 10570 words, STE 22 at 0.21).
+
+The old azimuth-resolved gate died on the words Rod used. The flown practice holds the blade tips down, from the underside, the concave side of the chord.
+
+The rebuild set below replaces it. Candidates live in scratch. Nothing has run against the draft on disk. It still reads `daab5102`.
+
+The rebuild set, pinned string-exact at `daab5102` (four hunks plus one word pair):
+
+```
+H1 168
+- Bank is the blade angle away from the ring plane about its chord axis at the ring.
++ Bank is the blade angle away from the plane of rotation about its chord axis at the ring.
+
+H2 old, 1115 to 1117
+- A lag short of 90 degrees turns the tilt azimuth.
+- The bank and steer then act off the intended axis.
+- The tilt gives side force and moment: bank, steer and load relief.
+
+H2 new
++ The tilt azimuth turns whenever the rotor phase lag is not zero.
++ The tilt and steer then act off the intended axis.
++ If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.
++ The tilt gives side force and moment: steer and load relief.
+
+H3 1148
+- First, can one-per-rev cyclic pitch on a TRPT rotor give useful bank and steer authority with no bending-capable shaft?
++ First, can one-per-rev cyclic pitch on a TRPT rotor give useful tilt and steer authority with no bending-capable shaft?
+
+H4 old, 1162
+- That check supplies the phase lag the sweep varies.
+
+H4 new checks
++ Check the ring tilt against the rim bridle.
++ Until they run, the rotor phase lag stays a free parameter.
+
+H4 new gate block (one blank line above it)
++ A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
++ The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
++ No such bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
++ So the bridle rule binds only on a design the genome cannot yet generate.
+
+W 1189 and 1205
+- with one stated capacity factor for the whole curve
++ with one capacity factor for the whole curve
+- The curve states one capacity factor.
++ The curve takes one capacity factor.
+```
+
+Measured end states, all reproduced at this desk on 2026-10-19:
+
+```
+base daab5102   1291 / 10570   STE 22 / 0.21
+D2   0b9d09bd   1299 / 10667   STE 22 / 0.21   word 6c1396ec
+F1   01e2ec9f   1298 / 10664   STE 23 / 0.22   word 536076fe   (retired)
+F2   559ce2dc   1298 / 10665   STE 22 / 0.21   word e76c8223
+F3   9a7a5d17   1298 / 10664   STE 22 / 0.21   word a308305d
+G3   4b49cfca   1298 / 10667   STE 22 / 0.21   word faf3d9a6
+```
+
+The G3 word hash `faf3d9a6` is the fresh measure from this desk. The other five states reproduce byte for byte from the hashes the room declared.
+
+The F3 defect and the G3 ruling. The two absolutes in F3 print false against the source.
+
+The model builds bridle rope segments from the lift bearing to the hub-ring vertices. The build sits at `src/initialization.jl` lines 342 to 359. The stiffness reads `BRIDLE_EA`, 500 kN, at line 318.
+
+The draft names the lifting bridles at 648 and the rim bridle at 1142. The 1143 pin the room gave reads one line off. `src/aerodynamics.jl:349` states only the blade bridle lines are absent.
+
+So the scoped pair in G3 is the only true form. The source forces the repair. It is not a wording call.
+
+F3 is dead as a declaration target. G3 is the target. The author seat may still adjust the words. Any change re-measures.
+
+The script on disk (`scratch/au_sec61_phase2.py`) still declares the old three-block chain. Its declared result `207bd022` and word `5be0a47d` are stale.
+
+The rebuild applies H1 to H4 and W above. Each old block occurs exactly once. A reverse substitution returns the base hash.
+
+The release conditions (not this seat). The author rules the final gate-block wording. Rod blesses the gate block and calls keep-gene or rename-command.
+
+The rename surface is prose only. Every printed bank in the figure set is gene-sense. Keeping the gene name costs no plate.
+
+The figure seat holds an open direction clause for 168. It is a seventh block with one re-measure. A coning echo at `figures/figure-generation-notes.md` line 62 aligns in the same pass.
 
 ## What this seat does
 
@@ -16,6 +99,8 @@ The desk keeps one rule: one rigorous read per gate. The sign-off stays at this 
 The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
+
+0. **The section 6.1 phase-2 hold.** See the live-hold section above. The declaration target is G3 (`4b49cfca`, word `faf3d9a6`). The release is the final gate-block wording and the two founder calls.
 
 1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here. The winner-form re-keys read closed with the relabel pass.
 
@@ -34,6 +119,10 @@ Each leg runs three tests.
 Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratch/` with the `av_` prefix.
 
 ## Closed, last (evidence index)
+
+- The assumption-class counter-read (2026-10-19). The fourth class lands and survives the counter-read. Receipt `docs/reporting/room-responses/aero-validator-2026-10-19-assumption-class.md`.
+
+- The section 6.1 phase-sentence receipt (2026-10-19). The three settled texts land in the patch script. The declared chain is stale. Receipt `docs/reporting/room-responses/aero-validator-2026-10-19-sec61-phase-sentence.md`.
 
 - The value-claims ledger seed read at `aa76367` (readback `9789b55`): v1 classes every value-track element (measured to a signed row, capability to a landed artifact, target to a label plus pointer, with the plain label for missing pointers); eight capability rows with resolved pointers, six target rows, and the figure-seat rung seed (5 kW solid, 7 to 50 kW open plus label, matching `const RUNGS`); the cost and carbon set reads HOLD and the pointer-less set stays flagged. Checker 44 checks, 0 fail. STE rc=0 at 0.49/100w on the ledger and 0.00/100w on the receipt. Receipt `docs/reporting/room-responses/aero-validator-2026-10-16-value-claims-ledger.md`. Evidence `scratch/av_vcl_*`.
 
@@ -108,4 +197,6 @@ Land the receipt in `docs/reporting/room-responses/` and the evidence in `scratc
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4). The mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @aero-validator. **Next action:** the bow chain is closed at this seat — NR-059 signed at `7aaf2ea`, the counter-read closed (receipt above) with one scope amend proposed for the science seat, and the section 3.3 sentence folded at v0.57. The value-claims ledger seeds at `aa76367` (receipt above), and the section 5 close fold read opens when the author fold lands. The section 4.1 fixed-defect copy counter-read opens when the author fold lands (the rebuilt copy is the read key). The register fold for the warm extract closed at `fab730a` (NR-013 ext2; the blob join re-verifies at this desk). The field-pair seat call stands open to a one-move bounce, and the standing figure watches hold.
+**Owner:** @aero-validator. **Next action:** the section 6.1 hold waits on the gate-block wording and the two founder calls.
+The close fold and the fixed-defect read wait on the author fold. The figure watches hold.
+The field-pair seat call holds. The warm extract register fold closed at `fab730a`.
