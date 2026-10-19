@@ -62,3 +62,17 @@ docs/plans/2026-10-07-state-fed-regen-cap-proposal.md
 # both paths, so they are reserved names and absent before the first run.
 scratch/sw_stale_phrases_base.md
 scratch/sw_stale_phrases_tip.md
+
+# Extension (2026-10-19, founder ruling, option A — third path): the sweep
+# source register, docs/agents/stale-phrases.md, joins the amend-only class
+# already carried here for DECISIONS.md and the trust log. It is the
+# register the transcript class above copies. Measured against its own
+# history (50e0300, b32bbb2): an entry is re-formed in place, and the change
+# carries a dated "Note (YYYY-MM-DD):" line under the carrying entry, so no
+# entry changes without a dated note. The file scores 3.21/100w whole-file
+# against a 2.0 block, so an amendment cannot clear the gate on its own
+# prose; the two commits that amended it held --no-verify for this class.
+# New entries must still be STE-clean. The exemption is a pre-commit filter
+# only: ste-lint.py reads no exemption file, so a hand run still scores the
+# whole file and fails.
+docs/agents/stale-phrases.md
