@@ -76,3 +76,12 @@ plate's only drawn region, reads byte-identical to the seed, so a
 regenerate at today's HEAD passes all 14 in-script checks and writes
 the four plate outputs byte-identical to the shipped bytes. Only the
 manifest pin line moves. No plate byte moves.
+
+**Delta** v3 (2026-10-19): the ledger input pin re-pins (author swap
+commit `a9dc348`, handoff receipt `abc12f0`). The house-vocabulary
+swap moved the ledger blob from `2f169ebe…` to `64073d0f…`. Section 4,
+the plate's only drawn region, reads byte-identical (the swap site is
+the section 2 gates row), so a regenerate at today's HEAD passes all 14
+in-script checks and writes the four plate outputs byte-identical to
+the shipped bytes. Only the manifest pin line moves. No plate byte
+moves.
