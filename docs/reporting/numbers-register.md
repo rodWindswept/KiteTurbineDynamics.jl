@@ -2486,3 +2486,16 @@ Boundaries:
 
 - No mass decomposition rides this row.
 
+## Notation note: NR-050, the projection factor prints as f_proj (2026-10-19, science-validator)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+The formula typesetting pass prints the projection factor of the power sizing as `f_proj` at draft section 2.1.
+The display and its definition line carry the token.
+The NR-050 sign-off basis names the same factor `f_i` in the decode and `f` in the sizing law.
+
+The rename keeps that factor apart from the score `f` of NR-046.
+No value, form or source moves.
+The cited row stays NR-050.
+The display token reads the factor that NR-050 signs.
+
