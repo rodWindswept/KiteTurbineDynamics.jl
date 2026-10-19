@@ -578,5 +578,6 @@ The sites read the rotor sizing at section 2.1, the crossing limit at section 2.
 The projection factor prints as `f_proj`, so it cannot read as the score `f`.
 The stationarity add-on prints as its own display, because NR-046 signs it apart from the three-penalty score.
 The crossing limit defines both terms below the display, `L_seg` included.
+The section 3.2 caveat lands, so the section states what its convergence measures.
 No number and no citation moves, and the citation gate still reads 56 cited.
 The draft ticks to v0.66.

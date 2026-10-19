@@ -537,6 +537,15 @@ The physical airborne mass of the winner is 25.698 kg (NR-018).
 The objective score adds 1.665 kg-equivalent of penalties (NR-039).
 The surviving ok designs hold a mean power between 5.02 and 6.32 kW (NR-007).
 
+Convergence in this section reads the search, not the window.
+The three results above read the best score per island against generation.
+The window test is a separate reading.
+
+It compares P_mean and P_end.
+The two agree below 0.5 per cent at every row of the load sweep (NR-041).
+The heavy-end rows of that sweep sit in a band, 8.9475 to 8.9511 kW at 4 dp.
+The register reads that band as a plateau.
+
 ### 3.3 The winner
 
 [Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
