@@ -1,7 +1,7 @@
 # Handover: the science-writer seat, KTD reporting room
 
 **Date:** 2026-10-19. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `b072ae2` on `bank-derate-cos2p65`. The section 6.1 hold is live and comes first. The explainer block and the references gate follow at this seat.
+**Base:** branch tip `b2e7e28` on `bank-derate-cos2p65`. The section 6.1 hold is live and comes first. The explainer block and the references gate follow at this seat.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -11,8 +11,9 @@ The receipts carry the story.
 The branch is `bank-derate-cos2p65`. The draft on disk is `daab5102`
 (1291 lines / 10,570 words) at commit `ad40fb1`. Nothing ran.
 The script `scratch/au_sec61_phase2.py` declares the result `207bd022`.
-That result is stale. Two later edits moved both counts. Do not trust the
-declared POST and do not re-open D2.
+That result is stale, and the script still inserts the retired bold rule.
+**Do not run it.** The replacement script is not written yet. It has to be
+built from the ruled block below.
 
 The pass now holds six blocks. The text of each sits in the room record.
 
@@ -25,36 +26,43 @@ The pass now holds six blocks. The text of each sits in the room record.
 
 Measured at this desk, all re-run, all byte-identical to the room record:
 
-| State | md5 | lines / words | STE | word leg |
-|---|---|---|---|---|
-| D2 | `0b9d09bd` | 1299 / 10,667 | 22 / 0.21 | `6c1396ec` |
-| F1 | `01e2ec9f` | 1298 / 10,664 | 23 / 0.22 | `536076fe` |
-| F2 | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223` |
-| F3, ruled by the author | `9a7a5d17` | 1298 / 10,664 | 22 / 0.21 | `a308305d` |
-| G3, this seat, pending | `4b49cfca` | 1298 / 10,667 | 22 / 0.21 | not made |
+| State | md5 | lines / words | STE | word leg | status |
+|---|---|---|---|---|---|
+| D2 | `0b9d09bd` | 1299 / 10,667 | 22 / 0.21 | `6c1396ec` | spent |
+| F1 | `01e2ec9f` | 1298 / 10,664 | 23 / 0.22 | `536076fe` | spent, STE breach |
+| F2 | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223` | spent |
+| F3 | `9a7a5d17` | 1298 / 10,664 | 22 / 0.21 | `a308305d` | dead at source |
+| G3 | `4b49cfca` | 1298 / 10,667 | 22 / 0.21 | `faf3d9a6` | spent |
+| G4, ruled by the author | `a825aaef` | 1298 / 10,663 | 22 / 0.21 | `c5d1ebda` | declaration target |
+| G5, this seat, pending | `6d047d73` | 1298 / 10,662 | 22 / 0.21 | not made | one word |
 
-F3 reproduces exactly. The md5 matches, the counts match, and every STE
-counter matches: passive 5, long_sentence 3, nominalization 1, contraction 1,
-long_paragraph 12, semicolon 0. The gate block reads five sentences of
-17 / 4 / 11 / 19 / 14 words.
+Every state reproduces: the md5, the line and word counts, and each STE
+counter. The counters are passive 5, long_sentence 3, nominalization 1,
+contraction 1, long_paragraph 12, semicolon 0. G4 reads five sentences of
+17 / 6 / 11 / 16 / 14 words.
 
-**The one defect in F3, graded from source.** Sentence 2 reads
-"The model remains unbridled". Sentence 3 reads "No bridle exists to go
-slack". Both print false as absolute claims. The model carries N bridle rope
-segments from the lift bearing to the hub-ring vertices
-(`src/initialization.jl:342-359`). The draft names the lifting bridles at 648
-and the rim bridle at 1143 and 1163. Only the tether-to-blade set is absent
-(986, and `src/aerodynamics.jl:349`).
+**The defect chain, graded from source.** F3 said the model was unbridled and
+that no bridle existed. Both are false as absolutes.
+`src/initialization.jl:342-359` builds N bridle segments from the lift bearing
+to the hub-ring vertices, at `BRIDLE_EA` 500 kN. G3 scoped the premise to the
+tether-to-blade set. G4 scoped the conclusion to match. One claim survives in
+G4, and it is the word `can`: "nothing here **can** check".
 
-G3 binds both sentences to the member. It moves no other line and adds three
-words:
+That word is false too. The model computes bridle tension on every
+sub-segment (`src/rope_forces.jl:404-412`), accumulates the bridle path length
+and rest length (`:512-520`), and applies a bridle break test at
+`ROPE_BREAK_STRAIN` 0.035 (`:618-620`). What it does not do is gate or report a
+bridle load. `get_max_rope_tension` loops only `4 * n_lines * (n_ring - 1)`
+shaft tethers (`:173-190`). Gates 4 and 6b read `cumulative_thrust`
+(`objective_v10.jl:634-666`). No output column carries bridle tension.
 
-> The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
-> No such bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
+Delete `can` and the sentence tells the truth without losing the rule:
 
-STE holds at 22 / 0.21. Both edits hit one site. The block adds no long
-sentence. @author rules this repair, and @aero-validator declares from the
-ruled state.
+> No such bridle exists to go slack, so nothing here checks that it stays loaded.
+
+That is G5. One word. The block reads 63 words and the sentence 15. STE holds
+at 22 / 0.21. @author rules the word, and @aero-validator declares from the
+ruled state. If @author keeps G4, G4 stands and the declared value is its own.
 
 **Two calls belong to @user and release the run.** One: bless the gate text.
 Two: keep the gene name `bank`, or rename the command sense. The command
@@ -65,11 +73,12 @@ captions.
 **One figure item stays open.** @fig asks for a tip-down direction clause at
 168. That would be a seventh block and one more re-measure.
 
-**Probe files.** `scratch/au_sec61_f3_candidate.md` and
-`scratch/au_sec61_f3_word.md` are the committed F3 pair.
-`scratch/sw_probe_g3.py` and `scratch/sw_probe_full_G3.md` are this seat's
-G3 probe. `scratch/sw_probe_full_D2.md`, `_F1`, `_F2` and their `_word`
-legs hold the retired states.
+**Probe files.** `scratch/au_g4_candidate.md` and `scratch/au_g4_word.md` are
+the ruled G4 pair. `scratch/sw_probe_g5.py` and `scratch/sw_probe_full_G5.md`
+are this seat's G5 probe. `scratch/av_g3_candidate.md` and
+`scratch/av_g3_word.md` hold G3 with its verify scripts.
+`scratch/sw_probe_full_D2.md`, `_F1`, `_F2` and their `_word` legs hold the
+retired states.
 
 ## What this seat does
 
@@ -84,7 +93,7 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 1. **The section 6.1 phase-2 hold.** Read the live section above first.
    The run waits on @user for two calls: the gate text, and the gene name.
-   The G3 repair waits on @author.
+   The G5 word waits on @author.
    Nothing runs and the draft stays at `daab5102` until both land.
 
 2. **Sweep 35 on the next draft push.**
@@ -113,7 +122,7 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Closed, last (evidence index)
 
-- Section 6.1 phase-2 verification (2026-10-19): F3 reproduced at `9a7a5d17`, word leg `a308305d`, all STE counters equal. G3 probe at `4b49cfca` stands pending. Probe `scratch/sw_probe_g3.py`.
+- Section 6.1 phase-2 verification (2026-10-19): G4 reproduced at `a825aaef`, word leg `c5d1ebda`, all STE counters equal. G5 probe at `6d047d73` stands pending the author's word. Probe `scratch/sw_probe_g5.py`. F3, G3 and the four earlier states are retired.
 
 - Sweep 34: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `de18442..7e60f37` verifies the house-vocabulary swap.
 
