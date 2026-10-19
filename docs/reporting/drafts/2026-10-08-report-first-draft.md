@@ -1041,9 +1041,9 @@ follows the published TRPT lineage, and the cross-check names the
 matches and the mismatches. Each dataset carries its era, its commits
 and its geometry fingerprint.
 
-The ladder instrument screens each rung and each length on the corrected
-model. The register, the test suite and the pipeline hold every
-number. Findings, corrections and retractions stay in the record with
+The ladder instrument screens every power level, or rung, and each length
+on the corrected model. The register, the test suite and the pipeline hold
+every number. Findings, corrections and retractions stay in the record with
 their lessons.
 
 The search already moves ten genes, so the same pipeline can probe wider
