@@ -7,7 +7,7 @@ The physics era is `post-95c385d_wind-authority`, with the bank derate applied t
 Numbers come only from signed register rows, cited by row ID.
 
 **Draft status.** This is an internal draft.
-Sections 1 to 5 carry their text.
+Sections 1 to 6 carry their text.
 Nomenclature and references stay incomplete.
 A section marked [PENDING] waits on a gate.
 
@@ -1072,15 +1072,141 @@ The programme takes one validation step at the Daisy scale. The mission
 target is a displaced-cost metric, set out in phase G of the programme
 strategy.
 
-## 6 Nomenclature [PENDING. Track D ratifies the glossary.]
+## 6 Potential extension work
 
-## 7 References
+The report answers the questions it set.
+It also opens questions it cannot answer yet.
+This section sets out three of them.
+Each one states the question, the reason the current model cannot close it, and the test that would.
+None of the three carries a scored result.
+
+### 6.1 Cyclic pitch and the lift kite
+
+The v1 BEM carries collective pitch only.
+Azimuth-dependent (cyclic) pitch is not modelled.
+The model source sits in `CoaxialAutogyroStacking.jl`: one scalar pitch value per rotor in `src/bem.jl`, with no azimuth term.
+
+The hardware design draws a swashplate with three actuators on the stationary ring.
+That geometry can produce cyclic pitch.
+The model and its tests do not exercise it.
+
+The question splits in two.
+The two parts carry different risk.
+
+The first part is control authority.
+Cyclic pitch is a control mechanism, not a lift source.
+One pitch cycle per revolution tilts the tip-path plane.
+The two-blade teetering hub gives a 90 degree rotor phase lag by construction.
+A delta-3 link or an underslung teeter would shorten that lag.
+Blade flexibility would shorten it too, and the model carries no flap dynamics.
+
+A lag short of 90 degrees turns the tilt azimuth.
+The bank and steer then act off the intended axis.
+The tilt gives side force and moment: bank, steer and load relief.
+This part is plausible and cheap to study.
+
+The second part is self-lift.
+The autogyro thrust of the rotor is one source of shaft tension.
+The lifter supplies the other source and sets the floor.
+
+A cyclic tilt trades axial thrust for side force.
+The moment capacity of the shaft rises with its tension.
+A lift taken here is torque capacity given up.
+Any added axial thrust also carries an induced-power cost.
+
+The two duties trade along one curve.
+A rotor that drives a generator runs below its zero-torque autorotation speed, and lift falls as extraction rises.
+The stack hardware already takes a small generator load.
+The model solves the zero-extraction limit.
+So "cyclic blades, no lift kite" is an energy-budget question, not a hinge question.
+The test should measure the trade curve, not a binary.
+
+One structural constraint decides the architecture.
+A TRPT shaft carries tension and torque, and almost no bending.
+A cyclic-commanded thrust tilt must therefore react through a teetering hub and the tether pendulum.
+
+The stack already carries a teetering hub, so the structural path exists.
+The per-revolution pitch linkage does not.
+A stiff-mast helicopter swashplate on a TRPT rotor is the wrong machine.
+
+The test has two legs.
+First, can one-per-rev cyclic pitch on a TRPT rotor give useful bank and steer authority with no bending-capable shaft?
+Second, what Cp cost does any axial component carry?
+
+Close it with an azimuth-resolved BEM on the 50 kW rotor.
+Add the azimuth term to the pitch input.
+Sweep the tilt from 0 to 10 degrees.
+That range is a plan value, not a signed row.
+Sweep the rotor phase lag as a free parameter, not as a fixed 90 degrees.
+
+Report the change in Cp at fixed thrust.
+Report the lift against extracted power at fixed wind.
+Report the hub moment against teeter offset.
+Run a lateral-mode check against the existing shaft model.
+
+The repo holds the platform, the shaft model and the BEM.
+The azimuth term is one addition.
+The torque sign through the zero-torque crossing is the other.
+Below that speed the model consumes power, while the machine drives its generator.
+The branch comes first. The trade curve means nothing without it.
+
+### 6.2 Cost of energy with scale
+
+The campaign scores power, mass and load.
+It does not score cost.
+The report cannot state the cost of energy at any rung, because no signed row for it exists.
+
+The study is a crossover curve from the 10 kW rung to a 500 kW utility-scale study point.
+The 50 kW rung sits in between.
+The 500 kW point sits above the ladder.
+It is an extrapolation, not a programme rung.
+Each point takes the same method, on the current model, with one stated capacity factor for the whole curve.
+
+Two outputs carry the value.
+The first is the rung where the kite turbine meets onshore wind.
+The second is the rung where the curve flattens, and further scale stops paying.
+
+The enabling step comes before the curve.
+The value-claims ledger classes every economics reading the project holds today as either held or unsigned.
+Its rule of use governs this section as it governs section 5.
+No value prints here until a fresh read produces a signed row for it.
+
+That statement is the anchor.
+The report does not know the cost of energy at scale, and it says so.
+
+The test: one curve and one method.
+Each printed point needs a signed row.
+The curve states one capacity factor.
+
+### 6.3 Failure modes and effects
+
+The model runs a healthy machine.
+The failure ledger records campaign failures: a run that stops, a row that reads below the floor.
+It does not record how the system fails.
+It does not record what each failure does to the machine, the ground equipment or the site.
+
+The prior art exists.
+The Daisy machine carries an FMEA and a fault tree to 5 kW, held in `DaisyKiteTurbineControl`.
+That work covers the rotor, the control set and the ground equipment on that machine.
+It does not cover this one.
+
+The extension lifts the Daisy method onto the full system: the airborne rotor, the TRPT shaft and the ground station.
+Each failure mode takes a severity score, an occurrence score and a detection score.
+Each mitigation points at a test.
+
+The test: a fault tree.
+Every top event traces to a component, a mitigation and a test that exercises the mitigation.
+A score without a test does not enter the record.
+
+## 7 Nomenclature [PENDING. Track D ratifies the glossary.]
+
+## 8 References
 
 Seeded in references.bib. Seventeen sources. Sixteen carry verified
 sources. The Hancock deck stands on the weaker standard (slides held, no
 public archive). The Ranneberg entry was dropped.
 
-## 8 Data availability and reproducibility
+## 9 Data availability and reproducibility
 
 The dataset commits to the repo at dd3cc6a on bankderate2-results.
 The launch commit is a76c5e9.
