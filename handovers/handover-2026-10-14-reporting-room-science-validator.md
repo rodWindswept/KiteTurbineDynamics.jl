@@ -1,7 +1,7 @@
 # Handover: the science-validator seat, KTD reporting room
 
 **Date:** 2026-10-14. **From:** @science-validator. **To:** the successor session.
-**Base:** branch tip `bfb2896` on `bank-derate-cos2p65`.
+**Base:** branch tip `61866f8` on `bank-derate-cos2p65`.
 **Updated** 2026-10-15 for the lifting-bridles term gate closure and the corner-grid register read.
 **Updated** 2026-10-16 for the bow row NR-059 sign, the 2026-10-15 row set, and the counter-read scope amend.
 **Updated** 2026-10-16 for the value-claims ledger counter-read.
@@ -9,9 +9,89 @@
 **Updated** 2026-10-18 for the NR-046 re-pin and the NR-061 six-class split sign.
 **Updated** 2026-10-18 for the register display round (19 rows print at four significant digits).
 **Updated** 2026-10-18 for the NR-062 and NR-063 signs (the fig Batch B metric lists).
+**Updated** 2026-10-19 for the section 6.1 phase-2 hold and the G3 candidate.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
+
+## Live: section 6.1 phase-2 hold (2026-10-19)
+
+**Base draft:** `docs/reporting/drafts/2026-10-08-report-first-draft.md`, md5
+`daab51024fbb84460a695de3b7481c75`, 1291 lines / 10,570 words. Nothing has
+run against it.
+
+**Measured candidate:** `scratch/av_g3_candidate.md`, md5 `4b49cfca`, 1298
+lines / 10,667 words, STE 22 flags at 0.21 per 100 words (passive 5,
+long_sentence 3, nominalization 1, contraction 1, long_paragraph 12,
+semicolon 0, em dash 0). The block reads 5 sentences / 65 words. Word leg
+`scratch/av_g3_word.md`, md5 `faf3d9a6`, 1298 / 10,666. Both files are at
+origin; `scratch/av_g3_verify.py` rebuilds G3 from the F3 pair and
+`scratch/av_g3_wordleg.py` rebuilds the word leg, both with reverse checks.
+
+**F3 is dead as a target.** `9a7a5d17` / `a308305d` reproduce, but its two
+absolute sentences print false. The model carries bridle rope segments from
+the lift bearing to the hub-ring vertices (`src/initialization.jl:342-359`,
+`BRIDLE_EA` 500 kN at 318), and `src/aerodynamics.jl:349` says only the
+blade bridle lines are absent. G3 scopes both sentences to the
+tether-to-blade set and binds them to 986.
+
+**The candidate's hunks, from `diff base candidate`.** The diff is the
+authority; the room's line numbers refer to different states.
+
+- 168: `ring plane` to `plane of rotation`.
+- 1115: `A lag short of 90 degrees turns the tilt azimuth.` to `The tilt
+  azimuth turns whenever the rotor phase lag is not zero.`
+- 1116: `The bank and steer then act...` to `The tilt and steer then act...`
+- 1117: insert `If the lag exceeds 90 degrees, the part of the tilt along
+  the intended axis reverses sign.`
+- 1118: drop the `bank,` list item. `The tilt gives side force and moment:
+  steer and load relief.`
+- 1149: `bank and steer` to `tilt and steer`.
+- 1162-1164: `That check supplies the phase lag the sweep varies.` to
+  `Check the ring tilt against the rim bridle.` / `Until they run, the rotor
+  phase lag stays a free parameter.`
+- 1166-1169: the four-line bridle block.
+
+**Rulings signed at this desk.**
+
+- The 1118 drop loses no axis. The paragraph names the roll response at
+  1115-1116 (`tilt`); the dropped item restates it. Do not later trim
+  `the tilt and steer` as redundant with the list. The roll axis lives only
+  there.
+- The underside bridle works against thrust, and thrust acts round the whole
+  turn. The restraint is azimuth-uniform. The upwind half is where it is
+  hardest pressed, not where it exists. The block is side-neutral and prints
+  under either answer.
+- The condition a future model can check is bridle tension positive round
+  the turn, the draft's own tension-member rule at 142-143, never a tip
+  height.
+- G3's scoped pair is the only true form. The absolutes in F3 are not.
+- Do not trim the two `so` clauses in the block. Each closes a different
+  premise.
+
+**Open, founder only.**
+
+1. Bless the G3 block at 1166-1169.
+2. Keep the gene name `bank` or rename the section 6.1 command. G3 already
+   carries `tilt` at 1116 and 1149. A gene rename moves the plates and their
+   captions, so it is not a prose-only pass.
+3. The direction clause at 168 is a possible seventh block. The verb is
+   `chooses`, not `magnitude`; `magnitude` has 0 hits. If it lands, re-measure
+   and only then declare.
+
+**Do not run `scratch/au_sec61_phase2.py`.** Its `B_NEW` still inserts the
+retired rule (`**Azimuth-resolved bank.** The windward blade tip stays at or
+above the root plane through the upwind half of the rotation.`), and its
+declared POST `207bd022` / 1297 / 10,662 is stale. It would write the dead
+gate into the draft. G3 exists as the committed scratch files, not as an
+in-place script.
+
+**Checks run at this desk, 2026-10-19.** Base md5, lines and words as above.
+Whole draft: 0 lines carry a semicolon, `ring plane` 1 (168), `plane of
+rotation` 0, `azimuth-resolved` 1, `bridle` 6, `unbridled` 1, `genome` 19,
+`magnitude` 0, `concave` 0, `under-side` 0, `roll` 0. `cosd(bank)^2.65` sits
+at `src/ring_forces.jl:235` and `src/bem.jl:142,150`, magnitude only.
+`src/objective_v6.jl:8,31` states the downward lean in words.
 
 ## What this seat does
 
@@ -24,19 +104,24 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **PL12 verification facts, on request.** The part 13 fold by @author (references
+1. **The section 6.1 phase-2 run (live section above).** The G3 candidate is
+   measured at `4b49cfca` with word leg `faf3d9a6`. Release waits on two
+   founder calls: bless the bridle block, and keep-gene or rename-command.
+   The phase-2 script is stale and must not run.
+
+2. **PL12 verification facts, on request.** The part 13 fold by @author (references
    and data availability) draws its verification facts from this seat. The section 7
    line "Fifteen of eighteen" moves with that pass.
 
-2. **The Nomenclature fold.** The fold runs with the lead and the SW seat. The
+3. **The Nomenclature fold.** The fold runs with the lead and the SW seat. The
    lifting-bridles rename now reads through the candidates, the notes, the
    stale-phrases list, the plate kit, the desk amends and the copy v0.49.
    The reading holds at one form.
 
-3. **New rows before print.** Any new value in the polish round, the figure builds,
+4. **New rows before print.** Any new value in the polish round, the figure builds,
    the corner build or the item-5 extract takes a register row and a sign at this desk.
 
-4. **T5 close-out rows.** T5-1 unsigned failure-ledger numbers and T5-2 Daisy anchor values take register rows and signs at this desk before the release close-out.
+5. **T5 close-out rows.** T5-1 unsigned failure-ledger numbers and T5-2 Daisy anchor values take register rows and signs at this desk before the release close-out.
 
 ## Closed, last (evidence index)
 
@@ -163,4 +248,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the NR-061 counter-read closed at the aero seat (`97d15c9`). The draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The fig Batch B metric cards are unblocked. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the section 6.1 phase-2 hold is the first item. G3 is measured at `4b49cfca`; release waits on Rod's two calls (bless the bridle block, keep-gene or rename-command). Do not run the stale phase-2 script. Behind it: the draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The fig Batch B metric cards are unblocked. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
