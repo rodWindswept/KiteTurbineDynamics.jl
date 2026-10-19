@@ -1166,7 +1166,7 @@ The azimuth term is one addition.
 The tilt degree of freedom is the second.
 The torque sign through the zero-torque crossing is the third.
 
-Below that speed the model consumes power, while the machine drives its generator.
+Below the zero-torque crossing the model consumes power, while the machine drives its generator.
 The branch comes first. The trade curve means nothing without it.
 
 ### 6.2 Cost of energy with scale
