@@ -70,6 +70,16 @@ def classify(tok):
         return run(["git", "cat-file", "-e", f"{tok}^{{commit}}"]).returncode == 0
     if tok == "bankderate2-results":
         return run(["git", "rev-parse", "--verify", "bankderate2-results"]).returncode == 0
+    if tok.startswith("coax@"):
+        m = re.fullmatch(r"coax@([0-9a-f]{7,40}):(.+)", tok)
+        if not m:
+            return False
+        sha, path = m.groups()
+        p = subprocess.run(
+            ["git", "-C", str(ROOT.parent / "CoaxialAutogyroStacking.jl"), "cat-file", "-e", f"{sha}:{path}"],
+            capture_output=True, text=True,
+        )
+        return p.returncode == 0
     if "/" in tok or tok.endswith((".md", ".py", ".jl", ".csv", ".png", ".txt")):
         return (ROOT / tok).exists() and tracked(tok)
     return "unknown"
@@ -120,6 +130,7 @@ def main():
                 class_cells.append(c)
     check("element rows carry only the three classes", all(c in CLASSES for c in class_cells))
     check("element row count >= 18", len(class_cells) >= 18, str(len(class_cells)))
+    check("CoAx model row present", "coax@2e1b1e1:src/bem.jl" in text)
     for cls in sorted(CLASSES):
         check(f"class present: {cls}", cls in class_cells)
 

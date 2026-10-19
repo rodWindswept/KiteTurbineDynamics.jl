@@ -29,6 +29,16 @@ The mapping comes from @science-validator (2026-10-16). The visual analogue come
 | The gates: the register, the test suite, and the pipeline that hold every number | `capability` | `docs/reporting/numbers-register.md`, `test/` |
 | The trust practice: findings, corrections, and retractions land in the record with their lessons | `capability` | `docs/agents/instrument-trust-log.md`, `docs/validation/physics-validation-ledger.md`, `reviews/2026-09-15-six-week-review.md` |
 
+## 2a. Direction addition (2026-10-19, aero-validator)
+
+The section 6 extension text prints one capability claim about the CoAx model. This row classes it. This dated line stands because the ledger changes by commit.
+
+| Element | Class | Pointer |
+|---|---|---|
+| The v1 CoAx stack model carries collective pitch only. Azimuth-dependent (cyclic) pitch is not modelled | `capability` | The CoAx repo at `coax@2e1b1e1:src/bem.jl`: one scalar pitch term (line 133), and the RPM solved at zero net aerodynamic torque (line 194) |
+
+The pointer names a sibling repo at a pinned commit. `scratch/av_vcl_check.py` resolves the coax@sha:path form against ../CoaxialAutogyroStacking.jl.
+
 ## 3. Target elements (the "where this goes" movement)
 
 | Element | Class | Pointer or label |
