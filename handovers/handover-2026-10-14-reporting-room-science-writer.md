@@ -1,10 +1,75 @@
 # Handover: the science-writer seat, KTD reporting room
 
-**Date:** 2026-10-18. **From:** @science-writer. **To:** the successor session.
-**Base:** branch tip `7e60f37` on `bank-derate-cos2p65`. The sweep-34 train follows. The explainer block and the references gate follow at this seat.
+**Date:** 2026-10-19. **From:** @science-writer. **To:** the successor session.
+**Base:** branch tip `b072ae2` on `bank-derate-cos2p65`. The section 6.1 hold is live and comes first. The explainer block and the references gate follow at this seat.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
+
+## Live hold: the section 6.1 phase-2 pass (2026-10-19)
+
+The branch is `bank-derate-cos2p65`. The draft on disk is `daab5102`
+(1291 lines / 10,570 words) at commit `ad40fb1`. Nothing ran.
+The script `scratch/au_sec61_phase2.py` declares the result `207bd022`.
+That result is stale. Two later edits moved both counts. Do not trust the
+declared POST and do not re-open D2.
+
+The pass now holds six blocks. The text of each sits in the room record.
+
+1. 1116 and 1148: `bank and steer` becomes `tilt and steer`.
+2. 1117: the list item drops. The seat ruling sits in the room record.
+3. 1107: the defining clause never lands. The line took the only semicolon with it.
+4. 168: `ring plane` becomes `plane of rotation`.
+5. The gate block replaces the old azimuth-resolved bank rule.
+6. The re-declarations: PRE stays `daab5102`, and POST is re-declared once.
+
+Measured at this desk, all re-run, all byte-identical to the room record:
+
+| State | md5 | lines / words | STE | word leg |
+|---|---|---|---|---|
+| D2 | `0b9d09bd` | 1299 / 10,667 | 22 / 0.21 | `6c1396ec` |
+| F1 | `01e2ec9f` | 1298 / 10,664 | 23 / 0.22 | `536076fe` |
+| F2 | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223` |
+| F3, ruled by the author | `9a7a5d17` | 1298 / 10,664 | 22 / 0.21 | `a308305d` |
+| G3, this seat, pending | `4b49cfca` | 1298 / 10,667 | 22 / 0.21 | not made |
+
+F3 reproduces exactly. The md5 matches, the counts match, and every STE
+counter matches: passive 5, long_sentence 3, nominalization 1, contraction 1,
+long_paragraph 12, semicolon 0. The gate block reads five sentences of
+17 / 4 / 11 / 19 / 14 words.
+
+**The one defect in F3, graded from source.** Sentence 2 reads
+"The model remains unbridled". Sentence 3 reads "No bridle exists to go
+slack". Both print false as absolute claims. The model carries N bridle rope
+segments from the lift bearing to the hub-ring vertices
+(`src/initialization.jl:342-359`). The draft names the lifting bridles at 648
+and the rim bridle at 1143 and 1163. Only the tether-to-blade set is absent
+(986, and `src/aerodynamics.jl:349`).
+
+G3 binds both sentences to the member. It moves no other line and adds three
+words:
+
+> The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
+> No such bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
+
+STE holds at 22 / 0.21. Both edits hit one site. The block adds no long
+sentence. @author rules this repair, and @aero-validator declares from the
+ruled state.
+
+**Two calls belong to @user and release the run.** One: bless the gate text.
+Two: keep the gene name `bank`, or rename the command sense. The command
+rename costs two prose words at 1116 and 1148 and no plate. A gene rename
+re-renders two PCA panel titles, one leader inside the drawing, and three
+captions.
+
+**One figure item stays open.** @fig asks for a tip-down direction clause at
+168. That would be a seventh block and one more re-measure.
+
+**Probe files.** `scratch/au_sec61_f3_candidate.md` and
+`scratch/au_sec61_f3_word.md` are the committed F3 pair.
+`scratch/sw_probe_g3.py` and `scratch/sw_probe_full_G3.md` are this seat's
+G3 probe. `scratch/sw_probe_full_D2.md`, `_F1`, `_F2` and their `_word`
+legs hold the retired states.
 
 ## What this seat does
 
@@ -17,31 +82,38 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 ## Open items
 
-1. **Sweep 35 on the next draft push.**
+1. **The section 6.1 phase-2 hold.** Read the live section above first.
+   The run waits on @user for two calls: the gate text, and the gene name.
+   The G3 repair waits on @author.
+   Nothing runs and the draft stays at `daab5102` until both land.
+
+2. **Sweep 35 on the next draft push.**
    The next movers now due: the figure re-stamp at the scaling-ladder
    kit, the hermes rebuild and the author rebuild verification.
    A-13 and A-20 to A-22 stay gated as routed.
-   The sweep keys on the next push.
+   The sweep keys on the next push. The section 6.1 pass lands before it.
 
-2. **The explainer block.**
+3. **The explainer block.**
    The round-4 routing seats the kg-equivalent explainer block on this seat.
    It lifts from the printed section 2.4 block and NR-046.
    This is the next writing item.
 
-3. **The references gate.** Three source calls stay pending in `references.bib`: the
+4. **The references gate.** Three source calls stay pending in `references.bib`: the
    Ranneberg report, the Jamieson slides and the Hancock slides.
    Each needs an own-source read or a room decision before prose cites it.
    The pass lands as `docs/reporting/references-verification.md`.
 
-4. **The Nomenclature fold.** The term gate cleared at `cadf83d`.
+5. **The Nomenclature fold.** The term gate cleared at `cadf83d`.
    The fold runs with the lead and this seat.
    The three projection terms sit in the candidates for Track D.
 
-5. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
+6. **The reading scope.** The thrive/fail view (figure-map row 22) joins the levers reading if it lands.
 
-6. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
+7. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
 
 ## Closed, last (evidence index)
+
+- Section 6.1 phase-2 verification (2026-10-19): F3 reproduced at `9a7a5d17`, word leg `a308305d`, all STE counters equal. G3 probe at `4b49cfca` stands pending. Probe `scratch/sw_probe_g3.py`.
 
 - Sweep 34: the record section sits in `docs/reporting/draft-consistency-sweep.md` and the receipt lands beside this page. The span `de18442..7e60f37` verifies the house-vocabulary swap.
 
@@ -103,4 +175,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** the explainer block, then the references gate. Sweep 35 keys on the next draft push.
+**Owner:** @science-writer. **Next action:** the section 6.1 hold. Declare from the ruled state once @user makes both calls and @author rules the G3 repair. Then the explainer block, then the references gate. Sweep 35 keys on the next draft push.
