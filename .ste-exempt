@@ -48,3 +48,17 @@ docs/reporting/feedback/2026-10-17-significant-external-review.md
 # torque cap proposal is a dated plan record, amend-only as drafted — the sole
 # copy of the κ-open proposal. New team material in it must still be STE-clean.
 docs/plans/2026-10-07-state-fed-regen-cap-proposal.md
+
+# Extension (2026-10-19, founder ruling, option A): the sweep stale-phrase
+# extracts join the exempt class. A copy is a verbatim transcript of
+# docs/agents/stale-phrases.md at one recorded revision: byte-identical, and
+# that identity is its whole audit value. The class is transcript, not age
+# and not generated data. The exemption is a pre-commit filter only: it
+# removes the path from the linter argument list. ste-lint.py reads no
+# exemption file, so a hand run still scores the transcript and fails. That
+# direction is fail-safe, and no register line carries a prose score for
+# these paths. The names are fixed permanently and carry no date, commit or
+# sweep number; the sweep identity lives in the stamp file. The sweep writes
+# both paths, so they are reserved names and absent before the first run.
+scratch/sw_stale_phrases_base.md
+scratch/sw_stale_phrases_tip.md
