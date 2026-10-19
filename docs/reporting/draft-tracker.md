@@ -582,3 +582,22 @@ The section 3.2 caveat lands, so the section states what its convergence measure
 The conclusion defines a rung at first use, because the word prints six times with no entry.
 No number and no citation moves, and the citation gate still reads 56 cited.
 The draft ticks to v0.66.
+
+v9 (2026-10-19): the section 6 provenance pass lands (author).
+
+The seam placed the extension shell with no version tick.
+This pass takes the tick and the section 6.1 fix together.
+The swashplate and the two-blade teetering hub now read as lifter stack hardware.
+They read as prior art, and the section names them at first use.
+The main rotor reads as a three-blade ring with fixed pitch and a fixed bank angle.
+Its bank angle cites NR-017 as a searched gene, not a control input.
+
+The 90 degree lag belongs to the stack hub.
+The lag on the ring reads as a ring-and-tether property.
+The lateral-mode check supplies that value.
+The hub moment reads against the offset of a hub the study would add.
+
+The model-addition count moves from two to three: the azimuth term, the tilt degree of freedom and the torque sign.
+The through-shaft sentence reads "something other than the shaft", because a ring rotor would react through its rim bridle.
+No register row moves and no citation moves.
+The draft ticks to v0.67.

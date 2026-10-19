@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.66. Date 2026-10-19.
+Internal engineering report. Draft v0.67. Date 2026-10-19.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1086,9 +1086,17 @@ The v1 BEM carries collective pitch only.
 Azimuth-dependent (cyclic) pitch is not modelled.
 The model source sits in `CoaxialAutogyroStacking.jl`: one scalar pitch value per rotor in `src/bem.jl`, with no azimuth term.
 
-The hardware design draws a swashplate with three actuators on the stationary ring.
+That BEM belongs to the lifter stack.
+The lifter stack carries a swashplate with three actuators on the stationary ring.
 That geometry can produce cyclic pitch.
-The model and its tests do not exercise it.
+The stack uses it for collective pitch only.
+The model and its tests do not exercise the cyclic case.
+
+This report studies a different rotor.
+The main rotor is a three-blade ring with fixed pitch and a fixed bank angle.
+The search chooses the blade bank angle for each design.
+That angle is not a control input.
+So a cyclic input would be a new degree of freedom on this rotor.
 
 The question splits in two.
 The two parts carry different risk.
@@ -1096,14 +1104,18 @@ The two parts carry different risk.
 The first part is control authority.
 Cyclic pitch is a control mechanism, not a lift source.
 One pitch cycle per revolution tilts the tip-path plane.
-The two-blade teetering hub gives a 90 degree rotor phase lag by construction.
+The two-blade teetering hub on the stack gives a 90 degree rotor phase lag by construction.
 A delta-3 link or an underslung teeter would shorten that lag.
-Blade flexibility would shorten it too, and the model carries no flap dynamics.
+Blade flexibility would shorten it too, though the model carries no flap dynamics.
+
+That lag belongs to the stack.
+The ring rotor has no teeter, and neither model carries a flap hinge for it.
+So the lag on the ring is a ring-and-tether property, not a flap response.
 
 A lag short of 90 degrees turns the tilt azimuth.
 The bank and steer then act off the intended axis.
 The tilt gives side force and moment: bank, steer and load relief.
-This part is plausible and cheap to study.
+This part is still plausible and cheap to study.
 
 The second part is self-lift.
 The autogyro thrust of the rotor is one source of shaft tension.
@@ -1123,30 +1135,37 @@ The test should measure the trade curve, not a binary.
 
 One structural constraint decides the architecture.
 A TRPT shaft carries tension and torque, and almost no bending.
-A cyclic-commanded thrust tilt must therefore react through a teetering hub and the tether pendulum.
+A cyclic-commanded thrust tilt must therefore leave through something other than the shaft.
 
-The stack already carries a teetering hub, so the structural path exists.
-The per-revolution pitch linkage does not.
+The stack shows that a teetering hub works at this scale.
+That is existence proof for a component, not a path for this rotor.
+A ring rotor would take the tilt reaction through its rim bridle.
+So the structural question moves to the bridle.
+The per-revolution pitch linkage is the part neither machine carries.
 A stiff-mast helicopter swashplate on a TRPT rotor is the wrong machine.
 
 The test has two legs.
 First, can one-per-rev cyclic pitch on a TRPT rotor give useful bank and steer authority with no bending-capable shaft?
 Second, what Cp cost does any axial component carry?
 
-Close it with an azimuth-resolved BEM on the 50 kW rotor.
+Close it with an azimuth-resolved BEM on the 50 kW ring rotor.
 Add the azimuth term to the pitch input.
+Add the tilt degree of freedom to the model.
 Sweep the tilt from 0 to 10 degrees.
 That range is a plan value, not a signed row.
 Sweep the rotor phase lag as a free parameter, not as a fixed 90 degrees.
 
 Report the change in Cp at fixed thrust.
 Report the lift against extracted power at fixed wind.
-Report the hub moment against teeter offset.
+Report the hub moment against the offset of a hub the study would add.
 Run a lateral-mode check against the existing shaft model.
+That check supplies the phase lag the sweep varies.
 
 The repo holds the platform, the shaft model and the BEM.
 The azimuth term is one addition.
-The torque sign through the zero-torque crossing is the other.
+The tilt degree of freedom is the second.
+The torque sign through the zero-torque crossing is the third.
+
 Below that speed the model consumes power, while the machine drives its generator.
 The branch comes first. The trade curve means nothing without it.
 
