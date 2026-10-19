@@ -271,6 +271,7 @@ The crossing limit reads (NR-053):
 $$\delta\alpha^{*}=2\arcsin\left(\frac{L_{\mathrm{seg}}}{\sqrt{2\left(L_{\mathrm{seg}}^{2}+2r_{\mathrm{seg}}^{2}\right)}}\right)$$
 
 The term $r_{\mathrm{seg}}$ reads the larger of the two ring radii at the segment.
+The term $L_{\mathrm{seg}}$ reads the segment length between the two rings.
 
 ### 2.3 The operating point and load selection
 
