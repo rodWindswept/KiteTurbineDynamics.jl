@@ -46,7 +46,7 @@ H4 new checks
 H4 new gate block (one blank line above it)
 + A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
 + The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
-+ No such bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
++ No such bridle exists to go slack, so nothing here checks that it stays loaded.
 + So the bridle rule binds only on a design the genome cannot yet generate.
 
 W 1189 and 1205
@@ -64,10 +64,13 @@ D2   0b9d09bd   1299 / 10667   STE 22 / 0.21   word 6c1396ec
 F1   01e2ec9f   1298 / 10664   STE 23 / 0.22   word 536076fe   (retired)
 F2   559ce2dc   1298 / 10665   STE 22 / 0.21   word e76c8223
 F3   9a7a5d17   1298 / 10664   STE 22 / 0.21   word a308305d
-G3   4b49cfca   1298 / 10667   STE 22 / 0.21   word faf3d9a6
+G3   4b49cfca   1298 / 10667   STE 22 / 0.21   word faf3d9a6   (spent)
+G4   a825aaef   1298 / 10663   STE 22 / 0.21   word c5d1ebda   (dead)
+G5   6d047d73   1298 / 10662   STE 22 / 0.21   word fa851bc0   (target)
 ```
 
-The G3 word hash `faf3d9a6` is the fresh measure from this desk. The other five states reproduce byte for byte from the hashes the room declared.
+The G3 word hash `faf3d9a6` was the fresh measure from the previous turn.
+The G4 and G5 files reproduce byte for byte at this desk.
 
 The F3 defect and the G3 ruling. The two absolutes in F3 print false against the source.
 
@@ -77,7 +80,18 @@ The draft names the lifting bridles at 648 and the rim bridle at 1142. The 1143 
 
 So the scoped pair in G3 is the only true form. The source forces the repair. It is not a wording call.
 
-F3 is dead as a declaration target. G3 is the target. The author seat may still adjust the words. Any change re-measures.
+F3 is dead as a declaration target. G4 is dead by the can-grade below. G5 is the target. Any change re-measures at this desk before the declaration.
+
+The G4 defect and the G5 ruling. The last word in G4 over-claims again.
+
+The engine computes segment tension for every sub-segment, bridles included. The loop starts at `src/rope_forces.jl` line 342. The bridle path and rest length accumulate at lines 512 to 520. The bridle break test runs each step at lines 618 to 620, against `ROPE_BREAK_STRAIN` 0.035.
+
+The gate side reads shaft tethers only. The summary is `get_max_rope_tension`.
+It loops 4 by n_lines by (n_ring minus 1) segments at lines 173 to 190. Gates 4 and 6b read `cumulative_thrust` at `src/objective_v10.jl` lines 634 to 666. No output column carries bridle tension. The dashboard draws the bridles in fixed gold.
+
+So the model can check a bridle load. It computes one each step. What it never does is gate or report one.
+
+The source forces the drop of one word. G4 is dead as a declaration target. G5 is the target.
 
 The script on disk (`scratch/au_sec61_phase2.py`) still declares the old three-block chain. Its declared result `207bd022` and word `5be0a47d` are stale.
 
@@ -100,7 +114,7 @@ The legwork can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-0. **The section 6.1 phase-2 hold.** See the live-hold section above. The declaration target is G3 (`4b49cfca`, word `faf3d9a6`). The release is the final gate-block wording and the two founder calls.
+0. **The section 6.1 phase-2 hold.** See the live-hold section above. The declaration target is G5 (`6d047d73`, word `fa851bc0`). The release is the final gate-block wording and the two founder calls.
 
 1. **Figure watches.** The item-5 lever-statistics extract takes an F-VALUE read if drawn values or pins move. The ring lead flag (15.033 against 15.0) stays with the room. A seat move on the machine winner hero re-keys a copy read here. The winner-form re-keys read closed with the relabel pass.
 
