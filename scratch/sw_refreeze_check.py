@@ -21,12 +21,14 @@ s = "The two plates map the same search in two views."
 e = "The gene-level effects wait on the landscape extracts."
 region = draft[draft.index(s):draft.index(e) + len(e)]
 
-# the pre-break block, captured from the committed receipt at HEAD
+# the pre-break block, captured from the receipt as committed just
+# before the re-freeze (c27b677 rewrote the region at the tip, so the
+# source pins to a commit-stable ref, never HEAD)
 import subprocess
-head_receipt = subprocess.run(
-    ["git", "show", "HEAD:docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md"],
+prebreak_receipt = subprocess.run(
+    ["git", "show", "c27b677^:docs/reporting/room-responses/science-writer-2026-10-14-levers-reading.md"],
     capture_output=True, text=True, cwd=repo).stdout
-old_seg = head_receipt.split(B, 1)[1].split(E, 1)[0].strip("\n")
+old_seg = prebreak_receipt.split(B, 1)[1].split(E, 1)[0].strip("\n")
 sim = (repo / "scratch/sw_levers_fold_sim.md").read_text()
 
 ok = True
