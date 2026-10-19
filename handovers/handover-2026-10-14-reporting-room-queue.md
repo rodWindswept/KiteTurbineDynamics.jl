@@ -5,6 +5,7 @@
 **Updated** 2026-10-15 for the second closure train through v0.56 — the rope-break placement fix, the operating-point and torsion fold, the reject split and item-2.1 environment set, the convergence row-16 build and its counter-reads, and the era pack. Draft v0.56. The review copy reads md5 `5ecee42e…`.
 **Updated** 2026-10-19 for the third closure train through v0.65 — the winner bow read, the six-class fold, the FEEDBACKBOT1 pair re-cuts, the B-20/B-21 and A-10 to A-19 prose passes, the house-vocabulary swap, sweeps 33 and 34, the levers re-freeze, the re-stamp and the rebuild. Draft v0.65. The review copy reads md5 `80e01b5d…`.
 **Updated** 2026-10-19 for the fourth closure train. The potential-extension section takes §6. Four draft passes run in one train. One rebuild lands at the tail. The section count moves to nine.
+**Updated** 2026-10-19 for the §6.1 phase-2 wording train. The train holds at one blocking point and nothing has run. Draft `daab5102`. The measured candidate reads `559ce2dc`.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -74,9 +75,23 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The §6.3 item points at the Daisy FMEA and fault tree in `DaisyKiteTurbineControl`, no number attached, `capability` class.
 
+- The §6.1 phase-2 train holds at one blocking point. The draft reads `daab5102`, 1291 lines and 10,570 words. STE reads 22 at 0.21 per 100 words, em_dash 0. The phase-2 script accepts that base.
+
+- The phase-2 script declares a result at `207bd022`, 1297 lines and 10,662 words. The 1118 drop and the gate-block rewrite moved both counts. So the commit seat re-declares the result once, from the measured run.
+
+- The room measures three candidate states. D2 reads `0b9d09bd`, 1299 lines and 10,667 words, STE 22 at 0.21. F1 reads `01e2ec9f`, 1298 and 10,664, STE 23 at 0.22. F2 reads `559ce2dc`, 1298 and 10,665, STE 22 at 0.21. The F2 word leg reads `e76c8223`, 1298 and 10,664. F2 is the declared candidate once @author rules the closing-sentence wording.
+
+- Six blocks make the pass. Two rename the pair at 1116 and 1148, and one drops the 1118 item. One deletes the 1107 clause. One puts `plane of rotation` at 168. The gate block and the re-declarations close the set. No plate moves under the plan.
+
+- Nothing has run and no draft byte moved. @aero-validator holds the phase2 edit at the base. Two founder calls release it: the gate text, and the keep-gene or rename-command direction. The tree also carries uncommitted peer work from @aero-validator, so a successor stages own paths only.
+
 ## Open queue, in fold order
 
-1. **The fourth closure train (accepted 2026-10-19, fold order).** Four draft passes, one rebuild at the tail.
+1. **@hermes: the §6.1 phase-2 wording train (blocked, nothing running).** The train rests at draft `daab5102`. The pass has six blocks. Two rename the pair at 1116 and 1148, and one drops the 1118 item. One deletes the 1107 clause. One puts `plane of rotation` at 168. The gate block and the re-declaration close the set.
+
+   @author rules the gate wording first. @aero-validator runs the pass after both founder calls land. F2 is the measured candidate at `559ce2dc`, with word leg `e76c8223`. Two calls wait on Rod: the gate text, and whether the gene keeps the name `bank`. A direction clause at 168 would add a seventh block and one re-measure. No plate moves and no number enters.
+
+2. **The fourth closure train (accepted 2026-10-19, fold order).** Four draft passes, one rebuild at the tail.
 
    (a) **@science-writer: the caveat lift.** Anchor to @science-validator's signed-verdict set, not token hits. Section 3.2 carries six cited score rows and no verdict sentence. The signed register line reads "P_mean and P_end agree below 0.5 per cent at every row". The NR-041 band reads 8.9475 to 8.9511. Both have zero draft surface today.
 
@@ -100,21 +115,21 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
    Train constraints: never edit inside the marker-bounded levers block. @aero-validator checks the region md5 against the block after each draft-moving commit. @author's `sw_refreeze_check.py` run closes. The heading-resolve baseline is measured once, after (b) and (c) land. It is then pinned for the rebuild.
 
-2. **@science-writer: sweep 35, and the extract-class ruling.** Sweeps 33 and 34 closed (science-writer). Sweep 35 keys on the next push and spans v0.65 onward. The founder ruled Option A on 2026-10-19: two fixed scratch names, one dated ledger entry, and no per-sweep bypass. The build seat landed the entry and a transcript sensor at `check-extract-stamp.py`. Sweep 35 commits with the gate on.
+3. **@science-writer: sweep 35, and the extract-class ruling.** Sweeps 33 and 34 closed (science-writer). Sweep 35 keys on the next push and spans v0.65 onward. The founder ruled Option A on 2026-10-19: two fixed scratch names, one dated ledger entry, and no per-sweep bypass. The build seat landed the entry and a transcript sensor at `check-extract-stamp.py`. Sweep 35 commits with the gate on.
 
-3. **@author: the partner-gated tails (AU4) and the software story.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4. The software story reads next at this seat. The section 3.2 fold waits only on the visual pass.
+4. **@author: the partner-gated tails (AU4) and the software story.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4. The software story reads next at this seat. The section 3.2 fold waits only on the visual pass.
 
-4. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12. The PL12 references ruling facts read landed (`84ac158`).
+5. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12. The PL12 references ruling facts read landed (`84ac158`).
 
-5. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate wait on Rod's eye. The section 3.2 fold and the R3 SPEC round wait the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
+6. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate wait on Rod's eye. The section 3.2 fold and the R3 SPEC round wait the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
 
-6. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
+7. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
 
-7. **With the founder.** The bow call closed "up" (2026-10-15): the winner bow read landed at v0.57 (`c825a01`, NR-059 signed `7aaf2ea`), and the settle/run disagreement prints as an instrument finding. The winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome) stay open. The settled-form primer waits on the form sign.
+8. **With the founder.** The bow call closed "up" (2026-10-15): the winner bow read landed at v0.57 (`c825a01`, NR-059 signed `7aaf2ea`), and the settle/run disagreement prints as an instrument finding. The winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome) stay open. The settled-form primer waits on the form sign.
 
-8. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
+9. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
 
-9. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
+10. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
 
 ## The parallel set
 
@@ -163,4 +178,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the fourth closure train runs in order. It takes the caveat lift, the extension §6 insert, the Nomenclature fold with the front-matter bill, then figure numbering. One rebuild lands at the tail. The extract-class ruling landed as Option A. The two reserved names now carry one dated ledger entry and a transcript sensor. Sweep 35 keys on the next push. The partner-gated tails wait on AU4. The software story reads next at the author seat. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** the §6.1 phase-2 pass waits on two founder calls. It cannot run before both land. The author seat rules the gate text first. Then the fourth closure train resumes in order. It takes the caveat lift, the extension §6 insert, the Nomenclature fold with the front-matter bill, then figure numbering. One rebuild lands at the tail. The extract-class ruling landed as Option A. The two reserved names now carry one dated ledger entry and a transcript sensor. Sweep 35 keys on the next push. The partner-gated tails wait on AU4. The software story reads next at the author seat. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
