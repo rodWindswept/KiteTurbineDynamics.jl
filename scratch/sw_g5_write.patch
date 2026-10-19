@@ -1,0 +1,49 @@
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -165,7 +165,7 @@
+ The lowest ring is the ground station power take-off (PTO) ring.
+ The PTO ring anchors the shaft at the ground and turns about its central axis.
+ 
+-Bank is the blade angle away from the ring plane about its chord axis at the ring.
++Bank is the blade angle away from the plane of rotation about its chord axis at the ring.
+ The equivalent term in AeroDyn is pre-cone.
+ 
+ Blade scale sets the blade size.
+@@ -1112,9 +1112,10 @@
+ The ring rotor has no teeter, and neither model carries a flap hinge for it.
+ So the lag on the ring is a ring-and-tether property, not a flap response.
+ 
+-A lag short of 90 degrees turns the tilt azimuth.
+-The bank and steer then act off the intended axis.
+-The tilt gives side force and moment: bank, steer and load relief.
++The tilt azimuth turns whenever the rotor phase lag is not zero.
++The tilt and steer then act off the intended axis.
++If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.
++The tilt gives side force and moment: steer and load relief.
+ This part is still plausible and cheap to study.
+ 
+ The second part is self-lift.
+@@ -1145,7 +1146,7 @@
+ A stiff-mast helicopter swashplate on a TRPT rotor is the wrong machine.
+ 
+ The test has two legs.
+-First, can one-per-rev cyclic pitch on a TRPT rotor give useful bank and steer authority with no bending-capable shaft?
++First, can one-per-rev cyclic pitch on a TRPT rotor give useful tilt and steer authority with no bending-capable shaft?
+ Second, what Cp cost does any axial component carry?
+ 
+ Close it with an azimuth-resolved BEM on the 50 kW ring rotor.
+@@ -1159,7 +1160,13 @@
+ Report the lift against extracted power at fixed wind.
+ Report the hub moment against the offset of a hub the study would add.
+ Run a lateral-mode check against the existing shaft model.
+-That check supplies the phase lag the sweep varies.
++Check the ring tilt against the rim bridle.
++Until they run, the rotor phase lag stays a free parameter.
++
++A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
++The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
++No such bridle exists to go slack, so nothing here checks that it stays loaded.
++So the bridle rule binds only on a design the genome cannot yet generate.
+ 
+ The repo holds the platform, the shaft model and the BEM.
+ The azimuth term is one addition.
