@@ -22,3 +22,4 @@ ste ledger: cand total=5 per100w=0.41 em_dash=12 cats=[('em_dash', '12'), ('long
 ste: total and per-category hold on all three surfaces
 citation gate: exit 0, 56 cited, every one signed
 pandoc: candidate parses clean
+landed: a9dc348c9c9b8d1310795291d14230c69c5373f9 (origin/bank-derate-cos2p65)
