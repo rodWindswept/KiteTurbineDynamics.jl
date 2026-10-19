@@ -15,9 +15,9 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Live: the section 6.1 phase-2 hold (2026-10-19)
 
-One script waits on two founder calls. The script is `scratch/au_sec61_phase2.py`.
-It is pinned at base `daab5102` (1291 lines, 10,570 words, STE 22 at 0.21).
-The md5 on disk matches the declaration. The draft on disk is still the base.
+One pass waits on two founder calls, and the script on disk is not the text that will run.
+The script is `scratch/au_sec61_phase2.py`, pinned at base `daab5102` (1291 lines, 10,570 words, STE 22 at 0.21).
+The draft on disk is still the base. The block and the line edits are ruled below, at G4.
 
 **The six blocks the pass will print.**
 
@@ -29,31 +29,39 @@ The md5 on disk matches the declaration. The draft on disk is still the base.
 5. The gate block prints after the test list, at 1164.
 6. The script re-declares PRE once and POST once. The word patch re-keys once.
 
-**The gate block, final form.** Five sentences, 65 words, lengths 17 / 4 / 11 / 19 / 14, longest 19, no semicolons, no em dashes. No bold lead: six bolded leads exist in the whole draft, all document-part labels, none between 1100 and 1180.
+**The gate block, final form.** Five sentences, 64 words, lengths 17 / 6 / 11 / 16 / 14, longest 17, no semicolons, no em dashes. No bold lead: six bolded leads exist in the whole draft, all document-part labels, none between 1100 and 1180.
 
 > A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
-> The model remains unbridled. It gives every blade one bank angle, all the way round.
-> No bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
+> The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
+> No such bridle exists to go slack, so nothing here can check that it stays loaded.
 > So the bridle rule binds only on a design the genome cannot yet generate.
 
-**The ruling this desk made, and why the name is not the one the room proposed.**
-"Azimuth-resolved bank" was the title of the old gate. That gate held the windward tip at or above the root plane through the upwind half. Rod inverted it. The tips are held down, on the underside, the concave side of the chord. The science-validator ruled the restraint azimuth-uniform, because thrust acts round the whole turn. So the old name would print on a block that rejects the old rule. `azimuth-resolved` also carries one other sense in the draft, at 1152, where it names the BEM. The block's subject is bridle load, so the closing sentence names that.
+**Two rulings from this desk, and both narrow.**
+
+**The name.** "Azimuth-resolved bank" was the title of the old gate. That gate held the windward tip at or above the root plane through the upwind half. Rod inverted it. The tips are held down, on the underside, the concave side of the chord. The science-validator ruled the restraint azimuth-uniform, because thrust acts round the whole turn. So the old name would print on a block that rejects the old rule. `azimuth-resolved` also carries one other sense in the draft, at 1152, where it names the BEM. The block's subject is bridle load, so the closing sentence names that.
+
+**The scope.** F3's "remains unbridled" and "No bridle exists" both print false. The model carries the lifting bridles as N rope segments at `BRIDLE_EA` 500 kN (`src/initialization.jl:342-359`) and it carries the rim bridle. The draft names both, at 648 and 1143. Only the tether-to-blade set is absent: 986, and `src/aerodynamics.jl:349`. G3 fixes the first absolute. Its second sentence still ends wide, because "no design in this report can check that a bridle stays loaded" covers the bridle sets the model does carry. So the conclusion takes the same scope as its premise: **"so nothing here can check that it stays loaded."** No gate or output in the chain reports bridle tension, so the scoped claim holds. `get_max_rope_tension` counts shaft tethers only.
 
 **The states, measured at this desk with `ste-lint.py`.**
 
 | State | md5 | lines / words | STE | word leg |
 |---|---|---|---|---|
 | F2, carrying the dead name | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223`, 1298 / 10,664 |
-| **F3, the ruled text** | **`9a7a5d17`** | **1298 / 10,664** | **22 / 0.21** | **`a308305d`, 1298 / 10,663** |
+| F3, two false absolutes | `9a7a5d17` | 1298 / 10,664 | 22 / 0.21 | `a308305d`, 1298 / 10,663 |
+| G3, one absolute left | `4b49cfca` | 1298 / 10,667 | 22 / 0.21 | `faf3d9a6`, 1298 / 10,666 |
+| **G4, the ruled text** | **`a825aaef`** | **1298 / 10,663** | **22 / 0.21** | **`c5d1ebda`, 1298 / 10,662** |
 
-Both read long_sentence 3, passive_voice 5, long_paragraph 12, semicolon 0, em dash 0.
-The files are `scratch/au_sec61_f3_candidate.md` and `scratch/au_sec61_f3_word.md`.
-F3 is one substitution from F2: `9a7a5d179b49b3b6ed09cc89995a86d3`, and `a308305d4d579366b01aca79ada2e79e` for the word leg.
+All four read long_sentence 3, passive_voice 5, long_paragraph 12, semicolon 0, em dash 0.
+G4 is one line from G3: `No such bridle exists to go slack, so nothing here can check that it stays loaded.`
+The files are `scratch/au_g4_candidate.md` and `scratch/au_g4_word.md`, both at origin.
+The G3 files are `scratch/av_g3_candidate.md` and `scratch/av_g3_word.md`. They stay as provenance.
 The declared result inside the script, `207bd022` at 1297 / 10,662, is stale. Do not re-open it.
-D2 and F1 are spent. F2 is spent by this ruling.
+F2, F3 and G3 are spent. G4 is the target. D2 and F1 went before them.
 
-**Repairs 1 and 2 were source-forced and are in.** `remains unbridled` keeps the passive count at 5. `is unbridled` costs one STE flag and lifts the score to 23.
-"No bridle exists to go slack" replaces a false claim. Slack is modelled and gated at `src/objective_v10.jl:8`, `src/initialization.jl:1197` and `src/dashboard_v2.jl:536`.
+**The earlier repairs, and what became of them.** `remains unbridled` was chosen to keep the passive count at 5. G4 retires that line, because "carries no tether-to-blade bridle" is active, so the passive count still reads 5 and `is unbridled` would still cost one flag.
+"Nothing in the model can go slack" was false, because slack is modelled and gated at `src/objective_v10.jl:8`, `src/initialization.jl:1197` and `src/dashboard_v2.jl:536`. G4 scopes that claim to the absent bridle.
+
+**Do not run the phase-2 script.** `scratch/au_sec61_phase2.py` still inserts the retired bold rule, `**Azimuth-resolved bank.** The windward blade tip...`, and it declares POST `207bd022` at 1297 / 10,662. Both are dead. G4 exists as a committed candidate pair, not as an in-place script. Write the phase-2 script from the G4 pair before the next run.
 
 **Do not trim, after the pass.** Two lines carry a load a later trim would drop.
 
@@ -69,7 +77,7 @@ D2 and F1 are spent. F2 is spent by this ruling.
 - `genome` has 19 hits. `magnitude`, `roll`, `concave` and `under-side` have 0 each.
 - No plate moves under this plan. Every printed `bank` in the figure set is gene-sense, and the figures seat holds the census.
 
-**Still blocked, on Rod only.** The gate text and the keep-gene or rename-command choice. Nothing runs until both land. Then the science-writer seat re-measures F3, and the aero seat declares the chain.
+**Still blocked, on Rod only.** The gate text and the keep-gene or rename-command choice. Nothing runs until both land. Then the science-writer seat re-measures G4, and the aero seat declares the chain.
 
 ## Open items
 
@@ -284,4 +292,4 @@ D2 and F1 are spent. F2 is spent by this ruling.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the section 6.1 phase-2 hold. The wording is ruled at F3 (`9a7a5d17` to `a308305d`), and the script waits on the two founder calls from Rod. When they land, the science-writer seat re-measures F3 and the aero seat declares it. Then the pass runs and the review copy rebuilds. The value-track close and the partner-gated tails hold.
+**Owner:** @author. **Next action:** the section 6.1 phase-2 hold. The wording is ruled at G4 (`a825aaef` to `c5d1ebda`), and the script waits on the two founder calls from Rod. When they land, the science-writer seat re-measures F3 and the aero seat declares it. Then the pass runs and the review copy rebuilds. The value-track close and the partner-gated tails hold.
