@@ -570,3 +570,12 @@ v7 (2026-10-18): the house-vocabulary swap lands (author).
 The ladder-embed sentence reads the pipeline.
 The value-claims-ledger row mirrors the sentence.
 The draft ticks to v0.65.
+
+v8 (2026-10-19): the formula typesetting lands (author).
+
+The four formula sites print as display math.
+The sites read the rotor sizing at section 2.1, the crossing limit at section 2.2 and the objective score at section 2.4.
+The projection factor prints as `f_proj`, so it cannot read as the score `f`.
+The stationarity add-on prints as its own display, because NR-046 signs it apart from the three-penalty score.
+No number and no citation moves, and the citation gate still reads 56 cited.
+The draft ticks to v0.66.

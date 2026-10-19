@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.64. Date 2026-10-18.
+Internal engineering report. Draft v0.66. Date 2026-10-19.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -176,11 +176,13 @@ The power sizing sets that radius for the rotor at its local wind speed (NR-050)
 That radius is not the ring radius.
 The ring radius `r_hub` is a separate structural gene.
 The blade radius `r_rotor` is the aerodynamic size the blade spans from.
-The power sizing inverts the power equation: `r_rotor = sqrt(P / (f Cp 0.5 rho pi v^3))` (NR-050).
+The power sizing inverts the power equation (NR-050):
+
+$$r_{\mathrm{rotor}}=\sqrt{\frac{P}{f_{\mathrm{proj}}\,C_{p}\,0.5\,\rho\,\pi\,v^{3}}}$$
 
 P reads the rotor power share and v the local wind speed at the ring.
 Cp reads the blade-element table coefficient at the sizing tip-speed ratio.
-f reads the bank-and-elevation projection factor.
+$f_{\mathrm{proj}}$ reads the bank-and-elevation projection factor.
 The winner decode reads r_rotor 2.434 m (NR-050).
 
 The search treats each of these as a gene.
@@ -264,7 +266,11 @@ The evaluator names two scoring quantities.
 P_score reads the tail-5 power, the mean of the last five seconds of the window (NR-046, NR-041).
 The draft prints it as the end power.
 The twist ratio reads the absolute segment twist divided by the crossing limit, the worst segment over the window (NR-046).
-The crossing limit reads `δα* = 2 asin(L_seg / sqrt(2 (L_seg^2 + 2 r_seg^2)))` with r_seg the larger of the two ring radii at the segment (NR-053).
+The crossing limit reads (NR-053):
+
+$$\delta\alpha^{*}=2\arcsin\left(\frac{L_{\mathrm{seg}}}{\sqrt{2\left(L_{\mathrm{seg}}^{2}+2r_{\mathrm{seg}}^{2}\right)}}\right)$$
+
+The term $r_{\mathrm{seg}}$ reads the larger of the two ring radii at the segment.
 
 ### 2.3 The operating point and load selection
 
@@ -414,8 +420,13 @@ The penalty charges read in kg-equivalent.
 The score builds along one chain.
 The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
 The score adds three soft constraint penalties to the airborne mass (NR-046):
-`f = mass + 5.0 * max(P_score - 5.0, 0)^2 + 20.0 * (2.5 / FoS_min)^2 + 1.0 * (r / (1 - r))^2`
-with `r = min(twist_ratio, 1)`, plus the stationarity add-on `10.0 * max(0, swing - 0.20)`.
+
+$$f=\mathrm{mass}+5.0\max\left(P_{\mathrm{score}}-5.0,\,0\right)^{2}+20.0\left(\frac{2.5}{\mathrm{FoS}_{\min}}\right)^{2}+1.0\left(\frac{r}{1-r}\right)^{2}$$
+
+The ratio reads $r=\min\left(\mathrm{twist\_ratio},\,1\right)$.
+The score then adds the stationarity add-on (NR-046):
+
+$$10.0\max\left(0,\,\mathrm{swing}-0.20\right)$$
 
 The over-power charge reads P_score, the end power, against the 5.0 kW ceiling (NR-046).
 The utilisation charge reads the window-minimum factor of safety against the 2.5 floor (NR-046).
@@ -1021,7 +1032,7 @@ matches and the mismatches. Each dataset carries its era, its commits
 and its geometry fingerprint.
 
 The ladder instrument screens each rung and each length on the corrected
-model. The register, the test suite and the seat checks hold every
+model. The register, the test suite and the pipeline hold every
 number. Findings, corrections and retractions stay in the record with
 their lessons.
 
