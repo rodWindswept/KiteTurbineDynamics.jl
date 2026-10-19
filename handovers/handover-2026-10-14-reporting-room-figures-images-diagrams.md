@@ -1,7 +1,7 @@
 # Handover: the figures-images-diagrams seat, KTD reporting room
 
-**Date:** 2026-10-14. **From:** @fig-img-diagrams. **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat, the convergence build and its counter-read closures (2026-10-15), and the scaling-ladder stage (2026-10-16).
+**Date:** 2026-10-19. **From:** @fig-img-diagrams. **To:** the successor session.
+**Base:** branch `bank-derate-cos2p65`. Fetch first and read the tip. This page refreshed in the fetch-first form. This refresh records the corner-grid closures (the register read at `7e68f0e` and the v0.51 copy counter-read at `ed95cf1`), the corner-machines fold at draft v0.51, the relabel closures, the term gate, the counter-reads, the cite fixes, the placement label re-cut, the fidelity band merge, the convergence seat, the convergence build and its counter-read closures (2026-10-15), the scaling-ladder stage (2026-10-16), and the figures-side reading of the §6.1 phase-2 hold (2026-10-19).
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -17,20 +17,39 @@ folders under `docs/reporting/figures/`. Any render or pin move takes a fresh
 F-VALUE counter-read by the aero seat. Any text or cite change takes the F-LABEL
 re-walk.
 
+## Live: the section 6.1 phase-2 hold (2026-10-19)
+
+Two items gate this pass. The first is the repair-3 line from @author. The second is two founder calls from Rod. One call is the gate text. The other is the choice between keeping the gene name and renaming the command.
+
+The script `au_sec61_phase2.py` is pinned at base `daab5102`. That base reads 1291 lines and 10,570 words at STE 22 per 0.21. The queue page records three measured candidates. D2 is `0b9d09bd` at 1299 and 10,667. F1 is `01e2ec9f` at 1298 and 10,664 with STE 23. F2 is `559ce2dc` at 1298 and 10,665 with STE 22.
+
+The queue names F2 the declared candidate, with word leg `e76c8223` at 1298 and 10,664. The declared result in the script reads `207bd022` at 1297 and 10,662. That result is stale. The 1118 drop and the gate rewrite moved both counts. The queue page is `21112da` with blob `0947ffc1`. Local equals origin.
+
+The figures-side facts a successor must not re-derive:
+
+- **No plate moves under the six-block plan.** Every printed "bank" in the figure set is gene-sense. Two panel titles at `pca-atlas.py:72-73` read `x7 bank_top (°)` and `x8 bank_bottom (°)`, drawn through `set_title` at `:229`. The drawing carries the leader `three blades, bank 7.088°` at `system-anatomy/system-anatomy.tex:77`. Three captions carry the word: `machine-winner-hero/captions.md:25`, `system-anatomy/captions.md:36` and `pca-landscape/captions.md:33`. The hit at `pca-atlas/captions.md:36` sits inside the `bankderate2` path.
+- **The rename cost is asymmetric, and the figures set is the reason.** A gene rename re-renders two plates and moves three captions and both label-ledgers. The drawn geometry changes by no pixel. A command rename costs prose lines only. The recommendation of this seat stands.
+- **The tip-down sense has three supports and no printed home.** Three plates place the outer end down the shaft toward the lower rings, from `tandeg(abs(bank))`. The sites are hero `262-263` and `282-283`, evolution strip `199-200` and `212-213`, and corner grid `209-210` and `222-223`. `src/objective_v6.jl:8` says "banked downward toward the next ring", and line `:31` says "blade bank angle toward next ring (5-25)".
+- **The machine has a side and the genome has none.** `src/bem.jl:149` and `src/ring_forces.jl:235` both take `cosd(bank)^2.65`, which is magnitude only and sign-blind. A 168 clause would be a seventh block and one re-measure. The direction must read as geometry, down-shaft toward the next ring. It must never read "away from the wind", because the shaft is inclined.
+- **The verb at 168 comes from the draft.** `magnitude` has 0 hits. `sign` and `signed` have 8, all register-sense. `chooses` at 1097 is the verb. "Carries the angle as a magnitude" would coin a term. "Carries no sign" would collide with the ledger register.
+- **One echo to align in the same pass, and it is not printed.** `figures/figure-generation-notes.md:62` calls the same gene the coning angle out of the ring plane. That is a third name for one quantity, in the file the next drawer reads first. Align it to whatever 168 takes.
+
 ## Open items
 
-1. **The visual pass by Rod.** The winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The corner grid's pass reads clean, its fold lands and its reads close (draft v0.51, map v42 and v43). The plates carry the round-6 top forms and the relabel. Row 4 carries
+1. **The section 6.1 phase-2 hold (above).** The contribution of this seat is spent and unruled. It holds the plate census, the rename cost, and the 168 direction clause with its two forms. The figure-convention form is ready. The machine-practice form needs confirmation from Rod that the flown blades are held down. Next come the repair-3 line from @author, the two calls from Rod, and the declaration from @aero-validator. No figure work waits on this seat, and nothing renders until the pass runs.
+
+2. **The visual pass by Rod.** The winner plate, the F1 plate and rows 4 to 7 read the visual pass as their next gate (map v38 to v41). The corner grid's pass reads clean, its fold lands and its reads close (draft v0.51, map v42 and v43). The plates carry the round-6 top forms and the relabel. Row 4 carries
 the placement re-cut: the counter-read closes (`8e33253`, 35 checks).
 Next: the visual pass by Rod, then the fold. The winner plate reads §3.3, ahead of the plates. It moves earlier in one line if the room calls.
 
-2. **The convergence two-panel build (row 16).** The build lands at
+3. **The convergence two-panel build (row 16).** The build lands at
 map v48: the generator (`0db99ac`) and the kit
 `docs/reporting/figures/convergence/`. The in-script set reads 22
 checks, 0 fail, and F-REPRO holds across three locations. The
 counter-reads close clean (the aero F-VALUE and the register read).
 Next: the visual pass by Rod.
 
-3. **The scaling-ladder stage (the close candidate).** The kit lands at
+4. **The scaling-ladder stage (the close candidate).** The kit lands at
 `docs/reporting/figures/scaling-ladder/` (generator `4ebc385`; map row
 24, delta v50). The in-script set reads 14 checks, 0 fail, and F-REPRO
 holds across three locations. Next: the counter-reads, then the visual
@@ -189,4 +208,4 @@ pass by Rod, then the fold.
   to Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the visual pass by Rod (the winner plate, the F1 plate, rows 4 to 7 and the convergence figure). The scaling-ladder stage reads its counter-reads next.
+**Owner:** @fig-img-diagrams (figures-images-diagrams). **Next action:** the section 6.1 phase-2 hold. No figure work waits on this seat. Nothing renders until the repair-3 line from @author and the two founder calls from Rod land. Then @aero-validator declares F2 (`559ce2dc` to `e76c8223`). After that comes the visual pass by Rod on the winner plate, the F1 plate, rows 4 to 7 and the convergence figure. The scaling-ladder counter-reads follow.
