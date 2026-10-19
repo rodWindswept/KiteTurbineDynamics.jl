@@ -15,73 +15,65 @@ The parallel work is the audits and the extracts the other seats run.
 
 ## Live: the section 6.1 phase-2 hold (2026-10-19)
 
-One pass waits on two founder calls, and the script on disk is not the text that will run.
-The script is `scratch/au_sec61_phase2.py`, pinned at base `daab5102` (1291 lines, 10,570 words, STE 22 at 0.21).
-The draft on disk is still the base. The block and the line edits are ruled below, at G4.
+One apply releases the run, and it is a patch, not a rebuild.
+The base is `daab5102` (1291 lines, 10,570 words, STE 22 at 0.21).
+The patch is `scratch/au_g6_final.patch`, four hunks, and it lands `5108e6d1` at 1299 / 10,674.
+Nothing else in my lane moves until it applies.
 
-**The six blocks the pass will print.**
-
-1. `The bank and steer then act off the intended axis.` (1116) takes `tilt and steer`. The authority question at 1148 takes the same pair.
-2. The list item at 1117 drops. The line reads "The tilt gives side force and moment: steer and load relief."
-3. 1107 takes no defining clause. The clause leaves the plan.
-   Base numbers hold below 1115 only. The pass adds one line at 1115, so later numbers move by one. The quoted text decides.
-4. 168 takes `plane of rotation` in place of `ring plane`.
-5. The gate block prints after the test list, at 1164.
-6. The script re-declares PRE once and POST once. The word patch re-keys once.
-
-**The gate block, final form.** Five sentences, 64 words, lengths 17 / 6 / 11 / 16 / 14, longest 17, no semicolons, no em dashes. No bold lead: six bolded leads exist in the whole draft, all document-part labels, none between 1100 and 1180.
+**The block, as ruled at G5.** Five sentences, 63 words, lengths 17 / 6 / 11 / 15 / 14, longest 17, no semicolons, no em dashes. No bold lead: six bolded leads exist in the whole draft, all document-part labels, none between 1100 and 1180.
 
 > A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
 > The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
-> No such bridle exists to go slack, so nothing here can check that it stays loaded.
-> So the bridle rule binds only on a design the genome cannot yet generate.
+> No such bridle exists to go slack, so nothing here checks that it stays loaded.
+> So the tether-to-blade rule binds only on a design the genome cannot yet generate.
 
-**Two rulings from this desk, and both narrow.**
+**Two rulings at this desk after G5, and each is one word.**
 
-**The name.** "Azimuth-resolved bank" was the title of the old gate. That gate held the windward tip at or above the root plane through the upwind half. Rod inverted it. The tips are held down, on the underside, the concave side of the chord. The science-validator ruled the restraint azimuth-uniform, because thrust acts round the whole turn. So the old name would print on a block that rejects the old rule. `azimuth-resolved` also carries one other sense in the draft, at 1152, where it names the BEM. The block's subject is bridle load, so the closing sentence names that.
+**The boundary.** Section 6.1 uses bare "the bridle" for two members 25 lines apart. At 1143, "A ring rotor would take the tilt reaction through its rim bridle." The block's closing sentence read "the bridle rule", so the nearest antecedent was the rim bridle, and that prints false against 1163, "Check the ring tilt against the rim bridle", which is a runnable item on the current design. The science-validator found it and the figures seat measured two candidates. This seat rules **`the tether-to-blade rule`**. It repeats the compound the block uses twice, at 1166 and 1167, and 986 before them. It cannot be read as the rim bridle, and it names the member the rule is scoped to. `the tip-down rule` was the other candidate and it loses: it names the rule after its geometry, and `tip` carries 15 hits, six of them tip-speed.
 
-**The scope.** F3's "remains unbridled" and "No bridle exists" both print false. The model carries the lifting bridles as N rope segments at `BRIDLE_EA` 500 kN (`src/initialization.jl:342-359`) and it carries the rim bridle. The draft names both, at 648 and 1143. Only the tether-to-blade set is absent: 986, and `src/aerodynamics.jl:349`. G3 fixes the first absolute. Its second sentence still ends wide, because "no design in this report can check that a bridle stays loaded" covers the bridle sets the model does carry. So the conclusion takes the same scope as its premise: **"so nothing here can check that it stays loaded."** No gate or output in the chain reports bridle tension, so the scoped claim holds. `get_max_rope_tension` counts shaft tethers only.
+**The direction.** The figures seat withdrew the machine-practice form, because 1166 already states it in words, and left a figure-convention sentence at 168. This seat takes that sentence and rules the verb. **"The machine plates show the blade leaning downward, toward the ring below."** `draw` is the wrong verb: the draft uses it five times, four for a gene drawn at random and one for drawn power, and never for a figure. The report's figure verbs are `shows` ("The strip shows built geometry and the search objective only") and `reads` for a value ("The panel reads three lines and six rings"). `The figures` would also over-claim: nine figures ship and three draw the lean, and those three are the `machine-` slugs, hero, strip and corner grid. The plate source agrees: `tandeg(abs(bank))` at 262-263, inner end at `+shaft*din`, outer at `-shaft*dout` at 282-283.
 
 **The states, measured at this desk with `ste-lint.py`.**
 
-| State | md5 | lines / words | STE | word leg |
-|---|---|---|---|---|
-| F2, carrying the dead name | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223`, 1298 / 10,664 |
-| F3, two false absolutes | `9a7a5d17` | 1298 / 10,664 | 22 / 0.21 | `a308305d`, 1298 / 10,663 |
-| G3, one absolute left | `4b49cfca` | 1298 / 10,667 | 22 / 0.21 | `faf3d9a6`, 1298 / 10,666 |
-| **G4, the ruled text** | **`a825aaef`** | **1298 / 10,663** | **22 / 0.21** | **`c5d1ebda`, 1298 / 10,662** |
+| State | md5 | lines / words | STE |
+|---|---|---|---|
+| G4, the can-check text | `a825aaef` | 1298 / 10,663 | 22 / 0.21 |
+| G5, the can-grade dropped | `6d047d73` | 1298 / 10,662 | 22 / 0.21 |
+| G6a, boundary only | `847baa7c` | 1298 / 10,662 | 22 / 0.21 |
+| **G6, both** | **`5108e6d1`** | **1299 / 10,674** | **22 / 0.21** |
 
-All four read long_sentence 3, passive_voice 5, long_paragraph 12, semicolon 0, em dash 0.
-G4 is one line from G3: `No such bridle exists to go slack, so nothing here can check that it stays loaded.`
-The files are `scratch/au_g4_candidate.md` and `scratch/au_g4_word.md`, both at origin.
-The G3 files are `scratch/av_g3_candidate.md` and `scratch/av_g3_word.md`. They stay as provenance.
-The declared result inside the script, `207bd022` at 1297 / 10,662, is stale. Do not re-open it.
-F2, F3 and G3 are spent. G4 is the target. D2 and F1 went before them.
+All four read long_sentence 3, passive_voice 5, nominalization 1, contraction 1, long_paragraph 12, semicolon 0, em dash 0.
+G5 is one word from G4, `can check` to `checks`. G6a is one word from G5. G6b is one sentence.
+The two late edits sit inside hunks that already exist, at 168 and at 1169, so the patch stays four hunks rather than six.
+F2, F3, G3 and G4 are spent. D2 and F1 went before them.
 
-**The earlier repairs, and what became of them.** `remains unbridled` was chosen to keep the passive count at 5. G4 retires that line, because "carries no tether-to-blade bridle" is active, so the passive count still reads 5 and `is unbridled` would still cost one flag.
-"Nothing in the model can go slack" was false, because slack is modelled and gated at `src/objective_v10.jl:8`, `src/initialization.jl:1197` and `src/dashboard_v2.jl:536`. G4 scopes that claim to the absent bridle.
+**The patches.** `scratch/au_g6_final.patch` applies clean to `daab5102` and lands `5108e6d1`. `scratch/au_g6_boundary.patch` is the same patch without the 168 sentence, landing `847baa7c`, if the founder holds that line. Acceptance is the md5, nothing else. The science-writer seat's `scratch/sw_g5_write.patch` is the write alone and lands `6d047d73`. The candidate files are `scratch/au_g6_final.md`, `au_g6_boundary.md`, `au_g6_168.md`, with the two rejected forms kept as `au_g6_168_fig.md` and `au_g6_sv_tipdown.md`.
 
-**Do not run the phase-2 script.** `scratch/au_sec61_phase2.py` still inserts the retired bold rule, `**Azimuth-resolved bank.** The windward blade tip...`, and it declares POST `207bd022` at 1297 / 10,662. Both are dead. G4 exists as a committed candidate pair, not as an in-place script. Write the phase-2 script from the G4 pair before the next run.
+**Do not run the phase-2 script.** `scratch/au_sec61_phase2.py` still inserts the retired bold rule, `**Azimuth-resolved bank.** The windward blade tip...`, and it declares POST `207bd022` at 1297 / 10,662. Both are dead. Replace it from the ruled text before the next run.
 
-**Do not trim, after the pass.** Two lines carry a load a later trim would drop.
+**Do not trim, after the pass.** Five strings, each one hit in G6.
 
-- 1116, `the tilt and steer`. Once the 1117 item goes, this line is the only statement of the roll axis.
-- The two `so`s in the gate block. Each closes a different premise. Take the second away and the rule reads as enforceable.
+- 1116, `The tilt and steer then act off the intended axis.` Once the 1117 item goes, this is the only statement of the roll axis.
+- `If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.` This is the finding, not a convention.
+- `Until they run, the rotor phase lag stays a free parameter.` It is what stops the gate reading as runnable.
+- The two `so`s in the block. Each closes a different premise. Take the second away and the rule reads as enforceable.
+- `that it stays loaded.` The model break-tests a bridle every step (`src/rope_forces.jl:618-620`), so a later trim to "checks a bridle load" prints false.
 
 **What a successor must not re-derive.** Every item is measured, not argued.
 
-- `ring plane` has one hit, at 168, in the sentence that defines bank. `plane of rotation` has 0. The substitution leaves no orphan term.
-- 986 already carries the absence in the draft's words: "better than the unbridled model assumes... The model does not include it." `unbridled` has one hit.
-- 142 carries the predicate: "A line is a tension member, like a tether or a bridle. It carries a load only in tension." Bridle tension is the checkable quantity, never tip height.
-- `bridl` has six hits and four members: stiffening bridles at 32, lifting bridles at 648, tether-to-blade bridling at 986, rim bridle at 1142. The block names the member, not the family.
-- `genome` has 19 hits. `magnitude`, `roll`, `concave` and `under-side` have 0 each.
-- No plate moves under this plan. Every printed `bank` in the figure set is gene-sense, and the figures seat holds the census.
+- 168 takes `plane of rotation` in place of `ring plane`. `coning` and `ring plane` both read 0 in G6.
+- `bank` stands on 31 lines of G6: 18 gene, 9 physics (the derate and the projection factor), 4 path strings that cannot move (`bankderate2-results`, `bank-derate-cos2p65`). The base carries 33, and the write empties the three command-sense uses. Keep-gene moves 0 lines; a rename moves 18 and leaves 13 standing.
+- `bridl` has six hits and four members: stiffening at 32, lifting at 648, tether-to-blade at 986, rim at 1143. The block names the member, not the family.
+- `genome` has 19 hits. `magnitude`, `roll`, `concave`, `under-side`, `lean` and `next ring` read 0 each.
+- 986 carries the absence in the draft's words: "better than the unbridled model assumes... The model does not include it."
+- 142 carries the predicate: "A line is a tension member, like a tether or a bridle. It carries a load only in tension."
+- No plate moves under this plan. Every printed `bank` in the figure set is gene-sense, and the 168 sentence is prose about the plates, not a plate change.
 
-**Still blocked, on Rod only.** The gate text and the keep-gene or rename-command choice. Nothing runs until both land. Then the science-writer seat re-measures G4, and the aero seat declares the chain.
+**Still blocked, on Rod only.** The apply, and keep-gene or rename-command. The block is blessed and the aero seat has declared it, so the release is the founder's word and nothing in this seat's lane.
 
 ## Open items
 
-1. **The section 6.1 phase-2 hold (above).** My lane is closed on it. The wording is ruled and measured, the script waits on the two founder calls, and no other author work moves until it runs.
+1. **The section 6.1 phase-2 hold (above).** My lane is closed on it. The text is ruled at G6, the patch lands `5108e6d1` in four hunks, and no other author work moves until it applies.
 
 2. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU4.
    The scope statement keeps its one home in the AU1 limits paragraph.
@@ -292,4 +284,4 @@ F2, F3 and G3 are spent. G4 is the target. D2 and F1 went before them.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the section 6.1 phase-2 hold. The wording is ruled at G4 (`a825aaef` to `c5d1ebda`), and the script waits on the two founder calls from Rod. When they land, the science-writer seat re-measures F3 and the aero seat declares it. Then the pass runs and the review copy rebuilds. The value-track close and the partner-gated tails hold.
+**Owner:** @author. **Next action:** the section 6.1 phase-2 hold. The text is ruled at G6 (`daab5102` to `5108e6d1`), the patch is executable and the block is blessed and declared. On Rod's word, apply `scratch/au_g6_final.patch`, check the md5, rebuild the review copy from source, and answer keep-gene or rename-command. The value-track close and the partner-gated tails hold.
