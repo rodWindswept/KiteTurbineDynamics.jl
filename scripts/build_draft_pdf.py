@@ -49,6 +49,7 @@ CHECKER = "scratch/sv_check_draft_citations.py"
 FIG_ROOT = "docs/reporting/figures"
 FIG_MAP = "docs/reporting/figures/figure-map.md"
 OUT_DIR = "scratch/report-pdf-build"
+KATEX_DIR = "docs/reporting/assets/katex"
 
 CSS = """
 @page { size: A4; margin: 20mm 18mm; }
@@ -301,13 +302,33 @@ def build_html(root, args, text, seats, summary):
     intermediate.write_text(text)
 
     html_path = out_dir / "draft.html"
+    # Math route. Source carries LaTeX ($...$ / $$...$$); the build must be told
+    # how to resolve it: without a flag pandoc emits the raw TeX text, so every
+    # formula prints as source and the page reads as code.
+    #   katex  -> TeX-quality typesetting, assets vendored under KATEX_DIR, fonts
+    #             inlined as data URIs so the HTML stays self-contained/offline.
+    #   mathml -> MathML Core, native to Chrome, no JS, but operator spacing is
+    #             looser than TeX (fences around max(...) open up).
+    math_flags = []
+    math_route = "none"
+    katex_dir = (root / args.katex_dir) if args.math == "katex" else None
+    if katex_dir is not None and (katex_dir / "katex.min.css").exists():
+        math_flags = [f"--katex={katex_dir.resolve()}/"]
+        math_route = f"katex ({katex_dir})"
+    elif args.math == "mathml":
+        math_flags = ["--mathml"]
+        math_route = "mathml"
+    elif args.math == "katex":
+        return None, f"katex assets missing under {args.katex_dir}"
     cmd = [
         "pandoc",
         str(intermediate),
         "-s",
-        "--self-contained",
+        "--embed-resources",
+        "--standalone",
         "-t",
         "html5",
+        *math_flags,
         "--css",
         "draft.css",
         "--metadata",
@@ -318,6 +339,7 @@ def build_html(root, args, text, seats, summary):
     _, err, rc = sh(cmd, cwd=root)
     if rc != 0:
         return None, f"pandoc failed:\n{err}"
+    print(f"[math] {math_route}")
 
     pdf_path = out_dir / "draft-live.pdf"
     chrome = "google-chrome" if sh(["which", "google-chrome"], cwd="/")[2] == 0 else "chromium"
@@ -448,6 +470,13 @@ def main():
     parser.add_argument("--title", default="The kite turbine: a search over its design space (draft build)")
     parser.add_argument("--no-check", action="store_true", help="skip the citation gate (debug only)")
     parser.add_argument("--route", choices=["html", "latex"], default="html")
+    parser.add_argument(
+        "--math",
+        choices=["katex", "mathml", "none"],
+        default="katex",
+        help="TeX math rendering for the HTML route (default katex, vendored assets)",
+    )
+    parser.add_argument("--katex-dir", default=KATEX_DIR, help="vendored KaTeX asset directory")
     parser.add_argument("--watch", action="store_true", help="rebuild when a source changes")
     parser.add_argument("--interval", type=float, default=3.0, help="watch poll seconds")
     parser.add_argument("--open", action="store_true", help="open the PDF after building")
