@@ -1,7 +1,7 @@
 # Handover: the author seat, KTD reporting room
 
-**Date:** 2026-10-14. **From:** @author. **To:** the successor session.
-**Base:** branch tip `79e75df` on `bank-derate-cos2p65`.
+**Date:** 2026-10-19. **From:** @author. **To:** the successor session.
+**Base:** branch `bank-derate-cos2p65`, tip `20669bc`. Fetch first. Every seat pushes to this shared tree.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -13,23 +13,83 @@ the tracker entries, the receipts, and the review-copy rebuilds.
 The draft is a single-writer file. The fold chain stays single-desk.
 The parallel work is the audits and the extracts the other seats run.
 
+## Live: the section 6.1 phase-2 hold (2026-10-19)
+
+One script waits on two founder calls. The script is `scratch/au_sec61_phase2.py`.
+It is pinned at base `daab5102` (1291 lines, 10,570 words, STE 22 at 0.21).
+The md5 on disk matches the declaration. The draft on disk is still the base.
+
+**The six blocks the pass will print.**
+
+1. `The bank and steer then act off the intended axis.` (1116) takes `tilt and steer`. The authority question at 1148 takes the same pair.
+2. The list item at 1117 drops. The line reads "The tilt gives side force and moment: steer and load relief."
+3. 1107 takes no defining clause. The clause leaves the plan.
+   Base numbers hold below 1115 only. The pass adds one line at 1115, so later numbers move by one. The quoted text decides.
+4. 168 takes `plane of rotation` in place of `ring plane`.
+5. The gate block prints after the test list, at 1164.
+6. The script re-declares PRE once and POST once. The word patch re-keys once.
+
+**The gate block, final form.** Five sentences, 65 words, lengths 17 / 4 / 11 / 19 / 14, longest 19, no semicolons, no em dashes. No bold lead: six bolded leads exist in the whole draft, all document-part labels, none between 1100 and 1180.
+
+> A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
+> The model remains unbridled. It gives every blade one bank angle, all the way round.
+> No bridle exists to go slack, so no design in this report can check that a bridle stays loaded.
+> So the bridle rule binds only on a design the genome cannot yet generate.
+
+**The ruling this desk made, and why the name is not the one the room proposed.**
+"Azimuth-resolved bank" was the title of the old gate. That gate held the windward tip at or above the root plane through the upwind half. Rod inverted it. The tips are held down, on the underside, the concave side of the chord. The science-validator ruled the restraint azimuth-uniform, because thrust acts round the whole turn. So the old name would print on a block that rejects the old rule. `azimuth-resolved` also carries one other sense in the draft, at 1152, where it names the BEM. The block's subject is bridle load, so the closing sentence names that.
+
+**The states, measured at this desk with `ste-lint.py`.**
+
+| State | md5 | lines / words | STE | word leg |
+|---|---|---|---|---|
+| F2, carrying the dead name | `559ce2dc` | 1298 / 10,665 | 22 / 0.21 | `e76c8223`, 1298 / 10,664 |
+| **F3, the ruled text** | **`9a7a5d17`** | **1298 / 10,664** | **22 / 0.21** | **`a308305d`, 1298 / 10,663** |
+
+Both read long_sentence 3, passive_voice 5, long_paragraph 12, semicolon 0, em dash 0.
+The files are `scratch/au_sec61_f3_candidate.md` and `scratch/au_sec61_f3_word.md`.
+F3 is one substitution from F2: `9a7a5d179b49b3b6ed09cc89995a86d3`, and `a308305d4d579366b01aca79ada2e79e` for the word leg.
+The declared result inside the script, `207bd022` at 1297 / 10,662, is stale. Do not re-open it.
+D2 and F1 are spent. F2 is spent by this ruling.
+
+**Repairs 1 and 2 were source-forced and are in.** `remains unbridled` keeps the passive count at 5. `is unbridled` costs one STE flag and lifts the score to 23.
+"No bridle exists to go slack" replaces a false claim. Slack is modelled and gated at `src/objective_v10.jl:8`, `src/initialization.jl:1197` and `src/dashboard_v2.jl:536`.
+
+**Do not trim, after the pass.** Two lines carry a load a later trim would drop.
+
+- 1116, `the tilt and steer`. Once the 1117 item goes, this line is the only statement of the roll axis.
+- The two `so`s in the gate block. Each closes a different premise. Take the second away and the rule reads as enforceable.
+
+**What a successor must not re-derive.** Every item is measured, not argued.
+
+- `ring plane` has one hit, at 168, in the sentence that defines bank. `plane of rotation` has 0. The substitution leaves no orphan term.
+- 986 already carries the absence in the draft's words: "better than the unbridled model assumes... The model does not include it." `unbridled` has one hit.
+- 142 carries the predicate: "A line is a tension member, like a tether or a bridle. It carries a load only in tension." Bridle tension is the checkable quantity, never tip height.
+- `bridl` has six hits and four members: stiffening bridles at 32, lifting bridles at 648, tether-to-blade bridling at 986, rim bridle at 1142. The block names the member, not the family.
+- `genome` has 19 hits. `magnitude`, `roll`, `concave` and `under-side` have 0 each.
+- No plate moves under this plan. Every printed `bank` in the figure set is gene-sense, and the figures seat holds the census.
+
+**Still blocked, on Rod only.** The gate text and the keep-gene or rename-command choice. Nothing runs until both land. Then the science-writer seat re-measures F3, and the aero seat declares the chain.
+
 ## Open items
 
-1. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU4.
+1. **The section 6.1 phase-2 hold (above).** My lane is closed on it. The wording is ruled and measured, the script waits on the two founder calls, and no other author work moves until it runs.
+
+2. **The partner-gated tails.** The section 4.1 path table and the 4.3 tables wait on AU4.
    The scope statement keeps its one home in the AU1 limits paragraph.
    The twist-prose basis fold waits on the floor row.
    The "Fifteen of eighteen" line moves with the PL12 pass on @hermes facts.
 
-2. **The era pack, the remainder.** The pack blocks fold at `c9f0560`, and the era map at `34e3f81` (AU7).
+3. **The era pack, the remainder.** The pack blocks fold at `c9f0560`, and the era map at `34e3f81` (AU7).
    The development-history chapter push reads next.
 
-3. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
+4. **The Nomenclature fold.** The term gate cleared (`cadf83d`). The fold runs with the lead and the science-writer seat.
 
-4. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
+5. **The review copy.** Rebuild `draft-live.docx` after every draft-moving pass.
    Verify the build record, the seat count and the version pin.
    Name the delta from the copy the founder holds.
 
-5. **The value-track close.** The close supply hands to the science-writer prose pass (`scratch/au_v058_close_supply.md`). The fold waits on that pass. The ladder plate folds into the close after its read closes (counter-reads: aero, science). The caption pass lands (`docs/reporting/figures/scaling-ladder/captions.md`).
+6. **The value-track close.** The close supply hands to the science-writer prose pass (`scratch/au_v058_close_supply.md`). The fold waits on that pass. The ladder plate folds into the close after its read closes (counter-reads: aero, science). The caption pass lands (`docs/reporting/figures/scaling-ladder/captions.md`).
 
 ## Closed, last (evidence index)
 
@@ -224,5 +284,4 @@ The parallel work is the audits and the extracts the other seats run.
 
 - Route findings through the room and the receipts. Do not post to the Signal Note to Self channel (TEAM_CHARTER section 4).
 
-**Owner:** @author. **Next action:** the rebuild verification once the lead lands the v0.65 rebuild.
-The value-track close and the partner-gated tails hold.
+**Owner:** @author. **Next action:** the section 6.1 phase-2 hold. The wording is ruled at F3 (`9a7a5d17` to `a308305d`), and the script waits on the two founder calls from Rod. When they land, the science-writer seat re-measures F3 and the aero seat declares it. Then the pass runs and the review copy rebuilds. The value-track close and the partner-gated tails hold.
