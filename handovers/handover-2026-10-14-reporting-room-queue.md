@@ -4,6 +4,7 @@
 **Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
 **Updated** 2026-10-15 for the second closure train through v0.56 — the rope-break placement fix, the operating-point and torsion fold, the reject split and item-2.1 environment set, the convergence row-16 build and its counter-reads, and the era pack. Draft v0.56. The review copy reads md5 `5ecee42e…`.
 **Updated** 2026-10-19 for the third closure train through v0.65 — the winner bow read, the six-class fold, the FEEDBACKBOT1 pair re-cuts, the B-20/B-21 and A-10 to A-19 prose passes, the house-vocabulary swap, sweeps 33 and 34, the levers re-freeze, the re-stamp and the rebuild. Draft v0.65. The review copy reads md5 `80e01b5d…`.
+**Updated** 2026-10-19 for the fourth closure train. The potential-extension section takes §6. Four draft passes run in one train. One rebuild lands at the tail. The section count moves to nine.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -65,11 +66,31 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The third closure train lands through v0.65. The winner bow read closes (v0.57, `c825a01`): the section 3.3 block takes the NR-059 values and the settle/run disagreement prints as an instrument finding. The close and caption passes land through v0.60 (`ef07533`) with the scaling-ladder embed. The six-class fold lands (v0.61, `ff60775`): sections 3.1 and 5 read 30 rope breaks and two hub divergences on NR-061. The FEEDBACKBOT1 pair re-cuts land (v0.62, `e7f68a9`) — the ring-utilisation linear axis and the twist-limit FoS gate. The B-20/B-21 prose pass lands (v0.63, `3290876`) — section 2 gains the decoder and gate math. The A-10 to A-19 prose pass lands (v0.64, `de18442`) — the paragraphs group and the abstract and summary split roles. The house-vocabulary swap lands (v0.65, `a9dc348`) — the ladder-embed sentence and the ledger row read "the pipeline". Sweeps 33 and 34 close (science-writer). The levers re-freeze lands at `0d9001e4` (`c27b677`, break commits `f7de920` and `646cddf`) and the freeze-check instrument pins the pre-break source to `c27b677^` (`5bcb9b9`). The re-stamp re-pins the scaling-ladder ledger to the swap blob (`c0e72f2`). The rebuild lands (`ccbad80`) — DOCX md5 `80e01b5d…`, PDF `7bbe4dff…`, 9/9 seats, 56 cited every one signed. The D4 fold lands (`66060fd`). Register `3407925` (63 signed). Draft v0.65 at `a9dc348`. Review copy md5 `80e01b5d…`.
 
+- The extension section is accepted as §6. It is new prose. The draft reads 9,371 words with `cyclic` 0, `swashplate` 0, `LCOE` 0 and `FMEA` 0. The insert is renumber-safe by measure, not by assumption. All 14 numeric section cross-references point at §2.2 to §4.3. No reference names §6, §7 or §8. The last figure marker sits at line 1037, above the §5/§6 seam at 1053/1054. Nomenclature moves to §7, References to §8 and Data availability to §9.
+
+- The §6.1 claim takes a signed ledger row (`af170a4`, section 2a, `capability` class). The row pins to `coax@2e1b1e1:src/bem.jl`. It cites one scalar pitch term at line 133. It cites the RPM solved at zero net aerodynamic torque at line 194. The check resolves the external pointer and reads 45 checks, 0 fail.
+
+- The §6.2 economics corner prints no value. The ledger holds the grounded-economics v13 5 kW readings (line 98). It also holds the April kit estimates (line 99). The numbers register carries zero LCOE rows. The item poses the 10, 50 and 500 kW crossover. It names a fresh read and a signed row as the enabling step.
+
+- The §6.3 item points at the Daisy FMEA and fault tree in `DaisyKiteTurbineControl`, no number attached, `capability` class.
+
 ## Open queue, in fold order
 
-1. **@science-writer: sweep 35, and the extract-class ruling.** Sweeps 33 and 34 closed (science-writer). Sweep 35 keys on the next push and spans v0.65 onward. The one open decision at this seat is the extract-class question, riding the sweep-33 and sweep-34 receipts: pin the sweep extract pair to two reserved scratch names and add those paths to `.ste-exempt` once (Option A, with @aero-validator's conditions), or keep the per-sweep `--no-verify` disclosure (Option B). Waits the founder's ruling.
+1. **The fourth closure train (accepted 2026-10-19, fold order).** Four draft passes, one rebuild at the tail.
 
-2. **@hermes (lead) + @science-writer: the Nomenclature fold.** Section 6 is the last pending section. The term gate cleared (`cadf83d`). The glossary ratification has not landed. The abstract and the keywords read written.
+   (a) **@science-writer: the caveat lift.** Anchor to @science-validator's signed-verdict set, not token hits. Section 3.2 carries six cited score rows and no verdict sentence. The signed register line reads "P_mean and P_end agree below 0.5 per cent at every row". The NR-041 band reads 8.9475 to 8.9511. Both have zero draft surface today.
+
+   (b) **@science-writer + @author: the extension section as §6.** The shell reads `scratch/sw_ext_section_shell.md`, md5 `75e792d9…`, 772 words, 101 lines, STE 0.00/100w. Four §6.1 corrections from @aero-validator fold before print. First, the TRPT thrust-cost replaces the generic CP claim. Second, the two duties trade on one curve rather than reading as exclusive. Third, the teeter hub is separated from the per-revolution pitch linkage. Fourth, "the azimuth term is the one addition" replaces "the repo holds every tool". @author writes the bridge out of §5 and the transition into §7. The order reads model, market, operations. Every item states the question in the negative. No chart is implied. No value token prints.
+
+   (c) **@hermes + @science-writer: the Nomenclature fold to §7, plus the front-matter bill.** @author's three lines change on the same commit: the line 10 section count, the line 11 incomplete-note and the line 12 `[PENDING]` legend. The final value of line 10 is written at the settled section count, after the fold, not before it.
+
+   (d) **@fig-img-diagrams + @author: figure numbering.** Captions take `Figure N — <title>` on the `Caption` style. The roster row moves to the appendix. The appendix Exhibit cell gains `Figure N` in place. The build-side style mapping is mine. @author's `see Figure N` calls stay outside the levers span, lines 750 to 792.
+
+   (e) **@hermes: one DOCX/PDF rebuild at the tail**, off-peak. The gate re-arms at the last pass, not the first.
+
+   Train constraints: never edit inside the marker-bounded levers block. @aero-validator checks the region md5 against the block after each draft-moving commit. @author's `sw_refreeze_check.py` run closes. The heading-resolve baseline is measured once, after (b) and (c) land. It is then pinned for the rebuild.
+
+2. **@science-writer: sweep 35, and the extract-class ruling.** Sweeps 33 and 34 closed (science-writer). Sweep 35 keys on the next push and spans v0.65 onward. The one open decision at this seat is the extract-class question, riding the sweep-33 and sweep-34 receipts: pin the sweep extract pair to two reserved scratch names and add those paths to `.ste-exempt` once (Option A, with @aero-validator's conditions), or keep the per-sweep `--no-verify` disclosure (Option B). Waits the founder's ruling.
 
 3. **@author: the partner-gated tails (AU4) and the software story.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4. The software story reads next at this seat. The section 3.2 fold waits only on the visual pass.
 
@@ -132,4 +153,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the extract-class ruling (Option A or B) from the founder, then sweep 35 at the science-writer seat (keys on the next push). The Nomenclature fold (section 6) lands with the lead and the science-writer seat — it is the last pending section. The partner-gated tails wait on AU4. The software story reads next at the author seat. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** the fourth closure train runs in order. It takes the caveat lift, the extension §6 insert, the Nomenclature fold with the front-matter bill, then figure numbering. One rebuild lands at the tail. The extract-class ruling (Option A or B) still waits the founder. Sweep 35 keys on the next push. The partner-gated tails wait on AU4. The software story reads next at the author seat. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
