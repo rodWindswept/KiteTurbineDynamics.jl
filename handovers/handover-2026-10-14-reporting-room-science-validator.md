@@ -9,7 +9,7 @@
 **Updated** 2026-10-18 for the NR-046 re-pin and the NR-061 six-class split sign.
 **Updated** 2026-10-18 for the register display round (19 rows print at four significant digits).
 **Updated** 2026-10-18 for the NR-062 and NR-063 signs (the fig Batch B metric lists).
-**Updated** 2026-10-19 for the section 6.1 phase-2 hold and the G3 candidate.
+**Updated** 2026-10-19 for the section 6.1 phase-2 hold and the G5 candidate.
 
 This page holds the rotation insurance for this seat. It is an index, not a retelling.
 The receipts carry the story.
@@ -20,20 +20,26 @@ The receipts carry the story.
 `daab51024fbb84460a695de3b7481c75`, 1291 lines / 10,570 words. Nothing has
 run against it.
 
-**Measured candidate:** `scratch/av_g3_candidate.md`, md5 `4b49cfca`, 1298
-lines / 10,667 words, STE 22 flags at 0.21 per 100 words (passive 5,
+**Measured candidate:** `scratch/sw_probe_full_G5.md`, md5 `6d047d73`, 1298
+lines / 10,662 words, STE 22 flags at 0.21 per 100 words (passive 5,
 long_sentence 3, nominalization 1, contraction 1, long_paragraph 12,
-semicolon 0, em dash 0). The block reads 5 sentences / 65 words. Word leg
-`scratch/av_g3_word.md`, md5 `faf3d9a6`, 1298 / 10,666. Both files are at
-origin; `scratch/av_g3_verify.py` rebuilds G3 from the F3 pair and
-`scratch/av_g3_wordleg.py` rebuilds the word leg, both with reverse checks.
+semicolon 0, em dash 0). The block reads 5 sentences / 63 words. Word leg
+`scratch/sw_probe_full_G5_word.md`, md5 `fa851bc0`, 1298 / 10,661.
+`scratch/sw_g5_wordleg.py` rebuilds it with a reverse check. F3 `9a7a5d17`,
+G3 `4b49cfca` and G4 `a825aaef` are spent. `diff G3 G5` is one line, the
+block's third sentence.
 
-**F3 is dead as a target.** `9a7a5d17` / `a308305d` reproduce, but its two
-absolute sentences print false. The model carries bridle rope segments from
-the lift bearing to the hub-ring vertices (`src/initialization.jl:342-359`,
-`BRIDLE_EA` 500 kN at 318), and `src/aerodynamics.jl:349` says only the
-blade bridle lines are absent. G3 scopes both sentences to the
-tether-to-blade set and binds them to 986.
+**The state chain.** F3 is dead: its two absolutes print false against the
+bridle segments at `src/initialization.jl:342-359` (`BRIDLE_EA` 500 kN at
+318) and `src/aerodynamics.jl:349`, which says only the blade bridle lines
+are absent. G4 is dead too: "nothing here can check" prints false because
+`src/rope_forces.jl:342` iterates every sub-segment,
+`get_subsegment_tension` runs at `:404-412`, and the bridle break test runs
+each step at `:618-620` against `ROPE_BREAK_STRAIN` 0.035 (`:89`). G5 keeps
+the capability word out. Its claim is true: no gate covers a bridle segment.
+`get_max_rope_tension` loops only the shaft tethers at `:173-190`, gates 4
+and 6b read `cumulative_thrust` at `src/objective_v10.jl:634-666`, and no
+output column carries bridle tension.
 
 **The candidate's hunks, from `diff base candidate`.** The diff is the
 authority; the room's line numbers refer to different states.
@@ -50,7 +56,16 @@ authority; the room's line numbers refer to different states.
 - 1162-1164: `That check supplies the phase lag the sweep varies.` to
   `Check the ring tilt against the rim bridle.` / `Until they run, the rotor
   phase lag stays a free parameter.`
-- 1166-1169: the four-line bridle block.
+- 1166-1169: the four-line bridle block (G5):
+
+  > A tether-to-blade bridle holds the blade tip down, from the underside,
+  > the concave side of the chord.
+  > The model carries no tether-to-blade bridle. It gives every blade one
+  > bank angle, all the way round.
+  > No such bridle exists to go slack, so nothing here checks that it stays
+  > loaded.
+  > So the bridle rule binds only on a design the genome cannot yet
+  > generate.
 
 **Rulings signed at this desk.**
 
@@ -65,7 +80,14 @@ authority; the room's line numbers refer to different states.
 - The condition a future model can check is bridle tension positive round
   the turn, the draft's own tension-member rule at 142-143, never a tip
   height.
-- G3's scoped pair is the only true form. The absolutes in F3 are not.
+- G5 is the true form and its words are load-bearing. `Nothing here checks
+  that it stays loaded` must not shorten to `checks a bridle load`. The
+  solver computes bridle tension (`src/rope_forces.jl:342,404-412`),
+  break-tests it (`:618-620`), the test suite asserts a lifting-bridle
+  tension (`test/test_bearing_alignment.jl:234-237`), and the sizing path
+  returns `min_fos_bridle` (`src/trpt_optimization.jl:778,1086-1101`).
+  None checks that a load persists round the turn. Only `stays loaded` is
+  true.
 - Do not trim the two `so` clauses in the block. Each closes a different
   premise.
 
@@ -104,8 +126,8 @@ The audit checks can fan out to sub-agents when the sections are independent.
 
 ## Open items
 
-1. **The section 6.1 phase-2 run (live section above).** The G3 candidate is
-   measured at `4b49cfca` with word leg `faf3d9a6`. Release waits on two
+1. **The section 6.1 phase-2 run (live section above).** The G5 candidate is
+   measured at `6d047d73` with word leg `fa851bc0`. Release waits on two
    founder calls: bless the bridle block, and keep-gene or rename-command.
    The phase-2 script is stale and must not run.
 
@@ -248,4 +270,4 @@ Earlier close-outs (SV5 to SV7, NR-042 and NR-043, the F1 census reads) sit in
   Self channel (TEAM_CHARTER section 4). The mechanics sit in
   `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-validator. **Next action:** the section 6.1 phase-2 hold is the first item. G3 is measured at `4b49cfca`; release waits on Rod's two calls (bless the bridle block, keep-gene or rename-command). Do not run the stale phase-2 script. Behind it: the draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The fig Batch B metric cards are unblocked. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
+**Owner:** @science-validator. **Next action:** the section 6.1 phase-2 hold is the first item. G5 is measured at `6d047d73` with word leg `fa851bc0`; release waits on Rod's two calls (bless the bridle block, keep-gene or rename-command). Do not run the stale phase-2 script. Behind it: the draft fold for sections 3.1 and 5 waits on the author and hermes. The register Status-column collapse waits on the builder seat. The fig Batch B metric cards are unblocked. The T5-1 and T5-2 rows sign at this desk before the release close-out. The PL12 verification facts stand on request.
