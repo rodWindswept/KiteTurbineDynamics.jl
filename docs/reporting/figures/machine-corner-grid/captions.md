@@ -41,7 +41,7 @@ airborne mass value.
 ## Provenance line
 
 Data commit `dd3cc6a` · extract `corner-grid-extract-2026-10-15-picks` ·
-rows NR-044, NR-051 · script commit `a4b4057` · full record: the
+rows NR-044, NR-051 · script commit `d0e410d` · full record: the
 figure-provenance appendix.
 
 ## Generation note
@@ -51,3 +51,8 @@ the machine-renderer D7 steer (family mode, corner variant, SPEC delta
 D10). The TikZ release backend stays open to the room. Captions and
 stamp stay single-source in this kit. The SVG emits glyph paths, not a
 text layer. The room holds this as an R2 item.
+
+Caption record re-pin (2026-10-20): the provenance line named script commit
+`a4b4057`, the commit that created the script. `d0e410d` changed the script and
+drew the bytes on disk, and the manifest names `d0e410d`. The line now agrees
+with the manifest. Text only, no render moves. (figures seat)

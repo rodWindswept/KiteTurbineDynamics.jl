@@ -61,6 +61,8 @@ INPUT_FIELDS = ("inputs", "extract", "extracts", "capture", "captures")
 
 HEADING_RE = re.compile(r"^## (.+)$", re.M)
 
+PROV_HEAD_RE = re.compile(r"^## .*provenance.*$", re.M | re.I)
+
 HISTORY_LIMIT = 200
 
 
@@ -107,6 +109,41 @@ def script_commit(man):
         return commit
     hit = re.search(r"--script-commit ([0-9a-f]{7,40})", man.get("command", ""))
     return hit.group(1) if hit else None
+
+
+def caption_provenance(kit_dir):
+    """The provenance section of a kit's captions.md, or None when it makes no claim."""
+    path = os.path.join(kit_dir, "captions.md")
+    try:
+        with open(path) as fh:
+            text = fh.read()
+    except OSError:
+        return None
+    head = PROV_HEAD_RE.search(text)
+    if not head:
+        return None
+    rest = text[head.end():]
+    nxt = re.search(r"^## ", rest, re.M)
+    return rest[:nxt.start()] if nxt else rest
+
+
+def prov_script_pin(prov):
+    """The backticked commit in the provenance segment that names the script."""
+    for seg in prov.split("\u00b7"):
+        if "script" not in seg.lower():
+            continue
+        hit = re.search(r"`([0-9a-f]{7,40})`", seg)
+        if hit:
+            return hit.group(1)
+    return None
+
+
+def prov_rows(prov):
+    """The register rows the provenance line claims, or None when it names none."""
+    hit = re.search(r"rows:? ([^\n\u00b7]*)", prov)
+    if not hit:
+        return None
+    return set(re.findall(r"NR-\d+", hit.group(1)))
 
 
 def file_records(obj):
@@ -182,6 +219,21 @@ def main():
                 checks.append((f"{s_path}@{commit}", s_want,
                                hashlib.sha256(got).hexdigest() if got is not None else None,
                                "SCRIPT"))
+
+        prov = caption_provenance(kit)
+        if prov:
+            pin = prov_script_pin(prov)
+            if pin and commit:
+                checks.append(("captions.md script pin", commit[:7], pin[:7], "CAP"))
+            claimed = prov_rows(prov)
+            if claimed is not None:
+                recorded = set()
+                for item in (man.get("registers")
+                             or (man.get("inputs") or {}).get("register_rows") or []):
+                    recorded.update(re.findall(r"NR-\d+", str(item)))
+                checks.append(("captions.md row set",
+                               ",".join(sorted(recorded)) or "-",
+                               ",".join(sorted(claimed)) or "-", "CAP"))
 
         for field in INPUT_FIELDS:
             for rec in file_records(man.get(field)):

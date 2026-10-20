@@ -7,8 +7,8 @@ Site: the report at §3.5, the evolution story. Reading order: seed to the
 campaign winner, left to right, top row then bottom row. The wording comes from
 the figures seat, STE-gate checked, with the 2026-10-12 caption split
 and the 2026-10-14 takeaway rewrite. Values cite
-NR-005, NR-006, NR-011 and NR-036. The geometry source is the signed extract
-`strip-extract-2026-10-09-best-so-far`.
+NR-005, NR-006, NR-011, NR-036, NR-062 and NR-066. The geometry source is the
+signed extract `strip-extract-2026-10-09-best-so-far`.
 
 The split (2026-10-12): the plain and technical captions carry the
 scientific text only. The provenance line carries the audit tokens: data
@@ -67,8 +67,8 @@ three-decimal objective. They are not a measurement.
 ## Provenance line
 
 Data commit `dd3cc6a` · extract `strip-extract-2026-10-09-best-so-far` ·
-rows NR-005, NR-006, NR-011, NR-036 · script commit `d0e410d` · full
-record: the figure-provenance appendix.
+rows NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 · script commit `ce9c5d8` ·
+full record: the figure-provenance appendix.
 
 ## Generation note
 
@@ -137,3 +137,12 @@ moved the sized ring mass about 0.03 kg. The corrected winner reads
 0.233 kg of mass, not 0.245 kg. The objective, the power values and
 every other drawn numeral stand. NR-066 needs an amend to the seven
 values. (figures seat)
+
+Caption record re-pin (2026-10-20): the header row list named four rows and the
+provenance line named script commit `d0e410d`, the pre-re-cut pin. The mass and
+power re-cut added NR-062 and NR-066 to the plate, and the manifest, the
+printed footer stamp and the script at `ce9c5d8` all carry six rows and
+`ce9c5d8`. Both lines now agree with the manifest, which is the record the
+appendix derives from. The pin note above describes the state before the
+re-cut and no longer describes this kit. Text only, no render moves. (figures
+seat)

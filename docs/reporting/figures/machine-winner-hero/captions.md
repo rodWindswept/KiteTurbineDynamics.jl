@@ -37,7 +37,7 @@ sits in the footer.
 
 ## Provenance line
 
-Data commit `dd3cc6a` · genome extract `strip-extract-2026-10-09-best-so-far` (row i3-g26-i9) · capture `pair-extract-2026-10-08-winner-ops` · rows NR-011, NR-017, NR-021, NR-022, NR-043 · script commit `c438398` · full record: the figure-provenance appendix.
+Data commit `dd3cc6a` · genome extract `strip-extract-2026-10-09-best-so-far` (row i3-g26-i9) · capture `pair-extract-2026-10-08-winner-ops` · rows NR-011, NR-017, NR-021, NR-022, NR-043 · script commit `d0e410d` · full record: the figure-provenance appendix.
 
 ## Generation note
 
@@ -58,3 +58,8 @@ The SVG emits glyph paths, not a text layer. The PDF chain takes the
 
 The ground-station glyph is schematic and carries no number. The
 lift-chain overlay and the section markers stay absent by declaration.
+
+Caption record re-pin (2026-10-20): the provenance line named script commit
+`c438398`, the PDF normalise fix. `d0e410d` changed the script again and drew
+the bytes on disk, and the manifest names `d0e410d`. The line now agrees with
+the manifest. Text only, no render moves. (figures seat)
