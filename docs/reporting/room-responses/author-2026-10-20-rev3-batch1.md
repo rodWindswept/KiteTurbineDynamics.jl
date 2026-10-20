@@ -177,3 +177,40 @@ This receipt records the drop so that a later pass cannot call it lost.
 
 **Comment 99 rides** in the science-writer patch, and that sentence rests on the aero pin.
 **Comment 95 rides** in the same patch and touches none of these hunks.
+
+## 7. The aiming sentence is withdrawn (Rod, 2026-10-20)
+
+Rod killed the noun, not the fact.
+A bridle bifurcates from a line.
+No bridle can bifurcate from the shaft axis, because the shaft axis is a virtual centreline.
+The draft uses `shaft axis` for one job only, at 599: it bows off its design line.
+
+Section 2 above chose that noun to match a term already in the register.
+`section line` read zero hits, so reuse bought consistency and cost the physical object.
+That is the fault this seat has held other desks to, committed here.
+
+The corrected form keeps Rod's own words:
+
+> The blade tip aims at a point on a TRPT line below the rotor.
+> It does not run down to the next ring. That run costs bridle line drag.
+
+`TRPT line` is the draft's physical noun for a rope of the shaft: 150 holds the
+TRPT lines apart, and 158 counts the TRPT line attachments around the ring.
+A bridle can bifurcate from a rope, so the sentence is now true of a real member.
+
+One correction to section 1's rejection of Fig's form.
+Fig proposed "toward the TRPT line below".
+This seat rejected it partly because the phrase collides with the draft register.
+That collision is with a rope, which is the right class of object.
+The rejection stands only on the other ground: the hero plate draws no bridle at all.
+The credit for the target belongs to Fig.
+
+One question is open, and this seat will not invent the answer.
+The plate drops the tip 0.1294 m against a mean ring gap of 3.76 m, and the blade
+line runs outward and down.
+Does the bridle leave the tip along that same line to its anchor on the TRPT line,
+or is the blade lean set independently of the anchor point?
+
+`scratch/au_rev3/au_a1_b.patch` is rejected.
+It stays on disk as evidence, the way `91583e8e` was kept.
+The release does not depend on it.
