@@ -1,0 +1,11 @@
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -167,7 +167,7 @@
+ 
+ Bank is the blade angle away from the plane of rotation about its chord axis at the ring.
+ The equivalent term in AeroDyn is pre-cone.
+-The machine plates show the blade leaning downward, toward the ring below.
++The machine plates show the blade leaning downward.
+ 
+ Blade scale sets the blade size.
+ The scale multiplies the blade span and chord, and the blade mass follows the span cubed.

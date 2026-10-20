@@ -1,0 +1,10 @@
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1169,6 +1169,7 @@
+ Until they run, the rotor phase lag stays a free parameter.
+ 
+ A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
++It aims at a point on the shaft axis below the rotor, not at the ring, to cut bridle drag.
+ The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round.
+ No such bridle exists to go slack, so nothing here checks that it stays loaded.
+ So the tether-to-blade rule binds only on a design the genome cannot yet generate.
