@@ -111,14 +111,11 @@ def script_commit(man):
     return hit.group(1) if hit else None
 
 
-def caption_provenance(kit_dir):
-    """The provenance section of a kit's captions.md, or None when it makes no claim."""
-    path = os.path.join(kit_dir, "captions.md")
-    try:
-        with open(path) as fh:
-            text = fh.read()
-    except OSError:
+def caption_provenance(data):
+    """The provenance section of a captions.md blob, or None when it makes no claim."""
+    if data is None:
         return None
+    text = data.decode("utf-8")
     head = PROV_HEAD_RE.search(text)
     if not head:
         return None
@@ -220,7 +217,7 @@ def main():
                                hashlib.sha256(got).hexdigest() if got is not None else None,
                                "SCRIPT"))
 
-        prov = caption_provenance(kit)
+        prov = caption_provenance(blob(args.rev, f"{rel_kit}/captions.md"))
         if prov:
             pin = prov_script_pin(prov)
             if pin and commit:
