@@ -1,0 +1,21 @@
+check: rows in the sweep (16 base + 2 repeats): 18  (OK)
+check: base rows at rep 1: 16  (OK)
+check: settle repeat rows: 2  (OK)
+check: distinct hub winds: 16  (OK)
+check: status split (ok, rejected): [7, 9]  (OK)
+check: mass constant across the sweep (kg, 6 dp): [25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468, 25.698468]  (OK)
+check: no ok row below the floor: True  (OK)
+check: every rejected row sits below the floor: True  (OK)
+check: identity row present: 1  (OK)
+check: identity fitness == recorded 27.363541266349: 27.363541266349  (OK)
+check: P_end / v^3 spread across ok rows < 0.5 %: True  (OK)
+check: settle repeat spreads (kW, 9 dp): [0.0, 0.0]  (OK)
+check: v_rated constant (11.0): ['11.000000']  (OK)
+check: h_ref_m constant (9.411699): ['9.411699']  (OK)
+check: k_mppt constant (2.24): ['2.240000']  (OK)
+check: genome hash constant: 1  (OK)
+ledger strings: 35
+outputs sha256: png 07f64820f7571c04dc700d693f892b08c4ac837de84ec9cfb0fc2d43efd3f82d
+                svg 7b13148fc2c26e73efefada20a8f3137de54e4eca63117e1aa660d110d15949e
+                pdf 9fc1f2a3e5066cc0914da178e17685ba8fc4965340d1b4f00d6255ad3392bbe3
+checks: ALL OK
