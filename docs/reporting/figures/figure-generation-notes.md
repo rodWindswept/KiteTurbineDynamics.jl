@@ -258,3 +258,19 @@ consequence
 lesson
 guard now in the code (test file or gate)
 source (DECISIONS.md entry or commit)
+
+Caption rules that bind every plate (2026-10-20)
+
+These rules come from the bridle exchange of 2026-10-20. They bind every plate and every caption.
+
+The word bridle names four objects in this model. They are the stiffening bridle, the lifting bridle, the tether-to-blade bridle, and the rim bridle. A caption must qualify every instance. Use a bare "bridle" only in the sentence that defines the word (draft line 142).
+
+One plate draws a bridle. F1, system anatomy, draws the lifting cone. It labels the cone "lifting bridles (three)" (relabel of 2026-10-15, system-anatomy.py:161-162). The label and the caption carry the qualifier already, so the plate needs no change. No other plate in docs/reporting/figures/ names a bridle. The only other hit is a style comment at elements/ktd-fig-elements.tex:11.
+
+A count of plates must cover every file type. An earlier check of this seat read only .jl files and reported zero plates with a bridle. system-anatomy.py and system-anatomy.tex build F1, so that count missed it.
+
+The 6.1 bridle paragraph is prose only. No plate may add a tether-to-blade bridle to illustrate it. The source puts the two attachment points at 0.49 and 0.21 of span. The hero plate draws neither.
+
+F_bridle in the 33 island-probe logs is the axial component of the lifting-bridle tension. rope_forces.jl:343 sets is_bridle when the rope end sits on the bearing node. This column is not the tether-to-blade bridle. If a plate shows it, the caption must read "lifting bridle".
+
+tilt_deg in the same logs is a diagnostic, not a control input. probe_axial_gap_compare.jl:231 derives it as min(bear_perp x 0.1, pi/6) from the bearing offset. Its values reach 0.05 deg. That range lies inside the 0-10 deg plan band. The value alone cannot separate a diagnostic from a small command. Two rules follow. The report must never quote tilt_deg. If the column ever reaches a plate, the caption must read "bearing-offset diagnostic", not "control input".
