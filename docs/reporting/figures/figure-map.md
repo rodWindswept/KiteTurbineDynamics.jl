@@ -23,8 +23,8 @@ work lands. The commit names the row.
 
 The open slugs carry their own SPECs in this directory: the machine
 renderer set, `ring-utilisation`, `twist-limit`, `k-basis`,
-`eval-timeline`, `pca-landscape` and `pca-atlas`. This map carries the
-full roster around them.
+`eval-timeline`, `power-curve`, `pca-landscape` and `pca-atlas`. This map
+carries the full roster around them.
 
 ## 2. The roster
 
@@ -42,7 +42,7 @@ full roster around them.
 | 10 | 9 | §3.3 | Machine winner and the plan, side, downwind capture set | `machine-winner-hero` | R2 | The winner genome. Makie captures of the recorded final operating pose (the pair-extract capture) | Seated in the draft (§3.3). The v0.41 counter-read closes clean (`0cbb9b8`, 226 checks). The round-6 hub-name re-cut lands (script `1af63fc`). The leader reads "topmost ring R6". The round-6 counter-read closes clean (`3038656`, 136 checks). The title takes the winner form (the founder note 2026-10-15): "hero" stops as a figure label. The winner-form sites take the forms in the draft (v0.49). The aero counter-read closes clean (`79da87c`). Next: the visual pass by Rod |
 | 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
 | 12 | 16 | §4.1 | Fidelity band chart | ⟨tbd⟩ | merged | The fidelity probes. NR-012, NR-013 | Merged into row 4, lane 3 (v46). Lane 3 carries the warm-vs-cold strain evidence, the core evidence of this row. The fix retired the warm false-reject premise (NR-013 ext2). No standalone plate builds. The slot frees. |
-| 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries |
+| 13 | 17 | §4.2 | Failure ledger timeline | ⟨tbd⟩ | proposed | DECISIONS, the git record, the trust log | Track B reconciles the entries. Two entries now hold: the coherence pair and the cartography pair. A pre-fix marker draws hollow with its own label. No line joins it to its corrected twin. |
 | 14 | 7 | §2.3 or §3 | Bank derate curve | ⟨tbd⟩ | candidate | NR-019, NR-020. `10-precone-sweep.csv` | A slot ruling. Park candidate |
 | 15 | 6 | §2.3 | TRPT segment diagram (r1, r2, L, h, Δα, T) | ⟨tbd⟩ | proposed | The src torque law. Harris 2.3 | The 2.3 derivation block and its co-sign |
 | 16 | 8 | §3.2 | Convergence and the status mix (two panels) | `convergence` | R2 | The aero series extract (`scratch/av_conv_series.csv`, `9dd453d`). NR-054 and NR-055. The status mix reads the three island telemetry files (generations 0 to 30) | The build lands (script `0db99ac`): two panels, "first feasibility, then mass", 22 checks, 0 fail, and F-REPRO byte-identical across three locations. The reject labels take the NR-055 forms. The counter-reads close clean: F-VALUE PASS (`24111e5` + `7956a39`, 39 + 2 checks) and the register read (`1b09190` + `c15af17`, 97 checks). Next: the visual pass by Rod, then the fold |
@@ -57,6 +57,8 @@ full roster around them.
 | 25 | ⟨tbd⟩ | §3.4 | The parallel coordinates. Active genes and outputs, one line per design, status ink | ⟨tbd⟩ | proposed | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The FEEDBACKBOT1 review (visual exhibits, item 1) | The value list and the SPEC. The slot ruling (author seat) |
 | 26 | ⟨tbd⟩ | §3.3 or §4.1 | The window traces. Power, speed, tension and shaft bow across settle, relax, window and extension | ⟨tbd⟩ | proposed | `window-trace-extract` (`6175f83`). The NR-059 extension capture. The FEEDBACKBOT1 review (campaign results, item 3) | The per-trace value list (science-validator). The slot ruling (author seat) |
 | 27 | ⟨tbd⟩ | §2.1 or §2.2 | The genome geometry schematic. r_hub, r_rotor, r_bottom, segment length, polygon count, bank and the 22 degree transition cone | ⟨tbd⟩ | proposed | The decode fields, NR-011 and NR-043. The FEEDBACKBOT1 review (methodology, item 3) | The SPEC. The row-15 reconcile at the slot ruling |
+| 28 | ⟨tbd⟩ | §4.3 | The ladder failure census. The designs of the power ladder read through the current model, by rung and shaft length | `ladder-census` | proposed | `scripts/results/ladder_v13_rerun_2026-10-20.csv` (blob `74408ea1`, anchor `581d33f`). The census record (`docs/validation/2026-10-20-ladder-rerun-census.md`). NR-064, NR-065 | The SPEC, then the two signatures. One era, one population. A class column carries the reason for each cell. This plate reads the tool, not the wind. It shows what the model accepts, and it never prints a power delivery. |
+| 29 | ⟨tbd⟩ | §3.3 | The power curve. One fixed winner across a wind sweep | `power-curve` | proposed | SPEC v1 (`2a53248`). The campaign winner at the declared stamp. SITE_DAISY | The run at the aero seat: seven points, site reference 6.0 to 16.0 m/s. The physics and numbers signatures. The caption carries the gain-bracket clause or the curve reads as one setting. |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -570,4 +572,16 @@ three slots).
   caption. Both kits take the 8 pt micro-typography floor on scientific
   text. No drawn value moves on either plate. Next: the F-VALUE
   re-checks, then the visual pass by Rod.
+
+- **v53 (2026-10-20):** the two census plates take their map rows
+  (author seat). Row 28 mints the ladder failure census at section 4.3.
+  The row reads the tool and not the wind: one era, one population, a
+  class column per cell, and no power delivery in any caption. The CSV
+  blob reads `74408ea1` at anchor `581d33f`, checked at this seat. Row
+  29 mints the power curve at section 3.3 on SPEC v1 (`2a53248`), with
+  its run at the aero seat and the gain-bracket clause in the caption.
+  Row 13 takes its second entry: the cartography pair draws as a hollow
+  pre-fix marker with no joining line, beside the coherence pair. No
+  plate byte moves and no drawn value moves. Next: the ladder SPEC,
+  then the power sweep.
 
