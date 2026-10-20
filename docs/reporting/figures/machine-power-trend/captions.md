@@ -81,7 +81,7 @@ as recorded: two significant digits and not a defect.
 ## Provenance line
 
 Data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` ·
-rows NR-002, NR-005, NR-006, NR-062, NR-066 · script commit `a1047a4` · full
+rows NR-002, NR-005, NR-006, NR-062, NR-066 · script commit `b384bca` · full
 record: the figure-provenance appendix, once the plate is seated.
 
 ## Seat note (2026-10-20, figures seat)
