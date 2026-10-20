@@ -53,10 +53,27 @@ const FOOTER_PX = 132
 const OBJ_ROW = Dict(0 => "36.109", 6 => "32.293", 10 => "31.661",
     18 => "30.929", 22 => "29.854", 25 => "28.315", 26 => "27.364")
 
-# NR-066 display forms (signed 2026-10-20). The decoded mass, three decimals,
-# lifter included — the same mass the campaign scored.
-const MASS_ROW = Dict(0 => "31.509", 6 => "30.217", 10 => "25.425",
-    18 => "26.464", 22 => "25.557", 25 => "26.172", 26 => "25.670")
+# NR-066 display forms (signed 2026-10-20; corrected 2026-10-20 for the
+# v_rated knob). The decoded mass, three decimals, lifter included — the same
+# mass the campaign scored. The first cut decoded at p.v_wind_ref (11.0097);
+# the score path uses v_rated 11.0, and that 0.09 per cent moved the sized
+# ring mass about 0.03 kg. The winner now reads 25.698468, which equals the
+# evaluator's recorded mass 25.69846825623688.
+const MASS_ROW = Dict(0 => "31.554", 6 => "30.261", 10 => "25.466",
+    18 => "26.505", 22 => "25.594", 25 => "26.202", 26 => "25.698")
+
+# Three-decimal display with round-half-to-even on the CSV's fourth digit.
+# The CSV carries four decimals. NR-066's reading rule prints the even form
+# where the fourth digit is 5 (31.554, 25.594, 25.698). A plain
+# @sprintf("%.3f", x) reads the binary value and truncates those cases.
+function fmt3(s::AbstractString)
+    q = round(Int, parse(Float64, s) * 10_000)
+    d, r = divrem(q, 10)
+    if r > 5 || (r == 5 && isodd(d))
+        d += 1
+    end
+    return string(d ÷ 1000, ".", lpad(d % 1000, 3, '0'))
+end
 
 # NR-062 display forms (signed 2026-10-18). Window-end power, verbatim from the
 # extract. Gen 6 prints 5.4 as recorded: two significant digits, not a defect.
@@ -373,7 +390,7 @@ function main()
 
     recs = read_extract(extract_path)
     mass_path = joinpath(@__DIR__, "extract-mass.csv")
-    mass_by_gen = Dict(parse(Int, r["selected_gen"]) => @sprintf("%.3f", parse(Float64, r["mass_kg"]))
+    mass_by_gen = Dict(parse(Int, r["selected_gen"]) => fmt3(r["mass_kg"])
         for r in read_extract(mass_path))
     panels = [build_panel(recs[k], k, mass_by_gen) for k in eachindex(recs)]
 

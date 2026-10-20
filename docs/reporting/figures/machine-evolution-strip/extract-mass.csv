@@ -1,5 +1,5 @@
 # machine-evolution-strip / extract-mass.csv
-# decoding commit: 9423310f96d1a8e6353bfcace3ceb16baf3491c3
+# decoding commit: 3307af65eca5708b179fbf1bdf3b27a2d56c8f2c
 # era: post-95c385d_wind-authority | dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
 # extract: extract-best-so-far.csv
 # source: decode-only (design_from_vector_v10 -> size_beams_closed_form -> build_system_from_v10 -> expansion_airborne_mass)
