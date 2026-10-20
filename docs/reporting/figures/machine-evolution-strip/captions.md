@@ -55,8 +55,8 @@ the window-end power. The objective is mass plus penalties. The
 penalties score the window-end power, the beam utilisation and the
 twist margin.
 
-The winner is not the lightest machine. Gen 10 reads 25.425 kg against
-the winner's 25.670 kg. The winner pays 0.245 kg of mass to shed
+The winner is not the lightest machine. Gen 10 reads 25.466 kg against
+the winner's 25.698 kg. The winner pays 0.233 kg of mass to shed
 4.515 kg of penalty. From gen 10 the mass moves inside 1.04 kg while
 the objective falls 4.297 kg. The later gains come from penalty, not
 from mass.
@@ -127,3 +127,13 @@ the card prints the second. Gen 6 shows the difference: the mean reads
 5.42 kW and the card reads 5.4 kW, as recorded. The clause names the
 column, so a reader who checks the register table finds the right
 member. Text only, no render moves. (figures seat)
+
+Mass decode correction (2026-10-20): the first mass cut decoded at
+`p.v_wind_ref` (11.0097 m/s) because the design call omitted the
+`v_rated` keyword. The score path passes 11.0, and the 0.09 per cent
+moved the sized ring mass about 0.03 kg. The corrected winner reads
+25.698 kg, and the evaluator's own recorded mass for that genome is
+25.69846825623688 kg. Gen 10 reads 25.466 kg, so the winner pays
+0.233 kg of mass, not 0.245 kg. The objective, the power values and
+every other drawn numeral stand. NR-066 needs an amend to the seven
+values. (figures seat)

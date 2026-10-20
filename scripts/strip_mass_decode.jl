@@ -14,12 +14,20 @@
 # Knobs mirror scripts/run_v13_5kw_masslift.jl exactly: era
 # post-95c385d_wind-authority, length 18.8, k_mppt 2.24, rotor_count_mode,
 # cylinder_cone, power_split 0.6, cone 22 deg, spacing 0.8, 2 mm wall floor.
+# The design call must carry v_rated = cfg.v_rated (11.0).  The function
+# default is p.v_wind_ref (11.0097), and that 0.09 per cent moves the sized
+# ring mass by about 0.03 kg.  The evaluator passes cfg.v_rated
+# (objective_evaluator.jl:721), so a decode that omits it measures a
+# machine the campaign did not score.
 #
 # The second column set is an independent route to the same numbers: the
 # recorded fitness is mass plus three analytic penalties, all of whose inputs
-# are recorded columns, so mass = fitness - penalties is an upper bound whose
-# slack is the stationarity term (P_range is not recorded).  The penalty is
-# charged on P_end, the value the score used (objective_evaluator.jl:1153).
+# are recorded columns.  The residual is the precision bound of this route,
+# not the stationarity term.  NR-039 records the winner's stationarity
+# charge as zero (window swing 0.54 per cent), and the over-power term is
+# charged here on the two-decimal P_end of the extract, while the score used
+# the full-precision value.  The residual therefore reads the P_end rounding
+# as a bound, and it changes sign from panel to panel.
 #
 # Output: docs/reporting/figures/machine-evolution-strip/extract-mass.csv
 # Usage:  julia --project=. scripts/strip_mass_decode.jl
@@ -82,7 +90,8 @@ println(buf, "# era: post-95c385d_wind-authority | dataset: v13_5kw_masslift_len
 println(buf, "# extract: extract-best-so-far.csv")
 println(buf, "# source: decode-only (design_from_vector_v10 -> size_beams_closed_form -> build_system_from_v10 -> expansion_airborne_mass)")
 println(buf, "# mass is the quantity the campaign scored (objective_evaluator.jl:1154); it carries the 5.0 kg lifter (include_lifter default true)")
-println(buf, "# residual = (fitness - penalties) - mass = the stationarity term, 10*max(0, P_range/P_mean - 0.2); P_range is not recorded, so it is a bound")
+println(buf, "# decode knobs match the evaluator: v_rated = cfg.v_rated (11.0), passed to design_from_vector_v10 as the score path does")
+println(buf, "# residual = (fitness - penalties) - mass = the P_end rounding bound of this route; the over-power charge reads the 2-dp extract column, the score read full precision. NR-039 records stationarity zero for the winner")
 println(buf, "# penalties are charged on P_end, the value the score used (objective_evaluator.jl:1153)")
 @printf(buf, "panel,selected_gen,label,objective_kg_eq,mass_kg,mass_kg_nolifter,pen_overpower_kg,pen_twist_kg,pen_utilisation_kg,pen_total_kg,residual_kg\n")
 for r in rows
@@ -91,7 +100,7 @@ for r in rows
     xr[4] = Float64(round(Int, clamp(xr[4], 3, 16)))
     xr[6] = Float64(round(Int, clamp(xr[6], 1, 3)))
     res = KTD.design_from_vector_v10(xr, PROFILE_ELLIPTICAL, p_base;
-        power_W=PW, cylinder_cone=true, rotor_count_mode=true,
+        power_W=PW, v_rated=cfg.v_rated, cylinder_cone=true, rotor_count_mode=true,
         power_split=cfg.power_split, cone_slope_deg=cfg.cone_slope_deg,
         rotor_spacing_frac=cfg.rotor_spacing_frac, blocking_factor=cfg.blocking_factor)
     sizing = KTD.size_beams_closed_form(res, p_base, cfg)

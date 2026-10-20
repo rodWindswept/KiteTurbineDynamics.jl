@@ -74,10 +74,13 @@ The decode chain rounds before scoring.
 - The name takes the `extract-` prefix because the repo ignores other CSVs. This file is a derivative of the extract, not a telemetry extract.
 - The pass runs no simulation. It decodes each genome, sizes the beams, builds the system, and reads `expansion_airborne_mass`.
 - The mass is the quantity the campaign scored. It carries the 5.0 kg lifter.
+- The design call passes `v_rated = cfg.v_rated` (11.0), the value the score path passes (`objective_evaluator.jl:721`). The function default is `p.v_wind_ref` (11.0097). A decode that omits the keyword sizes the rings about 0.03 kg light, which the four identity fields do not catch.
 - Before it trusts a value, it asserts the decode against the recorded `n_lines`, `n_rings`, `r_hub` and `n_active`.
 - The `residual_kg` column is a second route. Take the recorded fitness, remove the three analytic penalties, then remove the decoded mass.
-- The remainder is the stationarity term. `P_range` is not recorded, so the route gives a bound.
+- The remainder is the precision bound of this route, not the stationarity term. NR-039 records the winner's stationarity charge as zero. The over-power term reads the two-decimal `P_end` in the extract, and the score read the full-precision value, so the residual changes sign from panel to panel.
 - The penalties are charged on `P_end`, the column the score used.
-- Signed values: 31.5087, 30.2167, 25.4251, 26.4642, 25.5573, 26.1720, 25.6701 kg.
+- Signed values: 31.5535, 30.2612, 25.4657, 26.5048, 25.5935, 26.2020, 25.6985 kg.
+- The winner reads 25.698468 kg. The evaluator recorded 25.69846825623688 kg for the same genome, so the decode and the score agree to 1e-7 relative.
+- The first cut at `0c92e9b` decoded at 11.0097 and printed 25.6701 kg for the winner. NR-066 carries the first-cut values and needs an amend to the values above.
 - The score prints as `kg-eq` and the mass prints as `kg`. One panel carries one form of each.
 - The caption says "decoded mass". Three decimals are a decomposition against a three-decimal objective, not a measurement.
