@@ -471,6 +471,34 @@ The build gate checks citations and assembly, not appendix pins.
 
 No number moves, no citation moves and no caption moves. The draft ticks to v0.71.
 
+v0.72 pass by @author (2026-10-20).
+
+This pass folds three founder comments against the aero pins. No numeral enters.
+Comment 40 asks what easing k does in high wind. It asks for that before the refusal.
+Comment 41 asks if the spin-up is the reason.
+One edit closes both.
+
+The paragraph now reads the speed hold first.
+It reads 87.9° against the 78.8° limit second.
+It reads the refusal third, with its cause named.
+Both numerals already print at that site. The edit adds words and no numeral.
+
+The pin for 40 carries 25 m/s. That numeral does not print.
+The draft has never stated it. A new numeral needs the numbers seat.
+
+Comment 47 asks which failure class the line breaks belong to.
+Both census sites carry the same clause.
+It names the rope-break gate, and it rules out a beam FoS breach or a twist crossing (NR-013).
+The clause prints at 2.3 and in the section 5 census. Both sites took the edit so one fact keeps one wording.
+
+One terminology difference stays open. The aero seat rules on it.
+The pin calls the 78.8° a crossing limit on the segment.
+The draft calls it a collapse limit at both sites. The draft uses crossing at the twist gate.
+
+The paragraph split in two to hold the six-sentence limit.
+STE 25 total at 0.23 per 100 words.
+Every category reads the same as before the edit. Em dashes 0. The draft ticks to v0.72.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

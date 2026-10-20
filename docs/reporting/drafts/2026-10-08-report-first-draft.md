@@ -351,9 +351,11 @@ The objective charges 5 kg-equivalent per excess kW squared above the 5.0 kW cei
 The load choice also has a structural side.
 The team sizes the beam for a bounded generator load step: twice the nominal load (NR-048).
 The top-segment helix force reads about 1278 N/vertex (NR-048).
+
 A low-wind lull is harmless under the load law.
-The team refuses to ease k as the high-wind substitute.
+In high wind the load law holds the speed, and easing k removes that hold.
 The rotor spins up to 87.9° of twist against the 78.8° collapse limit (NR-048).
+The team refuses to ease k for that reason.
 
 The campaign also fixed the shaft length.
 The search does not vary it: every candidate runs at one length, 18.8 metres (NR-015).
@@ -528,7 +530,7 @@ They split six ways.
 37 settle at the torsional realisability cliff.
 36 refuse on rotor spacing.
 
-30 break a line.
+30 break a line at the rope-break gate, not a beam FoS breach or a twist crossing (NR-013).
 Three cross the Betz ceiling.
 Two diverge at the hub tip speed.
 Only the last class is a numerical divergence.
@@ -1028,7 +1030,7 @@ The re-run probe (NR-061) names them.
 37 settle at the realisability cliff.
 
 36 refuse on rotor spacing.
-30 break a line.
+30 break a line at the rope-break gate, not a beam FoS breach or a twist crossing (NR-013).
 Three cross the Betz ceiling.
 Two diverge at the hub tip speed.
 
