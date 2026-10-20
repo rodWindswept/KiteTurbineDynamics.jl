@@ -2903,7 +2903,7 @@ Boundaries:
 
 - No numeral from the mechanism paragraph is signed here. That covers `k_mppt` 8.23 and 1122.63, sin delta alpha 313, and the Betz ratio band 0.44 to 0.81.
 
-- The header comment at `scripts/ode_ladder_v13.jl:8` still reads 2.5 kW. The code uses 5.0 kW. The comment stays, because an edit would move md5 250a41d0 and break this anchor.
+- The header comment at `scripts/ode_ladder_v13.jl:6` still reads 2.5 kW. The code uses 5.0 kW. The comment stays, because an edit would move md5 250a41d0 and break this anchor.
 
 ## Source row: NR-065, the failure classes of the 35 failing cells (2026-10-20, science-validator)
 
