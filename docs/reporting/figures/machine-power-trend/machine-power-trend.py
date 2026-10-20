@@ -45,7 +45,7 @@ SLUG = "machine-power-trend"
 DATA_COMMIT = "dd3cc6a"
 RUN_COMMIT = "a76c5e9"
 ERA = "post-95c385d_wind-authority"
-ROWS = "NR-005 \u00b7 NR-006 \u00b7 NR-062"
+ROWS = "NR-002 \u00b7 NR-005 \u00b7 NR-006 \u00b7 NR-062"
 
 INK = "#1a1a1a"
 GREY = "#555555"
@@ -65,11 +65,11 @@ P_DRAWN = (0, 6, 10, 26)
 OBJ_FORMS = {0: 36.109, 6: 32.293, 10: 31.661, 18: 30.929,
              22: 29.854, 25: 28.315, 26: 27.364}
 
-TITLE = "Window-end power holds while the score falls"
+TITLE = "Window-end power drives the over-power penalty"
 SUB1 = ("running-best window-end power \u00b7 three islands \u00b7 "
         "generations 0 to 30 \u00b7 era " + ERA)
-SUB2 = ("island 3's score falls 36.109 to 27.364 kg-eq over the same "
-        "generations (NR-005, NR-006)")
+SUB2 = ("island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 \u00b7 its score "
+        "falls 36.109 to 27.364 kg-eq (NR-062, NR-005, NR-006)")
 
 LEDGER: list[str] = []
 
@@ -162,6 +162,14 @@ def main() -> int:
     chk("island 1 sits on the floor, generations 8 to 14",
         [g for g in gens if ser[1][g][1] == 5.0], list(range(8, 15)))
     chk("island 3 ends below the seed", ser[3][30][1] < ser[3][0][1], True)
+    ok_pe = sorted(float(r["P_end"]) for i in (1, 2, 3) for r in tele[i]
+                   if r["status"] == "ok")
+    chk("ok evaluations (NR-002 feasible count)", len(ok_pe), 508)
+    chk("no ok evaluation below the 5 kW gate",
+        sum(1 for v in ok_pe if v < 5.0), 0)
+    chk("exactly one ok evaluation on the gate", ok_pe.count(5.0), 1)
+    chk("the next lowest ok evaluation", ok_pe[1], 5.02)
+    chk("the highest ok evaluation", ok_pe[-1], 6.33)
 
     n_fail = sum(1 for *_, ok in checks if not ok)
     if n_fail:
@@ -198,11 +206,14 @@ def main() -> int:
             ls="none", marker="o", ms=3.4, mfc=ISL[3], mec="white",
             mew=0.6, zorder=6)
 
+    box = dict(boxstyle="round,pad=0.14", fc="white", ec="none", alpha=0.93)
     ax.axhline(5.0, color=AMBER, lw=1.0, ls=(0, (5, 3)), zorder=2)
     ax.text(0.15, 5.035, keep("5 kW floor"), ha="left", va="bottom",
             size=7.5, color=AMBER, zorder=7)
-
-    box = dict(boxstyle="round,pad=0.14", fc="white", ec="none", alpha=0.93)
+    ax.text(8.35, 5.045, keep("the tightest pass") + "\n"
+            + keep("one design of 508"),
+            ha="left", va="bottom", size=7.2, color=GREY, linespacing=1.05,
+            bbox=box, zorder=8)
     ax.text(0.9, 5.905, keep("the common seed \u00b7 5.86"), ha="left",
             va="bottom", size=8, color=GREY, bbox=box, zorder=8)
     ax.text(6.2, 5.355, keep("5.4"), ha="left", va="top", size=8,
@@ -227,7 +238,7 @@ def main() -> int:
     ax.set_yticklabels([keep("5.0"), keep("5.5"), keep("6.0")])
     ax.set_xlabel(keep("generation \u00b7 search order"), size=8, color=GREY)
     ax.set_ylabel(keep("window-end power (kW)") + "\n"
-                  + keep("a constraint axis \u00b7 floor 5 kW"),
+                  + keep("the floor is a gate, not a target"),
                   size=8, color=GREY)
     for sp in ("top", "right"):
         ax.spines[sp].set_visible(False)
@@ -301,7 +312,7 @@ def main() -> int:
                  "sha256": sha256(RUN_DIR / f"island_{i}" / "telemetry.csv")}
                 for i in (1, 2, 3)
             ],
-            "register_rows": ["NR-005", "NR-006", "NR-062"],
+            "register_rows": ["NR-002", "NR-005", "NR-006", "NR-062"],
         },
         "data_commit": DATA_COMMIT,
         "run_commit": RUN_COMMIT,
