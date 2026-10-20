@@ -726,3 +726,29 @@ The model-addition count moves from two to three: the azimuth term, the tilt deg
 The through-shaft sentence reads "something other than the shaft", because a ring rotor would react through its rim bridle.
 No register row moves and no citation moves.
 The draft ticks to v0.67.
+
+v0.74 pass by @author (2026-10-20).
+
+This pass makes the appendix rows column a derived value and corrects one cell.
+The column names the register rows each plate rests on.
+The kit manifest already carries that set, so the check reads it from there instead of trusting the table.
+The builder already takes the caption source line from the same field, so one fact now has one source.
+
+One row was stale. The strip row read four rows, and its manifest carries six.
+The two missing rows are NR-062 and NR-066, which the re-cut added for the mass line and the power line.
+The draft seat marker for the same plate carried the same four, so both draft copies of one fact were wrong.
+The other eight kits already matched, so the fix moves one table cell and one marker.
+
+The check now fails on a stale pin, a stale rows cell, a stale seat marker or an unmapped name.
+It exits 1 on the strip before the fix and reads 9/9 after it.
+A stale copy in the scratch directory failed on the cell and on the marker, and `--fix` rewrote the cell while it left the marker to a human.
+
+The gate already runs inside the build, so the next mint reads six rows for the strip.
+The mint at `9344751` prints four rows in that cell. Only that cell changes.
+
+The strip kit caption file still names the four rows in its own header and provenance line.
+That file belongs to the figures seat.
+
+The marker adds four words to the count, so the total reads 10,775.
+No printed sentence moves, no numeral moves and no citation count moves.
+STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.74.

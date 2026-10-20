@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.73. Date 2026-10-20.
+Internal engineering report. Draft v0.74. Date 2026-10-20.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -826,7 +826,7 @@ The gene-level effects wait on the landscape extracts.
 
 ### 3.5 The evolution story
 
-[Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006, NR-011 and NR-036.]
+[Figure seated: figure-map row 9 (machine evolution strip, slug `machine-evolution-strip`). Values cite NR-005, NR-006, NR-011, NR-036, NR-062 and NR-066.]
 
 The machine evolution strip traces the search on island 3 from the common seed to the campaign winner (NR-036).
 The objective falls from 36.109 kg-equivalent at generation 0 to 27.364 kg-equivalent at generation 26 (NR-036).
@@ -1290,7 +1290,7 @@ so the era sits here once instead of in a table column.
 |--------|----------------------|--------|------|
 | Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021, NR-015, NR-060 | `e3d664c` |
 | Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023, NR-040, NR-052, NR-053 | `e3d664c` |
-| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036 | `ce9c5d8` |
+| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 | `ce9c5d8` |
 | System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` |
 | Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `d0e410d` |
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `d0e410d` |
