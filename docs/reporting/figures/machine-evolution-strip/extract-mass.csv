@@ -1,0 +1,16 @@
+# machine-evolution-strip / extract-mass.csv
+# decoding commit: 06ab49cbcc648708fca2870751675280573b7ea1
+# era: post-95c385d_wind-authority | dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9
+# extract: extract-best-so-far.csv
+# source: decode-only (design_from_vector_v10 -> size_beams_closed_form -> build_system_from_v10 -> expansion_airborne_mass)
+# mass is the quantity the campaign scored (objective_evaluator.jl:1154); it carries the 5.0 kg lifter (include_lifter default true)
+# residual = (fitness - penalties) - mass = the stationarity term, 10*max(0, P_range/P_mean - 0.2); P_range is not recorded, so it is a bound
+# penalties are charged on P_end, the value the score used (objective_evaluator.jl:1153)
+panel,selected_gen,label,objective_kg_eq,mass_kg,mass_kg_nolifter,pen_overpower_kg,pen_twist_kg,pen_utilisation_kg,pen_total_kg,residual_kg
+1,0,i3-g0-i1,36.109,31.5087,26.5087,3.6980,0.1792,0.7024,4.5797,0.0206
+2,6,i3-g6-i2,32.293,30.2167,25.2167,0.8000,0.0997,1.1125,2.0122,0.0640
+3,10,i3-g10-i7,31.661,25.4251,20.4251,3.9605,0.4805,1.7260,6.1670,0.0689
+4,18,i3-g18-i4,30.929,26.4642,21.4642,3.0420,0.1432,1.2450,4.4302,0.0345
+5,22,i3-g22-i10,29.854,25.5573,20.5573,2.8880,0.1526,1.2133,4.2539,0.0427
+6,25,i3-g25-i8,28.315,26.1720,21.1720,1.3520,0.2031,0.5714,2.1266,0.0164
+7,26,i3-g26-i9,27.364,25.6701,20.6701,0.4805,0.6141,0.5578,1.6524,0.0415

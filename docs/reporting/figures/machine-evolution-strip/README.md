@@ -69,8 +69,9 @@ The decode chain rounds before scoring.
 
 ## Mass decode
 
-- `mass-decode.csv` holds the decoded mass for the seven panels.
+- `extract-mass.csv` holds the decoded mass for the seven panels.
 - The generator is `scripts/strip_mass_decode.jl`.
+- The name takes the `extract-` prefix because the repo ignores other CSVs. This file is a derivative of the extract, not a telemetry extract.
 - The pass runs no simulation. It decodes each genome, sizes the beams, builds the system, and reads `expansion_airborne_mass`.
 - The mass is the quantity the campaign scored. It carries the 5.0 kg lifter.
 - Before it trusts a value, it asserts the decode against the recorded `n_lines`, `n_rings`, `r_hub` and `n_active`.
