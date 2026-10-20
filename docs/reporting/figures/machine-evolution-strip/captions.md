@@ -52,7 +52,7 @@ value and no airborne mass value.
 ## Provenance line
 
 Data commit `dd3cc6a` · extract `strip-extract-2026-10-09-best-so-far` ·
-rows NR-005, NR-006, NR-011, NR-036 · script commit `74cfef9` · full
+rows NR-005, NR-006, NR-011, NR-036 · script commit `d0e410d` · full
 record: the figure-provenance appendix.
 
 ## Generation note
@@ -86,3 +86,13 @@ technical claim. Text only, no render moves.
 Retirement note (2026-10-14): the hub-name retirement (round-6
 comment 1). The final-panel line reads "topmost ring radius
 4.580 m". Text only, no render moves.
+
+Pin note (2026-10-20): the provenance line read script commit
+74cfef9. The T4 render pass (d0e410d, landed f696930) changed the
+drawn per-machine label from kg to kg-equivalent and re-cut the
+plate bytes. The manifest script_commit reads d0e410d, the printed
+footer stamp reads d0e410d, and the script sha256 at HEAD equals the
+manifest value, so d0e410d is the state that built the bytes on
+disk. The pin now reads d0e410d. The 2026-10-14 form note above
+describes the pre-T4 label and no longer describes the plate. Text
+and pin only, no render moves. (figures seat)
