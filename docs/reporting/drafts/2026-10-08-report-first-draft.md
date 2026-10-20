@@ -27,10 +27,12 @@ At the winner operating point, the least segment torque margin is
 (NR-040).
 The margin is torque capacity over the segment torque it carries, and the least value governs.
 
-All numbers carry the physics era `post-95c385d_wind-authority`, with the bank derate applied.
+All numbers come from one version of the model, the physics era `post-95c385d_wind-authority`.
+That version applies the bank derate, which cuts rotor power as the blades bank.
 The study is simulation-only.
-Blade integrity is not yet gated, and the outer stiffening bridles sit outside the model.
-Lifter kite modulation for steady lift tension across wind speeds remains an assumption.
+Blade integrity is not yet gated, and the outer stiffening bridles of real field turbines sit outside the model.
+A lifter kite can modulate its tension across wind speeds, and the report treats that ability as an assumption.
+
 The search is a screen, not a survey.
 The report does not claim a global optimum.
 
@@ -41,7 +43,7 @@ simulation, design search, factor of safety.
 **Summary for decision.** The project completed a 930-design simulation
 screen of a 5 kW-class ground-generation rotary kite turbine with a
 tensile rotary power transmission (NR-001).
-The screen found a feasible candidate under the model and gates.
+The screen found a feasible candidate inside the gated performance bounds.
 The decision metrics read as follows.
 
 | Decision metric | Value | Rows |
@@ -80,10 +82,10 @@ The field splits a second way, on the wing.
 Soft wings use fabric.
 They survive crashes and pack small.
 Rigid wings use composite airframes.
-They are more efficient and more costly.
+They are more efficient, but brittle and more costly.
 
 A third split matters for this report.
-It is the force transmission of ground-gen systems.
+It is the mechanical force transmission of ground-gen systems.
 A pumping (yo-yo) machine sends intermittent tension down a moving tether.
 A rotary machine sends steady torque down a turning set of tethers.
 
@@ -95,7 +97,8 @@ The machine in this report is a kite turbine.
 Kite turbines exploit multiple, short rigid blades.
 The blades sit on a ring and form a wide diameter rotor.
 The rotor and further rings tie together as a tensile rotary shaft.
-The shaft turns the ground generator.
+A wheel on the ground station holds the rotating shaft.
+When the shaft turns this wheel, the ground station generator converts the rotational power to electrical power.
 
 A tensile rotary power transmission (TRPT) is a shaft made of tensioned lines.
 Rings sit at fixed distances under tether tension.
@@ -159,8 +162,6 @@ It also equals the number of TRPT line attachments around the ring.
 A rotor is a set of blades on a ring.
 A pentagonal rotor carries five blades.
 
-Inactive genome slots may hold bank or blade-scale values.
-They do not create physical blades unless the rotor count selects them.
 The topmost ring carries the main rotor.
 The lowest ring is the ground station power take-off (PTO) ring.
 The PTO ring anchors the shaft at the ground and turns about its central axis.
@@ -173,26 +174,28 @@ Rotor pitch is that angle set for the whole rotor, as collective pitch.
 The machine plates show the blade leaning downward.
 
 Blade scale sets the blade size.
-The scale multiplies the blade span and chord, and the blade mass follows the span cubed.
-The base span reads 0.75 of the power-sized rotor radius, and the base chord reads 0.113 of it.
-The power sizing sets that radius for the rotor at its local wind speed (NR-050).
+The power sizing sets the rotor radius from the power, the wind speed and the power coefficient (NR-050).
+The scale then multiplies the blade span and chord, and the blade mass follows the span cubed.
+The base span is 0.75 of the power-sized rotor radius, and the base chord is 0.113 of it.
 
 That radius is not the ring radius.
-The ring radius `r_hub` is a separate structural gene.
+Its own slot sets the ring radius `r_hub`.
 The blade radius `r_rotor` is the aerodynamic size the blade spans from.
+The blade runs from the ring radius `r_hub` to the tip radius `r_rotor`.
+The part outside the ring is its overhang.
 The power sizing inverts the power equation (NR-050):
 
 $$r_{\mathrm{rotor}}=\sqrt{\frac{P}{f_{\mathrm{proj}}\,C_{p}\,0.5\,\rho\,\pi\,v^{3}}}$$
 
-P reads the rotor power share and v the local wind speed at the ring.
-Cp reads the blade-element table coefficient at the sizing tip-speed ratio.
-$f_{\mathrm{proj}}$ reads the bank-and-elevation projection factor.
-The winner decode reads r_rotor 2.434 m (NR-050).
+P is the rotor power share and v is the local wind speed at the ring.
+Cp is the blade-element table coefficient at the sizing tip-speed ratio.
+$f_{\mathrm{proj}}$ is the bank-and-elevation projection factor.
+The winner decode gives r_rotor 2.434 m (NR-050).
 
-The search treats each of these as a gene.
+Each of these is one design value the search sets.
 The ring geometry sets the topmost-ring and ground radii, and the rotor count sets how many rings carry blades.
 The shaft transition cone holds one fixed half-angle, 22 degrees, by construction.
-It is not a search gene (NR-049).
+It is not a search value (NR-049).
 
 At the top of the shaft the rotor turns in the wind.
 The whole shaft turns with the rotor.
@@ -204,7 +207,7 @@ Tension gives the shaft its capacity to transmit torque.
 With low tension the shaft bends and twists.
 A slack shaft cannot carry the load.
 
-Under the generator load the machine settles onto one operating point.
+Under the generator load and line drag, the machine settles onto one operating point.
 In the settled state the shaft runs twisted along its length.
 
 [Figure seated: figure-map row 2 (system anatomy plate, slug `system-anatomy`). Values cite NR-011, NR-017 and NR-043.]
@@ -241,6 +244,7 @@ The table lists each slot, its meaning and its search bounds.
 The decoder reads x6 as a rotor count.
 It rounds the gene to an integer between one and three.
 Inactive slots may hold values with no physical effect.
+An inactive slot may hold a bank or blade-scale value and still create no physical blade.
 The winner carries one active rotor, so x8 and x10 stay unused (NR-011).
 The decoder also rounds x4, the polygon side count, to an integer (NR-011).
 
@@ -269,13 +273,13 @@ The team sized the window to outlast the decay.
 The evaluator names two scoring quantities.
 P_score reads the tail-5 power, the mean of the last five seconds of the window (NR-046, NR-041).
 The draft prints it as the end power.
-The twist ratio reads the absolute segment twist divided by the crossing limit, the worst segment over the window (NR-046).
-The crossing limit reads (NR-053):
+The twist ratio is the absolute segment twist divided by the crossing limit, the worst segment over the window (NR-046).
+The crossing limit follows (NR-053):
 
 $$\delta\alpha^{*}=2\arcsin\left(\frac{L_{\mathrm{seg}}}{\sqrt{2\left(L_{\mathrm{seg}}^{2}+2r_{\mathrm{seg}}^{2}\right)}}\right)$$
 
-The term $r_{\mathrm{seg}}$ reads the larger of the two ring radii at the segment.
-The term $L_{\mathrm{seg}}$ reads the segment length between the two rings.
+The term $r_{\mathrm{seg}}$ is the larger of the two ring radii at the segment.
+The term $L_{\mathrm{seg}}$ is the segment length between the two rings.
 
 ### 2.3 The operating point and load selection
 

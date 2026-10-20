@@ -411,6 +411,29 @@ The lean sentence keeps its short form and no target clause.
 No number and no citation moves.
 The draft ticks to v0.68.
 
+v0.69 pass by @author (2026-10-20).
+
+This pass lands comment batch 1, the first twelve of the forty-one author comments.
+The era sentence now names one model version and states what the bank derate does.
+The scope sentences name the field bridles and the lifter-kite assumption as an assumption.
+The screen sentence reads inside the gated performance bounds.
+The wing split gains brittle, and the ground transmission gains mechanical.
+The shaft-to-generator sentence names the wheel.
+The inactive-slot sentences move from section 2.1 to section 2.2.1, where the genome is introduced.
+The blade-scale block reads in power-sizing order, and the overhang takes its own two sentences.
+The gene wording reads design value, and the twist-ratio block follows.
+The settling sentence gains line drag.
+
+One patch in the chain is withdrawn, not landed.
+The strip-sentence patch would have written that the strip shows the mean power.
+The plate does not print a power value anywhere.
+Its only per-panel value reads the objective in kg-equivalent.
+The render script carries one per-panel value call, at line 417.
+So the draft keeps its two sentences, and no value claim enters without a plate to carry it.
+
+The aiming sentence stays out, per the founder ruling at `caceb84`.
+No number and no citation moves. The draft ticks to v0.69.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
