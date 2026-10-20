@@ -71,10 +71,10 @@ and the 18.8 m length.
 
 ## Provenance line
 
-Sweep CSV md5 `a4e535af18da220a473db963c45ceb76`, 18 data rows: 16 winds plus
-two settle repeats · record commit `8a757f3`, src tree `4dd7e0d9`, probe
-sha256 `59718a02` · rows NR-015, NR-046, NR-066, NR-070, NR-071, NR-072 ·
-script commit `4bb45c9`.
+Sweep CSV md5 `a4e535af18da220a473db963c45ceb76`, 16 winds plus two settle
+repeats · record commit `8a757f3`, src tree `4dd7e0d9`, probe sha256
+`59718a02` · rows NR-015, NR-046, NR-066, NR-070, NR-071, NR-072 · script
+commit `4bb45c9`.
 
 ## Seat note
 
