@@ -2,9 +2,9 @@
 
 **Slug** `power-curve`
 
-**Status** SPEC v2, corrected against the run basis. Angle brackets ⟨⟩ mark
-binding slots. This document carries no drawn value. The numbers register
-supplies the citation discipline.
+**Status** SPEC v3, wind basis signed. Angle brackets ⟨⟩ mark binding slots.
+This document carries no drawn value. The numbers register supplies the
+citation discipline.
 
 **Owner** @figures-images-diagrams. **Content check** @aero-validator on
 physics, era and axis, and @science-validator on the numbers.
@@ -40,12 +40,11 @@ A sweep cannot start until they are collapsed to one. Measured at
 
 `evaluate_design` defaults `v_rated` to 11.0 and takes no value from the
 machine own site wind. So the ceiling sits at a wind that matches neither
-box, and the two big boxes fly at winds 1.1218 apart. This winner is the
-exception. Its hub wind is 0.09 per cent above the ceiling wind, so the
-mismatch is a 10 kW and 50 kW concern and not a reading on this plate.
-The ceiling question is with @science-validator and @aero-validator.
-Contract 2 waits on that ruling, because the basis decides the machine
-count.
+box, and the two big boxes fly 1.4336 m/s apart, a factor of 1.1218. This
+winner is the exception. Its hub wind is 0.09 per cent above the ceiling
+wind, so the mismatch is a 10 kW and 50 kW concern and not a reading on
+this plate. The ceiling question is with @science-validator and
+@aero-validator. Contract 2 carries their ruling.
 
 ## Binding contracts
 
@@ -56,11 +55,12 @@ count.
    (10.0 m/s at 4.8 m, exponent 1/7), carried through `mass_scale`. The
    axis label names the altitude and the value.
 
-2. **One field. ⟨ruling requested: @science-validator, @aero-validator⟩** The
-   swept field is `p.v_wind_ref`. `cfg.v_rated` holds at 11.0, because it
-   is part of the machine and not part of the wind. `design_from_vector_v10`
-   takes `v_rated`, and `size_beams_closed_form` reads it. A decode of the
-   fixed genome at five rated winds prints five different masses:
+2. **One field. ⟨signed: @science-validator, @aero-validator, 2026-10-20⟩**
+   The swept field is `p.v_wind_ref`. `cfg.v_rated` holds at 11.0, because
+   it is part of the machine and not part of the wind.
+   `design_from_vector_v10` takes `v_rated`, and `size_beams_closed_form`
+   reads it. A decode of the fixed genome at five rated winds prints five
+   different masses:
 
    | `cfg.v_rated` | decoded mass | against 11.0 |
    |---|---|---|
@@ -71,15 +71,21 @@ count.
    | 13.0 | 23.5694 kg | −2.1291 kg |
 
    So the two-field basis, which this document first carried, prints a
-   different machine at every point. It contradicts contract 4 and it
-   cannot draw one design. The mass column of the sweep CSV is the check:
-   it prints 25.698468 kg on every row.
+   different machine at each of the sixteen winds. It contradicts contract
+   4 and it cannot draw one design. The mass is not monotone in the
+   rating: 12.0 is the minimum and 13.0 is 0.0831 kg heavier. Five
+   different machines is the claim, and no direction rule follows from it.
+   The mass column of the sweep CSV is the check: it prints
+   25.698468 kg on every row.
 
-3. **Controller.** The gain is not fixed. `with_k_bracket` scores the
-   genome at k̂·{0.5, 1, 2} and keeps the best accepting evaluation, so
-   each point is the best of three gains. The caption says this in one
-   clause. A curve drawn from one fixed gain is admissible only as a
-   separate series with its own label.
+3. **Controller: one fixed gain.** Every point is scored at
+   `K_MPPT_5KW_HONEST` = 2.24, the campaign's own gain
+   (`scripts/compute_seeds.jl:36`). `evaluate_windowed` applies no bracket,
+   and the identity row matches the recorded score to 11 decimal places at
+   that gain, so the run sits on the campaign controller. A best-of-three
+   bracket would re-tune the controller at every wind, which is the
+   machine-moved defect at the controller level. The caption names the gain
+   in one clause.
 
 4. **Fixed design.** The genome is ⟨the campaign winner at the declared
    stamp⟩ and does not move across the sweep. A genome that adapts per
@@ -99,15 +105,17 @@ count.
    The label names the base, or two reference winds print in one report
    as one.
 
-6. **Settle repeat.** One sweep point runs twice from the same genome and
-   the same wind. Both scores print. A spread larger than ⟨the tolerance⟩
-   marks the whole sweep as a settle spread, not as a design value, and
-   the plate then carries no point value at all.
+6. **Settle repeat.** Two points run twice from the same genome and the
+   same wind: the identity wind and 13.5 m/s. Both scores print. A spread
+   larger than ⟨the tolerance⟩ means the plate carries no point value at
+   all.
 
-   The trigger is measured. At `caceb84` a 4 cm change of hub radius with
-   the ring count held produced a 52 per cent change in scored power. A
-   power axis cannot separate a gene effect from a settle attractor
-   without a repeat.
+   The repeat certifies determinism, and that is all it certifies. It
+   cannot measure settle sensitivity, because that responds to a different
+   input: at `caceb84` a 4 cm change of hub radius at a fixed ring count
+   moved scored power 52 per cent. The caption rests the design-point
+   claim on flatness instead. 11.0 scores 27.3181 against 27.3635 at the
+   design point, so 11.0097 is not an optimum on these numbers.
 
 ## The drawing
 
@@ -148,8 +156,13 @@ was run.
 - The winner genome, read from ⟨the campaign results file⟩ at the
   declared stamp.
 - The site spec: SITE_DAISY, named once, with its three constants.
-- One CSV per sweep: wind, scored power, gain used, status, plus a header
-  carrying the commit, the harness md5 and the site constants.
+- One CSV per sweep, one row per wind: the wind, the status, `P_end_kW`
+  with `P_mean_kW`, `FoS_min`, `twist_ratio`, `T_lift_N`, the mass, and
+  the fields that close the chain: `v_rated` 11.0, `h_ref_m` 9.411699,
+  `k_mppt` 2.24 and a per-row genome hash.
+- The header carries the repo commit, the `src` tree hash, the probe md5
+  and the three SITE_DAISY constants: 10.0 m/s at 4.8 m, exponent 1/7.
+  Without these the checks below cannot be asserted from the file.
 - No value prints without an NR row. The numbers seat derives the rows
   from the CSV, never from this document.
 
@@ -159,10 +172,10 @@ was run.
    status split printed beside the count.
 2. `p.h_ref` identical at every point, and `mass_kg` identical to the
    winner mass. A moved mass means the machine moved.
-3. `cfg.v_rated` constant across the sweep ⟨11.0, if the one-field ruling
-   lands⟩.
-4. Every produced power below the Betz ceiling at the ceiling wind and
-   that swept area.
+3. `cfg.v_rated` constant at 11.0 across the sweep.
+4. Every produced power sits below the Betz ceiling at its own wind and
+   that swept area. A ceiling held at 11.0 is not a bound on a point flown
+   at 13.5, where the available power is 1.85 times the 11 m/s value.
 5. The winner genome identical at every point.
 6. A below-floor reject keeps its measured power. A gate reject carries
    none, and the plate does not draw a number for it.
