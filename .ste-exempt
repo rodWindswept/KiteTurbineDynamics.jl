@@ -76,3 +76,12 @@ scratch/sw_stale_phrases_tip.md
 # only: ste-lint.py reads no exemption file, so a hand run still scores the
 # whole file and fails.
 docs/agents/stale-phrases.md
+
+# Extension (2026-10-20, builder seat, room may flip): the founder return
+# registers are verbatim external records, the class carried here since
+# 2026-10-14 for relayed feedback. Every table row quotes Rod's own comment
+# word for word, contractions and long cells included. Rewriting a quote
+# corrupts the record, and the register exists so the room can check it
+# against the returned copy. The builder's own prose in the file measures
+# 1.92/100w, under the 2.0 block. New team prose in the file must stay clean.
+docs/reporting/feedback/2026-10-20-founder-return-3-comments.md
