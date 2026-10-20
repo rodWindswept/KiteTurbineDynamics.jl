@@ -45,7 +45,8 @@ strip cards carry all seven.
 The 5 kW rule is a gate and not a datum. The fitness function returns infinity
 below the power floor (`objective_v12.jl:143`), and the evaluator passes the
 window-end power into that slot (`objective_evaluator.jl:1153`). Of 508 ok
-evaluations, none reads below 5.00 and exactly one reads 5.00. The next lowest
+evaluations (NR-002), none reads below 5.00 and exactly one reads 5.00
+(NR-069). The next lowest
 reads 5.02. That one machine holds the running-best place from generation 8
 to generation 14, and its window end sits below its own window mean. The plate
 labels it the tightest pass, one design of 508.
@@ -81,7 +82,7 @@ as recorded: two significant digits and not a defect.
 ## Provenance line
 
 Data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` ·
-rows NR-002, NR-005, NR-006, NR-062, NR-066 · script commit `b384bca` · full
+rows NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 · script commit `e66dd94` · full
 record: the figure-provenance appendix, once the plate is seated.
 
 ## Seat note (2026-10-20, figures seat)

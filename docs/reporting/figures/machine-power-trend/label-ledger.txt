@@ -19,7 +19,7 @@ island 2
 island 3
 island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 · its score falls 36.109 to 27.364 kg-eq (NR-062, NR-005, NR-006)
 one design of 508
-rows NR-002 · NR-005 · NR-006 · NR-062 · NR-066 · script commit b384bca · the four printed forms are the window-end member NR-062 signs
+rows NR-002 · NR-005 · NR-006 · NR-062 · NR-066 · NR-069 · script commit e66dd94 · the four printed forms are the window-end member NR-062 signs
 running-best window-end power · three islands · generations 0 to 30 · era post-95c385d_wind-authority
 sources: the campaign telemetry, islands 1 to 3 · data commit dd3cc6a · run a76c5e9
 step, no interpolation · the running-best machine changes only when a better design is recorded
