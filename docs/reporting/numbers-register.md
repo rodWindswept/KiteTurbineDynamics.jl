@@ -2512,3 +2512,77 @@ Proof on record: one seed and box read a lightest feasible mass of
 2.4× with the draw; the quantiles hold. The 13.018 kg value
 reproduces at three desks.
 
+## Source row: NR-064, the cartography feasible counts and the set containment (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-064 | Feasible-design counts, LHS cartography, N=80,000, seed 7, beam circular, axial free | 10 kW 45,493 of 80,000 on both sides. 50 kW 41,515 of 80,000 before the fix, 29,230 of 80,000 after | designs | Four files at `f7d3bd0`, each with the `feasible` column and a stamped header. 10 kW body md5 `98e8c266` on both sides. 50 kW bodies `2553bc4f` before and `eac8a4e5` after. Recount script `scratch/sv_lhs_cartography_rows.py`, log `scratch/sv_lhs_cartography_rows.log` | signed (science-validator, 2026-10-20) |
+
+The 50 kW set census:
+
+| Comparison | Count |
+|---|---|
+| Feasible before the fix | 41,515 |
+| Feasible after the fix | 29,230 |
+| Feasible on both sides | 29,230 |
+| Lost by the fix | 12,285 |
+| Gained by the fix | 0 |
+
+Sign-off basis:
+
+- The recount reads the `feasible` column of each file. A count rebuilt from a printed percentage misses by two or three designs, as this handover showed.
+
+- The 10 kW bodies are byte-identical across the fix. One row therefore covers both sides of that box.
+
+- The after set sits wholly inside the before set. No design became feasible.
+
+- A heavier load can only remove feasibility. The containment therefore signs the direction of the fix at row level.
+
+- Of the 12,285 lost designs, 3,721 read plain FoS below 1.8 and 9,101 read torsional FoS below 1.5. Those two sets overlap on 537 designs, so no lost design escapes both gates.
+
+Boundaries:
+
+- Gate constants at this commit are `OPT_FOS_REQUIRED` 1.8 and `OPT_TORSION_FOS_REQUIRED` 1.5.
+
+- The counts read gate acceptance at the design point. They are not a power claim.
+
+- A count belongs to this draw. It does not transfer to another seed or another N.
+
+## Source row: NR-065, the cartography winner mass and the feasible-mass quantiles (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-065 | Winner mass and feasible-mass quantiles, LHS cartography, N=80,000, seed 7 | The table below | kg | Same four files at `f7d3bd0`. Quantiles by linear interpolation on the sorted `mass_kg` column. Script `scratch/sv_lhs_cartography_rows.py` | signed (science-validator, 2026-10-20) |
+
+| Box | Side | Winner mass | p1 | p5 |
+|---|---|---|---|---|
+| 10 kW | both sides | 13.018 | 52.505 | 99.835 |
+| 50 kW | before the fix | 66.869 | 324.605 | 592.552 |
+| 50 kW | after the fix | 105.907 | 469.651 | 850.438 |
+
+Sign-off basis:
+
+- The quantiles print under the campaign-plate rule of `6d59b11`. Plates print p1 or p5 of the feasible mass.
+
+- The winner mass is a campaign output. It is the least-mass feasible design of this draw.
+
+- Both classes are sample statistics. Each moves with the draw.
+
+- The 66.869 kg design at the true load reads torsional FoS 0.7449 against the 1.5 gate. It fails.
+
+- Its plain FoS reads 2.1901 there. The torsional gate alone rejects it.
+
+- The ratio of 8.3286 to 0.7449 reads 11.1803. That is the inflation factor, taken from two rows of one design.
+
+- The 105.907 kg design sits in the pre-fix file at that same mass, with torsional FoS 21.0125. The fix changed which design wins, not which designs exist.
+
+- On three 2,000-draw subsets of the 10 kW box, p5 stayed within 5.6 per cent of its full-draw value. The minimum read 1.6 to 2.0 times the full-draw minimum.
+
+Boundaries:
+
+- Mass is the `mass_kg` score column. It is not the airborne mass of a flying machine.
+
+- The quantiles describe the sampled feasible population, not a machine.
+
+- The winner mass belongs to this campaign at this draw. It is not the best mass of the design space.
+
