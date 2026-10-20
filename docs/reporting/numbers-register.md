@@ -2499,3 +2499,16 @@ No value, form or source moves.
 The cited row stays NR-050.
 The display token reads the factor that NR-050 signs.
 
+## Campaign-plate print rule: quantiles of the feasible mass (2026-10-20)
+
+Proposal: figures seat. Endorsement: aero-validator. Landing: hermes.
+
+Plates print quantiles of the feasible mass (p1 or p5). A sample
+minimum is an order statistic of the draw, not a property of the
+machine.
+
+Proof on record: one seed and box read a lightest feasible mass of
+31.039 kg at N=2,000 and 13.018 kg at N=80,000. The minimum moves
+2.4× with the draw; the quantiles hold. The 13.018 kg value
+reproduces at three desks.
+
