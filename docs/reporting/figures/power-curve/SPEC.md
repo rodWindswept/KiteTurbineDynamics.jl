@@ -106,16 +106,18 @@ this plate. The ceiling question is with @science-validator and
    as one.
 
 6. **Settle repeat.** Two points run twice from the same genome and the
-   same wind: the identity wind and 13.5 m/s. Both scores print. A spread
-   larger than ⟨the tolerance⟩ means the plate carries no point value at
-   all.
+   same wind: the identity wind and 13.5 m/s. Both scores print. The
+   tolerance is 0.000001 kW. A spread larger than that means the plate
+   carries no point value at all.
 
-   The repeat certifies determinism, and that is all it certifies. It
-   cannot measure settle sensitivity, because that responds to a different
-   input: at `caceb84` a 4 cm change of hub radius at a fixed ring count
-   moved scored power 52 per cent. The caption rests the design-point
-   claim on flatness instead. 11.0 scores 27.3181 against 27.3635 at the
-   design point, so 11.0097 is not an optimum on these numbers.
+   Measured on 2026-10-20: both repeats print identical values at the six
+   decimals the CSV records, so both spreads read 0.000000 kW. The repeat
+   certifies determinism, and that is all it certifies. It cannot measure
+   settle sensitivity, because that responds to a different input: at
+   `caceb84` a 4 cm change of hub radius at a fixed ring count moved
+   scored power 52 per cent. The caption rests the design-point claim on
+   flatness instead. 11.0 scores 27.3181 against 27.3635 at the design
+   point, so 11.0097 is not an optimum on these numbers.
 
 ## The drawing
 

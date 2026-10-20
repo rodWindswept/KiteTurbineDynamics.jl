@@ -43,6 +43,8 @@ MUTED = "#98a0a8"
 AMBER = "#c08a1e"
 
 FLOOR = 5.0
+ROWS = ("NR-015 \u00b7 NR-046 \u00b7 NR-066 \u00b7 NR-070 \u00b7 "
+        "NR-071 \u00b7 NR-072")
 
 TITLE = "The floor decides which winds this machine can score at"
 SUB1 = ("one fixed machine at sixteen hub winds \u00b7 gain 2.24 \u00b7 "
@@ -78,7 +80,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--csv", required=True)
     ap.add_argument("--script-commit", default="uncommitted")
-    ap.add_argument("--rows", default="pending")
+    ap.add_argument("--rows", default=ROWS)
     ap.add_argument("--outdir", default=str(HERE))
     args = ap.parse_args()
 
@@ -92,9 +94,11 @@ def main() -> int:
         r["pe"] = float(r["P_end_kW"])
         r["pm"] = float(r["P_mean_kW"])
         r["mass"] = float(r["mass_kg"])
-    rows.sort(key=lambda r: r["w"])
-    ok = [r for r in rows if r["status"] == "ok"]
-    bad = [r for r in rows if r["status"] != "ok"]
+    rows.sort(key=lambda r: (r["w"], int(r["rep"])))
+    base = [r for r in rows if r["rep"] == "1"]
+    reps = [r for r in rows if r["rep"] != "1"]
+    ok = [r for r in base if r["status"] == "ok"]
+    bad = [r for r in base if r["status"] != "ok"]
 
     checks: list[tuple[str, object, object, bool]] = []
 
@@ -109,8 +113,10 @@ def main() -> int:
             good = got == want
         checks.append((name, got, want, good))
 
-    chk("rows in the sweep", len(rows), 16)
-    chk("distinct hub winds", len({round(r["w"], 6) for r in rows}), 16)
+    chk("rows in the sweep (16 base + 2 repeats)", len(rows), 18)
+    chk("base rows at rep 1", len(base), 16)
+    chk("settle repeat rows", len(reps), 2)
+    chk("distinct hub winds", len({round(r["w"], 6) for r in base}), 16)
     chk("status split (ok, rejected)", [len(ok), len(bad)], [7, 9])
     chk("mass constant across the sweep (kg, 6 dp)",
         [round(r["mass"], 6) for r in rows], [25.698468] * len(rows))
@@ -118,7 +124,7 @@ def main() -> int:
     chk("every rejected row sits below the floor",
         max(r["pe"] for r in bad) < FLOOR, True)
     # The identity row must reproduce the campaign's recorded score.
-    ident = [r for r in rows if abs(r["w"] - 11.00969423693896) < 1e-6]
+    ident = [r for r in base if abs(r["w"] - 11.00969423693896) < 1e-6]
     chk("identity row present", len(ident), 1)
     if ident:
         chk("identity fitness == recorded 27.363541266349",
@@ -127,6 +133,17 @@ def main() -> int:
     ratios = [r["pe"] / r["w"] ** 3 for r in ok]
     spread = (max(ratios) - min(ratios)) / max(ratios)
     chk("P_end / v^3 spread across ok rows < 0.5 %", spread < 0.005, True)
+    # The repeat must print the same score on the same inputs.
+    spreads: dict[float, list[float]] = {}
+    for r in reps:
+        spreads.setdefault(round(r["w"], 6), []).append(r["pe"])
+    for r in base:
+        key = round(r["w"], 6)
+        if key in spreads:
+            spreads[key].append(r["pe"])
+    chk("settle repeat spreads (kW, 9 dp)",
+        sorted(round(max(v) - min(v), 9) for v in spreads.values()),
+        [0.0] * len(spreads))
     # Fields that close the record chain, when the CSV carries them.
     for col, want in (("v_rated", "11.0"), ("h_ref_m", "9.411699"),
                       ("k_mppt", "2.24")):
@@ -135,13 +152,6 @@ def main() -> int:
                 [want])
     if rows and "gene_sha256" in rows[0]:
         chk("genome hash constant", len({r["gene_sha256"] for r in rows}), 1)
-    if rows and "rep" in rows[0]:
-        reps = {}
-        for r in rows:
-            if r["rep"] not in ("", "1"):
-                reps.setdefault(round(r["w"], 6), []).append(r["pe"])
-        chk("repeat spreads (kW)", sorted(
-            round(max(v) - min(v), 9) for v in reps.values()), [0.0] * len(reps))
 
     n_fail = sum(1 for *_, good in checks if not good)
     for name, got, want, good in checks:
@@ -168,8 +178,8 @@ def main() -> int:
     ax.text(13.62, FLOOR - 0.42, keep("5 kW floor: a gate, not a target"),
             ha="right", va="top", size=7, color=AMBER)
 
-    xs = [r["w"] for r in rows]
-    ys = [r["pe"] for r in rows]
+    xs = [r["w"] for r in base]
+    ys = [r["pe"] for r in base]
     ax.plot(xs, ys, color=INK, lw=0.9, zorder=2)
 
     ok_x = [r["w"] for r in ok]
@@ -181,14 +191,14 @@ def main() -> int:
 
     # Every marker prints its power, except the pair at 11.0 and 11.0097,
     # which carry one two-line block because they sit two pixels apart.
-    for r in rows:
+    for r in base:
         if abs(r["w"] - 11.0) < 1e-9 or abs(r["w"] - 11.00969423693896) < 1e-6:
             continue
         ax.annotate(keep(f"{r['pe']:.2f}"), (r["w"], r["pe"]),
                     textcoords="offset points", xytext=(0, 4.5),
                     ha="center", va="bottom", size=6.4, color=GREY)
 
-    pair_y = max(r["pe"] for r in rows
+    pair_y = max(r["pe"] for r in base
                  if abs(r["w"] - 11.0) < 1e-9
                  or abs(r["w"] - 11.00969423693896) < 1e-6)
     ax.annotate(keep("11.0 m/s: 5.30\n11.0097 m/s: 5.31"),
@@ -221,10 +231,10 @@ def main() -> int:
                   "sweep are chosen, not machine limits"),
              size=7, color=FAINT, style="italic")
     commit = args.script_commit
-    cache = hashlib.sha256(src.read_bytes()).hexdigest()
+    md5 = hashlib.md5(src.read_bytes()).hexdigest()
     fig.text(0.012, 0.112,
              keep(f"sources: the winner genome, bankderate2 island 3 gen 26 "
-                  f"\u00b7 sweep CSV sha256 {cache[:12]}\u2026 \u00b7 "
+                  f"\u00b7 sweep CSV md5 {md5[:12]}\u2026 \u00b7 "
                   f"script commit {commit}"),
              size=6.8, color=FAINT)
     fig.text(0.012, 0.068,
@@ -268,6 +278,40 @@ def main() -> int:
         return 1
 
     print(f"ledger strings: {len(ledger)}")
+    try:
+        csv_rel = str(src.resolve().relative_to(REPO))
+    except ValueError:
+        csv_rel = str(src)
+    manifest = {
+        "slug": SLUG,
+        "script": {"path": f"docs/reporting/figures/{SLUG}/{SLUG}.py",
+                   "sha256": sha256(Path(__file__).resolve())},
+        "toolchain": {"python": ".".join(str(v) for v in sys.version_info[:3]),
+                      "matplotlib": matplotlib.__version__,
+                      "svg_text_layer": "glyph text, not paths"},
+        "inputs": {"csv": {"path": csv_rel, "md5": md5, "sha256": sha256(src)},
+                   "register_rows": args.rows.split(" \u00b7 ")},
+        "header": header_lines,
+        "statistic": ("window-end power (P_end_kW) at each swept hub wind, "
+                      "one fixed design at cfg.v_rated = 11.0"),
+        "script_commit": commit,
+        "command": (f"/usr/bin/python3 docs/reporting/figures/{SLUG}/"
+                    f"{SLUG}.py --csv {csv_rel} --script-commit {commit}"),
+        "drawn_forms": {f"{r['w']:.6f}": f"{r['pe']:.2f}" for r in base},
+        "outputs": {f"{SLUG}.svg": sha256(svg), f"{SLUG}.pdf": sha256(pdf),
+                    f"{SLUG}.png": sha256(png),
+                    "label-ledger.txt": sha256(outdir / "label-ledger.txt")},
+    }
+    (outdir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    log = [f"check: {n}: {g}  ({'OK' if ok_ else 'OFF vs ' + str(w)})"
+           for n, g, w, ok_ in checks]
+    log.append(f"ledger strings: {len(ledger)}")
+    log.append(f"outputs sha256: png {sha256(png)}")
+    log.append(f"                svg {sha256(svg)}")
+    log.append(f"                pdf {sha256(pdf)}")
+    log.append("checks: ALL OK")
+    (outdir / "checks.log").write_text("\n".join(log) + "\n", encoding="utf-8")
     print(f"outputs sha256: png {sha256(png)}")
     print(f"                svg {sha256(svg)}")
     print(f"                pdf {sha256(pdf)}")

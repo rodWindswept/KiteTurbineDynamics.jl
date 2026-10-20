@@ -34,6 +34,10 @@ The gain is fixed at 2.24, the campaign's own gain. The identity row
 reproduces the recorded result: fitness 27.363541266349 against the recorded
 27.3635412663488, and window-end power 5.314 kW against 5.31 kW recorded.
 
+Two points ran twice: the identity wind and 13.5 m/s. Both repeats print the
+same value at the six decimals the file records, so both spreads read zero
+and the sweep is deterministic.
+
 Nine rows sit below the floor. The evaluator rejects them and keeps the
 measured power, so 1.09 to 4.61 kW draws as open markers. Seven rows score.
 The lowest scoring power is 5.30 kW at 11.0 m/s.
@@ -56,19 +60,21 @@ metric, so a polyline through the evaluated points is honest. The ends are
 chosen and not machine limits: the 13.5 m/s point passes at FoS 10.6 and
 twist 0.44.
 
-## Rows this plate needs
+## Rows this plate reads
 
-The values on the plate are new. The register carries the mass (NR-066) and
-the recorded winner row, but no row for the sweep itself. Before the plate
-seats, the numbers seat cuts one row for the sixteen window-end powers, one
-for the score pair at 11.0 and 11.0097, and one for the status split of
-nine rejects and seven scores.
+NR-070 signs the sixteen window-end powers, with their window means, FoS and
+twist. NR-071 signs the score pair at 11.0 and 11.0097 m/s and the identity
+reproduction. NR-072 signs the nine and seven split. NR-066 signs the winner
+mass. NR-046 signs the objective seam: the 5.0 kW floor and the 5.0 per kW
+squared charge. NR-015 signs the operating point: gain 2.24, the window chain
+and the 18.8 m length.
 
 ## Provenance line
 
-Sweep `⟨csv md5⟩` · repo `⟨commit⟩` · winner bankderate2 island 3 gen 26 ·
-rows ⟨NR-066, NR-0xx⟩ · script commit `⟨hex⟩` · full record: the
-figure-provenance appendix, once the plate is seated.
+Sweep CSV md5 `a4e535af18da220a473db963c45ceb76`, 18 data rows: 16 winds plus
+two settle repeats · record commit `8a757f3`, src tree `4dd7e0d9`, probe
+sha256 `59718a02` · rows NR-015, NR-046, NR-066, NR-070, NR-071, NR-072 ·
+script commit `⟨hex⟩`.
 
 ## Seat note
 
