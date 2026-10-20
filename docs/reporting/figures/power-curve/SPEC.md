@@ -56,21 +56,24 @@ count.
    (10.0 m/s at 4.8 m, exponent 1/7), carried through `mass_scale`. The
    axis label names the altitude and the value.
 
-2. **One field or two. ⟨OPEN, ruling with @science-validator and
-   @aero-validator⟩** Two bases are on the table. They give different
-   machines.
+2. **One field. ⟨ruling requested: @science-validator, @aero-validator⟩** The
+   swept field is `p.v_wind_ref`. `cfg.v_rated` holds at 11.0, because it
+   is part of the machine and not part of the wind. `design_from_vector_v10`
+   takes `v_rated`, and `size_beams_closed_form` reads it. A decode of the
+   fixed genome at five rated winds prints five different masses:
 
-   | basis | swept | held | the plate then reads |
-   |---|---|---|---|
-   | one field | `p.v_wind_ref` | `cfg.v_rated` at 11.0 | one machine at several winds |
-   | two fields | `p.v_wind_ref` and `cfg.v_rated` | none | a re-rated machine at each wind |
+   | `cfg.v_rated` | decoded mass | against 11.0 |
+   |---|---|---|
+   | 9.0 | 34.5650 kg | +8.8665 kg |
+   | 10.0 | 28.7999 kg | +3.1014 kg |
+   | 11.0 | 25.6985 kg | 0 |
+   | 12.0 | 23.4864 kg | −2.2121 kg |
+   | 13.0 | 23.5694 kg | −2.1291 kg |
 
-   This document first carried the two-field basis. That basis contradicts
-   contract 4. `design_from_vector_v10` takes `v_rated`, and
-   `size_beams_closed_form` reads it. A moving `v_rated` re-sizes the
-   beams, so the mass moves and the design is no longer fixed. On the
-   one-field basis the ceiling, the floor and the over-power penalty all
-   sit at the design rated wind, 11.0. The caption must then say so.
+   So the two-field basis, which this document first carried, prints a
+   different machine at every point. It contradicts contract 4 and it
+   cannot draw one design. The mass column of the sweep CSV is the check:
+   it prints 25.698468 kg on every row.
 
 3. **Controller.** The gain is not fixed. `with_k_bracket` scores the
    genome at k̂·{0.5, 1, 2} and keeps the best accepting evaluation, so
@@ -125,10 +128,13 @@ count.
   sweep has ends, not features.
 
 **Sweep** ⟨hub wind 6.5 to 13.5 m/s in 0.5 steps, plus the identity point
-at 11.0097 m/s⟩. The ends are where the gates bind, not a bracket. The
+at 11.0097 m/s⟩. The ends are chosen and the caption says so. The plate
+must not read them as machine limits. On the run of 2026-10-20 the top
+point passes at FoS 10.55 and twist 0.443, so no gate bounds it. The low
+end is the honest floor reject, which keeps its measured power. The
 earlier draft read seven points on the site reference, 6.0 to 16.0 m/s.
-That range converts to 6.6 to 17.6 m/s at this hub, and its top cannot
-pass a ceiling held at 11.0.
+That range converts to 6.6 to 17.6 m/s at this hub, and no part of it
+was run.
 
 ## What it may not print
 
