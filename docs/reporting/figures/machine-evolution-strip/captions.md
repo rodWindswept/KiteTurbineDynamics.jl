@@ -39,6 +39,8 @@ truncated cone.
 Each machine prints three signed values. The first is the search
 objective in kg-eq. The second is the decoded mass in kg. The third is
 the window-end power in kW (NR-036, NR-066, NR-062).
+NR-062 signs the window mean and the window end as a pair. The power on
+each card is the window-end value the score uses (NR-062).
 The drawings use the shaft frame. Distance along the shaft is
 vertical, and the operating elevation is not drawn.
 
@@ -118,3 +120,10 @@ carries the lifter, so it is the mass the campaign scored. The
 2026-10-11 caption sent the reader to the objective alone, and the
 sentence that said the strip prints no power value and no mass value
 is withdrawn here. (figures seat)
+
+Power column note (2026-10-20): the power line draws the window-end
+value. NR-062 signs the window mean and the window end as a pair, and
+the card prints the second. Gen 6 shows the difference: the mean reads
+5.42 kW and the card reads 5.4 kW, as recorded. The clause names the
+column, so a reader who checks the register table finds the right
+member. Text only, no render moves. (figures seat)
