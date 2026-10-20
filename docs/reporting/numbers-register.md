@@ -2863,3 +2863,70 @@ Consequences:
 
 - The draft's section now prints neither token. The refusal keeps its mechanism, and the sizing sentence keeps "twice the nominal load" without a number. That is the end state unless the era ruling restores a dated form.
 
+## Source row: NR-064, the 42-cell ladder census at 581d33f (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-064 | Cell verdicts on the 42-cell ladder re-run | 7 pass of 42 | count | `scripts/results/ladder_v13_rerun_2026-10-20.csv` md5 74408ea185deb9a9920f755d6395ec45, four stamp lines and 42 data rows | signed (science-validator, 2026-10-20) |
+
+| rung kW | pass | lengths that pass | P_gen kW |
+|---|---|---|---|
+| 5 | 6 of 6 | 12 to 40 | 5.57 to 6.42 |
+| 7 | 1 of 6 | 18 | 8.33 |
+| 10 to 50 | 0 of 30 | none | 0 to 0.13 |
+
+Sign-off basis:
+
+- The read is a fresh read of the shipped CSV. The file holds 47 lines. Four lines carry the stamp, one line carries the column names, and 42 lines carry the cells.
+
+- The `verdict` and `class` columns agree in all 42 rows.
+
+- The producing harness is a scratch probe at md5 bb59e12f83328dd504e67a7bf58e392b. Its `ladder_cell` is byte-identical to the one in `scripts/ode_ladder_v13.jl` at md5 250a41d04e1f66f78f133c25c15d82c8. The rung and length lists match too.
+
+- Three differences separate the probe from the in-tree script. It writes another path. It adds two columns, `wall_s` and `err`. It wraps each cell in a try/catch.
+
+- The in-tree script cannot write this file. Its output path is `scripts/results/ladder_v13.csv`.
+
+- `P_gen_kW` is the final window sample. It prints two decimal places. It is not a window mean. The gate compares the same sample against 5.0 kW.
+
+- The acceptance floor is 5.0 kW at every rung (`MIN_P_GEN_KW`, `scripts/ode_gate_v13.jl:27`, applied at line 224). The `p_floor_kw=KW` argument at line 142 sizes the beams. It does not set acceptance.
+
+- Four other conditions complete the test. Clearance reads 1.5 m or more. Ground speed reads above 0.5 rad/s. No twist crossing occurs. No line breaks.
+
+Boundaries:
+
+- A pass is gate acceptance at the design point. It is not a claim that a cell meets its rung rating.
+
+- The 7 kW pass reads twist ratio 0.96 against a crossing at 1.00. It is one point at the edge, not a band with margin.
+
+- The old `scripts/results/ladder_v13.csv` is not part of this row. No cell in the two grids shares a seed.
+
+- No numeral from the mechanism paragraph is signed here. That covers `k_mppt` 8.23 and 1122.63, sin delta alpha 313, and the Betz ratio band 0.44 to 0.81.
+
+- The header comment at `scripts/ode_ladder_v13.jl:8` still reads 2.5 kW. The code uses 5.0 kW. The comment stays, because an edit would move md5 250a41d0 and break this anchor.
+
+## Source row: NR-065, the failure classes of the 35 failing cells (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-065 | Class split of the 35 failing cells | cliff 20, stall 14, clearance 1 | count | same CSV, `class` column, re-derived from three columns | signed (science-validator, 2026-10-20) |
+
+| class | count | gate signature |
+|---|---|---|
+| cliff | 20 | the settle raised. P_gen 0, w_gnd 0, twist 0. |
+| stall | 14 | the settle completed. w_gnd 0.46 to 0.85 rad/s. P_gen 0.13 kW or less. |
+| clearance | 1 | 7 kW at 12 m. P_gen 10.71 kW. The ground check fails. |
+
+Sign-off basis:
+
+- The class reproduces from the CSV columns with no exceptions. A false verdict with all three values at zero reads cliff. The 7 kW cell at 12 m reads clearance. Every other false verdict reads stall.
+
+- That rule returns 20, 14 and 1. It agrees with the shipped column in all 42 rows.
+
+- The two cells that the wall-time cut misplaced read cliff by this rule. They are 7 kW at 25 m and 15 kW at 40 m.
+
+Boundaries:
+
+- The class names the gate signature. It does not name a physical cause beyond the settle behaviour.
+
+- The stall band reads `w_gnd` at the final window sample. The CSV prints no speed history.
