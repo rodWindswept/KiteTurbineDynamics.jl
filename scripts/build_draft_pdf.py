@@ -110,14 +110,20 @@ def git_hash(root, pathspec):
     return out.strip() if rc == 0 and out.strip() else "unknown"
 
 
-def citation_check(root, draft, register, checker):
-    """Run the register-seat checker. Return (summary, ok)."""
-    out, err, rc = sh(
-        [sys.executable, str(checker), str(draft), str(register)], cwd=root
-    )
+def citation_check(root, draft, register, checker, surfaces=()):
+    """Run the register-seat checker. Return (summary, ok).
+
+    surfaces: extra paths scanned as attached document text (the embedded
+    kit captions). The cited set then covers the assembled document, and a
+    caption-only cite to an unsigned row fails the build.
+    """
+    cmd = [sys.executable, str(checker), str(draft), str(register)]
+    cmd.extend(str(s) for s in surfaces)
+    out, err, rc = sh(cmd, cwd=root)
     cited = re.search(r"cited rows in .*?: (\d+)", out)
     signed = re.search(r"every cited row present and signed \((\d+) signed rows total\)", out)
     uncited = re.search(r"signed rows not cited by this draft \(informational\): (.+)", out)
+    draft_only = re.search(r"draft file alone: (\d+) cited", out)
     summary_parts = []
     if cited:
         summary_parts.append(f"{cited.group(1)} cited")
@@ -127,6 +133,8 @@ def citation_check(root, draft, register, checker):
         summary_parts.append(f"uncited: {uncited.group(1)}")
     else:
         summary_parts.append("uncited: none")
+    if draft_only:
+        summary_parts.append(f"draft file alone: {draft_only.group(1)} cited")
     summary = ", ".join(summary_parts)
     return summary, rc == 0, out + err
 
@@ -420,9 +428,21 @@ def build_once(root, args, route, summary_out=None):
     draft_path = root / args.draft
     text = draft_path.read_text()
 
+    # Resolve seats first: the citation gate scans the assembled document
+    # (draft + embedded kit captions), so a caption-only cite to an unsigned
+    # row fails the build instead of printing the row untraceably.
+    text, seats = resolve_seats(root, text)
+    surfaces = [
+        root / FIG_ROOT / slug / "captions.md"
+        for slug in seats
+        if (root / FIG_ROOT / slug / "captions.md").exists()
+    ]
+
     summary = "check skipped"
     if not args.no_check:
-        summary, ok, log = citation_check(root, args.draft, args.register, args.checker)
+        summary, ok, log = citation_check(
+            root, args.draft, args.register, args.checker, surfaces
+        )
         (root / args.out).mkdir(parents=True, exist_ok=True)
         (root / args.out / "citation-check.log").write_text(log)
         if not ok:
@@ -430,7 +450,6 @@ def build_once(root, args, route, summary_out=None):
             print(log)
             return 1
 
-    text, seats = resolve_seats(root, text)
     cited = sorted({int(m) for m in re.findall(r"NR-(\d+)", text)})
     if cited:
         text += "\n" + register_appendix(root, args.register, cited)

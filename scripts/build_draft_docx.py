@@ -203,9 +203,20 @@ def main():
     draft_path = root / args.draft
     text = draft_path.read_text()
 
+    # Same order as the PDF route: resolve seats first, then run the
+    # citation gate over the assembled document (draft + kit captions).
+    text, seats = resolve_seats_md(root, text)
+    surfaces = [
+        root / bdp.FIG_ROOT / slug / "captions.md"
+        for slug in seats
+        if (root / bdp.FIG_ROOT / slug / "captions.md").exists()
+    ]
+
     summary = "check skipped"
     if not args.no_check:
-        summary, ok, log = bdp.citation_check(root, args.draft, args.register, args.checker)
+        summary, ok, log = bdp.citation_check(
+            root, args.draft, args.register, args.checker, surfaces
+        )
         (root / args.out).mkdir(parents=True, exist_ok=True)
         (root / args.out / "citation-check.log").write_text(log)
         if not ok:
@@ -213,7 +224,6 @@ def main():
             print(log)
             return 1
 
-    text, seats = resolve_seats_md(root, text)
     cited = sorted({int(m) for m in __import__("re").findall(r"NR-(\d+)", text)})
     if cited:
         text += "\n" + bdp.register_appendix(root, args.register, cited)
