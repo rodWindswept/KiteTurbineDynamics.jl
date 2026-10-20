@@ -2,9 +2,9 @@
 
 **Slug** `power-curve`
 
-**Status** SPEC v1, first issue. Angle brackets ⟨⟩ mark binding slots.
-This document carries no drawn value. The numbers register supplies the
-citation discipline.
+**Status** SPEC v2, corrected against the run basis. Angle brackets ⟨⟩ mark
+binding slots. This document carries no drawn value. The numbers register
+supplies the citation discipline.
 
 **Owner** @figures-images-diagrams. **Content check** @aero-validator on
 physics, era and axis, and @science-validator on the numbers.
@@ -31,31 +31,46 @@ fixed design under a declared gain bracket, scored at each sweep wind.
 A sweep cannot start until they are collapsed to one. Measured at
 `914be4e`:
 
-| field | what it is | 10 kW box | 50 kW box |
-|---|---|---|---|
-| `p.h_ref` | hub altitude | 15.000 m | 33.541 m |
-| `p.v_wind_ref` | site wind at the hub, drives the aerodynamics and the forcing | 11.7677 m/s | 13.2014 m/s |
-| `cfg.v_rated` | config constant, default 11.0, sets the Betz ceiling, the floor and the k bracket | 11.0 m/s | 11.0 m/s |
-| forcing ÷ ceiling, in power | (v_wind_ref / v_rated)³ | 1.224 | 1.729 |
+| field | what it is | 5 kW box (this winner) | 10 kW box | 50 kW box |
+|---|---|---|---|---|
+| `p.h_ref` | hub altitude | 9.4117 m | 15.000 m | 33.541 m |
+| `p.v_wind_ref` | site wind at the hub, drives the aerodynamics and the forcing | 11.0097 m/s | 11.7677 m/s | 13.2014 m/s |
+| `cfg.v_rated` | config constant, default 11.0, sets the Betz ceiling, the floor and the k bracket | 11.0 m/s | 11.0 m/s | 11.0 m/s |
+| forcing ÷ ceiling, in power | (v_wind_ref / v_rated)³ | 1.003 | 1.224 | 1.729 |
 
 `evaluate_design` defaults `v_rated` to 11.0 and takes no value from the
-machine's own site wind. So the ceiling sits at a wind that matches
-neither box, and the two boxes fly at winds 1.1218 apart. The ceiling
-question is with @science-validator and @aero-validator. This SPEC does
-not depend on their ruling, because it sets both fields at every point.
+machine own site wind. So the ceiling sits at a wind that matches neither
+box, and the two big boxes fly at winds 1.1218 apart. This winner is the
+exception. Its hub wind is 0.09 per cent above the ceiling wind, so the
+mismatch is a 10 kW and 50 kW concern and not a reading on this plate.
+The ceiling question is with @science-validator and @aero-validator.
+Contract 2 waits on that ruling, because the basis decides the machine
+count.
 
 ## Binding contracts
 
-1. **Axis.** The x-axis is the wind at the winner's own hub altitude, in
-   m/s. The swept variable is the site reference wind. The plate converts
-   it to the hub wind with the anchor site profile (SITE_DAISY: 10.0 m/s
-   at 4.8 m, Hellmann exponent 1/7). The axis label names the hub
-   altitude and the shear.
+1. **Axis.** The x-axis is the wind at the winner hub altitude, in m/s.
+   The plate sweeps `p.v_wind_ref` directly, so no conversion is applied.
+   For this winner the hub sits at 9.4117 m and the reference wind is
+   11.0097 m/s. That value is `site_wind` of the altitude under SITE_DAISY
+   (10.0 m/s at 4.8 m, exponent 1/7), carried through `mass_scale`. The
+   axis label names the altitude and the value.
 
-2. **One wind, two fields.** At every point, `p.v_wind_ref` equals
-   `site_wind(p.h_ref)` from that site spec, **and** `cfg.v_rated` equals
-   the same value. A point that moves one field and not the other is not
-   admissible, because its Betz ceiling and its forcing then disagree.
+2. **One field or two. ⟨OPEN, ruling with @science-validator and
+   @aero-validator⟩** Two bases are on the table. They give different
+   machines.
+
+   | basis | swept | held | the plate then reads |
+   |---|---|---|---|
+   | one field | `p.v_wind_ref` | `cfg.v_rated` at 11.0 | one machine at several winds |
+   | two fields | `p.v_wind_ref` and `cfg.v_rated` | none | a re-rated machine at each wind |
+
+   This document first carried the two-field basis. That basis contradicts
+   contract 4. `design_from_vector_v10` takes `v_rated`, and
+   `size_beams_closed_form` reads it. A moving `v_rated` re-sizes the
+   beams, so the mass moves and the design is no longer fixed. On the
+   one-field basis the ceiling, the floor and the over-power penalty all
+   sit at the design rated wind, 11.0. The caption must then say so.
 
 3. **Controller.** The gain is not fixed. `with_k_bracket` scores the
    genome at k̂·{0.5, 1, 2} and keeps the best accepting evaluation, so
@@ -67,19 +82,19 @@ not depend on their ruling, because it sets both fields at every point.
    stamp⟩ and does not move across the sweep. A genome that adapts per
    wind is a different figure.
 
-5. **One base.** The genome's params base is declared in the header and
-   printed in the label. Two bases exist for the same rung, and they give
-   a different hub altitude and a different reference wind. Measured at
-   `caceb84`:
+5. **One base.** The genome params base is declared in the header and
+   printed in the label. Three bases are measured, and they give a
+   different hub altitude and a different reference wind:
 
-   | base | route to 10 kW | `h_ref` | `v_wind_ref` |
+   | base | route | `h_ref` | `v_wind_ref` |
    |---|---|---|---|
    | cartography | `params_10kw()` | 15.00 m | 11.7677 m/s |
    | ladder | the 1.5 kW Daisy anchor, scaled | 13.31 m | 11.5685 m/s |
+   | 5 kW masslift | `params_daisy()` at L 18.8 m, `mass_scale` 1.5 to 5 kW | 9.4117 m | 11.0097 m/s |
 
-   The table above quotes the cartography base. A figure drawn on the
-   ladder base prints the second row. The label names the base, or two
-   site winds print in one report as one.
+   The first two rows are 10 kW routes. This winner is the third row.
+   The label names the base, or two reference winds print in one report
+   as one.
 
 6. **Settle repeat.** One sweep point runs twice from the same genome and
    the same wind. Both scores print. A spread larger than ⟨the tolerance⟩
@@ -99,7 +114,8 @@ not depend on their ruling, because it sets both fields at every point.
 - Nothing is drawn between or beyond evaluated points. No fit, no smooth
   curve, no dashed extrapolation past the sweep ends.
 - Each point is a marker. Each marker prints its scored power to one
-  decimal.
+  decimal. The drawn column is `P_end_kW`, the `:tail5` statistic the
+  score reads. `P_mean_kW` prints in the caption.
 - The 5.0 kW floor draws as a horizontal line. It is a declared
   constraint with a row behind it.
 - The Betz ceiling at the winner's swept area draws only if
@@ -108,8 +124,11 @@ not depend on their ruling, because it sets both fields at every point.
 - No slope numeral, and no "cut-in", "rated" or "cut-out" wording. The
   sweep has ends, not features.
 
-**Sweep** ⟨7 points, site reference 6.0 to 16.0 m/s⟩, chosen to bracket
-the design point of 10.0 m/s at 4.8 m.
+**Sweep** ⟨hub wind 6.5 to 13.5 m/s in 0.5 steps, plus the identity point
+at 11.0097 m/s⟩. The ends are where the gates bind, not a bracket. The
+earlier draft read seven points on the site reference, 6.0 to 16.0 m/s.
+That range converts to 6.6 to 17.6 m/s at this hub, and its top cannot
+pass a ceiling held at 11.0.
 
 ## What it may not print
 
@@ -130,18 +149,25 @@ the design point of 10.0 m/s at 4.8 m.
 
 ## Checks at the gate
 
-1. Seven points, seven statuses, each `:ok` or named as rejected.
-2. `v_wind_ref == site_wind(h_ref)` at every point.
-3. `cfg.v_rated == v_wind_ref` at every point.
-4. Every scored power below the Betz ceiling for its wind and area.
+1. One row per swept wind, each `:ok` or named as rejected, with the
+   status split printed beside the count.
+2. `p.h_ref` identical at every point, and `mass_kg` identical to the
+   winner mass. A moved mass means the machine moved.
+3. `cfg.v_rated` constant across the sweep ⟨11.0, if the one-field ruling
+   lands⟩.
+4. Every produced power below the Betz ceiling at the ceiling wind and
+   that swept area.
 5. The winner genome identical at every point.
-6. Every printed digit on an NR row.
+6. A below-floor reject keeps its measured power. A gate reject carries
+   none, and the plate does not draw a number for it.
+7. Every printed digit on an NR row.
 
-## What this plate is expected to expose
+## What this plate can and cannot expose
 
-The two cartography boxes already fly at different winds, because
-`mass_scale` grows the hub altitude by √5 and the site profile then hands
-the bigger machine 1.1218 times the wind — 1.41 times the available
-power. If that holds on this sweep, the caption must say it: a bigger
-machine of this family flies higher and reads more wind. The plate is the
-instrument that measures the effect instead of asserting it.
+The sweep holds one machine at one hub altitude. It cannot measure the
+cross-box wind gain, because no box moves. That reading belongs to a
+mass-scale comparison, where `mass_scale` grows the hub by √5 and the
+site profile hands the bigger machine 1.1218 times the wind, which is
+1.41 times the available power. This plate measures one machine against
+its own gate. If a caption claims the scale effect here, it claims a
+reading the sweep cannot produce.
