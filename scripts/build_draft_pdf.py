@@ -395,7 +395,29 @@ def build_latex(root, args, text, seats, summary):
     return pdf_path, None
 
 
+def appendix_pin_gate(root, args):
+    """Fail the build when an appendix script pin disagrees with its manifest.
+
+    Runs the tracked check on the draft this route is actually assembling.
+    No skip flag: a plate mid-re-cut must move its pin in the same commit
+    as its bytes, which is the discipline the check enforces. The probe's
+    full output goes to stderr, and a non-zero exit aborts before this
+    route writes any output file.
+    """
+    proc = subprocess.run(
+        [sys.executable, str(Path(__file__).parent / "check_appendix_pins.py"),
+         "--draft", str(root / args.draft)],
+        capture_output=True, text=True,
+    )
+    if proc.returncode != 0:
+        sys.stderr.write(proc.stdout)
+        sys.stderr.write(proc.stderr)
+        print("[check] appendix pin gate failed - build aborted before any output", file=sys.stderr)
+        sys.exit(proc.returncode)
+
+
 def build_once(root, args, route, summary_out=None):
+    appendix_pin_gate(root, args)
     draft_path = root / args.draft
     text = draft_path.read_text()
 

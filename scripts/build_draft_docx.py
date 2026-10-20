@@ -166,6 +166,7 @@ def compact_table_style(styles_xml: bytes) -> bytes:
 
 
 def build_docx(root, args, text, seats, summary):
+    bdp.appendix_pin_gate(root, args)
     out_dir = root / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
     intermediate = out_dir / "draft-assembled-docx.md"
