@@ -33,7 +33,7 @@ at three significant figures. The projection reads NR-044: PC1 22.4 per cent, PC
 
 ## Provenance line
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044 · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `e23f226`
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044 · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `d0e410d`
 
 ## Checks for the consistency pass
 
@@ -41,6 +41,8 @@ data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_ban
   journey marks read "the common seed" and "the winner".
 - Every value cites a register row. The projection reads NR-044.
 - The panel titles read the genome glossary names.
+
+**Delta** v5 (2026-10-20): the provenance line takes `d0e410d`, not `e23f226`. The T4 render pass (`d0e410d`, landed `f696930`) re-cut this plate, and the manifest `script_commit` reads `d0e410d`. The four recorded output hashes match the files on disk, so `d0e410d` is the state that built the bytes. Caption text only, no render moves. (figures seat)
 
 **Delta** v4 (2026-10-14): the seating header refines. The caption text stands.
 

@@ -36,7 +36,7 @@ shares read PC1 22.4 per cent and PC2 17.3 per cent (NR-044).
 
 ## Provenance line
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044, NR-045 · script: `docs/reporting/figures/pca-landscape/pca-landscape.py` at `e23f226`
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044, NR-045 · script: `docs/reporting/figures/pca-landscape/pca-landscape.py` at `d0e410d`
 
 ## Checks for the consistency pass
 
@@ -44,6 +44,8 @@ data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_ban
   reads "the winner (island 3)" where the island matters.
 - Every value cites a register row. The variance shares cite NR-044.
 - The sentinel rows draw nothing, so no caption claims them.
+
+**Delta** v5 (2026-10-20): the provenance line takes `d0e410d`, not `e23f226`. The T4 render pass (`d0e410d`, landed `f696930`) re-cut this plate, and the manifest `script_commit` reads `d0e410d`. The four recorded output hashes match the files on disk, so `d0e410d` is the state that built the bytes. Caption text only, no render moves. (figures seat)
 
 **Delta** v4 (2026-10-14): the seating header refines. The caption text stands.
 
