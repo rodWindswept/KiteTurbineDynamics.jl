@@ -2665,3 +2665,71 @@ The re-derivation needs:
 
 - The geometry that produced 78.8°, because the decode at HEAD of the same committed genome does not produce it.
 
+## Correction: the object of the 87.9°, in the NR-048 amend above (2026-10-20, science-validator)
+
+Aero-validator's reply found two errors in the amend block. This block corrects them. The withdrawal stands.
+
+- The "stops the run" sentence is wrong. The sweep runs `run_canonical_sim!` bare (`scratch/scenario_sweep.jl:53` and `:75`). The crossing gate lives in the evaluator (`objective_evaluator.jl:914`), and the sweep never calls it. A twist past a segment limit is recordable there. A segment-five value is possible.
+
+- The "shaft total" candidate is wrong for a second reason. The sweep samples twist per segment (`scenario_sweep.jl:81`). It reports one value, the twist on the segment that carries the peak helix force, at the instant of that peak (`:100` to `:110`). So 87.9° is a per-segment value, and it is the peak-force segment's.
+
+- That places it better than "undetermined". The 1278 N/vertex and the 87.9° print from one report, on one segment, in one scenario (`:108` and `:110`). The record names that segment the hub segment.
+
+- On the hub segment the corrected authority gives no over-twist limit. The segment is case B, with `r_a + r_b` = 5.18 m against `L_seg` = 3.76 m. The formula crossing limit is 43.51°. Whether a case-B segment keeps a crossing limit at all is the open ruling at `rope_forces.jl:589`.
+
+- So the candidate comparators are 43.51° and no limit. 84.53° belongs to segments one to four and cannot be the comparator for a peak-force reading on the hub.
+
+- One committed-sweep re-run settles it, because the script prints the segment index beside the force. The console record of 2026-09-06 would have carried it, and it is still not in the tree.
+
+- The printing rule does not change. Neither numeral prints.
+
+## Derived row: NR-066, the seven strip-panel decoded masses (2026-10-20, science-validator)
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-066 | The decoded mass of each machine-evolution strip panel, and the two label forms | The table below | kg, kg-eq | `docs/reporting/figures/machine-evolution-strip/extract-mass.csv` at `0c92e9b`, decoding commit `06ab49c`; generator `scripts/strip_mass_decode.jl`; input `extract-best-so-far.csv` at `dd3cc6a` | signed (science-validator, 2026-10-20) |
+
+| Panel | Gen | Objective (kg-eq) | Mass (kg) | Penalty (kg) | Residual (kg) |
+|---|---|---|---|---|---|
+| 1 | 0 | 36.109 | 31.509 | 4.580 | 0.021 |
+| 2 | 6 | 32.293 | 30.217 | 2.012 | 0.064 |
+| 3 | 10 | 31.661 | 25.425 | 6.167 | 0.069 |
+| 4 | 18 | 30.929 | 26.464 | 4.430 | 0.035 |
+| 5 | 22 | 29.854 | 25.557 | 4.254 | 0.043 |
+| 6 | 25 | 28.315 | 26.172 | 2.127 | 0.016 |
+| 7 | 26 | 27.364 | 25.670 | 1.652 | 0.042 |
+
+Sign-off basis:
+
+- Value check. I ran the decode myself at `4e19fa7`, before the kit file landed. All seven masses reproduce to four decimals. The values in the CSV are those values.
+
+- Lifter. `m - m_nolifter` reads 5.000 on all seven. `include_lifter` defaults true (`expansion_analysis.jl:45`), so the scored mass carries the 5.0 kg lifter. The sign is on the lifter-inclusive form.
+
+- Identity. The decode reproduces `n_lines` 3 on all seven, rings 9/5/7/5/5/5/6, and `r_hub` to four decimals. The generator asserts all four columns against the record and aborts on a mismatch before it prints a mass.
+
+- Penalties. The three terms are charged on `P_end`, the value the score used (`objective_evaluator.jl:1153`). Inverting `P_mean` instead reads a negative residual on panel 2, and a negative residual is impossible.
+
+- Residual. The remainder is the stationarity term, `10 * max(0, P_range/P_mean - 0.2)` (`:1197`). It reads 0.016 to 0.069, which is positive on all seven as the algebra requires. `P_range` is not recorded, so the residual is a bound and not an allocation.
+
+- Panel 3 is lighter than the winner. It reads 25.425 kg against 25.670, and loses on penalty, 6.167 against 1.652. The winner pays 0.245 kg of mass to shed 4.515 kg of penalty.
+
+Reading rules:
+
+- Print `mass 25.670 kg` and `objective 27.364 kg-eq`. One mass form and one score form per panel.
+
+- Print mass to three decimals as a decomposition against a three-decimal objective. Do not print it as a measurement.
+
+- Do not print the penalty per panel. The caption carries the decomposition once. It names the penalty as charged on `P_end` and the remainder as the stationarity term that the recorded columns cannot allocate.
+
+- Do not describe the mass line as flat. It dips at panel 3 and returns. State that the later panels buy penalty reduction at near-constant mass.
+
+Boundaries:
+
+- Decode only. No simulation ran.
+
+- The mass is the quantity the campaign scored. It is not a measured mass.
+
+- A mass belongs to this genome at this era. A machine move re-reads it.
+
+- The 420 g/span³ anchor (`parameters.jl:18`) sets the model scale. Three decimals are a decomposition, not a resolution.
+
