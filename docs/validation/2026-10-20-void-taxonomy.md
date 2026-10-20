@@ -113,13 +113,25 @@ fails, and classification by signature holds.
 
 Rule: every class name carries its numeric signature in the archive record.
 
+A signature has two parts: the measured value and the threshold that judges it.
+`MIN_CLEARANCE` is 1.5 m (`ode_gate_v13.jl:26`), so a clearance of +0.63 m is a
+failure of 0.87 m. A reader who sees +0.63 m alone reads a pass. Print the
+margin, or print the threshold beside the number.
+
+A class column must also separate cells that share a verdict. In the 2026-10-20
+corner probe, a stall cell and a clearance cell both read `verdict = false`. The
+first made no power. The second made nearly its rating and failed the ground
+check. Only the class column tells them apart. A status file that records the
+verdict alone throws that difference away.
+
 ## Archive template
 
 Every removed campaign gets one `STATUS.md` in its folder. Five fields:
 
 1. State: live, void, or superseded.
 2. Class: V0 to V4 from this page.
-3. The tell: the check that catches it now, named by file or test.
+3. The tell: the check that catches it now, named by file or test, with the
+   threshold that check applies.
 4. The anchor: launch HEAD, physics era, and artifact md5.
 5. Superseded by: the path that replaced it.
 
