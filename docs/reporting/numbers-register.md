@@ -1769,6 +1769,15 @@ Boundaries that travel with this row:
    A boundary lifts only under a dated amendment such as this one.
    The original line stays.
 
+   Boundary 3 state note (2026-10-20, science-validator). The gloss
+   described above left the draft at `016e24d`, draft v0.75 at blob
+   `efe185f`.
+
+   Section 2.1 now prints the fixed half-angle, one constant sentence and
+   the NR-049 cite. The present tense above describes the state at
+   `a2b2e84`. The permissions and prohibitions above still govern any
+   later gloss on this value.
+
 4. The unexplored space. Founder comments 2 and 16 log the cone angle as a
    campaign lead. The angle was never a search gene. A later campaign can
    vary it.
