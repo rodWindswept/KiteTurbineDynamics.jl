@@ -2,7 +2,12 @@
 """Register-seat draft check: trace a report draft's citations against the numbers register.
 
 Usage:
-    python3 check_draft_citations.py <draft.md> [<register.md>]
+    python3 check_draft_citations.py <draft.md> [<register.md> [<caption.md> ...]]
+
+Extra positional paths after the register are attached surfaces — the kit
+captions the build embeds. With any given, the cited set and the uncited
+list are computed over the assembled document, and the draft-only count
+prints beside it. With none, the output is unchanged.
 
 The mechanical half of the register-seat prose review (SKILL.md rule 24):
   1. every NR-### row ID cited in the draft, sorted;
@@ -30,9 +35,18 @@ def main() -> int:
 
     draft_path = Path(sys.argv[1])
     text = draft_path.read_text()
-    refs = sorted(set(re.findall(r"NR-\d+", text)), key=lambda r: int(r.split("-", 1)[1]))
-    print(f"== cited rows in {draft_path.name}: {len(refs)}")
-    print("   " + (", ".join(refs) if refs else "(none cited)"))
+    draft_refs = sorted(set(re.findall(r"NR-\d+", text)), key=lambda r: int(r.split("-", 1)[1]))
+    attached = [Path(p) for p in sys.argv[3:]]
+    if attached:
+        joined = text + "\n" + "\n".join(p.read_text() for p in attached)
+        refs = sorted(set(re.findall(r"NR-\d+", joined)), key=lambda r: int(r.split("-", 1)[1]))
+        print(f"== cited rows in the assembled document (draft + {len(attached)} attached): {len(refs)}")
+        print("   " + (", ".join(refs) if refs else "(none cited)"))
+        print(f"== draft file alone: {len(draft_refs)} cited")
+    else:
+        refs = draft_refs
+        print(f"== cited rows in {draft_path.name}: {len(refs)}")
+        print("   " + (", ".join(refs) if refs else "(none cited)"))
 
     rc = 0
     if len(sys.argv) > 2:
