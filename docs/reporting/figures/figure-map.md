@@ -57,8 +57,8 @@ carries the full roster around them.
 | 25 | ⟨tbd⟩ | §3.4 | The parallel coordinates. Active genes and outputs, one line per design, status ink | ⟨tbd⟩ | proposed | The island telemetry (data commit `dd3cc6a`, run `a76c5e9`). The FEEDBACKBOT1 review (visual exhibits, item 1) | The value list and the SPEC. The slot ruling (author seat) |
 | 26 | ⟨tbd⟩ | §3.3 or §4.1 | The window traces. Power, speed, tension and shaft bow across settle, relax, window and extension | ⟨tbd⟩ | proposed | `window-trace-extract` (`6175f83`). The NR-059 extension capture. The FEEDBACKBOT1 review (campaign results, item 3) | The per-trace value list (science-validator). The slot ruling (author seat) |
 | 27 | ⟨tbd⟩ | §2.1 or §2.2 | The genome geometry schematic. r_hub, r_rotor, r_bottom, segment length, polygon count, bank and the 22 degree transition cone | ⟨tbd⟩ | proposed | The decode fields, NR-011 and NR-043. The FEEDBACKBOT1 review (methodology, item 3) | The SPEC. The row-15 reconcile at the slot ruling |
-| 28 | ⟨tbd⟩ | §4.3 | The ladder failure census. The designs of the power ladder read through the current model, by rung and shaft length | `ladder-census` | proposed | `scripts/results/ladder_v13_rerun_2026-10-20.csv` (blob `74408ea1`, anchor `581d33f`). The census record (`docs/validation/2026-10-20-ladder-rerun-census.md`). NR-064, NR-065 | The SPEC, then the two signatures. One era, one population. A class column carries the reason for each cell. This plate reads the tool, not the wind. It shows what the model accepts, and it never prints a power delivery. |
-| 29 | ⟨tbd⟩ | §3.3 | The power curve. One fixed winner across a wind sweep | `power-curve` | proposed | SPEC v1 (`2a53248`). The campaign winner at the declared stamp. SITE_DAISY | The run at the aero seat: seven points, site reference 6.0 to 16.0 m/s. The physics and numbers signatures. The caption carries the gain-bracket clause or the curve reads as one setting. |
+| 28 | ⟨tbd⟩ | §4.3 | The ladder failure census. The designs of the power ladder read through the current model, by rung and shaft length | `ladder-census` | proposed | `scripts/results/ladder_v13_rerun_2026-10-20.csv` (blob `74408ea1`, anchor `581d33f`). The census record (`docs/validation/2026-10-20-ladder-rerun-census.md`). NR-064, NR-065 | The SPEC, then the two signatures. One era, one population. A class column carries the reason for each cell. This plate reads the tool, not the wind. It shows what the model accepts, and it never prints a power delivery. v54 seats the caption, and the kit copies it. |
+| 29 | ⟨tbd⟩ | §3.3 | The power curve. One fixed winner across a wind sweep | `power-curve` | proposed | SPEC v1 (`2a53248`). The campaign winner at the declared stamp. SITE_DAISY | The run at the aero seat: seven points, site reference 6.0 to 16.0 m/s. The physics and numbers signatures. The caption carries the gain-bracket clause or the curve reads as one setting. Contract 5 prints the params base, so two site winds cannot merge into one. Contract 6 repeats one sweep point. |
 
 The Order column holds the reading sequence (author seat, `e252bca`).
 
@@ -584,4 +584,22 @@ three slots).
   pre-fix marker with no joining line, beside the coherence pair. No
   plate byte moves and no drawn value moves. Next: the ladder SPEC,
   then the power sweep.
+
+- **v54 (2026-10-20):** rows 28 and 29 take their caption and their
+  contracts (author seat). The census caption takes its seat here. The kit
+  copies it:
+
+  > In the 42 sampled genomes, the current gate certifies the 5 kW class
+  > and one 7 kW cell. At 25 m and beyond, one cell of seven passes, and
+  > it is the same cell at every length. Those counts describe the grid
+  > the search sampled. They do not bound the model. One gene, set inside
+  > the rung's own bounds, moves the 10 kW stall cell to a pass.
+
+  Two changes to the drafted form. The colon retires, because it promised
+  the scope of the counts and delivered a model result. The counterexample
+  now stands as its own sentence. This seat re-read the pass column from
+  `74408ea1`: seven cells pass, the 5 kW cell at six lengths and one 7 kW
+  cell at 18 m, and the single pass at 25, 30 and 40 m is the 5 kW cell
+  each time. Row 29 takes contracts 5 and 6 of its SPEC: the label prints
+  the params base, and one sweep point runs twice. No plate byte moves.
 
