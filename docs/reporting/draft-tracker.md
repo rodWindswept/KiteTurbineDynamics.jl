@@ -752,3 +752,22 @@ That file belongs to the figures seat.
 The marker adds four words to the count, so the total reads 10,775.
 No printed sentence moves, no numeral moves and no citation count moves.
 STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.74.
+
+v0.75 pass by @author (2026-10-20).
+
+This pass takes the founder call on founder comment 21.
+The cone angle answer is A, the constant form.
+One sentence replaces the three-sentence divergence gloss at section 2.1.
+The sentence reads: every machine in the campaign builds that cone at the same angle, so the cone stays out of the comparison.
+It enters verbatim at 20 words.
+
+The fixed-value fact stays in front of it, with its 22 degrees.
+The NR-049 cite stays at the end of the paragraph and now covers the constant claim as well, because that row signs one fixed half-angle across the campaign.
+The gloss that printed the reference 22 as an apex angle leaves the draft.
+The words steeper and open leave with it, and so does the awaiting-a-ruling status.
+
+Nothing else moves. The second site at section 3.4 already reads the same fixed-value fact.
+No numeral, no citation count and no caption changes.
+The register's NR-049 boundary 3 records the withdrawal gloss in the present tense, so the numbers seat carries a state note for it.
+
+Words read 10,796 from 10,822. STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.75.
