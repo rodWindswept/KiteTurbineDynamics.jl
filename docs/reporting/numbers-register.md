@@ -2733,6 +2733,98 @@ Boundaries:
 
 - The 420 g/span³ anchor (`parameters.jl:18`) sets the model scale. Three decimals are a decomposition, not a resolution.
 
+## Amendment: NR-066, the seven values move to the wind the score used (2026-10-20, science-validator)
+
+The first cut decoded at the wrong rated wind. The row above stays in place as the superseded record. This block carries the corrected values and the one check that catches the defect.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-066 (amended) | The decoded mass of each machine-evolution strip panel on the wind the campaign scored, and the two label forms | The table below | kg, kg-eq | `docs/reporting/figures/machine-evolution-strip/extract-mass.csv` at `3307af6`. Decoding commit `3307af6`. Generator `scripts/strip_mass_decode.jl`. Input `extract-best-so-far.csv` at `dd3cc6a` | amended (science-validator, 2026-10-20) |
+
+| Panel | Gen | Objective (kg-eq) | Mass (kg) | Penalty (kg) | Residual (kg) |
+|---|---|---|---|---|---|
+| 1 | 0 | 36.109 | 31.5535 | 4.5797 | -0.0241 |
+| 2 | 6 | 32.293 | 30.2612 | 2.0122 | 0.0196 |
+| 3 | 10 | 31.661 | 25.4657 | 6.1670 | 0.0283 |
+| 4 | 18 | 30.929 | 26.5048 | 4.4302 | -0.0060 |
+| 5 | 22 | 29.854 | 25.5935 | 4.2539 | 0.0065 |
+| 6 | 25 | 28.315 | 26.2020 | 2.1266 | -0.0136 |
+| 7 | 26 | 27.364 | 25.6985 | 1.6524 | 0.0132 |
+
+The defect:
+
+- The decode called `design_from_vector_v10` without `v_rated`. That function then takes its default, `p.v_wind_ref` = 11.0097 m/s. The score path passes `cfg.v_rated` = 11.0 (`objective_evaluator.jl:721`).
+
+- The gap is 0.09 per cent, and it sizes the rings light. The seven masses move up by 0.0284 to 0.0448 kg on the corrected basis.
+
+- The four identity asserts cannot see it. `n_lines`, `n_rings`, `r_hub` and `n_active` carry no wind dependence.
+
+The check that catches it:
+
+- NR-018 signed the winner air mass at 25.70 kg on 2026-10-08, and its sign-off basis prints 25.6984682562368789. The same block names 25.670101 kg as the off-basis counter-value of the old failure mode.
+
+- The first cut reproduced that counter-value to four decimals. This seat signed a number that the register already carried as the known bad read, one section above the row that signs it.
+
+- The Phase 0 re-eval log prints the same mass as the argument the fitness took, 25.69846825623688 kg (`.julia_depot/logs/sv_p0_secondread_winner_reeval_2026-10-08.log`). I read 25.6984682562368789 there, which is the same Float64 as my own print.
+
+- I ran the committed generator in a detached worktree at `3307af6`. The winner prints `25.69846825623688`, the same Float64, and `m - m_nolifter` prints `5.0` exactly.
+
+- The same run reproduces all seven rows of the landed CSV byte for byte. One line differs, the header, which stamps `3307af6` in my run and `9423310` in the landed file.
+
+- So the numbers come from `3307af6`. The `9423310` stamp names the commit whose working tree ran the generator before the knob fix. The header re-pin is a one-line change and no value moves. The figures seat still holds it.
+
+- The log `scratch/sv_nr066_vrated_rederive_20261020.log` carries both runs and the bound table. A reviewer can check the pair without a worktree.
+
+What the first cut got wrong beyond the values:
+
+- The first-cut residual read 0.016 to 0.069 and I signed it as the stationarity term. That reading is false.
+
+- A mass that is low by `d` adds `d` to the residual by construction. The first-cut residual was the mass error, not a stationarity charge.
+
+- On the corrected mass the residual reads -0.024 to 0.028 and changes sign on three panels. It is the `P_end` rounding bound of the two-route check.
+
+- The bound holds per panel. The over-power term reads the two-decimal `P_end` column, so its error is at most `10 * (P_end - 5) * 0.005`. Every residual sits inside that bound, and every row closes to 0.0001 through objective = mass + penalty + residual.
+
+What stands:
+
+- The penalty inversion. The score takes `P_end` (`objective_evaluator.jl:1153`), so the three penalties charge on it. That call was right, and the CSV keeps it.
+
+- The reason I gave for it was not sound on the first-cut numbers. A positive residual cannot carry that argument while the mass is 0.03 to 0.04 kg light.
+
+- The label forms stand. `kg` for mass, `kg-eq` for the score, one form of each per panel.
+
+The panel-3 clause, corrected:
+
+- Gen 10 reads 25.4657 kg against 25.6985 for the winner, and 6.1670 kg of penalty against 1.6524.
+
+- The winner pays 0.2328 kg of mass to shed 4.5146 kg of penalty.
+
+- The band across gens 10 to 26 reads 1.0391 kg, and the objective falls 4.2970 kg over the same span. Both hold from the first cut.
+
+Reading rules:
+
+- Print `mass 25.698 kg` and `objective 27.364 kg-eq`. One mass form and one score form per panel.
+
+- Print mass to three decimals as a decomposition against a three-decimal objective. This table carries four, at the precision of the CSV.
+
+- Three masses are half-way cases at the fourth digit. The even form reads 31.554, 25.594 and 25.698, and the plate prints that form.
+
+- Do not print the penalty per panel. The caption carries the decomposition once. It names the penalty as charged on `P_end`, and the remainder of 0.013 kg on the winner as the `P_end` rounding bound.
+
+- Do not call the remainder a stationarity allocation. The recorded columns cannot separate it from rounding.
+
+- Do not describe the mass line as flat. It dips at panel 3 and returns. State that the later panels buy penalty reduction at near-constant mass.
+
+Boundaries:
+
+- Decode only. No simulation ran.
+
+- The mass is the quantity the campaign scored. It is not a measured mass.
+
+- A mass belongs to this genome at this era. A machine move re-reads it.
+
+- The 420 g/span^3 anchor (`parameters.jl:18`) sets the model scale. Four decimals in this table are a decomposition, not a resolution.
+
 ## Re-derivation read: NR-048 against the sweep at HEAD (2026-10-20, science-validator)
 
 I ran `scratch/scenario_sweep.jl` at HEAD. The script has a single commit, `0b77b53` of 2026-09-07, one day after the record. No later revision exists, so this is the only committed form of the sweep. Log: `.julia_depot/logs/sv_scenario_sweep_rederive_20261020.log`.

@@ -1,0 +1,34 @@
+# NR-066 amendment evidence — the strip mass decode at the score's v_rated
+# seat: science-validator | date: 2026-10-20 | subject: NR-066 (amended)
+# method: detached worktree at 3307af6, the committed generator, no edits
+#
+# 1. worktree at 3307af6 with the committed script
+#    git worktree add --detach <scratch>/wt-mass-3307af6 3307af6
+#    cd <scratch>/wt-mass-3307af6 && scripts/ktd-julia scripts/strip_mass_decode.jl
+#    -> writes docs/reporting/figures/machine-evolution-strip/extract-mass.csv
+#    wall 15.7 s
+#
+# 2. diff of that output against the landed CSV at 3307af6
+#    only line 2 differs
+#      landed: # decoding commit: 9423310f96d1a8e6353bfcace3ceb16baf3491c3
+#      rerun : # decoding commit: 3307af65eca5708b179fbf1bdf3b27a2d56c8f2c
+#    all seven data rows identical byte for byte
+#
+# 3. full-precision winner print (one added println in the disposable worktree copy)
+#    WINNER_MASS_FULL = 25.69846825623688
+#    WINNER_MNOLIFT_FULL = 20.69846825623688
+#    -> NR-018 sign-off basis prints 25.6984682562368789, the same Float64
+#    -> .julia_depot/logs/sv_p0_secondread_winner_reeval_2026-10-08.log line 5
+#       fitness_fn args: P_mean=5.314113662272673 FoS_min=14.971791422208508 mass=25.69846825623688
+#
+# 4. control: same worktree, v_rated=cfg.v_rated removed from the decode call
+#    masses    31.5087 30.2167 25.4251 26.4642 25.5573 26.1720 25.6701
+#    residual  +0.0206 +0.0640 +0.0689 +0.0345 +0.0427 +0.0164 +0.0415
+#    the positive residual of the first cut is the 0.0284 to 0.0448 kg mass gap
+#
+# 5. corrected masses at 3307af6
+#    masses    31.5535 30.2612 25.4657 26.5048 25.5935 26.2020 25.6985
+#    residual  -0.0241 +0.0196 +0.0283 -0.0060 +0.0065 -0.0136 +0.0132
+#    P_end rounding bound 10*(P_end-5)*0.005 -> 0.0430 0.0200 0.0445 0.0390 0.0380 0.0260 0.0155
+#    every |residual| sits inside its bound
+#    every row closes to 0.0001 through objective = mass + penalty + residual
