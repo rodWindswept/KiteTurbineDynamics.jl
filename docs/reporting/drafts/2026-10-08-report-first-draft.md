@@ -191,7 +191,7 @@ The winner decode reads r_rotor 2.434 m (NR-050).
 
 The search treats each of these as a gene.
 The ring geometry sets the topmost-ring and ground radii, and the rotor count sets how many rings carry blades.
-The shaft transition cone holds one fixed angle, 22 degrees, by construction.
+The shaft transition cone holds one fixed half-angle, 22 degrees, by construction.
 It is not a search gene (NR-049).
 
 At the top of the shaft the rotor turns in the wind.
@@ -837,7 +837,7 @@ The topmost ring radius is 4.580 m and the ground radius is 0.804 m.
 The blade scales read 0.82 and 0.20 (NR-011).
 The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017).
 
-The shaft transition cone holds one fixed angle, 22 degrees, in every machine of the campaign (NR-049).
+The shaft transition cone holds one fixed half-angle, 22 degrees, in every machine of the campaign (NR-049).
 A later campaign can vary it.
 
 The strip shows built geometry and the search objective only.
