@@ -17,7 +17,7 @@ check: exactly one ok evaluation on the gate: 1  (OK)
 check: the next lowest ok evaluation: 5.02  (OK)
 check: the highest ok evaluation: 6.33  (OK)
 ledger strings: 29
-outputs sha256: png 18fc7a57350f4c09d6fec6d0f5c693093a3dd84d6e84cb33e74063ac7c0be43d
-                svg 00ae021a1f33840118a6589a7ef7de8c7e3bf942040576927d2ea13f5e988ed5
-                pdf 41415819c76b4f536012b39bbdfb38b1108b099bc2229614c2b8589a263b41bb
+outputs sha256: png c7b5daf95a57034a4706f6f77b1fd69045d52c1ada6fe365566e773590432aa5
+                svg c717f6be18aa16b2ef218d9507410c6faf40d889d97dc0a217652b0ec447eba1
+                pdf 1cedf2abfc8d3ab398c0ec800bc02f923d22b2d7c8c558988e13eb6efe14c1c8
 checks: ALL OK

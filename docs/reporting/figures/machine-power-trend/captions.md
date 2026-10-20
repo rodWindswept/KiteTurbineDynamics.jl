@@ -10,8 +10,9 @@ on all three islands, against the 5 kW floor.
 
 Values cite NR-062 (window-end power), NR-006 (the seed), NR-005 (the winner)
 and NR-002 (the feasible count). The drawing reads the three campaign
-telemetry files at data commit `dd3cc6a`. The penalty split reads
-`extract-mass.csv` at `ce9c5d8`, decode `3307af6` (NR-066).
+telemetry files at data commit `dd3cc6a`. The penalty split reads the three
+penalty columns of `extract-mass.csv` at `ce9c5d8`, decode `3307af6`.
+NR-066 signs the mass and the penalty totals.
 
 ## Plain caption
 
@@ -58,7 +59,13 @@ From generation 10 to generation 26 the machine gets heavier by 0.2328 kg and
 the penalty falls 4.5146 kg. The fall splits three ways: over-power 3.4800,
 utilisation 1.1682, twist up 0.1336. The over-power charge is
 5 x (P_end - 5)^2, so most of that relief is the window-end power coming down
-from 5.89 to 5.31.
+from 5.89 to 5.31. The split reads the three penalty columns of
+`extract-mass.csv` at `ce9c5d8`. NR-066 signs the mass and the totals, not the
+split.
+
+Each component is rounded to four decimals and the total is computed unrounded,
+so a row's parts can sum one digit from its printed total. Panels 1 and 6 read
+one digit low: 4.5796 against 4.5797, and 2.1265 against 2.1266.
 
 The plate therefore does not claim that power is independent of the score. The
 power path is one of the scored terms, and the last relief comes mostly from
@@ -74,8 +81,8 @@ as recorded: two significant digits and not a defect.
 ## Provenance line
 
 Data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` ·
-rows NR-002, NR-005, NR-006, NR-062 · script commit `a1047a4` · full record: the
-figure-provenance appendix, once the plate is seated.
+rows NR-002, NR-005, NR-006, NR-062, NR-066 · script commit `a1047a4` · full
+record: the figure-provenance appendix, once the plate is seated.
 
 ## Seat note (2026-10-20, figures seat)
 
