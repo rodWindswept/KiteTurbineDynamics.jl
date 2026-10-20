@@ -27,7 +27,7 @@
     "path": "docs/reporting/figures/scaling-ladder/scaling-ladder.py",
     "sha256": "2240b0929408307abbbf015c128ae6c8983758296150080e6ef95053420c1115"
   },
-  "script_commit": "4ebc385",
+  "script_commit": "94e4c21",
   "slug": "scaling-ladder",
   "toolchain": {
     "matplotlib": "3.10.8",
