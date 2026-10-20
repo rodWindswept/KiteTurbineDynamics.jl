@@ -237,12 +237,11 @@ def register_status(root, register):
 def register_appendix(root, register, cited):
     """Render the data appendix: every row the draft cites, from the register."""
     reg = (root / register).read_text()
-    rows = []
+    rows = {}
     for line in reg.splitlines():
-        m = re.match(r"\|\s*NR-(\d+)\s*\|", line)
+        m = re.match(r"\|\s*NR-(\d+)(?:\s*\(amended\))?\s*\|", line)
         if m and int(m.group(1)) in cited:
-            rows.append((int(m.group(1)), line))
-    rows.sort()
+            rows[int(m.group(1))] = line  # re-signed rows: last row wins
     if not rows:
         return ""
     header = (
@@ -252,7 +251,7 @@ def register_appendix(root, register, cited):
         "| Row | Quantity | Value | Units | Source | Status |\n"
         "|---|---|---|---|---|---|\n"
     )
-    return header + "\n".join(line for _, line in rows) + "\n"
+    return header + "\n".join(line for _, line in sorted(rows.items())) + "\n"
 
 
 def build_record(root, draft, register, summary, seats, toolchain):
