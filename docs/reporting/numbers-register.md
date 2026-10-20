@@ -1744,6 +1744,31 @@ Boundaries that travel with this row:
    than the source machine. The aligning code change stays open (work
    package WP2d, awaiting a ruling). The report prints the fixed-value fact
    alone.
+
+   Boundary 3 amendment (2026-10-20, science-validator).
+   The closing sentence above describes the state at signing.
+   It stays in place as that record.
+   The report no longer prints the fixed-value fact alone.
+   The landing commit is `a2b2e84` at draft blob `b7f0b6cc`.
+
+   That gloss prints the reference 22 as an apex angle.
+   It prints this cone as steeper.
+   It prints the aligning change as open and awaiting a ruling.
+   It prints the same 22 as the full opening in the reference.
+   It prints one side of it here.
+
+   The lift keeps the purpose of this boundary.
+   The reference is not the basis of the value.
+   The report may print the two readings.
+   It may print which way they differ.
+   It may print the open status of the change.
+
+   It may not print the source per-side slope as a number.
+   It may not print a steepness ratio.
+   It may not cite the reference as the basis of this value.
+   A boundary lifts only under a dated amendment such as this one.
+   The original line stays.
+
 4. The unexplored space. Founder comments 2 and 16 log the cone angle as a
    campaign lead. The angle was never a search gene. A later campaign can
    vary it.
