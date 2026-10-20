@@ -2,10 +2,10 @@
     "set": "machine-evolution-strip",
     "mode": "strip",
     "slug": "machine-evolution-strip",
-    "script_commit": "d0e410d",
+    "script_commit": "a42828a",
     "script": {
         "path": "docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl",
-        "sha256": "6577244d7ca7fa41d7f0340257184e2b17c50000bec160b9bb18bf2e8ef51856"
+        "sha256": "c248b62b0552260110ba60e12f91ededbe6833533908ade797d5715bb710cfde"
     },
     "toolchain": {
         "julia": "1.12.5",
@@ -34,8 +34,14 @@
         "NR-005",
         "NR-006",
         "NR-011",
-        "NR-036"
+        "NR-036",
+        "NR-062",
+        "NR-066"
     ],
+    "mass_extract": {
+        "path": "docs/reporting/figures/machine-evolution-strip/extract-mass.csv",
+        "sha256": "2ec8322d56fe901be87d1a21aa784a90cd63dd394ea8d208e853a5f2e740be8a"
+    },
     "knobs": {
         "power_W": 5000,
         "v_rated": 11,
@@ -87,6 +93,8 @@
             ],
             "source_row": 1,
             "objective": "36.109",
+            "mass_kg": "31.509",
+            "power_kw_end_of_window": "5.86",
             "counts": {
                 "rings": 9,
                 "gaps": 8,
@@ -115,6 +123,8 @@
             ],
             "source_row": 2,
             "objective": "32.293",
+            "mass_kg": "30.217",
+            "power_kw_end_of_window": "5.4",
             "counts": {
                 "rings": 5,
                 "gaps": 4,
@@ -143,6 +153,8 @@
             ],
             "source_row": 3,
             "objective": "31.661",
+            "mass_kg": "25.425",
+            "power_kw_end_of_window": "5.89",
             "counts": {
                 "rings": 7,
                 "gaps": 6,
@@ -171,6 +183,8 @@
             ],
             "source_row": 4,
             "objective": "30.929",
+            "mass_kg": "26.464",
+            "power_kw_end_of_window": "5.78",
             "counts": {
                 "rings": 5,
                 "gaps": 4,
@@ -199,6 +213,8 @@
             ],
             "source_row": 5,
             "objective": "29.854",
+            "mass_kg": "25.557",
+            "power_kw_end_of_window": "5.76",
             "counts": {
                 "rings": 5,
                 "gaps": 4,
@@ -227,6 +243,8 @@
             ],
             "source_row": 6,
             "objective": "28.315",
+            "mass_kg": "26.172",
+            "power_kw_end_of_window": "5.52",
             "counts": {
                 "rings": 5,
                 "gaps": 4,
@@ -255,6 +273,8 @@
             ],
             "source_row": 7,
             "objective": "27.364",
+            "mass_kg": "25.670",
+            "power_kw_end_of_window": "5.31",
             "counts": {
                 "rings": 6,
                 "gaps": 5,
@@ -267,11 +287,11 @@
             }
         }
     ],
-    "command": "scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl --script-commit d0e410d",
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-evolution-strip/machine-evolution-strip.jl --script-commit a42828a",
     "outputs": {
-        "machine-evolution-strip.pdf": "1a5ae79cbc60da3b91d6a3be97bff34a028d20f38dd56ced6fc04531e74d4609",
-        "machine-evolution-strip.svg": "8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2",
-        "checks.log": "24f27944e9ef0b875d05cc0746970eece163d233d3c05d5f6025d6345035526d",
-        "machine-evolution-strip.png": "f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a"
+        "machine-evolution-strip.pdf": "5a30154d072daa691601a7c6ea87bc58a03957766fbb43eeb410cb6e8ff27f2b",
+        "machine-evolution-strip.svg": "d4fd48809776d00f81c496aa14d778f1bc583da17fef843a7858fd6817e63942",
+        "checks.log": "efa922278cba5bbea101602109973d91601beb46cb531b630a8063dcc7c549bd",
+        "machine-evolution-strip.png": "0b43b75affd888c62e6e8649215ba66cd3b57c668a95428efb8650759bd1c947"
     }
 }

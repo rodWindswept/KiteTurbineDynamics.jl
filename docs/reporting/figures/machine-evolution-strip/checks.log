@@ -1,29 +1,31 @@
 machine-evolution-strip — GENERATE run
-script commit: d0e410d
+script commit: a42828a
 toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
 extract: docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv  sha256 f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad
-panel i3-g0-i1 (gen 0): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g0-i1 (gen 0): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 9 (incl ground) · TRPT polylines 24 (3 lines x 8 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g6-i2 (gen 6): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g6-i2 (gen 6): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g10-i7 (gen 10): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g10-i7 (gen 10): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 7 (incl ground) · TRPT polylines 18 (3 lines x 6 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g18-i4 (gen 18): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g18-i4 (gen 18): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g22-i10 (gen 22): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g22-i10 (gen 22): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g25-i8 (gen 25): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g25-i8 (gen 25): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 5 (incl ground) · TRPT polylines 12 (3 lines x 4 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
-panel i3-g26-i9 (gen 26): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
+panel i3-g26-i9 (gen 26): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
   drawn: ring segments 6 (incl ground) · TRPT polylines 15 (3 lines x 5 gaps) · rotor quads 1 · blade segments 3 (3/rotor) · section markers 2
 NR-011 winner-panel check (gen 26): n_lines 3 true · rings 6 true · r_hub 4.580 true · r_bot 0.804 true
-window: x ±6.385 m · y -0.759 .. 19.722 m · m_per_px 0.060236 · panel 212 x 340 px · figure 896 x 1028 px · scale bar 5.0 m
-layout viewports: header [0,944 + 896x84] · labels1 [0,550 + 896x54] · labels2 [0,132 + 896x54] · footer [0,0 + 896x132] · panel1 [0,604 + 212x340] · panel7 [570,186 + 212x340]
+window: x ±6.385 m · y -0.759 .. 19.722 m · m_per_px 0.060236 · panel 212 x 340 px · figure 896 x 1072 px · scale bar 5.0 m
+layout viewports: header [0,988 + 896x84] · labels1 [0,572 + 896x76] · labels2 [0,132 + 896x76] · footer [0,0 + 896x132] · panel1 [0,648 + 212x340] · panel7 [570,208 + 212x340]
 axis squareness: x 16.601332567 px/m · y 16.601332567 px/m · delta 0.0000 ppm
 objective labels (NR-036): 7 drawn · ALL OK
+mass labels (NR-066, decoded, lifter included): 7 drawn · ALL OK
+power labels (NR-062, window end): 7 drawn · ALL OK
 pdf normalisation: clean -d ok · CreationDate replacements 1 · clean -z ok
 outputs sha256:
-  machine-evolution-strip.png  f1ea862b9082993a646ec6a2cd8a1da83bf39d9707d8b63a509f170e6aab883a
-  machine-evolution-strip.svg  8f54eb9c749198b113e03f44346d378edc4ce1da723e667f73830692ee4216d2
-  machine-evolution-strip.pdf  1a5ae79cbc60da3b91d6a3be97bff34a028d20f38dd56ced6fc04531e74d4609
+  machine-evolution-strip.png  0b43b75affd888c62e6e8649215ba66cd3b57c668a95428efb8650759bd1c947
+  machine-evolution-strip.svg  d4fd48809776d00f81c496aa14d778f1bc583da17fef843a7858fd6817e63942
+  machine-evolution-strip.pdf  5a30154d072daa691601a7c6ea87bc58a03957766fbb43eeb410cb6e8ff27f2b
 checks: ALL OK

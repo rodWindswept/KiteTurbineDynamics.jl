@@ -36,7 +36,9 @@ ring segments in their section colours, the TRPT lines between rings,
 the blade segments, and the swept annulus of the main rotor as one
 truncated cone.
 
-The value under each machine is the search objective in kg-equivalent.
+Each machine prints three signed values. The first is the search
+objective in kg-eq. The second is the decoded mass in kg. The third is
+the window-end power in kW (NR-036, NR-066, NR-062).
 The drawings use the shaft frame. Distance along the shaft is
 vertical, and the operating elevation is not drawn.
 
@@ -46,8 +48,19 @@ differ in drawn size only where their built size differs.
 
 The final panel carries the campaign winner. It matches the register machine: three lines, six rings,
 topmost ring radius 4.580 m, ground radius 0.804 m, blade scales 0.82 and 0.20.
-The strip claims geometry and the search objective. It prints no power
-value and no airborne mass value.
+The strip claims geometry, the search objective, the decoded mass and
+the window-end power. The objective is mass plus penalties. The
+penalties score the window-end power, the beam utilisation and the
+twist margin.
+
+The winner is not the lightest machine. Gen 10 reads 25.425 kg against
+the winner's 25.670 kg. The winner pays 0.245 kg of mass to shed
+4.515 kg of penalty. From gen 10 the mass moves inside 1.04 kg while
+the objective falls 4.297 kg. The later gains come from penalty, not
+from mass.
+
+Three decimals on the mass are a decomposition against a
+three-decimal objective. They are not a measurement.
 
 ## Provenance line
 
@@ -96,3 +109,12 @@ manifest value, so d0e410d is the state that built the bytes on
 disk. The pin now reads d0e410d. The 2026-10-14 form note above
 describes the pre-T4 label and no longer describes the plate. Text
 and pin only, no render moves. (figures seat)
+
+Mass and power note (2026-10-20): the strip re-cut draws two values
+that the plate did not print before. Mass cites NR-066 and reads the
+decode-only pass in `extract-mass.csv`. Power cites NR-062 and reads
+the window-end value, the same value the score charges. The mass
+carries the lifter, so it is the mass the campaign scored. The
+2026-10-11 caption sent the reader to the objective alone, and the
+sentence that said the strip prints no power value and no mass value
+is withdrawn here. (figures seat)
