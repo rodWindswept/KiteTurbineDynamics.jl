@@ -55,3 +55,34 @@ It reads "The machine plates show the blade leaning downward."
 Candidate: `scratch/sw_168_drop_target.md`, md5 `b9d01717e7fd5e4f0f9ba0baaaf5f42e`, 1299 lines and 10,670 words.
 STE reads 22 at 0.21.
 `toward the ring below` returns 0 hits.
+
+## Version 2: the hedge is restored and comment 99 rides along
+
+Base: `265f90d5`, the G7 patch plus the author batch 1 applied, 1303 lines and 10,743 words.
+The science-validator found one fault in the first cut.
+The compression dropped "almost" from the shaft sentence and "would" from the rim-bridle sentence.
+That prints a hypothetical as fact in a section headed potential extension work.
+The fix is the science-validator sentence, verbatim, at 19 words.
+
+The cut also deleted the anchors for comments 98 and 99.
+Comment 99 now rides in paragraph 1: "Tension above the rotor reduces that steer, though it cannot change the phase relation."
+That sentence follows the aero pin: the phase reversal is kinematic, and stacking reduces the response size.
+Comment 98 has no slot under a two-paragraph cap.
+It is recorded as dropped by comment 100.
+
+One structural move, stated for the record.
+Comment 99 makes paragraph 1 seven sentences.
+Lock three therefore opens paragraph 2, before the blessed block, so both paragraphs hold six sentences and no long-paragraph flag enters.
+The alternative is lock three at the end of paragraph 1 and STE 23.
+All five lock strings return one hit each.
+
+Section 6 intro, comment 95, two lines outside the cut: "Many more remain open." joins the "three of them" sentence, and "None of these" replaces "None of the three".
+
+Candidate: `scratch/sw_sec61_cut_v2.md`, md5 `bfef2c95506daec34cb62c1436bd433a`, 1222 lines and 10,112 words.
+Patch: `scratch/sw_sec61_cut_v2.patch`, one hunk, applies clean to `265f90d5` and lands the same md5.
+Section 6.1 reads 171 body words in two paragraphs, from 805, a 79 per cent cut.
+STE reads 22 at 0.22.
+Counters: long_sentence 3, contraction 1, passive 5, nominalization 1, long_paragraph 12, em dash 0.
+The counters match the base.
+The patch also applies to the G6 disk copy and lands `fecf29bd`, because batch 1 does not touch this region.
+The base is `265f90d5`, and any other base fails the hash test.
