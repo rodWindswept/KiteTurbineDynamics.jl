@@ -40,18 +40,28 @@ include(joinpath(ROOT, "scripts", "compute_seeds.jl"))
 const SLUG = "machine-evolution-strip"
 const DATA_COMMIT = "dd3cc6a"
 const EXTRACT_ID = "strip-extract-2026-10-09-best-so-far"
-const REGISTER_ROWS = "NR-005 · NR-006 · NR-011 · NR-036"
+const REGISTER_ROWS = "NR-005 · NR-006 · NR-011 · NR-036 · NR-062 · NR-066"
 const SCALE_BAR_M = 5.0
 const PANEL_H_PX = 340
 const GAP_PX = 16
 const HEADER_PX = 84
-const LABELS_PX = 54
+const LABELS_PX = 76
 const ROW_GAP_PX = 24
 const FOOTER_PX = 132
 
 # NR-036 display forms (signed 2026-10-11). The label strip draws these.
 const OBJ_ROW = Dict(0 => "36.109", 6 => "32.293", 10 => "31.661",
     18 => "30.929", 22 => "29.854", 25 => "28.315", 26 => "27.364")
+
+# NR-066 display forms (signed 2026-10-20). The decoded mass, three decimals,
+# lifter included — the same mass the campaign scored.
+const MASS_ROW = Dict(0 => "31.509", 6 => "30.217", 10 => "25.425",
+    18 => "26.464", 22 => "25.557", 25 => "26.172", 26 => "25.670")
+
+# NR-062 display forms (signed 2026-10-18). Window-end power, verbatim from the
+# extract. Gen 6 prints 5.4 as recorded: two significant digits, not a defect.
+const PEND_ROW = Dict(0 => "5.86", 6 => "5.4", 10 => "5.89",
+    18 => "5.78", 22 => "5.76", 25 => "5.52", 26 => "5.31")
 
 const KW = 5.0
 const PW = KW * 1000.0
@@ -76,7 +86,7 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "Island 3 best-so-far: seven machines from the seed to the winner"
-const SUB = "Built geometry at one shared scale · the value under each machine is its search objective, in kg-equivalent, lower is better · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
+const SUB = "Built geometry at one shared scale · each machine prints its search objective (kg-eq, lower is better), its decoded mass (kg) and its window-end power (kW) · generations 0 · 6 · 10 · 18 · 22 · 25 · 26"
 
 tandeg(x) = tan(deg2rad(x))
 
@@ -125,6 +135,8 @@ struct Panel
     genome::Vector{Float64}
     source_row::Int
     objective::String
+    mass::String
+    pend::String
     s::Vector{Float64}
     radii::Vector{Float64}
     sections::Vector{Symbol}
@@ -140,10 +152,13 @@ struct Panel
     checksok::Bool
 end
 
-function build_panel(rec::Dict{String,String}, rownum::Int)
+function build_panel(rec::Dict{String,String}, rownum::Int,
+    mass_by_gen::Dict{Int,String})
     xraw = [parse(Float64, rec["x$j"]) for j in 1:10]
     gen = parse(Int, rec["selected_gen"])
     obj = rec["fitness"]
+    pend = rec["P_end"]
+    mass = get(mass_by_gen, gen, "?")
     xesc = round_discrete!(xraw)
     dec = design_from_vector_v10(xesc, PROFILE_ELLIPTICAL, P_BASE; power_W=PW,
         cylinder_cone=true, rotor_count_mode=true, power_split=0.6,
@@ -238,9 +253,11 @@ function build_panel(rec::Dict{String,String}, rownum::Int)
         "r_hub" => isapprox(dec.design.r_hub, parse(Float64, rec["r_hub"]); atol=1e-3),
         "r_bot" => isapprox(dec.design.r_bottom, parse(Float64, rec["r_bot"]); atol=1e-3),
         "objective" => obj == get(OBJ_ROW, gen, "?"),
+        "mass" => mass == get(MASS_ROW, gen, "?"),
+        "power" => pend == get(PEND_ROW, gen, "?"),
     ]
     return Panel(
-        rec["label"], gen, xraw, rownum, obj,
+        rec["label"], gen, xraw, rownum, obj, mass, pend,
         svec, radii, sections, ropes2d, quads, blades, markers,
         (rings=length(radii), gaps=sys.n_ring - 1, lines_per_gap=pc.n_lines,
             rotors=length(rotor_specs), blades_per_rotor=n_blades,
@@ -355,7 +372,10 @@ function main()
     mkpath(outdir)
 
     recs = read_extract(extract_path)
-    panels = [build_panel(recs[k], k) for k in eachindex(recs)]
+    mass_path = joinpath(@__DIR__, "extract-mass.csv")
+    mass_by_gen = Dict(parse(Int, r["selected_gen"]) => @sprintf("%.3f", parse(Float64, r["mass_kg"]))
+        for r in read_extract(mass_path))
+    panels = [build_panel(recs[k], k, mass_by_gen) for k in eachindex(recs)]
 
     # window: one shared data window for the set
     X0 = 1.06 * maximum(p.xmax for p in panels)
@@ -410,11 +430,13 @@ function main()
         lax = labs[k <= n_top ? 1 : 2]
         col = k <= n_top ? k : k - n_top
         xf = ((col - 1) * (panel_w + GAP_PX) + panel_w / 2) / fig_w
-        text!(lax, xf, 0.80; text="gen $(p.gen)", fontsize=13, color=C_INK,
+        text!(lax, xf, 0.86; text="gen $(p.gen)", fontsize=13, color=C_INK,
             align=(:center, :center))
-        text!(lax, xf, 0.48; text=p.label, fontsize=9, color=C_GREY,
+        text!(lax, xf, 0.64; text=p.label, fontsize=9, color=C_GREY,
             align=(:center, :center))
-        text!(lax, xf, 0.14; text="objective $(p.objective) kg-equivalent", fontsize=9.5,
+        text!(lax, xf, 0.42; text="objective $(p.objective) kg-eq", fontsize=9.5,
+            color=C_INK, align=(:center, :center))
+        text!(lax, xf, 0.19; text="mass $(p.mass) kg · power $(p.pend) kW", fontsize=9,
             color=C_INK, align=(:center, :center))
     end
 
@@ -536,6 +558,11 @@ function main()
         j !== nothing && last(p.checks[j])
     end
     push!(loglines, "objective labels (NR-036): $(length(panels)) drawn · $(obj_ok ? "ALL OK" : "FAIL")")
+    m_ok = all(p -> any(c -> first(c) == "mass" && last(c), p.checks), panels)
+    pw_ok = all(p -> any(c -> first(c) == "power" && last(c), p.checks), panels)
+    push!(loglines, "mass labels (NR-066, decoded, lifter included): $(length(panels)) drawn · $(m_ok ? "ALL OK" : "FAIL")")
+    push!(loglines, "power labels (NR-062, window end): $(length(panels)) drawn · $(pw_ok ? "ALL OK" : "FAIL")")
+    ok_all &= m_ok && pw_ok
     push!(loglines, "pdf normalisation: clean -d ok · CreationDate replacements $nrep · clean -z ok")
     push!(loglines, "outputs sha256:")
     for f in ("$SLUG.png", "$SLUG.svg", "$SLUG.pdf")
@@ -558,7 +585,9 @@ function main()
             sha256=bytes2hex(sha256(read(extract_path)))),
         selection=(rule="island 3 best-so-far, ok rows, earliest (gen, idx) tie-break; no interpolation",
             generations=[p.gen for p in panels]),
-        registers=["NR-005", "NR-006", "NR-011", "NR-036"],
+        registers=["NR-005", "NR-006", "NR-011", "NR-036", "NR-062", "NR-066"],
+        mass_extract=(path="docs/reporting/figures/$SLUG/extract-mass.csv",
+            sha256=bytes2hex(sha256(read(mass_path)))),
         knobs=(power_W=PW, v_rated=V_RATED, tether_length=LENGTH,
             k_mppt=K_MPPT_5KW_HONEST, blocking_factor=BF, cylinder_cone=true,
             rotor_count_mode=true, power_split=0.6, cone_slope_deg=22.0,
@@ -568,6 +597,7 @@ function main()
             tolerance_px=0.05),
         panels=[(label=p.label, gen=p.gen, genome=p.genome,
             source_row=p.source_row, objective=p.objective,
+            mass_kg=p.mass, power_kw_end_of_window=p.pend,
             counts=p.counts) for p in panels],
         command="scripts/ktd-julia docs/reporting/figures/$SLUG/$SLUG.jl --script-commit $script_commit",
         outputs=Dict(
