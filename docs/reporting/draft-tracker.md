@@ -455,6 +455,22 @@ The steepness claim stays with B, where it already lived.
 The row itself does not move. NR-049 boundary 3 signs awaiting a ruling, the slope 11.0 stays out of print, and the second site at section 3.5 reads the same fixed-value fact, so it needs no edit.
 STE 0.24 per 100 words, em dashes 0. The draft ticks to v0.70.
 
+v0.71 pass by @author (2026-10-20).
+
+This pass corrects five rows of the figure-provenance appendix.
+One commit, `d0e410d`, re-cut five plates and moved none of their five script pins.
+The strip, levers, atlas, winner and corner rows all now read `d0e410d`.
+The ring utilisation, twist limit, system anatomy and scaling ladder rows were already right and do not move.
+
+The check ran across the whole column, not the five rows named.
+Nine of nine now match their kit manifest, and each manifest's recorded script sha256 equals the script at HEAD.
+The probe is `scratch/au_appendix_pin_check.py`, and it exits non-zero on a stale row.
+
+Nothing in the build reads this column, so no build would have caught the drift.
+The build gate checks citations and assembly, not appendix pins.
+
+No number moves, no citation moves and no caption moves. The draft ticks to v0.71.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
