@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.67. Date 2026-10-19.
+Internal engineering report. Draft v0.68. Date 2026-10-20.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -165,8 +165,12 @@ The topmost ring carries the main rotor.
 The lowest ring is the ground station power take-off (PTO) ring.
 The PTO ring anchors the shaft at the ground and turns about its central axis.
 
-Bank is the blade angle away from the ring plane about its chord axis at the ring.
+Blade bank is the blade angle away from the plane of rotation about its chord axis at the ring.
 The equivalent term in AeroDyn is pre-cone.
+Rotor bank is that angle set for the whole rotor, so every blade carries it.
+Blade pitch is the angle of one blade about its span axis.
+Rotor pitch is that angle set for the whole rotor, as collective pitch.
+The machine plates show the blade leaning downward.
 
 Blade scale sets the blade size.
 The scale multiplies the blade span and chord, and the blade mass follows the span cubed.
@@ -983,7 +987,7 @@ valid-science case, not footnotes.
 
 - The model does not check blade integrity. The blade root factor of safety sits at infinity in the model. The team deferred the full beam-on-supports blade model (PRD 0006:147). The rotor blades are not yet structurally gated in this analysis.
 
-- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it.
+- Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it for the main rotor.
 
 - The model does not simulate launch or recovery.
   Each run starts with the machine already aloft at its operating point.
@@ -1110,11 +1114,12 @@ Blade flexibility would shorten it too, though the model carries no flap dynamic
 
 That lag belongs to the stack.
 The ring rotor has no teeter, and neither model carries a flap hinge for it.
-So the lag on the ring is a ring-and-tether property, not a flap response.
+So the lag on the ring is a ring-and-tether property, unmodelled in this model, not a flap response.
 
-A lag short of 90 degrees turns the tilt azimuth.
-The bank and steer then act off the intended axis.
-The tilt gives side force and moment: bank, steer and load relief.
+A tilt command has an azimuth, and that azimuth turns whenever the rotor phase lag is not zero.
+The tilt and steer then act off the intended axis.
+If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.
+The tilt gives side force and moment: steer and load relief.
 This part is still plausible and cheap to study.
 
 The second part is self-lift.
@@ -1142,10 +1147,9 @@ That is existence proof for a component, not a path for this rotor.
 A ring rotor would take the tilt reaction through its rim bridle.
 So the structural question moves to the bridle.
 The per-revolution pitch linkage is the part neither machine carries.
-A stiff-mast helicopter swashplate on a TRPT rotor is the wrong machine.
 
 The test has two legs.
-First, can one-per-rev cyclic pitch on a TRPT rotor give useful bank and steer authority with no bending-capable shaft?
+First, can one-per-rev cyclic pitch on a TRPT rotor give useful tilt and steer authority with no bending-capable shaft?
 Second, what Cp cost does any axial component carry?
 
 Close it with an azimuth-resolved BEM on the 50 kW ring rotor.
@@ -1159,7 +1163,15 @@ Report the change in Cp at fixed thrust.
 Report the lift against extracted power at fixed wind.
 Report the hub moment against the offset of a hub the study would add.
 Run a lateral-mode check against the existing shaft model.
-That check supplies the phase lag the sweep varies.
+Check the ring tilt against the rim bridle.
+Until they run, the rotor phase lag stays a free parameter.
+
+A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
+The bridle does not run down to the next ring. That run would cost too much in bridle line drag, so it anchors at a point on the TRPT line of the segment below the rotor.
+For expansion blades the model carries the geometry: two lines, 0.49 span outboard of the ring and 0.21 span inboard, both anchored about 30% down the segment below, and there the bank angle sets the line tension without moving the anchor.
+The sizing block would compute the bridle tension and the lateral load at that anchor. No run has ever entered it, and no gate reads either value.
+No tether-to-blade bridle exists on the main rotor in the model, so nothing here checks that one stays loaded.
+The tether-to-blade rule therefore binds only on a design the genome cannot yet generate.
 
 The repo holds the platform, the shaft model and the BEM.
 The azimuth term is one addition.

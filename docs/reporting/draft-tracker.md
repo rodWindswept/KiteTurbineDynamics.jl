@@ -400,6 +400,17 @@ counter-read. STE reads 34 in, 34 out. The citation checker reads 55
 cited, every one signed. Declared token diff: two 30s arrive, two 29s
 leave, net zero.
 
+v10 (2026-10-20): the bank and pitch terms split into blade and rotor levels (author).
+
+Blade bank keeps its definition, and rotor bank now reads as the whole-rotor setting every blade carries.
+Blade pitch and rotor pitch take the same split, so rotor pitch reads as collective pitch.
+The split follows the founder ruling and reads rotor bank as the cone, per comment 72.
+
+The section 6.1 bridle paragraph and the tilt wording land with it, from the founder bridle ruling.
+The lean sentence keeps its short form and no target clause.
+No number and no citation moves.
+The draft ticks to v0.68.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

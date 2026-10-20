@@ -1,0 +1,9 @@
+base reconstructed 5c3d7221e3b32439aa14219a31e492e0
+candidate         45c1f2d5ca2f1d959a0239f2c3d4cf91
+landed draft      45c1f2d5ca2f1d959a0239f2c3d4cf91
+round trip True
+lines 1300 -> 1303
+words 10763 -> 10804
+tokens added ['68'] removed ['67']
+lint base: rc=0 G8_base_pre.md                   words=10596 total= 25 per100w=  0.24 em_dash= 0
+lint cand: rc=0 G8_candidate.md                  words=10637 total= 25 per100w=  0.24 em_dash= 0
