@@ -79,6 +79,52 @@ The v5/v10 wrapper holds the same frozen 20.5 omega default. If
 those campaigns revive, the fix needs a sibling hunk in
 `evaluate_design_v5`. Outside scope, untouched.
 
+**Correction (2026-10-20, figures re-check and aero-validator second desk. Room ruling.)**
+
+The plate-side attribution in the addendum is wrong for eight
+plates. The `pitch_depower_campaign_v5_safe` plates come from a
+generator that holds four fixed `SpacerRingDesign` structs.
+
+That generator calls `evaluate_design` zero times. The frozen
+20.5 rad/s default never enters those plates. Their load is
+consistent at both sizes.
+
+The 2.236× lightening belongs to `run_v5_safe_campaign.jl`. That
+60-island DE campaign wrote no results.
+
+So those eight plates carry one reason: the ledger bar and era
+staleness. The two-reason reading holds for the v4, `trpt_opt_v2`
+and v5-wrapper-derived sets.
+
+The room withdraws the winner re-evaluation clause. The generator
+has four fixed designs and no winners. The clause has no targets
+and never will.
+
+A second fault stands behind those plates, independent of the load
+shape. At HEAD all four designs fail.
+
+Three fail at settle on the torsional realisability cliff. That
+check landed 2026-09-14 (`039a44f`). The fourth degenerates at 50
+steps.
+
+The era metrics disqualify all 256 runs. No run clears the 1.5
+buckling gate. The best reads 1.2246. The two comparison figures
+draw from those disqualified rows.
+
+The era analysis prose claims safety factors "comfortably above 1.5
+in all control scenarios". Its own CSV contradicts that sentence.
+
+The class-C reason for those eight plates now reads as follows.
+
+"Qualification-empty era, design point rejected at HEAD, and its
+analysis prose contradicted by its own CSV."
+
+This line supersedes the one-reason phrasing in the addendum.
+
+The frozen-omega defect and the cliff rejection stay two distinct
+faults. The load-consistency verification stands untouched. Those
+eight plates print as a failure census (class M) or not at all.
+
 ## [2026-10-15] Rope-break detection arms at the relax boundary: the measurement window only
 
 **Context.** The windowed evaluator ran the rope-break gate across the
