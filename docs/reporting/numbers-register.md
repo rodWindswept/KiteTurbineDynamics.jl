@@ -2611,3 +2611,57 @@ Boundaries:
 
 - The winner mass belongs to this campaign at this draw. It is not the best mass of the design space.
 
+## Amend: NR-048's twist-limit token is withdrawn (2026-10-20, science-validator)
+
+This block amends the signed row. The sizing tokens stand. The twist pair does not print.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-048 (amended) | The sizing pair, after the twist-limit amend | The load-step case stands at `k_mppt × 2` and `F_helix ≈ 1278 N/vertex`. The twist pair is withdrawn: `87.9°` has no resolved object and `78.8°` has no derivation at HEAD | N/vertex, degrees | `DECISIONS.md` [2026-09-06]; `docs/plans/2026-09-06-closed-form-beam-sizing.md` section 7.1; `src/trpt_twist_limit.jl`; `src/objective_evaluator.jl:448`; check `scripts/check_nr048_twist_limit.py` | amended (science-validator, 2026-10-20) |
+
+Sign-off basis:
+
+- Token check. `scripts/check_nr048_twist_limit.py` exits 0 at this commit. It recomputes both per-segment limits from the decoded geometry and solves for the radius that gives 78.8°.
+
+- The sweep machine decodes to one radius, 0.863 m, on rings one to five. Its top ring reads 4.320 m. Its crossing limit reads 84.53° on segments one to four and 43.51° on segment five. Segment five binds. Its over-twist limit reads 93.39° on segments one to four. Segment five has no over-twist limit.
+
+- The strip winner reads 85.20° crossing on segments one to four and 41.59° on segment five. Its over-twist limit reads 92.89°. That agrees with the NR-022 S5 value.
+
+- 78.8° equals no segment limit on either machine. The nearest is 84.53°, 5.73° away.
+
+- A 3.76 m segment carries a 78.8° crossing limit only when its larger ring radius is 1.305 m. Neither machine carries that radius.
+
+- The number predates the criterion. The sweep ran on 2026-09-06. The Tulloch (4.34) authority landed on 2026-09-25 at `996c970`, and the capacity fix at `c104737`, both 19 days later.
+
+- The 87.9° reading is a measured value. It cannot be a segment-five value, because a crossing at 43.51° stops the run. It is either a segments-one-to-four value or a shaft total. The uncommitted console record does not say which.
+
+Printing rules until the re-derivation:
+
+- Neither numeral prints. A comparator that has no derivation cannot support a violation claim. 87.9° alone states no claim.
+
+- The sizing tokens print as before: "twice the nominal load" and "about 1278 N/vertex".
+
+- The mechanism of the refusal stands without either numeral. The load law holds the speed in high wind, and easing k removes that hold.
+
+- The phrase "collapse limit" names neither limit in the current code. The crossing limit is a collapse detector. The over-twist limit is the torque peak. A later version must name which one it prints.
+
+Boundaries:
+
+- Boundary 2 of the signed row read "the 78.8° limit is the era machine's hub-segment collapse limit; a machine move re-reads it". That boundary is falsified. The machine did not move. The criterion changed under it.
+
+- `DECISIONS.md` [2026-09-06] still prints the pair. It is a dated record of the reasoning on that day, not a live claim. This row governs what the draft prints.
+
+- The 25 m/s case in the plan stays out of the draft. It was never printed.
+
+- This amend covers the twist token only. The 1278 N/vertex counter-read at `07e2eb9` stands.
+
+The re-derivation needs:
+
+- The committed sweep, script and console record, at a named hash.
+
+- The object of 87.9°: the worst segment or the shaft total.
+
+- The comparator at HEAD on that object.
+
+- The geometry that produced 78.8°, because the decode at HEAD of the same committed genome does not produce it.
+
