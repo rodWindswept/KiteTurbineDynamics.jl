@@ -2974,3 +2974,90 @@ Boundaries:
 - The population is the ok rows of this campaign at this commit. It does not transfer to another run, seed or floor.
 
 - This row signs the floor sentence and the `one design of 508` label on the `machine-power-trend` plate. It signs no rate, no trend and no value on any other plate.
+
+## Source row: NR-070, the sixteen window-end powers of the power-curve sweep (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-070 | Window-end power, window-mean power, FoS and twist at each swept hub wind, one fixed design | The sixteen-row table below | kW, -, - | `scratch/av_power_curve_sweep.csv` md5 `a4e535af18da220a473db963c45ceb76`. 18 data rows: 16 unique winds at `rep` 1 plus two settle repeats. The header carries commit `8a757f3`, src tree `4dd7e0d9`, probe sha256 `59718a02…`, SITE_DAISY 10.0 m/s at 4.8 m, exponent 1/7 | signed (science-validator, 2026-10-20) |
+
+| wind (m/s) | status | P_end (kW) | P_mean (kW) | FoS_min | twist_ratio |
+|---|---|---|---|---|---|
+| 6.5 | reject | 1.093994 | 1.092380 | 32.704172 | 0.416771 |
+| 7.0 | reject | 1.366255 | 1.364468 | 29.752359 | 0.421219 |
+| 7.5 | reject | 1.680178 | 1.678294 | 26.993186 | 0.425021 |
+| 8.0 | reject | 2.038947 | 2.036877 | 24.696609 | 0.428164 |
+| 8.5 | reject | 2.445569 | 2.443214 | 22.520148 | 0.430749 |
+| 9.0 | reject | 2.902913 | 2.900285 | 20.680794 | 0.433052 |
+| 9.5 | reject | 3.414044 | 3.411095 | 18.988440 | 0.435024 |
+| 10.0 | reject | 3.981952 | 3.978620 | 17.539592 | 0.436489 |
+| 10.5 | reject | 4.609590 | 4.605547 | 16.173981 | 0.437929 |
+| 11.0 | ok | 5.300088 | 5.294669 | 15.001751 | 0.439310 |
+| 11.0097 | ok | 5.314114 | 5.308779 | 14.971791 | 0.439347 |
+| 11.5 | ok | 6.056351 | 6.051141 | 13.908245 | 0.440475 |
+| 12.0 | ok | 6.881276 | 6.875770 | 12.996911 | 0.441384 |
+| 12.5 | ok | 7.778057 | 7.772013 | 12.065940 | 0.442217 |
+| 13.0 | ok | 8.749638 | 8.743000 | 11.269332 | 0.442857 |
+| 13.5 | ok | 9.798986 | 9.791677 | 10.552599 | 0.443446 |
+
+Sign-off basis:
+
+- Direct reads of the `status`, `P_end_kW`, `P_mean_kW`, `FoS_min` and `twist_ratio` columns at the md5 above. The 16 unique winds are 6.5 to 13.5 in 0.5 steps plus 11.009694 at full precision.
+
+- The mass column reads 25.698468 kg on all 18 rows. NR-066 signs the winner mass.
+
+- The identity row reproduces the recorded evaluation: P_end 5.314114 kW against 5.31 kW recorded, and the fitness pair reads in NR-071.
+
+- One machine at one hub altitude: `h_ref_m` reads 9.411699 on every row, and `v_rated` 11.0 and `k_mppt` 2.24 hold on every row (NR-015).
+
+- The top point tracks the cube. 9.798986 / 5.314114 = 1.84395 against (13.5/11.009694)^3 = 1.84364. No clamp flattens the top of the sweep.
+
+Boundaries:
+
+- `P_end` is the final window sample, the statistic the score charges. `P_mean` is the window mean. The plate draws `P_end`.
+
+- The reject rows carry measured power. Their split reads in NR-072.
+
+- The values belong to this genome, this base and this rating. They do not transfer to another machine.
+
+## Source row: NR-071, the score pair at the two 11 m/s points (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-071 | The score at 11.0 and 11.0097 m/s, and the identity reproduction | 11.0 m/s: 27.318058525862. 11.0097 m/s: 27.363541266349. Recorded: 27.3635412663488. The identity window end reads 5.314114 kW against 5.31 kW recorded | kg-eq, kW | The same CSV rows at md5 `a4e535af…`. The recorded values read from the campaign winner row, `best_vector.csv` at data commit `dd3cc6a`; the recorded 5.31 kW is also the gen 26 form NR-062 signs | signed (science-validator, 2026-10-20) |
+
+Sign-off basis:
+
+- The identity row agrees with the recorded winner row to 2e-13, eleven decimal places.
+
+- The 11.0 point scores 0.045483 lower than the 11.0097 point. The design point is therefore not an optimum on the sampled grid, and the plate makes no optimum claim.
+
+- The difference is deterministic, not a settle spread. The two rows share genome, rating and gain. Their P_end values, 5.300088 and 5.314114, differ, and the over-power charge prices the difference.
+
+Boundaries:
+
+- Fitness is the campaign objective in kg-equivalent. It is not a mass and not a machine-quality score.
+
+- The pair bounds a flat region. It does not locate a maximum.
+
+## Source row: NR-072, the status split of the power-curve sweep (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-072 | Status split of the sweep: floor rejects and scoring rows | 9 reject and 7 ok over 16 unique winds. All nine rejects carry finite P_end, 1.093994 to 4.609590 kW. Zero gate rejects | count, kW | The `status` and `P_end_kW` columns of the same CSV at md5 `a4e535af…` | signed (science-validator, 2026-10-20) |
+
+Sign-off basis:
+
+- Every reject row carries a finite P_end. No row carries NaN. The twist, Betz and hub gate-reject path did not fire in this sweep.
+
+- The floor crossing sits between 10.5 m/s (4.609590, reject) and 11.0 m/s (5.300088, ok).
+
+- The lowest scoring P_end is 5.300088 at 11.0 m/s. The highest is 9.798986 at 13.5 m/s (NR-070).
+
+- The counts read the `status` column over the 16 unique winds. The two `rep` 2 rows repeat the identity and 13.5 evaluations and add no wind.
+
+Boundaries:
+
+- A floor reject is a measurement the score refuses. It is not a failed run.
+
+- The split is a count. It is not a rate and not a pass fraction.
