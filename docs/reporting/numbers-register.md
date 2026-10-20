@@ -2739,7 +2739,7 @@ The first cut decoded at the wrong rated wind. The row above stays in place as t
 
 | ID | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-066 (amended) | The decoded mass of each machine-evolution strip panel on the wind the campaign scored, and the two label forms | The table below | kg, kg-eq | `docs/reporting/figures/machine-evolution-strip/extract-mass.csv` at `3307af6`. Decoding commit `3307af6`. Generator `scripts/strip_mass_decode.jl`. Input `extract-best-so-far.csv` at `dd3cc6a` | amended (science-validator, 2026-10-20) |
+| NR-066 (amended) | The decoded mass of each machine-evolution strip panel on the wind the campaign scored, and the two label forms | The table below | kg, kg-eq | `docs/reporting/figures/machine-evolution-strip/extract-mass.csv` at `ce9c5d8`. Decoding commit `3307af6`. Generator `scripts/strip_mass_decode.jl`. Input `extract-best-so-far.csv` at `dd3cc6a` | amended (science-validator, 2026-10-20) |
 
 | Panel | Gen | Objective (kg-eq) | Mass (kg) | Penalty (kg) | Residual (kg) |
 |---|---|---|---|---|---|
@@ -2769,9 +2769,13 @@ The check that catches it:
 
 - I ran the committed generator in a detached worktree at `3307af6`. The winner prints `25.69846825623688`, the same Float64, and `m - m_nolifter` prints `5.0` exactly.
 
-- The same run reproduces all seven rows of the landed CSV byte for byte. One line differs, the header, which stamps `3307af6` in my run and `9423310` in the landed file.
+- The same run reproduces all seven rows of the landed CSV byte for byte. One line differs, the header, which stamps `3307af6` in my run and `9423310` in the file as it stood at `3307af6`.
 
-- So the numbers come from `3307af6`. The `9423310` stamp names the commit whose working tree ran the generator before the knob fix. The header re-pin is a one-line change and no value moves. The figures seat still holds it.
+- So the numbers come from `3307af6`. The `9423310` stamp names the commit whose working tree ran the generator before the knob fix. The header re-pin is a one-line change and no value moves. It landed at `ce9c5d8`.
+
+- The file cite reads `ce9c5d8` and the decode cite keeps `3307af6`.
+
+- The tree at `3307af6` carries the same seven values under a header that names `9423310`. A reader who opened that tree would see the wrong stamp.
 
 - The log `scratch/sv_nr066_vrated_rederive_20261020.log` carries both runs and the bound table. A reviewer can check the pair without a worktree.
 
