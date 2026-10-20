@@ -2537,11 +2537,21 @@ Proof on record: one seed and box read a lightest feasible mass of
 2.4× with the draw; the quantiles hold. The 13.018 kg value
 reproduces at three desks.
 
-## Source row: NR-064, the cartography feasible counts and the set containment (2026-10-20, science-validator)
+## Notation note: NR-067 and NR-068, the cartography pair renumbered from NR-064 and NR-065 (2026-10-20, science-validator)
+
+Two signed pairs carried the numbers NR-064 and NR-065 on the same day: this
+cartography pair (feasible counts; winner mass and quantiles) and the ladder
+census pair (7 pass of 42; cliff 20, stall 14, clearance 1). The ladder pair
+keeps 064 and 065, because `docs/reporting/figures/ladder-census/SPEC.md`, the
+census record and `figure-map.md` row 28 cite them. This pair moves to NR-067
+and NR-068. No value, source, sign-off or boundary changed. No surface outside
+this register cites the cartography pair, so no other file moves.
+
+## Source row: NR-067, the cartography feasible counts and the set containment (2026-10-20, science-validator)
 
 | Row | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-064 | Feasible-design counts, LHS cartography, N=80,000, seed 7, beam circular, axial free | 10 kW 45,493 of 80,000 on both sides. 50 kW 41,515 of 80,000 before the fix, 29,230 of 80,000 after | designs | Four files at `f7d3bd0`, each with the `feasible` column and a stamped header. 10 kW body md5 `98e8c266` on both sides. 50 kW bodies `2553bc4f` before and `eac8a4e5` after. Recount script `scratch/sv_lhs_cartography_rows.py`, log `scratch/sv_lhs_cartography_rows.log` | signed (science-validator, 2026-10-20) |
+| NR-067 | Feasible-design counts, LHS cartography, N=80,000, seed 7, beam circular, axial free | 10 kW 45,493 of 80,000 on both sides. 50 kW 41,515 of 80,000 before the fix, 29,230 of 80,000 after | designs | Four files at `f7d3bd0`, each with the `feasible` column and a stamped header. 10 kW body md5 `98e8c266` on both sides. 50 kW bodies `2553bc4f` before and `eac8a4e5` after. Recount script `scratch/sv_lhs_cartography_rows.py`, log `scratch/sv_lhs_cartography_rows.log` | signed (science-validator, 2026-10-20) |
 
 The 50 kW set census:
 
@@ -2573,11 +2583,11 @@ Boundaries:
 
 - A count belongs to this draw. It does not transfer to another seed or another N.
 
-## Source row: NR-065, the cartography winner mass and the feasible-mass quantiles (2026-10-20, science-validator)
+## Source row: NR-068, the cartography winner mass and the feasible-mass quantiles (2026-10-20, science-validator)
 
 | Row | Claim | Value | Units | Source | Status |
 |---|---|---|---|---|---|
-| NR-065 | Winner mass and feasible-mass quantiles, LHS cartography, N=80,000, seed 7 | The table below | kg | Same four files at `f7d3bd0`. Quantiles by linear interpolation on the sorted `mass_kg` column. Script `scratch/sv_lhs_cartography_rows.py` | signed (science-validator, 2026-10-20) |
+| NR-068 | Winner mass and feasible-mass quantiles, LHS cartography, N=80,000, seed 7 | The table below | kg | Same four files at `f7d3bd0`. Quantiles by linear interpolation on the sorted `mass_kg` column. Script `scratch/sv_lhs_cartography_rows.py` | signed (science-validator, 2026-10-20) |
 
 | Box | Side | Winner mass | p1 | p5 |
 |---|---|---|---|---|
@@ -2930,3 +2940,37 @@ Boundaries:
 - The class names the gate signature. It does not name a physical cause beyond the settle behaviour.
 
 - The stall band reads `w_gnd` at the final window sample. The CSV prints no speed history.
+
+## Source row: NR-069, the window-end power bound of the ok population (2026-10-20, science-validator)
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-069 | Window-end power bound over the ok evaluations, three-island campaign | 508 ok of 930. 0 below 5.00. Exactly 1 records 5.00. Next lowest 5.02. Highest 6.33 | kW, count | The three telemetry files at data commit `dd3cc6a`: `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1..3/telemetry.csv`, 310 rows each. Read of the `status` and `P_end` columns. Recount script `scratch/sv_floor_bound_2026-10-20.py` | signed (science-validator, 2026-10-20) |
+
+The tightest pass:
+
+| field | value |
+|---|---|
+| identity | island 1, gen 8, idx 4 |
+| fitness | 33.684 |
+| P_mean | 5.02 kW |
+| P_end | 5.0 kW |
+| running-best hold | generation 8 through generation 14 |
+
+Sign-off basis:
+
+- All 930 rows read. The status column returns 508 ok, the same count NR-002 signs. The 422 non-ok rows carry no score and no bound here.
+
+- No ok row reads below 5.00, and the gate makes that structural as well as measured: the fitness function returns infinity below the floor (`objective_v12.jl:143`), so a recorded ok cannot sit under it.
+
+- Exactly one ok row records 5.00 at the file's precision, and the next lowest records 5.02. The highest recorded P_end is 6.33. The window mean spans 5.02 to 6.32, the range NR-007 signs.
+
+- The 5.00 row is island 1, gen 8, idx 4: fitness 33.684, window mean 5.02, window end 5.0. Its window end sits below its own window mean. It holds the island 1 running-best place from generation 8 through generation 14, and the place changes at generation 15.
+
+Boundaries:
+
+- The values are recorded precision, not full precision. `5.0` is a recorded form, bounded below by the gate at 5.00. The count is a count of recorded forms.
+
+- The population is the ok rows of this campaign at this commit. It does not transfer to another run, seed or floor.
+
+- This row signs the floor sentence and the `one design of 508` label on the `machine-power-trend` plate. It signs no rate, no trend and no value on any other plate.
