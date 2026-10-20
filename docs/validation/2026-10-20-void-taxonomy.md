@@ -15,11 +15,11 @@ count.
 - Source C: `scripts/results/archive_void_*/`, three folders.
 - Source D: `scripts/results/ladder_v13_rerun_2026-10-20.csv`, md5 74408ea1.
 
-## Five mechanisms
+## Six mechanisms
 
 The classes divide by where the number came from. A number can come from a
-builder, a model edge, a reader, a harness, or a solver that cannot reach the
-design point. Each origin has a different remedy.
+builder, a model edge, a reader, a harness, a solver that cannot reach the
+design point, or a search that never visits the region the model accepts. Each origin has a different remedy.
 
 ### V0, build mismatch
 
@@ -98,7 +98,29 @@ Instance: 2026-10-20, the ladder census. Twenty cliff cells, fourteen stall
 cells, one clearance cell, seven pass cells.
 
 Remedy: no verdict word. The class prints as UNPROVEN by this gate. The fix is
-a precondition, not a new design.
+a precondition, not a new design. A census class also describes the genomes
+that were sampled, not the model. The class sentence prints its sample size.
+
+### V5, search under-visitation
+
+The model would accept the point. The search never asked.
+
+Signature: the fix is one gene, and its value sits inside the declared bounds
+at the moment of the run.
+
+Instance: 2026-10-20, the 10 kW rung at 21.2 m. The census filed the cell as
+stall. One gene moved, `r_hub` 2.40 m to 3.90 m, and the cell passed every
+gate. The upper bound at that rung was 4.32 m, so the search box held the
+answer and the search did not visit it. The three-point sweep is in
+`scratch/_probe_corner_topology_2026-10-20.csv`, and its numerals print only
+with a register row.
+
+V5 is the mirror of V1. V1 goes too far into ground the model cannot price.
+V5 never reaches ground the model would accept.
+
+Remedy: bounds are not evidence of visitation. A campaign result states how
+much of its box it sampled, and a bound that never moved through a run is a
+finding, not a setting.
 
 ## The lexicon trap
 
@@ -126,18 +148,21 @@ verdict alone throws that difference away.
 
 ## Archive template
 
-Every removed campaign gets one `STATUS.md` in its folder. Five fields:
+Every removed campaign gets one `STATUS.md` in its folder. Six fields:
 
 1. State: live, void, or superseded.
-2. Class: V0 to V4 from this page.
+2. Class: V0 to V5 from this page.
 3. The tell: the check that catches it now, named by file or test, with the
    threshold that check applies.
 4. The anchor: launch HEAD, physics era, and artifact md5.
 5. Superseded by: the path that replaced it.
+6. The genome: the gene vector of the winning design, and the bounds in force
+   at the run. A record without the genome cannot be re-tested, so a filed
+   stall stays a stall for ever.
 
 The three `archive_void_*` folders already carry the substance in `VOID.md`
-and `PROVENANCE.md`. The template adds field 2, and it adds field 5 to the
-older pair.
+and `PROVENANCE.md`. The template adds field 2 and field 6, and it adds field 5
+to the older pair.
 
 ## Inventory
 

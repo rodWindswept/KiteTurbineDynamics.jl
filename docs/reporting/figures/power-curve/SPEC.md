@@ -67,6 +67,20 @@ not depend on their ruling, because it sets both fields at every point.
    stamp⟩ and does not move across the sweep. A genome that adapts per
    wind is a different figure.
 
+5. **One base.** The genome's params base is declared in the header and
+   printed in the label. Two bases exist for the same rung, and they give
+   a different hub altitude and a different reference wind. Measured at
+   `caceb84`:
+
+   | base | route to 10 kW | `h_ref` | `v_wind_ref` |
+   |---|---|---|---|
+   | cartography | `params_10kw()` | 15.00 m | 11.7677 m/s |
+   | ladder | the 1.5 kW Daisy anchor, scaled | 13.31 m | 11.5685 m/s |
+
+   The table above quotes the cartography base. A figure drawn on the
+   ladder base prints the second row. The label names the base, or two
+   site winds print in one report as one.
+
 ## The drawing
 
 - Wind is a metric axis, so a polyline through the evaluated points is
