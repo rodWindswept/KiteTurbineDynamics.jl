@@ -2763,3 +2763,7 @@ Consequences:
 
 - What the row needs is an era ruling, not another read: does section 2.2.2 describe the 2026-09-06 machine or the campaign machine? On the first answer the tokens print as dated record forms. On the second they need a full re-derivation on the campaign machine.
 
+- Boundary on the case-B call. The hub-segment limits use `L_seg` as the tether chord. That is exact for the equal-radius segments and an approximation for the flare. Aero-validator reports the case-B margin at 0.075 m on that chord. If the settled chord exceeds `r_a + r_b`, case A applies and a dcrit exists on the segment. No value near 78.8 emerges either way.
+
+- The draft's section now prints neither token. The refusal keeps its mechanism, and the sizing sentence keeps "twice the nominal load" without a number. That is the end state unless the era ruling restores a dated form.
+
