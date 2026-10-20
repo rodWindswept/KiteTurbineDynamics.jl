@@ -93,23 +93,6 @@ def blob_eq(path: Path) -> bool:
     return bool(head) and head == work
 
 
-def section_sha256(number: str) -> str:
-    """Hash one ``## <number>.`` section of the ledger, not the whole file.
-
-    Sliced from the heading line to the next ``## `` heading — the convention
-    ``scripts/check_plate_bytes.py`` reads — so this plate is not reported
-    stale every time an unrelated section of the ledger is edited. The plate
-    binds section 4 only, and this is the hash that says so.
-    """
-    text = LEDGER_MD.read_text(encoding="utf-8")
-    heads = list(re.finditer(r"^## (.+)$", text, re.M))
-    for i, h in enumerate(heads):
-        if h.group(1).split(".")[0].strip() == str(number):
-            end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
-            return hashlib.sha256(text[h.start():end].encode("utf-8")).hexdigest()
-    raise SystemExit(f"scaling-ladder: no section {number} in {LEDGER_MD}")
-
-
 def parse_ledger(text: str):
     sec4 = text.split("## 4. The rungs, element by element")[1]
     sec4 = sec4.split("## 5.")[0]
@@ -315,8 +298,7 @@ def main() -> int:
             "numpy": __import__("numpy").__version__},
         "inputs": {
             "ledger": {"path": "docs/reporting/value-claims-ledger.md",
-                       "sha256": sha256(LEDGER_MD), "section": "4",
-                       "section_sha256": section_sha256("4")},
+                       "sha256": sha256(LEDGER_MD), "section": "4"},
             "rung_set": {"path": "scripts/compute_seeds.jl",
                          "sha256": sha256(RUNGS_SRC), "const": "RUNGS"},
             "register_rows": [],

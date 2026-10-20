@@ -6,8 +6,7 @@
     "ledger": {
       "path": "docs/reporting/value-claims-ledger.md",
       "section": "4",
-      "section_sha256": "5d37f02ff8802e6d65f7c2756865e10f9b334bb7348dc461a4056923ffce7b91",
-      "sha256": "c521b10822d9d0d24851bcf9e8b46272e1ccc515cd62894e878d3c5ff6579f71"
+      "sha256": "64073d0f827ad0a299bbc4b83e1e8b3fdc3177c2d80685009f03bdccee50c03a"
     },
     "register_rows": [],
     "rung_set": {
@@ -25,9 +24,9 @@
   "precision": "the rung labels print integer kW forms from the code set; no other number prints",
   "script": {
     "path": "docs/reporting/figures/scaling-ladder/scaling-ladder.py",
-    "sha256": "2240b0929408307abbbf015c128ae6c8983758296150080e6ef95053420c1115"
+    "sha256": "af969f1c579b5841f3b109d49c00b2adbded220c1608c0df21a1a173e889b5c7"
   },
-  "script_commit": "94e4c21",
+  "script_commit": "4ebc385",
   "slug": "scaling-ladder",
   "toolchain": {
     "matplotlib": "3.10.8",

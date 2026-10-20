@@ -16,10 +16,16 @@ For every ``docs/reporting/figures/*/manifest.json`` it checks three things:
 2. the script at the recorded commit — the ``script_commit`` field, or the pin
    carried in the build ``command`` as ``--script-commit <hash>`` — hashes to
    the recorded ``script.sha256``;
-3. every recorded input hash equals the blob at ``--rev``. An input that
-   carries ``section`` and ``section_sha256`` is hashed over that section of
-   the file only, so a plate bound to one section is not reported stale every
-   time an unrelated section of the same document is edited.
+3. every recorded input hash equals the blob at ``--rev``.
+
+A section-bound input is the one refinement, and it is a stricter test rather
+than a looser one. When a record names the ``section`` of a document it reads
+and the whole file has since moved, this script finds the commit that holds
+the recorded bytes, slices the named section out of that blob and out of
+``--rev``, and compares the two. Equal sections pass and print as SECTION with
+the commit it found. Different sections fail. A file that moved in the part
+this plate reads is a stale plate; a file that moved elsewhere is not, and the
+manifest said so by recording a section.
 
 Usage:
     python3 scripts/check_plate_bytes.py [--rev REV] [-q]
@@ -55,12 +61,30 @@ INPUT_FIELDS = ("inputs", "extract", "extracts", "capture", "captures")
 
 HEADING_RE = re.compile(r"^## (.+)$", re.M)
 
+HISTORY_LIMIT = 200
+
 
 def blob(rev, path):
     """Return the bytes of ``path`` at ``rev``, or None when it is absent."""
     res = subprocess.run(["git", "-C", ROOT, "show", f"{rev}:{path}"],
                          capture_output=True)
     return res.stdout if res.returncode == 0 else None
+
+
+def history(path, limit=HISTORY_LIMIT):
+    """Commits that touched ``path``, newest first."""
+    res = subprocess.run(["git", "-C", ROOT, "log", "--format=%H", "--", path],
+                         capture_output=True, text=True)
+    return res.stdout.split()[:limit]
+
+
+def commit_holding(path, want):
+    """Find the newest commit whose ``path`` blob hashes to ``want``."""
+    for rev in history(path):
+        data = blob(rev, path)
+        if data is not None and hashlib.sha256(data).hexdigest() == want:
+            return rev, data
+    return None, None
 
 
 def section_bytes(data, number):
@@ -140,6 +164,7 @@ def main():
             continue
 
         checks = []  # (label, expected, actual, kind)
+        notes = []
         for name, want in (man.get("outputs") or {}).items():
             got = blob(args.rev, f"{rel_kit}/{name}")
             checks.append((name, want,
@@ -162,16 +187,32 @@ def main():
             for rec in file_records(man.get(field)):
                 p = rec["path"]
                 data = blob(args.rev, p)
-                if rec.get("section_sha256") and rec.get("section") is not None:
-                    label = f"{p}#{rec['section']}"
+                section = rec.get("section")
+                if rec.get("section_sha256") and section is not None:
+                    label = f"{p}#{section}"
                     want = rec["section_sha256"]
-                    sliced = section_bytes(data, rec["section"]) if data is not None else None
+                    sliced = section_bytes(data, section) if data is not None else None
                     got = hashlib.sha256(sliced).hexdigest() if sliced is not None else None
-                else:
-                    label = p
-                    want = rec.get("sha256")
-                    got = hashlib.sha256(data).hexdigest() if data is not None else None
-                checks.append((label, want, got, "IN"))
+                    checks.append((label, want, got, "IN"))
+                    continue
+                want = rec.get("sha256")
+                got = hashlib.sha256(data).hexdigest() if data is not None else None
+                if want and got != want and section is not None:
+                    found, old = commit_holding(p, want)
+                    old_sec = section_bytes(old, section) if old is not None else None
+                    new_sec = section_bytes(data, section) if data is not None else None
+                    if old_sec is not None and old_sec == new_sec:
+                        checks.append((f"{p}#{section}", got, got, "SECTION"))
+                        notes.append(f"            {p} moved to {got[:12]}…; section "
+                                     f"{section} identical to {found[:7]}")
+                        continue
+                    if found is not None:
+                        checks.append((f"{p}#{section}", want, got, "IN"))
+                        notes.append(f"            section {section} differs from "
+                                     f"{found[:7]}; this plate reads moved bytes")
+                        continue
+                    notes.append(f"            no commit holds {want[:12]}… for {p}")
+                checks.append((p, want, got, "IN"))
 
         total += len(checks)
         kit_bad = [c for c in checks if c[1] != c[2]]
@@ -181,8 +222,10 @@ def main():
             for label, want, got, kind in kit_bad:
                 state = "MISSING" if got is None else f"{got[:12]}… wants {want[:12]}…"
                 lines.append(f"STALE       {slug:26s} {kind:12s} {label}  {state}")
+            lines.extend(notes)
         elif not args.quiet:
             lines.append(f"PASS        {slug:26s} {len(checks)} hash(es) at {args.rev}")
+            lines.extend(notes)
 
     for line in lines:
         print(line)

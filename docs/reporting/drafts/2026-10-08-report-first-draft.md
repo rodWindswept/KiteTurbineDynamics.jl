@@ -1296,7 +1296,7 @@ so the era sits here once instead of in a table column.
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `d0e410d` |
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
-| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `94e4c21` |
+| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `4ebc385` |
 
 **Output pins.**
 
