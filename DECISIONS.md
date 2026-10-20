@@ -10,6 +10,28 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-10-20] The LHS cartography harness loads every design at its own rated power
+
+**Context.** `scripts/run_lhs_cartography.jl` called
+`evaluate_design(d; r_rotor, elev_angle)` only. `P_rated` fell to its
+10,000 W default and `omega_rotor` to `4.1 * OPT_V_PEAK / 5.0` for
+both the 10 kW and 50 kW boxes. The 50 kW sweep therefore evaluated
+its designs under a 10 kW torque while the torsional capacity scaled
+with the 50 kW geometry; the torsional factor of safety inflated
+11.18× and the era's 50 kW feasible fractions read too high.
+
+**Decided (aero-validator measurement 2026-10-20, builder landing).**
+The harness passes `P_rated=p.p_rated_w` and
+`omega_rotor=4.1*OPT_V_PEAK/r_rotor` and prints both in the log line.
+For the 10 kW box the explicit values equal the defaults, so the 10 kW
+output is byte-identical. The 50 kW rows re-derive at this HEAD with
+N=80,000 and seed 7. `v_peak` (25 m/s) and `v_rated` (11 m/s) stay
+constants for both boxes; the extract stamp records them.
+
+**Measured.** 10 kW circular, N=80,000, seed 7: feasible 56.87% and
+13.018 kg before and after, CSV byte-identical. 50 kW circular, same
+basis: 51.89% / 66.869 kg before, 36.54% / 105.907 kg after.
+
 ## [2026-10-15] Rope-break detection arms at the relax boundary: the measurement window only
 
 **Context.** The windowed evaluator ran the rope-break gate across the

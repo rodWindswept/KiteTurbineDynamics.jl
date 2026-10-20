@@ -63,6 +63,8 @@ function main()
     ax_locked = parse_axial(args["axial-profile"])
     r_rotor = p.rotor_radius
     elev    = p.elevation_angle
+    P_rated = p.p_rated_w
+    omega_rotor = 4.1 * OPT_V_PEAK / r_rotor
 
     rng = MersenneTwister(args["seed"])
     lo, hi = search_bounds_v2(p, beam)
@@ -73,7 +75,7 @@ function main()
 
     mkpath(dirname(args["output"]))
     N = args["samples"]
-    println("LHS cartography: N=$N, config=$cfg_name, beam=$beam, axial=$(ax_locked === nothing ? "free" : ax_locked)")
+    println("LHS cartography: N=$N, config=$cfg_name, beam=$beam, axial=$(ax_locked === nothing ? "free" : ax_locked), P_rated=$(Int(P_rated)) W, omega_rotor=$(round(omega_rotor; digits=3)) rad/s, v_peak=$OPT_V_PEAK m/s")
     X = lhs_sample(N, lo, hi, rng)
 
     out = DataFrame(
@@ -102,7 +104,8 @@ function main()
     for i in 1:N
         x = X[i, :]
         d = design_from_vector_v2(x, beam, p)
-        r = evaluate_design(d; r_rotor=r_rotor, elev_angle=elev)
+        r = evaluate_design(d; r_rotor=r_rotor, elev_angle=elev,
+                               P_rated=P_rated, omega_rotor=omega_rotor)
         out[i, :Do_top_m]        = d.Do_top
         out[i, :t_over_D]        = d.t_over_D
         out[i, :beam_aspect]     = d.beam_aspect
