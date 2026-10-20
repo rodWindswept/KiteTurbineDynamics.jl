@@ -1,0 +1,64 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/power-curve/power-curve.py --csv scratch/av_power_curve_sweep.csv --script-commit 4bb45c9",
+  "drawn_forms": {
+    "10.000000": "3.98",
+    "10.500000": "4.61",
+    "11.000000": "5.30",
+    "11.009694": "5.31",
+    "11.500000": "6.06",
+    "12.000000": "6.88",
+    "12.500000": "7.78",
+    "13.000000": "8.75",
+    "13.500000": "9.80",
+    "6.500000": "1.09",
+    "7.000000": "1.37",
+    "7.500000": "1.68",
+    "8.000000": "2.04",
+    "8.500000": "2.45",
+    "9.000000": "2.90",
+    "9.500000": "3.41"
+  },
+  "header": [
+    "# winner (bankderate2 island 3 gen 26 idx 9) response vs hub-altitude wind",
+    "# basis: one field \u2014 cfg.v_rated = 11.0 fixed (geometry/sizing/gates); only p.v_wind_ref swept",
+    "# basis: one gain \u2014 k_mppt = K_MPPT_5KW_HONEST = 2.24 fixed (campaign's own); no k bracket ran",
+    "# identity row = wind 11.00969423693896 (campaign's own p_base wind); recorded fitness 27.3635412663488",
+    "# settle repeat: identity wind and 13.5 m/s run twice (rep 1 and rep 2)",
+    "# status :reject with finite P = honest below-floor reject (P carried); NaN P = gate reject (twist/Betz/hub), measurement dropped",
+    "# record: commit 8a757f3b6f298656fa6e93c7eb82c18ce316716e | src tree 4dd7e0d967b86031f7caf488e63d56e50ec0fceb | probe sha256 59718a0215309f2bc241842a17835d70fac72fe9914226df7889832c25523d8f | SITE_DAISY 10.0 m/s at 4.8 m, exponent 1/7",
+    "# gene_sha256 (per row, repeats) = sha256 of comma-joined full-precision repr of the ten winner genes"
+  ],
+  "inputs": {
+    "csv": {
+      "md5": "a4e535af18da220a473db963c45ceb76",
+      "path": "scratch/av_power_curve_sweep.csv",
+      "sha256": "f46ecb34f3d484a7816d9aabe8579c413c6e4ede78cb100c4fe999f44fae7aa8"
+    },
+    "register_rows": [
+      "NR-015",
+      "NR-046",
+      "NR-066",
+      "NR-070",
+      "NR-071",
+      "NR-072"
+    ]
+  },
+  "outputs": {
+    "label-ledger.txt": "c666d7572c20e753931a608c660a09118ed5e84506624ffaecfc7e0bcf815ffb",
+    "power-curve.pdf": "9fc1f2a3e5066cc0914da178e17685ba8fc4965340d1b4f00d6255ad3392bbe3",
+    "power-curve.png": "07f64820f7571c04dc700d693f892b08c4ac837de84ec9cfb0fc2d43efd3f82d",
+    "power-curve.svg": "7b13148fc2c26e73efefada20a8f3137de54e4eca63117e1aa660d110d15949e"
+  },
+  "script": {
+    "path": "docs/reporting/figures/power-curve/power-curve.py",
+    "sha256": "cc6b96bf8923371e402df4a807d601f3e5c5049c3073dd89a04419a9c530c24e"
+  },
+  "script_commit": "4bb45c9",
+  "slug": "power-curve",
+  "statistic": "window-end power (P_end_kW) at each swept hub wind, one fixed design at cfg.v_rated = 11.0",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "python": "3.12.3",
+    "svg_text_layer": "glyph text, not paths"
+  }
+}

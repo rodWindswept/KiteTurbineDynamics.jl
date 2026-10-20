@@ -1,0 +1,36 @@
+0
+1.09
+1.37
+1.68
+10
+11
+11.0 m/s: 5.30
+11.0097 m/s: 5.31
+12
+13
+2
+2.04
+2.45
+2.90
+3.41
+3.98
+4
+4.61
+5 kW floor: a gate, not a target
+6
+6.06
+6.88
+7
+7.78
+8
+8.75
+9
+9.80
+The floor decides which winds this machine can score at
+hub wind (m/s) at 9.41 m · one evaluation per wind
+one fixed machine at sixteen hub winds · gain 2.24 · hub 9.41 m · identity point 11.0097 m/s
+one polyline, no fit, no extrapolation · the ends of the sweep are chosen, not machine limits
+open markers are measured below the 5 kW floor and take no score · the machine does not move across the sweep
+rows NR-015 · NR-046 · NR-066 · NR-070 · NR-071 · NR-072 · rated wind held at 11.0 across the sweep · open markers are the honest floor reject
+sources: the winner genome, bankderate2 island 3 gen 26 · sweep CSV md5 a4e535af18da… · script commit 4bb45c9
+window-end power (kW)
