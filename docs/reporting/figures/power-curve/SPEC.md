@@ -124,9 +124,11 @@ this plate. The ceiling question is with @science-validator and
   line was banned as a rate drawn where no rate exists.
 - Nothing is drawn between or beyond evaluated points. No fit, no smooth
   curve, no dashed extrapolation past the sweep ends.
-- Each point is a marker. Each marker prints its scored power to one
-  decimal. The drawn column is `P_end_kW`, the `:tail5` statistic the
-  score reads. `P_mean_kW` prints in the caption.
+- Each point is a marker. Each marker prints its scored power to two
+  decimals, the recorded precision. The drawn column is `P_end_kW`, the
+  `:tail5` statistic the score reads. `P_mean_kW` prints in the caption.
+  Two decimals are needed because the 11.0 and 11.0097 points differ only
+  in the second one.
 - The 5.0 kW floor draws as a horizontal line. It is a declared
   constraint with a row behind it.
 - The Betz ceiling at the winner's swept area draws only if
