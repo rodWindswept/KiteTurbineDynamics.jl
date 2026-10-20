@@ -45,7 +45,7 @@ SLUG = "machine-power-trend"
 DATA_COMMIT = "dd3cc6a"
 RUN_COMMIT = "a76c5e9"
 ERA = "post-95c385d_wind-authority"
-ROWS = "NR-002 \u00b7 NR-005 \u00b7 NR-006 \u00b7 NR-062"
+ROWS = "NR-002 \u00b7 NR-005 \u00b7 NR-006 \u00b7 NR-062 \u00b7 NR-066"
 
 INK = "#1a1a1a"
 GREY = "#555555"
@@ -312,7 +312,7 @@ def main() -> int:
                  "sha256": sha256(RUN_DIR / f"island_{i}" / "telemetry.csv")}
                 for i in (1, 2, 3)
             ],
-            "register_rows": ["NR-002", "NR-005", "NR-006", "NR-062"],
+            "register_rows": ["NR-002", "NR-005", "NR-006", "NR-062", "NR-066"],
         },
         "data_commit": DATA_COMMIT,
         "run_commit": RUN_COMMIT,
