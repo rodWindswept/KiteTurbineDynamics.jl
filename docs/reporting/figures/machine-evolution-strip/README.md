@@ -66,3 +66,17 @@ The decode chain rounds before scoring.
 - Values become register rows before any figure draws them.
 - The strip claims geometry and the search objective (NR-036; declared
   delta, 2026-10-11). The renderer draws what it receives.
+
+## Mass decode
+
+- `mass-decode.csv` holds the decoded mass for the seven panels.
+- The generator is `scripts/strip_mass_decode.jl`.
+- The pass runs no simulation. It decodes each genome, sizes the beams, builds the system, and reads `expansion_airborne_mass`.
+- The mass is the quantity the campaign scored. It carries the 5.0 kg lifter.
+- Before it trusts a value, it asserts the decode against the recorded `n_lines`, `n_rings`, `r_hub` and `n_active`.
+- The `residual_kg` column is a second route. Take the recorded fitness, remove the three analytic penalties, then remove the decoded mass.
+- The remainder is the stationarity term. `P_range` is not recorded, so the route gives a bound.
+- The penalties are charged on `P_end`, the column the score used.
+- Signed values: 31.5087, 30.2167, 25.4251, 26.4642, 25.5573, 26.1720, 25.6701 kg.
+- The score prints as `kg-eq` and the mass prints as `kg`. One panel carries one form of each.
+- The caption says "decoded mass". Three decimals are a decomposition against a three-decimal objective, not a measurement.

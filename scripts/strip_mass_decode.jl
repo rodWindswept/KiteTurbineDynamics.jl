@@ -21,7 +21,7 @@
 # slack is the stationarity term (P_range is not recorded).  The penalty is
 # charged on P_end, the value the score used (objective_evaluator.jl:1153).
 #
-# Output: docs/reporting/figures/machine-evolution-strip/mass-decode.csv
+# Output: docs/reporting/figures/machine-evolution-strip/extract-mass.csv
 # Usage:  julia --project=. scripts/strip_mass_decode.jl
 using Pkg; Pkg.activate(dirname(@__DIR__))
 using KiteTurbineDynamics, Printf, CSV
@@ -37,7 +37,7 @@ const MIN_WALL_M = 2e-3
 const ROOT = dirname(@__DIR__)
 const KIT = joinpath(ROOT, "docs", "reporting", "figures", "machine-evolution-strip")
 const EXTRACT = joinpath(KIT, "extract-best-so-far.csv")
-const OUT = joinpath(KIT, "mass-decode.csv")
+const OUT = joinpath(KIT, "extract-mass.csv")
 
 function params_at_length(L::Float64)
     p2 = params_daisy()
@@ -76,7 +76,7 @@ const DECODE_COMMIT = git_head()
 
 rows = CSV.File(EXTRACT; comment="#")
 buf = IOBuffer()
-println(buf, "# machine-evolution-strip / mass-decode.csv")
+println(buf, "# machine-evolution-strip / extract-mass.csv")
 println(buf, "# decoding commit: $(DECODE_COMMIT)")
 println(buf, "# era: post-95c385d_wind-authority | dataset: v13_5kw_masslift_len18.8_rotorcount_bankderate2 | data commit dd3cc6a | launch a76c5e9")
 println(buf, "# extract: extract-best-so-far.csv")
