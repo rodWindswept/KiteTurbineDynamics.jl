@@ -32,6 +32,53 @@ constants for both boxes; the extract stamp records them.
 13.018 kg before and after, CSV byte-identical. 50 kW circular, same
 basis: 51.89% / 66.869 kg before, 36.54% / 105.907 kg after.
 
+**Addendum (2026-10-20, aero-validator census. Room ruling.)**
+
+The defect is a call-shape family across six scripts, not one call
+site. The frozen default `omega_rotor=4.1*OPT_V_PEAK/5.0` (20.5 rad/s,
+a hard-coded 5 m rotor) applies wherever a caller omits omega.
+
+`run_lhs_cartography` (post-fix), `run_v6_cartography` and
+`sensitivity_analysis_v6_50kw` pass both load terms. The v6 pair
+derives omega from `v_rated` (11 m/s), not the signed `v_peak`
+(25 m/s).
+
+Its torque reads 11/25 of the signed load. No v6 numeral
+cross-compares with a cartography numeral until it prints its omega
+line or re-runs.
+
+`run_v5_campaign`, `run_v10_campaign` and `run_v5_safe_campaign`
+pass `P_rated` only. v5_safe passes `r_rotor=p.rotor_radius` per
+island. Its 10 kW islands are load-exact (omega 20.5).
+
+The frozen default lightens its 50 kW islands exactly 2.236×.
+
+The 1.57/1.43 factors first reported belong to the v5/v10 wrapper
+family. `evaluate_design_v5` derives `r_rotor` from power.
+
+The true omega is design-dependent: 13.5 to 14.9 rad/s at 50 kW and
+26.5 to 29.2 at 10 kW across n=5 to 8. Those factors are
+representative scalars, not exact.
+
+`run_v4_campaign` (three sites) and `run_trpt_optimization_v2`
+(four sites) pass neither. They inherit the 10 kW, 20.5 rad/s
+defaults.
+
+**Consequences.** The class-C plates in the figures triage (A 27,
+B 63, C 133) now carry two reasons: era staleness and load optimism.
+They cannot print values even as dated evidence.
+
+Ruling: v5_safe proceeds as winner re-evaluation under correct
+per-island omega. That work costs minutes of compute, not
+re-optimization (168 core-hours).
+
+The class stands either way. The two families that pass neither get
+no re-runs.
+
+The v5/v10 wrapper holds the same frozen 20.5 omega default. If
+those campaigns revive, the fix needs a sibling hunk in
+`evaluate_design_v5`. Outside scope, untouched.
+
 ## [2026-10-15] Rope-break detection arms at the relax boundary: the measurement window only
 
 **Context.** The windowed evaluator ran the rope-break gate across the
