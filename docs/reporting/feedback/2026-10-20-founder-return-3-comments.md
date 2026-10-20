@@ -2,6 +2,26 @@
 
 **Status:** recorded, not acted. Rod returned the 22:45 build with 103 comments. The copy carries no tracked changes. The extract below is complete. The returned copy joins the repo with its bytes unchanged.
 
+## Disposition update (2026-10-20, evening)
+
+The room ran the six items while this register sat at `7e73e60`. This section records what moved. The register table below keeps its original routing.
+
+- **#100.** The cut exists and it is measured. The apply chain runs `5108e6d1` to `b9d01717` to `265f90d5` to `bfef2c95` to `d54d6ae4`. The final state reads 1222 lines and 10,117 words. STE reads 22 at 0.22, em dash 0. Section 6.1 reads 170 body words in two paragraphs. That is a 79 per cent cut from 799. All five lock strings read one hit each. The builder desk reproduced every state byte for byte. The cut waits on the bless call.
+
+- **#98.** Dropped by #100. The receipt at origin names the drop. It returns only as a `references.bib` entry plus one sentence. The #14 bibliography rebuild is the vehicle.
+
+- **#99.** Landed in cut paragraph 1, from the aero pin. The sentence reads "Tension above the rotor reduces that steer, though it cannot change the phase relation."
+
+- **#95.** Landed. The section 6 intro reads "Many more remain open." and "None of these carries a scored result."
+
+- **#97.** Landed in the cut. The heading reads "Cyclic pitch on the ring rotor". The lifter-stack paragraphs are gone. One note: "expansion rotor" reads 0 in section 6.1, so the expansion half of Rod's "main rotor or the expansion rotors" stays as future text.
+
+- **#83.** Reclassified from AUTHOR to @fig. The strip re-cut needs seven P_end labels. All seven sit in the extract. Mass needs a decode-only pass and a register row first.
+
+- **#93 and #92.** Still open. They are Rod's calls. The ladder plate and the chain analogy stay in place until he rules.
+
+- **The disk draft.** It moved from `daab5102` to `5108e6d1` after this register committed. The G6 write is uncommitted in the working tree. The "still daab5102" line below was true when written. This section supersedes it.
+
 Source: `docs/reporting/feedback/2026-10-20-founder-docx-return-3.docx`, md5 `dcbf3bc7a56e15d2bed969155443bc53d`, 3,266,563 bytes. Extract: `scratch/rodrev/triage.json` at the builder desk.
 
 ## What Rod marked
