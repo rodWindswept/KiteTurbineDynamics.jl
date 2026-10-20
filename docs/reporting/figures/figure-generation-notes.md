@@ -274,3 +274,21 @@ The 6.1 bridle paragraph is prose only. No plate may add a tether-to-blade bridl
 F_bridle in the 33 island-probe logs is the axial component of the lifting-bridle tension. rope_forces.jl:343 sets is_bridle when the rope end sits on the bearing node. This column is not the tether-to-blade bridle. If a plate shows it, the caption must read "lifting bridle".
 
 tilt_deg in the same logs is a diagnostic, not a control input. probe_axial_gap_compare.jl:231 derives it as min(bear_perp x 0.1, pi/6) from the bearing offset. Its values reach 0.05 deg. That range lies inside the 0-10 deg plan band. The value alone cannot separate a diagnostic from a small command. Two rules follow. The report must never quote tilt_deg. If the column ever reaches a plate, the caption must read "bearing-offset diagnostic", not "control input".
+
+The four checks that bind every plate (2026-10-20)
+
+These four checks are the approval gate for every new chart. No plate renders until its spec passes them. The aero seat signs physics, era and axis. The numbers seat signs the values. The founder reviews the render.
+
+1. Spec first. One page holds the claim sentence, the statistic, its population, the count at each point, and the register rows. No spec, no render.
+2. One era per chart. Every point shares one era and git stamp. Read the stamp from the telemetry header and print it on the plate. No line joins two eras. A genome slot can change meaning between eras, so a cross-era line measures the decode chain, not the machine.
+3. The axis states its job. Name a merit axis as merit. Draw a constraint axis against its floor, such as power against 5 kW. A trend line against generation index names its statistic and covers only points with n >= 3.
+4. Values from one source. A numeral prints only when three conditions hold. It re-derives at the git stamp the spec declares, never at moving HEAD. It maps to a signed register row. That row derives from the same source as the chart point. The sign-off names the stamp and the row. A signed row from another source cannot carry the value, even when the number is close. A chart that fails this check draws architecture and carries no digits.
+
+Check 4 is tree-pinned. The notes already use this form: "Cleared for print (build dump at 980de02)". A chart pinned to moving HEAD is either invalidated or blessed by unrelated commits, and neither shows. The spec declares the stamp. The numeral re-derives at that stamp. The sign-off names both.
+
+Check 4 matches the source. NR-008 is a cold re-eval, so it cannot carry a telemetry endpoint. NR-062 is the signed telemetry series, and it carries the strip's power.
+
+Two caption rules follow from check 4:
+
+- A best-so-far series is an archive statistic. The caption says "best so far". A fall in the series must not read as the machine drifting.
+- A slope has no register row, so no slope numeral prints on a plate.
