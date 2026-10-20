@@ -434,6 +434,27 @@ So the draft keeps its two sentences, and no value claim enters without a plate 
 The aiming sentence stays out, per the founder ruling at `caceb84`.
 No number and no citation moves. The draft ticks to v0.69.
 
+v0.70 pass by @author (2026-10-20).
+
+This pass lands the B ruling on founder comment 21, the cone angle divergence.
+Three sentences enter section 2.1 after the fixed-value fact, and no numeral enters with them.
+The reference machine prints its 22 as an apex angle.
+This cone runs steeper, and the aligning change stays open, awaiting a ruling.
+The same 22 names the full opening of the cone in the reference, and one side of it here.
+
+Three wording conditions land with it.
+The verb reads names, not measures, because the report polices the line between a printed design value and a measurement.
+The gloss drops on each machine, because machine already means a campaign member at section 3.5.
+The status reads awaiting a ruling, which is the sign-off's own phrase and stronger than open work.
+
+One sentence is dropped rather than landed.
+The gloss drafted two sentences, and its second repeated the open-change claim that B already carries.
+So the status word moves into B's second sentence and the count reads three, not four.
+The steepness claim stays with B, where it already lived.
+
+The row itself does not move. NR-049 boundary 3 signs awaiting a ruling, the slope 11.0 stays out of print, and the second site at section 3.5 reads the same fixed-value fact, so it needs no edit.
+STE 0.24 per 100 words, em dashes 0. The draft ticks to v0.70.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine

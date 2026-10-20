@@ -197,6 +197,10 @@ The ring geometry sets the topmost-ring and ground radii, and the rotor count se
 The shaft transition cone holds one fixed half-angle, 22 degrees, by construction.
 It is not a search value (NR-049).
 
+The reference machine prints its 22 as an apex angle.
+This cone therefore runs steeper than that machine, and the aligning change stays open, awaiting a ruling.
+The same 22 names the full opening of the cone in the reference, and one side of it here.
+
 At the top of the shaft the rotor turns in the wind.
 The whole shaft turns with the rotor.
 The shaft passes the torque from ring to ring.
