@@ -47,7 +47,7 @@ islands, against the 5 kW floor. The founder ordered it on 2026-10-20.
 
 ## Checks
 
-The script asserts 13 conditions before it draws. Six of them carry the
+The script asserts 18 conditions before it draws. Eight of them carry the
 plate.
 
 - The common seed reads 36.109 and 5.86 kW on all three islands.
@@ -59,6 +59,9 @@ plate.
 - All 93 values sit at or above the 5 kW floor and below 6.0 kW.
 - Island 1 sits on the floor from generation 8 to generation 14. The script
   names this set, so a reader can check it.
+- Of 508 ok evaluations, none reads below 5.00 kW, exactly one reads 5.00
+  and the next lowest reads 5.02. The highest reads 6.33. These four numbers
+  say the floor is a gate and the floor segment is the tightest pass.
 
 ## Precision
 

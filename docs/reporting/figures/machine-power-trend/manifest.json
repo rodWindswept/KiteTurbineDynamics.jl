@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/machine-power-trend/machine-power-trend.py --script-commit 7c680d8",
+  "command": "/usr/bin/python3 docs/reporting/figures/machine-power-trend/machine-power-trend.py --script-commit a1047a4",
   "data_commit": "dd3cc6a",
   "drawn_forms": {
     "0": "5.86",
@@ -24,6 +24,7 @@
       }
     ],
     "register_rows": [
+      "NR-002",
       "NR-005",
       "NR-006",
       "NR-062"
@@ -31,17 +32,17 @@
   },
   "mode": "trend",
   "outputs": {
-    "label-ledger.txt": "dbde26423a9c1d7f956041804d6275182a0ea21cc77421d92d4eb7386fbd89cc",
-    "machine-power-trend.pdf": "2baf0eb8d0861c22a08044d3348f1673e1b9c2198eb0b4e990b05d54c905f6c6",
-    "machine-power-trend.png": "ebe2ea802cd19d9be0abf4f32b34b5661759212b189ba8a7ee0f2ebe567e58ee",
-    "machine-power-trend.svg": "33412d4a9b136f28f9143672047932152a64576cd6f7d41d6855b6e52f32f766"
+    "label-ledger.txt": "ef6d3a7871a134b98cf0d4f84a87a69b9ad2e5ba78d96069dc423c76badb3e77",
+    "machine-power-trend.pdf": "41415819c76b4f536012b39bbdfb38b1108b099bc2229614c2b8589a263b41bb",
+    "machine-power-trend.png": "18fc7a57350f4c09d6fec6d0f5c693093a3dd84d6e84cb33e74063ac7c0be43d",
+    "machine-power-trend.svg": "00ae021a1f33840118a6589a7ef7de8c7e3bf942040576927d2ea13f5e988ed5"
   },
   "run_commit": "a76c5e9",
   "script": {
     "path": "docs/reporting/figures/machine-power-trend/machine-power-trend.py",
-    "sha256": "69e8218e068ca09e04957d94b1d8f143dc285be353a6886ae401989a317dc670"
+    "sha256": "239d979476b81227784f27a9ce17110dcd8b8e94bd9e93ba8c1e440ad65f46a4"
   },
-  "script_commit": "7c680d8",
+  "script_commit": "a1047a4",
   "selection": "running-best = least recorded fitness among ok rows with gen <= G; ties to earliest (gen, idx); no interpolation",
   "slug": "machine-power-trend",
   "statistic": "window-end power (P_end) of each island's running-best machine, one point per generation, n = 3 per generation",

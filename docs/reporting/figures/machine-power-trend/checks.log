@@ -11,8 +11,13 @@ check: all 93 running-best values at or above the 5 kW floor: True  (OK)
 check: all 93 running-best values below 6.0 kW: True  (OK)
 check: island 1 sits on the floor, generations 8 to 14: [8, 9, 10, 11, 12, 13, 14]  (OK)
 check: island 3 ends below the seed: True  (OK)
-ledger strings: 27
-outputs sha256: png ebe2ea802cd19d9be0abf4f32b34b5661759212b189ba8a7ee0f2ebe567e58ee
-                svg 33412d4a9b136f28f9143672047932152a64576cd6f7d41d6855b6e52f32f766
-                pdf 2baf0eb8d0861c22a08044d3348f1673e1b9c2198eb0b4e990b05d54c905f6c6
+check: ok evaluations (NR-002 feasible count): 508  (OK)
+check: no ok evaluation below the 5 kW gate: 0  (OK)
+check: exactly one ok evaluation on the gate: 1  (OK)
+check: the next lowest ok evaluation: 5.02  (OK)
+check: the highest ok evaluation: 6.33  (OK)
+ledger strings: 29
+outputs sha256: png 18fc7a57350f4c09d6fec6d0f5c693093a3dd84d6e84cb33e74063ac7c0be43d
+                svg 00ae021a1f33840118a6589a7ef7de8c7e3bf942040576927d2ea13f5e988ed5
+                pdf 41415819c76b4f536012b39bbdfb38b1108b099bc2229614c2b8589a263b41bb
 checks: ALL OK

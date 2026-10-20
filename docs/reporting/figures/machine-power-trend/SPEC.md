@@ -16,10 +16,14 @@ the second.
 
 ## The claim
 
-The running-best machine holds window-end power above the 5 kW floor on all
-three islands across generations 0 to 30. Island 3 steps from 5.86 kW to
-5.31 kW. The score gains of the search do not come from cutting generator
-duty.
+Window-end power is a scored term, not a held quantity. The over-power charge
+is `5 * (P_end - 5)^2` kg-eq, and the 5 kW floor is a gate: the evaluator
+rejects any design below it.
+
+Island 3 falls from 5.89 kW at generation 10 to 5.31 kW at the winner, and
+that fall is 3.4800 of the 4.5146 kg-eq of penalty the winner sheds. The
+plate shows the power path behind the over-power term. It does not claim that
+power and score move independently.
 
 ## The statistic
 
@@ -43,6 +47,9 @@ generation. Running-best is the ok row of least recorded fitness with
 - Three step lines: island 1, island 2 and island 3. Island 3 is heavy,
   because it is the strip island.
 - The 5 kW floor draws as a dashed rule and carries the words "5 kW floor".
+  The ylabel states that the floor is a gate and not a target. The one island
+  1 segment that lies on the rule is labelled "the tightest pass · one design
+  of 508", because no ok evaluation can read below the gate.
 - The island 3 values step at exactly generations 0, 6, 10, 18, 22, 25 and
   26, the strip panel set. Four of them print, each in the NR-062 form:
   5.86, 5.4, 5.89, 5.31.
@@ -54,6 +61,7 @@ generation. Running-best is the ok row of least recorded fitness with
 
 - `NR-062` carries the window-end power forms, signed 2026-10-18. The island
   3 steps read this row.
+- `NR-002` carries the feasible count, 508. The tightest-pass label reads it.
 - `NR-006` carries the seed, 36.109. The sub-line names it.
 - `NR-005` carries the winner, 27.364. The sub-line names it.
 - The axis ticks and the floor label are calibration, not readings. They

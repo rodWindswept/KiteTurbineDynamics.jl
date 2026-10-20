@@ -170,7 +170,7 @@ L 510.5376 69.034961
     </g>
     <g id="text_12">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #555555" transform="translate(15.604256 185.721125) rotate(-90)">window-end power (kW)</text>
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #555555" transform="translate(24.562506 194.6505) rotate(-90)">a constraint axis · floor 5 kW</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #555555" transform="translate(24.562506 198.89175) rotate(-90)">the floor is a gate, not a target</text>
     </g>
    </g>
    <g id="line2d_14">
@@ -415,6 +415,23 @@ z
    </g>
    <g id="text_14">
     <g id="patch_5">
+     <path d="M 168.633938 196.572189 
+L 233.466563 196.572189 
+Q 234.474563 196.572189 234.474563 195.564189 
+L 234.474563 181.354145 
+Q 234.474563 180.346145 233.466563 180.346145 
+L 168.633938 180.346145 
+Q 167.625938 180.346145 167.625938 181.354145 
+L 167.625938 195.564189 
+Q 167.625938 196.572189 168.633938 196.572189 
+z
+" style="fill: #ffffff; opacity: 0.93"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #555555" transform="translate(168.633938 186.82502)">the tightest pass</text>
+    <text style="font-size: 7.2px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #555555" transform="translate(168.633938 194.066814)">one design of 508</text>
+   </g>
+   <g id="text_15">
+    <g id="patch_6">
      <path d="M 71.598423 82.741638 
 L 169.187173 82.741638 
 Q 170.307173 82.741638 170.307173 81.621638 
@@ -429,8 +446,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="71.598423" y="79.957888" transform="rotate(-0 71.598423 79.957888)">the common seed · 5.86</text>
    </g>
-   <g id="text_15">
-    <g id="patch_6">
+   <g id="text_16">
+    <g id="patch_7">
      <path d="M 140.6304 163.354374 
 L 153.3529 163.354374 
 Q 154.4729 163.354374 154.4729 162.234374 
@@ -445,8 +462,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #c1441e" x="140.6304" y="160.570624" transform="rotate(-0 140.6304 160.570624)">5.4</text>
    </g>
-   <g id="text_16">
-    <g id="patch_7">
+   <g id="text_17">
+    <g id="patch_8">
      <path d="M 194.032496 79.429354 
 L 211.844996 79.429354 
 Q 212.964996 79.429354 212.964996 78.309354 
@@ -461,8 +478,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #c1441e" x="194.032496" y="76.645604" transform="rotate(-0 194.032496 76.645604)">5.89</text>
    </g>
-   <g id="text_17">
-    <g id="patch_8">
+   <g id="text_18">
+    <g id="patch_9">
      <path d="M 438.671759 156.274331 
 L 456.484259 156.274331 
 Q 457.604259 156.274331 457.604259 155.154331 
@@ -477,8 +494,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #c1441e" x="456.484259" y="153.490581" transform="rotate(-0 456.484259 153.490581)">5.31</text>
    </g>
-   <g id="text_18">
-    <g id="patch_9">
+   <g id="text_19">
+    <g id="patch_10">
      <path d="M 464.2992 84.625518 
 L 495.59545 84.625518 
 Q 496.71545 84.625518 496.71545 83.505518 
@@ -493,8 +510,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #2e8b57" x="464.2992" y="81.841768" transform="rotate(-0 464.2992 81.841768)">island 2</text>
    </g>
-   <g id="text_19">
-    <g id="patch_10">
+   <g id="text_20">
+    <g id="patch_11">
      <path d="M 464.2992 116.423439 
 L 495.59545 116.423439 
 Q 496.71545 116.423439 496.71545 115.303439 
@@ -509,8 +526,8 @@ z
     </g>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #4a7fb5" x="464.2992" y="113.639689" transform="rotate(-0 464.2992 113.639689)">island 1</text>
    </g>
-   <g id="text_20">
-    <g id="patch_11">
+   <g id="text_21">
+    <g id="patch_12">
      <path d="M 464.2992 165.445234 
 L 495.59545 165.445234 
 Q 496.71545 165.445234 496.71545 164.325234 
@@ -526,23 +543,23 @@ z
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #c1441e" x="464.2992" y="162.661484" transform="rotate(-0 464.2992 162.661484)">island 3</text>
    </g>
   </g>
-  <g id="text_21">
-   <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="6.5664" y="12.3984" transform="rotate(-0 6.5664 12.3984)">Window-end power holds while the score falls</text>
-  </g>
   <g id="text_22">
-   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="26.568" transform="rotate(-0 6.5664 26.568)">running-best window-end power · three islands · generations 0 to 30 · era post-95c385d_wind-authority</text>
+   <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="6.5664" y="12.3984" transform="rotate(-0 6.5664 12.3984)">Window-end power drives the over-power penalty</text>
   </g>
   <g id="text_23">
-   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="37.7856" transform="rotate(-0 6.5664 37.7856)">island 3's score falls 36.109 to 27.364 kg-eq over the same generations (NR-005, NR-006)</text>
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="26.568" transform="rotate(-0 6.5664 26.568)">running-best window-end power · three islands · generations 0 to 30 · era post-95c385d_wind-authority</text>
   </g>
   <g id="text_24">
-   <text style="font-style: italic; font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="48.1536" y="250.92" transform="rotate(-0 48.1536 250.92)">step, no interpolation · the running-best machine changes only when a better design is recorded</text>
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="37.7856" transform="rotate(-0 6.5664 37.7856)">island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 · its score falls 36.109 to 27.364 kg-eq (NR-062, NR-005, NR-006)</text>
   </g>
   <g id="text_25">
-   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="265.68" transform="rotate(-0 6.5664 265.68)">sources: the campaign telemetry, islands 1 to 3 · data commit dd3cc6a · run a76c5e9</text>
+   <text style="font-style: italic; font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="48.1536" y="250.92" transform="rotate(-0 48.1536 250.92)">step, no interpolation · the running-best machine changes only when a better design is recorded</text>
   </g>
   <g id="text_26">
-   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="276.8976" transform="rotate(-0 6.5664 276.8976)">rows NR-005 · NR-006 · NR-062 · script commit 7c680d8 · the four printed forms are the window-end member NR-062 signs</text>
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="265.68" transform="rotate(-0 6.5664 265.68)">sources: the campaign telemetry, islands 1 to 3 · data commit dd3cc6a · run a76c5e9</text>
+  </g>
+  <g id="text_27">
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="276.8976" transform="rotate(-0 6.5664 276.8976)">rows NR-002 · NR-005 · NR-006 · NR-062 · script commit a1047a4 · the four printed forms are the window-end member NR-062 signs</text>
   </g>
  </g>
  <defs>
