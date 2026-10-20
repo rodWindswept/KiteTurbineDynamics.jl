@@ -499,6 +499,32 @@ The paragraph split in two to hold the six-sentence limit.
 STE 25 total at 0.23 per 100 words.
 Every category reads the same as before the edit. Em dashes 0. The draft ticks to v0.72.
 
+v0.73 pass by @author (2026-10-20).
+
+This pass withdraws both NR-048 values from section 2.3.
+It also takes a version tick that four passes recorded and did not carry.
+
+The twist sentence leaves the k-easing paragraph.
+It set a measured twist against a collapse limit (NR-048).
+The numbers seat amended NR-048 and withdrew both numerals, so the sentence goes whole.
+The paragraph keeps its mechanism without a numeral.
+A lull is harmless, the load law holds the speed, and easing k removes that hold.
+The team refuses to ease k for that reason.
+
+The force sentence leaves the load-step paragraph.
+It printed 1278 N/vertex as a campaign-machine value.
+The sweep re-run at HEAD reads 186.9 N/vertex on that step.
+So the sentence cannot keep its form, and no replacement enters.
+The sizing decision keeps one NR-048 cite, at twice the nominal load.
+
+The header had read v0.68 since `554e8cd`.
+Four entries here claimed ticks from v0.69 to v0.72, and the file carried none.
+The header now reads v0.73, so the label matches the entry count.
+The v0.72 entry said the paragraph reads the twist pair second, and this entry retires that line.
+
+That entry also said the draft carried the collapse limit at both sites.
+The draft carries it once, at the paragraph this pass edits.
+
 ## 2. Working notes
 
 A bracket marks open room work. The owners refine
