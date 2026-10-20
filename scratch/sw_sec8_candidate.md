@@ -1154,7 +1154,7 @@ A score without a test does not enter the record.
 
 Seeded in references.bib. Seventeen sources. Sixteen carry verified
 sources. The Hancock deck stands on the weaker standard (slides held, no
-public archive). The Ranneberg entry was dropped.
+public archive).
 
 Each entry carries a DOI link, an archive link, or a slides note.
 

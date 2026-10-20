@@ -1,9 +1,12 @@
---- a/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:28:11.601045883 +0100
-+++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:28:11.601984292 +0100
-@@ -1156,6 +1156,26 @@
- sources. The Hancock deck stands on the weaker standard (slides held, no
- public archive). The Ranneberg entry was dropped.
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:32:42.149717242 +0100
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:32:42.150876047 +0100
+@@ -1154,7 +1154,27 @@
  
+ Seeded in references.bib. Seventeen sources. Sixteen carry verified
+ sources. The Hancock deck stands on the weaker standard (slides held, no
+-public archive). The Ranneberg entry was dropped.
++public archive).
++
 +Each entry carries a DOI link, an archive link, or a slides note.
 +
 +1. Aull, M., Stough, A. & Cohen, K. (2020). Design Optimization and Sizing for Fly-Gen Airborne Wind Energy Systems. Automation 1(1), 1–16. https://doi.org/10.3390/automation1010001
@@ -23,7 +26,6 @@
 +15. van de Kaa, G. & Kamp, L. (2021). Exploring design dominance in early stages of the dominance process: The case of airborne wind energy. Journal of Cleaner Production 321, 128918. https://doi.org/10.1016/j.jclepro.2021.128918
 +16. van der Burg, S., Jurg, M. F. M., Tadema, F. M., Kamp, L. M. & van de Kaa, G. (2022). Dominant Designs for Wings of Airborne Wind Energy Systems. Energies 15(19), 7291. https://doi.org/10.3390/en15197291
 +17. Weber, J., Marquis, M., Cooperman, A., Draxl, C., Hammond, R., Jonkman, J., Lemke, A., Lopez, A., Mudafort, R., Optis, M., Roberts, O. & Shields, M. (2021). Challenges and Opportunities for Airborne Wind Energy in the United States. National Renewable Energy Laboratory, Report to Congress. https://www.energy.gov/sites/default/files/2021-12/report-to-congress-challenges-opportunities-airborne-wind-energy-united-states.pdf
-+
+ 
  ## 9 Data availability and reproducibility
  
- The dataset commits to the repo at dd3cc6a on bankderate2-results.

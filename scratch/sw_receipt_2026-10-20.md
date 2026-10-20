@@ -1,125 +1,118 @@
-# Science-writer seat, 2026-10-20: the section 6.1 cut keeps every lock
+# Science-writer seat, 2026-10-20: the section 6.1 cut and the section 8 list
 
-Base: the working tree draft reads md5 `5108e6d1`, 1299 lines and 10,674 words.
+Base: the working tree draft reads `5108e6d1`, 1299 lines and 10,674 words.
 G6 is applied on disk and not committed.
 
-## Finding 1: the four locks fit inside the cut
+## Section 6.1: the four locks fit inside the cut
 
-Section 6.1 runs from line 1084 to line 1179.
-It holds 807 words in 19 paragraphs.
+Section 6.1 held 805 body words in 18 paragraphs.
 The four do-not-trim strings sit at lines 1117, 1118, 1165 and 1169.
-All four sit inside section 6.1.
-So the ruling is not a choice between the cut and the locks.
+All four sat inside the section, so the ruling was not a choice between the cut and the locks.
 
-Candidate: `scratch/sw_sec61_cut.md`, md5 `f5bf426085e2c779c79042744124a838`, 1217 lines and 10,020 words.
-Section 6.1 reads 153 words in two body paragraphs, an 81 per cent cut.
-STE reads 22 at 0.22.
-Counters: long_sentence 3, contraction 1, passive 5, nominalization 1, long_paragraph 12, em dash 0.
-The counters match the base.
-The rate moves from 0.21 to 0.22 because the word count falls and the flag count does not.
-Every lock string returns one hit.
-`the tether-to-blade rule` returns one hit.
-
-Paragraph 2 is the blessed block, verbatim.
-Paragraph 1 keeps the gate, the rim-bridle reaction path and the test.
-The cut drops the lift-kite stack, the self-lift trade, the Cp cost of the axial component, the hub-moment check and the lateral-mode check.
+The cut keeps the gate, the rim-bridle reaction path and the two tests.
+It drops the lifter-stack paragraph, the self-lift trade, the Cp cost, the hub-moment check and the lateral-mode check.
 The heading reads "6.1 Cyclic pitch on the ring rotor", under comment 97.
+Paragraph 2 is the blessed block, verbatim.
 
-## Finding 2: section 8 can be built from references.bib
+## The science-validator hedge
+
+The first cut dropped "almost" from the shaft sentence and "would" from the rim-bridle sentence.
+That printed a hypothetical as fact inside potential extension work.
+The fix is the science-validator sentence at 19 words.
+It reads: "The shaft carries tension and torque but almost no bending, so the rim bridle would take the tilt reaction."
+
+## Comment 99, comment 98 and comment 95
+
+Comment 99 rides in paragraph 1.
+It reads: "Tension above the rotor reduces that steer, though it cannot change the phase relation."
+That sentence follows the aero pin. The reversal is kinematic, and stacking shrinks the steer.
+Comment 98 has no slot under a two-paragraph cap, so comment 100 drops it.
+It returns as one `someawe.org` bibliography entry and one sentence.
+Comment 95 adds "Many more remain open." to the section 6 intro.
+"None of these" replaces "None of the three".
+
+## The author fix and the v3 path
+
+The author seat found the real fault in version 2.
+The cut kept the lock "Until they run, the rotor phase lag stays a free parameter."
+It dropped the plural that the lock points at.
+The fix names both tests.
+It reads: "A BEM sweep from 0 to 10 degrees of tilt and a lateral-mode check are the two tests."
+The fault was mine and the fix is right.
+
+The author v3 patch carries the wrong path header.
+It reads `a/scratch/sw_sec61_cut_v2.md`, so inside the repo it edits the candidate and not the draft.
+`scratch/sw_cut_v3_pathfix.patch` carries the same body at the draft path.
+Applied to `bfef2c95`, it lands `d54d6ae4`.
+Reverse-applied, it returns `bfef2c95`.
+
+## The chain
+
+| Link | State | Measure |
+|---|---|---|
+| disk | `5108e6d1` | 1299 / 10,674 |
+| G7 | `b9d01717` | 1299 / 10,670 |
+| batch 1 | `265f90d5` | 1303 / 10,743 |
+| cut v2 | `bfef2c95` | 1222 / 10,112 |
+| pathfixed v3 | `d54d6ae4` | 1222 / 10,117 |
+| section 8 | `fc44f70a` | 1242 / 10,587 |
+
+Final section 6.1 reads 170 body words in two paragraphs by the register convention.
+That is a 79 per cent cut from 805.
+
+## Section 8: the list is built from references.bib
 
 `docs/reporting/references.bib` holds 17 entries.
-14 carry a DOI.
-Two carry an archive or report URL.
-One carries a slides note.
+14 carry a DOI. Two carry an archive or report URL. One carries a slides note.
 All five names in comment 14 sit in it with a year, a title and a DOI link.
 The list is `scratch/sw_refs_list.md`, 462 words.
 
-The draft names 10 of the 17 in section 1.
-Seven carry no in-text reference: Read, Jamieson, Aull, Joshi 2023, Joshi 2025, Weber and Hancock.
-Either the prose cites them or the list drops them.
+The science-validator checked the list against the bib in both directions.
+17 entries match 17 keys.
+Every DOI and both archive URLs read byte-identical.
 
-A reference list cannot pass the STE gate as written.
-Titles carry one semicolon and one em dash.
-Author initials split as sentences.
-The Weber entry holds 12 authors and reads 25 words.
-A pasted list adds 4 flags and 10 em dashes to the file total.
-Section 8 needs a linter exemption, or a build step that renders the list from the bib.
+Seven entries carry no in-text name in section 1.
+They are Read, Jamieson, Aull, Joshi 2023, Joshi 2025, Weber and Hancock.
+The author seat places them as clauses on sentences that already make the claim.
+Nothing in the list moves when those clauses land.
 
-## Finding 3: the 168 target clause prints false
-
-The founder answered in the room: the lean points at a point on the TRPT section line, not at the next ring.
-`toward the ring below` prints false against that answer.
-Delete the clause and the sentence is true.
-It reads "The machine plates show the blade leaning downward."
-
-Candidate: `scratch/sw_168_drop_target.md`, md5 `b9d01717e7fd5e4f0f9ba0baaaf5f42e`, 1299 lines and 10,670 words.
-STE reads 22 at 0.21.
-`toward the ring below` returns 0 hits.
-
-## Version 2: the hedge is restored and comment 99 rides along
-
-Base: `265f90d5`, the G7 patch plus the author batch 1 applied, 1303 lines and 10,743 words.
-The science-validator found one fault in the first cut.
-The compression dropped "almost" from the shaft sentence and "would" from the rim-bridle sentence.
-That prints a hypothetical as fact in a section headed potential extension work.
-The fix is the science-validator sentence, verbatim, at 19 words.
-
-The cut also deleted the anchors for comments 98 and 99.
-Comment 99 now rides in paragraph 1: "Tension above the rotor reduces that steer, though it cannot change the phase relation."
-That sentence follows the aero pin: the phase reversal is kinematic, and stacking reduces the response size.
-Comment 98 has no slot under a two-paragraph cap.
-It is recorded as dropped by comment 100.
-
-One structural move, stated for the record.
-Comment 99 makes paragraph 1 seven sentences.
-Lock three therefore opens paragraph 2, before the blessed block, so both paragraphs hold six sentences and no long-paragraph flag enters.
-The alternative is lock three at the end of paragraph 1 and STE 23.
-All five lock strings return one hit each.
-
-Section 6 intro, comment 95, two lines outside the cut: "Many more remain open." joins the "three of them" sentence, and "None of these" replaces "None of the three".
-
-Candidate: `scratch/sw_sec61_cut_v2.md`, md5 `bfef2c95506daec34cb62c1436bd433a`, 1222 lines and 10,112 words.
-Patch: `scratch/sw_sec61_cut_v2.patch`, one hunk, applies clean to `265f90d5` and lands the same md5.
-Section 6.1 reads 171 body words in two paragraphs, from 805, a 79 per cent cut.
-STE reads 22 at 0.22.
-Counters: long_sentence 3, contraction 1, passive 5, nominalization 1, long_paragraph 12, em dash 0.
-The counters match the base.
-The patch also applies to the G6 disk copy and lands `fecf29bd`, because batch 1 does not touch this region.
-The base is `265f90d5`, and any other base fails the hash test.
-
-## Version 3: the lock points at two tests, and the patch path is corrected
-
-The author seat found a real fault in version 2.
-The cut kept the lock "Until they run, the rotor phase lag stays a free parameter." and dropped the plural it points at.
-The only test sentence left read "A BEM sweep from 0 to 10 degrees of tilt is the test", which is singular.
-The fix names both tests and keeps the lock at the head of paragraph 2.
-It reads "A BEM sweep from 0 to 10 degrees of tilt and a lateral-mode check are the two tests."
-The fault was mine and the fix is right.
-Final state `d54d6ae4`, 1222 lines and 10,117 words, STE 22 at 0.22.
-
-The v3 patch carries the wrong path header.
-It reads `a/scratch/sw_sec61_cut_v2.md`, so inside the repo it edits the candidate and not the draft.
-The re-pathed hunk is `scratch/sw_cut_v3_pathfix.patch`, one line, same body.
-Applied to `bfef2c95`, it lands `d54d6ae4` on the draft path.
-The chain in the room works only with this header.
-
-## Section 8: the reference list is built, and the gate needs one rule
-
-Candidate `scratch/sw_sec8_candidate.md`, md5 `f58d6778a4a8b8dc4742597b5a658169`, 1242 lines and 10,592 words.
-It adds 17 entries under section 8, one per source, with authors, year, title, venue and a DOI or archive link.
-14 entries carry a DOI, two carry an archive or report URL, and the Hancock entry carries the slides note.
-The lead sentence reads "Each entry carries a DOI link, an archive link, or a slides note."
+## Section 8: the gate rule
 
 A reference list cannot pass the gate as written.
-The entries add 3 flags and 10 dashes, because titles are quoted material.
-Jamieson carries a semicolon, Tulloch carries an em dash, and the Weber author list reads 25 words.
-The list is data and not prose, so the linter should skip the entry list and still count the section prose.
-`scratch/sw_ste_lint_refs.patch` adds that rule: numbered entries under a References or Bibliography heading are dropped before the scan.
+Quoted titles add 3 flags and 10 dashes.
+Jamieson carries a semicolon and Tulloch carries an em dash.
+The Weber author list reads 25 words.
+The list is data and not prose.
+`scratch/sw_ste_lint_refs.patch` drops numbered entries under a References or Bibliography heading before the scan.
+The section prose still counts.
 
-Measured with the rule: the base reads 22 at 0.22 and the section 8 candidate reads 22 at 0.22.
-Measured without the rule: the candidate reads 25 at 0.24 with 10 dashes.
-The rule applies clean to `ste-lint.py` and changes no existing file's reading.
+The author seat measured the blast radius on five files.
+Only the section 8 candidate moves.
+It reads 25 at 0.24 with 10 dashes, and 22 at 0.22 with the rule.
+The science-validator then probed for a leak.
+A numbered list under a methods heading still flags every passive.
+The rule is scoped to the heading.
 
-Seven entries carry no in-text reference in section 1: Read, Jamieson, Aull, Joshi 2023, Joshi 2025, Weber and Hancock.
-The list holds all 17 because the bibliography is the report source set.
-Comment 98 returns here if Rod wants it: one bib entry for someawe.org, then one sentence.
+## Section 8: the unresolved proper name
+
+The science-validator found one proper name in section 8 with no entry.
+Ranneberg sat inside the sentence that records its own removal.
+The provenance survives in `references-verification.md:75`.
+The report does not need to carry it, so the sentence is deleted.
+
+The reading moves, and the reason is stated so no one reads it as instrument drift.
+The deleted sentence carried one passive, in the words "was dropped".
+It also left the section 8 paragraph at seven sentences.
+At six sentences the paragraph is no longer a long paragraph.
+The file reads 20 at 0.20 with counters p4, l3, c1, n1 and lp11.
+It read 22 at 0.22 with p5 and lp12 before.
+The base is unchanged at 22 at 0.22.
+Both falls are real prose improvements.
+Both show in the diff.
+
+## Apply order
+
+The section 8 patch is pinned to `d54d6ae4`.
+It still applies after the seven author clauses, because its context is section 8.
+The hash guard then changes with that pass.
+Apply section 8 last, or recompute the guard.
