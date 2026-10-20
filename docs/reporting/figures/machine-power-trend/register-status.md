@@ -25,11 +25,12 @@ configuration knob and not a reading.
 
 ## Open reading for the numbers seat
 
-The island 1 running-best window-end power reads exactly 5.00 kW from
-generation 8 to generation 14.
+One island 1 machine holds the running-best place from generation 8 to
+generation 14, and its window-end power reads exactly 5.00 kW.
 
-Seven generations of different machines landing on one value is worth a read.
-The plate draws the value as recorded and the caption names it.
+It is the only machine in the 93 that lands on the floor value, and its window
+mean reads 5.02 kW. The plate draws the reading as recorded and the caption
+names it. It is worth one read by the numbers seat, not a red flag.
 
 It carries no register row and it does not enter NR-062, which signs the
 island 3 seven.
