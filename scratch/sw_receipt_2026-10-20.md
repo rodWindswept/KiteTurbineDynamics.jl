@@ -86,3 +86,40 @@ Counters: long_sentence 3, contraction 1, passive 5, nominalization 1, long_para
 The counters match the base.
 The patch also applies to the G6 disk copy and lands `fecf29bd`, because batch 1 does not touch this region.
 The base is `265f90d5`, and any other base fails the hash test.
+
+## Version 3: the lock points at two tests, and the patch path is corrected
+
+The author seat found a real fault in version 2.
+The cut kept the lock "Until they run, the rotor phase lag stays a free parameter." and dropped the plural it points at.
+The only test sentence left read "A BEM sweep from 0 to 10 degrees of tilt is the test", which is singular.
+The fix names both tests and keeps the lock at the head of paragraph 2.
+It reads "A BEM sweep from 0 to 10 degrees of tilt and a lateral-mode check are the two tests."
+The fault was mine and the fix is right.
+Final state `d54d6ae4`, 1222 lines and 10,117 words, STE 22 at 0.22.
+
+The v3 patch carries the wrong path header.
+It reads `a/scratch/sw_sec61_cut_v2.md`, so inside the repo it edits the candidate and not the draft.
+The re-pathed hunk is `scratch/sw_cut_v3_pathfix.patch`, one line, same body.
+Applied to `bfef2c95`, it lands `d54d6ae4` on the draft path.
+The chain in the room works only with this header.
+
+## Section 8: the reference list is built, and the gate needs one rule
+
+Candidate `scratch/sw_sec8_candidate.md`, md5 `f58d6778a4a8b8dc4742597b5a658169`, 1242 lines and 10,592 words.
+It adds 17 entries under section 8, one per source, with authors, year, title, venue and a DOI or archive link.
+14 entries carry a DOI, two carry an archive or report URL, and the Hancock entry carries the slides note.
+The lead sentence reads "Each entry carries a DOI link, an archive link, or a slides note."
+
+A reference list cannot pass the gate as written.
+The entries add 3 flags and 10 dashes, because titles are quoted material.
+Jamieson carries a semicolon, Tulloch carries an em dash, and the Weber author list reads 25 words.
+The list is data and not prose, so the linter should skip the entry list and still count the section prose.
+`scratch/sw_ste_lint_refs.patch` adds that rule: numbered entries under a References or Bibliography heading are dropped before the scan.
+
+Measured with the rule: the base reads 22 at 0.22 and the section 8 candidate reads 22 at 0.22.
+Measured without the rule: the candidate reads 25 at 0.24 with 10 dashes.
+The rule applies clean to `ste-lint.py` and changes no existing file's reading.
+
+Seven entries carry no in-text reference in section 1: Read, Jamieson, Aull, Joshi 2023, Joshi 2025, Weber and Hancock.
+The list holds all 17 because the bibliography is the report source set.
+Comment 98 returns here if Rod wants it: one bib entry for someawe.org, then one sentence.

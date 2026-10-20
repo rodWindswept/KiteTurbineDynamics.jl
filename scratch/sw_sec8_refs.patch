@@ -1,0 +1,29 @@
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:28:11.601045883 +0100
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md	2026-10-20 16:28:11.601984292 +0100
+@@ -1156,6 +1156,26 @@
+ sources. The Hancock deck stands on the weaker standard (slides held, no
+ public archive). The Ranneberg entry was dropped.
+ 
++Each entry carries a DOI link, an archive link, or a slides note.
++
++1. Aull, M., Stough, A. & Cohen, K. (2020). Design Optimization and Sizing for Fly-Gen Airborne Wind Energy Systems. Automation 1(1), 1–16. https://doi.org/10.3390/automation1010001
++2. Benhaïem, P. & Schmehl, R. (2018). Airborne Wind Energy Conversion Using a Rotating Reel System. In Airborne Wind Energy: Advances in Technology Development and Research. Springer, 539–577. https://doi.org/10.1007/978-981-10-1947-0_22
++3. Cherubini, A., Papini, A., Vertechy, R. & Fontana, M. (2015). Airborne Wind Energy Systems: A review of the technologies. Renewable and Sustainable Energy Reviews 51, 1461–1476. https://doi.org/10.1016/j.rser.2015.07.053
++4. Diehl, M. (2013). Airborne Wind Energy: Basic Concepts and Physical Foundations. In Airborne Wind Energy. Springer, 3–22. https://doi.org/10.1007/978-3-642-39965-7_1
++5. Flather, J. J. (1895). Rope-Driving: A Treatise on the Transmission of Power by Means of Fibrous Ropes. John Wiley & Sons, New York. https://archive.org/details/ropedrivingtreat00flatrich
++6. Hancock, M. (2024). Multi-Rotors Seen Through a Blade Lens. Presentation at the 3rd International Seminar on Multi Rotor Wind Technology, Glasgow. 13 June 2024. Slides held, no public archive.
++7. Jamieson, P. & Branney, M. (2012). Multi-rotors; a solution to 20 MW and beyond? Energy Procedia 24, 52–59. https://doi.org/10.1016/j.egypro.2012.06.086
++8. Joshi, R., Kruijff, M. & Schmehl, R. (2023). Value-Driven System Design of Utility-Scale Airborne Wind Energy. Energies 16(4), 2075. https://doi.org/10.3390/en16042075
++9. Joshi, R., von Terzi, D. & Schmehl, R. (2025). System design and scaling trends in airborne wind energy demonstrated for a ground-generation concept. Wind Energy Science 10(4), 695–718. https://doi.org/10.5194/wes-10-695-2025
++10. Loyd, M. L. (1980). Crosswind kite power. Journal of Energy 4(3), 106–111. https://doi.org/10.2514/3.48021
++11. Pereira, A. F. C. & Sousa, J. M. M. (2023). A Review on Crosswind Airborne Wind Energy Systems: Key Factors for a Design Choice. Energies 16(1), 351. https://doi.org/10.3390/en16010351
++12. Read, R. (2018). Kite Networks for Harvesting Wind Energy. In Airborne Wind Energy: Advances in Technology Development and Research. Springer, 515–537. https://doi.org/10.1007/978-981-10-1947-0_21
++13. Trevisi, F., Gaunaa, M. & McWilliam, M. (2020). Unified engineering models for the performance and cost of Ground-Gen and Fly-Gen crosswind Airborne Wind Energy Systems. Renewable Energy 162, 893–907. https://doi.org/10.1016/j.renene.2020.07.129
++14. Tulloch, O., Yue, H., Kazemi Amiri, A. M. & Read, R. (2023). A Tensile Rotary Airborne Wind Energy System—Modelling, Analysis and Improved Design. Energies 16(6), 2610. https://doi.org/10.3390/en16062610
++15. van de Kaa, G. & Kamp, L. (2021). Exploring design dominance in early stages of the dominance process: The case of airborne wind energy. Journal of Cleaner Production 321, 128918. https://doi.org/10.1016/j.jclepro.2021.128918
++16. van der Burg, S., Jurg, M. F. M., Tadema, F. M., Kamp, L. M. & van de Kaa, G. (2022). Dominant Designs for Wings of Airborne Wind Energy Systems. Energies 15(19), 7291. https://doi.org/10.3390/en15197291
++17. Weber, J., Marquis, M., Cooperman, A., Draxl, C., Hammond, R., Jonkman, J., Lemke, A., Lopez, A., Mudafort, R., Optis, M., Roberts, O. & Shields, M. (2021). Challenges and Opportunities for Airborne Wind Energy in the United States. National Renewable Energy Laboratory, Report to Congress. https://www.energy.gov/sites/default/files/2021-12/report-to-congress-challenges-opportunities-airborne-wind-energy-united-states.pdf
++
+ ## 9 Data availability and reproducibility
+ 
+ The dataset commits to the repo at dd3cc6a on bankderate2-results.

@@ -1,0 +1,33 @@
+--- a/ste-lint.py	2026-10-20 16:28:11.604122561 +0100
++++ b/ste-lint.py	2026-10-20 16:28:11.605570678 +0100
+@@ -69,9 +69,28 @@
+             n += 1; hits.append(ph)
+     return n, hits
+ 
++def strip_references(t):
++    """Drop the numbered entry list of a References or Bibliography section.
++    Reference entries are quoted titles and author lists, so they carry no STE
++    signal. The section prose is still counted."""
++    out = []
++    in_refs = False
++    for line in t.split("\n"):
++        if re.match(r"^##\s+(?:\d+\.?\s*)?(?:References|Bibliography)\s*$", line):
++            in_refs = True
++            out.append(line)
++            continue
++        if in_refs and re.match(r"^##\s", line):
++            in_refs = False
++        if in_refs and re.match(r"^\s*\d+\.\s", line):
++            continue
++        out.append(line)
++    return "\n".join(out)
++
++
+ def lint(text):
+-    raw = text
+-    text = strip_code(text)
++    raw = strip_references(text)
++    text = strip_code(raw)
+     sents = sentences(text)
+     words = sum(wc(s) for s in sents) or 1
+     v = {}

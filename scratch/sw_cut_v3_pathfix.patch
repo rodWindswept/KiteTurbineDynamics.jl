@@ -1,0 +1,11 @@
+--- a/docs/reporting/drafts/2026-10-08-report-first-draft.md
++++ b/docs/reporting/drafts/2026-10-08-report-first-draft.md
+@@ -1092,7 +1092,7 @@
+ If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.
+ Tension above the rotor reduces that steer, though it cannot change the phase relation.
+ The shaft carries tension and torque but almost no bending, so the rim bridle would take the tilt reaction.
+-A BEM sweep from 0 to 10 degrees of tilt is the test.
++A BEM sweep from 0 to 10 degrees of tilt and a lateral-mode check are the two tests.
+ 
+ Until they run, the rotor phase lag stays a free parameter.
+ A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
