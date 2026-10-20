@@ -81,6 +81,16 @@ not depend on their ruling, because it sets both fields at every point.
    ladder base prints the second row. The label names the base, or two
    site winds print in one report as one.
 
+6. **Settle repeat.** One sweep point runs twice from the same genome and
+   the same wind. Both scores print. A spread larger than ⟨the tolerance⟩
+   marks the whole sweep as a settle spread, not as a design value, and
+   the plate then carries no point value at all.
+
+   The trigger is measured. At `caceb84` a 4 cm change of hub radius with
+   the ring count held produced a 52 per cent change in scored power. A
+   power axis cannot separate a gene effect from a settle attractor
+   without a repeat.
+
 ## The drawing
 
 - Wind is a metric axis, so a polyline through the evaluated points is
