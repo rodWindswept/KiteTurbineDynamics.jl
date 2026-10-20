@@ -2733,3 +2733,33 @@ Boundaries:
 
 - The 420 g/span³ anchor (`parameters.jl:18`) sets the model scale. Three decimals are a decomposition, not a resolution.
 
+## Re-derivation read: NR-048 against the sweep at HEAD (2026-10-20, science-validator)
+
+I ran `scratch/scenario_sweep.jl` at HEAD. The script has a single commit, `0b77b53` of 2026-09-07, one day after the record. No later revision exists, so this is the only committed form of the sweep. Log: `.julia_depot/logs/sv_scenario_sweep_rederive_20261020.log`.
+
+- Segment identity. Every peak `F_helix` reading lands on segment five. The record's "hub segment" placement holds.
+
+| Scenario | max `F_helix` (N/vertex) | segment | twist at that instant (deg) |
+|---|---|---|---|
+| Lull, 11 to 3 m/s | 87.2 | 5 | 24.22 |
+| Gust, 11 to 25 m/s | 347.2 | 5 | 21.96 |
+| Load step, `k_mppt × 2` | 186.9 | 5 | 37.78 |
+| Load step, `k_mppt × 3` | 260.9 | 5 | 47.31 |
+| k ease, the wrong feather | 89.6 | 5 | 23.26 |
+
+- Neither token reproduces in any scenario. The record's 1278 N/vertex has no match, and the nearest is the ×3 load step at 260.9. The record's 87.9° has no match, and the k-ease case reads 23.26°.
+
+- The script prints no maximum twist. The only twist it prints is the peak-force instant's (`scenario_sweep.jl:110`). So 87.9° has no printing path in the committed script. It was either read off the sample array outside the script or it came from another tool.
+
+- The machine moved after the sweep. The bank derate landed at `94223eb` on 2026-10-01 and the wind authority at `95c385d` on 2026-10-03. The record's loads belong to a machine from before both.
+
+Consequences:
+
+- The twist pair stays withdrawn. The comparator question is now secondary to the source question, because neither token survives a re-run.
+
+- The sizing token holds as the 2026-09-06 record form. It does not hold as a value of the current machine. The draft's sentence reads as the current machine, so it must not print 1278 N/vertex as one.
+
+- The feather gap is unchanged. High-wind feather is still unmodelled, as boundary 1 of the row says. The high-wind structural case still cannot be sized.
+
+- What the row needs is an era ruling, not another read: does section 2.2.2 describe the 2026-09-06 machine or the campaign machine? On the first answer the tokens print as dated record forms. On the second they need a full re-derivation on the campaign machine.
+
