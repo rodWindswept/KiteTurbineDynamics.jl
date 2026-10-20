@@ -848,8 +848,12 @@ The winner genome carries inactive slots at a rotor count of one (NR-011, NR-017
 The shaft transition cone holds one fixed half-angle, 22 degrees, in every machine of the campaign (NR-049).
 A later campaign can vary it.
 
-The strip shows built geometry and the search objective only.
-The strip prints no power value and no airborne mass value.
+The strip shows built geometry and three signed values on each card (NR-036, NR-062, NR-066).
+The values are the search objective, the decoded mass and the window-end power.
+The power on each card is the window-end sample that the score charges (NR-062).
+The strip shows that the winner is not the lightest machine (NR-066).
+The later fall in the objective comes from penalty, not from mass (NR-036, NR-066).
+
 The trace reads one island of the campaign.
 It does not prove a global optimum.
 A longer or broader run would extend the search.
