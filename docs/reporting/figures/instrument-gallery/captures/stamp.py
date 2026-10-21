@@ -33,6 +33,17 @@ ERA = "post-95c385d_wind-authority"
 # geometry only), but the row is hashed so the drawn object is pinned.
 ARCHIVE = REPO / "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv"
 
+# The chooser's input set, named. `collect_telemetry_csvs` scans `v13_5kw_len*`
+# one level deep under the directory it is given, so the set is what the glob
+# selects in `scripts/results` and not whichever copy a shell happened to hand
+# it. The frame's own `2784 / 2784 matching` counts rows across these files
+# (3 x 928), and the stamp has to name them or that count is a citation.
+TELEMETRY = [
+    REPO / "scripts/results/v13_5kw_len18.0/telemetry.csv",
+    REPO / "scripts/results/v13_5kw_len21.2/telemetry.csv",
+    REPO / "scripts/results/v13_5kw_len25.0/telemetry.csv",
+]
+
 RENDERERS = {
     "v1_v2": HERE / "render-captures-head.jl",
     "chooser": REPO / "scripts/view_campaign_genomes.jl",
@@ -53,6 +64,7 @@ CAPTURES = {
         px_per_unit=1.25,
         shot="1600 x 950 logical units, saved at px_per_unit 1.25",
         row=1,
+        flags="No flags. The defaults of render-captures-head.jl print this frame.",
         note="byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control",
     ),
     "dashboard-v2-head.png": dict(
@@ -61,6 +73,7 @@ CAPTURES = {
         px_per_unit=1.0,
         shot="1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)",
         row=1,
+        flags="No flags. The defaults of render-captures-head.jl print this frame.",
         note="byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control",
     ),
     "genome-chooser-head.png": dict(
@@ -69,7 +82,15 @@ CAPTURES = {
         px_per_unit=2,
         shot="1250 x 900 logical units at px_per_unit 2",
         row=2,
-        note="reads the campaign telemetry CSVs the browser exists to browse; prints none of their values",
+        flags=(
+            "--smoke=<prefix> scripts/results. The --smoke path sets card_text "
+            "style=:identity. The interactive browser keeps :full."
+        ),
+        note=(
+            "loads the three telemetry CSVs named under chooser_inputs and prints no value "
+            "from one: the cards carry island/gen/idx, the genome fingerprint and decoded "
+            "geometry (n_lines/n_rings/n_active, r_hub, tether) only"
+        ),
     ),
     "winner-10kw-cartography-head.png": dict(
         interface="10 kW winner cartography (render_winners_clean.jl)",
@@ -81,6 +102,11 @@ CAPTURES = {
             " (tower ink h/w 3.122 at the script's portrait default, 3.113 here)"
         ),
         row=2,
+        flags=(
+            "KTD_WINNER_FIG_W=2000 KTD_WINNER_FIG_H=1409 KTD_WINNER_AX_W=1880 "
+            "KTD_WINNER_AX_H=1330 KTD_WINNER_TITLE=geometry KTD_WINNER_OUT=<dir>. "
+            "The script default is TITLE=full."
+        ),
         note=(
             "title mode geometry: design tag and object descriptors only, no mass and no "
             "min_fos; draws its ring stack from elite_archive.csv at the pin"
@@ -130,6 +156,9 @@ def main() -> None:
                  for k, p in RENDERERS.items()}
     archive = {"path": str(ARCHIVE.relative_to(REPO)), "sha256": sha256(ARCHIVE),
                "tracked": git("ls-files", str(ARCHIVE.relative_to(REPO))) != ""}
+    telemetry = [{"path": str(t.relative_to(REPO)), "sha256": sha256(t),
+                  "tracked": git("ls-files", str(t.relative_to(REPO))) != ""}
+                 for t in TELEMETRY]
 
     captures = {}
     for name, kwargs in CAPTURES.items():
@@ -166,20 +195,27 @@ def main() -> None:
         "era": ERA,
         "reads_dataset": True,
         "dataset_note": (
-            "Three panels read no campaign row: v1 and v2 render the 10 kW canonical "
-            "system from the tree (params_10kw(), settled at V = 11 m/s), and the chooser "
-            "browses the telemetry CSVs without printing a value from one. The cartography "
-            "panel decodes its ring stack from elite_archive.csv at the pin and prints no "
-            "campaign quantity: its title carries the design tag and geometry descriptors "
-            "only. No value elsewhere in the report is taken from any capture."
+            "Two panels read no dataset: v1 and v2 render the 10 kW canonical system from "
+            "the tree (params_10kw(), settled at V = 11 m/s). Two read campaign files at the "
+            "pin and print no value from either. The chooser loads the three telemetry CSVs "
+            "named under chooser_inputs (the set the renderer's own glob selects in "
+            "scripts/results, 3 x 928 = 2784 rows) and its cards carry identity and decoded "
+            "geometry only, because the --smoke path sets card_text style=:identity, which "
+            "drops P_mean, FoS, fitness and status. The cartography decodes its ring stack "
+            "from elite_archive.csv and its title carries the design tag and geometry "
+            "descriptors only. No panel in the four prints a campaign result, and no value "
+            "elsewhere in the report is taken from any capture."
         ),
         "archive_input": archive,
+        "chooser_inputs": telemetry,
         "provenance_note": (
-            "v1 and v2's renderer, render-captures-head.jl, lived in an untracked kit "
-            "directory when the first pass ran; this kit carries a byte-identical copy "
-            "(c1e7e35f...), so from the landing commit onward every renderer named here is "
-            "in the tree. Figure 11's captures directory is itself still untracked, which "
-            "is not this kit's to commit."
+            "Each capture names its invocation under `flags`, because two of the four do "
+            "not print their shipped frame under the renderer's defaults. The chooser's "
+            "identity-only cards come from the --smoke path, and the cartography's geometry "
+            "title is set by KTD_WINNER_TITLE=geometry; a reader holding the commit, the "
+            "renderer and the input hashes still needs those flags to rebuild the frame. "
+            "Figure 11's captures directory is tracked from fa91a8e, so both figures' kits "
+            "now carry a renderer in the tree."
         ),
         "toolchain": {"julia": "1.12.6", "glmakie": "0.13", "python": "3.12.3"},
         "print": {
@@ -221,34 +257,59 @@ def main() -> None:
         lines.append(f"| `{r['path']}` | `{r['sha256']}` |")
     lines += [
         "",
+        "Invocation, per capture. Two frames need flags beyond the script defaults. "
+        "The flags are part of the receipt:",
+        "",
+        "| capture | invocation |",
+        "|---|---|",
+    ]
+    for name, c in captures.items():
+        lines.append(f"| `{name}` | {c['flags']} |")
+    lines += [
+        "",
         f"Cartography input: `{archive['path']}`. Its hash is `{archive['sha256'][:16]}...`. "
         f"The file is tracked at the pin: {archive['tracked']}.",
         "",
-        "The renderer for v1 and v2, `render-captures-head.jl`, was untracked at the first "
-        "pass. This kit holds a byte-identical copy (`c1e7e35f...`). From the landing "
-        "commit onward, each renderer named here is in the tree. The captures directory of "
-        "Figure 11 is still untracked. It is not this kit to commit.",
+        "Chooser inputs: the set the renderer's own glob selects in `scripts/results`.",
         "",
-        "The two dashboard frames reproduce the Figure 11 members byte for byte at this "
-        "commit. This is the re-stamp control. A scripts-only diff cannot move them. If "
-        "they had moved, the one-pass claim of the caption would be false.",
+        "| input | sha256 | tracked |",
+        "|---|---|---|",
+    ]
+    for t in telemetry:
+        lines.append(f"| `{t['path']}` | `{t['sha256'][:16]}...` | {t['tracked']} |")
+    lines += [
         "",
-        "Print geometry: an 85 x 59.89 mm box. Each frame fits by the binding dimension. "
+        "The first pass ran before this kit held a tracked renderer for v1 and v2. "
+        "This kit carries a byte-identical copy of that renderer (`c1e7e35f...`). "
+        "Each renderer named here sits in the tree from the landing commit onward. "
+        "The captures directory of Figure 11 is tracked from `fa91a8e`. "
+        "Both figures now carry their renderer.",
+        "",
+        "The two dashboard frames repeat the Figure 11 members byte for byte at this commit. "
+        "That repetition is the re-stamp control. A scripts-only diff cannot move them. "
+        "A move would break the one-pass claim in the caption.",
+        "",
+        "Print geometry is an 85 x 59.89 mm box. Each frame fits by the binding dimension. "
         "No panel is cropped. No panel is upsampled. Row 1 holds v1 and v2 at 56.35 mm. "
         f"Row 2 holds the chooser and the cartography at 59.89 mm. The block is {block} mm. "
-        "It sits in a 174 mm measure with a 4 mm gutter. The rows are flush from 0.00 mm.",
+        "It sits in a 174 mm measure with a 4 mm gutter. The rows run flush from 0.00 mm.",
         "",
-        "Type at these widths: v1 2.17 pt, v2 2.98 pt, chooser 2.92 pt, cartography "
+        "Type at these widths: v1 2.17 pt, v2 2.98 pt, chooser 2.36 pt, cartography "
         "2.59 pt. The cartography title band is 43 px at 85 mm. The smallest labels are "
-        "1.22 pt (v2, 9 px).",
+        "1.22 pt in v2 and 1.13 pt in the chooser filter column. The card strip does not "
+        "touch that column. The tallest chooser line was 2.92 pt before the strip. It is "
+        "2.36 pt after, because the line carrying P_mean reached highest. The set ceiling "
+        "is v2 at 2.98 pt either way.",
         "",
         "Source line for the plate:",
         "",
-        f"> captures: four instrument frames at `{head[:7]}` - v1 and v2 from "
-        f"`render-captures-head.jl`, chooser from `view_campaign_genomes.jl --smoke`, "
-        f"cartography from `render_winners_clean.jl` (title mode geometry) - era `{ERA}` - "
-        "cartography geometry read from `trpt_opt_v2/10kw_circular_straight_taper_s1/"
-        "elite_archive.csv`, no value printed from it",
+        f"> captures: four instrument frames at `{head[:7]}`. v1 and v2 come from "
+        f"`render-captures-head.jl`. The chooser comes from `view_campaign_genomes.jl "
+        f"--smoke` over the three `v13_5kw_len*` telemetry sets, with cards in "
+        f"identity+geometry style. The cartography comes from `render_winners_clean.jl` "
+        f"with `KTD_WINNER_TITLE=geometry`. Era `{ERA}`. The cartography geometry reads "
+        "from `trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`. No value "
+        "prints from either input.",
         "",
     ]
     (HERE / "captures.md").write_text("\n".join(lines))
