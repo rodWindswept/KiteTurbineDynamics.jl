@@ -79,4 +79,38 @@
         @test isapprox(p.m_blade, 11.0 / 5.0; rtol=1e-12)
         @test isapprox(p.n_blades * p.m_blade, 11.0; rtol=1e-12)
     end
+
+    # ── One word, one sense: every frame-visible FoS (2026-10-21) ──────────────
+    # The report's structural floor is FoS 2.5 (bankderate2).  The tether panel
+    # printed TETHER_SWL / T_max under the word FoS, which rendered 1.1 — a
+    # number a reader compares with 2.5 and reads as failure.  That ratio is not
+    # a factor of safety: TETHER_SWL is already derated (splice 0.90 x
+    # creep/fatigue/UV 0.50, expansion_rotor.jl), so it is an SWL margin.  The
+    # ring sites keep the word because their header prints FoS_design = 3 and
+    # the quantity is 1 / utilisation against Euler P_crit, which is the sense
+    # the floor belongs to.  Prose cannot fail; this test can.
+    @testset "dashboard labels: the tether ratio is an SWL margin" begin
+        src = Dict(f => read(joinpath(root, "src", f), String) for f in
+                   ("visualization.jl", "dashboard_panels.jl", "dashboard_v2.jl"))
+
+        # The three interfaces all name the quantity by its own name.
+        @test occursin("SWL margin", src["visualization.jl"])
+        @test occursin("SWL margin ∞", src["dashboard_panels.jl"])
+        @test occursin("\"SWL MARGIN\"", src["dashboard_v2.jl"])
+
+        # And none of them labels it with the structural word.
+        @test !occursin("\"TETHER FoS\"", src["dashboard_v2.jl"])
+        for l in split(src["dashboard_panels.jl"], '\n')
+            occursin("fos_tether", l) && @test !occursin("FoS", l)
+        end
+        for l in split(src["visualization.jl"], '\n')
+            (occursin("fos_tether", l) || occursin("fos_t_peak", l)) &&
+                @test !occursin("FoS", l)
+        end
+
+        # The ring panel keeps the word, beside the design value it belongs to.
+        @test occursin("FoS_design = ", src["visualization.jl"])
+        @test occursin("max util   0.0%  ·  FoS", src["visualization.jl"])
+        @test occursin("·  FoS %s", src["visualization.jl"])
+    end
 end

@@ -66,3 +66,23 @@ rotors, so both `A_total`s are the main annulus alone.
 _Findings from the last cycle that are not rows yet: edge cases, API quirks,
 unstated constraints. Move each one to a row above or to an issue before the item
 closes._
+
+## Closed item: one word, one sense for FoS (2026-10-21)
+
+The tether panel printed `TETHER_SWL / T_max` under the word FoS. The frame
+rendered 1.1 beside the report floor of 2.5. Six sites now name the quantity
+for what it is.
+
+`visualization.jl` 595, 632 and 1029. `dashboard_panels.jl` 351 and 360.
+`dashboard_v2.jl` 411. The ring sites keep the word beside `FoS_design = 3`.
+
+| # | Behaviour under test | Test file | Colour | Evidence |
+|---|---|---|---|---|
+| 1 | No frame visible label prints `TETHER_SWL / T_max` under the word FoS. The ring panel keeps the word beside its design value. | `test_documented_claims.jl` | GREEN 2026-10-21 | 25 of 25 pass. RED ran first on the parent bytes: the same predicates over `321edcf^` returned 2 passed and 6 failed. |
+| 2 | The dashboard still builds and renders after the label change. | `test_dashboard_smoke.jl` | GREEN 2026-10-21 | 3 of 3 pass in 20.8 s. |
+
+Two overflows fell out of the same check. The frame sliced the Lift Device
+line at `CL/CD = 5`.
+
+A re-render at HEAD leaves a 16 px gutter. The word FoS appears once, in the
+ring panel.
