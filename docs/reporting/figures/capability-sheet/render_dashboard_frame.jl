@@ -58,7 +58,10 @@ fig.scene.backgroundcolor[] = to_color(:white)
 
 println("Saving the frame at px_per_unit = $PX ...")
 save(OUT, fig; px_per_unit = PX)
-close(fig)
+# No close(fig): GLMakie teardown raised inside LibGit2/FileWatching on this
+# machine after the PNG was already written, so the script exited on a
+# stacktrace even though its output was correct. The process exit releases
+# the window.
 
 bytes = read(OUT)
 println("saved $OUT")
