@@ -794,7 +794,10 @@ The NR-049 cite stays behind them, and it covers the constant claim as well.
 No numeral, no citation count and no caption changes.
 The second site at section 3.4 already reads the same fixed-value fact.
 
-The NR-049 boundary 3 state note still describes the withdrawal.
-The numbers seat owes a forward note that the gloss is live again.
+The NR-049 boundary 3 state note described the withdrawal when this pass opened.
+The numbers seat landed the forward note at `2d01432`.
+It pins the gloss live again at `43356a5` and leaves the signed row untouched.
+A later note at `ab6165d` holds that any gloss naming the source cites the dimensioned figure.
+The source text prints 22 without a label, and the figure settles it.
 
 Words read 10,862 from 10,796. STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.76.
