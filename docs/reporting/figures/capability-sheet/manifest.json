@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit c51635d",
+  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit 4fb3a8e",
   "data_commit": "dd3cc6a",
   "era": "post-95c385d_wind-authority",
   "inputs": {
@@ -25,7 +25,7 @@
     ],
     "renderer": {
       "path": "docs/reporting/figures/capability-sheet/render_dashboard_frame.jl",
-      "sha256": "2fce12c9f1df841ae4eb511634418b48f70d45c5bca8a17a3e9ebfa96542df53"
+      "sha256": "4b20cf9d8bff6263dff9b8172a24e437092551fc68a93e1ac4f1843de21d9138"
     },
     "telemetry": [
       {
@@ -43,15 +43,15 @@
     ]
   },
   "outputs": {
-    "capability-sheet.pdf": "506f20085caefbfab4f07f4202dd995b909c8189505fa552354ea8a9519b3206",
-    "capability-sheet.png": "ae1908e7abe8836c0bc70d5efeb21e4f10b6d3e0dfbdc8f975a5ea4501671bf7",
-    "capability-sheet.svg": "0f320545fe0b2cff612d96232a9241e72b3c3715545437fab7880082c7573ecb",
+    "capability-sheet.pdf": "d123f8fd0fcf6886b534cd575bd1c5d70f3e434fcdbf7eaec458e306dc00be74",
+    "capability-sheet.png": "04ddb6070ae689279051364f0e2caaebbf1279e4cc4899ecd5ffaeb05830f2c9",
+    "capability-sheet.svg": "12347963495e5633585b399842112dfd60cbc046734586303b8252f1bcf299c1",
     "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
-    "label-ledger.txt": "c5d3aef60550742e8644ac08c23e5520edb7f555642dc1395490619150d55d40"
+    "label-ledger.txt": "27d69849dc9575353de4747deb28f9efb9f9b0c416628616d8cf05490b6c62cf"
   },
   "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
   "run": "a76c5e9",
-  "script_commit": "c51635d",
+  "script_commit": "4fb3a8e",
   "slug": "capability-sheet",
   "toolchain": {
     "matplotlib": "3.10.8",
