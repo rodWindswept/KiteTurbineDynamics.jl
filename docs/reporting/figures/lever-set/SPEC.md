@@ -58,7 +58,15 @@ No value draws that a signed row does not carry.
 ## 4. What each panel draws
 
 **A1. The sensitivity rank bar.** Ten genes, ordered by the absolute
-median shift. Bar length is the shift, `<gene>` at 2 dp, `rho` at 2 dp.
+median shift. Bar length is the shift at 2 dp, and `rho` at 3 dp.
+**The rho cannot take 2 dp:** `r_hub` 0.0736 and `density_profile`
+0.0662 both print `0.07` there, and they rank 8 and 9. They sit two
+rows apart and are indistinguishable on the page. At 3 dp the ten
+separate with no collision, one character per row. The shift holds at
+2 dp because the order is identical at 2 dp and 3 dp, ten of ten, and
+no two shifts collide (nearest pair 1.3560 / 1.0705). Science-validator
+signed the rounding on 2026-10-21. `<gene>` takes no precision at all
+because it names the gene.
 Every row prints its bin pair and both populations, as NR-074 signs.
 **Two rows hold fewer than five designs at one end** — `rotor_count` at
 506 and 2, `n_lines` at 319 and 1 — and they draw hatched and grey. The
@@ -70,6 +78,10 @@ to its highest, kg-equivalent`. A positive shift is heavier and worse.
 **A2. The response surface.** One strip per gene, divided by that gene's
 own bin count, so a seven-bin gene draws seven cells and a three-bin gene
 draws three. Colour is the median fitness; each cell prints its count.
+**The panel title names the population and the cell contents only.** The
+longer form ran off the canvas and clipped its final glyph in the PDF
+text layer, so the colour's meaning sits on the colourbar label,
+`median fitness, kg-equivalent`, where it has room.
 **Every bin under five designs prints no read**, hatched, with its count:
 four bins qualify — `n_lines` 6, 8 and 9, and `rotor_count` 2. NR-077
 signed the floor.

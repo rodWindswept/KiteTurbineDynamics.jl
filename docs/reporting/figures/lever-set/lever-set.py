@@ -162,7 +162,7 @@ def main() -> int:
         )
         axA1.text(
             29.2, y,
-            lab(f"{r['delta']:+.2f} kg-eq  (rho {r['rho']:+.2f})"),
+            lab(f"{r['delta']:+.2f} kg-eq  (rho {r['rho']:+.3f})"),
             va="center", ha="left", fontsize=6.6, color=INK,
         )
     axA1.set_yticks(ypos)
@@ -230,7 +230,7 @@ def main() -> int:
     axA2.set_xticks([])
     axA2.set_xlabel(lab("bins of each gene, lowest to highest. Strip width divides by the bin count."), fontsize=7.0)
     axA2.set_title(
-        lab("A2  The objective by gene bin, 508 ok designs. Colour is the median; cells print the count."),
+        lab("A2  The objective by gene bin, 508 ok designs. Cells print their count."),
         fontsize=8.0, loc="left", pad=6,
     )
     for sp in ("top", "right", "bottom"):
@@ -431,7 +431,7 @@ def main() -> int:
             "label-ledger.txt": sha256(ledger),
         },
         "script": {"path": f"docs/reporting/figures/{SLUG}/{SLUG}.py", "sha256": sha256(Path(__file__).resolve())},
-        "precision": "rho 2 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
+        "precision": "rho 3 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
         "toolchain": {"python": sys.version.split()[0], "matplotlib": matplotlib.__version__, "numpy": np.__version__},
     }
     (OUTDIR / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
