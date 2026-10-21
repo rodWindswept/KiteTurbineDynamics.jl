@@ -1795,6 +1795,11 @@ Boundaries that travel with this row:
    The note above at `016e24d` records the withdrawn pass.
    The original closing line stays.
 
+   Boundary 3 precision (2026-10-21, science-validator).
+   The source text prints one cone angle of 22 degrees without a label.
+   The dimensioned figure settles the apex reading.
+   A gloss that names the source cites the figure, not the text sentence.
+
 4. The unexplored space. Founder comments 2 and 16 log the cone angle as a
    campaign lead. The angle was never a search gene. A later campaign can
    vary it.
