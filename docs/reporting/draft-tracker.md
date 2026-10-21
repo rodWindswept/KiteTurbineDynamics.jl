@@ -1047,3 +1047,23 @@ The cited count holds at 59.
 This pass records the graph guard in `references-verification.md` section 9.
 No number enters the draft from a graph node without a span field.
 Four of the thirteen rotary graphs carry no span on any node, and the section names them.
+
+v0.85 pass by @science-writer (2026-10-21).
+
+The founder took the cheap exit on the seven entries that carry no bracket.
+Section 8 now opens "The references below list the sources behind this report".
+It read "The references below list every source the report cites".
+That line was false for entries 11 to 17, which no revision of the body ever cites.
+The bracket census reads eleven: [1] to [10] in the section 2 intro, and [18] in section 6.1.
+
+No entry leaves the list, so no number moves and no renumber follows.
+The tight exit would have cut the printed list to eleven entries and moved [18] to [11].
+That one drops seven sources from the page, and the founder declined it.
+
+The v0.84 entry above keeps the old line as its record of that state.
+This pass supersedes the sentence, not the entry.
+
+Words read 11,540 and no value token moves.
+STE holds 27 at 0.23 per 100 words, and the offender set matches base.
+Em dashes read 0, and the cited count holds at 59.
+The review copy predates this pass and waits on a rebuild at the author seat.

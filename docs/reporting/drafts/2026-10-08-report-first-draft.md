@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.84. Date 2026-10-21.
+Internal engineering report. Draft v0.85. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1245,7 +1245,7 @@ A score without a test does not enter the record.
 
 ## 8 References
 
-The references below list every source the report cites.
+The references below list the sources behind this report.
 Each entry prints the DOI where the source carries one.
 A bracketed number in the body points at its entry here.
 Entries 1 to 10 sit in the order the body first names them.
