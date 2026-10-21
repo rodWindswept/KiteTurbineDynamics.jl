@@ -85,3 +85,7 @@ Section 8 prints the rendered bibliography now, and the builder seat ran the reb
 - The render numbers by first appearance. Entries 1 to 10 match the body order. Entries 11 to 18 keep the file order.
 
 - The checked count moves from 16 to 17: sixteen from the 2026-10-08 pass plus Unterweger, checked by URL.
+
+## 7. Hancock cites as unpublished (2026-10-21)
+
+The founder ruled the one residual call: the entry without a public DOI cites as unpublished. The weaker-standard label from 2026-10-17 ("slides held, no public archive") leaves the report entry and the note. Both now read "Unpublished". The `.bib` comment records both rulings. Section 4.3 above stays as the record. This section supersedes its weaker-standard sentence.

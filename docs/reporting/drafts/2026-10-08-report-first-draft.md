@@ -1321,7 +1321,7 @@ Entries 1 to 10 sit in the order the body first names them.
 
 Eighteen sources follow.
 Seventeen carry verified sources.
-The Hancock deck stands on the weaker standard (slides held, no public archive).
+The Hancock deck cites as unpublished.
 The founder dropped the Ranneberg entry.
 
 1. Loyd, M. L. "Crosswind kite power". Journal of Energy 4(3), 106-111, 1980. DOI 10.2514/3.48021.
@@ -1372,7 +1372,7 @@ https://www.energy.gov/sites/default/files/2021-12/report-to-congress-challenges
 Energy Procedia 24, 52-59, 2012. DOI 10.1016/j.egypro.2012.06.086.
 
 17. Hancock, M. "Multi-Rotors Seen Through a Blade Lens". Presentation at the 3rd International Seminar on Multi Rotor Wind Technology, Glasgow, 13 June 2024.
-Slides held, no public archive.
+Unpublished.
 
 18. Unterweger, D. "Cyclic Pitch Control of a Rotary Kite". Master thesis, no year printed, posted by the Some AWE group.
 https://someawe.org/?p=196
