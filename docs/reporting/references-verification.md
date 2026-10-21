@@ -74,3 +74,14 @@ note, and the `.bib` comment marks the weaker standard.
 The 16 checked entries pass the references gate. The Hancock entry stands
 on the weaker standard with an explicit no-public-archive note. Ranneberg
 is dropped.
+
+## 6. Unterweger entry and the section 8 render (2026-10-21)
+
+The founder ruled the DOI standard on 2026-10-21 (return 3, comment 14).
+Section 8 prints the rendered bibliography now, and the builder seat ran the rebuild.
+
+- The Unterweger entry joined on the same ruling (return 3, comment 98). The URL resolves. The page prints no year, so the year field reads n.d.
+
+- The render numbers by first appearance. Entries 1 to 10 match the body order. Entries 11 to 18 keep the file order.
+
+- The checked count moves from 16 to 17: sixteen from the 2026-10-08 pass plus Unterweger, checked by URL.

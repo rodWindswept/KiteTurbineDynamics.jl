@@ -42,3 +42,13 @@ No number and no signed row moves here.
 - The founder holds one-word veto on any call above until the owning seat runs its pass.
 
 - Comment 100, the section 6.1 cut, still waits on the bless word. These answers do not cover it.
+
+## Correction (2026-10-21, after the validator reads)
+
+Item 3 named the gate order wrong.
+
+The evaluator order reads: clearance (runner gate, before the ODE), rope break, twist crossing, tip-speed ceiling. The three Betz screens follow, all at cfg.v_rated. The power and FoS floors close the list.
+
+The seam charges four soft terms: over-power, utilisation, twist and stationarity.
+
+Item 2 closes: the founder ruled the Hancock deck on the weaker standard (2026-10-17). Cite as unpublished stands, and no new call remains.

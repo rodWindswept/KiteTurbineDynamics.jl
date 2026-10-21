@@ -8,7 +8,7 @@ Numbers come only from signed register rows, cited by row ID.
 
 **Draft status.** This is an internal draft.
 Sections 1 to 6 carry their text.
-Nomenclature and references stay incomplete.
+Nomenclature stays incomplete.
 A section marked [PENDING] waits on a gate.
 
 **Abstract.** This report presents a search for a 5 kW-class
@@ -121,19 +121,19 @@ The analysis pipeline is the instrument.
 The report treats the instrument with the same distrust it treats the machine.
 
 The field context rests on the literature.
-Loyd showed that both crosswind modes share one theoretical power ceiling.
-Diehl set the classification axes.
-Trevisi built one power model for both modes and found the glide-ratio flip.
-Cherubini mapped the ground-gen and fly-gen taxonomy.
-Van der Burg found no dominant wing design.
+Loyd showed that both crosswind modes share one theoretical power ceiling [1].
+Diehl set the classification axes [2].
+Trevisi built one power model for both modes and found the glide-ratio flip [3].
+Cherubini mapped the ground-gen and fly-gen taxonomy [4].
+Van der Burg found no dominant wing design [5].
 
 Both wing families stay in play.
-Van de Kaa and Kamp found no dominant generation architecture.
-Pereira ranked the design factors and found that many small units beat few large ones.
+Van de Kaa and Kamp found no dominant generation architecture [6].
+Pereira ranked the design factors and found that many small units beat few large ones [7].
 
-Flather recorded the rope-drive physics that the TRPT descends from.
-Benhaïem and Schmehl analysed the torque path of a rotating reel.
-Tulloch modelled the Daisy TRPT and checked the model against measured flight windows.
+Flather recorded the rope-drive physics that the TRPT descends from [8].
+Benhaïem and Schmehl analysed the torque path of a rotating reel [9].
+Tulloch modelled the Daisy TRPT and checked the model against measured flight windows [10].
 Daisy is the experimental prototype rotary kite turbine whose measured flight data anchor the model (NR-056).
 This report extends that line of work.
 
@@ -1237,9 +1237,68 @@ A score without a test does not enter the record.
 
 ## 8 References
 
-Seeded in references.bib. Seventeen sources. Sixteen carry verified
-sources. The Hancock deck stands on the weaker standard (slides held, no
-public archive). The Ranneberg entry was dropped.
+The references below list every source the report cites.
+Each entry prints the DOI where the source carries one.
+A bracketed number in the body points at its entry here.
+Entries 1 to 10 sit in the order the body first names them.
+
+Eighteen sources follow.
+Seventeen carry verified sources.
+The Hancock deck stands on the weaker standard (slides held, no public archive).
+The founder dropped the Ranneberg entry.
+
+1. Loyd, M. L. "Crosswind kite power". Journal of Energy 4(3), 106-111, 1980. DOI 10.2514/3.48021.
+
+2. Diehl, M. "Airborne Wind Energy: Basic Concepts and Physical Foundations". In Ahrens, U., Diehl, M. and Schmehl, R. (eds), Airborne Wind Energy.
+Springer, Berlin, Heidelberg, 3-22, 2013. DOI 10.1007/978-3-642-39965-7_1.
+
+3. Trevisi, F., Gaunaa, M. and McWilliam, M. "Unified engineering models for the performance and cost of Ground-Gen and Fly-Gen crosswind Airborne Wind Energy Systems".
+Renewable Energy 162, 893-907, 2020. DOI 10.1016/j.renene.2020.07.129.
+
+4. Cherubini, A., Papini, A., Vertechy, R. and Fontana, M. "Airborne Wind Energy Systems: A review of the technologies".
+Renewable and Sustainable Energy Reviews 51, 1461-1476, 2015. DOI 10.1016/j.rser.2015.07.053.
+
+5. van der Burg, S., Jurg, M. F. M., Tadema, F. M., Kamp, L. M. and van de Kaa, G. "Dominant Designs for Wings of Airborne Wind Energy Systems".
+Energies 15(19), 7291, 2022. DOI 10.3390/en15197291.
+
+6. van de Kaa, G. and Kamp, L. "Exploring design dominance in early stages of the dominance process: The case of airborne wind energy".
+Journal of Cleaner Production 321, 128918, 2021. DOI 10.1016/j.jclepro.2021.128918.
+
+7. Pereira, A. F. C. and Sousa, J. M. M. "A Review on Crosswind Airborne Wind Energy Systems: Key Factors for a Design Choice".
+Energies 16(1), 351, 2023. DOI 10.3390/en16010351.
+
+8. Flather, J. J. Rope-Driving: A Treatise on the Transmission of Power by Means of Fibrous Ropes.
+John Wiley and Sons, New York, 1895. https://archive.org/details/ropedrivingtreat00flatrich
+
+9. Benhaïem, P. and Schmehl, R. "Airborne Wind Energy Conversion Using a Rotating Reel System". In Schmehl, R. (ed.), Airborne Wind Energy: Advances in Technology Development and Research.
+Springer, Singapore, 539-577, 2018. DOI 10.1007/978-981-10-1947-0_22.
+
+10. Tulloch, O., Yue, H., Kazemi Amiri, A. M. and Read, R. "A Tensile Rotary Airborne Wind Energy System: Modelling, Analysis and Improved Design".
+Energies 16(6), 2610, 2023. DOI 10.3390/en16062610.
+
+11. Read, R. "Kite Networks for Harvesting Wind Energy". In Schmehl, R. (ed.), Airborne Wind Energy: Advances in Technology Development and Research.
+Springer, Singapore, 515-537, 2018. DOI 10.1007/978-981-10-1947-0_21.
+
+12. Joshi, R., von Terzi, D. and Schmehl, R. "System design and scaling trends in airborne wind energy demonstrated for a ground-generation concept".
+Wind Energy Science 10(4), 695-718, 2025. DOI 10.5194/wes-10-695-2025.
+
+13. Aull, M., Stough, A. and Cohen, K. "Design Optimization and Sizing for Fly-Gen Airborne Wind Energy Systems".
+Automation 1(1), 1-16, 2020. DOI 10.3390/automation1010001.
+
+14. Joshi, R., Kruijff, M. and Schmehl, R. "Value-Driven System Design of Utility-Scale Airborne Wind Energy".
+Energies 16(4), 2075, 2023. DOI 10.3390/en16042075.
+
+15. Weber, J. and eleven others. "Challenges and Opportunities for Airborne Wind Energy in the United States". Report to Congress, National Renewable Energy Laboratory, Golden, CO, November 2021.
+https://www.energy.gov/sites/default/files/2021-12/report-to-congress-challenges-opportunities-airborne-wind-energy-united-states.pdf
+
+16. Jamieson, P. and Branney, M. "Multi-rotors: a solution to 20 MW and beyond?".
+Energy Procedia 24, 52-59, 2012. DOI 10.1016/j.egypro.2012.06.086.
+
+17. Hancock, M. "Multi-Rotors Seen Through a Blade Lens". Presentation at the 3rd International Seminar on Multi Rotor Wind Technology, Glasgow, 13 June 2024.
+Slides held, no public archive.
+
+18. Unterweger, D. "Cyclic Pitch Control of a Rotary Kite". Master thesis, no year printed, posted by the Some AWE group.
+https://someawe.org/?p=196
 
 ## 9 Data availability and reproducibility
 
