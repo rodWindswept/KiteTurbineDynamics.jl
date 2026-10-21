@@ -128,8 +128,9 @@ SPEC:
 
 1. **Sensitivity rank bar.** `extract-objective-vs-gene.csv`, 10 rows:
    the rank correlation of each gene against the objective, and the
-   median shift from the bottom bin to the top bin. This is a population
-   read over 930 designs. It does not close row 17.
+   median shift from the bottom bin to the top bin. This is a survivor
+   read over the 508 ok designs, not a read over 930 (NR-074). It does
+   not close row 17.
 2. **Disqualification census.** `extract-failure-rates-by-value.csv`, 13
    rows, with `extract-gate-failures-by-gene.csv`, 40 rows, as the paired
    panel: what fails, and which gene values carry it.

@@ -1,0 +1,18 @@
+ok   sensitivity rows read 10: 10
+ok   thin rows read 2: 2
+ok   surface drops four bins under five: 4
+ok   over-power sum 1462.3155
+ok   utilisation sum 506.3577
+ok   twist sum 141.1349
+ok   total sum 2109.8081
+ok   over-power dominant in 453
+ok   utilisation dominant in 46
+ok   twist dominant in 9
+ok   utilisation maximum exceeds over-power maximum
+ok   n_lines 6 ok share 4.8 per cent
+ok   clearance rejects sum to 110: 110
+ok   no clearance reject at one rotor
+ok   ok rows sum to 508: 508
+ok   all rows sum to 930: 930
+ok   label ledger holds 91 strings
+17 ok / 0 fail
