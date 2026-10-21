@@ -25,8 +25,8 @@ space and shows where the light machines live.
 The figure projects the 930-design screen of the v13 5 kW campaign on
 its first two principal components (NR-001). The axes come from a
 z-scored matrix of the ten genes. Colour is the cell mean of the search
-objective in kg-equivalent. Bright reads lower. Three lines trace the
-island best-so-far paths, one step per generation. The common seed
+objective in kg-equivalent. Bright reads lower. Three curves trace the
+island best-so-far values, one step per generation. The common seed
 starts at 36.109 (NR-006). The winner ends at 27.364 (NR-005). The
 PC1 inset reads larger main-rotor blades, wider ring spacing and a
 wider ground ring to the right, and more TRPT lines and more rotors to

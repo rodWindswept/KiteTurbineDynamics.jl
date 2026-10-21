@@ -34,8 +34,8 @@ The rows run from R2 at the base to R6 at the top. Utilisation is demand
 over capacity. The axis is linear from zero to the unit value. The margin
 of every ring reads as a direct fraction of capacity.
 
-The red dashed line is the fail boundary at the unit value, the physical
-interaction limit at FoS 1. The purple line is the campaign structural
+The red dashed rule is the fail boundary at the unit value, the physical
+interaction limit at FoS 1. The purple rule is the campaign structural
 gate. It draws at utilisation 0.40, the reciprocal of FoS 2.5 (NR-015).
 The readout at the row end gives the ring FoS: capacity over demand, the
 reciprocal of the interaction. The model tracks torsion outside the

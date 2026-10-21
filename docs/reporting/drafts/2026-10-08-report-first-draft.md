@@ -366,8 +366,8 @@ A longer shaft reaches stronger wind.
 The length screen history sits in section 3.3 with the era record.
 
 FoS is the design load margin.
-It is the ratio of what the line can carry to what the load demands.
-The model tests the TRPT beam element FoS for buckling risk the same way.
+It is the ratio of what the beam can carry to what the load demands.
+The model tests the TRPT beam element FoS for buckling risk.
 
 The dynamics run as a coupled multibody model.
 Every node, line and ring carries state.
@@ -894,7 +894,7 @@ The colour is the mean search objective in each cell, in kg-equivalent.
 Bright reads lower, and only feasible designs shade the field.
 The low-objective cells gather toward the upper right, where the winner sits.
 
-Three lines trace the island best-so-far paths, one step per generation (NR-045).
+Three curves trace the island best-so-far values, one step per generation (NR-045).
 Each island ran 31 generations.
 All three start at the common seed, 36.109 kg-equivalent (NR-006).
 Island 3 reaches the winner value, 27.364, at generation 26 and holds it to the end (NR-005).

@@ -27,7 +27,7 @@ times, once per gene slot (NR-001). The projection and the journey
 marks match the levers landscape plate. Each panel colours the cell
 mean of that gene over all 930 designs. The star marks the common seed
 (36.109, NR-006). The diamond marks the winner (27.364, NR-005). The
-thin lines trace the island journeys. The colour bars print each gene
+thin curves trace the island journeys. The colour bars print each gene
 at three significant figures. The projection reads NR-044: PC1 22.4 per cent, PC2
 17.3 per cent.
 

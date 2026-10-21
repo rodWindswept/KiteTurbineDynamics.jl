@@ -36,10 +36,10 @@ floor follows sin Δα ≤ 1/1.05 and holds the geometry only to 72.25°
 The crossing limit δα* is a per-segment collapse-detector limit. It is
 not the over-twist limit.
 
-A no limit segment carries no torsional ceiling. Its lines cannot reach
-the axis, so no over-twist limit exists. The figure draws no ratio for
-such a segment. Tether break strain and ring compression carry its limit
-instead.
+A no limit segment carries no torsional ceiling. Its tension lines cannot
+reach the axis, so no over-twist limit exists. The figure draws no ratio
+for such a segment. Tether break strain and ring compression carry its
+limit instead.
 
 Panel B pairs segment torque against torsional capacity at the final
 operating point of the campaign winner. Each segment draws the torsional
