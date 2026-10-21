@@ -1,0 +1,118 @@
+{
+  "slug": "figure-12-instrument-gallery",
+  "purpose": "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, v2 cockpit, genome chooser, 10 kW winner cartography. One pass, one commit.",
+  "head": "9e0866d4e35f58a6485a2bf641d2f418471d95c7",
+  "branch": "bank-derate-cos2p65",
+  "head_commit_time": "2026-10-21 18:49:59 +0100",
+  "era": "post-95c385d_wind-authority",
+  "reads_dataset": true,
+  "dataset_note": "Three panels read no campaign row: v1 and v2 render the 10 kW canonical system from the tree (params_10kw(), settled at V = 11 m/s), and the chooser browses the telemetry CSVs without printing a value from one. The cartography panel decodes its ring stack from elite_archive.csv at the pin and prints no campaign quantity: its title carries the design tag and geometry descriptors only. No value elsewhere in the report is taken from any capture.",
+  "archive_input": {
+    "path": "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv",
+    "sha256": "aa441c837fd036a85c5a1a587ed824e29fdcdcaaaa84a2ecee662b9e2e25078b",
+    "tracked": true
+  },
+  "provenance_note": "v1 and v2's renderer, render-captures-head.jl, lived in an untracked kit directory when the first pass ran; this kit carries a byte-identical copy (c1e7e35f...), so from the landing commit onward every renderer named here is in the tree. Figure 11's captures directory is itself still untracked, which is not this kit's to commit.",
+  "toolchain": {
+    "julia": "1.12.6",
+    "glmakie": "0.13",
+    "python": "3.12.3"
+  },
+  "print": {
+    "box_mm": [
+      85.0,
+      59.89
+    ],
+    "measure_mm": 174.0,
+    "gutter_mm": 4.0,
+    "row_1": "v1 + v2, flush from 0.00 mm",
+    "row_2": "chooser + cartography, flush from 0.00 mm; the 1.82 mm the chooser leaves inside its cell reads as the row's trailing gutter",
+    "row_heights_mm": {
+      "1": 56.35,
+      "2": 59.89
+    },
+    "block_mm": 120.24
+  },
+  "captures": {
+    "dashboard-v1-head.png": {
+      "path": "docs/reporting/figures/instrument-gallery/captures/dashboard-v1-head.png",
+      "pixels": [
+        2000,
+        1188
+      ],
+      "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f",
+      "renderer": "docs/reporting/figures/instrument-gallery/captures/render-captures-head.jl",
+      "renderer_sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0",
+      "prints_mm": [
+        85.0,
+        50.49
+      ],
+      "dpi": 598,
+      "interface": "v1 dashboard",
+      "px_per_unit": 1.25,
+      "shot": "1600 x 950 logical units, saved at px_per_unit 1.25",
+      "row": 1,
+      "note": "byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control"
+    },
+    "dashboard-v2-head.png": {
+      "path": "docs/reporting/figures/instrument-gallery/captures/dashboard-v2-head.png",
+      "pixels": [
+        1780,
+        1180
+      ],
+      "sha256": "b4fdedf07a9a1aed445685a467fb9d98d9ae8b3d8729b74a19408394b6266112",
+      "renderer": "docs/reporting/figures/instrument-gallery/captures/render-captures-head.jl",
+      "renderer_sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0",
+      "prints_mm": [
+        85.0,
+        56.35
+      ],
+      "dpi": 532,
+      "interface": "v2 cockpit",
+      "px_per_unit": 1.0,
+      "shot": "1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)",
+      "row": 1,
+      "note": "byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control"
+    },
+    "genome-chooser-head.png": {
+      "path": "docs/reporting/figures/instrument-gallery/captures/genome-chooser-head.png",
+      "pixels": [
+        2500,
+        1800
+      ],
+      "sha256": "f1b6fad0341da2773568ec1d13904f74166c9e126b290340c2189725e17f6838",
+      "renderer": "scripts/view_campaign_genomes.jl",
+      "renderer_sha256": "ffdf7f58c6e4dac17a55211b4683134ec28d55fcdd7594b9d65debd65ace5fd2",
+      "prints_mm": [
+        83.18,
+        59.89
+      ],
+      "dpi": 763,
+      "interface": "genome chooser (view_campaign_genomes.jl --smoke)",
+      "px_per_unit": 2,
+      "shot": "1250 x 900 logical units at px_per_unit 2",
+      "row": 2,
+      "note": "reads the campaign telemetry CSVs the browser exists to browse; prints none of their values"
+    },
+    "winner-10kw-cartography-head.png": {
+      "path": "docs/reporting/figures/instrument-gallery/captures/winner-10kw-cartography-head.png",
+      "pixels": [
+        4000,
+        2818
+      ],
+      "sha256": "c0a3f49afcc85d9298350d2d407269a93343ec458362fb84f5811de978f04d81",
+      "renderer": "scripts/render_winners_clean.jl",
+      "renderer_sha256": "81488e607c93783c952be1ea899979c9f971b38f32d6f072f96902da9dac2710",
+      "prints_mm": [
+        85.0,
+        59.88
+      ],
+      "dpi": 1195,
+      "interface": "10 kW winner cartography (render_winners_clean.jl)",
+      "px_per_unit": 2,
+      "shot": "2000 x 1409 logical units at px_per_unit 2; Axis3 aspect (1,1,3.5) pins the data box, so the canvas sets the margins and not the projection (tower ink h/w 3.122 at the script's portrait default, 3.113 here)",
+      "row": 2,
+      "note": "title mode geometry: design tag and object descriptors only, no mass and no min_fos; draws its ring stack from elite_archive.csv at the pin"
+    }
+  }
+}
