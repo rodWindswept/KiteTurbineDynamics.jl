@@ -1,0 +1,62 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit HEAD",
+  "data_commit": "dd3cc6a",
+  "era": "post-95c385d_wind-authority",
+  "inputs": {
+    "capture_full": {
+      "path": "docs/reporting/figures/capability-sheet/dashboard-frame-full.png",
+      "pixels": [
+        2000,
+        1188
+      ],
+      "px_per_unit": 1.25,
+      "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f"
+    },
+    "register_rows": [
+      "NR-001",
+      "NR-002",
+      "NR-005",
+      "NR-042",
+      "NR-078",
+      "NR-079",
+      "NR-080",
+      "NR-081",
+      "NR-082"
+    ],
+    "renderer": {
+      "path": "docs/reporting/figures/capability-sheet/render_dashboard_frame.jl",
+      "sha256": "2fce12c9f1df841ae4eb511634418b48f70d45c5bca8a17a3e9ebfa96542df53"
+    },
+    "telemetry": [
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1/telemetry.csv",
+        "sha256": "6f359c33f174d5dc98b1252e29fdba6eac8dbae15dd71d46ef8bbed6acc9bd2f"
+      },
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_2/telemetry.csv",
+        "sha256": "54172ce5a64b22903a2428f870b499f13da53c6b065600d8a01edfd882b29827"
+      },
+      {
+        "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_3/telemetry.csv",
+        "sha256": "34d40e8ea960a1e04c83df58df9e24047cfcf7eb3deff3278807f1147b8d60b0"
+      }
+    ]
+  },
+  "outputs": {
+    "capability-sheet.pdf": "343a4e24c44a3a8dfd2345eff54432ff131c5f772b766619d2f885b4b19724f6",
+    "capability-sheet.png": "033ea7240878548e3d58a8f6d06829891bf527a3a1db757b6fa2eb02afb8afdf",
+    "capability-sheet.svg": "a247cfb8d0592f5b4a11d8cfc24ea8cd733a3fa52933b755510984aa7a60ca92",
+    "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
+    "label-ledger.txt": "02e2fc980d09110f4b8babaa36eea86cb318512d828477804d26194c4c47edbc"
+  },
+  "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
+  "run": "a76c5e9",
+  "script_commit": "HEAD",
+  "slug": "capability-sheet",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "python": "3.12.3"
+  }
+}

@@ -1,0 +1,44 @@
++1
+0
+14.53
+29.66
+37.59
+5.04
+5.28
+5.93
+6.23
+9.30
+C1  The dashboard frame at HEAD · v1 interface · canonical 5-line · crop 966 x 708
+Figure 10   What the platform draws
+FoS  ·  -
+Heatmaps and M2 read the 508 ok designs. M1 reads all 930. M3 reads the 508, ordered. C1 is a render at HEAD, not a dataset read.
+M1  Parallel coordinates
+all 930 designs, ten genes
+M2  Gene correlation
+Spearman, 508 ok
+M3  The objective, ordered
+508 ok designs
+P_mean  ·  kW
+Seven chart classes redrawn at HEAD from this campaign's own rows, and the dashboard frame.
+bank_bot
+bank_top
+bank_top, degrees
+blade_bot
+blade_top
+clearance  ·  m
+clearance reject (110)
+density
+fitness  ·  kg-eq
+fitness, kg-eq
+n_lines
+ok (508)
+r_bot
+r_hub
+r_hub, metres  ·  508 ok designs
+rank, best to worst
+reject (301)
+rotors
+source v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv · data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · script HEAD
+target_Lr
+twist reject (11)
+−1
