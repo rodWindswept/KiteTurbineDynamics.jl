@@ -1377,3 +1377,21 @@ The kit `manifest.json` holds the rendered-output pins (`png`, `svg`,
 
 This appendix cites the kits once instead of reprinting the
 64-character hashes.
+
+**Figure 12 admission.**
+
+Figure 12 prints only the frames that pass four conditions. A panel must
+add an instrument that the set lacks. It must fit an 85 × 59.89 mm box
+and measure at least 79 mm wide. It must come from a tracked generator
+at one commit. Each panel carries a receipt that hashes the frame and
+the renderer.
+
+Two of the four frames need a flag to print what the plate shows. The
+cartography prints under `KTD_WINNER_TITLE=geometry`, and the renderer
+default is `full`. The chooser prints under `--smoke`, with `card_text`
+in identity mode, so a card carries identity and geometry and no
+campaign result.
+
+The commit and the four receipts fix the set. The flags fix the
+invocation. A reader who holds the commit, the renderer and the four
+input hashes reproduces all four frames only with them.
