@@ -3092,3 +3092,47 @@ Boundaries:
 - A floor reject is a measurement the score refuses. It is not a failed run.
 
 - The split is a count. It is not a rate and not a pass fraction.
+
+## Source row: NR-073, the charge decomposition across the power-curve sweep (2026-10-21, science-validator)
+
+Append only, under the amend pattern. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-073 | Charge decomposition across the power-curve sweep, and the power statistic the seam charges | At 13.5 m/s: mass 25.698468 + over-power 115.151333 + utilisation 1.122512 + twist 0.634844 + stationarity 0 = 142.607157 against the recorded 142.607162078419. At all seven scoring winds the three terms reproduce the recorded score inside the CSV's own six-decimal input cap | kg-equivalent | `scratch/av_power_curve_sweep.csv` md5 `a4e535af18da220a473db963c45ceb76`, columns `P_end_kW`, `FoS_min`, `twist_ratio`, `mass_kg`, `fitness_kg_eq`. Forms and weights NR-046: `src/objective_v12.jl:114-116`, `:145-168`, `src/objective_evaluator.jl:90-91`. Checker `scratch/sv_nr073_premium_decomposition.py` and its log | signed (science-validator, 2026-10-21) |
+
+| wind (m/s) | over-power (kg-eq) | utilisation (kg-eq) | twist (kg-eq) | stationarity (kg-eq) | recomputed | recorded | residual |
+|---|---|---|---|---|---|---|---|
+| 11.0 | 0.450264 | 0.555426 | 0.613898 | 0 | 27.318056 | 27.318059 | +0.0000021 |
+| 11.0097 | 0.493338 | 0.557651 | 0.614083 | 0 | 27.363540 | 27.363541 | +0.0000013 |
+| 11.5 | 5.579387 | 0.646198 | 0.619731 | 0 | 32.543784 | 32.543778 | -0.0000062 |
+| 12.0 | 17.695997 | 0.739997 | 0.624319 | 0 | 44.758780 | 44.758778 | -0.0000024 |
+| 12.5 | 38.588003 | 0.858594 | 0.628551 | 0 | 65.773616 | 65.773604 | -0.0000122 |
+| 13.0 | 70.298926 | 0.984269 | 0.631820 | 0 | 97.613483 | 97.613493 | +0.0000107 |
+| 13.5 | 115.151333 | 1.122512 | 0.634844 | 0 | 142.607157 | 142.607162 | +0.0000048 |
+
+Every row adds the constant mass 25.698468 kg.
+
+Sign-off basis:
+
+- Recipe. Each term recomputes from the CSV columns under the NR-046 forms, with the weights 5.0 per kW squared, 20.0 per FoS ratio squared and 1.0 per twist ratio squared, and the 5.0 kW floor. No term reads a quantity the file does not print.
+
+- Closure. Every residual sits inside its own input cap, the spread that a last-digit change in `P_end`, `FoS_min` and `twist_ratio` would move. The worst is 1.22e-5 kg at 12.5 m/s against a cap of 1.65e-5. The fit is arithmetically forced, not tuned.
+
+- The seam charges the window end. At the identity the two candidate statistics separate. Charging `P_end` leaves 1.3e-6 kg and charging `P_mean` leaves 1.66e-2. The row signs `P_end`, and it re-signs the parameter trap NR-046 records, from the numbers rather than from the source.
+
+- Stationarity reads zero. At every scoring wind the residual is smaller than the cap, so a live stationarity term would need a swing more than 0.0000012 above the 20 per cent gate. The sweep carries none.
+
+- The identity cross-check. The three terms recompute NR-039's full-precision strings, 0.493337, 0.557651 and 0.614085, to the six decimals the CSV carries.
+
+- The 13.5 headline. The premium over the machine's own mass is 116.908689 kg. Over-power carries 115.151333 of it, 98.50 per cent. Utilisation and twist carry 1.757356 together as FoS falls from 14.972 to 10.553.
+
+Boundaries:
+
+- This row signs the arithmetic of the recorded score. It signs no physical cause, no rate and no machine limit.
+
+- The over-power term at 13.5 recomputes from a six-decimal `P_end`, so its own precision is 2.4e-5 kg. The row prints six decimals and claims no more.
+
+- The sweep is one genome, one base, one rating and one gain. The terms do not transfer to another machine.
+
+- Fitness is the campaign objective in kg-equivalent. It is not a mass and not a quality score.
