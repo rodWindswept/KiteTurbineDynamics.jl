@@ -3505,3 +3505,94 @@ The swap verifies: one token at each site, the old form zero,
 and the declared sets exact.
 
 **Next run** at the next draft push.
+
+## Sweep 35: v0.79, 2026-10-21
+
+**Target** `docs/reporting/drafts/2026-10-08-report-first-draft.md` at
+`e8f1d45` (v0.79, the section 6.1 bless landing), spanning the movers
+from `7e60f37` (the Sweep 34 span end).
+The file carries zero diff to the branch tip at sweep time.
+
+**Register** `docs/reporting/numbers-register.md` at `c6d79b9`.
+The span carries 21 register movers.
+The numstat reads 650 added and 0 removed, so the block is append-only.
+The row set grows from NR-064 through NR-073.
+
+**Results**
+
+- Span note: this pass covers 14 versions, because pushes ran ahead
+  of the sweep since v0.65.
+  The span `7e60f37..c6d79b9` carries 161 commits and 30 draft movers.
+  Every landing falls inside this one note.
+  The register moved 21 times and no register mover sat outside the span.
+
+- Span landings by version: the formula typesetting at v0.66, the
+  section 6.1 provenance pass and its antecedent fix at v0.67, the
+  blade and rotor bank split at v0.68, the cone-angle pair, the third
+  founder return at v0.77, the section 2.4 per-gate split at v0.78,
+  the section 8 bibliography rebuild, the power trend seating at
+  section 3.5, and the section 6.1 cut at v0.79.
+
+- STE gate, draft: words 9,056 to 11,597, total 20 to 28, per100w 0.22
+  to 0.24.
+  The rise sits in the section 2.4 table and the section 8 entry list,
+  and both read as accepted classes.
+
+- Offender delta, draft: long sentences 1 to 8, long paragraphs 12 to
+  14, passive voice 5 to 4, contractions 1 to 1, nominalization 1 to
+  1, semicolons 0 to 0.
+  No category arrives that the span does not carry, and the passive
+  count falls by one.
+
+- Token diff, draft: raw added occurrences 196 and removed 55.
+  The net arrivals are the signed gate-table values, the three NR-039
+  charges, the NR-041 band, the section 8 DOIs and the section
+  numbers.
+  Seven tokens leave: 0.20, 1278, 25, 35, 65, 78.8 and 87.9.
+
+- Removal reading, one class each: 0.20 moves form into display math
+  and stays printed, 1278 with 78.8 and 87.9 leave on the NR-048
+  withdrawal, 25 and 35 leave with the scaling ladder, and 65 is the
+  version string.
+
+- Value cross-check: each new value reads in the register at its
+  quoted precision.
+  The reads are 0.4933, 0.5577, 0.6141, 8.9475, 8.9511, 100.0,
+  19.1304, 1.5, 2.03, 14.972 and 5.309.
+  The DOI strings are bibliography data and carry their own
+  verification record.
+
+- Retired phrasing: `adaptive` reads 0 and `DifferentialEquations`
+  reads 0.
+  The stale-phrases list carries no mover that this span prints.
+
+- Prose-form census: `seat checks` reads 0, `the room` reads 0,
+  `the pipeline` reads 2, and `campaign winner` reads 6.
+
+- Appendix pins: 9 of 9 rows pass.
+  The count moves from 8 because the power trend seated at section
+  3.5 in this span.
+
+- Cited commits: nine hex refs print in the draft, and every one
+  resolves in the tip ancestry.
+
+- Review copy: the DOCX reads md5 `4d2f977589afa75142e06a888ec57d16`
+  and the PDF reads md5 `49bb37a9fcc96e2f604dfb9b4bcf6e09`, both at
+  `e8f1d45`.
+  The build reads 24 pages at A4, 9 figure seats and 59 cited rows,
+  every one signed.
+
+**Finding**
+
+No value discrepancy found in the span.
+The seven removals each resolve to a landed ruling, a row withdrawal
+or a version string.
+
+One carry-note for the room, and no edit here.
+The section 6.1 cut removes six value tokens on purpose, and none is
+a signed row.
+The bless covers that lane only.
+Comment 95 still binds the section 6 intro at the draft, so a later
+pass must land it or retire the ruling.
+
+**Next run** at the next draft push.
