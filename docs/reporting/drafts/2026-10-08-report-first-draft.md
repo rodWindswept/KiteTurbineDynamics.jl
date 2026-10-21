@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.86. Date 2026-10-21.
+Internal engineering report. Draft v0.87. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1373,7 +1373,7 @@ repository, and its row names a commit in place of an extract.
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
 | The power trend | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 | `e66dd94` |
-| The instrument gallery | `instrument-gallery/captures/`, three frames hashed in `stamp.json` | none. No value in this report is read from a panel | `4749828` |
+| The instrument gallery | `instrument-gallery/captures/`, three frames hashed in `stamp.json` | none. No value in this report is read from a panel | `87e6b10` |
 
 **Output pins.**
 

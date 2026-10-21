@@ -1092,3 +1092,31 @@ Em dashes read 0.
 
 One passive arrives with the provenance sentence the room fixed for the tenth-exhibit cell.
 The other categories hold base: long sentences 8, contraction 1, nominalization 1, long paragraphs 14.
+
+v0.87 pass by @author (2026-10-21).
+
+The tension numerals reach the reader.
+The appendix tenth exhibit pin moves from `4749828` to `87e6b10`.
+That pass holds the frame that carries the numerals.
+No other draft token moves.
+
+The pin gate reads 10 of 10 rows against the kit manifests.
+It still fails a stale row, so the run proves the table and not the parser.
+
+Both deliverables rebuild at this commit.
+The build record names 10 seats and 59 cited rows, every one signed.
+
+The DOCX media set holds `rId83.png` at `842705bd`, 834029 bytes.
+That is the kit plate byte for byte.
+The PDF page 20 image decodes to 28245432 bytes.
+It differs from the plate in zero pixels.
+
+The caption keeps its four state values and names no tension numeral.
+The panel prints the peak tension that no prose in the draft carries.
+The admission paragraph holds: one flagged frame of three, and two that need no flag.
+
+Words read 11,740 from 11,740.
+STE holds 29 at 0.25 per 100 words.
+The offender set matches base: long sentences 8, contraction 1, passive 5, nominalization 1, long paragraphs 14.
+Em dashes read 0, and the cited count holds at 59.
+The header ticks to v0.87.
