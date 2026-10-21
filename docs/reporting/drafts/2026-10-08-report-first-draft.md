@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.76. Date 2026-10-20.
+Internal engineering report. Draft v0.77. Date 2026-10-20.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -61,7 +61,6 @@ The other 422 read 301 reject, 110 clearance_reject and 11 reject_twist (NR-002)
 
 All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
 The ODE path reproduces every recorded winner field (NR-012).
-The rapid path takes the rope-break gate placement fix (NR-013 ext2).
 
 The report shows that a feasible 5 kW-class candidate exists in the searched space under the model and gates.
 It does not show flight readiness, a global optimum, or full structural safety.
@@ -492,15 +491,22 @@ The differential-evolution campaign fixed the configuration below.
 
 Two paths score a design.
 The ODE path builds the machine, settles it, and runs the full dynamics over the measurement window.
+That path produces the score the campaign keeps.
 The rapid path pre-solves a static state and starts from it.
+It serves as a screening shortcut.
 
 The report names map to the code.
 The ODE path is `:cold`.
 The rapid path is `:warm`.
 The campaign scored every design on the cold path (NR-012).
+The two comparison probes are the only warm runs in the record.
 
 The probes that compare the paths sit in scripts/probe_rapid_vs_ode_winners.jl and scripts/probe_warm_reject_cause.jl.
 The register header pins their commits.
+
+The rapid path is the less reliable of the two.
+It once rejected all three winners, through gate placement and not the machine (NR-013).
+Section 4.1 holds the record, and the fix has landed.
 
 ### 2.6 Reproducibility
 
@@ -1059,23 +1065,15 @@ follows the published TRPT lineage, and the cross-check names the
 matches and the mismatches. Each dataset carries its era, its commits
 and its geometry fingerprint.
 
-The ladder instrument screens every power level, or rung, and each length
-on the corrected model. The register, the test suite and the pipeline hold
-every number. Findings, corrections and retractions stay in the record with
-their lessons.
+The register, the test suite and the pipeline hold every number.
+Findings, corrections and retractions stay in the record with their lessons.
 
 The search already moves ten genes, so the same pipeline can probe wider
 parameter regimes. The expansion rotor model ships with tests, so the
 pipeline can study multi-rotor and expansion-class machines.
 
-The validated rung is the machine this report covers. The programme
-targets form the ladder above it, 7, 10, 15, 25, 35 and 50 kW. Each rung
-above it is a programme target, not a result. No repo artifact backs the
-rungs.
-
-[Figure seated: figure-map row 24 (scaling ladder, slug `scaling-ladder`).
-The rung set reads from the value-claims ledger section 4. No register
-row binds the plate.]
+The programme targets larger machines, 7 to 50 kW.
+Each one is a target, not a result.
 
 Wider parameter regimes, flying higher on longer shafts, and the scale
 where multi-rotor machines win are programme targets too. The
@@ -1199,29 +1197,21 @@ The branch comes first. The trade curve means nothing without it.
 
 The campaign scores power, mass and load.
 It does not score cost.
-The report cannot state the cost of energy at any rung, because no signed row for it exists.
+The report cannot state the cost of energy at any scale, because no signed row for it exists.
 
-The study is a crossover curve from the 10 kW rung to a 500 kW utility-scale study point.
-The 50 kW rung sits in between.
-The 500 kW point sits above the ladder.
-It is an extrapolation, not a programme rung.
-Each point takes the same method, on the current model, with one stated capacity factor for the whole curve.
+A cost-of-energy number needs two inputs the project does not hold.
+The first is build cost from field-tested prototypes at each scale.
+The second is the performance data from this model at that scale.
 
-Two outputs carry the value.
-The first is the rung where the kite turbine meets onshore wind.
-The second is the rung where the curve flattens, and further scale stops paying.
-
-The enabling step comes before the curve.
+The enabling step comes before any figure.
 The value-claims ledger classes every economics reading the project holds today as either held or unsigned.
 Its rule of use governs this section as it governs section 5.
 No value prints here until a fresh read produces a signed row for it.
 
-That statement is the anchor.
 The report does not know the cost of energy at scale, and it says so.
 
-The test: one curve and one method.
+The test: one method, applied at each scale.
 Each printed point needs a signed row.
-The curve states one capacity factor.
 
 ### 6.3 Failure modes and effects
 
@@ -1286,11 +1276,9 @@ The table ties each headline claim of this report to its evidence and its signed
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. Eight read dataset commit `dd3cc6a`. The
-ladder reads the code rung set.
-
-All nine read the current physics era, `post-95c385d_wind-authority`,
-so the era sits here once instead of in a table column.
+One row per built exhibit. All eight read dataset commit `dd3cc6a` and
+the current physics era, `post-95c385d_wind-authority`, so the era sits
+here once instead of in a table column.
 
 | Exhibit | Source extract | Cited rows | Script commit |
 |--------|----------------------|--------|------|
@@ -1302,7 +1290,6 @@ so the era sits here once instead of in a table column.
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `d0e410d` |
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
-| Scaling ladder | `scripts/compute_seeds.jl` const RUNGS · value-claims ledger section 4 | none | `4ebc385` |
 
 **Output pins.**
 

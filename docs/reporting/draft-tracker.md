@@ -801,3 +801,48 @@ A later note at `ab6165d` holds that any gloss naming the source cites the dimen
 The source text prints 22 without a label, and the figure settles it.
 
 Words read 10,862 from 10,796. STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.76.
+
+v0.77 pass by @author (2026-10-21).
+
+This pass takes the room answer on the third founder return.
+Six calls land and three hold.
+
+Call 7 leaves the summary.
+The rapid-path sentence goes.
+Section 4.1 already carries its one fact, and the same eleven words print again in the close.
+The cited count holds, because NR-013 keeps six other sites.
+
+Calls 57 and 58 give section 2.5 its contribution and its use.
+The cold path produces the score the campaign keeps.
+The warm path is the screening shortcut.
+The two comparison probes are its only runs in the record.
+One flagged paragraph names it the less reliable path.
+It states the gate-placement cause and points at section 4.1 (NR-013).
+
+Calls 92 and 93 take the ladder out of the close.
+One plain sentence replaces the target paragraph and its seated figure block.
+The appendix carries eight rows.
+Its preamble collapses to one sentence, because only the ladder needed the split.
+The ladder row cited no register row, so the cited count holds.
+Map row 24 retires at the figures seat.
+
+Call 102 shortens section 6.2.
+The crossover curve and its capacity factor leave.
+The two inputs, the enabling step and the signed-row rule stay.
+The last rung wording leaves with the cut.
+
+Three calls hold.
+The section 2.4 split waits on a gate-definition table.
+The only gate table in the draft is the winner outcome table at section 3.3.
+It carries results.
+The campaign Betz gate also reads the rating wind with the 1.1 times screen.
+
+The bibliography rebuild belongs to the room.
+The trend plate waits on the seating word.
+Its appendix row and map row ride that same pass.
+
+Comment 28 is already landed, and comment 44 already reads as ruled.
+The file never prints the word shorter.
+Section 2.3 already names the beam where the member carries load.
+
+Words read 10,763 from 10,862. STE 24 total at 0.22 per 100 words, with long paragraphs at 12 from 13 and every other category held. Em dashes 0. Citations 58, every one signed. Appendix pins 8 of 8. The draft ticks to v0.77.
