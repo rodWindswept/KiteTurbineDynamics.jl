@@ -77,8 +77,8 @@ mean one of these four.
 tension member only, in body prose, in a caption and in the drawn text layer.
 Each drawn series takes the word its plate already uses: **step** for a
 series drawn as steps, **trace** for a measured time series, **curve** for a
-journey drawn against an axis, and **polyline** for the drawn form of the
-power curve. A drawn gate reads **rule**.
+plotted relation, and **polyline** for the drawn form of the power curve. A
+drawn gate reads **rule**.
 
 The drawn form decides, not the presence of an axis. A step series holds its
 value flat between generations, so a step series against labelled axes still
@@ -86,10 +86,24 @@ reads **step**. A journey moves at every generation and its ordinate is not
 the value, so "one step per generation" on a journey names the movement and
 not a staircase: that journey reads **curve**.
 
-**The class has two printed names, and each surface keeps its own.** The
-signed selection rule and the draft print **best-so-far**. The trend kit's
-ledger and caption print **running-best**. A change to one surface does not
-rename the other.
+**Curve also names a plotted relation whose ordinate is the value**: the
+load, power, trade and objective curves. The discriminator separates a
+journey from a staircase, not a curve from a value plot.
+
+**Step also names a recorded operating point**, not a series: the final
+operating step, the same step, an archived step. Draft L919, register L1410
+and the strip caption L22 read it that way, and the drawn winner-hero
+subtitles print it.
+
+**The class has two printed names.** Each plate keeps its own drawn word:
+trend and convergence print **running-best**, landscape and strip print
+**best-so-far**, and no sweep renames a plate. Prose takes the word of the
+plate it describes, so the draft prints both: L897 from the landscape and
+L949 from the trend. In the record, a series over generations reads
+**running-best** and a single generation's value reads **best-so-far**.
+NR-054's own cell prints both, correctly. **running-best machine** is neither
+a series nor a scalar: the trend plate owns it, and the plate rule above
+carries it.
 
 **"Path" is not a series word.** It names the fidelity routes at §2.5. The draft
 reads `path` or `paths` 32 times, and the fidelity sense holds most of them:

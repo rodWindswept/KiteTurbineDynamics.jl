@@ -939,7 +939,7 @@ The power on each card is the window-end sample that the score charges (NR-062).
 The strip shows that the winner is not the lightest machine (NR-066).
 The later fall in the objective comes from penalty, not from mass (NR-036, NR-066).
 
-The trace reads one island of the campaign.
+The strip reads one island of the campaign.
 It does not prove a global optimum.
 A longer or broader run would extend the search.
 

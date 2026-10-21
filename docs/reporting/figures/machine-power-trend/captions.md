@@ -94,8 +94,9 @@ paragraph and its marker, the appendix row, the appendix preamble count
 `check_appendix_pins.py`, and figure-map row 30.
 
 The four caption words landed at the same pass: `step` at the floor reading,
-`rule` for the gate, and `running-best` in the technical caption, because the
-ledger of this kit prints it and the drawn layer holds no `best-so-far`.
+`rule` for the gate, and `running-best` in the technical caption, because
+this plate draws a value series over generations and its drawn layer prints
+that word.
 
 `check_appendix_pins.py` read eight rows before the seat and nine after it.
 The new row maps through the entry "The power trend". The plate bytes did
@@ -104,9 +105,12 @@ not move, and no manifest lists `captions.md` as an output.
 The five chart-sense `line` strings in `SPEC.md` and `README.md` stay text
 debt. No builder prints them, and the drawn layer holds none of them.
 
-The two names for the selection rule stand apart by surface. The signed rule
-line and the landscape print `best-so-far`. This kit prints `running-best`,
-and neither name renames the other.
+The two names follow the drawn form. This kit draws a value series over
+generations, so its drawn word is `running-best`. The landscape and the strip
+draw a design-space path and an archived set, so their drawn word is
+`best-so-far`. The record splits the same way: a series reads
+`running-best`, one generation's value reads `best-so-far`, and the signed
+rule row prints both.
 
 ## Correction note (2026-10-20, figures seat)
 
