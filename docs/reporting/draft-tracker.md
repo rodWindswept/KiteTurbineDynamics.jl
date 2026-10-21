@@ -954,3 +954,21 @@ Words read 11,460 from 11,458.
 No value token moves and the cited count holds at 59.
 STE reads 27 at 0.24 and em dashes 0.
 The draft ticks to v0.81.
+
+v0.82 pass by @science-writer (2026-10-21).
+
+This pass closes the aero catch on section 6.1.
+The section did not state why the model cannot close the question.
+The intake line at L1190 binds all three sections to that clause.
+
+The last sentence now reads "the model has no cyclic input either, so the test starts by adding both".
+That sentence replaces the unnamed test line and opens the second paragraph.
+The code ground: each rotor holds one scalar `CL_blade` and one scalar `bank_angle_deg`.
+No azimuthal argument exists to carry a once-per-revolution angle.
+
+The section body reads 83 words, from 78, in two paragraphs.
+
+The draft reads 11,465 words, from 11,460.
+No value token moves and the cited count holds at 59.
+STE reads 27 at 0.24 and em dashes 0.
+The draft ticks to v0.82.

@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.81. Date 2026-10-21.
+Internal engineering report. Draft v0.82. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1195,9 +1195,10 @@ None of the three carries a scored result.
 The question is whether cyclic pitch or cyclic banking can act on one blade.
 It could also act on the whole rotor together.
 A cyclic input changes the pitch or the bank around the revolution.
+
 Today the bridles attach each blade to the network, and that attachment sets the pitch and the bank.
 Both angles stay fixed all the way round, so the rotor has no cyclic input today.
-The test is a model study of both inputs.
+The model has no cyclic input either, so the test starts by adding both.
 
 ### 6.2 Cost of energy with scale
 
