@@ -97,10 +97,20 @@ bare "the line" for a lift-chain member:
 > **Drawn series (2026-10-21).** A drawn series is not a line. "Line"
 > names the tension member only, in body prose, in a caption and in the
 > drawn text layer. Each drawn series takes the word its plate already
-> uses: step for a best-so-far series drawn as steps, trace for a
-> measured time series, curve for a series drawn against an axis, and
-> polyline for the drawn form of the power curve. A drawn gate reads
-> rule.
+> uses: step for a series drawn as steps, trace for a measured time series,
+> curve for a journey drawn against an axis, and polyline for the drawn
+> form of the power curve. A drawn gate reads rule.
+>
+> The drawn form decides, not the presence of an axis. A step series holds
+> its value flat between generations, so a step series against labelled
+> axes still reads step. A journey moves at every generation and its
+> ordinate is not the value, so "one step per generation" on a journey
+> names the movement and not a staircase: that journey reads curve.
+>
+> The class has two printed names, and each surface keeps its own. The
+> signed selection rule and the draft print best-so-far. The trend kit's
+> ledger and caption print running-best. A change to one surface does not
+> rename the other.
 
 > **"Path" is not a series word.** It names the fidelity routes at §2.5.
 > The draft reads `path` or `paths` 32 times, and the fidelity sense
@@ -121,6 +131,27 @@ bare "the line" for a lift-chain member:
 
 ## Two prices stand
 
-The §6.1 cut stays free at a cited set of 58. The trend plate stays one
-row, 58 to 59 on NR-069. Science Validator re-read both at `c9da885`:
-58 unique ids, zero NR-069, and §6.1 cites nothing.
+The §6.1 cut stays free: it cuts §6.1 text, and the trend seat lands in
+§3.5, so the cut's own cited set holds. The trend plate paid its one row
+at `72dc65a`: the draft reads 58 to 59 on NR-069, and the assembled
+document reads 59.
+
+## Seat landing (2026-10-21, after `72dc65a`)
+
+The trend plate seated at §3.5. The four caption words landed with the
+seat, so the unseated-caption surface is now one file, not two. Every
+builder opens `machine-power-trend/captions.md`, and its four chart-sense
+sites read `step` and `rule` now. The file holds one `line`, the
+"Provenance line" idiom, and a later sweep must leave it.
+
+The trend entry read nine strings, not five: the five doc strings plus the
+four caption sites in the unseated file. The four caption sites landed at
+the seat. The five doc strings remain: SPEC S39, S41, S73 and S93, and
+README S45. The seat moved no plate byte, so the kit's hashes and pins
+stand at `e66dd94`.
+
+`power-curve` still carries two chart-sense sites in an unseated
+`captions.md`: L16 "the lower half of the line is a reading and not a gap"
+and L60 "no line extends past the swept ends". Both take `polyline`, the
+block's word and the kit's ledger line 32. L74 "Provenance line" is the
+idiom and stays. That file fixes at its own seat.

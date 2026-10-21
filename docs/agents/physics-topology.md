@@ -76,9 +76,20 @@ mean one of these four.
 **Drawn series (2026-10-21).** A drawn series is not a line. "Line" names the
 tension member only, in body prose, in a caption and in the drawn text layer.
 Each drawn series takes the word its plate already uses: **step** for a
-best-so-far series drawn as steps, **trace** for a measured time series,
-**curve** for a series drawn against an axis, and **polyline** for the drawn
-form of the power curve. A drawn gate reads **rule**.
+series drawn as steps, **trace** for a measured time series, **curve** for a
+journey drawn against an axis, and **polyline** for the drawn form of the
+power curve. A drawn gate reads **rule**.
+
+The drawn form decides, not the presence of an axis. A step series holds its
+value flat between generations, so a step series against labelled axes still
+reads **step**. A journey moves at every generation and its ordinate is not
+the value, so "one step per generation" on a journey names the movement and
+not a staircase: that journey reads **curve**.
+
+**The class has two printed names, and each surface keeps its own.** The
+signed selection rule and the draft print **best-so-far**. The trend kit's
+ledger and caption print **running-best**. A change to one surface does not
+rename the other.
 
 **"Path" is not a series word.** It names the fidelity routes at §2.5. The draft
 reads `path` or `paths` 32 times, and the fidelity sense holds most of them:
