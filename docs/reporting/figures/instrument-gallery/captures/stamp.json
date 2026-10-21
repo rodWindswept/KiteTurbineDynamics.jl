@@ -1,12 +1,12 @@
 {
   "slug": "figure-12-instrument-gallery",
-  "purpose": "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, v2 cockpit, genome chooser, 10 kW winner cartography. One pass, one commit.",
-  "head": "ecc6fc6f7b11c9fb055c73c75a389580aa4f4a02",
+  "purpose": "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, v2 cockpit, dashboard twisted-state viewport, 10 kW winner cartography. One pass, one commit.",
+  "head": "47498289e3febbd5855ff586ef31d1c8762802b9",
   "branch": "bank-derate-cos2p65",
-  "head_commit_time": "2026-10-21 19:27:08 +0100",
+  "head_commit_time": "2026-10-21 21:26:15 +0100",
   "era": "post-95c385d_wind-authority",
   "reads_dataset": true,
-  "dataset_note": "Two panels read no dataset: v1 and v2 render the 10 kW canonical system from the tree (params_10kw(), settled at V = 11 m/s). Two read campaign files at the pin and print no value from either. The chooser loads the three telemetry CSVs named under chooser_inputs (the set the renderer's own glob selects in scripts/results, 3 x 928 = 2784 rows) and its cards carry identity and decoded geometry only, because the --smoke path sets card_text style=:identity, which drops P_mean, FoS, fitness and status. The cartography decodes its ring stack from elite_archive.csv and its title carries the design tag and geometry descriptors only. No panel in the four prints a campaign result, and no value elsewhere in the report is taken from any capture.",
+  "dataset_note": "Three panels read no dataset at all. v1 and v2 render the 10 kW canonical system from the tree (params_10kw(), settled at V = 11 m/s). The twisted-state cell renders the same system through the export script's default settle and reads no file. The cartography decodes its ring stack from elite_archive.csv and its title carries the design tag and geometry descriptors only. No panel in the four prints a campaign result. No value in this report is read from a panel.",
   "archive_input": {
     "path": "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv",
     "sha256": "aa441c837fd036a85c5a1a587ed824e29fdcdcaaaa84a2ecee662b9e2e25078b",
@@ -29,7 +29,7 @@
       "tracked": true
     }
   ],
-  "provenance_note": "Each capture names its invocation under `flags`, because two of the four do not print their shipped frame under the renderer's defaults. The chooser's identity-only cards come from the --smoke path, and the cartography's geometry title is set by KTD_WINNER_TITLE=geometry; a reader holding the commit, the renderer and the input hashes still needs those flags to rebuild the frame. Figure 11's captures directory is tracked from fa91a8e, so both figures' kits now carry a renderer in the tree.",
+  "provenance_note": "Each capture names its invocation under `flags`, because one of the four does not print its shipped frame under the renderer's defaults: the cartography's geometry title is set by KTD_WINNER_TITLE=geometry. The twisted-state cell needs its window size fixed, so the column boundaries the crop cuts on hold. A reader who holds the commit, the renderer and the inputs still needs those flags to rebuild the frame. Figure 11's captures directory is tracked from fa91a8e, so both figures' kits carry a renderer in the tree.",
   "toolchain": {
     "julia": "1.12.6",
     "glmakie": "0.13",
@@ -43,7 +43,8 @@
     "measure_mm": 174.0,
     "gutter_mm": 4.0,
     "row_1": "v1 + v2, flush from 0.00 mm",
-    "row_2": "chooser + cartography, flush from 0.00 mm; the 1.82 mm the chooser leaves inside its cell reads as the row's trailing gutter",
+    "row_2": "twisted-state viewport + cartography, flush from 0.00 mm; the cell fits at 84.98 mm and prints 1777 px, so both rows carry an 84 px gutter (4.02 mm at 531 dpi)",
+    "raster": "3638 x 2514 px at 531 dpi = 174.02 x 120.26 mm. A 4.00 mm gutter is 83.6 px, so the grid carries 84 px and the plate prints 0.02 mm over the nominal measure",
     "row_heights_mm": {
       "1": 56.35,
       "2": 59.89
@@ -66,6 +67,7 @@
       ],
       "dpi": 598,
       "interface": "v1 dashboard",
+      "picture": "whole window",
       "px_per_unit": 1.25,
       "shot": "1600 x 950 logical units, saved at px_per_unit 1.25",
       "row": 1,
@@ -87,32 +89,41 @@
       ],
       "dpi": 532,
       "interface": "v2 cockpit",
+      "picture": "whole window",
       "px_per_unit": 1.0,
       "shot": "1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)",
       "row": 1,
       "flags": "No flags. The defaults of render-captures-head.jl print this frame.",
       "note": "byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control"
     },
-    "genome-chooser-head.png": {
-      "path": "docs/reporting/figures/instrument-gallery/captures/genome-chooser-head.png",
+    "dashboard-twisted-state-head.png": {
+      "path": "docs/reporting/figures/instrument-gallery/captures/dashboard-twisted-state-head.png",
       "pixels": [
-        2500,
-        1800
+        2696,
+        1900
       ],
-      "sha256": "b1e5e367215d9363d86b80fa8d7e5cc218605d3ddffaed53816ccba08f7b86ca",
-      "renderer": "scripts/view_campaign_genomes.jl",
-      "renderer_sha256": "884133c125fc64cf2d7ec1c3b87e4cb72926d360a1acbe67689e262150c2db4d",
+      "sha256": "74299edc5ddaad611b805da0b5328436e631dbd37909f40cae5f54608e933fe8",
+      "renderer": "docs/reporting/figures/instrument-gallery/captures/render-twisted-state-head.jl",
+      "renderer_sha256": "506aa8a32181fc35c808783b80a07a5e7850b9c7dbb34c818e683ab0fdf367e6",
       "prints_mm": [
-        83.18,
+        84.98,
         59.89
       ],
-      "dpi": 763,
-      "interface": "genome chooser (view_campaign_genomes.jl --smoke)",
+      "dpi": 806,
+      "interface": "dashboard 3D viewport, settled twisted state",
+      "picture": "3D viewport",
       "px_per_unit": 2,
-      "shot": "1250 x 900 logical units at px_per_unit 2",
+      "shot": "2696 x 1900 px cut from a 4074 x 1900 whole-window render at px_per_unit 2, device columns 613..3308. The cut lands on the measured ink boundaries, so both inside margins carry no ink and the scene prints every pixel it draws",
       "row": 2,
-      "flags": "--smoke=<prefix> scripts/results. The --smoke path sets card_text style=:identity. The interactive browser keeps :full.",
-      "note": "loads the three telemetry CSVs named under chooser_inputs and prints no value from one: the cards carry island/gen/idx, the genome fingerprint and decoded geometry (n_lines/n_rings/n_active, r_hub, tether) only"
+      "flags": "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window, so the ink boundaries crop-twisted-cell.py cuts on hold. The build_dashboard figsize default is (1600, 950).",
+      "state": {
+        "twist_deg": 214.71,
+        "tension_peak_n": 3099.9,
+        "tension_swl_n": 3500,
+        "omega_hub_rad_s": 9.5,
+        "electrical_power_kw": 0.01
+      },
+      "note": "params_10kw() settled at 9.5 with the rotary lifter, V = 11 m/s, as the export script defaults; no CSV read. The frame shows twist, line tension and ring compression through the dashboard's own colour scales and prints no campaign result. State, printed by the generator: twist 214.71 deg (hub - PTO), T_peak 3099.9 N of 3500 N SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW"
     },
     "winner-10kw-cartography-head.png": {
       "path": "docs/reporting/figures/instrument-gallery/captures/winner-10kw-cartography-head.png",
@@ -129,6 +140,7 @@
       ],
       "dpi": 1195,
       "interface": "10 kW winner cartography (render_winners_clean.jl)",
+      "picture": "rendered figure",
       "px_per_unit": 2,
       "shot": "2000 x 1409 logical units at px_per_unit 2; Axis3 aspect (1,1,3.5) pins the data box, so the canvas sets the margins and not the projection (tower ink h/w 3.122 at the script's portrait default, 3.113 here)",
       "row": 2,

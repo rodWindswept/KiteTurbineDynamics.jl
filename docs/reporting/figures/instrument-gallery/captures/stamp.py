@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """stamp.py — the provenance stamp for Figure 12's four-panel instrument gallery.
 
-Reads the four capture files in this directory, hashes them and the three
+Reads the four capture files in this directory, hashes them and the
 renderers that made them, and writes `stamp.json` (machine) and `captures.md`
 (the line that travels with the plate). Nothing here draws.
 
@@ -46,13 +46,15 @@ TELEMETRY = [
 
 RENDERERS = {
     "v1_v2": HERE / "render-captures-head.jl",
+    "twisted_state": HERE / "render-twisted-state-head.jl",
+    "twisted_crop": HERE / "crop-twisted-cell.py",
     "chooser": REPO / "scripts/view_campaign_genomes.jl",
     "cartography": REPO / "scripts/render_winners_clean.jl",
 }
 
 # Printed geometry: box 85 x 59.89 mm, fit by the binding dimension, nothing
-# cropped and nothing upsampled. Row 1 is v1 + v2, row 2 is chooser + 3D,
-# flush to 0 and 174.00 mm inside a 174 mm measure with a 4 mm gutter.
+# upsampled. Row 1 is v1 + v2, row 2 is the twisted-state viewport + the 3D
+# cartography, flush to 0 and 174.00 mm inside a 174 mm measure, 4 mm gutter.
 BOX_MM = [85.0, 59.89]
 MEASURE_MM = 174.0
 GUTTER_MM = 4.0
@@ -60,6 +62,7 @@ GUTTER_MM = 4.0
 CAPTURES = {
     "dashboard-v1-head.png": dict(
         interface="v1 dashboard",
+        picture="whole window",
         renderer="v1_v2",
         px_per_unit=1.25,
         shot="1600 x 950 logical units, saved at px_per_unit 1.25",
@@ -69,6 +72,7 @@ CAPTURES = {
     ),
     "dashboard-v2-head.png": dict(
         interface="v2 cockpit",
+        picture="whole window",
         renderer="v1_v2",
         px_per_unit=1.0,
         shot="1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)",
@@ -76,24 +80,41 @@ CAPTURES = {
         flags="No flags. The defaults of render-captures-head.jl print this frame.",
         note="byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control",
     ),
-    "genome-chooser-head.png": dict(
-        interface="genome chooser (view_campaign_genomes.jl --smoke)",
-        renderer="chooser",
+    "dashboard-twisted-state-head.png": dict(
+        interface="dashboard 3D viewport, settled twisted state",
+        picture="3D viewport",
+        renderer="twisted_state",
         px_per_unit=2,
-        shot="1250 x 900 logical units at px_per_unit 2",
+        shot=(
+            "2696 x 1900 px cut from a 4074 x 1900 whole-window render at px_per_unit 2, "
+            "device columns 613..3308. The cut lands on the measured ink boundaries, so "
+            "both inside margins carry no ink and the scene prints every pixel it draws"
+        ),
         row=2,
         flags=(
-            "--smoke=<prefix> scripts/results. The --smoke path sets card_text "
-            "style=:identity. The interactive browser keeps :full."
+            "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window, so "
+            "the ink boundaries crop-twisted-cell.py cuts on hold. The "
+            "build_dashboard figsize default is (1600, 950)."
+        ),
+        state=dict(
+            twist_deg=214.71,
+            tension_peak_n=3099.9,
+            tension_swl_n=3500,
+            omega_hub_rad_s=9.5,
+            electrical_power_kw=0.01,
         ),
         note=(
-            "loads the three telemetry CSVs named under chooser_inputs and prints no value "
-            "from one: the cards carry island/gen/idx, the genome fingerprint and decoded "
-            "geometry (n_lines/n_rings/n_active, r_hub, tether) only"
+            "params_10kw() settled at 9.5 with the rotary lifter, V = 11 m/s, as "
+            "the export script defaults; no CSV read. The frame shows twist, line "
+            "tension and ring compression through the dashboard's own colour "
+            "scales and prints no campaign result. State, printed by the "
+            "generator: twist 214.71 deg (hub - PTO), T_peak 3099.9 N of 3500 N "
+            "SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW"
         ),
     ),
     "winner-10kw-cartography-head.png": dict(
         interface="10 kW winner cartography (render_winners_clean.jl)",
+        picture="rendered figure",
         renderer="cartography",
         px_per_unit=2,
         shot=(
@@ -187,7 +208,8 @@ def main() -> None:
         "slug": "figure-12-instrument-gallery",
         "purpose": (
             "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, "
-            "v2 cockpit, genome chooser, 10 kW winner cartography. One pass, one commit."
+            "v2 cockpit, dashboard twisted-state viewport, 10 kW winner cartography. "
+            "One pass, one commit."
         ),
         "head": head,
         "branch": branch,
@@ -195,27 +217,24 @@ def main() -> None:
         "era": ERA,
         "reads_dataset": True,
         "dataset_note": (
-            "Two panels read no dataset: v1 and v2 render the 10 kW canonical system from "
-            "the tree (params_10kw(), settled at V = 11 m/s). Two read campaign files at the "
-            "pin and print no value from either. The chooser loads the three telemetry CSVs "
-            "named under chooser_inputs (the set the renderer's own glob selects in "
-            "scripts/results, 3 x 928 = 2784 rows) and its cards carry identity and decoded "
-            "geometry only, because the --smoke path sets card_text style=:identity, which "
-            "drops P_mean, FoS, fitness and status. The cartography decodes its ring stack "
-            "from elite_archive.csv and its title carries the design tag and geometry "
-            "descriptors only. No panel in the four prints a campaign result, and no value "
-            "elsewhere in the report is taken from any capture."
+            "Three panels read no dataset at all. v1 and v2 render the 10 kW canonical "
+            "system from the tree (params_10kw(), settled at V = 11 m/s). The twisted-state "
+            "cell renders the same system through the export script's default settle and "
+            "reads no file. The cartography decodes its ring stack from elite_archive.csv "
+            "and its title carries the design tag and geometry descriptors only. No panel "
+            "in the four prints a campaign result. No value in this report is read from "
+            "a panel."
         ),
         "archive_input": archive,
         "chooser_inputs": telemetry,
         "provenance_note": (
-            "Each capture names its invocation under `flags`, because two of the four do "
-            "not print their shipped frame under the renderer's defaults. The chooser's "
-            "identity-only cards come from the --smoke path, and the cartography's geometry "
-            "title is set by KTD_WINNER_TITLE=geometry; a reader holding the commit, the "
-            "renderer and the input hashes still needs those flags to rebuild the frame. "
-            "Figure 11's captures directory is tracked from fa91a8e, so both figures' kits "
-            "now carry a renderer in the tree."
+            "Each capture names its invocation under `flags`, because one of the four does "
+            "not print its shipped frame under the renderer's defaults: the cartography's "
+            "geometry title is set by KTD_WINNER_TITLE=geometry. The twisted-state cell "
+            "needs its window size fixed, so the column boundaries the crop cuts on hold. "
+            "A reader who holds the commit, the renderer and the inputs still needs those "
+            "flags to rebuild the frame. Figure 11's captures directory is tracked from "
+            "fa91a8e, so both figures' kits carry a renderer in the tree."
         ),
         "toolchain": {"julia": "1.12.6", "glmakie": "0.13", "python": "3.12.3"},
         "print": {
@@ -223,8 +242,12 @@ def main() -> None:
             "measure_mm": MEASURE_MM,
             "gutter_mm": GUTTER_MM,
             "row_1": "v1 + v2, flush from 0.00 mm",
-            "row_2": "chooser + cartography, flush from 0.00 mm; the 1.82 mm the chooser "
-                     "leaves inside its cell reads as the row's trailing gutter",
+            "row_2": "twisted-state viewport + cartography, flush from 0.00 mm; the cell "
+                 "fits at 84.98 mm and prints 1777 px, so both rows carry an 84 px "
+                 "gutter (4.02 mm at 531 dpi)",
+            "raster": "3638 x 2514 px at 531 dpi = 174.02 x 120.26 mm. A 4.00 mm "
+                      "gutter is 83.6 px, so the grid carries 84 px and the plate "
+                      "prints 0.02 mm over the nominal measure",
             "row_heights_mm": row_h,
             "block_mm": block,
         },
@@ -237,14 +260,14 @@ def main() -> None:
         "",
         f"Rendered at `{head[:7]}` ({branch}), {head_time}. Era `{ERA}`. One pass, one commit.",
         "",
-        "| capture | pixels | prints | dpi | sha256 |",
-        "|---|---|---|---|---|",
+        "| capture | pixels | prints | dpi | picture | sha256 |",
+        "|---|---|---|---|---|---|",
     ]
     for name, c in captures.items():
         lines.append(
             f"| `{name}` | {c['pixels'][0]} x {c['pixels'][1]} "
             f"| {c['prints_mm'][0]:.2f} x {c['prints_mm'][1]:.2f} mm | {c['dpi']} "
-            f"| `{c['sha256']}` |"
+            f"| {c['picture']} | `{c['sha256']}` |"
         )
     lines += [
         "",
@@ -257,7 +280,7 @@ def main() -> None:
         lines.append(f"| `{r['path']}` | `{r['sha256']}` |")
     lines += [
         "",
-        "Invocation, per capture. Two frames need flags beyond the script defaults. "
+        "Invocation, per capture. One frame needs a flag beyond the script defaults. "
         "The flags are part of the receipt:",
         "",
         "| capture | invocation |",
@@ -270,7 +293,8 @@ def main() -> None:
         f"Cartography input: `{archive['path']}`. Its hash is `{archive['sha256'][:16]}...`. "
         f"The file is tracked at the pin: {archive['tracked']}.",
         "",
-        "Chooser inputs: the set the renderer's own glob selects in `scripts/results`.",
+        "The retired chooser frame's input set. It still sits in this directory, so "
+        "its inputs stay pinned, but no panel prints from them now.",
         "",
         "| input | sha256 | tracked |",
         "|---|---|---|",
@@ -285,31 +309,32 @@ def main() -> None:
         "The captures directory of Figure 11 is tracked from `fa91a8e`. "
         "Both figures now carry their renderer.",
         "",
-        "The two dashboard frames repeat the Figure 11 members byte for byte at this commit. "
-        "That repetition is the re-stamp control. A scripts-only diff cannot move them. "
-        "A move would break the one-pass claim in the caption.",
+        "The chooser frame from the first pass stays in this directory. The "
+        "twisted-state viewport replaced it at this seat and it prints no longer.",
         "",
-        "Print geometry is an 85 x 59.89 mm box. Each frame fits by the binding dimension. "
-        "No panel is cropped. No panel is upsampled. Row 1 holds v1 and v2 at 56.35 mm. "
-        f"Row 2 holds the chooser and the cartography at 59.89 mm. The block is {block} mm. "
+        "Print geometry is an 85 x 59.89 mm box. Each frame fits by the binding "
+        "dimension and no panel is upsampled. A panel enters this set only above a "
+        "79 mm admission floor. Each panel prints every pixel of the picture its tool "
+        "draws. The picture column of the capture table names the picture for each panel. "
+        "In the twisted-state cell that picture is the 3D viewport. The control "
+        "and readout columns sit outside it. Row 1 holds v1 and v2 at 56.35 mm. Row 2 holds "
+        f"the viewport at 84.98 mm and the cartography at 85.00 mm. The block is {block} mm. "
         "It sits in a 174 mm measure with a 4 mm gutter. The rows run flush from 0.00 mm.",
         "",
-        "Type at these widths: v1 2.17 pt, v2 2.98 pt, chooser 2.36 pt, cartography "
-        "2.59 pt. The cartography title band is 43 px at 85 mm. The smallest labels are "
-        "1.22 pt in v2 and 1.13 pt in the chooser filter column. The card strip does not "
-        "touch that column. The tallest chooser line was 2.92 pt before the strip. It is "
-        "2.36 pt after, because the line carrying P_mean reached highest. The set ceiling "
-        "is v2 at 2.98 pt either way.",
+        "Type at these widths: v1 2.17 pt, v2 2.98 pt, cartography 2.59 pt. The "
+        "cartography title band is 43 px at 85 mm. The smallest label in the set is "
+        "1.22 pt in v2. The set ceiling is v2 at 2.98 pt.",
         "",
         "Source line for the plate:",
         "",
         f"> captures: four instrument frames at `{head[:7]}`. v1 and v2 come from "
-        f"`render-captures-head.jl`. The chooser comes from `view_campaign_genomes.jl "
-        f"--smoke` over the three `v13_5kw_len*` telemetry sets, with cards in "
-        f"identity+geometry style. The cartography comes from `render_winners_clean.jl` "
-        f"with `KTD_WINNER_TITLE=geometry`. Era `{ERA}`. The cartography geometry reads "
-        "from `trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`. No value "
-        "prints from either input.",
+        f"`render-captures-head.jl`. The twisted-state cell comes from "
+        f"`render-twisted-state-head.jl` and `crop-twisted-cell.py`, which renders the "
+        f"canonical system at its default settle and reads no file. The cartography "
+        f"comes from `render_winners_clean.jl` with `KTD_WINNER_TITLE=geometry`. Era "
+        f"`{ERA}`. The cartography geometry reads from "
+        "`trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`. No value in "
+        "this report is read from a panel.",
         "",
     ]
     (HERE / "captures.md").write_text("\n".join(lines))

@@ -1,0 +1,146 @@
+{
+  "slug": "instrument-gallery",
+  "figure": "Figure 12, section 9: the instrument gallery",
+  "mode": "capture gallery, four panels",
+  "capture": {
+    "run_id": "one render pass, repository at 4749828"
+  },
+  "era": "post-95c385d_wind-authority",
+  "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --page-proof",
+  "script": {
+    "path": "docs/reporting/figures/instrument-gallery/instrument-gallery.py",
+    "sha256": "6a8002c6b8bbabb4ae20221e46245f4d3b50a7b38a7cdd72d5e42344a095d840"
+  },
+  "run_commit": "4749828",
+  "plate": {
+    "pixels": [
+      3638,
+      2514
+    ],
+    "dpi": 531,
+    "prints_mm": [
+      174.02,
+      120.26
+    ],
+    "box_mm": [
+      85.0,
+      59.89
+    ],
+    "row_heights_mm": [
+      56.35,
+      59.89
+    ],
+    "gutter_px": 84,
+    "gutter_mm": 4.02,
+    "block_mm": 120.26,
+    "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px and the plate prints 0.02 mm over the nominal measure. Both rows measure the same 84 px gutter.",
+    "sha256": "0578e358c44775cdce1ecbb975aece8d3921e5369fd32773c750663d639e22ed"
+  },
+  "inputs": {
+    "captures": [
+      {
+        "file": "captures/dashboard-v1-head.png",
+        "picture": "whole window",
+        "pixels": [
+          2000,
+          1188
+        ],
+        "prints_mm": [
+          85.0,
+          50.49
+        ],
+        "dpi": 598,
+        "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f"
+      },
+      {
+        "file": "captures/dashboard-v2-head.png",
+        "picture": "whole window",
+        "pixels": [
+          1780,
+          1180
+        ],
+        "prints_mm": [
+          85.0,
+          56.35
+        ],
+        "dpi": 532,
+        "sha256": "b4fdedf07a9a1aed445685a467fb9d98d9ae8b3d8729b74a19408394b6266112"
+      },
+      {
+        "file": "captures/dashboard-twisted-state-head.png",
+        "picture": "3D viewport",
+        "pixels": [
+          2696,
+          1900
+        ],
+        "prints_mm": [
+          84.98,
+          59.89
+        ],
+        "dpi": 806,
+        "sha256": "74299edc5ddaad611b805da0b5328436e631dbd37909f40cae5f54608e933fe8",
+        "state": {
+          "twist_deg": 214.71,
+          "tension_peak_n": 3099.9,
+          "tension_swl_n": 3500,
+          "omega_hub_rad_s": 9.5,
+          "electrical_power_kw": 0.01
+        }
+      },
+      {
+        "file": "captures/winner-10kw-cartography-head.png",
+        "picture": "rendered figure",
+        "pixels": [
+          4000,
+          2818
+        ],
+        "prints_mm": [
+          85.0,
+          59.88
+        ],
+        "dpi": 1195,
+        "sha256": "c0a3f49afcc85d9298350d2d407269a93343ec458362fb84f5811de978f04d81"
+      }
+    ],
+    "renderers": {
+      "v1_v2": {
+        "path": "captures/render-captures-head.jl",
+        "sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0"
+      },
+      "twisted_state": {
+        "path": "captures/render-twisted-state-head.jl",
+        "sha256": "506aa8a32181fc35c808783b80a07a5e7850b9c7dbb34c818e683ab0fdf367e6"
+      },
+      "twisted_crop": {
+        "path": "captures/crop-twisted-cell.py",
+        "sha256": "d775351d929580c5556095381471357355fe2aa4d7eedd684e5a67cd17ee6601"
+      },
+      "chooser": {
+        "path": "scripts/view_campaign_genomes.jl",
+        "sha256": "884133c125fc64cf2d7ec1c3b87e4cb72926d360a1acbe67689e262150c2db4d"
+      },
+      "cartography": {
+        "path": "scripts/render_winners_clean.jl",
+        "sha256": "81488e607c93783c952be1ea899979c9f971b38f32d6f072f96902da9dac2710"
+      }
+    },
+    "archive": {
+      "path": "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv",
+      "sha256": "aa441c837fd036a85c5a1a587ed824e29fdcdcaaaa84a2ecee662b9e2e25078b",
+      "role": "the cartography decodes its ring stack from this file; its title prints geometry descriptors only"
+    }
+  },
+  "outputs": {
+    "instrument-gallery.png": "0578e358c44775cdce1ecbb975aece8d3921e5369fd32773c750663d639e22ed",
+    "captions.md": "5fa5940c8cc03d193b89f3ea98588742dc65770cffdba35b481daa12c65cbd68",
+    "captures/captures.md": "d1878c002fd9761d07d295f342b685c6f81e9d9ece61d3fcff47d80eb3e64cec",
+    "captures/stamp.json": "b250598aed1c186c023eca7d85618b6cfe02d43ccc45e15828e120faa499e7bf"
+  },
+  "withheld": "no value in this report is read from a panel. v1 and v2 print no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only.",
+  "toolchain": {
+    "julia": "1.12.6",
+    "glmakie": "0.13",
+    "python": "3.12.3",
+    "pillow": "12.3.0"
+  }
+}
