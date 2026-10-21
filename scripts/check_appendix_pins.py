@@ -8,10 +8,15 @@ determined by the figure kit manifests, so this check derives it rather than
 trusting the table.
 
 Both manifest shapes are read: a ``script_commit`` field, and the pin carried
-in the build ``command`` as ``--script-commit <hash>``. The cited-rows column
-is derived the same way, from a top-level ``registers`` list (comma or
-interpunct separated) or ``inputs.register_rows``, and compared as a set, so
-a row order difference is not a failure but a missing or extra row is.
+in the build ``command`` as ``--script-commit <hash>``. A capture gallery
+records no script commit, because its plate composes frames that an earlier
+pass drew, so a third shape is read: ``run_commit``, the pass whose tree holds
+every frame at the hash the stamp records. The cited-rows column is derived
+the same way, from a top-level ``registers`` list (comma or interpunct
+separated) or ``inputs.register_rows``, and compared as a set, so a row order
+difference is not a failure but a missing or extra row is. A cell that carries
+prose beside its rows is compared on its register ids alone, because a
+sentence in that cell cites no row.
 
 Usage:
     python3 scripts/check_appendix_pins.py [--draft PATH] [-q]
@@ -53,6 +58,7 @@ KIT = {
     "Machine winner": "machine-winner-hero",
     "The corner machines": "machine-corner-grid",
     "The power trend": "machine-power-trend",
+    "The instrument gallery": "instrument-gallery",
     "Scaling ladder": "scaling-ladder",
 }
 
@@ -76,7 +82,17 @@ def manifest_commit(kit):
     if commit:
         return commit
     hit = re.search(r"--script-commit ([0-9a-f]{7})", m.get("command", ""))
-    return hit.group(1) if hit else None
+    if hit:
+        return hit.group(1)
+    return m.get("run_commit")
+
+
+NR_RE = re.compile(r"NR-\d+")
+
+
+def register_ids(parts):
+    """The register ids in a split cell; prose beside them cites no row."""
+    return {p for p in parts if NR_RE.fullmatch(p)}
 
 
 def _split_rows(value):
@@ -168,8 +184,8 @@ def main():
                 edits.append((m.start(4), m.end(4), name, "pin", pin, mc, kit))
             else:
                 print(f"STALE     {name:26s} pin {pin}  manifest {mc}")
-        drawn = draft_rows(rows_cell)
-        if set(drawn) != set(mr):
+        drawn = register_ids(draft_rows(rows_cell))
+        if drawn != set(mr):
             missing = [r for r in mr if r not in drawn]
             extra = [r for r in drawn if r not in mr]
             detail = ""
