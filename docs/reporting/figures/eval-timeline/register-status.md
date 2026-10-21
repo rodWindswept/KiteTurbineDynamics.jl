@@ -108,3 +108,14 @@ key). No drawn value moves, and no register row changes. Two runs at the
 same pin reproduce all five outputs byte for byte. The drawn footer
 moves from `label-ledger.txt` L44 to L42, because the sorted ledger
 shrinks by two lines; the caption carries the old pointer.
+
+**Delta** v10 (2026-10-21): the lane-key re-cut (script `1aca23d`). The
+gate-map rows name the gate, and the key carries when it reads: "every
+step, relax included", "one read per second", "mean of the last five
+samples", "one read, at decode". The NR-042 string stays whole on its own
+row line, "≥ 1.5 m, at decode", so no signed drawn string splits. The
+NR-039 name stays in its row, "power floor, over-power", and "P_end"
+leaves the drawn text. The label census reads 47 strings (50 before). No
+drawn value moves, and no register row changes. Two runs at the pin
+reproduce all five outputs byte for byte. The drawn footer sits at
+`label-ledger.txt` L40.

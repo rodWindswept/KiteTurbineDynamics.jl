@@ -85,4 +85,12 @@ safety gate reads the run".
 If that rule still binds, the two sentences come out here. Neither sentence
 cites a register row, so the cited count does not move either way.
 
+**Delta** v5 (2026-10-21): the lane-key re-cut (script `1aca23d`). The
+drawn footer moves to `label-ledger.txt` L40, because the sorted ledger
+reads 47 strings from 50. The open question above now sits against the
+key: the key prints "every step, relax included" and "one read per
+second", and the last two sentences of the technical caption print the
+same two facts. The caption text, its nine rows and their order do not
+change.
+
 **Delta** v1 (2026-10-13): created with the kit landing.

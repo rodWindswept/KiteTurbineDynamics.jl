@@ -11,5 +11,5 @@ check: warm end t (s): 0.002841  (OK)
 check: warm end strain: 1.00081012  (OK)
 check: ruling grid max: 1.447982844  (OK)
 check: ruling latch count: 0  (OK)
-written: eval-timeline.svg / .pdf / .png, label-ledger.txt (50 strings), manifest.json
+written: eval-timeline.svg / .pdf / .png, label-ledger.txt (47 strings), manifest.json
 F-LABEL self-check: OK

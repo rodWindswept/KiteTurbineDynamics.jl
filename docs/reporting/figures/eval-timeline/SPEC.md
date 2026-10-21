@@ -80,7 +80,8 @@ so a crossing between samples goes unseen.
   leg and the condition curve. An inset shows the first 12 ms.
 
 - Lane 4 carries the gate map. Four rows carry the code reads at
-  a89642b.
+  a89642b. Each row names its gate and the key names when that gate
+  reads, so no row repeats the key.
 
 ### Elements table
 
@@ -90,8 +91,8 @@ so a crossing between samples goes unseen.
 | `warm_leg` | the warm extract | red line, to the latch | last row, latch |
 | `condition_curve` | the ruling-mode extract | steel dashed line | grid max, no latch |
 | `inset_12ms` | the warm and ruling files | first 12 ms | placement |
-| `gate_map` | the gate table at a89642b | four rows, spans marked | presence |
-| `gate_key` | the lane-4 marks | one line, 424 pt column | four marks named, gaps 0.45 or more, pitch 0.30 |
+| `gate_map` | the gate table at a89642b | four rows, gate named, mark drawn | presence |
+| `gate_key` | the lane-4 marks | four glyph pairs, two columns at 0.19 / 0.60 | four marks named, each glyph at the form the lane draws |
 | `stamps` | — | sources, trees, rows, script commit | presence |
 
 ### Readout list
@@ -211,3 +212,19 @@ the taps this pass.
   every 10 ms". The lesson line moves from faint italic 6.8 to ink 7.5.
   No drawn value moves. The label census reads 50 strings (52 before:
   14 out, 11 in, two rewrites, one key).
+
+- v5 (2026-10-21): the lane-key re-cut (script `1aca23d`). The rows name
+  the gate and the key carries when it reads, so no row repeats the key.
+  The four rows read one line each ("rope break", "twist, top, tip and
+  Betz", "power floor, over-power", "ground clearance"), except the
+  clearance row, which keeps NR-042's signed string ("≥ 1.5 m, at
+  decode") whole on its own line. The key draws the four marks as glyphs
+  at the form the lane uses, each named by its cadence: "every step,
+  relax included", "one read per second", "mean of the last five
+  samples", "one read, at decode". The old line gave band, tick and
+  diamond two identical definitions ("one read"), so two marks could not
+  be told apart; the founder's read found the lane unreadable. The
+  lane-4 panel takes a 0.150 height at 0.150 so the two key lines clear
+  the x label. "P_end" leaves the drawn text. No drawn value moves. The
+  label census reads 47 strings (50 before: 12 row lines out, 5 in, one
+  key out, four key labels in).
