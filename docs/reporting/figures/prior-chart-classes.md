@@ -65,31 +65,50 @@ That single fact sorts the 37 classes.
 **Already drawn, 1 class.** `design_space_3d` is the PCA field. Rows 20
 and 21 carry it at R2, and their F-VALUE re-census closed at `7329191`.
 
-**Drawable now, no new run, 16 classes.** The 930 rows, or a table
+**Drawable now, no new run, 14 classes.** The 930 rows, or a table
 already built from them, is the whole input.
 
 | class | source |
 |---|---|
-| `heatmaps_smoothness`, `heatmaps_tension`, `heatmap_brake_time` | the 930 rows, two genes binned pairwise |
-| `heat_nrings_vs_nlines` | the same bins on the ring and line counts |
-| `parallel_coordinates`, `parallel_multivariate` | the 930 rows, ten genes, status ink |
+| `heatmaps` (four stems) | the 508 ok rows, one gene pair binned pairwise, and the pair measured here fills every cell: `r_hub` × `blade_scale_top` fills 25 of 25 with the smallest cell at 7. Colour is the median outcome per cell and occupancy is the read, so a cell under five prints `no read` with its count. The four stems are four of the seven recorded outcomes: `fitness`, `P_mean`, `FoS` and `clearance`, each on its own colourbar limits, because the cell medians span a different range per outcome |
+| `heat_nrings_vs_nlines` | the same bins on `rings` and `n_lines`: 98 cells, 40 of them occupied and 26 of those under five, so the class draws as a thin panel and not as a fourth heatmap |
+| `parallel_coordinates`, `parallel_multivariate` | the 930 rows, ten genes, status ink; `FoS = Inf` and `twist_ratio = 0.0` draw as the hatched no-read, never as zero or as infinity |
 | `ranked_configs` | the `fitness` column, ordered |
 | `3d_surface_duration_elev`, `3d_surface_payout_dmode` | two genes against one outcome |
 | `composite_waterfall` | `extract-penalty-contributions.csv`, 508 rows |
 | `sensitivity_bar` | `extract-objective-vs-gene.csv`, 10 rows |
 | `disqualifications` | `extract-failure-rates-by-value.csv`, 13 rows |
-| `correlation_matrix` | the 930 rows, gene against gene |
-| `survival_envelope` | `fitness` against the gate boundary |
+| `correlation_matrix` | the 508 ok rows, gene against gene, Spearman; Pearson on the same columns does not share `n_lines`' sign with the rank bar, and the 930 rows hold `FoS = Inf`, where Pearson is undefined |
+| `survival_envelope` | `fitness` against the gate boundary, over all 930 rows |
 | `safety_intersection` | `clearance` against `twist_ratio` |
 | `spider_chart` | the genes of one design on a normalised scale |
 
-All sixteen read the telemetry or a column that it carries. Three read
+**Each panel names its own population, and the three do not trade.**
+The heatmaps and the correlation matrix read the 508 ok rows, where
+`FoS` is finite and `twist_ratio` is never zero. The parallel
+coordinates read all 930, with the sentinels masked to the no-read. The
+envelope reads all 930 and needs the rejects, because its subject is the
+boundary. A caption that swaps one population for another prints a count
+from a panel that did not draw it.
+
+All fourteen read the telemetry or a column that it carries. Three read
 one of the item-5 tables directly: the waterfall, the sensitivity bar and
 the disqualification census. That extract (`lever-statistics-extract`,
 landed `6c51f5c`, 7 tables, 18 checks) holds the sensitivity, the bins,
 the failure rates, the failure discrimination and the three charges.
 **It has carried those tables since 2026-10-14 with no plate and no
 roster row:** the figure map returns zero hits for `lever-statistics`.
+
+**Two prior stems this campaign cannot draw, and they leave the count.**
+`heatmaps_smoothness` and `heatmaps_tension` need a tension smoothness
+the record does not carry: the three telemetry files hold 32 columns, and
+the outcome set is `fitness`, `P_mean`, `P_end`, `T_lift`, `FoS`,
+`twist_ratio` and `clearance`. `heatmap_brake_time` needs a quantity the
+campaign never logs. The three stems become the one `heatmaps` class
+above, whose four panels are four recorded outcomes, so the drawable
+count reads 14 where the census read 16 and the buckets sum to 35 of the
+37 stems. The two that leave have no column, so no run can recover them
+and no plate may carry their names.
 
 **One new extract each, 4 classes.** The class needs a table that does
 not exist yet, and the table builds from recorded columns:
@@ -140,7 +159,7 @@ SPEC:
    and over-power is the largest channel in 453 of the 508 ok rows. No
    plate carries that fact.
 4. **Response surface.** Two genes at a time against one outcome, over
-   the 930 rows: the heatmap and 3D-surface class, which holds no row
+   the 508 ok rows: the heatmap and 3D-surface class, which holds no row
    today. This is the envelope read that row 8 names.
 
 ## 6. The gate each plate still needs
