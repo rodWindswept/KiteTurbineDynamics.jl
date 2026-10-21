@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.77. Date 2026-10-20.
+Internal engineering report. Draft v0.78. Date 2026-10-20.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -425,27 +425,106 @@ The rejects fail a gate.
 Clearance rejects fail the clearance gate.
 Twist rejects fail the twist gate.
 
-The campaign minimizes a kg-equivalent objective score: the airborne mass plus the soft constraint penalties.
+The campaign applies its gates in one order.
+The order fixes the status a design carries when it fails more than one gate.
+The table names each gate, its formulation, its threshold, where it acts, the status it stamps and its register rows.
+
+| Gate | Formulation | Threshold | Where it acts | Status on failure | Rows |
+|---|---|---|---|---|---|
+| Genome screens | One active rotor, one or more rings, rotors spaced apart | Above zero, above zero, spacing clear | Runner, on the decoded geometry | reject | NR-046 |
+| Clearance | Lowest active rotor tip above the ground | 1.5 m | Runner, before any simulation time | clearance_reject | NR-042 |
+| Rope break | One line path strained past its break strain | Break strain | Evaluator, measurement window only | reject | NR-013 |
+| Twist crossing | Worst segment twist against the geometric crossing limit | Crossing limit | Evaluator, on the window | reject_twist | NR-052, NR-053 |
+| Tip-speed ceiling | Rim speed of every ring and rotor tip | 100.0 m/s | Evaluator, on the window | reject | NR-047 |
+| Betz, per rotor | Each rotor against the Betz limit on its bank-projected annulus | Limit with a margin, at the rating wind | Evaluator, on the window | reject | NR-034 |
+| Betz, availability | Power against a coefficient floor on the normal wind area | Below the power floor, at the rating wind | Evaluator, after the window | reject | NR-027, NR-034 |
+| Betz, aggregate | Window-mean power against the Betz limit on the total area | Limit with a margin, at the rating wind | Evaluator, after the window | reject | NR-034 |
+| Power floor | Window-end power against the power floor | 5.0 kW | Score seam | reject | NR-027, NR-039 |
+| Safety floor | Window-minimum factor of safety against its floor | 2.5 | Score seam | reject | NR-015 |
+| Charges | Four costs added to the airborne mass | Weights below | Score, after the gates | None, a cost only | NR-039, NR-046 |
+
+#### 2.4.1 The genome screens and clearance
+
+The runner screens the decoded geometry before it runs any simulation time.
+It needs one active rotor and one or more rings.
+It also needs the rotors clear of each other.
+A rotor tip below 1.5 m of ground clearance fails the clearance gate (NR-042).
+A failure stamps clearance_reject, and the run never starts.
+
+#### 2.4.2 The rope break
+
+A line path carries the tension from ring to ring.
+A strain past the break strain ends the run and rejects the design (NR-013).
+The check arms at the relax boundary and reads the measurement window only.
+Detection off the window would reject healthy machines, and section 4.1 holds that record.
+
+#### 2.4.3 The twist crossing
+
+The twist gate reads the worst segment twist against the geometric crossing limit (NR-052, NR-053).
+A segment past its limit stamps reject_twist.
+The same ratio enters the twist charge, so a design near the limit pays a growing cost before it fails.
+
+#### 2.4.4 The tip-speed ceiling
+
+Every ring rim and every rotor tip carries a speed ceiling of 100.0 m/s (NR-047).
+The gate reads each of them, and a design past the ceiling rejects.
+
+#### 2.4.5 The three Betz screens
+
+The campaign carries three Betz screens, not one.
+The per-rotor screen compares each rotor against the Betz limit on its own bank-projected annulus (NR-034).
+The availability screen compares power against a coefficient floor on the normal wind area, below the power floor (NR-027, NR-034).
+The aggregate screen compares the window-mean power against the Betz limit on the total area (NR-034).
+
+All three read the rating wind, and that basis is deliberate.
+They are an anti-cheat tripwire on the rated machine, so they evaluate at the rating wind.
+They do not evaluate at the wind of a later sweep.
+
+The three screens charge different area bases.
+The per-rotor screen reads the annulus with no elevation factor.
+The availability and aggregate screens read the wind-normal area, which carries the elevation factor (NR-034).
+The aggregate screen charges the window mean, and the power floor beside it charges the window end.
+
+Section 3.3 carries the ceiling value.
+The per-wind check on the power curve is a figure check, and it is not this gate.
+
+#### 2.4.6 The power floor and the safety floor
+
+The power floor reads the window-end power against 5.0 kW (NR-027, NR-039).
+The safety floor reads the window-minimum factor of safety against 2.5 (NR-015).
+The seam names its power parameter P_mean, and the value it carries is the window-end power.
+The report prints the window end as the power behind the floor.
+
+A torsional safety floor of 1.5 belongs to the design-verification path (NR-052).
+The two campaign floors read 5.0 kW and 2.5.
+
+#### 2.4.7 The objective and its four charges
+
+The campaign minimizes a kg-equivalent objective score: the airborne mass plus the charges.
 A lower score is better.
 The objective score is not the physical airborne mass.
 One kilogram of airborne mass adds 1.0 to the score (NR-046).
-The penalty charges read in kg-equivalent.
+The charges read in kg-equivalent.
 
 The score builds along one chain.
-The chain runs genome, decoder, builder, evaluator, window statistics, gate status, soft constraint penalties, score and rank.
-The score adds three soft constraint penalties to the airborne mass (NR-046):
+The chain runs genome, decoder, builder, evaluator, window statistics, gate status, charges, score and rank.
+The score adds three charges to the airborne mass (NR-046):
 
 $$f=\mathrm{mass}+5.0\max\left(P_{\mathrm{score}}-5.0,\,0\right)^{2}+20.0\left(\frac{2.5}{\mathrm{FoS}_{\min}}\right)^{2}+1.0\left(\frac{r}{1-r}\right)^{2}$$
 
 The ratio reads $r=\min\left(\mathrm{twist\_ratio},\,1\right)$.
-The score then adds the stationarity add-on (NR-046):
+The score then adds the stationarity charge (NR-046):
 
 $$10.0\max\left(0,\,\mathrm{swing}-0.20\right)$$
+
+The formula carries three charges.
+The stationarity charge makes four.
 
 The over-power charge reads P_score, the end power, against the 5.0 kW ceiling (NR-046).
 The utilisation charge reads the window-minimum factor of safety against the 2.5 floor (NR-046).
 The twist charge reads the worst segment twist ratio against the crossing limit (NR-046).
-The stationarity add-on reads the window swing against 20 per cent (NR-046).
+The stationarity charge reads the window swing against 20 per cent (NR-046).
+The winner carries all four in its own score: mass plus 0.4933, 0.5577 and 0.6141, and a stationarity charge of zero (NR-039).
 
 The swing reads P_range over P_mean, the window power range over its mean (NR-046).
 The twist charge clamps r to one.
@@ -457,11 +536,9 @@ The ratio reads one million at the limit and stays finite.
 The twist gate flags a segment that passes its limit, so a design
 at the limit exactly reaches the floor (NR-046).
 
-Two hard gates sit outside the soft penalties.
-A rotor tip below 1.5 m of ground clearance fails the clearance gate.
-A segment past its crossing limit fails the twist gate.
-These reject the design outright, and a rejected design carries no score (NR-046).
+#### 2.4.8 The reject seam
 
+A rejected design carries no score (NR-046).
 The evaluator carries Inf for a rejected design.
 The runner stamps the search cost `1e9` on every non-ok design (NR-046).
 No reject ranks above an ok design.

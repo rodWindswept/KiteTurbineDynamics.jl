@@ -846,3 +846,26 @@ The file never prints the word shorter.
 Section 2.3 already names the beam where the member carries load.
 
 Words read 10,763 from 10,862. STE 24 total at 0.22 per 100 words, with long paragraphs at 12 from 13 and every other category held. Em dashes 0. Citations 58, every one signed. Appendix pins 8 of 8. The draft ticks to v0.77.
+
+v0.78 pass by @author (2026-10-21).
+
+This pass takes the section 2.4 split that the aero seat signed and the numbers seat corrected.
+
+The campaign now states its gate order.
+A table names each gate, its formulation, its threshold, where it acts, the status it stamps and its rows.
+Eight subsections follow the table, one per gate, then the objective and the reject seam.
+
+Three corrections land from the numbers seat.
+The availability floor acts after the window, not before any simulation time.
+The two floors act in the score seam, and the seam carries the window-end power under a parameter named P_mean.
+The score carries four charges, and the winner score shows all four (NR-039).
+
+The three Betz screens print separately, with their own area bases and their own statistic.
+All three read the rating wind.
+The per-wind form stays a figure check on the power curve.
+
+Two facts wait on rows before they can print.
+The one point one factor on the Betz screens has no row.
+The three screens rest on a source read, and NR-034 signs the ceiling value only.
+
+Words read 12,104 from 11,344. STE 34 total at 0.28 per 100 words, and the rise sits in the twelve table rows that the linter reads as sentences. Em dashes 0. Citations 58, every one signed. The draft ticks to v0.78.
