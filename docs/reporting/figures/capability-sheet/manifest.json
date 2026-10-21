@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit 4fb3a8e",
+  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit 8670c01",
   "data_commit": "dd3cc6a",
   "era": "post-95c385d_wind-authority",
   "inputs": {
@@ -43,14 +43,14 @@
     ]
   },
   "outputs": {
-    "capability-sheet-A.pdf": "50bec0be61f652a1d63834236e67110a5c4b12e31c566e9ad41f6ec99b89f933",
-    "capability-sheet-A.png": "f49312c7a608c50a0ed17d0280dccd658683d77f7be718e52f5d532b3ebc283f",
-    "capability-sheet-A.svg": "6f1addeb0b2de069584a695bb7e42138fb7d08803f3c0cd800c486fe1e58d60f",
-    "capability-sheet-B.pdf": "b773b8eec5fc37f440dc03362aeed0ff580a4642c896c5db8cf86f48df4574c2",
-    "capability-sheet-B.png": "06308f9d126c5e3f42c9955f7baa4577e846c517fd185d62e717fb7cdcc2a95c",
-    "capability-sheet-B.svg": "2b2d30dbc5ec20bf8cb1f7449e26464ab61ed04c5d4d8a8bcfc16d561af95cfa",
+    "capability-sheet-A.pdf": "b7ffef65ddfbb6e411c722113ece70eda82c6ad938964fc70a601d3e27eeecc4",
+    "capability-sheet-A.png": "11394c21b2175276b9af56f59e3c5f87df8c31261b3f820a5f374364916cc0e4",
+    "capability-sheet-A.svg": "4cdf97b0e2d4037fdf85e8a8ecfa25843b2a95f9ed90c784f72491243f72a2fc",
+    "capability-sheet-B.pdf": "811225007bafcdeac6306e116c6d2a51f7d085c9f5fb29c8923325a25593a0ef",
+    "capability-sheet-B.png": "dbc9fba011ca97cc33d4bec57db07910218a6a6e35687a42cecdeb6433dfcb3c",
+    "capability-sheet-B.svg": "f48cff5f516764113b94980436f1f3606e17fe566d7ebcc395b87e4b70d0cd37",
     "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
-    "label-ledger.txt": "9c25f566d1daea80311c362e62be26aa1c15435420839ef15a436f592ec4f639"
+    "label-ledger.txt": "0ff4ee45118c89338dd00474d2f82efb9a381ed68753744cd49089ef0f7afdf6"
   },
   "pages": {
     "A": "H1 to H4, the four outcome heatmaps, 508 ok designs",
@@ -58,7 +58,7 @@
   },
   "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
   "run": "a76c5e9",
-  "script_commit": "4fb3a8e",
+  "script_commit": "8670c01",
   "slug": "capability-sheet",
   "toolchain": {
     "matplotlib": "3.10.8",

@@ -30,8 +30,8 @@ blade_top
 clearance  ·  m
 clearance reject (110)
 colour is the cell median of the outcome, never the mean. Bar limits are the smallest and largest cell medians, rounded outward to 2 dp.
-data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-002, NR-005 · script 4fb3a8e
-data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-078 to NR-082 · script 4fb3a8e
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-002, NR-005 · script 8670c01
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-078 to NR-082 · script 8670c01
 density
 fitness  ·  kg-eq
 fitness, kg-eq
