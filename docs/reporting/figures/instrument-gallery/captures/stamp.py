@@ -35,7 +35,7 @@ ERA = "post-95c385d_wind-authority"
 # The one render pass that produced these frame bytes. A recomposition of the
 # plate reads them and re-renders nothing, so the stamp records the pass and
 # not the tree it happens to run in; `git show 4749828` is the check.
-PASS = "4749828"
+PASS = "87e6b10"
 
 # The one panel that reads a campaign row: the winner cartography decodes its
 # ring stack from this archive. It prints no value from it (the title carries
@@ -92,13 +92,17 @@ CAPTURES = {
         shot=(
             "2696 x 1900 px cut from a 4074 x 1900 whole-window render at px_per_unit 2, "
             "device columns 613..3308. The cut lands on the measured ink boundaries, so "
-            "both inside margins carry no ink and the scene prints every pixel it draws"
+            "both inside margins carry no ink and the scene prints every pixel it draws. "
+            "The scene prints the peak tension in pixels at its top left: T_peak 3099.9 N "
+            "over SWL 3500 N. The ink box is 812..1388 x 111..257 device px, which is 199 px "
+            "inside the 613 boundary and 1920 px inside the 3309"
         ),
         row=1,
         flags=(
             "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window. "
             "The ink boundaries crop-twisted-cell.py cuts on hold. The "
-            "build_dashboard figsize default is (1600, 950)."
+            "build_dashboard figsize default is (1600, 950). tension_label defaults "
+            "to true, so the tension numerals print without a flag."
         ),
         state=dict(
             twist_deg=214.71,
@@ -113,7 +117,10 @@ CAPTURES = {
             "tension and ring compression through the dashboard's own colour "
             "scales and prints no campaign result. State, printed by the "
             "generator: twist 214.71 deg (hub - PTO), T_peak 3099.9 N of 3500 N "
-            "SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW"
+            "SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW. build_dashboard "
+            "generates the two tension numerals from the same SimPeaks T_peak its HUD row "
+            "prints, through _tension_label_text. The render script stops if the string "
+            "does not carry the receipt value"
         ),
     ),
     "winner-10kw-cartography-head.png": dict(
@@ -333,21 +340,34 @@ def main() -> None:
         "twisted-state cell that picture is the 3D viewport. The control and readout "
         "columns sit outside it.",
         "",
+        "The twisted-state cell prints its two tension numerals inside the picture. It "
+        "does not print them in a chrome column: T_peak 3099.9 N over SWL 3500 N. "
+        "build_dashboard draws them at its default, tension_label = true. The value is "
+        "the SimPeaks T_peak that its HUD row prints, and the receipt uses the same "
+        "formatter. Measured against the cut, the annotation ink box is "
+        "812..1388 x 111..257 device px. That is 199 px inside the 613 boundary and "
+        "1920 px inside the 3309. No numeral can fall in a zero-ink margin. The two "
+        "line runs are 111..184 and 198..257.",
+        "",
         "Row 1 holds v2 and the viewport, at 85.00 x 56.35 mm and 84.98 x 59.89 mm. "
         "Row 2 holds the cartography alone at 85.00 x 59.88 mm, centred from "
         f"44.50 mm. The block is {block} mm. It sits in a 174 mm measure with a 4 mm "
         "gutter. Row 1 runs flush from 0.00 mm.",
         "",
-        "Type at these widths: v2 2.98 pt, cartography 2.59 pt. The "
-        "cartography title band is 43 px at 85 mm. The smallest label in the set is "
-        "1.22 pt in v2. The set ceiling is v2 at 2.98 pt.",
+        "Type at these widths: v2 2.98 pt, cartography 2.59 pt, and the "
+        "twisted-state tension numerals 6.79 pt. The cartography title band is 43 px "
+        "at 85 mm. The smallest label in the set is 1.22 pt in v2. The set ceiling is "
+        "the twisted-state numerals at 6.79 pt. The one value the caption reads off the "
+        "picture is the largest type in the set.",
         "",
         "Source line for the plate:",
         "",
         f"> captures: three instrument frames at `{head[:7]}`. v2 comes from "
         f"`render-captures-head.jl`. The twisted-state cell comes from "
         f"`render-twisted-state-head.jl` and `crop-twisted-cell.py`, which renders the "
-        f"canonical system at its default settle and reads no file. The cartography "
+        f"canonical system at its default settle and reads no file. build_dashboard "
+        f"generates its two tension numerals from the same SimPeaks T_peak its HUD "
+        f"prints. The cartography "
         f"comes from `render_winners_clean.jl` with `KTD_WINNER_TITLE=geometry`. Era "
         f"`{ERA}`. The cartography geometry reads from "
         "`trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`. No value in "

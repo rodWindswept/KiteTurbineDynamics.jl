@@ -1,9 +1,9 @@
 {
   "slug": "figure-12-instrument-gallery",
   "purpose": "The three-panel instrument gallery of Figure 12 (section 9): v2 cockpit, dashboard twisted-state viewport, 10 kW winner cartography. One pass, one commit.",
-  "head": "47498289e3febbd5855ff586ef31d1c8762802b9",
+  "head": "87e6b10bb9bfa556a236b235b0390803878df064",
   "branch": "bank-derate-cos2p65",
-  "head_commit_time": "2026-10-21 21:26:15 +0100",
+  "head_commit_time": "2026-10-21 22:04:24 +0100",
   "era": "post-95c385d_wind-authority",
   "reads_dataset": true,
   "dataset_note": "Two panels read no dataset at all. v2 renders the 10 kW canonical system from the tree (params_10kw(), settled at V = 11 m/s). The twisted-state cell renders the same system through the export script's default settle and reads no file. The cartography decodes its ring stack from elite_archive.csv and its title carries the design tag and geometry descriptors only. No panel prints a campaign result. No value in this report is read from a panel.",
@@ -80,9 +80,9 @@
         2696,
         1900
       ],
-      "sha256": "74299edc5ddaad611b805da0b5328436e631dbd37909f40cae5f54608e933fe8",
+      "sha256": "691b13204ed8bbe35c38e6fddb0bd5ec950e8700ac448afc3a53f9ada04de72b",
       "renderer": "docs/reporting/figures/instrument-gallery/captures/render-twisted-state-head.jl",
-      "renderer_sha256": "506aa8a32181fc35c808783b80a07a5e7850b9c7dbb34c818e683ab0fdf367e6",
+      "renderer_sha256": "7c545caeac0660259bc97e1f0e7bc74dde3f4ac9c87b176b72cc5540cebd72d6",
       "prints_mm": [
         84.98,
         59.89
@@ -91,9 +91,9 @@
       "interface": "dashboard 3D viewport, settled twisted state",
       "picture": "3D viewport",
       "px_per_unit": 2,
-      "shot": "2696 x 1900 px cut from a 4074 x 1900 whole-window render at px_per_unit 2, device columns 613..3308. The cut lands on the measured ink boundaries, so both inside margins carry no ink and the scene prints every pixel it draws",
+      "shot": "2696 x 1900 px cut from a 4074 x 1900 whole-window render at px_per_unit 2, device columns 613..3308. The cut lands on the measured ink boundaries, so both inside margins carry no ink and the scene prints every pixel it draws. The scene prints the peak tension in pixels at its top left: T_peak 3099.9 N over SWL 3500 N. The ink box is 812..1388 x 111..257 device px, which is 199 px inside the 613 boundary and 1920 px inside the 3309",
       "row": 1,
-      "flags": "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window. The ink boundaries crop-twisted-cell.py cuts on hold. The build_dashboard figsize default is (1600, 950).",
+      "flags": "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window. The ink boundaries crop-twisted-cell.py cuts on hold. The build_dashboard figsize default is (1600, 950). tension_label defaults to true, so the tension numerals print without a flag.",
       "state": {
         "twist_deg": 214.71,
         "tension_peak_n": 3099.9,
@@ -101,7 +101,7 @@
         "omega_hub_rad_s": 9.5,
         "electrical_power_kw": 0.01
       },
-      "note": "params_10kw() settled at 9.5 with the rotary lifter, V = 11 m/s, as the export script defaults; no CSV read. The frame shows twist, line tension and ring compression through the dashboard's own colour scales and prints no campaign result. State, printed by the generator: twist 214.71 deg (hub - PTO), T_peak 3099.9 N of 3500 N SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW"
+      "note": "params_10kw() settled at 9.5 with the rotary lifter, V = 11 m/s, as the export script defaults; no CSV read. The frame shows twist, line tension and ring compression through the dashboard's own colour scales and prints no campaign result. State, printed by the generator: twist 214.71 deg (hub - PTO), T_peak 3099.9 N of 3500 N SWL, omega_hub 9.5 rad/s, electrical power 0.01 kW. build_dashboard generates the two tension numerals from the same SimPeaks T_peak its HUD row prints, through _tension_label_text. The render script stops if the string does not carry the receipt value"
     },
     "winner-10kw-cartography-head.png": {
       "path": "docs/reporting/figures/instrument-gallery/captures/winner-10kw-cartography-head.png",

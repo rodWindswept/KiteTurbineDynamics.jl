@@ -3,7 +3,7 @@
   "figure": "Figure 12, section 9: the instrument gallery",
   "mode": "capture gallery, three panels",
   "capture": {
-    "run_id": "one render pass, repository at 4749828"
+    "run_id": "one render pass, repository at 87e6b10"
   },
   "era": "post-95c385d_wind-authority",
   "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --page-proof",
@@ -11,7 +11,7 @@
     "path": "docs/reporting/figures/instrument-gallery/instrument-gallery.py",
     "sha256": "20365cb5ee5128398ff0291a46be35135cf04bf9954d56704d5e398659e31f92"
   },
-  "run_commit": "4749828",
+  "run_commit": "87e6b10",
   "plate": {
     "pixels": [
       3638,
@@ -34,7 +34,7 @@
     "gutter_mm": 4.02,
     "block_mm": 123.77,
     "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px. Three panels seat in two 85 mm columns, so row 2 holds one panel and centres it from 44.50 mm. The plate prints 0.02 mm over the measure and 0.03 mm over the 123.77 mm block.",
-    "sha256": "53f65ef77022fcd098836e20ae2d7de651c7c75992b55b4aae27f55ae7bfe35f"
+    "sha256": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022"
   },
   "inputs": {
     "captures": [
@@ -64,13 +64,31 @@
           59.89
         ],
         "dpi": 806,
-        "sha256": "74299edc5ddaad611b805da0b5328436e631dbd37909f40cae5f54608e933fe8",
+        "sha256": "691b13204ed8bbe35c38e6fddb0bd5ec950e8700ac448afc3a53f9ada04de72b",
         "state": {
           "twist_deg": 214.71,
           "tension_peak_n": 3099.9,
           "tension_swl_n": 3500,
           "omega_hub_rad_s": 9.5,
           "electrical_power_kw": 0.01
+        },
+        "annotation": {
+          "text": "T_peak 3099.9 N / SWL 3500 N",
+          "ink_box_px": [
+            812,
+            111,
+            1388,
+            257
+          ],
+          "cut_px": [
+            613,
+            3309
+          ],
+          "inside_margins_px": {
+            "left": 199,
+            "right": 1920
+          },
+          "source": "SimPeaks T_peak, formatted by build_dashboard._tension_label_text; default-on (tension_label = true)"
         }
       },
       {
@@ -95,7 +113,7 @@
       },
       "twisted_state": {
         "path": "captures/render-twisted-state-head.jl",
-        "sha256": "506aa8a32181fc35c808783b80a07a5e7850b9c7dbb34c818e683ab0fdf367e6"
+        "sha256": "7c545caeac0660259bc97e1f0e7bc74dde3f4ac9c87b176b72cc5540cebd72d6"
       },
       "twisted_crop": {
         "path": "captures/crop-twisted-cell.py",
@@ -117,10 +135,10 @@
     }
   },
   "outputs": {
-    "instrument-gallery.png": "53f65ef77022fcd098836e20ae2d7de651c7c75992b55b4aae27f55ae7bfe35f",
+    "instrument-gallery.png": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022",
     "captions.md": "bc162589977f16c76cd68768f840b9412b8d4a01b0fbf88c1d583a264851af66",
-    "captures/captures.md": "8ca3384e42f50afe37978e3a8c24dec5f56f845278b012a7145c1217bfffea74",
-    "captures/stamp.json": "6d24e30d6899ae621c5dc38176ced025b115a9adecbebc6a55251bf209ba81a4"
+    "captures/captures.md": "4b3374c9f3f26ee62e812aacac49a77eb81fb516a1797b374a6fcbeeffd81e21",
+    "captures/stamp.json": "da318f6209f5b1e7134d4a293ed6097402c62551d5348d6f52de691bdde40172"
   },
   "withheld": "no value in this report is read from a panel. v2 prints no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only.",
   "toolchain": {
