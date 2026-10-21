@@ -942,3 +942,15 @@ The section body reads 76 words, from 215.
 STE reads 27 total at 0.24 per 100 words, from 28 at 0.24.
 Em dashes 0.
 The draft ticks to v0.80.
+
+v0.81 pass by @science-writer (2026-10-21).
+
+One sentence in section 6.1 takes a plainer form.
+It read "the blade angle" and now reads "the pitch or the bank".
+The reader no longer maps one noun onto the two angles the next line names.
+The section body reads 78 words, from 76.
+
+Words read 11,460 from 11,458.
+No value token moves and the cited count holds at 59.
+STE reads 27 at 0.24 and em dashes 0.
+The draft ticks to v0.81.
