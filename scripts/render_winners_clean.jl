@@ -36,6 +36,22 @@ const FIG_H = parse(Int, get(ENV, "KTD_WINNER_FIG_H", "1600"))
 const AX_W  = parse(Int, get(ENV, "KTD_WINNER_AX_W",  "1200"))
 const AX_H  = parse(Int, get(ENV, "KTD_WINNER_AX_H",  "1500"))
 const OUT_DIR = get(ENV, "KTD_WINNER_OUT", V2_DIR)
+# Title payload. "full" is the recorded output: design tag, winner mass, the
+# archive's min_fos, then the object's own descriptors. "geometry" keeps the
+# tag and the descriptors and drops the two campaign outputs, because in this
+# tree neither is a reading a report may print beside the drawing:
+# scripts/results/README.md marks this campaign's 10 kW design pre-v3 and
+# torsionally infeasible, and min_fos is a saturated gate (one distinct value,
+# 1.80, across the elite archive), not a computed safety factor. The strip is
+# geometry-neutral: same tower, same camera, same pixels below the title band.
+const TITLE_MODE = get(ENV, "KTD_WINNER_TITLE", "full")
+
+function title_string(tag, row, design)
+    desc = @sprintf("n_rings=%d, n_lines=%d, r_hub=%.2fm",
+                    design.n_rings, design.n_lines, design.r_hub)
+    TITLE_MODE == "geometry" && return string(tag, " — ", desc)
+    return @sprintf("%s — %.2f kg, FOS %.2f, %s", tag, row.mass_kg, row.min_fos, desc)
+end
 
 # Force GLMakie first, fall back to CairoMakie if headless GL fails
 const M = try
@@ -116,9 +132,7 @@ function render_one(tag::String, out_path::String)
                   xlabelcolor = :black, ylabelcolor = :black, zlabelcolor = :black,
                   titlesize = 22,
                   titlecolor = :black,
-                  title = @sprintf("%s — %.2f kg, FOS %.2f, n_rings=%d, n_lines=%d, r_hub=%.2fm",
-                                    tag, row.mass_kg, row.min_fos,
-                                    design.n_rings, design.n_lines, design.r_hub),
+                  title = title_string(tag, row, design),
                   aspect = (1, 1, 3.5))
     M.colsize!(fig.layout, 1, M.Fixed(AX_W))
     M.rowsize!(fig.layout, 1, M.Fixed(AX_H))
