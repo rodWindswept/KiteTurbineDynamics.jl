@@ -771,3 +771,30 @@ No numeral, no citation count and no caption changes.
 The register's NR-049 boundary 3 records the withdrawal gloss in the present tense, so the numbers seat carries a state note for it.
 
 Words read 10,796 from 10,822. STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.75.
+
+v0.76 pass by @author (2026-10-20).
+
+This pass takes the founder call on founder comment 21 for the second time, and the answer is B.
+The cone gloss returns to section 2.1 with the plain-English reading the founder asked for.
+Option A printed the fixed value alone and left the comparison out.
+
+The block prints one side of the cone, from the shaft axis out to the cone wall.
+It prints the reference 22 as the angle across the full apex, one side against the other.
+The two numbers name different angles, so this cone runs steeper than that machine.
+The code change that would match this cone to that machine stays open, awaiting a ruling.
+
+The gloss obeys NR-049 boundary 3 as amended.
+It prints both readings and the direction they differ.
+It prints the open status of the change.
+It prints no source-side slope and no steepness ratio.
+It does not name the reference as the basis of the value.
+
+The fixed-value sentence and the constant sentence stay in front of the gloss.
+The NR-049 cite stays behind them, and it covers the constant claim as well.
+No numeral, no citation count and no caption changes.
+The second site at section 3.4 already reads the same fixed-value fact.
+
+The NR-049 boundary 3 state note still describes the withdrawal.
+The numbers seat owes a forward note that the gloss is live again.
+
+Words read 10,862 from 10,796. STE 25 total at 0.23 per 100 words. Em dashes 0. The draft ticks to v0.76.

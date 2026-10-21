@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.75. Date 2026-10-20.
+Internal engineering report. Draft v0.76. Date 2026-10-20.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -197,6 +197,11 @@ The ring geometry sets the topmost-ring and ground radii, and the rotor count se
 The shaft transition cone holds one fixed half-angle, 22 degrees, by construction.
 Every machine in the campaign builds that cone at the same angle, so the cone stays out of the comparison.
 It is not a search value (NR-049).
+
+That 22 measures one side of the cone, from the shaft axis out to the cone wall.
+A reference machine prints the same 22 as the angle across the full apex, one side against the other.
+The two numbers name different angles, so this cone runs steeper than that machine.
+The code change that would match this cone to that machine stays open, awaiting a ruling.
 
 At the top of the shaft the rotor turns in the wind.
 The whole shaft turns with the rotor.
