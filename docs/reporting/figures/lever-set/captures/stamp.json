@@ -1,0 +1,96 @@
+{
+  "slug": "figure-11-captures",
+  "purpose": "The interface capture strip of Figure 11: v1 dashboard, v2 cockpit, Pluto notebook.",
+  "head": "9f24fb07ff4fea4b0f97521705f69b81a809186e",
+  "branch": "bank-derate-cos2p65",
+  "head_commit_time": "2026-10-21 17:45:08 +0100",
+  "era": "post-95c385d_wind-authority",
+  "reads_dataset": false,
+  "dataset_note": "No capture reads a campaign row. The two Makie frames render the 10 kW canonical system from the tree at HEAD (params_10kw(), settled at V = 11 m/s); the notebook frame reads notebooks/design_explorer.jl at HEAD.",
+  "toolchain": {
+    "julia": "1.12.6",
+    "glmakie": "0.13",
+    "pluto": "1.0.3",
+    "plutoui": "0.7.83",
+    "python": "3.12.3"
+  },
+  "captures": {
+    "dashboard-v1-head.png": {
+      "path": "docs/reporting/figures/lever-set/captures/dashboard-v1-head.png",
+      "pixels": [
+        2000,
+        1188
+      ],
+      "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f",
+      "renderer": "docs/reporting/figures/lever-set/captures/render-captures-head.jl",
+      "renderer_sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0",
+      "interface": "v1 dashboard",
+      "px_per_unit": 1.25,
+      "shot": "1600 x 950 logical units, saved at px_per_unit 1.25",
+      "identical_to_figure_10_input": true,
+      "figure_10_input_sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f"
+    },
+    "dashboard-v2-head.png": {
+      "path": "docs/reporting/figures/lever-set/captures/dashboard-v2-head.png",
+      "pixels": [
+        1780,
+        1180
+      ],
+      "sha256": "b4fdedf07a9a1aed445685a467fb9d98d9ae8b3d8729b74a19408394b6266112",
+      "renderer": "docs/reporting/figures/lever-set/captures/render-captures-head.jl",
+      "renderer_sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0",
+      "interface": "v2 cockpit",
+      "px_per_unit": 1.0,
+      "shot": "1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)"
+    }
+  },
+  "notebook": {
+    "path": "docs/reporting/figures/lever-set/captures/notebook-page-head.png",
+    "source": "notebooks/design_explorer.jl",
+    "source_sha256": "b3670c3b58b26a62191d2bd190d7b8742c4e4fbd465b0486edd8976734ec3333",
+    "pixels": [
+      1490,
+      27414
+    ],
+    "sha256": "2f935f23d5e1cfbe94e01628af1094557877b7a382fa28ca0a29ce4b60315b6d",
+    "viewport_css": [
+      760,
+      560
+    ],
+    "device_scale_factor": 2,
+    "capture": "CDP Page.captureScreenshot, captureBeyondViewport, default view state (no code folded)",
+    "pluto": "1.0.3",
+    "export": {
+      "path": "docs/reporting/figures/lever-set/captures/design_explorer-head.html",
+      "bytes": 8687375,
+      "sha256": "795282abf8e8dd9629fba2ca53d670ddda78cdcdb076f4ba393a1356826ee940",
+      "route": "GET /notebookexport?id=<session notebook id>&offline_bundle=true"
+    }
+  },
+  "crop_candidates": {
+    "cand-notebook-verdict-hud.png": {
+      "pixels": [
+        1290,
+        500
+      ],
+      "sha256": "c8bdb8e51ade30957befae7f36d996f059115b4295a992c8c36afb1a71b85331",
+      "note": "the verdict HUD, natural aspect 2.58"
+    },
+    "cand-notebook-top-band.png": {
+      "pixels": [
+        1448,
+        1061
+      ],
+      "sha256": "d82043796e182585af7ec99d91583dd3aa8eea2d2eecd7a6e6867380a83881e0",
+      "note": "0.733 band from the page top: Pluto chrome + MeshCat viewport"
+    },
+    "cand-notebook-sliderbank-band.png": {
+      "pixels": [
+        1448,
+        1061
+      ],
+      "sha256": "163b375eb9d8d29006fc0d7f0001510cc095e29e18af005623e40dfe6b9b362f",
+      "note": "0.733 band through the preset and parameter banks"
+    }
+  }
+}
