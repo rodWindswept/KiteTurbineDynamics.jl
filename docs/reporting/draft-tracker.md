@@ -904,3 +904,41 @@ The draft ticks to v0.79.
 Two rulings stay in the cut chain and outside this pass.
 Comment 95 changes the section 6 intro, which still reads "three of them".
 The section 8 reference list also waits.
+
+v0.80 pass by @science-writer (2026-10-21).
+
+The founder withdrew the v0.79 bless on 2026-10-21.
+That entry stands as the record at `e8f1d45`.
+The composite at `e8f1d45` is the withdrawn review copy.
+No review copy holds a pin until the rebuild.
+
+This pass rewrites section 6.1 to the sketch the founder gave.
+The founder read the landed cut as jargon and asked for the plain version.
+The section now holds one paragraph of six short sentences.
+
+The first pair asks the question.
+Can cyclic pitch or cyclic banking act on one blade?
+Can it act on the whole rotor together?
+A third sentence defines a cyclic input as a blade angle that changes around the revolution.
+
+The second pair states the machine as it stands.
+The bridles set the pitch and the bank of each blade today.
+Both angles stay fixed all the way round, so the rotor has no cyclic input today.
+
+The last sentence gives the test.
+The test is a model study of both inputs.
+
+No sentence from the landed cut survives.
+The load-path pair leaves on the founder instruction, with the phase-relation clause.
+The BEM sweep name, the lateral-mode check and the tether-to-blade rule leave with it.
+One fact carries: the bridles fix both angles today.
+
+Two value tokens leave, 0 and 10, from the tilt sweep.
+Neither is a signed row, and no value token arrives.
+The section cites no register row, so the cited count holds at 59.
+
+Words read 11,458 from 11,597.
+The section body reads 76 words, from 215.
+STE reads 27 total at 0.24 per 100 words, from 28 at 0.24.
+Em dashes 0.
+The draft ticks to v0.80.

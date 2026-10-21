@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.79. Date 2026-10-21.
+Internal engineering report. Draft v0.80. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1192,9 +1192,12 @@ None of the three carries a scored result.
 
 ### 6.1 Cyclic pitch on the ring rotor
 
-The question is whether the ring rotor can take cyclic pitch, cyclic banking, or both. The input can act on one blade at a time, or on the whole rotor together. Today the bridle network sets the pitch and the bank of each blade. Its geometry holds both angles fixed for the whole revolution. A cyclic input would add a degree of freedom that the model does not carry.
-
-The rotor takes time to respond, so the tilt does not land where the input points. That tilt would steer the rotor. Tension above the rotor reduces the steer, but it cannot change the phase relation. The shaft carries tension and torque, and almost no bending, so the rim bridle would take the tilt reaction. The test is a BEM sweep from 0 to 10 degrees of tilt, plus a lateral-mode check. Until they run, the rotor phase lag stays a free parameter. A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord. The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round. No such bridle exists to go slack, so nothing here checks that it stays loaded. So the tether-to-blade rule binds only on a design the genome cannot yet generate.
+The question is whether cyclic pitch or cyclic banking can act on one blade.
+It could also act on the whole rotor together.
+A cyclic input changes the blade angle around the revolution.
+Today the bridles attach each blade to the network, and that attachment sets the pitch and the bank.
+Both angles stay fixed all the way round, so the rotor has no cyclic input today.
+The test is a model study of both inputs.
 
 ### 6.2 Cost of energy with scale
 
