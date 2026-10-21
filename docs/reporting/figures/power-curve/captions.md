@@ -45,15 +45,17 @@ The lowest scoring power is 5.30 kW at 11.0 m/s.
 The window-end power is the statistic the score charges. Above 11 m/s the
 score rises because the over-power charge, 5 x (P_end - 5)^2, prices the
 power the machine actually makes. No rated-power cap binds anywhere in the
-sweep: the commanded torque at 13.5 m/s is 0.39 of the cap.
+sweep. The clamp is a rope-protection torque cap, and the window-end power
+follows the cube of the wind across the whole sweep (NR-070).
 
 The design point is not an optimum on these numbers. The 11.0 m/s point
 scores 27.3181 and the 11.0097 m/s point scores 27.3635. The plate therefore
 makes no claim about an optimum. It draws the response.
 
-The 5 kW floor is a gate and not a target. The Betz ceiling, the floor and
-the over-power charge all evaluate at the design rating of 11.0 m/s, so the
-ceiling drawn for a point flown at 13.5 m/s would not be its bound.
+The 5 kW floor is a gate and not a target. The Betz screens evaluate at the
+design rating of 11.0 m/s. They are a screening test on the rated machine and
+not a physical bound at every wind, so a ceiling drawn there would not be the
+bound of a point flown at 13.5 m/s. The plate draws none.
 
 No fit draws here, and no line extends past the swept ends. The x-axis is
 metric, so a polyline through the evaluated points is honest. The ends are
