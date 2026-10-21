@@ -999,3 +999,10 @@ Words read 11,533 from 11,465.
 STE holds 27 total at 0.23 per 100 words, from 27 at 0.24.
 Em dashes 0.
 The draft ticks to v0.83.
+
+One stack note rides with the paragraph, from @science-validator.
+The dashboard is Makie: `display(GLMakie.Screen(), fig)` at `src/dashboard_v2.jl:19`.
+The notebook draws through MeshCat, not Makie.
+It calls `MeshCat.Visualizer()` at `notebooks/design_explorer.jl:40`.
+The paragraph says "three dimensions" and names no stack for the notebook.
+A sweep has no cause to correct it.
