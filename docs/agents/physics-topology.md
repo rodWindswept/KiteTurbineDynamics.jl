@@ -85,6 +85,15 @@ reads `path` or `paths` 32 times, and the fidelity sense holds most of them:
 rapid 8, ODE 5, cold 3, then warm, default, scoring and "the paths". A drawn
 series never takes it.
 
+**Member words (Rod, 2026-10-21).** "Beam" names the rigid tube of a polygon
+ring. "Line" names a tensile rope segment between ring polygons. A ring is a
+polygon of nodes and tubular beams, so its tubes never take "line". Load sign
+does not change the member word: a tube in tension is still a beam, and a rope
+never carries compression. The page already keeps the split. §2.3 reads "The
+beam load and the line load differ", and `ring-utilisation` reads "the
+beam-column interaction on the worst beam". The ring beams hold compression at
+R6 and tension at R5 alone, and every one stays a beam.
+
 **Reader name (Rod, 2026-10-15):** the report reads **lifting bridles** for the
 bearing-to-rotor member. The `DECISIONS.md` pages keep the **gold bridles**
 alias. The code identifiers and the recorded pages hold their spelling.
