@@ -408,7 +408,7 @@ function build_dashboard_v2(sys        ::KiteTurbineSystem,
 
     strip = GridLayout(fig[1, 1:6])
     strip_kpis = [("GEN ELEC kW", strip_power), ("Ω HUB rpm", strip_rpm),
-                  ("TETHER FoS", strip_fos), ("RING UTIL", strip_util),
+                  ("SWL MARGIN", strip_fos), ("RING UTIL", strip_util),
                   ("WIND m/s", strip_wind), ("TWIST", strip_twist),
                   ("TIME", strip_time)]
     for (i, (lbl, vo)) in enumerate(strip_kpis)

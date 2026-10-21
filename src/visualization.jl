@@ -562,7 +562,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # ── SECTION L: Lift Device Status ──────────────────────────────────────────
     hlbl(""; fontsize=6)
     hlbl("── Lift Device ───────────────────────────"; fontsize=13, font=:bold)
-    lift_status_lbl = hlbl("Type: Rotary  |  T_lift =      0 N")
+    lift_status_lbl = hlbl("Type: Rotary | T_lift =     0 N")
     lift_cl_lbl     = hlbl("R = 3.7 m  |  β = 30.0°")
     lift_furl_lbl   = hlbl(""; fontsize=10, color=:lawngreen)
 
@@ -592,7 +592,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # Tether max tension vs SWL — measured at mid sub-segment (avoids ring attachment spikes)
     hlbl("Tether tension  (SWL = $(Int(TETHER_SWL)) N)"; fontsize=11, color=:steelblue)
-    t_frame_lbl = hlbl("  max      0 N  ·  FoS      ∞")
+    t_frame_lbl = hlbl("  max      0 N  ·  SWL margin      ∞")
     Colorbar(hud[hnr!(), 1]; colormap=tension_cmap, limits=(0.0, Float64(TETHER_SWL)),
              vertical=false, height=14, tellheight=true, tellwidth=false,
              label="0 N → $(Int(TETHER_SWL)) N SWL",
@@ -628,8 +628,11 @@ function build_dashboard(sys       ::KiteTurbineSystem,
     # P_peak: maximum electrical power achieved during the run
     hlbl(@sprintf("P_peak   %6.2f kW  |  ω_peak  %6.3f rad/s (%5.1f rpm)",
                    P_peak, omega_peak, omega_peak * 60 / (2π)))
-    # T_peak: maximum tether tension and corresponding factor of safety
-    hlbl(@sprintf("T_peak   %5.0f N  ·  FoS %s  |  V_peak  %5.2f m/s",
+    # T_peak: maximum tether tension and headroom to the safe working load.
+    # NB the ratio is TETHER_SWL / T_max and TETHER_SWL is already derated
+    # (splice 0.90 x creep/fatigue/UV 0.50), so it is NOT a structural FoS and
+    # must never print under the word FoS beside the campaign's 2.5 floor.
+    hlbl(@sprintf("T_peak   %5.0f N  ·  SWL margin %s | V_peak %5.2f m/s",
                    T_peak, fos_str(fos_t_peak), V_peak))
     hlbl(@sprintf("Slack events:  %d / %d frames (%.1f%%)",
                    slack_events, n_frames, 100.0*slack_events/max(n_frames,1)))
@@ -1001,7 +1004,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
             # `sys` from the build_dashboard closure — design-aware airborne mass.
             lift_margin_v = T_lift_val / max(autogyro_lift_required(p, sys)[1], 1.0)
             if ld_hud isa RotaryLifterParams
-                lift_status_lbl.text[] = @sprintf("Type: Rotary  |  T_lift = %6.0f N  |  pitch = %.1f×  |  CL/CD = %.1f",
+                lift_status_lbl.text[] = @sprintf("Type: Rotary | T_lift = %5.0f N | pitch = %.1f× | CL/CD = %.1f",
                     T_lift_val, ld_hud.CL_blade, ld_hud.CL_blade / 0.20)
                 lift_cl_lbl.text[] = @sprintf("R = %.1f m  |  β = %.1f°  |  elev = %.1f°  |  margin = %.1f×",
                     ld_hud.rotor_radius, rad2deg(β_actual), elev_lift_val, lift_margin_v)
@@ -1026,7 +1029,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         delta_omega_lbl.text[]  = @sprintf("Δω (hub−PTO)  = %8.4f rad/s", sf.delta_omega)
 
         # ── Structural ───────────────────────────────────────────────────────
-        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  FoS %s", sf.T_max, fos_str(sf.fos_tether))
+        t_frame_lbl.text[] = @sprintf("  max %5.0f N  ·  SWL margin %s", sf.T_max, fos_str(sf.fos_tether))
         c_frame_lbl.text[] = @sprintf("  max util %4.1f%%  ·  FoS %s",
                                         sf.ring_max_util*100.0, fos_str(sf.fos_ring))
         sag_lbl.text[]     = @sprintf("Max rope sag %5.1f mm  (seg %2d)  |  slack: %d lines",

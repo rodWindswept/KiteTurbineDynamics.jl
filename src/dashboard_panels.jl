@@ -348,7 +348,7 @@ function config_panel!(gp, ext_frames_obs, palette::DashboardPalette;
 
     Label(gp[6, 1:2], "── Run Peaks ──"; fontsize=9, font=:bold, color=palette.INK, halign=:left, tellwidth=false)
     peak_lbl  = Label(gp[7, 1:2], "P 0kW · ω 0rpm · T 0N"; fontsize=8, color=palette.INK_DIM, halign=:left, tellwidth=false)
-    fos_lbl   = Label(gp[8, 1:2], "FoS ∞ · V 0 · Slack 0"; fontsize=8, color=palette.INK_DIM, halign=:left, tellwidth=false)
+    fos_lbl   = Label(gp[8, 1:2], "SWL margin ∞ · V 0 · Slack 0"; fontsize=8, color=palette.INK_DIM, halign=:left, tellwidth=false)
     Label(gp[9, 1:2], "── Regen State ──"; fontsize=9, font=:bold, color=palette.INK, halign=:left, tellwidth=false)
     state_lbl = Label(gp[10, 1:2], "Brake:OFF  Buckle:OK  Slack:OK  State:IDLE"; fontsize=8, color=palette.INK_DIM, halign=:left, tellwidth=false)
 
@@ -357,7 +357,7 @@ function config_panel!(gp, ext_frames_obs, palette::DashboardPalette;
         b = efs[end].base
         rpm = abs(b.omega_hub) * 60 / (2π)
         peak_lbl.text[] = @sprintf("P %.2fkW · ω %.0frpm · T %.0fN", b.P_kw, rpm, b.T_max)
-        fos_lbl.text[]  = @sprintf("FoS %s · V %.1f · Slack %d", fos_str(b.fos_tether), b.V_hub, b.n_slack)
+        fos_lbl.text[]  = @sprintf("SWL margin %s · V %.1f · Slack %d", fos_str(b.fos_tether), b.V_hub, b.n_slack)
         state_lbl.text[] = @sprintf("Brake:%s  Buckle:%s  Slack:%s  State:%s",
             b.brake_engaged ? "ON" : "OFF",
             b.buckling_risk ? "WARN" : "OK",
