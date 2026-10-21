@@ -69,7 +69,7 @@ md"""
 Tulloch's PhD includes a reference power curve (`PowerCurve_with_exp.pdf`, §5) —
 his simulated ideal for Config 8 at Cp = 0.15, λ = 4.2.
 
-**⏱️ This cell runs 5 settle operations (~5 minutes). The dot → will pulse while computing.**
+**⏱️ This cell runs 5 settle operations (~40 s at this revision). The dot → will pulse while computing.**
 
 We run the simulator at the same wind speeds Tulloch used (5–11 m/s), with the same
 system parameters he specified. The aerodynamics come from an AeroDyn BEM table
@@ -104,14 +104,23 @@ end
 md"""
 ## 4. Results
 
-At every wind speed, our simulator consistently predicts **20% less power** than
-Tulloch's reference curve. This is not a model error — it's a **controller
-difference**. Our k_mppt is sized for the reference operating point (λ ≈ 4.0)
-but the equilibrium settle finds a slightly different point (λ ≈ 3.4) where
-the generator loads harder.
+At all five reference wind speeds, our simulator predicts less power than
+Tulloch's reference curve. The gap narrows from **25.4%** at 5 m/s to
+**12.6%** at 8 m/s, then widens again to **17.2%** at 11 m/s, the rated
+case. Across the five points that is **16.9%** in aggregate (equal weight
+per wind speed, 2148.2 W against 2585.0 W).
 
-A simple k_mppt retune would place the equilibrium at λ = 4.0 and close the gap
-to **< 5%**. The same controller tuning is straightforward on a physical turbine.
+The sweep commands λ = 4.2, Tulloch's reference point. Our k_mppt is sized
+at the builder's own design λ = 4.0 (`scripts/daisy_builder.jl`), and the
+settle arrives at λ = 3.30–3.48. The controller is therefore loaded at a
+point it was not sized for, and the equilibrium lands 0.5–0.7 below the
+point it was sized for. Whether the controller gain or TRPT losses set that
+equilibrium has not been separated.
+
+A k_mppt retune that placed the equilibrium at λ = 4.0 might close most of
+the gap. That retune has not been run at this revision, so it is the next
+experiment rather than a measured result. The same controller tuning is
+straightforward on a physical turbine.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000010
@@ -142,7 +151,9 @@ The Bergey is SWCC‑certified (small wind certification). Its peak Cp of **0.30
 is measured, published, and independently verified. Our simulator's BEM table
 (for NACA 4412, the same airfoil family) peaks at Cp = **0.305**.
 
-That's a **1.6% difference** — identical within measurement tolerance.
+The BEM table's peak Cp, **0.305**, sits **1.7%** above Bergey's certified
+**0.30**. That is a peak-point check, not a curve comparison: it supports
+the blade aerodynamics at their optimum, not across the λ range.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000012
@@ -157,9 +168,11 @@ let
 	| Rotor | 7.0 m, 3‑blade upwind | 8.0 m, 3‑blade actuator disc |
 	| Tether? | None | None |
 
-	**Conclusion:** the 20% gap vs Tulloch's Daisy is entirely from TRPT‑specific
-	physics (tether drag, elevation cosine, ring compression). The blade
-	aerodynamics themselves are correct to within 2%.
+	**Conclusion:** across the five reference wind speeds the gap runs 12.6–25.4%
+	(16.9% equal-weighted). We attribute it to TRPT‑specific physics — tether drag,
+	elevation cosine, ring compression — rather than to the blade aerodynamics.
+	This notebook does not decompose the gap between those terms and the λ
+	shortfall in §4; that decomposition is the next experiment.
 	"""
 end
 
@@ -168,8 +181,9 @@ md"""
 ## 6. What This Means — and What Comes Next
 
 We now have a simulator whose **aerodynamic model is independently validated**
-(against a SWCC‑certified turbine) and whose **TRPT model matches published
-predictions** (against Tulloch's PhD). The same physics now scales.
+(against a SWCC‑certified turbine) and whose **TRPT model tracks the shape of
+Tulloch's published curve while sitting 12.6–25.4% below it** (against
+Tulloch's PhD). The same physics now scales.
 
 **To try the 50 kW V10‑Spoke:**
 
