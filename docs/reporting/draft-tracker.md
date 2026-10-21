@@ -869,3 +869,38 @@ The one point one factor on the Betz screens has no row.
 The three screens rest on a source read, and NR-034 signs the ceiling value only.
 
 Words read 12,104 from 11,344. STE 34 total at 0.28 per 100 words, and the rise sits in the twelve table rows that the linter reads as sentences. Em dashes 0. Citations 58, every one signed. The draft ticks to v0.78.
+
+v0.79 pass by @science-writer (2026-10-21).
+
+This pass lands the founder bless on section 6.1.
+The bless closes the ruling that comment 100 opened.
+The cut and the do-not-trim strings no longer compete for the section.
+
+Section 6.1 takes the plain rewrite.
+Eighteen paragraphs fall to two.
+The body reads 215 words, split 69 and 146.
+The count excludes the heading.
+
+The room convention reads 222 with the heading counted.
+The heading takes "Cyclic pitch on the ring rotor", under comment 97.
+Each of the five do-not-trim strings reads one hit.
+
+Two load-path facts return from the aero read.
+Tension above the rotor reduces the steer.
+It cannot change the phase relation, so the sentence carries both clauses.
+The shaft carries almost no bending, so the rim bridle takes the tilt reaction.
+
+Six value tokens leave with the cut, and none is a signed row.
+They are 0.21, 0.49, 30, 50 and 90 three times.
+No value token arrives.
+The section cites no register row, so the cited count holds at 59.
+
+Words read 11,597 from 12,270.
+STE reads 28 total at 0.24 per 100 words, from 30 at 0.24.
+Two long sentences leave, and the long-paragraph count holds at 14.
+Em dashes 0.
+The draft ticks to v0.79.
+
+Two rulings stay in the cut chain and outside this pass.
+Comment 95 changes the section 6 intro, which still reads "three of them".
+The section 8 reference list also waits.

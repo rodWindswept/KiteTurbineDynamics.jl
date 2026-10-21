@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.78. Date 2026-10-20.
+Internal engineering report. Draft v0.79. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1190,102 +1190,11 @@ This section sets out three of them.
 Each one states the question, the reason the current model cannot close it, and the test that would.
 None of the three carries a scored result.
 
-### 6.1 Cyclic pitch and the lift kite
+### 6.1 Cyclic pitch on the ring rotor
 
-The v1 BEM carries collective pitch only.
-Azimuth-dependent (cyclic) pitch is not modelled.
-The model source sits in `CoaxialAutogyroStacking.jl`: one scalar pitch value per rotor in `src/bem.jl`, with no azimuth term.
+The question is whether the ring rotor can take cyclic pitch, cyclic banking, or both. The input can act on one blade at a time, or on the whole rotor together. Today the bridle network sets the pitch and the bank of each blade. Its geometry holds both angles fixed for the whole revolution. A cyclic input would add a degree of freedom that the model does not carry.
 
-That BEM belongs to the lifter stack.
-The lifter stack carries a swashplate with three actuators on the stationary ring.
-That geometry can produce cyclic pitch.
-The stack uses it for collective pitch only.
-The model and its tests do not exercise the cyclic case.
-
-This report studies a different rotor.
-The main rotor is a three-blade ring with fixed pitch and a fixed bank angle.
-The search chooses the blade bank angle for each design.
-That angle is not a control input.
-So a cyclic input would be a new degree of freedom on this rotor.
-
-The question splits in two.
-The two parts carry different risk.
-
-The first part is control authority.
-Cyclic pitch is a control mechanism, not a lift source.
-One pitch cycle per revolution tilts the tip-path plane.
-The two-blade teetering hub on the stack gives a 90 degree rotor phase lag by construction.
-A delta-3 link or an underslung teeter would shorten that lag.
-Blade flexibility would shorten it too, though the model carries no flap dynamics.
-
-That lag belongs to the stack.
-The ring rotor has no teeter, and neither model carries a flap hinge for it.
-So the lag on the ring is a ring-and-tether property, unmodelled in this model, not a flap response.
-
-A tilt command has an azimuth, and that azimuth turns whenever the rotor phase lag is not zero.
-The tilt and steer then act off the intended axis.
-If the lag exceeds 90 degrees, the part of the tilt along the intended axis reverses sign.
-The tilt gives side force and moment: steer and load relief.
-This part is still plausible and cheap to study.
-
-The second part is self-lift.
-The autogyro thrust of the rotor is one source of shaft tension.
-The lifter supplies the other source and sets the floor.
-
-A cyclic tilt trades axial thrust for side force.
-The moment capacity of the shaft rises with its tension.
-A lift taken here is torque capacity given up.
-Any added axial thrust also carries an induced-power cost.
-
-The two duties trade along one curve.
-A rotor that drives a generator runs below its zero-torque autorotation speed, and lift falls as extraction rises.
-The stack hardware already takes a small generator load.
-The model solves the zero-extraction limit.
-So "cyclic blades, no lift kite" is an energy-budget question, not a hinge question.
-The test should measure the trade curve, not a binary.
-
-One structural constraint decides the architecture.
-A TRPT shaft carries tension and torque, and almost no bending.
-A cyclic-commanded thrust tilt must therefore leave through something other than the shaft.
-
-The stack shows that a teetering hub works at this scale.
-That is existence proof for a component, not a path for this rotor.
-A ring rotor would take the tilt reaction through its rim bridle.
-So the structural question moves to the bridle.
-The per-revolution pitch linkage is the part neither machine carries.
-
-The test has two legs.
-First, can one-per-rev cyclic pitch on a TRPT rotor give useful tilt and steer authority with no bending-capable shaft?
-Second, what Cp cost does any axial component carry?
-
-Close it with an azimuth-resolved BEM on the 50 kW ring rotor.
-Add the azimuth term to the pitch input.
-Add the tilt degree of freedom to the model.
-Sweep the tilt from 0 to 10 degrees.
-That range is a plan value, not a signed row.
-Sweep the rotor phase lag as a free parameter, not as a fixed 90 degrees.
-
-Report the change in Cp at fixed thrust.
-Report the lift against extracted power at fixed wind.
-Report the hub moment against the offset of a hub the study would add.
-Run a lateral-mode check against the existing shaft model.
-Check the ring tilt against the rim bridle.
-Until they run, the rotor phase lag stays a free parameter.
-
-A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord.
-The bridle does not run down to the next ring. That run would cost too much in bridle line drag, so it anchors at a point on the TRPT line of the segment below the rotor.
-For expansion blades the model carries the geometry: two lines, 0.49 span outboard of the ring and 0.21 span inboard, both anchored about 30% down the segment below, and there the bank angle sets the line tension without moving the anchor.
-The sizing block would compute the bridle tension and the lateral load at that anchor. No run has ever entered it, and no gate reads either value.
-No tether-to-blade bridle exists on the main rotor in the model, so nothing here checks that one stays loaded.
-The tether-to-blade rule therefore binds only on a design the genome cannot yet generate.
-
-The repo holds the platform, the shaft model and the BEM.
-The azimuth term is one addition.
-The tilt degree of freedom is the second.
-The torque sign through the zero-torque crossing is the third.
-
-Below the zero-torque crossing the model consumes power, while the machine drives its generator.
-The branch comes first. The trade curve means nothing without it.
+The rotor takes time to respond, so the tilt does not land where the input points. That tilt would steer the rotor. Tension above the rotor reduces the steer, but it cannot change the phase relation. The shaft carries tension and torque, and almost no bending, so the rim bridle would take the tilt reaction. The test is a BEM sweep from 0 to 10 degrees of tilt, plus a lateral-mode check. Until they run, the rotor phase lag stays a free parameter. A tether-to-blade bridle holds the blade tip down, from the underside, the concave side of the chord. The model carries no tether-to-blade bridle. It gives every blade one bank angle, all the way round. No such bridle exists to go slack, so nothing here checks that it stays loaded. So the tether-to-blade rule binds only on a design the genome cannot yet generate.
 
 ### 6.2 Cost of energy with scale
 
