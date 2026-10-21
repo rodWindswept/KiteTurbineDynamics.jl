@@ -19,8 +19,7 @@ the rest. The ground rate climbs to the window mean 13.38 rad/s
 (NR-008). The warm start as coded over-strains a line at 2.841 ms (NR-013 ext).
 The ruling-mode condition run holds the break gate off during the relax
 and completes the 50 s run with no line break. It peaks at 1.448, the
-extract grid max. The gate map shows the rope-break gate reads every
-step. The sampled gates read once per second.
+extract grid max. The key names the four gate marks.
 
 ## Provenance line
 
@@ -92,5 +91,23 @@ key: the key prints "every step, relax included" and "one read per
 second", and the last two sentences of the technical caption print the
 same two facts. The caption text, its nine rows and their order do not
 change.
+
+**Delta** v6 (2026-10-21): the duplication rule of SPEC v4 applies to the
+re-cut key. The two cadence sentences leave the technical caption. They
+print one fact twice.
+
+The key now draws "every step" and "once per second" at
+`eval-timeline.py` L333-360, ledger L26 and L32.
+
+The phrase "gate map" printed zero times in the 47-string ledger. It
+survived only in the script head comment.
+
+The replacement restores the closing line of the caption plan. The
+caption reads nine sentences and 101 words, from ten and 111. No register
+row and no cited count moves.
+
+`gate marks` also prints zero times in the 47 strings. Its authority is
+the readout-list pin at `SPEC.md` L114. The next line binds that form for
+labels, captions and prose alike.
 
 **Delta** v1 (2026-10-13): created with the kit landing.
