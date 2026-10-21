@@ -1,9 +1,9 @@
 {
   "slug": "figure-12-instrument-gallery",
   "purpose": "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, v2 cockpit, genome chooser, 10 kW winner cartography. One pass, one commit.",
-  "head": "9e0866d4e35f58a6485a2bf641d2f418471d95c7",
+  "head": "c15d0e0c0a475ff45abd891ae8dbf992f9c6a64c",
   "branch": "bank-derate-cos2p65",
-  "head_commit_time": "2026-10-21 18:49:59 +0100",
+  "head_commit_time": "2026-10-21 18:55:05 +0100",
   "era": "post-95c385d_wind-authority",
   "reads_dataset": true,
   "dataset_note": "Three panels read no campaign row: v1 and v2 render the 10 kW canonical system from the tree (params_10kw(), settled at V = 11 m/s), and the chooser browses the telemetry CSVs without printing a value from one. The cartography panel decodes its ring stack from elite_archive.csv at the pin and prints no campaign quantity: its title carries the design tag and geometry descriptors only. No value elsewhere in the report is taken from any capture.",

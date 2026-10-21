@@ -1,6 +1,6 @@
 # Figure 12 instrument gallery: provenance
 
-Rendered at `9e0866d` (bank-derate-cos2p65), 2026-10-21 18:49:59 +0100. Era `post-95c385d_wind-authority`. One pass, one commit.
+Rendered at `c15d0e0` (bank-derate-cos2p65), 2026-10-21 18:55:05 +0100. Era `post-95c385d_wind-authority`. One pass, one commit.
 
 | capture | pixels | prints | dpi | sha256 |
 |---|---|---|---|---|
@@ -29,4 +29,4 @@ Type at these widths: v1 2.17 pt, v2 2.98 pt, chooser 2.92 pt, cartography 2.59 
 
 Source line for the plate:
 
-> captures: four instrument frames at `9e0866d` - v1 and v2 from `render-captures-head.jl`, chooser from `view_campaign_genomes.jl --smoke`, cartography from `render_winners_clean.jl` (title mode geometry) - era `post-95c385d_wind-authority` - cartography geometry read from `trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`, no value printed from it
+> captures: four instrument frames at `c15d0e0` - v1 and v2 from `render-captures-head.jl`, chooser from `view_campaign_genomes.jl --smoke`, cartography from `render_winners_clean.jl` (title mode geometry) - era `post-95c385d_wind-authority` - cartography geometry read from `trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv`, no value printed from it
