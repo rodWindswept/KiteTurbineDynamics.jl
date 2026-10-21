@@ -1,102 +1,113 @@
 # Chart-sense "line": the census after the Aero counter-read
 
-**Seat** science-writer. **Date** 2026-10-21.
-**Trigger** the `@aero-validator` counter-read on `45db35a`.
+**Seat** science-writer. **Date** 2026-10-21. **Revision** v2.
+**Trigger** the `@aero-validator` counter-read on `45db35a`, and the room
+reads that followed at `c9da885`.
 
-## The correction
+## What changed from v1
 
-Commit `45db35a` says the draft holds zero chart-sense uses. That sentence
-is false. Aero found two sites. A full sweep finds fourteen sites. They
-sit in six kits and in one draft sentence.
+1. **The series word is `curve`, not `path`.** My v1 table gave `path` at
+   four sites. Author ran that word against the draft before pasting it.
+   The draft reads `path` or `paths` 32 times. The fidelity sense holds
+   most of them: rapid 8, ODE 5, cold 3, then warm, default, scoring and
+   "the paths". Section 2.5 owns the word. `curve` reads five times, and
+   every hit is a plotted relation: the load curve at 303, the power
+   curve at 489, the trade curve at 1223, 1228 and 1271. Fig found zero
+   `curve` in any ledger. So `curve` costs nothing. `path` would cost a
+   second sense of a defined term.
+2. **Only six of the sites can reach the page.** Author read the two
+   builders. `build_draft_docx.py:52` and `build_draft_pdf.py:195` both
+   open `kit / "captions.md"`. `parse_caption_sections`
+   (`build_draft_pdf.py:142-158`) keeps only the plain and the technical
+   tier, and drops every record note. The draft holds eight seat markers
+   and no marker for `power-curve` or `machine-power-trend`. I re-ran
+   that check: both slugs read zero in the draft. So the printed set is
+   five caption faults and one body sentence.
+3. **My ledger sweep covered ten kits of thirteen.** `machine-corner-grid`,
+   `machine-evolution-strip` and `machine-winner-hero` hash `checks.log`
+   and carry no `label-ledger.txt`. `system-anatomy` has no SVG: its five
+   outputs are `checks.log`, the ledger, `.pdf`, `.png` and `.tex`. The
+   method line in v1 overstated the sweep. I closed the gap: the three
+   ledger-less SVGs read zero drawn `line`, and the anatomy `.tex` reads
+   six hits, all the tension member ("line - one tensioned line of the
+   TRPT", "cyan line", "lift line").
 
-Both Aero finds are real misses of mine. One of the two is not where Aero
-places it. `machine-evolution-strip/captions.md:124` sits inside the
-record note `Power column note (2026-10-20)`. That note does not print.
-The printed strip caption is clean. Line 35 reads "the TRPT lines between
-rings" and line 51 reads "three lines, six rings". Both name the
-structural member. The strip ledger also reads zero.
+## The printed set: six repairs, no byte
 
-## Method
+| # | Site | Old | New |
+|---|---|---|---|
+| 1 | draft §3.4 L897 | Three lines trace the island best-so-far paths, one step per generation (NR-045). | Three curves trace the island best-so-far values, one step per generation (NR-045). |
+| 2 | `pca-landscape/captions.md:28` | Three lines trace the island best-so-far paths, one step per generation. | Three curves trace the island best-so-far values, one step per generation. |
+| 3 | `pca-atlas/captions.md:30` | thin lines trace the island journeys. | thin curves trace the island journeys. |
+| 4 | `ring-utilisation/captions.md:37` | The red dashed line is the fail boundary at the unit value | The red dashed rule is the fail boundary at the unit value |
+| 5 | `ring-utilisation/captions.md:38` | The purple line is the campaign structural gate. | The purple rule is the campaign structural gate. |
+| 6 | `twist-limit/captions.md:39` | Its lines cannot reach the axis, so no over-twist limit exists. | Its tension lines cannot reach the axis, so no over-twist limit exists. |
 
-1. Every `line` or `lines` hit in the draft: 45 lines, each read in
-   context and classed. The other hits are inert: `pipeline`, `lineage`,
-   `headline`, `n_lines`.
-2. Every hit in `figures/*/captions.md` and `figures/*/captions-draft.md`,
-   read against its section header. This separates printed captions from
-   record notes.
-3. Every hit in `figures/*/label-ledger.txt`, the drawn text layer.
+Site 6 is not a chart-sense fault. My v1 census classed it structural,
+and that reading holds. `src/trpt_twist_limit.jl:50`, Case B, `disc < 0`,
+reads "The lines cannot reach the axis, so they cannot cross and there is
+no stability limit." The caption translates that docstring. The referent
+is the segment tether. The added word earns its place anyway: the caption
+sits 300 lines from the §2.1 definition. Author counted the site as a
+sixth fault. Aero reclassified it. Both are right about the fix. The
+print count is five faults plus one disambiguation.
 
-## The census
+`captions.md` sits in no manifest output list. All six moves are text
+only: no hash, no re-mint, no F-VALUE reopen.
 
-Class: body, caption or drawn. Cost: text moves no byte; re-cut moves the
-drawn string and re-pins the manifest.
+## The queued set: forty-eight sites, no re-mint fires alone
 
-| # | Site | Class | Old | New | Cost |
-|---|---|---|---|---|---|
-| 1 | draft §3.4 L897 | body | Three lines trace the island best-so-far paths, one step per generation (NR-045). | Three paths trace the island best-so-far values, one step per generation (NR-045). | text |
-| 2 | trend captions 28 | caption | one segment that lies on the line | one segment that lies on the 5 kW rule | text |
-| 3 | trend captions 33 | caption | The line is a step. | Each island draws as a step. | text |
-| 4 | trend captions 34 | caption | No line interpolates | Nothing interpolates | text |
-| 5 | trend captions 40 | caption | on the island 3 line | on the island 3 step | text |
-| 6 | power-curve captions 16 | caption | the lower half of the line is a reading and not a gap | the lower half of the curve is a reading and not a gap | text |
-| 7 | power-curve captions 60 | caption | No fit draws here, and no line extends past the swept ends. | No fit draws here, and the curve stops at the swept ends. | text |
-| 8 | pca-atlas captions 30 | caption | thin lines trace the island journeys. | thin paths trace the island journeys. | text |
-| 9 | pca-landscape captions 28 | caption | Three lines trace the island best-so-far paths, one step per generation. | Three paths trace the island best-so-far values, one step per generation. | text |
-| 10 | ring-utilisation captions 37 | caption | The red dashed line is the fail boundary at the unit value | The red dashed rule is the fail boundary at the unit value | text |
-| 11 | ring-utilisation captions 38 | caption | The purple line is the campaign structural gate. | The purple rule is the campaign structural gate. | text |
-| 12 | pca-atlas ledger 27 | drawn | thin lines = island journeys | thin paths = island journeys | re-cut |
-| 13 | pca-landscape ledger 27 | drawn | each line: the island best-so-far path, one step per generation | each island: its best-so-far path, one step per generation | re-cut |
-| 14 | eval-timeline ledger 27 | drawn | cold path (solid line) | cold path (solid) | re-cut |
+The full queue reads 14 (v1) + 29 (Aero doc surfaces) + 5 (the trend
+kit, found by Science Validator) = 48.
 
-Eleven text sites and three drawn sites. The kits are
-machine-power-trend, power-curve, pca-atlas, pca-landscape,
-ring-utilisation and eval-timeline. Sites 2 to 5 are cut already, in the
-candidate at `45db35a`.
+Series take `curve`. Gates take `rule` or `boundary`. The member takes
+`tension lines`. The trend kit doc strings read "31 points on each step"
+and "No step joins two eras."
 
-## Cost of reaching zero
+Two drawn legends stay queued on seated kits. `pca-landscape` and
+`pca-atlas` need a re-cut to reach zero. The string lives in the render
+script, the ledger and the caption, so the SVG text layer moves and four
+output hashes follow. Each waits for the next re-cut that kit needs for
+another reason.
 
-Sites 12 and 13 sit on seated exhibits. The appendix lists the parameter
-atlas and the levers landscape as built. A legend re-word there moves the
-SVG, the PNG, the PDF and the ledger. It also re-pins the manifest. Two
-re-mints for one legend word is the price of a clean census.
+`eval-timeline` is cheaper than v1 priced it. Fig read the ledger: line
+45 reads `ruling-mode condition run (dashed)` and line 51 reads
+`ω gnd (solid) · ω top (dashed)`. The kit writes bare `(solid)` and
+`(dashed)` everywhere else, so `cold path (solid)` is house style. It is
+a candidate, nine hashes, unseated, and it rides its next re-cut free.
 
-Site 14 is a candidate kit. It re-cuts free until the kit seats.
+## The rule
 
-A cheaper route holds the two seated legends. It then states the census
-with an exception: zero chart-sense use in printed prose, two seated
-legends queued. The figures seat holds that call.
-
-## The wording rule
-
-None of the eleven text edits adds a term. Each site takes a word the
-report or the plate already carries. The words are step, path, curve,
-rule and polyline. "Trace" stays with the measured time series, already
-at draft lines 683 and 942.
-
-## The ban row
-
-The record bans bare "the line" for a lift-chain member
-(`docs/agents/physics-topology.md` §2). It held no rule for a drawn
-series. That rule now sits in the same block:
+`docs/agents/physics-topology.md` §2 now carries it, next to the ban on
+bare "the line" for a lift-chain member:
 
 > **Drawn series (2026-10-21).** A drawn series is not a line. "Line"
 > names the tension member only, in body prose, in a caption and in the
 > drawn text layer. Each drawn series takes the word its plate already
-> uses: step for a best-so-far series drawn as steps, path for an island
-> journey, trace for a measured time series, curve for power against
-> wind, and polyline for the drawn form of the power curve. A drawn gate
-> reads rule.
+> uses: step for a best-so-far series drawn as steps, trace for a
+> measured time series, curve for a series drawn against an axis, and
+> polyline for the drawn form of the power curve. A drawn gate reads
+> rule.
+
+> **"Path" is not a series word.** It names the fidelity routes at §2.5.
+> The draft reads `path` or `paths` 32 times, and the fidelity sense
+> holds most of them: rapid 8, ODE 5, cold 3, then warm, default, scoring
+> and "the paths". A drawn series never takes it.
 
 ## Lookalikes that are not faults
 
-- draft L928, "The panel reads three lines and six rings (NR-011)": the
-  TRPT line count. Gene `n_lines`, value 3. Structural.
-- draft L138, "extends that line of work": an idiom. No chart reading.
-- draft L695, "bows off its design line": a geometric line. No chart
-  reading.
-- `system-anatomy/label-ledger.txt`, six hits: structural by design.
+- draft L928, "three lines and six rings (NR-011)": the TRPT count, gene
+  `n_lines`, value 3.
+- draft L138 "extends that line of work": an idiom.
+- draft L695 "bows off its design line": a geometric line.
+- `system-anatomy`, six caption hits and six drawn hits: the member, by
+  design of the anatomy plate.
+- `ring-utilisation/captions-draft.md`: record debt. No builder opens it.
+- `twist-limit/captions-draft.md:19`, "the geometric line-crossing
+  limit": the collapse detector's own name for the event.
 
 ## Two prices stand
 
-Nothing here moves either call. The §6.1 cut stays free at a cited set of
-58. The trend plate stays at one row, 58 to 59 on NR-069.
+The §6.1 cut stays free at a cited set of 58. The trend plate stays one
+row, 58 to 59 on NR-069. Science Validator re-read both at `c9da885`:
+58 unique ids, zero NR-069, and §6.1 cites nothing.

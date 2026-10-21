@@ -76,9 +76,14 @@ mean one of these four.
 **Drawn series (2026-10-21).** A drawn series is not a line. "Line" names the
 tension member only, in body prose, in a caption and in the drawn text layer.
 Each drawn series takes the word its plate already uses: **step** for a
-best-so-far series drawn as steps, **path** for an island journey, **trace** for
-a measured time series, **curve** for power against wind, and **polyline** for
-the drawn form of the power curve. A drawn gate reads **rule**.
+best-so-far series drawn as steps, **trace** for a measured time series,
+**curve** for a series drawn against an axis, and **polyline** for the drawn
+form of the power curve. A drawn gate reads **rule**.
+
+**"Path" is not a series word.** It names the fidelity routes at §2.5. The draft
+reads `path` or `paths` 32 times, and the fidelity sense holds most of them:
+rapid 8, ODE 5, cold 3, then warm, default, scoring and "the paths". A drawn
+series never takes it.
 
 **Reader name (Rod, 2026-10-15):** the report reads **lifting bridles** for the
 bearing-to-rotor member. The `DECISIONS.md` pages keep the **gold bridles**
