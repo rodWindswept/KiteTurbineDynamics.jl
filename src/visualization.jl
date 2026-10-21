@@ -144,7 +144,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           times     ::Union{Vector{Float64}, Nothing}   = nothing,
                           u_settled ::Union{Vector{Float64}, Nothing}   = nothing,
                           wind_fn   ::Union{Function, Nothing}          = nothing,
-                          config_name::String = "Canonical 5-line")
+                          config_name::String = "Canonical 5-line",
+                          figsize   ::Tuple{Int, Int}                   = (1600, 950))
 
     n_frames = length(frames)
     # Segment count = consecutive-ring pairs = sys.n_ring - 1.  Derive it from the
@@ -247,7 +248,7 @@ function build_dashboard(sys       ::KiteTurbineSystem,
 
     # ── Figure — dark theme ───────────────────────────────────────────────────
     set_theme!(theme_dark())
-    fig = Figure(size=(1600, 950))
+    fig = Figure(size=figsize)
 
     ctrl = GridLayout(fig[1, 1])
     hud  = GridLayout(fig[1, 3])
