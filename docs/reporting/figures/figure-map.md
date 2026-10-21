@@ -37,7 +37,7 @@ carries the full roster around them.
 | 5 | 5 | §2.3 | The k basis, derived | `k-basis` | R2 | `scripts/results/k_sweep_daisy_5kw.csv` (blob `d17d1377`, run `adea1a3`). NR-041, NR-015 | F-VALUE PASS (`20d06bb`). Rod's visual pass, then the fold |
 | 6 | 10 | §3.3 | Ring utilisation plate | `ring-utilisation` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas landed (script `671ab96`; the log axis, the single-bar form, the corrected interaction form). The re-census at `c30b2ca` closes F-VALUE on the fix commit (`ef36c6c`) with zero defects. The round-6 hub-name re-cut lands (script `1af63fc`). The top row label reads "R6 (top)". The caption text takes the top forms. The FEEDBACKBOT1 re-cut lands (script `e3d664c`): the linear axis, the campaign structural gate at utilisation 0.40 and the R5 tension badge. The round-6 counter-read closes clean (`3038656`, 136 checks). Next: the F-VALUE re-check on the re-cut render, then the visual pass by Rod |
 | 7 | 11 | §3.3 | Twist limit plate | `twist-limit` | R2 | The extract `pair-extract-2026-10-08-winner-ops` | The 3.5 kit deltas and the 1.3 ruling landed (script `671ab96`; the notes out, the label re-space, the binding-limit title). The re-census at `c30b2ca` closes F-VALUE on the fix commit (`ef36c6c`) with zero defects. The round-6 hub-name re-cut lands (script `1af63fc`). The top row label reads "R6 (top)". The subtitle reads "ground to top". The FEEDBACKBOT1 re-cut lands (script `e3d664c`): the panel-B FoS 1.5 gate marks and the four method notes move to the technical caption. The round-6 counter-read closes clean (`3038656`, 136 checks). Next: the F-VALUE re-check on the re-cut render, then the visual pass by Rod |
-| 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | waiting | Landscape Phases 1 to 2 | The phase gates |
+| 8 | 12 | §3.4 | Lever set (four slots). Census and envelope | ⟨tbd⟩ | planned | `prior-chart-classes.md` (this kit, the class census). The 930-row island telemetry (`dd3cc6a`, run `a76c5e9`). The item-5 tables (`6c51f5c`). Rows 20 and 21 at R2 (`7329191`) | The gate is open: rows 20 and 21 read the same telemetry and closed Landscape Phases 1 to 2 at `7329191`, so the row no longer waits. The four classes are named at `prior-chart-classes.md` §5, each against a table that already exists: sensitivity rank bar (`extract-objective-vs-gene.csv`, 10 rows, a population read that leaves row 17's ODE perturbation study alone), disqualification census (`extract-failure-rates-by-value.csv` 13 rows with `extract-gate-failures-by-gene.csv` 40 rows), charge waterfall (`extract-penalty-contributions.csv` 508 rows with the four-channel summary), response surface (two genes at a time over the 930 rows, and the heatmap and 3D-surface class holds no row today). Parallel coordinates stays at row 25, which already names it against this telemetry. Next: the slot ruling (author seat, one four-panel plate or four plates), the value list and the register rows (numbers seat), the axis signs (aero seat) |
 | 9 | 14 | §3.5 | Machine evolution strip | `machine-evolution-strip` | R2 | The extract: island 3 best-so-far, seven panels (`a6d2dc6`, `517e69b`) | F-COUNT and F-PARSE on the re-rendered SVG (`74cfef9`). The round-6 hub-name retirement lands in the caption text ("topmost ring radius", no render move). The mass and power re-cut lands (script `ce9c5d8`): three signed values on every card, six register rows, and the appendix cell now reads all six from the manifest. Next: the visual pass by Rod, then the fold |
 | 10 | 9 | §3.3 | Machine winner and the plan, side, downwind capture set | `machine-winner-hero` | R2 | The winner genome. Makie captures of the recorded final operating pose (the pair-extract capture) | Seated in the draft (§3.3). The v0.41 counter-read closes clean (`0cbb9b8`, 226 checks). The round-6 hub-name re-cut lands (script `1af63fc`). The leader reads "topmost ring R6". The round-6 counter-read closes clean (`3038656`, 136 checks). The title takes the winner form (the founder note 2026-10-15): "hero" stops as a figure label. The winner-form sites take the forms in the draft (v0.49). The aero counter-read closes clean (`79da87c`). Next: the visual pass by Rod |
 | 11 | 15 | §3.5 | Design family grid | `machine-family-<name>` | planned | The Phase 3 exemplar list | The family names |
@@ -646,3 +646,31 @@ three slots).
   The drawn footer moves from `label-ledger.txt` L44 to L42, because the
   sorted ledger shrinks by two lines; the caption still carries the old
   pointer, so @author owns that one line.
+
+- **v58 (2026-10-21):** row 4's plate takes the lane-key re-cut, and the
+  two document landings that follow it join the record (figures and
+  author seats). The re-cut (`1aca23d`, `049438d`) separates gate from
+  cadence: the four rows name the gate alone, and the key draws band,
+  tick, box and diamond, each named by its own cadence. The label census
+  reads 47 strings from 50. Two runs reproduce all five outputs byte for
+  byte, and the drawn footer sits at `label-ledger.txt` L40. The SPEC
+  takes the key's legibility floor (`ddc9d67`): 7.5 pt on a 7.6 in
+  canvas prints at 6.76 pt in the A4 text block, and a slot under 6.51 in
+  puts the 7 pt rows below 6 pt, which is a re-cut and not a caption
+  restatement. The technical caption drops its two cadence sentences
+  (`e8e3b4e`, `6751d51`) and reads nine sentences and 101 words from ten
+  and 111. The caption file reads 863 words at 7 flags and 0.81. No
+  drawn value moves and no register row moves.
+
+- **v59 (2026-10-21):** the prior chart classes take a census, and row 8
+  stops waiting (figures seat). `prior-chart-classes.md` measures 320
+  image files in 16 directories, 163 distinct stems and 37 stems that
+  recur in three or more sets, then sorts those 37 against the 930-row
+  telemetry: 16 drawable now, 4 with one extract each, 16 that need a
+  run this campaign does not hold, and 1 already drawn. Row 8 moves from
+  `waiting` to `planned`, because rows 20 and 21 closed Landscape Phases
+  1 to 2 at `7329191`. Its four slots take named classes, and each reads
+  a table that already exists. The item-5 extract has carried those
+  tables since `6c51f5c` with no seat: the map read zero hits for
+  `lever-statistics` before this delta. No new row opens, no value
+  prints, and no plate hash or manifest pin moves.
