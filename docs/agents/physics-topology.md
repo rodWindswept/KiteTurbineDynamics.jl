@@ -73,6 +73,13 @@ their tensions are different quantities. `DECISIONS.md` calls the bridles the
 Do **not** write "bridles (cyan lines)". Do **not** write bare "the line" when you
 mean one of these four.
 
+**Drawn series (2026-10-21).** A drawn series is not a line. "Line" names the
+tension member only, in body prose, in a caption and in the drawn text layer.
+Each drawn series takes the word its plate already uses: **step** for a
+best-so-far series drawn as steps, **path** for an island journey, **trace** for
+a measured time series, **curve** for power against wind, and **polyline** for
+the drawn form of the power curve. A drawn gate reads **rule**.
+
 **Reader name (Rod, 2026-10-15):** the report reads **lifting bridles** for the
 bearing-to-rotor member. The `DECISIONS.md` pages keep the **gold bridles**
 alias. The code identifiers and the recorded pages hold their spelling.
