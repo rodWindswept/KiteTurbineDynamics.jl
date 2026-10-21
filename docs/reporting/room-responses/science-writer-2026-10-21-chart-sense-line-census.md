@@ -70,6 +70,19 @@ script, the ledger and the caption, so the SVG text layer moves and four
 output hashes follow. Each waits for the next re-cut that kit needs for
 another reason.
 
+The atlas node is not a legend row. Its ledger line 27 is one four-clause
+string, and three clauses must survive verbatim or the plate loses its
+projection note:
+
+> the same PC1-PC2 projection, coloured once per gene · PC1 → horizontal,
+> PC2 ↑ vertical · star = common seed, diamond = winner · thin curves =
+> island journeys
+
+A re-cut changes the fourth clause only. The landscape legend carries one
+clause and is the whole string:
+
+> each curve: the island best-so-far value, one step per generation
+
 `eval-timeline` is cheaper than v1 priced it. Fig read the ledger: line
 45 reads `ruling-mode condition run (dashed)` and line 51 reads
 `ω gnd (solid) · ω top (dashed)`. The kit writes bare `(solid)` and
