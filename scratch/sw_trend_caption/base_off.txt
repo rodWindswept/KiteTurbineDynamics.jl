@@ -1,0 +1,17 @@
+== docs/reporting/figures/machine-power-trend/captions.md: words=1039 total=12 per100w=1.15 ==
+-- sentences over 20 words --
+-- passive constructions --
+  | gns the mass and the totals, not the split.  Each component is rounded to four decimals and the total is compu
+  | .  Each component is rounded to four decimals and the total is computed unrounded, so a row's parts can sum one
+  | full record: the figure-provenance appendix, once the plate is seated.  ## Seat note (2026-10-20, figures sea
+  | nce carries the measured replacement, and the floor segment is labelled as the tightest pass. The drawing itsel
+-- nominalizations --
+-- paragraphs over six sentence-lines --
+  | Values cite NR-062 (window-end power), NR-006 (the seed), NR-005 (the winner)
+  | The plate prints four window-end values on the island 3 line. The seed reads
+  | The 5 kW rule is a gate and not a datum. The fitness function returns infinity
+  | Island 3 peaks at generation 10. The machine is lighter than the seed there
+  | From generation 10 to generation 26 the machine gets heavier by 0.2328 kg and
+  | - At generation 10 the penalty is the largest of the seven, 6.1670 kg. It
+  | - The statistic is the running-best window-end power. It is not a mean over
+
