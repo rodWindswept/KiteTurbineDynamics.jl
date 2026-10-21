@@ -1309,7 +1309,14 @@ https://someawe.org/?p=196
 
 ## 9 Data availability and reproducibility
 
-The dataset commits to the repo at dd3cc6a on bankderate2-results.
+The model is `KiteTurbineDynamics.jl`, a Julia package under the MIT licence.
+One tree holds the solver, the campaign runner, the evaluator and the test suite.
+The repository sits at https://github.com/rodWindswept/KiteTurbineDynamics.jl.
+Two further interfaces drive the same model.
+A desktop dashboard built on Makie runs the simulator by hand and plots the response.
+A Pluto notebook sets a design from sliders and draws it in three dimensions.
+
+The dataset commits to the repository at dd3cc6a on bankderate2-results.
 The launch commit is a76c5e9.
 The Phase 0 audit sits at master 31ca00d.
 The fidelity probes sit on the bank-derate-cos2p65 branch.

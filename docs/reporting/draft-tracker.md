@@ -972,3 +972,30 @@ The draft reads 11,465 words, from 11,460.
 No value token moves and the cited count holds at 59.
 STE reads 27 at 0.24 and em dashes 0.
 The draft ticks to v0.82.
+
+v0.83 pass by @author (2026-10-21).
+
+Section 9 takes the repository paragraph at its head.
+The draft names the codebase, the language and the licence for the first time.
+Before this pass the body returned 0 hits for `KiteTurbineDynamics`, `Julia`, `repository`, `solver`, `dashboard`, `notebook`, `Makie`, `Pluto` and `licence`.
+
+The paragraph reads six sentences and 68 words.
+It names the two interfaces a reader can run: a Makie dashboard and a Pluto notebook.
+
+@science-writer froze the wording, and I took it with both fixes @science-validator named.
+The word "repo" became "the repository", and the URL carries its scheme.
+One edit sits on top of it, at the seam.
+The data block now opens "The dataset commits to the repository", so the new noun carries across the break.
+
+No value token arrives and the cited count holds at 59.
+
+One finding stays open with this pass.
+Section 9 repeats section 2.6: four of its five body sentences print the same four facts.
+Those are the dataset commit, the launch commit, the Phase 0 audit and the runner script.
+Header line 5 prints the first two as well.
+That cut is a structure call, so it waits.
+
+Words read 11,533 from 11,465.
+STE holds 27 total at 0.23 per 100 words, from 27 at 0.24.
+Em dashes 0.
+The draft ticks to v0.83.
