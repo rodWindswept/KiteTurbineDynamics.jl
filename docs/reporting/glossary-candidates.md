@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v21, numbers-free by construction (no measurement values, no
+**Status** PREP v22, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -54,6 +54,7 @@ awe-knowledge wiki before it ships.
 | carousel | Method name (KiteGen). Define only where U1 uses it. | outline section 3 | verify |
 | rotating reel | Method name (Benhaïem, Schmehl). A rotating-reel machine controls torque transfer with phase lag. | outline section 3, anchor table | verify |
 | cyclic pitch | Method name (someAWE). | outline section 3 | verify |
+| cyclic banking | The bank angle changes around the revolution. | draft section 6.1, founder sketch 2026-10-21 | room-supplies |
 | tensile kite network | The design concept of joining kites as one tensile network. The Daisy lineage carries it. | outline section 3, Read chapter anchor | supply |
 | glide ratio | The aerodynamic ratio behind the fly-gen and ground-gen power trade. | outline section 2, Trevisi | supply |
 
@@ -412,3 +413,8 @@ defect, like a missing register row.
   The row takes the founder gravity form of 2026-10-16: gravity pulls the sag straight down.
   It takes the instrument-finding clause too, so the rule reads beside the printed disagreement (2026-09-15 ruling 2).
   The row stays numbers-free, so the winner read stays a binding slot for the register (NR-059). No other change.
+
+- **v22 (2026-10-21):** the cyclic banking row lands at the science-writer seat, on the founder sketch for section 6.1.
+  The section now asks for both inputs, and the cyclic pitch row above already covers the first.
+  The action reads room-supplies, because no repo record defines the term and the analysis room holds the exact reading.
+  The row carries no value. No other change.
