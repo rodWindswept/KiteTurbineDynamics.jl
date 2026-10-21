@@ -15,7 +15,7 @@
 | NR-027 | The floor numeral, with NR-039, per the section 2.4 table | Signed |
 | NR-029 | The window mean 13.38 rad/s (the taps basis) | Signed |
 | NR-039 | The same floor numeral, as the over-power ceiling | Signed |
-| NR-042 | The clearance gate floor 1.5 m — the "≥ 1.5 m, read once" string. Winner 5.468 m at decode, margin +3.968 m | Signed (science-validator, SV5, `8c278a5`) |
+| NR-042 | The clearance gate floor 1.5 m — the "≥ 1.5 m, at decode" string. Winner 5.468 m at decode, margin +3.968 m | Signed (science-validator, SV5, `8c278a5`) |
 
 The figure draws no other row. The gate-map rows read the code at
 a89642b: ground clearance at decode, rope break at every step, the
@@ -94,3 +94,17 @@ No drawn row changes.
 
 **Form note** (2026-10-15): swept at the v6 re-cut. The head comment
 reads "ground ring and top ring". No drawn text is affected.
+
+**Delta** v9 (2026-10-21): the readability re-cut (script `e974c7a`). The
+lane-4 labels read eleven lines at four anchors, and the blocks clear at
+0.55 against the 0.30 pitch. The gate key draws as one line and names
+the four marks. The phase-strip label reads "relax (grey)". The
+cold-path label carries its cadence, "one value every 10 ms". The lesson
+line moves to ink 7.5. The power-floor block keeps its four lines, so
+NR-039 keeps its drawn name. The NR-042 string reads "≥ 1.5 m, at
+decode", and the key carries the "once" ("diamond = one read"). The label
+census reads 50 strings (52 before: 14 out, 11 in, two rewrites, one
+key). No drawn value moves, and no register row changes. Two runs at the
+same pin reproduce all five outputs byte for byte. The drawn footer
+moves from `label-ledger.txt` L44 to L42, because the sorted ledger
+shrinks by two lines; the caption carries the old pointer.

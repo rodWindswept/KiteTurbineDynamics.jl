@@ -1,5 +1,4 @@
 (last five samples)
-(t > 10 s)
 0
 0.5
 1.0
@@ -19,34 +18,33 @@
 50
 6
 9
+Marks: band = a span of reads, tick = one read, box = the last five samples, diamond = one read.
 The cold path holds the window; the warm start breaks in milliseconds
 The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing.
 Winner island-3 machine · as-coded cold and warm paths · 100 Hz extract at tree 980de02 · era post-95c385d_wind-authority
-at decode
 break strain — rope-break gate
-cold path (solid line)
+cold path (solid line) — one value every 10 ms
 evaluation time (s)
-every step,
 first 12 ms
 generator power (kW)
 ground clearance —
 measurement window
-once per second
 over-power term —
 peak strain / break strain
 power floor,
 rate ω (rad/s)
 read on P_end
-relax
+read once per second
+relax (grey)
 relax included
-rope break —
+rope break — every step
 rope-break gate off during relax
-rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit a269636
+rows NR-008 · NR-012 · NR-013 · NR-013 ext · NR-016 · NR-027 · NR-029 · NR-039 · NR-042 · script commit e974c7a
 ruling-mode condition run (dashed) — peak 1.448 at t = 5.798 ms
-sampled gates — twist ·
+sampled gates — twist
 sources: eval-timeline-extract · window-trace-extract · data commit dd3cc6a · trees 980de02 / 8d01394
-top · tip · Betz, read
+top · tip · Betz,
 warm as coded: breaks at t = 2.841 ms — run ends
 window mean P 5.309 kW · P_end 5.314 kW last five (NR-008)
 ω gnd (solid) · ω top (dashed)
-≥ 1.5 m, read once
+≥ 1.5 m, at decode

@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py --script-commit a269636",
+  "command": "/usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py --script-commit e974c7a",
   "data_commit": "dd3cc6a",
   "inputs": {
     "extracts": [
@@ -33,17 +33,17 @@
     ]
   },
   "outputs": {
-    "eval-timeline.pdf": "f6a10be4e39360c006f9bb0fbd994cc82d10924089f7308b5052e05889bdc5cc",
-    "eval-timeline.png": "7a1297ce4655b0dd7c7302797d9e8e74cf97c9bf0eb07f28173da4c82e67d11f",
-    "eval-timeline.svg": "373c2db3827700baaab4a99cb6c2642a6a682fceb217691fa38fd3c77ba1b8c4",
-    "label-ledger.txt": "e34bc92466da43e530934e3a032b39cac26fad1c33a53696ba46fe14b0e3a681"
+    "eval-timeline.pdf": "a42da7e385667d2cd6a11fe402a390933cbfc2bb69ff9b56996f20208b58bc4e",
+    "eval-timeline.png": "3d54fd9bd38824fe9121b43c7ce14483ebaff245002d3b83b9982ef574f458e2",
+    "eval-timeline.svg": "66c6760642b9d71a5106da519f3aac43334a72d417130537f2cf93740265bf51",
+    "label-ledger.txt": "bfb6dd72e97673b63433d0721ee44474c40eb326ccf849773315e243d7847761"
   },
   "precision": "rates 2 dp; power 3 dp; strain annotations as signed; floor 5.0 kW",
   "script": {
     "path": "docs/reporting/figures/eval-timeline/eval-timeline.py",
-    "sha256": "5f7a2d1f6b15ff9287dc42290fb411fe0fe24b4b7ee8e8c643d69c4625833388"
+    "sha256": "26efa09ed7073745bb1a6eb8ec6fe314d65b475eb3e911012ffc52be747c82e2"
   },
-  "script_commit": "a269636",
+  "script_commit": "e974c7a",
   "slug": "eval-timeline",
   "toolchain": {
     "matplotlib": "3.10.8",
