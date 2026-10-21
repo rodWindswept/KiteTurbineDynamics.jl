@@ -62,8 +62,8 @@ That single fact sorts the 37 classes.
 
 ## 4. The bins
 
-**Already drawn, 1 class.** `design_space_3d` is the PCA field, and rows
-20 and 21 carry it at R2 (`7329191`).
+**Already drawn, 1 class.** `design_space_3d` is the PCA field. Rows 20
+and 21 carry it at R2, and their F-VALUE re-census closed at `7329191`.
 
 **Drawable now, no new run, 16 classes.** The 930 rows, or a table
 already built from them, is the whole input.
@@ -113,9 +113,9 @@ controller sweep, and this campaign holds neither.
 Row 8 of the figure map reads "Lever set (four slots). Census and
 envelope", section 3.4, status `waiting`, gate "Landscape Phases 1 to 2".
 
-**The gate is open.** Rows 20 (`pca-landscape`) and 21 (`pca-atlas`)
-reached R2 at `7329191`, and both read this same telemetry. Row 8 has
-waited on work that has landed.
+**The gate is open.** Rows 20 (`pca-landscape`) and 21 (`pca-atlas`) are
+R2, their F-VALUE re-census closed at `7329191`, and both read this same
+telemetry. Row 8 has waited on work that has landed.
 
 So the classes need no new slot. Four of them take the four slots that
 row 8 already holds. Row 25 holds the parallel-coordinates class against
