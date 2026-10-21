@@ -3317,3 +3317,65 @@ Boundaries that travel with this row:
 The four bins under the n >= 5 rule are the bins behind NR-074's two largest shifts. `rotor_count` 2 and `n_lines` 9 are two of them, and `n_lines` 8 carries the same gene. A sweep that reads NR-074's shift column without NR-077's floor reads two bars built on three designs.
 
 Counter-read requested from the aero seat.
+
+## Source rows: NR-078 to NR-082, the heatmap cells (2026-10-21, science-validator)
+
+Append only, under the amend pattern. No signed row changed.
+
+NR-077's boundary says a two-gene panel takes its own bins and its own row. The four heatmap stems are that panel: one gene pair, four outcomes, one population. This block opens five rows.
+
+**Source pins.** Three files, `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`, blobs `5a5561cc`, `b0fce176`, `21c826b1`, 310 data rows each. Header line: run `a76c5e9`, era `post-95c385d_wind-authority`, margin 1.5. Checker `scratch/sv_heatmap_cells_sign.py`, log `scratch/sv_heatmap_cells_sign.log`, 47 checks, 0 fail.
+
+**What the check does.** Recomputes every signed value from the raw rows: status counts, the sentinel census, both axes' quantile edges, all 25 cell counts and all 100 cell medians. The raw rows are the basis of the signature, not a drawn plate.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-078 | Heatmap cells, `fitness`: value quintiles of `r_hub` x `bank_top` over the 508 ok designs | cell medians 29.66 to 37.59; occupancy 10 to 36, median 21 | kg-equivalent | three island telemetry files | signed (science-validator, 2026-10-21) |
+| NR-079 | Heatmap cells, `P_mean`, same bins | cell medians 5.28 to 6.23 | kW | same | signed (science-validator, 2026-10-21) |
+| NR-080 | Heatmap cells, `FoS`, same bins, survivor-conditional | cell medians 9.30 to 14.53; population minimum 3.18 | - | same | signed (science-validator, 2026-10-21) |
+| NR-081 | Heatmap cells, `clearance`, same bins | cell medians 5.04 to 5.93 | m | same | signed (science-validator, 2026-10-21) |
+| NR-082 | The heatmap conditioning: bin edges, sentinels, floor | 508 ok rows only: 0 `FoS` = Inf and 0 `twist_ratio` = 0.0; the 422 rejects carry 212 Inf and 201 zeros. Six distinct quantile edges on each axis; every cell holds ten or more designs | designs | same | signed (science-validator, 2026-10-21) |
+
+### NR-078 to NR-081: the cell values
+
+Sign-off basis:
+
+- The bin rule. Value quintiles over the 508 ok designs on each axis, one bin per fifth of the sorted population. Axis edges: `r_hub` 2.399 / 4.116 / 4.2248 / 4.32 / 4.5172 / 5.116 m; `bank_top` 0.0 / 6.34 / 10.7 / 13.4 / 14.96 / 22.0 degrees.
+
+- Colour. The median of the outcome over the ok designs in the cell, never the mean. The colourbar limits are the smallest and largest cell medians on that panel, rounded outward to 2 dp so that no cell falls outside the bar. Exact maxima: `fitness` 37.585, `P_mean` 6.225, `FoS` 14.53, `clearance` 5.925.
+
+- Four panels, four limits. A shared bar would put `P_mean`'s 0.95 kW span and `fitness`'s 7.93 kg span on one scale, and it would flatten three panels to one tone.
+
+- Occupancy. Counts run 10 to 36, median 21, and no cell falls under the n >= 5 floor. So no cell on this pair prints `no read`, and the four panels carry no count numerals at all: the occupancy proof is the smallest cell and the median, and both are signed here for the caption.
+
+Display forms signed:
+
+1. Each panel prints its own outcome name and its own two colourbar limits. No shared bar.
+
+2. No cell prints a count on this pair, because every cell clears the floor. A count prints only under a `no read`, and this pair has none. A plate that moves to another pair drops this clause and takes the count rule of NR-077.
+
+3. Axis labels carry the edges, not the bin index.
+
+### NR-082: the conditioning, and the FoS caveat
+
+- The sentinels live in the rejects only. 212 of the 422 rejected rows carry `FoS` = Inf and 201 carry `twist_ratio` = 0.0. The two sets overlap. Neither appears in the 508.
+
+- `FoS` is survivor-conditional. Every one of the 508 passed `FoS` >= 2.5 under `bankderate2`, and the population minimum is 3.18. The lowest cell median is 9.30, which is 3.7 times the floor. The panel therefore reads the margin among designs that already cleared the floor. It is not a map of the campaign's safety performance, and its caption must carry the floor sentence.
+
+- `bank_top` 0.0 is a design value, not a sentinel. 31 ok designs and 21 rejects carry it.
+
+### Which pair, and why not `blade_scale_top`
+
+The census cell names `r_hub` x `blade_scale_top` and reports 25 of 25 cells filled with the smallest at 7. The count reproduces. The axis does not exist. 270 of the 508 ok designs sit at `blade_scale_top` = 1.0 exactly, so value quintiles 4 and 5 are both 1.0: 101 designs in one and 102 in the other, each single-valued. The top two columns of every panel would be one coordinate split by row order, and no caption can repair an axis whose two columns are the same number. The count is on the decoded column, which rounds to 3 dp; the raw `x9` slot reads 263 at 1.0, and either column collapses the top two bins.
+
+NR-074's own table already stops that gene at q3 for this reason: `blade_scale_top` reads q1 to q3 with bin counts 111 / 305.
+
+Substitutes measured on the same rule (value quintiles, 25 cells, smallest cell): `r_hub` x `bank_top` 10, `r_hub` x `r_bottom` 10, `r_hub` x `bank_bottom` 10, `r_bottom` x `bank_top` 7, `r_bottom` x `bank_bottom` 8. `r_hub` x `bank_top` takes the most even grid (median 21, largest 36) and both genes are levers in NR-074, at rank 8 and rank 6.
+
+Boundaries that travel with these rows:
+
+1. The signature binds the pair it names. A plate on another pair takes its own bins and its own row.
+
+2. The four outcomes are four of the seven columns the telemetry records. `P_end`, `T_lift` and `twist_ratio` are not signed as panels here, and no plate may draw them from this row.
+
+Counter-read requested from the aero seat and the figures seat.

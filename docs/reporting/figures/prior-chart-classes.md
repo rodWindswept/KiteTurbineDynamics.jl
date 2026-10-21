@@ -70,7 +70,7 @@ already built from them, is the whole input.
 
 | class | source |
 |---|---|
-| `heatmaps` (four stems) | the 508 ok rows, one gene pair binned pairwise, and the pair measured here fills every cell: `r_hub` × `blade_scale_top` fills 25 of 25 with the smallest cell at 7. Colour is the median outcome per cell and occupancy is the read, so a cell under five prints `no read` with its count. The four stems are four of the seven recorded outcomes: `fitness`, `P_mean`, `FoS` and `clearance`, each on its own colourbar limits, because the cell medians span a different range per outcome |
+| `heatmaps` (four stems) | the 508 ok rows, one gene pair binned pairwise, and the pair measured here fills every cell: `r_hub` × `bank_top` fills 25 of 25 with the smallest cell at 10 and a median of 21, and both axes carry six distinct value-quintile edges. `blade_scale_top` cannot be a five-bin axis: 270 of the 508 sit at exactly 1.0, so quintiles 4 and 5 are both 1.0 and would split one value across two columns by row order; the lever extract stops that gene at q3 for the same reason. Colour is the median outcome per cell and occupancy is the read, so a cell under five prints `no read` with its count, and no cell on this pair does. The four stems are four of the seven recorded outcomes: `fitness`, `P_mean`, `FoS` and `clearance`, each on its own colourbar limits, because the cell medians span a different range per outcome (NR-078 to NR-082) |
 | `heat_nrings_vs_nlines` | the same bins on `rings` and `n_lines`: 98 cells, 40 of them occupied and 26 of those under five, so the class draws as a thin panel and not as a fourth heatmap |
 | `parallel_coordinates`, `parallel_multivariate` | the 930 rows, ten genes, status ink; `FoS = Inf` and `twist_ratio = 0.0` draw as the hatched no-read, never as zero or as infinity |
 | `ranked_configs` | the `fitness` column, ordered |
@@ -159,8 +159,8 @@ SPEC:
    and over-power is the largest channel in 453 of the 508 ok rows. No
    plate carries that fact.
 4. **Response surface.** Two genes at a time against one outcome, over
-   the 508 ok rows: the heatmap and 3D-surface class, which holds no row
-   today. This is the envelope read that row 8 names.
+   the 508 ok rows: the heatmap and 3D-surface class. The two-gene panel
+   holds NR-078 to NR-082. This is the envelope read that row 8 names.
 
 ## 6. The gate each plate still needs
 
