@@ -24,6 +24,43 @@ The room ran the six items while this register sat at `7e73e60`. This section re
 
 Source: `docs/reporting/feedback/2026-10-20-founder-docx-return-3.docx`, md5 `dcbf3bc7a56e15d2bed969155443bc53d`, 3,266,563 bytes. Extract: `scratch/rodrev/triage.json` at the builder desk.
 
+## Bless (2026-10-21)
+
+Rod blessed the section 6.1 cut on 2026-10-21.
+The lane lands in the tracked draft as v0.79 (`e8f1d45`).
+The body takes `scratch/sw_sec61_plain_v7.md` as blessed.
+
+The section reads 215 body words in two paragraphs (69 and 146).
+The room convention reads 222 with the heading counted.
+The heading reads "Cyclic pitch on the ring rotor", under comment 97.
+All five do-not-trim strings read one hit each.
+
+The ruling that comment 100 opened is therefore closed.
+The cut and the lock list no longer compete for the section.
+
+The bless covers the section 6.1 lane only.
+Comment 95 changes the section 6 intro, and that intro still stands at the draft.
+The section 8 reference list and the rest of the cut chain stay outside this pass.
+The disposition lines above describe the chain state `d54d6ae4`.
+Comments 97 and 99 now also read true at the draft.
+
+Six value tokens leave with the cut, and none is a signed row.
+They are 0.21, 0.49, 30, 50 and 90 three times.
+No value token arrives.
+The section cites no register row, so the cited count holds at 59.
+
+Words read 11,597 from 12,270.
+STE reads 28 total at 0.24 per 100 words, from 30 at 0.24.
+Em dashes 0.
+
+The composite rebuilds at `e8f1d45`.
+It reads 24 pages, A4, 9 figure seats and 59 cited rows, every one signed.
+The DOCX reads md5 `4d2f977589afa75142e06a888ec57d16`.
+The PDF reads md5 `49bb37a9fcc96e2f604dfb9b4bcf6e09`.
+
+The draft tracker entry carries one count of 59, corrected from 58 in the same commit.
+That amend skipped the hook re-run, and the gate had passed at 0.54 on the same bytes.
+
 ## What Rod marked
 
 The marked copy carries the G5 text. It does not carry G6. Two probes settle it. The marked body returns 0 hits for `the tether-to-blade rule`. It returns 0 hits for `The machine plates show the blade leaning`. All four do-not-trim strings return exactly 1 hit each.
