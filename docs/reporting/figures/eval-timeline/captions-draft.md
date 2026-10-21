@@ -96,11 +96,12 @@ change.
 re-cut key. The two cadence sentences leave the technical caption. They
 print one fact twice.
 
-The key now draws "every step" and "once per second" at
-`eval-timeline.py` L333-360, ledger L26 and L32.
+The key now draws "every step, relax included" and "one read per second" at
+`eval-timeline.py` L333-360, script commit 1aca23d, ledger L26 and L32.
 
 The phrase "gate map" printed zero times in the 47-string ledger. It
-survived only in the script head comment.
+survives in the figure SPEC and in the script head comment, never in a
+drawn string or a caption.
 
 The replacement restores the closing line of the caption plan. The
 caption reads nine sentences and 101 words, from ten and 111. No register
