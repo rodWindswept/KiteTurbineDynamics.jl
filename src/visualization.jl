@@ -26,6 +26,16 @@ function _tension_color(T::Float64, swl::Float64)
     end
 end
 
+"""
+    _tension_label_text(T_peak) → String
+
+The peak-tension readout the 3D scene prints in pixels: the settled peak
+tether tension and the safe working load it is measured against. One
+formatting function so the frame, the HUD row and any receipt that quotes
+them cannot disagree.
+"""
+_tension_label_text(T::Real) = @sprintf("T_peak %.1f N\nSWL %d N", T, Int(TETHER_SWL))
+
 """Ring polygon-column buckling colour: blue → cyan → orange → red."""
 function _ring_util_color(util::Float64)
     t = clamp(util, 0.0, 1.0)
@@ -145,7 +155,8 @@ function build_dashboard(sys       ::KiteTurbineSystem,
                           u_settled ::Union{Vector{Float64}, Nothing}   = nothing,
                           wind_fn   ::Union{Function, Nothing}          = nothing,
                           config_name::String = "Canonical 5-line",
-                          figsize   ::Tuple{Int, Int}                   = (1600, 950))
+                          figsize   ::Tuple{Int, Int}                   = (1600, 950),
+                          tension_label::Bool                           = true)
 
     n_frames = length(frames)
     # Segment count = consecutive-ring pairs = sys.n_ring - 1.  Derive it from the
@@ -507,6 +518,24 @@ function build_dashboard(sys       ::KiteTurbineSystem,
         markersize=@lift(4 + 3 * $wind_dot_obs[4][i+1]),
         alpha=@lift($wind_dot_obs[4][i+1]))
         for i in 0:19]
+
+    # ── Peak-tension numerals — drawn in the scene, part of the picture ───────
+    # The value is the SimPeaks T_peak this build already computes (the same
+    # number the HUD row prints), formatted by _tension_label_text so the frame
+    # cannot disagree with the receipt that quotes it. Default on: a numeral
+    # the tool draws belongs to the picture, not to an optional overlay. Size
+    # scales with the figure height so a 950-high window and a 2x capture of it
+    # carry the numerals at the same proportion; the 0.040 x height rule prints
+    # the numerals at ~6.8 pt in the 85 mm Figure 12 cell, the largest text in
+    # the panel after the axis title.
+    if tension_label
+        text!(ax3d.scene, 0.055, 0.945;
+              text     = _tension_label_text(T_peak),
+              space    = :relative,
+              align    = (:left, :top),
+              fontsize = max(10, round(Int, 0.040 * figsize[2])),
+              color    = RGBf(0.90, 0.92, 0.96))
+    end
 
     # ── HUD (right column) ────────────────────────────────────────────────────
     # Fixed column width prevents label jitter as numbers change width

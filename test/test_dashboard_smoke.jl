@@ -53,3 +53,17 @@
 
     println("  smoke: dashboard data layer OK ($(n_frames) frames)")
 end
+
+@testset "tension label — one formatter for the frame and the receipt" begin
+    # The 3D scene prints the peak tension in pixels. The same formatter feeds
+    # any receipt that quotes it, so the two cannot drift apart.
+    @test KiteTurbineDynamics._tension_label_text(3099.9) ==
+          "T_peak 3099.9 N\nSWL $(Int(TETHER_SWL)) N"
+    # the SWL half is generated from the constant, never typed as a literal
+    @test occursin(string(Int(TETHER_SWL)), KiteTurbineDynamics._tension_label_text(1.0))
+    # one decimal place always, so a receipt can compare the string directly
+    @test KiteTurbineDynamics._tension_label_text(3500.04) ==
+          "T_peak 3500.0 N\nSWL $(Int(TETHER_SWL)) N"
+    # build_dashboard carries the default-on kwarg the render script relies on
+    @test :tension_label in Base.kwarg_decl(first(methods(build_dashboard)))
+end

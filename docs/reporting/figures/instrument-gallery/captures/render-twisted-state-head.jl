@@ -19,6 +19,15 @@
 #                                     ink boundaries (613 .. 3308 device px),
 #                                     ~806 dpi at the 85 x 59.89 mm cell
 #
+# The frame prints the peak tension in pixels, top-left of the scene:
+# `T_peak 3099.9 N` over `SWL 3500 N`. build_dashboard draws it by default
+# (tension_label = true) from the same SimPeaks T_peak the HUD row prints, and
+# _tension_label_text formats both, so the numeral in the picture and the
+# receipt below are one source. Measured against the cut: ink box
+# 812 .. 1388 x 111 .. 257 device px, which is 199 px inside the 613 cut and
+# 1920 px inside the 3309 cut — the numerals cannot fall in the zero-ink
+# margins.
+#
 # State: the canonical 10 kW system settled at V = 11 m/s — the same settle
 # as the v1/v2 frames, read from no CSV. The window places the viewport
 # column at 1367 x 950: the sliders overflow their fixed 300 px column by
@@ -73,6 +82,15 @@ println("state  twist Δα = $(round(rad2deg(a_hub - a_pto), digits=2))° (hub �
 println("state  T_peak = $(round(pk.T_peak, digits=1)) N (SWL $(Int(TETHER_SWL)) N)")
 println("state  ω_hub  = $(round(pk.omega_peak, digits=3)) rad/s")
 println("state  P      = $(round(pk.P_peak / 1000, digits=2)) kW")
+
+# The scene prints the peak tension in pixels. Read the string back from the
+# same formatter the frame uses, and check it carries the receipt's value —
+# so the numeral in the picture and the number in the receipt are one source.
+tlabel = KiteTurbineDynamics._tension_label_text(pk.T_peak)
+tline  = replace(tlabel, "\n" => "  ·  ")
+println("state  annotation  \"$(tline)\"")
+occursin(string(round(pk.T_peak, digits=1)), tlabel) ||
+    error("annotation \"$(tline)\" does not carry the receipt value $(round(pk.T_peak, digits=1)) N")
 
 println("Building the dashboard (window $(VW_W) x $(VW_H))...")
 fig, _cfg = build_dashboard(
