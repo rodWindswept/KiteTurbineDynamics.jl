@@ -61,6 +61,34 @@ The PDF reads md5 `49bb37a9fcc96e2f604dfb9b4bcf6e09`.
 The draft tracker entry carries one count of 59, corrected from 58 in the same commit.
 That amend skipped the hook re-run, and the gate had passed at 0.54 on the same bytes.
 
+## Supersede (2026-10-21, founder)
+
+Rod withdrew the section 6.1 bless on 2026-10-21, in the reporting room.
+The Bless section above stays as the record of what `e8f1d45` carried.
+
+The state at `e8f1d45` stays true as measurement:
+
+- two paragraphs, 215 body words.
+- five lock strings at one hit each.
+- six value tokens out, and none of them signed.
+- 59 cited rows, every one signed.
+
+`e8f1d45` stops being the review copy from this line.
+The draft keeps the old section 6.1 text until the rewrite lands.
+The section on disk does not yet meet the target.
+The composite re-pins at that rebuild.
+No review copy holds a current pin between this line and that build.
+
+The target is the sketch Rod wrote, and it is shorter than the blessed cut.
+He asks for cyclic pitch and cyclic banking on the individual blades, and possibly on the whole rotor together.
+He asks the section to say what sets pitch and bank today.
+The bridle network sets both, through the way its lines attach the blades to it.
+Nothing from the landed cut carries into the rewrite unless he asks for it back.
+The load-path clauses, the sweep names and the bridle rules leave.
+
+The lane returns to draft under comment 100, which caps the section at one or two paragraphs.
+The heading call under comment 97 and the section intro under comment 95 stand.
+
 ## What Rod marked
 
 The marked copy carries the G5 text. It does not carry G6. Two probes settle it. The marked body returns 0 hits for `the tether-to-blade rule`. It returns 0 hits for `The machine plates show the blade leaning`. All four do-not-trim strings return exactly 1 hit each.
