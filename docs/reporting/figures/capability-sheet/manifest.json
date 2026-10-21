@@ -43,11 +43,18 @@
     ]
   },
   "outputs": {
-    "capability-sheet.pdf": "d123f8fd0fcf6886b534cd575bd1c5d70f3e434fcdbf7eaec458e306dc00be74",
-    "capability-sheet.png": "04ddb6070ae689279051364f0e2caaebbf1279e4cc4899ecd5ffaeb05830f2c9",
-    "capability-sheet.svg": "12347963495e5633585b399842112dfd60cbc046734586303b8252f1bcf299c1",
+    "capability-sheet-A.pdf": "50bec0be61f652a1d63834236e67110a5c4b12e31c566e9ad41f6ec99b89f933",
+    "capability-sheet-A.png": "f49312c7a608c50a0ed17d0280dccd658683d77f7be718e52f5d532b3ebc283f",
+    "capability-sheet-A.svg": "6f1addeb0b2de069584a695bb7e42138fb7d08803f3c0cd800c486fe1e58d60f",
+    "capability-sheet-B.pdf": "b773b8eec5fc37f440dc03362aeed0ff580a4642c896c5db8cf86f48df4574c2",
+    "capability-sheet-B.png": "06308f9d126c5e3f42c9955f7baa4577e846c517fd185d62e717fb7cdcc2a95c",
+    "capability-sheet-B.svg": "2b2d30dbc5ec20bf8cb1f7449e26464ab61ed04c5d4d8a8bcfc16d561af95cfa",
     "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
-    "label-ledger.txt": "27d69849dc9575353de4747deb28f9efb9f9b0c416628616d8cf05490b6c62cf"
+    "label-ledger.txt": "9c25f566d1daea80311c362e62be26aa1c15435420839ef15a436f592ec4f639"
+  },
+  "pages": {
+    "A": "H1 to H4, the four outcome heatmaps, 508 ok designs",
+    "B": "M1 all 930, M2 and M3 at 508, C1 the render at HEAD"
   },
   "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
   "run": "a76c5e9",

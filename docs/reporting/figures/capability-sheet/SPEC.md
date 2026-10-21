@@ -29,24 +29,27 @@ The sheet draws classes, not results. It is not a reproduction of any
 prior plate. It does not stand in for one. The archive of prior figures
 is a different section.
 
-## 2. The slot ruling
+## 2. The slot ruling. Two pages, one figure.
 
-One sheet, eight exhibits. A4 portrait, 7.6 in by 9.45 in, drawn at
-300 dpi. A ninth exhibit takes a second page, or it takes a panel under
-the type floor.
+The sheet runs as two pages, and the split follows the population line
+that already divides it. Page A carries the four outcome heatmaps. All
+four read the 508 ok designs, and the floor clause binds four panels
+that sit together. Page B carries three keys-only classes and the
+frame. One figure number, one appendix row, two captions.
 
-| row | exhibit | panel size |
-|---|---|---|
-| H1 to H4 | four heatmaps | 29 mm square each |
-| C1 | dashboard frame | 133 mm wide |
-| M1 | parallel coordinates | 75 mm wide |
-| M2 | correlation matrix | 36 mm square |
-| M3 | ordered objective | 37 mm wide |
+| page | exhibit | panel size | population |
+|---|---|---|---|
+| A | H1 to H4, four heatmaps | 2.50 in square each | 508 ok |
+| B | C1 dashboard frame | 5.10 in wide | a render |
+| B | M1 parallel coordinates | 3.30 in wide | all 930 |
+| B | M2 correlation matrix | 1.56 in square | 508 ok |
+| B | M3 ordered objective | 1.22 in wide | 508 ok |
 
-Type size. The sheet draws at 7.6 in for a 174 mm slot, a scale of
-0.90. Body text lands at 5.2 to 5.9 pt. The densest keys in M2 land
-near 4.0 pt. Eight exhibits on one page cost that size. The other route
-is two pages and a 6 pt floor throughout.
+Both pages draw at 7.6 in for a 174 mm slot, a scale of 0.90. Page A
+now prints body text at 6.3 to 7.6 pt and its axis labels at 5.8 pt.
+Page B prints its titles at 6.5 pt and its densest gene keys near
+4.3 pt. The one-page build printed the same keys near 4.0 pt and paid
+for them with a caption that reached across three populations.
 
 ## 3. Inputs and populations
 
@@ -113,11 +116,11 @@ What these panels do not claim. They are not evidence of a result. They
 show that the platform holds the class, and that the class draws from
 these bytes.
 
-## 6. The capture (C1)
+## 6. The capture (C1), page B
 
 `render_dashboard_frame.jl` builds the dashboard at HEAD. It saves the
 frame at 2000 x 1188 px: the 1600 x 950 logical units of the dashboard
-at `px_per_unit = 1.25`, passed explicitly. The sheet crops this frame
+at `px_per_unit = 1.25`, passed explicitly. Page B crops this frame
 to 966 x 708 at offset 401, 329. The manifest pins the hash of that
 crop.
 

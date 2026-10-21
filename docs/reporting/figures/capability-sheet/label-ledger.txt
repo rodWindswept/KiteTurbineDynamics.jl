@@ -8,18 +8,20 @@
 5.93
 6.23
 9.30
-C1  The dashboard frame at HEAD · v1 interface · canonical 5-line · crop 966 x 708
+C1  The dashboard frame at HEAD · v1 interface · canonical 5-line · render, not a read
+Every panel reads the 508 designs that cleared every gate. FoS, clearance and P_mean carry floors in the caption.
 Figure 10   What the platform draws
 FoS  ·  -
-Heatmaps and M2 read the 508 ok designs. M1 reads all 930. M3 reads the 508, ordered. C1 is a render at HEAD, not a dataset read.
 M1  Parallel coordinates
-all 930 designs, ten genes
+all 930 designs, ten genes on their own ranges
+M1 reads all 930 designs. M2 and M3 read the 508 ok designs. C1 is a render at HEAD, not a dataset read.
 M2  Gene correlation
-Spearman, 508 ok
+Spearman, 508 ok designs
 M3  The objective, ordered
 508 ok designs
 P_mean  ·  kW
-Seven chart classes redrawn at HEAD from this campaign's own rows, and the dashboard frame.
+Plate A  ·  four outcomes on one gene pair  ·  508 ok designs  ·  one colourbar per panel
+Plate B  ·  keys only, no value printed  ·  populations named per panel
 bank_bot
 bank_top
 bank_top, degrees
@@ -27,6 +29,9 @@ blade_bot
 blade_top
 clearance  ·  m
 clearance reject (110)
+colour is the cell median of the outcome, never the mean. Bar limits are the smallest and largest cell medians, rounded outward to 2 dp.
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-002, NR-005 · script 4fb3a8e
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-078 to NR-082 · script 4fb3a8e
 density
 fitness  ·  kg-eq
 fitness, kg-eq
@@ -34,11 +39,10 @@ n_lines
 ok (508)
 r_bot
 r_hub
-r_hub, metres  ·  508 ok designs
-rank, best to worst
+r_hub, metres
+rank
 reject (301)
 rotors
-source v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv · data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · script 4fb3a8e
 target_Lr
 twist reject (11)
 −1
