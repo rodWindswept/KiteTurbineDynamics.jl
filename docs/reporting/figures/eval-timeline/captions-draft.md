@@ -63,4 +63,26 @@ neither those runs nor that status, so the caption leaves the word out. A
 caption that carried it would claim a pass the row does not sign. The
 manifest field in v2 reads `inputs.register_rows`. The short form raises
 KeyError on the next checker.
+
+**Delta** v4 (2026-10-21): the drawn footer moved to `label-ledger.txt` L42 at
+the re-cut (`e974c7a`). The sorted ledger fell from 52 lines to 50, so the nine
+rows sit two lines higher.
+
+Delta v2 keeps L44, because that pointer was true on its own date. The ledger
+then held 52 lines and the footer sat at 44. A rewrite of v2 would date-stamp a
+line number that did not exist that day.
+
+The rows, their order and the caption text do not change.
+
+**One open question, for the science seats.** The re-cut draws a `rope break`
+label that ends "every step", and a separate `read once per second` label. The
+last two sentences of the technical caption print those same two facts.
+
+The caption pair went at `bcbf33b` on the rule that the technical slot keeps
+only values. The plain caption at L10-11 keeps the pointer, "and when each
+safety gate reads the run".
+
+If that rule still binds, the two sentences come out here. Neither sentence
+cites a register row, so the cited count does not move either way.
+
 **Delta** v1 (2026-10-13): created with the kit landing.
