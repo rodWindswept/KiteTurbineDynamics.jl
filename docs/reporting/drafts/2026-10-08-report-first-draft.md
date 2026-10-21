@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.82. Date 2026-10-21.
+Internal engineering report. Draft v0.84. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1195,6 +1195,7 @@ None of the three carries a scored result.
 The question is whether cyclic pitch or cyclic banking can act on one blade.
 It could also act on the whole rotor together.
 A cyclic input changes the pitch or the bank around the revolution.
+The Some AWE group studies cyclic pitch on a rotary kite [18].
 
 Today the bridles attach each blade to the network, and that attachment sets the pitch and the bank.
 Both angles stay fixed all the way round, so the rotor has no cyclic input today.
@@ -1304,7 +1305,7 @@ Energy Procedia 24, 52-59, 2012. DOI 10.1016/j.egypro.2012.06.086.
 17. Hancock, M. "Multi-Rotors Seen Through a Blade Lens". Presentation at the 3rd International Seminar on Multi Rotor Wind Technology, Glasgow, 13 June 2024.
 Unpublished.
 
-18. Unterweger, D. "Cyclic Pitch Control of a Rotary Kite". Master thesis, no year printed, posted by the Some AWE group.
+18. Unterweger, D. "Cyclic Pitch Control of a Rotary Kite". Master thesis presentation, 31 January 2022.
 https://someawe.org/?p=196
 
 ## 9 Data availability and reproducibility

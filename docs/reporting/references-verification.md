@@ -111,8 +111,84 @@ The entry was already inside it on a resolving URL.
 This pass upgrades the evidence from a live URL to an artefact read.
 It adds no entry.
 
-- The draft section 8 line still reads "Master thesis, no year printed, posted by the Some AWE group".
-The render follows this entry when the draft owner lands it.
+- The draft section 8 line took this form at v0.84, landed by the draft owner in the same session.
+The render follows this entry.
 
 Gate statement: the entry passes on its own artefact read.
 No other entry moves.
+
+## 9. No number from a span-less graph (2026-10-21)
+
+The Unterweger rotary graph invents numbers.
+This section records the rule and the class behind it.
+
+The graph `CyclicPitch_Rotary.rotary.graph.json` holds 17 nodes.
+Not one node carries `evidence_span`, `locator` or `span`.
+Four of its readings trace to figures rather than to prose.
+
+- Pitch range `0.5° to 15°`.
+The bounds are axis ticks on a plotted curve.
+The deck prints βc = 2.25, 4.5, 6.75 and 9° at L553 to L567.
+
+- A nominal `100 rpm`.
+That value is a tick inside the speed axis at L581.
+
+- Tether stiffness at `1.2 Nm/deg`.
+No number exists in the deck.
+L77 reads "energy transmission by a torsionally stiff structure".
+
+- A pod on the ground.
+The figure at L97 to L102 lists the pod between the rotor and the torque tether.
+The pod flies.
+
+The wind envelope has no source.
+`m/s` returns 0 hits across 963 lines.
+The rig is wall-mounted, motor-driven and indoors.
+Wind is the wrong control variable for it.
+
+The class is wider than the one file.
+The tree holds 1,192 `*.graph.json` files, and 13 are rotary.
+Four carry nodes and no span field on any node.
+
+| File | Nodes |
+|---|---|
+| `AWEC2026_PowerEfficiency.rotary.graph.json` | 15 |
+| `CyclicPitch_Rotary.rotary.graph.json` | 17 |
+| `Dynamic_Tensegrity.rotary.graph.json` | 23 |
+| `Tulloch_PhD.rotary.graph.json` | 8 |
+
+All four come from one extractor schema, and that schema has no span key.
+The K1 graph for this same document holds 11 nodes.
+All 11 carry a span.
+So the fault sits in the rotary extractor and not in the text read.
+The same paper reaches this report by two paths, and a sweep can audit only one of them.
+
+Rule: no number enters the draft from a graph node without a span field.
+No record and no draft file cites a `*.rotary.graph.json` today.
+The report quotes nothing from the four.
+
+If section 6.1 ever quotes a number from this source, only these survive.
+Each one keeps its class.
+
+- βc 2.25, 4.5, 6.75 and 9°: printed labels at L553 to L567.
+
+- Rotor speed 60 to 110 min⁻¹ on the Alicante plots.
+
+- Test-rig speed 60 to 120 min⁻¹ at L743 to L750.
+The Alicante top is 110, so one range of 60 to 110 clips the test rig by 10 min⁻¹.
+
+- Moment magnitude: a plot read, bounded by its axis.
+The Alicante axis runs 0 to 6 N m at L566 to L579.
+The test-rig axis runs −0.6 to 0.6 N m at L749 to L755.
+The deck prints no measured moment as text.
+
+- The wind envelope: absent.
+No number from that envelope belongs in the draft.
+
+One count correction for the room record.
+The K1 graph for this document holds 11 nodes, not 16.
+The spurious author node `"2022 1 / 47"` sits in `awes_unified.graph.json`.
+The slide header strip bled in at the merge.
+
+The pipeline counts in `docs/agents/domain.md` and `docs/case-notes/01_source_inventory.md` were stale at 586 graph files.
+They now read what the tree holds.

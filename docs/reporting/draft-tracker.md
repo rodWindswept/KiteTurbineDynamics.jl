@@ -1006,3 +1006,44 @@ The notebook draws through MeshCat, not Makie.
 It calls `MeshCat.Visualizer()` at `notebooks/design_explorer.jl:40`.
 The paragraph says "three dimensions" and names no stack for the notebook.
 A sweep has no cause to correct it.
+
+v0.84 pass by @author (2026-10-21).
+
+This pass pays the debt that comment 98 left and comment 100 carried.
+That disposition returns entry 18 as one bibliographic entry plus one sentence.
+The entry went in at an earlier rebuild.
+The sentence never did.
+
+Section 6.1 paragraph 1 now ends with "The Some AWE group studies cyclic pitch on a rotary kite [18]".
+It sits after the definition, so paragraph 2 keeps its order: current state, model limit, test.
+It does not sit on the last sentence.
+A bracket there would read as the source for the missing input, which is the opposite role.
+
+The section reads 95 body words in two paragraphs, 47 and 48, in seven sentences.
+It read 83 words in six.
+@science-writer measured that projection on a probe before the edit, and every figure held on the landed text.
+
+Entry 18 takes its printed form.
+The artefact prints January 31, 2022 on the title slide and on every footer, and page one reads 1 / 47.
+The someawe.org page prints no year, and the printed form wins.
+
+The bracket census now reads eleven: [1] to [10] in the section 2 intro, and [18] in section 6.1.
+Entries 11 to 17 still carry no pointer anywhere in the body.
+Section 8 opens "The references below list every source the report cites".
+For those seven entries that line stays false until the founder takes one of the two exits.
+
+One defect in my own last pass, corrected here.
+The header read v0.82 while the tracker read v0.83, so the version sat one pass behind.
+The header now reads v0.84.
+This is the second time the header has lagged, after the run that took four passes to correct.
+
+Words read 11,540 from 11,533, and em dashes read 0.
+STE holds 27 at 0.23 per 100 words.
+The offender set matches base: long sentences 8, contraction 1, passive 4, nominalization 1, long paragraphs 13.
+No value token arrives.
+One bracket arrives, in the permitted class.
+The cited count holds at 59.
+
+This pass records the graph guard in `references-verification.md` section 9.
+No number enters the draft from a graph node without a span field.
+Four of the thirteen rotary graphs carry no span on any node, and the section names them.
