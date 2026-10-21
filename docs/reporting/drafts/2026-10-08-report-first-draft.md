@@ -1386,12 +1386,11 @@ and measure at least 79 mm wide. It must come from a tracked generator
 at one commit. Each panel carries a receipt that hashes the frame and
 the renderer.
 
-Two of the four frames need a flag to print what the plate shows. The
+One of the four frames needs a flag to print what the plate shows. The
 cartography prints under `KTD_WINNER_TITLE=geometry`, and the renderer
-default is `full`. The chooser prints under `--smoke`, with `card_text`
-in identity mode, so a card carries identity and geometry and no
-campaign result.
+default is `full`.
 
-The commit and the four receipts fix the set. The flags fix the
-invocation. A reader who holds the commit, the renderer and the four
-input hashes reproduces all four frames only with them.
+The commit and the four receipts fix the set. The flag fixes one
+invocation. A reader who holds the commit, the generators and the four
+input hashes reproduces three frames without a flag and the cartography
+only with it.
