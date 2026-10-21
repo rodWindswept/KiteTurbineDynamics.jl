@@ -137,22 +137,23 @@ See `docs/validation/physics-validation-ledger.md` for what is believed and why.
 ## External Resources
 
 ### Knowledge Pipeline (K1)
-- **Workspace:** `/home/rodbot/Documents/kites/` — extraction scripts, data, model
-- **Knowledge graph:** `/home/rodbot/Documents/kites/awes_graph/awes_unified.graph.json` — 7,048 nodes, 9,775 edges (540 academic + 45 industry, 586 individual graph files)
-- **Paper texts:** `/home/rodbot/Documents/kites/awes_texts/` (540 markdown files)
-- **Industry texts:** `/home/rodbot/Documents/kites/industry_texts/` (45 markdown files)
-- **K1 model:** `/home/rodbot/Documents/kites/models/agents-k1/` — 4B, RTX A4500 GPU, single-doc mode preferred
-- **Pipeline scripts:** `/home/rodbot/Documents/kites/scripts/` — 16 Python scripts
+- **Workspace:** `/home/rod/Documents/kites/` — extraction scripts, data, model
+- **Knowledge graph:** `/home/rod/Documents/kites/awes_graph/awes_unified.graph.json` — 13,825 nodes, 18,413 edges, measured 2026-10-21. The tree holds 607 paper texts, 45 industry texts and 1,192 individual graph files.
+- **Paper texts:** `/home/rod/Documents/kites/awes_texts/` (607 markdown files)
+- **Industry texts:** `/home/rod/Documents/kites/industry_texts/` (45 markdown files)
+- **K1 model:** `/home/rod/Documents/kites/models/agents-k1/` — 4B, RTX A4500 GPU, single-doc mode preferred
+- **Pipeline scripts:** `/home/rod/Documents/kites/scripts/` — 16 Python scripts
+- **Graph numbers:** no value from a `*.rotary.graph.json` may reach the report. Four of the thirteen carry no span field on any node. Rule and file list: `docs/reporting/references-verification.md` §9.
 - **Phase results:** Phase 1 (collab map), Phase 3 (citation lineage), Phase 3b (web validation) — all complete
 - **Crons:** ALL PAUSED as of 2026-06-23. Do not restart without explicit direction.
 - **Session record:** `docs/reports/knowledge-pipeline-sprint.md`
 - **graphanything CLI:** BROKEN — use direct API calls via `k1_ingest.py`
 
 ### Related Repos
-- **TRPTSim:** `/home/rodbot/Documents/GitHub/TRPTSim/` — TRPT airborne wind energy simulator
-- **TetherDragODESolver:** `/home/rodbot/Documents/GitHub/TetherDragODESolver/` — Tether drag ODE (Tveide)
-- **CoaxialAutogyroStacking.jl:** `/home/rodbot/Documents/GitHub/CoaxialAutogyroStacking.jl/` — Autogyro lift model
-- **10kW Prototype:** `/home/rodbot/Documents/GitHub/10kWKiteTurbine/` — Physical prototype docs
+- **TRPTSim:** `/home/rod/Documents/GitHub/TRPTSim/` — TRPT airborne wind energy simulator
+- **TetherDragODESolver:** `/home/rod/Documents/GitHub/TetherDragODESolver/` — Tether drag ODE (Tveide)
+- **CoaxialAutogyroStacking.jl:** `/home/rod/Documents/GitHub/CoaxialAutogyroStacking.jl/` — Autogyro lift model
+- **10kW Prototype:** `/home/rod/Documents/GitHub/10kWKiteTurbine/` — Physical prototype docs
 
 ## Conventions
 

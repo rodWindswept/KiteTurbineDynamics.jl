@@ -355,9 +355,9 @@ Full details: `docs/reports/knowledge-pipeline-sprint.md` (2026-06-22–23 sprin
 |----------|------|-------------|--------|
 | Extraction workspace | `/home/rod/Documents/kites/` | Main pipeline directory — scripts, graphs, model | Active |
 | K1 extraction scripts | `kites/scripts/` | 16 Python scripts — ingestion, phase analysis, synthesis | Complete |
-| Unified knowledge graph | `kites/awes_graph/awes_unified.graph.json` | 7,048 nodes, 9,775 edges (586 files) | Active |
-| Individual paper graphs | `kites/awes_graph/*.graph.json` | 586 per-paper K1 extractions | Frozen |
-| Academic paper texts | `kites/awes_texts/` | 540 markdown files (PDF extractions) | Frozen |
+| Unified knowledge graph | `kites/awes_graph/awes_unified.graph.json` | 13,825 nodes, 18,413 edges (measured 2026-10-21) | Active |
+| Individual paper graphs | `kites/awes_graph/*.graph.json` | 1,192 per-paper K1 extractions, 13 rotary | Frozen |
+| Academic paper texts | `kites/awes_texts/` | 607 markdown files (PDF extractions) | Frozen |
 | Industry document texts | `kites/industry_texts/` | 45 markdown files (PDF/DOCX/PPTX extractions) | Frozen |
 | K1 4B model | `kites/models/agents-k1/` | 2 shards, 8.3 GB, PyTorch, RTX A4500 GPU | Active (loaded on demand) |
 | graphanything CLI | `kites/agents-k1/` | **BROKEN** — `graphanything new --auto` produces zero nodes. Do not use. | Deprecated |
