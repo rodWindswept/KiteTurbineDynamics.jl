@@ -89,10 +89,22 @@ series never takes it.
 ring. "Line" names a tensile rope segment between ring polygons. A ring is a
 polygon of nodes and tubular beams, so its tubes never take "line". Load sign
 does not change the member word: a tube in tension is still a beam, and a rope
-never carries compression. The page already keeps the split. §2.3 reads "The
-beam load and the line load differ", and `ring-utilisation` reads "the
-beam-column interaction on the worst beam". The ring beams hold compression at
-R6 and tension at R5 alone, and every one stays a beam.
+never carries compression.
+
+The boundary governs the bare word inside the column. The lift chain's named
+members (lift line, backline, cyan line, bridles) sit outside the ring polygons,
+keep their own names, and never take "beam". Outside the column, a bare "line"
+is valid where the nearest named member supplies the referent: the two printed
+instances are L759 and L1260, and neither is a fault. Where the word defines
+itself, at L102–107 and L144–147, it speaks in its own voice and is exempt. At
+`0233f22` the draft reads 42 occurrences on 39 lines, and every one falls in one
+of these classes.
+
+The page already keeps the split. §2.3 reads "The beam load and the line load
+differ", and `ring-utilisation` reads "the beam-column interaction on the worst
+beam". The ring beams hold compression at R6 and tension at R5 alone, and every
+one stays a beam. L353's bare "the beam" is the ring tube, sized against
+NR-048, and the rule permits it.
 
 **Reader name (Rod, 2026-10-15):** the report reads **lifting bridles** for the
 bearing-to-rotor member. The `DECISIONS.md` pages keep the **gold bridles**
