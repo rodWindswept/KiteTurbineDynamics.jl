@@ -3136,3 +3136,184 @@ Boundaries:
 - The sweep is one genome, one base, one rating and one gain. The terms do not transfer to another machine.
 
 - Fitness is the campaign objective in kg-equivalent. It is not a mass and not a quality score.
+
+## Source rows: NR-074 to NR-077, the lever set (2026-10-21, science-validator)
+
+Append only, under the amend pattern. No signed row changed.
+
+The figures seat holds the four row-8 classes and a candidate value list (`docs/reporting/figures/lever-set/values-candidate.md`, `dce5c9d`). This block checks every value in that list against the raw telemetry, signs it, and replaces the display forms that would mislead. It opens four rows.
+
+**Source pins.** The five files sit in `docs/reporting/figures/lever-statistics-extract/`. Blobs: `5e2bea08` objective versus gene, `c0ab5017` objective by gene bins, `d9c3efeb` failure rates by value, `87a3d6bc` penalty summary, `15cd27e5` penalty contributions. Each reads byte-identical at `6c51f5c` and at HEAD. Builder `build-extract.py` at script commit `51ffc0d8db9aea3beef01f15a2feb9e83ae195a4`; data commit `dd3cc6a`, run `a76c5e9`. Checker `scratch/sv_lever_set_sign.py`, log `scratch/sv_lever_set_sign.log`, 77 checks, 0 fail.
+
+**What the check does.** It recomputes every signed value from the three island telemetry files, then compares its own numbers to the five extract files. The raw rows are the basis of the signature, not the extract; the extract agrees with them on every value at 1e-12.
+
+| ID | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-074 | The sensitivity set: rank correlation and the median bin shift, ten genes over the 508 ok designs | rho -0.5832 to -0.0287 in the signed rank order; shift -3.892 to +26.592; the two largest shifts sit on bins of 2 and 1 designs | -, kg-equivalent | `extract-objective-vs-gene.csv`, `extract-objective-by-gene-bins.csv` | signed (science-validator, 2026-10-21) |
+| NR-075 | The disqualification census: status counts per value for three columns, 13 rows | n_lines 3 to 9, rotor_count 1 to 3, n_active 1 to 3. Ok share 66.9 to 2.9 across the n_lines rows. Every clearance rejection sits at two rotors or more | designs, per cent | `extract-failure-rates-by-value.csv` | signed (science-validator, 2026-10-21) |
+| NR-076 | The charge set: fired, sum, share, dominance count, median and maximum for four channels over the 508 ok designs | over-power 1462.3155 kg-equivalent, 69.31 per cent, dominant in 453 of 508. Total 2109.8081 | kg-equivalent, per cent | `extract-penalty-summary.csv`, `extract-penalty-contributions.csv` | signed (science-validator, 2026-10-21) |
+| NR-077 | The response surface: 46 conditioned bins, their counts, and the n >= 5 floor rule | 46 bins, counts 1 to 506, four bins under five designs. Mean above median in 41 of the 42 bins holding five or more | designs | `extract-objective-by-gene-bins.csv` | signed (science-validator, 2026-10-21) |
+
+### NR-074: the sensitivity set
+
+| rank | gene | rho (4 dp) | signed print | shift (3 dp) | signed print | bins | n bottom to top |
+|---|---|---|---|---|---|---|---|
+| 1 | `target_Lr` | -0.5832 | -0.58 | -3.892 | -3.89 | q1 to q5 | 102 / 101 |
+| 2 | `blade_scale_top` | +0.5042 | +0.50 | +2.759 | +2.76 | q1 to q3 | 111 / 305 |
+| 3 | `bank_bottom` | -0.4033 | -0.40 | -2.896 | -2.90 | q1 to q5 | 102 / 102 |
+| 4 | `r_bottom` | -0.2764 | -0.28 | -1.801 | -1.80 | q1 to q5 | 103 / 99 |
+| 5 | `blade_scale_bottom` | +0.1656 | +0.17 | +1.356 | +1.36 | q1 to q4 | 102 / 203 |
+| 6 | `bank_top` | +0.1252 | +0.13 | +0.669 | +0.67 | q1 to q5 | 102 / 102 |
+| 7 | `rotor_count` | +0.1085 | +0.11 | +26.592 | +26.59 | 1 to 2 | 506 / 2 |
+| 8 | `r_hub` | +0.0736 | +0.07 | +1.071 | +1.07 | q1 to q5 | 102 / 102 |
+| 9 | `density_profile` | +0.0662 | +0.07 | -0.212 | -0.21 | q1 to q5 | 103 / 102 |
+| 10 | `n_lines` | -0.0287 | -0.03 | +22.540 | +22.54 | 3 to 9 | 319 / 1 |
+
+Sign-off basis:
+
+- Rank order. The ten genes rank by absolute rho exactly as the table prints. `rotor_count` reads seventh of ten and `n_lines` tenth.
+
+- The shift. Median of the top bin minus median of the bottom bin, over the 508 ok designs. Every value recomputes from the raw rows and matches the extract at 1e-12.
+
+- The two largest shifts. `rotor_count` +26.592 and `n_lines` +22.540. Their top bins hold 2 designs and 1 design. Their bottom bins hold 506 and 319.
+
+- The population. Every value in this row reads the 508 ok designs, not the 930. The extract's own recipe line says so.
+
+Display forms signed (replacing the candidate forms):
+
+1. rho prints signed at 2 dp. Where two genes share a form at that precision, the plate prints three decimals for that pair or omits the rank numerals: `r_hub` +0.0736 and `density_profile` +0.0662 both print +0.07, so ranks 8 and 9 are not derivable from a 2 dp label.
+
+2. The shift prints at 2 dp in kg-equivalent, never kg. It is a fitness difference, and the unit note of 2026-10-13 binds it (NR-036, NR-039).
+
+3. Every row prints its bin pair and both populations. A row with fewer than five designs at either end draws thin and takes no order in any caption.
+
+4. No caption calls a shift a lever, or the largest lever. The signed sentence: "The two largest bin shifts sit on two designs and one, so the shift column reads a range at the gene's extremes and not a population effect."
+
+5. The population line is mandatory wherever rho prints: "among the 508 designs that passed".
+
+Boundaries that travel with this row:
+
+1. Conditioning. The rho and the shift read survivors. `rotor_count` holds 506 of the 508 ok rows at one rotor, so its rho cannot see the population where 91 of 157 two-rotor designs fail clearance. That finding belongs to NR-075. No sentence may describe NR-074 as a read over 930 designs; `prior-chart-classes.md` section 5 carries that error and should read 508.
+
+2. The shift spans differ. Six genes read q1 to q5, a 10 to 90 per cent trimmed span. `blade_scale_top` reads q1 to q3 and `blade_scale_bottom` q1 to q4, because ties at the rail collapse the top bins (263 of the 508 ok designs sit at `blade_scale_top` exactly 1.0, and 305 at or above 0.995842). The two integer genes read their full decoder range. The column is not one scale.
+
+3. One shift is a midpoint. The `rotor_count` top bin holds two designs, so its median reads 59.755, the midpoint of two values.
+
+### NR-075: the disqualification census
+
+| n_lines | n | ok | reject | clearance | twist | ok share |
+|---|---|---|---|---|---|---|
+| 3 | 477 | 319 | 122 | 32 | 4 | 66.9 |
+| 4 | 209 | 144 | 51 | 13 | 1 | 68.9 |
+| 5 | 78 | 34 | 29 | 15 | 0 | 43.6 |
+| 6 | 62 | 3 | 42 | 13 | 4 | 4.8 |
+| 7 | 53 | 6 | 27 | 19 | 1 | 11.3 |
+| 8 | 17 | 1 | 14 | 2 | 0 | 5.9 |
+| 9 | 34 | 1 | 16 | 16 | 1 | 2.9 |
+
+| rotor_count | n | ok | reject | clearance | twist | ok share |
+|---|---|---|---|---|---|---|
+| 1 | 739 | 506 | 224 | 0 | 9 | 68.5 |
+| 2 | 157 | 2 | 62 | 91 | 2 | 1.3 |
+| 3 | 34 | 0 | 15 | 19 | 0 | 0.0 |
+
+| n_active | n | ok | reject | clearance | twist | ok share |
+|---|---|---|---|---|---|---|
+| 1 | 739 | 506 | 224 | 0 | 9 | 68.5 |
+| 2 | 167 | 2 | 62 | 101 | 2 | 1.2 |
+| 3 | 24 | 0 | 15 | 9 | 0 | 0.0 |
+
+Sign-off basis:
+
+- The 13 rows recompute from the `status` column and the decoder forms. Every cell matches the extract.
+
+- The step sits between five and six lines: 66.9 and 68.9 at three and four, 43.6 at five, 4.8 at six. "Below five" is right; "at five holds two thirds" is not.
+
+- `rotor_count`: 739 / 157 / 34 designs at 506 / 2 / 0 ok. Two rotors pass at 1.3 per cent, three at zero.
+
+- Clearance: 91 at two rotors and 19 at three. No clearance rejection sits at one rotor.
+
+- `n_active` differs from `rotor_count` on 10 rows, all `clearance_reject`: the x6 gene decodes to 3 and the recorded column reads 2. The two columns are not the same value, and no ok row moves between them.
+
+Display forms signed:
+
+1. Counts print as integers; the ok share at 1 dp as the extract prints.
+
+2. The plate draws `rotor_count`. `n_active` prints in the caption only, at "68.5, 1.2 and 0.0", never as a second panel. The caption says "the same shape", never "the same values".
+
+3. The causal sentence leaves. Signed form: "Every clearance rejection in this population sits at two rotors or more; none sits at one." The population does not isolate the rotor count, because the two-rotor designs differ in the other nine genes too, so no caption says the second rotor breaks clearance.
+
+Boundaries that travel with this row:
+
+1. One population, one campaign. The census counts designs, not flights.
+
+2. The three columns are three decoder readings of the same genome. `n_lines` is the line count, `rotor_count` the x6 gene, `n_active` the recorded active count. The first two take the decoder form; the third reads the recorded column.
+
+### NR-076: the charge set
+
+| channel | fired | sum | share | largest in | median | max |
+|---|---|---|---|---|---|---|
+| over-power | 507 of 508 | 1462.3155 | 69.31 | 453 | 2.8125 | 8.8445 |
+| utilisation | 508 of 508 | 506.3577 | 24.00 | 46 | 0.7190 | 12.3611 |
+| twist | 508 of 508 | 141.1349 | 6.69 | 9 | 0.1579 | 8.2856 |
+| total | 508 of 508 | 2109.8081 | 100.00 | - | 3.9569 | 15.1428 |
+
+Sign-off basis:
+
+- Sums recompute from the recorded `P_end`, `FoS` and `twist_ratio` columns under the NR-046 forms at recorded precision. The three shares close to 100.00.
+
+- Dominance. Over-power is the largest of the three charges in 453 rows, utilisation in 46, twist in 9. The counts sum to 508.
+
+- Over-power fires on 507 of 508. The one zero row sits at `P_end` 5.0, the floor itself (island 1, gen 8, idx 4; fitness 33.684).
+
+- The maxima run the other way: utilisation 12.3611, over-power 8.8445, twist 8.2856.
+
+Display forms signed:
+
+1. Shares at 2 dp. Sums, medians and maxima at 2 dp in kg-equivalent, never kg.
+
+2. Fired prints as "507 of 508", not a percentage.
+
+3. The signed sentence: "Over-power holds 69.31 per cent of the summed penalty charge across the 508 ok designs, and it is the largest of the three channels in 453 of them." The denominator is the summed charge, 2109.81 kg-equivalent. It is not the summed fitness and not the score.
+
+4. No caption ranks the channels by their maximum. That order inverts the sum order.
+
+5. The waterfall draws the 508-row file. The four-channel summary is its header, not a fifth bar.
+
+Boundaries that travel with this row:
+
+1. The charges are recomputations from two-decimal inputs (`P_end`, `FoS`) and full-precision twist. Each carries its own input bound, and the table prints what the recorded precision supports.
+
+2. Charge is not mass. 2109.81 kg-equivalent over 508 designs is a summed penalty; the median design carries 3.96.
+
+### NR-077: the response surface
+
+Sign-off basis:
+
+- 46 bins: `r_hub` 5, `r_bottom` 5, `target_Lr` 5, `n_lines` 7, `density_profile` 5, `rotor_count` 2, `bank_top` 5, `bank_bottom` 5, `blade_scale_top` 3, `blade_scale_bottom` 4.
+
+- Counts run 1 to 506. Two bins hold one design each (`n_lines` 8 and 9), one holds two (`rotor_count` 2), and the largest holds 506 (`rotor_count` 1).
+
+- The mean sits above the median in 42 of the 46 bins. Three of the four exceptions are the single- and two-design bins, where the two are equal by construction. The fourth is `target_Lr` q4 (102 designs, median 32.068, mean 31.784).
+
+- So the signed count reads 41 of the 42 bins that hold five or more designs, not 42 of 46. The candidate's "42 of 46" is arithmetically right and cross-cuts the floor.
+
+Display forms signed:
+
+1. The plate draws the median per bin, never the mean.
+
+2. The n >= 5 floor binds in the SPEC. The four bins under it are `n_lines` 6 (3), 8 (1), 9 (1) and `rotor_count` 2 (2); the plate greys or drops them.
+
+3. Every box prints its count, and the bin edges print on the axis.
+
+4. The signed caption: "In 41 of the 42 bins holding five or more designs the mean sits above the median; the exception is `target_Lr` q4, where it sits below."
+
+Boundaries that travel with this row:
+
+1. The surface reads 508 ok designs, one bin per gene at a time. It is not a two-gene interaction surface; a two-gene panel takes its own bins and its own row.
+
+### Cross-slot rule: one floor binds both slots
+
+The four bins under the n >= 5 rule are the bins behind NR-074's two largest shifts. `rotor_count` 2 and `n_lines` 9 are two of them, and `n_lines` 8 carries the same gene. A sweep that reads NR-074's shift column without NR-077's floor reads two bars built on three designs.
+
+Counter-read requested from the aero seat.

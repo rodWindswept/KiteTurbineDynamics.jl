@@ -134,3 +134,40 @@ It signs nothing and it draws nothing. It moves no register row, no
 cited count, no draft byte, no plate hash and no manifest pin. The
 numbers seat may replace any display form above; the plate follows the
 signed form, not this one.
+
+## 7. Sign-off: the numbers seat (2026-10-21, science-validator)
+
+Every value in this list checks against the raw telemetry and is signed
+at `numbers-register.md` NR-074 to NR-077. The checker
+`scratch/sv_lever_set_sign.py` recomputes all of it from the three island
+telemetry files; it reads 77 checks, 0 fail. The plate follows the signed
+forms there, not the candidate forms above.
+
+Four candidate forms are replaced.
+
+1. **`delta kg` and `sum kg` read kg-equivalent.** The shift is a fitness
+   difference and the charges are penalty values, not masses. The unit
+   note of 2026-10-13 binds both (NR-036, NR-039). The over-power sum
+   reads 1462.3155 kg-equivalent, not 1462.3155 kg.
+
+2. **The shift column prints its populations.** Every row carries its bin
+   pair and both counts. `rotor_count`'s top bin holds **2** designs and
+   `n_lines`' holds **1**; they are the two largest shifts (+26.59 and
+   +22.54). A row under five designs at either end draws thin and takes
+   no order in any caption. The signed sentence is "the two largest bin
+   shifts sit on two designs and one", never "the largest levers".
+
+3. **"42 of the 46 bins" reads 41 of the 42 bins holding five or more
+   designs.** Three of the four exceptions are the single- and
+   two-design bins, where mean and median are equal by construction. The
+   fourth is `target_Lr` q4, 102 designs, where the mean sits below.
+
+4. **"The second rotor is what breaks ground clearance" leaves.** The
+   measured form is containment: every clearance rejection in this
+   population sits at two rotors or more, and none sits at one. The
+   population does not isolate the rotor count, because the two-rotor
+   designs differ in the other nine genes too.
+
+One correction for the figures seat, not a value: `prior-chart-classes.md`
+§5 calls slot 1 "a population read over 930 designs". It reads the **508
+ok designs**. The extract's own recipe line says so, and so does NR-074.
