@@ -25,23 +25,31 @@ agree.
 
 Source `extract-objective-vs-gene.csv`, 10 rows. `spearman_rho` reads
 the rank correlation of the gene against the objective over the 508 ok
-rows. `delta_med_kg` reads the top-bin median minus the bottom-bin
+rows. **It is a survivor-conditioned read, not a read over 930 designs:**
+`rotor_count` holds 506 of the 508 at one rotor, so its rho cannot see
+the population where 91 of 157 two-rotor designs fail clearance. That
+finding belongs to slot 2. `delta_med_kg` reads the top-bin median minus the bottom-bin
 median.
 
-| gene | slot | rho (4 dp) | proposed form | delta kg (3 dp) | proposed form | bins |
-|---|---|---|---|---|---|---|
-| `target_Lr` | x3 | -0.5832 | -0.58 | -3.892 | -3.89 | q1 to q5 |
-| `blade_scale_top` | x9 | +0.5042 | +0.50 | +2.759 | +2.76 | q1 to q3 |
-| `bank_bottom` | x8 | -0.4033 | -0.40 | -2.896 | -2.90 | q1 to q5 |
-| `r_bottom` | x2 | -0.2764 | -0.28 | -1.801 | -1.80 | q1 to q5 |
-| `blade_scale_bottom` | x10 | +0.1656 | +0.17 | +1.356 | +1.36 | q1 to q4 |
-| `bank_top` | x7 | +0.1252 | +0.13 | +0.669 | +0.67 | q1 to q5 |
-| `rotor_count` | x6 | +0.1085 | +0.11 | +26.592 | +26.59 | 1 to 2 |
-| `r_hub` | x1 | +0.0736 | +0.07 | +1.071 | +1.07 | q1 to q5 |
-| `density_profile` | x5 | +0.0662 | +0.07 | -0.212 | -0.21 | q1 to q5 |
-| `n_lines` | x4 | -0.0287 | -0.03 | +22.540 | +22.54 | 3 to 9 |
+| gene | slot | rho (4 dp) | proposed form | delta kg (3 dp) | proposed form | bins | n at each end |
+|---|---|---|---|---|---|---|---|
+| `target_Lr` | x3 | -0.5832 | -0.58 | -3.892 | -3.89 | q1 to q5 | 102 / 101 |
+| `blade_scale_top` | x9 | +0.5042 | +0.50 | +2.759 | +2.76 | q1 to q3 | 111 / 305 |
+| `bank_bottom` | x8 | -0.4033 | -0.40 | -2.896 | -2.90 | q1 to q5 | 102 / 102 |
+| `r_bottom` | x2 | -0.2764 | -0.28 | -1.801 | -1.80 | q1 to q5 | 103 / 99 |
+| `blade_scale_bottom` | x10 | +0.1656 | +0.17 | +1.356 | +1.36 | q1 to q4 | 102 / 203 |
+| `bank_top` | x7 | +0.1252 | +0.13 | +0.669 | +0.67 | q1 to q5 | 102 / 102 |
+| `rotor_count` | x6 | +0.1085 | +0.11 | +26.592 | +26.59 | 1 to 2 | 506 / **2** |
+| `r_hub` | x1 | +0.0736 | +0.07 | +1.071 | +1.07 | q1 to q5 | 102 / 102 |
+| `density_profile` | x5 | +0.0662 | +0.07 | -0.212 | -0.21 | q1 to q5 | 103 / 102 |
+| `n_lines` | x4 | -0.0287 | -0.03 | +22.540 | +22.54 | 3 to 9 | 319 / **1** |
 
-**One finding the plate shows and the register does not carry yet:**
+**The signed rule for both columns:** every row prints its bin pair and
+both populations, and a row under five at either end draws thin and
+takes no order in any caption. Two rows meet that test, and they are the
+two largest shifts.
+
+**One finding the signed rows now carry:**
 `rotor_count` ranks seventh of ten on rho at +0.11, and **first** on the
 bin shift at +26.59 kg. `n_lines` ranks tenth on rho at -0.03, and
 **second** on the shift at +22.54 kg. A rank bar drawn on rho alone puts
@@ -117,8 +125,10 @@ conditioned on one gene at a time, five quantile bins for continuous
 genes, decoder values for integer genes. 508 ok rows.
 
 The plate draws the median per bin, not the mean: the mean sits above
-the median in **42 of the 46 bins**, so the two forms disagree almost
-everywhere. The bin edges print on the axis, and the count per bin
+the median in **41 of the 42 bins that hold five or more designs**, so
+the two forms disagree almost everywhere that a bin carries a
+population. Three of the four exceptions are the thin bins, where the
+two forms are equal by construction. The bin edges print on the axis, and the count per bin
 prints in the box.
 
 **A defect this file must flag before the SPEC:** the bins are uneven,

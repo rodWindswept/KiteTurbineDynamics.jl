@@ -1,0 +1,56 @@
+{
+  "command": "/usr/bin/python3 docs/reporting/figures/lever-set/lever-set.py --script-commit 2671d96",
+  "data_commit": "dd3cc6a",
+  "inputs": {
+    "extracts": [
+      {
+        "path": "docs/reporting/figures/lever-statistics-extract/extract-objective-vs-gene.csv",
+        "sha256": "01eccd666b531a6c5cf70f73f9842b4ab2d90c562a79009b473fe2fc9365612f"
+      },
+      {
+        "path": "docs/reporting/figures/lever-statistics-extract/extract-objective-by-gene-bins.csv",
+        "sha256": "e2715cf4d95b9c65933c0523e34e5d878680e0446be13cf319307cccc395aee9"
+      },
+      {
+        "path": "docs/reporting/figures/lever-statistics-extract/extract-failure-rates-by-value.csv",
+        "sha256": "00b7e66a1e119844b34046e448384a76c6b7442a68032a20ba594d09df6913d9"
+      },
+      {
+        "path": "docs/reporting/figures/lever-statistics-extract/extract-penalty-summary.csv",
+        "sha256": "007f9ceaef179096d03d5c69959400cc81c2b703856b7c85e994f96425d64dba"
+      },
+      {
+        "path": "docs/reporting/figures/lever-statistics-extract/extract-penalty-contributions.csv",
+        "sha256": "93d0411b7588483b7b8f97f98f0e089a0de33158ef69b49989ecdf9a0cc9ef78"
+      }
+    ],
+    "register_rows": [
+      "NR-074",
+      "NR-075",
+      "NR-076",
+      "NR-077"
+    ]
+  },
+  "outputs": {
+    "label-ledger.txt": "e41e8de2b53faa3122fc7289a4e76baa0196e080337ea73a16e7fde6eeb8a9fb",
+    "lever-set-A.pdf": "a681792acc80a3d028ac82cd2e7cff85fdfe72cc3fb2d4a6e36443fd3a8ca8a6",
+    "lever-set-A.png": "1448d434456cb7e69754bd239581c61efa9ae2827b1e24f876bd3fab405ec74b",
+    "lever-set-A.svg": "d6614c82015b6f2be0377025be2e1cb42234187c7ac215904c6b3865b5b6cca2",
+    "lever-set-B.pdf": "42cfe55d0b36dbe3a3f790fe0a7844d8ef26ab6ca59828986e3029670d69c1e7",
+    "lever-set-B.png": "5d9908cc22e994a90e9d8cf44fee3d32479e1a0cc3ad600e02aa1eb620fd4ad2",
+    "lever-set-B.svg": "37dc49c8efc936bf5a2fa2ff3cf884d4e9978533a4e3bebcc5200760ab5a45cc"
+  },
+  "precision": "rho 2 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
+  "run": "a76c5e9",
+  "script": {
+    "path": "docs/reporting/figures/lever-set/lever-set.py",
+    "sha256": "ff56243489a27f4df92f24c1fff415b11a415586a1a341febc13b19665ea6423"
+  },
+  "script_commit": "2671d96",
+  "slug": "lever-set",
+  "toolchain": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.4",
+    "python": "3.12.3"
+  }
+}
