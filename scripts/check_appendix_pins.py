@@ -52,6 +52,7 @@ KIT = {
     "Parameter atlas": "pca-atlas",
     "Machine winner": "machine-winner-hero",
     "The corner machines": "machine-corner-grid",
+    "The power trend": "machine-power-trend",
     "Scaling ladder": "scaling-ladder",
 }
 

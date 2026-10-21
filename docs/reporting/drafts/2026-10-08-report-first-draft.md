@@ -943,6 +943,23 @@ The trace reads one island of the campaign.
 It does not prove a global optimum.
 A longer or broader run would extend the search.
 
+[Figure seated: figure-map row 30 (the power trend, slug `machine-power-trend`). Values cite NR-002, NR-005, NR-006, NR-062, NR-066 and NR-069.]
+
+The power trend reads the same search on all three islands.
+It draws the window-end power of the running-best machine on each island at every generation.
+Each island carries 31 values, one for each generation (NR-045).
+A step holds until a better design lands, so the power stays flat between changes.
+No step interpolates between generations.
+
+The 5 kW floor is a gate and not a target.
+The score returns infinity below the floor, so no ok design sits below 5.00 kW.
+Of 508 ok evaluations, exactly one reads 5.00 kW and the next reads 5.02 kW (NR-069, NR-002).
+That design is the tightest pass of the campaign, one design of 508 (NR-069).
+
+The plate prints no objective curve, no mass curve and no slope numeral.
+The convergence plate (row 16) carries the objective curve.
+The trend shows where the search held flat and where it moved.
+
 ### 3.6 Design implications
 
 The record supports four implications.
@@ -1412,7 +1429,7 @@ The table ties each headline claim of this report to its evidence and its signed
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. All eight read dataset commit `dd3cc6a` and
+One row per built exhibit. All nine read dataset commit `dd3cc6a` and
 the current physics era, `post-95c385d_wind-authority`, so the era sits
 here once instead of in a table column.
 
@@ -1426,6 +1443,7 @@ here once instead of in a table column.
 | Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `d0e410d` |
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
+| The power trend | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 | `e66dd94` |
 
 **Output pins.**
 

@@ -1,7 +1,7 @@
 # Captions: machine power trend
 
-**Slug** `machine-power-trend`. **Status** GENERATE candidate, unseated.
-**Date** 2026-10-20.
+**Slug** `machine-power-trend`. **Status** GENERATE (render 2026-10-20),
+seated at §3.5. **Date** 2026-10-21.
 
 Companion to `machine-evolution-strip` (figure map row 9). The strip prints
 window-end power under each of its seven machines. This plate carries the
@@ -25,22 +25,22 @@ That fall is 3.480 of the 4.515 kg-eq of penalty the winner sheds. The rest
 is beam utilisation, less a small twist cost.
 
 No machine can cross the floor. The score rejects a design below 5 kW, so the
-one segment that lies on the line is the tightest pass of the campaign and
+one step that lies on the rule is the tightest pass of the campaign and
 not a limit that got close.
 
 ## Technical caption (undergrad register, STE-clean form)
 
-The line is a step. The running-best machine changes only when a better
-design lands, so the power holds flat between changes. No line interpolates
-between generations.
+The running-best series draws as steps. The running-best machine changes only
+when a better design lands, so the power holds flat between changes. No step
+interpolates between generations.
 
 Each generation carries three points, one running-best machine per island.
 The plate draws 93 values from 930 recorded designs.
 
-The plate prints four window-end values on the island 3 line. The seed reads
-5.86 kW. Generation 6 reads 5.4 kW. Generation 10 reads 5.89 kW. The winner
-reads 5.31 kW. Each printed value is one member of the pair NR-062 signs. The
-strip cards carry all seven.
+The plate prints four window-end values on the island 3 running-best series.
+The seed reads 5.86 kW. Generation 6 reads 5.4 kW. Generation 10 reads
+5.89 kW. The winner reads 5.31 kW. Each printed value is one member of the
+pair NR-062 signs. The strip cards carry all seven.
 
 The 5 kW rule is a gate and not a datum. The fitness function returns infinity
 below the power floor (`objective_v12.jl:143`), and the evaluator passes the
@@ -83,18 +83,30 @@ as recorded: two significant digits and not a defect.
 
 Data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` ·
 rows NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 · script commit `e66dd94` · full
-record: the figure-provenance appendix, once the plate is seated.
+record: the figure-provenance appendix.
 
-## Seat note (2026-10-20, figures seat)
+## Seat note (2026-10-21, founder call: seated)
 
-The plate is a candidate and not a seated figure. `check_appendix_pins.py`
-maps nine appendix rows through a fixed kit table. A tenth row would read
-UNMAPPED and fail the gate, so this kit carries a manifest and no appendix
-row.
+The founder seated the plate at §3.5, so the section carries two plates: the
+strip and this trend. The seat moved six surfaces in one pass: the draft
+paragraph and its marker, the appendix row, the appendix preamble count
+(eight exhibits to nine), the citation count (58 to 59), the kit table in
+`check_appendix_pins.py`, and figure-map row 30.
 
-Seating needs three changes in one pass: a row in the draft table, the slug
-in that kit table, and a re-mint. The strip kit does not move for this plate,
-so its pin stays at `ce9c5d8`.
+The four caption words landed at the same pass: `step` at the floor reading,
+`rule` for the gate, and `running-best` in the technical caption, because the
+ledger of this kit prints it and the drawn layer holds no `best-so-far`.
+
+`check_appendix_pins.py` read eight rows before the seat and nine after it.
+The new row maps through the entry "The power trend". The plate bytes did
+not move, and no manifest lists `captions.md` as an output.
+
+The five chart-sense `line` strings in `SPEC.md` and `README.md` stay text
+debt. No builder prints them, and the drawn layer holds none of them.
+
+The two names for the selection rule stand apart by surface. The signed rule
+line and the landscape print `best-so-far`. This kit prints `running-best`,
+and neither name renames the other.
 
 ## Correction note (2026-10-20, figures seat)
 
