@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit HEAD",
+  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit c51635d",
   "data_commit": "dd3cc6a",
   "era": "post-95c385d_wind-authority",
   "inputs": {
@@ -43,15 +43,15 @@
     ]
   },
   "outputs": {
-    "capability-sheet.pdf": "343a4e24c44a3a8dfd2345eff54432ff131c5f772b766619d2f885b4b19724f6",
-    "capability-sheet.png": "033ea7240878548e3d58a8f6d06829891bf527a3a1db757b6fa2eb02afb8afdf",
-    "capability-sheet.svg": "a247cfb8d0592f5b4a11d8cfc24ea8cd733a3fa52933b755510984aa7a60ca92",
+    "capability-sheet.pdf": "506f20085caefbfab4f07f4202dd995b909c8189505fa552354ea8a9519b3206",
+    "capability-sheet.png": "ae1908e7abe8836c0bc70d5efeb21e4f10b6d3e0dfbdc8f975a5ea4501671bf7",
+    "capability-sheet.svg": "0f320545fe0b2cff612d96232a9241e72b3c3715545437fab7880082c7573ecb",
     "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
-    "label-ledger.txt": "02e2fc980d09110f4b8babaa36eea86cb318512d828477804d26194c4c47edbc"
+    "label-ledger.txt": "c5d3aef60550742e8644ac08c23e5520edb7f555642dc1395490619150d55d40"
   },
   "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
   "run": "a76c5e9",
-  "script_commit": "HEAD",
+  "script_commit": "c51635d",
   "slug": "capability-sheet",
   "toolchain": {
     "matplotlib": "3.10.8",

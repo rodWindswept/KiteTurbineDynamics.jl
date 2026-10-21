@@ -17142,7 +17142,7 @@ z
    </g>
   </g>
   <g id="text_91">
-   <!-- source v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv · data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · script HEAD -->
+   <!-- source v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv · data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · script c51635d -->
    <g style="fill: #444444" transform="translate(1.44 646.56) scale(0.058 -0.058)">
     <defs>
      <path id="DejaVuSans-2f" d="M 1625 4666 
@@ -17373,10 +17373,13 @@ z
     <use xlink:href="#DejaVuSans-70" transform="translate(7930.765625 0)"/>
     <use xlink:href="#DejaVuSans-74" transform="translate(7994.242188 0)"/>
     <use xlink:href="#DejaVuSans-20" transform="translate(8033.451172 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(8065.238281 0)"/>
-    <use xlink:href="#DejaVuSans-45" transform="translate(8140.433594 0)"/>
-    <use xlink:href="#DejaVuSans-41" transform="translate(8203.617188 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(8272.025391 0)"/>
+    <use xlink:href="#DejaVuSans-63" transform="translate(8065.238281 0)"/>
+    <use xlink:href="#DejaVuSans-35" transform="translate(8120.21875 0)"/>
+    <use xlink:href="#DejaVuSans-31" transform="translate(8183.841797 0)"/>
+    <use xlink:href="#DejaVuSans-36" transform="translate(8247.464844 0)"/>
+    <use xlink:href="#DejaVuSans-33" transform="translate(8311.087891 0)"/>
+    <use xlink:href="#DejaVuSans-35" transform="translate(8374.710938 0)"/>
+    <use xlink:href="#DejaVuSans-64" transform="translate(8438.333984 0)"/>
    </g>
   </g>
   <g id="text_92">
