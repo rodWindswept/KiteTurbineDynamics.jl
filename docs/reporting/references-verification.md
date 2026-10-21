@@ -99,6 +99,9 @@ The same slide reads `January 31, 2022`, and every footer repeats the date.
 Page one reads `1 / 47`.
 The document metadata records a CreationDate of 31 January 2022.
 
+The wiki note carries 2021 in its header.
+No page of the artefact prints 2021.
+
 The printed form wins over the page, per the gate rule.
 
 - The entry now reads `Master thesis presentation`, year 2022, and 47 slides in the note.
