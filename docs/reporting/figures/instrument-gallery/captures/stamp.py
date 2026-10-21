@@ -349,6 +349,11 @@ def main() -> None:
         "1920 px inside the 3309. No numeral can fall in a zero-ink margin. The two "
         "line runs are 111..184 and 198..257.",
         "",
+        "The HUD row prints the same value at whole-newton precision, %5.0f, so it "
+        "reads 3100 N. That row sits outside the cut, so no reader meets the pair on "
+        "the plate. A later whole-window use of this frame meets both and should pass "
+        "one precision, not a second literal.",
+        "",
         "Row 1 holds v2 and the viewport, at 85.00 x 56.35 mm and 84.98 x 59.89 mm. "
         "Row 2 holds the cartography alone at 85.00 x 59.88 mm, centred from "
         f"44.50 mm. The block is {block} mm. It sits in a 174 mm measure with a 4 mm "

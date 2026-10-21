@@ -48,6 +48,8 @@ Each panel prints every pixel of the picture its tool draws. The picture column 
 
 The twisted-state cell prints its two tension numerals inside the picture. It does not print them in a chrome column: T_peak 3099.9 N over SWL 3500 N. build_dashboard draws them at its default, tension_label = true. The value is the SimPeaks T_peak that its HUD row prints, and the receipt uses the same formatter. Measured against the cut, the annotation ink box is 812..1388 x 111..257 device px. That is 199 px inside the 613 boundary and 1920 px inside the 3309. No numeral can fall in a zero-ink margin. The two line runs are 111..184 and 198..257.
 
+The HUD row prints the same value at whole-newton precision, %5.0f, so it reads 3100 N. That row sits outside the cut, so no reader meets the pair on the plate. A later whole-window use of this frame meets both and should pass one precision, not a second literal.
+
 Row 1 holds v2 and the viewport, at 85.00 x 56.35 mm and 84.98 x 59.89 mm. Row 2 holds the cartography alone at 85.00 x 59.88 mm, centred from 44.50 mm. The block is 123.77 mm. It sits in a 174 mm measure with a 4 mm gutter. Row 1 runs flush from 0.00 mm.
 
 Type at these widths: v2 2.98 pt, cartography 2.59 pt, and the twisted-state tension numerals 6.79 pt. The cartography title band is 43 px at 85 mm. The smallest label in the set is 1.22 pt in v2. The set ceiling is the twisted-state numerals at 6.79 pt. The one value the caption reads off the picture is the largest type in the set.
