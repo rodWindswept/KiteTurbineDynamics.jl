@@ -2,7 +2,7 @@
 
 **Slug** `instrument-gallery`. **Status** CANDIDATE. **Date** 2026-10-21. **Seat** science-writer.
 
-Section 9, Figure 12. Four frames, each from a tracked tool at one commit.
+Section 9, Figure 12. Three frames, each from a tracked tool at one commit.
 The builder emits the figure label, so no caption below names the figure
 number.
 
@@ -23,7 +23,7 @@ not restore them here.
 
 ## Plain caption
 
-Four panels, each a whole frame from the tool it names, drawn in one pass at one commit.
+Three panels, each a whole frame from the tool it names, drawn in one pass at one commit.
 
 ## Technical caption
 
