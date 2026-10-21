@@ -9,7 +9,7 @@ number.
 **Spec**, from `scripts/build_draft_pdf.py`: DejaVu Serif Book, 9 pt,
 leading 12.15 pt (`line-height: 1.35`, 4.286 mm per line), left aligned,
 174 mm measure. The technical caption sets four lines, 17.14 mm, with a
-55.0 mm last line.
+84.3 mm last line.
 
 The plain caption sets one line of 147.62 mm. The two halves do not
 repeat each other. The plain names the set and the pass. The technical
@@ -27,6 +27,6 @@ Four panels, each a whole frame from the tool it names, drawn in one pass at one
 
 ## Technical caption
 
-The panels show instruments that this repository tracks. They show what a designer meets when setting a run and inspecting a design: presence and arrangement, not results.
+The panels show instruments that this repository tracks. They show what a designer meets when setting a run and inspecting a design: presence, arrangement and state, not results.
 
 No register row signs a numeral in it. Where a panel shows a quantity, that number belongs to the tool that prints it at that commit. No other value in this report comes from it.
