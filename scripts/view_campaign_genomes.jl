@@ -473,11 +473,25 @@ function score_panel_text(row, df, dec)
     return join(lines, "\n")
 end
 
-"Compact single-card text (stat tile)."
-function card_text(df::DataFrame, params::Vector{DecodedParams}, decset, rid::Int)
+"Compact single-card text (stat tile).
+
+`style = :full` is the browser's own card: identity, then the row's result
+fields (P_mean, FoS, fitness, status), then geometry. `style = :identity`
+keeps only identity and geometry and is the report capture mode: the card
+then prints nothing that is a campaign result, so a board of cards reads as
+presence and arrangement and not as a table of readings. The card slots are
+fixed 180 x 70 px, so the grid layout is identical under either style and
+only the ink inside a card changes."
+function card_text(df::DataFrame, params::Vector{DecodedParams}, decset, rid::Int;
+                   style::Symbol=:full)
     row = df[rid, :]
     p = params[rid]
     fp = first(decset.fingerprints[rid], 12)
+    if style === :identity
+        return @sprintf("%d/%d/%d %s\nn=%d/%d/%d r=%.2f t=%.1f",
+            row.island, row.gen, row.idx, fp,
+            p.n_lines, p.n_rings, p.n_active, p.r_hub, p.tether)
+    end
     return @sprintf("%d/%d/%d %s\nP=%.2f FoS=%.3g f=%.4g %s\nn=%d/%d/%d r=%.2f t=%.1f",
         row.island, row.gen, row.idx, fp,
         row.P_mean, row.FoS, row.fitness, row.status,
@@ -779,8 +793,13 @@ function add_slider(gl, r::Int, name::String, lo::Float64, hi::Float64, integer:
     return M.IntervalSlider(gl[r, 2], range=rng, startvalues=(lo, hi), width=180)
 end
 
-"Chooser window: filter sliders + highlights menu + card grid."
-function build_chooser(df::DataFrame, params::Vector{DecodedParams}, decset, selected)
+"Chooser window: filter sliders + highlights menu + card grid.
+
+`card_style` is forwarded to `card_text`; `:identity` is the report capture
+mode and drops the per-row result fields from the cards. The grid is fixed
+slots either way, so the panel geometry does not move with the style."
+function build_chooser(df::DataFrame, params::Vector{DecodedParams}, decset, selected;
+                       card_style::Symbol=:full)
     full = full_bounds(params)
     fig = M.Figure(size=(1250, 900), backgroundcolor=:white)
 
@@ -835,7 +854,8 @@ function build_chooser(df::DataFrame, params::Vector{DecodedParams}, decset, sel
         for k in 1:length(card_buttons)
             rid = k <= length(display_rids) ? display_rids[k] : 0
             card_rids[k] = rid
-            card_buttons[k].label = rid == 0 ? "" : card_text(df, params, decset, rid)
+            card_buttons[k].label =
+                rid == 0 ? "" : card_text(df, params, decset, rid; style=card_style)
         end
     end
 
@@ -947,7 +967,11 @@ function main()
     end
 
     if smoke_prefix !== nothing
-        chooser = build_chooser(df, params, decset, selected)
+        # Report capture: the cards carry identity and geometry only, so the
+        # frame a report prints shows no campaign result (no P_mean, no FoS, no
+        # fitness, no status). The interactive browser keeps the full card.
+        println("smoke mode: chooser cards in identity+geometry style")
+        chooser = build_chooser(df, params, decset, selected; card_style=:identity)
         viewport = build_viewport(df, selected)
         cp = smoke_prefix * "_chooser.png"
         vp = smoke_prefix * "_viewport.png"
