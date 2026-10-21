@@ -143,7 +143,7 @@ The pod flies.
 
 The wind envelope has no source.
 `m/s` returns 0 hits across 963 lines.
-The rig is wall-mounted, motor-driven and indoors.
+The rig is wall-mounted and motor-driven.
 Wind is the wrong control variable for it.
 
 The class is wider than the one file.
@@ -164,7 +164,7 @@ So the fault sits in the rotary extractor and not in the text read.
 The same paper reaches this report by two paths, and a sweep can audit only one of them.
 
 Rule: no number enters the draft from a graph node without a span field.
-No record and no draft file cites a `*.rotary.graph.json` today.
+Neither the draft nor any record file uses a `*.rotary.graph.json` as a source.
 The report quotes nothing from the four.
 
 If section 6.1 ever quotes a number from this source, only these survive.
