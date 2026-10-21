@@ -27,6 +27,19 @@ v3 (the placement landed, 2026-10-15): the lane-3 label takes the
 landed form "rope-break gate off during relax". The head comment sweeps
 to the top form. No drawn value moves.
 
+v4 (the readability re-cut, 2026-10-21): the lane-4 labels go from four
+blocks of three or four short fragments to eleven lines at four anchors
+(3.80 / 2.80 / 1.50 / 0.35), so the blocks separate at 0.55 against the
+0.30 in-block pitch.  A first pass at 0.45 gaps (1.5 times the pitch)
+still read as one paragraph in the render, so the four gaps are uniform
+at 1.8 times the pitch. The gate key enters as one drawn line
+(band, tick, box, diamond), the phase-strip label reads "relax (grey)",
+the cold-path label carries its sampling cadence ("one value every
+10 ms"), and the lesson line moves from faint italic 6.8 to ink 7.5.
+The power-floor block keeps its four lines, so NR-039's name stays
+drawn. The footer keeps the nine rows. No drawn value moves; the label
+census goes 52 to 50 strings (14 out, 11 in, two rewrites, one new key).
+
 Run:
   /usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py \
       --script-commit <hex>
@@ -79,6 +92,9 @@ EDGE = "#c9c9c9"
 TITLE = "The cold path holds the window; the warm start breaks in milliseconds"
 SUB = ("Winner island-3 machine \u00b7 as-coded cold and warm paths \u00b7 "
        "100 Hz extract at tree 980de02 \u00b7 era post-95c385d_wind-authority")
+
+KEY = ("Marks: band = a span of reads, tick = one read, "
+       "box = the last five samples, diamond = one read.")
 
 LEDGER: list[str] = []
 
@@ -166,7 +182,7 @@ def main() -> int:
     ax1 = fig.add_axes([ML, 0.718, MW, 0.130])
     ax2 = fig.add_axes([ML, 0.560, MW, 0.130])
     ax3 = fig.add_axes([ML, 0.312, MW, 0.212])
-    ax4 = fig.add_axes([ML, 0.118, MW, 0.168])
+    ax4 = fig.add_axes([ML, 0.128, MW, 0.166])
 
     for ax in (ax1, ax2, ax3, ax4):
         ax.set_xlim(0, 50)
@@ -186,7 +202,7 @@ def main() -> int:
     axp.set_ylim(0, 1)
     axp.add_patch(Rectangle((0, 0.15), 10, 0.7, facecolor=SHADE, edgecolor=EDGE, lw=0.7))
     axp.add_patch(Rectangle((10, 0.15), 40, 0.7, facecolor="white", edgecolor=EDGE, lw=0.7))
-    axp.text(5, 0.5, keep("relax"), ha="center", va="center", size=7.5, color=GREY)
+    axp.text(5, 0.5, keep("relax (grey)"), ha="center", va="center", size=7.5, color=GREY)
     axp.text(30, 0.5, keep("measurement window"), ha="center", va="center", size=7.5, color=GREY)
     axp.plot([10, 10], [0.05, 0.95], color="#b0b0b0", lw=0.8)
 
@@ -241,7 +257,7 @@ def main() -> int:
              ha="right", va="bottom", size=7, color=STEEL, bbox=wbox)
     ax3.text(49.6, 0.66, keep("rope-break gate off during relax"),
              ha="right", va="bottom", size=7, color=STEEL, bbox=wbox)
-    ax3.text(49.6, 0.08, keep("cold path (solid line)"),
+    ax3.text(49.6, 0.08, keep("cold path (solid line) \u2014 one value every 10 ms"),
              ha="right", va="bottom", size=7, color=INK, bbox=wbox)
     ax3.set_xticks([])
 
@@ -269,7 +285,8 @@ def main() -> int:
     ax4.spines["left"].set_visible(False)
     ax4.set_xticks([0, 10, 20, 30, 40, 50])
     ax4.set_xticklabels([keep("0"), keep("10"), keep("20"), keep("30"), keep("40"), keep("50")])
-    ax4.set_xlabel(keep("evaluation time (s)"), size=7.5, color=GREY)
+    ax4.tick_params(axis="x", pad=2)
+    ax4.set_xlabel(keep("evaluation time (s)"), size=7.5, color=GREY, labelpad=2)
 
     def row_text(y: float, lines: list[str]) -> None:
         n = len(lines)
@@ -277,32 +294,42 @@ def main() -> int:
             yy = y + (n - 1) * 0.15 - j * 0.30
             ax4.text(-0.8, yy, keep(s), ha="right", va="center", size=7, color=INK)
 
-    row_text(3.8, ["rope break \u2014", "every step,", "relax included"])
+    # v4: eleven lines at the four anchors, with a uniform 0.55 gap
+    # between blocks against the 0.30 pitch (1.8 times).  The longest
+    # drawn line is "rope break \u2014 every step" at 86.3 pt, 2.0 pt past
+    # the old longest "sampled gates \u2014 twist \u00b7" at 84.3, so the
+    # gutter does not grow.
+    row_text(3.8, ["rope break \u2014 every step", "relax included"])
     ax4.add_patch(Rectangle((0, 3.375), 50, 0.85, facecolor=RED, edgecolor=RED,
                             lw=0.7, alpha=0.13, zorder=2))
     ax4.plot([0, 50], [3.375, 3.375], color=RED, lw=0.7)
     ax4.plot([0, 50], [4.225, 4.225], color=RED, lw=0.7)
 
-    row_text(2.7, ["sampled gates \u2014 twist \u00b7", "top \u00b7 tip \u00b7 Betz, read",
-                   "once per second", "(t > 10 s)"])
-    ax4.plot([10, 50], [2.7, 2.7], color=GREY, lw=1.0, zorder=2)
+    row_text(2.80, ["sampled gates \u2014 twist", "top \u00b7 tip \u00b7 Betz,",
+                    "read once per second"])
+    ax4.plot([10, 50], [2.80, 2.80], color=GREY, lw=1.0, zorder=2)
     for k in range(11, 51):
-        ax4.plot([k, k], [2.53, 2.87], color=GREY, lw=0.8, zorder=3)
+        ax4.plot([k, k], [2.63, 2.97], color=GREY, lw=0.8, zorder=3)
 
-    row_text(1.6, ["power floor,", "over-power term \u2014", "read on P_end",
-                   "(last five samples)"])
-    ax4.add_patch(Rectangle((46, 1.175), 4, 0.85, facecolor="#888888", edgecolor=GREY,
+    # The floor block keeps its four lines: NR-008's read station and
+    # NR-039's name (the over-power term) both stay drawn.
+    row_text(1.50, ["power floor,", "over-power term \u2014", "read on P_end",
+                    "(last five samples)"])
+    ax4.add_patch(Rectangle((46, 1.075), 4, 0.85, facecolor="#888888", edgecolor=GREY,
                             lw=0.7, alpha=0.30, zorder=2))
 
-    row_text(0.5, ["ground clearance \u2014", "\u2265 1.5 m, read once", "at decode"])
-    ax4.plot([0.75], [0.5], marker="D", ms=3.4, color=GREY, zorder=3)
+    row_text(0.35, ["ground clearance \u2014", "\u2265 1.5 m, at decode"])
+    ax4.plot([0.75], [0.35], marker="D", ms=3.4, color=GREY, zorder=3)
 
-    fig.text(ML, 0.055, keep("The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing."),
-             size=6.8, color=FAINT, style="italic")
+    # The gate key names the four marks the lane-4 panel draws.  It sits
+    # one line under the panel so the marks and their names read together.
+    fig.text(ML, 0.077, keep(KEY), size=7.0, color=GREY)
+    fig.text(ML, 0.051, keep("The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing."),
+             size=7.5, color=INK)
     stamp1 = ("sources: eval-timeline-extract \u00b7 window-trace-extract \u00b7 "
               f"data commit {DATA_COMMIT} \u00b7 trees 980de02 / 8d01394")
     stamp2 = f"rows {ROWS} \u00b7 script commit {args.script_commit}"
-    fig.text(0.012, 0.034, keep(stamp1), size=6.5, color=FAINT)
+    fig.text(0.012, 0.030, keep(stamp1), size=6.5, color=FAINT)
     fig.text(0.012, 0.013, keep(stamp2), size=6.5, color=FAINT)
 
     # ---------------------------------------------------------------- save

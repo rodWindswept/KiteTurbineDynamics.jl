@@ -44,7 +44,8 @@ so a crossing between samples goes unseen.
 - NR-013 ext binds the two lane-3 strain annotations. The aero
   counter-read closed.
 
-- The rows: NR-008, NR-012, NR-013, NR-016, NR-027, NR-029 and NR-039.
+- The rows: NR-008, NR-012, NR-013, NR-013 ext, NR-016, NR-027, NR-029,
+  NR-039 and NR-042.
 
 ## Inputs. The record contract.
 
@@ -66,7 +67,8 @@ so a crossing between samples goes unseen.
 ### Lanes
 
 - The phase strip carries the relax span and the measurement window
-  span. The seated labels read "relax" and "measurement window".
+  span. The seated labels read "relax (grey)" and "measurement window".
+  The grey tag names the shading in the element that owns it.
 
 - Lane 1 carries the ground rate and the top rate, with the two
   reference lines.
@@ -89,6 +91,7 @@ so a crossing between samples goes unseen.
 | `condition_curve` | the ruling-mode extract | steel dashed line | grid max, no latch |
 | `inset_12ms` | the warm and ruling files | first 12 ms | placement |
 | `gate_map` | the gate table at a89642b | four rows, spans marked | presence |
+| `gate_key` | the lane-4 marks | one line, 424 pt column | four marks named, gaps 0.45 or more, pitch 0.30 |
 | `stamps` | — | sources, trees, rows, script commit | presence |
 
 ### Readout list
@@ -101,6 +104,7 @@ so a crossing between samples goes unseen.
 | the warm annotation | NR-013 ext | lane 3 | 2.841 ms |
 | the condition peak | NR-013 ext | lane 3 | 1.448, grid max |
 | the gate spans | the a89642b read | lane 4 | code facts |
+| the gate marks | the a89642b read | lane 4 | band, tick, box, diamond |
 
 The display forms pin here once, for labels, captions and prose alike.
 
@@ -131,8 +135,10 @@ Pixels never validate numbers. Rod does the final visual pass.
   each gate reads the run.⟩
 
 - Technical caption (undergrad register, STE-clean form): ⟨the winner
-  timeline. The cold path holds the window. The warm start breaks in
-  milliseconds. The gate map marks the read spans.⟩
+  timeline. The cold path holds the window. The warm start as coded
+  over-strains a line in milliseconds. The condition run holds the
+  break gate off during the relax and completes the 50 s. The key
+  names the four gate marks.⟩
 
 @author writes both captions. Every number cites a register row.
 
@@ -189,3 +195,19 @@ the taps this pass.
 - v3 (2026-10-15): the placement lands (`2bf76a3`). The lane-3 label
   reads "rope-break gate off during relax". The head comment sweeps to the
   top form. No drawn value moves.
+
+- v4 (2026-10-21): the readability re-cut. The rows line takes the two
+  rows v2 recorded and never bound, so it reads the nine drawn rows. The
+  elements table gains `gate_key` and the readout list gains the four
+  marks. The caption plan takes the placement. The technical plan no
+  longer says the warm start breaks in milliseconds without naming the
+  condition run that clears the run. It also gives up "The gate map
+  marks the read spans", because the plate key carries it and a caption
+  cannot hold one fact twice. The phase-strip label reads "relax (grey)".
+  The lane-4 labels read eleven lines at four anchors (3.80 / 2.80 /
+  1.50 / 0.35), so the blocks clear at 0.55 against the 0.30 pitch. A
+  first pass at 0.45 gaps still read as one paragraph in the render. The power-floor block keeps its four lines, so NR-039 keeps its
+  drawn name. The cold-path label takes its sampling cadence, "one value
+  every 10 ms". The lesson line moves from faint italic 6.8 to ink 7.5.
+  No drawn value moves. The label census reads 50 strings (52 before:
+  14 out, 11 in, two rewrites, one key).
