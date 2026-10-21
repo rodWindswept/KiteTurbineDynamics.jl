@@ -26,8 +26,8 @@ read once per second.
 data: `docs/reporting/figures/eval-timeline-extract/` (blobs
 `398e230a` / `7eb2f44c` / `3abcaeba`, tree 980de02) and
 `docs/reporting/figures/window-trace-extract/` (taps sha `73132bdc`,
-tree 8d01394) · rows: NR-008, NR-012, NR-013 ext, NR-016, NR-027,
-NR-029, NR-039 · script: `docs/reporting/figures/eval-timeline/eval-timeline.py`
+tree 8d01394) · rows: NR-008, NR-012, NR-013, NR-013 ext, NR-016,
+NR-027, NR-029, NR-039, NR-042 · script: `docs/reporting/figures/eval-timeline/eval-timeline.py`
 at `⟨script commit⟩`
 
 ## Checks for the consistency pass
@@ -41,4 +41,13 @@ at `⟨script commit⟩`
 - The strain annotations read as signed: 1.00081 at t = 2.841 ms and
   1.448 at t = 5.798 ms.
 
+**Delta** v2 (2026-10-21): the provenance row list takes the nine rows the
+plate draws. `NR-013` bare and `NR-042` join it. The list now matches the
+drawn footer (`label-ledger.txt` L44) and the manifest field
+`register_rows`.
+
+NR-015 stays out. It signs the relax 10 s and window 40 s split the caption
+prints, and it is a caption row rather than a drawn one. The blob shas
+stay, and no data commit joins them, because a blob is content-addressed
+and a commit is not.
 **Delta** v1 (2026-10-13): created with the kit landing.
