@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.85. Date 2026-10-21.
+Internal engineering report. Draft v0.86. Date 2026-10-21.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1323,6 +1323,11 @@ The Phase 0 audit sits at master 31ca00d.
 The fidelity probes sit on the bank-derate-cos2p65 branch.
 The campaign runner script, `scripts/run_v13_5kw_masslift.jl`, pins the island seeds.
 
+Figure 12 names no dataset extract.
+It prints the tools of this repository at one commit, and the kit holds a hash for each frame.
+
+[Figure seated: figure-map row 31 (the instrument gallery, slug `instrument-gallery`).]
+
 Every figure will ship with its generating script and its data commit.
 Every public post will cite register rows by ID.
 
@@ -1350,9 +1355,12 @@ The table ties each headline claim of this report to its evidence and its signed
 
 ## Appendix: Figure provenance
 
-One row per built exhibit. All nine read dataset commit `dd3cc6a` and
-the current physics era, `post-95c385d_wind-authority`, so the era sits
-here once instead of in a table column.
+One row per built exhibit. Nine read dataset commit `dd3cc6a` and the
+current physics era, `post-95c385d_wind-authority`, so the era sits here
+once instead of in a table column.
+
+The tenth names no extract of that dataset. It prints the tools of this
+repository, and its row names a commit in place of an extract.
 
 | Exhibit | Source extract | Cited rows | Script commit |
 |--------|----------------------|--------|------|
@@ -1365,6 +1373,7 @@ here once instead of in a table column.
 | Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
 | The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
 | The power trend | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 | `e66dd94` |
+| The instrument gallery | `instrument-gallery/captures/`, three frames hashed in `stamp.json` | none. No value in this report is read from a panel | `4749828` |
 
 **Output pins.**
 
@@ -1386,11 +1395,11 @@ and measure at least 79 mm wide. It must come from a tracked generator
 at one commit. Each panel carries a receipt that hashes the frame and
 the renderer.
 
-One of the four frames needs a flag to print what the plate shows. The
+One of the three frames needs a flag to print what the plate shows. The
 cartography prints under `KTD_WINNER_TITLE=geometry`, and the renderer
 default is `full`.
 
-The commit and the four receipts fix the set. The flag fixes one
-invocation. A reader who holds the commit, the generators and the four
-input hashes reproduces three frames without a flag and the cartography
+The commit and the three receipts fix the set. The flag fixes one
+invocation. A reader who holds the commit, the generators and the three
+input hashes reproduces two frames without a flag and the cartography
 only with it.

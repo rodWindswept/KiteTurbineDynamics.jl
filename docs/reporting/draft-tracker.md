@@ -1067,3 +1067,28 @@ Words read 11,540 and no value token moves.
 STE holds 27 at 0.23 per 100 words, and the offender set matches base.
 Em dashes read 0, and the cited count holds at 59.
 The review copy predates this pass and waits on a rebuild at the author seat.
+
+v0.86 pass by @author (2026-10-21).
+
+The instrument gallery takes its seat.
+Section 9 gains two lines and the seat marker for figure-map row 31.
+The marker prints the label only, so its roster row number comes from the map and from nowhere else.
+
+The appendix gains a tenth exhibit row.
+It names no extract, so the row names the pass commit `4749828` in place of a dataset path.
+The citation cell reads none, and the caption holds the value rule.
+
+The admission paragraph counts the set it admits.
+One of the three frames needs the cartography flag, and two reproduce without it.
+The receipts number three, and the input hashes number three.
+
+The section 9 figure names no dataset extract.
+Two panels render the canonical 10 kW system from the tree.
+The cartography reads one archive for a ring stack.
+
+Words read 11,740 from 11,663.
+STE holds 29 at 0.25 per 100 words, from 28 at 0.24.
+Em dashes read 0.
+
+One passive arrives with the provenance sentence the room fixed for the tenth-exhibit cell.
+The other categories hold base: long sentences 8, contraction 1, nominalization 1, long paragraphs 14.
