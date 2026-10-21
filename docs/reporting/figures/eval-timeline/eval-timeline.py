@@ -40,6 +40,19 @@ The power-floor block keeps its four lines, so NR-039's name stays
 drawn. The footer keeps the nine rows. No drawn value moves; the label
 census goes 52 to 50 strings (14 out, 11 in, two rewrites, one new key).
 
+v5 (the lane-key re-cut, 2026-10-21): the gate-map rows name the gate
+and the key carries when it reads, so the row no longer repeats the
+key.  The four rows read one line each ("rope break", "twist, top, tip
+and Betz", "power floor, over-power", "ground clearance"), except the
+clearance row, which keeps NR-042's signed string (">= 1.5 m, at
+decode") whole on its own line.  The key draws the four marks as glyphs
+at the form the lane uses, each named by its cadence ("every step, relax
+included" / "one read per second" / "mean of the last five samples" /
+"one read, at decode").  The old one-line key named two different marks
+"one read", which is the ambiguity the founder flagged.  The panel takes
+a 0.150 height at 0.150 so the two key lines clear the x label.  No
+drawn value moves.
+
 Run:
   /usr/bin/python3 docs/reporting/figures/eval-timeline/eval-timeline.py \
       --script-commit <hex>
@@ -66,6 +79,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 
 HERE = Path(__file__).resolve().parent
@@ -93,8 +107,10 @@ TITLE = "The cold path holds the window; the warm start breaks in milliseconds"
 SUB = ("Winner island-3 machine \u00b7 as-coded cold and warm paths \u00b7 "
        "100 Hz extract at tree 980de02 \u00b7 era post-95c385d_wind-authority")
 
-KEY = ("Marks: band = a span of reads, tick = one read, "
-       "box = the last five samples, diamond = one read.")
+KEY_BAND = "every step, relax included"
+KEY_TICK = "one read per second"
+KEY_BOX = "mean of the last five samples"
+KEY_DIAMOND = "one read, at decode"
 
 LEDGER: list[str] = []
 
@@ -182,7 +198,7 @@ def main() -> int:
     ax1 = fig.add_axes([ML, 0.718, MW, 0.130])
     ax2 = fig.add_axes([ML, 0.560, MW, 0.130])
     ax3 = fig.add_axes([ML, 0.312, MW, 0.212])
-    ax4 = fig.add_axes([ML, 0.128, MW, 0.166])
+    ax4 = fig.add_axes([ML, 0.150, MW, 0.150])
 
     for ax in (ax1, ax2, ax3, ax4):
         ax.set_xlim(0, 50)
@@ -288,43 +304,62 @@ def main() -> int:
     ax4.tick_params(axis="x", pad=2)
     ax4.set_xlabel(keep("evaluation time (s)"), size=7.5, color=GREY, labelpad=2)
 
-    def row_text(y: float, lines: list[str]) -> None:
-        n = len(lines)
-        for j, s in enumerate(lines):
-            yy = y + (n - 1) * 0.15 - j * 0.30
-            ax4.text(-0.8, yy, keep(s), ha="right", va="center", size=7, color=INK)
+    # v5: the row names the gate; the key carries when that gate reads.  One
+    # line per row at 7 pt, so the four gates separate at a glance instead of
+    # reading as a paragraph of fragments.  The clearance row keeps NR-042's
+    # signed string ("\u2265 1.5 m, at decode") whole on its own line.
+    def row_label(y: float, s: str) -> None:
+        ax4.text(-0.8, y, keep(s), ha="right", va="center", size=7, color=INK)
 
-    # v4: eleven lines at the four anchors, with a uniform 0.55 gap
-    # between blocks against the 0.30 pitch (1.8 times).  The longest
-    # drawn line is "rope break \u2014 every step" at 86.3 pt, 2.0 pt past
-    # the old longest "sampled gates \u2014 twist \u00b7" at 84.3, so the
-    # gutter does not grow.
-    row_text(3.8, ["rope break \u2014 every step", "relax included"])
+    row_label(3.8, "rope break")
     ax4.add_patch(Rectangle((0, 3.375), 50, 0.85, facecolor=RED, edgecolor=RED,
                             lw=0.7, alpha=0.13, zorder=2))
     ax4.plot([0, 50], [3.375, 3.375], color=RED, lw=0.7)
     ax4.plot([0, 50], [4.225, 4.225], color=RED, lw=0.7)
 
-    row_text(2.80, ["sampled gates \u2014 twist", "top \u00b7 tip \u00b7 Betz,",
-                    "read once per second"])
+    row_label(2.80, "twist, top, tip and Betz")
     ax4.plot([10, 50], [2.80, 2.80], color=GREY, lw=1.0, zorder=2)
     for k in range(11, 51):
         ax4.plot([k, k], [2.63, 2.97], color=GREY, lw=0.8, zorder=3)
 
-    # The floor block keeps its four lines: NR-008's read station and
-    # NR-039's name (the over-power term) both stay drawn.
-    row_text(1.50, ["power floor,", "over-power term \u2014", "read on P_end",
-                    "(last five samples)"])
+    row_label(1.50, "power floor, over-power")
     ax4.add_patch(Rectangle((46, 1.075), 4, 0.85, facecolor="#888888", edgecolor=GREY,
                             lw=0.7, alpha=0.30, zorder=2))
 
-    row_text(0.35, ["ground clearance \u2014", "\u2265 1.5 m, at decode"])
+    row_label(0.50, "ground clearance")
+    row_label(0.20, "\u2265 1.5 m, at decode")
     ax4.plot([0.75], [0.35], marker="D", ms=3.4, color=GREY, zorder=3)
 
-    # The gate key names the four marks the lane-4 panel draws.  It sits
-    # one line under the panel so the marks and their names read together.
-    fig.text(ML, 0.077, keep(KEY), size=7.0, color=GREY)
-    fig.text(ML, 0.051, keep("The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing."),
+    # The key draws each mark at the form the lane uses: four glyphs, each
+    # named by the cadence it stands for, in two columns under the panel.
+    # The reader gets shape -> meaning here, and gate name -> row above.
+    KY1, KY2 = 0.096, 0.074
+
+    def key_mark(x: float, y: float, kind: str) -> float:
+        if kind == "band":
+            fig.add_artist(Rectangle((x, y - 0.0055), 0.036, 0.011,
+                                     transform=fig.transFigure, facecolor=RED,
+                                     edgecolor=RED, lw=0.7, alpha=0.13))
+        elif kind == "tick":
+            fig.add_artist(Line2D([x + 0.018, x + 0.018], [y - 0.0075, y + 0.0075],
+                                  transform=fig.transFigure, color=GREY, lw=0.9))
+        elif kind == "box":
+            fig.add_artist(Rectangle((x, y - 0.0055), 0.028, 0.011,
+                                     transform=fig.transFigure, facecolor="#888888",
+                                     edgecolor=GREY, lw=0.7, alpha=0.30))
+        else:
+            fig.add_artist(Line2D([x + 0.014], [y], transform=fig.transFigure,
+                                  marker="D", ms=3.4, color=GREY, linestyle="none"))
+        return x + 0.046
+
+    for x0, y, kind, s in ((ML, KY1, "band", KEY_BAND),
+                           (0.600, KY1, "tick", KEY_TICK),
+                           (ML, KY2, "box", KEY_BOX),
+                           (0.600, KY2, "diamond", KEY_DIAMOND)):
+        fig.text(key_mark(x0, y, kind), y, keep(s), size=7.5, color=GREY,
+                 ha="left", va="center")
+
+    fig.text(ML, 0.050, keep("The rope-break gate is the only read that covers the relax; the per-second reads can miss a crossing."),
              size=7.5, color=INK)
     stamp1 = ("sources: eval-timeline-extract \u00b7 window-trace-extract \u00b7 "
               f"data commit {DATA_COMMIT} \u00b7 trees 980de02 / 8d01394")
