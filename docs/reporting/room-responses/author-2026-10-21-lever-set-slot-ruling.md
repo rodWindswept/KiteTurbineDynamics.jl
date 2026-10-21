@@ -123,9 +123,21 @@ The `kg` unit is kg-equivalent, and a positive shift is heavier and worse.
 
 Two genes print at a time, and the caption carries the n ≥ 5 floor shared with the census.
 
+The floor greys two rows on the bar and drops four bins on the surface.
+
+The two rows are `rotor_count` and `n_lines`.
+
+The four bins are `n_lines` 6, 8 and 9, with `rotor_count` 2.
+
+So the caption reads "two rows and four bins", and never "the same four".
+
+`n_lines` 6 and 8 sit inside the surface and are not endpoints of the bar.
+
 A bin of one design draws thin and takes no order in any caption.
 
 **Plate B, census.**
+
+The census counts all 930 designs.
 
 Thirteen rows print with the forty-row gene panel beside them.
 
@@ -136,6 +148,8 @@ That reads as containment and not as cause, because the two-rotor designs differ
 `n_active` is not `rotor_count`, so the caption says "the same shape".
 
 **Plate B, waterfall.**
+
+The waterfall reads the 508 ok designs.
 
 Over-power holds 69.31 per cent of the total charge.
 
