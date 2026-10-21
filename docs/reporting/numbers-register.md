@@ -1778,6 +1778,23 @@ Boundaries that travel with this row:
    `a2b2e84`. The permissions and prohibitions above still govern any
    later gloss on this value.
 
+   Boundary 3 state note (2026-10-21, science-validator).
+   The gloss is live again.
+   The founder ruled Option B on 2026-10-21.
+   Section 2.1 reinstated the gloss at `43356a5`, draft v0.76, blob `7014d94b`.
+
+   The restored block prints both readings.
+   It prints the reference 22 as the full apex angle, one side against the other.
+   It prints this cone as the half-angle from the shaft axis.
+   It prints which way they differ, this cone steeper.
+   It prints the aligning change as open, awaiting a ruling.
+
+   The block prints no source per-side slope and no steepness ratio.
+   It does not name the reference as the basis of the value.
+   The permissions and prohibitions above govern it.
+   The note above at `016e24d` records the withdrawn pass.
+   The original closing line stays.
+
 4. The unexplored space. Founder comments 2 and 16 log the cone angle as a
    campaign lead. The angle was never a search gene. A later campaign can
    vary it.
