@@ -21,6 +21,22 @@ using CSV, DataFrames, Printf, LinearAlgebra
 const ROOT   = dirname(@__DIR__)
 const V2_DIR = joinpath(ROOT, "scripts", "results", "trpt_opt_v2")
 
+# Canvas is a parameter, not a constant, because the print width is not the
+# render width: a report panel fixes its printed width (85 mm) and the canvas
+# aspect then decides the printed height. The defaults below are the recorded
+# 1400x1600 portrait render and are byte-identical to it; a report capture
+# sets them from the environment and writes elsewhere, so this script keeps
+# one default output and gains a second caller without a second copy of the
+# geometry code.
+#   KTD_WINNER_FIG_W / _H    Figure canvas (logical px)
+#   KTD_WINNER_AX_W  / _H    Axis3 slot inside the canvas
+#   KTD_WINNER_OUT           output directory (default: V2_DIR)
+const FIG_W = parse(Int, get(ENV, "KTD_WINNER_FIG_W", "1400"))
+const FIG_H = parse(Int, get(ENV, "KTD_WINNER_FIG_H", "1600"))
+const AX_W  = parse(Int, get(ENV, "KTD_WINNER_AX_W",  "1200"))
+const AX_H  = parse(Int, get(ENV, "KTD_WINNER_AX_H",  "1500"))
+const OUT_DIR = get(ENV, "KTD_WINNER_OUT", V2_DIR)
+
 # Force GLMakie first, fall back to CairoMakie if headless GL fails
 const M = try
     @eval using GLMakie
@@ -87,8 +103,8 @@ function render_one(tag::String, out_path::String)
                     for k in 1:n_v]
     end
 
-    # 1400x1600 single-axis, white background, no side panels
-    fig = M.Figure(size = (1400, 1600), backgroundcolor = :white)
+    # single-axis, white background, no side panels (default 1400x1600)
+    fig = M.Figure(size = (FIG_W, FIG_H), backgroundcolor = :white)
     ax3 = M.Axis3(fig[1, 1],
                   backgroundcolor = :white,
                   xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
@@ -104,8 +120,12 @@ function render_one(tag::String, out_path::String)
                                     tag, row.mass_kg, row.min_fos,
                                     design.n_rings, design.n_lines, design.r_hub),
                   aspect = (1, 1, 3.5))
-    M.colsize!(fig.layout, 1, M.Fixed(1200))
-    M.rowsize!(fig.layout, 1, M.Fixed(1500))
+    M.colsize!(fig.layout, 1, M.Fixed(AX_W))
+    M.rowsize!(fig.layout, 1, M.Fixed(AX_H))
+    # Zero the gaps explicitly: Fixed slots do not reserve the layout default
+    # row/col gap, so an unset gap overflows the canvas and clips the title.
+    M.colgap!(fig.layout, 0.0)
+    M.rowgap!(fig.layout, 0.0)
 
     # Polygon beams — thickness maps linearly to Do, colour from viridis
     for i in 1:length(verts)
@@ -165,7 +185,7 @@ function main()
         "50kw_circular_straight_taper_s1",
     ]
     for tag in targets
-        out = joinpath(V2_DIR, "winner_$(tag |> t->replace(t, r"_s[12]$"=>"")).png")
+        out = joinpath(OUT_DIR, "winner_$(tag |> t->replace(t, r"_s[12]$"=>"")).png")
         render_one(tag, out)
     end
 end
