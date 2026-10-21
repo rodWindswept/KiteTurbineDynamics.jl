@@ -1,13 +1,13 @@
-+0.67 kg-eq  (rho +0.13)
-+1.07 kg-eq  (rho +0.07)
-+1.36 kg-eq  (rho +0.17)
-+2.76 kg-eq  (rho +0.50)
-+22.54 kg-eq  (rho -0.03)
-+26.59 kg-eq  (rho +0.11)
--0.21 kg-eq  (rho +0.07)
--1.80 kg-eq  (rho -0.28)
--2.90 kg-eq  (rho -0.40)
--3.89 kg-eq  (rho -0.58)
++0.67 kg-eq  (rho +0.125)
++1.07 kg-eq  (rho +0.074)
++1.36 kg-eq  (rho +0.166)
++2.76 kg-eq  (rho +0.504)
++22.54 kg-eq  (rho -0.029)
++26.59 kg-eq  (rho +0.108)
+-0.21 kg-eq  (rho +0.066)
+-1.80 kg-eq  (rho -0.276)
+-2.90 kg-eq  (rho -0.403)
+-3.89 kg-eq  (rho -0.583)
 0.0% ok
 1.3% ok
 11.3% ok
@@ -27,7 +27,7 @@
 69.31% of the total
 A positive shift is heavier and worse. The shift is a fitness difference, in kg-equivalent.
 A1  Which gene moves the objective. Grey rows hold under five designs at one end.
-A2  The objective by gene bin, 508 ok designs. Colour is the median; cells print the count.
+A2  The objective by gene bin, 508 ok designs. Cells print their count.
 B1  What fails, by line count and rotor count. All 930 designs; ok share printed at each bar.
 B1 counts all 930 designs. B2 reads the 508 that passed.
 B2  Where the penalty mass sits. 508 ok designs; the maximum is not the ranking.
@@ -86,7 +86,7 @@ rotor_count  (x6)  ·  2 bins
 rotor_count 1
 rotor_count 2
 rotor_count 3
-source lever-statistics-extract · data dd3cc6a · run a76c5e9 · script 2671d96
+source lever-statistics-extract · data dd3cc6a · run a76c5e9 · script 94a0a99
 target_Lr  (x3)  ·  5 bins
 total 2109.81 kg-eq
 twist

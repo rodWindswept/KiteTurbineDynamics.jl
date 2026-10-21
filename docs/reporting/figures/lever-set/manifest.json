@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/lever-set/lever-set.py --script-commit 2671d96",
+  "command": "/usr/bin/python3 docs/reporting/figures/lever-set/lever-set.py --script-commit 94a0a99",
   "data_commit": "dd3cc6a",
   "inputs": {
     "extracts": [
@@ -32,21 +32,21 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "e41e8de2b53faa3122fc7289a4e76baa0196e080337ea73a16e7fde6eeb8a9fb",
-    "lever-set-A.pdf": "a681792acc80a3d028ac82cd2e7cff85fdfe72cc3fb2d4a6e36443fd3a8ca8a6",
-    "lever-set-A.png": "1448d434456cb7e69754bd239581c61efa9ae2827b1e24f876bd3fab405ec74b",
-    "lever-set-A.svg": "d6614c82015b6f2be0377025be2e1cb42234187c7ac215904c6b3865b5b6cca2",
-    "lever-set-B.pdf": "42cfe55d0b36dbe3a3f790fe0a7844d8ef26ab6ca59828986e3029670d69c1e7",
-    "lever-set-B.png": "5d9908cc22e994a90e9d8cf44fee3d32479e1a0cc3ad600e02aa1eb620fd4ad2",
-    "lever-set-B.svg": "37dc49c8efc936bf5a2fa2ff3cf884d4e9978533a4e3bebcc5200760ab5a45cc"
+    "label-ledger.txt": "581dd6c732c552fbbdbe0c265461044b86b5dfc2ef8323c29db2ad831ecd62f0",
+    "lever-set-A.pdf": "9128757b241da5f4404ef6abc0c0e42c5e2b13d2adb80800adbc36fa2e810ce6",
+    "lever-set-A.png": "f3f5255ed57f2ae8006dcb1bd1b95e13be336c486cced0b161e863241dccc6ec",
+    "lever-set-A.svg": "7b8ab80b181540f7209e4537efd18a7ee877fdb6e2d8d99c00c99966282b31a6",
+    "lever-set-B.pdf": "a177e8b88abd6fa97da5fe521869f90f12ec44559b99be6fe01fe7ad8d63993c",
+    "lever-set-B.png": "770e5c74cb187f60d7d617cb2971938b0c9d86766825564c5cc58156f643750b",
+    "lever-set-B.svg": "978b73e758666668e7d959110192ffbbbda4000ba6a85567e17c3950d4ac1f7b"
   },
-  "precision": "rho 2 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
+  "precision": "rho 3 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
   "run": "a76c5e9",
   "script": {
     "path": "docs/reporting/figures/lever-set/lever-set.py",
-    "sha256": "ff56243489a27f4df92f24c1fff415b11a415586a1a341febc13b19665ea6423"
+    "sha256": "e9013221a4e73ebfb224f2e05a05cd8a8c1a554a528b422a27164de1c4898bf5"
   },
-  "script_commit": "2671d96",
+  "script_commit": "94a0a99",
   "slug": "lever-set",
   "toolchain": {
     "matplotlib": "3.10.8",
