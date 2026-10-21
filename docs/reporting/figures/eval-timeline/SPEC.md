@@ -83,6 +83,12 @@ so a crossing between samples goes unseen.
   a89642b. Each row names its gate and the key names when that gate
   reads, so no row repeats the key.
 
+**Key legibility floor.** The canvas is 7.6 in wide and the A4 text
+block is 6.85 in. At that slot the 7.5 pt key prints at 6.76 pt and the
+7 pt rows at 6.31 pt. A slot narrower than 6.51 in puts the rows under
+6 pt. When that happens the plate is re-cut. A caption restatement does
+not rescue a key that cannot be read.
+
 ### Elements table
 
 | tag | drawn from | drawing rule | asserted |
