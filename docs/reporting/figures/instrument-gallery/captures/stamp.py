@@ -1,14 +1,18 @@
 #!/usr/bin/python3
-"""stamp.py — the provenance stamp for Figure 12's four-panel instrument gallery.
+"""stamp.py — the provenance stamp for Figure 12's three-panel instrument gallery.
 
-Reads the four capture files in this directory, hashes them and the
+Reads the three capture files in this directory, hashes them and the
 renderers that made them, and writes `stamp.json` (machine) and `captures.md`
 (the line that travels with the plate). Nothing here draws.
 
-One pass at one commit: all four frames were rendered from the tree at the
+One pass at one commit: all three frames were rendered from the tree at the
 commit this stamp records, and each row carries the renderer it came from and
 that renderer's own hash, so a reader can re-run any one panel without
 re-running the others.
+
+The plate composes those frames and re-renders none of them, so a recomposition
+leaves every frame hash and the pass commit alone. Change `PASS` only when a
+frame is re-rendered.
 
 Run:
     /usr/bin/python3 docs/reporting/figures/instrument-gallery/captures/stamp.py
@@ -27,6 +31,11 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[4]
 
 ERA = "post-95c385d_wind-authority"
+
+# The one render pass that produced these frame bytes. A recomposition of the
+# plate reads them and re-renders nothing, so the stamp records the pass and
+# not the tree it happens to run in; `git show 4749828` is the check.
+PASS = "4749828"
 
 # The one panel that reads a campaign row: the winner cartography decodes its
 # ring stack from this archive. It prints no value from it (the title carries
@@ -53,23 +62,15 @@ RENDERERS = {
 }
 
 # Printed geometry: box 85 x 59.89 mm, fit by the binding dimension, nothing
-# upsampled. Row 1 is v1 + v2, row 2 is the twisted-state viewport + the 3D
-# cartography, flush to 0 and 174.00 mm inside a 174 mm measure, 4 mm gutter.
+# upsampled. Row 1 is v2 + the twisted-state viewport; row 2 is the 3D
+# cartography alone, centred, because a third panel in two 85 mm columns leaves
+# one cell empty. The grid is flush to 0 and 174.00 mm inside a 174 mm measure
+# with a 4 mm gutter.
 BOX_MM = [85.0, 59.89]
 MEASURE_MM = 174.0
 GUTTER_MM = 4.0
 
 CAPTURES = {
-    "dashboard-v1-head.png": dict(
-        interface="v1 dashboard",
-        picture="whole window",
-        renderer="v1_v2",
-        px_per_unit=1.25,
-        shot="1600 x 950 logical units, saved at px_per_unit 1.25",
-        row=1,
-        flags="No flags. The defaults of render-captures-head.jl print this frame.",
-        note="byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control",
-    ),
     "dashboard-v2-head.png": dict(
         interface="v2 cockpit",
         picture="whole window",
@@ -78,7 +79,10 @@ CAPTURES = {
         shot="1780 x 1180 logical units, one frame of a 1.0 s canonical run (50 frames, SAVE_EVERY 500, DT 4e-5)",
         row=1,
         flags="No flags. The defaults of render-captures-head.jl print this frame.",
-        note="byte-identical to Figure 11's member; reproduced at this commit as the re-stamp control",
+        note=(
+            "byte-identical to Figure 11's member; reproduced at this commit as "
+            "the re-stamp control. It is the set's one whole cockpit window"
+        ),
     ),
     "dashboard-twisted-state-head.png": dict(
         interface="dashboard 3D viewport, settled twisted state",
@@ -90,10 +94,10 @@ CAPTURES = {
             "device columns 613..3308. The cut lands on the measured ink boundaries, so "
             "both inside margins carry no ink and the scene prints every pixel it draws"
         ),
-        row=2,
+        row=1,
         flags=(
-            "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window, so "
-            "the ink boundaries crop-twisted-cell.py cuts on hold. The "
+            "No flags. figsize=(2037, 950) at px_per_unit 2 fixes the window. "
+            "The ink boundaries crop-twisted-cell.py cuts on hold. The "
             "build_dashboard figsize default is (1600, 950)."
         ),
         state=dict(
@@ -169,9 +173,9 @@ def fitted_mm(w_px: int, h_px: int) -> tuple[float, float, float]:
 
 
 def main() -> None:
-    head = git("rev-parse", "HEAD")
-    branch = git("rev-parse", "--abbrev-ref", "HEAD")
-    head_time = git("log", "-1", "--format=%ad", "--date=iso")
+    head = git("rev-parse", PASS)
+    branch = git("name-rev", "--name-only", "--refs=refs/heads/*", PASS).split("~")[0]
+    head_time = git("log", "-1", "--format=%ad", "--date=iso", PASS)
 
     renderers = {k: {"path": str(p.relative_to(REPO)), "sha256": sha256(p)}
                  for k, p in RENDERERS.items()}
@@ -207,8 +211,8 @@ def main() -> None:
     stamp = {
         "slug": "figure-12-instrument-gallery",
         "purpose": (
-            "The four-panel instrument gallery of Figure 12 (section 9): v1 dashboard, "
-            "v2 cockpit, dashboard twisted-state viewport, 10 kW winner cartography. "
+            "The three-panel instrument gallery of Figure 12 (section 9): v2 cockpit, "
+            "dashboard twisted-state viewport, 10 kW winner cartography. "
             "One pass, one commit."
         ),
         "head": head,
@@ -217,18 +221,18 @@ def main() -> None:
         "era": ERA,
         "reads_dataset": True,
         "dataset_note": (
-            "Three panels read no dataset at all. v1 and v2 render the 10 kW canonical "
+            "Two panels read no dataset at all. v2 renders the 10 kW canonical "
             "system from the tree (params_10kw(), settled at V = 11 m/s). The twisted-state "
             "cell renders the same system through the export script's default settle and "
             "reads no file. The cartography decodes its ring stack from elite_archive.csv "
             "and its title carries the design tag and geometry descriptors only. No panel "
-            "in the four prints a campaign result. No value in this report is read from "
+            "prints a campaign result. No value in this report is read from "
             "a panel."
         ),
         "archive_input": archive,
         "chooser_inputs": telemetry,
         "provenance_note": (
-            "Each capture names its invocation under `flags`, because one of the four does "
+            "Each capture names its invocation under `flags`, because one of the three does "
             "not print its shipped frame under the renderer's defaults: the cartography's "
             "geometry title is set by KTD_WINNER_TITLE=geometry. The twisted-state cell "
             "needs its window size fixed, so the column boundaries the crop cuts on hold. "
@@ -241,13 +245,13 @@ def main() -> None:
             "box_mm": BOX_MM,
             "measure_mm": MEASURE_MM,
             "gutter_mm": GUTTER_MM,
-            "row_1": "v1 + v2, flush from 0.00 mm",
-            "row_2": "twisted-state viewport + cartography, flush from 0.00 mm; the cell "
-                 "fits at 84.98 mm and prints 1777 px, so both rows carry an 84 px "
-                 "gutter (4.02 mm at 531 dpi)",
-            "raster": "3638 x 2514 px at 531 dpi = 174.02 x 120.26 mm. A 4.00 mm "
-                      "gutter is 83.6 px, so the grid carries 84 px and the plate "
-                      "prints 0.02 mm over the nominal measure",
+            "row_1": "v2 + the twisted-state viewport, flush from 0.00 mm",
+            "row_2": "the cartography alone at 85.00 mm, centred from 44.50 mm: a third "
+                 "panel in two 85 mm columns leaves one cell empty",
+            "raster": "3638 x 2588 px at 531 dpi = 174.02 x 123.80 mm. A 4.00 mm "
+                      "gutter is 83.6 px, so the grid carries 84 px: the plate prints "
+                      "0.02 mm over the nominal measure and 0.03 mm over the "
+                      "123.77 mm block",
             "row_heights_mm": row_h,
             "block_mm": block,
         },
@@ -258,7 +262,9 @@ def main() -> None:
     lines = [
         "# Figure 12 instrument gallery: provenance",
         "",
-        f"Rendered at `{head[:7]}` ({branch}), {head_time}. Era `{ERA}`. One pass, one commit.",
+        f"Frames rendered in one pass at `{head[:7]}` ({branch}), {head_time}. "
+        f"Era `{ERA}`. The plate composes these three frames at a later commit. "
+        "It re-renders none of them, so every hash below comes from the pass.",
         "",
         "| capture | pixels | prints | dpi | picture | sha256 |",
         "|---|---|---|---|---|---|",
@@ -291,7 +297,8 @@ def main() -> None:
     lines += [
         "",
         f"Cartography input: `{archive['path']}`. Its hash is `{archive['sha256'][:16]}...`. "
-        f"The file is tracked at the pin: {archive['tracked']}.",
+        + ("The file is tracked at the pin." if archive["tracked"]
+           else "The file is not tracked at the pin."),
         "",
         "The retired chooser frame's input set. It still sits in this directory, so "
         "its inputs stay pinned, but no panel prints from them now.",
@@ -303,7 +310,7 @@ def main() -> None:
         lines.append(f"| `{t['path']}` | `{t['sha256'][:16]}...` | {t['tracked']} |")
     lines += [
         "",
-        "The first pass ran before this kit held a tracked renderer for v1 and v2. "
+        "The first pass ran before this kit held a tracked renderer for v2. "
         "This kit carries a byte-identical copy of that renderer (`c1e7e35f...`). "
         "Each renderer named here sits in the tree from the landing commit onward. "
         "The captures directory of Figure 11 is tracked from `fa91a8e`. "
@@ -312,22 +319,32 @@ def main() -> None:
         "The chooser frame from the first pass stays in this directory. The "
         "twisted-state viewport replaced it at this seat and it prints no longer.",
         "",
+        "The v1 dashboard capture stays in this directory. It is the frame that the "
+        "Figure 11 strip prints and the re-stamp control from the first pass. This "
+        "gallery prints it no longer. A whole window is its own writing. The plate "
+        "carries the three frames that show what the report cannot say in words.",
+        "",
         "Print geometry is an 85 x 59.89 mm box. Each frame fits by the binding "
         "dimension and no panel is upsampled. A panel enters this set only above a "
-        "79 mm admission floor. Each panel prints every pixel of the picture its tool "
-        "draws. The picture column of the capture table names the picture for each panel. "
-        "In the twisted-state cell that picture is the 3D viewport. The control "
-        "and readout columns sit outside it. Row 1 holds v1 and v2 at 56.35 mm. Row 2 holds "
-        f"the viewport at 84.98 mm and the cartography at 85.00 mm. The block is {block} mm. "
-        "It sits in a 174 mm measure with a 4 mm gutter. The rows run flush from 0.00 mm.",
+        "79 mm admission floor.",
         "",
-        "Type at these widths: v1 2.17 pt, v2 2.98 pt, cartography 2.59 pt. The "
+        "Each panel prints every pixel of the picture its tool draws. The picture "
+        "column of the capture table names the picture for each panel. In the "
+        "twisted-state cell that picture is the 3D viewport. The control and readout "
+        "columns sit outside it.",
+        "",
+        "Row 1 holds v2 and the viewport, at 85.00 x 56.35 mm and 84.98 x 59.89 mm. "
+        "Row 2 holds the cartography alone at 85.00 x 59.88 mm, centred from "
+        f"44.50 mm. The block is {block} mm. It sits in a 174 mm measure with a 4 mm "
+        "gutter. Row 1 runs flush from 0.00 mm.",
+        "",
+        "Type at these widths: v2 2.98 pt, cartography 2.59 pt. The "
         "cartography title band is 43 px at 85 mm. The smallest label in the set is "
         "1.22 pt in v2. The set ceiling is v2 at 2.98 pt.",
         "",
         "Source line for the plate:",
         "",
-        f"> captures: four instrument frames at `{head[:7]}`. v1 and v2 come from "
+        f"> captures: three instrument frames at `{head[:7]}`. v2 comes from "
         f"`render-captures-head.jl`. The twisted-state cell comes from "
         f"`render-twisted-state-head.jl` and `crop-twisted-cell.py`, which renders the "
         f"canonical system at its default settle and reads no file. The cartography "

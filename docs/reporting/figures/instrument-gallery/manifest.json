@@ -1,7 +1,7 @@
 {
   "slug": "instrument-gallery",
   "figure": "Figure 12, section 9: the instrument gallery",
-  "mode": "capture gallery, four panels",
+  "mode": "capture gallery, three panels",
   "capture": {
     "run_id": "one render pass, repository at 4749828"
   },
@@ -9,49 +9,35 @@
   "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --page-proof",
   "script": {
     "path": "docs/reporting/figures/instrument-gallery/instrument-gallery.py",
-    "sha256": "6a8002c6b8bbabb4ae20221e46245f4d3b50a7b38a7cdd72d5e42344a095d840"
+    "sha256": "20365cb5ee5128398ff0291a46be35135cf04bf9954d56704d5e398659e31f92"
   },
   "run_commit": "4749828",
   "plate": {
     "pixels": [
       3638,
-      2514
+      2588
     ],
     "dpi": 531,
     "prints_mm": [
       174.02,
-      120.26
+      123.8
     ],
     "box_mm": [
       85.0,
       59.89
     ],
     "row_heights_mm": [
-      56.35,
-      59.89
+      59.89,
+      59.88
     ],
     "gutter_px": 84,
     "gutter_mm": 4.02,
-    "block_mm": 120.26,
-    "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px and the plate prints 0.02 mm over the nominal measure. Both rows measure the same 84 px gutter.",
-    "sha256": "0578e358c44775cdce1ecbb975aece8d3921e5369fd32773c750663d639e22ed"
+    "block_mm": 123.77,
+    "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px. Three panels seat in two 85 mm columns, so row 2 holds one panel and centres it from 44.50 mm. The plate prints 0.02 mm over the measure and 0.03 mm over the 123.77 mm block.",
+    "sha256": "53f65ef77022fcd098836e20ae2d7de651c7c75992b55b4aae27f55ae7bfe35f"
   },
   "inputs": {
     "captures": [
-      {
-        "file": "captures/dashboard-v1-head.png",
-        "picture": "whole window",
-        "pixels": [
-          2000,
-          1188
-        ],
-        "prints_mm": [
-          85.0,
-          50.49
-        ],
-        "dpi": 598,
-        "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f"
-      },
       {
         "file": "captures/dashboard-v2-head.png",
         "picture": "whole window",
@@ -131,12 +117,12 @@
     }
   },
   "outputs": {
-    "instrument-gallery.png": "0578e358c44775cdce1ecbb975aece8d3921e5369fd32773c750663d639e22ed",
-    "captions.md": "5fa5940c8cc03d193b89f3ea98588742dc65770cffdba35b481daa12c65cbd68",
-    "captures/captures.md": "d1878c002fd9761d07d295f342b685c6f81e9d9ece61d3fcff47d80eb3e64cec",
-    "captures/stamp.json": "b250598aed1c186c023eca7d85618b6cfe02d43ccc45e15828e120faa499e7bf"
+    "instrument-gallery.png": "53f65ef77022fcd098836e20ae2d7de651c7c75992b55b4aae27f55ae7bfe35f",
+    "captions.md": "bc162589977f16c76cd68768f840b9412b8d4a01b0fbf88c1d583a264851af66",
+    "captures/captures.md": "8ca3384e42f50afe37978e3a8c24dec5f56f845278b012a7145c1217bfffea74",
+    "captures/stamp.json": "6d24e30d6899ae621c5dc38176ced025b115a9adecbebc6a55251bf209ba81a4"
   },
-  "withheld": "no value in this report is read from a panel. v1 and v2 print no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only.",
+  "withheld": "no value in this report is read from a panel. v2 prints no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only.",
   "toolchain": {
     "julia": "1.12.6",
     "glmakie": "0.13",

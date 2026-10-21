@@ -1,17 +1,19 @@
 #!/usr/bin/python3
 """instrument-gallery.py - compose the Figure 12 plate at the report measure.
 
-The plate is the 2 x 2 frame grid and nothing else: no label, no rule, no type.
-It prints 1:1 at 174 mm wide on the 531 dpi grid (v2's own floor: 1780 px at
+The plate is the frame grid and nothing else: no label, no rule, no type. It
+prints 1:1 at 174 mm wide on the 531 dpi grid (v2's own floor: 1780 px at
 85 mm), so a reader who opens the PNG sees the same pixels the draft prints.
 
 Each frame keeps its natural aspect and fits an 85 x 59.89 mm cell by the
-binding dimension, which is the rule the stamp records. Row 1 is v1 and v2,
-both whole dashboard windows. Row 2 is the twisted-state 3D viewport, cut at
-measured ink boundaries, and the 3D cartography.
+binding dimension, which is the rule the stamp records. Three frames seat in
+two columns. Row 1 is v2, a whole cockpit window, and the twisted-state 3D
+viewport, cut at measured ink boundaries. Row 2 holds the cartography alone
+and centred on the measure: with two 85 mm columns a third panel leaves one
+cell empty, and a lone panel reads as one panel only when it is centred.
 
 The grid is a whole number of pixels: a 4.00 mm gutter is 83.6 px, so the
-plate carries 84 px gutters and prints 3638 x 2514 px = 174.02 x 120.26 mm.
+plate carries an 84 px gutter and prints 3638 x 2588 px = 174.02 x 123.79 mm.
 
 Run:
     /usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py
@@ -36,11 +38,12 @@ MM = DPI / 25.4
 
 W_MM = 174.00
 CELL_W = 85.00
-ROW1_H = 56.35          # v2's aspect at 85 mm: the set's own row height
+ROW1_H = 59.89          # the viewport's height at 85 mm binds the row
 GUTTER = 4.00
 ROW2_Y = ROW1_H + GUTTER
-ROW2_H = 59.89          # the admission box height
+ROW2_H = 59.89          # the box height; the cartography prints 59.88 mm
 X2 = CELL_W + GUTTER    # 89.00, left edge of the right column
+LAST_X = (W_MM - CELL_W) / 2.0   # 44.50, the trailing row's one panel
 
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
 SERIF_B = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
@@ -107,10 +110,10 @@ def build() -> tuple[Image.Image, list[tuple]]:
         img.paste(im, (xx, yy))
         d.rectangle([xx, yy, xx + tw - 1, yy + th - 1], outline=(30, 30, 30), width=3)
 
-    place("dashboard-v1-head.png", 0.0, 0.0, CELL_W, ROW1_H, "v1")
-    place("dashboard-v2-head.png", X2, 0.0, CELL_W, ROW1_H, "v2")
-    place("dashboard-twisted-state-head.png", 0.0, ROW2_Y, CELL_W, ROW2_H, "twisted")
-    place("winner-10kw-cartography-head.png", X2, ROW2_Y, CELL_W, ROW2_H, "cartography")
+    place("dashboard-v2-head.png", 0.0, 0.0, CELL_W, ROW1_H, "v2")
+    place("dashboard-twisted-state-head.png", X2, 0.0, CELL_W, ROW1_H, "twisted")
+    place("winner-10kw-cartography-head.png", LAST_X, ROW2_Y, CELL_W, ROW2_H,
+          "cartography")
 
     out = HERE / "instrument-gallery.png"
     img.save(out, dpi=(DPI, DPI))
