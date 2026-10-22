@@ -1,12 +1,12 @@
-# FEEDBACKBOT3: room routing v3 (2026-10-22)
+# FEEDBACKBOT3: room routing v4 (2026-10-22)
 
 **Source** `FEEDBACKBOT3.docx` (the founder review copy, 2026-10-22)
 against draft v0.87, data commit `dd3cc6a`, HEAD `2661194`. This record
 holds the findings the room checked in the repo. It holds the plan, the
-founder calls, and the seat lanes. v3 folds the k* torque column, the
-three-way k split, and the withdrawn s² mechanism. Phases 0 to 2 need
-no founder call. Status keys: VERIFIED, ADJUSTED,
-FALSIFIED, OPEN, CALL.
+founder calls, and the seat lanes. v4 folds the torque-charge
+decomposition, the f/k coupling, the frozen load basis, and the C_T
+check. Phases 0 to 2 need no founder call. Status keys: VERIFIED,
+ADJUSTED, FALSIFIED, OPEN, CALL.
 
 ## A. The feedback claims, checked in the repo
 
@@ -34,16 +34,19 @@ FALSIFIED, OPEN, CALL.
 | RF-8 | `round(beta_rate_max)` selects the control mode. `imu_reliable` reads a reserved gain. `start_mode` defaults :warm | `ring_forces.jl:109`, `objective_evaluator.jl:695` |
 | RF-9 | The extractor misses `NR-013 ext2`. The child blocks never entered scope. The Status column clips | `build_draft_pdf.py:245-262` |
 | RF-10 | The 212 FoS = Inf rows are the rejection placeholder. They are not the blade-root stub | telemetry |
-| RF-11 | The bridle-drag bound. 932 W full line at d 3 mm and C_D 1.2. Two bridles 547 to 684 W. The bound is 1.7 to 2.2 times the whole margin | `scratch/av_bridle_drag_bound_2026-10-22.py` |
+| RF-11 | The bridle-drag bound. 932 W full line at d 3 mm and C_D 1.2. Two bridles 547 to 684 W. The bound is 1.7 to 2.2 times the whole margin. Present tense: k = 2.24. RF-19 carries the k* rescale | `scratch/av_bridle_drag_bound_2026-10-22.py` |
 | RF-12 | The loss exponent. The drag shares the load omega² form. (1+f)x² + x - 2 = 0. P' = P x³. x sits near 1 - f/3. The (1+f)^-1.5 form retired. dQ/dw = 0 describes rising power, not a maximum | `scratch/aw_loss_response_exponent_2026-10-22.py` |
 | RF-13 | The survivors. Constant f full line plus eta: 2 (best 34.558 kg-eq, i3 g17, r_hub 3.785). Per-design f: 46 (best 32.079, i3 g15, r_hub 3.838). Worst case: 0. The tie rule rides the 2 dp P_end boundary. Quote the robust ends, not the middle | dd3cc6a telemetry |
 | RF-14 | The off-peak caveat. TSR 6.8415 against the Cp peak at 5.2. The drag slows the rotor toward the peak, so part of the loss returns. The archive loss is an overestimate | NR-031, NR-032 |
 | RF-15 | The static solve discriminates. design/op reads 0.565, 0.587, 1.081. The two winners whose warm path collapses hardest miss by about 75%. The fix points at the static solve, not the start protocol. Add the omega_op field. The ratios stay provisional until the island blade_scale values decode. The direction stands. The magnitude does not | `objective_evaluator.jl:798-854` |
 | RF-16 | Two couplings. f is lambda-free only while k stays constant. Under k per candidate the drag spread widens. One bridle-geometry ruling buys both the drag term and the root gate | RF-12, RF-4 |
 | RF-17 | One evaluation carries three k values. The disc sizes from cp_bem(n_lines, 4.1) with no blade_scale. The static solve charges s² x 2.24. The ODE gets flat 2.24. The decoupling is why the two solvers cross at a point neither validates | `objective_v10.jl:360,548-549`, `run_v13_5kw_masslift.jl:158` |
-| RF-18 | k* sits the machine at the Cp peak. k*/k_now = C_P(5.2)/5.2^3 / C_P(6.8415)/6.8415^3 = 3.114. k* reads 6.97 against the 2.24 the ODE gets. The move buys +37% power and charges +80% torque. Omega 13.33 to 10.13. Tau 397 to 715 N·m. P 5.31 to 7.26 kW. Every torque-sized structural line re-prices. The falsification: a fixed-geometry k sweep shows power rising to about 7, then turning over. Torque rises the whole way. Power still rising at 7 means the C_P curve is not the curve the ODE flies | NR-031, NR-032, `objective_evaluator.jl` |
+| RF-18 | k* sits the machine at the Cp peak. k*/k_now = C_P(5.2)/5.2^3 / C_P(6.8415)/6.8415^3 = 3.114. k* reads 6.97 against the 2.24 the ODE gets. The torque charge separates. The ring check never reads torque: fos = P_crit / N_comp. The torsional gate's demand is P_rated / omega. Its capacity is frozen CT x A x v^2. So k* only charges x1.316 (tau 375 to 494 N·m, flip 1.97), the floor only x1.380 (518, flip 2.07), both x1.816 (681, flip 2.72). The k* charge is rating-invariant; the floor charge is k-invariant. Min FoS across the 508 ok rows reads 3.180 (i1 g17). One row sits below 3.24. The 3.24 threshold retires. min_torsional_fos and N_comp_per_ring return from the solve and drop at the logger. The falsification: a fixed-geometry k sweep shows power rising to about 7, then turning over. Torque rises the whole way. Power still rising at 7 means the C_P curve is not the curve the ODE flies | NR-031, NR-032, `trpt_optimization.jl:863,866,1024`, `objective_v10.jl:618`, `run_v13_5kw_masslift.jl:182-205` |
+| RF-19 | f = kappa / k. The k* move divides every drag fraction by k*/k. Frozen diameter: credible bound 0.104 to 0.0334 (x^3 0.968), full line 0.177 to 0.0568 (0.946). Sized diameter lands below frozen: rho = C_T x lambda / C_P reads 13 to 80 at the archive lambdas, so out-of-plane load governs and f' = (0.298 to 0.321) f. Frozen d is the ceiling; quote it. Power at k* reads 7.03 kW credible bound, 6.87 kW full line, before eta. Part of the drag that empties the archive is the wrong operating point inflating kappa/k about 3x. Fixing k re-opens the archive partly while the torque charge re-prices mass. The two cannot brief separately | `bem.jl:109,128` |
+| RF-20 | The structural load basis is decoupled from the power basis. Capacity reads design thrust, frozen at CT x A x v^2 for every machine (CT 0.55). Demand reads the 5.0 kW rating over static-solve omega. Delivered power enters neither. Call 1 sits on the same decoupling. Charging the delivered torque is a Phase 3 wiring item, not a campaign | `trpt_optimization.jl:706-714,850-857,863,866`, `objective_v10.jl:618` |
+| RF-21 | C_T contradicts its momentum partner. At n = 3, lambda 6.84 the table reads C_T 0.942 with C_P 0.226. One induction ties them: 0.942 gives a = 0.380 and C_P 0.584. 0.226 gives a = 0.065 and C_T 0.241. The pair cannot describe one rotor. The SWL gate would be C_T's first consumer. Validate C_T before call 3's load basis rules. OPEN | `bem.jl:109,128` |
 
-## C. The plan, v2
+## C. The plan, v3
 
 **Phase 0 - report repair, zero compute.** Strike draft line 982. Fix
 "electrical power" (line 333). Reword the winner claims. Render ext2.
@@ -55,17 +58,21 @@ Harmonise the rounding. Place the refs. Fill the nomenclature.
 **Phase 1 - re-analysis of dd3cc6a, zero simulation.** Sign the 0.837 m
 bound. Land the omega-basis row (block 1: k from RotorSpec against 2.24). Land the closure row on the extract
 torque. Land the masked PCA and the lever table. Build the convergence
-exhibit. Decode the per-design f on the 508 rows.
+exhibit. Decode the per-design f on the 508 rows, three columns per
+row: k = 2.24, k*(n_lines) with frozen d, k*(n_lines) with sized d.
 
 **Phase 2 - winner diagnostics, minutes of compute.** Toggle gravity,
 frame drag and line drag to attribute the bow. Re-read FoS at
-t = 200 s. Run the one-point k perturbation at the winner to read the
-ODE local aero slope, reporting dP/dk and dtau/dk.
+t = 200 s. Run the one-point k perturbation at the winner as a
+two-point structural re-eval: dP/dk, dtau/dk, min_torsional_fos,
+per-ring c, and rho from the tables.
 
 **Phase 3 - model and gate code.** The per-row k bookkeeping plus the
 anti-collapse gate and a torque-basis column. One main-rotor bridle
 model with two outputs:
-the drag term and the bridle SWL gate. The dynamic clearance gate. The
+the drag term and the bridle SWL gate. The SWL gate names its load
+basis and the torsional demand reads delivered torque. C_T validates
+against C_P first (RF-21). The dynamic clearance gate. The
 taper clamp hard reject. Discrete x4 and x6.
 
 `start_mode` as a required keyword. The mode-selector guard. The dead
@@ -75,38 +82,52 @@ constants.
 (the k* decision at 2.24 against 6.97), the objective form and the gene
 masking land first. The floor reads
 delivered power. The design target is about 6.5 kW shaft. Zero of 930
-archived evaluations sit there.
+archived evaluations sit there. Calls 1, 3 and 4 form one decision
+surface: the SWL load basis, the diameter rule and the rating. The
+charges multiply: 1.316 x 1.380 = 1.816.
 
 ## D. The founder calls
 
 1. The power basis. Shaft or delivered. Under the two-bridle bound the
    winner reads about 4.5 kW, and about 4.2 kW with eta 0.94. The
    lightest feasible machine under the same bound reads 34.6 kg-eq
-   (constant f) to 32.1 (per design), against the winner 27.4.
+   (constant f) to 32.1 (per design), against the winner 27.4. This
+   call also sets the structural charge: x1.380 at 6.9 kW shaft.
 2. The objective form. A power value term, a banded ceiling penalty,
    or keep it and reword every claim. This call lands before any
    campaign. The floor must read as delivered power.
 3. The bridle geometry. Anchor fractions, diameter rule, coefficient
-   basis. One ruling buys the drag term and the bridle SWL gate.
+   basis, and the SWL load basis (design thrust, rating torque, or
+   delivered torque). One ruling buys the drag term and the bridle SWL
+   gate. The diameter rule sets the exponent of the k coupling. The
+   load basis sets which structural charge applies. RF-21 precedes
+   this call.
 4. The cone convention. Half-angle or full-apex. The taper clamp
    reject lands either way.
 5. The appendix scope. Carry the child blocks or cite them.
 6. The scratch keep rule. Signed rows cite probe logs inside the
    953 MB.
 
+Calls 1, 3 and 4 couple through the SWL load basis and the torque
+charge. The k* charge (x1.316) and the floor charge (x1.380) are
+independent and multiplicative. Both are payable. Declining call 4
+keeps the 1.38. Keeping the 5 kW rating keeps the 1.32.
+
 ## E. The seats
 
-- @aero-validator: per-design f decode (needs no founder call, starts
-  now), bridle model proposal, 1P/gust (OPEN, unscored), torsional
-  check.
+- @aero-validator: per-design f decode (three columns, needs no founder
+  call, starts now), C_T validation (RF-21), bridle model proposal,
+  1P/gust (OPEN, unscored), torsional check.
 - @science-validator: k law and anti-collapse gate, the k-from-RotorSpec
   check against 2.24 as omega-basis row block 1, masked PCA, lever
   table, delta-alpha* note.
 - @aero-worker: 0.837 m bound sign-off, NR-061 extension, the
-  loss-exponent row with the tie rule, the k perturbation reporting
-  dP/dk and dtau/dk, t = 200 s FoS.
+  loss-exponent row with the tie rule, the k perturbation as a
+  two-point structural re-eval (dP/dk, dtau/dk, min_torsional_fos,
+  per-ring c, rho), t = 200 s FoS.
 - @software-validator: extractor grammar and widths, ext2 render,
-  start_mode, discrete genes, hygiene sweep.
+  start_mode, discrete genes, hygiene sweep, the telemetry logger fix
+  (three lines, `run_v13_5kw_masslift.jl:182-205`).
 - @hermes: this routing record and the plan tracker.
 
 ## In plain English
@@ -125,12 +146,16 @@ P' = P x³, not P (1+f)^-1.5. The archive holds no machine built for
 the delivered-power floor, because the objective never paid for power
 above it.
 
-The load-constant round adds one number. The constant that sits the
-machine at the Cp peak reads 6.97 against the 2.24 in use. That buys
-37% power for 80% torque, and every torque-sized line re-prices. One
-evaluation carries three k values. The static-solve gap ratios stay
-provisional until the blade_scale decode lands.
+The load-constant round adds one number and one split. The constant
+that sits the machine at the Cp peak reads 6.97 against the 2.24 in
+use. The torque charge separates: x1.316 from k* alone, x1.380 from
+the delivered-power floor, x1.816 together. The drag fraction falls
+with k, so part of the empty archive is the wrong operating point.
+The structural model charges neither delivered power nor the design
+thrust at the right line, and its C_T table contradicts its C_P table.
+Both must fix before the bridle ruling.
 
-Six calls wait for the founder. Phases 0 to 2 need no call and run now.
-The Phase 1 decode starts on s² with the present flat k. Call 3 gates
-Phase 3. Calls 1 and 2 plus the k law gate Phase 4.
+Six calls wait for the founder. Phases 0 to 2 need no call and run
+now. The Phase 1 decode uses s² with the present flat k and emits
+three f columns per row. Call 3 gates Phase 3. Calls 1 and 2 plus the
+k law gate Phase 4. Calls 1, 3 and 4 decide one surface.
