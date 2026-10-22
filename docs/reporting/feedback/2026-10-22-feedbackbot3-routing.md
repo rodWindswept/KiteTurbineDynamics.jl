@@ -1,11 +1,12 @@
-# FEEDBACKBOT3: room routing v4 (2026-10-22)
+# FEEDBACKBOT3: room routing v5 (2026-10-22)
 
 **Source** `FEEDBACKBOT3.docx` (the founder review copy, 2026-10-22)
 against draft v0.87, data commit `dd3cc6a`, HEAD `2661194`. This record
 holds the findings the room checked in the repo. It holds the plan, the
-founder calls, and the seat lanes. v4 folds the torque-charge
-decomposition, the f/k coupling, the frozen load basis, and the C_T
-check. Phases 0 to 2 need no founder call. Status keys: VERIFIED,
+founder calls, and the seat lanes. v5 folds the torque-charge
+decomposition, the f/k coupling, the frozen load basis, the C_T
+check, and the founder input of 2026-10-22. Phases 0 to 2 need no
+founder call. Status keys: VERIFIED,
 ADJUSTED, FALSIFIED, OPEN, CALL.
 
 ## A. The feedback claims, checked in the repo
@@ -85,23 +86,53 @@ delivered power. The design target is about 6.5 kW shaft. Zero of 930
 archived evaluations sit there. Calls 1, 3 and 4 form one decision
 surface: the SWL load basis, the diameter rule and the rating. The
 charges multiply: 1.316 x 1.380 = 1.816.
+Founder input (queued): the k* of 6.97 stays a no-drag starting
+point. The founder's earlier k sweep showed the flanks: the speed
+climbs out of band at low k, and the torque rises at high k. That
+sweep ran without drag, so it ran fast. The load-law call waits on the
+k sweep run again with drag, not on the no-drag arithmetic.
 
 ## D. The founder calls
 
 1. The power basis. Shaft or delivered. Under the two-bridle bound the
-   winner reads about 4.5 kW, and about 4.2 kW with eta 0.94. The
-   lightest feasible machine under the same bound reads 34.6 kg-eq
-   (constant f) to 32.1 (per design), against the winner 27.4. This
-   call also sets the structural charge: x1.380 at 6.9 kW shaft.
+   winner reads about 4.5 kW. The lightest feasible machine under the
+   same bound reads 34.6 kg-eq (constant f) to 32.1 (per design),
+   against the winner 27.4. This call also sets the structural
+   charge: x1.380 at 6.9 kW shaft.
+   Founder input (queued): every power label reads mechanical.
+   Delivered means the PTO at the shaft bottom. No electrical term.
+   The floor opens to 4 kW when the bridle drag lands in the count.
+   Each label states its stage: rotor, ring shaft, or PTO.
 2. The objective form. A power value term, a banded ceiling penalty,
    or keep it and reword every claim. This call lands before any
    campaign. The floor must read as delivered power.
+   Plain English: the objective today minimises mass with power as a
+   gate at 5 kW. Every extra watt costs mass, so the search sits on
+   the floor. Option 1, a power value term: the score is mass minus
+   the worth of the power. A machine heavier but stronger can win. The
+   measure becomes mass per watt, which matches the company
+   carbon-per-kWh claim. Option 2, a banded penalty: keep mass-only,
+   but add a penalty that grows with distance from a band. Hard reject
+   below 5 kW, a penalty that falls as power rises above it, none in
+   the band, a small penalty above the ceiling. The founder's
+   "penalize under 5 and over 5" reads as this option. Option 3: keep
+   it and reword every power claim. The floor reads delivered power
+   either way.
 3. The bridle geometry. Anchor fractions, diameter rule, coefficient
    basis, and the SWL load basis (design thrust, rating torque, or
    delivered torque). One ruling buys the drag term and the bridle SWL
    gate. The diameter rule sets the exponent of the k coupling. The
    load basis sets which structural charge applies. RF-21 precedes
    this call.
+   Plain English: the bridle is the fan of lines from the rotor ring
+   to the torque shaft. It costs power through its own drag and it
+   carries the machine load. The anchor fractions set where the lines
+   meet the ring. That sets their length and angle. The diameter rule
+   sets whether every line keeps one fixed thickness, or grows thicker
+   as the load grows. The coefficient basis sets the drag coefficient
+   the lines are charged, and the load coefficient the strength check
+   reads. One ruling buys the drag term and the SWL gate. RF-21
+   precedes this call.
 4. The cone convention. Half-angle or full-apex. The taper clamp
    reject lands either way.
 5. The appendix scope. Carry the child blocks or cite them.
@@ -159,3 +190,9 @@ Six calls wait for the founder. Phases 0 to 2 need no call and run
 now. The Phase 1 decode uses s² with the present flat k and emits
 three f columns per row. Call 3 gates Phase 3. Calls 1 and 2 plus the
 k law gate Phase 4. Calls 1, 3 and 4 decide one surface.
+
+The founder input of 2026-10-22 queues four points. The power basis
+reads mechanical at the PTO. The floor opens to 4 kW when the drag
+lands in the count. The k law waits on the sweep run again with drag.
+The calls carry plain-English briefs now. Phases 0 to 2 proceed
+unchanged.
