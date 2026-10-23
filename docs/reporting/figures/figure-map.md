@@ -686,3 +686,5 @@ three slots).
   outputs byte for byte at `2671d96`. The two thin rows draw hatched and
   the four thin bins print no read, as NR-074 and NR-077 sign. No new row
   opens, no draft byte moves, and every drawn value carries a signed row.
+
+| 32 | ⟨tbd⟩ | §9 | The prior analysis classes. One plate of the chart classes the toolchain ran on earlier campaigns | `prior-analysis-gallery` | proposed | `prior-chart-classes.md` (the 37-stem census). The declarative set `charts/chart-spec.toml` to `charts/generate_charts.jl` (F1 to F6). `figures/report/` (14 campaign PNGs, the Tulloch/Wacker benchmark). `scripts/results/` (the pitch-depower campaign sets). Each panel prints its campaign, commit and void status. No panel prints a current claim | The founder ask 2026-10-23 (the section 9 gallery). The panel selection and slot ruling (author seat). One provenance stamp per panel (figures seat). The value gate (science-validator): historical panels carry campaign provenance, not register rows |
