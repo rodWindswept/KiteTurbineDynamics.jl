@@ -1103,6 +1103,14 @@ valid-science case, not footnotes.
 
 - Flown blades carry tether-to-blade bridling that resists thrust and expansion better than the unbridled model assumes. That bridling also adds drag. The model does not include it for the main rotor.
 
+- Multi-rotor blocking is a constant, not a spacing curve. A rotor
+  downstream of another keeps 85 per cent of the freestream power, the
+  lower upwind rotor keeps 100 per cent, and the charge never
+  accumulates (DECISIONS 2026-09-29). Spacing enters only as the
+  minimum-separation gate at 0.8 rotor diameters. Wake recovery with
+  distance is unmodelled, so the 85 per cent reads the same at any
+  legal spacing.
+
 - The model does not simulate launch or recovery.
   Each run starts with the machine already aloft at its operating point.
   The full launch sequence and the recovery are outside this report.
