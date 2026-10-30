@@ -6,6 +6,7 @@
 **Updated** 2026-10-19 for the third closure train through v0.65 — the winner bow read, the six-class fold, the FEEDBACKBOT1 pair re-cuts, the B-20/B-21 and A-10 to A-19 prose passes, the house-vocabulary swap, sweeps 33 and 34, the levers re-freeze, the re-stamp and the rebuild. Draft v0.65. The review copy reads md5 `80e01b5d…`.
 **Updated** 2026-10-19 for the fourth closure train. The potential-extension section takes §6. Four draft passes run in one train. One rebuild lands at the tail. The section count moves to nine.
 **Updated** 2026-10-19 for the §6.1 phase-2 wording train. The train holds at one blocking point and nothing has run. Draft `daab5102`. The measured candidate reads `559ce2dc`.
+**Updated** 2026-10-30 for the founder-call closure train. All seven FEEDBACKBOT3 calls ruled. The §6.1 phase-2 hold retired. Receipts 1, 2 and 3 land at `2a5dc84d`. Draft v0.87. The review copy reads the tension-numeral rebuild.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -85,51 +86,43 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - Nothing has run and no draft byte moved. @aero-validator holds the phase2 edit at the base. Two founder calls release it: the gate text, and the keep-gene or rename-command direction. The tree also carries uncommitted peer work from @aero-validator, so a successor stages own paths only.
 
+- The 2026-10-30 closure train lands the founder calls. Calls 1 to 3 ride `hermes-2026-10-30-feedbackbot3-founder-call-answers.md`: the band opens below 5 kW with a steepening penalty, the hard reject reads 4.0 kW, the labels read mechanical at the PTO, the objective gains a mass-per-watt term, and the bridle SWL basis reads delivered torque. Calls 4 to 7 ride `...-answers-2.md`: half-angle cone, the appendix carries the child blocks, the scratch keep-list script, and the n-surface proposal path. The call 3 remainder rides `...-answers-3.md`: tip-anchored bridle, frozen 3 mm ceiling first, C_D 1.2 drag basis, and the measured BEM C_T replaces the 1.02 cap with a 1.4 fallback.
+
+- The §6.1 phase-2 hold retired. Section 6.1 reads two paragraphs, the comment-100 cut landed, and the bank and pitch terms split at the G7 fold. The phase-2 script base no longer exists, so the train cannot run and nothing runs it.
+
+- The draft reads v0.87 at `2661194`, 59 cited rows every one signed, both deliverables rebuilt. The tension-numeral pass landed the same train.
+
 ## Open queue, in fold order
 
-1. **@hermes: the §6.1 phase-2 wording train (blocked, nothing running).** The train rests at draft `daab5102`. The pass has six blocks. Two rename the pair at 1116 and 1148, and one drops the 1118 item. One deletes the 1107 clause. One puts `plane of rotation` at 168. The gate block and the re-declaration close the set.
+1. **Phases 0 to 2 (no founder call, running now).** The report repair, the re-analysis of `dd3cc6a`, and the winner diagnostics. @science-validator, @aero-validator, @aero-worker and @software-validator per the routing E section.
 
-   @author rules the gate wording first. @aero-validator runs the pass after both founder calls land. F2 is the measured candidate at `559ce2dc`, with word leg `e76c8223`. Two calls wait on Rod: the gate text, and whether the gene keeps the name `bank`. A direction clause at 168 would add a seventh block and one re-measure. No plate moves and no number enters.
+2. **Call 7 proposal: the n-surface.** @science-validator proposes and writes the acceptance tests. @aero-validator counter-reads against the fine-lambda table. A DECISIONS entry lands with the proposal. @software-validator implements behind both signs. It gates the k law.
 
-2. **The fourth closure train (accepted 2026-10-19, fold order).** Four draft passes, one rebuild at the tail.
+3. **Call 2 proposal: the mass-per-watt term.** @science-validator proposes the term. @aero-validator counter-reads it. The proposal and acceptance-test path applies. It rides Phase 4.
 
-   (a) **@science-writer: the caveat lift.** Anchor to @science-validator's signed-verdict set, not token hits. Section 3.2 carries six cited score rows and no verdict sentence. The signed register line reads "P_mean and P_end agree below 0.5 per cent at every row". The NR-041 band reads 8.9475 to 8.9511. Both have zero draft surface today.
+4. **Call 1 proposal: the below-5 penalty shape.** @science-validator proposes the steepening form. @software-validator owns the config edit behind it.
 
-   (b) **@science-writer + @author: the extension section as §6.** The shell reads `scratch/sw_ext_section_shell.md`, md5 `be68ec4d…`, 975 words, 125 lines, STE 0.00/100w, em_dash 0. It lands as §6 at `ba4fd39`, and the draft then read md5 `aa76c851…`, 10393 words, 1272 lines. The 6.1 provenance pass follows at draft md5 `57f9e430…`, 10569 words, 1291 lines. That pass names the swashplate and the two-blade teeter as lifter stack hardware. It names the main rotor as a three-blade ring with fixed pitch and a bank gene. It moves the model-addition count to three, and the draft ticks to v0.67. Nomenclature, References and Data availability renumber to 7, 8 and 9. Front matter line 9 reads "Sections 1 to 6 carry their text". The splice is measured: 975 words added to 9418, 126 lines added to 1146, nine numbered headings contiguous from 1 to 9, and zero cross-references to sections 6 to 9 across the whole draft. The four §6.1 corrections from @aero-validator are in. First, the TRPT thrust-cost replaces the generic Cp claim. Second, the two duties trade on one curve rather than reading as exclusive. Third, the teeter hub is separated from the per-revolution pitch linkage. Fourth, "the azimuth term is the one addition" replaces "the repo holds every tool". @author writes the bridge out of §5 and the transition into §7. The order reads model, market, operations. Every item states the question in the negative. No chart is implied. No value token prints.
+5. **Phase 3 build, call 3 behind it.** The bridle drag term and the SWL gate on delivered torque, the measured C_T basis with the 1.4 fallback, the taper-clamp hard reject, the discrete x4 and x6 genes, and `start_mode` as a required keyword.
 
-   (c) **@hermes + @science-writer: the Nomenclature fold to §7, plus the front-matter bill.** @author's three lines change on the same commit: the line 10 section count, the line 11 incomplete-note and the line 12 `[PENDING]` legend. The final value of line 10 is written at the settled section count, after the fold, not before it.
+6. **@software-validator: the repo fixes.** The extractor child blocks, the `ext` and `ext2` suffix match, the status-column wrap, and the release build-record strip. Routed 2026-10-23.
 
-   The fold input is measured at `b150c46`. `docs/reporting/glossary-candidates.md` holds 132 headwords. Section 6 adds 15 terms with no entry. Two of its terms are alternates and take a prose fix, not a row: axial thrust reads as the signed autogyro thrust, and shaft tension budget reads as the signed tension-supplied capacity.
+7. **@figures-images-diagrams: two plates.** The lever-set pair at row 8 (two plates of two panels, NR-074 to NR-077 signed) and the section 9 gallery at row 32.
 
-   The 15 new rows read: collective pitch, azimuth, swashplate, tip-path plane, teetering hub, induced power, autorotation, capacity factor, FMEA, fault tree, severity, occurrence, detection, tether pendulum and load relief. The science-writer census states 13 new rows and lists 15. I read the file and 15 headwords carry no entry, so the queue bill reads 15 until that seat confirms the count.
+8. **@author: the return-3 folds.** Items 7, 55, 57, 58, 92, 93 and 102 plus the word calls from the 2026-10-21 answers. The founder veto window closed when the owning seat runs.
 
-   The bill re-measures at the splice. The science-writer census reads 18 concept terms in §6 at `be68ec4d`. @science-validator's stem read clears 15 of the 18 against the draft `c0408b67`. Three carry a head noun that is already load-bearing. `capacity` meets torque capacity inside the same section. `control authority` meets the wind-authority token. `detection` meets break detection on the measurement window. Those three take a disambiguation clause, not a new class. The count and the class split land here after Track D rules them. The sixteenth row, `rotor phase lag`, is confirmed.
+9. **@science-writer: the caveat lift.** Anchor to the signed verdict set, not token hits.
 
-   Ten terms take grounding from the repo record. The CoAx PRD gives collective pitch, swashplate and autorotation. The FMEA workbook gives FMEA, fault tree, severity, occurrence and detection. Tether pendulum and load relief take the operations record. Azimuth, tip-path plane and induced power wait on Track D. The existing `sweep` entry names the azimuthal setting of a blade, so Track D may resolve azimuth against it and take the bill to 14.
+10. **The Nomenclature fold and the figure numbering.** The fourth-train items now unblocked. @hermes and @science-writer fold to section 7. @fig-img-diagrams and @author take the captions.
 
-   The inherited gaps read bending, steer and crossover. @author measured all three as ordinary English at one print each, and crossover carries its parameter in the same sentence. Track D calls those three. Two inherited rows stand: Cp, which already carries a defining sentence at first use, and rung, which now carries its definition at first use.
+11. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms.
 
-   (d) **@fig-img-diagrams + @author: figure numbering.** Captions take `Figure N — <title>` on the `Caption` style. The roster row moves to the appendix. The appendix Exhibit cell gains `Figure N` in place. The build-side style mapping is mine. @author's `see Figure N` calls stay outside the levers span, lines 750 to 792.
+12. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The section 3.2 fold waits the same pass.
 
-   (e) **@hermes: one DOCX/PDF rebuild at the tail**, off-peak. The tail draft tip is the 6.1 provenance commit at draft md5 `57f9e430…`, 10569 words, 1291 lines. The splice commit before it is `ba4fd39`, at draft md5 `aa76c851…`. The build holds on the §6 artifact ledger. Four claims print at the shell with a pointer in the tree and no dated row behind them, so the §2a count of one capability claim is false until those rows land. A fifth row, capacity factor, has no admissible source in the tree: the two files that look like sources each disqualify themselves, and one carries a self-declared contaminated-output header. That value is a founder ruling, not a measurement. The build refuses a dirty draft pathspec, so a probe cannot stamp a clean label on uncommitted bytes. `build-record.txt` also carries a `git hash-object` line beside the commit. The DOCX `Caption` style mapping from @fig-img-diagrams rides the same pass. The gate re-arms at the last pass, not the first.
+13. **With the founder.** The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 
-   Train constraints: never edit inside the marker-bounded levers block. @aero-validator checks the region md5 against the block after each draft-moving commit. @author's `sw_refreeze_check.py` run closes. The heading-resolve baseline is measured once, after (b) and (c) land. It is then pinned for the rebuild.
+14. **Standing gates before the forum share.** The whole-report sign-off, then the reader-build strip and the abstract rewrite.
 
-3. **@science-writer: sweep 35, and the extract-class ruling.** Sweeps 33 and 34 closed (science-writer). Sweep 35 keys on the next push and spans v0.65 onward. The founder ruled Option A on 2026-10-19: two fixed scratch names, one dated ledger entry, and no per-sweep bypass. The build seat landed the entry and a transcript sensor at `check-extract-stamp.py`. Sweep 35 commits with the gate on.
-
-4. **@author: the partner-gated tails (AU4) and the software story.** The section 4.1 path table, the 4.3 tables, the twist-prose basis and the fifteen-of-eighteen line all wait on AU4. The software story reads next at this seat. The section 3.2 fold waits only on the visual pass.
-
-5. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms move with PL12. The PL12 references ruling facts read landed (`84ac158`).
-
-6. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate wait on Rod's eye. The section 3.2 fold and the R3 SPEC round wait the same pass. The kMppt-space graphic stays parked behind the era call (the era-fit flag gates any cite).
-
-7. **@hermes: the copy presentation check.** The figure caption form and the typeface question read here.
-
-8. **With the founder.** The bow call closed "up" (2026-10-15): the winner bow read landed at v0.57 (`c825a01`, NR-059 signed `7aaf2ea`), and the settle/run disagreement prints as an instrument finding. The winner-plate seat call, the root README refresh and the two campaign leads (explore the cone angle, widen the genome) stay open. The settled-form primer waits on the form sign.
-
-9. **Standing gates before the forum share.** The whole-report sign-off lands first. Then the reader-build strip and the abstract rewrite (Harris 3.1 and 3.7) land after the content closes.
-
-10. **@hermes: the map and the doc watch.** Delta maps, route notes and receipts stay here.
+15. **@hermes: the scratch keep-list script.** The mechanical protection for logs a signed row cites.
 
 ## The parallel set
 
@@ -178,4 +171,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the §6.1 phase-2 pass waits on two founder calls. It cannot run before both land. The author seat rules the gate text first. Then the fourth closure train resumes in order. It takes the caveat lift, the extension §6 insert, the Nomenclature fold with the front-matter bill, then figure numbering. One rebuild lands at the tail. The extract-class ruling landed as Option A. The two reserved names now carry one dated ledger entry and a transcript sensor. Sweep 35 keys on the next push. The partner-gated tails wait on AU4. The software story reads next at the author seat. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. The call 7 proposal starts at the science seat and gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume now that the §6.1 hold retired. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
