@@ -1157,3 +1157,32 @@ The cited count holds at 59.
 Words read 11,808 from 11,807.
 STE holds 31 total at 0.26 per 100 words.
 Em dashes read 0.
+
+v0.89 pass by @author (2026-11-01).
+
+The figure numbers land for the seated set.
+Row 31 takes Figure 10 and three draft lines change with it.
+The lines read 1336, 1400 and 1402 before the edit.
+The token diff removes 12 three times and adds 10 three times.
+The version ticks to v0.89.
+
+The base carries the Phase 0 report repair from @science-worker at `6f12520`.
+That pass moved the draft and no version pin.
+So this pass carries the pin.
+
+The figures check sits at `8858b65`.
+It confirms the ten-seat order and ten resolving embeds.
+It flags the instrument-gallery caption at lines 5 and 21.
+It flags the unseated capability sheet at line 5.
+
+This pass rules the seated set Figure 1 to Figure 10.
+The unseated plate carries no number until it seats.
+The figures seat applies the two caption edits.
+The map seat owns the builder counter.
+
+No number and no signed row moves.
+The cited count holds at 59.
+
+Words read 11,855.
+STE holds 32 total at 0.27 per 100 words.
+Em dashes read 0.

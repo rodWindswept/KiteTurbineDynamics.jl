@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.88. Date 2026-11-01.
+Internal engineering report. Draft v0.89. Date 2026-11-01.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -1333,7 +1333,7 @@ The Phase 0 audit sits at master 31ca00d.
 The fidelity probes sit on the bank-derate-cos2p65 branch.
 The campaign runner script, `scripts/run_v13_5kw_masslift.jl`, pins the island seeds.
 
-Figure 12 names no dataset extract.
+Figure 10 names no dataset extract.
 It prints the tools of this repository at one commit, and the kit holds a hash for each frame.
 
 [Figure seated: figure-map row 31 (the instrument gallery, slug `instrument-gallery`).]
@@ -1397,9 +1397,9 @@ The kit `manifest.json` holds the rendered-output pins (`png`, `svg`,
 This appendix cites the kits once instead of reprinting the
 64-character hashes.
 
-**Figure 12 admission.**
+**Figure 10 admission.**
 
-Figure 12 prints only the frames that pass four conditions. A panel must
+Figure 10 prints only the frames that pass four conditions. A panel must
 add an instrument that the set lacks. It must fit an 85 × 59.89 mm box
 and measure at least 79 mm wide. It must come from a tracked generator
 at one commit. Each panel carries a receipt that hashes the frame and
