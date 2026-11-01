@@ -87,11 +87,34 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - Nothing has run and no draft byte moved. @aero-validator holds the phase2 edit at the base. Two founder calls release it: the gate text, and the keep-gene or rename-command direction. The tree also carries uncommitted peer work from @aero-validator, so a successor stages own paths only.
 
-- The 2026-10-30 closure train lands the founder calls. Calls 1 to 3 ride `hermes-2026-10-30-feedbackbot3-founder-call-answers.md`: the band opens below 5 kW with a steepening penalty, the hard reject reads 4.0 kW, the labels read mechanical at the PTO, the objective gains a mass-per-watt term, and the bridle SWL basis reads delivered torque. Calls 4 to 7 ride `...-answers-2.md`: half-angle cone, the appendix carries the child blocks, the scratch keep-list script, and the n-surface proposal path. The call 3 remainder rides `...-answers-3.md`: tip-anchored bridle, frozen 3 mm ceiling first, C_D 1.2 drag basis, and the measured BEM C_T replaces the 1.02 cap with a 1.4 fallback.
+- The 2026-10-30 closure train lands the founder calls.
+Calls 1 to 3 ride the first receipt.
+The band opens below 5 kW with a steepening penalty.
+The hard reject reads 4.0 kW.
+The labels read mechanical at the PTO.
+The objective gains a mass-per-watt term.
+The bridle SWL basis reads delivered torque.
+Calls 4 to 7 ride the second receipt.
+The cone reads half-angle.
+The appendix carries the child blocks.
+The scratch keep-list script lands.
+The n-surface proposal path opens.
+The call 3 remainder rides the third receipt.
+The bridle anchors at the tip.
+The frozen 3 mm ceiling reads first.
+The drag basis reads C_D 1.2.
+The measured BEM C_T replaces the 1.02 cap with a 1.4 fallback.
 
-- The §6.1 phase-2 hold retired. Section 6.1 reads two paragraphs, the comment-100 cut landed, and the bank and pitch terms split at the G7 fold. The phase-2 script base no longer exists, so the train cannot run and nothing runs it.
+- The §6.1 phase-2 hold retired.
+Section 6.1 reads two paragraphs.
+The comment-100 cut landed.
+The bank and pitch terms split at the G7 fold.
+The phase-2 script base no longer exists.
+The train cannot run and nothing runs it.
 
-- The draft reads v0.87 at `2661194`, 59 cited rows every one signed, both deliverables rebuilt. The tension-numeral pass landed the same train.
+- The draft reads v0.87 at the tension-numeral rebuild.
+The cited count reads 59, every one signed.
+Both deliverables rebuilt.
 
 - The science-writer closes land at `3dc5ba9`. The section 3.2 caveat lift anchors at `03af154`. The verdict sentence reads draft lines 641 to 643, on six signed score rows and the NR-041 sign-off line. The heavy-end band reads 8.9475 to 8.9511 kW at 4 dp.
 
@@ -101,33 +124,74 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 ## Open queue, in fold order
 
-1. **Phases 0 to 2 (no founder call, running now).** The report repair, the re-analysis of `dd3cc6a`, and the winner diagnostics. @science-validator, @aero-validator, @aero-worker and @software-validator per the routing E section.
+1. **Phases 0 to 2 (no founder call, running now).**
+The report repair runs first.
+The re-analysis of the campaign dataset follows.
+The winner diagnostics close the set.
+@science-validator, @aero-validator, @aero-worker and @software-validator per routing E.
 
-2. **Call 7 proposal: the n-surface.** @science-validator proposes and writes the acceptance tests. @aero-validator counter-reads against the fine-lambda table. A DECISIONS entry lands with the proposal. @software-validator implements behind both signs. It gates the k law.
+2. **Call 7 proposal: the n-surface.**
+@science-validator proposes and writes the acceptance tests.
+@aero-validator counter-reads against the fine-lambda table.
+A DECISIONS entry lands with the proposal.
+@software-validator implements behind both signs.
+It gates the k law.
 
-3. **Call 2 proposal: the mass-per-watt term.** @science-validator proposes the term. @aero-validator counter-reads it. The proposal and acceptance-test path applies. It rides Phase 4.
+3. **Call 2 proposal: the mass-per-watt term.**
+@science-validator proposes the term.
+@aero-validator counter-reads it.
+The proposal and acceptance-test path applies.
+It rides Phase 4.
 
-4. **Call 1 proposal: the below-5 penalty shape.** @science-validator proposes the steepening form. @software-validator owns the config edit behind it.
+4. **Call 1 proposal: the below-5 penalty shape.**
+@science-validator proposes the steepening form.
+@software-validator owns the config edit behind it.
 
-5. **Phase 3 build, call 3 behind it.** The bridle drag term and the SWL gate on delivered torque, the measured C_T basis with the 1.4 fallback, the taper-clamp hard reject, the discrete x4 and x6 genes, and `start_mode` as a required keyword.
+5. **Phase 3 build, call 3 behind it.**
+The bridle drag term and the SWL gate land on delivered torque.
+The measured C_T basis carries the 1.4 fallback.
+The taper-clamp hard reject lands.
+The discrete x4 and x6 genes land.
+`start_mode` reads a required keyword.
 
-6. **@software-validator: the repo fixes.** The extractor child blocks, the `ext` and `ext2` suffix match, the status-column wrap, and the release build-record strip. Routed 2026-10-23.
+6. **@software-validator: the repo fixes.**
+The extractor child blocks, the suffix match, the status-column wrap, and the release build-record strip.
+Routed 2026-10-23.
 
-7. **@figures-images-diagrams: two plates.** The lever-set pair at row 8 (two plates of two panels, NR-074 to NR-077 signed) and the section 9 gallery at row 32.
+7. **@figures-images-diagrams: two plates.**
+The lever-set pair at row 8: two plates of two panels.
+The section 9 gallery at row 32.
+The numbers read signed: NR-074 to NR-077.
 
-8. **@author: the return-3 folds.** Items 7, 55, 57, 58, 92, 93 and 102 plus the word calls from the 2026-10-21 answers. The founder veto window closed when the owning seat runs.
+8. **@author: the return-3 folds.**
+Items 7, 55, 57, 58, 92, 93 and 102.
+The word calls ride the same pass.
+The founder veto window closed when the owning seat runs.
 
-9. **The Nomenclature fold and the figure numbering.** The fourth-train items now unblocked. @hermes and @science-writer fold to section 7. @fig-img-diagrams and @author take the captions.
+9. **@science-writer: the caveat lift.**
+Anchor to the signed verdict set, not token hits.
 
-10. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms.
+10. **The Nomenclature fold and the figure numbering.**
+The fourth-train items now unblocked.
+@hermes and @science-writer fold to section 7.
+@fig-img-diagrams and @author take the captions.
 
-11. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The section 3.2 fold waits the same pass.
+11. **@science-validator: PL12.**
+The fifteen-of-eighteen line and the item-5 printed forms.
 
-12. **With the founder.** The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
+12. **@fig-img-diagrams + Rod: the visual pass.**
+The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate.
+The section 3.2 fold waits the same pass.
 
-13. **Standing gates before the forum share.** The whole-report sign-off, then the reader-build strip and the abstract rewrite.
+13. **With the founder.**
+The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 
-14. **@hermes: the scratch keep-list script.** The mechanical protection for logs a signed row cites.
+14. **Standing gates before the forum share.**
+The whole-report sign-off, then the reader-build strip and the abstract rewrite.
+
+15. **@hermes: the scratch keep-list script.**
+Landed 2026-11-01.
+The mechanical protection for logs a signed row cites.
 
 ## The parallel set
 
@@ -178,4 +242,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. Sweep 36 keys on the next push over the v0.79-to-tip tail (science-writer). The call 7 proposal starts at the science seat and gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume now that the §6.1 hold retired. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. Sweep 36 keys on the next push over the v0.79-to-tip tail (science-writer). The call 7 proposal starts at the science seat. It gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
