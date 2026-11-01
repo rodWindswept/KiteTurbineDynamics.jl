@@ -2,8 +2,8 @@
   "slug": "prior-analysis-gallery",
   "figure": "roster row 32, section 9: the prior-analysis gallery",
   "mode": "prior-analysis gallery, six panels",
-  "run_id": "one composition pass, repository at 8858b65",
-  "run_commit": "8858b65",
+  "run_id": "one composition pass, repository at 96f84d6",
+  "run_commit": "96f84d6",
   "command": "/usr/bin/python3 docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py --page-proof",
   "script": {
     "path": "docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py",
@@ -143,7 +143,7 @@
   },
   "outputs": {
     "prior-analysis-gallery.png": "3e7f625dbdecf433c38ae20821c7c75abb62fb4a2a17b60e88f9acc741662658",
-    "page-proof.png": "9d129b17c25dbd0533922b0405eaf4c1228b527ae624b6f81ef6b79862946ce6"
+    "page-proof.png": "88c376c81db3467ee0acb4c21f698ef2fa326aad98c8509baeafca944a39d790"
   },
   "withheld": "no panel prints a current claim; every value belongs to the tool or campaign that printed it at that commit"
 }
