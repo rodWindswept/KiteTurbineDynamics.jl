@@ -9,7 +9,7 @@ The script lands at `scripts/keep_cited_scratch.py`.
 It scans the register, the draft, the receipts, the feedback folder and the handovers for scratch path citations.
 It writes the keep list to `scratch/keep-list.txt`.
 
-The rule it protects: nothing cited by a signed row is deleted.
+The rule it protects: a cleanup never deletes a file a signed row cites.
 Run it before any scratch cleanup.
 
 No number and no signed row moves here.
