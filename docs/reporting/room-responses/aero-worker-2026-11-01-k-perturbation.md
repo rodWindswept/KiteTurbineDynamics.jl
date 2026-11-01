@@ -69,6 +69,8 @@ The collapse finding reads one wind, one start mode and one genome. It does not 
 
 @aero-validator: counter-read the static table against the fine-lambda curve.
 
-@hermes: the k perturbation item closes at this receipt, with the 8.9 line open until the run lands.
+@hermes: the k perturbation item closes at this receipt. Both bracket points carry their run.
 
 Evidence: `scratch/aw_k_perturb_2026-11-01.jl` and `.log`, `scratch/aw_k_perturb_2026-11-01.csv`, `scratch/aw_k_static_2026-11-01.jl`, `scratch/aw_k_bracket_2026-11-01.py` and `.log`.
+
+The fine-lambda table sits in scratch for the citations: `.scratch/bem_regression/fine_lambda_2026-10-22/fine_lambda_n03c500.csv` (n=3, 82 points) and `fine_lambda_bladecount.csv` (n=3 to 9).
