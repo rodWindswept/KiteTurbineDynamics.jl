@@ -7,6 +7,7 @@
 **Updated** 2026-10-19 for the fourth closure train. The potential-extension section takes §6. Four draft passes run in one train. One rebuild lands at the tail. The section count moves to nine.
 **Updated** 2026-10-19 for the §6.1 phase-2 wording train. The train holds at one blocking point and nothing has run. Draft `daab5102`. The measured candidate reads `559ce2dc`.
 **Updated** 2026-10-30 for the founder-call closure train. All seven FEEDBACKBOT3 calls ruled. The §6.1 phase-2 hold retired. Receipts 1, 2 and 3 land at `2a5dc84d`. Draft v0.87. The review copy reads the tension-numeral rebuild.
+**Updated** 2026-11-01 for the science-writer closes. The section 3.2 caveat lift and the sweep 35 record land with their receipts at `3dc5ba9`. Sweep 36 keys on the next push over the v0.79-to-tip tail.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -22,7 +23,7 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - `handovers/handover-2026-10-14-reporting-room-author.md`: commit `bdab984`.
 
-- `handovers/handover-2026-10-14-reporting-room-science-writer.md`: commit `8399657`.
+- `handovers/handover-2026-10-14-reporting-room-science-writer.md`: commit `3dc5ba9`.
 
 - This page: the room queue.
 
@@ -92,6 +93,12 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 - The draft reads v0.87 at `2661194`, 59 cited rows every one signed, both deliverables rebuilt. The tension-numeral pass landed the same train.
 
+- The science-writer closes land at `3dc5ba9`. The section 3.2 caveat lift anchors at `03af154`. The verdict sentence reads draft lines 641 to 643, on six signed score rows and the NR-041 sign-off line. The heavy-end band reads 8.9475 to 8.9511 kW at 4 dp.
+
+- Sweep 35 records `7e60f37..c6d79b9`: v0.65 to v0.79, 161 commits, 30 draft movers, appendix pins 9 of 9, review copy 24 pages A4. The DOCX reads md5 `4d2f9775`, the PDF `49bb37a9`. Both receipts read STE 0.00 and move no draft byte, register row or cited count.
+
+- Sweep 36 keys on the next push over the v0.79-to-tip tail. The receipts sit under `docs/reporting/room-responses/`.
+
 ## Open queue, in fold order
 
 1. **Phases 0 to 2 (no founder call, running now).** The report repair, the re-analysis of `dd3cc6a`, and the winner diagnostics. @science-validator, @aero-validator, @aero-worker and @software-validator per the routing E section.
@@ -110,19 +117,17 @@ Six pages hold the rotation insurance. Each seat page carries the open items, th
 
 8. **@author: the return-3 folds.** Items 7, 55, 57, 58, 92, 93 and 102 plus the word calls from the 2026-10-21 answers. The founder veto window closed when the owning seat runs.
 
-9. **@science-writer: the caveat lift.** Anchor to the signed verdict set, not token hits.
+9. **The Nomenclature fold and the figure numbering.** The fourth-train items now unblocked. @hermes and @science-writer fold to section 7. @fig-img-diagrams and @author take the captions.
 
-10. **The Nomenclature fold and the figure numbering.** The fourth-train items now unblocked. @hermes and @science-writer fold to section 7. @fig-img-diagrams and @author take the captions.
+10. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms.
 
-11. **@science-validator: PL12.** The fifteen-of-eighteen line and the item-5 printed forms.
+11. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The section 3.2 fold waits the same pass.
 
-12. **@fig-img-diagrams + Rod: the visual pass.** The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The section 3.2 fold waits the same pass.
+12. **With the founder.** The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 
-13. **With the founder.** The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
+13. **Standing gates before the forum share.** The whole-report sign-off, then the reader-build strip and the abstract rewrite.
 
-14. **Standing gates before the forum share.** The whole-report sign-off, then the reader-build strip and the abstract rewrite.
-
-15. **@hermes: the scratch keep-list script.** The mechanical protection for logs a signed row cites.
+14. **@hermes: the scratch keep-list script.** The mechanical protection for logs a signed row cites.
 
 ## The parallel set
 
@@ -171,4 +176,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. The call 7 proposal starts at the science seat and gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume now that the §6.1 hold retired. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. Sweep 36 keys on the next push over the v0.79-to-tip tail (science-writer). The call 7 proposal starts at the science seat and gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume now that the §6.1 hold retired. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
