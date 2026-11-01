@@ -38,7 +38,7 @@ const OPT_FOS_REQUIRED = 1.8     # Factor of Safety (hard constraint)
 const OPT_TORSION_MARGIN = 1.10    # Required ratio A_actual / A_buckling_limit
 const OPT_TORSION_FOS_REQUIRED = 1.5 # Tulloch torsional stability FOS (hard constraint)
 const OPT_CT_RATED = 0.55    # Thrust coefficient at rated BEM operation
-const OPT_TSR_RATED = 4.1     # Optimal tip-speed ratio
+const OPT_TSR_RATED = 4.1     # Optimal tip-speed ratio (single source: the v2/v4 default speed chord)
 
 # ── Knuckle mass model (coupled to beam geometry) ─────────────────────────────
 # Each knuckle is a bent CFRP tube section coupling two adjacent polygon beams.
@@ -1178,7 +1178,7 @@ function evaluate_design(
     elev_angle::Float64=π/6,
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,
-    omega_rotor::Float64=4.1 * OPT_V_PEAK / 5.0,
+    omega_rotor::Float64=OPT_TSR_RATED * OPT_V_PEAK / 5.0,
     m_blade_total::Float64=11.0,
     v_rated::Float64=11.0,
     P_rated::Float64=10000.0,

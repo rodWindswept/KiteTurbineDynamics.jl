@@ -217,7 +217,7 @@ function evaluate_design(
     elev_angle::Float64=π/6,
     v_peak::Float64=OPT_V_PEAK,
     fos_req::Float64=OPT_FOS_REQUIRED,
-    omega_rotor::Float64=4.1 * OPT_V_PEAK / 5.0,
+    omega_rotor::Float64=OPT_TSR_RATED * OPT_V_PEAK / 5.0,
     m_blade_total::Float64=11.0,
     v_rated::Float64=11.0,
     P_rated::Float64=10000.0,

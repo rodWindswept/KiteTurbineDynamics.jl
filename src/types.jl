@@ -261,13 +261,4 @@ function ring_Do_at(sys::KiteTurbineSystem, ring_idx::Int, r::Float64, p::System
     return default_ring_do(r)
 end
 
-# Default kite time constant (s).
-# Physical basis:
-#   m_lifter = 4 kg, lift line length = 25 m.
-#   Aerodynamic damping on the line scales as ρ·CD·d·L·v ≈ 1.225·1.0·0.003·25·6 ≈ 0.55 N/(m/s).
-#   τ = m / c_aero ≈ 4 / 0.55 ≈ 7 s at 6 m/s wind.
-#   Rounded conservatively to 3 s to reflect that the rotary lifter is heavier
-#   and stiffer than a passive kite but the line still has finite drag.
-const KITE_TAU_S = 3.0
-
 state_size(sys::KiteTurbineSystem) = 6 * sys.n_total + 2 * sys.n_ring

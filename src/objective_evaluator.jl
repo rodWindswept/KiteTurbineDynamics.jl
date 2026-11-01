@@ -667,6 +667,112 @@ function build_system_from_v10(
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
+# structural_pass_v10 — the static structural pass, one genome
+# ══════════════════════════════════════════════════════════════════════════════
+
+"""
+    structural_pass_v10(x, beam_profile, p, cfg; omega_rotor, r_rotor=nothing,
+                        P_rated=cfg.power_W) → NamedTuple
+
+Static structural pass for ONE genome at ONE operating point. No ODE, no
+scoring, no rejection on the torsional value: decode the genome and evaluate
+the structure at the caller's measured equilibrium speed `omega_rotor`.
+
+`omega_rotor` is REQUIRED and comes from the two-point k re-evaluation (the
+measured speed at each k point). This pass does not solve for equilibrium: the
+aero seat owns that solve, and a private re-solve here would print a different
+machine from the one the re-evaluation measured.
+
+Returns `(; valid, reason, min_torsional_fos, fos_per_ring, Do_per_ring,
+omega_rotor, torsion_ungated)`.
+
+`min_torsional_fos` is REPORTED, never gated (RF-20). The two-point k
+re-evaluation folds it in as an ungated constraint; this pass must not reject
+or score a genome on it. `torsion_ungated` is always `true` so a table reader
+cannot mistake the column for a gate.
+"""
+function structural_pass_v10(
+    x::AbstractVector,
+    beam_profile::BeamProfile,
+    p::SystemParams,
+    cfg::ObjectiveConfig;
+    omega_rotor::Float64,
+    r_rotor::Union{Nothing,Float64}=nothing,
+    P_rated::Float64=cfg.power_W,
+)
+    x_canon = canonical_v10(x)
+    result = design_from_vector_v10(
+        x_canon,
+        beam_profile,
+        p;
+        power_W=cfg.power_W,
+        v_rated=cfg.v_rated,
+        cylinder_cone=true,
+        rotor_count_mode=cfg.rotor_count_mode,
+        power_split=cfg.power_split,
+        cone_slope_deg=cfg.cone_slope_deg,
+        rotor_spacing_frac=cfg.rotor_spacing_frac,
+        blocking_factor=cfg.blocking_factor,
+    )
+    if result.n_active == 0 || result.n_rings < 1
+        return (
+            valid=false,
+            reason=:no_active_rotor,
+            min_torsional_fos=NaN,
+            fos_per_ring=Float64[],
+            Do_per_ring=Float64[],
+            omega_rotor=omega_rotor,
+            torsion_ungated=true,
+        )
+    end
+    if !isfinite(omega_rotor) || omega_rotor <= 0.0
+        return (
+            valid=false,
+            reason=:bad_omega,
+            min_torsional_fos=NaN,
+            fos_per_ring=Float64[],
+            Do_per_ring=Float64[],
+            omega_rotor=omega_rotor,
+            torsion_ungated=true,
+        )
+    end
+
+    # Reference rotor radius: the same topmost-rotor projection the rank uses,
+    # unless the caller supplies the measured value.
+    r_ref = r_rotor
+    if r_ref === nothing
+        bank = isempty(result.rotors) ? 0.0 : result.rotors[1].bank_angle_deg
+        v_ref = isempty(result.rotors) ? cfg.v_rated : result.rotors[1].v_wind
+        P_per_rotor = cfg.power_W / result.n_active
+        r_ref = BEM.rotor_radius_for_power(
+            P_per_rotor, v_ref, result.design.n_lines;
+            f=BEM.projection_factor(bank, π / 6),
+        )
+    end
+
+    ev = evaluate_design(
+        result.design;
+        r_rotor=r_ref,
+        elev_angle=π / 6,
+        v_peak=OPT_V_PEAK,
+        fos_req=cfg.fos_hard,
+        omega_rotor=omega_rotor,
+        v_rated=cfg.v_rated,
+        P_rated=P_rated,
+    )
+
+    return (
+        valid=true,
+        reason=:ok,
+        min_torsional_fos=ev.min_torsional_fos,
+        fos_per_ring=ev.fos_per_ring,
+        Do_per_ring=ev.Do_per_ring,
+        omega_rotor=omega_rotor,
+        torsion_ungated=true,
+    )
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
 # evaluate_windowed — the protocol
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -705,6 +811,16 @@ function evaluate_windowed(
     trace_callback::Union{Nothing, Function}=nothing,
     fitness_fn::Function,       # the version seam — required
 )
+    # ── Mode-selector guard ──────────────────────────────────────────────
+    # Only :warm and :cold exist. Any other symbol used to fall through to the
+    # cold branch silently (2026-11-01 hygiene sweep); reject it here so a typo
+    # cannot pass a different start protocol off as the cold one.
+    start_mode in (:warm, :cold) || throw(
+        ArgumentError(
+            "evaluate_windowed: start_mode must be :warm or :cold, got $(repr(start_mode))",
+        ),
+    )
+
     # ── Decode genome ────────────────────────────────────────────────────
     (
         length(x) in
