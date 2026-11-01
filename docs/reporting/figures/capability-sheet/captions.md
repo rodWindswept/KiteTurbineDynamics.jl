@@ -2,7 +2,7 @@
 
 **Slug** `capability-sheet`. **Status** GENERATE. **Date** 2026-10-21.
 
-Site: section 7, as Figure 10, two pages. Page A carries the four
+Site: section 7, two pages. Page A carries the four
 outcome heatmaps. Page B carries three keys-only classes and the
 dashboard frame. One figure number, one appendix row, two captions and
 two population lines.

@@ -2,7 +2,7 @@
 
 **Slug** `instrument-gallery`. **Status** CANDIDATE. **Date** 2026-10-21. **Seat** science-writer.
 
-Section 9, Figure 12. Three frames, each from a tracked tool at one commit.
+Section 9, Figure 10. Three frames, each from a tracked tool at one commit.
 The builder emits the figure label, so no caption below names the figure
 number.
 
@@ -18,7 +18,7 @@ value of this report.
 
 **No format on the surface.** The caption prints to the report reader, so
 it carries no box size, no type size and no dpi floor. Those are method,
-and the Figure 12 admission paragraph in the appendix carries them. Do
+and the Figure 10 admission paragraph in the appendix carries them. Do
 not restore them here.
 
 ## Plain caption
