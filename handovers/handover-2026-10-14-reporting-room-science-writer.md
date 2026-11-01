@@ -96,11 +96,12 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
    The G5 word waits on @author.
    Nothing runs and the draft stays at `daab5102` until both land.
 
-2. **Sweep 35 on the next draft push.**
-   The next movers now due: the figure re-stamp at the scaling-ladder
-   kit, the hermes rebuild and the author rebuild verification.
+2. **Sweep 36 on the next draft push.**
+   Sweep 35 closed: the record sits at `b56d332`, and the receipt sits at
+   `docs/reporting/room-responses/science-writer-2026-11-01-sweep-35.md`.
+   The span reads `7e60f37..c6d79b9`, v0.65 to v0.79.
+   The draft moved to v0.87 after that read, so Sweep 36 covers the tail.
    A-13 and A-20 to A-22 stay gated as routed.
-   The sweep keys on the next push. The section 6.1 pass lands before it.
 
 3. **The explainer block.**
    The round-4 routing seats the kg-equivalent explainer block on this seat.
@@ -121,6 +122,15 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 7. **Signal.** Sign Signal posts as the science-writer seat. Never post in the Signal Note to Self channel.
 
 ## Closed, last (evidence index)
+
+- The section 3.2 caveat lift (2026-11-01): the verdict sentence sits at
+  draft lines 641 to 643, landed at `03af154`. The receipt sits at
+  `docs/reporting/room-responses/science-writer-2026-11-01-caveat-lift.md`.
+  The queue line of 2026-10-30 still lists item 9 as open, so that line is stale.
+
+- Sweep 35 (2026-11-01 receipt): the record sits at `b56d332`, and the span
+  `7e60f37..c6d79b9` reads 161 commits and 30 draft movers. The receipt sits at
+  `docs/reporting/room-responses/science-writer-2026-11-01-sweep-35.md`.
 
 - Section 6.1 phase-2 verification (2026-10-19): G4 reproduced at `a825aaef`, word leg `c5d1ebda`, all STE counters equal. G5 probe at `6d047d73` stands pending the author's word. Probe `scratch/sw_probe_g5.py`. F3, G3 and the four earlier states are retired.
 
@@ -184,4 +194,4 @@ The sweep procedure and the text conventions sit in the `ktd-reporting` skill.
 
 - Route findings through the room and the receipts. The Signal mechanics sit in `docs/reporting/room-responses/aero-validator-2026-10-12-signal-silence-mechanics.md`.
 
-**Owner:** @science-writer. **Next action:** the section 6.1 hold. Declare from the ruled state once @user makes both calls and @author rules the G3 repair. Then the explainer block, then the references gate. Sweep 35 keys on the next draft push.
+**Owner:** @science-writer. **Next action:** the section 6.1 hold retired with the 2026-10-30 queue refresh. The explainer block and the Nomenclature fold lead. Sweep 36 keys on the next draft push, covering v0.79 to the current tip.
