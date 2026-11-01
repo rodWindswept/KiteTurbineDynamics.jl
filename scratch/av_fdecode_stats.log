@@ -1,0 +1,31 @@
+rows 508
+n_lines census: {3: 319, 5: 34, 8: 1, 9: 1, 7: 6, 4: 144, 6: 3}
+rotor_count census: {1: 506, 2: 2}
+
+f(k=2.24, frozen 3mm, two-bridle) across 508:
+  min/p25/p50/p75/max: ['0.0339', '0.1256', '0.1355', '0.1483', '0.2285']
+f(k*=8.9, frozen): ['0.0085', '0.0316', '0.0341', '0.0373', '0.0575']
+f(k*=8.4, frozen): ['0.0090', '0.0335', '0.0361', '0.0396', '0.0609']
+f(k*=8.9, sized lo): ['0.0025', '0.0094', '0.0102', '0.0111', '0.0171']
+f(k*=8.4, sized hi): ['0.0029', '0.0107', '0.0116', '0.0127', '0.0196']
+f_full(k=2.24): ['0.0435', '0.1695', '0.1827', '0.2000', '0.3103']
+
+winner row (island 3 gen 26 idx 9 ):
+  n_lines 3  r_hub 4.5800  bank 7.0881  blade_scale 0.8213  v_wind 10.9980  r_rotor 2.4341
+  span 1.4994  r_in 4.1302  r_out 5.6296
+  f(k=2.24) 0.1288  f_full(k=2.24) 0.1756
+  f(k* frozen) 0.0324-0.0343  f(k* sized) 0.0097-0.0110
+
+RF-19 winner cross-checks:
+  two-bridle high f 0.1288 vs RF-19 0.1289-0.1295 band
+  full-line f 0.1756 vs RF-19 0.177
+  f(k*) credible 0.104 -> 0.0262-0.0277 (RF-19 0.0263-0.0276)
+
+median f(k=2.24) per n_lines:
+  n=3: n=319  median 0.1377  min 0.0909  max 0.2285
+  n=4: n=144  median 0.1317  min 0.1003  max 0.2056
+  n=5: n= 34  median 0.1336  min 0.1157  max 0.2095
+  n=6: n=  3  median 0.1332  min 0.1258  max 0.1762
+  n=7: n=  6  median 0.1417  min 0.0339  max 0.1938
+  n=8: n=  1  median 0.0531  min 0.0531  max 0.0531
+  n=9: n=  1  median 0.2154  min 0.2154  max 0.2154

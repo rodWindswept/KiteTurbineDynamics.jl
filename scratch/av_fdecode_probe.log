@@ -1,0 +1,12 @@
+┌ Warning: Assignment to `nerr` in soft scope is ambiguous because a global variable by the same name exists: `nerr` will be treated as a new local. Disambiguate by using `local nerr` to suppress this warning or `global nerr` to assign to the existing global variable.
+└ @ ~/Documents/GitHub/KiteTurbineDynamics.jl/scratch/av_fdecode_probe.jl:118
+h_ref 9.411699  tether 18.80
+ok rows 508
+decoded 508 rows, 0 errors
+winner: r_rotor 2.434117 span 1.499403 r_in 4.130158 r_out 5.629561 ring_z 18.8000 v_wind 10.9980
+  NR-050 expects r_rotor 2.434, span 1.499 (NR-043)
+  av probe expects r_in 4.130158, r_out 5.629560
+  f(k=2.24) two-bridle 0.1288 (RF-19 credible 0.104-0.129)  full-line 0.1756 (RF-19 0.177)
+  f(k*) frozen: 0.0324-0.0343   sized: 0.0097-0.0110
+fleet f(k=2.24): min 0.0339 median 0.1355 max 0.2285  (n=508)
+done

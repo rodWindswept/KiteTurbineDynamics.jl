@@ -1,0 +1,10 @@
+ct_at_tsr(6.8415) = 0.942448335
+cp_at_tsr(6.8415) = 0.225785265
+n=4  Rf_CT=1.136826  ct_at_tsr*Rf_CT=1.0714  Rf_CP=0.719049  cp_at_tsr*Rf_CP=0.1624
+n=5  Rf_CT=1.235212  ct_at_tsr*Rf_CT=1.1641  Rf_CP=0.396149  cp_at_tsr*Rf_CP=0.0894
+n=6  Rf_CT=1.31057  ct_at_tsr*Rf_CT=1.2351  Rf_CP=-0.001737  cp_at_tsr*Rf_CP=-0.0004
+n=7  Rf_CT=1.370543  ct_at_tsr*Rf_CT=1.2917  Rf_CP=-0.459038  cp_at_tsr*Rf_CP=-0.1036
+n=8  Rf_CT=1.42028  ct_at_tsr*Rf_CT=1.3385  Rf_CP=-0.968129  cp_at_tsr*Rf_CP=-0.2186
+n=9  Rf_CT=1.462178  ct_at_tsr*Rf_CT=1.378  Rf_CP=-1.509056  cp_at_tsr*Rf_CP=-0.3407
+measured n3 anchor 0.9651 vs code ct_at_tsr 0.9424
+k* arithmetic: 2.24 * (0.312928/4.8246^3)/(0.23686/6.8415^3) = 8.438607246609033

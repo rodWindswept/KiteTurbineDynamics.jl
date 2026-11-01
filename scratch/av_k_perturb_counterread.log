@@ -1,0 +1,22 @@
+measured curve: k(4.8319) = 8.4002  (expect 8.4), Cp 0.312919 (expect 0.31292)
+measured curve: k(4.7379) = 8.8999  (expect 8.9), Cp 0.312558 (expect 0.31256)
+
+checks: 18 total, 0 fail
+  ok   peak Cp 0.312928 at 4.8246 peak 0.312928 at 4.8246
+  ok   k(4.8319) reads 8.4 8.4002
+  ok   k(4.7379) reads 8.9 8.8999
+  ok   Cp(4.8319) 0.31292 0.312919
+  ok   Cp(4.7379) 0.31256 0.312558
+  ok   peak lambda between the bracket lambdas 
+  ok   k* 8.4387 straddled by 8.4..8.9 8.4386
+  ok   P at k 8.4 reads 7015.1 W 7015.12
+  ok   P at k 8.9 reads 7007.1 W 7007.02
+  ok   omega at k 8.4 reads 9.4535 9.4535
+  ok   omega at k 8.9 reads 9.2696 9.2696
+  ok   tau at k 8.4 reads 742.07 N m 742.068
+  ok   tau at k 8.9 reads 755.92 N m 755.916
+  ok   archive torque 396.71 N m 396.707
+  ok   charge x1.871 at 8.4 1.8706
+  ok   charge x1.906 at 8.9 1.9055
+  ok   dP/dk -16.1 W per k -16.21
+  ok   dtau/dk +27.7 N m per k 27.70
