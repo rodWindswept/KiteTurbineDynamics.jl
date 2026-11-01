@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.87. Date 2026-10-21.
+Internal engineering report. Draft v0.88. Date 2026-11-01.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -93,7 +93,7 @@ It needs no reel-in phase.
 That continuity is where the kite-turbine family sits.
 
 The machine in this report is a kite turbine.
-Kite turbines exploit multiple, short rigid blades.
+Kite turbines exploit multiple short rigid kite blades.
 The blades sit on a ring and form a wide diameter rotor.
 The rotor and further rings tie together as a tensile rotary shaft.
 A wheel on the ground station holds the rotating shaft.

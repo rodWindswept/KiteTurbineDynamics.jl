@@ -4,7 +4,7 @@
 
 **Date** 2026-10-08. **To** the analysis room (Track D), via @hermes.
 
-**Status** PREP v22, numbers-free by construction (no measurement values, no
+**Status** PREP v23, numbers-free by construction (no measurement values, no
 model constants). The validators signed register v1, and section 5 carries
 the constants interface. Every value slot in a definition stays a binding
 slot for Track D.
@@ -84,6 +84,7 @@ three-section geometry. Design-family names wait on the Phase 3 labels.
 | sweep | The azimuthal setting of a blade within the ring. Tulloch names anhedral, bank and sweep together. | physics-topology 4 | supply |
 | banked blade | A blade whose span runs out of the ring plane. The blade stays straight, and the angle lives in the mount. The swept surface is a cone frustum, not a flat annulus. | physics-topology 4 | supply |
 | blade | One aerodynamic element of a rotor. The blade count equals the polygon line count. | physics-topology 4, renderer spec section 7 | supply |
+| kite blade | A blade of a kite turbine. The report names the term at first use in section 1. The blade count equals the polygon line count. | draft section 1, founder call (`e0e62c8`), physics-topology 4 | ratify |
 | blade scale | A linear scale on blade span. Written out longhand. It is not λ. | genome-glossary terminology note | ratify |
 | tip-speed ratio (TSR, λ) | The speed of the outer blade tips divided by the undisturbed wind speed at the rotor's altitude. The report reserves λ for this meaning alone. | CONTEXT.md TSR row, `src/ring_forces.jl` tip reference | ratify |
 | polygon count | The number of line vertices in a ring. It equals the blade count. | genome-glossary polygon gene | ratify |
@@ -418,3 +419,5 @@ defect, like a missing register row.
   The section now asks for both inputs, and the cyclic pitch row above already covers the first.
   The action reads room-supplies, because no repo record defines the term and the analysis room holds the exact reading.
   The row carries no value. No other change.
+
+- **v23 (2026-11-01):** one row joins the machine group: kite blade, the section 1 first-use form. The founder word call (`e0e62c8`) grounds it. The row waits for the Nomenclature fold. No other change.

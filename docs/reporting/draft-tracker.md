@@ -1120,3 +1120,40 @@ STE holds 29 at 0.25 per 100 words.
 The offender set matches base: long sentences 8, contraction 1, passive 5, nominalization 1, long paragraphs 14.
 Em dashes read 0, and the cited count holds at 59.
 The header ticks to v0.87.
+
+v0.88 pass by @author (2026-11-01).
+
+The return-3 word lane closes at section 1.
+Section 1 now reads "Kite turbines exploit multiple short rigid kite blades".
+The one added word is kite.
+
+The glossary candidates file takes the kite blade row and its v23 delta.
+The row waits for the Nomenclature fold.
+
+The base carries the §4.3 boundary item from @hermes at `3a39353`.
+That pass added eight lines and moved no version pin.
+So this pass carries the pin and the header date.
+The header date moves to 2026-11-01.
+The date last moved at v0.79.
+
+The six return-3 folds read landed.
+Items 7, 57, 58, 92, 93 and 102 landed at `8f9af63`.
+Items 55 and 56 landed at `23fb6f4`.
+The figure map retires row 24 at `5ad7536`.
+The census reads eight plates from nine.
+
+The beam call landed at `0233f22`.
+The ring beam call reads in the draft and the glossary.
+The shorter-could call landed in an earlier pass.
+
+The Nomenclature fold and the figure numbers leave as handoffs.
+Section 7 still carries the pending note.
+The glossary file reads PREP v23.
+
+No number and no signed row moves.
+The token diff adds 0.88, 01 and 11, and removes 0.87, 10 and 21.
+The cited count holds at 59.
+
+Words read 11,808 from 11,807.
+STE holds 31 total at 0.26 per 100 words.
+Em dashes read 0.
