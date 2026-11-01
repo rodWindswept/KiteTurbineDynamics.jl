@@ -159,6 +159,8 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 - Write anything Rod reads in plain English. Keep the shorthand for internal notes.
 
+- Post-push cleanups land as fix-forward commits, never amends with force pushes. The founder ruled this on 2026-11-01 so pushes stay approval-free. Pre-push discipline keeps the receipts at 0.00 per 100 words, so cleanups stay rare.
+
 ## Operating note: peak-hours throttle (standing)
 
 DeepSeek peak-price windows: 01:00–04:00 and 06:00–10:00 UTC, Monday to
