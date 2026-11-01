@@ -1,0 +1,27 @@
+n=3 points 82 lambda 3.7757 to 7.971
+grid peak Cp 0.312928 at lambda 4.8246
+peak used for k*: Cp 0.312928 at lambda 4.8246 (measured grid point)
+
+k*/k at flown lambda 6.8415: 3.767257
+k* = 8.4387
+bracket 8.4/2.24 = 3.7500   8.9/2.24 = 3.9732
+
+k          lambda         Cp         Ct     tau/tau0         P/P0
+2.24       6.8415    0.23686     0.9651       1.0000       1.0000
+8.40       4.8319    0.31292     0.7671       1.8706       1.3211
+8.90       4.7379    0.31256     0.7540       1.9055       1.3196
+
+coefficient-form (0.5 rho A V^3 = P / Cp):
+dP/dk   = -0.000723 Cp per k unit
+dtau/dk = 0.002419 (Cp/lam) per k unit
+relative: d lnP/dk = -0.002313 per k unit
+relative: d lntau/dk = 0.037005 per k unit
+
+blade-count peaks:
+  n=3  grid peak Cp 0.31293 at lambda 4.8246  (82 points)
+  n=4  grid peak Cp 0.31876 at lambda 4.2477  (89 points)
+  n=5  grid peak Cp 0.31868 at lambda 3.7757  (89 points)
+  n=6  grid peak Cp 0.31624 at lambda 3.5135  (68 points)
+  n=7  grid peak Cp 0.31268 at lambda 3.2513  (68 points)
+  n=8  grid peak Cp 0.30866 at lambda 3.0416  (68 points)
+  n=9  grid peak Cp 0.30445 at lambda 2.8318  (68 points)

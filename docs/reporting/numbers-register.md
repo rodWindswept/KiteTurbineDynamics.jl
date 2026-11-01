@@ -3408,3 +3408,127 @@ Boundaries that travel with these rows:
 2. The four outcomes are four of the seven columns the telemetry records. `P_end`, `T_lift` and `twist_ratio` are not signed as panels here, and no plate may draw them from this row.
 
 Counter-read requested from the aero seat and the figures seat.
+
+## Amend: NR-061 extension, the twist class (2026-11-01, aero-worker)
+
+Append only, under the amend pattern. No signed row changed. The six-class row stands at 201.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-061 ext | Seven-class split of the 212 FoS=Inf rejects | betz_cp_floor 93, settle_fail 37, spacing 36, rope_break 30, betz_ceiling 3, hub_tip 2, twist 11 (total 212) | count | Own re-parse of the eight committed shard logs at `scratch/sv_reject_sixclass_a76c5e9/` (201 unique row lines, 96 SPLIT lines), plus the three signed telemetry files. Probe `scratch/aw_nr061_extension_2026-11-01.py` (sha256 `f5eb82f8…`), log (sha256 `53e82490…`) | signed (aero-worker, 2026-11-01) |
+
+Sign-off basis:
+
+- The six counts reproduce at 93, 37, 36, 30, 3 and 2. The sum reads 201. No row falls outside the six. All 96 under_floor rows carry a SPLIT line.
+
+- The 11 twist rows carry status `reject_twist`. Each reads FoS=Inf and a twist ratio above one. The ratios run 1.0293 to 10.2900. P_end reads 0.0 on all 11. The n_lines column mixes 3, 4, 6, 7 and 9.
+
+- The twist class is a gate rejection, not a physical failure mode. The six classes are the gates before the twist gate. The twist gate fires after them.
+
+- The full census closes at 930. It reads 508 ok, 201 six-class, 11 twist, 110 clearance and 100 finite-FoS.
+
+Boundaries:
+
+- The twist class does not move a six-class count. The 201 stands.
+
+- The 110 clearance rejects carry NaN FoS. They sit outside both rows.
+
+- The 100 finite-FoS rejects ride NR-055 subgroups A and B, at 96 and 4.
+
+- The producing commit reads `a76c5e9`. The HEAD re-run moves one row from rope_break to hub_tip. The signed basis reads 30 and 2.
+
+Counter-read requested from the science seat.
+
+## Source row: NR-083, the bow asymptote at the winner (2026-11-01, aero-worker)
+
+Append only. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-083 | Bow asymptote at the winner hub station | 0.8367 m mean-ratio read; 0.8370 m at the largest last-10 ratio; margin to the 1.5 m line 0.663 m; midpoint ring 0.4220 m, margin 1.078 m | m | Own derivation from the pinned NR-059 log `scratch/av_bow_probe.log` (sha256 `eacc0ce3…`). Probe `scratch/aw_bow_asym_2026-11-01.py` (sha256 `4645370d…`), log (sha256 `1f408227…`) | signed (aero-worker, 2026-11-01) |
+
+Sign-off basis:
+
+- The series carries 30 stations, t=55 s to t=200 s. The last increment reads 0.000464 m per 5 s.
+
+- The last ten ratios read mean 0.864981, max 0.875472 and min 0.854839. The ratio oscillates.
+
+- The geometric tail reads Δ × r/(1−r). The mean ratio gives 0.002973 m. The max ratio gives 0.003262 m.
+
+- The 200 s station reads 0.833774 m. The asymptote reads 0.836747 m to 0.837036 m.
+
+- The 195 s construction reads 0.836705 m. The check-log form reads 0.8371 m and counts 0.46 mm twice. All forms round to 0.837 m.
+
+- The ratio that reaches the 1.5 m line reads 0.9993 against the last-10 max 0.8755.
+
+Boundaries:
+
+- The bound is conditional. It holds while the ratio stays at or below the last-10 maximum. It extrapolates the measured decay. It does not prove a machine, a wind or a start mode.
+
+- The hub ring is the max station. The midpoint ring asymptote reads 0.4220 m.
+
+- The row bounds the transient bow of the recorded 200 s run at the archive k.
+
+Counter-read requested from the science seat.
+
+## Source row: NR-084, the drag-loss exponent and the two-dp tie rule (2026-11-01, aero-worker)
+
+Append only. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-084 | The drag-loss response exponent, and the survivor tie rule at the two-dp power floor | P' = P x³, with (1+f)x² + x − 2 = 0. At k 2.24: x³ 0.9052, 0.8839, 0.8475 for f 0.1036, 0.1295, 0.1765. At the measured k* bracket: x³ 0.9745 to 0.9548. Survivors at the full-line bound: eta 1.0 reads 108 strict, 10 tie, 118 inclusive; eta 0.94 reads 2, 0, 2 | —, kW | Own solve on the three signed bridle-drag bounds and the 508 ok rows. Probe `scratch/aw_loss_row_2026-11-01.py` (sha256 `ac631068…`), log (sha256 `b95cb947…`) | signed (aero-worker, 2026-11-01) |
+
+Sign-off basis:
+
+- The quadratic has one positive root. x sits near 1 − f/3. The parabolic Cp cross-check agrees to 0.4 per cent.
+
+- The linear form P(1−f) reads 0.8964, 0.8705 and 0.8235. The flat-torque form P(1+f)^−1.5 reads 0.8626, 0.8330 and 0.7837. The retired form overshoots by half again.
+
+- The k* move divides f by 3.75 to 3.97. The three bases then read x³ 0.9745 to 0.9730, 0.9683 to 0.9665 and 0.9573 to 0.9548.
+
+- The tie rule reads half a print step, 0.005 kW. A row within that band of the floor is a tie, not a strict survivor.
+
+- The full-line eta 1.0 floor reads 5.8994 kW. The strict count reads 108. Ten rows print 5.90. The inclusive count reads 118.
+
+- The 2026-10-22 probe printed 118 in its table and 108 in its reading line. Both numbers are right on different rules. This row prints all three counts.
+
+Boundaries:
+
+- The row reads the 508 ok rows of the live campaign. The floor reads 5.0 kW shaft, not delivered power.
+
+- f reads the three signed bridle-drag bounds at the archive k. The per-design f column is the aero seat's decode. RF-13 reads 46 survivors there. This row does not sign that column.
+
+- The exponent is first order in f. It carries no Cp curvature term beyond the parabolic check.
+
+Counter-read requested from the science seat.
+
+## Source row: NR-085, the two-point k structural re-eval (2026-11-01, aero-worker)
+
+Append only. No signed row changed.
+
+| Row | Claim | Value | Units | Source | Status |
+|---|---|---|---|---|---|
+| NR-085 | Two-point k structural re-eval at the measured k* bracket | At k 8.4: lambda 4.8319, Cp 0.31292, P 7.0151 kW, omega 9.4535 rad/s, tau 742.07 N m. At k 8.9: lambda 4.7379, Cp 0.31256, P 7.0071 kW, omega 9.2696 rad/s, tau 755.92 N m. dP/dk −16.1 W per k unit, dtau/dk +27.7 N m per k unit. min_torsional_fos 0.138421 and 0.135885 against 0.258927 at the archive k. Per-ring c_bend 1.3678, 25.765, 768.94 and 2015.3 N m; blade chord c 0.22591 m; rho 1.225 kg/m³. The torsional column is ungated (RF-20) | kW, rad/s, N m, —, m | Probe `scratch/aw_k_static_2026-11-01.jl` (sha256 `c1befb71…`), `scratch/aw_k_bracket_2026-11-01.py` (sha256 `187ec074…`), log (sha256 `3a015ecd…`). ODE check `scratch/aw_k_perturb_2026-11-01.jl` and `.csv` | signed (aero-worker, 2026-11-01) |
+
+Sign-off basis:
+
+- The fine-lambda n=3 curve peaks at Cp 0.312928 at lambda 4.8246. The flown point reads Cp 0.23686 at lambda 6.8415. k*/k reads 3.767257. k* reads 8.4387.
+
+- The archive anchor reads P 5.310 kW, omega 13.3852 rad/s and tau 396.71 N m.
+
+- The static pass takes each measured speed. It returns min_torsional_fos and per-ring Do. `torsion_ungated` reads true at every point. No campaign row carries this column.
+
+- The ODE check at k 8.4 does not settle. The twist ratio passes 1.0 by t=10 s and runs 23.5 to 57.9 across t=90 to 195 s. The hub speed oscillates 9.7 to 12.1 rad/s and the shaft power 1.3 to 9.8 kW. At k 8.9 the twist ratio runs 29.6 to 64.5 across the same span, and neither point converges.
+
+Boundaries:
+
+- The pass evaluates the TRPTDesign that `evaluate_design` carries: 4 radii, 3 segments. The ODE machine reads 6 rings and 5 segments. The torsional column reads a static-idealisation value, not the six-ring machine value.
+
+- The speeds come from the measured curve, not a converged ODE at k*. The ODE does not converge at either point.
+
+- The row reads one wind, one start mode and one genome.
+
+- The torsional column is ungated. It is not a gate. No reader may treat 0.138 as a pass or a fail. It measures an ungated constraint.
+
+Counter-read requested from the science seat and the software seat.

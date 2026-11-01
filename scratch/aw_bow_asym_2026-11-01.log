@@ -1,0 +1,58 @@
+log sha256 eacc0ce3acbcdeb66b6dd9db975b177ceb401a2929bee2c40fd258e22f2bf987
+pin holds   True
+extension rows 29
+t range 55.0 to 200.0  sites 30
+
+increments per 5 s (m):
+   55 ->  60   0.025390
+   60 ->  65   0.022210
+   65 ->  70   0.019400
+   70 ->  75   0.016930
+   75 ->  80   0.014740
+   80 ->  85   0.012830
+   85 ->  90   0.011150
+   90 ->  95   0.009690
+   95 -> 100   0.008400
+  100 -> 105   0.007280
+  105 -> 110   0.006310
+  110 -> 115   0.005470
+  115 -> 120   0.004720
+  120 -> 125   0.004100
+  125 -> 130   0.003530
+  130 -> 135   0.003060
+  135 -> 140   0.002650
+  140 -> 145   0.002280
+  145 -> 150   0.001980
+  150 -> 155   0.001700
+  155 -> 160   0.001480
+  160 -> 165   0.001270
+  165 -> 170   0.001110
+  170 -> 175   0.000950
+  175 -> 180   0.000830
+  180 -> 185   0.000710
+  185 -> 190   0.000620
+  190 -> 195   0.000530
+  195 -> 200   0.000464
+
+ratios:
+  0.8748 0.8735 0.8727 0.8706 0.8704 0.8691 0.8691 0.8669 0.8667 0.8668 0.8669 0.8629 0.8686 0.8610 0.8669 0.8660 0.8604 0.8684 0.8586 0.8706 0.8581 0.8740 0.8559 0.8737 0.8554 0.8732 0.8548 0.8755
+
+last-10 ratios: mean 0.864981  max 0.875472  min 0.854839
+ratio sequence non-increasing: False
+
+last increment 0.000464 m (195->200)
+tail, mean ratio  0.002973 m
+tail, max ratio   0.003262 m  (upper bound while r <= 0.8755)
+asymptote, mean   0.836747 m   margin 0.663253 m
+asymptote, max    0.837036 m   margin 0.662964 m
+check-log construction (195 station + 190->195 increment): 0.836705 m
+
+ratio that reaches 1.5 m: 0.9993  (last-10 max 0.8755)
+
+midpoint: last inc 0.000000  ratio mean 0.777356 max 0.880952
+midpoint asymptote mean 0.422020  max 0.422020  margin(max) 1.077980
+
+raw hub at t=200 (perp) 0.833774 ; bound uses the 200 s station plus the tail
+
+READING: bow asymptote 0.8367 m on the hub station, margin 0.6633 m to the
+1.5 m line. Upper bound on the same geometric basis 0.8370 m, margin 0.6630 m.

@@ -1,0 +1,45 @@
+shard files 8
+row lines 201 unique rows 201
+SPLIT lines 96 unique split rows 96
+  betz_cp_floor  93
+  settle_fail    37
+  spacing        36
+  rope_break     30
+  betz_ceiling   3
+  hub_tip        2
+  six-class total 201
+  classes outside the six: none
+  under_floor rows with a split line: 96
+
+telemetry rows 930
+status census {'ok': 508, 'reject': 301, 'clearance_reject': 110, 'reject_twist': 11}
+ok 508 | six-class 201 candidates 201 | twist 11 | clearance 110 | finite-FoS 100
+twist reject ratios: min 1.0293 max 10.2900  (all > 1: True)
+twist rows carry FoS=Inf: True ; P_end=0: True ; n_lines mix: {'9': 1, '3': 4, '7': 1, '6': 4, '4': 1}
+six-class rows carry twist_ratio=0: True
+
+seven-class census
+  betz_cp_floor  93
+  settle_fail    37
+  spacing        36
+  rope_break     30
+  betz_ceiling   3
+  hub_tip        2
+  twist          11
+  total          212
+
+closure
+  508 ok + 201 six-class + 11 twist + 110 clearance + 100 finite-FoS = 930
+
+the 11 twist rejects
+  i1 g5 idx6  n_lines 9  twist_ratio 1.191894  P_end 0.0
+  i1 g14 idx6  n_lines 3  twist_ratio 1.029346  P_end 0.0
+  i1 g15 idx5  n_lines 3  twist_ratio 1.093767  P_end 0.0
+  i2 g1 idx5  n_lines 7  twist_ratio 1.349476  P_end 0.0
+  i2 g4 idx2  n_lines 6  twist_ratio 1.795982  P_end 0.0
+  i3 g4 idx3  n_lines 6  twist_ratio 1.250758  P_end 0.0
+  i3 g4 idx6  n_lines 4  twist_ratio 1.176267  P_end 0.0
+  i3 g5 idx4  n_lines 3  twist_ratio 1.208814  P_end 0.0
+  i3 g5 idx9  n_lines 3  twist_ratio 1.239920  P_end 0.0
+  i3 g6 idx4  n_lines 6  twist_ratio 1.122717  P_end 0.0
+  i3 g7 idx1  n_lines 6  twist_ratio 10.289999  P_end 0.0

@@ -1,0 +1,61 @@
+ok rows 508  P_end max 6.33 kW  min 5.00 kW
+winner shaft basis 5.281 kW  winner fitness 27.364 kg-eq
+
+basis                       f        x      x^3      1-f (1+f)^-1.5    parab
+two bridles, low       0.1036   0.9673   0.9052   0.8964     0.8626   0.9676
+two bridles, high      0.1295   0.9597   0.8839   0.8705     0.8330   0.9602
+full line root-to-tip  0.1765   0.9464   0.8475   0.8235     0.7837   0.9472
+
+basis at k* 8.4-8.9       f low   f high  x^3 low x^3 high     P' low  P' high
+two bridles, low        0.02607  0.02762   0.9745   0.9730     0.9745   0.9730
+two bridles, high       0.03260  0.03454   0.9683   0.9665     0.9683   0.9665
+full line root-to-tip   0.04442  0.04706   0.9573   0.9548     0.9573   0.9548
+
+basis                   eta   floor kW     strict    tie  inclusive  lightest strict
+two bridles, low       1.00     5.5238        417      5        422  28.339 kg-eq (+0.97) i3 g29
+two bridles, low       0.94     5.8764        123      8        131  30.637 kg-eq (+3.27) i2 g30
+two bridles, high      1.00     5.6568        329      8        337  29.395 kg-eq (+2.03) i3 g25
+two bridles, high      0.94     6.0179         34      4         38  32.079 kg-eq (+4.71) i3 g15
+full line root-to-tip  1.00     5.8994        108     10        118  30.637 kg-eq (+3.27) i2 g30
+full line root-to-tip  0.94     6.2759          2      0          2  34.558 kg-eq (+7.19) i3 g17
+
+boundary rows within one print step of the two eta-0.94 floors:
+  two bridles, low  floor 5.8764 kW  rows within 0.02 kW:
+    i1 g0 idx1  P_end 5.86  fitness 36.109
+    i1 g22 idx4  P_end 5.86  fitness 34.303
+    i1 g22 idx10  P_end 5.86  fitness 31.879
+    i1 g23 idx5  P_end 5.86  fitness 32.102
+    i1 g24 idx9  P_end 5.86  fitness 32.394
+    i1 g25 idx6  P_end 5.86  fitness 32.331
+    i1 g29 idx10  P_end 5.86  fitness 32.21
+    i2 g0 idx1  P_end 5.86  fitness 36.109
+    i2 g20 idx5  P_end 5.86  fitness 35.366
+    i2 g24 idx4  P_end 5.86  fitness 32.541
+    i3 g0 idx1  P_end 5.86  fitness 36.109
+    i3 g18 idx1  P_end 5.86  fitness 33.337
+    i3 g29 idx3  P_end 5.86  fitness 33.789
+    i1 g19 idx5  P_end 5.87  fitness 34.884
+    i1 g20 idx2  P_end 5.87  fitness 34.36
+    i1 g24 idx7  P_end 5.87  fitness 31.915
+    i2 g22 idx2  P_end 5.87  fitness 35.291
+    i3 g11 idx7  P_end 5.87  fitness 39.565
+    i3 g14 idx3  P_end 5.87  fitness 34.852
+    i3 g22 idx8  P_end 5.87  fitness 31.4
+    i3 g23 idx8  P_end 5.87  fitness 32.038
+    i1 g18 idx8  P_end 5.88  fitness 32.764
+    i1 g21 idx2  P_end 5.88  fitness 32.143
+    i1 g27 idx6  P_end 5.88  fitness 32.682
+    i1 g28 idx2  P_end 5.88  fitness 32.199
+    i1 g29 idx2  P_end 5.88  fitness 43.348
+    i2 g23 idx3  P_end 5.88  fitness 32.457
+    i3 g13 idx6  P_end 5.88  fitness 32.963
+    i3 g20 idx6  P_end 5.88  fitness 32.242
+    i1 g18 idx7  P_end 5.89  fitness 37.136
+    i1 g19 idx9  P_end 5.89  fitness 37.202
+    i2 g15 idx4  P_end 5.89  fitness 32.823
+    i2 g18 idx8  P_end 5.89  fitness 33.108
+    i3 g10 idx7  P_end 5.89  fitness 31.661
+  full line root-to-tip  floor 6.2759 kW  rows within 0.02 kW:
+    i1 g16 idx5  P_end 6.26  fitness 36.943
+    i3 g16 idx5  P_end 6.26  fitness 34.933
+    i1 g18 idx3  P_end 6.27  fitness 34.778
