@@ -17,8 +17,8 @@ transmission (TRPT).
 The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale.
 A differential-evolution campaign evaluated 930 candidate designs under one fixed power-law generator load, each scored on the measurement window (NR-001).
 
-The campaign winner is the best feasible candidate under the modeled objective and gates.
-Its mean power is 5.309 kW at the site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
+The campaign winner is the best feasible candidate under the campaign objective and the gates.
+Its mean mechanical power is 5.309 kW at the site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
 All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
 The minimum factor of safety is 14.972 (NR-009).
 
@@ -330,7 +330,7 @@ The ceiling is a hard evaluator gate (TIP_SPEED_CEILING_MPS).
 The selected k 2.24 settles at omega 15.3, tip about 73 m/s (NR-047).
 
 The power is measured, not computed from a mean speed.
-The evaluator samples the electrical power at one hertz inside the window.
+The evaluator samples the mechanical power at one hertz inside the window.
 At each sample it reads the generator torque times the ground-ring speed.
 The window mean of those samples is P_mean.
 The window-mean ground-ring speed is a separate average (NR-029).
@@ -647,8 +647,8 @@ The register reads that band as a plateau.
 
 [Figure seated: figure-map row 10 (machine winner, slug `machine-winner-hero`). Values cite NR-011, NR-017, NR-021, NR-022 and NR-043.]
 
-Island 3 carries the campaign winner, the best feasible candidate under the modeled objective and gates.
-Its mean power reads 5.309 kW and its end power 5.314 kW (NR-008).
+Island 3 carries the campaign winner, the best feasible candidate under the campaign objective and the gates.
+Its mean mechanical power reads 5.309 kW and its end power 5.314 kW (NR-008).
 Its factor of safety reads 14.972 (NR-009).
 That value is the window minimum.
 The capture topmost ring reads a factor of safety of 15.033 at the final step (NR-021).
@@ -979,19 +979,17 @@ They do not prove an optimal gene set.
 
 Recommended next steps:
 
-1. Use the rapid path for screening under its fixed rope-break gate (NR-013 ext2).
+1. Add blade root factor-of-safety checks to the structural gate set.
 
-2. Add blade root factor-of-safety checks to the structural gate set.
+2. Validate lifter modulation across the wind bands.
 
-3. Validate lifter modulation across the wind bands.
+3. Extend the wind cases beyond the steady sheared profile.
 
-4. Extend the wind cases beyond the steady sheared profile.
+4. Extend the model to the launch and recovery sequence.
 
-5. Extend the model to the launch and recovery sequence.
+5. Extract the lever statistics from the campaign telemetry.
 
-6. Extract the lever statistics from the campaign telemetry.
-
-7. Re-run a short campaign with conditional genes and a clearance-aware decoder.
+6. Re-run a short campaign with conditional genes and a clearance-aware decoder.
 
 ## 4 Discussion
 
@@ -1017,10 +1015,14 @@ The evaluator arms the rope-break check at the relax boundary (NR-013 ext2).
 `ext2` names the second extension note of the row.
 Detection runs on the measurement window only.
 
-The fix removes false rejections.
+The fix removes the rope-break false rejections.
 It never allows breaks.
 A rope break in the measurement window always rejects the design.
 No design passes with a broken rope at its operating point.
+
+The warm path still rejects the three winners after the fix (NR-013 ext2).
+They read no broken line and no latch. Their minimum factor of safety reads 0.154, 0.439 and 0.593, all below the 2.5 floor.
+So the warm path rejects healthy winners at the factor-of-safety gate, not the rope-break gate.
 
 The lesson stands.
 The rapid path is the evaluator default.
@@ -1146,8 +1148,8 @@ The re-run probe (NR-061) names them.
 Three cross the Betz ceiling.
 Two diverge at the hub tip speed.
 
-The campaign winner, the best feasible candidate under the modeled
-objective and gates, reads 5.309 kW of mean power (NR-008).
+The campaign winner, the best feasible candidate under the campaign
+objective and the gates, reads 5.309 kW of mean mechanical power (NR-008).
 All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
 
 The result shows that a compact TRPT machine can satisfy the power, clearance, twist and structural gates in simulation.
@@ -1358,7 +1360,7 @@ The table ties each headline claim of this report to its evidence and its signed
 | Structural margin | Window-minimum factor of safety 14.972. The checked ring utilisations stay below the failure boundary. | §3.3, §3.4 | NR-009, NR-021 |
 | Twist and torque margin | All five segments stay inside their over-twist limits. The least segment torque margin is 2.03 at S1. | §3.4 | NR-022, NR-040 |
 | Search improvement | The search improved the best objective from the common seed to the winner. It reads 36.109 to 27.364 kg-equivalent. | §3.2 | NR-003 to NR-006, NR-036 |
-| Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path once rejected all three winners at the rope-break gate. The placement fix has landed. | §4.1 | NR-012, NR-013 ext2 |
+| Instrument fidelity | The cold path reproduces the recorded winner fields. The rapid path rejects all three winners before and after the fix (NR-013 ext2). | §4.1 | NR-012, NR-013 ext2 |
 | Model boundaries | Blade integrity is not gated. The report assumes lifter modulation. Launch and recovery sit outside this report. Gusts and turbulence are not modelled. | §4.3 | PRD 0006:147, assumptions |
 
 ## Appendix: Figure provenance

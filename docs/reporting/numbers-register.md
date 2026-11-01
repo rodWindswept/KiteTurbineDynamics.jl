@@ -1977,6 +1977,35 @@ Boundaries that travel with this row:
 2. The recorded P_mean and P_end stand as evaluator statistics.
    A trace-only recomputation reads the reconstruction bounds above.
 
+## Child-block scope: NR-013 ext and ext2 (2026-11-01, science-worker)
+
+This block appends only, under the amend pattern. No signed row changed.
+
+NR-013 carries two child blocks, `ext` and `ext2`. Each is signed and
+travels with the parent row.
+
+- `NR-013 ext` (2026-10-12) covers the lane-3 strain annotations for the
+  F3 timeline: the warm leg and the ruling-mode grid max.
+- `NR-013 ext2` (2026-10-15) covers the post-fix warm runs of the three
+  winners: status reject, FoS_min 0.154 / 0.439 / 0.593, line_broken
+  false, no latch.
+
+The founder ruled (call 5, 2026-10-30) the appendix carries the child
+blocks and keeps the three signed rows self-contained. The three rows
+read NR-013, NR-013 ext and NR-013 ext2. A citation to `NR-013 ext2`
+names the child block, not the parent. The appendix instrument-fidelity
+row carries the ext2 finding, so a reader gets the reject state without
+opening the register.
+
+Boundaries that travel with this scope:
+
+1. The child blocks append only. A new warm-run or strain extract writes
+   a new block and a new scope, never an edit to these two.
+
+2. The draft cites `NR-013 ext2` in section 4.1 and in the appendix.
+   Both read the post-fix factor-of-safety rejection, not the rope-break
+   rejection.
+
 ## NR-025 quote form, post-fix (2026-10-15, science-validator)
 
 This block appends only, under the amend pattern. No signed row changed.
