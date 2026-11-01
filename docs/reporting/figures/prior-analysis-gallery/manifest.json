@@ -1,0 +1,149 @@
+{
+  "slug": "prior-analysis-gallery",
+  "figure": "roster row 32, section 9: the prior-analysis gallery",
+  "mode": "prior-analysis gallery, six panels",
+  "run_id": "one composition pass, repository at 8858b65",
+  "run_commit": "8858b65",
+  "command": "/usr/bin/python3 docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py --page-proof",
+  "script": {
+    "path": "docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py",
+    "sha256": "abd049ba905ac5b9e852488148f679b1b0ee5802d8297f533c193ad14cc8397c"
+  },
+  "plate": {
+    "pixels": [
+      3638,
+      3704
+    ],
+    "dpi": 531,
+    "prints_mm": [
+      174.02,
+      177.18
+    ],
+    "cell_mm": [
+      85.0,
+      48.0
+    ],
+    "gutter_mm": 4.0,
+    "row_pitch_mm": 60.400000000000006,
+    "sha256": "3e7f625dbdecf433c38ae20821c7c75abb62fb4a2a17b60e88f9acc741662658"
+  },
+  "panels": [
+    {
+      "n": 1,
+      "klass": "power curve",
+      "file": "panels/F1_power_curve.png",
+      "pixels": [
+        2500,
+        1500
+      ],
+      "prints_mm": [
+        80.0,
+        48.0
+      ],
+      "factor": 0.669,
+      "source": "charts/output/F1_power_curve.svg",
+      "source_commit": "86ca0e5",
+      "campaign": "none (declarative chart set)",
+      "void": false
+    },
+    {
+      "n": 2,
+      "klass": "FoS envelope",
+      "file": "panels/F2_fos_envelope.png",
+      "pixels": [
+        2500,
+        1500
+      ],
+      "prints_mm": [
+        80.0,
+        48.0
+      ],
+      "factor": 0.669,
+      "source": "charts/output/F2_fos_envelope.svg",
+      "source_commit": "86ca0e5",
+      "campaign": "none (declarative chart set)",
+      "void": false
+    },
+    {
+      "n": 3,
+      "klass": "blade scaling",
+      "file": "panels/F5_blade_scaling.png",
+      "pixels": [
+        1875,
+        1500
+      ],
+      "prints_mm": [
+        60.0,
+        48.0
+      ],
+      "factor": 0.669,
+      "source": "charts/output/F5_blade_scaling.svg",
+      "source_commit": "86ca0e5",
+      "campaign": "none (declarative chart set)",
+      "void": false
+    },
+    {
+      "n": 4,
+      "klass": "loss discriminator",
+      "file": "panels/F6_loss_discriminator.png",
+      "pixels": [
+        2500,
+        1563
+      ],
+      "prints_mm": [
+        76.78,
+        48.0
+      ],
+      "factor": 0.642,
+      "source": "charts/output/F6_loss_discriminator.svg",
+      "source_commit": "86ca0e5",
+      "campaign": "none (declarative chart set)",
+      "void": false
+    },
+    {
+      "n": 5,
+      "klass": "BEM benchmark",
+      "file": "panels/bem_benchmark_tulloch_wacker.png",
+      "pixels": [
+        1905,
+        887
+      ],
+      "prints_mm": [
+        85.0,
+        39.58
+      ],
+      "factor": 0.933,
+      "source": "figures/report/fig_tulloch_wacker_chart.png",
+      "source_commit": "3619ad7",
+      "campaign": "none (literature benchmark)",
+      "void": false
+    },
+    {
+      "n": 6,
+      "klass": "design-space heatmap",
+      "file": "panels/design_space_heatmap_pitch_depower_v2.png",
+      "pixels": [
+        2414,
+        1367
+      ],
+      "prints_mm": [
+        84.76,
+        48.0
+      ],
+      "factor": 0.734,
+      "source": "scripts/results/pitch_depower_campaign/analysis/03_heatmap_brake_time.png",
+      "source_commit": "719e298",
+      "campaign": "pitch_depower_campaign (V2)",
+      "void": true
+    }
+  ],
+  "captions": {
+    "path": "docs/reporting/figures/prior-analysis-gallery/captions.md",
+    "sha256": "dc370534b85aed87974bac54df2f93476bc754c9792f23ece0ff77e016a27c37"
+  },
+  "outputs": {
+    "prior-analysis-gallery.png": "3e7f625dbdecf433c38ae20821c7c75abb62fb4a2a17b60e88f9acc741662658",
+    "page-proof.png": "9d129b17c25dbd0533922b0405eaf4c1228b527ae624b6f81ef6b79862946ce6"
+  },
+  "withheld": "no panel prints a current claim; every value belongs to the tool or campaign that printed it at that commit"
+}

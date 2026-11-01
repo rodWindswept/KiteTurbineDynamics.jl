@@ -1,0 +1,27 @@
+--- page-proof.png: page 239.12 mm of 257, spare 17.88 mm ---
+    plate 177.18 + gap 1.27 + block 51.79 (2 plain, 8 tech, stamp) + margins 8.88
+--- prior-analysis-gallery.png: 3638 x 3704 px at 531 dpi = 174.02 x 177.18 mm ---
+ok  panel count reads 6: 6
+ok  class set reads six distinct: power curve, FoS envelope, blade scaling, loss discriminator, BEM benchmark, design-space heatmap
+ok  void panels read 1: 1
+ok  panel 1 fits the cell: 80.0 x 48.0 mm
+ok  panel 2 fits the cell: 80.0 x 48.0 mm
+ok  panel 3 fits the cell: 60.0 x 48.0 mm
+ok  panel 4 fits the cell: 76.78 x 48.0 mm
+ok  panel 5 fits the cell: 85.0 x 39.58 mm
+ok  panel 6 fits the cell: 84.76 x 48.0 mm
+ok  plate width 3638 px = 174.02 mm
+ok  plate height 3704 px = 177.18 mm
+ok  stamp fits 1212 <= 1735 px: power curve · V10/constCL · no campaign
+ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
+ok  stamp fits 1242 <= 1735 px: FoS envelope · V10/constCL · no campaign
+ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
+ok  stamp fits 1237 <= 1735 px: blade scaling · V10/constCL · no campaign
+ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
+ok  stamp fits 1374 <= 1735 px: loss discriminator · V10/constCL · no campaign
+ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
+ok  stamp fits 1140 <= 1735 px: BEM benchmark · Tulloch/Wacker chart
+ok  stamp fits 1169 <= 1735 px: analytical design chart @ 3619ad7 · not void
+ok  stamp fits 1238 <= 1735 px: design-space heatmap · pitch-depower V2
+ok  stamp fits 1258 <= 1735 px: git 719e298 · VOID: 512 of 512 runs disqualified
+23 ok / 0 fail
