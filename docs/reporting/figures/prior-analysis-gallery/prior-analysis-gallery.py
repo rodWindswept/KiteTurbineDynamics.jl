@@ -192,23 +192,25 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
                         green.append((gx, gy))
             checks.append(f"lambda curve pixels found: {len(green)}")
             assert green, "no green curve pixels on the FoS panel"
-            bw, bh = round(24 * MM), round(7.5 * MM)
-            bx = xx + round(0.08 * w2)
-            by = yy + th - bh - round(12.0 * MM)
-            anchor = min(green, key=lambda p: p[1])
+            bw, bh = round(18 * MM), round(7.5 * MM)
+            bx = xx + tw - bw - round(3 * MM)
+            by = yy + round(0.30 * th)
+            anchor = min(green, key=lambda p: (p[0] - (bx - xx)) ** 2
+                         + (p[1] - (by - yy + bh / 2)) ** 2)
             axp, ayp = xx + anchor[0], yy + anchor[1]
             inside = bx <= axp <= bx + bw and by <= ayp <= by + bh
             checks.append(f"callout box clears the anchor: {not inside}")
             assert not inside
+            checks.append(f"callout sits right of the anchor: {axp < bx}")
+            assert axp < bx
             label = "\u03bb = 0.69"
             lw = d.textlength(label, font=F_CALLOUT)
             bb = d.textbbox((0, 0), label, font=F_CALLOUT)
             lh = bb[3] - bb[1]
-            lead_x = bx if axp < bx else bx + bw
-            lead_mm = (((axp - lead_x) ** 2 + (ayp - by) ** 2) ** 0.5) / MM
+            lead_mm = (((axp - bx) ** 2 + (ayp - (by + bh / 2)) ** 2) ** 0.5) / MM
             checks.append(f"callout leader reads {lead_mm:.1f} mm")
             assert lead_mm >= 8.0
-            d.line([lead_x, by, axp, ayp], fill=INK, width=2)
+            d.line([bx, by + bh / 2, axp, ayp], fill=INK, width=2)
             d.rectangle([bx, by, bx + bw, by + bh], fill="white", outline=INK, width=2)
             d.text((bx + (bw - lw) / 2, by + (bh - lh) / 2 - bb[1]), label,
                    font=F_CALLOUT, fill=INK)
