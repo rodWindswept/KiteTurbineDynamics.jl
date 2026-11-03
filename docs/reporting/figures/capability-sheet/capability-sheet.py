@@ -1,17 +1,16 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""capability-sheet: generating script for Figure 10 (section 7).
+"""capability-sheet: generating script for the capability sheet (section 7).
 
-One sheet, eight exhibits: seven chart classes redrawn at HEAD from this
-campaign's own rows, then the dashboard frame.
+One sheet, seven exhibits: four heatmaps and three chart classes redrawn at
+HEAD from this campaign's own rows.
 
   H1-H4  heatmaps, four recorded outcomes on r_hub x bank_top
          (508 ok designs, value quintiles, cell medians, own colourbar
          limits per panel: NR-078 to NR-082)
   M1     parallel coordinates, ten genes, all 930 designs, status ink
   M2     correlation matrix, Spearman, the 508 ok designs
-  M3     spider chart, the winner's ten genes on a standardised scale
-  C1     the dashboard frame, rendered at HEAD by render_dashboard_frame.jl
+  M3     the objective, ordered, the 508 ok designs
 
 The three M panels are specimen panels: they carry axis keys and print
 no value.  No cell annotation, no coefficient, no gene value, no
@@ -27,16 +26,11 @@ Rules this script enforces, not assumes:
     n >= 5 floor (NR-082 display form 2);
   - axis labels carry the edges, not a bin index (NR-082 form 3);
   - each panel names its own population; the three populations do not
-    trade;
-  - the capture is a crop of the HEAD render at a recorded offset, and
-    the crop's hash is pinned in the manifest.
+    trade.
 
 Run:
   /usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py \\
       --script-commit <hex>
-
-The capture must exist first:
-  julia --project=. docs/reporting/figures/capability-sheet/render_dashboard_frame.jl
 
 Toolchain pin: /usr/bin/python3 (CPython 3.12.3), matplotlib 3.10.8,
 numpy 2.4.4, pandas 2.3.3.
@@ -85,7 +79,7 @@ SIGNED = {
 EDGE_R = [2.399, 4.116, 4.2248, 4.32, 4.5172, 5.116]
 EDGE_B = [0.0, 6.34, 10.7, 13.4, 14.96, 22.0]
 
-# capture geometry, measured on the HEAD render
+# capture geometry, retained as kit history; the plate no longer prints the frame
 CAP_SIZE = (966, 708)
 CAP_OFFSET = (401, 329)
 FULL_SIZE = (2000, 1188)
@@ -214,24 +208,6 @@ def main() -> int:
     checks.append((int(cr.twist_ratio.isna().sum()) == 110,
                    "the 110 clearance rejects carry no twist reading (gate order)"))
 
-    # ---- the capture -------------------------------------------------------
-    full = OUTDIR / "dashboard-frame-full.png"
-    if not full.exists():
-        raise SystemExit(
-            "missing dashboard-frame-full.png: run "
-            "`julia --project=. docs/reporting/figures/capability-sheet/render_dashboard_frame.jl` first"
-        )
-    from PIL import Image
-
-    im = Image.open(full).convert("RGB")
-    checks.append((im.size == FULL_SIZE, f"render is {FULL_SIZE}: {im.size}"))
-    x0, y0 = CAP_OFFSET
-    w, h = CAP_SIZE
-    crop = im.crop((x0, y0, x0 + w, y0 + h))
-    checks.append((crop.size == CAP_SIZE, f"crop is {CAP_SIZE}: {crop.size}"))
-    cap_path = OUTDIR / "dashboard-frame.png"
-    crop.save(cap_path)
-
     # ---- page A: the four outcome heatmaps ---------------------------------
     W, H = 7.6, 8.20
     figA = plt.figure(figsize=(W, H))
@@ -243,7 +219,7 @@ def main() -> int:
         fig.text(x_in / W, y_in / H, lab(text), fontsize=size, ha="left",
                  va="baseline", color=colour, weight=weight)
 
-    note(figA, 0.04, 7.90, "Figure 10   What the platform draws", 10.4, INK, "bold")
+    note(figA, 0.04, 7.90, "What the platform draws", 10.4, INK, "bold")
     note(figA, 0.04, 7.68,
          "Plate A  ·  four outcomes on one gene pair  ·  508 ok designs  ·  one colourbar per panel",
          7.4, INK)
@@ -292,27 +268,16 @@ def main() -> int:
          "colour is the cell median of the outcome, never the mean. Bar limits are the smallest and largest cell medians, rounded outward to 2 dp.",
          6.4)
 
-    # ---- page B: three keys-only classes and the frame ---------------------
+    # ---- page B: three keys-only classes -----------------------------------
+    W, H = 7.6, 4.90
     figB = plt.figure(figsize=(W, H))
-    note(figB, 0.04, 7.90, "Figure 10   What the platform draws", 10.4, INK, "bold")
-    note(figB, 0.04, 7.68,
+    note(figB, 0.04, 4.60, "What the platform draws", 10.4, INK, "bold")
+    note(figB, 0.04, 4.40,
          "Plate B  ·  keys only, no value printed  ·  populations named per panel",
          7.4, INK)
 
-    cap_w = 5.10
-    cap_h = cap_w * CAP_SIZE[1] / CAP_SIZE[0]
-    cap_x = (W - cap_w) / 2
-    cap_y = 3.50
-    axc = figB.add_axes(rect(cap_x, cap_y, cap_w, cap_h))
-    axc.imshow(plt.imread(cap_path))
-    axc.set_axis_off()
-    axc.set_title(
-        lab("C1  The dashboard frame at HEAD · v1 interface · canonical 5-line · render, not a read"),
-        fontsize=7.2, pad=4.0, loc="left",
-    )
-
     norm = (d[GENES] - d[GENES].min()) / (d[GENES].max() - d[GENES].min())
-    axp = figB.add_axes(rect(0.62, 1.52, 3.30, 1.72))
+    axp = figB.add_axes(rect(0.62, 1.55, 3.30, 1.72))
     order = ["reject", "clearance_reject", "reject_twist", "ok"]
     ink = {"ok": OK, "reject": REJ, "clearance_reject": CLR, "reject_twist": TWS}
     alpha = {"ok": 0.16, "reject": 0.10, "clearance_reject": 0.22, "reject_twist": 0.32}
@@ -336,12 +301,12 @@ def main() -> int:
         axp.spines[s_].set_visible(False)
     axp.set_title(lab("M1  Parallel coordinates\nall 930 designs, ten genes on their own ranges"),
                   fontsize=7.2, pad=3.2, loc="left")
-    figB.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.62 / W, 0.92 / H),
+    figB.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.62 / W, 1.12 / H),
                 ncol=4, fontsize=5.4, frameon=False, handlelength=1.0,
                 columnspacing=0.9, handletextpad=0.4, borderaxespad=0.0)
 
     rho = spearman_matrix(ok)
-    axm = figB.add_axes(rect(4.24, 1.52, 1.56, 1.56))
+    axm = figB.add_axes(rect(4.24, 1.71, 1.56, 1.56))
     im2 = axm.imshow(rho, cmap="RdBu_r", vmin=-1, vmax=1, interpolation="nearest")
     axm.set_xticks(range(10))
     axm.set_yticks(range(10))
@@ -365,7 +330,7 @@ def main() -> int:
     checks.append((len(ranked) == 508, f"ranked curve holds 508 values: {len(ranked)}"))
     checks.append((abs(float(ranked[-1]) - 60.646) < 1e-3,
                    f"worst ok design reads the population maximum: {ranked[-1]:.3f}"))
-    axr = figB.add_axes(rect(6.16, 1.52, 1.22, 1.56))
+    axr = figB.add_axes(rect(6.16, 1.71, 1.22, 1.56))
     axr.plot(np.arange(1, len(ranked) + 1), ranked, color=INK, lw=0.8, zorder=3)
     axr.fill_between(np.arange(1, len(ranked) + 1), ranked.min(), ranked,
                      color=HAIR, alpha=0.55, lw=0.0, zorder=1)
@@ -380,10 +345,10 @@ def main() -> int:
         axr.spines[s_].set_visible(False)
     axr.set_title(lab("M3  The objective, ordered\n508 ok designs"), fontsize=7.2, pad=3.2, loc="left")
 
-    note(figB, 0.04, 0.60,
+    note(figB, 0.04, 0.66,
          f"data {DATA_COMMIT} · run {RUN} · era {ERA} · rows NR-001, NR-002, NR-005 · script {commit}", 6.4)
-    note(figB, 0.04, 0.40,
-         "M1 reads all 930 designs. M2 and M3 read the 508 ok designs. C1 is a render at HEAD, not a dataset read.",
+    note(figB, 0.04, 0.46,
+         "M1 reads all 930 designs. M2 and M3 read the 508 ok designs.",
          6.4)
 
     # ---- save --------------------------------------------------------------
@@ -414,23 +379,13 @@ def main() -> int:
         "era": ERA,
         "pages": {
             "A": "H1 to H4, the four outcome heatmaps, 508 ok designs",
-            "B": "M1 all 930, M2 and M3 at 508, C1 the render at HEAD",
+            "B": "M1 all 930, M2 and M3 at 508",
         },
         "inputs": {
             "telemetry": [
                 {"path": str(f.relative_to(ROOT)), "sha256": sha256(f)}
                 for f in sorted(RD.glob("island_*/telemetry.csv"))
             ],
-            "renderer": {
-                "path": f"docs/reporting/figures/{SLUG}/render_dashboard_frame.jl",
-                "sha256": sha256(OUTDIR / "render_dashboard_frame.jl"),
-            },
-            "capture_full": {
-                "path": f"docs/reporting/figures/{SLUG}/dashboard-frame-full.png",
-                "sha256": sha256(full),
-                "pixels": list(FULL_SIZE),
-                "px_per_unit": 1.25,
-            },
             "register_rows": ["NR-001", "NR-002", "NR-005", "NR-042",
                               "NR-078", "NR-079", "NR-080", "NR-081", "NR-082"],
         },
@@ -441,7 +396,6 @@ def main() -> int:
             f"{SLUG}-B.pdf": sha256(OUTDIR / f"{SLUG}-B.pdf"),
             f"{SLUG}-B.png": sha256(outB),
             f"{SLUG}-B.svg": sha256(OUTDIR / f"{SLUG}-B.svg"),
-            "dashboard-frame.png": sha256(cap_path),
             "label-ledger.txt": sha256(ledger),
         },
         "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",

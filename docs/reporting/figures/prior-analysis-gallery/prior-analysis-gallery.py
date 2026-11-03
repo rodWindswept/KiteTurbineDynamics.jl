@@ -41,7 +41,9 @@ X2 = CELL_W + GUTTER            # 89.00
 STAMP_GAP = 2.20
 STAMP_LH = 3.10
 ROW_GAP = 4.00
+BANNER_H = 9.00
 ROW_PITCH = IMG_H + STAMP_GAP + 2 * STAMP_LH + ROW_GAP
+BANNER_TEXT = "HISTORIC ANALYSES \u00b7 not the latest results"
 
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
 SERIF_B = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
@@ -101,6 +103,8 @@ def font(path: str, pt: float) -> ImageFont.FreeTypeFont:
 F_SANS = font(SANS, STAMP_PT)
 F_SANS_B = font(SANS_B, STAMP_PT)
 F_VOID = font(SANS_B, 8.0)
+F_BANNER = font(SANS_B, 8.5)
+F_CALLOUT = font(SANS_B, 6.8)
 F_CAP = font(SERIF, CAP_PT)
 F_CAP_B = font(SERIF_B, CAP_PT)
 F_RUN = font(MONO, RUN_STAMP_PT)
@@ -140,7 +144,7 @@ def sha256(path: Path) -> str:
 
 def build() -> tuple[Image.Image, list[dict], list[str]]:
     Wpx = round(W_MM * MM)
-    Hpx = round((2 * ROW_PITCH + IMG_H + STAMP_GAP + 2 * STAMP_LH) * MM)
+    Hpx = round((BANNER_H + 2 * ROW_PITCH + IMG_H + STAMP_GAP + 2 * STAMP_LH) * MM)
     img = Image.new("RGB", (Wpx, Hpx), "white")
     d = ImageDraw.Draw(img)
     checks: list[str] = []
@@ -149,7 +153,7 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
     for i, spec in enumerate(PANEL_SPEC):
         col, row = i % 2, i // 2
         cx = 0.0 if col == 0 else X2
-        ry = row * ROW_PITCH
+        ry = BANNER_H + row * ROW_PITCH
         src = PANELS / spec["file"]
         im = Image.open(src).convert("RGB")
 
@@ -177,6 +181,34 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
                     ty + (round(tag_h * MM) - lh) / 2), label, font=F_VOID,
                    fill="white")
 
+        if i == 1:
+            # the lambda callout: anchor to the green 0.69 envelope curve
+            w2, h2 = im2.size
+            green = []
+            for gy in range(0, h2, 2):
+                for gx in range(0, w2, 2):
+                    r, g, b = im2.getpixel((gx, gy))
+                    if g > 110 and r < 90 and g > r + 40 and b < 160:
+                        green.append((gx, gy))
+            checks.append(f"lambda curve pixels found: {len(green)}")
+            assert green, "no green curve pixels on the FoS panel"
+            tx0 = 0.55 * w2
+            band = [p for p in green if abs(p[0] - tx0) <= 0.10 * w2]
+            anchor = min(band or green, key=lambda p: p[1])
+            axp, ayp = xx + anchor[0], yy + anchor[1]
+            bw, bh = round(26 * MM), round(8.0 * MM)
+            bx = xx + round(0.20 * w2)
+            by = yy + th - bh - round(10.0 * MM)
+            label = "\u03bb = 0.69"
+            lw = d.textlength(label, font=F_CALLOUT)
+            bb = d.textbbox((0, 0), label, font=F_CALLOUT)
+            lh = bb[3] - bb[1]
+            d.line([bx + bw // 2, by, axp, ayp], fill=INK, width=2)
+            d.rectangle([bx, by, bx + bw, by + bh], fill="white", outline=INK, width=2)
+            d.text((bx + (bw - lw) / 2, by + (bh - lh) / 2 - bb[1]), label,
+                   font=F_CALLOUT, fill=INK)
+            checks.append(f"lambda callout anchors at {anchor[0]},{anchor[1]} in the FoS panel")
+
         sy = ry + IMG_H + STAMP_GAP
         sx = cx + 1.5
         d.text((round(sx * MM), round(sy * MM)), spec["l1"], font=F_SANS_B, fill=INK)
@@ -196,6 +228,17 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
             source=spec["source"], source_commit=spec["commit"],
             campaign=spec["campaign"], void=spec["void"],
         ))
+
+    # historic banner across the head of the plate
+    band_h = round(BANNER_H * MM)
+    d.rectangle([0, 0, Wpx - 1, band_h - 1], fill=(242, 242, 242))
+    d.line([0, band_h - 1, Wpx - 1, band_h - 1], fill=(30, 30, 30), width=2)
+    tw_ = d.textlength(BANNER_TEXT, font=F_BANNER)
+    bb = d.textbbox((0, 0), BANNER_TEXT, font=F_BANNER)
+    d.text(((Wpx - tw_) / 2, (band_h - (bb[3] - bb[1])) / 2 - bb[1]),
+           BANNER_TEXT, font=F_BANNER, fill=INK)
+    checks.append(f"banner fits the measure: {tw_:.0f} <= {Wpx} px")
+    assert tw_ <= Wpx - 10
 
     out = HERE / "prior-analysis-gallery.png"
     img.save(out, dpi=(DPI, DPI), optimize=False)
@@ -299,6 +342,10 @@ def write_manifest(img: Image.Image, facts: list[dict], run_id: str) -> None:
             "page-proof.png": sha256(HERE / "page-proof.png") if (HERE / "page-proof.png").exists() else None,
         },
         "withheld": "no panel prints a current claim; every value belongs to the tool or campaign that printed it at that commit",
+        "marks": {
+            "banner": BANNER_TEXT,
+            "callout": "lambda = 0.69 on panel 2, anchored to the green envelope curve",
+        },
     }
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 

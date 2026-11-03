@@ -118,6 +118,11 @@ def main() -> int:
     pop = {}
     for b in bins:
         pop.setdefault(b["gene"], {})[b["bin"]] = int(b["n"])
+    bmeta = {}
+    for b in bins:
+        bmeta[(b["gene"], b["bin"])] = (
+            float(b["lo"]), float(b["hi"]), int(b["n"]), float(b["median_fitness"])
+        )
     rows = []
     for r in sens:
         g = r["gene"]
@@ -135,6 +140,8 @@ def main() -> int:
                 "hi": hi,
                 "nlo": nlo,
                 "nhi": nhi,
+                "lo_range": bmeta[(g, lo)][:2],
+                "hi_range": bmeta[(g, hi)][:2],
                 "thin": nlo < FLOOR_N or nhi < FLOOR_N,
             }
         )
@@ -142,6 +149,18 @@ def main() -> int:
     thin_rows = [x for x in rows if x["thin"]]
     checks.append((len(rows) == 10, f"sensitivity rows read 10: {len(rows)}"))
     checks.append((len(thin_rows) == 2, f"thin rows read 2: {len(thin_rows)}"))
+    checks.append((all(r["lo_range"][0] <= r["lo_range"][1]
+                       and r["hi_range"][0] <= r["hi_range"][1] for r in rows),
+                   "every bucket range reads low to high"))
+    checks.append((all(r["lo_range"][1] <= r["hi_range"][0] for r in rows),
+                   "every bottom bucket ends at or below its top bucket"))
+
+    def fmtq(v: float) -> str:
+        return f"{v:.0f}" if abs(v) >= 100 else f"{v:.3g}"
+
+    def rng(lo: float, hi: float) -> str:
+        a, b = fmtq(lo), fmtq(hi)
+        return a if a == b else f"{a}\u2013{b}"
 
     # ---- plate A ----------------------------------------------------------
     figA = plt.figure(figsize=(7.6, 8.9))
@@ -167,7 +186,7 @@ def main() -> int:
         )
     axA1.set_yticks(ypos)
     axA1.set_yticklabels(
-        [f"{r['gene']}  ({r['slot']})\n{r['lo']} to {r['hi']},  {r['nlo']} / {r['nhi']} designs" for r in rows],
+        [f"{r['gene']}  ({r['slot']})\n{rng(*r['lo_range'])} \u00b7 {rng(*r['hi_range'])} \u00b7 {r['nlo']} / {r['nhi']}" for r in rows],
         fontsize=6.6,
     )
     axA1.axvline(0, color=INK, lw=0.7)
@@ -202,6 +221,7 @@ def main() -> int:
         k = len(ks)
         for j, bl in enumerate(ks):
             n, med = med_by_gene[g][bl]
+            b_lo, b_hi = bmeta[(g, bl)][:2]
             x0 = j / k
             w = 1.0 / k
             if n < FLOOR_N:
@@ -209,16 +229,16 @@ def main() -> int:
                 axA2.add_patch(plt.Rectangle((x0, i - 0.34), w - 0.008, 0.68,
                                              facecolor="#ffffff", edgecolor=GREY,
                                              lw=0.6, hatch="////", zorder=3))
-                axA2.text(x0 + w / 2, i, lab(f"n={n}\nno read"), ha="center", va="center",
-                          fontsize=4.9, color="#777777", linespacing=1.05, zorder=4,
+                axA2.text(x0 + w / 2, i, lab(f"{rng(b_lo, b_hi)}\nn={n} \u00b7 no read"), ha="center", va="center",
+                          fontsize=4.5, color="#777777", linespacing=1.05, zorder=4,
                           clip_on=True)
             else:
                 frac = (med - vmin) / (vmax - vmin) if vmax > vmin else 0.5
                 axA2.add_patch(plt.Rectangle((x0, i - 0.34), w - 0.008, 0.68,
                                              facecolor=cmap(0.08 + 0.84 * frac),
                                              edgecolor="white", lw=0.8, zorder=3))
-                axA2.text(x0 + w / 2, i, lab(f"n={n}"), ha="center", va="center",
-                          fontsize=5.8, color="white" if frac < 0.62 else INK, zorder=4)
+                axA2.text(x0 + w / 2, i, lab(f"{rng(b_lo, b_hi)}\nn={n}"), ha="center", va="center",
+                          fontsize=5.2, color="white" if frac < 0.62 else INK, zorder=4)
     checks.append((dropped == 4, f"surface drops four bins under five: {dropped}"))
     axA2.set_xlim(0, 1)
     axA2.set_ylim(-0.6, len(genes) - 0.4)
@@ -230,7 +250,7 @@ def main() -> int:
     axA2.set_xticks([])
     axA2.set_xlabel(lab("bins of each gene, lowest to highest. Strip width divides by the bin count."), fontsize=7.0)
     axA2.set_title(
-        lab("A2  The objective by gene bin, 508 ok designs. Cells print their count."),
+        lab("A2  The objective by gene bin, 508 ok designs. Cells print their range and count."),
         fontsize=8.0, loc="left", pad=6,
     )
     for sp in ("top", "right", "bottom"):

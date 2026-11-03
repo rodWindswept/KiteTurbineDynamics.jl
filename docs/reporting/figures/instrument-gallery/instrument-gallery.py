@@ -127,7 +127,47 @@ def build() -> tuple[Image.Image, list[tuple]]:
     return img, factors
 
 
-def page_proof(plate: Image.Image) -> None:
+def build_stacked() -> tuple[Image.Image, list[tuple]]:
+    """One frame on top of the other: a single 85 mm column, for a page fit."""
+    frames = [
+        ("dashboard-v2-head.png", "v2"),
+        ("dashboard-twisted-state-head.png", "twisted"),
+        ("winner-10kw-cartography-head.png", "cartography"),
+    ]
+    Wpx = round(W_MM * MM)
+    loaded = []
+    heights = []
+    for name, label in frames:
+        im = Image.open(CAPTURES / name).convert("RGB")
+        loaded.append((im, label))
+        heights.append(CELL_W * im.height / im.width)
+    total_h = sum(heights) + GUTTER * (len(frames) - 1)
+    img = Image.new("RGB", (Wpx, round(total_h * MM)), "white")
+    d = ImageDraw.Draw(img)
+    x = (W_MM - CELL_W) / 2.0
+    y = 0.0
+    factors = []
+    for (im, label), h in zip(loaded, heights):
+        tw, th = round(CELL_W * MM), round(h * MM)
+        im2 = im.resize((tw, th), Image.LANCZOS)
+        xx, yy = round(x * MM), round(y * MM)
+        img.paste(im2, (xx, yy))
+        d.rectangle([xx, yy, xx + tw - 1, yy + th - 1], outline=(30, 30, 30), width=3)
+        factors.append((label, im.width, im.height, tw, th, tw / im.width,
+                        im.width / (CELL_W / 25.4), y, CELL_W, h))
+        y += h + GUTTER
+    out = HERE / "instrument-gallery-stacked.png"
+    img.save(out, dpi=(DPI, DPI))
+    print(f"--- {out.name}: {img.width} x {img.height} px at {DPI} dpi "
+          f"= {img.width / MM:.2f} x {img.height / MM:.2f} mm ---")
+    for label, sw, sh, tw, th, factor, native, ytop, w, h in factors:
+        print(f"  {label:11s} {sw:5d}x{sh:<5d} -> {tw:5d}x{th:<5d}  y {ytop:6.2f} mm  "
+              f"fits {w:5.2f} x {h:5.2f} mm  factor {factor:5.3f}  native {native:7.1f} dpi")
+    return img, factors
+
+
+def page_proof(plate: Image.Image, out_name: str = "page-proof.png",
+               note: str = "") -> None:
     """The builder's page: 174 x 257 mm measure, figure margin 1.2em, figcaption."""
     plain, tech = parse_captions()
     probe = ImageDraw.Draw(Image.new("RGB", (10, 10)))
@@ -160,9 +200,9 @@ def page_proof(plate: Image.Image) -> None:
     for ln in tech_lines:
         d.text((0, round(y * MM)), ln, font=F_CAP, fill="black")
         y += CAP_LH
-    d.text((0, round(y * MM)), stamp, font=F_STAMP, fill=(70, 70, 70))
+    d.text((0, round(y * MM)), stamp + note, font=F_STAMP, fill=(70, 70, 70))
 
-    out = HERE / "page-proof.png"
+    out = HERE / out_name
     img.save(out, dpi=(DPI, DPI))
     print(f"--- {out.name}: page {page_h:.2f} mm of 257, spare {257 - page_h:.2f} mm ---")
     print(f"    plate {plate_h:.2f} + gap {gap} + block {block:.2f} "
@@ -172,7 +212,12 @@ def page_proof(plate: Image.Image) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--page-proof", action="store_true")
+    ap.add_argument("--stacked", action="store_true")
     args = ap.parse_args()
-    plate, _ = build()
-    if args.page_proof:
-        page_proof(plate)
+    if args.stacked:
+        plate, _ = build_stacked()
+        page_proof(plate, "page-proof-stacked.png", " \u00b7 stacked variant")
+    else:
+        plate, _ = build()
+        if args.page_proof:
+            page_proof(plate)
