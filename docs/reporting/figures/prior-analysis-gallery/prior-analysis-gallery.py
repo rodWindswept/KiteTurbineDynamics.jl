@@ -35,7 +35,7 @@ MM = DPI / 25.4
 
 W_MM = 174.00
 CELL_W = 85.00
-IMG_H = 48.00
+IMG_H = 46.00
 GUTTER = 4.00
 X2 = CELL_W + GUTTER            # 89.00
 STAMP_GAP = 2.20
