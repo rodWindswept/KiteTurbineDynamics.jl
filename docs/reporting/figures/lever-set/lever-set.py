@@ -160,7 +160,9 @@ def main() -> int:
 
     def rng(lo: float, hi: float) -> str:
         a, b = fmtq(lo), fmtq(hi)
-        return a if a == b else f"{a}\u2013{b}"
+        if a == b:
+            return a
+        return f"{a} to {b}" if (lo < 0 or hi < 0) else f"{a}\u2013{b}"
 
     # ---- plate A ----------------------------------------------------------
     figA = plt.figure(figsize=(7.6, 8.9))
