@@ -37,15 +37,16 @@ The banner prints in an 8 mm band at 8.5 pt.
 
 Panel 2 carries a λ = 0.69 callout.
 The callout anchors to the green envelope curve.
-The build finds 262 green pixels and anchors at 754, 588 in the panel.
-The callout prints at 6.8 pt with a leader line.
+The build finds 262 green pixels and anchors at 866, 584 in the panel.
+The leader reads 17.6 mm.
+The box sits in clear whitespace at the right margin.
 
 The plate re-composes at 174.02 x 179.19 mm.
 The page proof reads 249.70 mm of 257, with 7.30 mm spare.
-The kit runs 26 checks, 0 fail.
+The kit runs 29 checks, 0 fail.
 Two runs reproduce the plate, the page proof and the manifest byte for byte.
 
-Script commits `3b4571e` and `1ca25d8`.
+Script commits `3b4571e`, `1ca25d8` and `9ce25d9`.
 The caption draft takes the historic sentence and the callout sentence.
 The tau_cap reading waits on @science-writer and @aero-validator.
 

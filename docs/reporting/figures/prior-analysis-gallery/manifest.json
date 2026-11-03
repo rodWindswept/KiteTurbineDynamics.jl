@@ -2,12 +2,12 @@
   "slug": "prior-analysis-gallery",
   "figure": "roster row 32, section 9: the prior-analysis gallery",
   "mode": "prior-analysis gallery, six panels",
-  "run_id": "one composition pass, repository at 1ca25d8",
-  "run_commit": "1ca25d8",
+  "run_id": "one composition pass, repository at 9ce25d9",
+  "run_commit": "9ce25d9",
   "command": "/usr/bin/python3 docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py --page-proof",
   "script": {
     "path": "docs/reporting/figures/prior-analysis-gallery/prior-analysis-gallery.py",
-    "sha256": "92048c5ba5b7085d1067e94e62a1d0e685957fa2a46c50b31df90479aaf2c0ae"
+    "sha256": "3457af95bd914aaf35065e2fbfe9315961367ec67e75934bac4a8867084429a9"
   },
   "plate": {
     "pixels": [
@@ -25,7 +25,7 @@
     ],
     "gutter_mm": 4.0,
     "row_pitch_mm": 58.400000000000006,
-    "sha256": "dd47b495535bf5dfc830a4c8f469f2c1d8992bd246410bc55b648b51e0dea40c"
+    "sha256": "b5e147523cf953cd33acf321fe021c9f54a0d6c8b1cddb2e4ef32c419670cc22"
   },
   "panels": [
     {
@@ -142,8 +142,8 @@
     "sha256": "e1847b756210bd223d81341dfadbcd46d4894ce01667c9df9dcee360cb202944"
   },
   "outputs": {
-    "prior-analysis-gallery.png": "dd47b495535bf5dfc830a4c8f469f2c1d8992bd246410bc55b648b51e0dea40c",
-    "page-proof.png": "a4bf3f607f39eedf7a2320a913274ab0460411d24ec45000fb72d1bf1bc59c2c"
+    "prior-analysis-gallery.png": "b5e147523cf953cd33acf321fe021c9f54a0d6c8b1cddb2e4ef32c419670cc22",
+    "page-proof.png": "5b00098bb9848dd639407c98b06e0b886cd52f79ae04033e6dceb36da144fef9"
   },
   "withheld": "no panel prints a current claim; every value belongs to the tool or campaign that printed it at that commit",
   "marks": {

@@ -15,7 +15,10 @@ ok  plate height 3746 px = 179.19 mm
 ok  stamp fits 1212 <= 1735 px: power curve · V10/constCL · no campaign
 ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
 ok  lambda curve pixels found: 230
-ok  lambda callout anchors at 722,564 in the FoS panel
+ok  callout box clears the anchor: True
+ok  callout sits right of the anchor: True
+ok  callout leader reads 17.6 mm
+ok  lambda callout anchors at 866,584 in the FoS panel
 ok  stamp fits 1242 <= 1735 px: FoS envelope · V10/constCL · no campaign
 ok  stamp fits 1566 <= 1735 px: generate_charts.jl @ 86ca0e5 · tier P (provisional) · not void
 ok  stamp fits 1237 <= 1735 px: blade scaling · V10/constCL · no campaign
@@ -27,4 +30,4 @@ ok  stamp fits 1169 <= 1735 px: analytical design chart @ 3619ad7 · not void
 ok  stamp fits 1238 <= 1735 px: design-space heatmap · pitch-depower V2
 ok  stamp fits 1258 <= 1735 px: git 719e298 · VOID: 512 of 512 runs disqualified
 ok  banner fits the measure: 1538 <= 3638 px
-26 ok / 0 fail
+29 ok / 0 fail
