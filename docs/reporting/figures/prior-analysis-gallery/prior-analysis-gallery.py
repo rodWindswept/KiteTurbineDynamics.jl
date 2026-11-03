@@ -195,8 +195,7 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
             bw, bh = round(24 * MM), round(7.5 * MM)
             bx = xx + round(0.08 * w2)
             by = yy + th - bh - round(12.0 * MM)
-            anchor = min(green, key=lambda p: (p[0] - (bx + bw - xx)) ** 2
-                         + (p[1] - (by - yy)) ** 2)
+            anchor = min(green, key=lambda p: p[1])
             axp, ayp = xx + anchor[0], yy + anchor[1]
             inside = bx <= axp <= bx + bw and by <= ayp <= by + bh
             checks.append(f"callout box clears the anchor: {not inside}")
@@ -205,7 +204,11 @@ def build() -> tuple[Image.Image, list[dict], list[str]]:
             lw = d.textlength(label, font=F_CALLOUT)
             bb = d.textbbox((0, 0), label, font=F_CALLOUT)
             lh = bb[3] - bb[1]
-            d.line([bx + bw, by, axp, ayp], fill=INK, width=2)
+            lead_x = bx if axp < bx else bx + bw
+            lead_mm = (((axp - lead_x) ** 2 + (ayp - by) ** 2) ** 0.5) / MM
+            checks.append(f"callout leader reads {lead_mm:.1f} mm")
+            assert lead_mm >= 8.0
+            d.line([lead_x, by, axp, ayp], fill=INK, width=2)
             d.rectangle([bx, by, bx + bw, by + bh], fill="white", outline=INK, width=2)
             d.text((bx + (bw - lw) / 2, by + (bh - lh) / 2 - bb[1]), label,
                    font=F_CALLOUT, fill=INK)
