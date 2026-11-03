@@ -3,9 +3,8 @@
 **Slug** `capability-sheet`. **Status** GENERATE. **Date** 2026-10-21.
 
 Site: section 7, two pages. Page A carries the four
-outcome heatmaps. Page B carries three keys-only classes and the
-dashboard frame. One figure number, one appendix row, two captions and
-two population lines.
+outcome heatmaps. Page B carries three keys-only classes. One figure
+number, one appendix row, two captions and two population lines.
 
 ## Plain caption, page A
 
@@ -35,7 +34,7 @@ is the 5.0 kW floor penalty of the objective, not a rejection gate.
 ## Plain caption, page B
 
 Three more ways the platform draws the same campaign, with no number
-printed, and the dashboard itself.
+printed.
 
 ## Technical caption, page B
 
@@ -45,9 +44,6 @@ status class. M2 draws the rank correlation of the ten genes over the
 508 ok designs. M3 orders the 508 ok designs by objective value. The
 three panels print keys only.
 
-C1 shows the dashboard at HEAD in its first interface. C1 is a render,
-not a dataset read. The v2 cockpit is opt-in and is not shown.
-
 These panels redraw chart classes from the rows of this campaign at
 HEAD. They add no new run and no new column. Every value prints from
 the 930 rows, or from the 508 that cleared every gate. Every value is
@@ -56,7 +52,7 @@ platform, and they do not stand in for them.
 
 ## Provenance line, both pages
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` · rows: NR-001, NR-002, NR-005, NR-042, NR-078 to NR-082 · script: `docs/reporting/figures/capability-sheet/capability-sheet.py` and `render_dashboard_frame.jl` at the script commit
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · era `post-95c385d_wind-authority` · rows: NR-001, NR-002, NR-005, NR-042, NR-078 to NR-082 · script: `docs/reporting/figures/capability-sheet/capability-sheet.py` at the script commit
 
 ## Checks for the consistency pass
 
@@ -64,6 +60,6 @@ data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_ban
 - Every printed value cites a register row. Page B prints no value and
   cites the conditioning rows only.
 - The populations never trade. Page A holds one population. Page B
-  names three, panel by panel. C1 reads no dataset.
+  names three, panel by panel.
 - The floor sentence travels with page A. It names all three floors and
   the one panel that has none.

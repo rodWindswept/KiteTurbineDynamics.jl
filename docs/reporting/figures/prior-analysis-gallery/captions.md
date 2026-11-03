@@ -17,7 +17,7 @@ No register row signs a panel value.
 
 Six chart classes that the toolchain ran on earlier campaigns, each drawn from its own committed file.
 Every panel prints its campaign, its commit and its void status.
-No panel carries a value of this report.
+These panels are historic analyses, not the latest results, and no panel carries a value of this report.
 
 ## Technical caption
 
@@ -28,6 +28,9 @@ The first four panels come from the declarative chart set `charts/generate_chart
 The model reads V10/constCL and the tier reads P.
 The benchmark panel draws the Tulloch/Wacker torsional design chart at commit `3619ad7`.
 The heatmap panel draws the pitch-depower V2 campaign at commit `719e298`.
+
+Panel 2 carries a λ = 0.69 callout on the green envelope.
+The value belongs to the V10/constCL chart at `86ca0e5`.
 
 That campaign is void.
 All 512 runs carry a disqualification flag, so the panel carries a void label.

@@ -4,30 +4,122 @@
 +2.76 kg-eq  (rho +0.504)
 +22.54 kg-eq  (rho -0.029)
 +26.59 kg-eq  (rho +0.108)
+-0.179 to 0.0712
+n=102
 -0.21 kg-eq  (rho +0.066)
+-0.522 to -0.18
+n=100
+-0.8 to -0.535
+n=103
 -1.80 kg-eq  (rho -0.276)
 -2.90 kg-eq  (rho -0.403)
 -3.89 kg-eq  (rho -0.583)
 0.0% ok
+0.0767–0.393
+n=101
+0.2–0.377
+n=102
+0.379–0.741
+n=101
+0.393–0.8
+n=102
+0.398–0.808
+n=103
+0.743–0.942
+n=102
+0.785–0.982
+n=111
+0.808–0.903
+n=100
+0.903–1.09
+n=102
+0.945–1
+n=203
+0.982–0.996
+n=92
+0.996–1
+n=305
+0–5.26
+n=102
+0–6.29
+n=102
+1
+n=506
+1.09–1.18
+n=104
+1.18–1.2
+n=99
 1.3% ok
+10.7–13.4
+n=101
 11.3% ok
+13.4–14.9
+n=101
+13.5–21.1
+n=99
 141.13 kg-eq
 1462.32 kg-eq
+15–22
+n=102
+1–2.2
+n=102
+2
+n=2 · no read
+2.21–2.39
+n=101
+2.39–2.64
+n=102
+2.4–4.12
+n=102
+2.65–2.78
+n=102
+2.78–2.94
+n=101
 2.9% ok
+21.2–22
+n=102
 24.00% of the total
+3
+n=319
+4
+n=144
+4.12–4.22
+n=101
+4.23–4.32
+n=103
+4.32–4.52
+n=100
+4.52–5.12
+n=102
 4.8% ok
 43.6% ok
+5
+n=34
+5.27–9.03
+n=101
 5.9% ok
 506.36 kg-eq
 508 ok designs of 930, campaign v13_5kw_masslift_len18.8_rotorcount_bankderate2
+6
+n=3 · no read
+6.43–10.7
+n=102
 6.69% of the total
 66.9% ok
 68.5% ok
 68.9% ok
 69.31% of the total
+7
+n=6
+8
+n=1 · no read
+9
+n=1 · no read
+9.13–13.4
+n=104
 A positive shift is heavier and worse. The shift is a fitness difference, in kg-equivalent.
 A1  Which gene moves the objective. Grey rows hold under five designs at one end.
-A2  The objective by gene bin, 508 ok designs. Cells print their count.
+A2  The objective by gene bin, 508 ok designs. Cells print their range and count.
 B1  What fails, by line count and rotor count. All 930 designs; ok share printed at each bar.
 B1 counts all 930 designs. B2 reads the 508 that passed.
 B2  Where the penalty mass sits. 508 ok designs; the maximum is not the ranking.
@@ -48,27 +140,6 @@ largest charge in 46
 largest charge in 9
 median fitness, kg-equivalent
 median shift from the gene's lowest bin to its highest, kg-equivalent
-n=1
-no read
-n=100
-n=101
-n=102
-n=103
-n=104
-n=111
-n=144
-n=2
-no read
-n=203
-n=3
-no read
-n=305
-n=319
-n=34
-n=506
-n=6
-n=92
-n=99
 n_lines  (x4)  ·  7 bins
 n_lines 3
 n_lines 4
@@ -86,7 +157,7 @@ rotor_count  (x6)  ·  2 bins
 rotor_count 1
 rotor_count 2
 rotor_count 3
-source lever-statistics-extract · data dd3cc6a · run a76c5e9 · script 94a0a99
+source lever-statistics-extract · data dd3cc6a · run a76c5e9 · script 7500ca0
 target_Lr  (x3)  ·  5 bins
 total 2109.81 kg-eq
 twist

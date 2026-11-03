@@ -1,5 +1,7 @@
 ok   sensitivity rows read 10: 10
 ok   thin rows read 2: 2
+ok   every bucket range reads low to high
+ok   every bottom bucket ends at or below its top bucket
 ok   surface drops four bins under five: 4
 ok   over-power sum 1462.3155
 ok   utilisation sum 506.3577
@@ -14,5 +16,5 @@ ok   clearance rejects sum to 110: 110
 ok   no clearance reject at one rotor
 ok   ok rows sum to 508: 508
 ok   all rows sum to 930: 930
-ok   label ledger holds 91 strings
-17 ok / 0 fail
+ok   label ledger holds 119 strings
+19 ok / 0 fail

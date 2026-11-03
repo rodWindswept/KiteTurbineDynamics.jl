@@ -21,8 +21,8 @@
 
 - The three specimen panels M1, M2 and M3 print no value. They take no
   row. A future plate that annotates them opens its own row.
-- The capture C1 prints the frame text of the dashboard. That text is
-  not a report value and takes no row.
+- The capture C1 left the plate at the founder cut (2026-11-01). It
+  prints no frame text now and takes no row.
 - The occupancy figures are signed in NR-078 and NR-082. No new row
   carries them to the caption.
 

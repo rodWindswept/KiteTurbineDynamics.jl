@@ -1,4 +1,4 @@
-# SPEC: capability-sheet. Figure 10, the chart classes of the platform.
+# SPEC: capability-sheet. The chart classes of the platform.
 
 **Slug** `capability-sheet`
 
@@ -18,7 +18,7 @@ recurrent chart classes from the rows of this campaign without a new
 run. The claim must show its own evidence.
 
 This sheet is that evidence. It draws seven classes at HEAD from the
-campaign of record. It then seats the dashboard frame beside them.
+campaign of record.
 
 The sheet is one figure and one page. Eight separate plates would need
 eight era lines and eight population lines. One stamp over mixed eras
@@ -34,13 +34,12 @@ is a different section.
 The sheet runs as two pages, and the split follows the population line
 that already divides it. Page A carries the four outcome heatmaps. All
 four read the 508 ok designs, and the floor clause binds four panels
-that sit together. Page B carries three keys-only classes and the
-frame. One figure number, one appendix row, two captions.
+that sit together. Page B carries three keys-only classes. One figure
+number, one appendix row, two captions.
 
 | page | exhibit | panel size | population |
 |---|---|---|---|
 | A | H1 to H4, four heatmaps | 2.50 in square each | 508 ok |
-| B | C1 dashboard frame | 5.10 in wide | a render |
 | B | M1 parallel coordinates | 3.30 in wide | all 930 |
 | B | M2 correlation matrix | 1.56 in square | 508 ok |
 | B | M3 ordered objective | 1.22 in wide | 508 ok |
@@ -64,7 +63,6 @@ Each exhibit names its own population. The populations do not trade.
   `twist_ratio` is never zero.
 - **M1** reads all 930 designs. The status ink is the read.
 - **M3** reads the 508 ok designs, ordered by objective value.
-- **C1** reads no dataset. It is a render at HEAD.
 
 ## 4. The heatmap half (H1 to H4)
 
@@ -116,23 +114,19 @@ What these panels do not claim. They are not evidence of a result. They
 show that the platform holds the class, and that the class draws from
 these bytes.
 
-## 6. The capture (C1), page B
+## 6. The capture (C1), retired from the plate
 
-`render_dashboard_frame.jl` builds the dashboard at HEAD. It saves the
-frame at 2000 x 1188 px: the 1600 x 950 logical units of the dashboard
-at `px_per_unit = 1.25`, passed explicitly. Page B crops this frame
-to 966 x 708 at offset 401, 329. The manifest pins the hash of that
-crop.
+The founder cut the c1 dashboard frame at the head of page B on
+2026-11-01. Page B now carries the three keys-only classes alone.
 
-The frame reads the v1 interface. The v2 cockpit is opt-in, and this
-capture does not show it. No reading of this frame may pass as a
-reading of the v2 panels.
+The renderer and its frames stay in the kit as history:
+`render_dashboard_frame.jl`, `dashboard-frame-full.png` and
+`dashboard-frame.png`. The manifest no longer lists them as inputs or
+outputs, and the plate no longer prints the frame.
 
-The tracked home. `render_dashboard_frame.jl` is the tracked home of
-the renderer. That file sat untracked in `scratch/` before. The
-`Script commit` cell of the figure-provenance appendix names this
-directory. The capture now discharges the availability sentence that
-every figure ships with its generating script.
+The frame read the v1 interface. The v2 cockpit is opt-in, and this
+capture never showed it. No reading of this frame may pass as a reading
+of the v2 panels.
 
 ## 7. The clause that travels in the caption
 
@@ -156,7 +150,7 @@ files. The check list holds the row census, the status census, the 25
 cells with smallest, median and largest occupancy, both edge lists
 against the signed lists, the four colourbar limits against NR-078 to
 NR-081, all 100 cell medians inside their bars, the three floor
-conditions, the gate order, the pixel sizes of the capture, the winner
+conditions, the gate order, the winner
 value of 27.364, and the rank curve at 508 values.
 
 The gate order check reads that the 110 clearance rejects carry no

@@ -146,5 +146,22 @@
     "glmakie": "0.13",
     "python": "3.12.3",
     "pillow": "12.3.0"
+  },
+  "variant_stacked": {
+    "path": "instrument-gallery-stacked.png",
+    "pixels": [
+      3638,
+      3849
+    ],
+    "dpi": 531,
+    "prints_mm": [
+      174.02,
+      184.11
+    ],
+    "sha256": "04656caf0a4131ea4934cd3d33a791a712d9f7cebf9aa25f2ad55b66362ab551",
+    "page_proof": "page-proof-stacked.png",
+    "page_proof_sha256": "1fa323074a5e76e4a5ff6a7b3868b18d43fce52543394940aacda3300aed2569",
+    "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --stacked",
+    "note": "one frame stacked on the other in a single 85 mm column, built for the founder page-fit call on 2026-11-01; the delivered plate is unchanged"
   }
 }

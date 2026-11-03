@@ -1,17 +1,8 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit 8670c01",
+  "command": "/usr/bin/python3 docs/reporting/figures/capability-sheet/capability-sheet.py --script-commit f2171cb",
   "data_commit": "dd3cc6a",
   "era": "post-95c385d_wind-authority",
   "inputs": {
-    "capture_full": {
-      "path": "docs/reporting/figures/capability-sheet/dashboard-frame-full.png",
-      "pixels": [
-        2000,
-        1188
-      ],
-      "px_per_unit": 1.25,
-      "sha256": "be8a88e4a5f844c444491b3deef3c696f967f019d7fae6655483e1ba1e697c4f"
-    },
     "register_rows": [
       "NR-001",
       "NR-002",
@@ -23,10 +14,6 @@
       "NR-081",
       "NR-082"
     ],
-    "renderer": {
-      "path": "docs/reporting/figures/capability-sheet/render_dashboard_frame.jl",
-      "sha256": "4b20cf9d8bff6263dff9b8172a24e437092551fc68a93e1ac4f1843de21d9138"
-    },
     "telemetry": [
       {
         "path": "scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_1/telemetry.csv",
@@ -43,22 +30,21 @@
     ]
   },
   "outputs": {
-    "capability-sheet-A.pdf": "b7ffef65ddfbb6e411c722113ece70eda82c6ad938964fc70a601d3e27eeecc4",
-    "capability-sheet-A.png": "11394c21b2175276b9af56f59e3c5f87df8c31261b3f820a5f374364916cc0e4",
-    "capability-sheet-A.svg": "4cdf97b0e2d4037fdf85e8a8ecfa25843b2a95f9ed90c784f72491243f72a2fc",
-    "capability-sheet-B.pdf": "811225007bafcdeac6306e116c6d2a51f7d085c9f5fb29c8923325a25593a0ef",
-    "capability-sheet-B.png": "dbc9fba011ca97cc33d4bec57db07910218a6a6e35687a42cecdeb6433dfcb3c",
-    "capability-sheet-B.svg": "f48cff5f516764113b94980436f1f3606e17fe566d7ebcc395b87e4b70d0cd37",
-    "dashboard-frame.png": "15f7601e8563a6e12c2854d6138b87c5664356fe0e898bf308f499aa4674da47",
-    "label-ledger.txt": "0ff4ee45118c89338dd00474d2f82efb9a381ed68753744cd49089ef0f7afdf6"
+    "capability-sheet-A.pdf": "11e5971cd5085df588bac58159b2d5b6e1af1702839d0a9669c49298dc949ba2",
+    "capability-sheet-A.png": "10bee762227a9e918be52654c897d65217624a9f3a8512adb015019ff41e9099",
+    "capability-sheet-A.svg": "db06aa3a19cd45eb81b4a270ad3dac12e82722c58968b2644dd3d1d7f712b97b",
+    "capability-sheet-B.pdf": "60d8bba342aea2a7bde6f52f017ad467bbc396ca7243bdd4bc36c7bc2277b6da",
+    "capability-sheet-B.png": "80476fdd38196a970a62075d87ca25f888042ae2c23537415db3895bb55cf812",
+    "capability-sheet-B.svg": "12807ba081672c27cea0335f4c0607f630c78f214fd9d231099d9acee1ad8a73",
+    "label-ledger.txt": "a1ffdfb5cafb74cecd7ce516467d6c6c1a2f1948b137dc754a8884850f9a965e"
   },
   "pages": {
     "A": "H1 to H4, the four outcome heatmaps, 508 ok designs",
-    "B": "M1 all 930, M2 and M3 at 508, C1 the render at HEAD"
+    "B": "M1 all 930, M2 and M3 at 508"
   },
   "precision": "colourbar limits 2 dp outward; axis edges 2 dp; counts as integers; M panels print no value",
   "run": "a76c5e9",
-  "script_commit": "8670c01",
+  "script_commit": "f2171cb",
   "slug": "capability-sheet",
   "toolchain": {
     "matplotlib": "3.10.8",

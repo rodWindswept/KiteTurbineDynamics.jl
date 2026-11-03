@@ -1,0 +1,40 @@
+ok   rows read 930: 930
+ok   ok rows 508: 508
+ok   reject 301
+ok   clearance_reject 110
+ok   reject_twist 11
+ok   cells occupied 25: 25
+ok   smallest cell 10: 10
+ok   median cell 21: 21.0
+ok   largest cell 36: 36
+ok   no cell under five
+ok   r_hub edges match the signed list: [2.399, 4.116, 4.2248, 4.32, 4.5172, 5.116]
+ok   bank_top edges match the signed list: [0.0, 6.34, 10.7, 13.4, 14.96, 22.0]
+ok   fitness colourbar low 29.66: 29.66
+ok   fitness colourbar high 37.59: 37.59
+ok   fitness grid complete
+ok   fitness cells inside the bar (min 29.664000 vs 29.66, max 37.585000 vs 37.59)
+ok   P_mean colourbar low 5.28: 5.28
+ok   P_mean colourbar high 6.23: 6.23
+ok   P_mean grid complete
+ok   P_mean cells inside the bar (min 5.280000 vs 5.28, max 6.225000 vs 6.23)
+ok   FoS colourbar low 9.3: 9.30
+ok   FoS colourbar high 14.53: 14.53
+ok   FoS grid complete
+ok   FoS cells inside the bar (min 9.300000 vs 9.3, max 14.530000 vs 14.53)
+ok   clearance colourbar low 5.04: 5.04
+ok   clearance colourbar high 5.93: 5.93
+ok   clearance grid complete
+ok   clearance cells inside the bar (min 5.040000 vs 5.04, max 5.925000 vs 5.93)
+ok   every ok row passed the 2.5 FoS floor
+ok   ok FoS minimum 3.18: 3.18
+ok   ok clearance minimum 4.74 m
+ok   ok P_mean minimum 5.02 kW
+ok   clearance rejects all under 1.5 m: 1.42
+ok   twist rejects all over 1.0: 1.029
+ok   the 110 clearance rejects carry no twist reading (gate order)
+ok   winner fitness 27.364: 27.364
+ok   ranked curve holds 508 values: 508
+ok   worst ok design reads the population maximum: 60.646
+ok   label ledger holds 44 strings
+39 ok / 0 fail

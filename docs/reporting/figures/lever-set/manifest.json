@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/lever-set/lever-set.py --script-commit 94a0a99",
+  "command": "/usr/bin/python3 docs/reporting/figures/lever-set/lever-set.py --script-commit 7500ca0",
   "data_commit": "dd3cc6a",
   "inputs": {
     "extracts": [
@@ -32,21 +32,21 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "581dd6c732c552fbbdbe0c265461044b86b5dfc2ef8323c29db2ad831ecd62f0",
-    "lever-set-A.pdf": "9128757b241da5f4404ef6abc0c0e42c5e2b13d2adb80800adbc36fa2e810ce6",
-    "lever-set-A.png": "f3f5255ed57f2ae8006dcb1bd1b95e13be336c486cced0b161e863241dccc6ec",
-    "lever-set-A.svg": "7b8ab80b181540f7209e4537efd18a7ee877fdb6e2d8d99c00c99966282b31a6",
-    "lever-set-B.pdf": "a177e8b88abd6fa97da5fe521869f90f12ec44559b99be6fe01fe7ad8d63993c",
-    "lever-set-B.png": "770e5c74cb187f60d7d617cb2971938b0c9d86766825564c5cc58156f643750b",
-    "lever-set-B.svg": "978b73e758666668e7d959110192ffbbbda4000ba6a85567e17c3950d4ac1f7b"
+    "label-ledger.txt": "eb4c58ea5e51bdc173b3c2f17cbe13c4f023deba63b6dbc08858dfb6bde0962b",
+    "lever-set-A.pdf": "16bb43652d47ddddafee48217165b2f676a473532fa1f9a6d25ab315a4ee0bf1",
+    "lever-set-A.png": "71ded52fdf30dc226741a559f266c9f16043c3626cb833d9e0aaa15682eaec4d",
+    "lever-set-A.svg": "b9f8dfc930c6dc7a13dc2a4db25e58c66730dbebca8cd41f703bdc416681fc1f",
+    "lever-set-B.pdf": "2a4034d199959a1f74b0cbcdee0d99062097e717de3f18468572fc0eaaafd7e0",
+    "lever-set-B.png": "32a548976067714b04dbf482931912645b7c77319d1254bb36ad7ee00cd2be41",
+    "lever-set-B.svg": "216d1687f72ef30f659e50a1fd2bf2cc5c897165bcd0c7b8d9cb8a58d361d9da"
   },
   "precision": "rho 3 dp; shift 2 dp; charge sums 2 dp; ok share 1 dp; populations as integers",
   "run": "a76c5e9",
   "script": {
     "path": "docs/reporting/figures/lever-set/lever-set.py",
-    "sha256": "e9013221a4e73ebfb224f2e05a05cd8a8c1a554a528b422a27164de1c4898bf5"
+    "sha256": "cdc237b108df32a8e94e2637c766a85988c1cc3776f00a5d9689642d248eae09"
   },
-  "script_commit": "94a0a99",
+  "script_commit": "7500ca0",
   "slug": "lever-set",
   "toolchain": {
     "matplotlib": "3.10.8",

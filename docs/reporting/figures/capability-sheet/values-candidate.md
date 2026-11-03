@@ -45,8 +45,8 @@ and cell positions are not listed. They carry no claim.
   three are the analytic bounds of the statistic, not measurements. No
   coefficient prints.
 - **M3** prints gene keys and the axis scale. It prints no design value.
-- **C1** prints the frame text of the dashboard. That text is not a
-  report value.
+- **C1** left the plate at the founder cut (2026-11-01). It printed the
+  frame text of the dashboard, which was not a report value.
 
 ## 5. Candidate list, not a signature
 

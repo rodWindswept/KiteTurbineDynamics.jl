@@ -8,13 +8,11 @@
 5.93
 6.23
 9.30
-C1  The dashboard frame at HEAD · v1 interface · canonical 5-line · render, not a read
 Every panel reads the 508 designs that cleared every gate. FoS, clearance and P_mean carry floors in the caption.
-Figure 10   What the platform draws
 FoS  ·  -
 M1  Parallel coordinates
 all 930 designs, ten genes on their own ranges
-M1 reads all 930 designs. M2 and M3 read the 508 ok designs. C1 is a render at HEAD, not a dataset read.
+M1 reads all 930 designs. M2 and M3 read the 508 ok designs.
 M2  Gene correlation
 Spearman, 508 ok designs
 M3  The objective, ordered
@@ -22,6 +20,7 @@ M3  The objective, ordered
 P_mean  ·  kW
 Plate A  ·  four outcomes on one gene pair  ·  508 ok designs  ·  one colourbar per panel
 Plate B  ·  keys only, no value printed  ·  populations named per panel
+What the platform draws
 bank_bot
 bank_top
 bank_top, degrees
@@ -30,8 +29,8 @@ blade_top
 clearance  ·  m
 clearance reject (110)
 colour is the cell median of the outcome, never the mean. Bar limits are the smallest and largest cell medians, rounded outward to 2 dp.
-data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-002, NR-005 · script 8670c01
-data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-078 to NR-082 · script 8670c01
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-001, NR-002, NR-005 · script f2171cb
+data dd3cc6a · run a76c5e9 · era post-95c385d_wind-authority · rows NR-078 to NR-082 · script f2171cb
 density
 fitness  ·  kg-eq
 fitness, kg-eq
