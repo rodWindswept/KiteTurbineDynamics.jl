@@ -1,0 +1,59 @@
+name: Ontology invariants
+
+# The Windswept ontology axioms, evaluated as CI build-breakers against a
+# real ODE gate run of the reference machine (S2-class fold seed, 5 kW).
+# Phase 1-3 of the ontology-to-execution bridge (founder-approved 2026-11-04):
+#   binding.yaml maps axiom symbols to KTD telemetry fields,
+#   export_ontology_telemetry.jl produces the telemetry,
+#   test_ontology_invariants.py evaluates the JSON-LD expressions.
+# Fatal axiom violations exit 1 and turn the build red.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'scripts/ode_gate_v13.jl'
+      - 'scripts/export_ontology_telemetry.jl'
+      - 'scripts/test_ontology_invariants.py'
+      - 'tests/ontology/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'scripts/ode_gate_v13.jl'
+      - 'scripts/export_ontology_telemetry.jl'
+      - 'scripts/test_ontology_invariants.py'
+      - 'tests/ontology/**'
+
+jobs:
+  ontology:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone CoaxialAutogyroStacking
+        run: |
+          git clone https://github.com/rodWindswept/CoaxialAutogyroStacking.jl.git ../CoaxialAutogyroStacking.jl
+          echo "CoaxialAutogyroStacking cloned"
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.12'
+
+      - name: Instantiate + develop
+        run: |
+          julia --project=. -e '
+            using Pkg
+            Pkg.develop(path="../CoaxialAutogyroStacking.jl")
+            Pkg.instantiate()
+          '
+
+      - name: Export ontology telemetry (ODE gate run)
+        run: julia --project=. scripts/export_ontology_telemetry.jl
+
+      - name: Evaluate ontology invariants
+        run: |
+          pip install --quiet numpy
+          python3 scripts/test_ontology_invariants.py

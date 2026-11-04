@@ -1,0 +1,24 @@
+# Ontology CI binding — maps Windswept ontology axiom symbols to KTD telemetry.
+#
+# Source of truth: the Windswept Ontology Core (desktop: ~/Documents/kites/ontology/).
+# The JSON-LD next to this file (tests/ontology/ontology-core.jsonld) is a
+# VENDORED copy, refreshed from the ontology repo; update it whenever the
+# ontology axioms change (R60, max(T_section) > 0, is the current tension form).
+#
+# Telemetry is produced by scripts/export_ontology_telemetry.jl on the
+# S2-class fold seed (5 kW reference machine, L = 18.8 m).
+
+bindings:
+  # betz_goldstein_limit: Cp <= 16/27
+  Cp: "telemetry.power_coefficient"
+  # torsional_stability_warning: collapse_margin < delta_peak / delta_crit
+  collapse_margin: "telemetry.max_twist_ratio"
+  delta_crit: 1.0            # KTD's twist ratio basis: ratio to the geometric crossing limit
+  delta_peak: null           # restoring-torque peak not yet exported by KTD — axiom SKIPPED until supplied
+  # torsional_collapse_fatal: delta_operating < delta_crit
+  delta_operating: "telemetry.max_twist_ratio"
+  # positive_tension_constraint: max(T_section) > 0 (R56 full-section slack, R60 max form)
+  T_section: "telemetry.tension_matrix"
+
+parameters:
+  slack_threshold_N: 5.0     # KTD convention (get_max_rope_tension: T < 5.0 N reads slack)

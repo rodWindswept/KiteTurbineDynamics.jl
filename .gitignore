@@ -72,3 +72,4 @@ run_gh_ktd_bridge_reminder.ics
 # Ran without a provenance stamp (git hash + physics era + geometry fingerprint).
 # Stamp it before committing, per ROD_NOTES.
 scripts/results/control_maps/power_curve_quick.csv
+tests/ontology/telemetry.json
