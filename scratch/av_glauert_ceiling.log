@@ -1,0 +1,15 @@
+grid max: Cp 0.5192286517 at a 0.3433687500  (gamma 30 deg)
+cubic root in (0, 0.5) at c=0.8660254038: a = 0.3433687629, Cp = 0.5192286517
+axial anchor: max 0.5925925926 at a 0.3333332500 (Betz 16/27 = 0.5925925926 at 1/3)
+printed pair: 0.5192 at a = 0.3434; computed 0.5192 at a = 0.3434
+
+checks: 9 total, 0 fail
+  ok   grid max 0.5192 0.519229
+  ok   argmax 0.3434 0.343369
+  ok   cubic root 0.3434 0.343369
+  ok   cubic-root Cp 0.5192 0.519229
+  ok   cubic equals derivative condition at a=0.2 2.78e-17
+  ok   cubic equals derivative condition at a=0.3434 2.78e-17
+  ok   cubic equals derivative condition at a=0.45 1.39e-16
+  ok   axial max 16/27 0.5925925926
+  ok   axial argmax 1/3 0.3333332500
