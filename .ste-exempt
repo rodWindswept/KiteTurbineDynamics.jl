@@ -85,3 +85,11 @@ docs/agents/stale-phrases.md
 # against the returned copy. The builder's own prose in the file measures
 # 1.92/100w, under the 2.0 block. New team prose in the file must stay clean.
 docs/reporting/feedback/2026-10-20-founder-return-3-comments.md
+
+# Extension (2026-11-06, hermes seat, room may flip): the Tallak Tveide
+# review package (report review, ontology addendum, samara results note)
+# joins the verbatim external relay class. Amend-only as received. New
+# team material written against them must still be STE-clean.
+docs/reporting/feedback/2026-11-06-tallak-review.md
+docs/reporting/feedback/2026-11-06-tallak-review-ontology-addendum.md
+docs/reporting/feedback/2026-11-06-tallak-samara-results.md
