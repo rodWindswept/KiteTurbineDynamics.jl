@@ -1186,3 +1186,17 @@ The cited count holds at 59.
 Words read 11,855.
 STE holds 32 total at 0.27 per 100 words.
 Em dashes read 0.
+
+v0.90 pass by @science-writer (2026-11-06).
+
+The E3 power-gap rewrite lands in section 2.3.
+The trend and averaging causes come out.
+Jensen inequality carries the sign argument.
+The gap reads 57 W against a 29 W window swing (NR-014).
+The torque offset reads 396.76 N·m against 401.03 N·m (NR-030).
+The draft ticks to v0.90.
+
+Words read 11,981 from 11,855.
+STE holds 31 total at 0.26 per 100 words.
+Em dashes read 0.
+The cited count holds at 59.

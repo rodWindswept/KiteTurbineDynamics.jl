@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.89. Date 2026-11-01.
+Internal engineering report. Draft v0.90. Date 2026-11-01.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -340,9 +340,20 @@ derived ratio, not the instantaneous k times omega squared.
 The two differ slightly: P_mean 5.309 kW against k times the cube of
 the window-mean ground-ring speed, 5.366 kW, a 1.07 per cent gap.
 
-The exact source of the gap is open.
-It may come from a slow speed trend across the window, from
-ground-ring drag, or from how the instantaneous power is averaged.
+A trend or an averaging effect would push P_mean up, not down.
+The load law sets each sample at k times the cube of its own speed.
+For any speed history, the mean of the cube is at least the cube of the mean (the Jensen inequality).
+So a speed trend, or any averaging, can only push P_mean above the cube of the mean speed.
+It cannot push P_mean below it.
+
+The sampled power is therefore not k times the cube of the sampled speed.
+The gap is 57 W, and the whole window swing is 29 W (NR-014), so the gap is systematic.
+
+The torque shows the same offset.
+The delivered value is 396.76 N·m (NR-030).
+The load law gives 401.03 N·m at the mean speed (NR-015, NR-029).
+The gap sits between the delivered torque and the load law.
+Its physical source stays open for the gate-trace probe.
 
 At the heavy end the load raises the torque and the line tension, so FoS falls.
 The FoS_min column reads 36.4 at k 2.24, down to 24.3 at k 3.0 (NR-047).
