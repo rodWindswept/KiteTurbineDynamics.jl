@@ -1200,3 +1200,34 @@ Words read 11,981 from 11,855.
 STE holds 31 total at 0.26 per 100 words.
 Em dashes read 0.
 The cited count holds at 59.
+
+v0.91 pass by @author (2026-11-06).
+
+The Tallak derivation blocks land as a new appendix.
+The appendix reads TRPT shaft section: closed forms.
+Ten blocks print verbatim.
+Three print with the science-writer adjustments: block 4 units, block 8 domain, block 9 name.
+The Glauert value stays out until its row signs.
+
+The appendix cites the margin rows.
+S1 reads 2.03 and S5 reads 2.69 (NR-040).
+The extra digits wait on the display ruling.
+
+E1 corrects the blade sentence.
+The blade crosses the ring, and its tip sits at 5.630 m (NR-032).
+r_rotor is the power-sizing radius.
+
+E2 names the per-rotor Betz basis.
+The screen reads the untilted annulus and is a loose tripwire (NR-034).
+
+E4 notes the twist charge cap.
+The charge at the floor cap sits above the 1e9 reject cost.
+The reject-ordering sentence takes the qualification.
+
+No number and no signed row moves.
+The cited count holds at 59.
+The bracket census holds at 11.
+
+Words read 12,726 from 11,981.
+STE holds 31 total at 0.24 per 100 words.
+Em dashes read 0.

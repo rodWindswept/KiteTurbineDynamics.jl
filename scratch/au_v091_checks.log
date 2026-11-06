@@ -1,0 +1,15 @@
+v0.91 checks 2026-11-06T14:17:23Z base 9c403f7
+--- draft lint
+2026-10-08-report-first-draft.md words=12726 total= 31 per100w=  0.24 em_dash= 0
+--- tracker lint
+draft-tracker.md                 words=10136 total= 42 per100w=  0.41 em_dash= 1
+--- receipt lint
+author-2026-11-06-tallak-closed-forms.md words= 418 total=  0 per100w=  0.00 em_dash= 0
+--- banned values absent
+0.5192 hits=0
+2.0252 hits=0
+2.6883 hits=0
+--- citations
+rc=0
+== cited rows in 2026-10-08-report-first-draft.md: 59
+== every cited row present and signed (85 signed rows total)
