@@ -6,7 +6,7 @@
 The sweep changes no register row and no draft line. This record is its only
 artifact.
 
-**Method.** Each sweep runs four checks:
+**Method.** Each sweep runs five checks:
 
 - The STE gate by hand. Command: `python3 ste-lint.py --fail-above 2.0 <file>`.
 
@@ -15,6 +15,8 @@ artifact.
 - A value cross-check. Every printed value against its signed row or side block, at the quoted precision.
 
 - A number-token diff. The current draft against the previous one. The pattern: `(?<![\w-])\d+(?:\.\d+)?(?![\w-])`. It ignores identifiers and dates.
+
+- A form census, run alongside the token diff and reported with it. The pattern: `\b\d+/\d+\b` for a fraction, `\b[a-z]\s*=\s*\d+(?:\.\d+)?(?:/\d+)?` for an anchor, and `\b\d+(?:\.\d+)?\s*(?:per cent|degrees)\b` for a stated measure. The token diff reads `16/27` as the bare token `27`, and it reads `a = 1/3` as nothing at all, because `1` and `3` already print as section numbers. So a sweep reports the form set as well as the token set, and a form counts as an arrival when its whole expression is new even though its digits are old. The anchor pattern takes an optional fraction tail, or `a = 1/3` reads as the anchor `a = 1` plus a stray fraction. Forms already in the draft are set aside by set difference, so the DOI and ISBN shapes a reference list carries do not read as arrivals.
 
 ## Sweep 1: v0.2, 2026-10-08
 
