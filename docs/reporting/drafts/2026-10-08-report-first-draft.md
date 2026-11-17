@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.91. Date 2026-11-06.
+Internal engineering report. Draft v0.92. Date 2026-11-17.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -11,29 +11,58 @@ Sections 1 to 6 carry their text.
 Nomenclature stays incomplete.
 A section marked [PENDING] waits on a gate.
 
-**Abstract.** This report presents a search for a 5 kW-class
-ground-generation rotary kite turbine with a tensile rotary power
-transmission (TRPT).
+**Abstract.** This report asks one question.
+Can a kite turbine of about 5 kW carry its power to the ground on a shaft of tethers?
+The machine is a ground-generation rotary kite turbine.
+A tensile rotary power transmission (TRPT) carries the torque down as tension in the tethers.
+The generator stays on the ground.
+
+A differential-evolution campaign searched 930 candidate designs (NR-001).
 The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale.
-A differential-evolution campaign evaluated 930 candidate designs under one fixed power-law generator load, each scored on the measurement window (NR-001).
+Every design runs under one fixed power-law generator load.
+The campaign scores each design over the same simulation window.
 
-The campaign winner is the best feasible candidate under the campaign objective and the gates.
-Its mean mechanical power is 5.309 kW at the site wind, 11.01 m/s at 9.41 m (NR-008, NR-032).
-All checked TRPT rings and twist segments operate below their failure boundaries at the final operating point (NR-021, NR-022).
-The minimum factor of safety is 14.972 (NR-009).
+Of the 930 designs, 508 pass every gate (NR-002).
+The campaign ranks designs on an objective that reads in kilograms equivalent.
+The best feasible value reads 27.364 kg-equivalent against 36.109 at the common start point (NR-005, NR-006).
 
-At the winner operating point, the least segment torque margin is
-2.03, at S1, the first of the five segments between the rings
-(NR-040).
-The margin is torque capacity over the segment torque it carries, and the least value governs.
+At the winner operating point the mean mechanical power reads 5.309 kW (NR-008).
+The site wind reads 11.01 m/s at 9.41 m (NR-008, NR-032).
+The airborne mass reads 25.698 kg (NR-018).
 
-All numbers come from one version of the model, the physics era `post-95c385d_wind-authority`.
-That version applies the bank derate, which cuts rotor power as the blades bank.
-The study is simulation-only.
-Blade integrity is not yet gated, and the outer stiffening bridles of real field turbines sit outside the model.
-A lifter kite can modulate its tension across wind speeds, and the report treats that ability as an assumption.
+The winner carries six rings and three lines, with one active rotor (NR-011).
+Its topmost ring radius is 4.580 m (NR-011).
+It reaches 27.75 per cent of the Betz ceiling on its wind-normal area (NR-034).
+The least factor of safety reads 14.972 (NR-009).
+Every checked ring and every checked twist segment stays below its failure boundary at that point (NR-021, NR-022).
 
-The search is a screen, not a survey.
+The least segment torque margin reads 2.03 at S1 (NR-040).
+S1 is the first of the five segments between the rings.
+That margin divides the torque capacity of the segment by the torque the segment carries.
+The least margin governs.
+
+One version of the model supplies every number here.
+That version stays fixed across the search.
+
+Seven limits bound the result, and this report does not settle them.
+
+- Blade integrity has no gate yet.
+  The blade root factor of safety is infinite in the model.
+
+- The tether-to-blade bridling of flown blades is absent from the main rotor.
+
+- Rotor-to-rotor blocking is a constant 85 per cent at any legal spacing.
+
+- Launch and recovery are not simulated.
+
+- The wind is steady and sheared.
+  It carries no gust, no turbulence and no direction change.
+
+- The report assumes that a lifter kite can hold its tension across the wind range.
+
+- No machine flew in this study.
+
+The search reads as a first pass over a limited design space, not as a survey.
 The report does not claim a global optimum.
 
 **Keywords.** airborne wind energy, kite turbine, ground-generation,
@@ -349,7 +378,8 @@ So a speed trend, or any averaging, can only push P_mean above the cube of the m
 It cannot push P_mean below it.
 
 The sampled power is therefore not k times the cube of the sampled speed.
-The gap is 57 W, and the whole window swing is 29 W (NR-014), so the gap is systematic.
+The gap is 57 W, the difference between the delivered torque and the load law (NR-030, NR-015, NR-029).
+The whole window swing is 29 W (NR-014), so the gap is systematic.
 
 The torque shows the same offset.
 The delivered value is 396.76 N·m (NR-030).
@@ -1283,7 +1313,6 @@ A bracketed number in the body points at its entry here.
 Entries 1 to 10 sit in the order the body first names them.
 
 Eighteen sources follow.
-Seventeen carry verified sources.
 The Hancock deck cites as unpublished.
 The founder dropped the Ranneberg entry.
 
@@ -1367,8 +1396,10 @@ Every public post will cite register rows by ID.
 
 The version history, the working notes, the open requests to the
 analysis room and the seat notes sit in
-`docs/reporting/draft-tracker.md`. This document carries only
+`docs/reporting/draft-tracker.md`. The body carries only
 reader-facing material.
+
+Seventeen of the eighteen reference entries carry verified sources.
 
 ## Appendix: Claims and evidence
 

@@ -1231,3 +1231,20 @@ The bracket census holds at 11.
 Words read 12,726 from 11,981.
 STE holds 31 total at 0.24 per 100 words.
 Em dashes read 0.
+
+## v0.92, the gate 3 fold (2026-11-17, author)
+
+The abstract takes the ruled block, frozen by the science-writer at `2a0514f5`.
+The block reads 411 words at STE 0.00.
+Two amendments carry: the Betz share reads on the wind-normal area, and the blocking line reads at any legal spacing.
+
+The 57 W line takes its bracket (NR-030, NR-015, NR-029) and states the subtraction.
+The PL12 status sentence leaves section 8 for document control, and the control block names the count of eighteen.
+The cited count holds at 59.
+
+Words read 12,909 from 12,726.
+STE reads 30 total at 0.23 per 100 words.
+Em dashes read 0.
+No number moves except the two amendments, which restate a basis and a scope in the abstract.
+
+Author, 2026-11-17.
