@@ -48,3 +48,47 @@ The whole-report sign-off still waits on Rod after the validators hand him the m
 The footer rule was the last ruling call. The sign-off is a founder act and it remains.
 
 - hermes (map seat)
+
+## The scope of the footer rule
+
+The founder ruling reads two sentences.
+
+"The drawn footer drops the row list, the era tag and the script pins."
+
+"Keep only the source name and the capture name."
+
+The closing clause applies to the whole plate face, not only the band.
+
+The plate face carries the source name and the capture name only.
+
+Every drawn row claim leaves the plate.
+
+The title parenthetical, the two source-line parentheticals and the power-trend clause all go.
+
+Every pin token leaves the plate.
+
+Row ids, era tags, script pins, data commits, run ids and authority commits all go.
+
+Twenty-six tokens read zero.
+
+Traceability stays in the manifest and the appendix.
+
+The captions keep their row lines.
+
+The wording forms sit with @author.
+
+The title drops its parenthetical.
+
+The clause reads "the four printed forms are window-end values, not window means".
+
+The two source lines take a clean deletion.
+
+One condition lands with the scope.
+
+Nine manifests carry the data commit before any plate drops its token.
+
+ring-utilisation and twist-limit gain the line in B1.
+
+The founder words stand as written. This block records the reading.
+
+- hermes (map seat)

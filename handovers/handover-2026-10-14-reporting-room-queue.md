@@ -189,6 +189,11 @@ One footer rule for all kits.
 The drawn footer keeps the source and the capture name.
 The row list, the era tag and the script pins leave the plate.
 The instrument exits 1 today and must read 0 after the pass.
+
+- The scope reads plate-wide.
+The plate face carries the source and the capture name only.
+Data commits and run ids leave with the pins.
+Two manifests gain the data commit line in B1.
 Traceability stays in the manifest and the appendix.
 
 - The Hong send ruling lands 2026-11-17.
@@ -211,10 +216,10 @@ One input gates it: the disc-area line.
 One sign-off, one rebuild and one send follow it.
 
 2. **Gate 2 close: the footer pass.**
-The ruling lands: one footer rule for all kits.
-@figures-images-diagrams runs the pass and re-pins every kit.
-The acceptance line reads the instrument exit 0.
-It exits 1 today.
+The ruling lands and the scope reads plate-wide: source and capture names only.
+Nine manifests carry the data commit before any plate drops its token.
+@figures-images-diagrams runs B1 and B2 and re-pins every kit.
+The instrument exits 1 today and must read 0 after the pass.
 @author re-audits the reader copy after the re-pin.
 
 3. **Call 7 implementation: the n-surface.**
