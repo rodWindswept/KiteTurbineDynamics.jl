@@ -230,6 +230,7 @@ def main():
     # Same order as the PDF route: resolve seats first, then run the
     # citation gate over the assembled document (draft + kit captions).
     text, seats = resolve_seats_md(root, text, reader=args.reader)
+    bdp.plate_bytes_gate(root, seats)
     surfaces = [
         root / bdp.FIG_ROOT / slug / "captions.md"
         for slug in seats

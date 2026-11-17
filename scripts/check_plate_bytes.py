@@ -13,9 +13,9 @@ because both read the same record. This script tests the record itself.
 For every ``docs/reporting/figures/*/manifest.json`` it checks three things:
 
 1. every recorded output hash equals the blob at ``--rev`` (default HEAD);
-2. the script at the recorded commit — the ``script_commit`` field, or the pin
-   carried in the build ``command`` as ``--script-commit <hash>`` — hashes to
-   the recorded ``script.sha256``;
+2. the script at the recorded commit — the ``script_commit`` field, the pin
+   carried in the build ``command`` as ``--script-commit <hash>``, or a capture
+   gallery's ``run_commit`` — hashes to the recorded ``script.sha256``;
 3. every recorded input hash equals the blob at ``--rev``.
 
 A section-bound input is the one refinement, and it is a stricter test rather
@@ -29,7 +29,14 @@ manifest said so by recording a section.
 
 Usage:
     python3 scripts/check_plate_bytes.py [--rev REV] [-q]
+    python3 scripts/check_plate_bytes.py --worktree [--slugs a,b] [-q]
     python3 scripts/check_plate_bytes.py --git-show PATH
+
+``--worktree`` hashes the files on disk instead of the blobs at ``--rev``,
+because a build embeds the worktree: ``build_draft_pdf.py`` and
+``build_draft_docx.py`` call this script that way, scoped by ``--slugs`` to
+the seats the build is about to embed. HEAD mode stays the default for the
+standalone audit, where the question is what the record claims about a commit.
 
 ``--git-show`` prints the blob hash of one path at ``--rev`` and exits; it is
 the one-liner form used when a manifest needs re-pinning after a deliberate
@@ -66,11 +73,37 @@ PROV_HEAD_RE = re.compile(r"^## .*provenance.*$", re.M | re.I)
 HISTORY_LIMIT = 200
 
 
-def blob(rev, path):
+TREE = False  # set by --worktree: hash the files the build will embed, not HEAD
+
+
+def worktree_bytes(path):
+    """The bytes of ``path`` on disk, or None when it is absent."""
+    try:
+        with open(os.path.join(ROOT, path), "rb") as fh:
+            return fh.read()
+    except OSError:
+        return None
+
+
+def git_blob(rev, path):
     """Return the bytes of ``path`` at ``rev``, or None when it is absent."""
     res = subprocess.run(["git", "-C", ROOT, "show", f"{rev}:{path}"],
                          capture_output=True)
     return res.stdout if res.returncode == 0 else None
+
+
+def blob(rev, path):
+    """Bytes of ``path``: the worktree when TREE, else the blob at ``rev``.
+
+    A build embeds the bytes on disk, so the gate that guards it has to read
+    the same bytes. HEAD mode stays the default for the standalone audit,
+    where the question is what the record claims about a commit.
+    """
+    if TREE and rev in ("HEAD", "WORKTREE"):
+        data = worktree_bytes(path)
+        if data is not None:
+            return data
+    return git_blob(rev, path)
 
 
 def history(path, limit=HISTORY_LIMIT):
@@ -89,6 +122,19 @@ def commit_holding(path, want):
     return None, None
 
 
+def input_bytes(rev, rel_kit, path):
+    """Bytes for an input record: repo-relative first, then kit-relative.
+
+    Kits record input paths both ways. A capture gallery records its paths
+    relative to its own folder, so reading those against the repo root
+    reported three present files as MISSING.
+    """
+    data = blob(rev, path)
+    if data is not None:
+        return data
+    return blob(rev, f"{rel_kit}/{path}")
+
+
 def section_bytes(data, number):
     """Slice the ``## <number>.`` section out of a markdown blob."""
     text = data.decode("utf-8")
@@ -104,11 +150,21 @@ def section_bytes(data, number):
 
 
 def script_commit(man):
+    """The commit the manifest says drew the plate, in any of three shapes.
+
+    A ``script_commit`` field, a ``--script-commit`` argument in the build
+    command, or a capture gallery's ``run_commit``, which names the pass whose
+    tree holds every frame at the hash the stamp records. Reading only the
+    first two shapes reported the two gallery kits as unpinned when the pin
+    gate had read them correctly all along.
+    """
     commit = man.get("script_commit")
     if commit:
         return commit
     hit = re.search(r"--script-commit ([0-9a-f]{7,40})", man.get("command", ""))
-    return hit.group(1) if hit else None
+    if hit:
+        return hit.group(1)
+    return man.get("run_commit")
 
 
 def caption_provenance(data):
@@ -125,22 +181,47 @@ def caption_provenance(data):
 
 
 def prov_script_pin(prov):
-    """The backticked commit in the provenance segment that names the script."""
+    """The backticked commit in the provenance block that names the script.
+
+    Anchored on the word order the captions actually print. The old form took
+    the first backticked hex in any interpunct segment holding "script", which
+    read a line-per-claim block as one segment and returned the data commit:
+    a false stale pin on every kit that prints its provenance one claim per
+    line.
+    """
+    hit = re.search(r"script commit[^`\n]{0,40}`([0-9a-f]{7,40})`", prov, re.I)
+    if hit:
+        return hit.group(1)
+    hit = re.search(r"script:[^`\n]{0,200}?at[^`\n]{0,40}`([0-9a-f]{7,40})`",
+                    prov, re.I)
+    if hit:
+        return hit.group(1)
     for seg in prov.split("\u00b7"):
         if "script" not in seg.lower():
             continue
-        hit = re.search(r"`([0-9a-f]{7,40})`", seg)
+        hit = re.search(r"script[^0-9a-f]{0,80}`([0-9a-f]{7,40})`", seg, re.I)
         if hit:
             return hit.group(1)
     return None
 
 
 def prov_rows(prov):
-    """The register rows the provenance line claims, or None when it names none."""
+    """The register rows the provenance line claims, or None when it names none.
+
+    Ranges print in the captions as ``NR-078 to NR-082``, so a range expands
+    to its members before the set compare. Reading the notation blind reported
+    a row-set disagreement on a kit whose manifest carried every member.
+    """
     hit = re.search(r"rows:? ([^\n\u00b7]*)", prov)
     if not hit:
         return None
-    return set(re.findall(r"NR-\d+", hit.group(1)))
+    span = hit.group(1)
+    rows = set(re.findall(r"NR-\d+", span))
+    for lo, hi in re.findall(r"NR-(\d+)\s*(?:to|\u2013|-)\s*(?:NR-)?(\d+)", span):
+        a, b = int(lo), int(hi)
+        if a <= b and b - a < 100:
+            rows.update(f"NR-{n:03d}" for n in range(a, b + 1))
+    return rows
 
 
 def file_records(obj):
@@ -157,13 +238,20 @@ def file_records(obj):
 
 
 def main():
+    global TREE
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--rev", default="HEAD", help="commit to read the bytes at (default HEAD)")
+    ap.add_argument("--worktree", action="store_true",
+                    help="hash the files on disk, which is what a build embeds, "
+                         "instead of the blobs at --rev")
+    ap.add_argument("--slugs", metavar="LIST",
+                    help="comma-separated kit slugs to check; default is every kit")
     ap.add_argument("-q", "--quiet", action="store_true", help="print only failures")
     ap.add_argument("--git-show", metavar="PATH",
                     help="print the blob hash of PATH at --rev and exit")
     args = ap.parse_args()
+    TREE = bool(args.worktree)
 
     if subprocess.run(["git", "-C", ROOT, "rev-parse", "--verify", args.rev],
                       capture_output=True).returncode != 0:
@@ -182,6 +270,15 @@ def main():
     if not manifests:
         print("check_plate_bytes: no manifests found — refusing to pass", file=sys.stderr)
         return 1
+    if args.slugs:
+        want = [s.strip() for s in args.slugs.split(",") if s.strip()]
+        have = {os.path.basename(os.path.dirname(m)) for m in manifests}
+        missing = [s for s in want if s not in have]
+        if missing:
+            print(f"check_plate_bytes: no manifest for {', '.join(missing)}",
+                  file=sys.stderr)
+            return 1
+        manifests = [m for m in manifests if os.path.basename(os.path.dirname(m)) in set(want)]
 
     total = passed = bad = 0
     lines = []
@@ -235,7 +332,7 @@ def main():
         for field in INPUT_FIELDS:
             for rec in file_records(man.get(field)):
                 p = rec["path"]
-                data = blob(args.rev, p)
+                data = input_bytes(args.rev, rel_kit, p)
                 section = rec.get("section")
                 if rec.get("section_sha256") and section is not None:
                     label = f"{p}#{section}"

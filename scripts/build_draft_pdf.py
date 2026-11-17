@@ -451,6 +451,32 @@ def appendix_pin_gate(root, args):
         sys.exit(proc.returncode)
 
 
+def plate_bytes_gate(root, seats):
+    """Fail the build when a kit's manifest does not describe the bytes on disk.
+
+    The mirror of the pin gate above: that one proves manifest -> appendix,
+    this one proves bytes -> manifest for the seats this build is about to
+    embed, which no build used to check. It reads the worktree, because the
+    worktree is what the builder copies into either copy. No skip flag, for
+    the same reason as the pin gate: a plate that moved must record its new
+    bytes in the same commit that carries them.
+    """
+    slugs = list(dict.fromkeys(s for s in seats if s))
+    if not slugs:
+        return
+    proc = subprocess.run(
+        [sys.executable, str(Path(__file__).parent / "check_plate_bytes.py"),
+         "--worktree", "--slugs", ",".join(slugs), "-q"],
+        capture_output=True, text=True,
+    )
+    if proc.returncode != 0:
+        sys.stderr.write(proc.stdout)
+        sys.stderr.write(proc.stderr)
+        print("[check] plate bytes gate failed - build aborted before any output",
+              file=sys.stderr)
+        sys.exit(proc.returncode)
+
+
 def build_once(root, args, route, summary_out=None):
     appendix_pin_gate(root, args)
     draft_path = root / args.draft
@@ -460,6 +486,7 @@ def build_once(root, args, route, summary_out=None):
     # (draft + embedded kit captions), so a caption-only cite to an unsigned
     # row fails the build instead of printing the row untraceably.
     text, seats = resolve_seats(root, text, reader=getattr(args, "reader", False))
+    plate_bytes_gate(root, seats)
     surfaces = [
         root / FIG_ROOT / slug / "captions.md"
         for slug in seats
