@@ -215,4 +215,12 @@ The page resolved on 2026-11-17.
 
 This section supersedes nothing.
 
+Where each result prints: the peak-torque identity gloss sits in the appendix beside the Tulloch line.
+
+The second result prints in the appendix in these words: "The geometry cancels out of the torque margin."
+
+The gate 1 receipt (`aero-validator-2026-11-17-gate1-signoff.md`) names both results.
+
+The record file `docs/validation/trpt-reference/12-tallak-tveide-pyramid-nov-2026.md` carries the identity but not the margin words.
+
 The ruling receipt reads `room-responses/hermes-2026-11-17-samara-option-a-ruling.md`.
