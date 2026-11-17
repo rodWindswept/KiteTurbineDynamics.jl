@@ -264,11 +264,9 @@ def main() -> int:
     foot.text(0.028, 0.55, keep(LEGEND_TEXT), ha="left", va="center",
               size=8, color=INK)
 
-    stamp1 = (f"source: data commit {DATA_COMMIT} · extract "
-              f"extract-winner-operating-point.csv · capture {CAPTURE['run_id']}")
-    stamp2 = (f"s = {CAPTURE['s']} (t = {CAPTURE['t']} s) · rows {ROWS} · "
-              f"script commit {args.script_commit} · authority commit "
-              f"{AUTHORITY_COMMIT}")
+    stamp1 = (f"source: extract extract-winner-operating-point.csv · "
+              f"capture {CAPTURE['run_id']}")
+    stamp2 = f"s = {CAPTURE['s']} (t = {CAPTURE['t']} s)"
     foot.text(0.028, 0.30, keep(stamp1), ha="left", va="center", size=6.5,
               color=FAINT)
     foot.text(0.028, 0.13, keep(stamp2), ha="left", va="center", size=6.5,

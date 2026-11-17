@@ -195,13 +195,12 @@ INSET_ROWS = [
 ]
 
 TITLE = ("Kite turbine anatomy: the ground-generation rotary machine")
-SUB = ("Island-3 winner geometry (NR-011): six rings, three TRPT lines, one active rotor. "
+SUB = ("Island-3 winner geometry: six rings, three TRPT lines, one active rotor. "
        "The shaft is drawn at the operating elevation. The dashed outline sits outside "
        "the primary render scope.")
 
-STAMP1 = ("source: island-3 winner decode, best_vector.csv, data commit dd3cc6a "
-          "· rows NR-011 · NR-017 · NR-043")
-STAMP2 = ("script: scratch/fig1_decode_winner.jl · drawn to the 5 m scale bar "
+STAMP1 = ("source: island-3 winner decode, best_vector.csv")
+STAMP2 = ("drawn to the 5 m scale bar "
           "· dashed outline: outside the primary render scope")
 
 SCALE_BAR: dict = dict(x0=17.5, x1=22.5, z=-0.5, label="5 m")

@@ -4,7 +4,7 @@
     "s": "1724859",
     "t": "49.99999483862295"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit e3d664c",
+  "command": "/usr/bin/python3 docs/reporting/figures/twist-limit/twist-limit.py --script-commit deeb6aac",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
@@ -19,15 +19,15 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "af1a8d0c56a9324d4efac7defcde28a7be43793ecb27c7d3a77f2352bc903961",
-    "twist-limit.pdf": "200ddd20f03cdd1d74e67021c9725c729d44d186977d00fd88d11a221b6ff1d7",
-    "twist-limit.png": "f293b873e4f8fbe24e7757ca9eaead402ed311fa4869087efd7d205a2cac338b",
-    "twist-limit.svg": "e58287fe1cdf89e5805bcb2dfba944bbba169c1c975e993fa66207fecf82b967"
+    "label-ledger.txt": "c89ee60f76b3ad66768a571187f7594303beaa6d450615824ccfb477456578ab",
+    "twist-limit.pdf": "1a19c1964b68c1325d569569fe3a19b3c80e7a10df1579603171a4b9efd5d723",
+    "twist-limit.png": "7ca8c4a375cdbc857aa833c47815cedb985d803249f30edd06e65e45e5671eb4",
+    "twist-limit.svg": "29369d97a0d5f5f0350036628a9a8f42a46fd4950499d50811dc6abcfe4a08a1"
   },
   "precision": "angles 0.1 deg drawn; torque 0.1 N\u00b7m drawn; the panel-B gate mark at capacity / 1.5 from the signed constant (NR-052); mechanism reference as recorded",
   "script": {
     "path": "docs/reporting/figures/twist-limit/twist-limit.py",
-    "sha256": "58f0022b67ae12adf4134cee9150a007e1e8304d462d4f7f92854df77e81bed1"
+    "sha256": "7407c52021dd0c76a3d764f163691767e7aeeee8220dd35e48a53b0ad12530f4"
   },
   "slug": "twist-limit",
   "toolchain": {

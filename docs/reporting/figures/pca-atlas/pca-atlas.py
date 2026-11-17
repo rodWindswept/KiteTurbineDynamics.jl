@@ -252,10 +252,8 @@ def main() -> int:
         cbar.ax.tick_params(labelsize=5.5, length=1.5, pad=1.5, color=LINE)
         cbar.outline.set_edgecolor("#cccccc")
 
-    stamp1 = (f"source: island telemetry · data commit {DATA_COMMIT} · "
-              f"run {RUN} · era {ERA} · rows {ROWS}")
-    stamp2 = ("projection: z-scored 10-gene matrix, SVD · gene values over "
-              f"all 930 designs · script commit {args.script_commit}")
+    stamp1 = "source: island telemetry"
+    stamp2 = "projection: z-scored 10-gene matrix, SVD · gene values over all 930 designs"
     fig.text(0.045, 0.045, keep(stamp1), size=6.5, color=FAINT)
     fig.text(0.045, 0.016, keep(stamp2), size=6.5, color=FAINT)
 

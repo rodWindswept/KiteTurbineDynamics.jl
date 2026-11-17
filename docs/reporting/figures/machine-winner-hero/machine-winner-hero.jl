@@ -610,8 +610,8 @@ function main()
     text!(fax, (bx + bar_px + 10) / fig_w, 0.50; text="$(Int(SCALE_BAR_M)) m",
         fontsize=11.5, color=C_INK, align=(:left, :center))
 
-    stamp1 = "source: data commit $DATA_COMMIT · genome extract $GENOME_EXTRACT_ID (row $(h.label)) · capture $CAPTURE_ID (ring stations NR-021, per-segment twist NR-022)"
-    stamp2 = "rows $REGISTER_ROWS · script commit $script_commit · engine CairoMakie · PDF date normalised to 1970-01-01"
+    stamp1 = "source: genome extract $GENOME_EXTRACT_ID · capture $CAPTURE_ID"
+    stamp2 = "engine CairoMakie · PDF date normalised to 1970-01-01"
     stamp3 = "views: side is the shaft frame (distance along the shaft vertical) · plan looks along the shaft · downwind looks along the wind, foreshortened by the flown elevation"
     text!(fax, 14 / fig_w, 0.30; text=stamp1, fontsize=8, color=C_FAINT,
         align=(:left, :center))

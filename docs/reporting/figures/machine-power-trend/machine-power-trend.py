@@ -254,12 +254,10 @@ def main() -> int:
                   "only when a better design is recorded"),
              size=7, color=FAINT, style="italic")
     fig.text(0.012, 0.100,
-             keep("sources: the campaign telemetry, islands 1 to 3 \u00b7 "
-                  f"data commit {DATA_COMMIT} \u00b7 run {RUN_COMMIT}"),
+             keep("sources: the campaign telemetry, islands 1 to 3"),
              size=6.8, color=FAINT)
     fig.text(0.012, 0.062,
-             keep(f"rows {ROWS} \u00b7 script commit {args.script_commit} \u00b7 "
-                  "the four printed forms are the window-end member NR-062 signs"),
+             keep("the four printed forms are window-end values, not window means"),
              size=6.8, color=FAINT)
 
     # ---------------------------------------------------------------- save

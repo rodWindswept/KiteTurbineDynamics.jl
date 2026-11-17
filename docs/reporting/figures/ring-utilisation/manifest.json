@@ -4,7 +4,7 @@
     "s": "1724859",
     "t": "49.99999483862295"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit e3d664c",
+  "command": "/usr/bin/python3 docs/reporting/figures/ring-utilisation/ring-utilisation.py --script-commit deeb6aac",
   "inputs": {
     "extract": {
       "path": "docs/reporting/figures/pair-extract/extract-winner-operating-point.csv",
@@ -15,15 +15,15 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "e4f35949868bde6128ad6c98e465e658be9ba8255164fa2913d4dd1f4edec7dd",
-    "ring-utilisation.pdf": "a903117530af4e3ce0fa29be85953e6b49853585c1c3a9329b0a98e6f144af06",
-    "ring-utilisation.png": "dd096b883686ceb20a148633bda27cb1461fb84895a8387503aba0ce14203aea",
-    "ring-utilisation.svg": "384034291c531b560a11e416cabe1fd09c11a3764f0801ccd9b0bb2e381b6842"
+    "label-ledger.txt": "7fe49e2e7c635f789665ae8d1fce99fc40600ec0fa0c8c7984df4f070c627b46",
+    "ring-utilisation.pdf": "35ba12139fcd7962ab4d798854c05ae7bda1aa0369f08c22e6edb600b395583d",
+    "ring-utilisation.png": "4a5244782688b2e7186a81c61746fe04f889b99cadf64df4660dabdf29d3ed17",
+    "ring-utilisation.svg": "fb7396cae1171ce85918131c714d3e67a61f5b6e1a9888f9cffb44bac345a947"
   },
   "precision": "FoS readouts at 0.001, nearest integer above 1e4; the campaign gate draws at 1 / 2.5 = 0.40 (NR-015)",
   "script": {
     "path": "docs/reporting/figures/ring-utilisation/ring-utilisation.py",
-    "sha256": "9c4646a45ca9e27e5107f076c712899c583a234ac62f3eec1b63313fff5d33fc"
+    "sha256": "4fa1761a2740614f302cc951d2e5cfdec3087f207fdc9b81d25a479b9009a07f"
   },
   "slug": "ring-utilisation",
   "toolchain": {

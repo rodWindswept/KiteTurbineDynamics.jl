@@ -450,8 +450,8 @@ function main()
         color=C_INK, linewidth=1.0)
     text!(fax, (bx + bar_px + 10) / fig_w, 0.64; text="$(Int(SCALE_BAR_M)) m",
         fontsize=9.5, color=C_INK, align=(:left, :center))
-    stamp1 = "source: data commit $DATA_COMMIT · extract $EXTRACT_ID.csv · picks the nearest feasible design per [1,99] window corner (NR-051)"
-    stamp2 = "rows $REGISTER_ROWS · script commit $script_commit · engine CairoMakie · PDF date normalised to 1970-01-01"
+    stamp1 = "source: extract $EXTRACT_ID.csv · picks the nearest feasible design per [1,99] window corner"
+    stamp2 = "engine CairoMakie · PDF date normalised to 1970-01-01"
     stamp3 = "shaft frame: distance along the shaft is vertical · the operating elevation is not drawn"
     text!(fax, 14 / fig_w, 0.40; text=stamp1, fontsize=8, color=C_FAINT,
         align=(:left, :center))

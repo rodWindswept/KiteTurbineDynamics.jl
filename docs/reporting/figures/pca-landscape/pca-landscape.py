@@ -364,10 +364,8 @@ def main() -> int:
         "step per generation", size=6.5, color=FAINT)
 
     # ------------------------------------------------------------ foot
-    stamp1 = (f"source: island telemetry · data commit {DATA_COMMIT} · "
-              f"run {RUN} · era {ERA} · rows {ROWS}")
-    stamp2 = ("projection: z-scored 10-gene matrix, SVD · variance shares "
-              f"NR-044 · script commit {args.script_commit}")
+    stamp1 = "source: island telemetry"
+    stamp2 = "projection: z-scored 10-gene matrix, SVD"
     fig.text(0.058, 0.088, keep(stamp1), size=6.5, color=FAINT)
     fig.text(0.058, 0.050, keep(stamp2), size=6.5, color=FAINT)
 
