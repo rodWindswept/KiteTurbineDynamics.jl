@@ -117,52 +117,86 @@ The prose fold reads nineteen line edits.
 
 ## Gate 3: the abstract rewrite
 
-The front matter and the abstract carry five internal elements.
-They read the version line, the status block, the era tag, the decision frame and the enum names.
-The rewrite removes all five.
-It states the seven open items as a plain list.
-It opens on the machine, and it gives the winner geometry.
+@science-writer landed a draft block at `1b897067`.
+That seat hands the ruling to this seat.
+This seat rules the block with five changes.
 
-It carries no citation token, because the strip removes them.
+The block keeps its structure.
+It asks the question first and names the machine second.
+That opening serves a reader who meets the report cold.
+The plain-unit habit stays.
+The register tokens stay, because the draft keeps its 59 cited rows and the reader build strips the tokens.
 
-### Proposed text
+Five changes follow.
 
-**Abstract**
+1. The airborne mass reads 25.70 kg in that block.
+   Row NR-018 reads 25.698 kg, and the draft prints that form at five sites.
+   25.70 is a second display form for one value, and no display ruling covers it.
+   The block prints 25.698 kg.
 
-This report studies a 5 kW-class rotary kite turbine.
-It generates on the ground and sends torque down a tensile rotary power transmission (TRPT).
-The machine carries multiple short rigid blades on a ring.
-The ring and the rings below it form a tensile shaft of tensioned lines.
-A wheel on the ground station holds the shaft and drives a generator.
+2. Four open items read in that block.
+   Section 4.3 carries five boundaries, and the summary adds two more.
+   The block states seven.
 
-The study searches the design space rather than surveying it.
-A differential-evolution campaign scored 930 candidate designs.
-Each design varied ring geometry, polygon count, rotor count, blade bank angle and blade scale.
-One fixed power-law generator load and one fixed set of gates held for every design.
-The campaign scored every design over one fixed measurement window.
+3. The block omits the winner geometry.
+   The geometry is the most useful datum a reader outside this project can hold.
+   The block adds the ring count, the line count and the topmost ring radius on NR-011.
 
-Of the 930 designs, 508 passed every gate.
+4. The block omits the Betz fraction.
+   The block adds 27.75 per cent on NR-034.
 
-The winner operates at a site wind of 11.01 m/s at 9.41 m.
-Its mean mechanical power is 5.309 kW.
-Its airborne mass is 25.698 kg.
-It carries six rings and three lines, one active rotor, and a topmost ring radius of 4.580 m.
+5. The block keeps the Summary for decision heading as it stands.
+   That frame addresses an internal decider.
+   Gate 2 also removes the Rows column under it.
+   The heading becomes Summary, and the table loses that column.
 
-It reaches 27.75 per cent of the Betz ceiling for its swept area.
-Its minimum factor of safety is 14.972.
-All checked rings and twist segments stay below their failure boundaries at the final operating point.
-The least segment torque margin is 2.03, at segment S1.
-The search improved the best objective from 36.109 to 27.364 kg-equivalent.
+One ownership point follows.
+The science-writer fold plan puts the version tick and the tracker entry in its step 6.
+The session order puts both in this seat.
+This seat takes them.
 
-A feasible 5 kW-class design exists in the searched space under this model and these gates.
-The result does not show flight readiness, a global optimum or full structural safety.
+### The ruled block
 
-**Open items.** Seven limits bound the result.
+```text
+**Abstract.** This report asks one question.
+Can a kite turbine of about 5 kW carry its power to the ground on a shaft of tethers?
+The machine is a ground-generation rotary kite turbine.
+A tensile rotary power transmission (TRPT) carries the torque down as tension in the tethers.
+The generator stays on the ground.
 
-- Blade integrity is not gated.
+A differential-evolution campaign searched 930 candidate designs (NR-001).
+The search varies ring geometry, polygon count, rotor count, blade bank angles and blade scale.
+Every design runs under one fixed power-law generator load.
+The campaign scores each design over the same simulation window.
+
+Of the 930 designs, 508 pass every gate (NR-002).
+The campaign ranks designs on an objective that reads in kilograms equivalent.
+The best feasible value reads 27.364 kg-equivalent against 36.109 at the common start point (NR-005, NR-006).
+
+At the winner operating point the mean mechanical power reads 5.309 kW (NR-008).
+The site wind reads 11.01 m/s at 9.41 m (NR-008, NR-032).
+The airborne mass reads 25.698 kg (NR-018).
+
+The winner carries six rings and three lines, with one active rotor (NR-011).
+Its topmost ring radius is 4.580 m (NR-011).
+It reaches 27.75 per cent of the Betz ceiling for its swept area (NR-034).
+The least factor of safety reads 14.972 (NR-009).
+Every checked ring and every checked twist segment stays below its failure boundary at that point (NR-021, NR-022).
+
+The least segment torque margin reads 2.03 at S1 (NR-040).
+S1 is the first of the five segments between the rings.
+That margin divides the torque capacity of the segment by the torque the segment carries.
+The least margin governs.
+
+One version of the model supplies every number here.
+That version stays fixed across the search.
+
+Seven limits bound the result, and this report does not settle them.
+
+- Blade integrity has no gate yet.
   The blade root factor of safety is infinite in the model.
 
-- The tether-to-blade bridling that flown blades carry is absent from the main rotor.
+- The tether-to-blade bridling of flown blades is absent from the main rotor.
 
 - Rotor-to-rotor blocking is a constant 85 per cent, so spacing changes nothing.
 
@@ -171,18 +205,20 @@ The result does not show flight readiness, a global optimum or full structural s
 - The wind is steady and sheared.
   It carries no gust, no turbulence and no direction change.
 
-- Lifter-kite tension modulation is an assumption, not a result.
+- The report assumes that a lifter kite can hold its tension across the wind range.
 
-- All results come from simulation.
-  No machine flew in this study.
+- No machine flew in this study.
 
-The figures and the data statement carry the provenance for every number here.
+The search reads as a first pass over a limited design space, not as a survey.
+The report does not claim a global optimum.
+```
 
-### Checks on the proposed text
+### Checks on the ruled block
 
+It reads 411 STE words.
 STE reads 0 at 0.00 per 100 words. Em dashes read 0.
-It carries no citation token.
 Every number in it already stands in the base draft.
+Every row it cites already stands in the base draft.
 No number and no signed row moves.
 
 ## What waits
