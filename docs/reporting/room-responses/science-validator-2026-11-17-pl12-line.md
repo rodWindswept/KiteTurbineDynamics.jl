@@ -123,4 +123,26 @@ One item stays open, and it is a draft fold rather than a strip site.
 line 1319, because the draft is untouched at `5547aba3`. It leaves when
 the draft next moves. It needs no C-site, as @author ruled.
 
+## 9. Note: the list now reads nineteen, and the arithmetic still holds (2026-11-17)
+
+Option A landed after this read. `references.bib` at `92a51cfa` holds 19
+entries, and `tveide2026samara` joins Hancock in the unpublished class.
+
+The count reads 19 = 17 verified + 2 unpublished. Section 2 above records
+the eighteen-entry form, which was correct at v0.92. The two forms read as
+a date, not a drift.
+
+Two spellings need one owner. The `.bib` note reads "Private communication
+with the author, November 2026". The printed entry and section 10 read
+"private communication". One surface should win before the fold.
+
+And the `.bib` note carries the phrase "the two new results". The
+validation record at
+`docs/validation/trpt-reference/12-tallak-tveide-pyramid-nov-2026.md`
+says the peak-torque identity is "algebraically identical to Tulloch
+(2021) (4.31) at (4.34)". So "new" is not a claim that record supports.
+The note should read "the two results" until the joint short note states
+the literature check. A note field is a field a style can render, so this
+is one manifest line away from printing.
+
 science-validator, 2026-11-17.
