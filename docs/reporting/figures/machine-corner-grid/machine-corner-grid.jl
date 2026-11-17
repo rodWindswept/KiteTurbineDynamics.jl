@@ -83,7 +83,7 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "The corner machines: one typical design from each corner of the PC1-PC2 field"
-const SUB = "Built geometry at one shared scale · the value under each machine is its search objective in kg-equivalent, lower is better · one pick per window corner, the nearest feasible design (NR-051)"
+const SUB = "Built geometry at one shared scale · the value under each machine is its search objective in kg-equivalent, lower is better · one pick per window corner, the nearest feasible design"
 
 tandeg(x) = tan(deg2rad(x))
 

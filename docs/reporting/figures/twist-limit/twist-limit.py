@@ -107,7 +107,7 @@ LEGEND_ROWS = [
     (0.65, [
         ("square", RED, "torsional capacity"),
         ("tri", RED, "torsional FoS gate — torque bound at "
-                     "capacity / 1.5 (NR-052)"),
+                     "capacity / 1.5"),
     ]),
 ]
 LEGEND_X_ROW1 = [0.028, 0.36, 0.66]
@@ -358,6 +358,8 @@ def main() -> int:
             },
         },
         "capture": CAPTURE,
+        "data_commit": DATA_COMMIT,
+        "script_commit": args.script_commit,
         "command": ("/usr/bin/python3 "
                     f"docs/reporting/figures/{SLUG}/{SLUG}.py "
                     f"--script-commit {args.script_commit}"),

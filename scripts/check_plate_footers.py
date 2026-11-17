@@ -63,8 +63,13 @@ HEX = re.compile(r"(?<![0-9A-Za-z_])[0-9a-f]{7,40}(?![0-9A-Za-z_])")
 
 
 def hash_tokens(text):
-    """Commit-like tokens: hex runs that carry at least one digit."""
-    return {m.group(0) for m in HEX.finditer(text) if any(c.isdigit() for c in m.group(0))}
+    """Commit-like tokens: hex runs that carry at least one hex letter.
+
+    A run of digits alone is a frame index or a count, not a commit:
+    ``s = 1724859`` is a capture frame and read as a token until this rule
+    carried the letter test.
+    """
+    return {m.group(0) for m in HEX.finditer(text) if re.search(r"[a-f]", m.group(0))}
 
 
 def census(text):

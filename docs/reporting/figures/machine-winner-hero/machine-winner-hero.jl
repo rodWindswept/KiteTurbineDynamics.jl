@@ -85,8 +85,8 @@ const SECTION_COLOR = Dict(
 )
 
 const TITLE = "The island-3 winner at its operating point: plan, side and downwind"
-const SUB1 = "Built geometry with the recorded wind-up: six rings, three lines, one rotor (NR-011); per-segment twist at the final operating step (NR-022)."
-const SUB2 = "Ring stations read at the same step (NR-021). One scale holds across the three views. Blades: three, span 1.499 m (NR-043)."
+const SUB1 = "Built geometry with the recorded wind-up: six rings, three lines, one rotor; per-segment twist at the final operating step."
+const SUB2 = "Ring stations read at the same step. One scale holds across the three views. Blades: three, span 1.499 m."
 
 tandeg(x) = tan(deg2rad(x))
 

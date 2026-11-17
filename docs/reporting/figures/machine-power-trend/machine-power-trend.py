@@ -67,9 +67,9 @@ OBJ_FORMS = {0: 36.109, 6: 32.293, 10: 31.661, 18: 30.929,
 
 TITLE = "Window-end power drives the over-power penalty"
 SUB1 = ("running-best window-end power \u00b7 three islands \u00b7 "
-        "generations 0 to 30 \u00b7 era " + ERA)
+        "generations 0 to 30")
 SUB2 = ("island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 \u00b7 its score "
-        "falls 36.109 to 27.364 kg-eq (NR-062, NR-005, NR-006)")
+        "falls 36.109 to 27.364 kg-eq")
 
 LEDGER: list[str] = []
 

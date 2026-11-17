@@ -88,7 +88,7 @@ LEGEND_ROWS = [
     (0.843, [
         ("swatch", CYAN, "utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el)"),
         ("dash", GATE, "campaign structural gate — FoS 2.5, "
-                       "utilisation 0.40 (NR-015)"),
+                       "utilisation 0.40"),
     ]),
     (0.705, [
         ("dash", RED, "fail boundary — interaction at the unit value"),
@@ -330,6 +330,8 @@ def main() -> int:
             "register_rows": [ROWS],
         },
         "capture": CAPTURE,
+        "data_commit": DATA_COMMIT,
+        "script_commit": args.script_commit,
         "command": ("/usr/bin/python3 "
                     f"docs/reporting/figures/{SLUG}/{SLUG}.py "
                     f"--script-commit {args.script_commit}"),
