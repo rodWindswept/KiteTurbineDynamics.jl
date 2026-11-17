@@ -256,6 +256,10 @@ def main():
                   + ("" if ok else f"; only appendix {sorted(cell - plate)}, "
                                    f"only plate {sorted(plate - cell)}"))
         print(f"  {compared} exhibit(s) compared, {mismatch} set mismatch(es)")
+        if compared == 0:
+            print("check_plate_footers: the appendix comparison matched no exhibit, "
+                  "so it proved nothing - refusing to pass", file=sys.stderr)
+            return 1
 
     if over or mismatch:
         print(f"check_plate_footers: {over} kit(s) outside the limit, "
