@@ -1,19 +1,44 @@
 {
+  "slug": "instrument-gallery",
+  "figure": "Figure 12, section 9: the instrument gallery",
+  "mode": "capture gallery, three panels",
   "capture": {
     "run_id": "one render pass, repository at 87e6b10"
   },
-  "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --page-proof",
   "era": "post-95c385d_wind-authority",
-  "figure": "Figure 12, section 9: the instrument gallery",
+  "command": "/usr/bin/python3 docs/reporting/figures/instrument-gallery/instrument-gallery.py --page-proof",
+  "script": {
+    "path": "docs/reporting/figures/instrument-gallery/instrument-gallery.py",
+    "sha256": "20365cb5ee5128398ff0291a46be35135cf04bf9954d56704d5e398659e31f92"
+  },
+  "run_commit": "87e6b10",
+  "plate": {
+    "pixels": [
+      3638,
+      2588
+    ],
+    "dpi": 531,
+    "prints_mm": [
+      174.02,
+      123.8
+    ],
+    "box_mm": [
+      85.0,
+      59.89
+    ],
+    "row_heights_mm": [
+      59.89,
+      59.88
+    ],
+    "gutter_px": 84,
+    "gutter_mm": 4.02,
+    "block_mm": 123.77,
+    "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px. Three panels seat in two 85 mm columns, so row 2 holds one panel and centres it from 44.50 mm. The plate prints 0.02 mm over the measure and 0.03 mm over the 123.77 mm block.",
+    "sha256": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022"
+  },
   "inputs": {
-    "archive": {
-      "path": "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv",
-      "role": "the cartography decodes its ring stack from this file; its title prints geometry descriptors only",
-      "sha256": "aa441c837fd036a85c5a1a587ed824e29fdcdcaaaa84a2ecee662b9e2e25078b"
-    },
     "captures": [
       {
-        "dpi": 532,
         "file": "captures/dashboard-v2-head.png",
         "picture": "whole window",
         "pixels": [
@@ -24,28 +49,10 @@
           85.0,
           56.35
         ],
+        "dpi": 532,
         "sha256": "b4fdedf07a9a1aed445685a467fb9d98d9ae8b3d8729b74a19408394b6266112"
       },
       {
-        "annotation": {
-          "cut_px": [
-            613,
-            3309
-          ],
-          "ink_box_px": [
-            812,
-            111,
-            1388,
-            257
-          ],
-          "inside_margins_px": {
-            "left": 199,
-            "right": 1920
-          },
-          "source": "SimPeaks T_peak, formatted by build_dashboard._tension_label_text; default-on (tension_label = true)",
-          "text": "T_peak 3099.9 N / SWL 3500 N"
-        },
-        "dpi": 806,
         "file": "captures/dashboard-twisted-state-head.png",
         "picture": "3D viewport",
         "pixels": [
@@ -56,17 +63,35 @@
           84.98,
           59.89
         ],
+        "dpi": 806,
         "sha256": "691b13204ed8bbe35c38e6fddb0bd5ec950e8700ac448afc3a53f9ada04de72b",
         "state": {
-          "electrical_power_kw": 0.01,
-          "omega_hub_rad_s": 9.5,
+          "twist_deg": 214.71,
           "tension_peak_n": 3099.9,
           "tension_swl_n": 3500,
-          "twist_deg": 214.71
+          "omega_hub_rad_s": 9.5,
+          "electrical_power_kw": 0.01
+        },
+        "annotation": {
+          "text": "T_peak 3099.9 N / SWL 3500 N",
+          "ink_box_px": [
+            812,
+            111,
+            1388,
+            257
+          ],
+          "cut_px": [
+            613,
+            3309
+          ],
+          "inside_margins_px": {
+            "left": 199,
+            "right": 1920
+          },
+          "source": "SimPeaks T_peak, formatted by build_dashboard._tension_label_text; default-on (tension_label = true)"
         }
       },
       {
-        "dpi": 1195,
         "file": "captures/winner-10kw-cartography-head.png",
         "picture": "rendered figure",
         "pixels": [
@@ -77,74 +102,49 @@
           85.0,
           59.88
         ],
+        "dpi": 1195,
         "sha256": "c0a3f49afcc85d9298350d2d407269a93343ec458362fb84f5811de978f04d81"
       }
     ],
     "renderers": {
-      "cartography": {
-        "path": "scripts/render_winners_clean.jl",
-        "sha256": "81488e607c93783c952be1ea899979c9f971b38f32d6f072f96902da9dac2710"
-      },
-      "chooser": {
-        "path": "scripts/view_campaign_genomes.jl",
-        "sha256": "884133c125fc64cf2d7ec1c3b87e4cb72926d360a1acbe67689e262150c2db4d"
-      },
-      "twisted_crop": {
-        "path": "captures/crop-twisted-cell.py",
-        "sha256": "d775351d929580c5556095381471357355fe2aa4d7eedd684e5a67cd17ee6601"
+      "v1_v2": {
+        "path": "captures/render-captures-head.jl",
+        "sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0"
       },
       "twisted_state": {
         "path": "captures/render-twisted-state-head.jl",
         "sha256": "7c545caeac0660259bc97e1f0e7bc74dde3f4ac9c87b176b72cc5540cebd72d6"
       },
-      "v1_v2": {
-        "path": "captures/render-captures-head.jl",
-        "sha256": "c1e7e35fb57edfbd6f7cc9df88043dde37006a85b7bf60dd8b4d2ba2b88736f0"
+      "twisted_crop": {
+        "path": "captures/crop-twisted-cell.py",
+        "sha256": "d775351d929580c5556095381471357355fe2aa4d7eedd684e5a67cd17ee6601"
+      },
+      "chooser": {
+        "path": "scripts/view_campaign_genomes.jl",
+        "sha256": "884133c125fc64cf2d7ec1c3b87e4cb72926d360a1acbe67689e262150c2db4d"
+      },
+      "cartography": {
+        "path": "scripts/render_winners_clean.jl",
+        "sha256": "81488e607c93783c952be1ea899979c9f971b38f32d6f072f96902da9dac2710"
       }
+    },
+    "archive": {
+      "path": "scripts/results/trpt_opt_v2/10kw_circular_straight_taper_s1/elite_archive.csv",
+      "sha256": "aa441c837fd036a85c5a1a587ed824e29fdcdcaaaa84a2ecee662b9e2e25078b",
+      "role": "the cartography decodes its ring stack from this file; its title prints geometry descriptors only"
     }
   },
-  "mode": "capture gallery, three panels",
   "outputs": {
+    "instrument-gallery.png": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022",
     "captions.md": "fac785bb222849dacaafbb45746ad9e946fb4c88c47806a587aaa0a27c0f7646",
     "captures/captures.md": "98fe026313f06f4ab569069effb53eab17f9dfcf29b0c80b7e1544c23b450f0c",
-    "captures/stamp.json": "da318f6209f5b1e7134d4a293ed6097402c62551d5348d6f52de691bdde40172",
-    "instrument-gallery.png": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022"
+    "captures/stamp.json": "da318f6209f5b1e7134d4a293ed6097402c62551d5348d6f52de691bdde40172"
   },
-  "plate": {
-    "block_mm": 123.77,
-    "box_mm": [
-      85.0,
-      59.89
-    ],
-    "dpi": 531,
-    "gutter_mm": 4.02,
-    "gutter_px": 84,
-    "note": "A 4.00 mm gutter is 83.6 px, so the 531 dpi grid carries 84 px. Three panels seat in two 85 mm columns, so row 2 holds one panel and centres it from 44.50 mm. The plate prints 0.02 mm over the measure and 0.03 mm over the 123.77 mm block.",
-    "pixels": [
-      3638,
-      2588
-    ],
-    "prints_mm": [
-      174.02,
-      123.8
-    ],
-    "row_heights_mm": [
-      59.89,
-      59.88
-    ],
-    "sha256": "842705bddcfe8ae467e253b3f91f5847f0395e7839232cff2d1c262901c1c022"
-  },
-  "run_commit": "87e6b10",
-  "script": {
-    "path": "docs/reporting/figures/instrument-gallery/instrument-gallery.py",
-    "sha256": "20365cb5ee5128398ff0291a46be35135cf04bf9954d56704d5e398659e31f92"
-  },
-  "slug": "instrument-gallery",
+  "withheld": "no value in this report is read from a panel. v2 prints no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only.",
   "toolchain": {
-    "glmakie": "0.13",
     "julia": "1.12.6",
-    "pillow": "12.3.0",
-    "python": "3.12.3"
-  },
-  "withheld": "no value in this report is read from a panel. v2 prints no campaign result, the twisted cell prints its own instrument state, and the cartography title prints geometry only."
+    "glmakie": "0.13",
+    "python": "3.12.3",
+    "pillow": "12.3.0"
+  }
 }
