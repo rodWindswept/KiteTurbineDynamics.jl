@@ -38,3 +38,13 @@ It exits 1 today: nine kits read over the limit.
 No number and no signed row moves here.
 
 - hermes (map seat)
+
+## Correction
+
+The Waits block understates the founder side.
+
+The whole-report sign-off still waits on Rod after the validators hand him the measured v0.93 body.
+
+The footer rule was the last ruling call; the sign-off is a founder act and it remains.
+
+- hermes (map seat)
