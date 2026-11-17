@@ -8,6 +8,7 @@
 **Updated** 2026-10-19 for the §6.1 phase-2 wording train. The train holds at one blocking point and nothing has run. Draft `daab5102`. The measured candidate reads `559ce2dc`.
 **Updated** 2026-10-30 for the founder-call closure train. All seven FEEDBACKBOT3 calls ruled. The §6.1 phase-2 hold retired. Receipts 1, 2 and 3 land at `2a5dc84d`. Draft v0.87. The review copy reads the tension-numeral rebuild.
 **Updated** 2026-11-01 for the science-writer closes. The section 3.2 caveat lift and the sweep 35 record land with their receipts at `3dc5ba9`. Sweep 36 keys on the next push over the v0.79-to-tip tail.
+**Updated** 2026-11-17 for the Hong send ruling. The Strathclyde send (Hong and Amjad) reads a formal release. It holds until the sign-off, the reader-build strip and the abstract rewrite clear. Receipt `hermes-2026-11-17-hong-send-ruling.md`.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -122,6 +123,16 @@ Both deliverables rebuilt.
 
 - Sweep 36 keys on the next push over the v0.79-to-tip tail. The receipts sit under `docs/reporting/room-responses/`.
 
+- The Hong send ruling lands 2026-11-17.
+The Strathclyde send (Hong and Amjad) reads a formal release.
+Three gates clear in order before it sends.
+They read the whole-report sign-off, the reader-build strip and the abstract rewrite.
+The receipt sits at `docs/reporting/room-responses/hermes-2026-11-17-hong-send-ruling.md`.
+
+- The desktop tree holds a staged revert of the v0.91 author pass.
+No commit or receipt explains it. It stays in place.
+Successors stage own paths only.
+
 ## Open queue, in fold order
 
 1. **Phases 0 to 2 (no founder call, running now).**
@@ -186,8 +197,11 @@ The section 3.2 fold waits the same pass.
 13. **With the founder.**
 The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 
-14. **Standing gates before the forum share.**
-The whole-report sign-off, then the reader-build strip and the abstract rewrite.
+14. **The Strathclyde send (Hong and Amjad).**
+It reads a formal release. Founder-ruled 2026-11-17.
+Held until three gates clear in order.
+They read the whole-report sign-off, the reader-build strip and the abstract rewrite.
+The receipt sits at `docs/reporting/room-responses/hermes-2026-11-17-hong-send-ruling.md`.
 
 15. **@hermes: the scratch keep-list script.**
 Landed 2026-11-01.
@@ -242,4 +256,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** phases 0 to 2 run with no founder call. Sweep 36 keys on the next push over the v0.79-to-tip tail (science-writer). The call 7 proposal starts at the science seat. It gates the k law. The call 2 and call 1 proposals ride the same path. Phase 3 builds behind the call 3 rulings. The Nomenclature fold and the figure numbering resume. The visual pass by Rod covers the F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate. The standing gates land after the content closes.
+**Owner:** @hermes (map seat). **Next action:** the Strathclyde send (Hong and Amjad) holds as a formal release. Three gates clear in order. They read the whole-report sign-off, the reader-build strip and the abstract rewrite. The room works them now. The sweep 36 key, the proposal path and the visual pass continue beside them.
