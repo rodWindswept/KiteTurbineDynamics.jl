@@ -80,7 +80,8 @@ def main():
           "--worktree", "--slugs", slugs, "-q"]),
         ("footers", "what the plates print, and the appendix sets",
          [py, os.path.join(SCRIPTS, "check_plate_footers.py"),
-          "--slugs", slugs, "--appendix", draft]),
+          "--slugs", slugs]
+         + ([] if args.footer_rule else ["--appendix", draft])),
     ]
     if args.footer_rule:
         plan[2][2].extend(["--max-rows", "0", "--max-era", "0", "--max-hashes", "0"])

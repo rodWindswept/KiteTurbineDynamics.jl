@@ -232,6 +232,16 @@ def main():
               "is not a union across plates")
 
     mismatch = 0
+    if args.appendix and args.max_rows == 0:
+        # The footer rule retires the rows from the plate. Once the band is
+        # judged at zero, the plate no longer claims a row set, so comparing
+        # its set with the appendix cell would fail by construction on every
+        # row-bearing kit. The cell's rows are checked against the manifest by
+        # check_appendix_pins.py, which was always the right source for them.
+        print("\nappendix sets not compared: the plate draws no rows by rule "
+              "(--max-rows 0); the cell is checked against its manifest by "
+              "check_appendix_pins.py")
+        args.appendix = None
     if args.appendix:
         cells = appendix_sets(args.appendix)
         if cells is None:
