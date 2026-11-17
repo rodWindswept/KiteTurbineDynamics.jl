@@ -3595,4 +3595,89 @@ The bless covers that lane only.
 Comment 95 still binds the section 6 intro at the draft, so a later
 pass must land it or retire the ruling.
 
-**Next run** at the next draft push.
+## Sweep 36: v0.91, 2026-11-17
+
+**Status** LANDED. **Seat** science-writer.
+**Span** `c6d79b9..74052e59`. The read ran on 2026-11-17.
+**Draft** v0.79 to v0.91. **Register** 85 base rows and 5 extension rows.
+
+### The span
+
+The span opens at `c6d79b9`, the Sweep 35 end.
+It closes at `74052e59`, the tip at the read.
+The span carries 119 commits, 16 draft movers and 5 register movers.
+The draft moves across 12 versions.
+The register grows by 12 rows, NR-074 to NR-085.
+
+NR-086 sits on `bank-derate-cos2p65` and takes no part in this read.
+The Glauert numeral does not print in v0.91.
+Draft line 1526 reads that the value waits on a signed row.
+The cherry-pick of NR-086 is a condition on a later print, not on this text.
+
+### STE
+
+| State | Words | Total | Per 100 words |
+|---|---|---|---|
+| v0.79 | 11,597 | 28 | 0.24 |
+| v0.91 | 12,726 | 31 | 0.24 |
+
+The offender delta reads long sentences 8 to 9, passive 4 to 5 and long paragraphs 14 to 15.
+Contraction and nominalization hold at 1 each.
+Em dashes read 0 at both ends.
+
+### The two word counters
+
+`wc -w` reads 12,835 at v0.91.
+The house counter reads 12,726.
+The gap of 109 is a counting artefact, and it is not a draft change.
+The house counter strips code spans and splits punctuated tokens.
+The gap reads 191 at v0.79, so it moves with the text.
+No one should difference the two counters.
+
+### The token diff
+
+The diff reads 12 added tokens and 0 removed.
+
+| Token | Site | Support |
+|---|---|---|
+| 29 W, 57 W | line 352 | NR-014; 57 W has no row |
+| 79 mm, 59.89 mm, 90°, Eq 4.30 and 4.34 | appendix and lines 1425 to 1470 | spec and pins |
+| 0.154, 0.439, 0.593 | line 1046 | NR-013 ext2 |
+| 5.630 m, 401.03 N·m | lines 185 and 356 | NR-032, NR-015, NR-029 |
+
+The 0.593 at line 1046 reads a factor of safety.
+The same digits print in NR-034 as the rounded Betz coefficient.
+The two readings are separate quantities, and neither crosses the other.
+
+### The finding
+
+One token carries no signed row.
+The gap reads 57 W at draft line 352, and the bracket names NR-014 alone.
+NR-014 signs the 29 W window swing.
+The 57 W follows from the torque offset: 401.03 N·m less 396.76 N·m, times 13.38 rad/s.
+The two inputs print at lines 355 and 356 under NR-030, NR-015 and NR-029.
+No register row carries 57 W or 5.366 kW.
+Two fixes exist.
+The line 352 bracket takes NR-030, NR-015 and NR-029.
+Or a derived row lands the recipe.
+The room holds that call.
+
+### Checks that pass
+
+- Cited rows: 59 distinct rows in the draft.
+  Every one holds a register row and every one carries a sign.
+  The cited set reads the same as at Sweep 35.
+
+- Appendix pins: 10 of 10 refs resolve in the tip ancestry.
+  The tenth arrives with the tension-numeral pass at v0.87.
+
+- Retired phrasing: `adaptive` reads 0 and `DifferentialEquations` reads 0.
+
+- Prose-form census: `the room` reads 0, `seat checks` reads 0,
+  `the pipeline` reads 1 and `campaign winner` reads 7.
+
+- Exhibit stamps: the appendix names the dataset commit `dd3cc6a`
+  and the launch commit `a76c5e9`, and both resolve in the record.
+
+**Next run** at the gate 2 push.
+That push moves the draft, so the read keys there.
