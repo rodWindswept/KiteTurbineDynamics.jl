@@ -3681,3 +3681,67 @@ The room holds that call.
 
 **Next run** at the gate 2 push.
 That push moves the draft, so the read keys there.
+
+## Sweep 37: v0.92, 2026-11-17
+
+**Status** LANDED. **Seat** science-writer.
+**Span** `74052e59..690efb5a`. The read ran on 2026-11-17.
+**Draft** v0.91 to v0.92. **Register** 85 base rows and 5 extension rows, with no mover in the span.
+
+### The span
+
+The span carries 9 commits and 3 draft movers.
+The register holds still, so the row set reads the same at both ends.
+The fold lands the abstract block, the 57 W bracket and the PL12 move.
+The abstract block reads 411 words at 0 violations and 0.00 per 100 words.
+Both amendments print: the Betz share reads on the wind-normal area, and the blocking line reads at any legal spacing.
+
+### STE
+
+| State | Words | Total | Per 100 words |
+|---|---|---|---|
+| v0.91 | 12,726 | 31 | 0.24 |
+| v0.92 | 12,909 | 30 | 0.23 |
+
+The offender delta reads long sentences 9 to 8.
+Passive holds at 5, long paragraphs at 15, contraction at 1 and nominalization at 1.
+Em dashes read 0 at both ends.
+The one long sentence that leaves is the 21-word power line in the old abstract.
+
+### The fold accounting
+
+The diff reads 440 added words and 257 removed, for a net of 183.
+The split reads +171 in the abstract hunk, +6 at the 57 W line and +6 at the PL12 move.
+The PL12 move takes 4 words out of section 8 and puts 10 into document control.
+So the arithmetic 12,726 less 240 plus 411 reads 12,897, and the two prose edits carry the other 12.
+
+### The token diff
+
+The diff reads 0 arriving tokens and 0 removing tokens.
+This is the first fold in the record where no numeral enters or leaves the draft.
+Every value in the new abstract already printed in the v0.91 body.
+
+### The finding
+
+The wind pair reads at two sites: abstract line 30 and the table at line 728.
+Both carry `(NR-008, NR-032)`.
+NR-008 signs the power and NR-032 signs the tip-speed ratio and the reference speed.
+Neither signs the pair with the altitude.
+NR-056 signs it, and its row reads that the table pair reads 11.01 at 9.41.
+So both brackets take NR-056.
+No numeral moves and the cited count holds at 59, because NR-056 already stands cited.
+
+One reading verified as correct and worth the note: 25.698 kg at NR-018 is the sanctioned display form.
+The row prints 25.70 and its sign-off basis prints 25.6984682562368789.
+
+### Checks that pass
+
+- Cited rows: 59 distinct, every one present and signed.
+- Appendix pins: 10 of 10 rows pass.
+- Plate bytes: 152 of 152 recorded hashes verify at HEAD across 17 kits.
+- Retired phrasing: `adaptive` reads 0 and `DifferentialEquations` reads 0.
+- Prose-form census: `the room` reads 0, `seat checks` reads 0, `the pipeline` reads 1 and `campaign winner` reads 6.
+- Cited commits: 10 distinct hex refs, every one in the tip ancestry.
+
+**Next run** at the v0.93 fold.
+That fold carries the Glauert block and the nine appendix cells behind the founder calls.
