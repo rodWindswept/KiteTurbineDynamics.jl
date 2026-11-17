@@ -33,7 +33,7 @@ at three significant figures. The projection reads NR-044: PC1 22.4 per cent, PC
 
 ## Provenance line
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044 · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `d0e410d`
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044 · script: `docs/reporting/figures/pca-atlas/pca-atlas.py` at `4444c516`
 
 ## Checks for the consistency pass
 

@@ -36,7 +36,7 @@ shares read PC1 22.4 per cent and PC2 17.3 per cent (NR-044).
 
 ## Provenance line
 
-data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044, NR-045 · script: `docs/reporting/figures/pca-landscape/pca-landscape.py` at `d0e410d`
+data: island telemetry (`scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv`) · data commit `dd3cc6a` · run `a76c5e9` · rows: NR-001, NR-005, NR-006, NR-044, NR-045 · script: `docs/reporting/figures/pca-landscape/pca-landscape.py` at `4444c516`
 
 ## Checks for the consistency pass
 
