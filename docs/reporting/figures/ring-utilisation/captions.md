@@ -57,7 +57,7 @@ of the ring utilisation.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-021, NR-015, NR-060 · script commit `e3d664c` · full record: the
+rows NR-021, NR-015, NR-060 · script commit `4444c516` · full record: the
 figure-provenance appendix.
 
 ## Generation note

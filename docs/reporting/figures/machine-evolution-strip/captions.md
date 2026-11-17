@@ -67,7 +67,7 @@ three-decimal objective. They are not a measurement.
 ## Provenance line
 
 Data commit `dd3cc6a` · extract `strip-extract-2026-10-09-best-so-far` ·
-rows NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 · script commit `ce9c5d8` ·
+rows NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 · script commit `4444c516` ·
 full record: the figure-provenance appendix.
 
 ## Generation note

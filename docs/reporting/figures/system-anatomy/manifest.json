@@ -14,17 +14,17 @@
   },
   "outputs": {
     "checks.log": "be8dc1dc119143c0f45821de1de3d3aaa03e18650f8c3e5055822441428504ee",
-    "label-ledger.txt": "bed029d0f36a4e3b218510fc16fe5debf294b65413f64aa2abcafbfdc6ae4912",
-    "system-anatomy.pdf": "c55bd7a888a1f3d657445460a9e6bebb05504efe04d4194661b3ae8f1a844d4c",
-    "system-anatomy.png": "696be723993c708b038e0d1e10b96e83ba357a65cb2442580b1de371dedf8c66",
-    "system-anatomy.tex": "e7697c986d605f6ff50e2c628812a84e9eb2e5514a6170a7de89b2f707f1060c"
+    "label-ledger.txt": "5b3eb3da76fcb469a161430ae6a620d12a8a94105657e7ba2b574afbb3051ea4",
+    "system-anatomy.pdf": "6c23cae1d8c34c929159f2b6f299121c759ce8fa72994ad0e233a058405c3f5d",
+    "system-anatomy.png": "9da4d8e69fa2d77cd20478fdc23e7be11e4afeac9a22a4c5e8f3c610cac99d93",
+    "system-anatomy.tex": "6e0711dc6995d3b64ba0d4e619bc2926b61a6c275dd5b8d84d19c5839bdb43e6"
   },
   "precision": "radii, bank and span at three decimals, as registered; counts print as words",
   "script": {
     "path": "docs/reporting/figures/system-anatomy/system-anatomy.py",
-    "sha256": "b3f11a395da3067dff970a4cebf827e917eac8dc6b88bbb295ab8bdea75b1735"
+    "sha256": "396ee4254b828b3a2258f3bc2ceb56b7a19bee58ed87a420146cdc343ac5cb1c"
   },
-  "script_commit": "9241b23",
+  "script_commit": "4444c516",
   "slug": "system-anatomy",
   "toolchain": {
     "pdflatex": "TeX Live 2023/Debian",

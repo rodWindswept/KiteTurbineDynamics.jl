@@ -1,5 +1,5 @@
 machine-evolution-strip — GENERATE run
-script commit: ce9c5d8
+script commit: 4444c516
 toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
 extract: docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv  sha256 f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad
 panel i3-g0-i1 (gen 0): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true · mass true · power true
@@ -23,9 +23,9 @@ axis squareness: x 16.601332567 px/m · y 16.601332567 px/m · delta 0.0000 ppm
 objective labels (NR-036): 7 drawn · ALL OK
 mass labels (NR-066, decoded, lifter included): 7 drawn · ALL OK
 power labels (NR-062, window end): 7 drawn · ALL OK
-pdf normalisation: clean -d ok · CreationDate replacements 1 · clean -z ok
+pdf normalisation: clean -d ok · CreationDate replacements 0 · clean -z ok
 outputs sha256:
-  machine-evolution-strip.png  c701f193b33d11d4f403ea1cd377ce96027360801a3222d1a96b09c6bf5aaaf9
-  machine-evolution-strip.svg  f60f6c6d299503fb479ac112256bb436a0132ef1d451bdf5bf00ec53be8fc3bf
-  machine-evolution-strip.pdf  c2658b10da0510b4fcbe17aa1f0b2e1474ba9f621f1ff14d9944cce3c27b8ee2
+  machine-evolution-strip.png  db40fd0f23a71d46ca5ad17ba2ed465c0fd2fe93d347793c5c955fc2656e360f
+  machine-evolution-strip.svg  ddd1a1d269c882921aab614511cfbea6eb9d8ce44f80351915976e602c4d4f77
+  machine-evolution-strip.pdf  9f98d5dfc400c42024bcb33680f3b340f0db32374568de45399eb2e1f37573aa
 checks: ALL OK

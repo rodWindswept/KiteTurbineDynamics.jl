@@ -18,13 +18,13 @@ R4
 R5
 R6 (top)
 campaign structural gate — FoS 2.5
-campaign structural gate — FoS 2.5, utilisation 0.40 (NR-015)
+campaign structural gate — FoS 2.5, utilisation 0.40
 fail boundary
 fail boundary — interaction at the unit value
 net tension — FoS 326,974
 net tension — compression share not scored
 readout: ring FoS = 1 / ring utilisation
-s = 1724859 (t = 49.99999483862295 s) · rows NR-021 · NR-015 · NR-060 · script commit e3d664c · authority commit f8114be
-source: data commit dd3cc6a · extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops
+s = 1724859 (t = 49.99999483862295 s)
+source: extract extract-winner-operating-point.csv · capture pair-extract-2026-10-08-winner-ops
 utilisation (N/N_crit + √(M_ip²+M_oop²)/M_el)
 utilisation — beam-column interaction

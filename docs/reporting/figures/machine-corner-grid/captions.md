@@ -41,7 +41,7 @@ airborne mass value.
 ## Provenance line
 
 Data commit `dd3cc6a` · extract `corner-grid-extract-2026-10-15-picks` ·
-rows NR-044, NR-051 · script commit `d0e410d` · full record: the
+rows NR-044, NR-051 · script commit `4444c516` · full record: the
 figure-provenance appendix.
 
 ## Generation note

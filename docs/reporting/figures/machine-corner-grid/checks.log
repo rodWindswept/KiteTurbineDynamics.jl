@@ -1,5 +1,5 @@
 machine-corner-grid — GENERATE run
-script commit: d0e410d
+script commit: 4444c516
 toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
 extract: docs/reporting/figures/machine-corner-grid/extract-corner-grid.csv  sha256 03abd0c660e0ad22db89f767a7b033c18db82f67dde69593c31cbb3a3919a4d5
 panel i1-g13-i1 [low PC1 / low PC2] (gen 13): n_lines true · rings true · n_active true · r_hub true · r_bot true · objective true
@@ -19,9 +19,9 @@ window: x ±6.211 m · y -0.759 .. 19.742 m · m_per_px 0.060299 · panel 206 x 
 layout viewports: header [0,532 + 872x84] · labels [0,132 + 872x60] · footer [0,0 + 872x132] · panel1 [0,192 + 206x340] · panel4 [666,192 + 206x340]
 axis squareness: x 16.583913600 px/m · y 16.583913600 px/m · delta 0.0000 ppm
 objective labels (NR-051): 4 drawn · ALL OK
-pdf normalisation: clean -dg ok · CreationDate replacements 1 · clean -zg ok
+pdf normalisation: clean -dg ok · CreationDate replacements 0 · clean -zg ok
 outputs sha256:
-  machine-corner-grid.png  bbc9a744f27a95bc61781db38d8389a573f09b83c36a795a00e5362086d11cf7
-  machine-corner-grid.svg  526cdb1fd97b066c874a27f2f691c2d7e06d2c172ad231cd024dd5a48ec004b4
-  machine-corner-grid.pdf  0c1c31e14a39e0b0a463dee56d42688619e600faf8e06a4341469c81ba7fabad
+  machine-corner-grid.png  676a5ec9e912a201b329d702eb1ea15bde25a81304631ffdf3f37bc2121349c9
+  machine-corner-grid.svg  e63342d319dba65c4101db0501a38ae12b532d2ca8115c05c11ce8fde8aff235
+  machine-corner-grid.pdf  2b925a170bb7aedbbf15ff9afdeffbeb63ea405bb7a6aaf4192b32b5fbf97ab9
 checks: ALL OK

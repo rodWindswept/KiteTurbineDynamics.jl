@@ -1,5 +1,5 @@
 {
-  "command": "/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit d0e410d",
+  "command": "/usr/bin/python3 docs/reporting/figures/pca-landscape/pca-landscape.py --script-commit 4444c516",
   "data_commit": "dd3cc6a",
   "inputs": {
     "register_rows": [
@@ -26,17 +26,17 @@
     ]
   },
   "outputs": {
-    "label-ledger.txt": "5fb0426068bcbc2893b510c2273a1aad5096c1b4f35f30b64fce7fdfc145e748",
-    "pca-landscape.pdf": "79c145ed9a88c577b48796414815a33547c113bfa4ca734e256ae37fabbaf9a8",
-    "pca-landscape.png": "295315950f82d737c06132100ec88f667a0899d6103d0ede778c09ab4f2213b8",
-    "pca-landscape.svg": "1d4433856620ace8b29bb0f187075343962df572123641ce987b514796cece66"
+    "label-ledger.txt": "d7980105cd83164cfd5ba77045cf1193aee8c88550d3a4e5d5414bd922033d43",
+    "pca-landscape.pdf": "f4f2f58baeb6a85213f884c583c80dcbdb4fe72a10b96206a2f9f92b08b02e6d",
+    "pca-landscape.png": "a669ece3a6053d59b88c64f5ed1395382956179223ab5fb6687b5d4a5590d9ef",
+    "pca-landscape.svg": "d806099bf340ce6e08be3ca40f73a653a30caba84da62698febb5d5ae50b8416"
   },
   "precision": "journey values as signed; variance shares at 1 dp; colour norm at 2 dp internal",
   "script": {
     "path": "docs/reporting/figures/pca-landscape/pca-landscape.py",
-    "sha256": "eb3bdc4bb2a05adca602f2699fa4400bbdf05423c204f4f379a902c6609ba483"
+    "sha256": "c709f27ef3fbf4a372a149027d2c492410e9b2a383201fee09ace2cd6ad785fe"
   },
-  "script_commit": "d0e410d",
+  "script_commit": "4444c516",
   "slug": "pca-landscape",
   "toolchain": {
     "matplotlib": "3.10.8",

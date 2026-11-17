@@ -49,7 +49,7 @@ backline is an altitude limiter, not a load path. The scale bar is 5 m.
 ## Provenance line
 
 Data commit `dd3cc6a` · decode receipt `scratch/fig1_decode_winner.jl` ·
-rows NR-011, NR-017, NR-043 · script commit `9241b23` · full record: the
+rows NR-011, NR-017, NR-043 · script commit `4444c516` · full record: the
 figure-provenance appendix.
 
 ## Generation note

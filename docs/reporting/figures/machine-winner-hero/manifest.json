@@ -2,10 +2,10 @@
     "set": "machine-winner-hero",
     "mode": "hero",
     "slug": "machine-winner-hero",
-    "script_commit": "d0e410d",
+    "script_commit": "4444c516",
     "script": {
         "path": "docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl",
-        "sha256": "8e8374cbae0d68e669c6cd9df30225c61b8edb21adef9a20f50a093bfccf32ae"
+        "sha256": "fb26245572a6d690b9f87463141e0580ba8c17df4fa30055d7295642478624a0"
     },
     "toolchain": {
         "julia": "1.12.5",
@@ -131,11 +131,11 @@
         "annulus": 1,
         "glyph": 1
     },
-    "command": "scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl --script-commit d0e410d",
+    "command": "scripts/ktd-julia docs/reporting/figures/machine-winner-hero/machine-winner-hero.jl --script-commit 4444c516",
     "outputs": {
-        "machine-winner-hero.pdf": "1cd98dafefed42155dab1a6e621f62b0fe1b06205700b71a4e3dcd9b2a24cb72",
-        "checks.log": "2118d2bb6117a27a011b0524b2407951d206550ddc82386aeffb5a7c9cc3e86a",
-        "machine-winner-hero.png": "ad26e7cb5d7fc6b92b96dc97bd38c7ed9f9b1d3e6166a8e5780b118ae0d2c767",
-        "machine-winner-hero.svg": "27746f7202e1629eba5a2cc233ba023acb66c793a4c54f93e70100a3fa1e17bb"
+        "machine-winner-hero.pdf": "2814334c0ad35f4fd15857fedefcdca123f29f732c96fe2581b8e89f0cac9488",
+        "checks.log": "0b08afafa112f31fd7048538de10f3563d2f10cb50fc90b648a24644ea2a1eb7",
+        "machine-winner-hero.png": "1d2533a1c3e007d951d0a55871b6a56ae4d0c21116247c19fde5393ba01e9d1b",
+        "machine-winner-hero.svg": "54b6a2fa92d6608e042bc96fd35b8e5d46a56dc9ef56936891eece93f34e0dc7"
     }
 }

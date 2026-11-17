@@ -1,5 +1,5 @@
 machine-winner-hero — GENERATE run
-script commit: d0e410d
+script commit: 4444c516
 toolchain: julia 1.12.5 · CairoMakie 0.15.11 · mutool 1.23.10
 genome extract: docs/reporting/figures/machine-evolution-strip/extract-best-so-far.csv  sha256 f52a5a99600b1150274142651f7e2d5955c4b86b07056743b690a8f2efdd62ad
 capture: docs/reporting/figures/pair-extract/extract-winner-operating-point.csv  sha256 dd5a9dd25ea9782bd5e12d7c44cb6a8744141edb88e7f14a86b7b64acb0c9203
@@ -18,9 +18,9 @@ layout viewports: header [0,862 + 1248x96] · side [390,202 + 468x660] · plan [
 panel side: x 30.000000000 px/m · y 30.000000000 px/m · delta -0.0000 ppm
 panel plan: x 30.000000000 px/m · y 30.000000000 px/m · delta 0.0000 ppm
 panel down: x 30.000000000 px/m · y 30.000000000 px/m · delta 0.0000 ppm
-pdf normalisation: clean -dg ok · CreationDate replacements 1 · clean -zg ok
+pdf normalisation: clean -dg ok · CreationDate replacements 0 · clean -zg ok
 outputs sha256:
-  machine-winner-hero.png  ad26e7cb5d7fc6b92b96dc97bd38c7ed9f9b1d3e6166a8e5780b118ae0d2c767
-  machine-winner-hero.svg  27746f7202e1629eba5a2cc233ba023acb66c793a4c54f93e70100a3fa1e17bb
-  machine-winner-hero.pdf  1cd98dafefed42155dab1a6e621f62b0fe1b06205700b71a4e3dcd9b2a24cb72
+  machine-winner-hero.png  1d2533a1c3e007d951d0a55871b6a56ae4d0c21116247c19fde5393ba01e9d1b
+  machine-winner-hero.svg  54b6a2fa92d6608e042bc96fd35b8e5d46a56dc9ef56936891eece93f34e0dc7
+  machine-winner-hero.pdf  2814334c0ad35f4fd15857fedefcdca123f29f732c96fe2581b8e89f0cac9488
 checks: ALL OK

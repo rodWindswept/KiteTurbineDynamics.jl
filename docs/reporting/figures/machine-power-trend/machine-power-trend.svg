@@ -547,19 +547,19 @@ z
    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #1a1a1a" x="6.5664" y="12.3984" transform="rotate(-0 6.5664 12.3984)">Window-end power drives the over-power penalty</text>
   </g>
   <g id="text_23">
-   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="26.568" transform="rotate(-0 6.5664 26.568)">running-best window-end power · three islands · generations 0 to 30 · era post-95c385d_wind-authority</text>
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="26.568" transform="rotate(-0 6.5664 26.568)">running-best window-end power · three islands · generations 0 to 30</text>
   </g>
   <g id="text_24">
-   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="37.7856" transform="rotate(-0 6.5664 37.7856)">island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 · its score falls 36.109 to 27.364 kg-eq (NR-062, NR-005, NR-006)</text>
+   <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #555555" x="6.5664" y="37.7856" transform="rotate(-0 6.5664 37.7856)">island 3 falls 5.89 to 5.31 kW from gen 10 to gen 26 · its score falls 36.109 to 27.364 kg-eq</text>
   </g>
   <g id="text_25">
    <text style="font-style: italic; font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="48.1536" y="250.92" transform="rotate(-0 48.1536 250.92)">step, no interpolation · the running-best machine changes only when a better design is recorded</text>
   </g>
   <g id="text_26">
-   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="265.68" transform="rotate(-0 6.5664 265.68)">sources: the campaign telemetry, islands 1 to 3 · data commit dd3cc6a · run a76c5e9</text>
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="265.68" transform="rotate(-0 6.5664 265.68)">sources: the campaign telemetry, islands 1 to 3</text>
   </g>
   <g id="text_27">
-   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="276.8976" transform="rotate(-0 6.5664 276.8976)">rows NR-002 · NR-005 · NR-006 · NR-062 · NR-066 · NR-069 · script commit e66dd94 · the four printed forms are the window-end member NR-062 signs</text>
+   <text style="font-size: 6.8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #777777" x="6.5664" y="276.8976" transform="rotate(-0 6.5664 276.8976)">the four printed forms are window-end values, not window means</text>
   </g>
  </g>
  <defs>

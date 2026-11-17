@@ -37,7 +37,7 @@ sits in the footer.
 
 ## Provenance line
 
-Data commit `dd3cc6a` · genome extract `strip-extract-2026-10-09-best-so-far` (row i3-g26-i9) · capture `pair-extract-2026-10-08-winner-ops` · rows NR-011, NR-017, NR-021, NR-022, NR-043 · script commit `d0e410d` · full record: the figure-provenance appendix.
+Data commit `dd3cc6a` · genome extract `strip-extract-2026-10-09-best-so-far` (row i3-g26-i9) · capture `pair-extract-2026-10-08-winner-ops` · rows NR-011, NR-017, NR-021, NR-022, NR-043 · script commit `4444c516` · full record: the figure-provenance appendix.
 
 ## Generation note
 

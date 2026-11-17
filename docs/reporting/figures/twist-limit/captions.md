@@ -49,7 +49,7 @@ the load of the same state.
 ## Provenance line
 
 Data commit `dd3cc6a` · capture `pair-extract-2026-10-08-winner-ops` ·
-rows NR-022, NR-023, NR-040, NR-052, NR-053 · script commit `e3d664c` · full
+rows NR-022, NR-023, NR-040, NR-052, NR-053 · script commit `4444c516` · full
 record: the figure-provenance appendix.
 
 ## Generation note
