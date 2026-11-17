@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.90. Date 2026-11-01.
+Internal engineering report. Draft v0.91. Date 2026-11-06.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -179,8 +179,10 @@ The base span is 0.75 of the power-sized rotor radius, and the base chord is 0.1
 
 That radius is not the ring radius.
 Its own slot sets the ring radius `r_hub`.
-The blade radius `r_rotor` is the aerodynamic size the blade spans from.
-The blade runs from the ring radius `r_hub` to the tip radius `r_rotor`.
+The blade radius `r_rotor` is the power-sizing radius, not the tip.
+
+The blade crosses the ring.
+Its tip sits at 5.630 m from the shaft axis (NR-032).
 The part outside the ring is its overhang.
 The power sizing inverts the power equation (NR-050):
 
@@ -492,7 +494,11 @@ They are an anti-cheat tripwire on the rated machine, so they evaluate at the ra
 They do not evaluate at the wind of a later sweep.
 
 The three screens charge different area bases.
-The per-rotor screen reads the annulus with no elevation factor.
+The per-rotor screen reads the annulus normal to the rotor axis.
+It carries no elevation factor, so its ceiling is the untilted Betz limit.
+That ceiling sits above the momentum ceiling of the tilted disc.
+The screen is a loose tripwire (NR-034).
+
 The availability and aggregate screens read the wind-normal area, which carries the elevation factor (NR-034).
 The aggregate screen charges the window mean, and the power floor beside it charges the window end.
 
@@ -544,6 +550,10 @@ ratio r over (1 minus r) would divide by zero.
 
 The code floors the denominator at 1e-6.
 The ratio reads one million at the limit and stays finite.
+The floor caps the ratio.
+The charge at that cap sits above the 1e9 reject cost.
+An ok design within a whisker of the limit scores below every reject.
+
 The twist gate flags a segment that passes its limit, so a design
 at the limit exactly reaches the floor (NR-046).
 
@@ -552,7 +562,8 @@ at the limit exactly reaches the floor (NR-046).
 A rejected design carries no score (NR-046).
 The evaluator carries Inf for a rejected design.
 The runner stamps the search cost `1e9` on every non-ok design (NR-046).
-No reject ranks above an ok design.
+No reject ranks above an ok design at the campaign margins.
+One edge case exists near the twist limit, and section 2.4.7 states it.
 The search cannot trade power or safety against mass.
 
 The differential-evolution campaign fixed the configuration below.
@@ -1424,3 +1435,107 @@ The commit and the three receipts fix the set. The flag fixes one
 invocation. A reader who holds the commit, the generators and the three
 input hashes reproduces two frames without a flag and the cartography
 only with it.
+
+## Appendix: TRPT shaft section: closed forms
+
+The forms below state the segment model the code implements.
+The Tulloch thesis holds Eq 4.30 to 4.34, and `src/trpt_twist_limit.jl` carries the peak form.
+A segment is a pair of rings of radii $r_0$ and $r_1$, joined by lines of length $l$.
+Axial tension $T_N$ holds the segment.
+A twist $\theta$ turns the top ring and shortens the segment.
+The segment height follows from the line geometry.
+
+$$h(\theta) = \sqrt{A + B \cos \theta},
+\qquad
+A = l^2 - r_0^2 - r_1^2,
+\qquad
+B = 2 \, r_0 r_1$$
+
+The torque follows from virtual work.
+Twisting the ring does work against the tension, so the torque is the slope of the height curve.
+
+$$\tau = -T_N \, \frac{dh}{d\theta},
+\qquad
+\Lambda = \frac{\tau}{T_N \, r_1} = \frac{r_0 \sin \theta}{h(\theta)}$$
+
+The peak twist solves $d\Lambda/d\theta = 0$.
+The discriminant factors into the two reach terms.
+A root exists for every shaft longer than $r_0 + r_1$.
+
+$$\cos \delta_{\mathrm{peak}} =
+\frac{\sqrt{A^2 - B^2} - A}{B}
+\qquad (l > r_0 + r_1)$$
+
+The cosine is negative, so the peak sits past 90 degrees.
+For a long shaft the peak approaches 90 degrees from above.
+The series below reads in radians.
+
+$$\delta_{\mathrm{peak}} > 90^{\circ}
+\qquad\text{and}\qquad
+\delta_{\mathrm{peak}} = \frac{\pi}{2} + \frac{r_0 r_1}{l^2} + O(l^{-4})$$
+
+The peak torque is half the drop in segment height from no twist to half a turn.
+
+$$\tau_{\max} = T_N \cdot \frac{h(0) - h(\pi)}{2}$$
+
+The geometry cancels out of the torque margin.
+A segment has one shape parameter, its peak angle.
+The margin at an operating twist depends on two angles.
+
+$$M(\theta_{\mathrm{op}}, \delta_{\mathrm{peak}}) =
+\frac{\sqrt{1 + c^2 - 2 c \cos \theta_{\mathrm{op}}}}{\sin \theta_{\mathrm{op}}},
+\qquad
+c = \cos \delta_{\mathrm{peak}}$$
+
+The inverse gives the twist allowed for a target margin.
+
+$$\cos \theta_M =
+\frac{c + \sqrt{c^2 - M^2 (1 + c^2 - M^2)}}{M^2}$$
+
+The formula reproduces the winner margins.
+It reads the twist and peak angles (NR-022) and the torque pair (NR-023).
+S1 reads 2.03 and S5 reads 2.69 (NR-040).
+The extra digits wait on the display ruling of the numbers seat.
+
+For a fixed twist, the segment torque falls with the line length.
+
+$$\tau = \frac{T \, r_0 r_1 \sin \delta}{L}
+\qquad\Rightarrow\qquad
+\tau = 0 \text{ at } \delta = 180^{\circ}
+\qquad (l \geq r_0 + r_1)$$
+
+Below that length the rings meet first, and the torque does not cross zero.
+
+The zero crossing is a separate geometric bound.
+The report prints $\delta_{\mathrm{crit}}$ as the peak (NR-022), so this block names the zero crossing.
+
+$$\delta_{\mathrm{zero}} = \pi \qquad (l \geq r_0 + r_1)$$
+
+$$\delta_{\mathrm{zero}} =
+\arccos \frac{r_0^2 + r_1^2 - l^2}{2 r_0 r_1}
+\qquad (l < r_0 + r_1)$$
+
+The normalised response curve follows from the same two angles.
+
+$$y(x) = \frac{\sin(x \, \delta_{\mathrm{peak}})}
+{\sqrt{1 + c^2 - 2 c \cos(x \, \delta_{\mathrm{peak}})}},
+\qquad
+x = \delta / \delta_{\mathrm{peak}}$$
+
+The Glauert ceiling for a tilted rotor follows from a momentum model.
+Its value at 30 degrees waits on a signed row, so it does not print here.
+
+$$C_{p,\mathrm{Glauert}}(a, \gamma) =
+4a \, (\cos \gamma - a) \sqrt{1 - 2a \cos \gamma + a^2}$$
+
+The optimum satisfies a cubic condition.
+
+$$-3 a^3 + 7 a^2 c - 3 a c^2 - 2 a + c = 0,
+\qquad
+c = \cos \gamma$$
+
+The averaging argument uses the Jensen inequality.
+The mean of the cube is at least the cube of the mean.
+A trend or an averaging choice can only raise the measured power above k times the mean cube.
+
+$$\overline{\omega^3} \geq \overline{\omega}^{\,3}$$
