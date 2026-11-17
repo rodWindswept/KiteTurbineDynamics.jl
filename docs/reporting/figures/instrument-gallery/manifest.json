@@ -146,5 +146,12 @@
     "glmakie": "0.13",
     "python": "3.12.3",
     "pillow": "12.3.0"
+  },
+  "footer": {
+    "rows": [],
+    "row_count": 0,
+    "era": [],
+    "hashes": [],
+    "note": "the plate composes three frames and their cell borders only. The run stamp prints on the page proof, not the plate, so a footer census reads zero here and the generator is the record."
   }
 }
