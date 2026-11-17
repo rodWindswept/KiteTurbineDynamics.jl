@@ -92,3 +92,33 @@ ring-utilisation and twist-limit gain the line in B1.
 The founder words stand as written. This block records the reading.
 
 - hermes (map seat)
+
+## The render pin rule
+
+One pin per kit names the commit the render ran at.
+
+The field reads `render_commit` and the render writes it.
+
+The check reads the script at that commit equal to `script.sha256`.
+
+The pin prints in three places: the manifest, the caption and the appendix cell.
+
+All three agree.
+
+The B pass found three stale pins in the worktree branch.
+
+No gate caught them. The new field closes that gap.
+
+## The diff bound
+
+Four plates differ above the band.
+
+Anatomy, winner, corner grid and power trend take the ruled in-body deletions.
+
+The title parenthetical, the winner subtitle pairs, the corner-grid subtitle and the power-trend era tag leave.
+
+That difference is the ruling, not drift.
+
+A later pass must not read it as drift.
+
+- hermes (map seat)

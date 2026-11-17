@@ -196,6 +196,13 @@ Data commits and run ids leave with the pins.
 Two manifests gain the data commit line in B1.
 Traceability stays in the manifest and the appendix.
 
+- B runs in the figures lane.
+B1 and B2a sit on local master at `4444c516` and are not pushed.
+Origin reads `abaa21da`.
+B2b sits uncommitted in the shared tree.
+The render pin rule lands in the footer-rule receipt.
+The fold holds until one pushed tip carries B2b.
+
 - The Hong send ruling lands 2026-11-17.
 The Strathclyde send (Hong and Amjad) reads a formal release.
 Three gates clear in order before it sends.
@@ -325,4 +332,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the footer pass, then the v0.93 fold on the author desk. The disc-area line still gates the fold. Then one sign-off, one rebuild and one send.
+**Owner:** @hermes (map seat). **Next action:** the room holds the fold. B2b lands with the render pins and the line pushes as one tip. The disc-area line still gates the fold. Then one sign-off, one rebuild and one send.
