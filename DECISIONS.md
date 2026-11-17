@@ -10,6 +10,55 @@ can assess whether a decision still holds when circumstances change.
 
 ---
 
+## [2026-11-17] The ODE reads the line-count surface through its own function, not the sizing read
+
+**Context.** Founder call 7 ruled Option A on 2026-10-30: teach the ODE the
+n-surface. The ODE flies `cp_at_tsr(λ)` at four disc-power sites, so `n_lines`
+moves mass and drag but never power. The sizing path has read the measured
+blade-count ratio since 2026-10-05 through `cp_bem`.
+
+That function cannot carry the ODE. Above the last ratio knot (8.3905) the
+table is held at its end value. For `n >= 4` that value is negative, and the
+anchor is negative past λ 9.61 too, so the product returns positive power:
+`cp_bem(9, 10.5)` reads +0.5926, the Betz clamp, against an anchor of
+−0.3018. Its lower clamp also flattens the measured brake band to zero
+(`cp_bem(6, 7.0)` reads 0 against −0.0267 measured). Neither fires on the
+sizing path, which asks only for a positive radius. Both fire on the ODE,
+whose λ band runs to 12.
+
+**Decided (proposed 2026-11-17; awaiting the aero counter-read and the
+builder).** A second named read, `BEM.cp_ode(n, λ)`, corrects the anchor's
+positive branch only:
+
+    cp_ode(n, λ) = cp_at_tsr(λ) · Rf(n, λ)   while cp_at_tsr(λ) > 0
+                 = cp_at_tsr(λ)              where cp_at_tsr(λ) <= 0
+
+No lower clamp: a negative Cp is a brake, not a zero. `cp_bem` keeps its
+sizing form and its clamp. Rows stay exact in `n`, linear in λ between the
+eight knots, held at both ends.
+
+Four sites move: `src/ring_forces.jl:233`, `src/sim_frame.jl:157`,
+`src/sim_frame.jl:472`, `src/initialization.jl:1033`. The settle scan must
+match the ODE disc branch. Expansion rotors stay on `cp_at_tsr`; they are
+three-blade propellers and carry no line-count surface. CT does not move:
+RF-21 and NR-086 own that axis.
+
+**Measured (2026-11-17, at `2a0514f5`).** `n = 3` identity is exact over
+λ 0 to 12. Peak λ falls 5.200 to 2.813 from `n = 3` to `n = 9`; peak Cp runs
+0.3087 to 0.3236. At the archive's flown λ 6.8415 (NR-032) the surface reads
+0.2258 (`n = 3`), 0.1624 (`n = 4`), 0.0894 (`n = 5`), −0.0004 (`n = 6`) and
+−0.10 to −0.34 (`n = 7..9`). The `n = 6` crossing is 6.8392, which is 0.0023
+below the flown point.
+
+Exposure on the signed 508: 11 designs are `n >= 6` (2.2 per cent) and 189
+are `n >= 4` (37.2 per cent). RF-22's 251 of 404 belongs to the bankderate
+campaign, not to bankderate2.
+
+**Status.** Proposed. The acceptance file is `test/test_call7_nsurface.jl`:
+1,746 checks, 1,745 pass on the reference definition, and the one red is the
+implementation gate. It is not wired into `runtests.jl`. No draft numeral, no
+register row and no campaign CSV moves until a re-run is ruled.
+
 ## [2026-10-20] The LHS cartography harness loads every design at its own rated power
 
 **Context.** `scripts/run_lhs_cartography.jl` called
