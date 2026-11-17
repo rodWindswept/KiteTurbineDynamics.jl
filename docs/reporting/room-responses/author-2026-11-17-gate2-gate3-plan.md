@@ -39,11 +39,15 @@ Every pending bracket leaves, including the one in the section 7 heading.
 Every figure roster label, slug and kit stamp leaves.
 The signed-row data appendix and the builder record leave.
 
-### The fifteen prose sites
+### The prose sites
 
-The sheet needs a decision on each site.
-This seat rules thirteen rewrites and two drops.
-No site keeps, because every one of the fifteen carries room vocabulary.
+The sheet opened with fifteen sites.
+This seat rules twenty-two rewrites and seven drops over twenty-nine sites.
+No site keeps, because every one carries room vocabulary.
+
+The sheet then took six sites that the sixteen marker classes miss.
+Four more carry an internal reference in surviving body prose.
+The audit below names them.
 
 | id | Decision |
 |---|---|
@@ -71,6 +75,57 @@ No site keeps, because every one of the fifteen carries room vocabulary.
 | B13 | rewrite=No value prints here until a fresh measurement produces a reading for it. |
 | B14 | rewrite=Each printed point needs its own measured reading. |
 | B15 | rewrite=Every public post will cite its data and its commits. |
+
+### The sites the class table missed
+
+Six sites carry room vocabulary in body prose that none of the sixteen classes touches.
+
+| id | Decision |
+|---|---|
+| B16 | rewrite=Its value at 30 degrees is not yet signed off, so it does not print here. |
+| B17 | rewrite=The stamp names the commit, the model version and the geometry fingerprint. |
+| B18 | rewrite=The wind-authority model version row, with the era tag removed from the table cell |
+| B19 | rewrite=The team deferred the full beam-on-supports blade model. |
+
+| id | Decision |
+|---|---|
+| B20 | rewrite=accumulates. |
+| B21 | rewrite=The appendix prints two decimal places. |
+| B22 | drop |
+| B23 | drop |
+
+Four more carry an internal reference that a reader cannot resolve.
+
+| id | Decision |
+|---|---|
+| B24 | drop |
+| B25 | drop |
+| B26 | drop |
+| B27 | rewrite=The dataset sits at data commit dd3cc6a. |
+
+| id | Decision |
+|---|---|
+| B28 | rewrite=The dataset commits to the repository at dd3cc6a. |
+| B29 | rewrite=The report prints it as the end power. |
+
+### The anchor defect
+
+B08 carried an anchor that ends on a full stop.
+The draft line carries a citation group there, so the anchor missed the source.
+A rewrite that met it would have left a stray bracket and full stop.
+This seat widened the anchor to the whole line, citation group included.
+The replacement then reads clean, and the token strip finds nothing on that line.
+
+That makes the order matter on B08 alone.
+The rewrite runs before the token strip.
+Every other anchor stands clear of a citation group, so the order does not move them.
+
+### The audit
+
+After the twenty-nine rulings, the surviving body carries no room vocabulary.
+Two hits remain, and both sit inside blocks the mechanical set removes.
+They read the front-matter block and the section 7 pending bracket.
+The check ran on the committed draft with the rulings applied and the removed blocks deleted.
 
 ### Why each ruling
 
@@ -112,8 +167,8 @@ The cited count reads 59 in the draft and stays 59.
 
 The reader copy loses 360 citation tokens.
 It loses the four internal sections and three table columns.
-It gains thirteen ruled rewrites and loses two sentences.
-The prose fold reads nineteen line edits.
+It gains twenty-two ruled rewrites and loses seven sentences.
+The prose fold reads twenty-nine line edits.
 
 ## Gate 3: the abstract rewrite
 
