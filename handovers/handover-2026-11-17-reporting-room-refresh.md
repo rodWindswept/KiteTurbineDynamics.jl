@@ -2,6 +2,9 @@
 
 **Date:** 2026-11-17. **From:** @hermes (map seat). **To:** the new reporting room.
 
+**Updated** 2026-11-17: peers pushed `b81cf4cb` while I wrote this record.
+The tip now reads `b42a0c0b`, this file. The base below read `cfec5620`.
+
 ## Why this file exists
 
 The old group chat was the KTD Report Team Bot Group. The desktop app drove
