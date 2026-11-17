@@ -12,6 +12,7 @@
 **Updated** 2026-11-17 for the gate closure train. Gate 1 signs the aerodynamics at `74052e59` and opens the samara call. Sweep 36 lands at `2a0514f5`. The gate 2 caption set lands at `5547aba3`. The Call 7 proposal and counter-read land at `4380a94d` and `380c7758`. Draft v0.91. The send waits on gate 1.
 **Updated** 2026-11-17 for the v0.92 fold train. Gate 3 and the PL12 tally land at `690efb5a`. Sweep 37 lands at `57d07ec4`. The plate-footer instrument lands at `a5bced36`. The v0.93 fold waits on two founder calls and one aero line.
 **Updated** 2026-11-17 for the Option A ruling. The samara call closes. NR-086 cherry-picks onto master at `295d68c4`. The `.bib` entry, the verification section and the receipt land at `92a51cfa`. The footer rule and the disc-area line still gate the v0.93 fold.
+**Updated** 2026-11-17 for the footer rule. One footer rule for all kits. The drawn footer keeps the source and the capture name. The instrument must exit 0 after the pass. Only the disc-area line gates the v0.93 fold now.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -183,6 +184,13 @@ The `.bib` entry and the verification section land at `92a51cfa`.
 The appendix credit prose folds with v0.93.
 The cited count moves 59 to 60 inside that fold.
 
+- The footer rule lands on 2026-11-17.
+One footer rule for all kits.
+The drawn footer keeps the source and the capture name.
+The row list, the era tag and the script pins leave the plate.
+The instrument exits 1 today and must read 0 after the pass.
+Traceability stays in the manifest and the appendix.
+
 - The Hong send ruling lands 2026-11-17.
 The Strathclyde send (Hong and Amjad) reads a formal release.
 Three gates clear in order before it sends.
@@ -196,16 +204,18 @@ Successors stage own paths only.
 ## Open queue, in fold order
 
 1. **The v0.93 fold (one desk, one commit).**
+The footer pass runs first and the nine cells quote its pins.
 @author carries the two NR-056 cells, the Glauert block, the appendix credit prose and the nine pin cells.
-Two inputs gate it: the footer rule and the disc-area line.
+One input gates it: the disc-area line.
 @aero-validator hands the disc-area line.
 One sign-off, one rebuild and one send follow it.
 
-2. **Gate 2 close: the plate footer call.**
-The caption set landed at `5547aba3` with both routes at 59 cited.
-The plate-footer instrument landed at `a5bced36` and its acceptance line exits 1 today.
-The founder call reads three routes and the one-footer rule is the room recommendation.
-After a ruling, @figures-images-diagrams re-pins and @author re-audits.
+2. **Gate 2 close: the footer pass.**
+The ruling lands: one footer rule for all kits.
+@figures-images-diagrams runs the pass and re-pins every kit.
+The acceptance line reads the instrument exit 0.
+It exits 1 today.
+@author re-audits the reader copy after the re-pin.
 
 3. **Call 7 implementation: the n-surface.**
 @software-validator implements behind both signs.
@@ -249,7 +259,6 @@ The section 3.2 fold waits the same pass.
 
 11. **With the founder.**
 Gate 1: the whole-report sign-off.
-The plate footer rule.
 The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 The F11 acceptance reds read B6c and P2.
 
@@ -311,4 +320,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the v0.93 fold, one commit on the author desk. It waits on the footer rule and the disc-area line. Then one sign-off, one rebuild and one send.
+**Owner:** @hermes (map seat). **Next action:** the footer pass, then the v0.93 fold on the author desk. The disc-area line still gates the fold. Then one sign-off, one rebuild and one send.
