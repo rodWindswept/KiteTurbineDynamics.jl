@@ -36,29 +36,40 @@ import build_draft_pdf as bdp
 TOOLCHAIN = "pandoc 3.1.3 \u2192 DOCX (A4 reference doc, LibreOffice review copy)"
 
 
-def seat_to_md(root, match):
+def seat_to_md(root, match, reader=False):
     """Replace one seat marker with a markdown image block + captions.
 
-    DOCX cannot embed SVG, so this route uses the kit's PNG sibling —
-    still the shipped bytes, nothing re-rendered.
+    DOCX cannot embed SVG, so this route uses the kit's PNG sibling — still
+    the shipped bytes, nothing re-rendered.
+
+    reader=True drops the roster row, the slug and the provenance stamp, and
+    treats a missing kit as fatal.
     """
     slug = match.group("slug")
     row = match.group("row")
     kit = root / bdp.FIG_ROOT / slug
     label = f"Figure (roster row {row}) \u00b7 {slug}" if row else slug
     if not kit.is_dir():
+        if reader:
+            raise SystemExit(f"reader build: kit missing for {slug}")
         return bdp.MISSING_KIT_MESSAGE.format(slug=slug)
     manifest_path = kit / "manifest.json"
     captions_path = kit / "captions.md"
     image = kit / f"{slug}.png"
     if not image.exists() or not manifest_path.exists() or not captions_path.exists():
+        if reader:
+            raise SystemExit(f"reader build: kit incomplete for {slug}")
         return bdp.MISSING_KIT_MESSAGE.format(slug=slug)
     try:
         manifest = json.loads(manifest_path.read_text())
     except json.JSONDecodeError:
+        if reader:
+            raise SystemExit(f"reader build: kit manifest unreadable for {slug}")
         return bdp.MISSING_KIT_MESSAGE.format(slug=slug)
     plain, tech = bdp.parse_caption_sections(captions_path)
     stamp = bdp.manifest_stamp(manifest)
+    if reader:
+        return f"\n![{slug}]({image})\n\n{plain}\n\n> {tech}\n"
     block = (
         f"\n![{slug}]({image})\n\n"
         f"**{html.escape(label)}**\n\n"
@@ -69,11 +80,11 @@ def seat_to_md(root, match):
     return block
 
 
-def resolve_seats_md(root, text):
+def resolve_seats_md(root, text, reader=False):
     seats = []
     for match in bdp.SEAT_RE.finditer(text):
         seats.append(match.group("slug"))
-    text = bdp.SEAT_RE.sub(lambda m: seat_to_md(root, m), text)
+    text = bdp.SEAT_RE.sub(lambda m: seat_to_md(root, m, reader=reader), text)
     return text, seats
 
 
@@ -169,10 +180,15 @@ def build_docx(root, args, text, seats, summary):
     bdp.appendix_pin_gate(root, args)
     out_dir = root / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    intermediate = out_dir / "draft-assembled-docx.md"
+    intermediate = out_dir / (
+        "draft-reader-assembled-docx.md" if getattr(args, "reader", False)
+        else "draft-assembled-docx.md"
+    )
     intermediate.write_text(text)
     ref = a4_reference_doc(out_dir)
-    docx_path = out_dir / "draft-live.docx"
+    docx_path = out_dir / (
+        "draft-reader.docx" if getattr(args, "reader", False) else "draft-live.docx"
+    )
     cmd = [
         "pandoc",
         "-f",
@@ -197,15 +213,23 @@ def main():
     parser.add_argument("--checker", default=bdp.CHECKER)
     parser.add_argument("--out", default=bdp.OUT_DIR)
     parser.add_argument("--no-check", action="store_true", help="skip the citation gate (debug only)")
+    parser.add_argument(
+        "--reader",
+        action="store_true",
+        help="build the reader copy (gate 2): internal apparatus stripped, "
+             "no register appendix, no build record",
+    )
     args = parser.parse_args()
 
     root = bdp.repo_root()
+    if args.reader and args.out == bdp.OUT_DIR:
+        args.out = bdp.READER_OUT_DIR
     draft_path = root / args.draft
     text = draft_path.read_text()
 
     # Same order as the PDF route: resolve seats first, then run the
     # citation gate over the assembled document (draft + kit captions).
-    text, seats = resolve_seats_md(root, text)
+    text, seats = resolve_seats_md(root, text, reader=args.reader)
     surfaces = [
         root / bdp.FIG_ROOT / slug / "captions.md"
         for slug in seats
@@ -224,10 +248,25 @@ def main():
             print(log)
             return 1
 
-    cited = sorted({int(m) for m in __import__("re").findall(r"NR-(\d+)", text)})
-    if cited:
-        text += "\n" + bdp.register_appendix(root, args.register, cited)
-    text += "\n" + bdp.build_record(root, args.draft, args.register, summary, seats, TOOLCHAIN)
+    if args.reader:
+        # Reader build (gate 2). The citation gate above ran on the unstripped
+        # text, so the trace is proven before the tokens leave.
+        import reader_strip
+        text, report = reader_strip.strip_text(text)
+        reader_strip.reader_gate(text, report)
+        (root / args.out).mkdir(parents=True, exist_ok=True)
+        (root / args.out / "reader-strip-report-docx.txt").write_text(
+            "reader build strip report (docx route)\n\n"
+            + "\n".join(report["events"])
+            + f"\n\nprose sites {len(report['sites'])}, unruled {len(report['unruled'])}"
+            + f"\ncitation summary: {summary}"
+            + f"\ninput: {bdp.git_hash(root, args.draft)} {args.draft}\n"
+        )
+    else:
+        cited = sorted({int(m) for m in __import__("re").findall(r"NR-(\d+)", text)})
+        if cited:
+            text += "\n" + bdp.register_appendix(root, args.register, cited)
+        text += "\n" + bdp.build_record(root, args.draft, args.register, summary, seats, TOOLCHAIN)
 
     docx, err = build_docx(root, args, text, seats, summary)
     if err or docx is None:
@@ -236,11 +275,13 @@ def main():
 
     out_dir = root / args.out
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    copy = out_dir / f"draft-{bdp.git_hash(root, args.draft)}-{stamp}.docx"
+    prefix = "draft-reader" if args.reader else "draft"
+    copy = out_dir / f"{prefix}-{bdp.git_hash(root, args.draft)}-{stamp}.docx"
     bdp.sh(["cp", str(docx), str(copy)], cwd=root)
-    (out_dir / "build-record-docx.txt").write_text(
-        bdp.build_record(root, args.draft, args.register, summary, seats, TOOLCHAIN)
-    )
+    if not args.reader:
+        (out_dir / "build-record-docx.txt").write_text(
+            bdp.build_record(root, args.draft, args.register, summary, seats, TOOLCHAIN)
+        )
     print(f"[build] {docx.relative_to(root)}  ({len(seats)} seats, citations: {summary})")
     return 0
 

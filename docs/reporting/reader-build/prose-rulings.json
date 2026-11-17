@@ -1,0 +1,211 @@
+{
+  "gate": "2 of 3, the reader-build strip",
+  "seat": "software-worker",
+  "ruled_by": "author",
+  "ruled_at": "cfec5620",
+  "base_draft_version": "v0.91",
+  "note": "Anchors are exact draft text. A wrapped sentence takes the \\n escape. The human record of these decisions sits in prose-sites.md.",
+  "sites": [
+    {
+      "id": "B01",
+      "anchor": "The table names each gate, its formulation, its threshold, where it acts, the status it stamps and its register rows.",
+      "decision": "rewrite",
+      "replacement": "The table names each gate, its formulation, its threshold, where it acts and the status it stamps.",
+      "note": "The Rows column leaves the reader copy."
+    },
+    {
+      "id": "B02",
+      "anchor": "The register header pins their commits.",
+      "decision": "drop",
+      "note": "Points at the internal register header."
+    },
+    {
+      "id": "B03",
+      "anchor": "Every dataset carries a provenance stamp.",
+      "decision": "rewrite",
+      "replacement": "Every dataset carries its commit and its geometry fingerprint.",
+      "note": "Stamp is builder language."
+    },
+    {
+      "id": "B04",
+      "anchor": "The report names the commits in the register header.",
+      "decision": "drop",
+      "note": "Section 9 already names both commits."
+    },
+    {
+      "id": "B05",
+      "anchor": "The register reads that band as a plateau.",
+      "decision": "rewrite",
+      "replacement": "That band reads as a plateau.",
+      "note": "States the reading instead of comparing to the register."
+    },
+    {
+      "id": "B06",
+      "anchor": "The sum at three decimals reads 27.363, not the 27.364 the register quotes.",
+      "decision": "rewrite",
+      "replacement": "The sum at three decimals reads 27.363, not 27.364.",
+      "note": "Drops the room-frame on a rounding disagreement."
+    },
+    {
+      "id": "B07",
+      "anchor": "The final panel matches the register winner.",
+      "decision": "rewrite",
+      "replacement": "The final panel of the strip carries the winner.",
+      "note": "Names what the reader sees."
+    },
+    {
+      "id": "B08",
+      "anchor": "The strip shows built geometry and three signed values on each card (NR-036, NR-062, NR-066).",
+      "decision": "rewrite",
+      "replacement": "The strip shows built geometry and three values on each card.",
+      "note": "A reader cannot read signed."
+    },
+    {
+      "id": "B09",
+      "anchor": "The register, the test suite and the pipeline hold every number.",
+      "decision": "rewrite",
+      "replacement": "The analysis pipeline and the test suite hold every number.",
+      "note": "Drops the register as the holder."
+    },
+    {
+      "id": "B10",
+      "anchor": "not a\nsigned row.",
+      "decision": "rewrite",
+      "replacement": "not a measured result.",
+      "note": "Closes the wrapped sentence."
+    },
+    {
+      "id": "B11",
+      "anchor": "The signed length screen varied length alone on one pre-fold genome.",
+      "decision": "rewrite",
+      "replacement": "The length screen varied length alone on one pre-fold genome.",
+      "note": "Drops signed."
+    },
+    {
+      "id": "B12",
+      "anchor": "The report cannot state the cost of energy at any scale, because no signed row for it exists.",
+      "decision": "rewrite",
+      "replacement": "The report cannot state the cost of energy at any scale, because no measured reading for it exists.",
+      "note": "Names a measured reading in place of a signed row."
+    },
+    {
+      "id": "B13",
+      "anchor": "No value prints here until a fresh read produces a signed row for it.",
+      "decision": "rewrite",
+      "replacement": "No value prints here until a fresh measurement produces a reading for it.",
+      "note": "Same rule as B12."
+    },
+    {
+      "id": "B14",
+      "anchor": "Each printed point needs a signed row.",
+      "decision": "rewrite",
+      "replacement": "Each printed point needs its own measured reading.",
+      "note": "Same rule as B12."
+    },
+    {
+      "id": "B15",
+      "anchor": "Every public post will cite register rows by ID.",
+      "decision": "rewrite",
+      "replacement": "Every public post will cite its data and its commits.",
+      "note": "States a public behaviour in reader terms."
+    },
+    {
+      "id": "B16",
+      "anchor": "Its value at 30 degrees waits on a signed row, so it does not print here.",
+      "decision": "deferred",
+      "replacement": "Its value at 30 degrees is not yet signed off, so it does not print here.",
+      "note": "appendix closed forms; the 16 marker classes miss it"
+    },
+    {
+      "id": "B17",
+      "anchor": "The stamp names the commit, the physics era and the geometry fingerprint.",
+      "decision": "rewrite",
+      "replacement": "The stamp names the commit, the model version and the geometry fingerprint.",
+      "note": "section 2.6; the era tag is room vocabulary"
+    },
+    {
+      "id": "B18",
+      "anchor": "| The wind-authority era (`post-95c385d_wind-authority`) | One wind authority reads the scored results. | Current physics era. |",
+      "decision": "rewrite",
+      "replacement": "| The wind-authority model version | One wind authority reads the scored results. | Current model version. |",
+      "note": "section 4.1 table row; the era tag prints in a reader table"
+    },
+    {
+      "id": "B19",
+      "anchor": "The team deferred the full beam-on-supports blade model (PRD 0006:147).",
+      "decision": "rewrite",
+      "replacement": "The team deferred the full beam-on-supports blade model.",
+      "note": "section 4.3; an internal document reference"
+    },
+    {
+      "id": "B20",
+      "anchor": "accumulates (DECISIONS 2026-09-29).",
+      "decision": "rewrite",
+      "replacement": "accumulates.",
+      "note": "section 4.3; an internal document reference"
+    },
+    {
+      "id": "B21",
+      "anchor": "The extra digits wait on the display ruling of the numbers seat.",
+      "decision": "rewrite",
+      "replacement": "The appendix prints two decimal places.",
+      "note": "appendix closed forms; names the numbers seat"
+    },
+    {
+      "id": "B22",
+      "anchor": "The value-claims ledger classes every economics reading the project holds today as either held or unsigned.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 6.2; names an internal ledger"
+    },
+    {
+      "id": "B23",
+      "anchor": "Its rule of use governs this section as it governs section 5.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 6.2; internal rule of use"
+    },
+    {
+      "id": "B24",
+      "anchor": "The Phase 0 audit sits at master 31ca00d.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 2.6; an internal audit pin, and the line occurs twice"
+    },
+    {
+      "id": "B25",
+      "anchor": "The Phase 0 audit sits at master 31ca00d.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 9; the second occurrence of the same line"
+    },
+    {
+      "id": "B26",
+      "anchor": "The fidelity probes sit on the bank-derate-cos2p65 branch.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 9; an internal branch name"
+    },
+    {
+      "id": "B27",
+      "anchor": "The dataset sits at data commit dd3cc6a on the bankderate2-results branch.",
+      "decision": "rewrite",
+      "replacement": "The dataset sits at data commit dd3cc6a.",
+      "note": "section 2.6; drops the internal branch name"
+    },
+    {
+      "id": "B28",
+      "anchor": "The dataset commits to the repository at dd3cc6a on bankderate2-results.",
+      "decision": "rewrite",
+      "replacement": "The dataset commits to the repository at dd3cc6a.",
+      "note": "section 9; drops the internal branch name"
+    },
+    {
+      "id": "B29",
+      "anchor": "The draft prints it as the end power.",
+      "decision": "rewrite",
+      "replacement": "The report prints it as the end power.",
+      "note": "section 2.3; the reader holds the report, not the draft"
+    }
+  ]
+}

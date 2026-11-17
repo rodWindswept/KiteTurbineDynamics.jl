@@ -49,6 +49,7 @@ CHECKER = "scratch/sv_check_draft_citations.py"
 FIG_ROOT = "docs/reporting/figures"
 FIG_MAP = "docs/reporting/figures/figure-map.md"
 OUT_DIR = "scratch/report-pdf-build"
+READER_OUT_DIR = "scratch/report-reader-build"
 KATEX_DIR = "docs/reporting/assets/katex"
 
 CSS = """
@@ -183,13 +184,21 @@ def manifest_stamp(manifest):
     return " \u00b7 ".join(bits)
 
 
-def seat_to_html(root, match):
-    """Replace one seat marker with the embedded figure block."""
+def seat_to_html(root, match, reader=False):
+    """Replace one seat marker with the embedded figure block.
+
+    reader=True builds the reader copy: the roster row, the slug and the kit
+    provenance stamp are internal apparatus, so they are dropped. A missing
+    kit is fatal in reader mode - a visible placeholder is internal apparatus
+    too, and a release must not print one.
+    """
     slug = match.group("slug")
     row = match.group("row")
     kit = root / FIG_ROOT / slug
     label = f"Figure (roster row {row}) \u00b7 {slug}" if row else slug
     if not kit.is_dir():
+        if reader:
+            raise SystemExit(f"reader build: kit missing for {slug}")
         return MISSING_KIT_MESSAGE.format(slug=slug)
     manifest_path = kit / "manifest.json"
     captions_path = kit / "captions.md"
@@ -197,13 +206,32 @@ def seat_to_html(root, match):
     if not image.exists():
         image = kit / f"{slug}.png"
     if not image.exists() or not manifest_path.exists() or not captions_path.exists():
+        if reader:
+            raise SystemExit(f"reader build: kit incomplete for {slug}")
         return MISSING_KIT_MESSAGE.format(slug=slug)
     try:
         manifest = json.loads(manifest_path.read_text())
     except json.JSONDecodeError:
+        if reader:
+            raise SystemExit(f"reader build: kit manifest unreadable for {slug}")
         return MISSING_KIT_MESSAGE.format(slug=slug)
     plain, tech = parse_caption_sections(captions_path)
     stamp = manifest_stamp(manifest)
+    if reader:
+        return (
+            '<figure class="fig" id="fig-{slug}">\n'
+            '<img src="{src}" alt="{slug}">\n'
+            "<figcaption>\n"
+            '<span class="plain">{plain}</span>\n'
+            '<span class="tech">{tech}</span>\n'
+            "</figcaption>\n"
+            "</figure>"
+        ).format(
+            slug=slug,
+            src=image,
+            plain=html.escape(plain),
+            tech=html.escape(tech),
+        )
     block = (
         '<figure class="fig" id="fig-{slug}">\n'
         '<img src="{src}" alt="{slug}">\n'
@@ -225,11 +253,11 @@ def seat_to_html(root, match):
     return block
 
 
-def resolve_seats(root, text):
+def resolve_seats(root, text, reader=False):
     seats = []
     for match in SEAT_RE.finditer(text):
         seats.append(match.group("slug"))
-    text = SEAT_RE.sub(lambda m: seat_to_html(root, m), text)
+    text = SEAT_RE.sub(lambda m: seat_to_html(root, m, reader=reader), text)
     return text, seats
 
 
@@ -305,7 +333,7 @@ def build_html(root, args, text, seats, summary):
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "draft.css").write_text(CSS)
 
-    intermediate = out_dir / "draft-assembled.md"
+    intermediate = out_dir / ("draft-reader-assembled.md" if getattr(args, "reader", False) else "draft-assembled.md")
     intermediate.write_text(text)
 
     html_path = out_dir / "draft.html"
@@ -348,7 +376,7 @@ def build_html(root, args, text, seats, summary):
         return None, f"pandoc failed:\n{err}"
     print(f"[math] {math_route}")
 
-    pdf_path = out_dir / "draft-live.pdf"
+    pdf_path = out_dir / ("draft-reader.pdf" if getattr(args, "reader", False) else "draft-live.pdf")
     chrome = "google-chrome" if sh(["which", "google-chrome"], cwd="/")[2] == 0 else "chromium"
     cmd = [
         chrome,
@@ -386,7 +414,7 @@ def build_latex(root, args, text, seats, summary):
     text = SEAT_RE.sub(seat_to_md, text)
     out_dir = root / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    pdf_path = out_dir / "draft-live.pdf"
+    pdf_path = out_dir / ("draft-reader.pdf" if getattr(args, "reader", False) else "draft-live.pdf")
     cmd = [
         "pandoc",
         "-s",
@@ -431,7 +459,7 @@ def build_once(root, args, route, summary_out=None):
     # Resolve seats first: the citation gate scans the assembled document
     # (draft + embedded kit captions), so a caption-only cite to an unsigned
     # row fails the build instead of printing the row untraceably.
-    text, seats = resolve_seats(root, text)
+    text, seats = resolve_seats(root, text, reader=getattr(args, "reader", False))
     surfaces = [
         root / FIG_ROOT / slug / "captions.md"
         for slug in seats
@@ -450,11 +478,27 @@ def build_once(root, args, route, summary_out=None):
             print(log)
             return 1
 
-    cited = sorted({int(m) for m in re.findall(r"NR-(\d+)", text)})
-    if cited:
-        text += "\n" + register_appendix(root, args.register, cited)
     toolchain = toolchain_line()
-    text += "\n" + build_record(root, args.draft, args.register, summary, seats, toolchain)
+    if getattr(args, "reader", False):
+        # Reader build (gate 2): the internal apparatus leaves and the build
+        # record does not print. The citation gate above already ran on the
+        # unstripped text, so the trace is proven before the tokens go.
+        import reader_strip
+        text, report = reader_strip.strip_text(text)
+        reader_strip.reader_gate(text, report)
+        (root / args.out).mkdir(parents=True, exist_ok=True)
+        (root / args.out / "reader-strip-report.txt").write_text(
+            "reader build strip report\n\n"
+            + "\n".join(report["events"])
+            + f"\n\nprose sites {len(report['sites'])}, unruled {len(report['unruled'])}"
+            + f"\ncitation summary: {summary}"
+            + f"\ninput: {git_hash(root, args.draft)} {args.draft}\n"
+        )
+    else:
+        cited = sorted({int(m) for m in re.findall(r"NR-(\d+)", text)})
+        if cited:
+            text += "\n" + register_appendix(root, args.register, cited)
+        text += "\n" + build_record(root, args.draft, args.register, summary, seats, toolchain)
 
     if route == "latex":
         pdf, err = build_latex(root, args, text, seats, summary)
@@ -466,11 +510,13 @@ def build_once(root, args, route, summary_out=None):
 
     out_dir = root / args.out
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    copy = out_dir / f"draft-{git_hash(root, args.draft)}-{stamp}.pdf"
+    prefix = "draft-reader" if getattr(args, "reader", False) else "draft"
+    copy = out_dir / f"{prefix}-{git_hash(root, args.draft)}-{stamp}.pdf"
     sh(["cp", str(pdf), str(copy)], cwd=root)
-    (out_dir / "build-record.txt").write_text(
-        build_record(root, args.draft, args.register, summary, seats, toolchain)
-    )
+    if not getattr(args, "reader", False):
+        (out_dir / "build-record.txt").write_text(
+            build_record(root, args.draft, args.register, summary, seats, toolchain)
+        )
     print(f"[build] {pdf.relative_to(root)}  ({len(seats)} seats, citations: {summary})")
     if args.open:
         subprocess.Popen(["xdg-open", str(pdf)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -520,9 +566,17 @@ def main():
     parser.add_argument("--watch", action="store_true", help="rebuild when a source changes")
     parser.add_argument("--interval", type=float, default=3.0, help="watch poll seconds")
     parser.add_argument("--open", action="store_true", help="open the PDF after building")
+    parser.add_argument(
+        "--reader",
+        action="store_true",
+        help="build the reader copy (gate 2): internal apparatus stripped, "
+             "no register appendix, no build record",
+    )
     args = parser.parse_args()
 
     root = repo_root()
+    if args.reader and args.out == OUT_DIR:
+        args.out = READER_OUT_DIR
 
     if not args.watch:
         return build_once(root, args, args.route)
