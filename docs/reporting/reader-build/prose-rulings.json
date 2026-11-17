@@ -110,13 +110,6 @@
       "note": "States a public behaviour in reader terms."
     },
     {
-      "id": "B16",
-      "anchor": "Its value at 30 degrees waits on a signed row, so it does not print here.",
-      "decision": "deferred",
-      "replacement": "Its value at 30 degrees is not yet signed off, so it does not print here.",
-      "note": "appendix closed forms; the 16 marker classes miss it"
-    },
-    {
       "id": "B17",
       "anchor": "The stamp names the commit, the physics era and the geometry fingerprint.",
       "decision": "rewrite",
@@ -330,8 +323,8 @@
       "id": "C18",
       "anchor": "A bracketed number in the body points at its entry here.",
       "decision": "rewrite",
-      "replacement": "A bracketed number in the body points at its entry here. Entries 11 to 17 stand as further reading, with no body citation.",
-      "note": "section 8 body prose; the claim holds for entries 1 to 10 and 18 only"
+      "replacement": "A bracketed number in the body points at its entry here. Entries 11 to 17 stand as further reading, with no body citation. Entry 19 carries the appendix credit.",
+      "note": "section 8 body prose; the claim holds for entries 1 to 10 and 18, and entry 19 is cited in the appendix"
     }
   ]
 }

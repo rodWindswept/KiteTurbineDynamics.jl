@@ -1,6 +1,6 @@
 # The kite turbine: a search over its design space
 
-Internal engineering report. Draft v0.92. Date 2026-11-17.
+Internal engineering report. Draft v0.93. Date 2026-11-17.
 
 Status DRAFT. Data commit `dd3cc6a`. Launch commit `a76c5e9`.
 The physics era is `post-95c385d_wind-authority`, with the bank derate applied throughout.
@@ -27,7 +27,7 @@ The campaign ranks designs on an objective that reads in kilograms equivalent.
 The best feasible value reads 27.364 kg-equivalent against 36.109 at the common start point (NR-005, NR-006).
 
 At the winner operating point the mean mechanical power reads 5.309 kW (NR-008).
-The site wind reads 11.01 m/s at 9.41 m (NR-008, NR-032).
+The site wind reads 11.01 m/s at 9.41 m (NR-056).
 The airborne mass reads 25.698 kg (NR-018).
 
 The winner carries six rings and three lines, with one active rotor (NR-011).
@@ -725,7 +725,7 @@ Its operating point reads as follows.
 | Main-rotor bank, ring 6 | 7.088 deg | NR-017 |
 | Lift-line elevation | 70 deg | NR-026 |
 | Lift-line tension | 324.1 N | NR-010 |
-| Reference wind speed | 11.01 m/s at 9.41 m | NR-008, NR-032 |
+| Reference wind speed | 11.01 m/s at 9.41 m | NR-056 |
 | Shear law | Hellmann power law, exponent 1/7, from the measured Daisy pair 10.0 m/s at 4.8 m | NR-056 |
 | Shaft elevation | 30 deg, hub at 9.4000 m | NR-057 |
 | Ring speed ratio | 5.566 | NR-031 |
@@ -1312,7 +1312,7 @@ Each entry prints the DOI where the source carries one.
 A bracketed number in the body points at its entry here.
 Entries 1 to 10 sit in the order the body first names them.
 
-Eighteen sources follow.
+Nineteen sources follow.
 The Hancock deck cites as unpublished.
 The founder dropped the Ranneberg entry.
 
@@ -1369,6 +1369,9 @@ Unpublished.
 18. Unterweger, D. "Cyclic Pitch Control of a Rotary Kite". Master thesis presentation, 31 January 2022.
 https://someawe.org/?p=196
 
+19. Tveide, T. "Parameter Fibers". Public page, math.osp.no/parameter-fibers. Private communication, November 2026.
+Unpublished.
+
 ## 9 Data availability and reproducibility
 
 The model is `KiteTurbineDynamics.jl`, a Julia package under the MIT licence.
@@ -1399,7 +1402,7 @@ analysis room and the seat notes sit in
 `docs/reporting/draft-tracker.md`. The body carries only
 reader-facing material.
 
-Seventeen of the eighteen reference entries carry verified sources.
+Seventeen of the nineteen reference entries carry verified sources.
 
 ## Appendix: Claims and evidence
 
@@ -1427,15 +1430,15 @@ repository, and its row names a commit in place of an extract.
 
 | Exhibit | Source extract | Cited rows | Script commit |
 |--------|----------------------|--------|------|
-| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021, NR-015, NR-060 | `e3d664c` |
-| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023, NR-040, NR-052, NR-053 | `e3d664c` |
-| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 | `ce9c5d8` |
-| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `9241b23` |
-| Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `d0e410d` |
-| Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `d0e410d` |
-| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `d0e410d` |
-| The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `d0e410d` |
-| The power trend | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 | `e66dd94` |
+| Ring utilisation plate | `pair-extract-2026-10-08-winner-ops` | NR-021, NR-015, NR-060 | `4444c516` |
+| Twist limit plate | `pair-extract-2026-10-08-winner-ops` | NR-022, NR-023, NR-040, NR-052, NR-053 | `4444c516` |
+| Machine evolution strip | `strip-extract-2026-10-09-best-so-far` | NR-005, NR-006, NR-011, NR-036, NR-062, NR-066 | `4444c516` |
+| System anatomy plate | `scratch/fig1_decode_winner.jl` · `best_vector.csv` | NR-011, NR-017, NR-043 | `4444c516` |
+| Levers landscape | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044, NR-045 | `4444c516` |
+| Parameter atlas | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-001, NR-005, NR-006, NR-044 | `4444c516` |
+| Machine winner | `strip-extract-2026-10-09-best-so-far` · `pair-extract-2026-10-08-winner-ops` | NR-011, NR-017, NR-021, NR-022, NR-043 | `4444c516` |
+| The corner machines | `corner-grid-extract-2026-10-15-picks` | NR-044, NR-051 | `4444c516` |
+| The power trend | `scripts/results/v13_5kw_masslift_len18.8_rotorcount_bankderate2/island_{1,2,3}/telemetry.csv` | NR-002, NR-005, NR-006, NR-062, NR-066, NR-069 | `4444c516` |
 | The instrument gallery | `instrument-gallery/captures/`, three frames hashed in `stamp.json` | none. No value in this report is read from a panel | `87e6b10` |
 
 **Output pins.**
@@ -1471,6 +1474,8 @@ only with it.
 
 The forms below state the segment model the code implements.
 The Tulloch thesis holds Eq 4.30 to 4.34, and `src/trpt_twist_limit.jl` carries the peak form.
+Tveide's note states the half-shortening peak-torque identity and the geometry-free torque margin.
+The private communication dates November 2026, and the public page sits at `math.osp.no/parameter-fibers`.
 A segment is a pair of rings of radii $r_0$ and $r_1$, joined by lines of length $l$.
 Axial tension $T_N$ holds the segment.
 A twist $\theta$ turns the top ring and shortens the segment.
@@ -1554,10 +1559,14 @@ $$y(x) = \frac{\sin(x \, \delta_{\mathrm{peak}})}
 x = \delta / \delta_{\mathrm{peak}}$$
 
 The Glauert ceiling for a tilted rotor follows from a momentum model.
-Its value at 30 degrees waits on a signed row, so it does not print here.
 
 $$C_{p,\mathrm{Glauert}}(a, \gamma) =
 4a \, (\cos \gamma - a) \sqrt{1 - 2a \cos \gamma + a^2}$$
+
+Its value at 30 degrees of tilt reads 0.5192 at a = 0.3434 (NR-086).
+At zero tilt the same form reads 16/27 at a = 1/3 (NR-086).
+The 30-degree coefficient sits 12.4 per cent lower on the same disc area.
+The main text quotes its share on the wind-normal area, which equals the disc area only at zero tilt.
 
 The optimum satisfies a cubic condition.
 

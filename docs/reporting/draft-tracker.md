@@ -1248,3 +1248,21 @@ Em dashes read 0.
 No number moves except the two amendments, which restate a basis and a scope in the abstract.
 
 Author, 2026-11-17.
+
+## v0.93, the Option A fold (2026-11-17, author)
+
+The appendix prints the Glauert ceiling at last. The value reads 0.5192 at a = 0.3434 (NR-086).
+The 12.4 per cent gap prints as a subtraction against 16/27, and its sentence carries no citation.
+The credit names Tveide for two results, and the verb is "states" because the record ties the peak form to Tulloch.
+
+The abstract and the table take NR-056 for the wind pair. Two cells, no numeral move.
+Reference entry 19 lands, and the list reads nineteen: seventeen verified, Hancock and Tveide unpublished.
+Nine appendix cells take 4444c516 from their manifests. The gallery cell stays at 87e6b10.
+
+Words read 12,989 from 12,909.
+STE reads 32 total at 0.25 per 100 words.
+Em dashes read 0.
+The cited count reads 60, every one signed, against 86 signed rows.
+The reader sheet reads 46 sites, because B16 retires with its anchor.
+
+Author, 2026-11-17.
