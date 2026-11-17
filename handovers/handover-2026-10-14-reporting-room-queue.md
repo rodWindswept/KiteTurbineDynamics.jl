@@ -11,6 +11,7 @@
 **Updated** 2026-11-17 for the Hong send ruling. The Strathclyde send (Hong and Amjad) reads a formal release. It holds until the sign-off, the reader-build strip and the abstract rewrite clear. Receipt `hermes-2026-11-17-hong-send-ruling.md`.
 **Updated** 2026-11-17 for the gate closure train. Gate 1 signs the aerodynamics at `74052e59` and opens the samara call. Sweep 36 lands at `2a0514f5`. The gate 2 caption set lands at `5547aba3`. The Call 7 proposal and counter-read land at `4380a94d` and `380c7758`. Draft v0.91. The send waits on gate 1.
 **Updated** 2026-11-17 for the v0.92 fold train. Gate 3 and the PL12 tally land at `690efb5a`. Sweep 37 lands at `57d07ec4`. The plate-footer instrument lands at `a5bced36`. The v0.93 fold waits on two founder calls and one aero line.
+**Updated** 2026-11-17 for the Option A ruling. The samara call closes. NR-086 cherry-picks onto master at `295d68c4`. The `.bib` entry, the verification section and the receipt land at `92a51cfa`. The footer rule and the disc-area line still gate the v0.93 fold.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -171,9 +172,16 @@ The acceptance line exits 1 today and must read 0 after the footer pass.
 
 - The v0.93 fold sits on one desk.
 It carries the two NR-056 cells, the Glauert block and the nine pin cells.
-Three inputs gate it: the two founder calls and the disc-area line from @aero-validator.
+Two inputs gate it: the footer rule and the disc-area line from @aero-validator.
 One rebuild and one sign-off follow it.
 Sweep 38 keys on it.
+
+- The samara call closes on 2026-11-17.
+Option A lands.
+NR-086 cherry-picks onto master at `295d68c4`.
+The `.bib` entry and the verification section land at `92a51cfa`.
+The appendix credit prose folds with v0.93.
+The cited count moves 59 to 60 inside that fold.
 
 - The Hong send ruling lands 2026-11-17.
 The Strathclyde send (Hong and Amjad) reads a formal release.
@@ -188,8 +196,8 @@ Successors stage own paths only.
 ## Open queue, in fold order
 
 1. **The v0.93 fold (one desk, one commit).**
-@author carries the two NR-056 cells, the Glauert block after its display equation, and the nine pin cells.
-Three inputs gate it: the two founder calls and the disc-area line.
+@author carries the two NR-056 cells, the Glauert block, the appendix credit prose and the nine pin cells.
+Two inputs gate it: the footer rule and the disc-area line.
 @aero-validator hands the disc-area line.
 One sign-off, one rebuild and one send follow it.
 
@@ -240,7 +248,7 @@ The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate.
 The section 3.2 fold waits the same pass.
 
 11. **With the founder.**
-Gate 1: the whole-report sign-off with the samara call.
+Gate 1: the whole-report sign-off.
 The plate footer rule.
 The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
 The F11 acceptance reds read B6c and P2.
@@ -303,4 +311,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the v0.93 fold, one commit on the author desk. It waits on the two founder calls and the disc-area line. Then one sign-off, one rebuild and one send.
+**Owner:** @hermes (map seat). **Next action:** the v0.93 fold, one commit on the author desk. It waits on the footer rule and the disc-area line. Then one sign-off, one rebuild and one send.
