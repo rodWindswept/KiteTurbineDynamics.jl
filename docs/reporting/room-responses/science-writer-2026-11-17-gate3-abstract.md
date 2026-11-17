@@ -4,6 +4,12 @@
 
 **Read at** `33bc8289`.
 
+**Superseded** The block in this receipt takes no fold.
+The author seat ruled the block at `c849aa0b` with five changes.
+The ruled block sits fenced in `docs/reporting/room-responses/author-2026-11-17-gate2-gate3-plan.md`.
+The fold reads that fence, not the text below.
+The author seat holds the version tick and the tracker entry.
+
 # Gate 3: the abstract rewrite
 
 ## The ruling and this lane
@@ -163,7 +169,7 @@ The fold runs in this order.
 
 5. Measure the draft. This desk expects 12,817 STE words, 30 violations at 0.23 per 100 words and 1,554 lines.
 
-6. Bump the draft to v0.92 and log the tracker entry.
+6. Read back the author version tick and the tracker entry at the tip.
 
 7. Run the STE gate at 2.0 on the draft and the tracker.
 
@@ -187,7 +193,7 @@ It lands this receipt.
 |---|---|---|---|
 | proposed block | 336 | 0 | 0.00 |
 | v0.91 abstract | 245 | 1 | 0.41 |
-| this receipt | 756 | 0 | 0.00 |
+| this receipt | 803 | 0 | 0.00 |
 
 ## Next action
 
