@@ -1,0 +1,31 @@
+HEAD=a107cb64
+draft_lines=1541 draft_sha256=55927d47e5926c1d
+[PASS] draft_version_v091: v0.91 header present
+[PASS] draft_line_count: lines=1541
+[PASS] all_cited_rows_in_register: cited_distinct=59 missing=[]
+[PASS] power_winner_pmean_pend: P_mean=5.308779->5.309, P_end=5.314114->5.314 (NR-008)
+[PASS] power_window_swing: P_range=28.66 W -> 29 W / 0.029 kW (NR-014)
+[PASS] power_ok_range_and_floor_bound: NR-007 5.02-6.32 kW and NR-069 5.00/5.02 kW
+[PASS] power_kw3_gap_and_jensen: k*omega^3=5.365889 kW (5.366), gap=57.11 W (57 W), pct=1.08% (1.07%)
+[PASS] power_areas_and_betz: A_raw=45.9733, A_zn=39.4912, Betz=19.1304 kW, share=27.75% (NR-033, NR-034)
+[PASS] power_cp_pair: Cp 0.2944 @ TSR_ring 5.566 (NR-031), Cp 0.2258 @ TSR_tip 6.8415 (NR-032)
+[PASS] power_glauert_appendix_hold: Glauert formula/cubic printed; 0.5192 withheld in v0.91 because NR-086 is on bank-derate-cos2p65 (320330fd), not master HEAD
+[PASS] torque_delivered_and_law: tau_deliv=396.7621->396.76 (NR-030), tau_law=401.0302->401.03 (NR-015, NR-029)
+[PASS] torque_segment_margins_and_twists: S1 margin 2.03, S5 margin 2.69 (NR-040); twists 33.5-33.9/98.9 and 22.8/92.6 (NR-022)
+[PASS] torque_closed_form_reproduction: M_CF(S1)=2.0255->2.03, M_CF(S5)=2.6883->2.69
+[PASS] ct_no_unregistered_numerals_in_draft: ct_tokens_in_draft=0; §4.3 boundary states main-rotor bridling/thrust/drag scope
+[PASS] k_sweep_table_nr047: all 6 NR-047 display rows and NR-041 plateau band match
+[PASS] k_nr048_withdrawn_tokens_absent: NR-048 'twice the nominal load' present; withdrawn tokens 1278, 87.9, 78.8 absent
+[PASS] k_failure_ledger_anchors: §4.2 k-alignment and retired anchors match NR-047
+[PASS] blade_geometry_e1_and_nr050: r_rotor=2.4341->2.434, span=1.4994->1.499, r_in=4.1302->4.130, r_out=5.6296->5.630
+[PASS] blade_winner_decode_and_clearance: NR-011, NR-017, NR-042 winner geometry and clearance match
+[PASS] blade_cone_nr049_boundaries: NR-049 22 deg half-angle and reference apex gloss match Boundary 3; no forbidden 11.0 deg per-side numeral
+
+=== SAMARA CITATION RULING AUDIT ===
+two_new_results_printed_in_v091_appendix=True
+samara_url_in_draft=False
+tveide_or_samara_named_in_draft=False
+ruling_recorded_in_references_bib=False
+dated_section_in_references_verification_md=False
+
+AERODYNAMICS_CHECKS: 20/20 PASS
