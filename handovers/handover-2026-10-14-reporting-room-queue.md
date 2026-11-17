@@ -1,7 +1,7 @@
 # Handover: the reporting room queue
 
 **Date:** 2026-10-14. **From:** @hermes (map seat). **To:** the successor session.
-**Base:** branch `bank-derate-cos2p65`. First landing on `48aafab`.
+**Base:** branch `master` (the live line since 2026-11-17). First landing on `48aafab`.
 **Updated** 2026-10-15 for the second closure train through v0.56 — the rope-break placement fix, the operating-point and torsion fold, the reject split and item-2.1 environment set, the convergence row-16 build and its counter-reads, and the era pack. Draft v0.56. The review copy reads md5 `5ecee42e…`.
 **Updated** 2026-10-19 for the third closure train through v0.65 — the winner bow read, the six-class fold, the FEEDBACKBOT1 pair re-cuts, the B-20/B-21 and A-10 to A-19 prose passes, the house-vocabulary swap, sweeps 33 and 34, the levers re-freeze, the re-stamp and the rebuild. Draft v0.65. The review copy reads md5 `80e01b5d…`.
 **Updated** 2026-10-19 for the fourth closure train. The potential-extension section takes §6. Four draft passes run in one train. One rebuild lands at the tail. The section count moves to nine.
@@ -9,6 +9,7 @@
 **Updated** 2026-10-30 for the founder-call closure train. All seven FEEDBACKBOT3 calls ruled. The §6.1 phase-2 hold retired. Receipts 1, 2 and 3 land at `2a5dc84d`. Draft v0.87. The review copy reads the tension-numeral rebuild.
 **Updated** 2026-11-01 for the science-writer closes. The section 3.2 caveat lift and the sweep 35 record land with their receipts at `3dc5ba9`. Sweep 36 keys on the next push over the v0.79-to-tip tail.
 **Updated** 2026-11-17 for the Hong send ruling. The Strathclyde send (Hong and Amjad) reads a formal release. It holds until the sign-off, the reader-build strip and the abstract rewrite clear. Receipt `hermes-2026-11-17-hong-send-ruling.md`.
+**Updated** 2026-11-17 for the gate closure train. Gate 1 signs the aerodynamics at `74052e59` and opens the samara call. Sweep 36 lands at `2a0514f5`. The gate 2 caption set lands at `5547aba3`. The Call 7 proposal and counter-read land at `4380a94d` and `380c7758`. Draft v0.91. The send waits on gate 1.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
@@ -121,7 +122,33 @@ Both deliverables rebuilt.
 
 - Sweep 35 records `7e60f37..c6d79b9`: v0.65 to v0.79, 161 commits, 30 draft movers, appendix pins 9 of 9, review copy 24 pages A4. The DOCX reads md5 `4d2f9775`, the PDF `49bb37a9`. Both receipts read STE 0.00 and move no draft byte, register row or cited count.
 
-- Sweep 36 keys on the next push over the v0.79-to-tip tail. The receipts sit under `docs/reporting/room-responses/`.
+- The gate train lands 2026-11-17.
+Gate 1 signs at `74052e59`.
+The aerodynamics read passes 20 of 20 checks.
+The samara citation form fails the 2026-11-06 ruling.
+The founder call opens with three options.
+
+- Sweep 36 lands at `2a0514f5`.
+It reads the v0.79-to-v0.91 tail.
+The gate 3 hold lands beside it.
+The gate 2 caption set lands at `5547aba3`.
+Both reader routes exit 0 with 59 cited.
+
+- The Call 7 proposal lands at `4380a94d`.
+The counter-read lands at `380c7758` and signs at 103 checks with 0 fail.
+The return-3 set reads closed at v0.88 and the phases 0-2 reads land.
+The two plates read built and verified.
+Draft v0.91. The send waits on gate 1.
+
+- The 57 W gap at line 352 takes a bracket, not a derived row.
+The author ruled this. It rides the next draft fold.
+
+- NR-086 signs the Glauert ceiling at `320330fd` on the old branch.
+Line 1526 waits on it. The cherry-pick rides Option A.
+
+- The sized-diameter column stays out of signed rows.
+The 0.298 to 0.321 factor has no recoverable derivation in landed artifacts.
+The frozen 3 mm ceiling reads first.
 
 - The Hong send ruling lands 2026-11-17.
 The Strathclyde send (Hong and Amjad) reads a formal release.
@@ -135,77 +162,77 @@ Successors stage own paths only.
 
 ## Open queue, in fold order
 
-1. **Phases 0 to 2 (no founder call, running now).**
-The report repair runs first.
-The re-analysis of the campaign dataset follows.
-The winner diagnostics close the set.
-@science-validator, @aero-validator, @aero-worker and @software-validator per routing E.
+1. **Gate 3 fold: the abstract rewrite.**
+@science-writer folds the ruled block.
+Both amendments land as @author ruled them.
+They read "on its wind-normal area" and "at any legal spacing".
+The fold expects 12,892 words at 0.23.
+Sweep 37 keys after it.
 
-2. **Call 7 proposal: the n-surface.**
-@science-validator proposes and writes the acceptance tests.
-@aero-validator counter-reads against the fine-lambda table.
-A DECISIONS entry lands with the proposal.
+2. **Gate 2 close: the plate footer call.**
+The caption set landed at `5547aba3` with both routes at 59 cited.
+The plate footers print row lists, era tags and script hashes.
+The founder call reads: ship as drawn, per-copy variants, or one footer rule.
+The one-footer rule is the room recommendation.
+After a ruling, @figures-images-diagrams re-pins and @author re-audits.
+
+3. **Call 7 implementation: the n-surface.**
 @software-validator implements behind both signs.
-It gates the k law.
+The proposal reads `4380a94d`.
+The counter-read reads `380c7758`.
+No taper in the band 8.3905 to 9.6107.
+The acceptance file wires in when `cp_ode` exists.
 
-3. **Call 2 proposal: the mass-per-watt term.**
+4. **Call 2 proposal: the mass-per-watt term.**
 @science-validator proposes the term.
 @aero-validator counter-reads it.
-The proposal and acceptance-test path applies.
 It rides Phase 4.
 
-4. **Call 1 proposal: the below-5 penalty shape.**
+5. **Call 1 proposal: the below-5 penalty shape.**
 @science-validator proposes the steepening form.
 @software-validator owns the config edit behind it.
 
-5. **Phase 3 build, call 3 behind it.**
+6. **Phase 3 build, call 3 behind it.**
 The bridle drag term and the SWL gate land on delivered torque.
 The measured C_T basis carries the 1.4 fallback.
 The taper-clamp hard reject lands.
 The discrete x4 and x6 genes land.
 `start_mode` reads a required keyword.
 
-6. **@software-validator: the repo fixes.**
+7. **@software-validator: the repo fixes.**
 The extractor child blocks, the suffix match, the status-column wrap, and the release build-record strip.
 Routed 2026-10-23.
 
-7. **@figures-images-diagrams: two plates.**
-The lever-set pair at row 8: two plates of two panels.
-The section 9 gallery at row 32.
-The numbers read signed: NR-074 to NR-077.
+8. **@figures-images-diagrams + @aero-validator: the two plates.**
+The lever-set pair and the gallery read built and verified.
+The row-8 F-VALUE read and the row-32 axis sign wait on @aero-validator.
+Neither plate sits in v0.91 and neither touches the send.
 
-8. **@author: the return-3 folds.**
-Items 7, 55, 57, 58, 92, 93 and 102.
-The word calls ride the same pass.
-The founder veto window closed when the owning seat runs.
-
-9. **@science-writer: the caveat lift.**
-Anchor to the signed verdict set, not token hits.
+9. **@author: the PL12 residue.**
+The count reads 18 entries: 17 verified plus Hancock.
+C17 and C18 landed in the gate 2 set.
+The status sentence moves to document control in the next draft fold.
 
 10. **The Nomenclature fold and the figure numbering.**
-The fourth-train items now unblocked.
 @hermes and @science-writer fold to section 7.
 @fig-img-diagrams and @author take the captions.
 
-11. **@science-validator: PL12.**
-The fifteen-of-eighteen line and the item-5 printed forms.
-
-12. **@fig-img-diagrams + Rod: the visual pass.**
+11. **@fig-img-diagrams + Rod: the visual pass.**
 The F1 plate, the winner plate, rows 4 to 7 and the convergence row-16 plate.
 The section 3.2 fold waits the same pass.
 
-13. **With the founder.**
+12. **With the founder.**
+Gate 1: the whole-report sign-off with the samara call.
+The plate footer rule.
 The winner-plate seat call, the root README refresh, the two campaign leads, and the settled-form primer.
+The F11 acceptance reds read B6c and P2.
 
-14. **The Strathclyde send (Hong and Amjad).**
-It reads a formal release. Founder-ruled 2026-11-17.
-Held until three gates clear in order.
-They read the whole-report sign-off, the reader-build strip and the abstract rewrite.
-The receipt sits at `docs/reporting/room-responses/hermes-2026-11-17-hong-send-ruling.md`.
-
-15. **@hermes: the scratch keep-list script.**
-Landed 2026-11-01.
-The mechanical protection for logs a signed row cites.
+13. **The Strathclyde send (Hong and Amjad).**
+It reads a formal release.
+Gate 1 waits on the sign-off.
+Gate 2 reads landed at `5547aba3`.
+Gate 3 waits on the fold.
+The map seat runs the send when the gates clear.
 
 ## The parallel set
 
@@ -213,7 +240,9 @@ The claim audit closed at `90cd692`. The item-5 counter-read closed at `d0679d3`
 
 ## Boot
 
-- Fetch first. Every seat pushes to the shared tree on `bank-derate-cos2p65`.
+- Fetch first. Every seat pushes to the shared tree on `master`.
+
+- The 2026-11-17 room refresh reads `handovers/handover-2026-11-17-reporting-room-refresh.md`.
 
 - Read `handovers/handover-2026-10-08-reporting-room-boot.md` and the rulings page beside it.
 
@@ -256,4 +285,4 @@ No suspend.
 The no-op keep-alive ping every 90 minutes is the cache-warmer.
 Acknowledge it and move on. The backlog stays the same. No item drops.
 
-**Owner:** @hermes (map seat). **Next action:** the Strathclyde send (Hong and Amjad) holds as a formal release. Three gates clear in order. They read the whole-report sign-off, the reader-build strip and the abstract rewrite. The room works them now. The sweep 36 key, the proposal path and the visual pass continue beside them.
+**Owner:** @hermes (map seat). **Next action:** the Strathclyde send waits on gate 1 and the gate 3 fold. Two founder calls stand: the whole-report sign-off with the samara call, and the plate footer rule. Gate 2 reads landed at `5547aba3`.
