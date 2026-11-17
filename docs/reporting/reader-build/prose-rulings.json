@@ -206,6 +206,132 @@
       "decision": "rewrite",
       "replacement": "The report prints it as the end power.",
       "note": "section 2.3; the reader holds the report, not the draft"
+    },
+    {
+      "id": "C01",
+      "anchor": "The ring stations and the per-segment twist come from the signed capture (NR-021, NR-022).",
+      "decision": "deferred",
+      "replacement": "The ring stations and the per-segment twist come from the solved rotor state.",
+      "note": "machine-winner-hero caption; covers only the draft body, so the caption text reads absent there"
+    },
+    {
+      "id": "C02",
+      "anchor": "The built geometry converges to the register winner",
+      "decision": "deferred",
+      "replacement": "The built geometry converges to the campaign winner",
+      "note": "machine-evolution-strip caption; same form as B07"
+    },
+    {
+      "id": "C03",
+      "anchor": "Each machine prints three signed values.",
+      "decision": "deferred",
+      "replacement": "Each machine prints three values.",
+      "note": "machine-evolution-strip caption; same form as B08"
+    },
+    {
+      "id": "C04",
+      "anchor": "NR-062 signs the window mean and the window end as a pair.",
+      "decision": "deferred",
+      "replacement": "The window mean and the window end print as a pair.",
+      "note": "machine-evolution-strip caption; the row id stands as the subject, so the token strip leaves a verb with no subject"
+    },
+    {
+      "id": "C05",
+      "anchor": "It matches the register machine:",
+      "decision": "deferred",
+      "replacement": "It matches the winning machine:",
+      "note": "machine-evolution-strip caption"
+    },
+    {
+      "id": "C06",
+      "anchor": "Each printed value is one member of the pair NR-062 signs.",
+      "decision": "deferred",
+      "replacement": "Each printed value is one member of that pair.",
+      "note": "machine-power-trend caption; the row id closes the sentence"
+    },
+    {
+      "id": "C07",
+      "anchor": "NR-066 signs the mass and the totals, not the split.",
+      "decision": "deferred",
+      "replacement": "The mass and the totals are recorded, not the split.",
+      "note": "machine-power-trend caption; the row id stands as the subject"
+    },
+    {
+      "id": "C08",
+      "anchor": "No slope numeral prints, because no register row carries one.",
+      "decision": "deferred",
+      "replacement": "No slope numeral prints, because no reading for it exists.",
+      "note": "machine-power-trend caption; same form as B12"
+    },
+    {
+      "id": "C09",
+      "anchor": "No register row signs a numeral in it.",
+      "decision": "deferred",
+      "replacement": "No value in it is a reported result.",
+      "note": "instrument-gallery caption"
+    },
+    {
+      "id": "C10",
+      "anchor": "the kit holds a hash for each frame.",
+      "decision": "rewrite",
+      "replacement": "the record holds a hash for each frame.",
+      "note": "section 9 body prose; kit is builder vocabulary"
+    },
+    {
+      "id": "C11",
+      "anchor": "The convergence plate (row 16) carries the objective curve.",
+      "decision": "rewrite",
+      "replacement": "The convergence plate carries the objective curve.",
+      "note": "section 4.1 body prose; the parenthetical names a figure-map row"
+    },
+    {
+      "id": "C12",
+      "anchor": "The convergence plate (row 16) carries it.",
+      "decision": "deferred",
+      "replacement": "The convergence plate carries it.",
+      "note": "machine-power-trend caption; the parenthetical names a figure-map row"
+    },
+    {
+      "id": "C13",
+      "anchor": "All numbers come from one version of the model, the physics era `post-95c385d_wind-authority`.",
+      "decision": "deferred",
+      "replacement": "All numbers come from one model version, `post-95c385d_wind-authority`.",
+      "note": "abstract; gate 3 replaces this block, so the anchor leaves and the site reads absent"
+    },
+    {
+      "id": "C14",
+      "anchor": "Each dataset carries its era, its commits\nand its geometry fingerprint.",
+      "decision": "rewrite",
+      "replacement": "Each dataset carries its model version, its commits and its geometry fingerprint.",
+      "note": "section 9 body prose; same form as B17"
+    },
+    {
+      "id": "C15",
+      "anchor": "The cp fix is the 2026-10-05 power-coefficient correction (era a82cafd).",
+      "decision": "rewrite",
+      "replacement": "The cp fix is the 2026-10-05 power-coefficient correction (commit a82cafd).",
+      "note": "section 3.1 body prose; era stands for a commit pin"
+    },
+    {
+      "id": "C16",
+      "anchor": "| Superseded as era record. |",
+      "decision": "rewrite",
+      "replacement": "| Superseded. |",
+      "note": "section 3.1 table cell; the era wording sits beside the B18 model-version row"
+    },
+    {
+      "id": "C17",
+      "anchor": "The founder dropped the Ranneberg entry.",
+      "decision": "drop",
+      "replacement": null,
+      "note": "section 8 body prose; internal process and an actor outside the report"
+    },
+    {
+      "id": "C18",
+      "anchor": "A bracketed number in the body points at its entry here.",
+      "decision": "rewrite",
+      "replacement": "A bracketed number in the body points at its entry here. Entries 11 to 17 stand as further reading, with no body citation.",
+      "note": "section 8 body prose; the claim holds for entries 1 to 10 and 18 only"
     }
   ]
 }
