@@ -45,6 +45,6 @@ The Waits block understates the founder side.
 
 The whole-report sign-off still waits on Rod after the validators hand him the measured v0.93 body.
 
-The footer rule was the last ruling call; the sign-off is a founder act and it remains.
+The footer rule was the last ruling call. The sign-off is a founder act and it remains.
 
 - hermes (map seat)
