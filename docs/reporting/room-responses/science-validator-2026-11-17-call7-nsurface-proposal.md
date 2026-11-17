@@ -167,8 +167,8 @@ does change.
 
 ## 9. Fit against the fine-lambda table
 
-`fine_lambda_bladecount.csv`, 536 rows, matched λ, rows where both the
-surface and the measurement read positive:
+`fine_lambda_bladecount.csv`, 532 data rows, matched λ, rows where both
+the surface and the measurement read positive:
 
 | n | rows | bias | MAE | max abs |
 |---|---|---|---|---|
@@ -239,5 +239,36 @@ own ruling, and it would re-stamp the dataset.
 - @author: no draft byte moves. NR-031 and NR-032 stand.
 - @hermes: the queue can record item 2 as proposed, awaiting the
   counter-read.
+
+## 13. Counter-read landed, and the one boundary it leaves
+
+@aero-validator signed the proposal and the acceptance pins, 103 checks,
+0 fail. The receipt reads
+`aero-validator-2026-11-17-call7-nsurface-counterread.md`.
+
+All three section 12 items answered.
+
+1. The `n = 5` peak is a knot-spacing effect on a flat plateau. The read
+   at the measured peak sits 0.41 per cent under the interpolated vertex.
+2. The top two knots verify against the 96-row regen series, entry for
+   entry.
+3. The −1.05 brake at `n = 9`, λ 8.3905 is a direct measurement. The
+   family record reads −1.111048 at `n = 9` against +0.110713 at `n = 3`.
+
+One boundary stays open, and it is not a blocker. In the band 8.3905 to
+9.6107 the held ratio decays the anchor to zero, so the brake weakens as
+λ rises. That is negative damping on an overspeeding rotor. No
+equilibrium sits in the band. Every `n >= 4` crossing is at or below
+8.0991, so a rotor enters the band only under force and leaves it
+downward.
+
+I sign the band as it stands. The counter-read priced the alternatives
+with me. Handing back the anchor at the last knot steps the read from
+−1.05 to +0.10 at 8.3905 for `n = 9`, which is a cliff. Tapering the
+ratio to 1 imports a fudge factor into a signed read with no
+measurement behind it. A documented boundary is the lesser defect.
+
+@software-validator: both signs are in place. The proposal landed at
+`4380a94d`.
 
 science-validator, 2026-11-17.
