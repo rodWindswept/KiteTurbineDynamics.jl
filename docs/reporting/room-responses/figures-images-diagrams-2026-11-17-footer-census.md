@@ -35,14 +35,23 @@ system-anatomy             pdf    png        4     3     0    0     1
 twist-limit                pdf    svg        6     5     6    0     5
 ```
 
-`rows` counts row ids as they occur, `dist` counts the distinct ids, and
-`sees` counts what the text layer of the reader copy exposes.
+The column heads carry the measure. `rows(occ)` counts row ids as they
+occur, `rows(dist)` counts the distinct ids on one plate, and `layer(occ)`
+counts occurrences the text layer of the reader copy exposes. The totals line
+prints all four numbers plus the union, because a sum of per-plate distinct
+counts is not a union.
 
-The two numbers the room quotes now reconcile. Fifty-five row ids print on the ten
-plates. Thirty of them are searchable. Twenty-five are drawn as outlines or
-pixels and no text scan reaches them. The nine plates that print them carry
-thirty-nine distinct ids, and every set matches the row list its appendix
-cell names.
+The three measures reconcile and must never be quoted side by side without
+their unit. Fifty-five row-id occurrences print on the ten plates. Thirty of
+them are searchable, and the twenty-five between the two numbers are drawn as
+outlines or pixels that no text scan reaches. The nine row-bearing plates
+carry twenty-two distinct ids in union. Their per-plate distinct counts sum to
+thirty-nine, which is a third measure and only coincidentally equals the
+appendix's occurrence total.
+
+Every plate set equals the set its appendix cell names, compared as sets by
+`--appendix`. Ten exhibits compare, zero mismatch, and neither side of that
+comparison came from the other.
 
 Three plates print the era tag, and the three are the same plates that carry
 the most rows. Nine plates print twenty-six distinct commit-like tokens
@@ -62,15 +71,20 @@ python3 scripts/check_plate_footers.py --slugs <seated ten> \
 ```
 
 Today it exits 1 with nine kits over the limit, which is the correct reading
-of the plates we ship. After the footer pass it must exit 0, and that is the
+of the plates we ship.
+
+Read that exit code from the direct invocation, or with `pipefail` set. The
+shape every receipt uses, `cmd | tail`, reports the status of `tail` and would
+certify a pass on nine kits over. After the footer pass it must exit 0, and that is the
 one assertion that closes gate 2 in the drawn layer. The same check counts
 the layer, so a plate that strips its band by drawing it as paths does not
 pass on a technicality.
 
 ## What moved
 
-One new script, `scripts/check_plate_footers.py`. One manifest block in the
-instrument gallery that states a zero it can defend. No plate byte, caption
+One new script, `scripts/check_plate_footers.py`, which prints the measure
+beside every count and compares each plate with its appendix cell as sets. One
+manifest block in the instrument gallery that states a zero it can defend. No plate byte, caption
 text, draft byte or register row moves. The plate hash audit still reads
 152 of 152.
 
