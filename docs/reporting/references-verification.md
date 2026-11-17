@@ -192,3 +192,27 @@ The slide header strip bled in at the merge.
 
 The pipeline counts in `docs/agents/domain.md` and `docs/case-notes/01_source_inventory.md` were stale at 586 graph files.
 They now read what the tree holds.
+
+## 10. The samara credit under the interim ruling (2026-11-17)
+
+Rod ruled Option A on 2026-11-17.
+
+The closed-forms appendix stays in the release.
+
+The interim credit names Tallak Tveide (private communication, November 2026) and the public samara page (`math.osp.no/parameter-fibers`).
+
+The credit prints in the appendix and in section 8 References.
+
+The 2026-11-06 form stands.
+
+The joint short note comes first.
+
+The public page and the named private communication back it until the note is out.
+
+The `tveide2026samara` entry lands in `references.bib` with the Unpublished label.
+
+The page resolved on 2026-11-17.
+
+This section supersedes nothing.
+
+The ruling receipt reads `room-responses/hermes-2026-11-17-samara-option-a-ruling.md`.
