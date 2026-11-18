@@ -1474,8 +1474,10 @@ only with it.
 
 The forms below state the segment model the code implements.
 The Tulloch thesis holds Eq 4.30 to 4.34, and `src/trpt_twist_limit.jl` carries the peak form.
-Tveide's note states the half-shortening peak-torque identity and the geometry-free torque margin.
+
+Tveide states the half-shortening peak-torque identity and the geometry-free torque margin independently.
 The private communication dates November 2026, and the public page sits at `math.osp.no/parameter-fibers`.
+
 A segment is a pair of rings of radii $r_0$ and $r_1$, joined by lines of length $l$.
 Axial tension $T_N$ holds the segment.
 A twist $\theta$ turns the top ring and shortens the segment.

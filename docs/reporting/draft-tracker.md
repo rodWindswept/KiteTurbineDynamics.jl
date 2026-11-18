@@ -1266,3 +1266,12 @@ The cited count reads 60, every one signed, against 86 signed rows.
 The reader sheet reads 46 sites, because B16 retires with its anchor.
 
 Author, 2026-11-17.
+
+### The credit wording fix (2026-11-18, author)
+
+The credit now reads "Tveide states the half-shortening peak-torque identity and the geometry-free torque margin independently."
+The possessive and the word "note" leave. "Independently" carries the second derivation chain the record names, so the Tulloch precedence stays visible.
+The sentence takes its own paragraph, so the Tulloch line and the credit do not share one breath.
+
+Words hold at 12,989. STE reads 30 at 0.23, from 32 at 0.25.
+The cited count holds at 60, every one signed.
