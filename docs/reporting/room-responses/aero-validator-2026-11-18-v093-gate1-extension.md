@@ -58,7 +58,7 @@ Both match the fold message.
 
 Gate 1 aerodynamics now reads PASS on the v0.93 body, extending the 20 of 20 read at v0.91.
 
-The three deltas this seat was asked to carry all verify.
+The three deltas this seat carries all verify.
 
 They are the Glauert numeral, the `wind-normal` basis word and the 57 W row set.
 
