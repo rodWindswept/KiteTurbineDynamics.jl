@@ -13,6 +13,7 @@
 **Updated** 2026-11-17 for the v0.92 fold train. Gate 3 and the PL12 tally land at `690efb5a`. Sweep 37 lands at `57d07ec4`. The plate-footer instrument lands at `a5bced36`. The v0.93 fold waits on two founder calls and one aero line.
 **Updated** 2026-11-17 for the Option A ruling. The samara call closes. NR-086 cherry-picks onto master at `295d68c4`. The `.bib` entry, the verification section and the receipt land at `92a51cfa`. The footer rule and the disc-area line still gate the v0.93 fold.
 **Updated** 2026-11-17 for the footer rule. One footer rule for all kits. The drawn footer keeps the source and the capture name. The instrument must exit 0 after the pass. Only the disc-area line gates the v0.93 fold now.
+**Updated** 2026-11-18 for the hibernation. Rod received the report and the team rests on his word. The seven keep-alive crons pause. No item drops. The disc-area line still gates the v0.93 fold. The wake-up starts at this page and the refresh handover.
 
 This page is the consolidated queue index for the reporting room. It holds the rotation insurance set and the open work in fold order. It is an index, not a retelling. The receipts hold the story.
 
