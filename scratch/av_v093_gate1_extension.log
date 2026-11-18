@@ -1,0 +1,30 @@
+=== 1. Glauert block (after the display equation) ===
+PASS: four-sentence block prints verbatim after the display equation
+PASS: NR-086 cites == 2, one per anchor (found 2)
+PASS: 12.4 sentence prints
+PASS: the 12.4 sentence carries no citation
+PASS: the withholding sentence is gone
+
+=== 2. NR-056 wind-pair cells ===
+PASS: line 30 wind pair carries NR-056
+PASS: line 728 wind pair carries NR-056
+PASS: two wind-pair sites (found 2 at [30, 728])
+PASS: the old (NR-008, NR-032) bracket is gone
+
+=== 3. 57 W bracket ===
+PASS: 57 W line keeps the NR-030/NR-015/NR-029 bracket (['The gap is 57 W, the difference between the delivered torque and the load law (NR-030, NR-015, NR-029).'])
+PASS: both torque numerals print
+
+=== 4. Tveide credit and entry 19 ===
+PASS: credit sentence one prints, Tveide's note, verb states, both results named
+PASS: public page prints
+PASS: private communication prints
+PASS: the list reads nineteen
+PASS: the control tally reads seventeen of nineteen
+PASS: entry 19 exists in the reference list
+
+=== 5. Cited-row census against the register ===
+PASS: cited distinct rows = 60 (60 expected)
+PASS: no unsigned cited row ([])
+
+SUMMARY: 19 checks, 0 fails
