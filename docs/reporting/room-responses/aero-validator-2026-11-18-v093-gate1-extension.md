@@ -30,9 +30,15 @@ Both torque numerals, 396.76 and 401.03, print with their rows.
 
 ## 4. The Tveide credit and entry 19
 
-The credit reads "Tveide's note states the half-shortening peak-torque identity and the geometry-free torque margin."
+The credit reads:
 
-The scope names exactly the two results the appendix prints, and the verb `states` matches the record, which ties the peak form to Tulloch (2021) Eq 4.31 and 4.34.
+"Tveide's note states the half-shortening peak-torque identity and the geometry-free torque margin."
+
+The scope names exactly the two results the appendix prints.
+
+The verb `states` matches the record.
+
+That record ties the peak form to Tulloch (2021) Eq 4.31 and 4.34.
 
 The second sentence prints the date and the public page.
 
@@ -52,7 +58,9 @@ Both match the fold message.
 
 Gate 1 aerodynamics now reads PASS on the v0.93 body, extending the 20 of 20 read at v0.91.
 
-The three deltas this seat was asked to carry, the Glauert numeral, the `wind-normal` basis word and the 57 W row set, all verify.
+The three deltas this seat was asked to carry all verify.
+
+They are the Glauert numeral, the `wind-normal` basis word and the 57 W row set.
 
 The NR-056 pair fix and the credit scope also verify.
 
