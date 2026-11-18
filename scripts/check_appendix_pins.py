@@ -63,7 +63,7 @@ KIT = {
 }
 
 ROW_RE = re.compile(
-    r"^\| ([^|]+?) \| ([^|]*) \| ([^|]*) \| `([0-9a-f]{7})` \|$", re.M)
+    r"^\| ([^|]+?) \| ([^|]*) \| ([^|]*) \| `([0-9a-f]{7,40})` \|$", re.M)
 
 SEAT_RE = re.compile(r"\[Figure seated:(?P<body>.*?)\]", re.S)
 SEAT_SLUG_RE = re.compile(r"slug `(?P<slug>[a-z0-9_-]+)`")
@@ -81,7 +81,7 @@ def manifest_commit(kit):
     commit = m.get("script_commit")
     if commit:
         return commit
-    hit = re.search(r"--script-commit ([0-9a-f]{7})", m.get("command", ""))
+    hit = re.search(r"--script-commit ([0-9a-f]{7,40})", m.get("command", ""))
     if hit:
         return hit.group(1)
     return m.get("run_commit")
@@ -149,6 +149,16 @@ def main():
     matches = list(ROW_RE.finditer(text))
     if not matches:
         print("check_appendix_pins: no appendix rows parsed — refusing to pass", file=sys.stderr)
+        return 1
+
+    # A partial parse is the same failure as no parse: an unparsed exhibit row
+    # is an unchecked row, and the gate would report a green table it never read.
+    named = [line for line in text.splitlines()
+             if line.startswith("| ") and any(label in line for label in KIT)]
+    if len(matches) < len(named):
+        print(f"check_appendix_pins: {len(named)} exhibit row(s) in the table, "
+              f"{len(matches)} parsed — refusing to pass on a partial parse",
+              file=sys.stderr)
         return 1
 
     bad = 0
